@@ -1,0 +1,143 @@
+@use 'global' as *;
+
+/*
+* === Menu settings ===
+*/
+.main-navigation .main-nav ul li.sfHover > a, 
+.main-navigation .menu-bar-item:hover > a, 
+.main-navigation .menu-bar-item.sfHover > a{
+	background-color: transparent;
+}
+
+/* Fix the menu on top of the page */
+body:not(.home) #masthead, .sticky #masthead{
+	position: sticky;
+	z-index: 9999;
+	top: 0px;
+}
+
+html body:not(.home) #masthead{
+	z-index: 99999999;
+}
+
+#masthead .site-logo{
+	max-width: 40%;
+}
+
+/* make the words bigger*/
+#site-navigation{ 
+	a{
+		font-weight:600;
+	}
+
+	.inside-navigation{
+		justify-content: normal !important;
+	}
+
+	/* COlor the search image*/
+	.menu-bar-item:hover > a{
+		background-color: transparent;
+	}
+	
+	.icon-search svg{
+		color: black;
+	}
+	
+	.icon-search:hover svg{
+		color: $primary_color;
+	}
+	
+	/* background of submenus*/
+	ul .menu-item-has-children ul.sub-menu {
+		background-color: white;
+	}
+	
+	/* Align items right */
+	#menu-primary-menu{
+		justify-content: flex-end;
+
+		/* Samller line height */
+		li{
+			> a{
+				line-height: 40px;
+			}
+
+			/* Underline red */
+			&:hover > a,
+			&[class*="current-menu-"] > a
+			{
+				color: black;
+				text-decoration: underline;
+				-webkit-text-decoration-color: $primary_color; /* Safari */  
+				text-decoration-color: $primary_color;
+			}
+			
+			/* text color of active menu*/
+			&[class*="current-menu-"] > a {
+				color: $primary_color;
+			}
+		}
+
+		/* hover color of submenu*/
+		.menu-item-has-children ul.sub-menu .menu-item:hover a{
+			background-color: lightgrey;
+		}
+		
+		/*Number behind menu item*/
+		.numberCircle {
+			border-radius: 50%;
+			width: 30px;
+			height: 30px;
+			padding: 3px;
+			background: $primary_color;
+			color: white;
+			text-align: center;
+			font: 10px Arial, sans-serif;
+		}
+	}
+}
+
+/* Max width of the menu to allow for the search icon*/
+.logged-in #primary-menu{
+	width: 91%;
+}
+
+/* background of submenus*/
+@media (min-width: $tabletwidth){
+	.search-form.navigation-search.nav-search-active{
+		left: auto;
+		right: 100px;
+		border: 2px solid black;
+	}
+}
+
+/*
+* === Mobile menu settings ===
+*/
+@media (max-width: $tabletwidth){
+	/* White background for menu, White background for menu  icon */
+	#masthead.has-inline-mobile-toggle .inside-header.grid-container, 
+	#mobile-menu-control-wrapper .menu-toggle, #primary-menu{
+		background-color: white;
+	}
+
+	/* Color of the menu icon, color of the expanded submenu text */
+	.mobile-menu-control-wrapper .menu-toggle .gp-icon, 
+	#primary-menu #menu-primary-menu .sfHover a,
+	.home .icon-search svg{
+		color: $primary_color;
+	}
+
+	/* Color of mobile menu text */
+	.has-inline-mobile-toggle #site-navigation.toggled .menu-item a{
+		color: black;
+	}
+
+	/* Background of hovered submenu items */
+	#menu-primary-menu .menu-item{ 
+		&:not(.sfHover):hover a, 
+		.sub-menu.toggled-on .menu-item:hover a{
+			background-color:lightgrey;
+		}
+	}
+}

@@ -1,0 +1,20 @@
+{
+  "name": "simnigeria",
+  "version": "1.0.0",
+  "description": "All JS for SIM Nigeria custom plugin",
+  "main": "main.js",
+  "dependencies": {
+    "@web-auth/webauthn-helper": "0.0.13"
+  },
+  "devDependencies": {
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --progress --mode=production",
+    "watch": "webpack --progress --watch"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC"
+}

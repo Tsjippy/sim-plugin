@@ -1,0 +1,654 @@
+<?php
+namespace SIM;
+
+//Create an missionary (family) page
+function create_missionary_page($user_id){
+	global $MissionariesPageID;
+	
+	//get the current page
+	$page_id = get_user_meta($user_id,"missionary_page_id",true);
+	$userdata = get_userdata($user_id);
+	
+	//Check if this page exists and is published
+	if(get_post_status ($page_id) != 'publish' ) $page_id = null;
+	
+	$family = family_flat_array($user_id);
+	if (count($family)>0){
+		$title = $userdata->last_name." family";
+	}else{
+		$title = $userdata->last_name.', '.$userdata->first_name;
+	}
+	
+	$update = false;
+	
+	//Only create a page if the page does not exist
+	if ($page_id == null){
+		$update = true;
+		// Create post object
+		$missionary_page = array(
+		  'post_title'    => $title,
+		  'post_content'  => '',
+		  'post_status'   => 'publish',
+		  'post_type'	  => 'page',
+		  'post_parent'   => $MissionariesPageID,
+		);
+		 
+		// Insert the post into the database
+		$page_id = wp_insert_post( $missionary_page );
+		
+		//Save missionary id as meta
+		update_post_meta($page_id,'missionary_id',$user_id);
+		
+		print_array("Created missionary page with id $page_id");
+	}else{
+		$page = get_post($page_id);
+		//print_array($page,true);
+		if($page->post_title != $title){
+			$update = true;
+			print_array("Updating missionary page {$page->ID} to $title");
+			wp_update_post( [
+				'ID' 			=> $page->ID,
+				'post_title' 	=> $title,
+			]);
+			
+		}
+	}
+	
+	if($update == true and count($family)>0){
+		//Check if family has other pages who should be deleted
+		foreach($family as $family_member){
+			//get the current page
+			$member_page_id = get_user_meta($family_member,"missionary_page_id",true);
+			
+			//Check if this page exists and is already trashed
+			if(get_post_status ($member_page_id) == 'trash' ) $member_page_id = null;
+			
+			//If there a page exists for this family member and its not the same page
+			if($member_page_id != null and $member_page_id != $page_id){
+				//Remove the current user page
+				wp_delete_post($member_page_id);
+				
+				print_array("Removed missionary page with id $member_page_id");
+			}
+		}
+	}
+	
+	//Add the post id to the user profile
+	update_family_meta($user_id,"missionary_page_id",$page_id);
+	
+	//Return the id
+	return $page_id;
+}
+
+//Update user meta of a user and all of its relatives
+function update_family_meta($user_id, $metakey, $value){
+	if($value == 'delete'){
+		delete_user_meta($user_id, $metakey);
+	}else{
+		update_user_meta( $user_id, $metakey, $value);
+	}
+		
+	//Update the meta key for all family members as well
+	$family = get_user_meta($user_id,"family",true);
+	if (is_array($family) and count($family)>0){
+		if (isset($family["children"])){
+			$family = array_merge($family["children"],$family);
+			unset($family["children"]);
+		}
+		foreach($family as $relative){
+			if($value == 'delete'){
+				delete_user_meta($relative, $metakey);
+			}else{
+				//Update the marker for the relative as well
+				update_user_meta($relative,$metakey,$value);
+			}
+		}
+	}
+}
+
+//Create a dropdown with all users
+function user_select($text,$only_adults=false,$families=false, $class='',$id='user_selection',$args=[],$user_id='',$exclude_ids=''){
+	wp_enqueue_script('simnigeria_forms_script');
+	$html = "";
+
+	if(!is_numeric($user_id))	$user_id = $_GET["userid"];
+	
+	//Get the id and the displayname of all users
+	$users = get_missionary_accounts($families,$only_adults,true,[],$args);
+	$exists_array = array();
+
+	if(is_array($exclude_ids)){
+		$exclude_ids[]	= 1;
+	}else{
+		$exclude_ids	= [1];
+	}
+	
+	//Loop over all users to find duplicate displaynames
+	foreach($users as $key=>$user){
+		if(in_array($user->ID,$exclude_ids)){
+			unset($users[$key]);
+			continue;
+		}
+		//Get the displayname
+		$display_name = strtolower($user->display_name);
+		
+		//If the display name is already found
+		if (isset($exists_array[$display_name])){
+			//Change current users displayname
+			$user->display_name = $user->display_name." (".get_userdata($user->ID)->data->user_email.")";
+			//Change previous found users displayname
+			$user = $users[$exists_array[$display_name]];
+			$user->display_name = $user->display_name." (".get_userdata($user->ID)->data->user_email.")";
+		}else{
+			//User has a so far unique displayname, add to array
+			$exists_array[$display_name] = $key;
+		}
+	}
+	
+	$html .= "<div>";
+	if($text != ''){
+		$html .= "<h4>$text</h4>";
+	}
+	$html .= "<select name='$id' class='$class user_selection'>";
+		foreach($users as $key=>$user){
+			if ($user_id == $user->ID){
+				//Make this user the selected user
+				$selected='selected="selected"';
+			}else{
+				$selected="";
+			}
+ 			$html .= '<option value="'.$user->ID.'"'.$selected.'>'.$user->display_name.'</option>';
+		}
+	$html .= '</select></div>';
+	
+	return $html;
+}
+
+//Function to check if a post has child posts
+function has_children($post_id) {  
+  $pages = get_pages('child_of=' . $post_id);
+  
+  if (count($pages) > 0):
+    return $pages;
+  else:
+    return false;
+  endif;
+}
+
+function current_url($exclude_scheme=false, $remove_get=false){
+	$url = '';
+	if($exclude_scheme == false)	$url .=	$_SERVER['REQUEST_SCHEME']."://";
+	$url .=	$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	
+	return $url;
+}
+
+function url_to_path($url){
+	$site_url	= str_replace('https://','',get_site_url());
+	$url		= str_replace('https://','',$url);
+	
+	//in case of http
+	$site_url	= str_replace('http://','',$site_url);
+	$url		= str_replace('http://','',$url);
+	
+	//print_array($site_url);
+	$path = str_replace(trailingslashit($site_url),ABSPATH,$url);
+	return $path;
+}
+
+function path_to_url($path){
+	$url = str_replace(ABSPATH,get_site_url(),$path);
+	return $url;
+}
+
+function print_array($message,$display=false){
+	$bt = debug_backtrace();
+	$caller = array_shift($bt);
+	//always write to log
+	error_log("Called from file {$caller['file']} line {$caller['line']}");
+	file_put_contents(__DIR__.'/simlog.log',"Called from file {$caller['file']} line {$caller['line']}\n",FILE_APPEND);
+
+	if(is_array($message) or is_object($message)){
+		error_log(print_r($message,true));
+		file_put_contents(__DIR__.'/simlog.log',print_r($message,true),FILE_APPEND);
+	}else{
+		error_log(time().' - '.$message);
+		file_put_contents(__DIR__.'/simlog.log',time()." - $message\n",FILE_APPEND);
+	}
+	
+	if($display){
+		echo "<pre>";
+		echo "Called from file {$caller['file']} line {$caller['line']}<br><br>";
+		print_r($message);
+		echo "</pre>";
+	}
+}
+
+function page_select($select_id,$page_id=null,$class=""){	
+	$pages = get_pages(
+		array(
+			'orderby' => 'post_name',
+			'order' => 'asc',
+			'post_type' => 'page',
+			'post_status' => 'publish'
+		)
+	);
+	
+	$html = "";
+	$html .= "<select name='$select_id' id='$select_id' class='selectpage $class'>
+				<option value=''>---</option>";
+	
+	foreach ( $pages as $page ) {
+		if ($page_id == $page->ID){
+			$selected='selected=selected';
+		}else{
+			$selected="";
+		}
+		$option = '<option value="' . $page->ID . '" '.$selected.'>';
+		$option .= $page->post_title;
+		$option .= '</option>';
+		$html .= $option;
+	}
+	
+	$html .= "</select>";
+	return $html;
+}
+
+function media_select($id,$media_id=null,$class=""){
+	$html = "";
+	$html .= "<select name='$id' id='$id' class='selectpage $class'>
+				<option value=''>---</option>";
+				
+	$picture_ids = get_posts( 
+		array(
+			'post_type'      => 'attachment', 
+			'post_mime_type' => 'image',  
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'orderby'    	=> 'title',
+			'sort_order' 	=> 'asc'
+		) 
+	);
+	foreach($picture_ids as $picture_id){
+		if ($media_id == $picture_id){
+			$selected='selected=selected';
+		}else{
+			$selected="";
+		}
+		$option = '<option value="' . $picture_id . '" '.$selected.'>';
+		$option .= get_the_title($picture_id);
+		$option .= '</option>';
+		$html .= $option;
+	}
+	
+	$html .= "</select>";
+	return $html;
+}
+
+//family flat array
+function family_flat_array($user_id){
+	
+	$family = (array)get_user_meta( $user_id, 'family', true );
+	
+	//make the family array flat
+	if (isset($family["children"])){
+		$family = array_merge($family["children"],$family);
+		unset($family["children"]);
+	}
+	
+	return $family;
+}
+
+//Check if user has partner
+function has_partner($user_id) {
+	$family = get_user_meta($user_id, "family", true);
+	if(is_array($family)){
+		if (isset($family['partner']) and is_numeric($family['partner'])){
+			return $family['partner'];
+		}else{
+			return false;
+		}
+	}else{
+		return false;
+	}
+}
+
+//Get users parents
+function get_parents($user_id){
+	$family 	= get_user_meta( $user_id, 'family', true );
+	$parents 	= [];
+	foreach (["father","mother"] as $parent) {
+		if (isset($family[$parent])) {
+			$parent_userdata = get_userdata($family[$parent]);
+			if($parent_userdata != null){
+				$parents[] = $parent_userdata;
+			}
+		}
+	}
+	return $parents;
+}
+
+//Function to check if a certain user is a child
+function is_child($user_id) {
+	$family = get_user_meta($user_id, "family", true);
+	if(is_array($family)){
+		if(isset($family["father"]) or isset($family["mother"])){
+			return true;
+		}else{
+			return false;
+		}
+	}else{
+		return false;
+	}
+}
+
+function get_age($user_id){
+	$birthday = get_user_meta( $user_id, 'birthday', true );
+	if($birthday != ""){
+		$birthDate = explode("-", $birthday);
+		if (date("md", date("U", mktime(0, 0, 0, $birthDate[1], $birthDate[2], $birthDate[0]))) > date("md")){
+			$age = (date("Y") - $birthDate[0]) - 1;
+		}else{
+			$age = (date("Y") - $birthDate[0]);
+		}
+	}else{
+		$age = "";
+	}
+	
+	return $age;
+}
+
+function get_age_in_words($date){
+	global $num_word_list;
+	
+	$start_year = explode('-',$date)[0];
+	//get the difference with the current year
+	$age = date('Y')-$start_year;
+
+	//Convert the age to words
+	if($age > 20){
+		$base = intval($age/10);
+		$base_in_words = $num_word_list[$base+20];
+		return $base_in_words.'-'.$num_word_list[$age-($base*10)];
+	}else{
+		return $num_word_list[$age];
+	}
+}
+
+function get_anniversaries(){
+	global $Events;
+
+	$messages = [];
+
+	$Events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
+
+	foreach($Events->events as $event){
+		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
+		if(!empty($start_year)){
+			$title	= $event->post_title;
+			$age	= get_age_in_words($start_year);
+			$privacy= (array)get_user_meta($event->post_author, 'privacy_preference', true);
+
+			if(substr($title,0,8) == 'Birthday' and in_array('hide_birthday', $privacy)){
+				$age	= '';
+			}elseif(substr($title,0,3) != 'SIM'){
+				$title	= lcfirst($title);
+			}
+			$messages[$event->post_author] = "$age $title";
+		}
+	}
+
+	return $messages;
+}
+
+function get_arriving_users(){
+	$date   = new \DateTime(); 
+	$arrival_users = get_users(array(
+		'meta_key'     => 'arrival_date',
+		'meta_value'   => $date->format('Y-m-d'),
+		'meta_compare' => '=',
+	));
+	
+	return $arrival_users;
+}
+
+function get_missionary_accounts($return_family=false,$adults=true,$local_nigerians=false,$fields=[],$extra_args=[]){
+	$do_not_process 		= [];
+	$cleaned_user_array 	= [];
+	
+	$arg = array(
+		'orderby'	=> 'meta_value',
+		'meta_key'	=> 'last_name'
+	);
+
+	if($local_nigerians == false){
+		$arg['meta_query'] = array(
+			array(
+				'key' => 'local_nigerian',
+				'compare' => 'NOT EXISTS'
+			),
+		);
+	}
+	
+	if(is_array($fields) and count($fields)>0){
+		$arg['fields'] = $fields;
+	}
+	
+	$arg = array_merge_recursive($arg,$extra_args);
+	
+	$users  = get_users($arg);
+	
+	//Loop over the users
+	foreach($users as $user){
+		//If we should only return families
+		if($return_family == true){
+			$family = get_user_meta( $user->ID, 'family', true );
+			if ($family == ""){
+				$family = [];
+			}
+
+			//Current user is a child, exclude it
+			if (is_child($user->ID)){
+				$do_not_process[] = $user->ID;
+			//Check if this adult is not already in the list
+			}elseif(!in_array($user->ID, $do_not_process)){
+				if (isset($family["partner"])){
+					$do_not_process[] = $family["partner"];
+					//Change the display name
+					$user->display_name = $user->last_name." family";
+				}
+			}
+		//Only returning adults, but this is a child
+		}elseif($adults == true and is_child($user->ID)){
+			$do_not_process[] = $user->ID;
+		}
+	}
+	
+	//Loop over the users again
+	foreach($users as $user){
+		//Add the user to the cleaned array if not in the donotprocess array
+		if(!in_array($user->ID,$do_not_process)){
+			$cleaned_user_array[] = $user;
+		}
+	}
+	
+	return $cleaned_user_array;
+}
+
+//Updated nested array based on array of keys
+function add_to_nested_array($keys, &$array=array(), $value=null) {
+	//$temp point to the same content as $array
+	$temp =& $array;
+	if(!is_array($temp)) $temp = [];
+	
+	//loop over all the keys
+	foreach($keys as $key) {
+		//$temp points now to $array[$key]
+		$temp =& $temp[$key];
+	}
+	
+	//We update $temp resulting in updating $array[X][y][z] as well
+	$temp[] = $value;
+}
+
+//clean up an array
+function remove_from_nested_array(&$array){
+	foreach ($array as $key => $value){
+        if(is_array($value)){
+            remove_from_nested_array($value);
+			if(empty($value)){
+				unset($array[$key]);
+			}else{
+				$array[$key] = $value;
+			}
+		}elseif(empty(trim($value))){
+            unset($array[$key]);
+		}
+    }
+}
+
+//get array value
+function get_meta_array_value($user_id, $metakey, $values=null){
+	if(empty($metakey)) return $values;
+	
+	if($values === null and !empty($metakey)){
+		//get the basemetakey in case of an indexed one
+		if(preg_match('/(.*?)\[/', $metakey, $match)){
+			$base_meta_key	= $match[1];
+		}else{
+			//just use the whole, it is not indexed
+			$base_meta_key	= $metakey;
+		}
+		$values	= (array)get_user_meta($user_id,$base_meta_key,true);
+	}
+	//Return the value of the variable whos name is in the keystringvariable
+	preg_match_all('/\[(.*?)\]/', $metakey, $matches);
+	if(is_array($matches[1])){
+		$value	= $values;
+		foreach($matches[1] as $match){
+			if(!is_array($value)) break;
+			$value = $value[$match];
+		}
+	}
+
+	return $value;
+}
+
+function get_missionary_page_url($user_id){
+	//Get the missionary page of this user
+	$missionary_page_id = get_user_meta($user_id,'missionary_page_id',true);
+	
+	if(is_numeric($missionary_page_id)){
+		$url = get_permalink($missionary_page_id);
+		$url_without_https = str_replace('https://','',$url);
+		
+		
+		//redirect to the users page
+		return $url_without_https;
+	}
+}
+
+//Verify nonce
+function verify_nonce($nonce_string){
+	//print_array("Verifying nonce $nonce_string");
+	//print_array($_POST,true);
+	if(!isset($_POST[$nonce_string])){
+		wp_die("No nonce found! Try again after refreshing the page",500);
+	}elseif(!wp_verify_nonce($_POST[$nonce_string],$nonce_string)){
+		wp_die("Invalid nonce! Try again after refreshing the page",500);
+	}
+}
+
+function get_child_title($user_id){
+	$gender = get_user_meta( $user_id, 'gender', true );
+	if($gender == 'male'){
+		$title = "son";
+	}elseif($gender == 'female'){
+		$title = "daughter";
+	}else{
+		$title = "child";
+	}
+	
+	return $title;
+}
+
+function add_save_button($element_id, $button_text, $extraclass = ''){
+	global $LoaderImageURL;
+	
+	$html = "<div class='submit_wrapper'>";
+		$html .= "<button type='button' class='button form_submit $extraclass' name='$element_id'>$button_text</button>";
+		$html .= "<img class='loadergif hidden' src='$LoaderImageURL'>";
+	$html .= "</div>";
+	
+	return $html;
+}
+	
+function add_to_library($target_file){
+	try{
+		//print_array("Adding $target_file to library");
+		
+		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+			include( ABSPATH . 'wp-admin/includes/image.php' );
+		}
+		 
+		// Check the type of file. We'll use this as the 'post_mime_type'.
+		$filetype = wp_check_filetype( basename( $target_file ), null );
+		 
+		// Get the path to the upload directory.
+		$wp_upload_dir = wp_upload_dir();
+		 
+		// Prepare an array of post data for the attachment.
+		$attachment = array(
+			'guid'           =>	path_to_url($target_file ), 
+			'post_mime_type' => $filetype['type'],
+			'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $target_file ) ),
+			'post_content'   => '',
+			'post_status'    => 'inherit'
+		);
+		 
+		// Insert the attachment.
+		$post_id = wp_insert_attachment( $attachment, $target_file, $parent_post_id );
+		
+		//Store a post meta to create subsizes later as it can be very slow
+		update_post_meta($post_id, 'generate_attachment_metadata',true);
+		
+		return $post_id;
+	}catch(\GuzzleHttp\Exception\ClientException $e){
+		$result = json_decode($e->getResponse()->getBody()->getContents());
+		$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+		print_array($error_result);
+		if(isset($post_id)) return $post_id;
+	}catch(\Exception $e) {
+		$error_result = $e->getMessage();
+		print_array($error_result);
+		if(isset($post_id)) return $post_id;
+	}
+}
+
+function get_ministries(){
+	global $MinistryCategoryID;
+	
+	//Get all pages which are subpages of the MinistriesPageID
+	$Ministry_pages = get_posts([
+		'post_type'			=> 'location',
+		'posts_per_page'	=> -1,
+		'post_status'		=> 'publish',
+		'tax_query' => array(
+            array(
+                'taxonomy'	=> 'locationtype',
+				'field' => 'term_id',
+				'terms' => $MinistryCategoryID,
+                //'parent'	=> $MinistryCategoryID,
+            )
+        )
+	]);
+	$Ministries = [];
+	foreach ( $Ministry_pages as $Ministry_page ) {
+		$Ministries[] = $Ministry_page->post_title;
+	}
+	//Sort in alphabetical order
+	asort($Ministries);
+	$Ministries[] 			= "Other";
+	
+	return $Ministries;
+}

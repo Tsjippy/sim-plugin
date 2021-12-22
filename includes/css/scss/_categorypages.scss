@@ -1,0 +1,118 @@
+@use 'global' as *;
+
+.categorypage{
+	#main .inside-article{
+		background-color: transparent;
+		max-width: 100%;
+	}
+
+	/*Full width if only one item*/
+	@media (max-width: 600px){ 
+		article{
+			width: 100%;
+		}
+	}
+
+	/*50% width if only two items*/
+	@media (min-width: 601px){
+		article {
+			width: 40%;
+			margin: 30px;
+		}
+	}
+
+	/* layout of the news cards */
+	article{
+		border-radius:3%;
+		background-color: whitesmoke;
+		display: inline-flex;
+	}
+
+	/*Do not show the public category in the category widget*/
+	.section-blog-info, li.cat-item-6 { display: none; }
+
+	/* moretag layout */
+	.moretag{
+		font-size: 15px;
+		border-radius: 30px;
+		color: white;
+		text-transform: uppercase;
+		text-align: center;
+		padding: 10px 20px;
+		display: block;
+		max-width: 133px;
+		margin: 20px auto 0 auto;
+		white-space: nowrap;
+		background-color: $primary_color;
+		
+		/* on hover of the more tag*/
+		&:hover{
+			background-color:$secundary_color;
+			color:white;
+		}
+	}
+}	
+
+%icon-shared{
+	height: 30px;
+	margin-right: 5px;
+}
+
+%meta-shared{
+	margin-right: 10px;
+	display: inline-table;
+}
+
+.recipe_icon{
+	@extend %icon-shared;
+}
+
+.recipemeta{
+	@extend %meta-shared;
+}
+
+
+.location_icon{
+	@extend %icon-shared;
+}
+
+.locationmeta{
+	@extend %meta-shared;
+}
+
+.recipe, .location{
+	margin-top: 10px;
+}
+
+.archivetitle{
+	text-align: center;
+	margin-top: 15px;
+}
+
+.entry-content.archive{	
+	.picture, .author, .metas{
+		text-align: center;
+	}
+	
+	.author{
+		margin-top: 10px;
+	}
+	
+	.metas .nice-select{
+		display: contents;
+		font-size: inherit;
+	}
+}
+
+.cat_card{
+	width: 100%;
+	padding: 10px;
+}
+
+.metas .nice-select{
+	display: inline-block;
+	
+	.current{
+		margin-left: 5px;
+	}
+}

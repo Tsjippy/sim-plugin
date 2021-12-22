@@ -1,0 +1,40 @@
+@use 'global';
+
+/*Categorie checkbox on top of the map*/
+#floatingRectangle {
+    z-index: 10;
+    position: absolute;
+    background-color: whitesmoke;
+	margin: 15px 60px;
+	float: right;
+}
+
+/*Button in marker descriptions*/
+.leaflet-popup-content .umsMarkerDesc{
+	.marker_button{
+		margin: 0px;
+		padding: 3px 15px 3px 15px ;
+	}
+	
+	/*Hyperlink color*/
+	.page_link{
+		color: global.$primary_color;
+	}
+}
+
+/*Center marker descriptions*/
+.umsMarkerDesc{
+	text-align: center;
+}
+
+/*Make the icon round*/
+.leaflet-marker-icon{
+	border-radius: 25px;
+}
+
+/*Round the corners of the marker picture*/
+.avatar, 
+.markerpicture
+{
+	border-radius: 5px;
+}

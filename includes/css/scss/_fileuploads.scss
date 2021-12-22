@@ -1,0 +1,22 @@
+.file_upload_wrap{
+	margin-top: 20px;
+}
+
+.quota_document_div .add_quota_document, .quota_document_div  .remove_quota_document{
+	max-height: 30px;
+    margin-top: auto;
+}
+
+.quota_document_div .file_upload_wrap{
+	flex:9
+}
+
+/* Remove document button layout*/
+.remove_document{
+	padding: 5px;
+	margin-left: 15px;
+}
+
+.document{
+	margin-bottom: 10px;
+}

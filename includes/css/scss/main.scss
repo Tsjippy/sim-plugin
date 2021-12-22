@@ -1,0 +1,137 @@
+@use 'global' as *;
+@use 'account';
+@use 'categorypages';
+@use 'fileuploads';
+@use 'formbuilder';
+@use 'forms';
+@use 'frontendposting';
+@use 'home';
+@use 'infoIcons';
+@use 'maps';
+@use 'schedules';
+@use 'menu';
+@use 'modal';
+@use 'nice-select2';
+@use 'pagetitle';
+@use 'sidebar';
+@use 'table';
+@use 'events';
+@use 'loginform';
+
+/* paragraph text color*/
+p{
+	color: #676666;
+}
+
+/* Size of the loading gif */
+.loadergif{
+	width:7%; 
+	max-height:45px; 
+	margin:20px 0px 0px 10px;
+}
+
+/*Buttons */
+%buttons{
+	background-color: $primary_color;
+	border-radius: 3px;
+	text-align: center;
+	margin-right: 10px;
+}
+
+body div .button, 
+body div .button:focus
+{
+	@extend %buttons;
+	padding: 5px 10px;
+	
+	&:hover, &.active{
+		background-color: $secundary_color;
+	}
+	
+	&.tablink{
+		margin-top: 15px;
+		background-color: $secundary_color;
+		
+		&:hover,&.active{
+			background-color: $primary_color;
+			color: white;
+			border-color: unset;
+		}
+	}
+}
+
+.wp-core-ui div .button{
+	@extend %buttons;
+	color: white;
+	border-color: unset;
+	
+	&:hover,&:active{
+		background-color: $secundary_color;
+		color: white;
+		border-color: unset;
+	}
+}
+
+/*Buttons */
+.submit_wrapper{
+	margin: 20px 0px;
+    display: flex;
+}
+
+/* Hide copywright text*/
+.copyright-bar{
+	display: none;
+}
+
+/* Hide hidden elements*/
+.frontendform.hidden, .hidden, .stephidden{
+	display:none !important;
+}
+
+/* Transform to capital letters */
+.capitalize{
+	text-transform: capitalize;
+}
+
+.block{
+	display: block;
+    margin-top: 15px;
+    width: 100%;
+}
+
+div h4{
+	font-weight: bold;
+	color: $primary_color;
+	margin: 15px 5px 5px;
+}
+
+div fieldset{
+	border: solid;
+	padding: 20px;
+	margin-top: 20px;
+	
+	legend{
+		padding-left: 10px;
+		margin-bottom: 0px;
+	}
+}
+
+.optionlabel{
+	margin-left: 5px;
+}
+
+.warning{
+	background-color: #d8a354;
+    color: black;
+    padding: 10px;
+    margin: 10px 0 20px 0;
+    text-align: center;
+}
+
+.edit_useraccounts .button{
+	margin-bottom: 10px;
+}
+
+h3{
+	width:100%;
+}

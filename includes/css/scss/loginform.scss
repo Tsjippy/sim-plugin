@@ -1,0 +1,117 @@
+@use 'global' as *;
+
+.swal2-container .no-border {
+    border: none;
+  }
+
+#login_wrapper {
+    margin: 0;
+    padding: 0;
+
+    label{
+        color: #72777c;
+    }
+
+    h3{
+        color: $primary_color;
+    }
+
+    .message {
+        border-left: 4px solid #bd2919;
+        padding: 5px;
+
+        &:empty{
+            display: none;
+        }
+    }
+
+    .password{
+        margin-top: 15px;
+        position: relative;
+    
+        #toggle_pwd_view {
+            background: transparent;
+            border: 1px solid transparent;
+            box-shadow: none;
+            font-size: 14px;
+            line-height: 2;
+            width: 2.5rem;
+            height: 2.5rem;
+            min-width: 40px;
+            min-height: 40px;
+            margin: 0;
+            padding: 5px 9px;
+            position: absolute;
+            right: 0;
+            top: 20px;
+
+            .dashicons {
+                width: 1.25rem;
+                height: 1.25rem;
+                top: 0.25rem;
+                position: relative;
+                font-size: 20px;
+            }
+        }
+    }
+
+    #check_cred_wrapper{
+        width: 100%;
+        margin-top: 20px;
+        display: flex;
+
+        @media (max-width: $mobilewidth){
+            #rememberme_label{
+                width: 100%;
+                display: block;
+            }
+        }
+
+        #check_cred{
+            margin-left: auto;
+            margin-right: 0px;
+        }
+
+        .loadergif{
+            margin: 0px 0px 0px 10px;
+        }
+    }
+
+    .loadergif.center{
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+
+    #webauthn_wrapper{
+        margin-bottom:20px;
+    }
+
+    #authenticator_wrapper, #email_wrapper{
+        margin-bottom:20px;
+    }
+
+    #login_nav{
+        margin-top: 20px;
+    }
+
+    #login_button{
+        margin-left: auto;
+    }
+}
+
+.dashicons, .dashicons-before:before {
+    font-family: dashicons;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    font-style: normal;
+    text-decoration: inherit;
+    text-transform: none;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    vertical-align: top;
+    text-align: center;
+    transition: color 0.1s ease-in;
+}
