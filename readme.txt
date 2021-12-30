@@ -27,7 +27,7 @@ xdebug.profiler_enable_trigger = 0
 xdebug.remote_enable = 1
 
 uncomment this in php.ini:
-sodium
+sodium #not sure if we need this
 
 download wp 
 download website code into plugins folder
