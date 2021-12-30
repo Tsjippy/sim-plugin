@@ -4253,3 +4253,23 @@ Called from file D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simni
 1640265612 - ajax_auth_response: type => "test", user => "EwaldH"
 Called from file D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\fingerprint.php line 612
 1640266170 - ajax_auth_response: type => "test", user => "EwaldH"
+Called from file D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 64
+1640270355 - Redirecting from https://localhost/simgen/lhome/ to https://localhost/simgen/account/?redirected=true#Two%20factor
+Called from file D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 64
+1640270445 - Redirecting from https://localhost/simgen/lhome/ to https://localhost/simgen/account/?redirected=true#Two%20factor
+Called from file D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 64
+1640270515 - Redirecting from https://localhost/simgen/lhome/ to https://localhost/simgen/account/?redirected=true#Two%20factor
+Called from file D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 64
+1640270523 - Redirecting from http://localhost/simgen/lhome/ to http://localhost/simgen/account/?redirected=true#Two%20factor
+Called from file D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+1640271239 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simnigeria-plugin\includes\php\fileupload.php line 289
+1640282161 - File removal
+Called from file D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simnigeria-plugin\includes\php\fileupload.php line 290
+Array
+(
+    [action] => remove_document
+    [url] => D:Local_websiteshtdocssimgen/wp-content/uploads/private/visa_uploads/EwaldH-BSc-Certificate.pdf
+    [userid] => 45
+    [metakey] => visa_info[understudies][2][documents][qualifications][0]
+)

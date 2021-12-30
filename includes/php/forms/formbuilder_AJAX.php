@@ -595,17 +595,9 @@ class Formbuilder_Ajax extends Formbuilder{
 					}else{
 						//we are updating an arrayed value. Make sure we only update what we have values for
 						if(is_array($result)){
-							$org_data	= get_user_meta($this->user_id,$key, true);
+						 	$org_data	= get_user_meta($this->user_id,$key, true);
 							if(!is_array($org_data)) $org_data=[];
-
-							foreach($result as $k=>$r){
-								if(empty($r)){
-									unset($org_data[$k]);
-								}else{
-									$org_data[$k]	= $r;
-								}
-							}
-							update_user_meta($this->user_id,$key,$org_data);
+							update_user_meta($this->user_id,$key,array_replace_recursive($org_data, $result));
 						}else{
 							update_user_meta($this->user_id,$key,$result);
 						}

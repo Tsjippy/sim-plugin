@@ -242,7 +242,11 @@ if($CustomSimSettings == false){
 	$MailchimpMissionaryTAGs	= $CustomSimSettings["mailchimp_missionary_tags"];
 	$MailchimpOfficeStaffTAGs	= $CustomSimSettings["mailchimp_office_staff_tags"];
 	$MailchimpApi				= $CustomSimSettings["mailchimpapi"];
-	$MailchimpTemplateID		= (int)$CustomSimSettings["mailchimptemplateid"];
+	if(!empty($CustomSimSettings["mailchimptemplateid"])){
+		$MailchimpTemplateID		= (int)$CustomSimSettings["mailchimptemplateid"];
+	}else{
+		$MailchimpTemplateID=0;
+	}
 	$TrelloApiKey				= $CustomSimSettings["trellopapikey"];
 	$TrelloApiToken				= $CustomSimSettings["trellopapitoken"];
 	$TrelloBoard				= $CustomSimSettings["trello_board"];
