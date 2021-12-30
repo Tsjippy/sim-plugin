@@ -7,12 +7,9 @@ Stable tag: 1.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-A simple add-on for Contact Form 7 upload file on dropbox.
+
 
 == Description ==
-
-Add-on plugin for Contact Form 7 - adds the option to upload file directly on dropbox.
-NOTE: This plugin requires Contact Form 7 version 4.2 or later.
 
 == Setup ==
 Install VSCode
@@ -31,7 +28,6 @@ xdebug.remote_enable = 1
 
 uncomment this in php.ini:
 sodium
-
 
 download wp 
 download website code into plugins folder
