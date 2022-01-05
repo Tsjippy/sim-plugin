@@ -105,14 +105,14 @@ function login_modal($message='', $required=false){
     return ob_get_clean();
 }
 
-//add login modal to page if not logged in
+//add hidden login modal to page if not logged in
 add_filter( 'the_content', function ( $content ) {
-	if (!is_user_logged_in()){ 
+	if (!is_user_logged_in()){
         $content .= login_modal();
     }
 
     return $content;
-}, 99);
+}, 99999);
 
 add_action('wp_ajax_nopriv_request_login', 'SIM\user_login');
 function user_login(){
@@ -132,7 +132,7 @@ function user_login(){
         wp_die($user->get_error_message(),500);
     }
 
-    //Update the currentlogon count
+    //Update the current logon count
     $current_login_count = get_user_meta( $user->ID, 'login_count', true );
     if(is_numeric($current_login_count)){
         $login_count = intval( $current_login_count ) + 1;
@@ -162,10 +162,12 @@ function user_login(){
     $required_fields_status = get_user_meta($user->ID,"required_fields_status",true);
     //get 2fa methods for this user
     $methods  = get_user_meta($user->ID,'2fa_methods',true);
+
     //Redirect to account page if there are some required fields to be filled in
     if(!$methods or count($methods ) == 0){
         wp_die(TwoFA_page);
-    }elseif (!$required_fields_status){
+    //redirect to account page to fill in required fields
+    }elseif ($required_fields_status != 'done' and !isset($_SESSION['showpage'])){
         wp_die(home_url( '/account/' ));
     }else{
         wp_die('Login successful');

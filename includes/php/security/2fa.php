@@ -229,7 +229,7 @@ add_action ( 'wp_ajax_nopriv_check_cred', function(){
                     sendEmailCode($user);
                 }
                 wp_die(json_encode(array_values($methods)));
-            //no 2fa setup yet, login straight away
+                //no 2fa setup yet, login straight away
             }else{
                 user_login();
             }

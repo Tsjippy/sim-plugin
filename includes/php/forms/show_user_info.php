@@ -53,6 +53,8 @@ function user_info_page($atts){
 				return "<p>You do not have permission to see this, sorry.</p>";
 			}
 		}
+
+		$local_nigerian		= get_user_meta( $user_id, 'local_nigerian', true );
 	
 		//Continue only if there is a selected user
 		if(is_numeric($user_id)){
@@ -163,7 +165,7 @@ function user_info_page($atts){
 			/*
 				Visa Info
 			*/
-			if(array_intersect($visa_roles, $user_roles ) or $show_current_user_data){
+			if((array_intersect($visa_roles, $user_roles ) or $show_current_user_data) and empty($local_nigerian)){
 				if($user_age > 18){
 					if( isset($_POST['print_visa_info'])){
 						if(isset($_POST['userid']) and is_numeric($_POST['userid'])){
@@ -218,7 +220,7 @@ function user_info_page($atts){
 			/*
 				Medical Info
 			*/
-			if(array_intersect($medical_roles, $user_roles) or $show_current_user_data){
+			if((array_intersect($medical_roles, $user_roles) or $show_current_user_data) and empty($local_nigerian)){
 				if($show_current_user_data){
 					$active = '';
 					$class = 'class="hidden"';

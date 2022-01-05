@@ -14,13 +14,18 @@ function show_dashboard($user_id, $admin=false){
 	
 	if($admin){
 		$login_count = get_user_meta( $user_id, 'login_count', true);
-	
-		//store login date
 		$last_login = get_user_meta( $user_id, 'last_login_date',true);
-		if($last_login == '') $last_login = 'never';
-		$time_string 	= strtotime($last_login);
-		if($time_string ) $last_login = date('d F Y', $time_string);
-		$html .= "<p id='login_message' style='border: 3px solid #bd2919; padding: 10px; text-align: center;'>$first_name has logged in $login_count times.<br>Last login was $last_login.</p>";
+
+		if(is_numeric($login_count)){
+			$time_string 	= strtotime($last_login);
+			if($time_string ) $last_login = date('d F Y', $time_string);
+			$message = "$first_name has logged in $login_count times.<br>Last login was $last_login.";
+		}else{
+			$message = "$first_name has never logged in.<br>";
+		}
+		
+		//show last login date
+		$html .= "<p id='login_message' style='border: 3px solid #bd2919; padding: 10px; text-align: center;'>$message</p>";
 	}
 	
 	$html .= "<p>Hello $first_name</p>";

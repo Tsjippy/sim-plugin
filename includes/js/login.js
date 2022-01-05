@@ -193,10 +193,15 @@ async function verify_creds(){
 		body: formData
 	});
 
-	var methods = await response.json();
+	var text = await response.json();
 	
 	if(response.ok){
-		add_methods(methods);
+		try {
+			var methods = JSON.parse(text);
+			add_methods(methods);
+		} catch (e) {
+			location.href=text;
+		}
 	}else{
 		display_message(methods, 'error');
 	}

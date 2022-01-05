@@ -29,8 +29,8 @@ function profile_picture_change($user_id){
 }
 
 function get_profile_picture_url($user_id,$size=[50,50]){
-	$attachment_id = get_user_meta($user_id,'profile_picture',true);
-	
+	$attachment_id	= get_user_meta($user_id,'profile_picture',true);
+	$url			= false;
 	if(is_numeric($attachment_id)){
 		$url = wp_get_attachment_image_url($attachment_id,$size);
 	}
@@ -38,15 +38,17 @@ function get_profile_picture_url($user_id,$size=[50,50]){
 	return $url;
 }
 
-function display_profile_picture($user_id,$size=[50,50]){
+function display_profile_picture($user_id, $size=[50,50], $show_default = true){
 	$attachment_id = get_user_meta($user_id,'profile_picture',true);
 	if(is_numeric($attachment_id)){
 		$url = wp_get_attachment_image_url($attachment_id,'Full size');
 		$img = wp_get_attachment_image($attachment_id,$size);
 		return "<a href='$url'>$img</a>";
-	}else{
+	}elseif($show_default){
 		$url = plugins_url('',__DIR__).'/../pictures/usericon.png';
 		return "<img width='50' height='50' src='$url' class='attachment-50x50 size-50x50' loading='lazy'>";
+	}else{
+		return false;
 	}
 }
 

@@ -212,8 +212,8 @@ function print_array($message,$display=false){
 		error_log(print_r($message,true));
 		file_put_contents(__DIR__.'/simlog.log',print_r($message,true),FILE_APPEND);
 	}else{
-		error_log(time().' - '.$message);
-		file_put_contents(__DIR__.'/simlog.log',time()." - $message\n",FILE_APPEND);
+		error_log(date('d-m-Y H:i',time()).' - '.$message);
+		file_put_contents(__DIR__.'/simlog.log',date('d-m-Y H:i',time())." - $message\n",FILE_APPEND);
 	}
 	
 	if($display){
@@ -389,12 +389,13 @@ function get_anniversaries(){
 			$age	= get_age_in_words($start_year);
 			$privacy= (array)get_user_meta($event->post_author, 'privacy_preference', true);
 
-			if(substr($title,0,8) == 'Birthday' and in_array('hide_birthday', $privacy)){
+			if(substr($title,0,8) == 'Birthday' and in_array('hide_age', $privacy)){
 				$age	= '';
-			}elseif(substr($title,0,3) != 'SIM'){
+			}
+			if(substr($title,0,3) != 'SIM'){
 				$title	= lcfirst($title);
 			}
-			$messages[$event->post_author] = "$age $title";
+			$messages[$event->post_author] = trim("$age $title");
 		}
 	}
 

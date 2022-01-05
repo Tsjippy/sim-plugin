@@ -127,20 +127,14 @@ function get_required_fields($UserID){
 			}
 		}
 		
-		//Check if 2fa is enabled
-		$query = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}usermeta WHERE `user_id` = %s and `meta_key` ='wp_2fa_enabled_methods'",$UserID);
-		$result = $wpdb->get_results($query,ARRAY_A);
-		
 		if ($html != ""){
 			update_user_meta($UserID,"required_fields_status","");
 			//Echo the required fields list
 			$html .= "</ul>";
-		//If there are no required fields to be filled and 2fa is set, everything is done.
-		}elseif ($result != null){
+		//If there are no required fields to be filled.
+		}else{
 			//Set the value to done
 			update_user_meta($UserID,"required_fields_status","done");
-		}else{
-			update_user_meta($UserID,"required_fields_status","");
 		}
 		
 		return $html;

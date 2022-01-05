@@ -15,11 +15,9 @@ function activate_schedules() {
 	global $ScheduledFunctions;
 	//if (strpos(get_site_url(), 'localhost') === false and get_option("wpstg_is_staging_site") != true) {
 		//Add action to run the function 
-		foreach($ScheduledFunctions as $scheduled_function){
-			add_action( $scheduled_function[1].'_action', "SIM\\".$scheduled_function[1] );
+		foreach($ScheduledFunctions as $func){
+			add_action( $func['hookname'].'_action', "SIM\\".$func['hookname'] );
 		}
-
-		add_action( 'simnigeria_auto_archive_action', "SIM\auto_archive_action" );
 	//}
 }
 
@@ -27,16 +25,40 @@ function add_cron_schedules(){
 	global $ScheduledFunctions;
 	
 	print_array("Adding cron schedules");
-	
+
 	//schedule the actions if needed
-	foreach($ScheduledFunctions as $scheduled_function){
+	foreach($ScheduledFunctions as $func){
 		//Not yet activated
-		if (! wp_next_scheduled ( $scheduled_function[1].'_action' )) {
+		if (! wp_next_scheduled ( $func['hookname'].'_action' )) {
+			switch ($func['recurrence']) {
+				case 'weekly':
+					$time	= strtotime('next Monday');
+					break;
+				case 'monthly':
+					$time	= strtotime('first day of next month');
+					break;
+				case 'threemonthly':
+					//calculate start of next quarter
+					$monthcount = 0;
+					$month		= 0;
+					while(!in_array($month, [1,4,7,10])){
+						$monthcount++;
+						$time	= strtotime("first day of +$monthcount month");
+						$month = date('n',$time);
+					}
+					break;
+				case 'yearly':
+					$time	= strtotime('first day of next year');
+					break;
+				default:
+					$time	= time();
+			} 
+
 			//schedule
-			if(wp_schedule_event( time(), $scheduled_function[0], $scheduled_function[1].'_action' )){
-				print_array("Succesfully scheduled ".$scheduled_function[1]." to run ".$scheduled_function[0]);
+			if(wp_schedule_event( $time, $func['recurrence'], $func['hookname'].'_action' )){
+				print_array("Succesfully scheduled ".$func['hookname']." to run ".$func['recurrence']);
 			}else{
-				print_array("Scheduling of ".$scheduled_function[1]." unsuccesfull");
+				print_array("Scheduling of ".$func['hookname']." unsuccesfull");
 			}
 		}
 	}
@@ -207,7 +229,6 @@ function personal_info_reminder(){
 //send an e-mail with an overview of an users details for them to check
 function check_details_mail(){
 	wp_set_current_user(1);
-
 	global $WebmasterName;
 
 	$subject	= 'Please review your website profile';
@@ -216,11 +237,75 @@ function check_details_mail(){
 	$users = get_missionary_accounts($return_family=false,$adults=true,$local_nigerians=true);
 	//Loop over the users
 	foreach($users as $user){
+		$attachments = [];
+		$to='enharmsen@gmail.com';
+
 		//Send e-mail
 		$message  = "Hi {$user->first_name},<br><br>";
 		$message .= 'Once a year we would like to remind you to keep your information on the website up to date.<br>';
 		$message .= 'Please check the information below to see if it is still valid, if not update it.<br><br>';
 		
+		$message .= "<b>Profile picture</b><br>";
+		$attachment_id	= get_user_meta($user->ID,'profile_picture',true);
+		if(is_numeric($attachment_id)){
+			$file = get_attached_file($attachment_id);
+
+			if($file){
+				if(strpos($user->user_email, 'sim.org') !== false){
+					$to			 ='ewald.harmsen@sim.org';
+					$ext		 = pathinfo($file, PATHINFO_EXTENSION);
+					$contents	 = file_get_contents($file);
+					$image		 = base64_encode($contents);
+
+					$message 	.= "<img src='data:image/$ext;base64,$image'  alt='profilepicture' width='50' height='50'/><br>";
+					
+				}else{
+					$filename 		 = basename($file);
+					$attachments[]	 = $file;
+					$message 		.= "You have setup a profile picture, see attached $filename<br>";
+/* 
+					add_action( 'phpmailer_init', function($phpmailer)use($file){
+						$phpmailer->clearAttachments();
+						$ext = pathinfo($file, PATHINFO_EXTENSION);
+						$phpmailer->AddEmbeddedImage($file, 'ii_ky00j83h0', $filename, 'base64', 'image/'.$ext);
+					});
+
+					$message .= "You have uploaded a picture, see attachment     <img src='cid:ii_ky00j83h0' alt='testpicture' width='458' height='523'><br>"; */
+				}
+			}
+		}else{
+			continue;
+			$message .= "You have not uploaded a picture.<br>";
+		}
+		$message .= "<br>";
+
+		$message .= "<b>Personal details</b><br>";
+		$message .= "Name: $user->display_name<br>";
+
+		$birthday = get_user_meta($user->ID,'birthday',true);
+		if(empty($birthday)){
+			$birthday = 'no birthday specified.';
+		}else{
+			$birthday = date('d  F Y', strtotime($birthday));
+		}
+		$message .= "Birthday: $birthday<br>";
+
+		$local_nigerian = get_user_meta( $user->ID, 'local_nigerian', true );
+		if(empty($local_nigerian)){
+			$sending_office = get_user_meta($user->ID,'sending_office',true);
+			if(empty($sending_office)) $sending_office = 'no sending office specified.';
+			$message .= "Sending office: $sending_office<br>";
+
+			$arrivaldate = get_user_meta($user->ID,'arrival_date',true);
+			if(empty($arrivaldate)){
+				$arrivaldate = 'no arrival date specified.';
+			}else{
+				$arrivaldate = date('d F Y', strtotime($arrivaldate));
+			}
+			$message .= "Arrival date in Nigeria: $arrivaldate<br>";
+			$message .= "<br>";
+		}
+
 		$message .= "<b>Phonenumber";
 		$phonenumbers = (array)get_user_meta($user->ID,'phonenumbers',true);
 		remove_from_nested_array($phonenumbers);
@@ -250,7 +335,7 @@ function check_details_mail(){
 		}elseif(count($user_ministries) == 1){
 			foreach($user_ministries as $ministry=>$job){
 				$ministry = str_replace('_',' ',$ministry);
-				$message .= "$job at $ministry</br>";
+				$message .= "$job at $ministry<br>";
 			}
 		}else{
 			$message .= "<ul style='padding-left: 0px;'>";
@@ -260,8 +345,9 @@ function check_details_mail(){
 			}
 			$message .= "</ul>";
 		}
+		$message .= "<br>";
 
-		$message .= "<br><b>Location</b><br>";
+		$message .= "<b>State</b><br>";
 		$location= (array)get_user_meta($user->ID,'location',true);
 		remove_from_nested_array($location);
 		if(empty($location['address'])){
@@ -269,15 +355,41 @@ function check_details_mail(){
 		}else{
 			$message .= $location['address']."<br>";
 		}
+		$message .= "<br>";
+
+		$family = get_user_meta( $user->ID, 'family', true );
+		if(!empty($family)){
+			$message .= "<b>Family details</b><br>";
+			if(empty($family['partner'])){
+				$message .= 'You have no partner<br>';
+			}else{
+				$message .= 'Spouse: '.get_userdata($family['partner'])->display_name.'<br>';
+			}
+
+			if(is_array($family['children'])){
+				if(count($family['children']) == 1){
+					$child = array_values($family['children'])[0];
+					$message .= "Child: ".get_userdata($child)->display_name;
+				}else{
+					$message .= "Children:";
+					$message .= "<ul style='padding-left: 0px;'>";
+					foreach($family['children'] as $child){
+						$message .= "<li>".get_userdata($child)->display_name.'</li>';
+					}
+					$message .= "</ul>";
+				}
+			}
+		}
 
 		$message .= '<br><br>';
 		$message .= "If any information is not correct, please correct it on <a href='https://simnigeria.org/account/'>simnigeria.org/account</a><br>";
 
 		$message .= '<br><br>';
 		$message .= 'Kind regards,<br><br>'.$WebmasterName;
-		$headers = array('Content-Type: text/html; charset=UTF-8');
+		$headers = [];
+		$headers[]	='Content-Type: text/html; charset=UTF-8';
 		//$user->user_email
-		wp_mail( 'enharmsen@gmail.com', $subject, $message, $headers );
+		wp_mail( $to, $subject, $message, $headers, $attachments);
 	}
 }
 
@@ -538,7 +650,7 @@ function check_expiry_date($date, $expiry_name){
 }
 
 function birthday_check(){
-	//Change the user to the adminaccount otherwise get_users will not work
+	//Change the user to the admin account otherwise get_users will not work
 	wp_set_current_user(1);
 
 	//Current date time
@@ -558,11 +670,6 @@ function birthday_check(){
 		$family = get_user_meta( $user_id, 'family', true );
 		if ($family == ""){
 			$family = [];
-		}
-		if (isset($family["children"])) {
-			$children = $family["children"];
-		}else{
-			$children = [];
 		}
 	
 		//Send birthday wish to the user
@@ -586,6 +693,39 @@ function birthday_check(){
 				"Hi ".get_userdata($family["mother"])->first_name.",\n$message",
 				$family["mother"]
 			);
+		}
+	}
+}
+
+function anniversary_check(){
+	global $Events;
+
+	$Events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
+
+	foreach($Events->events as $event){
+		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
+		if(!empty($start_year)){
+			$userdata		= get_userdata($event->post_author);
+			$first_name		= $userdata->first_name;
+			$event_title	= $event->post_title;
+			$partner_id		= has_partner($event->post_author);
+
+			if($partner_id){
+				$partnerdata	= get_userdata($partner_id);
+				$couple_string	= $first_name.' & '.$partnerdata->display_name;
+				$event_title	= trim(str_replace($couple_string,"", $event_title));
+			}
+			
+			$event_title	= trim(str_replace($userdata->display_name,"", $event_title));
+
+			$age	= get_age_in_words($start_year);
+
+			send_signal_message("Hi $first_name,\nCongratulations with your $age $event_title!", $event->post_author);
+
+			//If the author has a partner and this events applies to both of them
+			if($partner_id and strpos($event->post_title, $couple_string)){
+				send_signal_message("Hi {$partnerdata->first_name},\nCongratulations with your $event_title!", $partner_id);
+			}
 		}
 	}
 }
@@ -743,7 +883,7 @@ function check_last_login_date(){
 }
 
 //Send contact info
-function send_missonary_detail_old(){
+function send_missonary_detail(){
 	global $WebmasterName;
 	
 	//Change the user to the adminaccount otherwise get_users will not work
@@ -823,7 +963,7 @@ function send_missonary_detail_old(){
 	}
 	
 	//Headers of the table
-	$table_headers = ["Name"," E-mail"," Phone"," Ministries"," Compound"];
+	$table_headers = ["Name"," E-mail"," Phone"," Ministries"," State"];
 	//Create a pdf and add it to the mail
 	$attachments = array( create_contactlist_pdf($table_headers,$user_details));
 	

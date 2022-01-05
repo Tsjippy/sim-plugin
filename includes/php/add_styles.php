@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-$StyleVersion = "6.9.302";
+$StyleVersion = "6.9.303";
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', 'SIM\enqueue_scripts');

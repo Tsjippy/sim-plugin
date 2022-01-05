@@ -1,5 +1,7 @@
 <?php
 namespace SIM;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 //Add a shortcode for the username
 add_shortcode( 'username', function ( $atts ) {
@@ -349,11 +351,15 @@ add_shortcode("account_statements",function (){
 //Shortcode for vaccination warnings
 add_shortcode("expiry_warnings",function (){
 	global $PersonnelCoordinatorEmail;
-	$UserID = get_current_user_id();
+	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
+		$user_id	= $_GET["userid"];
+	}else{
+		$user_id = get_current_user_id();
+	}
 	$remindercount = 0;
 	$reminder_html = "";
 	
-	$visa_info = get_user_meta( $UserID, "visa_info",true);
+	$visa_info = get_user_meta( $user_id, "visa_info",true);
 	if (is_array($visa_info) and isset($visa_info['greencard_expiry'])){
 		$reminder_html .= check_expiry_date($visa_info['greencard_expiry'],'greencard');
 		if($reminder_html != ""){
@@ -362,7 +368,7 @@ add_shortcode("expiry_warnings",function (){
 		}
 	}
 		
-	$vaccination_reminder_html = vaccination_reminders($UserID);
+	$vaccination_reminder_html = vaccination_reminders($user_id);
 	
 	if ($vaccination_reminder_html != ""){
 		$remindercount += 1;
@@ -370,7 +376,7 @@ add_shortcode("expiry_warnings",function (){
 	}
 	
 	//Check for children
-	$family = get_user_meta($UserID,"family",true);
+	$family = get_user_meta($user_id,"family",true);
 	//User has children
 	if (isset($family["children"])){
 		$child_vaccination_reminder_html = "";
@@ -385,13 +391,13 @@ add_shortcode("expiry_warnings",function (){
 	}
 	
 	//Check for upcoming reviews, but only if not set to be hidden for this year
-	if(get_user_meta($UserID,'hide_annual_review',true) != date('Y')){
-		$personnel_info 				= get_user_meta($UserID,"personnel",true);
+	if(get_user_meta($user_id,'hide_annual_review',true) != date('Y')){
+		$personnel_info 				= get_user_meta($user_id,"personnel",true);
 		if(is_array($personnel_info) and !empty($personnel_info['review_date'])){
 			//Hide annual review warning
 			if(isset($_GET['hide_annual_review']) and $_GET['hide_annual_review'] == date('Y')){
 				//Save in the db
-				update_user_meta($UserID,'hide_annual_review',date('Y'));
+				update_user_meta($user_id,'hide_annual_review',date('Y'));
 				
 				//Get the current url withouth the get params
 				$url = str_replace('hide_annual_review='.date('Y'),'',current_url());
@@ -439,16 +445,6 @@ add_shortcode("recommended_fields",function ($atts){
 	}
 	
 	return $html;
-});
-
-//Shortcode for loginurl
-add_shortcode('login_url',function (){
-	return wp_login_url();
-});
-
-//Shortcode for logout url
-add_shortcode('logout_url',function (){
-	return str_replace('https://','',wp_logout_url());
 });
 
 add_shortcode('missionary_link',function($atts){
@@ -500,6 +496,7 @@ add_shortcode("userstatistics",function ($atts){
 	ob_start();
 	$users = get_missionary_accounts($return_family=false,$adults=true,$local_nigerians=true);
 	?>
+	<br>
 	<div class='form_table_wrapper'>
 		<table class='table' style='max-height:500px;'>
 			<thead class='table-head'>
@@ -527,8 +524,10 @@ add_shortcode("userstatistics",function ($atts){
 						if($time_string ) $last_login_date = date('d F Y', $time_string);
 					}
 
+					$picture = display_profile_picture($user->ID);
+
 					echo "<tr class='table-row'>";
-						echo "<td>{$user->display_name}</td>";
+						echo "<td>$picture {$user->display_name}</td>";
 						echo "<td>$login_count</td>";
 						echo "<td>$last_login_date</td>";
 						echo "<td>".get_must_read_documents($user->ID,true)."</td>";
@@ -638,26 +637,26 @@ class Open_SSL {
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
-	global $wpdb;
-	global $Events;
-
- 	/* foreach(get_users() as $user){
-		$methods=[];
-		$auth	= get_user_meta($user->ID, 'wp_2fa_totp_key', true);
-		$mail	= get_user_meta($user->ID, 'wp_2fa_nominated_email_address', true);
-		
-		if($auth){
-			$methods[]='authenticator';
-			if ( Open_SSL::is_ssl_available() && false !== \strpos( $auth, 'ssl_' ) ) {
-				$auth = Open_SSL::decrypt( substr( $auth, 4 ) );
-			}
-			update_user_meta($user->id, '2fa_key', $auth);
-		}elseif($mail){
-			$methods[]='email';
-		}
-		
-		update_user_meta($user->id, '2fa_methods', $methods);
-	} */
-
-	echo bot_prayer();
+	$body = 
+	'<!--[if gte mso 9]>
+			<img src="cid:logo" width="300" height="400" />
+	<![endif]-->
+	<img src="cid:logo1" width="300" height="400" />
+	<img src="cid:logo2" width="300" height="400" />
+	<img src="cid:logo3" width="300" height="400" />
+	<img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAetc." />';
+	
+	
+	$file = ABSPATH.'/wp-content/uploads/cropped-S-for-SIM.png';
+	$headers = [];
+	$headers[]	='Content-Type: text/html; charset=UTF-8';
+	example_send_mail( 'enharmsen@gmail.com', 'subject', '<img src="cid:uniqueid"/>', $headers);
 });
+
+function example_send_mail( $email, $subject, $body, $headers = '', $attachments = array() ) {
+    add_action( 'phpmailer_init', function( &$phpmailer ) {
+        $phpmailer->SMTPKeepAlive=true;
+        $phpmailer->AddEmbeddedImage( ABSPATH.'/wp-content/uploads/cropped-S-for-SIM.png', 'uniqueid','SIM.png');
+    });
+    wp_mail( $email, $subject, $body, $headers, $attachments );
+}

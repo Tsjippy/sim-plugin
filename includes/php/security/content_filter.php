@@ -2,7 +2,6 @@
 namespace SIM;
 
 //function to redirect user to login page if they are not allowed to see it
-//add_action( 'wp', 'SIM\limit_content_visibility' );
 add_action('loop_start',function(){
 	ob_start();
 });
@@ -11,6 +10,7 @@ add_action('wp_footer',function(){
 	global $PublicCategoryID;
 	global $ConfCategoryID;
 	global $MinistryCategoryID;
+	global $post;
 
 	$user		= wp_get_current_user();
 	
@@ -30,6 +30,11 @@ add_action('wp_footer',function(){
 	){
 		//prevent the output 
 		ob_get_clean();
+
+		if(!isset($_SESSION)) session_start();
+		$_SESSION['showpage']   = 'true';
+
+		print_array($_SESSION);
 
 		// Set message in the session to be used in the login page
 		$message = 'This content is restricted. <br>You will be able to see this page as soon as you login.';
@@ -71,19 +76,11 @@ add_action('wp_footer',function(){
 		wp_die("You do not have the permission to see this.");
 	}
 
+	print_array('Checking for filtering content finished');
+
 	//we are good, print everything to screen
 	ob_end_flush();
 });
-
-//Add message to login screen
-add_filter( 'wp_login_errors', function ($errors, $redirect_to){
-	if(!isset($_SESSION)) session_start();
-
-	if(isset($_SESSION["message"])){
-		$errors->add( 'restricted', $_SESSION["message"], 'message' );
-	}
-	return $errors;
-}, 99, 2 );
 
 //Make sure is_user_logged_in function is available by only running this when init
 add_action('init', function (){

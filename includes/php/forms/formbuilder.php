@@ -103,7 +103,6 @@ class Formbuilder{
 			require_once ABSPATH . '/wp-admin/install-helper.php'; 
 		} 
 
-		$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 		//create table for this form
 		global $wpdb;
 		
@@ -141,8 +140,6 @@ class Formbuilder{
 			if(is_numeric($atts['userid'])){
 				$this->user_id	= $atts['userid'];
 			}
-			
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 		}
 	}
 	
@@ -229,6 +226,10 @@ class Formbuilder{
 	
 	function get_submission_data($user_id=null, $submission_id=null){
 		global $wpdb;
+
+		if(!isset($this->submissiontable_name)){
+			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
+		}
 		
 		$query				= "SELECT * FROM {$this->submissiontable_name} WHERE";
 		if(is_numeric($submission_id)){
@@ -1233,7 +1234,9 @@ class Formbuilder{
 								//update in db
 								$this->check_if_all_archived($this->formresults[$field_main_name]);
 							}
+							echo $sub_id;
 						}
+						echo $id;
 					}else{
 						//if the form value is equal to the trigger value it needs to be to be archived
 						if($this->formresults[$trigger_name] == $trigger_value){
@@ -2528,6 +2531,9 @@ function process_<?php echo $this->datatype;?>_fields(el){
 }
 
 add_action('init', function(){
+	//add action for use in scheduled task
+	add_action( 'auto_archive_action', "SIM\auto_archive_form_entries" );
+
 	//shortcode to make forms
 	add_shortcode( 'formbuilder', function($atts){
 		$formbuilder = new Formbuilder();
@@ -2549,9 +2555,9 @@ add_action('init', function(){
 
 function schedule_auto_archive(){
 	//Not yet activated
-	if (! wp_next_scheduled ( 'simnigeria_auto_archive_action' )) {
+	if (! wp_next_scheduled ( 'auto_archive_action' )) {
 		//schedule
-		if(wp_schedule_event( time(), 'daily', 'simnigeria_auto_archive_action' )){
+		if(wp_schedule_event( time(), 'daily', 'auto_archive_action' )){
 			print_array("Succesfully scheduled auto_archive to run daily");
 		}else{
 			print_array("Scheduling of auto_archive unsuccesfull");
@@ -2559,7 +2565,7 @@ function schedule_auto_archive(){
 	}
 }
 
-function auto_archive_action(){
+function auto_archive_form_entries(){
 	$formbuilder = new Formbuilder();
 	$formbuilder->autoarchive();
 }

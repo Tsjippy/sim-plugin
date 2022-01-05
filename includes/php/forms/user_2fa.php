@@ -21,7 +21,7 @@ function twofa_settings_form($user_id){
 				You have been redirected to this page because you need to setup a second login factor before you can visit other pages.
 			</p>
 		</div>
-	<?php
+		<?php
 	}
 	?>
 	<form id="2fa-setup-wrapper">

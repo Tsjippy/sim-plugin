@@ -275,14 +275,37 @@ class Events{
 		}
 	}
 
+	function delete_old_cel_event($post_id, $metavalue, $user_id, $type, $title){
+		if(is_numeric($post_id)){
+			$existing_event	= $this->retrieve_single_event($post_id);
+			if(
+				date('-m-d',strtotime($existing_event->startdate)) == date('-m-d',strtotime($metavalue)) and
+				$title == $existing_event->post_title
+			){
+				return false;//nothing changed
+			}else{
+				wp_delete_post($post_id,true);
+				delete_user_meta($user_id,$type.'_event_id');
+	
+				$this->remove_db_rows();
+			}
+		}
+	}
+
 	function create_celebration_event($type, $user, $metakey='', $metavalue=''){
 		if(is_numeric($user)) $user = get_userdata($user);
 		
 		if(empty($metakey)) $metakey = $type;
 
-		if(empty($metavalue))	$metavalue = get_user_meta($user->ID,$metakey,true);
+		$old_metavalue = get_user_meta($user->ID,$metakey,true);
+		if(empty($metavalue)){
+			$metavalue = $old_metavalue;
+		}elseif($metavalue == $old_metavalue){
+			//nothing changed return
+			return;
+		}
 
-		$title	= ucfirst($type).' '.$user->display_name;
+		$title		= ucfirst($type).' '.$user->display_name;
 		$partner_id	= has_partner($user->ID);
 		if($partner_id){
 			$partner_meta	= get_user_meta($partner_id,$metakey,true);
@@ -307,17 +330,10 @@ class Events{
 		
 		//get old post
 		$this->post_id	= get_user_meta($user->ID,$type.'_event_id',true);
+		$this->delete_old_cel_event($this->post_id, $metavalue, $user->ID, $type, $title);
 
-		if(is_numeric($this->post_id)){
-			$existing_event	= $this->retrieve_single_event($this->post_id)->startdate;
-			if(date('-m-d',strtotime($existing_event)) == date('-m-d',strtotime($metavalue))){
-				return;//nothing changed
-			}else{
-				wp_delete_post($this->post_id,true);
-				delete_user_meta($user->ID,$type.'_event_id');
-	
-				$this->remove_db_rows();
-			}
+		if($partner_id){
+			$this->delete_old_cel_event(get_user_meta($partner_id, $type.'_event_id',true), $metavalue, $user->ID, $type, $title);
 		}
 
 		if(!empty($metavalue)){
@@ -548,7 +564,10 @@ class Events{
 			$html	.= " until ".date('j F Y',strtotime($meta['repeat']['enddate']));
 		}
 		if(!empty($meta['repeat']['amount'])){
-			$html	.= " for {$meta['repeat']['amount']} times";
+			$repeat_amount = $meta['repeat']['amount'];
+			if($repeat_amount != 90){
+				$html	.= " for $repeat_amount times";
+			}
 		}
 
 		return $html;

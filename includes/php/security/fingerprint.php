@@ -609,8 +609,6 @@ function auth_finish(\WP_REST_Request $request){
             get_profile_picture($user_info->ID)
         );
 
-        print_array("ajax_auth_response: type => \"test\", user => \"".$user_info->user_login."\"");
-
         $server = new Server(
             get_rp_entity(),
             $publicKeyCredentialSourceRepository,
@@ -661,12 +659,13 @@ function auth_finish(\WP_REST_Request $request){
 
 // Get authenticator list
 function authenticator_list(){
-    if(!current_user_can("read")){
-        print_array("ajax_ajax_authenticator_list: (ERROR)Missing parameters, exit");
-        wp_die("Something went wrong.");
-    }
-
     $user_info = wp_get_current_user();
+
+    if(!current_user_can("read")){
+        $name = $user_info->display_name;
+        print_array("$name has not enough permissions");
+        return;
+    }
 
     if(isset($_GET["user_id"])){
         $user_id = intval(sanitize_text_field($_GET["user_id"]));

@@ -189,23 +189,22 @@ if($CustomSimSettings == false){
 		'Theological Translator'
 	];
 	$ScheduledFunctions = [
-		['monthly','personal_info_reminder'],
-		['monthly','vaccination_reminder'],
-		['daily','birthday_check'],
-		['daily','account_expiry_check'],
-		['threemonthly','send_missonary_detail'],
-		['monthly','greencard_reminder'],
-		['monthly','send_reimbursement_requests'],
-		['daily','archive_old_requests'],
-		['daily','anniversary_check'],
-		//['weekly','simnigeria_review_reminders'],
-		['monthly','check_last_login_date'],
-		['daily','expired_posts_check'],
-		['daily','process_images'],
-		['weekly','read_reminder'],
-		['yearly','check_details_mail'],
-		['yearly','remove_old_events'],
-		['monthly','page_age_warning']
+		['recurrence'=>'monthly','hookname'=>'personal_info_reminder'],
+		['recurrence'=>'monthly','hookname'=>'vaccination_reminder'],
+		['recurrence'=>'daily','hookname'=>'birthday_check'],
+		['recurrence'=>'daily','hookname'=>'account_expiry_check'],
+		['recurrence'=>'monthly','hookname'=>'greencard_reminder'],
+		['recurrence'=>'monthly','hookname'=>'send_reimbursement_requests'],
+		['recurrence'=>'daily','hookname'=>'anniversary_check'],
+		//['recurrence'=>'weekly','hookname'=>'review_reminders'],
+		['recurrence'=>'monthly','hookname'=>'check_last_login_date'],
+		['recurrence'=>'daily','hookname'=>'expired_posts_check'],
+		['recurrence'=>'daily','hookname'=>'process_images'],
+		['recurrence'=>'weekly','hookname'=>'read_reminder'],
+		['recurrence'=>'yearly','hookname'=>'check_details_mail'],
+		['recurrence'=>'yearly','hookname'=>'remove_old_events'],
+		['recurrence'=>'monthly','hookname'=>'page_age_warning'],
+		['recurrence'=>'threemonthly','hookname'=>'send_missonary_detail']
 	];
 	$picturesurl				= plugins_url('',__DIR__).'/pictures';
 	$LoaderImageURL 			= $picturesurl.'/loading.gif';
