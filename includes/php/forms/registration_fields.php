@@ -96,19 +96,22 @@ function user_register( $user_id ) {
 add_filter( 'wp_new_user_notification_email', 'new_user_notification_email', 10, 3 );
 function new_user_notification_email( $wp_new_user_notification_email, $user, $blogname ) {
 	global $WebmasterName;
-	//Set variablel
+	global $PW_ResetPage;
+
+	//Set variables
     $user_login = stripslashes( $user->user_login );
     $user_email = stripslashes( $user->user_email );
 	
 	//If a valid email
 	if ($user_email != "" and strpos($user_email, '.empty') === false){
-		$user_name = stripslashes( $user->display_name );
-		$reset_key = get_password_reset_key($user);
-		$login_url  = wp_login_url()."?action=rp&key=$reset_key&login=$user_login";
+		$user_name	= stripslashes( $user->display_name );
+		$reset_key	= get_password_reset_key($user);
+		$pageurl	= get_permalink($PW_ResetPage);
+		$login_url	= "$pageurl?key=$reset_key&login=$user_login";
 		
 		//Create message
-		$message  = 'Hi '.$user_name.",<br><br>";
-		$message .= sprintf( __( "Your account on %s has been approved!" ), get_option('blogname') ) . "<br>";
+		$message  = "Hi $user_name,<br><br>";
+		$message .= sprintf( __( "We have created an account for you on " ), $blogname ) . "<br>";
 		$message .= "Please set a password and login using this <a href='$login_url'>link</a>.<br>";
 		$message .= sprintf( __('Your username is: %s'), $user_login ) . "<br><br>";
 		
@@ -116,13 +119,11 @@ function new_user_notification_email( $wp_new_user_notification_email, $user, $b
 		if(is_numeric($validity)){
 			$message .= "Your account will be active for $validity months after you first login.<br><br>";
 		}
-		//$message .= 'Please add webmaster@simnigeria.org to your trusted contacts.<br>';
 		$message .= 'If you have any problems, please contact me by replying to this e-mail.<br><br>';
 		$message .= __( "Regards,<br>$WebmasterName<br>" );
 		$message .= __( "Webmaster" );
 	 
-		$wp_new_user_notification_email['subject'] = sprintf( __( "Your account on %s has been approved!" ), get_option('blogname') );
-		$wp_new_user_notification_email['headers'] = array('Content-Type: text/html; charset=UTF-8');
+		$wp_new_user_notification_email['subject'] = sprintf( __( "Your account on %s" ), $blogname );
 		$wp_new_user_notification_email['message'] = $message;
 	 
 		return $wp_new_user_notification_email;

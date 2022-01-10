@@ -20,8 +20,9 @@ function disable_category_menu () {
 function add_vimeo_media_menu_output(){
 	ob_start();
 	if ( isset( $_GET['action'] ) && isset( $_GET['id'] )&& $_GET['action'] === 'delete' ) {
-		$vimeo_helper = new \WP_DGV_Api_Helper();
-		$db_helper = new \WP_DGV_Db_Helper();
+		$vimeo_helper	= new \WP_DGV_Api_Helper();
+		$db_helper		= new \WP_DGV_Db_Helper();
+
 		if ( $vimeo_helper->is_connected ) {
 			//Get the vimeo id
 			$vimeo_id = $db_helper->get_vimeo_id( $_GET['id'] );
@@ -71,11 +72,8 @@ function add_vimeo_media_menu_output(){
 				echo "</p></div>";
 			}
 		}
-		
-		
 	}
 			
-	
 	?>
 	<h2><?php _e( 'Vimeo Videos', 'wp-vimeo-videos' ); ?></h2>
 
@@ -84,10 +82,9 @@ function add_vimeo_media_menu_output(){
 
 		<?php if ( current_user_can( 'manage_options' ) ): ?>
 			<a href="<?php echo admin_url( 'options-general.php?page=' . \WP_DGV_Admin::PAGE_SETTINGS . '&action=settings' ); ?>"
-			   class="page-title-action button"><?php _e( 'Settings', 'wp-vimeo-videos' ); ?></a>
-		<?php endif; ?>
-
-	
+			   class="page-title-action button"><?php _e( 'Settings', 'wp-vimeo-videos' ); ?>
+			</a>
+		<?php endif; ?>	
 
 	<form method="post">
 
@@ -125,7 +122,7 @@ if ( ! class_exists( 'WP_DGV_List_Table' ) ) {
  * @since      1.0.0
  * @package    WP_DGV
  * @subpackage WP_DGV/includes
- * @copyright     Darko Gjorgjijoski <info@codeverve.com>
+ * @copyright  Darko Gjorgjijoski <info@codeverve.com>
  * @license    GPLv2
  */
 class List_Table extends \WP_DGV_List_Table {
@@ -172,4 +169,58 @@ function _dgv_after_uploadn( $response, $api ) {
 	wp_send_json_success( array(
 		'message' => 'Video uploaded successfully.<br>I have already put the shortcode for the video, in the "Post Content" field for you.<br>This code will be replaced by the video on publish.<br>You can close this window now.',
 	) );
+}
+
+//add scheduled task to sync vimeo library
+add_action('init',function(){
+	add_action( 'sync_vimeo_action', "SIM\\vimeo_sync");
+});
+
+schedule_task('sync_vimeo_action', 'daily');
+
+//sync local db with vimeo.com
+function vimeo_sync(){
+	$vimeo_helper	= new \WP_DGV_Api_Helper();
+	$db_helper		= new \WP_DGV_Db_Helper();
+	
+	if ( $vimeo_helper->is_connected ) {
+		$online_videos	= $vimeo_helper->get_uploaded_videos();
+		$local_videos	= $db_helper->get_videos();
+
+		//Check if we need to remove any local video's
+		foreach($local_videos as $local_video){
+			$found	= false;
+
+			//loop over the online videos, each entry is an array
+			foreach($online_videos as $online_video){
+				if(in_array($local_video->post_title, $online_video)){
+					$found	= true;
+					break;
+				}
+			}
+
+			//local video is not found, remove it
+			if(!$found){
+				wp_delete_post($local_video->ID, true);
+			}
+		}
+
+		//Check if we need to add any local video's
+		foreach($online_videos as $online_video){
+			$found	= false;
+
+			//loop over the online videos, each entry is an array
+			foreach($local_videos as $local_video){
+				if(in_array($local_video->post_title, $online_video)){
+					$found	= true;
+					break;
+				}
+			}
+
+			//local video is not found, add it
+			if(!$found){
+				$db_helper->create_local_video( $online_video['name'], $online_video['description'], str_replace('/videos/', '', $online_video['uri']), 'sync' );
+			}
+		}
+	}
 }

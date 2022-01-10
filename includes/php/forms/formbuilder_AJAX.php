@@ -38,9 +38,6 @@ class Formbuilder_Ajax extends Formbuilder{
 	}
 	
 	function add_formfield(){
-		/* print_array('Adding form field');
-		print_array($_POST); */
-		
 		verify_nonce('add_form_element_nonce');
 		
 		if(!empty($_POST['formname'])){

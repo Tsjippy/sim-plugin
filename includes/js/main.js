@@ -103,22 +103,30 @@ function isMobileDevice() {
 	return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 };
 
-function showLoader(element,replace=true){
+function showLoader(element, replace=true, message=''){
 	if(element == null){
 		return;
 	}
 	
-	var loader = document.createElement("IMG");
-	loader.setAttribute('class','loadergif')
-	loader.setAttribute("src", simnigeria.loading_gif);
-	loader.style["height"]= "30px";
-	if(replace){
-		element.parentNode.replaceChild(loader, element);
-	}else{
-		element.parentNode.insertBefore(loader, element.nextSibling);
+	var wrapper	= document.createElement("DIV");
+	wrapper.setAttribute('class','loaderwrapper');
+	if(message != ''){
+		wrapper.textContent	= message;
 	}
 
-	return loader;
+	var loader	= document.createElement("IMG");
+	loader.setAttribute('class','loadergif');
+	loader.setAttribute("src", simnigeria.loading_gif);
+	loader.style["height"]= "30px";
+
+	wrapper.insertAdjacentElement('beforeEnd', loader);
+	if(replace){
+		element.parentNode.replaceChild(wrapper, element);
+	}else{
+		element.parentNode.insertBefore(wrapper, element.nextSibling);
+	}
+
+	return wrapper;
 }
 
 function send_statistics(){

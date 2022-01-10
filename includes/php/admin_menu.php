@@ -98,8 +98,6 @@ function admin_menu(){
 	global $Trello;
 	
 	ob_start();
-	
-	//print($CustomSimSettings);
 	?>
 	<div class="wrap">
         <h1>Define custom settings</h1>
@@ -188,6 +186,12 @@ function admin_menu(){
 					<th><label for="profile_page">Page with the profile data</label></th>
 					<td>
 						<?php echo page_select("profile_page",$CustomSimSettings["profile_page"]); ?>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="pw_reset_page">Page with the password reset form</label></th>
+					<td>
+						<?php echo page_select("pw_reset_page",$CustomSimSettings["pw_reset_page"]); ?>
 					</td>
 				</tr>
 				
@@ -284,15 +288,6 @@ function admin_menu(){
 						<select name="ministrycategory" id="ministrycategory">
 							<option value="">---</option>
 							<?php echo get_tax_categories("ministrycategory",'locationtype'); ?>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<th><label for="compoundcategory">Category used for compounds</label></th>
-					<td>
-						<select name="compoundcategory" id="compoundcategory">
-							<option value="">---</option>
-							<?php echo get_tax_categories("compoundcategory",'locationtype'); ?>
 						</select>
 					</td>
 				</tr>

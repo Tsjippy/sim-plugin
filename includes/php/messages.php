@@ -84,7 +84,7 @@ function birthday() {
 				}else{
 					$userdata	= get_userdata($user_id);
 					//Get the url of the user page
-					$url = get_missionary_page_url($user_id);
+					$url		= get_missionary_page_url($user_id);
 					$message	= str_replace($couple_string,"of <a href='$url'>$couple_string</a>",$message);
 					$message	= str_replace($userdata->display_name,"of <a href='$url'>{$userdata->display_name}</a>",$message);
 				}
@@ -103,8 +103,8 @@ function birthday() {
 			
 			if(count($arrival_users)==1){
 				//Get the url of the user page
-				$url = get_missionary_page_url($arrival_users[0]->ID);
-				$html .= '<p><a href="'.$url.'">'.$arrival_users[0]->display_name."</a> arrives today!";
+				$url	 = get_missionary_page_url($arrival_users[0]->ID);
+				$html	.= '<p><a href="'.$url.'">'.$arrival_users[0]->display_name."</a> arrives today!";
 			}else{
 				$html 	.= '<p>The following people arrive today:<br>';
 				//Loop over the birthdays

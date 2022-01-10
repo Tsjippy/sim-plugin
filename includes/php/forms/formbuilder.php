@@ -2553,17 +2553,7 @@ add_action('init', function(){
 
 });
 
-function schedule_auto_archive(){
-	//Not yet activated
-	if (! wp_next_scheduled ( 'auto_archive_action' )) {
-		//schedule
-		if(wp_schedule_event( time(), 'daily', 'auto_archive_action' )){
-			print_array("Succesfully scheduled auto_archive to run daily");
-		}else{
-			print_array("Scheduling of auto_archive unsuccesfull");
-		}
-	}
-}
+schedule_task('auto_archive_action', 'daily');
 
 function auto_archive_form_entries(){
 	$formbuilder = new Formbuilder();

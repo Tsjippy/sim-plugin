@@ -174,3 +174,7 @@ function add_user_account($first_name, $last_name, $email, $approved = false, $v
 		return 'error: '.$user_id->get_error_message();
 	}
 }
+
+add_action('user_register', function($user_id, $user){
+	new_user_notification_email( ['subject'=>'','message'=>''], get_userdata($user_id), get_bloginfo( 'name' ) );
+},10,2);

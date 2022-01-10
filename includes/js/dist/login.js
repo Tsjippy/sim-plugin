@@ -503,6 +503,28 @@ function logout_user(){
 	});
 };
 
+var observer = new MutationObserver(function(mutations) {
+	mutations.forEach(function(mutation) {
+		if (mutation.attributeName === "data-hcaptcha-response" && document.querySelector('.h-captcha iframe').dataset.hcaptchaResponse.length > 1000) {
+			reset_password(document.querySelector('#login_nav>a'));
+		}
+	});
+});
+
+function waitforcaptcha(){
+	setTimeout(function() {
+		var iframe	= document.querySelector('.h-captcha iframe');
+		if(iframe	== null){
+			waitforcaptcha();
+		}else{
+			observer.observe(iframe, {
+				attributes: true
+			});
+		}
+	}, 1000);
+}
+waitforcaptcha();
+  
 //request password reset e-mail
 async function reset_password(target){
 	var username	= document.getElementById('username').value;
@@ -514,6 +536,10 @@ async function reset_password(target){
 	var captcha	= target.previousElementSibling;
 	//check if captcha visible
 	if(captcha.classList.contains('hidden')){
+		if(captcha.querySelector('iframe') == null){
+			display_message('Captcha failed to load, please refresh the page','error');
+		}
+
 		//show captcha
 		captcha.classList.remove('hidden');
 
@@ -521,7 +547,7 @@ async function reset_password(target){
 		target.text	= 'Send password reset request';
 	}else{
 		target.classList.add('hidden');
-		var loader = showLoader(target, false);
+		var loader = showLoader(target, false, 'Sending e-mail...   ');
 
 		var formData	= new FormData(target.closest('form'));
 		formData.append('action','request_pwd_reset');

@@ -161,7 +161,7 @@ function send_post_notification($post_id){
 	if($_POST['signalmessagetype'] == 'all'){
 		$excerpt	= $post->post_content;
 	}else{
-		$excerpt	= wp_trim_words($post->post_content ,20);
+		$excerpt	= wp_trim_words(do_shortcode($post->post_content), 20);
 		//Only add read more if the excerpt is not the whole content
 		if($excerpt != strip_tags($post->post_content)){
 			$excerpt .=	"...\n\nRead more on:\n".get_permalink($post);

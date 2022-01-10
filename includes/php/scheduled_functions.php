@@ -28,42 +28,44 @@ function add_cron_schedules(){
 
 	//schedule the actions if needed
 	foreach($ScheduledFunctions as $func){
-		//Not yet activated
-		if (! wp_next_scheduled ( $func['hookname'].'_action' )) {
-			switch ($func['recurrence']) {
-				case 'weekly':
-					$time	= strtotime('next Monday');
-					break;
-				case 'monthly':
-					$time	= strtotime('first day of next month');
-					break;
-				case 'threemonthly':
-					//calculate start of next quarter
-					$monthcount = 0;
-					$month		= 0;
-					while(!in_array($month, [1,4,7,10])){
-						$monthcount++;
-						$time	= strtotime("first day of +$monthcount month");
-						$month = date('n',$time);
-					}
-					break;
-				case 'yearly':
-					$time	= strtotime('first day of next year');
-					break;
-				default:
-					$time	= time();
-			} 
+		schedule_task($func['hookname'].'_action', $func['recurrence']);
+	}
+}
 
-			//schedule
-			if(wp_schedule_event( $time, $func['recurrence'], $func['hookname'].'_action' )){
-				print_array("Succesfully scheduled ".$func['hookname']." to run ".$func['recurrence']);
-			}else{
-				print_array("Scheduling of ".$func['hookname']." unsuccesfull");
-			}
+function schedule_task($taskname, $recurrence){
+	//Not yet activated
+	if (! wp_next_scheduled($taskname)) {
+		switch ($recurrence) {
+			case 'weekly':
+				$time	= strtotime('next Monday');
+				break;
+			case 'monthly':
+				$time	= strtotime('first day of next month');
+				break;
+			case 'threemonthly':
+				//calculate start of next quarter
+				$monthcount = 0;
+				$month		= 0;
+				while(!in_array($month, [1,4,7,10])){
+					$monthcount++;
+					$time	= strtotime("first day of +$monthcount month");
+					$month = date('n',$time);
+				}
+				break;
+			case 'yearly':
+				$time	= strtotime('first day of next year');
+				break;
+			default:
+				$time	= time();
+		} 
+
+		//schedule
+		if(wp_schedule_event( $time, $recurrence, $taskname )){
+			print_array("Succesfully scheduled $taskname to run $recurrence");
+		}else{
+			print_array("Scheduling of $taskname unsuccesfull");
 		}
 	}
-	
-	schedule_auto_archive();
 }
 
 //Function to check for old ministry pages
@@ -202,7 +204,7 @@ function personal_info_reminder(){
 					);
 					
 					//If this not a valid email skip this email
-					if(strpos($userdata->user_email,'.empty') === false) continue;
+					if(strpos($userdata->user_email,'.empty') !== false) continue;
 						
 					$subject 	= "Please update your personal information on the simnigeria website";
 					$message 	= 'Hi '.$userdata->first_name.',<br><br>';

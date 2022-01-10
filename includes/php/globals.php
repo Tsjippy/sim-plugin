@@ -229,6 +229,7 @@ if($CustomSimSettings == false){
 	$WelcomeMessagePageID		= $CustomSimSettings["welcome_page"];
 	$PublishPostPage			= $CustomSimSettings["publish_post_page"];
 	$ProfilePage				= $CustomSimSettings["profile_page"];
+	$PW_ResetPage				= $CustomSimSettings["pw_reset_page"];
 	$PostOutOfDataWarning		= $CustomSimSettings["postoutofdatawarning"]; 	//Age in months on when a warning should be showed or send
 	$VaccinationExpiryWarning	= $CustomSimSettings["vaccinationoutofdatawarning"]; 	//Age in months on when a warning should be showed or send
 	$WebmasterName				= $CustomSimSettings["webmastername"]; 	//Used in registration_fields.php to sign the welcome e-mail
@@ -260,20 +261,6 @@ if($CustomSimSettings == false){
 		$HealtCoordinator->display_name = $WebmasterName;
 		error_log("Please assign someone the health coorodinator role!");
 	}
-	
-	//Create a html hyperlink for the page of the current health coordinator
-	add_action('init', function() {
-		global $HealtCoordinator;
-		global $Healtcoordinator_Page_Url;
-		
-		$Healtcoordinator_Page_Id = get_user_meta($HealtCoordinator->ID,'missionary_page_id',true);
-		if($Healtcoordinator_Page_Id != ""){
-			$Healtcoordinator_Page_Url = get_permalink($Healtcoordinator_Page_Id);
-			$Healtcoordinator_Page_Url = '<a href="'.$Healtcoordinator_Page_Url.'">'.$HealtCoordinator->display_name.'</a>';
-		}else{
-			$Healtcoordinator_Page_Url = $HealtCoordinator->display_name;
-		}
-	});
 	
 	//Get the current travel coordinator
 	$TravelCoordinator 			= get_users( array( 'role' => 'visainfo' ));

@@ -49,13 +49,18 @@ function sendAJAX(formData, form = null){
 		}
 		
 		//If the response data is json encoded and includes a callback name
-		if(typeof(responsdata) != undefined && responsdata.callback != undefined){
-			try {
-				console.log("Running "+responsdata['callback']);
-				window[responsdata['callback']](this,responsdata);
-			} catch (e) {
-				//console.log(e);
-				//console.log("No function named "+responsdata['callback']+" found");
+		if(typeof(responsdata) != undefined){
+			if(responsdata.callback != undefined){
+				try {
+					console.log("Running "+responsdata['callback']);
+					window[responsdata['callback']](this,responsdata);
+				} catch (e) {
+					//console.log(e);
+					//console.log("No function named "+responsdata['callback']+" found");
+				}
+			}
+			if(responsdata.redirect != undefined){
+				location.href	=	responsdata.redirect;
 			}
 		}
 		

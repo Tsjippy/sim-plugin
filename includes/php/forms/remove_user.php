@@ -8,31 +8,39 @@ function remove_user_data ($user_id){
 	global $MailchimpUserTAGs;
 	global $MailchimpMissionaryTAGs;
 	global $Events;
+	global $WebmasterName;
+	global $Maps;
 	
-	$userdata = get_userdata($user_id);
-	$user_nicename = $userdata->user_nicename;
-	$displayname = $userdata->display_name;
+	$userdata		= get_userdata($user_id);
+	$displayname	= $userdata->display_name;
 	
 	print_array("Deleting userdata for user $displayname");
 	
+	$attachment_id = get_user_meta($user_id,'profile_picture',true);
+	if(is_numeric($attachment_id)){
+		//Remove profile picture
+		wp_delete_attachment($attachment_id,true);
+		print_array("Removed profile picture for user $displayname");
+	}
+	
+	//remove category from mailchimp
+	$tags = array_merge(explode(',',$MailchimpUserTAGs),explode(',',$MailchimpMissionaryTAGs));
+	$Mailchimp = new Mailchimp($user_id);
+	
+	$Mailchimp->change_tags($tags, 'inactive');
+
+	//Remove birthday events
+	$birthday_post_id = get_user_meta($user_id,'birthday_event_id',true);
+	if(is_numeric($birthday_post_id))	$Events->remove_db_rows($birthday_post_id);
+
+	$anniversary_id	= get_user_meta($user_id,'SIM Nigeria anniversary_event_id',true);
+	if(is_numeric($anniversary_id))	$Events->remove_db_rows($anniversary_id);
+
 	$family = family_flat_array($user_id);
 	//Only remove if there is no family
 	if (count($family) == 0){
 		//Remove missionary page
-		//Check if a page exists for this person
-		$missionary_page = get_user_meta($user_id,"missionary_page_id",true);
-		if ($missionary_page != ""){
-			//page exists, delete it
-			wp_delete_post($missionary_page);
-			print_array("Deleted the missionary page for $displayname");
-		}
-		
-		//Remove birthday events
-		$birthday_post_id = get_user_meta($user_id,'birthday_event_id',true);
-		if(is_numeric($birthday_post_id))	$Events->remove_db_rows($birthday_post_id);
-
-		$anniversary_id	= get_user_meta($user_id,'SIM Nigeria anniversary_event_id',true);
-		if(is_numeric($anniversary_id))	$Events->remove_db_rows($anniversary_id);
+		remove_missionary_page($user_id);
 
 		//Check if a personal marker exists for this user
 		$marker_id = get_user_meta($user_id,"marker_id",true);
@@ -68,42 +76,35 @@ function remove_user_data ($user_id){
 		}
 	//User has family
 	}else{
-		if((isset($family["partner"]) or isset($family["father"]) or isset($family["mother"])) and count($family) == 1){
-			/* After removal of this account the current spouse has no children and spouse, so update the 
-			Private page, missionary page, and marker */
-			
+		/* 
+			After removal of this account the current spouse has no children and spouse, 
+			so update the Private page, missionary page, and marker
+		*/
+		if(
+			(
+				isset($family["partner"]) or 
+				isset($family["father"]) or 
+				isset($family["mother"])
+			) and 
+			count($family) == 1
+		){
 			//Get the partners display name to use as the new title
 			if(isset($family["partner"])){
-				$title = get_userdata($family["partner"])->data->display_name;
+				$title = get_userdata($family["partner"])->display_name;
 			}elseif( isset($family["father"])){
-				$title = get_userdata($family["father"])->data->display_name;
+				$title = get_userdata($family["father"])->display_name;
 			}elseif( isset($family["mother"])){
-				$title = get_userdata($family["mother"])->data->display_name;
+				$title = get_userdata($family["mother"])->display_name;
 			}
 			
-			//Check if a page exists for this person
-			$missionary_page = get_user_meta($user_id,"missionary_page_id",true);
-			if(is_numeric($missionary_page)){
-				wp_update_post(
-					array (
-						'ID'         => $missionary_page,
-						'post_title' => $title
-					)
-				);
-			}
+			//Update
+			update_missionary_page_title($user_id, $title);
 			
-			//Check if a personal marker exists for this relative
+			//Check if a personal marker exists
 			$marker_id = get_user_meta($user_id,"marker_id",true);
-			//There exists a marker for this person, remove it
-			if ($marker_id != ""){
-				$wpdb->update($wpdb->prefix . 'ums_markers', 
-					array(
-						'title' => $title,
-					), 
-					array( 'ID' => $marker_id),
-				);
-			}
+			$Maps->update_marker_title($marker_id, $title);
 		}
+		
 		//Remove user from the family arrays of its relative
 		foreach($family as $relative){
 			//get the relatives family array
@@ -142,19 +143,18 @@ function remove_user_data ($user_id){
 			}
 		}
 	}
-	
-	$attachment_id = get_user_meta($user_id,'profile_picture',true);
-	if(is_numeric($attachment_id)){
-		//Remove profile picture
-		wp_delete_attachment($attachment_id,true);
-		print_array("Removed profile picture for user $displayname");
-	}
-	
-	//remove category from mailchimp
-	$tags = array_merge(explode(',',$MailchimpUserTAGs),explode(',',$MailchimpMissionaryTAGs));
-	$Mailchimp = new Mailchimp($user_id);
-	
-	$Mailchimp->change_tags($tags, 'inactive');
+
+	//Send e-mail
+	$headers = array('Content-Type: text/html; charset=UTF-8');
+
+	$message = "Dear $userdata->first_name<br>
+	<br>
+	This is to inform you that your account on simnigeria.org has been deleted.<br>
+	<br>
+	Kind regards,<br>
+	$WebmasterName";
+					
+	wp_mail($userdata->user_email, 'Your account on simnigeria.org has been deleted', $message, $headers );
 }
 
 //Delete user shortcode

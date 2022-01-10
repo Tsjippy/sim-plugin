@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-$StyleVersion = "6.9.303";
+$StyleVersion = "6.9.305";
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', 'SIM\enqueue_scripts');
@@ -48,9 +48,6 @@ function enqueue_scripts($hook){
 	//debug
 	//wp_enqueue_script('simnigeria_test_script', '//localhost:8080/target.js');
 	
-	//Password strength js
-	wp_register_script('simnigeria_password_strength_script',plugins_url('js/account/password_strength.js', __DIR__),array('password-strength-meter'),$StyleVersion,true);
-	
 	//Welcome shortcode
 	wp_register_script('simnigeria_message_script',plugins_url('js/hide_welcome.js', __DIR__),array(),$StyleVersion,true);
 	
@@ -59,6 +56,10 @@ function enqueue_scripts($hook){
 	
 	//Submit forms
 	wp_register_script('simnigeria_forms_script',plugins_url('js/forms.js', __DIR__), array('sweetalert'),$StyleVersion,true);
+
+	//Password strength js
+	wp_register_script('simnigeria_password_strength_script',plugins_url('js/account/password_strength.js', __DIR__),array('password-strength-meter', 'simnigeria_forms_script'),$StyleVersion,true);
+	
 
 	//Recipe
 	wp_register_script('simnigeria_plurarize_script',plugins_url('js/recipe.js', __DIR__), array(),$StyleVersion,true);
@@ -83,13 +84,6 @@ function enqueue_scripts($hook){
 	//2FA page
 	wp_register_script('simnigeria_2fa_script',plugins_url('js/account/2fa.js', __DIR__), array('simnigeria_fingerprint_script'),$StyleVersion,true);
 	
-	//Add compounds as variable to the script
-	//$compound_map_id = $CustomSimSettings['compound_map'];
-	//$query = $wpdb->prepare("SELECT `title`,`coord_x`,`coord_y`,`address` FROM {$wpdb->prefix}ums_markers WHERE `map_id` = %s",$compound_map_id);
-	//$compound_markers = $wpdb->get_results($query,ARRAY_A);
-	//wp_localize_script( 'simnigeria_location_script', 'simnigeria_account', array( 'compounds' => $compound_markers) );
-	//wp_localize_script( 'simnigeria_location_script', 'simnigeria_account', array( 'compounds' => $NigeriaStates) );
-
 	//Formbuilder js
 	wp_register_script( 'simnigeria_formbuilderjs', plugins_url('js/formbuilder.js', __DIR__),array('simnigeria_forms_script','sortable','sweetalert'),$StyleVersion,true);
 	
@@ -107,9 +101,9 @@ function enqueue_scripts($hook){
     //Check if on the home page
 	if (is_front_page() or is_page($LoggedInHomePage)){
 		//Add header image selected in customizer to homepage using inline css
-		$header_image_id = get_theme_mod( 'simnigeria_header_image');
-		$header_image_url = wp_get_attachment_url($header_image_id);
-		$extra_css = ".home:not(.sticky) #masthead{background-image: url($header_image_url);";
+		$header_image_id	= get_theme_mod( 'simnigeria_header_image');
+		$header_image_url	= wp_get_attachment_url($header_image_id);
+		$extra_css			= ".home:not(.sticky) #masthead{background-image: url($header_image_url);";
 		wp_add_inline_style('simnigeria_style', $extra_css);
 		//home.js
 		wp_enqueue_script('simnigeria_home_script',plugins_url('js/home.js', __DIR__), array('sweetalert'),$StyleVersion,true);

@@ -222,14 +222,11 @@ add_action ( 'wp_ajax_nopriv_check_cred', function(){
             $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
             remove_from_nested_array($methods);
+            
             //return the methods
             if(!empty($methods)){
-                //send verification e-mail but only if we do not have webauthn enabled
-                if(in_array('email',$methods) and !in_array('webauthn',$methods)){
-                    sendEmailCode($user);
-                }
                 wp_die(json_encode(array_values($methods)));
-                //no 2fa setup yet, login straight away
+            //no 2fa setup yet, login straight away
             }else{
                 user_login();
             }

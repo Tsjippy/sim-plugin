@@ -637,20 +637,7 @@ class Open_SSL {
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
-	$body = 
-	'<!--[if gte mso 9]>
-			<img src="cid:logo" width="300" height="400" />
-	<![endif]-->
-	<img src="cid:logo1" width="300" height="400" />
-	<img src="cid:logo2" width="300" height="400" />
-	<img src="cid:logo3" width="300" height="400" />
-	<img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAetc." />';
-	
-	
-	$file = ABSPATH.'/wp-content/uploads/cropped-S-for-SIM.png';
-	$headers = [];
-	$headers[]	='Content-Type: text/html; charset=UTF-8';
-	example_send_mail( 'enharmsen@gmail.com', 'subject', '<img src="cid:uniqueid"/>', $headers);
+	vimeo_sync();
 });
 
 function example_send_mail( $email, $subject, $body, $headers = '', $attachments = array() ) {

@@ -141,10 +141,8 @@ add_filter('transform_formtable_data',function($string,$field_name){
 			foreach($string as $key=>$value){
 				//assume its a userid if it is a number, then transform it to a clickable link
 				if(is_numeric($value)){
-					$missionary_page_id	= get_user_meta($value,"missionary_page_id",true);
-					if(is_numeric($missionary_page_id)){
-						$page_url 			= get_post_permalink($missionary_page_id);
-						$output 				.= "<a class='missionary_link' href='$page_url'>".get_userdata($value)->display_name."</a>";
+					$output 			 = get_missionary_page_link($value);
+					if($output){
 						if($key != $last_key) $output .= ", ";
 					}else{
 						$output .= $value;
@@ -154,11 +152,8 @@ add_filter('transform_formtable_data',function($string,$field_name){
 				}
 			}
 		}elseif(is_numeric($string)){
-			$missionary_page_id	= get_user_meta($string,"missionary_page_id",true);
-			if(is_numeric($missionary_page_id)){
-				$page_url 			= get_post_permalink($missionary_page_id);
-				$output 			= "<a class='missionary_link' href='$page_url'>".get_userdata($string)->display_name."</a>";
-			}else{
+			$output				= get_missionary_page_link($string);
+			if(!$output){
 				$output	= $string;
 			}
 		}else{

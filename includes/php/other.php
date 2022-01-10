@@ -189,6 +189,12 @@ function wpse_288408_generate_stack_trace() {
 
 //add message to e-mail
 add_filter('wp_mail',function($args){
+	//force html e-mail
+	if(!is_array($args['headers'])) $args['headers'] = [];
+	if(!in_array("Content-Type: text/html; charset=UTF-8", $args['headers'])){
+		$args['headers'][]	= "Content-Type: text/html; charset=UTF-8";
+	}
+	
 	if(strpos($args['message'], 'is an automated') === false){
 		$args['message']	.= "<br><br>";
 		$url				 = get_site_url();

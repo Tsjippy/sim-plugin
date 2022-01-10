@@ -5,11 +5,15 @@ namespace SIM;
 add_action('init',function(){
     global $pagenow;
 	if( $pagenow == 'wp-login.php'){
-		wp_die('Sorry we do not use this page.<br> <a href="'.SiteURL.'">Go back</a>');
+        //redirect to login screen
+        wp_redirect(SiteURL."/?login=");
+        exit;
+
+		//wp_die('Sorry we do not use this page.<br> <a href="'.SiteURL.'">Go back</a>');
 	}
 });
 
-function login_modal($message='', $required=false){
+function login_modal($message='', $required=false, $username=''){
     global $LoaderImageURL;
 
     ob_start();
@@ -35,7 +39,7 @@ function login_modal($message='', $required=false){
                     <div id='usercred_wrapper'>
                         <label>
                             Username
-                            <input id="username" type="text" name="username" autofocus required>
+                            <input id="username" type="text" name="username" value="<?php echo $username;?>" autofocus required>
                         </label>
                         
                         <div class="password">
@@ -108,7 +112,11 @@ function login_modal($message='', $required=false){
 //add hidden login modal to page if not logged in
 add_filter( 'the_content', function ( $content ) {
 	if (!is_user_logged_in()){
-        $content .= login_modal();
+        if(isset($_GET['showlogin'])){
+            $content .= login_modal('', true, $_GET['showlogin']);
+        }else{
+            $content .= login_modal();
+        }
     }
 
     return $content;
@@ -163,7 +171,7 @@ function user_login(){
     //get 2fa methods for this user
     $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
-    //Redirect to account page if there are some required fields to be filled in
+    //Redirect to account page if 2fa is not set
     if(!$methods or count($methods ) == 0){
         wp_die(TwoFA_page);
     //redirect to account page to fill in required fields
@@ -178,30 +186,6 @@ add_action('wp_ajax_request_logout', function(){
     wp_logout();
     wp_die('Log out success');
 });
-
-add_action('wp_ajax_nopriv_request_pwd_reset', function(){
-    $username   = sanitize_text_field($_POST['username']);
-
-    if(empty($username))   wp_die('No username given', 500);
-
-    if(empty($_POST['h-captcha-response'])) wp_die('No captcha given', 500);
-    //$result = hcaptcha_request_verify($_POST['h-captcha-response']);
-    //if($result != 'success') wp_die('Captcha failed, try again', 500);
-
-    $result = retrieve_password($username);
-
-    if(is_wp_error($result)){
-        wp_die( $result->get_error_message(), 500);
-    }
-
-    $email  = get_user_by('login', $username)->user_email;
-    if(!$email or strpos('.empty', $email) !== false) wp_die("No valid e-mail found for user $username");
-    if($result){
-        wp_die("Password reset link send to $email");
-    }else{
-        wp_die($result->get_error_message(), 500);
-    }
-}); 
 
 //add login and logout buttons to main menu
 add_filter('wp_nav_menu_items', function ($items, $args) {

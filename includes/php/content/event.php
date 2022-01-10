@@ -454,12 +454,9 @@ class Events{
 						$user_id = get_post_meta($event->post_id,'user',true);
 						if(is_numeric($user_id)){
 							//Get the missionary page of this user
-							$missionary_page_id = get_user_meta($user_id,'missionary_page_id',true);
-							if(is_numeric($missionary_page_id)){
-								$event_url		= get_permalink($missionary_page_id);
-							}
+							$event_url	= get_missionary_page_link($user_id);
 						}else{
-							$event_url		= get_permalink($event->post_id);
+							$event_url	= get_permalink($event->post_id);
 						}
 					?>
 					<article class="event-article">

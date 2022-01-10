@@ -1,85 +1,6 @@
 <?php
 namespace SIM;
 
-//Create an missionary (family) page
-function create_missionary_page($user_id){
-	global $MissionariesPageID;
-	
-	//get the current page
-	$page_id = get_user_meta($user_id,"missionary_page_id",true);
-	$userdata = get_userdata($user_id);
-	
-	//Check if this page exists and is published
-	if(get_post_status ($page_id) != 'publish' ) $page_id = null;
-	
-	$family = family_flat_array($user_id);
-	if (count($family)>0){
-		$title = $userdata->last_name." family";
-	}else{
-		$title = $userdata->last_name.', '.$userdata->first_name;
-	}
-	
-	$update = false;
-	
-	//Only create a page if the page does not exist
-	if ($page_id == null){
-		$update = true;
-		// Create post object
-		$missionary_page = array(
-		  'post_title'    => $title,
-		  'post_content'  => '',
-		  'post_status'   => 'publish',
-		  'post_type'	  => 'page',
-		  'post_parent'   => $MissionariesPageID,
-		);
-		 
-		// Insert the post into the database
-		$page_id = wp_insert_post( $missionary_page );
-		
-		//Save missionary id as meta
-		update_post_meta($page_id,'missionary_id',$user_id);
-		
-		print_array("Created missionary page with id $page_id");
-	}else{
-		$page = get_post($page_id);
-		//print_array($page,true);
-		if($page->post_title != $title){
-			$update = true;
-			print_array("Updating missionary page {$page->ID} to $title");
-			wp_update_post( [
-				'ID' 			=> $page->ID,
-				'post_title' 	=> $title,
-			]);
-			
-		}
-	}
-	
-	if($update == true and count($family)>0){
-		//Check if family has other pages who should be deleted
-		foreach($family as $family_member){
-			//get the current page
-			$member_page_id = get_user_meta($family_member,"missionary_page_id",true);
-			
-			//Check if this page exists and is already trashed
-			if(get_post_status ($member_page_id) == 'trash' ) $member_page_id = null;
-			
-			//If there a page exists for this family member and its not the same page
-			if($member_page_id != null and $member_page_id != $page_id){
-				//Remove the current user page
-				wp_delete_post($member_page_id);
-				
-				print_array("Removed missionary page with id $member_page_id");
-			}
-		}
-	}
-	
-	//Add the post id to the user profile
-	update_family_meta($user_id,"missionary_page_id",$page_id);
-	
-	//Return the id
-	return $page_id;
-}
-
 //Update user meta of a user and all of its relatives
 function update_family_meta($user_id, $metakey, $value){
 	if($value == 'delete'){
@@ -107,7 +28,7 @@ function update_family_meta($user_id, $metakey, $value){
 }
 
 //Create a dropdown with all users
-function user_select($text,$only_adults=false,$families=false, $class='',$id='user_selection',$args=[],$user_id='',$exclude_ids=''){
+function user_select($text,$only_adults=false,$families=false, $class='',$id='user_selection',$args=[],$user_id='',$exclude_ids=[]){
 	wp_enqueue_script('simnigeria_forms_script');
 	$html = "";
 
@@ -117,31 +38,34 @@ function user_select($text,$only_adults=false,$families=false, $class='',$id='us
 	$users = get_missionary_accounts($families,$only_adults,true,[],$args);
 	$exists_array = array();
 
-	if(is_array($exclude_ids)){
-		$exclude_ids[]	= 1;
-	}else{
-		$exclude_ids	= [1];
-	}
+	$exclude_ids[]	= 1;
 	
 	//Loop over all users to find duplicate displaynames
 	foreach($users as $key=>$user){
-		if(in_array($user->ID,$exclude_ids)){
+		//remove any user who should not be in the dropdown
+		if(in_array($user->ID, $exclude_ids)){
 			unset($users[$key]);
 			continue;
 		}
-		//Get the displayname
-		$display_name = strtolower($user->display_name);
+
+		//Get the full name
+		$full_name = strtolower("$user->first_name $user->last_name");
 		
-		//If the display name is already found
-		if (isset($exists_array[$display_name])){
-			//Change current users displayname
-			$user->display_name = $user->display_name." (".get_userdata($user->ID)->data->user_email.")";
-			//Change previous found users displayname
-			$user = $users[$exists_array[$display_name]];
-			$user->display_name = $user->display_name." (".get_userdata($user->ID)->data->user_email.")";
+		//If the full name is already found
+		if (isset($exists_array[$full_name])){
+			//Change current users last name
+			$user->last_name = "$user->last_name ($user->user_email)";
+			
+			//Change previous found users last name
+			$user = $users[$exists_array[$full_name]];
+			
+			//But only if not already done
+			if(strpos($user->last_name, $user->user_email) === false ){
+				$user->last_name = "$user->last_name ($user->user_email)";
+			}
 		}else{
 			//User has a so far unique displayname, add to array
-			$exists_array[$display_name] = $key;
+			$exists_array[$full_name] = $key;
 		}
 	}
 	
@@ -157,7 +81,7 @@ function user_select($text,$only_adults=false,$families=false, $class='',$id='us
 			}else{
 				$selected="";
 			}
- 			$html .= '<option value="'.$user->ID.'"'.$selected.'>'.$user->display_name.'</option>';
+ 			$html .= "<option value='$user->ID' $selected>$user->first_name $user->last_name</option>";
 		}
 	$html .= '</select></div>';
 	
@@ -289,7 +213,8 @@ function media_select($id,$media_id=null,$class=""){
 function family_flat_array($user_id){
 	
 	$family = (array)get_user_meta( $user_id, 'family', true );
-	
+	remove_from_nested_array($family);
+
 	//make the family array flat
 	if (isset($family["children"])){
 		$family = array_merge($family["children"],$family);
@@ -533,20 +458,6 @@ function get_meta_array_value($user_id, $metakey, $values=null){
 	}
 
 	return $value;
-}
-
-function get_missionary_page_url($user_id){
-	//Get the missionary page of this user
-	$missionary_page_id = get_user_meta($user_id,'missionary_page_id',true);
-	
-	if(is_numeric($missionary_page_id)){
-		$url = get_permalink($missionary_page_id);
-		$url_without_https = str_replace('https://','',$url);
-		
-		
-		//redirect to the users page
-		return $url_without_https;
-	}
 }
 
 //Verify nonce

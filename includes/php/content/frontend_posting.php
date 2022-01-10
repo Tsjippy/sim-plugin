@@ -144,7 +144,7 @@ class FrontEndContent{
 			$user_compound 		= get_user_meta( $this->user->ID, "location", true);
 			if(isset($user_compound['compound'])) $user_compound = $user_compound['compound'];
 			
-			$missionary_page_id = get_user_meta($this->user->ID,"missionary_page_id",true);
+			$missionary_page_id = get_missionary_page_id($this->user->ID);
 			
 			$user_ministries 	= get_user_meta( $this->user->ID, "user_ministries", true);
 			
@@ -340,9 +340,9 @@ class FrontEndContent{
 			//only replace the name with a link if privacy allows
 			if(empty($privacy_preference['hide_name'])){
 				//Replace the name with a hyperlink
-				$url = get_missionary_page_url($user->ID);
-				$link = "<a href='$url'>{$user->display_name}</a>";
-				$post_content = str_replace($user->display_name,$link,$post_content);
+				$url			= get_missionary_page_url($user->ID);
+				$link			= "<a href='$url'>{$user->display_name}</a>";
+				$post_content	= str_replace($user->display_name,$link,$post_content);
 			}
 		}
 		
@@ -564,7 +564,7 @@ class FrontEndContent{
 			$user_id = $user->ID;
 
 			//Get current users ministry and compound
-			$missionary_page_id = get_user_meta($user_id,"missionary_page_id",true);
+			$missionary_page_id = get_missionary_page_id($user_id);
 			$user_ministries 	= get_user_meta($user_id, "user_ministries", true);
 			$user_compound 		= get_user_meta($user_id, "location", true);
 			if(!is_array($user_compound)) $user_compound = [];

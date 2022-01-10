@@ -174,29 +174,15 @@ class Maps{
 			//$userdata = get_userdata($user_id);
 			
 			$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
-
-			//Get missionary page id from db
-			$missionary_page_id = get_user_meta($user_id,"missionary_page_id",true);
-			//If it is not numeric, create a new one
-			if(!is_numeric($missionary_page_id)){
-				$missionary_page_id = create_missionary_page($user_id);
-			}
-			
-			//$location = (array)get_user_meta($user_id, 'location',true);
-				
+	
 			$description = "";			
 			if (empty($privacy_preference['hide_profile_picture'])){
 				$description .= display_profile_picture($user_id,[80,80]);
 			}
 			
 			//Add the post link to the marker content
-			$url = get_permalink($missionary_page_id);
-			$description .= "<a href='$url' style='display:block;' class='page_link'>More info</a><br>";
-			
-			/* if (empty($privacy_preference['hide_location']) and !empty($location)){
-				//Add a directions button to the marker
-				$description .= "<a class='button' onclick='getRoute(this,{$location['latitude']},{$location['longitude']})'>Get directions</a>";
-			} */
+			$url			 = get_missionary_page_url($user_id);
+			$description	.= "<a href='$url' style='display:block;' class='page_link'>More info</a><br>";
 			
 			return $description;
 		}
@@ -255,17 +241,6 @@ class Maps{
 			//Delete the personal marker
 			$this->remove_marker($marker_id);
 			delete_user_meta( $user_id, 'marker_id');
-		}
-		
-		//Check if a page exists for this person
-		$missionary_page_id = get_user_meta($user_id,"missionary_page_id",true);
-		if (is_numeric($missionary_page_id)){
-			//page exists, delete it
-			$result = wp_delete_post($missionary_page_id,true);
-			delete_user_meta($user_id,"missionary_page_id");
-			if ($result){
-				print_array("Removed the page with id $missionary_page_id");
-			}
 		}
 	}
 

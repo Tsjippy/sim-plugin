@@ -86,6 +86,7 @@ add_filter( 'post_password_required',
 add_filter( 'the_content', function ( $content ) {
 	if (is_user_logged_in()){
 		$post_id 	= get_the_ID();
+		$content=str_replace('<p>&nbsp;</p>','',$content);
 		
 		//If the string starts with 0 or more spaces, then a <p> followed by a hyperlink ending in .pdf then the download text ending an optional download button followed with 0 or more spaces.
 		$pattern = '/^\s*<p><a href="(.*?\.pdf)">([^<]*<\/a>)(.*\.pdf">Download<\/a>)?<\/p>\s*$/i';
@@ -95,23 +96,28 @@ add_filter( 'the_content', function ( $content ) {
 		//If an url exists it means there is only a pdf on this page
 		if(isset($matches[2])){
 			/* IF PEOPLE HAVE TO READ IT, MARK AS READ */
+			$audience	= get_post_meta($post_id,"audience",true);
 			
-			//Get current user id
-			$user_id = get_current_user_id();
+			if(!empty($audience)){
+				//Get current user id
+				$user_id = get_current_user_id();
+				
+				//get current alread read pages
+				$read_pages		= (array)get_user_meta( $user_id, 'read_pages', true );
+				
+				//only add if not already there
+				if(!in_array($post_id, $read_pages)){
+					//add current page
+					$read_pages[]	= $post_id;
 			
-			//get current alread read pages
-			$read_pages		= get_user_meta( $user_id, 'read_pages', true );
-			if(!is_array($read_pages)) $read_pages = [];
-			
-			//add current page
-			$read_pages[]	= $post_id;
-			
-			//update db
-			update_user_meta( $user_id, 'read_pages', $read_pages);
-			
+					//update db
+					update_user_meta( $user_id, 'read_pages', $read_pages);
+				}
+			}
+
+			/* SHOW THE PDF */
 			//Show the pdf fullscreen only if we are not a content manager
 			if(!in_array('contentmanager',wp_get_current_user()->roles)){
-				/* SHOW THE PDF */
 				//Get the url to the pdf
 				$pdf_url = $matches[1];
 				
@@ -148,70 +154,6 @@ add_filter( 'the_content', function ( $content ) {
 	return $content;
 });
 
-//Display compoundinfo
-function compound_description($post_id){
-	if (is_user_logged_in()){
-		//Retrieve the compound coordinates from the database
-		$compound = get_the_title();
-		
-		//Loop over all users to see if they live on this compound
-		$users = get_users('orderby=meta_value&meta_key=last_name');
-		$html = '<p>People living on this compound are:';
-		$previous_lastname = "";
-		foreach($users as $key=>$user){
-			$privacy_preference = get_user_meta( $user->ID, 'privacy_preference', true );
-			if(!is_array($privacy_preference)) $privacy_preference = [];
-			
-			if(!isset($privacy_preference['hide_location'])){
-				//If user lives on this compound, echo its name
-				$location = get_user_meta( $user->ID, 'location', true );
-				if (isset($location["compound"]) and $compound == $location["compound"]){
-					$userdata = get_userdata($user->ID);
-					$family = $userdata->family;
-					$lastname = $userdata->last_name;
-					if(is_array($family) and $previous_lastname != $lastname){
-						$display_name = $lastname." family";
-					}elseif(!is_array($family)){
-						$display_name = $user->display_name;
-					}else{
-						continue;
-					}
-					$previous_lastname = $lastname;
-				
-					$missionary_page_id = get_user_meta($user->ID,"missionary_page_id",true);
-					//No private page set
-					if ($missionary_page_id == ""){
-						//Check if is a child and use missionary_page_id of a parent
-						if (isset($family["father"])){
-							$missionary_page_id = get_user_meta($family["father"],"missionary_page_id",true);
-						}elseif(isset($family["mother"])){
-							$missionary_page_id = get_user_meta($family["mother"],"missionary_page_id",true);
-						}
-					}
-					$page_url = get_post_permalink($missionary_page_id);
-					$html .= '<div class="missionaries">';
-					if(!isset($privacy_preference['hide_profile_picture'])){
-						$html .= display_profile_picture($user->ID);
-						$style = "";
-					}else{
-						$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';
-					}
-					$html .= '<a class="missionary_link" href="'.$page_url.'"'.$style.'>'.$display_name.'</a></div>';
-				}
-			}
-		}
-		$html .= '</p>';
-		
-		$latitude = get_post_meta($post_id,'geo_latitude',true);
-		$longitude = get_post_meta($post_id,'geo_longitude',true);
-		if ($latitude != "" and $longitude != ""){
-			$html .= "<p><a class='button' onclick='getRoute(this,{$location['latitude']},{$location['longitude']})'>Get directions to $compound</a></p>";
-		}
-		
-		return $html;	
-	}
-}
-
 //Default content for ministry pages
 function ministry_description($post_id){
 	$html = "";
@@ -246,9 +188,8 @@ function ministry_description($post_id){
 		
 			//If user works for this ministry, echo its name and position
 			if (isset($user_ministries[$ministry_name])){
-				$user_page_id = get_user_meta($user->ID,"missionary_page_id",true);
-				$privacy_preference = get_user_meta( $user->ID, 'privacy_preference', true );
-				if(!is_array($privacy_preference)) $privacy_preference = [];
+				$user_page_url		= get_missionary_page_url($user->ID);
+				$privacy_preference = (array)get_user_meta( $user->ID, 'privacy_preference', true );
 				
 				if(!isset($privacy_preference['hide_ministry'])){
 					if(!isset($privacy_preference['hide_profile_picture'])){
@@ -258,15 +199,9 @@ function ministry_description($post_id){
 						$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';
 					}
 					
-					if ($user_page_id != ""){
-						$page_url = get_post_permalink($user_page_id);
-						$page_url = '<a class="missionary_link" href="'.$page_url.'">'.$user->display_name.'</a>';
-					}else{
-						$page_url = "<span>".$user->display_name."</span>";
-					}
+					$page_url = "<a class='missionary_link' href='$user_page_url'>$user->display_name</a>";
 					
-					$html .= '   '."<div $style>".$page_url.' ('.$user_ministries[$ministry_name].')</div>';
-					
+					$html .= "   <div $style>$page_url ({$user_ministries[$ministry_name]})</div>";
 					$html .= '<br>';
 				}					
 			}

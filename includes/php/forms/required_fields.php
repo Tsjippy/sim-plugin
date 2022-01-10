@@ -176,8 +176,6 @@ function get_recommended_fields_html($user_id, $child = false){
 	
 	//Only show warnings to unlimited accounts of expatriats
 	if($local_nigerian == ''){
-		global $Healtcoordinator_Page_Url;
-		
 		//Get the medical fields 
 		if($child)	$first_name = get_userdata($user_id)->first_name;
 		
