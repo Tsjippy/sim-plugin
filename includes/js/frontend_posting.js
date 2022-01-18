@@ -209,6 +209,29 @@ function addFeaturedImage(event) {
 		return;
 	} 
 
+	var myCustomState = wp.media.controller.Library.extend({
+		defaults :  _.defaults({
+			id: 'my-custom-state',
+			title: 'Upload Image',
+			allowLocalEdits: true,
+			displaySettings: true,
+			filterable: 'all', // This is the property you need. Accepts 'all', 'uploaded', or 'unattached'.
+			displayUserSettings: true,
+			multiple : false,
+		}, wp.media.controller.Library.prototype.defaults )
+	});
+	
+	//Setup media frame
+	frame = wp.media({
+		button: {
+			text: 'Select'
+		},
+		state: 'my-custom-state', // set the custom state as default state
+		states: [
+			new myCustomState() // add the state
+		]
+	});
+
 	file_frame = wp.media.frames.file_frame = wp.media({
 		title: 'Select featured image' ,
 		button: {

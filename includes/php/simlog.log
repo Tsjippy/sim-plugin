@@ -1,803 +1,146 @@
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\fingerprint.php line 666
-04-01-2022 13:32 - Grant Birks has not enough permissions
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:32 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\fingerprint.php line 666
-04-01-2022 13:33 - Grant Birks has not enough permissions
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:33 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'Content Manager' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'Financial Info' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'Housing Management' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'Housing Reservation' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'Personnel Info' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'Revisor' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'Role Management' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'Travel Info' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'User Management' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_roles.php line 74
-04-01-2022 13:35 - Added role 'Visa Info' for user Grant Birks
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:36 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 69
-04-01-2022 13:36 - Redirecting from http://localhost/simnigeria/greencard-info/bulk-update-nin/ to http://localhost/simnigeria/account/?redirected=true#Two%20factor
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:36 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:36 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 69
-04-01-2022 13:38 - Redirecting from http://localhost/simnigeria/lhome/ to http://localhost/simnigeria/account/?redirected=true#Two%20factor
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:38 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:38 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 69
-04-01-2022 13:39 - Redirecting from http://localhost/simnigeria/lhome/ to http://localhost/simnigeria/account/?redirected=true#Two%20factor
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:40 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:40 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 69
-04-01-2022 13:40 - Redirecting from http://localhost/simnigeria/lhome/ to http://localhost/simnigeria/account/?redirected=true#Two%20factor
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:40 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:40 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 69
-04-01-2022 13:42 - Redirecting from http://localhost/simnigeria/lhome/ to http://localhost/simnigeria/account/?redirected=true#Two%20factor
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:42 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:42 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 69
-04-01-2022 13:46 - Redirecting from http://localhost/simnigeria/lhome/ to http://localhost/simnigeria/account/?redirected=true#Two%20factor
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:46 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:47 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:47 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:47 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:49 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-04-01-2022 13:49 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:14 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 836
-05-01-2022 06:14 - Sending email
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 841
-05-01-2022 06:14 - Deleting user with id 345 and name Abby Janeck as it was a temporary account.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 16
-05-01-2022 06:14 - Deleting userdata for user Abby Janeck
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 836
-05-01-2022 06:14 - Sending email
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 841
-05-01-2022 06:14 - Deleting user with id 336 and name Guinea Pig as it was a temporary account.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 16
-05-01-2022 06:14 - Deleting userdata for user Guinea Pig
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 836
-05-01-2022 06:14 - Sending email
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 841
-05-01-2022 06:14 - Deleting user with id 334 and name Penny Bakewell as it was a temporary account.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 16
-05-01-2022 06:14 - Deleting userdata for user Penny Bakewell
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 836
-05-01-2022 06:14 - Sending email
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 841
-05-01-2022 06:14 - Deleting user with id 344 and name Wayne Janeck as it was a temporary account.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 16
-05-01-2022 06:14 - Deleting userdata for user Wayne Janeck
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Dec / Jan travel' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'COVID Update' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Travel Requirements Update' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'December 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Notice re Quota’s and CERPAC’s Renewal' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Security Update' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Information regarding the renewal of CERPAC’S once quota has been renewed' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'November 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Office hours' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'October 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Clarification on Signal group use' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Proof of life questions for contingency planning' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'SIM NIgeria Calendar 2022' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Farewell to the Porters' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Barley's answer to prayer' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'First Friday Update' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:14 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'September 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'August 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'June 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Short Term options for next year' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'June 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'First Friday' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Understudies Explaned' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'May 2021 Narrator' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Immigration Understudies Review' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Whats new on the website' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'April 2021 Narrator' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-05-01-2022 06:14 - Moving 'Greetings from a new arrival' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:14 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:14 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:19 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:21 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:23 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:23 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:23 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:23 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:23 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:24 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:27 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:27 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:30 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:39 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:40 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:41 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:46 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:52 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 06:56 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:27 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:27 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 37
-Array
-(
-    [showpage] => true
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:27 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:28 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:42 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:43 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:43 - Checking for filtering content finished
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+12-01-2022 10:21 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+12-01-2022 10:21 - Deleting user with id 345 and name Abby Janeck as it was a temporary account.
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
-05-01-2022 10:43 - Deleting userdata for user Neungsung Lee
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:43 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:44 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:45 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 37
-Array
-(
-    [showpage] => true
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-05-01-2022 10:45 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-06-01-2022 06:30 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "175".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-06-01-2022 06:30 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_version_chec...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_version_check()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(175): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 175)
+12-01-2022 10:21 - Deleting userdata for user Abby Janeck
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
+12-01-2022 10:21 - Deleted the missionary page 8646
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+12-01-2022 10:21 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+12-01-2022 10:21 - Deleting user with id 336 and name Guinea Pig as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+12-01-2022 10:21 - Deleting userdata for user Guinea Pig
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
+12-01-2022 10:21 - Deleted the missionary page 8652
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+12-01-2022 10:21 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+12-01-2022 10:21 - Deleting user with id 334 and name Penny Bakewell as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+12-01-2022 10:21 - Deleting userdata for user Penny Bakewell
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
+12-01-2022 10:21 - Deleted the missionary page 8638
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+12-01-2022 10:21 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+12-01-2022 10:21 - Deleting user with id 344 and name Wayne Janeck as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+12-01-2022 10:21 - Deleting userdata for user Wayne Janeck
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
+12-01-2022 10:21 - Deleted the missionary page 8645
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Nmbmm' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Jhjhhk' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Dec / Jan travel' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'COVID Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Travel Requirements Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'December 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Notice re Quota’s and CERPAC’s Renewal' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Security Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Information regarding the renewal of CERPAC’S once quota has been renewed' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'November 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Office hours' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'October 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Clarification on Signal group use' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Proof of life questions for contingency planning' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'SIM NIgeria Calendar 2022' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Farewell to the Porters' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Barley's answer to prayer' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'First Friday Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'September 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'August 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'June 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Short Term options for next year' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'June 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'First Friday' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Understudies Explaned' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'May 2021 Narrator' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Immigration Understudies Review' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Whats new on the website' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'April 2021 Narrator' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Greetings from a new arrival' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 57
+12-01-2022 10:29 - Adding 'asdasd@zfdzf.fghgf' to Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+12-01-2022 14:46 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-admin\includes\plugin-install.php" at line: "183".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+12-01-2022 14:46 - 
+1) D:\Local_websites\simnigeria\wp-admin\plugin-install.php(41): WP_Plugin_Install_List_Table->prepare_items()
+2) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-plugin-install-list-table.php(239): plugins_api('query_plugins', Object(stdClass))
+3) D:\Local_websites\simnigeria\wp-admin\includes\plugin-install.php(183): trigger_error('An unexpected e...', 1024)
+4) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 183)
 
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 06:30 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-06-01-2022 06:30 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "413".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-06-01-2022 06:30 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_plugi...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_plugins()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(413): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 413)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-06-01-2022 06:30 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "693".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-06-01-2022 06:30 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_theme...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_themes()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(693): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 693)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 06:30 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 06:30 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 06:31 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 11:54 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 11:56 - Checking for filtering content finished
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+13-01-2022 06:04 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+13-01-2022 06:04 - Deleting user with id 356 and name Pascal Laubach as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+13-01-2022 06:04 - Deleting userdata for user Pascal Laubach
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'Sdfsd' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'Xcvxcv' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'Xvxcv' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'Covid Protocols for SLC 2022' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'SLC Info' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 201
+14-01-2022 09:23 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 201
+14-01-2022 09:31 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\formbuilder.php line 1351
-06-01-2022 11:57 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php/../js/dynamic/repairrequestforms.js does not exist!
+14-01-2022 10:06 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php/../js/dynamic/security_questionsforms.js does not exist!
 Building it now
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 11:57 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 11:57 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 11:58 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 11:59 - Checking for filtering content finished
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-06-01-2022 11:59 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 11:59 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:02 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:02 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:02 - Checking for filtering content finished
+15-01-2022 19:37 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-06-01-2022 12:02 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:02 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:03 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:05 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:14 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:14 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\travelform.php line 290
-06-01-2022 12:15 - Loading NSimSun font failed.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\pdf_helper_functions.php line 256
-06-01-2022 12:15 - PDF_HELPER_Functions.php: D:\Local_websites\simnigeria/wp-content/uploads/cropped-Logo_SIM_2048_1496.png is not a valid image
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:15 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-06-01-2022 12:17 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-07-01-2022 06:17 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "175".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-07-01-2022 06:17 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_version_chec...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_version_check()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(175): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 175)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-07-01-2022 06:17 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "413".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-07-01-2022 06:17 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_plugi...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_plugins()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(413): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 413)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-07-01-2022 06:17 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "693".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-07-01-2022 06:17 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_theme...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_themes()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(693): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 693)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:17 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-07-01-2022 06:17 - Moving 'November People Matters' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:17 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:21 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 57
-07-01-2022 06:21 - Adding 'enharmsen@gmail.com' to Mailchimp
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 281
-07-01-2022 06:21 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/members/f9e496b50c4b58ef9ab637427f48620c
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:21 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:22 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_change_password.php line 149
-07-01-2022 06:22 - updating password
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:22 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:22 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 69
-07-01-2022 06:23 - Redirecting from http://localhost/simnigeria/lhome/ to http://localhost/simnigeria/account/?redirected=true#Two%20factor
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:23 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:27 - Checking for filtering content finished
+17-01-2022 08:39 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-07-01-2022 06:27 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:27 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8653
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8654
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8655
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 69
-07-01-2022 06:29 - Removed missionary page with id 3473
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8656
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8657
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8658
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8659
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8660
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8661
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8662
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8663
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8664
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8665
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8666
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8667
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 50
-07-01-2022 06:29 - Created missionary page with id 8668
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:29 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:30 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:30 - Checking for filtering content finished
+17-01-2022 08:43 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-07-01-2022 06:30 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:30 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\fileupload.php line 289
-07-01-2022 06:41 - File removal
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\fileupload.php line 290
-Array
-(
-    [action] => remove_document
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:42 - Checking for filtering content finished
+17-01-2022 10:29 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-07-01-2022 06:42 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:42 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:42 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 06:44 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 11:58 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 14:12 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 15:43 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-07-01-2022 15:43 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-admin\includes\update.php" at line: "143".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-07-01-2022 15:43 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_site_health_...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): WP_Site_Health->wp_cron_scheduled_check()
-5) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-site-health.php(2762): WP_Site_Health->perform_test(Array)
-6) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-site-health.php(192): WP_Site_Health->get_test_background_updates()
-7) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-site-health.php(1802): WP_Site_Health_Auto_Updates->run_tests()
-8) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-site-health-auto-updates.php(37): WP_Site_Health_Auto_Updates->test_all_files_writable()
-9) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-site-health-auto-updates.php(332): get_core_checksums('5.8.2', 'en_US')
-10) D:\Local_websites\simnigeria\wp-admin\includes\update.php(143): trigger_error('An unexpected e...', 1024)
-11) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 143)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 15:43 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-07-01-2022 15:43 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "175".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-07-01-2022 15:43 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_version_chec...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_version_check()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(175): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 175)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-07-01-2022 15:43 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "413".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-07-01-2022 15:43 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_plugi...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_plugins()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(413): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 413)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-07-01-2022 15:43 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "693".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-07-01-2022 15:43 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_theme...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_themes()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(693): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 693)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 15:43 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 15:43 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 15:44 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\fingerprint.php line 518
-07-01-2022 15:45 - ajax_auth: (ERROR)No authenticator available, exit
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 15:45 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 15:47 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\fingerprint.php line 518
-07-01-2022 15:53 - ajax_auth: (ERROR)No authenticator available, exit
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 15:58 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:01 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:01 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:29 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:31 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:31 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:32 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:35 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:35 - Checking for filtering content finished
+17-01-2022 12:33 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-07-01-2022 16:36 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:36 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:50 - Checking for filtering content finished
+17-01-2022 12:45 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-07-01-2022 16:54 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:54 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\fileupload.php line 289
-07-01-2022 16:55 - File removal
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\fileupload.php line 290
-Array
-(
-    [action] => remove_document
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:55 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:55 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:57 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-07-01-2022 16:57 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-08-01-2022 06:29 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "175".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-08-01-2022 06:29 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_version_chec...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_version_check()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(175): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 175)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-08-01-2022 06:29 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "413".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-08-01-2022 06:29 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_plugi...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_plugins()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(413): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 413)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-08-01-2022 06:29 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "693".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-08-01-2022 06:29 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_theme...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_themes()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(693): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 693)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 06:29 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-08-01-2022 06:29 - Moving 'December Narrator' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 06:29 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 06:29 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 06:31 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 06:48 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 06:55 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 06:58 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 15:22 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 15:23 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_change_password.php line 222
-08-01-2022 15:24 - updating password
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\2fa.php line 236
-08-01-2022 15:24 - username: EwaldH, password: mjGE0ybd)IIVMVtP
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 15:25 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 15:28 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_change_password.php line 222
-08-01-2022 15:32 - updating password
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_change_password.php line 222
-08-01-2022 15:32 - updating password
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\user_change_password.php line 222
-08-01-2022 15:33 - updating password
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 15:33 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 15:36 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 15:39 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-08-01-2022 15:42 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 16:55 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 16:55 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-09-01-2022 16:55 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "175".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-09-01-2022 16:55 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_version_chec...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_version_check()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(175): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 175)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 159
-09-01-2022 16:56 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "413".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 160
-09-01-2022 16:56 - 
-1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_plugi...', Array)
-2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
-3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
-4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_plugins()
-5) D:\Local_websites\simnigeria\wp-includes\update.php(413): trigger_error('An unexpected e...', 1024)
-6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 413)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 37
-Array
-(
-    [showpage] => true
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 37
-Array
-(
-    [showpage] => true
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 37
-Array
-(
-    [showpage] => true
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 37
-Array
-(
-    [showpage] => true
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 37
-Array
-(
-    [showpage] => true
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:01 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:04 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:04 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:04 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:06 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:07 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:08 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:09 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:10 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:10 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:10 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:13 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:13 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 17:58 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 18:31 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-09-01-2022 18:32 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 06:06 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\2fa.php line 236
-10-01-2022 06:06 - username: EwaldH, password: mjGE0ybd)IIVMVtP
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 06:06 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-10-01-2022 06:06 - Moving 'Office closed' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1058
-10-01-2022 06:06 - Moving 'As we are blessed we bless others...' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 06:07 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 06:07 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 06:07 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\fileupload.php line 289
-10-01-2022 06:07 - File removal
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\fileupload.php line 290
-Array
-(
-    [action] => remove_document
-)
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 06:21 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 06:38 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 06:39 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 06:39 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 07:52 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 07:55 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 07:55 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 07:59 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:00 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 64
-10-01-2022 08:25 - Succesfully scheduled sync_vimeo_action to run daily
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:25 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:26 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:26 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:35 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:36 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:37 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:41 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:43 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:43 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 08:48 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 09:05 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 09:15 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 09:17 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 09:20 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 09:44 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\2fa.php line 236
-10-01-2022 09:44 - username: EwaldH, password: mjGE0ybd)IIVMVtP
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 09:44 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 09:44 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 57
-10-01-2022 09:45 - Adding 'sdfsd@sfsdf.nl' to Mailchimp
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 57
-10-01-2022 09:46 - Adding 'asdsad@fsdfd.nl' to Mailchimp
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\security\content_filter.php line 79
-10-01-2022 09:51 - Checking for filtering content finished
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 57
-10-01-2022 09:51 - Adding 'fdgdg@hffgh.gh' to Mailchimp
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 57
-10-01-2022 09:56 - Adding 'xvcx@dgdfg.nl' to Mailchimp
+17-01-2022 12:51 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 13:19 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 13:28 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\formbuilder_AJAX.php line 188
+18-01-2022 08:05 - Inserting new form in db

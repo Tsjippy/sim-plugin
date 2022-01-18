@@ -6,12 +6,15 @@ add_action('init',function(){
     global $pagenow;
 	if( $pagenow == 'wp-login.php'){
         //redirect to login screen
-        wp_redirect(SiteURL."/?login=");
+        wp_redirect(SiteURL."/?showlogin");
         exit;
-
-		//wp_die('Sorry we do not use this page.<br> <a href="'.SiteURL.'">Go back</a>');
 	}
 });
+
+//make sure wp_login_url returns correct url
+add_filter( 'login_url', function($login_url, $redirect, $force_reauth ){
+    return add_query_arg(['showlogin' => '', 'redirect' => $redirect], home_url());
+},10,3);
 
 function login_modal($message='', $required=false, $username=''){
     global $LoaderImageURL;
@@ -166,17 +169,34 @@ function user_login(){
     //store login date
     update_user_meta( $user->ID, 'last_login_date',date('Y-m-d'));
 
-    //check if we should redirect
-    $required_fields_status = get_user_meta($user->ID,"required_fields_status",true);
-    //get 2fa methods for this user
-    $methods  = get_user_meta($user->ID,'2fa_methods',true);
+    /* check if we should redirect */
+    $home_url   = home_url();
+    if(current_url() == home_url()){
+        //_GET is empty for ajax calls, use the $_SERVER['HTTP_REFERER']
+        if(wp_doing_ajax()){
+            parse_str($_SERVER['HTTP_REFERER'], $url);
+            if(!empty($url['redirect'])){
+                wp_die($url['redirect']);
+            }
+        }elseif(!empty($_GET['redirect'])){
+            wp_die($_GET['redirect']);
+        }
 
-    //Redirect to account page if 2fa is not set
-    if(!$methods or count($methods ) == 0){
-        wp_die(TwoFA_page);
-    //redirect to account page to fill in required fields
-    }elseif ($required_fields_status != 'done' and !isset($_SESSION['showpage'])){
-        wp_die(home_url( '/account/' ));
+        $required_fields_status = get_user_meta($user->ID,"required_fields_status",true);
+        
+        //get 2fa methods for this user
+        $methods  = get_user_meta($user->ID,'2fa_methods',true);
+
+        //Redirect to account page if 2fa is not set
+        if(!$methods or count($methods ) == 0){
+            wp_die(TwoFA_page);
+        //redirect to account page to fill in required fields
+        }elseif ($required_fields_status != 'done' and !isset($_SESSION['showpage'])){
+            wp_die(home_url( '/account/' ));
+        }else{
+            if(isset($_SESSION['showpage'])) unset($_SESSION['showpage']);
+            wp_die('Login successful');
+        }
     }else{
         wp_die('Login successful');
     }

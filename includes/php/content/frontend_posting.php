@@ -1074,6 +1074,11 @@ class FrontEndContent{
 			if($this->lite == false){
 				$hidden = 'hidden';
 			}
+
+			$update	= 'false';
+			if(is_numeric($this->post_id) and $this->post->post_status == 'publish'){
+				$update	= 'true';
+			}
 			echo "<button class='button sim $hidden show' id='showallfields'>Show all fields</button>";
 			
 			$this->post_type_selector();
@@ -1088,6 +1093,7 @@ class FrontEndContent{
 				<input type="hidden" name="userid" value="<?php echo $this->user->ID?>">
 				<input type="hidden" name="post_type" value="<?php echo $this->post_type; ?>">
 				<input type="hidden" name="post_image_id" value="<?php echo $this->post_image_id;?>">
+				<input type="hidden" name="update" value="<?php echo $update;?>">
 				
 				<?php 
 				if($this->post_id != null) echo "<input type='hidden' name='post_id' value='{$this->post_id}'>";
@@ -1288,6 +1294,31 @@ function set_default_picture($post_id){
 		set_post_thumbnail( $post_id, $EventDefaultImageID);
 	}
 }
+
+//If no featured image on post is set, set one
+add_action( 'save_post', function ( $post_id, $post, $update ) {
+	global $Maps;
+	
+	//This hook fires multiple times, we should only check the last time
+	if($post->post_date != $post->post_modified and $post->post_status == "publish"){
+		global $MissionariesPageID;
+		$parents = get_post_ancestors( $post_id );
+		
+		//Post has no featured image and is about to get published
+		if (!has_post_thumbnail($post_id)) {
+			set_default_picture($post_id);
+		//Post is an missionary page and has an featured image and is a family page, use posts image as marker icon image
+		}elseif(in_array($MissionariesPageID,$parents) and has_post_thumbnail($post_id) and strpos($post->post_title, 'amily') !== false){
+			$author_id = $post->post_author;
+			//Personal marker id
+			$marker_id = get_user_meta($author_id,"marker_id",true);
+			if(is_numeric($marker_id)){
+				//Update the family marker
+				$Maps->create_icon($marker_id, get_userdata($author_id)->last_name." family", get_the_post_thumbnail_url($post_id), 1);
+			}
+		}
+	}
+}, 10,3 );
 
 add_shortcode('your_posts',function(){
 	//load js

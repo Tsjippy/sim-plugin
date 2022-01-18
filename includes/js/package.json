@@ -4,7 +4,8 @@
   "description": "All JS for SIM Nigeria custom plugin",
   "main": "main.js",
   "dependencies": {
-    "@web-auth/webauthn-helper": "0.0.13"
+    "@web-auth/webauthn-helper": "0.0.13",
+    "vimeo": "^2.1.1"
   },
   "devDependencies": {
     "webpack": "^5.65.0",

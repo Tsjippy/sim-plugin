@@ -13,10 +13,11 @@ add_action('wp_footer',function(){
 	global $post;
 
 	$user		= wp_get_current_user();
-	
+
 	//If this page or post does not have the public category and the user is not logged in, redirect them to the login page
 	if(
-		!is_tax()							and
+		http_response_code() != 404			and		//we try to visit an existing page
+		!is_tax()							and		
 		!is_user_logged_in()				and
 		!has_category($PublicCategoryID)	and 
 		!is_search()						and
@@ -29,12 +30,10 @@ add_action('wp_footer',function(){
 		)
 	){
 		//prevent the output 
-		ob_get_clean();
+		$output	= ob_get_clean();
 
 		if(!isset($_SESSION)) session_start();
 		$_SESSION['showpage']   = 'true';
-
-		print_array($_SESSION);
 
 		// Set message in the session to be used in the login page
 		$message = 'This content is restricted. <br>You will be able to see this page as soon as you login.';
@@ -75,8 +74,6 @@ add_action('wp_footer',function(){
 	if(is_page() and has_category($ConfCategoryID) and in_array('nigerianstaff',$user->roles)){
 		wp_die("You do not have the permission to see this.");
 	}
-
-	print_array('Checking for filtering content finished');
 
 	//we are good, print everything to screen
 	ob_end_flush();

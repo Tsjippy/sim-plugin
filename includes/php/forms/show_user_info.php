@@ -216,6 +216,19 @@ function user_info_page($atts){
 					$html .= "<p><br>This user has no visa requirements! ($user_age yr)";
 				}
 			}
+
+			/*
+				SECURITY INFO
+			*/
+			if((array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data)){				
+				//Tab button
+				$tab_html .= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
+				
+				//Content
+				$html .= "<div id='security_info' class='tabcontent hidden'>";
+					$html .= do_shortcode('[formbuilder datatype=security_questions]');
+				$html .= '</div>';
+			}
 	
 			/*
 				Medical Info
@@ -271,6 +284,9 @@ function user_info_page($atts){
 				$html .= '</div>';
 			}
 			
+			/*
+				CHILDREN TABS
+			*/
 			if($show_current_user_data){
 				$family = get_user_meta($user_id,'family',true);
 				if(is_array($family) and isset($family['children']) and is_array($family['children'])){

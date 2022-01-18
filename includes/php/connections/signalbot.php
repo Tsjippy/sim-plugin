@@ -173,14 +173,19 @@ function send_post_notification($post_id){
 
 	if(!empty($_POST['pagetype']['everyone'])) $excerpt	.= "\n\nThis is a mandatory message, please read it straight away.";
 	
+	if($_POST['update'] == 'true'){
+		$message = "'{$post->post_title}' just got updated\n\n$excerpt";
+	}else{
+		$message = "'{$post->post_title}' just got published\n\n$excerpt";
+	}
 	send_signal_message(
-		"'{$post->post_title}' just got published\n\n$excerpt",
+		$message,
 		"all",
 		$post_id
 	);
 }
 
-function send_signal_message($message,$recipient,$post_id=""){
+function send_signal_message($message, $recipient, $post_id=""){
 	//remove https from site urldecode
 	$url_without_https = str_replace('https://','',get_site_url());
 	

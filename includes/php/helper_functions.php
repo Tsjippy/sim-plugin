@@ -100,10 +100,13 @@ function has_children($post_id) {
 }
 
 function current_url($exclude_scheme=false, $remove_get=false){
-	$url = '';
-	if($exclude_scheme == false)	$url .=	$_SERVER['REQUEST_SCHEME']."://";
-	$url .=	$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-	
+	if(wp_doing_ajax()){
+		$url	 = trim(explode('?',$_SERVER['HTTP_REFERER'])[0],"/");
+	}else{
+		$url	 = '';
+		if($exclude_scheme == false)	$url .=	$_SERVER['REQUEST_SCHEME']."://";
+		$url	.=	$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	}
 	return $url;
 }
 
@@ -121,7 +124,7 @@ function url_to_path($url){
 }
 
 function path_to_url($path){
-	$url = str_replace(ABSPATH,get_site_url(),$path);
+	$url = str_replace(trim(ABSPATH,'/'),get_site_url(),$path);
 	return $url;
 }
 

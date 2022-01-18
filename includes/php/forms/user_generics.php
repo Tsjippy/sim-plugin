@@ -16,8 +16,19 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	global $Events;
 	if($formname != 'user_generics') return $formresults;
 	
-	$Events->create_celebration_event('birthday', $user_id,'birthday',$_POST['birthday']);
+	$Events->create_celebration_event('birthday', $user_id, 'birthday', $_POST['birthday']);
 	$Events->create_celebration_event('SIM Nigeria anniversary', $user_id,'arrival_date',$_POST['arrival_date']);
+
+	//check if phonenumber has changed
+	$old_phonenumbers	= get_user_meta($user_id, 'phonenumbers', true);
+	$new_phonenumbers	= $_POST['phonenumbers'];
+	$changed_numbers	= array_diff($new_phonenumbers, $old_phonenumbers);
+	$first_name			= get_userdata($user_id)->first_name;
+	foreach($changed_numbers as $changed_number){
+		global $SignalGroupLink;
+		$message	= "Hi $first_name\n\nI noticed you just updated your phonenumber on simnigeria.org.\n\nIf you want to join our Signal group with this number you can use this url:\n$SignalGroupLink";
+		send_signal_message($message, $changed_number);
+	}
 	
 	return $formresults;
 },10,3);

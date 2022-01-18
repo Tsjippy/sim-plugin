@@ -11,48 +11,12 @@ function register_admin_menu_page() {
 }
 
 function admin_menu_functions(){
-	if (isset($_POST['make_picture_private'])){
-		mark_picture_as_private(sanitize_text_field($_POST['make_picture_private']));
-	}
-
 	if (isset($_POST['add_cronschedules'])){
 		add_cron_schedules();
 	}
 	
-	$picture_options = "";
-	$picture_ids = get_posts( 
-		array(
-			'post_type'      => 'attachment', 
-			'post_mime_type' => 'image',  
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-			'orderby'    	=> 'title',
-			'sort_order' 	=> 'ASC'
-		) 
-	);
-	foreach($picture_ids as $picture_id){
-		//Only add as an option if it is not private yet
-		if (strpos(get_attached_file($picture_id), 'private') == false) {
-			$option = '<option value="' . $picture_id . '">';
-			$option .= get_the_title($picture_id);
-			$option .= '</option>';
-			$picture_options .= $option;
-		}
-	}
-	
 	?>
 	<h3>Available custom functions</h3>
-	<form action="" method="post">
-		<label>Select a picture</label><br>
-		<select name="make_picture_private" id="make_picture_private">
-			<option value="">---</option>
-			<?php echo $picture_options; ?>
-		</select>
-		<br>
-		<input type="submit" value="Make private">
-	</form>
-	<br>
-	<br>
 	<form action="" method="post">
 		<label>Click to reactivate schedules</label>
 		<br>
@@ -61,36 +25,6 @@ function admin_menu_functions(){
 	</form> 
 	<br>
 	<?php
-}
-
-//Move picture to private folder
-function mark_picture_as_private($post_id){
-	//get the file location of the picture
-	$file_location = get_attached_file($post_id);
-	
-	$path_parts = pathinfo($file_location);
-	$file_location_without_extension = str_replace("-scaled","",$path_parts['dirname'].'/'.$path_parts['filename']);
-
-	//Update the location in the db
-	update_attached_file($post_id,str_replace("/uploads","/uploads/private",$file_location));
-	
-	//Update the metadata as well.
-	$metadata = wp_get_attachment_metadata($post_id);
-	$metadata['file'] = 'private/'.$metadata['file'];
-	foreach($metadata['sizes'] as $key=>$size){
-		$metadata['sizes'][$key]['file'] = 'private/'.$size['file'];
-	}
-    wp_update_attachment_metadata($post_id,$metadata);
-	
-	//Open up the wp filesystem
-	WP_Filesystem();
-	global $wp_filesystem;
-	
-	//Move all the files to the private folder
-	$files = glob($file_location_without_extension.'*');
-	foreach($files as $file){
-		$wp_filesystem->move($file, str_replace("/uploads","/uploads/private",$file), true);
-	}
 }
 
 function admin_menu(){
@@ -194,7 +128,18 @@ function admin_menu(){
 						<?php echo page_select("pw_reset_page",$CustomSimSettings["pw_reset_page"]); ?>
 					</td>
 				</tr>
-				
+				<tr>
+					<th><label for="register_page">Page with the registration form for new users</label></th>
+					<td>
+						<?php echo page_select("register_page",$CustomSimSettings["register_page"]); ?>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="signal_group_link">Link to join the Signal group</label></th>
+					<td>
+						<input type='url' name='signal_group_link' value=<?php echo $CustomSimSettings["signal_group_link"]; ?> style='width:100%'>
+					</td>
+				</tr>
 				<tr>
 					<th><label for="placesmapid">Map showing all markers</label></th>
 					<td>

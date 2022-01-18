@@ -2,7 +2,8 @@
 namespace SIM;
 define('SiteURL',get_site_url());
 define('TwoFA_page', SiteURL."/account/?redirected=true#Two%20factor");
-define('PicturesUrl',plugins_url('',__DIR__).'/pictures');
+define('IncludesUrl', plugins_url('',__DIR__));
+define('PicturesUrl', IncludesUrl.'/pictures');
 define('LoaderImageURL', PicturesUrl.'/loading.gif');
 
 //ALl global available variables
@@ -230,6 +231,8 @@ if($CustomSimSettings == false){
 	$PublishPostPage			= $CustomSimSettings["publish_post_page"];
 	$ProfilePage				= $CustomSimSettings["profile_page"];
 	$PW_ResetPage				= $CustomSimSettings["pw_reset_page"];
+	$RegisterPage				= $CustomSimSettings["register_page"];
+	$SignalGroupLink			= $CustomSimSettings["signal_group_link"];
 	$PostOutOfDataWarning		= $CustomSimSettings["postoutofdatawarning"]; 	//Age in months on when a warning should be showed or send
 	$VaccinationExpiryWarning	= $CustomSimSettings["vaccinationoutofdatawarning"]; 	//Age in months on when a warning should be showed or send
 	$WebmasterName				= $CustomSimSettings["webmastername"]; 	//Used in registration_fields.php to sign the welcome e-mail

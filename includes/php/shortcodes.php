@@ -637,13 +637,17 @@ class Open_SSL {
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
-	vimeo_sync();
-});
+	//update all posts where this is attached
+    /* $users = get_users();
+    foreach($users as $user){
 
-function example_send_mail( $email, $subject, $body, $headers = '', $attachments = array() ) {
-    add_action( 'phpmailer_init', function( &$phpmailer ) {
-        $phpmailer->SMTPKeepAlive=true;
-        $phpmailer->AddEmbeddedImage( ABSPATH.'/wp-content/uploads/cropped-S-for-SIM.png', 'uniqueid','SIM.png');
-    });
-    wp_mail( $email, $subject, $body, $headers, $attachments );
-}
+	} */
+
+	$vimeo_helper	= new \WP_DGV_Api_Helper();
+	if ( $vimeo_helper->is_connected) {
+		$url='https://europe-files.tus.vimeo.com/files/vimeo-prod-src-tus-eu/fd04acd860a78e6a2820ceef36cf1da6';
+		$response = $vimeo_helper->api->request($url, [], 'HEAD', true, ['Tus-Resumable'=>'1.0.0']);
+
+		wp_die($response);
+	}
+});

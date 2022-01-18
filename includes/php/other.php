@@ -1,31 +1,6 @@
 <?php
 namespace SIM;
 
-//If no featured image on post is set, set one
-add_action( 'save_post', function ( $post_id, $post, $update ) {
-	global $Maps;
-	
-	//This hook fires multiple times, we should only check the last time
-	if($post->post_date != $post->post_modified and $post->post_status == "publish"){
-		global $MissionariesPageID;
-		$parents = get_post_ancestors( $post_id );
-		
-		//Post has no featured image and is about to get published
-		if (!has_post_thumbnail($post_id)) {
-			set_default_picture($post_id);
-		//Post is an missionary page and has an featured image and is a family page, use posts image as marker icon image
-		}elseif(in_array($MissionariesPageID,$parents) and has_post_thumbnail($post_id) and strpos($post->post_title, 'amily') !== false){
-			$author_id = $post->post_author;
-			//Personal marker id
-			$marker_id = get_user_meta($author_id,"marker_id",true);
-			if(is_numeric($marker_id)){
-				//Update the family marker
-				$Maps->create_icon($marker_id, get_userdata($author_id)->last_name." family", get_the_post_thumbnail_url($post_id), 1);
-			}
-		}
-	}
-}, 10,3 );
-
 //Only show read more on home and news page
 add_filter( 'excerpt_more', function ( $more ) {
 		return '<a class="moretag" href="' . get_the_permalink() . '">Read More »</a>';
@@ -35,12 +10,13 @@ add_filter( 'excerpt_more', function ( $more ) {
 add_filter( 'wp_check_post_lock_window', function(){ return 70;});
 
 //Change the extension of all jpg like files to jpe so that they are not directly available for non-logged in users
-add_filter('wp_handle_upload_prefilter', function ($file) {
+ add_filter('wp_handle_upload_prefilter', function ($file) {
 	global $post;
     $info = pathinfo($file['name']);
     $ext  = empty($info['extension']) ? '' : '.' . $info['extension'];
 	$name = basename($file['name'], $ext);
 	$ext = strtolower($ext);
+	
 	//Change the extension to jpe
 	if($ext == ".jpg" or $ext == ".jpeg" or $ext == ".jfif" or $ext == ".exif"){
 		$ext = ".jpe";
@@ -49,7 +25,7 @@ add_filter('wp_handle_upload_prefilter', function ($file) {
 	$file['name'] = $name . $ext;
 
 	return $file;
-}, 1, 1);
+}, 1, 1); 
 
 // Disable auto-update email notifications for plugins.
 add_filter( 'auto_plugin_update_send_email', '__return_false' );

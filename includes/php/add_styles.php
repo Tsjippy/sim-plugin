@@ -1,11 +1,11 @@
 <?php
 namespace SIM;
 
-$StyleVersion = "6.9.305";
+$StyleVersion = "6.9.307";
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', 'SIM\enqueue_scripts');
-//add_action( 'admin_enqueue_scripts', 'SIM\enqueue_scripts' );
+add_action( 'admin_enqueue_scripts', 'SIM\enqueue_scripts');
 
 add_filter( 'body_class', function( $classes ) {
 	$newclass = [];
@@ -91,12 +91,12 @@ function enqueue_scripts($hook){
 	wp_register_script('simnigeria_frontend_script',plugins_url('js/frontend_posting.js', __DIR__), array('simnigeria_fileupload_script'),$StyleVersion,true);
 	
 	//add main css, but only on non-admin pages
-	if ($hook == ""){
+	//if ($hook == ""){
 		//style for tinymce
 		add_editor_style(plugins_url('css/sim.min.css', __DIR__));
 		//style fo main site
 		wp_enqueue_style( 'simnigeria_style', plugins_url('css/sim.min.css', __DIR__), array(),$StyleVersion);
-	}
+	//}
 	
     //Check if on the home page
 	if (is_front_page() or is_page($LoggedInHomePage)){
