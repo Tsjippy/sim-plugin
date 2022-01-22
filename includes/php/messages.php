@@ -58,41 +58,45 @@ function prayer_request($plaintext = false) {
 
 //Get birthdays
 function birthday() {
+	global $Modules;
+
 	if (is_user_logged_in()){
 		$html			= "";
 		$current_user	= wp_get_current_user();
 		
-		$anniversary_messages = get_anniversaries();
-		
-		//If there are anniversaries
-		if(count($anniversary_messages) >0){
-			$html .= '<div name="anniversaries" style="text-align: center; font-size: 18px;">';
-				$html .= '<h3>Celebrations:</h3>';
-				$html .= '<p>';
-					$html .= "Today is the ";
+		if(isset($Modules['celebrations']['enable'])){
+			$anniversary_messages = get_anniversaries();
+			
+			//If there are anniversaries
+			if(count($anniversary_messages) >0){
+				$html .= '<div name="anniversaries" style="text-align: center; font-size: 18px;">';
+					$html .= '<h3>Celebrations:</h3>';
+					$html .= '<p>';
+						$html .= "Today is the ";
 
-			//Loop over the anniversary_messages
-			$message_string	= '';
-			foreach($anniversary_messages as $user_id=>$message){
-				if(!empty($message_string))$message_string .= " and the ";
+				//Loop over the anniversary_messages
+				$message_string	= '';
+				foreach($anniversary_messages as $user_id=>$message){
+					if(!empty($message_string))$message_string .= " and the ";
 
-				$couple_string	= $current_user->first_name.' & '.get_userdata(has_partner(($current_user->ID)))->display_name;
+					$couple_string	= $current_user->first_name.' & '.get_userdata(has_partner(($current_user->ID)))->display_name;
 
-				if($user_id  == $current_user->ID){
-					$message	= str_replace($couple_string,"of you and your spouse my dear ".$current_user->first_name."!<br>",$message);
-					$message	= str_replace($current_user->display_name,"of you my dear ".$current_user->first_name."!<br>",$message);
-				}else{
-					$userdata	= get_userdata($user_id);
-					//Get the url of the user page
-					$url		= get_missionary_page_url($user_id);
-					$message	= str_replace($couple_string,"of <a href='$url'>$couple_string</a>",$message);
-					$message	= str_replace($userdata->display_name,"of <a href='$url'>{$userdata->display_name}</a>",$message);
+					if($user_id  == $current_user->ID){
+						$message	= str_replace($couple_string,"of you and your spouse my dear ".$current_user->first_name."!<br>",$message);
+						$message	= str_replace($current_user->display_name,"of you my dear ".$current_user->first_name."!<br>",$message);
+					}else{
+						$userdata	= get_userdata($user_id);
+						//Get the url of the user page
+						$url		= get_missionary_page_url($user_id);
+						$message	= str_replace($couple_string,"of <a href='$url'>$couple_string</a>",$message);
+						$message	= str_replace($userdata->display_name,"of <a href='$url'>{$userdata->display_name}</a>",$message);
+					}
+
+					$message_string	.= $message;
 				}
-
-				$message_string	.= $message;
+				$html .= $message_string;
+				$html .= '.</p></div>';
 			}
-			$html .= $message_string;
-			$html .= '.</p></div>';
 		}
 		
 		$arrival_users = get_arriving_users();

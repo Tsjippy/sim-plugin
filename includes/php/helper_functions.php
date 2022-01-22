@@ -124,7 +124,13 @@ function url_to_path($url){
 }
 
 function path_to_url($path){
-	$url = str_replace(trim(ABSPATH,'/'),get_site_url(),$path);
+	if(is_string($path)){
+		$base	= str_replace('\\', '/', ABSPATH);
+		$url	= str_replace($base, get_site_url().'/', $path);
+	}else{
+		$url	= $path;
+	}
+	
 	return $url;
 }
 
@@ -301,33 +307,6 @@ function get_age_in_words($date){
 	}else{
 		return $num_word_list[$age];
 	}
-}
-
-function get_anniversaries(){
-	global $Events;
-
-	$messages = [];
-
-	$Events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
-
-	foreach($Events->events as $event){
-		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
-		if(!empty($start_year)){
-			$title	= $event->post_title;
-			$age	= get_age_in_words($start_year);
-			$privacy= (array)get_user_meta($event->post_author, 'privacy_preference', true);
-
-			if(substr($title,0,8) == 'Birthday' and in_array('hide_age', $privacy)){
-				$age	= '';
-			}
-			if(substr($title,0,3) != 'SIM'){
-				$title	= lcfirst($title);
-			}
-			$messages[$event->post_author] = trim("$age $title");
-		}
-	}
-
-	return $messages;
 }
 
 function get_arriving_users(){

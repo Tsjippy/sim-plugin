@@ -115,6 +115,9 @@ function login_modal($message='', $required=false, $username=''){
 //add hidden login modal to page if not logged in
 add_filter( 'the_content', function ( $content ) {
 	if (!is_user_logged_in()){
+        if(!isset($_SESSION)) session_start();
+        $_SESSION['login_added']=true;
+        
         if(isset($_GET['showlogin'])){
             $content .= login_modal('', true, $_GET['showlogin']);
         }else{

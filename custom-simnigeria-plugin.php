@@ -28,12 +28,20 @@ remove_action( 'wp_head', 'adjacent_posts_rel_link');
 //load all libraries
 require( __DIR__  . '/includes/lib/vendor/autoload.php');
 
-//Use all the files in the php directory
+$Modules		= array_merge(get_option('sim_modules', []), ['admin'=>[]]);
+
+//Load all main files
 $files = glob(__DIR__  . '/includes/php/*.php');
 $files = array_merge($files, glob(__DIR__  . '/includes/php/connections/*.php'));
 $files = array_merge($files, glob(__DIR__  . '/includes/php/content/*.php'));
 $files = array_merge($files, glob(__DIR__  . '/includes/php/forms/*.php'));
 $files = array_merge($files, glob(__DIR__  . '/includes/php/security/*.php'));
+
+//Load files for enabled modules
+foreach($Modules as $slug=>$settings){
+	$files = array_merge($files, glob(__DIR__  . "/includes/modules/$slug/php/*.php"));
+}
+
 foreach ($files as $file) {
     require_once($file);   
 }

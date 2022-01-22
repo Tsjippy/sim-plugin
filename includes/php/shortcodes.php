@@ -643,11 +643,5 @@ add_shortcode("test",function ($atts){
 
 	} */
 
-	$vimeo_helper	= new \WP_DGV_Api_Helper();
-	if ( $vimeo_helper->is_connected) {
-		$url='https://europe-files.tus.vimeo.com/files/vimeo-prod-src-tus-eu/fd04acd860a78e6a2820ceef36cf1da6';
-		$response = $vimeo_helper->api->request($url, [], 'HEAD', true, ['Tus-Resumable'=>'1.0.0']);
-
-		wp_die($response);
-	}
+	return '<input type="file" id="test"';
 });

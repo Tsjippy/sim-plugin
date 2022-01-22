@@ -1,11 +1,9 @@
 module.exports = {
     mode: 'production',
-    entry: './register_fingerprint.js',
+    //entry: './register_fingerprint.js',
+	entry: './vimeo_new.js',
     output: {
-        filename: 'main.js',
+        filename: 'vimeo.js',
         publicPath: 'dist'
-    },
-    optimization: {
-        minimize: false
-    },
+    }
 }

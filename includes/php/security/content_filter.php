@@ -35,11 +35,13 @@ add_action('wp_footer',function(){
 		if(!isset($_SESSION)) session_start();
 		$_SESSION['showpage']   = 'true';
 
-		// Set message in the session to be used in the login page
-		$message = 'This content is restricted. <br>You will be able to see this page as soon as you login.';
+		if(!$_SESSION['login_added']){
+			// Set message in the session to be used in the login page
+			$message = 'This content is restricted. <br>You will be able to see this page as soon as you login.';
 
-		//show login modal
-		echo login_modal($message, true);
+			//show login modal
+			echo login_modal($message, true);
+		}
 		return;
 	}
 	

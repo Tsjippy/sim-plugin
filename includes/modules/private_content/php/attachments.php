@@ -36,6 +36,8 @@ add_action( 'edit_attachment', function($attachment_id){
         $prev_vis   = get_post_meta( $attachment_id, 'visibility',true);
 
         if($prev_vis != $visibility){
+            do_action('before_visibility_change', $attachment_id, $visibility);
+
             //update post meta
             update_post_meta( $attachment_id, 'visibility', $visibility );
 
@@ -61,6 +63,8 @@ function move_attachment($post_id, $sub_dir){
 
 	//get the file location of the attachment
 	$old_path   = get_attached_file($post_id);
+    if(!file_exists($old_path)) return false;
+
     $filename   = basename ($old_path);
     $extension  = '.'.pathinfo($old_path, PATHINFO_EXTENSION);
     $base_dir   = dirname($old_path);

@@ -1,146 +1,226 @@
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
-12-01-2022 10:21 - Sending email
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
-12-01-2022 10:21 - Deleting user with id 345 and name Abby Janeck as it was a temporary account.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
-12-01-2022 10:21 - Deleting userdata for user Abby Janeck
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
-12-01-2022 10:21 - Deleted the missionary page 8646
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
-12-01-2022 10:21 - Sending email
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
-12-01-2022 10:21 - Deleting user with id 336 and name Guinea Pig as it was a temporary account.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
-12-01-2022 10:21 - Deleting userdata for user Guinea Pig
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
-12-01-2022 10:21 - Deleted the missionary page 8652
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
-12-01-2022 10:21 - Sending email
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
-12-01-2022 10:21 - Deleting user with id 334 and name Penny Bakewell as it was a temporary account.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
-12-01-2022 10:21 - Deleting userdata for user Penny Bakewell
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
-12-01-2022 10:21 - Deleted the missionary page 8638
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
-12-01-2022 10:21 - Sending email
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
-12-01-2022 10:21 - Deleting user with id 344 and name Wayne Janeck as it was a temporary account.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
-12-01-2022 10:21 - Deleting userdata for user Wayne Janeck
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
-12-01-2022 10:21 - Deleted the missionary page 8645
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Nmbmm' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Jhjhhk' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Dec / Jan travel' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'COVID Update' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Travel Requirements Update' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'December 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Notice re Quota’s and CERPAC’s Renewal' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Security Update' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Information regarding the renewal of CERPAC’S once quota has been renewed' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'November 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Office hours' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'October 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Clarification on Signal group use' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Proof of life questions for contingency planning' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'SIM NIgeria Calendar 2022' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Farewell to the Porters' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Barley's answer to prayer' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'First Friday Update' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'September 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'August 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'June 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Short Term options for next year' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'June 2021 Exchange rate' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'First Friday' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Understudies Explaned' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'May 2021 Narrator' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Immigration Understudies Review' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Whats new on the website' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'April 2021 Narrator' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-12-01-2022 10:21 - Moving 'Greetings from a new arrival' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 57
-12-01-2022 10:29 - Adding 'asdasd@zfdzf.fghgf' to Mailchimp
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
-12-01-2022 14:46 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-admin\includes\plugin-install.php" at line: "183".
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
-12-01-2022 14:46 - 
-1) D:\Local_websites\simnigeria\wp-admin\plugin-install.php(41): WP_Plugin_Install_List_Table->prepare_items()
-2) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-plugin-install-list-table.php(239): plugins_api('query_plugins', Object(stdClass))
-3) D:\Local_websites\simnigeria\wp-admin\includes\plugin-install.php(183): trigger_error('An unexpected e...', 1024)
-4) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 183)
-
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
-13-01-2022 06:04 - Sending email
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
-13-01-2022 06:04 - Deleting user with id 356 and name Pascal Laubach as it was a temporary account.
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
-13-01-2022 06:04 - Deleting userdata for user Pascal Laubach
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-13-01-2022 06:04 - Moving 'Sdfsd' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-13-01-2022 06:04 - Moving 'Xcvxcv' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-13-01-2022 06:04 - Moving 'Xvxcv' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-13-01-2022 06:04 - Moving 'Covid Protocols for SLC 2022' to trash as it has expired
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
-13-01-2022 06:04 - Moving 'SLC Info' to trash as it has expired
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 201
-14-01-2022 09:23 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 201
-14-01-2022 09:31 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\formbuilder.php line 1351
-14-01-2022 10:06 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php/../js/dynamic/security_questionsforms.js does not exist!
-Building it now
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-15-01-2022 19:37 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-17-01-2022 08:39 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-17-01-2022 08:43 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-17-01-2022 10:29 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-17-01-2022 12:33 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-17-01-2022 12:45 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-17-01-2022 12:51 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-17-01-2022 13:19 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
-17-01-2022 13:28 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
-Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\formbuilder_AJAX.php line 188
-18-01-2022 08:05 - Inserting new form in db
+21-01-2022 11:26 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:17 - Succesfully deleted video with id 667694637 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:17 - Succesfully deleted video with id 667694532 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:18 - Succesfully deleted video with id 667694674 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:18 - Succesfully deleted video with id 667694572 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:19 - Succesfully deleted video with id 667694500 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:19 - Succesfully deleted video with id 667717365 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:19 - Succesfully deleted video with id 667694758 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667694711 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667711995 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667712890 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667737882 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667738868 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667764739 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667716712 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667711306 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667717085 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\api_functions.php line 125
+21-01-2022 14:20 - Succesfully deleted video with id 667714621 from Vimeo
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 64
+21-01-2022 15:30 - Succesfully scheduled create_vimeo_thumbnails to run daily
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/231253839.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/231253839.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/251171903.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/251171903.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/538404779.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/538404779.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/542129419.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/542129419.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/542140279.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/542140279.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/542141830.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/542141830.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/620633431.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/620633431.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/663988581.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/663988581.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/664814465.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/664814465.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/665676439.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/665676439.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/538404507.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/538404507.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/499123223.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/499123223.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/483973485.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/483973485.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/258081074.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/258081074.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/264387128.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/264387128.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/237738264.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/237738264.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/289640970.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/289640970.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/298596841.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/298596841.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/300263578.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/300263578.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/302067831.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/302067831.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/477560950.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/477560950.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/667420623.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/667420623.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/272002516.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/272002516.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/231697887.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/231697887.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/230167025.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/230167025.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/229841560.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/229841560.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/229840229.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/229840229.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/229839979.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/229839979.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/229837833.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/229837833.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/542582994.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/542582994.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/229837558.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/229837558.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/229832353.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/229832353.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/235320761.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/235320761.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/668529102.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/668529102.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 233
+21-01-2022 17:19 - D:/Local_websites/simnigeria/wp-content/vimeo_files/thumbnails/667855020.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php line 235
+21-01-2022 17:19 - https://localhost/simnigeria/wp-content/vimeo_files/thumbnails/667855020.webp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:17 - Module page does not exist for module Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:17 - Module page does not exist for module Private Content
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:17 - Module page does not exist for module Trello
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:18 - Module page does not exist for module Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:18 - Module page does not exist for module Private Content
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:18 - Module page does not exist for module Trello
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:19 - Module page does not exist for module Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:19 - Module page does not exist for module Private Content
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:19 - Module page does not exist for module Trello
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:20 - Module page does not exist for module Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:20 - Module page does not exist for module Private Content
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:20 - Module page does not exist for module Trello
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:24 - Module page does not exist for module Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:24 - Module page does not exist for module Private Content
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:24 - Module page does not exist for module Trello
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:26 - Module page does not exist for module Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:26 - Module page does not exist for module Private Content
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:26 - Module page does not exist for module Trello
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:30 - Module page does not exist for module Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:30 - Module page does not exist for module Private Content
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:30 - Module page does not exist for module Trello
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:30 - Module page does not exist for module Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:30 - Module page does not exist for module Private Content
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
+22-01-2022 10:30 - Module page does not exist for module Trello

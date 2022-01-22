@@ -223,10 +223,7 @@ class Formbuilder_Ajax extends Formbuilder{
 		}
 	}
 	
-	function remove_formfield(){
-		/* print_array('Removing form element');
-		print_array($_POST); */
-		
+	function remove_formfield(){		
 		verify_nonce('remove_form_element_nonce');
 		
 		if(!empty($_POST['formname'])){
@@ -264,10 +261,7 @@ class Formbuilder_Ajax extends Formbuilder{
 		}
 	}
 	
-	function request_form_elements(){
-		/* print_array('Requesting form elements');
-		print_array($_POST); */
-		
+	function request_form_elements(){		
 		verify_nonce('request_form_element_nonce');
 		
 		$element_index = $_POST['elementindex'];
@@ -318,10 +312,7 @@ class Formbuilder_Ajax extends Formbuilder{
 		}
 	}
 	
-	function edit_formfield_width(){
-		/*global $wpdb;
-		print_array($_POST); */
-		
+	function edit_formfield_width(){		
 		verify_nonce('remove_form_element_nonce');
 		
 		$element_index = $_POST['elementindex'];
@@ -419,9 +410,6 @@ class Formbuilder_Ajax extends Formbuilder{
 	function save_form_settings(){
 		global $wpdb;
 		
-		/*print_array('saving form settings');
-		print_array($_POST); */
-		
 		if(!empty($_POST['formname'])){
 			$this->datatype = $_POST['formname'];
 			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
@@ -455,8 +443,6 @@ class Formbuilder_Ajax extends Formbuilder{
 		
 	function save_form_emails(){
 		global $wpdb;
-		
-		//print_array($_POST);
 		
 		if(!empty($_POST['formname'])){
 			$this->datatype = $_POST['formname'];
@@ -496,6 +482,7 @@ class Formbuilder_Ajax extends Formbuilder{
 			$this->datatype = $_POST['formname'];
 			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 			$this->loadformdata();
+			$this->create_db_submissions_table();
 		}else{
 			wp_die('Invalid form name',500);
 		}
@@ -563,7 +550,7 @@ class Formbuilder_Ajax extends Formbuilder{
 			$this->send_email();
 				
 			if($wpdb->last_error !== ''){
-				wp_die($wpdb->print_error(),500);
+				wp_die($wpdb->last_error,500);
 			}else{
 				wp_die("$message  \nYour id is {$this->formresults['id']}");
 			}

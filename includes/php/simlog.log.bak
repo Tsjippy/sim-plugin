@@ -1,10 +1,1568 @@
-Called from file xdebug://debug-eval line 1
-11-01-2022 12:51 - <p>SLC 2022 took place from January 5th till January 9th.<br>Main speaker was West-Africa Regional director <a href="localhost/simnigeria/missionaries/schmidt-steve/"></a><a href="http://localhost/simnigeria/missionaries/schmidt-steve/"><a href='http://localhost/simnigeria/missionaries/schmidt-steve/'>Steve Schmidt</a></a>.</p>
-<p>[caption id="attachment_8656" align="alignnone" width="300"]<img class="size-medium wp-image-8656" src="http://localhost/simnigeria/wp-content/uploads/P1090452-scaled-300x225.jpe" alt="" width="300" height="225"> OLYMPUS DIGITAL CAMERA[/caption]</p>
-<p>The video below gives an overview of this SLC in 5 minutes</p>
-<p>[dgv_vimeo_video id="663988581"]</p>
-<p>&nbsp;</p>
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+12-01-2022 10:21 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+12-01-2022 10:21 - Deleting user with id 345 and name Abby Janeck as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+12-01-2022 10:21 - Deleting userdata for user Abby Janeck
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
+12-01-2022 10:21 - Deleted the missionary page 8646
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+12-01-2022 10:21 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+12-01-2022 10:21 - Deleting user with id 336 and name Guinea Pig as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+12-01-2022 10:21 - Deleting userdata for user Guinea Pig
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
+12-01-2022 10:21 - Deleted the missionary page 8652
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+12-01-2022 10:21 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+12-01-2022 10:21 - Deleting user with id 334 and name Penny Bakewell as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+12-01-2022 10:21 - Deleting userdata for user Penny Bakewell
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
+12-01-2022 10:21 - Deleted the missionary page 8638
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+12-01-2022 10:21 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+12-01-2022 10:21 - Deleting user with id 344 and name Wayne Janeck as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+12-01-2022 10:21 - Deleting userdata for user Wayne Janeck
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\content\missionary_page.php line 143
+12-01-2022 10:21 - Deleted the missionary page 8645
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Nmbmm' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Jhjhhk' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Dec / Jan travel' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'COVID Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Travel Requirements Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'December 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Notice re Quota’s and CERPAC’s Renewal' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Security Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Information regarding the renewal of CERPAC’S once quota has been renewed' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'November 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Office hours' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'October 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Clarification on Signal group use' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Proof of life questions for contingency planning' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'SIM NIgeria Calendar 2022' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Farewell to the Porters' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Barley's answer to prayer' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'First Friday Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'September 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'August 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'June 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Short Term options for next year' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'June 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'First Friday' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Understudies Explaned' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'May 2021 Narrator' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Immigration Understudies Review' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Whats new on the website' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'April 2021 Narrator' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+12-01-2022 10:21 - Moving 'Greetings from a new arrival' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 57
+12-01-2022 10:29 - Adding 'asdasd@zfdzf.fghgf' to Mailchimp
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+12-01-2022 14:46 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-admin\includes\plugin-install.php" at line: "183".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+12-01-2022 14:46 - 
+1) D:\Local_websites\simnigeria\wp-admin\plugin-install.php(41): WP_Plugin_Install_List_Table->prepare_items()
+2) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-plugin-install-list-table.php(239): plugins_api('query_plugins', Object(stdClass))
+3) D:\Local_websites\simnigeria\wp-admin\includes\plugin-install.php(183): trigger_error('An unexpected e...', 1024)
+4) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 183)
 
-<!-- wp:image -->
-<figure class="wp-block-image size-large"><img src="http://localhost/simnigeria/wp-content/uploads/P1090452-scaled-1024x768.jpe" alt="" class="wp-image-8656" /><figcaption>OLYMPUS DIGITAL CAMERA</figcaption></figure>
-<!-- /wp:image -->
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+13-01-2022 06:04 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+13-01-2022 06:04 - Deleting user with id 356 and name Pascal Laubach as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+13-01-2022 06:04 - Deleting userdata for user Pascal Laubach
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'Sdfsd' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'Xcvxcv' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'Xvxcv' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'Covid Protocols for SLC 2022' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+13-01-2022 06:04 - Moving 'SLC Info' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 201
+14-01-2022 09:23 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 201
+14-01-2022 09:31 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\formbuilder.php line 1351
+14-01-2022 10:06 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php/../js/dynamic/security_questionsforms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+15-01-2022 19:37 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 08:39 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 08:43 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 10:29 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 12:33 - cURL error 6: Could not resolve host: us18.api.mailchimp.com (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 12:45 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 12:51 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 13:19 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+17-01-2022 13:28 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\formbuilder_AJAX.php line 188
+18-01-2022 08:05 - Inserting new form in db
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 15:32 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 15:32 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(395): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 15:56 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 15:56 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(395): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 15:59 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 15:59 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(395): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 16:02 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 16:02 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(395): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 16:17 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 16:17 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(395): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 16:18 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 16:18 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(395): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 16:54 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 16:54 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(382): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 16:56 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 16:56 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(382): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file xdebug://debug-eval line 1
+Array
+(
+    [id] => 8858
+    [title] => 2021-07-29 15-41-54GZXL8272.MP4
+    [filename] => Uploading to vimeo
+    [url] => https://vimeo.com/667356395
+    [link] => http://localhost/simnigeria/2021-07-29-15-41-54gzxl8272-mp4/
+    [alt] => 
+    [author] => 45
+    [description] => 
+    [caption] => 
+    [name] => 2021-07-29-15-41-54gzxl8272-mp4
+    [status] => inherit
+    [uploadedTo] => 0
+    [date] => 1642524995000
+    [modified] => 1642524995000
+    [menuOrder] => 0
+    [mime] => 
+    [type] => 
+    [subtype] => 
+    [icon] => http://localhost/simnigeria/wp-includes/images/media/default.png
+    [dateFormatted] => January 18, 2022
+    [nonces] => Array
+        (
+            [update] => 474fc7d9a5
+            [delete] => 816c4687ea
+            [edit] => 7ddd22b5f1
+        )
+
+    [editLink] => http://localhost/simnigeria/wp-admin/post.php?post=8858&action=edit
+    [meta] => 
+    [authorName] => Ewald Harmsen
+    [authorLink] => http://localhost/simnigeria/wp-admin/profile.php
+    [context] => 
+    [compat] => Array
+        (
+            [item] => <input type="hidden" name="attachments[8858][menu_order]" value="0" /><p class="media-types media-types-required-info">Required fields are marked <span class="required">*</span></p><table class="compat-attachment-fields">		<tr class='compat-field-visibility'>			<th scope='row' class='label'><label for='attachments-8858-visibility'><span class='alignleft'>Visibility</span><br class='clear' /></label></th>
+			<td class='field'><div><input checked style='width: initial' type='radio' name='attachments[8858][visibility]' value='public'> Public</div><div><input  style='width: initial' type='radio' name='attachments[8858][visibility]' value='private'> Private</div></td>
+		</tr>
+</table>
+            [meta] => 
+        )
+
+)
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 17:02 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 17:02 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(382): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 17:03 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 17:03 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(382): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 19:11 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 19:11 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(382): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 19:19 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 19:19 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(382): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+18-01-2022 19:22 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+18-01-2022 19:22 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(382): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 06:22 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 06:22 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 06:24 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 06:24 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:03 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:03 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:08 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:08 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:16 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:16 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:23 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:23 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:28 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:28 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:30 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:30 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:35 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:35 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:37 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:37 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:38 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 07:43 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 07:43 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 08:50 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 08:50 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 08:53 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 08:53 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:01 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:01 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:05 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:05 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:15 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:15 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:18 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:18 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:22 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:22 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:28 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:28 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:32 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:32 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:33 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:33 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:36 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:36 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:38 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:40 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:40 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:40 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:40 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:40 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:40 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:41 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:41 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:41 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:41 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:41 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:41 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:41 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:41 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:41 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:41 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:41 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:41 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:41 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:41 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:41 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:41 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:41 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:41 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:42 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:42 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:43 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:43 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:43 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:43 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:43 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:43 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:43 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:43 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:45 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:45 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:46 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:46 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:47 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:47 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:47 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:47 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:47 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:47 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:48 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:48 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:48 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:48 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:48 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:48 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:48 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:48 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:48 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:48 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:49 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:49 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:49 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:49 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:55 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:55 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:58 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:58 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 09:59 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 09:59 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 10:04 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 10:04 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 10:29 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 10:29 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 10:30 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 10:30 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 10:33 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 10:33 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 10:37 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 10:37 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 10:42 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 10:42 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 10:43 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 10:43 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 10:44 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 10:44 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(223): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 11:36 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 11:36 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(226): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 11:39 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 11:39 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(226): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+19-01-2022 12:46 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+19-01-2022 12:46 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\vimeo.php(226): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file xdebug://debug-eval line 1
+20-01-2022 07:32 - 
+<div class="wp-block-columns">
+<div class="wp-block-column" style="flex-basis:75%">
+<p>Hi visitor,</p>
+</div>
+</div>
+
+
+
+<p>Great to welcome you on our webpage!<br>You are in the right place to read all about our ministries and the latest news of SIM Nigeria.</p>
+
+
+
+<h4 class="has-text-align-center">See what we do</h4>
+
+
+
+<figure class="wp-block-embed is-type-video is-provider-vimeo wp-block-embed-vimeo wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">
+<iframe loading="lazy" src="https://player.vimeo.com/video/477560950?dnt=1&amp;app_id=122963" width="915" height="515" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+</div><figcaption><a href="http://localhost/simnigeria//videos/" data-type="page" data-id="1443">Watch more videos -&gt;</a></figcaption></figure>
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+20-01-2022 09:26 - You have an error notice: "is_embed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+20-01-2022 09:26 - 
+1) [internal function]: WP_Fatal_Error_Handler->handle()
+2) D:\Local_websites\simnigeria\wp-includes\class-wp-fatal-error-handler.php(57): WP_Fatal_Error_Handler->display_error_template(Array, Object(WP_Error))
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-fatal-error-handler.php(152): WP_Fatal_Error_Handler->display_default_error_template(Array, Object(WP_Error))
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-fatal-error-handler.php(233): wp_die(Object(WP_Error), '', Array)
+5) D:\Local_websites\simnigeria\wp-includes\functions.php(3599): _default_wp_die_handler('<div class="wp-...', 'WordPress &rsaq...', Array)
+6) D:\Local_websites\simnigeria\wp-includes\functions.php(3675): wp_robots()
+7) D:\Local_websites\simnigeria\wp-includes\robots-template.php(32): apply_filters('wp_robots', Array)
+8) D:\Local_websites\simnigeria\wp-includes\plugin.php(189): WP_Hook->apply_filters(Array, Array)
+9) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_robots_noindex_embeds(Array)
+10) D:\Local_websites\simnigeria\wp-includes\robots-template.php(93): is_embed()
+11) D:\Local_websites\simnigeria\wp-includes\query.php(881): _doing_it_wrong('is_embed', 'Conditional que...', '(This message w...')
+12) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('is_embed was ca...', 1024)
+13) [internal function]: SIM\handle_error(1024, 'is_embed was ca...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+20-01-2022 09:26 - You have an error notice: "is_search was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+20-01-2022 09:26 - 
+1) [internal function]: WP_Fatal_Error_Handler->handle()
+2) D:\Local_websites\simnigeria\wp-includes\class-wp-fatal-error-handler.php(57): WP_Fatal_Error_Handler->display_error_template(Array, Object(WP_Error))
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-fatal-error-handler.php(152): WP_Fatal_Error_Handler->display_default_error_template(Array, Object(WP_Error))
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-fatal-error-handler.php(233): wp_die(Object(WP_Error), '', Array)
+5) D:\Local_websites\simnigeria\wp-includes\functions.php(3599): _default_wp_die_handler('<div class="wp-...', 'WordPress &rsaq...', Array)
+6) D:\Local_websites\simnigeria\wp-includes\functions.php(3675): wp_robots()
+7) D:\Local_websites\simnigeria\wp-includes\robots-template.php(32): apply_filters('wp_robots', Array)
+8) D:\Local_websites\simnigeria\wp-includes\plugin.php(189): WP_Hook->apply_filters(Array, Array)
+9) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_robots_noindex_search(Array)
+10) D:\Local_websites\simnigeria\wp-includes\robots-template.php(119): is_search()
+11) D:\Local_websites\simnigeria\wp-includes\query.php(699): _doing_it_wrong('is_search', 'Conditional que...', '(This message w...')
+12) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('is_search was c...', 1024)
+13) [internal function]: SIM\handle_error(1024, 'is_search was c...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 201
+20-01-2022 10:07 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 06:29 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 06:29 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:19 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:19 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+21-01-2022 07:22 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:23 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:23 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:24 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:24 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:26 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:26 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:33 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:33 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:35 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:35 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:37 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:37 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:39 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:39 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:44 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:44 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:48 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:48 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:48 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:48 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:49 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:49 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:51 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:51 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:52 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:52 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:54 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:54 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:54 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:54 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+21-01-2022 07:55 - You have an error notice: "wpdb::prepare was called <strong>incorrectly</strong>. The query argument of wpdb::prepare() must have a placeholder. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.9.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5663".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+21-01-2022 07:55 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(187): do_action('wp_ajax_prepare...')
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): SIM\{closure}('')
+5) D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\modules\vimeo\php\vimeo.php(156): wpdb->prepare('SELECT * FROM w...')
+6) D:\Local_websites\simnigeria\wp-includes\wp-db.php(1317): _doing_it_wrong('wpdb::prepare', 'The query argum...', '(This message w...')
+7) D:\Local_websites\simnigeria\wp-includes\functions.php(5663): trigger_error('wpdb::prepare w...', 1024)
+8) [internal function]: SIM\handle_error(1024, 'wpdb::prepare w...', 'D:\\Local_websit...', 5663)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\connections\mailchimp.php line 467
+21-01-2022 08:18 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists/00cbd0e391/segments?count=100&offset=0&type=saved

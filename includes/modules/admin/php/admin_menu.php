@@ -1,13 +1,100 @@
 <?php
 namespace SIM;
 
+//load js and css
+add_action( 'admin_enqueue_scripts', function () {
+	global $StyleVersion;
+
+	wp_enqueue_style('sim_admin_css', plugins_url('css/admin.css', __DIR__), array(), $StyleVersion);
+	wp_enqueue_script('sim_admin_js', plugins_url('js/admin.js', __DIR__), array(),$StyleVersion, true);
+});
+
 /**
  * Register a custom menu page.
  */
 add_action( 'admin_menu', 'SIM\register_admin_menu_page' );
 function register_admin_menu_page() {
-	add_menu_page("Custom SIM Nigeria", "SIM Nigeria", 'manage_options', "custom_simnigeria", "SIM\admin_menu");
-	add_submenu_page('custom_simnigeria', "Functions", "Functions", "manage_options", "custom_simnigeria_functions", "SIM\admin_menu_functions");
+	global $Modules;
+
+	if(isset($_POST['module'])){
+		$module_slug	= $_POST['module'];
+		$options		= $_POST;
+		unset($options['module']);
+
+		if(!isset($options['enable']) and isset($Modules[$module_slug])){
+			unset($Modules[$module_slug]);
+		}elseif(!empty($options)){
+			$Modules[$module_slug]	= $options;
+		}
+		update_option('sim_modules', $Modules);
+	}
+
+	add_menu_page("SIM Plugin Settings", "SIM Settings", 'manage_options', "sim", "SIM\main_menu");
+	add_submenu_page('sim', "Functions", "Functions", "manage_options", "sim_functions", "SIM\admin_menu_functions");
+
+	//get all modules based on folder name
+	$modules	= glob(__DIR__ . '/../../*' , GLOB_ONLYDIR);
+
+	foreach($modules as $module){
+		$module_slug	= basename($module);
+		$module_name	= ucwords(str_replace(['_', '-'], ' ', $module_slug));
+		
+		//do not load admin and template menu
+		if(in_array($module_slug, ['__template', 'admin'])) continue;
+		
+		//check module page exists
+		if(!file_exists($module.'/php/module_menu.php')){
+			print_array("Module page does not exist for module $module_name");
+			continue;
+		}
+
+		//load the menu page php file
+		require_once($module.'/php/module_menu.php');
+
+		add_submenu_page('sim', $module_name, $module_name, "manage_options", "sim_$module_slug", "SIM\build_submenu");
+	}
+}
+
+function build_submenu(){
+	global $plugin_page;
+	global $Modules;
+
+	$module_slug	= str_replace('sim_','',$plugin_page);
+	$module_name	= ucwords(str_replace(['_', '-'], ' ', $module_slug));
+	$settings		= $Modules[$module_slug];
+
+	if(isset($_POST['module'])){
+		?>
+		<div class='succes'>
+			Settings succesfully saved
+		</div>
+		<?php
+	}
+	?>
+	<h1><?php echo $module_name;?> module</h1>
+	<form action="" method="post">
+		<input type='hidden' name='module' value='<?php echo $module_slug;?>'>
+		<?php 
+		do_action('sim_submenu_description', $module_slug, $module_name);
+		?>
+		Enable <?php echo $module_name;?> module 
+		<label class="switch">
+			<input type="checkbox" name="enable" <?php if($settings['enable']) echo 'checked';?>>
+			<span class="slider round"></span>
+		</label>
+		<br>
+		<br>
+		<div class='options' <?php if(!$settings['enable']) echo "style='display:none'";?>>
+			<?php 
+			do_action('sim_submenu_options', $module_slug, $module_name, $settings);
+			?>
+		</div>
+		<br>
+		<br>
+		<input type="submit" value="Save <?php echo $module_name;?> options">
+	</form> 
+	<br>
+	<?php
 }
 
 function admin_menu_functions(){
@@ -27,9 +114,8 @@ function admin_menu_functions(){
 	<?php
 }
 
-function admin_menu(){
+function main_menu(){
 	global $CustomSimSettings;
-	global $Trello;
 	
 	ob_start();
 	?>
@@ -37,29 +123,6 @@ function admin_menu(){
         <h1>Define custom settings</h1>
 		<?php		
 		if (isset($_POST["save_custom_sim_settings"])){
-			//Check if we need to update the trello webhook
-			if(!empty($_POST['trello_list']) and $_POST['trello_list'] != $CustomSimSettings['trello_list']){
-				$Trello->change_webhook_id($Trello->get_webhooks()[0]->id, $_POST['trello_list']);
-				print_array("Updated webhook modelid");
-			}
-			
-			//Trello token has changed
-			if($_POST['trellopapitoken'] != $CustomSimSettings['trellopapitoken']){
-				$new_trello_token = true;
-				
-				//remove all webhooks from the old token
-				$Trello->delete_all_webhooks();
-				
-				print_array("Removed all webhooks");
-				
-				//remove trello info belonging to the old token
-				unset($_POST['trello_list']);
-				unset($_POST['trello_board']);
-				unset($_POST['trello_destination_list']);
-			}else{
-				$new_trello_token = false;
-			}
-			
 			//Save everything
 			foreach($_POST as $key => $value){
 				if ($key != "save_custom_sim_settings"){
@@ -70,24 +133,8 @@ function admin_menu(){
 					}
 				}
 			}
-			
+
 			update_option("customsimsettings",$CustomSimSettings);
-			
-			//Now that the new trello token is set, lets create new webhooks
-			if($new_trello_token == true){
-				$new_trello = new trello();
-				
-				//remove all webhooks from the new token
-				$new_trello->delete_all_webhooks();
-				
-				//Get the userid belonging to the new token
-				$trello_user_id = $new_trello->get_token_info()->id;
-				
-				//Create a webhook listening to the userid
-				print_array('Created new webhook');
-				
-				$new_trello->create_webhook('https://simnigeria.org/trello_webhook', $trello_user_id, "Listens to all actions related to the user with id $trello_user_id");
-			}
 		}
 		?>
 		<form action="" method="post" id="set_settings" name="set_settings">
@@ -132,12 +179,6 @@ function admin_menu(){
 					<th><label for="register_page">Page with the registration form for new users</label></th>
 					<td>
 						<?php echo page_select("register_page",$CustomSimSettings["register_page"]); ?>
-					</td>
-				</tr>
-				<tr>
-					<th><label for="signal_group_link">Link to join the Signal group</label></th>
-					<td>
-						<input type='url' name='signal_group_link' value=<?php echo $CustomSimSettings["signal_group_link"]; ?> style='width:100%'>
 					</td>
 				</tr>
 				<tr>
@@ -254,92 +295,7 @@ function admin_menu(){
 						<input type="text" name="webmastername" id="webmastername" value="<?php echo $CustomSimSettings["webmastername"]; ?>">
 					</td>
 				</tr>
-				<tr>
-					<th><label for="mailchimpapi">Mailchimp API key</label></th>
-					<td>
-						<input type="text" name="mailchimpapi" id="mailchimpapi" value="<?php echo $CustomSimSettings["mailchimpapi"]; ?>" style="width:100%;">
-					</td>
-				</tr>
-				<tr>
-					<th><label>Mailchimp audience(s) you want new users added to</label></th>
-				<?php
-				$Mailchimp = new Mailchimp();
-				$lists = (array)$Mailchimp->get_lists();
-				foreach ($lists as $key=>$list){
-					if($CustomSimSettings["mailchimp_audienceids"][$key]==$list->id){
-						$checked = 'checked="checked"';
-					}else{
-						$checked = '';
-					}
-					echo '<td>
-						<input type="checkbox" id="mailchimp_audienceids['.$key.']" name="mailchimp_audienceids['.$key.']" value="'.$list->id.'" '.$checked.'>
-						<label for="mailchimp_audienceids['.$key.']">'.$list->name.'</label>
-					</td>';
-				}				
-				?>
-				</tr>
-				<tr>
-					<th><label>Mailchimp TAGs you want to add to new users</label></th>
-					<td>
-						<input type="text" id="mailchimp_user_tags" name="mailchimp_user_tags" value="<?php echo $CustomSimSettings["mailchimp_user_tags"]; ?>">
-					</td>
-				</tr>
-				<tr>
-					<th><label>Mailchimp TAGs you want to add to missionaries</label></th>
-					<td>
-						<input type="text" id="mailchimp_missionary_tags" name="mailchimp_missionary_tags" value="<?php echo $CustomSimSettings["mailchimp_missionary_tags"]; ?>">
-					</td>
-				</tr>
-				<tr>
-					<th><label>Mailchimp TAGs you want to add to office staff</label></th>
-					<td>
-						<input type="text" id="mailchimp_office_staff_tags" name="mailchimp_office_staff_tags" value="<?php echo $CustomSimSettings["mailchimp_office_staff_tags"]; ?>">
-					</td>
-				</tr>
-				<tr>
-					<th><label for="mailchimptemplateid">Mailchimp template id</label></th>
-					<td>
-						<input type="text" name="mailchimptemplateid" id="mailchimptemplateid" value="<?php echo $CustomSimSettings["mailchimptemplateid"]; ?>" style="width:100%;">
-					</td>
-				</tr>
-				<tr>
-					<th><label for="trellopapikey">Trello API key</label></th>
-					<td>
-						<input type="text" name="trellopapikey" id="trellopapikey" value="<?php echo $CustomSimSettings["trellopapikey"]; ?>" style="width:100%;">
-					</td>
-				</tr>
-				<tr>
-					<th><label for="trellopapitoken">Trello API token</label></th>
-					<td>
-						<input type="text" name="trellopapitoken" id="trellopapitoken" value="<?php echo $CustomSimSettings["trellopapitoken"]; ?>" style="width:100%;">
-					</td>
-				</tr>
-				<?php
-				if(isset($CustomSimSettings["trellopapikey"]) and isset($CustomSimSettings["trellopapitoken"]) and strpos(get_site_url(), 'localhost') === false){
-					?>
-					<tr>
-						<th><label>Trello board you want listen to</label></th>
-						<td>
-							<select name='trello_board' id='trello_board'>
-							<option value="">---</option>
-					<?php
-					$Trello->get_boards();
-					foreach ($Trello->get_boards() as $name=>$id){
-						if($CustomSimSettings["trello_board"] == $id){
-							$selected = 'selected="selected"';
-						}else{
-							$selected = '';
-						}
-						echo "<option value='$id' $selected>$name</option>";
-
-					}
-					?>
-							</select>
-						</td>
-					</tr>
-					<?php
-				}
-				?>
+				
 				<tr>
 					<th><label for="personnel_email">Personnel e-mail</label></th>
 					<td>

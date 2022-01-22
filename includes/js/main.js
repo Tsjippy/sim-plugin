@@ -111,7 +111,7 @@ function showLoader(element, replace=true, message=''){
 	var wrapper	= document.createElement("DIV");
 	wrapper.setAttribute('class','loaderwrapper');
 	if(message != ''){
-		wrapper.textContent	= message;
+		wrapper.innerHTML	= message;
 	}
 
 	var loader	= document.createElement("IMG");
