@@ -388,17 +388,27 @@ class Events{
 		return $wpdb->get_results($query)[0];
 	}
 
-	function retrieve_events($startdate = '', $enddate = '', $amount = '', $extra_query = '', $offset=''){
+	function retrieve_events($startdate = '', $enddate = '', $amount = '', $extra_query = '', $offset='', $cat=''){
 		global $wpdb;
 
 		//select all events attached to a post with publish status
-		$query	= "SELECT * FROM {$wpdb->prefix}posts INNER JOIN `{$this->table_name}` ON {$wpdb->prefix}posts.ID={$this->table_name}.post_id WHERE  {$wpdb->prefix}posts.post_status='publish'";
+		$query	 = "SELECT * FROM {$wpdb->prefix}posts ";
+		$query	.= "INNER JOIN `{$this->table_name}` ON {$wpdb->prefix}posts.ID={$this->table_name}.post_id ";
+		
+		if(is_numeric($cat)){
+			$query	.= "INNER JOIN `{$wpdb->prefix}term_relationships` ON {$wpdb->prefix}posts.ID={$wpdb->prefix}term_relationships.object_id ";
+		}
+		
+		$query	 .= "WHERE  {$wpdb->prefix}posts.post_status='publish'";
 		
 		//start date is greater than or the requested date falls in between a multiday event
 		if(!empty($startdate)) $query	.= " AND(`{$this->table_name}`.`startdate` >= '$startdate' OR '$startdate' BETWEEN `{$this->table_name}`.startdate and `{$this->table_name}`.enddate)";
 		
 		//any event who starts before the enddate
 		if(!empty($enddate)) $query		.= " AND `{$this->table_name}`.`startdate` <= '$enddate'";
+
+		//get events with a specific category
+		if(is_numeric($cat)) $query		.= " AND `{$wpdb->prefix}term_relationships`.`term_taxonomy_id` = '$cat'";
 		
 		//extra query
 		if(!empty($extra_query)) $query	.= " AND $extra_query";
@@ -424,6 +434,11 @@ class Events{
 		if(!is_page($LoggedInHomePage)) return;
 		$this->retrieve_events($startdate = date("Y-m-d"), $enddate = date('Y-m-d', strtotime('+3 month')), $amount = 10);
 
+		//do not list celebrations
+		foreach($this->events as $key=>$event){
+			if(!empty(get_post_meta($event->post_id,'celebrationdate',true))) unset($this->events[$key]);
+		}
+
 		ob_start();
 		?>
 		<aside class='event'>
@@ -441,9 +456,6 @@ class Events{
 				<div class="eventlist">
 					<?php
 					foreach($this->events as $event){
-						//do not list celebrations
-						if(!empty(get_post_meta($event->post_id,'celebrationdate',true))) continue;
-
 						$startdate		= strtotime($event->startdate);
 						$event_day		= date('d',$startdate);
 						$eventDay		= date('l',$startdate);
@@ -638,11 +650,11 @@ class Events{
 	}
 
 	//full calendar
-	function month_calendar(){
+	function month_calendar($cat=''){
 		global $picturesurl;
 
 		if(wp_doing_ajax()){
-			$month	= $_POST['month'];
+			$month		= $_POST['month'];
 			$year		= $_POST['year'];
 			if(!is_numeric($month)) 	wp_die('Invalid month given',500); 
 			if(!is_numeric($year)) 		wp_die('Invalid year given',500);
@@ -690,7 +702,7 @@ class Events{
 				$day				= date('j',$working_date);
 				
 				//get the events for this day
-				$this->retrieve_events($working_date_str,$working_date_str);
+				$this->retrieve_events($working_date_str, $working_date_str, '', '', '', $cat);
 
 				if(
 					$working_date_str== date('Y-m-d') or			// date is today
@@ -834,7 +846,7 @@ class Events{
 		}
 	}
 
-	function week_calendar(){
+	function week_calendar($cat=''){
 		global $picturesurl;
 
 		if(wp_doing_ajax()){
@@ -875,7 +887,7 @@ class Events{
 			$next_week_nr		= date("W",strtotime("+1 week",$working_date));
 			
 			//get the events for this day
-			$this->retrieve_events($working_date_str,$working_date_str);
+			$this->retrieve_events($working_date_str, $working_date_str, '', '', '', $cat);
 
 			$events 		= $this->events;
 			if(!empty($events )){
@@ -1106,7 +1118,7 @@ class Events{
 		}
 	}
 
-	function list_calendar(){
+	function list_calendar($cat=''){
 		global $picturesurl;
 
 		$offset='';
@@ -1134,7 +1146,7 @@ class Events{
 		$day	= date('d');
 		$date_str	= "$year-$month-$day";
 
-		$this->retrieve_events($date_str,'',10,'',$offset);
+		$this->retrieve_events($date_str, '', 10, '', $offset, $cat);
 		$html ='';
 
 		foreach($this->events as $event){

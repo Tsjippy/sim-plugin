@@ -49,6 +49,8 @@ add_action('generate_after_header',function (){
 		$title = $category->name;
 		if(is_tax('recipetype')){
 			$title .= ' recipies';
+		}elseif(is_tax('eventtype')){
+			$title .= ' events';
 		}elseif(is_tax('locationtype')){
 			//nothing
 		}else{

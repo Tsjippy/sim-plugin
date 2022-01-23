@@ -165,19 +165,15 @@ function change_password_field($user_id = null){
 	//Check if action is needed
 	if(isset($_GET['action']) and isset($_GET['wp_2fa_nonce'])){
 		if($_GET['action'] == 'reset2fa' and wp_verify_nonce( $_GET['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_GET['user_id'])){
-			 reset_2fa($user_id);
-			 echo "<div class='success'>Succesfully turned off 2fa for $name</div>";
+			if($_GET['do'] == 'off'){
+				reset_2fa($user_id);
+				echo "<div class='success'>Succesfully turned off 2fa for $name</div>";
+			}elseif($_GET['do'] == 'email'){
+				update_user_meta($user_id, '2fa_methods', ['email']);
+				echo "<div class='success'>Succesfully changed the 2fa factor for $name to e-mail</div>";
+			}
 		}
 	}
-	
-	//Build the reset url
-	$url = add_query_arg(
-		array(
-			'action'       => 'reset2fa',
-			'user_id'      => $user_id,
-			'wp_2fa_nonce' => wp_create_nonce( "wp-2fa-reset-nonce_$user_id" ),
-		)
-	);
 				
 	//Content
 	?>	
@@ -203,16 +199,38 @@ function change_password_field($user_id = null){
 		
 		echo password_reset_form($user);
 		
-		//echo twofa_settings_form($user_id);
+		$methods	= get_user_meta($user_id, '2fa_methods', true);
+		if(is_array($methods)){
 
-		if(get_user_meta($user_id,'2fa_methods',true) != ''){
-		?>
-		<div class="2FA" style="margin-top:30px;">
-			<p>
-				Use the button below to turn off Two Factor Authentication for  <?php echo $name;?><br><br>
-				<a href="<?php echo esc_url( $url );?>#Login%20info" class="button sim">Reset 2FA</a>
-			</p>
-		</div>
+			//base url parameters
+			$param	= [
+				'action'		=>'reset2fa',
+				'user_id'		=> $user_id,
+				'wp_2fa_nonce'	=> wp_create_nonce( "wp-2fa-reset-nonce_$user_id" )
+			];
+
+			?>
+			<div class="2FA" style="margin-top:30px;">
+				<?php
+				if(!isset($methods['email'])){
+					$param['do']	= 'email';
+					$url = add_query_arg($param);
+				?>
+				<p>
+					Use the button below to change the 2fa factor for <?php echo $name;?> to e-mail<br><br>
+					<a href="<?php echo esc_url($url) ;?>#Login%20info" class="button sim">Change to e-mail</a>
+				</p>
+
+				<?php
+				}
+					$param['do']	= 'off';
+					$url = add_query_arg($param);
+				?>
+				<p>
+					Use the button below to turn off Two Factor Authentication for <?php echo $name;?><br><br>
+					<a href="<?php echo esc_url( $url );?>#Login%20info" class="button sim">Reset 2FA</a>
+				</p>
+			</div>
 		<?php }?>
 	</div>
 	<?php	

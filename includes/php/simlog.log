@@ -224,3 +224,156 @@ Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simniger
 22-01-2022 10:30 - Module page does not exist for module Private Content
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\admin\php\admin_menu.php line 47
 22-01-2022 10:30 - Module page does not exist for module Trello
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 838
+23-01-2022 08:34 - Sending email
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 843
+23-01-2022 08:34 - Deleting user with id 345 and name Abby Janeck as it was a temporary account.
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\forms\remove_user.php line 17
+23-01-2022 08:34 - Deleting userdata for user Abby Janeck
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'January 2022 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Dec / Jan travel' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'COVID Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Travel Requirements Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'December 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Notice re Quota’s and CERPAC’s Renewal' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Security Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Information regarding the renewal of CERPAC’S once quota has been renewed' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'November 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Office hours' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'October 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Clarification on Signal group use' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Proof of life questions for contingency planning' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'SIM NIgeria Calendar 2022' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Farewell to the Porters' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Barley's answer to prayer' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'First Friday Update' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'September 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'August 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'June 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Short Term options for next year' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'June 2021 Exchange rate' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'First Friday' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Understudies Explaned' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'May 2021 Narrator' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Immigration Understudies Review' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Whats new on the website' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'April 2021 Narrator' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 1060
+23-01-2022 08:36 - Moving 'Greetings from a new arrival' to trash as it has expired
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Css
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Lib
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Modules
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Php
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Pictures
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Css
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Lib
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Modules
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Php
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+23-01-2022 09:28 - Module page does not exist for module Pictures
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 131
+23-01-2022 16:04 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+23-01-2022 16:05 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "693".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+23-01-2022 16:05 - 
+1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_version_chec...', Array)
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_version_check()
+5) D:\Local_websites\simnigeria\wp-includes\update.php(256): do_action('wp_maybe_auto_u...')
+6) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+7) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+8) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_maybe_auto_update('')
+9) D:\Local_websites\simnigeria\wp-includes\update.php(729): WP_Automatic_Updater->run()
+10) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-automatic-updater.php(475): wp_update_themes()
+11) D:\Local_websites\simnigeria\wp-includes\update.php(693): trigger_error('An unexpected e...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 693)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 131
+23-01-2022 16:05 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+23-01-2022 16:05 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "413".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+23-01-2022 16:05 - 
+1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_version_chec...', Array)
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_version_check()
+5) D:\Local_websites\simnigeria\wp-includes\update.php(256): do_action('wp_maybe_auto_u...')
+6) D:\Local_websites\simnigeria\wp-includes\plugin.php(470): WP_Hook->do_action(Array)
+7) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+8) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_maybe_auto_update('')
+9) D:\Local_websites\simnigeria\wp-includes\update.php(729): WP_Automatic_Updater->run()
+10) D:\Local_websites\simnigeria\wp-admin\includes\class-wp-automatic-updater.php(509): wp_update_plugins(Array)
+11) D:\Local_websites\simnigeria\wp-includes\update.php(413): trigger_error('An unexpected e...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 413)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 135
+23-01-2022 16:05 - You have an error notice: "An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.)" in file "D:\Local_websites\simnigeria\wp-includes\update.php" at line: "413".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\other.php line 136
+23-01-2022 16:05 - 
+1) D:\Local_websites\simnigeria\wp-cron.php(138): do_action_ref_array('wp_update_plugi...', Array)
+2) D:\Local_websites\simnigeria\wp-includes\plugin.php(518): WP_Hook->do_action(Array)
+3) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+4) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(303): wp_update_plugins()
+5) D:\Local_websites\simnigeria\wp-includes\update.php(413): trigger_error('An unexpected e...', 1024)
+6) [internal function]: SIM\handle_error(1024, 'An unexpected e...', 'D:\\Local_websit...', 413)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 131
+23-01-2022 16:05 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 134
+23-01-2022 16:22 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 134
+23-01-2022 16:24 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 134
+23-01-2022 16:25 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 134
+23-01-2022 17:40 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 134
+23-01-2022 17:46 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 134
+23-01-2022 17:48 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 134
+23-01-2022 17:49 - Not sure which template to load for page

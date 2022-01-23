@@ -33,7 +33,7 @@ function register_admin_menu_page() {
 	add_submenu_page('sim', "Functions", "Functions", "manage_options", "sim_functions", "SIM\admin_menu_functions");
 
 	//get all modules based on folder name
-	$modules	= glob(__DIR__ . '/../../*' , GLOB_ONLYDIR);
+	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
 
 	foreach($modules as $module){
 		$module_slug	= basename($module);
@@ -65,7 +65,7 @@ function build_submenu(){
 
 	if(isset($_POST['module'])){
 		?>
-		<div class='succes'>
+		<div class='success'>
 			Settings succesfully saved
 		</div>
 		<?php
@@ -140,12 +140,6 @@ function main_menu(){
 		<form action="" method="post" id="set_settings" name="set_settings">
 			<table class="form-table">
 				<tr>
-					<th><label for="logged_in_home_page">Page for logged in users</label></th>
-					<td>
-						<?php echo page_select("logged_in_home_page",$CustomSimSettings["logged_in_home_page"]); ?>
-					</td>
-				</tr>
-				<tr>
 					<th><label for="missionaries_page">Missionaries page</label></th>
 					<td>
 						<?php echo page_select("missionaries_page",$CustomSimSettings["missionaries_page"]); ?>
@@ -157,28 +151,11 @@ function main_menu(){
 						<?php echo page_select("welcome_page",$CustomSimSettings["welcome_page"]); ?>
 					</td>
 				</tr>
-				<tr>
-					<th><label for="publish_post_page">Page with the post edit form</label></th>
-					<td>
-						<?php echo page_select("publish_post_page",$CustomSimSettings["publish_post_page"]); ?>
-					</td>
-				</tr>
+
 				<tr>
 					<th><label for="profile_page">Page with the profile data</label></th>
 					<td>
 						<?php echo page_select("profile_page",$CustomSimSettings["profile_page"]); ?>
-					</td>
-				</tr>
-				<tr>
-					<th><label for="pw_reset_page">Page with the password reset form</label></th>
-					<td>
-						<?php echo page_select("pw_reset_page",$CustomSimSettings["pw_reset_page"]); ?>
-					</td>
-				</tr>
-				<tr>
-					<th><label for="register_page">Page with the registration form for new users</label></th>
-					<td>
-						<?php echo page_select("register_page",$CustomSimSettings["register_page"]); ?>
 					</td>
 				</tr>
 				<tr>
@@ -406,27 +383,3 @@ add_action('init', function() {
 	}
 });
 
-//Add expiry data column to users screen
-add_filter( 'manage_users_columns', 'SIM\add_expiry_date_to_user_table' );
-function add_expiry_date_to_user_table( $column ) {
-    $column['expiry_date'] = 'Expiry Date';
-    return $column;
-}
-
-//Add content to the expiry data column
-add_filter( 'manage_users_custom_column', 'SIM\add_expiry_date_to_user_table_row', 10, 3 );
-function add_expiry_date_to_user_table_row( $val, $column_name, $user_id ) {
-    switch ($column_name) {
-        case 'expiry_date' :
-            return get_user_meta( $user_id, 'account_validity',true);
-        default:
-    }
-    return $val;
-}
-
-add_filter( 'manage_users_sortable_columns', 'SIM\make_expiry_date_sortable' );
-function make_expiry_date_sortable( $columns ) {
-    $columns['expiry_date'] = 'Expiry Date';
-
-    return $columns;
-}

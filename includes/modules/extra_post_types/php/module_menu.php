@@ -8,17 +8,17 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	?>
 	Choose which posttypes you would want to enable:<br>
 	<label>
-		<input type='checkbox' name='events' <?php if(isset($settings['events'])) echo 'checked';?>>
+		<input type='checkbox' name='event' <?php if(isset($settings['event'])) echo 'checked';?>>
 		Calendar
 	</label>
 	<br>
 	<label>
-		<input type='checkbox' name='locations' <?php if(isset($settings['locations'])) echo 'checked';?>>
+		<input type='checkbox' name='location' <?php if(isset($settings['location'])) echo 'checked';?>>
 		Locations
 	</label>
 	<br>
 	<label>
-		<input type='checkbox' name='recipes' <?php if(isset($settings['recipes'])) echo 'checked';?>>
+		<input type='checkbox' name='recipe' <?php if(isset($settings['recipe'])) echo 'checked';?>>
 		Recipes
 	</label>
 	<br>

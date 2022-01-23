@@ -28,14 +28,13 @@ remove_action( 'wp_head', 'adjacent_posts_rel_link');
 //load all libraries
 require( __DIR__  . '/includes/lib/vendor/autoload.php');
 
-$Modules		= array_merge(get_option('sim_modules', []), ['admin'=>[]]);
+$Modules		= get_option('sim_modules', []);
 
 //Load all main files
 $files = glob(__DIR__  . '/includes/php/*.php');
-$files = array_merge($files, glob(__DIR__  . '/includes/php/connections/*.php'));
+$files = array_merge($files, glob(__DIR__  . '/includes/admin/php/*.php'));
 $files = array_merge($files, glob(__DIR__  . '/includes/php/content/*.php'));
 $files = array_merge($files, glob(__DIR__  . '/includes/php/forms/*.php'));
-$files = array_merge($files, glob(__DIR__  . '/includes/php/security/*.php'));
 
 //Load files for enabled modules
 foreach($Modules as $slug=>$settings){

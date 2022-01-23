@@ -1,3 +1,10 @@
+.success{
+	border: 3px solid yellowgreen;
+	text-align: center;
+	padding: 5px;
+	color: darkgreen;
+}
+
 .switch {
     position: relative;
     display: inline-block;

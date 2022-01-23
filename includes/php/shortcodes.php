@@ -435,18 +435,6 @@ add_shortcode("expiry_warnings",function (){
 	return $html;
 });
 
-//Shortcode for recommended fields
-add_shortcode("recommended_fields",function ($atts){
-	$UserID = get_current_user_id();
-	$html	= '';
-	$recommendation_html = get_recommended_fields($UserID);
-	if (!empty($recommendation_html)){
-		$html .=  '<div id=recommendations style="margin-top:20px;"><h3 class="frontpage">Recommendations</h3><p>It would be very helpfull if you could fill in the fields below:</p>'.$recommendation_html.'</div>';
-	}
-	
-	return $html;
-});
-
 add_shortcode('missionary_link',function($atts){
 	$html = "";
 	$a = shortcode_atts( array(
@@ -638,10 +626,10 @@ class Open_SSL {
 //Shortcode for testing
 add_shortcode("test",function ($atts){
 	//update all posts where this is attached
-    /* $users = get_users();
+    $users = get_users();
     foreach($users as $user){
-
-	} */
+		
+	}
 
 	return '<input type="file" id="test"';
 });

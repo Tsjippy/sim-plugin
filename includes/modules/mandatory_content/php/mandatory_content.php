@@ -209,6 +209,7 @@ add_action ( 'wp_ajax_mark_page_as_read', function(){
 	}
 });
 
+//for use in external communication like e-mail
 function markasread(\WP_REST_Request $request){
 	global $wpdb;
 	$email		= $request['email'];

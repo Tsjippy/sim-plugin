@@ -37,16 +37,16 @@ function register_post_type_and_tax($single, $plural){
 	
 	$args = array(
 		'labels' 				=> $labels,
-		'description' 			=> 'Post to display $plural',
+		'description' 			=> "Post to display $plural",
 		'public' 				=> true,
 		'show_ui' 				=> true,
 		'show_in_menu' 			=> true,
 		'capability_type' 		=> 'post',
-		'rewrite' 				=> false,
+		'has_archive' 			=> true,
+		'rewrite' 				=> true,	//archive page on /single
 		'query_var' 			=> true,
 		'supports' 				=> array('title','editor','author','excerpt','custom-fields','thumbnail','revisions','comments'),
 		'menu_position' 		=> 5,
-		'has_archive' 			=> true,
 		'show_in_rest'			=> true,
 		'delete_with_user'		=> false,
 		'taxonomies'  			=> array( $single."type" ),
@@ -83,9 +83,9 @@ function register_post_type_and_tax($single, $plural){
 		'show_in_rest' 		=> true,
 		'hierarchical' 		=> true,
 		'rewrite' 			=> array( 
-			'slug' 			=> $plural,
-			'with_front' 	=> false,
+			'slug' 			=> $plural,	//archive pages on /plural/
 			'hierarchical' 	=> true,
+			'has_archive'	=> true
 		),
 		'query_var' 		=> true,
 		'singular_label' 	=> "$Plural Type",
@@ -94,91 +94,55 @@ function register_post_type_and_tax($single, $plural){
 	
 	//register taxonomy category
 	register_taxonomy( $single.'type', $single, $taxonomy_category_args );
+
+	//redirect plural to archive page as well
+	add_rewrite_rule($plural.'/?$','index.php?post_type='.$single,'top');
 }
 
-/*
-	BUILD CUSTOM URLS FOR custom post type
-*/
-add_filter('post_type_link', function ( $permalink, $post ) {
-	global $taxnames;
-	
-	if( in_array($post->post_type, array_keys($taxnames)) and $post->post_status == 'publish') {
-		$cat_type_name	= $post->post_type.'type' ;
-		$plural			= $taxnames[$post->post_type];
-		
-		$resource_terms = get_the_terms( $post,$cat_type_name);
-		
-		$term_slug = '';
-		if( ! empty( $resource_terms ) ) {
-			foreach ( $resource_terms as $term ) {
-				// The featured resource will have another category which is the main one
-				if( $term->slug == 'featured' ) {
-					continue;
-				}
-				
-				$term_slug = $term->slug.'/';
-				
-				//if this term has a parent, prepent its slug
-				if($term->parent != 0){
-					$term_slug = get_term($term->parent, $cat_type_name)->slug.'/'.$term_slug;
-				}
-				break;
-			}
-		}
-		//We add a _ to the name so we know its a post and not a category
-		$permalink = get_home_url() ."/$plural/{$term_slug}_" . $post->post_name;
-		
+add_filter( 'single_template', 'SIM\get_template_file', 10, 3 );
+add_filter( 'page_template', 'SIM\get_template_file', 10, 3 );
+add_filter( 'taxonomy_template', 'SIM\get_template_file', 10, 3 );
+add_filter( 'part_template', 'SIM\get_template_file', 10, 3 );
+add_filter( 'archive_template', 'SIM\get_template_file', 10, 3 );
+add_filter( 'category_template', 'SIM\get_template_file', 10, 3 );
+add_filter( 'singular_template', 'SIM\get_template_file', 10, 3 );
+
+function get_template_file($template, $type, $templates){
+	global $post;
+	global $Modules;
+
+	$base_dir		= __DIR__."/templates";	
+
+	//check what we are dealing with
+	$name	= '';
+
+	switch ($type) {
+		case 'single':
+			$name			= $post->post_type;
+			$template_file	= "$base_dir/$name/$type-$name.php";
+			break;
+		case 'archive':
+			$name			= get_queried_object()->name;
+			$template_file	= "$base_dir/$name/$type-$name.php";
+			break;
+		case 'taxonomy':
+			$name			= get_queried_object()->taxonomy;
+			$dirname		= str_replace('type', '', $name);
+			$template_file	= "$base_dir/$dirname/$type-$name.php";
+			break;	
+		default:
+			print_array("Not sure which template to load for $type");
 	}
-	return $permalink;
-} ,10,2);
 
-/*
-	TRANSLATE NEW URL TO WP URL
-*/
-
-add_filter('generate_rewrite_rules', function($wp_rewrite) {
-	global $taxnames;
-	
-	$org_rules = $wp_rewrite->rules;
-	
-	//add at the top of the array
-	$rules=[];
-	
-	foreach($taxnames as $single=>$plural){
-		//Remove generic rules who break everything
-		unset($org_rules[$plural.'/(.+?)/?$']); 
-		unset($org_rules[$plural.'/(.+?)/page/?([0-9]{1,})/?$']);
-
-		$terms = get_terms( array(
-			'taxonomy' => $single.'type',
-			'hide_empty' => false,
-		) );
-		
-		//Also show items without category
-		$rules["$plural/_([^/]*)$"] = "index.php?post_type=$single&$single=\$matches[1]&name=\$matches[1]";
-
-		foreach ($terms as $term) {
-			
-			$term_slug = $term->slug;
-			
-			//Prepent parent if available
-			if($term->parent != 0){
-				$term_slug = get_term($term->parent, $single.'type')->slug.'/'.$term_slug;
-			}
-			
-			//Code below translates to: if the url is build like recipes/recipe type then get the content from blablabla
-			//We add a _ to the name so we know its a post and not a category
-			$rules["$plural/$term_slug/_([^/]*)$"] = "index.php?post_type=$single&$single=\$matches[1]&name=\$matches[1]";
-			
-			//Also make a rule for subcategory pages
-			$rules["$plural/($term_slug)/?$"]='index.php?locationtype=$matches[1]';
-
-			//add a rule for the main page
-			//$rules["$plural/([^/]*)$"] = "index.php?post_type=$single";
-		}
+	if ( 
+		empty($template)											or
+		(!empty($name)												and		// current posttype is an enabled post type
+		locate_template( array( "$type-$name.php" ) ) !== $template)	and	// and template is not found in theme folder
+		file_exists($template_file)											// template file exists
+	) {
+		//return plugin post template
+		return $template_file;
 	}
-	// merge with global rules
-	$wp_rewrite->rules = $rules+$org_rules;
-		
-	return $wp_rewrite->rules;
-});
+	
+	return $template;
+}
