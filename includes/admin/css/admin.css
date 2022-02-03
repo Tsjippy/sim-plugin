@@ -5,6 +5,10 @@
 	color: darkgreen;
 }
 
+.module-settings{
+    margin: 20px 20px 0px 0px;
+}
+
 .switch {
     position: relative;
     display: inline-block;

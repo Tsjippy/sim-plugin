@@ -115,8 +115,8 @@ function login_modal($message='', $required=false, $username=''){
 //add hidden login modal to page if not logged in
 add_filter( 'the_content', function ( $content ) {
 	if (!is_user_logged_in()){
-        if(!isset($_SESSION)) session_start();
-        $_SESSION['login_added']=true;
+        #if(!isset($_SESSION)) session_start();
+        #$_SESSION['login_added']=true;
         
         if(isset($_GET['showlogin'])){
             $content .= login_modal('', true, $_GET['showlogin']);
@@ -221,3 +221,16 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
     }
   return $items;
 }, 10, 2);
+
+//Redirect to frontpage for logged in users
+add_action( 'template_redirect', 'SIM\homepage_redirect' );
+function homepage_redirect(){
+	global $Modules;
+	if( is_front_page() && is_user_logged_in() ){
+        $url    = get_page_link($Modules['login']['home_page']);
+        if($url != current_url()){ 
+            wp_redirect(add_query_arg($_GET,$url));
+            exit();
+        }
+	}
+}

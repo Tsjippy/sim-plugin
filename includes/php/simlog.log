@@ -377,3 +377,192 @@ Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simniger
 23-01-2022 17:48 - Not sure which template to load for page
 Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 134
 23-01-2022 17:49 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 201
+23-01-2022 17:59 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 201
+23-01-2022 18:00 - cURL error 28: Failed to connect to us18.api.mailchimp.com port 443: Timed out (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://us18.api.mailchimp.com/3.0/lists?count=10&offset=0
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 64
+23-01-2022 18:03 - Succesfully scheduled create_vimeo_thumbnails to run daily
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\extra_post_types\php\add_post_type.php line 134
+23-01-2022 18:23 - Not sure which template to load for page
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\php\scheduled_functions.php line 64
+03-02-2022 09:48 - Succesfully scheduled create_vimeo_thumbnails to run daily
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms\php\formbuilder.php line 1351
+03-02-2022 09:49 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms/../js/dynamic/user_genericsforms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms\php\formbuilder.php line 1351
+03-02-2022 09:49 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms/../js/dynamic/user_locationforms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms\php\formbuilder.php line 1351
+03-02-2022 09:49 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms/../js/dynamic/user_familyforms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms\php\formbuilder.php line 1351
+03-02-2022 09:49 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms/../js/dynamic/user_visaforms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms\php\formbuilder.php line 1351
+03-02-2022 09:49 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms/../js/dynamic/understudy_1forms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms\php\formbuilder.php line 1351
+03-02-2022 09:49 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms/../js/dynamic/understudy_2forms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms\php\formbuilder.php line 1351
+03-02-2022 09:49 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms/../js/dynamic/security_questionsforms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms\php\formbuilder.php line 1351
+03-02-2022 09:49 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms/../js/dynamic/user_medicalforms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms\php\formbuilder.php line 1351
+03-02-2022 09:49 - D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\forms/../js/dynamic/child_genericforms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 09:50 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 09:50 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 09:50 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 09:51 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 09:52 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 09:53 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 09:53 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 09:54 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 10:02 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 10:06 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 10:06 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 10:10 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 379
+03-02-2022 10:21 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 381
+03-02-2022 10:22 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 381
+03-02-2022 10:25 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 381
+03-02-2022 10:30 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 391
+03-02-2022 10:32 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 391
+03-02-2022 10:34 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 391
+03-02-2022 10:34 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 391
+03-02-2022 10:34 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 10:35 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 10:36 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 391
+03-02-2022 10:41 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 391
+03-02-2022 10:49 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 393
+03-02-2022 10:50 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 393
+03-02-2022 10:51 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 393
+03-02-2022 10:52 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 393
+03-02-2022 10:52 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 394
+03-02-2022 10:54 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 394
+03-02-2022 10:55 - ajax_create_response: (ERROR)Challenge not found, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 391
+03-02-2022 10:56 - ajax_create_response: (ERROR)Wrong parameters, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 583
+03-02-2022 10:59 - ajax_auth_response: (ERROR)Challenge not found in transient, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:09 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:18 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:18 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\login\php\fingerprint.php line 582
+03-02-2022 11:36 - ajax_auth_response: (ERROR)Challenge not found in transient, exit
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:38 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:38 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:38 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:38 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:49 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:50 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:58 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:58 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 11:59 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 361
+03-02-2022 11:59 - Creating mailchimp campain
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 397
+03-02-2022 11:59 - Campain_id is 114ceb6dd4
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 426
+03-02-2022 11:59 - Mailchimp campain send succesfully
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\frontend_posting\php\frontend_posting.php line 514
+03-02-2022 12:00 - Removing post 9036
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:00 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:00 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:00 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:02 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:05 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:05 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:08 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:08 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:08 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:10 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 12:10 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 14:01 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 14:01 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 14:01 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 14:01 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 14:01 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 14:02 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 14:02 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 468
+03-02-2022 14:14 - Missing the required parameter $list_id when calling 
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 468
+03-02-2022 14:33 - Missing the required parameter $list_id when calling 
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 468
+03-02-2022 14:34 - Missing the required parameter $list_id when calling 
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 468
+03-02-2022 14:54 - Missing the required parameter $list_id when calling 
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 15:30 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 15:31 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 15:32 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\admin\php\admin_menu.php line 47
+03-02-2022 15:32 - Module page does not exist for module Js
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\custom-simnigeria-plugin\includes\modules\mailchimp\php\mailchimp.php line 468
+03-02-2022 15:51 - Missing the required parameter $list_id when calling 

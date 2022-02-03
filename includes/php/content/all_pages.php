@@ -33,7 +33,7 @@ add_filter( 'protected_title_format', function () {
 //Add a title section below the menu
 add_action('generate_after_header',function (){
 	global $post;
-	global $LoggedInHomePage;
+	global $Modules;
 	if($post){		
 		$title = $post->post_title;
 	}else{
@@ -59,7 +59,7 @@ add_action('generate_after_header',function (){
 	}
 	
 	//change title of all pages except the frontpage
-	if($title != 'Home' and !is_page($LoggedInHomePage)){
+	if($title != 'Home' and !is_page($Modules['login']['home_page'])){
 		//Display featured image in title if it has one
 		if ( has_post_thumbnail() and $title != "News" and !is_category() and !is_tax() and get_post_type() != 'recipe') {
 			echo '<div id="page-title-image" style="background-image: url('.get_the_post_thumbnail_url().');"></div>';

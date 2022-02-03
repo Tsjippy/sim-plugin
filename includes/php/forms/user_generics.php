@@ -25,8 +25,9 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	$changed_numbers	= array_diff($new_phonenumbers, $old_phonenumbers);
 	$first_name			= get_userdata($user_id)->first_name;
 	foreach($changed_numbers as $changed_number){
-		global $SignalGroupLink;
-		$message	= "Hi $first_name\n\nI noticed you just updated your phonenumber on simnigeria.org.\n\nIf you want to join our Signal group with this number you can use this url:\n$SignalGroupLink";
+		global $Modules;
+		$link		= $Modules['signal']['group_link'];
+		$message	= "Hi $first_name\n\nI noticed you just updated your phonenumber on simnigeria.org.\n\nIf you want to join our Signal group with this number you can use this url:\n$link";
 		send_signal_message($message, $changed_number);
 	}
 	

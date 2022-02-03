@@ -129,7 +129,9 @@ function get_template_file($template, $type, $templates){
 			$name			= get_queried_object()->taxonomy;
 			$dirname		= str_replace('type', '', $name);
 			$template_file	= "$base_dir/$dirname/$type-$name.php";
-			break;	
+			break;
+		case 'page';
+			break;
 		default:
 			print_array("Not sure which template to load for $type");
 	}

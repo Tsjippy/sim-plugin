@@ -3,10 +3,9 @@ namespace SIM;
 
 function show_dashboard($user_id, $admin=false){
 	if(!is_numeric($user_id)) return "<p>Invalid user id $user_id";
-	global $wpdb;
 	global $MinistrieIconID;
 	global $PostOutOfDataWarning;
-	global $PublishPostPage;
+	global $Modules;
 	
 	$html 		= '';
 	$userdata	= get_userdata($user_id);
@@ -87,7 +86,7 @@ function show_dashboard($user_id, $admin=false){
 		//If the page is not modified since the parameter
 		if ($page_age > $days ){
 			//Get the edit page url
-			$url = add_query_arg( ['post_id' => $post_id], get_permalink( $PublishPostPage ) );
+			$url = add_query_arg( ['post_id' => $post_id], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );
 
 			$post_age_warning_html .= '<li><a href="'.$url.'">'.$post_title.'</a></li>';
 		}

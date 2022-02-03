@@ -72,7 +72,7 @@ function schedule_task($taskname, $recurrence){
 //Whoever checked the box for that ministry on their account gets an email to remind them about the update
 function page_age_warning(){
 	global $PostOutOfDataWarning;
-	global $PublishPostPage;
+	global $Modules;
 	global $WebmasterName;
  
 	//Get all pages without the static content meta key
@@ -102,7 +102,7 @@ function page_age_warning(){
 		//If it is X days since last modified
 		if ($seconds_since_updated > $max_age_in_seconds){
 			//Get the edit page url
-			$url = add_query_arg( ['post_id' => $post_id], get_permalink( $PublishPostPage ) );
+			$url = add_query_arg( ['post_id' => $post_id], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );
 			
 			//Send an e-mail
 			$recipients = get_page_recipients($post_title);

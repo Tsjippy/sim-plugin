@@ -82,9 +82,8 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
             $meta[$publicKeyCredentialId] = $credential;
             update_user_meta($this->user_id,"2fa_webautn_cred_meta", serialize($meta));
 
-            //store temporary so that we now we did webauth
-            if(!isset($_SESSION)) session_start();
-            $_SESSION["webautn_id"] =  $publicKeyCredentialId;
+            //store temporary so that we know we did webauth
+            store_in_transient("webautn_id",$publicKeyCredentialId);
         }
     }
 
@@ -162,7 +161,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
                 $meta[$key]["user" ]    = $source;
             }else{
                 $meta[$key] = array(
-                    "identifier"    => $_SESSION["identifier"],
+                    "identifier"    => get_from_transient("identifier"),
                     "os_info"       => $this->get_os_info(),
                     "added"         => date('Y-m-d H:i:s', current_time('timestamp')), 
                     "user"          => $source, 
@@ -253,6 +252,21 @@ function get_rp_entity(){
     return $rpEntity;
 }
 
+function store_in_transient($key, $value){
+    #$value=serialize(base64_encode(serialize($value)));
+    #set_transient( $key, $value, 120 );
+
+    if(!isset($_SESSION)) session_start();
+    $_SESSION[$key] = $value;
+}
+
+function get_from_transient($key){
+    #return unserialize(base64_decode(unserialize(get_transient( $key))));
+
+    if(!isset($_SESSION)) session_start();
+    return $_SESSION[$key];
+}
+
 // Bind an authenticator
 function fingerprint_options(\WP_REST_Request $request){
     try{
@@ -326,11 +340,10 @@ function fingerprint_options(\WP_REST_Request $request){
             $authenticatorSelectionCriteria
         );
 
-        if(!isset($_SESSION)) session_start();
-        $_SESSION['pkcco']      = $publicKeyCredentialCreationOptions;
-        $_SESSION['userEntity'] = $userEntity;
-        $_SESSION['username']   = $user_info->user_login;
-        $_SESSION['identifier'] = $identifier;
+        store_in_transient('pkcco', $publicKeyCredentialCreationOptions);
+        store_in_transient('userEntity', $userEntity);
+        store_in_transient('username', $user_info->user_login);
+        store_in_transient('identifier', $identifier);
          
         header("Content-Type: application/json");
         $publicKeyCredentialCreationOptions = json_decode(json_encode($publicKeyCredentialCreationOptions), true);
@@ -370,9 +383,8 @@ function store_fingerprint(\WP_REST_Request $request){
         $user_info  = wp_get_current_user();
         $username   = $user_info->user_login;
 
-        if(!isset($_SESSION)) session_start();
-        $publicKeyCredentialCreationOptions     = $_SESSION['pkcco'];
-        $userEntity                             = $_SESSION['userEntity'];
+        $userEntity                             = get_from_transient('userEntity');
+        $publicKeyCredentialCreationOptions     = get_from_transient('pkcco');
 
         // May not get the challenge yet
         if(empty($publicKeyCredentialCreationOptions) or empty($userEntity)){
@@ -380,7 +392,7 @@ function store_fingerprint(\WP_REST_Request $request){
             wp_die("Bad request.", 500);
         }
 
-        if(strtolower($_SESSION['username']) !== strtolower($username)){
+        if(strtolower(get_from_transient('username')) !== strtolower($username)){
             print_array("ajax_create_response: (ERROR)Wrong parameters, exit");
             wp_die("Bad Request.", 500);
         }
@@ -454,13 +466,6 @@ function store_fingerprint(\WP_REST_Request $request){
         
         // Success
         echo json_encode(auth_table());
-
-        if(isset($_SESSION)){
-            // Destroy session
-            session_unset();
-            // destroy the session
-            session_destroy();
-        }
 
         exit();
     }catch(\Exception $exception){
@@ -536,11 +541,10 @@ function auth_start(\WP_REST_Request $request){
             );
 
             // Save for future use
-            if(!isset($_SESSION)) session_start();
-            $_SESSION["pkcco_auth"]     = $publicKeyCredentialRequestOptions;
-            $_SESSION["user_name_auth"] = $user_info->user_login;
-            $_SESSION["user_auth"]      = $userEntity;
-            $_SESSION["user_info"]      = $user_info;
+            store_in_transient("pkcco_auth", $publicKeyCredentialRequestOptions);
+            store_in_transient("user_name_auth", $user_info->user_login);
+            store_in_transient("user_auth", $userEntity);
+            store_in_transient("user_info", $user_info);
 
             header("Content-Type: application/json");
             $publicKeyCredentialRequestOptions = json_decode(json_encode($publicKeyCredentialRequestOptions), true);
@@ -572,11 +576,10 @@ function auth_finish(\WP_REST_Request $request){
             wp_die("Bad Request.", 500);
         }
 
-        if(!isset($_SESSION)) session_start();
-        $publicKeyCredentialRequestOptions  = $_SESSION["pkcco_auth"];
-        $user_name_auth                     = $_SESSION["user_name_auth"];
-        $userEntity                         = $_SESSION["user_auth"];
-        $user_info                          = $_SESSION["user_info"];
+        $publicKeyCredentialRequestOptions  = get_from_transient("pkcco_auth");
+        $user_name_auth                     = get_from_transient("user_name_auth");
+        $userEntity                         = get_from_transient("user_auth");
+        $user_info                          = get_from_transient("user_info");
 
         // May not get the challenge yet
         if(empty($publicKeyCredentialRequestOptions) or empty($user_name_auth) or empty($userEntity)){
@@ -633,6 +636,7 @@ function auth_finish(\WP_REST_Request $request){
             // Store last used
             $publicKeyCredentialSourceRepository->updateCredentialLastUsed($request->get_json_params()["rawId"]);
 
+            if(!isset($_SESSION)) session_start();
             $_SESSION['webauthn']   = 'success';
             echo "true";
         }catch(\Throwable $exception){

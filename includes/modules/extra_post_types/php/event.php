@@ -1,6 +1,10 @@
 <?php
 namespace SIM;
 
+// Only load if enabled
+global $Modules;
+if(!isset($Modules['extra_post_types']['event']))	return;
+
 class Events{
 	function __construct(){
 		global $wpdb;
@@ -429,9 +433,9 @@ class Events{
 
 	// Frontpage eventlist
 	function upcomingevents($atts){
-		global $LoggedInHomePage;
+		global $Modules;
 
-		if(!is_page($LoggedInHomePage)) return;
+		if(!is_page($Modules['login']['home_page'])) return;
 		$this->retrieve_events($startdate = date("Y-m-d"), $enddate = date('Y-m-d', strtotime('+3 month')), $amount = 10);
 
 		//do not list celebrations

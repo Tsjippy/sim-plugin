@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-global $PublishPostPage;
+global $Modules;
 global $CustomSimSettings;
 
 //Variable containing the current locations page we are on
@@ -66,7 +66,7 @@ get_header();
 					<div class="inside-article">
 						<div class="entry-content">
 							There are no locations submitted yet.
-							Add one <a href='<?php echo add_query_arg( ['type' => 'location'], get_permalink( $PublishPostPage ) );?>'>here</a>.
+							Add one <a href='<?php echo add_query_arg( ['type' => 'location'], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );?>'>here</a>.
 						</div>
 					</div>
 				</div>

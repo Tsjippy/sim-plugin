@@ -4,12 +4,14 @@ namespace SIM;
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	#if(strpos(get_site_url(), 'localhost') !== false)			return;
 	
 	global $Trello;
-
+	
 	//Check if we need to update the trello webhook
-	if(!empty($_POST['list']) and $_POST['list'] != $settings['list']){
-		$Trello->change_webhook_id($Trello->get_webhooks()[0]->id, $_POST['list']);
+	if(!empty($_POST['webhook_page']) and $_POST['webhook_page'] != $settings['webhook_page']){
+		$Trello->change_webhook_id($Trello->get_webhooks()[0]->id, $_POST['webhook_page']);
 	}
 
 	//Trello token has changed

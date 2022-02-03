@@ -2,6 +2,9 @@
 namespace SIM;
 
 function get_anniversaries(){
+	global $Modules;
+	if(!isset($Modules['extra_post_types']['event']))	return [];
+
 	global $Events;
 
 	$messages = [];

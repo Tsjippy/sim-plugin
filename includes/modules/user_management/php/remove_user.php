@@ -5,11 +5,10 @@ namespace SIM;
 add_action('delete_user', 'SIM\remove_user_data');
 function remove_user_data ($user_id){
 	global $wpdb;
-	global $MailchimpUserTAGs;
-	global $MailchimpMissionaryTAGs;
 	global $Events;
 	global $WebmasterName;
 	global $Maps;
+	global $Modules;
 	
 	$userdata		= get_userdata($user_id);
 	$displayname	= $userdata->display_name;
@@ -24,7 +23,7 @@ function remove_user_data ($user_id){
 	}
 	
 	//remove category from mailchimp
-	$tags = array_merge(explode(',',$MailchimpUserTAGs),explode(',',$MailchimpMissionaryTAGs));
+	$tags = array_merge(explode(',', $Modules['mailchimp']['user_tags']),explode(',',$Modules['mailchimp']['missionary_tags']));
 	$Mailchimp = new Mailchimp($user_id);
 	
 	$Mailchimp->change_tags($tags, 'inactive');

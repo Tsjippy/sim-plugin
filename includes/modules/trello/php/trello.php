@@ -3,20 +3,21 @@ namespace SIM;
 //Create token: https://trello.com/1/authorize?expiration=never&scope=read,write,account&response_type=token&name=Server%20Token&key=2fbe97b966e413fe5fc5eac889e2146a
 //https://developer.atlassian.com
 //https://developer.atlassian.com/cloud/trello/guides/rest-api/api-introduction/
+//https://developer.atlassian.com/cloud/trello/rest/
 
 // Get member info: https://api.trello.com/1/members/harmsenewald
 
 class Trello{
 	function __construct(){
-		global $TrelloApiKey;
-		global $TrelloApiToken;
+		global $Modules;
+		$this->settings		= $Modules['trello'];
 		
 		//Initialization
-		$this->api_key 		= $TrelloApiKey;
-		$this->api_token	= $TrelloApiToken;
+		$this->api_key 		= $this->settings['key'];
+		$this->api_token	= $this->settings['token'];
 		$this->query 		= array(
-			'key' 	=> $TrelloApiKey,
-			'token' => $TrelloApiToken
+			'key' 	=> $this->api_key,
+			'token' => $this->api_token
 		);
 		$this->headers = array(
 		  'Accept' => 'application/json'
@@ -214,9 +215,6 @@ class Trello{
 	
 	//Move card to another list
 	function move_card_to_list($card_id,$list_id){
-		global $TrelloApiKey;
-		global $TrelloApiToken;
-		
 		try{
 			$response = \Unirest\Request::put(
 				"https://api.trello.com/1/cards/$card_id?key={$this->api_key}&token={$this->api_token}&idList=$list_id"
@@ -239,9 +237,9 @@ class Trello{
 	function get_card_checklist($card_id){
 		try{
 			$response = \Unirest\Request::get(
-			"https://api.trello.com/1/cards/$card_id/checklists",
-			$this->headers,
-			$this->query
+				"https://api.trello.com/1/cards/$card_id/checklists",
+				$this->headers,
+				$this->query
 			);
 			
 			return $response->body;
@@ -260,9 +258,9 @@ class Trello{
 	//Create a checklist on a card
 	function create_checklist($card_id, $name){
 		try{
-			$query = $this->query;
-			$query['name'] = $name;
-			$query['pos'] = 'top';
+			$query 			= $this->query;
+			$query['name']	= $name;
+			$query['pos']	= 'top';
 			
 			$response = \Unirest\Request::post(
 				"https://api.trello.com/1/cards/$card_id/checklists",
@@ -450,7 +448,7 @@ class Trello{
 	//create a new webhooks
 	function create_webhook($url, $modelid, $description=''){
 		try{
-			$query = $this->query;
+			$query 					= $this->query;
 			$query['callbackURL']	= $url;
 			$query['idModel']		= $modelid;
 			$query['description']	= $description;
@@ -475,10 +473,12 @@ class Trello{
 	}
 	
 	//Change webhook id
-	function change_webhook_id($webhookid, $modelid){
+	function change_webhook_id($webhookid, $page_id){
 		try{
-			$response = \Unirest\Request::put(
-				"https://api.trello.com/1/webhooks/$webhookid?key={$this->api_key}&token={$this->api_token}&idModel=$modelid"
+			$url			= get_page_link($page_id);
+			$trello_user_id = $this->get_token_info()->id;
+			$response 		= \Unirest\Request::put(
+				"https://api.trello.com/1/webhooks/$webhookid?key={$this->api_key}&token={$this->api_token}&callbackURL={$url}&idModel=$trello_user_id"
 			);
 			
 			return $response->body;
@@ -553,9 +553,9 @@ class Trello{
 }
 
 //Only load trello in production
-if(strpos(get_site_url(), 'localhost') === false){
+#if(strpos(get_site_url(), 'localhost') === false){
 	$Trello = new Trello();
-}
+#}
 
 //Shortcode on the page which will be called by trello when something happens
 add_shortcode("trello_webhook",function(){

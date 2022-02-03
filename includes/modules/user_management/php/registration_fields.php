@@ -96,7 +96,7 @@ function user_register( $user_id ) {
 add_filter( 'wp_new_user_notification_email', 'new_user_notification_email', 10, 3 );
 function new_user_notification_email( $wp_new_user_notification_email, $user, $blogname ) {
 	global $WebmasterName;
-	global $PW_ResetPage;
+	global $Modules;
 
 	//Set variables
     $user_login = stripslashes( $user->user_login );
@@ -106,7 +106,7 @@ function new_user_notification_email( $wp_new_user_notification_email, $user, $b
 	if ($user_email != "" and strpos($user_email, '.empty') === false){
 		$user_name	= stripslashes( $user->display_name );
 		$reset_key	= get_password_reset_key($user);
-		$pageurl	= get_permalink($PW_ResetPage);
+		$pageurl	= get_permalink($Modules['login']['pw_reset_page']);
 		$login_url	= "$pageurl?key=$reset_key&login=$user_login";
 		
 		//Create message

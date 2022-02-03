@@ -9,8 +9,8 @@ function header_button(){
 	$second_btn_text = get_theme_mod( 'simnigeria_second_button_text', 'Second button text' );
 	$second_btn_link = get_theme_mod( 'simnigeria_second_button_link', '#' );
 
-	global $LoggedInHomePage;
-	if(is_page($LoggedInHomePage) or is_front_page()){
+	global $Modules;
+	if(is_page($Modules['login']['home_page']) or is_front_page()){
 		$html = '<div id="header_buttons">';
 		if (is_user_logged_in()){
 			$html .= '<a id="first_button" href="'.esc_url( get_site_url().$first_btn_link ).'" title="'.esc_attr( $first_btn_text ).'" class="btn btn-primary header_button" id="header_button1">'.esc_html( $first_btn_text ).'</a>';
@@ -23,9 +23,9 @@ function header_button(){
 
 add_action('generate_after_main_content','SIM\show_prayer');
 function show_prayer(){
-	global $LoggedInHomePage;
+	global $Modules;
 	//if on home page
-	if(is_page($LoggedInHomePage)){
+	if(is_page($Modules['login']['home_page'])){
 		$prayerrequest = prayer_request();
 		$prayer = '<article><div name="prayer_request" style="text-align: center; margin-left: auto; margin-right: auto; font-size: 18px; color:#999999; width:80%; max-width:800px;">
 						<h3  id="prayertitle">The prayer request of today:</h3>
@@ -45,11 +45,11 @@ function show_prayer(){
 add_action('generate_before_footer','SIM\blog_content');
 function blog_content() {
 	global $PublicCategoryID;
-	global $LoggedInHomePage;
+	global $Modules;
 	global $ConfCategoryID;
 	
 	//if on home page
-	if(is_page($LoggedInHomePage) or is_front_page()){
+	if(is_page($Modules['login']['home_page']) or is_front_page()){
 		//Show the ministry gallery
 		ministry_gallery();
 		$args                   = array('ignore_sticky_posts' => true,);
@@ -239,23 +239,13 @@ function ministry_gallery(){
 
 //Add the home class
 add_filter( 'body_class',function ( $classes ) {
-	global $LoggedInHomePage;
+	global $Modules;
 	
-	if(is_page($LoggedInHomePage) or is_front_page()){
+	if(is_page($Modules['login']['home_page']) or is_front_page()){
 		$classes[] = 'home';
 	}
     return $classes;
 });
-
-//Redirect to frontpage for logged in users
-add_action( 'template_redirect', 'SIM\homepage_redirect' );
-function homepage_redirect(){
-	global $LoggedInHomePage;
-	if( is_front_page() && is_user_logged_in() ){
-		wp_redirect(add_query_arg($_GET,get_page_link($LoggedInHomePage)));
-		exit();
-	}
-}
 
 //Add agenda button
 add_filter('dynamic_sidebar_params', function($params) {

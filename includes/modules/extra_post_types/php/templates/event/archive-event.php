@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-global $PublishPostPage;
+global $Modules;
 global $Events;
 
 $view = $_GET['view'];

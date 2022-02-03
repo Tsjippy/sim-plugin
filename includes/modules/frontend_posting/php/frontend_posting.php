@@ -88,7 +88,7 @@ class FrontEndContent{
 	}
 
 	function show_pending_posts($atts){
-		global $PublishPostPage;
+		global $Modules;
 		
 		//Get all the posts with a pending status
 		$args = array(
@@ -105,7 +105,7 @@ class FrontEndContent{
 			$html .= "<p><strong>Pending posts, pages and events:</strong><br><ul>";
 			//For each pending post add a link to edit the post
 			foreach ( $pending_posts as $pending_post ) {
-				$url = add_query_arg( ['post_id' => $pending_post->ID], get_permalink( $PublishPostPage ) );
+				$url = add_query_arg( ['post_id' => $pending_post->ID], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );
 				if ($url){
 					$html .= '<li>'.$pending_post->post_title.' <a href="'.$url.'">Review and publish</a></li>';
 				}
@@ -552,12 +552,13 @@ class FrontEndContent{
 	}
 
 	function add_page_edit_button(){
+		global $Modules;
 		$content = get_the_content();
 		
 		//Only show if logged in and not already on the post edit page and it is a single page, not a archive page
 		if (is_user_logged_in() and strpos($content,'[front_end_post]') === false and is_singular() and !is_tax()){
 			global $post;
-			global $PublishPostPage;
+			global $Modules;
 			global $PrayerCategoryID;
 			
 			$user = wp_get_current_user();
@@ -611,7 +612,7 @@ class FrontEndContent{
 				$type = $post->post_type;
 				$button_text = "Edit this $type";
 				
-				$url = add_query_arg( ['post_id' => $post_id], get_permalink( $PublishPostPage ) );
+				$url = add_query_arg( ['post_id' => $post_id], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );
 				echo "<a href='$url' class='button sim' id='pageedit'>$button_text</a>";
 			}
 		}
@@ -1221,7 +1222,7 @@ add_action('init', function(){
 });
 
 function send_pending_post_warning($post, $update){
-	global $PublishPostPage;
+	global $Modules;
 	global $WebmasterName;
 	
 	//Do not continue if already send
@@ -1241,7 +1242,7 @@ function send_pending_post_warning($post, $update){
 	$type = $post->post_type;
 	
 	//send notification to all content managers
-	$url = add_query_arg( ['post_id' => $post->ID], get_permalink( $PublishPostPage ) );
+	$url = add_query_arg( ['post_id' => $post->ID], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );
 	$author_name = get_userdata($post->post_author)->display_name;
 	
 	foreach($users as $user){
@@ -1324,7 +1325,7 @@ add_shortcode('your_posts',function(){
 	//load js
 	wp_enqueue_script('simnigeria_table_script');
 	
-	global $PublishPostPage;
+	global $Modules;
 	
 	//Get all posts for the current user
 	$post_types	= get_post_types(['public'=>true]);
@@ -1363,7 +1364,7 @@ add_shortcode('your_posts',function(){
 			if($status == 'Publish') $status = 'Published';
 			
 			$url 		= get_permalink($post);
-			$edit_url 	= add_query_arg( ['post_id' => $post->ID], get_permalink( $PublishPostPage ) );
+			$edit_url 	= add_query_arg( ['post_id' => $post->ID], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );
 			if($post->post_status == 'publish'){
 				$view = 'View';
 			}else{

@@ -63,37 +63,40 @@ function build_submenu(){
 	$module_name	= ucwords(str_replace(['_', '-'], ' ', $module_slug));
 	$settings		= $Modules[$module_slug];
 
-	if(isset($_POST['module'])){
-		?>
-		<div class='success'>
-			Settings succesfully saved
-		</div>
-		<?php
-	}
-	?>
-	<h1><?php echo $module_name;?> module</h1>
-	<form action="" method="post">
-		<input type='hidden' name='module' value='<?php echo $module_slug;?>'>
-		<?php 
-		do_action('sim_submenu_description', $module_slug, $module_name);
-		?>
-		Enable <?php echo $module_name;?> module 
-		<label class="switch">
-			<input type="checkbox" name="enable" <?php if($settings['enable']) echo 'checked';?>>
-			<span class="slider round"></span>
-		</label>
-		<br>
-		<br>
-		<div class='options' <?php if(!$settings['enable']) echo "style='display:none'";?>>
-			<?php 
-			do_action('sim_submenu_options', $module_slug, $module_name, $settings);
+	echo '<div class="module-settings">';
+
+		if(isset($_POST['module'])){
 			?>
-		</div>
+			<div class='success'>
+				Settings succesfully saved
+			</div>
+			<?php
+		}
+		?>
+		<h1><?php echo $module_name;?> module</h1>
+		<form action="" method="post">
+			<input type='hidden' name='module' value='<?php echo $module_slug;?>'>
+			<?php 
+			do_action('sim_submenu_description', $module_slug, $module_name);
+			?>
+			Enable <?php echo $module_name;?> module 
+			<label class="switch">
+				<input type="checkbox" name="enable" <?php if($settings['enable']) echo 'checked';?>>
+				<span class="slider round"></span>
+			</label>
+			<br>
+			<br>
+			<div class='options' <?php if(!$settings['enable']) echo "style='display:none'";?>>
+				<?php 
+				do_action('sim_submenu_options', $module_slug, $module_name, $settings);
+				?>
+			</div>
+			<br>
+			<br>
+			<input type="submit" value="Save <?php echo $module_name;?> options">
+		</form> 
 		<br>
-		<br>
-		<input type="submit" value="Save <?php echo $module_name;?> options">
-	</form> 
-	<br>
+	</div>
 	<?php
 }
 

@@ -7,7 +7,7 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	
 	?>
 	<label>
-		<input type='checkbox' name='tempuser' value='<?php if(isset($settings['tempuser'])) echo 'checked';?>'>
+		<input type='checkbox' name='tempuser' value='tempuser' <?php if(isset($settings['tempuser'])) echo 'checked';?>>
 		Enable temporary user accounts
 	</label>
 	<?php

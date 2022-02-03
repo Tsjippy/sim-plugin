@@ -42,12 +42,12 @@ add_action('wp_ajax_nopriv_request_pwd_reset', function(){
 //sends the password reset e-mail
 function send_password_reset_message($user){
 	global $WebmasterName;
-	global $PW_ResetPage;
+	global $Modules;
 
 	$key		 = get_password_reset_key($user);
 	if(is_wp_error($key)) return $key;
 
-	$pageurl	 = get_permalink($PW_ResetPage);
+	$pageurl	 = get_permalink($Modules['login']['pw_reset_page']);
 	$url		 = "$pageurl?key=$key&login=$user->user_login";
 
 	$message	 = "Hi $user->first_name<br>";

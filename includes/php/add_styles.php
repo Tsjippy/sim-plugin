@@ -18,7 +18,7 @@ add_filter( 'body_class', function( $classes ) {
 } );
 
 function enqueue_scripts($hook){
-	global $LoggedInHomePage;
+	global $Modules;
 	global $StyleVersion;
 	global $LoaderImageURL;
 	global $NigeriaStates;
@@ -99,7 +99,7 @@ function enqueue_scripts($hook){
 	//}
 	
     //Check if on the home page
-	if (is_front_page() or is_page($LoggedInHomePage)){
+	if (is_front_page() or is_page($Modules['login']['home_page'])){
 		//Add header image selected in customizer to homepage using inline css
 		$header_image_id	= get_theme_mod( 'simnigeria_header_image');
 		$header_image_url	= wp_get_attachment_url($header_image_id);
@@ -176,7 +176,7 @@ function inspect_script_styles() {
 add_action('wp_enqueue_scripts', 'SIM\disable_scripts_styles', 99999);
 function disable_scripts_styles() {
 	global $post;
-	global $LoggedInHomePage;
+	global $Modules;
 		
 	//Do no load these css files
 	$dequeue_styles = [];

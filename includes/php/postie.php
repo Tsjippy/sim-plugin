@@ -42,7 +42,6 @@ function postie_post($post, $headers) {
 
 add_filter('postie_post_after', 'SIM\postie_post_published');
 function postie_post_published($post){
-	global $PublishPostPage;
 	//Only send message if post is published
 	if($post['post_status'] == 'publish'){
 		//Send onesignal message

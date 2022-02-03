@@ -225,14 +225,9 @@ if($CustomSimSettings == false){
 	$FinanceCategoryID 			= $CustomSimSettings["financecategory"];
 	$MinistryCategoryID			= $CustomSimSettings["ministrycategory"];
 	$CompoundCategoryID			= $CustomSimSettings["compoundcategory"];
-	$LoggedInHomePage			= $CustomSimSettings["logged_in_home_page"];
 	$MissionariesPageID			= $CustomSimSettings["missionaries_page"];
 	$WelcomeMessagePageID		= $CustomSimSettings["welcome_page"];
-	$PublishPostPage			= $CustomSimSettings["publish_post_page"];
 	$ProfilePage				= $CustomSimSettings["profile_page"];
-	$PW_ResetPage				= $CustomSimSettings["pw_reset_page"];
-	$RegisterPage				= $CustomSimSettings["register_page"];
-	$SignalGroupLink			= $CustomSimSettings["signal_group_link"];
 	$PostOutOfDataWarning		= $CustomSimSettings["postoutofdatawarning"]; 	//Age in months on when a warning should be showed or send
 	$VaccinationExpiryWarning	= $CustomSimSettings["vaccinationoutofdatawarning"]; 	//Age in months on when a warning should be showed or send
 	$WebmasterName				= $CustomSimSettings["webmastername"]; 	//Used in registration_fields.php to sign the welcome e-mail
@@ -240,21 +235,7 @@ if($CustomSimSettings == false){
 	$HealthCoordinatorEmail		= $CustomSimSettings["medical_email"];  //Used for medical warning emails
 	$PersonnelCoordinatorEmail	= $CustomSimSettings["personnel_email"];
 	$STAEmail					= $CustomSimSettings["sta_email"];
-	$MailchimpAudienceIDs 		= $CustomSimSettings["mailchimp_audienceids"];
-	$MailchimpUserTAGs 			= $CustomSimSettings["mailchimp_user_tags"];
-	$MailchimpMissionaryTAGs	= $CustomSimSettings["mailchimp_missionary_tags"];
-	$MailchimpOfficeStaffTAGs	= $CustomSimSettings["mailchimp_office_staff_tags"];
-	$MailchimpApi				= $CustomSimSettings["mailchimpapi"];
-	if(!empty($CustomSimSettings["mailchimptemplateid"])){
-		$MailchimpTemplateID		= (int)$CustomSimSettings["mailchimptemplateid"];
-	}else{
-		$MailchimpTemplateID=0;
-	}
-	$TrelloApiKey				= $CustomSimSettings["trellopapikey"];
-	$TrelloApiToken				= $CustomSimSettings["trellopapitoken"];
-	$TrelloBoard				= $CustomSimSettings["trello_board"];
-	$TrelloList					= $CustomSimSettings["trello_list"];
-	$TrelloDestinationList		= $CustomSimSettings["trello_destination_list"];
+
 	//Get the current health coordinator
 	$HealtCoordinators 			= get_users( array( 'fields' => array( 'ID','display_name' ),'role' => 'medicalinfo' ));
 	if($HealtCoordinators != null){
