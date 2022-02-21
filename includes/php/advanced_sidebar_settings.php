@@ -32,7 +32,6 @@ add_action('init', function() {
 //Funcion to return the parent page is the advanced side bar menu
 function custom_top_page( $top_page_id, $widget_args, $widget_values, $menu_class ){
 	global $DirectionsPageID;
-	global $MinistriesPageID;
 	
 	if ( is_page() ) {
 		//Get the parent page id

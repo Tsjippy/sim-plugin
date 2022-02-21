@@ -2,8 +2,10 @@
 namespace SIM;
 
 function twofa_settings_form($user_id){
+	global $StyleVersion;
 	//Load js
-	wp_enqueue_script('simnigeria_2fa_script');
+	$url=plugins_url('js/2fa.js', __DIR__);
+	$result=wp_enqueue_script('2fa_script', $url, array('simnigeria_fingerprint_script'),$StyleVersion,true);
 
 	$secondfactor	= setupTimeCode();
 
@@ -12,7 +14,7 @@ function twofa_settings_form($user_id){
 
 	ob_start();
 	$twofa_methods	= (array)get_user_meta($user_id,'2fa_methods',true);
-	remove_from_nested_array($twofa_methods);
+	clean_up_nested_array($twofa_methods);
 
 	if($_GET['redirected']){
 		?>

@@ -42,6 +42,7 @@ class Fileupload{
 			$meta_values = get_option($base_meta_key);
 		}
 		
+		//get subvalue if needed
 		$meta_values = get_meta_array_value($this->user_id, $this->metakey, $meta_values);
 
 		if(is_array($meta_values)){
@@ -65,7 +66,7 @@ class Fileupload{
 			$class = '';
 		}else{
 			$multiple = '';
-			if($document_array != '') $class = "hidden";
+			if(!empty($document_array)) $class = "hidden";
 		}
 		
 		$this->html = '<div class="file_upload_wrap">';
@@ -119,6 +120,7 @@ class Fileupload{
 		}
 		
 		$this->html .= "<div class='document'>";
+			$this->html .= "<input type='hidden' name='{$this->metakey}[]' value='$document_path'>";
 
 		//Check if file is an image
 		if(getimagesize(url_to_path($url)) !== false) {
@@ -213,7 +215,7 @@ function upload_files(){
 				$i = 0;
 				$target_file = $targetdir.$file_name;
 				while (file_exists($target_file)) {
-/* 					// Set http header error
+ 					/*// Set http header error
 					header('HTTP/1.0 422 File exists');
 					// Return error message
 					die(json_encode(array('error' => "The file '$file_name' already exists."))); */
@@ -286,9 +288,6 @@ function upload_files(){
 //Make the remove_document function available via AJAX for logged-in users
 add_action ( 'wp_ajax_remove_document', 'SIM\remove_document' );
 function remove_document(){
-	print_array("File removal");
-	print_array($_POST);
-	
 	$callback = 'afterdocumentremove';
 	
 	if(!empty($_POST['url'])){
@@ -324,7 +323,8 @@ function remove_document(){
 			}
 			
 			//remove from array
-			if(is_array($meta_keys) and count($meta_keys)>0){ 
+			if(is_array($meta_keys) and count($meta_keys)>0){
+				
 				remove_from_nested_array($documents_array, $meta_keys);
 			}else{
 				$documents_array = '';
@@ -333,7 +333,7 @@ function remove_document(){
 			//Personnal document
 			if(is_numeric($user_id)){
 				//Store the array in db
-				update_user_meta( $user_id, $base_meta_key,$documents_array);
+				update_user_meta( $user_id, $base_meta_key, $documents_array);
 			//Generic document
 			}else{
 				//Save it in db

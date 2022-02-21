@@ -51,6 +51,7 @@ register_activation_hook( __FILE__, function(){
 
 	$formbuilder = new SIM\Formbuilder();
 	$formbuilder->create_db_submissions_table();
+	$formbuilder->create_db_table();
 
 	$formtable = new SIM\FormTable();
 	$formtable->create_db_shortcode_table();

@@ -6,7 +6,7 @@ add_action('loop_start',function(){
 	ob_start();
 });
 
-add_action('wp_footer',function(){
+add_action('wp_footer', function(){
 	global $PublicCategoryID;
 	global $ConfCategoryID;
 	global $MinistryCategoryID;
@@ -105,32 +105,10 @@ add_action('init', function (){
 
 //Only show public search results for non-loggedin users
 add_filter('pre_get_posts', function ($query) {
-	global $MinistriesPageID;
+	global $PublicCategoryID;
 	if ($query->is_search) {
 		if ( !is_user_logged_in() ) {
-			//Get all children of the ministries page
-			$ministry_pages = has_children($MinistriesPageID );
-			
-			//Loop over all children to see if they have children 
-			$ministry_pages_ids = [];
-			foreach ($ministry_pages as $ministry_page){
-				$children = has_children($ministry_page->ID);
-				if(is_array($children)){
-					//This page has children, add it to the array
-					$ministry_pages_ids[] = $ministry_page->ID;
-					//Loop over the children to see if they have children
-					foreach ($children as $child){
-						$grantchildren = has_children($child->ID);
-						if(is_array($grantchildren)){
-							//This page has children, add it to the array
-							$ministry_pages_ids[] = $child->ID;
-						}
-					}
-				}
-			}
-	
-			//Adjust the search query
-			$query->set('post_parent__in', $ministry_pages_ids);
+			$query->set('cat', $PublicCategoryID);
 		}
 	}
 	return $query;
@@ -155,5 +133,39 @@ add_filter( 'rest_authentication_errors', function( $result ) {
 		return $result;
     }else{
 		wp_die('You do not have permission for this.');
+	}
+});
+
+// Make partial page contents filterable
+add_shortcode( 'content_filter', function ( $atts = array(), $content = null ) {
+	$a = shortcode_atts( array(
+        'inversed' => false,
+		'roles' => "All",
+    ), $atts );
+	$inversed 		= $a['inversed'];
+	$allowed_roles 	= explode(',',$a['roles']);
+	$return = false;
+	
+    //Get the current user
+	$user = wp_get_current_user();
+	
+	//User is logged in
+	if(is_user_logged_in()){
+		if( in_array('All',$allowed_roles) or array_intersect($allowed_roles, $user->roles)) { 
+			// display content
+			$return = true;
+		}
+	}
+    
+	//If inversed
+	if($inversed){
+		//Swap the outcome
+		$return = !$return;
+	}
+	
+	//If return is true
+	if($return == true){
+		//return the shortcode content
+		return do_shortcode($content);
 	}
 });

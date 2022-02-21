@@ -182,3 +182,16 @@ add_filter('wp_mail',function($args){
 }, 10,1);
 
 add_action( 'init', function(){wp_deregister_script('heartbeat');}, 1 );
+
+
+//Remove the password protect of a page for logged in users
+add_filter( 'post_password_required', 
+	function( $returned, $post ){
+		// Override it for logged in users:
+		if( $returned && is_user_logged_in() )
+			$returned = false;
+
+		return $returned;
+	}
+	, 10, 2 
+);

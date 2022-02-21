@@ -157,11 +157,6 @@ if($CustomSimSettings == false){
 			'lon'=>'6.659996296'
 		],
 	];
-	$num_word_list = ['', 
-		'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eight', 'nineth', 'tenth', 
-		'eleventh','twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth','twentieth',
-		'teenth','twenty','thirty','fourty','fifty'
-	];
 	$QuotaNames				= [
 		'Administrative Workers',
 		'Allied Health Professionals',
@@ -210,10 +205,7 @@ if($CustomSimSettings == false){
 	$picturesurl				= plugins_url('',__DIR__).'/pictures';
 	$LoaderImageURL 			= $picturesurl.'/loading.gif';
 	$GenericUserInfoFields		= ["birthday","gender","privacy_preference","phonenumbers","user_ministries","arrival_date"];
-	$ChildrenCopyFields			= ["sending_office","local_nigerian","financial_account_id","account_statements","online_statements"]; //Fields of children who get their value from their parents
-	$FinanceDefaultImageID 		= get_theme_mod('financedefaultimage','');				//Other.php									
-	$NewsDefaultImageID 		= get_theme_mod('newsdefaultimage','');					//Other.php			
-	$PrayerDefaultImageID 		= get_theme_mod('prayerdefaultimage','');				//Other.php	
+	$ChildrenCopyFields			= ["sending_office","local_nigerian","financial_account_id","account_statements","online_statements"]; //Fields of children who get their value from their parents								
 	$EventDefaultImageID 		= get_theme_mod('eventdefaultimage','');				//Other.php
 	$TravelCoordinatorSignature	= get_attached_file( get_theme_mod('travelsignature',''));					
 	$PDF_Logo_path				= get_attached_file( get_theme_mod('pdflogo','') );

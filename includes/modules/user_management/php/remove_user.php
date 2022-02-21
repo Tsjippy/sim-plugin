@@ -5,7 +5,6 @@ namespace SIM;
 add_action('delete_user', 'SIM\remove_user_data');
 function remove_user_data ($user_id){
 	global $wpdb;
-	global $Events;
 	global $WebmasterName;
 	global $Maps;
 	global $Modules;
@@ -28,18 +27,11 @@ function remove_user_data ($user_id){
 	
 	$Mailchimp->change_tags($tags, 'inactive');
 
-	//Remove birthday events
-	$birthday_post_id = get_user_meta($user_id,'birthday_event_id',true);
-	if(is_numeric($birthday_post_id))	$Events->remove_db_rows($birthday_post_id);
-
-	$anniversary_id	= get_user_meta($user_id,'SIM Nigeria anniversary_event_id',true);
-	if(is_numeric($anniversary_id))	$Events->remove_db_rows($anniversary_id);
-
 	$family = family_flat_array($user_id);
 	//Only remove if there is no family
 	if (count($family) == 0){
 		//Remove missionary page
-		remove_missionary_page($user_id);
+		remove_user_page($user_id);
 
 		//Check if a personal marker exists for this user
 		$marker_id = get_user_meta($user_id,"marker_id",true);
@@ -97,7 +89,7 @@ function remove_user_data ($user_id){
 			}
 			
 			//Update
-			update_missionary_page_title($user_id, $title);
+			update_user_page_title($user_id, $title);
 			
 			//Check if a personal marker exists
 			$marker_id = get_user_meta($user_id,"marker_id",true);

@@ -6,11 +6,14 @@ class Formbuilder_Ajax extends Formbuilder{
 		// call parent constructor
 		parent::__construct();
 		
+		//Make function add_form availbale for AJAX request
+		add_action ( 'wp_ajax_add_form', array($this,'add_form'));
+
 		//Make function add_formfield availbale for AJAX request
 		add_action ( 'wp_ajax_add_formfield', array($this,'add_formfield'));
 		
 		//Make function remove_formfield availbale for AJAX request
-		add_action ( 'wp_ajax_remove_formfield', array($this,'remove_formfield'));
+		add_action ( 'wp_ajax_remove_formfield', array($this,'remove_element'));
 		
 		//Make function request_form_elements availbale for AJAX request
 		add_action ( 'wp_ajax_request_form_elements', array($this,'request_form_elements'));
@@ -38,183 +41,136 @@ class Formbuilder_Ajax extends Formbuilder{
 	}
 	
 	function add_formfield(){
+		global $wpdb;
+
 		verify_nonce('add_form_element_nonce');
+
+		$user	= wp_get_current_user();
 		
-		if(!empty($_POST['formname'])){
-			$this->datatype = $_POST['formname'];
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
-			$this->loadformdata();
-		}else{
-			wp_die('Invalid form name',500);
-		}
-	
-		$user_id = $_POST['userid'];
-		if(is_numeric($user_id)){
-			$user 		= get_userdata($user_id);
-			$user_roles = $user->roles;
-		}else{
-			wp_die('Invalid userid',500);
-		}
-		
-		if(in_array('contentmanager',$user_roles)){
-			$this->saveform_elements();
-		}else{
-			wp_die('You do not have the permission to do this',500);
-		}
-	}
-	
-	function saveform_elements(){
+		if(!in_array('contentmanager', $user->roles))	wp_die('You do not have the permission to do this',500);
+
+		if(!isset($_POST["formfield"])) wp_die('You did not submit any fields', 500);
+
 		//Store form results if submitted
-		if(isset($_POST["formfield"])){
-			$element		= $_POST["formfield"];
+		$element		= (object)$_POST["formfield"];
+		if(is_numeric($_POST['element_id'])){
+			$update	= true;
+		}else{
+			$update	= false;
+		}
+		
+		if($element->type == 'php'){
+			//we store the functionname in the html variable replace any double \ with a single \
+			$functionname 				= str_replace('\\\\','\\',$element->functionname);
+			$element->name			= $functionname;
+			$element->functionname	= $functionname;
 			
-			if($element['type'] == 'php'){
-				//we store the functionname in the html variable replace any double \ with a single \
-				$functionname 					= str_replace('\\\\','\\',$element['functionname']);
-				$element['name']			= $functionname;
-				$element['functionname']	= $functionname;
-				
-				//only continue if the function exists
-				if ( ! function_exists( $functionname ) ) wp_die("A function with name $functionname does not exist!",500);
-			}
-			
-			if(in_array($element['type'], ['label','button'])){
-				$element['name']	= $element['labeltext'];
-			}elseif($element['name'] == ''){
-				wp_die("Please enter a formfieldname",500);
-			}
+			//only continue if the function exists
+			if ( ! function_exists( $functionname ) ) wp_die("A function with name $functionname does not exist!",500);
+		}
+		
+		if(in_array($element->type, ['label','button'])){
+			$element->name	= $element->text;
+		}elseif($element->name == ''){
+			wp_die("Please enter a formfieldname",500);
+		}
 
-			$element['nicename']	= $element['name'];
-			$element['name']		= str_replace(" ","_",strtolower(trim($element['name'])));
+		$element->nicename	= $element->name;
+		$element->name		= str_replace(" ","_",strtolower(trim($element->name)));
 
-			if(
-				in_array($element['type'],$this->non_inputs) 	and //this is a non-input
-				$element['type'] != 'datalist'					and //but not a datalist
-				strpos($element['name'],$element['type']) === false	// and the type is not yet added to the name 
-			){
-				$element['name']	.= '_'.$element['type'];
-			}
+		if(
+			in_array($element->type,$this->non_inputs) 		and // this is a non-input
+			$element->type != 'datalist'					and // but not a datalist
+			strpos($element->name,$element->type) === false		// and the type is not yet added to the name 
+		){
+			$element->name	.= '_'.$element->type;
+		}
+		
+		//Give an unique name
+		if(strpos($element->name, '[]') === false and !$update){
+			$unique = false;
 			
-			//Give an unique name
-			if(strpos($element['name'], '[]') === false){
-				$unique = false;
-				
-				$i = '';
-				while($unique == false){
-					if($i == ''){
-						$fieldname = $element['name'];
-					}else{
-						$fieldname = "{$element['name']}_$i";
-					}
-					
-					$unique = true;
-					//loop over all elements to check if the names are equal
-					foreach($this->formdata->elements as $index=>$field){
-						//don't compare with itself
-						if(is_numeric($_POST['update']) and $index == $_POST['update']) continue;
-						//we found a duplicate name
-						if($fieldname == $field['name']){
-							$i++;
-							$unique = false;
-						}
-					}
-				}
-				//update the name
-				if($i != '') $element['name'] .= "_$i";
-			}
-
-			$element['infotext'] 	= wp_kses_post($element['infotext']);
-			$element['infotext']	= $this->deslash($element['infotext']);
-			
-			if(is_numeric($_POST['update'])){
-				$message								= "Succesfully updated '{$element['name']}'";
-				$index									= $_POST['update'];
-				//Add unique id again
-				$element['id']						= $this->formdata->form_elements[$index]['id'];
-				$this->formdata->form_elements[$index] 	= $element;
-				$callback								= 'update_form_element';
-			}else{
-				$message								= "Succesfully added '{$element['name']}' to this form";
-				
-				//there is alreay a element counter defined
-				if(is_numeric($this->formdata->element_counter)){
-					$this->formdata->element_counter+=1;
-				//no counter defined yet, start at 0
+			$i = '';
+			while($unique == false){
+				if($i == ''){
+					$fieldname = $element->name;
 				}else{
-					$this->formdata->element_counter = 0;
+					$fieldname = "{$element->name}_$i";
 				}
-				$element['id']						= $this->formdata->element_counter;
-
-				$this->formdata->form_elements[]		= $element;
-				$index									= count($this->formdata->form_elements)-1;
-				$callback								= 'after_form_element_submit';
+				
+				$unique = true;
+				//loop over all elements to check if the names are equal
+				foreach($this->formdata->elements as $index=>$field){
+					//don't compare with itself
+					if($update and $index == $_POST['element_id']) continue;
+					//we found a duplicate name
+					if($fieldname == $field['name']){
+						$i++;
+						$unique = false;
+					}
+				}
 			}
-			
+			//update the name
+			if($i != '') $element->name .= "_$i";
+		}
+
+		//Store info text in text column
+		if(in_array($element->type, ['info', 'p'])){
+			$element->text 	= wp_kses_post($element->infotext);
+			$element->text	= $this->deslash($element->text);
+		}
+		//do not store infotext
+		unset($element->infotext);
+
+		foreach($element as &$val){
+			if($val == "true") $val=true;
+		}
+		
+		if($update){
+			$message								= "Succesfully updated '{$element->name}'";
+			$element->id							= $_POST['element_id'];
+			$callback								= 'update_form_element';
+
+			$this->update_form_element($element);
+		}else{
+			$message								= "Succesfully added '{$element->name}' to this form";
+			$callback								= 'after_form_element_submit';
+
+			if(!is_numeric($_POST['insertafter'])){
+				$element->priority	= $wpdb->get_var( "SELECT COUNT(`id`) FROM `{$this->el_table_name}` WHERE `form_id`={$element->form_id}") +1;
+			}
+
+			$this->insert_element($element);
+
 			if(is_numeric($_POST['insertafter'])){
 				$index = $_POST['insertafter']+1;
-				$this->moveElement($this->formdata->form_elements,count($this->formdata->form_elements)-1,$index);
-			}
-			
-			$html = $this->buildhtml($element, $index);
 
-			$this->update_form_elements();
-			
-			echo json_encode([
-				'message'		=> $message,
-				'html'			=> $html,
-				'formid'		=> $this->datatype,
-				'callback'		=> $callback,
-				'index'			=> $index,
-			]);
-			wp_die();
-		}else{
-			wp_die('You did not submit any fields',500);
+				$this->reorder_elements(-1, $index, $element);
+			}
 		}
-	}
-	
-	function moveElement(&$array, $a, $b) {
-		if ($a == $b) return;
-		//$a is $fromIndex and $b is $toIndex
-		$out = array_splice($array, $a, 1);
-		array_splice($array, $b, 0, $out);
-	}
-	
-	function maybe_create_row(){
-		global $wpdb;
-		
-		//check if form row already exists
-		if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `form_name` = '{$this->datatype}'") != true){
-			//Create a new form row
-			print_array("Inserting new form in db");
 			
-			$result = $wpdb->insert(
-				$this->table_name, 
-				array(
-					'form_name'			=> $this->datatype,
-					'form_elements' 	=> '',
-					'form_conditions'	=> '',
-					'form_version' 		=> 0,
-					'element_counter'	=> 0
-				)
-			);
-		}
+		$html = $this->buildhtml($element, $index);
+		
+		echo json_encode([
+			'message'		=> $message,
+			'html'			=> $html,
+			'formname'		=> $_POST['formname'],
+			'callback'		=> $callback,
+			'index'			=> $index,
+		]);
+		wp_die();
 	}
-	
-	function update_form_elements(){
+
+	function update_priority($element){
 		global $wpdb;
-		
-		$this->maybe_create_row();
-		
+
 		//Update the database
-		$result = $wpdb->update($this->table_name, 
+		$result = $wpdb->update($this->el_table_name, 
 			array(
-				'form_elements' 	=> maybe_serialize($this->formdata->form_elements),
-				'form_conditions'	=> maybe_serialize($this->formdata->form_conditions),
-				'form_version' 		=> $this->formdata->form_version+1,
-				'element_counter'	=> $this->formdata->element_counter
+				'priority'	=> $element->priority
 			), 
 			array(
-				'form_name'		=> $this->datatype,
+				'id'		=> $element->id
 			),
 		);
 		
@@ -223,61 +179,194 @@ class Formbuilder_Ajax extends Formbuilder{
 		}
 	}
 	
-	function remove_formfield(){		
-		verify_nonce('remove_form_element_nonce');
+	function reorder_elements($old_priority, $new_priority, $element) {
+		if ($old_priority == $new_priority) return;
+
+		// Get all elements of this form
+		$this->get_all_form_elements('priority');
+
+		if(empty($element)){
+			foreach($this->form_elements as $el){
+				if($el->priority == $old_priority){
+					$element = $el;
+					break;
+				}
+			}
+		}
+
+		//No need to reorder if we are adding a new element at the end
+		if(count($this->form_elements) == $new_priority){
+			// First element is the element without priority
+			$el				= $this->form_elements[0];
+			$el->priority	= $new_priority;
+			$this->update_priority($el);
+			return;
+		}
 		
-		if(!empty($_POST['formname'])){
-			$this->datatype = $_POST['formname'];
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
-			$this->loadformdata();
-		}else{
-			wp_die('Invalid form name',500);
+		//Loop over all elements and give them the new priority
+		foreach($this->form_elements as $el){
+			if($el->name == $element->name){
+				$el->priority	= $new_priority;
+				$this->update_priority($el);
+			}elseif($old_priority == -1){
+				if($el->priority >= $new_priority){
+					$el->priority++;
+					$this->update_priority($el);
+				}
+			}elseif(
+				$old_priority > $new_priority	and 	//we are moving an element upward
+				$el->priority >= $new_priority	and		// current priority is bigger then the new prio
+				$el->priority < $old_priority			// current priority is smaller than the old prio
+			){
+				$el->priority++;
+				$this->update_priority($el);
+			}elseif(
+				$old_priority < $new_priority	and 	//we are moving an element downward
+				$el->priority > $old_priority	and		// current priority is bigger then the old prio
+				$el->priority < $new_priority			// current priority is smaller than the new prio
+			){
+				$el->priority--;
+				$this->update_priority($el);
+			}
 		}
+	}
+
+	//Function for AJAX call
+	function add_form(){
+		$this->datatype	= sanitize_text_field($_POST['form_name']);
+		if(empty($this->datatype)) wp_die('Invalid form name', 500);
+
+		$this->insert_form();
+
+		wp_die('Succesfully inserted the form');
+	}
+
+	function insert_form(){
+		global $wpdb;
+
+		$result = $wpdb->insert(
+			$this->table_name, 
+			array(
+				'name'			=> $this->datatype,
+				'version' 		=> 1
+			)
+		);
+		
+		if($wpdb->last_error !== ''){
+			wp_die($wpdb->print_error(),500);
+		}
+	}
+
+	function maybe_insert_form(){
+		global $wpdb;
+		
+		//check if form row already exists
+		if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `name` = '{$this->datatype}'") != true){
+			//Create a new form row
+			print_array("Inserting new form in db");
+			
+			$this->insert_form();
+		}
+	}
+
+	function insert_element($element){
+		global $wpdb;
+		
+		$result = $wpdb->insert(
+			$this->el_table_name, 
+			(array)$element
+		);
+	}
 	
-		if(is_numeric($_POST['elementindex'])){
-			global $wpdb;
-			
-			//store the fieldname for later use
-			$fieldname = $this->formdata->form_elements[$_POST['elementindex']]['name'];
-			
-			//Remove element from elements array
-			unset($this->formdata->form_elements[$_POST['elementindex']]);
-			
-			//Reorder array
-			$this->formdata->form_elements = array_values($this->formdata->form_elements);
-			
-			//Update the database
-			$this->update_form_elements();
-			
-			echo json_encode([
-				'message'		=> "Succesfully removed element $fieldname",
-				'formid'		=> $this->datatype,
-				'elementindex'	=> $_POST['elementindex'],
-				'callback'		=> 'removerow'
-			]);
-			wp_die();
-		}else{
-			wp_die('Invalid userid',500);
+	function update_form_element($element){
+		global $wpdb;
+		
+		//Update element
+		$result = $wpdb->update(
+			$this->el_table_name, 
+			(array)$element, 
+			array(
+				'id'		=> $element->id,
+			),
+		);
+
+		//Update form version
+		$result = $wpdb->update(
+			$this->table_name, 
+			['version'	=> $this->formdata->version+1], 
+			['id'		=> $this->formdata->id],
+		);
+		
+		if($wpdb->last_error !== ''){
+			wp_die($wpdb->print_error(),500);
 		}
+	}
+	
+	function remove_element(){
+		global $wpdb;
+
+		verify_nonce('remove_form_element_nonce');
+
+		$element_id	= $_POST['elementindex'];		
+		if(!is_numeric($element_id))	wp_die('Invalid element id',500);
+
+		$wpdb->delete(
+			$this->el_table_name,      
+			['id' => $element_id],           
+		);
+
+		// Fix priorities
+		// Get all elements of this form
+		$this->get_all_form_elements('priority');
+		
+		//Loop over all elements and give them the new priority
+		foreach($this->form_elements as $key=>$el){
+			if($el->priority != $key+1){
+				//Update the database
+				$result = $wpdb->update($this->el_table_name, 
+					array(
+						'priority'	=> $key+1
+					), 
+					array(
+						'id'		=> $el->id
+					),
+				);
+				
+				if($wpdb->last_error !== ''){
+					wp_die($wpdb->print_error(),500);
+				}
+			}
+		}
+
+		echo json_encode([
+			'message'		=> "Succesfully removed the element",
+			'formid'		=> $_POST['formid'],
+			'elementindex'	=> $element_id,
+			'callback'		=> 'removerow'
+		]);
+		wp_die();
 	}
 	
 	function request_form_elements(){		
 		verify_nonce('request_form_element_nonce');
 		
-		$element_index = $_POST['elementindex'];
+		$form_id = $_POST['formid'];
+		if(!is_numeric($form_id)) wp_die("Invalid form id given",500);
+
+		$element_id = $_POST['elementid'];
+		if(!is_numeric($element_id)) wp_die("Invalid element index given",500);
 		
-		if(!is_numeric($element_index)) wp_die("Invalid element index given",500);
+		$this->loadformdata($form_id);
 		
-		$this->datatype = $_POST['formname'];
-		$this->loadformdata();
-		
-		$condition_html = $this->element_conditions_form($element_index);
+		$condition_html = $this->element_conditions_form($element_id);
+
+		$element		= $this->getelementbyid($element_id);
 		
 		echo json_encode([
 			'message'			=> "",
-			'formid'			=> $this->datatype,
-			'element_id'		=> $element_index,
-			'original'			=> $this->formdata->form_elements[$element_index],
+			'formid'			=> $form_id,
+			'element_id'		=> $element_id,
+			'original'			=> $element,
 			'callback'			=> 'prefillforminput',
 			'conditions_html'	=> $condition_html
 		]);
@@ -287,62 +376,38 @@ class Formbuilder_Ajax extends Formbuilder{
 	function reorder_form_elements(){
 		verify_nonce('remove_form_element_nonce');
 		
-		$element_index = $_POST['elementindex'];
+		$old_index 	= $_POST['old_index'];
+		$new_index	= $_POST['new_index'];
 		
-		if(!is_numeric($element_index)) wp_die("Invalid element index given",500);
+		if(!is_numeric($old_index)) wp_die("Invalid element index given",500);
+		if(!is_numeric($new_index)) wp_die("Invalid new element index given",500);
 		
-		$this->datatype = $_POST['formname'];
-		$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
-		$this->loadformdata();
+		$this->reorder_elements($old_index, $new_index, '');
 		
-		if(is_numeric($_POST['newIndex'])){
-			$this->moveElement($this->formdata->form_elements,$element_index,$_POST['newIndex']);
-			
-			//Update the database
-			$this->update_form_elements();
-			
-			echo json_encode([
-				'message'	=> "Succesfully saved new form order",
-				'callback'	=> 'fixindexes',
-				'formid'	=> $this->datatype,
-			]);
-			wp_die();
-		}else{
-			wp_die("Invalid to index given",500);
-		}
+		wp_die(json_encode([
+			'message'	=> "Succesfully saved new form order",
+			'callback'	=> 'after_reorder',
+			'formid'	=> $_POST['formname'],
+		]));
 	}
 	
 	function edit_formfield_width(){		
 		verify_nonce('remove_form_element_nonce');
 		
-		$element_index = $_POST['elementindex'];
-		if(!is_numeric($element_index)) wp_die("Invalid element index given",500);
+		$element_id 	= $_POST['elementid'];
+		if(!is_numeric($element_id)) wp_die("Invalid element id given",500);
+		$element		= $this->getelementbyid($element_id);
 		
-		$newwidth = $_POST['formfield']['width'];
+		$newwidth 		= $_POST['new_width'];
 		if(!is_numeric($newwidth)) wp_die("Invalid width given",500);
-		$newwidth = min($newwidth,100);
+		$element->width = min($newwidth,100);
 		
-		$this->datatype = $_POST['formname'];
-		$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
-		$this->loadformdata();
+		$this->update_form_element($element);
 		
-		$old_width = $this->formdata->form_elements[$element_index]['with'];
-		$this->formdata->form_elements[$element_index]['width']	= $newwidth;
-		
-		$html = $this->formdata->form_elements[$element_index]['html'];
-		$html = str_replace("style='width:$old_width%;'","style='width:$newwidth%;'",$html);
-		$this->formdata->form_elements[$element_index]['html'] = $html;
-		
-		//Update db
-		$this->update_form_elements();
-		
-		echo json_encode([
+		wp_die(json_encode([
 			'message'	=> "Succesfully updated formelement width to $newwidth%",
-			'formid'	=> $this->datatype,
-			'callback'	=> 'hide_modals',
-			'index'		=> $element_index
-		]);
-		wp_die();
+			'callback'	=> 'hide_modals'
+		]));
 	}
 
 	function request_form_conditions_html(){
@@ -353,7 +418,6 @@ class Formbuilder_Ajax extends Formbuilder{
 		if(!is_numeric($element_index)) wp_die("Invalid element index given",500);
 		
 		$this->datatype = $_POST['formname'];
-		$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 		$this->loadformdata();
 		
 		$condition_html = $this->element_conditions_form($element_index);
@@ -370,38 +434,40 @@ class Formbuilder_Ajax extends Formbuilder{
 	function save_element_conditions(){
 		verify_nonce('element_condition_nonce');
 
-		$element_index = $_POST['element_id'];
-		if(!is_numeric($element_index)) wp_die("Invalid element index given",500);
+		$element_id = $_POST['element_id'];
+		if(!is_numeric($element_id)) wp_die("Invalid element id given",500);
+
+		$form_id	= $_POST['formid'];
+		if(!is_numeric($form_id)) wp_die("Invalid form id given",500);
 		
-		$this->datatype = $_POST['formname'];
-		$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
-		$this->loadformdata();
+		$this->loadformdata($form_id);
 		
-		$element = $this->formdata->form_elements[$element_index];
-		if(!is_array($this->formdata->form_conditions)) $this->formdata->form_conditions = [];
+		$element = $this->getelementbyid($element_id);
 		
 		$element_conditions	= $_POST['element_conditions'];
 		if(empty($element_conditions)){
-			unset($this->formdata->form_conditions[$element['id']]);
+			$element->conditions	= '';
 			
-			$message = "Succesfully removed all conditions for {$element['name']}";
+			$message = "Succesfully removed all conditions for {$element->name}";
 		}else{
-			$this->formdata->form_conditions[$element['id']] = $element_conditions;
+			$element->conditions = serialize($element_conditions);
 			
-			$message = "Succesfully updated conditions for {$element['name']}";
+			$message = "Succesfully updated conditions for {$element->name}";
 		}
+
+		$this->update_form_element($element);
 		
 		//Create new js
 		$this->create_js();
 		
 		//Update db
-		$this->update_form_elements();
+		//$this->update_form_elements();
 		
 		wp_die(
 			json_encode([
 				'message'	=> $message,
 				'formid'	=> $this->datatype,
-				'index'		=> $element_index,
+				'index'		=> $element_id,
 				'callback'	=> '',
 			])
 		);
@@ -412,7 +478,6 @@ class Formbuilder_Ajax extends Formbuilder{
 		
 		if(!empty($_POST['formname'])){
 			$this->datatype = $_POST['formname'];
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 			$this->loadformdata();
 		}else{
 			wp_die('Invalid form name',500);
@@ -423,14 +488,14 @@ class Formbuilder_Ajax extends Formbuilder{
 		//remove double slashes
 		$form_settings['upload_path']	= str_replace('\\\\','\\',$form_settings['upload_path']);
 		
-		$this->maybe_create_row();
+		$this->maybe_insert_form();
 		
 		$wpdb->update($this->table_name, 
 			array(
 				'settings' 	=> maybe_serialize($form_settings)
 			), 
 			array(
-				'form_name'		=> $this->datatype,
+				'name'		=> $this->datatype,
 			),
 		);
 		
@@ -446,7 +511,6 @@ class Formbuilder_Ajax extends Formbuilder{
 		
 		if(!empty($_POST['formname'])){
 			$this->datatype = $_POST['formname'];
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 			$this->loadformdata();
 		}else{
 			wp_die('Invalid form name',500);
@@ -458,13 +522,13 @@ class Formbuilder_Ajax extends Formbuilder{
 			$form_emails[$index]['message'] = $this->deslash($email['message']);
 		}
 		
-		$this->maybe_create_row();
+		$this->maybe_insert_form();
 		$wpdb->update($this->table_name, 
 			array(
 				'emails'	 	=> maybe_serialize($form_emails)
 			), 
 			array(
-				'form_name'		=> $this->datatype,
+				'name'		=> $this->datatype,
 			),
 		);
 		
@@ -477,18 +541,15 @@ class Formbuilder_Ajax extends Formbuilder{
 
 	function save_form_input(){
 		global $wpdb;
+
+		$form_id	= $_POST['formid'];
+		if(!is_numeric($form_id))	wp_die('Invalid form id',500);
 		
-		if(!empty($_POST['formname'])){
-			$this->datatype = $_POST['formname'];
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
-			$this->loadformdata();
-			$this->create_db_submissions_table();
-		}else{
-			wp_die('Invalid form name',500);
-		}
+		$this->loadformdata($form_id);
 		
+		$this->user_id	= 0;
 		if(is_numeric($_POST['userid'])){
-			//If we have the right to save the form for someone else
+			//If we are submitting for someone else and we do not have the right to save the form for someone else
 			if(array_intersect($this->user_roles,$this->submit_roles) === false and $this->user->ID != $_POST['userid']){
 				wp_die('You do not have permission to save data for user with id '.$_POST['userid'],500);
 			}else{
@@ -539,6 +600,7 @@ class Formbuilder_Ajax extends Formbuilder{
 			$wpdb->insert(
 				$this->submissiontable_name, 
 				array(
+					'form_id'			=> $form_id,
 					'timecreated'		=> $creation_date,
 					'timelastedited'	=> $creation_date,
 					'userid'			=> $this->user_id,
@@ -563,7 +625,7 @@ class Formbuilder_Ajax extends Formbuilder{
 			foreach($this->formresults as $key=>$result){
 				//remove empty elements from the array
 				if(is_array($result)){
-					remove_from_nested_array($result);
+					clean_up_nested_array($result);
 					$this->formresults[$key]	= $result;
 				}
 				//update in the _users table
@@ -577,14 +639,7 @@ class Formbuilder_Ajax extends Formbuilder{
 					if(empty($result)){
 						delete_user_meta($this->user_id,$key);
 					}else{
-						//we are updating an arrayed value. Make sure we only update what we have values for
-						if(is_array($result)){
-						 	$org_data	= get_user_meta($this->user_id,$key, true);
-							if(!is_array($org_data)) $org_data=[];
-							update_user_meta($this->user_id,$key,array_replace_recursive($org_data, $result));
-						}else{
-							update_user_meta($this->user_id,$key,$result);
-						}
+						update_user_meta($this->user_id,$key,$result);
 					}
 				}
 			}
@@ -632,7 +687,7 @@ class Formbuilder_Ajax extends Formbuilder{
 		}
 	}
 	
-	function element_conditions_form($element_index = -1){
+	function element_conditions_form($element_id = -1){
 		/* 		
 		A field can have one or more conditions applied to it like:
 			1) hide when field X is Y
@@ -655,11 +710,10 @@ class Formbuilder_Ajax extends Formbuilder{
 		
 		It is also stored at the conditional fields to be able to create efficient JavaScript
 		*/
-		
-		$element_id	= $this->formdata->form_elements[$element_index]['id'];
-		if($element_index == -1 or !is_array($this->formdata->form_conditions[$element_id])){
-			if(!is_array($this->formdata->form_conditions)) $this->formdata->form_conditions = [];
 
+		$element	= $this->getelementbyid($element_id);
+
+		if($element_id == -1 or empty($element->conditions)){
 			$dummyfieldcondition['rules'][0]["conditional_field"]	= "";
 			$dummyfieldcondition['rules'][0]["equation"]				= "";
 			$dummyfieldcondition['rules'][0]["conditional_field_2"]	= "";
@@ -668,23 +722,20 @@ class Formbuilder_Ajax extends Formbuilder{
 			$dummyfieldcondition["action"]					= "";
 			$dummyfieldcondition["target_field"]			= "";
 			
-			if($element_index == -1) $element_index			= 0;
-			$this->formdata->form_conditions[$element_id] = [$dummyfieldcondition];
+			if($element_id == -1) $element_id			= 0;
+			$element->conditions = [$dummyfieldcondition];
 		}
 		
-		$conditions = $this->formdata->form_conditions[$element_id];
+		$conditions = maybe_unserialize($element->conditions);
 		
 		ob_start();
 		$counter = 0;
-		foreach($this->formdata->form_conditions as $key=>$condition){
-			if(is_array($condition['copyto']) and in_array($element_id,$condition['copyto'])){
-				$index	= $this->formdata->element_mapping[$key];
-				$name	= str_replace('_',' ',$this->formdata->form_elements[$index]['name']);
-
+		foreach($this->form_elements as $el){
+			if(in_array($element_id, (array)unserialize($el->conditions)['copyto'])){
 				$counter++;
 				?>
-				<div class="form_element_wrapper" data-id="<?php echo $index;?>" data-formname="<?php echo $this->datatype;?>">
-					<button type="button" class="edit_form_element button" title="Jump to conditions element">View conditions of '<?php echo $name;?>'</button>
+				<div class="form_element_wrapper" data-id="<?php echo $el->id;?>" data-formid="<?php echo $this->formdata->id;?>">
+					<button type="button" class="edit_form_element button" title="Jump to conditions element">View conditions of '<?php echo $el->name;?>'</button>
 				</div>
 				<?php
 			}
@@ -714,9 +765,9 @@ class Formbuilder_Ajax extends Formbuilder{
 			<h3>Form element conditions</h3>
 			<input type='hidden' class='element_condition' name='action' value='save_element_conditions'>
 			
-			<input type='hidden' class='element_condition' name='formname' value='<?php echo $this->datatype;?>'>
+			<input type='hidden' class='element_condition' name='formid' value='<?php echo $this->formdata->id;?>'>
 			
-			<input type='hidden' class='element_condition' name='element_id' value='<?php echo $element_index;?>'>
+			<input type='hidden' class='element_condition' name='element_id' value='<?php echo $element_id;?>'>
 			
 			<input type='hidden' class='element_condition' name='element_condition_nonce' value='<?php echo wp_create_nonce('element_condition_nonce'); ?>'>
 			
@@ -737,7 +788,7 @@ class Formbuilder_Ajax extends Formbuilder{
 					
 						<select class='element_condition condition_select conditional_field' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][conditional_field]' required>
 						<?php
-							echo $this->input_dropdown($rule['conditional_field'], $element_index);
+							echo $this->input_dropdown($rule['conditional_field'], $element_id);
 						?>
 						</select>
 
@@ -771,7 +822,7 @@ class Formbuilder_Ajax extends Formbuilder{
 						<span class='<?php echo $hidden;?> condition_form conditional_field_2'>
 							<select class='element_condition condition_select' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][conditional_field_2]'>
 							<?php
-								echo $this->input_dropdown($rule['conditional_field_2'],$element_index);
+								echo $this->input_dropdown($rule['conditional_field_2'],$element_id);
 							?>
 							</select>
 						</span>
@@ -858,7 +909,7 @@ class Formbuilder_Ajax extends Formbuilder{
 						<label for='property'> property to the value of </label>
 						
 						<select class='element_condition condition_select' name='element_conditions[<?php echo $condition_index;?>][property_value]'>
-						<?php echo $this->input_dropdown($condition['property_value'], $element_index);?>
+						<?php echo $this->input_dropdown($condition['property_value'], $element_id);?>
 						</select><br>
 					</div>
 				</div>
@@ -877,18 +928,18 @@ class Formbuilder_Ajax extends Formbuilder{
 					Check the fields these conditions should apply to as well,<br>
 					This holds only for visibility conditions (show, hide or toggle).<br><br>
 					<?php
-					foreach($this->formdata->form_elements as $key=>$element){
+					foreach($this->form_elements as $key=>$element){
 						//do not show the current element itself or wrapped labels
-						if($key != $element_index and empty($element['wrap'])){
-							if(!empty($conditions['copyto'][$element['id']])){
+						if($element->id != $element_id and empty($element->wrap)){
+							if(!empty($conditions['copyto'][$element->id])){
 								$checked = 'checked';
 							}else{
 								$checked = '';
 							}
 							
 							echo "<label>";
-								echo "<input type='checkbox' name='element_conditions[copyto][{$element['id']}]' value='{$element['id']}' $checked>";
-								echo ucfirst(str_replace('_',' ',$element['name']));
+								echo "<input type='checkbox' name='element_conditions[copyto][{$element->id}]' value='{$element->id}' $checked>";
+								echo ucfirst(str_replace('_',' ',$element->name));
 							echo "</label><br>";
 						}
 					}

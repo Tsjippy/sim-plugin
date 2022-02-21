@@ -1,20 +1,29 @@
 <?php
 namespace SIM;
 
+if(!trait_exists('SIM\create_js')){
+	require_once(__DIR__.'/js_builder.php');
+}
+
 class Formbuilder{
+	use create_js;
+
 	function __construct(){
 		global $wpdb;
 		$this->isformstep				= false;
+		$this->is_multi_step_form		= '';
 		$this->formstepcounter			= 0;
-		$this->submissiontable_prefix	= $wpdb->prefix . 'simnigeria_form_submissions';
-		$this->table_name				= $wpdb->prefix . 'simnigeria_forms';
-		$this->create_db_table();
+		$this->submissiontable_name		= $wpdb->prefix . 'sim_form_submissions';
+		$this->table_name				= $wpdb->prefix . 'sim_forms';
+		$this->el_table_name			= $wpdb->prefix . 'sim_form_elements';
 		$this->non_inputs				= ['label','button','datalist','formstep','info','p','php','multi_start','multi_end'];
 		$this->multi_inputs_html		= [];
 
 		$this->user 		= wp_get_current_user();
 		$this->user_roles	= $this->user->roles;
 		$this->user_id		= $this->user->ID;
+
+		$this->create_db_table();
 
 		//calculate full form rights
 		if(array_intersect(['contentmanager'],$this->user_roles) != false){
@@ -41,7 +50,7 @@ class Formbuilder{
 		);
 		
 		global $StyleVersion;
-		$plugins['insert_form_shortcode']		= plugins_url("../js/tiny_mce_action.js?ver=$StyleVersion", __DIR__);
+		$plugins['insert_form_shortcode']		= plugins_url("../../js/tiny_mce_action.js?ver=$StyleVersion", __DIR__);
 		
 		return $plugins;
 	}
@@ -49,15 +58,15 @@ class Formbuilder{
 	function form_select(){
 		$this->get_forms();
 		
-		$this->form_names				= [];
+		$this->names				= [];
 		foreach($this->forms as $form){
-			$this->form_names[]			= $form->form_name;
+			$this->names[]			= $form->name;
 		}
 		
 		$html = "<select name='form_selector'>";
 		$html .= "<option value=''>---</option>";
-		foreach ($this->form_names as $form_name){
-			$html .= "<option value='$form_name'>$form_name</option>";
+		foreach ($this->names as $name){
+			$html .= "<option value='$name'>$name</option>";
 		}
 		$html .= "</select>";
 		
@@ -81,19 +90,45 @@ class Formbuilder{
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 
+		//Main table
 		$sql = "CREATE TABLE {$this->table_name} (
 		  id mediumint(9) NOT NULL AUTO_INCREMENT,
-		  form_name tinytext NOT NULL,
-		  form_elements longtext NOT NULL,
-		  form_conditions longtext NOT NULL,
-		  form_version text NOT NULL,
-		  settings text NOT NULL,
-		  emails text NOT NULL,
-		  element_counter int NOT NULL,
+		  name tinytext NOT NULL,
+		  version text NOT NULL,
+		  settings text,
+		  emails text,
 		  PRIMARY KEY  (id)
 		) $charset_collate;";
 
 		maybe_create_table($this->table_name, $sql );
+
+		// Form element table
+		$sql = "CREATE TABLE {$this->el_table_name} (
+			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			form_id int NOT NULL,
+			type text NOT NULL,
+			priority int,
+			width int default 100,
+			functionname text,
+			name text,
+			nicename text,
+			text text,
+			html text,
+			valuelist text,
+			default_value text,
+			default_array_value text,
+			options text,
+			required boolean default False,
+			mandatory boolean default False,
+			recommended boolean default False,
+			wrap boolean default False,
+			hidden boolean default False,
+			multiple boolean default False,
+		  	conditions longtext,
+			PRIMARY KEY  (id)
+		  ) $charset_collate;";
+  
+		maybe_create_table($this->el_table_name, $sql );
 		
 		add_option( "forms_db_version", "1.0" );
 	}
@@ -110,6 +145,7 @@ class Formbuilder{
 
 		$sql = "CREATE TABLE {$this->submissiontable_name} (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			form_id	int NOT NULL,
 			timecreated datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 			timelastedited datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 			userid mediumint(9) NOT NULL,
@@ -134,7 +170,6 @@ class Formbuilder{
 			);
 			
 			$this->datatype 	= strtolower(sanitize_text_field($atts['datatype']));
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 			$this->shortcode_id	= $atts['id'];
 			
 			if(is_numeric($atts['userid'])){
@@ -143,36 +178,60 @@ class Formbuilder{
 		}
 	}
 	
-	function getelementbyid($id,$key=''){
+	function getelementbyid($id, $key=''){
 		//load if needed
 		if(empty($this->formdata->element_mapping)) $this->loadformdata();
 		
 		$elementindex	= $this->formdata->element_mapping[$id];
 					
-		$element		= $this->formdata->form_elements[$elementindex];
+		$element		= $this->form_elements[$elementindex];
 		
 		if(empty($key)){
 			return $element;
 		}else{
-			return $element[$key];
+			return $element->$key;
 		}
 	}
-		
-	function loadformdata(){
+
+	function get_all_form_elements($sort_col = ''){
 		global $wpdb;
-		
-		$query				= "SELECT * FROM {$this->table_name} WHERE form_name= '".$this->datatype."'";
-		
-		$this->formdata 	=  (object)$wpdb->get_results($query)[0];
-		
-		$this->formdata->form_elements		= maybe_unserialize($this->formdata->form_elements);
-		//used to find the index of an element based on its unique id
-		$this->formdata->element_mapping	= [];
-		foreach($this->formdata->form_elements as $index=>$element){			
-			$this->formdata->element_mapping[$element['id']]	= $index;
+
+		if($this->formdata and is_numeric($this->formdata->id)){
+			$form_id	= $this->formdata->id;
+		}elseif(isset($_POST['formfield']['form_id'])){
+			$form_id	= $_POST['formfield']['form_id'];
+		}elseif(isset($_POST['formid'])){
+			$form_id	= $_POST['formid'];
 		}
+
+		// Get all form elements
+		$query						= "SELECT * FROM {$this->el_table_name} WHERE form_id= '$form_id'";
+
+		if(!empty($sort_col))	$query .= " ORDER BY {$this->el_table_name}.`$sort_col` ASC";
+		$this->form_elements 		=  $wpdb->get_results($query);
+	}
 		
-		$this->formdata->form_conditions	= maybe_unserialize($this->formdata->form_conditions);
+	function loadformdata($form_id=''){
+		global $wpdb;
+
+		if(is_numeric($_POST['formid'])) $form_id	= $_POST['formid'];
+		
+		// Get the form data
+		$query				= "SELECT * FROM {$this->table_name} WHERE ";
+		if(is_numeric($form_id)){
+			$query	.= "id= '$form_id'";
+		}else{
+			$query	.= "name= '$this->datatype'";
+		}
+		$this->formdata 	=  (object)$wpdb->get_results($query)[0];
+
+		$this->get_all_form_elements('priority');
+		
+		//used to find the index of an element based on its unique id
+ 		$this->formdata->element_mapping	= [];
+		foreach($this->form_elements as $index=>$element){			
+			$this->formdata->element_mapping[$element->id]	= $index;
+		}
 		
 		if(empty($this->formdata->settings)){
 			$settings['succesmessage']			= "";
@@ -221,15 +280,27 @@ class Formbuilder{
 		
 		if($wpdb->last_error !== '')		print_array($wpdb->print_error());
 		
-		$this->jsfilename	= plugin_dir_path(__DIR__)."../js/dynamic/{$this->datatype}forms.js";
+		$this->jsfilename	= plugin_dir_path(__DIR__)."js/dynamic/{$this->formdata->name}forms";
+	}
+
+	function is_multi_step(){
+		if(empty($this->is_multi_step_form)){
+			foreach($this->form_elements as $el){
+				if($el->type == 'formstep'){
+					$this->is_multi_step_form	= true;
+					return true;
+				}
+			}
+
+			$this->is_multi_step_form	= false;
+			return false;
+		}else{
+			return $this->is_multi_step_form;
+		}
 	}
 	
 	function get_submission_data($user_id=null, $submission_id=null){
 		global $wpdb;
-
-		if(!isset($this->submissiontable_name)){
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
-		}
 		
 		$query				= "SELECT * FROM {$this->submissiontable_name} WHERE";
 		if(is_numeric($submission_id)){
@@ -282,34 +353,34 @@ class Formbuilder{
 	function get_element_html($element, $replace=true, $width=100){
 		$html = '';
 		
-		if($element['type'] == 'p'){
-			$html = wp_kses_post($element['infotext']);
-			$html = "<div name='{$element['name']}'>".$this->deslash($html)."</div>";
-		}elseif($element['type'] == 'php'){
+		if($element->type == 'p'){
+			$html = wp_kses_post($element->text);
+			$html = "<div name='{$element->name}'>".$this->deslash($html)."</div>";
+		}elseif($element->type == 'php'){
 			//we store the functionname in the html variable replace any double \ with a single \
-			$functionname 						= str_replace('\\\\','\\',$element['functionname']);
+			$functionname 						= str_replace('\\\\','\\',$element->functionname);
 			//only continue if the function exists
 			if (function_exists( $functionname ) ){
 				$html	= $functionname($this->user_id);
 			}else{
 				$html	= "php function '$functionname' not found";
 			}
-		}elseif(in_array($element['type'], ['multi_start','multi_end'])){
+		}elseif(in_array($element->type, ['multi_start','multi_end'])){
 			$html 		= "";
-		}elseif(!empty($element['infotext'])){
+		}elseif(in_array($element->type, ['info'])){
 			//remove any paragraphs
-			$content = str_replace('<p>','',$element['infotext']);
+			$content = str_replace('<p>','',$element->text);
 			$content = str_replace('</p>','',$content);
 			$content = $this->deslash($content);
 			
-			$html = "<div class='infobox' name='{$element['name']}'>";
+			$html = "<div class='infobox' name='{$element->name}'>";
 				$html .= '<div style="float:right">';
 					$html .= '<p class="info_icon"><img draggable="false" role="img" class="emoji" alt="ℹ" src="'. plugins_url().'/custom-simnigeria-plugin/includes/pictures/info.png"></p>';
 				$html .= '</div>';
 				$html .= "<span class='info_text'>$content</span>";
 			$html .= '</div>';
-		}elseif(in_array($element['type'], ['file','image'])){
-			$name		= $element['name'];
+		}elseif(in_array($element->type, ['file','image'])){
+			$name		= $element->name;
 			$targetdir	= $this->formdata->settings['upload_path'];
 			if(empty($targetdir)) $targetdir = 'form_uploads/'.$this->formdata->settings['formname'];
 			
@@ -323,28 +394,28 @@ class Formbuilder{
 			//Load js
 			wp_enqueue_script('simnigeria_fileupload_script');
 			
-			$uploader = new Fileupload($user_id, $name,$targetdir,$element['multiple'],$metakey);
+			$uploader = new Fileupload($user_id, $name,$targetdir,$element->multiple,$metakey);
 			
 			$html = $uploader->get_upload_html();
 		}else{
 			/*
 				ELEMENT TAG NAME
 			*/
-			if(in_array($element['type'],['formstep','info'])){
+			if(in_array($element->type,['formstep','info'])){
 				$el_type	= "div";
-			}elseif(in_array($element['type'],array_merge($this->non_inputs,['select','textarea']))){
-				$el_type	= $element['type'];
+			}elseif(in_array($element->type,array_merge($this->non_inputs,['select','textarea']))){
+				$el_type	= $element->type;
 			}else{
-				$el_type	= "input type='{$element['type']}'";
+				$el_type	= "input type='{$element->type}'";
 			}
 			
 			/* 				
 				ELEMENT NAME
 			 */
 			//Get the field name, make it lowercase and replace any spaces with an underscore
-			$el_name	= $element['name'];
+			$el_name	= $element->name;
 			// [] not yet added to name
-			if(in_array($element['type'],['radio','checkbox']) and strpos($el_name, '[]') === false) {
+			if(in_array($element->type,['radio','checkbox']) and strpos($el_name, '[]') === false) {
 				$el_name .= '[]';
 			}
 			
@@ -352,7 +423,7 @@ class Formbuilder{
 				ELEMENT ID
 			*/
 			//datalist needs an id to work
-			if($element['type'] == 'datalist'){
+			if($element->type == 'datalist'){
 				$el_id	= "id='$el_name'";
 			}
 			
@@ -360,7 +431,7 @@ class Formbuilder{
 				ELEMENT CLASS
 			*/
 			$el_class = " class='formfield";
-			switch($element['type']){
+			switch($element->type){
 				case 'label':
 					$el_class .= " formfieldlabel";
 					break;
@@ -377,9 +448,9 @@ class Formbuilder{
 			/*
 				ELEMENT OPTIONS
 			*/
-			if(!empty($element['options'])){
+			if(!empty($element->options)){
 				//Store options in an array
-				$options	= explode("\n", $element['options']);
+				$options	= explode("\n", $element->options);
 				$el_options	= '';
 				
 				//Loop over the options array
@@ -405,14 +476,14 @@ class Formbuilder{
 			/*
 				BUTTON TYPE
 			*/
-			if($element['type'] == 'button'){
+			if($element->type == 'button'){
 				$el_options	.= " type='button'";
 			}
 			/*
 				ELEMENT VALUE
 			*/
 			$values	= $this->get_field_values($element);
-			if($this->multiwrap or !empty($element['multiple'])){
+			if($this->multiwrap or !empty($element->multiple)){
 				if(strpos($el_type,'input') !== false){
 					$el_value	= "value='%value%'";
 				}
@@ -435,25 +506,25 @@ class Formbuilder{
 				ELEMENT TAG CONTENTS
 			*/
 			$el_content = "";
-			if($element['type'] == 'textarea'){
+			if($element->type == 'textarea'){
 				$el_content = $values['metavalue'][0];
-			}elseif(!empty($element['labeltext'])){
-				switch($element['type']){
+			}elseif(!empty($element->text)){
+				switch($element->type){
 					case 'formstep':
-						$el_content = "<h3>{$element['labeltext']}</h3>";
+						$el_content = "<h3>{$element->text}</h3>";
 						break;
 					case 'label':
-						$el_content = "<h4 class='labeltext'>{$element['labeltext']}</h4>";;
+						$el_content = "<h4 class='labeltext'>{$element->text}</h4>";;
 						break;
 					case 'button':
-						$el_content = $element['labeltext'];
+						$el_content = $element->text;
 						break;
 					default:
-						$el_content = "<label class='labeltext'>{$element['labeltext']}</label>";
+						$el_content = "<label class='labeltext'>{$element->text}</label>";
 				}
 			}
 			
-			switch($element['type']){
+			switch($element->type){
 				case 'select':
 					$el_content .= "<option value=''>---</option>";
 					$options	= $this->get_field_options($element);
@@ -481,7 +552,7 @@ class Formbuilder{
 					
 					$low_values	= [];
 					
-					$default_key				= $element['default_value'];
+					$default_key				= $element->default_value;
 					if(!empty($default_key)){
 						$low_values[]	= strtolower($this->default_values[$default_key]);
 					}
@@ -517,22 +588,22 @@ class Formbuilder{
 			}
 			
 			//close the field
-			if(in_array($element['type'],['select','textarea','button','datalist'])){
-				$el_close	= "</{$element['type']}>";
+			if(in_array($element->type,['select','textarea','button','datalist'])){
+				$el_close	= "</{$element->type}>";
 			}else{
 				$el_close	= "";
 			}
 			
 			//only close a label field if it is not wrapped
-			if($element['type'] == 'label' and empty($element['wrap'])){
+			if($element->type == 'label' and empty($element->wrap)){
 				$el_close	= "</label>";
 			}
 			
 			/*
 				ELEMENT MULTIPLE
 			*/
-			if(!empty($element['multiple'])){
-				if($element['type'] == 'select'){
+			if(!empty($element->multiple)){
+				if($element->type == 'select'){
 					$html	= "<$el_type  name='$el_name' $el_id $el_class $el_options>";
 				}else{
 					$html	= "<$el_type  name='$el_name' $el_id $el_class $el_options value='%value%'>$el_content$el_close";
@@ -572,12 +643,12 @@ class Formbuilder{
 	function get_field_values($element){
 		$values	= [];
 
-		if(in_array($element['type'],$this->non_inputs)) return [];
+		if(in_array($element->type,$this->non_inputs)) return [];
 
 		$this->build_defaults_array();
 
 		//get the fieldname, remove [] and split on remaining [
-		$fieldname	= str_replace(']','',explode('[',str_replace('[]','',$element['name'])));
+		$fieldname	= str_replace(']','',explode('[',str_replace('[]','',$element->name)));
 		
 		//retrieve meta values if needed
 		if(!empty($this->formdata->settings['save_in_meta'])){
@@ -607,13 +678,13 @@ class Formbuilder{
 		}
 		
 		//add default values
-		if(empty($element['multiple']) or in_array($element['type'], ['select','checkbox'])){
-			$default_key				= $element['default_value'];
+		if(empty($element->multiple) or in_array($element->type, ['select','checkbox'])){
+			$default_key				= $element->default_value;
 			if(!empty($default_key)){
 				$values['defaults']		= $this->default_values[$default_key];
 			}
 		}else{
-			$default_key				= $element['default_array_value'];
+			$default_key				= $element->default_array_value;
 			if(!empty($default_key)){
 				$values['defaults']		= $this->default_array_values[$default_key];
 			}
@@ -625,7 +696,7 @@ class Formbuilder{
 	function get_field_options($element){
 		$options	= [];
 		//add element values
-		$el_values	= explode("\n",$element['valuelist']);
+		$el_values	= explode("\n",$element->valuelist);
 		
 		if(!empty($el_values[0])){
 			foreach($el_values as $key=>$value){
@@ -650,7 +721,7 @@ class Formbuilder{
 			asort($options);
 		}
 		
-		$default_array_key				= $element['default_array_value'];
+		$default_array_key				= $element->default_array_value;
 		if(!empty($default_array_key)){
 			$options	= (array)$this->default_array_values[$default_array_key]+$options;
 		}
@@ -662,7 +733,7 @@ class Formbuilder{
 		if($this->multiwrap or !is_numeric($key)){
 			if(is_numeric($key)){
 				//Check if element needs to be hidden
-				if(!empty($element['hidden'])){
+				if(!empty($element->hidden)){
 					$hidden = ' hidden';
 				}else{
 					$hidden = '';
@@ -670,9 +741,9 @@ class Formbuilder{
 				
 				//if the current element is required or this is a label and the next element is required
 				if(
-					!empty($element['required'])	or
-					$element['type'] == 'label'		and
-					$this->next_element['required']
+					!empty($element->required)	or
+					$element->type == 'label'		and
+					$this->next_element->required
 				){
 					$hidden .= ' required';
 				}
@@ -680,17 +751,17 @@ class Formbuilder{
 				$element_html = $this->get_element_html($element);
 				
 				//close the label element after the field element
-				if($this->wrap and !isset($element['wrap'])){
+				if($this->wrap and !isset($element->wrap)){
 					$element_html .= "</div>";
 					if($this->wrap == 'label'){
 						$element_html .= "</label>";
 					}
 					$this->wrap = false;
 				}elseif(!$this->wrap){
-					if($element['type'] == 'info'){
+					if($element->type == 'info'){
 						$element_html .= "<div class='inputwrapper$hidden info'>";
 					}else{
-						if(!empty($element['wrap'])){
+						if(!empty($element->wrap)){
 							$class	= 'flex';
 						}else{
 							$class	= '';
@@ -699,7 +770,7 @@ class Formbuilder{
 					}
 				}
 				
-				if(in_array($element['type'],$this->non_inputs)){	
+				if(in_array($element->type,$this->non_inputs)){	
 					//Get the field values of the next element as this does not have any
 					$values		= $this->get_field_values($this->next_element);
 				}else{
@@ -714,17 +785,17 @@ class Formbuilder{
 				
 				if(
 					$this->wrap == false								and
-					isset($element['wrap'])								and 							//we should wrap around next element
-					is_array($this->next_element)						and 							// and there is a next element
-					!in_array($this->next_element['type'], ['select','php','formstep'])	// and the next element type is not a select or php element
+					isset($element->wrap)								and 			//we should wrap around next element
+					is_object($this->next_element)						and 			// and there is a next element
+					!in_array($this->next_element->type, ['select','php','formstep'])	// and the next element type is not a select or php element
 				){
-					$this->wrap = $element['type'];
+					$this->wrap = $element->type;
 				}
 			//key is not numeric so we are dealing with a multi input field
 			}else{
 				//add label to each entry if prev element is a label and wrapped with this one
-				if($this->prev_element['type']	== 'label' and !empty($this->prev_element['wrap'])){
-					$this->prev_element['labeltext'] = $this->prev_element['labeltext'].' %key%';
+				if($this->prev_element->type	== 'label' and !empty($this->prev_element->wrap)){
+					$this->prev_element->text = $this->prev_element->text.' %key%';
 					$prev_label = $this->get_element_html($this->prev_element).'</label>';
 				}else{
 					$prev_label	= '';
@@ -747,7 +818,7 @@ class Formbuilder{
 				$html	= preg_replace("/(name='.*?)'/i", "\${1}[$index]'", $element_html);
 				
 				//we are dealing with a select, add options
-				if($element['type'] == 'select'){
+				if($element->type == 'select'){
 					$html .= "<option value=''>---</option>";
 					$options	= $this->get_field_options($element);
 					foreach($options as $option_key=>$option){
@@ -760,7 +831,7 @@ class Formbuilder{
 					}
 
 					$html  .= "</select>";
-				}elseif(in_array($element['type'], ['radio','checkbox'])){
+				}elseif(in_array($element->type, ['radio','checkbox'])){
 					$options	= $this->get_field_options($element);
 
 					//make key and value lowercase
@@ -801,7 +872,7 @@ class Formbuilder{
 				if(!is_numeric($key)){
 					$this->multi_inputs_html[$index] .= "<div class='clone_div' data-divid='$index'>";
 				}
-				if($this->prev_element['type'] == 'multi_start'){
+				if($this->prev_element->type == 'multi_start'){
 					$this->multi_inputs_html[$index] .= "<div class='clone_div' data-divid='$index' style='display:flex'>";
 					$this->multi_inputs_html[$index] .= "<div class='multi_input_wrapper'>";
 				}
@@ -813,7 +884,7 @@ class Formbuilder{
 					$this->multi_inputs_html[$index] .= "<div class='buttonwrapper' style='width:100%; display: flex;'>";
 				}
 				
-				if($element['type'] == 'label'){
+				if($element->type == 'label'){
 					$nr		= $index+1;
 					$html	= str_replace('</h4>'," $nr</h4>",$html);
 				}
@@ -821,14 +892,14 @@ class Formbuilder{
 				$this->multi_inputs_html[$index] .= $html;
 				
 				//end, write the buttons and closing div
-				if(!is_numeric($key) or $this->next_element['type'] == 'multi_end'){
+				if(!is_numeric($key) or $this->next_element->type == 'multi_end'){
 					//close any label first before adding the buttons
 					if($this->wrap == 'label'){
 						$this->multi_inputs_html[$index] .= "</label>";
 					}
 					
 					//close select
-					if($element['type'] == 'select'){
+					if($element->type == 'select'){
 						$this->multi_inputs_html[$index] .= "</select>";
 					}
 					
@@ -848,14 +919,14 @@ class Formbuilder{
 	
 	function buildhtml($element, $key=0){
 		global $LoaderImageURL;
-		$this->prev_element		= $this->formdata->form_elements[$key-1];
-		$this->next_element		= $this->formdata->form_elements[$key+1];
+		$this->prev_element		= $this->form_elements[$key-1];
+		$this->next_element		= $this->form_elements[$key+1];
 
 		if(
-			!empty($this->next_element['multiple']) and // if next element is a multiple
-			$this->next_element['type'] != 'file' 	and // next element is not a file
-			$element['type'] == 'label'				and // and this is a label
-			!empty($element['wrap'])				and // and the label is wrapped around the next element
+			!empty($this->next_element->multiple) and // if next element is a multiple
+			$this->next_element->type != 'file' 	and // next element is not a file
+			$element->type == 'label'				and // and this is a label
+			!empty($element->wrap)				and // and the label is wrapped around the next element
 			!isset($_GET['formbuilder']) 			and	// and we are not building the form
 			!wp_doing_ajax()							// and we are not doing a AJAX call
 		){
@@ -866,13 +937,13 @@ class Formbuilder{
 		$this->current_element			= $element;
 				
 		//Set the element width to 85 percent so that the info icon floats next to it
-		if($key != 0 and $this->prev_rendered_element['type'] == 'info'){
+		if($key != 0 and $this->prev_rendered_element->type == 'info'){
 			$width = 85;
 		//We are dealing with a label which is wrapped around the next element
-		}elseif($element['type'] == 'label'	and !isset($element['wrap']) and is_numeric($this->next_element['width'])){
-			$width = $this->next_element['width'];
-		}elseif(is_numeric($element['width'])){
-			$width = $element['width'];
+		}elseif($element->type == 'label'	and !isset($element->wrap) and is_numeric($this->next_element->width)){
+			$width = $this->next_element->width;
+		}elseif(is_numeric($element->width)){
+			$width = $element->width;
 		}else{
 			$width = 100;
 		}
@@ -881,7 +952,7 @@ class Formbuilder{
 		$element_html = $this->get_element_html($element,true,$width);
 		
 		//Check if element needs to be hidden
-		if(!empty($element['hidden'])){
+		if(!empty($element->hidden)){
 			$hidden = ' hidden';
 		}else{
 			$hidden = '';
@@ -889,32 +960,32 @@ class Formbuilder{
 		
 		//if the current element is required or this is a label and the next element is required
 		if(
-			!empty($element['required'])	or
-			$element['type'] == 'label'		and
-			$this->next_element['required']
+			!empty($element->required)	or
+			$element->type == 'label'		and
+			$this->next_element->required
 		){
 			$hidden .= ' required';
 		}
 		
 		//Add form edit controls if needed
 		if($this->editrights == true and (isset($_GET['formbuilder']) or wp_doing_ajax())){
-			$html = "<div class='form_element_wrapper' data-id='$key' data-formname='{$this->datatype}' style='display: flex;'>";
+			$html = "<div class='form_element_wrapper' data-id='{$element->id}' data-formname='{$this->datatype}' data-formid='{$this->formdata->id}' data-priority='{$element->priority}' style='display: flex;'>";
 				$html .= "<span class='movecontrol formfieldbutton' aria-hidden='true'>:::</span>";
 				$html .= "<div class='resizer_wrapper'>";
-					if($element['type'] == 'info'){
+					if($element->type == 'info'){
 						$html .= "<div class='show inputwrapper$hidden'>";
 					}else{
 						$html .= "<div class='resizer show inputwrapper$hidden' data-widthpercentage='$width' style='width:$width%;'>";
 					}
 					
-					if($element['type'] == 'formstep'){
+					if($element->type == 'formstep'){
 						$html .= ' ***formstep element***</div>';
-					}elseif($element['type'] == 'datalist'){
+					}elseif($element->type == 'datalist'){
 						$html .= ' ***datalist element***';
-					}elseif($element['type'] == 'multi_start'){
+					}elseif($element->type == 'multi_start'){
 						$html .= ' ***multi answer start***';
 						$element_html	= '';
-					}elseif($element['type'] == 'multi_end'){
+					}elseif($element->type == 'multi_end'){
 						$html .= ' ***multi answer end***';
 						$element_html	= '';
 					}
@@ -922,7 +993,7 @@ class Formbuilder{
 					
 					$html .= $element_html;
 						//Add a star if this field has conditions
-						if(is_array($this->formdata->form_conditions[$element['id']])){
+						if(!empty($element->conditions)){
 							$html .= "<div class='infobox'>";
 								$html .= "<span class='conditions_info formfieldbutton'>*</span>";
 								$html .= "<span class='info_text conditions' style='margin:-20px 10px;'>This element has conditions</span>";
@@ -939,7 +1010,7 @@ class Formbuilder{
 		}else{
 			$html	= '';
 			//write a formstep div
-			if($element['type'] == 'formstep'){
+			if($element->type == 'formstep'){
 				//if there is already a formstep wrtten close that one first
 				if($this->isformstep == true){
 					$html .= "</div>";
@@ -951,10 +1022,10 @@ class Formbuilder{
 				
 				$this->formstepcounter	+= 1;
 				$html .= $element_html;
-			}elseif($element['type'] == 'multi_end'){
+			}elseif($element->type == 'multi_end'){
 				$this->multiwrap	= false;
 				//write down all the multi html
-				$name	= str_replace('end','start',$element['name']);
+				$name	= str_replace('end','start',$element->name);
 				$html  .= "<div class='clone_divs_wrapper' name='$name'>";
 				foreach($this->multi_inputs_html as $multihtml){
 					$html .= $multihtml;
@@ -970,10 +1041,10 @@ class Formbuilder{
 				//wrap an element and a folowing field in the same wrapper
 				// so only write a div if the wrap property is not set
 				if(!$this->wrap){
-					if($element['type'] == 'info'){
+					if($element->type == 'info'){
 						$html = "<div class='inputwrapper$hidden info'>";
 					}else{
-						if(!empty($element['wrap'])){
+						if(!empty($element->wrap)){
 							$class	= 'flex';
 						}else{
 							$class	= '';
@@ -983,7 +1054,7 @@ class Formbuilder{
 				}
 				
 				$html .= $element_html;
-				if($element['type'] == 'multi_start'){
+				if($element->type == 'multi_start'){
 					$this->multiwrap				= true;
 					
 					//we are wrapping so we need to find the max amount of filled in fields
@@ -991,11 +1062,11 @@ class Formbuilder{
 					$this->multi_wrap_value_count	= 1;
 					//loop over all consequent wrapped elements
 					while(true){
-						$type	= $this->formdata->form_elements[$i]['type'];
+						$type	= $this->form_elements[$i]->type;
 						if($type != 'multi_end'){
 							if(!in_array($type,$this->non_inputs)){
 								//Get the field values and count
-								$value_count		= count($this->get_field_values($this->formdata->form_elements[$i]));
+								$value_count		= count($this->get_field_values($this->form_elements[$i]));
 								
 								if($value_count > $this->multi_wrap_value_count){
 									$this->multi_wrap_value_count = $value_count;
@@ -1006,29 +1077,28 @@ class Formbuilder{
 							break;
 						}
 					}
-					
 				}else{
 					//do not close the div if wrap is turned on
 					if(
-						!$this->wrap										and
-						!empty($element['wrap'])							and				//we should wrap around next element
-						is_array($this->next_element)						and 			// and there is a next element
-						!in_array($this->next_element['type'], ['php','formstep'])	// and the next element type is not a select or php element
+						!$this->wrap									and
+						!empty($element->wrap)							and				//we should wrap around next element
+						is_object($this->next_element)					and 			// and there is a next element
+						!in_array($this->next_element->type, ['php','formstep'])	// and the next element type is not a select or php element
 					){
 						//end a label if the next element is a select
-						if($element['type'] == 'label' and in_array($this->next_element['type'], ['php','select'])){
+						if($element->type == 'label' and in_array($this->next_element->type, ['php','select'])){
 							$html .= "</label></div>";
 						}else{
-							$this->wrap = $element['type'];
+							$this->wrap = $element->type;
 						}
 					//we have not started a wrap
 					}else{		
 						//only close wrap if the current element is not wrapped or it is the last
-						if(empty($element['wrap']) or !is_array($this->next_element)){
+						if(empty($element->wrap) or !is_array($this->next_element)){
 							//close the label element after the field element or if this the last element of the form and a label
 							if(
 								$this->wrap == 'label' or 
-								($element['type'] == 'label' and !is_array($this->next_element))
+								($element->type == 'label' and !is_array($this->next_element))
 							){
 								$html .= "</label>";
 							}
@@ -1082,9 +1152,20 @@ class Formbuilder{
 		);
 		
 		if($wpdb->last_error !== ''){
-			wp_die($wpdb->print_error(),500);
+			$message	= $wpdb->print_error();
+			if(wp_doing_ajax()){
+				wp_die($message,500);
+			}else{
+				print_array($message);
+			}
 		}elseif($result == false){
-			wp_die("No row with id $submission_id found",500);
+			$message	= "No row with id $submission_id found";
+			if(wp_doing_ajax()){
+				wp_die($message,500);
+			}else{
+				print_array($message);
+				print_array($this->formresults);
+			}
 		}
 		
 		return;
@@ -1094,11 +1175,11 @@ class Formbuilder{
 		//loop over all conditions
 		foreach($conditions as $condition){
 			//loop over all elements to find the element with the id specified
-			foreach($this->formdata->form_elements as $element){
+			foreach($this->form_elements as $element){
 				//we found the element with the correct id
-				if($element['id'] == $condition['fieldid']){
+				if($element->id == $condition['fieldid']){
 					//get the submitted form value
-					$form_value = $this->formresults[$element['name']];
+					$form_value = $this->formresults[$element->name];
 					
 					//if the value matches the conditional value
 					if(strtolower($form_value) == strtolower($condition['value'])){
@@ -1115,12 +1196,13 @@ class Formbuilder{
 		foreach($emails as $key=>$email){
 			if($email['emailtrigger'] == $trigger){
 				if($trigger == 'fieldchanged'){
+					$form_value='';
 					//loop over all elements to find the element with the id specified
-					foreach($this->formdata->form_elements as $element){
+					foreach($this->form_elements as $element){
 						//we found the element with the correct id
-						if($element['id'] == $email['conditionalfield']){
+						if($element->id == $email['conditionalfield']){
 							//get the submitted form value
-							$form_value = $this->formresults[$element['name']];
+							$form_value = $this->formresults[$element->name];
 							
 							break;
 						}
@@ -1181,7 +1263,7 @@ class Formbuilder{
 			
 			//check if auto archive is turned on for this form
 			if($settings['autoarchive'] == 'true'){
-				$this->datatype		= $form->form_name;
+				$this->datatype		= $form->name;
 				$field_main_name	= $settings['split'];
 				
 				//Get all submissions of this form
@@ -1234,9 +1316,7 @@ class Formbuilder{
 								//update in db
 								$this->check_if_all_archived($this->formresults[$field_main_name]);
 							}
-							echo $sub_id;
 						}
-						echo $id;
 					}else{
 						//if the form value is equal to the trigger value it needs to be to be archived
 						if($this->formresults[$trigger_name] == $trigger_value){
@@ -1271,25 +1351,25 @@ class Formbuilder{
 		$this->update_submission_data($all_archived);
 	}
 	
-	function input_dropdown($field_id, $element_index=-1){
+	function input_dropdown($field_id, $element_id=-1){
 		if($field_id == ''){
 			$html = "<option value='' selected>---</option>";
 		}else{
 			$html = "<option value=''>---</option>";
 		}
 		
-		foreach($this->formdata->form_elements as $key=>$element){
+		foreach($this->form_elements as $key=>$element){
 			//do not include the element itself do not include non-input types
-			if($key != $element_index and !in_array($element['type'],['label','info','datalist','formstep'])){
-				$name = ucfirst(str_replace('_',' ',$element['name']));
+			if($element->id != $element_id and !in_array($element->type,['label','info','datalist','formstep'])){
+				$name = ucfirst(str_replace('_',' ',$element->name));
 				
 				//Check which option is the selected one
-				if($field_id != '' and $field_id == $element['id']){
+				if($field_id != '' and $field_id == $element->id){
 					$selected = 'selected';
 				}else{
 					$selected = '';
 				}
-				$html .= "<option value='{$element['id']}' $selected>$name</option>";
+				$html .= "<option value='{$element->id}' $selected>$name</option>";
 			}
 		}
 		
@@ -1321,7 +1401,6 @@ class Formbuilder{
 	}
 
 	function formbuilder($atts){
-		global $wpdb;
 		global $StyleVersion;
 
 		$this->process_atts($atts);
@@ -1339,27 +1418,31 @@ class Formbuilder{
 
 		//add formbuilder.js
 		if($this->editrights == true and isset($_GET['formbuilder'])){
-			wp_enqueue_script('simnigeria_formbuilderjs');
+			//Formbuilder js
+			wp_enqueue_script( 'sim_formbuilderjs', plugins_url('js/formbuilder.js', __DIR__), array('simnigeria_forms_script','sortable','sweetalert'),$StyleVersion,true);
 		}
 		
 		//Load conditional js if available and needed
 		if(!isset($_GET['formbuilder'])){
-			wp_register_script( "dynamic_{$this->datatype}forms", plugins_url("../js/dynamic/{$this->datatype}forms.js", __DIR__),array('simnigeria_forms_script'),$this->formdata->form_version,true);
-			if(file_exists($this->jsfilename)){
-				wp_enqueue_script( "dynamic_{$this->datatype}forms");
+			if($_SERVER['HTTP_HOST'] == 'localhost'){
+				$js_path		= $this->jsfilename.'.js';
 			}else{
-				print_array($this->jsfilename." does not exist!\nBuilding it now");
+				$js_path		= $this->jsfilename.'.min.js';
+			}
+
+			if(!file_exists($js_path)){
+				print_array("$js_path does not exist!\nBuilding it now");
 				
-				if (!is_dir(plugin_dir_path(__DIR__)."../js/dynamic")) {
-					mkdir(plugin_dir_path(__DIR__)."../js/dynamic", 0777, true);
+				$path	= plugin_dir_path(__DIR__)."js/dynamic";
+				if (!is_dir($path)) {
+					mkdir($path, 0777, true);
 				}
 				
 				//build initial js if it does not exist
 				$this->create_js();
-				
-				//only load on real form, not on form builder form
-				wp_enqueue_script( "dynamic_{$this->datatype}forms");
 			}
+
+			wp_enqueue_script( "dynamic_{$this->datatype}forms", path_to_url($js_path), array('simnigeria_forms_script'), $this->formdata->version, true);
 		}
 		
 		?>
@@ -1368,7 +1451,7 @@ class Formbuilder{
 			
 			if($this->editrights == true){
 				//redirect  to formbuilder if we have rights and no formfields defined yet
-				if(empty($this->formdata->form_elements) and !isset($_GET['formbuilder'])){
+				if(empty($this->form_elements) and !isset($_GET['formbuilder'])){
 					$url = current_url();
 					if(strpos($url,'?') === false){
 						$url .= '/?';
@@ -1380,10 +1463,11 @@ class Formbuilder{
 				
 				if(isset($_GET['formbuilder'])){
 					$this->add_element_modal();
+
 					?>
-					<button class="button tablink formbuilderform active"	id="show_element_form" data-target="element_form">Form elements</button>
-					<button class="button tablink formbuilderform"			id="show_form_settings" data-target="form_settings">Form settings</button>
-					<button class="button tablink formbuilderform"			id="show_form_emails" data-target="form_emails">Form emails</button>
+					<button class="button tablink formbuilderform<?php if(!empty($this->form_elements)) echo ' active';?>"	id="show_element_form" data-target="element_form">Form elements</button>
+					<button class="button tablink formbuilderform<?php if(empty($this->form_elements)) echo ' active';?>"	id="show_form_settings" data-target="form_settings">Form settings</button>
+					<button class="button tablink formbuilderform"															id="show_form_emails" data-target="form_emails">Form emails</button>
 					<?php 
 				}else{
 					//button
@@ -1391,12 +1475,12 @@ class Formbuilder{
 				}
 				?>
 				
-				<div class="tabcontent" id="element_form">
+				<div class="tabcontent<?php if(empty($this->form_elements)) echo ' hidden';?>" id="element_form">
 					<input type="hidden" class="input-text formbuilder" name="request_form_element_nonce" value="<?php echo wp_create_nonce("request_form_element_nonce"); ?>">
 					<input type="hidden" class="input-text formbuilder" name="remove_form_element_nonce" value="<?php echo wp_create_nonce("remove_form_element_nonce"); ?>">
 					<?php
 					if(isset($_GET['formbuilder'])){
-						if(empty($this->formdata->form_elements)){
+						if(empty($this->form_elements)){
 							?>
 							<div name="formbuildbutton">
 								<p>No formfield defined yet.</p>
@@ -1419,7 +1503,7 @@ class Formbuilder{
 				?>
 				</div>
 				
-				<div class="tabcontent hidden" id="form_settings">
+				<div class="tabcontent<?php if(!empty($this->form_elements)) echo ' hidden';?>" id="form_settings">
 					<?php $this->form_settings_form();?>
 				</div>
 				
@@ -1486,13 +1570,13 @@ class Formbuilder{
 		?>
 		<form action='' method='post' id='<?php echo $form_id;?>' class='<?php echo $form_class;?>' <?php echo $dataset;?>>
 			<div class='form_elements'>
-				<input type='hidden' name='formname'	value='<?php echo $this->datatype;?>'>
+				<input type='hidden' name='formid'		value='<?php echo $this->formdata->id;?>'>
 				<input type='hidden' name='action'		value='save_form_input'>
 				<input type='hidden' name='formurl'		value='<?php echo current_url(true);?>'>
 				<input type='hidden' name='userid'		value='<?php echo $this->user_id;?>'>
 		<?php		
 			$this->labelwritten = false;
-			foreach($this->formdata->form_elements as $key=>$element){
+			foreach($this->form_elements as $key=>$element){
 				echo $this->buildhtml($element,$key);
 			}
 			
@@ -1529,7 +1613,7 @@ class Formbuilder{
 			}else{
 				$hidden = '';
 			}
-			if($this->isformstep == false and !empty($this->formdata->form_elements)){
+			if($this->isformstep == false and !empty($this->form_elements)){
 				echo add_save_button('submit_form',$buttontext,"$hidden form_submit");
 			}
 			?>
@@ -1588,8 +1672,8 @@ class Formbuilder{
 					<?php
 					//check if we have any upload fields in this form
 					$hide_upload_el	= true;
-					foreach($this->formdata->form_elements as $el){
-						if($el['type'] == 'file' or $el['type'] == 'image'){
+					foreach($this->form_elements as $el){
+						if($el->type == 'file' or $el->type == 'image'){
 							$hide_upload_el	= false;
 							break;
 						}
@@ -1644,10 +1728,10 @@ class Formbuilder{
 					}
 					
 					$found_elements = [];
-					foreach($this->formdata->form_elements as $key=>$element){
+					foreach($this->form_elements as $key=>$element){
 						$pattern = "/([^\[]+)\[[0-9]+\]/i";
 						
-						if(preg_match($pattern, $element['name'], $matches)){
+						if(preg_match($pattern, $element->name, $matches)){
 							//Only add if not found before
 							if(!in_array($matches[1],$found_elements)){
 								$found_elements[]	= $matches[1];
@@ -1700,13 +1784,13 @@ class Formbuilder{
 							}
 							
 							$processed = [];
-							foreach($this->formdata->form_elements as $key=>$element){
-								if(in_array($element['type'],$this->non_inputs)) continue;
+							foreach($this->form_elements as $key=>$element){
+								if(in_array($element->type,$this->non_inputs)) continue;
 								
 								$pattern			= "/\[[0-9]+\]\[([^\]]+)\]/i";
 								
-								$name = $element['name'];
-								if(preg_match($pattern, $element['name'],$matches)){
+								$name = $element->name;
+								if(preg_match($pattern, $element->name,$matches)){
 									//We found a keyword, check if we already got the same one
 									if(!in_array($matches[1],$processed)){
 										//Add to the processed array
@@ -1721,12 +1805,12 @@ class Formbuilder{
 								}
 								
 								//Check which option is the selected one
-								if($settings['autoarchivefield'] != '' and $settings['autoarchivefield'] == $key){
+								if(!empty($settings['autoarchivefield']) and $settings['autoarchivefield'] == $element->id){
 									$selected = 'selected';
 								}else{
 									$selected = '';
 								}
-								echo "<option value='{$element['id']}' $selected>$name</option>";
+								echo "<option value='{$element->id}' $selected>$name</option>";
 							}
 							
 							?>
@@ -1824,9 +1908,9 @@ class Formbuilder{
 					All your fieldvalues are available as well:
 					<select class='nonice placeholderselect'>
 						<option value=''>Select to copy to clipboard</option><?php
-					foreach($this->formdata->form_elements as $element){
-						if(!in_array($element['type'],['label','info','button','datalist','formstep'])){
-							echo "<option>%{$element['name']}%</option>";
+					foreach($this->form_elements as $element){
+						if(!in_array($element->type,['label','info','button','datalist','formstep'])){
+							echo "<option>%{$element->name}%</option>";
 						}
 					}
 					?>
@@ -2039,20 +2123,20 @@ class Formbuilder{
 		?>
 		<form action="" method="post" name="add_form_element_form" class="form_element_form simnigeria_form">
 			<div style="display: none;" class="error"></div>
-			<h4>Please fill in the form to add a new form element</h4><br>
-			<input type="hidden" class="input-text formbuilder" name="userid" value="<?php echo $this->user->ID; ?>">
+			<h4>Please fill in the form to add a new form element</h4><br>			
+			<input type="hidden" name="action" value="add_formfield">
+
+			<input type="hidden" name="formname" value="<?php echo $this->formdata->name;?>">
+
+			<input type="hidden" name="formfield[form_id]" value="<?php echo $this->formdata->id;?>">
 			
-			<input type="hidden" class="input-text formbuilder" name="action" value="add_formfield">
+			<input type="hidden" name="element_id" value="">
 			
-			<input type="hidden" class="input-text formbuilder" name="formname" value="<?php echo $this->datatype;?>">
+			<input type="hidden" name="insertafter">
 			
-			<input type="hidden" class="input-text formbuilder" name="insertafter">
+			<input type="hidden" name="formfield[width]" value="100">
 			
-			<input type="hidden" class="input-text formbuilder" name="update">
-			
-			<input type="hidden" class="input-text formbuilder" name="formfield[width]" value="100">
-			
-			<input type="hidden" class="input-text formbuilder" name="add_form_element_nonce" value="<?php echo wp_create_nonce("add_form_element_nonce"); ?>">
+			<input type="hidden" name="add_form_element_nonce" value="<?php echo wp_create_nonce("add_form_element_nonce"); ?>">
 			
 			<label>Select which kind of form element you want to add</label>
 			<select class="formbuilder elementtype" name="formfield[type]" required>
@@ -2110,14 +2194,14 @@ class Formbuilder{
 			<div name='labeltext' class='hidden'>
 				<label>
 					<div>Specify the <span class='elementtype'>label</span> text</div>
-					<input type="text" class="formbuilder" name="formfield[labeltext]">
+					<input type="text" class="formbuilder" name="formfield[text]">
 				</label>
 				<br><br>
 			</div>
 			
 			<div name='wrap'>
 				<label>
-					<input type="checkbox" class="formbuilder" name="formfield[wrap]" value="false">
+					<input type="checkbox" class="formbuilder" name="formfield[wrap]" value="true">
 					Group together with next element
 				</label>
 				<br><br>
@@ -2150,7 +2234,7 @@ class Formbuilder{
 			
 			<div name='multiple' class='labelhide hide'>
 				<label>
-					<input type="checkbox" class="formbuilder" name="formfield[multiple]" value="multiple">
+					<input type="checkbox" class="formbuilder" name="formfield[multiple]" value="true">
 					Allow multiple answers
 				</label>
 				<br>
@@ -2165,7 +2249,7 @@ class Formbuilder{
 				<br>
 			</div>
 
-			<div name='select_options' class='labelhide hide'>
+			<div name='select_options' class='hidden'>
 				<label class='block'>Specify an options group if desired</label>
 				<select class="formbuilder" name="formfield[default_array_value]">
 					<option value="">---</option>
@@ -2194,340 +2278,39 @@ class Formbuilder{
 				<label>
 					Specify any options like styling
 					<textarea class="formbuilder" name="formfield[options]"></textarea>
-				</label>
-				<br><br>
+				</label><br>
+				<br>
 				
 				<label class="option-label">
-					<input type="checkbox" class="formbuilder" name="formfield[required]" value="required">
+					<input type="checkbox" class="formbuilder" name="formfield[required]" value="true">
 					Check if this should be a required field
 				</label><br>
+				<br>
+
+				<label class="option-label">
+					<input type="checkbox" class="formbuilder" name="formfield[mandatory]" value="true">
+					Check if people should be warned by e-mail/signal if the have not filled in this field.<br>
+					Works only when form results are saved in user meta
+				</label><br>
+				<br>
+
+				<label class="option-label">
+					<input type="checkbox" class="formbuilder" name="formfield[recommended]" value="true">
+					Check if people should be notified on their homepage if the have not filled in this field.<br>
+					Works only when form results are saved in user meta
+				</label><br>
+				<br>
 			</div>
 			
 			<label class="option-label">
-				<input type="checkbox" class="formbuilder" name="formfield[hidden]" value="hidden">
+				<input type="checkbox" class="formbuilder" name="formfield[hidden]" value="true">
 				Check if this should be a hidden field
 			</label><br>
 
 			<?php echo add_save_button('submit_form_element',"Add form element"); ?>
 		</form>
 		<?php
-	}
-	
-	function create_js(){
-		//Add function to loop over conditions on page load
-		ob_start(); 
-		//write external js into this file
-		echo apply_filters('form_extra_js',$this->datatype);
-		
-		echo "\n\n";
-		?>
-document.addEventListener("DOMContentLoaded", function() {
-	console.log("Dynamic <?php echo $this->datatype;?> forms js loaded");
-	
-	tidy_multi_inputs();
-	
-	//show first tab
-	currentTab = 0; // Current tab is set to be the first tab (0)
-	form = document.getElementById('simnigeria_form_<?php echo $this->datatype;?>');
-	showTab(currentTab,form); // Display the current tab
-<?php
-if(!empty($this->formdata->settings['save_in_meta'])){
-?>
-	form.querySelectorAll('select, input, textarea').forEach(el=>process_<?php echo $this->datatype;?>_fields(el));
-<?php
-}
-?>
-});
-
-window.addEventListener("click", <?php echo $this->datatype;?>_listener);
-window.addEventListener("input", <?php echo $this->datatype;?>_listener);
-
-<?php echo $this->datatype;?>_prev_el = '';
-function <?php echo $this->datatype;?>_listener(event) {
-	var el			= event.target;
-	form			= el.closest('form');
-	var name		= el.name;
-	if(name == '' || name == undefined){
-		if(el.closest('.nice-select-dropdown') != null){
-			el.closest('.inputwrapper').querySelectorAll('select').forEach(select=>{
-				if(el.dataset.value == select.value){
-					el	= select;
-					name = select.name;
-				}
-			});
-		}else{
-			return;
-		}
-	}
-	
-	//prevent duplicate event handling
-	if(el == <?php echo $this->datatype;?>_prev_el){
-		return;
-	}
-	<?php echo $this->datatype;?>_prev_el = el;
-	//clear event prevenion after 200 ms
-	setTimeout(function(){ <?php echo $this->datatype;?>_prev_el = ''; }, 200);
-	
-	if(name == 'nextBtn'){
-		nextPrev(1);
-	}else if(name == 'prevBtn'){
-		nextPrev(-1);
-	}
-
-	process_<?php echo $this->datatype;?>_fields(el);
-}
-
-function process_<?php echo $this->datatype;?>_fields(el){
-	var name = el.name;
-<?php
-		//Loop over all elements to find any conditions
-		foreach($this->formdata->form_elements as $element){
-			$conditions	= $this->formdata->form_conditions[$element['id']];
-			//if there are conditions
-			if(is_array($conditions)){
-				//Loop over the conditions
-				foreach($conditions as $condition_index=>$condition){
-					//if there are rules build some javascript
-					if(is_array($condition['rules'])){
-						
-						//Open the if statemenet
-						$lastrule_key			= array_key_last($condition['rules']);
-						$field_check_if 		= "if(";
-						$condition_variables	= '';
-						$condition_if			= 'if(';
-						
-						$check_for_change = false;
-						
-						//Loop over the rules
-						foreach($condition['rules'] as $rule_index=>$rule){
-							$fieldnumber_1	= $rule_index*2  + 1;
-							$fieldnumber_2	= $fieldnumber_1 + 1;
-							$equation		= str_replace(' value','',$rule['equation']);
-							
-							//Get field names of the fields who's value we are checking
-							$conditional_element		= $this->getelementbyid($rule['conditional_field']);
-							$conditional_field_name		= $conditional_element['name'];
-							if(in_array($conditional_element['type'],['radio','checkbox']) and strpos($conditional_field_name, '[]') === false) {
-								$conditional_field_name .= '[]';
-							}
-							$conditional_field_type		= $conditional_element['type'];
-							$conditional_element_2		= $this->getelementbyid($rule['conditional_field_2']);
-							$conditional_field_2_name	= $conditional_element_2['name'];
-							if(in_array($conditional_element_2['type'],['radio','checkbox']) and strpos($conditional_field_2_name, '[]') === false) {
-								$conditional_field_2_name .= '[]';
-							}
-							$conditional_field_2_type	= $conditional_element_2['type'];
-							
-							//Check if we are calculating a value based on two field values
-							if(($equation == '+' or $equation == '-') and !empty($rule['conditional_field_2']) and !empty($rule['equation_2'])){
-								$calc = true;
-							}else{
-								$calc = false;
-							}
-							
-							//make sure we do not include other fields in changed or click rules
-							if(in_array($equation, ['changed','clicked'])){
-								$field_check_if		= "if(name == '$conditional_field_name'";
-								$check_for_change	= true;
-							}
-							
-							//Only allow or statements
-							if($check_for_change == false or $condition['rules'][$rule_index-1]['combinator'] == 'OR'){
-								//Write the if statement to check if the current clicked field belongs to this condition
-								if($field_check_if != 'if(') $field_check_if .= " || ";
-								$field_check_if .= "name == '$conditional_field_name'";
-								
-								//If there is an extra field to check
-								if(!empty($rule['conditional_field_2'])){
-									$field_check_if .= " || name == '$conditional_field_2_name'";
-								}
-							}
-			
-							//We calculate the sum or difference of two field values if needed.
-							if($calc){
-								if($conditional_field_type == 'date'){
-									//Convert date strings to date values then miliseconds to days
-									$condition_variables .= "\t\tvar calculated_value_$rule_index = (Date.parse(value_$fieldnumber_1) $equation Date.parse(value_$fieldnumber_2))/ (1000 * 60 * 60 * 24);\n";
-								}else{
-									$condition_variables .= "\t\tvar calculated_value_$rule_index = value_$fieldnumber_1 $equation value_$fieldnumber_2;\n";
-								}
-								$equation = $rule['equation_2'];
-							}
-							
-							//compare with calculated value
-							if($calc){
-								$comparevalue1 = "calculated_value_$rule_index";
-							//compare with a field value
-							}else{
-								$comparevalue1 = "value_$fieldnumber_1.toLowerCase()";
-							}
-								
-							//compare with the value of another field
-							if(strpos($rule['equation'], 'value') !== false){
-								$comparevalue2 = "value_$fieldnumber_2";
-							//compare with a number
-							}elseif(is_numeric($rule['conditional_value'])){
-								$comparevalue2 = trim($rule['conditional_value']);
-							//compare with text
-							}else{
-								$comparevalue2 = "'".strtolower(trim($rule['conditional_value']))."'";
-							}
-							
-							/* 
-								NOW WE KNOW THAT THE CHANGED FIELD BELONGS TO THIS CONDITION
-								LETS CHECK IF ALL THE VALUES ARE MET AS WELL 
-							*/
-							if(!in_array($equation, ['changed','clicked','checked','!checked'])){
-								$condition_variables .= "\n\t\tvar value_$fieldnumber_1 = get_field_value('$conditional_field_name',true,$comparevalue2);\n";
-								
-								if(!empty($rule['conditional_field_2'])){
-									$condition_variables .= "\n\t\tvar value_$fieldnumber_2 = get_field_value('$conditional_field_2_name',true,$comparevalue2);\n";
-								}
-							}
-							
-							if($equation == 'checked'){
-								if(count($condition['rules'])==1){
-									$condition_if .= "el.checked == true";
-								}else{
-									$condition_if .= "form.querySelector('[name=\"$conditional_field_name\"]').checked == true";
-								}
-							}elseif($equation == '!checked'){
-								if(count($condition['rules'])==1){
-									$condition_if .= "el.checked == false";
-								}else{
-									$condition_if .= "form.querySelector('[name=\"$conditional_field_name\"]').checked == false";
-								}
-							}elseif($equation != 'changed' and $equation != 'clicked'){
-								$condition_if .= "$comparevalue1 $equation $comparevalue2";
-							}
-							
-							//If there is another rule, add or or and
-							if($lastrule_key == $rule_index){
-								$condition_if .= "){\n";
-							}else{
-								if(
-									!empty($rule['combinator'])														and //there is a next rule
-									$condition_if != 'if(' 															and	//there is already preceding code
-									!in_array($condition['rules'][$rule_index+1]['equation'],['changed','clicked'])		//The next element will also be included in the if statement
-								){
-									if($rule['combinator'] == 'AND'){
-										$condition_if .= " && ";
-									}else{
-										$condition_if .= " || ";
-									}
-								}
-							}
-						}
-						//Now we write it all out as a whole
-						echo "\n\t$field_check_if){\n";
-							
-							//no need for variable in case of a 'changed' condition
-							if(strpos($condition_if,"if()") === false){
-								echo $condition_variables;
-								echo "\n\t\t$condition_if";
-							}
-							
-							$action = $condition['action'];
-							
-							//show, toggle or hide action for this field
-							if($action == 'show' or $action == 'hide' or $action == 'toggle'){
-								if($action == 'show'){
-									$action = 'remove';
-								}elseif($action == 'hide'){
-									$action = 'add';
-								}
-								
-								//do not write a rule for label with another element
-								if($element['type'] != 'label' or empty($element['wrap'])){
-									//formstep do not have an inputwrapper
-									if($element['type'] == 'formstep'){
-										$closest = "";
-									}else{
-										$closest = ".closest('.inputwrapper')";
-									}
-									$name	= $element['name'];
-									if(in_array($element['type'],['radio','checkbox']) and strpos($name, '[]') === false) {
-										$name .= '[]';
-									}
-									if(empty($element['multiple'])){
-										echo "\n\t\t\tform.querySelector('[name=\"$name\"]')$closest.classList.$action('hidden');";
-									}else{
-										echo "\n\t\t\tform.querySelector('[name^=\"$name\"]')$closest.classList.$action('hidden');";
-									}
-								}
-								foreach($conditions['copyto'] as $field_index){
-									if(!is_numeric($field_index))	continue;
-									//find the element with the right id
-									$copy_to_element	= $this->getelementbyid($field_index);
-									$name				= $copy_to_element['name'];
-									if(in_array($copy_to_element['type'],['radio','checkbox']) and strpos($name, '[]') === false) {
-										$name .= '[]';
-									}
-									
-									//formstep do not have an inputwrapper
-									if($element['type'] == 'formstep'){
-										$closest = "";
-									}else{
-										$closest = ".closest('.inputwrapper')";
-									}
-									if(empty($copy_to_element['multiple'])){
-										echo "\n\t\t\tform.querySelector('[name=\"$name\"]')$closest.classList.$action('hidden');";
-									}else{
-										echo "\n\t\t\tform.querySelector('[name^=\"$name\"]')$closest.classList.$action('hidden');";
-									}
-								}
-							//set property value
-							}elseif($action == 'property' or $action == 'value'){
-								//set the attribute value of one field to the value of another field
-								$fieldname		= $element['name'];
-								
-								//fixed prop value
-								if($action == 'value'){
-									$propertyname	= $condition['propertyname1'];
-									echo "\t\t\tvar replacement_value = '{$condition['action_value']}';";
-								//retrieve value from another field
-								}else{
-									$propertyname	= $condition['propertyname'];
-								
-									$copyfieldid	= $condition['property_value'];
-									
-									//find the element with the right id
-									$copyfieldname = $this->getelementbyid($copyfieldid,'name');
-									
-									//if($copyfieldname == $conditional_field_name and count($condition['rules']) == 1){
-									//	echo "\t\t\tvar replacement_value = value;";
-									//}else{
-										echo "\t\t\tvar replacement_value = get_field_value('$copyfieldname')";
-									//}
-								}
-								
-								if($propertyname == 'value'){
-									echo "\n\t\t\tchange_field_value('$fieldname', replacement_value);";
-								}else{
-									echo "\n\t\t\tchange_field_property('$fieldname', '$propertyname', replacement_value);";
-								}
-							}else{
-								print_array("formbuilder.php writing js: missing action: '$action' for condition $condition_index of field {$element['name']}");
-							}
-							
-							if(strpos($condition_if,"if()") === false){
-								echo "\n\t\t}";//close condition if
-							}
-						echo "\n\t}";//close field check if
-					}
-				}
-			}
-		}
-		
-		//end js listener function
-		echo "\n}";
-
-		//write it all to a file
-		$js			= ob_get_clean();
-
-		//Create js file
-		file_put_contents($this->jsfilename, $js);
-	}
+	}	
 }
 
 add_action('init', function(){

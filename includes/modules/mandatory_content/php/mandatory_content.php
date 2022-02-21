@@ -51,6 +51,11 @@ function save_page_audience($post_id){
 	}
 }
 
+add_action('sim_after_post_save', function($post){
+	//store audience
+	save_page_audience($post->ID);	
+});
+
 add_shortcode("must_read_documents",'SIM\get_must_read_documents');
 function get_must_read_documents($user_id='',$exclude_heading=false){
 	if(!is_numeric($user_id)) $user_id = get_current_user_id();

@@ -183,7 +183,7 @@ function add_select_user_button(){
 function add_form_shortcode(){
 	add_form_shortcode_html = '<div  class="wp-editor-help">'+
 		'<label for="form_name">Give the formname in one word:</label><br>' +
-		'<input type="text" id="form_name" name="form_name"><br>'+
+		'<input type="text" id="form_name" name="form_name" style="width:300px;"><br>'+
 		'<label for="form_name">Or add a table to display the data of an existing form:</label><br>' +
 		tinymce_data.form_select + '<br>'+
 	'</div>';
@@ -203,9 +203,22 @@ function add_form_shortcode(){
 				form_name		= document.querySelector("#form_name").value;
 				form_selector	= document.querySelector("[name='form_selector']").value;
 				if(form_name != ''){
-					tinymce.activeEditor.insertContent('[formbuilder datatype='+form_name+']');
-					
-					alert("Form succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
+					// Create the form via AJAX
+					var form_data = new FormData();
+					form_data.append('action', 'add_form');
+					form_data.append('form_name', form_name);
+
+					fetch(simnigeria.ajax_url, {
+						method: 'POST',
+						credentials: 'same-origin',
+						body: form_data
+					}).then(response => response.text())
+					.then(response => {
+						tinymce.activeEditor.insertContent('[formbuilder datatype='+form_name+']');
+						alert("Form succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
+						//console.log(response)
+					})
+					.catch(err => console.log(err));
 				}else if(form_selector != ''){
 					tinymce.activeEditor.insertContent('[formresults datatype='+form_selector+']');
 					

@@ -112,8 +112,6 @@ function upload_to_vimeo(file){
 	var post_id			= response.post_id;
 	var upload_start	= response.upload_start;
 
-	console.log(upload_url);
-
 	//https://github.com/vimeo/vimeo.js#installation
 	var upload = new tus.Upload(file, {
 		uploadUrl: upload_url,
@@ -133,12 +131,8 @@ function upload_to_vimeo(file){
 				div.style.width	= percentage+'%';
 				div.innerHTML	= '<span style="width:100%;text-align:center;color:white;display:block;font-size:smaller;">'+percentage+'%</span>';
 			});
-
-			//console.log(bytesUploaded, bytesTotal, percentage + "%");
 		}, 
 		onSuccess: function() {
-			console.log("Download %s from %s", upload.file.name, upload.url)
-
 			//get wp post details
 			var formdata = new FormData();
 			formdata.append('action', 'add-uploaded-vimeo');
@@ -152,15 +146,21 @@ function upload_to_vimeo(file){
 			wp_uploader.dispatchEvent('fileUploaded', plupload_file, request);
 
 			document.querySelector('[data-id="'+post_id+'"] .filename>div').textContent='Uploaded to Vimeo';
+		},
+        onShouldRetry: function(err, retryAttempt, options) {
+          var status = err.originalResponse ? err.originalResponse.getStatus() : 0
+          // If the status is a 403, we do not want to retry.
+          if (status === 403) {
+            return false
+          }
+          
+          // For any other status code, tus-js-client should retry.
+          return true
+        },
+		onChunkComplete: function(chunkSize, bytesAccepted, bytesTotal){
+
 		}
 	})
-	
-/* 	upload.findPreviousUploads().then(function (previousUploads) {
-        // Found previous uploads so we select the first one. 
-        if (previousUploads.length) {
-            upload.resumeFromPreviousUpload(previousUploads[0])
-        }
-    }); */
 	
 	// Start the upload
 	upload.start()

@@ -1,10 +1,12 @@
 <?php
 namespace SIM;
 
+use function Crontrol\enqueue_assets;
+
 global $Modules;
 
-//add upload to vimeo button to attachment page if auto upload is not on
-if(empty($GLOBALS['Modules']['vimeo']['upload'])){
+// Add upload to vimeo button to attachment page if auto upload is not on
+if(empty($Modules['vimeo']['upload'])){
 	add_filter( 'attachment_fields_to_edit', function($form_fields, $post ){
 		//only work on video's
 		if(explode('/',$post->post_mime_type)[0] != 'video') return;
@@ -45,9 +47,13 @@ add_action( 'edit_attachment', function($attachment_id){
 
 //shortcode to display vimeo video's
 add_shortcode("vimeo_video",function ($atts){
+	global $StyleVersion;
+	// Load css
+	wp_enqueue_style( 'vimeo_style', plugins_url('css/style.css', __DIR__), array(), $StyleVersion);
+
 	ob_start();
 
-	$vimeo_id	= 12;
+	$vimeo_id	= $atts['id'];
 	?>
 	<div class='vimeo-embed-container'>
 		<iframe src='https://player.vimeo.com/video/<?php echo $vimeo_id; ?>' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
@@ -57,7 +63,7 @@ add_shortcode("vimeo_video",function ($atts){
 });
 
 //auto upload via js if enabled
-if(!empty($GLOBALS['Modules']['vimeo']['upload'])){
+if(!empty($Modules['vimeo']['upload'])){
 	//load js script to change media screen
 	add_action( 'wp_enqueue_media', function(){
 		global $LoaderImageURL;
@@ -74,8 +80,8 @@ if(!empty($GLOBALS['Modules']['vimeo']['upload'])){
 	});
 }
 
-// Delete video from vimeo when attachemnt is deleted, if tah option is enabled
-if(!empty($GLOBALS['Modules']['vimeo']['remove'])){
+// Delete video from vimeo when attachemnt is deleted, if that option is enabled
+if(!empty($Modules['vimeo']['remove'])){
 	add_action( 'delete_attachment', function($post_id, $post ){
 		if(explode('/', $post->post_mime_type)[0] == 'video'){
 			$VimeoApi = new VimeoApi();
@@ -89,10 +95,10 @@ add_action('before_visibility_change', function($attachment_id, $visibility){
 		$VimeoApi	= new VimeoApi();
 		$VimeoApi->hide_vimeo_video($attachment_id);
 	}
-});
+}, 10, 2);
 
 //auto sync if that option is enabled
-if(!empty($GLOBALS['Modules']['vimeo']['sync'])){
+if(!empty($Modules['vimeo']['sync'])){
 	//add scheduled task to sync vimeo library
 	add_action('init',function(){
 		add_action( 'sync_vimeo_action', "SIM\\vimeo_sync");
@@ -191,14 +197,11 @@ add_filter( 'media_send_to_editor', function ($html, $id, $attachment) {
 	if(strpos($attachment['url'], 'https://vimeo.com') !== false){
 		$vimeo_id	= str_replace('https://vimeo.com/','',$attachment['url']);
 
-		ob_start();
-		?>
-		<!-- wp:video {"id":9002} -->
-			<figure class="wp-block-video"><video src="https://vimeo.com/668529102" controls="controls" width="300" height="150"></video></figure>
-		<!-- /wp:video -->
-		<?php
+		/* $html = '<!-- wp:video {"id":'.$attachment['id'].'} -->';
+			$html .= '<figure class="wp-block-video"><video src="https://vimeo.com/'.$vimeo_id.'" controls="controls" width="300" height="150"></video></figure>';
+		$html .= '<!-- /wp:video -->'; */
 
-		$html		= ob_get_clean();
+		$html	= "[vimeo_video id=$vimeo_id]";
 	}
 	
 	return $html;
@@ -252,25 +255,36 @@ add_action('wp_ajax_prepare-vimeo-upload', function(){
 	if(empty($mime)) wp_die('No file type given', 500);
 
 	$start_position	= 0;
+	$url			= '';
+	$post_id		= 0;
 
 	//check if post already exists
-	$results = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $wpdb->postmeta WHERE meta_key = 'vimeo_upload_url'") , ARRAY_N  );
+	$results = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $wpdb->postmeta WHERE meta_key = 'vimeo_upload_data'"));
 	foreach($results as $result){
-		if($result == $file_name){
-			echo 'result';
-			$start_position = get_post_meta($result->post_id, 'vimeo_upload_position', true);
+		$data	= unserialize($result->meta_value);
+		if($data['filename'] == $file_name){
+			$url			= $data['url'];
+			$post_id		= $result->post_id;
+			$start_position = get_post_meta($post_id, 'vimeo_upload_position', true);
 		}
 	}
 
-	$VimeoApi	= new VimeoApi();
-
-	$result	= $VimeoApi->create_vimeo_video($file_name, $mime);
+	if(empty($url)){
+		$VimeoApi	= new VimeoApi();
+		$result	= $VimeoApi->create_vimeo_video($file_name, $mime);
+	}else{
+		$result = [
+			'upload_link'	=> $url,
+			'post_id'		=> $post_id
+		];
+	}
 
 	wp_die(
 		wp_json_encode($result)
 	);
 }); 
 
+//After upload to vimeo was succesfull
 add_action('wp_ajax_add-uploaded-vimeo', function(){
 	$post_id		= $_POST['post_id'];
 	if(!is_numeric($post_id)) wp_die('No post id given', 500);
@@ -279,9 +293,19 @@ add_action('wp_ajax_add-uploaded-vimeo', function(){
 	if ( ! $attachment ) {
 		wp_die();
 	}
-	$attachment['icon']	= str_replace('default','video',$attachment['icon']	);
+	$attachment['icon']	= str_replace('default', 'video', $attachment['icon']);
 
 	update_post_meta($post_id, '_wp_attached_file', 'Video on vimeo');
+
+	// Download an backup
+	$VimeoApi	= new VimeoApi();
+	$vimeo_id   = $VimeoApi->download_video($post_id);
+	
+	//$video = new VideoController;
+	//$url =$video->getVimeoDirectUrl('http://vimeo.com/'.$vimeo_id);
+
+	//$VimeoApi->download_from_vimeo('https://i.vimeocdn.com/video/740773266-9491d60ada4ee1df38dd2e70f58bc19bcd69ea390e6868b836c40e0a099ccd50-d?mw=2900&mh=1631&q=70', $vimeo_id);
+
 	delete_post_meta($post_id, 'vimeo_upload_link');
 
 	echo wp_json_encode(
@@ -294,7 +318,9 @@ add_action('wp_ajax_add-uploaded-vimeo', function(){
 	wp_die();
 });
 
-if(!empty($GLOBALS['Modules']['vimeo']['upload'])){
+
+
+if(!empty($Modules['vimeo']['upload'])){
 	//add filter
 	add_action('post-html-upload-ui', function(){
 		add_filter('gettext', 'SIM\change_upload_size_message', 10, 3);
@@ -325,7 +351,7 @@ add_filter( 'render_block', function( $block_content,  $block ){
 	//if this is a video block
 	if($block['blockName'] == 'core/video'){
 		$post_id	= $block['attrs']['id'];
-		$vimeo_id		= get_post_meta($post_id, 'vimeo_id', true);
+		$vimeo_id	= get_post_meta($post_id, 'vimeo_id', true);
 
 		//if this video is an vimeo video
 		if(is_numeric($vimeo_id)){

@@ -116,7 +116,7 @@ function reset_2fa($user_id){
 	
 	$userdata = get_userdata($user_id);
 	//Send email and signal message
-	send_signal_message(
+	try_send_signal(
 		"Hi ".$userdata->first_name.",\n\nYour account is unlocked you can now login using your credentials. Please enable 2FA as soon as possible",
 		$_GET['user_id']
 	);
@@ -221,7 +221,7 @@ add_action ( 'wp_ajax_nopriv_check_cred', function(){
             //get 2fa methods for this user
             $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
-            remove_from_nested_array($methods);
+            clean_up_nested_array($methods);
             
             //return the methods
             if(!empty($methods)){
@@ -314,4 +314,3 @@ add_action ( 'wp_ajax_save_2fa_settings', function(){
         ]
     ));
 });
-

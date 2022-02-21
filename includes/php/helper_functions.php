@@ -35,7 +35,7 @@ function user_select($text,$only_adults=false,$families=false, $class='',$id='us
 	if(!is_numeric($user_id))	$user_id = $_GET["userid"];
 	
 	//Get the id and the displayname of all users
-	$users = get_missionary_accounts($families,$only_adults,true,[],$args);
+	$users = get_user_accounts($families,$only_adults,true,[],$args);
 	$exists_array = array();
 
 	$exclude_ids[]	= 1;
@@ -126,6 +126,7 @@ function url_to_path($url){
 function path_to_url($path){
 	if(is_string($path)){
 		$base	= str_replace('\\', '/', ABSPATH);
+		$path	= str_replace('\\', '/', $path);
 		$url	= str_replace($base, get_site_url().'/', $path);
 	}else{
 		$url	= $path;
@@ -187,42 +188,11 @@ function page_select($select_id,$page_id=null,$class=""){
 	return $html;
 }
 
-function media_select($id,$media_id=null,$class=""){
-	$html = "";
-	$html .= "<select name='$id' id='$id' class='selectpage $class'>
-				<option value=''>---</option>";
-				
-	$picture_ids = get_posts( 
-		array(
-			'post_type'      => 'attachment', 
-			'post_mime_type' => 'image',  
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-			'orderby'    	=> 'title',
-			'sort_order' 	=> 'asc'
-		) 
-	);
-	foreach($picture_ids as $picture_id){
-		if ($media_id == $picture_id){
-			$selected='selected=selected';
-		}else{
-			$selected="";
-		}
-		$option = '<option value="' . $picture_id . '" '.$selected.'>';
-		$option .= get_the_title($picture_id);
-		$option .= '</option>';
-		$html .= $option;
-	}
-	
-	$html .= "</select>";
-	return $html;
-}
-
 //family flat array
 function family_flat_array($user_id){
 	
 	$family = (array)get_user_meta( $user_id, 'family', true );
-	remove_from_nested_array($family);
+	clean_up_nested_array($family);
 
 	//make the family array flat
 	if (isset($family["children"])){
@@ -292,21 +262,146 @@ function get_age($user_id){
 	return $age;
 }
 
+function number_to_words($number) {
+    $hyphen = '-';
+    $conjunction = ' and ';
+    $separator = ', ';
+    $negative = 'negative ';
+    $decimal = ' Thai Baht And ';
+	$first_dic	= [
+        1 => 'first',
+        2 => 'second',
+        3 => 'third',
+        4 => 'fourth',
+        5 => 'fifth',
+        6 => 'sixth',
+        7 => 'seventh',
+        8 => 'eight',
+        9 => 'nineth',
+        10 => 'tenth',
+        11 => 'eleventh',
+        12 => 'twelfth',
+        13 => 'thirteenth',
+        14 => 'fourteenth',
+        15 => 'fifteenth',
+        16 => 'sixteenth',
+        17 => 'seventeenth',
+        18 => 'eighteenth',
+        19 => 'nineteenth',
+		10 => 'twentieth'
+	];
+    $dictionary = array(
+        0 => 'zero',
+        1 => 'one',
+        2 => 'two',
+        3 => 'three',
+        4 => 'four',
+        5 => 'five',
+        6 => 'six',
+        7 => 'seven',
+        8 => 'eight',
+        9 => 'nin',
+        10 => 'ten',
+        11 => 'eleven',
+        12 => 'twelve',
+        13 => 'thirteen',
+        14 => 'fourteen',
+        15 => 'fifteen',
+        16 => 'sixteen',
+        17 => 'seventeen',
+        18 => 'eighteen',
+        19 => 'nineteen',
+        20 => 'twenty',
+        30 => 'thirty',
+        40 => 'fourty',
+        50 => 'fifty',
+        60 => 'sixty',
+        70 => 'seventy',
+        80 => 'eighty',
+        90 => 'ninety',
+        100 => 'hundred',
+        1000 => 'thousand',
+        1000000 => 'million',
+        1000000000 => 'billion',
+        1000000000000 => 'trillion',
+        1000000000000000 => 'quadrillion',
+        1000000000000000000 => 'quintillion'
+    );
+
+	// If not numeric return an number from a word
+    if (!is_numeric($number)) {
+        return array_search(strtolower($number), $dictionary);
+    }
+
+    if (($number >= 0 && (int) $number < 0) || (int) $number < 0 - PHP_INT_MAX) {
+        // overflow
+        trigger_error(
+                'convert_number_to_words only accepts numbers between -' . PHP_INT_MAX . ' and ' . PHP_INT_MAX, E_USER_WARNING
+        );
+        return false;
+    }
+
+    if ($number < 0) {
+        return $negative . number_to_words(abs($number));
+    }
+
+    $string = $fraction = null;
+
+
+    if (strpos($number, '.') !== false) {
+        list($number, $fraction) = explode('.', $number);
+    }
+
+    switch (true) {
+        case $number < 21:
+            $string = $first_dic[$number];
+            break;
+        case $number < 100:
+            $tens = ((int) ($number / 10)) * 10;
+            $units = $number % 10;
+            $string = $dictionary[$tens];
+            if ($units) {
+                $string .= $hyphen . $first_dic[$units];
+            }
+            break;
+        case $number < 1000:
+            $hundreds = $number / 100;
+            $remainder = $number % 100;
+            $string = $dictionary[$hundreds] . ' ' . $dictionary[100];
+            if ($remainder) {
+                $string .= $conjunction . number_to_words($remainder);
+            }
+            break;
+        default:
+            $baseUnit = pow(1000, floor(log($number, 1000)));
+            $numBaseUnits = (int) ($number / $baseUnit);
+            $remainder = $number % $baseUnit;
+            $string = number_to_words($numBaseUnits) . ' ' . $dictionary[$baseUnit];
+            if ($remainder) {
+                $string .= $remainder < 100 ? $conjunction : $separator;
+                $string .= number_to_words($remainder);
+            }
+            break;
+    }
+
+    if (null !== $fraction && is_numeric($fraction)) {
+        $string .= $decimal;
+        $words = array();
+        foreach (str_split((string) $fraction) as $number) {
+            $words[] = $dictionary[$number];
+        }
+        $string .= implode(' ', $words);
+    }
+
+    return $string;
+}
+
 function get_age_in_words($date){
-	global $num_word_list;
-	
 	$start_year = explode('-',$date)[0];
 	//get the difference with the current year
 	$age = date('Y')-$start_year;
 
-	//Convert the age to words
-	if($age > 20){
-		$base = intval($age/10);
-		$base_in_words = $num_word_list[$base+20];
-		return $base_in_words.'-'.$num_word_list[$age-($base*10)];
-	}else{
-		return $num_word_list[$age];
-	}
+	return number_to_words($age);
 }
 
 function get_arriving_users(){
@@ -320,7 +415,7 @@ function get_arriving_users(){
 	return $arrival_users;
 }
 
-function get_missionary_accounts($return_family=false,$adults=true,$local_nigerians=false,$fields=[],$extra_args=[]){
+function get_user_accounts($return_family=false,$adults=true,$local_nigerians=false,$fields=[],$extra_args=[]){
 	$do_not_process 		= [];
 	$cleaned_user_array 	= [];
 	
@@ -399,12 +494,26 @@ function add_to_nested_array($keys, &$array=array(), $value=null) {
 	$temp[] = $value;
 }
 
+function remove_from_nested_array(&$array, $array_keys){
+	$last 		= array_key_last($array_keys);
+	$current 	=& $array;
+    foreach($array_keys as $index=>$key){
+		if($index == $last){
+			unset($current[$key]);
+		}else{
+        	$current =& $current[$key];
+		}
+    }
+
+    return $current;
+}
+
 //clean up an array
-function remove_from_nested_array(&$array){
+function clean_up_nested_array(&$array, $del_empty_arrays=false){
 	foreach ($array as $key => $value){
         if(is_array($value)){
-            remove_from_nested_array($value);
-			if(empty($value)){
+            clean_up_nested_array($value);
+			if(empty($value) and $del_empty_arrays){
 				unset($array[$key]);
 			}else{
 				$array[$key] = $value;
@@ -444,26 +553,21 @@ function get_meta_array_value($user_id, $metakey, $values=null){
 
 //Verify nonce
 function verify_nonce($nonce_string){
-	//print_array("Verifying nonce $nonce_string");
-	//print_array($_POST,true);
 	if(!isset($_POST[$nonce_string])){
-		wp_die("No nonce found! Try again after refreshing the page",500);
-	}elseif(!wp_verify_nonce($_POST[$nonce_string],$nonce_string)){
-		wp_die("Invalid nonce! Try again after refreshing the page",500);
+		if(wp_doing_ajax()){
+			wp_die("No nonce found! Try again after refreshing the page",500);
+		}else{
+			return false;
+		}
+	}elseif(!wp_verify_nonce($_POST[$nonce_string], $nonce_string)){
+		if(wp_doing_ajax()){
+			wp_die("Invalid nonce! Try again after refreshing the page",500);
+		}else{
+			return false;
+		}
 	}
-}
 
-function get_child_title($user_id){
-	$gender = get_user_meta( $user_id, 'gender', true );
-	if($gender == 'male'){
-		$title = "son";
-	}elseif($gender == 'female'){
-		$title = "daughter";
-	}else{
-		$title = "child";
-	}
-	
-	return $title;
+	return true;
 }
 
 function add_save_button($element_id, $button_text, $extraclass = ''){
@@ -518,31 +622,20 @@ function add_to_library($target_file){
 		if(isset($post_id)) return $post_id;
 	}
 }
+ 
+function get_module_option($module_name, $option){
+	global $Modules;
 
-function get_ministries(){
-	global $MinistryCategoryID;
-	
-	//Get all pages which are subpages of the MinistriesPageID
-	$Ministry_pages = get_posts([
-		'post_type'			=> 'location',
-		'posts_per_page'	=> -1,
-		'post_status'		=> 'publish',
-		'tax_query' => array(
-            array(
-                'taxonomy'	=> 'locationtype',
-				'field' => 'term_id',
-				'terms' => $MinistryCategoryID,
-                //'parent'	=> $MinistryCategoryID,
-            )
-        )
-	]);
-	$Ministries = [];
-	foreach ( $Ministry_pages as $Ministry_page ) {
-		$Ministries[] = $Ministry_page->post_title;
+	if(!empty($Modules[$module_name][$option])){
+		return $Modules[$module_name][$option];
+	}else{
+		return false;
 	}
-	//Sort in alphabetical order
-	asort($Ministries);
-	$Ministries[] 			= "Other";
-	
-	return $Ministries;
+}
+
+function try_send_signal($message, $recipient, $post_id=""){
+
+	if (function_exists('SIM\send_signal_message')) {
+		send_signal_message($message, $recipient, $post_id);
+	}
 }

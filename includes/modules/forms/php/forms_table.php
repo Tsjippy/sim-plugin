@@ -9,7 +9,7 @@ class FormTable extends Formbuilder{
 	function __construct(){
 		global $wpdb;
 		
-		$this->shortcodetable			= $wpdb->prefix . 'simnigeria_form_shortcodes';
+		$this->shortcodetable			= $wpdb->prefix . 'sim_form_shortcodes';
 		$this->enriched					= false;
 		
 		// call parent constructor
@@ -36,13 +36,14 @@ class FormTable extends Formbuilder{
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			table_settings text NOT NULL,
 			column_settings text NOT NULL,
+			form_id int NOT NULL,
 			PRIMARY KEY  (id)
 		) $charset_collate;";
 
 		maybe_create_table($this->shortcodetable, $sql );
 	}
 	
-	function transform_inputdata($string,$field_name){
+	function transform_inputdata($string, $field_name){
 		if(empty($string)) return $string;
 		$output = '';
 		
@@ -61,7 +62,7 @@ class FormTable extends Formbuilder{
 			}elseif(strpos($string, 'https://') !== false and strpos($string, 'href') === false) {
 				$output 	= "<a href='$string'>Link</a>";
 			//display dates in a nice way
-			}elseif(strtotime($string) != false and date('Y',strtotime($string))<2100){
+			}elseif(strtotime($string) != false and date_parse($string)['year']){
 				$output		= date('d-M-Y',strtotime($string));
 			//show file uploads as links
 			}elseif(strpos($string,'uploads/form_uploads') !== false){
@@ -92,16 +93,16 @@ class FormTable extends Formbuilder{
 			$index			= 0;
 			$element_ids	= [];
 			
-			foreach ($this->formdata->form_elements as $element){
-				$element_ids[]	= $element['id'];
+			foreach ($this->form_elements as $element){
+				$element_ids[]	= $element->id;
 				//check if the element is in the array, if not add it
-				if(!isset($this->column_settings[$element['id']])){
+				if(!isset($this->column_settings[$element->id])){
 					//do not show non-input elements
-					if(in_array($element['type'],$this->non_inputs)) continue;
+					if(in_array($element->type,$this->non_inputs)) continue;
 					
 					//Do not show elements that will be splitted
 					//Execute the regex
-					if($this->form_settings['split'] != '' and preg_match($pattern, $element['name'],$matches)){
+					if($this->form_settings['split'] != '' and preg_match($pattern, $element->name,$matches)){
 						//We found a keyword, check if we already got the same one
 						if(!in_array($matches[1],$processed)){
 							//Add to the processed array
@@ -124,10 +125,10 @@ class FormTable extends Formbuilder{
 							continue;
 						}
 					}else{
-						$name			= $element['name'];
+						$name			= $element->name;
 					}
 				
-					$this->column_settings[$element['id']] = [
+					$this->column_settings[$element->id] = [
 						'name'				=> $name,
 						'nice_name'			=> $name,
 						'show'				=> '',
@@ -135,11 +136,11 @@ class FormTable extends Formbuilder{
 						'view_right_roles'	=> []
 					];
 				}else{
-					if(!isset($this->column_settings[$element['id']]['edit_right_roles'])){
-						$this->column_settings[$element['id']]['edit_right_roles']	= [];
+					if(!isset($this->column_settings[$element->id]['edit_right_roles'])){
+						$this->column_settings[$element->id]['edit_right_roles']	= [];
 					}
-					if(!isset($this->column_settings[$element['id']]['view_right_roles'])){
-						$this->column_settings[$element['id']]['view_right_roles']	= [];
+					if(!isset($this->column_settings[$element->id]['view_right_roles'])){
+						$this->column_settings[$element->id]['view_right_roles']	= [];
 					}
 				}
 			}
@@ -193,7 +194,7 @@ class FormTable extends Formbuilder{
 		}
 	}
 	
-	function write_table_row($field_values,$index=-1,$is_archived=false){
+	function write_table_row($field_values, $index=-1, $is_archived=false){
 		$field_main_name	= $this->form_settings['split'];
 		//Loop over the fields in order of the defined columns
 		$rowcontents	= '';
@@ -300,7 +301,7 @@ class FormTable extends Formbuilder{
 			
 			//if the user has one of the roles diffined for this element
 			if($element_edit_rights and $fieldname != 'id'){
-				$class	.= 'edit';
+				$class	.= 'edit_forms_table';
 				$class	= " class='$class' data-id='$fieldname'";
 			}elseif($class != ''){
 				$class = " class='$class'";
@@ -336,7 +337,7 @@ class FormTable extends Formbuilder{
 				if($action == 'archive' and $this->show_archived == 'true' and $is_archived){
 					$action = 'unarchive';
 				}
-				$buttons_html[$action]	= "<button class='$action button table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
+				$buttons_html[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
 			}
 			$buttons_html = apply_filters('form_actions',$buttons_html,$field_values,$index);
 			
@@ -384,7 +385,7 @@ class FormTable extends Formbuilder{
 			//loop over the cells
 			foreach ($row as $cell) {
 				if(is_array($cell)){
-					remove_from_nested_array($cell);
+					clean_up_nested_array($cell);
 					$cell	= implode(',',$cell);
 				} 
 				/* 
@@ -630,7 +631,7 @@ class FormTable extends Formbuilder{
 						</div>
 						<?php
 						foreach ($this->column_settings as $element_index=>$column_setting){
-							//$element_index		= $element['id'];
+							//$element_index		= $element->id;
 							//$column_setting		= $this->column_settings[$element_index];
 							
 							$nice_name	= $column_setting['nice_name'];
@@ -714,7 +715,7 @@ class FormTable extends Formbuilder{
 							}
 							
 							foreach($this->column_settings as $key=>$element){
-								$name = $element['nice_name'];
+								$name = $element->nice_name;
 								
 								//Check which option is the selected one
 								if($this->table_settings['default_sort'] != '' and $this->table_settings['default_sort'] == $key){
@@ -742,15 +743,15 @@ class FormTable extends Formbuilder{
 							}
 							
 							foreach($this->column_settings as $key=>$element){
-								$name = $element['nice_name'];
+								$name = $element->nice_name;
 								
 								//Check which option is the selected one
-								if($this->table_settings['hiderow'] != '' and $this->table_settings['hiderow'] == $element['name']){
+								if($this->table_settings['hiderow'] != '' and $this->table_settings['hiderow'] == $element->name){
 									$selected = 'selected';
 								}else{
 									$selected = '';
 								}
-								echo "<option value='{$element['name']}' $selected>$name</option>";
+								echo "<option value='{$element->name}' $selected>$name</option>";
 							}
 							?>
 							</select>
@@ -767,10 +768,10 @@ class FormTable extends Formbuilder{
 							}
 							
 							$found_elements = [];
-							foreach($this->formdata->form_elements as $key=>$element){
+							foreach($this->form_elements as $key=>$element){
 								$pattern = "/([^\[]+)\[[0-9]+\]/i";
 								
-								if(preg_match($pattern, $element['name'], $matches)){
+								if(preg_match($pattern, $element->name, $matches)){
 									//Only add if not found before
 									if(!in_array($matches[1],$found_elements)){
 										$found_elements[]	= $matches[1];
@@ -849,7 +850,7 @@ class FormTable extends Formbuilder{
 								}
 								
 								foreach($this->column_settings as $key=>$element){
-									$name = $element['nice_name'];
+									$name = $element->nice_name;
 									
 									//Check which option is the selected one
 									if($this->form_settings['autoarchivefield'] != '' and $this->form_settings['autoarchivefield'] == $key){
@@ -926,6 +927,8 @@ class FormTable extends Formbuilder{
 	}
 	
 	function show_formresults_table($atts){
+		global $StyleVersion;
+
 		ob_start();
 		
 		$this->process_atts($atts);
@@ -983,14 +986,14 @@ class FormTable extends Formbuilder{
 		do_action('formtable_POST_actions');
 		
 		//Load js
-		wp_enqueue_script('simnigeria_table_script');
+		wp_enqueue_script('sim_forms_table_script', plugins_url('js/forms_table.js', __DIR__), array('simnigeria_table_script','simnigeria_forms_script'),$StyleVersion,true);
 		
 		//do not show if not logged in
 		if(!is_user_logged_in()) return;
 		
 		?>
 		<div class='form_table_wrapper'>
-			<h2 class="table_title"><?php echo esc_html($this->form_settings['formname']); ?></h2>
+			<h2 class="table_title"><?php echo esc_html($this->form_settings['formname']); ?></h2><br>
 			
 			<?php
 			//Show form properties button if we have form edit permissions
@@ -1205,6 +1208,21 @@ class FormTable extends Formbuilder{
 		return ob_get_clean();
 	}
 
+	function insert_in_db($form_id){
+		global $wpdb;
+
+		//add new row in db
+		$wpdb->insert(
+			$this->shortcodetable, 
+			array(
+				'table_settings'	=> '',
+				'form_id'			=> $form_id,
+			)
+		);
+
+		return $wpdb->insert_id;
+	}
+
 	//check for any formresults shortcode and add an id if needed
 	function check_for_form_shortcode($data , $postarr) {
 		global $wpdb;
@@ -1221,14 +1239,12 @@ class FormTable extends Formbuilder{
 					$shortcode = $matches[0][$key];
 					
 					$this->datatype = $matches[2][$key];
+
+					$this->loadformdata();
+
+					$this->create_db_shortcode_table();
 					
-					//add new row in db
-					$wpdb->insert(
-						$this->shortcodetable, 
-						array(
-							'table_settings'		=> '',
-						)
-					);
+					$this->insert_in_db($this->formdata->id);
 					
 					$shortcode_id	= $wpdb->insert_id;
 					$new_shortcode	= str_replace('formresults',"formresults id=$shortcode_id",$shortcode);

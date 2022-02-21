@@ -68,3 +68,8 @@ input:checked + .slider:before {
 .slider.round:before {
     border-radius: 50%;
 }
+
+ul.sim-list{
+    list-style: disc;
+    padding-left: 20px;
+}

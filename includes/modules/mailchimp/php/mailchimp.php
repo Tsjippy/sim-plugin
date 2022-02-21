@@ -410,6 +410,12 @@ if(!class_exists('SIM\Mailchimp')){
 
 		//Get an array of available segements in the audience
 		function get_segments(){
+			if(empty($this->settings['audienceids'][0])){
+				$error	= 'No Audience defined in mailchimp module settings';
+				print_array($error);
+				return $error;
+			}
+
 			try {
 				$response = $this->client->lists->listSegments(
 					$this->settings['audienceids'][0], 	//Audience id
@@ -427,7 +433,7 @@ if(!class_exists('SIM\Mailchimp')){
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
 				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				print_array($error_result);
+				//print_array($result->detail);
 				return $error_result;
 			}catch(\Exception $e) {
 				$error_result = $e->getMessage();
@@ -472,3 +478,22 @@ if(!class_exists('SIM\Mailchimp')){
 		}
 	}
 }
+
+
+add_action('sim_after_post_save', function($post){
+	//Mailchimp
+	if(is_numeric($_POST['mailchimp_segment_id'])){
+		if($post->post_status == 'publish'){
+			//Send mailchimp
+			$Mailchimp = new Mailchimp();
+			$result = $Mailchimp->send_email($post->ID, intval($_POST['mailchimp_segment_id']), $_POST['mailchimp_email']);
+			
+			//delete any post metakey
+			delete_post_meta($post->ID,'mailchimp_segment_id');
+			delete_post_meta($post->ID,'mailchimp_email');
+		}else{
+			update_post_meta($post->ID,'mailchimp_segment_id',$_POST['mailchimp_segment_id']);
+			update_post_meta($post->ID,'mailchimp_email',$_POST['mailchimp_email']);
+		}
+	}
+});

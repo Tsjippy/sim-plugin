@@ -56,8 +56,6 @@ window['cat_type_added'] = function(result,responsdata){
 }
 
 function refresh_post_lock(action='refresh_post_lock'){
-	//console.log(action);
-	
 	var request = new XMLHttpRequest();
 
 	request.open('POST', simnigeria.ajax_url, true);
@@ -209,7 +207,7 @@ function addFeaturedImage(event) {
 		return;
 	} 
 
-	var myCustomState = wp.media.controller.Library.extend({
+/* 	var myCustomState = wp.media.controller.Library.extend({
 		defaults :  _.defaults({
 			id: 'my-custom-state',
 			title: 'Upload Image',
@@ -230,7 +228,7 @@ function addFeaturedImage(event) {
 		states: [
 			new myCustomState() // add the state
 		]
-	});
+	}); */
 
 	file_frame = wp.media.frames.file_frame = wp.media({
 		title: 'Select featured image' ,

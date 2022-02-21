@@ -86,7 +86,6 @@ class FormTableAjax extends FormTable {
 		$form_settings = $_POST['form_settings'];
 		if(is_array($form_settings) and !empty($_POST['formname'])){
 			$this->datatype = $_POST['formname'];
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 			$this->loadformdata();
 			
 			//update existing
@@ -100,7 +99,7 @@ class FormTableAjax extends FormTable {
 					'settings' 	=> maybe_serialize($this->formdata->settings)
 				), 
 				array(
-					'form_name'		=> $this->datatype,
+					'form'		=> $this->datatype,
 				),
 			);
 		}
@@ -117,7 +116,6 @@ class FormTableAjax extends FormTable {
 			
 		if(!empty($_POST['table_id'])){
 			$this->datatype = $_POST['table_id'];
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 			$this->loadformdata();
 		}else{
 			wp_die('Invalid table id',500);
@@ -240,7 +238,6 @@ class FormTableAjax extends FormTable {
 		
 		if(!empty($_POST['formname'])){
 			$this->datatype = $_POST['formname'];
-			$this->submissiontable_name = $this->submissiontable_prefix."_".$this->datatype;
 			$this->loadformdata();
 		}else{
 			wp_die('Invalid form name',500);
@@ -248,8 +245,8 @@ class FormTableAjax extends FormTable {
 		
 		if(empty($_POST['fieldname']) or !is_numeric($_POST['submission_id']))	wp_die('Invalid submission id',500);
 		
-		foreach ($this->formdata->form_elements as $key=>$element){
-			if(str_replace('[]','',$element['name']) == $_POST['fieldname']){
+		foreach ($this->form_elements as $key=>$element){
+			if(str_replace('[]','',$element->name) == $_POST['fieldname']){
 				//Load default values for this element
 				$element_html = $this->get_element_html($element);
 				

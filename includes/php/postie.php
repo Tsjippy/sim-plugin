@@ -6,7 +6,6 @@ namespace SIM;
 add_filter('postie_post_before', 'SIM\postie_post', 10, 2);
 function postie_post($post, $headers) {
 	global $FinanceCategoryID;
-	global $FinanceDefaultImageID;
 	global $FinanceEmail;
 	
 	//Check if account statement mail
@@ -26,15 +25,10 @@ function postie_post($post, $headers) {
 		$post['post_title'] = trim(str_replace("Fwd:","",$subject));
 	
 		//Set the category
-		//print_array($headers);
-
 		if ($headers['from']['mailbox'].'@'.$headers['from']['host'] == $FinanceEmail){
 			echo "Setting the category";
 			//Set the category to Finance
 			$post['post_category'] = [$FinanceCategoryID];
-			
-			//Set the featured image
-			set_post_thumbnail( $post['ID'], $FinanceDefaultImageID); 
 		}
 	}
 	return $post;
@@ -44,9 +38,6 @@ add_filter('postie_post_after', 'SIM\postie_post_published');
 function postie_post_published($post){
 	//Only send message if post is published
 	if($post['post_status'] == 'publish'){
-		//Send onesignal message
-		//send_custom_onesignal_message($post['post_title'],"All",get_permalink($post[ID]),$post_id=$post[ID]);
-		print_array($post);
 		send_post_notification($post['ID']);
 	}else{
 		send_pending_post_warning(get_post($post['ID']), false);
@@ -86,8 +77,6 @@ function check_if_account_statement($post){
 				)
 			)
 		);
-		
-		//print_array($users,true);
 		
 		//Find the attachment url
 		$attachments = get_attached_media("",$post['ID']);
@@ -154,7 +143,7 @@ function check_if_account_statement($post){
 					update_user_meta($user->ID, "account_statements", $account_statements);
 					
 					//Send signal message
-					send_signal_message(
+					try_send_signal(
 						"Hi ".$user->first_name.",\n\nThe account statement for the month ".date_format($postdate,'F')." just got available on the website. See it here: \n\n".get_site_url(null, '/account/')."\n\nDirect url to the statement:\n$new_url",
 						$user->ID
 					);

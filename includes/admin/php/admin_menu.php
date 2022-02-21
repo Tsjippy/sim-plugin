@@ -5,6 +5,9 @@ namespace SIM;
 add_action( 'admin_enqueue_scripts', function () {
 	global $StyleVersion;
 
+	//Only load on sim settings pages
+	if(strpos(get_current_screen()->base, 'sim-settings') === false) return;
+
 	wp_enqueue_style('sim_admin_css', plugins_url('css/admin.css', __DIR__), array(), $StyleVersion);
 	wp_enqueue_script('sim_admin_js', plugins_url('js/admin.js', __DIR__), array(),$StyleVersion, true);
 });
@@ -34,6 +37,8 @@ function register_admin_menu_page() {
 
 	//get all modules based on folder name
 	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
+	//Sort alphabeticalyy, ignore case
+	sort($modules, SORT_STRING | SORT_FLAG_CASE);
 
 	foreach($modules as $module){
 		$module_slug	= basename($module);
@@ -119,9 +124,46 @@ function admin_menu_functions(){
 
 function main_menu(){
 	global $CustomSimSettings;
+	global $Modules;
+
+	//get all modules based on folder name
+	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
+
+	$active		= [];
+	$inactive	= [];
+	foreach($modules as $module){
+		$module_slug	= basename($module);
+		$module_name	= ucwords(str_replace(['_', '-'], ' ', $module_slug));
+		
+		if(in_array($module_slug, array_keys($Modules))){
+			$active[$module_slug]	= $module_name;
+		}elseif($module_slug != "__template"){
+			$inactive[$module_slug]	= $module_name;
+		}
+	}
 	
 	ob_start();
 	?>
+	<div>
+		<b>Current active modules</b><br>
+		<ul class="sim-list">
+		<?php
+		foreach($active as $slug=>$name){
+			$url	= admin_url("sim_$slug");
+			echo "<li><a href='$url'>$name</a></li>";
+		}
+		?>
+		</ul>
+		<b>Current inactive modules</b><br>
+		<ul class="sim-list">
+		<?php
+		foreach($inactive as $slug=>$name){
+			$url	= admin_url("admin.php?page=sim_$slug");
+			echo "<li><a href='$url'>$name</a></li>";
+		}
+		?>
+		</ul>
+	</div>
 	<div class="wrap">
         <h1>Define custom settings</h1>
 		<?php		

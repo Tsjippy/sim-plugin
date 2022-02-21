@@ -12,7 +12,7 @@ class FrontEndContent{
 		$this->post_category 	= [];
 		$this->post_content		= '';
 		$this->post_parent 		= null;
-		$this->post_image_id	= '';
+		$this->post_image_id	= 0;
 		$this->lite 			= false;
 		
 		if(in_array('contentmanager',$this->user->roles)){
@@ -30,6 +30,7 @@ class FrontEndContent{
 			
 			//Add post edit button
 			add_action( 'generate_before_content', array($this,'add_page_edit_button'));
+			add_action( 'sim_before_content', array($this,'add_page_edit_button'));
 			
 			//Shortcode to display all pages and post who are pending
 			add_shortcode("pending_pages", array($this,'show_pending_posts'));
@@ -73,8 +74,8 @@ class FrontEndContent{
 	
 	function add_tinymce_plugin($plugins) {
 		global $StyleVersion;
-		$plugins['file_upload'] = plugins_url("../js/tiny_mce_action.js?ver=$StyleVersion", __DIR__);
-		$plugins['select_user'] = plugins_url("../js/tiny_mce_action.js?ver=$StyleVersion", __DIR__);
+		$plugins['file_upload'] = plugins_url("../../js/tiny_mce_action.js?ver=$StyleVersion", __DIR__);
+		$plugins['select_user'] = plugins_url("../../js/tiny_mce_action.js?ver=$StyleVersion", __DIR__);
 		
 		if(isset($plugins['wpUserAvatar'])){
 			unset($plugins['wpUserAvatar']);
@@ -144,7 +145,7 @@ class FrontEndContent{
 			$user_compound 		= get_user_meta( $this->user->ID, "location", true);
 			if(isset($user_compound['compound'])) $user_compound = $user_compound['compound'];
 			
-			$missionary_page_id = get_missionary_page_id($this->user->ID);
+			$missionary_page_id = get_user_page_id($this->user->ID);
 			
 			$user_ministries 	= get_user_meta( $this->user->ID, "user_ministries", true);
 			
@@ -286,8 +287,6 @@ class FrontEndContent{
 		
 		//Only continue if the decoding was succesfull
 		if( $file_contents !== false){
-			//print_array("Adding picture to the library");
-			
 			//Save the image in the uploads folder
 			file_put_contents($new_file_path,$file_contents);
 			
@@ -334,13 +333,13 @@ class FrontEndContent{
 		$post_content 	= preg_replace_callback('/"data:image\/(\w+);base64,([^"]*)/m', array($this,'upload_images'), $post_content);
 		
 		//Find display names in content
-		$users = get_missionary_accounts(false,false,true);
+		$users = get_user_accounts(false,false,true);
 		foreach($users as $user){
 			$privacy_preference = get_user_meta( $user->ID, 'privacy_preference', true );
 			//only replace the name with a link if privacy allows
 			if(empty($privacy_preference['hide_name'])){
 				//Replace the name with a hyperlink
-				$url			= get_missionary_page_url($user->ID);
+				$url			= get_user_page_url($user->ID);
 				$link			= "<a href='$url'>{$user->display_name}</a>";
 				$post_content	= str_replace($user->display_name,$link,$post_content);
 			}
@@ -374,7 +373,7 @@ class FrontEndContent{
 			//only update author if needed and not in the content manager role
 			if(!$this->fullrights and $userdata->ID != $post->post_author)	$new_post_data['post_author'] 	= $userdata->ID;
 			
-			if($_POST['parent_page'] != $post->parent_page)	$new_post_data['post_parent'] 	= $_POST['parent_page'];
+			if($_POST['parent_page'] != $post->post_parent)	$new_post_data['post_parent'] 	= $_POST['parent_page'];
 			if($categories != $post->post_category)			$new_post_data['post_category'] = $categories;
 
 			//we cannot change the post type here
@@ -424,42 +423,6 @@ class FrontEndContent{
 		//Set the featured image
 		if(is_numeric($_POST['post_image_id'])){
 			set_post_thumbnail($this->post_id, $_POST['post_image_id']);
-		}else{
-			//check if we need to set an default image
-			set_default_picture($this->post_id);
-		}
-		
-		if(isset($_POST['signal']) and $_POST['signal'] == 'send_signal'){
-			if($status == 'publish'){
-				delete_post_meta($this->post_id,'signal');
-				delete_post_meta($this->post_id,'signalmessagetype');
-			}else{
-				update_post_meta($this->post_id,'signal','checked');
-				update_post_meta($this->post_id,'signalmessagetype',$_POST['signalmessagetype']);
-				
-			}
-		}
-		
-		//Run the after post inser hook
-		after_post_insert( $this->post_id, get_post($this->post_id), $update );
-		
-		//store audience
-		save_page_audience($this->post_id);	
-		
-		//Mailchimp
-		if(is_numeric($_POST['mailchimp_segment_id'])){
-			if($status == 'publish'){
-				//Send mailchimp
-				$Mailchimp = new Mailchimp($user->ID);
-				$result = $Mailchimp->send_email($this->post_id, intval($_POST['mailchimp_segment_id']), $_POST['mailchimp_email']);
-				
-				//delete any post metakey
-				delete_post_meta($this->post_id,'mailchimp_segment_id');
-				delete_post_meta($this->post_id,'mailchimp_email');
-			}else{
-				update_post_meta($this->post_id,'mailchimp_segment_id',$_POST['mailchimp_segment_id']);
-				update_post_meta($this->post_id,'mailchimp_email',$_POST['mailchimp_email']);
-			}
 		}
 		
 		//Static content
@@ -480,18 +443,7 @@ class FrontEndContent{
 			update_post_meta($this->post_id,'expirydate',$_POST['expirydate']);
 		}
 		
-		//PDF button
-		if(isset($_POST['add_print_button'])){
-			//Store pdf button
-			if($_POST['add_print_button'] == ''){
-				$value = false;
-			}else{
-				$value = true;
-			}
-			update_post_meta($this->post_id,'add_print_button',$value);
-		}
-		
-		do_action('frontend_post_save_meta',$this->post_id,$this->post_type);
+		do_action('sim_after_post_save', $post, $update);
 		
 		//Return result
 		if($status == 'publish'){
@@ -565,7 +517,7 @@ class FrontEndContent{
 			$user_id = $user->ID;
 
 			//Get current users ministry and compound
-			$missionary_page_id = get_missionary_page_id($user_id);
+			$missionary_page_id = get_user_page_id($user_id);
 			$user_ministries 	= get_user_meta($user_id, "user_ministries", true);
 			$user_compound 		= get_user_meta($user_id, "location", true);
 			if(!is_array($user_compound)) $user_compound = [];
@@ -783,15 +735,10 @@ class FrontEndContent{
 				echo page_select('parent_page',$this->post_parent);
 				?>
 			</div>
-			
-			<div id="add_print_button_div" class="frontendform">
-				<h4>PDF button</h4>	
-				<label>
-					<input type='checkbox'  name='add_print_button' value='add_print_button' <?php if(get_post_meta($this->post_id,'add_print_button',true) != '') echo 'checked';?>>
-					Add a 'Save as PDF' button
-				</label>
-			</div>
-			
+
+			<?php
+			do_action('sim_page_specific_fields', $this->post_id);
+			?>			
 			<div id="static_content" class="frontendform">
 				<h4>Update warnings</h4>	
 				<label>
@@ -1103,17 +1050,16 @@ class FrontEndContent{
 				<h4>Title</h4>
 				<input type="text" name="post_title" class='block' value="<?php echo $this->post_title;?>" required>
 				
-				
 				<?php
 				do_action('frontend_post_before_content',$this->post_type, $this->post_id);
 				
 				$this->post_categories();
 				?>
 				
-				<div id="featured-image-div" <?php if($this->post_image_id == '') echo ' class="hidden"';?>>
+		 		<div id="featured-image-div" <?php if($this->post_image_id == 0) echo ' class="hidden"';?>>
 					<h4 name="post_image_label">Featured image:</h4>
-					<?php
-					if($this->post_image_id != ''){
+					<?php 
+					if($this->post_image_id == 0){
 						echo get_the_post_thumbnail(
 							$this->post_id, 
 							'thumbnail', 
@@ -1247,7 +1193,7 @@ function send_pending_post_warning($post, $update){
 	
 	foreach($users as $user){
 		//send signal message
-		send_signal_message("$author_name just $action_text a $type. Please review it here:\n\n$url",$user->ID);
+		try_send_signal("$author_name just $action_text a $type. Please review it here:\n\n$url",$user->ID);
 		
 		//Send e-mail
 		$message = "Hi ".$user->first_name."<br><br>";
@@ -1269,57 +1215,6 @@ add_action(  'transition_post_status',  function ( $new_status, $old_status, $po
 		delete_post_meta($post->ID,'pending_notification_send');
 	}
 }, 10, 3 );
-
-//Set the default picture
-function set_default_picture($post_id){
-	global $FinanceDefaultImageID;
-	global $PrayerDefaultImageID;
-	global $NewsDefaultImageID;
-	global $EventDefaultImageID;
-	
-	//Post has category
-	if (has_category("",$post_id)){
-		$cat_name = get_the_category( $post_id )[0] -> name;
-		if ($cat_name == "Prayer"){
-			set_post_thumbnail( $post_id, $PrayerDefaultImageID); 
-		}elseif ($cat_name == "News"){
-			set_post_thumbnail( $post_id, $NewsDefaultImageID); 
-		}
-		elseif ($cat_name == "Finance"){
-			set_post_thumbnail( $post_id, $FinanceDefaultImageID); 
-		}else{
-			set_post_thumbnail( $post_id, $NewsDefaultImageID); 
-		}
-	//Post is an event
-	}elseif(get_post_type($post_id) == 'event'){
-		set_post_thumbnail( $post_id, $EventDefaultImageID);
-	}
-}
-
-//If no featured image on post is set, set one
-add_action( 'save_post', function ( $post_id, $post, $update ) {
-	global $Maps;
-	
-	//This hook fires multiple times, we should only check the last time
-	if($post->post_date != $post->post_modified and $post->post_status == "publish"){
-		global $MissionariesPageID;
-		$parents = get_post_ancestors( $post_id );
-		
-		//Post has no featured image and is about to get published
-		if (!has_post_thumbnail($post_id)) {
-			set_default_picture($post_id);
-		//Post is an missionary page and has an featured image and is a family page, use posts image as marker icon image
-		}elseif(in_array($MissionariesPageID,$parents) and has_post_thumbnail($post_id) and strpos($post->post_title, 'amily') !== false){
-			$author_id = $post->post_author;
-			//Personal marker id
-			$marker_id = get_user_meta($author_id,"marker_id",true);
-			if(is_numeric($marker_id)){
-				//Update the family marker
-				$Maps->create_icon($marker_id, get_userdata($author_id)->last_name." family", get_the_post_thumbnail_url($post_id), 1);
-			}
-		}
-	}
-}, 10,3 );
 
 add_shortcode('your_posts',function(){
 	//load js

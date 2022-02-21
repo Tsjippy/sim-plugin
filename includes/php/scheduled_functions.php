@@ -120,7 +120,7 @@ function page_age_warning(){
 				}
 				
 				//Send Signal message
-				send_signal_message("Hi ".$recipient->first_name.",\nPlease update the page '$post_title' here:\n\n$url",$recipient->ID);
+				try_send_signal("Hi ".$recipient->first_name.",\nPlease update the page '$post_title' here:\n\n$url",$recipient->ID);
 			}
 		}
 	}
@@ -154,6 +154,19 @@ function get_page_recipients($page_title){
 	return $recipients;
 }
 
+function get_child_title($user_id){
+	$gender = get_user_meta( $user_id, 'gender', true );
+	if($gender == 'male'){
+		$title = "son";
+	}elseif($gender == 'female'){
+		$title = "daughter";
+	}else{
+		$title = "child";
+	}
+	
+	return $title;
+}
+
 //loop over all users and scan for missing info
 function personal_info_reminder(){
 	global $WebmasterName;
@@ -163,7 +176,7 @@ function personal_info_reminder(){
 	
 	//Retrieve all users
 	
-	$users = get_missionary_accounts(false,true,true);
+	$users = get_user_accounts(false,true,true);
 	//Loop over the users
  	foreach($users as $user){
 		//get the reminders for this user
@@ -190,7 +203,7 @@ function personal_info_reminder(){
 						}
 									
 						//Send Signal message
-						send_signal_message(
+						try_send_signal(
 							"Hi ".$parent->first_name.",\nPlease update the personal information of your $child_title ".$userdata->first_name." here:\n\n".get_site_url()."/account",
 							$user->ID
 						);
@@ -198,7 +211,7 @@ function personal_info_reminder(){
 				//not a child
 				}else{			
 					//Send Signal message
-					send_signal_message(
+					try_send_signal(
 						"Hi ".$userdata->first_name.",\nPlease update your personal information here:\n\n".get_site_url()."/account",
 						$user->ID
 					);
@@ -236,7 +249,7 @@ function check_details_mail(){
 	$subject	= 'Please review your website profile';
 	
 	//Retrieve all uses
-	$users = get_missionary_accounts($return_family=false,$adults=true,$local_nigerians=true);
+	$users = get_user_accounts($return_family=false,$adults=true,$local_nigerians=true);
 	//Loop over the users
 	foreach($users as $user){
 		$attachments = [];
@@ -310,7 +323,7 @@ function check_details_mail(){
 
 		$message .= "<b>Phonenumber";
 		$phonenumbers = (array)get_user_meta($user->ID,'phonenumbers',true);
-		remove_from_nested_array($phonenumbers);
+		clean_up_nested_array($phonenumbers);
 		if(count($phonenumbers)>1) $message .= 's';
 		$message .= "</b><br>";
 		if(empty($phonenumbers)){
@@ -331,7 +344,7 @@ function check_details_mail(){
 		}else{
 			$message .= "<br><b>Ministry</b><br>";
 		}
-		remove_from_nested_array($user_ministries);
+		clean_up_nested_array($user_ministries);
 		if(empty($user_ministries)){
 			$message .= "No ministry provided.<br>";
 		}elseif(count($user_ministries) == 1){
@@ -351,7 +364,7 @@ function check_details_mail(){
 
 		$message .= "<b>State</b><br>";
 		$location= (array)get_user_meta($user->ID,'location',true);
-		remove_from_nested_array($location);
+		clean_up_nested_array($location);
 		if(empty($location['address'])){
 			$message .= "No location provided.<br>";
 		}else{
@@ -435,7 +448,7 @@ function vaccination_reminder(){
 									
 						//Send OneSignal message
 						//send_custom_onesignal_message("Hi ".$parent->first_name.",\nPlease renew the vaccinations of your $child_title ".$userdata->first_name,$user->ID,get_site_url());
-						send_signal_message(
+						try_send_signal(
 							"Hi ".$parent->first_name.",\nPlease renew the vaccinations  of your $child_title ".$userdata->first_name."!\n\n".get_site_url(),
 							$user->ID
 						);
@@ -449,7 +462,7 @@ function vaccination_reminder(){
 					$message = 'Hi '.$userdata->first_name.',<br><br>';
 					
 					//Send Signal message
-					send_signal_message("Hi ".$userdata->first_name.",\nPlease renew your vaccinations!\n\n".get_site_url(),$user->ID);
+					try_send_signal("Hi ".$userdata->first_name.",\nPlease renew your vaccinations!\n\n".get_site_url(),$user->ID);
 				}
 				
 				
@@ -501,7 +514,7 @@ function greencard_reminder(){
 
 				//Send OneSignal message
 				send_custom_onesignal_message("Hi ".$user->first_name.",\nPlease renew your greencard!",$user->ID,get_site_url(null, '/account/'));
-				send_signal_message("Hi ".$user->first_name.",\nPlease renew your greencard!\n\n".get_site_url(),$user->ID);
+				try_send_signal("Hi ".$user->first_name.",\nPlease renew your greencard!\n\n".get_site_url(),$user->ID);
 				
 				//Send e-mail
 				$message .= str_replace('</li>','',str_replace('<li>',"",$reminder_html));
@@ -529,7 +542,7 @@ function review_reminders(){
 		wp_set_current_user(1);
 		
 		//Retrieve all users
-		$users = get_missionary_accounts();
+		$users = get_user_accounts();
 		//print_array($users);
 		
 		//loop over the users
@@ -553,7 +566,7 @@ function review_reminders(){
 
 						//Send OneSignal message
 						//send_custom_onesignal_message("Hi ".$user->first_name.",\nPlease fill in the annual review questionary.",$user->ID,get_site_url());
-						send_signal_message(
+						try_send_signal(
 							"Hi ".$user->first_name.",\n\nIt is time for your annual review.\nPlease fill in the annual review questionary:\n\n".get_site_url().'/'.$generic_documents['Annual review form']."\n\nThen send it to $PersonnelCoordinatorEmail",
 							$user->ID
 						);
@@ -675,7 +688,7 @@ function birthday_check(){
 		}
 	
 		//Send birthday wish to the user
-		send_signal_message("Hi ".$first_name.",\nCongratulations with your birthday!",$user_id);
+		try_send_signal("Hi ".$first_name.",\nCongratulations with your birthday!",$user_id);
 
 		//Send to parents
 		if (isset($family["father"]) or isset($family["mother"])){
@@ -685,49 +698,16 @@ function birthday_check(){
 		}
 		
 		if (isset($family["father"])){	
-			send_signal_message(
+			try_send_signal(
 				"Hi ".get_userdata($family["father"])->first_name.",\n$message",
 				$family["father"]
 			);
 		}
 		if (isset($family["mother"])){
-			send_signal_message(
+			try_send_signal(
 				"Hi ".get_userdata($family["mother"])->first_name.",\n$message",
 				$family["mother"]
 			);
-		}
-	}
-}
-
-function anniversary_check(){
-	global $Events;
-
-	$Events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
-
-	foreach($Events->events as $event){
-		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
-		if(!empty($start_year)){
-			$userdata		= get_userdata($event->post_author);
-			$first_name		= $userdata->first_name;
-			$event_title	= $event->post_title;
-			$partner_id		= has_partner($event->post_author);
-
-			if($partner_id){
-				$partnerdata	= get_userdata($partner_id);
-				$couple_string	= $first_name.' & '.$partnerdata->display_name;
-				$event_title	= trim(str_replace($couple_string,"", $event_title));
-			}
-			
-			$event_title	= trim(str_replace($userdata->display_name,"", $event_title));
-
-			$age	= get_age_in_words($start_year);
-
-			send_signal_message("Hi $first_name,\nCongratulations with your $age $event_title!", $event->post_author);
-
-			//If the author has a partner and this events applies to both of them
-			if($partner_id and strpos($event->post_title, $couple_string)){
-				send_signal_message("Hi {$partnerdata->first_name},\nCongratulations with your $event_title!", $partner_id);
-			}
 		}
 	}
 }
@@ -788,7 +768,7 @@ function account_expiry_check(){
 		wp_mail($recipient , $subject, $message, $headers );
 		
 		//Send OneSignal message
-		send_signal_message("Hi ".$user->first_name.",\nThis is just a reminder that your account on simnigeria.org will be deleted on ".date("d F Y", strtotime(" +1 months")),$user->ID);
+		try_send_signal("Hi ".$user->first_name.",\nThis is just a reminder that your account on simnigeria.org will be deleted on ".date("d F Y", strtotime(" +1 months")),$user->ID);
 	}
 	
 	//Get the users who are expired
@@ -819,7 +799,7 @@ function account_expiry_check(){
 	foreach($expired_users as $user){
 		//Send OneSignal message
 		//send_custom_onesignal_message("Hi ".$user->first_name.",\nYour account is expired",$user->ID,get_site_url());
-		send_signal_message(
+		try_send_signal(
 			"Hi ".$user->first_name.",\nYour account is expired, as you are no longer in Nigeria.",
 			$user->ID
 		);
@@ -847,7 +827,7 @@ function account_expiry_check(){
 
 //Send reminder to people to login
 function check_last_login_date(){
-	$users = get_missionary_accounts();
+	$users = get_user_accounts();
 	foreach($users as $user){
 		$lastlogin = get_user_meta( $user->ID, 'last_login_date',true);
 		$lastlogin_date	= date_create($lastlogin);
@@ -862,7 +842,7 @@ function check_last_login_date(){
 			if(strpos($to,'.empty') !== false) continue;
 
 			//Send Signal message
-			send_signal_message(
+			try_send_signal(
 				"Hi ".$user->first_name.",\n\nWe miss you! We haven't seen you since $lastlogin\n\nPlease pay us a visit on\n".get_site_url(),
 				$user->ID
 			);
@@ -907,7 +887,7 @@ function send_missonary_detail(){
 			'query_two' => 'ASC',
 		),
 	);
-	$users = get_missionary_accounts($return_family=false,$adults=true,$local_nigerians=true,$fields=[],$extra_args=$args);
+	$users = get_user_accounts($return_family=false,$adults=true,$local_nigerians=true,$fields=[],$extra_args=$args);
 	
 	//Loop over all users to add a row with their data to the table
 	$user_details = [];
@@ -979,6 +959,33 @@ function send_missonary_detail(){
 	
 	//Send the mail
 	wp_mail( get_option( 'admin_email' ), $subject, $message, $email_headers, $attachments);
+}
+
+//Export data in an PDF
+function create_contactlist_pdf($header, $data) {
+	// Column headings
+	$widths = array(30, 45, 28, 47,45);
+	
+	//Built frontpage
+	$pdf = new \PDF_HTML();
+	$pdf->frontpage('SIM Nigeria Contact List',date('F'));
+	
+	//Write the table headers
+	$pdf->table_headers($header,$widths);
+	
+    // Data
+    $fill = false;
+	//Loop over all the rows
+    foreach($data as $row){
+		$pdf->WriteTableRow($widths, $row, $fill,$header);		
+        $fill = !$fill;
+    }
+    // Closing line
+    $pdf->Cell(array_sum($widths),0,'','T');
+	
+	$contact_list = get_temp_dir()."/SIM Nigeria Contactlist - ".date('F').".pdf";
+	$pdf->Output( $contact_list , "F");
+    return $contact_list; 
 }
 
 function send_reimbursement_requests(){
@@ -1068,7 +1075,7 @@ function read_reminder(){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 	
-	$users = get_missionary_accounts();
+	$users = get_user_accounts();
 	foreach($users as $user){
 		$html = get_must_read_documents($user->ID);
 		
@@ -1083,7 +1090,7 @@ function read_reminder(){
 			$message = 'Hi '.$user->first_name.',<br>';
 
 			//Send Signal message
-			send_signal_message("Hi ".$user->first_name.",\nPlease read some mandatory content.\n\nVisit ".get_site_url()." to see the content",$user->ID);
+			try_send_signal("Hi ".$user->first_name.",\nPlease read some mandatory content.\n\nVisit ".get_site_url()." to see the content",$user->ID);
 			
 			//Send e-mail
 			$message .= $html;
@@ -1111,16 +1118,6 @@ function process_images(){
 	foreach($images as $image){
 		wp_maybe_generate_attachment_metadata($image);
 	}
-}
-
-//clean up events, in events table. Not the post
-function remove_old_events(){
-	global $Events;
-	global $wpdb;
-
-	$query	= "DELETE FROM {$Events->table_name} WHERE startdate<'".date('Y-m-d',strtotime('-2 years'))."'";
-
-	$wpdb->get_results( $query);
 }
 
 //Add three monthly schedule

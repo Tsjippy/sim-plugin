@@ -509,7 +509,7 @@ class PDF_HTML extends FPDF{
 			}else{
 				$org_lines = explode("\n",$celltext);
 			}
-			SIM\remove_from_nested_array($org_lines);
+			SIM\clean_up_nested_array($org_lines);
 
 			$celltext	= trim(implode("\n",$org_lines));
 
@@ -550,7 +550,7 @@ class PDF_HTML extends FPDF{
 			}else{
 				$org_lines	= explode("\n",$celltext);
 			}
-			SIM\remove_from_nested_array($org_lines);
+			SIM\clean_up_nested_array($org_lines);
 
 			$cell_width = $col_widths[$col_nr];
 			foreach($org_lines as $l_nr=>$line){
@@ -584,10 +584,13 @@ class PDF_HTML extends FPDF{
 	}
 
 	function printpdf(){
-		//loop over all object levels to clear them all
-		for ($i = 0; $i < ob_get_level(); $i++) {
-			ob_get_clean();
+		// CLear the complete queue
+		while(true){
+			//ob_get_clean only returns false when there is absolutely nothing anymore
+			$result	= ob_get_clean();
+			if($result === false) break;
 		}
+
 		ob_start();
 		$this->Output();
 		ob_end_flush();

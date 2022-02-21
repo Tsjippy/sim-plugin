@@ -32,7 +32,8 @@ if(!class_exists('SIM\VimeoApi')){
                     if($this->api == null)  $this->api = new \Vimeo\Vimeo($this->client_id, $this->client_secret, $this->access_token);
                     $response = $this->api->request( '/oauth/verify', [], 'GET' );
         
-                    $this->status    = 'online';
+                    $this->status       = 'online';
+                    $this->license      = $response['body']['user']['account'];
                     if($response['status'] != 200){
                         $this->status   = 'offline';
                         $error          = $response['body']['error'];
@@ -60,7 +61,9 @@ if(!class_exists('SIM\VimeoApi')){
                 'private',
                 'edit',
                 'upload',
-                'delete'
+                'delete',
+                'public',
+                'video_files'
             );
         
             $state  = mt_rand(1000000000,9999999999);
@@ -201,7 +204,7 @@ if(!class_exists('SIM\VimeoApi')){
             
             add_post_meta($attachment_id, '_wp_attached_file', 'Uploading to vimeo');
             //store upload link in case of failed upload and we want to resume
-            add_post_meta($attachment_id, 'vimeo_upload_link', $upload_link);
+            add_post_meta($attachment_id, 'vimeo_upload_data', ['url'=>$upload_link, 'filename'=>$file_name]);
             
             return [
                 'upload_link'	=> $upload_link,
@@ -304,6 +307,12 @@ if(!class_exists('SIM\VimeoApi')){
             }
         }
 
+        function download_video($post_id){
+            $vimeo_id   = $this->get_vimeo_id($post_id);
+            $response	= $this->api->request("/videos/$vimeo_id", [], 'GET');
+            $url = $response;
+        }
+
         function download_from_vimeo($url, $filename) {
             $extension  = pathinfo($url, PATHINFO_EXTENSION);
             if($extension == 'webp'){
@@ -311,6 +320,8 @@ if(!class_exists('SIM\VimeoApi')){
             }else{
                 $path   = $this->backup_dir;
             }
+
+            if(empty($extension )) $extension = 'mp4';
 
             if (!file_exists($path)) {
                 print_array("Creating folder at $path");

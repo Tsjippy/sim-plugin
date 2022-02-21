@@ -29,66 +29,13 @@ add_action( 'rest_api_init', function () {
 
 function bot_prayer() {
 	if (is_user_logged_in()) {
-		global $Events;
-		
 		$message = "The prayer request of today is:\n";
 
 		$message .= prayer_request(true);
 		
-		$user_page_url = '';
-		
-		$anniversary_messages = get_anniversaries();
-		//If there are anniversaries
-		if(count($anniversary_messages) > 0){
-			$message .= "\n\nToday is the ";
+		$params		= apply_filters('sim_after_bot_payer', ['message'=>$message, 'urls'=>'']);
 
-			$message_string	= '';
-
-			//Loop over the anniversary_messages
-			foreach($anniversary_messages as $user_id=>$msg){
-				if(!empty($message_string))$message_string .= " and the ";
-
-				$userdata	= get_userdata($user_id);
-				$couple_string	= $userdata->first_name.' & '.get_userdata(has_partner(($userdata->ID)))->display_name;
-
-				$msg	= str_replace($couple_string,"of $couple_string",$msg);
-				$msg	= str_replace($userdata->display_name,"of {$userdata->display_name}",$msg);
-
-				$message_string .= $msg;
-				$user_page_url .= get_missionary_page_url($user_id)."\n";
-			}
-			$message .= $message_string.'.';
-		}
-		
-		$arrival_users = get_arriving_users();
-		//If there are arrivals
-		if(count($arrival_users) >0){
-			if(count($arrival_users)==1){
-				$message .= "\n\n".$arrival_users[0]->display_name." arrives today.";
-				$user_page_url .= get_missionary_page_url($arrival_users[0]->ID)."\n";
-			}else{
-				$message .= "\n\nToday the following people will arrive: ";
-				//Loop over the arrival_users
-				foreach($arrival_users as $user){
-					$message .= $user->display_name."\n";
-					$user_page_url .= get_missionary_page_url($user->ID)."\n";
-				}
-			}
-		}
-
-		if(isset($Modules['extra_post_types']['event'])){
-			$Events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
-			foreach($Events->events as $event){
-				$start_year	= get_post_meta($event->ID,'celebrationdate',true);
-				//only add events which are not a celebration and start today after curent time
-				if(empty($start_year) and $event->startdate == date('Y-m-d') and $event->starttime > date('h:i')){
-					$message .= "\n\n".$event->post_title.' starts today at '.$event->starttime;
-					$user_page_url	.= get_permalink($event->ID);
-				}
-			}
-		}
-
-		$message .= "\n\n".$user_page_url;
+		$message = $params['message']."\n\n".$params['urls'];
 		
 		return $message;
 	}else{
@@ -138,21 +85,6 @@ function check_if_signal_must_send( $new_status, $old_status, $post ) {
 		// Verify that the nonce is valid and checkbox to send is checked.
 		if (wp_verify_nonce( $nonce, 'signal_message_meta_box') and isset($_POST['signal_message'])) {
 			send_post_notification($post->ID);
-		}
-	}
-}
-
-//Send notifications new posts frontend
-add_action( 'wp_after_insert_post','SIM\after_post_insert', 10, 3 );
-function after_post_insert( $post_id, $post, $update ) {	
-	//send notification if it needs to be approved
-	if($post->post_status == 'pending'){
-		send_pending_post_warning($post, $update);
-	//If the status is publish send a signal message
-	}elseif($post->post_status == 'publish'){
-		//Send signal message if the signal box is ticked
-		if(isset($_POST['signal']) and $_POST['signal'] == 'send_signal'){
-			send_post_notification($post_id);
 		}
 	}
 }

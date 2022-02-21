@@ -1,11 +1,11 @@
 <?php
 namespace SIM;
 
-$StyleVersion = "6.9.307";
+$StyleVersion = "6.9.402";
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', 'SIM\enqueue_scripts');
-add_action( 'admin_enqueue_scripts', 'SIM\enqueue_scripts');
+//add_action( 'admin_enqueue_scripts', 'SIM\enqueue_scripts');
 
 add_filter( 'body_class', function( $classes ) {
 	$newclass = [];
@@ -80,12 +80,6 @@ function enqueue_scripts($hook){
 
 	//schedules page
 	wp_register_script('simnigeria_schedule_script',plugins_url('js/schedules.js', __DIR__), array('simnigeria_table_script','selectable','simnigeria_forms_script'),$StyleVersion,true);
-	
-	//2FA page
-	wp_register_script('simnigeria_2fa_script',plugins_url('js/account/2fa.js', __DIR__), array('simnigeria_fingerprint_script'),$StyleVersion,true);
-	
-	//Formbuilder js
-	wp_register_script( 'simnigeria_formbuilderjs', plugins_url('js/formbuilder.js', __DIR__),array('simnigeria_forms_script','sortable','sweetalert'),$StyleVersion,true);
 	
 	//Frontend posting page
 	wp_register_script('simnigeria_frontend_script',plugins_url('js/frontend_posting.js', __DIR__), array('simnigeria_fileupload_script'),$StyleVersion,true);

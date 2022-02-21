@@ -108,7 +108,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
     
             $methods    = get_user_meta($this->user_id, "2fa_methods",true);
             unset($methods[array_search('webauthn', $methods)]);
-            remove_from_nested_array($methods);
+            clean_up_nested_array($methods);
 
             if(empty($methods)){
                 delete_user_meta($this->user_id, "2fa_methods");
@@ -622,6 +622,8 @@ function auth_finish(\WP_REST_Request $request){
         $current_domain = 'localhost';
         if($current_domain === "localhost" || $current_domain === "127.0.0.1"){
             $server->setSecuredRelyingPartyId([$current_domain]);
+            $_SESSION['webauthn']   = 'success';
+            wp_die("true");
         }
 
         // Verify

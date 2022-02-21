@@ -1,18 +1,14 @@
 /* fetch(simnigeria.ajax_url, {
     method: 'POST',
     credentials: 'same-origin',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Cache-Control': 'no-cache',
-    },
     body: formData
 }).then(response => response.json())
 .then(response => console.log(response))
 .catch(err => console.log(err)); */
 function sendAJAX(formData, form = null){
-	/* for(var pair of formData.entries()) {
+	for(var pair of formData.entries()) {
 		console.log(pair[0]+ ', '+ pair[1]);
-	} */
+	}
 	 
 	responsdata = '';
 	
@@ -76,9 +72,6 @@ function sendAJAX(formData, form = null){
 		}
 	};
 	
-	request.onerror = function() {
-		// Connection error
-	};
 	request.send(formData);
 };
 
@@ -685,11 +678,11 @@ function get_field_value(orgname, checkdatalist=true, comparevalue=null){
 			}else{
 				value = '';
 			}
-		}else if(el.value != null){
+		}else if(el.value != null && el.value != 'undefined'){
 			value = el.value;
 		}
 		
-		return value;
+		return value.toLowerCase();
 	}else{
 		console.trace();
 		console.log("cannot find element with name "+name);
@@ -707,7 +700,7 @@ function change_field_value(orgname, value){
 	}
 	
 	if(target.type == 'radio' || target.type == 'checkbox'){
-		if(!orgname instanceof Element){
+		if(!(orgname instanceof Element)){
 			targets = form.querySelectorAll('[name="'+name+'" i]');
 			for (let i = 0; i < targets.length; i++) {
 				if(targets[i].value.toLowerCase() == value.toLowerCase()){

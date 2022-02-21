@@ -28,12 +28,8 @@ add_shortcode("login_count",function ($atts){
 	$UserID = get_current_user_id();
 	$current_loggin_count = get_user_meta( $UserID, 'login_count', true );
 	//Get the word from the array
-	if ($current_loggin_count != "" and $current_loggin_count < 20){
-		global $num_word_list;
-		return $num_word_list[$current_loggin_count];
-	//Just return the number
-	}elseif ($current_loggin_count != "" and $current_loggin_count > 19){
-		return strval($current_loggin_count);
+	if (is_numeric($current_loggin_count)){
+		return number_to_words($current_loggin_count);
 	//key not set, assume its the first time
 	}else{
 		return "your first";
@@ -64,137 +60,6 @@ add_shortcode("welcome",function ($atts){
 	}
 });
 
-//Shortcode to display the pending user accounts
-add_shortcode('pending_user',function ($atts){
-	if ( current_user_can( 'edit_others_pages' ) ) {
-		//Delete user account if there is an url parameter for it
-		if(isset($_GET['delete_pending_user'])){
-			//Get user id from url parameter
-			$UserId = $_GET['delete_pending_user'];
-			//Check if the user account is still pending
-			if(get_user_meta($UserId,'wp-approve-user-new-registration',true)==1){
-				//Load delete function
-				require_once(ABSPATH.'wp-admin/includes/user.php');
-				
-				//Delete the account
-				$result = wp_delete_user($UserId);
-				if ($result == true){
-					//show succesmessage
-					echo '<div class="success">User succesfully removed</div>';
-				}
-			}
-		}
-		
-		//Activate useraccount
-		if(isset($_GET['activate_pending_user'])){
-			//Get user id from url parameter
-			$UserId = $_GET['activate_pending_user'];
-			//Check if the user account is still pending
-			if(get_user_meta($UserId,'wp-approve-user-new-registration',true)==1){
-				//Make approved
-				update_user_meta( $UserId, 'wp-approve-user-mail-sent', true );
-				update_user_meta( $UserId, 'wp-approve-user', true );
-				delete_user_meta( $UserId, 'wp-approve-user-new-registration');
-				//Send welcome-email
-				wp_new_user_notification($UserId,null,'user');
-				echo '<div class="success">Useraccount succesfully activated</div>';
-			}
-		}
-		
-		//Display pening user accounts
-		$initial_html = "";
-		$html = $initial_html;
-		//Get all the users who need approval
-		$pending_users = get_users(array(
-			'meta_key'     => 'wp-approve-user',
-			'meta_value'   => false,
-			'meta_compare' => '=',
-		));
-		
-		// Array of WP_User objects.
-		if ( $pending_users ) {
-			$html .= "<p><strong>Pending user accounts:</strong><br><ul>";
-			foreach ( $pending_users as $pending_user ) {
-				$userdata = get_userdata($pending_user->ID);
-				$approve_url = add_query_arg( 'activate_pending_user', $pending_user->ID);
-				$delete_url = add_query_arg( 'delete_pending_user', $pending_user->ID);
-				$html .= '<li>'.$pending_user->display_name.'  ('.$userdata->user_email.') <a href="'.$approve_url.'">Approve</a>   <a href="'.$delete_url.'">Delete</a></li>';
-			}
-		}else{
-			return "<p>There are no pending user accounts.</p>";
-		}
-		
-		if ($html != $initial_html){
-			$html.="</ul></p>";
-			return $html;
-		}
-	}
-});
-
-//Shortcode to display number of pending user accounts
-add_shortcode('pending_user_icon',function ($atts){
-	$pending_users = get_users(array(
-		'meta_key'     => 'wp-approve-user',
-		'meta_value'   => false,
-		'meta_compare' => '=',
-	));
-	
-	if (count($pending_users) > 0){
-		return '<span class="numberCircle">'.count($pending_users).'</span>';
-	}
-});
-
-//Shortcode for expired 2FA grace periods
-add_shortcode('expired_2FA',function ($atts){
-	$user = wp_get_current_user();
-	
-	if ( in_array('usermanagement',$user->roles)){
-		if(isset($_GET['action']) and isset($_GET['user_id']) and isset($_GET['wp_2fa_nonce'])){
-			if($_GET['action'] == 'unlock_account' and is_numeric($_GET['user_id']) and wp_verify_nonce( $_GET['wp_2fa_nonce'], 'wp-2fa-unlock-account-nonce')){
-				 reset_2fa($_GET['user_id']);
-			}
-		}
-		//Display user accounts
-		$initial_html = "<p><strong>Expired 2FA user accounts:</strong><br><ul>";
-		$html = $initial_html;
-		//Get all the users with the wp_2fa_user_grace_period_expired meta key
-		$expired_2fa_users = get_users( 'meta_key=wp_2fa_user_grace_period_expired' );
-		// Array of WP_User objects.
-		if ( $expired_2fa_users ) {
-			foreach ( $expired_2fa_users as $expired_2fa_user ) {
-				//only show users with a valid email
-				if (strpos($expired_2fa_user->user_email,'.empty') === false){
-					//Build the unlock url
-					$url = add_query_arg(
-						array(
-							'action'       => 'unlock_account',
-							'user_id'      => $expired_2fa_user->ID,
-							'wp_2fa_nonce' => wp_create_nonce( 'wp-2fa-unlock-account-nonce' ),
-						)
-					);
-					//Add the unlock url html
-					$html .= '<li>'.$expired_2fa_user->display_name.'<a href="'.esc_url( $url ).'"> Unlock useraccount</a></li>';
-				}
-			}
-		}
-		
-		if ($html != $initial_html){
-			$html.="</ul></p>";
-			return $html;
-		}
-	}
-});
-
-//Shortcode to display number of expired 2FA grace periods
-add_shortcode('expired_2fa_icon',function ($atts){
-	global $wpdb;
-	$count = $wpdb->get_var("SELECT COUNT(user_id) FROM ".$wpdb->prefix ."usermeta WHERE meta_key = 'wp_2fa_user_grace_period_expired' AND user_id in (SELECT ID FROM ".$wpdb->prefix ."users WHERE user_email NOT LIKE '%.empty')");
-	
-	if ($count>0){
-		return '<span class="numberCircle">'.$count.'</span>';
-	}
-});
-
 //Shortcode to download all contact info
 add_shortcode("all_contacts",function (){
 	global $post;
@@ -206,7 +71,7 @@ add_shortcode("all_contacts",function (){
 			header('Content-Type: text/x-vcard');
 			header('Content-Disposition: inline; filename= "SIMContacts.vcf"');
 			$vcard = "";
-			$users = get_missionary_accounts(false,true,true,['ID']);
+			$users = get_user_accounts(false,true,true,['ID']);
 			foreach($users as $user){
 				$vcard .= build_vcard($user->ID);
 			}
@@ -216,7 +81,7 @@ add_shortcode("all_contacts",function (){
 			
 			if ($zip->open('SIMContacts.zip', \ZipArchive::CREATE) === TRUE){
 				//Get all user accounts
-				$users = get_missionary_accounts(false,true,true,['ID','display_name']);
+				$users = get_user_accounts(false,true,true,['ID','display_name']);
 				
 				//Loop over the accounts and add their vcards
 				foreach($users as $user){
@@ -255,39 +120,6 @@ add_shortcode("all_contacts",function (){
 		$html .= "</div>";
 		
 		return $html;
-	}
-});
-
-add_shortcode( 'content_filter', function ( $atts = array(), $content = null ) {
-	$a = shortcode_atts( array(
-        'inversed' => false,
-		'roles' => "All",
-    ), $atts );
-	$inversed 		= $a['inversed'];
-	$allowed_roles 	= explode(',',$a['roles']);
-	$return = false;
-	
-    //Get the current user
-	$user = wp_get_current_user();
-	
-	//User is logged in
-	if(is_user_logged_in()){
-		if( in_array('All',$allowed_roles) or array_intersect($allowed_roles, $user->roles)) { 
-			// display content
-			$return = true;
-		}
-	}
-    
-	//If inversed
-	if($inversed){
-		//Swap the outcome
-		$return = !$return;
-	}
-	
-	//If return is true
-	if($return == true){
-		//return the shortcode content
-		return do_shortcode($content);
 	}
 });
 
@@ -435,6 +267,7 @@ add_shortcode("expiry_warnings",function (){
 	return $html;
 });
 
+// Shortcode to display user in a page or post
 add_shortcode('missionary_link',function($atts){
 	$html = "";
 	$a = shortcode_atts( array(
@@ -462,7 +295,7 @@ add_shortcode('missionary_link',function($atts){
 	$privacy_preference = get_user_meta( $user_id, 'privacy_preference', true );
 	if(!is_array($privacy_preference)) $privacy_preference = [];
 	
-	$url = get_missionary_page_url($user_id);
+	$url = get_user_page_url($user_id);
 	
 	if($a['picture'] == true and !isset($privacy_preference['hide_profile_picture'])){
 		$profile_picture = display_profile_picture($user_id);
@@ -482,7 +315,7 @@ add_shortcode('missionary_link',function($atts){
 add_shortcode("userstatistics",function ($atts){
 	wp_enqueue_script('simnigeria_table_script');
 	ob_start();
-	$users = get_missionary_accounts($return_family=false,$adults=true,$local_nigerians=true);
+	$users = get_user_accounts($return_family=false,$adults=true,$local_nigerians=true);
 	?>
 	<br>
 	<div class='form_table_wrapper'>
@@ -625,11 +458,139 @@ class Open_SSL {
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
+	global $wpdb;
 	//update all posts where this is attached
-    $users = get_users();
+/* 	$users = get_users();
     foreach($users as $user){
-		
+
+	} */
+
+
+	//DROP TABLE `{$wpdb->prefix}sim_forms`, `{$wpdb->prefix}sim_form_elements`, `{$wpdb->prefix}sim_form_submissions`
+	$wpdb->query("DROP TABLE `{$wpdb->prefix}sim_forms`, `{$wpdb->prefix}sim_form_elements`, `{$wpdb->prefix}sim_form_submissions`");
+	$wpdb->query("RENAME TABLE {$wpdb->prefix}simnigeria_form_shortcodes TO {$wpdb->prefix}sim_form_shortcodes");
+	$wpdb->query("RENAME TABLE {$wpdb->prefix}simnigeria_forms TO {$wpdb->prefix}sim_forms");
+	$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_forms` CHANGE `form_name` `name` TINYTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;");
+	$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_forms` CHANGE `form_version` `version` TINYTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;");
+
+	$formbuilder = new Formbuilder();
+	$formbuilder->get_forms();
+	$formbuilder->create_db_submissions_table();
+	$formbuilder->create_db_table();
+	$formtable = new FormTable();
+	//$formtable->create_db_shortcode_table();
+	foreach($formbuilder->forms as $form){
+		$form_elements		= maybe_unserialize($form->form_elements);
+		$form_conditions	= maybe_unserialize($form->form_conditions);
+
+		$id_mapper	= [];
+
+		$priority=1;
+		foreach($form_elements as $form_element){
+			$form_element['form_id']	= $form->id;
+
+			if(!empty($form_element['labeltext'])){
+				$form_element['text']	= $form_element['labeltext'];
+			}
+			unset($form_element['labeltext']);
+			if(!empty($form_element['infotext'])){
+				$form_element['text']	= $form_element['infotext'];
+			}
+			unset($form_element['infotext']);
+
+			unset($form_element['labelwrap']);
+
+			$form_element['priority']	= $priority;
+			$priority++;
+
+			if(!empty($form_element['buttontext'])) echo $form_element['buttontext'].'<br>';
+			unset($form_element['buttontext']);
+
+			if($form_element['hidden'] == 'hidden') $form_element['hidden']=true;
+			if($form_element['required'] == 'required') $form_element['required']=true;
+			if($form_element['multiple'] == 'multiple') $form_element['multiple']=true;
+			if($form_element['wrap'] == 'wrap') $form_element['wrap']=true;
+
+			$old_id	=	$form_element['id'];
+			unset($form_element['id']);
+
+			$result = $wpdb->insert(
+				$wpdb->prefix . 'sim_form_elements', 
+				$form_element
+			);
+
+			$id_mapper[$old_id]	= $wpdb->insert_id;
+		}
+
+		//now process the conditions
+		foreach($form_elements as $form_element){
+			$form_element['form_id']	= $form->id;
+
+			$conditions	= $form_conditions[$form_element['id']];
+			if(!empty($conditions)){
+				foreach($conditions as $index=>&$condition){
+					if($index === 'copyto'){
+						foreach($condition as $i=>$v){
+							if(is_numeric($v)){
+								unset($condition[$i]);
+								$id=$id_mapper[$i];
+								if(is_numeric($id)){
+									$condition[$id]	= $id;
+								}
+							}
+						}
+					}else{
+						if(is_numeric($condition['property_value'])){
+							$id=$id_mapper[$condition['property_value']];
+							if(is_numeric($id)){
+								//replace with new id
+								$condition['property_value']	= $id;
+							}
+						}
+
+						if(!empty($condition['rules'])){
+							foreach($condition['rules'] as &$rule){
+								if(is_numeric($rule['conditional_field'])){
+									$id=$id_mapper[$rule['conditional_field']];
+									if(is_numeric($id)){
+										//replace with new id
+										$rule['conditional_field']	= $id;
+									}
+								}
+								if(is_numeric($rule['conditional_field_2'])){
+									$id=$id_mapper[$rule['conditional_field_2']];
+									if(is_numeric($id)){
+										//replace with new id
+										$rule['conditional_field_2']	= $id;
+									}
+								}
+							}
+						}
+					}
+				}
+				//change element ids
+				$form_element['conditions']	= serialize($conditions);
+
+				$result = $wpdb->update(
+					$wpdb->prefix . 'sim_form_elements', 
+					['conditions'	=> serialize($conditions)],
+					['id'			=> $id_mapper[$form_element['id']]]
+				);
+			}
+		}
+
+		//Move submissions
+		$query							= "SELECT * FROM {$wpdb->prefix}simnigeria_form_submissions_{$form->name} WHERE 1";
+		$form_results					= $wpdb->get_results($query, ARRAY_A);
+		foreach($form_results as $result){
+			$result['form_id'] = $form->id;
+			unset($result['id']);
+			$wpdb->insert(
+				$wpdb->prefix . 'sim_form_submissions', 
+				$result
+			);
+		}
 	}
 
-	return '<input type="file" id="test"';
+	return '';
 });

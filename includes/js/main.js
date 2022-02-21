@@ -83,6 +83,8 @@ function display_tab(tab_button){
 		
 		//Mark the tabbutton as active
 		tab_button.classList.add("active");
+
+		position_table();
 	}
 }
 
@@ -129,17 +131,6 @@ function showLoader(element, replace=true, message=''){
 	return wrapper;
 }
 
-function send_statistics(){
-	var request = new XMLHttpRequest();
-
-	request.open('POST', simnigeria.ajax_url, true);
-	
-	var formData = new FormData();
-	formData.append('action','add_page_view');
-	formData.append('url',window.location.href);
-	request.send(formData);
-}
-
 function display_message(message, icon, autoclose=false, no_ok=false){
 	if(message == undefined){
 		return;
@@ -176,9 +167,6 @@ document.addEventListener("DOMContentLoaded",function() {
 	//check for tab actions
 	if(window.location.hash != ""){
 		process_hash()
-	}else{
-		//send statistics
-		send_statistics();
 	}
 
 	//add niceselects
@@ -236,6 +224,7 @@ window.addEventListener("click", function(event) {
 
 	//if clicked outside the menu, then close the menu
 	if(
+		document.querySelector('.menu-toggle') != null &&
 		document.querySelector('.menu-toggle').getAttribute("aria-expanded")=="true" &&
 		target.closest('#site-navigation') == null && 
 		target.closest('#mobile-menu-control-wrapper') == null
@@ -252,7 +241,5 @@ window.addEventListener("click", function(event) {
 		display_tab(target);
 		//change the hash in browser
 		change_hash(target);
-		//send statistics
-		send_statistics();
 	}		
 });

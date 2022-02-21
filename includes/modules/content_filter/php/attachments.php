@@ -88,18 +88,14 @@ function move_attachment($post_id, $sub_dir){
 
     wp_generate_attachment_metadata($post_id, "$new_path/$filename");
 
-    //update all posts where this is attached
-    $posts = get_posts( [
-        'post_type'     => get_post_types(),
-        'post_status'   => 'publish',
-        'numberposts'   => -1,
-    ] );
-    foreach($posts as $post){
-        //replace any url with new urls for this attachment
+    //replace any url with new urls for this attachment
+    $old_url    = path_to_url(str_replace($filename, $base_name, $old_path));
+    $new_url    = path_to_url("$new_path/$base_name");
 
-        $old_url    = 'src="'.path_to_url(str_replace($filename, $base_name, $old_path));
-        $new_url    = 'src="'.path_to_url("$new_path/$base_name");
-        
+    // Search for any post with the old url
+    $query = new \WP_Query( array( 's' => $old_url ) );
+
+    foreach($query->posts as $post){        
         //if old url is found in the content of this post
         if(strpos($post->post_content, $old_url) !== false){
             //replace with new url
@@ -116,21 +112,32 @@ function move_attachment($post_id, $sub_dir){
     }
 }
 
-//filter library if needed
+// filter library if needed
 add_filter( 'ajax_query_attachments_args', function($query){
     if(!empty($_REQUEST['query']['visibility'])){
-        $query['meta_key']     = 'visibility';
-        $query['meta_value']   = $_REQUEST['query']['visibility'];
-        $query['meta_compare'] = '==';
+        $visibility = $_REQUEST['query']['visibility'];
+        $query['meta_query'] = [
+            [
+                'key'     => 'visibility',
+                'value'   => $visibility,
+                'compare' => '==',
+            ]
+        ];
+
+        if($visibility == 'public'){
+            $query['meta_query']['relation'] = 'OR';
+            $query['meta_query'][] = [
+                'key'     => 'visibility',
+                'compare' => 'NOT EXISTS'
+            ];
+        }
     }
 
     return $query;
 } );
 
-if(!empty($GLOBALS['Modules']['private_content']['enable'])){
-	//load js script to change media screen
-	add_action( 'wp_enqueue_media', function(){
-        global $StyleVersion;
-		wp_enqueue_script('sim_library_script', IncludesUrl.'/modules/private_content/js/library.js', [], $StyleVersion);
-	});
-}
+//load js script to change media screen
+add_action( 'wp_enqueue_media', function(){
+    global $StyleVersion;
+    wp_enqueue_script('sim_library_script', plugins_url('js/library.js', __DIR__), [], $StyleVersion);
+});

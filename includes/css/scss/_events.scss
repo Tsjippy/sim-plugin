@@ -23,6 +23,7 @@ article.event{
     @media (min-width: $fullwidth){
         .description{
             width: 66%;
+            min-width: 500px;
             float: left;
         }
 
