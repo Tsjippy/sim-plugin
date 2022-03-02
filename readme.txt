@@ -1,4 +1,4 @@
-=== Custom Sim Nigeria Plugin===
+=== Custom SIM Plugin===
 Tags: CSS, JS, and other tweaks
 Contributors: Ewald Harmsen
 Requires at least: 4.0.0
@@ -31,7 +31,7 @@ sodium #not sure if we need this
 
 download wp 
 download website code into plugins folder
-cd D:\Local_websites\htdocs\simgen\wp-content\plugins\custom-simnigeria-plugin\includes\js
+cd D:\Local_websites\htdocs\simgen\wp-content\plugins\sim-plugin\includes\js
 npm update
 npm install webpack webpack-cli --save-dev
 

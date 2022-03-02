@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\LOGIN;
+use SIM;
 
 //disable wp-login.php
 add_action('init',function(){
@@ -128,7 +129,7 @@ add_filter( 'the_content', function ( $content ) {
     return $content;
 }, 99999);
 
-add_action('wp_ajax_nopriv_request_login', 'SIM\user_login');
+add_action('wp_ajax_nopriv_request_login', 'SIM\LOGIN\user_login');
 function user_login(){
     $username       = sanitize_text_field($_POST['username']);
     $password       = sanitize_text_field($_POST['password']);
@@ -174,7 +175,7 @@ function user_login(){
 
     /* check if we should redirect */
     $home_url   = home_url();
-    if(current_url() == home_url()){
+    if(SIM\current_url() == home_url()){
         //_GET is empty for ajax calls, use the $_SERVER['HTTP_REFERER']
         if(wp_doing_ajax()){
             parse_str($_SERVER['HTTP_REFERER'], $url);
@@ -192,7 +193,10 @@ function user_login(){
 
         //Redirect to account page if 2fa is not set
         if(!$methods or count($methods ) == 0){
-            wp_die(TwoFA_page);
+
+            $twofa_page      = get_page_link(SIM\get_module_option('login', '2fa_page'));
+            $twofa_page     .= SIM\get_module_option('login', '2fa_page_extras');
+            wp_die($twofa_page);
         //redirect to account page to fill in required fields
         }elseif ($required_fields_status != 'done' and !isset($_SESSION['showpage'])){
             wp_die(home_url( '/account/' ));
@@ -205,16 +209,11 @@ function user_login(){
     }
 };
 
-add_action('wp_ajax_request_logout', function(){
-    wp_logout();
-    wp_die('Log out success');
-});
-
 //add login and logout buttons to main menu
 add_filter('wp_nav_menu_items', function ($items, $args) {
     if( $args->container_id == 'primary-menu' ){
         if(is_user_logged_in()){
-            $items .= '<li id="logout" class="menu-item logout"><a href="#logout">Log out</a></li>';
+            $items .= '<li id="logout" class="menu-item logout"><a href="#logout" class="logout">Log out</a></li>';
         }else{
             $items .= '<li id="login" class="menu-item login"><a href="#login">Login</a></li>';
         }
@@ -223,14 +222,25 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
 }, 10, 2);
 
 //Redirect to frontpage for logged in users
-add_action( 'template_redirect', 'SIM\homepage_redirect' );
+add_action( 'template_redirect', 'SIM\LOGIN\homepage_redirect' );
 function homepage_redirect(){
 	global $Modules;
 	if( is_front_page() && is_user_logged_in() ){
         $url    = get_page_link($Modules['login']['home_page']);
-        if($url != current_url()){ 
+        if($url != SIM\current_url()){ 
             wp_redirect(add_query_arg($_GET,$url));
             exit();
         }
 	}
 }
+
+add_action( 'wp_enqueue_scripts', function(){
+    global $StyleVersion;
+
+    if(!is_user_logged_in()){
+	    //login form
+	    wp_enqueue_script('sim_login_script', plugins_url('js/login.min.js', __DIR__), array('sim_script'), $StyleVersion, true);
+    }else{
+        wp_enqueue_script('sim_logout_script', plugins_url('js/logout.min.js', __DIR__), array(), $StyleVersion, true);
+    }
+});

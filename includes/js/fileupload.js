@@ -1,7 +1,7 @@
 console.log("Fileupload.js loaded");
 
 if(window.tinyMCE != undefined){
-	simnigeria = tinyMCEPopup.getWindowArg('simnigeria');
+	sim = tinyMCEPopup.getWindowArg('sim');
 }
 
 function file_upload(target){
@@ -27,8 +27,8 @@ function file_upload(target){
 	if (totalfiles > 0){
 		//Add all the files to the formdata
 		for (var index = 0; index < totalfiles; index++) {
-			if(target.files[index].size > simnigeria.max_file_size){
-				display_message('File to big, max file size is '+(parseInt(simnigeria.max_file_size)/1024/1024)+'MB','error');
+			if(target.files[index].size > sim.max_file_size){
+				display_message('File to big, max file size is '+(parseInt(sim.max_file_size)/1024/1024)+'MB','error');
 				target.value = '';
 				return;
 			}else{
@@ -71,7 +71,7 @@ function file_upload(target){
 	//Listen to the upload status
 	request.upload.addEventListener('progress', file_upload_progress, false);
 	
-	request.open('POST', simnigeria.ajax_url, true);
+	request.open('POST', sim.ajax_url, true);
 	
 	//Show loading gif
 	target.closest('.upload_div').querySelectorAll(".loadergif_wrapper").forEach(loader =>{
@@ -147,7 +147,7 @@ function file_upload_upload_succes(result){
 		
 		var filename = src.split("/")[src.split("/").length-1];
 		
-		var url = simnigeria.base_url+'/'+src;
+		var url = sim.base_url+'/'+src;
 
 		//Add link to tinymce
 		if(file_upload_wrap.closest('.mce-container') != null){
@@ -166,7 +166,7 @@ function file_upload_upload_succes(result){
 			
 			//Add an remove button
 			html += '<button type="button" class="remove_document button" data-url="' + src + '" ' + dataset_string +'>X</button>';
-			html += '<img class="remove_document_loader hidden" src="' + simnigeria.loading_gif + '" style="height:40px;">';
+			html += '<img class="remove_document_loader hidden" src="' + sim.loading_gif + '" style="height:40px;">';
 			file_upload_wrap.querySelector('.documentpreview').insertAdjacentHTML('beforeend', html + '</div>');
 		}
 	}

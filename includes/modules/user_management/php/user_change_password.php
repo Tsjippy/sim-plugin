@@ -81,7 +81,7 @@ add_shortcode("change_pasword", function(){
 
 function password_reset_form($user){
 	//Load js
-	wp_enqueue_script('simnigeria_password_strength_script');
+	wp_enqueue_script('sim_password_strength_script');
 
 	if(get_current_user_id() == $user->id or !is_user_logged_in()){
 		$message		 = "Change your password using the fields below.<br>";
@@ -116,7 +116,7 @@ function password_reset_form($user){
 		}
 	</style>
 
-	<form data-reset='true' class='simnigeria_form'>
+	<form data-reset='true' class='sim_form'>
 		<div class="login_info">
 			<input type="hidden" name="password_reset_nonce"	value="<?php echo wp_create_nonce("password_reset_nonce");?>">
 			<input type="hidden" name="userid"					value="<?php echo $user->ID; ?>">
@@ -183,7 +183,7 @@ function change_password_field($user_id = null){
 		<?php
 		if(in_array('usermanagement', wp_get_current_user()->roles)){
 		?>
-		<form data-reset='true' class='simnigeria_form'>
+		<form data-reset='true' class='sim_form'>
 			<input type="hidden" name="disable_useraccount"		value="<?php echo wp_create_nonce("disable_useraccount");?>">
 			<input type="hidden" name="userid"					value="<?php echo $user_id; ?>">
 			<input type="hidden" name="action"					value="<?php echo $action_text;?>_useraccount">

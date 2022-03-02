@@ -1,221 +1,173 @@
 <?php
-namespace SIM;
+namespace SIM\FORMS;
+use SIM;
 
-//Function to return the required fields
-function get_required_fields($UserID){
-	global $ProfilePage;
-	$profile_page_url = get_permalink($ProfilePage);
-	$html = '';
-	$local_nigerian = get_user_meta( $UserID, 'local_nigerian', true );
-	
-	//Only show warnings to unlimited accounts of expatriats
-	if($local_nigerian == ''){
-		//Get the required fields string from the db
-		$CustomSimSettings = get_option("customsimsettings");
-		//Remove the location from the required fields if the privacy setings are not all
-		$privacy_preference = get_user_meta( $UserID, 'privacy_preference', true );
-		if(!is_array($privacy_preference)) $privacy_preference = [];
-		
-		if (!isset($privacy_preference['hide_location'])){
-			$CustomSimSettings["required_account_fields"] = str_replace("\nLocation,location,location","",$CustomSimSettings["required_account_fields"]);
-		}
-		//Convert every line to an array item
-		$temp = explode("\n", $CustomSimSettings["required_account_fields"]);
-		$required_fields = [];
-		//Split each array item into a sub array of options
-		foreach($temp as $array){
-			$required_fields[] = explode(",",$array);
-		}
-		
-		//Check for children
-		$family = get_user_meta($UserID,"family",true);
-		//User has children
-		if (isset($family["children"])){
-			foreach($family["children"] as $key=>$child){
-				$userdata = get_userdata($child);
-				if ($userdata != null){
-					//check if they are missing the field
-					foreach ($required_fields as $required_field){
-						$hash =  str_replace("\n", "", $required_field[2]);
-						$hash = str_replace("\r", "", $hash);
-						
-						//If this field is also required for children
-						if(!isset($required_field[3])){
-							//check if field is not set
-							if(isset($required_field[1]) and get_user_meta($child, $required_field[1], true ) == ""){
-								//required field is not set.
-								$first_name = get_userdata($child)->first_name;
-								$required_fields[] = [ucfirst($required_field[0]). " for $first_name","","$first_name#$hash"];
-							}
-						}
-					}
-				}
-			}
-		}
+/**
+ * Gets all mandatory or recomended form fields as html links
+ *
+ * @param int    	$user_id 	WP user id
+ * @param string   	$type		One of 'mandatory' or 'recommended'
+ *
+ * @return string 	Returns html links to forms with empty mandatory fields
+ */
+function get_all_fields($user_id, $type){
+	global $wpdb;
 
-		//Check for account picture, only if the privacy settings allow it
-		if (empty($privacy_preference['hide_profile_picture'])){
-			if(!is_numeric(get_user_meta($UserID,'profile_picture',true))){
-				$required_fields[] = ["Profile picture","","Profile%20picture"];
-			}
-		}
-		
-		//Build the html with the required fields which are not filled
-		$html = "";
-		$visa_warning = '';
-		foreach ($required_fields as $required_field){
-			$display_text = $required_field[0];
-			$metakey = $required_field[1];
-			$hash =  preg_replace( "/\r|\n/", "", $required_field[2] );
-			
-			$set = true;
-			
-			//If we are looking for a specific array index
-			if (strpos($metakey, '[') !== false){
-				$metakey = explode('[',$metakey)[0];
-			}else{
-				$metakey = $metakey;
-			}
-			
-			$field_value = get_user_meta($UserID, $metakey, true );
-			
-			//required field is a visa info field
-			if ($metakey == 'visa_info'){
-				//Do not make visa fields required if accompanying spouse
-				if(isset($field_value['accompanying'])) continue;
-				
-				//If none of the visa fields are filled only show it once
-				if(!is_array($field_value) or count($field_value)==0){
-					if($visa_warning == ''){
-						$html .= "<li><a href='$profile_page_url#$hash'>Visa information</a></li>";
-						$visa_warning = 'done';
-					}
-					continue;
-				}
-			}
-			
-			//Get the array index value
-			if (strpos($required_field[1], '[') !== false){
-				$field_value = get_meta_array_value($UserID, $required_field[1], $field_value);
-			}
-			
-			if(is_array($field_value)){
-				if (count($field_value) == 0){
-					$set = false;
-				}
-			}else{
-				if ($field_value == ""){
-					$set = false;
-				}
-			}
-			
-			//Set is false or it is an empty array
-			if($metakey == "" or $set == false){
-				if(is_child($UserID)){
-					$hash			= "$first_name#$hash";
-					$display_text	= "$display_text for $first_name";
-				}
+	$formbuilder		= new Formbuilder();
 
-				if(strpos($profile_page_url,$_SERVER['REQUEST_URI']) === false){
-					$url = "$profile_page_url#$hash";
-					$html .= "<li><a href='$url'>$display_text</a></li>";
+	$query				= "SELECT * FROM {$formbuilder->el_table_name} WHERE `$type`=1";
+	$fields				= $wpdb->get_results($query);
+
+	$fields				= apply_filters("sim_{$type}_fields_filter", $fields, $user_id);
+
+	$html				= '';
+	if(!empty($fields)){
+		$html				= '<ul>';
+		$form_urls			= [];
+
+		//check which of the fields are not yet filled in
+		foreach($fields as $field){
+			$metakey 	= explode('[',$field->name)[0];
+			$value		= get_user_meta($user_id, $metakey, true);
+
+			$name		= str_replace('[]', '', $field->name);
+			if (strpos($name, '[') !== false){
+				$value = SIM\get_meta_array_value($user_id, $name, $value);
+			}
+
+			if(empty($value)){
+				//get form url
+				if(isset($form_urls[$field->form_id])){
+					$form_url		= $form_urls[$field->form_id];
 				}else{
-					$html .= "<li><a onclick='change_hash(this)' data-hash='$hash' style='cursor:grabbing'>$display_text</a></li>";
+					$query				= "SELECT * FROM {$formbuilder->table_name} WHERE `id`={$field->form_id}";
+					$form				= $wpdb->get_results($query)[0];
+					$form_url			= maybe_unserialize($form->settings)['formnurl'];
+
+					//save in cache
+					$form_urls[$field->form_id]	= $form_url;
+				}
+
+				// Do not add if no form url given
+				if(empty($form_url)) continue;
+
+				parse_str(parse_url($form_url, PHP_URL_QUERY), $params);
+
+				$name	= ucfirst(str_replace(['[]', '_'], ['', ' '], $field->nicename));
+				// If the url has no hash or we are not on the same url
+				if(empty($params['main_tab']) or strpos($form_url, explode('main_tab=', $_SERVER['REQUEST_URI'])[0]) === false){
+					$html .= "<li><a href='$form_url#{$field->name}'>$name</a></li>";
+				//We are on the same page, just change the hash
+				}else{
+					$html .= "<li><a onclick='change_url(this)' data-param_val='{$params['main_tab']}' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
 				}
 			}
 		}
-		
-		if ($html != ""){
-			update_user_meta($UserID,"required_fields_status","");
-			//Echo the required fields list
-			$html .= "</ul>";
-		//If there are no required fields to be filled.
-		}else{
-			//Set the value to done
-			update_user_meta($UserID,"required_fields_status","done");
-		}
-		
-		return $html;
+
+		$html				.= '</ul>';
 	}
+
+	$html	= apply_filters("sim_{$type}_html_filter", $html, $user_id);
+
+	return $html;
 }
-		
-function get_recommended_fields($user_id){
-	$html = get_recommended_fields_html($user_id);
-	
-	//Check for children
-	$family = get_user_meta($user_id,"family",true);
-	
+
+add_filter('sim_mandatory_fields_filter', function($fields, $user_id){
+	// Local nigerian do not have mandatory fields
+	if(!empty(get_user_meta( $user_id, 'local_nigerian', true ))){
+		foreach($fields as $key=>$field){
+			if(strpos($field->name, 'understudy') !== false){
+				unset($fields[$key]);
+			}
+		}
+	}
+
+	// Unset visa fields if accompanying spouse
+	$visa_info = get_user_meta($user_id, 'visa_info', true );
+	if(isset($visa_info['accompanying'])){
+		foreach($fields as $key=>$field){
+			if(strpos($field->name, 'understudy') !== false){
+				unset($fields[$key]);
+			}
+		}
+	}
+
+	// If no visa fields are set at all
+	$understudy1 = get_user_meta($user_id, 'understudy1', true );
+	$understudy2 = get_user_meta($user_id, 'understudy2', true );
+	if(empty($visa_info) and empty($understudy1) and empty($understudy2)){
+		foreach($fields as $key=>$field){
+			if(strpos($field->name, 'understudy') !== false){
+				unset($fields[$key]);
+			}
+		}
+	}
+
+	$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
+
+	// Location is not mandatory when hidden in privacy
+	if (!empty($privacy_preference['hide_location'])){
+		foreach($fields as $key=>$field){
+			if($field->name == 'location'){
+				unset($fields[$key]);
+			}
+		}
+	}
+
+	//Check for account picture, only if the privacy settings allow it
+	if (!empty($privacy_preference['hide_profile_picture']))	$fields = $fields;
+
+	// Filter mandatory fields for children
+	if(SIM\is_child($user_id)){
+		foreach($fields as $key=>$field){
+			if(in_array($field->name, ['location'])){
+				unset($fields[$key]);
+			}
+		}
+	}
+
+	if (empty($fields)){
+		//Set the value to done
+		update_user_meta($user_id,"required_fields_status","done");
+	//If there are no required fields to be filled.
+	}else{
+		update_user_meta($user_id,"required_fields_status","");
+	}
+
+	return $fields;
+}, 10, 2);
+
+add_filter('sim_mandatory_html_filter', 'SIM\add_child_fields', 10, 2);
+add_filter('sim_recommended_html_filter', 'SIM\add_child_fields', 10, 2);
+function add_child_fields($html, $user_id){
+	// Add warnings for child fields
+	$family = get_user_meta($user_id, "family", true);
 	//User has children
 	if (isset($family["children"])){
+		// Loop over children
 		foreach($family["children"] as $key=>$child){
-			$html .= get_recommended_fields_html($child, true);
+			$userdata = get_userdata($child);
+			// Valid user account
+			if ($userdata){
+				// Add html for each field as well
+				$html	.= get_all_fields($child, 'mandatory');
+			}
 		}
 	}
-	
-	if($html != '') $html .= '</ul>';
-	
+
 	return $html;
 }
 
-//Function to return the required fields
-function get_recommended_fields_html($user_id, $child = false){
-	global $ProfilePage;
+add_action('sim_dashboard_warnings', function($user_id){		
+	$html	 = get_all_fields($user_id, 'recommended');
 	
-	$CustomSimSettings 	= get_option("customsimsettings");
-	$profile_page_url 	= get_permalink($ProfilePage);
-	$html 				= '';
-	$local_nigerian 	= get_user_meta( $user_id, 'local_nigerian', true );
-	$temp 				= explode("\n", $CustomSimSettings["recommended_fields"]); //Convert every line to an array item
-	//Split each array item into a sub array of options
-	foreach($temp as $array){
-		$recommended_fields[] = explode(",",$array);
+	if (empty($html)){
+		echo "<p>All your data is up to date, well done.</p>";
+	}else{
+		echo "<h3>Please finish your account:</h3>";
 	}
-	
-	//Only show warnings to unlimited accounts of expatriats
-	if($local_nigerian == ''){
-		//Get the medical fields 
-		if($child)	$first_name = get_userdata($user_id)->first_name;
 		
-		foreach ($recommended_fields as $required_field){
-			$display_text = $required_field[0];
-			$metakey = trim($required_field[1]);
-			$hash =  preg_replace( "/\r|\n/", "", $required_field[2]);
-
-			if($child){
-				//Only show if it is meant for kids as well
-				if(isset($required_field[3])) continue;
-				
-				$hash			= "$first_name#$hash";
-				$display_text	= "$display_text for $first_name";
-			}
-
-			$field_value = get_user_meta($user_id, $metakey, true );
-			if(empty($field_value)){
-				if(strpos($profile_page_url,$_SERVER['REQUEST_URI']) === false){
-					$url = "$profile_page_url#$hash";
-					$html .= "<li><a href='$url'>$display_text</a></li>";
-				}else{
-					$html .= "<li><a onclick='change_hash(this)' data-hash='$hash' style='cursor:grabbing'>$display_text</a></li>";
-				}
-			}
-		}
+	if (!empty($html)){
+		echo "<p>Please fill in these fields:<br></p>$html";
 	}
-	
-	return $html;
-}
-
-//Shortcode for recommended fields
-add_shortcode("recommended_fields",function ($atts){
-	$UserID = get_current_user_id();
-	$html	= '';
-	$recommendation_html = get_recommended_fields($UserID);
-	if (!empty($recommendation_html)){
-		$html .=  '<div id=recommendations style="margin-top:20px;">';
-            $html .=  '<h3 class="frontpage">Recommendations</h3>';
-            $html .=  '<p>It would be very helpfull if you could fill in the fields below:</p>';
-            $html .=  $recommendation_html;
-        $html .=  '</div>';
-	}
-	
-	return $html;
 });

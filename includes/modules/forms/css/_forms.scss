@@ -1,0 +1,214 @@
+@use '../../../css/scss/global' as *;
+
+.sim_form{
+	.formfieldinput{
+		float:left;
+	}
+	
+	.infobox{
+		position: relative;
+		z-index: 2;
+	}
+
+	.info_icon{
+		flex:1;
+		margin-left: 10px !important;
+		width: 25px;
+		padding-top: 30px;
+	}
+
+	label .info_icon{
+		margin-top: -30px;
+		padding-top: 0px;
+	}
+
+	/* Mark input boxes that gets an error on validation: */
+	input.invalid {
+	  background-color: #ffdddd;
+	}
+
+	.formsteploader{
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+	}
+
+	/* Make circles that indicate the steps of the form: */
+	.step {
+		height: 15px;
+		width: 15px;
+		margin: 0 2px;
+		background-color: #bd2919;
+		border: none;
+		border-radius: 50%;
+		display: inline-block;
+		opacity: 0.5;
+		
+		/* Mark the active step: */
+		&.active {
+			opacity: 1;
+		}
+
+		/* Mark the steps that are finished and valid: */
+		&.finish {
+			background-color: $secundary_color;
+			opacity: 0.8;
+		}
+	}
+
+	.nextBtn{
+		float: right;
+	}
+
+	@media (max-width: $mobilewidth){
+		.submit_wrapper{
+			margin-top: 0px;
+		}
+	}
+
+	.submit_wrapper{
+		width: 100%;
+		
+		.button{
+			margin-top: 20px;
+		}
+	}
+
+	.multistepcontrols_wrapper{
+		display:flex; 
+		width:100%;
+		padding-top: 20px;
+
+		.submit_wrapper{
+			justify-content: end;
+			margin: 0px;
+			
+			.button{
+				margin-top: 0px;
+			}
+
+			.loadergif{
+				margin-top: 0px;
+			}
+		}
+	}
+	
+
+	.form_submit{
+		&:disabled{
+			background-color: grey;
+			
+			.online{
+				display: none;
+			}
+		}
+	}
+
+	.conditions_info{
+		margin-top: -20px;
+		margin-right: 30px;
+		float: right;
+		color: #bd2919;
+		font-size: xx-large;
+	}
+
+	.clone_div{
+		margin-top: 5px;
+		
+		.button{
+			max-width: 50px;
+		}
+	}
+
+	.optionlabel{
+		margin-left: 5px;
+	}
+	
+	.labeltext{
+		margin-bottom: 5px;
+	}
+	
+	.inputwrapper {
+		margin-top: 10px;
+		&:not(.info){
+			float: left;
+		}
+		
+		&.flex{
+			display: flex;
+			flex-wrap: wrap;
+
+			@media (max-width: $mobilewidth){
+				input[type="date"],
+				input[type="text"],
+				input[type="email"],
+				input[type="tel"],
+				input[type="month"],
+				input[type="password"],
+				input[type="number"]
+				{
+					width: 100%;
+					margin-bottom: 10px;
+				}
+			}
+		} 
+
+		
+		input:not([type='checkbox']){
+			margin-right: 10px;
+		}
+	}
+	
+	.wrapper, .clone_div{
+		.nice-select{
+			display: inline-block;
+		}
+	}
+	
+	.nice-select.relation{
+		min-width: 150px;
+	}
+
+	.formfieldlabel{
+		width: 100%;
+	}
+
+	.highlight{
+		background-color: #f3f37d;
+		background: #f3f37d;
+	}
+}
+
+.export_button_wrapper{
+	margin:50px 0px 20px 0px;
+	display: flex;
+	
+	form{
+		min-width: fit-content;
+	}
+}
+
+div input[type="text"],
+div input[type="email"],
+div input[type="tel"],
+div input[type="month"],
+div input[type="password"],
+div input[type="search"],
+div input[type="number"],
+div input[type="url"]
+{
+	background-color: #fff;
+	border-radius: 5px;
+	border: solid 1px #e8e8e8;
+	font-size: 14px;
+	max-height: 38px;
+
+	&:not(.column_settings, .element_condition){
+		width: 100%;
+	}
+}
+
+.edit_forms_table{
+	text-decoration: underline;
+	text-decoration-color: $primary_color;
+}

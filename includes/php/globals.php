@@ -1,7 +1,6 @@
 <?php
 namespace SIM;
 define('SiteURL',get_site_url());
-define('TwoFA_page', SiteURL."/account/?redirected=true#Two%20factor");
 define('IncludesUrl', plugins_url('',__DIR__));
 define('PicturesUrl', IncludesUrl.'/pictures');
 define('LoaderImageURL', PicturesUrl.'/loading.gif');
@@ -185,7 +184,6 @@ if($CustomSimSettings == false){
 		'Theological Translator'
 	];
 	$ScheduledFunctions = [
-		['recurrence'=>'monthly','hookname'=>'personal_info_reminder'],
 		['recurrence'=>'monthly','hookname'=>'vaccination_reminder'],
 		['recurrence'=>'daily','hookname'=>'birthday_check'],
 		['recurrence'=>'daily','hookname'=>'account_expiry_check'],
@@ -198,7 +196,6 @@ if($CustomSimSettings == false){
 		['recurrence'=>'daily','hookname'=>'process_images'],
 		['recurrence'=>'weekly','hookname'=>'read_reminder'],
 		['recurrence'=>'yearly','hookname'=>'check_details_mail'],
-		['recurrence'=>'yearly','hookname'=>'remove_old_events'],
 		['recurrence'=>'monthly','hookname'=>'page_age_warning'],
 		['recurrence'=>'threemonthly','hookname'=>'send_missonary_detail']
 	];
@@ -209,17 +206,12 @@ if($CustomSimSettings == false){
 	$EventDefaultImageID 		= get_theme_mod('eventdefaultimage','');				//Other.php
 	$TravelCoordinatorSignature	= get_attached_file( get_theme_mod('travelsignature',''));					
 	$PDF_Logo_path				= get_attached_file( get_theme_mod('pdflogo','') );
-	$PlacesMapId				= $CustomSimSettings["placesmapid"];
-	$MissionariesMapId			= $CustomSimSettings["missionariesmapid"];
 	$PublicCategoryID 			= $CustomSimSettings["publiccategory"];					//Other.php
 	$ConfCategoryID 			= $CustomSimSettings["confcategory"];					//Other.php
 	$PrayerCategoryID 			= $CustomSimSettings["prayercategory"];
 	$FinanceCategoryID 			= $CustomSimSettings["financecategory"];
 	$MinistryCategoryID			= $CustomSimSettings["ministrycategory"];
-	$CompoundCategoryID			= $CustomSimSettings["compoundcategory"];
-	$MissionariesPageID			= $CustomSimSettings["missionaries_page"];
 	$WelcomeMessagePageID		= $CustomSimSettings["welcome_page"];
-	$ProfilePage				= $CustomSimSettings["profile_page"];
 	$PostOutOfDataWarning		= $CustomSimSettings["postoutofdatawarning"]; 	//Age in months on when a warning should be showed or send
 	$VaccinationExpiryWarning	= $CustomSimSettings["vaccinationoutofdatawarning"]; 	//Age in months on when a warning should be showed or send
 	$WebmasterName				= $CustomSimSettings["webmastername"]; 	//Used in registration_fields.php to sign the welcome e-mail

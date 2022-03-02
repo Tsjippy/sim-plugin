@@ -1,90 +1,105 @@
 console.log("Main.js loaded");
 
-function change_hash(target){
-	if(target.dataset.hash != null){
-		var new_hash	= target.dataset.hash;
-	}else{
-		var new_hash	= target.textContent;
-	}
-	//Change the hash
+function change_url(target){
+	var new_param	= target.dataset.param_val;
+
+	var hash		= target.dataset.hash;
+
+	const url = new URL(window.location);
+
+	//Change the url params
 	if(target.closest('.tabcontent') == null || target.parentNode.classList.contains('modal-content') == true){
-		//Add anchor if it is a main tab
-		location.hash = new_hash;
-	}else if(location.hash.replace('#','').split('#').length>1){
-		var hash = location.hash.replace('#','').split('#');
-		//Add anchor if it is a secondary tab
-		location.hash = '#'+hash[0]+'#'+new_hash;
+		//Add query_arg if it is a main tab
+		url.searchParams.set('main_tab', new_param);
 	}else{
-		location.hash = location.hash+'#'+new_hash;
+		url.searchParams.set('second_tab', new_param);
+	}
+	
+	window.history.pushState({}, '', url);
+
+	if(hash != null){
+		window.location.hash	= hash;
+	}else{
+		window.location.hash	= '';
 	}
 
-	if(target.dataset.hash != null){
-		process_hash();
+	// switch tab when clicking on a change url link
+	if(target.tagName == 'A'){
+		switch_tab();
 	}
 }
 
-function process_hash(event=null){
-	var content = decodeURIComponent(window.location.hash.replace('#',''));
+function switch_tab(event=null){
+	const url = new URL(window.location);
+	const params = new Proxy(new URLSearchParams(window.location.search), {
+		get: (searchParams, prop) => searchParams.get(prop),
+	});
 	
-	//split the hash on #
-	content = content.split('#');
-	
-	//loop over all the tab buttons
-	document.querySelectorAll('.tablink').forEach(function(tab_button){
-		//Add the dataset if it does not exist yet.
-		if(tab_button.dataset.text == undefined){
-			tab_button.dataset.text = tab_button.textContent;
-		}
-	})
-	
-	tab_button = '';
-	//find the tab and display it
-	document.querySelectorAll('[data-text="'+content[0]+'"]').forEach(tabbutton=>{
-		//only process non-modal tabs
-		if(tabbutton.closest('.modal') == null){
-			tab_button = tabbutton;
+	var main_tab 	= params.main_tab;
+	var last_tab	= '';
+	if(main_tab != null){
+		//find the tab and display it
+		document.querySelectorAll('[data-param_val="'+main_tab+'"]').forEach(tabbutton=>{
+			//only process non-modal tabs
+			if(tabbutton.closest('.modal') == null){
+				last_tab	= display_tab(tabbutton);
+			}
+		});
+	}
+
+	var second_tab = params.second_tab;
+	if(second_tab != null){
+		//find the tab and display it
+		last_tab.querySelectorAll('[data-param_val="'+second_tab+'"]').forEach(tabbutton=>{
 			display_tab(tabbutton);
-		}
-	})
-	
-	//if there is a second tab
-	if(content.length>1){
-		//get the content of the main tab
-		var maincontent = document.getElementById(tab_button.dataset.target);
-		
-		//look in the main content for the second tabbutton
-		var secondtab = maincontent.querySelector('[data-text="'+content[1]+'"]');
-		display_tab(secondtab);
+		});
 	}
 }
 
 function display_tab(tab_button){
-	//reset hash if something goes wrong
-	if(tab_button == null){
-		console.log("resetting hash");
-		window.location = window.location.href.split('#')[0];
+	//remove all existing highlights
+	document.querySelectorAll('.highlight').forEach(el=>el.classList.remove('highlight'));
+
+	// Get content area
+	if(tab_button.dataset.target == undefined){
+		var tab = document.querySelector('#'+tab_button.dataset.param_val);
+	}else{
+		var tab = tab_button.closest('div').querySelector('#'+tab_button.dataset.target);
 	}
-	
-	//Show the  tab
-	var tab = tab_button.closest('div').querySelector('#'+tab_button.dataset.target);
 	
 	if(tab != null){
 		tab.classList.remove('hidden');
-		//Mark the other tabbuttons as inactive
-		tab_button.parentNode.childNodes.forEach(child=>{
-			if(child.classList != null && child.classList.contains('active') && child != tab_button){
+
+		if(tab_button.tagName != 'A'){
+			//Mark the other tabbuttons as inactive
+			tab_button.parentNode.querySelectorAll('.active:not(#'+tab_button.id+')').forEach(child=>{
 				//Make inactive
 				child.classList.remove("active");
 					
 				//Hide the tab
 				child.closest('div').querySelector('#'+child.dataset.target).classList.add('hidden');
-			}
-		});
+			});
+			
+			//Mark the tabbutton as active
+			tab_button.classList.add("active");
+		}
+
+		//scroll to field
+		if (window.location.hash) {
+			var hash 		= window.location.hash.replace('#','');
+
+			var hash_field	= tab.querySelector('[name^="'+hash+'"]');
 		
-		//Mark the tabbutton as active
-		tab_button.classList.add("active");
+			hash_field.scrollIntoView({block: "center"});
+
+			hash_field.closest('.inputwrapper').classList.add('highlight');
+			hash_field.classList.add('highlight');
+			hash_field.focus();
+		}
 
 		position_table();
+
+		return tab;
 	}
 }
 
@@ -93,7 +108,7 @@ function getRoute(target,lat,lon){
 	if(isMobileDevice()){
 		var origin = '';
 	}else{
-		var origin = '&origin='+simnigeria.address;
+		var origin = '&origin='+sim.address;
 	}
 	var url = 'https://www.google.com/maps/dir/?api=1&destination='+lat+','+lon+origin;
 	var win = window.open(url, '_blank');
@@ -118,7 +133,7 @@ function showLoader(element, replace=true, message=''){
 
 	var loader	= document.createElement("IMG");
 	loader.setAttribute('class','loadergif');
-	loader.setAttribute("src", simnigeria.loading_gif);
+	loader.setAttribute("src", sim.loading_gif);
 	loader.style["height"]= "30px";
 
 	wrapper.insertAdjacentElement('beforeEnd', loader);
@@ -164,10 +179,16 @@ function display_message(message, icon, autoclose=false, no_ok=false){
 
 //Load after page load
 document.addEventListener("DOMContentLoaded",function() {
+	//loop over all the tab buttons
+	document.querySelectorAll('.tablink').forEach(function(tab_button){
+		//Add the dataset if it does not exist yet.
+		if(tab_button.dataset.param_val == undefined){
+			tab_button.dataset.param_val = tab_button.textContent.replace(' ','_').toLowerCase();
+		}
+	})
+
 	//check for tab actions
-	if(window.location.hash != ""){
-		process_hash()
-	}
+	switch_tab();
 
 	//add niceselects
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
@@ -237,9 +258,10 @@ window.addEventListener("click", function(event) {
 
 	//Process the click on tab button
 	if(target.matches(".tablink")){
+		//change the url in browser
+		change_url(target);
+
 		//show the tab
 		display_tab(target);
-		//change the hash in browser
-		change_hash(target);
 	}		
 });

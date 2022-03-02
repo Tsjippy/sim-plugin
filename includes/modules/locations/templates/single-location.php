@@ -1,4 +1,7 @@
 <?php
+namespace SIM\LOCATIONS;
+use SIM;
+
 /**
  * The Template for displaying all single recipes.
  *

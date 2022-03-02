@@ -5,10 +5,10 @@ namespace SIM;
 add_action('generate_before_header','SIM\header_button');
 function header_button(){
 	if (is_user_logged_in()){
-		$first_btn_text = get_theme_mod( 'simnigeria_first_button_text', 'First button text' );
-		$first_btn_link = get_theme_mod( 'simnigeria_first_button_link', '#' );
-		$second_btn_text = get_theme_mod( 'simnigeria_second_button_text', 'Second button text' );
-		$second_btn_link = get_theme_mod( 'simnigeria_second_button_link', '#' );
+		$first_btn_text = get_theme_mod( 'sim_first_button_text', 'First button text' );
+		$first_btn_link = get_theme_mod( 'sim_first_button_link', '#' );
+		$second_btn_text = get_theme_mod( 'sim_second_button_text', 'Second button text' );
+		$second_btn_link = get_theme_mod( 'sim_second_button_link', '#' );
 
 		global $Modules;
 		if(is_page($Modules['login']['home_page']) or is_front_page()){
@@ -34,7 +34,7 @@ function show_prayer(){
 		if (is_user_logged_in()){
 			if ($prayerrequest != "")	echo $prayer;
 			if(isset($Modules['events']['enable'])){
-				echo birthday();
+				echo EVENTS\birthday();
 			}
 			echo '</article>';
 		}
@@ -208,10 +208,10 @@ function blog_content() {
 //Function to show a gallery of 3 ministries
 function ministry_gallery(){
 	$ministry_adds = [];
-	$ministry_adds['image_ids'] = [get_theme_mod( 'simnigeria_ministry_image_1', '' ),get_theme_mod( 'simnigeria_ministry_image_2', '' ),get_theme_mod( 'simnigeria_ministry_image_3', '' )];
-	$ministry_adds['links'] = [get_theme_mod( 'simnigeria_ministry_link_1', '' ),get_theme_mod( 'simnigeria_ministry_link_2', '' ),get_theme_mod( 'simnigeria_ministry_link_3', '' )];
-	$ministry_adds['titles'] = [get_theme_mod( 'simnigeria_ministry_title_1', '' ),get_theme_mod( 'simnigeria_ministry_title_2', '' ),get_theme_mod( 'simnigeria_ministry_title_3', '' )];
-	$ministry_adds['texts'] = [get_theme_mod( 'simnigeria_ministry_text_1', '' ),get_theme_mod( 'simnigeria_ministry_text_2', '' ),get_theme_mod( 'simnigeria_ministry_text_3', '' )];
+	$ministry_adds['image_ids'] = [get_theme_mod( 'sim_ministry_image_1', '' ),get_theme_mod( 'sim_ministry_image_2', '' ),get_theme_mod( 'sim_ministry_image_3', '' )];
+	$ministry_adds['links'] = [get_theme_mod( 'sim_ministry_link_1', '' ),get_theme_mod( 'sim_ministry_link_2', '' ),get_theme_mod( 'sim_ministry_link_3', '' )];
+	$ministry_adds['titles'] = [get_theme_mod( 'sim_ministry_title_1', '' ),get_theme_mod( 'sim_ministry_title_2', '' ),get_theme_mod( 'sim_ministry_title_3', '' )];
+	$ministry_adds['texts'] = [get_theme_mod( 'sim_ministry_text_1', '' ),get_theme_mod( 'sim_ministry_text_2', '' ),get_theme_mod( 'sim_ministry_text_3', '' )];
 	
 	?>
 	<article id="ministry-gallery">

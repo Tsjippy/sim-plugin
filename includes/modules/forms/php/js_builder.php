@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\FORMS;
+use SIM;
 
 trait create_js{
     function create_js(){
@@ -244,7 +245,7 @@ trait create_js{
                             //fixed prop value
                             if($action == 'value'){
                                 $propertyname	                        = $condition['propertyname1'];
-                                if(!empty($condition['action_value'])){
+                                if(isset($condition['action_value'])){
                                     $var_name   = '"'.$condition['action_value'].'"';
                                 }
                             //retrieve value from another field
@@ -279,7 +280,7 @@ trait create_js{
                                 }
                             }
                         }else{
-                            print_array("formbuilder.php writing js: missing action: '$action' for condition $condition_index of field {$element->name}");
+                            SIM\print_array("formbuilder.php writing js: missing action: '$action' for condition $condition_index of field {$element->name}");
                         }
                     }
                 }
@@ -299,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("Dynamic <?php echo $this->datatype;?> forms js loaded");
 
     tidy_multi_inputs();
-    form = document.getElementById('simnigeria_form_<?php echo $this->datatype;?>');
+    form = document.getElementById('sim_form_<?php echo $this->datatype;?>');
     <?php
     if($this->is_multi_step()){
     ?>
@@ -343,8 +344,8 @@ function <?php echo $this->datatype;?>_listener(event) {
         return;
     }
     <?php echo $this->datatype;?>_prev_el = el;
-    //clear event prevenion after 200 ms
-    setTimeout(function(){ <?php echo $this->datatype;?>_prev_el = ''; }, 200);
+    //clear event prevenion after 100 ms
+    setTimeout(function(){ <?php echo $this->datatype;?>_prev_el = ''; }, 100);
 
     if(el_name == 'nextBtn'){
         nextPrev(1);

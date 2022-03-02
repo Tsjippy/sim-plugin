@@ -44,7 +44,7 @@ function filllocationfields(event){
 		show_modal('add_compound');
 	}else if (name != ""){
 		//Get the compounds from the compounds variable
-		var compounds = simnigeria.compounds;
+		var compounds = sim.compounds;
 		form.querySelector("[name='location[address]']").value		= name+' State';
 		form.querySelector("[name='location[latitude]']").value		= compounds[value]["lat"];
 		form.querySelector("[name='location[longitude]']").value	= compounds[value]["lon"];

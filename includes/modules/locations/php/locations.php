@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\LOCATIONS;
+use SIM;
 
 /*
 	In this file we define a new post type: location
@@ -8,7 +9,7 @@ namespace SIM;
 */
 
 add_action('init', function(){
-	register_post_type_and_tax('location', 'locations');
+	SIM\register_post_type_and_tax('location', 'locations');
 }, 999);
 
 
@@ -17,7 +18,7 @@ add_action('wp_ajax_add_location_type',function(){
 	global $CustomSimSettings;
 	global $Maps;
 	
-	verify_nonce('add_location_type_nonce');
+	SIM\verify_nonce('add_location_type_nonce');
 	
 	$name		= ucfirst(sanitize_text_field($_POST['location_type_name']));
 	
@@ -35,7 +36,7 @@ add_action('wp_ajax_add_location_type',function(){
 	}else{
 		$map_id		= $Maps->add_map($name);
 		$term_id	= $result['term_id'];
-		print_array("Created locationtype category with name $name and id $term_id, created a new map with id $map_id");
+		SIM\print_array("Created locationtype category with name $name and id $term_id, created a new map with id $map_id");
 		
 		//Attach the map id to the term
 		update_term_meta($term_id,'map_id',$map_id);
@@ -152,7 +153,6 @@ function save_location_meta($post, $post_type){
 }
 
 function location_address($locationtypes, $post_id){
-	global $CustomSimSettings;
 	global $wpdb;
 	global $Maps;
 	
@@ -223,16 +223,17 @@ function location_address($locationtypes, $post_id){
 				if($result == false){
 					//Check if marker exist, if not delete the metakey
 					if(!$Maps->marker_exists($marker_ids['generic'])){
-						print_array("Updating marker with id {$marker_ids['generic']} failed as it does not exist");
+						SIM\print_array("Updating marker with id {$marker_ids['generic']} failed as it does not exist");
 						unset($marker_ids['generic']);
 					}
 				}else{
-					print_array("Updating marker with id {$marker_ids['generic']} was succesfull");
+					SIM\print_array("Updating marker with id {$marker_ids['generic']} was succesfull");
 				}
 			}
 			
 			//Marker does not exist, create it
-			if(!isset($marker_ids['generic'])){					
+			if(!isset($marker_ids['generic'])){			
+				$map_id	=  SIM\get_module_option('locations', 'placesmapid');		
 				//First create the marker on the generic map
 				$wpdb->insert($wpdb->prefix . 'ums_markers', array(
 					'title' 		=> $title,
@@ -240,13 +241,13 @@ function location_address($locationtypes, $post_id){
 					'coord_x'		=> $latitude,
 					'coord_y'		=> $longitude,
 					'icon'			=> $icon_id,
-					'map_id'		=> $CustomSimSettings['placesmapid'],		//Generic map with all places
+					'map_id'		=> $map_id,		//Generic map with all places
 					'address'		=> $address,
 				));
 				
 				//Get the marker id
 				$marker_ids['generic'] = $wpdb->insert_id;
-				print_array("Created marker with id {$wpdb->insert_id} and title $title om map with id {$CustomSimSettings['placesmapid']}");
+				SIM\print_array("Created marker with id {$wpdb->insert_id} and title $title om map with id $map_id");
 				
 			}
 			
@@ -277,11 +278,11 @@ function location_address($locationtypes, $post_id){
 				if($result == false){
 					//Check if marker exist, if not delete the metakey
 					if(!$Maps->marker_exists($marker_ids['page_marker'])){
-						print_array("Updating marker with id {$marker_ids['page_marker']} failed as it does not exist");
+						SIM\print_array("Updating marker with id {$marker_ids['page_marker']} failed as it does not exist");
 						unset($marker_ids['page_marker']);
 					}
 				}else{
-					print_array("Updated marker with id {$marker_ids['page_marker']} and title $title on map with id $map_id");
+					SIM\print_array("Updated marker with id {$marker_ids['page_marker']} and title $title on map with id $map_id");
 				}
 			}
 			
@@ -311,7 +312,7 @@ function location_address($locationtypes, $post_id){
 				));
 				$marker_ids['page_marker'] = $wpdb->insert_id;
 				
-				print_array("Created marker with id {$wpdb->insert_id} and title $title on map with id $map_id");
+				SIM\print_array("Created marker with id {$wpdb->insert_id} and title $title on map with id $map_id");
 			}
 			
 			/* 
@@ -330,9 +331,9 @@ function location_address($locationtypes, $post_id){
 				if(in_array($locationtype->cat_ID, $locationtypes)){
 					$name 				= $locationtype->slug;
 					$map_name			= $name."_map";
-					$map_id				= $CustomSimSettings[$map_name];
+					$map_id				= SIM\get_module_option('locations', $map_name);
 					$icon_name			= $name."_icon";
-					$icon_id			= $CustomSimSettings[$icon_name];
+					$icon_id			= SIM\get_module_option('locations', $icon_name);
 					
 					//Checking if this marker exists
 					if(is_numeric($marker_ids[$name])){
@@ -355,11 +356,11 @@ function location_address($locationtypes, $post_id){
 						if($result == false){
 							//Check if marker exist, if not delete the metakey
 							if(!$Maps->marker_exists($marker_ids[$name])){
-								print_array("Updating marker with id {$marker_ids[$name]} failed as it does not exist");
+								SIM\print_array("Updating marker with id {$marker_ids[$name]} failed as it does not exist");
 								unset($marker_ids[$name]);
 							}
 						}else{
-							print_array("Updated marker with id {$marker_ids[$name]} and title $title on map with id $map_id");
+							SIM\print_array("Updated marker with id {$marker_ids[$name]} and title $title on map with id $map_id");
 						}
 					}
 					
@@ -381,7 +382,7 @@ function location_address($locationtypes, $post_id){
 						//Get the marker id
 						$marker_ids[$name] = $wpdb->insert_id;
 						
-						print_array("Created marker with id {$wpdb->insert_id} and title $title on map with id $map_id");
+						SIM\print_array("Created marker with id {$wpdb->insert_id} and title $title on map with id $map_id");
 					}
 				}
 			}
@@ -407,7 +408,7 @@ function location_address($locationtypes, $post_id){
 //add meta data fields
 function location_specific_fields($post_name, $post_id){
 	//Load js
-	wp_enqueue_script('simnigeria_location_script');
+	wp_enqueue_script('sim_location_script');
 	
 	$location = get_post_meta($post_id, 'location', true);
 	
@@ -519,12 +520,12 @@ function ministry_description($post_id){
 		
 			//If user works for this ministry, echo its name and position
 			if (isset($user_ministries[$ministry_name])){
-				$user_page_url		= get_user_page_url($user->ID);
+				$user_page_url		= SIM\get_user_page_url($user->ID);
 				$privacy_preference = (array)get_user_meta( $user->ID, 'privacy_preference', true );
 				
 				if(!isset($privacy_preference['hide_ministry'])){
 					if(!isset($privacy_preference['hide_profile_picture'])){
-						$html .= display_profile_picture($user->ID);
+						$html .= SIM\display_profile_picture($user->ID);
 						$style = "";
 					}else{
 						$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';

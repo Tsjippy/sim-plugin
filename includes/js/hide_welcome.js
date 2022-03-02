@@ -6,7 +6,7 @@ document.querySelector("#welcome-message-button").addEventListener("click", func
 	//AJAX
 	var request = new XMLHttpRequest();
 
-	request.open('POST', simnigeria.ajax_url, true);
+	request.open('POST', sim.ajax_url, true);
 	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
 	request.onload = function () {
 		if (this.status >= 200 && this.status < 400) {

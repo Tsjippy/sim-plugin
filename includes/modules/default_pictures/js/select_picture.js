@@ -1,7 +1,5 @@
 function selectImage(event) {
 	event.preventDefault();
-	
-	//var parent = event.target.closest('#frontend_upload_form');
 
 	// if the file_frame has already been created, just reuse it
 	if ( typeof file_frame == 'object' ) {

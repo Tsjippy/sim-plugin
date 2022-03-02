@@ -1,0 +1,1 @@
+sass --watch --style=compressed ".\module.scss" "default_pictures.min.css"

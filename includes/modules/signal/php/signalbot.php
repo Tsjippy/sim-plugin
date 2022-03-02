@@ -3,6 +3,30 @@ namespace SIM;
 
 add_action( 'rest_api_init', function () {
 	//Route for prayerrequest of today
+	register_rest_route( 'sim/v1', '/prayermessage', array(
+		'methods' => 'GET',
+		'callback' => 'SIM\bot_prayer',
+		'permission_callback' => '__return_true',
+		)
+	);
+	
+	//Route for notification messages
+	register_rest_route( 'sim/v1', '/notifications', array(
+		'methods' => 'GET',
+		'callback' => 'SIM\bot_messages',
+		'permission_callback' => '__return_true',
+		)
+	);
+	
+	//Route for first names
+	register_rest_route( 'sim/v1', '/firstname', array(
+		'methods' => 'GET',
+		'callback' => 'SIM\find_firstname',
+		'permission_callback' => '__return_true',
+		)
+	);
+
+	//Route for prayerrequest of today
 	register_rest_route( 'simnigeria/v1', '/prayermessage', array(
 		'methods' => 'GET',
 		'callback' => 'SIM\bot_prayer',
@@ -84,13 +108,15 @@ function check_if_signal_must_send( $new_status, $old_status, $post ) {
 		$nonce = $_POST['signal_message_meta_box_nonce'];
 		// Verify that the nonce is valid and checkbox to send is checked.
 		if (wp_verify_nonce( $nonce, 'signal_message_meta_box') and isset($_POST['signal_message'])) {
-			send_post_notification($post->ID);
+			send_post_notification($post);
 		}
 	}
 }
 
-function send_post_notification($post_id){
-	$post = get_post($post_id);
+function send_post_notification($post){
+	if(is_numeric($post)){
+		$post = get_post($post);
+	}
 	
 	if($_POST['signalmessagetype'] == 'all'){
 		$excerpt	= $post->post_content;
@@ -115,7 +141,7 @@ function send_post_notification($post_id){
 	send_signal_message(
 		$message,
 		"all",
-		$post_id
+		$post->ID
 	);
 }
 
@@ -126,7 +152,7 @@ function send_signal_message($message, $recipient, $post_id=""){
 	$message = str_replace(get_site_url(),$url_without_https,$message);
 	
 	//Check if recipient is an existing userid
-	if(get_userdata($recipient)){
+	if(is_numeric($recipient) and get_userdata($recipient)){
 		$phonenumbers = get_user_meta( $recipient, 'phonenumbers', true );
 		
 		//If this user has more than 1 phone number add them all
@@ -146,6 +172,7 @@ function send_signal_message($message, $recipient, $post_id=""){
 	$notifications = get_option('signal_bot_messages');
 	//Notifications should be an array of recipients
 	if(!is_array($notifications)) $notifications = [];
+
 	//The recipient should be an array of messages
 	if(!isset($notifications[$recipient]) or !is_array($notifications[$recipient])) $notifications[$recipient]=[];
 	

@@ -167,7 +167,7 @@ class Fileupload{
 */
 function document_upload($user_id, $documentname,$targetdir="",$metakey='',$library=false, $callback=''){
 	//Load js
-	wp_enqueue_script('simnigeria_fileupload_script');
+	wp_enqueue_script('sim_fileupload_script');
 	
 	$uploader = new Fileupload($user_id, $documentname,$targetdir,$metakey,$library, $callback);
 	

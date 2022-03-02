@@ -1,24 +1,22 @@
 <?php
 namespace SIM;
 
-function save_page_audience($post_id){
+add_action('sim_after_post_save', function($post){
+	//store audience
 	if(is_array($_POST['pagetype'])) {
 		$pagetype = $_POST['pagetype'];
 		
 		//Reset to normal if that box is ticked
 		if(isset($pagetype['normal']) and $pagetype['normal'] == 'normal'){
-			delete_post_meta($post_id,"audience");
+			delete_post_meta($post->ID,"audience");
 		//Store in DB
 		}else{
-			$audiences = [];
-			//Store the audiencetype(s)
-			foreach($_POST['pagetype'] as $type){
-				if($type != '') $audiences[$type] = $type;
-			}
+			$audiences = $_POST['pagetype'];
+			clean_up_nested_array($audiences);
 			
 			//Only continue if there are audiences defined
 			if(count($audiences)>0){
-				update_post_meta($post_id,"audience",$audiences);
+				update_post_meta($post->ID,"audience",$audiences);
 			
 				//Mark existing users as if they have read the page if this pages should be read by new people after arrival
 				if(isset($audiences['afterarrival']) and !isset($audiences['everyone'])){
@@ -40,7 +38,7 @@ function save_page_audience($post_id){
 						$read_pages		= (array)get_user_meta( $user->ID, 'read_pages', true );
 		
 						//add current page
-						$read_pages[]	= $post_id;
+						$read_pages[]	= $post->ID;
 						//update
 						update_user_meta( $user->ID, 'read_pages', $read_pages);
 					}
@@ -48,12 +46,9 @@ function save_page_audience($post_id){
 				}
 			}
 		}
+	}else{
+		delete_post_meta($post->ID,"audience");
 	}
-}
-
-add_action('sim_after_post_save', function($post){
-	//store audience
-	save_page_audience($post->ID);	
 });
 
 add_shortcode("must_read_documents",'SIM\get_must_read_documents');
@@ -61,8 +56,7 @@ function get_must_read_documents($user_id='',$exclude_heading=false){
 	if(!is_numeric($user_id)) $user_id = get_current_user_id();
 	
 	//Get all the page this user already read
-	$read_pages		= get_user_meta( $user_id, 'read_pages', true );
-	if(!is_array($read_pages)) $read_pages = [];
+	$read_pages		= (array)get_user_meta( $user_id, 'read_pages', true );
 	
 	//Array of documents unique for each person
 	$personal_document_array = [
@@ -72,8 +66,7 @@ function get_must_read_documents($user_id='',$exclude_heading=false){
 		'jobdescription'	=> 'Job Description',
 	];
 	
-	$personnel_documents 	= get_user_meta( $user_id, "personnel_documents",true);
-	if(!is_array($personnel_documents ))	$personnel_documents  = [];
+	$personnel_documents 	= (array)get_user_meta( $user_id, "personnel_documents",true);
 	
 	$html 			= '';
 	$before_html 	= '';
@@ -96,14 +89,17 @@ function get_must_read_documents($user_id='',$exclude_heading=false){
 			'post_status' 	=> 'publish',
 			'meta_key' 		=> "audience",
 			'numberposts'	=> -1,
+			//'fields' 		=> 'ids'
 		)
 	);
+
+	//$must_read_pages	= array_diff($pages, $read_pages);
 	
 	//Loop over the pages while building the html
 	$arrived_pages_count = 0;
 	foreach($pages as $page){
-		//check is already read
-		if(!in_array($page->ID,$read_pages)){
+		//check if already read
+		if(!in_array($page->ID, $read_pages)){
 			$audience =  get_post_meta($page->ID,"audience",true);
 			
 			//Add a link if not yet in the country and should read before arriving
@@ -182,7 +178,7 @@ add_filter( 'the_content', function ($content){
 			isset($audience['afterarrival']) 					or
 			isset($audience['everyone']))
 		){
-			wp_enqueue_script('simnigeria_forms_script');
+			wp_enqueue_script('sim_other_script');
 			$message = '<p style="border: 3px solid #bd2919; padding: 10px; text-align: center;">
 				This is mandatory content.<br>
 				Make sure you have clicked the "I have read this" button after reading.
@@ -262,7 +258,7 @@ function markasread(\WP_REST_Request $request){
 
 add_action( 'rest_api_init', function () {
 	//Route to update mark as read from mailchimp
-	register_rest_route( 'simnigeria/v1', '/markasread', array(
+	register_rest_route( 'sim/v1', '/markasread', array(
 		'methods' => 'GET',
 		'callback' => 'SIM\markasread',
 		'permission_callback' => '__return_true',

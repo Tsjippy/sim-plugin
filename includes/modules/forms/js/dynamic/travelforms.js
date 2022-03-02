@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("Dynamic travel forms js loaded");
 
     tidy_multi_inputs();
-    form = document.getElementById('simnigeria_form_travel');
+    form = document.getElementById('sim_form_travel');
         //show first tab
     currentTab = 0; // Current tab is set to be the first tab (0)
     showTab(currentTab,form); // Display the current tab
@@ -37,8 +37,8 @@ function travel_listener(event) {
         return;
     }
     travel_prev_el = el;
-    //clear event prevenion after 200 ms
-    setTimeout(function(){ travel_prev_el = ''; }, 200);
+    //clear event prevenion after 100 ms
+    setTimeout(function(){ travel_prev_el = ''; }, 100);
 
     if(el_name == 'nextBtn'){
         nextPrev(1);
@@ -127,7 +127,7 @@ function process_travel_fields(el){
 		var value_1 = get_field_value('traveltype[]',true,'in_country');
 
 		if(value_1 == 'in_country' || value_3 == 'yes'){
-			change_field_property('fromorto[]', 'checked', userid);
+			change_field_property('fromorto[]', 'checked', "");
 		}
 	}
 
@@ -143,7 +143,7 @@ function process_travel_fields(el){
 				}
 			});
 			form.querySelector('[name="departure_travel_details_formstep"]').classList.add('hidden');
-			change_field_value('departure1address', userid);
+			change_field_value('departure1address', "");
 			change_field_value('travel[4][from]', "Abroad");
 		}
 
@@ -160,8 +160,8 @@ function process_travel_fields(el){
 		var value_1 = get_field_value('fromorto[]',true,'leaving_nigeria');
 
 		if(value_1 == 'leaving_nigeria'){
-			change_field_value('travel[4][from]', "Abroad");
-			change_field_value('travel[4][to]', custom_return_airport);
+			change_field_value('travel[4][from]', "");
+			change_field_value('travel[4][to]', "");
 		}
 	}
 
@@ -185,9 +185,9 @@ function process_travel_fields(el){
 					el.classList.add('hidden');
 				}
 			});
-			change_field_value('stopover1address', userid);
-			change_field_value('stopover1date', departuredate1);
-			change_field_property('return_stopover[][]', 'checked', "true");
+			change_field_value('stopover1address', "");
+			change_field_value('stopover1date', "");
+			change_field_property('return_stopover[][]', 'checked', "");
 		}
 	}
 
@@ -219,8 +219,8 @@ function process_travel_fields(el){
 					el.classList.remove('hidden');
 				}
 			});
-			change_field_value('custom_airport', departure_airport);
-			change_field_property('custom_return_airport', '', departure_airport);
+			change_field_value('custom_airport', "");
+			change_field_property('custom_return_airport', '', "");
 		}
 
 		if(value_1 != 'other'){
@@ -347,7 +347,7 @@ function process_travel_fields(el){
 		}
 
 		if(value_3 == ''){
-			change_field_value('destination', "Abroad");
+			change_field_value('destination', "");
 		}
 		var value_3 = get_field_value('roundtrip[]',true,'yes');
 
@@ -383,16 +383,16 @@ function process_travel_fields(el){
 		var value_3 = get_field_value('fromorto[]',true,'to_nigeria');
 
 		if(value_1 == 'no' && value_3 != 'to_nigeria'){
-			change_field_value('returnstartdate', "Abroad");
+			change_field_value('returnstartdate', "");
 		}
 
 		if(value_1 == 'no'){
-			change_field_value('final_destination', departure1address);
+			change_field_value('final_destination', "");
 		}
 		var value_1 = get_field_value('roundtrip[]',true,'yes');
 
 		if(value_1 == 'yes'){
-			change_field_value('travel[4][from]', destination);
+			change_field_value('travel[4][from]', "");
 		}
 	}
 
@@ -495,8 +495,8 @@ function process_travel_fields(el){
 					el.classList.add('hidden');
 				}
 			});
-			change_field_value('stopover2address', "true");
-			change_field_value('travel[6][to]', departure1address);
+			change_field_value('stopover2address', "");
+			change_field_value('travel[6][to]', "");
 		}
 	}
 
@@ -680,7 +680,7 @@ function process_travel_fields(el){
 		var value_3 = get_field_value('traveltype[]',true,'in_country');
 
 		if(form.querySelector('[name="stopover[]"]').checked == false && value_3 == 'in_country'){
-			change_field_value('travel[2][to]', destination);
+			change_field_value('travel[2][to]', "");
 		}
 	}
 

@@ -1,0 +1,1 @@
+sass --watch --style=compressed ".\module.scss" "events.min.css"

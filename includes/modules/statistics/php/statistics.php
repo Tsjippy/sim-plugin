@@ -4,7 +4,7 @@ namespace SIM;
 class Statistics {
     function __construct(){
         global $wpdb;
-        $this->table_name				= $wpdb->prefix . 'simnigeria_statistics';
+        $this->table_name				= $wpdb->prefix . 'sim_statistics';
 		$this->create_db_table();
 
         //Make add_page_view function availbale for AJAX request
@@ -71,7 +71,8 @@ class Statistics {
     }
 }
 
-add_action('init', function(){
+
+add_action('wp_enqueue_scripts', function(){
     global $StyleVersion;
     
 	new Statistics();
@@ -85,7 +86,7 @@ add_filter( 'the_content', function ($content){
     
     global $wpdb;
 
-    $table_name				= $wpdb->prefix . 'simnigeria_statistics';
+    $table_name				= $wpdb->prefix . 'sim_statistics';
     $url        = str_replace(get_site_url(),'',current_url());
 
     $pageviews  = $wpdb->get_results( "SELECT * FROM $table_name WHERE url='$url' ORDER BY $table_name.`timelastedited` DESC" );

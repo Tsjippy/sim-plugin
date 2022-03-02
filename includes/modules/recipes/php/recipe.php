@@ -42,9 +42,7 @@ add_action('wp_ajax_add_recipe_type',function(){
 });
 
 add_filter( 'widget_categories_args', function ( $cat_args, $instance  ) {
-	//custom_simnigeria_print_array($cat_args);
-	
-    //if we are on a recipetype page, change to display the recipe types
+	//if we are on a recipetype page, change to display the recipe types
 	if(is_tax('recipetype') or is_page('recipes') or get_post_type()=='recipe'){
 		$cat_args['taxonomy'] 		= 'recipetype';
 		$cat_args['hierarchical']	= true;

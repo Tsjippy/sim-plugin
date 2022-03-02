@@ -11,14 +11,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	 
 	 //First button
 	$wp_customize->add_setting(
-		'simnigeria_first_button_text', array(
+		'sim_first_button_text', array(
 			'default'           => esc_html( 'First Button text'),
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_first_button_text', array(
+		'sim_first_button_text', array(
 			'label'    => esc_html('First Button text'),
 			'section'  => 'static_front_page',
 			'priority' => 30,
@@ -27,14 +27,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Second button
 	$wp_customize->add_setting(
-		'simnigeria_second_button_text', array(
+		'sim_second_button_text', array(
 			'default'           => esc_html( 'Second Button text'),
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_second_button_text', array(
+		'sim_second_button_text', array(
 			'label'    => esc_html( 'Second Button text'),
 			'section'  => 'static_front_page',
 			'priority' => 30,
@@ -47,14 +47,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	 
 	//First link
 	$wp_customize->add_setting(
-		'simnigeria_first_button_link', array(
+		'sim_first_button_link', array(
 			'default'           => '#',
 			'sanitize_callback' => 'esc_url_raw',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_first_button_link', array(
+		'sim_first_button_link', array(
 			'label'    => esc_html( 'First Button URL'),
 			'section'  => 'static_front_page',
 			'priority' => 30,
@@ -63,14 +63,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Second link
 	$wp_customize->add_setting(
-		'simnigeria_second_button_link', array(
+		'sim_second_button_link', array(
 			'default'           => '#',
 			'sanitize_callback' => 'esc_url_raw',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_second_button_link', array(
+		'sim_second_button_link', array(
 			'label'    => esc_html( 'Second Button URL'),
 			'section'  => 'static_front_page',
 			'priority' => 30,
@@ -81,7 +81,7 @@ add_action( 'customize_register', function( $wp_customize ) {
 	 * Control and setting for header image
 	 */
 	$wp_customize->add_setting(
-		'simnigeria_header_image', array(
+		'sim_header_image', array(
 			'default'           => '',
 			'sanitize_callback' => 'absint',
 			'transport'         => 'postMessage',
@@ -90,7 +90,7 @@ add_action( 'customize_register', function( $wp_customize ) {
 	$wp_customize->add_control(
 		new WP_Customize_Media_Control(
 			$wp_customize,
-			'simnigeria_header_image', 
+			'sim_header_image', 
 			array(
 				'label'    => esc_html( 'Header image frontpage'),
 				'section'  => 'static_front_page',
@@ -109,7 +109,7 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Image
 	$wp_customize->add_setting(
-		'simnigeria_ministry_image_1', array(
+		'sim_ministry_image_1', array(
 			'default'           => '',
 			'sanitize_callback' => 'absint',
 			'transport'         => 'postMessage',
@@ -118,7 +118,7 @@ add_action( 'customize_register', function( $wp_customize ) {
 	$wp_customize->add_control(
 		new WP_Customize_Media_Control(
 			$wp_customize,
-			'simnigeria_ministry_image_1', 
+			'sim_ministry_image_1', 
 			array(
 				'label'    => esc_html( 'Picture for the first ministry'),
 				'section'  => 'static_front_page',
@@ -129,14 +129,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Link
 	$wp_customize->add_setting(
-		'simnigeria_ministry_link_1', array(
+		'sim_ministry_link_1', array(
 			'default'           => '#',
 			'sanitize_callback' => 'esc_url_raw',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_ministry_link_1', array(
+		'sim_ministry_link_1', array(
 			'label'    => esc_html( 'Link for the first ministry'),
 			'section'  => 'static_front_page',
 			'priority' => 40,
@@ -145,14 +145,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Title
 	$wp_customize->add_setting(
-		'simnigeria_ministry_title_1', array(
+		'sim_ministry_title_1', array(
 			'default'           => 'Some title',
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_ministry_title_1', array(
+		'sim_ministry_title_1', array(
 			'label'    => esc_html( 'Title for the first ministry'),
 			'section'  => 'static_front_page',
 			'priority' => 40,
@@ -161,14 +161,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Text
 	$wp_customize->add_setting(
-		'simnigeria_ministry_text_1', array(
+		'sim_ministry_text_1', array(
 			'default'           => 'Some text',
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_ministry_text_1', array(
+		'sim_ministry_text_1', array(
 			'type' => 'textarea',
 			'label'    => esc_html( 'Text for the first ministry'),
 			'section'  => 'static_front_page',
@@ -182,7 +182,7 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Image
 	$wp_customize->add_setting(
-		'simnigeria_ministry_image_2', array(
+		'sim_ministry_image_2', array(
 			'default'           => '',
 			'sanitize_callback' => 'absint',
 			'transport'         => 'postMessage',
@@ -191,7 +191,7 @@ add_action( 'customize_register', function( $wp_customize ) {
 	$wp_customize->add_control(
 		new WP_Customize_Media_Control(
 			$wp_customize,
-			'simnigeria_ministry_image_2', 
+			'sim_ministry_image_2', 
 			array(
 				'label'    => esc_html( 'Picture for the second ministry'),
 				'section'  => 'static_front_page',
@@ -202,14 +202,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Link
 	$wp_customize->add_setting(
-		'simnigeria_ministry_link_2', array(
+		'sim_ministry_link_2', array(
 			'default'           => '#',
 			'sanitize_callback' => 'esc_url_raw',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_ministry_link_2', array(
+		'sim_ministry_link_2', array(
 			'label'    => esc_html( 'Link for the second ministry'),
 			'section'  => 'static_front_page',
 			'priority' => 50,
@@ -218,14 +218,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Title
 	$wp_customize->add_setting(
-		'simnigeria_ministry_title_2', array(
+		'sim_ministry_title_2', array(
 			'default'           => 'Some title',
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_ministry_title_2', array(
+		'sim_ministry_title_2', array(
 			'label'    => esc_html( 'Title for the second ministry'),
 			'section'  => 'static_front_page',
 			'priority' => 50,
@@ -234,14 +234,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Text
 	$wp_customize->add_setting(
-		'simnigeria_ministry_text_2', array(
+		'sim_ministry_text_2', array(
 			'default'           => 'Some text',
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_ministry_text_2', array(
+		'sim_ministry_text_2', array(
 			'type' => 'textarea',
 			'label'    => esc_html( 'Text for the second ministry'),
 			'section'  => 'static_front_page',
@@ -255,7 +255,7 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Image
 	$wp_customize->add_setting(
-		'simnigeria_ministry_image_3', array(
+		'sim_ministry_image_3', array(
 			'default'           => '',
 			'sanitize_callback' => 'absint',
 			'transport'         => 'postMessage',
@@ -264,7 +264,7 @@ add_action( 'customize_register', function( $wp_customize ) {
 	$wp_customize->add_control(
 		new WP_Customize_Media_Control(
 			$wp_customize,
-			'simnigeria_ministry_image_3', 
+			'sim_ministry_image_3', 
 			array(
 				'label'    => esc_html( 'Picture for the third ministry'),
 				'section'  => 'static_front_page',
@@ -275,14 +275,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Link
 	$wp_customize->add_setting(
-		'simnigeria_ministry_link_3', array(
+		'sim_ministry_link_3', array(
 			'default'           => '#',
 			'sanitize_callback' => 'esc_url_raw',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_ministry_link_3', array(
+		'sim_ministry_link_3', array(
 			'label'    => esc_html( 'Link for the third ministry'),
 			'section'  => 'static_front_page',
 			'priority' => 60,
@@ -291,14 +291,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Title
 	$wp_customize->add_setting(
-		'simnigeria_ministry_title_3', array(
+		'sim_ministry_title_3', array(
 			'default'           => 'Some title',
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_ministry_title_3', array(
+		'sim_ministry_title_3', array(
 			'label'    => esc_html( 'Title for the third ministry'),
 			'section'  => 'static_front_page',
 			'priority' => 60,
@@ -307,14 +307,14 @@ add_action( 'customize_register', function( $wp_customize ) {
 	
 	//Text
 	$wp_customize->add_setting(
-		'simnigeria_ministry_text_3', array(
+		'sim_ministry_text_3', array(
 			'default'           => 'Some text',
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'postMessage',
 		)
 	);
 	$wp_customize->add_control(
-		'simnigeria_ministry_text_3', array(
+		'sim_ministry_text_3', array(
 			'type' => 'textarea',
 			'label'    => esc_html( 'Text for the third ministry'),
 			'section'  => 'static_front_page',

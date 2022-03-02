@@ -1,11 +1,12 @@
 <?php
-namespace SIM;
+namespace SIM\DEFAULTPICTURE;
+use SIM;
 
 //Set the default picture
 function set_default_picture($post_id){
     if(has_post_thumbnail($post_id)) return;
 
-    $picture_ids    = get_module_option('default_pictures', 'picture_ids');
+    $picture_ids    = SIM\get_module_option('default_pictures', 'picture_ids');
     $categories     = get_the_category( $post_id );
 
     $picture_set    = false;

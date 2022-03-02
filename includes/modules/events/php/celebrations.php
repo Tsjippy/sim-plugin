@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\EVENTS;
+use SIM;
 
 function get_anniversaries(){
 	global $Modules;
@@ -15,7 +16,7 @@ function get_anniversaries(){
 		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
 		if(!empty($start_year)){
 			$title	= $event->post_title;
-			$age	= get_age_in_words($start_year);
+			$age	= SIM\get_age_in_words($start_year);
 			$privacy= (array)get_user_meta($event->post_author, 'privacy_preference', true);
 
 			if(substr($title,0,8) == 'Birthday' and in_array('hide_age', $privacy)){
@@ -44,13 +45,13 @@ add_filter('sim_after_bot_payer', function($args){
 			if(!empty($message_string))$message_string .= " and the ";
 
 			$userdata	= get_userdata($user_id);
-			$couple_string	= $userdata->first_name.' & '.get_userdata(has_partner(($userdata->ID)))->display_name;
+			$couple_string	= $userdata->first_name.' & '.get_userdata(SIM\has_partner(($userdata->ID)))->display_name;
 
 			$msg	= str_replace($couple_string,"of $couple_string",$msg);
 			$msg	= str_replace($userdata->display_name,"of {$userdata->display_name}",$msg);
 
 			$message_string .= $msg;
-			$args['urls'] .= get_user_page_url($user_id)."\n";
+			$args['urls'] .= SIM\get_user_page_url($user_id)."\n";
 		}
 		$args['message'] .= $message_string.'.';
 	}
@@ -59,25 +60,24 @@ add_filter('sim_after_bot_payer', function($args){
 });
 
 add_filter('sim_after_bot_payer', function($args){
-	$arrival_users = get_arriving_users();
+	$arrival_users = SIM\get_arriving_users();
 	//If there are arrivals
 	if(count($arrival_users) >0){
 		if(count($arrival_users)==1){
 			$args['message'] .= "\n\n".$arrival_users[0]->display_name." arrives today.";
-			$args['urls'] .= get_user_page_url($arrival_users[0]->ID)."\n";
+			$args['urls'] .= SIM\get_user_page_url($arrival_users[0]->ID)."\n";
 		}else{
 			$args['message'] .= "\n\nToday the following people will arrive: ";
 			//Loop over the arrival_users
 			foreach($arrival_users as $user){
 				$args['message'] .= $user->display_name."\n";
-				$args['urls'] .= get_user_page_url($user->ID)."\n";
+				$args['urls'] .= SIM\get_user_page_url($user->ID)."\n";
 			}
 		}
 	}
 
 	return $args;
 });
-
 
 function anniversary_check(){
 	global $Events;
@@ -90,7 +90,7 @@ function anniversary_check(){
 			$userdata		= get_userdata($event->post_author);
 			$first_name		= $userdata->first_name;
 			$event_title	= $event->post_title;
-			$partner_id		= has_partner($event->post_author);
+			$partner_id		= SIM\has_partner($event->post_author);
 
 			if($partner_id){
 				$partnerdata	= get_userdata($partner_id);
@@ -100,13 +100,13 @@ function anniversary_check(){
 			
 			$event_title	= trim(str_replace($userdata->display_name,"", $event_title));
 
-			$age	= get_age_in_words($start_year);
+			$age	= SIM\get_age_in_words($start_year);
 
-			try_send_signal("Hi $first_name,\nCongratulations with your $age $event_title!", $event->post_author);
+			SIM\try_send_signal("Hi $first_name,\nCongratulations with your $age $event_title!", $event->post_author);
 
 			//If the author has a partner and this events applies to both of them
 			if($partner_id and strpos($event->post_title, $couple_string)){
-				try_send_signal("Hi {$partnerdata->first_name},\nCongratulations with your $event_title!", $partner_id);
+				SIM\try_send_signal("Hi {$partnerdata->first_name},\nCongratulations with your $event_title!", $partner_id);
 			}
 		}
 	}
@@ -146,7 +146,7 @@ function birthday() {
 				foreach($anniversary_messages as $user_id=>$message){
 					if(!empty($message_string))$message_string .= " and the ";
 
-					$couple_string	= $current_user->first_name.' & '.get_userdata(has_partner(($current_user->ID)))->display_name;
+					$couple_string	= $current_user->first_name.' & '.get_userdata(SIM\has_partner(($current_user->ID)))->display_name;
 
 					if($user_id  == $current_user->ID){
 						$message	= str_replace($couple_string,"of you and your spouse my dear ".$current_user->first_name."!<br>",$message);
@@ -154,7 +154,7 @@ function birthday() {
 					}else{
 						$userdata	= get_userdata($user_id);
 						//Get the url of the user page
-						$url		= get_user_page_url($user_id);
+						$url		= SIM\get_user_page_url($user_id);
 						$message	= str_replace($couple_string,"of <a href='$url'>$couple_string</a>",$message);
 						$message	= str_replace($userdata->display_name,"of <a href='$url'>{$userdata->display_name}</a>",$message);
 					}
@@ -166,7 +166,7 @@ function birthday() {
 			}
 		}
 		
-		$arrival_users = get_arriving_users();
+		$arrival_users = SIM\get_arriving_users();
 		//If there are arrivals
 		if(count($arrival_users) >0){
 			$html 	.= '<div name="arrivals" style="text-align: center; font-size: 18px;">';
@@ -174,13 +174,13 @@ function birthday() {
 			
 			if(count($arrival_users)==1){
 				//Get the url of the user page
-				$url	 = get_user_page_url($arrival_users[0]->ID);
+				$url	 = SIM\get_user_page_url($arrival_users[0]->ID);
 				$html	.= '<p><a href="'.$url.'">'.$arrival_users[0]->display_name."</a> arrives today!";
 			}else{
 				$html 	.= '<p>The following people arrive today:<br>';
 				//Loop over the birthdays
 				foreach($arrival_users as $user){
-					$url 	 = get_user_page_url($user->ID);
+					$url 	 = SIM\get_user_page_url($user->ID);
 					$html 	.= '<a href="'.$url.'">'.$user->display_name."</a><br>";
 				}
 			}

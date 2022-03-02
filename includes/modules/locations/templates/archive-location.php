@@ -1,4 +1,7 @@
 <?php
+namespace SIM\LOCATIONS;
+use SIM;
+
 /**
  * The layout specific for the page with the slug 'locations' i.e. simnigeria.org/locations.
  * Displays all the post of the location type
@@ -14,7 +17,7 @@ global $CustomSimSettings;
 //Variable containing the current locations page we are on
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
-$locations_query = new WP_Query(array(
+$locations_query = new \WP_Query(array(
 	'post_type'			=>'location', 
 	'post_status'		=>'publish', 
 	'paged'           	=> $paged,

@@ -9,7 +9,7 @@ function add_upload_button(){
 			'</div>' +
 			'<div style="width:100%; display: flex; margin-top:20px">'+
 				'<button type="button" class="button upload-files" id="upload_file" style="color: white;">Upload</button>'+
-				'<img id="loadinggif" class="loadergif" src="'+simnigeria.loading_gif+'" style="margin-top:-10px;display:none;">'+
+				'<img id="loadinggif" class="loadergif" src="'+sim.loading_gif+'" style="margin-top:-10px;display:none;">'+
 			'</div>'+		
 			'<br>'+
 		'</div>'+
@@ -208,7 +208,7 @@ function add_form_shortcode(){
 					form_data.append('action', 'add_form');
 					form_data.append('form_name', form_name);
 
-					fetch(simnigeria.ajax_url, {
+					fetch(sim.ajax_url, {
 						method: 'POST',
 						credentials: 'same-origin',
 						body: form_data
@@ -310,7 +310,7 @@ function upload(event){
 	//Listen to the upload status
 	request.upload.addEventListener('progress', progress, false);
 	
-	request.open('POST', simnigeria.ajax_url, true);
+	request.open('POST', sim.ajax_url, true);
 
 	//Create a progressbar
 	var progress_percentage = document.createElement('span');
@@ -352,7 +352,7 @@ function upload_succes(result){
 		var filename = src.split("/")[src.split("/").length-1];
 		
 		//Add link to editor
-		tinymce.activeEditor.insertContent('<p><a href="'+simnigeria.base_url+'/'+src+'">'+filename+'</a><a class="button sim" href="'+simnigeria.base_url+'/'+src+'">Download</a></p>');
+		tinymce.activeEditor.insertContent('<p><a href="'+sim.base_url+'/'+src+'">'+filename+'</a><a class="button sim" href="'+sim.base_url+'/'+src+'">Download</a></p>');
 	}
 	
 	//Close the popup
@@ -369,7 +369,7 @@ function read_file_contents(url){
 	//Add the ajax action name
 	action.append('action', 'get_docx_contents');
 
-	action.append('url', simnigeria.base_url+'/'+url);
+	action.append('url', sim.base_url+'/'+url);
 
 	//Listen to the state changes
 	request.onreadystatechange = function(){
@@ -392,7 +392,7 @@ function read_file_contents(url){
 		}
 	};
 
-	request.open('POST', simnigeria.ajax_url, false);
+	request.open('POST', sim.ajax_url, false);
 
 	request.send(action);
 }

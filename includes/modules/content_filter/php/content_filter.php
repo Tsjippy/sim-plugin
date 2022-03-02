@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\CONTENTFILTER;
+use SIM;
 
 //function to redirect user to login page if they are not allowed to see it
 add_action('loop_start',function(){
@@ -10,7 +11,6 @@ add_action('wp_footer', function(){
 	global $PublicCategoryID;
 	global $ConfCategoryID;
 	global $MinistryCategoryID;
-	global $post;
 
 	$user		= wp_get_current_user();
 
@@ -39,35 +39,13 @@ add_action('wp_footer', function(){
 		$message = 'This content is restricted. <br>You will be able to see this page as soon as you login.';
 
 		//show login modal
-		echo login_modal($message, true);
+		echo SIM\LOGIN\login_modal($message, true);
 		return;
 	}
 	
 	//If not a valid e-mail then only allow the account page to reset the email
 	if(strpos($user->user_email, ".empty") !== false and !has_category($PublicCategoryID) and !is_search() and !is_home() and strpos($_SERVER['REQUEST_URI'],'account') === false ){
 		wp_die("Your e-mail address is not valid please change it <a href='".get_site_url()."/account/?section=generic'>here</a>.");
-	}
-
-	//If 2fa not enabled and we are not on the account page
-	$methods	= get_user_meta($user->ID,'2fa_methods',true);
-	if(!isset($_SESSION)) session_start();
-	if (
-		is_user_logged_in() and 							// we are logged in
-		strpos($user->user_email,'.empty') === false and 	// we have a valid email
-		strpos(current_url(),"/account/") === false and		// and we are not currently on the account page
-		(
-			!$methods or									// and we have no 2fa enabled or
-			(
-				isset($_SESSION['webauthn']) and
-				$_SESSION['webauthn'] == 'failed' and 		// we have a failed webauthn
-				count($methods) == 1 and					// and we only have one 2fa method
-				in_array('webauthn',$methods)				// and that method is webauthn
-			)
-		)
-	){
-		print_array("Redirecting from ".current_url()." to ".TwoFA_page);
-		wp_redirect(TwoFA_page);
-		exit();
 	}
 	
 	//block access to confidential pages
@@ -125,47 +103,13 @@ add_filter( 'rest_authentication_errors', function( $result ) {
     if ( 
 		is_user_logged_in() or 
 		strpos($_SERVER['REQUEST_URI'],'wp-json/wp-mail-smtp/v1') !== false	or
-		strpos($_SERVER['REQUEST_URI'],'wp-json/simnigeria/v1/markasread') !== false or
-		strpos($_SERVER['REQUEST_URI'],'wp-json/simnigeria/v1/auth_finish') !== false or
-		strpos($_SERVER['REQUEST_URI'],'wp-json/simnigeria/v1/auth_start') !== false 
+		strpos($_SERVER['REQUEST_URI'],'wp-json/sim/v1/markasread') !== false or
+		strpos($_SERVER['REQUEST_URI'],'wp-json/sim/v1/auth_finish') !== false or
+		strpos($_SERVER['REQUEST_URI'],'wp-json/sim/v1/auth_start') !== false 
 	) {
 		// Our custom authentication check should have no effect on logged-in requests
 		return $result;
     }else{
 		wp_die('You do not have permission for this.');
-	}
-});
-
-// Make partial page contents filterable
-add_shortcode( 'content_filter', function ( $atts = array(), $content = null ) {
-	$a = shortcode_atts( array(
-        'inversed' => false,
-		'roles' => "All",
-    ), $atts );
-	$inversed 		= $a['inversed'];
-	$allowed_roles 	= explode(',',$a['roles']);
-	$return = false;
-	
-    //Get the current user
-	$user = wp_get_current_user();
-	
-	//User is logged in
-	if(is_user_logged_in()){
-		if( in_array('All',$allowed_roles) or array_intersect($allowed_roles, $user->roles)) { 
-			// display content
-			$return = true;
-		}
-	}
-    
-	//If inversed
-	if($inversed){
-		//Swap the outcome
-		$return = !$return;
-	}
-	
-	//If return is true
-	if($return == true){
-		//return the shortcode content
-		return do_shortcode($content);
 	}
 });

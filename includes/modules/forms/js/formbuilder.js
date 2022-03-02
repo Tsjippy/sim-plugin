@@ -11,15 +11,15 @@ window['after_form_element_submit'] = function(result,responsdata){
 			var node			= template.content.firstChild;
 			
 			//insert the node
-			referenceNode = document.querySelector('form#simnigeria_form_'+responsdata.formname+' .form_elements [data-priority="'+(parseInt(responsdata.index)-1)+'"]');
+			referenceNode = document.querySelector('form#sim_form_'+responsdata.formname+' .form_elements [data-priority="'+(parseInt(responsdata.index)-1)+'"]');
 			if(referenceNode == null){
-				var form_div = document.querySelector('form#simnigeria_form_'+responsdata.formname+' .form_elements');
+				var form_div = document.querySelector('form#sim_form_'+responsdata.formname+' .form_elements');
 				form_div.insertAdjacentElement('beforeend',node);
 			}else{
 				referenceNode.parentNode.insertBefore(node, referenceNode.nextSibling);
 			}
 			
-			fix_element_numbering(document.querySelector('form#simnigeria_form_'+responsdata.formname));
+			fix_element_numbering(document.querySelector('form#sim_form_'+responsdata.formname));
 			
 			//add resize listener
 			resize_ob.observe(node);
@@ -36,7 +36,7 @@ window['update_form_element'] = function(result,responsdata){
 	try{
 		if (result.status >= 200 && result.status < 400) {
 			//Replace html with new html
-			document.querySelectorAll('form#simnigeria_form_'+responsdata.formid+' .form_elements [data-id="'+responsdata.index+'"]').forEach(el=>el.outerHTML = responsdata.html);
+			document.querySelectorAll('form#sim_form_'+responsdata.formid+' .form_elements [data-id="'+responsdata.index+'"]').forEach(el=>el.outerHTML = responsdata.html);
 		}
 	}catch(err) {
 		console.error(err);
@@ -365,7 +365,7 @@ function show_empty_modal(target){
 	
 	modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Update','Add');
 	
-	modal.querySelector('.element_conditions_wrapper').innerHTML = '<img src="'+simnigeria.loading_gif+'" style="display:block; margin:0px auto 0px auto;">';
+	modal.querySelector('.element_conditions_wrapper').innerHTML = '<img src="'+sim.loading_gif+'" style="display:block; margin:0px auto 0px auto;">';
 	
 	var formdata = new FormData();
 	formdata.append('action','request_form_conditions_html');
@@ -753,7 +753,7 @@ document.addEventListener("DOMContentLoaded",function() {
 window.addEventListener("click", event => {
 	var target = event.target;
 	
-	formwrapper				= target.closest('.simnigeria_form.wrapper');
+	formwrapper				= target.closest('.sim_form.wrapper');
 	form_element_wrapper	= target.closest('.form_element_wrapper');
 	
 	if(formwrapper != null){
@@ -888,6 +888,10 @@ window.addEventListener("click", event => {
 	}
 
 	if(target.name == 'settings[save_in_meta]'){
-		target.closest('.simnigeria_form.builder').querySelector('.submit_others_form_wrapper').classList.toggle('hidden');
+		target.closest('.sim_form.builder').querySelector('.submit_others_form_wrapper').classList.toggle('hidden');
+	}
+
+	if(target.name == 'formfield[mandatory]' && target.checked){
+		target.closest('div').querySelector('[name="formfield[recommended]"]').checked=true;
 	}
 });

@@ -83,12 +83,14 @@ function check_if_account_statement($post){
 		
 		if($users != null and $attachments != null){
 			//Make sure we only continue with an adult
+			$login_name	= '';
 			foreach($users as $user){
 				if (!is_child($user->ID)){
 					$login_name = $user->data->user_login;
 					break;
 				}
 			}
+			if(empty($login_name)) return false;
 			
 			//Loop over all attachments
 			foreach($attachments as $attachment){

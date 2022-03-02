@@ -1,11 +1,14 @@
 <?php
-namespace SIM;
+namespace SIM\LOGIN;
+use SIM;
 use RobThree\Auth\TwoFactorAuth;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use stdClass;
+
+use function SIM\get_module_option;
 
 if(!class_exists('BaconQrCode\Renderer\ImageRenderer')){
     wp_die("bacon-qr-code interface does not exist. Please run 'composer require bacon/bacon-qr-code'");
@@ -116,7 +119,7 @@ function reset_2fa($user_id){
 	
 	$userdata = get_userdata($user_id);
 	//Send email and signal message
-	try_send_signal(
+	SIM\try_send_signal(
 		"Hi ".$userdata->first_name.",\n\nYour account is unlocked you can now login using your credentials. Please enable 2FA as soon as possible",
 		$_GET['user_id']
 	);
@@ -221,7 +224,7 @@ add_action ( 'wp_ajax_nopriv_check_cred', function(){
             //get 2fa methods for this user
             $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
-            clean_up_nested_array($methods);
+            SIM\clean_up_nested_array($methods);
             
             //return the methods
             if(!empty($methods)){
@@ -233,12 +236,12 @@ add_action ( 'wp_ajax_nopriv_check_cred', function(){
         }
     }
 
-    print_array("username: $username, password: $password");
+    SIM\print_array("username: $username, password: $password");
     wp_die('false');
 });
 
 add_action ( 'wp_ajax_save_2fa_settings', function(){
-    verify_nonce('save2fasettings_nonce');
+    SIM\verify_nonce('save2fasettings_nonce');
 
     if(!is_user_logged_in()) wp_die("You should be logged in!", 500);
     
@@ -313,4 +316,37 @@ add_action ( 'wp_ajax_save_2fa_settings', function(){
             'callback'	=> 'saved2fa'
         ]
     ));
+});
+
+
+//Redirect to 2fa page if not setup
+add_action('wp_footer', function(){
+    $user		= wp_get_current_user();
+
+    //If 2fa not enabled and we are not on the account page
+    $methods	= get_user_meta($user->ID,'2fa_methods',true);
+    if(!isset($_SESSION)) session_start();
+    if (
+        is_user_logged_in() and 							// we are logged in
+        strpos($user->user_email,'.empty') === false and 	// we have a valid email
+        (
+            !$methods or									// and we have no 2fa enabled or
+            (
+                isset($_SESSION['webauthn']) and
+                $_SESSION['webauthn'] == 'failed' and 		// we have a failed webauthn
+                count($methods) == 1 and					// and we only have one 2fa method
+                in_array('webauthn',$methods)				// and that method is webauthn
+            )
+        )
+    ){
+        $twofa_page      = get_page_link(SIM\get_module_option('login', '2fa_page'));
+        $twofa_page     .= SIM\get_module_option('login', '2fa_page_extras');
+
+        //Only redirect if we are not currently on the page already
+        if(strpos(SIM\current_url(),$twofa_page) === false){
+            SIM\print_array("Redirecting from ".SIM\current_url()." to $twofa_page");
+            wp_redirect($twofa_page);
+            exit();
+        }
+    }
 });

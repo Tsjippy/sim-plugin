@@ -1,11 +1,16 @@
 <?php 
-namespace SIM;
+namespace SIM\LOGIN;
+use SIM;
 
-function twofa_settings_form($user_id){
+add_shortcode('twofa_setup', 'SIM\LOGIN\twofa_settings_form');
+function twofa_settings_form($user_id=''){
 	global $StyleVersion;
 	//Load js
-	$url=plugins_url('js/2fa.js', __DIR__);
-	$result=wp_enqueue_script('2fa_script', $url, array('simnigeria_fingerprint_script'),$StyleVersion,true);
+	wp_enqueue_script('sim_2fa_script', plugins_url('js/2fa.min.js', __DIR__), array('sim_other_script','sim_table_script'), $StyleVersion, true);
+
+	if(!is_numeric($user_id)){
+		$user_id = get_current_user_id();
+	}
 
 	$secondfactor	= setupTimeCode();
 
@@ -14,7 +19,7 @@ function twofa_settings_form($user_id){
 
 	ob_start();
 	$twofa_methods	= (array)get_user_meta($user_id,'2fa_methods',true);
-	clean_up_nested_array($twofa_methods);
+	SIM\clean_up_nested_array($twofa_methods);
 
 	if($_GET['redirected']){
 		?>
@@ -101,7 +106,7 @@ function twofa_settings_form($user_id){
 			</p>
 		</div>
 		<?php
-		echo add_save_button('save2fa',"Save 2fa settings", 'hidden');
+		echo SIM\add_save_button('save2fa',"Save 2fa settings", 'hidden');
 		?>
 	</form>
 

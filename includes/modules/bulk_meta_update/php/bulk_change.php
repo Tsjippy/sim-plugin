@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\BULKCHANGE;
+use SIM;
 
 //Shortcode for bulk updaitng meta fields
 add_shortcode('bulk_update_meta', function ($atts){
@@ -22,7 +23,7 @@ add_shortcode('bulk_update_meta', function ($atts){
 				$meta_key_base = $a['key'];
 				$meta_key_name = $a['key'];
 			}
-			$users = get_user_accounts();
+			$users = SIM\get_user_accounts();
 			$html = '';
 			foreach($users as $user){
 				$value 	= get_user_meta( $user->ID, $meta_key_base, true );
@@ -30,7 +31,7 @@ add_shortcode('bulk_update_meta', function ($atts){
 				//Only show if value not set
 				if(!is_array($value) or !isset($value[$meta_key_name]) or $value[$meta_key_name] == '' or count($value[$meta_key_name])==0){
 					$html .= "<div style='margin-top:50px;'><strong>{$user->display_name}</strong>";
-					$html .= document_upload($user->ID, $meta_key_name,$a['folder'],$meta_key_base).'</div>';
+					$html .= SIM\document_upload($user->ID, $meta_key_name,$a['folder'],$meta_key_base).'</div>';
 				}
 			}
 		//Normal meta key
@@ -60,7 +61,7 @@ function bulkchange_meta($meta_key, $allowed_roles, $return_family=false){
 	//User is logged in and has the correct role
 	if($user->ID != 0 and array_intersect($allowed_roles, $user->roles ) ) {
 		//Load js
-		wp_enqueue_script('simnigeria_table_script');
+		wp_enqueue_script('sim_table_script');
 		
 		$html = "
 			<h2 id='{$meta_key}_table_title' class='table_title'>$display_name</h2>
@@ -73,7 +74,7 @@ function bulkchange_meta($meta_key, $allowed_roles, $return_family=false){
 				</thead>";
 		
 		//Get all users who are non-local nigerias, sort by last name
-		foreach(get_user_accounts($return_family) as $user){
+		foreach(SIM\get_user_accounts($return_family) as $user){
 			$value 	= get_user_meta( $user->ID, $meta_key_base, true );
 			
 			//Check if the value is an array

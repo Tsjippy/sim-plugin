@@ -3,13 +3,13 @@ namespace SIM;
 
 //load js and css
 add_action( 'admin_enqueue_scripts', function () {
-	global $StyleVersion;
+	$module_version		= '7.0.0';
 
 	//Only load on sim settings pages
 	if(strpos(get_current_screen()->base, 'sim-settings') === false) return;
 
-	wp_enqueue_style('sim_admin_css', plugins_url('css/admin.css', __DIR__), array(), $StyleVersion);
-	wp_enqueue_script('sim_admin_js', plugins_url('js/admin.js', __DIR__), array(),$StyleVersion, true);
+	wp_enqueue_style('sim_admin_css', plugins_url('css/admin.min.css', __DIR__), array(), $module_version);
+	wp_enqueue_script('sim_admin_js', plugins_url('js/admin.js', __DIR__), array('niceselect') ,$module_version, true);
 });
 
 /**
@@ -24,10 +24,22 @@ function register_admin_menu_page() {
 		$options		= $_POST;
 		unset($options['module']);
 
-		if(!isset($options['enable']) and isset($Modules[$module_slug])){
-			unset($Modules[$module_slug]);
-		}elseif(!empty($options)){
-			$Modules[$module_slug]	= $options;
+		//module was already activated
+		if(isset($Modules[$module_slug])){
+			//deactivate the module
+			if(!isset($options['enable'])){
+				unset($Modules[$module_slug]);
+				do_action('sim_module_deactivated', $module_slug, $options);
+			}elseif(!empty($options)){
+				$Modules[$module_slug]	= $options;
+				do_action('sim_module_updated', $module_slug, $options);
+			}
+		//module needs to be activated
+		}else{
+			if(!empty($options)){
+				$Modules[$module_slug]	= $options;
+				do_action('sim_module_activated', $module_slug, $options);
+			}
 		}
 		update_option('sim_modules', $Modules);
 	}
@@ -56,7 +68,7 @@ function register_admin_menu_page() {
 		//load the menu page php file
 		require_once($module.'/php/module_menu.php');
 
-		add_submenu_page('sim', $module_name, $module_name, "manage_options", "sim_$module_slug", "SIM\build_submenu");
+		add_submenu_page('sim', $module_name." module", $module_name, "manage_options", "sim_$module_slug", "SIM\build_submenu");
 	}
 }
 
@@ -81,9 +93,18 @@ function build_submenu(){
 		<h1><?php echo $module_name;?> module</h1>
 		<form action="" method="post">
 			<input type='hidden' name='module' value='<?php echo $module_slug;?>'>
+
 			<?php 
+			ob_start();
 			do_action('sim_submenu_description', $module_slug, $module_name);
+			$description = ob_get_clean();
+
+			if(!empty($description)){
+				echo "<h2>Description</h2>";
+				echo $description;
+			}
 			?>
+			<h2>Settings</h2>
 			Enable <?php echo $module_name;?> module 
 			<label class="switch">
 				<input type="checkbox" name="enable" <?php if($settings['enable']) echo 'checked';?>>
@@ -93,7 +114,14 @@ function build_submenu(){
 			<br>
 			<div class='options' <?php if(!$settings['enable']) echo "style='display:none'";?>>
 				<?php 
+				ob_start();
 				do_action('sim_submenu_options', $module_slug, $module_name, $settings);
+				$html	= ob_get_clean();
+				if(empty($html)){
+					$html = '<div>No special settings needed for this module</div>';
+				}
+
+				echo $html;
 				?>
 			</div>
 			<br>
@@ -149,7 +177,7 @@ function main_menu(){
 		<ul class="sim-list">
 		<?php
 		foreach($active as $slug=>$name){
-			$url	= admin_url("sim_$slug");
+			$url	= admin_url("admin.php?page=sim_$slug");
 			echo "<li><a href='$url'>$name</a></li>";
 		}
 		?>
@@ -185,12 +213,6 @@ function main_menu(){
 		<form action="" method="post" id="set_settings" name="set_settings">
 			<table class="form-table">
 				<tr>
-					<th><label for="missionaries_page">Missionaries page</label></th>
-					<td>
-						<?php echo page_select("missionaries_page",$CustomSimSettings["missionaries_page"]); ?>
-					</td>
-				</tr>
-				<tr>
 					<th><label for="welcome_page">Welcome page</label></th>
 					<td>
 						<?php echo page_select("welcome_page",$CustomSimSettings["welcome_page"]); ?>
@@ -203,57 +225,7 @@ function main_menu(){
 						<?php echo page_select("profile_page",$CustomSimSettings["profile_page"]); ?>
 					</td>
 				</tr>
-				<tr>
-					<th><label for="placesmapid">Map showing all markers</label></th>
-					<td>
-						<select name="placesmapid" id="placesmapid">
-							<option value="">---</option>
-							<?php echo get_maps("placesmapid"); ?>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<th><label for="missionariesmapid">Map showing all missionaries</label></th>
-					<td>
-						<select name="missionariesmapid" id="missionariesmapid">
-							<option value="">---</option>
-							<?php echo get_maps("missionariesmapid"); ?>
-						</select>
-					</td>
-				</tr>
 				
-				<?php
-				
-				$categories = get_categories( array(
-					'orderby' 	=> 'name',
-					'order'   	=> 'ASC',
-					'taxonomy'	=> 'locationtype',
-					'hide_empty'=> false,
-				) );
-				foreach($categories as $locationtype){
-					$name 				= $locationtype->slug;
-					$map_name			= $name."_map";
-					$icon_name			= $name."_icon";
-					?>
-					<tr>
-						<th><label for="<?php echo $map_name;?>">Map showing <?php echo strtolower($name);?></label></th>
-						<td>
-							<select name="<?php echo $map_name;?>" id="<?php echo $map_name;?>">
-								<option value="">---</option>
-								<?php echo get_maps($map_name); ?>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<th><label for="<?php echo $icon_name;?>">Id of the icon on the map used for <?php echo $name;?></label></th>
-						<td>
-							<input type="text" name="<?php echo $icon_name;?>" id="<?php echo $icon_name;?>" value="<?php echo $CustomSimSettings[$icon_name]; ?>">
-						</td>
-					</tr>
-					<?php
-				}
-				?>
-
 				<tr>
 					<th><label for="publiccategory">Category used for public news and pages</label></th>
 					<td>
@@ -360,29 +332,6 @@ function main_menu(){
     </div>
 	<?php
 	echo ob_get_clean();
-}
-
-//Location maps
-function get_maps($option_key){
-	global $wpdb;
-	global $CustomSimSettings;
-	$map_options = "";
-	$option_value = $CustomSimSettings[$option_key];
-
-	$query = 'SELECT  `id`,`title` FROM `'.$wpdb->prefix .'ums_maps` WHERE 1';
-	$result = $wpdb->get_results($query,ARRAY_A);
-	foreach ( $result as $map ) {
-		if ($option_value == $map['id']){
-			$selected='selected=selected';
-		}else{
-			$selected="";
-		}
-		$option = '<option value="' . $map['id'] . '" '.$selected.'>';
-		$option .= $map['title'];
-		$option .= '</option>';
-		$map_options .= $option;
-	}
-	return $map_options;
 }
 
 //categories

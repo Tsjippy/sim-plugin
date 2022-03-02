@@ -1,0 +1,18 @@
+@use '../../../css/scss/global' as *;
+
+/*
+* === Schedule settings ===
+*/
+.ui-selecting{
+	background-color: antiquewhite;
+}
+
+.ui-selected, .selected{
+	background-color: #f9efef;
+}
+
+.keyword, .timeslot{
+	font-size: 12px;
+	display: block;
+	margin-top: 5px;
+}

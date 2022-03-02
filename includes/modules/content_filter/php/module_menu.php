@@ -1,9 +1,22 @@
 <?php
-namespace SIM;
+namespace SIM\CONTENTFILTER;
+use SIM;
 
-add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
+add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
-	
-	echo '<div>No special settings needed for this module</div>';
-}, 10, 3);
+
+	?>
+	<p>
+		This module filters all content to be only available to logged-in users.<br>
+		Only content with the public category is visible to non-logged-in users.<br>
+		It also makes it possible to move files to a private folder so that it is not directly accessable.<br>
+		<br>
+		It adds one shortcode: 'content_filter' which makes it possible to limit certain parts of a page or post to certain groups.<br>
+		This shortcode has two properties: roles and inversed.<br>
+		Roles define the roles who can see the content.<br>
+		If inversed is set to true, roles define the roles who cannot see the content.<br>
+		Use like this: <code>[content_filter roles='administrator, otherroles']This has limited visibility[/content_filter]</code>
+	</p>
+	<?php
+},10,2);

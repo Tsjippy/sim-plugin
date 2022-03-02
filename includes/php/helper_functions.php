@@ -29,7 +29,7 @@ function update_family_meta($user_id, $metakey, $value){
 
 //Create a dropdown with all users
 function user_select($text,$only_adults=false,$families=false, $class='',$id='user_selection',$args=[],$user_id='',$exclude_ids=[]){
-	wp_enqueue_script('simnigeria_forms_script');
+	wp_enqueue_script('sim_other_script');
 	$html = "";
 
 	if(!is_numeric($user_id))	$user_id = $_GET["userid"];
@@ -86,17 +86,6 @@ function user_select($text,$only_adults=false,$families=false, $class='',$id='us
 	$html .= '</select></div>';
 	
 	return $html;
-}
-
-//Function to check if a post has child posts
-function has_children($post_id) {  
-  $pages = get_pages('child_of=' . $post_id);
-  
-  if (count($pages) > 0):
-    return $pages;
-  else:
-    return false;
-  endif;
 }
 
 function current_url($exclude_scheme=false, $remove_get=false){
@@ -161,7 +150,7 @@ function print_array($message,$display=false){
 function page_select($select_id,$page_id=null,$class=""){	
 	$pages = get_pages(
 		array(
-			'orderby' => 'post_name',
+			'orderby' => 'post_title',
 			'order' => 'asc',
 			'post_type' => 'page',
 			'post_status' => 'publish'
@@ -186,6 +175,17 @@ function page_select($select_id,$page_id=null,$class=""){
 	
 	$html .= "</select>";
 	return $html;
+}
+
+//Function to check if a post has child posts
+function has_children($post_id) {  
+	$pages = get_pages('child_of=' . $post_id);
+	
+	if (count($pages) > 0):
+	  return $pages;
+	else:
+	  return false;
+	endif;
 }
 
 //family flat array
@@ -634,7 +634,6 @@ function get_module_option($module_name, $option){
 }
 
 function try_send_signal($message, $recipient, $post_id=""){
-
 	if (function_exists('SIM\send_signal_message')) {
 		send_signal_message($message, $recipient, $post_id);
 	}

@@ -1,5 +1,7 @@
 <?php
-namespace SIM;
+namespace SIM\LOCATIONS;
+use SIM;
+
 /**
  * The content of a location shared between a single post, archive or the recipes page.
 **/
@@ -26,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			if(is_user_logged_in()){
 			?>
 				<div class='author'>
-					Shared by: <a href='<?php echo get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
+					Shared by: <a href='<?php echo SIM\get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
 				</div>
 				<?php
 				if($argsarchive){
@@ -57,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							) 
 						);
 						
-						$url = plugins_url().'/custom-simnigeria-plugin/includes/pictures/location.png';
+						$url = plugins_url().'/sim-plugin/includes/pictures/location.png';
 						echo "<img src='$url' alt='category' class='location_icon'>";
 						
 						//First loop over the cat to see if any parent cat needs to be removed
@@ -91,7 +93,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php
 						$tel		= get_post_meta(get_the_ID(),'tel',true);
 						if($tel != ''){
-							$image_url = plugins_url().'/custom-simnigeria-plugin/includes/pictures/tel.png';
+							$image_url = plugins_url().'/sim-plugin/includes/pictures/tel.png';
 							$icon = "<img src='$image_url' alt='telephone' class='location_icon'>";
 							echo "<a href='tel:$tel'>$icon Call them  »</a>";
 						}
@@ -102,7 +104,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php
 						$url		= get_post_meta(get_the_ID(),'url',true);
 						if($url != '' and $url != 'https://www.'){
-							$image_url = plugins_url().'/custom-simnigeria-plugin/includes/pictures/url.png';
+							$image_url = plugins_url().'/sim-plugin/includes/pictures/url.png';
 							$icon = "<img src='$image_url' alt='location' class='location_icon'>";
 							echo "<a href='$url'>$icon Visit website  »</a>";
 						}

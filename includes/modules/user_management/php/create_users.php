@@ -7,12 +7,12 @@ function create_temp_user($atts){
 	$user = wp_get_current_user();
 	if ( in_array('usermanagement',$user->roles)){		
 		//Load js
-		wp_enqueue_script('simnigeria_forms_script');
+		wp_enqueue_script('sim_other_script');
 		
 		ob_start();
 		?>
 		<div class="tabcontent">
-			<form class='simnigeria_form' data-reset="true">
+			<form class='sim_form' data-reset="true">
 				<p>Please fill in the form to create an user account</p>
 				
 				<input type="hidden" name="action" value="adduseraccount">

@@ -1,11 +1,11 @@
 <?php
 namespace SIM;
 
-$StyleVersion = "6.9.402";
+$StyleVersion = "6.9.403";
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', 'SIM\enqueue_scripts');
-//add_action( 'admin_enqueue_scripts', 'SIM\enqueue_scripts');
+add_action( 'admin_enqueue_scripts', 'SIM\enqueue_libraries');
 
 add_filter( 'body_class', function( $classes ) {
 	$newclass = [];
@@ -17,18 +17,9 @@ add_filter( 'body_class', function( $classes ) {
 	return array_merge( $classes, $newclass );
 } );
 
-function enqueue_scripts($hook){
-	global $Modules;
+function enqueue_libraries(){
 	global $StyleVersion;
-	global $LoaderImageURL;
-	global $NigeriaStates;
-	
-	$current_user = wp_get_current_user();
-	$current_user_first_name = $current_user->first_name;
-	$UserID = $current_user->id;
 
-	//Register scripts
-	
 	//LIBRARIES
 	//Nice select https://github.com/bluzky/nice-select2
 	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(),$StyleVersion,true);
@@ -41,66 +32,66 @@ function enqueue_scripts($hook){
 	
 	//Sweet alert https://sweetalert2.github.io/
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
+}
+
+function enqueue_scripts($hook){
+	global $Modules;
+	global $StyleVersion;
+	global $LoaderImageURL;
+	global $NigeriaStates;
 	
+	$current_user = wp_get_current_user();
+	$current_user_first_name = $current_user->first_name;
+	$UserID = $current_user->id;
+
+	enqueue_libraries();
+
+	//Register scripts	
 	//OWN SCRIPTS
 	//add main.js
-	wp_enqueue_script('simnigeria_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),$StyleVersion, true);
+	wp_enqueue_script('sim_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),$StyleVersion, true);
 	//debug
-	//wp_enqueue_script('simnigeria_test_script', '//localhost:8080/target.js');
+	//wp_enqueue_script('sim_test_script', '//localhost:8080/target.js');
 	
 	//Welcome shortcode
-	wp_register_script('simnigeria_message_script',plugins_url('js/hide_welcome.js', __DIR__),array(),$StyleVersion,true);
+	wp_register_script('sim_message_script',plugins_url('js/hide_welcome.js', __DIR__),array(),$StyleVersion,true);
 	
 	//account_statements
-	wp_register_script('simnigeria_account_statements_script',plugins_url('js/account_statements.js', __DIR__), array(),$StyleVersion,true);
+	wp_register_script('sim_account_statements_script',plugins_url('js/account_statements.js', __DIR__), array(),$StyleVersion,true);
 	
 	//Submit forms
-	wp_register_script('simnigeria_forms_script',plugins_url('js/forms.js', __DIR__), array('sweetalert'),$StyleVersion,true);
+	wp_register_script('sim_other_script',plugins_url('js/other.js', __DIR__), array('sweetalert'),$StyleVersion,true);
 
 	//Password strength js
-	wp_register_script('simnigeria_password_strength_script',plugins_url('js/account/password_strength.js', __DIR__),array('password-strength-meter', 'simnigeria_forms_script'),$StyleVersion,true);
+	wp_register_script('sim_password_strength_script',plugins_url('js/account/password_strength.js', __DIR__),array('password-strength-meter', 'sim_other_script'),$StyleVersion,true);
 	
 
 	//Recipe
-	wp_register_script('simnigeria_plurarize_script',plugins_url('js/recipe.js', __DIR__), array(),$StyleVersion,true);
+	wp_register_script('sim_plurarize_script',plugins_url('js/recipe.js', __DIR__), array(),$StyleVersion,true);
 	
-	//login form
-	wp_enqueue_script('simnigeria_login_script', plugins_url('js/dist/login.js', __DIR__), array('simnigeria_script'), $StyleVersion, true);
-
-	//events
-	wp_register_script('simnigeria_event_script',plugins_url('js/events.js', __DIR__), array('simnigeria_forms_script'),$StyleVersion,true);
-
 	//table request shortcode
-	wp_register_script('simnigeria_table_script',plugins_url('js/table.js', __DIR__), array('sortable','simnigeria_forms_script'),$StyleVersion,true);
+	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_other_script'),$StyleVersion,true);
 	
-	wp_register_script('simnigeria_fingerprint_script',plugins_url('js/dist/main.js', __DIR__), array('simnigeria_forms_script','simnigeria_table_script'), $StyleVersion, true);
-
 	//File upload js
-	wp_register_script('simnigeria_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('simnigeria_forms_script'),$StyleVersion,true);
+	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('sim_other_script'),$StyleVersion,true);
 
-	//schedules page
-	wp_register_script('simnigeria_schedule_script',plugins_url('js/schedules.js', __DIR__), array('simnigeria_table_script','selectable','simnigeria_forms_script'),$StyleVersion,true);
-	
-	//Frontend posting page
-	wp_register_script('simnigeria_frontend_script',plugins_url('js/frontend_posting.js', __DIR__), array('simnigeria_fileupload_script'),$StyleVersion,true);
-	
 	//add main css, but only on non-admin pages
 	//if ($hook == ""){
 		//style for tinymce
 		add_editor_style(plugins_url('css/sim.min.css', __DIR__));
 		//style fo main site
-		wp_enqueue_style( 'simnigeria_style', plugins_url('css/sim.min.css', __DIR__), array(),$StyleVersion);
+		wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(),$StyleVersion);
 	//}
 	
     //Check if on the home page
 	if (is_front_page() or is_page($Modules['login']['home_page'])){
 		//Add header image selected in customizer to homepage using inline css
-		$header_image_id	= get_theme_mod( 'simnigeria_header_image');
+		$header_image_id	= get_theme_mod( 'sim_header_image');
 		$header_image_url	= wp_get_attachment_url($header_image_id);
 		$extra_css			= ".home:not(.sticky) #masthead{background-image: url($header_image_url);";
-		wp_add_inline_style('simnigeria_style', $extra_css);
+		wp_add_inline_style('sim_style', $extra_css);
 		//home.js
-		wp_enqueue_script('simnigeria_home_script',plugins_url('js/home.js', __DIR__), array('sweetalert'),$StyleVersion,true);
+		wp_enqueue_script('sim_home_script',plugins_url('js/home.js', __DIR__), array('sweetalert'),$StyleVersion,true);
 	}
 	
 	//Get current users location
@@ -111,8 +102,8 @@ function enqueue_scripts($hook){
 		$address = "";
 	}
 
-	wp_localize_script( 'simnigeria_script', 
-		'simnigeria', 
+	wp_localize_script( 'sim_script', 
+		'sim', 
 		array( 
 			'ajax_url' 		=> admin_url( 'admin-ajax.php' ), 
 			"logged_in"		=> is_user_logged_in(), 
@@ -127,20 +118,6 @@ function enqueue_scripts($hook){
 		) 
 	);
 };
-
-//Add js to registration page
-add_action( 'login_enqueue_scripts', 'SIM\login_js' );
-function login_js($hook) {
-	global $StyleVersion;
-	global $LoaderImageURL;
-
-	$action = ( !empty( $_GET['action'] ) ) ? sanitize_text_field( $_GET['action'] ) : '';
-	//Only add registration scripts on registration page
-	if ($action=="register"){
-		wp_enqueue_script('simnigeria_registration_script',plugins_url('js/registration.js', __DIR__), array(),$StyleVersion, true);
-		wp_localize_script( 'simnigeria_registration_script', 'simnigeria', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'loading_gif' => $LoaderImageURL ));
-	}		
-}
 
 //add_action('wp_print_scripts', 'SIM\inspect_script_styles');
 function inspect_script_styles() {

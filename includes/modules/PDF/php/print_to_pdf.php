@@ -22,12 +22,12 @@ function create_page_pdf(){
 		$pdf->print_image(get_the_post_thumbnail_url($post),-1,20,-1,-1,true,true);
 		
 		//Duration
-		$url = plugins_url().'/custom-simnigeria-plugin/includes/pictures/time.png';
+		$url = plugins_url().'/sim-plugin/includes/pictures/time.png';
 		$pdf->print_image($url,10,-1,10,10);
 		$pdf->write(10,get_post_meta($post->ID,'time_needed',true).' minutes');
 		
 		//Serves
-		$url = plugins_url().'/custom-simnigeria-plugin/includes/pictures/recipe_serves.png';
+		$url = plugins_url().'/sim-plugin/includes/pictures/recipe_serves.png';
 		$pdf->print_image($url,55,-1,10,10);
 		
 		$persons = get_post_meta(get_the_ID(),'serves',true);

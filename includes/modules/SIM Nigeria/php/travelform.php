@@ -131,7 +131,7 @@ add_filter( 'add_form_multi_defaults', function($default_array_values,$user_id){
 },1,2);
 
 //Transform table data from travelform
-add_filter('transform_formtable_data',function($string,$field_name){
+add_filter('sim_transform_formtable_data',function($string,$field_name){
 	if(in_array($field_name,['name','driver','passengers'])){
 		if($field_name == 'passengers'){
 			$output	= '';
@@ -537,7 +537,7 @@ function quoata_document_upload($quota_documents){
 	global $StyleVersion;
 
 	//Load js
-	wp_enqueue_script( 'sim_quotajs', plugins_url('js/quota.js', __DIR__), array('simnigeria_forms_script'),$StyleVersion,true);
+	wp_enqueue_script( 'sim_quotajs', plugins_url('js/quota.js', __DIR__), array('sim_other_script'),$StyleVersion,true);
 	
 	ob_start();
 	?>

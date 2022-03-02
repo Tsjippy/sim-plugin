@@ -1,0 +1,17 @@
+{
+  "name": "login",
+  "version": "1.0.0",
+  "description": "login",
+  "main": "./login.js",
+  "scripts": {
+    "build-login": "webpack --entry ./login.js --output-path . --output-filename login.min.js --progress --mode=production --devtool source-map",
+    "build-2fa": "webpack --entry ./2fa.js --output-path . --output-filename 2fa.min.js --progress --mode=production",
+    "build-logout": "webpack --entry ./logout.js --output-path . --output-filename logout.min.js --progress --mode=production"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

@@ -8,7 +8,7 @@ add_action('sim_after_post_save', function($post, $update){
             delete_post_meta($post->ID, 'signalmessagetype');
 
             //Send signal message
-            send_post_notification($post->ID);
+            send_post_notification($post);
         }else{
             update_post_meta($post->ID, 'signal','checked');
             update_post_meta($post->ID, 'signalmessagetype', $_POST['signalmessagetype']);

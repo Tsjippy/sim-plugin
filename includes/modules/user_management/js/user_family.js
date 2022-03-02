@@ -1,7 +1,7 @@
 window['add_new_relation_to_select'] = function(result, responsdata){
 	if (result.status >= 200 && result.status < 400) {
 		var modal		= document.getElementById('add_account_modal');
-		var family_form	= document.querySelector('#simnigeria_form_user_family');
+		var family_form	= document.querySelector('#sim_form_user_family');
 
 		var first_name	= modal.querySelector('[name="first_name"]').value;
 		var last_name	= modal.querySelector('[name="last_name"]').value;

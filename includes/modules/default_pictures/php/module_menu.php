@@ -1,5 +1,18 @@
 <?php
-namespace SIM;
+namespace SIM\DEFAULTPICTURE;
+use SIM;
+
+add_action('sim_submenu_description', function($module_slug, $module_name){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	?>
+	<p>
+		This module allows you to set a default picture for each category on the website.<br>
+		This picture will be used in case content gets created with this category set and no featured image is set.
+	</p>
+	<?php
+},10,2);
 
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	global $StyleVersion;
@@ -9,14 +22,7 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	
 	wp_enqueue_media();
 	wp_enqueue_script('sim_default_pictures',plugins_url('js/select_picture.js', __DIR__), array(),$StyleVersion,true);
-	wp_enqueue_style( 'sim_default_pictures_style', plugins_url('css/style.css', __DIR__), array(), $StyleVersion);
-
-	?>
-	<p>
-		Below you can set a default picture for each category on the website.<br>
-		This picture will be used in case content gets created with this category set and no featured image is set.
-	</p>
-	<?php
+	wp_enqueue_style( 'sim_default_pictures_style', plugins_url('css/default_pictures.min.css', __DIR__), array(), $StyleVersion);
 
 	//Get all post types
 	$args = array(

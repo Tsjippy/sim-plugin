@@ -1,0 +1,17 @@
+{
+  "name": "forms",
+  "version": "1.0.0",
+  "description": "Forms",
+  "main": "./forms.js",
+  "scripts": {
+    "build-formbuilder": "webpack --entry ./formbuilder.js --output-path . --output-filename formbuilder.min.js --progress --mode=production",
+    "build-formstable": "webpack --entry ./forms_table.js --output-path . --output-filename forms_table.min.js --progress --mode=production",
+    "build-forms": "webpack --entry ./forms.js --output-path . --output-filename forms.min.js --progress --mode=production"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

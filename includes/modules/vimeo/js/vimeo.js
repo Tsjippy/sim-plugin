@@ -98,7 +98,7 @@ function upload_to_vimeo(file){
 	formdata.append('file_type', file.type);
 	
 	var request = new XMLHttpRequest();
-	request.open('POST', simnigeria.ajax_url, false);
+	request.open('POST', sim.ajax_url, false);
 	request.send(formdata);
 
 	if(request.status != 200){
@@ -139,7 +139,7 @@ function upload_to_vimeo(file){
 			formdata.append('post_id', post_id);
 			
 			var request = new XMLHttpRequest();
-			request.open('POST', simnigeria.ajax_url, false);
+			request.open('POST', sim.ajax_url, false);
 			request.send(formdata);
 
 			//mark as uploaded

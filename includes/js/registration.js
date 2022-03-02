@@ -15,9 +15,8 @@ document.addEventListener("DOMContentLoaded",function() {
 			
 			//Show the spinner
 			var img = document.createElement('img'); 
-			img.src = simnigeria.loading_gif;
+			img.src = sim.loading_gif;
 			img.style["height"]="30px";
-			//img.style["margin"]= "15px 0px 0px 10px";
 			img.style["position"]= "absolute";
 			button.parentNode.insertBefore(img, button.nextSibling);
 			
@@ -32,7 +31,7 @@ document.addEventListener("DOMContentLoaded",function() {
 			//Form is filled, set the UserName via AJAX
 			if (first_name != "" && last_name != ""){
 				var request = new XMLHttpRequest();
-				request.open('POST', simnigeria.ajax_url, true);
+				request.open('POST', sim.ajax_url, true);
 				request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
 
 				request.onload = function () {

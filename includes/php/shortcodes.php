@@ -47,7 +47,7 @@ add_shortcode("welcome",function ($atts){
 			$welcome_post = get_post($WelcomeMessagePageID); 
 			if($welcome_post != null){
 				//Load js
-				wp_enqueue_script('simnigeria_message_script');
+				wp_enqueue_script('sim_message_script');
 				
 				//Html
 				$html = '<div id="welcome-message">';
@@ -136,7 +136,7 @@ add_shortcode("account_statements",function (){
 	
 	if(is_child($user_id) == false and is_array($account_statements)){
 		//Load js
-		wp_enqueue_script('simnigeria_account_statements_script');
+		wp_enqueue_script('sim_account_statements_script');
 		
 		$html = "<div class='account_statements'>";
 		$html .= '<h3>Account statements</h3>';
@@ -267,6 +267,93 @@ add_shortcode("expiry_warnings",function (){
 	return $html;
 });
 
+//Shortcode for vaccination warnings
+add_action('sim_dashboard_warnings', function($user_id){
+	global $PersonnelCoordinatorEmail;
+	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
+		$user_id	= $_GET["userid"];
+	}else{
+		$user_id = get_current_user_id();
+	}
+	$remindercount = 0;
+	$reminder_html = "";
+	
+	$visa_info = get_user_meta( $user_id, "visa_info",true);
+	if (is_array($visa_info) and isset($visa_info['greencard_expiry'])){
+		$reminder_html .= check_expiry_date($visa_info['greencard_expiry'],'greencard');
+		if($reminder_html != ""){
+			$remindercount = 1;
+			$reminder_html .= '<br>';
+		}
+	}
+		
+	$vaccination_reminder_html = vaccination_reminders($user_id);
+	
+	if ($vaccination_reminder_html != ""){
+		$remindercount += 1;
+		$reminder_html .= $vaccination_reminder_html ;
+	}
+	
+	//Check for children
+	$family = get_user_meta($user_id,"family",true);
+	//User has children
+	if (isset($family["children"])){
+		$child_vaccination_reminder_html = "";
+		foreach($family["children"] as $key=>$child){
+			$result = vaccination_reminders($child);
+			if ($result != ""){
+				$remindercount += 1;
+				$userdata = get_userdata($child);
+				$reminder_html .= str_replace("Your",$userdata->first_name."'s",$result);
+			}
+		}
+	}
+	
+	//Check for upcoming reviews, but only if not set to be hidden for this year
+	if(get_user_meta($user_id,'hide_annual_review',true) != date('Y')){
+		$personnel_info 				= get_user_meta($user_id,"personnel",true);
+		if(is_array($personnel_info) and !empty($personnel_info['review_date'])){
+			//Hide annual review warning
+			if(isset($_GET['hide_annual_review']) and $_GET['hide_annual_review'] == date('Y')){
+				//Save in the db
+				update_user_meta($user_id,'hide_annual_review',date('Y'));
+				
+				//Get the current url withouth the get params
+				$url = str_replace('hide_annual_review='.date('Y'),'',current_url());
+				//redirect to same page without params
+				header ("Location: $url");
+			}
+			
+			$reviewdate	= date('F', strtotime($personnel_info['review_date']));
+			//If this month is the review month or the month before the review month
+			if($reviewdate == date('F') or date('F', strtotime('-1 month',strtotime($reviewdate))) == date('F')){			
+				$generic_documents = get_option('personnel_documents');
+				if(is_array($generic_documents) and !empty($generic_documents['Annual review form'])){
+					$reminder_html .= "Please fill in the annual review questionary.<br>";
+					$reminder_html .= 'Find it <a href="'.get_site_url().'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
+					$reminder_html .= 'Then send it to the <a href="mailto:'.$PersonnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
+					$url = add_query_arg( 'hide_annual_review', date('Y'), current_url() );
+					$reminder_html .= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
+				}
+			}
+		}
+	}
+	
+	if ($reminder_html != ""){
+		$html = '<h3 class="frontpage">';
+		if($remindercount > 1){
+			$html .= 'Reminders</h3><p>'.$reminder_html;
+		}else{
+			$reminder_html = str_replace('</li>','',str_replace('<li>',"",$reminder_html));
+			$html .= 'Reminder</h3><p>'.$reminder_html;
+		}
+		
+		$html =  '<div id=reminders>'.$html.'</p></div>';
+	}
+	
+	echo $html;
+});
+
 // Shortcode to display user in a page or post
 add_shortcode('missionary_link',function($atts){
 	$html = "";
@@ -313,7 +400,7 @@ add_shortcode('missionary_link',function($atts){
 });
 
 add_shortcode("userstatistics",function ($atts){
-	wp_enqueue_script('simnigeria_table_script');
+	wp_enqueue_script('sim_table_script');
 	ob_start();
 	$users = get_user_accounts($return_family=false,$adults=true,$local_nigerians=true);
 	?>
@@ -352,7 +439,7 @@ add_shortcode("userstatistics",function ($atts){
 						echo "<td>$login_count</td>";
 						echo "<td>$last_login_date</td>";
 						echo "<td>".get_must_read_documents($user->ID,true)."</td>";
-						echo "<td>".get_required_fields($user->ID)."</td>";
+						//echo "<td>".get_required_fields($user->ID)."</td>";
 						echo "<td>";
 						foreach($user->roles as $role){
 							echo $role.'<br>';
@@ -369,119 +456,59 @@ add_shortcode("userstatistics",function ($atts){
 	return ob_get_clean();
 });
 
-class Open_SSL {
-
-	const CIPHER_METHOD    = 'aes-256-ctr';
-	const BLOCK_BYTE_SIZE  = 16;
-	const DIGEST_ALGORITHM = 'SHA256';
-
-	/**
-	 * Internal cache var for the PHP ssl functions availability
-	 *
-	 * @var mixed|boolean
-	 *
-	 * @since 2.0.0
-	 */
-	private static $ssl_enabled = null;
-
-	/**
-	 * Encrypts given text
-	 *
-	 * @param string $text - Text to be encrypted.
-	 *
-	 * @return string
-	 *
-	 * @since 2.0.0
-	 */
-
-	/**
-	 * Decrypts crypt text
-	 *
-	 * @param string $text - Encrypted text to be decrypted.
-	 *
-	 * @return string
-	 *
-	 * @since 2.0.0
-	 */
-	public static function decrypt( string $text ): string {
-
-		if ( self::is_ssl_available() ) {
-			$decoded_base = \base64_decode( $text );
-
-			$key = \openssl_digest( \base64_decode( "9bto3O5xU1QYuwWQd/iV+Q==" ), self::DIGEST_ALGORITHM, true );
-
-			$ivlen = \openssl_cipher_iv_length( self::CIPHER_METHOD );
-
-			$iv             = \substr( $decoded_base, 0, $ivlen );
-			$ciphertext_raw = \substr( $decoded_base, $ivlen );
-			$text           = \openssl_decrypt( $ciphertext_raw, self::CIPHER_METHOD, $key, OPENSSL_RAW_DATA, $iv );
-		}
-
-		return $text;
-	}
-
-	/**
-	 * Generates random bytes by given size
-	 *
-	 * @param integer $octets - Number of octets for use for random generator.
-	 *
-	 * @return string
-	 *
-	 * @since 2.0.0
-	 */
-	public static function secure_random( int $octets = 0 ): string {
-		if ( 0 === $octets ) {
-			$octets = self::BLOCK_BYTE_SIZE;
-		}
-
-		return \random_bytes( $octets );
-	}
-
-	/**
-	 * Checks the open ssl methods existence
-	 *
-	 * @return boolean
-	 *
-	 * @since 2.0.0
-	 */
-	public static function is_ssl_available(): bool {
-		if ( null === self::$ssl_enabled ) {
-			self::$ssl_enabled = false;
-			if ( \function_exists( 'openssl_encrypt' ) ) {
-				self::$ssl_enabled = true;
-			}
-		}
-
-		return self::$ssl_enabled;
-	}
-}
-
 //Shortcode for testing
 add_shortcode("test",function ($atts){
 	global $wpdb;
 	//update all posts where this is attached
-/* 	$users = get_users();
+	/* 	$users = get_users();
     foreach($users as $user){
 
 	} */
 
+/* 	$theme_mods		= get_option('theme_mods_generatepress-child');
+
+	foreach($theme_mods as $key=>$mod){
+		if(strpos($key, 'custom_simnigeria') !== false){
+			$theme_mods[str_replace('custom_simnigeria', 'sim', $key)]	= $mod;
+			unset($theme_mods[$key]);
+		}elseif(strpos($key, 'simnigeria') !== false){
+			$theme_mods[str_replace('simnigeria', 'sim', $key)]	= $mod;
+			unset($theme_mods[$key]);
+		}
+	}
+
+	update_option('theme_mods_generatepress-child', $theme_mods); */
+
+	//theme_mods_generatepress-child
 
 	//DROP TABLE `{$wpdb->prefix}sim_forms`, `{$wpdb->prefix}sim_form_elements`, `{$wpdb->prefix}sim_form_submissions`
-	$wpdb->query("DROP TABLE `{$wpdb->prefix}sim_forms`, `{$wpdb->prefix}sim_form_elements`, `{$wpdb->prefix}sim_form_submissions`");
-	$wpdb->query("RENAME TABLE {$wpdb->prefix}simnigeria_form_shortcodes TO {$wpdb->prefix}sim_form_shortcodes");
-	$wpdb->query("RENAME TABLE {$wpdb->prefix}simnigeria_forms TO {$wpdb->prefix}sim_forms");
-	$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_forms` CHANGE `form_name` `name` TINYTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;");
-	$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_forms` CHANGE `form_version` `version` TINYTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;");
+ 	/* try{
+		$wpdb->query("DROP TABLE `{$wpdb->prefix}sim_statistics`,`{$wpdb->prefix}sim_schedules`,`{$wpdb->prefix}sim_events`,`{$wpdb->prefix}sim_forms`, `{$wpdb->prefix}sim_form_elements`, `{$wpdb->prefix}sim_form_submissions`, {$wpdb->prefix}sim_form_shortcodes");
+	}catch(Exception $e) {
+		print_array($e);
+	 }
 
-	$formbuilder = new Formbuilder();
+	 try{
+		$wpdb->query("RENAME TABLE {$wpdb->prefix}simnigeria_form_shortcodes TO {$wpdb->prefix}sim_form_shortcodes");
+		$wpdb->query("RENAME TABLE {$wpdb->prefix}simnigeria_forms TO {$wpdb->prefix}sim_forms");
+		$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_forms` CHANGE `form_name` `name` TINYTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;");
+		$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_forms` CHANGE `form_version` `version` TINYTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;");
+		$wpdb->query("RENAME TABLE {$wpdb->prefix}simnigeria_schedules TO {$wpdb->prefix}sim_schedules");
+		$wpdb->query("RENAME TABLE {$wpdb->prefix}simnigeria_statistics TO {$wpdb->prefix}sim_statistics");
+		$wpdb->query("RENAME TABLE {$wpdb->prefix}simnigeria_events TO {$wpdb->prefix}sim_events");
+	 }catch(Exception $e) {
+		print_array($e);
+	 }
+
+	$formbuilder = new FORMS\Formbuilder();
 	$formbuilder->get_forms();
-	$formbuilder->create_db_submissions_table();
 	$formbuilder->create_db_table();
-	$formtable = new FormTable();
-	//$formtable->create_db_shortcode_table();
+
 	foreach($formbuilder->forms as $form){
 		$form_elements		= maybe_unserialize($form->form_elements);
 		$form_conditions	= maybe_unserialize($form->form_conditions);
+		$form_settings		= maybe_unserialize($form->settings);
+		$form_emails		= maybe_unserialize($form->emails);
 
 		$id_mapper	= [];
 
@@ -581,16 +608,85 @@ add_shortcode("test",function ($atts){
 
 		//Move submissions
 		$query							= "SELECT * FROM {$wpdb->prefix}simnigeria_form_submissions_{$form->name} WHERE 1";
-		$form_results					= $wpdb->get_results($query, ARRAY_A);
-		foreach($form_results as $result){
-			$result['form_id'] = $form->id;
-			unset($result['id']);
+		$form_submissions					= $wpdb->get_results($query, ARRAY_A);
+		foreach($form_submissions as $submission){
+			$submission['form_id'] = $form->id;
+			unset($submission['id']);
+
+			$form_results = maybe_unserialize($submission['formresults']);
+
+			if(is_numeric($form_results['id'])){
+				$form_results['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$wpdb->prefix}sim_form_submissions')");
+			}
+
+			$submission['formresults']=serialize($form_results);
+
 			$wpdb->insert(
 				$wpdb->prefix . 'sim_form_submissions', 
-				$result
+				$submission
 			);
 		}
-	}
+
+		//remap the table column settings to the new ids
+		$query							= "SELECT * FROM {$wpdb->prefix}sim_form_shortcodes WHERE form_id={$form->id}";
+		$form_results					= $wpdb->get_results($query, ARRAY_A);
+		foreach($form_results as $result){
+			$column_settings		= unserialize($result['column_settings']);
+
+			foreach($column_settings as $index=>$column_setting){
+				if($index == -1) continue;
+				$column_settings[$id_mapper[$index]] = $column_setting;
+				unset($column_settings[$index]);
+			}
+
+			$table_settings		= unserialize($result['table_settings']);
+
+			foreach($table_settings as $index=>&$table_setting){
+				if(is_numeric($table_setting)){
+					$table_setting	= $id_mapper[$table_setting];
+				}
+			}
+
+			$wpdb->update(
+				$wpdb->prefix . 'sim_form_shortcodes', 
+				[
+					'column_settings'=>serialize($column_settings),
+					'table_settings'=>serialize($table_settings),
+				],
+				['form_id'=>$form->id]
+			);
+		}
+
+		foreach($form_settings as &$form_setting){
+			if(is_numeric($form_setting)){
+				$form_setting	= $id_mapper[$form_setting];
+			}
+		}
+
+		foreach($form_emails as &$form_email){
+			foreach($form_email as &$setting){
+				if(is_numeric($setting)){
+					$setting	= $id_mapper[$setting];
+				}
+				if(is_array($setting)){
+					foreach($setting as &$set){
+						if(is_numeric($set['fieldid'])){
+							$set['fieldid']	= $id_mapper[$set['fieldid']];
+						}
+					}
+				}
+			}
+		}
+
+		$wpdb->update(
+			$wpdb->prefix . 'sim_forms', 
+			[
+				'settings'=>serialize($form_settings),
+				'emails'=>serialize($form_emails),
+			],
+			['id'=>$form->id]
+		);
+	} */
 
 	return '';
 });

@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\LOGIN;
+use SIM;
 
 use Webauthn\Server;
 use Webauthn\PublicKeyCredentialRpEntity;
@@ -108,7 +109,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
     
             $methods    = get_user_meta($this->user_id, "2fa_methods",true);
             unset($methods[array_search('webauthn', $methods)]);
-            clean_up_nested_array($methods);
+            SIM\clean_up_nested_array($methods);
 
             if(empty($methods)){
                 delete_user_meta($this->user_id, "2fa_methods");
@@ -275,12 +276,12 @@ function fingerprint_options(\WP_REST_Request $request){
         $client_id  = strval(time()).generate_random_string(24);
 
         if(!is_user_logged_in()){
-            print_array("ajax_create: (ERROR)Permission denied, exit");
+            SIM\print_array("ajax_create: (ERROR)Permission denied, exit");
             wp_die("Something went wrong.", 500);
         }
 
         if(empty($identifier)){
-            print_array("ajax_create: (ERROR)No identifier given");
+            SIM\print_array("ajax_create: (ERROR)No identifier given");
             wp_die("No identifier given.");
         }
         $user_info  = wp_get_current_user();
@@ -351,14 +352,14 @@ function fingerprint_options(\WP_REST_Request $request){
         echo json_encode($publicKeyCredentialCreationOptions);
         exit;
     }catch(\Exception $exception){
-        print_array("ajax_create: (ERROR)".$exception->getMessage());
-        print_array(generate_call_trace($exception));
-        print_array("ajax_create: (ERROR)Unknown error, exit");
+        SIM\print_array("ajax_create: (ERROR)".$exception->getMessage());
+        SIM\print_array(generate_call_trace($exception));
+        SIM\print_array("ajax_create: (ERROR)Unknown error, exit");
         wp_die("Something went wrong.");
     }catch(\Error $error){
-        print_array("ajax_create: (ERROR)".$error->getMessage());
-        print_array(generate_call_trace($error));
-        print_array("ajax_create: (ERROR)Unknown error, exit");
+        SIM\print_array("ajax_create: (ERROR)".$error->getMessage());
+        SIM\print_array(generate_call_trace($error));
+        SIM\print_array("ajax_create: (ERROR)Unknown error, exit");
         wp_die("Something went wrong.");
     }
 }
@@ -370,13 +371,13 @@ function store_fingerprint(\WP_REST_Request $request){
         $credential_id  = sanitize_text_field($param["rawId"]);
 
         if(!is_user_logged_in()){
-            print_array("ajax_create_response: (ERROR)Permission denied, exit");
+            SIM\print_array("ajax_create_response: (ERROR)Permission denied, exit");
             wp_die("Something went wrong.", 500);
         }
 
         // Check param
         if(empty($credential_id)){
-            print_array("ajax_create_response: (ERROR)Missing parameters, exit");
+            SIM\print_array("ajax_create_response: (ERROR)Missing parameters, exit");
             wp_die("Bad Request.", 500);
         }
 
@@ -388,19 +389,19 @@ function store_fingerprint(\WP_REST_Request $request){
 
         // May not get the challenge yet
         if(empty($publicKeyCredentialCreationOptions) or empty($userEntity)){
-            print_array("ajax_create_response: (ERROR)Challenge not found, exit");
+            SIM\print_array("ajax_create_response: (ERROR)Challenge not found, exit");
             wp_die("Bad request.", 500);
         }
 
         if(strtolower(get_from_transient('username')) !== strtolower($username)){
-            print_array("ajax_create_response: (ERROR)Wrong parameters, exit");
+            SIM\print_array("ajax_create_response: (ERROR)Wrong parameters, exit");
             wp_die("Bad Request.", 500);
         }
 
         // Check global unique credential ID
         $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user_info);
         if($publicKeyCredentialSourceRepository->findOneMetaByCredentialId($credential_id) !== null){
-            print_array("ajax_create_response: (ERROR)Credential ID not unique, ID => \"".base64_encode($credential_id)."\" , exit");
+            SIM\print_array("ajax_create_response: (ERROR)Credential ID not unique, ID => \"".base64_encode($credential_id)."\" , exit");
             wp_die("Something went wrong.", 500);
         }
 
@@ -451,9 +452,9 @@ function store_fingerprint(\WP_REST_Request $request){
             $publicKeyCredentialSourceRepository->saveCredentialSource($publicKeyCredentialSource);
         }catch(\Throwable $exception){
             // Failed to verify
-            print_array("ajax_create_response: (ERROR)".$exception->getMessage());
-            print_array(generate_call_trace($exception));
-            print_array("ajax_create_response: (ERROR)Challenge not verified, exit");
+            SIM\print_array("ajax_create_response: (ERROR)".$exception->getMessage());
+            SIM\print_array(generate_call_trace($exception));
+            SIM\print_array("ajax_create_response: (ERROR)Challenge not verified, exit");
             wp_die("Something went wrong.");
         }
 
@@ -469,14 +470,14 @@ function store_fingerprint(\WP_REST_Request $request){
 
         exit();
     }catch(\Exception $exception){
-        print_array("ajax_create_response: (ERROR)".$exception->getMessage());
-        print_array(generate_call_trace($exception));
-        print_array("ajax_create_response: (ERROR)Unknown error, exit");
+        SIM\print_array("ajax_create_response: (ERROR)".$exception->getMessage());
+        SIM\print_array(generate_call_trace($exception));
+        SIM\print_array("ajax_create_response: (ERROR)Unknown error, exit");
         wp_die("Something went wrong.");
     }catch(\Error $error){
-        print_array("ajax_create_response: (ERROR)".$error->getMessage());
-        print_array(generate_call_trace($error));
-        print_array("ajax_create_response: (ERROR)Unknown error, exit");
+        SIM\print_array("ajax_create_response: (ERROR)".$error->getMessage());
+        SIM\print_array(generate_call_trace($error));
+        SIM\print_array("ajax_create_response: (ERROR)Unknown error, exit");
         wp_die("Something went wrong.");
     }
 }
@@ -520,7 +521,7 @@ function auth_start(\WP_REST_Request $request){
 
             // If the user haven't bind a authenticator yet, exit
             if(count($credentialSources) === 0){
-                print_array("ajax_auth: (ERROR)No authenticator available, exit");
+                SIM\print_array("ajax_auth: (ERROR)No authenticator available, exit");
                 wp_die("No authenticator available", 500);
             }
 
@@ -553,14 +554,14 @@ function auth_start(\WP_REST_Request $request){
         }
         exit;
     }catch(\Exception $exception){
-        print_array("ajax_auth: (ERROR)".$exception->getMessage());
-        print_array(generate_call_trace($exception));
-        print_array("ajax_auth: (ERROR)Unknown error, exit");
+        SIM\print_array("ajax_auth: (ERROR)".$exception->getMessage());
+        SIM\print_array(generate_call_trace($exception));
+        SIM\print_array("ajax_auth: (ERROR)Unknown error, exit");
         wp_die("Something went wrong.");
     }catch(\Error $error){
-        print_array("ajax_auth: (ERROR)".$error->getMessage());
-        print_array(generate_call_trace($error));
-        print_array("ajax_auth: (ERROR)Unknown error, exit");
+        SIM\print_array("ajax_auth: (ERROR)".$error->getMessage());
+        SIM\print_array(generate_call_trace($error));
+        SIM\print_array("ajax_auth: (ERROR)Unknown error, exit");
         wp_die("Something went wrong.");
     }
 }
@@ -572,7 +573,7 @@ function auth_finish(\WP_REST_Request $request){
         $client_id      = sanitize_text_field($param["id"]);
 
         if(empty($client_id)){
-            print_array("ajax_auth_response: (ERROR)Missing parameters, exit");
+            SIM\print_array("ajax_auth_response: (ERROR)Missing parameters, exit");
             wp_die("Bad Request.", 500);
         }
 
@@ -583,7 +584,7 @@ function auth_finish(\WP_REST_Request $request){
 
         // May not get the challenge yet
         if(empty($publicKeyCredentialRequestOptions) or empty($user_name_auth) or empty($userEntity)){
-            print_array("ajax_auth_response: (ERROR)Challenge not found in transient, exit");
+            SIM\print_array("ajax_auth_response: (ERROR)Challenge not found in transient, exit");
             wp_die("Bad request.", 500);
         }
 
@@ -601,7 +602,7 @@ function auth_finish(\WP_REST_Request $request){
         // If user entity is not saved, read from WordPress
         $user_key   = get_user_meta($user_info->ID, '2fa_webauthn_key', true);
         if(!$user_key){
-            print_array("ajax_auth_response: (ERROR)User not initialized, exit");
+            SIM\print_array("ajax_auth_response: (ERROR)User not initialized, exit");
             wp_die("User not inited.", 500);
         }
 
@@ -619,11 +620,10 @@ function auth_finish(\WP_REST_Request $request){
         );
 
         // Allow to bypass scheme verification when under localhost
-        $current_domain = 'localhost';
+        $current_domain = $_SERVER['HTTP_HOST'];
         if($current_domain === "localhost" || $current_domain === "127.0.0.1"){
             $server->setSecuredRelyingPartyId([$current_domain]);
             $_SESSION['webauthn']   = 'success';
-            wp_die("true");
         }
 
         // Verify
@@ -643,22 +643,22 @@ function auth_finish(\WP_REST_Request $request){
             echo "true";
         }catch(\Throwable $exception){
             // Failed to verify
-            print_array("ajax_auth_response: (ERROR)".$exception->getMessage());
-            print_array(generate_call_trace($exception));
-            print_array("ajax_auth_response: (ERROR)Challenge not verified, exit");
+            SIM\print_array("ajax_auth_response: (ERROR)".$exception->getMessage());
+            SIM\print_array(generate_call_trace($exception));
+            SIM\print_array("ajax_auth_response: (ERROR)Challenge not verified, exit");
             wp_die("Something went wrong.");
         }
 
         exit;
     }catch(\Exception $exception){
-        print_array("ajax_auth_response: (ERROR)".$exception->getMessage());
-        print_array(generate_call_trace($exception));
-        print_array("ajax_auth_response: (ERROR)Unknown error, exit");
+        SIM\print_array("ajax_auth_response: (ERROR)".$exception->getMessage());
+        SIM\print_array(generate_call_trace($exception));
+        SIM\print_array("ajax_auth_response: (ERROR)Unknown error, exit");
         wp_die("Something went wrong.");
     }catch(\Error $error){
-        print_array("ajax_auth_response: (ERROR)".$error->getMessage());
-        print_array(generate_call_trace($error));
-        print_array("ajax_auth_response: (ERROR)Unknown error, exit");
+        SIM\print_array("ajax_auth_response: (ERROR)".$error->getMessage());
+        SIM\print_array(generate_call_trace($error));
+        SIM\print_array("ajax_auth_response: (ERROR)Unknown error, exit");
         wp_die("Something went wrong.");
     }
 }
@@ -669,26 +669,26 @@ function authenticator_list(){
 
     if(!current_user_can("read")){
         $name = $user_info->display_name;
-        print_array("$name has not enough permissions");
+        SIM\print_array("$name has not enough permissions");
         return;
     }
 
     if(isset($_GET["user_id"])){
         $user_id = intval(sanitize_text_field($_GET["user_id"]));
         if($user_id <= 0){
-            print_array("ajax_ajax_authenticator_list: (ERROR)Wrong parameters, exit");
+            SIM\print_array("ajax_ajax_authenticator_list: (ERROR)Wrong parameters, exit");
             wp_die("Bad Request.", 500);
         }
 
         if($user_info->ID !== $user_id){
             if(!current_user_can("edit_user", $user_id)){
-                print_array("ajax_ajax_authenticator_list: (ERROR)No permission, exit");
+                SIM\print_array("ajax_ajax_authenticator_list: (ERROR)No permission, exit");
                 wp_die("Something went wrong.", 500);
             }
             $user_info = get_user_by('id', $user_id);
 
             if($user_info === false){
-                print_array("ajax_ajax_authenticator_list: (ERROR)Wrong user ID, exit");
+                SIM\print_array("ajax_ajax_authenticator_list: (ERROR)Wrong user ID, exit");
                 wp_die("Something went wrong.", 500);
             }
         }
@@ -790,31 +790,31 @@ add_action("wp_ajax_remove_web_authenticator",function(){
 
 add_action( 'rest_api_init', function () {
 	//Routes for registration
-	register_rest_route( 'simnigeria/v1', '/fingerprint_options', array(
+	register_rest_route( 'sim/v1', '/fingerprint_options', array(
 		'methods' => 'POST,GET',
-		'callback' => 'SIM\fingerprint_options',
+		'callback' => 'SIM\LOGIN\fingerprint_options',
 		'permission_callback' => '__return_true',
 		)
 	);
 
-    register_rest_route( 'simnigeria/v1', '/store_fingerprint', array(
+    register_rest_route( 'sim/v1', '/store_fingerprint', array(
 		'methods' => 'POST,GET',
-		'callback' => 'SIM\store_fingerprint',
+		'callback' => 'SIM\LOGIN\store_fingerprint',
 		'permission_callback' => '__return_true',
 		)
 	);
 
     //Routes for login
-    register_rest_route( 'simnigeria/v1', '/auth_start', array(
+    register_rest_route( 'sim/v1', '/auth_start', array(
 		'methods' => 'POST,GET',
-		'callback' => 'SIM\auth_start',
+		'callback' => 'SIM\LOGIN\auth_start',
 		'permission_callback' => '__return_true',
 		)
 	);
 
-    register_rest_route( 'simnigeria/v1', '/auth_finish', array(
+    register_rest_route( 'sim/v1', '/auth_finish', array(
 		'methods' => 'POST,GET',
-		'callback' => 'SIM\auth_finish',
+		'callback' => 'SIM\LOGIN\auth_finish',
 		'permission_callback' => '__return_true',
 		)
 	);

@@ -69,8 +69,8 @@ if(!empty($Modules['vimeo']['upload'])){
 		global $LoaderImageURL;
 		global $StyleVersion;
 		wp_enqueue_script('tus', IncludesUrl.'/js/tus.min.js', [], $StyleVersion);
-		wp_enqueue_script('simnigeria_media_script', IncludesUrl.'/modules/vimeo/js/vimeo.js', ['tus','simnigeria_forms_script','media-audiovideo', 'sweetalert'], $StyleVersion);
-		wp_localize_script('simnigeria_media_script', 
+		wp_enqueue_script('sim_media_script', IncludesUrl.'/modules/vimeo/js/vimeo.js', ['tus','sim_other_script','media-audiovideo', 'sweetalert'], $StyleVersion);
+		wp_localize_script('sim_media_script', 
 			'media_vars', 
 			array( 
 				'loading_gif' 	=> $LoaderImageURL,

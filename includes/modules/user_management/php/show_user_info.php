@@ -59,7 +59,7 @@ function user_info_page($atts){
 		//Continue only if there is a selected user
 		if(is_numeric($user_id)){
 			$html .= "<div id='profile_forms'>";
-			$html .= '<input type="hidden" class="input-text" name="userid" id="userid" value="'.$user_id.'">';
+				$html .= '<input type="hidden" class="input-text" name="userid" id="userid" value="'.$user_id.'">';
 			
 			/*
 				Dashboard
@@ -101,15 +101,26 @@ function user_info_page($atts){
 					$removal_date 	= date_create($account_validity);
 					$nonce 			= wp_create_nonce("extend_validity_reset_nonce");
 					
-					$html .= "<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'><p>
-					<input type='hidden' id='extend_validity_reset_nonce' value='$nonce'>
-					This user account is only valid till ".date_format($removal_date,"d F Y").".<br>
-					<br>
-					Change expiry date to 
-					<input type='date' id='new_expiry_date' min='$account_validity' style='width:auto; display: initial; padding:0px; margin:0px;'><br>
-					<input type='checkbox' id='unlimited' value='unlimited' style='width:auto; display: initial; padding:0px; margin:0px;'>
-					<label for='unlimited'> Check if the useraccount should never expire.</label><br></p>";
-					$html .= add_save_button('extend_validity', 'Change validity');
+					$html .= "<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'>";
+
+					if(array_intersect($generic_info_roles, $user_roles )){
+						$html .= "<p>";
+							$html .= "This user account is only valid till ".date_format($removal_date,"d F Y").".<br>";
+							$html .= "<br>";
+							$html .= "<input type='hidden' id='extend_validity_reset_nonce' value='$nonce'>";
+							$html .= "Change expiry date to ";
+							$html .= "<input type='date' id='new_expiry_date' min='$account_validity' style='width:auto; display: initial; padding:0px; margin:0px;'>";
+							$html .= "<br>";
+							$html .= "<input type='checkbox' id='unlimited' value='unlimited' style='width:auto; display: initial; padding:0px; margin:0px;'>";
+							$html .= "<label for='unlimited'> Check if the useraccount should never expire.</label>";
+							$html .= "<br>";
+						$html .= "</p>";
+						$html .= add_save_button('extend_validity', 'Change validity');
+					}else{
+						$html .= "<p>";
+							$html .= "Your user account will be automatically deactivated on ".date_format($removal_date,"d F Y").".<br>";
+						$html .= "</p>";
+					}
 					$html .= "</div>";
 				}
 					$html .= do_shortcode('[formbuilder datatype=user_generics]');
@@ -265,7 +276,7 @@ function user_info_page($atts){
 				
 				//Content
 				$html .= '<div id="twofa_info" class="tabcontent hidden">';
-				$html .= twofa_settings_form($user_id);
+				$html .= LOGIN\twofa_settings_form($user_id);
 				$html .= '</div>';
 			}			
 			
@@ -278,8 +289,7 @@ function user_info_page($atts){
 				
 				//Content
 				$html .= '<div id="profile_picture_info" class="tabcontent hidden">';
-					$html .="<h3>Profile picture</h3>";
-					$html .= document_upload($user_id, $documentname='Profile image',$targetdir='private/profile_pictures',$multiple=false,$metakey='profile_picture',$library=true, $callback='profile_picture_change');
+					$html .= do_shortcode('[formbuilder datatype=profile_picture]');
 				$html .= '</div>';
 			}
 			
@@ -305,7 +315,7 @@ function user_info_page($atts){
 		
 		return $select_user_html.$tab_html.'</ul></nav>'.$html.'</div>';
 	}else{
-		echo login_modal("You do not have permission to see this, sorry.");
+		echo LOGIN\login_modal("You do not have permission to see this, sorry.");
 	}
 }
 

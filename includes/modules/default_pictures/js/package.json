@@ -1,0 +1,16 @@
+{
+  "name": "default_picture",
+  "version": "1.0.0",
+  "description": "Default pictures ",
+  "main": "./select_picture.js",
+  "scripts": {
+    "build": "webpack --entry ./select_picture.js --output-path . --output-filename select_picture.min.js --progress --mode=production",
+    "watch": "webpack --entry ./select_picture.js --output-path . --output-filename select_picture.min.js --progress --watch"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

@@ -1,4 +1,7 @@
 <?php
+namespace SIM\EVENTS;
+use SIM;
+
 add_filter('sim_after_bot_payer', function($messages){
     global $Events;
 

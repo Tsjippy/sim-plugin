@@ -1,0 +1,15 @@
+{
+  "name": "frontend_posting",
+  "version": "1.0.0",
+  "description": "frontend_posting",
+  "main": "./frontend_posting.js",
+  "scripts": {
+    "build": "webpack --entry ./frontend_posting.js --output-path . --output-filename frontend_posting.min.js --progress --mode=production"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

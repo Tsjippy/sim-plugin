@@ -2,7 +2,7 @@
 namespace SIM;
 
 add_action('admin_init', function() {
-    if ( is_admin() && get_option( 'Activated_Plugin' ) == 'SIMNIGERIA' ) {
+    if ( is_admin() && get_option( 'Activated_Plugin' ) == 'SIM' ) {
 		delete_option( 'Activated_Plugin' );
 
 		add_cron_schedules();
@@ -167,80 +167,6 @@ function get_child_title($user_id){
 	return $title;
 }
 
-//loop over all users and scan for missing info
-function personal_info_reminder(){
-	global $WebmasterName;
-	
-	//Change the user to the adminaccount otherwise get_users will not work
-	wp_set_current_user(1);
-	
-	//Retrieve all users
-	
-	$users = get_user_accounts(false,true,true);
-	//Loop over the users
- 	foreach($users as $user){
-		//get the reminders for this user
-		$reminder_html = get_required_fields($user->ID);
-		//If there are reminders, send an e-mail
-		if ($reminder_html != ""){
-			$userdata 	= get_userdata($user->ID);
-			$recipients = '';
-			if($userdata != null){
-				$parents = get_parents($user->ID);
-				//Is child
-				if(count($parents)>0){
-					$child_title = get_child_title($user->ID);
-					
-					$subject = "Please update the personal information of {$userdata->first_name} on the simnigeria website";
-					$message = 'Dear '.$userdata->last_name.' family,<br><br>';
-					$message .= "Some of the personal information of {$userdata->first_name} on simnigeria.org needs to be updated.<br>";
-					$reminder_html = str_replace("Your",$userdata->first_name."'s",$reminder_html);
-					
-					foreach($parents as $parent){
-						if(strpos($parent->user_email,'.empty') === false){
-							if($recipients != '') $recipients .= ', ';
-							$recipients .= $parent->user_email;
-						}
-									
-						//Send Signal message
-						try_send_signal(
-							"Hi ".$parent->first_name.",\nPlease update the personal information of your $child_title ".$userdata->first_name." here:\n\n".get_site_url()."/account",
-							$user->ID
-						);
-					}				
-				//not a child
-				}else{			
-					//Send Signal message
-					try_send_signal(
-						"Hi ".$userdata->first_name.",\nPlease update your personal information here:\n\n".get_site_url()."/account",
-						$user->ID
-					);
-					
-					//If this not a valid email skip this email
-					if(strpos($userdata->user_email,'.empty') !== false) continue;
-						
-					$subject 	= "Please update your personal information on the simnigeria website";
-					$message 	= 'Hi '.$userdata->first_name.',<br><br>';
-					$message   .= 'Some of your personal information on simnigeria.org needs to be updated.<br>';
-					$recipients	= $userdata->user_email;
-				}
-				
-				//If there is an email set
-				if($recipients != ''){					
-					//Send e-mail
-					$message .= 'Please click on the items below to update the data:';
-					$message .= $reminder_html;
-					$message .= '<br><br>';
-					$message .= 'Kind regards,<br><br>'.$WebmasterName;
-					$headers = array('Content-Type: text/html; charset=UTF-8');
-					
-					wp_mail( $recipients, $subject, $message, $headers );
-				}
-			}
-		}
-	} 
-}
-
 //send an e-mail with an overview of an users details for them to check
 function check_details_mail(){
 	wp_set_current_user(1);
@@ -278,7 +204,7 @@ function check_details_mail(){
 					$filename 		 = basename($file);
 					$attachments[]	 = $file;
 					$message 		.= "You have setup a profile picture, see attached $filename<br>";
-/* 
+					/* 
 					add_action( 'phpmailer_init', function($phpmailer)use($file){
 						$phpmailer->clearAttachments();
 						$ext = pathinfo($file, PATHINFO_EXTENSION);
