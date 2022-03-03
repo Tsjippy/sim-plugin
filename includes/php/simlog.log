@@ -4323,3 +4323,1521 @@ Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\incl
 10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
 11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
 
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:37 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:37 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:38 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:38 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:39 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:39 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:39 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:39 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:40 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:40 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:42 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:42 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:42 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:42 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:44 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:44 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:44 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:44 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:44 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:44 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:44 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:44 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:44 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:44 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:44 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:44 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:44 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:44 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 09:44 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 09:44 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:47 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:47 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:47 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:47 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\forms\php\class_formbuilder.php line 1457
+03-03-2022 12:47 - D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\forms/js/dynamic/reimbursementforms.js does not exist!
+Building it now
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:47 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:47 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:47 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:47 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:47 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:47 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:47 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:47 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:48 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:48 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:49 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:49 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:49 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:49 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:49 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:49 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:49 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:49 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:49 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:58 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:58 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 12:58 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 12:58 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:02 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:02 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:02 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:02 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:03 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:03 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:03 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:03 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:04 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:04 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:04 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:04 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:29 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:29 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:29 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:29 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:29 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:29 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:29 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:29 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:29 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:29 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:38 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:38 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:38 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:38 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:38 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:38 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:38 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:38 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:39 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:39 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:39 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:39 - 
+1) D:\Local_websites\simnigeria\wp-admin\customize.php(13): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:39 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:39 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:39 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:39 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 13:39 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 13:39 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:32 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:32 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:32 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:32 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:32 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:32 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:33 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:33 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:33 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:33 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:33 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:33 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:33 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:33 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:33 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:33 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:34 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:34 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:34 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:34 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:34 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:34 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:35 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:35 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:35 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:35 - 
+1) D:\Local_websites\simnigeria\wp-admin\index.php(10): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:35 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:35 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:36 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:36 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:36 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:36 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:36 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:36 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:36 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:36 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:42 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:42 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:43 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:43 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin.php(34): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+11) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+12) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "is_feed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\index.php(17): require('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-blog-header.php(13): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+8) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(176): wp_styles()
+10) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(24): WP_Styles->__construct()
+11) D:\Local_websites\simnigeria\wp-includes\class.wp-styles.php(135): do_action_ref_array('wp_default_styl...', Array)
+12) D:\Local_websites\simnigeria\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+13) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(331): WP_Hook->apply_filters('', Array)
+14) D:\Local_websites\simnigeria\wp-includes\class-wp-hook.php(307): wp_default_styles(Object(WP_Styles))
+15) D:\Local_websites\simnigeria\wp-includes\script-loader.php(1612): wp_should_load_separate_core_block_assets()
+16) D:\Local_websites\simnigeria\wp-includes\script-loader.php(2415): is_feed()
+17) D:\Local_websites\simnigeria\wp-includes\query.php(416): _doing_it_wrong('is_feed', 'Conditional que...', '(This message w...')
+18) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('is_feed was cal...', 1024)
+19) [internal function]: SIM\handle_error(1024, 'is_feed was cal...', 'D:\\Local_websit...', 5768, Array)
+
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 135
+03-03-2022 14:46 - You have an error notice: "wp_enqueue_style was called <strong>incorrectly</strong>. Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>sim_locations_style</code> handle. Please see <a href="https://wordpress.org/support/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.3.0.)" in file "D:\Local_websites\simnigeria\wp-includes\functions.php" at line: "5768".
+Called from file D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\php\other.php line 136
+03-03-2022 14:46 - 
+1) D:\Local_websites\simnigeria\wp-admin\admin-ajax.php(22): require_once('D:\\Local_websit...')
+2) D:\Local_websites\simnigeria\wp-load.php(50): require_once('D:\\Local_websit...')
+3) D:\Local_websites\simnigeria\wp-config.php(103): require_once('D:\\Local_websit...')
+4) D:\Local_websites\simnigeria\wp-settings.php(418): include_once('D:\\Local_websit...')
+5) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\sim-plugin.php(45): require_once('D:\\Local_websit...')
+6) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(363): SIM\LOCATIONS\Maps->__construct()
+7) D:\Local_websites\simnigeria\wp-content\plugins\sim-plugin\includes\modules\locations\php\class_maps.php(17): wp_enqueue_style('sim_locations_s...', 'http://localhos...', Array, 'ModuleVersion')
+8) D:\Local_websites\simnigeria\wp-includes\functions.wp-styles.php(174): _wp_scripts_maybe_doing_it_wrong('wp_enqueue_styl...', 'sim_locations_s...')
+9) D:\Local_websites\simnigeria\wp-includes\functions.wp-scripts.php(67): _doing_it_wrong('wp_enqueue_styl...', 'Scripts and sty...', '(This message w...')
+10) D:\Local_websites\simnigeria\wp-includes\functions.php(5768): trigger_error('wp_enqueue_styl...', 1024)
+11) [internal function]: SIM\handle_error(1024, 'wp_enqueue_styl...', 'D:\\Local_websit...', 5768, Array)
+

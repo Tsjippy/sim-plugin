@@ -63,7 +63,7 @@ add_action ( 'wp_ajax_updateroles', function(){
 		$new_roles		= (array)$_POST['roles'];
 		
 		//Check if new roles require mailchimp actions
-		$Mailchimp = new Mailchimp($user->ID);
+		$Mailchimp = new MAILCHIMP\Mailchimp($user->ID);
 		$Mailchimp->role_changed($new_roles);
 		
 		//add new roles

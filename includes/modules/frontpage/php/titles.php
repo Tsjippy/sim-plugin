@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\FRONTPAGE;
+use SIM;
 
 //Remove the featured image from the page and post content
 add_action( 'init', function() {

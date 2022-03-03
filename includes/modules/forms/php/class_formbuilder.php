@@ -1412,9 +1412,14 @@ class Formbuilder{
 			if(empty($this->formresults[$match])){
 				//remove the placeholder, there is no value
 				$string = str_replace("%$match%",'',$string);
+			}elseif(is_array($this->formresults[$match])){
+				$files	= $this->formresults[$match];
+				$string = array_map(function($value){
+					return ABSPATH.$value;
+				},$files);
 			}else{
 				//replace the placeholder with the value
-				$string = str_replace("%$match%",str_replace('_',' ',$this->formresults[$match]),$string);
+				$string = str_replace("%$match%", str_replace('_',' ',$this->formresults[$match]), $string);
 			}
 		}
 		
