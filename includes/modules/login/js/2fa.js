@@ -31,31 +31,33 @@ document.addEventListener("DOMContentLoaded",function() {
 	if(el != null){
 		check_webauthn_available();
 	}
+
+	document.querySelectorAll('.twofa_option_checkbox').forEach(el=>el.addEventListener('click', show_2fa_setup));
 	
+	document.querySelectorAll('.remove_webauthn').forEach(el=>el.addEventListener('click',remove_web_authenticator));
+
+	document.querySelectorAll('#add_fingerprint').forEach(el=>el.addEventListener('click',register_fingerprint));
 });
 
-document.addEventListener("click",function(event) {
+function show_2fa_setup(event) {
 	var target	= event.target;
 
-	// We clicked a 2fa method option (authenticator or e-mail)
-	if(target.classList.contains('twofa_option_checkbox')){
-		//hide all options
-		document.querySelectorAll('.twofa_option').forEach(el=>el.classList.add('hidden'));
+	//hide all options
+	document.querySelectorAll('.twofa_option').forEach(el=>el.classList.add('hidden'));
 
-		// Show setup for this method
-		var wrapper	= document.getElementById('setup-'+target.value);
-		wrapper.classList.remove('hidden');
+	// Show setup for this method
+	var wrapper	= document.getElementById('setup-'+target.value);
+	wrapper.classList.remove('hidden');
 
-		if (isMobileDevice()){
-			wrapper.querySelectorAll('.mobile.hidden').forEach(el=>el.classList.remove('hidden'));
-		}else{
-			wrapper.querySelectorAll('.desktop.hidden').forEach(el=>el.classList.remove('hidden'));
-		}
-
-		//Show submit button
-		target.closest('form').querySelector('.form_submit').classList.remove('hidden');
+	if (isMobileDevice()){
+		wrapper.querySelectorAll('.mobile.hidden').forEach(el=>el.classList.remove('hidden'));
+	}else{
+		wrapper.querySelectorAll('.desktop.hidden').forEach(el=>el.classList.remove('hidden'));
 	}
-});
+
+	//Show submit button
+	target.closest('form').querySelector('.form_submit').classList.remove('hidden');
+}
 
 // Register a new fingerprint
 const register = useRegistration(
@@ -99,9 +101,7 @@ function remove_web_authenticator(event){
 }
 
 //Start registration with button click
-var el = document.querySelector("#add_fingerprint")
-if(el != null){
-  el.addEventListener('click', function(event){
+function register_fingerprint(event){
     var identifier  = event.target.closest('#webauthn_wrapper').querySelector('[name="identifier"]').value;
     if(identifier == ''){
       display_message('Please specify a device name', 'error');
@@ -141,9 +141,4 @@ if(el != null){
       //remove loader
       document.querySelector('#loader_wrapper').remove();
     })
-  });
 }
-
-document.querySelectorAll('.remove_webauthn').forEach(el=>{
-  el.addEventListener('click',remove_web_authenticator);
-});

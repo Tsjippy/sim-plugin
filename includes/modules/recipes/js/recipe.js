@@ -521,8 +521,6 @@ document.addEventListener("DOMContentLoaded",function() {
 			//Check with what number the ingredients need to be multiplied
 			var factor 		= newvalue/originalvalue;
 			
-			//console.log('factor is '+factor);
-			
 			//Update the person text
 			if(this.value == 1){
 				this.parentNode.querySelector('.personspan').textContent = "person";

@@ -1,8 +1,9 @@
 <?php
-namespace SIM;
+namespace SIM\MANDATORY;
+use SIM;
 
 //only load when checked
-if(!get_module_option('PDF', 'full_screen')) return;
+if(!SIM\get_module_option('PDF', 'full_screen')) return;
 
 //Show PDFs full screen
 add_filter( 'the_content', function ( $content ) {
@@ -43,7 +44,7 @@ add_filter( 'the_content', function ( $content ) {
             $pdf_url = $matches[1];
             
             //Convert to path
-            $path = url_to_path($pdf_url);
+            $path = SIM\url_to_path($pdf_url);
             
             //Echo the pdf to screen
             ob_clean();

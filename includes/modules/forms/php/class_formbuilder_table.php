@@ -5,6 +5,8 @@ use SIM;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+use const SIM\CONTENTFILTER\ModuleVersion;
+
 ob_start();
 class FormTable extends Formbuilder{
 	function __construct(){
@@ -940,8 +942,6 @@ class FormTable extends Formbuilder{
 	}
 	
 	function show_formresults_table($atts){
-		global $StyleVersion;
-
 		ob_start();
 		
 		$this->process_atts($atts);
@@ -1000,7 +1000,7 @@ class FormTable extends Formbuilder{
 		do_action('formtable_POST_actions');
 		
 		//Load js
-		wp_enqueue_script('sim_forms_table_script', plugins_url('js/forms_table.min.js', __DIR__), array('sim_table_script','sim_other_script'),$StyleVersion,true);
+		wp_enqueue_script('sim_forms_table_script', plugins_url('js/forms_table.min.js', __DIR__), array('sim_table_script','sim_other_script'), ModuleVersion,true);
 		
 		//do not show if not logged in
 		if(!is_user_logged_in()) return;

@@ -914,7 +914,7 @@ class FrontEndContent{
 			</div>
 			
 			<?php
-			$Mailchimp = new SIM\Mailchimp($this->user->ID);
+			$Mailchimp = new SIM\MAILCHIMP\Mailchimp($this->user->ID);
 			$segments = $Mailchimp->get_segments();
 			if($segments){
 				?>
@@ -972,11 +972,10 @@ class FrontEndContent{
 		include ABSPATH . 'wp-admin/includes/post.php';
 		
 		global $LoaderImageURL;
-		global $StyleVersion;
 		
-		wp_enqueue_style('sim_frontend_style', plugins_url('css/frontend_posting.min.css', __DIR__), array(), $StyleVersion);
+		wp_enqueue_style('sim_frontend_style', plugins_url('css/frontend_posting.min.css', __DIR__), array(), ModuleVersion);
 		//Load js
-		wp_enqueue_script('sim_frontend_script', plugins_url('js/frontend_posting.min.js', __DIR__), array('sim_fileupload_script'), $StyleVersion, true);
+		wp_enqueue_script('sim_frontend_script', plugins_url('js/frontend_posting.min.js', __DIR__), array('sim_fileupload_script'), ModuleVersion, true);
 		wp_enqueue_media();
 		
 		ob_start();

@@ -5,7 +5,6 @@ use SIM;
 class Maps{
 	function __construct(){
 		global $wpdb;
-		global $StyleVersion;
 		
 		$this->map_table	= $wpdb->prefix .'ums_maps';
 		$this->marker_table	= $wpdb->prefix .'ums_markers';
@@ -15,7 +14,7 @@ class Maps{
 		
 		add_shortcode("markerdescription", array($this,'marker_description') );
 
-		wp_enqueue_style('sim_locations_style', plugins_url('css/locations.min.css', __DIR__), array(), $StyleVersion);
+		wp_enqueue_style('sim_locations_style', plugins_url('css/locations.min.css', __DIR__), array(), ModuleVersion);
 	}
 	
 	function add_map($name, $lattitude='9.910260', $longitude='8.889170', $address='',$height='400', $zoom=6){

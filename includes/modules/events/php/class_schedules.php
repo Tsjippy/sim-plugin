@@ -236,11 +236,10 @@ class Schedule{
 	}
 	
 	function showschedules(){
-		global $StyleVersion;
 		//js
-		wp_enqueue_script('sim_schedule_script', plugins_url('js/schedules.min.js', __DIR__), array('sim_table_script','selectable','sim_other_script'), $StyleVersion, true);
+		wp_enqueue_script('sim_schedule_script', plugins_url('js/schedules.min.js', __DIR__), array('sim_table_script','selectable','sim_other_script'), ModuleVersion, true);
 	
-		wp_enqueue_style('sim_schedule_css', plugins_url('css/events.min.css', __DIR__), array(), $StyleVersion);
+		wp_enqueue_style('sim_schedule_css', plugins_url('css/events.min.css', __DIR__), array(), ModuleVersion);
 
 		ob_start();
 		?>

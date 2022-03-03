@@ -1,5 +1,7 @@
 <?php
-namespace SIM;
+namespace SIM\RECIPES;
+use SIM;
+
 /**
  * The content of a recipe shared between a single post, archive or the recipes page.
  *
@@ -10,7 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-wp_enqueue_script('plurarize_script');
+// Load js
+wp_enqueue_script('sim_plurarize_script',plugins_url('js/recipe.min.js', __DIR__), array(), ModuleVersion,true);
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
 	<div class="cat_card<?php if(!$archive) echo ' inside-article';?>">
@@ -31,7 +34,7 @@ wp_enqueue_script('plurarize_script');
 			</div>
 			
 			<div class='author'>
-				Shared by: <a href='<?php echo get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
+				Shared by: <a href='<?php echo SIM\get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
 			</div>
 			
 			<div class='recipe metas'>

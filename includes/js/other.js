@@ -1,15 +1,3 @@
-function mark_as_read(target){
-	if(target.dataset.postid != undefined){
-		showLoader(target);
-		
-		formData = new FormData();
-		formData.append('action','mark_page_as_read');
-		formData.append('userid',target.dataset.userid);
-		formData.append('postid',target.dataset.postid);
-		sendAJAX(formData);
-	}
-}
-
 function show_modal(modal_id){
 	var modal = document.getElementById(modal_id+"_modal");
 	
@@ -24,13 +12,8 @@ function hide_modals(){
 
 document.addEventListener('click',function(event) {
 	var target = event.target;
-		
-	//Process the click on a mark as read button
-	if(target.matches(".mark_as_read")){
-		mark_as_read(target);
-	}
 
-    	//close modal if clicked outside of modal
+    //close modal if clicked outside of modal
 	if(target.closest('.modal-content') == null && target.closest('.swal2-container') == null && target.tagName=='DIV'){
 		hide_modals();
 	}

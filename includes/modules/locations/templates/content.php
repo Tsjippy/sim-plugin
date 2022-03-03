@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-//wp_enqueue_script('plurarize_script');
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
 	<div class="cat_card<?php if($archive) echo ' inside-article';?>">

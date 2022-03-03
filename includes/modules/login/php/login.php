@@ -235,12 +235,10 @@ function homepage_redirect(){
 }
 
 add_action( 'wp_enqueue_scripts', function(){
-    global $StyleVersion;
-
     if(!is_user_logged_in()){
 	    //login form
-	    wp_enqueue_script('sim_login_script', plugins_url('js/login.min.js', __DIR__), array('sim_script'), $StyleVersion, true);
+	    wp_enqueue_script('sim_login_script', plugins_url('js/login.min.js', __DIR__), array('sim_script'), ModuleVersion, true);
     }else{
-        wp_enqueue_script('sim_logout_script', plugins_url('js/logout.min.js', __DIR__), array(), $StyleVersion, true);
+        wp_enqueue_script('sim_logout_script', plugins_url('js/logout.min.js', __DIR__), array(), ModuleVersion, true);
     }
 });

@@ -15,14 +15,20 @@ function get_all_fields($user_id, $type){
 
 	$formbuilder		= new Formbuilder();
 
-	$query				= "SELECT * FROM {$formbuilder->el_table_name} WHERE `$type`=1";
+	$query				= "SELECT * FROM {$formbuilder->el_table_name} WHERE ";
+	if($type == 'all'){
+		$query			.= "`recommended`=1 OR `mandatory`=1";
+	}else{
+		$query			.= "`$type`=1";
+	}
+
 	$fields				= $wpdb->get_results($query);
 
 	$fields				= apply_filters("sim_{$type}_fields_filter", $fields, $user_id);
 
 	$html				= '';
 	if(!empty($fields)){
-		$html				= '<ul>';
+		$html				= '';
 		$form_urls			= [];
 
 		//check which of the fields are not yet filled in
@@ -53,7 +59,7 @@ function get_all_fields($user_id, $type){
 
 				parse_str(parse_url($form_url, PHP_URL_QUERY), $params);
 
-				$name	= ucfirst(str_replace(['[]', '_'], ['', ' '], $field->nicename));
+				$name	= ucfirst(str_replace(']','',end(explode('[', str_replace(['[]', '_'], ['', ' '], $field->nicename)))));
 				// If the url has no hash or we are not on the same url
 				if(empty($params['main_tab']) or strpos($form_url, explode('main_tab=', $_SERVER['REQUEST_URI'])[0]) === false){
 					$html .= "<li><a href='$form_url#{$field->name}'>$name</a></li>";
@@ -64,7 +70,9 @@ function get_all_fields($user_id, $type){
 			}
 		}
 
-		$html				.= '</ul>';
+		if(!empty($html)){
+			$html	= "<ul>$html</ul>";
+		}
 	}
 
 	$html	= apply_filters("sim_{$type}_html_filter", $html, $user_id);
@@ -137,8 +145,8 @@ add_filter('sim_mandatory_fields_filter', function($fields, $user_id){
 	return $fields;
 }, 10, 2);
 
-add_filter('sim_mandatory_html_filter', 'SIM\add_child_fields', 10, 2);
-add_filter('sim_recommended_html_filter', 'SIM\add_child_fields', 10, 2);
+add_filter('sim_mandatory_html_filter', 'SIM\FORMS\add_child_fields', 10, 2);
+add_filter('sim_recommended_html_filter', 'SIM\FORMS\add_child_fields', 10, 2);
 function add_child_fields($html, $user_id){
 	// Add warnings for child fields
 	$family = get_user_meta($user_id, "family", true);

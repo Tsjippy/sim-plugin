@@ -1,4 +1,7 @@
 <?php
+namespace SIM\RECIPES;
+use SIM;
+
 /**
  * The layout specific for the page with the slug 'recipes' i.e. simnigeria.org/recipes.
  * Displays all the post of the recipe type
@@ -13,7 +16,7 @@ global $Modules;
 
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
-$recipes_query = new WP_Query(array(
+$recipes_query = new \WP_Query(array(
 	'post_type'			=>'recipe', 
 	'post_status'		=>'publish', 
 	'paged'           	=> $paged,
@@ -27,7 +30,6 @@ add_filter( 'body_class', function( $classes ) {
 
 get_header(); 
 ?>
-
 	<div id="primary" <?php generate_do_element_classes( 'content' ); ?>>
 		<main id="main" class='inside-article'<?php generate_do_element_classes( 'main' ); ?>>
 			<?php

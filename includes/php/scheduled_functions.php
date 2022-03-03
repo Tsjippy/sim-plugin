@@ -924,7 +924,7 @@ function send_reimbursement_requests(){
 	wp_set_current_user(1);
 	
 	//Export the excel file to temp
-	$formtable = new FormTable();
+	$formtable = new FORMS\FormTable();
 
 	//make sure we have permission on the data
 	$formtable->table_edit_permissions = true;
@@ -992,44 +992,6 @@ function expired_posts_check(){
 	foreach($posts as $post){
 		print_array("Moving '{$post->post_title}' to trash as it has expired");
 		wp_trash_post($post->ID);
-	}
-}
-
-function read_reminder(){
-	global $WebmasterName;
-	
-	//Change the user to the adminaccount otherwise get_users will not work
-	wp_set_current_user(1);
-	
-	$users = get_user_accounts();
-	foreach($users as $user){
-		$html = get_must_read_documents($user->ID);
-		
-		//Only continue if there are documents to read
-		if($html != ''){
-			$to = $user->user_email;
-				
-			//Skip if not valid email
-			if(strpos($to,'.empty') !== false) continue;
-			
-			$subject = "Please read this website content:";
-			$message = 'Hi '.$user->first_name.',<br>';
-
-			//Send Signal message
-			try_send_signal("Hi ".$user->first_name.",\nPlease read some mandatory content.\n\nVisit ".get_site_url()." to see the content",$user->ID);
-			
-			//Send e-mail
-			$message .= $html;
-			$message .= '<br>';
-			$message .= 'Please read it as soon as possible.<br>';
-			$message .= 'Mark as read by clicking on the button on the bottom of each page<br><br>';
-			$message .= "Kind regards,<br><br>$WebmasterName<br>Webmaster simnigeria.org<br><br><br>";
-			$message .= "This message is automatically generated";
-			$headers = array('Content-Type: text/html; charset=UTF-8');
-			
-			//Send the mail
-			wp_mail($to , $subject, $message, $headers );
-		}
 	}
 }
 

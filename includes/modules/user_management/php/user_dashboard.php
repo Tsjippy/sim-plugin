@@ -29,8 +29,6 @@ function show_dashboard($user_id, $admin=false){
 	
 	echo "<p>Hello $first_name</p>";
 	
-	//$html .= get_must_read_documents($user_id);
-	
 	?>
 	<div id="warnings">
 		<?php

@@ -139,6 +139,5 @@ add_filter( 'ajax_query_attachments_args', function($query){
 
 //load js script to change media screen
 add_action( 'wp_enqueue_media', function(){
-    global $StyleVersion;
-    wp_enqueue_script('sim_library_script', plugins_url('js/library.min.js', __DIR__), [], $StyleVersion);
+    wp_enqueue_script('sim_library_script', plugins_url('js/library.min.js', __DIR__), [], ModuleVersion);
 });

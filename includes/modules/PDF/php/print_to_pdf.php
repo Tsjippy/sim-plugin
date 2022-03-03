@@ -1,9 +1,9 @@
 <?php
-
-namespace SIM;
+namespace SIM\MANDATORY;
+use SIM;
 
 //only load this if the pdf print is enabled
-if(!get_module_option('PDF', 'pdf_print')) return;
+if(!SIM\get_module_option('PDF', 'pdf_print')) return;
 
 function create_page_pdf(){
 	global $post;
@@ -74,6 +74,19 @@ add_filter( 'the_content', function ( $content ) {
 	return $content;
 });
 
+// Add fields to frontend content form
+add_action('sim_page_specific_fields', function($post_id){
+    ?>
+	<div id="add_print_button_div" class="frontendform">
+        <h4>PDF button</h4>	
+        <label>
+            <input type='checkbox'  name='add_print_button' value='add_print_button' <?php if(get_post_meta($post_id,'add_print_button',true) != '') echo 'checked';?>>
+            Add a 'Save as PDF' button
+        </label>
+    </div>
+    <?php
+});
+
 // Save the option to have a pdf button
 add_action('sim_after_post_save', function($post){
     //PDF button
@@ -86,16 +99,4 @@ add_action('sim_after_post_save', function($post){
         }
         update_post_meta($post->ID,'add_print_button', $value);
     }
-});
-
-add_action('sim_page_specific_fields', function($post_id){
-    ?>
-	<div id="add_print_button_div" class="frontendform">
-        <h4>PDF button</h4>	
-        <label>
-            <input type='checkbox'  name='add_print_button' value='add_print_button' <?php if(get_post_meta($post_id,'add_print_button',true) != '') echo 'checked';?>>
-            Add a 'Save as PDF' button
-        </label>
-    </div>
-    <?php
 });

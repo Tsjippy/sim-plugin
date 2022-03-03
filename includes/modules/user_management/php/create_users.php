@@ -96,7 +96,7 @@ add_action ( 'wp_ajax_adduseraccount', function(){
 	
 	if(is_numeric($user_id)){	
 		//Add to mailchimp
-		$Mailchimp = new Mailchimp($user_id);
+		$Mailchimp = new MAILCHIMP\Mailchimp($user_id);
 		$Mailchimp->add_to_mailchimp();
 		
 		//Store the validity

@@ -2,6 +2,8 @@
 namespace SIM\FORMS;
 use SIM;
 
+const ModuleVersion		= '7.0.0';
+
 //run on module activation
 add_action('sim_module_activated', function($module_slug, $options){
 	//module slug should be the same as grandparent folder name

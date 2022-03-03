@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\SIGNAL;
+use SIM;
 
 add_action('sim_after_post_save', function($post, $update){
     if(isset($_POST['signal']) and $_POST['signal'] == 'send_signal'){
@@ -16,6 +17,6 @@ add_action('sim_after_post_save', function($post, $update){
     }    
 
     if($post->post_status == 'pending'){
-        send_pending_post_warning($post, $update);
+        SIM\FRONTEND_POSTING\send_pending_post_warning($post, $update);
     }
 }, 10, 2);

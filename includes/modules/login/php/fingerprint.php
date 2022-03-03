@@ -51,13 +51,15 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
     // Get all credentials of one user
     public function findAllForUserEntity(PublicKeyCredentialUserEntity $publicKeyCredentialUserEntity): array {
         $sources = [];
+
+        //check if the platform matches
+        $metadata   = unserialize(get_user_meta($this->user_id,"2fa_webautn_cred_meta",true));
+        $os         = $this->get_os_info()['name'];
+
         foreach($this->read() as $key=>$data){
-            //check if the platform matches
-            $metadata   = unserialize(get_user_meta($this->user_id,"2fa_webautn_cred_meta",true));
-            
             if(
                 $data->getUserHandle() === $publicKeyCredentialUserEntity->getId() and  //should always be true
-                $this->get_os_info()    == $metadata[$key]['os_info']
+                $os == $metadata[$key]['os_info']['name']                               // Only return same OS
             ){
                 $sources[] = $data;
             }
@@ -521,7 +523,8 @@ function auth_start(\WP_REST_Request $request){
 
             // If the user haven't bind a authenticator yet, exit
             if(count($credentialSources) === 0){
-                SIM\print_array("ajax_auth: (ERROR)No authenticator available, exit");
+                SIM\print_array("ajax_auth: (ERROR)No authenticator found");
+                SIM\print_array($userEntity);
                 wp_die("No authenticator available", 500);
             }
 

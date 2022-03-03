@@ -2,6 +2,8 @@
 namespace SIM\EVENTS;
 use SIM;
 
+const ModuleVersion		= '7.0.0';
+
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;

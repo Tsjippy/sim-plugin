@@ -1,4 +1,7 @@
 <?php
+namespace SIM\RECIPES;
+use SIM;
+
 /**
  * The template for displaying all recipes of a particular recipytype category.
  *

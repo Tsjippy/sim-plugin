@@ -408,31 +408,37 @@ function process_<?php echo $this->datatype;?>_fields(el){
 }
 <?php
 
+        
         //write it all to a file
         $js			= ob_get_clean();
+        if(empty($checks)){
+            //create empty files
+            file_put_contents($this->jsfilename.'.js', '');
+            file_put_contents($this->jsfilename.'.min.js', '');
+        }else{
+            //Create js file
+            file_put_contents($this->jsfilename.'.js', $js);
 
-        //Create js file
-        file_put_contents($this->jsfilename.'.js', $js);
-
-        //replace long strings for shorter ones
-        $js=str_replace(
-            [
-                'process_travel_fields',
-                'value_',
-                'el_name',
-                "\n"
-            ],
-            [
-                'p',
-                'v_',
-                'n',
-                ''
-            ],
-            $js
-        );
-        // Create minified version
-        $js = \JShrink\Minifier::minify($js, array('flaggedComments' => false));
-        file_put_contents($this->jsfilename.'.min.js', $js);
+            //replace long strings for shorter ones
+            $js=str_replace(
+                [
+                    'process_travel_fields',
+                    'value_',
+                    'el_name',
+                    "\n"
+                ],
+                [
+                    'p',
+                    'v_',
+                    'n',
+                    ''
+                ],
+                $js
+            );
+            // Create minified version
+            $js = \JShrink\Minifier::minify($js, array('flaggedComments' => false));
+            file_put_contents($this->jsfilename.'.min.js', $js);
+        }         
     }
 }
 

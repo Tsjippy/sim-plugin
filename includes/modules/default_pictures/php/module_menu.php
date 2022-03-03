@@ -2,6 +2,8 @@
 namespace SIM\DEFAULTPICTURE;
 use SIM;
 
+const ModuleVersion		= '7.0.0';
+
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
@@ -15,14 +17,12 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 },10,2);
 
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
-	global $StyleVersion;
-
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 	
 	wp_enqueue_media();
-	wp_enqueue_script('sim_default_pictures',plugins_url('js/select_picture.js', __DIR__), array(),$StyleVersion,true);
-	wp_enqueue_style( 'sim_default_pictures_style', plugins_url('css/default_pictures.min.css', __DIR__), array(), $StyleVersion);
+	wp_enqueue_script('sim_default_pictures',plugins_url('js/select_picture.js', __DIR__), array(), ModuleVersion,true);
+	wp_enqueue_style( 'sim_default_pictures_style', plugins_url('css/default_pictures.min.css', __DIR__), array(), ModuleVersion);
 
 	//Get all post types
 	$args = array(

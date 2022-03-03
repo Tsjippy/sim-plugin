@@ -65,10 +65,6 @@ function enqueue_scripts($hook){
 	//Password strength js
 	wp_register_script('sim_password_strength_script',plugins_url('js/account/password_strength.js', __DIR__),array('password-strength-meter', 'sim_other_script'),$StyleVersion,true);
 	
-
-	//Recipe
-	wp_register_script('sim_plurarize_script',plugins_url('js/recipe.js', __DIR__), array(),$StyleVersion,true);
-	
 	//table request shortcode
 	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_other_script'),$StyleVersion,true);
 	

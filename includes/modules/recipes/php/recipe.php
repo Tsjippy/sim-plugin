@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\RECIPES;
+use SIM;
 
 /*
 	In this file we define a new post type: recipe
@@ -11,12 +12,12 @@ add_action('init', function(){
 	/*
 		CREATE RECIPE POST TYPE
 	*/
-	register_post_type_and_tax('recipe','recipes');
+	SIM\register_post_type_and_tax('recipe','recipes');
 }, 999);
 
 //Add recipe type via AJAX
 add_action('wp_ajax_add_recipe_type',function(){
-	verify_nonce('add_recipe_type_nonce');
+	SIM\verify_nonce('add_recipe_type_nonce');
 	
 	$name		= sanitize_text_field($_POST['recipe_type_name']);
 	$parent		= $_POST['recipe_type_parent'];

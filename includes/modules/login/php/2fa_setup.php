@@ -4,9 +4,8 @@ use SIM;
 
 add_shortcode('twofa_setup', 'SIM\LOGIN\twofa_settings_form');
 function twofa_settings_form($user_id=''){
-	global $StyleVersion;
 	//Load js
-	wp_enqueue_script('sim_2fa_script', plugins_url('js/2fa.min.js', __DIR__), array('sim_other_script','sim_table_script'), $StyleVersion, true);
+	wp_enqueue_script('sim_2fa_script', plugins_url('js/2fa.min.js', __DIR__), array('sim_other_script','sim_table_script'), ModuleVersion, true);
 
 	if(!is_numeric($user_id)){
 		$user_id = get_current_user_id();

@@ -8,8 +8,6 @@ class Events{
 		
 		$this->table_name		= $wpdb->prefix.'sim_events';
 
-		$this->module_version	= "7.0.0";
-
 		add_action('wp_ajax_add_event_type',array($this,'add_event_cat'));
 
 		add_action('wp_ajax_getmonthhtml',array($this,'month_calendar'));
@@ -664,7 +662,7 @@ class Events{
 			$date_str	= "$year-$month-01";
 		}else{
 			//events
-			wp_enqueue_script('sim_event_script', plugins_url('js/events.min.js', __DIR__), array('sim_other_script'), $this->module_version,true);
+			wp_enqueue_script('sim_event_script', plugins_url('js/events.min.js', __DIR__), array('sim_other_script'), ModuleVersion,true);
 
 			$day	= date('d');
 			$month	= $_GET['month'];

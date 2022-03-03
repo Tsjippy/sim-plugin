@@ -38,9 +38,9 @@ add_filter('postie_post_after', 'SIM\postie_post_published');
 function postie_post_published($post){
 	//Only send message if post is published
 	if($post['post_status'] == 'publish'){
-		send_post_notification($post['ID']);
+		SIGNAL\send_post_notification($post['ID']);
 	}else{
-		send_pending_post_warning(get_post($post['ID']), false);
+		FRONTEND_POSTING\send_pending_post_warning(get_post($post['ID']), false);
 	}
 }
 

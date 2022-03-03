@@ -135,11 +135,16 @@ function reset_2fa($user_id){
 	wp_mail( $userdata->user_email, "Your account is unlocked", $message, $headers );
 }
 
-//Check 2fa code
+//Check 2fa during login
 add_filter( 'wp_authenticate_user', function ( $user) {
     $methods    = get_user_meta($user->ID,'2fa_methods',true);
     if(!empty($methods)){
         if(!isset($_SESSION)) session_start();
+
+        // Remove webautn_id if webauthn was unsuccesfull
+        if($_SESSION['webautn_id'] and $_SESSION['webauthn'] != 'success'){
+            unset($_SESSION['webautn_id']);
+        }
         
         //we did a succesfull webauthn
         if(in_array('webauthn',$methods) and $_SESSION['webauthn'] == 'success'){
@@ -317,7 +322,6 @@ add_action ( 'wp_ajax_save_2fa_settings', function(){
         ]
     ));
 });
-
 
 //Redirect to 2fa page if not setup
 add_action('wp_footer', function(){

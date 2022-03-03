@@ -4,6 +4,8 @@ use SIM;
 
 use stdClass;
 
+use const SIM\CONTENTFILTER\ModuleVersion;
+
 if(!trait_exists('SIM\create_js')){
 	require_once(__DIR__.'/js_builder.php');
 }
@@ -1420,14 +1422,13 @@ class Formbuilder{
 	}
 
 	function formbuilder($atts){
-		global $StyleVersion;
-
 		$this->process_atts($atts);
 				
 		$this->loadformdata();
 
-		wp_enqueue_style( 'sim_forms_style', plugins_url('css/forms.min.css', __DIR__), array(), $StyleVersion);
-		wp_enqueue_script('sim_forms_script',plugins_url('js/forms.min.js', __DIR__), array('sweetalert', 'sim_other_script'),$StyleVersion,true);
+		wp_enqueue_style( 'sim_forms_style', plugins_url('css/forms.min.css', __DIR__), array(), ModuleVersion);
+		// We cannot use the minified version as the dynamic js files depend on the function names
+		wp_enqueue_script('sim_forms_script',plugins_url('js/forms.js', __DIR__), array('sweetalert', 'sim_other_script'), ModuleVersion,true);
 
 		if(
 			array_intersect($this->user_roles,$this->submit_roles) != false	and	// we have the permission to submit on behalf on someone else
@@ -1441,7 +1442,7 @@ class Formbuilder{
 		//add formbuilder.js
 		if($this->editrights == true and isset($_GET['formbuilder'])){
 			//Formbuilder js
-			wp_enqueue_script( 'sim_formbuilderjs', plugins_url('js/formbuilder.min.js', __DIR__), array('sim_forms_script','sortable','sweetalert'),$StyleVersion,true);
+			wp_enqueue_script( 'sim_formbuilderjs', plugins_url('js/formbuilder.min.js', __DIR__), array('sim_forms_script','sortable','sweetalert'), ModuleVersion,true);
 		}
 		
 		//Load conditional js if available and needed
@@ -1464,7 +1465,10 @@ class Formbuilder{
 				$this->create_js();
 			}
 
-			wp_enqueue_script( "dynamic_{$this->datatype}forms", SIM\path_to_url($js_path), array('sim_forms_script'), $this->formdata->version, true);
+			//Only enqueue if there is content in the file
+			if(filesize($js_path) > 0){
+				wp_enqueue_script( "dynamic_{$this->datatype}forms", SIM\path_to_url($js_path), array('sim_forms_script'), $this->formdata->version, true);
+			}
 		}
 		
 		?>

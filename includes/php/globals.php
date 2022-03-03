@@ -194,7 +194,6 @@ if($CustomSimSettings == false){
 		['recurrence'=>'monthly','hookname'=>'check_last_login_date'],
 		['recurrence'=>'daily','hookname'=>'expired_posts_check'],
 		['recurrence'=>'daily','hookname'=>'process_images'],
-		['recurrence'=>'weekly','hookname'=>'read_reminder'],
 		['recurrence'=>'yearly','hookname'=>'check_details_mail'],
 		['recurrence'=>'monthly','hookname'=>'page_age_warning'],
 		['recurrence'=>'threemonthly','hookname'=>'send_missonary_detail']

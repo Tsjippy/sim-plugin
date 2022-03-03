@@ -1,7 +1,5 @@
 <?php
 namespace SIM;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 //Add a shortcode for the username
 add_shortcode( 'username', function ( $atts ) {
@@ -367,7 +365,7 @@ add_shortcode('missionary_link',function($atts){
 	
 	$user_id = $a['id'];
 	
-	if($a['style'] != ''){
+	if(!empty($a['style'])){
 		$style = "style='".$a['style']."'";
 	}else{
 		$style = '';
@@ -438,7 +436,7 @@ add_shortcode("userstatistics",function ($atts){
 						echo "<td>$picture {$user->display_name}</td>";
 						echo "<td>$login_count</td>";
 						echo "<td>$last_login_date</td>";
-						echo "<td>".get_must_read_documents($user->ID,true)."</td>";
+						echo "<td>".MANDATORY\get_must_read_documents($user->ID,true)."</td>";
 						//echo "<td>".get_required_fields($user->ID)."</td>";
 						echo "<td>";
 						foreach($user->roles as $role){
@@ -465,7 +463,7 @@ add_shortcode("test",function ($atts){
 
 	} */
 
-/* 	$theme_mods		= get_option('theme_mods_generatepress-child');
+	/*$theme_mods		= get_option('theme_mods_generatepress-child');
 
 	foreach($theme_mods as $key=>$mod){
 		if(strpos($key, 'custom_simnigeria') !== false){
