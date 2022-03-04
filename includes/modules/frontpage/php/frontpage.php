@@ -9,13 +9,13 @@ if(!empty($hook_name)){
 	add_action($hook_name, function(){
 		if (is_user_logged_in() and (is_page(SIM\get_module_option('login','home_page')) or is_front_page())){
 			$base_url			= get_site_url();
-			$first_btn_text		= SIM\get_module_option('template_specific', 'first_button_text');
-			$first_btn_link		= SIM\get_module_option('template_specific', 'first_button_url');
+			$first_btn_text		= SIM\get_module_option('frontpage', 'first_button_text');
+			$first_btn_link		= SIM\get_module_option('frontpage', 'first_button_url');
 			if(strpos($first_btn_link, $base_url) === false){
 				$first_btn_link	= $base_url.$first_btn_link;
 			}
-			$second_btn_text	= SIM\get_module_option('template_specific', 'second_button_text');
-			$second_btn_link	= SIM\get_module_option('template_specific', 'second_button_url');
+			$second_btn_text	= SIM\get_module_option('frontpage', 'second_button_text');
+			$second_btn_link	= SIM\get_module_option('frontpage', 'second_button_url');
 			if(strpos($second_btn_link, $base_url) === false){
 				$second_btn_link	= $base_url.$second_btn_link;
 			}
@@ -57,7 +57,6 @@ if(!empty($hook_name)){
 //Show the latest news
 //generate_before_footer
 $hook_name	= SIM\get_module_option('frontpage','before_footer_hook');
-//generate_before_footer
 if(!empty($hook_name)){
 	add_action($hook_name, function() {
 		global $PublicCategoryID;
@@ -68,15 +67,16 @@ if(!empty($hook_name)){
 			//Show the ministry gallery
 			ministry_gallery();
 			$args                   = array('ignore_sticky_posts' => true,);
-			$args['post_type'] 		= array('post', 'event','pages','recipe','location');
+			$args['post_type'] 		= SIM\get_module_option('frontpage', 'news_post_types');
 			$args['post_status'] 	= 'publish';
 
-			//Only include posts who are published less than 2 months ago
+			//Only include posts who are published less than $max_news_age ago
+			$max_news_age	= SIM\get_module_option('frontpage', 'max_news_age');
 			$args['date_query']		= array(
 				array(
 					'after' => array(
-						'year' => date('Y',strtotime("-2 months")),
-						'month' => date('m',strtotime("-2 months")),
+						'year' => date('Y',strtotime("-$max_news_age")),
+						'month' => date('m',strtotime("-$max_news_age")),
 						'day' => date('d'),
 					)
 				)
@@ -181,9 +181,8 @@ if(!empty($hook_name)){
 				'br'     => array(),
 				'em'     => array(),
 				'strong' => array(),
-				'i'      => array(
-					'class' => array(),
-				),
+				'i'      => array(),
+				'class' => array(),
 				'span'   => array(),
 			);
 			
