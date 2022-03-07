@@ -1,12 +1,9 @@
 <?php
-namespace SIM;
-
-use function Crontrol\enqueue_assets;
-
-global $Modules;
+namespace SIM\VIMEO;
+use SIM;
 
 // Add upload to vimeo button to attachment page if auto upload is not on
-if(empty($Modules['vimeo']['upload'])){
+if(!SIM\get_module_option('vimeo', 'upload')){
 	add_filter( 'attachment_fields_to_edit', function($form_fields, $post ){
 		//only work on video's
 		if(explode('/',$post->post_mime_type)[0] != 'video') return;
@@ -45,43 +42,8 @@ add_action( 'edit_attachment', function($attachment_id){
     }
 } );
 
-//shortcode to display vimeo video's
-add_shortcode("vimeo_video",function ($atts){
-	global $StyleVersion;
-	// Load css
-	wp_enqueue_style( 'vimeo_style', plugins_url('css/style.css', __DIR__), array(), $StyleVersion);
-
-	ob_start();
-
-	$vimeo_id	= $atts['id'];
-	?>
-	<div class='vimeo-embed-container'>
-		<iframe src='https://player.vimeo.com/video/<?php echo $vimeo_id; ?>' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-	</div>
-	<?php
-	return ob_get_clean();
-});
-
-//auto upload via js if enabled
-if(!empty($Modules['vimeo']['upload'])){
-	//load js script to change media screen
-	add_action( 'wp_enqueue_media', function(){
-		global $LoaderImageURL;
-		global $StyleVersion;
-		wp_enqueue_script('tus', IncludesUrl.'/js/tus.min.js', [], $StyleVersion);
-		wp_enqueue_script('sim_media_script', IncludesUrl.'/modules/vimeo/js/vimeo.js', ['tus','sim_other_script','media-audiovideo', 'sweetalert'], $StyleVersion);
-		wp_localize_script('sim_media_script', 
-			'media_vars', 
-			array( 
-				'loading_gif' 	=> $LoaderImageURL,
-				'ajax_url' 		=> admin_url( 'admin-ajax.php' ), 
-			) 
-		);
-	});
-}
-
 // Delete video from vimeo when attachemnt is deleted, if that option is enabled
-if(!empty($Modules['vimeo']['remove'])){
+if(SIM\get_module_option('vimeo', 'remove')){
 	add_action( 'delete_attachment', function($post_id, $post ){
 		if(explode('/', $post->post_mime_type)[0] == 'video'){
 			$VimeoApi = new VimeoApi();
@@ -98,19 +60,19 @@ add_action('before_visibility_change', function($attachment_id, $visibility){
 }, 10, 2);
 
 //auto sync if that option is enabled
-if(!empty($Modules['vimeo']['sync'])){
+if(SIM\get_module_option('vimeo', 'sync')){
 	//add scheduled task to sync vimeo library
 	add_action('init',function(){
-		add_action( 'sync_vimeo_action', "SIM\\vimeo_sync");
+		add_action( 'sync_vimeo_action', 'SIM\VIMEO\vimeoSync');
 	});
-	schedule_task('sync_vimeo_action', 'daily');
+	SIM\schedule_task('sync_vimeo_action', 'daily');
 
 	//sync local db with vimeo.com
-	function vimeo_sync(){
-		$VimeoApi	= new VimeoApi();
+	function vimeoSync(){
+		$vimeoApi	= new VimeoApi();
 		
-		if ( $VimeoApi->is_connected() ) {
-			$vimeo_videos	= $VimeoApi->get_uploaded_videos();
+		if ( $vimeoApi->is_connected() ) {
+			$vimeoVideos	= $vimeoApi->get_uploaded_videos();
 			$args = array(
 				'post_type'  	=> 'attachment',
 				'numberposts'	=> -1,
@@ -122,31 +84,31 @@ if(!empty($Modules['vimeo']['sync'])){
 			);
 			$posts = get_posts( $args );
 
-			$local_videos	= [];
-			$online_videos	= [];
+			$localVideos	= [];
+			$onlineVideos	= [];
 
 			//Build the local videos array
 			foreach($posts as $post){
-				$vimeo_id	= get_post_meta($post->ID, 'vimeo_id',true);
-				if(is_numeric($vimeo_id)){
-					$local_videos[$vimeo_id]	= $post->ID;
+				$vimeoId	= get_post_meta($post->ID, 'vimeo_id',true);
+				if(is_numeric($vimeoId)){
+					$localVideos[$vimeoId]	= $post->ID;
 				}
 			}
 
 			//Build online video's array
-			foreach($vimeo_videos as $vimeo_video){
-				$vimeo_id					= str_replace('/videos/', '', $vimeo_video['uri']);
-				$online_videos[$vimeo_id]	= html_entity_decode($vimeo_video['name']);
+			foreach($vimeoVideos as $vimeoVideo){
+				$vimeoId				= str_replace('/videos/', '', $vimeoVideo['uri']);
+				$onlineVideos[$vimeoId]	= html_entity_decode($vimeoVideo['name']);
 			}
 
 			//remove any local video which does not exist on vimeo
-			foreach(array_diff_key($local_videos, $online_videos) as $post_id){
-				wp_delete_post($post_id);
+			foreach(array_diff_key($localVideos, $onlineVideos) as $postId){
+				wp_delete_post($postId);
 			}
 
 			//add any video which does not exist locally
-			foreach(array_diff_key($online_videos, $local_videos) as $vimeo_id => $video_name){
-				$VimeoApi->create_vimeo_post( $video_name, 'video/mp4', $vimeo_id);
+			foreach(array_diff_key($onlineVideos, $localVideos) as $vimeoId => $videoName){
+				$vimeoApi->create_vimeo_post( $videoName, 'video/mp4', $vimeoId);
 			}
 		}
 	}
@@ -154,12 +116,12 @@ if(!empty($Modules['vimeo']['sync'])){
 
 //add scheduled task to sync vimeo library
 add_action('init',function(){
-	add_action( 'create_vimeo_thumbnails', "SIM\\create_vimeo_thumbnails");
+	add_action( 'createVimeoThumbnails', 'SIM\VIMEO\createVimeoThumbnails');
 });
-schedule_task('create_vimeo_thumbnails', 'daily');
+SIM\schedule_task('createVimeoThumbnails', 'daily');
 
 //create local thumbnails
-function create_vimeo_thumbnails(){
+function createVimeoThumbnails(){
 	$args = array(
 		'post_type'  	=> 'attachment',
 		'numberposts'	=> -1,
@@ -176,9 +138,9 @@ function create_vimeo_thumbnails(){
 	$posts = get_posts( $args );
 
 	if(!empty($posts)){
-		$VimeoApi	= new VimeoApi();
+		$vimeoApi	= new VimeoApi();
 		foreach($posts as $post){
-			$VimeoApi->get_thumbnail($post->ID);
+			$vimeoApi->get_thumbnail($post->ID);
 		}
 	}
 }
@@ -233,11 +195,11 @@ add_filter( 'wp_mime_type_icon', function ($icon, $mime, $post_id) {
 			$VimeoApi	= new VimeoApi();
 			$path		= $VimeoApi->get_thumbnail($post_id);
 			if(!$path)  return $icon;
-			print_array($path);
-			$icon		= path_to_url($path);
-			print_array($icon);
+			SIM\print_array($path);
+			$icon		= SIM\path_to_url($path);
+			SIM\print_array($icon);
 		}catch(\Exception $e){
-			print_array($e);
+			SIM\print_array($e);
 		}
 	}
 	
@@ -254,7 +216,6 @@ add_action('wp_ajax_prepare-vimeo-upload', function(){
 	$mime		= $_POST['file_type'];
 	if(empty($mime)) wp_die('No file type given', 500);
 
-	$start_position	= 0;
 	$url			= '';
 	$post_id		= 0;
 
@@ -265,7 +226,6 @@ add_action('wp_ajax_prepare-vimeo-upload', function(){
 		if($data['filename'] == $file_name){
 			$url			= $data['url'];
 			$post_id		= $result->post_id;
-			$start_position = get_post_meta($post_id, 'vimeo_upload_position', true);
 		}
 	}
 
@@ -318,21 +278,19 @@ add_action('wp_ajax_add-uploaded-vimeo', function(){
 	wp_die();
 });
 
-
-
-if(!empty($Modules['vimeo']['upload'])){
+if(SIM\get_module_option('vimeo', 'upload')){
 	//add filter
 	add_action('post-html-upload-ui', function(){
-		add_filter('gettext', 'SIM\change_upload_size_message', 10, 3);
+		add_filter('gettext', 'SIM\VIMEO\change_upload_size_message', 10, 2);
 	});
 
 	//add filter
 	add_action('post-plupload-upload-ui', function(){
-		add_filter('gettext', 'SIM\change_upload_size_message', 10, 3);
+		add_filter('gettext', 'SIM\VIMEO\change_upload_size_message', 10, 2);
 	});
 
 	//do the filter: change upload size message
-	function change_upload_size_message($translation, $text, $domain){
+	function change_upload_size_message($translation, $text){
 		if($text == "Maximum upload file size: %s."){
 			$translation	= "Maximum upload file size: %s, unlimited upload size for videos.";
 		}

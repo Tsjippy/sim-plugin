@@ -1,22 +1,13 @@
 <?php
-namespace SIM;
+namespace SIM\ADMIN;
+use SIM;
 
-//load js and css
-add_action( 'admin_enqueue_scripts', function () {
-	$module_version		= '7.0.0';
-
-	//Only load on sim settings pages
-	if(strpos(get_current_screen()->base, 'sim-settings') === false) return;
-
-	wp_enqueue_style('sim_admin_css', plugins_url('css/admin.min.css', __DIR__), array(), $module_version);
-	wp_enqueue_script('sim_admin_js', plugins_url('js/admin.js', __DIR__), array('niceselect') ,$module_version, true);
-});
+const ModuleVersion		= '7.0.0';
 
 /**
  * Register a custom menu page.
  */
-add_action( 'admin_menu', 'SIM\register_admin_menu_page' );
-function register_admin_menu_page() {
+add_action( 'admin_menu', function() {
 	global $Modules;
 
 	if(isset($_POST['module'])){
@@ -44,8 +35,8 @@ function register_admin_menu_page() {
 		update_option('sim_modules', $Modules);
 	}
 
-	add_menu_page("SIM Plugin Settings", "SIM Settings", 'manage_options', "sim", "SIM\main_menu");
-	add_submenu_page('sim', "Functions", "Functions", "manage_options", "sim_functions", "SIM\admin_menu_functions");
+	add_menu_page("SIM Plugin Settings", "SIM Settings", 'manage_options', "sim", "SIM\ADMIN\main_menu");
+	add_submenu_page('sim', "Functions", "Functions", "manage_options", "sim_functions", "SIM\ADMIN\admin_menu_functions");
 
 	//get all modules based on folder name
 	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
@@ -61,16 +52,16 @@ function register_admin_menu_page() {
 		
 		//check module page exists
 		if(!file_exists($module.'/php/module_menu.php')){
-			print_array("Module page does not exist for module $module_name");
+			SIM\print_array("Module page does not exist for module $module_name");
 			continue;
 		}
 
 		//load the menu page php file
 		require_once($module.'/php/module_menu.php');
 
-		add_submenu_page('sim', $module_name." module", $module_name, "manage_options", "sim_$module_slug", "SIM\build_submenu");
+		add_submenu_page('sim', $module_name." module", $module_name, "manage_options", "sim_$module_slug", "SIM\ADMIN\build_submenu");
 	}
-}
+});
 
 function build_submenu(){
 	global $plugin_page;
@@ -135,7 +126,7 @@ function build_submenu(){
 
 function admin_menu_functions(){
 	if (isset($_POST['add_cronschedules'])){
-		add_cron_schedules();
+		SIM\add_cron_schedules();
 	}
 	
 	?>
@@ -215,14 +206,14 @@ function main_menu(){
 				<tr>
 					<th><label for="welcome_page">Welcome page</label></th>
 					<td>
-						<?php echo page_select("welcome_page",$CustomSimSettings["welcome_page"]); ?>
+						<?php echo SIM\page_select("welcome_page",$CustomSimSettings["welcome_page"]); ?>
 					</td>
 				</tr>
 
 				<tr>
 					<th><label for="profile_page">Page with the profile data</label></th>
 					<td>
-						<?php echo page_select("profile_page",$CustomSimSettings["profile_page"]); ?>
+						<?php echo SIM\page_select("profile_page",$CustomSimSettings["profile_page"]); ?>
 					</td>
 				</tr>
 				
@@ -372,7 +363,7 @@ add_action('init', function() {
 	//Process the request
 	if(is_numeric($_GET['send_activation_email'])){
 		$email = get_userdata($_GET['send_activation_email'])->user_email;
-		print_array("Sending welcome email to $email");
+		SIM\print_array("Sending welcome email to $email");
 		wp_new_user_notification($_GET['send_activation_email'],null,'both');
 	}
 });

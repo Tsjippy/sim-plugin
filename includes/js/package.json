@@ -1,7 +1,7 @@
 {
-  "name": "default_picture",
+  "name": "picture_select",
   "version": "1.0.0",
-  "description": "Default pictures ",
+  "description": "Pictures selector",
   "main": "./select_picture.js",
   "scripts": {
     "build": "webpack --entry ./select_picture.js --output-path . --output-filename select_picture.min.js --progress --mode=production",

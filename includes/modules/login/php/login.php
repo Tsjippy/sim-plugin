@@ -17,7 +17,7 @@ add_filter( 'login_url', function($login_url, $redirect, $force_reauth ){
     return add_query_arg(['showlogin' => '', 'redirect' => $redirect], home_url());
 },10,3);
 
-function login_modal($message='', $required=false, $username=''){
+function login_modal($message='', $required=false, $username=''){	
     global $LoaderImageURL;
 
     ob_start();
@@ -233,12 +233,3 @@ function homepage_redirect(){
         }
 	}
 }
-
-add_action( 'wp_enqueue_scripts', function(){
-    if(!is_user_logged_in()){
-	    //login form
-	    wp_enqueue_script('sim_login_script', plugins_url('js/login.min.js', __DIR__), array('sim_script'), ModuleVersion, true);
-    }else{
-        wp_enqueue_script('sim_logout_script', plugins_url('js/logout.min.js', __DIR__), array(), ModuleVersion, true);
-    }
-});

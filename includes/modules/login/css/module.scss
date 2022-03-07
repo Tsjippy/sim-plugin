@@ -1,4 +1,4 @@
-@use 'global' as *;
+@use '../../../css/scss/global' as *;
 
 .swal2-container .no-border {
     border: none;
@@ -114,4 +114,15 @@
     vertical-align: top;
     text-align: center;
     transition: color 0.1s ease-in;
+}
+
+#loginform{
+    div input[type="text"],
+    div input[type="tel"],
+    div input[type="password"]
+    {
+        @extend %input-shared;
+
+        width: 100%;
+    }
 }

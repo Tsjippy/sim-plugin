@@ -520,12 +520,12 @@ function ministry_description($post_id){
 		
 			//If user works for this ministry, echo its name and position
 			if (isset($user_ministries[$ministry_name])){
-				$user_page_url		= SIM\get_user_page_url($user->ID);
+				$user_page_url		= SIM\USERPAGE\get_user_page_url($user->ID);
 				$privacy_preference = (array)get_user_meta( $user->ID, 'privacy_preference', true );
 				
 				if(!isset($privacy_preference['hide_ministry'])){
 					if(!isset($privacy_preference['hide_profile_picture'])){
-						$html .= SIM\display_profile_picture($user->ID);
+						$html .= SIM\USERMANAGEMENT\display_profile_picture($user->ID);
 						$style = "";
 					}else{
 						$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';

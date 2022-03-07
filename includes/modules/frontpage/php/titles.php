@@ -12,8 +12,7 @@ add_action( 'init', function() {
 });
 
 //Do not display page title
-add_action( 'after_setup_theme', 'SIM\tu_remove_all_titles' );
-function tu_remove_all_titles() {
+add_action( 'after_setup_theme', function() {
 	//on all page except the newspage
 	add_filter( 'generate_show_title', function (){
 		if ( is_home() or is_search() or is_category() or is_tax()) {
@@ -24,7 +23,7 @@ function tu_remove_all_titles() {
 			return false;
 		}
 	});
-};
+});
 
 //Removes the 'Protected:' part from posts titles
 add_filter( 'protected_title_format', function () {

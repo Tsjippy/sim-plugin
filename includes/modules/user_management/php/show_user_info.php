@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\USERMANAGEMENT;
+use SIM;
 
 /* HELPER FUNCTIONS */
 //add special js to the dynamic form js
@@ -8,9 +9,12 @@ add_filter('form_extra_js',function($formname){
 });
 
 //Shortcode for userdata forms
-add_shortcode("user-info",'SIM\user_info_page');
+add_shortcode("user-info",'SIM\USERMANAGEMENT\user_info_page');
 function user_info_page($atts){
 	if(is_user_logged_in()){
+
+		wp_enqueue_style('sim_forms_style');
+		
 		$a = shortcode_atts( array(
 			'currentuser' => false,
 		), $atts );
@@ -43,7 +47,7 @@ function user_info_page($atts){
 				if(isset($_GET["userid"]) and get_userdata($_GET["userid"])){
 					$user_id = $_GET["userid"];
 				}else{
-					echo user_select("Select an user to show the data of:");
+					echo SIM\user_select("Select an user to show the data of:");
 				}
 
 				$user_birthday = get_user_meta($user_id, "birthday", true);
@@ -115,7 +119,7 @@ function user_info_page($atts){
 							$html .= "<label for='unlimited'> Check if the useraccount should never expire.</label>";
 							$html .= "<br>";
 						$html .= "</p>";
-						$html .= add_save_button('extend_validity', 'Change validity');
+						$html .= SIM\add_save_button('extend_validity', 'Change validity');
 					}else{
 						$html .= "<p>";
 							$html .= "Your user account will be automatically deactivated on ".date_format($removal_date,"d F Y").".<br>";
@@ -186,7 +190,7 @@ function user_info_page($atts){
 					}
 					
 					if( isset($_POST['export_visa_info'])){
-						export_visa_excel();
+						SIM\export_visa_excel();
 					}
 				
 					//only active if not own data and has not the user management role
@@ -205,7 +209,7 @@ function user_info_page($atts){
 					
 					//Content
 					$html .= "<div id='visa_info' class='tabcontent $class'>";
-					$html .= visa_page($user_id,true);
+					$html .= SIM\visa_page($user_id,true);
 					
 					if(array_intersect($visa_roles, $user_roles )){
 						$html .= "<div class='export_button_wrapper' style='margin-top:50px;'>
@@ -276,7 +280,7 @@ function user_info_page($atts){
 				
 				//Content
 				$html .= '<div id="twofa_info" class="tabcontent hidden">';
-				$html .= LOGIN\twofa_settings_form($user_id);
+				$html .= SIM\LOGIN\twofa_settings_form($user_id);
 				$html .= '</div>';
 			}			
 			
@@ -315,21 +319,18 @@ function user_info_page($atts){
 		
 		return $select_user_html.$tab_html.'</ul></nav>'.$html.'</div>';
 	}else{
-		echo LOGIN\login_modal("You do not have permission to see this, sorry.");
+		echo SIM\LOGIN\login_modal("You do not have permission to see this, sorry.");
 	}
 }
 
 function export_visa_info_pdf($user_id=0, $all=false) {
-	global $PDF_Logo_path;
-	$title_line_height = 10;
-	
 	if($all == true){
 		//Build the frontpage
 		$pdf = new \PDF_HTML();
 		$pdf->frontpage("Visa user info","");
 		
 		//Get all adult missionaries
-		$users = get_user_accounts();
+		$users = SIM\get_user_accounts();
 		foreach($users as $user){
 			$pdf->setHeaderTitle('Greencard information for '.$user->display_name);
 			$pdf->PageTitle($pdf->headertitle);
@@ -346,7 +347,6 @@ function export_visa_info_pdf($user_id=0, $all=false) {
 }
 
 function write_visa_pages($user_id, $pdf){
-	$display_name = get_userdata( $user_id )->display_name;
 	$visa_info = get_user_meta( $user_id, "visa_info",true);
 	if(!is_array($visa_info)){
 		$pdf->Write(10,"No greencard information found.");
@@ -418,7 +418,7 @@ function write_visa_pages($user_id, $pdf){
 add_action ( 'wp_ajax_extend_validity', function(){
 	//print_array($_POST,true);
 	if(isset($_POST['new_expiry_date']) and isset($_POST['userid']) and is_numeric($_POST['userid'])){
-		verify_nonce('extend_validity_reset_nonce');
+		SIM\verify_nonce('extend_validity_reset_nonce');
 		
 		$user_id = $_POST['userid'];
 		if(isset($_POST['unlimited']) and $_POST['unlimited'] == 'unlimited'){

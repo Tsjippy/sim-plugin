@@ -2,7 +2,6 @@
 namespace SIM\EVENTS;
 use SIM;
 
-
 class Schedule{
 	function __construct(){
 		global $wpdb;
@@ -235,12 +234,7 @@ class Schedule{
 		return ob_get_clean();
 	}
 	
-	function showschedules(){
-		//js
-		wp_enqueue_script('sim_schedule_script', plugins_url('js/schedules.min.js', __DIR__), array('sim_table_script','selectable','sim_other_script'), ModuleVersion, true);
-	
-		wp_enqueue_style('sim_schedule_css', plugins_url('css/events.min.css', __DIR__), array(), ModuleVersion);
-
+	function showschedules(){	
 		ob_start();
 		?>
 		<div class='schedules_wrapper' style='z-index: 99;position: relative;'>
@@ -955,6 +949,3 @@ class Schedule{
 add_action('init', function(){
 	if(wp_doing_ajax()) new Schedule();
 });
-
-
-

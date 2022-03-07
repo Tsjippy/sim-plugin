@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\USERMANAGEMENT;
+use SIM;
 
 //Remove missionary page and missionary marker on user account deletion
 add_action('delete_user', 'SIM\remove_user_data');
@@ -12,26 +13,26 @@ function remove_user_data ($user_id){
 	$userdata		= get_userdata($user_id);
 	$displayname	= $userdata->display_name;
 	
-	print_array("Deleting userdata for user $displayname");
+	SIM\print_array("Deleting userdata for user $displayname");
 	
 	$attachment_id = get_user_meta($user_id,'profile_picture',true);
 	if(is_numeric($attachment_id)){
 		//Remove profile picture
 		wp_delete_attachment($attachment_id,true);
-		print_array("Removed profile picture for user $displayname");
+		SIM\print_array("Removed profile picture for user $displayname");
 	}
 	
 	//remove category from mailchimp
 	$tags = array_merge(explode(',', $Modules['mailchimp']['user_tags']),explode(',',$Modules['mailchimp']['missionary_tags']));
-	$Mailchimp = new Mailchimp($user_id);
+	$Mailchimp = new SIM\MAILCHIMP\Mailchimp($user_id);
 	
 	$Mailchimp->change_tags($tags, 'inactive');
 
-	$family = family_flat_array($user_id);
+	$family = SIM\family_flat_array($user_id);
 	//Only remove if there is no family
 	if (count($family) == 0){
 		//Remove missionary page
-		remove_user_page($user_id);
+		SIM\remove_user_page($user_id);
 
 		//Check if a personal marker exists for this user
 		$marker_id = get_user_meta($user_id,"marker_id",true);
@@ -42,17 +43,17 @@ function remove_user_data ($user_id){
 			if ($marker_icon_id != null){
 				$icon = $marker_icon_id;
 			}else{
-				print_array("Marker id is $marker_id but this marker is not found in the db");
+				SIM\print_array("Marker id is $marker_id but this marker is not found in the db");
 				$icon = 1;
 			}
 			
 			//Delete the personal marker
 			$wpdb->delete( $wpdb->prefix .'ums_markers', array( 'id' => $marker_id ) );
-			print_array("Deleted the marker for $displayname with id $marker_id");
+			SIM\print_array("Deleted the marker for $displayname with id $marker_id");
 			if ($icon != 1){
 				//Delete the personal icon
 				$wpdb->delete( $wpdb->prefix .'ums_icons', array( 'id' => $icon ));
-				print_array("Deleted the personal icon for $displayname");
+				SIM\print_array("Deleted the personal icon for $displayname");
 			}
 		}
 		
@@ -62,7 +63,7 @@ function remove_user_data ($user_id){
 			foreach($account_statements as $key => $account_statement){
 				$file_path = str_replace(wp_get_upload_dir()["baseurl"],wp_get_upload_dir()["basedir"],$account_statement);
 				unlink($file_path);
-				print_array("Removed $file_path");
+				SIM\print_array("Removed $file_path");
 			}
 		}
 	//User has family
@@ -89,7 +90,7 @@ function remove_user_data ($user_id){
 			}
 			
 			//Update
-			update_user_page_title($user_id, $title);
+			SIM\update_user_page_title($user_id, $title);
 			
 			//Check if a personal marker exists
 			$marker_id = get_user_meta($user_id,"marker_id",true);
@@ -219,7 +220,7 @@ function delete_user_shortcode(){
 			}
 		}
 		
-		$html .= user_select("Select an user to delete from the website:");
+		$html .= SIM\user_select("Select an user to delete from the website:");
 		
 		return $html;
 	}

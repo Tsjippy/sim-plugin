@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\USERMANAGEMENT;
+use SIM;
 
 //Multi default values used to prefil the compound dropdown
 add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id, $formname){
@@ -68,10 +69,10 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		
 		$location['address'] = sanitize_text_field($location['address']);
 		
-		update_family_meta($user_id, "location", $location);
+		SIM\update_family_meta($user_id, "location", $location);
 		
 		//Update mailchimp tags if needed
-		$Mailchimp = new Mailchimp($user_id);
+		$Mailchimp = new SIM\MAILCHIMP\Mailchimp($user_id);
 		if(strpos(strtolower($location['address']),'jos') !== false){
 			//Live in Jos, add the tags
 			$Mailchimp->update_family_tags(['Jos'], 'active');
@@ -101,12 +102,12 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 			$Maps->update_marker_location($marker_id, $location);
 		}
 		
-		print_array("Saved location for user id $user_id");
+		SIM\print_array("Saved location for user id $user_id");
 	}elseif(isset($_POST["location"]) and (empty($location['latitude']) or empty($location['longitude']))){
 		//Remove location from db if empty
 		delete_user_meta( $user_id, 'location');
 		delete_user_meta( $user_id, 'marker_id');
-		print_array("Deleted location for user id $user_id");
+		SIM\print_array("Deleted location for user id $user_id");
 		//Delete the marker as well
 		$Maps->remove_personal_marker($user_id);
 	}
@@ -122,7 +123,7 @@ add_action ( 'wp_ajax_add_compound', function(){
 	if(empty($_POST['location_name'])) wp_die("Please give a compound name",500);
 	if(empty($_POST['userid']) or !is_numeric($_POST['userid'])) wp_die("Could not find user id",500);
 	
-	verify_nonce('add_compound_nonce');
+	SIM\verify_nonce('add_compound_nonce');
 	
 	// Insert the post into the database.
 	$post_id = wp_insert_post([
@@ -139,7 +140,7 @@ add_action ( 'wp_ajax_add_compound', function(){
 		wp_set_post_terms($post_id ,$CompoundCategoryID,'locationtype');
 		
 		//Add the address and the maps
-		save_location_meta($post_id, 'location');
+		SIM\LOCATIONS\save_location_meta($post_id, 'location');
 		
 		$url = get_permalink($post_id);
 		
@@ -191,7 +192,7 @@ add_action('before_form',function ($formname){
 					<input type="text" class="longitude" name="location[longitude]">
 				</label>
 				
-				<?php echo add_save_button('add_compound','Add compound'); ?>
+				<?php echo SIM\add_save_button('add_compound','Add compound'); ?>
 			</form>
 		</div>
 	</div>

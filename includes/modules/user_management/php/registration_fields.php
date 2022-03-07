@@ -1,11 +1,6 @@
 <?php
-
-//Check which username is available
-add_action ( 'wp_ajax_nopriv_getUserName', 'return_available_UserName' );
-function return_available_UserName(){
-	echo get_available_username();
-	wp_die();
-}
+namespace SIM\USERMANAGEMENT;
+use SIM;
 
 function get_available_username($first_name=null, $last_name=null){
 	if($first_name == null) $first_name = ( !empty( $_POST['first_name'] ) ) ? sanitize_text_field( $_POST['first_name'] ) : '';

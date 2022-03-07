@@ -197,11 +197,7 @@ div input[type="search"],
 div input[type="number"],
 div input[type="url"]
 {
-	background-color: #fff;
-	border-radius: 5px;
-	border: solid 1px #e8e8e8;
-	font-size: 14px;
-	max-height: 38px;
+	@extend %input-shared;
 
 	&:not(.column_settings, .element_condition){
 		width: 100%;

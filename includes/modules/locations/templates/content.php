@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			if(is_user_logged_in()){
 			?>
 				<div class='author'>
-					Shared by: <a href='<?php echo SIM\get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
+					Shared by: <a href='<?php echo SIM\USERPAGE\get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
 				</div>
 				<?php
 				if($argsarchive){

@@ -33,15 +33,6 @@ class FrontEndContent{
 			add_action( 'generate_before_content', array($this,'add_page_edit_button'));
 			add_action( 'sim_before_content', array($this,'add_page_edit_button'));
 			
-			//Shortcode to display all pages and post who are pending
-			add_shortcode("pending_pages", array($this,'show_pending_posts'));
-			
-			//Shortcode to display number of pending posts and pages
-			add_shortcode('pending_post_icon',array($this,'pending_post_icon'));
-			
-			//Add shortcode for the post edit form
-			add_shortcode("front_end_post",array($this,'frontend_post'));
-			
 			//add action over ajax to read file contents
 			add_action ( 'wp_ajax_get_docx_contents',array($this,'get_docx_contents'));
 			
@@ -88,55 +79,6 @@ class FrontEndContent{
 		array_push($buttons, 'separator', 'file_upload','select_user');
 		return $buttons;
 	}
-
-	function show_pending_posts($atts){
-		global $Modules;
-		
-		//Get all the posts with a pending status
-		$args = array(
-		  'post_status' => 'pending',
-		  'post_type'	=> 'any'
-		);
-		
-		//Build de HTML
-		$initial_html = "";
-		$html = $initial_html;
-		$pending_posts = get_posts( $args );
-		//Only if there are any pending posts
-		if ( $pending_posts ) {
-			$html .= "<p><strong>Pending posts, pages and events:</strong><br><ul>";
-			//For each pending post add a link to edit the post
-			foreach ( $pending_posts as $pending_post ) {
-				$url = add_query_arg( ['post_id' => $pending_post->ID], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );
-				if ($url){
-					$html .= '<li>'.$pending_post->post_title.' <a href="'.$url.'">Review and publish</a></li>';
-				}
-			}
-			$html .= "</ul>";
-		}
-		
-		if ($html != $initial_html){
-			$html.="</ul></p>";
-			return $html;
-		}else{
-			return "<p>No pending posts or pages found</p>";
-		}
-	}
-
-	function pending_post_icon($atts){
-		$args = array(
-		  'post_status' => 'pending',
-		  'post_type'	=> 'any'
-		);
-		$pending_posts = get_posts( $args );
-		if ( $pending_posts ) {
-			$pending_total = count($pending_posts);
-		}
-		
-		if ($pending_total > 0){
-			return '<span class="numberCircle">'.$pending_total.'</span>';
-		}
-	}
 	
 	function has_edit_rights(){
 		global $PrayerCategoryID;
@@ -146,7 +88,7 @@ class FrontEndContent{
 			$user_compound 		= get_user_meta( $this->user->ID, "location", true);
 			if(isset($user_compound['compound'])) $user_compound = $user_compound['compound'];
 			
-			$missionary_page_id = SIM\get_user_page_id($this->user->ID);
+			$missionary_page_id = SIM\USERPAGE\get_user_page_id($this->user->ID);
 			
 			$user_ministries 	= get_user_meta( $this->user->ID, "user_ministries", true);
 			
@@ -340,7 +282,7 @@ class FrontEndContent{
 			//only replace the name with a link if privacy allows
 			if(empty($privacy_preference['hide_name'])){
 				//Replace the name with a hyperlink
-				$url			= SIM\get_user_page_url($user->ID);
+				$url			= SIM\USERPAGE\get_user_page_url($user->ID);
 				$link			= "<a href='$url'>{$user->display_name}</a>";
 				$post_content	= str_replace($user->display_name,$link,$post_content);
 			}
@@ -518,7 +460,7 @@ class FrontEndContent{
 			$user_id = $user->ID;
 
 			//Get current users ministry and compound
-			$missionary_page_id = SIM\get_user_page_id($user_id);
+			$missionary_page_id = SIM\USERPAGE\get_user_page_id($user_id);
 			$user_ministries 	= get_user_meta($user_id, "user_ministries", true);
 			$user_compound 		= get_user_meta($user_id, "location", true);
 			if(!is_array($user_compound)) $user_compound = [];
@@ -973,9 +915,8 @@ class FrontEndContent{
 		
 		global $LoaderImageURL;
 		
-		wp_enqueue_style('sim_frontend_style', plugins_url('css/frontend_posting.min.css', __DIR__), array(), ModuleVersion);
 		//Load js
-		wp_enqueue_script('sim_frontend_script', plugins_url('js/frontend_posting.min.js', __DIR__), array('sim_fileupload_script'), ModuleVersion, true);
+		wp_enqueue_script('sim_frontend_script');
 		wp_enqueue_media();
 		
 		ob_start();
@@ -1164,3 +1105,7 @@ class FrontEndContent{
 		return ob_get_clean();
 	}
 }
+
+add_action('init', function(){
+	new FrontEndContent();
+});

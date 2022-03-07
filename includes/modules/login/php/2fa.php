@@ -216,6 +216,10 @@ add_filter( 'wp_authenticate_user', function ( $user) {
 }); 
 
 //check username and password validity via ajax
+add_action ( 'wp_ajax_check_cred', function(){
+    wp_die('Already logged in');
+});
+
 add_action ( 'wp_ajax_nopriv_check_cred', function(){
     $username   = sanitize_text_field($_POST['username']);
     $password   = sanitize_text_field($_POST['password']);

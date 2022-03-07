@@ -13,6 +13,18 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 == Setup ==
 Install VSCode
+
+install vscode plugins:
+code --install-extension bmewburn.vscode-intelephense-client
+code --install-extension dbaeumer.vscode-eslint
+code --install-extension ecodes.vscode-phpmd
+code --install-extension esbenp.prettier-vscode
+code --install-extension liximomo.sftp
+code --install-extension ms-python.python
+code --install-extension ms-python.vscode-pylance
+code --install-extension ms-toolsai.jupyter
+code --install-extension xdebug.php-debug
+
 Install NPM
 Install XAMPP
 Add this to your php.ini:

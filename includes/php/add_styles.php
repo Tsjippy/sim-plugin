@@ -62,9 +62,6 @@ function enqueue_scripts($hook){
 	//Submit forms
 	wp_register_script('sim_other_script',plugins_url('js/other.js', __DIR__), array('sweetalert'),$StyleVersion,true);
 
-	//Password strength js
-	wp_register_script('sim_password_strength_script',plugins_url('js/account/password_strength.js', __DIR__),array('password-strength-meter', 'sim_other_script'),$StyleVersion,true);
-	
 	//table request shortcode
 	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_other_script'),$StyleVersion,true);
 	
@@ -78,17 +75,6 @@ function enqueue_scripts($hook){
 		//style fo main site
 		wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(),$StyleVersion);
 	//}
-	
-    //Check if on the home page
-	if (is_front_page() or is_page($Modules['login']['home_page'])){
-		//Add header image selected in customizer to homepage using inline css
-		$header_image_id	= get_theme_mod( 'sim_header_image');
-		$header_image_url	= wp_get_attachment_url($header_image_id);
-		$extra_css			= ".home:not(.sticky) #masthead{background-image: url($header_image_url);";
-		wp_add_inline_style('sim_style', $extra_css);
-		//home.js
-		wp_enqueue_script('sim_home_script',plugins_url('js/home.js', __DIR__), array('sweetalert'),$StyleVersion,true);
-	}
 	
 	//Get current users location
 	$location = get_user_meta( $UserID, 'location', true );

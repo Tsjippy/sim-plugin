@@ -1,14 +1,15 @@
 <?php
-namespace SIM;
+namespace SIM\VIMEO;
+use SIM;
 
-if(!class_exists('SIM\VimeoApi')){
+if(!class_exists('SIM\VIMEO\VimeoApi')){
     class VimeoApi{
         function __construct(){
             global $Modules;
 
             if ( ! class_exists( '\Vimeo\Vimeo' ) ) {
                 $error = __( 'Vimeo not loaded', 'sim' );
-                print_array($error);
+                SIM\print_array($error);
                 return false;
             }
 
@@ -156,7 +157,7 @@ if(!class_exists('SIM\VimeoApi')){
                     return $response['body']['error'];
                 }
 
-                print_array("Succesfully deleted video with id $vimeo_id from Vimeo");
+                SIM\print_array("Succesfully deleted video with id $vimeo_id from Vimeo");
 
                 //delete thumbnail
                 $path   = get_post_meta($post_id, 'thumbnail', true);
@@ -246,7 +247,7 @@ if(!class_exists('SIM\VimeoApi')){
                     'description'   => $post->post_content
                 ]);
             }catch(\Exception $e) {
-                print_array('Unable to upload: '.$e->getMessage());
+                SIM\print_array('Unable to upload: '.$e->getMessage());
             }
 
             update_post_meta($post_id, 'vimeo_id', str_replace('/videos/', '', $response['body']['uri']));
@@ -276,7 +277,7 @@ if(!class_exists('SIM\VimeoApi')){
                     )
                 ), 'PATCH' );
             } catch ( \Exception $e ) {
-                print_array( 'Hide Vimeo video: ' . $e->getMessage() );
+                SIM\print_array( 'Hide Vimeo video: ' . $e->getMessage() );
             }
         }
 
@@ -324,9 +325,9 @@ if(!class_exists('SIM\VimeoApi')){
             if(empty($extension )) $extension = 'mp4';
 
             if (!file_exists($path)) {
-                print_array("Creating folder at $path");
+                SIM\print_array("Creating folder at $path");
                 if(!mkdir($path, 0755, true)){
-                    print_array("Creating folder in $path failed!");
+                    SIM\print_array("Creating folder in $path failed!");
                     return false;
                 }
             }

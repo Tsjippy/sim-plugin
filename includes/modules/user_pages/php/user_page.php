@@ -1,14 +1,13 @@
 <?php
-namespace SIM;
+namespace SIM\USERPAGE;
+use SIM;
 
 function get_user_page_id($user_id){
     return get_user_meta($user_id,"missionary_page_id",true);
 }
 
 //Create an missionary (family) page
-function create_user_page($user_id){
-	global $MissionariesPageID;
-	
+function create_user_page($user_id){	
 	//get the current page
 	$page_id    = get_user_page_id($user_id);
 	$userdata   = get_userdata($user_id);
@@ -19,7 +18,7 @@ function create_user_page($user_id){
 	//Check if this page exists and is published
 	if(get_post_status ($page_id) != 'publish' ) $page_id = null;
 	
-	$family = family_flat_array($user_id);
+	$family = SIM\family_flat_array($user_id);
 	if (count($family)>0){
 		$title = $userdata->last_name." family";
 	}else{
@@ -38,7 +37,7 @@ function create_user_page($user_id){
 		  'post_content'  => '',
 		  'post_status'   => 'publish',
 		  'post_type'	  => 'page',
-		  'post_parent'   => $MissionariesPageID,
+		  'post_parent'   => SIM\get_module_option('user_pages', 'missionaries_page'),
 		);
 		 
 		// Insert the post into the database
@@ -47,7 +46,7 @@ function create_user_page($user_id){
 		//Save missionary id as meta
 		update_post_meta($page_id,'missionary_id',$user_id);
 		
-		print_array("Created missionary page with id $page_id");
+		SIM\print_array("Created missionary page with id $page_id");
 	}else{
         $update = update_user_page_title($user_id, $title);
 	}
@@ -66,13 +65,13 @@ function create_user_page($user_id){
 				//Remove the current user page
 				wp_delete_post($member_page_id);
 				
-				print_array("Removed missionary page with id $member_page_id");
+				SIM\print_array("Removed missionary page with id $member_page_id");
 			}
 		}
 	}
 	
 	//Add the post id to the user profile
-	update_family_meta($user_id,"missionary_page_id",$page_id);
+	SIM\update_family_meta($user_id,"missionary_page_id",$page_id);
 	
 	//Return the id
 	return $page_id;
@@ -140,7 +139,7 @@ function remove_user_page($user_id){
     if (is_numeric($missionary_page)){
         //page exists, delete it
         wp_delete_post($missionary_page);
-        print_array("Deleted the missionary page $missionary_page");
+        SIM\print_array("Deleted the missionary page $missionary_page");
     }
 }
 
@@ -238,10 +237,10 @@ function user_description($user_id){
 			$html .= " They have the following children:<br>";
 			foreach($family["children"] as $child){
 				$childdata = get_userdata($child);
-				$age = get_age($child);
+				$age = SIM\get_age($child);
 				if($age != '') $age = "($age)";
 				
-				$html .= display_profile_picture($childdata->ID);
+				$html .= SIM\USERMANAGEMENT\display_profile_picture($childdata->ID);
 			$html .= "<span class='person_work'> {$childdata->first_name} $age</span><br>";
 			}
 			$html .= "</p>";
@@ -259,7 +258,7 @@ function user_description($user_id){
 			
 			$html .= "<h1>";
 			if(!isset($privacy_preference['hide_profile_picture'])){
-				$html .= display_profile_picture($user_id);
+				$html .= SIM\USERMANAGEMENT\display_profile_picture($user_id);
 			}
 			$html .= "  ".$displayname."</h1>";
 			$html .= "<br>";
@@ -309,7 +308,7 @@ function show_user_info($user_id){
 		
 		$html .= "<p>";
 		if(empty($privacy_preference['hide_profile_picture'])){
-			$html .= display_profile_picture($user_id);
+			$html .= SIM\USERMANAGEMENT\display_profile_picture($user_id);
 			$style = "";
 		}else{
 			$style = ' style="margin-left: 55px;"';
@@ -449,7 +448,7 @@ function build_vcard($user_id){
 	
 	//User has an profile picture add it
 	if (is_numeric(get_user_meta($user_id,'profile_picture',true)) and empty($privacy_preference['hide_profile_picture'])){
-		$picture_url 			= str_replace(wp_upload_dir()['url'],wp_upload_dir()['path'],get_profile_picture_url($user_id, "large"));
+		$picture_url 			= str_replace(wp_upload_dir()['url'],wp_upload_dir()['path'], SIM\USERMANAGEMENT\get_profile_picture_url($user_id, "large"));
 		$photo               	= file_get_contents($picture_url);
 		$b64vcard               = base64_encode($photo);
 		$b64mline               = chunk_split($b64vcard,74,"\n");
@@ -484,6 +483,7 @@ function add_ministry_links($UserID){
 	return $html;
 }
 
+// Add description if the current page is attached to a user id
 add_filter( 'the_content', function ( $content ) {
 	if (is_user_logged_in()){
 		$post_id 	= get_the_ID();

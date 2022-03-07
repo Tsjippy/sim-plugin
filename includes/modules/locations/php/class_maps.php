@@ -11,10 +11,6 @@ class Maps{
 		
 		//Remove marker when post is sent to trash
 		add_action('wp_trash_post',array($this,'remove_post_markers'));
-		
-		add_shortcode("markerdescription", array($this,'marker_description') );
-
-		wp_enqueue_style('sim_locations_style', plugins_url('css/locations.min.css', __DIR__), array(), ModuleVersion);
 	}
 	
 	function add_map($name, $lattitude='9.910260', $longitude='8.889170', $address='',$height='400', $zoom=6){
@@ -162,31 +158,6 @@ class Maps{
 			}
 			
 			SIM\print_array("Created the marker with id $marker_id and title $title");
-		}
-	}
-	
-	function marker_description($atts){
-		$a = shortcode_atts( array(
-			'userid' => '',
-		), $atts );
-		
-		$user_id = $a['userid'];
-		
-		if(is_numeric($user_id)){
-			//$userdata = get_userdata($user_id);
-			
-			$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
-	
-			$description = "";			
-			if (empty($privacy_preference['hide_profile_picture'])){
-				$description .= SIM\display_profile_picture($user_id,[80,80]);
-			}
-			
-			//Add the post link to the marker content
-			$url			 = SIM\get_user_page_url($user_id);
-			$description	.= "<a href='$url' style='display:block;' class='page_link'>More info</a><br>";
-			
-			return $description;
 		}
 	}
 

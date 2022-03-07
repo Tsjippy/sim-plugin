@@ -4,7 +4,7 @@
   "description": "locations",
   "main": "./admin.js",
   "scripts": {
-    "build": "webpack --entry ./admin.js --output-path . --output-filename locations_admin.min.js --progress --mode=production"
+    "build": "webpack --entry ./admin.js --output-path . --output-filename locations_admin.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

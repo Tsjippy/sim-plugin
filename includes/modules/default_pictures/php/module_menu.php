@@ -21,8 +21,8 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 	
 	wp_enqueue_media();
-	wp_enqueue_script('sim_default_pictures',plugins_url('js/select_picture.js', __DIR__), array(), ModuleVersion,true);
-	wp_enqueue_style( 'sim_default_pictures_style', plugins_url('css/default_pictures.min.css', __DIR__), array(), ModuleVersion);
+	wp_enqueue_script('sim_picture_selector_script', IncludesUrl.'/js/select_picture.js', array(), ModuleVersion,true);
+	wp_enqueue_style( 'sim_picture_selector_style', IncludesUrl.'/css/default_pictures.min.css', array(), ModuleVersion);
 
 	//Get all post types
 	$args = array(
@@ -39,33 +39,12 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		}
 		echo "<h3>Default pictures for {$post_type}s</h3>";
 		echo "<h4>Default picture for $post_type</h4>";
-		default_picture_selector($post_type, ucfirst($post_type), $settings);
+		SIM\picture_selector($post_type, ucfirst($post_type), $settings);
 		echo "<h4>Default pictures per category for {$post_type}s</h4>";
 		$categories	= get_terms(['hide_empty' => false, 'taxonomy'=>$tax]);
 		foreach($categories as $category){
-			default_picture_selector($category->slug, $category->name, $settings);
+			SIM\picture_selector($category->slug, $category->name, $settings);
 		}
 		echo '<br><br>';
 	}	
 }, 10, 3);
-
-function default_picture_selector($key, $name, $settings){
-	if(empty($settings['picture_ids'][$key])){
-		$hidden		= 'hidden';
-		$src		= '';
-		$id			= '';
-	}else{
-		$id			= $settings['picture_ids'][$key];
-		$src		= wp_get_attachment_image_url($id);
-		$hidden		= '';
-	}
-	?>
-	<div class='picture_selector_wrapper'>
-		<div class='image-preview-wrapper <?php echo $hidden;?>'>
-			<img class='image-preview' src='<?php echo $src;?>'>
-		</div>
-		<input type="button" class="button select_image_button" value="Select picture for <?php echo strtolower($name);?>" />
-		<input type='hidden' class="image_attachment_id" name='picture_ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
-	</div>
-	<?php
-}

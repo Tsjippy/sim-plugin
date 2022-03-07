@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\USERMANAGEMENT;
+use SIM;
 
 add_filter('forms_load_userdata',function($usermeta,$user_id){
 	$userdata	= (array)get_userdata($user_id)->data;
@@ -39,7 +40,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		if($changed_number[0] != '+')				$changed_number = $formresults['phonenumbers'][$key]	= '+234'.$changed_number;
 
 		$message	= "Hi $first_name\n\nI noticed you just updated your phonenumber on simnigeria.org.\n\nIf you want to join our Signal group with this number you can use this url:\n$link";
-		try_send_signal($message, $changed_number);
+		SIM\try_send_signal($message, $changed_number);
 	}
 	
 	return $formresults;
@@ -49,7 +50,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 add_action ( 'wp_ajax_add_ministry', function(){
 	global $MinistryCategoryID;
 	
-	verify_nonce('add_ministry_nonce');
+	SIM\verify_nonce('add_ministry_nonce');
 	
 	if (!empty($_POST["location_name"])){
 		//Get the post data
@@ -73,7 +74,7 @@ add_action ( 'wp_ajax_add_ministry', function(){
 		//Store the ministry location
 		if ($post_id != 0){
 			//Add the location to the page
-			save_location_meta($post_id, 'location');
+			SIM\LOCATIONS\save_location_meta($post_id, 'location');
 		}
 	
 		$url = get_permalink($post_id);
@@ -121,7 +122,7 @@ add_action('before_form',function ($formname){
 					<input type="text" class="longitude" name="location[longitude]">
 				</label>
 				
-				<?php echo add_save_button('add_ministry','Add ministry page'); ?>
+				<?php echo SIM\add_save_button('add_ministry','Add ministry page'); ?>
 			</form>
 		</div>
 	</div>

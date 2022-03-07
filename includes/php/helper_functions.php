@@ -148,12 +148,13 @@ function print_array($message,$display=false){
 }
 
 function page_select($select_id,$page_id=null,$class=""){	
-	$pages = get_pages(
+	$pages = get_posts(
 		array(
-			'orderby' => 'post_title',
-			'order' => 'asc',
-			'post_type' => 'page',
-			'post_status' => 'publish'
+			'orderby' 		=> 'post_title',
+			'order' 		=> 'asc',
+			'post_status' 	=> 'publish',
+			'post_type'     => ['page', 'location'],
+			'posts_per_page'=> -1,
 		)
 	);
 	
@@ -635,6 +636,27 @@ function get_module_option($module_name, $option){
 
 function try_send_signal($message, $recipient, $post_id=""){
 	if (function_exists('SIM\send_signal_message')) {
-		send_signal_message($message, $recipient, $post_id);
+		SIGNAL\send_signal_message($message, $recipient, $post_id);
 	}
+}
+
+function picture_selector($key, $name, $settings){
+	if(empty($settings['picture_ids'][$key])){
+		$hidden		= 'hidden';
+		$src		= '';
+		$id			= '';
+	}else{
+		$id			= $settings['picture_ids'][$key];
+		$src		= wp_get_attachment_image_url($id);
+		$hidden		= '';
+	}
+	?>
+	<div class='picture_selector_wrapper'>
+		<div class='image-preview-wrapper <?php echo $hidden;?>'>
+			<img class='image-preview' src='<?php echo $src;?>'>
+		</div>
+		<input type="button" class="button select_image_button" value="Select picture for <?php echo strtolower($name);?>" />
+		<input type='hidden' class="image_attachment_id" name='picture_ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
+	</div>
+	<?php
 }

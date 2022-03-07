@@ -1,23 +1,37 @@
 <?php
-namespace SIM;
+namespace SIM\TRELLO;
+use SIM;
+
+const ModuleVersion		= '7.0.0';
+
+add_action('sim_submenu_description', function($module_slug, $module_name){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	?>
+	<p>
+		This module creates an integration with trello.<br>
+		It is able to import new users and update existing users based on trello card contents.<br>
+	</p>
+	<?php
+
+},10,2);
 
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 
-	#if(strpos(get_site_url(), 'localhost') !== false)			return;
-	
-	global $Trello;
+	$trello	= new Trello();
 	
 	//Check if we need to update the trello webhook
 	if(!empty($_POST['webhook_page']) and $_POST['webhook_page'] != $settings['webhook_page']){
-		$Trello->change_webhook_id($Trello->get_webhooks()[0]->id, $_POST['webhook_page']);
+		$trello->changeWebhookId($trello->getWebhooks()[0]->id, $_POST['webhook_page']);
 	}
 
 	//Trello token has changed
 	if($_POST['token'] != $settings['token']){
 		//remove all webhooks from the old token
-		$Trello->delete_all_webhooks();
+		$trello->deleteAllWebhooks();
 		
 		//remove trello info belonging to the old token
 		unset($_POST['trello_list']);
@@ -28,13 +42,13 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		$new_trello = new trello();
 		
 		//remove all webhooks from the new token
-		$new_trello->delete_all_webhooks();
+		$new_trello->deleteAllWebhooks();
 		
 		//Get the userid belonging to the new token
-		$trello_user_id = $new_trello->get_token_info()->id;
+		$trello_user_id = $new_trello->getTokenInfo()->id;
 		
 		//Create a webhook listening to the userid	
-		$new_trello->create_webhook('https://simnigeria.org/trello_webhook', $trello_user_id, "Listens to all actions related to the user with id $trello_user_id");
+		$new_trello->createWebhook('https://simnigeria.org/trello_webhook', $trello_user_id, "Listens to all actions related to the user with id $trello_user_id");
 	}
 
 	//Trelle webhook page
@@ -42,7 +56,7 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<label>
 		Trello Webhook page
 	</label>
-	<?php echo page_select("webhook_page", $settings["webhook_page"]);?>
+	<?php echo SIM\page_select("webhook_page", $settings["webhook_page"]);?>
 	
 	<br>
 	<label>
@@ -64,8 +78,8 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		<select name='board'>
 			<option value="">---</option>
 			<?php
-			$Trello->get_boards();
-			foreach ($Trello->get_boards() as $name=>$id){
+			$trello->getBoards();
+			foreach ($trello->getBoards() as $name=>$id){
 				if($settings["board"] == $id){
 					$selected = 'selected="selected"';
 				}else{

@@ -1000,7 +1000,7 @@ class FormTable extends Formbuilder{
 		do_action('formtable_POST_actions');
 		
 		//Load js
-		wp_enqueue_script('sim_forms_table_script', plugins_url('js/forms_table.min.js', __DIR__), array('sim_table_script','sim_other_script'), ModuleVersion,true);
+		wp_enqueue_script('sim_forms_table_script');
 		
 		//do not show if not logged in
 		if(!is_user_logged_in()) return;

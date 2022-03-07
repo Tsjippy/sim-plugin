@@ -1430,10 +1430,9 @@ class Formbuilder{
 		$this->process_atts($atts);
 				
 		$this->loadformdata();
-
-		wp_enqueue_style( 'sim_forms_style', plugins_url('css/forms.min.css', __DIR__), array(), ModuleVersion);
+		
 		// We cannot use the minified version as the dynamic js files depend on the function names
-		wp_enqueue_script('sim_forms_script',plugins_url('js/forms.js', __DIR__), array('sweetalert', 'sim_other_script'), ModuleVersion,true);
+		wp_enqueue_script('sim_forms_script');
 
 		if(
 			array_intersect($this->user_roles,$this->submit_roles) != false	and	// we have the permission to submit on behalf on someone else
@@ -1447,7 +1446,7 @@ class Formbuilder{
 		//add formbuilder.js
 		if($this->editrights == true and isset($_GET['formbuilder'])){
 			//Formbuilder js
-			wp_enqueue_script( 'sim_formbuilderjs', plugins_url('js/formbuilder.min.js', __DIR__), array('sim_forms_script','sortable','sweetalert'), ModuleVersion,true);
+			wp_enqueue_script( 'sim_formbuilderjs');
 		}
 		
 		//Load conditional js if available and needed

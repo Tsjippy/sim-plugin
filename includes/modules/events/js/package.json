@@ -4,9 +4,9 @@
   "description": "Events",
   "main": "./events.js",
   "scripts": {
-    "build": "webpack --entry ./events.js --output-path . --output-filename events.min.js --progress --mode=production",
-    "build-schedule": "webpack --entry ./schedules.js --output-path . --output-filename schedules.min.js --progress --mode=production",
-    "watch": "webpack --entry ./events.js --output-path . --output-filename events.min.js --progress --watch"
+    "build": "webpack --entry ./events.js --output-path . --output-filename events.min.js --progress --mode=production --devtool source-map",
+    "build-schedule": "webpack --entry ./schedules.js --output-path . --output-filename schedules.min.js --progress --mode=production --devtool source-map",
+    "watch": "webpack --entry ./events.js --output-path . --output-filename events.min.js --progress --watch --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

@@ -18,8 +18,6 @@ class Events{
 
 		add_action('sim_after_post_save', array($this,'store_event_meta'), 10, 2);
 
-		add_shortcode("upcomingevents", array($this,'upcomingevents'));
-
 		add_action( 'before_delete_post', array($this,'remove_db_rows'));
 	}
 
@@ -429,10 +427,7 @@ class Events{
 	}
 
 	// Frontpage eventlist
-	function upcomingevents($atts){
-		global $Modules;
-
-		if(!is_page($Modules['login']['home_page'])) return;
+	function upcomingevents(){
 		$this->retrieve_events($startdate = date("Y-m-d"), $enddate = date('Y-m-d', strtotime('+3 month')), $amount = 10);
 
 		//do not list celebrations
@@ -467,7 +462,7 @@ class Events{
 						$user_id = get_post_meta($event->post_id,'user',true);
 						if(is_numeric($user_id)){
 							//Get the missionary page of this user
-							$event_url	= SIM\get_user_page_link($user_id);
+							$event_url	= SIM\USERPAGE\get_user_page_link($user_id);
 						}else{
 							$event_url	= get_permalink($event->post_id);
 						}
@@ -538,7 +533,7 @@ class Events{
 		if(empty($user_id)){
 			return $event->organizer;
 		}else{
-			$url	= SIM\get_user_page_url($user_id);
+			$url	= SIM\USERPAGE\get_user_page_url($user_id);
 			$email	= $user->user_email;
 			$phone	= get_user_meta($user_id,'phonenumbers',true);
 			$html	= "<a href='$url'>{$user->display_name}</a><br>";
@@ -662,8 +657,6 @@ class Events{
 			$date_str	= "$year-$month-01";
 		}else{
 			//events
-			wp_enqueue_script('sim_event_script', plugins_url('js/events.min.js', __DIR__), array('sim_other_script'), ModuleVersion,true);
-
 			$day	= date('d');
 			$month	= $_GET['month'];
 			$year	= $_GET['yr'];

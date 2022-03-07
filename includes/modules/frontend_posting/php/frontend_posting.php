@@ -2,10 +2,6 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
-add_action('init', function(){
-	$GLOBALS['FrontEndContent']	= new FrontEndContent();
-});
-
 function send_pending_post_warning($post, $update){
 	global $Modules;
 	global $WebmasterName;

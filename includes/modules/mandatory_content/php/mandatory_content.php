@@ -80,8 +80,8 @@ add_filter( 'the_content', function ($content){
 			isset($audience['afterarrival']) 					or
 			isset($audience['everyone']))
 		){
-			wp_enqueue_style('sim_mandatory_style', plugins_url('css/mandatory.min.css', __DIR__), array(), ModuleVersion);
-			wp_enqueue_script('sim_mandatory_script', plugins_url('js/mandatory.min.js', __DIR__), array(), ModuleVersion,true);
+			wp_enqueue_style('sim_mandatory_style');
+			wp_enqueue_script('sim_mandatory_script');
 			$message = '<p class="mandatory_content_warning">
 				This is mandatory content.<br>
 				Make sure you have clicked the "I have read this" button after reading.

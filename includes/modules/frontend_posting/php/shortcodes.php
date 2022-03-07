@@ -64,3 +64,58 @@ add_shortcode('your_posts',function(){
 	//print_array($user_user_posts);
 	return $html;
 });
+
+//Shortcode to display all pages and post who are pending
+add_shortcode("pending_pages", function ($atts){
+	//Get all the posts with a pending status
+	$args = array(
+	  'post_status' => 'pending',
+	  'post_type'	=> 'any'
+	);
+	
+	//Build de HTML
+	$initial_html = "";
+	$html = $initial_html;
+	$pending_posts = get_posts( $args );
+	//Only if there are any pending posts
+	if ( $pending_posts ) {
+		$html .= "<p><strong>Pending posts, pages and events:</strong><br><ul>";
+		//For each pending post add a link to edit the post
+		foreach ( $pending_posts as $pending_post ) {
+			$url = add_query_arg( ['post_id' => $pending_post->ID], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page')) );
+			if ($url){
+				$html .= '<li>'.$pending_post->post_title.' <a href="'.$url.'">Review and publish</a></li>';
+			}
+		}
+		$html .= "</ul>";
+	}
+	
+	if ($html != $initial_html){
+		$html.="</ul></p>";
+		return $html;
+	}else{
+		return "<p>No pending posts or pages found</p>";
+	}
+});
+
+//Shortcode to display number of pending posts and pages
+add_shortcode('pending_post_icon', function ($atts){
+	$args = array(
+	  'post_status' => 'pending',
+	  'post_type'	=> 'any'
+	);
+	$pending_posts = get_posts( $args );
+	if ( $pending_posts ) {
+		$pending_total = count($pending_posts);
+	}
+	
+	if ($pending_total > 0){
+		return '<span class="numberCircle">'.$pending_total.'</span>';
+	}
+});
+
+//Add shortcode for the post edit form
+add_shortcode("front_end_post", function(){
+	$FrontEndContent	= new FrontEndContent();
+	return $FrontEndContent->frontend_post();
+});

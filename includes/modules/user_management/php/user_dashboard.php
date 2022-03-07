@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\USERMANAGEMENT;
+use SIM;
 
 function show_dashboard($user_id, $admin=false){
 	if(!is_numeric($user_id)) return "<p>Invalid user id $user_id";

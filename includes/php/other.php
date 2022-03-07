@@ -88,22 +88,22 @@ if(get_option("wpstg_is_staging_site") == "true"){
 
 //Keep line breaks in excerpts
 remove_filter('get_the_excerpt', 'wp_trim_excerpt');
-add_filter('get_the_excerpt', 'SIM\custom_excerpt');
-add_filter('the_excerpt', 'SIM\custom_excerpt');
-function custom_excerpt($text) {
-	$raw_excerpt = $text;
+add_filter('get_the_excerpt', 'SIM\custom_excerpt', 10, 2);
+add_filter('the_excerpt', 'SIM\custom_excerpt', 10, 2);
+function custom_excerpt($excerpt, $post=null) {
+	$raw_excerpt = $excerpt;
 	
-	if ( '' == $text ) {
+	if ( empty($excerpt)) {
 		//Retrieve the post content. 
-		$text = get_the_content('');
+		if(!empty($post)) $excerpt = $post->post_content;
 		
 		//Delete all shortcode tags from the content. 
-		$text = strip_shortcodes( $text );
+		$excerpt = strip_shortcodes( $excerpt );
 		
-		$text = str_replace(']]>', ']]&gt;', $text);
-		$text = str_replace("<p>","<br>", $text);
+		$excerpt = str_replace(']]>', ']]&gt;', $excerpt);
+		$excerpt = str_replace("<p>","<br>", $excerpt);
 		$allowed_tags = '<br>,<strong>'; 
-		$text = strip_tags($text, $allowed_tags);
+		$excerpt = strip_tags($excerpt, $allowed_tags);
 		 
 		$excerpt_word_count = 45; 
 		$excerpt_length = apply_filters('excerpt_length', $excerpt_word_count); 
@@ -111,17 +111,17 @@ function custom_excerpt($text) {
 		$excerpt_end = '[...]'; 
 		$excerpt_more = apply_filters('excerpt_more', ' ' . $excerpt_end);
 		 
-		$words = preg_split("/[\n\r\t ]+/", $text, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY);
+		$words = preg_split("/[\n\r\t ]+/", $excerpt, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY);
 		if ( count($words) > $excerpt_length ) {
 			array_pop($words);
-			$text = implode(' ', $words);
-			$text = $text . $excerpt_more;
+			$excerpt = implode(' ', $words);
+			$excerpt = $excerpt . $excerpt_more;
 		} else {
-			$text = implode(' ', $words);
+			$excerpt = implode(' ', $words);
 		}
 	}
 
-	return apply_filters('wp_trim_excerpt', $text, $raw_excerpt);
+	return apply_filters('wp_trim_excerpt', $excerpt, $raw_excerpt);
 }
 
 set_error_handler('SIM\handle_error');

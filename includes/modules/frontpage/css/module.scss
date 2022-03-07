@@ -1,4 +1,4 @@
-@use 'global' as *;
+@use '../../../css/scss/global' as *;
 
 /* make whole frontpage white*/
 .home{
@@ -153,7 +153,7 @@
 		text-align: center;
 	} 
 	
-	#ministry-gallery{
+	#page-gallery{
 		@extend %shared_gallery
 	}
 
@@ -176,7 +176,7 @@
 
 	/* the heading of the news area*/
 	#news-title,
-	#ministries-gallery-title{
+	#page-gallery-title{
 		padding-top:30px;
 	}
 
@@ -265,7 +265,7 @@
 		font-weight: 500;
 	}
 
-	.ministry-add {
+	.page-gallery {
 		@extend %shared-newscard;
 		
 		position: relative;
@@ -283,6 +283,10 @@
 			border-radius: 50%;
 			width: 50%;
 			height: unset;
+		}
+
+		.content a{
+			color: gray;
 		}
 	}
 	
@@ -311,15 +315,7 @@
 	
 	/*Ministry gallery*/
 	@media (min-width: 480px){
-		.ministry-add {
-			display: inline-block;
-			float: none !important;
-			margin-right: -4px;
-			margin-left: -4px;
-			vertical-align: top;
-		}
-
-		.ministry-add {
+		.page-gallery {
 			display: inline-block;
 			float: none !important;
 			margin-right: -4px;
@@ -342,7 +338,7 @@
 			display: unset;
 		}
  
-		.news-article, .ministry-add {
+		.news-article, .page-gallery {
 			width: 90%;
 			margin-left: 5%;
 		}
@@ -350,7 +346,7 @@
 
 	/*50% width if only two item*/
 	@media (min-width: 601px){
-		.news-article, .ministry-add  {
+		.news-article, .page-gallery  {
 			width: 45.5vw;
 			margin-left:3vw;
 		}
@@ -358,12 +354,12 @@
 
 	/*32% width*/
 	@media (min-width: $fullwidth){
-		.news-article, .ministry-add {
+		.news-article, .page-gallery {
 			width: 30.7vw;
 			margin-left:2vw;
 		}
 		
-		#news, #ministry-gallery{
+		#news, #page-gallery{
 			white-space: nowrap;
 		}
 	}
@@ -373,7 +369,7 @@
 			max-width: 1200px;
 			overflow: hidden;
 		}
-		.news-article, .ministry-add {
+		.news-article, .page-gallery {
 			width: 370px;
 			margin-left:45px;
 		}
@@ -382,7 +378,7 @@
 			margin-left:0px;
 		}
 		
-		#news, #ministry-gallery{
+		#news, #page-gallery{
 			white-space: nowrap;
 		}
 	}

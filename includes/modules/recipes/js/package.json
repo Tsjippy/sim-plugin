@@ -4,7 +4,7 @@
   "description": "recipe",
   "main": "./recipe.js",
   "scripts": {
-    "build": "webpack --entry ./recipe.js --output-path . --output-filename recipe.min.js --progress --mode=production"
+    "build": "webpack --entry ./recipe.js --output-path . --output-filename recipe.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

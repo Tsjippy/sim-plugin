@@ -1,5 +1,8 @@
 <?php
-namespace SIM;
+namespace SIM\USERMANAGEMENT;
+use SIM;
+
+use function SIM\get_module_option;
 
 //check if account is disabled
 add_filter( 'wp_authenticate_user', function($user, $password){
@@ -22,8 +25,6 @@ add_action('wp_ajax_nopriv_request_pwd_reset', function(){
 
     if(empty($username))   wp_die('No username given', 500);
 
-    //if(empty($_POST['h-captcha-response'])) wp_die('No captcha given', 500);
-
 	$user	= get_user_by('login', $username);
     if(!$user)	wp_die('Invalid username', 500);
 
@@ -41,13 +42,10 @@ add_action('wp_ajax_nopriv_request_pwd_reset', function(){
 
 //sends the password reset e-mail
 function send_password_reset_message($user){
-	global $WebmasterName;
-	global $Modules;
-
 	$key		 = get_password_reset_key($user);
 	if(is_wp_error($key)) return $key;
 
-	$pageurl	 = get_permalink($Modules['login']['pw_reset_page']);
+	$pageurl	 = get_permalink(SIM\get_module_option('login', 'pw_reset_page'));
 	$url		 = "$pageurl?key=$key&login=$user->user_login";
 
 	$message	 = "Hi $user->first_name<br>";
@@ -56,28 +54,12 @@ function send_password_reset_message($user){
 	$message	.= "If that was not you, please ignore this e-mail.<br>";
 	$message	.= "Otherwise, follow this <a href='$url'>link</a> to reset your password.<br>";
 	$message	.= "<br><br>";
-	$message	.= 'Kind regards,<br><br>'.$WebmasterName;
-	//$message	.= 'Is the link not working?<br>';
-	//$message	.= "Copy this url in your browser:<code>$url</code>";
+	$message	.= 'Kind regards,<br><br>';
 
 	if(!wp_mail($user->user_email, 'Password reset requested', $message)){
 		return new \WP_Error('sending email failed', 'Sending e-mail failed');
 	}
 }
-
-add_shortcode("change_pasword", function(){
-	if(!is_user_logged_in()){
-		$user	= check_password_reset_key($_GET['key'], $_GET['login']);
-
-		if(is_wp_error($user)){
-			return $user->get_error_message(). "<br>Please try again.";
-		}
-	}else{
-		$user	= wp_get_current_user();
-	}
-
-	return password_reset_form($user);
-});
 
 function password_reset_form($user){
 	//Load js
@@ -140,7 +122,7 @@ function password_reset_form($user){
 			<br>
 			<span style="text-align: center;" class="pass-strength-result hidden" id="pass-strength-result2">Strength indicator</span>
 		</div>
-		<?php echo add_save_button('update_password', 'Change password');?>
+		<?php echo SIM\add_save_button('update_password', 'Change password');?>
 	</form>
 	
 	<?php
@@ -166,7 +148,7 @@ function change_password_field($user_id = null){
 	if(isset($_GET['action']) and isset($_GET['wp_2fa_nonce'])){
 		if($_GET['action'] == 'reset2fa' and wp_verify_nonce( $_GET['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_GET['user_id'])){
 			if($_GET['do'] == 'off'){
-				reset_2fa($user_id);
+				SIM\LOGIN\reset_2fa($user_id);
 				echo "<div class='success'>Succesfully turned off 2fa for $name</div>";
 			}elseif($_GET['do'] == 'email'){
 				update_user_meta($user_id, '2fa_methods', ['email']);
@@ -192,7 +174,7 @@ function change_password_field($user_id = null){
 				Click the button below if you want to <?php echo $action_text;?> the useraccount for <?php echo $name;?>.
 			</p>
 
-			<?php echo add_save_button('disable_useraccount', ucfirst($action_text)." useraccount for $name");?>
+			<?php echo SIM\add_save_button('disable_useraccount', ucfirst($action_text)." useraccount for $name");?>
 		</form>
 		<?php
 		}
@@ -241,7 +223,7 @@ function change_password_field($user_id = null){
 add_action ( 'wp_ajax_update_password', 'SIM\process_pw_update');
 add_action ( 'wp_ajax_nopriv_update_password', 'SIM\process_pw_update');
 function process_pw_update(){
-	print_array("updating password");
+	SIM\print_array("updating password");
 
 	$user_id	= $_POST['userid'];
 	if(!is_numeric($user_id))	wp_die('Invalid user id given', 500);
@@ -253,7 +235,7 @@ function process_pw_update(){
 
 	if($_POST['pass1'] != $_POST['pass2'])	wp_die("Passwords do not match, try again.",500);
 
-	verify_nonce('password_reset_nonce');
+	SIM\verify_nonce('password_reset_nonce');
 	
 	wp_set_password( $_POST['pass1'], $user_id );
 	wp_die(
@@ -276,7 +258,7 @@ function disable_useraccount(){
 		wp_die('Invalid userid given',500);
 	}
 
-	verify_nonce('disable_useraccount');
+	SIM\verify_nonce('disable_useraccount');
 	
 	if($_POST['action'] == 'disable_useraccount'){
 		update_user_meta( $_POST['userid'], 'disabled', true );

@@ -109,7 +109,6 @@ add_filter( 'singular_template', 'SIM\get_template_file', 10, 3 );
 
 function get_template_file($template, $type, $templates){
 	global $post;
-	global $Modules;
 
 	$base_dir		= __DIR__."/../modules";	
 

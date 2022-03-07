@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\USERMANAGEMENT;
+use SIM;
 
 //Add availbale partners as default
 add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id, $formname){
@@ -88,7 +89,7 @@ function fill_family_dropdowns($user_id){
 			*/
 			$hidden = '';
 			//Check if current processing user already has a spouse
-			$spouse = has_partner($user->ID);
+			$spouse = SIM\has_partner($user->ID);
 
 			//if this is the spouse
 			if( $spouse == $user_id){
@@ -110,7 +111,7 @@ function fill_family_dropdowns($user_id){
 			/*
 				Fill the child dropdowns
 			*/
-			$parent_objects	= get_parents($user->ID);
+			$parent_objects	= SIM\get_parents($user->ID);
 			$parents 		= [];
 			foreach($parent_objects as $par){
 				$parents[]	= $par->ID;
@@ -138,7 +139,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	$family = $formresults["family"];
 
 	//save wedding date to partner as well
-	$partner_id	= has_partner($user_id);
+	$partner_id	= SIM\has_partner($user_id);
 	if($partner_id and !empty($_POST['weddingdate'])) update_user_meta($partner_id,'weddingdate',$_POST['weddingdate']);
 	if(!empty($_POST['weddingdate'])) $Events->create_celebration_event('Wedding anniversary', $user_id,'weddingdate',$_POST['weddingdate']);
 	
@@ -260,25 +261,25 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		//Save the marker id for all family members
 		$marker_id = get_user_meta($user_id,"marker_id",true);
 		if($marker_id == "" and isset($family['partner']))	$marker_id = get_user_meta($family['partner'],"marker_id",true);
-		update_family_meta( $user_id, "marker_id", $marker_id);
+		SIM\update_family_meta( $user_id, "marker_id", $marker_id);
 		
 		foreach ($ChildrenCopyFields as $field){
 			$field_value = get_user_meta( $user_id, $field, true );
 			
 			if($field_value != ""){
 				//Update the relatives field value as well
-				update_family_meta( $user_id, $field, $field_value);
+				SIM\update_family_meta( $user_id, $field, $field_value);
 			}elseif (isset($family['partner'])){
 				//Use the field value of the partner
 				$partner_field_value = get_user_meta( $family['partner'], $field, true );
 				if($partner_field_value != ""){
-					update_family_meta( $family['partner'], $field, $partner_field_value);
+					SIM\update_family_meta( $family['partner'], $field, $partner_field_value);
 				}
 			}
 		}
 		
 		//update missionary page if needed
-		create_user_page($user_id);
+		SIM\create_user_page($user_id);
 	}
 	
 	
@@ -288,7 +289,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 //Save in db
 function save_family_in_db($user_id, $family){
 	if(is_array($family)){
-		clean_up_nested_array($family);
+		SIM\clean_up_nested_array($family);
 	}
 	
 	global $Maps;
@@ -343,7 +344,7 @@ add_action('before_form',function ($formname){
 					<input type="email" name="email">
 				</label>
 				
-				<?php echo add_save_button('adduseraccount', 'Add family member');?>
+				<?php echo SIM\add_save_button('adduseraccount', 'Add family member');?>
 			</form>
 		</div>
 	</div>

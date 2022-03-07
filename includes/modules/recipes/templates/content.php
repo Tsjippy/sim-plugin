@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Load js
-wp_enqueue_script('sim_plurarize_script',plugins_url('js/recipe.min.js', __DIR__), array(), ModuleVersion,true);
+wp_enqueue_script('sim_plurarize_script');
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
 	<div class="cat_card<?php if(!$archive) echo ' inside-article';?>">
@@ -34,7 +34,7 @@ wp_enqueue_script('sim_plurarize_script',plugins_url('js/recipe.min.js', __DIR__
 			</div>
 			
 			<div class='author'>
-				Shared by: <a href='<?php echo SIM\get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
+				Shared by: <a href='<?php echo SIM\USERPAGE\get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
 			</div>
 			
 			<div class='recipe metas'>

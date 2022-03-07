@@ -84,10 +84,10 @@ function event_specific_fields($post_type,$post_id){
 				<?php
 				$locations = get_posts( 
 					array(
-						'post_type'      => 'location', 
-						'posts_per_page' => -1,
-						'orderby'    	=> 'title',
-						'order' 	=> 'ASC'
+						'post_type'      	=> 'location', 
+						'posts_per_page'	=> -1,
+						'orderby'			=> 'title',
+						'order' 			=> 'ASC'
 					) 
 				);
 				foreach($locations as $location){

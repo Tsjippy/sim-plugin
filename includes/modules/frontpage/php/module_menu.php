@@ -2,6 +2,8 @@
 namespace SIM\FRONTPAGE;
 use SIM;
 
+const ModuleVersion		= '7.0.0';
+
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
@@ -14,6 +16,11 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		<input type="text" name="header_hook" value="<?php echo $settings['header_hook'];?>">
 	</label>
 	<br>
+
+	<label>Default picture for $post_type</label>
+	<?php
+	SIM\picture_selector('header_image',  'Header image frontpage', $settings);
+	?>
 	
     <label>
 		First button text.<br>
@@ -77,6 +84,27 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		Used to display a galery of pages you want to highlight.<br>
 		<input type="text" name="before_footer_hook" value="<?php echo $settings['before_footer_hook'];?>">
 	</label>
-	
+	<br>
+
 	<?php
+	for ($x = 1; $x <= 3; $x++) {
+		?>
+		<h5> Highlight page <?php echo $x;?></h5>
+		Select the page you want to show on frontpage.<br>
+		<?php
+		echo SIM\page_select("page$x", $settings["page$x"]);
+		?>
+		<label>
+			Type a short title.<br>
+			<input type="text" name="title<?php echo $x;?>" value="<?php echo $settings["title$x"];?>">
+		</label>
+		<br>
+		<label>
+			Type a short description.<br>
+			<input type="text" name="description<?php echo $x;?>" value="<?php echo $settings["description$x"];?>">
+		</label>
+		<br>
+
+		<?php
+	}
 }, 10, 3);

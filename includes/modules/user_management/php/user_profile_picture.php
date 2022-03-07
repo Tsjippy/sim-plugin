@@ -1,19 +1,20 @@
 <?php
-namespace SIM;
+namespace SIM\USERMANAGEMENT;
+use SIM;
 
 function profile_picture_change($user_id){
 	//Create all sizes of the image
-	process_images();
+	SIM\process_images();
 	
 	global $Maps;
 	
-	print_array("Updating profile image for $user_id");
+	SIM\print_array("Updating profile image for $user_id");
 	
 	$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
 	
 	if (empty($privacy_preference['hide_profile_picture'])){
 		$marker_id = get_user_meta($user_id,"marker_id",true);
-		print_array("marker_id is $marker_id, user_id is $user_id");
+		SIM\print_array("marker_id is $marker_id, user_id is $user_id");
 		
 		//New profile picture is set, update the marker icon
 		if(is_numeric(get_user_meta($user_id,'profile_picture',true))){

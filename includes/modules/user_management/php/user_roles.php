@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\USERMANAGEMENT;
+use SIM;
 
 function display_roles($user_id){
 	global $wp_roles;
@@ -44,7 +45,7 @@ function display_roles($user_id){
 			<?php
 		}
 		
-		echo add_save_button('updateroles','Update roles');
+		echo SIM\add_save_button('updateroles','Update roles');
 	
 		?>
 		</form>
@@ -56,14 +57,14 @@ function display_roles($user_id){
 //Make updateroles function availbale for AJAX request
 add_action ( 'wp_ajax_updateroles', function(){
 	if (isset($_POST['userid']) and is_numeric($_POST['userid'])){
-		verify_nonce('change_roles');
+		SIM\verify_nonce('change_roles');
 		
 		$user 			= get_userdata($_POST['userid']);
 		$user_roles 	= $user->roles;
 		$new_roles		= (array)$_POST['roles'];
 		
 		//Check if new roles require mailchimp actions
-		$Mailchimp = new MAILCHIMP\Mailchimp($user->ID);
+		$Mailchimp = new SIM\MAILCHIMP\Mailchimp($user->ID);
 		$Mailchimp->role_changed($new_roles);
 		
 		//add new roles
@@ -71,7 +72,7 @@ add_action ( 'wp_ajax_updateroles', function(){
 			//If the role is set, and the user does not have the role currently
 			if(!in_array($key,$user_roles)){
 				$user->add_role( $key );
-				print_array("Added role '$role' for user {$user->display_name}");
+				SIM\print_array("Added role '$role' for user {$user->display_name}");
 			}
 		}
 		
@@ -79,7 +80,7 @@ add_action ( 'wp_ajax_updateroles', function(){
 			//If the role is not set, but the user has the role currently
 			if(!in_array($role,array_keys($new_roles))){
 				$user->remove_role( $role );
-				print_array("Removed role '$role' for user {$user->display_name}");
+				SIM\print_array("Removed role '$role' for user {$user->display_name}");
 			}
 		}
 		

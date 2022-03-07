@@ -3,6 +3,7 @@ namespace SIM\FRONTPAGE;
 use SIM;
 
 //generate_before_header
+// diplay buttons
 $hook_name	= SIM\get_module_option('frontpage','header_hook');
 if(!empty($hook_name)){
 	//Add a button to the header
@@ -30,6 +31,7 @@ if(!empty($hook_name)){
 }
 
 //generate_after_main_content
+//display prayer message and birtdays
 $hook_name	= SIM\get_module_option('frontpage','after_main_content_hook');
 if(!empty($hook_name)){
 	add_action($hook_name, function(){
@@ -65,7 +67,7 @@ if(!empty($hook_name)){
 		//if on home page
 		if(is_page(SIM\get_module_option('login','home_page')) or is_front_page()){
 			//Show the ministry gallery
-			ministry_gallery();
+			page_gallery();
 			$args                   = array('ignore_sticky_posts' => true,);
 			$args['post_type'] 		= SIM\get_module_option('frontpage', 'news_post_types');
 			$args['post_status'] 	= 'publish';
@@ -221,28 +223,29 @@ if(!empty($hook_name)){
 }
 
 //Function to show a gallery of 3 ministries
-function ministry_gallery(){
-	$ministry_adds = [];
-	$ministry_adds['image_ids'] = [get_theme_mod( 'sim_ministry_image_1', '' ),get_theme_mod( 'sim_ministry_image_2', '' ),get_theme_mod( 'sim_ministry_image_3', '' )];
-	$ministry_adds['links'] = [get_theme_mod( 'sim_ministry_link_1', '' ),get_theme_mod( 'sim_ministry_link_2', '' ),get_theme_mod( 'sim_ministry_link_3', '' )];
-	$ministry_adds['titles'] = [get_theme_mod( 'sim_ministry_title_1', '' ),get_theme_mod( 'sim_ministry_title_2', '' ),get_theme_mod( 'sim_ministry_title_3', '' )];
-	$ministry_adds['texts'] = [get_theme_mod( 'sim_ministry_text_1', '' ),get_theme_mod( 'sim_ministry_text_2', '' ),get_theme_mod( 'sim_ministry_text_3', '' )];
-	
+function page_gallery(){
 	?>
-	<article id="ministry-gallery">
-		<h3 id="ministries-gallery-title">See what we do:</h3>
+	<article id="page-gallery">
+		<h3 id="page-gallery-title">See what we do:</h3>
 		<div class="row">
 		<?php
-		for ($x = 0; $x <= 2; $x++) {
+		for ($x = 1; $x <= 3; $x++) {
 			?>
-			<div class="ministry-add">
+			<div class="page-gallery">
 				<div class="card card-profile card-plain">
 					<div class="col-md-5">
 						<div class="card-image">
 							<?php
-							echo '<a href="'.get_site_url().$ministry_adds['links'][$x].'">';
-								$image_url = wp_get_attachment_url($ministry_adds['image_ids'][$x]);
-								echo '<img class="img" src="'.$image_url.'" alt="'.$ministry_adds['titles'][$x].'" title="'.$ministry_adds['titles'][$x].'">';
+							$pageId		= SIM\get_module_option('frontpage', "page$x");
+							$pictureUrl	= get_the_post_thumbnail_url($pageId);
+							$pageUrl	= get_permalink($pageId);
+							$title		= SIM\get_module_option('frontpage', "title$x");
+							if(!$title) $title	= get_the_title($pageId);
+							$text		= SIM\get_module_option('frontpage', "description$x");
+							if(!$text) $text	= get_the_excerpt($pageId);
+
+							echo "<a href='$pageUrl'>";
+								echo "<img class='img' src='$pictureUrl' alt='' title='$title'>";
 							?>
 							</a>
 						</div>
@@ -250,9 +253,9 @@ function ministry_gallery(){
 					<div class="col-md-7">
 						<div class="content">
 							<?php
-							echo '<a href="'.get_site_url().$ministry_adds['links'][$x].'">';
-								echo '<h4 class="card-title">'.$ministry_adds['titles'][$x].'</h4>';
-								echo '<p class="card-description">'.$ministry_adds['texts'][$x].'</p>';
+							echo "<a href='$pageUrl'>";
+								echo "<h4 class='card-title'>$title</h4>";
+								echo "<p class='card-description'>$text</p>";
 							?>
 							</a>
 						</div>

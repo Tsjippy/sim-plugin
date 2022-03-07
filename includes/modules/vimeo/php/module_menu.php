@@ -1,5 +1,8 @@
 <?php
-namespace SIM;
+namespace SIM\VIMEO;
+use SIM;
+
+const ModuleVersion		= '7.0.0';
 
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name

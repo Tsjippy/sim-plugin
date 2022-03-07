@@ -534,10 +534,8 @@ add_shortcode( 'quotadocuments', function (){
 });
 
 function quoata_document_upload($quota_documents){
-	global $StyleVersion;
-
 	//Load js
-	wp_enqueue_script( 'sim_quotajs', plugins_url('js/quota.js', __DIR__), array('sim_other_script'),$StyleVersion,true);
+	wp_enqueue_script( 'sim_quotajs');
 	
 	ob_start();
 	?>
