@@ -4,6 +4,15 @@ use SIM;
 
 const ModuleVersion		= '7.0.0';
 
+add_action('sim_module_activated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	
+	//Create a public category if it does not exist
+	wp_create_category('Public');
+	wp_create_category('Confidential');
+}, 10, 2);
+
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;

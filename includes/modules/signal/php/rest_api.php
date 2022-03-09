@@ -2,15 +2,7 @@
 namespace SIM\SIGNAL;
 use SIM;
 
-add_action( 'rest_api_init', function () {
-	//Route for prayerrequest of today
-	register_rest_route( 'sim/v1', '/prayermessage', array(
-		'methods' => 'GET',
-		'callback' => 'SIM\SIGNAL\bot_prayer',
-		'permission_callback' => '__return_true',
-		)
-	);
-	
+add_action( 'rest_api_init', function () {	
 	//Route for notification messages
 	register_rest_route( 'sim/v1', '/notifications', array(
 		'methods' => 'GET',
@@ -23,14 +15,6 @@ add_action( 'rest_api_init', function () {
 	register_rest_route( 'sim/v1', '/firstname', array(
 		'methods' => 'GET',
 		'callback' => 'SIM\SIGNAL\find_firstname',
-		'permission_callback' => '__return_true',
-		)
-	);
-
-	//Route for prayerrequest of today
-	register_rest_route( 'simnigeria/v1', '/prayermessage', array(
-		'methods' => 'GET',
-		'callback' => 'SIM\SIGNAL\bot_prayer',
 		'permission_callback' => '__return_true',
 		)
 	);
@@ -52,22 +36,6 @@ add_action( 'rest_api_init', function () {
 	);
 } );
 
-function bot_prayer() {
-	if (is_user_logged_in()) {
-		$message = "The prayer request of today is:\n";
-
-		$message .= SIM\prayer_request(true);
-		
-		$params		= apply_filters('sim_after_bot_payer', ['message'=>$message, 'urls'=>'']);
-
-		$message = $params['message']."\n\n".$params['urls'];
-		
-		return $message;
-	}else{
-		return "You have no permission to see this";
-	}
-}
-
 function bot_messages( $delete = true) {
 	if (is_user_logged_in()) {
 		$notifications = get_option('signal_bot_messages');
@@ -77,7 +45,6 @@ function bot_messages( $delete = true) {
 		return $notifications;
 	}
 }
-
 
 //Function to return the first name of a user with a certain phone number
 function find_firstname(\WP_REST_Request $request ) {

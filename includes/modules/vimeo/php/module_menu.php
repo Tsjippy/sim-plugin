@@ -4,6 +4,21 @@ use SIM;
 
 const ModuleVersion		= '7.0.0';
 
+add_action('sim_submenu_description', function($module_slug, $module_name){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	?>
+	<p>
+		This module will upload all video's to Vimeo. It support resumable uploads, meaning that if the page gets reloaded or internet connection is lost the video upload can be restarted and will continue where it was left.<br>
+		A video title or description  update is also synced to Vimeo.<br>
+		You can enable the option to sync your media library with Vimeo, so that enay videos added to Vimeo will also be added to your websites library<br>
+		You can enable the option to delete a video from Vimeo if you delete the video from your media library.<br>
+	</p>
+	<?php
+
+},10,2);
+
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
@@ -93,18 +108,22 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<div class="settings-section">
 		<h2>API Settings</h2>
 		<label>
-			Client ID
+			Client ID<br>
 			<input type="text" name="client_id" value="<?php echo $client_id;?>">
-			</label>
+		</label>
+		<br>
+
 		<label>
-			Client Secret
+			Client Secret<br>
 			<input type="text" name="client_secret" value="<?php echo $client_secret;?>">
 		</label>
+		<br>
 
 		<label <?php if(empty($client_secret)) echo 'style="display:none;"';?>>
-			Access Token
+			Access Token<br>
 			<input type="text" name="access_token" value="<?php echo $access_token;?>">
 		</label>
+		
 	</div>
 
 	<div class="settings-section" <?php if(empty($access_token)) echo 'style="display:none;"';?>>
@@ -138,3 +157,10 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 
 	return;
 }, 10, 3);
+
+add_action('sim_module_updated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	schedule_tasks();
+}, 10, 2);

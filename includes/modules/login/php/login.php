@@ -7,7 +7,7 @@ add_action('init',function(){
     global $pagenow;
 	if( $pagenow == 'wp-login.php'){
         //redirect to login screen
-        wp_redirect(SiteURL."/?showlogin");
+        wp_redirect(SITEURL."/?showlogin");
         exit;
 	}
 });
@@ -18,8 +18,6 @@ add_filter( 'login_url', function($login_url, $redirect, $force_reauth ){
 },10,3);
 
 function login_modal($message='', $required=false, $username=''){	
-    global $LoaderImageURL;
-
     ob_start();
 
     ?>
@@ -52,7 +50,7 @@ function login_modal($message='', $required=false, $username=''){
                                 <input id="password" type="password" name="password" required>
                             </label>
                             <button type="button" id='toggle_pwd_view' data-toggle="0" title="Show password">
-                                <img src="<?php echo PicturesUrl.'/invisible.png';?>">
+                                <img src="<?php echo PICTURESURL.'/invisible.png';?>">
                             </button>
                         </div>
                         <div id='check_cred_wrapper'>
@@ -61,18 +59,18 @@ function login_modal($message='', $required=false, $username=''){
                                 Remember Me
                             </label>
                             <button type='button' id='check_cred' class='button'>Verify credentials</button>
-                            <img class='loadergif hidden' src='<?php echo $LoaderImageURL;?>'>
+                            <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>'>
                         </div>
                     </div>
 
                     <div id='logging_in_wrapper' class='hidden'>
                         <h4 class='status_message'>Logging in...</h4>
-                        <img class='loadergif center' src='<?php echo LoaderImageURL; ?>'>
+                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>'>
                     </div>
 
                     <div id='webauthn_wrapper' class='authenticator_wrapper hidden'>
                         <h4 class='status_message'>Please authenticate...</h4>
-                        <img class='loadergif center' src='<?php echo LoaderImageURL; ?>'>
+                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>'>
                     </div>
 
                     <div id='authenticator_wrapper' class='authenticator_wrapper hidden'>
@@ -92,7 +90,7 @@ function login_modal($message='', $required=false, $username=''){
                     <div id='submit_login_wrapper' class='hidden'>                       
                         <div class='submit_wrapper'>
 		                    <button type='button' class='button' id='login_button' disabled>Login</button>
-		                    <img class='loadergif hidden' src='<?php echo $LoaderImageURL;?>'>
+		                    <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>'>
 	                    </div>
                     </div>
                 </form>
@@ -116,9 +114,6 @@ function login_modal($message='', $required=false, $username=''){
 //add hidden login modal to page if not logged in
 add_filter( 'the_content', function ( $content ) {
 	if (!is_user_logged_in()){
-        #if(!isset($_SESSION)) session_start();
-        #$_SESSION['login_added']=true;
-        
         if(isset($_GET['showlogin'])){
             $content .= login_modal('', true, $_GET['showlogin']);
         }else{

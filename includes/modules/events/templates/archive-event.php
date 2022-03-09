@@ -52,7 +52,7 @@ get_header();
 					<div class="date-search">
 						<input type="hidden" value="Select">
 						<?php
-						echo "<img src='$picturesurl/date.png' alt='time' class='event_icon'>";
+						echo "<img src='".PICTURESURL."/date.png' alt='time' class='event_icon'>";
 						?>
 						<select class='month_selector<?php if($view=='week') echo ' hidden';?>' placeholder="Select month">
 							<?php

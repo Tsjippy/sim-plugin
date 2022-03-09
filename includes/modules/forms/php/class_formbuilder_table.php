@@ -435,8 +435,6 @@ class FormTable extends Formbuilder{
 	}
 
 	function export_pdf($filename=""){
-		global $PDF_Logo_path;
-			
 		$pdf = new \PDF_HTML();
 		$pdf->SetFont('Arial','B',15);
 				

@@ -572,11 +572,9 @@ function verify_nonce($nonce_string){
 }
 
 function add_save_button($element_id, $button_text, $extraclass = ''){
-	global $LoaderImageURL;
-	
 	$html = "<div class='submit_wrapper'>";
 		$html .= "<button type='button' class='button form_submit $extraclass' name='$element_id'>$button_text</button>";
-		$html .= "<img class='loadergif hidden' src='$LoaderImageURL'>";
+		$html .= "<img class='loadergif hidden' src='".LOADERIMAGEURL."'>";
 	$html .= "</div>";
 	
 	return $html;
@@ -641,21 +639,27 @@ function try_send_signal($message, $recipient, $post_id=""){
 }
 
 function picture_selector($key, $name, $settings){
+	wp_enqueue_media();
+	wp_enqueue_script('sim_picture_selector_script', INCLUDESURL.'/js/select_picture.js', array(), '7.0.0',true);
+	wp_enqueue_style( 'sim_picture_selector_style', INCLUDESURL.'/css/picture_select.min.css', array(), '7.0.0');
+
 	if(empty($settings['picture_ids'][$key])){
 		$hidden		= 'hidden';
 		$src		= '';
 		$id			= '';
+		$text		= 'Select';
 	}else{
 		$id			= $settings['picture_ids'][$key];
 		$src		= wp_get_attachment_image_url($id);
 		$hidden		= '';
+		$text		= 'Change';
 	}
 	?>
 	<div class='picture_selector_wrapper'>
 		<div class='image-preview-wrapper <?php echo $hidden;?>'>
 			<img class='image-preview' src='<?php echo $src;?>'>
 		</div>
-		<input type="button" class="button select_image_button" value="Select picture for <?php echo strtolower($name);?>" />
+		<input type="button" class="button select_image_button" value="<?php echo $text;?> picture for <?php echo strtolower($name);?>" />
 		<input type='hidden' class="image_attachment_id" name='picture_ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
 	</div>
 	<?php

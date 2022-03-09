@@ -1,8 +1,15 @@
+@use '../../../css/scss/global' as *;
+
 .media-frame-router button{
 	color: black;
 }
 
 #postform{
+	input[type="text"]{
+        @extend %input-shared;
+        width: 100%;
+    }
+
 	.submit_wrapper{
 		max-width: 300px;
 		margin-right: 20px;

@@ -1,10 +1,10 @@
 console.log("Home.js loaded");
 document.addEventListener("DOMContentLoaded",function() {
-
+	// SHow message 
  	if(location['search'].includes('?message=')){
 		var param	= location.search.substr(1).split("&");
-		var text = decodeURIComponent(param[0].split("=")[1]);
-		var type = param[1].split("=")[1];
+		var text 	= decodeURIComponent(param[0].split("=")[1]);
+		var type 	= param[1].split("=")[1];
 
 		//remove params again
 		window.history.replaceState({}, document.title, window.location.href.split('?')[0]);
@@ -42,4 +42,21 @@ document.addEventListener("DOMContentLoaded",function() {
 			document.getElementById('page').style['padding-top']= '0px';
 		}		
 	};
+
+	var el=document.querySelector("#welcome-message-button");
+	if(el != null){
+		el.addEventListener("click", function(){
+			//Hide the message
+			document.querySelector("#welcome-message").classList.add('hidden');
+
+			var form_data = new FormData();
+			form_data.append('action', 'hideWelcome');
+
+			fetch(sim.ajax_url, {
+				method: 'POST',
+				credentials: 'same-origin',
+				body: form_data
+			}).catch(err => console.error(err));
+		});
+	}
 });

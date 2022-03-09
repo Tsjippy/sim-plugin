@@ -37,12 +37,12 @@ function load_vimeo_video(el) {
 				wrapper.innerHTML	= '<img src="'+media_vars.loading_gif+'" style="max-height: 100px;"><br><b>Loading Vimeo video</b>';
 		
 				//add the div replacing the default video screen
-				element	= document.querySelector('.wp-media-wrapper.wp-video');
+				var element	= document.querySelector('.wp-media-wrapper.wp-video');
 				element.parentNode.replaceChild(wrapper, element);
 			}
 
 			//get the vimeo id
-			var vimeo_id = vimeo_link.replace('https://vimeo.com/','');
+			var vimeoId = vimeo_link.replace('https://vimeo.com/','');
 
 			//build an iframe element to show the vimeo video
 			var iframe			= document.createElement("iframe");
@@ -54,7 +54,7 @@ function load_vimeo_video(el) {
 				//remove loading gif
 				wrapper.remove();
 			};
-			iframe.src			= 'https://player.vimeo.com/video/'+vimeo_id;
+			iframe.src			= 'https://player.vimeo.com/video/'+vimeoId;
 			iframe.style.width	= '100%';
 			iframe.style.height	= '100%';
 			iframe.style.display= 'none';

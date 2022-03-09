@@ -7,12 +7,17 @@ add_action( 'wp_enqueue_scripts', function($hook){
 		wp_enqueue_style( 'sim_frontpage_style', plugins_url('css/frontpage.min.css', __DIR__), array(), ModuleVersion);
 
 		//Add header image selected in customizer to homepage using inline css
-		$header_image_id	= get_theme_mod( 'sim_header_image');
+		$header_image_id	= SIM\get_module_option('frontpage', 'picture_ids')['header_image'];
 		$header_image_url	= wp_get_attachment_url($header_image_id);
-		$extra_css			= ".home:not(.sticky) #masthead{background-image: url($header_image_url);";
-		wp_add_inline_style('sim_frontpage_style', $extra_css);
+		if($header_image_url){
+			$extra_css			= ".home:not(.sticky) #masthead{background-image: url($header_image_url);";
+			wp_add_inline_style('sim_frontpage_style', $extra_css);
+		}
 		
 		//home.js
 		wp_enqueue_script('sim_home_script',plugins_url('js/home.js', __DIR__), array('sweetalert'), ModuleVersion, true);
+
+		//Welcome shortcode
+		wp_register_script('sim_message_script', plugins_url('js/hide_welcome.js', __DIR__), array(), ModuleVersion, true);
 	}
 });

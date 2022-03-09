@@ -211,18 +211,17 @@ class PDF_HTML extends FPDF{
 	}
 
 	function frontpage($title, $subtitle=''){
-		global $PDF_Logo_path;
-		
 		//Set the title of the document
 		$this->SetTitle($title. " " .$subtitle);
 		
 		$this->AddPage();
 
 		//Add the logo to the page
+		$logo	= get_attached_file(SIM\get_module_option('PDF', 'picture_ids')['logo']);
 		try{
-			$this->Image($PDF_Logo_path, 70, 30, 70,0);
+			$this->Image($logo, 70, 30, 70,0);
 		}catch (\Exception $e) {
-			SIM\print_array("PDF_export.php: $PDF_Logo_path is not a valid image");
+			SIM\print_array("PDF_export.php: $logo is not a valid image");
 		}
 		$this->SetFont( 'Arial', '', 42 );
 		
@@ -247,13 +246,13 @@ class PDF_HTML extends FPDF{
 	
 	// Page header
 	function Header(){
-		global $PDF_Logo_path;
 		if($this->skipfirstpage == false or $this->PageNo() != 1){
+			$logo	= get_attached_file(SIM\get_module_option('PDF', 'picture_ids')['logo']);
 			try{
 				// Logo
-				$this->Image($PDF_Logo_path,10,6,30,0,'JPG');
+				$this->Image($logo,10,6,30,0,'JPG');
 			}catch (Exception $e) {
-				SIM\print_array("PDF_HELPER_Functions.php: $PDF_Logo_path is not a valid image");
+				SIM\print_array("PDF_HELPER_Functions.php: $logo is not a valid image");
 			}
 			// Arial bold 15
 			$this->SetFont('Arial','B',15);

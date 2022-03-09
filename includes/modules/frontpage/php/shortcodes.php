@@ -28,12 +28,11 @@ add_shortcode("login_count",function ($atts){
 //Shortcode for the welcome message on the homepage
 add_shortcode("welcome",function ($atts){
 	if (is_user_logged_in()){
-		global $WelcomeMessagePageID;
 		$UserID = get_current_user_id();
 		//Check welcome message needs to be shown
 		$show_welcome = get_user_meta( $UserID, 'welcomemessage', true );
 		if ($show_welcome == ""){
-			$welcome_post = get_post($WelcomeMessagePageID); 
+			$welcome_post = get_post(SIM\get_module_option('frontpage', 'welcome_page')); 
 			if($welcome_post != null){
 				//Load js
 				wp_enqueue_script('sim_message_script');

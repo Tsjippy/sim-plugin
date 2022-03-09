@@ -18,7 +18,7 @@ export async function getUploadUrl (plupload_file, wp_uploader) {
             storedEntry = storedEntries[0];
             if (storedEntry.uploadUrl) {
                 console.debug('previous URL found: ' + storedEntry.uploadUrl);
-                return startUpload(file);
+                return startUpload(plupload_file, wp_uploader);
             }
             // cleanup
             urlStorage.removeUpload(storedEntry.urlStorageKey);
@@ -34,6 +34,13 @@ export async function getUploadUrl (plupload_file, wp_uploader) {
             credentials: 'same-origin',
             body: formdata
         });
+        //Failed
+        if(!response.ok){
+            console.error('Failed');
+            console.error(formdata);
+            console.log(file);
+            return;
+        }
         const data          = await response.json();
         var uploadUrl		= data.upload_link;
         var postId		    = data.post_id;
@@ -73,7 +80,7 @@ function startUpload (plupload_file, wp_uploader) {
 			var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
 
 			//show percentage in progressbar
-			document.querySelectorAll('.media-progress-bar > div').forEach(div=>{
+			document.querySelectorAll('.attachments-wrapper .uploading:first-child .media-progress-bar > div, .selection-view .uploading:first-child .media-progress-bar > div, .media-uploader-status.uploading .media-progress-bar > div').forEach(div=>{
 				div.style.width	= percentage+'%';
 				div.innerHTML	= '<span style="width:100%;text-align:center;color:white;display:block;font-size:smaller;">'+percentage+'%</span>';
 			});

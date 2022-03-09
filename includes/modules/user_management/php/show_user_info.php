@@ -190,7 +190,7 @@ function user_info_page($atts){
 					}
 					
 					if( isset($_POST['export_visa_info'])){
-						SIM\export_visa_excel();
+						SIM\SIMNIGERIA\export_visa_excel();
 					}
 				
 					//only active if not own data and has not the user management role
@@ -209,7 +209,7 @@ function user_info_page($atts){
 					
 					//Content
 					$html .= "<div id='visa_info' class='tabcontent $class'>";
-					$html .= SIM\visa_page($user_id,true);
+					$html .= SIM\SIMNIGERIA\visa_page($user_id,true);
 					
 					if(array_intersect($visa_roles, $user_roles )){
 						$html .= "<div class='export_button_wrapper' style='margin-top:50px;'>

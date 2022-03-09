@@ -118,7 +118,7 @@ function twofa_settings_form($user_id=''){
 			<div class="infobox" name="traveltype_info">
 				<div style="float:right">
 					<p class="info_icon" style='margin-top: -30px;padding-top: 0px;'>
-						<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PicturesUrl;?>/info.png" style='max-height:25px;'>
+						<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL;?>/info.png" style='max-height:25px;'>
 					</p>
 				</div>
 				<span class="info_text">

@@ -78,7 +78,6 @@ class Schedule{
 	}
 	
 	function add_modals(){
-		global $LoaderImageURL;
 		ob_start();
 		?>
 		<!-- Add host modal for admins -->
@@ -654,6 +653,8 @@ class Schedule{
 	
 	function add_schedule(){
 		SIM\verify_nonce('add_schedule_nonce');
+
+		if(!$this->admin) wp_die('You have no permission to add a schedule!', 500);
 		
 		if(empty($_POST['target_name']) or empty($_POST['startdate']) or empty($_POST['enddate'])){
 			wp_die("Please submit a name and two dates",500);
@@ -728,6 +729,8 @@ class Schedule{
 	function remove_schedule(){
 		global $Events;
 		global $wpdb;
+
+		if(!$this->admin) wp_die('You have no permission to remove a schedule!', 500);
 
 		SIM\verify_nonce('remove_schedule_nonce');
 
@@ -916,6 +919,8 @@ class Schedule{
 		global $wpdb;
 		
 		SIM\verify_nonce('publish_schedule_nonce');
+
+		if(!$this->admin) wp_die('You have no permission to publish a schedule!', 500);
 		
 		$schedule_id	= $_POST['schedule_id'];
 		if(!is_numeric($schedule_id) or !is_numeric($_POST['select_schedule_target'])){

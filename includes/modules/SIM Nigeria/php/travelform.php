@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\SIMNIGERIA;
+use SIM;
 
 //Single default values used to prefil the travel form
 add_filter( 'add_form_defaults', function($default_values,$user_id){
@@ -98,8 +99,8 @@ add_filter( 'add_form_multi_defaults', function($default_array_values,$user_id){
 							//numeric key so add the array as a whole
 							$default_array_values[$field.'_'.$key] = $value;
 						}else{
-							print_array('I have not added fieldvalue: "');
-							print_array($value);
+							SIM\print_array('I have not added fieldvalue: "');
+							SIM\print_array($value);
 						}
 					}
 				}
@@ -107,15 +108,15 @@ add_filter( 'add_form_multi_defaults', function($default_array_values,$user_id){
 		}
 	}
 	
-	foreach(get_user_accounts($return_family=false,$adults=true,$local_nigerians=true) as $user){
+	foreach(SIM\get_user_accounts($return_family=false,$adults=true,$local_nigerians=true) as $user){
 		$default_array_values['all_users'][$user->ID] = $user->display_name;
 	}
 
-	foreach(get_user_accounts() as $user){
+	foreach(SIM\get_user_accounts() as $user){
 		$default_array_values['missionaries'][$user->ID] = $user->display_name;
 	}
 
-	foreach(get_user_accounts($return_family=true) as $user){
+	foreach(SIM\get_user_accounts($return_family=true) as $user){
 		$default_array_values['families'][$user->ID] = $user->display_name;
 	}
 
@@ -140,7 +141,7 @@ add_filter('sim_transform_formtable_data',function($string,$field_name){
 			foreach($string as $key=>$value){
 				//assume its a userid if it is a number, then transform it to a clickable link
 				if(is_numeric($value)){
-					$output 			 = get_user_page_link($value);
+					$output 			 = SIM\USERPAGE\get_user_page_link($value);
 					if($output){
 						if($key != $last_key) $output .= ", ";
 					}else{
@@ -151,7 +152,7 @@ add_filter('sim_transform_formtable_data',function($string,$field_name){
 				}
 			}
 		}elseif(is_numeric($string)){
-			$output				= get_user_page_link($string);
+			$output				= SIM\USERPAGE\get_user_page_link($string);
 			if(!$output){
 				$output	= $string;
 			}
@@ -284,7 +285,7 @@ function generate_immigration_letters(){
 		$pdf->AddFont('NSimSun','');
 		$pdf->SetFont('NSimSun','',12);
 	}catch (\Exception $e){
-		print_array('Loading NSimSun font failed.');
+		SIM\print_array('Loading NSimSun font failed.');
 		$pdf->SetFont('Arial','B',12);
 	}
 	
@@ -309,8 +310,6 @@ class IMMIGRATION_LETTER extends \PDF_HTML{
 	
 	//Add departure or arrival pages to an existing pdf
 	function generate_travel_letter($type, $visa_info, $gender, $date, $origin, $destination, $transporttype){
-		global $TravelCoordinatorSignature;
-		
 		//Check if values are available
 		if(!is_array($visa_info)){
 			$passport_name 		= "UNKNOWN";
@@ -423,10 +422,11 @@ class IMMIGRATION_LETTER extends \PDF_HTML{
 		}
 		
 		//Add the signature
+		$signature	= get_attached_file(SIM\get_module_option('SIM Nigeria', 'picture_ids')['tc_signature']);
 		try{
-			$this->Image($TravelCoordinatorSignature, null, null, 30);
+			$this->Image($signature, null, null, 30);
 		}catch (\Exception $e) {
-			print_array("PDF_export.php: $TravelCoordinatorSignature is not a valid image");
+			SIM\print_array("PDF_export.php: $signature is not a valid image");
 		}
 		
 		$lines = [
@@ -523,7 +523,7 @@ add_shortcode( 'quotadocuments', function (){
 						</div>
 						<?php
 					}
-					echo add_save_button('update_visa_documents', 'Update visa documents');
+					echo SIM\add_save_button('update_visa_documents', 'Update visa documents');
 					?>
 				</div>
 			</div>
@@ -567,7 +567,7 @@ function quoata_document_upload($quota_documents){
 				<div class="buttonwrapper" style="width:100%; display: flex;">
 					<?php
 					$name	= "quota_documents[quotafiles][$key]";
-					echo document_upload($user_id='', $documentname=$name, $targetdir='visa_uploads', $multiple=true, $metakey=$name);
+					echo SIM\document_upload($user_id='', $documentname=$name, $targetdir='visa_uploads', $multiple=true, $metakey=$name);
 					echo $button;
 					?>
 				</div>
@@ -577,7 +577,7 @@ function quoata_document_upload($quota_documents){
 		?>
 		</div>
 		<?php
-		echo add_save_button('update_visa_documents', 'Update quota documents');
+		echo SIM\add_save_button('update_visa_documents', 'Update quota documents');
 		?>
 	</form>
 	<?php

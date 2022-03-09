@@ -47,9 +47,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 },10,3);
 
 //add new ministry location via AJAX
-add_action ( 'wp_ajax_add_ministry', function(){
-	global $MinistryCategoryID;
-	
+add_action ( 'wp_ajax_add_ministry', function(){	
 	SIM\verify_nonce('add_ministry_nonce');
 	
 	if (!empty($_POST["location_name"])){
@@ -130,9 +128,7 @@ add_action('before_form',function ($formname){
 });
 
 
-function get_ministries(){
-	global $MinistryCategoryID;
-	
+function get_ministries(){	
 	//Get all pages which are subpages of the MinistriesPageID
 	$Ministry_pages = get_posts([
 		'post_type'			=> 'location',
@@ -142,8 +138,7 @@ function get_ministries(){
             array(
                 'taxonomy'	=> 'locationtype',
 				'field' => 'term_id',
-				'terms' => $MinistryCategoryID,
-                //'parent'	=> $MinistryCategoryID,
+				'terms' => get_term_by('name', 'Ministries', 'locationtype')->term_id
             )
         )
 	]);
@@ -158,7 +153,7 @@ function get_ministries(){
 	return $Ministries;
 }
 
-//display ministries
+//display ministries defined as php function in generics form
 function display_ministry_positions($user_id){
 	$user_ministries 	= (array)get_user_meta( $user_id, "user_ministries", true);
 	

@@ -2,13 +2,17 @@
 namespace SIM\EVENTS;
 use SIM;
 
+add_filter('sim_frontend_posting_modals', function($types){
+	$types[]	= 'event';
+	return $types;
+});
+
 add_action('init', function(){
 	$GLOBALS['Events']	= new Events();
 
 	SIM\register_post_type_and_tax('event', 'events');
-	add_action('frontend_post_modal', 'SIM\add_event_modal');
-	add_action('frontend_post_before_content', 'SIM\event_specific_fields',10,2);
-	add_action('frontend_post_content_title', 'SIM\event_title');
+	add_action('frontend_post_before_content', 'SIM\EVENTS\event_specific_fields');
+	add_action('frontend_post_content_title', 'SIM\EVENTS\event_title');
 	
 	add_filter(
 		'widget_categories_args',
@@ -27,11 +31,6 @@ add_action('init', function(){
 	);
 }, 999);
 
-function add_event_modal(){
-	global $FrontEndContent;
-	$FrontEndContent->add_modal('event');
-}
-
 function event_title($post_type){
 	$class = 'event';
 	if($post_type != 'event')	$class .= ' hidden';
@@ -41,9 +40,7 @@ function event_title($post_type){
 	echo "</label>";
 }
 
-function event_specific_fields($post_type,$post_id){
-	global $FrontEndContent;
-	
+function event_specific_fields($frontEndContent){
 	$categories	= get_categories( array(
 		'orderby' => 'name',
 		'order'   => 'ASC',
@@ -51,14 +48,14 @@ function event_specific_fields($post_type,$post_id){
 		'hide_empty' => false,
 	) );
 	
-	$FrontEndContent->show_categories('event',$categories);
+	$frontEndContent->show_categories('event',$categories);
 	
-	$eventdetails	= (array)get_post_meta($post_id,'eventdetails',true);
+	$eventdetails	= (array)get_post_meta($frontEndContent->post_id,'eventdetails',true);
 	$repeat_param	= $eventdetails['repeat'];
 	
 	?>
 	<br>
-	<div class="event <?php if($post_type != 'event') echo 'hidden'; ?>">
+	<div class="event <?php if($frontEndContent->post_type != 'event') echo 'hidden'; ?>">
 		<label>
 			<input type='checkbox' name='event[allday]' value='allday' <?php if(!empty($eventdetails['allday'])) echo 'checked'?> ;>
 			All day event

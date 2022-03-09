@@ -116,6 +116,6 @@ add_shortcode('pending_post_icon', function ($atts){
 
 //Add shortcode for the post edit form
 add_shortcode("front_end_post", function(){
-	$FrontEndContent	= new FrontEndContent();
-	return $FrontEndContent->frontend_post();
+	$frontEndContent	= new FrontEndContent();
+	return $frontEndContent->frontend_post();
 });

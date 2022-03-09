@@ -8,25 +8,20 @@ add_action('loop_start',function(){
 });
 
 add_action('wp_footer', function(){
-	global $PublicCategoryID;
-	global $ConfCategoryID;
-	global $MinistryCategoryID;
-
-	$user		= wp_get_current_user();
+	$user				= wp_get_current_user();
+	$publicCategoryId	= get_cat_ID('Public');
 
 	//If this page or post does not have the public category and the user is not logged in, redirect them to the login page
 	if(
 		http_response_code() != 404			and		//we try to visit an existing page
 		!is_tax()							and		
 		!is_user_logged_in()				and
-		!has_category($PublicCategoryID)	and 
+		!has_category($publicCategoryId)	and 
 		!is_search()						and
 		!is_home()							or 
 		(
 			is_tax()							and 
-			!is_user_logged_in()				and
-			get_queried_object()->term_id != $MinistryCategoryID and
-			get_queried_object()->parent  != $MinistryCategoryID
+			!is_user_logged_in()
 		)
 	){
 		//prevent the output 
@@ -44,12 +39,12 @@ add_action('wp_footer', function(){
 	}
 	
 	//If not a valid e-mail then only allow the account page to reset the email
-	if(strpos($user->user_email, ".empty") !== false and !has_category($PublicCategoryID) and !is_search() and !is_home() and strpos($_SERVER['REQUEST_URI'],'account') === false ){
+	if(strpos($user->user_email, ".empty") !== false and !has_category($publicCategoryId) and !is_search() and !is_home() and strpos($_SERVER['REQUEST_URI'],'account') === false ){
 		wp_die("Your e-mail address is not valid please change it <a href='".get_site_url()."/account/?section=generic'>here</a>.");
 	}
 	
 	//block access to confidential pages
-	if(is_page() and has_category($ConfCategoryID) and in_array('nigerianstaff',$user->roles)){
+	if(is_page() and has_category('Confidential') and in_array('nigerianstaff',$user->roles)){
 		wp_die("You do not have the permission to see this.");
 	}
 
@@ -61,20 +56,17 @@ add_action('wp_footer', function(){
 add_action('init', function (){
 	//Function to only show newsittems on the news page the user is allowed to see
 	add_action( 'pre_get_posts', function ( $query ) {
-		global $PublicCategoryID;
-		global $ConfCategoryID;
-		
 		if ( $query->is_home() && $query->is_main_query() ) {
 			if ( !is_user_logged_in() ) {
 				//Only show items with the public category
-				$query->set( 'cat', $PublicCategoryID );
+				$query->set( 'cat', get_cat_ID('Public') );
 				//Only show the items without a password
 				$query->set( 'has_password', false );
 			}else{
 				$user = wp_get_current_user();
 				if(in_array('nigerianstaff',$user->roles)){
 					//Hide confidential items
-					$query->set( 'category__not_in', [$ConfCategoryID] );
+					$query->set( 'category__not_in', [get_cat_ID('Confidential')] );
 				}
 			}
 		}
@@ -83,10 +75,9 @@ add_action('init', function (){
 
 //Only show public search results for non-loggedin users
 add_filter('pre_get_posts', function ($query) {
-	global $PublicCategoryID;
 	if ($query->is_search) {
 		if ( !is_user_logged_in() ) {
-			$query->set('cat', $PublicCategoryID);
+			$query->set('cat', get_cat_ID('Public'));
 		}
 	}
 	return $query;

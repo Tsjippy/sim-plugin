@@ -76,39 +76,6 @@ add_filter('sim_after_bot_payer', function($args){
 	return $args;
 });
 
-function anniversary_check(){
-	global $Events;
-
-	$Events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
-
-	foreach($Events->events as $event){
-		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
-		if(!empty($start_year)){
-			$userdata		= get_userdata($event->post_author);
-			$first_name		= $userdata->first_name;
-			$event_title	= $event->post_title;
-			$partner_id		= SIM\has_partner($event->post_author);
-
-			if($partner_id){
-				$partnerdata	= get_userdata($partner_id);
-				$couple_string	= $first_name.' & '.$partnerdata->display_name;
-				$event_title	= trim(str_replace($couple_string,"", $event_title));
-			}
-			
-			$event_title	= trim(str_replace($userdata->display_name,"", $event_title));
-
-			$age	= SIM\get_age_in_words($start_year);
-
-			SIM\try_send_signal("Hi $first_name,\nCongratulations with your $age $event_title!", $event->post_author);
-
-			//If the author has a partner and this events applies to both of them
-			if($partner_id and strpos($event->post_title, $couple_string)){
-				SIM\try_send_signal("Hi {$partnerdata->first_name},\nCongratulations with your $event_title!", $partner_id);
-			}
-		}
-	}
-}
-
 add_action('delete_user', function($user_id){
 	global $Events;
 

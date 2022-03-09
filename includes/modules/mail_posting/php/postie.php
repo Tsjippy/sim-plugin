@@ -1,13 +1,11 @@
 <?php 
-namespace SIM;
+namespace SIM\MAIL_POSTING;
+use SIM;
 
 //Update the post
 //http://postieplugin.com/postie_post_before/
 add_filter('postie_post_before', 'SIM\postie_post', 10, 2);
-function postie_post($post, $headers) {
-	global $FinanceCategoryID;
-	global $FinanceEmail;
-	
+function postie_post($post, $headers) {	
 	//Check if account statement mail
 	$post = check_if_account_statement($post);
 	
@@ -25,10 +23,10 @@ function postie_post($post, $headers) {
 		$post['post_title'] = trim(str_replace("Fwd:","",$subject));
 	
 		//Set the category
-		if ($headers['from']['mailbox'].'@'.$headers['from']['host'] == $FinanceEmail){
+		if ($headers['from']['mailbox'].'@'.$headers['from']['host'] == SIM\get_module_option('mail_posting', 'finance_email')){
 			echo "Setting the category";
 			//Set the category to Finance
-			$post['post_category'] = [$FinanceCategoryID];
+			$post['post_category'] = [get_cat_ID('Finance')];
 		}
 	}
 	return $post;
@@ -38,9 +36,9 @@ add_filter('postie_post_after', 'SIM\postie_post_published');
 function postie_post_published($post){
 	//Only send message if post is published
 	if($post['post_status'] == 'publish'){
-		SIGNAL\send_post_notification($post['ID']);
+		SIM\SIGNAL\send_post_notification($post['ID']);
 	}else{
-		FRONTEND_POSTING\send_pending_post_warning(get_post($post['ID']), false);
+		SIM\FRONTEND_POSTING\send_pending_post_warning(get_post($post['ID']), false);
 	}
 }
 
@@ -85,7 +83,7 @@ function check_if_account_statement($post){
 			//Make sure we only continue with an adult
 			$login_name	= '';
 			foreach($users as $user){
-				if (!is_child($user->ID)){
+				if (!SIM\is_child($user->ID)){
 					$login_name = $user->data->user_login;
 					break;
 				}
@@ -128,7 +126,7 @@ function check_if_account_statement($post){
 				
 				$year = date_format($postdate,"Y");
 				foreach($users as $user){
-					if (is_child($user->ID)) continue;
+					if (SIM\is_child($user->ID)) continue;
 					
 					//Get the account statement list
 					$account_statements = get_user_meta($user->ID, "account_statements", true);
@@ -145,7 +143,7 @@ function check_if_account_statement($post){
 					update_user_meta($user->ID, "account_statements", $account_statements);
 					
 					//Send signal message
-					try_send_signal(
+					SIM\try_send_signal(
 						"Hi ".$user->first_name.",\n\nThe account statement for the month ".date_format($postdate,'F')." just got available on the website. See it here: \n\n".get_site_url(null, '/account/')."\n\nDirect url to the statement:\n$new_url",
 						$user->ID
 					);

@@ -939,7 +939,6 @@ class Formbuilder{
 	}
 	
 	function buildhtml($element, $key=0){
-		global $LoaderImageURL;
 		$this->prev_element		= $this->form_elements[$key-1];
 		$this->next_element		= $this->form_elements[$key+1];
 
@@ -1038,7 +1037,7 @@ class Formbuilder{
 				//first part of the form, don't hide
 				}else{
 					$this->isformstep = true;
-					$html .= "<img class='formsteploader' src='$LoaderImageURL'>";
+					$html .= "<img class='formsteploader' src='".LOADERIMAGEURL."'>";
 				}
 				
 				$this->formstepcounter	+= 1;

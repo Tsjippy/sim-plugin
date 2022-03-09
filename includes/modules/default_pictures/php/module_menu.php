@@ -19,10 +19,6 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
-	
-	wp_enqueue_media();
-	wp_enqueue_script('sim_picture_selector_script', IncludesUrl.'/js/select_picture.js', array(), ModuleVersion,true);
-	wp_enqueue_style( 'sim_picture_selector_style', IncludesUrl.'/css/default_pictures.min.css', array(), ModuleVersion);
 
 	//Get all post types
 	$args = array(

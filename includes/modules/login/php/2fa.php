@@ -63,8 +63,6 @@ add_action('wp_ajax_nopriv_request_email_code',function(){
 });
 
 function sendEmailCode($user){
-    global $WebmasterName;
-
     $email_code  = mt_rand(1000000000,9999999999);
 
     if(!isset($_SESSION)) session_start();
@@ -75,11 +73,10 @@ function sendEmailCode($user){
     $message  = "Hi {$user->first_name},<br><br>";
     $message .= "Your requested a verification code for login on simnigeria.org.<br>";
     $message .= "Please use this code: <code>$email_code</code>.<br><br>";
-    $message .= "Kind regards,<br><br>$WebmasterName<br><br>";
-    $headers  = array('Content-Type: text/html; charset=UTF-8');
+    $message .= "Kind regards,<br><br>";
 
     //Send the mail
-    wp_mail( $user->user_email, $subject, $message, $headers);
+    wp_mail( $user->user_email, $subject, $message);
 }
 
 function verifyEmailCode(){
@@ -103,11 +100,10 @@ function send_2fa_warning_email($user){
     $message  = "Hi {$user->first_name},<br><br>";
     $message .= "Someone just logged in onto your account without the use of a second login factor.<br>";
     $message .= "Please let us know immidiately if this was not you.<br><br>";
-    $message .= "Kind regards,<br><br>".WebmasterName."<br><br>";
-    $headers  = array('Content-Type: text/html; charset=UTF-8');
+    $message .= "Kind regards,<br><br>";
 
     //Send the mail
-    wp_mail( $user->user_email, $subject, $message, $headers);
+    wp_mail( $user->user_email, $subject, $message);
 }
 
 //Reset 2fa
@@ -129,10 +125,9 @@ function reset_2fa($user_id){
 	$message .= "I have removed all your second login factors so you can login again.<br>";
 	$message .= "After logging in with your username ({ $userdata->user_login}) and password you have to set it up again.<br>";
 	$message .= 'Find how to set it up on '.get_site_url().'/manuals/<br><br>';
-	$message .= 'Kind regards,<br><br>'.WebmasterName;
-	$headers = ['Content-Type: text/html; charset=UTF-8'];
+	$message .= 'Kind regards,<br><br>';
 
-	wp_mail( $userdata->user_email, "Your account is unlocked", $message, $headers );
+	wp_mail( $userdata->user_email, "Your account is unlocked", $message);
 }
 
 //Check 2fa during login
@@ -304,11 +299,10 @@ add_action ( 'wp_ajax_save_2fa_settings', function(){
         $mail_message  = "Hi $firstname,<br><br>";
         $mail_message .= "This is to confirm you enabled e-mail verification for login on simnigeria.org.<br>";
         $mail_message .= "<br>";
-        $mail_message .= "Kind regards,<br><br>". WebmasterName."<br><br>";
-        $headers        = array('Content-Type: text/html; charset=UTF-8');
+        $mail_message .= "Kind regards,<br><br>";
         
         //Send the mail
-        wp_mail( $email , $subject, $mail_message, $headers);
+        wp_mail( $email , $subject, $mail_message);
     }
 
     //make sure we keep webauthn enabled

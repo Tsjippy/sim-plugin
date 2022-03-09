@@ -8,7 +8,7 @@ add_action('init', function(){
 });
 
 function schedule_tasks(){
-    $freq   = SIM\get_module_option('mandatory', 'reminder_freq');
+    $freq   = SIM\get_module_option('mandatory_content', 'reminder_freq');
     if($freq)   SIM\schedule_task('read_reminder_action', $freq);
 }
 

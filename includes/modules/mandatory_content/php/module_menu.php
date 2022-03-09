@@ -27,15 +27,22 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 	
     ?>
-	<label for="warning_freq">How often should people be reminded of remaining required fields</label>
+	<label for="reminder_freq">How often should people be reminded of remaining required fields</label>
 	<br>
-	<select name="warning_freq">
+	<select name="reminder_freq">
 		<option value=''>---</option>
-		<option value='daily' <?php if($settings["warning_freq"] == 'daily') echo 'selected';?>>Daily</option>
-		<option value='weekly' <?php if($settings["warning_freq"] == 'weekly') echo 'selected';?>>Weekly</option>
-		<option value='monthly' <?php if($settings["warning_freq"] == 'monthly') echo 'selected';?>>Monthly</option>
-		<option value='threemonthly' <?php if($settings["warning_freq"] == 'threemonthly') echo 'selected';?>>Every quarter</option>
-		<option value='yearly' <?php if($settings["warning_freq"] == 'yearly') echo 'selected';?>>Yearly</option>
+		<option value='daily' <?php if($settings["reminder_freq"] == 'daily') echo 'selected';?>>Daily</option>
+		<option value='weekly' <?php if($settings["reminder_freq"] == 'weekly') echo 'selected';?>>Weekly</option>
+		<option value='monthly' <?php if($settings["reminder_freq"] == 'monthly') echo 'selected';?>>Monthly</option>
+		<option value='threemonthly' <?php if($settings["reminder_freq"] == 'threemonthly') echo 'selected';?>>Every quarter</option>
+		<option value='yearly' <?php if($settings["reminder_freq"] == 'yearly') echo 'selected';?>>Yearly</option>
 	</select>
 	<?php
 }, 10, 3);
+
+add_action('sim_module_updated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	schedule_tasks();
+}, 10, 2);

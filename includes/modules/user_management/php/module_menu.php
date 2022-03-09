@@ -42,6 +42,45 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		<input type='checkbox' name='tempuser' value='tempuser' <?php if(isset($settings['tempuser'])) echo 'checked';?>>
 		Enable temporary user accounts
 	</label>
+	<br>
+	<label>How long in advance (in months) should we warn people about vaccinations who are about to expire?</label>
+	<select name="vaccination_warning_time">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+		<option value="7">7</option>
+		<option value="8">8</option>
+		<option value="9">9</option>
+		<option value="10">10</option>
+		<option value="11">11</option>
+		<option value="12">12</option>
+	</select>
+	<br>
+	<label>
+		E-mail address of the healthcare coordinator<br>
+		<input type="email" name="health_email" value="<?php echo $settings['health_email'];?>">
+	</label>
+	<br>
+	<label>
+		E-mail address of the personnel coordinator<br>
+		<input type="email" name="personnel_email" value="<?php echo $settings['personnel_email'];?>">
+	</label>
+	<br>
+	<label>
+		E-mail address of the short term coordinator<br>
+		<input type="email" name="sta_email" value="<?php echo $settings['sta_email'];?>">
+	</label>
+	<br>
 	<?php
     
 }, 10, 3);
+
+add_action('sim_module_updated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	schedule_tasks();
+}, 10, 2);

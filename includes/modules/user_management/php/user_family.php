@@ -134,7 +134,6 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	if($formname != 'user_family') return $formresults;
 	
 	global $Events;
-	global $ChildrenCopyFields;
 	
 	$family = $formresults["family"];
 
@@ -263,6 +262,14 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		if($marker_id == "" and isset($family['partner']))	$marker_id = get_user_meta($family['partner'],"marker_id",true);
 		SIM\update_family_meta( $user_id, "marker_id", $marker_id);
 		
+		//Fields of children who get their value from their parents
+		$ChildrenCopyFields			= [
+			"sending_office",
+			"local_nigerian",
+			"financial_account_id",
+			"account_statements",
+			"online_statements"
+		];
 		foreach ($ChildrenCopyFields as $field){
 			$field_value = get_user_meta( $user_id, $field, true );
 			
@@ -279,7 +286,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		}
 		
 		//update missionary page if needed
-		SIM\create_user_page($user_id);
+		SIM\USERPAGE\create_user_page($user_id);
 	}
 	
 	

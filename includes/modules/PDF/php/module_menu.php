@@ -29,10 +29,13 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		Show PDF documents full screen if that is the only page content
 	</label>
 	<br>
+	<br>
 	<label>
 		<input type='checkbox' name='pdf_print' <?php if(isset($settings['pdf_print'])) echo 'checked';?>>
 		Add a "Print to PDF" button option
 	</label>
 	<br>
+	<br>
 	<?php
+	SIM\picture_selector('logo',  'Logo for use in PDF headers', $settings);
 }, 10, 3);

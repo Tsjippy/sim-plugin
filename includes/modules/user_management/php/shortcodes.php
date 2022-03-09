@@ -271,7 +271,8 @@ add_shortcode("change_password", function(){
 
 //Shortcode for vaccination warnings
 add_action('sim_dashboard_warnings', function($user_id){
-	global $PersonnelCoordinatorEmail;
+	$personnelCoordinatorEmail	= SIM\get_module_option('user_managment', 'personnel_email');
+
 	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
 		$user_id	= $_GET["userid"];
 	}else{
@@ -282,14 +283,14 @@ add_action('sim_dashboard_warnings', function($user_id){
 	
 	$visa_info = get_user_meta( $user_id, "visa_info",true);
 	if (is_array($visa_info) and isset($visa_info['greencard_expiry'])){
-		$reminder_html .= SIM\check_expiry_date($visa_info['greencard_expiry'],'greencard');
+		$reminder_html .= check_expiry_date($visa_info['greencard_expiry'],'greencard');
 		if($reminder_html != ""){
 			$remindercount = 1;
 			$reminder_html .= '<br>';
 		}
 	}
 		
-	$vaccination_reminder_html = SIM\vaccination_reminders($user_id);
+	$vaccination_reminder_html = vaccination_reminders($user_id);
 	
 	if ($vaccination_reminder_html != ""){
 		$remindercount += 1;
@@ -302,7 +303,7 @@ add_action('sim_dashboard_warnings', function($user_id){
 	if (isset($family["children"])){
 		$child_vaccination_reminder_html = "";
 		foreach($family["children"] as $key=>$child){
-			$result = SIM\vaccination_reminders($child);
+			$result = vaccination_reminders($child);
 			if ($result != ""){
 				$remindercount += 1;
 				$userdata = get_userdata($child);
@@ -333,7 +334,7 @@ add_action('sim_dashboard_warnings', function($user_id){
 				if(is_array($generic_documents) and !empty($generic_documents['Annual review form'])){
 					$reminder_html .= "Please fill in the annual review questionary.<br>";
 					$reminder_html .= 'Find it <a href="'.get_site_url().'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
-					$reminder_html .= 'Then send it to the <a href="mailto:'.$PersonnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
+					$reminder_html .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
 					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\current_url() );
 					$reminder_html .= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
 				}
@@ -415,7 +416,8 @@ add_shortcode("account_statements",function (){
 
 //Shortcode for vaccination warnings
 add_shortcode("expiry_warnings",function (){
-	global $PersonnelCoordinatorEmail;
+	$personnelCoordinatorEmail	= SIM\get_module_option('user_managment', 'personnel_email');
+
 	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
 		$user_id	= $_GET["userid"];
 	}else{
@@ -426,14 +428,14 @@ add_shortcode("expiry_warnings",function (){
 	
 	$visa_info = get_user_meta( $user_id, "visa_info",true);
 	if (is_array($visa_info) and isset($visa_info['greencard_expiry'])){
-		$reminder_html .= SIM\check_expiry_date($visa_info['greencard_expiry'],'greencard');
+		$reminder_html .= check_expiry_date($visa_info['greencard_expiry'],'greencard');
 		if($reminder_html != ""){
 			$remindercount = 1;
 			$reminder_html .= '<br>';
 		}
 	}
 		
-	$vaccination_reminder_html = SIM\vaccination_reminders($user_id);
+	$vaccination_reminder_html = vaccination_reminders($user_id);
 	
 	if ($vaccination_reminder_html != ""){
 		$remindercount += 1;
@@ -446,7 +448,7 @@ add_shortcode("expiry_warnings",function (){
 	if (isset($family["children"])){
 		$child_vaccination_reminder_html = "";
 		foreach($family["children"] as $key=>$child){
-			$result = SIM\vaccination_reminders($child);
+			$result = vaccination_reminders($child);
 			if ($result != ""){
 				$remindercount += 1;
 				$userdata = get_userdata($child);
@@ -477,7 +479,7 @@ add_shortcode("expiry_warnings",function (){
 				if(is_array($generic_documents) and !empty($generic_documents['Annual review form'])){
 					$reminder_html .= "Please fill in the annual review questionary.<br>";
 					$reminder_html .= 'Find it <a href="'.get_site_url().'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
-					$reminder_html .= 'Then send it to the <a href="mailto:'.$PersonnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
+					$reminder_html .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
 					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\current_url() );
 					$reminder_html .= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
 				}

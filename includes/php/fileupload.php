@@ -25,8 +25,6 @@ class Fileupload{
 	}
 	
 	function get_upload_html(){
-		global $LoaderImageURL;
-		
 		//get the basemetakey in case of an indexed one
 		if(preg_match('/(.*?)\[/', $this->metakey, $match)){
 			$base_meta_key	= $match[1];
@@ -100,7 +98,7 @@ class Fileupload{
 					if(!empty($this->callback)){
 						$this->html .= "<input type='hidden' name='fileupload[callback]' 		value='{$this->callback}'>";
 					}
-					$this->html .= "<div class='loadergif_wrapper hidden'><span class='uploadmessage'></span><img class='loadergif' src='$LoaderImageURL'></div>";
+					$this->html .= "<div class='loadergif_wrapper hidden'><span class='uploadmessage'></span><img class='loadergif' src='".LOADERIMAGEURL."'></div>";
 				$this->html .= "</div>";
 			$this->html .= "</div>";
 		$this->html .= "</div>";
@@ -110,8 +108,6 @@ class Fileupload{
 	
 	//Function to render the already uploaded images or show the link to a file
 	function document_preview($document_path, $index){
-		global $LoaderImageURL;
-		
 		//documentpath is already an url
 		if(strpos($document_path,get_site_url()) !== false){
 			$url = $document_path;
@@ -156,7 +152,7 @@ class Fileupload{
 		}
 		
 		$this->html .= "<button type='button' class='remove_document button' data-url='$document_path' data-userid='{$this->user_id}' data-metakey='$metakey_string' $library_string>X</button>";
-		$this->html .= "<img class='remove_document_loader hidden' src='$LoaderImageURL' style='height:40px;' >";
+		$this->html .= "<img class='remove_document_loader hidden' src='".LOADERIMAGEURL."' style='height:40px;' >";
 		$this->html .= "</div>";
 	}
 	

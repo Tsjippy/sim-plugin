@@ -35,11 +35,11 @@ if(!empty($hook_name)){
 $hook_name	= SIM\get_module_option('frontpage','after_main_content_hook');
 if(!empty($hook_name)){
 	add_action($hook_name, function(){
-		//if on home page
-		if(is_page(SIM\get_module_option('login','home_page'))){
+		//if on home page and prayer module activated
+		if(is_page(SIM\get_module_option('login','home_page')) and SIM\get_module_option('prayer','enable')){
 			
 			if (is_user_logged_in()){
-				$prayerrequest = SIM\prayer_request();
+				$prayerrequest = SIM\PRAYER\prayer_request();
 				if (empty($prayerrequest)) return;
 			
 				echo "<article>";
@@ -61,9 +61,6 @@ if(!empty($hook_name)){
 $hook_name	= SIM\get_module_option('frontpage','before_footer_hook');
 if(!empty($hook_name)){
 	add_action($hook_name, function() {
-		global $PublicCategoryID;
-		global $ConfCategoryID;
-		
 		//if on home page
 		if(is_page(SIM\get_module_option('login','home_page')) or is_front_page()){
 			//Show the ministry gallery
@@ -111,7 +108,7 @@ if(!empty($hook_name)){
 			//If not logged in..
 			if ( !is_user_logged_in() ) {
 				//Only get news wih the public category
-				$blog_categories = [$PublicCategoryID];
+				$blog_categories = [get_cat_ID('Public')];
 				$args['tax_query'] = array(
 					array(
 						'taxonomy' => 'category',
@@ -144,7 +141,7 @@ if(!empty($hook_name)){
 						array(
 							'taxonomy' => 'eventtype',
 							'field'    => 'term_id',
-							'terms'    => [$ConfCategoryID],
+							'terms'    => [get_cat_ID('Confidential')],
 							'operator' => 'NOT IN'
 						);
 				}

@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\SIMNIGERIA;
+use SIM;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -17,8 +18,6 @@ add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id,
 },10,3);
 
 function visa_page($user_id, $message=false, $readonly=false){
-	global $LoaderImageURL;
-					
 	ob_start();
 	?>
 	<div>		
@@ -107,11 +106,11 @@ function export_visa_excel(){
 	
 	$row = 3;
 	//Get all adult missionaries
-	$users = get_user_accounts();
+	$users = SIM\get_user_accounts();
 	foreach($users as $user){
 		//skip non-valid users
 		if(empty($user->display_name)){
-			print_array("User with id {$user->ID} has not a valid display name");
+			SIM\print_array("User with id {$user->ID} has not a valid display name");
 			continue;
 		}
 		

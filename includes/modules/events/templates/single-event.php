@@ -27,7 +27,6 @@ get_footer();
 
 function event_contents(){
 	global $Events;
-	global $picturesurl;
 	$event		= $Events->retrieve_single_event(get_the_ID());
 	$date		= $Events->get_date($event);
 	$time		= $Events->get_time($event);
@@ -56,7 +55,7 @@ function event_contents(){
 						?>
 							<span class='category eventmeta'> 
 								<?php
-								echo "<img src='$picturesurl/event_category.png' alt='category' class='event_icon'>";
+								echo "<img src='".PICTURESURL."/event_category.png' alt='category' class='event_icon'>";
 								
 								//First loop over the cat to see if any parent cat needs to be removed
 								foreach($categories as $id=>$category){
@@ -102,7 +101,7 @@ function event_contents(){
 						<div class="event-meta">
 							<div class="single-event-date">
 								<?php
-								echo "<img src='$picturesurl/date.png' alt='date' class='event_icon'>";
+								echo "<img src='".PICTURESURL."/date.png' alt='date' class='event_icon'>";
 								?>
 								<h4>DATE</h4>
 								<dl>
@@ -115,7 +114,7 @@ function event_contents(){
 							</div>
 							<div class="event-time">
 								<?php
-								echo "<img src='$picturesurl/time_red.png' alt='time' class='event_icon'>";
+								echo "<img src='".PICTURESURL."/time_red.png' alt='time' class='event_icon'>";
 								?>
 								<h4 class="time">TIME</h4>
 								<dl>
@@ -132,7 +131,7 @@ function event_contents(){
 							?>
 								<div class="event-repeat">
 									<?php
-									echo "<img src='$picturesurl/repeat_small.png' alt='repeat' class='event_icon'>";
+									echo "<img src='".PICTURESURL."/repeat_small.png' alt='repeat' class='event_icon'>";
 									?>
 									<h4 class="repeat">REPEATS</h4>
 									<dl>
@@ -158,7 +157,7 @@ function event_contents(){
 							?>
 								<div class="event-location">
 									<?php
-									echo "<img src='$picturesurl/location_red.png' alt='' class='event_icon'>";
+									echo "<img src='".PICTURESURL."/location_red.png' alt='' class='event_icon'>";
 									?>
 									<h4>LOCATION</h4>
 									<div class='location_details'>
@@ -173,7 +172,7 @@ function event_contents(){
 							?>
 								<div class="event-organizer">
 									<?php
-									echo "<img src='$picturesurl/organizer.png' alt='' class='event_icon'>";
+									echo "<img src='".PICTURESURL."/organizer.png' alt='' class='event_icon'>";
 									?>
 									<h4>ORGANIZER</h4>
 									<div class='author_details'>

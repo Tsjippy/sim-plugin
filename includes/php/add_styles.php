@@ -2,10 +2,11 @@
 namespace SIM;
 
 $StyleVersion = "6.9.403";
+const StyleVersion		= '7.0.0';
 
 //Add js and css files
-add_action( 'wp_enqueue_scripts', 'SIM\enqueue_scripts');
-add_action( 'admin_enqueue_scripts', 'SIM\enqueue_libraries');
+add_action( 'wp_enqueue_scripts', 'SIM\enqueueScripts');
+add_action( 'admin_enqueue_scripts', 'SIM\enqueueLibraries');
 
 add_filter( 'body_class', function( $classes ) {
 	$newclass = [];
@@ -17,63 +18,55 @@ add_filter( 'body_class', function( $classes ) {
 	return array_merge( $classes, $newclass );
 } );
 
-function enqueue_libraries(){
-	global $StyleVersion;
+add_action( 'wp_enqueue_media', function(){
+    wp_enqueue_style('sim_media_style', plugins_url('css/media.min.css', __DIR__), [], StyleVersion);
+});
 
+function enqueueLibraries(){
 	//LIBRARIES
 	//Nice select https://github.com/bluzky/nice-select2
-	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(),$StyleVersion,true);
+	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(),StyleVersion,true);
 
 	//sortable library: https://github.com/SortableJS/Sortable#bs
-	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(),$StyleVersion,true);
+	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(),StyleVersion,true);
 	
 	//selectable select table cells https://github.com/Mobius1/Selectable
 	wp_register_script('selectable', "https://unpkg.com/selectable.js@latest/selectable.min.js", array(), null, true);
 	
 	//Sweet alert https://sweetalert2.github.io/
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
+
+
 }
 
-function enqueue_scripts($hook){
-	global $Modules;
-	global $StyleVersion;
-	global $LoaderImageURL;
-	global $NigeriaStates;
-	
+function enqueueScripts($hook){
 	$current_user = wp_get_current_user();
 	$current_user_first_name = $current_user->first_name;
 	$UserID = $current_user->id;
 
-	enqueue_libraries();
+	enqueueLibraries();
 
-	//Register scripts	
-	//OWN SCRIPTS
 	//add main.js
-	wp_enqueue_script('sim_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),$StyleVersion, true);
-	//debug
-	//wp_enqueue_script('sim_test_script', '//localhost:8080/target.js');
-	
-	//Welcome shortcode
-	wp_register_script('sim_message_script',plugins_url('js/hide_welcome.js', __DIR__),array(),$StyleVersion,true);
+	wp_enqueue_script('sim_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
 	
 	//account_statements
-	wp_register_script('sim_account_statements_script',plugins_url('js/account_statements.js', __DIR__), array(),$StyleVersion,true);
+	wp_register_script('sim_account_statements_script',plugins_url('js/account_statements.js', __DIR__), array(),StyleVersion,true);
 	
 	//Submit forms
-	wp_register_script('sim_other_script',plugins_url('js/other.js', __DIR__), array('sweetalert'),$StyleVersion,true);
+	wp_register_script('sim_other_script',plugins_url('js/other.js', __DIR__), array('sweetalert'),StyleVersion,true);
 
 	//table request shortcode
-	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_other_script'),$StyleVersion,true);
+	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_other_script'),StyleVersion,true);
 	
 	//File upload js
-	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('sim_other_script'),$StyleVersion,true);
+	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('sim_other_script'),StyleVersion,true);
 
 	//add main css, but only on non-admin pages
 	//if ($hook == ""){
 		//style for tinymce
 		add_editor_style(plugins_url('css/sim.min.css', __DIR__));
 		//style fo main site
-		wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(),$StyleVersion);
+		wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(),StyleVersion);
 	//}
 	
 	//Get current users location
@@ -92,9 +85,8 @@ function enqueue_scripts($hook){
 			"firstname"		=> $current_user_first_name, 
 			"userid"		=> $UserID,
 			'address' 		=> $address,
-			'loading_gif' 	=> $LoaderImageURL,
+			'loading_gif' 	=> LOADERIMAGEURL,
 			'base_url' 		=> get_home_url(),
-			'compounds' 	=> $NigeriaStates,
 			'max_file_size'	=> wp_max_upload_size(),
 			'restnonce'		=> wp_create_nonce('wp_rest')
 		) 

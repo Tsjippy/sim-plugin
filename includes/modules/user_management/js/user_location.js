@@ -48,19 +48,6 @@ function filllocationfields(event){
 		form.querySelector("[name='location[address]']").value		= name+' State';
 		form.querySelector("[name='location[latitude]']").value		= compounds[value]["lat"];
 		form.querySelector("[name='location[longitude]']").value	= compounds[value]["lon"];
-
-		/* 
-		//Loop over all compounds
-		for (index = 0; index < compounds.length; index++) { 
-			//Check if this is the selected compound
-			if(compounds[index]["title"] == name){
-				//Fill the elements with the compound data
-				form.querySelector("[name='location[address]']").value		= compounds[index]["address"];
-				form.querySelector("[name='location[latitude]']").value		= compounds[index]["coord_x"];
-				form.querySelector("[name='location[longitude]']").value	= compounds[index]["coord_y"]; 
-			}
-		}
-		*/
 	}
 }
 

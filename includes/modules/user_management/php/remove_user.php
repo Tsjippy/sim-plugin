@@ -6,7 +6,6 @@ use SIM;
 add_action('delete_user', 'SIM\remove_user_data');
 function remove_user_data ($user_id){
 	global $wpdb;
-	global $WebmasterName;
 	global $Maps;
 	global $Modules;
 	
@@ -32,7 +31,7 @@ function remove_user_data ($user_id){
 	//Only remove if there is no family
 	if (count($family) == 0){
 		//Remove missionary page
-		SIM\remove_user_page($user_id);
+		SIM\USERPAGE\remove_user_page($user_id);
 
 		//Check if a personal marker exists for this user
 		$marker_id = get_user_meta($user_id,"marker_id",true);
@@ -90,7 +89,7 @@ function remove_user_data ($user_id){
 			}
 			
 			//Update
-			SIM\update_user_page_title($user_id, $title);
+			SIM\USERPAGE\update_user_page_title($user_id, $title);
 			
 			//Check if a personal marker exists
 			$marker_id = get_user_meta($user_id,"marker_id",true);
@@ -143,8 +142,7 @@ function remove_user_data ($user_id){
 	<br>
 	This is to inform you that your account on simnigeria.org has been deleted.<br>
 	<br>
-	Kind regards,<br>
-	$WebmasterName";
+	Kind regards,<br>";
 					
 	wp_mail($userdata->user_email, 'Your account on simnigeria.org has been deleted', $message, $headers );
 }

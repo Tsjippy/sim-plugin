@@ -241,7 +241,7 @@ function process_pw_update(){
 	wp_die(
 		json_encode([
 			'message'	=>'Changed password succesfully',
-			'redirect'	=> SiteURL."/?showlogin=$userdata->user_login"
+			'redirect'	=> SITEURL."/?showlogin=$userdata->user_login"
 		])
 	);
 }

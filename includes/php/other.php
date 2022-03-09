@@ -10,7 +10,7 @@ add_filter( 'excerpt_more', function ( $more ) {
 add_filter( 'wp_check_post_lock_window', function(){ return 70;});
 
 //Change the extension of all jpg like files to jpe so that they are not directly available for non-logged in users
- add_filter('wp_handle_upload_prefilter', function ($file) {
+add_filter('wp_handle_upload_prefilter', function ($file) {
 	global $post;
     $info = pathinfo($file['name']);
     $ext  = empty($info['extension']) ? '' : '.' . $info['extension'];

@@ -7,29 +7,6 @@ add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id,
 	if($formname != 'user_location') return $default_array_values;
 
 	global $NigeriaStates;
-
-	/* global $CompoundCategoryID;
-		
-	//Get all pages which are subpages of the CompoundsPageID
-	$compound_pages = get_posts([
-		'post_type'			=> 'location',
-		'posts_per_page'	=> -1,
-		'post_status'		=> 'publish',
-		
-		'tax_query' => array(
-            array(
-                'taxonomy' => 'locationtype',
-                'field' => 'term_id',
-                'terms' => $CompoundCategoryID,
-            )
-        )
-	]);
-	$compounds = [];
-	foreach ( $compound_pages as $compound_page ) {
-		$compounds[$compound_page->post_title] = $compound_page->post_title;
-	}
-	//Sort in alphabetical order
-	asort($compounds); */
 	
 	$compounds = [];
 	foreach ( $NigeriaStates as $name=>$state ) {

@@ -17,7 +17,7 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	</label>
 	<br>
 
-	<label>Default picture for $post_type</label>
+	<br>
 	<?php
 	SIM\picture_selector('header_image',  'Header image frontpage', $settings);
 	?>
@@ -107,4 +107,11 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 
 		<?php
 	}
+	?>
+	<br>
+	<label>Select a page containing information for first time users</label>
+
+	<?php
+	echo SIM\page_select("welcome_page", $settings["welcome_page"]);
+
 }, 10, 3);

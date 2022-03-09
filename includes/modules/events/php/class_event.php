@@ -647,8 +647,6 @@ class Events{
 
 	//full calendar
 	function month_calendar($cat=''){
-		global $picturesurl;
-
 		if(wp_doing_ajax()){
 			$month		= $_POST['month'];
 			$year		= $_POST['year'];
@@ -741,7 +739,7 @@ class Events{
 											$detail_html .= '</div>';
 										}
 										$detail_html .= "<div class='event-time'>";
-											$detail_html .= "<img src='$picturesurl/time_red.png' alt='time' class='event_icon'>";
+											$detail_html .= "<img src='".PICTURESURL."/time_red.png' alt='time' class='event_icon'>";
 											$detail_html .=  $this->get_time($event);
 										$detail_html .= "</div>";
 									$detail_html .= "</div>";
@@ -753,19 +751,19 @@ class Events{
 									$detail_html .= "<div class='event-detail'>";
 									if(!empty($event->location)){
 										$detail_html .= "<div class='location'>";
-											$detail_html .= "<img src='$picturesurl/location_red.png' alt='time' class='event_icon'>";
+											$detail_html .= "<img src='".PICTURESURL."/location_red.png' alt='time' class='event_icon'>";
 											$detail_html .= $this->get_location_detail($event);
 										$detail_html .= "</div>";
 									}	
 									if(!empty($event->organizer)){
 										$detail_html .= "<div class='organizer'>";
-											$detail_html .= "<img src='$picturesurl/organizer.png' alt='time' class='event_icon'>";
+											$detail_html .= "<img src='".PICTURESURL."/organizer.png' alt='time' class='event_icon'>";
 											$detail_html .= $this->get_author_detail($event);
 										$detail_html .= "</div>";
 									}
 									if(!empty($meta['repeat']['type'])){
 										$detail_html .= "<div class='repeat'>";
-											$detail_html .= "<img src='$picturesurl/repeat_small.png' alt='repeat' class='event_icon'>";
+											$detail_html .= "<img src='".PICTURESURL."/repeat_small.png' alt='repeat' class='event_icon'>";
 											$detail_html .= $this->get_repeat_detail($meta);
 										$detail_html .= "</div>";
 									}
@@ -843,8 +841,6 @@ class Events{
 	}
 
 	function week_calendar($cat=''){
-		global $picturesurl;
-
 		if(wp_doing_ajax()){
 			$week_nr	= $_POST['wknr'];
 			$year		= $_POST['year'];
@@ -972,7 +968,7 @@ class Events{
 							$detail_html .= '</div>';
 						}
 						$detail_html .= "<div class='event-time'>";
-							$detail_html .= "<img src='$picturesurl/time_red.png' alt='time' class='event_icon'>";
+							$detail_html .= "<img src='".PICTURESURL."/time_red.png' alt='time' class='event_icon'>";
 							$detail_html .=  $this->get_date($event).'   '.$this->get_time($event);
 						$detail_html .= "</div>";
 
@@ -984,20 +980,20 @@ class Events{
 						$detail_html .= "<div class='event-detail'>";
 						if(!empty($event->location)){
 							$detail_html .= "<div class='location'>";
-								$detail_html .= "<img src='$picturesurl/location_red.png' alt='time' class='event_icon'>";
+								$detail_html .= "<img src='".PICTURESURL."/location_red.png' alt='time' class='event_icon'>";
 								$detail_html .= $this->get_location_detail($event);
 							$detail_html .= "</div>";
 						}	
 						if(!empty($event->organizer)){
 							$detail_html .= "<div class='organizer'>";
-								$detail_html .= "<img src='$picturesurl/organizer.png' alt='time' class='event_icon'>";
+								$detail_html .= "<img src='".PICTURESURL."/organizer.png' alt='time' class='event_icon'>";
 								$detail_html .= $this->get_author_detail($event);
 							$detail_html .= "</div>";
 						}
 
 						if(!empty($meta['repeat']['type'])){
 							$detail_html .= "<div class='repeat'>";
-								$detail_html .= "<img src='$picturesurl/repeat_small.png' alt='repeat' class='event_icon'>";
+								$detail_html .= "<img src='".PICTURESURL."/repeat_small.png' alt='repeat' class='event_icon'>";
 								$detail_html .= $this->get_repeat_detail($meta);
 							$detail_html .= "</div>";
 						}
@@ -1115,8 +1111,6 @@ class Events{
 	}
 
 	function list_calendar($cat=''){
-		global $picturesurl;
-
 		$offset='';
 		if(wp_doing_ajax()){
 			if(is_numeric($_POST['offset'])){
@@ -1157,28 +1151,28 @@ class Events{
 					$html .= "</h3>";
 					$html .= "<div class='event-detail'>";
 						$html .= "<div class='date'>";
-							$html .="<img src='$picturesurl/date.png' alt='' class='event_icon'>";
+							$html .="<img src='".PICTURESURL."/date.png' alt='' class='event_icon'>";
 							$html .= $this->get_date($event);
 						$html .= "</div>";
 						$html .= "<div class='time'>";
-							$html .="<img src='$picturesurl/time_red.png' alt='' class='event_icon'>";
+							$html .="<img src='".PICTURESURL."/time_red.png' alt='' class='event_icon'>";
 							$html .= $this->get_time($event);
 						$html .= "</div>";
 					if(!empty($event->location)){
 						$html .= "<div class='location'>";
-							$html .= "<img src='$picturesurl/location_red.png' alt='time' class='event_icon'>";
+							$html .= "<img src='".PICTURESURL."/location_red.png' alt='time' class='event_icon'>";
 							$html .= $this->get_location_detail($event);
 						$html .= "</div>";
 					}
 					if(!empty($event->organizer)){
 						$html .= "<div class='organizer'>";
-							$html .= "<img src='$picturesurl/organizer.png' alt='time' class='event_icon'>";
+							$html .= "<img src='".PICTURESURL."/organizer.png' alt='time' class='event_icon'>";
 							$html .= $this->get_author_detail($event);
 						$html .= "</div>";
 					}
 					if(!empty($meta['repeat']['type'])){
 						$html .= "<div class='repeat'>";
-							$html .= "<img src='$picturesurl/repeat_small.png' alt='repeat' class='event_icon'>";
+							$html .= "<img src='".PICTURESURL."/repeat_small.png' alt='repeat' class='event_icon'>";
 							$html .= $this->get_repeat_detail($meta);
 						$html .= "</div>";
 					}

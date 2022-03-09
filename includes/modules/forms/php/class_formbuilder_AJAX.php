@@ -41,14 +41,17 @@ class Formbuilder_Ajax extends Formbuilder{
 		add_action ( 'wp_ajax_save_form_emails', array($this,'save_form_emails'));
 	}
 	
+	function check_permissions(){
+		$user	= wp_get_current_user();
+		if(!in_array('contentmanager', $user->roles))	wp_die('You do not have the permission to do this',500);
+	}
+
 	function add_formfield(){
 		global $wpdb;
 
 		SIM\verify_nonce('add_form_element_nonce');
 
-		$user	= wp_get_current_user();
-		
-		if(!in_array('contentmanager', $user->roles))	wp_die('You do not have the permission to do this',500);
+		$this->check_permissions();
 
 		if(!isset($_POST["formfield"])) wp_die('You did not submit any fields', 500);
 
@@ -234,6 +237,8 @@ class Formbuilder_Ajax extends Formbuilder{
 
 	//Function for AJAX call
 	function add_form(){
+		$this->check_permissions();
+
 		$this->datatype	= sanitize_text_field($_POST['form_name']);
 		if(empty($this->datatype)) wp_die('Invalid form name', 500);
 
@@ -288,6 +293,8 @@ class Formbuilder_Ajax extends Formbuilder{
 	}
 	
 	function remove_element(){
+		$this->check_permissions();
+
 		global $wpdb;
 
 		SIM\verify_nonce('remove_form_element_nonce');
@@ -332,7 +339,9 @@ class Formbuilder_Ajax extends Formbuilder{
 		wp_die();
 	}
 	
-	function request_form_elements(){		
+	function request_form_elements(){
+		$this->check_permissions();
+
 		SIM\verify_nonce('request_form_element_nonce');
 		
 		$form_id = $_POST['formid'];
@@ -359,6 +368,8 @@ class Formbuilder_Ajax extends Formbuilder{
 	}
 	
 	function reorder_form_elements(){
+		$this->check_permissions();
+
 		SIM\verify_nonce('remove_form_element_nonce');
 		
 		$old_index 	= $_POST['old_index'];
@@ -376,7 +387,9 @@ class Formbuilder_Ajax extends Formbuilder{
 		]));
 	}
 	
-	function edit_formfield_width(){		
+	function edit_formfield_width(){
+		$this->check_permissions();
+
 		SIM\verify_nonce('remove_form_element_nonce');
 		
 		$element_id 	= $_POST['elementid'];
@@ -417,6 +430,8 @@ class Formbuilder_Ajax extends Formbuilder{
 	}
 
 	function save_element_conditions(){
+		$this->check_permissions();
+
 		SIM\verify_nonce('element_condition_nonce');
 
 		$element_id = $_POST['element_id'];
@@ -459,6 +474,8 @@ class Formbuilder_Ajax extends Formbuilder{
 	}
 
 	function save_form_settings(){
+		$this->check_permissions();
+
 		global $wpdb;
 		
 		if(!empty($_POST['formname'])){
@@ -492,6 +509,8 @@ class Formbuilder_Ajax extends Formbuilder{
 	}
 		
 	function save_form_emails(){
+		$this->check_permissions();
+		
 		global $wpdb;
 		
 		if(!empty($_POST['formname'])){
@@ -942,5 +961,7 @@ class Formbuilder_Ajax extends Formbuilder{
 }
 
 add_action('init', function(){
-	if(wp_doing_ajax()) new Formbuilder_Ajax();
+	if(wp_doing_ajax()){
+		new Formbuilder_Ajax();
+	}
 });

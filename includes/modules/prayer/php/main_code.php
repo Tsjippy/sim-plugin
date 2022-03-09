@@ -1,12 +1,31 @@
 <?php
-namespace SIM;
+namespace SIM\PRAYER;
+use SIM;
+
+//give prayer coordinator acces to prayer items		
+add_filter('sim_frontend_content_edit_rights', function($edit_right, $post_category){
+	// If we currently have no edit right
+	if(!$edit_right){
+		// If we have the prayer coordinator role and the post or page has the prayer category
+		if(
+			in_array('prayercoordinator', wp_get_current_user()->roles) and 
+			(
+				in_array(get_cat_ID('Prayer'), $post_category) or 
+				in_array('prayer', $post_category)
+			)
+		){
+			$edit_right = true;
+		}
+	}
+
+	return $edit_right;
+}, 10, 2);
 
 //Get Prayerrequest
 function prayer_request($plaintext = false) {
 	if (is_user_logged_in()){
-		global $PrayerCategoryID;
 		//Get all the post belonging to the prayer category
-		$prayer_posts = get_posts(array('category' => $PrayerCategoryID ));
+		$prayer_posts = get_posts(array('category' => get_cat_ID('Prayer') ));
 		
 		//Loop over them to find the post for this month
 		foreach($prayer_posts as $prayer_post){

@@ -11,14 +11,12 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	?>
 	<p>
 		This module adds the possibility to send Signal messages to users or groups.<br>
-		It adds messages like birthday messages or prayer messages to the db.<br>
 		An external Signal Bot can read and delete these messages and send them on Signal.<br>
 		<br>
 		Add one shortcode: 'signal_messages'.<br>
 		Use this shortcode to display all pending Signal messages and delete them if needed.<br>
 		<br>
-		Adds 3 urls to the rest api:<br>
-		sim/v1/prayermessage to get the current prayer request<br>
+		Adds 2 urls to the rest api:<br>
 		sim/v1/notifications to get any other messages<br>
 		sim/v1/firstname to find a users name by phonenumber<br>
 	</p>

@@ -29,10 +29,6 @@ class FrontEndContent{
 			//add tinymce button
 			add_filter('mce_buttons', array($this,'register_buttons'));
 			
-			//Add post edit button
-			add_action( 'generate_before_content', array($this,'add_page_edit_button'));
-			add_action( 'sim_before_content', array($this,'add_page_edit_button'));
-			
 			//add action over ajax to read file contents
 			add_action ( 'wp_ajax_get_docx_contents',array($this,'get_docx_contents'));
 			
@@ -81,8 +77,6 @@ class FrontEndContent{
 	}
 	
 	function has_edit_rights(){
-		global $PrayerCategoryID;
-		
 		//Only set this once
 		if(!isset($this->edit_right)){
 			$user_compound 		= get_user_meta( $this->user->ID, "location", true);
@@ -93,27 +87,21 @@ class FrontEndContent{
 			$user_ministries 	= get_user_meta( $this->user->ID, "user_ministries", true);
 			
 			$post_author		= $this->post->post_author;
-			
-			//give prayer coordinator acces to prayer items
-			if(in_array('prayercoordinator',$this->user->roles) and (in_array($PrayerCategoryID,$this->post_category) or in_array('prayer',$this->post_category))){
-				$prayeracces = true;
-			}else{
-				$prayeracces = false;
-			}
 				
 			//Check if allowed to edit this
 			if(
-				$post_author != $this->user->ID 							and 
+				$post_author != $this->user->ID 									and 
 				!isset($user_ministries[str_replace(" ","_",$this->post_title )])	and 
 				$user_compound != $this->post_title 								and 
-				$missionary_page_id != $this->ID							and
-				$prayeracces == false										and
+				$missionary_page_id != $this->ID									and
 				!$this->fullrights
 			){
 				$this->edit_right	= false;
 			}else{
 				$this->edit_right	= true;
 			}
+
+			$this->edit_right	= apply_filters('sim_frontend_content_edit_rights', $this->edit_right, $this->post_category);
 		}
 	}
 	
@@ -446,73 +434,6 @@ class FrontEndContent{
 		}
 	}
 
-	function add_page_edit_button(){
-		global $Modules;
-		$content = get_the_content();
-		
-		//Only show if logged in and not already on the post edit page and it is a single page, not a archive page
-		if (is_user_logged_in() and strpos($content,'[front_end_post]') === false and is_singular() and !is_tax()){
-			global $post;
-			global $Modules;
-			global $PrayerCategoryID;
-			
-			$user = wp_get_current_user();
-			$user_id = $user->ID;
-
-			//Get current users ministry and compound
-			$missionary_page_id = SIM\USERPAGE\get_user_page_id($user_id);
-			$user_ministries 	= get_user_meta($user_id, "user_ministries", true);
-			$user_compound 		= get_user_meta($user_id, "location", true);
-			if(!is_array($user_compound)) $user_compound = [];
-			
-			//This is a draft
-			if(isset($_GET['p']) or isset($_GET['page_id'])){
-				if(isset($_GET['p'])){
-					$post_id 		= $_GET['p'];
-				}else{
-					$post_id 		= $_GET['page_id'];
-				}
-				
-				$post_title 		= get_the_title($post_id);
-				$post_author 		= get_the_author($post_id);
-			//published
-			}else{
-				$post_id 			= get_the_ID();
-				$post_title 		= get_the_title();
-				$post_author 		= get_the_author();
-			}
-			
-			if(isset($user_compound['compound'])){
-				$user_compound = $user_compound['compound'];
-			}
-			
-			$post_category 	= $post->post_category;
-				
-			//give prayer coordinator acces to prayer items
-			if(in_array('prayercoordinator',$user->roles) and (in_array($PrayerCategoryID,$post_category) or in_array('prayer',$post_category))){
-				$prayeracces = true;
-			}else{
-				$prayeracces = false;
-			}
-				
-			//Add an edit page button if this page a page describing a ministry this person is working for or a comound an user lives on, or the personal page
-			if (
-				$post_author == $user->display_name 						or 
-				isset($user_ministries[str_replace(" ","_",$post_title)])	or 
-				$user_compound == $post_title								or 
-				$missionary_page_id == $post_id								or
-				$prayeracces == true										or
-				in_array('contentmanager',$user->roles)
-			){
-				$type = $post->post_type;
-				$button_text = "Edit this $type";
-				
-				$url = add_query_arg( ['post_id' => $post_id], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );
-				echo "<a href='$url' class='button sim' id='pageedit'>$button_text</a>";
-			}
-		}
-	}
-
 	function post_type_selector(){
 		//do not show for lite posts
 		if($this->lite == false){
@@ -559,59 +480,60 @@ class FrontEndContent{
 		}
 	}
 	
-	function add_modal($type){
-		$categories = get_categories( array(
-			'orderby' 	=> 'name',
-			'order'   	=> 'ASC',
-			'taxonomy'	=> $type.'type',
-			'hide_empty'=> false,
-		) );
+	function add_modals(){
+		$post_types		= apply_filters('sim_frontend_posting_modals', []);
 
-		?>
-		<div id="add_<?php echo $type;?>_type" class="modal hidden">
-			<!-- Modal content -->
-			<div class="modal-content">
-				<span id="modal_close" class="close">&times;</span>
-				<form action="" method="post" id="add_<?php echo $type;?>_type_form">
-					<p>Please fill in the form to add a new <?php echo $type;?> category</p>
-					<input type="hidden" name="action" value="add_<?php echo $type;?>_type">
-					<input type="hidden" name="userid" value="<?php echo $this->user->ID; ?>">
-					
-					<input type="hidden" name="add_<?php echo $type;?>_type_nonce" value="<?php echo wp_create_nonce("add_{$type}_type_nonce"); ?>">
-					
-					<label>
-						<h4>Category name<span class="required">*</span></h4>
-						<input type="text"  name="<?php echo $type;?>_type_name" required>
-					</label>
-					
-					<h4>Parent category</h4>
-					<select class="" name='<?php echo $type;?>_type_parent'>
-						<option value=''>---</option>
-						<?php
-						foreach($categories as $category){
-							//Only ouptut categories without a parent
-							if($category->parent == 0){
-								$name 	= $category->name;
-								$cat_id = $category->cat_ID;
-								echo "<option value='$cat_id'>$name</opton>";
+		foreach($post_types as $type){
+			$categories = get_categories( array(
+				'orderby' 	=> 'name',
+				'order'   	=> 'ASC',
+				'taxonomy'	=> $type.'type',
+				'hide_empty'=> false,
+			) );
+
+			?>
+			<div id="add_<?php echo $type;?>_type" class="modal hidden">
+				<!-- Modal content -->
+				<div class="modal-content">
+					<span id="modal_close" class="close">&times;</span>
+					<form action="" method="post" id="add_<?php echo $type;?>_type_form">
+						<p>Please fill in the form to add a new <?php echo $type;?> category</p>
+						<input type="hidden" name="action" value="add_<?php echo $type;?>_type">
+						<input type="hidden" name="userid" value="<?php echo $this->user->ID; ?>">
+						
+						<input type="hidden" name="add_<?php echo $type;?>_type_nonce" value="<?php echo wp_create_nonce("add_{$type}_type_nonce"); ?>">
+						
+						<label>
+							<h4>Category name<span class="required">*</span></h4>
+							<input type="text"  name="<?php echo $type;?>_type_name" required>
+						</label>
+						
+						<h4>Parent category</h4>
+						<select class="" name='<?php echo $type;?>_type_parent'>
+							<option value=''>---</option>
+							<?php
+							foreach($categories as $category){
+								//Only ouptut categories without a parent
+								if($category->parent == 0){
+									$name 	= $category->name;
+									$cat_id = $category->cat_ID;
+									echo "<option value='$cat_id'>$name</opton>";
+								}
 							}
-						}
-						?>
-					</select>
-					
-					
-					<?php echo SIM\add_save_button('add_'.$type.'_type',"Add $type category"); ?>
-				</form>
+							?>
+						</select>
+						
+						
+						<?php echo SIM\add_save_button('add_'.$type.'_type',"Add $type category"); ?>
+					</form>
+				</div>
 			</div>
-		</div>
-		<?php
+			<?php
+		}
 	}
 	
 	//Show categories for posts and pages
 	function post_categories(){
-		global $PublicCategoryID;
-		global $ConfCategoryID;
-		
 		$categories = get_categories( array(
 			'orderby' => 'name',
 			'order'   => 'ASC',
@@ -631,7 +553,7 @@ class FrontEndContent{
 					
 					echo "<div class='infobox post ";
 
-					if($cat_id == $PublicCategoryID or $cat_id == $ConfCategoryID ){
+					if($cat_id == get_cat_ID('Public') or $cat_id == get_cat_ID('Confidential') ){
 						echo 'page';
 					//do not show categories other than public and confidential to non-post types
 					}elseif($this->post_type != 'post'){
@@ -913,8 +835,6 @@ class FrontEndContent{
 	function frontend_post(){
 		include ABSPATH . 'wp-admin/includes/post.php';
 		
-		global $LoaderImageURL;
-		
 		//Load js
 		wp_enqueue_script('sim_frontend_script');
 		wp_enqueue_media();
@@ -974,6 +894,7 @@ class FrontEndContent{
 			
 			$this->post_type_selector();
 			
+			$this->add_modals();
 			do_action('frontend_post_modal');
 
 			//Write the form to create all posts except events
@@ -994,7 +915,7 @@ class FrontEndContent{
 				<input type="text" name="post_title" class='block' value="<?php echo $this->post_title;?>" required>
 				
 				<?php
-				do_action('frontend_post_before_content',$this->post_type, $this->post_id);
+				do_action('frontend_post_before_content', $this);
 				
 				$this->post_categories();
 				?>
@@ -1012,7 +933,7 @@ class FrontEndContent{
 							)
 						);
 						echo "<button type='button' class='remove_document button' data-url='$document' data-userid='{$this->user_id}' data-metakey='$metakey_string' $library_string>X</button>";
-						echo '<img class="remove_document_loader" src="'.$LoaderImageURL.'" style="display:none; height:40px;" >';
+						echo "<img class='remove_document_loader src='".LOADERIMAGEURL."' style='display:none; height:40px;' >";
 						$text = 'Change';
 					}else{
 						$text = 'Add';
@@ -1062,7 +983,7 @@ class FrontEndContent{
 				try{
 					$this->content_manager_options();
 				}catch(\Exception $e) {
-
+					SIM\print_array($e);
 				}
 				
 				//Add a draft button for new posts
@@ -1075,7 +996,7 @@ class FrontEndContent{
 					
 					echo "<div class='submit_wrapper' style='display: flex;'>";
 						echo "<button type='button' class='button savedraft' name='draft_post'>$button_text</button>";
-						echo "<img class='loadergif hidden' src='$LoaderImageURL'>";
+						echo "<img class='loadergif hidden' src='".LOADERIMAGEURL."'>";
 					echo "</div>";
 					
 				}
@@ -1094,7 +1015,7 @@ class FrontEndContent{
 					<input hidden name='deletepost_nonce_<?php echo $this->post_id ?>' value='<?php echo wp_create_nonce("deletepost_nonce_".$this->post_id); ?>'>
 					
 					<button type='submit' class='button' name='delete_post'>Delete <?php echo $this->post_type; ?></button>
-					<img class='loadergif hidden' src='<?php echo $LoaderImageURL; ?>'>
+					<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>'>
 				</form>
 			</div>
 			<?php } ?>
@@ -1107,5 +1028,7 @@ class FrontEndContent{
 }
 
 add_action('init', function(){
-	new FrontEndContent();
+	if(wp_doing_ajax()){
+		new FrontEndContent();
+	}
 });

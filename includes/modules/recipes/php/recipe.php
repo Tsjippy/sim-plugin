@@ -54,15 +54,14 @@ add_filter( 'widget_categories_args', function ( $cat_args, $instance  ) {
 }, 10, 2 );
 
 //Add to frontend form
-add_action('frontend_post_modal', 'SIM\add_recipe_modal');
-add_action('frontend_post_before_content', 'SIM\recipe_specific_fields',10,2);
-add_action('frontend_post_content_title', 'SIM\recipe_title');
-add_action('sim_after_post_save', 'SIM\store_recipe_meta',10,2);
+add_action('frontend_post_before_content', 'SIM\RECIPES\recipe_specific_fields');
+add_action('frontend_post_content_title', 'SIM\RECIPES\recipe_title');
+add_action('sim_after_post_save', 'SIM\RECIPES\store_recipe_meta',10,2);
 
-function add_recipe_modal(){
-	global $FrontEndContent;
-	$FrontEndContent->add_modal('recipe');
-}
+add_filter('sim_frontend_posting_modals', function($types){
+	$types[]	= 'recipe';
+	return $types;
+});
 
 function recipe_title($post_type){
 	//Recipe content title
@@ -143,9 +142,7 @@ function store_recipe_meta($post, $post_type){
 	}
 }
 
-function recipe_specific_fields($post_type, $post_id){
-	global $FrontEndContent;
-	
+function recipe_specific_fields($frontEndContent){
 	$categories	= get_categories( array(
 		'orderby' => 'name',
 		'order'   => 'ASC',
@@ -153,24 +150,24 @@ function recipe_specific_fields($post_type, $post_id){
 		'hide_empty' => false,
 	) );
 	
-	$FrontEndContent->show_categories('recipe', $categories);
+	$frontEndContent->show_categories('recipe', $categories);
 	?>
-	<div class="recipe <?php if($post_type != 'recipe') echo 'hidden'; ?>">
+	<div class="recipe <?php if($frontEndContent->post_type != 'recipe') echo 'hidden'; ?>">
 		<h4 name="ingredients_label">Recipe ingredients (one per line)</h4>
 		<textarea name="ingredients" rows="10">
-			<?php echo wp_strip_all_tags(get_post_meta($post_id,'ingredients',true)); ?>
+			<?php echo wp_strip_all_tags(get_post_meta($frontEndContent->post_id,'ingredients',true)); ?>
 		</textarea>
 		
 		
 		<label class="block" name="time_need_label">
 			<h4>Recipe time needed</h4>
-			<input type='number' name="time_needed" min="1" value="<?php echo get_post_meta($post_id,'time_needed',true); ?>" style="display: inline-block;"> 
+			<input type='number' name="time_needed" min="1" value="<?php echo get_post_meta($frontEndContent->post_id,'time_needed',true); ?>" style="display: inline-block;"> 
 			<span style="margin-left:-100px;">minutes</span>
 		</label>
 
 		<label class="block" name="serves_label">
 			<h4>Serves</h4>
-			<input type='number' name="serves" min="1" value="<?php echo get_post_meta($post_id,'serves',true); ?>" style="display: inline-block;"> 
+			<input type='number' name="serves" min="1" value="<?php echo get_post_meta($frontEndContent->post_id,'serves',true); ?>" style="display: inline-block;"> 
 			<span style="margin-left:-100px;">people</span>
 		</label>
 	</div>

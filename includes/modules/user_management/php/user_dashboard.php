@@ -5,8 +5,6 @@ use SIM;
 function show_dashboard($user_id, $admin=false){
 	if(!is_numeric($user_id)) return "<p>Invalid user id $user_id";
 	global $MinistrieIconID;
-	global $PostOutOfDataWarning;
-	global $Modules;
 
 	ob_start();
 	$userdata	= get_userdata($user_id);
@@ -68,13 +66,13 @@ function show_dashboard($user_id, $admin=false){
 			$page_age=date_diff($date1,$today);
 			$page_age = $page_age->format("%a");
 			
-			//Get the firs warning parameter and convert to days
-			$days = $PostOutOfDataWarning[0]*30;
+			//Get the first warning parameter and convert to days
+			$days = SIM\get_module_option('frontend_posting', 'max_page_age')*30;
 			
 			//If the page is not modified since the parameter
 			if ($page_age > $days ){
 				//Get the edit page url
-				$url = add_query_arg( ['post_id' => $post_id], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );
+				$url = add_query_arg( ['post_id' => $post_id], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );
 
 				$post_age_warning_html .= '<li><a href="'.$url.'">'.$post_title.'</a></li>';
 			}

@@ -92,21 +92,21 @@ add_filter('sim_mandatory_fields_filter', function($fields, $user_id){
 
 	// Unset visa fields if accompanying spouse
 	$visa_info = get_user_meta($user_id, 'visa_info', true );
-	if(isset($visa_info['accompanying'])){
+	if(isset($visa_info['accompanying']) or SIM\is_child($user_id)){
 		foreach($fields as $key=>$field){
-			if(strpos($field->name, 'understudy') !== false){
+			if(strpos($field->name, 'understudy') !== false or strpos($field->name, 'visa_info') !== false){
 				unset($fields[$key]);
 			}
 		}
-	}
-
-	// If no visa fields are set at all
-	$understudy1 = get_user_meta($user_id, 'understudy1', true );
-	$understudy2 = get_user_meta($user_id, 'understudy2', true );
-	if(empty($visa_info) and empty($understudy1) and empty($understudy2)){
-		foreach($fields as $key=>$field){
-			if(strpos($field->name, 'understudy') !== false){
-				unset($fields[$key]);
+	}else{
+		// If no visa fields are set at all
+		$understudy1 = get_user_meta($user_id, 'understudy1', true );
+		$understudy2 = get_user_meta($user_id, 'understudy2', true );
+		if(empty($visa_info) and empty($understudy1) and empty($understudy2)){
+			foreach($fields as $key=>$field){
+				if(strpos($field->name, 'understudy') !== false){
+					unset($fields[$key]);
+				}
 			}
 		}
 	}
@@ -128,7 +128,7 @@ add_filter('sim_mandatory_fields_filter', function($fields, $user_id){
 	// Filter mandatory fields for children
 	if(SIM\is_child($user_id)){
 		foreach($fields as $key=>$field){
-			if(in_array($field->name, ['location'])){
+			if(in_array($field->name, ['location[compound]', 'sending_office', 'arrival_date'])){
 				unset($fields[$key]);
 			}
 		}

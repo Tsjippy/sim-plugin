@@ -90,9 +90,6 @@ function user_register( $user_id ) {
  */
 add_filter( 'wp_new_user_notification_email', 'new_user_notification_email', 10, 3 );
 function new_user_notification_email( $wp_new_user_notification_email, $user, $blogname ) {
-	global $WebmasterName;
-	global $Modules;
-
 	//Set variables
     $user_login = stripslashes( $user->user_login );
     $user_email = stripslashes( $user->user_email );
@@ -101,7 +98,7 @@ function new_user_notification_email( $wp_new_user_notification_email, $user, $b
 	if ($user_email != "" and strpos($user_email, '.empty') === false){
 		$user_name	= stripslashes( $user->display_name );
 		$reset_key	= get_password_reset_key($user);
-		$pageurl	= get_permalink($Modules['login']['pw_reset_page']);
+		$pageurl	= get_permalink(SIM\get_module_option('login', 'pw_reset_page'));
 		$login_url	= "$pageurl?key=$reset_key&login=$user_login";
 		
 		//Create message
@@ -115,8 +112,7 @@ function new_user_notification_email( $wp_new_user_notification_email, $user, $b
 			$message .= "Your account will be active for $validity months after you first login.<br><br>";
 		}
 		$message .= 'If you have any problems, please contact me by replying to this e-mail.<br><br>';
-		$message .= __( "Regards,<br>$WebmasterName<br>" );
-		$message .= __( "Webmaster" );
+		$message .= __( "Regards," );
 	 
 		$wp_new_user_notification_email['subject'] = sprintf( __( "Your account on %s" ), $blogname );
 		$wp_new_user_notification_email['message'] = $message;
