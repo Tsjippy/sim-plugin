@@ -61,13 +61,9 @@ class FrontEndContent{
 	}
 	
 	function add_tinymce_plugin($plugins) {
-		global $StyleVersion;
-		$plugins['file_upload'] = plugins_url("../../js/tiny_mce_action.js?ver=$StyleVersion", __DIR__);
-		$plugins['select_user'] = plugins_url("../../js/tiny_mce_action.js?ver=$StyleVersion", __DIR__);
+		$plugins['file_upload'] = INCLUDESURL."/js/tiny_mce_action.js?ver=".ModuleVersion;
+		$plugins['select_user'] = INCLUDESURL."/js/tiny_mce_action.js?ver=".ModuleVersion;
 		
-		if(isset($plugins['wpUserAvatar'])){
-			unset($plugins['wpUserAvatar']);
-		}
 		return $plugins;
 	}
 	
@@ -339,6 +335,7 @@ class FrontEndContent{
 			
 			// Insert the post into the database.
 			$this->post_id 	= wp_insert_post( $post,true,false);
+			$post['ID']		= $this->post_id;
 			
 			if(is_wp_error($this->post_id)){
 				wp_die($this->post_id->get_error_message(),500);

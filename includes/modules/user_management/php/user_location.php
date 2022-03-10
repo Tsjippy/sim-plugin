@@ -6,10 +6,8 @@ use SIM;
 add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id, $formname){
 	if($formname != 'user_location') return $default_array_values;
 
-	global $NigeriaStates;
-	
 	$compounds = [];
-	foreach ( $NigeriaStates as $name=>$state ) {
+	foreach ( NIGERIASTATES as $name=>$state ) {
 		$compounds[$name] = str_replace('_',' ',$name);
 	}
 	$default_array_values['compounds'] 			= $compounds;

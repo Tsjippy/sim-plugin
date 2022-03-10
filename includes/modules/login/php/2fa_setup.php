@@ -96,7 +96,7 @@ function twofa_settings_form($user_id=''){
 				Insert the created code here.<br>
 				<input type='text' name='auth_secret' required>
 			</label>
-			<p>Not sure what to do? Check the <a href="<?php echo get_site_url();?>'/manuals/">manuals!</a></p>
+			<p>Not sure what to do? Check the <a href="<?php echo SITEURL;?>'/manuals/">manuals!</a></p>
 		</div>
 		<div id='setup-email' class='twofa_option hidden'>
 			<p>

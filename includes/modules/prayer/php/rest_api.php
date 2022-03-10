@@ -6,7 +6,7 @@ add_action( 'rest_api_init', function () {
 	//Route for prayerrequest of today
 	register_rest_route( 'sim/v1', '/prayermessage', array(
 		'methods' => 'GET',
-		'callback' => 'SIM\SIGNAL\bot_prayer',
+		'callback' => 'SIM\PRAYER\bot_prayer',
 		'permission_callback' => '__return_true',
 		)
 	);
@@ -14,7 +14,7 @@ add_action( 'rest_api_init', function () {
 	//Route for prayerrequest of today
 	register_rest_route( 'simnigeria/v1', '/prayermessage', array(
 		'methods' => 'GET',
-		'callback' => 'SIM\SIGNAL\bot_prayer',
+		'callback' => 'SIM\PRAYER\bot_prayer',
 		'permission_callback' => '__return_true',
 		)
 	);

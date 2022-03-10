@@ -214,7 +214,7 @@ if(SIM\get_module_option('vimeo', 'upload')){
 
 	//remove filter
 	add_action('post-upload-ui', function(){
-		remove_filter( 'gettext', 'SIM\change_upload_size_message', 10 );
+		remove_filter( 'gettext', 'SIM\VIMEO\change_upload_size_message', 10 );
 	});
 }
 

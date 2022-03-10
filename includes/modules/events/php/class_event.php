@@ -16,7 +16,7 @@ class Events{
 
 		add_action('wp_ajax_getlisthtml',array($this,'list_calendar'));
 
-		add_action('sim_after_post_save', array($this,'store_event_meta'), 10, 2);
+		add_action('sim_after_post_save', array($this,'store_event_meta'), 1, 2);
 
 		add_action( 'before_delete_post', array($this,'remove_db_rows'));
 	}
@@ -374,7 +374,7 @@ class Events{
 			}
 			set_post_thumbnail( $this->post_id, get_theme_mod($mod_name,''));
 
-			update_user_meta($user->ID,$type.'_event_id',$this->post_id);
+			update_user_meta($user->ID, $type.'_event_id',$this->post_id);
 
 			if($partner_id) update_user_meta($partner_id,$type.'_event_id',$this->post_id);
 			$this->create_events();
@@ -383,8 +383,13 @@ class Events{
 
 	function retrieve_single_event($post_id){
 		global $wpdb;
-		$query	= "SELECT * FROM {$wpdb->prefix}posts INNER JOIN `{$this->table_name}` ON {$wpdb->prefix}posts.ID={$this->table_name}.post_id WHERE post_id=$post_id ORDER BY ABS( DATEDIFF( startdate, CURDATE() ) ) LIMIT 1";
-		return $wpdb->get_results($query)[0];
+		$query		= "SELECT * FROM {$wpdb->prefix}posts INNER JOIN `{$this->table_name}` ON {$wpdb->prefix}posts.ID={$this->table_name}.post_id WHERE post_id=$post_id ORDER BY ABS( DATEDIFF( startdate, CURDATE() ) ) LIMIT 1";
+		$results	= $wpdb->get_results($query);
+		
+		if(empty($results)){
+			return false;
+		}
+		return $results[0];
 	}
 
 	function retrieve_events($startdate = '', $enddate = '', $amount = '', $extra_query = '', $offset='', $cat=''){
@@ -493,7 +498,7 @@ class Events{
 				}
 				?>
 				</div>
-				<a class='calendar button' href="<?php echo get_site_url();?>/events" class="button sim">
+				<a class='calendar button' href="<?php echo SITEURL;?>/events" class="button sim">
 					Calendar
 				</a>
 			</div>

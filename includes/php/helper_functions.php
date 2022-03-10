@@ -100,8 +100,8 @@ function current_url($exclude_scheme=false, $remove_get=false){
 }
 
 function url_to_path($url){
-	$site_url	= str_replace('https://','',get_site_url());
-	$url		= str_replace('https://','',$url);
+	$site_url	= str_replace('https://', '', SITEURL);
+	$url		= str_replace('https://', '', $url);
 	
 	//in case of http
 	$site_url	= str_replace('http://','',$site_url);
@@ -116,7 +116,7 @@ function path_to_url($path){
 	if(is_string($path)){
 		$base	= str_replace('\\', '/', ABSPATH);
 		$path	= str_replace('\\', '/', $path);
-		$url	= str_replace($base, get_site_url().'/', $path);
+		$url	= str_replace($base, SITEURL.'/', $path);
 	}else{
 		$url	= $path;
 	}
@@ -178,15 +178,17 @@ function page_select($select_id,$page_id=null,$class=""){
 	return $html;
 }
 
-//Function to check if a post has child posts
-function has_children($post_id) {  
-	$pages = get_pages('child_of=' . $post_id);
+function get_child_title($user_id){
+	$gender = get_user_meta( $user_id, 'gender', true );
+	if($gender == 'male'){
+		$title = "son";
+	}elseif($gender == 'female'){
+		$title = "daughter";
+	}else{
+		$title = "child";
+	}
 	
-	if (count($pages) > 0):
-	  return $pages;
-	else:
-	  return false;
-	endif;
+	return $title;
 }
 
 //family flat array
@@ -403,17 +405,6 @@ function get_age_in_words($date){
 	$age = date('Y')-$start_year;
 
 	return number_to_words($age);
-}
-
-function get_arriving_users(){
-	$date   = new \DateTime(); 
-	$arrival_users = get_users(array(
-		'meta_key'     => 'arrival_date',
-		'meta_value'   => $date->format('Y-m-d'),
-		'meta_compare' => '=',
-	));
-	
-	return $arrival_users;
 }
 
 function get_user_accounts($return_family=false,$adults=true,$local_nigerians=false,$fields=[],$extra_args=[]){

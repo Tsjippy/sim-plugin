@@ -1,5 +1,5 @@
 <?php
-namespace SIM\MANDATORY;
+namespace SIM\PDF;
 use SIM;
 
 const ModuleVersion		= '7.0.0';

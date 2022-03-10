@@ -343,7 +343,7 @@ class Schedule{
 						<button type='button' class='button schedule_action remove_schedule' data-schedule_id='<?php echo $schedule->id;?>'>Remove</button>
 					<?php
 					//schedule is not yet set.
-					if(!$schedule->published){
+					if(!$schedule->published and $schedule->target != 0){
 						echo "<button type='button' class='button schedule_action publish' data-target='{$schedule->target}' data-schedule_id='{$schedule->id}'>Publish</button>";
 					}
 					echo '</div>';

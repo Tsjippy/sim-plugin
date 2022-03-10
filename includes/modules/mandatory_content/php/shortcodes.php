@@ -75,7 +75,7 @@ function get_must_read_documents($user_id='', $exclude_heading=false){
 		$html .= "<ul>$before_html";
 		foreach($personal_document_array as $key=>$document){
 			if(isset($personnel_documents[$document])){
-				$html .= "<li><a href='".get_site_url().'/'.$personnel_documents[$document]."'>$document</a></li>";
+				$html .= "<li><a href='".SITEURL.'/'.$personnel_documents[$document]."'>$document</a></li>";
 			}
 		}
 		$html .= "</ul>";

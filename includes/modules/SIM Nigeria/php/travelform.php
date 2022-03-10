@@ -299,7 +299,10 @@ function generate_immigration_letters(){
 	$pdf->printpdf();
 }
 
-class IMMIGRATION_LETTER extends \PDF_HTML{
+if(!class_exists('SIM\PDF\PDF_HTML')){
+	include_once(INCLUDESPATH.'modules/PDF/php/pdf_helper_functions.php');
+}
+class IMMIGRATION_LETTER extends SIM\PDF\PDF_HTML{
 	function __construct($orientation='P', $unit='mm', $format='A4'){
 		//Call parent constructor
 		parent::__construct($orientation,$unit,$format);
@@ -481,8 +484,6 @@ add_action ( 'wp_ajax_update_visa_documents', function(){
 add_shortcode( 'quotadocuments', function (){
 	//Only show if not editing a user
 	if(!isset($_GET['id'])){
-		global $QuotaNames;
-
 		$quota_documents = (array)get_option('quota_documents');
 		
 		if(!isset($quota_documents['quotafiles']) or !is_array($quota_documents['quotafiles'])) $quota_documents['quotafiles'] = [1 => ""];
@@ -503,7 +504,7 @@ add_shortcode( 'quotadocuments', function (){
 				<div id="quota_mapping" class='hidden'>
 					<?php
 					//Add a select box for each quota position, containing the available quota documents
-					foreach($QuotaNames as $document){
+					foreach(QUOTANAMES as $document){
 						?>
 						<div style="margin-top:20px;">
 							<label><?php echo $document;?></label>

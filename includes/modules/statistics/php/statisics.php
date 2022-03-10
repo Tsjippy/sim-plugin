@@ -15,7 +15,7 @@ add_filter( 'the_content', function ($content){
     global $wpdb;
 
     $table_name	= $wpdb->prefix . 'sim_statistics';
-    $url        = str_replace(get_site_url(),'', SIM\current_url());
+    $url        = str_replace(SITEURL,'', SIM\current_url());
 
     $pageviews  = $wpdb->get_results( "SELECT * FROM $table_name WHERE url='$url' ORDER BY $table_name.`timelastedited` DESC" );
     

@@ -5,10 +5,9 @@ namespace SIM;
 add_shortcode("test",function ($atts){
 	global $wpdb;
 	//update all posts where this is attached
-	/* 	$users = get_users();
+	$users = get_users();
     foreach($users as $user){
-
-	} */
+	}
 
 	/*$theme_mods		= get_option('theme_mods_generatepress-child');
 

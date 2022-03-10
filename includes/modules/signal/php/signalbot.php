@@ -3,8 +3,7 @@ namespace SIM\SIGNAL;
 use SIM;
 
 //Post is published from backend
-add_action(  'transition_post_status',  'SIM\check_if_signal_must_send', 10, 3 );
-function check_if_signal_must_send( $new_status, $old_status, $post ) {
+add_action(  'transition_post_status',  function( $new_status, $old_status, $post ) {
 	// Check if signal nonce is set.
 	if ($new_status == 'publish' and isset( $_POST['signal_message_meta_box_nonce'] ) ) {
 		//Get the nonce from the post array
@@ -14,7 +13,7 @@ function check_if_signal_must_send( $new_status, $old_status, $post ) {
 			send_post_notification($post);
 		}
 	}
-}
+}, 10, 3 );
 
 function send_post_notification($post){
 	if(is_numeric($post)){
@@ -34,6 +33,8 @@ function send_post_notification($post){
 	
 	$excerpt = strip_tags(str_replace('<br>',"\n",$excerpt));
 
+	$excerpt = apply_filters('sim_signal_post_notification_message', $excerpt, $post);
+
 	if(!empty($_POST['pagetype']['everyone'])) $excerpt	.= "\n\nThis is a mandatory message, please read it straight away.";
 	
 	if($_POST['update'] == 'true'){
@@ -50,9 +51,9 @@ function send_post_notification($post){
 
 function send_signal_message($message, $recipient, $post_id=""){
 	//remove https from site urldecode
-	$url_without_https = str_replace('https://','',get_site_url());
+	$url_without_https = str_replace('https://', '', SITEURL);
 	
-	$message = str_replace(get_site_url(),$url_without_https,$message);
+	$message = str_replace(SITEURL,$url_without_https,$message);
 	
 	//Check if recipient is an existing userid
 	if(is_numeric($recipient) and get_userdata($recipient)){
@@ -93,8 +94,8 @@ function send_signal_message($message, $recipient, $post_id=""){
 
 //Function to add a checkbox for signal messages to a post
 add_action( 'add_meta_boxes',  function() {
-	add_meta_box( 'send-signal-message', 'Signal message', 'SIM\send_signal_message_meta_box', ['page','post','event'], 'side', 'high' );
-	add_meta_box( 'send-signal-message-bottom', 'Signal message', 'SIM\send_signal_message_meta_box', ['page','post','event'], 'normal', 'high' );
+	add_meta_box( 'send-signal-message', 'Signal message', 'SIM\SIGNAL\send_signal_message_meta_box', ['page','post','event'], 'side', 'high' );
+	add_meta_box( 'send-signal-message-bottom', 'Signal message', 'SIM\SIGNAL\send_signal_message_meta_box', ['page','post','event'], 'normal', 'high' );
 });
 
 //Display the send signal meta box

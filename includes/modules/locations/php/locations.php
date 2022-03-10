@@ -77,7 +77,7 @@ add_filter(
 add_filter('widget_title', function ($title, $widget_id=null){
 	//Change the title of the location category widget if not logged in
 	if(is_tax('locationtype') and $widget_id == 'categories' and !is_user_logged_in()){
-		$url = get_site_url().'/locations/ministry/';
+		$url = SITEURL.'/locations/ministry/';
 		return "<a href='$url'>Ministries</a>";
 	}
     return $title;

@@ -18,7 +18,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	if($formname != 'user_generics') return $formresults;
 	
 	$Events->create_celebration_event('birthday', $user_id, 'birthday', $_POST['birthday']);
-	$Events->create_celebration_event('SIM Nigeria anniversary', $user_id,'arrival_date',$_POST['arrival_date']);
+	$Events->create_celebration_event(SITENAME.' anniversary', $user_id,'arrival_date',$_POST['arrival_date']);
 
 	//check if phonenumber has changed
 	$old_phonenumbers	= (array)get_user_meta($user_id, 'phonenumbers', true);

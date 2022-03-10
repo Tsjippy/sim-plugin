@@ -70,7 +70,7 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	</label>
 	<br>
 	<?php
-	if(isset($settings["key"]) and isset($settings["token"]) and strpos(get_site_url(), 'localhost') === false){
+	if(isset($settings["key"]) and isset($settings["token"]) and strpos(SITEURL, 'localhost') === false){
 		?>
 		<label>
 			Trello board you want listen to

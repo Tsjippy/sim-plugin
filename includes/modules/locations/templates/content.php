@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							) 
 						);
 						
-						$url = plugins_url().'/sim-plugin/includes/pictures/location.png';
+						$url = PICTURESURL.'/location.png';
 						echo "<img src='$url' alt='category' class='location_icon'>";
 						
 						//First loop over the cat to see if any parent cat needs to be removed
@@ -103,7 +103,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php
 						$url		= get_post_meta(get_the_ID(),'url',true);
 						if($url != '' and $url != 'https://www.'){
-							$image_url = plugins_url().'/sim-plugin/includes/pictures/url.png';
+							$image_url = PICTURESURL.'/url.png';
 							$icon = "<img src='$image_url' alt='location' class='location_icon'>";
 							echo "<a href='$url'>$icon Visit website  »</a>";
 						}

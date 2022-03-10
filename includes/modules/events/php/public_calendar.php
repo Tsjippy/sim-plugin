@@ -33,7 +33,7 @@ function calendar_stream(){
 	$ical_start		.= "VERSION:2.0\r\n";
 	$ical_start		.= "METHOD:PUBLISH\r\n";
 	$ical_start		.= "PRODID:-//sim//website//EN\r\n";
-	$ical_start		.= "X-WR-CALNAME: SIM Nigeria events\r\n";
+	$ical_start		.= "X-WR-CALNAME: SIM events\r\n";
 	$ical_events	 = '';
 	
 	foreach($events as $event){

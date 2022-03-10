@@ -109,10 +109,10 @@ class Fileupload{
 	//Function to render the already uploaded images or show the link to a file
 	function document_preview($document_path, $index){
 		//documentpath is already an url
-		if(strpos($document_path,get_site_url()) !== false){
+		if(strpos($document_path, SITEURL) !== false){
 			$url = $document_path;
 		}else{
-			$url = get_site_url().'/'.str_replace(ABSPATH,'',$document_path);
+			$url = SITEURL.'/'.str_replace(ABSPATH,'',$document_path);
 		}
 		
 		$this->html .= "<div class='document'>";
@@ -155,7 +155,6 @@ class Fileupload{
 		$this->html .= "<img class='remove_document_loader hidden' src='".LOADERIMAGEURL."' style='height:40px;' >";
 		$this->html .= "</div>";
 	}
-	
 }
 
 /* 

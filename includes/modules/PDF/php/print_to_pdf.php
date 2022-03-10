@@ -1,5 +1,5 @@
 <?php
-namespace SIM\MANDATORY;
+namespace SIM\PDF;
 use SIM;
 
 //only load this if the pdf print is enabled
@@ -8,7 +8,7 @@ if(!SIM\get_module_option('PDF', 'pdf_print')) return;
 function create_page_pdf(){
 	global $post;
 	
-	$pdf = new \PDF_HTML();
+	$pdf = new PDF_HTML();
 	$pdf->SetFont('Arial','B',15);
 	
 	$pdf->skipfirstpage = false;
@@ -22,12 +22,12 @@ function create_page_pdf(){
 		$pdf->print_image(get_the_post_thumbnail_url($post),-1,20,-1,-1,true,true);
 		
 		//Duration
-		$url = plugins_url().'/sim-plugin/includes/pictures/time.png';
+		$url = PICTURESURL.'/time.png';
 		$pdf->print_image($url,10,-1,10,10);
 		$pdf->write(10,get_post_meta($post->ID,'time_needed',true).' minutes');
 		
 		//Serves
-		$url = plugins_url().'/sim-plugin/includes/pictures/recipe_serves.png';
+		$url = PICTURESURL.'/recipe_serves.png';
 		$pdf->print_image($url,55,-1,10,10);
 		
 		$persons = get_post_meta(get_the_ID(),'serves',true);

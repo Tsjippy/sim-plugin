@@ -21,6 +21,15 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 	
     SIM\picture_selector('tc_signature',  'Signature of the travel coordinator', $settings);
+
+	?>
+	<label>How often should we send the contact list</label>
+	<select name="freq">
+		<?php
+		SIM\ADMIN\recurrenceSelector($settings['freq']);
+		?>
+	</select>
+	<?php
 }, 10, 3);
 
 add_action('sim_module_updated', function($module_slug, $options){

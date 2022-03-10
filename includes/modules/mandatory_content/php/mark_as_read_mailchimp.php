@@ -5,7 +5,7 @@ use SIM;
 add_filter('sim_before_mailchimp_send', function($mail_content, $post){
     ///add button if mandatory message
     if(!empty($_POST['pagetype']['everyone'])){
-        $url			= get_site_url()."/wp-json/sim/v1/markasread?email=*|EMAIL|*&postid={$post->ID}";
+        $url			= SITEURL."/wp-json/sim/v1/markasread?email=*|EMAIL|*&postid={$post->ID}";
         $style			= "color: white; background-color: #bd2919; border-radius: 3px; text-align: center; margin-right: 10px; padding: 5px 10px;";
         $mail_content	.= "<br><a href='$url' style='$style'>I have read this</a>";
     }

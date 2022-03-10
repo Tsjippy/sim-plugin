@@ -76,7 +76,7 @@ class FormTable extends Formbuilder{
 				}
 			//show file uploads as links
 			}elseif(strpos($string,'uploads/form_uploads') !== false){
-				$url		= get_site_url()."/$string";
+				$url		= SITEURL."/$string";
 				$filename	= end(explode('/',$string));
 				$output		= "<a href='$url'>$filename</a>";
 			}
@@ -435,7 +435,7 @@ class FormTable extends Formbuilder{
 	}
 
 	function export_pdf($filename=""){
-		$pdf = new \PDF_HTML();
+		$pdf = new SIM\PDF\PDF_HTML();
 		$pdf->SetFont('Arial','B',15);
 				
 		//Determine the column widths
@@ -455,7 +455,7 @@ class FormTable extends Formbuilder{
 				if(is_array($row_data[$x])) $row_data[$x] = implode("\n",$row_data[$x]);
 
 				//convert to hyperlink if needed
-			/* 				if(strpos($row_data[$x],get_site_url()) !== false){
+			/* 				if(strpos($row_data[$x],SITEURL) !== false){
 					$this->excel_content[$index][$x]	= "<a href='{$row_data[$x]}'>Link</a>";
 				} */
 
@@ -521,19 +521,19 @@ class FormTable extends Formbuilder{
 		if($min_width > 180){
 			if($min_width < 297){
 				//Landscape A4 pdf
-				$pdf = new \PDF_HTML('L');
+				$pdf = new SIM\PDF\PDF_HTML('L');
 			}elseif($min_width < 420){
 				//Landscape pdf A3 size
-				$pdf = new \PDF_HTML('L','mm','A3');
+				$pdf = new SIM\PDF\PDF_HTML('L','mm','A3');
 			}elseif($min_width < 594){
 				//Landscape pdf A2 size
-				$pdf = new \PDF_HTML('L','mm',array(594,420));
+				$pdf = new SIM\PDF\PDF_HTML('L','mm',array(594,420));
 			}elseif($min_width < 841){
 				//Landscape pdf A1 size
-				$pdf = new \PDF_HTML('L','mm',array(841,594));
+				$pdf = new SIM\PDF\PDF_HTML('L','mm',array(841,594));
 			}else{
 				//Landscape pdf A0 size
-				$pdf = new \PDF_HTML('L','mm',array(1189,841));
+				$pdf = new SIM\PDF\PDF_HTML('L','mm',array(1189,841));
 			}
 			
 			//Set font again
@@ -643,7 +643,7 @@ class FormTable extends Formbuilder{
 							}else{
 								$visibility	= 'visible';
 							}
-							$icon			= "<img class='visibilityicon $visibility' src='".plugins_url()."/sim-plugin/includes/pictures/$visibility.png'>";
+							$icon			= "<img class='visibilityicon $visibility' src='".PICTURESURL."/$visibility.png'>";
 							
 							?>
 						<div class="column_setting_wrapper" data-id="<?php echo $element_index;?>" style="display: flex;">
@@ -881,7 +881,7 @@ class FormTable extends Formbuilder{
 								<div class="infobox" name="info" style="min-width: fit-content;">
 									<div style="float:right">
 										<p class="info_icon">
-											<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo plugins_url();?>/sim-plugin/includes/pictures/info.png">
+											<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL."/info.png";?>">
 										</p>
 									</div>
 									<span class="info_text">
@@ -1195,9 +1195,15 @@ class FormTable extends Formbuilder{
 						<form method="post" class="exportform" id="export_xls">
 							<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
 						</form>
-						<form method="post" class="exportform" id="export_pdf">
-							<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
-						</form>
+						<?php
+						if(SIM\get_module_option('PDF', 'enable')){
+							?>
+							<form method="post" class="exportform" id="export_pdf">
+								<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
+							</form>
+							<?php
+						}
+						?>
 					</div>
 				<?php
 				}

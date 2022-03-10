@@ -183,7 +183,7 @@ function user_description($user_id){
 	
 	//Add a useraccount edit button if the user has the usermanagement role
 	if (in_array('usermanagement',$user->roles)){
-		$edit_user_url = get_site_url().'/update-personal-info/?userid=';
+		$edit_user_url = SITEURL.'/update-personal-info/?userid=';
 		
 		$html .= "<div class='flex edit_useraccounts'><a href='$edit_user_url$user_id' class='button sim'>Edit useraccount for ".$userdata->first_name."</a>";
 		if(is_array($family) and isset($family['partner'])){
@@ -403,7 +403,7 @@ function build_vcard($user_id){
 		$vcard .= "FN:".$userdata->data->display_name."\r\n";
 		$vcard .= "N:".$userdata->last_name.";".$userdata->first_name.";;;\r\n";
 	}
-	$vcard .= "ORG:SIM Nigeria\r\n";
+	$vcard .= "ORG:".SITENAME."\r\n";
 	$vcard .= "EMAIL;TYPE=INTERNET;TYPE=WORK:".$userdata->user_email."\r\n";
 	
 	if(empty($privacy_preference['hide_phone'])){

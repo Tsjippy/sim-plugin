@@ -27,15 +27,12 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 	
     ?>
-	<label for="reminder_freq">How often should people be reminded of remaining required fields</label>
+	<label for="reminder_freq">How often should people be reminded of remaining content to read</label>
 	<br>
 	<select name="reminder_freq">
-		<option value=''>---</option>
-		<option value='daily' <?php if($settings["reminder_freq"] == 'daily') echo 'selected';?>>Daily</option>
-		<option value='weekly' <?php if($settings["reminder_freq"] == 'weekly') echo 'selected';?>>Weekly</option>
-		<option value='monthly' <?php if($settings["reminder_freq"] == 'monthly') echo 'selected';?>>Monthly</option>
-		<option value='threemonthly' <?php if($settings["reminder_freq"] == 'threemonthly') echo 'selected';?>>Every quarter</option>
-		<option value='yearly' <?php if($settings["reminder_freq"] == 'yearly') echo 'selected';?>>Yearly</option>
+		<?php
+		SIM\ADMIN\recurrenceSelector($settings['reminder_freq']);
+		?>
 	</select>
 	<?php
 }, 10, 3);

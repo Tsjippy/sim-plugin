@@ -2,11 +2,7 @@
 namespace SIM\FORMS;
 use SIM;
 
-use stdClass;
-
-use const SIM\CONTENTFILTER\ModuleVersion;
-
-if(!trait_exists('SIM\create_js')){
+if(!trait_exists('SIM\FORMS\create_js')){
 	require_once(__DIR__.'/js_builder.php');
 }
 
@@ -54,8 +50,7 @@ class Formbuilder{
 			) 
 		);
 		
-		global $StyleVersion;
-		$plugins['insert_form_shortcode']		= plugins_url("../../js/tiny_mce_action.js?ver=$StyleVersion", __DIR__);
+		$plugins['insert_form_shortcode']		= plugins_url("../../js/tiny_mce_action.js?ver=".ModuleVersion, __DIR__);
 		
 		return $plugins;
 	}
@@ -242,7 +237,7 @@ class Formbuilder{
 		// Form does not exit yet
 		if(empty($result)){
 			$this->insert_form();
-			$this->formdata 	=  new stdClass();
+			$this->formdata 	=  new \stdClass();
 		}else{
 			$this->formdata 	=  (object)$result[0];
 		}
@@ -395,7 +390,7 @@ class Formbuilder{
 			
 			$html = "<div class='infobox' name='{$element->name}'>";
 				$html .= '<div style="float:right">';
-					$html .= '<p class="info_icon"><img draggable="false" role="img" class="emoji" alt="ℹ" src="'. plugins_url().'/sim-plugin/includes/pictures/info.png"></p>';
+					$html .= '<p class="info_icon"><img draggable="false" role="img" class="emoji" alt="ℹ" src="'.PICTURESURL.'/pictures/info.png"></p>';
 				$html .= '</div>';
 				$html .= "<span class='info_text'>$content</span>";
 			$html .= '</div>';

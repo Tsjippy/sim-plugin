@@ -46,7 +46,7 @@ function display_profile_picture($user_id, $size=[50,50], $show_default = true){
 		$img = wp_get_attachment_image($attachment_id,$size);
 		return "<a href='$url'>$img</a>";
 	}elseif($show_default){
-		$url = plugins_url('',__DIR__).'/../pictures/usericon.png';
+		$url = PICTURESURL.'/usericon.png';
 		return "<img width='50' height='50' src='$url' class='attachment-50x50 size-50x50' loading='lazy'>";
 	}else{
 		return false;
@@ -54,8 +54,7 @@ function display_profile_picture($user_id, $size=[50,50], $show_default = true){
 }
 
 // Apply filter
-add_filter( 'get_avatar' , 'SIM\custom_avatar' , 1 , 5 );
-function custom_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
+add_filter( 'get_avatar' , function ( $avatar, $id_or_email, $size, $default, $alt ) {
     $user = false;
  
 	//CHeck if an, id, email or user is given
@@ -80,4 +79,4 @@ function custom_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
 		$avatar = "<img alt='$alt' src='$url' class='avatar avatar-{$size} photo' height='$size' width='$size' />";
     }
     return $avatar;
-}
+}, 1 , 5 );

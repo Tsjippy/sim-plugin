@@ -2,6 +2,17 @@
 namespace SIM\EVENTS;
 use SIM;
 
+function get_arriving_users(){
+	$date   = new \DateTime(); 
+	$arrival_users = get_users(array(
+		'meta_key'     => 'arrival_date',
+		'meta_value'   => $date->format('Y-m-d'),
+		'meta_compare' => '=',
+	));
+	
+	return $arrival_users;
+}
+
 function get_anniversaries(){
 	global $Events;
 
@@ -57,7 +68,7 @@ add_filter('sim_after_bot_payer', function($args){
 });
 
 add_filter('sim_after_bot_payer', function($args){
-	$arrival_users = SIM\get_arriving_users();
+	$arrival_users = get_arriving_users();
 	//If there are arrivals
 	if(count($arrival_users) >0){
 		if(count($arrival_users)==1){
@@ -83,7 +94,7 @@ add_action('delete_user', function($user_id){
 	$birthday_post_id = get_user_meta($user_id,'birthday_event_id',true);
 	if(is_numeric($birthday_post_id))	$Events->remove_db_rows($birthday_post_id);
 
-	$anniversary_id	= get_user_meta($user_id,'SIM Nigeria anniversary_event_id',true);
+	$anniversary_id	= get_user_meta($user_id, SITENAME.' anniversary_event_id',true);
 	if(is_numeric($anniversary_id))	$Events->remove_db_rows($anniversary_id);
 });
 
@@ -128,7 +139,7 @@ function birthday() {
 			}
 		}
 		
-		$arrival_users = SIM\get_arriving_users();
+		$arrival_users = get_arriving_users();
 		//If there are arrivals
 		if(count($arrival_users) >0){
 			$html 	.= '<div name="arrivals" style="text-align: center; font-size: 18px;">';

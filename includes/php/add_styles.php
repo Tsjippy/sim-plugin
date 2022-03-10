@@ -1,7 +1,6 @@
 <?php
 namespace SIM;
 
-$StyleVersion = "6.9.403";
 const StyleVersion		= '7.0.0';
 
 //Add js and css files
@@ -18,6 +17,7 @@ add_filter( 'body_class', function( $classes ) {
 	return array_merge( $classes, $newclass );
 } );
 
+// Style the buttons in the media library
 add_action( 'wp_enqueue_media', function(){
     wp_enqueue_style('sim_media_style', plugins_url('css/media.min.css', __DIR__), [], StyleVersion);
 });
@@ -35,22 +35,16 @@ function enqueueLibraries(){
 	
 	//Sweet alert https://sweetalert2.github.io/
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
-
-
 }
 
 function enqueueScripts($hook){
-	$current_user = wp_get_current_user();
-	$current_user_first_name = $current_user->first_name;
-	$UserID = $current_user->id;
+	$current_user	= wp_get_current_user();
+	$UserID			= $current_user->id;
 
 	enqueueLibraries();
 
 	//add main.js
 	wp_enqueue_script('sim_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
-	
-	//account_statements
-	wp_register_script('sim_account_statements_script',plugins_url('js/account_statements.js', __DIR__), array(),StyleVersion,true);
 	
 	//Submit forms
 	wp_register_script('sim_other_script',plugins_url('js/other.js', __DIR__), array('sweetalert'),StyleVersion,true);
@@ -80,9 +74,7 @@ function enqueueScripts($hook){
 	wp_localize_script( 'sim_script', 
 		'sim', 
 		array( 
-			'ajax_url' 		=> admin_url( 'admin-ajax.php' ), 
-			"logged_in"		=> is_user_logged_in(), 
-			"firstname"		=> $current_user_first_name, 
+			'ajax_url' 		=> admin_url( 'admin-ajax.php' ),
 			"userid"		=> $UserID,
 			'address' 		=> $address,
 			'loading_gif' 	=> LOADERIMAGEURL,

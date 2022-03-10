@@ -105,7 +105,7 @@ add_action ( 'wp_ajax_adduseraccount', function(){
 		}
 	
 		if(in_array('usermanagement', $user_roles)){
-			$url = get_site_url()."/update-personal-info/?userid=$user_id";
+			$url = SITEURL."/update-personal-info/?userid=$user_id";
 			$message = "Succesfully created an useraccount for $first_name<br>You can edit the deails <a href='$url'>here</a>";
 		}else{
 			$message =  "Succesfully created useraccount for $first_name<br>You can now select $first_name in the dropdowns";
@@ -333,7 +333,7 @@ add_action('sim_dashboard_warnings', function($user_id){
 				$generic_documents = get_option('personnel_documents');
 				if(is_array($generic_documents) and !empty($generic_documents['Annual review form'])){
 					$reminder_html .= "Please fill in the annual review questionary.<br>";
-					$reminder_html .= 'Find it <a href="'.get_site_url().'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
+					$reminder_html .= 'Find it <a href="'.SITEURL.'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
 					$reminder_html .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
 					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\current_url() );
 					$reminder_html .= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
@@ -478,7 +478,7 @@ add_shortcode("expiry_warnings",function (){
 				$generic_documents = get_option('personnel_documents');
 				if(is_array($generic_documents) and !empty($generic_documents['Annual review form'])){
 					$reminder_html .= "Please fill in the annual review questionary.<br>";
-					$reminder_html .= 'Find it <a href="'.get_site_url().'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
+					$reminder_html .= 'Find it <a href="'.SITEURL.'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
 					$reminder_html .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
 					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\current_url() );
 					$reminder_html .= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';

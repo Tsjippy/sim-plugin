@@ -28,7 +28,9 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 	
     ?>
-	<label>E-mail address used by finance department</label>
-	<input type="email" name="finance_email" value="<?php echo $settings['finance_email'];?>">
+	<label>
+		E-mail address used by finance department<br>
+		<input type="email" name="finance_email" value="<?php echo $settings['finance_email'];?>">
+	</label>
 	<?php
 }, 10, 3);

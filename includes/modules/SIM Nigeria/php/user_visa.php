@@ -8,11 +8,9 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 //Multi default values used to prefil the compound dropdown
 add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id, $formname){
-	global $QuotaNames;
-	
 	if($formname != 'user_visa') return $default_array_values;
 	
-	$default_array_values['quotanames'] 			= $QuotaNames;
+	$default_array_values['quotanames'] 			= QUOTANAMES;
 	
 	return $default_array_values;
 },10,3);

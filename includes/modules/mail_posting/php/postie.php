@@ -4,8 +4,7 @@ use SIM;
 
 //Update the post
 //http://postieplugin.com/postie_post_before/
-add_filter('postie_post_before', 'SIM\postie_post', 10, 2);
-function postie_post($post, $headers) {	
+add_filter('postie_post_before', function($post, $headers) {	
 	//Check if account statement mail
 	$post = check_if_account_statement($post);
 	
@@ -30,17 +29,16 @@ function postie_post($post, $headers) {
 		}
 	}
 	return $post;
-}
+}, 10, 2);
 
-add_filter('postie_post_after', 'SIM\postie_post_published');
-function postie_post_published($post){
+add_filter('postie_post_after', function($post){
 	//Only send message if post is published
 	if($post['post_status'] == 'publish'){
 		SIM\SIGNAL\send_post_notification($post['ID']);
 	}else{
 		SIM\FRONTEND_POSTING\send_pending_post_warning(get_post($post['ID']), false);
 	}
-}
+});
 
 function check_if_account_statement($post){
 	global $wp_filesystem;

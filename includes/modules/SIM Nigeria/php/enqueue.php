@@ -2,7 +2,7 @@
 namespace SIM\SIMNIGERIA;
 use SIM;
 
-$NigeriaStates	= [
+define('NIGERIASTATES', [
     'Abia' => [
         'lat'=>'5.532003041',
         'lon'=>'7.486002487'
@@ -143,9 +143,9 @@ $NigeriaStates	= [
         'lat'=>'12.1704057',
         'lon'=>'6.659996296'
     ],
-];
+]);
 
-$QuotaNames				= [
+define('QUOTANAMES', [
     'Administrative Workers',
     'Allied Health Professionals',
     'Allied Health Workers',
@@ -171,7 +171,7 @@ $QuotaNames				= [
     'Theological Educators',
     'Theological Teachers',
     'Theological Translator'
-];
+]);
 
 add_action( 'wp_enqueue_scripts', function(){
     wp_enqueue_script( 'sim_quotajs', plugins_url('js/quota.js', __DIR__), array('sim_other_script'), ModuleVersion,true);

@@ -28,9 +28,9 @@ function setupTimeCode(){
     update_user_meta($user_id,'2fa_hash',password_hash($setup_details->secretkey,PASSWORD_DEFAULT));
 
     if (!extension_loaded('imagick')){
-        $setup_details->image_html     = "<img src=".$twofa->getQRCodeImageAsDataUri("SIM Nigeria (".get_userdata($user_id)->user_login.")", $setup_details->secretkey).">";
+        $setup_details->image_html     = "<img src=".$twofa->getQRCodeImageAsDataUri(SITENAME." (".get_userdata($user_id)->user_login.")", $setup_details->secretkey).">";
     }else{
-        $qrCodeUrl = $twofa->getQRText("SIM Nigeria (".get_userdata($user_id)->user_login.")",$setup_details->secretkey);
+        $qrCodeUrl = $twofa->getQRText(SITENAME." (".get_userdata($user_id)->user_login.")",$setup_details->secretkey);
 
         $renderer = new ImageRenderer(
             new RendererStyle(400),
@@ -124,7 +124,7 @@ function reset_2fa($user_id){
 	$message = "Hi ".$userdata->first_name."<br><br>";
 	$message .= "I have removed all your second login factors so you can login again.<br>";
 	$message .= "After logging in with your username ({ $userdata->user_login}) and password you have to set it up again.<br>";
-	$message .= 'Find how to set it up on '.get_site_url().'/manuals/<br><br>';
+	$message .= 'Find how to set it up on '.SITEURL.'/manuals/<br><br>';
 	$message .= 'Kind regards,<br><br>';
 
 	wp_mail( $userdata->user_email, "Your account is unlocked", $message);

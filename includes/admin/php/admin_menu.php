@@ -36,8 +36,8 @@ add_action( 'admin_menu', function() {
 		update_option('sim_modules', $Modules);
 	}
 
-	add_menu_page("SIM Plugin Settings", "SIM Settings", 'manage_options', "sim", "SIM\ADMIN\main_menu");
-	add_submenu_page('sim', "Functions", "Functions", "manage_options", "sim_functions", "SIM\ADMIN\admin_menu_functions");
+	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", "SIM\ADMIN\main_menu");
+	add_submenu_page('sim', "Functions", "Functions", "edit_others_posts", "sim_functions", "SIM\ADMIN\admin_menu_functions");
 
 	//get all modules based on folder name
 	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
@@ -60,7 +60,7 @@ add_action( 'admin_menu', function() {
 		//load the menu page php file
 		require_once($module.'/php/module_menu.php');
 
-		add_submenu_page('sim', $module_name." module", $module_name, "manage_options", "sim_$module_slug", "SIM\ADMIN\build_submenu");
+		add_submenu_page('sim', $module_name." module", $module_name, "edit_others_posts", "sim_$module_slug", "SIM\ADMIN\build_submenu");
 	}
 });
 
@@ -147,6 +147,7 @@ function main_menu(){
 
 	//get all modules based on folder name
 	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
+	sort($modules, SORT_STRING | SORT_FLAG_CASE);
 
 	$active		= [];
 	$inactive	= [];
@@ -176,6 +177,9 @@ function main_menu(){
 		<b>Current inactive modules</b><br>
 		<ul class="sim-list">
 		<?php
+		if(empty($inactive)){
+			echo "All modules are activated";
+		}
 		foreach($inactive as $slug=>$name){
 			$url	= admin_url("admin.php?page=sim_$slug");
 			echo "<li><a href='$url'>$name</a></li>";
@@ -188,9 +192,9 @@ function main_menu(){
 }
 
 //Add link to the user menu to resend the confirmation e-mail
-add_filter( 'user_row_actions', 'SIM\add_send_welcome_mail_action', 10, 2 );
+add_filter( 'user_row_actions', 'SIM\ADMIN\add_send_welcome_mail_action', 10, 2 );
 function add_send_welcome_mail_action( $actions, $user ) {
-    $actions['Resend welcome mail'] = '<a href="'.get_site_url().'/wp-admin/users.php?send_activation_email='.$user->ID.'">Resend email</a>';
+    $actions['Resend welcome mail'] = "<a href='".SITEURL."/wp-admin/users.php?send_activation_email=$user->ID'>Resend email</a>";
     return $actions;
 }
 
@@ -203,3 +207,14 @@ add_action('init', function() {
 	}
 });
 
+function recurrenceSelector($curFreq){
+	?>
+	<option value=''>---</option>
+	<option value='daily' <?php if($curFreq == 'daily') echo 'selected';?>>Daily</option>
+	<option value='weekly' <?php if($curFreq == 'weekly') echo 'selected';?>>Weekly</option>
+	<option value='monthly' <?php if($curFreq == 'monthly') echo 'selected';?>>Monthly</option>
+	<option value='threemonthly' <?php if($curFreq == 'threemonthly') echo 'selected';?>>Every quarter</option>
+	<option value='sixmonthly' <?php if($curFreq == 'sixmonthly') echo 'selected';?>>Every half a year</option>
+	<option value='yearly' <?php if($curFreq == 'yearly') echo 'selected';?>>Yearly</option>
+	<?php
+}

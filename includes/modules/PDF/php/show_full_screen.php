@@ -1,5 +1,5 @@
 <?php
-namespace SIM\MANDATORY;
+namespace SIM\PDF;
 use SIM;
 
 //only load when checked

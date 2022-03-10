@@ -62,7 +62,7 @@ add_shortcode("trello_webhook",function(){
 			}
 
 			//create an useraccount
-			$user_id = SIM\add_user_account(ucfirst($user_props['first name']), ucfirst($user_props['last name']), $user_props['email address'], true, $duration);
+			$user_id = SIM\USERMANAGEMENT\add_user_account(ucfirst($user_props['first name']), ucfirst($user_props['last name']), $user_props['email address'], true, $duration);
 			
 			if(is_numeric($user_id)){
 				//send welcome e-mail
@@ -75,7 +75,7 @@ add_shortcode("trello_webhook",function(){
 				$trello->addComment($card_id,"Account created, user id is $user_id");
 				
 				//Update the description of the card
-				$url	= get_site_url()."/update-personal-info/?userid=$user_id";
+				$url	= SITEURL."/update-personal-info/?userid=$user_id";
 				$trello->updateCard($card_id, 'desc', $desc."%0A <a href='$url'>user_id:$user_id</a>");
 			}
 		}else{

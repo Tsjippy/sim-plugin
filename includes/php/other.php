@@ -170,17 +170,22 @@ add_filter('wp_mail',function($args){
 	if(!in_array("Content-Type: text/html; charset=UTF-8", $args['headers'])){
 		$args['headers'][]	= "Content-Type: text/html; charset=UTF-8";
 	}
+
+	if(strpos($args['message'], 'Kind regards,') === false and strpos($args['message'], 'Cheers,') === false){
+		$args['message']	.= "Kind regards,<br><br>".SITENAME;
+	}
 	
 	if(strpos($args['message'], 'is an automated') === false){
 		$args['message']	.= "<br><br>";
-		$url				 = get_site_url();
-		$clean_url			 =  str_replace('https://','',$url);
-		$args['message']	.= "<span style='font-size:10px'>This is an automated e-mail originating from <a href='$url'>$clean_url</a></span>";
+		$clean_url			 = str_replace('https://','', SITEURL);
+		$args['message']	.= "<span style='font-size:10px'>This is an automated e-mail originating from <a href='".SITEURL."'>$clean_url</a></span>";
 	}
 
 	return $args;
 }, 10,1);
 
+
+// Turn off heartbeat
 add_action( 'init', function(){wp_deregister_script('heartbeat');}, 1 );
 
 

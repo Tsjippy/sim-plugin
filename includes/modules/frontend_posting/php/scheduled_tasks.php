@@ -2,8 +2,6 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
-use function SIM\get_module_option;
-
 add_action('init', function(){
 	//add action for use in scheduled task
 	add_action( 'expired_posts_check_action', 'SIM\FRONTEND_POSTING\expired_posts_check' );
@@ -47,14 +45,22 @@ function expired_posts_check(){
 //Function to check for old ministry pages
 //Whoever checked the box for that ministry on their account gets an email to remind them about the update
 function page_age_warning(){
+	//Change the user to the adminaccount otherwise get_users will not work
+	wp_set_current_user(1);
+
 	//Get all pages without the static content meta key
 	$pages = get_posts(array(
 		'numberposts'      => -1,
-		'post_type'        => 'page',
+		'post_type'        => ['page', 'location'],
 		'meta_query' => array(
+			'relation' => 'AND',
 			array(
-			 'key' => 'static_content',
-			 'compare' => 'NOT EXISTS'
+				'key' 		=> 'static_content',
+				'compare'	=> 'NOT EXISTS'
+			),
+			array(
+				'key'		=> 'missionary_id',
+				'compare'	=> 'NOT EXISTS'
 			),
 		)
 	));
@@ -74,25 +80,21 @@ function page_age_warning(){
 		//If it is X days since last modified
 		if ($seconds_since_updated > $max_age_in_seconds){
 			//Get the edit page url
-			$url = add_query_arg( ['post_id' => $post_id], get_permalink( get_module_option('frontend_posting', 'publish_post_page') ) );
+			$url = add_query_arg( ['post_id' => $post_id], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );
 			
 			//Send an e-mail
 			$recipients = get_page_recipients($post_title);
 			foreach($recipients as $recipient){
 				//Only email if valid email
 				if(strpos($recipient->user_email,'.empty') === false){
-					$subject = "Please update the contents of ".$post_title;
-					$message = 'Dear '.$recipient->display_name.',<br><br>';
-					$message .= 'It has been '.$page_age.' days since the page with title "'.$post_title.'" on <a href="https://simnigeria.org">SIM Nigeria</a> has been updated.<br>';
-					$message .= 'Please follow this link to update it: <a href="'.$url.'">the link</a>.<br><br>';
-					$message .= 'Kind regards,<br><br>';
-					$headers = array('Content-Type: text/html; charset=UTF-8');
+					$subject  = "Please update the contents of '$post_title'";
+					$message  = "Dear $recipient->first_name,<br><br>";
+					$message .= "It has been $page_age days since the page with title '$post_title' on <a href='".SITEURL."'>".SITENAME."</a> has been updated.<br>";
+					$message .= "Please follow this link to update it: <a href='$url'>the link</a>.<br><br>";
+					$message .= "Kind regards,<br><br>";
 				
-					wp_mail( $recipient->user_email, $subject, $message, $headers );
+					wp_mail( $recipient->user_email, $subject, $message);
 				}
-				
-				//Send Signal message
-				SIM\try_send_signal("Hi ".$recipient->first_name.",\nPlease update the page '$post_title' here:\n\n$url",$recipient->ID);
 			}
 		}
 	}
@@ -100,6 +102,7 @@ function page_age_warning(){
 
 //Function to check who the recipients should be for the page update mail
 function get_page_recipients($page_title){
+
 	$recipients = [];
 	
 	//Get all the users with a ministry set
@@ -125,3 +128,12 @@ function get_page_recipients($page_title){
 	
 	return $recipients;
 }
+
+// Remove scheduled tasks upon module deactivatio
+add_action('sim_module_deactivated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	wp_clear_scheduled_hook( 'expired_posts_check_action' );
+	wp_clear_scheduled_hook( 'page_age_warning_action' );
+}, 10, 2);

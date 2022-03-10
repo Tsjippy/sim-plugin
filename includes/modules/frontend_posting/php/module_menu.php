@@ -34,17 +34,16 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<br>
 	<label>How often should people be reminded of content which should be updated?</label>
 	<select name="page_age_reminder">
-		<option value="weekly" <?php if($settings["page_age_reminder"] == "weekly") echo 'selected';?>>Weekly</option>
-		<option value="monthly" <?php if($settings["page_age_reminder"] == "monthly") echo 'selected';?>>Monthly</option>
-		<option value="threemonthly" <?php if($settings["page_age_reminder"] == "threemonthly") echo 'selected';?>>Every 3 months</option>
-		<option value="yearly" <?php if($settings["page_age_reminder"] == "yearly") echo 'selected';?>>Yearly</option>
+		<?php
+		SIM\ADMIN\recurrenceSelector($settings['page_age_reminder']);
+		?>
 	</select>
 	<br>
 	<label>What should be the max time in months for a page without any changes?</label>
 	<select name="max_page_age">
 		<?php
 		for ($x = 0; $x <= 12; $x++) {
-			if($settings['max_page_age'] == $x){
+			if($settings['max_page_age'] === strval($x)){
 				$selected = 'selected';
 			}else{
 				$selected = '';

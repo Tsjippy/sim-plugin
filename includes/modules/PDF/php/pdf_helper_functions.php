@@ -1,4 +1,7 @@
 <?php
+namespace SIM\PDF;
+use SIM;
+
 /**
  * Modified from http://www.fpdf.org/en/script/script42.php
  */
@@ -31,7 +34,7 @@ function txtentities($html){
     return strtr($html, $trans);
 }
 ////////////////////////////////////
-class PDF_HTML extends FPDF{
+class PDF_HTML extends \FPDF{
 	//variables of html parser
 	protected $B;
 	protected $I;
@@ -136,7 +139,7 @@ class PDF_HTML extends FPDF{
 						if($ext == 'JPE') $ext = 'JPG';
 						$this->Image($attr['SRC'],$this->GetX(),$this->GetY(),px2mm($attr['WIDTH']), px2mm($attr['HEIGHT']),$ext);
 						$this->SetY($this->GetY()+px2mm($attr['HEIGHT'])+2);
-					}catch (Exception $e) {
+					}catch (\Exception $e) {
 						SIM\print_array("PDF_HELPER_Functions.php: {$attr['SRC']} is not a valid image");
 					}
 				}
@@ -251,7 +254,7 @@ class PDF_HTML extends FPDF{
 			try{
 				// Logo
 				$this->Image($logo,10,6,30,0,'JPG');
-			}catch (Exception $e) {
+			}catch (\Exception $e) {
 				SIM\print_array("PDF_HELPER_Functions.php: $logo is not a valid image");
 			}
 			// Arial bold 15
@@ -369,7 +372,7 @@ class PDF_HTML extends FPDF{
 							//Print the picture
 							try{
 								$this->Image(ABSPATH.$image, null, null, 100, 0,  $extension);
-							}catch (Exception $e) {
+							}catch (\Exception $e) {
 								SIM\print_array(ABSPATH.$image." is not a valid image");
 							}
 						}else{
@@ -441,7 +444,7 @@ class PDF_HTML extends FPDF{
 			if($adjustY) $y += $height;
 			
 			$this->setXY($x+$width,$y);
-		}catch (Exception $e) {
+		}catch (\Exception $e) {
 			SIM\print_array("PDF_export.php: $path is not a valid image");
 		}
 	}

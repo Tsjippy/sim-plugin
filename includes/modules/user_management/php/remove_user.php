@@ -3,8 +3,7 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 //Remove missionary page and missionary marker on user account deletion
-add_action('delete_user', 'SIM\remove_user_data');
-function remove_user_data ($user_id){
+add_action('delete_user', function ($user_id){
 	global $wpdb;
 	global $Maps;
 	global $Modules;
@@ -145,11 +144,10 @@ function remove_user_data ($user_id){
 	Kind regards,<br>";
 					
 	wp_mail($userdata->user_email, 'Your account on simnigeria.org has been deleted', $message, $headers );
-}
+});
 
 //Delete user shortcode
-add_shortcode( 'delete_user', 'SIM\delete_user_shortcode' );
-function delete_user_shortcode(){
+add_shortcode( 'delete_user', function(){
 	require_once(ABSPATH.'wp-admin/includes/user.php');
 	
 	$user = wp_get_current_user();
@@ -222,4 +220,4 @@ function delete_user_shortcode(){
 		
 		return $html;
 	}
-}
+});

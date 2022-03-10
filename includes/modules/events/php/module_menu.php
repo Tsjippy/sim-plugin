@@ -29,12 +29,9 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<label for="freq">How often should we check for expired events?</label>
 	<br>
 	<select name="freq">
-		<option value=''>---</option>
-		<option value='daily' <?php if($settings["freq"] == 'daily') echo 'selected';?>>Daily</option>
-		<option value='weekly' <?php if($settings["freq"] == 'weekly') echo 'selected';?>>Weekly</option>
-		<option value='monthly' <?php if($settings["freq"] == 'monthly') echo 'selected';?>>Monthly</option>
-		<option value='threemonthly' <?php if($settings["freq"] == 'threemonthly') echo 'selected';?>>Every quarter</option>
-		<option value='yearly' <?php if($settings["freq"] == 'yearly') echo 'selected';?>>Yearly</option>
+		<?php
+		SIM\ADMIN\recurrenceSelector($settings['freq']);
+		?>
 	</select>
 	<br>
 	<br>

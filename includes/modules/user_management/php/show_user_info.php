@@ -326,7 +326,7 @@ function user_info_page($atts){
 function export_visa_info_pdf($user_id=0, $all=false) {
 	if($all == true){
 		//Build the frontpage
-		$pdf = new \PDF_HTML();
+		$pdf = new SIM\PDF\PDF_HTML();
 		$pdf->frontpage("Visa user info","");
 		
 		//Get all adult missionaries
@@ -338,7 +338,7 @@ function export_visa_info_pdf($user_id=0, $all=false) {
 		}
 	}else{
 		//Build the frontpage
-		$pdf = new \PDF_HTML();
+		$pdf = new SIM\PDF\PDF_HTML();
 		$pdf->frontpage("Visa user info for:",get_userdata($user_id)->display_name);
 		write_visa_pages($user_id, $pdf);
 	}

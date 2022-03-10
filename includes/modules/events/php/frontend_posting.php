@@ -333,3 +333,34 @@ function event_specific_fields($frontEndContent){
 	</div>
 	<?php
 }
+
+add_filter('sim_signal_post_notification_message', function($excerpt, $post){
+	if($post->post_type == 'event'){
+		global $Events;
+		$event		= $Events->retrieve_single_event($post->ID);
+		$startdate	= date('d-m-Y', strtotime($event->startdate));
+		if($event->startdate == $event->enddate){
+			$excerpt .= "\n\nDate: $startdate";
+		}else{
+			$enddate	 = date('d-m-Y', strtotime($event->enddate));
+			$excerpt 	.= "\n\nStart date: $startdate";
+			$excerpt 	.= "\nEnd date: $enddate";
+		}
+		if(!empty($event->starttime) and !empty($event->endtime)){
+			$excerpt .= "\nTime: $event->starttime till $event->endtime";
+		}
+
+		if(!empty($event->location)){
+			$excerpt .= "\nLocation: $event->location";
+		}
+
+		if(!empty($event->organizer)){
+			if(is_numeric($event->organizer)){
+				$event->organizer	= get_user_by('id', $event->organizer)->display_name;
+			}
+			$excerpt .= "\nOrganized by : $event->organizer";
+		}
+	}
+
+	return $excerpt;
+}, 10, 2);

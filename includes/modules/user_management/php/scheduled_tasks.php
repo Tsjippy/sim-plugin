@@ -82,7 +82,7 @@ function vaccination_reminder(){
 		$reminder_html = vaccination_reminders($user->ID);
 
 		//If there are reminders, send an e-mail
-		if ($reminder_html != ""){
+		if (!empty($reminder_html)){
 			update_user_meta($user->ID,"required_fields_status","");
 			$userdata = get_userdata($user->ID);
 			if($userdata != null){
@@ -104,7 +104,7 @@ function vaccination_reminder(){
 									
 						//Send OneSignal message
 						SIM\try_send_signal(
-							"Hi ".$parent->first_name.",\nPlease renew the vaccinations  of your $child_title ".$userdata->first_name."!\n\n".get_site_url(),
+							"Hi $parent->first_name,\nPlease renew the vaccinations  of your $child_title $userdata->first_name!\n\n".SITEURL,
 							$user->ID
 						);
 					}				
@@ -117,11 +117,11 @@ function vaccination_reminder(){
 					$message = 'Hi '.$userdata->first_name.',<br><br>';
 					
 					//Send Signal message
-					SIM\try_send_signal("Hi ".$userdata->first_name.",\nPlease renew your vaccinations!\n\n".get_site_url(),$user->ID);
+					SIM\try_send_signal("Hi $userdata->first_name,\nPlease renew your vaccinations!\n\n".SITEURL, $user->ID);
 				}
 				
 				
-				if($recipients != ''){
+				if(!empty($recipients)){
 					//Get the current health coordinator
 					$healtCoordinators 			= get_users( array( 'fields' => array( 'ID','display_name' ),'role' => 'medicalinfo' ));
 					if($healtCoordinators != null){
@@ -256,7 +256,7 @@ function greencard_reminder(){
 				$message = 'Hi '.$user->first_name.',<br><br>';
 
 				//Send OneSignal message
-				SIM\try_send_signal("Hi ".$user->first_name.",\nPlease renew your greencard!\n\n".get_site_url(),$user->ID);
+				SIM\try_send_signal("Hi $user->first_name,\nPlease renew your greencard!\n\n".SITEURL, $user->ID);
 				
 				//Send e-mail
 				$message .= str_replace('</li>','',str_replace('<li>',"",$reminder_html));
@@ -524,8 +524,7 @@ function account_expiry_check(){
 	);
 	
 	foreach($expired_users as $user){
-		//Send OneSignal message
-		//send_custom_onesignal_message("Hi ".$user->first_name.",\nYour account is expired",$user->ID,get_site_url());
+		//Send Signal message
 		SIM\try_send_signal(
 			"Hi ".$user->first_name.",\nYour account is expired, as you are no longer in Nigeria.",
 			$user->ID
@@ -582,16 +581,15 @@ function review_reminders(){
 						$subject 	 = "Please fill in the annual review questionary.";
 						$message 	 = 'Hi '.$user->first_name.',<br><br>';
 
-						//Send OneSignal message
-						//send_custom_onesignal_message("Hi ".$user->first_name.",\nPlease fill in the annual review questionary.",$user->ID,get_site_url());
+						//Send Signal message
 						SIM\try_send_signal(
-							"Hi ".$user->first_name.",\n\nIt is time for your annual review.\nPlease fill in the annual review questionary:\n\n".get_site_url().'/'.$generic_documents['Annual review form']."\n\nThen send it to $personnelCoordinatorEmail",
+							"Hi ".$user->first_name.",\n\nIt is time for your annual review.\nPlease fill in the annual review questionary:\n\n".SITEURL.'/'.$generic_documents['Annual review form']."\n\nThen send it to $personnelCoordinatorEmail",
 							$user->ID
 						);
 						
 						//Send e-mail
 						$message 	.= 'It is time for your annual review.<br>';
-						$message 	.= 'Please fill in the <a href="'.get_site_url().'/'.$generic_documents['Annual review form'].'">review questionaire</a> to prepare for the talk.<br>';
+						$message 	.= 'Please fill in the <a href="'.SITEURL.'/'.$generic_documents['Annual review form'].'">review questionaire</a> to prepare for the talk.<br>';
 						$message 	.= 'When filled it in send it to me by replying to this e-mail<br><br>';
 						$message	.= 'Kind regards,<br><br>the personnel coordinator';
 						$headers 	 = array(
@@ -608,3 +606,16 @@ function review_reminders(){
 		}
 	}
 }
+
+// Remove scheduled tasks upon module deactivatio
+add_action('sim_module_deactivated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	wp_clear_scheduled_hook( 'birthday_check_action' );
+	wp_clear_scheduled_hook( 'account_expiry_check_action' );
+	wp_clear_scheduled_hook( 'vaccination_reminder_action' );
+	wp_clear_scheduled_hook( 'greencard_reminder_action' );
+	wp_clear_scheduled_hook( 'check_details_mail_action' );
+	wp_clear_scheduled_hook( 'review_reminders_action' );
+}, 10, 2);

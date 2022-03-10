@@ -23,7 +23,7 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 
-	if(!class_exists('SIM\VimeoApi')){
+	if(!class_exists('SIM\VIMEO\VimeoApi')){
 		require(__DIR__.'/api_functions.php');
 	}
 

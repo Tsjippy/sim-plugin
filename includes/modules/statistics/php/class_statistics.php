@@ -40,7 +40,7 @@ class Statistics {
 
         if(empty($_POST['url'])) wp_die();
         $user_id        = get_current_user_id();
-        $url            = str_replace(get_site_url(),'',$_POST['url']);
+        $url            = str_replace(SITEURL,'',$_POST['url']);
         $creation_date	= date("Y-m-d H:i:s");
 
         $pageviews  = $wpdb->get_var( "SELECT counter FROM {$this->table_name} WHERE userid='$user_id' AND url='$url'" );

@@ -25,6 +25,14 @@ if(!isset($_SERVER['HTTP_SEC_FETCH_DEST'])){
 //only call it once
 remove_action( 'wp_head', 'adjacent_posts_rel_link');
 
+// Define constants
+define('SITEURL', get_site_url());
+define('SITENAME', get_bloginfo());
+define('INCLUDESURL', plugins_url('includes',__FILE__));
+define('INCLUDESPATH', plugin_dir_path(__FILE__).'includes/');
+define('PICTURESURL', INCLUDESURL.'/pictures');
+define('LOADERIMAGEURL', PICTURESURL.'/loading.gif');
+
 //load all libraries
 require( __DIR__  . '/includes/lib/vendor/autoload.php');
 
@@ -48,18 +56,17 @@ foreach ($files as $file) {
 //Activate
 register_activation_hook( __FILE__, function(){
 	add_option( 'Activated_Plugin', 'SIM' );
+
+	
 });	
 	
 //Register a function to run on plugin deactivation
 register_deactivation_hook( __FILE__, 'sim_deactivate' );
 
 //Add remove scheduled action on plugin deacivation
-function sim_deactivate() {
-	global $ScheduledFunctions;
-	
+function sim_deactivate() {	
 	SIM\print_array("Removing cron schedules");
 	
-	foreach($ScheduledFunctions as $scheduled_function){
-		wp_clear_scheduled_hook( $scheduled_function[1].'_action' );
-	}
+	wp_clear_scheduled_hook( 'check_last_login_date_action' );
+	wp_clear_scheduled_hook( 'process_images_action' );
 }

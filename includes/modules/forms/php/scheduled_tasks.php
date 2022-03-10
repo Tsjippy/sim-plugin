@@ -52,7 +52,7 @@ function mandatory_fields_reminder(){
                                 
                     //Send Signal message
                     SIM\try_send_signal(
-                        "Hi ".$parent->first_name.",\nPlease update the personal information of your $child_title ".$user->first_name." here:\n\n".get_site_url()."/account",
+                        "Hi $parent->first_name,\nPlease update the personal information of your $child_title $user->first_name here:\n\n".SITEURL."/account",
                         $user->ID
                     );
                 }				
@@ -60,7 +60,7 @@ function mandatory_fields_reminder(){
             }else{			
                 //Send Signal message
                 SIM\try_send_signal(
-                    "Hi ".$user->first_name.",\nPlease update your personal information here:\n\n".get_site_url()."/account",
+                    "Hi $user->first_name,\nPlease update your personal information here:\n\n".SITEURL."/account",
                     $user->ID
                 );
                 
@@ -87,3 +87,12 @@ function mandatory_fields_reminder(){
 		}
 	} 
 }
+
+// Remove scheduled tasks upon module deactivatio
+add_action('sim_module_deactivated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	wp_clear_scheduled_hook( 'auto_archive_action' );
+	wp_clear_scheduled_hook( 'mandatory_fields_reminder_action' );
+}, 10, 2);

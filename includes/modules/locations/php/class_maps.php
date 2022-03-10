@@ -124,7 +124,7 @@ class Maps{
 			if (empty($privacy_preference['hide_profile_picture'])){
 				$login_name = $userdata->user_login;
 				if ( is_numeric(get_user_meta($user_id,'profile_picture',true)) ) {
-					$icon_url = SIM\get_profile_picture_url($user_id, 'thumbnail');
+					$icon_url = SIM\USERMANAGEMENT\get_profile_picture_url($user_id, 'thumbnail');
 				}else{
 					$icon_url = "";
 				}
