@@ -1,6 +1,6 @@
 window['remove_form_table_row']	= function(result,responsdata){
 	if (result.status >= 200 && result.status < 400) {
-		var base_query	= '.form_data_table[data-id="'+responsdata.formid+'"] .table-row[data-id="'+responsdata.submissionid+'"]';
+		var base_query	= '.form-data-table[data-id="'+responsdata.formid+'"] .table-row[data-id="'+responsdata.submissionid+'"]';
 		if(responsdata.subid != -1){
 			document.querySelectorAll(base_query+'[data-subid="'+responsdata.subid+'"]').forEach(
 				row=>{row.remove();}
@@ -24,12 +24,12 @@ window['changearchivebutton']	= function(result,responsdata){
 		}
 		
 		if(responsdata.subid != -1){
-			var buttons = document.querySelectorAll('.form_data_table[data-id="'+responsdata.formid+'"] .table-row[data-id="'+responsdata.submissionid+'"][data-subid="'+responsdata.subid+'"] .'+buttonclass);
+			var buttons = document.querySelectorAll('.form-data-table[data-id="'+responsdata.formid+'"] .table-row[data-id="'+responsdata.submissionid+'"][data-subid="'+responsdata.subid+'"] .'+buttonclass);
 		}else{
-			var buttons = document.querySelectorAll('.form_data_table[data-id="'+responsdata.formid+'"] .table-row[data-id="'+responsdata.submissionid+'"] .'+buttonclass);
+			var buttons = document.querySelectorAll('.form-data-table[data-id="'+responsdata.formid+'"] .table-row[data-id="'+responsdata.submissionid+'"] .'+buttonclass);
 		}
 		
-		var loader = document.querySelector('.form_data_table[data-id="'+responsdata.formid+'"] .loadergif');
+		var loader = document.querySelector('.form-data-table[data-id="'+responsdata.formid+'"] .loadergif');
 		var loaderhtml = loader.outerHTML;
 		
 		

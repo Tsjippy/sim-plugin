@@ -22,7 +22,7 @@ class FrontEndContent{
 			$this->fullrights		= false;
 		}
 		
-		if(get_class($this) == 'SIM\FRONTEND_POSTING\FrontEndContent'){
+		if(get_class($this) == __NAMESPACE__.'\FrontEndContent'){
 			//Add tinymce plugin
 			add_filter('mce_external_plugins', array($this,'add_tinymce_plugin'),999);
 			

@@ -11,8 +11,8 @@ add_action('init', function(){
 	$GLOBALS['Events']	= new Events();
 
 	SIM\register_post_type_and_tax('event', 'events');
-	add_action('frontend_post_before_content', 'SIM\EVENTS\event_specific_fields');
-	add_action('frontend_post_content_title', 'SIM\EVENTS\event_title');
+	add_action('frontend_post_before_content', __NAMESPACE__.'\event_specific_fields');
+	add_action('frontend_post_content_title', __NAMESPACE__.'\event_title');
 	
 	add_filter(
 		'widget_categories_args',

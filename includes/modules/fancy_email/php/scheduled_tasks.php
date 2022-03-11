@@ -1,11 +1,11 @@
 <?php
-namespace SIM\ADMIN;
+namespace SIM\FANCYMAIL;
 use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'auto_archive_action', __NAMESPACE__.'\auto_archive_form_entries' );
-    add_action( 'mandatory_fields_reminder_action', __NAMESPACE__.'\mandatory_fields_reminder' );
+	add_action( 'auto_archive_action', 'SIM\FORMS\auto_archive_form_entries' );
+    add_action( 'mandatory_fields_reminder_action', 'SIM\FORMS\mandatory_fields_reminder' );
 });
 
 function schedule_tasks(){

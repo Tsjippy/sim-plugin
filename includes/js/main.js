@@ -146,7 +146,7 @@ function showLoader(element, replace=true, message=''){
 	return wrapper;
 }
 
-function display_message(message, icon, autoclose=false, no_ok=false){
+function display_message(message, icon, autoclose=false, no_ok=false, timer=1500){
 	if(message == undefined){
 		return;
 	}
@@ -168,7 +168,7 @@ function display_message(message, icon, autoclose=false, no_ok=false){
 		}
 		
 		if(autoclose){
-			options['timer'] = 1500;
+			options['timer'] = timer;
 		}
 		
 		Swal.fire(options);
@@ -265,3 +265,32 @@ window.addEventListener("click", function(event) {
 		display_tab(target);
 	}		
 });
+
+//check internet
+async function has_internet(){
+	await fetch('https://google.com', {
+		method: 'GET', // *GET, POST, PUT, DELETE, etc.
+		mode: 'no-cors',
+	}).then((result) => {
+		window['online'] = true;
+	}).catch(e => {
+		window['online'] = false;
+	});
+
+	return window['online'];
+}
+
+async function waitForInternet(){
+	var internet	= await has_internet();
+	if(!internet){
+		display_message('You have no internet connection, waiting till internet is back...', 'warning', true, true, 5000);
+
+		while(!internet){
+			if(window['online']){
+				break;
+			}
+
+			internet	= await has_internet();
+		}
+	}
+}

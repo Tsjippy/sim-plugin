@@ -220,8 +220,8 @@ function change_password_field($user_id = null){
 }
 
 //Save the password....
-add_action ( 'wp_ajax_update_password', 'SIM\USERMANAGEMENT\process_pw_update');
-add_action ( 'wp_ajax_nopriv_update_password', 'SIM\USERMANAGEMENT\process_pw_update');
+add_action ( 'wp_ajax_update_password', __NAMESPACE__.'\process_pw_update');
+add_action ( 'wp_ajax_nopriv_update_password', __NAMESPACE__.'\process_pw_update');
 function process_pw_update(){
 	SIM\print_array("updating password");
 
@@ -247,8 +247,8 @@ function process_pw_update(){
 }
 
 //Disable or enable an useraccount
-add_action ( 'wp_ajax_disable_useraccount', 'SIM\USERMANAGEMENT\disable_useraccount');
-add_action ( 'wp_ajax_enable_useraccount', 'SIM\USERMANAGEMENT\disable_useraccount');
+add_action ( 'wp_ajax_disable_useraccount', __NAMESPACE__.'\disable_useraccount');
+add_action ( 'wp_ajax_enable_useraccount', __NAMESPACE__.'\disable_useraccount');
 function disable_useraccount(){
 	if(!in_array('usermanagement', wp_get_current_user()->roles)){
 		wp_die("You do not have permission to disable useraccounts.",500);

@@ -55,8 +55,8 @@ add_filter( 'safe_style_css', function( $styles ) {
 } );
 
 //Add post edit button
-add_action( 'generate_before_content', 'SIM\FRONTEND_POSTING\add_page_edit_button');
-add_action( 'sim_before_content', 'SIM\FRONTEND_POSTING\add_page_edit_button');
+add_action( 'generate_before_content', __NAMESPACE__.'\add_page_edit_button');
+add_action( 'sim_before_content', __NAMESPACE__.'\add_page_edit_button');
 function add_page_edit_button(){
 	$content = get_the_content();
 	

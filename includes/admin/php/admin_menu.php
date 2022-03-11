@@ -29,6 +29,12 @@ add_action( 'admin_menu', function() {
 		}else{
 			if(!empty($options)){
 				$Modules[$module_slug]	= $options;
+
+				// Load module files as they might contain activation actions
+				$files = glob(__DIR__  . "/../../modules/$module_slug/php/*.php");
+				foreach ($files as $file) {
+					require_once($file);   
+				}	
 				do_action('sim_module_activated', $module_slug, $options);
 				do_action('sim_module_updated', $module_slug, $options);
 			}
@@ -36,8 +42,8 @@ add_action( 'admin_menu', function() {
 		update_option('sim_modules', $Modules);
 	}
 
-	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", "SIM\ADMIN\main_menu");
-	add_submenu_page('sim', "Functions", "Functions", "edit_others_posts", "sim_functions", "SIM\ADMIN\admin_menu_functions");
+	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\main_menu");
+	add_submenu_page('sim', "Functions", "Functions", "edit_others_posts", "sim_functions", __NAMESPACE__."\admin_menu_functions");
 
 	//get all modules based on folder name
 	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
@@ -60,7 +66,7 @@ add_action( 'admin_menu', function() {
 		//load the menu page php file
 		require_once($module.'/php/module_menu.php');
 
-		add_submenu_page('sim', $module_name." module", $module_name, "edit_others_posts", "sim_$module_slug", "SIM\ADMIN\build_submenu");
+		add_submenu_page('sim', $module_name." module", $module_name, "edit_others_posts", "sim_$module_slug", __NAMESPACE__."\build_submenu");
 	}
 });
 
@@ -192,7 +198,7 @@ function main_menu(){
 }
 
 //Add link to the user menu to resend the confirmation e-mail
-add_filter( 'user_row_actions', 'SIM\ADMIN\add_send_welcome_mail_action', 10, 2 );
+add_filter( 'user_row_actions', __NAMESPACE__.'\add_send_welcome_mail_action', 10, 2 );
 function add_send_welcome_mail_action( $actions, $user ) {
     $actions['Resend welcome mail'] = "<a href='".SITEURL."/wp-admin/users.php?send_activation_email=$user->ID'>Resend email</a>";
     return $actions;

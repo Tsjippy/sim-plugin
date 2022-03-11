@@ -1,11 +1,11 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.0';
+const StyleVersion		= '7.0.1';
 
 //Add js and css files
-add_action( 'wp_enqueue_scripts', 'SIM\enqueueScripts');
-add_action( 'admin_enqueue_scripts', 'SIM\enqueueLibraries');
+add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
+add_action( 'admin_enqueue_scripts', __NAMESPACE__.'\enqueueLibraries');
 
 add_filter( 'body_class', function( $classes ) {
 	$newclass = [];
@@ -35,6 +35,12 @@ function enqueueLibraries(){
 	
 	//Sweet alert https://sweetalert2.github.io/
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
+
+	//Submit forms
+	wp_register_script('sim_other_script',plugins_url('js/other.js', __DIR__), array('sweetalert'),StyleVersion,true);
+
+	//table request shortcode
+	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_other_script'),StyleVersion,true);
 }
 
 function enqueueScripts($hook){
@@ -45,12 +51,6 @@ function enqueueScripts($hook){
 
 	//add main.js
 	wp_enqueue_script('sim_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
-	
-	//Submit forms
-	wp_register_script('sim_other_script',plugins_url('js/other.js', __DIR__), array('sweetalert'),StyleVersion,true);
-
-	//table request shortcode
-	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_other_script'),StyleVersion,true);
 	
 	//File upload js
 	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('sim_other_script'),StyleVersion,true);

@@ -54,9 +54,9 @@ add_filter( 'widget_categories_args', function ( $cat_args, $instance  ) {
 }, 10, 2 );
 
 //Add to frontend form
-add_action('frontend_post_before_content', 'SIM\RECIPES\recipe_specific_fields');
-add_action('frontend_post_content_title', 'SIM\RECIPES\recipe_title');
-add_action('sim_after_post_save', 'SIM\RECIPES\store_recipe_meta',10,2);
+add_action('frontend_post_before_content', __NAMESPACE__.'\recipe_specific_fields');
+add_action('frontend_post_content_title', __NAMESPACE__.'\recipe_title');
+add_action('sim_after_post_save', __NAMESPACE__.'\store_recipe_meta',10,2);
 
 add_filter('sim_frontend_posting_modals', function($types){
 	$types[]	= 'recipe';

@@ -89,6 +89,7 @@ function verify_webauthn(methods){
 				var message = "No biometric login for this device found. <br>Give verification code.";
 			}else{
 				var message = 'Web authentication failed, please give verification code.';
+				message += '<button type="button" class="button small" id="retry_webauthn" style="float:right;margin-top:-20px;">Retry</button>';
 				console.error('Authentication failure: '+error['message']);
 			}
 			show_message(message);
@@ -184,6 +185,9 @@ async function verify_creds(){
 		}
 		return;
 	}
+
+	await waitForInternet();
+
 	var formData	= new FormData();
 	formData.append('action','check_cred');
 	formData.append('username',username);
@@ -194,6 +198,8 @@ async function verify_creds(){
 		credentials: 'same-origin',
 		body: formData
 	});
+
+	console.log(response);
 
 	var text = await response.text();
 	
@@ -226,6 +232,8 @@ async function request_login(){
 		return;
 	}
 
+	await waitForInternet();
+
 	var response = await fetch(sim.ajax_url, {
 		method: 'POST',
 		credentials: 'same-origin',
@@ -242,7 +250,6 @@ async function request_login(){
 		}else{
 			location.href = message;
 		}
-		
 	}else{
 		document.querySelectorAll('.authenticator_wrapper input').forEach(el=>{
 			if(el.value != ''){
@@ -287,6 +294,8 @@ function toggle_pwd_view(ev){
 };
 
 function open_login_modal(){
+	waitforcaptcha();
+
 	close_mobile_menu();
 
 	//prevent page scrolling
@@ -323,7 +332,6 @@ function waitforcaptcha(){
 		}
 	}, 1000);
 }
-waitforcaptcha();
 
 //request password reset e-mail
 async function reset_password(target){
@@ -388,6 +396,9 @@ document.addEventListener("click", function(event){
 		open_login_modal();
 	}else if(target.id == "lost_pwd_link"){
 		reset_password(target);
+	}else if(target.id == 'retry_webauthn'){
+		show_message('');
+		verify_webauthn([]);
 	}
 });
 

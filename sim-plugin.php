@@ -29,9 +29,10 @@ remove_action( 'wp_head', 'adjacent_posts_rel_link');
 define('SITEURL', get_site_url());
 define('SITENAME', get_bloginfo());
 define('INCLUDESURL', plugins_url('includes',__FILE__));
-define('INCLUDESPATH', plugin_dir_path(__FILE__).'includes/');
 define('PICTURESURL', INCLUDESURL.'/pictures');
 define('LOADERIMAGEURL', PICTURESURL.'/loading.gif');
+define('INCLUDESPATH', plugin_dir_path(__FILE__).'includes/');
+define('PICTURESPATH', INCLUDESPATH.'pictures');
 
 //load all libraries
 require( __DIR__  . '/includes/lib/vendor/autoload.php');

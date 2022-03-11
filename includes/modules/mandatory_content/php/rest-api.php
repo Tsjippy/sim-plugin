@@ -62,8 +62,15 @@ add_action( 'rest_api_init', function () {
 	//Route to update mark as read from mailchimp
 	register_rest_route( 'sim/v1', '/markasread', array(
 		'methods' => 'GET',
-		'callback' => 'SIM\MANDATORY\markasread',
+		'callback' => __NAMESPACE__.'\markasread',
 		'permission_callback' => '__return_true',
 		)
 	);
+});
+
+// Make mark as read rest api publicy available
+add_filter('sim_allowed_rest_api_urls', function($urls){
+	$urls[]	= 'sim/v1/markasread';
+
+	return $urls;
 });

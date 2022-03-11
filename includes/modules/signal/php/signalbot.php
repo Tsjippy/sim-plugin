@@ -94,8 +94,8 @@ function send_signal_message($message, $recipient, $post_id=""){
 
 //Function to add a checkbox for signal messages to a post
 add_action( 'add_meta_boxes',  function() {
-	add_meta_box( 'send-signal-message', 'Signal message', 'SIM\SIGNAL\send_signal_message_meta_box', ['page','post','event'], 'side', 'high' );
-	add_meta_box( 'send-signal-message-bottom', 'Signal message', 'SIM\SIGNAL\send_signal_message_meta_box', ['page','post','event'], 'normal', 'high' );
+	add_meta_box( 'send-signal-message', 'Signal message', __NAMESPACE__.'\send_signal_message_meta_box', ['page','post','event'], 'side', 'high' );
+	add_meta_box( 'send-signal-message-bottom', 'Signal message', __NAMESPACE__.'\send_signal_message_meta_box', ['page','post','event'], 'normal', 'high' );
 });
 
 //Display the send signal meta box

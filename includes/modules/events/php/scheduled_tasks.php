@@ -4,8 +4,8 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'remove_old_events_action', 'SIM\EVENTS\remove_old_events');
-	add_action( 'anniversary_check_action', 'SIM\EVENTS\anniversary_check');
+	add_action( 'remove_old_events_action', __NAMESPACE__.'\remove_old_events');
+	add_action( 'anniversary_check_action', __NAMESPACE__.'\anniversary_check');
 });
 
 function schedule_tasks(){

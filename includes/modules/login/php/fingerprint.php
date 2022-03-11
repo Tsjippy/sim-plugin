@@ -484,6 +484,14 @@ function store_fingerprint(\WP_REST_Request $request){
     }
 }
 
+// Make login rest api urls publicy available
+add_filter('sim_allowed_rest_api_urls', function($urls){
+	$urls[]	= 'sim/v1/auth_finish';
+    $urls[]	= 'sim/v1/auth_start';
+
+	return $urls;
+});
+
 // Auth challenge
 function auth_start(\WP_REST_Request $request){
     try{

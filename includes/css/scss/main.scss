@@ -31,8 +31,7 @@ p{
 }
 
 body div .button, 
-body div .button:focus
-{
+body div .button:focus{
 	@extend %buttons;
 	padding: 5px 10px;
 	
@@ -64,7 +63,10 @@ body div .button:focus
 	}
 }
 
-/*Buttons */
+.button.small{
+	padding: 0px 2px;
+}
+
 .submit_wrapper{
 	margin: 20px 0px;
     display: flex;
@@ -137,4 +139,8 @@ h3{
 	text-align: center;
 	padding: 5px;
 	color: darkgreen;
+}
+
+.swal2-container .no-border {
+    border: none;
 }

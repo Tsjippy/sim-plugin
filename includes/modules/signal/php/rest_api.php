@@ -6,31 +6,31 @@ add_action( 'rest_api_init', function () {
 	//Route for notification messages
 	register_rest_route( 'sim/v1', '/notifications', array(
 		'methods' => 'GET',
-		'callback' => 'SIM\SIGNAL\bot_messages',
+		'callback' => __NAMESPACE__.'\bot_messages',
 		'permission_callback' => '__return_true',
 		)
 	);
 	
 	//Route for first names
 	register_rest_route( 'sim/v1', '/firstname', array(
-		'methods' => 'GET',
-		'callback' => 'SIM\SIGNAL\find_firstname',
-		'permission_callback' => '__return_true',
+		'methods'				=> 'GET',
+		'callback'				=> __NAMESPACE__.'\find_firstname',
+		'permission_callback' 	=> '__return_true',
 		)
 	);
 	
 	//Route for notification messages
 	register_rest_route( 'simnigeria/v1', '/notifications', array(
-		'methods' => 'GET',
-		'callback' => 'SIM\SIGNAL\bot_messages',
-		'permission_callback' => '__return_true',
+		'methods' 				=> 'GET',
+		'callback' 				=> __NAMESPACE__.'\bot_messages',
+		'permission_callback' 	=> '__return_true',
 		)
 	);
 	
 	//Route for first names
 	register_rest_route( 'simnigeria/v1', '/firstname', array(
 		'methods' => 'GET',
-		'callback' => 'SIM\SIGNAL\find_firstname',
+		'callback' => __NAMESPACE__.'\find_firstname',
 		'permission_callback' => '__return_true',
 		)
 	);

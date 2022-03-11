@@ -4,12 +4,12 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'birthday_check_action', 'SIM\USERMANAGEMENT\birthday_check' );
-    add_action( 'vaccination_reminder_action', 'SIM\USERMANAGEMENT\vaccination_reminder' );
-    add_action( 'greencard_reminder_action', 'SIM\USERMANAGEMENT\greencard_reminder' );
-    add_action( 'check_details_mail_action', 'SIM\USERMANAGEMENT\check_details_mail' );
-    add_action( 'account_expiry_check_action', 'SIM\USERMANAGEMENT\account_expiry_check' );
-	add_action( 'review_reminders_action', 'SIM\USERMANAGEMENT\review_reminders' );
+	add_action( 'birthday_check_action', __NAMESPACE__.'\birthday_check' );
+    add_action( 'vaccination_reminder_action', __NAMESPACE__.'\vaccination_reminder' );
+    add_action( 'greencard_reminder_action', __NAMESPACE__.'\greencard_reminder' );
+    add_action( 'check_details_mail_action', __NAMESPACE__.'\check_details_mail' );
+    add_action( 'account_expiry_check_action', __NAMESPACE__.'\account_expiry_check' );
+	add_action( 'review_reminders_action', __NAMESPACE__.'\review_reminders' );
 });
 
 function schedule_tasks(){

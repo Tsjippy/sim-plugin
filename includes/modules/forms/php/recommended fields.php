@@ -145,8 +145,8 @@ add_filter('sim_mandatory_fields_filter', function($fields, $user_id){
 	return $fields;
 }, 10, 2);
 
-add_filter('sim_mandatory_html_filter', 'SIM\FORMS\add_child_fields', 10, 2);
-add_filter('sim_recommended_html_filter', 'SIM\FORMS\add_child_fields', 10, 2);
+add_filter('sim_mandatory_html_filter', __NAMESPACE__.'\add_child_fields', 10, 2);
+add_filter('sim_recommended_html_filter', __NAMESPACE__.'\add_child_fields', 10, 2);
 function add_child_fields($html, $user_id){
 	// Add warnings for child fields
 	$family = get_user_meta($user_id, "family", true);
