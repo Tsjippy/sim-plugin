@@ -48,20 +48,110 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<?php echo SIM\page_select("home_page", $settings["home_page"]);?>
 	<br>
 
-	<label>Page with the password reset form</label>
-	<?php echo SIM\page_select("pw_reset_page", $settings["pw_reset_page"]); ?>
-	<br>
-	
-	<label>Page with the registration form for new users</label>
-	<?php echo SIM\page_select("register_page", $settings["register_page"]);?>
-	<br>
-
 	<label>Page with the two factor setup form</label>
 	<?php echo SIM\page_select("2fa_page", $settings["2fa_page"]);?>
 	<label>
 		Anything you want to append to the url<br>
 		<input type='text' name="2fa_page_extras" value="<?php echo $settings['2fa_page_extras'];?>">
 	</label>
+
+	<h4>E-mail with the two factor login code</h4>
+	<label>Define the e-mail people get when they requested a code for login.</label>
+	<?php
+	$twoFAEmail    = new TwoFaEmail(wp_get_current_user());
+	$twoFAEmail->printPlaceholders();
+	$twoFAEmail->printInputs($settings);
+
+	?>
+	<br>
+	<br>
+
+	<h4>Warning e-mail for unsafe login</h4>
+	<label>Define the e-mail people get when they login to the website and they have not configured two factor authentication.</label>
+	<?php
+	$unsafeLogin    = new UnsafeLogin(wp_get_current_user());
+	$unsafeLogin->printPlaceholders();
+	$unsafeLogin->printInputs($settings);
+
+	?>
+	<br>
+	<br>
     
+	<h4>Two factor login reset e-mail</h4>
+	<label>Define the e-mail people get when their two factor login got reset by a user manager.</label>
+	<?php
+	$twoFaReset    = new TwoFaReset(wp_get_current_user());
+	$twoFaReset->printPlaceholders();
+	$twoFaReset->printInputs($settings);
+
+	?>
+	<br>
+	<br>
+	<h4>Two factor login confirmation e-mail</h4>
+	<label>Define the e-mail people get when they have just enabled email verification.</label>
+	<?php
+	$emailVerfEnabled    = new EmailVerfEnabled(wp_get_current_user());
+	$emailVerfEnabled->printPlaceholders();
+	$emailVerfEnabled->printInputs($settings);
+
+	?>
+	<h4>E-mail to people who requested a password reset</h4>
+	<label>Define the e-mail people get when they requested a password reset</label>
+	<?php
+	$passwordResetMail    = new PasswordResetMail(wp_get_current_user());
+	$passwordResetMail->printPlaceholders();
+	$passwordResetMail->printInputs($settings);
+	?>
+	<br>
+	<br>
+
+	<input type='hidden' name='password_reset_page' value='<?php echo SIM\get_module_option($module_slug, 'password_reset_page');?>'>
+	<input type='hidden' name='register_page' value='<?php echo SIM\get_module_option($module_slug, 'register_page');?>'>
 	<?php
 }, 10, 3);
+
+add_action('sim_module_updated', function($module_slug, $options){
+	global $Modules;
+
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	// Create password reset page
+	$page_id	= SIM\get_module_option($module_slug, 'password_reset_page');
+	// Only create if it does not yet exist
+	if(!$page_id or get_post_status($page_id) != 'publish'){
+		$post = array(
+			'post_type'		=> 'page',
+			'post_title'    => 'Change password',
+			'post_content'  => '[change_password]',
+			'post_status'   => "publish",
+			'post_author'   => '1'
+		);
+		$page_id 	= wp_insert_post( $post, true, false);
+
+		//Store page id in module options
+		$Modules[$module_slug]['password_reset_page']	= $page_id;
+
+		update_option('sim_modules', $Modules);
+	}
+
+	// Create register page
+	$page_id	= SIM\get_module_option($module_slug, 'register_page');
+	// Only create if it does not yet exist
+	if(!$page_id or get_post_status($page_id) != 'publish'){
+		$post = array(
+			'post_type'		=> 'page',
+			'post_title'    => 'Request user account',
+			'post_content'  => '[request_account]',
+			'post_status'   => "publish",
+			'post_author'   => '1'
+		);
+		$page_id 	= wp_insert_post( $post, true, false);
+
+		//Store page id in module options
+		$Modules[$module_slug]['register_page']	= $page_id;
+
+		update_option('sim_modules', $Modules);
+	}
+
+}, 10, 2);

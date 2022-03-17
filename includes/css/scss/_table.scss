@@ -7,18 +7,27 @@
 
 .sim-table{
 	@extend %shared-table;
-	
-	width: intrinsic;           /* Safari/WebKit uses a non-standard name */
-	width: -moz-max-content;    /* Firefox/Gecko */
-	width: -webkit-max-content;
-	width: max-content;
-	max-width: -webkit-calc(100vw - 40px);
-    max-width:    -moz-calc(100vw - 40px);
-    max-width:         calc(100vw - 40px);
-	max-height: 500px;
-    overflow: auto;
-    white-space: nowrap;
-	display: block;
+
+	@media screen and (max-width: $mobilewidth){
+		width: 100vw;
+
+		.mobile-hidden{
+			display: none;
+		}
+	}
+	@media screen and (min-width: $mobilewidth){
+		width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+		width: -moz-max-content;    /* Firefox/Gecko */
+		width: -webkit-max-content;
+		width: max-content;
+		max-width: -webkit-calc(100vw - 40px);
+		max-width:    -moz-calc(100vw - 40px);
+		max-width:         calc(100vw - 40px);
+		max-height: 500px;
+		overflow: auto;
+		white-space: nowrap;
+		display: block;
+	}
 	
 	#displayname{
 		left:0;
@@ -81,20 +90,20 @@
 			}
 		}
 	}
+
+	tr:nth-child(even), 
+	tr:nth-child(even) .sticky{
+	background-color: #dddddd;
+	}
+
+	tr:nth-child(odd),
+	tr:nth-child(odd) .sticky{
+	background-color: white;
+	}
 }
 
 .table-row-final {
 	background-color: #dddddd;
-}
-
-tr[class^="table-row"]:nth-child(even), 
-tr[class^="table-row"]:nth-child(even) .sticky{
-  background-color: #dddddd;
-}
-
-tr[class^="table-row"]:nth-child(odd),
-tr[class^="table-row"]:nth-child(odd) .sticky{
-  background-color: white;
 }
 
 .table_action{
@@ -127,8 +136,6 @@ tr[class^="table-row"]:nth-child(odd) .sticky{
 #account_id_table input{
 	width: 100%;
 }
-
-
 
 /*
 * === Table settings ===

@@ -39,6 +39,16 @@ function get_profile_picture_url($user_id,$size=[50,50]){
 	return $url;
 }
 
+function getProfilePicturePath($user_id){
+	$attachment_id	= get_user_meta($user_id,'profile_picture',true);
+	$path			= false;
+	if(is_numeric($attachment_id)){
+		$path = get_attached_file($attachment_id);
+	}
+	
+	return $path;
+}
+
 function display_profile_picture($user_id, $size=[50,50], $show_default = true){
 	$attachment_id = get_user_meta($user_id,'profile_picture',true);
 	if(is_numeric($attachment_id)){

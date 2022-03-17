@@ -18,9 +18,9 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		You can also change userdata for other users if you have the 'usermanagement' role.<br>
 		Use like this: <code>[user-info currentuser='true']</code>
 		<br>
-		<h4>create_temp_user</h4>
+		<h4>create_user_account</h4>
 		This shortcode displays a from to create new user accounts.<br>
-		Use like this: <code>[create_temp_user]</code>
+		Use like this: <code>[create_user_account]</code>
 		<br>
 		<h4>pending_user</h4>
 		This shortcode displays all user account who are pending approval.<br>
@@ -72,8 +72,74 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		<input type="email" name="sta_email" value="<?php echo $settings['sta_email'];?>">
 	</label>
 	<br>
+	<br>
+
+	<h4>E-mail to people who's account is just created</h4>
+	<label>Define the e-mail people get when they are added to the website</label>
 	<?php
-    
+	$accountCreatedMail    = new AccountCreatedMail(wp_get_current_user());
+	$accountCreatedMail->printPlaceholders();
+	$accountCreatedMail->printInputs($settings);
+	?>
+	<br>
+	<br>
+
+	<h4>E-mail to people who's account is about to expire</h4>
+	<label>Define the e-mail people get when they are about to be removed from the website</label>
+	<?php
+	$accountExpiryMail    = new AccountExpiryMail(wp_get_current_user());
+	$accountExpiryMail->printPlaceholders();
+	$accountExpiryMail->printInputs($settings);
+	?>
+	<br>
+	<br>
+
+	<h4>E-mail to people who's account is deleted</h4>
+	<label>Define the e-mail people get when they are removed from the website</label>
+	<?php
+	$accountRemoveMail    = new AccountRemoveMail(wp_get_current_user());
+	$accountRemoveMail->printPlaceholders();
+	$accountRemoveMail->printInputs($settings);
+	?>
+	<br>
+	<br>
+
+	<h4>E-mail to people who have not logged in for more than a year</h4>
+	<label>Define the e-mail people get when they have not logged into the website for more than a year</label>
+	<?php
+	$weMissYouMail    = new WeMissYouMail(wp_get_current_user());
+	$weMissYouMail->printPlaceholders();
+	$weMissYouMail->printInputs($settings);
+	?>
+	<br>
+	<br>
+
+	<h4>E-mail to people who's vaccinations are about to expire</h4>
+	<label>Define the e-mail people get when one or more vaccinations are about to expire</label>
+	<?php
+	$vaccinationWarningMail    = new AdultVaccinationWarningMail(wp_get_current_user());
+	$vaccinationWarningMail->printPlaceholders();
+	$vaccinationWarningMail->printInputs($settings);
+    ?>
+	<br>
+	<br>
+
+	<h4>E-mail to parents who's children have vaccinations who are about to expire</h4>
+	<label>Define the e-mail people get when one or more vaccinations of a child are about to expire</label>
+	<?php
+	$vaccinationWarningMail    = new ChildVaccinationWarningMail(wp_get_current_user());
+	$vaccinationWarningMail->printPlaceholders();
+	$vaccinationWarningMail->printInputs($settings);
+	?>
+	<br>
+	<br>
+
+	<h4>E-mail when the greencard is about to expire</h4>
+	<label>Define the e-mail people get when one or more vaccinations of a child are about to expire</label>
+	<?php
+	$greenCardReminderMail    = new GreenCardReminderMail(wp_get_current_user());
+	$greenCardReminderMail->printPlaceholders();
+	$greenCardReminderMail->printInputs($settings);
 }, 10, 3);
 
 add_action('sim_module_updated', function($module_slug, $options){

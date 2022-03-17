@@ -265,7 +265,7 @@ class Schedule{
 			}
 			
 			?>
-			<div class='schedules_div form_table_wrapper'>
+			<div class='schedules_div form-table-wrapper'>
 				<div class="modal publish_schedule hidden">
 					<!-- Modal content -->
 					<div class="modal-content">

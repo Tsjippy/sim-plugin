@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
+use MatthiasMullie\Minify;
 
 trait create_js{
     function create_js(){
@@ -268,13 +269,13 @@ trait create_js{
                             }
                             
                             if($propertyname == 'value'){
-                                $action_code    = "change_field_value('$fieldname', $var_name);";
+                                $action_code    = "change_field_value('$fieldname', $var_name, {$this->datatype}.process_fields);";
                                 if(!in_array($action_code, $action_array)){
                                     $action_array[] = $action_code;
                                 }
                             }else{
                                 //$action_code    = "change_field_property('$fieldname', '$propertyname', replacement_value);";
-                                $action_code    = "change_field_property('$fieldname', '$propertyname', $var_name);";
+                                $action_code    = "change_field_property('$fieldname', '$propertyname', $var_name, {$this->datatype}.process_fields);";
                                 if(!in_array($action_code, $action_array)){
                                     $action_array[] = $action_code;
                                 }
@@ -289,128 +290,152 @@ trait create_js{
         
         ob_start(); 
 
-        //write external js into this file
-        $extra_js   = apply_filters('form_extra_js', $this->datatype);
-        if(!empty($extra_js)){
-            echo $extra_js;
-            echo "\n\n";
-        }
-        ?>
-document.addEventListener("DOMContentLoaded", function() {
-    console.log("Dynamic <?php echo $this->datatype;?> forms js loaded");
-
-    tidy_multi_inputs();
-    form = document.getElementById('sim_form_<?php echo $this->datatype;?>');
-    <?php
-    if($this->is_multi_step()){
-    ?>
-    //show first tab
-    currentTab = 0; // Current tab is set to be the first tab (0)
-    showTab(currentTab,form); // Display the current tab
-    <?php
-    }
-    if(!empty($this->formdata->settings['save_in_meta'])){
-    ?>form.querySelectorAll('select, input, textarea').forEach(el=>process_<?php echo $this->datatype;?>_fields(el));<?php
-    }
-?>
-
-});
-
-window.addEventListener("click", <?php echo $this->datatype;?>_listener);
-window.addEventListener("input", <?php echo $this->datatype;?>_listener);
-
-<?php echo $this->datatype;?>_prev_el = '';
-function <?php echo $this->datatype;?>_listener(event) {
-    var el			= event.target;
-    form			= el.closest('form');
-    var el_name		= el.name;
-    if(el_name == '' || el_name == undefined){
-        //el is a nice select
-        if(el.closest('.nice-select-dropdown') != null && el.closest('.inputwrapper') != null){
-            //find the select element connected to the nice-select 
-            el.closest('.inputwrapper').querySelectorAll('select').forEach(select=>{
-                if(el.dataset.value == select.value){
-                    el	= select;
-                    el_name = select.name;
-                }
-            });
-        }else{
-            return;
-        }
-    }
-
-    //prevent duplicate event handling
-    if(el == <?php echo $this->datatype;?>_prev_el){
-        return;
-    }
-    <?php echo $this->datatype;?>_prev_el = el;
-    //clear event prevenion after 100 ms
-    setTimeout(function(){ <?php echo $this->datatype;?>_prev_el = ''; }, 100);
-
-    if(el_name == 'nextBtn'){
-        nextPrev(1);
-    }else if(el_name == 'prevBtn'){
-        nextPrev(-1);
-    }
-
-    process_<?php echo $this->datatype;?>_fields(el);
-}
-
-function process_<?php echo $this->datatype;?>_fields(el){
-    var el_name = el.name;
-<?php
-        foreach($checks as $if => $check){
-            $prev_var   = [];
-            echo "\t$if\n";
-            foreach($check['variables'] as $variable){
-                //Only write same var definition once
-                $var_parts  = explode(' = ',$variable);
-                if($prev_var[$var_parts[0]] != $var_parts[1]){
-                    echo "\t\t$variable\n";
-                    $prev_var[$var_parts[0]] = $var_parts[1];
-                }
+        $js         = "";
+        $minifiedJs = "";
+        
+        /* 
+        ** DOMContentLoaded JS
+        */
+        $newJs   = "\n\tdocument.addEventListener('DOMContentLoaded', function() {";
+            $newJs.= "\n\t\tconsole.log('Dynamic $this->datatype forms js loaded');";
+            $newJs.= "\n\t\ttidy_multi_inputs();";
+            $newJs.= "\n\t\tform = document.getElementById('sim_form_$this->datatype');";
+            if($this->is_multi_step()){
+                $newJs.= "\n\t\t//show first tab";
+                $newJs.= "\n\t\t// Display the current tab// Current tab is set to be the first tab (0)";
+                $newJs.= "\n\t\tcurrentTab = 0; ";
+                $newJs.= "\n\t\t// Display the current tab";
+                $newJs.= "\n\t\tshowTab(currentTab,form); ";
             }
-
-            foreach($check['actions'] as $index=>$action){
-                if($index === 'querystrings'){
-                    echo build_query_selector($action);
-                }else{
-                    echo "\t\t$action\n";
-                }
+            if(!empty($this->formdata->settings['save_in_meta'])){
+                $newJs.= "\n\t\tform.querySelectorAll('select, input, textarea').forEach(";
+                    $newJs.= "\n\t\t\tel=>{$this->datatype}.process_fields(el)";
+                $newJs.= "\n\t\t);";
             }
+        $newJs.= "\n\t});";
 
-            $prev_var   = [];
-            foreach($check['condition_ifs'] as $if=>$prop){
-                foreach($prop['variables'] as $variable){
+        $js         .= $newJs;
+        $minifiedJs .= \Garfix\JsMinify\Minifier::minify($newJs, array('flaggedComments' => false));
+
+        /* 
+        ** EVENT LISTENER JS
+        */
+        $newJs   = '';
+        $newJs  .= "\n\tvar prev_el = '';";
+        $newJs  .= "\n\n\tvar listener = function(event) {";
+            $newJs  .= "\n\t\tvar el			= event.target;";
+            $newJs  .= "\n\t\tform			= el.closest('form');";
+            $newJs  .= "\n\t\tvar el_name		= el.name;";
+            $newJs  .= "\n\n\t\tif(el_name == '' || el_name == undefined){";
+                $newJs  .= "\n\t\t\t//el is a nice select";
+                $newJs  .= "\n\t\t\tif(el.closest('.nice-select-dropdown') != null && el.closest('.inputwrapper') != null){";
+                    $newJs  .= "\n\t\t\t\t//find the select element connected to the nice-select";
+                    $newJs  .= "\n\t\t\t\tel.closest('.inputwrapper').querySelectorAll('select').forEach(select=>{";
+                        $newJs  .= "\n\t\t\t\t\tif(el.dataset.value == select.value){";
+                            $newJs  .= "\n\t\t\t\t\t\tel	= select;";
+                            $newJs  .= "\n\t\t\t\t\t\tel_name = select.name;";
+                        $newJs  .= "\n\t\t\t\t\t}";
+                    $newJs  .= "\n\t\t\t\t});";
+                $newJs  .= "\n\t\t\t}else{";
+                    $newJs  .= "\n\t\t\t\treturn;";
+                $newJs  .= "\n\t\t\t}";
+            $newJs  .= "\n\t\t}";
+
+            $newJs  .= "\n\n\t\t//prevent duplicate event handling";
+            $newJs  .= "\n\t\tif(el == prev_el){";
+                $newJs  .= "\n\t\t\treturn;";
+            $newJs  .= "\n\t\t}";
+            
+            $newJs  .= "\n\t\tprev_el = el;";
+            $newJs  .= "\n\n\t\t//clear event prevenion after 100 ms";
+            $newJs  .= "\n\t\tsetTimeout(function(){ prev_el = ''; }, 100);";
+
+            $newJs  .= "\n\n\t\tif(el_name == 'nextBtn'){";
+                $newJs  .= "\n\t\t\tnextPrev(1);";
+            $newJs  .= "\n\t\t}else if(el_name == 'prevBtn'){";
+                $newJs  .= "\n\t\t\tnextPrev(-1);";
+            $newJs  .= "\n\t\t}";
+
+            $newJs  .= "\n\n\t\t{$this->datatype}.process_fields(el);";
+        $newJs  .= "\n\t};";
+        $newJs  .= "\n\n\twindow.addEventListener('click', listener);";
+        $newJs  .= "\n\twindow.addEventListener('input', listener);";
+
+        $js         .= $newJs;
+        $minifiedJs .= \Garfix\JsMinify\Minifier::minify($newJs, array('flaggedComments' => false));
+
+        /* 
+        ** MAIN JS
+        */
+        $newJs   = '';
+        $newJs  .= "\n\n\tthis.process_fields    = function(el){";
+            $newJs  .= "\n\t\tvar el_name = el.name;\n";
+            foreach($checks as $if => $check){
+                $prev_var   = [];
+                $newJs  .= "\t\t$if\n";
+                foreach($check['variables'] as $variable){
                     //Only write same var definition once
                     $var_parts  = explode(' = ',$variable);
                     if($prev_var[$var_parts[0]] != $var_parts[1]){
-                        echo "\t\t$variable\n";
+                        $newJs  .= "\t\t\t$variable\n";
                         $prev_var[$var_parts[0]] = $var_parts[1];
                     }
                 }
 
-                if(!empty($prop['actions'])){
-                    echo "\n\t\t$if\n";
-                    foreach($prop['actions'] as $index=>$action){
-                        if($index === 'querystrings'){
-                            echo build_query_selector($action);
-                        }else{
-                            echo "\t\t\t$action\n";
+                foreach($check['actions'] as $index=>$action){
+                    if($index === 'querystrings'){
+                        $newJs  .= build_query_selector($action);
+                    }else{
+                        $newJs  .= "\t\t\t$action\n";
+                    }
+                }
+
+                $prev_var   = [];
+                foreach($check['condition_ifs'] as $if=>$prop){
+                    foreach($prop['variables'] as $variable){
+                        //Only write same var definition once
+                        $var_parts  = explode(' = ',$variable);
+                        if($prev_var[$var_parts[0]] != $var_parts[1]){
+                            $newJs  .= "\t\t\t$variable\n";
+                            $prev_var[$var_parts[0]] = $var_parts[1];
                         }
                     }
-                    echo "\t\t}\n";
-                }
-            }
-            echo "\t}\n\n";
-        }
-?>
-}
-<?php
 
-        
+                    if(!empty($prop['actions'])){
+                        $newJs  .= "\n\t\t\t$if\n";
+                        foreach($prop['actions'] as $index=>$action){
+                            if($index === 'querystrings'){
+                                $newJs  .= build_query_selector($action);
+                            }else{
+                                $newJs  .= "\t\t\t\t$action\n";
+                            }
+                        }
+                        $newJs  .= "\t\t\t}\n";
+                    }
+                }
+                $newJs  .= "\t\t}\n\n";
+            }
+        $newJs  .= "\t};";
+        $js         .= $newJs;
+        $minifiedJs .= \Garfix\JsMinify\Minifier::minify($newJs, array('flaggedComments' => false));
+      
+        // Put is all in a namespace variable
+        $js         = "var {$this->datatype} = new function(){".$js."\n}";  
+        $minifiedJs = "var {$this->datatype} = new function(){".$minifiedJs."}";
+
+        /* 
+        ** EXTERNAL JS
+        */
+        $extraJs   = apply_filters('form_extra_js', $this->datatype, false);
+        if(!empty($extraJs)){
+            $js.= "\n\n";
+            $js.= $extraJs;
+        }
+        $minifiedJs .= apply_filters('form_extra_js', $this->datatype, true);
+
+
         //write it all to a file
-        $js			= ob_get_clean();
+        //$js			= ob_get_clean();
         if(empty($checks)){
             //create empty files
             file_put_contents($this->jsfilename.'.js', '');
@@ -420,24 +445,27 @@ function process_<?php echo $this->datatype;?>_fields(el){
             file_put_contents($this->jsfilename.'.js', $js);
 
             //replace long strings for shorter ones
-            $js=str_replace(
+            $minifiedJs=str_replace(
                 [
-                    'process_travel_fields',
+                    "listener",
+                    "process_fields",
                     'value_',
                     'el_name',
                     "\n"
                 ],
                 [
+                    'q',
                     'p',
                     'v_',
                     'n',
                     ''
                 ],
-                $js
+                $minifiedJs
             );
             // Create minified version
-            $js = \JShrink\Minifier::minify($js, array('flaggedComments' => false));
-            file_put_contents($this->jsfilename.'.min.js', $js);
+            //$minifier = new Minify\CSS($js);
+            //$minifier->minify($this->jsfilename.'.min.js');
+            file_put_contents($this->jsfilename.'.min.js', $minifiedJs);
         }         
     }
 }
@@ -455,11 +483,16 @@ function build_query_selector($querystrings){
             }
             $action_code    .= "').forEach(el=>{\n";
                 $action_code    .= "\t\t\t\ttry{\n";
-                    $action_code    .= "\t\t\t\t\tel.closest('.inputwrapper').classList.$action('hidden');\n";
+                    $action_code    .= "\t\t\t\t\t//Make sure we only do each wrapper once by adding a temp class\n";
+                    $action_code    .= "\t\t\t\t\tif(!el.closest('.inputwrapper').matches('.action-processed')){\n";
+                        $action_code    .= "\t\t\t\t\t\tel.closest('.inputwrapper').classList.add('action-processed');\n";
+                        $action_code    .= "\t\t\t\t\t\tel.closest('.inputwrapper').classList.$action('hidden');\n";
+                    $action_code    .= "\t\t\t\t\t}\n";
                 $action_code    .= "\t\t\t\t}catch(e){\n";
                     $action_code    .= "\t\t\t\t\tel.classList.$action('hidden');\n";
                 $action_code    .= "\t\t\t\t}\n";
             $action_code    .= "\t\t\t});\n";
+            $action_code    .= "\t\t\tdocument.querySelectorAll('.action-processed').forEach(el=>{el.classList.remove('action-processed')});\n";
         //just one
         }elseif(count($names)==1){
             $action_code    .= "\t\t\tform.querySelector('{$names[0]}')";

@@ -57,7 +57,6 @@ function check_if_account_statement($post){
 		//get the results
 		$accountid = trim($matches[0][1]);
 		
-		//print_array("Accountid is '$accountid'");
 		//Change the user to the adminaccount otherwise get_users will not work
 		wp_set_current_user(1);
 		
@@ -119,9 +118,7 @@ function check_if_account_statement($post){
 			}
 			
 			//If there is an account statment
-			if(isset($new_url)){
-				//print_array("new_url is $new_url");
-				
+			if(isset($new_url)){				
 				$year = date_format($postdate,"Y");
 				foreach($users as $user){
 					if (SIM\is_child($user->ID)) continue;

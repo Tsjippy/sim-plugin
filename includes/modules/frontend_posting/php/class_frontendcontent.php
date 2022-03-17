@@ -830,7 +830,9 @@ class FrontEndContent{
 	}
 	
 	function frontend_post(){
-		include ABSPATH . 'wp-admin/includes/post.php';
+		if(!function_exists('_wp_translate_postdata')){
+			include ABSPATH . 'wp-admin/includes/post.php';
+		}
 		
 		//Load js
 		wp_enqueue_script('sim_frontend_script');

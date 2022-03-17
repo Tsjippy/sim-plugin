@@ -741,7 +741,7 @@ function auth_table($auth_id=''){
 		?>
 		<div id='webautn_devices_wrapper'>
             <h4>Biometric authenticators overview</h4>
-			<table class='table'>
+			<table class='sim-table'>
 				<thead>
 					<tr>
 						<th>Name</th>

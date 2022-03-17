@@ -4,14 +4,14 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'auto_archive_action', 'SIM\FORMS\auto_archive_form_entries' );
-    add_action( 'mandatory_fields_reminder_action', 'SIM\FORMS\mandatory_fields_reminder' );
+	add_action( 'auto_archive_action', __NAMESPACE__.'\auto_archive_form_entries' );
+    add_action( 'mandatory_fields_reminder_action', __NAMESPACE__.'\mandatory_fields_reminder' );
 });
 
 function schedule_tasks(){
     SIM\schedule_task('auto_archive_action', 'daily');
 
-    $freq   = SIM\get_module_option('forms', 'warning_freq');
+    $freq   = SIM\get_module_option('forms', 'reminder_freq');
     if($freq)   SIM\schedule_task('mandatory_fields_reminder_action', $freq);
 }
 
@@ -37,12 +37,15 @@ function mandatory_fields_reminder(){
             $parents = SIM\get_parents($user->ID);
             //Is child
             if(count($parents)>0){
-                $child_title = SIM\get_child_title($user->ID);
-                
-                $subject = "Please update the personal information of {$user->first_name} on the simnigeria website";
-                $message = 'Dear '.$user->last_name.' family,<br><br>';
-                $message .= "Some of the personal information of {$user->first_name} on simnigeria.org needs to be updated.<br>";
-                $reminder_html = str_replace("Your",$user->first_name."'s",$reminder_html);
+                $child_title    = SIM\get_child_title($user->ID);
+
+                $childEmail    = new ChildEmail($user);
+                $childEmail->filterMail();
+                    
+                $subject        = $childEmail->subject;
+                $message        = $childEmail->message;
+
+                $reminder_html  = str_replace("Your",$user->first_name."'s",$reminder_html);
                 
                 foreach($parents as $parent){
                     if(strpos($parent->user_email,'.empty') === false){
@@ -66,23 +69,20 @@ function mandatory_fields_reminder(){
                 
                 //If this not a valid email skip this email
                 if(strpos($user->user_email,'.empty') !== false) continue;
+
+                $adultEmail    = new AdultEmail($user);
+                $adultEmail->filterMail();
                     
-                $subject 	= "Please update your personal information on the simnigeria website";
-                $message 	= 'Hi '.$user->first_name.',<br><br>';
-                $message   .= 'Some of your personal information on simnigeria.org needs to be updated.<br>';
-                $recipients	= $user->user_email;
+                $subject        = $adultEmail->subject;
+                $message        = $adultEmail->message;
+                $recipients	    = $user->user_email;
             }
             
             //If there is an email set
-            if($recipients != ''){					
-                //Send e-mail
-                $message .= 'Please click on the items below to update the data:';
+            if(!empty($recipients)){                
                 $message .= $reminder_html;
-                $message .= '<br><br>';
-                $message .= 'Kind regards,';
-                $headers = array('Content-Type: text/html; charset=UTF-8');
                 
-                wp_mail( $recipients, $subject, $message, $headers );
+                wp_mail( $recipients, $subject, $message);
             }
 		}
 	} 

@@ -199,8 +199,6 @@ async function verify_creds(){
 		body: formData
 	});
 
-	console.log(response);
-
 	var text = await response.text();
 	
 	if(response.ok){
@@ -211,7 +209,8 @@ async function verify_creds(){
 			location.href=text;
 		}
 	}else{
-		display_message(methods, 'error');
+		display_message(text, 'error');
+		hide_modals();
 	}
 }
 

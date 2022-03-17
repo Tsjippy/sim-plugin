@@ -15,3 +15,26 @@ document.addEventListener("DOMContentLoaded",function() {
 		select._niceselect = NiceSelect.bind(select,{searchable: true});
 	});
 });
+
+window.addEventListener("click", event => {
+	var target = event.target;
+    if(target.classList.contains('placeholderselect') || target.classList.contains('placeholders')){
+        var value = '';
+        if(target.classList.contains('placeholders')){
+            value = target.textContent;
+        }else if(target.value != ''){
+            value = target.value;
+            target.selectedIndex = '0';
+        }
+        
+        if(value != ''){
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied '+value,
+                showConfirmButton: false,
+                timer: 1500
+            })
+            navigator.clipboard.writeText(value);
+        }
+    }
+});

@@ -14,6 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $Modules;
 global $Events;
 
+wp_enqueue_style('sim_events_css');
+wp_enqueue_script('sim_event_script');
+
 $view = $_GET['view'];
 if(empty($view)){
 	$view = 'month';

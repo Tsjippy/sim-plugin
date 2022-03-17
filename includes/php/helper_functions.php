@@ -291,7 +291,7 @@ function number_to_words($number) {
         17 => 'seventeenth',
         18 => 'eighteenth',
         19 => 'nineteenth',
-		10 => 'twentieth'
+		20 => 'twentieth'
 	];
     $dictionary = array(
         0 => 'zero',
@@ -349,7 +349,6 @@ function number_to_words($number) {
     }
 
     $string = $fraction = null;
-
 
     if (strpos($number, '.') !== false) {
         list($number, $fraction) = explode('.', $number);
@@ -624,7 +623,7 @@ function get_module_option($module_name, $option){
 }
 
 function try_send_signal($message, $recipient, $post_id=""){
-	if (function_exists('SIM\send_signal_message')) {
+	if (function_exists('SIM\SIGNAL\send_signal_message')) {
 		SIGNAL\send_signal_message($message, $recipient, $post_id);
 	}
 }
@@ -654,4 +653,19 @@ function picture_selector($key, $name, $settings){
 		<input type='hidden' class="image_attachment_id" name='picture_ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
 	</div>
 	<?php
+}
+
+function removeFiles($target){
+	if(is_dir($target)){
+
+		$files = glob( $target . '*', GLOB_MARK );
+
+		foreach( $files as $file ){
+			removeFiles( $file );      
+		}
+
+		rmdir( $target );
+	} elseif(is_file($target)) {
+		unlink( $target );  
+	}
 }

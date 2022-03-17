@@ -43,7 +43,7 @@ add_action( 'wp_enqueue_scripts', function(){
         wp_enqueue_style('sim_schedules_css');
 
         wp_enqueue_script('sim_schedules_script');
-    }elseif(is_post_type_archive('event') or in_array(get_the_ID(), $upcomingevents_pages)){
+    }elseif(in_array(get_the_ID(), $upcomingevents_pages)){
         wp_enqueue_style('sim_events_css');
     }
 });

@@ -151,15 +151,10 @@ function send_missonary_detail(){
 	$attachments = array( create_contactlist_pdf($table_headers,$user_details));
 	
 	//Send e-mail
-	$subject = "Contact list";
-	$message = 'Dear all,<br><br>';
-	$message .= 'Attached you can find a list off all missionary contact info.<br>';
-	$message .= 'This information is for SIM use only. Do not share this informations with others.<br>';
-	$message .= 'Visit <a href="'.get_site_url(null,'/account/').'"> the SIM Nigeria website</a> if your contactinfo is not listed or not up to date.<br><br>';
-	$message .= 'Kind regards,<br><br>';
-	
-	//Send the mail
-	wp_mail( get_option( 'admin_email' ), $subject, $message, $email_headers, $attachments);
+	$contactList    = new ContactList($user);
+	$contactList->filterMail();
+						
+	wp_mail( get_option( 'admin_email' ), $contactList->subject, $contactList->message, $email_headers, $attachments);
 }
 
 //Export data in an PDF

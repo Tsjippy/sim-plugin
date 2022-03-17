@@ -154,7 +154,7 @@ function get_ministries(){
 }
 
 //display ministries defined as php function in generics form
-function display_ministry_positions($user_id){
+function displayMinistryPositions($user_id){
 	$user_ministries 	= (array)get_user_meta( $user_id, "user_ministries", true);
 	
 	ob_start();

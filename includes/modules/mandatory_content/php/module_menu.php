@@ -34,7 +34,14 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		SIM\ADMIN\recurrenceSelector($settings['reminder_freq']);
 		?>
 	</select>
+	<br>
+	<br>
+	<h4>E-mail with read reminders</h4>
+	<label>Define the e-mail people get when they shour read some mandatory content.</label>
 	<?php
+	$readReminder    = new ReadReminder(wp_get_current_user());
+	$readReminder->printPlaceholders();
+	$readReminder->printInputs($settings);
 }, 10, 3);
 
 add_action('sim_module_updated', function($module_slug, $options){

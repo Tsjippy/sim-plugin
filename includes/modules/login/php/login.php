@@ -124,7 +124,7 @@ add_filter( 'the_content', function ( $content ) {
     return $content;
 }, 99999);
 
-add_action('wp_ajax_nopriv_request_login', 'SIM\LOGIN\user_login');
+add_action('wp_ajax_nopriv_request_login', __NAMESPACE__.'\user_login');
 function user_login(){
     $username       = sanitize_text_field($_POST['username']);
     $password       = sanitize_text_field($_POST['password']);
@@ -139,7 +139,7 @@ function user_login(){
     $user = wp_signon( $creds);
  
     if ( is_wp_error( $user ) ) {
-        wp_die($user->get_error_message(),500);
+        wp_die($user->get_error_message(), 500);
     }
 
     //Update the current logon count

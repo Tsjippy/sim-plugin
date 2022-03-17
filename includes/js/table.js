@@ -13,7 +13,6 @@ window['updated_table_value']		= function(result,responsdata){
 	editedel = '';
 }
 
-
 function add_input_event_listeners(cell){
 	var inputs	= cell.querySelectorAll('input,select,textarea');
 		
@@ -217,9 +216,7 @@ function sort_table(target){
 //Store the table headers as td attribute for use on smaller screens
 function setTableLabel() {
 	//Loop over all tables
-	document.querySelectorAll('.table').forEach(function(table){
-		//console.log(table);
-		
+	document.querySelectorAll('.sim-table').forEach(function(table){
 		//Get all heading elements
 		tdLabels = [];
 		table.querySelectorAll('thead th').forEach((el,index) => {
@@ -237,6 +234,9 @@ function setTableLabel() {
 				//set the header text as label
 				function(td, index){
 					td.setAttribute('label', tdLabels[index]);
+					if(td.textContent=='X' || td.textContent==''){
+						td.classList.add('mobile-hidden');
+					}
 				}
 			);
 		});
@@ -245,13 +245,14 @@ function setTableLabel() {
 
 function position_table(){
 	//use whole page width for tables
-	document.querySelectorAll(".form_table_wrapper").forEach(wrapper=>{
+	document.querySelectorAll(".form-table-wrapper").forEach(wrapper=>{
 		var table	= wrapper.querySelector('table');
-		if(table != null){
-			var width	= table.scrollWidth;
-
-			// Width is 0 when element is hidden
-			if(width > 0){
+		var width	= table.scrollWidth;
+		if(table != null && width != 0){
+			// If on small width use full screen
+			if(window.innerWidth < 570){
+				var offset	= wrapper.getBoundingClientRect().x
+			}else{
 				var diff	= window.innerWidth - width;
 				
 				//calculate if room for sidebar
@@ -278,9 +279,9 @@ function position_table(){
 				
 				//then calculate the required offset
 				var offset	= parseInt(wrapper.getBoundingClientRect().x)-new_x;
-
-				wrapper.style.marginLeft = '-'+offset+'px';
 			}
+
+			wrapper.style.marginLeft = '-'+offset+'px';
 		}
 	});
 }

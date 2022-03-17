@@ -26,21 +26,15 @@ function read_reminder(){
 				
 			//Skip if not valid email
 			if(strpos($to,'.empty') !== false) continue;
-			
-			$subject = "Please read some website content";
-			$message = 'Hi '.$user->first_name.',<br>';
 
 			//Send Signal message
 			SIM\try_send_signal("Hi $user->first_name,\nPlease read some mandatory content.\n\nVisit ".SITEURL." to see the content",$user->ID);
 			
 			//Send e-mail
-			$message .= $html;
-			$message .= '<br>';
-			$message .= 'Please read it as soon as possible.<br>';
-			$message .= 'Mark as read by clicking on the button on the bottom of each page<br><br>';
-			
-			//Send the mail
-			wp_mail($to, $subject, $message);
+			$readReminder    = new ReadReminder($user, $html);
+			$readReminder->filterMail();
+								
+			wp_mail( $user->user_email, $readReminder->subject, $readReminder->message);
 		}
 	}
 }

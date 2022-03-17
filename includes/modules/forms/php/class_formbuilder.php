@@ -390,7 +390,7 @@ class Formbuilder{
 			
 			$html = "<div class='infobox' name='{$element->name}'>";
 				$html .= '<div style="float:right">';
-					$html .= '<p class="info_icon"><img draggable="false" role="img" class="emoji" alt="ℹ" src="'.PICTURESURL.'/pictures/info.png"></p>';
+					$html .= '<p class="info_icon"><img draggable="false" role="img" class="emoji" alt="ℹ" src="'.PICTURESURL.'/info.png"></p>';
 				$html .= '</div>';
 				$html .= "<span class='info_text'>$content</span>";
 			$html .= '</div>';
@@ -1205,6 +1205,12 @@ class Formbuilder{
 		}
 	}
 
+	function email_footer($footer){
+		$footer['url']		= $_POST['formurl'];
+		$footer['text']		= $_POST['formurl'];
+		return $footer;
+	}
+
 	function send_email($trigger='submitted'){
 		$emails = $this->formdata->emails;
 		
@@ -1259,10 +1265,13 @@ class Formbuilder{
 				
 				//Send the mail
 				if($_SERVER['HTTP_HOST'] != 'localhost'){
+					add_filter('sim_email_footer_url', [$this, 'email_footer']);
+
 					$result = wp_mail($to , $subject, $message, $headers, $files);
 					if($result === false){
 						SIM\print_array("Sending the e-mail failed");
 					}
+					remove_filter('sim_email_footer_url', [$this, 'email_footer']);
 				}
 			}
 		}
@@ -1596,7 +1605,7 @@ class Formbuilder{
 			<div class='form_elements'>
 				<input type='hidden' name='formid'		value='<?php echo $this->formdata->id;?>'>
 				<input type='hidden' name='action'		value='save_form_input'>
-				<input type='hidden' name='formurl'		value='<?php echo SIM\current_url(true);?>'>
+				<input type='hidden' name='formurl'		value='<?php echo SIM\current_url();?>'>
 				<input type='hidden' name='userid'		value='<?php echo $this->user_id;?>'>
 		<?php		
 			$this->labelwritten = false;
@@ -1858,7 +1867,7 @@ class Formbuilder{
 							<div class="infobox" name="info" style="min-width: fit-content;">
 								<div style="float:right">
 									<p class="info_icon">
-										<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo plugins_url();?>/sim-plugin/includes/pictures/info.png">
+										<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL;?>/info.png">
 									</p>
 								</div>
 								<span class="info_text">

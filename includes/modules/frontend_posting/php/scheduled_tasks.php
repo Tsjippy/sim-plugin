@@ -80,20 +80,17 @@ function page_age_warning(){
 		//If it is X days since last modified
 		if ($seconds_since_updated > $max_age_in_seconds){
 			//Get the edit page url
-			$url = add_query_arg( ['post_id' => $post_id], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );
+			$url 		= add_query_arg( ['post_id' => $post_id], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );		
 			
 			//Send an e-mail
 			$recipients = get_page_recipients($post_title);
 			foreach($recipients as $recipient){
 				//Only email if valid email
 				if(strpos($recipient->user_email,'.empty') === false){
-					$subject  = "Please update the contents of '$post_title'";
-					$message  = "Dear $recipient->first_name,<br><br>";
-					$message .= "It has been $page_age days since the page with title '$post_title' on <a href='".SITEURL."'>".SITENAME."</a> has been updated.<br>";
-					$message .= "Please follow this link to update it: <a href='$url'>the link</a>.<br><br>";
-					$message .= "Kind regards,<br><br>";
-				
-					wp_mail( $recipient->user_email, $subject, $message);
+					$postOutOfDateEmail    = new PostOutOfDateEmail($recipient, $post_title, $page_age, $url);
+					$postOutOfDateEmail->filterMail();
+						
+					wp_mail( $recipient->user_email, $postOutOfDateEmail->subject, $postOutOfDateEmail->message);
 				}
 			}
 		}

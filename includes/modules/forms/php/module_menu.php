@@ -2,7 +2,7 @@
 namespace SIM\forms;
 use SIM;
 
-const ModuleVersion		= '7.0.0';
+const ModuleVersion		= '7.0.1';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -73,12 +73,38 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 
 	?>
-	<label for="reminder_freq">How often should people be reminded of remaining content to read</label>
+	<label for="reminder_freq">How often should people be reminded of remaining form fields to fill?</label>
 	<br>
 	<select name="reminder_freq">
 		<?php
 		SIM\ADMIN\recurrenceSelector($settings['reminder_freq']);
 		?>
 	</select>
+
+	<br>
+	<label>
+		Define the e-mail people get when they need to fill in some mandatory form information.<br>
+		There is one e-mail to adults, and one to parents of children with missing info.<br>
+	</label>
+	<br>
+
 	<?php
+	$formAdultEmails    = new AdultEmail(wp_get_current_user());
+	$formAdultEmails->printPlaceholders();
+	?>
+
+	<h4>E-mail to adults</h4>
+	<?php
+
+	$formAdultEmails->printInputs($settings);
+	
+	?>
+	<br>
+	<br>
+	<h4>E-mail to parents about their child</h4>
+	<?php
+
+	$formAdultEmails    = new ChildEmail(wp_get_current_user());
+
+	$formAdultEmails->printInputs($settings);
 }, 10, 3);

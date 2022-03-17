@@ -493,7 +493,7 @@ function get_field_value(orgname, checkdatalist=true, comparevalue=null){
 	}
 }
 
-function change_field_value(orgname, value){
+function change_field_value(orgname, value, function_ref){
 	if(orgname instanceof Element){
 		var name	= orgname.name;
 		var target	= orgname;
@@ -537,10 +537,11 @@ function change_field_value(orgname, value){
 	target.dispatchEvent(evt);
 	
 	//run the originating function with this event
-	window[arguments.callee.caller.name](target);
+	//window[arguments.callee.caller.name](target);
+	function_ref(target);
 }
 
-function change_field_property(name, att, value){
+function change_field_property(name, att, value, function_ref){
 	//first change the value
 	var target = form.querySelector('[name="'+name+'" i]');
 	
@@ -552,7 +553,8 @@ function change_field_property(name, att, value){
 	//attach the target
 	target.dispatchEvent(evt);
 	//run the originating function with this event
-	window[arguments.callee.caller.name](target);
+	//window[arguments.callee.caller.name](target);
+	function_ref(target);
 }
 
 //Main code

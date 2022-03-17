@@ -1004,7 +1004,7 @@ class FormTable extends Formbuilder{
 		if(!is_user_logged_in()) return;
 		
 		?>
-		<div class='form_table_wrapper'>
+		<div class='form-table-wrapper'>
 			<h2 class="table_title"><?php echo esc_html($this->form_settings['formname']); ?></h2><br>
 			
 			<?php

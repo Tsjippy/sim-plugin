@@ -70,8 +70,8 @@ add_shortcode("userstatistics",function ($atts){
 	$users = SIM\get_user_accounts($return_family=false,$adults=true,$local_nigerians=true);
 	?>
 	<br>
-	<div class='form_table_wrapper'>
-		<table class='table' style='max-height:500px;'>
+	<div class='form-table-wrapper'>
+		<table class='sim-table' style='max-height:500px;'>
 			<thead class='table-head'>
 				<tr>
 					<th>Name</th>

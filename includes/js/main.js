@@ -92,7 +92,10 @@ function display_tab(tab_button){
 		
 			hash_field.scrollIntoView({block: "center"});
 
-			hash_field.closest('.inputwrapper').classList.add('highlight');
+			var el			= hash_field.closest('.inputwrapper');
+			if(el != null){
+				hash_field.closest('.inputwrapper').classList.add('highlight');
+			}
 			hash_field.classList.add('highlight');
 			hash_field.focus();
 		}
@@ -154,7 +157,7 @@ function display_message(message, icon, autoclose=false, no_ok=false, timer=1500
 	if(typeof(Swal) != 'undefined'){
 		var options = {
 			icon: icon,
-			title: message,
+			title: message.trim(),
 			confirmButtonColor: "#bd2919",
 			cancelButtonColor: 'Crimson'
 		};
@@ -173,7 +176,7 @@ function display_message(message, icon, autoclose=false, no_ok=false, timer=1500
 		
 		Swal.fire(options);
 	}else{
-		alert(message);
+		alert(message.trim());
 	}
 }
 

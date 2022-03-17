@@ -20,20 +20,18 @@ function send_pending_post_warning($post, $update){
 	$type = $post->post_type;
 	
 	//send notification to all content managers
-	$url = add_query_arg( ['post_id' => $post->ID], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );
-	$author_name = get_userdata($post->post_author)->display_name;
+	$url			= add_query_arg( ['post_id' => $post->ID], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );
+	$author_name	= get_userdata($post->post_author)->display_name;
 	
 	foreach($users as $user){
 		//send signal message
 		SIM\try_send_signal("$author_name just $action_text a $type. Please review it here:\n\n$url",$user->ID);
-		
-		//Send e-mail
-		$message = "Hi ".$user->first_name."<br><br>";
-		$message .= "$author_name just $action_text a $type. Please review it <a href='$url'>here</a><br><br>";
-		$message .= 'Cheers,<br><br>';
-		$headers = ['Content-Type: text/html; charset=UTF-8'];
 
-		wp_mail( $user->user_email, "Please review a $type", $message, $headers );
+		$pendinfPostEmail    = new PendingPostEmail($user, $author_name, $action_text, $type, $url);
+		$pendinfPostEmail->filterMail();
+			
+		//Send e-mail
+		wp_mail( $user->user_email, $pendinfPostEmail->subject, $pendinfPostEmail->message);
 	}
 	
 	//Mark warning as send

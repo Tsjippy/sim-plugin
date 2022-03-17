@@ -569,7 +569,7 @@ class Formbuilder_Ajax extends Formbuilder{
 		unset($this->formresults['fileupload']);
 		unset($this->formresults['userid']);
 		
-		$this->formresults = apply_filters('before_saving_formdata',$this->formresults,$this->datatype,$this->user_id);
+		$this->formresults = apply_filters('before_saving_formdata', $this->formresults, $this->formdata->name, $this->user_id);
 		
 		$message = $this->formdata->settings['succesmessage'];
 		if(empty($message)) $message = 'succes';

@@ -135,15 +135,10 @@ add_action('delete_user', function ($user_id){
 	}
 
 	//Send e-mail
-	$headers = array('Content-Type: text/html; charset=UTF-8');
-
-	$message = "Dear $userdata->first_name<br>
-	<br>
-	This is to inform you that your account on simnigeria.org has been deleted.<br>
-	<br>
-	Kind regards,<br>";
-					
-	wp_mail($userdata->user_email, 'Your account on simnigeria.org has been deleted', $message, $headers );
+	$accountRemoveMail    = new AccountRemoveMail($userdata);
+	$accountRemoveMail->filterMail();
+						
+	wp_mail( $userdata->user_email, $accountRemoveMail->subject, $accountRemoveMail->message);
 });
 
 //Delete user shortcode

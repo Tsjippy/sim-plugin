@@ -272,7 +272,7 @@ function afterSelect(e, selected, unselected){
 						title: "You can not select times on multiple days!",
 						confirmButtonColor: "#bd2919",
 					});
-					e.target.closest('.table')._selectable.clear();
+					e.target.closest('.sim-table')._selectable.clear();
 					return;
 				}
 			};
@@ -362,7 +362,7 @@ function hideRows() {
 	if (window.innerWidth > 800) return false;
 	
 	//Loop over all tables
-	document.querySelectorAll('.table').forEach(function(table){
+	document.querySelectorAll('.sim-table').forEach(function(table){
 		var emptyrow = true;
 		
 		//DO not hide lunch or dinner rows
@@ -387,7 +387,7 @@ function add_selectable(){
 	//Add selectable on non-mobile devices
 	if(!isMobileDevice()){
 		//loop over all the schedule tables
-		document.querySelectorAll('.table.schedule').forEach(function(table){
+		document.querySelectorAll('.sim-table.schedule').forEach(function(table){
 			//Load selectable and attach it to the table
 			table._selectable = new Selectable({
 			   filter:		".orientation.admin",

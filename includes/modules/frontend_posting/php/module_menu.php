@@ -26,12 +26,6 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 	
 	?>
-	<label for="publish_post_page">Page with the post edit form</label>
-	<?php
-	echo SIM\page_select("publish_post_page",$settings["publish_post_page"]);
-	?>
-	<br>
-	<br>
 	<label>How often should people be reminded of content which should be updated?</label>
 	<select name="page_age_reminder">
 		<?php
@@ -52,13 +46,59 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		}
 		?>
 	</select>
+	<br>
+
+	<h4>E-mail send to people when a page is out of date</h4>
+	<label>
+		Define the e-mail people get when they are responsible for a page which is out of date.<br>
+		You can use placeholders in your inputs.<br>
+		These ones are available (click on any of them to copy):
+	</label>
 	<?php
+	$postOutOfDateEmail    = new PostOutOfDateEmail(wp_get_current_user());
+	$postOutOfDateEmail->printPlaceholders();
+	$postOutOfDateEmail->printInputs($settings);
+	?>
+	<br>
+	<br>
+	<h4>E-mail send to content managers when a post is pending</h4>
+	<label>
+		Define the e-mail content managers get when someone has submitted a post or post update for review<br>
+	</label>
+	<?php
+	$pendingPostEmail    = new PendingPostEmail(wp_get_current_user());
+	$pendingPostEmail->printPlaceholders();
+	$pendingPostEmail->printInputs($settings);
     
+	?>
+	<input type='hidden' name='publish_post_page' value='<?php echo SIM\get_module_option($module_slug, 'publish_post_page');?>'>
+	<?php
 }, 10, 3);
 
 add_action('sim_module_updated', function($module_slug, $options){
+	global $Modules;
+
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	// Create frontend posting page
+	$page_id	= SIM\get_module_option($module_slug, 'publish_post_page');
+	// Only create if it does not yet exist
+	if(!$page_id or get_post_status($page_id) != 'publish'){
+		$post = array(
+			'post_type'		=> 'page',
+			'post_title'    => 'Add content',
+			'post_content'  => '[front_end_post]',
+			'post_status'   => "publish",
+			'post_author'   => '1'
+		);
+		$page_id 	= wp_insert_post( $post, true, false);
+
+		//Store page id in module options
+		$Modules[$module_slug]['publish_post_page']	= $page_id;
+
+		update_option('sim_modules', $Modules);
+	}
 
 	schedule_tasks();
 }, 10, 2);

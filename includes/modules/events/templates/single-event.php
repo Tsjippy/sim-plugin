@@ -4,6 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+wp_enqueue_style('sim_events_css');
+
 get_header(); ?>
 	<div id="primary">
 		<main>

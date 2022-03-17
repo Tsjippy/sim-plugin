@@ -4,14 +4,11 @@ use SIM;
 
 global $wpdb;
 
-define('MAILTABLE', $wpdb->prefix."sim_emails");
-define('MAILEVENTTABLE', $wpdb->prefix."sim_email_events");
-
 add_action( 'rest_api_init', function () {
 	//Route for e-mail tracking of today
 	register_rest_route( 'sim/v1', '/mailtracker', array(
 		'methods' => 'GET',
-		'callback' => __NAMESPACE__.'\email_tracking',
+		'callback' => __NAMESPACE__.'\mailtracker',
 		'permission_callback' => '__return_true',
 		)
 	);
@@ -24,63 +21,45 @@ add_filter('sim_allowed_rest_api_urls', function($urls){
 	return $urls;
 });
 
-function email_tracking(\WP_REST_Request $request) {
+function mailtracker(\WP_REST_Request $request) {
 	global $wpdb;
 
-	$mailId		= $request->get_params()['mailid'];
+	$mailId		= $request->get_param('mailid');
+	$url		= strval($request->get_param('url'));
 
+	// Store mail open or link clicked in db
 	if(is_numeric($mailId)){
+		if(empty($url)){
+			$type	= 'mail-opened';
+		}else{
+			$type	= 'link-clicked';
+			$url	= str_replace(SITEURL, '', $url);
+		}
+
+		$fancyEmail     = new FancyEmail();
+
 		// Add e-mail to e-mails db
 		$wpdb->insert(
-			MAILEVENTTABLE, 
+			$fancyEmail->mailEventTable, 
 			array(
 				'email_id'		=> $mailId,
-				'type'			=> 'mail_opened',
-				'time'			=> date('Y-m-d')
+				'type'			=> $type,
+				'time'			=> current_time('U'),
+				'url'			=> $url
 			)
 		);
+
+		if($wpdb->last_error !== ''){
+			SIM\print_array($wpdb->last_error);
+		}else{
+			SIM\print_array("Succesfully inserted with id $wpdb->insert_id");
+		}
 	}
 
-	// open the file in a binary mode
-	$name = PICTURESPATH.'/transparent.png';
-	$fp = fopen($name, 'rb');
-
-	// send the right headers
-	header("Content-Type: image/png");
-	header("Content-Length: " . filesize($name));
-
-	// dump the picture and stop the script
-	fpassthru($fp);
-	exit;
-}
-
-function create_db_tables(){
-    if ( !function_exists( 'maybe_create_table' ) ) { 
-        require_once ABSPATH . '/wp-admin/install-helper.php'; 
-    }
-    
-    //only create db if it does not exist
-    global $wpdb;
-    $charset_collate = $wpdb->get_charset_collate();
-
-    //Main table
-    $sql = "CREATE TABLE ".MAILTABLE." (
-      id mediumint(9) NOT NULL AUTO_INCREMENT,
-      subject tinytext NOT NULL,
-      recipients longtext NOT NULL,
-      PRIMARY KEY  (id)
-    ) $charset_collate;";
-
-    maybe_create_table(MAILTABLE, $sql );
-
-    // Form element table
-    $sql = "CREATE TABLE ".MAILEVENTTABLE." (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        email_id int NOT NULL,
-        type text NOT NULL,
-        time text NOT NULL,
-        PRIMARY KEY  (id)
-      ) $charset_collate;";
-
-    maybe_create_table(MAILEVENTTABLE, $sql );
+	if(empty($url)){
+		// redirect to picture
+		$url = PICTURESURL.'/transparent.png?ver='.time();
+	}
+	wp_redirect( $url );
+	exit();
 }
