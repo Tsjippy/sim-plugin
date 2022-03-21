@@ -57,12 +57,27 @@ function add_conditions_html(result,responsdata){
 }
 window['conditions_html'] = add_conditions_html;
 
+function add_warning_conditions_form(result,responsdata){
+	try{
+		modal.querySelector('#warning_conditions_form').innerHTML = responsdata.warning_conditions;
+
+		modal.querySelectorAll('#warning_conditions_form select').forEach(function(select){
+			select._niceselect = NiceSelect.bind(select,{searchable: true});
+		});
+	}catch(err) {
+		console.error(err);
+	}
+}
+
 //fill the form after we have clicked the edit button
 window['prefillforminput'] = function(result,responsdata){
 	try{
 		if (result.status >= 200 && result.status < 400) {
 			clearforminputs();
 			add_conditions_html(result,responsdata);
+
+			add_warning_conditions_form(result,responsdata);
+
 			//parse data
 			var original = responsdata.original;
 			var form = modal.querySelector('form');
@@ -92,7 +107,10 @@ window['prefillforminput'] = function(result,responsdata){
 						if(el.type == "select-one"){
 							if(el.selectedOptions.length > 0){
 								el.selectedOptions[0].defaultSelected = true;
-								el._niceselect.update();
+
+								if(el._niceselect != 'undefined'){
+									el._niceselect.update();
+								}
 							}
 						}
 						
@@ -894,4 +912,79 @@ window.addEventListener("click", event => {
 	if(target.name == 'formfield[mandatory]' && target.checked){
 		target.closest('div').querySelector('[name="formfield[recommended]"]').checked=true;
 	}
+
+	//copy warning_conditions row
+	if(target.matches('.warn_cond')){
+		//copy the row
+		var new_node = clone_node(target.closest('.warning_conditions'));
+
+		document.getElementById('conditions_wrapper').insertAdjacentElement('beforeEnd', new_node);
+
+		//add the active class
+		target.classList.add('active');
+
+		//store the value
+		target.closest('.warning_conditions').querySelector('.combinator').value = target.value;
+
+		fix_warning_condition_numbering();
+	}
+
+	if(target.matches('.remove_warn_cond')){
+		target.closest('.warning_conditions').remove();
+		fix_warning_condition_numbering();
+	}
+	
 });
+
+window.addEventListener('change', ev=>{
+	if(ev.target.matches('.meta_key')){
+		//if this option has a keys data value
+		var meta_indexes	= ev.target.list.querySelector("[value='"+ev.target.value+"' i]").dataset.keys;
+		if(meta_indexes != null){
+			parent	= ev.target.closest('.warning_conditions').querySelector('.index_wrapper');
+			//show the data key selector
+			parent.classList.remove('hidden');
+			
+			console.log(parent);
+			//remove all options and add new ones
+			var datalist	= parent.querySelector('.meta_key_index_list');
+			console.log(datalist);
+			for(var i=1; i<datalist.options.length; i++) {
+				datalist.options[i].remove();
+			}
+
+			//add the new options
+			meta_indexes.split(',').forEach(key=>{
+				var opt			= document.createElement('option');
+				opt.value 		= key;
+				datalist.appendChild(opt);
+			});
+		}
+	}
+});
+
+function fix_warning_condition_numbering(){
+	var warning_conditions	= document.querySelectorAll('#conditions_wrapper .warning_conditions');
+	var i = 0;
+	//loop over all rules in the condition
+	warning_conditions.forEach(condition =>{
+		condition.dataset.index = i;
+		
+		condition.querySelectorAll('.warning_condition').forEach(function(el){
+			//fix numbering
+			if(el.name != undefined){
+				el.name	= el.name.replace(/([0-9])+/g,i);
+			}
+
+			if(el.id != undefined){
+				el.id	= el.id.replace(/([0-9])+/g,i);
+			}
+
+			if(el.list != undefined){
+				el.setAttribute('list', el.list.id.replace(/([0-9])+/g,i));
+			}
+		});
+		
+		i++;
+	});
+}

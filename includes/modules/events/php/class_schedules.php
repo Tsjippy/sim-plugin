@@ -310,8 +310,8 @@ class Schedule{
 					<?php echo $schedule->info;?>
 				</h3>
 				<p>Click on an available date to indicate you want to host.<br>Click on any date you are subscribed for to unsubscribe</p>
-				<table class="table schedule" data-id="<?php echo $schedule->id; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule'>
-					<thead class="table-head">
+				<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule'>
+					<thead>
 						<tr>
 							<th>Dates</th>
 							<?php
@@ -533,7 +533,7 @@ class Schedule{
 			}elseif($starttime == '18:00'){
 				$mealschedulerow	= true;
 				$rowspan			= '';
-				$description		= 'Diner';
+				$description		= 'Dinner';
 			}else{
 				$rowspan			= '';
 				$description		= $starttime;
@@ -588,6 +588,16 @@ class Schedule{
 		if($wpdb->last_error !== ''){
 			wp_die($wpdb->print_error(),500);
 		}
+
+		$event_id   = $wpdb->insert_id;
+
+		//Create event warning
+		$start	= new \DateTime($event['startdate'].' '.$event['starttime'], new \DateTimeZone(wp_timezone_string()));
+
+		//Warn 15 minutes in advance
+		$start	= $start->getTimestamp() - 15 * MINUTE_IN_SECONDS;
+		
+		wp_schedule_single_event($start, 'send_event_reminder_action', [$event_id]);
 	}
 
 	function add_schedule_events($title, $schedule, $add_host_partner=true, $add_partner=true){
@@ -798,7 +808,7 @@ class Schedule{
 			$this->location		= "House of $host_name";
 		}elseif($this->starttime == '18:00'){
 			$this->endtime		= '19:30'; 
-			$title				= 'diner';
+			$title				= 'dinner';
 			$this->location		= "House of $host_name";
 		}else{
 			$title				= sanitize_text_field($_POST['subject']);
@@ -812,7 +822,7 @@ class Schedule{
 			$message	= "Succesfully added you as a host for {$this->name} on $date_str";
 		}
 
-		if($title == 'lunch' or $title == 'diner'){
+		if($title == 'lunch' or $title == 'dinner'){
 			$this->add_schedule_events($title, $schedule);
 			$cell_html	= $this->write_meal_cell($schedule, $this->date, $this->starttime);
 		}else{

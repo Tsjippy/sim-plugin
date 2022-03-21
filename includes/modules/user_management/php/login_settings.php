@@ -18,7 +18,7 @@ add_filter( 'wp_authenticate_user', function($user, $password){
 	return $user;
 },10,2);
 
-function change_password_field($user_id = null){
+function change_password_form($user_id = null){
 	if(is_numeric($user_id)){
 		$user		= get_userdata($user_id);
 	}else{

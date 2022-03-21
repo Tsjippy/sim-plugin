@@ -44,7 +44,6 @@ add_action('sim_after_post_save', function($post){
 						//update
 						update_user_meta( $user->ID, 'read_pages', $read_pages);
 					}
-					
 				}
 			}
 		}
@@ -75,10 +74,13 @@ add_filter( 'the_content', function ($content){
 		
 		//People should read this, and have not read it yet
 		if(
-			!in_array($post_id,$read_pages)						and 
-			((isset($audience['beforearrival']) and !$arrived)	or 
-			isset($audience['afterarrival']) 					or
-			isset($audience['everyone']))
+			get_the_author_meta('ID') != $user_id					and
+			!in_array($post_id,$read_pages)							and 
+			(
+				(isset($audience['beforearrival']) and !$arrived)	or 
+				isset($audience['afterarrival']) 					or
+				isset($audience['everyone'])
+			)
 		){
 			wp_enqueue_style('sim_mandatory_style');
 			wp_enqueue_script('sim_mandatory_script');

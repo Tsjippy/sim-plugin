@@ -8,9 +8,11 @@ function clone_node(original_node, clear=true){
 	//First remove any nice selects
 	original_node.querySelectorAll('select').forEach(select => {
 		//remove defaults if it has changed
-		if(select.options[select.selectedIndex].defaultSelected == false){
-			//remove all default selected
-			remove_default_select(select);
+		if(select.selectedIndex != -1){
+			if(select.options[select.selectedIndex].defaultSelected == false){
+				//remove all default selected
+				remove_default_select(select);
+			}
 		}
 		
 		//Then add a new default selected if needed

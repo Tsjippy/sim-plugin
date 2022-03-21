@@ -19,7 +19,7 @@ add_shortcode('formselector', function($atts){
     if(!empty($a['exclude']) or $a['no_meta']){
         $exclusions = explode(',', $a['exclude']);
         foreach($forms as $key=>$form){
-            if(in_array($form->name, $exclusions)){
+            if(in_array($form->name, $exclusions) or empty($form->name)){
                 unset($forms[$key]);
             }
 

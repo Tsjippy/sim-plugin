@@ -128,6 +128,10 @@ class Formbuilder_Ajax extends Formbuilder{
 
 		foreach($element as &$val){
 			if($val == "true") $val=true;
+
+			if(is_array($val)){
+				$val=serialize($val);
+			}
 		}
 		
 		if($update){
@@ -352,9 +356,11 @@ class Formbuilder_Ajax extends Formbuilder{
 		
 		$this->loadformdata($form_id);
 		
-		$condition_html = $this->element_conditions_form($element_id);
+		$condition_html				= $this->element_conditions_form($element_id);
 
-		$element		= $this->getelementbyid($element_id);
+		$warning_conditions_html	= $this->warning_conditions_form($element_id);
+
+		$element					= $this->getelementbyid($element_id);
 		
 		echo json_encode([
 			'message'			=> "",
@@ -362,7 +368,8 @@ class Formbuilder_Ajax extends Formbuilder{
 			'element_id'		=> $element_id,
 			'original'			=> $element,
 			'callback'			=> 'prefillforminput',
-			'conditions_html'	=> $condition_html
+			'conditions_html'	=> $condition_html,
+			'warning_conditions'=> $warning_conditions_html
 		]);
 		wp_die();
 	}
@@ -953,6 +960,95 @@ class Formbuilder_Ajax extends Formbuilder{
 			<?php
 			echo SIM\add_save_button('submit_form_condition','Save conditions'); ?>
 		</form>
+		<?php
+		$html = ob_get_clean();
+		//print_array($html);
+		return $html;
+	}
+
+	function warning_conditions_form($element_id = -1){
+		$element	= $this->getelementbyid($element_id);
+
+		if($element_id == -1 or empty($element->warning_conditions)){
+			$dummy[0]["user_meta_key"]	= "";
+			$dummy[0]["equation"]		= "";
+			
+			if($element_id == -1) $element_id			= 0;
+			$element->warning_conditions = $dummy;
+		}
+		
+		$conditions 	= maybe_unserialize($element->warning_conditions);
+		
+		$usermeta_keys	= get_user_meta($this->user_id);
+		ksort($usermeta_keys);
+
+		ob_start();
+		?>
+			
+		<label>Do not warn if usermeta with the key</label>
+		<br>
+
+		<div id="conditions_wrapper">
+			<?php
+			foreach($conditions as $condition_index=>$condition){
+				if(!is_numeric($condition_index)) continue;
+				?>
+				<div class='warning_conditions element_conditions' data-index='<?php echo $condition_index;?>'>
+					<input type="hidden" class='warning_condition combinator' name="formfield[warning_conditions][<?php echo $condition_index;?>][combinator]" value="<?php echo $condition['combinator'];?>">
+
+					<input type="text" class="warning_condition meta_key" name="formfield[warning_conditions][<?php echo $condition_index;?>][meta_key]" value="<?php echo $condition['meta_key'];?>" list="meta_key" style="width: fit-content;">
+					<datalist id="meta_key">
+						<?php
+						foreach($usermeta_keys as $key=>$value){
+							// Check if array, store array keys
+							$value 	= maybe_unserialize($value[0]);
+							$data	= '';
+							if(is_array($value)){
+								$keys	= implode(',', array_keys($value));
+								$data	= "data-keys=$keys";
+							}
+							echo "<option value='$key' $data>";
+						}
+
+						?>
+					</datalist>
+
+					<?php
+						$array_keys	= maybe_unserialize($usermeta_keys[$condition['meta_key']][0]);
+					?>
+					<span class="index_wrapper <?php if(!is_array($array_keys)) echo 'hidden';?>">
+						<span>and index</span>
+						<input type="text" class="warning_condition meta_key_index" name='formfield[warning_conditions][<?php echo $condition_index;?>][meta_key_index]' value="<?php echo $condition['meta_key_index'];?>" list="meta_key_index[<?php echo $condition_index;?>]" style="width: fit-content;">
+						<datalist class="meta_key_index_list warning_condition" id="meta_key_index[<?php echo $condition_index;?>]">
+							<?php
+							if(is_array($array_keys)){
+								foreach(array_keys($array_keys) as $key){
+									echo "<option value='$key'>";
+								}
+							}
+							?>
+						</datalist>
+					</span>
+					
+					<select class="warning_condition" name='formfield[warning_conditions][<?php echo $condition_index;?>][equation]'>
+						<option value=''		<?php if($condition['equation'] == '')			echo 'selected';?>>---</option>";
+						<option value='=='		<?php if($condition['equation'] == '==')		echo 'selected';?>>equals</option>
+						<option value='!='		<?php if($condition['equation'] == '!=')		echo 'selected';?>>is not</option>
+						<option value='>'		<?php if($condition['equation'] == '>')			echo 'selected';?>>greather than</option>
+						<option value='<'		<?php if($condition['equation'] == '<')			echo 'selected';?>>smaller than</option>
+					</select>
+					<input  type='text'   class='warning_condition' name='formfield[warning_conditions][<?php echo $condition_index;?>][conditional_value]' value="<?php echo $condition['conditional_value'];?>" style="width: fit-content;">
+					
+					<button type='button' class='warn_cond button <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'AND') echo 'active';?>'	title='Add a new "AND" rule' value="and">AND</button>
+					<button type='button' class='warn_cond button  <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'OR') echo 'active';?>'	title='Add a new "OR"  rule' value="or">OR</button>
+					<button type='button' class='remove_warn_cond  button' title='Remove rule'>-</button>
+
+					<br>
+				</div>
+				<?php 
+			}
+			?>
+		</div>
 		<?php
 		$html = ob_get_clean();
 		//print_array($html);

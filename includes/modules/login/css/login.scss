@@ -115,9 +115,9 @@
 #loginform{
     div input[type="text"],
     div input[type="tel"],
+    div input[type="email"],
     div input[type="password"]
     {
-        @extend %input-shared;
         width: 100%;
     }
 }

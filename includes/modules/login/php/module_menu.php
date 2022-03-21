@@ -116,6 +116,8 @@ add_action('sim_module_updated', function($module_slug, $options){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 
+	$public_cat	= get_cat_ID('Public');
+
 	// Create password reset page
 	$page_id	= SIM\get_module_option($module_slug, 'password_reset_page');
 	// Only create if it does not yet exist
@@ -125,7 +127,8 @@ add_action('sim_module_updated', function($module_slug, $options){
 			'post_title'    => 'Change password',
 			'post_content'  => '[change_password]',
 			'post_status'   => "publish",
-			'post_author'   => '1'
+			'post_author'   => '1',
+			'post_category'	=> [$public_cat]
 		);
 		$page_id 	= wp_insert_post( $post, true, false);
 
@@ -144,7 +147,8 @@ add_action('sim_module_updated', function($module_slug, $options){
 			'post_title'    => 'Request user account',
 			'post_content'  => '[request_account]',
 			'post_status'   => "publish",
-			'post_author'   => '1'
+			'post_author'   => '1',
+			'post_category'	=> [$public_cat]
 		);
 		$page_id 	= wp_insert_post( $post, true, false);
 

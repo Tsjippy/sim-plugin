@@ -72,7 +72,7 @@ add_shortcode("userstatistics",function ($atts){
 	<br>
 	<div class='form-table-wrapper'>
 		<table class='sim-table' style='max-height:500px;'>
-			<thead class='table-head'>
+			<thead>
 				<tr>
 					<th>Name</th>
 					<th>Login count</th>

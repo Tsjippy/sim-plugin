@@ -24,8 +24,36 @@ class AccountCreatedMail extends ADMIN\MailSetting{
 
         $this->defaultMessage    = 'Hi %first_name%,<br><br>';
 		$this->defaultMessage 	.= "We have created an account for you on  %site_name%.<br>";
-		$this->defaultMessage 	.= "Please set a password and login using this <a href='%login_url%'>link</a>.<br>";
+		$this->defaultMessage 	.= "Please set a password using this <a href='%login_url%'>link</a>.<br>";
         $this->defaultMessage 	.= 'Your username is: %user_name%.<br>';
+        $this->defaultMessage 	.= 'If you have any problems, please contact us by replying to this e-mail.';
+    }
+}
+
+class AccountApproveddMail extends ADMIN\MailSetting{
+
+    public $user;
+    public $login_url;
+
+    public function __construct($user, $login_url='') {
+        // call parent constructor
+		parent::__construct();
+
+        $this->addUser($user);
+
+        $this->moduleSlug        = 'user_management';
+        $this->keyword           = 'account_approved';
+
+        $this->replaceArray['%login_url%']    = $login_url;
+        $this->replaceArray['%user_name%']    = $user->user_login;
+
+        $this->defaultSubject    = 'We have approved your account on %site_name%';
+
+        $this->defaultMessage    = 'Hi %first_name%,<br><br>';
+		$this->defaultMessage 	.= "We have approved your account on  %site_name%.<br>";
+        $this->defaultMessage 	.= "You can now login on %site_url%.<br>";
+        $this->defaultMessage 	.= 'Your username is: %user_name%.<br>';
+		$this->defaultMessage 	.= "If you have not yet setup a password you can do so using this <a href='%login_url%'>link</a>.<br>";
         $this->defaultMessage 	.= 'If you have any problems, please contact us by replying to this e-mail.';
     }
 }
@@ -73,7 +101,8 @@ class AccountRemoveMail extends ADMIN\MailSetting{
         $this->defaultSubject    = 'Your account on %site_name% has been deleted';
 
         $this->defaultMessage    = 'Dear %full_name%,<br><br>';
-        $this->defaultMessage   .= 'This is to inform you that your account on %site_name% has been deleted';
+        $this->defaultMessage   .= 'This is to inform you that your account on %site_name% has been deleted.<br>';
+        $this->defaultMessage   .= 'You are no longer able to login.';
     }
 }
 

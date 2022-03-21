@@ -19,6 +19,9 @@ add_action( 'template_redirect', function() {
 //outlook.com: https://outlook.office.com/calendar/addcalendar
 //google: https://calendar.google.com/calendar/u/1/r/settings/addbyurl
 function calendar_stream(){
+	$user_id		= $_GET['id'];
+	if(!is_numeric($user_id))	$user_id	= -1;
+
 	//see https://gist.github.com/jakebellacera/635416
 	$ICAL_FORMAT = 'Ymd\THis\Z';
 
@@ -38,8 +41,6 @@ function calendar_stream(){
 	
 	foreach($events as $event){
 		$onlyfor		= get_post_meta($event->ID,'onlyfor',true);
-		$user_id		= $_GET['id'];
-		if(!is_numeric($user_id))	$user_id	= 0;
 
 		//do not show events which are not meant for us
 		if(!empty($onlyfor) and !in_array($user_id, $onlyfor)) continue;
@@ -180,7 +181,7 @@ function calendar_stream(){
 	
 	// close calendar
 	$ical_end = "END:VCALENDAR\r\n";
-	
+
 	// Set the headers
 	header('Content-type: text/calendar; charset=utf-8');
 	header('Content-Disposition: attachment; filename="sim_events.ics"');

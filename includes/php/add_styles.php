@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.3';
+const StyleVersion		= '7.0.5';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
@@ -29,9 +29,6 @@ function enqueueLibraries(){
 
 	//sortable library: https://github.com/SortableJS/Sortable#bs
 	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(),StyleVersion,true);
-	
-	//selectable select table cells https://github.com/Mobius1/Selectable
-	wp_register_script('selectable', "https://unpkg.com/selectable.js@latest/selectable.min.js", array(), null, true);
 	
 	//Sweet alert https://sweetalert2.github.io/
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);

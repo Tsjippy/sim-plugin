@@ -672,31 +672,54 @@ function review_reminders(){
 
 //Send reminder to people to login
 function check_last_login_date(){
+	wp_set_current_user(1);
+
 	$users = SIM\get_user_accounts();
 	foreach($users as $user){
 		$lastlogin				= get_user_meta( $user->ID, 'last_login_date',true);
-		$lastlogin_date			= date_create($lastlogin);
-		$now 	= new \DateTime();
-		$years_since_last_login = date_diff($lastlogin_date, $now)->format("%y");
-		
-		//User has not logged in in the last year
-		if($years_since_last_login > 0){
+
+		//user has never logged in
+		if(empty($lastlogin)){
 			//Send e-mail
 			$to = $user->user_email;
+			
 			//Skip if not valid email
 			if(strpos($to,'.empty') !== false) continue;
 
-			//Send Signal message
-			SIM\try_send_signal(
-				"Hi $user->first_name,\n\nWe miss you! We haven't seen you since $lastlogin\n\nPlease pay us a visit on\n".SITEURL,
-				$user->ID
-			);
+			$key		 = get_password_reset_key($user);
+			if(is_wp_error($key)) return $key;
+
+			$pageurl	 = get_permalink(SIM\get_module_option('login', 'password_reset_page'));
+			$url		 = "$pageurl?key=$key&login=$user->user_login";
+
+			$mail = new AccountCreatedMail($user, $url);
+			$mail->filterMail();
+
+			wp_mail( $to, $mail->subject, $mail->message);
+		}else{
+			$lastlogin_date			= date_create($lastlogin);
+			$now 	= new \DateTime();
+			$years_since_last_login = date_diff($lastlogin_date, $now)->format("%y");
 			
-			//Send e-mail
-			$weMissYouMail    = new WeMissYouMail($user, $lastlogin);
-			$weMissYouMail->filterMail();
-								
-			wp_mail( $to, $weMissYouMail->subject, $weMissYouMail->message);
+			//User has not logged in in the last year
+			if($years_since_last_login > 0){
+				//Send e-mail
+				$to = $user->user_email;
+				//Skip if not valid email
+				if(strpos($to,'.empty') !== false) continue;
+
+				//Send Signal message
+				SIM\try_send_signal(
+					"Hi $user->first_name,\n\nWe miss you! We haven't seen you since $lastlogin\n\nPlease pay us a visit on\n".SITEURL,
+					$user->ID
+				);
+				
+				//Send e-mail
+				$weMissYouMail    = new WeMissYouMail($user, $lastlogin);
+				$weMissYouMail->filterMail();
+									
+				wp_mail( $to, $weMissYouMail->subject, $weMissYouMail->message);
+			}
 		}
 	}
 	
@@ -713,4 +736,5 @@ add_action('sim_module_deactivated', function($module_slug, $options){
 	wp_clear_scheduled_hook( 'greencard_reminder_action' );
 	wp_clear_scheduled_hook( 'check_details_mail_action' );
 	wp_clear_scheduled_hook( 'review_reminders_action' );
+	wp_clear_scheduled_hook( 'check_last_login_date_action' );
 }, 10, 2);

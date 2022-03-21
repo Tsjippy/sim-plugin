@@ -74,7 +74,23 @@ class Events{
 		maybe_create_table($this->table_name, $sql );
 	}
 
-	function store_event_meta($post, $post_type){
+	function send_event_reminder($event_id){
+		global $wpdb;
+		$query		= "SELECT * FROM $this->table_name WHERE id=$event_id";
+		$results	= $wpdb->get_results($query);
+		
+		if(empty($results)){
+			return false;
+		}
+
+		$event	= $results[0];
+
+		if(is_numeric($event->onlyfor)){
+			SIM\try_send_signal(get_the_title($event->post_title)." is about to start\nIt starts at $event->starttime", $event->onlyfor);
+		}
+	}
+
+	function store_event_meta($post, $update){
 		$this->post_id					= $post->ID;
 	
 		$event							= $_POST['event'];	
@@ -98,6 +114,12 @@ class Events{
 	
 		//check if anything has changed
 		if(get_post_meta($this->post_id,'eventdetails',true) != $event){
+			// First delete any existing events
+			$this->remove_db_rows($this->post_id);
+
+			// Delete any existing events as well
+			wp_clear_scheduled_hook([$this, 'send_event_reminder'], $this->post_id);
+
 			//store meta in db
 			update_post_meta($this->post_id, 'eventdetails', $event);
 		
@@ -143,7 +165,7 @@ class Events{
 		return $this->yearWeek($first_day_of_month);
 	}
 	
-	function create_events($onlyfor=null){
+	function create_events(){
 		global $wpdb;
 
 		$this->create_events_table();
@@ -257,7 +279,6 @@ class Events{
 			unset($args['repeat']);
 			unset($args['allday']);
 			$args['enddate']		= $enddate;
-			$args['onlyfor']		= $onlyfor;
 
 			//Update the database
 			$result = $wpdb->update($this->table_name, 
@@ -431,9 +452,8 @@ class Events{
 		$this->events 	=  $wpdb->get_results($query);
 	}
 
-	// Frontpage eventlist
 	function upcomingevents(){
-		$this->retrieve_events($startdate = date("Y-m-d"), $enddate = date('Y-m-d', strtotime('+3 month')), $amount = 10);
+		$this->retrieve_events($startdate = date("Y-m-d"), $enddate = date('Y-m-d', strtotime('+3 month')), $amount = 10, $extra_query = "endtime > '".date('H:i', current_time('U'))."'");
 
 		//do not list celebrations
 		foreach($this->events as $key=>$event){
@@ -650,7 +670,6 @@ class Events{
 		return $html;								
 	}
 
-	//full calendar
 	function month_calendar($cat=''){
 		if(wp_doing_ajax()){
 			$month		= $_POST['month'];
@@ -809,7 +828,7 @@ class Events{
 				</div>
 				<div class="calendar-table">
 					<div class="month-container">
-						<dl class="calendar-table-head">
+						<dl>
 							<?php
 							$working_date	= strtotime("-$weekday day",strtotime(date('Y-m-01',$date)));
 							for ($y = 0; $y <= 6; $y++) {
@@ -1036,7 +1055,7 @@ class Events{
 				</div>
 				<div class="calendar-table">
 					<table class="week-container">
-						<thead class="calendar-table-head">
+						<thead>
 							<th> </th>
 							<?php
 							$working_date	= $datetime->setISODate(date('Y',$date), $week_nr, "0")->getTimestamp();

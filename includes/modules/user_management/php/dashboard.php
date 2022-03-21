@@ -31,15 +31,13 @@ function show_dashboard($user_id, $admin=false){
 	?>
 	<div id="warnings">
 		<?php
-		do_action('sim_dashboard_warnings', $user_id);
+		do_action('sim_dashboard_warnings', $user_id, $admin);
 		?>
 	</div>
-	
-	<div id="Account statements" style="margin-top:20px;">
-		<?php
-		echo do_shortcode('[account_statements]');
-		?>
-	</div>
+
+	<?php
+	do_action('sim_user_dashboard', $user_id, $admin);
+	?>
 	
 	<div id="ministrywarnings">
 		<?php
@@ -82,7 +80,6 @@ function show_dashboard($user_id, $admin=false){
 			echo $post_age_warning_html;
 		}
 	echo '</div>';
-	//echo do_shortcode("[schedules]");
 
 	return ob_get_clean();
 }

@@ -133,16 +133,6 @@ function update_user_page_title($user_id, $title){
     } 
 }
 
-function remove_user_page($user_id){
-    //Check if a page exists for this person
-    $missionary_page    = get_user_page_id($user_id);
-    if (is_numeric($missionary_page)){
-        //page exists, delete it
-        wp_delete_post($missionary_page);
-        SIM\print_array("Deleted the missionary page $missionary_page");
-    }
-}
-
 //Display name and mission of missionary
 function user_description($user_id){
 	global $CompoundsPageID;

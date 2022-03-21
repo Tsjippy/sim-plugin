@@ -200,10 +200,12 @@ add_shortcode('pending_user',function ($atts){
 			$UserId = $_GET['activate_pending_user'];
 			//Check if the user account is still pending
 			if(get_user_meta($UserId,'disabled',true) == 'pending'){
-				//Make approved
-				delete_user_meta( $UserId, 'disabled');
 				//Send welcome-email
 				wp_new_user_notification($UserId, null, 'user');
+
+				//Make approved
+				delete_user_meta( $UserId, 'disabled');
+				
 				echo '<div class="success">Useraccount succesfully activated</div>';
 			}
 		}
@@ -337,63 +339,6 @@ add_action('sim_dashboard_warnings', function($user_id){
 	}
 	
 	echo $html;
-});
-
-//Shortcode for financial items
-add_shortcode("account_statements",function (){
-	global $current_user;
-	
-	if(isset($_GET["id"])){
-		$user_id = $_GET["id"];
-	}else{
-		$user_id = $current_user->ID;
-	}
-	$account_statements = get_user_meta($user_id, "account_statements", true);
-	
-	if(SIM\is_child($user_id) == false and is_array($account_statements)){
-		//Load js
-		wp_enqueue_script('sim_account_statements_script');
-		
-		$html = "<div class='account_statements'>";
-		$html .= '<h3>Account statements</h3>';
-		ksort($account_statements);
-		$html .= '<table id="account_statements"><tbody>';
-		foreach($account_statements as $year=>$month_array){
-			if(date("Y") == $year){
-				$button_text 	= "Hide $year";
-				$visibility 	= '';
-			}else{
-				$button_text 	= "Show $year";
-				$visibility 	= ' style="display:none;"';
-			}
-				
-			$html .= "<button type='button' class='statement_button button' data-target='_$year' style='margin-right: 10px; padding: 0px 10px;'>$button_text</button>";
-			if(is_array($month_array)){
-				$month_count = count($month_array);
-				$first_month = array_key_first($month_array);
-				foreach($month_array as $month => $url){
-					$site_url	= site_url();
-					if(strpos($url, $site_url) === false){
-						$url = $site_url.$url;
-					}
-					
-					$html .= "<tr class='_$year'$visibility>";
-					if($first_month == $month){
-						$html .= "<td rowspan='$month_count'><strong>$year<strong></td>";
-					}
-					$html .= "<td>
-							<a href='$url'>$month</a>
-						</td>
-						<td>
-							<a class='statement' href='$url'>Download</a>
-						</td>
-					</tr>";
-				}
-			}
-		}
-		$html .= '</tbody></table></div>';
-		return $html;
-	}
 });
 
 //Shortcode for expiry warnings
@@ -563,7 +508,7 @@ function user_info_page($atts){
 				//Add a tab button
 				$tab_html .= '<li class="tablink" id="show_login_info" data-target="login_info">Login info</li> ';
 				
-				$html .= change_password_field($user_id);
+				$html .= change_password_form($user_id);
 			}
 			
 			/*
@@ -798,3 +743,79 @@ function user_info_page($atts){
 		echo SIM\LOGIN\login_modal("You do not have permission to see this, sorry.");
 	}
 }
+
+//Delete user shortcode
+add_shortcode( 'delete_user', function(){
+	require_once(ABSPATH.'wp-admin/includes/user.php');
+	
+	$user = wp_get_current_user();
+	if ( in_array('usermanagement',$user->roles)){
+		//Load js	
+		wp_enqueue_script('user_select_script');
+	
+		$html = "";
+		
+		if(isset($_GET["userid"])){
+			$user_id = $_GET["userid"];
+			$userdata = get_userdata($user_id);
+			if($userdata != null){
+				$family = get_user_meta($user_id,"family",true);
+				$nonce_string = 'delete_user_'.$user_id.'_nonce';
+				
+				if(!isset($_GET["confirm"])){
+					echo '<script>
+					var remove = confirm("Are you sure you want to remove the useraccount for '.$userdata->display_name.'?");
+					if(remove){
+						var url=window.location+"&'.$nonce_string.'='.wp_create_nonce($nonce_string).'";';
+						if (is_array($family) and count($family)>0){
+							echo '
+							var family = confirm("Do you want to delete all useraccounts for the familymembers of '.$userdata->display_name.' as well?");
+							if(family){
+								window.location = url+"&confirm=true&family=true";
+							}else{
+								window.location = url+"&confirm=true";
+							}';
+						}else{
+							echo 'window.location = url+"&confirm=true"';
+						}
+					echo '}
+					</script>';
+				}elseif($_GET["confirm"] == "true"){
+					if(!isset($_GET[$nonce_string]) or !wp_create_nonce($_GET[$nonce_string],$nonce_string)){
+						$html .='<div class="error">Invalid nonce! Refresh the page</div>';
+					}else{
+						$deleted_name = $userdata->display_name;
+						if(isset($_GET["family"]) and $_GET["family"] == "true"){
+							if (is_array($family) and count($family)>0){
+								$deleted_name .= " and all the family";
+								if (isset($family["children"])){
+									$family = array_merge($family["children"],$family);
+									unset($family["children"]);
+								}
+								foreach($family as $relative){
+									//Remove user account
+									wp_delete_user($relative,1);
+								}
+							}
+						}
+						//Remove user account
+						wp_delete_user($user_id,1);
+						$html .= '<div class="success">Useraccount for '.$deleted_name.' succcesfully deleted.</div>';
+						echo "<script>
+							setTimeout(function(){
+								window.location = window.location.href.replace('/?userid=$user_id&delete_user_{$user_id}_nonce=".$_GET[$nonce_string]."&confirm=true','').replace('&family=true','');
+							}, 3000);
+						</script>";
+					}
+				}
+				
+			}else{
+				$html .= '<div class="error">User with id '.$user_id.' does not exist.</div>';
+			}
+		}
+		
+		$html .= SIM\user_select("Select an user to delete from the website:");
+		
+		return $html;
+	}
+});

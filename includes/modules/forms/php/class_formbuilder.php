@@ -127,6 +127,7 @@ class Formbuilder{
 			hidden boolean default False,
 			multiple boolean default False,
 		  	conditions longtext,
+			warning_conditions longtext,
 			PRIMARY KEY  (id)
 		  ) $charset_collate;";
   
@@ -2328,34 +2329,41 @@ class Formbuilder{
 				</label><br>
 				<br>
 				
-				<label class="option-label">
-					<input type="checkbox" class="formbuilder" name="formfield[required]" value="true">
-					Check if this should be a required field
-				</label><br>
-				<br>
-
 				<?php
-				$active	= false;
+				$meta	= false;
 				if(!empty($this->formdata->settings['save_in_meta'])){
-					$active	=true;
+					$meta	=true;
+				}
+
+				if($meta){
+					?>
+					<h3>Warning conditions</h3>
+					<label class="option-label">
+						<input type="checkbox" class="formbuilder" name="formfield[mandatory]" value="true">
+						Check if people should be warned by e-mail/signal if they have not filled in this field.
+					</label><br>
+					<br>
+
+					<label class="option-label">
+						<input type="checkbox" class="formbuilder" name="formfield[recommended]" value="true">
+						Check if people should be notified on their homepage if they have not filled in this field.
+					</label><br>
+					<br>
+
+					<div id="warning_conditions_form"></div>
+					<?php
+				}else{
+					?>
+					<label class="option-label">
+						<input type="checkbox" class="formbuilder" name="formfield[required]" value="true">
+						Check if this should be a required field
+					</label><br>
+					<br>
+					<?php
 				}
 				?>
-
-				<label class="option-label">
-					<input type="checkbox" class="formbuilder" name="formfield[mandatory]" value="true" <?php if(!$active) echo 'disabled';?>>
-					Check if people should be warned by e-mail/signal if they have not filled in this field.
-					<?php if(!$active) echo '<br> Enable saving in usermeta first before you can use this option<br>The form url needs to be set as well.';?>
-				</label><br>
-				<br>
-
-				<label class="option-label">
-					<input type="checkbox" class="formbuilder" name="formfield[recommended]" value="true" <?php if(!$active) echo 'disabled';?>>
-					Check if people should be notified on their homepage if they have not filled in this field.
-					<?php if(!$active) echo '<br> Enable saving in usermeta first before you can use this option<br>The form url needs to be set as well.';?>
-				</label><br>
-				<br>
 			</div>
-			
+			<br>
 			<label class="option-label">
 				<input type="checkbox" class="formbuilder" name="formfield[hidden]" value="true">
 				Check if this should be a hidden field

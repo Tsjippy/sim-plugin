@@ -204,6 +204,10 @@ trait create_js{
                                     $name .= '[]';
                                 }
 
+                                if(in_array($element->type, ['file', 'image'])){
+                                    $name .= '_files[]';
+                                }
+
                                 //only add if there is no wrapping element with the same condition.
                                 $prev_element = $this->form_elements[$element_index];
                                 if(!$prev_element->wrap or !in_array("[name=\"$prev_element->name\"]",$action_array['querystrings'][$action])){
@@ -221,6 +225,10 @@ trait create_js{
                                 $name				= $copy_to_element->name;
                                 if(in_array($copy_to_element->type,['radio','checkbox']) and strpos($name, '[]') === false) {
                                     $name .= '[]';
+                                }
+
+                                if(in_array($copy_to_element->type, ['file', 'image'])){
+                                    $name .= '_files[]';
                                 }
                                 
                                 //formstep do not have an inputwrapper

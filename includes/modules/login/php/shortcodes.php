@@ -55,8 +55,12 @@ function password_reset_form($user){
 add_shortcode("change_password", function(){
 	if(!is_user_logged_in()){
 		$user	= check_password_reset_key($_GET['key'], $_GET['login']);
-
+		
 		if(is_wp_error($user)){
+			if($user->get_error_message() == "Invalid key."){
+				return "This link has expired, please request a new password using the login menu.";
+			}
+
 			return $user->get_error_message(). "<br>Please try again.";
 		}
 	}else{

@@ -13,6 +13,9 @@ use SIM;
 function get_all_fields($user_id, $type){
 	global $wpdb;
 
+	$child				= SIM\is_child($user_id);
+	if($child) $child_name	= get_userdata($user_id)->first_name;
+
 	$formbuilder		= new Formbuilder();
 
 	$query				= "SELECT * FROM {$formbuilder->el_table_name} WHERE ";
@@ -33,6 +36,53 @@ function get_all_fields($user_id, $type){
 
 		//check which of the fields are not yet filled in
 		foreach($fields as $field){
+			//check if this field applies to this user
+			$warning_condition	= maybe_unserialize($field->warning_conditions);
+			SIM\clean_up_nested_array($warning_condition, true);
+			if(is_array($warning_condition)){
+				$skip	= false;
+
+				foreach($warning_condition as $check){
+					$value		= get_user_meta($user_id, $check['meta_key'], true);
+					if(!empty($check['meta_key_index'])){
+						$value		= $value[$check['meta_key_index']];
+					}
+
+					switch($check['equation']){
+						case '==':
+							$result	= $value == $check['conditional_value'];
+							break;
+						case '!=':
+							$result	= $value != $check['conditional_value'];
+							break;
+						case '>':
+							$result	= $value > $check['conditional_value'];
+							break;
+						case '<':
+							$result	= $value < $check['conditional_value'];
+							break;
+						default:
+							$result = false;
+					}
+
+					// Check the result
+					if($result){
+						$skip = true;
+						//break this loop when when already know we should skip this field
+						if($check['combinator'] == 'or'){
+							break;
+						}
+					}else{
+						$skip = false;
+					}
+				}
+				
+				//if we should check the next on
+				if($skip ){
+					continue;
+				}
+			}
+
 			$metakey 	= explode('[',$field->name)[0];
 			$value		= get_user_meta($user_id, $metakey, true);
 
@@ -59,13 +109,29 @@ function get_all_fields($user_id, $type){
 
 				parse_str(parse_url($form_url, PHP_URL_QUERY), $params);
 
-				$name	= ucfirst(str_replace(']','',end(explode('[', str_replace(['[]', '_'], ['', ' '], $field->nicename)))));
+				//Show a nice name
+				$name	= str_replace(['[]', '_'], ['', ' '], $field->nicename);
+				$name	= ucfirst(str_replace(['[', ']'],[': ',''], $name));
+
+				$baseurl	= explode('main_tab=', $_SERVER['REQUEST_URI'])[0];
+				$main_tab	= $params['main_tab'];
+				if($child){
+					$name 		.= " for $child_name";
+					$main_tab	 = strtolower($child_name);
+					$form_url	 = str_replace($params['main_tab'], $main_tab, $form_url);
+				}
+				
 				// If the url has no hash or we are not on the same url
-				if(empty($params['main_tab']) or strpos($form_url, explode('main_tab=', $_SERVER['REQUEST_URI'])[0]) === false){
+				if(empty($params['main_tab']) or strpos($form_url, $baseurl) === false){
 					$html .= "<li><a href='$form_url#{$field->name}'>$name</a></li>";
 				//We are on the same page, just change the hash
 				}else{
-					$html .= "<li><a onclick='change_url(this)' data-param_val='{$params['main_tab']}' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
+					$second_tab	= '';
+					$names		= explode('[', $field->name);
+					if(count($names) > 1){
+						$second_tab	= $names[0];
+					}
+					$html .= "<li><a onclick='change_url(this, `$second_tab`)' data-param_val='$main_tab' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
 				}
 			}
 		}
@@ -80,7 +146,7 @@ function get_all_fields($user_id, $type){
 	return $html;
 }
 
-add_filter('sim_mandatory_fields_filter', function($fields, $user_id){
+/* add_filter('sim_mandatory_fields_filter', function($fields, $user_id){
 	// Local nigerian do not have mandatory fields
 	if(!empty(get_user_meta( $user_id, 'local_nigerian', true ))){
 		foreach($fields as $key=>$field){
@@ -143,7 +209,7 @@ add_filter('sim_mandatory_fields_filter', function($fields, $user_id){
 	}
 
 	return $fields;
-}, 10, 2);
+}, 10, 2); */
 
 add_filter('sim_mandatory_html_filter', __NAMESPACE__.'\add_child_fields', 10, 2);
 add_filter('sim_recommended_html_filter', __NAMESPACE__.'\add_child_fields', 10, 2);

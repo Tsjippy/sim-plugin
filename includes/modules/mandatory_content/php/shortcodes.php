@@ -2,7 +2,7 @@
 namespace SIM\MANDATORY;
 use SIM;
 
-add_shortcode("must_read_documents",'SIM\MANDATORY\get_must_read_documents');
+add_shortcode("must_read_documents", __NAMESPACE__.'\get_must_read_documents');
 function get_must_read_documents($user_id='', $exclude_heading=false){
 	if(!is_numeric($user_id)) $user_id = get_current_user_id();
 	
@@ -39,7 +39,8 @@ function get_must_read_documents($user_id='', $exclude_heading=false){
 			'post_type' 	=> 'any',
 			'post_status' 	=> 'publish',
 			'meta_key' 		=> "audience",
-			'numberposts'	=> -1
+			'numberposts'	=> -1,				// all posts
+			'author' 		=> '-'.$user_id		// exclude own posts
 		)
 	);
 	

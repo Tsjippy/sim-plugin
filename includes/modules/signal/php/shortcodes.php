@@ -11,13 +11,18 @@ add_shortcode('signal_messages',function(){
 	
 	//Perform remove action
 	if(isset($_POST['recipient_number']) and isset($_POST['key'])){
-		$html .= '<div class="success">Succesfully removed the message</div>';
-	
-		unset($signal_messages[$_POST['recipient_number']][$_POST['key']]);
-		
-		if(count($signal_messages[$_POST['recipient_number']]) == 0) unset($signal_messages[$_POST['recipient_number']]);
-		
-		update_option('signal_bot_messages',$signal_messages);
+		if($_SERVER['HTTP_HOST'] == 'localhost'){
+			$html .= '<div class="success">Succesfully removed all the messages</div>';
+			delete_option('signal_bot_messages');
+		}else{
+			$html .= '<div class="success">Succesfully removed the message</div>';
+
+			unset($signal_messages[$_POST['recipient_number']][$_POST['key']]);
+			
+			if(count($signal_messages[$_POST['recipient_number']]) == 0) unset($signal_messages[$_POST['recipient_number']]);
+			
+			update_option('signal_bot_messages',$signal_messages);
+		}
 	}
 	
 	if(is_array($signal_messages) and count($signal_messages) >0){
@@ -34,7 +39,7 @@ add_shortcode('signal_messages',function(){
 			}
 		}
 	}else{
-		$html = "No Signal messages found";
+		$html .= "No Signal messages found";
 	}
 	return $html;
 });

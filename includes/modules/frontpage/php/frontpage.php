@@ -9,20 +9,18 @@ if(!empty($hook_name)){
 	//Add a button to the header
 	add_action($hook_name, function(){
 		if (is_user_logged_in() and (is_page(SIM\get_module_option('login','home_page')) or is_front_page())){
-			$first_btn_text		= SIM\get_module_option('frontpage', 'first_button_text');
-			$first_btn_link		= SIM\get_module_option('frontpage', 'first_button_url');
-			if(strpos($first_btn_link, SITEURL) === false){
-				$first_btn_link	= SITEURL.$first_btn_link;
-			}
-			$second_btn_text	= SIM\get_module_option('frontpage', 'second_button_text');
-			$second_btn_link	= SIM\get_module_option('frontpage', 'second_button_url');
-			if(strpos($second_btn_link, SITEURL) === false){
-				$second_btn_link	= SITEURL.$second_btn_link;
-			}
+			$button1	= SIM\get_module_option('frontpage', 'first_button');
+			$button2	= SIM\get_module_option('frontpage', 'second_button');
+
+			$text1		= get_the_title($button1);
+			$text2		= get_the_title($button2);
+
+			$url1		= get_the_permalink($button1);
+			$url2		= get_the_permalink($button2);
 
 			$html = '<div id="header_buttons">';
-				$html .= "<a id='first_button' href='$first_btn_link' title='$first_btn_text' class='btn btn-primary header_button' id='header_button1'>$first_btn_text</a>";
-				$html .= "<a id='second_button' href='$second_btn_link' title='$second_btn_text' class='btn btn-right header_button' id='header_button1'>$second_btn_text</a>";
+				$html .= "<a id='first_button' href='$url1' title='$text1' class='btn btn-primary header_button' id='header_button1'>$text1</a>";
+				$html .= "<a id='second_button' href='$url2' title='$text2' class='btn btn-right header_button' id='header_button1'>$text2</a>";
 			$html .= '</div>';
 			echo $html;
 		}

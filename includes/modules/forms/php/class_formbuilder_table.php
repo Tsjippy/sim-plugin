@@ -1059,7 +1059,7 @@ class FormTable extends Formbuilder{
 				
 				?>
 				<table class='sim-table form-data-table' data-id='<?php echo $this->datatype;?>' data-shortcodeid='<?php echo $this->shortcode_id;?>' data-nonce='<?php echo wp_create_nonce('updateforminput');?>'>
-					<thead class="table-head">
+					<thead>
 						<tr>
 							<?php
 							//add normal fields

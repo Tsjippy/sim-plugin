@@ -74,6 +74,16 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<br>
 	<br>
 
+	<h4>E-mail to people who's account is just approved</h4>
+	<label>Define the e-mail people get when they are added to the website</label>
+	<?php
+	$accountApproveddMail    = new AccountApproveddMail(wp_get_current_user());
+	$accountApproveddMail->printPlaceholders();
+	$accountApproveddMail->printInputs($settings);
+	?>
+	<br>
+	<br>
+
 	<h4>E-mail to people who's account is just created</h4>
 	<label>Define the e-mail people get when they are added to the website</label>
 	<?php

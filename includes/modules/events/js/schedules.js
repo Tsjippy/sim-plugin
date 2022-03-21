@@ -385,7 +385,7 @@ function hideRows() {
 
 function add_selectable(){
 	//Add selectable on non-mobile devices
-	if(!isMobileDevice()){
+	//if(!isMobileDevice()){
 		//loop over all the schedule tables
 		document.querySelectorAll('.sim-table.schedule').forEach(function(table){
 			//Load selectable and attach it to the table
@@ -401,7 +401,7 @@ function add_selectable(){
 			//Run the function afterSelect when selection is final
 			table._selectable.on('end', afterSelect);
 		});
-	}
+	//}
 
 	hideRows();
 }

@@ -1,6 +1,6 @@
 console.log("Main.js loaded");
 
-function change_url(target){
+function change_url(target, second_tab=''){
 	var new_param	= target.dataset.param_val;
 
 	var hash		= target.dataset.hash;
@@ -13,6 +13,10 @@ function change_url(target){
 		url.searchParams.set('main_tab', new_param);
 	}else{
 		url.searchParams.set('second_tab', new_param);
+	}
+
+	if(second_tab != ''){
+		url.searchParams.set('second_tab', second_tab);
 	}
 	
 	window.history.pushState({}, '', url);
@@ -42,7 +46,10 @@ function switch_tab(event=null){
 		document.querySelectorAll('[data-param_val="'+main_tab+'"]').forEach(tabbutton=>{
 			//only process non-modal tabs
 			if(tabbutton.closest('.modal') == null){
-				last_tab	= display_tab(tabbutton);
+				var result	= display_tab(tabbutton);
+				if(result != false){
+					last_tab	= result;
+				}
 			}
 		});
 	}
@@ -103,6 +110,8 @@ function display_tab(tab_button){
 		position_table();
 
 		return tab;
+	}else{
+		return false;
 	}
 }
 
@@ -207,6 +216,9 @@ function body_scrolling(type){
 		//disable scrolling of the body
 		document.querySelector("body").style.overflow = 'hidden';
 
+		//scroll to top
+		window.scrollTo(0, 0);
+
 		var menu = document.querySelector("#masthead");
 		menu.style.overflowY	= 'scroll';
 		menu.style.top			= '0px';
@@ -214,6 +226,7 @@ function body_scrolling(type){
 		menu.style.right		= '0';
 		menu.style.bottom		= '0';
 		menu.style.position		= 'absolute';
+
 	}else{
 		//disable scrolling of the body
 		document.querySelector("body").style.overflow = '';

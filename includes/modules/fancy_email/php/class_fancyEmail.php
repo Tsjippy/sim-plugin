@@ -52,8 +52,8 @@ class FancyEmail{
 
         $this->recipients   = &$args['to'];
         //Do not send an e-mail when the adres contains .empty
-        if(strpos($this->recipients,'.empty') !== false){
-            $this->recipients   = '';
+        if(strpos($this->recipients,'.empty') !== false or $_SERVER['HTTP_HOST'] == 'localhost'){
+            $args['to'] = '';
             return $args;
         }
 
@@ -133,7 +133,7 @@ class FancyEmail{
                 mkdir($new_path, 0777, true);
 
                 //Schedule a task to delete this folder in 1 month time
-                wp_schedule_single_event(strtotime(time(), '+1 month'), [$this, 'clean_up_email_messages'], [$this->emailId]);
+                wp_schedule_single_event(strtotime(time(), '+1 minute'), 'clean_up_email_messages_action', [$this->emailId]);
             }
             $new_path   = $new_path.$name;
 
@@ -160,7 +160,7 @@ class FancyEmail{
         $url	    = $matches[1];
 
         // Change to rest-api url
-        $new_url    = "$this->mailTrackerUrl?mailid=$this->emailId&url=$url";
+        $new_url    = "$this->mailTrackerUrl?mailid=$this->emailId&url=".urlencode($url);
 
         $html	    = str_replace($url, $new_url, $html);
         return $html;

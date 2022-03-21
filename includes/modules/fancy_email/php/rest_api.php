@@ -25,7 +25,7 @@ function mailtracker(\WP_REST_Request $request) {
 	global $wpdb;
 
 	$mailId		= $request->get_param('mailid');
-	$url		= strval($request->get_param('url'));
+	$url		= strval(urldecode($request->get_param('url')));
 
 	// Store mail open or link clicked in db
 	if(is_numeric($mailId)){
@@ -33,7 +33,6 @@ function mailtracker(\WP_REST_Request $request) {
 			$type	= 'mail-opened';
 		}else{
 			$type	= 'link-clicked';
-			$url	= str_replace(SITEURL, '', $url);
 		}
 
 		$fancyEmail     = new FancyEmail();
@@ -45,7 +44,7 @@ function mailtracker(\WP_REST_Request $request) {
 				'email_id'		=> $mailId,
 				'type'			=> $type,
 				'time'			=> current_time('U'),
-				'url'			=> $url
+				'url'			=> str_replace(SITEURL, '', $url)
 			)
 		);
 

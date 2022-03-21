@@ -1,0 +1,12 @@
+@use '../../../css/scss/global' as *;
+
+#account_statements, #account_statements th, #account_statements td{
+	border: none;
+}
+
+/* Mobile settings*/
+@media screen and (max-width: 800px){	
+	.account_statements td::before{
+		min-width: unset;
+	}
+}

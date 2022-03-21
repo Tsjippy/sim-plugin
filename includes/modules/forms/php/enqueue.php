@@ -3,7 +3,7 @@ namespace SIM\FORMS;
 use SIM;
 
 add_action( 'save_post', function($post_ID, $post){
-    if(has_shortcode($post->post_content, 'formbuilder')){
+    if(has_shortcode($post->post_content, 'formbuilder') or has_shortcode($post->post_content, 'formselector')){
         global $Modules;
 
         if(!is_array($Modules['forms']['formbuilder_pages'])){

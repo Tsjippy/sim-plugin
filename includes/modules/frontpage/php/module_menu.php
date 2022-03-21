@@ -22,28 +22,17 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	SIM\picture_selector('header_image',  'Header image frontpage', $settings);
 	?>
 	
-    <label>
-		First button text.<br>
-		<input type="text" name="first_button_text" value="<?php echo $settings['first_button_text'];?>">
-	</label>
-	<br>
-	<label>
-		First button url.<br>
-		<input type="text" name="first_button_url" value="<?php echo $settings['first_button_url'];?>">
-	</label>
-	<br>
+	<h5> First button</h5>
+	Select the page you want to connect to the first button.<br>
+	<?php
+	echo SIM\page_select("first_button", $settings["first_button"]);
+	?>
 
-	<label>
-		Second button text.<br>
-		<input type="text" name="second_button_text" value="<?php echo $settings['second_button_text'];?>">
-	</label>
-	<br>
-	<label>
-		Second button url.<br>
-		<input type="text" name="second_button_url" value="<?php echo $settings['second_button_url'];?>">
-	</label>
-	<br>
-	<br>
+	<h5> Second button</h5>
+	Select the page you want to connect to the second button.<br>
+	<?php
+	echo SIM\page_select("second_button", $settings["second_button"]);
+	?>
 
 	<h4>News feed</h4>
 	<label>

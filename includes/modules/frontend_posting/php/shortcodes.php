@@ -23,7 +23,7 @@ add_shortcode('your_posts',function(){
 	
 	$html = "<h2 class='table_title'>Content submitted by you</h2>";
 		$html .= "<table class='sim-table' id='user_posts'>";
-			$html .= "<thead class='table-head'>";
+			$html .= "<thead>";
 				$html .= "<tr>";
 					$html .= "<th>Date</th>";
 					$html .= "<th>Type</th>";
