@@ -29,9 +29,6 @@ class FrontEndContent{
 			//add tinymce button
 			add_filter('mce_buttons', array($this,'register_buttons'));
 			
-			//add action over ajax to read file contents
-			add_action ( 'wp_ajax_get_docx_contents',array($this,'get_docx_contents'));
-			
 			//Save a post over AJAX
 			add_action ( 'wp_ajax_submit_post', array($this,'submit_post'));
 			add_action ( 'wp_ajax_draft_post', array($this,'submit_post'));
@@ -61,7 +58,6 @@ class FrontEndContent{
 	}
 	
 	function add_tinymce_plugin($plugins) {
-		$plugins['file_upload'] = INCLUDESURL."/js/tiny_mce_action.js?ver=".ModuleVersion;
 		$plugins['select_user'] = INCLUDESURL."/js/tiny_mce_action.js?ver=".ModuleVersion;
 		
 		return $plugins;
@@ -134,66 +130,6 @@ class FrontEndContent{
 			$this->action = "Submit <span class='replaceposttype'>{$this->post_name}</span> for review";
 		}
 	}
-	
-	function get_docx_contents(){
-		//print_array($_FILES,true);
-		
-		if(!empty($_POST['url'])){
-			$url 	= $_POST['url'];
-			$path 	= SIM\url_to_path($url);
-			$ext 	= pathinfo($path, PATHINFO_EXTENSION);
-			
-			if($ext == 'docx'){
-				$reader = 'Word2007';
-			}elseif($ext == 'doc'){
-				$reader = 'MsDoc';
-			}elseif($ext == 'rtf'){
-				$reader = 'rtf';
-			}elseif($ext == 'txt'){
-				$reader = 'plain';
-			}else{
-				$reader = 'Word2007';
-			}
-			
-			if($reader == 'plain'){
-				$file = fopen($path, "r") or wp_die("Unable to open file!");
-				$contents =  fread($file,filesize($path));
-				fclose($file);
-				
-				wp_die($contents);
-			}else{
-				//Load the filecontents
-				$phpWord = \PhpOffice\PhpWord\IOFactory::createReader($reader)->load($path);
-
-				//Convert it to html
-				$htmlWriter = new \PhpOffice\PhpWord\Writer\HTML($phpWord);
-				
-				$html = $htmlWriter->getWriterPart('Body')->write();
-				
-				
-				$html = preg_replace_callback(
-					//get all tags which are followed by the same tag 
-					//syntax: <(some tagname)>(some text)</some tagname)0 or more spaces<(use tagname as found before + some extra symbols)>
-					'/<([^>]*)>([^<]*)<\/(\w+)>\s*<(\3[^>]*)>/m', 
-					function($matches){
-						//print_array($matches,true);
-						//If the opening tag is exactly like the next opening tag, remove the the duplicate
-						if($matches[1] == $matches[4] and ($matches[3] == 'span' or $matches[3] == 'strong' or $matches[3] == 'b')){
-							return $matches[2];
-						}else{
-							return $matches[0];
-						}
-					}, 
-					$html
-				);
-				
-				//Return the contents
-				wp_die($html);
-			}
-		}else{
-			wp_die("No file url given",500);
-		}
-	}
 		
 	function upload_images($matches) {
 		$ext 			= $matches[1];
@@ -236,8 +172,8 @@ class FrontEndContent{
 			
 		if($_POST['action'] == 'draft_post'){
 			$status = 'draft';
-		}elseif($status == ''){
-			if($this->fullrights == true){
+		}elseif(empty($status)){
+			if($this->fullrights == true and $_POST['publish_date'] == date('Y-m-d')){
 				$status = 'publish';
 			}else{
 				$status = 'pending';
@@ -332,6 +268,14 @@ class FrontEndContent{
 			if(count($categories)>0){
 				$post['post_category'] = $categories;
 			}
+
+			//Schedule the post
+			if($_POST['publish_date'] != date('Y-m-d')){
+				$publish_date			= date("Y-m-d 08:00:00", strtotime($_POST['publish_date']));
+
+				$post['post_date'] 		= $publish_date;
+				$post['post_date_gmt'] 	= $publish_date;
+			}
 			
 			// Insert the post into the database.
 			$this->post_id 	= wp_insert_post( $post,true,false);
@@ -372,12 +316,16 @@ class FrontEndContent{
 		}
 		
 		do_action('sim_after_post_save', (object)$post, $update);
+
+
 		
 		//Return result
 		if($status == 'publish'){
 			wp_die("Succesfully $action_text the $this->post_type, view it <a href='$url'>here</a>");
 		}elseif($status == 'draft'){
 			wp_die("Succesfully $action_text the draft for this $this->post_type, preview it <a href='$url'>here</a>");
+		}elseif($_POST['publish_date'] != date('Y-m-d')){
+			wp_die("Succesfully $action_text the $this->post_type, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM');
 		}else{
 			wp_die("Succesfully $action_text the $this->post_type, it will be published after it has been reviewed");			
 		}
@@ -694,9 +642,7 @@ class FrontEndContent{
 		<?php
 	}
 
-	function content_manager_options(){
-		//require_once(__DIR__ . '/../connections/mailchimp.php');
-		
+	function content_manager_options(){		
 		if($this->fullrights){
 			$hidden			= '';
 		}else{
@@ -704,24 +650,6 @@ class FrontEndContent{
 		}
 		
 		$buttontext		= 'Show';
-		$signal_hidden	= 'hidden';
-		if($this->fullrights and ($this->post_id == null or !empty(get_post_meta($this->post_id,'signal',true)))){
-			$signal_checked 	= 'checked';
-			$hidden				= '';
-			$signal_hidden		= '';
-			$signalmessagetype	= get_post_meta($this->post_id,'signalmessagetype',true);
-		}
-		
-		$audience = get_post_meta($this->post_id,"audience",true);
-		if(isset($audience['normal']) or !is_array($audience)){
-			$audience_checked	= 'checked';
-		}else{
-			$hidden				= '';
-		}
-		
-		$mailchimp_segment_id	= get_post_meta($this->post_id,'mailchimp_segment_id',true);
-		$mailchimp_email		= get_post_meta($this->post_id,'mailchimp_email',true);
-		if(!empty($mailchimp_segment_id) or !empty($mailchimp_email))	$hidden	= '';
 		
 		if($hidden == '') $buttontext		= 'Hide';
 		
@@ -729,101 +657,18 @@ class FrontEndContent{
 		<button type="button" class="button" id="advancedpublishoptionsbutton" style='display:block; margin-top:15px;'><span><?php echo $buttontext;?></span> advanced options</button>
 		
 		<div class="advancedpublishoptions <?php echo $hidden;?>">
-			<div id="signalmessage" class="frontendform">
-				<h4>Signal</h4>	
-				<label>
-					<input type='checkbox' name='signal' value='send_signal' <?php echo $signal_checked; ?>>
-					Send signal message on publish
-				</label>
-				<div class='signalmessagetype <?php echo $signal_hidden;?>' style='margin-top:15px;'>
-					<label>
-						<input type='radio' name='signalmessagetype' value='summary' <?php if($signalmessagetype != 'all') echo 'checked';?>>
-						Send a summary
-					</label>
-					<label>
-						<input type='radio' name='signalmessagetype' value='all' <?php if($signalmessagetype == 'all') echo 'checked';?>>
-						Send the whole post content
-					</label>
-				</div>
-			</div>
-			
-			<div id="recipients" class="frontendform post page<?php if($this->post_type != 'page' and $this->post_type != 'post') echo ' hidden'; ?>">
-				<h4>Audience</h4>				
-				<?php
-				if($this->post_id != null){
-					if(is_array($audience) and count($audience)>0){
-						?>
-						<input type="checkbox" name="pagetype[normal]" value="normal" <?php echo $audience_checked; ?>>
-						<label for="normal">Normal</label><br>
-						<?php
-					}
-				} 
-				?>
-				
-				<label>
-					<input type="checkbox" name="pagetype[beforearrival]" value="beforearrival" <?php if(isset($audience['beforearrival'])) echo 'checked'; ?>>
-					People should read this before arriving in the country (pre-field)
-				</label><br>
-				<label>
-					<input type="checkbox" name="pagetype[afterarrival]" value="afterarrival" <?php if(isset($audience['afterarrival'])) echo 'checked'; ?>>
-					People should read this after arriving in the country
-				</label><br>
-				<label>
-					<input type="checkbox" name="pagetype[everyone]" value="everyone" <?php if(isset($audience['everyone'])) echo 'checked'; ?>>
-					Everyone must read this no matter how long in the country
-				</label><br>
-			</div>
-			
-			<?php
-			$Mailchimp = new SIM\MAILCHIMP\Mailchimp($this->user->ID);
-			$segments = $Mailchimp->get_segments();
-			if($segments){
-				?>
-				<div id="mailchimp" class="frontendform">
-					<h4>Send <span class="replaceposttype"><?php echo $this->post_type;?></span> contents to the following Mailchimp group on publish:</h4>
-					<select name='mailchimp_segment_id'>
-						<option value="">---</option>
-					<?php
-						foreach($segments as $segment){
-							if($mailchimp_segment_id == $segment->id){
-								$selected = 'selected';
-							}else{
-								$selected = '';
-							}
-							echo "<option value='{$segment->id}' $selected>{$segment->name}</option>";
-						}
-					?>
-					</select>
-					
-					<h4>Use this from email address</h4>
-					<select name='mailchimp_email'>
-						<option value=''>---</option>
-						
-						<?php
-						$emails = [
-							'jos.personnel@sim.org'	=> 'jos.personnel',
-							'jos.dirassist@sim.org'	=> 'jos.dirassist',
-							'jos.director@sim.org'	=> 'jos.director',
-						];
-						foreach($emails as $email=>$text){
-							if($mailchimp_email == $email){
-								$selected = 'selected';
-							}else{
-								$selected = '';
-							}
-							echo "<option value='$email' $selected>$text</option>";
-						}
-						?>
-					</select>
-				</div>
-				<?php 
-			}
+			<label>
+				<h4>Publishing date</h4>
+				<input type="date" min="<?php echo date("Y-m-d");?>" name="publish_date" value="<?php echo date("Y-m-d");?>">
+				Define when the content should be published
+			</label>
+			<?php			
 			
 			$this->post_specific_fields();
 			
 			$this->page_specific_fields();
 				
-			do_action('frontend_post_after_content',$this->post_id, $this->post_name);
+			do_action('frontend_post_after_content', $this);
 			?>
 		</div>
 		<?php

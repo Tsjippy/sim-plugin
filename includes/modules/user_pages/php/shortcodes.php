@@ -78,7 +78,6 @@ add_shortcode("userstatistics",function ($atts){
 					<th>Login count</th>
 					<th>Last login</th>
 					<th>Mandatory pages to read</th>
-					<th>Mandatory info to be filled in</th>
 					<th>User roles</th>
 					<th>Account validity</th>
 				</tr>
@@ -104,7 +103,6 @@ add_shortcode("userstatistics",function ($atts){
 						echo "<td>$login_count</td>";
 						echo "<td>$last_login_date</td>";
 						echo "<td>".SIM\MANDATORY\get_must_read_documents($user->ID,true)."</td>";
-						//echo "<td>".get_required_fields($user->ID)."</td>";
 						echo "<td>";
 						foreach($user->roles as $role){
 							echo $role.'<br>';

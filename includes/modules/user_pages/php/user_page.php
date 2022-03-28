@@ -192,16 +192,24 @@ function user_description($user_id){
 
 	//Build the html
 	//Missionary has a family
-	if ($family != ""){
-		$html .= "<h1>".$userdata->last_name." family</h1>";
+	if (!empty($family)){
+		$html .= "<h1>$userdata->last_name family</h1>";
+
+		$url 	= wp_get_attachment_url($family['picture'][0]);
+		if($url){
+			$html .= "<a href='$url'><img src=$url width=200 height=200></a>";
+		}
+		
 		$html .= "<p>
 					Lives in: ";
 		$html .= $address.' State';
 		$html .= "</p>";
+
 		$sending_office = get_user_meta( $user_id, 'sending_office', true );
-		if($sending_office != "")
+		if(!empty($sending_office)){
 			$html .= "<p>Sending office: $sending_office</p>";
-			
+		}
+		
 		$arrivaldate 	= get_user_meta( $user_id, 'arrival_date', true );
 		if($arrivaldate != "" and !isset($privacy_preference['hide_anniversary'])){
 			$arrival_epoch	= strtotime($arrivaldate);

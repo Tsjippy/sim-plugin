@@ -11,6 +11,7 @@ function change_url(target, second_tab=''){
 	if(target.closest('.tabcontent') == null || target.parentNode.classList.contains('modal-content') == true){
 		//Add query_arg if it is a main tab
 		url.searchParams.set('main_tab', new_param);
+		url.searchParams.delete('second_tab');
 	}else{
 		url.searchParams.set('second_tab', new_param);
 	}
@@ -107,7 +108,10 @@ function display_tab(tab_button){
 			hash_field.focus();
 		}
 
-		position_table();
+		// position any tables on this tab, as they can only be positioned when visible
+		if(typeof(position_table) != 'undefined'){
+			position_table();
+		}
 
 		return tab;
 	}else{

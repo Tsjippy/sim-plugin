@@ -38,3 +38,10 @@
 {
 	border-radius: 5px;
 }
+
+/* Make location details form responsive*/
+@media (max-width: $mobilewidth){
+	.location table tr, .location table th, .location table td{
+		display: block;
+	}
+}

@@ -112,6 +112,7 @@ class Formbuilder{
 			priority int,
 			width int default 100,
 			functionname text,
+			foldername text,
 			name text,
 			nicename text,
 			text text,
@@ -126,6 +127,7 @@ class Formbuilder{
 			wrap boolean default False,
 			hidden boolean default False,
 			multiple boolean default False,
+			library boolean default False,
 		  	conditions longtext,
 			warning_conditions longtext,
 			PRIMARY KEY  (id)
@@ -174,6 +176,11 @@ class Formbuilder{
 		if(empty($this->formdata->element_mapping)) $this->loadformdata();
 		
 		$elementindex	= $this->formdata->element_mapping[$id];
+
+		if(empty($elementindex)){
+			SIM\print_array("Element with id $id not found");
+			return false;
+		}
 					
 		$element		= $this->form_elements[$elementindex];
 		
@@ -397,20 +404,23 @@ class Formbuilder{
 			$html .= '</div>';
 		}elseif(in_array($element->type, ['file','image'])){
 			$name		= $element->name;
-			$targetdir	= $this->formdata->settings['upload_path'];
-			if(empty($targetdir)) $targetdir = 'form_uploads/'.$this->formdata->settings['formname'];
 			
 			if(!empty($this->formdata->settings['save_in_meta'])){
 				$metakey	= $name;
 				$user_id	= $this->user_id;
+				$targetdir	= "private/".$element->foldername;
+				$library	= $element->library;
 			}else{
+				$library	= false;
 				$metakey	= '';
 				$user_id	= '';
+				$targetdir	= $this->formdata->settings['upload_path'];
+				if(empty($targetdir)) $targetdir = 'form_uploads/'.$this->formdata->settings['formname'];
 			}
 			//Load js
 			wp_enqueue_script('sim_fileupload_script');
 			
-			$uploader = new SIM\Fileupload($user_id, $name,$targetdir,$element->multiple,$metakey);
+			$uploader = new SIM\Fileupload($user_id, $name, $targetdir, $element->multiple, $metakey, $library);
 			
 			$html = $uploader->get_upload_html();
 		}else{
@@ -1474,7 +1484,7 @@ class Formbuilder{
 			}
 
 			//Only enqueue if there is content in the file
-			if(filesize($js_path) > 0){
+			if(file_exists($js_path) and filesize($js_path) > 0){
 				wp_enqueue_script( "dynamic_{$this->datatype}forms", SIM\path_to_url($js_path), array('sim_forms_script'), $this->formdata->version, true);
 			}
 		}
@@ -1972,11 +1982,11 @@ class Formbuilder{
 							
 							?>
 							<div class='clone_div' data-divid='<?php echo $key;?>'>
-								<label class="formfield">E-mail <?php echo $key+1;?></label>
+								<h4 class="formfield" style="margin-top:50px; display:inline-block;">E-mail <?php echo $key+1;?></h4>
 								<button type='button' class='add button' style='flex: 1;'>+</button>
 								<button type='button' class='remove button' style='flex: 1;'>-</button>
 								<div style='width:100%;'>
-									<label class="formfield formfieldlabel">
+									<div class="formfield formfieldlabel" style="margin-top:10px;">
 										Send e-mail when:<br>
 										<label>
 											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='submitted' <?php if(empty($email['emailtrigger']) or $email['emailtrigger'] == 'submitted') echo 'checked';?>>
@@ -1990,7 +2000,7 @@ class Formbuilder{
 											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='disabled' <?php if($email['emailtrigger'] == 'disabled') echo 'checked';?>>
 											Do not send this e-mail
 										</label><br>
-									</label>
+									</div>
 									
 									<div class='emailfieldcondition <?php if($email['emailtrigger'] != 'fieldchanged') echo 'hidden';?>'>
 										<label class="formfield formfieldlabel">Field</label>
@@ -2007,7 +2017,7 @@ class Formbuilder{
 									</div>
 									
 									<br>
-									<label class="formfield formfieldlabel">
+									<div class="formfield formfieldlabel">
 										Sender e-mail should be:<br>
 										<label>
 											<input type='radio' name='emails[<?php echo $key;?>][fromemail]' class='fromemail' value='fixed' <?php if(empty($email['fromemail']) or $email['fromemail'] == 'fixed') echo 'checked';?>>
@@ -2017,7 +2027,7 @@ class Formbuilder{
 											<input type='radio' name='emails[<?php echo $key;?>][fromemail]' class='fromemail' value='conditional' <?php if($email['fromemail'] == 'conditional') echo 'checked';?>>
 											Conditional e-mail adress
 										</label><br>
-									</label>
+									</div>
 									
 									<div class='emailfromfixed <?php if(!empty($email['fromemail']) and $email['fromemail'] != 'fixed') echo 'hidden';?>'>
 										<label class="formfield formfieldlabel">
@@ -2061,7 +2071,7 @@ class Formbuilder{
 									</div>
 									
 									<br>
-									<label class="formfield tofieldlabel">
+									<div class="formfield tofieldlabel">
 										Recipient e-mail should be:<br>
 										<label>
 											<input type='radio' name='emails[<?php echo $key;?>][emailto]' class='emailto' value='fixed' <?php if(empty($email['emailto']) or $email['emailto'] == 'fixed') echo 'checked';?>>
@@ -2071,15 +2081,14 @@ class Formbuilder{
 											<input type='radio' name='emails[<?php echo $key;?>][emailto]' class='emailto' value='conditional' <?php if($email['emailto'] == 'conditional') echo 'checked';?>>
 											Conditional e-mail adress
 										</label><br>
-									</label>
-									
+									</div>
+									<br>
 									<div class='emailtofixed <?php if(!empty($email['emailto']) and $email['emailto'] != 'fixed') echo 'hidden';?>'>
 										<label class="formfield formfieldlabel">
 											To e-mail
 											<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][to]' value="<?php if(empty($email['to'])){echo '%email%';}else{echo $email['to'];} ?>">
 										</label>
 									</div>
-									
 									<div class='emailtoconditional <?php if($email['emailto'] != 'conditional') echo 'hidden';?>'>
 										<div class='clone_divs_wrapper'>
 											<?php
@@ -2113,13 +2122,14 @@ class Formbuilder{
 											?>
 										</div>
 									</div>
-									
-									<label class="formfield formfieldlabel">
+									<br>
+									<div class="formfield formfieldlabel">
 										Subject
 										<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][subject]' value="<?php echo $email['subject']?>">
-									</label>
+									</div>
 									
-									<label class="formfield formfieldlabel">
+									<br>
+									<div class="formfield formfieldlabel">
 										E-mail content
 										<?php
 										$settings = array(
@@ -2137,21 +2147,23 @@ class Formbuilder{
 											$settings
 										);
 										?>
-									</label>
+									</div>
 									
-									<label class="formfield formfieldlabel">
+									<br>
+									<div class="formfield formfieldlabel">
 										Additional headers like 'Reply-To'
 										<textarea class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][headers]'><?php
 											echo $email['headers']?>
 										</textarea>
-									</label>
+									</div>
 									
-									<label class="formfield formfieldlabel">
+									<br>
+									<div class="formfield formfieldlabel">
 										Form values that should be attached to the e-mail
 										<textarea class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][files]'><?php
 											echo $email['files']?>
 										</textarea>
-									</label>
+									</div>
 								</div>
 							</div>
 							<?php
@@ -2245,6 +2257,19 @@ class Formbuilder{
 					<input type="text" class="formbuilder" name="formfield[text]">
 				</label>
 				<br><br>
+			</div>
+
+			<div name='upload-options' class='hidden'>
+				<label>
+					<input type="checkbox" class="formbuilder" name="formfield[library]" value="true">
+					Add the <span class='filetype'>file</span> to the library
+				</label>
+				<br><br>
+
+				<label>
+					Name of the folder the <span class='filetype'>file</span> should be uploaded to.<br>
+					<input type="text" class="formbuilder" name="formfield[foldername]">
+				</label>
 			</div>
 			
 			<div name='wrap'>

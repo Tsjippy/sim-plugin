@@ -274,7 +274,7 @@ add_action( 'save_post', function($post_ID, $post){
     if(has_shortcode($post->post_content, 'user-info')){
         global $Modules;
 
-        $Modules['forms']['account_page']    = $post_ID;
+        $Modules['user_management']['account_page']    = $post_ID;
 
         update_option('sim_modules', $Modules);
     }
@@ -291,7 +291,10 @@ function check_details_mail(){
 	$accountPage	= SIM\get_module_option('user_management', 'account_page');
 	$accountPageUrl	= get_permalink($accountPage);
 
-	if(!$accountPageUrl)	return;
+	if(!$accountPageUrl){
+		SIM\print_array('No account page defined');
+		return;
+	}	
 	$baseUrl		= "$accountPageUrl?main_tab=";
 
 	$style_string	= "style='text-decoration:none; color:#444;'";
@@ -478,16 +481,51 @@ function check_details_mail(){
 		$message .= "</table>";
 		$message .= "<br>";
 
+		/* 
+		** FAMILY
+ 		*/
 		$family = get_user_meta( $user->ID, 'family', true );
 		if(!empty($family)){
+			if(empty($family['picture'])){
+				$picture	= "You have not uploaded a picture";
+			}else{
+				$url		= wp_get_attachment_url($family['picture'][0]);
+				$picture	= "<img src='$url' width=100 height=100>";
+			}
+
+			$weddingDate	= '';
 			if(empty($family['partner'])){
-				$partner = 'You have no spouse';
+				$partner 		= 'You have no spouse';
 			}else{
 				$partner = get_userdata($family['partner'])->display_name;
+
+				if(empty($family['weddingdate'])){
+					$text	= "No weddingdate provided";
+				}else{
+					$text	= date('d F Y', strtotime($family['weddingdate']));
+				}
+
+				$weddingDate = "<tr>";
+					$weddingDate .= "<td>";
+						$weddingDate .= "Wedding date:";
+					$weddingDate .= "</td>";
+					$weddingDate .= "<td>";
+						$weddingDate .= "<a href='{$baseUrl}family#family[weddingdate]' $style_string>$text</a>";
+					$weddingDate .= "</td>";
+				$weddingDate .= "</tr>";
 			}
 
 			$message .= "<a href='{$baseUrl}family' $style_string><b>Family details</b></a><br>";
 			$message .= "<table>";
+				$message .= "<tr>";
+					$message .= "<td>";
+						$message .= "Family picture:";
+					$message .= "</td>";
+					$message .= "<td>";
+						$message .= "<a href='{$baseUrl}family#family[picture]' $style_string>$picture</a>";
+					$message .= "</td>";
+				$message .= "</tr>";
+
 				$message .= "<tr>";
 					$message .= "<td>";
 						$message .= "Spouse:";
@@ -497,6 +535,8 @@ function check_details_mail(){
 					$message .= "</td>";
 				$message .= "</tr>";
 
+				$message .= $weddingDate;
+
 				foreach($family['children'] as $key=>$child){
 					$nr=$key+1;
 					$message .= "<tr>";
@@ -504,7 +544,7 @@ function check_details_mail(){
 							$message .= "Child $nr:";
 						$message .= "</td>";
 						$message .= "<td>";
-							$message .= "<a href='{$baseUrl}family#familyfamily[children][$key]' $style_string>".get_userdata($child)->display_name."</a>";
+							$message .= "<a href='{$baseUrl}family#family[children][$key]' $style_string>".get_userdata($child)->display_name."</a>";
 						$message .= "</td>";
 					$message .= "</tr>";
 				}
@@ -513,7 +553,6 @@ function check_details_mail(){
 
 		$message .= '<br>';
 		$message .= "If any information is not correct, please correct it on <a href='".SITEURL."/account/'>".str_replace(['https://www.','https://'], '', $accountPageUrl)."</a>.<br>Or just click on any details listed above.";
-
 		wp_mail( $user->user_email, $subject, $message);
 	}
 }
@@ -554,7 +593,7 @@ function account_expiry_check(){
 	
 	foreach($users as $user){
 		//Send e-mail
-		$accountExpiryMail    = new AccountExpiryMail($user, $reminder);
+		$accountExpiryMail    = new AccountExpiryMail($user);
 		$accountExpiryMail->filterMail();
 
 		$headers 	= [

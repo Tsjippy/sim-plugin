@@ -25,38 +25,26 @@ class Fileupload{
 	}
 	
 	function get_upload_html(){
-		//get the basemetakey in case of an indexed one
-		if(preg_match('/(.*?)\[/', $this->metakey, $match)){
-			$base_meta_key	= $match[1];
-		}else{
-			//just use the whole, it is not indexed
-			$base_meta_key	= $this->metakey;
-		}
-		
-		//get the db value
-		if(is_numeric($this->user_id)){
-			$meta_values = get_user_meta($this->user_id,$base_meta_key,true);
-		}else{
-			$meta_values = get_option($base_meta_key);
-		}
-		
-		//get subvalue if needed
-		$meta_values = get_meta_array_value($this->user_id, $this->metakey, $meta_values);
+		$document_array = '';
 
-		if(is_array($meta_values)){
-			$document_array = $meta_values;
-		//Image from library
-		}elseif(is_numeric($meta_values)){
-			$url = wp_get_attachment_url($meta_values);
-			
-			if($url === false){
-				$document_array		= '';
+		if(!empty($this->metakey)){
+			//get the basemetakey in case of an indexed one
+			if(preg_match('/(.*?)\[/', $this->metakey, $match)){
+				$base_meta_key	= $match[1];
 			}else{
-				$document_array		= $url;
-				$this->library_id	= $meta_values;
+				//just use the whole, it is not indexed
+				$base_meta_key	= $this->metakey;
 			}
-		}else{
-			$document_array = '';
+			
+			//get the db value
+			if(is_numeric($this->user_id)){
+				$document_array = get_user_meta($this->user_id,$base_meta_key,true);
+			}else{
+				$document_array = get_option($base_meta_key);
+			}
+			
+			//get subvalue if needed
+			$document_array = get_meta_array_value($this->user_id, $this->metakey, $document_array);
 		}
 		
 		if($this->multiple){
@@ -70,7 +58,6 @@ class Fileupload{
 		$this->html = '<div class="file_upload_wrap">';
 			$this->html .= '<div class="documentpreview">';
 			if(is_array($document_array) and count($document_array)>0){
-				$this->html .= "<label>Documents</label>";
 				foreach($document_array as $document_key => $document){
 					$this->html .= $this->document_preview($document, $document_key);
 				}
@@ -108,6 +95,18 @@ class Fileupload{
 	
 	//Function to render the already uploaded images or show the link to a file
 	function document_preview($document_path, $index){
+		$meta_value	= $document_path;
+		if(is_numeric($document_path) and $this->library){
+			$url = wp_get_attachment_url($document_path);
+
+			if($url === false){
+				$document_path		= '';
+			}else{
+				$this->library_id	= $document_path;
+				$document_path		= $url;
+			}
+		}
+
 		//documentpath is already an url
 		if(strpos($document_path, SITEURL) !== false){
 			$url = $document_path;
@@ -116,7 +115,7 @@ class Fileupload{
 		}
 		
 		$this->html .= "<div class='document'>";
-			$this->html .= "<input type='hidden' name='{$this->metakey}[]' value='$document_path'>";
+			$this->html .= "<input type='hidden' name='{$this->metakey}[]' value='$meta_value'>";
 
 		//Check if file is an image
 		if(getimagesize(url_to_path($url)) !== false) {
@@ -160,7 +159,7 @@ class Fileupload{
 /* 
 		Upload buttons
 */
-function document_upload($user_id, $documentname,$targetdir="",$metakey='',$library=false, $callback=''){
+function document_upload($user_id, $documentname, $targetdir="", $metakey='', $library=false, $callback=''){
 	//Load js
 	wp_enqueue_script('sim_fileupload_script');
 	
@@ -222,6 +221,9 @@ function upload_files(){
 				//Move the file
 				$moved = move_uploaded_file($files['tmp_name'][$key], $target_file);
 				if ($moved) {
+					
+					$size = array_push($files_arr, ['url' => str_replace(ABSPATH, '', $target_file)]);
+
 					//Only store url in db if a metakey isset
 					if(isset($meta_key)){
 						//get the basemetakey in case of an indexed one
@@ -232,6 +234,18 @@ function upload_files(){
 							//just use the whole, it is not indexed
 							$base_meta_key	= $meta_key;
 						}
+
+						$new_value	= $target_file;
+
+						//Add to library if needed
+						if(isset($file_param['library']) and $file_param['library'] == '1'){
+							$attach_id	= add_to_library($target_file);
+
+							$new_value	= $attach_id;
+							
+							//store the id in the array
+							$files_arr[$size-1]['id'] = $attach_id;
+						}
 						
 						if(!is_numeric($user_id)){
 							//generic documents
@@ -240,25 +254,14 @@ function upload_files(){
 							$meta_value = get_user_meta( $user_id, $base_meta_key,true);
 						}
 						
-						add_to_nested_array($keys, $meta_value, $target_file);
+						add_to_nested_array($keys, $meta_value, $new_value);
 						
 						if(!is_numeric($user_id)){
 							//generic documents
-							update_option($base_meta_key,$meta_value);
+							update_option($base_meta_key, $meta_value);
 						}else{
-							update_user_meta( $user_id, $base_meta_key,$meta_value);
+							update_user_meta( $user_id, $base_meta_key, $meta_value);
 						}
-					}
-					$size = array_push($files_arr, ['url' => str_replace(ABSPATH,'',$target_file)]);
-					
-					//Add to library if needed
-					if(isset($file_param['library']) and $file_param['library'] == '1'){
-						$attach_id = add_to_library($target_file);
-						
-						//store the id in the array
-						$files_arr[$size-1]['id'] = $attach_id;
-						
-						update_user_meta( $user_id, $base_meta_key,$attach_id);
 					}
 				}else {
 					header('HTTP/1.1 500 Internal Server Booboo');

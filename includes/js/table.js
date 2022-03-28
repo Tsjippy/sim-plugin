@@ -318,5 +318,4 @@ document.addEventListener("DOMContentLoaded",function() {
 	
 	//sort the table
 	document.querySelectorAll('th.defaultsort').forEach(column=>sort_table(column));
-
 });

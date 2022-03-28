@@ -465,11 +465,13 @@ class Formbuilder_Ajax extends Formbuilder{
 		$this->update_form_element($element);
 		
 		//Create new js
-		$this->create_js();
-		
-		//Update db
-		//$this->update_form_elements();
-		
+		$errors		 = $this->create_js();
+
+		if(!empty($errors)){
+			$message	.= "\n\nThere were some errors:\n";
+			$message	.= implode("\n", $errors);
+		}
+
 		wp_die(
 			json_encode([
 				'message'	=> $message,

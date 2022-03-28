@@ -64,7 +64,7 @@ body div .button:focus{
 }
 
 .button.small{
-	padding: 0px 2px;
+	padding: 0px 10px;
 }
 
 .submit_wrapper{
@@ -145,7 +145,14 @@ h3{
     border: none;
 }
 
-input{
+div input[type="text"],
+div input[type="email"],
+div input[type="tel"],
+div input[type="month"],
+div input[type="password"],
+div input[type="search"],
+div input[type="number"],
+div input[type="url"]{
 	background-color: #fff;
     border-radius: 5px;
     border: solid 1px #e8e8e8;

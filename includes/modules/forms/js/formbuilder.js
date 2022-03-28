@@ -314,6 +314,13 @@ function show_condional_fields(type, form){
 			form.querySelectorAll('[name="elementname"],[name="infotext"],[name="labeltext"],[name="wrap"],[name="multiple"],[name="defaults"],[name="elementoptions"]').forEach(div=>div.classList.add('hidden'))
 			form.querySelector('[name="functionname"]').classList.replace('hidden', 'hide');
 			break;
+		case 'file':
+		case 'image':
+			form.querySelectorAll('[name="functionname"],[name="infotext"],[name="labeltext"],[name="wrap"],[name="defaults"]').forEach(div=>div.classList.add('hidden'))
+			form.querySelector('[name="upload-options"]').classList.replace('hidden', 'hide');
+
+			form.querySelectorAll('.filetype').forEach(el=>{el.textContent = type;});
+			break;
 		default:
 			//console.log(type);
 	} 

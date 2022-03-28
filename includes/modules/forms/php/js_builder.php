@@ -8,6 +8,7 @@ trait create_js{
         $this->datatype = $this->formdata->name;
 
         $checks = [];
+        $errors = [];
 
         //Loop over all elements to find any conditions
         foreach($this->form_elements as $element_index=>$element){
@@ -34,6 +35,12 @@ trait create_js{
                             
                             //Get field names of the fields who's value we are checking
                             $conditional_element		= $this->getelementbyid($rule['conditional_field']);
+                            if(!$conditional_element){
+                                $errors[]   = "Element $element->name has an invalid rule";
+
+                                continue;
+                            }
+
                             $conditional_field_name		= $conditional_element->name;
                             if(in_array($conditional_element->type,['radio','checkbox']) and strpos($conditional_field_name, '[]') === false) {
                                 $conditional_field_name .= '[]';
@@ -42,6 +49,11 @@ trait create_js{
 
                             if(is_numeric($rule['conditional_field_2'])){
                                 $conditional_element_2		= $this->getelementbyid($rule['conditional_field_2']);
+                                if(!$conditional_element_2){
+                                    $errors[]   = "Element $element->name has an invalid rule";
+                                    continue;
+                                }
+
                                 $conditional_field_2_name	= $conditional_element_2->name;
                                 if(in_array($conditional_element_2->type,['radio','checkbox']) and strpos($conditional_field_2_name, '[]') === false) {
                                     $conditional_field_2_name .= '[]';
@@ -218,10 +230,16 @@ trait create_js{
                                     }
                                 }
                             }
+
                             foreach($conditions['copyto'] as $field_index){
                                 if(!is_numeric($field_index))	continue;
                                 //find the element with the right id
                                 $copy_to_element	= $this->getelementbyid($field_index);
+                                if(!$copy_to_element){
+                                    $errors[]   = "Element $element->name has an invalid rule";
+                                    continue;
+                                }
+
                                 $name				= $copy_to_element->name;
                                 if(in_array($copy_to_element->type,['radio','checkbox']) and strpos($name, '[]') === false) {
                                     $name .= '[]';
@@ -265,6 +283,11 @@ trait create_js{
                                 
                                 //find the element with the right id
                                 $copy_element = $this->getelementbyid($copyfieldid);
+                                if(!$copy_element){
+                                    $errors[]   = "Element $element->name has an invalid rule";
+                                    continue;
+                                }
+
                                 $copyfieldname	= $copy_element->name;
                                 if($copy_element->type == 'checkbox') $copyfieldname .= '[]';
                                 
@@ -295,9 +318,6 @@ trait create_js{
                 }
             }
         }
-        
-        ob_start(); 
-
         $js         = "";
         $minifiedJs = "";
         
@@ -428,23 +448,25 @@ trait create_js{
         $minifiedJs .= \Garfix\JsMinify\Minifier::minify($newJs, array('flaggedComments' => false));
       
         // Put is all in a namespace variable
-        $js         = "var {$this->datatype} = new function(){".$js."\n}";  
-        $minifiedJs = "var {$this->datatype} = new function(){".$minifiedJs."}";
+        $js         = "var {$this->datatype} = new function(){".$js."\n};";  
+        $minifiedJs = "var {$this->datatype} = new function(){".$minifiedJs."};";
 
         /* 
         ** EXTERNAL JS
         */
-        $extraJs   = apply_filters('form_extra_js', $this->datatype, false);
+        $extraJs   = apply_filters('form_extra_js', '', $this->datatype, false);
         if(!empty($extraJs)){
-            $js.= "\n\n";
-            $js.= $extraJs;
+            if(empty($checks)){
+                $js = $extraJs;
+            }else{
+                $js.= "\n\n";
+                $js.= $extraJs;
+            }
         }
-        $minifiedJs .= apply_filters('form_extra_js', $this->datatype, true);
-
 
         //write it all to a file
         //$js			= ob_get_clean();
-        if(empty($checks)){
+        if(empty($checks) and empty($extraJs)){
             //create empty files
             file_put_contents($this->jsfilename.'.js', '');
             file_put_contents($this->jsfilename.'.min.js', '');
@@ -470,11 +492,17 @@ trait create_js{
                 ],
                 $minifiedJs
             );
+
+            $minifiedJs     .= "\n\n".apply_filters('form_extra_js', '', $this->datatype, true);
             // Create minified version
             //$minifier = new Minify\CSS($js);
             //$minifier->minify($this->jsfilename.'.min.js');
             file_put_contents($this->jsfilename.'.min.js', $minifiedJs);
-        }         
+        }
+        
+        if(!empty($errors)) SIM\print_array($errors);
+
+        return $errors;
     }
 }
 

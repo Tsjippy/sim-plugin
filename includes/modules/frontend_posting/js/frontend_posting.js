@@ -322,6 +322,50 @@ document.addEventListener("DOMContentLoaded",function() {
 			refresh_post_lock('delete_post_lock');
 		}
 	};
+
+	document.querySelector('#insert-media-button').addEventListener('click', function(){
+		if(typeof(wp.media.frame) == 'undefined'){
+			setTimeout(
+				function(){
+					wp.media.frame.on('insert', function(e) {
+						var selection = wp.media.frame.state().get('selection').first().toJSON(); 
+						if (['.txt', '.doc', '.rtf'].some(v => selection.url.includes(v))) {
+							Swal.fire({
+								title: 'Question',
+								text: 'Do you want to insert the contents of this file into the post?',
+								icon: 'question',
+								showCancelButton: true,
+								confirmButtonColor: "#bd2919",
+								cancelButtonColor: '#d33',
+								confirmButtonText: 'Yes please',
+								cancelButtonText: 'No thanks',
+								hideClass: {
+									popup: '',                     // disable popup fade-out animation
+								  },
+							}).then((result) => {
+								Swal.fire({
+									title: 'Please wait...',
+									html: "<IMG src='"+sim.loading_gif+"' width=100 height=100>",
+									showConfirmButton: false,
+									showClass: {
+										backdrop: 'swal2-noanimation', // disable backdrop animation
+										popup: '',                     // disable popup animation
+										icon: ''                       // disable icon animation
+									  },
+									
+								});
+								if (result.isConfirmed) {
+									read_file_contents(selection.id);
+								}
+							});
+						}
+					});
+				},
+				100
+			);
+		}
+	})
+	
 });
 
 document.addEventListener("click", event=>{
@@ -544,3 +588,28 @@ document.addEventListener('change', event=>{
 	}
 });
 
+//Retrieve file contents over AJAX
+function read_file_contents(attachmentId){
+	var formData	= new FormData();
+	formData.append('attachment_id', attachmentId);
+	formData.append('_wpnonce', sim.restnonce);
+	
+	fetch(
+		sim.base_url+'/wp-json/sim/v1/get_attachment_contents', 
+		{
+			method: 'POST',
+			credentials: 'same-origin',
+			body: formData
+		}
+	).then(response => response.json())
+	.then(response => {
+				
+		//Put cursor at the end
+		var content	= tinyMCE.activeEditor.getContent();
+		//Add contents to editor
+		tinymce.activeEditor.setContent(content+response);
+		
+		Swal.close();
+	})
+	.catch(err => console.error(err));
+}

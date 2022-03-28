@@ -260,6 +260,7 @@ class Maps{
 	function create_icon($marker_id, $icon_title, $icon_url, $default_icon_id){
 		global $wpdb;
 
+		$icon_query 	= $wpdb->prepare("SELECT * FROM {$wpdb->prefix}ums_icons WHERE title = %s ", $icon_title);
 		//Check if marker id is given
 		if (is_numeric($marker_id)){
 			
@@ -267,19 +268,28 @@ class Maps{
 			$query = $wpdb->prepare("SELECT icon FROM {$this->marker_table} WHERE id = %d ", $marker_id);
 			$current_marker_icon_id = $wpdb->get_var($query);
 			
+			//check if marker icon id exists
+			if(is_numeric($current_marker_icon_id)){
+				$icon_query 	= $wpdb->prepare("SELECT * FROM {$wpdb->prefix}ums_icons WHERE id = %d ", $current_marker_icon_id);
 			//Marker not found in the db
-			if($current_marker_icon_id == null) $current_marker_icon_id = $default_icon_id;
+			}else{
+				$current_marker_icon_id = $default_icon_id;
+			}
 		}else{
 			$current_marker_icon_id = $default_icon_id;
 		}
 		
 		//check if an icon with this title exist
-		$query = $wpdb->prepare("SELECT id FROM {$wpdb->prefix}ums_icons WHERE title = %s ", $icon_title);
-		$icon_id = $wpdb->get_var($query);
+		$icon	 	= $wpdb->get_results($icon_query);
+
+		if(!empty($icon) and $icon[0]->path == $icon_url){
+			//no update needed
+			return $icon->id;
+		}
 		
 		//Marker icon is still the default and there is no icon with this id
 		//Potentially the profile image of the partner is used
-		if($current_marker_icon_id == $default_icon_id and $icon_id == null){
+		if($current_marker_icon_id == $default_icon_id and empty($icon)){
 			//Create new icon if there is an icon url
 			if ( $icon_url != "") {
 				//Insert picture as icon in the database
@@ -306,29 +316,33 @@ class Maps{
 				$icon_id = $default_icon_id;
 			}
 		//Only update if there is an icon url
-		}elseif($icon_url != ""){
+		}elseif(!empty($icon_url)){
 			//Update marker icon
 			$wpdb->update($wpdb->prefix . 'ums_icons', 
-				array('path' => $icon_url,), 
-				array( 'id' => $icon_id),
+				array(
+					'path' 	=> $icon_url,
+					'title' => $icon_title,
+				), 
+				array( 'id' => $icon->id),
 			);
-			SIM\print_array("Updated icon with title $icon_title and id $icon_id");
+			SIM\print_array("Updated icon with title $icon_title and id $icon->id");
 			
-			//Reset the marker id to the default icon
+			//Reset the marker id to the custom icon
 			if (is_numeric($marker_id)){
 				$wpdb->update(
 					$this->marker_table, 
-					array('icon' => $icon_id,), 
+					array('icon' => $icon->id,), 
 					array( 'id' => $marker_id),
 				);
 			}
+
+			$icon_id	= $icon->id;
 		}else{
 			$icon_id = $current_marker_icon_id;
 		}
 
 		return $icon_id;
 	}
-
 }
 
 $Maps = new Maps();

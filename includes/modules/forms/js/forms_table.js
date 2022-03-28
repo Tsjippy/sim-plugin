@@ -314,6 +314,61 @@ function processFomrsTableButtons(target){
 	}
 };
 
+function hide_column(cell){
+	// Hide the column
+	var table		= cell.closest('table');
+	var tablerows	= table.rows;
+	for (let i = 0; i < tablerows.length; i++) {
+		tablerows[i].cells[cell.cellIndex].classList.add('hidden')
+	}
+
+	//show the reset button
+
+	cell.closest('.form-table-wrapper').querySelector('.reset-col-vis').classList.remove('hidden');
+
+	// store as preference
+	var formData	= new FormData();
+	formData.append('formname', table.dataset.id);
+	formData.append('column_name', cell.id);
+	formData.append('_wpnonce', sim.restnonce);
+	
+	fetch(
+		sim.base_url+'/wp-json/sim/v1/save_table_prefs', 
+		{
+			method: 'POST',
+			credentials: 'same-origin',
+			body: formData
+		}
+	).then(response => response.json())
+	.then(response => console.log(response))
+	.catch(err => console.error(err));
+}
+
+function show_hidden_columns(target){
+	//hiden the reset button
+	target.closest('.form-table-wrapper').querySelector('.reset-col-vis').classList.add('hidden');
+
+	// Show the columns again
+	var table		= target.closest('.form-table-wrapper').querySelector('table');
+	table.querySelectorAll('th.hidden, td.hidden').forEach(el=>el.classList.remove('hidden'));
+
+	// store as preference
+	var formData	= new FormData();
+	formData.append('formname', table.dataset.id);
+	formData.append('_wpnonce', sim.restnonce);
+	
+	fetch(
+		sim.base_url+'/wp-json/sim/v1/delete_table_prefs', 
+		{
+			method: 'POST',
+			credentials: 'same-origin',
+			body: formData
+		}
+	).then(response => response.json())
+	.then(response => console.log(response))
+	.catch(err => console.error(err));
+}
+
 document.addEventListener("click", event=>{
 	var target = event.target;
 
@@ -350,18 +405,27 @@ document.addEventListener("click", event=>{
 		if(target.tagName == 'SPAN'){
 			target = target.querySelector('img');
 		}
-		
-		if(target.classList.contains('visible')){
-			target.classList.replace('visible','invisible');
-			target.src	= target.src.replace('visible.png','invisible.png');
-			target.closest('.column_setting_wrapper').querySelector('.visibilitytype').value = 'hide';
+
+		// Table itself
+		if(target.parentNode.matches('th')){
+			hide_column(target.parentNode);
+		// Table settings
 		}else{
-			target.classList.replace('invisible','visible');
-			target.src	= target.src.replace('invisible.png','visible.png');
-			target.closest('.column_setting_wrapper').querySelector('.visibilitytype').value = 'show';
+			if(target.classList.contains('visible')){
+				target.classList.replace('visible','invisible');
+				target.src	= target.src.replace('visible.png','invisible.png');
+				target.closest('.column_setting_wrapper').querySelector('.visibilitytype').value = 'hide';
+			}else{
+				target.classList.replace('invisible','visible');
+				target.src	= target.src.replace('invisible.png','visible.png');
+				target.closest('.column_setting_wrapper').querySelector('.visibilitytype').value = 'show';
+			}
 		}
 	}
-	
+
+	if(target.matches('.reset-col-vis')){
+		show_hidden_columns(target);
+	}
 });
 
 document.addEventListener("DOMContentLoaded",function() {

@@ -5,8 +5,6 @@ use SIM;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-use const SIM\CONTENTFILTER\ModuleVersion;
-
 ob_start();
 class FormTable extends Formbuilder{
 	function __construct(){
@@ -79,6 +77,9 @@ class FormTable extends Formbuilder{
 				$url		= SITEURL."/$string";
 				$filename	= end(explode('/',$string));
 				$output		= "<a href='$url'>$filename</a>";
+			// Convert phonenumber to signal link
+			}elseif($string[0] == '+'){
+				$output	= "<a href='https://signal.me/#p/$string'>$string</a>";
 			}
 		
 			$output = apply_filters('sim_transform_formtable_data',$output,$field_name);
@@ -304,11 +305,15 @@ class FormTable extends Formbuilder{
 
 			//Add classes to the cell
 			$class = '';
-			if($fieldname == "displayname") $class = 'sticky ';
+			if($fieldname == "displayname") $class = 'sticky';
+
+			if(!empty($this->hidden_columns[$column_setting['name']])){
+				$class	.= ' hidden';
+			}
 			
 			//if the user has one of the roles diffined for this element
 			if($element_edit_rights and $fieldname != 'id'){
-				$class	.= 'edit_forms_table';
+				$class	.= ' edit_forms_table';
 				$class	= " class='$class' data-id='$fieldname'";
 			}elseif($class != ''){
 				$class = " class='$class'";
@@ -318,6 +323,7 @@ class FormTable extends Formbuilder{
 			if(strpos($field_value,'href=') === false){
 				$field_value	= str_replace('_',' ',$field_value);
 			}
+
 			$rowcontents .= "<td $class $style data-original='$org_field_value' $sub_id>$field_value</td>";
 		}
 		
@@ -373,8 +379,57 @@ class FormTable extends Formbuilder{
 		$this->table_settings		= unserialize($this->shortcodedata->table_settings);
 		$this->column_settings		= unserialize($this->shortcodedata->column_settings);
 	}
+
+	function clean_export_content(){
+		$hidden_columns		= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formdata->name, true);
+
+		$exclude_indexes	= [];
+
+		$header				= $this->excel_content[0];
+
+		foreach($this->column_settings as $setting){
+			// If the name is found in the hidden columns, add the header index to the exclusion array
+			if(!empty($hidden_columns[$setting['name']])){
+				$exclude_indexes[]	= array_search($setting['nice_name'], $header);
+			}
+		}
+
+		//loop over the content and remove all needed
+		foreach($this->excel_content as &$row){
+			foreach($exclude_indexes as $i){
+				unset($row[$i]);
+			}
+
+			$row	= array_values($row);
+		}
+
+		// There is a custom sort column defined
+		if(is_numeric($this->table_settings['default_sort'])){
+			$sortElementId	= $this->table_settings['default_sort'];
+			$sortElement	= $this->getelementbyid($sortElementId);
+			$sortElementType= $sortElement->type;
+			$sortColumnName	= $this->column_settings[$sortElementId]['nice_name'];
+			$sortCol		= array_search($sortColumnName, $this->excel_content[0]);
+
+			// Sort
+			$header				= $this->excel_content[0];
+			//remove header, as it should not be sorted
+			unset($this->excel_content[0]);
 	
-	function export_excel($filename="",$download=true){
+			//Sort the array
+			usort($this->excel_content, function($a, $b) use ($sortCol, $sortElementType){
+				if($sortElementType == 'date'){
+					return strtotime($a[$sortCol]) <=> strtotime($b[$sortCol]);
+				}
+				return $a[$sortCol] > $b[$sortCol];
+			});
+	
+			//Add header again
+			$this->excel_content	= array_merge([$header], $this->excel_content);
+		}
+	}
+	
+	function export_excel($filename="", $download=true){
 		if($filename == "") $filename = get_the_title($this->form_id).".xlsx";
 
 		$spreadsheet = new Spreadsheet();
@@ -384,6 +439,8 @@ class FormTable extends Formbuilder{
 		$col = 0;
 		$row = 1;
 		$rowindex	= 1;
+
+		$this->clean_export_content();
 
 		//loop over the rows
 		foreach($this->excel_content as $row){
@@ -437,12 +494,14 @@ class FormTable extends Formbuilder{
 	function export_pdf($filename=""){
 		$pdf = new SIM\PDF\PDF_HTML();
 		$pdf->SetFont('Arial','B',15);
+
+		$this->clean_export_content();
 				
 		//Determine the column widths
 		$col_count	= count($this->excel_content[0]);
 		$col_widths	= [];
 		
-		$header		= array_map('ucfirst',$this->excel_content[0]);
+		$header		= array_map('ucfirst', $this->excel_content[0]);
 
 		$title		= $this->form_settings['formname'].' export';
 		if(empty($title)) $title = 'Form export';
@@ -452,7 +511,7 @@ class FormTable extends Formbuilder{
 			//loop over the columns to check how wide they need to be
 			for ($x = 0; $x <= $col_count-1; $x++) {
 				//Add the length to the array
-				if(is_array($row_data[$x])) $row_data[$x] = implode("\n",$row_data[$x]);
+				if(is_array($row_data[$x])) $row_data[$x] = implode("\n", $row_data[$x]);
 
 				//convert to hyperlink if needed
 			/* 				if(strpos($row_data[$x],SITEURL) !== false){
@@ -559,7 +618,7 @@ class FormTable extends Formbuilder{
 		$pdf->frontpage($title);
 		
 		//Write the table headers
-		$pdf->table_headers($header,$col_widths);
+		$pdf->table_headers($header, $col_widths);
 		
 		// Data
 		$fill = false;
@@ -1002,43 +1061,56 @@ class FormTable extends Formbuilder{
 		
 		//do not show if not logged in
 		if(!is_user_logged_in()) return;
+
+		//Get personal visibility
+		$this->hidden_columns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formdata->name, true);	
 		
 		?>
 		<div class='form-table-wrapper'>
 			<h2 class="table_title"><?php echo esc_html($this->form_settings['formname']); ?></h2><br>
 			
-			<?php
-			//Show form properties button if we have form edit permissions
-			if($this->form_edit_permissions){
-				?>
-				<button class='button edit_formshortcode_settings'>Edit settings</button>
+			<div class="table-buttons-wrapper">
 				<?php
-				$this->add_shortcode_settings_modal();
-			}
-
-			if($this->show_archived){
-				if($_GET['archived']){
-				?>
-				<a href="." class="button sim">Hide archived entries</a>
-				<?php
+				//Show form properties button if we have form edit permissions
+				if($this->form_edit_permissions){
+					?>
+					<button class='button small edit_formshortcode_settings'>Edit settings</button>
+					<?php
+					$this->add_shortcode_settings_modal();
 				}
-			}else{
-				?>
-				<a href="?archived=true" class="button sim">Show archived entries</a>
-				<?php
-			}
 
-			if($_GET['onlyown'] or $this->table_settings['result_type'] == 'personal'){
+				if($this->show_archived){
+					if($_GET['archived']){
+					?>
+					<a href="." class="button sim">Hide archived entries</a>
+					<?php
+					}
+				}else{
+					?>
+					<a href="?archived=true" class="button sim">Show archived entries</a>
+					<?php
+				}
+
+				if($_GET['onlyown'] or $this->table_settings['result_type'] == 'personal'){
+					?>
+					<a href="." class="button sim">Show all entries</a>
+					<?php
+				}else{
+					?>
+					<a href="?onlyown=true" class="button sim">Show only my own entries</a>
+					<?php
+				}
+				
+				$hidden	= '';
+				if(empty($this->hidden_columns)){
+					$hidden	= 'hidden';
+				}
 				?>
-				<a href="." class="button sim">Show all entries</a>
-				<?php
-			}else{
-				?>
-				<a href="?onlyown=true" class="button sim">Show only my own entries</a>
-				<?php
-			}
-			
-			
+				<button type="button" class="button small reset-col-vis <?php echo $hidden;?>">Reset visibility</button>
+			</div>
+				
+			<?php
+
 			$this->no_records	= true;
 			if(count($this->submission_data) != 0){
 				$this->enrich_column_settings();
@@ -1084,13 +1156,18 @@ class FormTable extends Formbuilder{
 								$nice_name			= $column_setting['nice_name'];
 								
 								if($this->table_settings['default_sort']	== $setting_id){
-									$class	= " class='defaultsort'"; 
+									$class	= "defaultsort"; 
 								}else{
 									$class	= ""; 
 								}
+			
+								if(!empty($this->hidden_columns[$column_setting['name']])){
+									$class	.= ' hidden';
+								}
+								$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20>";
 								
 								//Add a heading for each column
-								echo "<th id='{$column_setting['name']}' data-nicename='$nice_name'$class>$nice_name</th>";
+								echo "<th class='$class' id='{$column_setting['name']}' data-nicename='$nice_name'>$nice_name $icon</th>";
 								
 								$excelrow[]	= $nice_name;
 							}

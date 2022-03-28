@@ -145,16 +145,22 @@ function file_upload_upload_succes(result){
 			dataset_string += ' data-libraryid="'+imgurls[index]['id']+'"'
 		}
 		
-		var filename = src.split("/")[src.split("/").length-1];
+		var filename 	= src.split("/")[src.split("/").length-1];
 		
-		var url = sim.base_url+'/'+src;
+		var url 		= sim.base_url+'/'+src;
+
+		if(imgurls[index]['id'] == undefined){
+			var value		= url;
+		}else{
+			var value		= imgurls[index]['id'];
+		}
 
 		//Add link to tinymce
 		if(file_upload_wrap.closest('.mce-container') != null){
 			window.tinyMCE.activeEditor.execCommand( 'mceInsertContent', false, '<p><a href="'+url+'">'+filename+'</a></p>' );
 		}else{
 			var html = "<div class='document'>";
-			html += "<input type='hidden' name='"+file_upload_wrap.querySelector('.file_upload').name.replace('_files','')+"' value='"+url+"'>";
+			html += "<input type='hidden' name='"+file_upload_wrap.querySelector('.file_upload').name.replace('_files','')+"' value='"+value+"'>";
 			//is image
 			if (src.toLowerCase().match(/\.(jpeg|jpg|gif|png)$/) != null){
 				//Add the image

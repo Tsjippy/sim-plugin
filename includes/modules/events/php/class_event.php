@@ -214,7 +214,7 @@ class Events{
 						$startdate		= strtotime("+{$i} day",$base_start_date);
 						$startdate_str	= date('Y-m-d',$startdate);
 						if(!in_array(date('w', $startdate),$weekdays)){
-							continue;
+							continue 2;
 						}
 						break;
 					case 'weekly':
@@ -227,14 +227,14 @@ class Events{
 							$monthWeek	= 'last';
 						}
 						if(!in_array($monthWeek,$weeks)){
-							continue;
+							continue 2;
 						}
 						break;
 					case 'monthly':
 						$startdate		= strtotime("+{$i} month",$base_start_date);
 						$month		= date('m',$startdate);
 						if(!empty($months) and !in_array($month,$months)){
-							continue;
+							continue 2;
 						}
 
 						if(!empty($weeks) and !empty($weekdays)){

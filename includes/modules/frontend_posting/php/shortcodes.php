@@ -79,12 +79,17 @@ add_shortcode("pending_pages", function ($atts){
 	$pending_posts = get_posts( $args );
 	//Only if there are any pending posts
 	if ( $pending_posts ) {
-		$html .= "<p><strong>Pending posts, pages and events:</strong><br><ul>";
+		$html .= "<p><strong>Pending content:</strong><br><ul>";
 		//For each pending post add a link to edit the post
 		foreach ( $pending_posts as $pending_post ) {
 			$url = add_query_arg( ['post_id' => $pending_post->ID], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page')) );
 			if ($url){
-				$html .= '<li>'.$pending_post->post_title.' <a href="'.$url.'">Review and publish</a></li>';
+				if(strtotime($pending_post->post_date_gmt) > time()){
+					$date	= date('d-M-Y', strtotime($pending_post->post_date_gmt));
+					$html .= "<li>$pending_post->post_title (scheduled for $date) <a href='$url'>Publish now</a></li>";
+				}else{
+					$html .= '<li>'.$pending_post->post_title.' <a href="'.$url.'">Review and publish</a></li>';
+				}
 			}
 		}
 		$html .= "</ul>";

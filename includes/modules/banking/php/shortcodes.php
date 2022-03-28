@@ -18,6 +18,8 @@ function show_statements(){
 	
 	if(SIM\is_child($user_id) == false and is_array($account_statements)){
 		//Load js
+		wp_enqueue_style('sim_account_statements_style');
+		
 		wp_enqueue_script('sim_account_statements_script');
 
 		ksort($account_statements);

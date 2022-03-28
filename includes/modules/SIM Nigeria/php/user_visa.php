@@ -49,7 +49,8 @@ function visa_page($user_id, $message=false, $readonly=false){
 			echo do_shortcode('[formbuilder datatype=understudy_2]');
 			?>
 		</div>
-		<?php 
+	</div>
+	<?php 
 
 	return ob_get_clean();
 }

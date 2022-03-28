@@ -4,15 +4,18 @@ use SIM;
 
 /* HELPER FUNCTIONS */
 //add special js to the dynamic form js
-add_filter('form_extra_js',function($formname, $minimized){
-	$path	= plugins_url("js/account/$formname.min.js", __DIR__);
+add_filter('form_extra_js', function($js, $formname, $minimized){
+	$path	= plugin_dir_path( __DIR__)."js/$formname.min.js";
 	if(!$minimized or !file_exists($path)){
-		$path	= plugins_url("js/account/$formname.js", __DIR__);
+		$path	= plugin_dir_path( __DIR__)."js/$formname.js";
 	}
-	$js		= file_get_contents($path);
+
+	if(file_exists($path)){
+		$js		= file_get_contents($path);
+	}
 
 	return $js;
-}, 10, 2);
+}, 10, 3);
 
 function export_visa_info_pdf($user_id=0, $all=false) {
 	if($all == true){

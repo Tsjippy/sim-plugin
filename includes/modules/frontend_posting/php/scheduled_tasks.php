@@ -4,8 +4,10 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'expired_posts_check_action', 'SIM\FRONTEND_POSTING\expired_posts_check' );
-	add_action( 'page_age_warning_action', 'SIM\FRONTEND_POSTING\page_age_warning' );
+	add_action( 'expired_posts_check_action', __NAMESPACE__.'\expired_posts_check' );
+	add_action( 'page_age_warning_action', __NAMESPACE__.'\page_age_warning' );
+	add_action( 'publish_posts_action', __NAMESPACE__.'\publish_post' );
+	
 });
 
 function schedule_tasks(){

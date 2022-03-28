@@ -13,7 +13,7 @@ function update_family_meta($user_id, $metakey, $value){
 	$family = get_user_meta($user_id,"family",true);
 	if (is_array($family) and count($family)>0){
 		if (isset($family["children"])){
-			$family = array_merge($family["children"],$family);
+			$family = array_merge($family["children"], $family);
 			unset($family["children"]);
 		}
 		foreach($family as $relative){
@@ -21,7 +21,7 @@ function update_family_meta($user_id, $metakey, $value){
 				delete_user_meta($relative, $metakey);
 			}else{
 				//Update the marker for the relative as well
-				update_user_meta($relative,$metakey,$value);
+				update_user_meta($relative, $metakey, $value);
 			}
 		}
 	}
@@ -477,6 +477,7 @@ function add_to_nested_array($keys, &$array=array(), $value=null) {
 	
 	//loop over all the keys
 	foreach($keys as $key) {
+		if(!isset($temp[$key]))	$temp[$key]	= [];
 		//$temp points now to $array[$key]
 		$temp =& $temp[$key];
 	}
@@ -486,6 +487,8 @@ function add_to_nested_array($keys, &$array=array(), $value=null) {
 }
 
 function remove_from_nested_array(&$array, $array_keys){
+	if(!is_array($array)) return $array;
+
 	$last 		= array_key_last($array_keys);
 	$current 	=& $array;
     foreach($array_keys as $index=>$key){

@@ -111,7 +111,7 @@ add_action('before_form',function ($formname){
 				</label>
 				
 				<label>
-					<h4>Latitude<h5>
+					<h4>Latitude</h4>
 					<input type="text" class="latitude" name="location[latitude]">
 				</label>
 				

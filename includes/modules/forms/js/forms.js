@@ -133,21 +133,16 @@ function copy_form_input(original_node){
 		original_node.querySelector('.buttonwrapper').insertAdjacentHTML('beforeend',html);
 		//Add minus button to the second div
 		newnode.querySelector('.buttonwrapper').insertAdjacentHTML('beforeend',html)
-	}
+	}	
 	
 	//Insert the clone
 	original_node.parentNode.insertBefore(newnode, original_node.nextSibling);
-	
-	//add tinymce's can only be done when node is inserted and id is unique
-	newnode.querySelectorAll('.wp-editor-area').forEach(el =>{
-		tinymce.init({selector:"#"+el.id});
-	});
 	
 	return newnode;
 }
 
 function fix_numbering(clone_divs_wrapper){
-	clone_divs_wrapper.querySelectorAll('.clone_div').forEach((clone, index)=>{
+	clone_divs_wrapper.querySelectorAll(':scope > .clone_div').forEach((clone, index)=>{
 		//Update the new number	
 		//DIV
 		if(clone.id != ''){
@@ -588,9 +583,14 @@ document.addEventListener('click',function(event) {
 	
 	//add element
 	if(target.matches('.add')){
-		copy_form_input(target.closest(".clone_div"));
+		var newnode = copy_form_input(target.closest(".clone_div"));
 
 		fix_numbering(target.closest('.clone_divs_wrapper'));
+
+		//add tinymce's can only be done when node is inserted and id is unique
+		newnode.querySelectorAll('.wp-editor-area').forEach(el =>{
+			window.tinyMCE.execCommand('mceAddEditor',false, el.id);
+		});
 
 		target.remove();
 	}

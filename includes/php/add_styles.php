@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.5';
+const StyleVersion		= '7.0.7';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
@@ -68,6 +68,11 @@ function enqueueScripts($hook){
 		$address = "";
 	}
 
+	$locations	= '';
+	if(defined('NIGERIASTATES')){
+		$locations	= NIGERIASTATES;
+	}
+
 	wp_localize_script( 'sim_script', 
 		'sim', 
 		array( 
@@ -77,7 +82,8 @@ function enqueueScripts($hook){
 			'loading_gif' 	=> LOADERIMAGEURL,
 			'base_url' 		=> get_home_url(),
 			'max_file_size'	=> wp_max_upload_size(),
-			'restnonce'		=> wp_create_nonce('wp_rest')
+			'restnonce'		=> wp_create_nonce('wp_rest'),
+			'locations'		=> $locations
 		) 
 	);
 };

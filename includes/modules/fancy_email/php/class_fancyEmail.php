@@ -84,7 +84,7 @@ class FancyEmail{
             strpos(strtolower($this->message), 'kind regards,') === false and 
             strpos(strtolower($this->message), 'cheers,') === false
         ){
-            $this->message	.= "<br>Kind regards,<br><br>".SITENAME;
+            $this->message	.= "<br><br><br>Kind regards,<br><br>".SITENAME;
         }
         
         // Mention that this is an automated message

@@ -2,6 +2,23 @@
 namespace SIM\SIMNIGERIA;
 use SIM;
 
+//add js special to the travelform
+add_filter('form_extra_js', function($js, $formname, $minimized){
+
+	if($formname != 'travel') return $js;
+
+	$path	= plugin_dir_path( __DIR__)."js/travelform.min.js";
+	if(!$minimized or !file_exists($path)){
+		$path	= plugin_dir_path( __DIR__)."js/travelform.js";
+	}
+
+	if(file_exists($path)){
+		$js		= file_get_contents($path);
+	}
+
+	return $js;
+}, 10, 3);
+
 //Single default values used to prefil the travel form
 add_filter( 'add_form_defaults', function($default_values,$user_id){
 	$usermeta = get_user_meta($user_id);

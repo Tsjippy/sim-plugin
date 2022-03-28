@@ -42,6 +42,11 @@ function send_post_notification($post){
 	}else{
 		$message = "'{$post->post_title}' just got published\n\n$excerpt";
 	}
+
+	if(!empty($_POST['signal_extra_message'])){
+		$message .=	"\n\n".$_POST['signal_extra_message'];
+	}
+
 	send_signal_message(
 		$message,
 		"all",

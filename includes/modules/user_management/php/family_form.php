@@ -134,6 +134,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	if($formname != 'user_family') return $formresults;
 	
 	global $Events;
+	global $Maps;
 	
 	$family = $formresults["family"];
 
@@ -143,6 +144,26 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	if(!empty($_POST['weddingdate'])) $Events->create_celebration_event('Wedding anniversary', $user_id,'weddingdate',$_POST['weddingdate']);
 	
 	$old_family = (array)get_user_meta( $user_id, 'family', true );
+
+	$marker_id 	= get_user_meta($user_id,"marker_id",true);
+
+	//update marker icon if needed
+	if (!empty($family['picture']) ){
+		$url = wp_get_attachment_url($family['picture'][0]);
+
+		$icon_title	= get_userdata($user_id)->last_name.' family';
+
+		$Maps->create_icon($marker_id, $icon_title, $url, 1);
+
+		if (isset($family['partner'])){
+			$partner_family 			= (array)get_user_meta( $family['partner'], 'family', true );
+			
+			$partner_family['picture']	= $family['picture'];
+
+			//Save the partners family array
+			update_user_meta( $family['partner'], 'family', $partner_family);
+		}
+	}
 	
 	//Don't do anything if the current and the last family is equal
 	if($family != $old_family){
@@ -258,37 +279,12 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		}
 		
 		//Save the marker id for all family members
-		$marker_id = get_user_meta($user_id,"marker_id",true);
-		if($marker_id == "" and isset($family['partner']))	$marker_id = get_user_meta($family['partner'],"marker_id",true);
+		if(empty($marker_id) and isset($family['partner']))	$marker_id = get_user_meta($family['partner'],"marker_id",true);
 		SIM\update_family_meta( $user_id, "marker_id", $marker_id);
-		
-		//Fields of children who get their value from their parents
-		$ChildrenCopyFields			= [
-			"sending_office",
-			"local_nigerian",
-			"financial_account_id",
-			"account_statements",
-			"online_statements"
-		];
-		foreach ($ChildrenCopyFields as $field){
-			$field_value = get_user_meta( $user_id, $field, true );
-			
-			if($field_value != ""){
-				//Update the relatives field value as well
-				SIM\update_family_meta( $user_id, $field, $field_value);
-			}elseif (isset($family['partner'])){
-				//Use the field value of the partner
-				$partner_field_value = get_user_meta( $family['partner'], $field, true );
-				if($partner_field_value != ""){
-					SIM\update_family_meta( $family['partner'], $field, $partner_field_value);
-				}
-			}
-		}
 		
 		//update missionary page if needed
 		SIM\USERPAGE\create_user_page($user_id);
 	}
-	
 	
 	return $formresults;
 },10,3);

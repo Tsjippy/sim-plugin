@@ -498,7 +498,7 @@ function user_info_page($atts){
 				
 				//Add a tab button
 				$tab_html .= "<li class='tablink active' id='show_dashboard' data-target='dashboard'>Dashboard</li> ";
-				$html .= "<div id='dashboard'>".show_dashboard($user_id,$admin).'</div>';
+				$html .= "<div id='dashboard'>".show_dashboard($user_id, $admin).'</div>';
 			}
 			
 			/*
@@ -521,35 +521,57 @@ function user_info_page($atts){
 				$tab_html .= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
 				
 				//Content
-				$html .= '<div id="generic_info" class="tabcontent hidden">';
-				if($account_validity != '' and $account_validity != 'unlimited' and !is_numeric($account_validity)){
-					$removal_date 	= date_create($account_validity);
-					$nonce 			= wp_create_nonce("extend_validity_reset_nonce");
-					
-					$html .= "<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'>";
+				$result	= ob_get_clean();
 
-					if(array_intersect($generic_info_roles, $user_roles )){
-						$html .= "<p>";
-							$html .= "This user account is only valid till ".date_format($removal_date,"d F Y").".<br>";
-							$html .= "<br>";
-							$html .= "<input type='hidden' id='extend_validity_reset_nonce' value='$nonce'>";
-							$html .= "Change expiry date to ";
-							$html .= "<input type='date' id='new_expiry_date' min='$account_validity' style='width:auto; display: initial; padding:0px; margin:0px;'>";
-							$html .= "<br>";
-							$html .= "<input type='checkbox' id='unlimited' value='unlimited' style='width:auto; display: initial; padding:0px; margin:0px;'>";
-							$html .= "<label for='unlimited'> Check if the useraccount should never expire.</label>";
-							$html .= "<br>";
-						$html .= "</p>";
-						$html .= SIM\add_save_button('extend_validity', 'Change validity');
-					}else{
-						$html .= "<p>";
-							$html .= "Your user account will be automatically deactivated on ".date_format($removal_date,"d F Y").".<br>";
-						$html .= "</p>";
+				ob_start();
+				?>
+				<div id="generic_info" class="tabcontent hidden">
+					<?php
+					if($account_validity != '' and $account_validity != 'unlimited' and !is_numeric($account_validity)){
+						$removal_date 	= date_create($account_validity);
+						$nonce 			= wp_create_nonce("extend_validity_reset_nonce");
+						?>
+					
+						<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'>
+							<?php
+							if(array_intersect($generic_info_roles, $user_roles )){
+								?>
+								<p>
+									This user account is only valid till <?php echo date_format($removal_date,"d F Y");?>
+									<br>
+									<br>
+									<input type='hidden' id='extend_validity_reset_nonce' value='<?php echo $nonce;?>'>
+									Change expiry date to
+									<input type='date' id='new_expiry_date' min='<?php echo $account_validity;?>' style='width:auto; display: initial; padding:0px; margin:0px;'>
+									<br>
+									<input type='checkbox' id='unlimited' value='unlimited' style='width:auto; display: initial; padding:0px; margin:0px;'>
+									<label for='unlimited'> Check if the useraccount should never expire.</label>
+									<br>
+								</p>
+								<?php
+							
+								echo SIM\add_save_button('extend_validity', 'Change validity');
+							}else{
+								?>
+								<p>
+									Your user account will be automatically deactivated on <?php echo date_format($removal_date,"d F Y");?>.
+								</p>
+								<?php
+							}
+							?>
+						</div>
+						<?php
 					}
-					$html .= "</div>";
-				}
-					$html .= do_shortcode('[formbuilder datatype=user_generics]');
-				$html .= '</div>';
+
+					echo do_shortcode('[formbuilder datatype=user_generics]');
+					?>
+				</div>
+				<?php
+
+				$result	= ob_get_clean();
+				
+				//SIM\print_array($result);
+				$html	.= $result;
 			}
 			
 			/*
@@ -560,9 +582,12 @@ function user_info_page($atts){
 				$tab_html .= '<li class="tablink" id="show_location_info" data-target="location_info">Location</li> ';
 				
 				//Content
-				$html .= '<div id="location_info" class="tabcontent hidden">';
-				$html .= do_shortcode('[formbuilder datatype=user_location]');
-				$html .= '</div>';
+				$location_html = '<div id="location_info" class="tabcontent hidden">';
+				$location_html .= do_shortcode('[formbuilder datatype=user_location]');
+				$location_html .= '</div>';
+
+				//SIM\print_array($location_html);
+				$html	.= $location_html;
 			}
 			
 			/*
@@ -574,14 +599,15 @@ function user_info_page($atts){
 					$tab_html .= '<li class="tablink" id="show_family_info" data-target="family_info">Family</li> ';
 					
 					//Content
-					$html .= '<div id="family_info" class="tabcontent hidden">';
+					$family_html = '<div id="family_info" class="tabcontent hidden">';
 
-						$html .= do_shortcode('[formbuilder datatype=user_family]');
+						$family_html .= do_shortcode('[formbuilder datatype=user_family]');
 						
-					$html .= '</div>';
-				}elseif(!$show_current_user_data){
-					$html .= "<p><br>This user has no family page. ($user_age yr)";
+					$family_html .= '</div>';
 				}
+				//SIM\print_array($family_html);
+
+				$html.= $family_html;
 			}
 			
 			/*
@@ -592,9 +618,13 @@ function user_info_page($atts){
 				$tab_html .= '<li class="tablink" id="show_roles" data-target="role_info">Roles</li> ';
 				
 				//Content
-				$html .= '<div id="role_info" class="tabcontent hidden">'; 
-				$html .= display_roles($user_id);
-				$html .= '</div>';
+				$role_html = '<div id="role_info" class="tabcontent hidden">'; 
+				$role_html .= display_roles($user_id);
+				$role_html .= '</div>';
+
+				//SIM\print_array($role_html);
+
+				$html	.= $role_html;
 			}
 				
 			/*
@@ -629,26 +659,36 @@ function user_info_page($atts){
 					$tab_html .= "<li class='tablink $active $tabclass' id='show_visa_info' data-target='visa_info'>Immigration</li>";
 					
 					//Content
-					$html .= "<div id='visa_info' class='tabcontent $class'>";
-					$html .= SIM\SIMNIGERIA\visa_page($user_id,true);
+					ob_start();
+					?>
+					<div id='visa_info' class='tabcontent <?php echo $class;?>'>
+						<?php
+						echo SIM\SIMNIGERIA\visa_page($user_id,true);
 					
-					if(array_intersect($visa_roles, $user_roles )){
-						$html .= "<div class='export_button_wrapper' style='margin-top:50px;'>
-							<form  method='post'>
-								<input type='hidden' name='userid' id='userid' value='$user_id'>
-								<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export user data as PDF</button>
-							</form>
-							<form method='post'>
-								<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export ALL data as PDF</button>
-							</form>
-							<form method='post'>
-								<button class='button button-primary' type='submit' name='export_visa_info' value='generate'>Export ALL data to excel</button>
-							</form>
-						</div>";
-					}
-					$html .= '</div></div>';
-				}elseif(!$show_current_user_data){
-					$html .= "<p><br>This user has no visa requirements! ($user_age yr)";
+						if(array_intersect($visa_roles, $user_roles )){
+							?>
+							<div class='export_button_wrapper' style='margin-top:50px;'>
+								<form  method='post'>
+									<input type='hidden' name='userid' id='userid' value='$user_id'>
+									<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export user data as PDF</button>
+								</form>
+								<form method='post'>
+									<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export ALL data as PDF</button>
+								</form>
+								<form method='post'>
+									<button class='button button-primary' type='submit' name='export_visa_info' value='generate'>Export ALL data to excel</button>
+								</form>
+							</div>
+							<?php
+						}
+					?>
+					</div>
+					<?php
+
+					$result	= ob_get_clean();
+					//SIM\print_array($result);
+
+					$html	.= $result;
 				}
 			}
 
@@ -660,11 +700,16 @@ function user_info_page($atts){
 				$tab_html .= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
 				
 				//Content
-				$html .= "<div id='security_info' class='tabcontent hidden'>";
-					$html .= do_shortcode('[formbuilder datatype=security_questions]');
-				$html .= '</div>';
+				$security = "<div id='security_info' class='tabcontent hidden'>";
+					$security .= do_shortcode('[formbuilder datatype=security_questions]');
+				$security .= '</div>';
+
+				//SIM\print_array($security);
+
+				$html	.= $security;
 			}
 	
+			
 			/*
 				Medical Info
 			*/
@@ -681,16 +726,25 @@ function user_info_page($atts){
 				$tab_html .= "<li class='tablink $active' id='show_medical_info' data-target='medical_info'>Vaccinations</li> ";
 				
 				//Content
-				$html .= "<div id='medical_info' $class><div>";
-					$html .= do_shortcode('[formbuilder datatype=user_medical]');
-					$html .= '<div>
-						<form method="post" id="print_medicals-form">
-							<input type="hidden" name="userid" id="userid" value="'.$user_id.'">
-							<button class="button button-primary" type="submit" name="print_medicals" value="generate">Export data as PDF</button>
-						</form>
-					</div>
-				</div></div>';
+				ob_start();
+				?>
+				<div id='medical_info' <?php echo $class;?>>
+					<?php echo do_shortcode('[formbuilder datatype=user_medical]');?>
+					<form method="post" id="print_medicals-form">
+						<input type="hidden" name="userid" id="userid" value="'.$user_id.'">
+						<button class="button button-primary" type="submit" name="print_medicals" value="generate">Export data as PDF</button>
+					</form>
+				</div>
+
+				<?php
+
+				$result	= ob_get_clean();
+
+				//SIM\print_array($result);
+
+				$html	.= $result;
 			}
+			
 			
 			/*
 				Two FA Info
@@ -700,10 +754,14 @@ function user_info_page($atts){
 				$tab_html .= '<li class="tablink" id="show_2fa_info" data-target="twofa_info">Two factor</li>';
 				
 				//Content
-				$html .= '<div id="twofa_info" class="tabcontent hidden">';
-				$html .= SIM\LOGIN\twofa_settings_form($user_id);
-				$html .= '</div>';
-			}			
+				$twofa_html = '<div id="twofa_info" class="tabcontent hidden">';
+					$twofa_html .= SIM\LOGIN\twofa_settings_form($user_id);
+				$twofa_html .= '</div>';
+				
+				//SIM\print_array($twofa_html);	
+
+				$html	.= $twofa_html;	
+			}		
 			
 			/*
 				PROFILE PICTURE Info
@@ -713,9 +771,13 @@ function user_info_page($atts){
 				$tab_html .= '<li class="tablink" id="show_profile_picture_info" data-target="profile_picture_info">Profile picture</li>';
 				
 				//Content
-				$html .= '<div id="profile_picture_info" class="tabcontent hidden">';
-					$html .= do_shortcode('[formbuilder datatype=profile_picture]');
-				$html .= '</div>';
+				$picture_html = '<div id="profile_picture_info" class="tabcontent hidden">';
+					$picture_html .= do_shortcode('[formbuilder datatype=profile_picture]');
+				$picture_html .= '</div>';
+
+				//SIM\print_array($picture_html);
+
+				$html	.= $picture_html;
 			}
 			
 			/*
@@ -730,14 +792,18 @@ function user_info_page($atts){
 						$tab_html .= "<li class='tablink' id='show_child_info_$child_id' data-target='child_info_$child_id'>$first_name</li>";
 						
 						//Content
-						$html .= "<div id='child_info_$child_id' class='tabcontent hidden'>";
-							$html .= show_children_fields($child_id);
-						$html .= '</div>';
+						$child_html = "<div id='child_info_$child_id' class='tabcontent hidden'>";
+							$child_html .= show_children_fields($child_id);
+						$child_html .= '</div>';
+
+						//SIM\print_array($child_html);
+						
+						$html	.= $child_html;
 					}
 				}
 			}
 		}
-		
+		SIM\print_array($child_html);
 		return $select_user_html.$tab_html."</ul></nav>$html</div>";
 	}else{
 		echo SIM\LOGIN\login_modal("You do not have permission to see this, sorry.");

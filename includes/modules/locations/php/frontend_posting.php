@@ -28,7 +28,7 @@ add_action('frontend_post_content_title', function ($post_type){
     echo "</h4>";
 });
 
-add_action('sim_after_post_save', 'SIM\LOCATIONS\save_location_meta');
+add_action('sim_after_post_save', __NAMESPACE__.'\save_location_meta');
 function save_location_meta($post){
     //store locationtype
     $locationtypes = [];
@@ -167,7 +167,6 @@ function location_address($locationtypes, $post_id){
             if(isset($marker_ids['page_marker'])){
                 //Create an icon for this marker
                 $custom_icon_id = $Maps->create_icon($marker_id=$marker_ids['page_marker'], $icon_title=$title, $icon_url, $default_icon_id=$icon_id);
-                
                     
                 $result = $wpdb->update($wpdb->prefix . 'ums_markers', 
                     array(
@@ -312,11 +311,14 @@ function location_address($locationtypes, $post_id){
 }
 
 //add meta data fields
-add_action('frontend_post_after_content', function ($post_name, $post_id){
+add_action('frontend_post_after_content', function ($frontendcontend){
     //Load js
     wp_enqueue_script('sim_location_script');
+
+    $post_id    = $frontendcontend->post_id;
+    $post_name  = $frontendcontend->post_name;
     
-    $location = get_post_meta($post_id, 'location', true);
+    $location   = get_post_meta($post_id, 'location', true);
     
     if(isset($location['address'])){
         $address = $location['address'];

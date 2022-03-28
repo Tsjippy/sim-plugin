@@ -4,7 +4,7 @@
   "description": "frontend_posting",
   "main": "./frontend_posting.js",
   "scripts": {
-    "build": "webpack --entry ./frontend_posting.js --output-path . --output-filename frontend_posting.min.js --progress --mode=production --devtool source-map"
+    "build": "webpack --watch --entry ./frontend_posting.js --output-path . --output-filename frontend_posting.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",
