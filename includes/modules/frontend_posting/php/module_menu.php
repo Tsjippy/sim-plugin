@@ -16,7 +16,9 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		If anyone without publish rights tries to add or edit a page, it will be stored as pending.<br>
 		An overview of pending content can be shown using the <code>[pending_pages]</code> shortcode.<br>
 		You can use the <code>[pending_post_icon]</code> shortcode as an indicator, displaying the amount of pending posts in menu items.<br>
-				
+		<br>
+		If a post only contains an url leading to another page, that url will be replaced with the shortcode <code>[showotherpost postid=XX]</code>.<br>
+		In that way the post content of another post can be shown.
 	</p>
 	<?php
 },10,2);
@@ -75,11 +77,17 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<?php
 }, 10, 3);
 
-add_action('sim_module_updated', function($module_slug, $options){
-	global $Modules;
-
+add_action('sim_module_deactivated', function($module_slug, $options){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	// Remove the auto created page
+	wp_delete_post($options['publish_post_page'], true);
+}, 10, 2);
+
+add_filter('sim_module_updated', function($options, $module_slug){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	// Create frontend posting page
 	$page_id	= SIM\get_module_option($module_slug, 'publish_post_page');
@@ -95,10 +103,10 @@ add_action('sim_module_updated', function($module_slug, $options){
 		$page_id 	= wp_insert_post( $post, true, false);
 
 		//Store page id in module options
-		$Modules[$module_slug]['publish_post_page']	= $page_id;
-
-		update_option('sim_modules', $Modules);
+		$options['publish_post_page']	= $page_id;
 	}
 
 	schedule_tasks();
+
+	return $options;
 }, 10, 2);

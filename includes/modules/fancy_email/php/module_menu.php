@@ -20,11 +20,13 @@ add_action('sim_module_activated', function($module_slug, $options){
 	$fancyEmail->create_db_tables();
 }, 10, 2);
 
-add_action('sim_module_updated', function($module_slug, $options){
+add_filter('sim_module_updated', function($options, $module_slug){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	//schedule_tasks();
+
+	return $options;
 }, 10, 2);
 
 

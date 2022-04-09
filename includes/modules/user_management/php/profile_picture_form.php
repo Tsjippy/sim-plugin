@@ -2,19 +2,17 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-function profile_picture_change($user_id){
-	//Create all sizes of the image
-	SIM\process_images();
-	
+add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
+	if($formname != 'profile_picture') return $formresults;	
 	global $Maps;
 	
-	SIM\print_array("Updating profile image for $user_id");
-	
 	$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
+
+	$family				= get_user_meta($user_id, 'family', true);
 	
-	if (empty($privacy_preference['hide_profile_picture'])){
+	//update a marker icon only if privacy allows and no family picture is set
+	if (empty($privacy_preference['hide_profile_picture']) and !is_numeric($family['picture'][0])){
 		$marker_id = get_user_meta($user_id,"marker_id",true);
-		SIM\print_array("marker_id is $marker_id, user_id is $user_id");
 		
 		//New profile picture is set, update the marker icon
 		if(is_numeric(get_user_meta($user_id,'profile_picture',true))){
@@ -27,6 +25,16 @@ function profile_picture_change($user_id){
 			$Maps->remove_icon($marker_id);
 		}
 	}
+
+	// Hide profile picture by default from media galery
+	$picture_id	=  $formresults['profile_picture'][0];
+	if(is_numeric($picture_id)) update_post_meta($picture_id, 'gallery_visibility', 'hide' );
+
+	return $formresults;
+},10,3);
+
+function profile_picture_change($user_id){
+	
 }
 
 function get_profile_picture_url($user_id,$size=[50,50]){

@@ -22,11 +22,18 @@ function send_post_notification($post){
 	
 	if($_POST['signalmessagetype'] == 'all'){
 		$excerpt	= $post->post_content;
+
+		if(!empty($_POST['signal_url'])){
+			$excerpt .=	"...\n\nView it on the web:\n".get_permalink($post->ID);
+		}
 	}else{
 		$excerpt	= wp_trim_words(do_shortcode($post->post_content), 20);
+		
 		//Only add read more if the excerpt is not the whole content
 		if($excerpt != strip_tags($post->post_content)){
-			$excerpt .=	"...\n\nRead more on:\n".get_permalink($post);
+			$excerpt .=	"...\n\nRead more on:\n".get_permalink($post->ID);
+		}elseif(!empty($_POST['signal_url'])){
+			$excerpt .=	"...\n\nView it on the web:\n".get_permalink($post->ID);
 		}
 	}
 	$excerpt = html_entity_decode($excerpt);

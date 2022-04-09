@@ -13,7 +13,7 @@ function set_default_picture($post_id){
     # Loop over all categories of this post
     foreach($categories as $category){
         # If the current category has a default picture set
-        if(in_array($category->slug, array_keys($picture_ids))){
+        if(is_numeric($picture_ids[$category->slug])){
             # Set the picture
             set_post_thumbnail( $post_id, $picture_ids[$category->slug]);
             $picture_set    = true;
@@ -25,7 +25,7 @@ function set_default_picture($post_id){
     if(!$picture_set){
         # If the posttype has a default picture set
         $post_type      = get_post_type($post_id);
-        if(in_array($post_type, array_keys($picture_ids))){
+        if(is_numeric($picture_ids[$post_type])){
             # Set the picture
             set_post_thumbnail( $post_id, $picture_ids[$post_type]);
         }

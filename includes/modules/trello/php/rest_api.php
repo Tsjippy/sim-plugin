@@ -2,16 +2,28 @@
 namespace SIM\TRELLO;
 use SIM;
 
-//Shortcode on the page which will be called by trello when something happens
-add_shortcode("trello_webhook",function(){
-	$trello	= new Trello();
+add_action( 'rest_api_init', function () {
+	//Route for notification messages
+	register_rest_route( 
+		'sim/v1', 
+		'/trello', 
+		array(
+			'methods' 				=> \WP_REST_Server::ALLMETHODS,
+			'callback' 				=> __NAMESPACE__.'\trello_actions',
+			'permission_callback' 	=> '__return_true'
+		)
+	);
+} );
 
-	$data = json_decode(file_get_contents('php://input'));
+function trello_actions( \WP_REST_Request $request ) {
+
+	$data	= $request->get_params()['action'];
+	$trello	= new Trello();
 	
 	//only do something when the action is addMemberToCard
-	if($data->action->type == 'addMemberToCard'){
+	if($data['type'] == 'addMemberToCard'){
 		$checklist_name 	= 'Website Actions';
-		$card_id 			= $data->action->data->card->id;
+		$card_id 			= $data['data']['card']['id'];
 		$website_checklist	= '';
 		
 		//Remove self from the card again
@@ -32,9 +44,8 @@ add_shortcode("trello_webhook",function(){
 		$desc = $trello->getCardField($card_id, 'desc');
 		
 		//First split on new lines
-		$data 		= explode("\n",$desc);
 		$user_props	= [];
-		foreach($data as $item){
+		foreach(explode("\n", $desc) as $item){
 			//then split on :
 			$temp = explode(':', $item);
 			if($temp[0] != '')	$user_props[trim(strtolower($temp[0]))] = trim($temp[1]);
@@ -115,4 +126,11 @@ add_shortcode("trello_webhook",function(){
 			}
 		}
 	}
+}
+
+// Make mailtracker rest api url publicy available
+add_filter('sim_allowed_rest_api_urls', function($urls){
+	$urls[]	= 'sim/v1/trello';
+
+	return $urls;
 });

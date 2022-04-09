@@ -94,42 +94,32 @@ function switchforms(target){
 		//show the button to show all fields again
 		parent.querySelector('#showallfields').classList.add('hidden');
 	}
+
+	parent.querySelectorAll('#wp-post_content-media-buttons, .advancedpublishoptions, #advancedpublishoptionsbutton').forEach(el=>el.classList.remove('hidden'));
 	
 	switch(post_type) {
 		case 'page':
 			//Show all page options
-			parent.querySelectorAll('.page:not(.page-template-default)').forEach(function(el){
-				el.classList.remove('hidden');
-			});
-			
+			parent.querySelectorAll('.page:not(.page-template-default)').forEach(el=>el.classList.remove('hidden'));
+
 			//Hide other options
-			parent.querySelectorAll('.post:not(.page), .recipe, .event, .location').forEach(function(el){
-				el.classList.add('hidden');
-			});
+			parent.querySelectorAll('.post:not(.page), .recipe, .event, .location, .attachment').forEach(el=>el.classList.add('hidden'));
 			
 			break;
 		case 'post':
 			//Show all post options
-			parent.querySelectorAll('.post').forEach(function(el){
-				el.classList.remove('hidden');
-			});
+			parent.querySelectorAll('.post').forEach(el=>el.classList.remove('hidden'));
 			
 			//Hide other options
-			parent.querySelectorAll('.page:not(.post, .page-template-default), .recipe, .event, .location').forEach(function(el){
-				el.classList.add('hidden');
-			});
+			parent.querySelectorAll('.page:not(.post, .page-template-default), .recipe, .event, .location, .attachment').forEach(el=>el.classList.add('hidden'));
 			
 			break;
 		case 'location':
 			//Show all post options
-			parent.querySelectorAll('.location').forEach(function(el){
-				el.classList.remove('hidden');
-			});
+			parent.querySelectorAll('.location').forEach(el=>el.classList.remove('hidden'));
 			
 			//Hide other options
-			parent.querySelectorAll('.page, .post, .recipe, .event').forEach(function(el){
-				el.classList.add('hidden');
-			});
+			parent.querySelectorAll('.page, .post, .recipe, .event, .attachment').forEach(el=>el.classList.add('hidden'));
 			
 			//Hide the lite elements if there is no content
 			if(tinymce.activeEditor == null || tinymce.activeEditor.getContent() == ""){
@@ -144,26 +134,25 @@ function switchforms(target){
 			break;
 		case 'event':
 			//Show all event options
-			parent.querySelectorAll('.event').forEach(function(el){
-				el.classList.remove('hidden');
-			});
+			parent.querySelectorAll('.event').forEach(el=>el.classList.remove('hidden'));
 			
 			//Hide other options
-			parent.querySelectorAll('.post, .page, .recipe, .location').forEach(function(el){
-				el.classList.add('hidden');
-			});
+			parent.querySelectorAll('.post, .page, .recipe, .location, .attachment').forEach(el=>el.classList.add('hidden'));
 			
 			break;
 		case 'recipe':
 			//Show all recipe options
-			parent.querySelectorAll('.recipe').forEach(function(el){
-				el.classList.remove('hidden');
-			});
+			parent.querySelectorAll('.recipe').forEach(el=>el.classList.remove('hidden'));
 			
 			//Hide other options
-			parent.querySelectorAll('.post, .page, .event, .location').forEach(function(el){
-				el.classList.add('hidden');
-			});
+			parent.querySelectorAll('.post, .page, .event, .location, .attachment').forEach(el=>el.classList.add('hidden'));
+			break;
+		case 'attachment':
+			//Show all attachment options
+			parent.querySelectorAll('.attachment').forEach(el=>el.classList.remove('hidden'));
+
+			//Hide other options
+			parent.querySelectorAll('.post, .page, .event, .location, .recipe, #wp-post_content-media-buttons, .advancedpublishoptions, #advancedpublishoptionsbutton').forEach(el=>el.classList.add('hidden'));
 			break;
 		default:
 			//Change button text
@@ -365,6 +354,11 @@ document.addEventListener("DOMContentLoaded",function() {
 			);
 		}
 	})
+	
+	// run js if we open a specific post type
+	if(location.search.includes('?type')){
+		switchforms(document.querySelector('#post_type_selector'));
+	}
 	
 });
 

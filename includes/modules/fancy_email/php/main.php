@@ -10,7 +10,6 @@ add_filter('wp_mail',function($args){
     return $args;
 }, 10, 1);
 
-
 // show wp_mail() errors
 add_action( 'wp_mail_failed', function( $wp_error ) {
     SIM\print_array($wp_error);

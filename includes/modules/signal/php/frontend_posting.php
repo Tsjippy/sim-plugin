@@ -33,6 +33,12 @@ add_action('frontend_post_after_content', function($frontendcontend){
                 Add this sentence to the signal message:<br>
                 <input type="text" name="signal_extra_message">
             </label>
+            <br>
+            <br>
+            <label>
+                <input type="checkbox" name="signal_url">
+                Include the url in the message even if the whole content is posted
+            </label>
         </div>
     </div>
     <?php

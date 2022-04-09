@@ -94,7 +94,7 @@ class FancyEmail{
         ]);
 
         $url            = $footer_url['url'];
-        $text           = str_replace(['https://www.', 'https://'],'', $footer_url['text']);
+        $text           = str_replace(['https://www.', 'https://', 'http://www.', 'http://'],'', $footer_url['text']);
         $this->footer	= "<span style='font-size:10px'>This is an automated e-mail originating from <a href='$url'>$text</a></span>";
     
         // Convert message to html

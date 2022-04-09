@@ -1,4 +1,4 @@
 <?php
-namespace SIM\ADMIN;
+namespace SIM\COMMENTS;
 use SIM;
 

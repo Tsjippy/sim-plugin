@@ -177,7 +177,7 @@ class Formbuilder{
 		
 		$elementindex	= $this->formdata->element_mapping[$id];
 
-		if(empty($elementindex)){
+		if(!isset($this->formdata->element_mapping[$id])){
 			SIM\print_array("Element with id $id not found");
 			return false;
 		}
@@ -417,10 +417,8 @@ class Formbuilder{
 				$targetdir	= $this->formdata->settings['upload_path'];
 				if(empty($targetdir)) $targetdir = 'form_uploads/'.$this->formdata->settings['formname'];
 			}
-			//Load js
-			wp_enqueue_script('sim_fileupload_script');
-			
-			$uploader = new SIM\Fileupload($user_id, $name, $targetdir, $element->multiple, $metakey, $library);
+			//Load js			
+			$uploader = new SIM\Fileupload($user_id, $name, $targetdir, $element->multiple, $metakey, $library, '', false);
 			
 			$html = $uploader->get_upload_html();
 		}else{
@@ -482,17 +480,19 @@ class Formbuilder{
 				//Loop over the options array
 				foreach($options as $option_key=>$option){
 					//Remove starting or ending spaces and make it lowercase
-					$option = trim($option);
-					$escaped_option = str_replace(' ','_',$option);
-					$escaped_option = str_replace(',','',$escaped_option);
-					$escaped_option = str_replace('(','',$escaped_option);
-					$escaped_option = str_replace(')','',$escaped_option);
+					$option 		= trim($option);
 
-					if(explode('=',$option)[0] == 'class'){
-						$el_class .= " ".explode('=',$option)[1];
+					$option_type	= explode('=',$option)[0];
+					$option_value	= str_replace('\\\\', '\\', explode('=',$option)[1]);
+
+					if($option_type == 'class'){
+						$el_class .= " $option_value";
 					}else{
+						if(!in_array($option_type, ['pattern', 'title'])){
+							$option_value = str_replace([' ', ',', '(', ')'],['_', '', '', ''], $option_value);
+						}
 						//Write the corrected option as html
-						$el_options	.= " $escaped_option";
+						$el_options	.= " $option_type='$option_value'";
 					}
 				}
 			}
@@ -1058,7 +1058,7 @@ class Formbuilder{
 				}
 				$html .= '</div>';//close clone_divs_wrapper
 				$html .= '</div>';//close inputwrapper
-				//print_array($html);
+
 			//just calculate the multi html
 			}elseif($this->multiwrap){
 				$this->process_multi_fields($element, $key, $width);

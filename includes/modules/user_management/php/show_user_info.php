@@ -54,12 +54,15 @@ function write_visa_pages($user_id, $pdf){
 	//Visa info without qualifications
 	unset($visa_info['qualifications']);
 	
-	//Understudy info
-	$understudiesarray = $visa_info['understudies'];
-	//Visa info without understudies
-	unset($visa_info['understudies']);
-	
+	//Understudy info	
 	$understudies_documents = [];
+
+	$understudiesarray	= [];
+	$info_1				= get_user_meta( $user_id, "understudy_1",true);
+	$info_2				= get_user_meta( $user_id, "understudy_2",true);
+	if(!empty($info_1)) $understudiesarray[1]	= $info_1;
+	if(!empty($info_2)) $understudiesarray[2]	= $info_2;
+
 	foreach($understudiesarray as $key=>$understudy){
 		$understudies_documents[$key] = $understudy['documents'];
 		unset($understudiesarray[$key]['documents']);
@@ -72,7 +75,7 @@ function write_visa_pages($user_id, $pdf){
 		$pdf->Ln(10);
 	}
 
-	if(is_array($understudiesarray) and count($understudiesarray)>0){
+	if(count($understudiesarray)>0){
 		$pdf->PageTitle('Understudy information');
 		$pdf->WriteArray($understudiesarray);
 	}else{

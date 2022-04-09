@@ -121,10 +121,10 @@ trait create_js{
                                 LETS CHECK IF ALL THE VALUES ARE MET AS WELL 
                             */
                             if(!in_array($equation, ['changed','clicked','checked','!checked'])){
-                                $condition_variables[]      = "var value_$fieldnumber_1 = get_field_value('$conditional_field_name',true,$comparevalue2);";
+                                $condition_variables[]      = "var value_$fieldnumber_1 = get_field_value('$conditional_field_name',true,$comparevalue2,true);";
                                 
                                 if(is_numeric($rule['conditional_field_2'])){
-                                    $condition_variables[]  = "var value_$fieldnumber_2 = get_field_value('$conditional_field_2_name',true,$comparevalue2);";
+                                    $condition_variables[]  = "var value_$fieldnumber_2 = get_field_value('$conditional_field_2_name',true,$comparevalue2, true);";
                                 }
                             }
                             

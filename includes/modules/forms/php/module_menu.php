@@ -2,7 +2,7 @@
 namespace SIM\forms;
 use SIM;
 
-const ModuleVersion		= '7.0.10';
+const ModuleVersion		= '7.0.11';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -61,11 +61,13 @@ add_action('sim_module_activated', function($module_slug, $options){
 	schedule_tasks();
 }, 10, 2);
 
-add_action('sim_module_updated', function($module_slug, $options){
+add_filter('sim_module_updated', function($options, $module_slug){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	schedule_tasks();
+
+	return $options;
 }, 10, 2);
 
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){

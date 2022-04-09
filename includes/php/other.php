@@ -29,19 +29,8 @@ add_filter('wp_handle_upload_prefilter', function ($file) {
 
 // Disable auto-update email notifications for plugins.
 add_filter( 'auto_plugin_update_send_email', '__return_false' );
- 
 // Disable auto-update email notifications for themes.
 add_filter( 'auto_theme_update_send_email', '__return_false' );
-
-//Modify default registration message
-add_filter( 'wp_login_errors', function ($errors, $redirect_to){
-	if ( in_array( 'registered', $errors->get_error_codes(), true ) ) {
-		$message = 'Registration complete. You will receive an email once your registration was confirmed by an administrator.<br>Please check your spamfolder if you do not receive an e-mail within 2 days.';
-		$errors->remove( 'registered' );
-		$errors->add( 'registered', $message, 'message' );
-	}
-	return $errors;
-}, 99, 2 );
 
 //Hide adminbar
 add_action('after_setup_theme', function () {
@@ -124,10 +113,8 @@ function custom_excerpt($excerpt, $post=null) {
 	return apply_filters('wp_trim_excerpt', $excerpt, $raw_excerpt);
 }
 
-
 // Turn off heartbeat
 add_action( 'init', function(){wp_deregister_script('heartbeat');}, 1 );
-
 
 //Remove the password protect of a page for logged in users
 add_filter( 'post_password_required', 

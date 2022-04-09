@@ -151,9 +151,7 @@ class FrontEndContent{
 		//Only continue if the decoding was succesfull
 		if( $file_contents !== false){
 			//Save the image in the uploads folder
-			file_put_contents($new_file_path,$file_contents);
-			
-			$mime_type = wp_check_filetype( $new_file_path)['type'];
+			file_put_contents($new_file_path, $file_contents);
 			
 			SIM\add_to_library($new_file_path);
 		}else{
@@ -194,6 +192,23 @@ class FrontEndContent{
 		
 		//Find any base64 encoded images in the post content and replace the url
 		$post_content 	= preg_replace_callback('/"data:image\/(\w+);base64,([^"]*)/m', array($this,'upload_images'), $post_content);
+
+		// Check if content is just an hyperlink
+		//find all urls in the page
+		$regex = '(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))';
+		preg_match_all("#$regex#i", $post_content, $matches);
+		$url = $matches[0][0];
+
+		//if the url is the only post content
+		if($url == strip_tags($post_content)){
+			//find the post id of the url
+			$postId	= url_to_postid($url);
+
+			// If a valid post id
+			if($postId > 0){
+				$post_content	= "[showotherpost postid='$postId']";
+			}
+		}
 		
 		//Find display names in content
 		$users = SIM\get_user_accounts(false,false,true);
@@ -233,8 +248,9 @@ class FrontEndContent{
 			if($this->post_title != $post->post_title) 		$new_post_data['post_title'] 	= $this->post_title;
 			if($post_content != $post->post_content) 		$new_post_data['post_content'] 	= $post_content;
 			if($status != $post->post_status)				$new_post_data['post_status'] 	= $status;
+			
 			//only update author if needed and not in the content manager role
-			if(!$this->fullrights and $userdata->ID != $post->post_author)	$new_post_data['post_author'] 	= $userdata->ID;
+			$new_post_data['post_author'] 	= $_POST['author'];
 			
 			if($_POST['parent_page'] != $post->post_parent)	$new_post_data['post_parent'] 	= $_POST['parent_page'];
 			if($categories != $post->post_category)			$new_post_data['post_category'] = $categories;
@@ -251,35 +267,39 @@ class FrontEndContent{
 			}
 		}else{
 			$update = false;
-			
-			//New post
-			$post = array(
-				'post_type'		=> $this->post_type,
-				'post_title'    => $this->post_title,
-				'post_content'  => $post_content,
-				'post_status'   => $status,
-				'post_author'   => $userdata->ID
-			);
-			
-			if(is_numeric($_POST['parent_page'])){
-				$post['post_parent'] = $_POST['parent_page'];
-			}
-		
-			if(count($categories)>0){
-				$post['post_category'] = $categories;
-			}
 
-			//Schedule the post
-			if($_POST['publish_date'] != date('Y-m-d')){
-				$publish_date			= date("Y-m-d 08:00:00", strtotime($_POST['publish_date']));
-
-				$post['post_date'] 		= $publish_date;
-				$post['post_date_gmt'] 	= $publish_date;
-			}
+			if($this->post_type == 'attachment'){
+				$this->post_id 	= SIM\add_to_library(SIM\url_to_path($_POST['attachment'][0]), $this->post_title, $post_content);
+			}else{
+				//New post
+				$post = array(
+					'post_type'		=> $this->post_type,
+					'post_title'    => $this->post_title,
+					'post_content'  => $post_content,
+					'post_status'   => $status,
+					'post_author'   => $_POST['author']
+				);
+				
+				if(is_numeric($_POST['parent_page'])){
+					$post['post_parent'] = $_POST['parent_page'];
+				}
 			
-			// Insert the post into the database.
-			$this->post_id 	= wp_insert_post( $post,true,false);
-			$post['ID']		= $this->post_id;
+				if(count($categories)>0){
+					$post['post_category'] = $categories;
+				}
+
+				//Schedule the post
+				if($_POST['publish_date'] != date('Y-m-d')){
+					$publish_date			= date("Y-m-d 08:00:00", strtotime($_POST['publish_date']));
+
+					$post['post_date'] 		= $publish_date;
+					$post['post_date_gmt'] 	= $publish_date;
+				}
+				
+				// Insert the post into the database.
+				$this->post_id 	= wp_insert_post( $post,true,false);
+				$post['ID']		= $this->post_id;
+			}
 			
 			if(is_wp_error($this->post_id)){
 				wp_die($this->post_id->get_error_message(),500);
@@ -316,8 +336,6 @@ class FrontEndContent{
 		}
 		
 		do_action('sim_after_post_save', (object)$post, $update);
-
-
 		
 		//Return result
 		if($status == 'publish'){
@@ -396,7 +414,6 @@ class FrontEndContent{
 			<select id="post_type_selector" name="post_type_selector" required>
 				<?php
 				$post_types	= get_post_types(['public'=>true]);
-				unset( $post_types['attachment'] );
 				
 				foreach($post_types as $post_type){
 					if($this->post_type == $post_type){
@@ -404,7 +421,10 @@ class FrontEndContent{
 					}else{
 						$selected = '';
 					}
-					echo "<option value='$post_type' $selected>".ucfirst($post_type)."</option>";
+
+					$type_name	= ucfirst($post_type);
+					if($post_type == 'attachment') $type_name = 'Picture/Video/Audio';
+					echo "<option value='$post_type' $selected>$type_name</option>";
 				}
 				
 				?>
@@ -657,13 +677,19 @@ class FrontEndContent{
 		<button type="button" class="button" id="advancedpublishoptionsbutton" style='display:block; margin-top:15px;'><span><?php echo $buttontext;?></span> advanced options</button>
 		
 		<div class="advancedpublishoptions <?php echo $hidden;?>">
+			<?php	
+			// Show change author dropdown 
+			$author_id	= $this->post->post_author;
+			if(!is_numeric($author_id)) $author_id = $this->user->ID;
+			echo SIM\user_select('Author', $only_adults=true, $families=false, $class='', $id='author', $args=[], $user_id=$author_id);
+			?>
 			<label>
 				<h4>Publishing date</h4>
 				<input type="date" min="<?php echo date("Y-m-d");?>" name="publish_date" value="<?php echo date("Y-m-d");?>">
 				Define when the content should be published
 			</label>
-			<?php			
-			
+			<?php
+
 			$this->post_specific_fields();
 			
 			$this->page_specific_fields();
@@ -784,6 +810,14 @@ class FrontEndContent{
 					}
 					?>
 				</div>
+
+				<div class='attachment hidden'>
+					<h4>Upload your file</h4>
+					<?php
+					$uploader = new SIM\Fileupload($this->user->ID, 'attachment', 'private', false);
+					echo $uploader->get_upload_html();
+					?>
+				</div>
 				
 				<?php
 				//Content wrapper
@@ -799,6 +833,8 @@ class FrontEndContent{
 						echo "<h4 class='$class' name='post_content_label'>";
 							echo '<span class="capitalize replaceposttype">'.ucfirst($this->post_type).'</span> content';
 						echo "</h4>";
+
+						echo "<h4 class='attachment hidden' name='attachment_content_label'>Description:</h4>";
 						
 						do_action('frontend_post_content_title',$this->post_type);
 					echo "</div>";

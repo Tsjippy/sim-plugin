@@ -8,6 +8,10 @@ add_action( 'rest_api_init', function () {
 		'methods'				=> 'GET',
 		'callback'				=> __NAMESPACE__.'\find_firstname',
 		'permission_callback' 	=> '__return_true',
+		'args'					=> array(
+			'formname'		=> array('required'	=> true),
+			'column_name'	=> array('required'	=> true),
+		)
 		)
 	);
 } );

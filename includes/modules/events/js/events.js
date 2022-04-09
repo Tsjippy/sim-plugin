@@ -285,4 +285,4 @@ window.onscroll = function() {
 };
 
 document.addEventListener('touchstart', handleTouchStart);        
-document.addEventListener('touchmove', handleTouchMove)
+document.addEventListener('touchmove', handleTouchMove);

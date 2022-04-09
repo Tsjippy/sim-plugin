@@ -34,6 +34,7 @@ add_action( 'admin_menu', function() {
 
 		//load the menu page php file
 		require_once($module.'/php/module_menu.php');
+		if(file_exists($module.'/php/class_emails.php'))	include_once($module.'/php/class_emails.php');
 
 		add_submenu_page('sim', $module_name." module", $module_name, "edit_others_posts", "sim_$module_slug", __NAMESPACE__."\build_submenu");
 	}

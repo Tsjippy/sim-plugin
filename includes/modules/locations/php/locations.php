@@ -88,8 +88,7 @@ function ministry_description($post_id){
 	$html = "";
 	//Get the post id of the page the shortcode is on
 	$ministry = get_the_title($post_id);
-	$ministry_name = str_replace(" ","_",$ministry);
-	$ministry = strtolower($ministry);
+	//$ministry = strtolower($ministry);
 	$args = array(
 		'post_parent' => $post_id, // The parent id.
 		'post_type'   => 'page',
@@ -106,12 +105,29 @@ function ministry_description($post_id){
 		$child_page_html .= "</ul>";
 	}		
 	
+	$html		.= get_location_employees($ministry);
+	$latitude 	= get_post_meta($post_id,'geo_latitude',true);
+	$longitude 	= get_post_meta($post_id,'geo_longitude',true);
+	if ($latitude != "" and $longitude != ""){
+		$html .= "<p><a class='button' onclick='getRoute(this,$latitude,$longitude)'>Get directions to $ministry</a></p>";
+	}
+	
+	if(!empty($child_page_html)){
+		$html = $child_page_html."<br><br>".$html; 
+	}
+	return $html;	
+}
+
+
+function get_location_employees($locationName){
 	if (is_user_logged_in()){
+		$ministry_name 	= str_replace(" ", "_", $locationName);
+
 		//Loop over all users to see if they work here
-		$users = get_users('orderby=display_name');
+		$users 			= get_users('orderby=display_name');
 		
-		$original_html = "<p><strong>People working at $ministry are:</strong><br><br>";
-		$html = $original_html;
+		$html 			= '';
+
 		foreach($users as $user){
 			$user_ministries = (array)get_user_meta( $user->ID, "user_ministries", true);
 		
@@ -135,25 +151,12 @@ function ministry_description($post_id){
 				}					
 			}
 		}
-		if($html == $original_html){
-			//Check if page has children
-			if ($child_pages == false){
-				//No children add an message
-				$html .= "No one dares to say they are working here!";
-			}else{
-				$html = "";
-			}
+		if(empty($html)){
+			$html .= "No one dares to say they are working here!";
 		}
-		$html .= '</p>';
+
+		$html 	= "<p><strong>People working at $locationName are:</strong><br><br>$html</p>";
 		
-		$latitude = get_post_meta($post_id,'geo_latitude',true);
-		$longitude = get_post_meta($post_id,'geo_longitude',true);
-		if ($latitude != "" and $longitude != ""){
-			$html .= "<p><a class='button' onclick='getRoute(this,$latitude,$longitude)'>Get directions to $ministry</a></p>";
-		}
+		return $html;
 	}
-	if($child_page_html != ""){
-		$html = $child_page_html."<br><br>".$html; 
-	}
-	return $html;	
 }

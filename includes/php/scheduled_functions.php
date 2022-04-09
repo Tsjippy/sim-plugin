@@ -1,19 +1,6 @@
 <?php
 namespace SIM;
 
-add_action('admin_init', function() {
-    if ( is_admin() && get_option( 'Activated_Plugin' ) == 'SIM' ) {
-		delete_option( 'Activated_Plugin' );
-
-		schedule_task('process_images_action', 'daily');
-    }
-});
-
-//Add action to scan for old pages reminder
-add_action('init', function () {
-	add_action( 'process_images_action', 'SIM\process_images' );
-});
-
 function schedule_task($taskname, $recurrence){
 	// Clear before readding
 	if (wp_next_scheduled($taskname)) {
@@ -59,19 +46,6 @@ function schedule_task($taskname, $recurrence){
 		print_array("Succesfully scheduled $taskname to run $recurrence");
 	}else{
 		print_array("Scheduling of $taskname unsuccesfull");
-	}
-}
-
-//Creates subimages
-function process_images(){
-	include_once( ABSPATH . 'wp-admin/includes/image.php' );
-	$images = get_posts(array(
-		'numberposts'      => -1,
-		'post_type'        => 'attachment',
-	));
-	
-	foreach($images as $image){
-		wp_maybe_generate_attachment_metadata($image);
 	}
 }
 

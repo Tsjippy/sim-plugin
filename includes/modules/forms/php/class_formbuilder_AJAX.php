@@ -121,7 +121,6 @@ class Formbuilder_Ajax extends Formbuilder{
 		//Store info text in text column
 		if(in_array($element->type, ['info', 'p'])){
 			$element->text 	= wp_kses_post($element->infotext);
-			$element->text	= $this->deslash($element->text);
 		}
 		//do not store infotext
 		unset($element->infotext);
@@ -131,6 +130,8 @@ class Formbuilder_Ajax extends Formbuilder{
 
 			if(is_array($val)){
 				$val=serialize($val);
+			}else{
+				$val	= $this->deslash($val);
 			}
 		}
 		

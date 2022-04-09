@@ -137,36 +137,26 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	global $Maps;
 	
 	$family = $formresults["family"];
-
-	//save wedding date to partner as well
-	$partner_id	= SIM\has_partner($user_id);
-	if($partner_id and !empty($_POST['weddingdate'])) update_user_meta($partner_id,'weddingdate',$_POST['weddingdate']);
-	if(!empty($_POST['weddingdate'])) $Events->create_celebration_event('Wedding anniversary', $user_id,'weddingdate',$_POST['weddingdate']);
 	
 	$old_family = (array)get_user_meta( $user_id, 'family', true );
 
 	$marker_id 	= get_user_meta($user_id,"marker_id",true);
-
-	//update marker icon if needed
-	if (!empty($family['picture']) ){
-		$url = wp_get_attachment_url($family['picture'][0]);
-
-		$icon_title	= get_userdata($user_id)->last_name.' family';
-
-		$Maps->create_icon($marker_id, $icon_title, $url, 1);
-
-		if (isset($family['partner'])){
-			$partner_family 			= (array)get_user_meta( $family['partner'], 'family', true );
-			
-			$partner_family['picture']	= $family['picture'];
-
-			//Save the partners family array
-			update_user_meta( $family['partner'], 'family', $partner_family);
-		}
-	}
 	
 	//Don't do anything if the current and the last family is equal
 	if($family != $old_family){
+
+		if ($family['weddingdate'] != $old_family['weddingdate']) {
+			//save wedding date to partner as well
+			if (isset($family['partner'])){
+				//Get the partners family
+				$partner_family = (array)get_user_meta( $family['partner'], 'family', true );
+				$partner_family['weddingdate']	= $family['weddingdate'];
+				update_user_meta($family['partner'], 'family', $partner_family);
+			}
+
+			$Events->create_celebration_event('Wedding anniversary', $user_id, 'family[weddingdate]', $family['weddingdate']);
+		}
+
 		$user_gender = get_user_meta( $user_id, 'gender', true );
 		if(empty($user_gender)) $user_gender = 'male';
 		
@@ -269,6 +259,28 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 				//Remove children - for the partner as well
 				unset($partner_family["children"]);
 			}		
+		}
+
+		//update marker icon if needed
+		if (!empty($family['picture'] and $family['picture'] != $old_family['picture']) ){
+			// Hide profile picture by default from media galery
+			$picture_id	=  $family['picture'][0];
+			if(is_numeric($picture_id)) update_post_meta($picture_id, 'gallery_visibility', 'hide' );
+
+			$url = wp_get_attachment_url($family['picture'][0]);
+
+			$icon_title	= get_userdata($user_id)->last_name.' family';
+
+			$Maps->create_icon($marker_id, $icon_title, $url, 1);
+
+			if (isset($family['partner'])){
+				$partner_family 			= (array)get_user_meta( $family['partner'], 'family', true );
+				
+				$partner_family['picture']	= $family['picture'];
+
+				//Save the partners family array
+				update_user_meta( $family['partner'], 'family', $partner_family);
+			}
 		}
 		
 		//Save the family array

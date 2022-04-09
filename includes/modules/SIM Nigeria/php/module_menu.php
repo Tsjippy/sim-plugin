@@ -39,9 +39,11 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	$contactList->printInputs($settings);
 }, 10, 3);
 
-add_action('sim_module_updated', function($module_slug, $options){
+add_filter('sim_module_updated', function($options, $module_slug){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	schedule_tasks();
+
+	return $options;
 }, 10, 2);

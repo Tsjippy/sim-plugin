@@ -12,7 +12,7 @@ add_filter('forms_load_userdata',function($usermeta,$user_id){
 	return array_merge($usermeta,$userdata);
 },10,2);
 
-//create birthday and anniversary events
+//create  events
 add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	global $Events;
 	if($formname != 'user_generics') return $formresults;

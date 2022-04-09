@@ -23,41 +23,8 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 
 	$trello	= new Trello();
 	
-	//Check if we need to update the trello webhook
-	if(!empty($_POST['webhook_page']) and $_POST['webhook_page'] != $settings['webhook_page']){
-		$trello->changeWebhookId($trello->getWebhooks()[0]->id, $_POST['webhook_page']);
-	}
-
-	//Trello token has changed
-	if($_POST['token'] != $settings['token']){
-		//remove all webhooks from the old token
-		$trello->deleteAllWebhooks();
-		
-		//remove trello info belonging to the old token
-		unset($_POST['trello_list']);
-		unset($_POST['trello_board']);
-		unset($_POST['trello_destination_list']);
-
-		//Now that the new trello token is set, lets create new webhooks
-		$new_trello = new trello();
-		
-		//remove all webhooks from the new token
-		$new_trello->deleteAllWebhooks();
-		
-		//Get the userid belonging to the new token
-		$trello_user_id = $new_trello->getTokenInfo()->id;
-		
-		//Create a webhook listening to the userid	
-		$new_trello->createWebhook('https://simnigeria.org/trello_webhook', $trello_user_id, "Listens to all actions related to the user with id $trello_user_id");
-	}
-
 	//Trelle webhook page
-	?>
-	<label>
-		Trello Webhook page
-	</label>
-	<?php echo SIM\page_select("webhook_page", $settings["webhook_page"]);?>
-	
+	?>	
 	<br>
 	<label>
 		Trello API key
@@ -93,3 +60,30 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	}
 }, 10, 3);
 
+add_filter('sim_module_updated', function($new_options, $module_slug, $old_options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return $new_options;
+
+	//Trello token has changed
+	if($old_options['token'] != $new_options['token']){
+		$trello	= new Trello();
+		//remove all webhooks from the old token
+		$trello->deleteAllWebhooks();
+
+		//Now that the new trello token is set, lets create new webhooks
+		$Modules[$module_slug]	= $new_options;
+		$new_trello = new trello();
+		
+		//remove all webhooks from the new token
+		$new_trello->deleteAllWebhooks();
+		
+		//Get the userid belonging to the new token
+		$trello_user_id = $new_trello->getTokenInfo()->id;
+		
+		//Create a webhook listening to the userid	
+		$trello->createWebhook(SITEURL.'/wp-json/sim/v1/trello', $trello_user_id, "Listens to all actions related to the user with id $trello_user_id");
+	}
+
+	return $new_options;
+	
+}, 10, 3);

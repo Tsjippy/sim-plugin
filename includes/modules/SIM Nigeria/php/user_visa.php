@@ -113,8 +113,10 @@ function export_visa_excel(){
 			continue;
 		}
 		
-		$display_name = get_userdata( $user->ID)->display_name;
-		$visa_info = get_user_meta( $user->ID, "visa_info",true);
+		$display_name 	= get_userdata( $user->ID)->display_name;
+		$visa_info 		= get_user_meta( $user->ID, "visa_info",true);
+		$understudy_1	= get_user_meta( $user->ID, "understudy_1",true);
+		$understudy_2	= get_user_meta( $user->ID, "understudy_2",true);
 		
 		$sheet->setCellValueByColumnAndRow(1, $row, $display_name);
 		
@@ -131,8 +133,8 @@ function export_visa_excel(){
 		
 		//Loop over the understudy values and write them to excel
 		foreach($understudy_data as $key=>$field){
-			$sheet->setCellValueByColumnAndRow($key+8 , $row, $visa_info['understudies'][1][$field]);
-			$sheet->setCellValueByColumnAndRow($key+19, $row, $visa_info['understudies'][2][$field]);
+			$sheet->setCellValueByColumnAndRow($key+8 , $row, $understudy_1[$field]);
+			$sheet->setCellValueByColumnAndRow($key+19, $row, $understudy_2[$field]);
 		}
 
 		$row++;

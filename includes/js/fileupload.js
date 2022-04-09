@@ -162,7 +162,7 @@ function file_upload_upload_succes(result){
 			var html = "<div class='document'>";
 			html += "<input type='hidden' name='"+file_upload_wrap.querySelector('.file_upload').name.replace('_files','')+"' value='"+value+"'>";
 			//is image
-			if (src.toLowerCase().match(/\.(jpeg|jpg|gif|png)$/) != null){
+			if (src.toLowerCase().match(/\.(jpe|jpeg|jpg|gif|png)$/) != null){
 				//Add the image
 				html += '<a class="fileupload" href="'+url+'"><img src="'+url+'" alt="picture" style="width:150px;height:150px;"></a>';
 			}else{

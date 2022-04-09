@@ -124,3 +124,15 @@ add_shortcode("front_end_post", function(){
 	$frontEndContent	= new FrontEndContent();
 	return $frontEndContent->frontend_post();
 });
+
+// Show the content of another post
+add_shortcode("showotherpost", function($atts){
+	if(is_numeric($atts['postid'])){
+		$content = get_the_content(null, false, $atts['postid']);
+		if(!empty($content)){
+			return do_shortcode($content);
+		}
+	}
+	
+	return '';
+});

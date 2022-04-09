@@ -1,8 +1,9 @@
 <?php
 namespace SIM\VIMEO;
 use SIM;
+use GuzzleHttp;
 
-if(!class_exists('SIM\VIMEO\VimeoApi')){
+if(!class_exists(__NAMESPACE__.'\VimeoApi')){
     class VimeoApi{
         function __construct(){
             global $Modules;
@@ -311,11 +312,22 @@ if(!class_exists('SIM\VIMEO\VimeoApi')){
         function download_video($post_id){
             $vimeo_id   = $this->get_vimeo_id($post_id);
             $response	= $this->api->request("/videos/$vimeo_id", [], 'GET');
-            $url = $response;
+            $response['download']['quality'];
+            $url = $response['download']['link'];
+
+            if(empty($url)){
+                $admin_url  = admin_url("admin.php?page=sim_vimeo&vimeoid=$vimeo_id");
+                $message    = "Hi admin,<br><br>";
+                $message    = "Please provide me with a link to download the Vimeo video with id $vimeo_id to a local backup folder on your website.<br>";
+                $message    = "Use <a href='$admin_url'>this page</a> to provide me the download link.<br>";
+                $message    = "Get the download link from Vimeo on <a href='https://vimeo.com/manage/$vimeo_id/advanced'>this page</a>.<br>";
+                
+                wp_mail(get_option('admin_email'), 'Please backup this Vimeo Video', $message);
+            }
         }
 
         function download_from_vimeo($url, $filename) {
-            $extension  = pathinfo($url, PATHINFO_EXTENSION);
+            $extension  = pathinfo(parse_url($url)['path'], PATHINFO_EXTENSION);
             if($extension == 'webp'){
                 $path   = $this->pictures_dir;
             }else{
@@ -324,6 +336,7 @@ if(!class_exists('SIM\VIMEO\VimeoApi')){
 
             if(empty($extension )) $extension = 'mp4';
 
+            // Create folder if it does not exist
             if (!file_exists($path)) {
                 SIM\print_array("Creating folder at $path");
                 if(!mkdir($path, 0755, true)){
@@ -334,7 +347,14 @@ if(!class_exists('SIM\VIMEO\VimeoApi')){
 
             $file_path  = str_replace('\\', '/', $path.$filename.'.'.$extension);
 
-            $ch = curl_init();
+            $client = new GuzzleHttp\Client();
+            $client->request(
+                'GET',
+                $url,
+                array('sink' => $file_path)
+            );
+
+/*             $ch = curl_init();
         
             curl_setopt($ch, CURLOPT_HEADER, 0);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -343,7 +363,7 @@ if(!class_exists('SIM\VIMEO\VimeoApi')){
             $data = curl_exec($ch);
             curl_close($ch);
         
-            file_put_contents( $file_path, $data );
+            file_put_contents( $file_path, $data ); */
 
             return $file_path;
         }

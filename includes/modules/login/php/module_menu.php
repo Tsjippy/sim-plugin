@@ -110,11 +110,9 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<?php
 }, 10, 3);
 
-add_action('sim_module_updated', function($module_slug, $options){
-	global $Modules;
-
+add_filter('sim_module_updated', function($options, $module_slug){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	$public_cat	= get_cat_ID('Public');
 
@@ -133,9 +131,7 @@ add_action('sim_module_updated', function($module_slug, $options){
 		$page_id 	= wp_insert_post( $post, true, false);
 
 		//Store page id in module options
-		$Modules[$module_slug]['password_reset_page']	= $page_id;
-
-		update_option('sim_modules', $Modules);
+		$options['password_reset_page']	= $page_id;
 	}
 
 	// Create register page
@@ -153,9 +149,18 @@ add_action('sim_module_updated', function($module_slug, $options){
 		$page_id 	= wp_insert_post( $post, true, false);
 
 		//Store page id in module options
-		$Modules[$module_slug]['register_page']	= $page_id;
-
-		update_option('sim_modules', $Modules);
+		$options['register_page']	= $page_id;
 	}
 
+	return $options;
+
+}, 10, 2);
+
+add_action('sim_module_deactivated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	// Remove the auto created page
+	wp_delete_post($options['password_reset_page'], true);
+	wp_delete_post($options['register_page'], true);
 }, 10, 2);

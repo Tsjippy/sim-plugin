@@ -28,7 +28,7 @@ function update_family_meta($user_id, $metakey, $value){
 }
 
 //Create a dropdown with all users
-function user_select($text,$only_adults=false,$families=false, $class='',$id='user_selection',$args=[],$user_id='',$exclude_ids=[]){
+function user_select($text, $only_adults=false, $families=false, $class='', $id='user_selection', $args=[], $user_id='', $exclude_ids=[]){
 	wp_enqueue_script('sim_other_script');
 	$html = "";
 
@@ -573,34 +573,28 @@ function add_save_button($element_id, $button_text, $extraclass = ''){
 	return $html;
 }
 	
-function add_to_library($target_file){
-	try{
-		//print_array("Adding $target_file to library");
-		
-		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
-			include( ABSPATH . 'wp-admin/includes/image.php' );
-		}
-		 
+function add_to_library($target_file, $title='', $description=''){
+	try{		 
 		// Check the type of file. We'll use this as the 'post_mime_type'.
 		$filetype = wp_check_filetype( basename( $target_file ), null );
-		 
-		// Get the path to the upload directory.
-		$wp_upload_dir = wp_upload_dir();
+
+		if(empty($title)) $title = preg_replace( '/\.[^.]+$/', '', basename( $target_file ) );
 		 
 		// Prepare an array of post data for the attachment.
 		$attachment = array(
 			'guid'           =>	path_to_url($target_file ), 
 			'post_mime_type' => $filetype['type'],
-			'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $target_file ) ),
-			'post_content'   => '',
-			'post_status'    => 'inherit'
+			'post_title'     => $title,
+			'post_content'   => $description,
+			'post_status'    => 'publish'
 		);
 		 
 		// Insert the attachment.
-		$post_id = wp_insert_attachment( $attachment, $target_file, $parent_post_id );
-		
-		//Store a post meta to create subsizes later as it can be very slow
-		update_post_meta($post_id, 'generate_attachment_metadata',true);
+		$post_id = wp_insert_attachment( $attachment, $target_file);
+
+		//Schedule the creation of subsizes as it can take some time.
+		// By doing it this way its asynchronous
+		wp_schedule_single_event( time(), 'process_images_action', [$post_id]);
 		
 		return $post_id;
 	}catch(\GuzzleHttp\Exception\ClientException $e){
@@ -613,6 +607,18 @@ function add_to_library($target_file){
 		print_array($error_result);
 		if(isset($post_id)) return $post_id;
 	}
+}
+
+//Creates subimages
+//Add action
+add_action('init', function () {
+	add_action( 'process_images_action', __NAMESPACE__.'\process_images' );
+});
+function process_images($post){
+	include_once( ABSPATH . 'wp-admin/includes/image.php' );
+
+	if(is_numeric($post)) $post	= get_post($post);
+	wp_maybe_generate_attachment_metadata($image);
 }
  
 function get_module_option($module_name, $option){

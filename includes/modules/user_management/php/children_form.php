@@ -11,8 +11,8 @@ function show_children_fields($child_id){
 
 	<div id="profile_picture_child_info_<?php echo $child_id;?>" class="tabcontent hidden">
 		<?php 
-		//Upload button for profile_picture
-		echo SIM\document_upload($child_id, $documentname='Profile image',$targetdir='profile_pictures',$multiple=false,$metakey='profile_picture',$library=true);
+		//profile_picture
+		echo do_shortcode("[formbuilder datatype=profile_picture userid='$child_id']");
 		?>
 	</div>
 	

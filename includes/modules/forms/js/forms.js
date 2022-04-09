@@ -399,7 +399,7 @@ function nextPrev(n) {
 	showTab(currentTab,form);
 }
 
-function get_field_value(orgname, checkdatalist=true, comparevalue=null){
+function get_field_value(orgname, checkdatalist=true, comparevalue=null, lowercase=false){
 	//name is not a name but a node
 	if(orgname instanceof Element){
 		el			= orgname;		
@@ -483,7 +483,10 @@ function get_field_value(orgname, checkdatalist=true, comparevalue=null){
 			value = el.value;
 		}
 		
-		return value.toLowerCase();
+		if(lowercase){
+			return value.toLowerCase();
+		}
+		return value;
 	}else{
 		console.trace();
 		console.log("cannot find element with name "+name);

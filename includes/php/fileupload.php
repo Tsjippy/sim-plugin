@@ -12,8 +12,9 @@ class Fileupload{
 	public $callback;
 	public $html;
 	private $library_id;
+	public $updatemeta;
 	
-	function __construct($user_id, $documentname,$targetdir,$multiple=true,$metakey='',$library=false, $callback='') {
+	function __construct($user_id, $documentname, $targetdir, $multiple=true, $metakey='', $library=false, $callback='', $updatemeta=true) {
 		$this->user_id		= $user_id;
 		$this->documentname = $documentname;
 		$this->targetdir	= str_replace('\\','/',$targetdir);
@@ -22,6 +23,10 @@ class Fileupload{
 		$this->library		= $library;
 		$this->callback		= $callback;
 		$this->library_id	= 0;
+		$this->updatemeta	= $updatemeta;
+
+		//Load js
+		wp_enqueue_script('sim_fileupload_script');
 	}
 	
 	function get_upload_html(){
@@ -38,7 +43,7 @@ class Fileupload{
 			
 			//get the db value
 			if(is_numeric($this->user_id)){
-				$document_array = get_user_meta($this->user_id,$base_meta_key,true);
+				$document_array = get_user_meta($this->user_id, $base_meta_key, true);
 			}else{
 				$document_array = get_option($base_meta_key);
 			}
@@ -85,6 +90,9 @@ class Fileupload{
 					if(!empty($this->callback)){
 						$this->html .= "<input type='hidden' name='fileupload[callback]' 		value='{$this->callback}'>";
 					}
+
+					$this->html .= "<input type='hidden' name='fileupload[updatemeta]' 		value='{$this->updatemeta}'>";
+					
 					$this->html .= "<div class='loadergif_wrapper hidden'><span class='uploadmessage'></span><img class='loadergif' src='".LOADERIMAGEURL."'></div>";
 				$this->html .= "</div>";
 			$this->html .= "</div>";
@@ -149,6 +157,8 @@ class Fileupload{
 		if($this->callback != ''){
 			$library_string .= " data-callback='{$this->callback}'";
 		}
+
+		$library_string .= " data-updatemeta='{$this->updatemeta}'";
 		
 		$this->html .= "<button type='button' class='remove_document button' data-url='$document_path' data-userid='{$this->user_id}' data-metakey='$metakey_string' $library_string>X</button>";
 		$this->html .= "<img class='remove_document_loader hidden' src='".LOADERIMAGEURL."' style='height:40px;' >";
@@ -160,10 +170,9 @@ class Fileupload{
 		Upload buttons
 */
 function document_upload($user_id, $documentname, $targetdir="", $metakey='', $library=false, $callback=''){
-	//Load js
-	wp_enqueue_script('sim_fileupload_script');
 	
-	$uploader = new Fileupload($user_id, $documentname,$targetdir,$metakey,$library, $callback);
+	
+	$uploader = new Fileupload($user_id, $documentname, $targetdir, true, $metakey, $library, $callback);
 	
 	return $uploader->get_upload_html();
 }
@@ -254,12 +263,14 @@ function upload_files(){
 							$meta_value = get_user_meta( $user_id, $base_meta_key,true);
 						}
 						
-						add_to_nested_array($keys, $meta_value, $new_value);
+						if(isset($keys)) add_to_nested_array($keys, $meta_value, $new_value);
+						
+						if($metakey_index)	$meta_value[$metakey_index] = $new_value;
 						
 						if(!is_numeric($user_id)){
 							//generic documents
 							update_option($base_meta_key, $meta_value);
-						}else{
+						}elseif($file_param['updatemeta']){
 							update_user_meta( $user_id, $base_meta_key, $meta_value);
 						}
 					}

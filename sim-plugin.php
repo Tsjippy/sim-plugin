@@ -60,7 +60,6 @@ function wpse_288408_generate_stack_trace() {
     return $result;
 }
 
-
 //only call it once
 remove_action( 'wp_head', 'adjacent_posts_rel_link');
 
@@ -81,8 +80,6 @@ $Modules		= get_option('sim_modules', []);
 //Load all main files
 $files = glob(__DIR__  . '/includes/php/*.php');
 $files = array_merge($files, glob(__DIR__  . '/includes/admin/php/*.php'));
-$files = array_merge($files, glob(__DIR__  . '/includes/php/content/*.php'));
-$files = array_merge($files, glob(__DIR__  . '/includes/php/forms/*.php'));
 
 //Load files for enabled modules
 foreach($Modules as $slug=>$settings){
@@ -90,24 +87,34 @@ foreach($Modules as $slug=>$settings){
 }
 
 foreach ($files as $file) {
-	error_log(print_r($file,true));
     require_once($file);   
 }
 
 //Activate
 register_activation_hook( __FILE__, function(){
-	add_option( 'Activated_Plugin', 'SIM' );
-
-	
+   // exit( wp_redirect( admin_url( 'admin.php?page=sim' ) ) );
 });	
-	
+
+//redirect after plugin activation
+add_action( 'activated_plugin', function ( $plugin ) {
+    if( $plugin == plugin_basename( __FILE__ ) ) {
+        exit( wp_redirect( admin_url( 'admin.php?page=sim' ) ) );
+    }
+} );
+
+//Add setting link
+$plugin = plugin_basename(__FILE__); 
+add_filter("plugin_action_links_$plugin", function ($links) { 
+    $url            = admin_url( 'admin.php?page=sim' );
+    $settings_link  = "<a href='$url'>Settings</a>"; 
+    array_unshift($links, $settings_link); 
+    return $links; 
+});
+  
 //Register a function to run on plugin deactivation
 register_deactivation_hook( __FILE__, 'sim_deactivate' );
 
 //Add remove scheduled action on plugin deacivation
 function sim_deactivate() {	
 	SIM\print_array("Removing cron schedules");
-	
-	wp_clear_scheduled_hook( 'check_last_login_date_action' );
-	wp_clear_scheduled_hook( 'process_images_action' );
 }

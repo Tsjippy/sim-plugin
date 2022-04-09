@@ -317,7 +317,16 @@ class Events{
 		
 		if(empty($metakey)) $metakey = $type;
 
-		$old_metavalue = get_user_meta($user->ID,$metakey,true);
+		$metakeys	= explode('[', str_replace(']', '', $metakey));
+
+		$old_metavalue = get_user_meta($user->ID, $metakeys[0], true);
+
+		$i		= 1;
+		while ($i != count($metakeys)){
+			$old_metavalue	= $old_metavalue[$metakeys[$i]];
+			$i++;
+		}
+
 		if(empty($metavalue)){
 			$metavalue = $old_metavalue;
 		}elseif($metavalue == $old_metavalue){
@@ -328,7 +337,13 @@ class Events{
 		$title		= ucfirst($type).' '.$user->display_name;
 		$partner_id	= SIM\has_partner($user->ID);
 		if($partner_id){
-			$partner_meta	= get_user_meta($partner_id,$metakey,true);
+			$partner_meta	= get_user_meta($partner_id, $metakeys[0], true);
+
+			$i		= 1;
+			while ($i != count($metakeys)){
+				$partner_meta	= $partner_meta[$metakeys[$i]];
+				$i++;
+			}
 
 			//only treat as a couples event if they both have the same value
 			if($partner_meta == $metavalue){
@@ -377,7 +392,7 @@ class Events{
 			$post = array(
 				'post_type'		=> 'event',
 				'post_title'    => $title,
-				'post_content'  => '',
+				'post_content'  => $title,
 				'post_status'   => 'publish',
 				'post_author'   => $user->ID
 			);

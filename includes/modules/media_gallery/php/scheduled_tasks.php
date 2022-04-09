@@ -1,5 +1,5 @@
 <?php
-namespace SIM\ADMIN;
+namespace SIM\MEDIAGALLERY;
 use SIM;
 
 add_action('init', function(){

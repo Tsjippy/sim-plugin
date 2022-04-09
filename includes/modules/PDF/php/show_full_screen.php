@@ -14,7 +14,7 @@ add_filter( 'the_content', function ( $content ) {
     $pattern = '/^\s*<p><a href="(.*?\.pdf)">([^<]*<\/a>)(.*\.pdf">Download<\/a>)?<\/p>\s*$/i';
     
     //Execute the regex
-    preg_match($pattern, $content,$matches);
+    preg_match($pattern, $content, $matches);
     //If an url exists it means there is only a pdf on this page
     if(isset($matches[2])){
         /* IF PEOPLE HAVE TO READ IT, MARK AS READ */

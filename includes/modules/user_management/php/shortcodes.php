@@ -704,8 +704,6 @@ function user_info_page($atts){
 					$security .= do_shortcode('[formbuilder datatype=security_questions]');
 				$security .= '</div>';
 
-				//SIM\print_array($security);
-
 				$html	.= $security;
 			}
 	
@@ -775,8 +773,6 @@ function user_info_page($atts){
 					$picture_html .= do_shortcode('[formbuilder datatype=profile_picture]');
 				$picture_html .= '</div>';
 
-				//SIM\print_array($picture_html);
-
 				$html	.= $picture_html;
 			}
 			
@@ -795,8 +791,6 @@ function user_info_page($atts){
 						$child_html = "<div id='child_info_$child_id' class='tabcontent hidden'>";
 							$child_html .= show_children_fields($child_id);
 						$child_html .= '</div>';
-
-						//SIM\print_array($child_html);
 						
 						$html	.= $child_html;
 					}

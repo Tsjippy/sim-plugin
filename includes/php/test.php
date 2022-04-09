@@ -8,7 +8,11 @@ add_shortcode("test",function ($atts){
 	//update all posts where this is attached
 	$users = get_users();
     foreach($users as $user){
+		$family = get_user_meta($user->ID, 'family', true);
 
+		if(!empty($family['weddingdate'])){
+			echo $user->display_name.'<br>';
+		}
 	}
 
 	global $Modules;
@@ -16,6 +20,7 @@ add_shortcode("test",function ($atts){
 	//$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_emails` CHANGE `reciepients` `recipients` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;"); 
 	//$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_email_events` ADD `url` TEXT NOT NULL AFTER `time`;"); 
 	//$wpdb->query("DROP TABLE `{$wpdb->prefix}sim_emails`");
+
 
 	return '';
 });

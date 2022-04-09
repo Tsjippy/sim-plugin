@@ -18,25 +18,30 @@ add_shortcode('bulk_update_meta', function ($atts){
 			if (strpos($a['key'], '#') !== false){
 				$meta_key_base = explode('#',$a['key'])[0];
 				$meta_key_name = explode('#',$a['key'])[1];
-				
+				$meta_key		= $meta_key_base.'['.$meta_key_name.']';				
 			}else{
-				$meta_key_base = $a['key'];
-				$meta_key_name = $a['key'];
+				$meta_key_base 	= $a['key'];
+				$meta_key_name 	= $a['key'];
+				$meta_key		= "";
 			}
 			$users = SIM\get_user_accounts();
 			$html = '';
 			foreach($users as $user){
 				$value 	= get_user_meta( $user->ID, $meta_key_base, true );
+
+				if (strpos($a['key'], '#') !== false){
+					$value			= $value[$meta_key_name];
+				}
 				
 				//Only show if value not set
-				if(!is_array($value) or !isset($value[$meta_key_name]) or $value[$meta_key_name] == '' or count($value[$meta_key_name])==0){
+				if(empty($value)){
 					$html .= "<div style='margin-top:50px;'><strong>{$user->display_name}</strong>";
-					$html .= SIM\document_upload($user->ID, $meta_key_name,$a['folder'],$meta_key_base).'</div>';
+					$html .= SIM\document_upload($user->ID, $meta_key, $a['folder'], $meta_key).'</div>';
 				}
 			}
 		//Normal meta key
 		}else{
-			$html = bulkchangeMeta($a['key'],explode(',',$a['roles']),$a['family']);
+			$html = bulkchangeMeta($a['key'], explode(',', $a['roles']), $a['family']);
 		}
 		
 		return $html;

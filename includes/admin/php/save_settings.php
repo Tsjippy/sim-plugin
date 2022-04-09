@@ -26,21 +26,18 @@ function save_settings(){
             unset($Modules[$module_slug]);
             do_action('sim_module_deactivated', $module_slug, $options);
         }elseif(!empty($options)){
-            $Modules[$module_slug]	= $options;
-            do_action('sim_module_updated', $module_slug, $options);
+            $Modules[$module_slug]	= apply_filters('sim_module_updated', $options, $module_slug, $Modules[$module_slug]);
         }
     //module needs to be activated
     }else{
         if(!empty($options)){
-            $Modules[$module_slug]	= $options;
-
             // Load module files as they might contain activation actions
             $files = glob(__DIR__  . "/../../modules/$module_slug/php/*.php");
             foreach ($files as $file) {
                 require_once($file);   
             }	
             do_action('sim_module_activated', $module_slug, $options);
-            do_action('sim_module_updated', $module_slug, $options);
+            $Modules[$module_slug]	= apply_filters('sim_module_updated', $options, $module_slug, $Modules[$module_slug]);
         }
     }
 
