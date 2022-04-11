@@ -7,44 +7,6 @@ class Events{
 		global $wpdb;
 		
 		$this->table_name		= $wpdb->prefix.'sim_events';
-
-		add_action('wp_ajax_add_event_type',array($this,'add_event_cat'));
-
-		add_action('wp_ajax_getmonthhtml',array($this,'month_calendar'));
-
-		add_action('wp_ajax_getweekhtml',array($this,'week_calendar'));
-
-		add_action('wp_ajax_getlisthtml',array($this,'list_calendar'));
-
-		add_action('sim_after_post_save', array($this,'store_event_meta'), 1, 2);
-
-		add_action( 'before_delete_post', array($this,'remove_db_rows'));
-	}
-
-	function add_event_cat(){
-		SIM\verify_nonce('add_event_type_nonce');
-		
-		$name		= sanitize_text_field($_POST['event_type_name']);
-		$parent		= $_POST['event_type_parent'];
-		
-		$args 		= ['slug' => strtolower($name)];
-		if(is_numeric($parent)) $args['parent'] = $parent;
-		
-		$result = wp_insert_term( ucfirst($name), 'eventtype',$args);
-		
-		if(is_wp_error($result)){
-			wp_die($result->get_error_message(),500);
-		}else{
-			wp_die(json_encode(
-				[
-					'id'		=> $result['term_id'],
-					'name'		=> $name,
-					'type'		=> 'event',
-					'message'	=> "Added $name succesfully as event category",
-					'callback'	=> 'cat_type_added'
-				]
-			));
-		}
 	}
 		
 	function create_events_table(){
@@ -686,11 +648,9 @@ class Events{
 	}
 
 	function month_calendar($cat=''){
-		if(wp_doing_ajax()){
+		if(defined('REST_REQUEST')){
 			$month		= $_POST['month'];
 			$year		= $_POST['year'];
-			if(!is_numeric($month)) 	wp_die('Invalid month given',500); 
-			if(!is_numeric($year)) 		wp_die('Invalid year given',500);
 			$date_str	= "$year-$month-01";
 		}else{
 			//events
@@ -867,24 +827,13 @@ class Events{
 		</div>
 		<?php
 
-		if(wp_doing_ajax()){
-			wp_die(
-				json_encode([
-					'html'		=> ob_get_clean(),
-					'callback'	=> 'add_month',
-				])
-			);
-		}else{
-			return ob_get_clean();
-		}
+		return ob_get_clean();
 	}
 
 	function week_calendar($cat=''){
-		if(wp_doing_ajax()){
+		if(defined('REST_REQUEST')){
 			$week_nr	= $_POST['wknr'];
 			$year		= $_POST['year'];
-			if(!is_numeric($week_nr)) 	wp_die('Invalid week given',500); 
-			if(!is_numeric($year)) 		wp_die('Invalid year given',500); 
 		}else{
 			$week_nr	= $_GET['week'];
 			$year		= $_GET['yr'];
@@ -1137,27 +1086,13 @@ class Events{
 		</div>
 		<?php
 
-		if(wp_doing_ajax()){
-			wp_die(
-				json_encode([
-					'html'		=> ob_get_clean(),
-					'callback'	=> 'add_week',
-				])
-			);
-		}else{
-			return ob_get_clean();
-		}
+		return ob_get_clean();
 	}
 
 	function list_calendar($cat=''){
 		$offset='';
-		if(wp_doing_ajax()){
-			if(is_numeric($_POST['offset'])){
-				$offset	= $_POST['offset'];
-			}else{
-				wp_die('Invalid date given',500);
-			}
-
+		if(defined('REST_REQUEST')){
+			$offset	= $_POST['offset'];
 			$month	= $_POST['month'];
 			$year	= $_POST['year'];
 		}else{
@@ -1226,15 +1161,6 @@ class Events{
 			$html .= "</article>";
 		}
 
-		if(wp_doing_ajax()){
-			wp_die(
-				json_encode([
-					'html'		=> $html,
-					'callback'	=> 'expand_list',
-				])
-			);
-		}else{
-			return $html;
-		}
+		return $html;
 	}
 }

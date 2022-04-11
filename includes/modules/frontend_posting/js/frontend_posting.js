@@ -25,36 +25,6 @@ function confirmPostDelete( event ) {
 		})
 };
 
-window['cat_type_added'] = function(result,responsdata){
-	//If succesfull
-	if (result.status >= 200 && result.status < 400) {
-		//Get the newly added recipe_type parent id
-		var type_parent  = document.querySelector('[name="'+responsdata.type+'_type_parent"]').value;
-		
-		//No parent recipe type
-		if(type_parent == ''){
-			var parent_div		= document.getElementById(responsdata.type+'_parenttypes');
-			var parent_data		= '';
-		//There is a parent
-		}else{
-			var parent_div	 	= document.getElementById(responsdata.type+'_childtypes');
-			var parent_data		= 'data-parent="'+type_parent+'"';
-			
-			//Select parent if it is not checked already
-			var parent = document.querySelector('.'+responsdata.type+'type[value="'+type_parent+'"]');
-			if(parent.checked == false){
-				parent.click();
-			}
-		}
-		
-		//Add the new reipe type as checkbox
-		parent_div.insertAdjacentHTML('afterBegin','<div class="infobox" '+parent_data+'><input type="checkbox" class="'+responsdata.type+'type" id="'+responsdata.type+'type[]" value="'+JSON.parse(result.response)['id']+'" checked><label class="option-label category-select">'+responsdata.name+'</label></div>');
-	}
-	hide_modals();
-	
-	return;
-}
-
 function refresh_post_lock(action='refresh_post_lock'){
 	var request = new XMLHttpRequest();
 
@@ -65,11 +35,6 @@ function refresh_post_lock(action='refresh_post_lock'){
 	if(postid != null){
 		request.send('action='+action+'&postid='+postid.value);
 	}
-}
-
-//Show modal on click
-function add_cat_type(type){
-	document.getElementById('add_'+type+'_type').classList.remove('hidden');
 }
 
 function switchforms(target){
@@ -289,6 +254,45 @@ function catChanged(target){
 		}
 	}
 }
+
+async function addCatType(target){
+	var response	= await submitForm(target.closest('form'), 'frontendposting/add_category');
+
+	if(response){
+		//Get the newly added category parent id
+		var parent_cat  = target.closest('form').querySelector('[name="cat_parent"]').value;
+		var post_type	= target.closest('form').querySelector('[name="post_type"]').value;
+		var cat_name	= target.closest('form').querySelector('[name="cat_name"]').value;
+		
+		//No parent category
+		if(parent_cat == ''){
+			var parent_div		= document.getElementById(post_type+'_parenttypes');
+			var parent_data		= '';
+		//There is a parent
+		}else{
+			var parent_div	 	= document.getElementById(post_type+'_childtypes');
+			var parent_data		= 'data-parent="'+parent_cat+'"';
+			
+			//Select parent if it is not checked already
+			var parent = document.querySelector('.'+post_type+'type[value="'+parent_cat+'"]');
+			if(parent.checked == false){
+				parent.click();
+			}
+		}
+		
+		//Add the new category as checkbox
+		var html = `
+		<div class="infobox" ${parent_data}>
+			<input type="checkbox" class="${post_type}type" id="${post_type}type[]" value="${response.id}" checked>
+			<label class="option-label category-select">${cat_name}</label>
+		</div>
+		`
+		parent_div.insertAdjacentHTML('afterBegin', html);
+		hide_modals();
+
+		display_message(`Succesfully added the ${cat_name} category`);
+	}
+}
 		
 document.addEventListener("DOMContentLoaded",function() {
 	console.log("Frontendposting.js loaded");
@@ -382,7 +386,7 @@ document.addEventListener("click", event=>{
 	}
 
 	if(target.classList.contains('add_cat')){
-		add_cat_type(target.dataset.type);
+		document.getElementById('add_'+target.dataset.type+'_type').classList.remove('hidden');
 	}
 	
 	if(target.classList.contains('savedraft')){
@@ -439,6 +443,10 @@ document.addEventListener("click", event=>{
 	if(target.closest('.repeat_type_option') != null){
 		document.querySelectorAll('.repeat_type_option_specifics:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 		target.closest('.repeat_type_option').querySelector('.repeat_type_option_specifics').classList.remove('hidden');
+	}
+
+	if(target.matches('.add_category .form_submit')){
+		addCatType(target);
 	}
 });
 
@@ -589,7 +597,7 @@ function read_file_contents(attachmentId){
 	formData.append('_wpnonce', sim.restnonce);
 	
 	fetch(
-		sim.base_url+'/wp-json/sim/v1/get_attachment_contents', 
+		sim.base_url+'/wp-json/sim/v1/frontendposting/get_attachment_contents', 
 		{
 			method: 'POST',
 			credentials: 'same-origin',

@@ -18,27 +18,28 @@ function schedule_tasks(){
 
 //clean up events, in events table. Not the post
 function remove_old_events(){
-	global $Events;
 	global $wpdb;
 
 	$max_age   = SIM\get_module_option('events', 'max_age');
 
-	$query	= "DELETE FROM {$Events->table_name} WHERE startdate<'".date('Y-m-d',strtotime("- $max_age"))."'";
+	$events		= new Events();
+
+	$query	= "DELETE FROM {$events->table_name} WHERE startdate<'".date('Y-m-d',strtotime("- $max_age"))."'";
 
 	$expired_events	= $wpdb->get_results( $query);
 	foreach($expired_events as $event){
 		wp_delete_post($event->ID);
 
-		$Events->remove_db_rows($event->ID);
+		$events->remove_db_rows($event->ID);
 	}
 }
 
 function anniversary_check(){
-	global $Events;
+	$events		= new Events();
 
-	$Events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
+	$events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
 
-	foreach($Events->events as $event){
+	foreach($events->events as $event){
 		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
 		if(!empty($start_year)){
 			$userdata		= get_userdata($event->post_author);

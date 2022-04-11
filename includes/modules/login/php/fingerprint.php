@@ -457,7 +457,7 @@ function store_fingerprint(\WP_REST_Request $request){
             SIM\print_array("ajax_create_response: (ERROR)".$exception->getMessage());
             SIM\print_array(generate_call_trace($exception));
             SIM\print_array("ajax_create_response: (ERROR)Challenge not verified, exit");
-            wp_die("Something went wrong.");
+            return new \WP_Error('error', $exception->getMessage(), ['status'=> 500]);
         }
 
         // Store as a 2fa option

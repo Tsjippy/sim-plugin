@@ -3,10 +3,10 @@ namespace SIM\EVENTS;
 use SIM;
 
 add_filter('sim_after_bot_payer', function($messages){
-    global $Events;
+    $events		= new Events();
 
-    $Events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
-    foreach($Events->events as $event){
+    $events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
+    foreach($events->events as $event){
         $start_year	= get_post_meta($event->ID,'celebrationdate',true);
         //only add events which are not a celebration and start today after curent time
         if(empty($start_year) and $event->startdate == date('Y-m-d') and $event->starttime > date('H:i', current_time('U'))){

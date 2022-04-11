@@ -35,6 +35,7 @@ function enqueueLibraries(){
 
 	//Submit forms
 	wp_register_script('sim_other_script',plugins_url('js/other.js', __DIR__), array('sweetalert'),StyleVersion,true);
+	wp_register_script('sim_formsubmit_script',plugins_url('js/form_submit.js', __DIR__), array(),StyleVersion,true);
 
 	//table request shortcode
 	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_other_script'),StyleVersion,true);

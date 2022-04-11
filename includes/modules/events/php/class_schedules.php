@@ -1,6 +1,7 @@
 <?php
 namespace SIM\EVENTS;
 use SIM;
+use WP_Error;
 
 class Schedule{
 	function __construct(){
@@ -14,28 +15,16 @@ class Schedule{
 		
 		$this->user 			= wp_get_current_user();
 		
-		if(in_array('personnelinfo',$this->user->roles)){
+		if(in_array('personnelinfo', $this->user->roles)){
 			$this->admin	=	true;
 		}else{
 			$this->admin	= false;
 		}
-		
-		add_action ( 'wp_ajax_add_schedule',array($this,'add_schedule'));
 
-		add_action ( 'wp_ajax_remove_schedule',array($this,'remove_schedule'));
-		
-		add_action ( 'wp_ajax_add_menu',array($this,'add_menu'));
-		
-		add_action( 'wp_ajax_publish_schedule',array($this,'publish_schedule'));
-
-		add_action( 'wp_ajax_add_host',array($this,'add_host'));
-
-		add_action( 'wp_ajax_remove_host',array($this,'remove_host'));
+		$this->events		= new Events();
 	}
 	
 	function create_db_table(){
-		global $Events;
-
 		if ( !function_exists( 'maybe_create_table' ) ) { 
 			require_once ABSPATH . '/wp-admin/install-helper.php'; 
 		} 
@@ -100,12 +89,10 @@ class Schedule{
 		</div>
 		
 		<!-- Add recipe modal -->
-		<div name='add_recipe_keyword' class="modal hidden">
+		<div name='recipe_keyword_modal' class="modal hidden">
 			<div class="modal-content">
 				<span class="close">&times;</span>
 				<form action="" method="post">
-					<input type="hidden" name="update_schedule_nonce" value="<?php echo wp_create_nonce("update_schedule_nonce"); ?>">
-					<input type='hidden' name='action' value='add_menu'>
 					<input type='hidden' name='schedule_id'>
 					<input type='hidden' name='date'>
 					<input type='hidden' name='starttime'>
@@ -182,9 +169,7 @@ class Schedule{
 		if($this->admin == true){
 			?>			
 			<h3 style='text-align:center;'>Add a schedule</h3>
-			<form>
-				<input type="hidden" name="add_schedule_nonce" value="<?php echo wp_create_nonce("add_schedule_nonce"); ?>">
-				<input type="hidden" name="action" value="add_schedule">
+			<form id='add-schedule-form'>
 				<input type="hidden" name="target_id">
 				
 				<label>
@@ -272,8 +257,6 @@ class Schedule{
 						<span id="modal_close" class="close">&times;</span>
 						<form action="" method="post" id="publish_schedule_form">
 							<input type='hidden' name='schedule_id'>
-							<input type='hidden' name='action' value='publish_schedule'>
-							<input type="hidden" name="publish_schedule_nonce" value="<?php echo wp_create_nonce("publish_schedule_nonce"); ?>">
 						
 							<p>
 								Please select the user or family this schedule should be published for.<br>
@@ -299,7 +282,7 @@ class Schedule{
 								);
 							}
 							
-							echo SIM\user_select($text='',$only_adults=true,$families=true,$class='',$id='select_schedule_target',$args);
+							echo SIM\user_select($text='',$only_adults=true,$families=true,$class='',$id='schedule_target',$args);
 							echo SIM\add_save_button('publish_schedule','Publish this schedule'); 
 							?>
 						</form>
@@ -384,18 +367,16 @@ class Schedule{
 	//multiple events
 	function get_schedule_events($schedule_id, $startdate, $starttime){
 		global $wpdb;
-		global $Events;
 
-		$query	=  "SELECT * FROM {$Events->table_name} WHERE `schedule_id` = '{$schedule_id}' AND startdate = '$startdate' AND starttime='$starttime'";
+		$query	=  "SELECT * FROM {$this->events->table_name} WHERE `schedule_id` = '{$schedule_id}' AND startdate = '$startdate' AND starttime='$starttime'";
 		return $wpdb->get_results($query);
 	}
 
 	//personal events
 	function get_personal_orientation_events($schedule){
 		global $wpdb;
-		global $Events;
 
-		$query	= "SELECT * FROM {$Events->table_name} WHERE `schedule_id` = '{$schedule->id}' AND onlyfor={$this->user->ID} AND starttime != '18:00'";
+		$query	= "SELECT * FROM {$this->events->table_name} WHERE `schedule_id` = '{$schedule->id}' AND onlyfor={$this->user->ID} AND starttime != '18:00'";
 		if($schedule->lunch){
 			$query	.= " AND starttime != '12:00'";
 		}
@@ -578,10 +559,9 @@ class Schedule{
 
 	function add_event_to_db($event){
 		global $wpdb;
-		global $Events;
 
 		$result = $wpdb->insert(
-			$Events->table_name, 
+			$this->events->table_name, 
 			$event
 		);
 		
@@ -666,78 +646,88 @@ class Schedule{
 
 		if(!$this->admin) wp_die('You have no permission to add a schedule!', 500);
 		
-		if(empty($_POST['target_name']) or empty($_POST['startdate']) or empty($_POST['enddate'])){
-			wp_die("Please submit a name and two dates",500);
-		}else{
-			global $wpdb;
-		
-			$name		= sanitize_text_field($_POST['target_name']);
-			//check if schedule already exists
-			if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `name` = '$name'") != null){
-				wp_die("A schedule for $name already exists!",500);
-			}
-
-			$info		= sanitize_text_field($_POST['schedule_info']);
-
-			if(empty($_POST['skiplunch'])){
-				$lunch	= true;
-			}else{
-				$lunch	= false;
-			}
-
-			if(empty($_POST['skiporientation'])){
-				$orientation	= true;
-			}else{
-				$orientation	= false;
-			}
-
-			$startdate_str	= $_POST['startdate'];
-			$startdate		= strtotime($startdate_str);
-			$enddate_str	= $_POST['enddate'];
-			$enddate		= strtotime($enddate_str);
-
-			if($orientation){
-				$starttime	= '08:00';
-			}elseif($lunch){
-				$starttime	= '12:00';
-			}else{
-				$starttime	= '18:00';
-			}						
-
-			if($startdate > $enddate) wp_die("Ending date cannot be before starting date",500);
-
-			$wpdb->insert(
-				$this->table_name, 
-				array(
-					'target'		=> $_POST['target_id'],
-					'name'			=> $name,
-					'info'			=> $info,
-					'lunch'			=> $lunch,
-					'orientation'	=> $orientation,
-					'startdate'		=> $startdate_str,
-					'enddate'		=> $enddate_str,
-					'starttime'		=> $starttime,
-					'endtime'		=> '18:00',
-				)
-			);
-			
-			
-			$this->get_schedules();
-			$schedules_html	= $this->showschedules();
-
-			wp_die(json_encode(
-				[
-					'message'		=> "Succesfully added a schedule for $name",
-					'callback'		=> 'add_schedule',
-					'html'			=> $schedules_html
-				]
-			));
-			wp_die();
+		global $wpdb;
+	
+		$name		= sanitize_text_field($_POST['target_name']);
+		//check if schedule already exists
+		if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `name` = '$name'") != null){
+			wp_die("A schedule for $name already exists!",500);
 		}
+
+		$info		= sanitize_text_field($_POST['schedule_info']);
+
+		if(empty($_POST['skiplunch'])){
+			$lunch	= true;
+		}else{
+			$lunch	= false;
+		}
+
+		if(empty($_POST['skiporientation'])){
+			$orientation	= true;
+		}else{
+			$orientation	= false;
+		}
+
+		$startdate_str	= $_POST['startdate'];
+		$startdate		= strtotime($startdate_str);
+		$enddate_str	= $_POST['enddate'];
+		$enddate		= strtotime($enddate_str);
+
+		if($orientation){
+			$starttime	= '08:00';
+		}elseif($lunch){
+			$starttime	= '12:00';
+		}else{
+			$starttime	= '18:00';
+		}						
+
+		if($startdate > $enddate) wp_die("Ending date cannot be before starting date",500);
+
+		$wpdb->insert(
+			$this->table_name, 
+			array(
+				'target'		=> $_POST['target_id'],
+				'name'			=> $name,
+				'info'			=> $info,
+				'lunch'			=> $lunch,
+				'orientation'	=> $orientation,
+				'startdate'		=> $startdate_str,
+				'enddate'		=> $enddate_str,
+				'starttime'		=> $starttime,
+				'endtime'		=> '18:00',
+			)
+		);
+		
+		$this->get_schedules();
+		$schedules_html	= $this->showschedules();
+
+		return [
+			'message'		=> "Succesfully added a schedule for $name",
+			'html'			=> $schedules_html
+		];
+	}
+
+	function publish_schedule(){
+		global $wpdb;
+		
+		$schedule_id	= $_POST['schedule_id'];
+
+		SIM\update_family_meta($_POST['schedule_target'], 'schedule', $schedule_id);
+
+		$wpdb->update(
+			$this->table_name, 
+			array(
+				'published'	=> true
+			),
+			array(
+				'id'		=> $schedule_id
+			)
+		);
+
+		return 'Succesfully published the schedule';
 	}
 	
 	function remove_schedule(){
-		global $Events;
 		global $wpdb;
 
 		if(!$this->admin) wp_die('You have no permission to remove a schedule!', 500);
@@ -755,14 +745,14 @@ class Schedule{
 		}
 		
 		//Delete all the posts of this schedule
-		$events = $wpdb->get_results("SELECT * FROM {$Events->table_name} WHERE schedule_id='$schedule_id'");
+		$events = $wpdb->get_results("SELECT * FROM {$this->events->table_name} WHERE schedule_id='$schedule_id'");
 		foreach($events as $event){
 			wp_delete_post($event->post_id,true);
 		}
 		
 		//Delete all events of this schedule
 		$wpdb->delete(
-			$Events->table_name,      
+			$this->events->table_name,      
 			['schedule_id' => $schedule_id],           
 			['%d'],
 		);
@@ -775,21 +765,18 @@ class Schedule{
 		);
 			
 		//Remove the schedule from the schedules array
-		wp_die('Succesfully removed the schedule');
+		return 'Succesfully removed the schedule';
 	}
 
 	function add_host(){
-		SIM\verify_nonce('update_schedule_nonce');
-
 		$this->schedule_id	= $_POST['schedule_id'];
-		if(!is_numeric($this->schedule_id)) wp_die('No valid schedule id given',500);
 		$schedule		= $this->find_schedule_by_id($this->schedule_id);
 
 		$this->host_id	= $_POST['host'];
-		if(!is_numeric($this->host_id)) wp_die('No valid host given',500);
 
 		$partner_id		= SIM\has_partner($this->host_id);
-		if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) wp_die('No permission to do that!',500);
+
+		if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) return new WP_Error('No permission', 'No permission to do that!');
 		
 		if($partner_id){
 			$host_name		= get_userdata($this->host_id)->last_name.' family';
@@ -824,39 +811,26 @@ class Schedule{
 
 		if($title == 'lunch' or $title == 'dinner'){
 			$this->add_schedule_events($title, $schedule);
-			$cell_html	= $this->write_meal_cell($schedule, $this->date, $this->starttime);
+			$html	= $this->write_meal_cell($schedule, $this->date, $this->starttime);
 		}else{
 			$this->add_schedule_events($title, $schedule, false);
-			$cell_html	= $this->write_orientation_cell($schedule, $this->date, $this->starttime);
+			$html	= $this->write_orientation_cell($schedule, $this->date, $this->starttime);
 		}
 		
-		wp_die(json_encode(
-			[
-				'message'		=> $message,
-				'callback'		=> 'schedule_host_added',
-				'cell_html'		=> $cell_html,
-				'schedule_id'	=> $this->schedule_id,
-				'starttime'		=> $this->starttime,
-				'endtime'		=> $this->endtime,
-				'date'			=> $this->date,
-			]
-		));
+		return [
+			'message'	=> $message,
+			'html'		=> $html
+		];
 	}
 
 	function remove_host(){
-		global $Events;
-
-		SIM\verify_nonce('update_schedule_nonce');
-
 		$this->schedule_id	= $_POST['schedule_id'];
-		if(!is_numeric($this->schedule_id)) wp_die('No valid schedule id given',500);
 		$schedule		= $this->find_schedule_by_id($this->schedule_id);
 
 		$this->host_id	= $_POST['host'];
-		if(!is_numeric($this->host_id)) wp_die('No valid host given',500);
 
 		$partner_id		= SIM\has_partner($this->host_id);
-		if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) wp_die('No permission to do that!',500);
+		if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) return new \WP_Error('Permission error', 'No permission to do that!');
 		if($partner_id){
 			$host_name		= get_userdata($this->host_id)->last_name.' family';
 		}else{
@@ -874,7 +848,7 @@ class Schedule{
 			wp_delete_post($event->post_id);
 
 			//delete events
-			$Events->remove_db_rows($event->post_id);
+			$this->events->remove_db_rows($event->post_id);
 		}
 
 		if($this->admin == true){
@@ -883,84 +857,27 @@ class Schedule{
 			$message	= "Succesfully removed you as a host for {$this->name} on $date_str";
 		}
 
-		wp_die(json_encode(
-			[
-				'message'		=> $message,
-				'callback'		=> 'schedule_host_removed',
-				'schedule_id'	=> $this->schedule_id,
-				'starttime'		=> $this->starttime,
-				'date'			=> $this->date,
-			]
-		));
+		return $message;
 	}
 
 	function add_menu(){
 		$schedule_id	= $_POST['schedule_id'];
-		if(!is_numeric($schedule_id)) wp_die('No valid schedule id given',500);
 		$schedule		= $this->find_schedule_by_id($schedule_id);
 
 		$date	= sanitize_text_field($_POST['date']);
-		if(empty($date)) wp_die('No valid date given',500);
 
 		$starttime	= sanitize_text_field($_POST['starttime']);
-		if(empty($starttime)) wp_die('No valid start time given',500);
 
 		$menu	= sanitize_text_field($_POST['recipe_keyword']);
-		if(empty($menu)) wp_die('No valid menu given',500);
 
 		$events	= $this->get_schedule_events($schedule->id, $date, $starttime);
 		foreach($events as $event){
 			update_post_meta($event->post_id, 'recipe_keyword', $menu);
 		}
 
-		wp_die(json_encode(
-			[
-				'message'		=> 'succesfully added the keywords',
-				'callback'		=> 'schedule_add_menu',
-				'menu'			=> $menu,
-				'schedule_id'	=> $schedule_id,
-				'starttime'		=> $starttime,
-				'date'			=> $date,
-			]
-		));
-	}
-	
-	function publish_schedule(){
-		global $wpdb;
-		
-		SIM\verify_nonce('publish_schedule_nonce');
-
-		if(!$this->admin) wp_die('You have no permission to publish a schedule!', 500);
-		
-		$schedule_id	= $_POST['schedule_id'];
-		if(!is_numeric($schedule_id) or !is_numeric($_POST['select_schedule_target'])){
-			wp_die("Please submit a name and a schedule id",500);
+		if(count(explode(' ', $menu)) == 1){
+			return "Succesfully added the keyword $menu";
 		}
-
-		$schedule	= $this->find_schedule_by_id($schedule_id);
-		SIM\update_family_meta($_POST['select_schedule_target'],'schedule',$_POST['schedule_index']);
-
-		$schedule->target		= $_POST['select_schedule_target'];
-
-		$wpdb->update(
-			$this->table_name, 
-			array(
-				'published'	=> true
-			),
-			array(
-				'id'		=> $schedule->id
-			)
-		);
-
-		wp_die(json_encode(
-			[
-				'message'	=> 'Succesfully published the schedule',
-				'callback'	=> 'hide_modals'
-			]
-		));
+		return "Succesfully added the keywords $menu";
 	}
 }
-
-add_action('init', function(){
-	if(wp_doing_ajax()) new Schedule();
-});

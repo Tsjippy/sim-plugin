@@ -14,13 +14,12 @@ function get_arriving_users(){
 }
 
 function get_anniversaries(){
-	global $Events;
-
 	$messages = [];
 
-	$Events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
+	$events = new Events();
+	$events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
 
-	foreach($Events->events as $event){
+	foreach($events->events as $event){
 		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
 		if(!empty($start_year)){
 			$title	= $event->post_title;
@@ -88,14 +87,14 @@ add_filter('sim_after_bot_payer', function($args){
 });
 
 add_action('delete_user', function($user_id){
-	global $Events;
+	$events = new Events();
 
 	//Remove birthday events
 	$birthday_post_id = get_user_meta($user_id,'birthday_event_id',true);
-	if(is_numeric($birthday_post_id))	$Events->remove_db_rows($birthday_post_id);
+	if(is_numeric($birthday_post_id))	$events->remove_db_rows($birthday_post_id);
 
 	$anniversary_id	= get_user_meta($user_id, SITENAME.' anniversary_event_id',true);
-	if(is_numeric($anniversary_id))	$Events->remove_db_rows($anniversary_id);
+	if(is_numeric($anniversary_id))	$events->remove_db_rows($anniversary_id);
 });
 
 //Get birthdays

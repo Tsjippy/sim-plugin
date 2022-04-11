@@ -8,8 +8,6 @@ add_filter('sim_frontend_posting_modals', function($types){
 });
 
 add_action('init', function(){
-	$GLOBALS['Events']	= new Events();
-
 	SIM\register_post_type_and_tax('event', 'events');
 	add_action('frontend_post_before_content', __NAMESPACE__.'\event_specific_fields');
 	add_action('frontend_post_content_title', __NAMESPACE__.'\event_title');
@@ -336,8 +334,8 @@ function event_specific_fields($frontEndContent){
 
 add_filter('sim_signal_post_notification_message', function($excerpt, $post){
 	if($post->post_type == 'event'){
-		global $Events;
-		$event		= $Events->retrieve_single_event($post->ID);
+		$events		= new Events();
+		$event		= $events->retrieve_single_event($post->ID);
 		$startdate	= date('d-m-Y', strtotime($event->startdate));
 		if($event->startdate == $event->enddate){
 			$excerpt .= "\n\nDate: $startdate";

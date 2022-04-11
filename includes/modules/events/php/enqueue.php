@@ -37,8 +37,8 @@ add_action( 'wp_enqueue_scripts', function(){
     //selectable select table cells https://github.com/Mobius1/Selectable
 	wp_register_script('selectable', "https://unpkg.com/selectable.js@latest/selectable.min.js", array(), null, true);
 
-    wp_register_script('sim_schedules_script', plugins_url('js/schedules.min.js', __DIR__), array('sim_table_script','selectable','sim_other_script'), ModuleVersion, true);
-    wp_register_script('sim_event_script', plugins_url('js/events.min.js', __DIR__), array('sim_other_script'), ModuleVersion,true);
+    wp_register_script('sim_schedules_script', plugins_url('js/schedules.min.js', __DIR__), array('sim_table_script','selectable','sim_formsubmit_script'), ModuleVersion, true);
+    wp_register_script('sim_event_script', plugins_url('js/events.min.js', __DIR__), array('sim_formsubmit_script'), ModuleVersion,true);
 
     $schedule_pages         = SIM\get_module_option('events', 'schedule_pages');
     $upcomingevents_pages   = SIM\get_module_option('events', 'upcomingevents_pages');

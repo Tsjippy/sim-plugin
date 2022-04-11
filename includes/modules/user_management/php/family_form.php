@@ -133,8 +133,9 @@ function fill_family_dropdowns($user_id){
 add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	if($formname != 'user_family') return $formresults;
 	
-	global $Events;
 	global $Maps;
+
+	$events	= new SIM\EVENTS\Events();
 	
 	$family = $formresults["family"];
 	
@@ -154,7 +155,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 				update_user_meta($family['partner'], 'family', $partner_family);
 			}
 
-			$Events->create_celebration_event('Wedding anniversary', $user_id, 'family[weddingdate]', $family['weddingdate']);
+			$events->create_celebration_event('Wedding anniversary', $user_id, 'family[weddingdate]', $family['weddingdate']);
 		}
 
 		$user_gender = get_user_meta( $user_id, 'gender', true );

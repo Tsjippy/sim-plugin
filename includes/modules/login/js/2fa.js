@@ -135,7 +135,7 @@ function register_fingerprint(event){
     .catch((error) => {
       document.getElementById('add_webauthn').classList.remove('hidden');
       display_message('Registration failure: '+error['message'], 'error'); 
-      console.error('Registration failure: '+error['message']) }
+      console.error(error) }
     )
     .finally(()=>{
       //remove loader

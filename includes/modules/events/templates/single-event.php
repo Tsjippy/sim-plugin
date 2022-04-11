@@ -1,5 +1,6 @@
 <?php
-namespace SIM;
+namespace SIM\EVENTS;
+use SIM;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -19,7 +20,7 @@ get_header(); ?>
 			endwhile;
 			?>
 		</main>
-		<?php show_comments(); ?>
+		<?php SIM\show_comments(); ?>
 	</div>
 
 <?php
@@ -28,10 +29,10 @@ get_header(); ?>
 get_footer();
 
 function event_contents(){
-	global $Events;
-	$event		= $Events->retrieve_single_event(get_the_ID());
-	$date		= $Events->get_date($event);
-	$time		= $Events->get_time($event);
+	$events		= new Events();
+	$event		= $events->retrieve_single_event(get_the_ID());
+	$date		= $events->get_date($event);
+	$time		= $events->get_time($event);
 	$meta		= get_post_meta($event->ID,'eventdetails',true);
 
 	?>
@@ -164,7 +165,7 @@ function event_contents(){
 									<h4>LOCATION</h4>
 									<div class='location_details'>
 										<?php
-										echo $Events->get_location_detail($event);
+										echo $events->get_location_detail($event);
 										?>
 									</div>
 								</div>
@@ -179,13 +180,13 @@ function event_contents(){
 									<h4>ORGANIZER</h4>
 									<div class='author_details'>
 										<?php
-										echo $Events->get_author_detail($event);
+										echo $events->get_author_detail($event);
 										?>
 									</div>
 								</div>
 							<?php
 							}
-							echo $Events->event_export_html($event);	
+							echo $events->event_export_html($event);	
 							?>
 						</div>
 					</div>

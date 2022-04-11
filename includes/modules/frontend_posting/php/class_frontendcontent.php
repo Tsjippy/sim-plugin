@@ -461,20 +461,20 @@ class FrontEndContent{
 				<!-- Modal content -->
 				<div class="modal-content">
 					<span id="modal_close" class="close">&times;</span>
-					<form action="" method="post" id="add_<?php echo $type;?>_type_form">
+					<form action="" method="post" id="add_<?php echo $type;?>_type_form" class="add_category">
 						<p>Please fill in the form to add a new <?php echo $type;?> category</p>
-						<input type="hidden" name="action" value="add_<?php echo $type;?>_type">
+						<input type="hidden" name="post_type" value="<?php echo $type;?>">
 						<input type="hidden" name="userid" value="<?php echo $this->user->ID; ?>">
 						
-						<input type="hidden" name="add_<?php echo $type;?>_type_nonce" value="<?php echo wp_create_nonce("add_{$type}_type_nonce"); ?>">
+						<input type="hidden" name="add_category_nonce" value="<?php echo wp_create_nonce("add_category_nonce"); ?>">
 						
 						<label>
 							<h4>Category name<span class="required">*</span></h4>
-							<input type="text"  name="<?php echo $type;?>_type_name" required>
+							<input type="text"  name="cat_name" required>
 						</label>
 						
 						<h4>Parent category</h4>
-						<select class="" name='<?php echo $type;?>_type_parent'>
+						<select class="" name='cat_parent'>
 							<option value=''>---</option>
 							<?php
 							foreach($categories as $category){

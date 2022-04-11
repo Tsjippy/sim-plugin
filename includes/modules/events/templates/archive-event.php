@@ -5,14 +5,14 @@
  * 
  */
 
-namespace SIM;
+namespace SIM\EVENTS;
+use SIM;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 global $Modules;
-global $Events;
 
 wp_enqueue_style('sim_events_css');
 wp_enqueue_script('sim_event_script');

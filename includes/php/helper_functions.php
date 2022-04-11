@@ -129,14 +129,14 @@ function print_array($message,$display=false){
 	$caller = array_shift($bt);
 	//always write to log
 	error_log("Called from file {$caller['file']} line {$caller['line']}");
-	file_put_contents(__DIR__.'/simlog.log',"Called from file {$caller['file']} line {$caller['line']}\n",FILE_APPEND);
+	//file_put_contents(__DIR__.'/simlog.log',"Called from file {$caller['file']} line {$caller['line']}\n",FILE_APPEND);
 
 	if(is_array($message) or is_object($message)){
 		error_log(print_r($message,true));
-		file_put_contents(__DIR__.'/simlog.log',print_r($message,true),FILE_APPEND);
+		//file_put_contents(__DIR__.'/simlog.log',print_r($message,true),FILE_APPEND);
 	}else{
 		error_log(date('d-m-Y H:i',time()).' - '.$message);
-		file_put_contents(__DIR__.'/simlog.log',date('d-m-Y H:i',time())." - $message\n",FILE_APPEND);
+		//file_put_contents(__DIR__.'/simlog.log',date('d-m-Y H:i',time())." - $message\n",FILE_APPEND);
 	}
 	
 	if($display){
@@ -676,5 +676,21 @@ function removeFiles($target){
 		rmdir( $target );
 	} elseif(is_file($target)) {
 		unlink( $target );  
+	}
+}
+
+function is_date($date){
+	if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function is_time($time){
+	if (preg_match("/^[0-9]{2}:[0-9]{2}$/",$time)) {
+		return true;
+	} else {
+		return false;
 	}
 }
