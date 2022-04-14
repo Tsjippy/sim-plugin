@@ -6,14 +6,14 @@ use SMTPValidateEmail\Validator as SmtpEmailValidator;
 add_shortcode("test",function ($atts){
 	global $wpdb;
 	//update all posts where this is attached
-	$users = get_users();
+/* 	$users = get_users();
     foreach($users as $user){
 		$family = get_user_meta($user->ID, 'family', true);
 
 		if(!empty($family['weddingdate'])){
 			echo $user->display_name.'<br>';
 		}
-	}
+	} */
 
 	global $Modules;
 
@@ -21,6 +21,7 @@ add_shortcode("test",function ($atts){
 	//$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_email_events` ADD `url` TEXT NOT NULL AFTER `time`;"); 
 	//$wpdb->query("DROP TABLE `{$wpdb->prefix}sim_emails`");
 
+	PRAYER\bot_prayer();
 
 	return '';
 });

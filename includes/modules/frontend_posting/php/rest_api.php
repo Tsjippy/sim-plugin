@@ -3,9 +3,9 @@ namespace SIM\FRONTEND_POSTING;
 use SIM;
 
 add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	// get_attachment_contents
 	register_rest_route( 
-		'sim/v1/frontendposting', 
+		'sim/v1/frontend_posting', 
 		'/get_attachment_contents', 
 		array(
 			'methods' 				=> 'POST',
@@ -14,19 +14,15 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'attachment_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
-						return is_numeric( $param );
-					}
+					'validate_callback' => 'is_numeric'
 				),
 			)
 		)
 	);
-} );
 
-add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	// add_category
 	register_rest_route( 
-		'sim/v1/frontendposting', 
+		'sim/v1/frontend_posting', 
 		'/add_category', 
 		array(
 			'methods' 				=> 'POST',
@@ -36,9 +32,7 @@ add_action( 'rest_api_init', function () {
 				'cat_name'		=> array('required'	=> true),
 				'cat_parent'	=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
-						return is_numeric( $param );
-					}
+					'validate_callback' => 'is_numeric'
 				),
 				'post_type'		=> array(
 					'required'	=> true,
@@ -46,6 +40,138 @@ add_action( 'rest_api_init', function () {
 						return in_array($param, get_post_types());
 					}
 				),
+			)
+		)
+	);
+
+	//submit_post
+	register_rest_route( 
+		'sim/v1/frontend_posting', 
+		'/submit_post', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function(){
+				$frontEndContent	= new FrontEndContent();
+				return $frontEndContent->submit_post();
+			},
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'post_type'		=> array(
+					'required'	=> true,
+					'validate_callback' => function($param, $request, $key) {
+						return in_array($param, get_post_types());
+					}
+				),
+				'post_title'		=> array(
+					'required'	=> true
+				),
+				'post_content'	=> array(
+					'required'	=> true
+				),
+				'author'	=> array(
+					'required'	=> true
+				),
+				'publish_date'	=> array(
+					'required'	=> true,
+					'validate_callback' => function($param) {
+						return SIM\is_date($param);
+					}
+				),
+			)
+		)
+	);
+	
+	// remove_post
+	register_rest_route( 
+		'sim/v1/frontend_posting', 
+		'/remove_post', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function(){
+				$frontEndContent	= new FrontEndContent();
+				return $frontEndContent->remove_post();
+			},
+			'permission_callback' 	=> function(){
+				$frontEndContent	= new FrontEndContent();
+				return $frontEndContent->fullrights;
+			},
+			'args'					=> array(
+				'post_id'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+				)
+			)
+		)
+	);
+
+	// refresh post lock
+	register_rest_route( 
+		'sim/v1/frontend_posting', 
+		'/refresh_post_lock', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function(){
+				if(!function_exists('wp_set_post_lock')){
+					include ABSPATH . 'wp-admin/includes/post.php';
+				}
+				wp_set_post_lock($_POST['postid']);
+				return 'Succes';
+			},
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'postid'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+				)
+			)
+		)
+	);
+
+	// delete post lock
+	register_rest_route( 
+		'sim/v1/frontend_posting', 
+		'/delete_post_lock', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function(){
+				delete_post_meta( $_POST['postid'], '_edit_lock');
+				return 'Succes';
+			},
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'postid'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+				)
+			)
+		)
+	);
+
+	// change post type
+	register_rest_route( 
+		'sim/v1/frontend_posting', 
+		'/change_post_type', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function(){
+				$frontEndContent	= new FrontEndContent();
+				return $frontEndContent->change_post_type();
+			},
+			'permission_callback' 	=> function(){
+				$frontEndContent	= new FrontEndContent();
+				return $frontEndContent->fullrights;
+			},
+			'args'					=> array(
+				'postid'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+				),
+				'post_type_selector'		=> array(
+					'required'	=> true,
+					'validate_callback' => function($param) {
+						return in_array($param, get_post_types());
+					}
+				)
 			)
 		)
 	);
@@ -107,8 +233,6 @@ function get_attachment_contents(\WP_REST_Request $request ){
 }
 
 function addCategory(\WP_REST_Request $request ){
-	SIM\verify_nonce('add_category_nonce');
-
 	$name		= $request->get_param('cat_name');
 	$parent		= $request->get_param('cat_parent');
 	$post_type	= $request->get_param('post_type');
@@ -117,6 +241,8 @@ function addCategory(\WP_REST_Request $request ){
 	if(is_numeric($parent)) $args['parent'] = $parent;
 	
 	$result = wp_insert_term( ucfirst($name), $post_type."type", $args);
+
+	do_action('sim_after_category_add', $post_type, strtolower($name), $result);
 	
 	if(is_wp_error($result)){
 		return new \WP_Error('Event Cat error', $result->get_error_message(), ['status' => 500]);

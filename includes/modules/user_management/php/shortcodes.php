@@ -156,7 +156,7 @@ function add_user_account($first_name, $last_name, $email, $approved = false, $v
 		update_user_meta( $user_id, 'disabled', 'pending');
 	}else{
 		delete_user_meta( $user_id, 'disabled');
-		wp_send_new_user_notifications($user_id);
+		wp_send_new_user_notifications($user_id, 'user');
 	}
 
 	//Store the validity

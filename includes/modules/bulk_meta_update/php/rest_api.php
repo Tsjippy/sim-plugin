@@ -2,11 +2,33 @@
 namespace SIM\BULKCHANGE;
 use SIM;
 
-//Save a meta key via ajax
-add_action ( 'wp_ajax_bulk_change_meta', function(){
-	if(!is_numeric($_POST['user_id'])) wp_die('Invalid user id', 500);
-	if(!isset($_POST['meta_key'])) wp_die('No meta_key given', 500);
-	
+//Save a meta key via rest api
+add_action( 'rest_api_init', function () {
+	register_rest_route( 
+		'sim/v1/bulkchange', 
+		'/bulk_change_meta', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> __NAMESPACE__.'\bulkUpdateMeta',
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'user_id'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+				),
+				'meta_key'		=> array(
+					'required'	=> true
+				),
+				'value'		=> array(
+					'required'	=> true
+				),
+			)
+		)
+	);
+
+});
+
+function bulkUpdateMeta(){	
 	$userId 	= $_POST['user_id'];
 	$metaKey 	= sanitize_text_field($_POST['meta_key']);
 	$metaValue	= sanitize_text_field($_POST['value']);
@@ -33,11 +55,9 @@ add_action ( 'wp_ajax_bulk_change_meta', function(){
 	}
 
 	$metaKey = ucfirst(str_replace('_',' ',$metaKey));
-	wp_die(json_encode(
-		[
-			'message'	=> "Saved $metaKey succesfully",
-			'callback'	=> 'updated_table_value',
-			'new_value'	=> $metaValue
-			]
-	));
-});
+	return [
+		'message'	=> "Saved $metaKey succesfully",
+		'callback'	=> 'updated_table_value',
+		'new_value'	=> $metaValue
+	];
+}

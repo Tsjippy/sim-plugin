@@ -121,10 +121,10 @@ trait create_js{
                                 LETS CHECK IF ALL THE VALUES ARE MET AS WELL 
                             */
                             if(!in_array($equation, ['changed','clicked','checked','!checked'])){
-                                $condition_variables[]      = "var value_$fieldnumber_1 = get_field_value('$conditional_field_name',true,$comparevalue2,true);";
+                                $condition_variables[]      = "var value_$fieldnumber_1 = formFunctions.getFieldValue('$conditional_field_name',true,$comparevalue2,true);";
                                 
                                 if(is_numeric($rule['conditional_field_2'])){
-                                    $condition_variables[]  = "var value_$fieldnumber_2 = get_field_value('$conditional_field_2_name',true,$comparevalue2, true);";
+                                    $condition_variables[]  = "var value_$fieldnumber_2 = formFunctions.getFieldValue('$conditional_field_2_name',true,$comparevalue2, true);";
                                 }
                             }
                             
@@ -293,20 +293,19 @@ trait create_js{
                                 
                                 $var_name = str_replace(['[]','[',']'],['','_',''],$copyfieldname);
 
-                                $var_code = "var $var_name = get_field_value('$copyfieldname');";
+                                $var_code = "var $var_name = formFunctions.getFieldValue('$copyfieldname');";
                                 if(!in_array($var_code, $checks[$field_check_if]['variables'])){
                                     $checks[$field_check_if]['variables'][] = $var_code;
                                 }
                             }
                             
                             if($propertyname == 'value'){
-                                $action_code    = "change_field_value('$fieldname', $var_name, {$this->datatype}.process_fields);";
+                                $action_code    = "formFunctions.changeFieldValue('$fieldname', $var_name, {$this->datatype}.process_fields);";
                                 if(!in_array($action_code, $action_array)){
                                     $action_array[] = $action_code;
                                 }
                             }else{
-                                //$action_code    = "change_field_property('$fieldname', '$propertyname', replacement_value);";
-                                $action_code    = "change_field_property('$fieldname', '$propertyname', $var_name, {$this->datatype}.process_fields);";
+                                $action_code    = "formFunctions.changeFieldProperty('$fieldname', '$propertyname', $var_name, {$this->datatype}.process_fields);";
                                 if(!in_array($action_code, $action_array)){
                                     $action_array[] = $action_code;
                                 }
@@ -326,14 +325,14 @@ trait create_js{
         */
         $newJs   = "\n\tdocument.addEventListener('DOMContentLoaded', function() {";
             $newJs.= "\n\t\tconsole.log('Dynamic $this->datatype forms js loaded');";
-            $newJs.= "\n\t\ttidy_multi_inputs();";
+            $newJs.= "\n\t\tformFunctions.tidyMultiInputs();";
             $newJs.= "\n\t\tform = document.getElementById('sim_form_$this->datatype');";
             if($this->is_multi_step()){
                 $newJs.= "\n\t\t//show first tab";
                 $newJs.= "\n\t\t// Display the current tab// Current tab is set to be the first tab (0)";
                 $newJs.= "\n\t\tcurrentTab = 0; ";
                 $newJs.= "\n\t\t// Display the current tab";
-                $newJs.= "\n\t\tshowTab(currentTab,form); ";
+                $newJs.= "\n\t\tformFunctions.showTab(currentTab,form); ";
             }
             if(!empty($this->formdata->settings['save_in_meta'])){
                 $newJs.= "\n\t\tform.querySelectorAll('select, input, textarea').forEach(";
@@ -379,9 +378,9 @@ trait create_js{
             $newJs  .= "\n\t\tsetTimeout(function(){ prev_el = ''; }, 100);";
 
             $newJs  .= "\n\n\t\tif(el_name == 'nextBtn'){";
-                $newJs  .= "\n\t\t\tnextPrev(1);";
+                $newJs  .= "\n\t\t\tformFunctions.nextPrev(1);";
             $newJs  .= "\n\t\t}else if(el_name == 'prevBtn'){";
-                $newJs  .= "\n\t\t\tnextPrev(-1);";
+                $newJs  .= "\n\t\t\tformFunctions.nextPrev(-1);";
             $newJs  .= "\n\t\t}";
 
             $newJs  .= "\n\n\t\t{$this->datatype}.process_fields(el);";

@@ -1,8 +1,8 @@
-function confirmPostDelete( event ) {
+async function confirmPostDelete( event ) {
 	event.preventDefault();
 	parent = event.target.closest('#frontend_upload_form');
 
-	Swal.fire({
+	var confirmed = await Swal.fire({
 		title: 'Are you sure?',
 		text: "Are you sure you want to remove this "+frontendpost.post_type+"?",
 		icon: 'warning',
@@ -10,30 +10,48 @@ function confirmPostDelete( event ) {
 		confirmButtonColor: '#3085d6',
 		cancelButtonColor: '#d33',
 		confirmButtonText: 'Yes, delete it!'
-	}).then((result) => {
-		if (result.isConfirmed) {
-			var post_id = parent.querySelector('[name="post_id"]').value;
-			var nonce 	= parent.querySelector('[name="deletepost_nonce_'+post_id+'"]').value;
-			event.target.closest('form').querySelector('.loadergif').classList.remove('hidden');
+	});
+
+	if (confirmed.isConfirmed) {
+		var post_id = parent.querySelector('[name="post_id"]').value;
+		event.target.closest('form').querySelector('.loadergif').classList.remove('hidden');
+	
+		var formdata = new FormData();
+		formdata.append('post_id',post_id);
 		
-			var formdata = new FormData();
-			formdata.append('action','remove_post');
-			formdata.append('post_id',post_id);
-			formdata.append("deletepost_nonce_"+post_id,nonce);
-			sendAJAX(formdata);
-			}
-		})
+		var response = await fetchRestApi('frontend_posting/remove_post', formdata);
+
+		if(response){
+			display_message(response);
+		}
+	}
 };
 
-function refresh_post_lock(action='refresh_post_lock'){
-	var request = new XMLHttpRequest();
+async function refreshPostLock(){
+	var postid = document.querySelector('[name="post_id"]');
 
-	request.open('POST', sim.ajax_url, true);
-	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
-	
-	var postid = document.getElementById('post_id')
 	if(postid != null){
-		request.send('action='+action+'&postid='+postid.value);
+		var formdata	= new FormData();
+		formdata.append('postid', postid.value);
+		var response = await fetchRestApi('frontend_posting/refresh_post_lock', formdata);
+	}
+}
+
+async function deletePostLock(){
+	var postid = document.querySelector('[name="post_id"]');
+
+	if(postid != null){
+		var formdata	= new FormData();
+		formdata.append('postid', postid.value);
+		var response = await fetchRestApi('frontend_posting/delete_post_lock', formdata);
+	}
+}
+
+async function changePostType(target){
+	var response = await submitForm(target, 'frontend_posting/change_post_type');
+
+	if(response){
+		display_message(response);
 	}
 }
 
@@ -256,7 +274,7 @@ function catChanged(target){
 }
 
 async function addCatType(target){
-	var response	= await submitForm(target.closest('form'), 'frontendposting/add_category');
+	var response	= await submitForm(target, 'frontend_posting/add_category');
 
 	if(response){
 		//Get the newly added category parent id
@@ -293,6 +311,14 @@ async function addCatType(target){
 		display_message(`Succesfully added the ${cat_name} category`);
 	}
 }
+
+async function submitPost(target){
+	var response	= await submitForm(target, 'frontend_posting/submit_post');
+
+	if(response){
+		display_message(response);
+	}
+}
 		
 document.addEventListener("DOMContentLoaded",function() {
 	console.log("Frontendposting.js loaded");
@@ -305,14 +331,14 @@ document.addEventListener("DOMContentLoaded",function() {
 		}, 60000);
 	}
 	
-	refresh_post_lock();
+	refreshPostLock();
 	//Refresh the post lock every minute
-	setInterval(refresh_post_lock, 60000);
+	setInterval(refreshPostLock, 60000);
 	
 	//Remove post lock when move away from the page
 	window.onbeforeunload = function(){
 		if(document.getElementById('post_lock_warning') == null){
-			refresh_post_lock('delete_post_lock');
+			deletePostLock();
 		}
 	};
 
@@ -369,8 +395,22 @@ document.addEventListener("DOMContentLoaded",function() {
 document.addEventListener("click", event=>{
 	var target = event.target;
 
-	if(target.name == 'submit_post'){
-		//target.remove();
+	if(target.name == 'submit_post' || target.parentNode.name == 'submit_post'){
+		submitPost(target);
+	}
+	if(target.name == 'draft_post' || target.parentNode.name == 'draft_post'){
+		//change action value
+		target.closest('form').querySelector('[name="post_status"]').value = 'draft';
+		
+		submitPost(target);
+	}
+
+	if(target.name == 'delete_post'){
+		confirmPostDelete(event);
+	}
+
+	if(target.name == 'change_post_type'){
+		changePostType(target);
 	}
 
 	if(target.name == "add-featured-image"){
@@ -381,20 +421,9 @@ document.addEventListener("click", event=>{
 		showallfields(target);
 	}
 	
-	if(target.name == 'delete_post'){
-		confirmPostDelete(event);
-	}
-
+	// SHow add category modal
 	if(target.classList.contains('add_cat')){
 		document.getElementById('add_'+target.dataset.type+'_type').classList.remove('hidden');
-	}
-	
-	if(target.classList.contains('savedraft')){
-		//change action value
-		target.closest('form').querySelector('[name="action"]').value = 'draft_post';
-		
-		//submit form
-		submit_form(event);
 	}
 	
 	if(target.id == 'advancedpublishoptionsbutton'){
@@ -591,27 +620,18 @@ document.addEventListener('change', event=>{
 });
 
 //Retrieve file contents over AJAX
-function read_file_contents(attachmentId){
-	var formData	= new FormData();
-	formData.append('attachment_id', attachmentId);
-	formData.append('_wpnonce', sim.restnonce);
-	
-	fetch(
-		sim.base_url+'/wp-json/sim/v1/frontendposting/get_attachment_contents', 
-		{
-			method: 'POST',
-			credentials: 'same-origin',
-			body: formData
-		}
-	).then(response => response.json())
-	.then(response => {
-				
-		//Put cursor at the end
+async function read_file_contents(attachmentId){
+	var formdata	= new FormData();
+	formdata.append('attachment_id', attachmentId);
+
+	var response	= await fetchRestApi('frontend_posting/get_attachment_contents', formdata);
+
+	if(response){
+		// Get current content
 		var content	= tinyMCE.activeEditor.getContent();
 		//Add contents to editor
 		tinymce.activeEditor.setContent(content+response);
-		
+
 		Swal.close();
-	})
-	.catch(err => console.error(err));
+	}
 }

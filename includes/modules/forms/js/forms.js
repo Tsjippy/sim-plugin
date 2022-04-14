@@ -1,17 +1,32 @@
-function remove_default_select(el){
+async function saveFormInput(target){
+	var form		= target.closest('form');
+	var response	= await submitForm(target, 'forms/save_form_input');
+
+	if(response){
+		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
+
+		display_message(response);
+
+		if(form.dataset.reset == 'true'){
+			formReset(form);
+		}
+	}
+}
+
+export function removeDefaultSelect(el){
 	Array.from(el.options).forEach(function(option){
 		option.defaultSelected = false;
 	});
 }
 
-function clone_node(original_node, clear=true){
+export function cloneNode(original_node, clear=true){
 	//First remove any nice selects
 	original_node.querySelectorAll('select').forEach(select => {
 		//remove defaults if it has changed
 		if(select.selectedIndex != -1){
 			if(select.options[select.selectedIndex].defaultSelected == false){
 				//remove all default selected
-				remove_default_select(select);
+				removeDefaultSelect(select);
 			}
 		}
 		
@@ -65,7 +80,7 @@ function clone_node(original_node, clear=true){
 			//if this is a select
 			if(input.type == "select-one"){
 				//remove any defaults
-				remove_default_select(input);
+				removeDefaultSelect(input);
 				
 				input._niceselect = NiceSelect.bind(input,{searchable: true});
 				input._niceselect.clear();
@@ -268,7 +283,7 @@ function remove_node(target){
 /* 
 	FUNCTIONS USED BY DYNAMIC FORMS JS
  */
-function tidy_multi_inputs(){
+export function tidyMultiInputs(){
 	//remove unnecessary buttons on inputs with multiple values
 	document.querySelectorAll('.clone_divs_wrapper').forEach(function(div){
 		var clone_div_arr	= div.querySelectorAll('.clone_div');
@@ -290,7 +305,7 @@ function tidy_multi_inputs(){
 }
 	
 //show a next form step
-function showTab(n,form) {
+export function showTab(n,form) {
 	if(typeof(form) != 'undefined'){
 		if(n == 0){
 			var loader = form.querySelector('.formsteploader');
@@ -348,7 +363,7 @@ function showTab(n,form) {
 }
 
 //next form step clicked
-function nextPrev(n) {
+export function nextPrev(n) {
 	// This function will figure out which tab to display
 	var x 				= form.getElementsByClassName("formstep");
 	var stepindicators	= form.getElementsByClassName("step");
@@ -399,7 +414,7 @@ function nextPrev(n) {
 	showTab(currentTab,form);
 }
 
-function get_field_value(orgname, checkdatalist=true, comparevalue=null, lowercase=false){
+export function getFieldValue(orgname, checkdatalist=true, comparevalue=null, lowercase=false){
 	//name is not a name but a node
 	if(orgname instanceof Element){
 		el			= orgname;		
@@ -493,7 +508,7 @@ function get_field_value(orgname, checkdatalist=true, comparevalue=null, lowerca
 	}
 }
 
-function change_field_value(orgname, value, function_ref){
+export function changeFieldValue(orgname, value, function_ref){
 	if(orgname instanceof Element){
 		var name	= orgname.name;
 		var target	= orgname;
@@ -541,7 +556,7 @@ function change_field_value(orgname, value, function_ref){
 	function_ref(target);
 }
 
-function change_field_property(name, att, value, function_ref){
+export function changeFieldProperty(name, att, value, function_ref){
 	//first change the value
 	var target = form.querySelector('[name="'+name+'" i]');
 	
@@ -605,5 +620,9 @@ document.addEventListener('click',function(event) {
 		remove_node(target); 
 
 		fix_numbering(wrapper);
+	}
+
+	if(target.matches('.sim_form [name="submit_form"]')){
+		saveFormInput(target);
 	}
 });

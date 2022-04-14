@@ -31,11 +31,12 @@ function formReset(form){
 	
 		//go back to the first part of the form in case of multistep
 		currentTab = 0;
-		showTab(currentTab,form);
+		formFunctions.showTab(currentTab,form);
 	}
 }
 
-async function submitForm(form, url){	
+async function submitForm(target, url){
+	var form		= target.closest('form');
 	var validity = true;
 	
 	//first get all hidden required inputs and unrequire them
@@ -46,11 +47,7 @@ async function submitForm(form, url){
 	//only continue if valid
 	if(validity){
 		//Display loader
-		form.querySelectorAll('.submit_wrapper .loadergif').forEach(
-			function(loader){
-				loader.classList.remove('hidden');
-			}
-		);
+		target.closest('.submit_wrapper').querySelectorAll('.loadergif').forEach(loader=>loader.classList.remove('hidden'));
 		
 		//save any tinymce forms
 		if (typeof tinymce !== 'undefined') {
@@ -69,7 +66,11 @@ async function submitForm(form, url){
 			});
 		}
 
-		return await fetchRestApi(url, formdata);
+		var response = await fetchRestApi(url, formdata);
+
+		form.querySelectorAll('.submit_wrapper .loadergif').forEach(loader => loader.classList.add('hidden'));
+
+		return response;
 	}else{
 		return false;
 	}

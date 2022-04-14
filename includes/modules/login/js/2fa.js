@@ -1,13 +1,30 @@
 // Import the registration hook
-import useRegistration from './node_modules/@web-auth/webauthn-helper/src/useRegistration.js';
+import {
+    fetchEndpoint,
+    preparePublicKeyCredentials,
+    preparePublicKeyOptions,
+	fetchRestApi
+} from './shared.js';
 
-window['saved2fa'] = function(result,responsdata){
-	if (result.status >= 200 && result.status < 400) {
-        document.querySelectorAll('[id^="setup-"]:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+async function saveTwofaSettings(target){
+	// Show loader
+	var loader	= target.closest('.submit_wrapper').querySelector('.loadergif');
+	loader.classList.remove('hidden');
+
+	var form		= target.closest('form');
+	var formdata	= new FormData(form);
+	var response 	= await fetchRestApi('save_2fa_settings', formdata);
+
+	if(response){
+		form.querySelectorAll('[id^="setup-"]:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+
+		display_message(response);
 	}
+
+	loader.classList.add('hidden');
 }
 
-function check_webauthn_available(){
+function checkWebauthnAvailable(){
 	if (window.PublicKeyCredential) {
 		PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then((available) => {
 			if (available) {
@@ -23,25 +40,7 @@ function check_webauthn_available(){
 	}
 }
 
-document.addEventListener("DOMContentLoaded",function() {
-	console.log("2fa.js loaded");
-
-	//hide the webauthn table if not possible
-	var el = document.getElementById('webauthn_wrapper');
-	if(el != null){
-		check_webauthn_available();
-	}
-
-	document.querySelectorAll('.twofa_option_checkbox').forEach(el=>el.addEventListener('click', show_2fa_setup));
-	
-	document.querySelectorAll('.remove_webauthn').forEach(el=>el.addEventListener('click',remove_web_authenticator));
-
-	document.querySelectorAll('#add_fingerprint').forEach(el=>el.addEventListener('click',register_fingerprint));
-});
-
-function show_2fa_setup(event) {
-	var target	= event.target;
-
+function showTwofaSetup(target) {
 	//hide all options
 	document.querySelectorAll('.twofa_option').forEach(el=>el.classList.add('hidden'));
 
@@ -59,50 +58,44 @@ function show_2fa_setup(event) {
 	target.closest('form').querySelector('.form_submit').classList.remove('hidden');
 }
 
-// Register a new fingerprint
-const register = useRegistration(
-  {
-    actionUrl: sim.base_url+'/wp-json/sim/v1/store_fingerprint',
-    optionsUrl: sim.base_url+'/wp-json/sim/v1/fingerprint_options',
-    actionHeader:{'X-WP-Nonce': sim.restnonce}
-  },
-  {
-    'X-WP-Nonce': sim.restnonce
-  }
-);
-
-function remove_web_authenticator(event){
-	var target  = event.target;
+async function removeWebAuthenticator(target){
 	var table   = target.closest('table');
 	var row     = target.closest('tr');
 
-	var formData	= new FormData();
-	formData.append('action','remove_web_authenticator');
-	formData.append('key',target.dataset.key);
+	var formdata	= new FormData();
+	formdata.append('key',target.dataset.key);
+	formdata.append('_wpnonce', sim.restnonce);
 
 	showLoader(target, true);
 
-	fetch(sim.ajax_url, {
-		method: 'POST',
-		credentials: 'same-origin',
-		body: formData
-	})
-	.then((response) => {
-		if(response.ok){
-			if(table.rows.length==2){
-			table.remove();
-			}else{
-			row.remove();
-			}
+	var result = await fetch(
+		sim.base_url+'/wp-json/sim/v1/login/remove_web_authenticator',
+		{
+			method: 'POST',
+			credentials: 'same-origin',
+			body: formdata
 		}
-		response.text();
-	})
-	.then((response) => display_message(response))
+	);
+
+	var response	= await result.json();
+
+	if(result.ok){
+		if(table.rows.length==2){
+			table.remove();
+		}else{
+			row.remove();
+		}
+
+		display_message(response);
+	}else{
+		console.error(response);
+		display_message(response.message, 'error');
+	};
 }
 
 //Start registration with button click
-function register_fingerprint(event){
-    var identifier  = event.target.closest('#webauthn_wrapper').querySelector('[name="identifier"]').value;
+async function registerBiometric(target){
+    var identifier  = target.closest('#webauthn_wrapper').querySelector('[name="identifier"]').value;
     if(identifier == ''){
       display_message('Please specify a device name', 'error');
       return;
@@ -110,35 +103,86 @@ function register_fingerprint(event){
 
     //show loader
     document.getElementById('add_webauthn').classList.add('hidden');
-    var loader_html = `<div id="loader_wrapper" style='margin-bottom:20px;'><span class="message">Please authenticate...</span><img class="loadergif" src="${sim.loading_gif}" height="30px;"></div>`;
+    var loader_html = `<div id="loader_wrapper" style='margin-bottom:20px;'><span class="message"></span><img class="loadergif" src="${sim.loading_gif}" height="30px;"></div>`;
     document.getElementById('add_webauthn').insertAdjacentHTML('afterEnd',loader_html);
+	var message		= document.querySelector('#loader_wrapper .message');
 
-    register({
-      identifier: identifier,
-    })
-    //registering succesfull
-    .then((response) => {
-      var wrapper = document.getElementById('webautn_devices_wrapper');
+	try{
+		// Get biometric challenge
+		var formData			= new FormData();
+		formData.append('identifier', identifier);
+		var response			= await fetchRestApi('fingerprint_options', formData);
+		if(!response){
+			throw 'Options retrieval failed';
+		}
+		var publicKey 			= preparePublicKeyOptions(response);
 
-      //add authenthn table
-      if(wrapper == null){
-        document.getElementById('webauthn_wrapper').insertAdjacentHTML('beforeEnd',response)
-      }else{
-        wrapper.outerHTML = response;
-      }
+		// Update the message
+		message.textContent  	= 'Please authenticate...';
 
-      //labels for use
-      setTableLabel();
+		// Ask user to verify
+		var credentials 		= await navigator.credentials.create({publicKey});
 
-      display_message('Registration success', 'success');
-    })
-    .catch((error) => {
-      document.getElementById('add_webauthn').classList.remove('hidden');
-      display_message('Registration failure: '+error['message'], 'error'); 
-      console.error(error) }
-    )
-    .finally(()=>{
-      //remove loader
-      document.querySelector('#loader_wrapper').remove();
-    })
+		// Update the message
+		message.textContent  	= 'Saving authenticator...';
+
+		// Store result
+		var publicKeyCredential = preparePublicKeyCredentials(credentials);
+		
+		var formData			= new FormData();
+		formData.append('publicKeyCredential', JSON.stringify(publicKeyCredential));
+		var response			= await fetchRestApi('store_fingerprint', formData);
+		if(!response){
+			throw 'Storing biometric failed';
+		}
+
+		var wrapper 			= document.getElementById('webautn_devices_wrapper');
+		if(wrapper == null){
+			//add authenthn table
+			document.getElementById('webauthn_wrapper').insertAdjacentHTML('beforeEnd', response);
+		}else{
+			//update authenthn table
+			wrapper.outerHTML = response;
+		}
+  
+		//labels for use
+		setTableLabel();
+  
+		display_message('Registration success');
+	}catch(error){
+		document.getElementById('add_webauthn').classList.remove('hidden');
+		console.error(error);
+	}
+
+    document.querySelector('#loader_wrapper').remove();
 }
+
+document.addEventListener("DOMContentLoaded",function() {
+	console.log("2fa.js loaded");
+
+	//hide the webauthn table if not possible
+	var el = document.getElementById('webauthn_wrapper');
+	if(el != null){
+		checkWebauthnAvailable();
+	}	
+});
+
+document.addEventListener('click', ev =>{
+	var target = ev.target;
+
+	if(target.name == '2fa_methods[]'){
+		showTwofaSetup(target);
+	}
+
+	if(target.matches('.remove_webauthn')){
+		removeWebAuthenticator(target);
+	}
+	
+	if(target.id == 'add_fingerprint'){
+		registerBiometric(target);
+	}
+
+	if(target.name == 'save2fa'){
+		saveTwofaSettings(target);
+	}
+})

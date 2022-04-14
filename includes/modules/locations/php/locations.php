@@ -2,61 +2,25 @@
 namespace SIM\LOCATIONS;
 use SIM;
 
-/*
-	In this file we define a new post type: location
-	We also define a new taxonomy (category): locationtype
-	We make sure post of this type get an url according to their taxonomy
-*/
-
 add_action('init', function(){
 	SIM\register_post_type_and_tax('location', 'locations');
 }, 999);
 
+//Add a map when a location category is added
+add_action('sim_after_category_add', function($postType, $name, $result){
+	if($postType != 'location') return;
+	global $Modules;
 
-//Add location type via AJAX
-add_action('wp_ajax_add_location_type',function(){
-	global $CustomSimSettings;
-	global $Maps;
+	$Maps		= new Maps();
+	$map_id		= $Maps->add_map($name);
+
+	//Attach the map id to the term
+	update_term_meta($result['term_id'], 'map_id', $map_id);
+
+	$Modules['locations'][$name.'_map']	= $map_id;
 	
-	SIM\verify_nonce('add_location_type_nonce');
-	
-	$name		= ucfirst(sanitize_text_field($_POST['location_type_name']));
-	
-	$args		= ['slug' => strtolower($name)];
-	
-	$parent		= $_POST['location_type_parent'];
-	if(is_numeric($parent)) $args['parent'] = $parent;
-	
-	$result		= wp_insert_term( $name, 'locationtype',$args);
-	
-	//Something went wront
-	if(is_wp_error($result)){
-		wp_die($result->get_error_message(),500);
-	//Succes
-	}else{
-		$map_id		= $Maps->add_map($name);
-		$term_id	= $result['term_id'];
-		SIM\print_array("Created locationtype category with name $name and id $term_id, created a new map with id $map_id");
-		
-		//Attach the map id to the term
-		update_term_meta($term_id,'map_id',$map_id);
-		
-		//Update the admin options
-		$CustomSimSettings[strtolower($name).'_map']	= $map_id;
-		update_option("customsimsettings",$CustomSimSettings);
-		
-		//Return the id and  message
-		wp_die(json_encode(
-			[
-				'id'		=> $term_id,
-				'name'		=> $name,
-				'type'		=> 'location',
-				'message'	=> "Added $name succesfully as location category",
-				'callback'	=> 'cat_type_added'
-			]
-		));
-	}
-});
+	update_option('sim_modules', $Modules);
+}, 10, 3);
 
 add_filter(
 	'widget_categories_args',

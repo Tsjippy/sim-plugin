@@ -105,7 +105,7 @@ class PasswordResetMail extends ADMIN\MailSetting{
 
         $this->addUser($user);
 
-        $this->moduleSlug        = 'user_management';
+        $this->moduleSlug        = 'login';
         $this->keyword           = 'password_reset';
 
         $this->replaceArray['%url%']    = $url;

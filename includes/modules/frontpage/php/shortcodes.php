@@ -34,9 +34,6 @@ add_shortcode("welcome",function ($atts){
 		if ($show_welcome == ""){
 			$welcome_post = get_post(SIM\get_module_option('frontpage', 'welcome_page')); 
 			if($welcome_post != null){
-				//Load js
-				wp_enqueue_script('sim_message_script');
-				
 				//Html
 				$html = '<div id="welcome-message">';
 				$html .= '<h4>'.$welcome_post->post_title.'</h4>';

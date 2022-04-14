@@ -1,4 +1,4 @@
-import {close_mobile_menu} from './shared.js';
+import {closeMobileMenu} from './shared.js';
 
 //Logout user
 document.addEventListener("DOMContentLoaded",function() {
@@ -9,11 +9,14 @@ document.addEventListener("DOMContentLoaded",function() {
     });
 });
 
-function logout(event){
+async function logout(event){
+    event.stopPropagation();
+    event.preventDefault();
+
 	var target = event.target;
     
 	if(target.id == "logout" || target.parentNode.id == "logout"){
-        close_mobile_menu();
+        closeMobileMenu();
 
         if(typeof(Swal) != 'undefined'){
             var options = {
@@ -28,19 +31,28 @@ function logout(event){
             Swal.fire(options);
         }
 
-        var formData	= new FormData();
-        formData.append('action','request_logout');
+        var formdata	= new FormData();
+	    formdata.append('_wpnonce', sim.restnonce);
 
-        fetch(sim.ajax_url, {
-            method: 'POST',
-            credentials: 'same-origin',
-            body: formData
-        })
-        .then(result=>result.text())
-        .then(result=>{
-            display_message(result,'success', false, true);
+        var result = await fetch(
+            sim.base_url+'/wp-json/sim/v1/login/logout',
+            {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: formdata
+            }
+        );
+    
+        var response	= await result.json();
+
+        if(result.ok){
+            display_message(response,'success', false, true);
+
             //redirect to homepage
             location.href	= sim.base_url;
-        });
+        }else{
+            console.error(response);
+            display_message(response, 'error');
+        };
     }
 }

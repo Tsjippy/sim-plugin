@@ -324,7 +324,8 @@ class FormTable extends Formbuilder{
 				$field_value	= str_replace('_',' ',$field_value);
 			}
 
-			$rowcontents .= "<td $class $style data-original='$org_field_value' $sub_id>$field_value</td>";
+			$oldValue		= json_encode($org_field_value);
+			$rowcontents .= "<td $class $style data-oldvalue='$oldValue' $sub_id>$field_value</td>";
 		}
 		
 		$this->no_records = false;
@@ -372,16 +373,16 @@ class FormTable extends Formbuilder{
 	function loadshortcodedata(){
 		global $wpdb;
 		
-		$query							= "SELECT * FROM {$this->shortcodetable} WHERE id= '{$this->shortcode_id}'";
+		$query						= "SELECT * FROM {$this->shortcodetable} WHERE id= '{$this->shortcode_id}'";
 		
-		$this->shortcodedata 			= $wpdb->get_results($query)[0];
+		$this->shortcodedata 		= $wpdb->get_results($query)[0];
 		
 		$this->table_settings		= unserialize($this->shortcodedata->table_settings);
 		$this->column_settings		= unserialize($this->shortcodedata->column_settings);
 	}
 
 	function clean_export_content(){
-		$hidden_columns		= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formdata->name, true);
+		$hidden_columns		= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formdata->id, true);
 
 		$exclude_indexes	= [];
 
@@ -681,9 +682,7 @@ class FormTable extends Formbuilder{
 				
 				<div class="tabcontent <?php echo $class1;?>" id="column_settings_<?php echo $this->shortcodedata->id;?>">
 					<form class="sortable_column_settings_rows">
-						<input type='hidden' class='shortcode_settings' name='shortcode_id'							value='<?php echo $this->shortcodedata->id;?>'>
-						<input type='hidden' class='shortcode_settings' name='action'								value='save_column_settings'>
-						<input type='hidden' class='shortcode_settings' name='save_column_settings_nonce'			value='<?php echo wp_create_nonce('save_column_settings_nonce');?>'>
+						<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodedata->id;?>'>
 						
 						<div class="column_setting_wrapper" style="display: flex;">
 							<label class="columnheading formfieldbutton">Sort</label>
@@ -760,10 +759,8 @@ class FormTable extends Formbuilder{
 				
 				<div class="tabcontent <?php echo $class2;?>" id="table_rights_<?php echo $this->shortcodedata->id;?>">
 					<form>
-						<input type='hidden' class='shortcode_settings' name='shortcode_id'					value='<?php echo $this->shortcodedata->id;?>'>
-						<input type='hidden' class='shortcode_settings' name='action'						value='save_table_settings'>
-						<input type='hidden' class='shortcode_settings' name='save_table_settings_nonce'	value='<?php echo wp_create_nonce('save_table_settings_nonce');?>'>
-						<input type='hidden' class='shortcode_settings' name='formname'						value='<?php echo $this->datatype;?>'>
+						<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodedata->id;?>'>
+						<input type='hidden' class='shortcode_settings' name='formid'		value='<?php echo $this->formdata->id;?>'>
 						
 						<div class="table_rights_wrapper">
 							<label>Select the default column the table is sorted on</label>
@@ -1063,7 +1060,7 @@ class FormTable extends Formbuilder{
 		if(!is_user_logged_in()) return;
 
 		//Get personal visibility
-		$this->hidden_columns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formdata->name, true);	
+		$this->hidden_columns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formdata->id, true);	
 		
 		?>
 		<div class='form-table-wrapper'>
@@ -1130,7 +1127,7 @@ class FormTable extends Formbuilder{
 				}
 				
 				?>
-				<table class='sim-table form-data-table' data-id='<?php echo $this->datatype;?>' data-shortcodeid='<?php echo $this->shortcode_id;?>' data-nonce='<?php echo wp_create_nonce('updateforminput');?>'>
+				<table class='sim-table form-data-table' data-formid='<?php echo $this->formdata->id;?>' data-shortcodeid='<?php echo $this->shortcode_id;?>' data-nonce='<?php echo wp_create_nonce('updateforminput');?>'>
 					<thead>
 						<tr>
 							<?php

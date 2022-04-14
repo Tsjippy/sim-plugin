@@ -33,27 +33,6 @@ class Formbuilder{
 			$this->editrights		= false;
 		}
 	}
-
-	function register_buttons($buttons) {
-		array_push($buttons, 'insert_form_shortcode');
-		return $buttons;
-	}
-	
-	function add_tinymce_plugin($plugins) {
-		//Add extra variables to the main.js script
-		wp_localize_script( 'sim_script', 
-			'tinymce_data', 
-			array( 
-				'user_select' 		=> SIM\user_select("Select a person to show the link to",true),
-				'post_type'			=> $this->post_type,
-				'form_select'		=> $this->form_select()
-			) 
-		);
-		
-		$plugins['insert_form_shortcode']		= plugins_url("../../js/tiny_mce_action.js?ver=".ModuleVersion, __DIR__);
-		
-		return $plugins;
-	}
 	
 	function form_select(){
 		$this->get_forms();
@@ -209,21 +188,21 @@ class Formbuilder{
 		$this->form_elements 		=  $wpdb->get_results($query);
 	}
 	
-	function insert_form(){
+	function insert_form($name=''){
 		global $wpdb;
+
+		if(empty($name))	$name = $this->datatype;
 
 		$result = $wpdb->insert(
 			$this->table_name, 
 			array(
-				'name'			=> $this->datatype,
+				'name'			=> $name,
 				'version' 		=> 1
 			)
 		);
 		
-		if($wpdb->last_error !== ''){
-			if(wp_doing_ajax()){
-				wp_die($wpdb->print_error(),500);
-			}
+		if(!empty($wpdb->last_error)){
+			return new \WP_Error('error', $wpdb->print_error());
 		}
 	}
 
@@ -308,6 +287,109 @@ class Formbuilder{
 		$this->jsfilename	= plugin_dir_path(__DIR__)."js/dynamic/{$this->formdata->name}forms";
 	}
 
+	function update_form_element($element){
+		global $wpdb;
+		
+		//Update element
+		$result = $wpdb->update(
+			$this->el_table_name, 
+			(array)$element, 
+			array(
+				'id'		=> $element->id,
+			),
+		);
+
+		//Update form version
+		$result = $wpdb->update(
+			$this->table_name, 
+			['version'	=> $this->formdata->version+1], 
+			['id'		=> $this->formdata->id],
+		);
+		
+		if($wpdb->last_error !== ''){
+			wp_die($wpdb->print_error(),500);
+		}
+	}
+
+	function insert_element($element){
+		global $wpdb;
+		
+		$result = $wpdb->insert(
+			$this->el_table_name, 
+			(array)$element
+		);
+	}
+
+	function update_priority($element){
+		global $wpdb;
+
+		//Update the database
+		$result = $wpdb->update($this->el_table_name, 
+			array(
+				'priority'	=> $element->priority
+			), 
+			array(
+				'id'		=> $element->id
+			),
+		);
+		
+		if($wpdb->last_error !== ''){
+			wp_die($wpdb->print_error(),500);
+		}
+	}
+
+	function reorder_elements($old_priority, $new_priority, $element) {
+		if ($old_priority == $new_priority) return;
+
+		// Get all elements of this form
+		$this->get_all_form_elements('priority');
+
+		if(empty($element)){
+			foreach($this->form_elements as $el){
+				if($el->priority == $old_priority){
+					$element = $el;
+					break;
+				}
+			}
+		}
+
+		//No need to reorder if we are adding a new element at the end
+		if(count($this->form_elements) == $new_priority){
+			// First element is the element without priority
+			$el				= $this->form_elements[0];
+			$el->priority	= $new_priority;
+			$this->update_priority($el);
+			return;
+		}
+		
+		//Loop over all elements and give them the new priority
+		foreach($this->form_elements as $el){
+			if($el->name == $element->name){
+				$el->priority	= $new_priority;
+				$this->update_priority($el);
+			}elseif($old_priority == -1){
+				if($el->priority >= $new_priority){
+					$el->priority++;
+					$this->update_priority($el);
+				}
+			}elseif(
+				$old_priority > $new_priority	and 	//we are moving an element upward
+				$el->priority >= $new_priority	and		// current priority is bigger then the new prio
+				$el->priority < $old_priority			// current priority is smaller than the old prio
+			){
+				$el->priority++;
+				$this->update_priority($el);
+			}elseif(
+				$old_priority < $new_priority	and 	//we are moving an element downward
+				$el->priority > $old_priority	and		// current priority is bigger then the old prio
+				$el->priority < $new_priority			// current priority is smaller than the new prio
+			){
+				$el->priority--;
+				$this->update_priority($el);
+			}
+		}
+	}
+
 	function is_multi_step(){
 		if(empty($this->is_multi_step_form)){
 			foreach($this->form_elements as $el){
@@ -346,6 +428,8 @@ class Formbuilder{
 		$this->submission_data		= $result;
 		
 		if(is_numeric($submission_id))	$this->submission_data = $this->submission_data[0];
+
+		$this->formresults 			= maybe_unserialize($this->submission_data->formresults);
 		
 		if($wpdb->last_error !== '')		SIM\print_array($wpdb->print_error());
 	}
@@ -373,7 +457,7 @@ class Formbuilder{
 		}
 	}
 	
-	function get_element_html($element, $replace=true, $width=100){
+	function get_element_html($element, $width=100){
 		$html = '';
 		
 		if($element->type == 'p'){
@@ -670,6 +754,11 @@ class Formbuilder{
 	function get_field_values($element){
 		$values	= [];
 
+		// Do not return default values when requesting the html over rest api
+		if(defined('REST_REQUEST')){
+			return $values;
+		}
+		
 		if(in_array($element->type,$this->non_inputs)) return [];
 
 		$this->build_defaults_array();
@@ -716,7 +805,7 @@ class Formbuilder{
 				$values['defaults']		= $this->default_array_values[$default_key];
 			}
 		}
-		
+
 		return $values;
 	}
 	
@@ -975,7 +1064,7 @@ class Formbuilder{
 		}
 
 		//Load default values for this element
-		$element_html = $this->get_element_html($element,true,$width);
+		$element_html = $this->get_element_html($element,$width);
 		
 		//Check if element needs to be hidden
 		if(!empty($element->hidden)){
@@ -994,7 +1083,7 @@ class Formbuilder{
 		}
 		
 		//Add form edit controls if needed
-		if($this->editrights == true and (isset($_GET['formbuilder']) or wp_doing_ajax())){
+		if($this->editrights == true and (isset($_GET['formbuilder']) or defined('REST_REQUEST'))){
 			$html = "<div class='form_element_wrapper' data-id='{$element->id}' data-formname='{$this->datatype}' data-formid='{$this->formdata->id}' data-priority='{$element->priority}' style='display: flex;'>";
 				$html .= "<span class='movecontrol formfieldbutton' aria-hidden='true'>:::</span>";
 				$html .= "<div class='resizer_wrapper'>";
@@ -1153,13 +1242,11 @@ class Formbuilder{
 		if(!is_numeric($submission_id)){
 			if(is_numeric($this->submission_id)){
 				$submission_id	= $this->submission_id;
-			}elseif(is_numeric($_POST['submission_id'])){
-				$submission_id	= $_POST['submission_id'];
-			}elseif(wp_doing_ajax()){
-				wp_die("Please submit a valid submission id",500);
+			}elseif(is_numeric($_POST['submissionid'])){
+				$submission_id	= $_POST['submissionid'];
 			}else{
 				SIM\print_array('No submission id found');
-				return;
+				return false;
 			}
 		}	
 
@@ -1681,8 +1768,7 @@ class Formbuilder{
 		<div class="element_settings_wrapper">
 			<form action='' method='post' id='sim_form_<?php echo $this->datatype;?>_settings' class='sim_form builder'>
 				<div class='form_elements'>
-					<input type='hidden' class='formbuilder' name='formname'	value='<?php echo $this->datatype;?>'>
-					<input type='hidden' class='formbuilder' name='action'		value='save_form_settings'>
+					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formdata->id;?>'>
 					
 					<label class="block">
 						<h4>Submit button text</h4>
@@ -1948,8 +2034,7 @@ class Formbuilder{
 		<div class="emails_wrapper">
 			<form action='' method='post' id='sim_form_<?php echo $this->datatype;?>_emails' class='sim_form builder'>
 				<div class='form_elements'>
-					<input type='hidden' class='formbuilder' name='formname'	value='<?php echo $this->datatype;?>'>
-					<input type='hidden' class='formbuilder' name='action'		value='save_form_emails'>
+					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formdata->id;?>'>
 					
 					<label class="formfield formfieldlabel">
 						Define any e-mails you want to send.<br>
@@ -2398,4 +2483,405 @@ class Formbuilder{
 		</form>
 		<?php
 	}	
+
+	function element_conditions_form($element_id = -1){
+		/* 		
+		A field can have one or more conditions applied to it like:
+			1) hide when field X is Y
+			2) Show when field X is Z
+		Each condition can have multiple rules like:
+			Hide when field X is Y and field A is B 
+			
+		The array structure is therefore:
+			[
+				[0][
+					[rules]	
+							[0]
+							[1]
+					[action]
+				[1]
+					[rules]	
+							[0]
+					[action]
+			]
+		
+		It is also stored at the conditional fields to be able to create efficient JavaScript
+		*/
+
+		$element	= $this->getelementbyid($element_id);
+
+		if($element_id == -1 or empty($element->conditions)){
+			$dummyfieldcondition['rules'][0]["conditional_field"]	= "";
+			$dummyfieldcondition['rules'][0]["equation"]				= "";
+			$dummyfieldcondition['rules'][0]["conditional_field_2"]	= "";
+			$dummyfieldcondition['rules'][0]["equation_2"]			= "";
+			$dummyfieldcondition['rules'][0]["conditional_value"]	= "";
+			$dummyfieldcondition["action"]					= "";
+			$dummyfieldcondition["target_field"]			= "";
+			
+			if($element_id == -1) $element_id			= 0;
+			$element->conditions = [$dummyfieldcondition];
+		}
+		
+		$conditions = maybe_unserialize($element->conditions);
+		
+		ob_start();
+		$counter = 0;
+		foreach($this->form_elements as $el){
+			if(in_array($element_id, (array)unserialize($el->conditions)['copyto'])){
+				$counter++;
+				?>
+				<div class="form_element_wrapper" data-id="<?php echo $el->id;?>" data-formid="<?php echo $this->formdata->id;?>">
+					<button type="button" class="edit_form_element button" title="Jump to conditions element">View conditions of '<?php echo $el->name;?>'</button>
+				</div>
+				<?php
+			}
+		}
+		if($counter>0){
+			$jumbbuttonhtml =  ob_get_clean();
+			if($counter==1){
+				$counter	= 'another element';
+				$any 		= 'the';
+			}else{
+				$counter	= "$counter other elements";
+				$any 		= 'any';
+			}
+			
+			ob_start();
+			?>
+			<div>
+				This element has some conditions defined by <?php echo $counter;?>.<br>
+				Click on <?php echo $any;?> button below to view.
+				<?php echo $jumbbuttonhtml;?>
+			</div><br><br>
+			<?php
+		}
+		?>
+		
+		<form action='' method='post' name='add_form_element_conditions_form'>
+			<h3>Form element conditions</h3>
+			<input type='hidden' class='element_condition' name='formid' value='<?php echo $this->formdata->id;?>'>
+			
+			<input type='hidden' class='element_condition' name='elementid' value='<?php echo $element_id;?>'>
+
+			<?php
+			$lastcondtion_key = array_key_last($conditions);
+			foreach($conditions as $condition_index=>$condition){
+				if(!is_numeric($condition_index)) continue;
+			?>
+			<div class='condition_row' data-condition_index='<?php echo $condition_index;?>'>
+				<span style='font-weight: 600;'>If</span>
+				<br>
+				<?php
+				$lastrule_key = array_key_last($condition['rules']);
+				foreach($condition['rules'] as $rule_index=>$rule){
+					?>
+					<div class='rule_row' data-rule_index='<?php echo $rule_index;?>'>
+						<input type='hidden' class='element_condition combinator' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][combinator]' value='<?php echo $rule['combinator']; ?>'>
+					
+						<select class='element_condition condition_select conditional_field' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][conditional_field]' required>
+						<?php
+							echo $this->input_dropdown($rule['conditional_field'], $element_id);
+						?>
+						</select>
+
+						<select class='element_condition condition_select equation' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][equation]' required>
+							<option value=''		<?php if($rule['equation'] == '')			echo 'selected';?>>---</option>";
+							<option value='changed'	<?php if($rule['equation'] == 'changed')	echo 'selected';?>>has changed</option>
+							<option value='clicked'	<?php if($rule['equation'] == 'clicked')	echo 'selected';?>>is clicked</option>
+							<option value='=='		<?php if($rule['equation'] == '==')			echo 'selected';?>>equals</option>
+							<option value='!='		<?php if($rule['equation'] == '!=')			echo 'selected';?>>is not</option>
+							<option value='>'		<?php if($rule['equation'] == '>')			echo 'selected';?>>greather than</option>
+							<option value='<'		<?php if($rule['equation'] == '<')			echo 'selected';?>>smaller than</option>
+							<option value='checked'	<?php if($rule['equation'] == 'checked')	echo 'selected';?>>is checked</option>
+							<option value='!checked'<?php if($rule['equation'] == '!checked')	echo 'selected';?>>is not checked</option>
+							<option value='== value'<?php if($rule['equation'] == '== value')	echo 'selected';?>>equals the value of</option>
+							<option value='!= value'<?php if($rule['equation'] == '!= value')	echo 'selected';?>>is not the value of</option>
+							<option value='> value'	<?php if($rule['equation'] == '> value')	echo 'selected';?>>greather than the value of</option>
+							<option value='< value'	<?php if($rule['equation'] == '< value')	echo 'selected';?>>smaller than the value of</option>
+							<option value='-'		<?php if($rule['equation'] == '-')			echo 'selected';?>>minus the value of</option>
+							<option value='+'		<?php if($rule['equation'] == '+')			echo 'selected';?>>plus the value of</option>
+						</select>
+
+						<?php
+						//show if -, + or value field istarget value
+						if($rule['equation'] == '-' or $rule['equation'] == '+' or strpos($rule['equation'], 'value') !== false){
+							$hidden = '';
+						}else{
+							$hidden = 'hidden';
+						}
+						?>
+						
+						<span class='<?php echo $hidden;?> condition_form conditional_field_2'>
+							<select class='element_condition condition_select' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][conditional_field_2]'>
+							<?php
+								echo $this->input_dropdown($rule['conditional_field_2'],$element_id);
+							?>
+							</select>
+						</span>
+						
+						<?php
+						if($rule['equation'] == '-' or $rule['equation'] == '+'){
+							$hidden = '';
+						}else{
+							$hidden = 'hidden';
+						}
+						?>
+
+						<span class='<?php echo $hidden;?> condition_form equation_2'>
+							<select class='element_condition condition_select' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][equation_2]'>
+								<option value=''	<?php if($rule['equation_2'] == '')		echo 'selected';?>>---</option>";
+								<option value='=='	<?php if($rule['equation_2'] == '==')	echo 'selected';?>>equals</option>
+								<option value='!='	<?php if($rule['equation_2'] == '!=')	echo 'selected';?>>is not</option>
+								<option value='>'	<?php if($rule['equation_2'] == '>')	echo 'selected';?>>greather than</option>
+								<option value='<'	<?php if($rule['equation_2'] == '<')	echo 'selected';?>>smaller than</option>
+							</select>
+						</span>
+						<?php 
+						if(strpos($rule['equation'], 'value') !== false or in_array($rule['equation'], ['changed','checked','!checked'])){
+							$hidden = 'hidden';
+						}else{
+							$hidden = '';
+						}
+						?>
+						<input  type='text'   class='<?php echo $hidden;?> element_condition condition_form' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][conditional_value]' value="<?php echo $rule['conditional_value'];?>">
+						
+						<button type='button' class='element_condition and_rule condition_form button <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'AND') echo 'active';?>'	title='Add a new "AND" rule to this condition'>AND</button>
+						<button type='button' class='element_condition or_rule condition_form button  <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'OR') echo 'active';?>'	title='Add a new "OR"  rule to this condition'>OR</button>
+						<button type='button' class='remove_condition condition_form button' title='Remove rule or condition'>-</button>
+						<?php
+						if($condition_index == $lastcondtion_key and $rule_index == $lastrule_key){
+							?>
+							<button type='button' class='add_condition condition_form button' title='Add a new condition'>+</button>
+							<button type='button' class='add_condition opposite condition_form button' title='Add a new condition, opposite to to the previous one'>Add opposite</button>
+						<?php
+						}
+						?>
+					</div>
+				<?php 
+				}
+				?>
+				<br>
+				<span style='font-weight: 600;'>then</span><br>
+				
+				<div class='action_row'>
+					<div class='radio_wrapper condition_form'>
+						<label>
+							<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='show' <?php if($condition['action'] == 'show') echo 'checked';?> required>
+							Show this element
+						</label><br>
+						
+						<label>
+							<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='hide' <?php if($condition['action'] == 'hide') echo 'checked';?> required>
+							Hide this element
+						</label><br>
+						
+						<label>
+							<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='toggle' <?php if($condition['action'] == 'toggle') echo 'checked';?> required>
+							Toggle this element
+						</label><br>
+						
+						<label>
+							<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='value' <?php if($condition['action'] == 'value') echo 'checked';?> required>
+							Set property
+						</label>
+						<input type="text" name="element_conditions[<?php echo $condition_index;?>][propertyname1]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname1'];?>">
+						<label> to:</label>
+						<input type="text" name="element_conditions[<?php echo $condition_index;?>][action_value]" class='element_condition' value="<?php echo $condition['action_value'];?>">
+						<br>
+						
+						<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property') echo 'checked';?> required>
+						<label for='property'>Set the</label>
+						
+						<input type="text" list="propertylist" name="element_conditions[<?php echo $condition_index;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
+						<datalist id="propertylist">
+							<option value="value">
+							<option value="min">
+							<option value="max">
+						</datalist>
+						<label for='property'> property to the value of </label>
+						
+						<select class='element_condition condition_select' name='element_conditions[<?php echo $condition_index;?>][property_value]'>
+						<?php echo $this->input_dropdown($condition['property_value'], $element_id);?>
+						</select><br>
+					</div>
+				</div>
+			</div>
+			<?php 
+			}
+			?>
+			<br>
+			<div class="copyfieldswrapper">
+				<label>
+					<input type='checkbox' class="showcopyfields" <?php if(!empty($conditions['copyto'])) echo 'checked';?>>
+					Apply visibility conditions to other fields
+				</label><br><br>
+				
+				<div class='copyfields <?php if(empty($conditions['copyto'])) echo 'hidden';?>'>
+					Check the fields these conditions should apply to as well,<br>
+					This holds only for visibility conditions (show, hide or toggle).<br><br>
+					<?php
+					foreach($this->form_elements as $key=>$element){
+						//do not show the current element itself or wrapped labels
+						if($element->id != $element_id and empty($element->wrap)){
+							if(!empty($conditions['copyto'][$element->id])){
+								$checked = 'checked';
+							}else{
+								$checked = '';
+							}
+							
+							echo "<label>";
+								echo "<input type='checkbox' name='element_conditions[copyto][{$element->id}]' value='{$element->id}' $checked>";
+								echo ucfirst(str_replace('_',' ',$element->name));
+							echo "</label><br>";
+						}
+					}
+					?>
+				</div>
+			</div>
+			<?php
+			echo SIM\add_save_button('submit_form_condition','Save conditions'); ?>
+		</form>
+		<?php
+		$html = ob_get_clean();
+		//print_array($html);
+		return $html;
+	}
+
+	function warning_conditions_form($element_id = -1){
+		$element	= $this->getelementbyid($element_id);
+
+		if($element_id == -1 or empty($element->warning_conditions)){
+			$dummy[0]["user_meta_key"]	= "";
+			$dummy[0]["equation"]		= "";
+			
+			if($element_id == -1) $element_id			= 0;
+			$element->warning_conditions = $dummy;
+		}
+		
+		$conditions 	= maybe_unserialize($element->warning_conditions);
+		
+		$usermeta_keys	= get_user_meta($this->user_id);
+		ksort($usermeta_keys);
+
+		ob_start();
+		?>
+			
+		<label>Do not warn if usermeta with the key</label>
+		<br>
+
+		<div id="conditions_wrapper">
+			<?php
+			foreach($conditions as $condition_index=>$condition){
+				if(!is_numeric($condition_index)) continue;
+				?>
+				<div class='warning_conditions element_conditions' data-index='<?php echo $condition_index;?>'>
+					<input type="hidden" class='warning_condition combinator' name="formfield[warning_conditions][<?php echo $condition_index;?>][combinator]" value="<?php echo $condition['combinator'];?>">
+
+					<input type="text" class="warning_condition meta_key" name="formfield[warning_conditions][<?php echo $condition_index;?>][meta_key]" value="<?php echo $condition['meta_key'];?>" list="meta_key" style="width: fit-content;">
+					<datalist id="meta_key">
+						<?php
+						foreach($usermeta_keys as $key=>$value){
+							// Check if array, store array keys
+							$value 	= maybe_unserialize($value[0]);
+							$data	= '';
+							if(is_array($value)){
+								$keys	= implode(',', array_keys($value));
+								$data	= "data-keys=$keys";
+							}
+							echo "<option value='$key' $data>";
+						}
+
+						?>
+					</datalist>
+
+					<?php
+						$array_keys	= maybe_unserialize($usermeta_keys[$condition['meta_key']][0]);
+					?>
+					<span class="index_wrapper <?php if(!is_array($array_keys)) echo 'hidden';?>">
+						<span>and index</span>
+						<input type="text" class="warning_condition meta_key_index" name='formfield[warning_conditions][<?php echo $condition_index;?>][meta_key_index]' value="<?php echo $condition['meta_key_index'];?>" list="meta_key_index[<?php echo $condition_index;?>]" style="width: fit-content;">
+						<datalist class="meta_key_index_list warning_condition" id="meta_key_index[<?php echo $condition_index;?>]">
+							<?php
+							if(is_array($array_keys)){
+								foreach(array_keys($array_keys) as $key){
+									echo "<option value='$key'>";
+								}
+							}
+							?>
+						</datalist>
+					</span>
+					
+					<select class="warning_condition" name='formfield[warning_conditions][<?php echo $condition_index;?>][equation]'>
+						<option value=''		<?php if($condition['equation'] == '')			echo 'selected';?>>---</option>";
+						<option value='=='		<?php if($condition['equation'] == '==')		echo 'selected';?>>equals</option>
+						<option value='!='		<?php if($condition['equation'] == '!=')		echo 'selected';?>>is not</option>
+						<option value='>'		<?php if($condition['equation'] == '>')			echo 'selected';?>>greather than</option>
+						<option value='<'		<?php if($condition['equation'] == '<')			echo 'selected';?>>smaller than</option>
+					</select>
+					<input  type='text'   class='warning_condition' name='formfield[warning_conditions][<?php echo $condition_index;?>][conditional_value]' value="<?php echo $condition['conditional_value'];?>" style="width: fit-content;">
+					
+					<button type='button' class='warn_cond button <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'AND') echo 'active';?>'	title='Add a new "AND" rule' value="and">AND</button>
+					<button type='button' class='warn_cond button  <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'OR') echo 'active';?>'	title='Add a new "OR"  rule' value="or">OR</button>
+					<button type='button' class='remove_warn_cond  button' title='Remove rule'>-</button>
+
+					<br>
+				</div>
+				<?php 
+			}
+			?>
+		</div>
+		<?php
+		$html = ob_get_clean();
+		//print_array($html);
+		return $html;
+	}
+
+	function maybe_insert_form(){
+		global $wpdb;
+		
+		//check if form row already exists
+		if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `name` = '{$this->datatype}'") != true){
+			//Create a new form row
+			SIM\print_array("Inserting new form in db");
+			
+			$this->insert_form();
+		}
+	}
+
+	function process_files($uploaded_files, $inputname){
+		//loop over all files uploaded in this fileinput
+		foreach ($uploaded_files as $key => $url){
+			$urlparts 	= explode('/',$url);
+			$filename	= end($urlparts);
+			$path		= SIM\url_to_path($url);
+			$targetdir	= str_replace($filename,'',$path);
+			
+			//add input name to filename
+			$filename	= "{$inputname}_$filename";
+			
+			//also add submission id if not saving to meta
+			if(empty($this->formdata->settings['save_in_meta'])){
+				$filename	= $this->formresults['id']."_$filename";
+			}
+			
+			//Create the filename
+			$i = 0;
+			$target_file = $targetdir.$filename;
+			//add a number if the file already exists
+			while (file_exists($target_file)) {
+				$i++;
+				$target_file = "$targetdir.$filename($i)";
+			}
+	
+			//if rename is succesfull
+			if (rename($path, $target_file)) {
+				//update in formdata
+				$this->formresults[$inputname][$key]	= str_replace(ABSPATH,'',$target_file);
+			}else {
+				//update in formdata
+				$this->formresults[$inputname][$key]	= str_replace(ABSPATH,'',$path);
+			}
+		}
+	}
 }

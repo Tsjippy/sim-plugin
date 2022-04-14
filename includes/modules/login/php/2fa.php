@@ -8,8 +8,6 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use stdClass;
 
-use function SIM\get_module_option;
-
 if(!class_exists('BaconQrCode\Renderer\ImageRenderer')){
     wp_die("bacon-qr-code interface does not exist. Please run 'composer require bacon/bacon-qr-code'");
 }
@@ -50,17 +48,6 @@ function setupTimeCode(){
 
     return $setup_details;
 }
-
-//request an e-mail code via AJAX
-add_action('wp_ajax_nopriv_request_email_code',function(){
-    $username   = sanitize_text_field($_POST['username']);
-    $user       = get_user_by('login', $username);
-    if($user){
-        sendEmailCode($user);
-
-        wp_die("E-mail send to ".$user->user_email);
-    }
-});
 
 function sendEmailCode($user){
     $email_code  = mt_rand(1000000000,9999999999);
@@ -197,114 +184,6 @@ add_filter( 'wp_authenticate_user', function ( $user) {
 
     return $user;
 }); 
-
-//check username and password validity via ajax
-add_action ( 'wp_ajax_check_cred', function(){
-    wp_die('Already logged in');
-});
-
-add_action ( 'wp_ajax_nopriv_check_cred', function(){
-    $username   = sanitize_text_field($_POST['username']);
-    $password   = sanitize_text_field($_POST['password']);
-
-    if(!empty($username) and !empty($password)){
-        //get user
-        $user   = get_user_by('login',$username);
-
-        //validate credentials
-        if($user and wp_check_password($password, $user->data->user_pass, $user->ID)){
-            //get 2fa methods for this user
-            $methods  = get_user_meta($user->ID,'2fa_methods',true);
-
-            SIM\clean_up_nested_array($methods);
-            
-            //return the methods
-            if(!empty($methods)){
-                wp_die(json_encode(array_values($methods)));
-            //no 2fa setup yet, login straight away
-            }else{
-                user_login();
-            }
-        }
-    }
-
-    SIM\print_array("username: $username, password: $password");
-    wp_die('false');
-});
-
-add_action ( 'wp_ajax_save_2fa_settings', function(){
-    SIM\verify_nonce('save2fasettings_nonce');
-
-    if(!is_user_logged_in()) wp_die("You should be logged in!", 500);
-    
-    $user_id = get_current_user_id();
-
-    $new_methods    = $_POST['2fa_methods'];
-    if(!is_array($new_methods)) wp_die('You should select at least one second factor for login', 500);
-
-    $old_methods    = (array)get_user_meta($user_id,'2fa_methods', true);
-    
-    $twofa  = new TwoFactorAuth();
-
-    //we just enabled the authenticator
-    if(in_array('authenticator', $new_methods) and !in_array('authenticator', $old_methods)){
-        $secret     = $_POST['auth_secret'];
-        $secretkey  = $_POST['secretkey'];
-        $hash       = get_user_meta($user_id,'2fa_hash',true);
-
-        //we should have submitted an secret
-        if(empty($secret)){
-            wp_die("You have to submit a code when setting up the authenticator",500);
-        }
-
-        //we should not have changed the secretkey
-        if(!password_verify($secretkey,$hash)){
-            wp_die("Why do you try to hack me?",500);
-        }
-            
-        $last2fa        = '';
-        if($twofa->verifyCode($secretkey, $secret, 1, null, $last2fa)){
-            //store in usermeta
-            update_user_meta($user_id,'2fa_key',$secretkey);
-            update_user_meta($user_id,'2fa_last',$last2fa);
-        }else{
-            wp_die("Could not verify your code", 500);
-        } 
-
-        $message    = "Succesfully enabled authenticator as a second factor";
-    }
-
-    //we just enabled email verification
-    if(in_array('email', $new_methods) and !in_array('email', $old_methods)){
-        $userdata   = get_userdata($user_id);
-
-        SIM\try_send_signal(
-            "Hi ".$userdata->first_name.",\n\nYou have succesfully setup e-mail verification on ".SITENAME,
-            $user_id
-        );
-
-        //Send e-mail
-        $emailVerfEnabled    = new EmailVerfEnabled($userdata);
-	    $emailVerfEnabled->filterMail();
-						
-	    wp_mail( $userdata->user_email, $emailVerfEnabled->subject, $emailVerfEnabled->message);
-    }
-
-    //make sure we keep webauthn enabled
-    if(in_array('webauthn',$old_methods)){
-        $new_methods[]  = 'webauthn';
-    }
-
-    //store all methods. We will not come here if one of the failed
-    update_user_meta($user_id,'2fa_methods',$new_methods);
-
-    wp_die(json_encode(
-        [
-            'message'	=> $message,
-            'callback'	=> 'saved2fa'
-        ]
-    ));
-});
 
 //Redirect to 2fa page if not setup
 add_action('wp_footer', function(){

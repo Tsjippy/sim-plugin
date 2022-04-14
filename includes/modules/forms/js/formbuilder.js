@@ -1,173 +1,5 @@
-//*		AFTER AJAX CALLS *//
-window['after_form_element_submit'] = function(result,responsdata){
-	try{
-		if (result.status >= 200 && result.status < 400) {
-			//First clear any previous input
-			clearforminputs();
-			
-			//Add the new element to the form, first convert the received html to nodes
-			var template		= document.createElement('template');
-			template.innerHTML	= responsdata.html;
-			var node			= template.content.firstChild;
-			
-			//insert the node
-			referenceNode = document.querySelector('form#sim_form_'+responsdata.formname+' .form_elements [data-priority="'+(parseInt(responsdata.index)-1)+'"]');
-			if(referenceNode == null){
-				var form_div = document.querySelector('form#sim_form_'+responsdata.formname+' .form_elements');
-				form_div.insertAdjacentElement('beforeend',node);
-			}else{
-				referenceNode.parentNode.insertBefore(node, referenceNode.nextSibling);
-			}
-			
-			fix_element_numbering(document.querySelector('form#sim_form_'+responsdata.formname));
-			
-			//add resize listener
-			resize_ob.observe(node);
-			
-			//hide_modals();
-		}
-	}catch(err) {
-		console.error(err);
-	}
-}
-
-//Runs after an element update
-window['update_form_element'] = function(result,responsdata){
-	try{
-		if (result.status >= 200 && result.status < 400) {
-			//Replace html with new html
-			document.querySelectorAll('form#sim_form_'+responsdata.formid+' .form_elements [data-id="'+responsdata.index+'"]').forEach(el=>el.outerHTML = responsdata.html);
-		}
-	}catch(err) {
-		console.error(err);
-	}
-}
-
-//fill the element conditions tab
-function add_conditions_html(result,responsdata){
-	try{
-		modal.querySelector('.element_conditions_wrapper').innerHTML = responsdata.conditions_html;
-
-		modal.querySelectorAll('.condition_select').forEach(function(select){
-			select._niceselect = NiceSelect.bind(select,{searchable: true});
-		});
-	}catch(err) {
-		console.error(err);
-	}
-}
-window['conditions_html'] = add_conditions_html;
-
-function add_warning_conditions_form(result,responsdata){
-	try{
-		modal.querySelector('#warning_conditions_form').innerHTML = responsdata.warning_conditions;
-
-		modal.querySelectorAll('#warning_conditions_form select').forEach(function(select){
-			select._niceselect = NiceSelect.bind(select,{searchable: true});
-		});
-	}catch(err) {
-		console.error(err);
-	}
-}
-
-//fill the form after we have clicked the edit button
-window['prefillforminput'] = function(result,responsdata){
-	try{
-		if (result.status >= 200 && result.status < 400) {
-			clearforminputs();
-			add_conditions_html(result,responsdata);
-
-			add_warning_conditions_form(result,responsdata);
-
-			//parse data
-			var original = responsdata.original;
-			var form = modal.querySelector('form');
-			show_condional_fields(original['type'],form);
-			//loop over all elements in the modal
-			modal.querySelectorAll('.formbuilder').forEach(function(el){
-				if(el.name != null){
-					//get the elements name
-					var name = el.name.replace('formfield[','').replace(']','');
-					
-					//Check if there is a value for this element
-					if(original[name] != undefined && original[name] != ''){						
-						if(el.type == 'checkbox'){
-							if(original[name]==true){
-								el.checked = true;
-							}
-							
-							/* if(el.name == "formfield[multiple]"){
-								multiple_changed(el);
-								form.querySelector('select.formbuilder.array').classList.replace('hidden', 'hide');
-							} */
-						}else{
-							//set the value
-							el.value = original[name];
-						}
-						
-						if(el.type == "select-one"){
-							if(el.selectedOptions.length > 0){
-								el.selectedOptions[0].defaultSelected = true;
-
-								if(el._niceselect != 'undefined'){
-									el._niceselect.update();
-								}
-							}
-						}
-						
-						if(el.classList.contains('wp-editor-area')){
-							tinyMCE.get(el.id).setContent(original[name]);
-						}
-					}
-				}
-			});
-			
-			modal.querySelector('[name="element_id"]').value = responsdata.element_id;
-			modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Add','Update');		
-			modal.classList.remove('hidden');
-			
-			//show edit button again
-			var loader 			= document.querySelector('.form_element_wrapper[data-id="'+responsdata.element_id+'"][data-formid="'+responsdata.formid+'"] .loadergif');
-			var template		= document.createElement('template');
-			template.innerHTML	= modal.originalhtml;
-			var node			= template.content.firstChild;
-			
-			loader.parentNode.replaceChild(node, loader);
-		}else{
-			console.log(result);
-		}
-	}catch(err) {
-		console.error(err);
-	}
-}
-
-//After removing the row in db, reflect changes on screen as well
-window['removerow'] = function (result,responsdata){
-	try{
-		if (result.status >= 200 && result.status < 400) {
-
-			var row	= document.querySelector('[data-formid="'+responsdata.formid+'"][data-id="'+responsdata.elementindex+'"]');
-			var form	= row.closest('form');
-			//remove the formelement row
-			row.remove();
-			
-			fix_element_numbering(form);
-		}
-	}catch(err) {
-		console.error(err);
-	}
-}
-
-//fix the row indexes after adding or removing a row
-window['after_reorder'] = function(result,responsdata){
-	try{
-		reordering_busy = false;
-	}catch(err) {
-		console.error(err);
-	}
-}
-
 /* FUNCTIONS */
-function clearforminputs(){
+function clearFormInputs(){
 	try {
 		//Loop to clear the modalform
 		modal.querySelectorAll('input:not([type=hidden]), select, textarea, [name=insertafter], [name=element_id]').forEach(function(el){
@@ -185,7 +17,7 @@ function clearforminputs(){
 			}
 			
 			if(el.type == "select-one"){
-				remove_default_select(el);
+				formFunctions.removeDefaultSelect(el);
 				
 				if(el._niceselect != undefined){
 					el._niceselect.clear();
@@ -198,6 +30,293 @@ function clearforminputs(){
 	}
 	catch(err) {
 		console.error(err);
+	}
+}
+
+function fixElementNumbering(form){
+	form.querySelectorAll('.form_element_wrapper').forEach((el, index)=>{
+		el.dataset.priority = index+1;
+	});
+}
+
+function addWarningConditionsForm(response){
+	if(modal.querySelector('#warning_conditions_form') == null) return;
+	try{
+		modal.querySelector('#warning_conditions_form').innerHTML = response.warning_conditions;
+
+		modal.querySelectorAll('#warning_conditions_form select').forEach(function(select){
+			select._niceselect = NiceSelect.bind(select,{searchable: true});
+		});
+	}catch(err) {
+		console.error(err);
+	}
+}
+
+function addConditionsForm(response){
+	//fill the element conditions tab
+	modal.querySelector('.element_conditions_wrapper').innerHTML = response;
+
+	// Add nice selects
+	modal.querySelectorAll('.condition_select').forEach(function(select){
+		select._niceselect = NiceSelect.bind(select,{searchable: true});
+	});
+}
+
+// add new element
+async function showEmptyModal(target){
+	target.classList.add('clicked');
+
+	var formid					= target.dataset.formid;
+	if(formid == undefined){
+		formid = target.closest('.form_element_wrapper').dataset.formid;
+	}
+	
+	clearFormInputs();
+	
+	if(form_element_wrapper != null){
+		modal.querySelector('[name="insertafter"]').value = form_element_wrapper.dataset.priority;
+	}
+	
+	modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Update','Add');
+	
+	modal.querySelector('.element_conditions_wrapper').innerHTML = '<img src="'+sim.loading_gif+'" style="display:block; margin:0px auto 0px auto;">';
+	
+	modal.classList.remove('hidden');
+
+	var formdata = new FormData();
+	formdata.append('elementid','-1');
+	formdata.append('formid', formid);
+	var response = await fetchRestApi('forms/request_form_conditions_html', formdata);
+
+	addConditionsForm(response);
+}
+
+//edit existing element
+async function requestEditElementData(target){
+	target.classList.add('clicked');
+
+	var elementid					= form_element_wrapper.dataset.id;
+	var formid						= target.closest('.form_element_wrapper').dataset.formid;
+	modal.querySelector('[name="element_id"]').value = form_element_wrapper.dataset.id;
+	modal.originalhtml = target.outerHTML;
+	var parent			= target.parentNode;
+	showLoader(target);
+	parent.querySelector('.loadergif').style.margin = '5px 19px 0px 19px';
+	
+	var formdata = new FormData();
+	formdata.append('elementid',elementid);
+	formdata.append('formid',formid);
+	
+	var response = await fetchRestApi('forms/request_form_element', formdata);
+
+	if(response){
+		//fill the form after we have clicked the edit button
+		clearFormInputs();
+
+		addConditionsForm(response.conditions_html);
+
+		addWarningConditionsForm(response.warning_conditions);
+
+		//parse data
+		var original = response.original;
+		var form = modal.querySelector('form');
+		show_condional_fields(original['type'],form);
+		//loop over all elements in the modal
+		modal.querySelectorAll('.formbuilder').forEach(function(el){
+			if(el.name != null){
+				//get the elements name
+				var name = el.name.replace('formfield[','').replace(']','');
+				
+				//Check if there is a value for this element
+				if(original[name] != undefined && original[name] != ''){						
+					if(el.type == 'checkbox'){
+						if(original[name]==true){
+							el.checked = true;
+						}
+						
+						/* if(el.name == "formfield[multiple]"){
+							multiple_changed(el);
+							form.querySelector('select.formbuilder.array').classList.replace('hidden', 'hide');
+						} */
+					}else{
+						//set the value
+						el.value = original[name];
+					}
+					
+					if(el.type == "select-one"){
+						if(el.selectedOptions.length > 0){
+							el.selectedOptions[0].defaultSelected = true;
+
+							if(el._niceselect != 'undefined'){
+								el._niceselect.update();
+							}
+						}
+					}
+					
+					if(el.classList.contains('wp-editor-area')){
+						tinyMCE.get(el.id).setContent(original[name]);
+					}
+				}
+			}
+		});
+		
+		modal.querySelector('[name="element_id"]').value = elementid;
+		modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Add','Update');		
+		modal.classList.remove('hidden');
+		
+		//show edit button again
+		var loader 			= document.querySelector(`.form_element_wrapper[data-id="${elementid}"][data-formid="${formid}"] .loadergif`);
+		var template		= document.createElement('template');
+		template.innerHTML	= modal.originalhtml;
+		var node			= template.content.firstChild;
+		
+		loader.parentNode.replaceChild(node, loader);
+	}
+}
+
+async function addFormElement(target){
+	var form		= target.closest('form');
+	var response	= await submitForm(target, 'forms/add_formfield');
+
+	if(response){
+		if(form.querySelector('[name="element_id"]').value == ''){
+			//First clear any previous input
+			clearFormInputs();
+			
+			//Add the new element to the form, first convert the received html to nodes
+			var template		= document.createElement('template');
+			template.innerHTML	= response.html;
+			var node			= template.content.firstChild;
+			
+			//insert the node
+			referenceNode = document.querySelector('.form_elements .clicked');
+			referenceNode.classList.remove('clicked');
+			referenceNode.closest('.form_element_wrapper').parentNode.insertBefore(node, referenceNode.closest('.form_element_wrapper').nextSibling);
+			
+			fixElementNumbering(form);
+			
+			//add resize listener
+			resize_ob.observe(node);
+		}else{
+			//Runs after an element update
+			document.querySelector('.form_elements .clicked').closest('.form_element_wrapper').outerHTML = response.html;
+		}
+
+		hide_modals();
+
+		display_message(response.message);
+	}
+}
+
+async function sendElementSize(el, widthpercentage){
+	if(widthpercentage != el.dataset.widthpercentage && Math.abs(widthpercentage - el.dataset.widthpercentage)>5){
+		el.dataset.widthpercentage = widthpercentage;
+		
+		//send new width over AJAX
+		var remove_form_element_nonce = document.querySelector('[name="remove_form_element_nonce"]').value;
+		var formdata = new FormData();
+		formdata.append('formid',el.closest('.form_element_wrapper').dataset.formid);
+		formdata.append('elementid',el.closest('.form_element_wrapper').dataset.id);
+		formdata.append('new_width',widthpercentage);
+		
+		response = await fetchRestApi('forms/edit_formfield_width', formdata);
+
+		if(response){
+			hide_modals();
+
+			display_message(response);
+		}
+	}
+}
+
+async function remove_element(target){
+	var parent			= target.parentNode;
+	var elementwrapper	= target.closest('.form_element_wrapper');
+	var formid			= elementwrapper.dataset.formid;
+	var elementindex 	= elementwrapper.dataset.id;
+	var form			= target.closest('form');
+
+	showLoader(target);
+	var loader			= parent.querySelector('.loadergif');
+	loader.style.paddingRight = '10px';
+	loader.classList.remove('loadergif');
+
+	var formdata = new FormData();
+	formdata.append('formid',formid);
+
+	formdata.append('elementindex',elementindex);
+	
+	response = await fetchRestApi('forms/remove_element', formdata);
+
+	if(response){
+		//remove the formelement row
+		elementwrapper.remove();
+		
+		fixElementNumbering(form);
+
+		display_message(response);
+	}
+}
+
+ //Fires after element reorder
+async function reorderformelements(event){
+	if(reordering_busy == false){
+		reordering_busy = true;
+
+		var old_index	= parseInt(event.item.dataset.priority);
+
+		fixElementNumbering(event.item.closest('form'));
+		
+		var difference = event.newIndex-event.oldIndex
+
+		var formdata = new FormData();
+		formdata.append('formid',event.item.dataset.formid);
+		formdata.append('old_index', old_index);
+		formdata.append('new_index',(old_index+difference));
+		
+		var response	= await fetchRestApi('forms/reorder_form_elements', formdata);
+
+		if(response){
+			reordering_busy = false;
+
+			display_message(response);
+		}
+	}else{
+		Swal.fire({
+			icon: 'error',
+			title: 'ordering already in progress, please wait',
+			confirmButtonColor: "#bd2919",
+		});
+	}
+}
+
+async function saveFormConditions(target){
+	var response	= await submitForm(target, 'forms/save_element_conditions');
+
+	if(response){
+		hide_modals();
+
+		display_message(response);
+	}
+}
+
+async function saveFormSettings(target){
+	var response	= await submitForm(target, 'forms/save_form_settings');
+
+	if(response){
+		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
+
+		display_message(response);
+	}
+}
+
+async function saveFormEmails(target){
+	var response	= await submitForm(target, 'forms/save_form_emails');
+
+	if(response){
+		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
+
+		display_message(response);
 	}
 }
 
@@ -218,54 +337,11 @@ const resize_ob = new ResizeObserver(function(entries) {
 		}
 		
 		clearTimeout(doit);
-		doit = setTimeout(send_element_size, 500,element,widthpercentage);
+		doit = setTimeout(sendElementSize, 500,element,widthpercentage);
 	}
 });
 
-function send_element_size(el,widthpercentage){
-	if(widthpercentage != el.dataset.widthpercentage && Math.abs(widthpercentage - el.dataset.widthpercentage)>5){
-		el.dataset.widthpercentage = widthpercentage;
-		
-		//send new width over AJAX
-		var remove_form_element_nonce = document.querySelector('[name="remove_form_element_nonce"]').value;
-		var formdata = new FormData();
-		formdata.append('action','edit_formfield_width');
-		formdata.append('formid',el.closest('.form_element_wrapper').dataset.formid);
-		formdata.append('elementid',el.closest('.form_element_wrapper').dataset.id);
-		formdata.append('new_width',widthpercentage);
-		formdata.append('remove_form_element_nonce',remove_form_element_nonce);
-		sendAJAX(formdata);
-	}
-}
 
-//Fires after element reorder
-function reorderformelements(event){
-	if(reordering_busy == false){
-		reordering_busy = true;
-
-		var old_index	= parseInt(event.item.dataset.priority);
-
-		fix_element_numbering(event.item.closest('form'));
-		
-		var difference = event.newIndex-event.oldIndex
-		
-		var remove_form_element_nonce = document.querySelector('[name="remove_form_element_nonce"]').value;
-		
-		var formdata = new FormData();
-		formdata.append('action','reorder_form_elements');
-		formdata.append('formid',event.item.dataset.formid);
-		formdata.append('old_index', old_index);
-		formdata.append('new_index',(old_index+difference));
-		formdata.append('remove_form_element_nonce',remove_form_element_nonce);
-		sendAJAX(formdata);
-	}else{
-		Swal.fire({
-			icon: 'error',
-			title: 'ordering already in progress, please wait',
-			confirmButtonColor: "#bd2919",
-		});
-	}
-}
 
 //show conditional fields based on on the element type
 function show_condional_fields(type, form){
@@ -375,53 +451,6 @@ function show_or_hide_controls(target){
 		}
 }
 
-function show_empty_modal(target){
-	var request_form_element_nonce	= document.querySelector('[name="request_form_element_nonce"]').value;
-	var formname					= target.dataset.formname;
-	if(formname == undefined){
-		formname = target.closest('.form_element_wrapper').dataset.formname;
-	}
-	
-	clearforminputs();
-	
-	if(form_element_wrapper != null){
-		modal.querySelector('[name="insertafter"]').value = form_element_wrapper.dataset.priority;
-	}
-	
-	modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Update','Add');
-	
-	modal.querySelector('.element_conditions_wrapper').innerHTML = '<img src="'+sim.loading_gif+'" style="display:block; margin:0px auto 0px auto;">';
-	
-	var formdata = new FormData();
-	formdata.append('action','request_form_conditions_html');
-	formdata.append('elementindex','-1');
-	formdata.append('request_form_element_nonce',request_form_element_nonce);
-	formdata.append('formname',formname);
-	sendAJAX(formdata);
-
-	modal.classList.remove('hidden');
-}
-
-function request_edit_element_data(target){
-	var elementid					= form_element_wrapper.dataset.id;
-	var request_form_element_nonce	= document.querySelector('[name="request_form_element_nonce"]').value;
-	var formid						= target.closest('.form_element_wrapper').dataset.formid;
-	modal.querySelector('[name="element_id"]').value = form_element_wrapper.dataset.id;
-	
-	modal.originalhtml = target.outerHTML;
-	
-	var parent			= target.parentNode;
-	showLoader(target);
-	parent.querySelector('.loadergif').style.margin = '5px 19px 0px 19px';
-	
-	var formdata = new FormData();
-	formdata.append('action','request_form_elements');
-	formdata.append('elementid',elementid);
-	formdata.append('request_form_element_nonce',request_form_element_nonce);
-	formdata.append('formid',formid);
-	sendAJAX(formdata);
-}
-
 function maybe_remove_element(target){
 	if(typeof(Swal)=='undefined'){
 		remove_element(target);
@@ -440,25 +469,6 @@ function maybe_remove_element(target){
 			}
 		})
 	}
-}
-
-function remove_element(target){
-	var parent			= target.parentNode;
-	var elementwrapper	= target.closest('.form_element_wrapper');
-	var formid		= elementwrapper.dataset.formid;
-	var elementindex 	= elementwrapper.dataset.id;
-
-	showLoader(target);
-	parent.querySelector('.loadergif').style.paddingRight = '10px';
-	var remove_form_element_nonce = document.querySelector('[name="remove_form_element_nonce"]').value;
-	
-	var formdata = new FormData();
-	formdata.append('action','remove_formfield');
-	formdata.append('formid',formid);
-
-	formdata.append('elementindex',elementindex);
-	formdata.append('remove_form_element_nonce',remove_form_element_nonce);
-	sendAJAX(formdata);
 }
 
 function show_or_hide_condition_fields(target){
@@ -540,7 +550,7 @@ function add_condition_rule(target){
 
 function addrulerow(row){
 	//Insert a new rule row
-	var clone		= clone_node(row);
+	var clone		= formFunctions.cloneNode(row);
 	
 	var cloneindex	= parseInt(row.dataset.rule_index) + 1;
 
@@ -555,9 +565,9 @@ function add_condition(target){
 	var row = target.closest('.condition_row');
 	
 	if(target.classList.contains('opposite')){
-		clone = clone_node(row, false);
+		clone = formFunctions.cloneNode(row, false);
 	}else{
-		clone = clone_node(row);
+		clone = formFunctions.cloneNode(row);
 	}
 	
 	var cloneindex	= parseInt(row.dataset.condition_index) + 1;
@@ -575,7 +585,7 @@ function add_condition(target){
 		clone.querySelectorAll('.element_condition').forEach(function(el){
 			if(el.tagName == 'SELECT' && el.classList.contains('equation')){
 				//remove all default selected
-				remove_default_select(el);
+				formFunctions.removeDefaultSelect(el);
 				
 				//get the original value which was lost during cloning
 				var original_select = row.querySelector('.equation');
@@ -698,12 +708,6 @@ function remove_condition_rule(target){
 	}
 }
 
-function fix_element_numbering(form){
-	form.querySelectorAll('.form_element_wrapper').forEach((el, index)=>{
-		el.dataset.priority = index+1;
-	})
-}
-
 function fix_rule_numbering(condition_row){
 	var rulerows	= condition_row.querySelectorAll('.element_conditions_wrapper .rule_row');
 	var i = 0;
@@ -751,9 +755,6 @@ function fix_condition_numbering(){
 function focus_first(){
 	modal.scrollTo(0,0);
 	modal.querySelector('[name="add_form_element_form"] .nice-select').focus();
-	
-	//clear the callback variable 
-	callback		= null;
 }
 
 reordering_busy = false;
@@ -794,16 +795,28 @@ window.addEventListener("click", event => {
 	
 	//open the modal to add an element
 	if (target.classList.contains('add_form_element') || target.name == 'createform'){
-		show_empty_modal(target);
+		showEmptyModal(target);
 	}
 	
 	if(target.name == 'submit_form_element'){
-		callback		= focus_first;
+		addFormElement(target);
+	}
+
+	if(target.name == 'submit_form_condition'){
+		saveFormConditions(target);
+	}
+
+	if(target.name == 'submit_form_setting'){
+		saveFormSettings(target);
+	}
+
+	if(target.name == 'submit_form_emails'){
+		saveFormEmails(target);
 	}
 	
 	//request form values via AJAX
 	if (target.classList.contains('edit_form_element')){
-		request_edit_element_data(target);
+		requestEditElementData(target);
 	}
 	
 	if (target.classList.contains('remove_form_element')){
@@ -923,7 +936,7 @@ window.addEventListener("click", event => {
 	//copy warning_conditions row
 	if(target.matches('.warn_cond')){
 		//copy the row
-		var new_node = clone_node(target.closest('.warning_conditions'));
+		var new_node = formFunctions.cloneNode(target.closest('.warning_conditions'));
 
 		document.getElementById('conditions_wrapper').insertAdjacentElement('beforeEnd', new_node);
 

@@ -1,6 +1,7 @@
 <?php
 namespace SIM\CONTENTFILTER;
 use SIM;
+use WP_Error;
 
 //Secure the rest api
 add_filter( 'rest_authentication_errors', function( $result ) {	
@@ -17,7 +18,7 @@ add_filter( 'rest_authentication_errors', function( $result ) {
 		// Our custom authentication check should have no effect on logged-in requests
 		return $result;
     }else{
-		wp_die('You do not have permission for this.');
+		return new WP_Error( 'forbidden_access', __( 'You should be logged in to perform this request' ), array( 'status' => rest_authorization_required_code() ) );
 	}
 });
 

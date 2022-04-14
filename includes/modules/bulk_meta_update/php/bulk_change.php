@@ -23,7 +23,7 @@ function bulkchangeMeta($metaKey, $allowedRoles, $returnFamily){
 		
 		$html = "
 			<h2 id='{$metaKey}_table_title' class='table_title'>$displayName</h2>
-			<table class='sim-table' data-action='bulk_change_meta'>
+			<table class='sim-table' data-url='bulkchange\bulk_change_meta'>
 				<thead>
 					<tr>
 						<th class='dsc'>Name</th>

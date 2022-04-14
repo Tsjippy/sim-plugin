@@ -15,9 +15,6 @@ add_action( 'wp_enqueue_scripts', function($hook){
 		}
 		
 		//home.js
-		wp_enqueue_script('sim_home_script',plugins_url('js/home.js', __DIR__), array('sweetalert'), ModuleVersion, true);
-
-		//Welcome shortcode
-		wp_register_script('sim_message_script', plugins_url('js/hide_welcome.js', __DIR__), array(), ModuleVersion, true);
+		wp_enqueue_script('sim_home_script',plugins_url('js/home.min.js', __DIR__), array('sweetalert'), ModuleVersion, true);
 	}
 });

@@ -70,34 +70,6 @@ add_shortcode("change_password", function(){
 	return password_reset_form($user);
 });
 
-//Save the password....
-add_action ( 'wp_ajax_update_password', __NAMESPACE__.'\process_pw_update');
-add_action ( 'wp_ajax_nopriv_update_password', __NAMESPACE__.'\process_pw_update');
-function process_pw_update(){
-	SIM\print_array("updating password");
-
-	$user_id	= $_POST['userid'];
-	if(!is_numeric($user_id))	wp_die('Invalid user id given', 500);
-
-	$userdata	= get_userdata($user_id);	
-	if(!$userdata)	wp_die('Invalid user id given', 500);
-
-	if (empty($_POST['pass1']))	wp_die('Password cannot be empty', 500);
-
-	if($_POST['pass1'] != $_POST['pass2'])	wp_die("Passwords do not match, try again.",500);
-
-	SIM\verify_nonce('password_reset_nonce');
-	
-	wp_set_password( $_POST['pass1'], $user_id );
-	wp_die(
-		json_encode([
-			'message'	=>'Changed password succesfully',
-			'redirect'	=> SITEURL."/?showlogin=$userdata->user_login"
-		])
-	);
-}
-
-
 #####
 # ACCOUNT REQUEST #
 #####
@@ -161,49 +133,3 @@ add_shortcode('request_account', function ($atts){
 	
 	return ob_get_clean();
 });
-
-// Handle the request
-//Save the password....
-add_action ( 'wp_ajax_requestuseraccount', __NAMESPACE__.'\requestUserAccount');
-add_action ( 'wp_ajax_nopriv_requestuseraccount', __NAMESPACE__.'\requestUserAccount');
-function requestUserAccount(){
-	$first_name	= $_POST['first_name'];
-	if(empty($first_name))	wp_die('No first name given', 500);
-
-	$last_name	= $_POST['last_name'];
-	if(empty($last_name))	wp_die('No last name given', 500);
-
-	$email	= $_POST['email'];
-	if(empty($email))	wp_die('No e-mail given', 500);
-
-	$pass1	= $_POST['pass1'];
-	$pass2	= $_POST['pass2'];
-
-	if($pass1 != $pass2)	wp_die("Passwords do not match, try again.",500);
-
-	$username	= get_available_username($first_name, $last_name);
-
-	// Creating account
-	//Build the user
-	$userdata = array(
-		'user_login'    => $username,
-		'last_name'     => $last_name,
-		'first_name'    => $first_name,
-		'user_email'    => $email,
-		'display_name'  => "$first_name $last_name",
-		'user_pass'     => $pass1
-	);
-
-	//Insert the user
-	$user_id = wp_insert_user( $userdata ) ;
-	
-	if(is_wp_error($user_id)){
-		SIM\print_array($user_id->get_error_message());
-		wp_die($user_id->get_error_message(),500);
-	}
-
-	// Disable the useraccount until approved by admin
-	update_user_meta( $user_id, 'disabled', 'pending' );
-
-	wp_die( 'Useraccount successfully created, you will receive an e-mail as soon as it gets approved.'	);
-}

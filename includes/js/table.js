@@ -1,18 +1,3 @@
-window['updated_table_value']		= function(result,responsdata){
-	//if there is a subid, make sure the new value shows up on the right place
-	var loaders	= document.querySelectorAll('td .loadergif');
-	
-	loaders.forEach(img=>{
-		var value = responsdata.new_value;
-		//Replace the input element with its value
-		if(value == "") value = "X";
-		img.closest('td').innerHTML = value;
-	});
-	
-	//reset editing indicator
-	editedel = '';
-}
-
 function add_input_event_listeners(cell){
 	var inputs	= cell.querySelectorAll('input,select,textarea');
 		
@@ -95,14 +80,14 @@ function edit_td(target){
 	add_input_event_listeners(target);
 }
 
-//function to get the temp input value and save it over AJAX
+//function to get the temp input value and save it using the rest api
 var running = false;
-function processInput(event,target){
+async function processInput(event, target){
 	if(typeof(target)=='undefined'){
 		var target	= event.target;
 	}
 	
-	form = target.closest('td');
+	cell = target.closest('td');
 	
 	if(running == target){
 		return;
@@ -110,29 +95,35 @@ function processInput(event,target){
 	running = target;	
 	setTimeout(function(){ running = false;}, 500);	
 	
-	var value			= get_field_value(target,false);
+	var value			= formFunctions.getFieldValue(target, false);
 	var table			= target.closest('table');
 	
 	//remove all event listeners
 	document.removeEventListener("click", outsideclicked);
 	
 	//Only update when needed
-	if (value != old_value || table.dataset.action == undefined){		
+	if (value != old_value){		
 		//get the updated fieldname from the column header
 		var formdata = new FormData();
-		formdata.append('action', table.dataset.action);
 		formdata.append('value', value);
 
-		for( var key in target.closest('td').dataset){
-			formdata.append(key, target.closest('td').dataset[key]);
+		for( var key in cell.dataset){
+			formdata.append(key, cell.dataset[key]);
 		}
 		for( var key in target.closest('tr').dataset){
 			formdata.append(key, target.closest('tr').dataset[key]);
 		}
 		
-		showLoader(target.closest('td').firstChild);
+		showLoader(cell.firstChild);
 		
-		sendAJAX(formdata);
+		response = await fetchRestApi(table.dataset.url, formdata);
+
+		if(response){
+			cell.innerHTML = value;
+
+			//reset editing indicator
+			editedel = '';
+		}
 	}else{
 		console.log(value)
 		target.closest('td').innerHTML = old_text;

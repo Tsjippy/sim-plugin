@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --entry ./select_picture.js --output-path . --output-filename select_picture.min.js --progress --mode=production",
     "watch": "webpack --entry ./select_picture.js --output-path . --output-filename select_picture.min.js --progress --watch",
-    "main": "webpack --watch --entry ./main_new.js --output-path . --output-filename main.min.js --progress --mode=development --devtool source-map"
+    "main": "webpack --watch --entry ./main_new.js --output-path . --output-filename main.min.js --progress --mode=development --devtool source-map",
+    "test": "webpack"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

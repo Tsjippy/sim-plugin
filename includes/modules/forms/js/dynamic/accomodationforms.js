@@ -1,7 +1,7 @@
 var accomodation = new function(){
 	document.addEventListener('DOMContentLoaded', function() {
 		console.log('Dynamic accomodation forms js loaded');
-		tidy_multi_inputs();
+		formFunctions.tidyMultiInputs();
 		form = document.getElementById('sim_form_accomodation');
 	});
 	var prev_el = '';
@@ -36,9 +36,9 @@ var accomodation = new function(){
 		setTimeout(function(){ prev_el = ''; }, 100);
 
 		if(el_name == 'nextBtn'){
-			nextPrev(1);
+			formFunctions.nextPrev(1);
 		}else if(el_name == 'prevBtn'){
-			nextPrev(-1);
+			formFunctions.nextPrev(-1);
 		}
 
 		accomodation.process_fields(el);
@@ -50,7 +50,7 @@ var accomodation = new function(){
 	this.process_fields    = function(el){
 		var el_name = el.name;
 		if(el_name == 'childcount'){
-			var value_1 = get_field_value('childcount',true,0);
+			var value_1 = formFunctions.getFieldValue('childcount',true,0,true);
 
 			if(value_1 > 0){
 			form.querySelectorAll('[name="ages_of_the_children_label"], [name="childrenage"]').forEach(el=>{

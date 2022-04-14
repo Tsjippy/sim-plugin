@@ -4,9 +4,10 @@
   "description": "Forms",
   "main": "./forms.js",
   "scripts": {
-    "build-formbuilder": "webpack --watch --entry ./formbuilder.js --output-path . --output-filename formbuilder.min.js --progress --mode=production --devtool source-map",
-    "build-formstable": "webpack --watch --entry ./forms_table.js --output-path . --output-filename forms_table.min.js --progress --mode=production --devtool source-map",
-    "build-forms": "webpack --watch --entry ./forms.js --output-path . --output-filename forms.min.js --progress --mode=production --devtool source-map"
+    "formbuilder": "webpack --watch --entry ./formbuilder.js --output-path . --output-filename formbuilder.min.js --progress --mode=production --devtool source-map",
+    "formstable": "webpack --watch --entry ./forms_table.js --output-path . --output-filename forms_table.min.js --progress --mode=production --devtool source-map",
+    "forms": "webpack --watch --entry ./forms.js --output-path . --output-filename forms.min.js --progress --mode=production --devtool source-map",
+    "build": "webpack"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

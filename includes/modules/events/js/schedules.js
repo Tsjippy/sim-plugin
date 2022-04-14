@@ -9,7 +9,7 @@
  * @return nothing
 */ 
 async function addSchedule(target){
-	var response = await submitForm(target.closest('form'), 'events/add_schedule');
+	var response = await submitForm(target, 'events/add_schedule');
 
 	if(response){
 		target.closest('.schedules_wrapper').outerHTML=response.html;
@@ -33,7 +33,7 @@ function ShowPublishScheduleModal(target){
 }
 
 async function publishSchedule(target){
-	response	= await submitForm(target.closest('form'), 'events/publish_schedule');
+	response	= await submitForm(target, 'events/publish_schedule');
 
 	if(response){
 		document.querySelectorAll('.schedule_actions .loadergif').forEach(el=>el.classList.add('hidden'));
@@ -95,8 +95,7 @@ function showAddHostModal(){
 
 // Add a new host when the host form is submitted
 async function addHost(target){
-	var form		= target.closest('form');
-	var response 	= await submitForm(form, 'events/add_host');
+	var response 	= await submitForm(target, 'events/add_host');
 
 	if(response){
 		addHostHtml(response);
@@ -302,7 +301,7 @@ function showRecipeModal(target){
 
 //submit the recipe form
 async function submitRecipe(target){
-	var response = await submitForm(target.closest('form'), 'events/add_menu');
+	var response = await submitForm(target, 'events/add_menu');
 
 	document.querySelector('.active').textContent	= target.closest('form').querySelector('[name="recipe_keyword"]').value;
 

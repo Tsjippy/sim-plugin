@@ -21,7 +21,7 @@ function get_anniversaries(){
 
 	foreach($events->events as $event){
 		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
-		if(!empty($start_year)){
+		if(!empty($start_year) and $start_year != date('Y-m-d')){
 			$title	= $event->post_title;
 			$age	= SIM\get_age_in_words($start_year);
 			$privacy= (array)get_user_meta($event->post_author, 'privacy_preference', true);
@@ -39,6 +39,7 @@ function get_anniversaries(){
 	return $messages;
 }
 
+// Add anniversaries
 add_filter('sim_after_bot_payer', function($args){
 	$anniversary_messages = get_anniversaries();
 	//If there are anniversaries
@@ -63,13 +64,10 @@ add_filter('sim_after_bot_payer', function($args){
 		$args['message'] .= $message_string.'.';
 	}
 
-	return $args;
-});
-
-add_filter('sim_after_bot_payer', function($args){
 	$arrival_users = get_arriving_users();
+	
 	//If there are arrivals
-	if(count($arrival_users) >0){
+	if(count($arrival_users) > 0){
 		if(count($arrival_users)==1){
 			$args['message'] .= "\n\n".$arrival_users[0]->display_name." arrives today.";
 			$args['urls'] .= SIM\USERPAGE\get_user_page_url($arrival_users[0]->ID)."\n";

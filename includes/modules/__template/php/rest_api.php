@@ -15,9 +15,7 @@ add_action( 'rest_api_init', function () {
 				'cat_name'		=> array('required'	=> true),
 				'cat_parent'	=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
-						return is_numeric( $param );
-					}
+					'validate_callback' => 'is_numeric'
 				),
 				'post_type'		=> array(
 					'required'	=> true,

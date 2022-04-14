@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FRONTEND_POSTING;
 use SIM;
+use WP_Error;
 
 class FrontEndContent{
 	function __construct(){
@@ -28,37 +29,16 @@ class FrontEndContent{
 			
 			//add tinymce button
 			add_filter('mce_buttons', array($this,'register_buttons'));
-			
-			//Save a post over AJAX
-			add_action ( 'wp_ajax_submit_post', array($this,'submit_post'));
-			add_action ( 'wp_ajax_draft_post', array($this,'submit_post'));
-			
-			//add action over ajax to read file contents
-			add_action ( 'wp_ajax_remove_post',array($this,'remove_post'));
-			
-			//add action over ajax to change the post type
-			add_action ( 'wp_ajax_change_post_type', array($this,'change_post_type'));
-			
-			//Lock the post for editing of other users
-			add_action ( 'wp_ajax_refresh_post_lock',function(){
-				if(!empty($_POST['postid']) and is_numeric($_POST['postid'])){
-					//print_array("refreshing post lock for ".$_POST['postid']);
-					wp_set_post_lock($_POST['postid']);
-				}
-			});
-
-			//allow editing by other users again
-			add_action ( 'wp_ajax_delete_post_lock',function(){
-				if(!empty($_POST['postid']) and is_numeric($_POST['postid'])){
-					//print_array("Removing post lock for ".$_POST['postid']);
-					delete_post_meta( $_POST['postid'], '_edit_lock');
-				}
-			});
 		}
 	}
 	
 	function add_tinymce_plugin($plugins) {
-		$plugins['select_user'] = INCLUDESURL."/js/tiny_mce_action.js?ver=".ModuleVersion;
+		wp_localize_script( 'sim_script', 
+			'user_select', 
+			SIM\user_select("Select a person to show the link to",true),
+		);
+
+		$plugins['select_user'] = plugins_url("js/tiny_mce.js?ver=".ModuleVersion, __DIR__);
 		
 		return $plugins;
 	}
@@ -164,11 +144,7 @@ class FrontEndContent{
 	}
 
 	function submit_post($status=''){
-		SIM\verify_nonce('frontend_post_nonce');
-
-		$userdata	= wp_get_current_user();
-			
-		if($_POST['action'] == 'draft_post'){
+		if($_POST['post_status'] == 'draft'){
 			$status = 'draft';
 		}elseif(empty($status)){
 			if($this->fullrights == true and $_POST['publish_date'] == date('Y-m-d')){
@@ -178,15 +154,10 @@ class FrontEndContent{
 			}
 		}
 		
-		//Check if valid post type
 		$this->post_type = $_POST['post_type'];
-		if(count(get_post_types(['name' => $this->post_type])) == 0){
-			wp_die("{$this->post_type} is not a valid type",500);
-		}
 		
 		//First letter should be capital in the title
 		$this->post_title 	= ucfirst(sanitize_text_field($_POST['post_title']));
-		if(empty($this->post_title)) wp_die("Please specify a title!",500);
 		
 		$post_content 	= $_POST['post_content'];
 		
@@ -261,7 +232,9 @@ class FrontEndContent{
 			//Update the post
 			$result = wp_update_post($new_post_data,true,false);
 			if(is_wp_error($result)){
-				wp_die($result->get_error_message(),500);
+				return new WP_Error('Update failed', $result->get_error_message());
+			}elseif($post->post_status == 'draft' and $status == 'publish'){
+				$action_text = 'published';
 			}else{
 				$action_text = 'updated';
 			}
@@ -302,9 +275,9 @@ class FrontEndContent{
 			}
 			
 			if(is_wp_error($this->post_id)){
-				wp_die($this->post_id->get_error_message(),500);
+				return new WP_Error('Inserting post error', $this->post_id->get_error_message());
 			}elseif($this->post_id === 0){
-				wp_die("Could not create the $this->post_type!",500);
+				return new WP_Error('Inserting post error', "Could not create the $this->post_type!");
 			}else{
 				$action_text = 'created';
 			}
@@ -339,61 +312,42 @@ class FrontEndContent{
 		
 		//Return result
 		if($status == 'publish'){
-			wp_die("Succesfully $action_text the $this->post_type, view it <a href='$url'>here</a>");
+			return "Succesfully $action_text the $this->post_type, view it <a href='$url'>here</a>";
 		}elseif($status == 'draft'){
-			wp_die("Succesfully $action_text the draft for this $this->post_type, preview it <a href='$url'>here</a>");
+			return "Succesfully $action_text the draft for this $this->post_type, preview it <a href='$url'>here</a>";
 		}elseif($_POST['publish_date'] != date('Y-m-d')){
-			wp_die("Succesfully $action_text the $this->post_type, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM');
+			return "Succesfully $action_text the $this->post_type, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
 		}else{
-			wp_die("Succesfully $action_text the $this->post_type, it will be published after it has been reviewed");			
+			return "Succesfully $action_text the $this->post_type, it will be published after it has been reviewed";			
 		}
 	}
 	
 	function remove_post(){
-		if($this->fullrights == false) wp_die("You do not have permissions to delete posts!",500);
-		
 		$post_id = $_POST['post_id'];
+			
+		SIM\print_array("Removing post $post_id");
 		
-		if(is_numeric($_POST['post_id'])){
-			SIM\verify_nonce("deletepost_nonce_$post_id");
+		$post		= wp_trash_post($post_id);
 		
-			SIM\print_array("Removing post $post_id");
-			
-			$post = wp_trash_post($post_id);
-			
-			$post_type = get_post_type($post);
-			
-			if($post_type != false) wp_die("Succesfully deleted $post_type '{$post->post_title}'<br>You can leave this page now");
-			
+		$post_type	= get_post_type($post);
+		
+		if($post_type){
+			return "Succesfully deleted $post_type '{$post->post_title}'<br>You can leave this page now";
 		}else{
-			wp_die("Invalid post id",500);
+			return new WP_Error('Post removal error', 'Something went wrong');
 		}
 	}	
 	
 	function change_post_type(){
 		$post_type = $_POST['post_type_selector'];
 		
-		if(!in_array($post_type,get_post_types())){
-			wp_die("$post_type is not a valid post type!",500);
-		}
-		
-		SIM\print_array("Changing post type to ".$post_type);
-		
 		$post_id = $_POST['postid'];
-		SIM\verify_nonce("change_poste_type_nonce");
-		
-		if(is_numeric($post_id)){
-			if($this->fullrights == false) wp_die("You do not have permissions to delete posts!",500);
-			
-			$result = set_post_type($post_id,$post_type);
-			if($result){
-				wp_die("Succesfully updated the type to ".$post_type);
-			}else{
-				wp_die("Could not update the type",500);
-			}
-				
+
+		$result = set_post_type($post_id, $post_type);
+		if($result){
+			return "Succesfully updated the type to $post_type";
 		}else{
-			wp_die("No valid post id",500);
+			return new WP_Error('Update failed', "Could not update the type");
 		}
 	}
 
@@ -770,9 +724,7 @@ class FrontEndContent{
 			//Write the form to create all posts except events
 			?>
 			<form id="postform">
-				<input type="hidden" name="action" value="submit_post">
-				<input type="hidden" name="frontend_post_nonce" value="<?php echo wp_create_nonce("frontend_post_nonce");?>">
-				<input type="hidden" name="userid" value="<?php echo $this->user->ID?>">
+				<input type="hidden" name="post_status" value="publish">
 				<input type="hidden" name="post_type" value="<?php echo $this->post_type; ?>">
 				<input type="hidden" name="post_image_id" value="<?php echo $this->post_image_id;?>">
 				<input type="hidden" name="update" value="<?php echo $update;?>">
@@ -906,9 +858,3 @@ class FrontEndContent{
 		return ob_get_clean();
 	}
 }
-
-add_action('init', function(){
-	if(wp_doing_ajax()){
-		new FrontEndContent();
-	}
-});

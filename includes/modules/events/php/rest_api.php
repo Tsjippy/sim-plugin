@@ -3,13 +3,16 @@ namespace SIM\EVENTS;
 use SIM;
 
 add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	// Month calendar
 	register_rest_route( 
 		'sim/v1/events', 
 		'/get_month_html', 
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> __NAMESPACE__.'\getMonthHtml',
+			'callback' 				=> function(){
+				$events		= new Events();
+				return $events->month_calendar();
+			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'month'		=> array(
@@ -27,79 +30,53 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
-} );
 
-function getMonthHtml(\WP_REST_Request $request ){
-	$events		= new Events();
-	return $events->month_calendar();
-}
-
-add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	// Week calendar
 	register_rest_route( 
 		'sim/v1/events', 
 		'/get_week_html', 
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> __NAMESPACE__.'\getWeekHtml',
+			'callback' 				=> function (){
+				$events		= new Events();
+				return $events->week_calendar();
+			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'wknr'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
-						return is_numeric( $param );
-					}
+					'validate_callback' => 'is_numeric'
 				),
 				'year'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
-						return is_numeric( $param );
-					}
+					'validate_callback' => 'is_numeric'
 				),
 			)
 		)
 	);
-} );
 
-function getWeekHtml(\WP_REST_Request $request ){
-	$events		= new Events();
-	return $events->week_calendar();
-}
-
-add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	// List calendar
 	register_rest_route( 
 		'sim/v1/events', 
 		'/get_list_html', 
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> __NAMESPACE__.'\getListHtml',
+			'callback' 				=> function(){
+				$events		= new Events();
+				return $events->list_calendar();
+			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'offset'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
-						return is_numeric( $param );
-					}
+					'validate_callback' => 'is_numeric'
 				),
 			)
 		)
 	);
-} );
 
-function getListHtml(\WP_REST_Request $request ){
-	$events		= new Events();
-	return $events->list_calendar();
-}
-
-/* 
-
-add_action( 'wp_ajax_remove_host',array($this,'remove_host')); */
-
-//add_schedule
-add_action( 'rest_api_init', function () {
-	//Route for notification messages
-	register_rest_route( 
+	//add_schedule
+	register_rest_route(
 		'sim/v1/events', 
 		'/add_schedule', 
 		array(
@@ -125,11 +102,8 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
-} );
 
-//publish_schedule
-add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	//publish_schedule
 	register_rest_route( 
 		'sim/v1/events', 
 		'/publish_schedule', 
@@ -155,11 +129,8 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
-} );
 
-//remove_schedule
-add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	//remove_schedule
 	register_rest_route( 
 		'sim/v1/events', 
 		'/remove_schedule', 
@@ -181,11 +152,8 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
-} );
 
-//add_host
-add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	//add_host
 	register_rest_route( 
 		'sim/v1/events', 
 		'/add_host', 
@@ -220,11 +188,8 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
-} );
 
-//remove_host
-add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	//remove_host
 	register_rest_route( 
 		'sim/v1/events', 
 		'/remove_host', 
@@ -259,11 +224,8 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
-} );
 
-//add_menu
-add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	//add_menu
 	register_rest_route( 
 		'sim/v1/events', 
 		'/add_menu', 

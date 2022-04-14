@@ -89,7 +89,7 @@ function user_select($text, $only_adults=false, $families=false, $class='', $id=
 }
 
 function current_url($exclude_scheme=false, $remove_get=false){
-	if(wp_doing_ajax()){
+	if(defined('REST_REQUEST')){
 		$url	 = trim(explode('?',$_SERVER['HTTP_REFERER'])[0],"/");
 	}else{
 		$url	 = '';
