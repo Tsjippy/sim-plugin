@@ -88,13 +88,20 @@ async function fetchRestApi(url, formdata){
 		}
 	);
 
-	var response	= await result.json();
+	try{
+		var response	= await result.json();
 
-	if(result.ok){
-		return response;
-	}else{
-		console.error(response);
-		display_message(response.message, 'error');
+		if(result.ok){
+			return response;
+		}else{
+			console.error(response);
+			display_message(response.message, 'error');
+			return false;
+		};
+	}catch(error){
+		console.error(error);
+		console.error(result);
+		display_message(`Url ${sim.base_url}/wp-json/sim/v1/${url} not found`, 'error');
 		return false;
-	};
+	}
 }

@@ -15,33 +15,6 @@ add_action('init', function(){
 	SIM\register_post_type_and_tax('recipe','recipes');
 }, 999);
 
-//Add recipe type via AJAX
-add_action('wp_ajax_add_recipe_type',function(){
-	SIM\verify_nonce('add_recipe_type_nonce');
-	
-	$name		= sanitize_text_field($_POST['recipe_type_name']);
-	$parent		= $_POST['recipe_type_parent'];
-	
-	$args 		= ['slug' => strtolower($name)];
-	if(is_numeric($parent)) $args['parent'] = $parent;
-	
-	$result = wp_insert_term( ucfirst($name), 'recipetype',$args);
-	
-	if(is_wp_error($result)){
-		wp_die($result->get_error_message(),500);
-	}else{
-		wp_die(json_encode(
-			[
-				'id'		=> $result['term_id'],
-				'name'		=> $name,
-				'type'		=> 'recipe',
-				'message'	=> "Added $name succesfully as recipe category",
-				'callback'	=> 'cat_type_added'
-			]
-		));
-	}
-});
-
 add_filter( 'widget_categories_args', function ( $cat_args, $instance  ) {
 	//if we are on a recipetype page, change to display the recipe types
 	if(is_tax('recipetype') or is_page('recipes') or get_post_type()=='recipe'){
@@ -173,3 +146,42 @@ function recipe_specific_fields($frontEndContent){
 	</div>
 	<?php
 }
+
+add_action('sim_before_page_print', function($post, $pdf){
+	//If recipe
+	if($post->post_type == 'recipe'){
+		$pdf->print_image(get_the_post_thumbnail_url($post),-1,20,-1,-1,true,true);
+
+		$baseUrl	= plugins_url('pictures', __DIR__);
+		
+		//Duration
+		$url = "{$baseUrl}/time.png";
+		$pdf->print_image($url,10,-1,10,10);
+		$pdf->write(10,get_post_meta($post->ID,'time_needed',true).' minutes');
+		
+		//Serves
+		$url = "{$baseUrl}/recipe_serves.png";
+		$pdf->print_image($url,55,-1,10,10);
+		
+		$persons = get_post_meta(get_the_ID(),'serves',true);
+		if($persons == 1){
+			$person_text = 'person';
+		}else{
+			$person_text = 'people';
+		}
+		
+		$pdf->write(10,"$persons $person_text");
+		
+		$pdf->Ln(15);
+		$pdf->writeHTML('<b>Ingredients:</b>');
+		$pdf->Ln(5);
+		$ingredients = explode("\n", trim(get_post_meta(get_the_ID(),'ingredients',true)));
+		foreach($ingredients as $ingredient){
+			$pdf->write(10,chr(127).' '.$ingredient);
+			$pdf->Ln(5);
+		}
+		
+		$pdf->Ln(10);
+		$pdf->writeHTML('<b>Instructions:</b>');
+	}
+});

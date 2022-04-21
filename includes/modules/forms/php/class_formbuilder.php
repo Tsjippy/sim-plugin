@@ -1,6 +1,8 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
+use WP_Embed;
+use WP_Error;
 
 if(!trait_exists('SIM\FORMS\create_js')){
 	require_once(__DIR__.'/js_builder.php');
@@ -307,7 +309,7 @@ class Formbuilder{
 		);
 		
 		if($wpdb->last_error !== ''){
-			wp_die($wpdb->print_error(),500);
+			return new WP_Error('forms', $wpdb->print_error());
 		}
 	}
 
@@ -334,7 +336,7 @@ class Formbuilder{
 		);
 		
 		if($wpdb->last_error !== ''){
-			wp_die($wpdb->print_error(),500);
+			return new WP_Error('forms', $wpdb->print_error());
 		}
 	}
 
@@ -489,17 +491,27 @@ class Formbuilder{
 		}elseif(in_array($element->type, ['file','image'])){
 			$name		= $element->name;
 			
-			if(!empty($this->formdata->settings['save_in_meta'])){
-				$metakey	= $name;
-				$user_id	= $this->user_id;
-				$targetdir	= "private/".$element->foldername;
-				$library	= $element->library;
-			}else{
+			// Element setting
+			if(!empty($element->foldername)){
+				if(strpos($element->foldername, "private/") !== false){
+					$targetdir	= $element->foldername;
+				}else{
+					$targetdir	= "private/".$element->foldername;
+				}
+			} 
+			// Form setting
+			if(empty($targetdir)) $targetdir = $this->formdata->settings['upload_path'];
+			// Default setting
+			if(empty($targetdir)) $targetdir = 'form_uploads/'.$this->formdata->settings['formname'];
+
+			if(empty($this->formdata->settings['save_in_meta'])){
 				$library	= false;
 				$metakey	= '';
 				$user_id	= '';
-				$targetdir	= $this->formdata->settings['upload_path'];
-				if(empty($targetdir)) $targetdir = 'form_uploads/'.$this->formdata->settings['formname'];
+			}else{
+				$library	= $element->library;
+				$metakey	= $name;
+				$user_id	= $this->user_id;
 			}
 			//Load js			
 			$uploader = new SIM\Fileupload($user_id, $name, $targetdir, $element->multiple, $metakey, $library, '', false);
@@ -1038,12 +1050,12 @@ class Formbuilder{
 		$this->next_element		= $this->form_elements[$key+1];
 
 		if(
-			!empty($this->next_element->multiple) and // if next element is a multiple
+			!empty($this->next_element->multiple) 	and // if next element is a multiple
 			$this->next_element->type != 'file' 	and // next element is not a file
 			$element->type == 'label'				and // and this is a label
-			!empty($element->wrap)				and // and the label is wrapped around the next element
+			!empty($element->wrap)					and // and the label is wrapped around the next element
 			!isset($_GET['formbuilder']) 			and	// and we are not building the form
-			!wp_doing_ajax()							// and we are not doing a AJAX call
+			!defined('REST_REQUEST')				// and we are not doing a REST call
 		){
 			return;
 		}
@@ -1266,15 +1278,15 @@ class Formbuilder{
 		
 		if($wpdb->last_error !== ''){
 			$message	= $wpdb->print_error();
-			if(wp_doing_ajax()){
-				wp_die($message,500);
+			if(defined('REST_REQUEST')){
+				return new WP_Error('form error', $message);
 			}else{
 				SIM\print_array($message);
 			}
 		}elseif($result == false){
 			$message	= "No row with id $submission_id found";
-			if(wp_doing_ajax()){
-				wp_die($message,500);
+			if(defined('REST_REQUEST')){
+				return new WP_Error('form error', $message);
 			}else{
 				SIM\print_array($message);
 				SIM\print_array($this->formresults);
@@ -1607,8 +1619,6 @@ class Formbuilder{
 				?>
 				
 				<div class="tabcontent<?php if(empty($this->form_elements)) echo ' hidden';?>" id="element_form">
-					<input type="hidden" class="input-text formbuilder" name="request_form_element_nonce" value="<?php echo wp_create_nonce("request_form_element_nonce"); ?>">
-					<input type="hidden" class="input-text formbuilder" name="remove_form_element_nonce" value="<?php echo wp_create_nonce("remove_form_element_nonce"); ?>">
 					<?php
 					if(isset($_GET['formbuilder'])){
 						if(empty($this->form_elements)){
@@ -1651,7 +1661,6 @@ class Formbuilder{
 		include_once( ABSPATH . 'wp-includes/formatting.php');
 
 		$html	= ob_get_clean();
-		//print_array($html);
 		//close any open html tags
 		return force_balance_tags($html);
 	}
@@ -2280,8 +2289,6 @@ class Formbuilder{
 			<input type="hidden" name="insertafter">
 			
 			<input type="hidden" name="formfield[width]" value="100">
-			
-			<input type="hidden" name="add_form_element_nonce" value="<?php echo wp_create_nonce("add_form_element_nonce"); ?>">
 			
 			<label>Select which kind of form element you want to add</label>
 			<select class="formbuilder elementtype" name="formfield[type]" required>

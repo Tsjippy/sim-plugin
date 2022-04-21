@@ -2,10 +2,54 @@
 namespace SIM\MANDATORY;
 use SIM;
 
+// Make mark as read rest api publicy available
+add_filter('sim_allowed_rest_api_urls', function($urls){
+	$urls[]	= 'sim/v1/markasread';
+
+	return $urls;
+});
+
+add_action( 'rest_api_init', function () {
+	//Route to update mark as read from mailchimp
+	register_rest_route( 'sim/v1/mandatory_content', '/markasread', array(
+		'methods' => 'GET',
+		'callback' => __NAMESPACE__.'\markAsReadFromEmail',
+		'permission_callback' => '__return_true',
+		'args'					=> array(
+			'postid'		=> array(
+				'required'	=> true,
+				'validate_callback' => 'is_numeric'
+			),
+			'email'		=> array(
+				'required'	=> true
+			)
+		)
+		)
+	);
+
+	// Mark as read from website
+	register_rest_route( 'sim/v1/mandatory_content', '/markasread', array(
+		'methods' => 'POST',
+		'callback' => __NAMESPACE__.'\markAsRead',
+		'permission_callback' => '__return_true',
+		'args'					=> array(
+			'postid'		=> array(
+				'required'	=> true,
+				'validate_callback' => 'is_numeric'
+			),
+			'userid'		=> array(
+				'required'	=> true,
+				'validate_callback' => 'is_numeric'
+			)
+		)
+		)
+	);
+});
+
 add_filter('sim_before_mailchimp_send', function($mail_content, $post){
     ///add button if mandatory message
     if(!empty($_POST['pagetype']['everyone'])){
-        $url			= SITEURL."/wp-json/sim/v1/markasread?email=*|EMAIL|*&postid={$post->ID}";
+        $url			= SITEURL."/wp-json/sim/v1/mandatory_content/markasread?email=*|EMAIL|*&postid={$post->ID}";
         $style			= "color: white; background-color: #bd2919; border-radius: 3px; text-align: center; margin-right: 10px; padding: 5px 10px;";
         $mail_content	.= "<br><a href='$url' style='$style'>I have read this</a>";
     }
@@ -14,12 +58,12 @@ add_filter('sim_before_mailchimp_send', function($mail_content, $post){
 }, 10, 2);
 
 //for use in external communication like e-mail
-function markasread(\WP_REST_Request $request){
+function markAsReadFromEmail(\WP_REST_Request $request){
 	$email		= $request['email'];
 	$post_id	= $request['postid'];
 
 	//only continue if valid email and numeric postid
-	if (filter_var($email, FILTER_VALIDATE_EMAIL) and is_numeric($post_id)) {
+	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 		//set the admin as the user so we can query the db
 		wp_set_current_user(1);
 
@@ -54,23 +98,21 @@ function markasread(\WP_REST_Request $request){
 
 		wp_redirect( home_url("?message=$message&type=$type") );
 		exit();
-
 	}
 }
 
-add_action( 'rest_api_init', function () {
-	//Route to update mark as read from mailchimp
-	register_rest_route( 'sim/v1', '/markasread', array(
-		'methods' => 'GET',
-		'callback' => __NAMESPACE__.'\markasread',
-		'permission_callback' => '__return_true',
-		)
-	);
-});
-
-// Make mark as read rest api publicy available
-add_filter('sim_allowed_rest_api_urls', function($urls){
-	$urls[]	= 'sim/v1/markasread';
-
-	return $urls;
-});
+//Process button click
+function markAsRead(){
+	$user_id = $_POST['userid'];
+	$post_id = $_POST['postid'];
+	
+	//get current alread read pages
+	$read_pages		= (array)get_user_meta( $user_id, 'read_pages', true );
+	
+	//add current page
+	$read_pages[]	= $post_id;
+	//update
+	update_user_meta( $user_id, 'read_pages', $read_pages);
+	
+	return "Succesfully marked this page as read";
+}

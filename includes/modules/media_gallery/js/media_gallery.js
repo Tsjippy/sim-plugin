@@ -1,3 +1,5 @@
+console.log('Media galery js loaded');
+
 function showImage(index){
     //hide all containers
     document.querySelectorAll('.large-image:not(.hidden)').forEach(el=>el.classList.add('hidden'));
@@ -6,86 +8,62 @@ function showImage(index){
     document.querySelector('.large-image[data-index="'+index+'"]').classList.remove('hidden');
 }
 
-function load_more(index, showfirst, skipAmount){
-    var formData	= new FormData();
-	formData.append('_wpnonce', sim.restnonce);
-
+async function load_more(index, showfirst, skipAmount){
     var amount  = document.querySelector('#media-amount').value;
-
     if(amount == skipAmount) return;
-
+    var types   = [];
+    document.querySelectorAll('.media-type-selector:checked').forEach(el=>types.push(el.value));
+    
+    var formData	= new FormData();
     formData.append('amount', amount);
     formData.append('page', document.querySelector('#paged').value);
     formData.append('skipAmount', skipAmount);
-    var types   = [];
-    document.querySelectorAll('.media-type-selector:checked').forEach(el=>types.push(el.value));
     formData.append('types', types);
     formData.append('startIndex', index+1);
-	
-	fetch(
-		sim.base_url+'/wp-json/sim/v1/load_more_media', 
-		{
-			method: 'POST',
-			credentials: 'same-origin',
-			body: formData
-		}
-	).then(response => response.json())
-	.then(response => {
-        document.querySelectorAll('#medialoaderwrapper:not(.hidden), .loaderwrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 
-        if(response == false){
-            display_message('All media are loaded', 'info');
+    var response    = await fetchRestApi('media_gallery/load_more_media', formData);
+
+    document.querySelectorAll('#medialoaderwrapper:not(.hidden), .loaderwrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+
+    if(!response){
+        display_message('All media are loaded', 'info');
+        document.getElementById('loadmoremedia').classList.add('hidden');
+    }else{
+        document.querySelector('.mediawrapper').insertAdjacentHTML('beforeEnd', response);
+
+        if(showfirst){
+            var el      = document.querySelector('[data-index="'+index+'"]');
+            var next_el = el.nextElementSibling.nextElementSibling;
+
+            showImage(next_el.dataset.index);
+        }
+
+        //hide the load more button if the last cell has no next button
+        var cells = document.querySelectorAll('.large-image');
+        if(cells[cells.length-1].querySelector('.nextbtn') == null){
             document.getElementById('loadmoremedia').classList.add('hidden');
-        }else{
-            document.querySelector('.mediawrapper').insertAdjacentHTML('beforeEnd', response);
-
-            if(showfirst){
-                var el      = document.querySelector('[data-index="'+index+'"]');
-                var next_el = el.nextElementSibling.nextElementSibling;
-
-                showImage(next_el.dataset.index);
-            }
-
-            //hide the load more button if the last cell has no next button
-            var cells = document.querySelectorAll('.large-image');
-            if(cells[cells.length-1].querySelector('.nextbtn') == null){
-                document.getElementById('loadmoremedia').classList.add('hidden');
-            }
-        }       
-	})
-	.catch(err => console.error(err));
+        }
+    }
 }
 
-function mediaSearch(target){
-    var formData	= new FormData();
-    formData.append('_wpnonce', sim.restnonce);
-
-    var amount      = document.querySelector('#media-amount').value;
-    formData.append('amount', amount);
-
-    var types   = [];
+async function mediaSearch(target){
+    var amount          = document.querySelector('#media-amount').value;
+    var types           = [];
     document.querySelectorAll('.media-type-selector:checked').forEach(el=>types.push(el.value));
-    formData.append('types', types);
-
-    var searchstring= target.closest('.mediabuttons').querySelector('.searchtext').value;
-    formData.append('search', searchstring);
+    var searchstring    = target.closest('.mediabuttons').querySelector('.searchtext').value;
     
-    fetch(
-        sim.base_url+'/wp-json/sim/v1/media_search', 
-        {
-            method: 'POST',
-            credentials: 'same-origin',
-            body: formData
-        }
-    ).then(response => response.json())
-    .then(response => {
-        if(response == false){
-            display_message('Nothing found', 'warning');
-        }else{
-            document.querySelector('.mediawrapper').innerHTML = response;
-        }       
-    })
-    .catch(err => console.error(err));
+    var formData	= new FormData();
+    formData.append('amount', amount);
+    formData.append('types', types);
+    formData.append('search', searchstring);
+
+    var response    = await fetchRestApi('media_gallery/media_search', formData);
+    
+    if(!response){
+        display_message('Nothing found', 'warning');
+    }else{
+        document.querySelector('.mediawrapper').innerHTML = response;
+    }
 }
 
 document.querySelectorAll('.searchtext').forEach(el=>{
@@ -101,6 +79,8 @@ document.addEventListener('click', ev=>{
     var parent  = target.closest('.large-image');
 
     if(target.matches('.media-item')){
+        ev.preventDefault();
+		ev.stopPropagation();
         showImage(target.closest('.cell').dataset.index);
     }
 
@@ -140,6 +120,9 @@ document.addEventListener('click', ev=>{
     }
 
     if(target.id == 'loadmoremedia'){
+        
+        ev.preventDefault();
+		ev.stopPropagation();
         //find the last image
         var media = document.querySelectorAll('.cell');
 
@@ -176,6 +159,8 @@ document.addEventListener('click', ev=>{
     }
 
     if(target.matches('.mediabuttons .search')){
+        ev.preventDefault();
+		ev.stopPropagation();
         mediaSearch(target);
     }
 });

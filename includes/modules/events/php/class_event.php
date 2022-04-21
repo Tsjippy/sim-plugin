@@ -1,6 +1,7 @@
 <?php
 namespace SIM\EVENTS;
 use SIM;
+use WP_Error;
 
 class Events{
 	function __construct(){
@@ -252,7 +253,7 @@ class Events{
 			);
 			
 			if($wpdb->last_error !== ''){
-				wp_die($wpdb->print_error(),500);
+				return new WP_Error('event', $wpdb->print_error());
 			}
 		}
 	}
@@ -462,7 +463,7 @@ class Events{
 						$enddate_str	= date('d M', strtotime(($event->enddate)));
 
 						$user_id = get_post_meta($event->post_id,'user',true);
-						if(is_numeric($user_id)){
+						if(is_numeric($user_id) and function_exists('SIM\USERPAGE\get_user_page_link')){
 							//Get the missionary page of this user
 							$event_url	= SIM\USERPAGE\get_user_page_link($user_id);
 						}else{
@@ -535,7 +536,7 @@ class Events{
 		if(empty($user_id)){
 			return $event->organizer;
 		}else{
-			$url	= SIM\USERPAGE\get_user_page_url($user_id);
+			$url	= SIM\getUserPageUrl($user_id);
 			$email	= $user->user_email;
 			$phone	= get_user_meta($user_id,'phonenumbers',true);
 			$html	= "<a href='$url'>{$user->display_name}</a><br>";
@@ -683,6 +684,8 @@ class Events{
 		$calendar_rows	= '';
 		$detail_html	= '';
 
+		$baseUrl	= plugins_url('pictures', __DIR__);
+
 		//loop over all weeks of a month
 		while(true){
 			$calendar_rows .= "<dl class='calendar-row'>";
@@ -738,7 +741,7 @@ class Events{
 											$detail_html .= '</div>';
 										}
 										$detail_html .= "<div class='event-time'>";
-											$detail_html .= "<img src='".PICTURESURL."/time_red.png' alt='time' class='event_icon'>";
+											$detail_html .= "<img src='{$baseUrl}/time_red.png' alt='time' class='event_icon'>";
 											$detail_html .=  $this->get_time($event);
 										$detail_html .= "</div>";
 									$detail_html .= "</div>";
@@ -750,19 +753,19 @@ class Events{
 									$detail_html .= "<div class='event-detail'>";
 									if(!empty($event->location)){
 										$detail_html .= "<div class='location'>";
-											$detail_html .= "<img src='".PICTURESURL."/location_red.png' alt='time' class='event_icon'>";
+											$detail_html .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
 											$detail_html .= $this->get_location_detail($event);
 										$detail_html .= "</div>";
 									}	
 									if(!empty($event->organizer)){
 										$detail_html .= "<div class='organizer'>";
-											$detail_html .= "<img src='".PICTURESURL."/organizer.png' alt='time' class='event_icon'>";
+											$detail_html .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
 											$detail_html .= $this->get_author_detail($event);
 										$detail_html .= "</div>";
 									}
 									if(!empty($meta['repeat']['type'])){
 										$detail_html .= "<div class='repeat'>";
-											$detail_html .= "<img src='".PICTURESURL."/repeat_small.png' alt='repeat' class='event_icon'>";
+											$detail_html .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
 											$detail_html .= $this->get_repeat_detail($meta);
 										$detail_html .= "</div>";
 									}
@@ -857,10 +860,11 @@ class Events{
 		$calendar_rows	= [];
 		$detail_html	= '';
 
+		$baseUrl	= plugins_url('pictures', __DIR__);
+
 		//loop over all days of a week
 		while(true){
 			$working_date_str	= date('Y-m-d',$working_date);
-			$day				= date('j',$working_date);
 			$weekday			= date('w',$working_date);
 			$year				= date('Y',$working_date);
 			$prev_week_nr		= date("W",strtotime("-1 week",$working_date));
@@ -956,7 +960,7 @@ class Events{
 							$detail_html .= '</div>';
 						}
 						$detail_html .= "<div class='event-time'>";
-							$detail_html .= "<img src='".PICTURESURL."/time_red.png' alt='time' class='event_icon'>";
+							$detail_html .= "<img src='{$baseUrl}/time_red.png' alt='time' class='event_icon'>";
 							$detail_html .=  $this->get_date($event).'   '.$this->get_time($event);
 						$detail_html .= "</div>";
 
@@ -968,20 +972,20 @@ class Events{
 						$detail_html .= "<div class='event-detail'>";
 						if(!empty($event->location)){
 							$detail_html .= "<div class='location'>";
-								$detail_html .= "<img src='".PICTURESURL."/location_red.png' alt='time' class='event_icon'>";
+								$detail_html .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
 								$detail_html .= $this->get_location_detail($event);
 							$detail_html .= "</div>";
 						}	
 						if(!empty($event->organizer)){
 							$detail_html .= "<div class='organizer'>";
-								$detail_html .= "<img src='".PICTURESURL."/organizer.png' alt='time' class='event_icon'>";
+								$detail_html .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
 								$detail_html .= $this->get_author_detail($event);
 							$detail_html .= "</div>";
 						}
 
 						if(!empty($meta['repeat']['type'])){
 							$detail_html .= "<div class='repeat'>";
-								$detail_html .= "<img src='".PICTURESURL."/repeat_small.png' alt='repeat' class='event_icon'>";
+								$detail_html .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
 								$detail_html .= $this->get_repeat_detail($meta);
 							$detail_html .= "</div>";
 						}
@@ -1113,6 +1117,8 @@ class Events{
 		$this->retrieve_events($date_str, '', 10, '', $offset, $cat);
 		$html ='';
 
+		$baseUrl	= plugins_url('pictures', __DIR__);
+
 		foreach($this->events as $event){
 			$meta		= get_post_meta($event->ID,'eventdetails',true);
 			$html .= "<article class='event-article'>";
@@ -1125,28 +1131,28 @@ class Events{
 					$html .= "</h3>";
 					$html .= "<div class='event-detail'>";
 						$html .= "<div class='date'>";
-							$html .="<img src='".PICTURESURL."/date.png' alt='' class='event_icon'>";
+							$html .="<img src='{$baseUrl}/date.png' alt='' class='event_icon'>";
 							$html .= $this->get_date($event);
 						$html .= "</div>";
 						$html .= "<div class='time'>";
-							$html .="<img src='".PICTURESURL."/time_red.png' alt='' class='event_icon'>";
+							$html .="<img src='{$baseUrl}/time_red.png' alt='' class='event_icon'>";
 							$html .= $this->get_time($event);
 						$html .= "</div>";
 					if(!empty($event->location)){
 						$html .= "<div class='location'>";
-							$html .= "<img src='".PICTURESURL."/location_red.png' alt='time' class='event_icon'>";
+							$html .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
 							$html .= $this->get_location_detail($event);
 						$html .= "</div>";
 					}
 					if(!empty($event->organizer)){
 						$html .= "<div class='organizer'>";
-							$html .= "<img src='".PICTURESURL."/organizer.png' alt='time' class='event_icon'>";
+							$html .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
 							$html .= $this->get_author_detail($event);
 						$html .= "</div>";
 					}
 					if(!empty($meta['repeat']['type'])){
 						$html .= "<div class='repeat'>";
-							$html .= "<img src='".PICTURESURL."/repeat_small.png' alt='repeat' class='event_icon'>";
+							$html .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
 							$html .= $this->get_repeat_detail($meta);
 						$html .= "</div>";
 					}

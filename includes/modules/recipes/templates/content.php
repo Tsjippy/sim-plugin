@@ -34,7 +34,7 @@ wp_enqueue_script('sim_plurarize_script');
 			</div>
 			
 			<div class='author'>
-				Shared by: <a href='<?php echo SIM\USERPAGE\get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
+				Shared by: <a href='<?php echo SIM\getUserPageUrl(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
 			</div>
 			
 			<div class='recipe metas'>
@@ -55,7 +55,7 @@ wp_enqueue_script('sim_plurarize_script');
 						) 
 					);
 					
-					$url = PICTURESURL.'/recipe_category.png';
+					$url = plugins_url('pictures/recipe_category.png', __DIR__);
 					echo "<img src='$url' alt='category' class='recipe_icon'>";
 					
 					//print_array($categories);
@@ -74,7 +74,7 @@ wp_enqueue_script('sim_plurarize_script');
 				?>
 				<span class='cooking_time recipemeta'>
 					<?php 
-					$url = PICTURESURL.'/recipe_coocking_time.png';
+					$url = plugins_url('pictures/recipe_coocking_time.png', __DIR__);
 					echo "<img src='$url' alt='category' class='recipe_icon'>";
 					echo get_post_meta(get_the_ID(),'time_needed',true); 
 					if(!$archive) echo 'minutes';
@@ -82,7 +82,7 @@ wp_enqueue_script('sim_plurarize_script');
 				</span>
 				<span class='serves recipemeta'>
 					<?php
-					$url = PICTURESURL.'/recipe_serves.png';
+					$url = plugins_url('pictures/recipe_serves.png', __DIR__);
 					echo "<img src='$url' alt='category' class='recipe_icon'>";
 					$persons = get_post_meta(get_the_ID(),'serves',true);
 					echo "<select class='serves_select' data-originalvalue='$persons' style='padding:0px;'>";

@@ -20,11 +20,9 @@ function password_reset_form($user){
 	ob_start();
 	?>
 
-	<form data-reset='true' class='sim_form'>
+	<form class="pwd-reset">
 		<div class="login_info">
-			<input type="hidden" name="password_reset_nonce"	value="<?php echo wp_create_nonce("password_reset_nonce");?>">
 			<input type="hidden" name="userid"					value="<?php echo $user->ID; ?>">
-			<input type="hidden" name="action"					value="update_password">
 			
 			<p style="margin-top:30px;">
 				<?php echo $message;?>
@@ -73,26 +71,11 @@ add_shortcode("change_password", function(){
 #####
 # ACCOUNT REQUEST #
 #####
-function get_available_username($first_name, $last_name){
-	//Check if a user with this username already exists
-	$i =1;
-	while (true){
-		//Create a username
-		$username = str_replace(' ', '', $first_name.substr($last_name, 0, $i));
-		//Check for availability
-		if (get_user_by("login",$username) == ""){
-			//available, return the username
-			return $username;
-		}
-		$i += 1;
-	}
-}
-
 //Shortcode for people to register themselves
 add_shortcode('request_account', function ($atts){
 	ob_start();
 	?>
-	<form class='sim_form' data-reset="true">
+	<form class='request-account'>
 		<p>Please fill in the form to create an user account</p>
 		
 		<input type="hidden" name="action" value="requestuseraccount">

@@ -73,7 +73,7 @@ function trello_actions( \WP_REST_Request $request ) {
 			}
 
 			//create an useraccount
-			$user_id = SIM\USERMANAGEMENT\add_user_account(ucfirst($user_props['first name']), ucfirst($user_props['last name']), $user_props['email address'], true, $duration);
+			$user_id = SIM\addUserAccount(ucfirst($user_props['first name']), ucfirst($user_props['last name']), $user_props['email address'], true, $duration);
 			
 			if(is_numeric($user_id)){
 				//send welcome e-mail

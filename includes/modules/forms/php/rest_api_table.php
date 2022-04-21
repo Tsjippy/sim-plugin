@@ -358,6 +358,8 @@ function editValue(){
 	//update an existing entry
 	$fieldName 		= sanitize_text_field($_POST['fieldname']);
 	$newValue 		= sanitize_text_field($_POST['newvalue']);
+
+	$transValue		= $formTable->transform_inputdata($newValue, $fieldName);
 	
 	$sub_id			= $_POST['subid'];
 	//Update the current value
@@ -366,13 +368,13 @@ function editValue(){
 		$pattern = "/$field_main_name\[[0-9]\]\[([^\]]*)\]/i";
 		if(preg_match($pattern, $fieldName,$matches)){
 			$formTable->formresults[$field_main_name][$sub_id][$matches[1]]	= $newValue;
-			$message = "Succesfully updated '{$matches[1]}' to $newValue";
+			$message = "Succesfully updated '{$matches[1]}' to $transValue";
 		}else{
 			return new \WP_Error('No element founc', "Could not find $fieldName");
 		}
 	}else{
 		$formTable->formresults[$fieldName]	= $newValue;
-		$message = "Succesfully updated '$fieldName' to $newValue";
+		$message = "Succesfully updated '$fieldName' to $transValue";
 	}
 	
 	$formTable->update_submission_data();
@@ -383,6 +385,6 @@ function editValue(){
 	//send message back to js
 	return [
 		'message'			=> $message,
-		'newvalue'			=> $formTable->transform_inputdata($newValue, $fieldName),
+		'newvalue'			=> $transValue,
 	];
 }

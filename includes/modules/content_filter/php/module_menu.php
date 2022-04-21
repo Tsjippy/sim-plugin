@@ -2,7 +2,7 @@
 namespace SIM\CONTENTFILTER;
 use SIM;
 
-const ModuleVersion		= '7.0.0';
+const ModuleVersion		= '7.0.1';
 
 add_action('sim_module_activated', function($module_slug, $options){
 	//module slug should be the same as grandparent folder name
@@ -31,3 +31,17 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	</p>
 	<?php
 },10,2);
+
+add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	$default    = SIM\get_module_option('content_filter', 'default_status');
+	
+    ?>
+	<label>
+		<input type="checkbox" name="default_status" value="private" <?php if($default == 'private') echo 'checked';?>>
+		Make uploaded media private by default
+	</label>
+	<?php
+}, 10, 3);

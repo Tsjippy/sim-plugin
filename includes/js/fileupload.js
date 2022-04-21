@@ -189,38 +189,8 @@ function file_upload_upload_succes(result){
 	}
 }
 
-window['afterdocumentremove'] = function(result,responsdata){
-	var docwrapper			= document.querySelector('.remove_document[data-url="'+responsdata.url+'"').closest('.document');
-	var file_upload_wrap	= docwrapper.closest('.file_upload_wrap');
-	
-	//hide the loading gif
-	docwrapper.querySelector('.remove_document_loader').classList.add('hidden');
-		
-	// If successful
-	if (result.status >= 200 && result.status < 400) {
-		try{
-			//show the upload field
-			file_upload_wrap.querySelector('.upload_div').classList.remove('hidden');
-		}catch{
-			//remove featured image id
-			document.querySelector('[name="post_image_id"]').value = '';
-		}
-		
-		//remove the document/picture
-		docwrapper.remove();
-		
-		re = new RegExp('(.*)[0-9](.*)',"g");
-		//reindex documents
-		file_upload_wrap.querySelectorAll('.file_url').forEach((el,index)=>{
-			el.name = el.name.replace(re, '$1'+index+'$2');
-		});
-	}
-}
-
-function remove_document(target){
-	var data = new FormData();
-	data.append("action","remove_document");
-		
+async function remove_document(target){
+	var data = new FormData();		
 	//Loop over the dataset attributes and add them to post
 	for(var d in target.dataset){
 		if(target.dataset[d] != ''){
@@ -237,7 +207,35 @@ function remove_document(target){
 	//show loader
 	target.parentNode.querySelector('.remove_document_loader').classList.remove('hidden');
 	
-	sendAJAX(data);
+	var response	= await fetchRestApi('remove_document', data);
+
+	if(response){
+		var docwrapper			= target.closest('.document');
+		var file_upload_wrap	= docwrapper.closest('.file_upload_wrap');
+		
+		//hide the loading gif
+		docwrapper.querySelector('.remove_document_loader').classList.add('hidden');
+			
+		// If successful
+		try{
+			//show the upload field
+			file_upload_wrap.querySelector('.upload_div').classList.remove('hidden');
+		}catch{
+			//remove featured image id
+			document.querySelector('[name="post_image_id"]').value = '';
+		}
+		
+		//remove the document/picture
+		docwrapper.remove();
+		
+		var re = new RegExp('(.*)[0-9](.*)',"g");
+		//reindex documents
+		file_upload_wrap.querySelectorAll('.file_url').forEach((el,index)=>{
+			el.name = el.name.replace(re, '$1'+index+'$2');
+		});
+
+		display_message(response);
+	}
 }
 
 //Remove picture on button click

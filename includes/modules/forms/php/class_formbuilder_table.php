@@ -1127,7 +1127,7 @@ class FormTable extends Formbuilder{
 				}
 				
 				?>
-				<table class='sim-table form-data-table' data-formid='<?php echo $this->formdata->id;?>' data-shortcodeid='<?php echo $this->shortcode_id;?>' data-nonce='<?php echo wp_create_nonce('updateforminput');?>'>
+				<table class='sim-table form-data-table' data-formid='<?php echo $this->formdata->id;?>' data-shortcodeid='<?php echo $this->shortcode_id;?>'>
 					<thead>
 						<tr>
 							<?php

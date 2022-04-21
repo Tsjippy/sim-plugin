@@ -46,47 +46,6 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	return $formresults;
 },10,3);
 
-//add new ministry location via AJAX
-add_action ( 'wp_ajax_add_ministry', function(){	
-	SIM\verify_nonce('add_ministry_nonce');
-	
-	if (!empty($_POST["location_name"])){
-		//Get the post data
-		$name = sanitize_text_field($_POST["location_name"]);
-		
-		//Build the compound page
-		$ministry_page = array(
-		  'post_title'    => ucfirst($name),
-		  'post_content'  => '',
-		  'post_status'   => 'publish',
-		  'post_type'	  => 'location',
-		  'post_author'	  => get_current_user_id(),
-		);
-		 
-		//Insert the page
-		$post_id = wp_insert_post( $ministry_page );
-		
-		//Add the ministry cat
-		wp_set_post_terms($post_id ,27,'locationtype');
-		
-		//Store the ministry location
-		if ($post_id != 0){
-			//Add the location to the page
-			SIM\LOCATIONS\save_location_meta($post_id, 'location');
-		}
-	
-		$url = get_permalink($post_id);
-		wp_die(json_encode(
-			[
-				'message'	=> "Succesfully created new ministry page, see it <a href='$url'>here</a>",
-				'callback'	=> 'add_new_ministry_data'
-			]
-		));
-	}else{
-		wp_die("Please specify a ministry name",500);
-	}
-});
-
 //Add ministry modal
 add_action('before_form',function ($formname){
 	if($formname != 'user_generics') return;
@@ -97,8 +56,6 @@ add_action('before_form',function ($formname){
 			<span id="modal_close" class="close">&times;</span>
 			<form action="" method="post" id="add_ministry_form">
 				<p>Please fill in the form to create a page describing your ministry and list it as an option</p>				
-				<input type="hidden" name="action"				value = "add_ministry">
-				<input type="hidden" name="add_ministry_nonce"	value="<?php echo wp_create_nonce("add_ministry_nonce"); ?>">
 				
 				<label>
 					<h4>Ministry name<span class="required">*</span></h4>
@@ -126,7 +83,6 @@ add_action('before_form',function ($formname){
 	</div>
 	<?php
 });
-
 
 function get_ministries(){	
 	//Get all pages which are subpages of the MinistriesPageID

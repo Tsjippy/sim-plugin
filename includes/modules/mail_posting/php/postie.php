@@ -30,9 +30,9 @@ add_filter('postie_post_before', function($post, $headers) {
 
 add_filter('postie_post_after', function($post){
 	//Only send message if post is published
-	if($post['post_status'] == 'publish'){
+	if($post['post_status'] == 'publish' and function_exists('SIM\SIGNAL\send_post_notification')){
 		SIM\SIGNAL\send_post_notification($post['ID']);
-	}else{
+	}elseif(function_exists('SIM\FRONTEND_POSTING\send_pending_post_warning')){
 		SIM\FRONTEND_POSTING\send_pending_post_warning(get_post($post['ID']), false);
 	}
 });

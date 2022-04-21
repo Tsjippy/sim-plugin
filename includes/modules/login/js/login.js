@@ -1,6 +1,5 @@
 import {
 	closeMobileMenu,
-	fetchEndpoint,
     preparePublicKeyCredentials,
     preparePublicKeyOptions,
 	fetchRestApi
@@ -117,6 +116,7 @@ async function verifyWebauthn(methods){
 	}
 }
 
+// Request email code for 2fa login
 async function requestEmailCode(){
 	//add new one
 	var loader				= "<img id='loader' src='"+sim.loading_gif+"' style='height:30px;margin-top:-6px;float:right;'>";
@@ -134,7 +134,7 @@ async function requestEmailCode(){
 }
 
 // Check if a valid username and password is submitted
-async function verifyCreds(){
+async function verifyCreds(target){
 	var username	= document.getElementById('username').value;
 	var password	= document.getElementById('password').value;
 
@@ -156,16 +156,19 @@ async function verifyCreds(){
 	var response	= await fetchRestApi('check_cred', formData);
 
  	if(response){
-		try {
+		if(response == 'false') {
+			showMessage('Invalid login, try again');
+			
+			// hide loader
+			document.querySelector('#check_cred_wrapper .loadergif').classList.add('hidden');
+		} else {
 			addMethods(response);
-		} catch (e) {
-			location.href=text;
 		}
 	}
 }
 
 //request password reset e-mail
-async function reset_password(target){
+async function resetPassword(target){
 	var username	= document.getElementById('username').value;
 
 	if(username == ''){
@@ -188,28 +191,41 @@ async function reset_password(target){
 		target.classList.add('hidden');
 		var loader = showLoader(target, false, 'Sending e-mail...   ');
 
-		var formData	= new FormData(target.closest('form'));
-		formData.append('action','request_pwd_reset');
+		var formData	= new FormData();
 		formData.append('username',username);
+		
+		var response	= await fetchRestApi('request_pwd_reset', formData);
 
-		var response = await fetch(sim.ajax_url, {
-			method: 'POST',
-			credentials: 'same-origin',
-			body: formData
-		});
-
-		var message = await response.text();
-
-		if (response.ok) {
+		if (response) {
 			display_message(message,'success');
-		}else{
-			display_message(message,'error');
 		}
 
 		loader.remove();
 		target.classList.remove('hidden');
 	}
 };
+
+// request a new user account
+async function requestAccount(target){
+	var form 		= target.closest('form');
+
+	// Show loader
+	form.querySelector('.loadergif').classList.remove('hidden');
+
+	var formData	= new FormData(form);
+
+	var response	= await fetchRestApi('request_user_account', formData);
+	
+	if(response){
+		display_message(response);
+	}
+
+	// reset form 
+	form.reset();
+
+	// Hide loader
+	form.querySelector('.loadergif').classList.add('hidden');
+}
 
 function showMessage(message){
 	document.querySelector("#login_wrapper .message").innerHTML= message;
@@ -306,14 +322,14 @@ function addMethods(result){
 document.addEventListener('keypress', function (e) {
     if (e.key === 'Enter'){
 		if(!document.querySelector("#usercred_wrapper").classList.contains('hidden')) {
-			verifyCreds(e);
+			verifyCreds(e.target);
 		}else if(!document.querySelector("#submit_login_wrapper").classList.contains('hidden')){
 			requestLogin();
 		}
 	}
 });
 
-function toggle_pwd_view(ev){
+function togglePassworView(ev){
 	if(ev.target.tagName == 'IMG'){
 		var target	= ev.target.parentNode;
 	}else{
@@ -358,12 +374,16 @@ function openLoginModal(){
 var observer = new MutationObserver(function(mutations) {
 	mutations.forEach(function(mutation) {
 		if (mutation.attributeName === "data-hcaptcha-response" && document.querySelector('.h-captcha iframe').dataset.hcaptchaResponse.length > 1000) {
-			reset_password(document.querySelector('#login_nav>a'));
+			resetPassword(document.querySelector('#login_nav>a'));
 		}
 	});
 });
 
 function waitForCaptcha(){
+	// Do not try to load if there is not even a h-captcha element
+	if(document.querySelector('.h-captcha') == null) return;
+
+	// Wait till the iframe is loaded before we attach the observer
 	setTimeout(function() {
 		var iframe	= document.querySelector('.h-captcha iframe');
 		if(iframe	== null){
@@ -387,17 +407,19 @@ document.addEventListener("click", function(event){
 		openLoginModal();
 	}else if(target.id == 'check_cred'){
 		// Check if a valid username and password is submitted
-		verifyCreds();
+		verifyCreds(target);
 	}else if(target.id == "login_button"){
 		// Submit the login form when averything is ok
 		requestLogin();
 	}else if(target.id == 'toggle_pwd_view' || target.parentNode.id == 'toggle_pwd_view'){
-		toggle_pwd_view(event);
+		togglePassworView(event);
 	}else if(target.id == "lost_pwd_link"){
-		reset_password(target);
+		resetPassword(target);
 	}else if(target.id == 'retry_webauthn'){
 		showMessage('');
 		verifyWebauthn([]);
+	}else if(target.name == 'request_account'){
+		requestAccount(target);
 	}
 });
 

@@ -331,10 +331,10 @@ async function processFormsTableInput(target){
 					cell.innerHTML = value;
 				});
 			}else{
-				target.innerHTML = value;
+				cell.innerHTML = value;
 			}
 	
-			display_message(response.message);
+			display_message(response.message)
 		}
 	}else{
 		console.log(value)

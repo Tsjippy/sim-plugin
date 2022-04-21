@@ -77,15 +77,10 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
         'paged'             => $page,
         //Only include items whithout gallery_visibility meta key
         'meta_query'        => array(
-            'relation' => 'OR',
             array(
                 'key'     => 'gallery_visibility',
-                'value'   => 'hide',
-                'compare' => '!='
-            ),
-            array(
-                'key'     => 'gallery_visibility',
-                'compare' => 'NOT EXISTS'
+                'value'   => 'show',
+                'compare' => '=='
             )
         )    
     );
@@ -93,6 +88,8 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
     if(!empty($search)) $args['s']  = $search;
     
     $postslist = new \WP_Query( $args );
+
+    $total  = $postslist->found_posts;
 
     if ( ! $postslist->have_posts() ) {
         return false;
@@ -166,7 +163,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                         echo "<source src='$url'/>";
                     echo '</audio>';
                 // Vimeo video
-                }elseif(is_numeric($vimeo_id)){
+                }elseif(is_numeric($vimeo_id) and function_exists('SIM\VIMEO\show_vimeo_video')){
                     echo SIM\VIMEO\show_vimeo_video($vimeo_id);
                 }elseif($type=='video'){
                     echo "<video width='320' height='240' controls>";
@@ -196,10 +193,11 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                 <?php
             }
 
-            if(
+/*             if(
                 $postslist->post_count == $amount or            // we got as many post as requested
                 $i != $page*$amount+$postslist->post_count-1    // or we got less but the current index is not the last one
-            ){
+            ){ */
+            if($i != $total-1){
                 ?>
                 <a href="#" class="nextbtn">&#8250;</a>
                 <?php

@@ -2,7 +2,7 @@
 namespace SIM\MEDIAGALLERY;
 use SIM;
 
-const ModuleVersion		= '7.0.15';
+const ModuleVersion		= '7.0.16';
 
 //run on module activation
 add_action('sim_module_activated', function($module_slug, $options){

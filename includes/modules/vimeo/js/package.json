@@ -4,7 +4,7 @@
   "description": "Vimeo",
   "main": "./vimeo.js",
   "scripts": {
-    "build": "webpack --entry ./vimeo.js --output-path . --output-filename vimeo.min.js --progress --mode=production --devtool source-map"
+    "build": "webpack --watch --entry ./vimeo.js --output-path . --output-filename vimeo.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

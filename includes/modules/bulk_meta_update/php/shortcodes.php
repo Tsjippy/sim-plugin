@@ -35,8 +35,11 @@ add_shortcode('bulk_update_meta', function ($atts){
 				
 				//Only show if value not set
 				if(empty($value)){
-					$html .= "<div style='margin-top:50px;'><strong>{$user->display_name}</strong>";
-					$html .= SIM\document_upload($user->ID, $meta_key, $a['folder'], $meta_key).'</div>';
+					$html .= "<div style='margin-top:50px;'>";
+						$html .= "<strong>{$user->display_name}</strong>";
+						$uploader = new SIM\Fileupload($user->ID, $meta_key, $a['folder'], true, $meta_key);
+						$html .= $uploader->get_upload_html();
+					$html .= '</div>';
 				}
 			}
 		//Normal meta key

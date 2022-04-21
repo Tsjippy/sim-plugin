@@ -1,21 +1,25 @@
 //Load after page load
 document.addEventListener("DOMContentLoaded",function() {
-	send_statistics();
+	sendStatistics();
 });
 
 //Hide or show the clicked tab
 window.addEventListener("hashchange", function() {
     //send statistics
-	send_statistics();
+	sendStatistics();
 });
 
-function send_statistics(){
-    var request = new XMLHttpRequest();
-
-    request.open('POST', sim.ajax_url, true);
-    
+function sendStatistics(){
     var formData = new FormData();
-    formData.append('action','add_page_view');
     formData.append('url',window.location.href);
-    request.send(formData);
+    formData.append('_wpnonce', sim.restnonce);
+
+	fetch(
+		sim.base_url+'/wp-json/sim/v1/statistics/add_page_view',
+		{
+			method: 'POST',
+			credentials: 'same-origin',
+			body: formData
+		}
+	);
 }

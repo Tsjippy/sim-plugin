@@ -75,8 +75,6 @@ class Schedule{
 				<span class="close">&times;</span>
 				<form action="" method="post">
 					<p>Please select the user or family who is hosting</p>
-					<input type='hidden' name='action' value='add_host'>
-					<input type="hidden" name="update_schedule_nonce" value="<?php echo wp_create_nonce("update_schedule_nonce"); ?>">
 					<input type='hidden' name='schedule_id'>
 					<input type='hidden' name='date'>
 					<input type='hidden' name='starttime'>
@@ -114,8 +112,6 @@ class Schedule{
 				<span class="close">&times;</span>
 				<form action="" method="post">
 					<input type='hidden' name='schedule_id'>
-					<input type='hidden' name='action' value='add_host'>
-					<input type="hidden" name="update_schedule_nonce" value="<?php echo wp_create_nonce("update_schedule_nonce"); ?>">
 					<input type='hidden' name='olddate'>
 					
 					<h3>Add an orientation session</h3>
@@ -222,8 +218,6 @@ class Schedule{
 		ob_start();
 		?>
 		<div class='schedules_wrapper' style='z-index: 99;position: relative;'>
-			<input	type="hidden" name="remove_schedule_nonce" value="<?php echo wp_create_nonce("remove_schedule_nonce"); ?>">
-			<input type="hidden" name="update_schedule_nonce" value="<?php echo wp_create_nonce("update_schedule_nonce"); ?>">
 		<?php
 		echo $this->add_modals();
 		
@@ -566,7 +560,7 @@ class Schedule{
 		);
 		
 		if($wpdb->last_error !== ''){
-			wp_die($wpdb->print_error(),500);
+			return new WP_Error('schedules', $wpdb->print_error());
 		}
 
 		$event_id   = $wpdb->insert_id;
@@ -642,16 +636,12 @@ class Schedule{
 	}
 	
 	function add_schedule(){
-		SIM\verify_nonce('add_schedule_nonce');
-
-		if(!$this->admin) wp_die('You have no permission to add a schedule!', 500);
-		
 		global $wpdb;
 	
 		$name		= sanitize_text_field($_POST['target_name']);
 		//check if schedule already exists
 		if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `name` = '$name'") != null){
-			wp_die("A schedule for $name already exists!",500);
+			return new WP_Error('schedule', "A schedule for $name already exists!");
 		}
 
 		$info		= sanitize_text_field($_POST['schedule_info']);
@@ -681,7 +671,7 @@ class Schedule{
 			$starttime	= '18:00';
 		}						
 
-		if($startdate > $enddate) wp_die("Ending date cannot be before starting date",500);
+		if($startdate > $enddate) return new WP_Error('schedule', "Ending date cannot be before starting date");
 
 		$wpdb->insert(
 			$this->table_name, 
@@ -730,12 +720,7 @@ class Schedule{
 	function remove_schedule(){
 		global $wpdb;
 
-		if(!$this->admin) wp_die('You have no permission to remove a schedule!', 500);
-
-		SIM\verify_nonce('remove_schedule_nonce');
-
 		$schedule_id	= $_POST['schedule_id'];
-		if(!is_numeric($schedule_id)) wp_die('No valid schedule id given',500);
 
 		$schedule	= $this->schedules[$schedule_id];
 

@@ -4,6 +4,8 @@ use SIM;
 
 function display_roles($user_id){
 	global $wp_roles;
+
+	wp_enqueue_script( 'sim_user_management');
 	
 	//Get the roles this user currently has
 	$roles = get_userdata($user_id)->roles;				
@@ -24,8 +26,6 @@ function display_roles($user_id){
 	?>
 	<div class="role_info">
 		<form>
-			<input type="hidden" name="action" value = "updateroles">
-			<input type='hidden' name='change_roles' value='<?php echo wp_create_nonce( 'change_roles');?>'>
 			<input type='hidden' name='userid' value='<?php echo $user_id;?>'>
 			<h3>Select user roles</h3>
 			<p>
@@ -53,39 +53,3 @@ function display_roles($user_id){
 	<?php
 	return ob_get_clean();
 }
-
-//Make updateroles function availbale for AJAX request
-add_action ( 'wp_ajax_updateroles', function(){
-	if (isset($_POST['userid']) and is_numeric($_POST['userid'])){
-		SIM\verify_nonce('change_roles');
-		
-		$user 			= get_userdata($_POST['userid']);
-		$user_roles 	= $user->roles;
-		$new_roles		= (array)$_POST['roles'];
-		
-		//Check if new roles require mailchimp actions
-		$Mailchimp = new SIM\MAILCHIMP\Mailchimp($user->ID);
-		$Mailchimp->role_changed($new_roles);
-		
-		//add new roles
-		foreach($new_roles as $key=>$role){
-			//If the role is set, and the user does not have the role currently
-			if(!in_array($key,$user_roles)){
-				$user->add_role( $key );
-				SIM\print_array("Added role '$role' for user {$user->display_name}");
-			}
-		}
-		
-		foreach($user_roles as $role){
-			//If the role is not set, but the user has the role currently
-			if(!in_array($role,array_keys($new_roles))){
-				$user->remove_role( $role );
-				SIM\print_array("Removed role '$role' for user {$user->display_name}");
-			}
-		}
-		
-		wp_die("Updated roles succesfully");
-	}else{
-		wp_die("Invalid user id given",500);
-	}
-});

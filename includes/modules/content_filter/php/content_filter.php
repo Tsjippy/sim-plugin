@@ -34,7 +34,9 @@ add_action('wp_footer', function(){
 		$message = 'This content is restricted. <br>You will be able to see this page as soon as you login.';
 
 		//show login modal
-		echo SIM\LOGIN\login_modal($message, true);
+		if(function_exists('SIM\LOGIN\login_modal')){
+			echo SIM\LOGIN\login_modal($message, true);
+		}
 		return;
 	}
 	

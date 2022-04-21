@@ -166,17 +166,6 @@ class Fileupload{
 	}
 }
 
-/* 
-		Upload buttons
-*/
-function document_upload($user_id, $documentname, $targetdir="", $metakey='', $library=false, $callback=''){
-	
-	
-	$uploader = new Fileupload($user_id, $documentname, $targetdir, true, $metakey, $library, $callback);
-	
-	return $uploader->get_upload_html();
-}
-
 //Make upload_files function availbale for AJAX request
 add_action ( 'wp_ajax_upload_files', 'SIM\upload_files' );
 function upload_files(){
@@ -198,7 +187,6 @@ function upload_files(){
 		if(!empty($file_param['userid'])){
 			$user_id 	= sanitize_text_field($file_param['userid']);
 			$username 	= get_userdata($user_id)->user_login;
-			$targetdir	= $targetdir.$username.'-';
 		}
 		
 		if(isset($file_param['metakey']))		$meta_key 		= sanitize_text_field($file_param['metakey']);
@@ -216,7 +204,12 @@ function upload_files(){
 				
 				//Create the filename
 				$i = 0;
-				$target_file = $targetdir.$file_name;
+				if(strtolower(substr($file_name, 0, strlen($username))) == strtolower($username)){
+					$target_file = $targetdir.$file_name;
+				}else{
+					$target_file = $targetdir.$username.'-'.$file_name;
+				}
+				
 				while (file_exists($target_file)) {
  					/*// Set http header error
 					header('HTTP/1.0 422 File exists');
@@ -224,7 +217,12 @@ function upload_files(){
 					die(json_encode(array('error' => "The file '$file_name' already exists."))); */
 					
 					$i++;
-					$target_file = $targetdir.$i.'-'.$file_name;
+
+					if(strtolower(substr($file_name, 0, strlen($username))) == strtolower($username)){
+						$target_file = $targetdir.$i.'-'.$file_name;
+					}else{
+						$target_file = $targetdir.$username.'-'.$i.'-'.$file_name;
+					}
 				}
 
 				//Move the file
@@ -294,15 +292,24 @@ function upload_files(){
 	}
 }
 
-//Make the remove_document function available via AJAX for logged-in users
-add_action ( 'wp_ajax_remove_document', 'SIM\remove_document' );
-function remove_document(){
-	$callback = 'afterdocumentremove';
-	
-	if(!empty($_POST['url'])){
-		$path = get_home_path().$_POST['url'];
+add_action( 'rest_api_init', function () {	
+	//Route for first names
+	register_rest_route( 
+		'sim/v1/', 
+		'/remove_document', 
+		array(
+			'methods'				=> 'POST',
+			'callback'				=> __NAMESPACE__.'\removeDocument',
+			'permission_callback' 	=> '__return_true'
+		)
+	);
+});
 
-		if(isset($_POST['userid']))	$user_id = sanitize_text_field($_POST["userid"]);
+function removeDocument(){
+	if(!empty($_POST['url'])){
+		$path = ABSPATH.$_POST['url'];
+
+		if(isset($_POST['userid']))		$user_id = sanitize_text_field($_POST["userid"]);
 		if(isset($_POST['metakey']))	$metakey = sanitize_text_field($_POST['metakey']);
 		
 		if(isset($metakey)){
@@ -321,7 +328,6 @@ function remove_document(){
 			}
 			
 			//Remove the path from db 
-			//Personnal document
 			if(is_numeric($user_id)){
 				//Get document array from db
 				$documents_array = get_user_meta( $user_id, $base_meta_key,true);
@@ -349,10 +355,6 @@ function remove_document(){
 				update_option($base_meta_key,$documents_array);
 			}
 			
-			if(!empty($_POST['callback'])){
-				$callback = $_POST['callback'];
-			}
-			
 			$message = "File successfully removed";
 		}else{
 			$message = null;
@@ -362,11 +364,6 @@ function remove_document(){
 	}
 	
 	//send message back to js
-	wp_send_json(
-		[
-			'message'			=> $message,
-			'callback'			=> $callback,
-			'url'				=> $_POST['url']
-		]
-	);
+	return $message;
 }
+

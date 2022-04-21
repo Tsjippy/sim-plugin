@@ -483,22 +483,9 @@ class IMMIGRATION_LETTER extends SIM\PDF\PDF_HTML{
 	}
 }
 
-add_action ( 'wp_ajax_update_visa_documents', function(){
-	if(isset($_POST['quota_documents'])){
-		$quota_documents = get_option('quota_documents');
-
-		if(isset($_POST['quota_documents']['quotafiles'])){
-			$quota_documents['quotafiles']	= $_POST['quota_documents']['quotafiles'];
-		}else{
-			array_merge($quota_documents,$_POST['quota_documents']);
-		}
-		update_option('quota_documents', $quota_documents);
-	}
-	
-	wp_die("Updated quota documents succesfully");
-});
-
 add_shortcode( 'quotadocuments', function (){
+	wp_enqueue_script( 'sim_quotajs');
+	
 	//Only show if not editing a user
 	if(!isset($_GET['id'])){
 		$quota_documents = (array)get_option('quota_documents');
@@ -585,7 +572,9 @@ function quoata_document_upload($quota_documents){
 				<div class="buttonwrapper" style="width:100%; display: flex;">
 					<?php
 					$name	= "quota_documents[quotafiles][$key]";
-					echo SIM\document_upload($user_id='', $documentname=$name, $targetdir='visa_uploads', $multiple=true, $metakey=$name);
+
+					$uploader = new SIM\Fileupload($user_id='', $documentname=$name, $targetdir='visa_uploads', $multiple=true, $metakey=$name);
+					echo $uploader->get_upload_html();
 					echo $button;
 					?>
 				</div>

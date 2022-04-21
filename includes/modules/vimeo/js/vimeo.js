@@ -68,7 +68,11 @@ function load_vimeo_video(el) {
 window.wp.Uploader.prototype.init = function() { // plupload 'PostInit'
 	this.uploader.bind('FileFiltered', function(up, files) {
 		//show vimeo loader
-		showLoader(document.querySelector('.upload-inline-status'), false, '<span class="vimeo" style="font-size:x-large;">Preparing upload to Vimeo</span>');
+		try{
+			showLoader(document.querySelector('.upload-inline-status'), false, '<span class="vimeo" style="font-size:x-large;">Preparing upload to Vimeo</span>');
+		}catch(error){
+			console.error(error);
+		}
 	});
 
 	this.uploader.bind('BeforeUpload', function(up, file) {

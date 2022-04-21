@@ -6,11 +6,6 @@ class Statistics {
     function __construct(){
         global $wpdb;
         $this->table_name				= $wpdb->prefix . 'sim_statistics';
-		$this->create_db_table();
-
-        //Make add_page_view function availbale for AJAX request
-        add_action ( 'wp_ajax_nopriv_add_page_view', array($this,'add_page_view'));
-        add_action ( 'wp_ajax_add_page_view', array($this,'add_page_view'));
     }
 
     function create_db_table(){
@@ -37,8 +32,6 @@ class Statistics {
 
     function add_page_view(){
         global $wpdb;
-
-        if(empty($_POST['url'])) wp_die();
         $user_id        = get_current_user_id();
         $url            = str_replace(SITEURL,'',$_POST['url']);
         $creation_date	= date("Y-m-d H:i:s");

@@ -4,8 +4,8 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'send_reimbursement_requests_action', 'SIM\SIMNIGERIA\send_reimbursement_requests' );
-	add_action( 'send_missonary_detail_action', 'SIM\SIMNIGERIA\send_missonary_detail' );
+	add_action( 'send_reimbursement_requests_action', __NAMESPACE__.'\send_reimbursement_requests' );
+	add_action( 'send_missonary_detail_action', __NAMESPACE__.'\send_missonary_detail' );
 });
 
 function schedule_tasks(){
@@ -16,8 +16,6 @@ function schedule_tasks(){
 }
 
 function send_reimbursement_requests(){
-	SIM\print_array('Sending reimbursement requests');
-
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 	
@@ -35,9 +33,11 @@ function send_reimbursement_requests(){
 		SIM\print_array('No reimbursement requests found');
 	}else{
 		//Get all files in the reimbursement dir as they are the receipts
-		$attachments	= glob(wp_upload_dir()['path']."/form_uploads/Reimbursement/*.*");
+		$recieptsDir	= wp_upload_dir()['path']."/form_uploads/Reimbursement";
+		$attachments	= glob("$recieptsDir/*.*");
+
 		//Create the excel
-		$attachments[]	= $formtable->export_excel("Reimbursement requests - ".date("F Y", strtotime("previous month")).'.xlsx',false);
+		$excel	= $formtable->export_excel("Reimbursement requests - ".date("F Y", strtotime("previous month")).'.xlsx',false);
 
 		//mark all entries as archived
 		foreach($formtable->submission_data as $id=>$sub_data){
@@ -48,20 +48,32 @@ function send_reimbursement_requests(){
 
 		//If there are any attachements
 		if(!empty($attachments)){
+			// Check if we need to make a folder
+			if (!is_dir("$recieptsDir/old")) {
+                mkdir("$recieptsDir/old", 0777, true);
+            }
+
 			//Send e-mail
-			$subject = "Reimbursements for ".date("F Y", strtotime("previous month"));
-			$message = 'Dear finance team,<br><br>';
-			$message .= 'Attached you can find all reimbursement requests of this month<br><br>';
-			$message .= 'Kind regards,<br><br>';
-			$email_headers = ["Bcc:enharmsen@gmail.com"];
+			$subject		 = "Reimbursements for ".date("F Y", strtotime("previous month"));
+			$message		 = 'Dear finance team,<br><br>';
+			$message		.= 'Attached you can find all reimbursement requests of this month<br>';
+			$message		.= 'Please use the links below to get the reciepts:<br>';
+
+			// Add attachments as urls so to not exceed the appendix limit of outlook
+			foreach($attachments as $attachment){
+				$message		.= SIM\path_to_url($attachment);
+				$message		.= '<br><br>';
+			}
+			$email_headers	 = ["Bcc:enharmsen@gmail.com"];
 			
 			//Send the mail
-			wp_mail(SIM\get_module_option('mail_posting', 'finance_email') , $subject, $message,$email_headers, $attachments);
+			$to				= SIM\get_module_option('mail_posting', 'finance_email');
+			wp_mail($to, $subject, $message, $email_headers, $excel);
 
 			//Loop over the attachements and delete them from the server
 			foreach($attachments as $attachment){
 				//Remove the upload attached to the form
-				unlink($attachment);
+				rename($attachment, str_replace($recieptsDir, "$recieptsDir/old", $attachment));
 			}
 		}
 	}

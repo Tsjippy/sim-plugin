@@ -71,7 +71,6 @@ if(get_option("wpstg_is_staging_site") == "true"){
 			$wp_rewrite->set_permalink_structure( '/%category%/%postname%/' );
 			$wp_rewrite->flush_rules(); 
 		}
-		
 	} );
 }
 

@@ -58,6 +58,8 @@ function save_location_meta($post){
     location_address($locationtypes, $post->ID);
 }
 
+
+add_action('sim_ministry_added', __NAMESPACE__.'\location_address', 10, 2);
 function location_address($locationtypes, $post_id){
     global $wpdb;
     global $Maps;
@@ -102,6 +104,7 @@ function location_address($locationtypes, $post_id){
             
             //Get the first category name
             $name = get_term( $locationtypes[0], 'locationtype' )->slug.'_icon';
+            
             //If there is a location category set and an custom icon for this category is set
             if(count($locationtypes)>0 and !empty($CustomSimSettings[$name])){
                 $icon_id = $CustomSimSettings[$name];

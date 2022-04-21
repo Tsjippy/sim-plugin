@@ -57,7 +57,7 @@ function mailtracker(\WP_REST_Request $request) {
 
 	if(empty($url)){
 		// redirect to picture
-		$url = PICTURESURL.'/transparent.png?ver='.time();
+		$url = plugins_url('pictures/transparent.png', __DIR__).'?ver='.time();
 	}
 	wp_redirect( $url );
 	exit();

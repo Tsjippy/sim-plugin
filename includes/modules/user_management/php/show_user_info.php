@@ -111,22 +111,3 @@ function write_visa_pages($user_id, $pdf){
 	
 	return $pdf;
 }
-
-add_action ( 'wp_ajax_extend_validity', function(){
-	//print_array($_POST,true);
-	if(isset($_POST['new_expiry_date']) and isset($_POST['userid']) and is_numeric($_POST['userid'])){
-		SIM\verify_nonce('extend_validity_reset_nonce');
-		
-		$user_id = $_POST['userid'];
-		if(isset($_POST['unlimited']) and $_POST['unlimited'] == 'unlimited'){
-			$date = 'unlimited';
-			echo "Marked the useraccount for ".get_userdata($user_id)->first_name." to never expire.";
-		}else{
-			$date = sanitize_text_field($_POST['new_expiry_date']);
-			echo "Extended valitidy for ".get_userdata($user_id)->first_name." till $date";
-		}
-		update_user_meta( $user_id, 'account_validity',$date);
-	}
-	wp_die();
-	
-});

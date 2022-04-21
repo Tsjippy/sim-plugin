@@ -40,7 +40,6 @@ function send_pending_post_warning($post, $update){
 
 //Delete the indicator that the warning has been send
 add_action(  'transition_post_status',  function ( $new_status, $old_status, $post ) {
-	// Check if signal nonce is set.
 	if ($new_status == 'publish' and $old_status == 'pending'){
 		delete_post_meta($post->ID,'pending_notification_send');
 	}
@@ -66,7 +65,7 @@ function add_page_edit_button(){
 		$user_id = $user->ID;
 
 		//Get current users ministry and compound
-		$missionary_page_id = SIM\USERPAGE\get_user_page_id($user_id);
+		$missionary_page_id = SIM\getUserPageId($user_id);
 		$user_ministries 	= get_user_meta($user_id, "user_ministries", true);
 		$user_compound 		= get_user_meta($user_id, "location", true);
 		if(!is_array($user_compound)) $user_compound = [];

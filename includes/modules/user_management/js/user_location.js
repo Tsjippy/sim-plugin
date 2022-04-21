@@ -1,36 +1,5 @@
 console.log("Location.js loaded");
 
-window['add_new_compound_data'] = function(result){
-	//If succesfull
-	if (result.status >= 200 && result.status < 400) {
-		var add_compound_form = document.getElementById('add_compound_form');
-		
-		if(add_compound_form != null){
-			//get the details from the form
-			var name 		= add_compound_form.querySelector('#location_name').value;
-			var addres 		= add_compound_form.querySelector('#location\\[address\\]').value;
-			var latitude 	= add_compound_form.querySelector('#location\\[latitude\\]').value
-			var longitude 	= add_compound_form.querySelector('#location\\[longitude\\]').value;
-			
-			var mainform = document.getElementById('location_info');
-			
-			//Fill in the new address and location
-			mainform.querySelector('#location\\[address\\]').value 		= addres;
-			mainform.querySelector('#location\\[latitude\\]').value 	= latitude;
-			mainform.querySelector('#location\\[longitude\\]').value 	= longitude;
-			
-			//Add new compound to dropdown
-			var newOption = new Option(name, name, true, true);
-			
-			jQuery('#location\\[compound\\]').append(newOption).trigger('change');
-		}
-	}
-	
-	hide_modals();
-	
-	return;
-}
-
 function filllocationfields(event){
 	var target	= event.target;
 	var form	= target.closest('form');

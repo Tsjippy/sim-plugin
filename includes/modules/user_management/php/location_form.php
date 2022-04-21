@@ -47,14 +47,16 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		SIM\update_family_meta($user_id, "location", $location);
 		
 		//Update mailchimp tags if needed
-		$Mailchimp = new SIM\MAILCHIMP\Mailchimp($user_id);
-		if(strpos(strtolower($location['address']),'jos') !== false){
-			//Live in Jos, add the tags
-			$Mailchimp->update_family_tags(['Jos'], 'active');
-			$Mailchimp->update_family_tags(['not-Jos'], 'inactive');
-		}else{
-			$Mailchimp->update_family_tags(['Jos'], 'inactive');
-			$Mailchimp->update_family_tags(['not-Jos'], 'active');
+		if(class_exists('SIM\MAILCHIMP\Mailchimp')){
+			$Mailchimp = new SIM\MAILCHIMP\Mailchimp($user_id);
+			if(strpos(strtolower($location['address']),'jos') !== false){
+				//Live in Jos, add the tags
+				$Mailchimp->update_family_tags(['Jos'], 'active');
+				$Mailchimp->update_family_tags(['not-Jos'], 'inactive');
+			}else{
+				$Mailchimp->update_family_tags(['Jos'], 'inactive');
+				$Mailchimp->update_family_tags(['not-Jos'], 'active');
+			}
 		}
 		
 		//Get any existing marker id from the db
@@ -89,87 +91,3 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	
 	return $formresults;
 },10,3);
-
-add_action ( 'wp_ajax_add_compound', function(){
-	global $CompoundCategoryID;
-	
-	//print_array($_POST,true);
-	
-	if(empty($_POST['location_name'])) wp_die("Please give a compound name",500);
-	if(empty($_POST['userid']) or !is_numeric($_POST['userid'])) wp_die("Could not find user id",500);
-	
-	SIM\verify_nonce('add_compound_nonce');
-	
-	// Insert the post into the database.
-	$post_id = wp_insert_post([
-		'post_title'    => sanitize_text_field($_POST['location_name']),
-		'post_content'  => '',
-		'post_status'   => 'publish',
-		'post_author'   => $_POST['userid'],
-		'post_type'		=> 'location',
-	]);
-	
-	//Save the location
-	if($post_id != 0){		
-		//Add the compound cat
-		wp_set_post_terms($post_id ,$CompoundCategoryID,'locationtype');
-		
-		//Add the address and the maps
-		SIM\LOCATIONS\save_location_meta($post_id, 'location');
-		
-		$url = get_permalink($post_id);
-		
-		wp_die(json_encode(
-			[
-				'message'	=> "Succesfully created new compound page see it <a href='$url'>here</a>",
-				'callback'	=> 'add_new_compound_data'
-			]
-		));
-	}else{
-		wp_die("Page creaion failed",500);
-	}
-});
-
-//Add compound modal
-add_action('before_form',function ($formname){
-	if($formname != 'user_location') return;
-	global $CompoundIconID;
-
-	?>
-	<div id="add_compound_modal" class="modal hidden">
-		<!-- Modal content -->
-		<div class="modal-content">
-			<span id="modal_close" class="close">&times;</span>
-			<form action="" method="post" id="add_compound_form">
-				<div style="display: none;" class="error modal-warning" id="add-compound-warning">Longitude is a required field!</div>
-				<p>Please fill in the form to add a new compound to the list</p>
-				<input type="hidden" name="action"				value = "add_compound">
-				<input type="hidden" name="location_type"		value = "<?php echo $CompoundIconID; ?>">			
-				<input type="hidden" name="add_compound_nonce"	value = "<?php echo wp_create_nonce("add_compound_nonce"); ?>">
-				
-				<label>
-					<div>Compound name<span class="required">*</span></div>
-					<input type="text"  name="location_name">
-				</label>
-				
-				<label>
-					<div>Address</div>
-					<input type="text" class="address" name="location[address]">
-				</label>
-				
-				<label>
-					<div>Latitude</div>
-					<input type="text" class="latitude" name="location[latitude]">
-				</label>
-				
-				<label>
-					<div>Longitude</div>
-					<input type="text" class="longitude" name="location[longitude]">
-				</label>
-				
-				<?php echo SIM\add_save_button('add_compound','Add compound'); ?>
-			</form>
-		</div>
-	</div>
-	<?php
-});

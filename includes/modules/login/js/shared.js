@@ -35,24 +35,6 @@ export async function fetchRestApi(url, formdata){
 	};
 }
 
-// Predefined fetch function
-export const fetchEndpoint = (data, url, header) => {
-	return fetch(
-		url,
-		{
-		  method: 'POST',
-		  credentials: 'same-origin',
-		  redirect: 'error',
-		  headers: {
-			'Content-Type': 'application/json',
-			'Accept': 'application/json',
-			...header
-		  },
-		  body: JSON.stringify(data),
-		}
-	);
-} 
-
 // Decodes a Base64Url string
 const base64UrlDecode = (input) => {
 input = input

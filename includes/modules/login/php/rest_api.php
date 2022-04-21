@@ -3,15 +3,12 @@ namespace SIM\LOGIN;
 use SIM;
 use RobThree\Auth\TwoFactorAuth;
 use Webauthn\Server;
-use Webauthn\PublicKeyCredentialRpEntity;
 use Webauthn\PublicKeyCredentialUserEntity;
 use Webauthn\PublicKeyCredentialCreationOptions;
-use Webauthn\PublicKeyCredentialSourceRepository as PublicKeyCredentialSourceRepositoryInterface;
 use Webauthn\PublicKeyCredentialSource;
 use Webauthn\AuthenticatorSelectionCriteria;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
-use DeviceDetector\Parser\OperatingSystem as OS_info;
 use WP_Error;
 
 // Allow rest api urls for non-logged in users
@@ -279,7 +276,6 @@ add_action( 'rest_api_init', function () {
 function biometricOptions(){
     try{
         $identifier = sanitize_text_field($_POST['identifier']);
-        $clientId   = strval(time()).generate_random_string(24);
 
         $user       = wp_get_current_user();
 
@@ -343,7 +339,6 @@ function biometricOptions(){
         store_in_transient('username', $user->user_login);
         store_in_transient('identifier', $identifier);
 
-        $publicKeyCredentialCreationOptions["clientID"] = $clientId;
         return $publicKeyCredentialCreationOptions;
     }catch(\Exception $exception){
         SIM\print_array("ajax_create: (ERROR)".$exception->getMessage());
@@ -462,8 +457,6 @@ function storeBiometric(){
 // Auth challenge
 function startAuthentication(){
     try{
-        $clientId       = strval(time()).generate_random_string(24);
-
         $user           = get_user_by('login', $_POST['username']);
         
         if(!$user) return new WP_Error('User error', "No user with user name {$_POST['username']} found.");
@@ -525,7 +518,6 @@ function startAuthentication(){
         store_in_transient("user_auth", $userEntity);
         store_in_transient("user", $user);
 
-        //$publicKeyCredentialRequestOptions["clientID"] = $clientId;
         return $publicKeyCredentialRequestOptions;
     }catch(\Exception $exception){
         SIM\print_array("ajax_auth: (ERROR)".$exception->getMessage());
@@ -540,7 +532,6 @@ function startAuthentication(){
 
 // Verify webauthn
 function finishAuthentication(){
-    $clientId = false;
     try{
         $publicKeyCredential                = sanitize_text_field(stripslashes($_POST['publicKeyCredential']));
 
@@ -818,8 +809,6 @@ function requestPasswordReset(){
 
 //Save a new password
 function processPasswordUpdate(){
-	SIM\print_array("updating password");
-
 	$user_id	= $_POST['userid'];
 
 	$userdata	= get_userdata($user_id);	
@@ -828,8 +817,13 @@ function processPasswordUpdate(){
 	if($_POST['pass1'] != $_POST['pass2'])	return new WP_Error('Password error', "Passwords do not match, try again.");
 	
 	wp_set_password( $_POST['pass1'], $user_id );
+
+    $message    = 'Changed password succesfully';
+    if(is_user_logged_in()){
+        $message .= ', please login again';
+    }
 	return [
-        'message'	=>'Changed password succesfully',
+        'message'	=> $message,
         'redirect'	=> SITEURL."/?showlogin=$userdata->user_login"
     ];
 }
@@ -837,17 +831,14 @@ function processPasswordUpdate(){
 // Request user account.
 function requestUserAccount(){
 	$first_name	= $_POST['first_name'];
-
 	$last_name	= $_POST['last_name'];
-
-	$email	= $_POST['email'];
-
-	$pass1	= $_POST['pass1'];
-	$pass2	= $_POST['pass2'];
+	$email	    = $_POST['email'];
+	$pass1	    = $_POST['pass1'];
+	$pass2	    = $_POST['pass2'];
 
 	if($pass1 != $pass2)	return new WP_Error('Password error', "Passwords do not match, try again.");
 
-	$username	= get_available_username($first_name, $last_name);
+	$username	= SIM\getAvailableUsername($first_name, $last_name);
 
 	// Creating account
 	//Build the user
@@ -857,8 +848,11 @@ function requestUserAccount(){
 		'first_name'    => $first_name,
 		'user_email'    => $email,
 		'display_name'  => "$first_name $last_name",
-		'user_pass'     => $pass1
 	);
+
+    if(!empty($pass1)){
+        $userdata['user_pass']     = $pass1;
+    }
 
 	//Insert the user
 	$user_id = wp_insert_user( $userdata ) ;

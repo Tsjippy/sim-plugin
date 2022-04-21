@@ -33,7 +33,7 @@ async function refreshPostLock(){
 	if(postid != null){
 		var formdata	= new FormData();
 		formdata.append('postid', postid.value);
-		var response = await fetchRestApi('frontend_posting/refresh_post_lock', formdata);
+		fetchRestApi('frontend_posting/refresh_post_lock', formdata);
 	}
 }
 
@@ -61,7 +61,7 @@ function switchforms(target){
 	var submit_button 	= parent.querySelector('[name="submit_post"]');
 	var post_type 		= target.value;
 	
-	parent.querySelector('[name="post_type"]').value 	= post_type;
+	document.querySelector('#postform [name="post_type"]').value 	= post_type;
 	
 	//Change button text
 	parent.querySelectorAll('.replaceposttype').forEach(function(el){
@@ -314,7 +314,6 @@ async function addCatType(target){
 
 async function submitPost(target){
 	var response	= await submitForm(target, 'frontend_posting/submit_post');
-
 	if(response){
 		display_message(response);
 	}

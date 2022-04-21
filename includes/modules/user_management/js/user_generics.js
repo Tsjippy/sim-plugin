@@ -3,41 +3,40 @@ function change_visibility(target) {
 	target.closest('span').querySelector('.ministryposition').classList.toggle('hidden');
 }
 
-window['add_new_ministry_data'] = function(result){
-	if (result.status >= 200 && result.status < 400) {
-		var add_ministry_form = document.getElementById('add_ministry_form');
+async function addNewMinistry(target){
+	var response = await submitForm(target, 'user_management/add_ministry');
+	
+	if(response){
+		var ministry_name 		= target.closest('form').querySelector('[name="location_name"]').value;
+		ministry_name			= ministry_name.charAt(0).toUpperCase() + ministry_name.slice(1);
+		//Replace any spaces with underscore
+		ministry_key			= ministry_name.replace(/ /g,'_');
+
+		var html = `
+		<span>
+			<label>
+				<input type="checkbox" class="ministry_option_checkbox" name="ministries[]" value="${ministry_key}" checked>
+				<span class="optionlabel">${ministry_name}</span>
+			</label>
+			<label class="ministryposition" style="display:block;">
+				<h4 class="labeltext">Position at ${ministry_name}:</h4>
+				<input type="text" id="justadded" name="user_ministries[${ministry_key}]">
+			</label>
+		</span>`;
 		
-		if(add_ministry_form != null){
-			var ministry_name 		= add_ministry_form.querySelector('[name="location_name"]').value;
-			ministry_name			= ministry_name.charAt(0).toUpperCase() + ministry_name.slice(1);
-			//Replace any spaces with underscore
-			ministry_key			= ministry_name.replace(/ /g,'_');
+		document.querySelector("#ministries_list").insertAdjacentHTML('beforeEnd',html);
+		
+		//hide the SWAL window
+		setTimeout(function(){document.querySelectorAll('.swal2-container').forEach(el=>el.remove());}, 1500);
 
-			var html ='<span>\
-				<label>\
-					<input type="checkbox" class="ministry_option_checkbox" name="ministries[]" value="'+ministry_key+'" checked>\
-					<span class="optionlabel">'+ministry_name+'</span>\
-				</label>\
-				<label class="ministryposition" style="display:block;">\
-					<h4 class="labeltext">Position at '+ministry_name+':</h4>\
-					<input type="text" id="justadded" name="user_ministries['+ministry_key+']">\
-				</label>\
-			</span>';
-			
-			document.querySelector("#ministries_list").insertAdjacentHTML('beforeEnd',html);
-			
-			//hide the SWAL window
-			setTimeout(function(){document.querySelectorAll('.swal2-container').forEach(el=>el.remove());}, 1500);
+		//focus on the newly added input
+		document.getElementById('justadded').focus();
+		document.getElementById('justadded').select();
 
-			//focus on the newly added input
-			document.getElementById('justadded').focus();
-			document.getElementById('justadded').select();
-		}
+		display_message(`Succesfully added ministry ${ministry_name}.`)
 	}
 	
 	hide_modals();
-	
-	return;
 }
 
 //listen to all clicks
@@ -55,5 +54,9 @@ document.addEventListener('click',function(event) {
 	
 	if(target.classList.contains('ministry_option_checkbox')){
 		change_visibility(target);
+	}
+
+	if(target.name == 'add_ministry'){
+		addNewMinistry(target);
 	}
 });

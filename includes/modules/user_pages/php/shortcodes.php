@@ -96,7 +96,7 @@ add_shortcode("userstatistics",function ($atts){
 						if($time_string ) $last_login_date = date('d F Y', $time_string);
 					}
 
-					$picture = SIM\USERMANAGEMENT\display_profile_picture($user->ID);
+					$picture = SIM\displayProfilePicture($user->ID);
 
 					echo "<tr class='table-row'>";
 						echo "<td>$picture {$user->display_name}</td>";
@@ -148,10 +148,10 @@ add_shortcode('missionary_link',function($atts){
 	$privacy_preference = get_user_meta( $user_id, 'privacy_preference', true );
 	if(!is_array($privacy_preference)) $privacy_preference = [];
 	
-	$url = get_user_page_url($user_id);
+	$url = SIM\getUserPageUrl($user_id);
 	
 	if($a['picture'] == true and !isset($privacy_preference['hide_profile_picture'])){
-		$profile_picture = SIM\USERMANAGEMENT\display_profile_picture($user_id);
+		$profile_picture = SIM\displayProfilePicture($user_id);
 	}
 	$html .= "<a href='$url'>$profile_picture $nickname $display_name</a><br>";
 	

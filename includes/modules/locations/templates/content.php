@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			if(is_user_logged_in()){
 			?>
 				<div class='author'>
-					Shared by: <a href='<?php echo SIM\USERPAGE\get_user_page_url(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
+					Shared by: <a href='<?php echo SIM\getUserPageUrl(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
 				</div>
 				<?php
 				if($argsarchive){
@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							) 
 						);
 						
-						$url = PICTURESURL.'/location.png';
+						$url	= plugins_url('pictures/location.png', __DIR__);
 						echo "<img src='$url' alt='category' class='location_icon'>";
 						
 						//First loop over the cat to see if any parent cat needs to be removed
@@ -92,7 +92,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php
 						$tel		= get_post_meta(get_the_ID(),'tel',true);
 						if($tel != ''){
-							$image_url = plugins_url().'/sim-plugin/includes/pictures/tel.png';
+							$image_url = plugins_url('pictures/tel.png', __DIR__);
 							$icon = "<img src='$image_url' alt='telephone' class='location_icon'>";
 							echo "<a href='tel:$tel'>$icon Call them  »</a>";
 						}
@@ -103,7 +103,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php
 						$url		= get_post_meta(get_the_ID(),'url',true);
 						if($url != '' and $url != 'https://www.'){
-							$image_url = PICTURESURL.'/url.png';
+							$image_url = plugins_url('pictures/url.png', __DIR__);
 							$icon = "<img src='$image_url' alt='location' class='location_icon'>";
 							echo "<a href='$url'>$icon Visit website  »</a>";
 						}

@@ -33,10 +33,11 @@ function change_password_form($user_id = null){
 	}
 	
 	ob_start();
+	
 	//Check if action is needed
 	if(isset($_GET['action']) and isset($_GET['wp_2fa_nonce'])){
 		if($_GET['action'] == 'reset2fa' and wp_verify_nonce( $_GET['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_GET['user_id'])){
-			if($_GET['do'] == 'off'){
+			if($_GET['do'] == 'off' and function_exists('SIM\LOGIN\reset_2fa')){
 				SIM\LOGIN\reset_2fa($user_id);
 				echo "<div class='success'>Succesfully turned off 2fa for $name</div>";
 			}elseif($_GET['do'] == 'email'){
@@ -53,22 +54,25 @@ function change_password_form($user_id = null){
 
 		<?php
 		if(in_array('usermanagement', wp_get_current_user()->roles)){
-		?>
-		<form data-reset='true' class='sim_form'>
-			<input type="hidden" name="disable_useraccount"		value="<?php echo wp_create_nonce("disable_useraccount");?>">
-			<input type="hidden" name="userid"					value="<?php echo $user_id; ?>">
-			<input type="hidden" name="action"					value="<?php echo $action_text;?>_useraccount">
+			wp_enqueue_script( 'sim_user_management');
+			?>
+			<form data-reset='true' class='sim_form'>
+				<input type="hidden" name="disable_useraccount"		value="<?php echo wp_create_nonce("disable_useraccount");?>">
+				<input type="hidden" name="userid"					value="<?php echo $user_id; ?>">
+				<input type="hidden" name="action"					value="<?php echo $action_text;?>_useraccount">
 
-			<p style="margin:30px 0px 0px;">
-				Click the button below if you want to <?php echo $action_text;?> the useraccount for <?php echo $name;?>.
-			</p>
+				<p style="margin:30px 0px 0px;">
+					Click the button below if you want to <?php echo $action_text;?> the useraccount for <?php echo $name;?>.
+				</p>
 
-			<?php echo SIM\add_save_button('disable_useraccount', ucfirst($action_text)." useraccount for $name");?>
-		</form>
-		<?php
+				<?php echo SIM\add_save_button('disable_useraccount', ucfirst($action_text)." useraccount for $name");?>
+			</form>
+			<?php
 		}
 		
-		echo SIM\LOGIN\password_reset_form($user);
+		if(function_exists('SIM\LOGIN\password_reset_form')){
+			echo SIM\LOGIN\password_reset_form($user);
+		}
 		
 		$methods	= get_user_meta($user_id, '2fa_methods', true);
 		if(is_array($methods)){
@@ -106,27 +110,4 @@ function change_password_form($user_id = null){
 	</div>
 	<?php	
 	return ob_get_clean();
-}
-
-//Disable or enable an useraccount
-add_action ( 'wp_ajax_disable_useraccount', __NAMESPACE__.'\disable_useraccount');
-add_action ( 'wp_ajax_enable_useraccount', __NAMESPACE__.'\disable_useraccount');
-function disable_useraccount(){
-	if(!in_array('usermanagement', wp_get_current_user()->roles)){
-		wp_die("You do not have permission to disable useraccounts.",500);
-	}
-
-	if (!is_numeric($_POST['userid'])){
-		wp_die('Invalid userid given',500);
-	}
-
-	SIM\verify_nonce('disable_useraccount');
-	
-	if($_POST['action'] == 'disable_useraccount'){
-		update_user_meta( $_POST['userid'], 'disabled', true );
-		wp_die('Disabled useraccount succesfully');
-	}else{
-		delete_user_meta( $_POST['userid'], 'disabled');
-		wp_die('Enabled useraccount succesfully');
-	}
 }

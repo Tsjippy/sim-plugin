@@ -7,7 +7,7 @@ add_action('delete_user', function ($user_id){
 	//Only remove if there is no family
 	if (count($family) == 0){
         //Check if a page exists for this person
-        $missionary_page    = get_user_page_id($user_id);
+        $missionary_page    = SIM\getUserPageId($user_id);
         if (is_numeric($missionary_page)){
             //page exists, delete it
             wp_delete_post($missionary_page);

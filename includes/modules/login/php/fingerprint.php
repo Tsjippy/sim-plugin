@@ -18,7 +18,7 @@ use WP_Error;
 
 //check for interface
 if(!interface_exists('Webauthn\PublicKeyCredentialSourceRepository')){
-    wp_die("Webauthn\PublicKeyCredentialSourceRepository interface does not exist. Please run 'composer require web-auth/webauthn-lib'");
+    return new WP_Error('biometric', "Webauthn\PublicKeyCredentialSourceRepository interface does not exist. Please run 'composer require web-auth/webauthn-lib'");
 }
 
 /**
@@ -285,19 +285,19 @@ function authenticator_list(){
         $user_id = intval(sanitize_text_field($_GET["user_id"]));
         if($user_id <= 0){
             SIM\print_array("ajax_ajax_authenticator_list: (ERROR)Wrong parameters, exit");
-            wp_die("Bad Request.", 500);
+            return new WP_Error('webauthn', "Bad Request.");
         }
 
         if($user_info->ID !== $user_id){
             if(!current_user_can("edit_user", $user_id)){
                 SIM\print_array("ajax_ajax_authenticator_list: (ERROR)No permission, exit");
-                wp_die("Something went wrong.", 500);
+                return new WP_Error('webauthn', "Bad Request.");
             }
             $user_info = get_user_by('id', $user_id);
 
             if($user_info === false){
                 SIM\print_array("ajax_ajax_authenticator_list: (ERROR)Wrong user ID, exit");
-                wp_die("Something went wrong.", 500);
+                return new WP_Error('webauthn', "Bad Request.");
             }
         }
     }
@@ -305,9 +305,8 @@ function authenticator_list(){
     $user_key   = get_user_meta($user_info->ID, '2fa_webauthn_key', true);
     if(!$user_key){
         // The user haven't bound any authenticator, return empty list
-        if(wp_doing_ajax()){
-            echo "[]";
-            exit;
+        if(defined('REST_REQUEST')){
+            return "[]";
         }else{
             return array();
         }
@@ -322,12 +321,7 @@ function authenticator_list(){
     $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user_info);
     $authenticator_list   = $publicKeyCredentialSourceRepository->getShowList($userEntity);
     
-    if(wp_doing_ajax()){
-        return json_encode($authenticator_list);
-        exit;
-    }else{
-        return $authenticator_list;
-    }
+    return $authenticator_list;
 }
 
 function auth_table($auth_id=''){

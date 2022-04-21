@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
+use WP_Error;
 
 function checkPermissions(){
 	$user	= wp_get_current_user();
@@ -242,7 +243,7 @@ function addFormElement(){
 		$element->functionname	= $functionname;
 		
 		//only continue if the function exists
-		if ( ! function_exists( $functionname ) ) wp_die("A function with name $functionname does not exist!",500);
+		if ( ! function_exists( $functionname ) ) return new WP_Error('forms', "A function with name $functionname does not exist!");
 	}
 	
 	if(in_array($element->type, ['label','button'])){

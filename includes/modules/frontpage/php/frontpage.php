@@ -35,7 +35,7 @@ if(!empty($hook_name)){
 		//if on home page and prayer module activated
 		if(is_page(SIM\get_module_option('login','home_page')) and SIM\get_module_option('prayer','enable')){
 			
-			if (is_user_logged_in()){
+			if (is_user_logged_in() and function_exists('SIM\PRAYER\prayer_request')){
 				$prayerrequest = SIM\PRAYER\prayer_request();
 				if (empty($prayerrequest)) return;
 			

@@ -1,4 +1,7 @@
-import {closeMobileMenu} from './shared.js';
+import {
+    closeMobileMenu,
+    fetchRestApi
+} from './shared.js';
 
 //Logout user
 document.addEventListener("DOMContentLoaded",function() {
@@ -32,27 +35,14 @@ async function logout(event){
         }
 
         var formdata	= new FormData();
-	    formdata.append('_wpnonce', sim.restnonce);
 
-        var result = await fetch(
-            sim.base_url+'/wp-json/sim/v1/login/logout',
-            {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: formdata
-            }
-        );
-    
-        var response	= await result.json();
+        var response    = await fetchRestApi('logout', formdata);
 
-        if(result.ok){
+        if(response){
             display_message(response,'success', false, true);
 
             //redirect to homepage
             location.href	= sim.base_url;
-        }else{
-            console.error(response);
-            display_message(response, 'error');
-        };
+        }
     }
 }

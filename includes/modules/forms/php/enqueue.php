@@ -46,7 +46,7 @@ add_action( 'wp_enqueue_scripts', function(){
 
     wp_register_script( 'sim_formbuilderjs', plugins_url('js/formbuilder.min.js', __DIR__), array('sim_forms_script','sortable','sweetalert', 'sim_formsubmit_script'), ModuleVersion,true);
     
-    wp_register_script('sim_forms_table_script', plugins_url('js/forms_table.min.js', __DIR__), array('sim_table_script', 'sim_forms_script', 'sim_formsubmit_script'), ModuleVersion,true);
+    wp_register_script('sim_forms_table_script', plugins_url('js/forms_table.min.js', __DIR__), array('sim_forms_script', 'sim_table_script', 'sim_formsubmit_script'), ModuleVersion,true);
 
     $formbuilder_pages   = SIM\get_module_option('forms', 'formbuilder_pages');
     if(in_array(get_the_ID(), $formbuilder_pages)){

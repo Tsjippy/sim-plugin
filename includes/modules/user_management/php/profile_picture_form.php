@@ -57,20 +57,6 @@ function getProfilePicturePath($user_id){
 	return $path;
 }
 
-function display_profile_picture($user_id, $size=[50,50], $show_default = true){
-	$attachment_id = get_user_meta($user_id,'profile_picture',true);
-	if(is_numeric($attachment_id)){
-		$url = wp_get_attachment_image_url($attachment_id,'Full size');
-		$img = wp_get_attachment_image($attachment_id,$size);
-		return "<a href='$url'>$img</a>";
-	}elseif($show_default){
-		$url = PICTURESURL.'/usericon.png';
-		return "<img width='50' height='50' src='$url' class='attachment-50x50 size-50x50' loading='lazy'>";
-	}else{
-		return false;
-	}
-}
-
 // Apply filter
 add_filter( 'get_avatar' , function ( $avatar, $id_or_email, $size, $default, $alt ) {
     $user = false;

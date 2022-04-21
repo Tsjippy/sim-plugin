@@ -31,8 +31,6 @@ function twofa_settings_form($user_id=''){
 	}
 	?>
 	<form id="2fa-setup-wrapper">
-		<input type='hidden' name='action' value='save_2fa_settings'>
-		<input type='hidden' name='save2fasettings_nonce' value='<?php echo wp_create_nonce( 'save2fasettings_nonce' );?>'>
 		<input type='hidden' name='secretkey' value='<?php echo $secondfactor->secretkey;?>'>
 
 		<div id='2fa-options-wrapper' style='margin-bottom:20px;'>

@@ -25,25 +25,22 @@ export async function getUploadUrl (plupload_file, wp_uploader) {
         }
 
         var formdata = new FormData();
-        formdata.append('action', 'prepare-vimeo-upload');
         formdata.append('file_size', file.size);
         formdata.append('file_name', file.name);
         formdata.append('file_type', file.type);
-        const response = await fetch(sim.ajax_url, {
-            method: 'POST',
-            credentials: 'same-origin',
-            body: formdata
-        });
+
+        var response    = await fetchRestApi('vimeo/prepare_vimeo_upload', formdata);
+
         //Failed
-        if(!response.ok){
+        if(!response){
             console.error('Failed');
             console.error(formdata);
             console.log(file);
             return;
         }
-        const data          = await response.json();
-        var uploadUrl		= data.upload_link;
-        var postId		    = data.post_id;
+
+        var uploadUrl		= response.upload_link;
+        var postId		    = response.post_id;
         console.debug('new upload URL: ' + uploadUrl);
 
         storedEntry = {
@@ -90,25 +87,32 @@ function startUpload (plupload_file, wp_uploader) {
             
             //get wp post details
 			var formdata = new FormData();
-			formdata.append('action', 'add-uploaded-vimeo');
 			formdata.append('post_id', storedEntry.postId);
-			
-			var request = new XMLHttpRequest();
-			request.open('POST', sim.ajax_url, false);
+
+            var request = new XMLHttpRequest();
+			request.open('POST', sim.base_url+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
 			request.send(formdata);
+
+            //var response    = await fetchRestApi('vimeo/add_uploaded_vimeo', formdata);
 
 			//mark as uploaded
 			wp_uploader.dispatchEvent('fileUploaded', plupload_file, request);
+            //wp_uploader.dispatchEvent('fileUploaded', plupload_file, response);
 
 			document.querySelector('[data-id="'+storedEntry.postId+'"] .filename>div').textContent='Uploaded to Vimeo';
         },
         onError (error) {
             console.error("Failed because: " + error);
-			wp_uploader.dispatchEvent('fileUploaded', plupload_file, request);
+			wp_uploader.dispatchEvent('fileUploaded', plupload_file, response);
 
 			return;
         },
     });
+
+    //update upload count
+    document.querySelector('.upload-details .upload-index').textContent    = wp_uploader.total.uploaded+1;
+    
+    document.querySelector('.upload-details .upload-filename').textContent = wp_uploader.files[wp_uploader.total.uploaded].name;
 
     upload.start();
 }

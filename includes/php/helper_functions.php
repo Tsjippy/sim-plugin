@@ -29,7 +29,7 @@ function update_family_meta($user_id, $metakey, $value){
 
 //Create a dropdown with all users
 function user_select($text, $only_adults=false, $families=false, $class='', $id='user_selection', $args=[], $user_id='', $exclude_ids=[]){
-	wp_enqueue_script('sim_other_script');
+	wp_enqueue_script('sim_user_select_script');
 	$html = "";
 
 	if(!is_numeric($user_id))	$user_id = $_GET["userid"];
@@ -538,6 +538,9 @@ function get_meta_array_value($user_id, $metakey, $values=null){
 		$value	= $values;
 		foreach($matches[1] as $match){
 			if(!is_array($value)) break;
+			if(!isset($value[$match])){
+				$match	= str_replace('_files', '', $match);
+			}
 			$value = $value[$match];
 		}
 	}
@@ -548,17 +551,9 @@ function get_meta_array_value($user_id, $metakey, $values=null){
 //Verify nonce
 function verify_nonce($nonce_string){
 	if(!isset($_POST[$nonce_string])){
-		if(wp_doing_ajax()){
-			wp_die("No nonce found! Try again after refreshing the page",500);
-		}else{
-			return false;
-		}
+		return false;
 	}elseif(!wp_verify_nonce($_POST[$nonce_string], $nonce_string)){
-		if(wp_doing_ajax()){
-			wp_die("Invalid nonce! Try again after refreshing the page",500);
-		}else{
-			return false;
-		}
+		return false;
 	}
 
 	return true;
@@ -691,6 +686,108 @@ function is_time($time){
 	if (preg_match("/^[0-9]{2}:[0-9]{2}$/",$time)) {
 		return true;
 	} else {
+		return false;
+	}
+}
+
+// check if a given useraccount is not already used
+function getAvailableUsername($first_name, $last_name){
+	//Check if a user with this username already exists
+	$i =1;
+	while (true){
+		//Create a username
+		$username = str_replace(' ', '', $first_name.substr($last_name, 0, $i));
+		//Check for availability
+		if (get_user_by("login",$username) == ""){
+			//available, return the username
+			return $username;
+		}
+		$i += 1;
+	}
+}
+
+// Create an user account
+function addUserAccount($first_name, $last_name, $email, $approved = false, $validity = 'unlimited'){
+	//Get the username based on the first and lastname
+	$username = getAvailableUsername($first_name, $last_name);
+	
+	//Build the user
+	$userdata = array(
+		'user_login'    => $username,
+		'last_name'     => $last_name,
+		'first_name'    => $first_name,
+		'user_email'    => $email,
+		'display_name'  => "$first_name $last_name",
+		'user_pass'     => NULL
+	);
+	
+	//Give it the guest user role
+	if($validity != "unlimited"){
+		$userdata['role'] = 'subscriber';
+	}
+	//Insert the user
+	$user_id = wp_insert_user( $userdata ) ;
+	// User creation failed
+	if(is_wp_error($user_id)){
+		print_array($user_id->get_error_message());
+		return new \WP_Error('User creation', $user_id->get_error_message());
+	}
+	
+	if($approved){
+		delete_user_meta( $user_id, 'disabled');
+		wp_send_new_user_notifications($user_id, 'user');
+
+		do_action('sim_after_user_approval', $user_id);
+	}else{
+		//Make the useraccount inactive
+		update_user_meta( $user_id, 'disabled', 'pending');
+	}
+
+	//Store the validity
+	update_user_meta( $user_id, 'account_validity', $validity);
+	
+	//Force an account update
+	do_action( 'profile_update', $user_id, get_userdata($user_id));
+	
+	// Return the user id
+	return $user_id;
+}
+
+function getUserPageId($user_id){
+    return get_user_meta($user_id,"missionary_page_id",true);
+}
+
+// Get the users description page
+function getUserPageUrl($user_id){
+	//Get the missionary page of this user
+	$missionary_page_id = getUserPageId($user_id);
+	
+	if(!is_numeric($missionary_page_id) or get_post_status($missionary_page_id ) != 'publish'){
+        if(function_exists('SIM\USERPAGE\create_user_page')){
+			$missionary_page_id = USERPAGE\create_user_page($user_id);
+		}
+
+        if(!$missionary_page_id) return false;
+    }
+
+    $url = get_permalink($missionary_page_id);
+    $url_without_https = str_replace('https://','',$url);
+    
+    //return the url
+    return $url_without_https;
+}
+
+// Get profile picture html
+function displayProfilePicture($user_id, $size=[50,50], $show_default = true){
+	$attachment_id = get_user_meta($user_id,'profile_picture',true);
+	if(is_numeric($attachment_id)){
+		$url = wp_get_attachment_image_url($attachment_id,'Full size');
+		$img = wp_get_attachment_image($attachment_id,$size);
+		return "<a href='$url'>$img</a>";
+	}elseif($show_default){
+		$url = plugins_url('pictures/usericon.png', __DIR__);
+		return "<img width='50' height='50' src='$url' class='attachment-50x50 size-50x50' loading='lazy'>";
+	}else{
 		return false;
 	}
 }

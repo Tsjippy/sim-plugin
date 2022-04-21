@@ -81,9 +81,19 @@ $Modules		= get_option('sim_modules', []);
 $files = glob(__DIR__  . '/includes/php/*.php');
 $files = array_merge($files, glob(__DIR__  . '/includes/admin/php/*.php'));
 
-//Load files for enabled modules
+// Only the requested module if this is a rest request
+/* if(strpos($_SERVER['REQUEST_URI'], '/wp-json/sim/v1') !== false){
+    $module_name    = explode('/', explode('sim/v1/',$_SERVER['REQUEST_URI'])[1])[0]; 
+    $files          = array_merge($files, glob(__DIR__  . "/includes/modules/$module_name/php/*.php"));
+}else{
+    //Load files for enabled modules
+    foreach($Modules as $slug=>$settings){
+        $files = array_merge($files, glob(__DIR__  . "/includes/modules/$slug/php/*.php"));
+    }
+} */
+
 foreach($Modules as $slug=>$settings){
-	$files = array_merge($files, glob(__DIR__  . "/includes/modules/$slug/php/*.php"));
+    $files = array_merge($files, glob(__DIR__  . "/includes/modules/$slug/php/*.php"));
 }
 
 foreach ($files as $file) {

@@ -1,6 +1,5 @@
 // Import the registration hook
 import {
-    fetchEndpoint,
     preparePublicKeyCredentials,
     preparePublicKeyOptions,
 	fetchRestApi
@@ -64,22 +63,12 @@ async function removeWebAuthenticator(target){
 
 	var formdata	= new FormData();
 	formdata.append('key',target.dataset.key);
-	formdata.append('_wpnonce', sim.restnonce);
 
 	showLoader(target, true);
 
-	var result = await fetch(
-		sim.base_url+'/wp-json/sim/v1/login/remove_web_authenticator',
-		{
-			method: 'POST',
-			credentials: 'same-origin',
-			body: formdata
-		}
-	);
+	var response 	= await fetchRestApi('remove_web_authenticator', formdata);
 
-	var response	= await result.json();
-
-	if(result.ok){
+	if(response){
 		if(table.rows.length==2){
 			table.remove();
 		}else{
@@ -87,10 +76,7 @@ async function removeWebAuthenticator(target){
 		}
 
 		display_message(response);
-	}else{
-		console.error(response);
-		display_message(response.message, 'error');
-	};
+	}
 }
 
 //Start registration with button click

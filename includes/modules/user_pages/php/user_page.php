@@ -2,14 +2,10 @@
 namespace SIM\USERPAGE;
 use SIM;
 
-function get_user_page_id($user_id){
-    return get_user_meta($user_id,"missionary_page_id",true);
-}
-
 //Create an missionary (family) page
 function create_user_page($user_id){	
 	//get the current page
-	$page_id    = get_user_page_id($user_id);
+	$page_id    = SIM\getUserPageId($user_id);
 	$userdata   = get_userdata($user_id);
 	
     //return false when $user_id is not valid
@@ -77,29 +73,12 @@ function create_user_page($user_id){
 	return $page_id;
 }
 
-function get_user_page_url($user_id){
-	//Get the missionary page of this user
-	$missionary_page_id = get_user_page_id($user_id);
-	
-	if(!is_numeric($missionary_page_id) or get_post_status($missionary_page_id ) != 'publish'){
-        $missionary_page_id = create_user_page($user_id);
-
-        if(!$missionary_page_id) return false;
-    }
-
-    $url = get_permalink($missionary_page_id);
-    $url_without_https = str_replace('https://','',$url);
-    
-    //return the url
-    return $url_without_https;
-}
-
 function get_user_page_link($user){
     if(is_numeric($user)){
         $user   = get_userdata($user);
         if(!$user) return false;
     }
-    $url    = get_user_page_url($user->ID);
+    $url    = SIM\getUserPageUrl($user->ID);
     if($url){
         $html   = "<a href='$url'>$user->display_name</a>";
     }else{
@@ -110,7 +89,7 @@ function get_user_page_link($user){
 }
 
 function update_user_page_title($user_id, $title){
-    $page_id    = get_user_page_id($user_id);
+    $page_id    = SIM\getUserPageId($user_id);
 
     if(is_numeric($page_id)){
         $page = get_post($page_id);
@@ -238,7 +217,7 @@ function user_description($user_id){
 				$age = SIM\get_age($child);
 				if($age != '') $age = "($age)";
 				
-				$html .= SIM\USERMANAGEMENT\display_profile_picture($childdata->ID);
+				$html .= SIM\displayProfilePicture($childdata->ID);
 			$html .= "<span class='person_work'> {$childdata->first_name} $age</span><br>";
 			}
 			$html .= "</p>";
@@ -256,7 +235,7 @@ function user_description($user_id){
 			
 			$html .= "<h1>";
 			if(!isset($privacy_preference['hide_profile_picture'])){
-				$html .= SIM\USERMANAGEMENT\display_profile_picture($user_id);
+				$html .= SIM\displayProfilePicture($user_id);
 			}
 			$html .= "  ".$displayname."</h1>";
 			$html .= "<br>";
@@ -306,7 +285,7 @@ function show_user_info($user_id){
 		
 		$html .= "<p>";
 		if(empty($privacy_preference['hide_profile_picture'])){
-			$html .= SIM\USERMANAGEMENT\display_profile_picture($user_id);
+			$html .= SIM\displayProfilePicture($user_id);
 			$style = "";
 		}else{
 			$style = ' style="margin-left: 55px;"';

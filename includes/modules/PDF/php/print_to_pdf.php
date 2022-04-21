@@ -17,40 +17,7 @@ function create_page_pdf(){
 	$pdf->SetTitle($post->post_title);
 	$pdf->AddPage();
 
-	//If recipe
-	if($post->post_type == 'recipe'){
-		$pdf->print_image(get_the_post_thumbnail_url($post),-1,20,-1,-1,true,true);
-		
-		//Duration
-		$url = PICTURESURL.'/time.png';
-		$pdf->print_image($url,10,-1,10,10);
-		$pdf->write(10,get_post_meta($post->ID,'time_needed',true).' minutes');
-		
-		//Serves
-		$url = PICTURESURL.'/recipe_serves.png';
-		$pdf->print_image($url,55,-1,10,10);
-		
-		$persons = get_post_meta(get_the_ID(),'serves',true);
-		if($persons == 1){
-			$person_text = 'person';
-		}else{
-			$person_text = 'people';
-		}
-		
-		$pdf->write(10,"$persons $person_text");
-		
-		$pdf->Ln(15);
-		$pdf->writeHTML('<b>Ingredients:</b>');
-		$pdf->Ln(5);
-		$ingredients = explode("\n", trim(get_post_meta(get_the_ID(),'ingredients',true)));
-		foreach($ingredients as $ingredient){
-			$pdf->write(10,chr(127).' '.$ingredient);
-			$pdf->Ln(5);
-		}
-		
-		$pdf->Ln(10);
-		$pdf->writeHTML('<b>Instructions:</b>');
-	}
+	do_action('sim_before_page_print', $post, $pdf);
 	
 	$pdf->WriteHTML($post->post_content);
 	

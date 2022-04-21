@@ -3,9 +3,9 @@ namespace SIM\SIMNIGERIA;
 use SIM;
 
 add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	// Check for existing travel request
 	register_rest_route( 
-		'sim/v1', 
+		'sim/v1/sim_nigeria', 
 		'/verify_traveldate', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
@@ -14,6 +14,20 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'userid'		=> array('required'	=> true),
 				'departuredate'	=> array('required'	=> true),
+			)
+		)
+	);
+
+	// Update quota documents
+	register_rest_route( 
+		'sim/v1/sim_nigeria', 
+		'/update_visa_documents', 
+		array(
+			'methods' 				=> \WP_REST_Server::EDITABLE,
+			'callback' 				=> __NAMESPACE__.'\updateVisaDocuments',
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'quota_documents'		=> array('required'	=> true)
 			)
 		)
 	);
@@ -31,7 +45,6 @@ function verify_traveldate( \WP_REST_Request $request ) {
 
 		$formbuilder->submission_data;
 
-
 		foreach($formbuilder->submission_data as $submission){
 			$formresults	= unserialize($submission->formresults);
 
@@ -46,4 +59,17 @@ function verify_traveldate( \WP_REST_Request $request ) {
 	}
 
 	return false;
+}
+
+function updateVisaDocuments(){
+	$quota_documents = get_option('quota_documents');
+
+	if(isset($_POST['quota_documents']['quotafiles'])){
+		$quota_documents['quotafiles']	= $_POST['quota_documents']['quotafiles'];
+	}else{
+		array_merge($quota_documents,$_POST['quota_documents']);
+	}
+	update_option('quota_documents', $quota_documents);
+	
+	return "Updated quota documents succesfully";
 }

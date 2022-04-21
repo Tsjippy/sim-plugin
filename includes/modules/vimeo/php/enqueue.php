@@ -11,7 +11,7 @@ add_action( 'wp_enqueue_scripts', function(){
 if(SIM\get_module_option('vimeo', 'upload')){
 	//load js script to change media screen
 	add_action( 'wp_enqueue_media', function(){
-		wp_enqueue_script('sim_media_script', INCLUDESURL.'/modules/vimeo/js/vimeo.min.js', ['sim_other_script','media-audiovideo', 'sweetalert'], ModuleVersion);
+		wp_enqueue_script('sim_media_script', INCLUDESURL.'/modules/vimeo/js/vimeo.min.js', ['media-audiovideo', 'sweetalert'], ModuleVersion);
 		wp_localize_script('sim_media_script', 
 			'media_vars', 
 			array( 

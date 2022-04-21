@@ -2,7 +2,7 @@
 namespace SIM\STATISTICS;
 use SIM;
 
-const ModuleVersion		= '7.0.0';
+const ModuleVersion		= '7.0.1';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -33,3 +33,11 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		echo "<input type='checkbox' name='view_rights[]' value='$key' $checked> $name<br>";
 	}
 }, 10, 3);
+
+add_action('sim_module_activated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	
+	$formbuilder = new Statistics();
+	$formbuilder->create_db_table();
+}, 10, 2);

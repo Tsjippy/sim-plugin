@@ -296,7 +296,9 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		SIM\update_family_meta( $user_id, "marker_id", $marker_id);
 		
 		//update missionary page if needed
-		SIM\USERPAGE\create_user_page($user_id);
+		if(function_exists('SIM\USERPAGE\create_user_page')){
+			SIM\USERPAGE\create_user_page($user_id);
+		}
 	}
 	
 	return $formresults;
@@ -342,9 +344,7 @@ add_action('before_form',function ($formname){
 			<span class="close">&times;</span>
 			<form action="" method="post" id="add_member_form">
 				<p>Please fill in the form to create a user profile for a family member</p>
-				<input type="hidden" name="create_user_nonce"	value = "<?php echo wp_create_nonce("create_user_nonce"); ?>">
-				<input type="hidden" name="action"				value = "adduseraccount">
-				
+								
 				<label>
 					<h4>First name</h4>
 					<input type="text" class="" name="first_name">

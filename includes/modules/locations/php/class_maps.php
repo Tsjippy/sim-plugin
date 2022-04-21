@@ -123,7 +123,7 @@ class Maps{
 			//Add the profile picture to the marker description if it is set, and allowed by privacy
 			if (empty($privacy_preference['hide_profile_picture'])){
 				$login_name = $userdata->user_login;
-				if ( is_numeric(get_user_meta($user_id,'profile_picture',true)) ) {
+				if ( is_numeric(get_user_meta($user_id,'profile_picture',true)) and function_exists('SIM\USERMANAGEMENT\get_profile_picture_url')) {
 					$icon_url = SIM\USERMANAGEMENT\get_profile_picture_url($user_id, 'thumbnail');
 				}else{
 					$icon_url = "";

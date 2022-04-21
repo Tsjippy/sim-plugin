@@ -54,7 +54,7 @@ class FrontEndContent{
 			$user_compound 		= get_user_meta( $this->user->ID, "location", true);
 			if(isset($user_compound['compound'])) $user_compound = $user_compound['compound'];
 			
-			$missionary_page_id = SIM\USERPAGE\get_user_page_id($this->user->ID);
+			$missionary_page_id = SIM\getUserPageId($this->user->ID);
 			
 			$user_ministries 	= get_user_meta( $this->user->ID, "user_ministries", true);
 			
@@ -188,7 +188,7 @@ class FrontEndContent{
 			//only replace the name with a link if privacy allows
 			if(empty($privacy_preference['hide_name'])){
 				//Replace the name with a hyperlink
-				$url			= SIM\USERPAGE\get_user_page_url($user->ID);
+				$url			= SIM\getUserPageUrl($user->ID);
 				$link			= "<a href='$url'>{$user->display_name}</a>";
 				$post_content	= str_replace($user->display_name,$link,$post_content);
 			}
@@ -221,13 +221,13 @@ class FrontEndContent{
 			if($status != $post->post_status)				$new_post_data['post_status'] 	= $status;
 			
 			//only update author if needed and not in the content manager role
-			$new_post_data['post_author'] 	= $_POST['author'];
+			$new_post_data['post_author'] 	= $_POST['post_author'];
 			
 			if($_POST['parent_page'] != $post->post_parent)	$new_post_data['post_parent'] 	= $_POST['parent_page'];
 			if($categories != $post->post_category)			$new_post_data['post_category'] = $categories;
 
 			//we cannot change the post type here
-			if($post->post_type != $this->post_type) wp_die('You can not change the post type like that!',500);
+			if($post->post_type != $this->post_type) return new WP_Error('frontend_contend', 'You can not change the post type like that!');
 			
 			//Update the post
 			$result = wp_update_post($new_post_data,true,false);
@@ -241,18 +241,19 @@ class FrontEndContent{
 		}else{
 			$update = false;
 
+			//New post
+			$post = array(
+				'post_type'		=> $this->post_type,
+				'post_title'    => $this->post_title,
+				'post_content'  => $post_content,
+				'post_status'   => $status,
+				'post_author'   => $_POST['post_author']
+			);
+
 			if($this->post_type == 'attachment'){
 				$this->post_id 	= SIM\add_to_library(SIM\url_to_path($_POST['attachment'][0]), $this->post_title, $post_content);
-			}else{
-				//New post
-				$post = array(
-					'post_type'		=> $this->post_type,
-					'post_title'    => $this->post_title,
-					'post_content'  => $post_content,
-					'post_status'   => $status,
-					'post_author'   => $_POST['author']
-				);
-				
+				$post['ID']	= $this->post_id;
+			}else{				
 				if(is_numeric($_POST['parent_page'])){
 					$post['post_parent'] = $_POST['parent_page'];
 				}
@@ -339,11 +340,11 @@ class FrontEndContent{
 	}	
 	
 	function change_post_type(){
-		$post_type = $_POST['post_type_selector'];
+		$post_type	= $_POST['post_type_selector'];
 		
-		$post_id = $_POST['postid'];
+		$post_id	= $_POST['postid'];
 
-		$result = set_post_type($post_id, $post_type);
+		$result		= set_post_type($post_id, $post_type);
 		if($result){
 			return "Succesfully updated the type to $post_type";
 		}else{
@@ -387,10 +388,8 @@ class FrontEndContent{
 			
 			if($this->post_id != null){
 				?>
-					<input type="hidden" name="action"					value="change_post_type">
 					<input type="hidden" name="userid"					value="<?php echo $this->user->ID; ?>">
 					<input type="hidden" name="postid"					value="<?php echo $this->post_id; ?>">
-					<input type="hidden" name="change_poste_type_nonce" value="<?php echo wp_create_nonce("change_poste_type_nonce"); ?>">
 				
 				<?php
 				echo SIM\add_save_button('change_post_type','Change the post type');
@@ -419,8 +418,6 @@ class FrontEndContent{
 						<p>Please fill in the form to add a new <?php echo $type;?> category</p>
 						<input type="hidden" name="post_type" value="<?php echo $type;?>">
 						<input type="hidden" name="userid" value="<?php echo $this->user->ID; ?>">
-						
-						<input type="hidden" name="add_category_nonce" value="<?php echo wp_create_nonce("add_category_nonce"); ?>">
 						
 						<label>
 							<h4>Category name<span class="required">*</span></h4>
@@ -635,7 +632,7 @@ class FrontEndContent{
 			// Show change author dropdown 
 			$author_id	= $this->post->post_author;
 			if(!is_numeric($author_id)) $author_id = $this->user->ID;
-			echo SIM\user_select('Author', $only_adults=true, $families=false, $class='', $id='author', $args=[], $user_id=$author_id);
+			echo SIM\user_select('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $user_id=$author_id);
 			?>
 			<label>
 				<h4>Publishing date</h4>
@@ -842,10 +839,8 @@ class FrontEndContent{
 			?>
 			<div class='submit_wrapper' style='display: flex; margin-top:20px;float:right;margin-right:0px;'>
 				<form>
-					<input type="hidden" name="action" value="delete_post">
 					<input hidden name='post_id' value='<?php echo $this->post_id; ?>'>
-					<input hidden name='deletepost_nonce_<?php echo $this->post_id ?>' value='<?php echo wp_create_nonce("deletepost_nonce_".$this->post_id); ?>'>
-					
+
 					<button type='submit' class='button' name='delete_post'>Delete <?php echo $this->post_type; ?></button>
 					<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>'>
 				</form>

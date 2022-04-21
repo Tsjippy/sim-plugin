@@ -1,6 +1,10 @@
-function check_pass_strength() {
-	pass1 		= document.querySelector('[name="pass1"]');
-	pass2 		= document.querySelector('[name="pass2"]');
+import {
+	fetchRestApi
+} from './shared.js';
+
+function checkPassStrength() {
+	var pass1 		= document.querySelector('[name="pass1"]');
+	var pass2 		= document.querySelector('[name="pass2"]');
 	var indicator1	= document.querySelector('#pass-strength-result1');
 	var indicator2	= document.querySelector('#pass-strength-result2');
 
@@ -36,7 +40,9 @@ function check_pass_strength() {
 function updateIndicator(indicator){
 	indicator.classList.remove('short,bad,good,strong');
 
-	strength = wp.passwordStrength.meter(pass1.value, wp.passwordStrength.userInputDisallowedList(), pass2.value);
+	var pass1 		= document.querySelector('[name="pass1"]');
+	var pass2 		= document.querySelector('[name="pass2"]');
+	var strength	= wp.passwordStrength.meter(pass1.value, wp.passwordStrength.userInputDisallowedList(), pass2.value);
 
 	switch (strength) {
 		case 2:
@@ -62,9 +68,33 @@ function updateIndicator(indicator){
 	
 	indicator.classList.remove('hidden');
 }
+
+async function submitPasswordChange(event){
+	var form	= event.target.closest('form');
+
+	// show loader
+	form.querySelector('.submit_wrapper .loadergif').classList.remove('hidden');
+
+	var formData	= new FormData(form);
+
+	var response	= await fetchRestApi('update_password', formData);
+
+	if(response){
+		display_message(response.message);
+
+		// redirect to login again
+		location.href	= response.redirect
+	}
+
+	// hide loader
+	form.querySelector('.submit_wrapper .loadergif').classList.add('hidden');
+}
 					
 document.addEventListener("DOMContentLoaded",function() {
 	console.log('Password strength.js loaded');
 	
-	document.querySelectorAll('.changepass').forEach(el=>el.addEventListener("keyup",check_pass_strength));
+	document.querySelectorAll('.changepass').forEach(el=>el.addEventListener("keyup",checkPassStrength));
+
+	
+	document.querySelectorAll('[name="update_password"]').forEach(el=>el.addEventListener("click",submitPasswordChange));
 });

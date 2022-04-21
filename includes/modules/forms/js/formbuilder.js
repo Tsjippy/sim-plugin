@@ -213,7 +213,6 @@ async function sendElementSize(el, widthpercentage){
 		el.dataset.widthpercentage = widthpercentage;
 		
 		//send new width over AJAX
-		var remove_form_element_nonce = document.querySelector('[name="remove_form_element_nonce"]').value;
 		var formdata = new FormData();
 		formdata.append('formid',el.closest('.form_element_wrapper').dataset.formid);
 		formdata.append('elementid',el.closest('.form_element_wrapper').dataset.id);

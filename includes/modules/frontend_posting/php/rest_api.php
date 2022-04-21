@@ -68,7 +68,7 @@ add_action( 'rest_api_init', function () {
 				'post_content'	=> array(
 					'required'	=> true
 				),
-				'author'	=> array(
+				'post_author'	=> array(
 					'required'	=> true
 				),
 				'publish_date'	=> array(
@@ -80,7 +80,7 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
-	
+
 	// remove_post
 	register_rest_route( 
 		'sim/v1/frontend_posting', 

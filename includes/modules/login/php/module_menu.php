@@ -2,7 +2,7 @@
 namespace SIM\LOGIN;
 use SIM;
 
-const ModuleVersion		= '7.0.3';
+const ModuleVersion		= '7.0.4';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -48,8 +48,22 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<?php echo SIM\page_select("home_page", $settings["home_page"]);?>
 	<br>
 
+	<p>
+		You can enable user registration if you want.<br>
+		If that's the case people can request an user account.<br>
+		Once that account is approved they will be able to login.<br>
+	</p>
+	<label>
+		<input type="checkbox" name="user_registration" value="enabled" <?php if($settings['user_registration']) echo 'checked';?>>
+		Enable user registration
+	</label>
+	<br>
+	<br>
+
 	<label>Page with the two factor setup form</label>
 	<?php echo SIM\page_select("2fa_page", $settings["2fa_page"]);?>
+	<br>
+
 	<label>
 		Anything you want to append to the url<br>
 		<input type='text' name="2fa_page_extras" value="<?php echo $settings['2fa_page_extras'];?>">
@@ -110,9 +124,9 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<?php
 }, 10, 3);
 
-add_filter('sim_module_updated', function($options, $module_slug){
+add_filter('sim_module_updated', function($new_options, $module_slug, $old_options){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return $new_options;
 
 	$public_cat	= get_cat_ID('Public');
 
@@ -131,30 +145,39 @@ add_filter('sim_module_updated', function($options, $module_slug){
 		$page_id 	= wp_insert_post( $post, true, false);
 
 		//Store page id in module options
-		$options['password_reset_page']	= $page_id;
+		$new_options['password_reset_page']	= $page_id;
 	}
 
-	// Create register page
-	$page_id	= SIM\get_module_option($module_slug, 'register_page');
-	// Only create if it does not yet exist
-	if(!$page_id or get_post_status($page_id) != 'publish'){
-		$post = array(
-			'post_type'		=> 'page',
-			'post_title'    => 'Request user account',
-			'post_content'  => '[request_account]',
-			'post_status'   => "publish",
-			'post_author'   => '1',
-			'post_category'	=> [$public_cat]
-		);
-		$page_id 	= wp_insert_post( $post, true, false);
+	// Add registration page
+	if(isset($new_options['user_registration'])){
+		// Create register page
+		$page_id	= SIM\get_module_option($module_slug, 'register_page');
+		// Only create if it does not yet exist
+		if(!$page_id or get_post_status($page_id) != 'publish'){
+			$post = array(
+				'post_type'		=> 'page',
+				'post_title'    => 'Request user account',
+				'post_content'  => '[request_account]',
+				'post_status'   => "publish",
+				'post_author'   => '1',
+				'post_category'	=> [$public_cat]
+			);
+			$page_id 	= wp_insert_post( $post, true, false);
 
-		//Store page id in module options
-		$options['register_page']	= $page_id;
+			//Store page id in module options
+			$new_options['register_page']	= $page_id;
+		}
 	}
 
-	return $options;
+	// Remove registration page
+	if(isset($old_options['register_page']) and !isset($new_options['user_registration'])){
+		wp_delete_post($old_options['register_page'], true);
+		unset($new_options['register_page']);
+	}
 
-}, 10, 2);
+	return $new_options;
+
+}, 10, 3);
 
 add_action('sim_module_deactivated', function($module_slug, $options){
 	//module slug should be the same as grandparent folder name

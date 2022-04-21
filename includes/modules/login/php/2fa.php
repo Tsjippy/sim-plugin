@@ -7,12 +7,13 @@ use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use stdClass;
+use WP_Error;
 
 if(!class_exists('BaconQrCode\Renderer\ImageRenderer')){
-    wp_die("bacon-qr-code interface does not exist. Please run 'composer require bacon/bacon-qr-code'");
+    return new WP_Error('2fa', "bacon-qr-code interface does not exist. Please run 'composer require bacon/bacon-qr-code'");
 }
 if(!class_exists('RobThree\Auth\TwoFactorAuth')){
-    wp_die("twofactorauth interface does not exist. Please run 'composer require robthree/twofactorauth'");
+    return new WP_Error('2fa', "twofactorauth interface does not exist. Please run 'composer require robthree/twofactorauth'");
 }
 
 //https://robthree.github.io/TwoFactorAuth/getting-started.html

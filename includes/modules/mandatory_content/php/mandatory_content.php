@@ -97,23 +97,3 @@ add_filter( 'the_content', function ($content){
 	
 	return $content;
 });
-
-//Process button click
-add_action ( 'wp_ajax_mark_page_as_read', function(){
-	if(is_numeric($_POST['userid']) and is_numeric($_POST['postid'])){
-		$user_id = $_POST['userid'];
-		$post_id = $_POST['postid'];
-		
-		//get current alread read pages
-		$read_pages		= (array)get_user_meta( $user_id, 'read_pages', true );
-		
-		//add current page
-		$read_pages[]	= $post_id;
-		//update
-		update_user_meta( $user_id, 'read_pages', $read_pages);
-		
-		wp_die("Succesfully marked this page as read");
-	}else{
-		wp_die('Invalid user or post id',500);
-	}
-});

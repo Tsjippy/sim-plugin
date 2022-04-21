@@ -47,35 +47,19 @@ async function publishSchedule(target){
 // Removes an existing schedule
 async function remove_schedule(target){
 	schedule_id					= target.dataset["schedule_id"];
-	var remove_schedule_nonce	= document.querySelector('[name="remove_schedule_nonce"]').value;
-		
 	var text 			= "Are you sure you want to remove this schedule";
 	var formdata 		= new FormData();
 	formdata.append('schedule_id', schedule_id);
-	formdata.append('remove_schedule_nonce',remove_schedule_nonce);
-	formdata.append('_wpnonce', sim.restnonce);
 
 	var confirmed		= await checkConfirmation(text);
 	if(confirmed){
-		var result = await fetch(
-			sim.base_url+'/wp-json/sim/v1/events/remove_schedule',
-			{
-				method: 'POST',
-				credentials: 'same-origin',
-				body: formdata
-			}
-		);
+		var response	= await fetchRestApi('events/remove_schedule', formdata);
 
-		var response	= await result.json();
-
-		if(result.ok){
+		if(response){
 			display_message(response);
 
 			document.querySelector('.schedules_wrapper .loaderwrapper:not(.hidden)').remove();
-		}else{
-			console.error(response);
-			display_message(response, 'error');
-		};
+		}
 	}
 }
 
@@ -313,7 +297,6 @@ async function submitRecipe(target){
 }
 
 function loadHostFormdata(target){
-	var update_nonce	= document.querySelector('[name="update_schedule_nonce"]').value;
 	table				= target.closest('table');
 	schedule_id			= table.dataset["id"];
 	var heading			= table.tHead.rows[0];
@@ -330,7 +313,6 @@ function loadHostFormdata(target){
 	}
 	
 	formdata.append('starttime',starttime);
-	formdata.append('update_schedule_nonce',update_nonce);
 	formdata.append('schedule_id',schedule_id);
 
 	return formdata;

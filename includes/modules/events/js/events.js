@@ -1,4 +1,4 @@
-function request_month(target, month, year){
+async function request_month(target, month, year){
     url.searchParams.set('month', month);
     url.searchParams.set('yr', year);
     window.history.pushState({}, '', url);
@@ -13,22 +13,13 @@ function request_month(target, month, year){
         var formdata = new FormData();
         formdata.append('month',month);
         formdata.append('year',year);
-        formdata.append('_wpnonce', sim.restnonce);
+
+        var response    = await fetchRestApi('events/get_month_html', formdata);
         
-        fetch(
-            sim.base_url+'/wp-json/sim/v1/events/get_month_html',
-            {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: formdata
-            }
-        )
-        .then(response => response.json())
-        .then(response => {
+        if(response) {
             target.closest('.calendar-wrap').querySelector('.loader').remove();
             document.querySelector('#monthview').insertAdjacentHTML('beforeEnd', response);
-        })
-        .catch(err => console.error(err));
+        }
     }else{
         calendar_page.classList.remove('hidden');
     }
@@ -37,7 +28,7 @@ function request_month(target, month, year){
     document.querySelector('div.year_selector .current').textContent = year;
 }
 
-function request_week(target, wknr, year){
+async function request_week(target, wknr, year){
     url.searchParams.set('yr', year);
     url.searchParams.set('week', wknr);
     window.history.pushState({}, '', url);
@@ -55,22 +46,13 @@ function request_week(target, wknr, year){
         var formdata = new FormData();
         formdata.append('wknr',wknr);
         formdata.append('year',year);
-        formdata.append('_wpnonce', sim.restnonce);
+
+        var response    = await fetchRestApi('events/get_week_html', formdata);
         
-        fetch(
-            sim.base_url+'/wp-json/sim/v1/events/get_week_html',
-            {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: formdata
-            }
-        )
-        .then(response => response.json())
-        .then(response => {
+        if(response) {
             target.closest('.calendar-wrap').querySelector('.loader').remove();
             document.querySelector('#weekview').insertAdjacentHTML('beforeEnd',response);
-        })
-        .catch(err => console.error(err));
+        }
     }else{
         calendar_page.classList.remove('hidden');
     }
@@ -79,7 +61,7 @@ function request_week(target, wknr, year){
     document.querySelector('div.year_selector .current').textContent = year;
 }
 
-function request_expand_list(offset, month='', year=''){
+async function request_expand_list(offset, month='', year=''){
     //remove any existing element when requesting specific date
     if(month != '' || year != ''){
         document.querySelectorAll('#listview article').forEach(el=>el.remove());
@@ -95,22 +77,13 @@ function request_expand_list(offset, month='', year=''){
     formdata.append('offset',offset);
     formdata.append('month',month);
     formdata.append('year',year);
-    formdata.append('_wpnonce', sim.restnonce);
+    
+    var response    = await fetchRestApi('events/get_list_html', formdata);
         
-    fetch(
-        sim.base_url+'/wp-json/sim/v1/events/get_list_html',
-        {
-            method: 'POST',
-            credentials: 'same-origin',
-            body: formdata
-        }
-    )
-    .then(response => response.json())
-    .then(response => {
+    if(response) {
         document.querySelector('#listview').querySelector('.loader').remove();
         document.querySelector('#listview').insertAdjacentHTML('beforeEnd',response);
-    })
-    .catch(err => console.error(err));
+    }
 }                                                    
                                                                            
 function handleTouchStart(evt) {

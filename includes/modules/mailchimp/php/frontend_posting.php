@@ -51,3 +51,9 @@ add_action('frontend_post_after_content', function($frontendcontend){
         <?php 
     }
 });
+
+add_action('sim_roles_changed', function($user, $new_roles){
+    //Check if new roles require mailchimp actions
+    $Mailchimp = new Mailchimp($user->ID);
+    $Mailchimp->role_changed($new_roles);
+}, 10, 2);

@@ -16,11 +16,11 @@ add_shortcode("markerdescription", 	function ($atts){
 
         $description = "";			
         if (empty($privacy_preference['hide_profile_picture'])){
-            $description .= SIM\USERMANAGEMENT\display_profile_picture($user_id,[80,80]);
+            $description .= SIM\displayProfilePicture($user_id,[80,80]);
         }
         
         //Add the post link to the marker content
-        $url			 = SIM\USERPAGE\get_user_page_url($user_id);
+        $url			 = SIM\getUserPageUrl($user_id);
         $description	.= "<a href='$url' style='display:block;' class='page_link'>More info</a><br>";
         
         return $description;

@@ -193,6 +193,20 @@ function display_message(message, icon, autoclose=false, no_ok=false, timer=1500
 	}
 }
 
+function show_modal(modal_id){
+	var modal = document.getElementById(modal_id+"_modal");
+	
+	if(modal != null){
+		modal.classList.remove('hidden');
+	}	
+}
+
+function hide_modals(){
+	document.querySelectorAll('.modal:not(.hidden)').forEach(modal=>{
+		modal.classList.add('hidden');
+	});
+}
+
 //Load after page load
 document.addEventListener("DOMContentLoaded",function() {
 	//loop over all the tab buttons
@@ -283,7 +297,12 @@ window.addEventListener("click", function(event) {
 
 		//show the tab
 		display_tab(target);
-	}		
+	}	
+	
+	//close modal if clicked outside of modal
+	if(target.closest('.modal-content') == null && target.closest('.swal2-container') == null && target.tagName=='DIV'){
+		hide_modals();
+	}
 });
 
 //check internet

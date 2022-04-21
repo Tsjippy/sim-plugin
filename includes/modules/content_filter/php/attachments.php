@@ -136,3 +136,18 @@ add_filter( 'ajax_query_attachments_args', function($query){
 
     return $query;
 } );
+
+// Make private by default if enabled
+add_action( 'add_attachment', function ( $postId) { 
+    $default    = SIM\get_module_option('content_filter', 'default_status');
+    $path       = get_attached_file($postId);
+    
+    if($default == 'private' or strpos($path, '/private/') !== false ){
+        update_post_meta( $postId, 'visibility', 'private' );
+        
+        // Move if not already in the private folder
+        if(strpos($path, '/private/') === false ){
+            move_attachment($postId, 'private');
+        }
+    }
+});

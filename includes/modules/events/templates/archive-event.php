@@ -25,6 +25,8 @@ if(empty($view)){
 global $wp_query;
 $cat	= $wp_query->queried_object_id;
 
+$events	= new Events();
+
 get_header(); 
 ?>
 <div id="primary" style="width:100%;">
@@ -55,7 +57,7 @@ get_header();
 					<div class="date-search">
 						<input type="hidden" value="Select">
 						<?php
-						echo "<img src='".PICTURESURL."/date.png' alt='time' class='event_icon'>";
+						echo "<img src='{$baseUrl}/date.png' alt='time' class='event_icon'>";
 						?>
 						<select class='month_selector<?php if($view=='week') echo ' hidden';?>' placeholder="Select month">
 							<?php
@@ -109,17 +111,17 @@ get_header();
 
 			<div id='monthview' class='calendarview<?php if($view!='month') echo ' hidden';?>'>
 				<?php
-				echo $Events->month_calendar($cat);
+				echo $events->month_calendar($cat);
 				?>
 			</div>
 			<div id='weekview' class='calendarview<?php if($view!='week') echo ' hidden';?>'>
 				<?php
-				echo $Events->week_calendar($cat);
+				echo $events->week_calendar($cat);
 				?>
 			</div>
 			<div id='listview' class='calendarview<?php if($view!='list') echo ' hidden';?>'>
 				<?php
-				echo $Events->list_calendar($cat);
+				echo $events->list_calendar($cat);
 				?>
 			</div>		
 		</div>

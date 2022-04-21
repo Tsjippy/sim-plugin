@@ -59,7 +59,7 @@ add_filter('sim_after_bot_payer', function($args){
 			$msg	= str_replace($userdata->display_name, "of {$userdata->display_name}", $msg);
 
 			$message_string .= $msg;
-			$args['urls'] .= SIM\USERPAGE\get_user_page_url($user_id)."\n";
+			$args['urls'] .= SIM\getUserPageUrl($user_id)."\n";
 		}
 		$args['message'] .= $message_string.'.';
 	}
@@ -70,13 +70,13 @@ add_filter('sim_after_bot_payer', function($args){
 	if(count($arrival_users) > 0){
 		if(count($arrival_users)==1){
 			$args['message'] .= "\n\n".$arrival_users[0]->display_name." arrives today.";
-			$args['urls'] .= SIM\USERPAGE\get_user_page_url($arrival_users[0]->ID)."\n";
+			$args['urls'] .= SIM\getUserPageUrl($arrival_users[0]->ID)."\n";
 		}else{
 			$args['message'] .= "\n\nToday the following people will arrive: ";
 			//Loop over the arrival_users
 			foreach($arrival_users as $user){
 				$args['message'] .= $user->display_name."\n";
-				$args['urls'] .= SIM\USERPAGE\get_user_page_url($user->ID)."\n";
+				$args['urls'] .= SIM\getUserPageUrl($user->ID)."\n";
 			}
 		}
 	}
@@ -124,7 +124,7 @@ function birthday() {
 					}else{
 						$userdata	= get_userdata($user_id);
 						//Get the url of the user page
-						$url		= SIM\USERPAGE\get_user_page_url($user_id);
+						$url		= SIM\getUserPageUrl($user_id);
 						$message	= str_replace($couple_string,"of <a href='$url'>$couple_string</a>",$message);
 						$message	= str_replace($userdata->display_name,"of <a href='$url'>{$userdata->display_name}</a>",$message);
 					}
@@ -144,13 +144,13 @@ function birthday() {
 			
 			if(count($arrival_users)==1){
 				//Get the url of the user page
-				$url	 = SIM\USERPAGE\get_user_page_url($arrival_users[0]->ID);
+				$url	 = SIM\getUserPageUrl($arrival_users[0]->ID);
 				$html	.= '<p><a href="'.$url.'">'.$arrival_users[0]->display_name."</a> arrives today!";
 			}else{
 				$html 	.= '<p>The following people arrive today:<br>';
 				//Loop over the birthdays
 				foreach($arrival_users as $user){
-					$url 	 = SIM\USERPAGE\get_user_page_url($user->ID);
+					$url 	 = SIM\getUserPageUrl($user->ID);
 					$html 	.= '<a href="'.$url.'">'.$user->display_name."</a><br>";
 				}
 			}

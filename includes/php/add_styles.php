@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.7';
+const StyleVersion		= '7.0.8';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
@@ -34,7 +34,7 @@ function enqueueLibraries(){
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
 
 	//Submit forms
-	wp_register_script('sim_other_script',plugins_url('js/other.js', __DIR__), array('sweetalert'),StyleVersion,true);
+	wp_register_script('sim_user_select_script',plugins_url('js/user_select.js', __DIR__), array('sweetalert'),StyleVersion,true);
 	wp_register_script('sim_formsubmit_script',plugins_url('js/form_submit.js', __DIR__), array(),StyleVersion,true);
 
 	//table request shortcode
@@ -51,7 +51,7 @@ function enqueueScripts($hook){
 	wp_enqueue_script('sim_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
 	
 	//File upload js
-	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('sim_other_script'),StyleVersion,true);
+	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('sim_formsubmit_script'),StyleVersion,true);
 
 	//add main css, but only on non-admin pages
 	//if ($hook == ""){

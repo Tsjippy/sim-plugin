@@ -29,9 +29,9 @@ add_action( 'wp_enqueue_scripts', function(){
 
     wp_register_style( 'sim_pw_reset_style', plugins_url('css/pw_reset.min.css', __DIR__), array(), ModuleVersion);
 
-    wp_register_script('sim_password_strength_script', plugins_url('js/password_strength.min.js', __DIR__), array('password-strength-meter', 'sim_other_script'), ModuleVersion,true);
+    wp_register_script('sim_password_strength_script', plugins_url('js/password_strength.min.js', __DIR__), array('password-strength-meter'), ModuleVersion,true);
 
-	wp_register_script('sim_2fa_script', plugins_url('js/2fa.min.js', __DIR__), array('sim_other_script','sim_table_script'), ModuleVersion, true);
+	wp_register_script('sim_2fa_script', plugins_url('js/2fa.min.js', __DIR__), array('sim_table_script'), ModuleVersion, true);
 
     $password_reset_page    = SIM\get_module_option('login', 'password_reset_page');
     $register_page          = SIM\get_module_option('login', 'register_page');

@@ -2,6 +2,7 @@
 namespace SIM\VIMEO;
 use SIM;
 use GuzzleHttp;
+use WP_Error;
 
 if(!class_exists(__NAMESPACE__.'\VimeoApi')){
     class VimeoApi{
@@ -168,7 +169,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
         function create_vimeo_video($file_name, $mime){
             //we should only do this via AJAX
-            if(!wp_doing_ajax()){
+            if(!defined('REST_REQUEST')){
                 return false;
             }
         
@@ -177,7 +178,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             $upload_link    = '';
             $size		    = $_POST['file_size'];
             if(!is_numeric($size)){
-                wp_die('No filesize given', 500);
+                return new WP_Error('vimeo','No filesize given');
             }
                 
             if ( $this->is_connected()) {
@@ -195,16 +196,17 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
                 $vimeo_id		= str_replace('/videos/','',$response['body']['uri']);
             }else{
-                wp_die(wp_json_encode('no internet'), 500);
+                return new WP_Error('vimeo','No internet');
             }
             
             if(!is_numeric($vimeo_id)){
-                wp_die('Something went wrong', 500);
+                return new WP_Error('vimeo','Something went wrong');
             } 
         
             $attachment_id  = $this->create_vimeo_post($title, $mime, $vimeo_id);
             
             add_post_meta($attachment_id, '_wp_attached_file', 'Uploading to vimeo');
+            
             //store upload link in case of failed upload and we want to resume
             add_post_meta($attachment_id, 'vimeo_upload_data', ['url'=>$upload_link, 'filename'=>$file_name]);
             
@@ -292,10 +294,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
             if($vimeo_id and $this->is_connected()){
                 //Get thumbnails
-                $response	= $this->api->request("/videos/$vimeo_id/pictures?sizes=48x64", [], 'GET');
-                $url		= $response['body']['data'][0]['base_link'];
-                if($url){
-                    $icon_url= $url.'.webp';
+                $data	= $this->api->request("/videos/$vimeo_id/pictures?sizes=48x64", [], 'GET')['body']['data'][0];
+                if($data['active']){
+                    $icon_url= $data['base_link'].'.webp';
 
                     $result = $this->download_from_vimeo($icon_url, $vimeo_id);
                     update_post_meta($post_id, 'thumbnail', $result);
@@ -312,15 +313,16 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         function download_video($post_id){
             $vimeo_id   = $this->get_vimeo_id($post_id);
             $response	= $this->api->request("/videos/$vimeo_id", [], 'GET');
-            $response['download']['quality'];
-            $url = $response['download']['link'];
 
-            if(empty($url)){
+            if(isset($response['download'])){
+                $response['download']['quality'];
+                $url = $response['download']['link'];
+            }else{
                 $admin_url  = admin_url("admin.php?page=sim_vimeo&vimeoid=$vimeo_id");
                 $message    = "Hi admin,<br><br>";
-                $message    = "Please provide me with a link to download the Vimeo video with id $vimeo_id to a local backup folder on your website.<br>";
-                $message    = "Use <a href='$admin_url'>this page</a> to provide me the download link.<br>";
-                $message    = "Get the download link from Vimeo on <a href='https://vimeo.com/manage/$vimeo_id/advanced'>this page</a>.<br>";
+                $message    .= "Please provide me with a link to download the Vimeo video with id $vimeo_id to a local backup folder on your website.<br>";
+                $message    .= "Use <a href='$admin_url'>this page</a> to provide me the download link.<br>";
+                $message    .= "Get the download link from Vimeo on <a href='https://vimeo.com/manage/$vimeo_id/advanced'>this page</a>.<br>";
                 
                 wp_mail(get_option('admin_email'), 'Please backup this Vimeo Video', $message);
             }
@@ -353,17 +355,6 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 $url,
                 array('sink' => $file_path)
             );
-
-/*             $ch = curl_init();
-        
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_URL, $url);
-        
-            $data = curl_exec($ch);
-            curl_close($ch);
-        
-            file_put_contents( $file_path, $data ); */
 
             return $file_path;
         }

@@ -1,3 +1,5 @@
+var re	= '';
+
 async function saveFormInput(target){
 	var form		= target.closest('form');
 	var response	= await submitForm(target, 'forms/save_form_input');
@@ -53,7 +55,7 @@ export function cloneNode(original_node, clear=true){
 	}
 	
 	//make a clone
-	newnode = original_node.cloneNode(true);
+	var newnode = original_node.cloneNode(true);
 	
 	//Then add niceselects again after cloning took place
 	original_node.querySelectorAll('select').forEach(select => {
@@ -96,7 +98,7 @@ export function cloneNode(original_node, clear=true){
 }
 
 function copy_form_input(original_node){
-	newnode = clone_node(original_node);
+	var newnode = cloneNode(original_node);
 	
 	//Find the node number
 	var nodenr = parseInt(original_node.dataset.divid)+1;
@@ -122,7 +124,7 @@ function copy_form_input(original_node){
 	var i = 0;
 	newnode.querySelectorAll('select').forEach(select => {
 		//Find the value of the select we have cloned
-		previous_val = original_node.getElementsByTagName('select')[i].selectedIndex;
+		var previous_val = original_node.getElementsByTagName('select')[i].selectedIndex;
 		
 		//Hide the value in the clone
 		select.options[previous_val].style.display = 'none';
@@ -235,7 +237,7 @@ function remove_node(target){
 	}
 	
 	//Loop over all the remaining nodes.
-	nodenr = parseInt(all_clone_divs[0].dataset.divid);
+	var nodenr = parseInt(all_clone_divs[0].dataset.divid);
 	all_clone_divs.forEach(function(clonenode){
 		if(clonenode.dataset.type == 'understudies'){
 			//update the data index
@@ -417,7 +419,7 @@ export function nextPrev(n) {
 export function getFieldValue(orgname, checkdatalist=true, comparevalue=null, lowercase=false){
 	//name is not a name but a node
 	if(orgname instanceof Element){
-		el			= orgname;		
+		var el			= orgname;		
 		//check if valid input type
 		if(el.tagName != 'INPUT' && el.tagName != 'TEXTAREA' && el.tagName != 'SELECT' && el.closest('.nice-select-dropdown') == null){
 			el = el.querySelector('input, select, textarea');
@@ -425,10 +427,10 @@ export function getFieldValue(orgname, checkdatalist=true, comparevalue=null, lo
 		if(el == null){
 			el			= orgname;
 		}
-		name		= el.name;
+		var name		= el.name;
 	}else{
-		name		= orgname;
-		el			= form.querySelector('[name=\"'+name+'\" i]');
+		var name		= orgname;
+		var el			= form.querySelector('[name=\"'+name+'\" i]');
 	}
 	
 	if(el != null){
@@ -455,13 +457,13 @@ export function getFieldValue(orgname, checkdatalist=true, comparevalue=null, lo
 			}else{
 				//we should find the checkbox with this value and check if it is checked
 				if(comparevalue != null){
-					els		= form.querySelector('[name=\"'+name+'\" i][value="'+comparevalue+'" i]:checked');
+					var els		= form.querySelector('[name=\"'+name+'\" i][value="'+comparevalue+'" i]:checked');
 					if(els != null){
 						value = comparevalue;
 					}
 				//no compare value give just return all checked values
 				}else{
-					els		= form.querySelectorAll('[name=\"'+name+'\" i]:checked');
+					var els		= form.querySelectorAll('[name=\"'+name+'\" i]:checked');
 					
 					els.forEach(el=>{
 						if(value != ''){
@@ -545,9 +547,9 @@ export function changeFieldValue(orgname, value, function_ref){
 		target.value = value;
 	}
 	
-	prev_el = '';
+	var prev_el = '';
 	//create a new event
-	evt = new Event('input');
+	var evt = new Event('input');
 	//attach the target
 	target.dispatchEvent(evt);
 	
@@ -562,9 +564,9 @@ export function changeFieldProperty(name, att, value, function_ref){
 	
 	form.querySelector('[name="'+name+'"]')[att] = value;
 	
-	prev_el = '';
+	var prev_el = '';
 	//create a new event
-	evt = new Event('input');
+	var evt = new Event('input');
 	//attach the target
 	target.dispatchEvent(evt);
 	//run the originating function with this event
