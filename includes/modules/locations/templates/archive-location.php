@@ -11,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-global $Modules;
-global $CustomSimSettings;
-
 //Variable containing the current locations page we are on
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
@@ -36,7 +33,7 @@ get_header();
 			<?php
 			if ( $locations_query->have_posts() ){
 				if(is_user_logged_in()){
-					$map_id = $CustomSimSettings['placesmapid'];
+					$map_id = SIM\get_module_option('locations', 'placesmapid');
 					echo do_shortcode("[ultimate_maps id='$map_id']");
 				}
 				
@@ -69,7 +66,7 @@ get_header();
 					<div class="inside-article">
 						<div class="entry-content">
 							There are no locations submitted yet.
-							Add one <a href='<?php echo add_query_arg( ['type' => 'location'], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );?>'>here</a>.
+							Add one <a href='<?php echo add_query_arg( ['type' => 'location'], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );?>'>here</a>.
 						</div>
 					</div>
 				</div>

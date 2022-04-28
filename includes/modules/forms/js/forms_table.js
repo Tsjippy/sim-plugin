@@ -344,10 +344,6 @@ async function processFormsTableInput(target){
 	delete target.dataset.oldtext;
 }
 
-
-
-
-
 document.addEventListener("click", event=>{
 	var target = event.target;
 
@@ -387,11 +383,13 @@ document.addEventListener("click", event=>{
 		target.parentNode.querySelector('.form_shortcode_settings').classList.remove('hidden');
 	}
 	
-	//Edit data]
+	//Edit data
 	var td = target.closest('td');
 	if(target.matches('td.edit_forms_table') && target.dataset.oldtext == null){
+		event.stopPropagation();
 		getInputHtml(target);
 	}else if(td != null  && target.dataset.oldtext == null && td.matches('td.edit_forms_table') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
+		event.stopPropagation();
 		getInputHtml(target.closest('td'));
 	}
 	

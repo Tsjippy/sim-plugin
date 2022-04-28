@@ -67,7 +67,7 @@ add_shortcode("all_contacts",function (){
 add_shortcode("userstatistics",function ($atts){
 	wp_enqueue_script('sim_table_script');
 	ob_start();
-	$users = SIM\get_user_accounts($return_family=false,$adults=true,$local_nigerians=true);
+	$users = SIM\get_user_accounts($return_family=false,$adults=true);
 	?>
 	<br>
 	<div class='form-table-wrapper'>
@@ -102,7 +102,9 @@ add_shortcode("userstatistics",function ($atts){
 						echo "<td>$picture {$user->display_name}</td>";
 						echo "<td>$login_count</td>";
 						echo "<td>$last_login_date</td>";
-						echo "<td>".SIM\MANDATORY\get_must_read_documents($user->ID,true)."</td>";
+						if(function_exists('SIM\MANDATORY\mustReadDocuments')){
+							echo "<td>".SIM\MANDATORY\mustReadDocuments($user->ID,true)."</td>";
+						}
 						echo "<td>";
 						foreach($user->roles as $role){
 							echo $role.'<br>';

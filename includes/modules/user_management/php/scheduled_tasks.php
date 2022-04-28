@@ -286,7 +286,7 @@ function check_details_mail(){
 	$subject	= 'Please review your website profile';
 	
 	//Retrieve all users
-	$users = SIM\get_user_accounts($return_family=false,$adults=true,$local_nigerians=true);
+	$users = SIM\get_user_accounts($return_family=false,$adults=true);
 
 	$accountPage	= SIM\get_module_option('user_management', 'account_page');
 	$accountPageUrl	= get_permalink($accountPage);
@@ -355,8 +355,8 @@ function check_details_mail(){
 				$message .= "</td>";
 			$message .= "</tr>";
 
-			$local_nigerian = get_user_meta( $user->ID, 'local_nigerian', true );
-			if(empty($local_nigerian)){
+			$visaInfo = get_user_meta( $user->ID, 'visa_info', true );
+			if(!isset($visaInfo['permit_type']) or $visaInfo['permit_type'] == 'greencard'){
 				$sendingOffice = get_user_meta($user->ID,'sending_office',true);
 				if(empty($sendingOffice)) $sendingOffice = 'No sending office specified';
 				$message .= "<tr>";

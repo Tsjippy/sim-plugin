@@ -27,9 +27,13 @@ class Fileupload{
 
 		//Load js
 		wp_enqueue_script('sim_fileupload_script');
+
+		// Will only work if vimeo module is enabled
+		// Exposes the vimeoUploader variable
+		wp_enqueue_script('sim_vimeo_uploader_script');
 	}
 	
-	function get_upload_html(){
+	function get_upload_html($options=''){
 		$document_array = '';
 
 		if(!empty($this->metakey)){
@@ -72,7 +76,7 @@ class Fileupload{
 			$this->html .= '</div>';
 		
 			$this->html .= "<div class='upload_div $class'>";
-				$this->html .= "<input class='file_upload' type='file' name='{$this->documentname}_files[]' $multiple>";
+				$this->html .= "<input class='file_upload' type='file' name='{$this->documentname}_files[]' $multiple $options>";
 				$this->html .= "<div style='width:100%; display: flex;'>";
 					if(is_numeric($this->user_id)){
 						$this->html .= "<input type='hidden' name='fileupload[userid]' 			value='{$this->user_id}'>";

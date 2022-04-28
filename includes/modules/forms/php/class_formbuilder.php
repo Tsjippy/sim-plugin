@@ -152,7 +152,7 @@ class Formbuilder{
 		}
 	}
 	
-	function getelementbyid($id, $key=''){
+	function getElementById($id, $key=''){
 		//load if needed
 		if(empty($this->formdata->element_mapping)) $this->loadformdata();
 		
@@ -301,6 +301,10 @@ class Formbuilder{
 			),
 		);
 
+		if($this->formdata == null){
+			$this->loadformdata($_POST['formid']);
+		}
+
 		//Update form version
 		$result = $wpdb->update(
 			$this->table_name, 
@@ -320,6 +324,8 @@ class Formbuilder{
 			$this->el_table_name, 
 			(array)$element
 		);
+
+		return $wpdb->insert_id;
 	}
 
 	function update_priority($element){
@@ -460,7 +466,40 @@ class Formbuilder{
 	}
 	
 	function get_element_html($element, $width=100){
-		$html = '';
+		$html		= '';
+		$el_class	= '';
+		$el_options	= '';
+
+		/*
+			ELEMENT OPTIONS
+		*/
+		if(!empty($element->options)){
+			//Store options in an array
+			$options	= explode("\n", $element->options);
+			
+			//Loop over the options array
+			foreach($options as $option_key=>$option){
+				//Remove starting or ending spaces and make it lowercase
+				$option 		= trim($option);
+
+				$option_type	= explode('=',$option)[0];
+				$option_value	= str_replace('\\\\', '\\', explode('=',$option)[1]);
+
+				if($option_type == 'class'){
+					$el_class .= " $option_value";
+				}else{
+					if(!in_array($option_type, ['pattern', 'title', 'accept'])){
+						$option_value = str_replace([' ', ',', '(', ')'],['_', '', '', ''], $option_value);
+					}
+
+					//remove any leading "
+					$option_value	= trim($option_value, '\'"');
+
+					//Write the corrected option as html
+					$el_options	.= " $option_type='$option_value'";
+				}
+			}
+		}
 		
 		if($element->type == 'p'){
 			$html = wp_kses_post($element->text);
@@ -516,7 +555,7 @@ class Formbuilder{
 			//Load js			
 			$uploader = new SIM\Fileupload($user_id, $name, $targetdir, $element->multiple, $metakey, $library, '', false);
 			
-			$html = $uploader->get_upload_html();
+			$html = $uploader->get_upload_html($el_options);
 		}else{
 			/*
 				ELEMENT TAG NAME
@@ -542,7 +581,7 @@ class Formbuilder{
 			/*
 				ELEMENT ID
 			*/
-			//datalist needs an id to work
+			//datalist needs an id to work as well as mandatory elements for use in anchor links
 			if($element->type == 'datalist' or $element->mandatory or $element->recommended){
 				$el_id	= "id='$el_name'";
 			}
@@ -550,7 +589,7 @@ class Formbuilder{
 			/*
 				ELEMENT CLASS
 			*/
-			$el_class = " class='formfield";
+			$el_class = " formfield";
 			switch($element->type){
 				case 'label':
 					$el_class .= " formfieldlabel";
@@ -564,36 +603,6 @@ class Formbuilder{
 				default:
 					$el_class .= " formfieldinput";
 			}
-			
-			/*
-				ELEMENT OPTIONS
-			*/
-			if(!empty($element->options)){
-				//Store options in an array
-				$options	= explode("\n", $element->options);
-				$el_options	= '';
-				
-				//Loop over the options array
-				foreach($options as $option_key=>$option){
-					//Remove starting or ending spaces and make it lowercase
-					$option 		= trim($option);
-
-					$option_type	= explode('=',$option)[0];
-					$option_value	= str_replace('\\\\', '\\', explode('=',$option)[1]);
-
-					if($option_type == 'class'){
-						$el_class .= " $option_value";
-					}else{
-						if(!in_array($option_type, ['pattern', 'title'])){
-							$option_value = str_replace([' ', ',', '(', ')'],['_', '', '', ''], $option_value);
-						}
-						//Write the corrected option as html
-						$el_options	.= " $option_type='$option_value'";
-					}
-				}
-			}
-			//CLOSE THE CLASS STRING
-			$el_class			.= "'";
 			
 			/*
 				BUTTON TYPE
@@ -698,7 +707,7 @@ class Formbuilder{
 						}
 						
 						$html .= "<label>";
-							$html .= "<$el_type name='$el_name' $el_class $el_options value='$key' $checked>";
+							$html .= "<$el_type name='$el_name' class='$el_class' $el_options value='$key' $checked>";
 							$html .= "<span class='optionlabel'>$option</span>";
 						$html .= "</label><br>";
 					}
@@ -726,9 +735,9 @@ class Formbuilder{
 			*/
 			if(!empty($element->multiple)){
 				if($element->type == 'select'){
-					$html	= "<$el_type  name='$el_name' $el_id $el_class $el_options>";
+					$html	= "<$el_type  name='$el_name' $el_id class='$el_class' $el_options>";
 				}else{
-					$html	= "<$el_type  name='$el_name' $el_id $el_class $el_options value='%value%'>$el_content$el_close";
+					$html	= "<$el_type  name='$el_name' $el_id class='$el_class' $el_options value='%value%'>$el_content$el_close";
 				}
 					
 				$this->process_multi_fields($element, 'multifield', $width, $values, $html);
@@ -738,7 +747,7 @@ class Formbuilder{
 				}
 				$html	.= '</div>';
 			}elseif(empty($html)){
-				$html	= "<$el_type  name='$el_name' $el_id $el_class $el_options $el_value>$el_content$el_close";
+				$html	= "<$el_type  name='$el_name' $el_id class='$el_class' $el_options $el_value>$el_content$el_close";
 			}
 		}
 		
@@ -1046,6 +1055,8 @@ class Formbuilder{
 	}
 	
 	function buildhtml($element, $key=0){
+		if(empty($this->formdata))		$this->loadformdata();
+		if(empty($this->form_elements)) $this->get_all_form_elements();
 		$this->prev_element		= $this->form_elements[$key-1];
 		$this->next_element		= $this->form_elements[$key+1];
 
@@ -1096,7 +1107,7 @@ class Formbuilder{
 		
 		//Add form edit controls if needed
 		if($this->editrights == true and (isset($_GET['formbuilder']) or defined('REST_REQUEST'))){
-			$html = "<div class='form_element_wrapper' data-id='{$element->id}' data-formname='{$this->datatype}' data-formid='{$this->formdata->id}' data-priority='{$element->priority}' style='display: flex;'>";
+			$html = " <div class='form_element_wrapper' data-id='{$element->id}' data-formid='{$this->formdata->id}' data-priority='{$element->priority}' style='display: flex;'>";
 				$html .= "<span class='movecontrol formfieldbutton' aria-hidden='true'>:::</span>";
 				$html .= "<div class='resizer_wrapper'>";
 					if($element->type == 'info'){
@@ -1403,7 +1414,7 @@ class Formbuilder{
 				//Get all submissions of this form
 				$this->get_submission_data();
 				
-				$trigger_name	= $this->getelementbyid($settings['autoarchivefield'],'name');
+				$trigger_name	= $this->getElementById($settings['autoarchivefield'],'name');
 				$trigger_value	= $settings['autoarchivevalue'];
 				$pattern		= '/'.$field_main_name."\[[0-9]+\]\[([^\]]+)\]/i";
 				if(preg_match($pattern, $trigger_name,$matches)){
@@ -1676,7 +1687,7 @@ class Formbuilder{
 				<button class="button tablink formbuilderform"			id="show_element_conditions" data-target="element_conditions">Element conditions</button>
 				
 				<div class="tabcontent" id="element_builder">
-					<?php echo $this->element_builder_form();?>
+					<?php echo $this->elementBuilderForm();?>
 				</div>
 				
 				<div class="tabcontent hidden" id="element_conditions">
@@ -1699,19 +1710,17 @@ class Formbuilder{
 		}
 		echo do_action('before_form',$this->datatype);
 
-		$form_id	= "sim_form_".$this->datatype;
 		$form_class	= "sim_form";
 		if(isset($_GET['formbuilder'])) $form_class	.= ' builder';
 
-		$dataset	= '';
+		$dataset	= "data-formid=".$this->formdata->id;
 		if(!empty($this->formdata->settings['formreset']))		$dataset .= " data-reset='true'";
 		if(!empty($this->formdata->settings['save_in_meta']))	$dataset .= " data-addempty='true'";
 
 		?>
-		<form action='' method='post' id='<?php echo $form_id;?>' class='<?php echo $form_class;?>' <?php echo $dataset;?>>
+		<form action='' method='post' class='<?php echo $form_class;?>' <?php echo $dataset;?>>
 			<div class='form_elements'>
 				<input type='hidden' name='formid'		value='<?php echo $this->formdata->id;?>'>
-				<input type='hidden' name='action'		value='save_form_input'>
 				<input type='hidden' name='formurl'		value='<?php echo SIM\current_url();?>'>
 				<input type='hidden' name='userid'		value='<?php echo $this->user_id;?>'>
 		<?php		
@@ -1775,7 +1784,7 @@ class Formbuilder{
 		
 		?>
 		<div class="element_settings_wrapper">
-			<form action='' method='post' id='sim_form_<?php echo $this->datatype;?>_settings' class='sim_form builder'>
+			<form action='' method='post' class='sim_form builder'>
 				<div class='form_elements'>
 					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formdata->id;?>'>
 					
@@ -2041,7 +2050,7 @@ class Formbuilder{
 		$emails = $this->formdata->emails;
 		?>
 		<div class="emails_wrapper">
-			<form action='' method='post' id='sim_form_<?php echo $this->datatype;?>_emails' class='sim_form builder'>
+			<form action='' method='post' class='sim_form builder'>
 				<div class='form_elements'>
 					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formdata->id;?>'>
 					
@@ -2273,18 +2282,22 @@ class Formbuilder{
 		<?php
 	}
 	
-	function element_builder_form(){
-		?>
-		<form action="" method="post" name="add_form_element_form" class="form_element_form sim_form">
-			<div style="display: none;" class="error"></div>
-			<h4>Please fill in the form to add a new form element</h4><br>			
-			<input type="hidden" name="action" value="add_formfield">
+	function elementBuilderForm($element=null){
+		ob_start();
 
-			<input type="hidden" name="formname" value="<?php echo $this->formdata->name;?>">
+		if(is_numeric($element)){
+			$element = $this->getElementById($element);
+		}
+		?>
+		<form action="" method="post" name="add_form_element_form" class="form_element_form sim_form" data-addempty=true>
+			<div style="display: none;" class="error"></div>
+			<h4>Please fill in the form to add a new form element</h4><br>
+
+			<input type="hidden" name="formid" value="<?php echo $this->formdata->id;?>">
 
 			<input type="hidden" name="formfield[form_id]" value="<?php echo $this->formdata->id;?>">
 			
-			<input type="hidden" name="element_id" value="">
+			<input type="hidden" name="element_id" value="<?php if( $element != null) echo $element->id;?>">
 			
 			<input type="hidden" name="insertafter">
 			
@@ -2293,36 +2306,63 @@ class Formbuilder{
 			<label>Select which kind of form element you want to add</label>
 			<select class="formbuilder elementtype" name="formfield[type]" required>
 				<optgroup label="Normal elements">
-					<option value="button">Button</option>
-					<option value="checkbox">Checkbox</option>
-					<option value="color">Color</option>
-					<option value="date">Date</option>
-					<option value="select">Dropdown</option>
-					<option value="email">E-mail</option>
-					<option value="file">File upload</option>
-					<option value="image">Image upload</option>
-					<option value="label">Label</option>
-					<option value="month">Month</option>
-					<option value="number">Number</option>
-					<option value="password">Password</option>
-					<option value="tel">Phonenumber</option>
-					<option value="radio">Radio</option>
-					<option value="range">Range</option>
-					<option value="text">Text</option>
-					<option value="textarea">Text (multiline)</option>
-					<option value="time">Time</option>
-					<option value="url">Url</option>
-					<option value="week">Week</option>
+					<?php
+					$options=[
+						"button"	=> "Button",
+						"checkbox"	=> "Checkbox",
+						"color"		=> "Color",
+						"date"		=> "Date",
+						"select"	=> "Dropdown",
+						"email"		=> "E-mail",
+						"file"		=> "File upload",
+						"image"		=> "Image upload",
+						"label"		=> "Label",
+						"month"		=> "Month",
+						"number"	=> "Number",
+						"password"	=> "Password",
+						"tel"		=> "Phonenumber",
+						"radio"		=> "Radio",
+						"range"		=> "Range",
+						"text"		=> "Text",
+						"textarea"	=> "Text (multiline)",
+						"time"		=> "Time",
+						"url"		=> "Url",
+						"week"		=> "Week"
+					];
+
+					foreach($options as $key=>$option){
+						if($element != null and $element->type == $key){
+							$selected = 'selected';
+						}else{
+							$selected = '';
+						}
+						echo "<option value='$key' $selected>$option</option>";
+					}
+					?>
+					
 				</optgroup>
 				<optgroup label="Special elements">
-					<option value="captcha">Captcha</option>
-					<option value="php">Custom code</option>
-					<option value="datalist">Datalist</option>
-					<option value="info">Infobox</option>
-					<option value="multi_start">Multi-answer - start</option>
-					<option value="multi_end">Multi-answer - end</option>
-					<option value="formstep">Multistep</option>
-					<option value="p">Paragraph</option>
+					<?php
+					$options=[
+						"captcha"		=> "Captcha",
+						"php"			=> "Custom code",
+						"datalist"		=> "Datalist",
+						"info"			=> "Infobox",
+						"multi_start"	=> "Multi-answer - start",
+						"multi_end"		=> "Multi-answer - end",
+						"formstep"		=> "Multistep",
+						"p"				=> "Paragraph"
+					];
+
+					foreach($options as $key=>$option){
+						if($element != null and $element->type == $key){
+							$selected = 'selected';
+						}else{
+							$selected = '';
+						}
+						echo "<option value='$key' $selected>$option</option>";
+					}
+					?>
 				</optgroup>
 			</select>
 			<br>
@@ -2330,7 +2370,7 @@ class Formbuilder{
 			<div name='elementname' class='labelhide hide'>
 				<label>
 					<div>Specify a name for the element</div>
-					<input type="text" class="formbuilder" name="formfield[name]">
+					<input type="text" class="formbuilder" name="formfield[name]" value="<?php if($element != null) echo $element->name;?>">
 				</label>
 				<br><br>
 			</div>
@@ -2338,7 +2378,7 @@ class Formbuilder{
 			<div name='functionname' class='hidden'>
 				<label>
 					Specify the functionname
-					<input type="text" class="formbuilder" name="formfield[functionname]">
+					<input type="text" class="formbuilder" name="formfield[functionname]" value="<?php if($element != null) echo $element->functionname;?>">
 				</label>
 				<br><br>
 			</div>
@@ -2346,27 +2386,27 @@ class Formbuilder{
 			<div name='labeltext' class='hidden'>
 				<label>
 					<div>Specify the <span class='elementtype'>label</span> text</div>
-					<input type="text" class="formbuilder" name="formfield[text]">
+					<input type="text" class="formbuilder" name="formfield[text]" value="<?php if($element != null) echo $element->text;?>">
 				</label>
 				<br><br>
 			</div>
 
 			<div name='upload-options' class='hidden'>
 				<label>
-					<input type="checkbox" class="formbuilder" name="formfield[library]" value="true">
+					<input type="checkbox" class="formbuilder" name="formfield[library]" value="true" <?php if($element != null and $element->library) echo 'checkec';?>>
 					Add the <span class='filetype'>file</span> to the library
 				</label>
 				<br><br>
 
 				<label>
 					Name of the folder the <span class='filetype'>file</span> should be uploaded to.<br>
-					<input type="text" class="formbuilder" name="formfield[foldername]">
+					<input type="text" class="formbuilder" name="formfield[foldername]" value="<?php if($element != null) echo $element->foldername;?>">
 				</label>
 			</div>
 			
 			<div name='wrap'>
 				<label>
-					<input type="checkbox" class="formbuilder" name="formfield[wrap]" value="true">
+					<input type="checkbox" class="formbuilder" name="formfield[wrap]" value="true" <?php if($element != null and $element->wrap) echo 'checked';?>>
 					Group together with next element
 				</label>
 				<br><br>
@@ -2386,8 +2426,13 @@ class Formbuilder{
 						'editor_class'				=> 'formbuilder'
 					);
 				
+					if(empty($element->infotext)){
+						$content	= '';
+					}else{
+						$content	= $element->infotext;
+					}
 					echo wp_editor(
-						'',
+						$content,
 						"{$this->datatype}_infotext",	//editor should always have an unique id
 						$settings
 					);
@@ -2399,7 +2444,7 @@ class Formbuilder{
 			
 			<div name='multiple' class='labelhide hide'>
 				<label>
-					<input type="checkbox" class="formbuilder" name="formfield[multiple]" value="true">
+					<input type="checkbox" class="formbuilder" name="formfield[multiple]" value="true" <?php if($element != null and $element->multiple) echo 'checked';?>>
 					Allow multiple answers
 				</label>
 				<br>
@@ -2409,7 +2454,7 @@ class Formbuilder{
 			<div name='valuelist' class='hidden'>
 				<label>
 					Specify the values, one per line
-					<textarea class="formbuilder" name="formfield[valuelist]"></textarea>
+					<textarea class="formbuilder" name="formfield[valuelist]"><?php if($element != null) echo trim($element->valuelist);?></textarea>
 				</label>
 				<br>
 			</div>
@@ -2421,7 +2466,13 @@ class Formbuilder{
 					<?php
 					$this->build_defaults_array();
 					foreach($this->default_array_values as $key=>$field){
-						echo "<option value='$key'>".ucfirst(str_replace('_',' ',$key))."</option>";
+						if($element != null and $element->default_array_value == $key){
+							$selected = 'selected';
+						}else{
+							$selected = '';
+						}
+						$optionName	= ucfirst(str_replace('_',' ',$key));
+						echo "<option value='$key' $selected>$optionName</option>";
 					}
 					?>
 				</select>
@@ -2433,7 +2484,13 @@ class Formbuilder{
 					<option value="">---</option>
 					<?php
 					foreach($this->default_values as $key=>$field){
-						echo "<option value='$key'>".ucfirst(str_replace('_',' ',$key))."</option>";
+						if($element != null and $element->default_value == $key){
+							$selected = 'selected';
+						}else{
+							$selected = '';
+						}
+						$optionName	= ucfirst(str_replace('_',' ',$key));
+						echo "<option value='$key' $selected>$optionName</option>";
 					}
 					?>
 				</select>
@@ -2442,37 +2499,46 @@ class Formbuilder{
 			<div name='elementoptions' class='labelhide hide'>
 				<label>
 					Specify any options like styling
-					<textarea class="formbuilder" name="formfield[options]"></textarea>
+					<textarea class="formbuilder" name="formfield[options]"><?php if($element != null) echo trim($element->options);?></textarea>
 				</label><br>
 				<br>
 				
 				<?php
 				$meta	= false;
 				if(!empty($this->formdata->settings['save_in_meta'])){
-					$meta	=true;
+					$meta	= true;
 				}
 
 				if($meta){
 					?>
 					<h3>Warning conditions</h3>
 					<label class="option-label">
-						<input type="checkbox" class="formbuilder" name="formfield[mandatory]" value="true">
+						<input type="checkbox" class="formbuilder" name="formfield[mandatory]" value="true" <?php if($element != null and $element->mandatory) echo 'checked';?>>
 						Check if people should be warned by e-mail/signal if they have not filled in this field.
 					</label><br>
 					<br>
 
 					<label class="option-label">
-						<input type="checkbox" class="formbuilder" name="formfield[recommended]" value="true">
+						<input type="checkbox" class="formbuilder" name="formfield[recommended]" value="true" <?php if($element != null and $element->recommended) echo 'checked';?>>
 						Check if people should be notified on their homepage if they have not filled in this field.
 					</label><br>
 					<br>
 
-					<div id="warning_conditions_form"></div>
+					<div <?php if($element == null or (!$element->mandatory and !$element->recommended)) echo "class='hidden'";?>>
+						<?php
+						if($element == null){
+							$elementId	= -1;
+						}else{
+							$elementId	= $element->id;
+						}
+						echo $this->warningConditionsForm($elementId);
+						?>
+					</div>
 					<?php
 				}else{
 					?>
 					<label class="option-label">
-						<input type="checkbox" class="formbuilder" name="formfield[required]" value="true">
+						<input type="checkbox" class="formbuilder" name="formfield[required]" value="true" <?php if($element != null and $element->required) echo 'checked';?>>
 						Check if this should be a required field
 					</label><br>
 					<br>
@@ -2482,13 +2548,21 @@ class Formbuilder{
 			</div>
 			<br>
 			<label class="option-label">
-				<input type="checkbox" class="formbuilder" name="formfield[hidden]" value="true">
+				<input type="checkbox" class="formbuilder" name="formfield[hidden]" value="true" <?php if($element != null and $element->hidden) echo 'checked';?>>
 				Check if this should be a hidden field
 			</label><br>
 
-			<?php echo SIM\add_save_button('submit_form_element',"Add form element"); ?>
+			<?php 
+			if($element == null){
+				$text	= "Add";
+			}else{
+				$text	= "Change";
+			}	
+			echo SIM\add_save_button('submit_form_element',"$text form element"); ?>
 		</form>
 		<?php
+
+		return ob_get_clean();
 	}	
 
 	function element_conditions_form($element_id = -1){
@@ -2515,7 +2589,7 @@ class Formbuilder{
 		It is also stored at the conditional fields to be able to create efficient JavaScript
 		*/
 
-		$element	= $this->getelementbyid($element_id);
+		$element	= $this->getElementById($element_id);
 
 		if($element_id == -1 or empty($element->conditions)){
 			$dummyfieldcondition['rules'][0]["conditional_field"]	= "";
@@ -2755,8 +2829,8 @@ class Formbuilder{
 		return $html;
 	}
 
-	function warning_conditions_form($element_id = -1){
-		$element	= $this->getelementbyid($element_id);
+	function warningConditionsForm($element_id = -1){
+		$element	= $this->getElementById($element_id);
 
 		if($element_id == -1 or empty($element->warning_conditions)){
 			$dummy[0]["user_meta_key"]	= "";
@@ -2777,7 +2851,7 @@ class Formbuilder{
 		<label>Do not warn if usermeta with the key</label>
 		<br>
 
-		<div id="conditions_wrapper">
+		<div class="conditions_wrapper">
 			<?php
 			foreach($conditions as $condition_index=>$condition){
 				if(!is_numeric($condition_index)) continue;
@@ -2828,8 +2902,8 @@ class Formbuilder{
 					</select>
 					<input  type='text'   class='warning_condition' name='formfield[warning_conditions][<?php echo $condition_index;?>][conditional_value]' value="<?php echo $condition['conditional_value'];?>" style="width: fit-content;">
 					
-					<button type='button' class='warn_cond button <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'AND') echo 'active';?>'	title='Add a new "AND" rule' value="and">AND</button>
-					<button type='button' class='warn_cond button  <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'OR') echo 'active';?>'	title='Add a new "OR"  rule' value="or">OR</button>
+					<button type='button' class='warn_cond button <?php if(!empty($condition['combinator']) and $condition['combinator'] == 'and') echo 'active';?>'	title='Add a new "AND" rule' value="and">AND</button>
+					<button type='button' class='warn_cond button  <?php if(!empty($condition['combinator']) and $condition['combinator'] == 'or') echo 'active';?>'	title='Add a new "OR"  rule' value="or">OR</button>
 					<button type='button' class='remove_warn_cond  button' title='Remove rule'>-</button>
 
 					<br>

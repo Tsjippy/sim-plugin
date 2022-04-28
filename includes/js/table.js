@@ -1,3 +1,13 @@
+function outsideClicked(event){
+	if(event.target.closest('td') == null || !event.target.closest('td').matches('.editing')){
+		event.stopPropagation();
+		
+		//remove as soon as we come here
+		document.removeEventListener('click', outsideClicked);
+		processInput(event, document.querySelector('.editing input, .editing select, .editing textarea'));
+	}
+}
+
 function add_input_event_listeners(cell){
 	var inputs	= cell.querySelectorAll('input,select,textarea');
 		
@@ -27,7 +37,7 @@ function add_input_event_listeners(cell){
 		});
 		
 		//add a listener for clicks outside the cell
-		document.addEventListener('click', outsideclicked);
+		document.addEventListener('click', outsideClicked);
 		
 		if(inputnode.type != 'checkbox' || inputs.length == 1){
 			if(inputnode.type == 'date'){
@@ -51,55 +61,31 @@ function add_input_event_listeners(cell){
 	});
 }
 
-function outsideclicked(event){
-	if(event.target.closest('td') != target_cell){
-		//remove as soon as we come here
-		this.removeEventListener("click", arguments.callee);
-		processInput(event,target_cell);
-	}
-}
-
 //function to change a cells contents
-var editedel = '';
 function edit_td(target){
+	target.closest('td').classList.add('editing');
+
 	//element is already edited
-	if(editedel == target){
-		return;
-	}
-	editedel			= target;
-	var table			= target.closest('table');
 
 	old_value	= target.textContent;
-
 	if (old_value == "Click to update" || old_value == "X"){
 		old_value = "";
 	}
 	
-	target.innerHTML = target.innerHTML='<input type="text" value="'+old_value+'">';
+	target.innerHTML = `<input type="text" value="${old_value}">`;
 
 	add_input_event_listeners(target);
 }
 
 //function to get the temp input value and save it using the rest api
-var running = false;
 async function processInput(event, target){
 	if(typeof(target)=='undefined'){
 		var target	= event.target;
 	}
 	
-	cell = target.closest('td');
-	
-	if(running == target){
-		return;
-	}
-	running = target;	
-	setTimeout(function(){ running = false;}, 500);	
-	
+	var cell 			= target.closest('td');	
 	var value			= formFunctions.getFieldValue(target, false);
 	var table			= target.closest('table');
-	
-	//remove all event listeners
-	document.removeEventListener("click", outsideclicked);
 	
 	//Only update when needed
 	if (value != old_value){		
@@ -128,6 +114,8 @@ async function processInput(event, target){
 		console.log(value)
 		target.closest('td').innerHTML = old_text;
 	}
+
+	cell.classList.remove('editing');
 }
 
 //function to sort a table by column
@@ -238,42 +226,47 @@ function position_table(){
 	//use whole page width for tables
 	document.querySelectorAll(".form-table-wrapper").forEach(wrapper=>{
 		var table	= wrapper.querySelector('table');
-		var width	= table.scrollWidth;
-		if(table != null && width != 0){
-			// If on small width use full screen
-			if(window.innerWidth < 570){
-				var offset	= wrapper.getBoundingClientRect().x
-			}else{
-				var diff	= window.innerWidth - width;
-				
-				//calculate if room for sidebar
-				if((width/window.innerWidth)<0.7){
-					diff	= (window.innerWidth*0.7) - width;
-				}else{
-					document.getElementById('primary').style.zIndex=1;
-					//sidebar behind table
-					document.querySelectorAll('#right-sidebar').forEach(el=>el.style.zIndex=0);
-					//Table needs full screen width
-					if(diff<20){
-						var new_x = 10;
-					//center the table
-					}else{
-						var new_x = diff/2; 
-					}
-				}
-				
-				
-				//first set it back to default
-				if(wrapper.style.marginLeft != ''){
-					wrapper.style.marginLeft = '-0px';
-				}
-				
-				//then calculate the required offset
-				var offset	= parseInt(wrapper.getBoundingClientRect().x)-new_x;
-			}
-
-			wrapper.style.marginLeft = '-'+offset+'px';
+		if(table == null){
+			return;
 		}
+		var width	= table.scrollWidth;
+		if(width == 0){
+			return;
+		}
+		
+		// If on small width use full screen
+		if(window.innerWidth < 570){
+			var offset	= wrapper.getBoundingClientRect().x
+		}else{
+			var diff	= window.innerWidth - width;
+			
+			//calculate if room for sidebar
+			if((width/window.innerWidth)<0.7){
+				diff	= (window.innerWidth*0.7) - width;
+			}else{
+				document.getElementById('primary').style.zIndex=1;
+				//sidebar behind table
+				document.querySelectorAll('#right-sidebar').forEach(el=>el.style.zIndex=0);
+				//Table needs full screen width
+				if(diff<20){
+					var new_x = 10;
+				//center the table
+				}else{
+					var new_x = diff/2; 
+				}
+			}
+			
+			
+			//first set it back to default
+			if(wrapper.style.marginLeft != ''){
+				wrapper.style.marginLeft = '-0px';
+			}
+			
+			//then calculate the required offset
+			var offset	= parseInt(wrapper.getBoundingClientRect().x)-new_x;
+		}
+
+		wrapper.style.marginLeft = '-'+offset+'px';
 	});
 }
 
@@ -292,8 +285,10 @@ document.addEventListener("click", event=>{
 	//Edit data]
 	var td = target.closest('td');
 	if(target.matches('td.edit')){
+		event.stopPropagation();
 		edit_td(target);
 	}else if(td != null && td.matches('td.edit') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
+		event.stopPropagation();
 		edit_td(target.closest('td'));
 	}
 });

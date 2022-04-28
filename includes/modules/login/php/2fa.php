@@ -106,8 +106,8 @@ function reset_2fa($user_id){
 	wp_mail( $userdata->user_email, $twoFaReset->subject, $twoFaReset->message);
 }
 
-//Check 2fa during login
-add_filter( 'wp_authenticate_user', function ( $user) {
+//Check 2fa after user credentials are checked
+add_filter( 'authenticate', function ( $user) {
     $methods    = get_user_meta($user->ID,'2fa_methods',true);
     if(!empty($methods)){
         if(!isset($_SESSION)) session_start();
@@ -184,7 +184,7 @@ add_filter( 'wp_authenticate_user', function ( $user) {
     }
 
     return $user;
-}); 
+}, 40); 
 
 //Redirect to 2fa page if not setup
 add_action('wp_footer', function(){

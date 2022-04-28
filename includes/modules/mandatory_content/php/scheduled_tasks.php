@@ -18,7 +18,7 @@ function read_reminder(){
 	
 	$users = SIM\get_user_accounts();
 	foreach($users as $user){
-		$html = get_must_read_documents($user->ID);
+		$html = mustReadDocuments($user->ID);
 		
 		//Only continue if there are documents to read
 		if(!empty($html)){

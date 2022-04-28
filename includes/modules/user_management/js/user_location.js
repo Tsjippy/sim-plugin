@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded",function() {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(showPosition);
 			} else { 
-				alert = "Geolocation is not supported by your browser.";
+				display_message("Geolocation is not supported by your browser.");
 			}
 		}
 	});

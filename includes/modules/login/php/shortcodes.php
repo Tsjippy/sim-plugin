@@ -49,6 +49,11 @@ function password_reset_form($user){
 	return ob_get_clean();
 }
 
+// Make password reset links valid for 7 days
+add_filter( 'password_reset_expiration', function($expirationDuration){
+	return DAY_IN_SECONDS * 7;
+});
+
 // Display password reset
 add_shortcode("change_password", function(){
 	if(!is_user_logged_in()){

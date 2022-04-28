@@ -6,10 +6,12 @@ add_action('init', function(){
 	//add action for use in scheduled task
 	add_action( 'remove_old_events_action', __NAMESPACE__.'\remove_old_events');
 	add_action( 'anniversary_check_action', __NAMESPACE__.'\anniversary_check');
+	add_action( 'remove_old_schedules_action', __NAMESPACE__.'\removeOldSchedules');
 });
 
 function schedule_tasks(){
 	SIM\schedule_task('anniversary_check_action', 'daily');
+	SIM\schedule_task('remove_old_schedules_action', 'daily');
 
     $freq   = SIM\get_module_option('events', 'freq');
 
@@ -63,6 +65,17 @@ function anniversary_check(){
 			if($partner_id and strpos($event->post_title, $couple_string)){
 				SIM\try_send_signal("Hi {$partnerdata->first_name},\nCongratulations with your $event_title!", $partner_id);
 			}
+		}
+	}
+}
+
+function removeOldSchedules(){
+	$schedules	= new Schedule();
+	$schedules->get_schedules();
+
+	foreach($schedules->schedules as $schedule){
+		if($schedule->enddate < date('Y-m-d')){
+			$schedules->removeSchedule($schedule->id);
 		}
 	}
 }

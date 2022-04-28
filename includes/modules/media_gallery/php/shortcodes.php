@@ -103,19 +103,20 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
         //skip if needed
         if(is_numeric($itemsToSkip) and $i < $itemsToSkip) continue;
 
-        $id         = get_the_ID();
-        $url        = wp_get_attachment_url($id);
-        $icon_url   = $url;
-        $title      = get_the_title();
-        $mime       = get_post_mime_type();
-        $type       = explode('/', $mime)[0];
-        $vimeo_id   = get_post_meta($id, 'vimeo_id', true);
+        $id             = get_the_ID();
+        $url            = wp_get_attachment_url($id);
+        $icon_url       = $url;
+        $title          = get_the_title();
+        $mime           = get_post_mime_type();
+        $type           = explode('/', $mime)[0];
+        $vimeo_id       = get_post_meta($id, 'vimeo_id', true);
+        $description    = ucfirst(get_the_content());
 
         /* 
         **** PREVIEW GRID ****
         */
 
-        // Replace icone with VIMEO icon
+        // Replace icon with VIMEO icon
         if($type == 'video'){
             $icon_url       = apply_filters( 'wp_mime_type_icon', SITEURL."/wp-includes/images/media/video.png", get_post_mime_type(), $id);
         }elseif($type == 'audio'){
@@ -131,15 +132,25 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
         }
 
         $index=$startIndex+$i;
-        echo "<div class='cell $type' data-index='$index'>";
-            echo "<img src='$icon_url' alt='$title' class='media-item' width='150' height='150' title='$title'>";
-        echo '</div>';
+        ?>
+        <div class='cell <?php echo $type;?>' data-index='<?php echo $index;?>'>
+                <img src='<?php echo $icon_url;?>' alt='<?php echo $title;?>' class='media-item' width='150' height='120' title='<?php echo $title;?>'>
+            <?php
+            if(!empty($description)){
+            ?>
+            <div class='media-description hidden'>
+                <?php echo $description;?>
+            </div>
+            <?php
+            }
+            ?>
+        </div>
+        <?php
 
         /* 
         **** FULL SCREEN VIEWS ****
         */
         ?>
-        <!-- The expanding image container -->
         <div class="large-image <?php echo $type;?> hidden" data-index='<?php echo $index;?>'>
             <?php
             //Only show back button if not the first item
@@ -210,8 +221,6 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                     echo "<a href='".SITEURL."/wp-admin/upload.php?item=$id' class='button editmedia'>Edit</a>";
                 }
 
-                $description    = ucfirst(get_the_content());
-
                 if(!empty($description)){
                     ?>
                     <button type='button' class='button small description' data-description='<?php echo $description;?>' title='<?php echo $description;?>'>Description</button>
@@ -224,7 +233,10 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                 }
                 ?>
 
-                <a href='<?php echo $download_url;?>' class='button download' download>Download</a>
+                <button type="button" class="button small download">
+                    Download
+                    <a href='<?php echo $download_url;?>' class='hidden' download>Download</a>
+                </button>
             </div>
         </div>
 

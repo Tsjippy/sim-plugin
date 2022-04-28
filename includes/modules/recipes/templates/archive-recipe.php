@@ -12,8 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-global $Modules;
-
 $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
 $recipes_query = new \WP_Query(array(
@@ -63,7 +61,7 @@ get_header();
 					<div class="inside-article">
 						<div class="entry-content">
 							There are no recipes submitted yet.
-							Add one <a href='<?php echo add_query_arg( ['type' => 'recipe'], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );?>'>here</a>.
+							Add one <a href='<?php echo add_query_arg( ['type' => 'recipe'], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );?>'>here</a>.
 						</div>
 					</div>
 				</div>

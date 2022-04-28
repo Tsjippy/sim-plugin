@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded",function() {
 window.addEventListener("click", event => {
 	var target = event.target;
     if(target.classList.contains('placeholderselect') || target.classList.contains('placeholders')){
+        event.preventDefault();
+
         var value = '';
         if(target.classList.contains('placeholders')){
             value = target.textContent;

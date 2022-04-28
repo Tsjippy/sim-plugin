@@ -153,3 +153,175 @@ function export_visa_excel(){
 	ob_end_flush();
 	exit;
 }
+
+function exportVisaInfoPdf($user_id=0, $all=false) {
+	if($all == true){
+		//Build the frontpage
+		$pdf = new SIM\PDF\PDF_HTML();
+		$pdf->frontpage("Visa user info","");
+		
+		//Get all adult missionaries
+		$users = SIM\get_user_accounts();
+		foreach($users as $user){
+			$pdf->setHeaderTitle('Greencard information for '.$user->display_name);
+			$pdf->PageTitle($pdf->headertitle);
+			writeVisaPages($user->ID, $pdf);
+		}
+	}else{
+		//Build the frontpage
+		$pdf = new SIM\PDF\PDF_HTML();
+		$pdf->frontpage("Visa user info for:",get_userdata($user_id)->display_name);
+		writeVisaPages($user_id, $pdf);
+	}
+	
+	$pdf->printpdf();
+}
+
+function writeVisaPages($user_id, $pdf){
+	$visa_info = get_user_meta( $user_id, "visa_info",true);
+	if(!is_array($visa_info)){
+		$pdf->Write(10,"No greencard information found.");
+		return;
+	}
+	
+	// Post Content	
+	$pdf->SetFont( 'Arial', '', 12 );
+	
+	$qualificationsarray = $visa_info['qualifications'];
+	//Visa info without qualifications
+	unset($visa_info['qualifications']);
+	
+	//Understudy info	
+	$understudies_documents = [];
+
+	$understudiesarray	= [];
+	$info_1				= get_user_meta( $user_id, "understudy_1",true);
+	$info_2				= get_user_meta( $user_id, "understudy_2",true);
+	if(!empty($info_1)) $understudiesarray[1]	= $info_1;
+	if(!empty($info_2)) $understudiesarray[2]	= $info_2;
+
+	foreach($understudiesarray as $key=>$understudy){
+		$understudies_documents[$key] = $understudy['documents'];
+		unset($understudiesarray[$key]['documents']);
+	}
+	
+	if(count($visa_info)>0){
+		$pdf->WriteArray($visa_info);
+	}else{
+		$pdf->Write(10,'No greencard details found');
+		$pdf->Ln(10);
+	}
+
+	if(count($understudiesarray)>0){
+		$pdf->PageTitle('Understudy information');
+		$pdf->WriteArray($understudiesarray);
+	}else{
+		$pdf->Write(10,'No understudy information found');
+		$pdf->Ln(10);
+	}
+	
+	if(is_array($qualificationsarray) and count($qualificationsarray)>0){
+		$pdf->PageTitle('Qualifications');
+		$pdf->WriteImageArray($qualificationsarray);
+	}else{
+		$pdf->Write(10,'No qualifications found');
+		$pdf->Ln(10);
+	}
+	
+	if(is_array($understudies_documents) and count($understudies_documents)>0){
+		$pdf->AddPage();
+		
+		foreach($understudies_documents as $key=>$understudies_document){
+			if(count($understudies_document)>0){
+				if($key>1) $pdf->Ln(10);
+				$pdf->PageTitle('Understudy documents for understudy '.$key,false);
+				$pdf->WriteImageArray($understudies_document);
+			}else{
+				$pdf->Write(10,'No understudy documents found for understudy '.$key);
+				$pdf->Ln(10);
+			}
+		}
+	}else{
+		$pdf->Write(10,'No understudy documents found');
+		$pdf->Ln(10);
+	}
+	
+	return $pdf;
+}
+
+
+// allow people with the visainfo role to see the user select
+add_filter('sim_user_page_dropdown', function($genericInfoRoles){
+	$genericInfoRoles[]	= "visainfo";
+	return $genericInfoRoles;
+});
+
+/*
+	Add a visa Info page to user management screen
+*/
+add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $user, $userAge){
+	if((array_intersect(["visainfo"], $user->roles ) or $showCurrentUserData)){
+		if($userAge > 18){
+			if( isset($_POST['print_visa_info'])){
+				if(isset($_POST['userid']) and is_numeric($_POST['userid'])){
+					exportVisaInfoPdf($_POST['userid']);
+				}else{
+					exportVisaInfoPdf($_POST['userid'], true);//export for all people
+				}
+			}
+			
+			if( isset($_POST['export_visa_info'])){
+				export_visa_excel();
+			}
+		
+			//only active if not own data and has not the user management role
+			if(!array_intersect(["usermanagement"], $user->roles ) and !$showCurrentUserData){
+				$active = "active";
+				$class = '';
+				$tabclass = 'hidden';
+			}else{
+				$active = "";
+				$class = 'hidden';
+				$tabclass = '';
+			}
+			
+			//Add an extra tab button on position 3
+			$postion				= 3;
+			$value					= "<li class='tablink $active $tabclass' id='show_visa_info' data-target='visa_info'>Immigration</li>";
+			$filteredHtml['tabs'] 	= array_merge(array_slice($filteredHtml['tabs'], 0, $postion), [$value], array_slice($filteredHtml['tabs'], $postion));
+			
+			//Content
+			ob_start();
+			?>
+			<div id='visa_info' class='tabcontent <?php echo $class;?>'>
+				<?php
+				echo visa_page($user->ID, true);
+			
+				if(!$showCurrentUserData){
+					?>
+					<div class='export_button_wrapper' style='margin-top:50px;'>
+						<form  method='post'>
+							<input type='hidden' name='userid' id='userid' value='$user_id'>
+							<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export user data as PDF</button>
+						</form>
+						<form method='post'>
+							<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export ALL data as PDF</button>
+						</form>
+						<form method='post'>
+							<button class='button button-primary' type='submit' name='export_visa_info' value='generate'>Export ALL data to excel</button>
+						</form>
+					</div>
+					<?php
+				}
+			?>
+			</div>
+			<?php
+
+			$result	= ob_get_clean();
+
+			$filteredHtml['html']	.= $result;
+		}
+	}
+
+	return $filteredHtml;
+}, 10, 4);

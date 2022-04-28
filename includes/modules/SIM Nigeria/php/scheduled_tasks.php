@@ -100,7 +100,7 @@ function send_missonary_detail(){
 			'query_two' => 'ASC',
 		),
 	);
-	$users = SIM\get_user_accounts($return_family=false,$adults=true,$local_nigerians=true,$fields=[],$extra_args=$args);
+	$users = SIM\get_user_accounts($return_family=false,$adults=true,$fields=[],$extra_args=$args);
 	
 	//Loop over all users to add a row with their data to the table
 	$user_details = [];

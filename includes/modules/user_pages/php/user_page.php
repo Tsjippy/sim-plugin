@@ -233,12 +233,13 @@ function user_description($user_id){
 				$displayname = $userdata->data->display_name;
 			}
 			
-			$html .= "<h1>";
-			if(!isset($privacy_preference['hide_profile_picture'])){
-				$html .= SIM\displayProfilePicture($user_id);
-			}
-			$html .= "  ".$displayname."</h1>";
-			$html .= "<br>";
+			$html	.= "<h1>";
+				if(!isset($privacy_preference['hide_profile_picture'])){
+					$html .= SIM\displayProfilePicture($user_id);
+				}
+				$html	.= "  $displayname";
+			$html	.= "</h1>";
+			$html	.= "<br>";
 			if(!isset($privacy_preference['hide_location'])){ 
 				$html .= "<p>Lives on: $address</p>";
 			}

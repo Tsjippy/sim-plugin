@@ -40,7 +40,7 @@ async function submitForm(target, url){
 	var validity = true;
 	
 	//first get all hidden required inputs and unrequire them
-	form.querySelectorAll('.hidden [required]').forEach(el=>{el.required = false});
+	form.querySelectorAll('.hidden [required], select[required]').forEach(el=>{el.required = false});
 	
 	validity	= form.reportValidity();
 

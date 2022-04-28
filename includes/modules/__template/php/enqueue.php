@@ -17,17 +17,13 @@ add_action( 'save_post', function($post_ID, $post){
 }, 10, 2);
 
 add_action( 'wp_enqueue_scripts', function(){
-    wp_register_style( 'sim_forms_style', plugins_url('css/forms.min.css', __DIR__), array(), ModuleVersion);
+    wp_register_style( 'sim_XXX_style', plugins_url('css/XXX.min.css', __DIR__), array(), ModuleVersion);
 
     // We cannot use the minified version as the dynamic js files depend on the function names
-    wp_register_script('sim_forms_script',plugins_url('js/forms.js', __DIR__), array('sweetalert'), ModuleVersion,true);
+    wp_register_script('sim_XXXX_script',plugins_url('js/XXXX.js', __DIR__), array('sweetalert'), ModuleVersion,true);
 
-    wp_register_script( 'sim_formbuilderjs', plugins_url('js/formbuilder.min.js', __DIR__), array('sim_forms_script','sortable','sweetalert'), ModuleVersion,true);
-    
-    wp_register_script('sim_forms_table_script', plugins_url('js/forms_table.min.js', __DIR__), array('sim_table_script', 'sim_forms_script'), ModuleVersion,true);
-
-    $formbuilder_pages   = SIM\get_module_option('forms', 'formbuilder_pages');
+    $formbuilder_pages   = SIM\get_module_option('XXX', 'XXX_pages');
     if(in_array(get_the_ID(), $formbuilder_pages)){
-        wp_enqueue_style('sim_forms_style');
+        wp_enqueue_style('sim_XXX_style');
     }
 });

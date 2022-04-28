@@ -11,9 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-global $Modules;
-global $CustomSimSettings;
-
 add_filter( 'body_class', function( $classes ) {
 	$newclass[] = 'categorypage';
 	return array_merge( $classes, $newclass );
@@ -31,7 +28,7 @@ get_header(); ?>
 					//Show the map of this category
 					echo "<div style='margin-bottom:25px;'>";
 						$map_name			= $name."_map";
-						$map_id				= $CustomSimSettings[$map_name];
+						$map_id				= SIM\get_module_option('locations', $map_name);
 
 						if(is_numeric($map_id)){
 							echo do_shortcode("[ultimate_maps id='$map_id']");
@@ -53,7 +50,7 @@ get_header(); ?>
 					<div class="inside-article">
 						<div class="entry-content">
 							There are no <?php echo $name;?> locations yet.
-							Add one <a href='<?php echo add_query_arg( ['type' => 'location'], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );?>'>here</a>.
+							Add one <a href='<?php echo add_query_arg( ['type' => 'location'], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );?>'>here</a>.
 						</div>
 					</div>
 				</div>

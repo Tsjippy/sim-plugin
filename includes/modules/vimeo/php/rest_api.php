@@ -40,6 +40,33 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
+
+	// Save uploaded video details
+    register_rest_route( 
+		'sim/v1/vimeo', 
+		'/download_to_server', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> 	function(){
+				$vimeo	= new VimeoApi();
+				$result	= $vimeo->download_from_vimeo($_POST['download_url'], $_POST['vimeoid']);
+				if(is_wp_error($result)){
+					return $result;
+				}
+				return "Video downloaded to server succesfully";
+			},
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'vimeoid'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+                ),
+				'download_url'		=> array(
+					'required'	=> true
+                )
+			)
+		)
+	);
 });
 
 //create a video on vimeo to upload to
@@ -59,6 +86,7 @@ function prepareVimeoUpload(){
 		if($data['filename'] == $file_name){
 			$url			= $data['url'];
 			$post_id		= $result->post_id;
+			$vimeo_id      	= $data['vimeo_id'];
 		}
 	}
 
@@ -70,7 +98,8 @@ function prepareVimeoUpload(){
 	}else{
 		$result = [
 			'upload_link'	=> $url,
-			'post_id'		=> $post_id
+			'post_id'		=> $post_id,
+			'vimeo_id'      => $vimeo_id
 		];
 	}
 

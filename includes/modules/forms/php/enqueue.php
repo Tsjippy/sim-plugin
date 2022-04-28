@@ -5,25 +5,38 @@ use SIM;
 add_action( 'save_post', function($post_ID, $post){
     $hasFormbuilderShortcode    = has_shortcode($post->post_content, 'formbuilder');
 
-    // Add the form 
+    // Add the form if it does not exist yet
     if($hasFormbuilderShortcode){
-
         preg_match_all( 
             '/' . get_shortcode_regex() . '/', 
             $post->post_content, 
-            $matches, 
+            $shortcodes, 
             PREG_SET_ORDER
         );
 
-        $formname       = $matches[0];
+        // loop over all the found the shortcodes
+        foreach($shortcodes as $shortcode){
+            // Only continue if the current shortcode is a formbuilder shortcode
+            if($shortcode[2] == 'formbuilder'){
+                // Get the formbuilder name from the shortcode
+                $formname       = shortcode_parse_atts($shortcode[3])['datatype'];
 
-        $formbuilder    = new Formbuilder();
-        $formbuilder->get_forms();
+                $formbuilder    = new Formbuilder();
+                $formbuilder->get_forms();
 
-        $formbuilder->forms;
+                // check if a form with this name already exists
+                $found  = false;
+                foreach($formbuilder->forms as $form){
+                    if($form->name == $formname){
+                        $found  = true;
+                        break;
+                    }
+                }
 
-        //if(strpos())
-        $formbuilder->insert_form();
+                // Only add a new form if it does not exist yet
+                if(!$found) $formbuilder->insert_form($formname);
+            }
+        }
     }
 
     if($hasFormbuilderShortcode or has_shortcode($post->post_content, 'formselector')){

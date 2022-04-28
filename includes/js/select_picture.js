@@ -39,6 +39,7 @@ function selectImage(event) {
 var button = '';
 window.addEventListener('click', event=>{
 	if(event.target.classList.contains('select_image_button')){
+		event.preventDefault();
 		button		= event.target;
 		selectImage(event);
 	}

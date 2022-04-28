@@ -27,6 +27,14 @@ async function extendValidity(target){
 	}
 }
 
+async function createUserAccount(target){
+    var response	= await submitForm(target, 'user_management/add_useraccount');
+
+	if(response){
+		display_message(response.message);
+	}
+}
+
 document.addEventListener('click', ev=>{
     const target    = ev.target;
 
@@ -36,5 +44,7 @@ document.addEventListener('click', ev=>{
         updateUserRoles(target);
     }else if(target.name == 'extend_validity'){
         extendValidity(target);
-    }
+    }else if(target.name == 'adduseraccount'){
+		createUserAccount(target);
+	}
 });

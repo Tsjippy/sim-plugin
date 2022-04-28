@@ -46,7 +46,7 @@ async function publishSchedule(target){
 
 // Removes an existing schedule
 async function remove_schedule(target){
-	schedule_id					= target.dataset["schedule_id"];
+	schedule_id			= target.dataset["schedule_id"];
 	var text 			= "Are you sure you want to remove this schedule";
 	var formdata 		= new FormData();
 	formdata.append('schedule_id', schedule_id);
@@ -404,19 +404,27 @@ document.addEventListener('click',function(event){
 	target = event.target;
 	
 	if(target.name == 'add_schedule'){
+		event.stopPropagation();
+
 		addSchedule(target);
 	}
 
 	if(target.classList.contains('remove_schedule')){
+		event.stopPropagation();
+
 		remove_schedule(target);
 	}
 
 	//publish the schedule
 	if(target.classList.contains('publish')){
+		event.stopPropagation();
+
 		ShowPublishScheduleModal(target);
 	}
 
 	if(target.name == 'publish_schedule'){
+		event.stopPropagation();
+
 		publishSchedule(target);
 	}
 	
@@ -425,10 +433,14 @@ document.addEventListener('click',function(event){
 	}
 
 	if(target.name == 'add_recipe_keyword'){
+		event.stopPropagation();
+
 		submitRecipe(target);
 	}
 
 	if(target.name == 'add_host' || target.name == 'add_timeslot'){
+		event.stopPropagation();
+		
 		addHost(target);
 	}
 });

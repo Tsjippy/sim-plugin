@@ -12,8 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-global $Modules;
-
 add_filter( 'body_class', function( $classes ) {
 	$newclass[] = 'categorypage';
 	return array_merge( $classes, $newclass );
@@ -40,7 +38,7 @@ get_header(); ?>
 					<div class="inside-article">
 						<div class="entry-content">
 							There are no <?php echo get_queried_object()->slug;?> recipies yet.
-							Add one <a href='<?php echo add_query_arg( ['type' => 'recipe'], get_permalink( $Modules['frontend_posting']['publish_post_page'] ) );?>'>here</a>.
+							Add one <a href='<?php echo add_query_arg( ['type' => 'recipe'], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );?>'>here</a>.
 						</div>
 					</div>
 				</div>

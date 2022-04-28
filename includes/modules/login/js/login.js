@@ -11,7 +11,10 @@ console.log("Login.js loaded");
 //show loader
 async function requestLogin(){
 	//hide everything
-	document.querySelectorAll('.authenticator_wrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+	document.querySelectorAll('.authenticator_wrapper:not(.hidden)').forEach(el=>{
+		el.classList.add('hidden');
+		el.classList.add('current-method');
+	});
 	
 	//show login message
 	document.getElementById('logging_in_wrapper').classList.remove('hidden');
@@ -37,6 +40,10 @@ async function requestLogin(){
 		}else{
 			location.href = response;
 		}
+	}else{
+		document.getElementById('logging_in_wrapper').classList.add('hidden');
+
+		document.querySelector('.current-method').classList.remove('hidden');
 	}
 /* 
 

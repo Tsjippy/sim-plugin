@@ -5,7 +5,7 @@
   "main": "./forms.js",
   "scripts": {
     "formbuilder": "webpack --watch --entry ./formbuilder.js --output-path . --output-filename formbuilder.min.js --progress --mode=production --devtool source-map",
-    "formstable": "webpack --watch --entry ./forms_table.js --output-path . --output-filename forms_table.min.js --progress --mode=production --devtool source-map",
+    "formtable": "webpack --watch --entry ./forms_table.js --output-path . --output-filename forms_table.min.js --progress --mode=production --devtool source-map",
     "forms": "webpack --config forms.config.js"
   },
   "author": "Ewald Harmsen",

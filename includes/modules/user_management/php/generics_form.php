@@ -13,12 +13,14 @@ add_filter('forms_load_userdata',function($usermeta,$user_id){
 },10,2);
 
 //create  events
-add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
-	global $Events;
+add_filter('before_saving_formdata', function($formresults, $formname, $user_id){
 	if($formname != 'user_generics') return $formresults;
 	
-	$Events->create_celebration_event('birthday', $user_id, 'birthday', $_POST['birthday']);
-	$Events->create_celebration_event(SITENAME.' anniversary', $user_id,'arrival_date',$_POST['arrival_date']);
+	if(class_exists('SIM\EVENTS\Events')){
+		$events	= new SIM\EVENTS\Events();
+		$events->create_celebration_event('birthday', $user_id, 'birthday', $_POST['birthday']);
+		$events->create_celebration_event(SITENAME.' anniversary', $user_id,'arrival_date',$_POST['arrival_date']);
+	}
 
 	//check if phonenumber has changed
 	$old_phonenumbers	= (array)get_user_meta($user_id, 'phonenumbers', true);
@@ -26,8 +28,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	$changed_numbers	= array_diff($new_phonenumbers, $old_phonenumbers);
 	$first_name			= get_userdata($user_id)->first_name;
 	foreach($changed_numbers as $key=>$changed_number){
-		global $Modules;
-		$link		= $Modules['signal']['group_link'];
+		$link		= SIM\get_module_option('signal', 'group_link');
 
 		// Make sure the phonenumber is in the right format
 		# = should be +

@@ -74,7 +74,7 @@ document.querySelectorAll('.searchtext').forEach(el=>{
     });
 });
 
-document.addEventListener('click', ev=>{
+document.addEventListener('click', async ev=>{
     var target  = ev.target;
     var parent  = target.closest('.large-image');
 
@@ -120,7 +120,6 @@ document.addEventListener('click', ev=>{
     }
 
     if(target.id == 'loadmoremedia'){
-        
         ev.preventDefault();
 		ev.stopPropagation();
         //find the last image
@@ -162,6 +161,23 @@ document.addEventListener('click', ev=>{
         ev.preventDefault();
 		ev.stopPropagation();
         mediaSearch(target);
+    }
+
+    if(target.matches('.download')){
+        ev.preventDefault();
+        var answer = await Swal.fire({
+            title: 'Warning',
+            html: "Downloading of materials is only allowed for use in presentations. <br>You should not share this file with others as it may contain privacy sensitive information",
+            showCancelButton: true,
+            confirmButtonText: 'I promise not to share this file',
+            confirmButtonColor: "#bd2919"
+        });
+    
+        //swap and/or
+        if (answer.isConfirmed) {
+            console.log(target.querySelector('a'));
+            target.querySelector('a').click();
+        }
     }
 });
 

@@ -151,6 +151,8 @@ document.addEventListener("click",function(event) {
     }
 
     if(target.classList.contains('calendar-day')){
+        event.stopPropagation();
+
         var date    = target.dataset.date;
 
         //hide events of all days
@@ -166,6 +168,8 @@ document.addEventListener("click",function(event) {
     }
 
     if(target.classList.contains('calendar-hour')){
+        event.stopPropagation();
+
         var date        = target.dataset.date;
         var starttime   = target.dataset.starttime;
 
@@ -194,6 +198,8 @@ document.addEventListener("click",function(event) {
     }
 
     if(target.classList.contains('viewselector')){
+        event.stopPropagation();
+
         var parent  = target.closest('.search-form');
         if(target.dataset.type  == 'weekview' || target.dataset.type  == 'monthview'){
             parent.querySelector('div.week_selector').classList.toggle('hidden');
@@ -218,6 +224,7 @@ document.addEventListener("click",function(event) {
     }
     
     if(target.classList.contains('calendarurl')){
+        event.stopPropagation();
         if(target.textContent != ''){
             navigator.clipboard.writeText(target.textContent);
             Swal.fire({
@@ -233,6 +240,8 @@ document.addEventListener("click",function(event) {
 document.addEventListener("change",function(event) {
 	var target = event.target;
     if(target.classList.contains('week_selector')){
+        event.stopPropagation();
+
         var year    = target.closest('.date-search').querySelector('.year_selector').value;
         if(document.querySelector('.viewselector.selected').dataset.type=='weekview'){
             request_week(target, target.value, year);
@@ -245,6 +254,8 @@ document.addEventListener("change",function(event) {
     }
 
     if(target.classList.contains('month_selector')){
+        event.stopPropagation();
+
         var year    = target.closest('.date-search').querySelector('.year_selector').value;
         if(document.querySelector('.viewselector.selected').dataset.type=='monthview'){
             request_month(target, target.value, year);
@@ -255,6 +266,8 @@ document.addEventListener("change",function(event) {
     }
 
     if(target.classList.contains('year_selector')){
+        event.stopPropagation();
+        
         var month   = target.closest('.date-search').querySelector('.month_selector').value;
         if(document.querySelector('.viewselector.selected').dataset.type=='monthview'){
             request_month(target, month, target.value);

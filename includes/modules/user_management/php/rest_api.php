@@ -174,7 +174,6 @@ function updateRoles(){
     return "Updated roles succesfully";
 }
 
-//Make the adduseraccount function available via AJAX for logged-in users
 function createUserAccount(){
     // Check if the current user has the right to create approved user accounts
     $user 		= wp_get_current_user();
@@ -211,6 +210,8 @@ function createUserAccount(){
     }else{
         $message = "Succesfully created useraccount for $first_name<br>You can now select $first_name in the dropdowns";
     }
+
+	do_action('sim_after_user_account_creation', $user_id);
 		
 	return [
         'message'	=> $message,

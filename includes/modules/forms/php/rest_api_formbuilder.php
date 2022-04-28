@@ -14,7 +14,7 @@ add_action( 'rest_api_init', function () {
 	// add element to form
 	register_rest_route( 
 		'sim/v1/forms', 
-		'/add_formfield', 
+		'/add_form_element', 
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\addFormElement',
@@ -155,9 +155,6 @@ add_action( 'rest_api_init', function () {
 				'elementid'		=> array(
 					'required'	=> true,
 					'validate_callback' => 'is_numeric'
-				),
-				'element_conditions'		=> array(
-					'required'	=> true,
 				)
 			)
 		)
@@ -190,7 +187,7 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\saveFormInput',
-			'permission_callback' 	=> __NAMESPACE__.'\checkPermissions',
+			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'formid'		=> array(
 					'required'	=> true,
@@ -316,15 +313,12 @@ function addFormElement(){
 		$message								= "Succesfully added '{$element->name}' to this form";
 		if(!is_numeric($_POST['insertafter'])){
 			$element->priority	= $wpdb->get_var( "SELECT COUNT(`id`) FROM `{$formbuilder->el_table_name}` WHERE `form_id`={$element->form_id}") +1;
+		}else{
+			$element->priority	= $_POST['insertafter'];
+			$formbuilder->reorder_elements(-1, $element->priority, $element);
 		}
 
-		$formbuilder->insert_element($element);
-
-		if(is_numeric($_POST['insertafter'])){
-			$index = $_POST['insertafter']+1;
-
-			$formbuilder->reorder_elements(-1, $index, $element);
-		}
+		$element->id	= $formbuilder->insert_element($element);
 	}
 		
 	$html = $formbuilder->buildhtml($element, $index);
@@ -378,21 +372,18 @@ function removeElement(){
 function requestFormElement(){
 	$formbuilder				= new Formbuilder();
 	
-	$form_id 					= $_POST['formid'];
-	$element_id 				= $_POST['elementid'];
+	$formId 				= $_POST['formid'];
+	$elementId 				= $_POST['elementid'];
 	
-	$formbuilder->loadformdata($form_id);
+	$formbuilder->loadformdata($formId);
 	
-	$condition_html				= $formbuilder->element_conditions_form($element_id);
+	$conditionForm			= $formbuilder->element_conditions_form($elementId);
 
-	$warning_conditions_html	= $formbuilder->warning_conditions_form($element_id);
-
-	$element					= $formbuilder->getelementbyid($element_id);
+	$elementForm			= $formbuilder->elementBuilderForm($elementId);
 	
 	return [
-		'original'			=> $element,
-		'conditions_html'	=> $condition_html,
-		'warning_conditions'=> $warning_conditions_html
+		'element_form'		=> $elementForm,
+		'conditions_html'	=> $conditionForm
 	];
 }
 
@@ -413,7 +404,7 @@ function editFormfieldWidth(){
 	$formbuilder	= new Formbuilder();
 	
 	$elementId 		= $_POST['elementid'];
-	$element		= $formbuilder->getelementbyid($elementId);
+	$element		= $formbuilder->getElementById($elementId);
 	
 	$newwidth 		= $_POST['new_width'];
 	$element->width = min($newwidth,100);
@@ -445,7 +436,7 @@ function saveElementConditions(){
 	
 	$formbuilder->loadformdata($formID);
 	
-	$element = $formbuilder->getelementbyid($elementID);
+	$element = $formbuilder->getElementById($elementID);
 	
 	$elementConditions	= $_POST['element_conditions'];
 	if(empty($elementConditions)){

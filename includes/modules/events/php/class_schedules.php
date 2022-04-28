@@ -584,8 +584,8 @@ class Schedule{
 		$event['organizer_id']			= $this->host_id;
 		$event['schedule_id']			= $this->schedule_id;
 
-		if($add_host_partner){
-			$host_partner	= SIM\has_partner($this->host_id);
+		if($add_host_partner and SIM\has_partner($this->host_id)){
+			$host_partner	= true;
 			$event['organizer']				= get_userdata($this->host_id)->last_name.' family';
 		}else{
 			$host_partner	= false;
@@ -717,12 +717,14 @@ class Schedule{
 		return 'Succesfully published the schedule';
 	}
 	
-	function remove_schedule(){
+	function removeSchedule($scheduleId){
 		global $wpdb;
 
-		$schedule_id	= $_POST['schedule_id'];
+		if(!is_numeric($scheduleId)){
+			return new WP_Error('schedules', 'Schedule id should be numeric');
+		}
 
-		$schedule	= $this->schedules[$schedule_id];
+		$schedule	= $this->schedules[$scheduleId];
 
 		//Remove the schedule from the user meta
 		if(is_numeric($schedule->target)){
@@ -730,7 +732,7 @@ class Schedule{
 		}
 		
 		//Delete all the posts of this schedule
-		$events = $wpdb->get_results("SELECT * FROM {$this->events->table_name} WHERE schedule_id='$schedule_id'");
+		$events = $wpdb->get_results("SELECT * FROM {$this->events->table_name} WHERE schedule_id='$scheduleId'");
 		foreach($events as $event){
 			wp_delete_post($event->post_id,true);
 		}
@@ -738,14 +740,14 @@ class Schedule{
 		//Delete all events of this schedule
 		$wpdb->delete(
 			$this->events->table_name,      
-			['schedule_id' => $schedule_id],           
+			['schedule_id' => $scheduleId],           
 			['%d'],
 		);
 		
 		//Delete the schedule
 		$wpdb->delete(
 			$this->table_name,
-			['id' => $schedule_id],
+			['id' => $scheduleId],
 			['%d'],
 		);
 			

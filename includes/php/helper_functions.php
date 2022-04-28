@@ -406,7 +406,7 @@ function get_age_in_words($date){
 	return number_to_words($age);
 }
 
-function get_user_accounts($return_family=false,$adults=true,$local_nigerians=false,$fields=[],$extra_args=[]){
+function get_user_accounts($return_family=false,$adults=true,$fields=[],$extra_args=[]){
 	$do_not_process 		= [];
 	$cleaned_user_array 	= [];
 	
@@ -414,15 +414,6 @@ function get_user_accounts($return_family=false,$adults=true,$local_nigerians=fa
 		'orderby'	=> 'meta_value',
 		'meta_key'	=> 'last_name'
 	);
-
-	if($local_nigerians == false){
-		$arg['meta_query'] = array(
-			array(
-				'key' => 'local_nigerian',
-				'compare' => 'NOT EXISTS'
-			),
-		);
-	}
 	
 	if(is_array($fields) and count($fields)>0){
 		$arg['fields'] = $fields;

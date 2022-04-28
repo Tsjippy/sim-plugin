@@ -106,8 +106,8 @@ function location_address($locationtypes, $post_id){
             $name = get_term( $locationtypes[0], 'locationtype' )->slug.'_icon';
             
             //If there is a location category set and an custom icon for this category is set
-            if(count($locationtypes)>0 and !empty($CustomSimSettings[$name])){
-                $icon_id = $CustomSimSettings[$name];
+            if(count($locationtypes)>0 and !empty(SIM\get_module_option('locations', $name))){
+                $icon_id = SIM\get_module_option('locations', $name);
             }else{
                 $icon_id = 1;
             }

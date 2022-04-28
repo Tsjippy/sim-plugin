@@ -80,7 +80,7 @@ function display_tab(tab_button){
 
 		if(tab_button.tagName != 'A'){
 			//Mark the other tabbuttons as inactive
-			tab_button.parentNode.querySelectorAll('.active:not(#'+tab_button.id+')').forEach(child=>{
+			tab_button.parentNode.querySelectorAll(':scope > .active:not(#'+tab_button.id+')').forEach(child=>{
 				//Make inactive
 				child.classList.remove("active");
 					
@@ -260,7 +260,7 @@ function body_scrolling(type){
 }
 
 //Hide or show the clicked tab
-window.addEventListener("click", function(event) {
+window.addEventListener("click", function(event) {	
 	var target = event.target;
 
 	//close modal on close click
@@ -270,6 +270,7 @@ window.addEventListener("click", function(event) {
 	
 	//we clicked the menu
 	if(target.closest('.menu-toggle') != null){
+		event.preventDefault();
 		if(document.querySelector('.menu-toggle').getAttribute("aria-expanded")=="true"){
 			body_scrolling('disable');
 		}else{
@@ -292,6 +293,7 @@ window.addEventListener("click", function(event) {
 
 	//Process the click on tab button
 	if(target.matches(".tablink")){
+		event.preventDefault();
 		//change the url in browser
 		change_url(target);
 

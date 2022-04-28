@@ -34,7 +34,7 @@ trait create_js{
                             $equation		= str_replace(' value','',$rule['equation']);
                             
                             //Get field names of the fields who's value we are checking
-                            $conditional_element		= $this->getelementbyid($rule['conditional_field']);
+                            $conditional_element		= $this->getElementById($rule['conditional_field']);
                             if(!$conditional_element){
                                 $errors[]   = "Element $element->name has an invalid rule";
 
@@ -48,7 +48,7 @@ trait create_js{
                             $conditional_field_type		= $conditional_element->type;
 
                             if(is_numeric($rule['conditional_field_2'])){
-                                $conditional_element_2		= $this->getelementbyid($rule['conditional_field_2']);
+                                $conditional_element_2		= $this->getElementById($rule['conditional_field_2']);
                                 if(!$conditional_element_2){
                                     $errors[]   = "Element $element->name has an invalid rule";
                                     continue;
@@ -234,7 +234,7 @@ trait create_js{
                             foreach($conditions['copyto'] as $field_index){
                                 if(!is_numeric($field_index))	continue;
                                 //find the element with the right id
-                                $copy_to_element	= $this->getelementbyid($field_index);
+                                $copy_to_element	= $this->getElementById($field_index);
                                 if(!$copy_to_element){
                                     $errors[]   = "Element $element->name has an invalid rule";
                                     continue;
@@ -282,7 +282,7 @@ trait create_js{
                                 $copyfieldid	= $condition['property_value'];
                                 
                                 //find the element with the right id
-                                $copy_element = $this->getelementbyid($copyfieldid);
+                                $copy_element = $this->getElementById($copyfieldid);
                                 if(!$copy_element){
                                     $errors[]   = "Element $element->name has an invalid rule";
                                     continue;
@@ -326,7 +326,7 @@ trait create_js{
         $newJs   = "\n\tdocument.addEventListener('DOMContentLoaded', function() {";
             $newJs.= "\n\t\tconsole.log('Dynamic $this->datatype forms js loaded');";
             $newJs.= "\n\t\tformFunctions.tidyMultiInputs();";
-            $newJs.= "\n\t\tform = document.getElementById('sim_form_$this->datatype');";
+            $newJs.= "\n\t\tform = document.querySelector('[data-formid=\"{$this->formdata->id}\"]');";
             if($this->is_multi_step()){
                 $newJs.= "\n\t\t//show first tab";
                 $newJs.= "\n\t\t// Display the current tab// Current tab is set to be the first tab (0)";

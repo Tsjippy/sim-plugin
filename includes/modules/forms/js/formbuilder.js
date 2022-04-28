@@ -39,29 +39,6 @@ function fixElementNumbering(form){
 	});
 }
 
-function addWarningConditionsForm(response){
-	if(modal.querySelector('#warning_conditions_form') == null) return;
-	try{
-		modal.querySelector('#warning_conditions_form').innerHTML = response.warning_conditions;
-
-		modal.querySelectorAll('#warning_conditions_form select').forEach(function(select){
-			select._niceselect = NiceSelect.bind(select,{searchable: true});
-		});
-	}catch(err) {
-		console.error(err);
-	}
-}
-
-function addConditionsForm(response){
-	//fill the element conditions tab
-	modal.querySelector('.element_conditions_wrapper').innerHTML = response;
-
-	// Add nice selects
-	modal.querySelectorAll('.condition_select').forEach(function(select){
-		select._niceselect = NiceSelect.bind(select,{searchable: true});
-	});
-}
-
 // add new element
 async function showEmptyModal(target){
 	target.classList.add('clicked');
@@ -88,115 +65,77 @@ async function showEmptyModal(target){
 	formdata.append('formid', formid);
 	var response = await fetchRestApi('forms/request_form_conditions_html', formdata);
 
-	addConditionsForm(response);
+	//fill the element conditions tab
+	modal.querySelector('.element_conditions_wrapper').innerHTML = response;
+
+	// Add nice selects
+	modal.querySelectorAll('.condition_select').forEach(function(select){
+		select._niceselect = NiceSelect.bind(select,{searchable: true});
+	});
 }
 
 //edit existing element
 async function requestEditElementData(target){
 	target.classList.add('clicked');
 
-	var elementid					= form_element_wrapper.dataset.id;
-	var formid						= target.closest('.form_element_wrapper').dataset.formid;
+	var elementid		= form_element_wrapper.dataset.id;
+	var formid			= target.closest('.form_element_wrapper').dataset.formid;
 	modal.querySelector('[name="element_id"]').value = form_element_wrapper.dataset.id;
-	modal.originalhtml = target.outerHTML;
-	var parent			= target.parentNode;
-	showLoader(target);
-	parent.querySelector('.loadergif').style.margin = '5px 19px 0px 19px';
+	modal.originalhtml	= target.outerHTML;
+
+	var editButton		= target.outerHTML;
+
+	var loader			= showLoader(target);
+
+	loader.querySelector('.loadergif').style.margin = '5px 19px 0px 19px';
 	
 	var formdata = new FormData();
-	formdata.append('elementid',elementid);
-	formdata.append('formid',formid);
+	formdata.append('elementid', elementid);
+	formdata.append('formid', formid);
 	
 	var response = await fetchRestApi('forms/request_form_element', formdata);
 
 	if(response){
 		//fill the form after we have clicked the edit button
-		clearFormInputs();
+		if(modal.querySelector('[name="add_form_element_form"]') != null){
+			modal.querySelector('[name="add_form_element_form"]').innerHTML = response.element_form;
+		}
 
-		addConditionsForm(response.conditions_html);
+		showCondionalFields(modal.querySelector('[name="formfield[type]"]').value, modal.querySelector('[name="add_form_element_form"]'));
 
-		addWarningConditionsForm(response.warning_conditions);
+		//fill the element conditions tab
+		modal.querySelector('.element_conditions_wrapper').innerHTML = response.conditions_html;
 
-		//parse data
-		var original = response.original;
-		var form = modal.querySelector('form');
-		show_condional_fields(original['type'],form);
-		//loop over all elements in the modal
-		modal.querySelectorAll('.formbuilder').forEach(function(el){
-			if(el.name != null){
-				//get the elements name
-				var name = el.name.replace('formfield[','').replace(']','');
-				
-				//Check if there is a value for this element
-				if(original[name] != undefined && original[name] != ''){						
-					if(el.type == 'checkbox'){
-						if(original[name]==true){
-							el.checked = true;
-						}
-						
-						/* if(el.name == "formfield[multiple]"){
-							multiple_changed(el);
-							form.querySelector('select.formbuilder.array').classList.replace('hidden', 'hide');
-						} */
-					}else{
-						//set the value
-						el.value = original[name];
-					}
-					
-					if(el.type == "select-one"){
-						if(el.selectedOptions.length > 0){
-							el.selectedOptions[0].defaultSelected = true;
-
-							if(el._niceselect != 'undefined'){
-								el._niceselect.update();
-							}
-						}
-					}
-					
-					if(el.classList.contains('wp-editor-area')){
-						tinyMCE.get(el.id).setContent(original[name]);
-					}
-				}
-			}
+		// Add nice selects
+		modal.querySelectorAll('select').forEach(function(select){
+			select._niceselect = NiceSelect.bind(select,{searchable: true});
 		});
 		
-		modal.querySelector('[name="element_id"]').value = elementid;
-		modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Add','Update');		
+		//modal.querySelector('[name="element_id"]').value = elementid;
 		modal.classList.remove('hidden');
 		
 		//show edit button again
-		var loader 			= document.querySelector(`.form_element_wrapper[data-id="${elementid}"][data-formid="${formid}"] .loadergif`);
-		var template		= document.createElement('template');
-		template.innerHTML	= modal.originalhtml;
-		var node			= template.content.firstChild;
-		
-		loader.parentNode.replaceChild(node, loader);
+		loader.outerHTML	= editButton;
 	}
 }
 
 async function addFormElement(target){
 	var form		= target.closest('form');
-	var response	= await submitForm(target, 'forms/add_formfield');
+	var response	= await submitForm(target, 'forms/add_form_element');
 
 	if(response){
 		if(form.querySelector('[name="element_id"]').value == ''){
 			//First clear any previous input
 			clearFormInputs();
-			
-			//Add the new element to the form, first convert the received html to nodes
-			var template		= document.createElement('template');
-			template.innerHTML	= response.html;
-			var node			= template.content.firstChild;
-			
-			//insert the node
-			referenceNode = document.querySelector('.form_elements .clicked');
+
+			referenceNode		= document.querySelector('.form_elements .clicked');
 			referenceNode.classList.remove('clicked');
-			referenceNode.closest('.form_element_wrapper').parentNode.insertBefore(node, referenceNode.closest('.form_element_wrapper').nextSibling);
+			referenceNode.closest('.form_element_wrapper').insertAdjacentHTML('afterEnd', response.html)
 			
 			fixElementNumbering(form);
 			
 			//add resize listener
-			resize_ob.observe(node);
+			form.querySelectorAll('.resizer').forEach(el=>{resize_ob.observe(el);});
 		}else{
 			//Runs after an element update
 			document.querySelector('.form_elements .clicked').closest('.form_element_wrapper').outerHTML = response.html;
@@ -340,10 +279,8 @@ const resize_ob = new ResizeObserver(function(entries) {
 	}
 });
 
-
-
 //show conditional fields based on on the element type
-function show_condional_fields(type, form){
+function showCondionalFields(type, form){
 	hide_conditionalfields(form);
 	
 	switch(type) {
@@ -798,6 +735,7 @@ window.addEventListener("click", event => {
 	}
 	
 	if(target.name == 'submit_form_element'){
+		event.stopPropagation();
 		addFormElement(target);
 	}
 
@@ -824,7 +762,7 @@ window.addEventListener("click", event => {
 	
 	//actions on element type select
 	if (target.closest('.elementtype') != null){
-		show_condional_fields(target.dataset.value, target.closest('form'));
+		showCondionalFields(target.dataset.value, target.closest('form'));
 		//if label type is selected, wrap by default
 		if(target.dataset.value == 'label'){
 			target.closest('form').querySelector('[name="formfield[wrap]"]').checked	= true;
@@ -937,7 +875,7 @@ window.addEventListener("click", event => {
 		//copy the row
 		var new_node = formFunctions.cloneNode(target.closest('.warning_conditions'));
 
-		document.getElementById('conditions_wrapper').insertAdjacentElement('beforeEnd', new_node);
+		target.closest('.conditions_wrapper').insertAdjacentElement('beforeEnd', new_node);
 
 		//add the active class
 		target.classList.add('active');
@@ -945,12 +883,25 @@ window.addEventListener("click", event => {
 		//store the value
 		target.closest('.warning_conditions').querySelector('.combinator').value = target.value;
 
-		fix_warning_condition_numbering();
+		fixWarningConditionNumbering(target.closest('.conditions_wrapper'));
 	}
 
 	if(target.matches('.remove_warn_cond')){
-		target.closest('.warning_conditions').remove();
-		fix_warning_condition_numbering();
+		var condition	= target.closest('.warning_conditions');
+
+		// Remove the active class of the previous conditions
+		if(condition.nextElementSibling == null){
+			console.log(condition.previousElementSibling);
+			condition.previousElementSibling.querySelector('.active').classList.remove('active');
+
+			//clear the value
+			condition.previousElementSibling.querySelector('.combinator').value='';
+		}
+
+		// remove the condition
+		condition.remove();
+
+		fixWarningConditionNumbering(target.closest('.conditions_wrapper'));
 	}
 	
 });
@@ -982,8 +933,8 @@ window.addEventListener('change', ev=>{
 	}
 });
 
-function fix_warning_condition_numbering(){
-	var warning_conditions	= document.querySelectorAll('#conditions_wrapper .warning_conditions');
+function fixWarningConditionNumbering(parent){
+	var warning_conditions	= parent.querySelectorAll('.warning_conditions');
 	var i = 0;
 	//loop over all rules in the condition
 	warning_conditions.forEach(condition =>{

@@ -1,10 +1,49 @@
 console.log("Fileupload.js loaded");
 
-if(window.tinyMCE != undefined){
-	sim = tinyMCEPopup.getWindowArg('sim');
+let totalfiles			= 0;
+let file_upload_wrap	= '';
+dataset_string			= '';
+
+function createProgressBar(target, filetype){
+	//Show loading gif
+	target.closest('.upload_div').querySelectorAll(".loadergif_wrapper").forEach(loader =>{
+		loader.classList.remove('hidden');
+		loader.querySelectorAll(".uploadmessage").forEach(el =>{
+			//Change message text
+			if (totalfiles > 1){
+				el.textContent = `Uploading ${filetype}s`;
+			}else{
+				el.textContent = `Uploading ${filetype}`;
+			}
+		});
+	});
+	
+	var progressbar		= document.createElement('progress');
+	progressbar.id		= "upload_progress";
+	progressbar.value	= "0";
+	progressbar.max		= "100";
+	file_upload_wrap.appendChild(progressbar);
+
+	var percentage 			= document.createElement('span');
+	percentage.id			= "progress_percentage";
+	percentage.textContent	= "   0%"
+	file_upload_wrap.appendChild(percentage);
 }
 
-function file_upload(target){
+function addPreview(link, value){
+	var name		= file_upload_wrap.querySelector('.file_upload').name.replace('_files','');
+
+	var html = `
+	<div class='document'>
+		<input type='hidden' name='${name}' value='${value}'>
+		${link}
+		<img class="remove_document_loader hidden" src="${sim.loading_gif}" style="height:40px;">
+	</div>`;
+
+	file_upload_wrap.querySelector('.documentpreview').insertAdjacentHTML('beforeend', html);
+}
+
+async function file_upload(target){
 	file_upload_wrap = target.closest('.file_upload_wrap');
 	
 	//Create a formdata element
@@ -13,12 +52,11 @@ function file_upload(target){
 	//Add the ajax action name
 	form_data.append('action', 'upload_files');
 	
-	dataset_string = '';
 	//Loop over the dataset attributes and add them to post
 	target.parentNode.querySelectorAll('input').forEach(
 		function(input){
 			form_data.append(input.name, input.value);
-			dataset_string += 'data-'+input.name+'="'+input.value+'" ';
+			dataset_string += `data-${input.name}="${input.value}`;
 		}
 	);
 
@@ -27,8 +65,13 @@ function file_upload(target){
 	if (totalfiles > 0){
 		//Add all the files to the formdata
 		for (var index = 0; index < totalfiles; index++) {
-			if(target.files[index].size > sim.max_file_size){
-				display_message('File to big, max file size is '+(parseInt(sim.max_file_size)/1024/1024)+'MB','error');
+			// file is a video and vimeo enabled
+			if(target.files[index].type.split('/')[0] == 'video' && typeof(vimeoUploader) == 'object'){
+				createProgressBar(target, 'video');
+				await uploadVideo(target.files[index]);
+			// file to big
+			}else if(target.files[index].size > sim.max_file_size){
+				display_message('File too big, max file size is '+(parseInt(sim.max_file_size)/1024/1024)+'MB','error');
 				target.value = '';
 				return;
 			}else{
@@ -36,7 +79,12 @@ function file_upload(target){
 			}
 		}
 	}else{
-		alert("Please select some files before hitting the uplad button!");
+		display_message("Please select some files before hitting the uplad button!", 'error');
+		return;
+	}
+
+	// No files remaining to upload
+	if(form_data.get('files[]') == null){
 		return;
 	}
 	
@@ -61,7 +109,6 @@ function file_upload(target){
 					loader.classList.add('hidden');
 				}
 			);
-			
 				
 			//Clear the input
 			file_upload_wrap.querySelector('.file_upload').value = "";
@@ -73,29 +120,8 @@ function file_upload(target){
 	
 	request.open('POST', sim.ajax_url, true);
 	
-	//Show loading gif
-	target.closest('.upload_div').querySelectorAll(".loadergif_wrapper").forEach(loader =>{
-		loader.classList.remove('hidden');
-		loader.querySelectorAll(".uploadmessage").forEach(el =>{
-			//Change message text
-			if (totalfiles > 1){
-				el.textContent = "Uploading documents";
-			}else{
-				el.textContent = "Uploading document";
-			}
-		});
-	});
-	
 	//Create a progressbar
-	var progressbar = document.createElement('progress');
-	progressbar.id = "upload_progress";
-	progressbar.value="0";
-	progressbar.max="100";
-	file_upload_wrap.appendChild(progressbar);
-	var progress_percentage = document.createElement('span');
-	progress_percentage.id = "progress_percentage";
-	progress_percentage.textContent="   0%"
-	file_upload_wrap.appendChild(progress_percentage);
+	createProgressBar(target, 'file');
 	
 	//Send AJAX request
 	request.send(form_data);
@@ -106,13 +132,13 @@ function file_upload_progress(e){
 		var max = e.total;
 		var current = e.loaded;
 
-		var Percentage = (current * 100)/max;
-		Percentage = Math.round(Percentage*10)/10
+		var percentage = (current * 100)/max;
+		percentage = Math.round(percentage*10)/10
 		
-		document.getElementById("upload_progress").value = Percentage;
-		document.getElementById("progress_percentage").textContent = "   "+Percentage+"%";
+		document.getElementById("upload_progress").value 			= percentage;
+		document.getElementById("progress_percentage").textContent	= `   ${percentage}%`;
 
-		if(Percentage >= 99){
+		if(percentage >= 99){
 			//Remove progress barr
 			document.getElementById("upload_progress").remove();
 			document.getElementById("progress_percentage").remove();
@@ -131,11 +157,6 @@ function file_upload_progress(e){
 }
 
 function file_upload_upload_succes(result){
-	if(file_upload_wrap.closest('.mce-container') != null){
-		//close the modal
-		window.tinyMCE.activeEditor.windowManager.close()
-	}	
-	
 	var imgurls			= JSON.parse(result);
 	
 	for(var index = 0; index < imgurls.length; index++) {
@@ -155,26 +176,17 @@ function file_upload_upload_succes(result){
 			var value		= imgurls[index]['id'];
 		}
 
-		//Add link to tinymce
-		if(file_upload_wrap.closest('.mce-container') != null){
-			window.tinyMCE.activeEditor.execCommand( 'mceInsertContent', false, '<p><a href="'+url+'">'+filename+'</a></p>' );
+		//is image
+		if (src.toLowerCase().match(/\.(jpe|jpeg|jpg|gif|png)$/) != null){
+			//Add the image
+			var link	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="width:150px;height:150px;"></a>`;
 		}else{
-			var html = "<div class='document'>";
-			html += "<input type='hidden' name='"+file_upload_wrap.querySelector('.file_upload').name.replace('_files','')+"' value='"+value+"'>";
-			//is image
-			if (src.toLowerCase().match(/\.(jpe|jpeg|jpg|gif|png)$/) != null){
-				//Add the image
-				html += '<a class="fileupload" href="'+url+'"><img src="'+url+'" alt="picture" style="width:150px;height:150px;"></a>';
-			}else{
-				//Add a link
-				html += '<a class="fileupload" href="'+url+'">' + filename + '</a>';
-			}
-			
-			//Add an remove button
-			html += '<button type="button" class="remove_document button" data-url="' + src + '" ' + dataset_string +'>X</button>';
-			html += '<img class="remove_document_loader hidden" src="' + sim.loading_gif + '" style="height:40px;">';
-			file_upload_wrap.querySelector('.documentpreview').insertAdjacentHTML('beforeend', html + '</div>');
+			//Add a link
+			var link	= `<a class="fileupload" href="${url}">${filename}</a>`;
 		}
+		link += `<button type="button" class="remove_document button" data-url="${src}" ${dataset_string}>X</button>`;
+
+		addPreview(link, value);
 	}
 	
 	if(imgurls.length==1){
@@ -238,11 +250,57 @@ async function remove_document(target){
 	}
 }
 
+async function uploadVideo(file){
+	var uploader	= new vimeoUploader.VimeoUpload(file);
+	var upload		= await uploader.tusUploader();
+
+	upload.options.onProgress   = function(bytesUploaded, bytesTotal) {
+		//calculate percentage
+		var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
+	
+		//show percentage in progressbar
+		document.getElementById("upload_progress").value			= percentage;
+		document.getElementById("progress_percentage").textContent	= `   ${percentage}%`;
+	};
+
+	upload.options.onSuccess    = async function() {
+		uploader.urlStorage.removeUpload(uploader.storedEntry.urlStorageKey);
+
+		//Remove progress barr
+		document.getElementById("upload_progress").remove();
+		document.getElementById("progress_percentage").remove();
+
+		var link	= `
+		<div class="vimeo-wrapper">
+			<div class='vimeo-embed-container'>
+				<iframe src='https://player.vimeo.com/video/${uploader.storedEntry.vimeoId}' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+			</div>
+		</div>`;
+
+		addPreview(link, uploader.storedEntry.postId, uploader.storedEntry.postId);
+
+		display_message(`The file ${file.name} has been uploaded succesfully.`,'success',true);
+		
+		//Hide upload button if only one file allowed
+		if(file_upload_wrap.querySelector('.file_upload').multiple == false){
+			file_upload_wrap.querySelector('.upload_div').classList.add('hidden');
+		}
+	}
+
+	upload.options.onError      = function(error) {
+		console.error("Failed because: " + error);				
+		return;
+	}
+
+	upload.start();
+}
+
 //Remove picture on button click
 window.addEventListener("click", function(event) {
 	var target = event.target;
 	
 	if (target.className.includes("remove_document")){
+		event.preventDefault();
 		remove_document(target);
 	}
 });
@@ -251,6 +309,7 @@ window.addEventListener("change", event => {
 	var target = event.target;
 
 	if (target.className.includes("file_upload")){
+		event.preventDefault();
 		file_upload(target);
 	}
 });

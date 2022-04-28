@@ -1,11 +1,11 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.8';
+const StyleVersion		= '7.0.11';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
-add_action( 'admin_enqueue_scripts', __NAMESPACE__.'\enqueueLibraries');
+add_action( 'admin_enqueue_scripts', __NAMESPACE__.'\registerScripts');
 
 add_filter( 'body_class', function( $classes ) {
 	$newclass = [];
@@ -22,7 +22,7 @@ add_action( 'wp_enqueue_media', function(){
     wp_enqueue_style('sim_media_style', plugins_url('css/media.min.css', __DIR__), [], StyleVersion);
 });
 
-function enqueueLibraries(){
+function registerScripts(){
 	//LIBRARIES
 	//Nice select https://github.com/bluzky/nice-select2
 	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(),StyleVersion,true);
@@ -39,27 +39,26 @@ function enqueueLibraries(){
 
 	//table request shortcode
 	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_formsubmit_script','sim_forms_script'),StyleVersion,true);
+
+	//add main.js
+	wp_register_script('sim_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
+	
+	//File upload js
+	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('sim_formsubmit_script'),StyleVersion,true);
+
 }
 
 function enqueueScripts($hook){
 	$current_user	= wp_get_current_user();
 	$UserID			= $current_user->id;
 
-	enqueueLibraries();
+	registerScripts();
 
-	//add main.js
-	wp_enqueue_script('sim_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
-	
-	//File upload js
-	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('sim_formsubmit_script'),StyleVersion,true);
-
-	//add main css, but only on non-admin pages
-	//if ($hook == ""){
-		//style for tinymce
-		add_editor_style(plugins_url('css/sim.min.css', __DIR__));
-		//style fo main site
-		wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(),StyleVersion);
-	//}
+	wp_enqueue_script('sim_script');
+	//add main css
+	add_editor_style(plugins_url('css/sim.min.css', __DIR__));
+	//style fo main site
+	wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(),StyleVersion);
 	
 	//Get current users location
 	$location = get_user_meta( $UserID, 'location', true );
@@ -115,10 +114,7 @@ function inspect_script_styles() {
 }
 
 add_action('wp_enqueue_scripts', 'SIM\disable_scripts_styles', 99999);
-function disable_scripts_styles() {
-	global $post;
-	global $Modules;
-		
+function disable_scripts_styles() {		
 	//Do no load these css files
 	$dequeue_styles = [];
 	//Do no load these js files

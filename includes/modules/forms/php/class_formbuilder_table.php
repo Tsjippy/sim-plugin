@@ -279,7 +279,9 @@ class FormTable extends Formbuilder{
 					$field_value	= $field_values[$fieldname];
 					
 					$sub_id = "";
-				}		
+				}
+
+				if($field_value == null)	$field_value = '';
 				
 				//transform if needed
 				$org_field_value	= $field_value;
@@ -407,7 +409,7 @@ class FormTable extends Formbuilder{
 		// There is a custom sort column defined
 		if(is_numeric($this->table_settings['default_sort'])){
 			$sortElementId	= $this->table_settings['default_sort'];
-			$sortElement	= $this->getelementbyid($sortElementId);
+			$sortElement	= $this->getElementById($sortElementId);
 			$sortElementType= $sortElement->type;
 			$sortColumnName	= $this->column_settings[$sortElementId]['nice_name'];
 			$sortCol		= array_search($sortColumnName, $this->excel_content[0]);

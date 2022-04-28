@@ -4,6 +4,8 @@ use SIM;
 
 //Shortcode for adding user accounts
 add_shortcode('create_user_account', function ($atts){
+	wp_enqueue_script( 'sim_user_management');
+
 	$user = wp_get_current_user();
 	if ( in_array('usermanagement',$user->roles)){		
 		ob_start();
@@ -40,9 +42,13 @@ add_shortcode('create_user_account', function ($atts){
 					<option value="unlimited">Always</option>
 				</select>
 				<?php 
+				do_action('sim_after_user_create_form');
+				
 				echo SIM\add_save_button('adduseraccount', 'Add user account');
-			echo '</form>';
-		echo '</div>';
+				?>
+			</form>
+		</div>
+		<?php
 		
 		return ob_get_clean();
 	}else{
@@ -324,10 +330,10 @@ function user_info_page($atts){
 		//Variables
 		$medical_roles		= ["medicalinfo"];
 		$generic_info_roles = array_merge(['usermanagement'],$medical_roles,['administrator']);
-		$visa_roles 		= ["visainfo"];
+
 		$user 				= wp_get_current_user();
 		$user_roles 		= $user->roles;
-		$tab_html 			= "<nav id='profile_menu'><ul id='profile_menu_list'>";
+		$tabs				= [];
 		$select_user_html	= '';
 		$html				= '';
 		$user_age 			= 19;
@@ -337,8 +343,9 @@ function user_info_page($atts){
 			$user_id = get_current_user_id();
 		//Display a select to choose which users data should be shown
 		}else{
+			$userSelectRoles	= apply_filters('sim_user_page_dropdown', $generic_info_roles);
 			//Show the select user to allowed user only
-			if(array_intersect(array_merge($generic_info_roles,$visa_roles), $user_roles )){
+			if(array_intersect($userSelectRoles, $user_roles )){
 				$a = shortcode_atts( 
 					array('id' => '', ), 
 					$atts 
@@ -358,14 +365,9 @@ function user_info_page($atts){
 				return "<p>You do not have permission to see this, sorry.</p>";
 			}
 		}
-
-		$local_nigerian		= get_user_meta( $user_id, 'local_nigerian', true );
 	
 		//Continue only if there is a selected user
-		if(is_numeric($user_id)){
-			$html .= "<div id='profile_forms'>";
-				$html .= '<input type="hidden" class="input-text" name="userid" id="userid" value="'.$user_id.'">';
-			
+		if(is_numeric($user_id)){			
 			/*
 				Dashboard
 			*/
@@ -377,18 +379,27 @@ function user_info_page($atts){
 				}
 				
 				//Add a tab button
-				$tab_html .= "<li class='tablink active' id='show_dashboard' data-target='dashboard'>Dashboard</li> ";
+				$tabs[]	= "<li class='tablink active' id='show_dashboard' data-target='dashboard'>Dashboard</li>";
 				$html .= "<div id='dashboard'>".show_dashboard($user_id, $admin).'</div>';
 			}
-			
+
 			/*
-				LOGIN Info
+				Family Info
 			*/
-			if(in_array('usermanagement', $user_roles )){				
-				//Add a tab button
-				$tab_html .= '<li class="tablink" id="show_login_info" data-target="login_info">Login info</li> ';
-				
-				$html .= change_password_form($user_id);
+			if(array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data){
+				if($user_age > 18){
+					//Tab button
+					$tabs[]	= '<li class="tablink" id="show_family_info" data-target="family_info">Family</li>';
+					
+					//Content
+					$family_html = '<div id="family_info" class="tabcontent hidden">';
+
+						$family_html .= do_shortcode('[formbuilder datatype=user_family]');
+						
+					$family_html .= '</div>';
+				}
+
+				$html.= $family_html;
 			}
 			
 			/*
@@ -398,7 +409,7 @@ function user_info_page($atts){
 				$account_validity = get_user_meta( $user_id, 'account_validity',true);
 				
 				//Add a tab button
-				$tab_html .= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
+				$tabs[]	= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
 				
 				//Content
 				$result	= ob_get_clean();
@@ -451,8 +462,6 @@ function user_info_page($atts){
 				<?php
 
 				$result	= ob_get_clean();
-				
-				//SIM\print_array($result);
 				$html	.= $result;
 			}
 			
@@ -461,35 +470,38 @@ function user_info_page($atts){
 			*/
 			if(array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data){
 				//Add tab button
-				$tab_html .= '<li class="tablink" id="show_location_info" data-target="location_info">Location</li> ';
+				$tabs[]	= '<li class="tablink" id="show_location_info" data-target="location_info">Location</li>';
 				
 				//Content
 				$location_html = '<div id="location_info" class="tabcontent hidden">';
 				$location_html .= do_shortcode('[formbuilder datatype=user_location]');
 				$location_html .= '</div>';
-
-				//SIM\print_array($location_html);
 				$html	.= $location_html;
 			}
 			
 			/*
-				Family Info
+				LOGIN Info
 			*/
-			if(array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data){
-				if($user_age > 18){
-					//Tab button
-					$tab_html .= '<li class="tablink" id="show_family_info" data-target="family_info">Family</li> ';
-					
-					//Content
-					$family_html = '<div id="family_info" class="tabcontent hidden">';
-
-						$family_html .= do_shortcode('[formbuilder datatype=user_family]');
+			if(in_array('usermanagement', $user_roles )){				
+				//Add a tab button
+				$tabs[]	= '<li class="tablink" id="show_login_info" data-target="login_info">Login info</li>';
+				
+				$html .= change_password_form($user_id);
+			}
 						
-					$family_html .= '</div>';
-				}
-				//SIM\print_array($family_html);
+			/*
+				PROFILE PICTURE Info
+			*/
+			if(in_array('usermanagement',$user_roles ) or $show_current_user_data){
+				//Add tab button
+				$tabs[]	= '<li class="tablink" id="show_profile_picture_info" data-target="profile_picture_info">Profile picture</li>';
+				
+				//Content
+				$picture_html = '<div id="profile_picture_info" class="tabcontent hidden">';
+					$picture_html .= do_shortcode('[formbuilder datatype=profile_picture]');
+				$picture_html .= '</div>';
 
-				$html.= $family_html;
+				$html	.= $picture_html;
 			}
 			
 			/*
@@ -497,89 +509,22 @@ function user_info_page($atts){
 			*/
 			if(in_array('rolemanagement', $user_roles ) or in_array('administrator', $user_roles )){
 				//Add a tab button
-				$tab_html .= '<li class="tablink" id="show_roles" data-target="role_info">Roles</li> ';
+				$tabs[]	= '<li class="tablink" id="show_roles" data-target="role_info">Roles</li>';
 				
 				//Content
 				$role_html = '<div id="role_info" class="tabcontent hidden">'; 
 				$role_html .= display_roles($user_id);
 				$role_html .= '</div>';
 
-				//SIM\print_array($role_html);
-
 				$html	.= $role_html;
 			}
 				
-			/*
-				Visa Info
-			*/
-			if((array_intersect($visa_roles, $user_roles ) or $show_current_user_data) and empty($local_nigerian)){
-				if($user_age > 18){
-					if( isset($_POST['print_visa_info'])){
-						if(isset($_POST['userid']) and is_numeric($_POST['userid'])){
-							export_visa_info_pdf($_POST['userid']);
-						}else{
-							export_visa_info_pdf($_POST['userid'], true);//export for all people
-						}
-					}
-					
-					if( isset($_POST['export_visa_info'])){
-						SIM\SIMNIGERIA\export_visa_excel();
-					}
-				
-					//only active if not own data and has not the user management role
-					if(!array_intersect(["usermanagement"], $user_roles ) and !$show_current_user_data){
-						$active = "active";
-						$class = '';
-						$tabclass = 'hidden';
-					}else{
-						$active = "";
-						$class = 'hidden';
-						$tabclass = '';
-					}
-					
-					//Tab button
-					$tab_html .= "<li class='tablink $active $tabclass' id='show_visa_info' data-target='visa_info'>Immigration</li>";
-					
-					//Content
-					ob_start();
-					?>
-					<div id='visa_info' class='tabcontent <?php echo $class;?>'>
-						<?php
-						echo SIM\SIMNIGERIA\visa_page($user_id,true);
-					
-						if(array_intersect($visa_roles, $user_roles )){
-							?>
-							<div class='export_button_wrapper' style='margin-top:50px;'>
-								<form  method='post'>
-									<input type='hidden' name='userid' id='userid' value='$user_id'>
-									<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export user data as PDF</button>
-								</form>
-								<form method='post'>
-									<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export ALL data as PDF</button>
-								</form>
-								<form method='post'>
-									<button class='button button-primary' type='submit' name='export_visa_info' value='generate'>Export ALL data to excel</button>
-								</form>
-							</div>
-							<?php
-						}
-					?>
-					</div>
-					<?php
-
-					$result	= ob_get_clean();
-					//SIM\print_array($result);
-
-					$html	.= $result;
-				}
-			}
-
 			/*
 				SECURITY INFO
 			*/
 			if((array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data)){				
 				//Tab button
-				$tab_html .= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
+				$tabs[]	= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
 				
 				//Content
 				$security = "<div id='security_info' class='tabcontent hidden'>";
@@ -588,12 +533,26 @@ function user_info_page($atts){
 
 				$html	.= $security;
 			}
-	
 			
 			/*
-				Medical Info
+				Two FA Info
 			*/
-			if((array_intersect($medical_roles, $user_roles) or $show_current_user_data) and empty($local_nigerian)){
+			if($show_current_user_data){
+				//Add tab button
+				$tabs[]	= '<li class="tablink" id="show_2fa_info" data-target="twofa_info">Two factor</li>';
+				
+				//Content
+				$twofa_html = '<div id="twofa_info" class="tabcontent hidden">';
+					$twofa_html .= SIM\LOGIN\twofa_settings_form($user_id);
+				$twofa_html .= '</div>';
+
+				$html	.= $twofa_html;	
+			}
+
+			/*
+				Vaccinations Info
+			*/
+			if((array_intersect($medical_roles, $user_roles) or $show_current_user_data)){
 				if($show_current_user_data){
 					$active = '';
 					$class = 'class="hidden"';
@@ -603,7 +562,7 @@ function user_info_page($atts){
 				}
 				
 				//Add tab button
-				$tab_html .= "<li class='tablink $active' id='show_medical_info' data-target='medical_info'>Vaccinations</li> ";
+				$tabs[]	= "<li class='tablink $active' id='show_medical_info' data-target='medical_info'>Vaccinations</li>";
 				
 				//Content
 				ob_start();
@@ -620,43 +579,13 @@ function user_info_page($atts){
 
 				$result	= ob_get_clean();
 
-				//SIM\print_array($result);
-
 				$html	.= $result;
 			}
-			
-			
-			/*
-				Two FA Info
-			*/
-			if($show_current_user_data){
-				//Add tab button
-				$tab_html .= '<li class="tablink" id="show_2fa_info" data-target="twofa_info">Two factor</li>';
-				
-				//Content
-				$twofa_html = '<div id="twofa_info" class="tabcontent hidden">';
-					$twofa_html .= SIM\LOGIN\twofa_settings_form($user_id);
-				$twofa_html .= '</div>';
-				
-				//SIM\print_array($twofa_html);	
 
-				$html	.= $twofa_html;	
-			}		
-			
-			/*
-				PROFILE PICTURE Info
-			*/
-			if(in_array('usermanagement',$user_roles ) or $show_current_user_data){
-				//Add tab button
-				$tab_html .= '<li class="tablink" id="show_profile_picture_info" data-target="profile_picture_info">Profile picture</li>';
-				
-				//Content
-				$picture_html = '<div id="profile_picture_info" class="tabcontent hidden">';
-					$picture_html .= do_shortcode('[formbuilder datatype=profile_picture]');
-				$picture_html .= '</div>';
-
-				$html	.= $picture_html;
-			}
+			//  Add filter to add extra pages, children tabs should always be last
+			$filtered_html	= apply_filters('sim_user_info_page', ['tabs'=>$tabs, 'html'=>$html], $show_current_user_data, $user, $user_age);
+			$tabs		 	= $filtered_html['tabs'];
+			$html	 		= $filtered_html['html'];
 			
 			/*
 				CHILDREN TABS
@@ -667,7 +596,7 @@ function user_info_page($atts){
 					foreach($family['children'] as $child_id){
 						$first_name = get_userdata($child_id)->first_name;
 						//Add tab button
-						$tab_html .= "<li class='tablink' id='show_child_info_$child_id' data-target='child_info_$child_id'>$first_name</li>";
+						$tabs[]	= "<li class='tablink' id='show_child_info_$child_id' data-target='child_info_$child_id'>$first_name</li>";
 						
 						//Content
 						$child_html = "<div id='child_info_$child_id' class='tabcontent hidden'>";
@@ -679,7 +608,22 @@ function user_info_page($atts){
 				}
 			}
 		}
-		return $select_user_html.$tab_html."</ul></nav>$html</div>";
+
+		$result	= $select_user_html;
+		$result	.= "<nav id='profile_menu'>";
+			$result	.= "<ul id='profile_menu_list'>";
+			foreach($tabs as $tab){
+				$result	.= $tab;
+			}
+			$result	.= "</ul>";
+		$result	.= "</nav>";
+
+		$result	.= "<div id='profile_forms'>";
+			$result .= "<input type='hidden' class='input-text' name='userid' value='$user_id'>";
+			$result	.= $html;
+		$result	.= "</div>";
+
+		return $result;
 	}elseif(function_exists('SIM\LOGIN\login_modal')){
 		echo SIM\LOGIN\login_modal("You do not have permission to see this, sorry.");
 	}

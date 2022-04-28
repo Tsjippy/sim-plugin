@@ -2,8 +2,12 @@
 namespace SIM\MANDATORY;
 use SIM;
 
-add_shortcode("must_read_documents", __NAMESPACE__.'\get_must_read_documents');
-function get_must_read_documents($user_id='', $exclude_heading=false){
+add_action('sim_dashboard_warnings', function($user_id){	
+	echo mustReadDocuments($user_id);
+}, 5);
+
+add_shortcode("must_read_documents", __NAMESPACE__.'\mustReadDocuments');
+function mustReadDocuments($user_id='', $exclude_heading=false){
 	if(!is_numeric($user_id)) $user_id = get_current_user_id();
 	
 	//Get all the pages this user already read
@@ -93,7 +97,7 @@ function get_must_read_documents($user_id='', $exclude_heading=false){
 		if(!$exclude_heading){
 			$html .= "<h3>Please read the following $page:</h3>";
 		}
-		$html .= "<ul>".$arrived_html."</ul>";
+		$html .= "<ul>$arrived_html</ul>";
 	}
 	
 	if($html != ''){

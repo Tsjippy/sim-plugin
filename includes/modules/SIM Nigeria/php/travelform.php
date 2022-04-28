@@ -125,7 +125,7 @@ add_filter( 'add_form_multi_defaults', function($default_array_values,$user_id){
 		}
 	}
 	
-	foreach(SIM\get_user_accounts($return_family=false,$adults=true,$local_nigerians=true) as $user){
+	foreach(SIM\get_user_accounts($return_family=false,$adults=true) as $user){
 		$default_array_values['all_users'][$user->ID] = $user->display_name;
 	}
 

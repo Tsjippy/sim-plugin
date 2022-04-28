@@ -43,7 +43,7 @@ export function cloneNode(original_node, clear=true){
 	
 	//also remove any tinymce's
 	if(typeof(tinymce) != 'undefined'){
-		tinymce_settings = [];
+		var tinymce_settings = [];
 		original_node.querySelectorAll('.wp-editor-area').forEach(el =>{
 			var tn = tinymce.get(el.id);
 			if(tn != null){
@@ -307,7 +307,7 @@ export function tidyMultiInputs(){
 }
 	
 //show a next form step
-export function showTab(n,form) {
+export function showTab(n, form) {
 	if(typeof(form) != 'undefined'){
 		if(n == 0){
 			var loader = form.querySelector('.formsteploader');
@@ -625,6 +625,8 @@ document.addEventListener('click',function(event) {
 	}
 
 	if(target.matches('.sim_form [name="submit_form"]')){
+		event.stopPropagation();
+		
 		saveFormInput(target);
 	}
 });

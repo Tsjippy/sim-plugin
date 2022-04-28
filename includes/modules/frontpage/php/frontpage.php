@@ -60,6 +60,11 @@ if(!empty($hook_name)){
 	add_action($hook_name, function() {
 		//if on home page
 		if(is_page(SIM\get_module_option('login','home_page')) or is_front_page()){
+			// If not logged in and on the logged in homepage
+			if (!is_user_logged_in() and is_page(SIM\get_module_option('login','home_page'))){
+				return;
+			}
+
 			//Show the ministry gallery
 			page_gallery();
 			$args                   = array('ignore_sticky_posts' => true,);

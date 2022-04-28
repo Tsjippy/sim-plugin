@@ -11,19 +11,22 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 
 	//display url form
 	if(is_numeric($_GET['vimeoid'])){
-		if(empty($_POST['download_url'])){
-			?>
-			<form method="post">
-				<label>Enter download url (get it from <a href='https://vimeo.com/manage/<?php echo $_GET['vimeoid'];?>/advanced' target="_blank">this page</a>)
-					<input type="url" name="download_url" style='width:100%;'><br><br>
-				</label>
-				<input type="submit" value="Submit">
-			</form> 
+		wp_enqueue_script('sim_vimeo_admin_script');
+		?>
+		<style>
+			.loadergif{
+				width: 30px;
+			}
+		</style>
+		<form>
+			<label>Enter download url (get it from <a href='https://vimeo.com/manage/<?php echo $_GET['vimeoid'];?>/advanced' target="_blank">this page</a>)
+				<input type="url" name="download_url" style='width:100%;'><br><br>
+			</label>
 			<?php
-		}else{
-			$vimeo	= new VimeoApi();
-			$vimeo->download_from_vimeo($_POST['download_url'], $_GET['vimeoid']);
-		}
+			echo SIM\add_save_button('download_video', 'Submit download url');
+			?>
+		</form> 
+		<?php
 	}
 	?>
 	<p>

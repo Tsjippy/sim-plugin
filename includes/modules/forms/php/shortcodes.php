@@ -5,6 +5,8 @@ use SIM;
 add_shortcode('formselector', function($atts){
     global $wpdb;
 
+    ob_start();
+
     $a = shortcode_atts( array(
         'exclude'   => [],
         'no_meta'   => true
@@ -112,6 +114,8 @@ add_shortcode('formselector', function($atts){
         ?>
     </div>
     <?php
+
+    return ob_get_clean();
 });
 
 //shortcode to make forms

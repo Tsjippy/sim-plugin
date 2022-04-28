@@ -208,11 +208,16 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             add_post_meta($attachment_id, '_wp_attached_file', 'Uploading to vimeo');
             
             //store upload link in case of failed upload and we want to resume
-            add_post_meta($attachment_id, 'vimeo_upload_data', ['url'=>$upload_link, 'filename'=>$file_name]);
+            add_post_meta($attachment_id, 'vimeo_upload_data', [
+                'url'       => $upload_link, 
+                'filename'  => $file_name,
+                'vimeo_id'  => $vimeo_id
+            ]);
             
             return [
                 'upload_link'	=> $upload_link,
-                'post_id'		=> $attachment_id
+                'post_id'		=> $attachment_id,
+                'vimeo_id'      => $vimeo_id
             ];
         }
 
@@ -289,16 +294,19 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
             if(file_exists($thumbnail)) return $thumbnail;
 
-            //no thumbnal found, create one
+            //no thumbnail found, create one
             $vimeo_id   = $this->get_vimeo_id($post_id);
 
             if($vimeo_id and $this->is_connected()){
                 //Get thumbnails
                 $data	= $this->api->request("/videos/$vimeo_id/pictures?sizes=48x64", [], 'GET')['body']['data'][0];
                 if($data['active']){
-                    $icon_url= $data['base_link'].'.webp';
+                    $icon_url   = $data['base_link'].'.webp';
 
                     $result = $this->download_from_vimeo($icon_url, $vimeo_id);
+                    if(is_wp_error($result)){
+                        $result = $result->error_data['vimeo']['path'];
+                    }
                     update_post_meta($post_id, 'thumbnail', $result);
 
                     return $result;
@@ -349,14 +357,27 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
             $file_path  = str_replace('\\', '/', $path.$filename.'.'.$extension);
 
-            $client = new GuzzleHttp\Client();
-            $client->request(
-                'GET',
-                $url,
-                array('sink' => $file_path)
-            );
+            if (file_exists($file_path)) {
+                return new WP_Error('vimeo', "The video is already downloaded", ['path' => $file_path]);
+            }
 
-            return $file_path;
+            $client = new GuzzleHttp\Client();
+            try{
+                $client->request(
+                    'GET',
+                    $url,
+                    array('sink' => $file_path)
+                );
+
+                return $file_path;
+            }catch (\GuzzleHttp\Exception\ClientException $e) {
+                unlink($file_path);
+
+                if($e->getResponse()->getReasonPhrase() == 'Gone'){
+                    return new WP_Error('vimeo', "The link has expired, please get a new one");
+                }
+                return $e->getResponse()->getReasonPhrase();
+            }
         }
     }
 }

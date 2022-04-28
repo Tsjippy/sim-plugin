@@ -1,33 +1,35 @@
 import * as tus from 'tus-js-client';
 
-// 0. get a reference to the urlStorage
-const { urlStorage, fingerprint: getFingerprint } = tus.defaultOptions;
-let storedEntry = {};
-let upload = null;
+export class VimeoUpload{
+    constructor(file){
+        this.urlStorage     = tus.defaultOptions.urlStorage;
+        this.getFingerprint = tus.defaultOptions.fingerprint;
+        this.file           = file;
+        this.storedEntry    = {};
+    }
 
-// 1. get the upload url first and save it into urlStorage
-export async function getUploadUrl (plupload_file, wp_uploader) {
-    try {
-        var file    = plupload_file.getNative();
-        if (!file) return;
-
-        let fingerprint = await getFingerprint(file, { endpoint: sim.ajax_url });
-        let storedEntries = await urlStorage.findUploadsByFingerprint(fingerprint);
+    async findInStorage(){
+        this.fingerprint    = await this.getFingerprint(this.file, { endpoint: sim.base_url });
+        let storedEntries   = await this.urlStorage.findUploadsByFingerprint(this.fingerprint);
 
         if (storedEntries.length) {
-            storedEntry = storedEntries[0];
-            if (storedEntry.uploadUrl) {
-                console.debug('previous URL found: ' + storedEntry.uploadUrl);
-                return startUpload(plupload_file, wp_uploader);
+            this.storedEntry = storedEntries[0];
+            if (this.storedEntry.uploadUrl) {
+                console.debug('previous URL found: ' + this.storedEntry.uploadUrl);
+                return true;
             }
             // cleanup
-            urlStorage.removeUpload(storedEntry.urlStorageKey);
+            this.urlStorage.removeUpload(this.storedEntry.urlStorageKey);
         }
 
+        return false;
+    }
+
+    async getVimeoUploadUrl(){
         var formdata = new FormData();
-        formdata.append('file_size', file.size);
-        formdata.append('file_name', file.name);
-        formdata.append('file_type', file.type);
+        formdata.append('file_size', this.file.size);
+        formdata.append('file_name', this.file.name);
+        formdata.append('file_type', this.file.type);
 
         var response    = await fetchRestApi('vimeo/prepare_vimeo_upload', formdata);
 
@@ -35,84 +37,55 @@ export async function getUploadUrl (plupload_file, wp_uploader) {
         if(!response){
             console.error('Failed');
             console.error(formdata);
-            console.log(file);
-            return;
+            console.log(this.file);
+            return false;
         }
 
         var uploadUrl		= response.upload_link;
         var postId		    = response.post_id;
-        console.debug('new upload URL: ' + uploadUrl);
+        var vimeoId		    = response.vimeo_id;
 
-        storedEntry = {
-            size: file.size,
+        this.storedEntry = {
+            size: this.file.size,
             metadata: {
-                filename: file.name,
-                filetype: file.type,
+                filename: this.file.name,
+                filetype: this.file.type,
             },
             creationTime: new Date().toString(),
-            uploadUrl,
-            postId
+            url: uploadUrl,
+            postId: postId,
+            vimeoId: vimeoId
         };
 
-        storedEntry.urlStorageKey = await urlStorage.addUpload(fingerprint, storedEntry);
-
-        startUpload(plupload_file, wp_uploader);
-
-    } catch (error) {
-        console.error('Error:', error);
+        this.storedEntry.urlStorageKey = await this.urlStorage.addUpload(this.fingerprint, this.storedEntry);
     }
-}
 
-// 2. then upload, and remove the upload reference from urlStorage when done
-function startUpload (plupload_file, wp_uploader) {
-    upload = new tus.Upload(plupload_file.getNative(), {
-        uploadUrl: storedEntry.uploadUrl,
-        headers: {
-            // https://developer.vimeo.com/api/upload/videos#resumable-approach-step-2
-            Accept: 'application/vnd.vimeo.*+json;version=3.4' // required
-        },
-        chunkSize: 50000000, // required
-        onProgress: function(bytesUploaded, bytesTotal) {
-			//calculate percentage
-			var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
+    async tusUploader(){
+        /* 
+        ** Get the upload url
+        */
+        // Check if already an url in memory
+        var existing    = await this.findInStorage();
+        if(!existing){
+            // Nothing found, get a new upload url
+            await this.getVimeoUploadUrl();
+        }
 
-			//show percentage in progressbar
-			document.querySelectorAll('.attachments-wrapper .uploading:first-child .media-progress-bar > div, .selection-view .uploading:first-child .media-progress-bar > div, .media-uploader-status.uploading .media-progress-bar > div').forEach(div=>{
-				div.style.width	= percentage+'%';
-				div.innerHTML	= '<span style="width:100%;text-align:center;color:white;display:block;font-size:smaller;">'+percentage+'%</span>';
-			});
-		}, 
-        async onSuccess () {
-            urlStorage.removeUpload(storedEntry.urlStorageKey);
-            
-            //get wp post details
-			var formdata = new FormData();
-			formdata.append('post_id', storedEntry.postId);
+        console.log(this.storedEntry.url);
 
-            var request = new XMLHttpRequest();
-			request.open('POST', sim.base_url+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
-			request.send(formdata);
+        var upload = new tus.Upload(this.file, {
+            uploadUrl: this.storedEntry.url,
+            headers: {
+                // https://developer.vimeo.com/api/upload/videos#resumable-approach-step-2
+                Accept: 'application/vnd.vimeo.*+json;version=3.4' // required
+            },
+            chunkSize: 50000000, // required
+        });
 
-            //var response    = await fetchRestApi('vimeo/add_uploaded_vimeo', formdata);
+        return upload;
+    }
 
-			//mark as uploaded
-			wp_uploader.dispatchEvent('fileUploaded', plupload_file, request);
-            //wp_uploader.dispatchEvent('fileUploaded', plupload_file, response);
-
-			document.querySelector('[data-id="'+storedEntry.postId+'"] .filename>div').textContent='Uploaded to Vimeo';
-        },
-        onError (error) {
-            console.error("Failed because: " + error);
-			wp_uploader.dispatchEvent('fileUploaded', plupload_file, response);
-
-			return;
-        },
-    });
-
-    //update upload count
-    document.querySelector('.upload-details .upload-index').textContent    = wp_uploader.total.uploaded+1;
-    
-    document.querySelector('.upload-details .upload-filename').textContent = wp_uploader.files[wp_uploader.total.uploaded].name;
-
-    upload.start();
+    removeFromStorage(){
+        this.urlStorage.removeUpload(this.storedEntry.urlStorageKey);
+    }
 }

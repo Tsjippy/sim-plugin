@@ -33,7 +33,6 @@ add_filter( 'protected_title_format', function () {
 //Add a title section below the menu
 add_action('generate_after_header',function (){
 	global $post;
-	global $Modules;
 	if($post){		
 		$title = $post->post_title;
 	}else{
@@ -44,10 +43,12 @@ add_action('generate_after_header',function (){
 	if ( is_home()) {
 		$title = "News";
 	//Or an archive page (category of news)
-	}elseif(is_category() or is_tax()){
+	}elseif(is_category() or is_tax() or is_archive()){
 		$category = get_queried_object();
 		$title = $category->name;
-		if(is_tax('recipetype')){
+		if($title = 'event'){
+			$title = 'Calendar';
+		}elseif(is_tax('recipetype')){
 			$title .= ' recipies';
 		}elseif(is_tax('eventtype')){
 			$title .= ' events';
@@ -59,14 +60,21 @@ add_action('generate_after_header',function (){
 	}
 	
 	//change title of all pages except the frontpage
-	if($title != 'Home' and !is_page($Modules['login']['home_page'])){
+	if($title != 'Home' and !is_page(SIM\get_module_option('login', 'home_page'))){
 		//Display featured image in title if it has one
-		if ( has_post_thumbnail() and $title != "News" and !is_category() and !is_tax() and get_post_type() != 'recipe') {
+		if ( 
+			has_post_thumbnail() 	and 
+			!is_home() 				and 
+			!is_category() 			and 
+			!is_tax() 				and
+			!is_archive()			and
+			get_post_type() != 'recipe'
+		) {
 			echo '<div id="page-title-image" style="background-image: url('.get_the_post_thumbnail_url().');"></div>';
 		}
 		//Add the title
 		echo '<div id="page-title-div">';
-		echo '<h2 id="page-title">'.$title.'</h2>';
+			echo "<h2 id='page-title'>$title</h2>";
 		echo '</div>';
 	}
 });

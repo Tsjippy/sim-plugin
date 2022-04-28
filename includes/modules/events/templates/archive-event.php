@@ -11,9 +11,6 @@ use SIM;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
-global $Modules;
-
 wp_enqueue_style('sim_events_css');
 wp_enqueue_script('sim_event_script');
 
@@ -55,8 +52,8 @@ get_header();
 			<div class="search-form">	
 				<div class="date-selector">
 					<div class="date-search">
-						<input type="hidden" value="Select">
 						<?php
+						$baseUrl	= plugins_url('pictures', __DIR__);
 						echo "<img src='{$baseUrl}/date.png' alt='time' class='event_icon'>";
 						?>
 						<select class='month_selector<?php if($view=='week') echo ' hidden';?>' placeholder="Select month">
