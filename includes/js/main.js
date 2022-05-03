@@ -1,6 +1,6 @@
 console.log("Main.js loaded");
 
-function change_url(target, second_tab=''){
+export function changeUrl(target, second_tab=''){
 	var new_param	= target.dataset.param_val;
 
 	var hash		= target.dataset.hash;
@@ -30,11 +30,11 @@ function change_url(target, second_tab=''){
 
 	// switch tab when clicking on a change url link
 	if(target.tagName == 'A'){
-		switch_tab();
+		switchTab();
 	}
 }
 
-function switch_tab(event=null){
+function switchTab(event=null){
 	const url = new URL(window.location);
 	const params = new Proxy(new URLSearchParams(window.location.search), {
 		get: (searchParams, prop) => searchParams.get(prop),
@@ -47,7 +47,7 @@ function switch_tab(event=null){
 		document.querySelectorAll('[data-param_val="'+main_tab+'"]').forEach(tabbutton=>{
 			//only process non-modal tabs
 			if(tabbutton.closest('.modal') == null){
-				var result	= display_tab(tabbutton);
+				var result	= displayTab(tabbutton);
 				if(result != false){
 					last_tab	= result;
 				}
@@ -59,12 +59,12 @@ function switch_tab(event=null){
 	if(second_tab != null){
 		//find the tab and display it
 		last_tab.querySelectorAll('[data-param_val="'+second_tab+'"]').forEach(tabbutton=>{
-			display_tab(tabbutton);
+			displayTab(tabbutton);
 		});
 	}
 }
 
-function display_tab(tab_button){
+function displayTab(tab_button){
 	//remove all existing highlights
 	document.querySelectorAll('.highlight').forEach(el=>el.classList.remove('highlight'));
 
@@ -109,8 +109,8 @@ function display_tab(tab_button){
 		}
 
 		// position any tables on this tab, as they can only be positioned when visible
-		if(typeof(position_table) != 'undefined'){
-			position_table();
+		if(typeof(table.positionTable) != 'undefined'){
+			table.positionTable();
 		}
 
 		return tab;
@@ -119,7 +119,7 @@ function display_tab(tab_button){
 	}
 }
 
-function getRoute(target,lat,lon){
+export function getRoute(target,lat,lon){
 	//Leave the origin empty on a mobile device to use the current location
 	if(isMobileDevice()){
 		var origin = '';
@@ -136,97 +136,7 @@ function isMobileDevice() {
 	return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 };
 
-function showLoader(element, replace=true, message=''){
-	if(element == null){
-		return;
-	}
-	
-	var wrapper	= document.createElement("DIV");
-	wrapper.setAttribute('class','loaderwrapper');
-	if(message != ''){
-		wrapper.innerHTML	= message;
-	}
-
-	var loader	= document.createElement("IMG");
-	loader.setAttribute('class','loadergif');
-	loader.setAttribute("src", sim.loading_gif);
-	loader.style["height"]= "30px";
-
-	wrapper.insertAdjacentElement('beforeEnd', loader);
-	if(replace){
-		element.parentNode.replaceChild(wrapper, element);
-	}else{
-		element.parentNode.insertBefore(wrapper, element.nextSibling);
-	}
-
-	return wrapper;
-}
-
-function display_message(message, icon, autoclose=false, no_ok=false, timer=1500){
-	if(message == undefined){
-		return;
-	}
-	
-	if(typeof(Swal) != 'undefined'){
-		var options = {
-			icon: icon,
-			title: message.trim(),
-			confirmButtonColor: "#bd2919",
-			cancelButtonColor: 'Crimson'
-		};
-
-		if(no_ok){
-			options['showConfirmButton'] = false;
-		}
-		
-		if(typeof(callback) == 'function'){
-			options['didClose'] = () => callback();
-		}
-		
-		if(autoclose){
-			options['timer'] = timer;
-		}
-		
-		Swal.fire(options);
-	}else{
-		alert(message.trim());
-	}
-}
-
-function show_modal(modal_id){
-	var modal = document.getElementById(modal_id+"_modal");
-	
-	if(modal != null){
-		modal.classList.remove('hidden');
-	}	
-}
-
-function hide_modals(){
-	document.querySelectorAll('.modal:not(.hidden)').forEach(modal=>{
-		modal.classList.add('hidden');
-	});
-}
-
-//Load after page load
-document.addEventListener("DOMContentLoaded",function() {
-	//loop over all the tab buttons
-	document.querySelectorAll('.tablink').forEach(function(tab_button){
-		//Add the dataset if it does not exist yet.
-		if(tab_button.dataset.param_val == undefined){
-			tab_button.dataset.param_val = tab_button.textContent.replace(' ','_').toLowerCase();
-		}
-	})
-
-	//check for tab actions
-	switch_tab();
-
-	//add niceselects
-	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
-		select._niceselect = NiceSelect.bind(select,{searchable: true});
-	});
-});
-
-function body_scrolling(type){
+function bodyScrolling(type){
 	//don't do anything on homepage
 	if(document.querySelector('body').classList.contains('home')) return;
 	
@@ -259,6 +169,126 @@ function body_scrolling(type){
 	}
 }
 
+export function showLoader(element, replace=true, message=''){
+	if(element == null){
+		return;
+	}
+	
+	var wrapper	= document.createElement("DIV");
+	wrapper.setAttribute('class','loaderwrapper');
+	if(message != ''){
+		wrapper.innerHTML	= message;
+	}
+
+	var loader	= document.createElement("IMG");
+	loader.setAttribute('class','loadergif');
+	loader.setAttribute("src", sim.loading_gif);
+	loader.style["height"]= "30px";
+
+	wrapper.insertAdjacentElement('beforeEnd', loader);
+	if(replace){
+		element.parentNode.replaceChild(wrapper, element);
+	}else{
+		element.parentNode.insertBefore(wrapper, element.nextSibling);
+	}
+
+	return wrapper;
+}
+
+export function displayMessage(message, icon, autoclose=false, no_ok=false, timer=1500){
+	if(message == undefined){
+		return;
+	}
+	
+	if(typeof(Swal) != 'undefined'){
+		var options = {
+			icon: icon,
+			title: message.trim(),
+			confirmButtonColor: "#bd2919",
+			cancelButtonColor: 'Crimson'
+		};
+
+		if(no_ok){
+			options['showConfirmButton'] = false;
+		}
+		
+		if(typeof(callback) == 'function'){
+			options['didClose'] = () => callback();
+		}
+		
+		if(autoclose){
+			options['timer'] = timer;
+		}
+		
+		Swal.fire(options);
+	}else{
+		alert(message.trim());
+	}
+}
+
+export function showModal(modal_id){
+	var modal = document.getElementById(modal_id+"_modal");
+	
+	if(modal != null){
+		modal.classList.remove('hidden');
+	}	
+}
+
+export function hideModals(){
+	document.querySelectorAll('.modal:not(.hidden)').forEach(modal=>{
+		modal.classList.add('hidden');
+	});
+}
+
+//check internet
+async function hasInternet(){
+	await fetch('https://google.com', {
+		method: 'GET', // *GET, POST, PUT, DELETE, etc.
+		mode: 'no-cors',
+	}).then((result) => {
+		window['online'] = true;
+	}).catch(e => {
+		window['online'] = false;
+	});
+
+	return window['online'];
+}
+
+export async function waitForInternet(){
+	var internet	= await hasInternet();
+	if(!internet){
+		displayMessage('You have no internet connection, waiting till internet is back...', 'warning', true, true, 5000);
+
+		while(!internet){
+			if(window['online']){
+				break;
+			}
+
+			internet	= await hasInternet();
+		}
+	}
+}
+
+//Load after page load
+document.addEventListener("DOMContentLoaded",function() {
+	//loop over all the tab buttons
+	document.querySelectorAll('.tablink').forEach(function(tab_button){
+		//Add the dataset if it does not exist yet.
+		if(tab_button.dataset.param_val == undefined){
+			tab_button.dataset.param_val = tab_button.textContent.replace(' ','_').toLowerCase();
+		}
+	})
+
+	//check for tab actions
+	switchTab();
+
+	//add niceselects
+	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
+		select._niceselect = NiceSelect.bind(select,{searchable: true});
+	});
+});
+
+
 //Hide or show the clicked tab
 window.addEventListener("click", function(event) {	
 	var target = event.target;
@@ -272,9 +302,9 @@ window.addEventListener("click", function(event) {
 	if(target.closest('.menu-toggle') != null){
 		event.preventDefault();
 		if(document.querySelector('.menu-toggle').getAttribute("aria-expanded")=="true"){
-			body_scrolling('disable');
+			bodyScrolling('disable');
 		}else{
-			body_scrolling('enable');
+			bodyScrolling('enable');
 		}
 	}
 
@@ -288,50 +318,21 @@ window.addEventListener("click", function(event) {
 		document.querySelector('#mobile-menu-control-wrapper').classList.remove("toggled");
 		document.querySelector('.menu-toggle').setAttribute("aria-expanded", 'false');
 		document.querySelector('#site-navigation').classList.remove("toggled");
-		body_scrolling('enable');
+		bodyScrolling('enable');
 	}
 
 	//Process the click on tab button
 	if(target.matches(".tablink")){
 		event.preventDefault();
 		//change the url in browser
-		change_url(target);
+		changeUrl(target);
 
 		//show the tab
-		display_tab(target);
+		displayTab(target);
 	}	
 	
 	//close modal if clicked outside of modal
 	if(target.closest('.modal-content') == null && target.closest('.swal2-container') == null && target.tagName=='DIV'){
-		hide_modals();
+		hideModals();
 	}
 });
-
-//check internet
-async function has_internet(){
-	await fetch('https://google.com', {
-		method: 'GET', // *GET, POST, PUT, DELETE, etc.
-		mode: 'no-cors',
-	}).then((result) => {
-		window['online'] = true;
-	}).catch(e => {
-		window['online'] = false;
-	});
-
-	return window['online'];
-}
-
-async function waitForInternet(){
-	var internet	= await has_internet();
-	if(!internet){
-		display_message('You have no internet connection, waiting till internet is back...', 'warning', true, true, 5000);
-
-		while(!internet){
-			if(window['online']){
-				break;
-			}
-
-			internet	= await has_internet();
-		}
-	}
-}

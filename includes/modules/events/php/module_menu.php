@@ -2,7 +2,7 @@
 namespace SIM\EVENTS;
 use SIM;
 
-const ModuleVersion		= '7.0.4';
+const ModuleVersion		= '7.0.5';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -17,6 +17,11 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		<br>
 		It also adds the possibility for schedules: a mealschedule or orientantion schedule or other.<br>
 		Add it to any page using the shortcode <code>[schedules]</code>
+	</p>
+
+	<p>
+		<b>Auto created page:</b><br>
+		<a href='<?php echo home_url('/events');?>'>Calendar</a><br>
 	</p>
 	<?php
 },10,2);

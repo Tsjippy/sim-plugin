@@ -19,10 +19,10 @@ async function confirmPostDelete( event ) {
 		var formdata = new FormData();
 		formdata.append('post_id',post_id);
 		
-		var response = await fetchRestApi('frontend_posting/remove_post', formdata);
+		var response = await formsubmit.fetchRestApi('frontend_posting/remove_post', formdata);
 
 		if(response){
-			display_message(response);
+			main.displayMessage(response);
 		}
 	}
 };
@@ -33,7 +33,7 @@ async function refreshPostLock(){
 	if(postid != null){
 		var formdata	= new FormData();
 		formdata.append('postid', postid.value);
-		fetchRestApi('frontend_posting/refresh_post_lock', formdata);
+		formsubmit.fetchRestApi('frontend_posting/refresh_post_lock', formdata);
 	}
 }
 
@@ -43,15 +43,15 @@ async function deletePostLock(){
 	if(postid != null){
 		var formdata	= new FormData();
 		formdata.append('postid', postid.value);
-		var response = await fetchRestApi('frontend_posting/delete_post_lock', formdata);
+		var response = await formsubmit.fetchRestApi('frontend_posting/delete_post_lock', formdata);
 	}
 }
 
 async function changePostType(target){
-	var response = await submitForm(target, 'frontend_posting/change_post_type');
+	var response = await formsubmit.submitForm(target, 'frontend_posting/change_post_type');
 
 	if(response){
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 
@@ -135,7 +135,10 @@ function switchforms(target){
 			parent.querySelectorAll('.attachment').forEach(el=>el.classList.remove('hidden'));
 
 			//Hide other options
-			parent.querySelectorAll('.post, .page, .event, .location, .recipe, #wp-post_content-media-buttons, .advancedpublishoptions, #advancedpublishoptionsbutton').forEach(el=>el.classList.add('hidden'));
+			parent.querySelectorAll('.post, .page, .event, .location, .recipe, #wp-post_content-media-buttons').forEach(el=>el.classList.add('hidden'));
+
+			// tick the box to always include the url
+			parent.querySelector('[name="signal_url"]').checked=true;
 			break;
 		default:
 			//Change button text
@@ -274,7 +277,7 @@ function catChanged(target){
 }
 
 async function addCatType(target){
-	var response	= await submitForm(target, 'frontend_posting/add_category');
+	var response	= await formsubmit.submitForm(target, 'frontend_posting/add_category');
 
 	if(response){
 		//Get the newly added category parent id
@@ -306,16 +309,17 @@ async function addCatType(target){
 		</div>
 		`
 		parent_div.insertAdjacentHTML('afterBegin', html);
-		hide_modals();
+		main.hideModals();
 
-		display_message(`Succesfully added the ${cat_name} category`);
+		main.displayMessage(`Succesfully added the ${cat_name} category`);
 	}
 }
 
 async function submitPost(target){
-	var response	= await submitForm(target, 'frontend_posting/submit_post');
+	console.log(target);
+	var response	= await formsubmit.submitForm(target, 'frontend_posting/submit_post');
 	if(response){
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 		
@@ -623,7 +627,7 @@ async function read_file_contents(attachmentId){
 	var formdata	= new FormData();
 	formdata.append('attachment_id', attachmentId);
 
-	var response	= await fetchRestApi('frontend_posting/get_attachment_contents', formdata);
+	var response	= await formsubmit.fetchRestApi('frontend_posting/get_attachment_contents', formdata);
 
 	if(response){
 		// Get current content

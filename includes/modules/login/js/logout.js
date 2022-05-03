@@ -39,7 +39,7 @@ async function logout(event){
         var response    = await fetchRestApi('logout', formdata);
 
         if(response){
-            display_message(response,'success', false, true);
+            main.displayMessage(response,'success', false, true);
 
             //redirect to homepage
             location.href	= sim.base_url;

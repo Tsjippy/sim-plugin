@@ -10,7 +10,7 @@ function filllocationfields(event){
 	
 	//Fill the fields based on the selected compound
 	if(value == 'modal'){
-		show_modal('add_compound');
+		main.showModal('add_compound');
 	}else if (name != ""){
 		//Get the compounds from the compounds variable
 		form.querySelector("[name='location[address]']").value		= name+' State';
@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded",function() {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(showPosition);
 			} else { 
-				display_message("Geolocation is not supported by your browser.");
+				main.displayMessage("Geolocation is not supported by your browser.");
 			}
 		}
 	});

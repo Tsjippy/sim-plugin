@@ -28,7 +28,7 @@ function update_family_meta($user_id, $metakey, $value){
 }
 
 //Create a dropdown with all users
-function user_select($text, $only_adults=false, $families=false, $class='', $id='user_selection', $args=[], $user_id='', $exclude_ids=[]){
+function user_select($text, $only_adults=false, $families=false, $class='', $id='user_selection', $args=[], $user_id='', $exclude_ids=[], $type='select'){
 	wp_enqueue_script('sim_user_select_script');
 	$html = "";
 
@@ -73,17 +73,36 @@ function user_select($text, $only_adults=false, $families=false, $class='', $id=
 	if($text != ''){
 		$html .= "<h4>$text</h4>";
 	}
-	$html .= "<select name='$id' class='$class user_selection'>";
-		foreach($users as $key=>$user){
-			if ($user_id == $user->ID){
-				//Make this user the selected user
-				$selected='selected="selected"';
-			}else{
-				$selected="";
+
+	if($type == 'select'){
+		$html .= "<select name='$id' class='$class user_selection'>";
+			foreach($users as $key=>$user){
+				if ($user_id == $user->ID){
+					//Make this user the selected user
+					$selected='selected="selected"';
+				}else{
+					$selected="";
+				}
+				$html .= "<option value='$user->ID' $selected>$user->first_name $user->last_name</option>";
 			}
- 			$html .= "<option value='$user->ID' $selected>$user->first_name $user->last_name</option>";
-		}
-	$html .= '</select></div>';
+		$html .= '</select>';
+	}elseif($type == 'list'){
+		$value	= '';
+		$datalist = "<datalist id='$id' class='$class user_selection'>";
+			foreach($users as $key=>$user){
+				if ($user_id == $user->ID){
+					//Make this user the selected user
+					$value	= $user->display_name;
+				}
+				$datalist .= "<option value='$user->first_name $user->last_name' data-userid='$user->ID'>";
+			}
+		$datalist .= '</datalist>';
+
+		$html	.= "<input type='text' name='$id' list='$id' value='$value'>";
+		$html	.= $datalist;
+	}
+	
+	$html	.= '</div>';
 	
 	return $html;
 }
@@ -625,7 +644,7 @@ function try_send_signal($message, $recipient, $post_id=""){
 
 function picture_selector($key, $name, $settings){
 	wp_enqueue_media();
-	wp_enqueue_script('sim_picture_selector_script', INCLUDESURL.'/js/select_picture.js', array(), '7.0.0',true);
+	wp_enqueue_script('sim_picture_selector_script', INCLUDESURL.'/js/select_picture.min.js', array(), '7.0.0',true);
 	wp_enqueue_style( 'sim_picture_selector_style', INCLUDESURL.'/css/picture_select.min.css', array(), '7.0.0');
 
 	if(empty($settings['picture_ids'][$key])){

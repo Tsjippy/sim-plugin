@@ -560,7 +560,7 @@ class Events{
 			$url	= get_permalink($post_id);
 			$html	= "<href='$url'>{$event->location}</a><br>";
 			if(!empty($location['address'])){
-				$html	.="<br><a onclick='getRoute(this,{$location['latitude']},{$location['longitude']})'>{$location['address']}</a>";
+				$html	.="<br><a onclick='main.getRoute(this,{$location['latitude']},{$location['longitude']})'>{$location['address']}</a>";
 			}
 			return $html;
 		}

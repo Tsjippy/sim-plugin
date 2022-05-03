@@ -22,7 +22,6 @@ export async function fetchRestApi(url, formdata){
 		var response	= await result.json();
 	}catch (error){
 		console.error(error);
-		//display_message(response.message, 'error');
 		return false;
 	}
 
@@ -30,7 +29,7 @@ export async function fetchRestApi(url, formdata){
 		return response;
 	}else{
 		console.error(response);
-		display_message(response.message, 'error');
+		main.displayMessage(response.message, 'error');
 		return false;
 	};
 }

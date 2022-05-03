@@ -147,7 +147,11 @@ function export_visa_excel(){
 	$writer = new Xlsx($spreadsheet);
 	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 	header("Content-Disposition: attachment; filename=$filename");
-	ob_clean();
+	while(true){
+		//ob_get_clean only returns false when there is absolutely nothing anymore
+		$result	= ob_get_clean();
+		if($result === false) break;
+	}
 	ob_start();
 	$writer->save('php://output');
 	ob_end_flush();

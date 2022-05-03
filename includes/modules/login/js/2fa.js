@@ -17,7 +17,7 @@ async function saveTwofaSettings(target){
 	if(response){
 		form.querySelectorAll('[id^="setup-"]:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 
-		display_message(response);
+		main.displayMessage(response);
 	}
 
 	loader.classList.add('hidden');
@@ -47,7 +47,7 @@ function showTwofaSetup(target) {
 	var wrapper	= document.getElementById('setup-'+target.value);
 	wrapper.classList.remove('hidden');
 
-	if (isMobileDevice()){
+	if (main.isMobileDevice()){
 		wrapper.querySelectorAll('.mobile.hidden').forEach(el=>el.classList.remove('hidden'));
 	}else{
 		wrapper.querySelectorAll('.desktop.hidden').forEach(el=>el.classList.remove('hidden'));
@@ -64,7 +64,7 @@ async function removeWebAuthenticator(target){
 	var formdata	= new FormData();
 	formdata.append('key',target.dataset.key);
 
-	showLoader(target, true);
+	main.showLoader(target, true);
 
 	var response 	= await fetchRestApi('remove_web_authenticator', formdata);
 
@@ -75,7 +75,7 @@ async function removeWebAuthenticator(target){
 			row.remove();
 		}
 
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 
@@ -83,7 +83,7 @@ async function removeWebAuthenticator(target){
 async function registerBiometric(target){
     var identifier  = target.closest('#webauthn_wrapper').querySelector('[name="identifier"]').value;
     if(identifier == ''){
-      display_message('Please specify a device name', 'error');
+		main.displayMessage('Please specify a device name', 'error');
       return;
     }
 
@@ -134,7 +134,7 @@ async function registerBiometric(target){
 		//labels for use
 		setTableLabel();
   
-		display_message('Registration success');
+		main.displayMessage('Registration success');
 	}catch(error){
 		document.getElementById('add_webauthn').classList.remove('hidden');
 		console.error(error);

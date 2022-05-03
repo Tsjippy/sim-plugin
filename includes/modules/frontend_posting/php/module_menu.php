@@ -2,12 +2,13 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
-const ModuleVersion		= '7.0.4';
+const ModuleVersion		= '7.0.6';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 
+	$pageId	= SIM\get_module_option($module_slug, 'publish_post_page');
 	?>
 	<p>
 		This module makes it possible to add and edit pages, posts and custom post types.<br>
@@ -20,7 +21,16 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		If a post only contains an url leading to another page, that url will be replaced with the shortcode <code>[showotherpost postid=XX]</code>.<br>
 		In that way the post content of another post can be shown.
 	</p>
+
 	<?php
+	if(is_numeric($pageId)){
+		?>
+		<p>
+			<b>Auto created page:</b><br>
+			<a href='<?php echo get_permalink($pageId);?>'>Add content</a>
+		</p>
+		<?php
+	}
 },10,2);
 
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
@@ -100,10 +110,13 @@ add_filter('sim_module_updated', function($options, $module_slug){
 			'post_status'   => "publish",
 			'post_author'   => '1'
 		);
-		$page_id 	= wp_insert_post( $post, true, false);
+		$pageId 	= wp_insert_post( $post, true, false);
 
 		//Store page id in module options
-		$options['publish_post_page']	= $page_id;
+		$options['publish_post_page']	= $pageId;
+
+		// Do not require page updates
+		update_post_meta($pageId,'static_content', true);
 	}
 
 	schedule_tasks();

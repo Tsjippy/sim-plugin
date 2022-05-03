@@ -15,7 +15,7 @@ async function hideColumn(cell){
 	formdata.append('formid', table.dataset.formid);
 	formdata.append('column_name', cell.id);
 	
-	var response	= await fetchRestApi('forms/save_table_prefs', formdata);
+	var response	= await formsubmit.fetchRestApi('forms/save_table_prefs', formdata);
 }
 
 async function showHiddenColumns(target){
@@ -30,28 +30,28 @@ async function showHiddenColumns(target){
 	var formdata	= new FormData();
 	formdata.append('formid', table.dataset.formid);
 
-	var response	= await fetchRestApi('forms/delete_table_prefs', formdata);
+	var response	= await formsubmit.fetchRestApi('forms/delete_table_prefs', formdata);
 
 	if(response){
-		display_message(response);
+		main.displayMessage(response);
 		location.reload();
 	}
 }
 
 async function saveColumnSettings(target){
-	var response = await submitForm(target, 'forms/save_column_settings');
+	var response = await formsubmit.submitForm(target, 'forms/save_column_settings');
 
 	if(response){
-		display_message(response);
+		main.displayMessage(response);
 		location.reload();
 	}
 }
 
 async function saveTableSettings(target){
-	var response = await submitForm(target, 'forms/save_table_settings');
+	var response = await formsubmit.submitForm(target, 'forms/save_table_settings');
 
 	if(response){
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 
@@ -78,9 +78,9 @@ async function removeSubmission(target){
 		formdata.append('submissionid', submissionid);
 		
 		//display loading gif
-		showLoader(target);
+		main.showLoader(target);
 
-		var response	= await fetchRestApi('forms/remove_submission', formdata);
+		var response	= await formsubmit.fetchRestApi('forms/remove_submission', formdata);
 
 		if(response){
 			table.querySelectorAll(`.table-row[data-id="${submissionid}"]`).forEach(
@@ -136,9 +136,9 @@ async function archiveSubmission(target){
 	}
 
 	//display loading gif
-	showLoader(target);
+	main.showLoader(target);
 	
-	var response	= await fetchRestApi('forms/archive_submission', formdata);
+	var response	= await formsubmit.fetchRestApi('forms/archive_submission', formdata);
 
 	if(response){
 		const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -191,7 +191,7 @@ async function getInputHtml(target){
 
 	old_text			= target.textContent;
     
-    showLoader(target.firstChild);
+    main.showLoader(target.firstChild);
     
     /* if (old_value == "Click to update" || old_value == "X"){
         old_value = "";
@@ -204,7 +204,7 @@ async function getInputHtml(target){
     formdata.append('submissionid',submission_id);
     formdata.append('fieldname',cell_id);
 
-	var response	= await fetchRestApi('forms/get_input_html', formdata);
+	var response	= await formsubmit.fetchRestApi('forms/get_input_html', formdata);
 
 	if(response){
 		target.innerHTML	 = response;
@@ -307,7 +307,7 @@ async function processFormsTableInput(target){
 	
 	//Only update when needed
 	if (value != JSON.parse(cell.dataset.oldvalue)){
-		showLoader(cell.firstChild);
+		main.showLoader(cell.firstChild);
 		
 		// Submit new value and receive the filtered value back
 		var formdata = new FormData();
@@ -317,7 +317,7 @@ async function processFormsTableInput(target){
 		formdata.append('fieldname',cell_id);
 		formdata.append('newvalue',value);
 		
-		var response	= await fetchRestApi('forms/edit_value', formdata);
+		var response	= await formsubmit.fetchRestApi('forms/edit_value', formdata);
 	
 		if(response){
 			var value = response.newvalue;
@@ -334,7 +334,7 @@ async function processFormsTableInput(target){
 				cell.innerHTML = value;
 			}
 	
-			display_message(response.message)
+			main.displayMessage(response.message)
 		}
 	}else{
 		console.log(value)
@@ -447,6 +447,6 @@ document.addEventListener('change', event=>{
 		document.getElementById(target.value).classList.remove('hidden');
 
 		// position table
-		position_table();
+		table.positionTable();
 	}
 });

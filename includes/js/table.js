@@ -1,3 +1,5 @@
+var old_value;
+
 function outsideClicked(event){
 	if(event.target.closest('td') == null || !event.target.closest('td').matches('.editing')){
 		event.stopPropagation();
@@ -8,7 +10,7 @@ function outsideClicked(event){
 	}
 }
 
-function add_input_event_listeners(cell){
+function addInputEventListeners(cell){
 	var inputs	= cell.querySelectorAll('input,select,textarea');
 		
 	inputs.forEach(inputnode=>{
@@ -62,7 +64,7 @@ function add_input_event_listeners(cell){
 }
 
 //function to change a cells contents
-function edit_td(target){
+function editTd(target){
 	target.closest('td').classList.add('editing');
 
 	//element is already edited
@@ -74,7 +76,7 @@ function edit_td(target){
 	
 	target.innerHTML = `<input type="text" value="${old_value}">`;
 
-	add_input_event_listeners(target);
+	addInputEventListeners(target);
 }
 
 //function to get the temp input value and save it using the rest api
@@ -100,9 +102,9 @@ async function processInput(event, target){
 			formdata.append(key, target.closest('tr').dataset[key]);
 		}
 		
-		showLoader(cell.firstChild);
+		main.showLoader(cell.firstChild);
 		
-		response = await fetchRestApi(table.dataset.url, formdata);
+		response = await formsubmit.fetchRestApi(table.dataset.url, formdata);
 
 		if(response){
 			cell.innerHTML = value;
@@ -119,7 +121,7 @@ async function processInput(event, target){
 }
 
 //function to sort a table by column
-function sort_table(target){
+function sortTable(target){
 	//console.log(target);
 	var table 			= target.closest('table');
 	var switching	 	= true;
@@ -197,7 +199,7 @@ function setTableLabel() {
 	//Loop over all tables
 	document.querySelectorAll('.sim-table').forEach(function(table){
 		//Get all heading elements
-		tdLabels = [];
+		var tdLabels = [];
 		table.querySelectorAll('thead th').forEach((el,index) => {
 			if(el.dataset.nicename != null){
 				tdLabels[index]	= el.dataset.nicename;
@@ -222,7 +224,7 @@ function setTableLabel() {
 	});
 }
 
-function position_table(){
+export function positionTable(){
 	//use whole page width for tables
 	document.querySelectorAll(".form-table-wrapper").forEach(wrapper=>{
 		var table	= wrapper.querySelector('table');
@@ -279,29 +281,29 @@ document.addEventListener("click", event=>{
 	}
 	
 	if(target.tagName == 'TH'){
-		sort_table(target);
+		sortTable(target);
 	}
 	
 	//Edit data]
 	var td = target.closest('td');
 	if(target.matches('td.edit')){
 		event.stopPropagation();
-		edit_td(target);
+		editTd(target);
 	}else if(td != null && td.matches('td.edit') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
 		event.stopPropagation();
-		edit_td(target.closest('td'));
+		editTd(target.closest('td'));
 	}
 });
 
 document.addEventListener("DOMContentLoaded",function() {
 	console.log("Table.js loaded");
 	
-	position_table();
-	window.addEventListener('resize', position_table);
+	positionTable();
+	window.addEventListener('resize', positionTable);
 	
 	//add label attribute
 	setTableLabel();
 	
 	//sort the table
-	document.querySelectorAll('th.defaultsort').forEach(column=>sort_table(column));
+	document.querySelectorAll('th.defaultsort').forEach(column=>sortTable(column));
 });

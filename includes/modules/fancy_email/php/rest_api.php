@@ -50,8 +50,6 @@ function mailtracker(\WP_REST_Request $request) {
 
 		if($wpdb->last_error !== ''){
 			SIM\print_array($wpdb->last_error);
-		}else{
-			SIM\print_array("Succesfully inserted with id $wpdb->insert_id");
 		}
 	}
 

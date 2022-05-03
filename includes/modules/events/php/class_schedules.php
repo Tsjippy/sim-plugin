@@ -79,7 +79,7 @@ class Schedule{
 					<input type='hidden' name='date'>
 					<input type='hidden' name='starttime'>
 					<?php
-					echo SIM\user_select($text='',$only_adults=true,$families=true,$class='',$id='host');
+					echo SIM\user_select('', $only_adults=true, $families=true, $class='', $id='host', $args=[], $user_id='', $exclude_ids=[], $type='list');
 					echo SIM\add_save_button('add_host','Add host','update_schedule'); 
 					?>
 				</form>
@@ -147,7 +147,7 @@ class Schedule{
 						?>
 						<label for="host"><h4>Who is in charge</h4></label>
 						<?php
-						echo SIM\user_select($text='',$only_adults=true,$families=false,$class='',$id='host');
+						echo SIM\user_select('', $only_adults=true, $families=false, $class='', $id='host', $args=[], $user_id='', $exclude_ids=[], $type='list');
 					}
 					
 					echo SIM\add_save_button('add_timeslot','Add time slot','update_event add_schedule_row');
@@ -583,13 +583,17 @@ class Schedule{
 		$event['location']				= $this->location;
 		$event['organizer_id']			= $this->host_id;
 		$event['schedule_id']			= $this->schedule_id;
-
-		if($add_host_partner and SIM\has_partner($this->host_id)){
-			$host_partner	= true;
-			$event['organizer']				= get_userdata($this->host_id)->last_name.' family';
-		}else{
-			$host_partner	= false;
-			$event['organizer']				= get_userdata($this->host_id)->display_name;
+		
+		$host_partner					= false;
+		if(is_numeric($this->host_id)){
+			if($add_host_partner and SIM\has_partner($this->host_id)){
+				$host_partner	= true;
+				$event['organizer']				= get_userdata($this->host_id)->last_name.' family';
+			}else{
+				$event['organizer']				= get_userdata($this->host_id)->display_name;
+			}
+		}elseif(!empty($_POST['host'])){
+			$event['organizer']					= $_POST['host'];
 		}
 
 		if($add_partner){
@@ -603,17 +607,21 @@ class Schedule{
 		$title	= str_replace("Hosting {$this->name} for ",'',$title);
 
 		//New events
-		$array		= [
+		$eventarray		= [
 			[
 				'title'		=>ucfirst($title)." with {$event['organizer']}",
 				'onlyfor'	=>[$schedule->target, $partner_id]
-			],
+			]
+		];
+
+		if(is_numeric($this->host_id)){
+			$eventarray[] =
 			[
 				'title'		=>"Hosting {$this->name} for $title",
 				'onlyfor'	=>[$this->host_id, $host_partner]
-			]
-		];
-		foreach($array as $a){
+			];
+		}
+		foreach($eventarray as $a){
 			$post = array(
 				'post_type'		=> 'event',
 				'post_title'    => $a['title'],
@@ -759,16 +767,23 @@ class Schedule{
 		$this->schedule_id	= $_POST['schedule_id'];
 		$schedule		= $this->find_schedule_by_id($this->schedule_id);
 
-		$this->host_id	= $_POST['host'];
+		if(is_numeric($_POST['host'])){
+			$this->host_id	= $_POST['host'];
+			$host			= get_userdata($this->host_id);
 
-		$partner_id		= SIM\has_partner($this->host_id);
+			$partner_id		= SIM\has_partner($this->host_id);
 
-		if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) return new WP_Error('No permission', 'No permission to do that!');
-		
-		if($partner_id){
-			$host_name		= get_userdata($this->host_id)->last_name.' family';
+			if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) return new WP_Error('No permission', 'No permission to do that!');
+			
+			if($partner_id){
+				$host_name		= $host->last_name.' family';
+			}else{
+				$host_name		= $host->display_name;
+			}
 		}else{
-			$host_name		= get_userdata($this->host_id)->display_name;
+			$this->host_id	= '';
+			$host_name		= $_POST['host'];
+			if($this->admin != true) return new WP_Error('No permission', 'No permission to do that!');
 		}
 
 		$this->name			= $schedule->name;

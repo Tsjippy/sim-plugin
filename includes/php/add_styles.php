@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.11';
+const StyleVersion		= '7.0.17';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
@@ -34,17 +34,17 @@ function registerScripts(){
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
 
 	//Submit forms
-	wp_register_script('sim_user_select_script',plugins_url('js/user_select.js', __DIR__), array('sweetalert'),StyleVersion,true);
-	wp_register_script('sim_formsubmit_script',plugins_url('js/form_submit.js', __DIR__), array(),StyleVersion,true);
+	wp_register_script('sim_user_select_script',plugins_url('js/user_select.min.js', __DIR__), array('sweetalert'), StyleVersion,true);
+	wp_register_script('sim_formsubmit_script', plugins_url('js/formsubmit.min.js', __DIR__), array(), StyleVersion,true);
 
 	//table request shortcode
-	wp_register_script('sim_table_script',plugins_url('js/table.js', __DIR__), array('sortable','sim_formsubmit_script','sim_forms_script'),StyleVersion,true);
+	wp_register_script('sim_table_script',plugins_url('js/table.min.js', __DIR__), array('sortable','sim_formsubmit_script','sim_forms_script'),StyleVersion,true);
 
 	//add main.js
-	wp_register_script('sim_script',plugins_url('js/main.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
+	wp_register_script('sim_script',plugins_url('js/main.min.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
 	
 	//File upload js
-	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.js', __DIR__), array('sim_formsubmit_script'),StyleVersion,true);
+	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.min.js', __DIR__), array('sim_formsubmit_script'),StyleVersion,true);
 
 }
 

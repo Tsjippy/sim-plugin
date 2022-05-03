@@ -86,7 +86,6 @@ function vaccination_reminder(){
 
 		//If there are reminders, send an e-mail
 		if (!empty($reminder_html)){
-			update_user_meta($user->ID,"required_fields_status","");
 			$userdata = get_userdata($user->ID);
 			if($userdata != null){
 				$parents 	= SIM\get_parents($user->ID);

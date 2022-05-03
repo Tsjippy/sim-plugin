@@ -2,7 +2,7 @@
 namespace SIM\LOGIN;
 use SIM;
 
-const ModuleVersion		= '7.0.4';
+const ModuleVersion		= '7.0.5';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -37,6 +37,17 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		Use like this: <code>[twofa_setup]</code>
 	</p>
 	<?php
+	$page1Id	= SIM\get_module_option($module_slug, 'password_reset_page');
+	$page2Id	= SIM\get_module_option($module_slug, 'register_page');
+	if(is_numeric($page1Id) or is_numeric($page2Id)){
+		?>
+		<p>
+			<b>Auto created pages:</b><br>
+			<a href='<?php echo get_permalink($page1Id);?>'>Change password</a><br>
+			<a href='<?php echo get_permalink($page2Id);?>'>Request user account</a><br>
+		</p>
+		<?php
+	}
 
 },10,2);
 
@@ -142,10 +153,13 @@ add_filter('sim_module_updated', function($new_options, $module_slug, $old_optio
 			'post_author'   => '1',
 			'post_category'	=> [$public_cat]
 		);
-		$page_id 	= wp_insert_post( $post, true, false);
+		$pageId 	= wp_insert_post( $post, true, false);
 
 		//Store page id in module options
-		$new_options['password_reset_page']	= $page_id;
+		$new_options['password_reset_page']	= $pageId;
+
+		// Do not require page updates
+		update_post_meta($pageId,'static_content', true);
 	}
 
 	// Add registration page
@@ -162,10 +176,13 @@ add_filter('sim_module_updated', function($new_options, $module_slug, $old_optio
 				'post_author'   => '1',
 				'post_category'	=> [$public_cat]
 			);
-			$page_id 	= wp_insert_post( $post, true, false);
+			$pageId 	= wp_insert_post( $post, true, false);
 
 			//Store page id in module options
-			$new_options['register_page']	= $page_id;
+			$new_options['register_page']	= $pageId;
+
+			// Do not require page updates
+			update_post_meta($pageId,'static_content', true);
 		}
 	}
 

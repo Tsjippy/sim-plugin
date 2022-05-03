@@ -2,7 +2,7 @@
 namespace SIM\LOCATIONS;
 use SIM;
 
-const ModuleVersion		= '7.0.0';
+const ModuleVersion		= '7.0.1';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -16,6 +16,10 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		<br>
 		It add one shortcode:<br>
 		<code>[ministry_description name=SOMENAME]</code>
+	</p>
+	<p>
+		<b>Auto created page:</b><br>
+		<a href='<?php echo home_url('/locations');?>'>Locations</a><br>
 	</p>
 	<?php
 },10,2);

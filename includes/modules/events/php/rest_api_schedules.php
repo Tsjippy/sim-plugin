@@ -99,7 +99,6 @@ add_action( 'rest_api_init', function () {
 				),
 				'host'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
 				),
 				'date'		=> array(
 					'required'	=> true,

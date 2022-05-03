@@ -118,7 +118,7 @@ function addUploadedVimeo(){
     // Replace the icon if needed
 	$attachment['icon']	= str_replace('default', 'video', $attachment['icon']);
 
-	update_post_meta($post_id, '_wp_attached_file', 'Video on vimeo');
+	update_post_meta($post_id, '_wp_attached_file', $attachment['title']);
 
     // remove upload data
     delete_post_meta($post_id, 'vimeo_upload_data');

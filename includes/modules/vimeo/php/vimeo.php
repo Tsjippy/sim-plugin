@@ -107,7 +107,7 @@ add_action( 'edit_attachment', function($attachment_id){
 	$data			= [];
 	if(!empty($title)){
 		$data['name']	= $title;
-		add_post_meta($attachment_id, '_wp_attached_file', $title);
+		update_post_meta($attachment_id, '_wp_attached_file', $title);
 	}
 	if(!empty($description)){
 		$data['description']	= $description;

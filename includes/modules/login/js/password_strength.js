@@ -80,7 +80,7 @@ async function submitPasswordChange(event){
 	var response	= await fetchRestApi('update_password', formData);
 
 	if(response){
-		display_message(response.message);
+		main.displayMessage(response.message);
 
 		// redirect to login again
 		location.href	= response.redirect

@@ -75,7 +75,6 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
         'post_mime_type'    => $accepted_mimes,
         'posts_per_page'    => $amount, 
         'paged'             => $page,
-        //Only include items whithout gallery_visibility meta key
         'meta_query'        => array(
             array(
                 'key'     => 'gallery_visibility',
@@ -204,7 +203,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                 <?php
             }
 
-/*             if(
+        /*             if(
                 $postslist->post_count == $amount or            // we got as many post as requested
                 $i != $page*$amount+$postslist->post_count-1    // or we got less but the current index is not the last one
             ){ */

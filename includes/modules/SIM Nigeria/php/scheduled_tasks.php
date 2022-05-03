@@ -61,7 +61,7 @@ function send_reimbursement_requests(){
 
 			// Add attachments as urls so to not exceed the appendix limit of outlook
 			foreach($attachments as $attachment){
-				$message		.= SIM\path_to_url($attachment);
+				$message		.= SIM\path_to_url(str_replace($recieptsDir, "$recieptsDir/old", $attachment));
 				$message		.= '<br><br>';
 			}
 			$email_headers	 = ["Bcc:enharmsen@gmail.com"];

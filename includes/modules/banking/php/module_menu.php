@@ -2,7 +2,7 @@
 namespace SIM\BANKING;
 use SIM;
 
-const ModuleVersion		= '7.0.0';
+const ModuleVersion		= '7.0.1';
 
 //run on module activation
 add_action('sim_module_activated', function($module_slug, $options){

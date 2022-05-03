@@ -33,7 +33,7 @@ var insert_form_shortcode_dialog = {
             form_selector	= document.querySelector("[name='form_selector']").value;
             if(form_name != ''){
                 tinymce.activeEditor.insertContent('[formbuilder datatype='+form_name+']');
-                display_message("Form succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
+                main.displayMessage("Form succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
             }else if(form_selector != ''){
                 tinymce.activeEditor.insertContent('[formresults datatype='+form_selector+']');
                 

@@ -30,15 +30,14 @@ add_shortcode("welcome",function ($atts){
 	if (is_user_logged_in()){
 		$UserID = get_current_user_id();
 		//Check welcome message needs to be shown
-		$show_welcome = get_user_meta( $UserID, 'welcomemessage', true );
-		if ($show_welcome == ""){
-			$welcome_post = get_post(SIM\get_module_option('frontpage', 'welcome_page')); 
-			if($welcome_post != null){
+		if (empty(get_user_meta( $UserID, 'welcomemessage', true ))){
+			$welcome_message = SIM\get_module_option('frontpage', 'welcome_message'); 
+			if(!empty($welcome_message)){
 				//Html
 				$html = '<div id="welcome-message">';
-				$html .= '<h4>'.$welcome_post->post_title.'</h4>';
-				$html .= apply_filters('the_content',$welcome_post->post_content);
-				$html .= '<button type="button" class="button" id="welcome-message-button">Do not show again</button></div>';
+					$html .= do_shortcode($welcome_message);
+					$html .= '<button type="button" class="button" id="welcome-message-button">Do not show again</button>';
+				$html .= '</div>';
 				return $html;
 			}
 		}

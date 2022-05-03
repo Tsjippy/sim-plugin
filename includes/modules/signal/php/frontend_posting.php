@@ -48,7 +48,7 @@ add_action('frontend_post_after_content', function($frontendcontend){
 // Send Signal message about the new or updated post
 add_action('sim_after_post_save', function($post, $update){
     if(isset($_POST['signal']) and $_POST['signal'] == 'send_signal'){
-        if($post->post_status == 'publish'){
+        if($post->post_status == 'publish' or $post->post_status == 'inherit'){
             delete_post_meta($post->ID, 'signal');
             delete_post_meta($post->ID, 'signalmessagetype');
 

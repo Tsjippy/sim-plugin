@@ -9,9 +9,9 @@ document.addEventListener('change', async ev=>{
         formData.append('userid', form.querySelector('[name="user_id"]').value);
         formData.append('departuredate', target.value);
         
-        var response    = await fetchRestApi('sim_nigeria/verify_traveldate', formData);
+        var response    = await formsubmit.fetchRestApi('sim_nigeria/verify_traveldate', formData);
         if(response){
-            display_message(response, 'warning');
+            main.displayMessage(response, 'warning');
         }
     }
 });

@@ -46,7 +46,7 @@ add_action('generate_after_header',function (){
 	}elseif(is_category() or is_tax() or is_archive()){
 		$category = get_queried_object();
 		$title = $category->name;
-		if($title = 'event'){
+		if($title == 'event'){
 			$title = 'Calendar';
 		}elseif(is_tax('recipetype')){
 			$title .= ' recipies';

@@ -14,7 +14,7 @@ async function request_month(target, month, year){
         formdata.append('month',month);
         formdata.append('year',year);
 
-        var response    = await fetchRestApi('events/get_month_html', formdata);
+        var response    = await formsubmit.fetchRestApi('events/get_month_html', formdata);
         
         if(response) {
             target.closest('.calendar-wrap').querySelector('.loader').remove();
@@ -47,7 +47,7 @@ async function request_week(target, wknr, year){
         formdata.append('wknr',wknr);
         formdata.append('year',year);
 
-        var response    = await fetchRestApi('events/get_week_html', formdata);
+        var response    = await formsubmit.fetchRestApi('events/get_week_html', formdata);
         
         if(response) {
             target.closest('.calendar-wrap').querySelector('.loader').remove();
@@ -78,7 +78,7 @@ async function request_expand_list(offset, month='', year=''){
     formdata.append('month',month);
     formdata.append('year',year);
     
-    var response    = await fetchRestApi('events/get_list_html', formdata);
+    var response    = await formsubmit.fetchRestApi('events/get_list_html', formdata);
         
     if(response) {
         document.querySelector('#listview').querySelector('.loader').remove();
@@ -188,7 +188,7 @@ document.addEventListener("click",function(event) {
             //make this date selected
             target.classList.add('selected');
 
-            if(isMobileDevice()){
+            if(main.isMobileDevice()){
                 window.scrollTo(0, eventdetail.offsetTop);
             }else{
                 //scroll the detail into view

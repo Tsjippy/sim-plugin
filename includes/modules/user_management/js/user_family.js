@@ -1,7 +1,7 @@
 async function submitAddAccountForm(event){
 	var target		= event.target;
 
-	var response	= await submitForm(target, 'user_management/add_useraccount');
+	var response	= await formsubmit.submitForm(target, 'user_management/add_useraccount');
 
 	if(response){
 		var form		= target.closest('form');
@@ -35,15 +35,15 @@ async function submitAddAccountForm(event){
 			select._niceselect.update();
 		});
 
-		display_message(response.message, 'success');
+		main.displayMessage(response.message, 'success');
 	}
 
-	hide_modals();
+	main.hideModals();
 };
 
 document.addEventListener("DOMContentLoaded",function() {
 	document.querySelectorAll('[name="add_user_account_button"]').forEach(el=>el.addEventListener('click',function(event){
-		show_modal('add_account');
+		main.showModal('add_account');
 	}));
 
 	document.querySelectorAll('[name="adduseraccount"]').forEach(el=>el.addEventListener('click', ev=>{

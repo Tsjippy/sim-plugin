@@ -101,7 +101,7 @@ class FrontEndContent{
 		}
 		
 		if($this->fullrights == true){
-			if($this->post_id == null or $this->post->post_status != 'publish'){
+			if($this->post_id == null or ($this->post->post_status != 'publish' and $this->post->post_status != 'inherit')){
 				$this->action = "Publish <span class='replaceposttype'>{$this->post_name}</span>";
 			}else{
 				$this->action = "Update <span class='replaceposttype'>{$this->post_name}</span>";
@@ -216,7 +216,37 @@ class FrontEndContent{
 			$new_post_data = ['ID'=>$this->post_id];
 			
 			//Check for updates
-			if($this->post_title != $post->post_title) 		$new_post_data['post_title'] 	= $this->post_title;
+			if($this->post_title != $post->post_title){
+				//title
+				$new_post_data['post_title'] 	= $this->post_title;
+
+				// name
+				$postName	= urldecode($this->post_title);
+
+				//check if name is unique as it used as slug
+				$args	= array(
+					'post_type'		=> get_post_types(),
+					'post_status'	=> 'any',
+					'name'          => $postName,
+					'numberposts'	=> -1,
+				);
+				$posts	= get_posts( $args);
+
+				$i=1;
+				while(!empty($posts)){
+					$postName	= urldecode($this->post_title.'_'.$i);
+					$args['name']	= $postName;
+					$i++;
+					$posts	= get_posts( $args);
+				}
+
+				$new_post_data['post_name'] 	= $postName;
+
+				//attached file
+				if($_POST['post_type'] == 'attachment' and explode('/', $post->post_mime_type)[0] == 'video'){
+					$new_post_data['_wp_attached_file'] 	= $this->post_title;
+				}
+			}
 			if($post_content != $post->post_content) 		$new_post_data['post_content'] 	= $post_content;
 			if($status != $post->post_status)				$new_post_data['post_status'] 	= $status;
 			
@@ -671,7 +701,7 @@ class FrontEndContent{
 		}
 		
 		//Show warning if someone else is editing
-		$current_edting_user = wp_check_post_lock($post_id);
+		$current_edting_user = wp_check_post_lock($_GET['post_id']);
 		if(is_numeric($current_edting_user)){
 			header("Refresh: 30;");
 			return "<div class='error' id='	'>".get_userdata($current_edting_user)->display_name." is currently editing this {$this->post_type}, please wait.<br>We will refresh this page every 30 seconds to see if you can go ahead.</div>";
@@ -725,10 +755,7 @@ class FrontEndContent{
 				<input type="hidden" name="post_type" value="<?php echo $this->post_type; ?>">
 				<input type="hidden" name="post_image_id" value="<?php echo $this->post_image_id;?>">
 				<input type="hidden" name="update" value="<?php echo $update;?>">
-				
-				<?php 
-				if($this->post_id != null) echo "<input type='hidden' name='post_id' value='{$this->post_id}'>";
-				?>
+				<input type='hidden' name='post_id' value='<?php echo $this->post_id;?>'>
 				
 				<h4>Title</h4>
 				<input type="text" name="post_title" class='block' value="<?php echo $this->post_title;?>" required>
@@ -757,14 +784,6 @@ class FrontEndContent{
 					}else{
 						$text = 'Add';
 					}
-					?>
-				</div>
-
-				<div class='attachment hidden'>
-					<h4>Upload your file</h4>
-					<?php
-					$uploader = new SIM\Fileupload($this->user->ID, 'attachment', 'private', false);
-					echo $uploader->get_upload_html();
 					?>
 				</div>
 				
@@ -808,7 +827,18 @@ class FrontEndContent{
 						'textarea_rows'				=> 10
 					);
 					echo wp_editor($this->post_content,'post_content',$settings);
-				echo "</div>";
+					?>
+				</div>
+
+				<div class='attachment hidden'>
+					<h4>Upload your file</h4>
+					<?php
+					$uploader = new SIM\Fileupload($this->user->ID, 'attachment', 'private', false);
+					echo $uploader->get_upload_html();
+					?>
+				</div>
+				
+				<?php
 				try{
 					$this->content_manager_options();
 				}catch(\Exception $e) {
@@ -816,7 +846,7 @@ class FrontEndContent{
 				}
 				
 				//Add a draft button for new posts
-				if($this->post_id == null or $this->post->post_status != 'publish'){
+				if($this->post_id == null or ($this->post->post_status != 'publish' and $this->post->post_status != 'inherit')){
 					if($this->post_id == null){
 						$button_text = "Save <span class='replaceposttype'>{$this->post_name}</span> as draft";
 					}else{

@@ -28,7 +28,7 @@ async function requestLogin(){
 		return;
 	}
 
-	await waitForInternet();
+	await main.waitForInternet();
 
 	var response	= await fetchRestApi('request_login', formData);
 
@@ -154,7 +154,7 @@ async function verifyCreds(target){
 	}
 
 	// Make sure we have a internet connection
-	await waitForInternet();
+	await main.waitForInternet();
 
 	var formData	= new FormData();
 	formData.append('username',username);
@@ -179,14 +179,14 @@ async function resetPassword(target){
 	var username	= document.getElementById('username').value;
 
 	if(username == ''){
-		display_message('Specify your username first','error');
+		main.displayMessage('Specify your username first','error');
 		return;
 	}
 	var captcha	= target.previousElementSibling;
 	//check if captcha visible
 	if(captcha.classList.contains('hidden')){
 		if(captcha.querySelector('iframe') == null){
-			display_message('Captcha failed to load, please refresh the page','error');
+			main.displayMessage('Captcha failed to load, please refresh the page','error');
 		}
 
 		//show captcha
@@ -196,7 +196,7 @@ async function resetPassword(target){
 		target.text	= 'Send password reset request';
 	}else{
 		target.classList.add('hidden');
-		var loader = showLoader(target, false, 'Sending e-mail...   ');
+		var loader = main.showLoader(target, false, 'Sending e-mail...   ');
 
 		var formData	= new FormData();
 		formData.append('username',username);
@@ -204,7 +204,7 @@ async function resetPassword(target){
 		var response	= await fetchRestApi('request_pwd_reset', formData);
 
 		if (response) {
-			display_message(message,'success');
+			main.displayMessage(message,'success');
 		}
 
 		loader.remove();
@@ -224,7 +224,7 @@ async function requestAccount(target){
 	var response	= await fetchRestApi('request_user_account', formData);
 	
 	if(response){
-		display_message(response);
+		main.displayMessage(response);
 	}
 
 	// reset form 
@@ -294,7 +294,7 @@ function addMethods(result){
 			location.href	= result;
 		}else{
 			//close login modal
-			hide_modals();
+			main.hideModals();
 		}
 	}else if(result == false){
 		//incorrect creds add message, but only once

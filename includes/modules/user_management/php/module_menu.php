@@ -2,7 +2,7 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-const ModuleVersion		= '7.0.3';
+const ModuleVersion		= '7.0.4';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -31,6 +31,15 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		Use like this: <code>[change_password]</code>
 	</p>
 	<?php
+	$page1Id	= SIM\get_module_option($module_slug, 'account_page');
+	if(is_numeric($page1Id)){
+		?>
+		<p>
+			<b>Auto created page:</b><br>
+			<a href='<?php echo get_permalink($page1Id);?>'>Account</a><br>
+		</p>
+		<?php
+	}
 },10,2);
 
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
@@ -156,7 +165,36 @@ add_filter('sim_module_updated', function($options, $module_slug){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
 
+	// Create account page
+	$page_id	= SIM\get_module_option($module_slug, 'account_page');
+	// Only create if it does not yet exist
+	if(!$page_id or get_post_status($page_id) != 'publish'){
+		$post = array(
+			'post_type'		=> 'page',
+			'post_title'    => 'Account',
+			'post_content'  => '[user-info currentuser=true]',
+			'post_status'   => "publish",
+			'post_author'   => '1'
+		);
+		$pageId 	= wp_insert_post( $post, true, false);
+
+		//Store page id in module options
+		$options['account_page']	= $pageId;
+
+		// Do not require page updates
+		update_post_meta($pageId,'static_content', true);
+	}
+
 	schedule_tasks();
 
 	return $options;
+}, 10, 2);
+
+
+add_action('sim_module_deactivated', function($module_slug, $options){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	// Remove the auto created page
+	wp_delete_post($options['user_info_page'], true);
 }, 10, 2);

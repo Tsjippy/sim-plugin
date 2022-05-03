@@ -9,12 +9,12 @@
  * @return nothing
 */ 
 async function addSchedule(target){
-	var response = await submitForm(target, 'events/add_schedule');
+	var response = await formsubmit.submitForm(target, 'events/add_schedule');
 
 	if(response){
 		target.closest('.schedules_wrapper').outerHTML=response.html;
 		
-		display_message(response.message);
+		main.displayMessage(response.message);
 
 		add_selectable();
 	}
@@ -26,21 +26,21 @@ function ShowPublishScheduleModal(target){
 	if(target.dataset.target != null){
 		modal.querySelector('[name="schedule_target"]').value = target.dataset.target;
 		modal.querySelector('[name="publish_schedule"]').click();
-		showLoader(target,true);
+		main.showLoader(target,true);
 	}else{
 		modal.classList.remove('hidden');
 	}
 }
 
 async function publishSchedule(target){
-	response	= await submitForm(target, 'events/publish_schedule');
+	response	= await formsubmit.submitForm(target, 'events/publish_schedule');
 
 	if(response){
 		document.querySelectorAll('.schedule_actions .loadergif').forEach(el=>el.classList.add('hidden'));
 		
-		hide_modals();
+		main.hideModals();
 
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 
@@ -53,10 +53,10 @@ async function remove_schedule(target){
 
 	var confirmed		= await checkConfirmation(text);
 	if(confirmed){
-		var response	= await fetchRestApi('events/remove_schedule', formdata);
+		var response	= await formsubmit.fetchRestApi('events/remove_schedule', formdata);
 
 		if(response){
-			display_message(response);
+			main.displayMessage(response);
 
 			document.querySelector('.schedules_wrapper .loaderwrapper:not(.hidden)').remove();
 		}
@@ -79,7 +79,7 @@ function showAddHostModal(){
 
 // Add a new host when the host form is submitted
 async function addHost(target){
-	var response 	= await submitForm(target, 'events/add_host');
+	var response 	= await formsubmit.submitForm(target, 'events/add_host');
 
 	if(response){
 		addHostHtml(response);
@@ -101,7 +101,7 @@ async function addCurrentUserAsHost(target){
 
 		var formdata		= loadHostFormdata(target);
 
-		var response	= await fetchRestApi('events/add_host', formdata);
+		var response	= await formsubmit.fetchRestApi('events/add_host', formdata);
 
 		if(response){
 			addHostHtml(response);
@@ -126,11 +126,11 @@ function addHostHtml(response){
 
 	target_cell.outerHTML	= response.html;
 
-	hide_modals();
+	main.hideModals();
 
 	add_selectable();
 
-	display_message(response.message);
+	main.displayMessage(response.message);
 }
 
 // Remove a host
@@ -153,9 +153,9 @@ async function removeHost(target){
 	var confirmed	= await checkConfirmation(text);
 
 	if(confirmed){
-		showLoader(cell.firstChild);
+		main.showLoader(cell.firstChild);
 
-		var response = await fetchRestApi('events/remove_host', formdata);
+		var response = await formsubmit.fetchRestApi('events/remove_host', formdata);
 
 		//Remove cell class
 		cell.classList.remove('selected');
@@ -178,7 +178,7 @@ async function removeHost(target){
 			target.rowSpan = 1;
 		}
 
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 
@@ -269,7 +269,7 @@ function showRecipeModal(target){
 	//Fill the modal with the values of the clickes schedule
 	recipe_modal = document.querySelector('[name="recipe_keyword_modal"]');
 
-	formReset(recipe_modal.querySelector('form'));
+	formsubmit.formReset(recipe_modal.querySelector('form'));
 
 	recipe_modal.querySelector('[name="schedule_id"]').value 	= table.dataset["id"];
 	recipe_modal.querySelector('[name="date"]').value 			= date;
@@ -285,15 +285,15 @@ function showRecipeModal(target){
 
 //submit the recipe form
 async function submitRecipe(target){
-	var response = await submitForm(target, 'events/add_menu');
+	var response = await formsubmit.submitForm(target, 'events/add_menu');
 
 	document.querySelector('.active').textContent	= target.closest('form').querySelector('[name="recipe_keyword"]').value;
 
 	document.querySelector('.active').classList.remove('active');
 
-	hide_modals();
+	main.hideModals();
 
-	display_message(response);
+	main.displayMessage(response);
 }
 
 function loadHostFormdata(target){
@@ -333,9 +333,9 @@ async function checkConfirmation(text){
 			document.querySelectorAll('.modal:not(.hidden)').forEach(modal=>modal.classList.add('hidden'));
 			//display loading gif
 			if(target.classList.contains('remove_schedule')){
-				showLoader(target.closest('.schedules_div'));
+				main.showLoader(target.closest('.schedules_div'));
 			}else{
-				showLoader(target.firstChild);
+				main.showLoader(target.firstChild);
 			}
 			
 			return true;

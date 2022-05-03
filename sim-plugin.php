@@ -64,7 +64,7 @@ function wpse_288408_generate_stack_trace() {
 remove_action( 'wp_head', 'adjacent_posts_rel_link');
 
 // Define constants
-define('SITEURL', get_site_url());
+define('SITEURL', site_url( '', 'https' ));
 define('SITENAME', get_bloginfo());
 define('INCLUDESURL', plugins_url('includes',__FILE__));
 define('PICTURESURL', INCLUDESURL.'/pictures');

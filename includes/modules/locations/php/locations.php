@@ -73,7 +73,7 @@ function ministry_description($post_id){
 	$latitude 	= get_post_meta($post_id,'geo_latitude',true);
 	$longitude 	= get_post_meta($post_id,'geo_longitude',true);
 	if ($latitude != "" and $longitude != ""){
-		$html .= "<p><a class='button' onclick='getRoute(this,$latitude,$longitude)'>Get directions to $ministry</a></p>";
+		$html .= "<p><a class='button' onclick='main.getRoute(this,$latitude,$longitude)'>Get directions to $ministry</a></p>";
 	}
 	
 	if(!empty($child_page_html)){

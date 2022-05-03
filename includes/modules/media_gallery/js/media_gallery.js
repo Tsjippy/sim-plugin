@@ -21,12 +21,12 @@ async function load_more(index, showfirst, skipAmount){
     formData.append('types', types);
     formData.append('startIndex', index+1);
 
-    var response    = await fetchRestApi('media_gallery/load_more_media', formData);
+    var response    = await formsubmit.fetchRestApi('media_gallery/load_more_media', formData);
 
     document.querySelectorAll('#medialoaderwrapper:not(.hidden), .loaderwrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 
     if(!response){
-        display_message('All media are loaded', 'info');
+        main.displayMessage('All media are loaded', 'info');
         document.getElementById('loadmoremedia').classList.add('hidden');
     }else{
         document.querySelector('.mediawrapper').insertAdjacentHTML('beforeEnd', response);
@@ -57,10 +57,10 @@ async function mediaSearch(target){
     formData.append('types', types);
     formData.append('search', searchstring);
 
-    var response    = await fetchRestApi('media_gallery/media_search', formData);
+    var response    = await formsubmit.fetchRestApi('media_gallery/media_search', formData);
     
     if(!response){
-        display_message('Nothing found', 'warning');
+        main.displayMessage('Nothing found', 'warning');
     }else{
         document.querySelector('.mediawrapper').innerHTML = response;
     }
@@ -129,11 +129,11 @@ document.addEventListener('click', async ev=>{
 
         load_more(media[media.length-1].firstChild.dataset.index, false);
 
-        showLoader(target, false);
+        main.showLoader(target, false);
     }
 
     if(target.matches('.buttonwrapper .description')){
-        display_message(target.dataset.description);
+        main.displayMessage(target.dataset.description);
     }
 
     // media type selector
@@ -175,7 +175,6 @@ document.addEventListener('click', async ev=>{
     
         //swap and/or
         if (answer.isConfirmed) {
-            console.log(target.querySelector('a'));
             target.querySelector('a').click();
         }
     }

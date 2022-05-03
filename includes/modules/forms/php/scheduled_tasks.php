@@ -30,7 +30,7 @@ function mandatory_fields_reminder(){
 	//Loop over the users
  	foreach($users as $user){
 		//get the reminders for this user
-		$reminder_html = get_all_fields($user->ID, 'mandatory');
+		$reminder_html = getAllFields($user->ID, 'mandatory');
 		//If there are reminders, send an e-mail
 		if (!empty($reminder_html)){
 			$recipients = '';

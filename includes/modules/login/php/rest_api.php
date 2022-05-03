@@ -757,28 +757,30 @@ function userLogin(){
     //store login date
     update_user_meta( $user->ID, 'last_login_date',date('Y-m-d'));
 
+    $accountPageId  = SIM\get_module_option('user_management', 'account_page');
+
+    // GEt mandatory or recommended fields
+    if(function_exists('SIM\FORMS\getAllFields') and is_numeric($accountPageId)){
+        $fieldList   = SIM\FORMS\getAllFields($user->ID, 'all');
+    }
+
     /* check if we should redirect */
-
-
     if(rtrim( $_SERVER['HTTP_REFERER'], '/' ) == rtrim(home_url(), '/')){
         if(!empty($_GET['redirect'])){
             return $_GET['redirect'];
         }
-
-        $required_fields_status = get_user_meta($user->ID,"required_fields_status",true);
         
         //get 2fa methods for this user
         $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
         //Redirect to account page if 2fa is not set
         if(!$methods or count($methods ) == 0){
-
             $twofa_page      = get_page_link(SIM\get_module_option('login', '2fa_page'));
             $twofa_page     .= SIM\get_module_option('login', '2fa_page_extras');
             return $twofa_page;
         //redirect to account page to fill in required fields
-        }elseif ($required_fields_status != 'done' and !isset($_SESSION['showpage'])){
-            return home_url( '/account/' );
+        }elseif (!isset($_SESSION['showpage']) and !empty($fieldList) and is_numeric($accountPageId)){
+            return get_permalink($accountPageId);
         }else{
             if(isset($_SESSION['showpage'])) unset($_SESSION['showpage']);
             return 'Login successful';

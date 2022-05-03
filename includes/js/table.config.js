@@ -2,9 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: {
-		"main": './main.js',
-		"fileupload": './fileupload.js',
-		"formsubmit": './form_submit.js',
+		"table": './table.js',
 	},
     mode: 'production',
     output: {
@@ -20,6 +18,4 @@ module.exports = {
     }
 }
 
-//if (process.env.NODE_ENV !== 'production') {
-	module.exports['devtool'] = 'source-map';
-//}
+module.exports['devtool'] = 'source-map';

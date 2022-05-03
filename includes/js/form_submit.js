@@ -1,6 +1,6 @@
 console.log('formsubmit loaded');
 
-function formReset(form){
+export function formReset(form){
 	//reset form to the default
 	form.reset();
 
@@ -30,12 +30,11 @@ function formReset(form){
 		form.querySelectorAll('.multistepcontrols .step.finish').forEach(el=>el.classList.remove('finish'));
 	
 		//go back to the first part of the form in case of multistep
-		currentTab = 0;
-		formFunctions.showTab(currentTab,form);
+		formFunctions.showTab(0,form);
 	}
 }
 
-async function submitForm(target, url){
+export async function submitForm(target, url){
 	var form		= target.closest('form');
 	var validity = true;
 	
@@ -54,7 +53,7 @@ async function submitForm(target, url){
 			tinymce.get().forEach((tn)=>tn.save());
 		}
 		
-		formdata = new FormData(form);
+		var formdata = new FormData(form);
 
 		if(form.dataset.addempty == 'true'){
 			//also append at least one off all checkboxes
@@ -76,15 +75,15 @@ async function submitForm(target, url){
 	}
 }
 
-async function fetchRestApi(url, formdata){
-	formdata.append('_wpnonce', sim.restnonce);
+export async function fetchRestApi(url, formData){
+	formData.append('_wpnonce', sim.restnonce);
 
 	var result = await fetch(
 		sim.base_url+'/wp-json/sim/v1/'+url,
 		{
 			method: 'POST',
 			credentials: 'same-origin',
-			body: formdata
+			body: formData
 		}
 	);
 
@@ -95,13 +94,13 @@ async function fetchRestApi(url, formdata){
 			return response;
 		}else{
 			console.error(response);
-			display_message(response.message, 'error');
+			main.displayMessage(response.message, 'error');
 			return false;
 		};
 	}catch(error){
 		console.error(error);
 		console.error(result);
-		display_message(`Url ${sim.base_url}/wp-json/sim/v1/${url} not found`, 'error');
+		main.displayMessage(`Url ${sim.base_url}/wp-json/sim/v1/${url} not found`, 'error');
 		return false;
 	}
 }

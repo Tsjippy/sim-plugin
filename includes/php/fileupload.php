@@ -171,8 +171,7 @@ class Fileupload{
 }
 
 //Make upload_files function availbale for AJAX request
-add_action ( 'wp_ajax_upload_files', 'SIM\upload_files' );
-function upload_files(){
+add_action ( 'wp_ajax_upload_files', function (){
 	if (!empty($_FILES["files"])) {
 		$file_param	= (array)$_POST['fileupload'];
 		$files		= $_FILES["files"];
@@ -294,7 +293,7 @@ function upload_files(){
 		// Return error message
 		die(json_encode(array('error' => 'No files found')));
 	}
-}
+});
 
 add_action( 'rest_api_init', function () {	
 	//Route for first names

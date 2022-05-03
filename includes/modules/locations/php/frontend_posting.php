@@ -91,7 +91,7 @@ function location_address($locationtypes, $post_id){
             $post_thumbnail = get_the_post_thumbnail($post_id, 'thumbnail', array( 'class' => 'aligncenter markerpicture' , 'style' => 'max-height:100px;',));
             
             //Add a directions button to the marker content
-            $directions_form = "<p><a class='button' onclick='getRoute(this,$latitude,$longitude)'>Get directions</a></p>";
+            $directions_form = "<p><a class='button' onclick='main.getRoute(this,$latitude,$longitude)'>Get directions</a></p>";
             
             //Add the post excerpt to the marker content
             $description = $post_thumbnail.wp_trim_words(wp_trim_excerpt("",$post_id),25);

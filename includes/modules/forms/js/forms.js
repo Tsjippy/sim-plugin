@@ -2,15 +2,15 @@ var re	= '';
 
 async function saveFormInput(target){
 	var form		= target.closest('form');
-	var response	= await submitForm(target, 'forms/save_form_input');
+	var response	= await formsubmit.submitForm(target, 'forms/save_form_input');
 
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
 
-		display_message(response);
+		main.displayMessage(response);
 
 		if(form.dataset.reset == 'true'){
-			formReset(form);
+			formsubmit.formReset(form);
 		}
 	}
 }

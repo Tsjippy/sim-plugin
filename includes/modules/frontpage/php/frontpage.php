@@ -83,7 +83,7 @@ if(!empty($hook_name)){
 				)
 			);
 			
-			//exclude private events
+			//exclude private events and user pages
 			$args['meta_query']		= array(
 				'relation' => 'AND',
 				array(
@@ -104,6 +104,10 @@ if(!empty($hook_name)){
 						'key' => 'expirydate',
 						'compare' => 'NOT EXISTS',
 					)
+				),
+				array(
+					'key'		=> 'missionary_id',
+					'compare'	=> 'NOT EXISTS'
 				),
 			);
 			

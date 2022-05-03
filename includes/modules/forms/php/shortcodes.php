@@ -137,7 +137,7 @@ add_shortcode("missing_form_fields",function ($atts){
 
 	$html	= '';
 
-    $field_html = get_all_fields(get_current_user_id(), $a['type']);
+    $field_html = getAllFields(get_current_user_id(), $a['type']);
 	
 	if (!empty($field_html)){
 		$html .=  '<div id=recommendations style="margin-top:20px;">';

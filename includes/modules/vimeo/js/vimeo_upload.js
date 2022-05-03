@@ -31,7 +31,7 @@ export class VimeoUpload{
         formdata.append('file_name', this.file.name);
         formdata.append('file_type', this.file.type);
 
-        var response    = await fetchRestApi('vimeo/prepare_vimeo_upload', formdata);
+        var response    = await formsubmit.fetchRestApi('vimeo/prepare_vimeo_upload', formdata);
 
         //Failed
         if(!response){

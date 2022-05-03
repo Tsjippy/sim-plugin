@@ -114,14 +114,6 @@ div fieldset{
 	margin-left: 5px;
 }
 
-.warning{
-	background-color: #d8a354;
-    color: black;
-    padding: 10px;
-    margin: 10px 0 20px 0;
-    text-align: center;
-}
-
 .edit_useraccounts .button{
 	margin-bottom: 10px;
 }
@@ -139,6 +131,22 @@ h3{
 	text-align: center;
 	padding: 5px;
 	color: darkgreen;
+}
+
+.warning{
+	background-color: #d8a354;
+    color: black;
+    padding: 10px;
+    margin: 10px 0 20px 0;
+    text-align: center;
+}
+
+.error{
+	border: 3px solid $secundary_color;
+    color: $primary_color;
+    padding: 10px;
+    margin: 10px 0 20px 0;
+    text-align: center;
 }
 
 .swal2-container .no-border {

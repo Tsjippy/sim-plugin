@@ -2,7 +2,7 @@
 namespace SIM\FRONTPAGE;
 use SIM;
 
-const ModuleVersion		= '7.0.1';
+const ModuleVersion		= '7.0.2';
 
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
@@ -98,9 +98,26 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	}
 	?>
 	<br>
-	<label>Select a page containing information for first time users</label>
 
+	<label>
+		Welcome message on homepage
+		<?php
+		$tinyMceSettings = array(
+			'wpautop' 					=> false,
+			'media_buttons' 			=> false,
+			'forced_root_block' 		=> true,
+			'convert_newlines_to_brs'	=> true,
+			'textarea_name' 			=> "welcome_message",
+			'textarea_rows' 			=> 10
+		);
+
+		echo wp_editor(
+			$settings["welcome_message"],
+			"welcome_message",
+			$tinyMceSettings
+		);
+		?>
+	</label>
 	<?php
-	echo SIM\page_select("welcome_page", $settings["welcome_page"]);
 
 }, 10, 3);

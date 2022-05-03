@@ -235,8 +235,8 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             $attachment_id = wp_insert_post( $args );
         
             //add to wp library
-            add_post_meta($attachment_id, 'vimeo_id', $vimeo_id);
-            add_post_meta($attachment_id, '_wp_attached_file', $title);
+            update_post_meta($attachment_id, 'vimeo_id', $vimeo_id);
+            update_post_meta($attachment_id, '_wp_attached_file', $title);
 
             return $attachment_id;
         }

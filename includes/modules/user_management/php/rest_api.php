@@ -150,7 +150,7 @@ function updateRoles(){
     $userRoles 	= $user->roles;
     $newRoles	= (array)$_POST['roles'];
 
-    if(empty(array_diff($userRoles, array_keys($newRoles)))){
+    if(empty(array_diff($userRoles, array_keys($newRoles)) ) and empty(array_diff(array_keys($newRoles), $userRoles))){
         return "Nothing to update";
     }
 

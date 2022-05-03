@@ -63,7 +63,7 @@ async function showEmptyModal(target){
 	var formdata = new FormData();
 	formdata.append('elementid','-1');
 	formdata.append('formid', formid);
-	var response = await fetchRestApi('forms/request_form_conditions_html', formdata);
+	var response = await formsubmit.fetchRestApi('forms/request_form_conditions_html', formdata);
 
 	//fill the element conditions tab
 	modal.querySelector('.element_conditions_wrapper').innerHTML = response;
@@ -85,7 +85,7 @@ async function requestEditElementData(target){
 
 	var editButton		= target.outerHTML;
 
-	var loader			= showLoader(target);
+	var loader			= main.showLoader(target);
 
 	loader.querySelector('.loadergif').style.margin = '5px 19px 0px 19px';
 	
@@ -93,7 +93,7 @@ async function requestEditElementData(target){
 	formdata.append('elementid', elementid);
 	formdata.append('formid', formid);
 	
-	var response = await fetchRestApi('forms/request_form_element', formdata);
+	var response = await formsubmit.fetchRestApi('forms/request_form_element', formdata);
 
 	if(response){
 		//fill the form after we have clicked the edit button
@@ -121,7 +121,7 @@ async function requestEditElementData(target){
 
 async function addFormElement(target){
 	var form		= target.closest('form');
-	var response	= await submitForm(target, 'forms/add_form_element');
+	var response	= await formsubmit.submitForm(target, 'forms/add_form_element');
 
 	if(response){
 		if(form.querySelector('[name="element_id"]').value == ''){
@@ -141,9 +141,9 @@ async function addFormElement(target){
 			document.querySelector('.form_elements .clicked').closest('.form_element_wrapper').outerHTML = response.html;
 		}
 
-		hide_modals();
+		main.hideModals();
 
-		display_message(response.message);
+		main.displayMessage(response.message);
 	}
 }
 
@@ -157,12 +157,12 @@ async function sendElementSize(el, widthpercentage){
 		formdata.append('elementid',el.closest('.form_element_wrapper').dataset.id);
 		formdata.append('new_width',widthpercentage);
 		
-		response = await fetchRestApi('forms/edit_formfield_width', formdata);
+		response = await formsubmit.fetchRestApi('forms/edit_formfield_width', formdata);
 
 		if(response){
-			hide_modals();
+			main.hideModals();
 
-			display_message(response);
+			main.displayMessage(response);
 		}
 	}
 }
@@ -174,7 +174,7 @@ async function remove_element(target){
 	var elementindex 	= elementwrapper.dataset.id;
 	var form			= target.closest('form');
 
-	showLoader(target);
+	main.showLoader(target);
 	var loader			= parent.querySelector('.loadergif');
 	loader.style.paddingRight = '10px';
 	loader.classList.remove('loadergif');
@@ -184,7 +184,7 @@ async function remove_element(target){
 
 	formdata.append('elementindex',elementindex);
 	
-	response = await fetchRestApi('forms/remove_element', formdata);
+	response = await formsubmit.fetchRestApi('forms/remove_element', formdata);
 
 	if(response){
 		//remove the formelement row
@@ -192,7 +192,7 @@ async function remove_element(target){
 		
 		fixElementNumbering(form);
 
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 
@@ -212,12 +212,12 @@ async function reorderformelements(event){
 		formdata.append('old_index', old_index);
 		formdata.append('new_index',(old_index+difference));
 		
-		var response	= await fetchRestApi('forms/reorder_form_elements', formdata);
+		var response	= await formsubmit.fetchRestApi('forms/reorder_form_elements', formdata);
 
 		if(response){
 			reordering_busy = false;
 
-			display_message(response);
+			main.displayMessage(response);
 		}
 	}else{
 		Swal.fire({
@@ -229,32 +229,32 @@ async function reorderformelements(event){
 }
 
 async function saveFormConditions(target){
-	var response	= await submitForm(target, 'forms/save_element_conditions');
+	var response	= await formsubmit.submitForm(target, 'forms/save_element_conditions');
 
 	if(response){
-		hide_modals();
+		main.hideModals();
 
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 
 async function saveFormSettings(target){
-	var response	= await submitForm(target, 'forms/save_form_settings');
+	var response	= await formsubmit.submitForm(target, 'forms/save_form_settings');
 
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
 
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 
 async function saveFormEmails(target){
-	var response	= await submitForm(target, 'forms/save_form_emails');
+	var response	= await formsubmit.submitForm(target, 'forms/save_form_emails');
 
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
 
-		display_message(response);
+		main.displayMessage(response);
 	}
 }
 

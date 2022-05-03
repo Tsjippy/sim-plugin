@@ -4,7 +4,7 @@ function change_visibility(target) {
 }
 
 async function addNewMinistry(target){
-	var response = await submitForm(target, 'user_management/add_ministry');
+	var response = await formsubmit.submitForm(target, 'user_management/add_ministry');
 	
 	if(response){
 		var ministry_name 		= target.closest('form').querySelector('[name="location_name"]').value;
@@ -33,10 +33,10 @@ async function addNewMinistry(target){
 		document.getElementById('justadded').focus();
 		document.getElementById('justadded').select();
 
-		display_message(`Succesfully added ministry ${ministry_name}.`)
+		main.displayMessage(`Succesfully added ministry ${ministry_name}.`)
 	}
 	
-	hide_modals();
+	main.hideModals();
 }
 
 //listen to all clicks
@@ -49,7 +49,7 @@ document.addEventListener('click',function(event) {
 		target.closest('.ministryposition').classList.add('hidden');
 
 		//Show the modal
-		show_modal('add_ministry');
+		main.showModal('add_ministry');
 	}
 	
 	if(target.classList.contains('ministry_option_checkbox')){

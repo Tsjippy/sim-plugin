@@ -47,7 +47,11 @@ add_filter( 'the_content', function ( $content ) {
             $path = SIM\url_to_path($pdf_url);
             
             //Echo the pdf to screen
-            ob_clean();
+            while(true){
+                //ob_get_clean only returns false when there is absolutely nothing anymore
+                $result	= ob_get_clean();
+                if($result === false) break;
+            }
             ob_start();
             header("Content-type: application/pdf");
             header("Content-Disposition: inline; filename=".$matches[2]);

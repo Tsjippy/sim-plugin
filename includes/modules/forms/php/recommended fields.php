@@ -10,7 +10,7 @@ use SIM;
  *
  * @return string 	Returns html links to forms with empty mandatory fields
  */
-function get_all_fields($user_id, $type){
+function getAllFields($user_id, $type){
 	global $wpdb;
 
 	$child				= SIM\is_child($user_id);
@@ -131,7 +131,7 @@ function get_all_fields($user_id, $type){
 					if(count($names) > 1){
 						$second_tab	= $names[0];
 					}
-					$html .= "<li><a onclick='change_url(this, `$second_tab`)' data-param_val='$main_tab' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
+					$html .= "<li><a onclick='main.changeUrl(this, `$second_tab`)' data-param_val='$main_tab' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
 				}
 			}
 		}
@@ -159,7 +159,7 @@ function add_child_fields($html, $user_id){
 			// Valid user account
 			if ($userdata){
 				// Add html for each field as well
-				$html	.= get_all_fields($child, 'mandatory');
+				$html	.= getAllFields($child, 'mandatory');
 			}
 		}
 	}
@@ -168,7 +168,7 @@ function add_child_fields($html, $user_id){
 }
 
 add_action('sim_dashboard_warnings', function($user_id){		
-	$html	 = get_all_fields($user_id, 'recommended');
+	$html	 = getAllFields($user_id, 'recommended');
 	
 	if (empty($html)){
 		echo "<p>All your data is up to date, well done.</p>";
