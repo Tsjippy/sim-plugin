@@ -25,9 +25,9 @@ add_action('sim_after_category_add', function($postType, $name, $result){
 add_filter(
 	'widget_categories_args',
 	function ( $cat_args, $instance  ) {
-		//if we are on a locationtype page, change to display the location types
-		if(is_tax('locationtype') or is_page('location') or get_post_type()=='location'){
-			$cat_args['taxonomy'] 		= 'locationtype';
+		//if we are on a locations page, change to display the location types
+		if(is_tax('locations') or is_page('location') or get_post_type()=='location'){
+			$cat_args['taxonomy'] 		= 'locations';
 			$cat_args['hierarchical']	= true;
 			$cat_args['hide_empty'] 	= false;
 		}
@@ -40,7 +40,7 @@ add_filter(
 
 add_filter('widget_title', function ($title, $widget_id=null){
 	//Change the title of the location category widget if not logged in
-	if(is_tax('locationtype') and $widget_id == 'categories' and !is_user_logged_in()){
+	if(is_tax('locations') and $widget_id == 'categories' and !is_user_logged_in()){
 		$url = SITEURL.'/locations/ministry/';
 		return "<a href='$url'>Ministries</a>";
 	}

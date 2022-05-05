@@ -48,11 +48,11 @@ add_action('generate_after_header',function (){
 		$title = $category->name;
 		if($title == 'event'){
 			$title = 'Calendar';
-		}elseif(is_tax('recipetype')){
+		}elseif(is_tax('recipes')){
 			$title .= ' recipies';
-		}elseif(is_tax('eventtype')){
+		}elseif(is_tax('events')){
 			$title .= ' events';
-		}elseif(is_tax('locationtype')){
+		}elseif(is_tax('locations')){
 			//nothing
 		}else{
 			$title .= " posts";

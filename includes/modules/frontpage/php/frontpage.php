@@ -131,11 +131,11 @@ if(!empty($hook_name)){
 				//exclude birthdays and anniversaries
 				$args['tax_query'] = array(
 					array(
-						'taxonomy' => 'eventtype',
+						'taxonomy' => 'events',
 						'field'    => 'term_id',
 						'terms'    => [
-							get_term_by('slug', 'anniversary','eventtype')->term_id,
-							get_term_by('slug', 'birthday','eventtype')->term_id
+							get_term_by('slug', 'anniversary','events')->term_id,
+							get_term_by('slug', 'birthday','events')->term_id
 						],
 						'operator' => 'NOT IN'
 					),
@@ -145,7 +145,7 @@ if(!empty($hook_name)){
 				if(in_array('nigerianstaff',$user->roles)){
 					$args['tax_query'][] = 
 						array(
-							'taxonomy' => 'eventtype',
+							'taxonomy' => 'events',
 							'field'    => 'term_id',
 							'terms'    => [get_cat_ID('Confidential')],
 							'operator' => 'NOT IN'

@@ -93,9 +93,9 @@ function get_ministries(){
 		'post_status'		=> 'publish',
 		'tax_query' => array(
             array(
-                'taxonomy'	=> 'locationtype',
+                'taxonomy'	=> 'locations',
 				'field' => 'term_id',
-				'terms' => get_term_by('name', 'Ministries', 'locationtype')->term_id
+				'terms' => get_term_by('name', 'Ministries', 'locations')->term_id
             )
         )
 	]);

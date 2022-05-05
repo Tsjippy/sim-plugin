@@ -131,7 +131,7 @@ function addMinistry(){
     $post_id = wp_insert_post( $ministry_page );
     
     //Add the ministry cat
-    wp_set_post_terms($post_id ,27,'locationtype');
+    wp_set_post_terms($post_id ,27,'locations');
     
     //Store the ministry location
     if ($post_id != 0){

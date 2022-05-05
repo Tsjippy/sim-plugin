@@ -93,41 +93,38 @@ function register_post_type_and_tax($single, $plural){
 	);
 	
 	//register taxonomy category
-	register_taxonomy( $single.'type', $single, $taxonomy_category_args );
+	register_taxonomy( $plural, $single, $taxonomy_category_args );
 
 	//redirect plural to archive page as well
 	add_rewrite_rule($plural.'/?$','index.php?post_type='.$single,'top');
 }
 
-add_filter( 'single_template', 'SIM\get_template_file', 10, 3 );
-add_filter( 'page_template', 'SIM\get_template_file', 10, 3 );
-add_filter( 'taxonomy_template', 'SIM\get_template_file', 10, 3 );
-add_filter( 'part_template', 'SIM\get_template_file', 10, 3 );
-add_filter( 'archive_template', 'SIM\get_template_file', 10, 3 );
-add_filter( 'category_template', 'SIM\get_template_file', 10, 3 );
-add_filter( 'singular_template', 'SIM\get_template_file', 10, 3 );
+add_filter( 'single_template', __NAMESPACE__.'\get_template_file', 10, 2 );
+add_filter( 'page_template', __NAMESPACE__.'\get_template_file', 10, 2 );
+add_filter( 'taxonomy_template', __NAMESPACE__.'\get_template_file', 10, 2 );
+add_filter( 'part_template', __NAMESPACE__.'\get_template_file', 10, 2 );
+add_filter( 'archive_template', __NAMESPACE__.'\get_template_file', 10, 2 );
+add_filter( 'category_template', __NAMESPACE__.'\get_template_file', 10, 2 );
+add_filter( 'singular_template', __NAMESPACE__.'\get_template_file', 10, 2 );
 
-function get_template_file($template, $type, $templates){
+function get_template_file($template, $type, $name=''){
 	global $post;
 
 	$base_dir		= __DIR__."/../modules";	
 
 	//check what we are dealing with
-	$name	= '';
-
 	switch ($type) {
 		case 'single':
-			$name			= $post->post_type;
+			if(empty($name))	$name	= $post->post_type;
 			$template_file	= "$base_dir/{$name}s/templates/$type-$name.php";
 			break;
 		case 'archive':
-			$name			= get_queried_object()->name;
-			$template_file	= "$base_dir/{$name}s/templates/$type-$name.php";
+			if(empty($name))	$name	= get_queried_object()->name.'s';
+			$template_file	= "$base_dir/{$name}/templates/$type-$name.php";
 			break;
 		case 'taxonomy':
-			$name			= get_queried_object()->taxonomy;
-			$dirname		= str_replace('type', '', $name);
-			$template_file	= "$base_dir/{$dirname}s/templates/$type-$name.php";
+			if(empty($name))	$name	= get_queried_object()->taxonomy;
+			$template_file	= "$base_dir/$name/templates/$type-$name.php";
 			break;
 		case 'page';
 			break;
@@ -141,8 +138,6 @@ function get_template_file($template, $type, $templates){
 		locate_template( array( "$type-$name.php" ) ) !== $template)	and	// and template is not found in theme folder
 		file_exists($template_file)											// template file exists
 	) {
-		//return plugin post template
-		//return $template;
 		return $template_file;
 	}
 	

@@ -166,32 +166,50 @@ function print_array($message,$display=false){
 	}
 }
 
-function page_select($select_id,$page_id=null,$class=""){	
+function page_select($select_id, $page_id=null, $class="", $postTypes=['page', 'location']){	
 	$pages = get_posts(
 		array(
 			'orderby' 		=> 'post_title',
 			'order' 		=> 'asc',
 			'post_status' 	=> 'publish',
-			'post_type'     => ['page', 'location'],
+			'post_type'     => $postTypes,
 			'posts_per_page'=> -1,
 		)
 	);
-	
-	$html = "";
-	$html .= "<select name='$select_id' id='$select_id' class='selectpage $class'>
-				<option value=''>---</option>";
-	
+
+	$taxonomies = get_taxonomies(
+		array(
+		'public'   => true,
+		'_builtin' => false	 
+		)
+	);
+
+	$terms		= get_terms(['hide_empty'=>false]);
+
+	$options	= [];
 	foreach ( $pages as $page ) {
-		if ($page_id == $page->ID){
-			$selected='selected=selected';
-		}else{
-			$selected="";
-		}
-		$option = '<option value="' . $page->ID . '" '.$selected.'>';
-		$option .= $page->post_title;
-		$option .= '</option>';
-		$html .= $option;
+		$options[$page->ID]	= $page->post_title;
 	}
+	foreach ( $taxonomies as $taxonomy ) {
+		$options[$taxonomy]	= ucfirst($taxonomy);
+	}
+	foreach ( $terms as $term ) {
+		$options[$term->taxonomy.'/'.$term->slug]	= $term->name;
+	}
+
+	asort($options);
+
+	$html = "<select name='$select_id' id='$select_id' class='selectpage $class'>";
+		$html .= "<option value=''>---</option>";
+	
+		foreach ( $options as $id=>$name ) {
+			if ($page_id == $id){
+				$selected='selected=selected';
+			}else{
+				$selected="";
+			}
+			$html .= "<option value='$id' $selected>$name</option>";
+		}
 	
 	$html .= "</select>";
 	return $html;

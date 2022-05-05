@@ -55,16 +55,16 @@ add_action( 'edit_attachment', function($attachment_id){
 	if ( !empty( $_REQUEST['attachments'][$attachment_id]['vimeo_url'] ) ) {
 		$vimeo		= new VimeoApi();
 		$vimeo_id   = get_post_meta( $attachment_id, 'vimeo_id',true);
-		$vimeo->download_from_vimeo($_REQUEST['attachments'][$attachment_id]['vimeo_url'], $vimeo_id);
+		$vimeo->downloadFromVimeo($_REQUEST['attachments'][$attachment_id]['vimeo_url'], $vimeo_id);
 	}
 } );
 
 // Delete video from vimeo when attachemnt is deleted, if that option is enabled
 if(SIM\get_module_option('vimeo', 'remove')){
-	add_action( 'delete_attachment', function($post_id, $post ){
+	add_action( 'delete_attachment', function($postId, $post ){
 		if(explode('/', $post->post_mime_type)[0] == 'video'){
 			$VimeoApi = new VimeoApi();
-			$VimeoApi->delete_vimeo_video($post_id);
+			$VimeoApi->deleteVimeoVideo($postId);
 		}
 	},10,2);
 }

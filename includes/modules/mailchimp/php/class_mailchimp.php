@@ -306,9 +306,9 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			}
 		}
 
-		function send_email($post_id, $segment_id, $from=''){
+		function sendEmail($postId, $segmentId, $from='', $extraMessage=''){
 			try {
-				$post 			= get_post($post_id);
+				$post 			= get_post($postId);
 				
 				$title			= $post->post_title;
 				
@@ -330,7 +330,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 							"recipients"	=> [
 								"list_id"		=> $this->settings['audienceids'][0],
 								"segment_opts"	=> [
-									"saved_segment_id"	=> $segment_id
+									"saved_segment_id"	=> $segmentId
 								]
 							],
 							"settings"		=> [
@@ -365,7 +365,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				$campain_content 	= $response->html;
 				
 				//Update the html
-				$mail_content		= $post->post_content;
+				$mail_content		= $extraMessage.'<br>'.$post->post_content;
 
 				$replace_text 		= '//*THIS WILL BE REPLACED BY THE WEBSITE *//';
 				$mail_content 		= str_replace($replace_text, $mail_content, $campain_content);

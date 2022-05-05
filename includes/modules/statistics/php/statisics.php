@@ -4,6 +4,8 @@ use SIM;
 
 // Adds statisics to a page about the current page
 add_filter( 'the_content', function ($content){
+    if(!is_main_query())    return $content;
+
     if(!is_user_logged_in()) return $content;
 
     $view_roles     = SIM\get_module_option('statistics', 'view_rights');

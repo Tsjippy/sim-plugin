@@ -48,12 +48,28 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	function(){
-				$vimeo	= new VimeoApi();
-				$result	= $vimeo->download_from_vimeo($_POST['download_url'], $_POST['vimeoid']);
-				if(is_wp_error($result)){
-					return $result;
+				$vimeo		= new VimeoApi();
+				$vimeoId	= $_POST['vimeoid'];
+
+				// Get the post for this video
+				$posts = get_posts(array(
+					'numberposts'   => -1,
+					'post_type'     => 'attachment',
+					'meta_key'      => 'vimeo_id',
+					'meta_value'    => $vimeoId
+				));
+
+				if(empty($posts)){
+					return new WP_Error('vimeo'," No post found for this video");
+				}else{
+					$title	= $posts[0]->post_title;
+
+					$result		= $vimeo->downloadFromVimeo($_POST['download_url'], $vimeoId."_$title");
+					if(is_wp_error($result)){
+						return $result;
+					}
+					return "Video downloaded to server succesfully";
 				}
-				return "Video downloaded to server succesfully";
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(

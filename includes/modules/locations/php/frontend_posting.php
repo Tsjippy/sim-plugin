@@ -11,7 +11,7 @@ add_action('frontend_post_before_content', function($frontEndContent){
     $categories = get_categories( array(
         'orderby' 	=> 'name',
         'order'   	=> 'ASC',
-        'taxonomy'	=> 'locationtype',
+        'taxonomy'	=> 'locations',
         'hide_empty'=> false,
     ) );
     
@@ -30,7 +30,7 @@ add_action('frontend_post_content_title', function ($post_type){
 
 add_action('sim_after_post_save', __NAMESPACE__.'\save_location_meta');
 function save_location_meta($post){
-    //store locationtype
+    //store locations
     $locationtypes = [];
     if(is_array($_POST['locationtype'])){
         foreach($_POST['locationtype'] as $key=>$locationtype) {
@@ -40,7 +40,7 @@ function save_location_meta($post){
         //Store types
         $locationtypes = array_map( 'intval', $locationtypes );
         
-        wp_set_post_terms($post->ID,$locationtypes,'locationtype');
+        wp_set_post_terms($post->ID,$locationtypes,'locations');
     }
     
     //tel
@@ -91,7 +91,7 @@ function location_address($locationtypes, $post_id){
             $post_thumbnail = get_the_post_thumbnail($post_id, 'thumbnail', array( 'class' => 'aligncenter markerpicture' , 'style' => 'max-height:100px;',));
             
             //Add a directions button to the marker content
-            $directions_form = "<p><a class='button' onclick='main.getRoute(this,$latitude,$longitude)'>Get directions</a></p>";
+            $directions_form = "<p><a class='button' onclick='zgetRoute(this,$latitude,$longitude)'>Get directions</a></p>";
             
             //Add the post excerpt to the marker content
             $description = $post_thumbnail.wp_trim_words(wp_trim_excerpt("",$post_id),25);
@@ -103,7 +103,7 @@ function location_address($locationtypes, $post_id){
             $icon_url = get_the_post_thumbnail_url($post_id);
             
             //Get the first category name
-            $name = get_term( $locationtypes[0], 'locationtype' )->slug.'_icon';
+            $name = get_term( $locationtypes[0], 'locations' )->slug.'_icon';
             
             //If there is a location category set and an custom icon for this category is set
             if(count($locationtypes)>0 and !empty(SIM\get_module_option('locations', $name))){
@@ -229,7 +229,7 @@ function location_address($locationtypes, $post_id){
             $categories = get_categories( array(
                 'orderby' 	=> 'name',
                 'order'   	=> 'ASC',
-                'taxonomy'	=> 'locationtype',
+                'taxonomy'	=> 'locations',
                 'hide_empty'=> false,
             ) );		
         

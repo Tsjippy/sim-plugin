@@ -2,13 +2,12 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
-const ModuleVersion		= '7.0.6';
+const ModuleVersion		= '7.0.7';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
 
-	$pageId	= SIM\get_module_option($module_slug, 'publish_post_page');
 	?>
 	<p>
 		This module makes it possible to add and edit pages, posts and custom post types.<br>
@@ -23,6 +22,7 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	</p>
 
 	<?php
+	$pageId	= SIM\get_module_option($module_slug, 'publish_post_page');
 	if(is_numeric($pageId)){
 		?>
 		<p>

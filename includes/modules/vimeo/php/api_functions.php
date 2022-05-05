@@ -89,10 +89,10 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             return $token['body']['access_token'];
         }
 
-        function get_vimeo_id($post_id){
-            $vimeo_id		= get_post_meta($post_id, 'vimeo_id', true);
-            if(is_numeric($vimeo_id)){
-                return $vimeo_id;
+        function getVimeoId($postId){
+            $vimeoId		= get_post_meta($postId, 'vimeo_id', true);
+            if(is_numeric($vimeoId)){
+                return $vimeoId;
             }else{
                 return false;
             }
@@ -146,17 +146,20 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             return $videos;
         }
 
-        function delete_vimeo_video($post_id){  
+        function deleteVimeoVideo($post_id){  
             if ( $this->is_connected() ) {
-                $vimeo_id   = $this->get_vimeo_id($post_id);
+                $vimeo_id   = $this->getVimeoId($post_id);
 
                 if(!is_numeric($vimeo_id)) return false;
 
                 //Deleting video on vimeo
-                $response = $this->api->request( "/videos/$vimeo_id", [], 'DELETE' );
+                if($_SERVER['HTTP_HOST'] != 'localhost'){
+                    wp_mail('enharmsen@gmail.com' , 'Video deleted', 'Hi Ewald<br><br>'.wp_get_current_user()->display_name.' just deleted the video with id '.$vimeo_id);
+                    /* $response = $this->api->request( "/videos/$vimeo_id", [], 'DELETE' );
         
-                if(isset($response['body']['error'])){
-                    return $response['body']['error'];
+                    if(isset($response['body']['error'])){
+                        return $response['body']['error'];
+                    } */
                 }
 
                 SIM\print_array("Succesfully deleted video with id $vimeo_id from Vimeo");
@@ -264,7 +267,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         }
 
         function update_meta($post_id, $data){
-            $vimeo_id   = $this->get_vimeo_id($post_id);
+            $vimeo_id   = $this->getVimeoId($post_id);
 
             if($vimeo_id and $this->is_connected()){
                 $response = $this->api->request("/videos/$vimeo_id", $data, 'PATCH');
@@ -275,7 +278,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         function hide_vimeo_video( $post_id) {
             //Hide the video from vimeo
             try {
-                $vimeo_id   = $this->get_vimeo_id($post_id);
+                $vimeo_id   = $this->getVimeoId($post_id);
 
                 if(!is_numeric($vimeo_id) or !$this->is_connected()) return false;
 
@@ -295,7 +298,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             if(file_exists($thumbnail)) return $thumbnail;
 
             //no thumbnail found, create one
-            $vimeo_id   = $this->get_vimeo_id($post_id);
+            $vimeo_id   = $this->getVimeoId($post_id);
 
             if($vimeo_id and $this->is_connected()){
                 //Get thumbnails
@@ -303,7 +306,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 if($data['active']){
                     $icon_url   = $data['base_link'].'.webp';
 
-                    $result = $this->download_from_vimeo($icon_url, $vimeo_id);
+                    $result = $this->downloadFromVimeo($icon_url, $vimeo_id);
                     if(is_wp_error($result)){
                         $result = $result->error_data['vimeo']['path'];
                     }
@@ -319,7 +322,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         }
 
         function download_video($post_id){
-            $vimeo_id   = $this->get_vimeo_id($post_id);
+            $vimeo_id   = $this->getVimeoId($post_id);
             $response	= $this->api->request("/videos/$vimeo_id", [], 'GET');
 
             if(isset($response['download'])){
@@ -336,7 +339,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             }
         }
 
-        function download_from_vimeo($url, $filename) {
+        function downloadFromVimeo($url, $filename) {
             $extension  = pathinfo(parse_url($url)['path'], PATHINFO_EXTENSION);
             if($extension == 'webp'){
                 $path   = $this->pictures_dir;

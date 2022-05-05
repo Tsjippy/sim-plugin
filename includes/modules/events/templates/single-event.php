@@ -7,7 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 wp_enqueue_style('sim_events_css');
 
-get_header(); ?>
+if(!isset($skipHeader) or !$skipHeader)	get_header(); 
+?>
 	<div id="primary">
 		<main>
 			<?php
@@ -26,7 +27,7 @@ get_header(); ?>
 <?php
 //get_sidebar();
 
-get_footer();
+if(!$skipFooter)	get_footer();
 
 function event_contents(){
 	$events		= new Events();
@@ -44,7 +45,7 @@ function event_contents(){
 				
 				$categories = wp_get_post_terms(
 					get_the_ID(), 
-					'eventtype',
+					'events',
 					array(
 						'orderby'   => 'name',
 						'order'     => 'ASC',
@@ -64,7 +65,7 @@ function event_contents(){
 								//First loop over the cat to see if any parent cat needs to be removed
 								foreach($categories as $id=>$category){
 									//Get the child categories of this category
-									$children = get_term_children($id,'eventtype');
+									$children = get_term_children($id,'events');
 									
 									//Loop over the children to see if one of them is also in he cat array
 									foreach($children as $child){

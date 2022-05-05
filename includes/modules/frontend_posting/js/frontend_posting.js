@@ -56,10 +56,15 @@ async function changePostType(target){
 }
 
 function switchforms(target){
-	var parent = target.closest('#frontend_upload_form');
+	var parent 			= document.getElementById('frontend_upload_form');
+
+	if(target == null){
+		var post_type		= location.search.replace('?type=', '');
+	}else{
+		var post_type 		= target.value;
+	}
 				
 	var submit_button 	= parent.querySelector('[name="submit_post"]');
-	var post_type 		= target.value;
 	
 	document.querySelector('#postform [name="post_type"]').value 	= post_type;
 	
@@ -398,7 +403,7 @@ document.addEventListener("DOMContentLoaded",function() {
 document.addEventListener("click", event=>{
 	var target = event.target;
 
-	if(target.name == 'submit_post' || target.parentNode.name == 'submit_post'){
+	if(target.name == 'submit_post' || (target.parentNode != null && target.parentNode.name == 'submit_post')){
 		submitPost(target);
 	}
 	if(target.name == 'draft_post' || target.parentNode.name == 'draft_post'){

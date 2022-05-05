@@ -12,12 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-get_header(); 
+if(!isset($skipHeader) or !$skipHeader)	get_header(); 
 ?>
 	<div id="primary">
 		<main id="main">
 			<?php
-			$archive	= false;
 			while ( have_posts() ) :
 				the_post();
 				include(__DIR__.'/content.php');
@@ -46,4 +45,4 @@ get_header();
 
 	get_sidebar();
 
-	get_footer();
+	if(!isset($skipFooter) or !$skipFooter)	get_footer();

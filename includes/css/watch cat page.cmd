@@ -1,0 +1,1 @@
+sass --watch --style=compressed ".\scss\taxonomy.scss" "taxonomy.min.css"

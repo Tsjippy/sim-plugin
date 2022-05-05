@@ -44,7 +44,7 @@ class FrontEndContent{
 	}
 	
 	function register_buttons($buttons) {
-		array_push($buttons, 'separator', 'file_upload','select_user');
+		array_push($buttons, 'select_user');
 		return $buttons;
 	}
 	
@@ -384,46 +384,50 @@ class FrontEndContent{
 
 	function post_type_selector(){
 		//do not show for lite posts
-		if($this->lite == false){
-			if($this->post_id == null){
-				$label_text = 'Select the content type you want to create:';
-			}else{
-				$label_text = "You are editing a {$this->post_type}, use selector below if you want to change the post type";
-				?>
-				<form action="" method="post" name="change_post_type">
-				<?php
-			}
-			
-			?>
-			<h4><?php echo $label_text; ?></h4>
-			<select id="post_type_selector" name="post_type_selector" required>
-				<?php
-				$post_types	= get_post_types(['public'=>true]);
-				
-				foreach($post_types as $post_type){
-					if($this->post_type == $post_type){
-						$selected = 'selected';
-					}else{
-						$selected = '';
-					}
+		if(!$this->lite){
 
-					$type_name	= ucfirst($post_type);
-					if($post_type == 'attachment') $type_name = 'Picture/Video/Audio';
-					echo "<option value='$post_type' $selected>$type_name</option>";
+			// Only show type selector if we do not query a specific one
+			if(empty($_GET['type'])){
+				if($this->post_id == null){
+					$label_text = 'Select the content type you want to create:';
+				}else{
+					$label_text = "You are editing a {$this->post_type}, use selector below if you want to change the post type";
+					?>
+					<form action="" method="post" name="change_post_type">
+					<?php
 				}
 				
 				?>
-			</select>
-			<?php
-			
-			if($this->post_id != null){
-				?>
-					<input type="hidden" name="userid"					value="<?php echo $this->user->ID; ?>">
-					<input type="hidden" name="postid"					value="<?php echo $this->post_id; ?>">
-				
+				<h4><?php echo $label_text; ?></h4>
+				<select id="post_type_selector" name="post_type_selector" required>
+					<?php
+					$post_types	= get_post_types(['public'=>true]);
+					
+					foreach($post_types as $post_type){
+						if($this->post_type == $post_type){
+							$selected = 'selected';
+						}else{
+							$selected = '';
+						}
+
+						$type_name	= ucfirst($post_type);
+						if($post_type == 'attachment') $type_name = 'Picture/Video/Audio';
+						echo "<option value='$post_type' $selected>$type_name</option>";
+					}
+					
+					?>
+				</select>
 				<?php
-				echo SIM\add_save_button('change_post_type','Change the post type');
-				echo '</form>';
+			
+				if($this->post_id != null){
+					?>
+						<input type="hidden" name="userid"					value="<?php echo $this->user->ID; ?>">
+						<input type="hidden" name="postid"					value="<?php echo $this->post_id; ?>">
+					
+					<?php
+					echo SIM\add_save_button('change_post_type','Change the post type');
+					echo '</form>';
+				}
 			}
 		}
 	}

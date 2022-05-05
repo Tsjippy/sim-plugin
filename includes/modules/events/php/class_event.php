@@ -323,8 +323,8 @@ class Events{
 			$cat_name = 'anniversary';
 			if(SIM\is_child($user->ID)) return;//do not create annversaries for children
 		}
-		$termid = get_term_by('slug', $cat_name,'eventtype')->term_id;
-		if(empty($termid)) $termid = wp_insert_term(ucfirst($cat_name),'eventtype')['term_id'];
+		$termid = get_term_by('slug', $cat_name,'events')->term_id;
+		if(empty($termid)) $termid = wp_insert_term(ucfirst($cat_name),'events')['term_id'];
 		
 		//get old post
 		$this->post_id	= get_user_meta($user->ID,$type.'_event_id',true);
@@ -364,7 +364,7 @@ class Events{
 			update_post_meta($this->post_id,'eventdetails',$this->event_data);
 			update_post_meta($this->post_id,'celebrationdate',$metavalue);
 
-			wp_set_object_terms($this->post_id,$termid,'eventtype');
+			wp_set_object_terms($this->post_id,$termid,'events');
 
 			if($type == 'birthday'){
 				$mod_name = 'birthdaydefaultimage';
@@ -746,7 +746,8 @@ class Events{
 										$detail_html .= "</div>";
 									$detail_html .= "</div>";
 									$detail_html .= "<h4 class='event-title'>";
-										$detail_html .= "<a href='{$event->guid}'>";
+										$url	= get_permalink($event->ID);
+										$detail_html .= "<a href='$url'>";
 											$detail_html .= $event->post_title;
 										$detail_html .= "</a>";
 									$detail_html .= "</h4>";
@@ -965,7 +966,8 @@ class Events{
 						$detail_html .= "</div>";
 
 						$detail_html .= "<h4 class='event-title'>";
-							$detail_html .= "<a href='{$event->guid}'>";
+							$url	= get_permalink($event->ID);
+							$detail_html .= "<a href='$url'>";
 								$detail_html .= $event->post_title;
 							$detail_html .= "</a>";
 						$detail_html .= "</h4>";
@@ -1125,7 +1127,8 @@ class Events{
 				$html .= "<div class='event-wrapper'>";
 					$html .= get_the_post_thumbnail($event->post_id,'medium');
 					$html .= "<h3 class='event-title'>";
-						$html .= "<a href='{$event->guid}'>";
+						$url	= get_permalink($event->ID);
+						$html .= "<a href='$url'>";
 							$html .= $event->post_title;
 						$html .= "</a>";
 					$html .= "</h3>";

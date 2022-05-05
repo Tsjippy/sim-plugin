@@ -126,6 +126,3 @@ add_filter( 'post_password_required',
 	}
 	, 10, 2 
 );
-
-// make it possible to include a page in another page
-//add_shortcode('embed')

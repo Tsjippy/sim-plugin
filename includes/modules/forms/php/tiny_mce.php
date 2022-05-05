@@ -13,7 +13,6 @@ add_action('init', function(){
 			$formbuilder->form_select()
 		);
 
-		$url = plugins_url("js/tiny_mce.js?ver=".ModuleVersion, __DIR__);
 		$plugins['insert_form_shortcode']		= plugins_url("js/tiny_mce.js?ver=".ModuleVersion, __DIR__);
 
 		return $plugins;

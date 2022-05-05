@@ -240,7 +240,7 @@ function addCategory(\WP_REST_Request $request ){
 	$args 		= ['slug' => strtolower($name)];
 	if(is_numeric($parent)) $args['parent'] = $parent;
 	
-	$result = wp_insert_term( ucfirst($name), $post_type."type", $args);
+	$result = wp_insert_term( ucfirst($name), $post_type."s", $args);
 
 	do_action('sim_after_category_add', $post_type, strtolower($name), $result);
 	

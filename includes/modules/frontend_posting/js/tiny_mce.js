@@ -98,4 +98,4 @@ tinymce.PluginManager.add(
 	tinymce.plugins.select_user
 )
 
-console.log('tiny_mce.js loaded');
+console.log('Frontend posting tiny_mce.js loaded');

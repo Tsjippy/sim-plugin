@@ -114,7 +114,6 @@ function update_user_page_title($user_id, $title){
 
 //Display name and mission of missionary
 function user_description($user_id){
-	global $CompoundsPageID;
 	$html = "";
 
 	$userdata	= get_userdata($user_id);
@@ -133,18 +132,7 @@ function user_description($user_id){
 				$address = $location["address"];
 			}
 		}else{
-			$url = "";
-			$compounds = get_children( array('post_parent' => $CompoundsPageID,));
-			foreach($compounds as $compound){
-				if($compound->post_title == $location["compound"]){
-					$url = $compound->guid;
-					$address = '<a href="'.$url.'">'.$location["compound"].'</a>';
-				}
-			}
-			//Compound is set, but no compound page found
-			if ( $url == ""){
-				$address = $location["compound"];
-			}
+			$address = $location["compound"];
 		}
 	}else{
 		$address = "No clue, since no address is given";

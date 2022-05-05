@@ -7,16 +7,6 @@ const StyleVersion		= '7.0.17';
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
 add_action( 'admin_enqueue_scripts', __NAMESPACE__.'\registerScripts');
 
-add_filter( 'body_class', function( $classes ) {
-	$newclass = [];
-	
-	if ( is_home() or is_search() or is_category() or is_tax()){
-		$newclass[] = 'categorypage';
-	}
-	
-	return array_merge( $classes, $newclass );
-} );
-
 // Style the buttons in the media library
 add_action( 'wp_enqueue_media', function(){
     wp_enqueue_style('sim_media_style', plugins_url('css/media.min.css', __DIR__), [], StyleVersion);
@@ -46,13 +36,20 @@ function registerScripts(){
 	//File upload js
 	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.min.js', __DIR__), array('sim_formsubmit_script'),StyleVersion,true);
 
+	wp_register_style('sim_taxonomy_style', plugins_url('css/taxonomy.min.css', __DIR__), array(), StyleVersion);
 }
 
 function enqueueScripts($hook){
+	global $post;
+
 	$current_user	= wp_get_current_user();
 	$UserID			= $current_user->id;
 
 	registerScripts();
+
+	if ( is_home() or is_search() or is_category() or is_tax()){
+		wp_enqueue_style('sim_taxonomy_style');
+	}
 
 	wp_enqueue_script('sim_script');
 	//add main css

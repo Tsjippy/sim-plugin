@@ -14,6 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Load js
 wp_enqueue_script('sim_plurarize_script');
+
+if(is_tax() or is_archive()){
+	$archive	= true;
+}
+
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
 	<div class="cat_card<?php if(!$archive) echo ' inside-article';?>">
@@ -46,7 +51,7 @@ wp_enqueue_script('sim_plurarize_script');
 					<?php
 					$categories = wp_get_post_terms(
 						get_the_ID(), 
-						'recipetype',
+						'recipes',
 						array(
 							'orderby'   => 'name',
 							'order'     => 'ASC',
@@ -74,7 +79,7 @@ wp_enqueue_script('sim_plurarize_script');
 				?>
 				<span class='cooking_time recipemeta'>
 					<?php 
-					$url = plugins_url('pictures/recipe_coocking_time.png', __DIR__);
+					$url = plugins_url('pictures/time.png', __DIR__);
 					echo "<img src='$url' alt='category' class='recipe_icon'>";
 					echo get_post_meta(get_the_ID(),'time_needed',true); 
 					if(!$archive) echo 'minutes';

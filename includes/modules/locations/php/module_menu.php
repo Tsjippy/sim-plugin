@@ -60,7 +60,7 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	$categories = get_categories( array(
 		'orderby' 	=> 'name',
 		'order'   	=> 'ASC',
-		'taxonomy'	=> 'locationtype',
+		'taxonomy'	=> 'locations',
 		'hide_empty'=> false,
 	) );
 	foreach($categories as $locationtype){

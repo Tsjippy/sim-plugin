@@ -15,9 +15,9 @@ add_action('init', function(){
 	add_filter(
 		'widget_categories_args',
 		function ( $cat_args, $instance  ) {
-			//if we are on a eventtype page, change to display the event types
-			if(is_tax('eventtype') or is_page('event') or get_post_type()=='event'){
-				$cat_args['taxonomy'] 		= 'eventtype';
+			//if we are on a events page, change to display the event types
+			if(is_tax('events') or is_page('event') or get_post_type()=='event'){
+				$cat_args['taxonomy'] 		= 'events';
 				$cat_args['hierarchical']	= true;
 				$cat_args['hide_empty'] 	= false;
 			}
@@ -42,7 +42,7 @@ function event_specific_fields($frontEndContent){
 	$categories	= get_categories( array(
 		'orderby' => 'name',
 		'order'   => 'ASC',
-		'taxonomy'=> 'eventtype',
+		'taxonomy'=> 'events',
 		'hide_empty' => false,
 	) );
 	

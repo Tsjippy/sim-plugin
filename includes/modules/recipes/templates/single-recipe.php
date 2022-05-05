@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-get_header(); 
+if(!isset($skipHeader) or !$skipHeader)	get_header(); 
 ?>
 
 	<div id="primary" <?php generate_do_element_classes( 'content' ); ?>>
@@ -49,4 +49,4 @@ get_header();
 
 	generate_construct_sidebars();
 
-	get_footer();
+	if(!isset($skipFooter) or !$skipFooter)	get_footer();

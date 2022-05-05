@@ -28,6 +28,8 @@ function create_page_pdf(){
 add_filter( 'the_content', function ( $content ) {
     //Print to screen if the button is clicked
     if( isset($_POST['print_as_pdf']))	create_page_pdf();
+
+    if(!is_main_query())    return $content;
     
     //pdf button
     if(!empty(get_post_meta(get_the_ID(), 'add_print_button',true))){

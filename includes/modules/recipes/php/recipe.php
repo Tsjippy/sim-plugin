@@ -4,7 +4,7 @@ use SIM;
 
 /*
 	In this file we define a new post type: recipe
-	We also define a new taxonomy (category): recipetype
+	We also define a new taxonomy (category): recipes
 	We make sure post of this type get an url according to their taxonomy
 */
 
@@ -16,9 +16,9 @@ add_action('init', function(){
 }, 999);
 
 add_filter( 'widget_categories_args', function ( $cat_args, $instance  ) {
-	//if we are on a recipetype page, change to display the recipe types
-	if(is_tax('recipetype') or is_page('recipes') or get_post_type()=='recipe'){
-		$cat_args['taxonomy'] 		= 'recipetype';
+	//if we are on a recipes page, change to display the recipe types
+	if(is_tax('recipes') or is_page('recipes') or get_post_type()=='recipe'){
+		$cat_args['taxonomy'] 		= 'recipes';
 		$cat_args['hierarchical']	= true;
 		$cat_args['hide_empty'] 	= false;
 	}
@@ -55,7 +55,7 @@ function store_recipe_meta($post, $post_type){
 		}
 		
 		//Store recipe type
-		wp_set_post_terms($post->ID,$recipetypes,'recipetype');
+		wp_set_post_terms($post->ID,$recipetypes,'recipes');
 	}
 	
 	//ingredients
@@ -119,7 +119,7 @@ function recipe_specific_fields($frontEndContent){
 	$categories	= get_categories( array(
 		'orderby' => 'name',
 		'order'   => 'ASC',
-		'taxonomy'=> 'recipetype',
+		'taxonomy'=> 'recipes',
 		'hide_empty' => false,
 	) );
 	

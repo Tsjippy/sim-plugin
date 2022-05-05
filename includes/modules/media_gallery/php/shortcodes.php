@@ -217,7 +217,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
             <div class="buttonwrapper">
                 <?php
                 if($canEdit){
-                    echo "<a href='".SITEURL."/wp-admin/upload.php?item=$id' class='button editmedia'>Edit</a>";
+                    echo apply_filters('sim-media-edit-link', "<a href='".SITEURL."/wp-admin/upload.php?item=$id' class='button editmedia'>Edit</a>", $id);
                 }
 
                 if(!empty($description)){

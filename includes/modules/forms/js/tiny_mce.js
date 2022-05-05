@@ -82,4 +82,4 @@ tinymce.PluginManager.add(
     tinymce.plugins.insert_form_shortcode
 )
 
-console.log('tiny_mce.js loaded');
+console.log('Form shortcode tiny_mce.js loaded');
