@@ -3,27 +3,49 @@ namespace SIM\SIGNAL;
 use SIM;
 
 //Post is published from backend
-add_action(  'transition_post_status',  function( $new_status, $old_status, $post ) {
+add_action(  'transition_post_status',  function( $newStatus, $oldStatus, $post ) {
 	// Check if signal nonce is set.
-	if ($new_status == 'publish' and isset( $_POST['signal_message_meta_box_nonce'] ) ) {
-		//Get the nonce from the post array
-		$nonce = $_POST['signal_message_meta_box_nonce'];
-		// Verify that the nonce is valid and checkbox to send is checked.
-		if (wp_verify_nonce( $nonce, 'signal_message_meta_box') and isset($_POST['signal_message'])) {
-			send_post_notification($post);
+	if ($newStatus == 'publish'){
+		if(isset( $_POST['signal_message_meta_box_nonce'] ) ) {
+			//Get the nonce from the post array
+			$nonce = $_POST['signal_message_meta_box_nonce'];
+			// Verify that the nonce is valid and checkbox to send is checked.
+			if (wp_verify_nonce( $nonce, 'signal_message_meta_box') and isset($_POST['signal_message'])) {
+				sendPostNotification($post);
+			}
+		}elseif($oldStatus != 'publish' and $oldStatus != 'new'){
+			sendPostNotification($post);
 		}
 	}
 }, 10, 3 );
 
-function send_post_notification($post){
+/**
+ *
+ * Sends a summary or full post to the Signal group when post is published
+ *
+ * @param    object|int $post       Wordpress post or post id
+ *
+**/
+function sendPostNotification($post){
 	if(is_numeric($post)){
 		$post = get_post($post);
 	}
+
+	if(empty(get_post_meta($post->ID, 'signal','checked'))) return;
+
+    $signalMessageType	= get_post_meta($post->ID, 'signalmessagetype', true);
+	$signalUrl			= get_post_meta($post->ID, 'signal_url', true);
+	$signalExtraMessage	= get_post_meta($post->ID, 'signal_extra_message', true);
+
+	delete_post_meta($post->ID, 'signal');
+	delete_post_meta($post->ID, 'signalmessagetype');
+	delete_post_meta($post->ID, 'signal_url');
+	delete_post_meta($post->ID, 'signal_extra_message');
 	
-	if($_POST['signalmessagetype'] == 'all'){
+	if($signalMessageType == 'all'){
 		$excerpt	= $post->post_content;
 
-		if(!empty($_POST['signal_url'])){
+		if(!empty($signalUrl)){
 			$excerpt .=	"...\n\nView it on the web:\n".get_permalink($post->ID);
 		}
 	}else{
@@ -32,7 +54,7 @@ function send_post_notification($post){
 		//Only add read more if the excerpt is not the whole content
 		if($excerpt != strip_tags($post->post_content)){
 			$excerpt .=	"...\n\nRead more on:\n".get_permalink($post->ID);
-		}elseif(!empty($_POST['signal_url'])){
+		}elseif(!empty($signalUrl)){
 			$excerpt .=	"...\n\nView it on the web:\n".get_permalink($post->ID);
 		}
 	}
@@ -41,8 +63,6 @@ function send_post_notification($post){
 	$excerpt = strip_tags(str_replace('<br>',"\n",$excerpt));
 
 	$excerpt = apply_filters('sim_signal_post_notification_message', $excerpt, $post);
-
-	if(!empty($_POST['pagetype']['everyone'])) $excerpt	.= "\n\nThis is a mandatory message, please read it straight away.";
 	
 	if($_POST['update'] == 'true'){
 		$message = "'{$post->post_title}' just got updated\n\n$excerpt";
@@ -50,8 +70,8 @@ function send_post_notification($post){
 		$message = "'{$post->post_title}' just got published\n\n$excerpt";
 	}
 
-	if(!empty($_POST['signal_extra_message'])){
-		$message .=	"\n\n".$_POST['signal_extra_message'];
+	if(!empty($signalExtraMessage)){
+		$message .=	"\n\n$signalExtraMessage";
 	}
 
 	send_signal_message(

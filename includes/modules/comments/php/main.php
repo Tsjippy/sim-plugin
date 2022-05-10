@@ -26,7 +26,7 @@ add_action( 'comment_post', function( $commentID, $approved, $commentdata ){
     // Send e-mail to content managers
     }else{
         $to                     = '';
-        $users                  = get_users( ['role'    => 'contentmanager'] );
+        $users                  = get_users( ['role'    => 'editor'] );
         foreach($users as $user){
             $to .= $user->user_email.', ';
         }

@@ -3,7 +3,7 @@ namespace SIM\VIMEO;
 use SIM;
 use Vimeo\Vimeo;
 
-const ModuleVersion		= '7.0.4';
+const ModuleVersion		= '7.0.5';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -82,12 +82,12 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 				?>
 				<div class='error'>
 					<p>
-						Something went wrong <a href="<?php echo $VimeoApi->get_authorize_url($client_id, $client_secret);?>">try again</a>.
+						Something went wrong <a href="<?php echo $VimeoApi->getAuthorizeUrl($client_id, $client_secret);?>">try again</a>.
 					</p>
 				</div>
 				<?php
 			}else{
-				$access_token = $VimeoApi->store_accesstoken($client_id, $client_secret, $_GET['code'], admin_url( "admin.php?page=".$_GET["page"] ));
+				$access_token = $VimeoApi->storeAccessToken($client_id, $client_secret, $_GET['code'], admin_url( "admin.php?page=".$_GET["page"] ));
 				?>
 				<div id='set_vimeo_token'>
 					<h2>Succesfully connect to vimeo</h2>
@@ -100,7 +100,7 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 			}
 		}else{
 			$VimeoApi		= new VimeoApi();
-			$link	= $VimeoApi->get_authorize_url($client_id, $client_secret);
+			$link	= $VimeoApi->getAuthorizeUrl($client_id, $client_secret);
 			?>
 			<div id='set_vimeo_token'>
 				<h2>Connect to vimeo</h2>
@@ -122,7 +122,7 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 		}
 	}else{
 		$VimeoApi		= new VimeoApi();
-		$VimeoApi->is_connected();
+		$VimeoApi->isConnected();
 	}
 	?>
 	<div class="settings-section">

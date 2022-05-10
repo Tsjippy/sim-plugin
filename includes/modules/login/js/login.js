@@ -204,7 +204,7 @@ async function resetPassword(target){
 		var response	= await fetchRestApi('request_pwd_reset', formData);
 
 		if (response) {
-			main.displayMessage(message,'success');
+			main.displayMessage(response,'success');
 		}
 
 		loader.remove();

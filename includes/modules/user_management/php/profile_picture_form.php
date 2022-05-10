@@ -4,38 +4,13 @@ use SIM;
 
 add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	if($formname != 'profile_picture') return $formresults;	
-	global $Maps;
 	
-	$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
-
-	$family				= get_user_meta($user_id, 'family', true);
-	
-	//update a marker icon only if privacy allows and no family picture is set
-	if (empty($privacy_preference['hide_profile_picture']) and !is_numeric($family['picture'][0])){
-		$marker_id = get_user_meta($user_id,"marker_id",true);
-		
-		//New profile picture is set, update the marker icon
-		if(is_numeric(get_user_meta($user_id,'profile_picture',true))){
-			$icon_url = get_profile_picture_url($user_id);
-			
-			//Save profile picture as icon
-			$Maps->create_icon($marker_id, get_userdata($user_id)->user_login, $icon_url, 1);
-		}else{
-			//remove the icon
-			$Maps->remove_icon($marker_id);
-		}
-	}
-
 	// Hide profile picture by default from media galery
 	$picture_id	=  $formresults['profile_picture'][0];
 	if(is_numeric($picture_id)) update_post_meta($picture_id, 'gallery_visibility', 'hide' );
 
 	return $formresults;
 },10,3);
-
-function profile_picture_change($user_id){
-	
-}
 
 function get_profile_picture_url($user_id,$size=[50,50]){
 	$attachment_id	= get_user_meta($user_id,'profile_picture',true);

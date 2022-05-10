@@ -35,7 +35,7 @@ function createVimeoThumbnails(){
 	if(!empty($posts)){
 		$vimeoApi	= new VimeoApi();
 		foreach($posts as $post){
-			$vimeoApi->get_thumbnail($post->ID);
+			$vimeoApi->getThumbnail($post->ID);
 		}
 	}
 }
@@ -44,8 +44,10 @@ function createVimeoThumbnails(){
 function vimeoSync(){
     $vimeoApi	= new VimeoApi();
     
-    if ( $vimeoApi->is_connected() ) {
-        $vimeoVideos	= $vimeoApi->get_uploaded_videos();
+    if ( $vimeoApi->isConnected() ) {
+        $vimeoVideos	= $vimeoApi->getUploadedVideos();
+        if(!$vimeoVideos) return;
+
         $args = array(
             'post_type'  	=> 'attachment',
             'numberposts'	=> -1,
@@ -75,7 +77,7 @@ function vimeoSync(){
         }
 
         //remove any local video which does not exist on vimeo
-        foreach(array_diff_key($localVideos, $onlineVideos) as $postId){
+        foreach(array_diff_key($localVideos, $onlineVideos) as $vimeoId=>$postId){
             $vimeoId		= get_post_meta($postId, 'vimeo_id', true);
             SIM\print_array("Deleting video with vimeo id $vimeoId");
             wp_delete_post($postId);
@@ -83,7 +85,7 @@ function vimeoSync(){
 
         //add any video which does not exist locally
         foreach(array_diff_key($onlineVideos, $localVideos) as $vimeoId => $videoName){
-            $vimeoApi->create_vimeo_post( $videoName, 'video/mp4', $vimeoId);
+            $vimeoApi->createVimeoPost( $videoName, 'video/mp4', $vimeoId);
         }
     }
 }

@@ -2,13 +2,15 @@
 namespace SIM\FRONTPAGE;
 use SIM;
 
+use function SIM\get_module_option;
+
 //generate_before_header
 // diplay buttons
 $hook_name	= SIM\get_module_option('frontpage','header_hook');
 if(!empty($hook_name)){
 	//Add a button to the header
 	add_action($hook_name, function(){
-		if (is_user_logged_in() and (is_page(SIM\get_module_option('login','home_page')) or is_front_page())){
+		if (is_user_logged_in() and (is_page(SIM\get_module_option('frontpage','home_page')) or is_front_page())){
 			$button1	= SIM\get_module_option('frontpage', 'first_button');
 			$button2	= SIM\get_module_option('frontpage', 'second_button');
 
@@ -29,14 +31,14 @@ if(!empty($hook_name)){
 
 //generate_after_main_content
 //display prayer message and birtdays
-$hook_name	= SIM\get_module_option('frontpage','after_main_content_hook');
+$hook_name	= SIM\get_module_option('frontpage', 'after_main_content_hook');
 if(!empty($hook_name)){
 	add_action($hook_name, function(){
 		//if on home page and prayer module activated
-		if(is_page(SIM\get_module_option('login','home_page')) and SIM\get_module_option('prayer','enable')){
+		if(is_page(SIM\get_module_option('frontpage','home_page')) and SIM\get_module_option('prayer','enable')){
 			
-			if (is_user_logged_in() and function_exists('SIM\PRAYER\prayer_request')){
-				$prayerrequest = SIM\PRAYER\prayer_request();
+			if (is_user_logged_in() and function_exists('SIM\PRAYER\prayerRequest')){
+				$prayerrequest = SIM\PRAYER\prayerRequest();
 				if (empty($prayerrequest)) return;
 			
 				echo "<article>";
@@ -59,9 +61,9 @@ $hook_name	= SIM\get_module_option('frontpage','before_footer_hook');
 if(!empty($hook_name)){
 	add_action($hook_name, function() {
 		//if on home page
-		if(is_page(SIM\get_module_option('login','home_page')) or is_front_page()){
+		if(is_page(SIM\get_module_option('frontpage','home_page')) or is_front_page()){
 			// If not logged in and on the logged in homepage
-			if (!is_user_logged_in() and is_page(SIM\get_module_option('login','home_page'))){
+			if (!is_user_logged_in() and is_page(SIM\get_module_option('frontpage','home_page'))){
 				return;
 			}
 
@@ -275,7 +277,7 @@ function page_gallery(){
 
 //Add the home class
 add_filter( 'body_class',function ( $classes ) {
-	if(is_page(SIM\get_module_option('login','home_page')) or is_front_page()){
+	if(is_page(SIM\get_module_option('frontpage','home_page')) or is_front_page()){
 		$classes[] = 'home';
 	}
     return $classes;

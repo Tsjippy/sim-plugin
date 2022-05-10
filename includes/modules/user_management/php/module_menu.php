@@ -18,6 +18,10 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		You can also change userdata for other users if you have the 'usermanagement' role.<br>
 		Use like this: <code>[user-info currentuser='true']</code>
 		<br>
+		<h4>userstatistics</h4>
+		This shortcode displays a table listing all website users and some of their details.<br>
+		Use like this: <code>[userstatistics]</code>
+		<br>
 		<h4>create_user_account</h4>
 		This shortcode displays a from to create new user accounts.<br>
 		Use like this: <code>[create_user_account]</code>
@@ -32,11 +36,13 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	</p>
 	<?php
 	$page1Id	= SIM\get_module_option($module_slug, 'account_page');
-	if(is_numeric($page1Id)){
+	$page2Id	= SIM\get_module_option($module_slug, 'user_edit_page');
+	if(is_numeric($page1Id) or is_numeric($page2Id)){
 		?>
 		<p>
 			<b>Auto created page:</b><br>
 			<a href='<?php echo get_permalink($page1Id);?>'>Account</a><br>
+			<a href='<?php echo get_permalink($page2Id);?>'>Edit users</a><br>
 		</p>
 		<?php
 	}
@@ -184,6 +190,37 @@ add_filter('sim_module_updated', function($options, $module_slug){
 		// Do not require page updates
 		update_post_meta($pageId,'static_content', true);
 	}
+
+	// Create user edit page
+	$pageId	= SIM\get_module_option($module_slug, 'user_edit_page');
+	// Only create if it does not yet exist
+	if(!$pageId or get_post_status($pageId) != 'publish'){
+		$post = array(
+			'post_type'		=> 'page',
+			'post_title'    => 'Edit users',
+			'post_content'  => '[user-info]',
+			'post_status'   => "publish",
+			'post_author'   => '1'
+		);
+		$pageId 	= wp_insert_post( $post, true, false);
+
+		//Store page id in module options
+		$options['user_edit_page']	= $pageId;
+
+		// Do not require page updates
+		update_post_meta($pageId, 'static_content', true);
+	}
+
+	add_filter('display_post_states', function ( $states, $post ) { 
+    
+		if ( $post->ID == SIM\get_module_option('user_management', 'account_page') ) {
+			$states[] = __('Account page'); 
+		}elseif ( $post->ID == SIM\get_module_option('user_management', 'user_edit_page') ) {
+			$states[] = __('User edit page'); 
+		}
+	
+		return $states;
+	}, 10, 2);
 
 	schedule_tasks();
 

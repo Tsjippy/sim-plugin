@@ -29,7 +29,7 @@ class Formbuilder{
 		$this->create_db_table();
 
 		//calculate full form rights
-		if(array_intersect(['contentmanager'],$this->user_roles) != false){
+		if(array_intersect(['editor'],$this->user_roles) != false){
 			$this->editrights		= true;
 		}else{
 			$this->editrights		= false;
@@ -250,7 +250,7 @@ class Formbuilder{
 		}
 
 		if(!$this->editrights){
-			$edit_roles	= ['contentmanager'];
+			$edit_roles	= ['editor'];
 			foreach($this->formdata->settings['full_right_roles'] as $key=>$role){
 				if(!empty($role)){
 					$edit_roles[] = $key;

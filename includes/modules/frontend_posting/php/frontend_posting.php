@@ -8,7 +8,7 @@ function send_pending_post_warning($post, $update){
 	
 	//get all the content managers
 	$users = get_users( array(
-		'role'    => 'contentmanager',
+		'role'    => 'editor',
 	));
 	
 	if($update){
@@ -20,7 +20,9 @@ function send_pending_post_warning($post, $update){
 	$type = $post->post_type;
 	
 	//send notification to all content managers
-	$url			= add_query_arg( ['post_id' => $post->ID], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );
+	$url			= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
+	if(!$url)	 return;
+	$url			= add_query_arg( ['post_id' => $post->ID], $url );
 	$author_name	= get_userdata($post->post_author)->display_name;
 	
 	foreach($users as $user){
@@ -99,12 +101,14 @@ function add_page_edit_button(){
 			isset($user_ministries[str_replace(" ","_",$post_title)])							or 
 			$missionary_page_id == $post_id														or
 			apply_filters('sim_frontend_content_edit_rights', false, $post_category) == true	or
-			in_array('contentmanager',$user->roles)
+			in_array('editor',$user->roles)
 		){
 			$type = $post->post_type;
 			$button_text = "Edit this $type";
 			
-			$url = add_query_arg( ['post_id' => $post_id], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );
+			$url	= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
+			if(!$url) return;
+			$url = add_query_arg( ['post_id' => $post_id], $url );
 			echo "<a href='$url' class='button sim' id='pageedit'>$button_text</a>";
 		}
 	}

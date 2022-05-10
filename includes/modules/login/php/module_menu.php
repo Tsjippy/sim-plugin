@@ -2,7 +2,7 @@
 namespace SIM\LOGIN;
 use SIM;
 
-const ModuleVersion		= '7.0.5';
+const ModuleVersion		= '7.0.6';
 
 add_action('sim_submenu_description', function($module_slug, $module_name){
 	//module slug should be the same as grandparent folder name
@@ -39,12 +39,14 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	<?php
 	$page1Id	= SIM\get_module_option($module_slug, 'password_reset_page');
 	$page2Id	= SIM\get_module_option($module_slug, 'register_page');
-	if(is_numeric($page1Id) or is_numeric($page2Id)){
+	$page3Id	= SIM\get_module_option($module_slug, '2fa_page');
+	if(is_numeric($page1Id) or is_numeric($page2Id) or is_numeric($page3Id)){
 		?>
 		<p>
 			<b>Auto created pages:</b><br>
 			<a href='<?php echo get_permalink($page1Id);?>'>Change password</a><br>
 			<a href='<?php echo get_permalink($page2Id);?>'>Request user account</a><br>
+			<a href='<?php echo get_permalink($page3Id);?>'>Two Factor Authentication</a><br>
 		</p>
 		<?php
 	}
@@ -54,11 +56,7 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
-	
-	?><label>Page for logged in users</label>
-	<?php echo SIM\page_select("home_page", $settings["home_page"]);?>
-	<br>
-
+	?>
 	<p>
 		You can enable user registration if you want.<br>
 		If that's the case people can request an user account.<br>
@@ -70,15 +68,6 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	</label>
 	<br>
 	<br>
-
-	<label>Page with the two factor setup form</label>
-	<?php echo SIM\page_select("2fa_page", $settings["2fa_page"]);?>
-	<br>
-
-	<label>
-		Anything you want to append to the url<br>
-		<input type='text' name="2fa_page_extras" value="<?php echo $settings['2fa_page_extras'];?>">
-	</label>
 
 	<h4>E-mail with the two factor login code</h4>
 	<label>Define the e-mail people get when they requested a code for login.</label>
@@ -186,6 +175,26 @@ add_filter('sim_module_updated', function($new_options, $module_slug, $old_optio
 		}
 	}
 
+	// Add 2fa page
+	$page_id	= SIM\get_module_option($module_slug, '2fa_page');
+	// Only create if it does not yet exist
+	if(!$page_id or get_post_status($page_id) != 'publish'){
+		$post = array(
+			'post_type'		=> 'page',
+			'post_title'    => 'Two Factor Authentication',
+			'post_content'  => '[twofa_setup]',
+			'post_status'   => "publish",
+			'post_author'   => '1'
+		);
+		$pageId 	= wp_insert_post( $post, true, false);
+
+		//Store page id in module options
+		$new_options['2fa_page']	= $pageId;
+
+		// Do not require page updates
+		update_post_meta($pageId,'static_content', true);
+	}
+
 	// Remove registration page
 	if(isset($old_options['register_page']) and !isset($new_options['user_registration'])){
 		wp_delete_post($old_options['register_page'], true);
@@ -195,6 +204,19 @@ add_filter('sim_module_updated', function($new_options, $module_slug, $old_optio
 	return $new_options;
 
 }, 10, 3);
+
+add_filter('display_post_states', function ( $states, $post ) { 
+    
+    if ( $post->ID == SIM\get_module_option('login', 'password_reset_page') ) {
+        $states[] = __('Password reset page'); 
+    }elseif ( $post->ID == SIM\get_module_option('login', 'register_page') ) {
+        $states[] = __('User register page'); 
+    }elseif ( $post->ID == SIM\get_module_option('login', '2fa_page') ) {
+        $states[] = __('Two Factor Setup page'); 
+    } 
+
+    return $states;
+}, 10, 2);
 
 add_action('sim_module_deactivated', function($module_slug, $options){
 	//module slug should be the same as grandparent folder name

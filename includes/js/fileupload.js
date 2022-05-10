@@ -265,6 +265,22 @@ function refreshVimeoiFrame(){
 async function uploadVideo(file){
 	var uploader	= new vimeoUploader.VimeoUpload(file);
 	var upload		= await uploader.tusUploader();
+
+	// Could not upload
+	if(!upload){
+		//clear file upload
+		file_upload_wrap.querySelector('.file_upload').value = "";
+				
+		//Remove progress barr
+		document.getElementById("progress-wrapper").remove();
+
+		// Hide the loader
+		document.querySelector('.loadergif_wrapper:not(.hidden)').classList.add('hidden');
+
+		return false;
+	}
+
+	// Upload started
 	if (totalfiles > 1){
 		var s = "s";
 	}else{
@@ -297,7 +313,6 @@ async function uploadVideo(file){
 
 		//Remove progress barr
 		document.getElementById("progress-wrapper").remove();
-
 		
 		let link	= `
 		<div class="vimeo-wrapper">

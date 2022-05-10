@@ -8,7 +8,7 @@ add_shortcode("schedules",function(){
 });
 
 add_shortcode("upcomingevents", function(){
-	if(!is_page(SIM\get_module_option('login', 'home_page'))) return;
+	if(!is_page(SIM\get_module_option('frontpage', 'home_page'))) return;
 
 	wp_enqueue_style('sim_events_css');
 

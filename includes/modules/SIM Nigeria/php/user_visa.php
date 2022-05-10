@@ -290,9 +290,7 @@ add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $
 			}
 			
 			//Add an extra tab button on position 3
-			$postion				= 3;
-			$value					= "<li class='tablink $active $tabclass' id='show_visa_info' data-target='visa_info'>Immigration</li>";
-			$filteredHtml['tabs'] 	= array_merge(array_slice($filteredHtml['tabs'], 0, $postion), [$value], array_slice($filteredHtml['tabs'], $postion));
+			$filteredHtml['tabs']['Immigration']	= "<li class='tablink $active $tabclass' id='show_visa_info' data-target='visa_info'>Immigration</li>";
 			
 			//Content
 			ob_start();

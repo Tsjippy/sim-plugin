@@ -344,9 +344,3 @@ class Maps{
 		return $icon_id;
 	}
 }
-
-$Maps = new Maps();
-
-
-
-

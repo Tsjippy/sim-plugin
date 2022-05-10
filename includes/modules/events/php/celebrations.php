@@ -95,61 +95,65 @@ add_action('delete_user', function($user_id){
 	if(is_numeric($anniversary_id))	$events->remove_db_rows($anniversary_id);
 });
 
-//Get birthdays
+/**
+ *
+ * Get the html birthday message and arriving users if any
+ *
+ * @return   string|false     Birthday and arrining usrs html or false if there are no events
+ *
+**/
 function birthday() {
 	if (is_user_logged_in()){
-		$html			= "";
-		$current_user	= wp_get_current_user();
+		$html				= "";
+		$currentUser		= wp_get_current_user();
+		$anniversaryMessages = get_anniversaries();
 		
-		if(SIM\get_module_option('events', 'enable')){
-			$anniversary_messages = get_anniversaries();
-			
-			//If there are anniversaries
-			if(count($anniversary_messages) >0){
-				$html .= '<div name="anniversaries" style="text-align: center; font-size: 18px;">';
-					$html .= '<h3>Celebrations:</h3>';
-					$html .= '<p>';
-						$html .= "Today is the ";
+		//If there are anniversaries
+		if(count($anniversaryMessages) >0){
+			$html .= '<div name="anniversaries" style="text-align: center; font-size: 18px;">';
+				$html .= '<h3>Celebrations:</h3>';
+				$html .= '<p>';
+					$html .= "Today is the ";
 
-				//Loop over the anniversary_messages
-				$message_string	= '';
-				foreach($anniversary_messages as $user_id=>$message){
-					if(!empty($message_string))$message_string .= " and the ";
+			//Loop over the anniversary_messages
+			$messageString	= '';
+			foreach($anniversaryMessages as $userId=>$message){
+				if(!empty($messageString))$messageString .= " and the ";
 
-					$couple_string	= $current_user->first_name.' & '.get_userdata(SIM\has_partner(($current_user->ID)))->display_name;
+				$coupleString	= $currentUser->first_name.' & '.get_userdata(SIM\has_partner(($currentUser->ID)))->display_name;
 
-					if($user_id  == $current_user->ID){
-						$message	= str_replace($couple_string,"of you and your spouse my dear ".$current_user->first_name."!<br>",$message);
-						$message	= str_replace($current_user->display_name,"of you my dear ".$current_user->first_name."!<br>",$message);
-					}else{
-						$userdata	= get_userdata($user_id);
-						//Get the url of the user page
-						$url		= SIM\getUserPageUrl($user_id);
-						$message	= str_replace($couple_string,"of <a href='$url'>$couple_string</a>",$message);
-						$message	= str_replace($userdata->display_name,"of <a href='$url'>{$userdata->display_name}</a>",$message);
-					}
+				if($userId  == $currentUser->ID){
+					$message	= str_replace($coupleString, "of you and your spouse my dear ".$currentUser->first_name."!<br>",$message);
+					$message	= str_replace($currentUser->display_name, "of you my dear ".$currentUser->first_name."!<br>",$message);
+				}else{
+					$userdata	= get_userdata($userId);
 
-					$message_string	.= $message;
+					//Get the url of the user page
+					$url		= SIM\getUserPageUrl($userId);
+					$message	= str_replace($coupleString, "of <a href='$url'>$coupleString</a>", $message);
+					$message	= str_replace($userdata->display_name, "of <a href='$url'>{$userdata->display_name}</a>", $message);
 				}
-				$html .= $message_string;
-				$html .= '.</p></div>';
+
+				$messageString	.= $message;
 			}
+			$html .= $messageString;
+			$html .= '.</p></div>';
 		}
 		
-		$arrival_users = get_arriving_users();
+		$arrivingUsers = get_arriving_users();
 		//If there are arrivals
-		if(count($arrival_users) >0){
+		if(count($arrivingUsers) >0){
 			$html 	.= '<div name="arrivals" style="text-align: center; font-size: 18px;">';
 			$html 	.= '<h3>Arrivals</h3>';
 			
-			if(count($arrival_users)==1){
+			if(count($arrivingUsers)==1){
 				//Get the url of the user page
-				$url	 = SIM\getUserPageUrl($arrival_users[0]->ID);
-				$html	.= '<p><a href="'.$url.'">'.$arrival_users[0]->display_name."</a> arrives today!";
+				$url	 = SIM\getUserPageUrl($arrivingUsers[0]->ID);
+				$html	.= '<p><a href="'.$url.'">'.$arrivingUsers[0]->display_name."</a> arrives today!";
 			}else{
 				$html 	.= '<p>The following people arrive today:<br>';
 				//Loop over the birthdays
-				foreach($arrival_users as $user){
+				foreach($arrivingUsers as $user){
 					$url 	 = SIM\getUserPageUrl($user->ID);
 					$html 	.= '<a href="'.$url.'">'.$user->display_name."</a><br>";
 				}
@@ -159,6 +163,6 @@ function birthday() {
 		
 		return $html;
 	}else{
-		return "";	
+		return false;	
 	}
 }

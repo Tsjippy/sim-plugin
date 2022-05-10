@@ -57,7 +57,7 @@ if(get_option("wpstg_is_staging_site") == "true"){
 			//Get all users
 			$users = get_users();
 			//Only keep admins and editors
-			$allowed_roles = array('medicalinfo','administrator','contentmanager');
+			$allowed_roles = array('medicalinfo','administrator','editor');
  			foreach($users as $user){
 				//If this user is not an admin or editor
 				if( !array_intersect($allowed_roles, $user->roles ) ) { 

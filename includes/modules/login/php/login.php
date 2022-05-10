@@ -142,8 +142,8 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
 add_action( 'template_redirect', __NAMESPACE__.'\homepage_redirect' );
 function homepage_redirect(){
 	if( is_front_page() && is_user_logged_in() ){
-        $url    = get_page_link(SIM\get_module_option('login', 'home_page'));
-        if($url != SIM\current_url()){ 
+        $url    = SIM\getValidPageLink(SIM\get_module_option('frontpage', 'home_page'));
+        if($url and $url != SIM\current_url()){ 
             wp_redirect(add_query_arg($_GET,$url));
             exit();
         }

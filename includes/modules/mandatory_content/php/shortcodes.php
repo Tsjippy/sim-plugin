@@ -6,6 +6,12 @@ add_action('sim_dashboard_warnings', function($user_id){
 	echo mustReadDocuments($user_id);
 }, 5);
 
+add_filter('sim_loggedin_homepage',  function($content){
+	$content	.= mustReadDocuments();
+	return $content;
+});
+
+
 add_shortcode("must_read_documents", __NAMESPACE__.'\mustReadDocuments');
 function mustReadDocuments($user_id='', $exclude_heading=false){
 	if(!is_numeric($user_id)) $user_id = get_current_user_id();

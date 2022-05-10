@@ -5,7 +5,7 @@ use WP_Error;
 
 function checkPermissions(){
 	$user	= wp_get_current_user();
-	if(in_array('contentmanager', $user->roles)) return true;
+	if(in_array('editor', $user->roles)) return true;
 
 	return false;
 }

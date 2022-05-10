@@ -116,8 +116,9 @@ function update_user_page_title($user_id, $title){
 function user_description($user_id){
 	$html = "";
 
-	$userdata	= get_userdata($user_id);
-	$user 		= wp_get_current_user();
+	$user	= get_userdata($user_id);
+
+	do_action('sim_user_description', $user);
 	
 	//get the family details
 	$family = get_user_meta( $user_id, 'family', true );
@@ -138,29 +139,13 @@ function user_description($user_id){
 		$address = "No clue, since no address is given";
 	}
 	
-	//Add a useraccount edit button if the user has the usermanagement role
-	if (in_array('usermanagement',$user->roles)){
-		$edit_user_url = SITEURL.'/update-personal-info/?userid=';
-		
-		$html .= "<div class='flex edit_useraccounts'><a href='$edit_user_url$user_id' class='button sim'>Edit useraccount for ".$userdata->first_name."</a>";
-		if(is_array($family) and isset($family['partner'])){
-			$html .= "<a  href='$edit_user_url".$family['partner']."' class='button sim'>Edit useraccount for ".get_userdata($family['partner'])->first_name."</a>";
-		}
-		if(is_array($family) and isset($family['children'])){
-			foreach($family['children'] as $child){
-				$html .= "<a href='$edit_user_url$child' class='button sim'>Edit useraccount for ".get_userdata($child)->first_name."</a>";
-			}
-		}
-		$html .= '</div>';
-	}
-	
 	$privacy_preference = get_user_meta( $user_id, 'privacy_preference', true );
 	if(!is_array($privacy_preference)) $privacy_preference = [];
 
 	//Build the html
 	//Missionary has a family
 	if (!empty($family)){
-		$html .= "<h1>$userdata->last_name family</h1>";
+		$html .= "<h1>$user->last_name family</h1>";
 
 		$url 	= wp_get_attachment_url($family['picture'][0]);
 		if($url){
@@ -201,9 +186,11 @@ function user_description($user_id){
 			$html .= "<p>";
 			$html .= " They have the following children:<br>";
 			foreach($family["children"] as $child){
-				$childdata = get_userdata($child);
-				$age = SIM\get_age($child);
-				if($age != '') $age = "($age)";
+				$childdata	= get_userdata($child);
+				$age		= SIM\get_age($child);
+				if($age !== false){
+					$age = "($age)";
+				}
 				
 				$html .= SIM\displayProfilePicture($childdata->ID);
 			$html .= "<span class='person_work'> {$childdata->first_name} $age</span><br>";

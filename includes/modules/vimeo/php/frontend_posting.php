@@ -29,7 +29,7 @@ add_action('sim_after_post_save', function($post){
         }
 
         if(!empty($data)){
-            $vimeoApi->update_meta($post->ID, $data);
+            $vimeoApi->updateMeta($post->ID, $data);
         }
     }    
 });

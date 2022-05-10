@@ -48,19 +48,14 @@ add_action('frontend_post_after_content', function($frontendcontend){
 // Send Signal message about the new or updated post
 add_action('sim_after_post_save', function($post, $update){
     if(isset($_POST['signal']) and $_POST['signal'] == 'send_signal'){
-        if($post->post_status == 'publish' or $post->post_status == 'inherit'){
-            delete_post_meta($post->ID, 'signal');
-            delete_post_meta($post->ID, 'signalmessagetype');
+        update_post_meta($post->ID, 'signal','checked');
+        update_post_meta($post->ID, 'signalmessagetype', $_POST['signalmessagetype']);
+        update_post_meta($post->ID, 'signal_url', $_POST['signal_url']);
+        update_post_meta($post->ID, 'signal_extra_message', $_POST['signal_extra_message']);
 
+        if(in_array($post->post_status, ['publish', 'inherit'])){
             //Send signal message
-            send_post_notification($post);
-        }else{
-            update_post_meta($post->ID, 'signal','checked');
-            update_post_meta($post->ID, 'signalmessagetype', $_POST['signalmessagetype']);
+            sendPostNotification($post);
         }
-    }    
-
-    if($post->post_status == 'pending'){
-        SIM\FRONTEND_POSTING\send_pending_post_warning($post, $update);
     }
 }, 999, 2);

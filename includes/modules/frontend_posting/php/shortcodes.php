@@ -43,7 +43,9 @@ add_shortcode('your_posts',function(){
 			if($status == 'Publish') $status = 'Published';
 			
 			$url 		= get_permalink($post);
-			$edit_url 	= add_query_arg( ['post_id' => $post->ID], get_permalink( SIM\get_module_option('frontend_posting','publish_post_page')) );
+			$edit_url	= SIM\getValidPageLink(SIM\get_module_option('frontend_posting','publish_post_page'));
+			if(!$edit_url) $edit_url = '';
+			$edit_url 	= add_query_arg( ['post_id' => $post->ID], $edit_url);
 			if($post->post_status == 'publish'){
 				$view = 'View';
 			}else{
@@ -74,15 +76,16 @@ add_shortcode("pending_pages", function ($atts){
 	);
 	
 	//Build de HTML
-	$initial_html = "";
-	$html = $initial_html;
-	$pending_posts = get_posts( $args );
+	$initial_html 	= "";
+	$html 			= $initial_html;
+	$pending_posts 	= get_posts( $args );
+	$url			= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
 	//Only if there are any pending posts
-	if ( $pending_posts ) {
+	if ( $pending_posts and $url) {
 		$html .= "<p><strong>Pending content:</strong><br><ul>";
 		//For each pending post add a link to edit the post
 		foreach ( $pending_posts as $pending_post ) {
-			$url = add_query_arg( ['post_id' => $pending_post->ID], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page')) );
+			$url = add_query_arg( ['post_id' => $pending_post->ID], $url );
 			if ($url){
 				if(strtotime($pending_post->post_date_gmt) > time()){
 					$date	= date('d-M-Y', strtotime($pending_post->post_date_gmt));

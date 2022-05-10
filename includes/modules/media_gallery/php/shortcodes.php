@@ -59,7 +59,7 @@ add_shortcode('mediagallery', function($atts){
 });
 
 function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'video', 'audio'], $startIndex=0, $search=''){
-    $canEdit            = in_array('contentmanager', wp_get_current_user()->roles);
+    $canEdit            = in_array('editor', wp_get_current_user()->roles);
     $all_mimes          = get_allowed_mime_types();
     $accepted_mimes     = [];
     foreach($all_mimes as $mime){

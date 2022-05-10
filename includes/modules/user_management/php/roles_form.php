@@ -13,10 +13,7 @@ function display_roles($user_id){
 	$user_roles = $wp_roles->role_names;
 	
 	//Remove these roles from the roles array
-	unset($user_roles['administrator']);
-	unset($user_roles['author']);
-	unset($user_roles['contributor']);
-	unset($user_roles['editor']);
+	if(!in_array('administrator',(array)$roles)) 	unset($user_roles['administrator']);
 	
 	//Sort the roles
 	asort($user_roles);
@@ -39,7 +36,12 @@ function display_roles($user_id){
 			?>
 			<label> 
 				<input type='checkbox' name='roles[<?php echo $key;?>]' value='<?php echo $role_name;?>' <?php echo $checked;?>>
-				<?php echo $role_name;?>
+				<?php 
+				echo $role_name; 
+				echo '   <i>'; 
+				echo apply_filters('sim_role_description', '', $key);
+				echo '</i>'; 
+				?>
 			</label>
 			<br>
 			<?php

@@ -123,3 +123,12 @@ add_filter('sim_module_updated', function($options, $module_slug){
 
 	return $options;
 }, 10, 2);
+
+add_filter('display_post_states', function ( $states, $post ) { 
+    
+    if ( $post->ID == SIM\get_module_option('frontend_posting', 'publish_post_page') ) {
+        $states[] = __('Frontend posting page'); 
+    } 
+
+    return $states;
+}, 10, 2);

@@ -218,9 +218,6 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
                 'username'		=> array(
 					'required'	=> true
-				),
-                'password'		=> array(
-					'required'	=> true
 				)
 			)
 		)
@@ -775,11 +772,12 @@ function userLogin(){
 
         //Redirect to account page if 2fa is not set
         if(!$methods or count($methods ) == 0){
-            $twofa_page      = get_page_link(SIM\get_module_option('login', '2fa_page'));
-            $twofa_page     .= SIM\get_module_option('login', '2fa_page_extras');
-            return $twofa_page;
+            $twofaPage      = SIM\getValidPageLink(SIM\get_module_option('login', '2fa_page'));
+            if($twofaPage) return $twofaPage;
+        }
+        
         //redirect to account page to fill in required fields
-        }elseif (!isset($_SESSION['showpage']) and !empty($fieldList) and is_numeric($accountPageId)){
+        if (!isset($_SESSION['showpage']) and !empty($fieldList) and is_numeric($accountPageId)){
             return get_permalink($accountPageId);
         }else{
             if(isset($_SESSION['showpage'])) unset($_SESSION['showpage']);

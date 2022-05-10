@@ -72,7 +72,7 @@ if(SIM\get_module_option('vimeo', 'remove')){
 add_action('before_visibility_change', function($attachment_id, $visibility){
 	if($visibility == 'private'){
 		$VimeoApi	= new VimeoApi();
-		$VimeoApi->hide_vimeo_video($attachment_id);
+		$VimeoApi->hideVimeoVideo($attachment_id);
 	}
 }, 10, 2);
 
@@ -115,7 +115,7 @@ add_action( 'edit_attachment', function($attachment_id){
 
 	if(!empty($data)){
 		$VimeoApi		= new VimeoApi();
-		$VimeoApi->update_meta($attachment_id, $data);
+		$VimeoApi->updateMeta($attachment_id, $data);
 	}
 });
 
@@ -124,7 +124,7 @@ add_filter( 'wp_mime_type_icon', function ($icon, $mime, $post_id) {
 	if(strpos($icon, 'video.png')){
 		try{
 			$VimeoApi	= new VimeoApi();
-			$path		= $VimeoApi->get_thumbnail($post_id);
+			$path		= $VimeoApi->getThumbnail($post_id);
 			if(!$path)  return $icon;
 			$icon		= SIM\path_to_url($path);
 		}catch(\Exception $e){

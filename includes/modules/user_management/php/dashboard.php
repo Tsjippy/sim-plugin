@@ -71,7 +71,9 @@ function show_dashboard($user_id, $admin=false){
 			//If the page is not modified since the parameter
 			if ($page_age > $days ){
 				//Get the edit page url
-				$url = add_query_arg( ['post_id' => $post_id], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );
+				$url	= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page') );
+				if(!$url) $url = '';
+				$url = add_query_arg( ['post_id' => $post_id], $url );
 
 				$post_age_warning_html .= '<li><a href="'.$url.'">'.$post_title.'</a></li>';
 			}

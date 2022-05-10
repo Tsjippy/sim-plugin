@@ -21,57 +21,69 @@ add_filter('sim_frontend_content_edit_rights', function($edit_right, $post_categ
 	return $edit_right;
 }, 10, 2);
 
-//Get Prayerrequest
-function prayer_request($plaintext = false) {
+/**
+ *
+ * Get the prayer request of today
+ *
+ * @param    string     $plainText      Whether we shuld return the prayer request in html or plain text
+ * @return   string|false     			The prayer request or false if no prayer request found
+ *
+**/
+function prayerRequest($plainText = false) {
 	if (is_user_logged_in()){
 		//Get all the post belonging to the prayer category
-		$prayer_posts = get_posts(array('category' => get_cat_ID('Prayer') ));
+		$posts = get_posts(
+			array(
+				'category'  => get_cat_ID('Prayer'),
+				's'			=> date("F Y")
+			)
+		);
+
+		$prayer	= '';
 		
 		//Loop over them to find the post for this month
-		foreach($prayer_posts as $prayer_post){
-			if (strpos($prayer_post->post_title, date("F")) !== false ) {
-				$PrayerPageID = $prayer_post->ID;
-			}
-		}
-		
-		if (isset($PrayerPageID)){
+		foreach($posts as $post){
+			// double check if the current month is in the title as the s parameter searches everywhere
+			if(strpos($post->post_title, date("F Y")) === false) continue;
+
 			//Content of page with all prayer requests of this month
-			if($plaintext){
-				$content 	= wp_strip_all_tags(get_post($PrayerPageID)->post_content);
+			if($plainText){
+				$content 	= wp_strip_all_tags($post->post_content);
 				$content	= str_replace(["&nbsp;", '&amp; '], [' ',''], $content);
 			}else{
-				$content	= get_post($PrayerPageID)->post_content;
+				$content	= $post->post_content;
 			}
 			
 			if ($content != null){
 				//Current date
 				$datetime = date('Y-m-d'); 
 				//Current day of the month
-				$day_num = date('j', strtotime($datetime));
+				$dayNum = date('j', strtotime($datetime));
 
 				//Find the request of the current day, Remove the daynumber (dayletter) - from the request
 				//space(A)space-space
-				$generic_start	= "\s*\([A-Za-z]\)\s*[\W]\s*";
+				$genericStart	= "\s*\([A-Za-z]\)\s*[\W]\s*";
 				#$generic_start	= "\s*\([A-Za-z]\)\s*";
-				$re_start	= $day_num.$generic_start;
-				$re_next	= ($day_num+1).$generic_start;
+				$reStart	= $dayNum.$genericStart;
+				$reNext	= ($dayNum+1).$genericStart;
 				//look for the start of a prayer line, get everything after "30(T) – " until you find a B* or the next "30(T) – " or the end of the document
-				$re			= "/(*UTF8)$re_start(.+?)((B\*)|$re_next|$)/m";
+				$re			= "/(*UTF8)$reStart(.+?)((B\*)|$reNext|$)/m";
 				preg_match_all($re, strip_tags($content), $matches, PREG_SET_ORDER, 0);
 				
 				//No prayer request found
-				if (sizeof($matches) == 0){
-					return "";
-				}else{
+				if (isset($matches[0][1]) and !empty($matches[0][1])){
 					//Return the prayer request
-					return $matches[0][1];
+					$prayer = $matches[0][1];
 				}
 			}
-		//No prayer request post for this month found
+		}
+
+		if(empty($prayer)){
+			return false;
 		}else{
-			return "";
+			return $prayer;
 		}
 	}else{
-		return "";	
+		return false;	
 	}
 }

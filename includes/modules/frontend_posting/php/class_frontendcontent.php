@@ -17,7 +17,7 @@ class FrontEndContent{
 		$this->post_image_id	= 0;
 		$this->lite 			= false;
 		
-		if(in_array('contentmanager',$this->user->roles)){
+		if(in_array('editor',$this->user->roles)){
 			$this->fullrights		= true;
 		}else{
 			$this->fullrights		= false;
@@ -147,8 +147,12 @@ class FrontEndContent{
 		if($_POST['post_status'] == 'draft'){
 			$status = 'draft';
 		}elseif(empty($status)){
-			if($this->fullrights == true and $_POST['publish_date'] == date('Y-m-d')){
-				$status = 'publish';
+			if($this->fullrights == true){
+				if($_POST['publish_date'] == date('Y-m-d')){
+					$status = 'publish';
+				}else{
+					$status = 'future';
+				}
 			}else{
 				$status = 'pending';
 			}
@@ -159,7 +163,7 @@ class FrontEndContent{
 		//First letter should be capital in the title
 		$this->post_title 	= ucfirst(sanitize_text_field($_POST['post_title']));
 		
-		$post_content 	= $_POST['post_content'];
+		$post_content 		= $_POST['post_content'];
 		
 		//Find any base64 encoded images in the post content and replace the url
 		$post_content 	= preg_replace_callback('/"data:image\/(\w+);base64,([^"]*)/m', array($this,'upload_images'), $post_content);
@@ -337,6 +341,10 @@ class FrontEndContent{
 		if(isset($_POST['expirydate'])){
 			//Store expiry date
 			update_post_meta($this->post_id,'expirydate',$_POST['expirydate']);
+		}
+
+		if($post->post_status == 'pending'){
+			send_pending_post_warning($post, $update);
 		}
 		
 		do_action('sim_after_post_save', (object)$post, $update);
@@ -667,10 +675,17 @@ class FrontEndContent{
 			$author_id	= $this->post->post_author;
 			if(!is_numeric($author_id)) $author_id = $this->user->ID;
 			echo SIM\user_select('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $user_id=$author_id);
+			
+			if(empty($this->post)){
+				$publishDate	= date("Y-m-d");
+			}else{
+				$publishDate	= date("Y-m-d", strtotime($this->post->post_date));
+			}
+
 			?>
 			<label>
 				<h4>Publishing date</h4>
-				<input type="date" min="<?php echo date("Y-m-d");?>" name="publish_date" value="<?php echo date("Y-m-d");?>">
+				<input type="date" min="<?php echo date("Y-m-d");?>" name="publish_date" value="<?php echo $publishDate;?>">
 				Define when the content should be published
 			</label>
 			<?php
@@ -712,11 +727,11 @@ class FrontEndContent{
 		}
 		
 		//Current time minus last modified time
-		$seconds_since_updated = time()-get_post_modified_time('U',true,$this->post);
+		$secondsSinceUpdated = time()-get_post_modified_time('U', true, $this->post);
 		
 		//Show warning when post has been updated recently
-		if($seconds_since_updated < 3600){
-			$minutes = intval($seconds_since_updated/60);
+		if($secondsSinceUpdated < 3600 and $secondsSinceUpdated > -1){
+			$minutes = intval($secondsSinceUpdated/60);
 			echo "<div class='warning'>This {$this->post_type} has been updated <span id='minutes'>$minutes</span> minutes ago.</div>";
 		}
 		

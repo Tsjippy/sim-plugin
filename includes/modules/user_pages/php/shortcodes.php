@@ -64,63 +64,6 @@ add_shortcode("all_contacts",function (){
 	}
 });
 
-add_shortcode("userstatistics",function ($atts){
-	wp_enqueue_script('sim_table_script');
-	ob_start();
-	$users = SIM\get_user_accounts($return_family=false,$adults=true);
-	?>
-	<br>
-	<div class='form-table-wrapper'>
-		<table class='sim-table' style='max-height:500px;'>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Login count</th>
-					<th>Last login</th>
-					<th>Mandatory pages to read</th>
-					<th>User roles</th>
-					<th>Account validity</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<?php
-				foreach($users as $user){
-					$login_count= get_user_meta($user->ID,'login_count',true);
-					if(!is_numeric(($login_count))) $login_count = 0;
-					$last_login_date	= get_user_meta($user->ID,'last_login_date',true);
-					if(empty($last_login_date)){
-						$last_login_date	= 'Never';
-					}else{
-						$time_string 	= strtotime($last_login_date);
-						if($time_string ) $last_login_date = date('d F Y', $time_string);
-					}
-
-					$picture = SIM\displayProfilePicture($user->ID);
-
-					echo "<tr class='table-row'>";
-						echo "<td>$picture {$user->display_name}</td>";
-						echo "<td>$login_count</td>";
-						echo "<td>$last_login_date</td>";
-						if(function_exists('SIM\MANDATORY\mustReadDocuments')){
-							echo "<td>".SIM\MANDATORY\mustReadDocuments($user->ID,true)."</td>";
-						}
-						echo "<td>";
-						foreach($user->roles as $role){
-							echo $role.'<br>';
-						}
-						echo "</td>";
-						echo "<td>".get_user_meta($user->ID,'account_validity',true)."</td>";
-					echo "</tr>";
-				}
-				?>
-			</tbody>
-		</table>
-	</div>
-	<?php
-	return ob_get_clean();
-});
-
 // Shortcode to display a user in a page or post
 add_shortcode('missionary_link',function($atts){
 	$html = "";

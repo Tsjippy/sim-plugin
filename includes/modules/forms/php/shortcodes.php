@@ -129,8 +129,15 @@ add_shortcode( 'formresults', function($atts){
 	return $formtable->show_formresults_table($atts);
 });
 
+add_filter('sim_loggedin_homepage',  function($content){
+	$content	.= missingFormFields(['type'=>"all"]);
+	return $content;
+});
+
 //Shortcode for recommended fields
-add_shortcode("missing_form_fields",function ($atts){
+add_shortcode("missing_form_fields", __NAMESPACE__.'\missingFormFields');
+
+function missingFormFields($atts){
     $a = shortcode_atts( array(
         'type'   => 'mandatory'
     ), $atts );
@@ -148,4 +155,4 @@ add_shortcode("missing_form_fields",function ($atts){
 	}
 	
 	return $html;
-});
+}

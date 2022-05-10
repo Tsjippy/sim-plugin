@@ -62,7 +62,8 @@ function save_location_meta($post){
 add_action('sim_ministry_added', __NAMESPACE__.'\location_address', 10, 2);
 function location_address($locationtypes, $post_id){
     global $wpdb;
-    global $Maps;
+
+    $maps   = new Maps();
     
     if(
         isset($_POST['location'])				and
@@ -131,7 +132,7 @@ function location_address($locationtypes, $post_id){
                 //Failed
                 if($result == false){
                     //Check if marker exist, if not delete the metakey
-                    if(!$Maps->marker_exists($marker_ids['generic'])){
+                    if(!$maps->marker_exists($marker_ids['generic'])){
                         SIM\print_array("Updating marker with id {$marker_ids['generic']} failed as it does not exist");
                         unset($marker_ids['generic']);
                     }
@@ -169,7 +170,7 @@ function location_address($locationtypes, $post_id){
             //First try to update
             if(isset($marker_ids['page_marker'])){
                 //Create an icon for this marker
-                $custom_icon_id = $Maps->create_icon($marker_id=$marker_ids['page_marker'], $icon_title=$title, $icon_url, $default_icon_id=$icon_id);
+                $custom_icon_id = $maps->create_icon($marker_id=$marker_ids['page_marker'], $icon_title=$title, $icon_url, $default_icon_id=$icon_id);
                     
                 $result = $wpdb->update($wpdb->prefix . 'ums_markers', 
                     array(
@@ -185,7 +186,7 @@ function location_address($locationtypes, $post_id){
                 //Failed
                 if($result == false){
                     //Check if marker exist, if not delete the metakey
-                    if(!$Maps->marker_exists($marker_ids['page_marker'])){
+                    if(!$maps->marker_exists($marker_ids['page_marker'])){
                         SIM\print_array("Updating marker with id {$marker_ids['page_marker']} failed as it does not exist");
                         unset($marker_ids['page_marker']);
                     }
@@ -199,14 +200,14 @@ function location_address($locationtypes, $post_id){
                 
                 if(!is_numeric($map_id)){
                     //Create a custom map for this location
-                    $map_id = $Maps->add_map($title, $latitude, $longitude, $address,$height='300',$zoom=10);
+                    $map_id = $maps->add_map($title, $latitude, $longitude, $address,$height='300',$zoom=10);
                     
                     //Save the map id in db
                     update_post_meta($post_id,'map_id',$map_id);
                 }					
                 
                 //Create an icon for this marker
-                $custom_icon_id = $Maps->create_icon($marker_id=null, $icon_title=$title, $icon_url, $default_icon_id=$icon_id);
+                $custom_icon_id = $maps->create_icon($marker_id=null, $icon_title=$title, $icon_url, $default_icon_id=$icon_id);
                 
                 //Add the marker to this map
                 $wpdb->insert($wpdb->prefix . 'ums_markers', array(
@@ -246,7 +247,7 @@ function location_address($locationtypes, $post_id){
                     //Checking if this marker exists
                     if(is_numeric($marker_ids[$name])){
                         //Create an icon for this marker
-                        $custom_icon_id = $Maps->create_icon($marker_id=$marker_ids[$name], $icon_title=$title, $icon_url, $default_icon_id=$icon_id);
+                        $custom_icon_id = $maps->create_icon($marker_id=$marker_ids[$name], $icon_title=$title, $icon_url, $default_icon_id=$icon_id);
                         
                         //Update the marker in db
                         $result = $wpdb->update($wpdb->prefix . 'ums_markers', 
@@ -263,7 +264,7 @@ function location_address($locationtypes, $post_id){
                         //Failed
                         if($result == false){
                             //Check if marker exist, if not delete the metakey
-                            if(!$Maps->marker_exists($marker_ids[$name])){
+                            if(!$maps->marker_exists($marker_ids[$name])){
                                 SIM\print_array("Updating marker with id {$marker_ids[$name]} failed as it does not exist");
                                 unset($marker_ids[$name]);
                             }
@@ -274,7 +275,7 @@ function location_address($locationtypes, $post_id){
                     
                     if(!is_numeric($marker_ids[$name])){
                         //Create an icon for this marker
-                        $custom_icon_id = $Maps->create_icon($marker_id=null, $icon_title=$title, $icon_url, $default_icon_id=$icon_id);
+                        $custom_icon_id = $maps->create_icon($marker_id=null, $icon_title=$title, $icon_url, $default_icon_id=$icon_id);
                         
                         //Add marker for this map
                         $wpdb->insert($wpdb->prefix . 'ums_markers', array(
@@ -300,11 +301,11 @@ function location_address($locationtypes, $post_id){
         }elseif($latitude == '' and $longitude == '' and is_numeric($map_id)){
             //Delete the custom map for this post
             delete_post_meta($post_id,'map_id');
-            $Maps->remove_map($map_id);
+            $maps->remove_map($map_id);
             
             //Remove all markers related to this post
             foreach($marker_ids as $marker_id){
-                $Maps->remove_marker($marker_id);
+                $maps->remove_marker($marker_id);
             }
             
             //Store marker ids in db

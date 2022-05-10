@@ -2,7 +2,7 @@
 namespace SIM\LOGIN;
 use SIM;
 
-add_shortcode('twofa_setup', 'SIM\LOGIN\twofa_settings_form');
+add_shortcode('twofa_setup', __NAMESPACE__.'\twofa_settings_form');
 function twofa_settings_form($user_id=''){
 	//Load js
 	wp_enqueue_script('sim_2fa_script');

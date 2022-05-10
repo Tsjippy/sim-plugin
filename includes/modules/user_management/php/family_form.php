@@ -132,16 +132,12 @@ function fill_family_dropdowns($user_id){
 //Save family
 add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 	if($formname != 'user_family') return $formresults;
-	
-	global $Maps;
 
 	$events	= new SIM\EVENTS\Events();
 	
 	$family = $formresults["family"];
 	
 	$old_family = (array)get_user_meta( $user_id, 'family', true );
-
-	$marker_id 	= get_user_meta($user_id,"marker_id",true);
 	
 	//Don't do anything if the current and the last family is equal
 	if($family != $old_family){
@@ -262,17 +258,13 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 			}		
 		}
 
-		//update marker icon if needed
+		// Update family picture
 		if (!empty($family['picture'] and $family['picture'] != $old_family['picture']) ){
 			// Hide profile picture by default from media galery
 			$picture_id	=  $family['picture'][0];
 			if(is_numeric($picture_id)) update_post_meta($picture_id, 'gallery_visibility', 'hide' );
 
-			$url = wp_get_attachment_url($family['picture'][0]);
-
-			$icon_title	= get_userdata($user_id)->last_name.' family';
-
-			$Maps->create_icon($marker_id, $icon_title, $url, 1);
+			do_action('sim_update_family_picture', $user_id, $family['picture'][0]);
 
 			if (isset($family['partner'])){
 				$partner_family 			= (array)get_user_meta( $family['partner'], 'family', true );
@@ -291,10 +283,6 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 			update_user_meta( $family['partner'], 'family', $partner_family);
 		}
 		
-		//Save the marker id for all family members
-		if(empty($marker_id) and isset($family['partner']))	$marker_id = get_user_meta($family['partner'],"marker_id",true);
-		SIM\update_family_meta( $user_id, "marker_id", $marker_id);
-		
 		//update missionary page if needed
 		if(function_exists('SIM\USERPAGE\create_user_page')){
 			SIM\USERPAGE\create_user_page($user_id);
@@ -309,23 +297,16 @@ function save_family_in_db($user_id, $family){
 	if(is_array($family)){
 		SIM\clean_up_nested_array($family);
 	}
-	
-	global $Maps;
+
 	if (count($family)==0){
 		//remove from db, there is no family anymore
-		delete_user_meta($user_id,"family");
-		
-		$title = get_userdata($user_id)->display_name;
+		delete_user_meta($user_id, "family");
 	}else{
 		//Store in db
 		update_user_meta($user_id,"family",$family);
-		
-		$title = get_userdata($user_id)->last_name." family";
 	}
-	
-	//Update the marker title
-	$marker_id = get_user_meta($user_id,"marker_id",true);
-	$Maps->update_marker_title($marker_id, $title);
+
+	do_action('sim_family_safe', $user_id);
 }
 
 // add a family member modal

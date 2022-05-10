@@ -15,10 +15,6 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		This shortcode displays a button to download all registered users to store them as contacts in gmail or outtlook.<br>
 		Use like this: <code>[all_contacts']</code>
 		<br>
-		<h4>userstatistics</h4>
-		This shortcode displays a table listing all website users and some of their details.<br>
-		Use like this: <code>[userstatistics]</code>
-		<br>
 		<h4>missionary_link</h4>
 		This shortcode displays a user in a post or page.<br>
 		It has 5 properties:<br>

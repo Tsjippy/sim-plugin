@@ -7,8 +7,8 @@ use SIM;
 add_filter('postie_post_before', function($post, $headers) {	
 	if($post != null){
 		$user = get_userdata($post['post_author']);
-		//Change the post status to pending for all users without the contentmanager role
-		if ( !in_array('contentmanager',$user->roles) and strpos(strtolower($post['post_title']), 'exchange rate') === false){
+		//Change the post status to pending for all users without the editor role
+		if ( !in_array('editor',$user->roles) and strpos(strtolower($post['post_title']), 'exchange rate') === false){
 			$post['post_status'] = 'pending';
 		}
 		
@@ -30,8 +30,8 @@ add_filter('postie_post_before', function($post, $headers) {
 
 add_filter('postie_post_after', function($post){
 	//Only send message if post is published
-	if($post['post_status'] == 'publish' and function_exists('SIM\SIGNAL\send_post_notification')){
-		SIM\SIGNAL\send_post_notification($post['ID']);
+	if($post['post_status'] == 'publish' and function_exists('SIM\SIGNAL\sendPostNotification')){
+		SIM\SIGNAL\sendPostNotification($post['ID']);
 	}elseif(function_exists('SIM\FRONTEND_POSTING\send_pending_post_warning')){
 		SIM\FRONTEND_POSTING\send_pending_post_warning(get_post($post['ID']), false);
 	}

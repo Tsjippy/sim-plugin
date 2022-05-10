@@ -4,6 +4,28 @@ use SIM;
 
 const ModuleVersion		= '7.0.2';
 
+add_action('sim_submenu_description', function($module_slug, $module_name){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+
+	?>
+	<p>
+		This module add a news gallery to the homepage as well as an gallery of the last added content.<br>
+		It also adds a homepage for logged in users, where users will be redirected on login.
+	</p>
+
+	<?php
+	$pageId	= SIM\get_module_option($module_slug, 'home_page');
+	if(is_numeric($pageId)){
+		?>
+		<p>
+			<b>Auto created page:</b><br>
+			<a href='<?php echo get_permalink($pageId);?>'>Home page for logged in users</a>
+		</p>
+		<?php
+	}
+},10,2);
+
 add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
 	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
@@ -121,3 +143,62 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<?php
 
 }, 10, 3);
+
+add_filter('sim_module_updated', function($options, $module_slug){
+	//module slug should be the same as grandparent folder name
+	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
+
+	// Create frontend posting page
+	$pageId	= SIM\get_module_option($module_slug, 'home_page');
+	// Only create if it does not yet exist
+	if(!$pageId or get_post_status($pageId) != 'publish'){
+		$content	= 'Hi [displayname],<br><br>I hope you have a great day!<br><br>[logged_home_page]<br><br>[welcome]';
+
+		$post = array(
+			'post_type'		=> 'page',
+			'post_title'    => 'Home',
+			'post_content'  => $content,
+			'post_status'   => "publish",
+			'post_author'   => '1'
+		);
+		$pageId 	= wp_insert_post( $post, true, false);
+
+		//Store page id in module options
+		$options['home_page']	= $pageId;
+
+		// Do not require page updates
+		update_post_meta($pageId, 'static_content', true);
+	}
+
+	return $options;
+}, 10, 2);
+
+add_filter('display_post_states', function ( $states, $post ) { 
+    
+    if ( $post->ID == SIM\get_module_option('frontpage', 'home_page') ) {
+        $states[] = __('Home page for logged in users'); 
+    } 
+
+    return $states;
+}, 10, 2);
+
+//Shortcode for the welcome message on the homepage
+add_shortcode("welcome", __NAMESPACE__.'\welcomeMessage');
+
+function welcomeMessage($atts){
+	if (is_user_logged_in()){
+		$UserID = get_current_user_id();
+		//Check welcome message needs to be shown
+		if (empty(get_user_meta( $UserID, 'welcomemessage', true ))){
+			$welcome_message = SIM\get_module_option('frontpage', 'welcome_message'); 
+			if(!empty($welcome_message)){
+				//Html
+				$html = '<div id="welcome-message">';
+					$html .= do_shortcode($welcome_message);
+					$html .= '<button type="button" class="button" id="welcome-message-button">Do not show again</button>';
+				$html .= '</div>';
+				return $html;
+			}
+		}
+	}
+}

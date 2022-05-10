@@ -206,14 +206,12 @@ add_action('wp_footer', function(){
             )
         )
     ){
-        $twofa_page      = get_page_link(SIM\get_module_option('login', '2fa_page'));
-        $twofa_page     .= SIM\get_module_option('login', '2fa_page_extras');
+        $accountPageId  = SIM\get_module_option('login', '2fa_page');
+        $url            = SIM\getValidPageLink($accountPageId);
+        if(!$url) return;
 
-        //Only redirect if we are not currently on the page already
-        if(strpos(SIM\current_url(),$twofa_page) === false){
-            SIM\print_array("Redirecting from ".SIM\current_url()." to $twofa_page");
-            wp_redirect($twofa_page);
-            exit();
-        }
+        SIM\print_array("Redirecting from ".SIM\current_url()." to $url");
+        wp_redirect($url);
+        exit();
     }
 });

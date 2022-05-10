@@ -82,7 +82,8 @@ function page_age_warning(){
 		//If it is X days since last modified
 		if ($seconds_since_updated > $max_age_in_seconds){
 			//Get the edit page url
-			$url 		= add_query_arg( ['post_id' => $post_id], get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page') ) );		
+			$url		= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
+			$url 		= add_query_arg( ['post_id' => $post_id], $url );		
 			
 			//Send an e-mail
 			$recipients = get_page_recipients($post_title);
@@ -121,7 +122,7 @@ function get_page_recipients($page_title){
 	//If no one is responsible for this page
 	if(count($recipients) == 0){
 		$recipients = get_users( array(
-			'role'    => 'contentmanager',
+			'role'    => 'editor',
 		));
 	}
 	

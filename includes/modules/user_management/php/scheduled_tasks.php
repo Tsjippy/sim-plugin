@@ -562,8 +562,8 @@ function account_expiry_check(){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 
-	$personnelCoordinatorEmail	= SIM\get_module_option('user_managment', 'personnel_email');
-	$staEmail					= SIM\get_module_option('user_managment', 'sta_email');
+	$personnelCoordinatorEmail	= SIM\get_module_option('user_management', 'personnel_email');
+	$staEmail					= SIM\get_module_option('user_management', 'sta_email');
 	
 	//Get the users who will expire in 1 month
 	$users = get_users(
@@ -656,7 +656,7 @@ function account_expiry_check(){
 function review_reminders(){	
 	$generic_documents = get_option('personnel_documents');
 	if(is_array($generic_documents) and !empty($generic_documents['Annual review form'])){
-		$personnelCoordinatorEmail	= SIM\get_module_option('user_managment', 'personnel_email');
+		$personnelCoordinatorEmail	= SIM\get_module_option('user_management', 'personnel_email');
 		//Change the user to the adminaccount otherwise get_users will not work
 		wp_set_current_user(1);
 		

@@ -154,42 +154,28 @@ function updateRoles(){
         return "Nothing to update";
     }
 
-    do_action('sim_roles_changed', $user, $newRoles);
-    
-    //add new roles
-    foreach($newRoles as $key=>$role){
-        //If the role is set, and the user does not have the role currently
-        if(!in_array($key,$userRoles)){
-            $user->add_role( $key );
-        }
-    }
-    
-    foreach($userRoles as $role){
-        //If the role is not set, but the user has the role currently
-        if(!in_array($role,array_keys($newRoles))){
-            $user->remove_role( $role );
-        }
-    }
+	SIM\saveExtraUserRoles($_POST['userid']);
     
     return "Updated roles succesfully";
 }
 
+
 function createUserAccount(){
     // Check if the current user has the right to create approved user accounts
     $user 		= wp_get_current_user();
-	$user_roles = $user->roles;
-	if(in_array('usermanagement', $user_roles)){
+	$userRoles	= $user->roles;
+	if(in_array('usermanagement', $userRoles)){
 		$approved = true;
 	}
 
-	$last_name	= sanitize_text_field($_POST["last_name"]);
-	$first_name = sanitize_text_field($_POST["first_name"]);
+	$lastName	= ucfirst(sanitize_text_field($_POST["last_name"]));
+	$firstName	= ucfirst(sanitize_text_field($_POST["first_name"]));
 	
 	if (empty($_POST["email"])){
-		$username = SIM\getAvailableUsername($first_name, $last_name);
+		$username = SIM\getAvailableUsername($firstName, $lastName);
 		
 		//Make up a non-existing emailaddress
-		$email = sanitize_email($username."@".$last_name.".empty");
+		$email = sanitize_email($username."@".$lastName.".empty");
 	}else{
         $email = sanitize_email($_POST["email"]);
     }
@@ -201,14 +187,14 @@ function createUserAccount(){
 	}
 	
 	//Create the account
-	$user_id = SIM\addUserAccount($first_name, $last_name, $email, $approved, $validity);
+	$user_id = SIM\addUserAccount($firstName, $lastName, $email, $approved, $validity);
 	if(is_wp_error($user_id))   return $user_id;
 	
-    if(in_array('usermanagement', $user_roles)){
+    if(in_array('usermanagement', $userRoles)){
         $url = SITEURL."/update-personal-info/?userid=$user_id";
-        $message = "Succesfully created an useraccount for $first_name<br>You can edit the deails <a href='$url'>here</a>";
+        $message = "Succesfully created an useraccount for $firstName<br>You can edit the deails <a href='$url'>here</a>";
     }else{
-        $message = "Succesfully created useraccount for $first_name<br>You can now select $first_name in the dropdowns";
+        $message = "Succesfully created useraccount for $firstName<br>You can now select $firstName in the dropdowns";
     }
 
 	do_action('sim_after_user_account_creation', $user_id);

@@ -230,7 +230,6 @@ function get_child_title($user_id){
 
 //family flat array
 function family_flat_array($user_id){
-	
 	$family = (array)get_user_meta( $user_id, 'family', true );
 	clean_up_nested_array($family);
 
@@ -288,15 +287,13 @@ function is_child($user_id) {
 
 function get_age($user_id){
 	$birthday = get_user_meta( $user_id, 'birthday', true );
-	if($birthday != ""){
-		$birthDate = explode("-", $birthday);
-		if (date("md", date("U", mktime(0, 0, 0, $birthDate[1], $birthDate[2], $birthDate[0]))) > date("md")){
-			$age = (date("Y") - $birthDate[0]) - 1;
-		}else{
-			$age = (date("Y") - $birthDate[0]);
-		}
+	if(empty($birthday)) return false;
+
+	$birthDate = explode("-", $birthday);
+	if (date("md", date("U", mktime(0, 0, 0, $birthDate[1], $birthDate[2], $birthDate[0]))) > date("md")){
+		$age = (date("Y") - $birthDate[0]) - 1;
 	}else{
-		$age = "";
+		$age = (date("Y") - $birthDate[0]);
 	}
 	
 	return $age;
@@ -806,16 +803,37 @@ function getUserPageUrl($user_id){
 }
 
 // Get profile picture html
-function displayProfilePicture($user_id, $size=[50,50], $show_default = true){
-	$attachment_id = get_user_meta($user_id,'profile_picture',true);
-	if(is_numeric($attachment_id)){
-		$url = wp_get_attachment_image_url($attachment_id,'Full size');
-		$img = wp_get_attachment_image($attachment_id,$size);
-		return "<a href='$url'>$img</a>";
-	}elseif($show_default){
+function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $famillyPicture=false){
+	
+	$attachmentId = get_user_meta($userId, 'profile_picture', true);
+
+	if($famillyPicture){
+		$family			= get_user_meta($userId, 'family', true);
+
+		if(isset($family['picture']) and is_numeric($family['picture']))	$attachmentId	= $family['picture'];
+	}
+	if(!empty($attachmentId) and is_array($attachmentId)) $attachmentId	= $attachmentId[0];
+
+	if(is_numeric($attachmentId)){
+		$url = wp_get_attachment_image_url($attachmentId,'Full size');
+		return "<a href='$url'><img width='50' height='50' src='$url' class='attachment-50x50 size-50x50' loading='lazy'></a>";
+	}elseif($showDefault){
 		$url = plugins_url('pictures/usericon.png', __DIR__);
 		return "<img width='50' height='50' src='$url' class='attachment-50x50 size-50x50' loading='lazy'>";
 	}else{
 		return false;
 	}
+}
+
+function getValidPageLink($postId){
+	if(!is_numeric($postId)) return false;
+
+	if(get_post_status($postId) != 'publish') return false;
+
+	$link      = get_page_link($postId);
+
+	//Only redirect if we are not currently on the page already
+	if(strpos(current_url(), $link) !== false) return false;
+
+	return $link;
 }

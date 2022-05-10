@@ -109,7 +109,7 @@ function prepareVimeoUpload(){
     // If there is no file with the same name, create a new video on vimeo
 	if(empty($url)){
 		$VimeoApi	= new VimeoApi();
-		$result	= $VimeoApi->create_vimeo_video($file_name, $mime);
+		$result	= $VimeoApi->createVimeoVideo($file_name, $mime);
     // Return a previous created vimeo video link and post id
 	}else{
 		$result = [
@@ -141,7 +141,7 @@ function addUploadedVimeo(){
 
 	// Download a backup or send an e-mail if that is not possible
 	$VimeoApi	= new VimeoApi();
-	$VimeoApi->download_video($post_id);
+	$VimeoApi->downloadVideo($post_id);
 
     // Media libray expects the below array!
     return [
