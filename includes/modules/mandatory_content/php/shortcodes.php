@@ -2,8 +2,8 @@
 namespace SIM\MANDATORY;
 use SIM;
 
-add_action('sim_dashboard_warnings', function($user_id){	
-	echo mustReadDocuments($user_id);
+add_action('sim_dashboard_warnings', function($userId){	
+	echo mustReadDocuments($userId);
 }, 5);
 
 add_filter('sim_loggedin_homepage',  function($content){
@@ -11,31 +11,36 @@ add_filter('sim_loggedin_homepage',  function($content){
 	return $content;
 });
 
-
 add_shortcode("must_read_documents", __NAMESPACE__.'\mustReadDocuments');
-function mustReadDocuments($user_id='', $exclude_heading=false){
-	if(!is_numeric($user_id)) $user_id = get_current_user_id();
+
+/**
+ * Get an unordered list of documents to read
+ * @param  int		$userId 		
+ * @param  bool	 	$excludeHeading        	Whether to include a heading for 
+ * @return string							HTML unordered list              
+ */
+function mustReadDocuments($userId='', $excludeHeading=false){
+	$html 			= '';
+	$beforeHtml 	= '';
+	$arrivedHtml 	= '';
+	
+	wp_enqueue_script('sim_mandatory_script');
+
+	if(!is_numeric($userId)){
+		$userId = get_current_user_id();
+	}
+
+	// skip if user has the no mandatory pages role
+	$user	= get_userdata($userId);
+	if(in_array('no_man_docs', $user->roles)) return '';
+	
 	
 	//Get all the pages this user already read
-	$read_pages		= (array)get_user_meta( $user_id, 'read_pages', true );
-	
-	//Array of documents unique for each person
-	$personal_document_array = [
-		'welcomeletter'		=> 'Welcome Letter',
-		'mealschedule'		=> 'Meal Schedule',
-		'orientation'		=> 'Orientation Schedule',
-		'jobdescription'	=> 'Job Description',
-	];
-	
-	$personnel_documents 	= (array)get_user_meta( $user_id, "personnel_documents",true);
-	
-	$html 			= '';
-	$before_html 	= '';
-	$arrived_html 	= '';
+	$readPages		= (array)get_user_meta( $userId, 'read_pages', true );
 	
 	//Get the users arrival date
-	$arrivaldate 	= strtotime(get_user_meta( $user_id, 'arrival_date', true ));
-	if($arrivaldate != false and $arrivaldate < time()){
+	$arrivalDate 	= strtotime(get_user_meta( $userId, 'arrival_date', true ));
+	if($arrivalDate != false and $arrivalDate < time()){
 		$arrived = true;
 	}else{
 		$arrived = false;
@@ -50,63 +55,65 @@ function mustReadDocuments($user_id='', $exclude_heading=false){
 			'post_status' 	=> 'publish',
 			'meta_key' 		=> "audience",
 			'numberposts'	=> -1,				// all posts
-			'author' 		=> '-'.$user_id		// exclude own posts
+			'author' 		=> '-'.$userId		// exclude own posts
 		)
 	);
 	
 	//Loop over the pages while building the html
-	$arrived_pages_count = 0;
+	$arrivedPagesCount = 0;
 	foreach($pages as $page){
 		//check if already read
-		if(!in_array($page->ID, $read_pages)){
-			$audience =  get_post_meta($page->ID,"audience",true);
+		if(!in_array($page->ID, $readPages)){
+			$audience =  get_post_meta($page->ID, "audience", true);
 			
 			//Add a link if not yet in the country and should read before arriving
 			if(isset($audience['beforearrival']) and !$arrived){
-				$before_html .= '<li><a href="'.get_permalink($page->ID).'">'.$page->post_title.'</a></li>';
+				$beforeHtml .= '<li><a href="'.get_permalink($page->ID).'">'.$page->post_title.'</a></li>';
 			}
 			
 			//Page has not been read and should be read by all users
 			if(isset($audience['afterarrival']) or isset($audience['everyone'])){
 				//If this page also needs to be read by users who are not yet arrived, do not show again
 				if(!isset($audience['beforearrival']) or ($arrived and isset($audience['beforearrival']))){
-					$arrived_html .= '<li><a href="'.get_permalink($page->ID).'">'.$page->post_title.'</a></li>';
-					$arrived_pages_count++;
+					$arrivedHtml .= '<li><a href="'.get_permalink($page->ID).'">'.$page->post_title.'</a></li>';
+					$arrivedPagesCount++;
 				}
 			}
 		}
 	}
 	
 	///Documents to read before arrival
-	if($before_html != '' or (count($personal_document_array)>0 and !$arrived)){
-		if(!$exclude_heading){
-			$html .= "<h3>Welcome!</h3><p>We are so happy to welcome you to Nigeria!<br>";
-			$html .= "Please read and/or download the documents below to prepare for your stay.</p>";
+	if(!empty($beforeHtml) and !$arrived){
+		if(!$excludeHeading){
+			$html .= "<h3>Welcome!</h3>";
+			$html .= "<p>";
+				$html .= "We are so happy to welcome you!<br>";
+				$html .= "Please read and/or download the documents below to prepare for your stay.";
+			$html .= "</p>";
 		}
-		$html .= "<ul>$before_html";
-		foreach($personal_document_array as $key=>$document){
-			if(isset($personnel_documents[$document])){
-				$html .= "<li><a href='".SITEURL.'/'.$personnel_documents[$document]."'>$document</a></li>";
-			}
-		}
-		$html .= "</ul>";
+		$html .= "<ul>$beforeHtml</ul>";
 	}
 	
 	//Documents to read after arrival
-	if($arrived_html != ''){
-		if($arrived_pages_count == 1){
+	if($arrivedHtml != ''){
+		if($arrivedPagesCount == 1){
 			$page = "page";
 		}else{
 			$page = "pages";
 		}
 		
-		if(!$exclude_heading){
+		if(!$excludeHeading){
 			$html .= "<h3>Please read the following $page:</h3>";
 		}
-		$html .= "<ul>$arrived_html</ul>";
+		$html .= "<ul>$arrivedHtml</ul>";
 	}
 	
-	if($html != ''){
+
+	if(!empty($html)){
+		if($userId != get_current_user_id()){
+			$html	= "<button type'button' class='button small mark-all-as-read' data-userid='$userId'>Mark all pages as read for {$user->display_name}</button>".$html;
+		}
+
 		return "<div id='personalinfo'>$html</div>";
 	}
 }

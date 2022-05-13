@@ -46,14 +46,14 @@ function event_specific_fields($frontEndContent){
 		'hide_empty' => false,
 	) );
 	
-	$frontEndContent->show_categories('event',$categories);
+	$frontEndContent->showCategories('event', $categories);
 	
-	$eventdetails	= (array)get_post_meta($frontEndContent->post_id,'eventdetails',true);
+	$eventdetails	= (array)get_post_meta($frontEndContent->postId,'eventdetails',true);
 	$repeat_param	= $eventdetails['repeat'];
 	
 	?>
 	<br>
-	<div class="event <?php if($frontEndContent->post_type != 'event') echo 'hidden'; ?>">
+	<div class="event <?php if($frontEndContent->postType != 'event') echo 'hidden'; ?>">
 		<label>
 			<input type='checkbox' name='event[allday]' value='allday' <?php if(!empty($eventdetails['allday'])) echo 'checked'?> ;>
 			All day event
@@ -362,3 +362,8 @@ add_filter('sim_signal_post_notification_message', function($excerpt, $post){
 
 	return $excerpt;
 }, 10, 2);
+
+add_action('sim_after_post_save', function($post, $update){
+    $events = new Events();
+    $events->store_event_meta($post, $update);
+}, 1, 2);

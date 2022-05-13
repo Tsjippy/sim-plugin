@@ -779,23 +779,23 @@ function addUserAccount($first_name, $last_name, $email, $approved = false, $val
 }
 
 function getUserPageId($user_id){
-    return get_user_meta($user_id,"missionary_page_id",true);
+    return get_user_meta($user_id,"user_page_id",true);
 }
 
 // Get the users description page
 function getUserPageUrl($user_id){
-	//Get the missionary page of this user
-	$missionary_page_id = getUserPageId($user_id);
+	//Get the user page of this user
+	$user_page_id = getUserPageId($user_id);
 	
-	if(!is_numeric($missionary_page_id) or get_post_status($missionary_page_id ) != 'publish'){
+	if(!is_numeric($user_page_id) or get_post_status($user_page_id ) != 'publish'){
         if(function_exists('SIM\USERPAGE\create_user_page')){
-			$missionary_page_id = USERPAGE\create_user_page($user_id);
+			$user_page_id = USERPAGE\create_user_page($user_id);
 		}
 
-        if(!$missionary_page_id) return false;
+        if(!$user_page_id) return false;
     }
 
-    $url = get_permalink($missionary_page_id);
+    $url = get_permalink($user_page_id);
     $url_without_https = str_replace('https://','',$url);
     
     //return the url

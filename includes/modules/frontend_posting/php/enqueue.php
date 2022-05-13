@@ -22,8 +22,8 @@ add_action( 'wp_enqueue_scripts', function ($hook) {
     //Load js
 	wp_register_script('sim_frontend_script', plugins_url('js/frontend_posting.min.js', __DIR__), array('sim_fileupload_script', 'sim_formsubmit_script'), ModuleVersion, true);
 
-    $front_end_post_pages   = SIM\get_module_option('frontend_posting', 'publish_post_page');
-    if(get_the_ID() == $front_end_post_pages){
+    $frontEndPostPages   = SIM\get_module_option('frontend_posting', 'publish_post_page');
+    if(get_the_ID() == $frontEndPostPages){
         wp_enqueue_style('sim_frontend_style');
     }
 });

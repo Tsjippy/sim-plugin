@@ -84,7 +84,7 @@ class Events{
 			wp_clear_scheduled_hook([$this, 'send_event_reminder'], $this->post_id);
 
 			//store meta in db
-			update_post_meta($this->post_id, 'eventdetails', $event);
+			update_metadata( 'post', $this->post_id, 'eventdetails', $event);
 		
 			//create events
 			$this->event_data		= $event;
@@ -361,8 +361,8 @@ class Events{
 			);
 
 			$this->post_id 	= wp_insert_post( $post,true,false);
-			update_post_meta($this->post_id,'eventdetails',$this->event_data);
-			update_post_meta($this->post_id,'celebrationdate',$metavalue);
+			update_metadata( 'post', $this->post_id,'eventdetails',$this->event_data);
+			update_metadata( 'post', $this->post_id,'celebrationdate',$metavalue);
 
 			wp_set_object_terms($this->post_id,$termid,'events');
 
@@ -464,7 +464,7 @@ class Events{
 
 						$user_id = get_post_meta($event->post_id,'user',true);
 						if(is_numeric($user_id) and function_exists('SIM\USERPAGE\get_user_page_link')){
-							//Get the missionary page of this user
+							//Get the user page of this user
 							$event_url	= SIM\USERPAGE\get_user_page_link($user_id);
 						}else{
 							$event_url	= get_permalink($event->post_id);

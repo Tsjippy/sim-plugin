@@ -108,7 +108,7 @@ if(!empty($hook_name)){
 					)
 				),
 				array(
-					'key'		=> 'missionary_id',
+					'key'		=> 'user_id',
 					'compare'	=> 'NOT EXISTS'
 				),
 			);

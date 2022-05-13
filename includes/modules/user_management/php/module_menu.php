@@ -4,9 +4,9 @@ use SIM;
 
 const ModuleVersion		= '7.0.4';
 
-add_action('sim_submenu_description', function($module_slug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $module_name){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	?>
 	<p>
@@ -35,8 +35,8 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		Use like this: <code>[change_password]</code>
 	</p>
 	<?php
-	$page1Id	= SIM\get_module_option($module_slug, 'account_page');
-	$page2Id	= SIM\get_module_option($module_slug, 'user_edit_page');
+	$page1Id	= SIM\get_module_option($moduleSlug, 'account_page');
+	$page2Id	= SIM\get_module_option($moduleSlug, 'user_edit_page');
 	if(is_numeric($page1Id) or is_numeric($page2Id)){
 		?>
 		<p>
@@ -48,9 +48,9 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	}
 },10,2);
 
-add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	
 	?>
 	<label>
@@ -167,12 +167,12 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	$greenCardReminderMail->printInputs($settings);
 }, 10, 3);
 
-add_filter('sim_module_updated', function($options, $module_slug){
+add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	// Create account page
-	$page_id	= SIM\get_module_option($module_slug, 'account_page');
+	$page_id	= SIM\get_module_option($moduleSlug, 'account_page');
 	// Only create if it does not yet exist
 	if(!$page_id or get_post_status($page_id) != 'publish'){
 		$post = array(
@@ -192,7 +192,7 @@ add_filter('sim_module_updated', function($options, $module_slug){
 	}
 
 	// Create user edit page
-	$pageId	= SIM\get_module_option($module_slug, 'user_edit_page');
+	$pageId	= SIM\get_module_option($moduleSlug, 'user_edit_page');
 	// Only create if it does not yet exist
 	if(!$pageId or get_post_status($pageId) != 'publish'){
 		$post = array(
@@ -228,9 +228,9 @@ add_filter('sim_module_updated', function($options, $module_slug){
 }, 10, 2);
 
 
-add_action('sim_module_deactivated', function($module_slug, $options){
+add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	// Remove the auto created page
 	wp_delete_post($options['user_info_page'], true);

@@ -7,12 +7,12 @@ add_shortcode('your_posts',function(){
 	wp_enqueue_script('sim_table_script');
 	
 	//Get all posts for the current user
-	$post_types	= get_post_types(['public'=>true]);
-	unset( $post_types['attachment'] );
+	$postTypes	= get_post_types(['public'=>true]);
+	unset( $postTypes['attachment'] );
 	
-	$user_user_posts = get_posts( 
+	$userUserPosts = get_posts( 
 		array(
-			'post_type'		=> $post_types,
+			'post_type'		=> $postTypes,
 			'post_status'	=> 'any',
 			'author'		=> get_current_user_id(),
 			'orderby'		=> 'post_date',
@@ -32,7 +32,7 @@ add_shortcode('your_posts',function(){
 					$html .= "<th>Actions</th>";
 				$html .= "</tr>";
 			$html .= "</thead>";
-		foreach($user_user_posts as $post){
+		foreach($userUserPosts as $post){
 			$date 		= get_the_modified_date('d F Y',$post);
 			
 			$type		= ucfirst($post->post_type);
@@ -43,15 +43,15 @@ add_shortcode('your_posts',function(){
 			if($status == 'Publish') $status = 'Published';
 			
 			$url 		= get_permalink($post);
-			$edit_url	= SIM\getValidPageLink(SIM\get_module_option('frontend_posting','publish_post_page'));
-			if(!$edit_url) $edit_url = '';
-			$edit_url 	= add_query_arg( ['post_id' => $post->ID], $edit_url);
+			$editUrl	= SIM\getValidPageLink(SIM\get_module_option('frontend_posting','publish_post_page'));
+			if(!$editUrl) $editUrl = '';
+			$editUrl 	= add_query_arg( ['post_id' => $post->ID], $editUrl);
 			if($post->post_status == 'publish'){
 				$view = 'View';
 			}else{
 				$view = 'Preview';
 			}
-			$actions= "<span><a href='$url'>$view</a></span><span style='margin-left:20px;'> <a href='$edit_url'>Edit</a></span>";
+			$actions= "<span><a href='$url'>$view</a></span><span style='margin-left:20px;'> <a href='$editUrl'>Edit</a></span>";
 			
 			$html .= "<tr class='table-row'>";
 				$html .= "<td>$date</td>";
@@ -63,69 +63,97 @@ add_shortcode('your_posts',function(){
 		}
 		$html .= "</table>";
 	
-	//print_array($user_user_posts);
 	return $html;
 });
 
 //Shortcode to display all pages and post who are pending
 add_shortcode("pending_pages", function ($atts){
 	//Get all the posts with a pending status
-	$args = array(
-	  'post_status' => 'pending',
-	  'post_type'	=> 'any'
+	$pendingPosts 	= get_posts( 
+		array(
+			'post_status'	=> 'pending',
+			'post_type'		=> 'any',
+			'numberposts'	=> -1
+		)
 	);
-	
-	//Build de HTML
-	$initial_html 	= "";
-	$html 			= $initial_html;
-	$pending_posts 	= get_posts( $args );
+
+	//Get all the posts with a pending revision
+	$pendingRevisions 	= get_posts( 
+		array(
+			'post_status'	=> 'inherit',
+			'post_type'		=> 'change',
+			'numberposts'	=> -1
+		)
+		
+	);
+
 	$url			= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
+	if(!$url)	return;
+
+	$html='';
 	//Only if there are any pending posts
-	if ( $pending_posts and $url) {
-		$html .= "<p><strong>Pending content:</strong><br><ul>";
+	if ( $pendingPosts) {
+		$html .= "<strong>Pending content:</strong><br>";
+		$html .= "<ul>";
 		//For each pending post add a link to edit the post
-		foreach ( $pending_posts as $pending_post ) {
-			$url = add_query_arg( ['post_id' => $pending_post->ID], $url );
-			if ($url){
-				if(strtotime($pending_post->post_date_gmt) > time()){
-					$date	= date('d-M-Y', strtotime($pending_post->post_date_gmt));
-					$html .= "<li>$pending_post->post_title (scheduled for $date) <a href='$url'>Publish now</a></li>";
-				}else{
-					$html .= '<li>'.$pending_post->post_title.' <a href="'.$url.'">Review and publish</a></li>';
-				}
+		foreach ( $pendingPosts as $post ) {
+			$url = add_query_arg( ['post_id' => $post->ID], $url );
+			if(strtotime($post->post_date_gmt) > time()){
+				$date	= date('d-M-Y', strtotime($post->post_date_gmt));
+				$html .= "<li>$post->post_title (scheduled for $date) <a href='$url'>Publish now</a></li>";
+			}else{
+				$html .= '<li>'.$post->post_title.' <a href="'.$url.'">Review and publish</a></li>';
 			}
 		}
 		$html .= "</ul>";
 	}
-	
-	if ($html != $initial_html){
-		$html.="</ul></p>";
-		return $html;
-	}else{
-		return "<p>No pending posts or pages found</p>";
+
+	if ( $pendingRevisions) {
+		$html .= "<br><br><strong>Pending content revisions:</strong><br>";
+		$html .= "<ul>";
+		//For each pendingRevisions post add a link to edit the post
+		foreach ( $pendingRevisions as $post ) {
+			$url = add_query_arg( ['post_id' => $post->ID], $url );
+			$html .= "<li>$post->post_title <a href='$url'>Review changes</a></li>";
+		}
+		$html .= "</ul>";
 	}
+
+	if(!empty($html))	return "<p>$html</p>";
+	
+	return "<p>No pending posts or pages found</p>";
 });
 
 //Shortcode to display number of pending posts and pages
 add_shortcode('pending_post_icon', function ($atts){
-	$args = array(
-	  'post_status' => 'pending',
-	  'post_type'	=> 'any'
+	//Get all the posts with a pending status
+	$pendingPosts 	= get_posts( 
+		array(
+			'post_status'	=> 'pending',
+			'post_type'		=> 'any',
+			'numberposts'	=> -1
+		)
 	);
-	$pending_posts = get_posts( $args );
-	if ( $pending_posts ) {
-		$pending_total = count($pending_posts);
-	}
-	
-	if ($pending_total > 0){
-		return '<span class="numberCircle">'.$pending_total.'</span>';
+
+	//Get all the posts with a pending revision
+	$pendingRevisions 	= get_posts( 
+		array(
+			'post_status'	=> 'inherit',
+			'post_type'		=> 'change',
+			'numberposts'	=> -1
+		)
+	);
+
+	if ( $pendingPosts or $pendingRevisions) {
+		$pendingTotal = count($pendingPosts) + count($pendingRevisions);
+		return "<span class='numberCircle'>$pendingTotal</span>";
 	}
 });
 
 //Add shortcode for the post edit form
 add_shortcode("front_end_post", function(){
 	$frontEndContent	= new FrontEndContent();
-	return $frontEndContent->frontend_post();
+	return $frontEndContent->frontendPost();
 });
 
 // Show the content of another post

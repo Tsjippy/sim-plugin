@@ -46,7 +46,7 @@ var select_user_dialog = {
 				if(document.getElementById('insert_email').checked){
 					options += ' email=true';
 				}
-				tinymce.activeEditor.insertContent('[missionary_link id="'+userid+'"'+options+']');
+				tinymce.activeEditor.insertContent('[user_link id="'+userid+'"'+options+']');
 			}
 			dialog.close();
 		}

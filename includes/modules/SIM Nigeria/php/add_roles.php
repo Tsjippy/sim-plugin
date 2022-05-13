@@ -2,9 +2,9 @@
 namespace SIM\SIMNIGERIA;
 use SIM;
 
-add_filter('sim_module_updated', function($options, $module_slug){
+add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	$roleSet = get_role( 'contributor' )->capabilities;
 

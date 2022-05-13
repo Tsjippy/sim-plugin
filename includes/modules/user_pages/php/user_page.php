@@ -2,7 +2,7 @@
 namespace SIM\USERPAGE;
 use SIM;
 
-//Create an missionary (family) page
+//Create an user (family) page
 function create_user_page($user_id){	
 	//get the current page
 	$page_id    = SIM\getUserPageId($user_id);
@@ -28,7 +28,7 @@ function create_user_page($user_id){
 		$update = true;
 
 		// Create post object
-		$missionary_page = array(
+		$user_page = array(
 		  'post_title'    => $title,
 		  'post_content'  => '',
 		  'post_status'   => 'publish',
@@ -37,12 +37,12 @@ function create_user_page($user_id){
 		);
 		 
 		// Insert the post into the database
-		$page_id = wp_insert_post( $missionary_page );
+		$page_id = wp_insert_post( $user_page );
 		
-		//Save missionary id as meta
-		update_post_meta($page_id,'missionary_id',$user_id);
+		//Save user id as meta
+		update_post_meta($page_id,'user_id',$user_id);
 		
-		SIM\print_array("Created missionary page with id $page_id");
+		SIM\print_array("Created user page with id $page_id");
 	}else{
         $update = update_user_page_title($user_id, $title);
 	}
@@ -51,7 +51,7 @@ function create_user_page($user_id){
 		//Check if family has other pages who should be deleted
 		foreach($family as $family_member){
 			//get the current page
-			$member_page_id = get_user_meta($family_member,"missionary_page_id",true);
+			$member_page_id = get_user_meta($family_member,"user_page_id",true);
 			
 			//Check if this page exists and is already trashed
 			if(get_post_status ($member_page_id) == 'trash' ) $member_page_id = null;
@@ -61,13 +61,13 @@ function create_user_page($user_id){
 				//Remove the current user page
 				wp_delete_post($member_page_id);
 				
-				SIM\print_array("Removed missionary page with id $member_page_id");
+				SIM\print_array("Removed user page with id $member_page_id");
 			}
 		}
 	}
 	
 	//Add the post id to the user profile
-	SIM\update_family_meta($user_id,"missionary_page_id",$page_id);
+	SIM\update_family_meta($user_id,"user_page_id",$page_id);
 	
 	//Return the id
 	return $page_id;
@@ -112,7 +112,7 @@ function update_user_page_title($user_id, $title){
     } 
 }
 
-//Display name and mission of missionary
+//Display name and job of user
 function user_description($user_id){
 	$html = "";
 
@@ -143,7 +143,7 @@ function user_description($user_id){
 	if(!is_array($privacy_preference)) $privacy_preference = [];
 
 	//Build the html
-	//Missionary has a family
+	//user has a family
 	if (!empty($family)){
 		$html .= "<h1>$user->last_name family</h1>";
 
@@ -440,9 +440,9 @@ function add_ministry_links($UserID){
 add_filter( 'the_content', function ( $content ) {
 	if (is_user_logged_in()){
 		$post_id 	= get_the_ID();
-		//missionary page
-		$missionary_id = get_post_meta($post_id,'missionary_id',true);
-		if(is_numeric($missionary_id)) $content .= user_description($missionary_id);
+		//user page
+		$user_id = get_post_meta($post_id,'user_id',true);
+		if(is_numeric($user_id)) $content .= user_description($user_id);
 	}
 
 	return $content;

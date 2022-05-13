@@ -16,9 +16,9 @@ function schedule_tasks(){
 }
 
 // Remove scheduled tasks upon module deactivatio
-add_action('sim_module_deactivated', function($module_slug, $options){
+add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	wp_clear_scheduled_hook( 'auto_archive_action' );
 	wp_clear_scheduled_hook( 'mandatory_fields_reminder_action' );

@@ -2,7 +2,7 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-//Remove missionary page and missionary marker on user account deletion
+//Remove user page and user marker on user account deletion
 add_action('delete_user', function ($user_id){
 	$userdata		= get_userdata($user_id);
 	$displayname	= $userdata->display_name;

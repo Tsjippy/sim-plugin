@@ -485,6 +485,10 @@ document.addEventListener("click", event=>{
 	if(target.matches('.add_category .form_submit')){
 		addCatType(target);
 	}
+
+	if(target.matches('button.show-diff')){
+		target.parentNode.querySelector('.post-diff-wrapper').classList.toggle('hidden');
+	}
 });
 
 document.addEventListener('change', event=>{
@@ -500,11 +504,11 @@ document.addEventListener('change', event=>{
 		var datalist_op = target.list.querySelector("[value='"+target.value+"' i]");
 		if(datalist_op != null){
 			var value = datalist_op.dataset.value;
-		}
 
-		var val_el	= target.closest('label').querySelector('.datalistvalue');
-		if(val_el != null){
-			val_el.value	= value;
+			var val_el	= target.closest('label').querySelector('.datalistvalue');
+			if(val_el != null){
+				val_el.value	= value;
+			}
 		}
 	}
 	

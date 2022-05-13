@@ -6,7 +6,7 @@ use SIM;
 add_action('sim_after_post_save', function($post){
     // Add to media gallery if post type is attachment
     if($post->post_type == 'attachment'){
-        update_post_meta( $post->ID, 'gallery_visibility', 'show' );
+        update_metadata( 'post',  $post->ID, 'gallery_visibility', 'show' );
     }
 });
 
@@ -16,6 +16,6 @@ add_action( 'add_attachment', function ( $postId) {
     $type   = explode('/', $post->post_mime_type)[0];
     
     if(in_array($type, ['audio', 'video'])){
-        update_post_meta( $post->ID, 'gallery_visibility', 'show' );
+        update_metadata( 'post',  $post->ID, 'gallery_visibility', 'show' );
     }
 });

@@ -108,7 +108,7 @@ function get_location_employees($locationName){
 						$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';
 					}
 					
-					$page_url = "<a class='missionary_link' href='$user_page_url'>$user->display_name</a>";
+					$page_url = "<a class='user_link' href='$user_page_url'>$user->display_name</a>";
 					
 					$html .= "   <div $style>$page_url ({$user_ministries[$ministry_name]})</div>";
 					$html .= '<br>';

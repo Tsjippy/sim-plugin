@@ -2,9 +2,9 @@
 namespace SIM\BULKCHANGE;
 use SIM;
 
-add_action('sim_submenu_description', function($module_slug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $module_name){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	?>
 	<p>

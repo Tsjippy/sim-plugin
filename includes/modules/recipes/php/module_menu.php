@@ -4,9 +4,9 @@ use SIM;
 
 const ModuleVersion		= '7.0.1';
 
-add_action('sim_submenu_description', function($module_slug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $module_name){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	?>
 	<p>
@@ -22,7 +22,7 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 },10,2);
 
 
-add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;    
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;    
 }, 10, 3);

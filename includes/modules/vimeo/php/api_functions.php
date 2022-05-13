@@ -137,6 +137,30 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
         /**
          *
+         * Gets a vimeo id from a post id
+         *
+         * @param    int        $vimeId     Vimeo video id
+         * @return   WP_Post|WP_Error       Wordpress post
+         *
+        **/
+        function getPost($vimeoId){
+            // Get the post for this video
+            $posts = get_posts(array(
+                'numberposts'   => -1,
+                'post_type'     => 'attachment',
+                'meta_key'      => 'vimeo_id',
+                'meta_value'    => $vimeoId
+            ));
+
+            if(empty($posts)){
+                return new WP_Error('vimeo'," No post found for this video");
+            }
+
+            return $posts[0];
+        }
+
+        /**
+         *
          * Retrieves all videos on Vimeo
          *
          * @return   array      An Array containing all the videos on Vimeo
@@ -325,12 +349,15 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          *
          * Retrieves an upload url from Vimeo
          *
-         * @param    int     $postId    Wordpress post id
+         * @param    int     $postId    WP_Post id
          * @return   array              The vimeo response
          *
         **/
         function upload($postId){
             if(!is_numeric($postId)) return false;
+
+            // only continue if not on vimeo yet
+            if(is_numeric($this->getVimeoId($postId))) return false;
 
             $path   = get_attached_file($postId);
             if(!file_exists($path)) return false;
@@ -353,17 +380,67 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
         /**
          *
+         * Saves the backup video path to post meta
+         *
+         * @param    int     $postId    WP_Post id
+         * @return   int|bool           meta key id if a new one got created
+         *
+        **/
+        function saveVideoPath($postId, $filePath){
+            if(!is_numeric($postId)) return false;
+
+            return update_post_meta($postId, 'video_path', $filePath);
+        }
+
+        /**
+         *
+         * Retrieves the backup video path
+         *
+         * @param    int     $postId    WP_Post id
+         * @return   string|false       Path to the video file
+         *
+        **/
+        function getVideoPath($postId){
+            if(!is_numeric($postId)) return false;
+
+            $filePath   = get_post_meta($postId, 'video_path', true);
+
+            if(empty($filePath)) return false;
+
+            return $filePath;
+        }
+
+        /**
+         *
          * Updates the metadata of an video on Vimeo
          *
-         * @param    int     $postId    Wordpress post id
+         * @param    int     $postId    WP_Post id
          * @param    array   $data      Meta data to be updated
          *
         **/
         function updateMeta($postId, $data){
             $vimeoId   = $this->getVimeoId($postId);
 
+            // Save meta on vimeo
             if($vimeoId and $this->isConnected()){
                 $response = $this->api->request("/videos/$vimeoId", $data, 'PATCH');
+            }
+
+            // If we are updating the title
+            if(!empty($data['name'])){
+                update_post_meta($postId, '_wp_attached_file', $data['name']);
+
+                // Get current file path
+                $filePath = $this->getVideoPath($postId);
+
+                if($filePath){
+                    //Rename backup file
+                    $newFilePath    = dirname($filePath)."/{$vimeoId}_{$data['name']}.mp4";
+                    rename($filePath, $newFilePath);
+
+                    // Save new filepath in post meta
+                    $this->saveVideoPath($postId, $newFilePath);
+                }
             }
         }
 
@@ -371,7 +448,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          *
          * Hides a vimeo video 
          *
-         * @param    int        $postId    Wordpress post id
+         * @param    int        $postId    WP_Post id
          *
         **/
         function hideVimeoVideo( $postId) {
@@ -395,7 +472,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          *
          * Retrieves the path of the thumbnail of a Vimeo video
          *
-         * @param    int        $postId     Wordpress post id
+         * @param    int        $postId     WP_Post id
          * @return   string|WP_Error|false  Thumbnail path
          *
         **/
@@ -413,7 +490,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 if($data['active']){
                     $icon_url   = $data['base_link'].'.webp';
 
-                    $result = $this->downloadFromVimeo($icon_url, $vimeoId);
+                    $result = $this->downloadFromVimeo($icon_url, $postId);
                     if(is_wp_error($result)){
                         $result = $result->error_data['vimeo']['path'];
                     }
@@ -433,7 +510,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * Tries to download a vimeo video to the server
          * Sends an e-mail to the site admin if that fails
          *
-         * @param    int        $postId     Wordpress post id
+         * @param    int        $postId     WP_Post id
          *
         **/
         function downloadVideo($postId){
@@ -459,19 +536,22 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * Retrieves an upload url from Vimeo
          *
          * @param    string                 $url        The url to the Vimeo 
-         * @param    string                 $filename   The filename for the downloaded file
+         * @param    string                 $postID     The WP_Post id
          * @return   string|false|WP_Error              An Array containing the upload url, WP post id and Vimeo video id
          *
         **/
-        function downloadFromVimeo($url, $filename) {
+        function downloadFromVimeo($url, $postId) {
             $extension  = pathinfo(parse_url($url)['path'], PATHINFO_EXTENSION);
             if($extension == 'webp'){
-                $path   = $this->pictures_dir;
+                $path       = $this->pictures_dir;
+                $filename   = $this->getVimeoId($postId);
             }else{
-                $path   = $this->backup_dir;
-            }
+                $path       = $this->backup_dir;
 
-            if(empty($extension )) $extension = 'mp4';
+                $filename   = $this->getVimeoId($postId)."_".get_the_title($postId);
+
+                if(empty($extension )) $extension = 'mp4';
+            }
 
             // Create folder if it does not exist
             if (!file_exists($path)) {
@@ -483,6 +563,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             }
 
             $filePath  = str_replace('\\', '/', $path.$filename.'.'.$extension);
+
+            // save filepath in meta
+            if($extension == 'mp4') $this->saveVideoPath($postId, $filePath);
 
             if (file_exists($filePath)) {
                 return new WP_Error('vimeo', "The video is already downloaded", ['path' => $filePath]);

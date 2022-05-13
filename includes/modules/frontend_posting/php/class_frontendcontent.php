@@ -5,19 +5,19 @@ use WP_Error;
 
 class FrontEndContent{
 	function __construct(){
-		$this->post_id			= $_GET['post_id'];
+		$this->postId			= $_GET['post_id'];
 		$this->user 			= wp_get_current_user();
 		$this->post 			= null;
-		$this->post_type 		= "post";
+		$this->postType 		= "post";
 		$this->name 			= "post";
-		$this->post_title 		= '';
-		$this->post_category 	= [];
-		$this->post_content		= '';
-		$this->post_parent 		= null;
-		$this->post_image_id	= 0;
+		$this->postTitle 		= '';
+		$this->postCategory 	= [];
+		$this->postContent		= '';
+		$this->postParent 		= null;
+		$this->postImageId		= 0;
 		$this->lite 			= false;
 		
-		if(in_array('editor',$this->user->roles)){
+		if(in_array('editor', $this->user->roles)){
 			$this->fullrights		= true;
 		}else{
 			$this->fullrights		= false;
@@ -25,14 +25,235 @@ class FrontEndContent{
 		
 		if(get_class($this) == __NAMESPACE__.'\FrontEndContent'){
 			//Add tinymce plugin
-			add_filter('mce_external_plugins', array($this,'add_tinymce_plugin'),999);
+			add_filter('mce_external_plugins', array($this, 'addTinymcePlugin'),999);
 			
 			//add tinymce button
-			add_filter('mce_buttons', array($this,'register_buttons'));
+			add_filter('mce_buttons', array($this,'registerButtons'));
 		}
 	}
 	
-	function add_tinymce_plugin($plugins) {
+	/**
+	 *
+	 * Renders the form to edit existing content or create new content
+	 *
+	 * @return   string     The form html
+	 *
+	**/
+	function frontendPost(){
+		if(!function_exists('_wp_translate_postdata')){
+			include ABSPATH . 'wp-admin/includes/post.php';
+		}
+		
+		//Load js
+		wp_enqueue_script('sim_frontend_script');
+		wp_enqueue_media();
+		
+		ob_start();
+		
+		$this->fillPostData();
+		
+		//Show warning if not allowed to edit
+		$this->hasEditRights();
+		if(!$this->editRight and is_numeric($_GET['post_id'])){
+			return '<div class="error">You do not have permission to edit this page.</div>';
+		}
+		
+		//Show warning if someone else is editing
+		$currentEditingUser = wp_check_post_lock($_GET['post_id']);
+		if(is_numeric($currentEditingUser)){
+			header("Refresh: 30;");
+			return "<div class='error' id='	'>".get_userdata($currentEditingUser)->display_name." is currently editing this {$this->postType}, please wait.<br>We will refresh this page every 30 seconds to see if you can go ahead.</div>";
+		}
+		
+		//Current time minus last modified time
+		$secondsSinceUpdated = time()-get_post_modified_time('U', true, $this->post);
+		
+		//Show warning when post has been updated recently
+		if($secondsSinceUpdated < 3600 and $secondsSinceUpdated > -1){
+			$minutes = intval($secondsSinceUpdated/60);
+			echo "<div class='warning'>This {$this->postType} has been updated <span id='minutes'>$minutes</span> minutes ago.</div>";
+		}
+		
+		//Show warning when post is in trash
+		if($this->post->post_status == 'trash'){
+			echo "<div class='warning'>This {$this->postType} has been deleted.<br>You can republish if that should not be the case.</div>";
+		}
+		
+		//Add extra variables to the main.js script
+		wp_localize_script( 'sim_script', 
+			'frontendpost', 
+			array( 
+				'user_select' 		=> SIM\user_select("Select a person to show the link to",true),
+				'post_type'			=> $this->postType,
+			) 
+		);
+
+		?>
+		<div id="frontend_upload_form">			
+			<?php
+			if($this->lite == false){
+				$hidden = 'hidden';
+			}
+
+			$this->update	= 'false';
+			if(is_numeric($this->postId) and $this->post->post_status == 'publish'){
+				$this->update	= 'true';
+			}
+			echo "<button class='button sim $hidden show' id='showallfields'>Show all fields</button>";
+			
+			$this->postTypeSelector();
+			
+			$this->addModals();
+			do_action('frontend_post_modal');
+
+			$this->showChanges();
+
+			//Write the form to create all posts except events
+			?>
+			<form id="postform">
+				<input type="hidden" name="post_status" 	value="publish">
+				<input type="hidden" name="post_type" 		value="<?php echo $this->postType; ?>">
+				<input type="hidden" name="post_image_id" 	value="<?php echo $this->postImageId;?>">
+				<input type="hidden" name="update" 			value="<?php echo $this->update;?>">
+				<input type='hidden' name='post_id' 		value='<?php echo $this->postId;?>'>
+				
+				<h4>Title</h4>
+				<input type="text" name="post_title" class='block' value="<?php echo $this->postTitle;?>" required>
+				
+				<?php
+				do_action('frontend_post_before_content', $this);
+				
+				$this->postCategories();
+				?>
+				
+		 		<div id="featured-image-div" <?php if($this->postImageId == 0) echo ' class="hidden"';?>>
+					<h4 name="post_image_label">Featured image:</h4>
+					<?php 
+					if($this->postImageId != 0){
+						echo get_the_post_thumbnail(
+							$this->postId, 
+							'thumbnail', 
+							array(
+								'title' => 'Featured Image',
+								'class' => 'postimage'
+							)
+						);
+						echo "<button type='button' class='remove_document button' data-url='$document' data-userid='{$this->user_id}' data-metakey='$metakey_string' $library_string>X</button>";
+						echo "<img class='remove_document_loader src='".LOADERIMAGEURL."' style='display:none; height:40px;' >";
+						$text = 'Change';
+					}else{
+						$text = 'Add';
+					}
+					?>
+				</div>
+				
+				<?php
+				//Content wrapper
+				if($this->lite == true){
+					echo "<div class='hidden postcontentwrapper lite'>";
+				}else{
+					echo "<div class='postcontentwrapper lite'>";
+				}
+					echo "<div class='titlewrapper'>";
+						//Post content title
+						$class = 'post page';
+						if($this->postType != 'post' and $this->postType != 'page') $class .= ' hidden';
+						echo "<h4 class='$class' name='post_content_label'>";
+							echo '<span class="capitalize replaceposttype">'.ucfirst($this->postType).'</span> content';
+						echo "</h4>";
+
+						echo "<h4 class='attachment hidden' name='attachment_content_label'>Description:</h4>";
+						
+						do_action('frontend_post_content_title',$this->postType);
+					echo "</div>";
+					
+					//make it possible to select or upload a featured image
+					if ( current_user_can( 'upload_files' ) ) {
+						add_action(
+							'media_buttons',
+							function() use ($text){
+								echo "<button type='button' name='add-featured-image' class='button add_media'><span class='wp-media-buttons-icon'></span> $text Featured Image</button>";
+							},
+							5
+						);
+					}
+					
+					//output tinymce window
+					$settings = array(
+						'wpautop'					=> false,
+						'forced_root_block'			=> true,
+						'convert_newlines_to_brs'	=> true,
+						'textarea_name'				=> "post_content",
+						'textarea_rows'				=> 10
+					);
+					echo wp_editor($this->postContent,'post_content',$settings);
+					?>
+				</div>
+
+				<div class='attachment hidden'>
+					<h4>Upload your file</h4>
+					<?php
+					$uploader = new SIM\Fileupload($this->user->ID, 'attachment', 'private', false);
+					echo $uploader->get_upload_html();
+					?>
+				</div>
+				
+				<?php
+				try{
+					$this->contentManagerOptions();
+				}catch(\Exception $e) {
+					SIM\print_array($e);
+				}
+				
+				//Add a draft button for new posts
+				if($this->postId == null or ($this->post->post_status != 'publish' and $this->post->post_status != 'inherit')){
+					if($this->postId == null){
+						$button_text = "Save <span class='replaceposttype'>{$this->post_name}</span> as draft";
+					}else{
+						$button_text = "Update this <span class='replaceposttype'>{$this->post_name}</span> draft";
+					}
+					
+					echo "<div class='submit_wrapper' style='display: flex;'>";
+						echo "<button type='button' class='button savedraft' name='draft_post'>$button_text</button>";
+						echo "<img class='loadergif hidden' src='".LOADERIMAGEURL."'>";
+					echo "</div>";
+					
+				}
+				echo SIM\add_save_button('submit_post', $this->action);
+				?>
+			</form>
+			<?php
+						
+			//Only show delete button for existing posts and not yet deleted
+			if($this->postId != null and $this->post->post_status != 'trash' and $this->fullrights){
+				?>
+				<div class='submit_wrapper' style='display: flex; margin-top:20px;float:right;margin-right:0px;'>
+					<form>
+						<input hidden name='post_id' value='<?php echo $this->postId; ?>'>
+
+						<button type='submit' class='button' name='delete_post'>Delete <?php echo $this->post->post_type; ?></button>
+						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>'>
+					</form>
+				</div>
+				<?php 
+			} 
+			?>
+		</div>
+		
+		<?php
+		
+		return ob_get_clean();
+	}
+
+	/**
+	 *
+	 * Add a new plugin to the TinyMCE window to select an user and insert a user shortcode
+	 *
+	 * @param    array     $plugins	Array of existing plugins
+	 * @return   array     			Array of new plugins
+	 *
+	**/
+	function addTinymcePlugin($plugins) {
 		wp_localize_script( 'sim_script', 
 			'user_select', 
 			SIM\user_select("Select a person to show the link to",true),
@@ -43,407 +264,268 @@ class FrontEndContent{
 		return $plugins;
 	}
 	
-	function register_buttons($buttons) {
+	/**
+	 *
+	 * Add a new button to the TinyMCE window to select an user and insert a user shortcode
+	 *
+	 * @param    array     $buttons	Array of existing buttons
+	 * @return   array     			Array of new buttons
+	 *
+	**/
+	function registerButtons($buttons) {
 		array_push($buttons, 'select_user');
 		return $buttons;
 	}
 	
-	function has_edit_rights(){
+	/**
+	 *
+	 * Checks whether the current user has edit rights for the current post
+	 *
+	 * @return   boolean  true|false   
+	 *  
+	 *
+	**/
+	function hasEditRights(){
 		//Only set this once
-		if(!isset($this->edit_right)){
-			$user_compound 		= get_user_meta( $this->user->ID, "location", true);
-			if(isset($user_compound['compound'])) $user_compound = $user_compound['compound'];
+		if(!isset($this->editRight)){			
+			$userPageId 	= SIM\getUserPageId($this->user->ID);
 			
-			$missionary_page_id = SIM\getUserPageId($this->user->ID);
+			$ministries 	= get_user_meta( $this->user->ID, "user_ministries", true);
 			
-			$user_ministries 	= get_user_meta( $this->user->ID, "user_ministries", true);
-			
-			$post_author		= $this->post->post_author;
+			$postAuthor		= $this->post->post_author;
 				
 			//Check if allowed to edit this
 			if(
-				$post_author != $this->user->ID 									and 
-				!isset($user_ministries[str_replace(" ","_",$this->post_title )])	and 
-				$user_compound != $this->post_title 								and 
-				$missionary_page_id != $this->ID									and
+				$postAuthor != $this->user->ID 									and 
+				!isset($ministries[str_replace(" ","_",$this->postTitle )])		and  
+				$userPageId != $this->ID										and
 				!$this->fullrights
 			){
-				$this->edit_right	= false;
+				$this->editRight	= false;
 			}else{
-				$this->edit_right	= true;
+				$this->editRight	= true;
 			}
 
-			$this->edit_right	= apply_filters('sim_frontend_content_edit_rights', $this->edit_right, $this->post_category);
+			$this->editRight	= apply_filters('sim_frontend_content_edit_rights', $this->editRight, $this->postCategory);
 		}
 	}
 	
-	function fill_post_data(){
+	/**
+	 *
+	 * Fills the submit form with existing option values of the current post 
+	 *
+	**/
+	function fillPostData(){
 		//Load existing post data
-		if(is_numeric($this->post_id)){
-			$this->post 											= get_post($this->post_id);
-			$this->post_type 										= $this->post->post_type;
-			$this->post_title 										= $this->post->post_title;
-			$this->post_content 									= $this->post->post_content;
-			$this->post_parent 										= $this->post->post_parent;
-			$this->post_image_id									= get_post_thumbnail_id($this->post_id);
+		if(is_numeric($this->postId)){
+			// Check if there are pending changes
+			$args = array(
+				'post_parent' => $this->postId,
+				'post_type'   => 'change',
+				'post_status' => 'inherit',
+			);
+		
+			$revisions = get_children( $args );
+
+			if(empty($revisions)){
+				$this->post 									= get_post($this->postId);
+			// Load the first revision if there is one.
+			}else{
+				$this->post										= array_values($revisions)[0];
+				$this->postId									= $this->post->ID;
+			}
+			$this->postParent 									= $this->post->post_parent;
+			$this->postType 									= $this->post->post_type;
+			if($this->postType == 'change')	$this->postType = get_post_type($this->postParent);
+			$this->postTitle 									= $this->post->post_title;
+			$this->postContent 									= $this->post->post_content;
+			$this->postImageId									= get_post_thumbnail_id($this->postId);
 		}
 		
 		if(!empty($_GET['type'])){
-			$this->post_type 	= $_GET['type'];
+			$this->postType 	= $_GET['type'];
 		}
 		
-		$this->post_name 									= str_replace("_lite","",$this->post_type);
-		$this->post_category 								= $this->post->post_category;
+		$this->postName 										= str_replace("_lite","",$this->postType);
+		$this->postCategory 									= $this->post->post_category;
 		
 		//show lite version of location by default
-		if($this->post_name == 'location' and $this->post_content == '' or strpos($this->post_type, '_lite') !== false){
+		if($this->postName == 'location' and $this->postContent == '' or strpos($this->postType, '_lite') !== false){
 			$this->lite 		= true;
 		}
 		
 		if($this->fullrights == true){
-			if($this->post_id == null or ($this->post->post_status != 'publish' and $this->post->post_status != 'inherit')){
-				$this->action = "Publish <span class='replaceposttype'>{$this->post_name}</span>";
+			if($this->postId == null or ($this->post->post_status != 'publish' and $this->post->post_status != 'inherit')){
+				$this->action = "Publish <span class='replaceposttype'>{$this->postName}</span>";
 			}else{
-				$this->action = "Update <span class='replaceposttype'>{$this->post_name}</span>";
+				$this->action = "Update <span class='replaceposttype'>{$this->postName}</span>";
 			}
 		}else{
-			$this->action = "Submit <span class='replaceposttype'>{$this->post_name}</span> for review";
+			$this->action = "Submit <span class='replaceposttype'>{$this->postName}</span> for review";
 		}
 	}
-		
-	function upload_images($matches) {
-		$ext 			= $matches[1];
-		$filename 		= "frontend_picture";
-		$basedir 		= wp_upload_dir()['path'];
-		$new_file_path 	= "$basedir/$filename.$ext";
-		$i 				= 0;
-		$upload_id		= 0;
-		
-		//Find an available filename
-		while( file_exists( $new_file_path ) ) {
-			$i++;
-			$new_file_path = "$basedir/$filename"."_$i.$ext";
-		}
-		
-		//Decode the base64
-		$file_contents = base64_decode(substr_replace($matches[2] ,"",-1));
-		
-		//Only continue if the decoding was succesfull
-		if( $file_contents !== false){
-			//Save the image in the uploads folder
-			file_put_contents($new_file_path, $file_contents);
-			
-			SIM\add_to_library($new_file_path);
-		}else{
-			SIM\print_array('Not a valid image');
-		}
-		
-		//Return the image url
-		$url = wp_get_attachment_image_url($upload_id,'');
-		return '"'.$url;
-	}
+	/**
+	 *
+	 * Prints pending changes to the screen
+	 *
+	**/
+	function showChanges(){
+		if($this->update and $this->post->post_type == 'change'){
+			// Get changes in title and content
+			if(!function_exists('wp_get_revision_ui_diff')) include_once ABSPATH . 'wp-admin/includes/revision.php';
+			$result		= wp_get_revision_ui_diff($this->post->post_parent, $this->post->post_parent, $this->post->ID);
 
-	function submit_post($status=''){
-		if($_POST['post_status'] == 'draft'){
-			$status = 'draft';
-		}elseif(empty($status)){
-			if($this->fullrights == true){
-				if($_POST['publish_date'] == date('Y-m-d')){
-					$status = 'publish';
-				}else{
-					$status = 'future';
-				}
-			}else{
-				$status = 'pending';
-			}
-		}
-		
-		$this->post_type = $_POST['post_type'];
-		
-		//First letter should be capital in the title
-		$this->post_title 	= ucfirst(sanitize_text_field($_POST['post_title']));
-		
-		$post_content 		= $_POST['post_content'];
-		
-		//Find any base64 encoded images in the post content and replace the url
-		$post_content 	= preg_replace_callback('/"data:image\/(\w+);base64,([^"]*)/m', array($this,'upload_images'), $post_content);
+			// Get changes in meta values
+			$newMeta	= get_post_meta($this->postId);
+			$oldMeta	= get_post_meta($this->postParent);
 
-		// Check if content is just an hyperlink
-		//find all urls in the page
-		$regex = '(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))';
-		preg_match_all("#$regex#i", $post_content, $matches);
-		$url = $matches[0][0];
-
-		//if the url is the only post content
-		if($url == strip_tags($post_content)){
-			//find the post id of the url
-			$postId	= url_to_postid($url);
-
-			// If a valid post id
-			if($postId > 0){
-				$post_content	= "[showotherpost postid='$postId']";
-			}
-		}
-		
-		//Find display names in content
-		$users = SIM\get_user_accounts(false,false,true);
-		foreach($users as $user){
-			$privacy_preference = get_user_meta( $user->ID, 'privacy_preference', true );
-			//only replace the name with a link if privacy allows
-			if(empty($privacy_preference['hide_name'])){
-				//Replace the name with a hyperlink
-				$url			= SIM\getUserPageUrl($user->ID);
-				$link			= "<a href='$url'>{$user->display_name}</a>";
-				$post_content	= str_replace($user->display_name,$link,$post_content);
-			}
-		}
-		
-		//Sanitize the post content
-		$post_content = wp_kses_post($post_content);
-		
-		$categories = [];
-		if(is_array($_POST['category_id'])){
-			foreach($_POST['category_id'] as $category_id) {
-				if(!empty($category_id)) $categories[] = $category_id;
-			}
-		}
-			
-		//Check if editing an existing post
-		if(is_numeric($_POST['post_id'])){
-			$this->post_id = $_POST['post_id'];
-			
-			$update = true;
-			
-			//Retrieve the old post data
-			$post = get_post($this->post_id);
-			
-			$new_post_data = ['ID'=>$this->post_id];
-			
-			//Check for updates
-			if($this->post_title != $post->post_title){
-				//title
-				$new_post_data['post_title'] 	= $this->post_title;
-
-				// name
-				$postName	= urldecode($this->post_title);
-
-				//check if name is unique as it used as slug
-				$args	= array(
-					'post_type'		=> get_post_types(),
-					'post_status'	=> 'any',
-					'name'          => $postName,
-					'numberposts'	=> -1,
-				);
-				$posts	= get_posts( $args);
-
-				$i=1;
-				while(!empty($posts)){
-					$postName	= urldecode($this->post_title.'_'.$i);
-					$args['name']	= $postName;
-					$i++;
-					$posts	= get_posts( $args);
+			//exclude certain keys
+			$exclusion	= ['pending_notification_send', '_edit_lock'];
+			foreach($exclusion as $exclude){
+				if(isset($oldMeta[$exclude])){
+					unset($oldMeta[$exclude]);
 				}
 
-				$new_post_data['post_name'] 	= $postName;
-
-				//attached file
-				if($_POST['post_type'] == 'attachment' and explode('/', $post->post_mime_type)[0] == 'video'){
-					$new_post_data['_wp_attached_file'] 	= $this->post_title;
+				if(isset($newMeta[$exclude])){
+					unset($newMeta[$exclude]);
 				}
 			}
-			if($post_content != $post->post_content) 		$new_post_data['post_content'] 	= $post_content;
-			if($status != $post->post_status)				$new_post_data['post_status'] 	= $status;
-			
-			//only update author if needed and not in the content manager role
-			$new_post_data['post_author'] 	= $_POST['post_author'];
-			
-			if($_POST['parent_page'] != $post->post_parent)	$new_post_data['post_parent'] 	= $_POST['parent_page'];
-			if($categories != $post->post_category)			$new_post_data['post_category'] = $categories;
 
-			//we cannot change the post type here
-			if($post->post_type != $this->post_type) return new WP_Error('frontend_contend', 'You can not change the post type like that!');
-			
-			//Update the post
-			$result = wp_update_post($new_post_data,true,false);
-			if(is_wp_error($result)){
-				return new WP_Error('Update failed', $result->get_error_message());
-			}elseif($post->post_status == 'draft' and $status == 'publish'){
-				$action_text = 'published';
-			}else{
-				$action_text = 'updated';
+			$added		= array_diff_assoc($newMeta, $oldMeta);
+			SIM\clean_up_nested_array($added, true);
+			$removed	= array_diff_assoc($oldMeta, $newMeta);
+			SIM\clean_up_nested_array($removed, true);
+			$changed	= [];
+
+			foreach($added as $key=>$add){
+				$changed[$key]	= ['old'=>$add[0], 'new'=>''];
 			}
-		}else{
-			$update = false;
 
-			//New post
-			$post = array(
-				'post_type'		=> $this->post_type,
-				'post_title'    => $this->post_title,
-				'post_content'  => $post_content,
-				'post_status'   => $status,
-				'post_author'   => $_POST['post_author']
-			);
-
-			if($this->post_type == 'attachment'){
-				$this->post_id 	= SIM\add_to_library(SIM\url_to_path($_POST['attachment'][0]), $this->post_title, $post_content);
-				$post['ID']	= $this->post_id;
-			}else{				
-				if(is_numeric($_POST['parent_page'])){
-					$post['post_parent'] = $_POST['parent_page'];
-				}
-			
-				if(count($categories)>0){
-					$post['post_category'] = $categories;
-				}
-
-				//Schedule the post
-				if($_POST['publish_date'] != date('Y-m-d')){
-					$publish_date			= date("Y-m-d 08:00:00", strtotime($_POST['publish_date']));
-
-					$post['post_date'] 		= $publish_date;
-					$post['post_date_gmt'] 	= $publish_date;
-				}
-				
-				// Insert the post into the database.
-				$this->post_id 	= wp_insert_post( $post,true,false);
-				$post['ID']		= $this->post_id;
+			foreach($removed as $key=>$del){
+				$changed[$key]	= ['old'=>'', 'new'=>$del[0]];
 			}
 			
-			if(is_wp_error($this->post_id)){
-				return new WP_Error('Inserting post error', $this->post_id->get_error_message());
-			}elseif($this->post_id === 0){
-				return new WP_Error('Inserting post error', "Could not create the $this->post_type!");
-			}else{
-				$action_text = 'created';
-			}
-		}
-		
-		$url 		= get_permalink($this->post_id);
-		
-		//Set the featured image
-		if(is_numeric($_POST['post_image_id'])){
-			set_post_thumbnail($this->post_id, $_POST['post_image_id']);
-		}
-		
-		//Static content
-		if(isset($_POST['static_content'])){
-			//Store static content option
-			if($_POST['static_content'] == ''){
-				$value = false;
-			}else{
-				$value = true;
-			}
-			
-			update_post_meta($this->post_id,'static_content',$value);
-		}
-		
-		//Expiry date
-		if(isset($_POST['expirydate'])){
-			//Store expiry date
-			update_post_meta($this->post_id,'expirydate',$_POST['expirydate']);
-		}
+			foreach(array_intersect($newMeta, $oldMeta) as $key=>$value){
+				if($oldMeta[$key] != $value){
+					$newValue = maybe_unserialize($value[0]);
+					$oldValue = maybe_unserialize($oldMeta[$key][0]);
 
-		if($post->post_status == 'pending'){
-			send_pending_post_warning($post, $update);
-		}
-		
-		do_action('sim_after_post_save', (object)$post, $update);
-		
-		//Return result
-		if($status == 'publish'){
-			return "Succesfully $action_text the $this->post_type, view it <a href='$url'>here</a>";
-		}elseif($status == 'draft'){
-			return "Succesfully $action_text the draft for this $this->post_type, preview it <a href='$url'>here</a>";
-		}elseif($_POST['publish_date'] != date('Y-m-d')){
-			return "Succesfully $action_text the $this->post_type, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
-		}else{
-			return "Succesfully $action_text the $this->post_type, it will be published after it has been reviewed";			
-		}
-	}
-	
-	function remove_post(){
-		$post_id = $_POST['post_id'];
-			
-		SIM\print_array("Removing post $post_id");
-		
-		$post		= wp_trash_post($post_id);
-		
-		$post_type	= get_post_type($post);
-		
-		if($post_type){
-			return "Succesfully deleted $post_type '{$post->post_title}'<br>You can leave this page now";
-		}else{
-			return new WP_Error('Post removal error', 'Something went wrong');
-		}
-	}	
-	
-	function change_post_type(){
-		$post_type	= $_POST['post_type_selector'];
-		
-		$post_id	= $_POST['postid'];
+					if(is_array($newValue)){
+						foreach($newValue as $k=>$v){
+							$newV	= maybe_unserialize($v);
+							$oldV	= maybe_unserialize($oldValue[$k]);
 
-		$result		= set_post_type($post_id, $post_type);
-		if($result){
-			return "Succesfully updated the type to $post_type";
-		}else{
-			return new WP_Error('Update failed', "Could not update the type");
-		}
-	}
-
-	function post_type_selector(){
-		//do not show for lite posts
-		if(!$this->lite){
-
-			// Only show type selector if we do not query a specific one
-			if(empty($_GET['type'])){
-				if($this->post_id == null){
-					$label_text = 'Select the content type you want to create:';
-				}else{
-					$label_text = "You are editing a {$this->post_type}, use selector below if you want to change the post type";
-					?>
-					<form action="" method="post" name="change_post_type">
-					<?php
-				}
-				
-				?>
-				<h4><?php echo $label_text; ?></h4>
-				<select id="post_type_selector" name="post_type_selector" required>
-					<?php
-					$post_types	= get_post_types(['public'=>true]);
-					
-					foreach($post_types as $post_type){
-						if($this->post_type == $post_type){
-							$selected = 'selected';
-						}else{
-							$selected = '';
+							if($newV != $oldV){
+								$changed[$k]	= ['old'=>$oldV, 'new'=>$newV];
+							}
 						}
-
-						$type_name	= ucfirst($post_type);
-						if($post_type == 'attachment') $type_name = 'Picture/Video/Audio';
-						echo "<option value='$post_type' $selected>$type_name</option>";
+					}elseif($newValue != $oldValue){
+						$changed[$key]	= ['old'=>$oldValue, 'new'=>$newValue];
 					}
-					
-					?>
-				</select>
-				<?php
-			
-				if($this->post_id != null){
-					?>
-						<input type="hidden" name="userid"					value="<?php echo $this->user->ID; ?>">
-						<input type="hidden" name="postid"					value="<?php echo $this->post_id; ?>">
-					
-					<?php
-					echo SIM\add_save_button('change_post_type','Change the post type');
-					echo '</form>';
 				}
 			}
+
+			foreach($changed as $key=>$change){
+				$diff	= wp_text_diff($change['old'], $change['new']);
+
+				// picture id to picture html
+				if($key == '_thumbnail_id'){
+					if(is_numeric($change['old'])){
+						$diff	= str_replace($change['old'], wp_get_attachment_image( $change['old']), $diff);
+					}
+
+					if(is_numeric($change['new'])){
+						$diff	= str_replace($change['new'], wp_get_attachment_image( $change['new']), $diff);
+					}
+					$key	= 'Featured image';
+				}
+
+				$result[]	= array(
+					'id'	=> 'post_meta',
+					'name'	=> ucfirst(str_replace('_', ' ', $key)),
+					'diff'	=> $diff
+				);
+			}
+
+			?>
+			<button type='button' class='button small show-diff'>Show what is changed</button>
+			<fieldset class='post-diff-wrapper hidden'>
+			<legend>
+				<h4>Change list</h4>
+			</legend>
+				<?php
+				foreach($result as $r){
+					echo "<h4>{$r['name']}</h4>";
+					echo $r['diff'];
+				}
+				?>
+			</fieldset>
+			<?php
+		}
+	}
+
+	/**
+	 *
+	 * Show a selector to select or change the post type
+	 *
+	**/
+	function postTypeSelector(){
+		//do not show for lite posts
+		if($this->lite) return;
+
+		// Only show type selector if we do not query a specific one
+		if(!empty($_GET['type'])) return;
+
+		if($this->postId == null){
+			$labelText = 'Select the content type you want to create:';
+		}else{
+			$labelText = "You are editing a {$this->postType}, use selector below if you want to change the post type";
+		}
+
+		$postTypes	= get_post_types(['public'=>true]);
+		
+		$html	= "<h4>$labelText</h4>";
+		$html	.= "<select id='post_type_selector' name='post_type_selector' required>";
+
+		foreach($postTypes as $postType){
+			if($this->postType == $postType){
+				$selected = 'selected';
+			}else{
+				$selected = '';
+			}
+
+			$typeName	= ucfirst($postType);
+			if($postType == 'attachment') $typeName = 'Picture/Video/Audio';
+			$html	.= "<option value='$postType' $selected>$typeName</option>";
+		}
+			
+		$html	.=	"</select>";
+	
+		if(is_numeric($this->postId)){
+			?>
+			<form action="" method="post" name="change_post_type">
+				<input type="hidden" name="userid" value="<?php echo $this->user->ID; ?>">
+				<input type="hidden" name="postid" value="<?php echo $this->postId; ?>">
+				<?php
+				echo $html;
+				echo SIM\add_save_button('change_post_type','Change the post type');
+				?>
+			</form>
+			<?php
+		}else{
+			echo $html;
 		}
 	}
 	
-	function add_modals(){
-		$post_types		= apply_filters('sim_frontend_posting_modals', []);
+	/**
+	 *
+	 * Add a modal form to add a new category for the selected post type
+	 *
+	**/
+	function addModals(){
+		$postTypes		= apply_filters('sim_frontend_posting_modals', []);
 
-		foreach($post_types as $type){
+		foreach($postTypes as $type){
 			$categories = get_categories( array(
 				'orderby' 	=> 'name',
 				'order'   	=> 'ASC',
@@ -473,16 +555,14 @@ class FrontEndContent{
 							foreach($categories as $category){
 								//Only ouptut categories without a parent
 								if($category->parent == 0){
-									$name 	= $category->name;
-									$cat_id = $category->cat_ID;
-									echo "<option value='$cat_id'>$name</opton>";
+									echo "<option value='$category->cat_ID'>$category->name</opton>";
 								}
 							}
 							?>
 						</select>
 						
 						
-						<?php echo SIM\add_save_button('add_'.$type.'_type',"Add $type category"); ?>
+						<?php echo SIM\add_save_button('add_'.$type.'_type', "Add $type category"); ?>
 					</form>
 				</div>
 			</div>
@@ -490,42 +570,47 @@ class FrontEndContent{
 		}
 	}
 	
-	//Show categories for posts and pages
-	function post_categories(){
+	/**
+	 *
+	 * Show the post categories
+	 *
+	**/
+	function postCategories(){
 		$categories = get_categories( array(
 			'orderby' => 'name',
 			'order'   => 'ASC',
 			'hide_empty' => false,
 		) );
 		?>
-		<div id="post-category" class="categorywrapper post page <?php if($this->post_type != 'post' and $this->post_type != 'page') echo 'hidden'; ?>">
+		<div id="post-category" class="categorywrapper post page <?php if($this->postType != 'post' and $this->postType != 'page') echo 'hidden'; ?>">
 			<h4>
-				<span class="capitalize replaceposttype"><?php echo $this->post_type;?></span> category
+				<span class="capitalize replaceposttype"><?php echo $this->postType;?></span> category
 			</h4>
 			<div class='categorieswrapper'>
 				<?php
 				foreach($categories as $category){
 					$name 				= $category->name;
-					$cat_id 			= $category->cat_ID;
-					$cat_description	= $category->description;
-					
-					echo "<div class='infobox post ";
+					$catId 			= $category->cat_ID;
+					$catDescription	= $category->description;
+					$class			= 'infobox post';
 
-					if($cat_id == get_cat_ID('Public') or $cat_id == get_cat_ID('Confidential') ){
-						echo 'page';
+					if($catId == get_cat_ID('Public') or $catId == get_cat_ID('Confidential') ){
+						$class	.= 'page';
 					//do not show categories other than public and confidential to non-post types
-					}elseif($this->post_type != 'post'){
-						echo ' hidden';
+					}elseif($this->postType != 'post'){
+						$class	.= ' hidden';
 					}
-					echo "'>";
+
+					$checked	= '';
+					if(is_array($this->postCategory) and in_array($catId, $this->postCategory)) $checked 	= 'checked';
 					
-						echo "<input type='checkbox' name='category_id[]' value='$cat_id'";
-							if(is_array($this->post_category) and in_array($cat_id,$this->post_category)) echo ' checked';
-						echo '>';
+					echo "<div class='$class'>";
+					
+						echo "<input type='checkbox' name='category_id[]' value='$catId' $checked>";
 					
 						echo "<label class='option-label category-select'>$name</label>";
 
-						if($cat_description != '')	echo "<span class='info_text'>$cat_description</span>";
+						if(!empty($catDescription))	echo "<span class='info_text'>$catDescription</span>";
 
 					echo '</div>';
 				}
@@ -535,13 +620,18 @@ class FrontEndContent{
 		<?php
 	}
 	
-	function post_specific_fields(){
+	/**
+	 *
+	 * Adds fields specific for the post post_type
+	 *
+	**/
+	function postSpecificFields(){
 		?>
-		<div id="post-attributes"  class="post<?php if($this->post_type != 'post') echo ' hidden'; ?>">
+		<div id="post-attributes"  class="post<?php if($this->postType != 'post') echo ' hidden'; ?>">
 			<div id="expirydate_div" class="frontendform">
 				<h4>Expiry date</h4>
 				<label>
-					<input type='date' class='' name='expirydate' min="<?php echo date("Y-m-d"); ?>" value="<?php echo get_post_meta($this->post_id,'expirydate',true); ?>" style="display: unset;width:unset;">
+					<input type='date' class='' name='expirydate' min="<?php echo date("Y-m-d"); ?>" value="<?php echo get_post_meta($this->postId,'expirydate', true); ?>" style="display: unset; width:unset;">
 					Set an optional expiry date of this post
 				</label>
 			</div>
@@ -549,23 +639,28 @@ class FrontEndContent{
 		<?php
 	}
 	
-	function page_specific_fields(){
+	/**
+	 *
+	 * Adds fields specific for the page post_type
+	 *
+	**/
+	function pageSpecificFields(){
 		?>		
-		<div id="page-attributes" class="page<?php if($this->post_type != 'page') echo ' hidden'; ?>">
+		<div id="page-attributes" class="page<?php if($this->postType != 'page') echo ' hidden'; ?>">
 			<div id="parentpage" class="frontendform">
 				<h4>Select a parent page</h4>
 				<?php 
-				echo SIM\page_select('parent_page',$this->post_parent);
+				echo SIM\page_select('parent_page', $this->postParent);
 				?>
 			</div>
 
 			<?php
-			do_action('sim_page_specific_fields', $this->post_id);
+			do_action('sim_page_specific_fields', $this->postId);
 			?>			
 			<div id="static_content" class="frontendform">
 				<h4>Update warnings</h4>	
 				<label>
-					<input type='checkbox' name='static_content' value='static_content' <?php if(get_post_meta($this->post_id,'static_content',true) != '') echo 'checked';?>>
+					<input type='checkbox' name='static_content' value='static_content' <?php if(get_post_meta($this->postId,'static_content',true) != '') echo 'checked';?>>
 					Do not send update warnings for this page
 				</label>
 			</div>
@@ -573,21 +668,29 @@ class FrontEndContent{
 		<?php
 	}
 	
-	function show_categories($type, $categories){
+	/**
+	 *
+	 * Display the categories for a specific post_type
+	 *
+	 * @param    string     $type		The post_type the category is for
+	 * @param    array     	$categories	Array of categories
+	 *
+	**/
+	function showCategories($type, $categories){
 		?>
-		<div class="<?php echo $type; if($this->post_type != $type) echo ' hidden'; ?>">
+		<div class="<?php echo $type; if($this->postType != $type) echo ' hidden'; ?>">
 			<div class="frontendform">
 				<h4><?php echo ucfirst($type);?> type</h4>
 				<div class='categories'>
 					<?php
-					$parent_category_html 	= '';
-					$child_category_html 	= '';
-					$hidden				= 'hidden';
+					$parentCategoryHtml 	= '';
+					$childCategoryHtml 		= '';
+					$hidden					= 'hidden';
 				
 					foreach($categories as $category){
 						$name 				= ucfirst($category->slug);
-						$cat_id 			= $category->cat_ID;
-						$cat_description	= $category->description;
+						$catId 				= $category->cat_ID;
+						$catDescription		= $category->description;
 						$parent				= $category->parent;
 						$checked			= '';
 						$class				= 'infobox';
@@ -601,18 +704,18 @@ class FrontEndContent{
 						}
 						
 						//if this cat belongs to this post
-						if(has_term($cat_id,$type.'type',$this->post_id)){
+						if(has_term($catId,$type.'type',$this->postId)){
 							$checked = 'checked';
 							
 							//If this type has child types, show the label
-							if(count(get_term_children($category->cat_ID,$type.'type'))>0) $hidden = '';
+							if(count(get_term_children($category->cat_ID, $type.'type'))>0) $hidden = '';
 						}
 						
 						
 						//if this is a child, hide it and atach the parent id as attribute
 						if($parent != 0){
 							//Hide subcategory if parent is not in the cat array
-							if(!has_term($parent,$type.'type',$this->post_id))	$class .= " hidden";
+							if(!has_term($parent, $type.'type', $this->postId))	$class .= " hidden";
 							
 							//Store cat parent
 							$class .= "' data-parent='$parent";
@@ -620,15 +723,15 @@ class FrontEndContent{
 						
 						//$$html --> use the value of $html as variable name
 						$$html .= "<div class='$class'>";
-							$checkboxclass = "{$type}type";
-							if(count(get_term_children($category->cat_ID,$type.'type'))>0) $checkboxclass .= " parent_cat";
-							$$html .= "<input type='checkbox' class='$checkboxclass' name='{$type}type[]' value='$cat_id' $checked>";
+							$checkboxClass = "{$type}type";
+							if(count(get_term_children($category->cat_ID, $type.'type'))>0) $checkboxClass .= " parent_cat";
+							$$html .= "<input type='checkbox' class='$checkboxClass' name='{$type}type[]' value='$catId' $checked>";
 						
 							//Name of the category
 							$$html .= "<label class='option-label category-select'>$name</label>";
 							
 							//Add infobox if needed
-							if($cat_description != '')	$$html .= "<span class='info_text'>$cat_description</span>";
+							if($catDescription != '')	$$html .= "<span class='info_text'>$catDescription</span>";
 
 						$$html .= '</div>';
 					}
@@ -637,7 +740,7 @@ class FrontEndContent{
 					?>
 					<div id='<?php echo $type;?>_parenttypes'>
 						<?php
-						echo $parent_category_html;
+						echo $parentCategoryHtml;
 						?>
 						<button type='button' name='add_<?php echo $type;?>_type_button' class='button add_cat' data-type='<?php echo $type;?>'>Add category</button>
 					</div>
@@ -646,7 +749,7 @@ class FrontEndContent{
 					
 					<div id='<?php echo $type;?>_childtypes' class='childtypes'>
 						<?php
-						echo $child_category_html;
+						echo $childCategoryHtml;
 						?>
 					</div>
 				</div>
@@ -655,16 +758,21 @@ class FrontEndContent{
 		<?php
 	}
 
-	function content_manager_options(){		
+	/**
+	 *
+	 * Adds options specific for content managers
+	 *
+	**/
+	function contentManagerOptions(){		
 		if($this->fullrights){
 			$hidden			= '';
 		}else{
 			$hidden			= 'hidden';
 		}
 		
-		$buttontext		= 'Show';
+		$buttontext			= 'Show';
 		
-		if($hidden == '') $buttontext		= 'Hide';
+		if(empty($hidden)) $buttontext		= 'Hide';
 		
 		?>
 		<button type="button" class="button" id="advancedpublishoptionsbutton" style='display:block; margin-top:15px;'><span><?php echo $buttontext;?></span> advanced options</button>
@@ -672,27 +780,30 @@ class FrontEndContent{
 		<div class="advancedpublishoptions <?php echo $hidden;?>">
 			<?php	
 			// Show change author dropdown 
-			$author_id	= $this->post->post_author;
-			if(!is_numeric($author_id)) $author_id = $this->user->ID;
-			echo SIM\user_select('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $user_id=$author_id);
+			$authorId	= $this->post->post_author;
+			if(!is_numeric($authorId)) $authorId = $this->user->ID;
+			echo SIM\user_select('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $user_id=$authorId);
 			
-			if(empty($this->post)){
-				$publishDate	= date("Y-m-d");
-			}else{
-				$publishDate	= date("Y-m-d", strtotime($this->post->post_date));
+			// Only show publish date if not yet published
+			if(!in_array($this->post->post_status, ['publish', 'inherit'])){
+				if(empty($this->post)){
+					$publishDate	= date("Y-m-d");
+				}else{
+					$publishDate	= date("Y-m-d", strtotime($this->post->post_date));
+				}
+
+				?>
+				<label>
+					<h4>Publishing date</h4>
+					<input type="date" min="<?php echo date("Y-m-d");?>" name="publish_date" value="<?php echo $publishDate;?>">
+					Define when the content should be published
+				</label>
+				<?php
 			}
 
-			?>
-			<label>
-				<h4>Publishing date</h4>
-				<input type="date" min="<?php echo date("Y-m-d");?>" name="publish_date" value="<?php echo $publishDate;?>">
-				Define when the content should be published
-			</label>
-			<?php
-
-			$this->post_specific_fields();
+			$this->postSpecificFields();
 			
-			$this->page_specific_fields();
+			$this->pageSpecificFields();
 				
 			do_action('frontend_post_after_content', $this);
 			?>
@@ -700,205 +811,341 @@ class FrontEndContent{
 		<?php
 	}
 	
-	function frontend_post(){
-		if(!function_exists('_wp_translate_postdata')){
-			include ABSPATH . 'wp-admin/includes/post.php';
+	/**
+	 *
+	 * saves base64 images as images and adds them to the library
+	 *
+	 * @param    array     $matches	Array of matches from a regex
+	 * @return   string     		Image url
+	 *
+	**/
+	function uploadImages($matches) {
+		$ext 			= $matches[1];
+		$filename 		= "frontend_picture";
+		$basedir 		= wp_upload_dir()['path'];
+		$newFilePath 	= "$basedir/$filename.$ext";
+		$i 				= 0;
+		$uploadId		= 0;
+		
+		//Find an available filename
+		while( file_exists( $newFilePath ) ) {
+			$i++;
+			$newFilePath = "$basedir/$filename"."_$i.$ext";
 		}
 		
-		//Load js
-		wp_enqueue_script('sim_frontend_script');
-		wp_enqueue_media();
+		//Decode the base64
+		$fileContents = base64_decode(substr_replace($matches[2] ,"",-1));
 		
-		ob_start();
-		
-		$this->fill_post_data();
-		
-		//Show warning if not allowed to edit
-		$this->has_edit_rights();
-		if(!$this->edit_right and is_numeric($_GET['post_id'])){
-			return '<div class="error">You do not have permission to edit this page.</div>';
-		}
-		
-		//Show warning if someone else is editing
-		$current_edting_user = wp_check_post_lock($_GET['post_id']);
-		if(is_numeric($current_edting_user)){
-			header("Refresh: 30;");
-			return "<div class='error' id='	'>".get_userdata($current_edting_user)->display_name." is currently editing this {$this->post_type}, please wait.<br>We will refresh this page every 30 seconds to see if you can go ahead.</div>";
-		}
-		
-		//Current time minus last modified time
-		$secondsSinceUpdated = time()-get_post_modified_time('U', true, $this->post);
-		
-		//Show warning when post has been updated recently
-		if($secondsSinceUpdated < 3600 and $secondsSinceUpdated > -1){
-			$minutes = intval($secondsSinceUpdated/60);
-			echo "<div class='warning'>This {$this->post_type} has been updated <span id='minutes'>$minutes</span> minutes ago.</div>";
-		}
-		
-		//Show warning when post is in trash
-		if($this->post->post_status == 'trash'){
-			echo "<div class='warning'>This {$this->post_type} has been deleted.<br>You can republish if that should not be the case.</div>";
-		}
-		
-		//Add extra variables to the main.js script
-		wp_localize_script( 'sim_script', 
-			'frontendpost', 
-			array( 
-				'user_select' 		=> SIM\user_select("Select a person to show the link to",true),
-				'post_type'			=> $this->post_type,
-			) 
-		);
-
-		?>
-		<div id="frontend_upload_form">			
-			<?php
-			if($this->lite == false){
-				$hidden = 'hidden';
-			}
-
-			$update	= 'false';
-			if(is_numeric($this->post_id) and $this->post->post_status == 'publish'){
-				$update	= 'true';
-			}
-			echo "<button class='button sim $hidden show' id='showallfields'>Show all fields</button>";
+		//Only continue if the decoding was succesfull
+		if( $fileContents !== false){
+			//Save the image in the uploads folder
+			file_put_contents($newFilePath, $fileContents);
 			
-			$this->post_type_selector();
-			
-			$this->add_modals();
-			do_action('frontend_post_modal');
-
-			//Write the form to create all posts except events
-			?>
-			<form id="postform">
-				<input type="hidden" name="post_status" value="publish">
-				<input type="hidden" name="post_type" value="<?php echo $this->post_type; ?>">
-				<input type="hidden" name="post_image_id" value="<?php echo $this->post_image_id;?>">
-				<input type="hidden" name="update" value="<?php echo $update;?>">
-				<input type='hidden' name='post_id' value='<?php echo $this->post_id;?>'>
-				
-				<h4>Title</h4>
-				<input type="text" name="post_title" class='block' value="<?php echo $this->post_title;?>" required>
-				
-				<?php
-				do_action('frontend_post_before_content', $this);
-				
-				$this->post_categories();
-				?>
-				
-		 		<div id="featured-image-div" <?php if($this->post_image_id == 0) echo ' class="hidden"';?>>
-					<h4 name="post_image_label">Featured image:</h4>
-					<?php 
-					if($this->post_image_id == 0){
-						echo get_the_post_thumbnail(
-							$this->post_id, 
-							'thumbnail', 
-							array(
-								'title' => 'Featured Image',
-								'class' => 'postimage'
-							)
-						);
-						echo "<button type='button' class='remove_document button' data-url='$document' data-userid='{$this->user_id}' data-metakey='$metakey_string' $library_string>X</button>";
-						echo "<img class='remove_document_loader src='".LOADERIMAGEURL."' style='display:none; height:40px;' >";
-						$text = 'Change';
-					}else{
-						$text = 'Add';
-					}
-					?>
-				</div>
-				
-				<?php
-				//Content wrapper
-				if($this->lite == true){
-					echo "<div class='hidden postcontentwrapper lite'>";
-				}else{
-					echo "<div class='postcontentwrapper lite'>";
-				}
-					echo "<div class='titlewrapper'>";
-						//Post content title
-						$class = 'post page';
-						if($this->post_type != 'post' and $this->post_type != 'page') $class .= ' hidden';
-						echo "<h4 class='$class' name='post_content_label'>";
-							echo '<span class="capitalize replaceposttype">'.ucfirst($this->post_type).'</span> content';
-						echo "</h4>";
-
-						echo "<h4 class='attachment hidden' name='attachment_content_label'>Description:</h4>";
-						
-						do_action('frontend_post_content_title',$this->post_type);
-					echo "</div>";
-					
-					//make it possible to select or upload a featured image
-					if ( current_user_can( 'upload_files' ) ) {
-						add_action(
-							'media_buttons',
-							function() use ($text){
-								echo "<button type='button' name='add-featured-image' class='button add_media'><span class='wp-media-buttons-icon'></span> $text Featured Image</button>";
-							},
-							5
-						);
-					}
-					
-					//output tinymce window
-					$settings = array(
-						'wpautop'					=> false,
-						'forced_root_block'			=> true,
-						'convert_newlines_to_brs'	=> true,
-						'textarea_name'				=> "post_content",
-						'textarea_rows'				=> 10
-					);
-					echo wp_editor($this->post_content,'post_content',$settings);
-					?>
-				</div>
-
-				<div class='attachment hidden'>
-					<h4>Upload your file</h4>
-					<?php
-					$uploader = new SIM\Fileupload($this->user->ID, 'attachment', 'private', false);
-					echo $uploader->get_upload_html();
-					?>
-				</div>
-				
-				<?php
-				try{
-					$this->content_manager_options();
-				}catch(\Exception $e) {
-					SIM\print_array($e);
-				}
-				
-				//Add a draft button for new posts
-				if($this->post_id == null or ($this->post->post_status != 'publish' and $this->post->post_status != 'inherit')){
-					if($this->post_id == null){
-						$button_text = "Save <span class='replaceposttype'>{$this->post_name}</span> as draft";
-					}else{
-						$button_text = "Update this <span class='replaceposttype'>{$this->post_name}</span> draft";
-					}
-					
-					echo "<div class='submit_wrapper' style='display: flex;'>";
-						echo "<button type='button' class='button savedraft' name='draft_post'>$button_text</button>";
-						echo "<img class='loadergif hidden' src='".LOADERIMAGEURL."'>";
-					echo "</div>";
-					
-				}
-				echo SIM\add_save_button('submit_post', $this->action);
-				?>
-			</form>
-			<?php
-						
-			//Only show delete button for existing posts and not yet deleted
-			if($this->post_id != null and $this->post->post_status != 'trash'){
-			?>
-			<div class='submit_wrapper' style='display: flex; margin-top:20px;float:right;margin-right:0px;'>
-				<form>
-					<input hidden name='post_id' value='<?php echo $this->post_id; ?>'>
-
-					<button type='submit' class='button' name='delete_post'>Delete <?php echo $this->post_type; ?></button>
-					<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>'>
-				</form>
-			</div>
-			<?php } ?>
-		</div>
+			SIM\add_to_library($newFilePath);
+		}else{
+			SIM\print_array('Not a valid image');
+		}
 		
-		<?php
-		
-		return ob_get_clean();
+		//Return the image url
+		$url = wp_get_attachment_image_url($uploadId,'');
+		return '"'.$url;
 	}
+
+	/**
+	 *
+	 * Saves or publishes a new post or updates an existing one
+	 *
+	 * @param    string     $status	Desired post status
+	 * @return   string|WP_Error     		Result message
+	 *
+	**/
+	function submitPost($status=''){
+		if($_POST['post_status'] == 'draft'){
+			$status = 'draft';
+		}elseif(empty($status)){
+			if($this->fullrights){
+				if(!isset($_POST['publish_date']) or $_POST['publish_date'] == date('Y-m-d')){
+					$status = 'publish';
+				}else{
+					$status = 'future';
+				}
+			}else{
+				$status = 'pending';
+			}
+		}
+		
+		$this->postType 	= $_POST['post_type'];
+		
+		//First letter should be capital in the title
+		$this->postTitle 	= ucfirst(sanitize_text_field($_POST['post_title']));
+		
+		$postContent 		= $_POST['post_content'];
+		
+		//Find any base64 encoded images in the post content and replace the url
+		$postContent 	= preg_replace_callback('/"data:image\/(\w+);base64,([^"]*)/m', array($this,'uploadImages'), $postContent);
+
+		// Check if content is just an hyperlink
+		//find all urls in the page
+		$regex = '(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))';
+		preg_match_all("#$regex#i", $postContent, $matches);
+		$url = $matches[0][0];
+
+		//if the url is the only post content
+		if($url == strip_tags($postContent)){
+			//find the post id of the url
+			$postId	= url_to_postid($url);
+
+			// If a valid post id
+			if($postId > 0){
+				$postContent	= "[showotherpost postid='$postId']";
+			}
+		}
+		
+		//Find display names in content
+		$users = SIM\get_user_accounts(false,false,true);
+		foreach($users as $user){
+			$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
+			//only replace the name with a link if privacy allows
+			if(empty($privacyPreference['hide_name'])){
+				//Replace the name with a hyperlink
+				$url			= SIM\getUserPageUrl($user->ID);
+				$link			= "<a href='$url'>{$user->display_name}</a>";
+				$postContent	= str_replace($user->display_name, $link, $postContent);
+			}
+		}
+		
+		//Sanitize the post content
+		$postContent = wp_kses_post($postContent);
+		
+		$categories = [];
+		if(is_array($_POST['category_id'])){
+			foreach($_POST['category_id'] as $categoryId) {
+				if(!empty($categoryId)) $categories[] = $categoryId;
+			}
+		}
+			
+		//Check if editing an existing post
+		if(is_numeric($_POST['post_id'])){
+			$this->postId = $_POST['post_id'];
+
+			//Retrieve the old post data
+			$post = get_post($this->postId);
+
+			// Check if this is a post revison
+			if($this->fullrights and $post->post_type == 'change'){
+				// delete revision
+				$delete = wp_delete_post( $this->postId );
+				if ( $delete ) {
+					do_action( 'wp_delete_post_revision', $this->postId, $post);
+				}
+
+				// Use parent page as post id
+				$this->postId	= $post->post_parent;
+
+				// Load parent post data
+				$post = get_post($this->postId);
+			}
+			
+			$this->update = true;
+			
+			$newPostData = ['ID'=>$this->postId];
+			
+			//Check for updates
+			if($this->postTitle != $post->post_title){
+				//title
+				$newPostData['post_title'] 	= $this->postTitle;
+
+				// name
+				$postName	= urldecode($this->postTitle);
+
+				//check if name is unique as it used as slug
+				$args	= array(
+					'post_type'		=> get_post_types(),
+					'post_status'	=> 'any',
+					'name'          => $postName,
+					'numberposts'	=> -1,
+				);
+				$posts	= get_posts( $args);
+
+				$i=1;
+				while(!empty($posts)){
+					$postName	= urldecode($this->postTitle.'_'.$i);
+					$args['name']	= $postName;
+					$i++;
+					$posts	= get_posts( $args);
+				}
+
+				$newPostData['post_name'] 	= $postName;
+
+				//attached file
+				if($_POST['post_type'] == 'attachment' and explode('/', $post->post_mime_type)[0] == 'video'){
+					$newPostData['_wp_attached_file'] 	= $this->postTitle;
+				}
+			}
+			if($postContent != $post->post_content) 		$newPostData['post_content'] 	= $postContent;
+			if($status != $post->post_status)				$newPostData['post_status'] 	= $status;
+			if( $_POST['post_author'] != $post->post_author)$newPostData['post_author']		= $_POST['post_author'];
+			if($_POST['parent_page'] != $post->post_parent)	$newPostData['post_parent'] 	= $_POST['parent_page'];
+			if($categories != $post->post_category)			$newPostData['post_category'] 	= $categories;
+
+			//we cannot change the post type here
+			if($post->post_type != $this->postType and $post->post_type != 'revision') return new WP_Error('frontend_contend', 'You can not change the post type like that!');
+			
+			//Create a revision post
+			if($status == 'pending'){
+				foreach($newPostData as $key=>$data){
+					$post->$key	= $data;
+				}
+
+				// Mark new post as inherit
+				$post->post_status	= 'inherit';
+				$post->post_name	= $post->ID.'-revision-v1';
+				$post->post_parent	= $post->ID;
+				$post->post_type	= 'change';
+				unset($post->ID);
+
+				// Insert the post into the database.
+				$postId 	= wp_insert_post( $post, true, false);
+
+				$post->ID	= $postId;
+			//Update the post only if we have the rights to so
+			}else{
+				$result = wp_update_post($newPostData, true, false);
+				if(is_wp_error($result)){
+					return new WP_Error('Update failed', $result->get_error_message());
+				}elseif($post->post_status == 'draft' and $status == 'publish'){
+					$action_text = 'published';
+				}else{
+					$action_text = 'updated';
+				}
+			}
+		}else{
+			$this->update = false;
+
+			//New post
+			$post = array(
+				'post_type'		=> $this->postType,
+				'post_title'    => $this->postTitle,
+				'post_content'  => $postContent,
+				'post_status'   => $status,
+				'post_author'   => $_POST['post_author']
+			);
+
+			if($this->postType == 'attachment'){
+				$this->postId 	= SIM\add_to_library(SIM\url_to_path($_POST['attachment'][0]), $this->postTitle, $postContent);
+				$post['ID']	= $this->postId;
+			}else{				
+				if(is_numeric($_POST['parent_page'])){
+					$post['post_parent'] = $_POST['parent_page'];
+				}
+			
+				if(count($categories)>0){
+					$post['post_category'] = $categories;
+				}
+
+				//Schedule the post
+				if($_POST['publish_date'] != date('Y-m-d')){
+					$publishDate			= date("Y-m-d 08:00:00", strtotime($_POST['publish_date']));
+
+					$post['post_date'] 		= $publishDate;
+					$post['post_date_gmt'] 	= $publishDate;
+				}
+				
+				// Insert the post into the database.
+				$this->postId 	= wp_insert_post( $post,true,false);
+				$post['ID']		= $this->postId;
+			}
+			
+			if(is_wp_error($this->postId)){
+				return new WP_Error('Inserting post error', $this->postId->get_error_message());
+			}elseif($this->postId === 0){
+				return new WP_Error('Inserting post error', "Could not create the $this->postType!");
+			}else{
+				$action_text = 'created';
+			}
+		}
+		
+		$url 		= get_permalink($this->postId);
+		
+		//Set the featured image
+		if(is_numeric($_POST['post_image_id'])){
+			set_post_thumbnail($this->postId, $_POST['post_image_id']);
+		}
+		
+		//Static content
+		if(isset($_POST['static_content'])){
+			//Store static content option
+			if($_POST['static_content'] == ''){
+				$value = false;
+			}else{
+				$value = true;
+			}
+			
+			update_metadata( 'post', $this->postId,'static_content',$value);
+		}
+		
+		//Expiry date
+		if(isset($_POST['expirydate'])){
+			//Store expiry date
+			update_metadata( 'post', $this->postId,'expirydate',$_POST['expirydate']);
+		}
+
+		if($post->post_status == 'pending'){
+			send_pending_post_warning($post, $this->update);
+		}
+		
+		do_action('sim_after_post_save', (object)$post, $this->update);
+		
+		//Return result
+		if($status == 'publish'){
+			return "Succesfully $action_text the $this->postType, view it <a href='$url'>here</a>";
+		}elseif($status == 'draft'){
+			return "Succesfully $action_text the draft for this $this->postType, preview it <a href='$url'>here</a>";
+		}elseif($_POST['publish_date'] > date('Y-m-d') and $status == 'future'){
+			return "Succesfully $action_text the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
+		}else{
+			return "Succesfully $action_text the $this->postType, it will be published after it has been reviewed";			
+		}
+	}
+	
+	/**
+	 *
+	 * Removes an existing post
+	 * @return   string|WP_Error     		Result message
+	 *
+	**/
+	function removePost(){
+		$postId = $_POST['post_id'];
+		
+		$post		= wp_trash_post($postId);
+		
+		$postType	= get_post_type($post);
+		
+		if($postType){
+			return "Succesfully deleted $postType '{$post->post_title}'<br>You can leave this page now";
+		}else{
+			return new WP_Error('Post removal error', 'Something went wrong');
+		}
+	}	
+	
+	/**
+	 *
+	 * Change the type of an existing post
+	 *
+	 * @return   string|WP_Error     		Result message
+	 *
+	**/
+	function changePostType(){
+		$postType	= $_POST['post_type_selector'];
+		
+		$postId	= $_POST['postid'];
+
+		$result		= set_post_type($postId, $postType);
+		if($result){
+			return "Succesfully updated the type to $postType";
+		}else{
+			return new WP_Error('Update failed', "Could not update the type");
+		}
+	}
+
 }

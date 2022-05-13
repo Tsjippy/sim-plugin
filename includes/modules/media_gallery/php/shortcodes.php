@@ -1,6 +1,7 @@
 <?php
 namespace SIM\MEDIAGALLERY;
 use SIM;
+use SIM\VIMEO\VimeoApi;
 
 add_shortcode('mediagallery', function($atts){
     ob_start();
@@ -108,7 +109,6 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
         $title          = get_the_title();
         $mime           = get_post_mime_type();
         $type           = explode('/', $mime)[0];
-        $vimeo_id       = get_post_meta($id, 'vimeo_id', true);
         $description    = ucfirst(get_the_content());
 
         /* 
@@ -169,23 +169,22 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                 // Normal media
                 if($type == 'audio'){
                     // Start Audio tag
-                    echo "<audio loop='loop' controls='controls'>";
-                        echo "<source src='$url'/>";
-                    echo '</audio>';
-                // Vimeo video
-                }elseif(is_numeric($vimeo_id) and function_exists('SIM\VIMEO\show_vimeo_video')){
-                    echo SIM\VIMEO\show_vimeo_video($vimeo_id);
+                    $mediaHtml  = "<audio loop='loop' controls='controls'>";
+                        $mediaHtml  .=  "<source src='$url'/>";
+                    $mediaHtml  .=  '</audio>';
                 }elseif($type=='video'){
-                    echo "<video width='320' height='240' controls>";
-                        echo "<source src='$url' type='$mime'>";
-                    echo '</video>';
+                    $mediaHtml  =  "<video width='320' height='240' controls>";
+                        $mediaHtml  .=  "<source src='$url' type='$mime'>";
+                    $mediaHtml  .=  '</video>';
                 }else{
-                    list($width, $height, $type, $attr) = getimagesize(SIM\url_to_path($url));
+                    list($width, $height, $a, $attr) = getimagesize(SIM\url_to_path($url));
                     $ratio  = $height/$width;
 
                     //Center the image vertically
-                    echo "<img src='$url' with='100%' height='100vh' style='top: max(0px, calc( 50vh - 50vw * $ratio));'>";
+                    $mediaHtml  =  "<img src='$url' with='100%' height='100vh' style='top: max(0px, calc( 50vh - 50vw * $ratio));'>";
                 }
+
+                echo apply_filters('sim_media_gallery_item_html', $mediaHtml, $type, $id);
                 ?>
             </div>
             
@@ -203,10 +202,6 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                 <?php
             }
 
-        /*             if(
-                $postslist->post_count == $amount or            // we got as many post as requested
-                $i != $page*$amount+$postslist->post_count-1    // or we got less but the current index is not the last one
-            ){ */
             if($i != $total-1){
                 ?>
                 <a href="#" class="nextbtn">&#8250;</a>
@@ -226,16 +221,18 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                     <?php
                 }
 
-                $download_url = $url;
-                if(is_numeric($vimeo_id)){
-                    $download_url = WP_CONTENT_URL."/vimeo_files/backup/$vimeo_id.mp4";
+                $url            = apply_filters('sim_media_gallery_download_url', $url, $id);
+
+                if(file_exists(SIM\url_to_path($url))){
+                    $fileName   = apply_filters('sim_media_gallery_download_filename', '', $type, $id);
+                    ?>
+                    <button type="button" class="button small download">
+                        Download
+                        <a href='<?php echo $url;?>' class='hidden' download="<?php echo $fileName;?>">Download</a>
+                    </button>
+                    <?php
                 }
                 ?>
-
-                <button type="button" class="button small download">
-                    Download
-                    <a href='<?php echo $download_url;?>' class='hidden' download>Download</a>
-                </button>
             </div>
         </div>
 

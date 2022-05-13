@@ -40,7 +40,7 @@ add_action( 'edit_attachment', function($attachment_id){
             do_action('before_visibility_change', $attachment_id, $visibility);
 
             //update post meta
-            update_post_meta( $attachment_id, 'visibility', $visibility );
+            update_metadata( 'post', $attachment_id, 'visibility', $visibility );
 
             //Check if moving to public or to private
             if($visibility == 'public'){
@@ -75,7 +75,7 @@ function move_attachment($post_id, $sub_dir){
 	update_attached_file($post_id, "$new_path/$filename");
 
     //update main path
-    update_post_meta($post_id, '_wp_attached_file', $sub_dir.$filename);
+    update_metadata( 'post', $post_id, '_wp_attached_file', $sub_dir.$filename);
 	
 	//Open up the wp filesystem
 	WP_Filesystem();
@@ -143,7 +143,7 @@ add_action( 'add_attachment', function ( $postId) {
     $path       = get_attached_file($postId);
     
     if($default == 'private' or strpos($path, '/private/') !== false ){
-        update_post_meta( $postId, 'visibility', 'private' );
+        update_metadata( 'post',  $postId, 'visibility', 'private' );
         
         // Move if not already in the private folder
         if(strpos($path, '/private/') === false ){

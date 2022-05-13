@@ -109,8 +109,8 @@ function displayTab(tab_button){
 		}
 
 		// position any tables on this tab, as they can only be positioned when visible
-		if(typeof(table.positionTable) != 'undefined'){
-			table.positionTable();
+		if(typeof(sim_table_functions) != 'undefined'){
+			sim_table_functions.positionTable();
 		}
 
 		return tab;

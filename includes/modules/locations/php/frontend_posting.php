@@ -15,7 +15,7 @@ add_action('frontend_post_before_content', function($frontEndContent){
         'hide_empty'=> false,
     ) );
     
-    $frontEndContent->show_categories('location', $categories);
+    $frontEndContent->showCategories('location', $categories);
 });
 
 add_action('frontend_post_content_title', function ($post_type){
@@ -46,13 +46,13 @@ function save_location_meta($post){
     //tel
     if(isset($_POST['tel'])){
         //Store serves
-        update_post_meta($post->ID,'tel',$_POST['tel']);
+        update_metadata( 'post', $post->ID,'tel',$_POST['tel']);
     }
     
     //url
     if(isset($_POST['url'])){
         //Store serves
-        update_post_meta($post->ID,'url',$_POST['url']);
+        update_metadata( 'post', $post->ID,'url',$_POST['url']);
     }
     
     location_address($locationtypes, $post->ID);
@@ -86,7 +86,7 @@ function location_address($locationtypes, $post_id){
         
         //Only update if needed
         if($old_location != $new_location and $latitude != '' and $longitude != ''){
-            update_post_meta($post_id,'location',$new_location);
+            update_metadata( 'post', $post_id,'location',$new_location);
 
             //Add the profile picture to the marker content
             $post_thumbnail = get_the_post_thumbnail($post_id, 'thumbnail', array( 'class' => 'aligncenter markerpicture' , 'style' => 'max-height:100px;',));
@@ -203,7 +203,7 @@ function location_address($locationtypes, $post_id){
                     $map_id = $maps->add_map($title, $latitude, $longitude, $address,$height='300',$zoom=10);
                     
                     //Save the map id in db
-                    update_post_meta($post_id,'map_id',$map_id);
+                    update_metadata( 'post', $post_id,'map_id',$map_id);
                 }					
                 
                 //Create an icon for this marker
@@ -297,7 +297,7 @@ function location_address($locationtypes, $post_id){
             }
             
             //Store marker ids in db
-            update_post_meta($post_id,"marker_ids",$marker_ids);
+            update_metadata( 'post', $post_id,"marker_ids",$marker_ids);
         }elseif($latitude == '' and $longitude == '' and is_numeric($map_id)){
             //Delete the custom map for this post
             delete_post_meta($post_id,'map_id');
@@ -319,8 +319,8 @@ add_action('frontend_post_after_content', function ($frontendcontend){
     //Load js
     wp_enqueue_script('sim_location_script');
 
-    $post_id    = $frontendcontend->post_id;
-    $post_name  = $frontendcontend->post_name;
+    $post_id    = $frontendcontend->postId;
+    $post_name  = $frontendcontend->postName;
     
     $location   = get_post_meta($post_id, 'location', true);
     

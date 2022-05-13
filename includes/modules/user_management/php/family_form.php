@@ -283,7 +283,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 			update_user_meta( $family['partner'], 'family', $partner_family);
 		}
 		
-		//update missionary page if needed
+		//update user page if needed
 		if(function_exists('SIM\USERPAGE\create_user_page')){
 			SIM\USERPAGE\create_user_page($user_id);
 		}

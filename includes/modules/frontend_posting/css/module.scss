@@ -86,3 +86,51 @@
 		width: 100%;
 	}
 }
+
+table.diff{
+	border: none;
+	
+	.diff-deletedline {		
+		width: 50%;
+		position: relative;
+		background-color: #fcf0f1;
+
+		del {
+			background-color: #ffabaf;
+		}
+	}
+
+	.diff-addedline {		
+		width: 50%;
+		position: relative;
+		background-color: #edfaef;
+	
+		ins {
+			background-color: #68de7c;
+		}
+	}
+
+	th, td{
+		border: none;
+	}
+
+	td.old{
+		background-color: #fcf0f1;
+	}
+
+	td.new{
+		background-color: #edfaef;
+	}
+
+	td.key, td.old, td.new{
+		width: 33%;
+		text-align: center;
+	}
+
+}
+
+.post-diff-wrapper{
+	h4{
+		text-align: center;
+	}
+}

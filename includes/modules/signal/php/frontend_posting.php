@@ -4,10 +4,10 @@ use SIM;
 
 add_action('frontend_post_after_content', function($frontendcontend){
     $hidden	= 'hidden';
-    if($frontendcontend->fullrights and ($frontendcontend->post_id == null or !empty(get_post_meta($frontendcontend->post_id,'signal',true)))){
+    if($frontendcontend->fullrights and ($frontendcontend->postId == null or !empty(get_post_meta($frontendcontend->postId,'signal',true)))){
         $checked 	    = 'checked';
         $hidden		    = '';
-        $messagetype	= get_post_meta($frontendcontend->post_id,'signalmessagetype',true);
+        $messagetype	= get_post_meta($frontendcontend->postId,'signalmessagetype',true);
     }
 
     ?>
@@ -48,10 +48,10 @@ add_action('frontend_post_after_content', function($frontendcontend){
 // Send Signal message about the new or updated post
 add_action('sim_after_post_save', function($post, $update){
     if(isset($_POST['signal']) and $_POST['signal'] == 'send_signal'){
-        update_post_meta($post->ID, 'signal','checked');
-        update_post_meta($post->ID, 'signalmessagetype', $_POST['signalmessagetype']);
-        update_post_meta($post->ID, 'signal_url', $_POST['signal_url']);
-        update_post_meta($post->ID, 'signal_extra_message', $_POST['signal_extra_message']);
+        update_metadata( 'post', $post->ID, 'signal','checked');
+        update_metadata( 'post', $post->ID, 'signalmessagetype', $_POST['signalmessagetype']);
+        update_metadata( 'post', $post->ID, 'signal_url', $_POST['signal_url']);
+        update_metadata( 'post', $post->ID, 'signal_extra_message', $_POST['signal_extra_message']);
 
         if(in_array($post->post_status, ['publish', 'inherit'])){
             //Send signal message

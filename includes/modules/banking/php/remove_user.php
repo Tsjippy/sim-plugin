@@ -2,7 +2,7 @@
 namespace SIM\BANKING;
 use SIM;
 
-//Remove missionary page and missionary marker on user account deletion
+//Remove user page and user marker on user account deletion
 add_action('delete_user', function ($user_id){
 	$family = SIM\family_flat_array($user_id);
 	//Only remove if there is no family

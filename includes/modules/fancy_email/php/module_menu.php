@@ -6,9 +6,9 @@ const ModuleVersion		= '7.0.0';
 define('ImageFolder', wp_upload_dir()['path'].'/email_pictures');
 
 //run on module activation
-add_action('sim_module_activated', function($module_slug, $options){
+add_action('sim_module_activated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	//create folder for temporary e-mail messages
 	if (!is_dir(ImageFolder)) {
@@ -20,9 +20,9 @@ add_action('sim_module_activated', function($module_slug, $options){
 	$fancyEmail->create_db_tables();
 }, 10, 2);
 
-add_filter('sim_module_updated', function($options, $module_slug){
+add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	//schedule_tasks();
 
@@ -30,9 +30,9 @@ add_filter('sim_module_updated', function($options, $module_slug){
 }, 10, 2);
 
 
-add_action('sim_submenu_description', function($module_slug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $module_name){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	?>
 	This module will place all e-mails send in a nice format.<br>
@@ -41,14 +41,14 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	It will also monitor how often an e-mail is opened.<br>
 	<?php
 
-	if(SIM\get_module_option($module_slug, 'enable')){
+	if(SIM\get_module_option($moduleSlug, 'enable')){
 		echo email_stats();
 	}
 },10,2);
 
-add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	
     ?>
 	<label>Select a picture for the e-mail header.</label>

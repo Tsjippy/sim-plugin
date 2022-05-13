@@ -65,7 +65,7 @@ add_shortcode("all_contacts",function (){
 });
 
 // Shortcode to display a user in a page or post
-add_shortcode('missionary_link',function($atts){
+add_shortcode('user_link',function($atts){
 	$html = "";
 	$a = shortcode_atts( array(
         'id' => '',

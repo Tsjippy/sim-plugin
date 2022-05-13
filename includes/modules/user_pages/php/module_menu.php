@@ -4,9 +4,9 @@ use SIM;
 
 const ModuleVersion		= '7.0.0';
 
-add_action('sim_submenu_description', function($module_slug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $module_name){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	?>
 	<p>
@@ -15,7 +15,7 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		This shortcode displays a button to download all registered users to store them as contacts in gmail or outtlook.<br>
 		Use like this: <code>[all_contacts']</code>
 		<br>
-		<h4>missionary_link</h4>
+		<h4>user_link</h4>
 		This shortcode displays a user in a post or page.<br>
 		It has 5 properties:<br>
 		<ul>
@@ -30,9 +30,9 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	<?php
 },10,2);
 
-add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	
     
 }, 10, 3);

@@ -52,7 +52,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$frontEndContent	= new FrontEndContent();
-				return $frontEndContent->submit_post();
+				return $frontEndContent->submitPost();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -72,7 +72,6 @@ add_action( 'rest_api_init', function () {
 					'required'	=> true
 				),
 				'publish_date'	=> array(
-					'required'	=> true,
 					'validate_callback' => function($param) {
 						return SIM\is_date($param);
 					}
@@ -89,7 +88,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$frontEndContent	= new FrontEndContent();
-				return $frontEndContent->remove_post();
+				return $frontEndContent->removePost();
 			},
 			'permission_callback' 	=> function(){
 				$frontEndContent	= new FrontEndContent();
@@ -155,7 +154,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$frontEndContent	= new FrontEndContent();
-				return $frontEndContent->change_post_type();
+				return $frontEndContent->changePostType();
 			},
 			'permission_callback' 	=> function(){
 				$frontEndContent	= new FrontEndContent();
@@ -235,21 +234,21 @@ function get_attachment_contents(\WP_REST_Request $request ){
 function addCategory(\WP_REST_Request $request ){
 	$name		= $request->get_param('cat_name');
 	$parent		= $request->get_param('cat_parent');
-	$post_type	= $request->get_param('post_type');
+	$postType	= $request->get_param('post_type');
 	
 	$args 		= ['slug' => strtolower($name)];
 	if(is_numeric($parent)) $args['parent'] = $parent;
 	
-	$result = wp_insert_term( ucfirst($name), $post_type."s", $args);
+	$result = wp_insert_term( ucfirst($name), $postType."s", $args);
 
-	do_action('sim_after_category_add', $post_type, strtolower($name), $result);
+	do_action('sim_after_category_add', $postType, strtolower($name), $result);
 	
 	if(is_wp_error($result)){
 		return new \WP_Error('Event Cat error', $result->get_error_message(), ['status' => 500]);
 	}else{
 		return [
 			'id'		=> $result['term_id'],
-			'message'	=> "Added $name succesfully as en $post_type category"
+			'message'	=> "Added $name succesfully as en $postType category"
 		];
 	}
 }

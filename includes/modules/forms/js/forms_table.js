@@ -447,6 +447,6 @@ document.addEventListener('change', event=>{
 		document.getElementById(target.value).classList.remove('hidden');
 
 		// position table
-		table.positionTable();
+		sim_table_functions.positionTable();
 	}
 });

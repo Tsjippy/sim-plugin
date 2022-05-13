@@ -51,20 +51,13 @@ add_action( 'rest_api_init', function () {
 				$vimeo		= new VimeoApi();
 				$vimeoId	= $_POST['vimeoid'];
 
-				// Get the post for this video
-				$posts = get_posts(array(
-					'numberposts'   => -1,
-					'post_type'     => 'attachment',
-					'meta_key'      => 'vimeo_id',
-					'meta_value'    => $vimeoId
-				));
-
-				if(empty($posts)){
-					return new WP_Error('vimeo'," No post found for this video");
+				$post	= $vimeo->getPost($vimeoId);
+				if(is_wp_error($post)){
+					return $post;
 				}else{
-					$title	= $posts[0]->post_title;
+					$title	= $post->post_title;
 
-					$result		= $vimeo->downloadFromVimeo($_POST['download_url'], $vimeoId."_$title");
+					$result		= $vimeo->downloadFromVimeo($_POST['download_url'], $post->ID);
 					if(is_wp_error($result)){
 						return $result;
 					}

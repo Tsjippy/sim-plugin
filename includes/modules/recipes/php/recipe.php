@@ -99,19 +99,19 @@ function store_recipe_meta($post, $post_type){
 		);
 		
 		//Store ingredients
-		update_post_meta($post->ID,'ingredients',$ingredients);
+		update_metadata( 'post', $post->ID,'ingredients',$ingredients);
 	}
 	
 	//time_needed
 	if(isset($_POST['time_needed']) and is_numeric($_POST['time_needed'])){
 		//Store time_needed
-		update_post_meta($post->ID,'time_needed',$_POST['time_needed']);
+		update_metadata( 'post', $post->ID,'time_needed',$_POST['time_needed']);
 	}
 	
 	//serves
 	if(isset($_POST['serves']) and is_numeric($_POST['serves'])){
 		//Store serves
-		update_post_meta($post->ID,'serves',$_POST['serves']);
+		update_metadata( 'post', $post->ID,'serves',$_POST['serves']);
 	}
 }
 
@@ -123,7 +123,7 @@ function recipe_specific_fields($frontEndContent){
 		'hide_empty' => false,
 	) );
 	
-	$frontEndContent->show_categories('recipe', $categories);
+	$frontEndContent->showCategories('recipe', $categories);
 	?>
 	<div class="recipe <?php if($frontEndContent->post_type != 'recipe') echo 'hidden'; ?>">
 		<h4 name="ingredients_label">Recipe ingredients (one per line)</h4>

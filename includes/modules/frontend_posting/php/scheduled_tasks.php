@@ -61,36 +61,36 @@ function page_age_warning(){
 				'compare'	=> 'NOT EXISTS'
 			),
 			array(
-				'key'		=> 'missionary_id',
+				'key'		=> 'user_id',
 				'compare'	=> 'NOT EXISTS'
 			),
 		)
 	));
 	
 	//Months converted to seconds (days*hours*minutes*seconds)
-	$max_age_in_seconds		= SIM\get_module_option('frontend_posting', 'max_page_age') * 30.4375 *24 *60 * 60;
+	$maxAgeInSeconds		= SIM\get_module_option('frontend_posting', 'max_page_age') * 30.4375 *24 *60 * 60;
 	
 	//Loop over all the pages
 	foreach ( $pages as $page ) {
 		//Get the ID of the current page
-		$post_id 				= $page->ID;
-		$post_title 			= $page->post_title;
+		$postId 				= $page->ID;
+		$postTitle 			= $page->post_title;
 		//Get the last modified date
-		$seconds_since_updated 	= time()-get_post_modified_time('U',true,$page);
-		$page_age				= round($seconds_since_updated/60/60/24);
+		$secondsSinceUpdated 	= time()-get_post_modified_time('U',true,$page);
+		$pageAge				= round($secondsSinceUpdated/60/60/24);
 
 		//If it is X days since last modified
-		if ($seconds_since_updated > $max_age_in_seconds){
+		if ($secondsSinceUpdated > $maxAgeInSeconds){
 			//Get the edit page url
 			$url		= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
-			$url 		= add_query_arg( ['post_id' => $post_id], $url );		
+			$url 		= add_query_arg( ['post_id' => $postId], $url );		
 			
 			//Send an e-mail
-			$recipients = get_page_recipients($post_title);
+			$recipients = get_page_recipients($postTitle);
 			foreach($recipients as $recipient){
 				//Only email if valid email
 				if(strpos($recipient->user_email,'.empty') === false){
-					$postOutOfDateEmail    = new PostOutOfDateEmail($recipient, $post_title, $page_age, $url);
+					$postOutOfDateEmail    = new PostOutOfDateEmail($recipient, $postTitle, $pageAge, $url);
 					$postOutOfDateEmail->filterMail();
 						
 					wp_mail( $recipient->user_email, $postOutOfDateEmail->subject, $postOutOfDateEmail->message);
@@ -130,9 +130,9 @@ function get_page_recipients($page_title){
 }
 
 // Remove scheduled tasks upon module deactivatio
-add_action('sim_module_deactivated', function($module_slug, $options){
+add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	wp_clear_scheduled_hook( 'expired_posts_check_action' );
 	wp_clear_scheduled_hook( 'page_age_warning_action' );

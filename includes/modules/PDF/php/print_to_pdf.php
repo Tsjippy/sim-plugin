@@ -66,6 +66,6 @@ add_action('sim_after_post_save', function($post){
         }else{
             $value = true;
         }
-        update_post_meta($post->ID,'add_print_button', $value);
+        update_metadata( 'post', $post->ID,'add_print_button', $value);
     }
 });

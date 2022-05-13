@@ -6,20 +6,20 @@ use SIM\ADMIN;
 class PendingPostEmail extends ADMIN\MailSetting{
 
     public $user;
-    public $author_name;
-    public $action_text;
-    public $post_type;
+    public $authorName;
+    public $actionText;
+    public $postType;
     public $url;
 
-    public function __construct($user, $author_name='', $action_text='', $post_type='', $url='') {
+    public function __construct($user, $authorName='', $actionText='', $postType='', $url='') {
         // call parent constructor
 		parent::__construct();
 
         $this->addUser($user);
 
-        $this->replaceArray['%author_name%']    = $author_name;
-        $this->replaceArray['%action_text%']    = $action_text;
-        $this->replaceArray['%post_type%']      = $post_type;
+        $this->replaceArray['%author_name%']    = $authorName;
+        $this->replaceArray['%action_text%']    = $actionText;
+        $this->replaceArray['%post_type%']      = $postType;
         $this->replaceArray['%url%']            = $url;
 
         $this->moduleSlug        = 'frontend_posting';
@@ -35,18 +35,18 @@ class PendingPostEmail extends ADMIN\MailSetting{
 class PostOutOfDateEmail extends ADMIN\MailSetting{
 
     public $user;
-    public $post_title;
-    public $page_age;
+    public $postTitle;
+    public $pageAge;
     public $url;
 
-    public function __construct($user, $post_title='', $page_age='', $url='') {
+    public function __construct($user, $postTitle='', $pageAge='', $url='') {
         // call parent constructor
 		parent::__construct();
 
         $this->addUser($user);
 
-        $this->replaceArray['%post_title%']     = $post_title;
-        $this->replaceArray['%page_age%']       = $page_age;
+        $this->replaceArray['%post_title%']     = $postTitle;
+        $this->replaceArray['%page_age%']       = $pageAge;
         $this->replaceArray['%url%']            = $url;
 
         $this->moduleSlug        = 'frontend_posting';

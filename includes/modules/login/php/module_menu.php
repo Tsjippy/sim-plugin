@@ -4,9 +4,9 @@ use SIM;
 
 const ModuleVersion		= '7.0.6';
 
-add_action('sim_submenu_description', function($module_slug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $module_name){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	?>
 	<p>
@@ -37,9 +37,9 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 		Use like this: <code>[twofa_setup]</code>
 	</p>
 	<?php
-	$page1Id	= SIM\get_module_option($module_slug, 'password_reset_page');
-	$page2Id	= SIM\get_module_option($module_slug, 'register_page');
-	$page3Id	= SIM\get_module_option($module_slug, '2fa_page');
+	$page1Id	= SIM\get_module_option($moduleSlug, 'password_reset_page');
+	$page2Id	= SIM\get_module_option($moduleSlug, 'register_page');
+	$page3Id	= SIM\get_module_option($moduleSlug, '2fa_page');
 	if(is_numeric($page1Id) or is_numeric($page2Id) or is_numeric($page3Id)){
 		?>
 		<p>
@@ -53,9 +53,9 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 
 },10,2);
 
-add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	?>
 	<p>
 		You can enable user registration if you want.<br>
@@ -119,19 +119,19 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<br>
 	<br>
 
-	<input type='hidden' name='password_reset_page' value='<?php echo SIM\get_module_option($module_slug, 'password_reset_page');?>'>
-	<input type='hidden' name='register_page' value='<?php echo SIM\get_module_option($module_slug, 'register_page');?>'>
+	<input type='hidden' name='password_reset_page' value='<?php echo SIM\get_module_option($moduleSlug, 'password_reset_page');?>'>
+	<input type='hidden' name='register_page' value='<?php echo SIM\get_module_option($moduleSlug, 'register_page');?>'>
 	<?php
 }, 10, 3);
 
-add_filter('sim_module_updated', function($new_options, $module_slug, $old_options){
+add_filter('sim_module_updated', function($new_options, $moduleSlug, $old_options){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return $new_options;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $new_options;
 
 	$public_cat	= get_cat_ID('Public');
 
 	// Create password reset page
-	$page_id	= SIM\get_module_option($module_slug, 'password_reset_page');
+	$page_id	= SIM\get_module_option($moduleSlug, 'password_reset_page');
 	// Only create if it does not yet exist
 	if(!$page_id or get_post_status($page_id) != 'publish'){
 		$post = array(
@@ -154,7 +154,7 @@ add_filter('sim_module_updated', function($new_options, $module_slug, $old_optio
 	// Add registration page
 	if(isset($new_options['user_registration'])){
 		// Create register page
-		$page_id	= SIM\get_module_option($module_slug, 'register_page');
+		$page_id	= SIM\get_module_option($moduleSlug, 'register_page');
 		// Only create if it does not yet exist
 		if(!$page_id or get_post_status($page_id) != 'publish'){
 			$post = array(
@@ -176,7 +176,7 @@ add_filter('sim_module_updated', function($new_options, $module_slug, $old_optio
 	}
 
 	// Add 2fa page
-	$page_id	= SIM\get_module_option($module_slug, '2fa_page');
+	$page_id	= SIM\get_module_option($moduleSlug, '2fa_page');
 	// Only create if it does not yet exist
 	if(!$page_id or get_post_status($page_id) != 'publish'){
 		$post = array(
@@ -218,9 +218,9 @@ add_filter('display_post_states', function ( $states, $post ) {
     return $states;
 }, 10, 2);
 
-add_action('sim_module_deactivated', function($module_slug, $options){
+add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	// Remove the auto created page
 	wp_delete_post($options['password_reset_page'], true);

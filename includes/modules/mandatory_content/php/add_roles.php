@@ -1,5 +1,5 @@
 <?php
-namespace SIM\PRAYER;
+namespace SIM\MANDATORY;
 use SIM;
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
@@ -9,10 +9,10 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	$roleSet = get_role( 'contributor' )->capabilities;
 
 	// Only add the new role if it does not exist
-	if(!wp_roles()->is_role( 'prayercoordinator' )){
+	if(!wp_roles()->is_role( 'no_man_docs' )){
 		add_role( 
-			'prayercoordinator', 
-			'Prayer coordinator', 
+			'no_man_docs', 
+			'No mandatory documents', 
 			$roleSet
 		);
 	}
@@ -21,9 +21,9 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 }, 10, 2);
 
 add_filter('sim_role_description', function($description, $role){
-    switch($role){
-        case 'prayercoordinator':
-            return 'Ability to publish prayer requests';
-    }
+    if($role == 'no_man_docs'){
+		return "Mandatory documents do not apply";
+	}
+
     return $description;
 }, 10, 2);

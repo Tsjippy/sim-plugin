@@ -2,11 +2,11 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
-const ModuleVersion		= '7.0.7';
+const ModuleVersion		= '7.0.8';
 
-add_action('sim_submenu_description', function($module_slug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $module_name){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	?>
 	<p>
@@ -22,7 +22,7 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	</p>
 
 	<?php
-	$pageId	= SIM\get_module_option($module_slug, 'publish_post_page');
+	$pageId	= SIM\get_module_option($moduleSlug, 'publish_post_page');
 	if(is_numeric($pageId)){
 		?>
 		<p>
@@ -33,9 +33,9 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	}
 },10,2);
 
-add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	
 	?>
 	<label>How often should people be reminded of content which should be updated?</label>
@@ -83,26 +83,26 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	$pendingPostEmail->printInputs($settings);
     
 	?>
-	<input type='hidden' name='publish_post_page' value='<?php echo SIM\get_module_option($module_slug, 'publish_post_page');?>'>
+	<input type='hidden' name='publish_post_page' value='<?php echo SIM\get_module_option($moduleSlug, 'publish_post_page');?>'>
 	<?php
 }, 10, 3);
 
-add_action('sim_module_deactivated', function($module_slug, $options){
+add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	// Remove the auto created page
 	wp_delete_post($options['publish_post_page'], true);
 }, 10, 2);
 
-add_filter('sim_module_updated', function($options, $module_slug){
+add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	// Create frontend posting page
-	$page_id	= SIM\get_module_option($module_slug, 'publish_post_page');
+	$pageId	= SIM\get_module_option($moduleSlug, 'publish_post_page');
 	// Only create if it does not yet exist
-	if(!$page_id or get_post_status($page_id) != 'publish'){
+	if(!$pageId or get_post_status($pageId) != 'publish'){
 		$post = array(
 			'post_type'		=> 'page',
 			'post_title'    => 'Add content',

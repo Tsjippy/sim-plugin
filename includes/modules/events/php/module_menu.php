@@ -4,9 +4,9 @@ use SIM;
 
 const ModuleVersion		= '7.0.5';
 
-add_action('sim_submenu_description', function($module_slug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $module_name){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
 	?>
 	<p>
@@ -26,9 +26,9 @@ add_action('sim_submenu_description', function($module_slug, $module_name){
 	<?php
 },10,2);
 
-add_action('sim_submenu_options', function($module_slug, $module_name, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	
     ?>
 	<label for="freq">How often should we check for expired events?</label>
@@ -52,9 +52,9 @@ add_action('sim_submenu_options', function($module_slug, $module_name, $settings
 	<?php
 }, 10, 3);
 
-add_filter('sim_module_updated', function($options, $module_slug){
+add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($module_slug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	schedule_tasks();
 

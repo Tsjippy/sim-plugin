@@ -15,12 +15,6 @@ add_action('sim_after_post_save', function($post){
 
         // Only update when needed
         if(!empty($newTitle) and $newTitle != $post->post_title){
-            $files = glob("{$vimeoApi->backup_dir}/$vimeoId*.mp4");
-
-            if(!empty($files)){
-                rename($files[0], dirname($files[0])."/{$vimeoId}_$newTitle.mp4");
-            }
-
             $data['name']	= $newTitle;
         }
         

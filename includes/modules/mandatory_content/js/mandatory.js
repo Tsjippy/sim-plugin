@@ -7,7 +7,7 @@ async function markAsRead(event){
 		formData.append('userid',target.dataset.userid);
 		formData.append('postid',target.dataset.postid);
 
-        var response    = await formsubmit.fetchRestApi('mandatory_content/markasread', formData);
+        var response    = await formsubmit.fetchRestApi('mandatory_content/mark_as_read', formData);
 		
         if(response){
             main.displayMessage(response, 'success', false);
@@ -16,7 +16,26 @@ async function markAsRead(event){
 	}
 }
 
+async function markAllAsRead(event){
+    var target  = event.target;
+    var loader  = main.showLoader(target);
+    
+    formData = new FormData();
+    formData.append('userid', target.dataset.userid);
+
+    var response    = await formsubmit.fetchRestApi('mandatory_content/mark_all_as_read', formData);
+    
+    if(response){
+        main.displayMessage(response, 'success', false);
+        document.querySelectorAll('.mark-all-as-read').forEach(el=>el.remove());
+    }
+
+    loader.remove();
+}
+
 document.addEventListener("DOMContentLoaded",function() {
     console.log('Mandatory.js loaded');
     document.querySelectorAll('.mark_as_read').forEach(el=>el.addEventListener('click',markAsRead));
+
+    document.querySelectorAll('.mark-all-as-read').forEach(el=>el.addEventListener('click', markAllAsRead));
 })

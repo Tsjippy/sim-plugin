@@ -5,13 +5,13 @@ use SIM;
 add_action('frontend_post_after_content', function($frontendcontend){
     $allowedPostTypes     = SIM\get_module_option('comments', 'posttypes');
 
-    if(in_array($frontendcontend->post_type, $allowedPostTypes)){
+    if(in_array($frontendcontend->postType, $allowedPostTypes)){
         $hidden = '';
     }else{
         $hidden = 'hidden';
     }
 
-    if(comments_open($frontendcontend->post_id)){
+    if(comments_open($frontendcontend->postId)){
         $checked    = 'checked';
     }else{
         $checked    = '';
