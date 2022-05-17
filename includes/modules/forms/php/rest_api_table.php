@@ -178,12 +178,12 @@ function save_table_prefs( \WP_REST_Request $request ) {
 	if (is_user_logged_in()) {
 		$columnName		= $request['column_name'];
 
-		$user_id		= get_current_user_id();
-		$hidden_columns	= (array)get_user_meta($user_id, 'hidden_columns_'.$request['formid'], true);	
+		$userId		= get_current_user_id();
+		$hidden_columns	= (array)get_user_meta($userId, 'hidden_columns_'.$request['formid'], true);	
 
 		$hidden_columns[$columnName]	= 'hidden';
 
-		update_user_meta($user_id, 'hidden_columns_'.$request['formid'], $hidden_columns);	
+		update_user_meta($userId, 'hidden_columns_'.$request['formid'], $hidden_columns);	
 
 		return 'Succesfully updated column settings';
 	}else{
@@ -193,8 +193,8 @@ function save_table_prefs( \WP_REST_Request $request ) {
 
 function delete_table_prefs( \WP_REST_Request $request ) {
 	if (is_user_logged_in()) {
-		$user_id		= get_current_user_id();
-		delete_user_meta($user_id, 'hidden_columns_'.$request['formid']);	
+		$userId		= get_current_user_id();
+		delete_user_meta($userId, 'hidden_columns_'.$request['formid']);	
 
 		return 'Succesfully deleted column settings';
 	}else{

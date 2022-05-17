@@ -90,8 +90,8 @@ function move_attachment($post_id, $sub_dir){
     wp_generate_attachment_metadata($post_id, "$new_path/$filename");
 
     //replace any url with new urls for this attachment
-    $old_url    = SIM\path_to_url(str_replace($filename, $base_name, $old_path));
-    $new_url    = SIM\path_to_url("$new_path/$base_name");
+    $old_url    = SIM\pathToUrl(str_replace($filename, $base_name, $old_path));
+    $new_url    = SIM\pathToUrl("$new_path/$base_name");
 
     // Search for any post with the old url
     $query = new \WP_Query( array( 's' => $old_url ) );

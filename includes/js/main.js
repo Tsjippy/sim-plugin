@@ -1,7 +1,7 @@
 console.log("Main.js loaded");
 
-export function changeUrl(target, second_tab=''){
-	var new_param	= target.dataset.param_val;
+export function changeUrl(target, secondTab=''){
+	var newParam	= target.dataset.param_val;
 
 	var hash		= target.dataset.hash;
 
@@ -10,14 +10,14 @@ export function changeUrl(target, second_tab=''){
 	//Change the url params
 	if(target.closest('.tabcontent') == null || target.parentNode.classList.contains('modal-content') == true){
 		//Add query_arg if it is a main tab
-		url.searchParams.set('main_tab', new_param);
+		url.searchParams.set('main_tab', newParam);
 		url.searchParams.delete('second_tab');
 	}else{
-		url.searchParams.set('second_tab', new_param);
+		url.searchParams.set('second_tab', newParam);
 	}
 
-	if(second_tab != ''){
-		url.searchParams.set('second_tab', second_tab);
+	if(secondTab != ''){
+		url.searchParams.set('second_tab', secondTab);
 	}
 	
 	window.history.pushState({}, '', url);
@@ -40,47 +40,47 @@ function switchTab(event=null){
 		get: (searchParams, prop) => searchParams.get(prop),
 	});
 	
-	var main_tab 	= params.main_tab;
-	var last_tab	= '';
-	if(main_tab != null){
+	var mainTab 	= params.main_tab;
+	var lastTab	= '';
+	if(mainTab != null){
 		//find the tab and display it
-		document.querySelectorAll('[data-param_val="'+main_tab+'"]').forEach(tabbutton=>{
+		document.querySelectorAll('[data-param_val="'+mainTab+'"]').forEach(tabbutton=>{
 			//only process non-modal tabs
 			if(tabbutton.closest('.modal') == null){
 				var result	= displayTab(tabbutton);
 				if(result != false){
-					last_tab	= result;
+					lastTab	= result;
 				}
 			}
 		});
 	}
 
-	var second_tab = params.second_tab;
-	if(second_tab != null){
+	var secondTab = params.secondTab;
+	if(secondTab != null){
 		//find the tab and display it
-		last_tab.querySelectorAll('[data-param_val="'+second_tab+'"]').forEach(tabbutton=>{
+		last_tab.querySelectorAll('[data-param_val="'+secondTab+'"]').forEach(tabbutton=>{
 			displayTab(tabbutton);
 		});
 	}
 }
 
-function displayTab(tab_button){
+function displayTab(tabButton){
 	//remove all existing highlights
 	document.querySelectorAll('.highlight').forEach(el=>el.classList.remove('highlight'));
 
 	// Get content area
-	if(tab_button.dataset.target == undefined){
-		var tab = document.querySelector('#'+tab_button.dataset.param_val);
+	if(tabButton.dataset.target == undefined){
+		var tab = document.querySelector('#'+tabButton.dataset.param_val);
 	}else{
-		var tab = tab_button.closest('div').querySelector('#'+tab_button.dataset.target);
+		var tab = tabButton.closest('div').querySelector('#'+tabButton.dataset.target);
 	}
 	
 	if(tab != null){
 		tab.classList.remove('hidden');
 
-		if(tab_button.tagName != 'A'){
+		if(tabButton.tagName != 'A'){
 			//Mark the other tabbuttons as inactive
-			tab_button.parentNode.querySelectorAll(':scope > .active:not(#'+tab_button.id+')').forEach(child=>{
+			tabButton.parentNode.querySelectorAll(':scope > .active:not(#'+tabButton.id+')').forEach(child=>{
 				//Make inactive
 				child.classList.remove("active");
 					
@@ -89,23 +89,23 @@ function displayTab(tab_button){
 			});
 			
 			//Mark the tabbutton as active
-			tab_button.classList.add("active");
+			tabButton.classList.add("active");
 		}
 
 		//scroll to field
 		if (window.location.hash) {
 			var hash 		= window.location.hash.replace('#','');
 
-			var hash_field	= tab.querySelector('[name^="'+hash+'"]');
+			var hashField	= tab.querySelector('[name^="'+hash+'"]');
 		
-			hash_field.scrollIntoView({block: "center"});
+			hashField.scrollIntoView({block: "center"});
 
-			var el			= hash_field.closest('.inputwrapper');
+			var el			= hashField.closest('.inputwrapper');
 			if(el != null){
-				hash_field.closest('.inputwrapper').classList.add('highlight');
+				hashField.closest('.inputwrapper').classList.add('highlight');
 			}
-			hash_field.classList.add('highlight');
-			hash_field.focus();
+			hashField.classList.add('highlight');
+			hashField.focus();
 		}
 
 		// position any tables on this tab, as they can only be positioned when visible
@@ -182,7 +182,7 @@ export function showLoader(element, replace=true, message=''){
 
 	var loader	= document.createElement("IMG");
 	loader.setAttribute('class','loadergif');
-	loader.setAttribute("src", sim.loading_gif);
+	loader.setAttribute("src", sim.loadingGif);
 	loader.style["height"]= "30px";
 
 	wrapper.insertAdjacentElement('beforeEnd', loader);
@@ -272,10 +272,10 @@ export async function waitForInternet(){
 //Load after page load
 document.addEventListener("DOMContentLoaded",function() {
 	//loop over all the tab buttons
-	document.querySelectorAll('.tablink').forEach(function(tab_button){
+	document.querySelectorAll('.tablink').forEach(function(tabButton){
 		//Add the dataset if it does not exist yet.
-		if(tab_button.dataset.param_val == undefined){
-			tab_button.dataset.param_val = tab_button.textContent.replace(' ','_').toLowerCase();
+		if(tabButton.dataset.param_val == undefined){
+			tabButton.dataset.param_val = tabButton.textContent.replace(' ','_').toLowerCase();
 		}
 	})
 

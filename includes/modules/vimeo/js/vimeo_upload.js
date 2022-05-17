@@ -26,12 +26,12 @@ export class VimeoUpload{
     }
 
     async getVimeoUploadUrl(){
-        var formdata = new FormData();
-        formdata.append('file_size', this.file.size);
-        formdata.append('file_name', this.file.name);
-        formdata.append('file_type', this.file.type);
+        var formData = new FormData();
+        formData.append('file_size', this.file.size);
+        formData.append('file_name', this.file.name);
+        formData.append('file_type', this.file.type);
 
-        var response    = await formsubmit.fetchRestApi('vimeo/prepare_vimeo_upload', formdata);
+        var response    = await formsubmit.fetchRestApi('vimeo/prepare_vimeo_upload', formData);
 
         //Failed
         if(response){
@@ -56,7 +56,7 @@ export class VimeoUpload{
             return true;
         }else{
             console.error('Failed');
-            console.error(formdata);
+            console.error(formData);
             console.log(this.file);
 
             // reset

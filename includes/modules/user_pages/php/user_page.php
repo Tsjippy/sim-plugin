@@ -3,18 +3,18 @@ namespace SIM\USERPAGE;
 use SIM;
 
 //Create an user (family) page
-function create_user_page($user_id){	
+function create_user_page($userId){	
 	//get the current page
-	$page_id    = SIM\getUserPageId($user_id);
-	$userdata   = get_userdata($user_id);
+	$page_id    = SIM\getUserPageId($userId);
+	$userdata   = get_userdata($userId);
 	
-    //return false when $user_id is not valid
+    //return false when $userId is not valid
     if(!$userdata) return false;
 
 	//Check if this page exists and is published
 	if(get_post_status ($page_id) != 'publish' ) $page_id = null;
 	
-	$family = SIM\family_flat_array($user_id);
+	$family = SIM\familyFlatArray($userId);
 	if (count($family)>0){
 		$title = $userdata->last_name." family";
 	}else{
@@ -40,11 +40,11 @@ function create_user_page($user_id){
 		$page_id = wp_insert_post( $user_page );
 		
 		//Save user id as meta
-		update_post_meta($page_id,'user_id',$user_id);
+		update_post_meta($page_id,'user_id',$userId);
 		
-		SIM\print_array("Created user page with id $page_id");
+		SIM\printArray("Created user page with id $page_id");
 	}else{
-        $update = update_user_page_title($user_id, $title);
+        $update = update_user_page_title($userId, $title);
 	}
 	
 	if($update == true and count($family)>0){
@@ -61,13 +61,13 @@ function create_user_page($user_id){
 				//Remove the current user page
 				wp_delete_post($member_page_id);
 				
-				SIM\print_array("Removed user page with id $member_page_id");
+				SIM\printArray("Removed user page with id $member_page_id");
 			}
 		}
 	}
 	
 	//Add the post id to the user profile
-	SIM\update_family_meta($user_id,"user_page_id",$page_id);
+	SIM\updateFamilyMeta($userId,"user_page_id",$page_id);
 	
 	//Return the id
 	return $page_id;
@@ -88,8 +88,8 @@ function get_user_page_link($user){
     return $html;
 }
 
-function update_user_page_title($user_id, $title){
-    $page_id    = SIM\getUserPageId($user_id);
+function update_user_page_title($userId, $title){
+    $page_id    = SIM\getUserPageId($userId);
 
     if(is_numeric($page_id)){
         $page = get_post($page_id);
@@ -108,23 +108,23 @@ function update_user_page_title($user_id, $title){
             return false;
         }
     }else{
-        return create_user_page($user_id);  
+        return create_user_page($userId);  
     } 
 }
 
 //Display name and job of user
-function user_description($user_id){
+function user_description($userId){
 	$html = "";
 
-	$user	= get_userdata($user_id);
+	$user	= get_userdata($userId);
 
 	do_action('sim_user_description', $user);
 	
 	//get the family details
-	$family = get_user_meta( $user_id, 'family', true );
+	$family = get_user_meta( $userId, 'family', true );
 	
 	//Find compound or address
-	$location = get_user_meta( $user_id, 'location', true );
+	$location = get_user_meta( $userId, 'location', true );
 	if(is_array($location)){
 		if (empty($location["compound"])){
 			if (empty($location["address"])){
@@ -139,7 +139,7 @@ function user_description($user_id){
 		$address = "No clue, since no address is given";
 	}
 	
-	$privacy_preference = get_user_meta( $user_id, 'privacy_preference', true );
+	$privacy_preference = get_user_meta( $userId, 'privacy_preference', true );
 	if(!is_array($privacy_preference)) $privacy_preference = [];
 
 	//Build the html
@@ -157,12 +157,12 @@ function user_description($user_id){
 		$html .= $address.' State';
 		$html .= "</p>";
 
-		$sending_office = get_user_meta( $user_id, 'sending_office', true );
+		$sending_office = get_user_meta( $userId, 'sending_office', true );
 		if(!empty($sending_office)){
 			$html .= "<p>Sending office: $sending_office</p>";
 		}
 		
-		$arrivaldate 	= get_user_meta( $user_id, 'arrival_date', true );
+		$arrivaldate 	= get_user_meta( $userId, 'arrival_date', true );
 		if($arrivaldate != "" and !isset($privacy_preference['hide_anniversary'])){
 			$arrival_epoch	= strtotime($arrivaldate);
 			$arrivaldate	= date('F Y',$arrival_epoch);
@@ -179,7 +179,7 @@ function user_description($user_id){
 		}
 		
 		//User data
-		$html .= show_user_info($user_id);
+		$html .= show_user_info($userId);
 			
 		//Children
 		if (isset($family["children"])){
@@ -187,7 +187,7 @@ function user_description($user_id){
 			$html .= " They have the following children:<br>";
 			foreach($family["children"] as $child){
 				$childdata	= get_userdata($child);
-				$age		= SIM\get_age($child);
+				$age		= SIM\getAge($child);
 				if($age !== false){
 					$age = "($age)";
 				}
@@ -199,7 +199,7 @@ function user_description($user_id){
 		}
 	//Single
 	}else{
-		$userdata = get_userdata($user_id);
+		$userdata = get_userdata($userId);
 	
 		if ($userdata != null){
 			if(isset($privacy_preference['hide_name'])){ 
@@ -210,7 +210,7 @@ function user_description($user_id){
 			
 			$html	.= "<h1>";
 				if(!isset($privacy_preference['hide_profile_picture'])){
-					$html .= SIM\displayProfilePicture($user_id);
+					$html .= SIM\displayProfilePicture($userId);
 				}
 				$html	.= "  $displayname";
 			$html	.= "</h1>";
@@ -219,13 +219,13 @@ function user_description($user_id){
 				$html .= "<p>Lives on: $address</p>";
 			}
 			if(!isset($privacy_preference['hide_ministry'])){ 
-				$html .= "<p>Works with: <br>".add_ministry_links($user_id)."</p>";
+				$html .= "<p>Works with: <br>".add_ministry_links($userId)."</p>";
 			}
-			$sending_office = get_user_meta( $user_id, 'sending_office', true );
+			$sending_office = get_user_meta( $userId, 'sending_office', true );
 			if($sending_office != "")
 				$html .= "<p>Sending office: $sending_office</p>";
 				
-			$arrivaldate = get_user_meta( $user_id, 'arrival_date', true );
+			$arrivaldate = get_user_meta( $userId, 'arrival_date', true );
 			if($arrivaldate != "" and !isset($privacy_preference['hide_anniversary'])){
 				$arrival_epoch	= strtotime($arrivaldate);
 				$arrivaldate	= date('F Y',$arrival_epoch);
@@ -236,7 +236,7 @@ function user_description($user_id){
 				}
 			}
 			
-			$html .= show_phonenumbers($user_id);
+			$html .= show_phonenumbers($userId);
 		}else{
 			$html .= "<p>Nothing to show here due to privacy settings.</p>";
 		}
@@ -245,11 +245,11 @@ function user_description($user_id){
 	return $html;
 }
 
-function show_user_info($user_id){
+function show_user_info($userId){
 	$html = ""; 
 	
-	$userdata = get_userdata($user_id);
-	$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
+	$userdata = get_userdata($userId);
+	$privacy_preference = (array)get_user_meta( $userId, 'privacy_preference', true );
 	
 	//If it is a valid user and privacy allows us to show it
 	if ($userdata != null){
@@ -261,7 +261,7 @@ function show_user_info($user_id){
 		
 		$html .= "<p>";
 		if(empty($privacy_preference['hide_profile_picture'])){
-			$html .= SIM\displayProfilePicture($user_id);
+			$html .= SIM\displayProfilePicture($userId);
 			$style = "";
 		}else{
 			$style = ' style="margin-left: 55px;"';
@@ -269,24 +269,24 @@ function show_user_info($user_id){
 		
 		if(!isset($privacy_preference['hide_ministry'])){ 
 			$html .= "<span class='person_work' $style> $displayname works with: </span><br>";
-			$html .= add_ministry_links($user_id);
+			$html .= add_ministry_links($userId);
 		}
 		$html .= "</p>";
-		$html .= show_phonenumbers($user_id);
+		$html .= show_phonenumbers($userId);
 	}
 	
 	return $html;
 }
 
-function show_phonenumbers($user_id){
-	$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
+function show_phonenumbers($userId){
+	$privacy_preference = (array)get_user_meta( $userId, 'privacy_preference', true );
 	
 	$html = "";
 	if(!isset($privacy_preference['hide_phone'])){
-		$phonenumbers = get_user_meta( $user_id, 'phonenumbers', true );
+		$phonenumbers = get_user_meta( $userId, 'phonenumbers', true );
 	
 		$html .= "<p><span style='font-size: 15px;'>Contact details below are only for you to use.<br>Do not share with other people.</span><br><br>";
-		$email	= get_userdata($user_id)->user_email;
+		$email	= get_userdata($userId)->user_email;
 		$html .= "E-mail: <a href='mailto:$email'>$email</a><br>";
 		if(empty($phonenumbers)){
 			$html .= "Phone number: No phonenumber given<br><br>";
@@ -298,57 +298,57 @@ function show_phonenumbers($user_id){
 				$html .= "Phone number ".($key+1)." is: <a href='https://signal.me/#p/{$phonenumber}'>{$phonenumber}</a><br><br>";
 			}
 		}
-		$html .= add_vcard_download($user_id).'</p>';
+		$html .= add_vcard_download($userId).'</p>';
 	}
 	
 	return $html;
 }
 
 //Create vcard
-function add_vcard_download($user_id){
+function add_vcard_download($userId){
 	global $post;
 	//Make vcard
 	if (isset($_GET['vcard'])){
 		ob_end_clean();
 		//ob_start();
-		$user_id = $_GET['vcard'];
+		$userId = $_GET['vcard'];
 		header('Content-Type: text/x-vcard');
-		header('Content-Disposition: inline; filename= "'.get_userdata($user_id)->data->display_name.'.vcf"');
+		header('Content-Disposition: inline; filename= "'.get_userdata($userId)->data->display_name.'.vcf"');
 
-		$vcard = build_vcard($user_id);
+		$vcard = build_vcard($userId);
 		echo $vcard;
 		die();
 
 	//Return vcard hyperlink
 	}else{
-		$url = add_query_arg( ['vcard' => $user_id], get_permalink( $post->ID ) );
+		$url = add_query_arg( ['vcard' => $userId], get_permalink( $post->ID ) );
 		return '<a href="'.$url.'" class="button sim vcard">Add to your contacts</a>';
 	}
 }
 
 //Get vcard contents for a person
-function build_vcard($user_id){
+function build_vcard($userId){
 	//Get the user partner
-	$family = (array)get_user_meta( $user_id, 'family', true );
+	$family = (array)get_user_meta( $userId, 'family', true );
 	if (isset($family['partner'])){
 		$partner = $family['partner'];
 	}else{
 		$partner = "";
 	}
 	
-	$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
+	$privacy_preference = (array)get_user_meta( $userId, 'privacy_preference', true );
 	
 	if(empty($privacy_preference['hide_location'])){ 
 		//Get the user address
-		$location = get_user_meta( $user_id, 'location', true );
+		$location = get_user_meta( $userId, 'location', true );
 		if (!empty($location['address'])){
 			$address = $location['address'];
 			$lat = $location['latitude'];
 			$lon = $location['longitude'];
 		}
 	}
-	$gender 	= get_user_meta( $user_id, 'gender', true );
-	$userdata 	= get_userdata($user_id);
+	$gender 	= get_user_meta( $userId, 'gender', true );
+	$userdata 	= get_userdata($userId);
 		
 	$vcard = "BEGIN:VCARD\r\n";
 	$vcard .= "VERSION:4.0\r\n";
@@ -360,7 +360,7 @@ function build_vcard($user_id){
 	$vcard .= "EMAIL;TYPE=INTERNET;TYPE=WORK:".$userdata->user_email."\r\n";
 	
 	if(empty($privacy_preference['hide_phone'])){
-		$phonenumbers = get_user_meta( $user_id, 'phonenumbers', true );
+		$phonenumbers = get_user_meta( $userId, 'phonenumbers', true );
 		if (is_array($phonenumbers)){
 			foreach ($phonenumbers as $key=>$phonenumber){
 				switch ($key) {
@@ -384,7 +384,7 @@ function build_vcard($user_id){
 		$vcard .= "ADR;TYPE=HOME:;;$address\r\n";
 		$vcard .= "GEO:geo:".$lat.",".$lon."\r\n";
 	}
-	$vcard .= "BDAY:".str_replace("-","",get_user_meta( $user_id, "birthday", true ))."\r\n";
+	$vcard .= "BDAY:".str_replace("-","",get_user_meta( $userId, "birthday", true ))."\r\n";
 	if ($partner != ""){
 		$vcard .= "item1.X-ABRELATEDNAMES:".get_userdata($partner)->data->display_name."\r\n";
 		$vcard .= 'item1.X-ABLabel:_$!<Spouse>!$_';
@@ -400,8 +400,8 @@ function build_vcard($user_id){
 	}
 	
 	//User has an profile picture add it
-	if (is_numeric(get_user_meta($user_id,'profile_picture',true)) and empty($privacy_preference['hide_profile_picture'])){
-		$picture_url 			= str_replace(wp_upload_dir()['url'],wp_upload_dir()['path'], SIM\USERMANAGEMENT\get_profile_picture_url($user_id, "large"));
+	if (is_numeric(get_user_meta($userId,'profile_picture',true)) and empty($privacy_preference['hide_profile_picture'])){
+		$picture_url 			= str_replace(wp_upload_dir()['url'],wp_upload_dir()['path'], SIM\USERMANAGEMENT\get_profile_picture_url($userId, "large"));
 		$photo               	= file_get_contents($picture_url);
 		$b64vcard               = base64_encode($photo);
 		$b64mline               = chunk_split($b64vcard,74,"\n");
@@ -441,8 +441,8 @@ add_filter( 'the_content', function ( $content ) {
 	if (is_user_logged_in()){
 		$post_id 	= get_the_ID();
 		//user page
-		$user_id = get_post_meta($post_id,'user_id',true);
-		if(is_numeric($user_id)) $content .= user_description($user_id);
+		$userId = get_post_meta($post_id,'user_id',true);
+		if(is_numeric($userId)) $content .= user_description($userId);
 	}
 
 	return $content;

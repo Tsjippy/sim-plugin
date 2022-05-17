@@ -2,8 +2,8 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-add_filter('forms_load_userdata',function($usermeta,$user_id){
-	$userdata	= (array)get_userdata($user_id)->data;
+add_filter('forms_load_userdata',function($usermeta,$userId){
+	$userdata	= (array)get_userdata($userId)->data;
 
 	//Change ID to userid because its a confusing name
 	$userdata['user_id']	= $userdata['ID'];
@@ -13,20 +13,20 @@ add_filter('forms_load_userdata',function($usermeta,$user_id){
 },10,2);
 
 //create  events
-add_filter('before_saving_formdata', function($formresults, $formname, $user_id){
+add_filter('before_saving_formdata', function($formresults, $formname, $userId){
 	if($formname != 'user_generics') return $formresults;
 	
 	if(class_exists('SIM\EVENTS\Events')){
 		$events	= new SIM\EVENTS\Events();
-		$events->create_celebration_event('birthday', $user_id, 'birthday', $_POST['birthday']);
-		$events->create_celebration_event(SITENAME.' anniversary', $user_id,'arrival_date',$_POST['arrival_date']);
+		$events->create_celebration_event('birthday', $userId, 'birthday', $_POST['birthday']);
+		$events->create_celebration_event(SITENAME.' anniversary', $userId,'arrival_date',$_POST['arrival_date']);
 	}
 
 	//check if phonenumber has changed
-	$old_phonenumbers	= (array)get_user_meta($user_id, 'phonenumbers', true);
+	$old_phonenumbers	= (array)get_user_meta($userId, 'phonenumbers', true);
 	$new_phonenumbers	= $_POST['phonenumbers'];
 	$changed_numbers	= array_diff($new_phonenumbers, $old_phonenumbers);
-	$first_name			= get_userdata($user_id)->first_name;
+	$first_name			= get_userdata($userId)->first_name;
 	foreach($changed_numbers as $key=>$changed_number){
 		$link		= SIM\get_module_option('signal', 'group_link');
 
@@ -86,7 +86,7 @@ add_action('before_form',function ($formname){
 });
 
 function get_ministries(){	
-	//Get all pages which are subpages of the MinistriesPageID
+	//Get all pages describing a ministry
 	$Ministry_pages = get_posts([
 		'post_type'			=> 'location',
 		'posts_per_page'	=> -1,
@@ -111,8 +111,8 @@ function get_ministries(){
 }
 
 //display ministries defined as php function in generics form
-function displayMinistryPositions($user_id){
-	$user_ministries 	= (array)get_user_meta( $user_id, "user_ministries", true);
+function displayMinistryPositions($userId){
+	$user_ministries 	= (array)get_user_meta( $userId, "user_ministries", true);
 	
 	ob_start();
 	?>

@@ -12,9 +12,9 @@ add_action('sim_update_family_picture', function($userId, $attachmentId){
     $maps->create_icon($markerId, $iconTitle, $url, 1);
 
     //Save the marker id for all family members
-    $partner    = SIM\has_partner($userId);
+    $partner    = SIM\hasPartner($userId);
 	if(empty($markerId) and $partner)	$markerId = get_user_meta($partner ,"marker_id", true);
-	SIM\update_family_meta( $userId, "marker_id", $markerId);
+	SIM\updateFamilyMeta( $userId, "marker_id", $markerId);
 }, 10, 2);
 
 // Update marker title whenever there are changes to the family
@@ -24,7 +24,7 @@ add_action('sim_family_safe', function($userId){
 	//Update the marker title
 	$markerId   = get_user_meta($userId,"marker_id",true);
 
-    $family     = SIM\family_flat_array($userId);
+    $family     = SIM\familyFlatArray($userId);
 
     if(empty($family)){
         $title = get_userdata($userId)->display_name;

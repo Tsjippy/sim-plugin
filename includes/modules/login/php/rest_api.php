@@ -338,12 +338,12 @@ function biometricOptions(){
 
         return $publicKeyCredentialCreationOptions;
     }catch(\Exception $exception){
-        SIM\print_array("ajax_create: (ERROR)".$exception->getMessage());
-        SIM\print_array(generate_call_trace($exception));
+        SIM\printArray("ajax_create: (ERROR)".$exception->getMessage());
+        SIM\printArray(generate_call_trace($exception));
         return new WP_Error('Error',"Something went wrong.");
     }catch(\Error $error){
-        SIM\print_array("ajax_create: (ERROR)".$error->getMessage());
-        SIM\print_array(generate_call_trace($error));
+        SIM\printArray("ajax_create: (ERROR)".$error->getMessage());
+        SIM\printArray(generate_call_trace($error));
         return new WP_Error('Error',"Something went wrong.");
     }
 }
@@ -375,7 +375,7 @@ function storeBiometric(){
         // Check global unique credential ID
         $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user);
         if($publicKeyCredentialSourceRepository->findOneMetaByCredentialId($credential_id) !== null){
-            SIM\print_array("ajax_create_response: (ERROR)Credential ID not unique, ID => \"".base64_encode($credential_id)."\" , exit");
+            SIM\printArray("ajax_create_response: (ERROR)Credential ID not unique, ID => \"".base64_encode($credential_id)."\" , exit");
             return new WP_Error('Logged in error', "Credential ID not unique");
         }
 
@@ -426,8 +426,8 @@ function storeBiometric(){
             $publicKeyCredentialSourceRepository->saveCredentialSource($publicKeyCredentialSource);
         }catch(\Throwable $exception){
             // Failed to verify
-            SIM\print_array("ajax_create_response: (ERROR)".$exception->getMessage());
-            SIM\print_array(generate_call_trace($exception));
+            SIM\printArray("ajax_create_response: (ERROR)".$exception->getMessage());
+            SIM\printArray(generate_call_trace($exception));
             return new \WP_Error('error', $exception->getMessage(), ['status'=> 500]);
         }
 
@@ -441,12 +441,12 @@ function storeBiometric(){
         // Success
         return auth_table();
     }catch(\Exception $exception){
-        SIM\print_array("ajax_create_response: (ERROR)".$exception->getMessage());
-        SIM\print_array(generate_call_trace($exception));
+        SIM\printArray("ajax_create_response: (ERROR)".$exception->getMessage());
+        SIM\printArray(generate_call_trace($exception));
         return new WP_Error('Logged in error', "Something went wrong.");
     }catch(\Error $error){
-        SIM\print_array("ajax_create_response: (ERROR)".$error->getMessage());
-        SIM\print_array(generate_call_trace($error));
+        SIM\printArray("ajax_create_response: (ERROR)".$error->getMessage());
+        SIM\printArray(generate_call_trace($error));
         return new WP_Error('Logged in error', "Something went wrong.");
     }
 }
@@ -488,8 +488,8 @@ function startAuthentication(){
 
         // If the user haven't bind a authenticator yet, exit
         if(count($credentialSources) === 0){
-            SIM\print_array("ajax_auth: (ERROR)No authenticator found");
-            SIM\print_array($userEntity);
+            SIM\printArray("ajax_auth: (ERROR)No authenticator found");
+            SIM\printArray($userEntity);
             return new WP_Error('authenticator error',"No authenticator available");
         }
 
@@ -517,12 +517,12 @@ function startAuthentication(){
 
         return $publicKeyCredentialRequestOptions;
     }catch(\Exception $exception){
-        SIM\print_array("ajax_auth: (ERROR)".$exception->getMessage());
-        SIM\print_array(generate_call_trace($exception));
+        SIM\printArray("ajax_auth: (ERROR)".$exception->getMessage());
+        SIM\printArray(generate_call_trace($exception));
         return new WP_Error('webauthn error',"Something went wrong.");
     }catch(\Error $error){
-        SIM\print_array("ajax_auth: (ERROR)".$error->getMessage());
-        SIM\print_array(generate_call_trace($error));
+        SIM\printArray("ajax_auth: (ERROR)".$error->getMessage());
+        SIM\printArray(generate_call_trace($error));
         return new WP_Error('webauthn error',"Something went wrong.");
     }
 }
@@ -539,7 +539,7 @@ function finishAuthentication(){
 
         // May not get the challenge yet
         if(empty($publicKeyCredentialRequestOptions) or empty($user_name_auth) or empty($userEntity)){
-            SIM\print_array("ajax_auth_response: (ERROR)Challenge not found in transient, exit");
+            SIM\printArray("ajax_auth_response: (ERROR)Challenge not found in transient, exit");
             return new WP_Error('webauthn',"Bad request.");
         }
 
@@ -557,7 +557,7 @@ function finishAuthentication(){
         // If user entity is not saved, read from WordPress
         $webauthnKey   = get_user_meta($user->ID, '2fa_webauthn_key', true);
         if(!$webauthnKey){
-            SIM\print_array("ajax_auth_response: (ERROR)User not initialized, exit");
+            SIM\printArray("ajax_auth_response: (ERROR)User not initialized, exit");
             return new WP_Error('webauthn',"User not inited.");
         }
 
@@ -600,17 +600,17 @@ function finishAuthentication(){
             return "true";
         }catch(\Throwable $exception){
             // Failed to verify
-            SIM\print_array("ajax_auth_response: (ERROR)".$exception->getMessage());
-            SIM\print_array(generate_call_trace($exception));
+            SIM\printArray("ajax_auth_response: (ERROR)".$exception->getMessage());
+            SIM\printArray(generate_call_trace($exception));
             return new WP_Error('webauthn', "Something went wrong.");
         }
     }catch(\Exception $exception){
-        SIM\print_array("ajax_auth_response: (ERROR)".$exception->getMessage());
-        SIM\print_array(generate_call_trace($exception));
+        SIM\printArray("ajax_auth_response: (ERROR)".$exception->getMessage());
+        SIM\printArray(generate_call_trace($exception));
         return new WP_Error('webauthn', "Something went wrong.");
     }catch(\Error $error){
-        SIM\print_array("ajax_auth_response: (ERROR)".$error->getMessage());
-        SIM\print_array(generate_call_trace($error));
+        SIM\printArray("ajax_auth_response: (ERROR)".$error->getMessage());
+        SIM\printArray(generate_call_trace($error));
         return new WP_Error('webauthn', "Something went wrong.");
     }
 }
@@ -628,7 +628,7 @@ function checkCredentials(){
         //get 2fa methods for this user
         $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
-        SIM\clean_up_nested_array($methods);
+        SIM\cleanUpNestedArray($methods);
         
         //return the methods
         if(!empty($methods)){
@@ -644,11 +644,11 @@ function checkCredentials(){
 
 // Save 2fa options
 function saveTwoFaSettings(){    
-    $user_id = get_current_user_id();
+    $userId = get_current_user_id();
 
     $new_methods    = $_POST['2fa_methods'];
 
-    $old_methods    = (array)get_user_meta($user_id,'2fa_methods', true);
+    $old_methods    = (array)get_user_meta($userId,'2fa_methods', true);
     
     $twofa          = new TwoFactorAuth();
 
@@ -658,7 +658,7 @@ function saveTwoFaSettings(){
     if(in_array('authenticator', $new_methods) and !in_array('authenticator', $old_methods)){
         $secret     = $_POST['auth_secret'];
         $secretkey  = $_POST['secretkey'];
-        $hash       = get_user_meta($user_id,'2fa_hash',true);
+        $hash       = get_user_meta($userId,'2fa_hash',true);
 
         //we should have submitted a secret
         if(empty($secret)){
@@ -673,8 +673,8 @@ function saveTwoFaSettings(){
         $last2fa        = '';
         if($twofa->verifyCode($secretkey, $secret, 1, null, $last2fa)){
             //store in usermeta
-            update_user_meta($user_id, '2fa_key', $secretkey);
-            update_user_meta($user_id, '2fa_last', $last2fa);
+            update_user_meta($userId, '2fa_key', $secretkey);
+            update_user_meta($userId, '2fa_last', $last2fa);
         }else{
             return new WP_Error('Invalid 2fa code', "Your code is expired");
         } 
@@ -684,11 +684,11 @@ function saveTwoFaSettings(){
 
     //we just enabled email verification
     if(in_array('email', $new_methods) and !in_array('email', $old_methods)){
-        $userdata   = get_userdata($user_id);
+        $userdata   = get_userdata($userId);
 
         SIM\try_send_signal(
             "Hi ".$userdata->first_name.",\n\nYou have succesfully setup e-mail verification on ".SITENAME,
-            $user_id
+            $userId
         );
 
         //Send e-mail
@@ -706,7 +706,7 @@ function saveTwoFaSettings(){
     }
 
     //store all methods. We will not come here if one of the failed
-    update_user_meta($user_id,'2fa_methods',$new_methods);
+    update_user_meta($userId,'2fa_methods',$new_methods);
 
     return $message;
 }
@@ -809,14 +809,14 @@ function requestPasswordReset(){
 
 //Save a new password
 function processPasswordUpdate(){
-	$user_id	= $_POST['userid'];
+	$userId	= $_POST['userid'];
 
-	$userdata	= get_userdata($user_id);	
+	$userdata	= get_userdata($userId);	
 	if(!$userdata)	return new WP_Error('userid error','Invalid user id given');
 
 	if($_POST['pass1'] != $_POST['pass2'])	return new WP_Error('Password error', "Passwords do not match, try again.");
 	
-	wp_set_password( $_POST['pass1'], $user_id );
+	wp_set_password( $_POST['pass1'], $userId );
 
     $message    = 'Changed password succesfully';
     if(is_user_logged_in()){
@@ -855,15 +855,15 @@ function requestUserAccount(){
     }
 
 	//Insert the user
-	$user_id = wp_insert_user( $userdata ) ;
+	$userId = wp_insert_user( $userdata ) ;
 	
-	if(is_wp_error($user_id)){
-		SIM\print_array($user_id->get_error_message());
-		return new WP_Error('User insert error', $user_id->get_error_message());
+	if(is_wp_error($userId)){
+		SIM\printArray($userId->get_error_message());
+		return new WP_Error('User insert error', $userId->get_error_message());
 	}
 
 	// Disable the useraccount until approved by admin
-	update_user_meta( $user_id, 'disabled', 'pending' );
+	update_user_meta( $userId, 'disabled', 'pending' );
 
 	return 'Useraccount successfully created, you will receive an e-mail as soon as it gets approved.';
 }

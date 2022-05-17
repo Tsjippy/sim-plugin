@@ -79,7 +79,7 @@ function vimeoSync(){
         //remove any local video which does not exist on vimeo
         foreach(array_diff_key($localVideos, $onlineVideos) as $vimeoId=>$postId){
             $vimeoId		= get_post_meta($postId, 'vimeo_id', true);
-            SIM\print_array("Deleting video with vimeo id $vimeoId");
+            SIM\printArray("Deleting video with vimeo id $vimeoId");
             wp_delete_post($postId);
         }
 

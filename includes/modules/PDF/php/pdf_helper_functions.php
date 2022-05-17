@@ -140,7 +140,7 @@ class PDF_HTML extends \FPDF{
 						$this->Image($attr['SRC'],$this->GetX(),$this->GetY(),px2mm($attr['WIDTH']), px2mm($attr['HEIGHT']),$ext);
 						$this->SetY($this->GetY()+px2mm($attr['HEIGHT'])+2);
 					}catch (\Exception $e) {
-						SIM\print_array("PDF_HELPER_Functions.php: {$attr['SRC']} is not a valid image");
+						SIM\printArray("PDF_HELPER_Functions.php: {$attr['SRC']} is not a valid image");
 					}
 				}
 				break;
@@ -224,7 +224,7 @@ class PDF_HTML extends \FPDF{
 		try{
 			$this->Image($logo, 70, 30, 70,0);
 		}catch (\Exception $e) {
-			SIM\print_array("PDF_export.php: $logo is not a valid image");
+			SIM\printArray("PDF_export.php: $logo is not a valid image");
 		}
 		$this->SetFont( 'Arial', '', 42 );
 		
@@ -255,7 +255,7 @@ class PDF_HTML extends \FPDF{
 				// Logo
 				$this->Image($logo,10,6,30,0,'JPG');
 			}catch (\Exception $e) {
-				SIM\print_array("PDF_HELPER_Functions.php: $logo is not a valid image");
+				SIM\printArray("PDF_HELPER_Functions.php: $logo is not a valid image");
 			}
 			// Arial bold 15
 			$this->SetFont('Arial','B',15);
@@ -373,7 +373,7 @@ class PDF_HTML extends \FPDF{
 							try{
 								$this->Image(ABSPATH.$image, null, null, 100, 0,  $extension);
 							}catch (\Exception $e) {
-								SIM\print_array(ABSPATH.$image." is not a valid image");
+								SIM\printArray(ABSPATH.$image." is not a valid image");
 							}
 						}else{
 							//Write down the url as link
@@ -425,7 +425,7 @@ class PDF_HTML extends \FPDF{
 	
 	function print_image($url, $x=-1, $y=-1, $width=100, $height=200,$centre=false, $adjustY = false){
 		try{
-			$path = SIM\url_to_path($url);
+			$path = SIM\urlToPath($url);
 			
 			if($x == -1) $x = $this->getX();
 			if($y == -1) $y = $this->getY();
@@ -445,7 +445,7 @@ class PDF_HTML extends \FPDF{
 			
 			$this->setXY($x+$width,$y);
 		}catch (\Exception $e) {
-			SIM\print_array("PDF_export.php: $path is not a valid image");
+			SIM\printArray("PDF_export.php: $path is not a valid image");
 		}
 	}
 		
@@ -511,7 +511,7 @@ class PDF_HTML extends \FPDF{
 			}else{
 				$org_lines = explode("\n",$celltext);
 			}
-			SIM\clean_up_nested_array($org_lines);
+			SIM\cleanUpNestedArray($org_lines);
 
 			$celltext	= trim(implode("\n",$org_lines));
 
@@ -552,7 +552,7 @@ class PDF_HTML extends \FPDF{
 			}else{
 				$org_lines	= explode("\n",$celltext);
 			}
-			SIM\clean_up_nested_array($org_lines);
+			SIM\cleanUpNestedArray($org_lines);
 
 			$cell_width = $col_widths[$col_nr];
 			foreach($org_lines as $l_nr=>$line){

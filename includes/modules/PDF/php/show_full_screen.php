@@ -22,10 +22,10 @@ add_filter( 'the_content', function ( $content ) {
         
         if(!empty($audience)){
             //Get current user id
-            $user_id = get_current_user_id();
+            $userId = get_current_user_id();
             
             //get current alread read pages
-            $read_pages		= (array)get_user_meta( $user_id, 'read_pages', true );
+            $read_pages		= (array)get_user_meta( $userId, 'read_pages', true );
             
             //only add if not already there
             if(!in_array($post_id, $read_pages)){
@@ -33,7 +33,7 @@ add_filter( 'the_content', function ( $content ) {
                 $read_pages[]	= $post_id;
         
                 //update db
-                update_user_meta( $user_id, 'read_pages', $read_pages);
+                update_user_meta( $userId, 'read_pages', $read_pages);
             }
         }
 
@@ -44,7 +44,7 @@ add_filter( 'the_content', function ( $content ) {
             $pdf_url = $matches[1];
             
             //Convert to path
-            $path = SIM\url_to_path($pdf_url);
+            $path = SIM\urlToPath($pdf_url);
             
             //Echo the pdf to screen
             while(true){

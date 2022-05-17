@@ -39,7 +39,7 @@ function expired_posts_check(){
 	));
 	
 	foreach($posts as $post){
-		SIM\print_array("Moving '{$post->post_title}' to trash as it has expired");
+		SIM\printArray("Moving '{$post->post_title}' to trash as it has expired");
 		wp_trash_post($post->ID);
 	}
 }

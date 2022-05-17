@@ -47,7 +47,7 @@ function anniversary_check(){
 			$userdata		= get_userdata($event->post_author);
 			$first_name		= $userdata->first_name;
 			$event_title	= $event->post_title;
-			$partner_id		= SIM\has_partner($event->post_author);
+			$partner_id		= SIM\hasPartner($event->post_author);
 
 			if($partner_id){
 				$partnerdata	= get_userdata($partner_id);
@@ -57,7 +57,7 @@ function anniversary_check(){
 			
 			$event_title	= trim(str_replace($userdata->display_name,"", $event_title));
 
-			$age	= SIM\get_age_in_words($start_year);
+			$age	= SIM\getAge($start_year);
 
 			SIM\try_send_signal("Hi $first_name,\nCongratulations with your $age $event_title!", $event->post_author);
 

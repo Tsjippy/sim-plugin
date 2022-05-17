@@ -1,8 +1,8 @@
 console.log("Fileupload.js loaded");
 
-let totalfiles			= 0;
-let file_upload_wrap	= '';
-dataset_string			= '';
+let totalFiles			= 0;
+let fileUploadWrap		= '';
+let datasetString		= '';
 
 function createProgressBar(target, filetype){
 	//Show loading gif
@@ -21,46 +21,46 @@ function createProgressBar(target, filetype){
 	</div>
 	`;
 
-	file_upload_wrap.insertAdjacentHTML('beforeEnd', html);
+	fileUploadWrap.insertAdjacentHTML('beforeEnd', html);
 }
 
 function addPreview(link, value){
-	var name		= file_upload_wrap.querySelector('.file_upload').name.replace('_files','');
+	var name		= fileUploadWrap.querySelector('.file_upload').name.replace('_files','');
 
 	var html = `
 	<div class='document'>
 		<input type='hidden' name='${name}' value='${value}'>
 		${link}
-		<img class="remove_document_loader hidden" src="${sim.loading_gif}" style="height:40px;">
+		<img class="remove_document_loader hidden" src="${sim.loadingGif}" style="height:40px;">
 	</div>`;
 
-	file_upload_wrap.querySelector('.documentpreview').insertAdjacentHTML('beforeend', html);
+	fileUploadWrap.querySelector('.documentpreview').insertAdjacentHTML('beforeend', html);
 
-	return file_upload_wrap.querySelector('.documentpreview .document');
+	return fileUploadWrap.querySelector('.documentpreview .document');
 }
 
-async function file_upload(target){
-	file_upload_wrap = target.closest('.file_upload_wrap');
+async function fileUpload(target){
+	fileUploadWrap = target.closest('.fileUploadWrap');
 	
-	//Create a formdata element
-	var form_data = new FormData();
+	//Create a formData element
+	var formData = new FormData();
 	
 	//Add the ajax action name
-	form_data.append('action', 'upload_files');
+	formData.append('action', 'upload_files');
 	
 	//Loop over the dataset attributes and add them to post
 	target.parentNode.querySelectorAll('input').forEach(
 		function(input){
-			form_data.append(input.name, input.value);
-			dataset_string += `data-${input.name}="${input.value}`;
+			formData.append(input.name, input.value);
+			datasetString += `data-${input.name}="${input.value}`;
 		}
 	);
 
 	// Read selected files
-	totalfiles = target.files.length;
-	if (totalfiles > 0){
-		//Add all the files to the formdata
-		for (var index = 0; index < totalfiles; index++) {
+	totalFiles = target.files.length;
+	if (totalFiles > 0){
+		//Add all the files to the formData
+		for (var index = 0; index < totalFiles; index++) {
 			// file is a video and vimeo enabled
 			if(target.files[index].type.split('/')[0] == 'video' && typeof(vimeoUploader) == 'object'){
 				createProgressBar(target, 'video');
@@ -73,7 +73,7 @@ async function file_upload(target){
 				target.value = '';
 				return;
 			}else{
-				form_data.append('files[]', target.files[index]);
+				formData.append('files[]', target.files[index]);
 			}
 		}
 	}else{
@@ -82,7 +82,7 @@ async function file_upload(target){
 	}
 
 	// No files remaining to upload
-	if(form_data.get('files[]') == null){
+	if(formData.get('files[]') == null){
 		return;
 	}
 	
@@ -95,7 +95,7 @@ async function file_upload(target){
 		if(request.readyState == 4){
 			//Success
 			if (request.status >= 200 && request.status < 400) {
-				file_upload_upload_succes(request.responseText)
+				fileUploadSucces(request.responseText)
 			//Error
 			}else{
 				main.displayMessage(JSON.parse(request.responseText).error,'error');
@@ -109,20 +109,20 @@ async function file_upload(target){
 			);
 				
 			//Clear the input
-			file_upload_wrap.querySelector('.file_upload').value = "";
+			fileUploadWrap.querySelector('.file_upload').value = "";
 		}
 	};
 	
 	//Listen to the upload status
-	request.upload.addEventListener('progress', file_upload_progress, false);
+	request.upload.addEventListener('progress', fileUploadProgress, false);
 	
-	request.open('POST', sim.ajax_url, true);
+	request.open('POST', sim.ajaxUrl, true);
 	
 	//Create a progressbar
 	createProgressBar(target, 'file');
 	
 	//Send AJAX request
-	if (totalfiles > 1){
+	if (totalFiles > 1){
 		var s = "s";
 	}else{
 		var s = "";
@@ -130,10 +130,10 @@ async function file_upload(target){
 	target.closest('.upload_div').querySelector('.uploadmessage').textContent = "Uploading document"+s;
 	document.getElementById('progress-wrapper').classList.remove('hidden');
 
-	request.send(form_data);
+	request.send(formData);
 }
 
-function file_upload_progress(e){
+function fileUploadProgress(e){
 	if(e.lengthComputable){
 		var max = e.total;
 		var current = e.loaded;
@@ -149,9 +149,9 @@ function file_upload_progress(e){
 			document.getElementById("progress-wrapper").remove();
 			
 			// process completed
-			file_upload_wrap.querySelectorAll(".uploadmessage").forEach(el =>{
+			fileUploadWrap.querySelectorAll(".uploadmessage").forEach(el =>{
 				//Change message text
-				if (totalfiles > 1){
+				if (totalFiles > 1){
 					el.textContent = "Processing documents";
 				}else{
 					el.textContent = "Processing document";
@@ -161,24 +161,24 @@ function file_upload_progress(e){
 	}  
 }
 
-function file_upload_upload_succes(result){
-	var imgurls			= JSON.parse(result);
+function fileUploadSucces(result){
+	var imgUrls			= JSON.parse(result);
 	
 	for(var index = 0; index < imgurls.length; index++) {
 		var src = imgurls[index]['url'];
 		
-		if(imgurls[index]['id'] != undefined){
-			dataset_string += ' data-libraryid="'+imgurls[index]['id']+'"'
+		if(imgUrls[index]['id'] != undefined){
+			datasetString += ' data-libraryid="'+imgurls[index]['id']+'"'
 		}
 		
-		var filename 	= src.split("/")[src.split("/").length-1];
+		var fileName 	= src.split("/")[src.split("/").length-1];
 		
 		var url 		= sim.base_url+'/'+src;
 
-		if(imgurls[index]['id'] == undefined){
+		if(imgUrls[index]['id'] == undefined){
 			var value		= url;
 		}else{
-			var value		= imgurls[index]['id'];
+			var value		= imgUrls[index]['id'];
 		}
 
 		//is image
@@ -189,24 +189,24 @@ function file_upload_upload_succes(result){
 			//Add a link
 			var link	= `<a class="fileupload" href="${url}">${filename}</a>`;
 		}
-		link += `<button type="button" class="remove_document button" data-url="${src}" ${dataset_string}>X</button>`;
+		link += `<button type="button" class="remove_document button" data-url="${src}" ${datasetString}>X</button>`;
 
 		addPreview(link, value);
 	}
 	
-	if(imgurls.length==1){
-		main.displayMessage("The file " + filename + " has been uploaded succesfully.",'success',true);
+	if(imgUrls.length==1){
+		main.displayMessage(`The file ${fileName} has been uploaded succesfully.`,'success',true);
 	}else{
 		main.displayMessage("The files have been uploaded succesfully.",'success',true);
 	}
 	
 	//Hide upload button if only one file allowed
-	if(file_upload_wrap.querySelector('.file_upload').multiple == false){
-		file_upload_wrap.querySelector('.upload_div').classList.add('hidden');
+	if(fileUploadWrap.querySelector('.file_upload').multiple == false){
+		fileUploadWrap.querySelector('.upload_div').classList.add('hidden');
 	}
 }
 
-async function remove_document(target){
+async function removeDocument(target){
 	var data = new FormData();		
 	//Loop over the dataset attributes and add them to post
 	for(var d in target.dataset){
@@ -227,8 +227,8 @@ async function remove_document(target){
 	var response	= await formsubmit.fetchRestApi('remove_document', data);
 
 	if(response){
-		var docwrapper			= target.closest('.document');
-		var file_upload_wrap	= docwrapper.closest('.file_upload_wrap');
+		var docWrapper			= target.closest('.document');
+		var fileUploadWrap	= docwrapper.closest('.fileUploadWrap');
 		
 		//hide the loading gif
 		docwrapper.querySelector('.remove_document_loader').classList.add('hidden');
@@ -236,18 +236,18 @@ async function remove_document(target){
 		// If successful
 		try{
 			//show the upload field
-			file_upload_wrap.querySelector('.upload_div').classList.remove('hidden');
+			fileUploadWrap.querySelector('.upload_div').classList.remove('hidden');
 		}catch{
 			//remove featured image id
 			document.querySelector('[name="post_image_id"]').value = '';
 		}
 		
 		//remove the document/picture
-		docwrapper.remove();
+		docWrapper.remove();
 		
 		var re = new RegExp('(.*)[0-9](.*)',"g");
 		//reindex documents
-		file_upload_wrap.querySelectorAll('.file_url').forEach((el,index)=>{
+		fileUploadWrap.querySelectorAll('.file_url').forEach((el,index)=>{
 			el.name = el.name.replace(re, '$1'+index+'$2');
 		});
 
@@ -269,7 +269,7 @@ async function uploadVideo(file){
 	// Could not upload
 	if(!upload){
 		//clear file upload
-		file_upload_wrap.querySelector('.file_upload').value = "";
+		fileUploadWrap.querySelector('.file_upload').value = "";
 				
 		//Remove progress barr
 		document.getElementById("progress-wrapper").remove();
@@ -281,7 +281,7 @@ async function uploadVideo(file){
 	}
 
 	// Upload started
-	if (totalfiles > 1){
+	if (totalFiles > 1){
 		var s = "s";
 	}else{
 		var s = "";
@@ -304,12 +304,12 @@ async function uploadVideo(file){
 	upload.options.onSuccess    = async function() {
 		var postId	= uploader.storedEntry.postId;
 		// Add post id of the video to the form
-		var formdata = new FormData();
-        formdata.append('post_id', postId);
+		var formData = new FormData();
+        formData.append('post_id', postId);
     
         var request = new XMLHttpRequest();
         request.open('POST', sim.base_url+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
-        request.send(formdata);
+        request.send(formData);
 
 		//Remove progress barr
 		document.getElementById("progress-wrapper").remove();
@@ -329,12 +329,12 @@ async function uploadVideo(file){
 		main.displayMessage(`The file ${file.name} has been uploaded succesfully.`,'success',true);
 		
 		//Hide upload button if only one file allowed
-		if(file_upload_wrap.querySelector('.file_upload').multiple == false){
-			file_upload_wrap.querySelector('.upload_div').classList.add('hidden');
+		if(fileUploadWrap.querySelector('.file_upload').multiple == false){
+			fileUploadWrap.querySelector('.upload_div').classList.add('hidden');
 		}
 
 		//clear file upload
-		file_upload_wrap.querySelector('.file_upload').value = "";
+		fileUploadWrap.querySelector('.file_upload').value = "";
 		
 		uploader.urlStorage.removeUpload(uploader.storedEntry.urlStorageKey);
 
@@ -376,7 +376,7 @@ window.addEventListener("click", function(event) {
 	
 	if (target.className.includes("remove_document")){
 		event.preventDefault();
-		remove_document(target);
+		removeDocument(target);
 	}
 });
 
@@ -385,6 +385,6 @@ window.addEventListener("change", event => {
 
 	if (target.className.includes("file_upload")){
 		event.preventDefault();
-		file_upload(target);
+		fileUpload(target);
 	}
 });

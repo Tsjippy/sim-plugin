@@ -8,7 +8,7 @@ add_action('init', function(){
 		//Add extra variables to the main.js script
 		wp_localize_script( 'sim_script', 
 			'page_select', 
-			SIM\page_select('page-selector')
+			SIM\pageSelect('page-selector')
 		);
 
 		$plugins['insert_embed_shortcode']		= plugins_url("js/tiny_mce.js?ver=".ModuleVersion, __DIR__);

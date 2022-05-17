@@ -11,11 +11,11 @@ async function hideColumn(cell){
 	cell.closest('.form-table-wrapper').querySelector('.reset-col-vis').classList.remove('hidden');
 
 	// store as preference
-	var formdata	= new FormData();
-	formdata.append('formid', table.dataset.formid);
-	formdata.append('column_name', cell.id);
+	var formData	= new FormData();
+	formData.append('formid', table.dataset.formid);
+	formData.append('column_name', cell.id);
 	
-	var response	= await formsubmit.fetchRestApi('forms/save_table_prefs', formdata);
+	var response	= await formsubmit.fetchRestApi('forms/save_table_prefs', formData);
 }
 
 async function showHiddenColumns(target){
@@ -27,10 +27,10 @@ async function showHiddenColumns(target){
 	table.querySelectorAll('th.hidden, td.hidden').forEach(el=>el.classList.remove('hidden'));
 
 	// store as preference
-	var formdata	= new FormData();
-	formdata.append('formid', table.dataset.formid);
+	var formData	= new FormData();
+	formData.append('formid', table.dataset.formid);
 
-	var response	= await formsubmit.fetchRestApi('forms/delete_table_prefs', formdata);
+	var response	= await formsubmit.fetchRestApi('forms/delete_table_prefs', formData);
 
 	if(response){
 		main.displayMessage(response);
@@ -74,13 +74,13 @@ async function removeSubmission(target){
 		var submissionid	= target.closest('tr').dataset.id;
 		var table			= target.closest('table');
 
-		var formdata = new FormData();
-		formdata.append('submissionid', submissionid);
+		var formData = new FormData();
+		formData.append('submissionid', submissionid);
 		
 		//display loading gif
 		main.showLoader(target);
 
-		var response	= await formsubmit.fetchRestApi('forms/remove_submission', formdata);
+		var response	= await formsubmit.fetchRestApi('forms/remove_submission', formData);
 
 		if(response){
 			table.querySelectorAll(`.table-row[data-id="${submissionid}"]`).forEach(
@@ -97,10 +97,10 @@ async function archiveSubmission(target){
 	var show_swal		= true;
 	var action			= target.value;
 
-	var formdata 		= new FormData();
-	formdata.append('formid', table.dataset.formid);
-	formdata.append('submissionid', submissionid);
-	formdata.append('action', action);
+	var formData 		= new FormData();
+	formData.append('formid', table.dataset.formid);
+	formData.append('submissionid', submissionid);
+	formData.append('action', action);
 	
 	// Ask whether to archive one piece or the whole
 	if(table_row.dataset.subid != undefined){
@@ -118,7 +118,7 @@ async function archiveSubmission(target){
 		});
 
 		if (response.isConfirmed) {
-			formdata.append('subid', table_row.dataset.subid);
+			formData.append('subid', table_row.dataset.subid);
 		}
 		
 		// skip if denied
@@ -138,7 +138,7 @@ async function archiveSubmission(target){
 	//display loading gif
 	main.showLoader(target);
 	
-	var response	= await formsubmit.fetchRestApi('forms/archive_submission', formdata);
+	var response	= await formsubmit.fetchRestApi('forms/archive_submission', formData);
 
 	if(response){
 		const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -146,7 +146,7 @@ async function archiveSubmission(target){
 		});
 		
 		// Delete all
-		if(formdata.get('subid') == null){
+		if(formData.get('subid') == null){
 			table.querySelectorAll(`.table-row[data-id="${submissionid}"]`).forEach(row=>{
 				// just change the button name
 				if(params.archived == 'true'){
@@ -199,12 +199,12 @@ async function getInputHtml(target){
 	
 	target.dataset.oldtext	 	= old_text;
 
-	var formdata = new FormData();
-    formdata.append('formid', formid);
-    formdata.append('submissionid',submission_id);
-    formdata.append('fieldname',cell_id);
+	var formData = new FormData();
+    formData.append('formid', formid);
+    formData.append('submissionid',submission_id);
+    formData.append('fieldname',cell_id);
 
-	var response	= await formsubmit.fetchRestApi('forms/get_input_html', formdata);
+	var response	= await formsubmit.fetchRestApi('forms/get_input_html', formData);
 
 	if(response){
 		target.innerHTML	 = response;
@@ -310,14 +310,14 @@ async function processFormsTableInput(target){
 		main.showLoader(cell.firstChild);
 		
 		// Submit new value and receive the filtered value back
-		var formdata = new FormData();
-		formdata.append('formid', formid);
-		formdata.append('submissionid',submission_id);
-		formdata.append('subid',sub_id);
-		formdata.append('fieldname',cell_id);
-		formdata.append('newvalue',value);
+		var formData = new FormData();
+		formData.append('formid', formid);
+		formData.append('submissionid',submission_id);
+		formData.append('subid',sub_id);
+		formData.append('fieldname',cell_id);
+		formData.append('newvalue',value);
 		
-		var response	= await formsubmit.fetchRestApi('forms/edit_value', formdata);
+		var response	= await formsubmit.fetchRestApi('forms/edit_value', formData);
 	
 		if(response){
 			var value = response.newvalue;

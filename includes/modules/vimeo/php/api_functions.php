@@ -12,7 +12,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
             if ( ! class_exists( '\Vimeo\Vimeo' ) ) {
                 $error = __( 'Vimeo not loaded', 'sim' );
-                SIM\print_array($error);
+                SIM\printArray($error);
                 return false;
             }
 
@@ -240,7 +240,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                     } */
                 }
 
-                SIM\print_array("Succesfully deleted video with id $vimeoId from Vimeo");
+                SIM\printArray("Succesfully deleted video with id $vimeoId from Vimeo");
 
                 //delete thumbnail
                 $path   = get_post_meta($postId, 'thumbnail', true);
@@ -370,7 +370,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                     'description'   => $post->post_content
                 ]);
             }catch(\Exception $e) {
-                SIM\print_array('Unable to upload: '.$e->getMessage());
+                SIM\printArray('Unable to upload: '.$e->getMessage());
             }
 
             update_post_meta($postId, 'vimeo_id', str_replace('/videos/', '', $response['body']['uri']));
@@ -464,7 +464,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                     )
                 ), 'PATCH' );
             } catch ( \Exception $e ) {
-                SIM\print_array( 'Hide Vimeo video: ' . $e->getMessage() );
+                SIM\printArray( 'Hide Vimeo video: ' . $e->getMessage() );
             }
         }
 
@@ -555,9 +555,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
             // Create folder if it does not exist
             if (!file_exists($path)) {
-                SIM\print_array("Creating folder at $path");
+                SIM\printArray("Creating folder at $path");
                 if(!mkdir($path, 0755, true)){
-                    SIM\print_array("Creating folder in $path failed!");
+                    SIM\printArray("Creating folder in $path failed!");
                     return false;
                 }
             }

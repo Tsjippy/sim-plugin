@@ -49,7 +49,7 @@ function mailtracker(\WP_REST_Request $request) {
 		);
 
 		if($wpdb->last_error !== ''){
-			SIM\print_array($wpdb->last_error);
+			SIM\printArray($wpdb->last_error);
 		}
 	}
 

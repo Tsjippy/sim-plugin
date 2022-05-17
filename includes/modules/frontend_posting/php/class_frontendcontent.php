@@ -83,7 +83,7 @@ class FrontEndContent{
 		wp_localize_script( 'sim_script', 
 			'frontendpost', 
 			array( 
-				'user_select' 		=> SIM\user_select("Select a person to show the link to",true),
+				'user_select' 		=> SIM\userSelect("Select a person to show the link to",true),
 				'post_type'			=> $this->postType,
 			) 
 		);
@@ -194,7 +194,7 @@ class FrontEndContent{
 					<h4>Upload your file</h4>
 					<?php
 					$uploader = new SIM\Fileupload($this->user->ID, 'attachment', 'private', false);
-					echo $uploader->get_upload_html();
+					echo $uploader->getUploadHtml();
 					?>
 				</div>
 				
@@ -202,7 +202,7 @@ class FrontEndContent{
 				try{
 					$this->contentManagerOptions();
 				}catch(\Exception $e) {
-					SIM\print_array($e);
+					SIM\printArray($e);
 				}
 				
 				//Add a draft button for new posts
@@ -256,7 +256,7 @@ class FrontEndContent{
 	function addTinymcePlugin($plugins) {
 		wp_localize_script( 'sim_script', 
 			'user_select', 
-			SIM\user_select("Select a person to show the link to",true),
+			SIM\userSelect("Select a person to show the link to",true),
 		);
 
 		$plugins['select_user'] = plugins_url("js/tiny_mce.js?ver=".ModuleVersion, __DIR__);
@@ -392,9 +392,9 @@ class FrontEndContent{
 			}
 
 			$added		= array_diff_assoc($newMeta, $oldMeta);
-			SIM\clean_up_nested_array($added, true);
+			SIM\cleanUpNestedArray($added, true);
 			$removed	= array_diff_assoc($oldMeta, $newMeta);
-			SIM\clean_up_nested_array($removed, true);
+			SIM\cleanUpNestedArray($removed, true);
 			$changed	= [];
 
 			foreach($added as $key=>$add){
@@ -650,7 +650,7 @@ class FrontEndContent{
 			<div id="parentpage" class="frontendform">
 				<h4>Select a parent page</h4>
 				<?php 
-				echo SIM\page_select('parent_page', $this->postParent);
+				echo SIM\pageSelect('parent_page', $this->postParent);
 				?>
 			</div>
 
@@ -782,7 +782,7 @@ class FrontEndContent{
 			// Show change author dropdown 
 			$authorId	= $this->post->post_author;
 			if(!is_numeric($authorId)) $authorId = $this->user->ID;
-			echo SIM\user_select('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $user_id=$authorId);
+			echo SIM\userSelect('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $userId=$authorId);
 			
 			// Only show publish date if not yet published
 			if(!in_array($this->post->post_status, ['publish', 'inherit'])){
@@ -843,7 +843,7 @@ class FrontEndContent{
 			
 			SIM\add_to_library($newFilePath);
 		}else{
-			SIM\print_array('Not a valid image');
+			SIM\printArray('Not a valid image');
 		}
 		
 		//Return the image url
@@ -902,7 +902,7 @@ class FrontEndContent{
 		}
 		
 		//Find display names in content
-		$users = SIM\get_user_accounts(false,false,true);
+		$users = SIM\getUserAccounts(false,false,true);
 		foreach($users as $user){
 			$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
 			//only replace the name with a link if privacy allows
@@ -1032,7 +1032,7 @@ class FrontEndContent{
 			);
 
 			if($this->postType == 'attachment'){
-				$this->postId 	= SIM\add_to_library(SIM\url_to_path($_POST['attachment'][0]), $this->postTitle, $postContent);
+				$this->postId 	= SIM\add_to_library(SIM\urlToPath($_POST['attachment'][0]), $this->postTitle, $postContent);
 				$post['ID']	= $this->postId;
 			}else{				
 				if(is_numeric($_POST['parent_page'])){

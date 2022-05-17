@@ -3,7 +3,7 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 //Multi default values used to prefil the compound dropdown
-add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id, $formname){
+add_filter( 'add_form_multi_defaults', function($default_array_values, $userId, $formname){
 	if($formname != 'user_location') return $default_array_values;
 
 	$compounds = [];
@@ -16,13 +16,13 @@ add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id,
 },10,3);
 
 //create birthday and anniversary events
-add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
+add_filter('before_saving_formdata',function($formresults, $formname, $userId){
 	if($formname != 'user_location') return $formresults;
 
 	global $wpdb;
 	
 	//Get the old values from the db
-	$old_location = get_user_meta( $user_id, 'location', true );
+	$old_location = get_user_meta( $userId, 'location', true );
 	
 	//Get the location from the post array
 	$location = $_POST["location"];
@@ -43,17 +43,17 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		
 		$location['address'] = sanitize_text_field($location['address']);
 		
-		SIM\update_family_meta($user_id, "location", $location);
+		SIM\updateFamilyMeta($userId, "location", $location);
 
-		do_action('sim_location_update', $user_id, $location);
+		do_action('sim_location_update', $userId, $location);
 		
-		SIM\print_array("Saved location for user id $user_id");
+		SIM\printArray("Saved location for user id $userId");
 	}elseif(isset($_POST["location"]) and (empty($location['latitude']) or empty($location['longitude']))){
 		//Remove location from db if empty
-		delete_user_meta( $user_id, 'location');
-		SIM\print_array("Deleted location for user id $user_id");
+		delete_user_meta( $userId, 'location');
+		SIM\printArray("Deleted location for user id $userId");
 
-		do_action('sim_location_removal', $user_id);
+		do_action('sim_location_removal', $userId);
 	}
 	
 	return $formresults;

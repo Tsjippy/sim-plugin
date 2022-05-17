@@ -7,20 +7,20 @@ add_shortcode("markerdescription", 	function ($atts){
         'userid' => '',
     ), $atts );
     
-    $user_id = $a['userid'];
+    $userId = $a['userid'];
     
-    if(is_numeric($user_id)){
+    if(is_numeric($userId)){
         wp_enqueue_style('sim_locations_style');
         
-        $privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
+        $privacy_preference = (array)get_user_meta( $userId, 'privacy_preference', true );
 
         $description = "";			
         if (empty($privacy_preference['hide_profile_picture'])){
-            $description .= SIM\displayProfilePicture($user_id, [80,80], true, true);
+            $description .= SIM\displayProfilePicture($userId, [80,80], true, true);
         }
         
         //Add the post link to the marker content
-        $url			 = SIM\getUserPageUrl($user_id);
+        $url			 = SIM\getUserPageUrl($userId);
         $description	.= "<a href='$url' style='display:block;' class='page_link'>More info</a><br>";
         
         return $description;

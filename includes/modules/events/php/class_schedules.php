@@ -79,7 +79,7 @@ class Schedule{
 					<input type='hidden' name='date'>
 					<input type='hidden' name='starttime'>
 					<?php
-					echo SIM\user_select('', $only_adults=true, $families=true, $class='', $id='host', $args=[], $user_id='', $exclude_ids=[], $type='list');
+					echo SIM\userSelect('', $only_adults=true, $families=true, $class='', $id='host', $args=[], $userId='', $exclude_ids=[], $type='list');
 					echo SIM\add_save_button('add_host','Add host','update_schedule'); 
 					?>
 				</form>
@@ -147,7 +147,7 @@ class Schedule{
 						?>
 						<label for="host"><h4>Who is in charge</h4></label>
 						<?php
-						echo SIM\user_select('', $only_adults=true, $families=false, $class='', $id='host', $args=[], $user_id='', $exclude_ids=[], $type='list');
+						echo SIM\userSelect('', $only_adults=true, $families=false, $class='', $id='host', $args=[], $userId='', $exclude_ids=[], $type='list');
 					}
 					
 					echo SIM\add_save_button('add_timeslot','Add time slot','update_event add_schedule_row');
@@ -175,7 +175,7 @@ class Schedule{
 				
 				<datalist id="website_users">
 					<?php
-					foreach(SIM\get_user_accounts(true) as $user){
+					foreach(SIM\getUserAccounts(true) as $user){
 						echo "<option value='{$user->display_name}' data-value='{$user->ID}'></option>";
 					}
 					?>
@@ -226,7 +226,7 @@ class Schedule{
 
 		foreach($this->schedules as $key=>$schedule){
 			//do not show schedule if not published and it is for us
-			if(($schedule->target == $this->user->ID or $schedule->target == SIM\has_partner($this->user->ID)) and !$this->admin and !$schedule->published) continue;
+			if(($schedule->target == $this->user->ID or $schedule->target == SIM\hasPartner($this->user->ID)) and !$this->admin and !$schedule->published) continue;
 			
 			$nothing	= false;
 			$only_meals = true;
@@ -276,7 +276,7 @@ class Schedule{
 								);
 							}
 							
-							echo SIM\user_select($text='',$only_adults=true,$families=true,$class='',$id='schedule_target',$args);
+							echo SIM\userSelect($text='',$only_adults=true,$families=true,$class='',$id='schedule_target',$args);
 							echo SIM\add_save_button('publish_schedule','Publish this schedule'); 
 							?>
 						</form>
@@ -403,7 +403,7 @@ class Schedule{
 			$starttime	= $event->starttime;
 
 			$class .= ' selected';
-			$partner_id = SIM\has_partner($this->user->ID);
+			$partner_id = SIM\hasPartner($this->user->ID);
 			//Host is current user or the spouse
 			if($host_id == $this->user->ID or $host_id == $partner_id){				
 				$menu		= get_post_meta($event->post_id,'recipe_keyword',true);
@@ -586,7 +586,7 @@ class Schedule{
 		
 		$host_partner					= false;
 		if(is_numeric($this->host_id)){
-			if($add_host_partner and SIM\has_partner($this->host_id)){
+			if($add_host_partner and SIM\hasPartner($this->host_id)){
 				$host_partner	= true;
 				$event['organizer']				= get_userdata($this->host_id)->last_name.' family';
 			}else{
@@ -597,7 +597,7 @@ class Schedule{
 		}
 
 		if($add_partner){
-			$partner_id	= SIM\has_partner($schedule->target);
+			$partner_id	= SIM\hasPartner($schedule->target);
 		}else{
 			$partner_id	= false;
 		}
@@ -633,9 +633,9 @@ class Schedule{
 			update_post_meta($post_id,'eventdetails',$event);
 			update_post_meta($post_id,'onlyfor',$a['onlyfor']);
 
-			foreach($a['onlyfor'] as $user_id){
-				if(is_numeric($user_id)){
-					$event['onlyfor']	= $user_id;
+			foreach($a['onlyfor'] as $userId){
+				if(is_numeric($userId)){
+					$event['onlyfor']	= $userId;
 					$event['post_id']	= $post_id;
 					$this->add_event_to_db($event);
 				}
@@ -710,7 +710,7 @@ class Schedule{
 		
 		$schedule_id	= $_POST['schedule_id'];
 
-		SIM\update_family_meta($_POST['schedule_target'], 'schedule', $schedule_id);
+		SIM\updateFamilyMeta($_POST['schedule_target'], 'schedule', $schedule_id);
 
 		$wpdb->update(
 			$this->table_name, 
@@ -736,7 +736,7 @@ class Schedule{
 
 		//Remove the schedule from the user meta
 		if(is_numeric($schedule->target)){
-			SIM\update_family_meta($schedule->target,'schedule','delete');
+			SIM\updateFamilyMeta($schedule->target,'schedule','delete');
 		}
 		
 		//Delete all the posts of this schedule
@@ -771,7 +771,7 @@ class Schedule{
 			$this->host_id	= $_POST['host'];
 			$host			= get_userdata($this->host_id);
 
-			$partner_id		= SIM\has_partner($this->host_id);
+			$partner_id		= SIM\hasPartner($this->host_id);
 
 			if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) return new WP_Error('No permission', 'No permission to do that!');
 			
@@ -831,7 +831,7 @@ class Schedule{
 
 		$this->host_id	= $_POST['host'];
 
-		$partner_id		= SIM\has_partner($this->host_id);
+		$partner_id		= SIM\hasPartner($this->host_id);
 		if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) return new \WP_Error('Permission error', 'No permission to do that!');
 		if($partner_id){
 			$host_name		= get_userdata($this->host_id)->last_name.' family';

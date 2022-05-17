@@ -9,14 +9,14 @@ function show_statements(){
 	global $current_user;
 	
 	if(isset($_GET["id"])){
-		$user_id = $_GET["id"];
+		$userId = $_GET["id"];
 	}else{
-		$user_id = $current_user->ID;
+		$userId = $current_user->ID;
 	}
 
-	$account_statements = get_user_meta($user_id, "account_statements", true);
+	$account_statements = get_user_meta($userId, "account_statements", true);
 	
-	if(SIM\is_child($user_id) == false and is_array($account_statements)){
+	if(SIM\isChild($userId) == false and is_array($account_statements)){
 		//Load js
 		wp_enqueue_style('sim_account_statements_style');
 		

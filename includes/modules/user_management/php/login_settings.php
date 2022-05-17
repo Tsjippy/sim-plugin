@@ -18,9 +18,9 @@ add_filter( 'wp_authenticate_user', function($user, $password){
 	return $user;
 },10,2);
 
-function change_password_form($user_id = null){
-	if(is_numeric($user_id)){
-		$user		= get_userdata($user_id);
+function change_password_form($userId = null){
+	if(is_numeric($userId)){
+		$user		= get_userdata($userId);
 	}else{
 		$user		= wp_get_current_user();
 	}
@@ -38,10 +38,10 @@ function change_password_form($user_id = null){
 	if(isset($_GET['action']) and isset($_GET['wp_2fa_nonce'])){
 		if($_GET['action'] == 'reset2fa' and wp_verify_nonce( $_GET['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_GET['user_id'])){
 			if($_GET['do'] == 'off' and function_exists('SIM\LOGIN\reset_2fa')){
-				SIM\LOGIN\reset_2fa($user_id);
+				SIM\LOGIN\reset_2fa($userId);
 				echo "<div class='success'>Succesfully turned off 2fa for $name</div>";
 			}elseif($_GET['do'] == 'email'){
-				update_user_meta($user_id, '2fa_methods', ['email']);
+				update_user_meta($userId, '2fa_methods', ['email']);
 				echo "<div class='success'>Succesfully changed the 2fa factor for $name to e-mail</div>";
 			}
 		}
@@ -58,7 +58,7 @@ function change_password_form($user_id = null){
 			?>
 			<form data-reset='true' class='sim_form'>
 				<input type="hidden" name="disable_useraccount"		value="<?php echo wp_create_nonce("disable_useraccount");?>">
-				<input type="hidden" name="userid"					value="<?php echo $user_id; ?>">
+				<input type="hidden" name="userid"					value="<?php echo $userId; ?>">
 				<input type="hidden" name="action"					value="<?php echo $action_text;?>_useraccount">
 
 				<p style="margin:30px 0px 0px;">
@@ -74,14 +74,14 @@ function change_password_form($user_id = null){
 			echo SIM\LOGIN\password_reset_form($user);
 		}
 		
-		$methods	= get_user_meta($user_id, '2fa_methods', true);
+		$methods	= get_user_meta($userId, '2fa_methods', true);
 		if(is_array($methods)){
 
 			//base url parameters
 			$param	= [
 				'action'		=>'reset2fa',
-				'user_id'		=> $user_id,
-				'wp_2fa_nonce'	=> wp_create_nonce( "wp-2fa-reset-nonce_$user_id" )
+				'user_id'		=> $userId,
+				'wp_2fa_nonce'	=> wp_create_nonce( "wp-2fa-reset-nonce_$userId" )
 			];
 
 			?>

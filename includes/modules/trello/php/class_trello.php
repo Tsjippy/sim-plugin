@@ -53,11 +53,11 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
 			$errorResult = $e->getMessage();
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}
 	}
@@ -98,10 +98,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -119,10 +119,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -140,10 +140,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -162,10 +162,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -183,10 +183,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -204,10 +204,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -223,10 +223,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -244,10 +244,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -269,10 +269,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -294,10 +294,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -313,10 +313,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -362,10 +362,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -384,10 +384,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -405,10 +405,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -426,10 +426,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -452,10 +452,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -473,10 +473,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -492,10 +492,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}
@@ -528,10 +528,10 @@ class Trello{
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-			SIM\print_array($errorResult);
+			SIM\printArray($errorResult);
 			return [];
 		}catch(\Exception $e) {
-			SIM\print_array($e->getMessage());
+			SIM\printArray($e->getMessage());
 			return [];
 		}
 	}

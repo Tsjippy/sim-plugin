@@ -16,7 +16,7 @@ function read_reminder(){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 	
-	$users = SIM\get_user_accounts();
+	$users = SIM\getUserAccounts();
 	foreach($users as $user){
 		$html = mustReadDocuments($user->ID);
 		

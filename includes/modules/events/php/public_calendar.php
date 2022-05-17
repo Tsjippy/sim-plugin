@@ -19,8 +19,8 @@ add_action( 'template_redirect', function() {
 //outlook.com: https://outlook.office.com/calendar/addcalendar
 //google: https://calendar.google.com/calendar/u/1/r/settings/addbyurl
 function calendar_stream(){
-	$user_id		= $_GET['id'];
-	if(!is_numeric($user_id))	$user_id	= -1;
+	$userId		= $_GET['id'];
+	if(!is_numeric($userId))	$userId	= -1;
 
 	//see https://gist.github.com/jakebellacera/635416
 	$ICAL_FORMAT = 'Ymd\THis\Z';
@@ -43,7 +43,7 @@ function calendar_stream(){
 		$onlyfor		= get_post_meta($event->ID,'onlyfor',true);
 
 		//do not show events which are not meant for us
-		if(!empty($onlyfor) and !in_array($user_id, $onlyfor)) continue;
+		if(!empty($onlyfor) and !in_array($userId, $onlyfor)) continue;
 
 		//skip events without meta data
 		$meta			= (array)get_post_meta($event->ID,'eventdetails',true);
@@ -133,7 +133,7 @@ function calendar_stream(){
 
 							if($freq == 'MONTHLY'){
 								//number of the week in the month
-								$ical_event	.= SIM\number_to_words($week);
+								$ical_event	.= SIM\numberToWords($week);
 							}
 
 							//add the first two letters of the weekday of the startdate as capitals (FR)
@@ -160,7 +160,7 @@ function calendar_stream(){
 
 				if(!empty($meta['repeat']['excludedates'])){
 					$excludedates		= $meta['repeat']['excludedates'];
-					SIM\clean_up_nested_array($excludedates);
+					SIM\cleanUpNestedArray($excludedates);
 					if(!empty($excludedates)){
 						$ical_event	.="EXDATE:";
 						

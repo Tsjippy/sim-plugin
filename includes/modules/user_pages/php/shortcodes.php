@@ -12,7 +12,7 @@ add_shortcode("all_contacts",function (){
 			header('Content-Type: text/x-vcard');
 			header('Content-Disposition: inline; filename= "SIMContacts.vcf"');
 			$vcard = "";
-			$users = SIM\get_user_accounts(false,true,true,['ID']);
+			$users = SIM\getUserAccounts(false,true,true,['ID']);
 			foreach($users as $user){
 				$vcard .= build_vcard($user->ID);
 			}
@@ -22,7 +22,7 @@ add_shortcode("all_contacts",function (){
 			
 			if ($zip->open('SIMContacts.zip', \ZipArchive::CREATE) === TRUE){
 				//Get all user accounts
-				$users = SIM\get_user_accounts(false,true,true,['ID','display_name']);
+				$users = SIM\getUserAccounts(false,true,true,['ID','display_name']);
 				
 				//Loop over the accounts and add their vcards
 				foreach($users as $user){
@@ -75,8 +75,8 @@ add_shortcode('user_link',function($atts){
 		'style' => '',
     ), $atts );
 	
-	$user_id = $a['id'];
-    if(!is_numeric($user_id)) return '';
+	$userId = $a['id'];
+    if(!is_numeric($userId)) return '';
 	
 	if(!empty($a['style'])){
 		$style = "style='".$a['style']."'";
@@ -86,17 +86,17 @@ add_shortcode('user_link',function($atts){
 	
 	$html = "<div $style>";
 	
-	$userdata = get_userdata($user_id);
-	$nickname = get_user_meta($user_id,'nickname',true);
+	$userdata = get_userdata($userId);
+	$nickname = get_user_meta($userId,'nickname',true);
 	$display_name = "(".$userdata->display_name.")";
 	if($userdata->display_name == $nickname) $display_name = '';
-	$privacy_preference = get_user_meta( $user_id, 'privacy_preference', true );
+	$privacy_preference = get_user_meta( $userId, 'privacy_preference', true );
 	if(!is_array($privacy_preference)) $privacy_preference = [];
 	
-	$url = SIM\getUserPageUrl($user_id);
+	$url = SIM\getUserPageUrl($userId);
 	
 	if($a['picture'] == true and !isset($privacy_preference['hide_profile_picture'])){
-		$profile_picture = SIM\displayProfilePicture($user_id);
+		$profile_picture = SIM\displayProfilePicture($userId);
 	}
 	$html .= "<a href='$url'>$profile_picture $nickname $display_name</a><br>";
 	
@@ -105,7 +105,7 @@ add_shortcode('user_link',function($atts){
 	}
 		
 	if($a['phone'] == true){
-		$html .= show_phonenumbers($user_id);
+		$html .= show_phonenumbers($userId);
 	}
 	return $html."</div>";
 });

@@ -26,7 +26,7 @@ function mandatory_fields_reminder(){
 	wp_set_current_user(1);
 	
 	//Retrieve all users
-	$users = SIM\get_user_accounts(false,true,true);
+	$users = SIM\getUserAccounts(false,true,true);
 	//Loop over the users
  	foreach($users as $user){
 		//get the reminders for this user
@@ -34,10 +34,10 @@ function mandatory_fields_reminder(){
 		//If there are reminders, send an e-mail
 		if (!empty($reminder_html)){
 			$recipients = '';
-            $parents = SIM\get_parents($user->ID);
+            $parents = SIM\getParents($user->ID);
             //Is child
-            if(count($parents)>0){
-                $child_title    = SIM\get_child_title($user->ID);
+            if($parents){
+                $child_title    = SIM\getChildTitle($user->ID);
 
                 $childEmail    = new ChildEmail($user);
                 $childEmail->filterMail();

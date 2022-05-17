@@ -5,16 +5,16 @@ use SIM;
 /**
  * Gets all mandatory or recomended form fields as html links
  *
- * @param int    	$user_id 	WP user id
+ * @param int    	$userId 	WP user id
  * @param string   	$type		One of 'mandatory' or 'recommended'
  *
  * @return string 	Returns html links to forms with empty mandatory fields
  */
-function getAllFields($user_id, $type){
+function getAllFields($userId, $type){
 	global $wpdb;
 
-	$child				= SIM\is_child($user_id);
-	if($child) $child_name	= get_userdata($user_id)->first_name;
+	$child				= SIM\isChild($userId);
+	if($child) $child_name	= get_userdata($userId)->first_name;
 
 	$formbuilder		= new Formbuilder();
 
@@ -27,7 +27,7 @@ function getAllFields($user_id, $type){
 
 	$fields				= $wpdb->get_results($query);
 
-	$fields				= apply_filters("sim_{$type}_fields_filter", $fields, $user_id);
+	$fields				= apply_filters("sim_{$type}_fields_filter", $fields, $userId);
 
 	$html				= '';
 	if(!empty($fields)){
@@ -38,12 +38,12 @@ function getAllFields($user_id, $type){
 		foreach($fields as $field){
 			//check if this field applies to this user
 			$warning_condition	= maybe_unserialize($field->warning_conditions);
-			SIM\clean_up_nested_array($warning_condition, true);
+			SIM\cleanUpNestedArray($warning_condition, true);
 			if(is_array($warning_condition)){
 				$skip	= false;
 
 				foreach($warning_condition as $check){
-					$value		= get_user_meta($user_id, $check['meta_key'], true);
+					$value		= get_user_meta($userId, $check['meta_key'], true);
 					if(!empty($check['meta_key_index'])){
 						$value		= $value[$check['meta_key_index']];
 					}
@@ -84,11 +84,11 @@ function getAllFields($user_id, $type){
 			}
 
 			$metakey 	= explode('[',$field->name)[0];
-			$value		= get_user_meta($user_id, $metakey, true);
+			$value		= get_user_meta($userId, $metakey, true);
 
 			$name		= str_replace('[]', '', $field->name);
 			if (strpos($name, '[') !== false){
-				$value = SIM\get_meta_array_value($user_id, $name, $value);
+				$value = SIM\getMetaArrayValue($userId, $name, $value);
 			}
 
 			if(empty($value)){
@@ -141,16 +141,16 @@ function getAllFields($user_id, $type){
 		}
 	}
 
-	$html	= apply_filters("sim_{$type}_html_filter", $html, $user_id);
+	$html	= apply_filters("sim_{$type}_html_filter", $html, $userId);
 
 	return $html;
 }
 
 add_filter('sim_mandatory_html_filter', __NAMESPACE__.'\add_child_fields', 10, 2);
 add_filter('sim_recommended_html_filter', __NAMESPACE__.'\add_child_fields', 10, 2);
-function add_child_fields($html, $user_id){
+function add_child_fields($html, $userId){
 	// Add warnings for child fields
-	$family = get_user_meta($user_id, "family", true);
+	$family = get_user_meta($userId, "family", true);
 	//User has children
 	if (isset($family["children"])){
 		// Loop over children
@@ -167,8 +167,8 @@ function add_child_fields($html, $user_id){
 	return $html;
 }
 
-add_action('sim_dashboard_warnings', function($user_id){		
-	$html	 = getAllFields($user_id, 'recommended');
+add_action('sim_dashboard_warnings', function($userId){		
+	$html	 = getAllFields($userId, 'recommended');
 	
 	if (empty($html)){
 		echo "<p>All your data is up to date, well done.</p>";

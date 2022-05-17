@@ -582,7 +582,7 @@ function saveFormInput(){
 		foreach($formbuilder->formresults as $key=>$result){
 			//remove empty elements from the array
 			if(is_array($result)){
-				SIM\clean_up_nested_array($result);
+				SIM\cleanUpNestedArray($result);
 				$formbuilder->formresults[$key]	= $result;
 			}
 			//update in the _users table

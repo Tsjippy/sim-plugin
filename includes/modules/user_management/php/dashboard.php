@@ -2,18 +2,18 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-function show_dashboard($user_id, $admin=false){
-	if(!is_numeric($user_id)) return "<p>Invalid user id $user_id</p>";
+function show_dashboard($userId, $admin=false){
+	if(!is_numeric($userId)) return "<p>Invalid user id $userId</p>";
 
 	global $MinistrieIconID;
 
 	ob_start();
-	$userdata	= get_userdata($user_id);
+	$userdata	= get_userdata($userId);
 	$first_name	= $userdata->first_name;
 	
 	if($admin){
-		$login_count = get_user_meta( $user_id, 'login_count', true);
-		$last_login = get_user_meta( $user_id, 'last_login_date',true);
+		$login_count = get_user_meta( $userId, 'login_count', true);
+		$last_login = get_user_meta( $userId, 'last_login_date',true);
 
 		if(is_numeric($login_count)){
 			$time_string 	= strtotime($last_login);
@@ -32,12 +32,12 @@ function show_dashboard($user_id, $admin=false){
 	?>
 	<div id="warnings">
 		<?php
-		do_action('sim_dashboard_warnings', $user_id, $admin);
+		do_action('sim_dashboard_warnings', $userId, $admin);
 		?>
 	</div>
 
 	<?php
-	do_action('sim_user_dashboard', $user_id, $admin);
+	do_action('sim_user_dashboard', $userId, $admin);
 	?>
 	
 	<div id="ministrywarnings">

@@ -3,20 +3,20 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 //Remove user page and user marker on user account deletion
-add_action('delete_user', function ($user_id){
-	$userdata		= get_userdata($user_id);
+add_action('delete_user', function ($userId){
+	$userdata		= get_userdata($userId);
 	$displayname	= $userdata->display_name;
 	
-	SIM\print_array("Deleting userdata for user $displayname");
+	SIM\printArray("Deleting userdata for user $displayname");
 	
-	$attachment_id = get_user_meta($user_id,'profile_picture',true);
+	$attachment_id = get_user_meta($userId,'profile_picture',true);
 	if(is_numeric($attachment_id)){
 		//Remove profile picture
 		wp_delete_attachment($attachment_id,true);
-		SIM\print_array("Removed profile picture for user $displayname");
+		SIM\printArray("Removed profile picture for user $displayname");
 	}
 
-	$family = SIM\family_flat_array($user_id);
+	$family = SIM\familyFlatArray($userId);
 	//User has family
 	if (count($family) > 0){		
 		//Remove user from the family arrays of its relatives
@@ -24,8 +24,8 @@ add_action('delete_user', function ($user_id){
 			//get the relatives family array
 			$relative_family = get_user_meta($relative,"family",true);
 			if (is_array($relative_family)){
-				//Find the familyrelation to $user_id
-				$result = array_search($user_id, $relative_family);
+				//Find the familyrelation to $userId
+				$result = array_search($userId, $relative_family);
 				if($result){
 					//Remove the relation
 					unset($relative_family[$result]);
@@ -33,7 +33,7 @@ add_action('delete_user', function ($user_id){
 					//Not found, check children
 					if(is_array($relative_family['children'])){
 						$children = $relative_family['children'];
-						$result = array_search($user_id, $children);
+						$result = array_search($userId, $children);
 						if($result!==null){
 							//Remove the relation
 							unset($children[$result]);

@@ -3,6 +3,9 @@ namespace SIM;
 
 add_action( 'show_user_profile', __NAMESPACE__.'\extraUserRoles' );
 add_action( 'edit_user_profile', __NAMESPACE__.'\extraUserRoles' );
+/**
+ * Add the possibilty to select multiple roles in the /wp-admin/users.php page
+ */
 function extraUserRoles( $user ) {
     ?>
     <script>
@@ -10,8 +13,8 @@ function extraUserRoles( $user ) {
             <th><label>Role</label><br></th>
             <td>
                 <?php
-                $wp_roles  = wp_roles();
-                foreach($wp_roles->roles as $role=>$name){
+                $wpRoles  = wp_roles();
+                foreach($wpRoles->roles as $role=>$name){
                     if(in_array($role, $user->roles)){
                         $checked    = 'checked';
                     }else{
@@ -34,6 +37,10 @@ function extraUserRoles( $user ) {
     
 add_action( 'personal_options_update', __NAMESPACE__.'\saveExtraUserRoles');
 add_action( 'edit_user_profile_update', __NAMESPACE__.'\saveExtraUserRoles');
+
+/**
+ * Saves the selected user roles from the /wp-admin/users.php page
+ */
 function saveExtraUserRoles( $userId ) {    
     $user 		= get_userdata($userId);
     $userRoles 	= $user->roles;

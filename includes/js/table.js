@@ -1,4 +1,4 @@
-var old_value;
+var oldValue;
 
 function outsideClicked(event){
 	if(event.target.closest('td') == null || !event.target.closest('td').matches('.editing')){
@@ -15,7 +15,7 @@ function addInputEventListeners(cell){
 		
 	inputs.forEach(inputnode=>{
 		//add old value
-		old_value.split(',').forEach(val=>{
+		oldValue.split(',').forEach(val=>{
 			if(inputnode.type == 'checkbox' || inputnode.type == 'radio'){
 				if(inputnode.value == val.trim()){
 					inputnode.checked = true;
@@ -23,7 +23,7 @@ function addInputEventListeners(cell){
 			}else if(inputnode.type == 'select'){
 				inputnode.querySelector('option[value="'+val+'"]').selected = true;
 			}else{
-				inputnode.value	= old_value;
+				inputnode.value	= oldValue;
 			}
 		});
 		
@@ -69,12 +69,12 @@ function editTd(target){
 
 	//element is already edited
 
-	old_value	= target.textContent;
-	if (old_value == "Click to update" || old_value == "X"){
-		old_value = "";
+	oldValue	= target.textContent;
+	if (oldValue == "Click to update" || oldValue == "X"){
+		oldValue = "";
 	}
 	
-	target.innerHTML = `<input type="text" value="${old_value}">`;
+	target.innerHTML = `<input type="text" value="${oldValue}">`;
 
 	addInputEventListeners(target);
 }
@@ -90,21 +90,21 @@ async function processInput(event, target){
 	var table			= target.closest('table');
 	
 	//Only update when needed
-	if (value != old_value){		
+	if (value != oldValue){		
 		//get the updated fieldname from the column header
-		var formdata = new FormData();
-		formdata.append('value', value);
+		var formData = new FormData();
+		formData.append('value', value);
 
 		for( var key in cell.dataset){
-			formdata.append(key, cell.dataset[key]);
+			formData.append(key, cell.dataset[key]);
 		}
 		for( var key in target.closest('tr').dataset){
-			formdata.append(key, target.closest('tr').dataset[key]);
+			formData.append(key, target.closest('tr').dataset[key]);
 		}
 		
 		main.showLoader(cell.firstChild);
 		
-		response = await formsubmit.fetchRestApi(table.dataset.url, formdata);
+		response = await formsubmit.fetchRestApi(table.dataset.url, formData);
 
 		if(response){
 			cell.innerHTML = value;
@@ -114,7 +114,7 @@ async function processInput(event, target){
 		}
 	}else{
 		console.log(value)
-		target.closest('td').innerHTML = old_text;
+		target.closest('td').innerHTML = oldValue;
 	}
 
 	cell.classList.remove('editing');
@@ -126,7 +126,7 @@ function sortTable(target){
 	var table 			= target.closest('table');
 	var switching	 	= true;
 	var shouldSwitch 	= false;
-	var x,y;
+	var x,y, rows;
 	
 	//Check the sort order
 	if (target.classList.contains('dsc')){
@@ -139,11 +139,11 @@ function sortTable(target){
 	no switching has been done:*/
 	while (switching) {
 		//start by saying: no switching is done:
-		switching = false;
-		rows = table.rows;
+		switching	= false;
+		rows		= table.rows;
 		/*Loop through all table rows (except the
 		first, which contains table headers):*/
-		for (i = 1; i < (rows.length - 1); i++) {
+		for (var i = 1; i < (rows.length - 1); i++) {
 			//start by saying there should be no switching:
 			shouldSwitch = false;
 			// Get the lowercase cell contents
@@ -274,11 +274,6 @@ export function positionTable(){
 
 document.addEventListener("click", event=>{
 	var target = event.target;
-	
-	//Actions
-	if(target.classList.contains('table_action')){
-		//processButtons(target);
-	}
 	
 	if(target.tagName == 'TH'){
 		sortTable(target);

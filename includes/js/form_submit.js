@@ -36,7 +36,7 @@ export function formReset(form){
 
 export async function submitForm(target, url){
 	var form		= target.closest('form');
-	var validity = true;
+	var validity 	= true;
 	
 	//first get all hidden required inputs and unrequire them
 	form.querySelectorAll('.hidden [required], select[required]').forEach(el=>{el.required = false});
@@ -53,19 +53,19 @@ export async function submitForm(target, url){
 			tinymce.get().forEach((tn)=>tn.save());
 		}
 		
-		var formdata = new FormData(form);
+		var formData = new FormData(form);
 
 		if(form.dataset.addempty == 'true'){
 			//also append at least one off all checkboxes
 			form.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(checkbox=>{
 				//if no checkbox with this name exist yet
-				if(!formdata.has(checkbox.name)){
-					formdata.append(checkbox.name,'');
+				if(!formData.has(checkbox.name)){
+					formData.append(checkbox.name,'');
 				}
 			});
 		}
 
-		var response = await fetchRestApi(url, formdata);
+		var response = await fetchRestApi(url, formData);
 
 		form.querySelectorAll('.submit_wrapper .loadergif').forEach(loader => loader.classList.add('hidden'));
 

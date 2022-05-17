@@ -23,7 +23,7 @@ async function logout(event){
 
         if(typeof(Swal) != 'undefined'){
             var options = {
-                iconHtml: '<img src="'+sim.loading_gif+'">',
+                iconHtml: '<img src="'+sim.loadingGif+'">',
                 title: 'Logging out...',
                 showConfirmButton: false,
                 customClass: {
@@ -34,9 +34,9 @@ async function logout(event){
             Swal.fire(options);
         }
 
-        var formdata	= new FormData();
+        var formData	= new FormData();
 
-        var response    = await fetchRestApi('logout', formdata);
+        var response    = await fetchRestApi('logout', formData);
 
         if(response){
             main.displayMessage(response,'success', false, true);

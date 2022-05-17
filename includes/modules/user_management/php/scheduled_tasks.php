@@ -39,20 +39,20 @@ function birthday_check(){
 	));
 	
 	foreach($users as $user){
-		$user_id 	= $user->ID;
+		$userId 	= $user->ID;
 		$first_name = $user->first_name;
 		
-		$family = get_user_meta( $user_id, 'family', true );
+		$family = get_user_meta( $userId, 'family', true );
 		if ($family == ""){
 			$family = [];
 		}
 	
 		//Send birthday wish to the user
-		SIM\try_send_signal("Hi ".$first_name.",\nCongratulations with your birthday!",$user_id);
+		SIM\try_send_signal("Hi ".$first_name.",\nCongratulations with your birthday!",$userId);
 
 		//Send to parents
 		if (isset($family["father"]) or isset($family["mother"])){
-			$child_title = SIM\get_child_title($user->ID);
+			$child_title = SIM\getChildTitle($user->ID);
 			
 			$message = "Congratulations with the birthday of your $child_title ".get_userdata($user->ID)->first_name;
 		}
@@ -88,11 +88,11 @@ function vaccination_reminder(){
 		if (!empty($reminder_html)){
 			$userdata = get_userdata($user->ID);
 			if($userdata != null){
-				$parents 	= SIM\get_parents($user->ID);
+				$parents 	= SIM\getParents($user->ID);
 				$recipients = '';
 				
 				//Is child
-				if(count($parents)>0){
+				if($parents){
 					
 					$reminder_html = str_replace("Your",$userdata->first_name."'s",$reminder_html);
 
@@ -101,7 +101,7 @@ function vaccination_reminder(){
 					$subject					= $vaccinationWarningMail->subject; 
 					$message					= $vaccinationWarningMail->message;
 					
-					$child_title = SIM\get_child_title($user->ID);
+					$child_title = SIM\getChildTitle($user->ID);
 					foreach($parents as $parent){
 						if(strpos($parent->user_email,'.empty') === false){
 							if($recipients != '') $recipients .= ', ';
@@ -285,13 +285,13 @@ function check_details_mail(){
 	$subject	= 'Please review your website profile';
 	
 	//Retrieve all users
-	$users = SIM\get_user_accounts($return_family=false,$adults=true);
+	$users = SIM\getUserAccounts($return_family=false,$adults=true);
 
 	$accountPage	= SIM\get_module_option('user_management', 'account_page');
 	$accountPageUrl	= get_permalink($accountPage);
 
 	if(!$accountPageUrl){
-		SIM\print_array('No account page defined');
+		SIM\printArray('No account page defined');
 		return;
 	}	
 	$baseUrl		= "$accountPageUrl?main_tab=";
@@ -389,7 +389,7 @@ function check_details_mail(){
 		** PHONENUMBERS
  		*/
 		$phonenumbers = (array)get_user_meta($user->ID,'phonenumbers',true);
-		SIM\clean_up_nested_array($phonenumbers);
+		SIM\cleanUpNestedArray($phonenumbers);
 		$title	= 'Phonenumber';
 		if(count($phonenumbers)>1) $title .= 's';
 
@@ -435,7 +435,7 @@ function check_details_mail(){
 		$message .= "<a href='{$baseUrl}generic_info' $style_string><b>$title</b></a><br>";
 
 		$message .= "<table>";
-			SIM\clean_up_nested_array($user_ministries);
+			SIM\cleanUpNestedArray($user_ministries);
 			if(empty($user_ministries)){
 				$message .= "<tr>";
 					$message .= "<td>";
@@ -464,7 +464,7 @@ function check_details_mail(){
  		*/
 		$message .= "<a href='{$baseUrl}location' $style_string><b>Location</b></a><br>";
 		$location= (array)get_user_meta($user->ID,'location',true);
-		SIM\clean_up_nested_array($location);
+		SIM\cleanUpNestedArray($location);
 		if(empty($location['address'])){
 			$location = "No location provided";
 		}else{
@@ -647,7 +647,7 @@ function account_expiry_check(){
 		);
 		
 		//Delete the account
-		SIM\print_array("Deleting user with id ".$user->ID." and name ".$user->display_name." as it was a temporary account.");
+		SIM\printArray("Deleting user with id ".$user->ID." and name ".$user->display_name." as it was a temporary account.");
 		wp_delete_user($user->ID);
 	}
 }
@@ -661,7 +661,7 @@ function review_reminders(){
 		wp_set_current_user(1);
 		
 		//Retrieve all users
-		$users = SIM\get_user_accounts();
+		$users = SIM\getUserAccounts();
 		
 		//loop over the users
 		foreach($users as $user){
@@ -712,7 +712,7 @@ function review_reminders(){
 function check_last_login_date(){
 	wp_set_current_user(1);
 
-	$users = SIM\get_user_accounts();
+	$users = SIM\getUserAccounts();
 	foreach($users as $user){
 		$lastlogin				= get_user_meta( $user->ID, 'last_login_date',true);
 

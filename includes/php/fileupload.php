@@ -3,9 +3,9 @@ namespace SIM;
 
 //Class to display uploaded files and the upload form
 class Fileupload{
-	public $user_id;
-	public $documentname;
-	public $targetdir;
+	public $userId;
+	public $documentName;
+	public $targetDir;
 	public $multiple;
 	public $metakey;
 	public $library;
@@ -14,10 +14,10 @@ class Fileupload{
 	private $library_id;
 	public $updatemeta;
 	
-	function __construct($user_id, $documentname, $targetdir, $multiple=true, $metakey='', $library=false, $callback='', $updatemeta=true) {
-		$this->user_id		= $user_id;
-		$this->documentname = $documentname;
-		$this->targetdir	= str_replace('\\','/',$targetdir);
+	function __construct($userId, $documentName, $targetDir, $multiple=true, $metakey='', $library=false, $callback='', $updatemeta=true) {
+		$this->userId		= $userId;
+		$this->documentName = $documentName;
+		$this->targetDir	= str_replace('\\','/',$targetDir);
 		$this->multiple		= $multiple;
 		$this->metakey		= $metakey;
 		$this->library		= $library;
@@ -33,27 +33,27 @@ class Fileupload{
 		wp_enqueue_script('sim_vimeo_uploader_script');
 	}
 	
-	function get_upload_html($options=''){
-		$document_array = '';
+	function getUploadHtml($options=''){
+		$documentArray = '';
 
 		if(!empty($this->metakey)){
 			//get the basemetakey in case of an indexed one
 			if(preg_match('/(.*?)\[/', $this->metakey, $match)){
-				$base_meta_key	= $match[1];
+				$baseMetaKey	= $match[1];
 			}else{
 				//just use the whole, it is not indexed
-				$base_meta_key	= $this->metakey;
+				$baseMetaKey	= $this->metakey;
 			}
 			
 			//get the db value
-			if(is_numeric($this->user_id)){
-				$document_array = get_user_meta($this->user_id, $base_meta_key, true);
+			if(is_numeric($this->userId)){
+				$documentArray = get_user_meta($this->userId, $baseMetaKey, true);
 			}else{
-				$document_array = get_option($base_meta_key);
+				$documentArray = get_option($baseMetaKey);
 			}
 			
 			//get subvalue if needed
-			$document_array = get_meta_array_value($this->user_id, $this->metakey, $document_array);
+			$documentArray = getMetaArrayValue($this->userId, $this->metakey, $documentArray);
 		}
 		
 		if($this->multiple){
@@ -61,32 +61,32 @@ class Fileupload{
 			$class = '';
 		}else{
 			$multiple = '';
-			if(!empty($document_array)) $class = "hidden";
+			if(!empty($documentArray)) $class = "hidden";
 		}
 		
 		$this->html = '<div class="file_upload_wrap">';
 			$this->html .= '<div class="documentpreview">';
-			if(is_array($document_array) and count($document_array)>0){
-				foreach($document_array as $document_key => $document){
-					$this->html .= $this->document_preview($document, $document_key);
+			if(is_array($documentArray) and count($documentArray)>0){
+				foreach($documentArray as $documentKey => $document){
+					$this->html .= $this->documentPreview($document, $documentKey);
 				}
-			}elseif(!is_array($document_array) and $document_array != ""){
-				$this->html .= $this->document_preview($document_array, -1);
+			}elseif(!is_array($documentArray) and $documentArray != ""){
+				$this->html .= $this->documentPreview($documentArray, -1);
 			}
 			$this->html .= '</div>';
 		
 			$this->html .= "<div class='upload_div $class'>";
-				$this->html .= "<input class='file_upload' type='file' name='{$this->documentname}_files[]' $multiple $options>";
+				$this->html .= "<input class='file_upload' type='file' name='{$this->documentName}_files[]' $multiple $options>";
 				$this->html .= "<div style='width:100%; display: flex;'>";
-					if(is_numeric($this->user_id)){
-						$this->html .= "<input type='hidden' name='fileupload[userid]' 			value='{$this->user_id}'>";
+					if(is_numeric($this->userId)){
+						$this->html .= "<input type='hidden' name='fileupload[userid]' 			value='{$this->userId}'>";
 					}
-					if(!empty($this->targetdir)){
-						$this->html .= "<input type='hidden' name='fileupload[targetdir]' 		value='{$this->targetdir}'>";
+					if(!empty($this->targetDir)){
+						$this->html .= "<input type='hidden' name='fileupload[targetDir]' 		value='{$this->targetDir}'>";
 					}
 					if(!empty($this->metakey)){
 						$this->html .= "<input type='hidden' name='fileupload[metakey]' 		value='{$this->metakey}'>";
-						$this->html .= "<input type='hidden' name='fileupload[metakey_index]' 	value='{$this->documentname}'>";
+						$this->html .= "<input type='hidden' name='fileupload[metakey_index]' 	value='{$this->documentName}'>";
 					}
 					if(!empty($this->library)){
 						$this->html .= "<input type='hidden' name='fileupload[library]' 		value='{$this->library}'>";
@@ -106,65 +106,65 @@ class Fileupload{
 	}
 	
 	//Function to render the already uploaded images or show the link to a file
-	function document_preview($document_path, $index){
-		$meta_value	= $document_path;
-		if(is_numeric($document_path) and $this->library){
-			$url = wp_get_attachment_url($document_path);
+	function documentPreview($documentPath, $index){
+		$metaValue	= $documentPath;
+		if(is_numeric($documentPath) and $this->library){
+			$url = wp_get_attachment_url($documentPath);
 
 			if($url === false){
-				$document_path		= '';
+				$documentPath		= '';
 			}else{
-				$this->library_id	= $document_path;
-				$document_path		= $url;
+				$this->library_id	= $documentPath;
+				$documentPath		= $url;
 			}
 		}
 
 		//documentpath is already an url
-		if(strpos($document_path, SITEURL) !== false){
-			$url = $document_path;
+		if(strpos($documentPath, SITEURL) !== false){
+			$url = $documentPath;
 		}else{
-			$url = SITEURL.'/'.str_replace(ABSPATH,'',$document_path);
+			$url = SITEURL.'/'.str_replace(ABSPATH,'',$documentPath);
 		}
 		
 		$this->html .= "<div class='document'>";
-			$this->html .= "<input type='hidden' name='{$this->metakey}[]' value='$meta_value'>";
+			$this->html .= "<input type='hidden' name='{$this->metakey}[]' value='$metaValue'>";
 
 		//Check if file is an image
-		if(getimagesize(url_to_path($url)) !== false) {
+		if(getimagesize(urlToPath($url)) !== false) {
 			//Display the image
 			$this->html .= "<a href='$url'><img src='$url' alt='picture' style='width:150px;height:150px;'></a>";
 		//File is not an image
 		} else {
 			//Display an link to the file
-			$filename = basename($document_path);
+			$fileName = basename($documentPath);
 			
 			//remove the username from the filename if it is there
-			$username 	= get_userdata($this->user_id)->user_login;
-			$filename = str_replace($username.'-','',$filename);
+			$userName 	= get_userdata($this->userId)->user_login;
+			$fileName = str_replace($userName.'-','', $fileName);
 			
 			//add the hyperlink to the file to the html
-			$this->html .= '<a href="'.$url.'">'.$filename.'</a>';
+			$this->html .= '<a href="'.$url.'">'.$fileName.'</a>';
 		}
 		//Add an remove button
 		if($index == -1){
-			$metakey_string = $this->metakey;
+			$metakeyString = $this->metakey;
 		}else{
-			$metakey_string = $this->metakey.'['.$index.']';
+			$metakeyString = $this->metakey.'['.$index.']';
 		}
 		
 		if($this->library_id != 0){
-			$library_string = " data-libraryid='{$this->library_id}'";
+			$libraryString = " data-libraryid='{$this->library_id}'";
 		}else{
-			$library_string = '';
+			$libraryString = '';
 		}
 		
 		if($this->callback != ''){
-			$library_string .= " data-callback='{$this->callback}'";
+			$libraryString .= " data-callback='{$this->callback}'";
 		}
 
-		$library_string .= " data-updatemeta='{$this->updatemeta}'";
+		$libraryString .= " data-updatemeta='{$this->updatemeta}'";
 		
-		$this->html .= "<button type='button' class='remove_document button' data-url='$document_path' data-userid='{$this->user_id}' data-metakey='$metakey_string' $library_string>X</button>";
+		$this->html .= "<button type='button' class='remove_document button' data-url='$documentPath' data-userid='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
 		$this->html .= "<img class='remove_document_loader hidden' src='".LOADERIMAGEURL."' style='height:40px;' >";
 		$this->html .= "</div>";
 	}
@@ -173,47 +173,47 @@ class Fileupload{
 //Make upload_files function availbale for AJAX request
 add_action ( 'wp_ajax_upload_files', function (){
 	if (!empty($_FILES["files"])) {
-		$file_param	= (array)$_POST['fileupload'];
+		$fileParam	= (array)$_POST['fileupload'];
 		$files		= $_FILES["files"];
-		$max_size	= wp_max_upload_size();
-		if(!empty($file_param['targetdir'])){
-			$targetdir 		= wp_upload_dir()['path'].'/'.sanitize_text_field($file_param['targetdir']).'/';
+		$maxSize	= wp_max_upload_size();
+		if(!empty($fileParam['targetDir'])){
+			$targetDir 		= wp_upload_dir()['path'].'/'.sanitize_text_field($fileParam['targetDir']).'/';
 		}else{
-			$targetdir 		= wp_upload_dir()['path'].'/';
+			$targetDir 		= wp_upload_dir()['path'].'/';
 		}
 		
 		//create folder if it does not exist
-		if (!is_dir($targetdir)) {
-			mkdir($targetdir, 0777, true);
+		if (!is_dir($targetDir)) {
+			mkdir($targetDir, 0777, true);
 		}
 		
-		if(!empty($file_param['userid'])){
-			$user_id 	= sanitize_text_field($file_param['userid']);
-			$username 	= get_userdata($user_id)->user_login;
+		if(!empty($fileParam['userid'])){
+			$userId 	= sanitize_text_field($fileParam['userid']);
+			$username 	= get_userdata($userId)->user_login;
 		}
 		
-		if(isset($file_param['metakey']))		$meta_key 		= sanitize_text_field($file_param['metakey']);
-		if(isset($file_param['metakey_index']))	$metakey_index 	= sanitize_text_field($file_param['metakey_index']);
+		if(isset($fileParam['metakey']))		$metaKey 		= sanitize_text_field($fileParam['metakey']);
+		if(isset($fileParam['metakey_index']))	$metaKeyIndex 	= sanitize_text_field($fileParam['metakey_index']);
 		
-		$files_arr = [];
-		foreach ($files['name'] as $key => $file_name) {
+		$filesArr = [];
+		foreach ($files['name'] as $key => $fileName) {
 			//check file size
-			if($files['size'][$key] > $max_size){
-				wp_die('FIle to big, max file size is '.$max_size/1024/1024 .'MB');
+			if($files['size'][$key] > $maxSize){
+				wp_die('File to big, max file size is '.$maxSize/1024/1024 .'MB');
 			}
 			
 			if ($files['name'][$key]) {
-				$file_name 	= sanitize_file_name($file_name);
+				$fileName 	= sanitize_file_name($fileName);
 				
 				//Create the filename
 				$i = 0;
-				if(strtolower(substr($file_name, 0, strlen($username))) == strtolower($username)){
-					$target_file = $targetdir.$file_name;
+				if(strtolower(substr($fileName, 0, strlen($username))) == strtolower($username)){
+					$targetFile = $targetDir.$fileName;
 				}else{
-					$target_file = $targetdir.$username.'-'.$file_name;
+					$targetFile = $targetDir.$username.'-'.$fileName;
 				}
 				
-				while (file_exists($target_file)) {
+				while (file_exists($targetFile)) {
  					/*// Set http header error
 					header('HTTP/1.0 422 File exists');
 					// Return error message
@@ -221,58 +221,58 @@ add_action ( 'wp_ajax_upload_files', function (){
 					
 					$i++;
 
-					if(strtolower(substr($file_name, 0, strlen($username))) == strtolower($username)){
-						$target_file = $targetdir.$i.'-'.$file_name;
+					if(strtolower(substr($fileName, 0, strlen($username))) == strtolower($username)){
+						$targetFile = $targetDir.$i.'-'.$fileName;
 					}else{
-						$target_file = $targetdir.$username.'-'.$i.'-'.$file_name;
+						$targetFile = $targetDir.$username.'-'.$i.'-'.$fileName;
 					}
 				}
 
 				//Move the file
-				$moved = move_uploaded_file($files['tmp_name'][$key], $target_file);
+				$moved = move_uploaded_file($files['tmp_name'][$key], $targetFile);
 				if ($moved) {
 					
-					$size = array_push($files_arr, ['url' => str_replace(ABSPATH, '', $target_file)]);
+					$size = array_push($filesArr, ['url' => str_replace(ABSPATH, '', $targetFile)]);
 
 					//Only store url in db if a metakey isset
-					if(isset($meta_key)){
+					if(isset($metaKey)){
 						//get the basemetakey in case of an indexed one
-						if(preg_match_all('/(.*?)\[(.*?)\]/i', $meta_key, $matches)){
-							$base_meta_key	= $matches[1][0];
+						if(preg_match_all('/(.*?)\[(.*?)\]/i', $metaKey, $matches)){
+							$baseMetaKey	= $matches[1][0];
 							$keys			= $matches[2];
 						}else{
 							//just use the whole, it is not indexed
-							$base_meta_key	= $meta_key;
+							$baseMetaKey	= $metaKey;
 						}
 
-						$new_value	= $target_file;
+						$newValue	= $targetFile;
 
 						//Add to library if needed
-						if(isset($file_param['library']) and $file_param['library'] == '1'){
-							$attach_id	= add_to_library($target_file);
+						if(isset($fileParam['library']) and $fileParam['library'] == '1'){
+							$attachId	= add_to_library($targetFile);
 
-							$new_value	= $attach_id;
+							$newValue	= $attachId;
 							
 							//store the id in the array
-							$files_arr[$size-1]['id'] = $attach_id;
+							$files_arr[$size-1]['id'] = $attachId;
 						}
 						
-						if(!is_numeric($user_id)){
+						if(!is_numeric($userId)){
 							//generic documents
-							$meta_value = get_option($base_meta_key);
+							$metaValue = get_option($baseMetaKey);
 						}else{
-							$meta_value = get_user_meta( $user_id, $base_meta_key,true);
+							$metaValue = get_user_meta( $userId, $baseMetaKey,true);
 						}
 						
-						if(isset($keys)) add_to_nested_array($keys, $meta_value, $new_value);
+						if(isset($keys)) addToNestedArray($keys, $metaValue, $newValue);
 						
-						if($metakey_index)	$meta_value[$metakey_index] = $new_value;
+						if($metaKeyIndex)	$metaValue[$metaKeyIndex] = $newValue;
 						
-						if(!is_numeric($user_id)){
+						if(!is_numeric($userId)){
 							//generic documents
-							update_option($base_meta_key, $meta_value);
-						}elseif($file_param['updatemeta']){
-							update_user_meta( $user_id, $base_meta_key, $meta_value);
+							update_option($baseMetaKey, $metaValue);
+						}elseif($fileParam['updatemeta']){
+							update_user_meta( $userId, $baseMetaKey, $metaValue);
 						}
 					}
 				}else {
@@ -283,9 +283,9 @@ add_action ( 'wp_ajax_upload_files', function (){
 			}
 		}
 		
-		if(isset($file_param['callback'])) call_user_func($file_param['callback'],$user_id);
+		if(isset($fileParam['callback'])) call_user_func($fileParam['callback'], $userId);
 		
-		echo json_encode($files_arr);
+		echo json_encode($filesArr);
 		wp_die();
 	}else{
 		// Set http header error
@@ -312,13 +312,13 @@ function removeDocument(){
 	if(!empty($_POST['url'])){
 		$path = ABSPATH.$_POST['url'];
 
-		if(isset($_POST['userid']))		$user_id = sanitize_text_field($_POST["userid"]);
-		if(isset($_POST['metakey']))	$metakey = sanitize_text_field($_POST['metakey']);
+		if(isset($_POST['userid']))		$userId = sanitize_text_field($_POST["userid"]);
+		if(isset($_POST['metakey']))	$metaKey = sanitize_text_field($_POST['metakey']);
 		
-		if(isset($metakey)){
-			$meta_keys = str_replace(']','',explode('[',$metakey));
-			$base_meta_key = $meta_keys[0];
-			unset($meta_keys[0]);
+		if(isset($metaKey)){
+			$metaKeys = str_replace(']','',explode('[', $metaKey));
+			$baseMetaKey = $metaKeys[0];
+			unset($metaKeys[0]);
 		}
 		
 		//Just an extra check
@@ -331,31 +331,31 @@ function removeDocument(){
 			}
 			
 			//Remove the path from db 
-			if(is_numeric($user_id)){
+			if(is_numeric($userId)){
 				//Get document array from db
-				$documents_array = get_user_meta( $user_id, $base_meta_key,true);
+				$documentsArray = get_user_meta( $userId, $baseMetaKey,true);
 			//Generic document
 			}else{
 				//get documents array from db
-				$documents_array = get_option($base_meta_key);
+				$documentsArray = get_option($baseMetaKey);
 			}
 			
 			//remove from array
-			if(is_array($meta_keys) and count($meta_keys)>0){
+			if(is_array($metaKeys) and count($metaKeys)>0){
 				
-				remove_from_nested_array($documents_array, $meta_keys);
+				removeFromNestedArray($documentsArray, $metaKeys);
 			}else{
-				$documents_array = '';
+				$documentsArray = '';
 			}
 				
 			//Personnal document
-			if(is_numeric($user_id)){
+			if(is_numeric($userId)){
 				//Store the array in db
-				update_user_meta( $user_id, $base_meta_key, $documents_array);
+				update_user_meta( $userId, $baseMetaKey, $documentsArray);
 			//Generic document
 			}else{
 				//Save it in db
-				update_option($base_meta_key,$documents_array);
+				update_option($baseMetaKey, $documentsArray);
 			}
 			
 			$message = "File successfully removed";

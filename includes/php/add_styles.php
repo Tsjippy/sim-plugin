@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.18';
+const StyleVersion		= '7.0.19';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
@@ -40,10 +40,8 @@ function registerScripts(){
 }
 
 function enqueueScripts($hook){
-	global $post;
-
-	$current_user	= wp_get_current_user();
-	$UserID			= $current_user->id;
+	$currentUser	= wp_get_current_user();
+	$UserID			= $currentUser->id;
 
 	registerScripts();
 
@@ -73,10 +71,10 @@ function enqueueScripts($hook){
 	wp_localize_script( 'sim_script', 
 		'sim', 
 		array( 
-			'ajax_url' 		=> admin_url( 'admin-ajax.php' ),
+			'ajaxUrl' 		=> admin_url( 'admin-ajax.php' ),
 			"userid"		=> $UserID,
 			'address' 		=> $address,
-			'loading_gif' 	=> LOADERIMAGEURL,
+			'loadingGif' 	=> LOADERIMAGEURL,
 			'base_url' 		=> get_home_url(),
 			'max_file_size'	=> wp_max_upload_size(),
 			'restnonce'		=> wp_create_nonce('wp_rest'),
@@ -91,47 +89,46 @@ function inspect_script_styles() {
 	global $wp_scripts, $wp_styles;
 	
 	echo "\n" .'<!--'. "\n\n";
-	print_array('\n SCRIPT IDs:');
+	printArray('\n SCRIPT IDs:');
 	echo 'SCRIPT IDs:'. "\n";
 	
 	foreach($wp_scripts->queue as $handle){
 		echo $handle . "\n";
-		print_array($handle);
+		printArray($handle);
 	}
 	
 	echo '\n STYLE IDs:';
-	print_array( "\n" .'STYLE IDs:'. "\n");
+	printArray( "\n" .'STYLE IDs:'. "\n");
 	foreach($wp_styles->queue as $handle){
 		echo $handle . "\n";
-		print_array($handle);
+		printArray($handle);
 	}
 	
 	echo "\n" .'-->'. "\n\n";
 	
 }
 
-add_action('wp_enqueue_scripts', 'SIM\disable_scripts_styles', 99999);
-function disable_scripts_styles() {		
+add_action('wp_enqueue_scripts', function() {		
 	//Do no load these css files
-	$dequeue_styles = [];
+	$dequeueStyles = [];
 	//Do no load these js files
-	$dequeue_scripts = [];
+	$dequeueScripts = [];
 	
-	$dequeue_scripts[] = 'featherlight';
-	$dequeue_scripts[] = 'jquery';
-	$dequeue_scripts[] = 'jquery-ui-datepicker';
-	$dequeue_scripts[] = 'jquery-ui-autocomplete';
+	$dequeueScripts[] = 'featherlight';
+	$dequeueScripts[] = 'jquery';
+	$dequeueScripts[] = 'jquery-ui-datepicker';
+	$dequeueScripts[] = 'jquery-ui-autocomplete';
 	
 	//Dequeue the css files
-	foreach ($dequeue_styles as $dequeue_style){
+	foreach ($dequeueStyles as $dequeue_style){
 		wp_dequeue_style($dequeue_style);
 	}
 	
 	//dequeue the js files
-	foreach ($dequeue_scripts as $dequeue_script){
+	foreach ($dequeueScripts as $dequeue_script){
 		wp_dequeue_script($dequeue_script);
 	}
-}
+}, 99999);
 
 add_action( 'wp_default_scripts', function( $scripts ) {
 	if ( ! is_admin() && isset( $scripts->registered['jquery'] ) ) {

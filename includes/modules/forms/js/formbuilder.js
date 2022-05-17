@@ -56,14 +56,14 @@ async function showEmptyModal(target){
 	
 	modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Update','Add');
 	
-	modal.querySelector('.element_conditions_wrapper').innerHTML = '<img src="'+sim.loading_gif+'" style="display:block; margin:0px auto 0px auto;">';
+	modal.querySelector('.element_conditions_wrapper').innerHTML = '<img src="'+sim.loadingGif+'" style="display:block; margin:0px auto 0px auto;">';
 	
 	modal.classList.remove('hidden');
 
-	var formdata = new FormData();
-	formdata.append('elementid','-1');
-	formdata.append('formid', formid);
-	var response = await formsubmit.fetchRestApi('forms/request_form_conditions_html', formdata);
+	var formData = new FormData();
+	formData.append('elementid','-1');
+	formData.append('formid', formid);
+	var response = await formsubmit.fetchRestApi('forms/request_form_conditions_html', formData);
 
 	//fill the element conditions tab
 	modal.querySelector('.element_conditions_wrapper').innerHTML = response;
@@ -89,11 +89,11 @@ async function requestEditElementData(target){
 
 	loader.querySelector('.loadergif').style.margin = '5px 19px 0px 19px';
 	
-	var formdata = new FormData();
-	formdata.append('elementid', elementid);
-	formdata.append('formid', formid);
+	var formData = new FormData();
+	formData.append('elementid', elementid);
+	formData.append('formid', formid);
 	
-	var response = await formsubmit.fetchRestApi('forms/request_form_element', formdata);
+	var response = await formsubmit.fetchRestApi('forms/request_form_element', formData);
 
 	if(response){
 		//fill the form after we have clicked the edit button
@@ -152,12 +152,12 @@ async function sendElementSize(el, widthpercentage){
 		el.dataset.widthpercentage = widthpercentage;
 		
 		//send new width over AJAX
-		var formdata = new FormData();
-		formdata.append('formid',el.closest('.form_element_wrapper').dataset.formid);
-		formdata.append('elementid',el.closest('.form_element_wrapper').dataset.id);
-		formdata.append('new_width',widthpercentage);
+		var formData = new FormData();
+		formData.append('formid',el.closest('.form_element_wrapper').dataset.formid);
+		formData.append('elementid',el.closest('.form_element_wrapper').dataset.id);
+		formData.append('new_width',widthpercentage);
 		
-		response = await formsubmit.fetchRestApi('forms/edit_formfield_width', formdata);
+		response = await formsubmit.fetchRestApi('forms/edit_formfield_width', formData);
 
 		if(response){
 			main.hideModals();
@@ -179,12 +179,12 @@ async function remove_element(target){
 	loader.style.paddingRight = '10px';
 	loader.classList.remove('loadergif');
 
-	var formdata = new FormData();
-	formdata.append('formid',formid);
+	var formData = new FormData();
+	formData.append('formid',formid);
 
-	formdata.append('elementindex',elementindex);
+	formData.append('elementindex',elementindex);
 	
-	response = await formsubmit.fetchRestApi('forms/remove_element', formdata);
+	response = await formsubmit.fetchRestApi('forms/remove_element', formData);
 
 	if(response){
 		//remove the formelement row
@@ -207,12 +207,12 @@ async function reorderformelements(event){
 		
 		var difference = event.newIndex-event.oldIndex
 
-		var formdata = new FormData();
-		formdata.append('formid',event.item.dataset.formid);
-		formdata.append('old_index', old_index);
-		formdata.append('new_index',(old_index+difference));
+		var formData = new FormData();
+		formData.append('formid',event.item.dataset.formid);
+		formData.append('old_index', old_index);
+		formData.append('new_index',(old_index+difference));
 		
-		var response	= await formsubmit.fetchRestApi('forms/reorder_form_elements', formdata);
+		var response	= await formsubmit.fetchRestApi('forms/reorder_form_elements', formData);
 
 		if(response){
 			reordering_busy = false;

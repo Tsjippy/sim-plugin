@@ -20,8 +20,8 @@ add_filter('form_extra_js', function($js, $formname, $minimized){
 }, 10, 3);
 
 //Single default values used to prefil the travel form
-add_filter( 'add_form_defaults', function($default_values,$user_id){
-	$usermeta = get_user_meta($user_id);
+add_filter( 'add_form_defaults', function($default_values,$userId){
+	$usermeta = get_user_meta($userId);
 	
 	//fields to retrieve from usermeta
 	$fields = [
@@ -87,8 +87,8 @@ add_filter( 'add_form_defaults', function($default_values,$user_id){
 },10,2);
 
 //Multi default values used to prefil the travel form elements with multivalues like checkboxes ans dropdowns
-add_filter( 'add_form_multi_defaults', function($default_array_values,$user_id){
-	$usermeta = get_user_meta($user_id);
+add_filter( 'add_form_multi_defaults', function($default_array_values,$userId){
+	$usermeta = get_user_meta($userId);
 	
 	//fields to retrieve from usermeta
 	$fields = [
@@ -116,8 +116,8 @@ add_filter( 'add_form_multi_defaults', function($default_array_values,$user_id){
 							//numeric key so add the array as a whole
 							$default_array_values[$field.'_'.$key] = $value;
 						}else{
-							SIM\print_array('I have not added fieldvalue: "');
-							SIM\print_array($value);
+							SIM\printArray('I have not added fieldvalue: "');
+							SIM\printArray($value);
 						}
 					}
 				}
@@ -125,15 +125,15 @@ add_filter( 'add_form_multi_defaults', function($default_array_values,$user_id){
 		}
 	}
 	
-	foreach(SIM\get_user_accounts($return_family=false,$adults=true) as $user){
+	foreach(SIM\getUserAccounts($return_family=false,$adults=true) as $user){
 		$default_array_values['all_users'][$user->ID] = $user->display_name;
 	}
 
-	foreach(SIM\get_user_accounts() as $user){
+	foreach(SIM\getUserAccounts() as $user){
 		$default_array_values['missionaries'][$user->ID] = $user->display_name;
 	}
 
-	foreach(SIM\get_user_accounts($return_family=true) as $user){
+	foreach(SIM\getUserAccounts($return_family=true) as $user){
 		$default_array_values['families'][$user->ID] = $user->display_name;
 	}
 
@@ -183,23 +183,23 @@ add_filter('sim_transform_formtable_data',function($string,$field_name){
 },10,2);
 
 //first make sure we request all the data
-add_filter('formdata_retrieval_query', function($query, $user_id, $datatype){
+add_filter('formdata_retrieval_query', function($query, $userId, $datatype){
 	if($datatype == 'travel' and $_GET['onlyown'] == 'true'){
 		//remove userid from query
-		$query	= str_replace(" userid='$user_id' and", '', $query);
+		$query	= str_replace(" userid='$userId' and", '', $query);
 	}
 
 	return $query;
 },10,3);
 
 //then remove all unwanted data
-add_filter('retrieved_formdata', function($formdata, $user_id, $datatype){
+add_filter('retrieved_formdata', function($formdata, $userId, $datatype){
 	if($datatype == 'travel' and $_GET['onlyown'] == 'true'){
 		//remove userid from query
 		foreach($formdata as $key=>$entry){
 			$passengers	= (array)unserialize($entry->formresults)['passengers'];
 			//if this entry does not belong to this user and the user is no passenger
-			if($entry->userid != $user_id and !in_array($user_id, $passengers)){
+			if($entry->userid != $userId and !in_array($userId, $passengers)){
 				//remove
 				unset($formdata[$key]);
 			}
@@ -289,7 +289,7 @@ add_action('formtable_POST_actions',function(){
 });
 
 function generate_immigration_letters(){
-	$user_ids		= explode(',',$_POST['passengers']);
+	$userIds		= explode(',',$_POST['passengers']);
 	$origin			= sanitize_text_field($_POST['origin']);
 	$destination	= str_replace('_',' ',sanitize_text_field($_POST['destination']));
 	$transporttype	= $_POST['transporttype'];
@@ -302,13 +302,13 @@ function generate_immigration_letters(){
 		$pdf->AddFont('NSimSun','');
 		$pdf->SetFont('NSimSun','',12);
 	}catch (\Exception $e){
-		SIM\print_array('Loading NSimSun font failed.');
+		SIM\printArray('Loading NSimSun font failed.');
 		$pdf->SetFont('Arial','B',12);
 	}
 	
-	foreach($user_ids as $user_id){
-		$visa_info 			= get_user_meta( $user_id, "visa_info",true);
-		$gender				= get_user_meta($user_id,'gender',true);
+	foreach($userIds as $userId){
+		$visa_info 			= get_user_meta( $userId, "visa_info",true);
+		$gender				= get_user_meta($userId,'gender',true);
 			
 		$pdf->generate_travel_letter($travelttype,$visa_info,$gender,$travel_date,$origin,$destination,$transporttype);
 	}
@@ -446,7 +446,7 @@ class IMMIGRATION_LETTER extends SIM\PDF\PDF_HTML{
 		try{
 			$this->Image($signature, null, null, 30);
 		}catch (\Exception $e) {
-			SIM\print_array("PDF_export.php: $signature is not a valid image");
+			SIM\printArray("PDF_export.php: $signature is not a valid image");
 		}
 		
 		$lines = [
@@ -573,8 +573,8 @@ function quoata_document_upload($quota_documents){
 					<?php
 					$name	= "quota_documents[quotafiles][$key]";
 
-					$uploader = new SIM\Fileupload($user_id='', $documentname=$name, $targetdir='visa_uploads', $multiple=true, $metakey=$name);
-					echo $uploader->get_upload_html();
+					$uploader = new SIM\Fileupload($userId='', $documentname=$name, $targetdir='visa_uploads', $multiple=true, $metakey=$name);
+					echo $uploader->getUploadHtml();
 					echo $button;
 					?>
 				</div>

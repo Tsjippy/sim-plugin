@@ -32,11 +32,11 @@ class Statistics {
 
     function add_page_view(){
         global $wpdb;
-        $user_id        = get_current_user_id();
+        $userId        = get_current_user_id();
         $url            = str_replace(SITEURL,'',$_POST['url']);
         $creation_date	= date("Y-m-d H:i:s");
 
-        $pageviews  = $wpdb->get_var( "SELECT counter FROM {$this->table_name} WHERE userid='$user_id' AND url='$url'" );
+        $pageviews  = $wpdb->get_var( "SELECT counter FROM {$this->table_name} WHERE userid='$userId' AND url='$url'" );
         
         if(is_numeric($pageviews)){
             $wpdb->update(
@@ -46,7 +46,7 @@ class Statistics {
                     'counter'	 	=> $pageviews+1
                 ), 
                 array(
-                    'userid'		=> $user_id,
+                    'userid'		=> $userId,
                     'url'           => $url,
                 ),
             );
@@ -56,7 +56,7 @@ class Statistics {
 				array(
                     'timecreated'   => $creation_date,
                     'timelastedited'=> $creation_date,
-					'userid'		=> $user_id,
+					'userid'		=> $userId,
                     'url'           => $url,
 					'counter'	    => 1
 				)

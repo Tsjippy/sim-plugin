@@ -22,44 +22,6 @@ if(!isset($_SERVER['HTTP_SEC_FETCH_DEST'])){
 	//error_log(print_r($_SERVER,true));
 }
 
-set_error_handler(function ( $errno, $errstr, $errfile, $errline ) {
-
-    if( $errno === E_USER_NOTICE ) {
-
-        $message = 'You have an error notice: "%s" in file "%s" at line: "%s".' ;
-        $message = sprintf($message, $errstr, $errfile, $errline);
-
-        error_log(print_r($message,true));
-        error_log(print_r(wpse_288408_generate_stack_trace(), true));
-    }
-});
-// Function from php.net http://php.net/manual/en/function.debug-backtrace.php#112238
-function wpse_288408_generate_stack_trace() {
-
-    $e = new Exception();
-
-    $trace = explode( "\n" , $e->getTraceAsString() );
-
-    // reverse array to make steps line up chronologically
-
-    $trace = array_reverse($trace);
-
-    array_shift($trace); // remove {main}
-    array_pop($trace); // remove call to this method
-
-    $length = count($trace);
-    $result = array();
-
-    for ($i = 0; $i < $length; $i++) {
-        $result[] = ($i + 1)  . ')' . substr($trace[$i], strpos($trace[$i], ' ')); // replace '#someNum' with '$i)', set the right ordering
-    }
-
-    $result = implode("\n", $result);
-    $result = "\n" . $result . "\n";
-
-    return $result;
-}
-
 //only call it once
 remove_action( 'wp_head', 'adjacent_posts_rel_link');
 
@@ -83,8 +45,8 @@ $files = array_merge($files, glob(__DIR__  . '/includes/admin/php/*.php'));
 
 // Only the requested module if this is a rest request
 /* if(strpos($_SERVER['REQUEST_URI'], '/wp-json/sim/v1') !== false){
-    $module_name    = explode('/', explode('sim/v1/',$_SERVER['REQUEST_URI'])[1])[0]; 
-    $files          = array_merge($files, glob(__DIR__  . "/includes/modules/$module_name/php/*.php"));
+    $moduleName    = explode('/', explode('sim/v1/',$_SERVER['REQUEST_URI'])[1])[0]; 
+    $files          = array_merge($files, glob(__DIR__  . "/includes/modules/$moduleName/php/*.php"));
 }else{
     //Load files for enabled modules
     foreach($Modules as $slug=>$settings){
@@ -151,5 +113,44 @@ register_deactivation_hook( __FILE__, 'sim_deactivate' );
 
 //Add remove scheduled action on plugin deacivation
 function sim_deactivate() {	
-	SIM\print_array("Removing cron schedules");
+	SIM\printArray("Removing cron schedules");
+}
+
+set_error_handler(function ( $errno, $errstr, $errfile, $errline ) {
+
+    if( $errno === E_USER_NOTICE ) {
+
+        $message = 'You have an error notice: "%s" in file "%s" at line: "%s".' ;
+        $message = sprintf($message, $errstr, $errfile, $errline);
+
+        error_log(print_r($message,true));
+        error_log(print_r(wpse_288408_generate_stack_trace(), true));
+    }
+});
+
+// Function from php.net http://php.net/manual/en/function.debug-backtrace.php#112238
+function wpse_288408_generate_stack_trace() {
+
+    $e = new Exception();
+
+    $trace = explode( "\n" , $e->getTraceAsString() );
+
+    // reverse array to make steps line up chronologically
+
+    $trace = array_reverse($trace);
+
+    array_shift($trace); // remove {main}
+    array_pop($trace); // remove call to this method
+
+    $length = count($trace);
+    $result = array();
+
+    for ($i = 0; $i < $length; $i++) {
+        $result[] = ($i + 1)  . ')' . substr($trace[$i], strpos($trace[$i], ' ')); // replace '#someNum' with '$i)', set the right ordering
+    }
+
+    $result = implode("\n", $result);
+    $result = "\n" . $result . "\n";
+
+    return $result;
 }

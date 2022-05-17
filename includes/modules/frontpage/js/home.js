@@ -49,14 +49,14 @@ document.addEventListener("DOMContentLoaded",function() {
 			//Hide the message
 			document.querySelector("#welcome-message").classList.add('hidden');
 
-			var formdata = new FormData();
-			formdata.append('_wpnonce', sim.restnonce);
+			var formData = new FormData();
+			formData.append('_wpnonce', sim.restnonce);
 			fetch(
 				sim.base_url+'/wp-json/sim/v1/frontpage/hide_welcome', 
 				{
 					method: 'POST',
 					credentials: 'same-origin',
-					body: formdata
+					body: formData
 				}
 			).catch(err => console.error(err));
 		});

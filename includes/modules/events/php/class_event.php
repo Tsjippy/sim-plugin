@@ -258,7 +258,7 @@ class Events{
 		}
 	}
 
-	function delete_old_cel_event($post_id, $metavalue, $user_id, $type, $title){
+	function delete_old_cel_event($post_id, $metavalue, $userId, $type, $title){
 		if(is_numeric($post_id)){
 			$existing_event	= $this->retrieve_single_event($post_id);
 			if(
@@ -268,7 +268,7 @@ class Events{
 				return false;//nothing changed
 			}else{
 				wp_delete_post($post_id,true);
-				delete_user_meta($user_id,$type.'_event_id');
+				delete_user_meta($userId,$type.'_event_id');
 	
 				$this->remove_db_rows();
 			}
@@ -298,7 +298,7 @@ class Events{
 		}
 
 		$title		= ucfirst($type).' '.$user->display_name;
-		$partner_id	= SIM\has_partner($user->ID);
+		$partner_id	= SIM\hasPartner($user->ID);
 		if($partner_id){
 			$partner_meta	= get_user_meta($partner_id, $metakeys[0], true);
 
@@ -321,7 +321,7 @@ class Events{
 			$cat_name = 'birthday';
 		}else{
 			$cat_name = 'anniversary';
-			if(SIM\is_child($user->ID)) return;//do not create annversaries for children
+			if(SIM\isChild($user->ID)) return;//do not create annversaries for children
 		}
 		$termid = get_term_by('slug', $cat_name,'events')->term_id;
 		if(empty($termid)) $termid = wp_insert_term(ucfirst($cat_name),'events')['term_id'];
@@ -396,13 +396,13 @@ class Events{
 
 		//select all events attached to a post with publish status
 		$query	 = "SELECT * FROM {$wpdb->prefix}posts ";
-		$query	.= "INNER JOIN `{$this->table_name}` ON {$wpdb->prefix}posts.ID={$this->table_name}.post_id ";
+		$query	.= "INNER JOIN `{$this->table_name}` ON {$wpdb->prefix}posts.ID={$this->table_name}.post_id";
 		
 		if(is_numeric($cat)){
-			$query	.= "INNER JOIN `{$wpdb->prefix}term_relationships` ON {$wpdb->prefix}posts.ID={$wpdb->prefix}term_relationships.object_id ";
+			$query	.= " INNER JOIN `{$wpdb->prefix}term_relationships` ON {$wpdb->prefix}posts.ID={$wpdb->prefix}term_relationships.object_id";
 		}
 		
-		$query	 .= "WHERE  {$wpdb->prefix}posts.post_status='publish'";
+		$query	 .= " WHERE  {$wpdb->prefix}posts.post_status='publish'";
 		
 		//start date is greater than or the requested date falls in between a multiday event
 		if(!empty($startdate)) $query	.= " AND(`{$this->table_name}`.`startdate` >= '$startdate' OR '$startdate' BETWEEN `{$this->table_name}`.startdate and `{$this->table_name}`.enddate)";
@@ -417,8 +417,8 @@ class Events{
 		if(!empty($extra_query)) $query	.= " AND $extra_query";
 		
 		//exclude private events which are not ours
-		$user_id	= get_current_user_id();
-		$query	.= " AND (`{$this->table_name}`.`onlyfor` IS NULL OR `{$this->table_name}`.`onlyfor`='$user_id')";
+		$userId	= get_current_user_id();
+		$query	.= " AND (`{$this->table_name}`.`onlyfor` IS NULL OR `{$this->table_name}`.`onlyfor`='$userId')";
 
 		//sort on startdate
 		$query	.= " ORDER BY `{$this->table_name}`.`startdate`, `{$this->table_name}`.`starttime` ASC";
@@ -431,11 +431,13 @@ class Events{
 	}
 
 	function upcomingevents(){
-		$this->retrieve_events($startdate = date("Y-m-d"), $enddate = date('Y-m-d', strtotime('+3 month')), $amount = 10, $extra_query = "endtime > '".date('H:i', current_time('U'))."'");
+		global $wpdb;
+
+		$this->retrieve_events($startdate = date("Y-m-d"), $enddate = date('Y-m-d', strtotime('+3 month')), $amount = 10, $extra_query = "endtime > '".date('H:i', current_time('U'))."' AND {$wpdb->prefix}posts.ID NOT IN ( SELECT `post_id` FROM `{$wpdb->prefix}postmeta` WHERE `meta_key`='celebrationdate')");
 
 		//do not list celebrations
 		foreach($this->events as $key=>$event){
-			if(!empty(get_post_meta($event->post_id,'celebrationdate',true))) unset($this->events[$key]);
+			if(!empty(get_post_meta($event->post_id, 'celebrationdate', true))) unset($this->events[$key]);
 		}
 
 		ob_start();
@@ -462,10 +464,10 @@ class Events{
 						$event_title	= get_the_title($event->post_id);
 						$enddate_str	= date('d M', strtotime(($event->enddate)));
 
-						$user_id = get_post_meta($event->post_id,'user',true);
-						if(is_numeric($user_id) and function_exists('SIM\USERPAGE\get_user_page_link')){
+						$userId = get_post_meta($event->post_id,'user',true);
+						if(is_numeric($userId) and function_exists('SIM\USERPAGE\get_user_page_link')){
 							//Get the user page of this user
-							$event_url	= SIM\USERPAGE\get_user_page_link($user_id);
+							$event_url	= SIM\USERPAGE\get_user_page_link($userId);
 						}else{
 							$event_url	= get_permalink($event->post_id);
 						}
@@ -530,15 +532,15 @@ class Events{
 	}
 
 	function get_author_detail($event){
-		$user_id	= $event->organizer_id;
-		$user		= get_userdata($user_id);
+		$userId	= $event->organizer_id;
+		$user		= get_userdata($userId);
 
-		if(empty($user_id)){
+		if(empty($userId)){
 			return $event->organizer;
 		}else{
-			$url	= SIM\getUserPageUrl($user_id);
+			$url	= SIM\getUserPageUrl($userId);
 			$email	= $user->user_email;
-			$phone	= get_user_meta($user_id,'phonenumbers',true);
+			$phone	= get_user_meta($userId,'phonenumbers',true);
 			$html	= "<a href='$url'>{$user->display_name}</a><br>";
 			$html	.="<br><a href='mailto:$email'>$email</a>";
 			if(is_array($phone)){

@@ -21,7 +21,7 @@ if(!isset($skipHeader) or !$skipHeader)	get_header();
 			endwhile;
 			?>
 		</main>
-		<?php SIM\show_comments(); ?>
+		<?php SIM\showComments(); ?>
 	</div>
 
 <?php
@@ -65,7 +65,7 @@ function event_contents(){
 								//First loop over the cat to see if any parent cat needs to be removed
 								foreach($categories as $id=>$category){
 									//Get the child categories of this category
-									$children = get_term_children($id,'events');
+									$children = get_term_children($id, 'Events');
 									
 									//Loop over the children to see if one of them is also in he cat array
 									foreach($children as $child){

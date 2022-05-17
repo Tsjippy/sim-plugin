@@ -53,12 +53,12 @@ function trello_actions( \WP_REST_Request $request ) {
 		
 		//useraccount exists
 		if(is_numeric($user_props['user_id'])){
-			$user_id = $user_props['user_id'];
+			$userId = $user_props['user_id'];
 			
 		//create an user account
 		}elseif(!empty($user_props['email address']) and !empty($user_props['first name']) and !empty($user_props['last name'])  and !empty($user_props['duration'])){
-			SIM\print_array('Creating user account from trello',true);
-			SIM\print_array($user_props,true);
+			SIM\printArray('Creating user account from trello',true);
+			SIM\printArray($user_props,true);
 			
 			//Find the duration number an quantifier in the result
 			$pattern = "/([0-9]+) (months?|years?)/i";
@@ -73,28 +73,28 @@ function trello_actions( \WP_REST_Request $request ) {
 			}
 
 			//create an useraccount
-			$user_id = SIM\addUserAccount(ucfirst($user_props['first name']), ucfirst($user_props['last name']), $user_props['email address'], true, $duration);
+			$userId = SIM\addUserAccount(ucfirst($user_props['first name']), ucfirst($user_props['last name']), $user_props['email address'], true, $duration);
 			
-			if(is_numeric($user_id)){
+			if(is_numeric($userId)){
 				//send welcome e-mail
-				wp_new_user_notification($user_id,null,'both');
+				wp_new_user_notification($userId,null,'both');
 
 				//Add a checklist item on the card
 				$trello->changeChecklistOption($card_id, $website_checklist, 'Useraccount created');
 				
 				//Add a comment
-				$trello->addComment($card_id,"Account created, user id is $user_id");
+				$trello->addComment($card_id,"Account created, user id is $userId");
 				
 				//Update the description of the card
-				$url	= SITEURL."/update-personal-info/?userid=$user_id";
-				$trello->updateCard($card_id, 'desc', $desc."%0A <a href='$url'>user_id:$user_id</a>");
+				$url	= SITEURL."/update-personal-info/?userid=$userId";
+				$trello->updateCard($card_id, 'desc', $desc."%0A <a href='$url'>user_id:$userId</a>");
 			}
 		}else{
 			//no account yet and we cannot create one
 			return;
 		}
 		
-		$username = get_userdata($user_id)->user_login;
+		$username = get_userdata($userId)->user_login;
 		
 		/* 		
 			SAVE COVER IMAGE AS PROFILE PICTURE 
@@ -104,7 +104,7 @@ function trello_actions( \WP_REST_Request $request ) {
 		//If there is a cover image
 		if($url != ''){
 			//And an image is not yet set
-			if(!is_numeric(get_user_meta($user_id,'profile_picture',true))){
+			if(!is_numeric(get_user_meta($userId,'profile_picture',true))){
 				//Get the extension
 				$ext = pathinfo($url, PATHINFO_EXTENSION);
 				
@@ -119,7 +119,7 @@ function trello_actions( \WP_REST_Request $request ) {
 				$post_id = SIM\add_to_library($filepath);
 				
 				//Save in the db
-				update_user_meta($user_id,'profile_picture',$post_id);
+				update_user_meta($userId,'profile_picture',$post_id);
 				
 				//Add a checklist item on the card
 				$trello->changeChecklistOption($card_id, $website_checklist, 'Profile picture');

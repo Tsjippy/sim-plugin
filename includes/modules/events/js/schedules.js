@@ -48,12 +48,12 @@ async function publishSchedule(target){
 async function remove_schedule(target){
 	schedule_id			= target.dataset["schedule_id"];
 	var text 			= "Are you sure you want to remove this schedule";
-	var formdata 		= new FormData();
-	formdata.append('schedule_id', schedule_id);
+	var formData 		= new FormData();
+	formData.append('schedule_id', schedule_id);
 
 	var confirmed		= await checkConfirmation(text);
 	if(confirmed){
-		var response	= await formsubmit.fetchRestApi('events/remove_schedule', formdata);
+		var response	= await formsubmit.fetchRestApi('events/remove_schedule', formData);
 
 		if(response){
 			main.displayMessage(response);
@@ -99,9 +99,9 @@ async function addCurrentUserAsHost(target){
 	if(confirmed){
 		target.classList.add('active');
 
-		var formdata		= loadHostFormdata(target);
+		var formData		= loadHostFormdata(target);
 
-		var response	= await formsubmit.fetchRestApi('events/add_host', formdata);
+		var response	= await formsubmit.fetchRestApi('events/add_host', formData);
 
 		if(response){
 			addHostHtml(response);
@@ -135,7 +135,7 @@ function addHostHtml(response){
 
 // Remove a host
 async function removeHost(target){
-	var formdata		= loadHostFormdata(target);
+	var formData		= loadHostFormdata(target);
 
 	table				= target.closest('table');
 	var scheduleowner	= table.dataset.target;
@@ -155,7 +155,7 @@ async function removeHost(target){
 	if(confirmed){
 		main.showLoader(cell.firstChild);
 
-		var response = await formsubmit.fetchRestApi('events/remove_host', formdata);
+		var response = await formsubmit.fetchRestApi('events/remove_host', formData);
 
 		//Remove cell class
 		cell.classList.remove('selected');
@@ -304,18 +304,18 @@ function loadHostFormdata(target){
 	var date			= heading.cells[cell.cellIndex].dataset.isodate;
 	var starttime		= target.closest('tr').dataset.starttime;
 
-	var formdata		= new FormData();
-	formdata.append('date',date);
+	var formData		= new FormData();
+	formData.append('date',date);
 	if(cell.dataset.host != null){
-		formdata.append('host',cell.dataset.host);
+		formData.append('host',cell.dataset.host);
 	}else{
-		formdata.append('host',sim.userid);
+		formData.append('host',sim.userid);
 	}
 	
-	formdata.append('starttime',starttime);
-	formdata.append('schedule_id',schedule_id);
+	formData.append('starttime',starttime);
+	formData.append('schedule_id',schedule_id);
 
-	return formdata;
+	return formData;
 }
 
 async function checkConfirmation(text){

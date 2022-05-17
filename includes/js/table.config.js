@@ -7,7 +7,7 @@ module.exports = {
     mode: 'production',
     output: {
 		path: path.resolve(__dirname, ''),
-		filename: '[name].min.js',
+		filename: 'table.min.js',
 		library: {
 			name: '[name]',
 			type: 'umd',

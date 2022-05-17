@@ -124,7 +124,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
             //skip if not existing, and send e-mail
             $path   = get_attached_file($id);
             if(!file_exists($path)){
-                SIM\print_array("Check file with id $id");
+                SIM\printArray("Check file with id $id");
                 wp_mail(get_option('admin_email'), 'Missing file', "Hi Admin,<br><br>A file seems to be missing: $path");
                 continue;
             }
@@ -177,7 +177,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                         $mediaHtml  .=  "<source src='$url' type='$mime'>";
                     $mediaHtml  .=  '</video>';
                 }else{
-                    list($width, $height, $a, $attr) = getimagesize(SIM\url_to_path($url));
+                    list($width, $height, $a, $attr) = getimagesize(SIM\urlToPath($url));
                     $ratio  = $height/$width;
 
                     //Center the image vertically
@@ -223,7 +223,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
 
                 $url            = apply_filters('sim_media_gallery_download_url', $url, $id);
 
-                if(file_exists(SIM\url_to_path($url))){
+                if(file_exists(SIM\urlToPath($url))){
                     $fileName   = apply_filters('sim_media_gallery_download_filename', '', $type, $id);
                     ?>
                     <button type="button" class="button small download">

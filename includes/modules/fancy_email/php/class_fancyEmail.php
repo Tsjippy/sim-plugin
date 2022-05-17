@@ -101,6 +101,8 @@ class FancyEmail{
         if(strpos($this->message, '<!doctype html>') === false){
             $this->htmlEmail();
         }
+
+        SIM\printArray($args);
         
         return $args;
     }
@@ -124,7 +126,7 @@ class FancyEmail{
 
         // Convert to public url
         if(strpos($url, '/private/') !== false){
-            $path       = SIM\url_to_path($url);
+            $path       = SIM\urlToPath($url);
             $name       = basename($path);
             $new_path   = "$this->mailImagesFolder/$this->emailId/";
 
@@ -140,7 +142,7 @@ class FancyEmail{
             // Copy the private picture to the public accesible folder
             $result=copy($path, $new_path);
 
-            $new_url    = SIM\path_to_url($new_path);
+            $new_url    = SIM\pathToUrl($new_path);
             $html	    = str_replace($url, $new_url, $html);
         }
 

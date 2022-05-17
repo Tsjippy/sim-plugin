@@ -2,13 +2,13 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-function display_roles($user_id){
+function display_roles($userId){
 	global $wp_roles;
 
 	wp_enqueue_script( 'sim_user_management');
 	
 	//Get the roles this user currently has
-	$roles = get_userdata($user_id)->roles;				
+	$roles = get_userdata($userId)->roles;				
 	//Get all available roles
 	$user_roles = $wp_roles->role_names;
 	
@@ -46,7 +46,7 @@ function display_roles($user_id){
 
 	<div class="role_info">
 		<form>
-			<input type='hidden' name='userid' value='<?php echo $user_id;?>'>
+			<input type='hidden' name='userid' value='<?php echo $userId;?>'>
 			<h3>Select user roles</h3>
 			<p>
 				Select the roles this user should have.<br>

@@ -43,7 +43,7 @@ add_filter('postie_post_before', function($post) {
 			//Make sure we only continue with an adult
 			$login_name	= '';
 			foreach($users as $user){
-				if (!SIM\is_child($user->ID)){
+				if (!SIM\isChild($user->ID)){
 					$login_name = $user->data->user_login;
 					break;
 				}
@@ -84,7 +84,7 @@ add_filter('postie_post_before', function($post) {
 			if(isset($new_url)){				
 				$year = date_format($postdate,"Y");
 				foreach($users as $user){
-					if (SIM\is_child($user->ID)) continue;
+					if (SIM\isChild($user->ID)) continue;
 					
 					//Get the account statement list
 					$account_statements = get_user_meta($user->ID, "account_statements", true);

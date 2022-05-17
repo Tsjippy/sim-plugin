@@ -112,7 +112,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
     
             $methods    = get_user_meta($this->user_id, "2fa_methods",true);
             unset($methods[array_search('webauthn', $methods)]);
-            SIM\clean_up_nested_array($methods);
+            SIM\cleanUpNestedArray($methods);
 
             if(empty($methods)){
                 delete_user_meta($this->user_id, "2fa_methods");
@@ -178,8 +178,8 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
     }
 }
 
-function get_profile_picture($user_id){
-    $attachment_id  = get_user_meta($user_id,'profile_picture',true);
+function get_profile_picture($userId){
+    $attachment_id  = get_user_meta($userId,'profile_picture',true);
     $image          = null;
 
     if(is_numeric($attachment_id)){
@@ -277,26 +277,26 @@ function authenticator_list(){
 
     if(!current_user_can("read")){
         $name = $user_info->display_name;
-        SIM\print_array("$name has not enough permissions");
+        SIM\printArray("$name has not enough permissions");
         return;
     }
 
     if(isset($_GET["user_id"])){
-        $user_id = intval(sanitize_text_field($_GET["user_id"]));
-        if($user_id <= 0){
-            SIM\print_array("ajax_ajax_authenticator_list: (ERROR)Wrong parameters, exit");
+        $userId = intval(sanitize_text_field($_GET["user_id"]));
+        if($userId <= 0){
+            SIM\printArray("ajax_ajax_authenticator_list: (ERROR)Wrong parameters, exit");
             return new WP_Error('webauthn', "Bad Request.");
         }
 
-        if($user_info->ID !== $user_id){
-            if(!current_user_can("edit_user", $user_id)){
-                SIM\print_array("ajax_ajax_authenticator_list: (ERROR)No permission, exit");
+        if($user_info->ID !== $userId){
+            if(!current_user_can("edit_user", $userId)){
+                SIM\printArray("ajax_ajax_authenticator_list: (ERROR)No permission, exit");
                 return new WP_Error('webauthn', "Bad Request.");
             }
-            $user_info = get_user_by('id', $user_id);
+            $user_info = get_user_by('id', $userId);
 
             if($user_info === false){
-                SIM\print_array("ajax_ajax_authenticator_list: (ERROR)Wrong user ID, exit");
+                SIM\printArray("ajax_ajax_authenticator_list: (ERROR)Wrong user ID, exit");
                 return new WP_Error('webauthn', "Bad Request.");
             }
         }

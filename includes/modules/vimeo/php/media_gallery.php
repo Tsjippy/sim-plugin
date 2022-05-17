@@ -21,7 +21,7 @@ add_filter('sim_media_gallery_download_url', function($url, $postId){
     $path       = $vimeo->getVideoPath($postId);
 
     if($path){
-        return SIM\path_to_url($path);
+        return SIM\pathToUrl($path);
     }
 
     return $url;

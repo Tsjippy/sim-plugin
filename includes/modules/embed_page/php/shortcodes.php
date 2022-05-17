@@ -47,7 +47,7 @@ add_shortcode('embed_page', function($atts){
 		
         $wp_query   = new \WP_Query($args);
         $wp_query->is_embed = true;
-		$template           = SIM\get_template_file('', $type, $id[0]);
+		$template           = SIM\getTemplateFile('', $type, $id[0]);
 
 		include_once($template);
 	}

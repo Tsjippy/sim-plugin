@@ -3,7 +3,7 @@ namespace SIM\LOCATIONS;
 use SIM;
 
 add_action('init', function(){
-	SIM\register_post_type_and_tax('location', 'locations');
+	SIM\registerPostTypeAndTax('location', 'locations');
 }, 999);
 
 //Add a map when a location category is added

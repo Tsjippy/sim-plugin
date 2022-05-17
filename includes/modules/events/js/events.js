@@ -8,13 +8,13 @@ async function request_month(target, month, year){
 
     var calendar_page   = document.querySelector('.events-wrap[data-date="'+year+'-'+month+'"]');
     if(calendar_page == null){
-        target.closest('.calendar-wrap').insertAdjacentHTML('beforeEnd','<img class="loader" src="'+sim.loading_gif+'" style="margin-left: auto;margin-right: auto;display: block;">');
+        target.closest('.calendar-wrap').insertAdjacentHTML('beforeEnd','<img class="loader" src="'+sim.loadingGif+'" style="margin-left: auto;margin-right: auto;display: block;">');
         
-        var formdata = new FormData();
-        formdata.append('month',month);
-        formdata.append('year',year);
+        var formData = new FormData();
+        formData.append('month',month);
+        formData.append('year',year);
 
-        var response    = await formsubmit.fetchRestApi('events/get_month_html', formdata);
+        var response    = await formsubmit.fetchRestApi('events/get_month_html', formData);
         
         if(response) {
             target.closest('.calendar-wrap').querySelector('.loader').remove();
@@ -40,14 +40,14 @@ async function request_week(target, wknr, year){
     if(calendar_page == null){
         target.closest('.calendar-wrap').insertAdjacentHTML(
             'beforeEnd',
-            `<img class="loader" src="${sim.loading_gif}" style="margin-left: auto;margin-right: auto;display: block;">`
+            `<img class="loader" src="${sim.loadingGif}" style="margin-left: auto;margin-right: auto;display: block;">`
         );
         
-        var formdata = new FormData();
-        formdata.append('wknr',wknr);
-        formdata.append('year',year);
+        var formData = new FormData();
+        formData.append('wknr',wknr);
+        formData.append('year',year);
 
-        var response    = await formsubmit.fetchRestApi('events/get_week_html', formdata);
+        var response    = await formsubmit.fetchRestApi('events/get_week_html', formData);
         
         if(response) {
             target.closest('.calendar-wrap').querySelector('.loader').remove();
@@ -71,14 +71,14 @@ async function request_expand_list(offset, month='', year=''){
         window.history.pushState({}, '', url);
     }
 
-    document.getElementById('listview').insertAdjacentHTML('beforeEnd','<img class="loader" src="'+sim.loading_gif+'" style="margin-left: auto;margin-right: auto;display: block;">');
+    document.getElementById('listview').insertAdjacentHTML('beforeEnd','<img class="loader" src="'+sim.loadingGif+'" style="margin-left: auto;margin-right: auto;display: block;">');
     
-    var formdata = new FormData();
-    formdata.append('offset',offset);
-    formdata.append('month',month);
-    formdata.append('year',year);
+    var formData = new FormData();
+    formData.append('offset',offset);
+    formData.append('month',month);
+    formData.append('year',year);
     
-    var response    = await formsubmit.fetchRestApi('events/get_list_html', formdata);
+    var response    = await formsubmit.fetchRestApi('events/get_list_html', formData);
         
     if(response) {
         document.querySelector('#listview').querySelector('.loader').remove();

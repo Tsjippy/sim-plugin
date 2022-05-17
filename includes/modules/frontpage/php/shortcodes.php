@@ -18,7 +18,7 @@ add_shortcode("login_count", function ($atts){
 	$current_loggin_count = get_user_meta( $UserID, 'login_count', true );
 	//Get the word from the array
 	if (is_numeric($current_loggin_count)){
-		return SIM\number_to_words($current_loggin_count);
+		return SIM\numberToWords($current_loggin_count);
 	//key not set, assume its the first time
 	}else{
 		return "your first";

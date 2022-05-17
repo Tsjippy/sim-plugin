@@ -38,7 +38,7 @@ if(!isset($skipHeader) or !$skipHeader)	get_header();
 			</div>
 		</main>
 		
-		<?php SIM\show_comments(); ?>
+		<?php SIM\showComments(); ?>
 	</div>
 
 	<?php

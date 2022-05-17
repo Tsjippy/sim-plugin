@@ -119,9 +119,9 @@ add_filter( 'wp_mime_type_icon', function ($icon, $mime, $post_id) {
 			$VimeoApi	= new VimeoApi();
 			$path		= $VimeoApi->getThumbnail($post_id);
 			if(!$path)  return $icon;
-			$icon		= SIM\path_to_url($path);
+			$icon		= SIM\pathToUrl($path);
 		}catch(\Exception $e){
-			SIM\print_array($e);
+			SIM\printArray($e);
 		}
 	}
 	

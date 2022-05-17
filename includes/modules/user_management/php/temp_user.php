@@ -12,9 +12,9 @@ add_filter( 'manage_users_columns', function( $columns ) {
 });
 
 //Add content to the expiry data column
-add_filter( 'manage_users_custom_column', function ( $val, $column_name, $user_id ) {
+add_filter( 'manage_users_custom_column', function ( $val, $column_name, $userId ) {
     if($column_name != 'expiry_date')   return $val;
-    return get_user_meta( $user_id, 'account_validity',true);
+    return get_user_meta( $userId, 'account_validity',true);
 }, 10, 3);
 
 add_filter( 'manage_users_sortable_columns', function ( $columns ) {

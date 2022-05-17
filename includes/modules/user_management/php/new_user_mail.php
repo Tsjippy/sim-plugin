@@ -10,11 +10,11 @@ add_filter( 'user_row_actions', function ( $actions, $user ) {
 
 add_action('admin_menu', function() {
 	//Process the request
-    $user_id    = $_GET['send_activation_email'];
-	if(is_numeric($user_id )){
-		$email = get_userdata($user_id )->user_email;
-		SIM\print_array("Sending welcome email to $email");
-		wp_new_user_notification($user_id, null, 'user');
+    $userId    = $_GET['send_activation_email'];
+	if(is_numeric($userId )){
+		$email = get_userdata($userId )->user_email;
+		SIM\printArray("Sending welcome email to $email");
+		wp_new_user_notification($userId, null, 'user');
 	}
 });
 

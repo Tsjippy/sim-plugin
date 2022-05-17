@@ -102,18 +102,18 @@ class Maps{
 		}
 	}
 	
-	function create_marker($user_id, $location){
+	function create_marker($userId, $location){
 		global $wpdb;
 		
 		if(!empty($location['latitude']) and !empty($location['longitude'])){
-			$userdata = get_userdata($user_id);
+			$userdata = get_userdata($userId);
 			
-			$privacy_preference = (array)get_user_meta( $user_id, 'privacy_preference', true );
+			$privacy_preference = (array)get_user_meta( $userId, 'privacy_preference', true );
 			
 			//Do not continue if privacy dictates so
 			if($privacy_preference == "show_none") return;
 			
-			$family = SIM\family_flat_array($user_id);
+			$family = SIM\familyFlatArray($userId);
 			if (count($family)>0){
 				$title = $userdata->last_name . " family";
 			}else{
@@ -123,8 +123,8 @@ class Maps{
 			//Add the profile picture to the marker description if it is set, and allowed by privacy
 			if (empty($privacy_preference['hide_profile_picture'])){
 				$login_name = $userdata->user_login;
-				if ( is_numeric(get_user_meta($user_id,'profile_picture',true)) and function_exists('SIM\USERMANAGEMENT\get_profile_picture_url')) {
-					$icon_url = SIM\USERMANAGEMENT\get_profile_picture_url($user_id, 'thumbnail');
+				if ( is_numeric(get_user_meta($userId,'profile_picture',true)) and function_exists('SIM\USERMANAGEMENT\get_profile_picture_url')) {
+					$icon_url = SIM\USERMANAGEMENT\get_profile_picture_url($userId, 'thumbnail');
 				}else{
 					$icon_url = "";
 				}
@@ -138,7 +138,7 @@ class Maps{
 			//Insert it all in the database
 			$wpdb->insert($this->marker_table, array(
 				'title'			=> $title,
-				'description'	=> "[markerdescription userid='$user_id']",
+				'description'	=> "[markerdescription userid='$userId']",
 				'coord_x'		=> $location['latitude'],
 				'coord_y'		=> $location['longitude'],
 				'icon'			=> $Icon_ID,
@@ -148,7 +148,7 @@ class Maps{
 			//Get the marker id
 			$marker_id = $wpdb->insert_id;
 			//Add the marker id to the user database
-			update_user_meta($user_id,"marker_id",$marker_id);
+			update_user_meta($userId,"marker_id",$marker_id);
 			
 			if (count($family)>0){
 				foreach($family as $relative){
@@ -156,8 +156,6 @@ class Maps{
 					update_user_meta($relative,"marker_id",$marker_id);
 				}
 			}
-			
-			SIM\print_array("Created the marker with id $marker_id and title $title");
 		}
 	}
 
@@ -173,7 +171,6 @@ class Maps{
 				), 
 				array( 'ID' => $marker_id)
 			);
-			SIM\print_array ("Updated the location of marker with id $marker_id");
 		}
 	}
 
@@ -188,7 +185,6 @@ class Maps{
 				), 
 				array( 'ID' => $marker_id),
 			);
-			SIM\print_array ("Updated the title of marker with id $marker_id to $title");
 		}
 	}
 
@@ -200,20 +196,20 @@ class Maps{
 		
 		$result = $wpdb->delete( $this->marker_table, array( 'id' => $marker_id ) );
 		if($result != false){
-			SIM\print_array("Removed the marker with id $marker_id");
+			SIM\printArray("Removed the marker with id $marker_id");
 		}
 	}
 	
-	function remove_personal_marker($user_id){
+	function remove_personal_marker($userId){
 		global $wpdb;	
 		//Check if a previous marker exists for this user_id
-		$marker_id = get_user_meta($user_id,"marker_id",true);
+		$marker_id = get_user_meta($userId,"marker_id",true);
 		
 		//There exists a previous marker for this person, remove it
 		if (is_numeric($marker_id)){
 			//Delete the personal marker
 			$this->remove_marker($marker_id);
-			delete_user_meta( $user_id, 'marker_id');
+			delete_user_meta( $userId, 'marker_id');
 		}
 	}
 
@@ -240,7 +236,6 @@ class Maps{
 			if ($marker_icon_id != null and $marker_icon_id > 47){
 				//Remove the icon
 				$wpdb->delete( $wpdb->prefix .'ums_icons', array( 'id' => $marker_icon_id ));
-				SIM\print_array("Deleted the personal icon with id $marker_icon_id");
 				
 				//Reset the marker id to the default icon
 				$wpdb->update($this->marker_table, 
@@ -248,12 +243,12 @@ class Maps{
 					array( 'id' => $marker_id),
 				);
 			}elseif($marker_icon_id < 48){
-				SIM\print_array("Icon is already the default");
+				SIM\printArray("Icon is already the default");
 			}else{
-				SIM\print_array("Marker id is $marker_id but this marker is not found in the db, marker_icon_id is $marker_icon_id");
+				SIM\printArray("Marker id is $marker_id but this marker is not found in the db, marker_icon_id is $marker_icon_id");
 			}
 		}else{
-			SIM\print_array("No marker to remove");
+			SIM\printArray("No marker to remove");
 		}
 	}
 
@@ -310,7 +305,6 @@ class Maps{
 					array( 'icon' => $icon_id, ), 
 					array( 'id' => $marker_id),
 				);
-				SIM\print_array("Created new icon with title $icon_title");
 			}else{
 				//No icon url, use default icon
 				$icon_id = $default_icon_id;
@@ -325,7 +319,6 @@ class Maps{
 				), 
 				array( 'id' => $icon->id),
 			);
-			SIM\print_array("Updated icon with title $icon_title and id $icon->id");
 			
 			//Reset the marker id to the custom icon
 			if (is_numeric($marker_id)){

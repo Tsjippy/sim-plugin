@@ -8,7 +8,7 @@ add_action( 'admin_enqueue_scripts', function(){
 	wp_localize_script( 'sim_vimeo_admin_script', 
 		'sim', 
 		array(
-			'loading_gif' 	=> LOADERIMAGEURL,
+			'loadingGif' 	=> LOADERIMAGEURL,
 			'base_url' 		=> get_home_url(),
 			'restnonce'		=> wp_create_nonce('wp_rest')
 		) 
@@ -33,7 +33,7 @@ if(SIM\get_module_option('vimeo', 'upload')){
 		wp_localize_script('sim_vimeo_script', 
 			'media_vars', 
 			array( 
-				'loading_gif' 	=> LOADERIMAGEURL
+				'loadingGif' 	=> LOADERIMAGEURL
 			) 
 		);
 	});

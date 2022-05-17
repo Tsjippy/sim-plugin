@@ -140,18 +140,18 @@ add_shortcode('pending_user_icon',function ($atts){
 });
 
 //Shortcode for the dashboard
-add_action('sim_dashboard_warnings', function($user_id){
+add_action('sim_dashboard_warnings', function($userId){
 	$personnelCoordinatorEmail	= SIM\get_module_option('user_management', 'personnel_email');
 
 	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
-		$user_id	= $_GET["userid"];
+		$userId	= $_GET["userid"];
 	}else{
-		$user_id = get_current_user_id();
+		$userId = get_current_user_id();
 	}
 	$remindercount = 0;
 	$reminder_html = "";
 	
-	$visa_info = get_user_meta( $user_id, "visa_info",true);
+	$visa_info = get_user_meta( $userId, "visa_info",true);
 	if (is_array($visa_info) and isset($visa_info['greencard_expiry'])){
 		$reminder_html .= check_expiry_date($visa_info['greencard_expiry'],'greencard');
 		if($reminder_html != ""){
@@ -160,7 +160,7 @@ add_action('sim_dashboard_warnings', function($user_id){
 		}
 	}
 		
-	$vaccination_reminder_html = vaccination_reminders($user_id);
+	$vaccination_reminder_html = vaccination_reminders($userId);
 	
 	if ($vaccination_reminder_html != ""){
 		$remindercount += 1;
@@ -168,7 +168,7 @@ add_action('sim_dashboard_warnings', function($user_id){
 	}
 	
 	//Check for children
-	$family = get_user_meta($user_id,"family",true);
+	$family = get_user_meta($userId,"family",true);
 	//User has children
 	if (isset($family["children"])){
 		$child_vaccination_reminder_html = "";
@@ -183,16 +183,16 @@ add_action('sim_dashboard_warnings', function($user_id){
 	}
 	
 	//Check for upcoming reviews, but only if not set to be hidden for this year
-	if(get_user_meta($user_id,'hide_annual_review',true) != date('Y')){
-		$personnel_info 				= get_user_meta($user_id,"personnel",true);
+	if(get_user_meta($userId,'hide_annual_review',true) != date('Y')){
+		$personnel_info 				= get_user_meta($userId,"personnel",true);
 		if(is_array($personnel_info) and !empty($personnel_info['review_date'])){
 			//Hide annual review warning
 			if(isset($_GET['hide_annual_review']) and $_GET['hide_annual_review'] == date('Y')){
 				//Save in the db
-				update_user_meta($user_id,'hide_annual_review',date('Y'));
+				update_user_meta($userId,'hide_annual_review',date('Y'));
 				
 				//Get the current url withouth the get params
-				$url = str_replace('hide_annual_review='.date('Y'),'', SIM\current_url());
+				$url = str_replace('hide_annual_review='.date('Y'),'', SIM\currentUrl());
 				//redirect to same page without params
 				header ("Location: $url");
 			}
@@ -205,7 +205,7 @@ add_action('sim_dashboard_warnings', function($user_id){
 					$reminder_html .= "Please fill in the annual review questionary.<br>";
 					$reminder_html .= 'Find it <a href="'.SITEURL.'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
 					$reminder_html .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
-					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\current_url() );
+					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\currentUrl() );
 					$reminder_html .= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
 				}
 			}
@@ -239,14 +239,14 @@ function expiryWarnings(){
 	$personnelCoordinatorEmail	= SIM\get_module_option('user_management', 'personnel_email');
 
 	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
-		$user_id	= $_GET["userid"];
+		$userId	= $_GET["userid"];
 	}else{
-		$user_id = get_current_user_id();
+		$userId = get_current_user_id();
 	}
 	$remindercount = 0;
 	$reminder_html = "";
 	
-	$visa_info = get_user_meta( $user_id, "visa_info",true);
+	$visa_info = get_user_meta( $userId, "visa_info",true);
 	if (is_array($visa_info) and isset($visa_info['greencard_expiry'])){
 		$reminder_html .= check_expiry_date($visa_info['greencard_expiry'],'greencard');
 		if($reminder_html != ""){
@@ -255,7 +255,7 @@ function expiryWarnings(){
 		}
 	}
 		
-	$vaccination_reminder_html = vaccination_reminders($user_id);
+	$vaccination_reminder_html = vaccination_reminders($userId);
 	
 	if ($vaccination_reminder_html != ""){
 		$remindercount += 1;
@@ -263,7 +263,7 @@ function expiryWarnings(){
 	}
 	
 	//Check for children
-	$family = get_user_meta($user_id,"family",true);
+	$family = get_user_meta($userId,"family",true);
 	//User has children
 	if (isset($family["children"])){
 		$child_vaccination_reminder_html = "";
@@ -278,16 +278,16 @@ function expiryWarnings(){
 	}
 	
 	//Check for upcoming reviews, but only if not set to be hidden for this year
-	if(get_user_meta($user_id,'hide_annual_review',true) != date('Y')){
-		$personnel_info 				= get_user_meta($user_id,"personnel",true);
+	if(get_user_meta($userId,'hide_annual_review',true) != date('Y')){
+		$personnel_info 				= get_user_meta($userId,"personnel",true);
 		if(is_array($personnel_info) and !empty($personnel_info['review_date'])){
 			//Hide annual review warning
 			if(isset($_GET['hide_annual_review']) and $_GET['hide_annual_review'] == date('Y')){
 				//Save in the db
-				update_user_meta($user_id,'hide_annual_review',date('Y'));
+				update_user_meta($userId,'hide_annual_review',date('Y'));
 				
 				//Get the current url withouth the get params
-				$url = str_replace('hide_annual_review='.date('Y'),'', SIM\current_url());
+				$url = str_replace('hide_annual_review='.date('Y'),'', SIM\currentUrl());
 				//redirect to same page without params
 				header ("Location: $url");
 			}
@@ -300,7 +300,7 @@ function expiryWarnings(){
 					$reminder_html .= "Please fill in the annual review questionary.<br>";
 					$reminder_html .= 'Find it <a href="'.SITEURL.'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
 					$reminder_html .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
-					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\current_url() );
+					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\currentUrl() );
 					$reminder_html .= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
 				}
 			}
@@ -347,7 +347,7 @@ function user_info_page($atts){
 	
 		//Showing data for current user
 		if($show_current_user_data){
-			$user_id = get_current_user_id();
+			$userId = get_current_user_id();
 		//Display a select to choose which users data should be shown
 		}else{
 			$userSelectRoles	= apply_filters('sim_user_page_dropdown', $generic_info_roles);
@@ -357,15 +357,15 @@ function user_info_page($atts){
 					array('id' => '', ), 
 					$atts 
 				);
-				$user_id = $a['id'];
+				$userId = $a['id'];
 				
 				if(isset($_GET["userid"]) and get_userdata($_GET["userid"])){
-					$user_id = $_GET["userid"];
+					$userId = $_GET["userid"];
 				}else{
-					echo SIM\user_select("Select an user to show the data of:");
+					echo SIM\userSelect("Select an user to show the data of:");
 				}
 
-				$user_birthday = get_user_meta($user_id, "birthday", true);
+				$user_birthday = get_user_meta($userId, "birthday", true);
 				if($user_birthday != "")	$user_age = date_diff(date_create(date("Y-m-d")),date_create($user_birthday))->y;
 				
 			}else{
@@ -374,7 +374,7 @@ function user_info_page($atts){
 		}
 	
 		//Continue only if there is a selected user
-		if(is_numeric($user_id)){			
+		if(is_numeric($userId)){			
 			/*
 				Dashboard
 			*/
@@ -387,7 +387,7 @@ function user_info_page($atts){
 				
 				//Add a tab button
 				$tabs[]	= "<li class='tablink active' id='show_dashboard' data-target='dashboard'>Dashboard</li>";
-				$html .= "<div id='dashboard'>".show_dashboard($user_id, $admin).'</div>';
+				$html .= "<div id='dashboard'>".show_dashboard($userId, $admin).'</div>';
 			}
 
 			/*
@@ -413,7 +413,7 @@ function user_info_page($atts){
 				GENERIC Info
 			*/
 			if(array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data){
-				$account_validity = get_user_meta( $user_id, 'account_validity',true);
+				$account_validity = get_user_meta( $userId, 'account_validity',true);
 				
 				//Add a tab button
 				$tabs[]	= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
@@ -435,7 +435,7 @@ function user_info_page($atts){
 								wp_enqueue_script( 'sim_user_management');
 								?>
 								<form>
-									<input type="hidden" name="userid" value="<?php echo $user_id = $_GET['userid'];?>">
+									<input type="hidden" name="userid" value="<?php echo $userId = $_GET['userid'];?>">
 									This user account is only valid till <?php echo date_format($removal_date,"d F Y");?>
 									<br>
 									<br>
@@ -493,7 +493,7 @@ function user_info_page($atts){
 				//Add a tab button
 				$tabs[]	= '<li class="tablink" id="show_login_info" data-target="login_info">Login info</li>';
 				
-				$html .= change_password_form($user_id);
+				$html .= change_password_form($userId);
 			}
 						
 			/*
@@ -520,7 +520,7 @@ function user_info_page($atts){
 				
 				//Content
 				$role_html = '<div id="role_info" class="tabcontent hidden">'; 
-				$role_html .= display_roles($user_id);
+				$role_html .= display_roles($userId);
 				$role_html .= '</div>';
 
 				$html	.= $role_html;
@@ -562,7 +562,7 @@ function user_info_page($atts){
 				<div id='medical_info' <?php echo $class;?>>
 					<?php echo do_shortcode('[formbuilder datatype=user_medical]');?>
 					<form method="post" id="print_medicals-form">
-						<input type="hidden" name="userid" id="userid" value="'.$user_id.'">
+						<input type="hidden" name="userid" id="userid" value="'.$userId.'">
 						<button class="button button-primary" type="submit" name="print_medicals" value="generate">Export data as PDF</button>
 					</form>
 				</div>
@@ -583,7 +583,7 @@ function user_info_page($atts){
 				CHILDREN TABS
 			*/
 			if($show_current_user_data){
-				$family = get_user_meta($user_id,'family',true);
+				$family = get_user_meta($userId,'family',true);
 				if(is_array($family) and isset($family['children']) and is_array($family['children'])){
 					foreach($family['children'] as $child_id){
 						$first_name = get_userdata($child_id)->first_name;
@@ -611,7 +611,7 @@ function user_info_page($atts){
 		$result	.= "</nav>";
 
 		$result	.= "<div id='profile_forms'>";
-			$result .= "<input type='hidden' class='input-text' name='userid' value='$user_id'>";
+			$result .= "<input type='hidden' class='input-text' name='userid' value='$userId'>";
 			$result	.= $html;
 		$result	.= "</div>";
 
@@ -633,11 +633,11 @@ add_shortcode( 'delete_user', function(){
 		$html = "";
 		
 		if(isset($_GET["userid"])){
-			$user_id = $_GET["userid"];
-			$userdata = get_userdata($user_id);
+			$userId = $_GET["userid"];
+			$userdata = get_userdata($userId);
 			if($userdata != null){
-				$family = get_user_meta($user_id,"family",true);
-				$nonce_string = 'delete_user_'.$user_id.'_nonce';
+				$family = get_user_meta($userId,"family",true);
+				$nonce_string = 'delete_user_'.$userId.'_nonce';
 				
 				if(!isset($_GET["confirm"])){
 					echo '<script>
@@ -676,22 +676,22 @@ add_shortcode( 'delete_user', function(){
 							}
 						}
 						//Remove user account
-						wp_delete_user($user_id,1);
+						wp_delete_user($userId,1);
 						$html .= '<div class="success">Useraccount for '.$deleted_name.' succcesfully deleted.</div>';
 						echo "<script>
 							setTimeout(function(){
-								window.location = window.location.href.replace('/?userid=$user_id&delete_user_{$user_id}_nonce=".$_GET[$nonce_string]."&confirm=true','').replace('&family=true','');
+								window.location = window.location.href.replace('/?userid=$userId&delete_user_{$userId}_nonce=".$_GET[$nonce_string]."&confirm=true','').replace('&family=true','');
 							}, 3000);
 						</script>";
 					}
 				}
 				
 			}else{
-				$html .= '<div class="error">User with id '.$user_id.' does not exist.</div>';
+				$html .= '<div class="error">User with id '.$userId.' does not exist.</div>';
 			}
 		}
 		
-		$html .= SIM\user_select("Select an user to delete from the website:");
+		$html .= SIM\userSelect("Select an user to delete from the website:");
 		
 		return $html;
 	}
@@ -702,7 +702,7 @@ add_shortcode("userstatistics",function ($atts){
 
 	ob_start();
 
-	$users 		= SIM\get_user_accounts($return_family=false,$adults=true);
+	$users 		= SIM\getUserAccounts($return_family=false,$adults=true);
 
 	$baseUrl	= SIM\getValidPageLink(SIM\get_module_option('user_management', 'user_edit_page'));
 	?>

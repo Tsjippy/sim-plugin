@@ -133,11 +133,8 @@ function location_address($locationtypes, $post_id){
                 if($result == false){
                     //Check if marker exist, if not delete the metakey
                     if(!$maps->marker_exists($marker_ids['generic'])){
-                        SIM\print_array("Updating marker with id {$marker_ids['generic']} failed as it does not exist");
                         unset($marker_ids['generic']);
                     }
-                }else{
-                    SIM\print_array("Updating marker with id {$marker_ids['generic']} was succesfull");
                 }
             }
             
@@ -157,8 +154,6 @@ function location_address($locationtypes, $post_id){
                 
                 //Get the marker id
                 $marker_ids['generic'] = $wpdb->insert_id;
-                SIM\print_array("Created marker with id {$wpdb->insert_id} and title $title om map with id $map_id");
-                
             }
             
             /* 
@@ -187,11 +182,10 @@ function location_address($locationtypes, $post_id){
                 if($result == false){
                     //Check if marker exist, if not delete the metakey
                     if(!$maps->marker_exists($marker_ids['page_marker'])){
-                        SIM\print_array("Updating marker with id {$marker_ids['page_marker']} failed as it does not exist");
                         unset($marker_ids['page_marker']);
                     }
                 }else{
-                    SIM\print_array("Updated marker with id {$marker_ids['page_marker']} and title $title on map with id $map_id");
+                    SIM\printArray("Updated marker with id {$marker_ids['page_marker']} and title $title on map with id $map_id");
                 }
             }
             
@@ -220,8 +214,6 @@ function location_address($locationtypes, $post_id){
                     'address'		=> $address,
                 ));
                 $marker_ids['page_marker'] = $wpdb->insert_id;
-                
-                SIM\print_array("Created marker with id {$wpdb->insert_id} and title $title on map with id $map_id");
             }
             
             /* 
@@ -265,11 +257,10 @@ function location_address($locationtypes, $post_id){
                         if($result == false){
                             //Check if marker exist, if not delete the metakey
                             if(!$maps->marker_exists($marker_ids[$name])){
-                                SIM\print_array("Updating marker with id {$marker_ids[$name]} failed as it does not exist");
                                 unset($marker_ids[$name]);
                             }
                         }else{
-                            SIM\print_array("Updated marker with id {$marker_ids[$name]} and title $title on map with id $map_id");
+                            SIM\printArray("Updated marker with id {$marker_ids[$name]} and title $title on map with id $map_id");
                         }
                     }
                     
@@ -291,7 +282,7 @@ function location_address($locationtypes, $post_id){
                         //Get the marker id
                         $marker_ids[$name] = $wpdb->insert_id;
                         
-                        SIM\print_array("Created marker with id {$wpdb->insert_id} and title $title on map with id $map_id");
+                        SIM\printArray("Created marker with id {$wpdb->insert_id} and title $title on map with id $map_id");
                     }
                 }
             }

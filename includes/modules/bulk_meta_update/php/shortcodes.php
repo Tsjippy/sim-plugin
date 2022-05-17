@@ -24,7 +24,7 @@ add_shortcode('bulk_update_meta', function ($atts){
 				$meta_key_name 	= $a['key'];
 				$meta_key		= "";
 			}
-			$users = SIM\get_user_accounts();
+			$users = SIM\getUserAccounts();
 			$html = '';
 			foreach($users as $user){
 				$value 	= get_user_meta( $user->ID, $meta_key_base, true );
@@ -38,7 +38,7 @@ add_shortcode('bulk_update_meta', function ($atts){
 					$html .= "<div style='margin-top:50px;'>";
 						$html .= "<strong>{$user->display_name}</strong>";
 						$uploader = new SIM\Fileupload($user->ID, $meta_key, $a['folder'], true, $meta_key);
-						$html .= $uploader->get_upload_html();
+						$html .= $uploader->getUploadHtml();
 					$html .= '</div>';
 				}
 			}

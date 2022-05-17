@@ -452,7 +452,7 @@ class FormTable extends Formbuilder{
 			//loop over the cells
 			foreach ($row as $cell) {
 				if(is_array($cell)){
-					SIM\clean_up_nested_array($cell);
+					SIM\cleanUpNestedArray($cell);
 					$cell	= implode(',',$cell);
 				} 
 				/* 
@@ -1119,7 +1119,7 @@ class FormTable extends Formbuilder{
 				*/
 				//first check if the data contains data of our own
 				$this->owndata	= false;
-				$this->user->partner_id		= SIM\has_partner($this->user->ID);
+				$this->user->partner_id		= SIM\hasPartner($this->user->ID);
 				foreach($this->submission_data as $key=>$submission_data){
 					//Our own entry or one of our partner
 					if($submission_data->userid == $this->user->ID or $submission_data->userid == $this->user->partner_id){

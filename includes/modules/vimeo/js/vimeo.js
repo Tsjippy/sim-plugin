@@ -34,7 +34,7 @@ function load_vimeo_video(el) {
 				wrapper.style.margin	= 'auto';
 				wrapper.style.width		= 'fit-content';
 
-				wrapper.innerHTML	= '<img src="'+media_vars.loading_gif+'" style="max-height: 100px;"><br><b>Loading Vimeo video</b>';
+				wrapper.innerHTML	= '<img src="'+media_vars.loadingGif+'" style="max-height: 100px;"><br><b>Loading Vimeo video</b>';
 		
 				//add the div replacing the default video screen
 				var element	= document.querySelector('.wp-media-wrapper.wp-video');
@@ -122,12 +122,12 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
         uploader.removeFromStorage();
         
         //get wp post details
-        var formdata = new FormData();
-        formdata.append('post_id', uploader.storedEntry.postId);
+        var formData = new FormData();
+        formData.append('post_id', uploader.storedEntry.postId);
     
         var request = new XMLHttpRequest();
         request.open('POST', sim.base_url+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
-        request.send(formdata);
+        request.send(formData);
     
         //mark as uploaded
 	    wp_uploader.dispatchEvent('fileUploaded', plupload_file, request);

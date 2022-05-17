@@ -3,10 +3,10 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 //Add availbale partners as default
-add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id, $formname){
+add_filter( 'add_form_multi_defaults', function($default_array_values, $userId, $formname){
 	if($formname != 'user_family') return $default_array_values;
 	
-	$dropdowns = fill_family_dropdowns($user_id);
+	$dropdowns = fill_family_dropdowns($userId);
 
 	$default_array_values['Potential fathers'] 	= $dropdowns['father'];
 	$default_array_values['Potential mothers'] 	= $dropdowns['mother'];
@@ -17,10 +17,10 @@ add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id,
 },10,3);
 
 //Function used in the backend and frontend (family.php)
-function fill_family_dropdowns($user_id){
-	$birthday	= get_user_meta( $user_id, 'birthday', true );
-	$gender		= get_user_meta( $user_id, 'gender', true );
-	$family		= (array)get_user_meta( $user_id, 'family', true );
+function fill_family_dropdowns($userId){
+	$birthday	= get_user_meta( $userId, 'birthday', true );
+	$gender		= get_user_meta( $userId, 'gender', true );
+	$family		= (array)get_user_meta( $userId, 'family', true );
 
 	if(empty($family['children'])){
 		$children	= [];
@@ -58,7 +58,7 @@ function fill_family_dropdowns($user_id){
 	//Loop over all users to fill the dropdowns
 	foreach($users as $key=>$user){
 		//do not process the current user
-		if ($user->ID != $user_id){
+		if ($user->ID != $userId){
 			//Get the current gender
 			$current_user_gender	= get_user_meta( $user->ID, 'gender', true );
 			$current_user_birthday	= get_user_meta($user->ID, "birthday", true);
@@ -89,10 +89,10 @@ function fill_family_dropdowns($user_id){
 			*/
 			$hidden = '';
 			//Check if current processing user already has a spouse
-			$spouse = SIM\has_partner($user->ID);
+			$spouse = SIM\hasPartner($user->ID);
 
 			//if this is the spouse
-			if( $spouse == $user_id){
+			if( $spouse == $userId){
 				$dropdowns['spouse'][$user->ID] = $user->display_name;
 			//this user does not have a spouse         
 			}elseif (!is_numeric($spouse)){
@@ -111,13 +111,17 @@ function fill_family_dropdowns($user_id){
 			/*
 				Fill the child dropdowns
 			*/
-			$parent_objects	= SIM\get_parents($user->ID);
+			$parent_objects	= SIM\getParents($user->ID);
 			$parents 		= [];
-			foreach($parent_objects as $par){
-				$parents[]	= $par->ID;
+
+			if($parent_objects){
+				foreach($parent_objects as $par){
+					$parents[]	= $par->ID;
+				}
 			}
+			
 			if(
-				in_array($user_id,$parents)		or		// or is the current users child
+				in_array($userId,$parents)		or		// or is the current users child
 				(empty($parents)				and		//is not a child
 				($age_difference == null		or		//there is no age diff
 				$age_difference >16))					//the age diff is at least 16 years
@@ -130,14 +134,14 @@ function fill_family_dropdowns($user_id){
 }
 
 //Save family
-add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
+add_filter('before_saving_formdata',function($formresults, $formname, $userId){
 	if($formname != 'user_family') return $formresults;
 
 	$events	= new SIM\EVENTS\Events();
 	
 	$family = $formresults["family"];
 	
-	$old_family = (array)get_user_meta( $user_id, 'family', true );
+	$old_family = (array)get_user_meta( $userId, 'family', true );
 	
 	//Don't do anything if the current and the last family is equal
 	if($family != $old_family){
@@ -151,10 +155,10 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 				update_user_meta($family['partner'], 'family', $partner_family);
 			}
 
-			$events->create_celebration_event('Wedding anniversary', $user_id, 'family[weddingdate]', $family['weddingdate']);
+			$events->create_celebration_event('Wedding anniversary', $userId, 'family[weddingdate]', $family['weddingdate']);
 		}
 
-		$user_gender = get_user_meta( $user_id, 'gender', true );
+		$user_gender = get_user_meta( $userId, 'gender', true );
 		if(empty($user_gender)) $user_gender = 'male';
 		
 		if (isset($old_family['partner'])){
@@ -170,7 +174,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 			
 			if($family['partner'] != $old_partner){
 				//Store curent user as partner of the partner
-				$partner_family['partner'] = $user_id;
+				$partner_family['partner'] = $userId;
 				
 				//If I am updating this user to have a partner and that partner has children adds them to the current user as well
 				if (isset($partner_family['children']) and !isset($family['children']) and !isset($old_family['children'])){
@@ -229,13 +233,13 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 				
 				//Store current user as parent of the child
 				if($user_gender == 'male'){
-					$child_family["father"] = $user_id;
+					$child_family["father"] = $userId;
 					if (isset($family['partner'])){
 						//store current partner as parent of the child
 						$child_family["mother"] = $family['partner'];
 					}
 				}else{
-					$child_family["mother"] = $user_id;
+					$child_family["mother"] = $userId;
 					if (isset($family['partner'])){
 						//store current partner as parent of the child
 						$child_family["father"] = $family['partner'];
@@ -264,7 +268,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 			$picture_id	=  $family['picture'][0];
 			if(is_numeric($picture_id)) update_post_meta($picture_id, 'gallery_visibility', 'hide' );
 
-			do_action('sim_update_family_picture', $user_id, $family['picture'][0]);
+			do_action('sim_update_family_picture', $userId, $family['picture'][0]);
 
 			if (isset($family['partner'])){
 				$partner_family 			= (array)get_user_meta( $family['partner'], 'family', true );
@@ -277,7 +281,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		}
 		
 		//Save the family array
-		save_family_in_db($user_id, $family);
+		save_family_in_db($userId, $family);
 		if (isset($family['partner'])){
 			//Save the partners family array
 			update_user_meta( $family['partner'], 'family', $partner_family);
@@ -285,7 +289,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 		
 		//update user page if needed
 		if(function_exists('SIM\USERPAGE\create_user_page')){
-			SIM\USERPAGE\create_user_page($user_id);
+			SIM\USERPAGE\create_user_page($userId);
 		}
 	}
 	
@@ -293,20 +297,20 @@ add_filter('before_saving_formdata',function($formresults, $formname, $user_id){
 },10,3);
 
 //Save in db
-function save_family_in_db($user_id, $family){
+function save_family_in_db($userId, $family){
 	if(is_array($family)){
-		SIM\clean_up_nested_array($family);
+		SIM\cleanUpNestedArray($family);
 	}
 
 	if (count($family)==0){
 		//remove from db, there is no family anymore
-		delete_user_meta($user_id, "family");
+		delete_user_meta($userId, "family");
 	}else{
 		//Store in db
-		update_user_meta($user_id,"family",$family);
+		update_user_meta($userId,"family",$family);
 	}
 
-	do_action('sim_family_safe', $user_id);
+	do_action('sim_family_safe', $userId);
 }
 
 // add a family member modal

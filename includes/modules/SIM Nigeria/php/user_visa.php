@@ -7,7 +7,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 //Multi default values used to prefil the compound dropdown
-add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id, $formname){
+add_filter( 'add_form_multi_defaults', function($default_array_values, $userId, $formname){
 	if($formname != 'user_visa') return $default_array_values;
 	
 	$default_array_values['quotanames'] 			= QUOTANAMES;
@@ -15,7 +15,7 @@ add_filter( 'add_form_multi_defaults', function($default_array_values, $user_id,
 	return $default_array_values;
 },10,3);
 
-function visa_page($user_id, $message=false, $readonly=false){
+function visa_page($userId, $message=false, $readonly=false){
 	ob_start();
 	?>
 	<div>		
@@ -105,11 +105,11 @@ function export_visa_excel(){
 	
 	$row = 3;
 	//Get all adult missionaries
-	$users = SIM\get_user_accounts();
+	$users = SIM\getUserAccounts();
 	foreach($users as $user){
 		//skip non-valid users
 		if(empty($user->display_name)){
-			SIM\print_array("User with id {$user->ID} has not a valid display name");
+			SIM\printArray("User with id {$user->ID} has not a valid display name");
 			continue;
 		}
 		
@@ -158,14 +158,14 @@ function export_visa_excel(){
 	exit;
 }
 
-function exportVisaInfoPdf($user_id=0, $all=false) {
+function exportVisaInfoPdf($userId=0, $all=false) {
 	if($all == true){
 		//Build the frontpage
 		$pdf = new SIM\PDF\PDF_HTML();
 		$pdf->frontpage("Visa user info","");
 		
 		//Get all adult missionaries
-		$users = SIM\get_user_accounts();
+		$users = SIM\getUserAccounts();
 		foreach($users as $user){
 			$pdf->setHeaderTitle('Greencard information for '.$user->display_name);
 			$pdf->PageTitle($pdf->headertitle);
@@ -174,15 +174,15 @@ function exportVisaInfoPdf($user_id=0, $all=false) {
 	}else{
 		//Build the frontpage
 		$pdf = new SIM\PDF\PDF_HTML();
-		$pdf->frontpage("Visa user info for:",get_userdata($user_id)->display_name);
-		writeVisaPages($user_id, $pdf);
+		$pdf->frontpage("Visa user info for:",get_userdata($userId)->display_name);
+		writeVisaPages($userId, $pdf);
 	}
 	
 	$pdf->printpdf();
 }
 
-function writeVisaPages($user_id, $pdf){
-	$visa_info = get_user_meta( $user_id, "visa_info",true);
+function writeVisaPages($userId, $pdf){
+	$visa_info = get_user_meta( $userId, "visa_info",true);
 	if(!is_array($visa_info)){
 		$pdf->Write(10,"No greencard information found.");
 		return;
@@ -199,8 +199,8 @@ function writeVisaPages($user_id, $pdf){
 	$understudies_documents = [];
 
 	$understudiesarray	= [];
-	$info_1				= get_user_meta( $user_id, "understudy_1",true);
-	$info_2				= get_user_meta( $user_id, "understudy_2",true);
+	$info_1				= get_user_meta( $userId, "understudy_1",true);
+	$info_2				= get_user_meta( $userId, "understudy_2",true);
 	if(!empty($info_1)) $understudiesarray[1]	= $info_1;
 	if(!empty($info_2)) $understudiesarray[2]	= $info_2;
 
@@ -303,7 +303,7 @@ add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $
 					?>
 					<div class='export_button_wrapper' style='margin-top:50px;'>
 						<form  method='post'>
-							<input type='hidden' name='userid' id='userid' value='$user_id'>
+							<input type='hidden' name='userid' id='userid' value='$userId'>
 							<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export user data as PDF</button>
 						</form>
 						<form method='post'>

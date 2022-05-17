@@ -19,17 +19,17 @@ if(!class_exists('RobThree\Auth\TwoFactorAuth')){
 //https://robthree.github.io/TwoFactorAuth/getting-started.html
 function setupTimeCode(){
     $user                           = wp_get_current_user();
-    $user_id                        = $user->ID;
+    $userId                        = $user->ID;
     $twofa                          = new TwoFactorAuth();
     $setup_details                  = new stdClass();
     $setup_details->secretkey       = $twofa->createSecret();
 
-    update_user_meta($user_id,'2fa_hash',password_hash($setup_details->secretkey,PASSWORD_DEFAULT));
+    update_user_meta($userId,'2fa_hash',password_hash($setup_details->secretkey,PASSWORD_DEFAULT));
 
     if (!extension_loaded('imagick')){
-        $setup_details->image_html     = "<img src=".$twofa->getQRCodeImageAsDataUri(SITENAME." (".get_userdata($user_id)->user_login.")", $setup_details->secretkey).">";
+        $setup_details->image_html     = "<img src=".$twofa->getQRCodeImageAsDataUri(SITENAME." (".get_userdata($userId)->user_login.")", $setup_details->secretkey).">";
     }else{
-        $qrCodeUrl = $twofa->getQRText(SITENAME." (".get_userdata($user_id)->user_login.")",$setup_details->secretkey);
+        $qrCodeUrl = $twofa->getQRText(SITENAME." (".get_userdata($userId)->user_login.")",$setup_details->secretkey);
 
         $renderer = new ImageRenderer(
             new RendererStyle(400),
@@ -86,13 +86,13 @@ function send_2fa_warning_email($user){
 }
 
 //Reset 2fa
-function reset_2fa($user_id){
+function reset_2fa($userId){
 	global $wpdb;
 
 	//Remove all 2fa keys
-    $wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE '2fa%' AND user_id=$user_id" );
+    $wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE '2fa%' AND user_id=$userId" );
 	
-	$userdata = get_userdata($user_id);
+	$userdata = get_userdata($userId);
 	//Send email and signal message
 	SIM\try_send_signal(
 		"Hi ".$userdata->first_name.",\n\nYour account is unlocked you can now login using your credentials. Please enable 2FA as soon as possible",
@@ -210,7 +210,7 @@ add_action('wp_footer', function(){
         $url            = SIM\getValidPageLink($accountPageId);
         if(!$url) return;
 
-        SIM\print_array("Redirecting from ".SIM\current_url()." to $url");
+        SIM\printArray("Redirecting from ".SIM\currentUrl()." to $url");
         wp_redirect($url);
         exit();
     }

@@ -12,7 +12,7 @@ add_action('init', function(){
 	/*
 		CREATE RECIPE POST TYPE
 	*/
-	SIM\register_post_type_and_tax('recipe','recipes');
+	SIM\registerPostTypeAndTax('recipe','recipes');
 }, 999);
 
 add_filter( 'widget_categories_args', function ( $cat_args, $instance  ) {

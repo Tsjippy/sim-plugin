@@ -2,15 +2,22 @@
 namespace SIM;
 
 //Update user meta of a user and all of its relatives
-function update_family_meta($user_id, $metakey, $value){
+
+/**
+ * Update user meta for a specific key for the current user and all of its relatives
+ * @param  int		$userId 	WP_User id
+ * @param  string	metaKey		The meta key to update or create
+ * @param  string	value  		The new value            
+ */
+function updateFamilyMeta($userId, $metaKey, $value){
 	if($value == 'delete'){
-		delete_user_meta($user_id, $metakey);
+		delete_user_meta($userId, $metaKey);
 	}else{
-		update_user_meta( $user_id, $metakey, $value);
+		update_user_meta( $userId, $metaKey, $value);
 	}
 		
 	//Update the meta key for all family members as well
-	$family = get_user_meta($user_id,"family",true);
+	$family = get_user_meta($userId,"family",true);
 	if (is_array($family) and count($family)>0){
 		if (isset($family["children"])){
 			$family = array_merge($family["children"], $family);
@@ -18,46 +25,59 @@ function update_family_meta($user_id, $metakey, $value){
 		}
 		foreach($family as $relative){
 			if($value == 'delete'){
-				delete_user_meta($relative, $metakey);
+				delete_user_meta($relative, $metaKey);
 			}else{
 				//Update the marker for the relative as well
-				update_user_meta($relative, $metakey, $value);
+				update_user_meta($relative, $metaKey, $value);
 			}
 		}
 	}
 }
 
-//Create a dropdown with all users
-function user_select($text, $only_adults=false, $families=false, $class='', $id='user_selection', $args=[], $user_id='', $exclude_ids=[], $type='select'){
+/**
+ * Create a dropdown with all users
+ * @param 	string		$title	 		The title to display above the select
+ * @param	bool		$onlyAdults	 	Whether children should be excluded. Default false
+ * @param	bool		$families  		Whether we should group families in one entry default false
+ * @param	string		$class			Any extra class to be added to the dropdown default empty
+ * @param	string		$id				The name or id of the dropdown, default 'user-selection'    
+ * @param	array		$args    		Extra query arg to get the users  
+ * @param	int			$userId			The current selected user id
+ * @param	array		$excludeIds		An array of user id's to be excluded 
+ * @param	string		$type			Html input type Either select or list
+ * 
+ * @return	string						The html
+*/
+function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[], $type='select'){
 	wp_enqueue_script('sim_user_select_script');
 	$html = "";
 
-	if(!is_numeric($user_id))	$user_id = $_GET["userid"];
+	if(!is_numeric($userId))	$userId = $_GET["userid"];
 	
 	//Get the id and the displayname of all users
-	$users = get_user_accounts($families,$only_adults,true,[],$args);
-	$exists_array = array();
+	$users 			= getUserAccounts($families, $onlyAdults, true, [], $args);
+	$existsArray 	= array();
 
-	$exclude_ids[]	= 1;
+	$excludeIds[]	= 1;
 	
 	//Loop over all users to find duplicate displaynames
 	foreach($users as $key=>$user){
 		//remove any user who should not be in the dropdown
-		if(in_array($user->ID, $exclude_ids)){
+		if(in_array($user->ID, $excludeIds)){
 			unset($users[$key]);
 			continue;
 		}
 
 		//Get the full name
-		$full_name = strtolower("$user->first_name $user->last_name");
+		$fullName = strtolower("$user->first_name $user->last_name");
 		
 		//If the full name is already found
-		if (isset($exists_array[$full_name])){
+		if (isset($existsArray[$fullName])){
 			//Change current users last name
 			$user->last_name = "$user->last_name ($user->user_email)";
 			
 			//Change previous found users last name
-			$user = $users[$exists_array[$full_name]];
+			$user = $users[$existsArray[$fullName]];
 			
 			//But only if not already done
 			if(strpos($user->last_name, $user->user_email) === false ){
@@ -65,19 +85,19 @@ function user_select($text, $only_adults=false, $families=false, $class='', $id=
 			}
 		}else{
 			//User has a so far unique displayname, add to array
-			$exists_array[$full_name] = $key;
+			$existsArray[$fullName] = $key;
 		}
 	}
 	
 	$html .= "<div>";
-	if($text != ''){
-		$html .= "<h4>$text</h4>";
+	if(!empty($title)){
+		$html .= "<h4>$title</h4>";
 	}
 
 	if($type == 'select'){
 		$html .= "<select name='$id' class='$class user_selection'>";
 			foreach($users as $key=>$user){
-				if ($user_id == $user->ID){
+				if ($userId == $user->ID){
 					//Make this user the selected user
 					$selected='selected="selected"';
 				}else{
@@ -90,7 +110,7 @@ function user_select($text, $only_adults=false, $families=false, $class='', $id=
 		$value	= '';
 		$datalist = "<datalist id='$id' class='$class user_selection'>";
 			foreach($users as $key=>$user){
-				if ($user_id == $user->ID){
+				if ($userId == $user->ID){
 					//Make this user the selected user
 					$value	= $user->display_name;
 				}
@@ -107,31 +127,43 @@ function user_select($text, $only_adults=false, $families=false, $class='', $id=
 	return $html;
 }
 
-function current_url($exclude_scheme=false, $remove_get=false){
+/**
+ * Returns the current url
+ * 
+ * @return	string						The url
+*/
+function currentUrl(){
 	if(defined('REST_REQUEST')){
 		$url	 = trim(explode('?',$_SERVER['HTTP_REFERER'])[0],"/");
 	}else{
 		$url	 = '';
-		if($exclude_scheme == false)	$url .=	$_SERVER['REQUEST_SCHEME']."://";
+		$url 	.=	$_SERVER['REQUEST_SCHEME']."://";
 		$url	.=	$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 	}
 	return $url;
 }
 
-function url_to_path($url){
-	$site_url	= str_replace('https://', '', SITEURL);
-	$url		= str_replace('https://', '', $url);
+/**
+ * Transforms an url to a path
+ * @param 	string		$url	 		The url to be transformed
+ * 
+ * @return	string						The path
+*/
+function urlToPath($url){
+	$siteUrl	= str_replace(['https://', 'http://'], '', SITEURL);
+	$url		= str_replace(['https://', 'http://'], '', $url);
 	
-	//in case of http
-	$site_url	= str_replace('http://','',$site_url);
-	$url		= str_replace('http://','',$url);
-	
-	//print_array($site_url);
-	$path = str_replace(trailingslashit($site_url),ABSPATH,$url);
+	$path = str_replace(trailingslashit($siteUrl), ABSPATH, $url);
 	return $path;
 }
 
-function path_to_url($path){
+/**
+ * Transforms a path to an url
+ * @param 	string		$path	 		The path to be transformed
+ * 
+ * @return	string						The url
+*/
+function pathToUrl($path){
 	if(is_string($path)){
 		$base	= str_replace('\\', '/', ABSPATH);
 		$path	= str_replace('\\', '/', $path);
@@ -143,8 +175,13 @@ function path_to_url($path){
 	return $url;
 }
 
-function print_array($message,$display=false){
-	$bt = debug_backtrace();
+/**
+ * Prints something to the log file and optional to the screen
+ * @param 	string		$message	 	The message to be printed
+ * @param	bool		$display		Whether to print the message to the screen or not
+*/
+function printArray($message, $display=false){
+	$bt		= debug_backtrace();
 	$caller = array_shift($bt);
 	//always write to log
 	error_log("Called from file {$caller['file']} line {$caller['line']}");
@@ -166,7 +203,16 @@ function print_array($message,$display=false){
 	}
 }
 
-function page_select($select_id, $page_id=null, $class="", $postTypes=['page', 'location']){	
+/**
+ * Creates s dropdown to select a page
+ * @param 	string		$selectId	 	The id or name of the dropown
+ * @param	bool		$pageId	 		The current select page id default to empty
+ * @param	string		$class			Any extra class to be added to the dropdown default empty   
+ * @param	array		$postTypes    	The posttypes to include archive pages for. Defaults to pages and locations  
+ * 
+ * @return	string						The dropdown html
+*/
+function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'location']){	
 	$pages = get_posts(
 		array(
 			'orderby' 		=> 'post_title',
@@ -199,11 +245,11 @@ function page_select($select_id, $page_id=null, $class="", $postTypes=['page', '
 
 	asort($options);
 
-	$html = "<select name='$select_id' id='$select_id' class='selectpage $class'>";
+	$html = "<select name='$selectId' id='$selectId' class='selectpage $class'>";
 		$html .= "<option value=''>---</option>";
 	
 		foreach ( $options as $id=>$name ) {
-			if ($page_id == $id){
+			if ($pageId == $id){
 				$selected='selected=selected';
 			}else{
 				$selected="";
@@ -215,8 +261,14 @@ function page_select($select_id, $page_id=null, $class="", $postTypes=['page', '
 	return $html;
 }
 
-function get_child_title($user_id){
-	$gender = get_user_meta( $user_id, 'gender', true );
+/**
+ * Checks if a child is a son or daughter
+ * @param 	int		$userId	 	The User_ID of the child
+ * 
+ * @return	string				Either "son", "daughter" or 'child'
+*/
+function getChildTitle($userId){
+	$gender = get_user_meta( $userId, 'gender', true );
 	if($gender == 'male'){
 		$title = "son";
 	}elseif($gender == 'female'){
@@ -228,10 +280,15 @@ function get_child_title($user_id){
 	return $title;
 }
 
-//family flat array
-function family_flat_array($user_id){
-	$family = (array)get_user_meta( $user_id, 'family', true );
-	clean_up_nested_array($family);
+/**
+ * Gets the children array and add it to the main level of the array
+ * @param 	int		$userId	 	WP User_ID
+ * 
+ * @return	array				All family members in one array
+*/
+function familyFlatArray($userId){
+	$family = (array)get_user_meta( $userId, 'family', true );
+	cleanUpNestedArray($family);
 
 	//make the family array flat
 	if (isset($family["children"])){
@@ -242,9 +299,14 @@ function family_flat_array($user_id){
 	return $family;
 }
 
-//Check if user has partner
-function has_partner($user_id) {
-	$family = get_user_meta($user_id, "family", true);
+/**
+ * Check if user has partner
+ * @param 	int		$userId	 	WP User_ID
+ * 
+ * @return	int|false			The partner user id, or false if no partner
+*/
+function hasPartner($userId) {
+	$family = get_user_meta($userId, "family", true);
 	if(is_array($family)){
 		if (isset($family['partner']) and is_numeric($family['partner'])){
 			return $family['partner'];
@@ -256,9 +318,14 @@ function has_partner($user_id) {
 	}
 }
 
-//Get users parents
-function get_parents($user_id){
-	$family 	= get_user_meta( $user_id, 'family', true );
+/**
+ * Get users parents
+ * @param 	int		$userId	 	WP User_ID
+ * 
+ * @return	array|false			Array containing the id of the father and the mother, or false if no parents
+*/
+function getParents($userId){
+	$family 	= get_user_meta( $userId, 'family', true );
 	$parents 	= [];
 	foreach (["father","mother"] as $parent) {
 		if (isset($family[$parent])) {
@@ -268,12 +335,19 @@ function get_parents($user_id){
 			}
 		}
 	}
+
+	if(empty($parents)) return false;
 	return $parents;
 }
 
-//Function to check if a certain user is a child
-function is_child($user_id) {
-	$family = get_user_meta($user_id, "family", true);
+/**
+ * Function to check if a certain user is a child
+ * @param 	int		$userId	 	WP User_ID
+ * 
+ * @return	bool				True if a child, false if not
+*/
+function isChild($userId) {
+	$family = get_user_meta($userId, "family", true);
 	if(is_array($family)){
 		if(isset($family["father"]) or isset($family["mother"])){
 			return true;
@@ -285,8 +359,14 @@ function is_child($user_id) {
 	}
 }
 
-function get_age($user_id){
-	$birthday = get_user_meta( $user_id, 'birthday', true );
+/**
+ * Get an users age
+ * @param 	int		$userId	 	WP User_ID
+ * 
+ * @return	int					Age in years
+*/
+function getAge($userId){
+	$birthday = get_user_meta( $userId, 'birthday', true );
 	if(empty($birthday)) return false;
 
 	$birthDate = explode("-", $birthday);
@@ -299,7 +379,13 @@ function get_age($user_id){
 	return $age;
 }
 
-function number_to_words($number) {
+/**
+ * Converts an number to words
+ * @param 	string|int|float	the number to be converted
+ * 
+ * @return	string				the number in words
+*/
+function numberToWords($number) {
     $hyphen = '-';
     $conjunction = ' and ';
     $separator = ', ';
@@ -379,7 +465,7 @@ function number_to_words($number) {
     }
 
     if ($number < 0) {
-        return $negative . number_to_words(abs($number));
+        return $negative . numberToWords(abs($number));
     }
 
     $string = $fraction = null;
@@ -405,17 +491,17 @@ function number_to_words($number) {
             $remainder = $number % 100;
             $string = $dictionary[$hundreds] . ' ' . $dictionary[100];
             if ($remainder) {
-                $string .= $conjunction . number_to_words($remainder);
+                $string .= $conjunction . numberToWords($remainder);
             }
             break;
         default:
             $baseUnit = pow(1000, floor(log($number, 1000)));
             $numBaseUnits = (int) ($number / $baseUnit);
             $remainder = $number % $baseUnit;
-            $string = number_to_words($numBaseUnits) . ' ' . $dictionary[$baseUnit];
+            $string = numberToWords($numBaseUnits) . ' ' . $dictionary[$baseUnit];
             if ($remainder) {
                 $string .= $remainder < 100 ? $conjunction : $separator;
-                $string .= number_to_words($remainder);
+                $string .= numberToWords($remainder);
             }
             break;
     }
@@ -432,17 +518,18 @@ function number_to_words($number) {
     return $string;
 }
 
-function get_age_in_words($date){
-	$start_year = explode('-',$date)[0];
-	//get the difference with the current year
-	$age = date('Y')-$start_year;
-
-	return number_to_words($age);
-}
-
-function get_user_accounts($return_family=false,$adults=true,$fields=[],$extra_args=[]){
-	$do_not_process 		= [];
-	$cleaned_user_array 	= [];
+/**
+ * Create a dropdown with all users
+ * @param	bool		$returnFamily  	Whether we should group families in one entry default false
+ * @param	bool		$adults			Whether we should only get adults  
+ * @param	array		$fields    		Extra fields to return
+ * @param	array		$extraArgs		An array of extra query arguments
+ * 
+ * @return	array						An array of WP_Users
+*/
+function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraArgs=[]){
+	$doNotProcess 		= [];
+	$cleanedUserArray 	= [];
 	
 	$arg = array(
 		'orderby'	=> 'meta_value',
@@ -453,49 +540,54 @@ function get_user_accounts($return_family=false,$adults=true,$fields=[],$extra_a
 		$arg['fields'] = $fields;
 	}
 	
-	$arg = array_merge_recursive($arg,$extra_args);
+	$arg = array_merge_recursive($arg, $extraArgs);
 	
 	$users  = get_users($arg);
 	
 	//Loop over the users
 	foreach($users as $user){
 		//If we should only return families
-		if($return_family == true){
+		if($returnFamily == true){
 			$family = get_user_meta( $user->ID, 'family', true );
 			if ($family == ""){
 				$family = [];
 			}
 
 			//Current user is a child, exclude it
-			if (is_child($user->ID)){
-				$do_not_process[] = $user->ID;
+			if (isChild($user->ID)){
+				$doNotProcess[] = $user->ID;
 			//Check if this adult is not already in the list
-			}elseif(!in_array($user->ID, $do_not_process)){
+			}elseif(!in_array($user->ID, $doNotProcess)){
 				if (isset($family["partner"])){
-					$do_not_process[] = $family["partner"];
+					$doNotProcess[] = $family["partner"];
 					//Change the display name
 					$user->display_name = $user->last_name." family";
 				}
 			}
 		//Only returning adults, but this is a child
-		}elseif($adults == true and is_child($user->ID)){
-			$do_not_process[] = $user->ID;
+		}elseif($adults == true and isChild($user->ID)){
+			$doNotProcess[] = $user->ID;
 		}
 	}
 	
 	//Loop over the users again
 	foreach($users as $user){
 		//Add the user to the cleaned array if not in the donotprocess array
-		if(!in_array($user->ID,$do_not_process)){
-			$cleaned_user_array[] = $user;
+		if(!in_array($user->ID, $doNotProcess)){
+			$cleanedUserArray[] = $user;
 		}
 	}
 	
-	return $cleaned_user_array;
+	return $cleanedUserArray;
 }
 
-//Updated nested array based on array of keys
-function add_to_nested_array($keys, &$array=array(), $value=null) {
+/**
+ * Updated nested array based on array of keys
+ * @param	array		$keys  			The keys
+ * @param	array		$array			Reference to an array
+ * @param	string		$value    		The value to set
+*/
+function addToNestedArray($keys, &$array=array(), $value=null) {
 	//$temp point to the same content as $array
 	$temp =& $array;
 	if(!is_array($temp)) $temp = [];
@@ -511,12 +603,19 @@ function add_to_nested_array($keys, &$array=array(), $value=null) {
 	$temp[] = $value;
 }
 
-function remove_from_nested_array(&$array, $array_keys){
+/**
+ * Removes a key from a nested array based on array of keys
+ * @param	array		$array			Reference to an array
+ * @param	array		$arrayKeys    	Array of keys
+ * 
+ * @return array						The array
+*/
+function removeFromNestedArray(&$array, $arrayKeys){
 	if(!is_array($array)) return $array;
 
-	$last 		= array_key_last($array_keys);
+	$last 		= array_key_last($arrayKeys);
 	$current 	=& $array;
-    foreach($array_keys as $index=>$key){
+    foreach($arrayKeys as $index=>$key){
 		if($index == $last){
 			unset($current[$key]);
 		}else{
@@ -527,12 +626,16 @@ function remove_from_nested_array(&$array, $array_keys){
     return $current;
 }
 
-//clean up an array
-function clean_up_nested_array(&$array, $del_empty_arrays=false){
+/**
+ * Removes all empty values from array, if the emty value is an array keep it by default
+ * @param	array		$array			Reference to an array
+ * @param	bool		$delEmptyArrays Wheter to delete empty nested arrays or not. Default false
+*/
+function cleanUpNestedArray(&$array, $delEmptyArrays=false){
 	foreach ($array as $key => $value){
         if(is_array($value)){
-            clean_up_nested_array($value);
-			if(empty($value) and $del_empty_arrays){
+            cleanUpNestedArray($value);
+			if(empty($value) and $delEmptyArrays){
 				unset($array[$key]);
 			}else{
 				$array[$key] = $value;
@@ -543,22 +646,30 @@ function clean_up_nested_array(&$array, $del_empty_arrays=false){
     }
 }
 
-//get array value
-function get_meta_array_value($user_id, $metakey, $values=null){
-	if(empty($metakey)) return $values;
+/**
+ * Get the value of a given meta key
+ * @param	int		$userId			WP_User id
+ * @param	string	$metaKey    	The meta key we should get the value for
+ * @param	array	$values			The optional values of a metakey
+ * 
+ * @return string					The value
+*/
+function getMetaArrayValue($userId, $metaKey, $values=null){
+	if(empty($metaKey)) return $values;
 	
-	if($values === null and !empty($metakey)){
+	if($values === null and !empty($metaKey)){
 		//get the basemetakey in case of an indexed one
-		if(preg_match('/(.*?)\[/', $metakey, $match)){
-			$base_meta_key	= $match[1];
+		if(preg_match('/(.*?)\[/', $metaKey, $match)){
+			$baseMetaKey	= $match[1];
 		}else{
 			//just use the whole, it is not indexed
-			$base_meta_key	= $metakey;
+			$baseMetaKey	= $metaKey;
 		}
-		$values	= (array)get_user_meta($user_id,$base_meta_key,true);
+		$values	= (array)get_user_meta($userId, $baseMetaKey, true);
 	}
+
 	//Return the value of the variable whos name is in the keystringvariable
-	preg_match_all('/\[(.*?)\]/', $metakey, $matches);
+	preg_match_all('/\[(.*?)\]/', $metaKey, $matches);
 	if(is_array($matches[1])){
 		$value	= $values;
 		foreach($matches[1] as $match){
@@ -571,17 +682,6 @@ function get_meta_array_value($user_id, $metakey, $values=null){
 	}
 
 	return $value;
-}
-
-//Verify nonce
-function verify_nonce($nonce_string){
-	if(!isset($_POST[$nonce_string])){
-		return false;
-	}elseif(!wp_verify_nonce($_POST[$nonce_string], $nonce_string)){
-		return false;
-	}
-
-	return true;
 }
 
 function add_save_button($element_id, $button_text, $extraclass = ''){
@@ -602,7 +702,7 @@ function add_to_library($target_file, $title='', $description=''){
 		 
 		// Prepare an array of post data for the attachment.
 		$attachment = array(
-			'guid'           =>	path_to_url($target_file ), 
+			'guid'           =>	pathToUrl($target_file ), 
 			'post_mime_type' => $filetype['type'],
 			'post_title'     => $title,
 			'post_content'   => $description,
@@ -620,11 +720,11 @@ function add_to_library($target_file, $title='', $description=''){
 	}catch(\GuzzleHttp\Exception\ClientException $e){
 		$result = json_decode($e->getResponse()->getBody()->getContents());
 		$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-		print_array($error_result);
+		printArray($error_result);
 		if(isset($post_id)) return $post_id;
 	}catch(\Exception $e) {
 		$error_result = $e->getMessage();
-		print_array($error_result);
+		printArray($error_result);
 		if(isset($post_id)) return $post_id;
 	}
 }
@@ -641,11 +741,11 @@ function process_images($post){
 	wp_maybe_generate_attachment_metadata($image);
 }
  
-function get_module_option($module_name, $option){
+function get_module_option($moduleName, $option){
 	global $Modules;
 
-	if(!empty($Modules[$module_name][$option])){
-		return $Modules[$module_name][$option];
+	if(!empty($Modules[$moduleName][$option])){
+		return $Modules[$moduleName][$option];
 	}else{
 		return false;
 	}
@@ -751,45 +851,45 @@ function addUserAccount($first_name, $last_name, $email, $approved = false, $val
 		$userdata['role'] = 'subscriber';
 	}
 	//Insert the user
-	$user_id = wp_insert_user( $userdata ) ;
+	$userId = wp_insert_user( $userdata ) ;
 	// User creation failed
-	if(is_wp_error($user_id)){
-		print_array($user_id->get_error_message());
-		return new \WP_Error('User creation', $user_id->get_error_message());
+	if(is_wp_error($userId)){
+		printArray($userId->get_error_message());
+		return new \WP_Error('User creation', $userId->get_error_message());
 	}
 	
 	if($approved){
-		delete_user_meta( $user_id, 'disabled');
-		wp_send_new_user_notifications($user_id, 'user');
+		delete_user_meta( $userId, 'disabled');
+		wp_send_new_user_notifications($userId, 'user');
 
-		do_action('sim_after_user_approval', $user_id);
+		do_action('sim_after_user_approval', $userId);
 	}else{
 		//Make the useraccount inactive
-		update_user_meta( $user_id, 'disabled', 'pending');
+		update_user_meta( $userId, 'disabled', 'pending');
 	}
 
 	//Store the validity
-	update_user_meta( $user_id, 'account_validity', $validity);
+	update_user_meta( $userId, 'account_validity', $validity);
 	
 	//Force an account update
-	do_action( 'profile_update', $user_id, get_userdata($user_id));
+	do_action( 'profile_update', $userId, get_userdata($userId));
 	
 	// Return the user id
-	return $user_id;
+	return $userId;
 }
 
-function getUserPageId($user_id){
-    return get_user_meta($user_id,"user_page_id",true);
+function getUserPageId($userId){
+    return get_user_meta($userId,"user_page_id",true);
 }
 
 // Get the users description page
-function getUserPageUrl($user_id){
+function getUserPageUrl($userId){
 	//Get the user page of this user
-	$user_page_id = getUserPageId($user_id);
+	$user_page_id = getUserPageId($userId);
 	
 	if(!is_numeric($user_page_id) or get_post_status($user_page_id ) != 'publish'){
         if(function_exists('SIM\USERPAGE\create_user_page')){
-			$user_page_id = USERPAGE\create_user_page($user_id);
+			$user_page_id = USERPAGE\create_user_page($userId);
 		}
 
         if(!$user_page_id) return false;
@@ -833,7 +933,7 @@ function getValidPageLink($postId){
 	$link      = get_page_link($postId);
 
 	//Only redirect if we are not currently on the page already
-	if(strpos(current_url(), $link) !== false) return false;
+	if(strpos(currentUrl(), $link) !== false) return false;
 
 	return $link;
 }

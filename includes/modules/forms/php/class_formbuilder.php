@@ -159,7 +159,7 @@ class Formbuilder{
 		$elementindex	= $this->formdata->element_mapping[$id];
 
 		if(!isset($this->formdata->element_mapping[$id])){
-			SIM\print_array("Element with id $id not found");
+			SIM\printArray("Element with id $id not found");
 			return false;
 		}
 					
@@ -284,7 +284,7 @@ class Formbuilder{
 			$this->formdata->emails = maybe_unserialize($this->formdata->emails);
 		}
 		
-		if($wpdb->last_error !== '')		SIM\print_array($wpdb->print_error());
+		if($wpdb->last_error !== '')		SIM\printArray($wpdb->print_error());
 		
 		$this->jsfilename	= plugin_dir_path(__DIR__)."js/dynamic/{$this->formdata->name}forms";
 	}
@@ -414,24 +414,24 @@ class Formbuilder{
 		}
 	}
 	
-	function get_submission_data($user_id=null, $submission_id=null){
+	function get_submission_data($userId=null, $submission_id=null){
 		global $wpdb;
 		
 		$query				= "SELECT * FROM {$this->submissiontable_name} WHERE form_id={$this->formdata->id}";
 		if(is_numeric($submission_id)){
 			$query .= " and id='$submission_id'";
-		}elseif(is_numeric($user_id)){
-			$query .= " and userid='$user_id'";
+		}elseif(is_numeric($userId)){
+			$query .= " and userid='$userId'";
 		}
 		
 		if(!$this->show_archived and $submission_id == null){
 			$query .= " and archived=0";
 		}
 
-		$query	= apply_filters('formdata_retrieval_query', $query, $user_id, $this->datatype);
+		$query	= apply_filters('formdata_retrieval_query', $query, $userId, $this->datatype);
 
 		$result	= $wpdb->get_results($query);
-		$result	= apply_filters('retrieved_formdata', $result, $user_id, $this->datatype);
+		$result	= apply_filters('retrieved_formdata', $result, $userId, $this->datatype);
 
 		$this->submission_data		= $result;
 		
@@ -439,7 +439,7 @@ class Formbuilder{
 
 		$this->formresults 			= maybe_unserialize($this->submission_data->formresults);
 		
-		if($wpdb->last_error !== '')		SIM\print_array($wpdb->print_error());
+		if($wpdb->last_error !== '')		SIM\printArray($wpdb->print_error());
 	}
 	
 	function build_defaults_array(){
@@ -546,16 +546,16 @@ class Formbuilder{
 			if(empty($this->formdata->settings['save_in_meta'])){
 				$library	= false;
 				$metakey	= '';
-				$user_id	= '';
+				$userId	= '';
 			}else{
 				$library	= $element->library;
 				$metakey	= $name;
-				$user_id	= $this->user_id;
+				$userId	= $this->user_id;
 			}
 			//Load js			
-			$uploader = new SIM\Fileupload($user_id, $name, $targetdir, $element->multiple, $metakey, $library, '', false);
+			$uploader = new SIM\Fileupload($userId, $name, $targetdir, $element->multiple, $metakey, $library, '', false);
 			
-			$html = $uploader->get_upload_html($el_options);
+			$html = $uploader->getUploadHtml($el_options);
 		}else{
 			/*
 				ELEMENT TAG NAME
@@ -1268,7 +1268,7 @@ class Formbuilder{
 			}elseif(is_numeric($_POST['submissionid'])){
 				$submission_id	= $_POST['submissionid'];
 			}else{
-				SIM\print_array('No submission id found');
+				SIM\printArray('No submission id found');
 				return false;
 			}
 		}	
@@ -1292,15 +1292,15 @@ class Formbuilder{
 			if(defined('REST_REQUEST')){
 				return new WP_Error('form error', $message);
 			}else{
-				SIM\print_array($message);
+				SIM\printArray($message);
 			}
 		}elseif($result == false){
 			$message	= "No row with id $submission_id found";
 			if(defined('REST_REQUEST')){
 				return new WP_Error('form error', $message);
 			}else{
-				SIM\print_array($message);
-				SIM\print_array($this->formresults);
+				SIM\printArray($message);
+				SIM\printArray($this->formresults);
 			}
 		}
 		
@@ -1361,7 +1361,7 @@ class Formbuilder{
 					$from		= $this->process_placeholders($email['from']);
 				}
 				if($from == ''){
-					SIM\print_array("No from email found for email $key");
+					SIM\printArray("No from email found for email $key");
 				}
 								
 				$to		= '';
@@ -1371,16 +1371,15 @@ class Formbuilder{
 					$to		= $this->process_placeholders($email['to']);
 				}
 				
-				if($to == ''){
-					SIM\print_array("No to email found for email $key");
+				if(empty($to)){
+					SIM\printArray("No to email found for email $key");
 					continue;
 				}
 
 				$subject	= $this->process_placeholders($email['subject']);
 				$message	= $this->process_placeholders($email['message']);
 				$headers	= explode("\n",$email['headers']);
-				$headers[]	= 'Content-Type: text/html; charset=UTF-8';
-				if($from != ''){$headers[]	= "Reply-To: $from";}
+				if(!empty($from)){$headers[]	= "Reply-To: $from";}
 				
 				$files		= $this->process_placeholders($email['files']);
 				
@@ -1388,9 +1387,10 @@ class Formbuilder{
 				if($_SERVER['HTTP_HOST'] != 'localhost'){
 					add_filter('sim_email_footer_url', [$this, 'email_footer']);
 
+					SIM\printArray("Sending e-mail to $to");
 					$result = wp_mail($to , $subject, $message, $headers, $files);
 					if($result === false){
-						SIM\print_array("Sending the e-mail failed");
+						SIM\printArray("Sending the e-mail failed");
 					}
 					remove_filter('sim_email_footer_url', [$this, 'email_footer']);
 				}
@@ -1426,7 +1426,7 @@ class Formbuilder{
 				//Execute the regex
 				preg_match_all($pattern, $trigger_value,$matches);
 				if(!is_array($matches[1])){
-					SIM\print_array($matches[1]);
+					SIM\printArray($matches[1]);
 				}else{
 					foreach((array)$matches[1] as $key=>$keyword){
 						//If the keyword is a valid date keyword
@@ -1543,7 +1543,8 @@ class Formbuilder{
 				},$files);
 			}else{
 				//replace the placeholder with the value
-				$string = str_replace("%$match%", str_replace('_',' ',$this->formresults[$match]), $string);
+				$replaceValue	= str_replace('_', ' ', $this->formresults[$match]);
+				$string 		= str_replace("%$match%", $replaceValue, $string);
 			}
 		}
 		
@@ -1582,7 +1583,7 @@ class Formbuilder{
 			}
 
 			if(!file_exists($js_path)){
-				SIM\print_array("$js_path does not exist!\nBuilding it now");
+				SIM\printArray("$js_path does not exist!\nBuilding it now");
 				
 				$path	= plugin_dir_path(__DIR__)."js/dynamic";
 				if (!is_dir($path)) {
@@ -1595,7 +1596,7 @@ class Formbuilder{
 
 			//Only enqueue if there is content in the file
 			if(file_exists($js_path) and filesize($js_path) > 0){
-				wp_enqueue_script( "dynamic_{$this->datatype}forms", SIM\path_to_url($js_path), array('sim_forms_script'), $this->formdata->version, true);
+				wp_enqueue_script( "dynamic_{$this->datatype}forms", SIM\pathToUrl($js_path), array('sim_forms_script'), $this->formdata->version, true);
 			}
 		}
 		
@@ -1606,7 +1607,7 @@ class Formbuilder{
 			if($this->editrights == true){
 				//redirect  to formbuilder if we have rights and no formfields defined yet
 				if(empty($this->form_elements) and !isset($_GET['formbuilder'])){
-					$url = SIM\current_url();
+					$url = SIM\currentUrl();
 					if(strpos($url,'?') === false){
 						$url .= '/?';
 					}else{
@@ -1706,7 +1707,7 @@ class Formbuilder{
 		if(!empty($formname)) echo "<h3>$formname</h3>";	
 
 		if(array_intersect($this->user_roles,$this->submit_roles) != false and !empty($this->formdata->settings['save_in_meta'])){
-			echo SIM\user_select("Select an user to show the data of:");
+			echo SIM\userSelect("Select an user to show the data of:");
 		}
 		echo do_action('before_form',$this->datatype);
 
@@ -1721,7 +1722,7 @@ class Formbuilder{
 		<form action='' method='post' class='<?php echo $form_class;?>' <?php echo $dataset;?>>
 			<div class='form_elements'>
 				<input type='hidden' name='formid'		value='<?php echo $this->formdata->id;?>'>
-				<input type='hidden' name='formurl'		value='<?php echo SIM\current_url();?>'>
+				<input type='hidden' name='formurl'		value='<?php echo SIM\currentUrl();?>'>
 				<input type='hidden' name='userid'		value='<?php echo $this->user_id;?>'>
 		<?php		
 			$this->labelwritten = false;
@@ -1823,7 +1824,7 @@ class Formbuilder{
 						if(!empty($settings['formnurl'])){
 							$url	= $settings['formnurl'];
 						}else{
-							$url	= str_replace(['?formbuilder=yes', '&formbuilder=yes'], '', SIM\current_url());
+							$url	= str_replace(['?formbuilder=yes', '&formbuilder=yes'], '', SIM\currentUrl());
 						}
 
 						?>
@@ -2825,7 +2826,6 @@ class Formbuilder{
 		</form>
 		<?php
 		$html = ob_get_clean();
-		//print_array($html);
 		return $html;
 	}
 
@@ -2914,7 +2914,6 @@ class Formbuilder{
 		</div>
 		<?php
 		$html = ob_get_clean();
-		//print_array($html);
 		return $html;
 	}
 
@@ -2924,7 +2923,7 @@ class Formbuilder{
 		//check if form row already exists
 		if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `name` = '{$this->datatype}'") != true){
 			//Create a new form row
-			SIM\print_array("Inserting new form in db");
+			SIM\printArray("Inserting new form in db");
 			
 			$this->insert_form();
 		}
@@ -2935,7 +2934,7 @@ class Formbuilder{
 		foreach ($uploaded_files as $key => $url){
 			$urlparts 	= explode('/',$url);
 			$filename	= end($urlparts);
-			$path		= SIM\url_to_path($url);
+			$path		= SIM\urlToPath($url);
 			$targetdir	= str_replace($filename,'',$path);
 			
 			//add input name to filename

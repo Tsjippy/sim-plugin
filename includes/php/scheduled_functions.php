@@ -43,9 +43,9 @@ function schedule_task($taskname, $recurrence){
 
 	//schedule
 	if(wp_schedule_event( $time, $recurrence, $taskname )){
-		print_array("Succesfully scheduled $taskname to run $recurrence");
+		printArray("Succesfully scheduled $taskname to run $recurrence");
 	}else{
-		print_array("Scheduling of $taskname unsuccesfull");
+		printArray("Scheduling of $taskname unsuccesfull");
 	}
 }
 

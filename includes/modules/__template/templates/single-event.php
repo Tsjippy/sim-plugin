@@ -20,7 +20,7 @@ get_header(); ?>
 			endwhile;
 			?>
 		</main>
-		<?php SIM\show_comments(); ?>
+		<?php SIM\showComments(); ?>
 	</div>
 
 <?php

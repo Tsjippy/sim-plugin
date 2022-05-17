@@ -32,7 +32,7 @@ function bulkchangeMeta($metaKey, $allowedRoles, $returnFamily){
 				</thead>";
 		
 		//Get all users who are non-local nigerias, sort by last name
-		foreach(SIM\get_user_accounts($returnFamily) as $user){
+		foreach(SIM\getUserAccounts($returnFamily) as $user){
 			$value 	= get_user_meta( $user->ID, $metaKeyBase, true );
 			
 			//Check if the value is an array

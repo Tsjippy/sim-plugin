@@ -21,14 +21,14 @@ add_action( 'admin_menu', function() {
 
 	foreach($modules as $module){
 		$moduleSlug	= basename($module);
-		$module_name	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
+		$moduleName	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
 		
 		//do not load admin and template menu
 		if(in_array($moduleSlug, ['__template', 'admin'])) continue;
 		
 		//check module page exists
 		if(!file_exists($module.'/php/module_menu.php')){
-			SIM\print_array("Module page does not exist for module $module_name");
+			SIM\printArray("Module page does not exist for module $moduleName");
 			continue;
 		}
 
@@ -36,7 +36,7 @@ add_action( 'admin_menu', function() {
 		require_once($module.'/php/module_menu.php');
 		if(file_exists($module.'/php/class_emails.php'))	include_once($module.'/php/class_emails.php');
 
-		add_submenu_page('sim', $module_name." module", $module_name, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\build_submenu");
+		add_submenu_page('sim', $moduleName." module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\build_submenu");
 	}
 });
 
@@ -45,7 +45,7 @@ function build_submenu(){
 	global $Modules;
 
 	$moduleSlug	= str_replace('sim_','',$plugin_page);
-	$module_name	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
+	$moduleName	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
 	$settings		= $Modules[$moduleSlug];
 
 	echo '<div class="module-settings">';
@@ -58,10 +58,10 @@ function build_submenu(){
 			<?php
 		}
 		?>
-		<h1><?php echo $module_name;?> module</h1>
+		<h1><?php echo $moduleName;?> module</h1>
 		<?php 
 		ob_start();
-		do_action('sim_submenu_description', $moduleSlug, $module_name);
+		do_action('sim_submenu_description', $moduleSlug, $moduleName);
 		$description = ob_get_clean();
 
 		if(!empty($description)){
@@ -73,7 +73,7 @@ function build_submenu(){
 		
 		<form action="" method="post">
 			<input type='hidden' name='module' value='<?php echo $moduleSlug;?>'>
-			Enable <?php echo $module_name;?> module 
+			Enable <?php echo $moduleName;?> module 
 			<label class="switch">
 				<input type="checkbox" name="enable" <?php if($settings['enable']) echo 'checked';?>>
 				<span class="slider round"></span>
@@ -83,7 +83,7 @@ function build_submenu(){
 			<div class='options' <?php if(!$settings['enable']) echo "style='display:none'";?>>
 				<?php 
 				ob_start();
-				do_action('sim_submenu_options', $moduleSlug, $module_name, $settings);
+				do_action('sim_submenu_options', $moduleSlug, $moduleName, $settings);
 				$html	= ob_get_clean();
 				if(empty($html)){
 					$html = '<div>No special settings needed for this module</div>';
@@ -94,7 +94,7 @@ function build_submenu(){
 			</div>
 			<br>
 			<br>
-			<input type="submit" value="Save <?php echo $module_name;?> options">
+			<input type="submit" value="Save <?php echo $moduleName;?> options">
 		</form> 
 		<br>
 	</div>
@@ -112,12 +112,12 @@ function main_menu(){
 	$inactive	= [];
 	foreach($modules as $module){
 		$moduleSlug	= basename($module);
-		$module_name	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
+		$moduleName	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
 		
 		if(in_array($moduleSlug, array_keys($Modules))){
-			$active[$moduleSlug]	= $module_name;
+			$active[$moduleSlug]	= $moduleName;
 		}elseif($moduleSlug != "__template"){
-			$inactive[$moduleSlug]	= $module_name;
+			$inactive[$moduleSlug]	= $moduleName;
 		}
 	}
 	

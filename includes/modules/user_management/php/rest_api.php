@@ -187,35 +187,35 @@ function createUserAccount(){
 	}
 	
 	//Create the account
-	$user_id = SIM\addUserAccount($firstName, $lastName, $email, $approved, $validity);
-	if(is_wp_error($user_id))   return $user_id;
+	$userId = SIM\addUserAccount($firstName, $lastName, $email, $approved, $validity);
+	if(is_wp_error($userId))   return $userId;
 	
     if(in_array('usermanagement', $userRoles)){
-        $url = SITEURL."/update-personal-info/?userid=$user_id";
+        $url = SITEURL."/update-personal-info/?userid=$userId";
         $message = "Succesfully created an useraccount for $firstName<br>You can edit the deails <a href='$url'>here</a>";
     }else{
         $message = "Succesfully created useraccount for $firstName<br>You can now select $firstName in the dropdowns";
     }
 
-	do_action('sim_after_user_account_creation', $user_id);
+	do_action('sim_after_user_account_creation', $userId);
 		
 	return [
         'message'	=> $message,
-        'user_id'		=> $user_id
+        'user_id'		=> $userId
     ];
 }
 
 function extendValidity(){
-	$user_id = $_POST['userid'];
+	$userId = $_POST['userid'];
     if(isset($_POST['unlimited']) and $_POST['unlimited'] == 'unlimited'){
         $date       = 'unlimited';
-        $message    = "Marked the useraccount for ".get_userdata($user_id)->first_name." to never expire.";
+        $message    = "Marked the useraccount for ".get_userdata($userId)->first_name." to never expire.";
     }else{
         $date       = sanitize_text_field($_POST['new_expiry_date']);
         $date_str   = date('d-m-Y', strtotime($date));
-        $message    = "Extended valitidy for ".get_userdata($user_id)->first_name." till $date_str";
+        $message    = "Extended valitidy for ".get_userdata($userId)->first_name." till $date_str";
     }
-    update_user_meta( $user_id, 'account_validity',$date);
+    update_user_meta( $userId, 'account_validity',$date);
 	
     return $message;
 }

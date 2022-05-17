@@ -59,7 +59,7 @@ add_action('sim_after_post_save', function($post){
 		//Store in DB
 		}else{
 			$audiences = $_POST['pagetype'];
-			SIM\clean_up_nested_array($audiences);
+			SIM\cleanUpNestedArray($audiences);
 			
 			//Only continue if there are audiences defined
 			if(count($audiences)>0){

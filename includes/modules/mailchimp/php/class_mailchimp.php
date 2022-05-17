@@ -6,15 +6,15 @@ use SIM;
 
 if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 	class Mailchimp{
-		public $user_id;
+		public $userId;
 		
-		function __construct($user_id=''){
+		function __construct($userId=''){
 			global $Modules;
 
 			$this->settings		= $Modules['mailchimp'];
 			
-			if(is_numeric($user_id)){
-				$this->user			= get_userdata($user_id);
+			if(is_numeric($userId)){
+				$this->user			= get_userdata($userId);
 				
 				//Get phone number
 				$this->phonenumbers = get_user_meta( $this->user->ID, "phonenumbers",true);
@@ -55,7 +55,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		function add_to_mailchimp(){			
 			//Only do if valid e-mail
 			if($this->user->user_email != '' and strpos($this->user->user_email,'.empty') === false){
-				SIM\print_array("Adding '{$this->user->user_email}' to Mailchimp");
+				SIM\printArray("Adding '{$this->user->user_email}' to Mailchimp");
 				
 				//First add to the audience
 				$this->subscribe_member($this->build_merge_tags());
@@ -81,7 +81,6 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			
 			//Loop over all the segments
 			foreach($tags as $tag){
-				//print_array("Processing $tag");
 				//Only update if needed
 				if($tag != ""){
 					if($status == 'active' and (!isset($this->mailchimpstatus[$tag]) or $this->mailchimpstatus[$tag] != 'succes')){
@@ -90,10 +89,10 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 						
 						//Subscription succesfull
 						if( $response == 'succes' ){
-							SIM\print_array("Succesfully added the $tag tag to {$this->user->display_name}");
+							SIM\printArray("Succesfully added the $tag tag to {$this->user->display_name}");
 						//Subscription failed
 						}else{
-							SIM\print_array("Tag $tag  was not added to user wih email {$this->user->user_mail}} because: $response" );
+							SIM\printArray("Tag $tag  was not added to user wih email {$this->user->user_mail}} because: $response" );
 						}
 					
 						//Store result
@@ -104,11 +103,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 						
 						//Unsubscription succesfull
 						if( $response == 'succes' ){
-							SIM\print_array("Succesfully removed the $tag tag from {$this->user->display_name}");
+							SIM\printArray("Succesfully removed the $tag tag from {$this->user->display_name}");
 							unset($this->mailchimpstatus[$tag]);
 						//Subscription failed
 						}else{
-							SIM\print_array("Tag $tag  was not removed from user {$this->user->display_name} because: $response" );
+							SIM\printArray("Tag $tag  was not removed from user {$this->user->display_name} because: $response" );
 						}
 					}
 				}
@@ -152,13 +151,13 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 
 			//catch exception
 			catch(\GuzzleHttp\Exception\ClientException $e){
-				$result = json_decode($e->getResponse()->getBody()->getContents());
-				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\print_array($error_result);
+				$result			= json_decode($e->getResponse()->getBody()->getContents());
+				$error_result	= $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+				SIM\printArray($error_result);
 				return $error_result;
 			}catch(\Exception $e) {
-				$error_result = $e->getMessage();
-				SIM\print_array($error_result);
+				$error_result	= $e->getMessage();
+				SIM\printArray($error_result);
 				return $error_result;
 			}
 		}
@@ -172,13 +171,13 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 
 			//catch exception
 			catch(\GuzzleHttp\Exception\ClientException $e){
-				$result = json_decode($e->getResponse()->getBody()->getContents());
-				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\print_array($error_result);
+				$result			= json_decode($e->getResponse()->getBody()->getContents());
+				$error_result	= $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+				SIM\printArray($error_result);
 				return $error_result;
 			}catch(\Exception $e) {
 				$error_result = $e->getMessage();
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}
 		}
@@ -195,11 +194,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
 				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}catch(\Exception $e) {
 				$error_result = $e->getMessage();
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}
 		}
@@ -218,11 +217,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
 				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}catch(\Exception $e) {
 				$error_result = $e->getMessage();
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}
 		}
@@ -249,11 +248,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
 				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}catch(\Exception $e) {
 				$error_result = $e->getMessage();
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}
 		}
@@ -297,11 +296,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				}
 
 				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}catch(\Exception $e) {
 				$error_result = $e->getMessage();
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}
 		}
@@ -321,7 +320,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					$email		= $from;
 				}
 				
-				SIM\print_array("Creating mailchimp campain");
+				SIM\printArray("Creating mailchimp campain");
 				//Create a campain
 				try{
 					$response = $this->client->campaigns->create(
@@ -347,17 +346,17 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				}catch(\GuzzleHttp\Exception\ClientException $e){
 					$result = json_decode($e->getResponse()->getBody()->getContents());
 					$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-					SIM\print_array($error_result);
+					SIM\printArray($error_result);
 					return $error_result;
 				}catch(\Exception $e) {
 					$error_result = $e->getMessage();
-					SIM\print_array($error_result);
+					SIM\printArray($error_result);
 					return $error_result;
 				}
 							
 				//Get the campain id
 				$campain_id = $response->id;
-				SIM\print_array("Campain_id is $campain_id");
+				SIM\printArray("Campain_id is $campain_id");
 				
 				//get the campain html
 				$response 			= $this->client->campaigns->getContent($campain_id);
@@ -383,7 +382,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				//Send the campain
 				$response = $this->client->campaigns->send($campain_id);
 				
-				SIM\print_array("Mailchimp campain send succesfully");
+				SIM\printArray("Mailchimp campain send succesfully");
 				return 'succes';
 			}
 			
@@ -391,11 +390,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
 				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}catch(\Exception $e) {
 				$error_result = $e->getMessage();
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}
 		}
@@ -404,7 +403,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		function get_segments(){
 			if(empty($this->settings['audienceids'][0])){
 				$error	= 'No Audience defined in mailchimp module settings';
-				SIM\print_array($error);
+				SIM\printArray($error);
 				return $error;
 			}
 
@@ -425,11 +424,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
 				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				//print_array($result->detail);
+				//printArray($result->detail);
 				return $error_result;
 			}catch(\Exception $e) {
 				$error_result = $e->getMessage();
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}
 		}
@@ -455,11 +454,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
 				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}catch(\Exception $e) {
 				$error_result = $e->getMessage();
-				SIM\print_array($error_result);
+				SIM\printArray($error_result);
 				return $error_result;
 			}
 		}
@@ -469,7 +468,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			$this->change_tags($this->user->ID, $tags, $status);
 				
 			//Update the meta key for all family members as well
-			$family = SIM\family_flat_array($this->user->ID);
+			$family = SIM\familyFlatArray($this->user->ID);
 			if (count($family)>0){
 				foreach($family as $relative){
 					//Update the marker for the relative as well

@@ -4,7 +4,7 @@ use SIM;
 
 const ModuleVersion		= '7.0.0';
 
-add_action('sim_submenu_description', function($moduleSlug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
@@ -18,7 +18,7 @@ add_action('sim_submenu_description', function($moduleSlug, $module_name){
 
 },10,2);
 
-add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	

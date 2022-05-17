@@ -8,7 +8,7 @@ add_filter('sim_frontend_posting_modals', function($types){
 });
 
 add_action('init', function(){
-	SIM\register_post_type_and_tax('event', 'events');
+	SIM\registerPostTypeAndTax('event', 'events');
 	add_action('frontend_post_before_content', __NAMESPACE__.'\event_specific_fields');
 	add_action('frontend_post_content_title', __NAMESPACE__.'\event_title');
 	
@@ -98,7 +98,7 @@ function event_specific_fields($frontEndContent){
 			<input type='text'							name='event[organizer]'		value='<?php echo $eventdetails['organizer']; ?>' list="users">
 			<datalist id="users">
 				<?php
-				foreach(SIM\get_user_accounts(false,true,true) as $user){
+				foreach(SIM\getUserAccounts(false,true,true) as $user){
 					echo "<option data-value='{$user->ID}' value='{$user->display_name}'></option>";
 				}
 				?>

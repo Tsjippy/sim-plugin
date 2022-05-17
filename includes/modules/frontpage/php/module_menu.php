@@ -4,7 +4,7 @@ use SIM;
 
 const ModuleVersion		= '7.0.2';
 
-add_action('sim_submenu_description', function($moduleSlug, $module_name){
+add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
@@ -26,7 +26,7 @@ add_action('sim_submenu_description', function($moduleSlug, $module_name){
 	}
 },10,2);
 
-add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
@@ -47,13 +47,13 @@ add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings)
 	<h5> First button</h5>
 	Select the page you want to connect to the first button.<br>
 	<?php
-	echo SIM\page_select("first_button", $settings["first_button"]);
+	echo SIM\pageSelect("first_button", $settings["first_button"]);
 	?>
 
 	<h5> Second button</h5>
 	Select the page you want to connect to the second button.<br>
 	<?php
-	echo SIM\page_select("second_button", $settings["second_button"]);
+	echo SIM\pageSelect("second_button", $settings["second_button"]);
 	?>
 
 	<h4>News feed</h4>
@@ -103,7 +103,7 @@ add_action('sim_submenu_options', function($moduleSlug, $module_name, $settings)
 		<h5> Highlight page <?php echo $x;?></h5>
 		Select the page you want to show on frontpage.<br>
 		<?php
-		echo SIM\page_select("page$x", $settings["page$x"]);
+		echo SIM\pageSelect("page$x", $settings["page$x"]);
 		?>
 		<label>
 			Type a short title.<br>

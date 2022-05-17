@@ -311,7 +311,7 @@ trait create_js{
                                 }
                             }
                         }else{
-                            SIM\print_array("formbuilder.php writing js: missing action: '$action' for condition $condition_index of field {$element->name}");
+                            SIM\printArray("formbuilder.php writing js: missing action: '$action' for condition $condition_index of field {$element->name}");
                         }
                     }
                 }
@@ -499,7 +499,7 @@ trait create_js{
             file_put_contents($this->jsfilename.'.min.js', $minifiedJs);
         }
         
-        if(!empty($errors)) SIM\print_array($errors);
+        if(!empty($errors)) SIM\printArray($errors);
 
         return $errors;
     }

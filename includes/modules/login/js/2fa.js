@@ -11,8 +11,8 @@ async function saveTwofaSettings(target){
 	loader.classList.remove('hidden');
 
 	var form		= target.closest('form');
-	var formdata	= new FormData(form);
-	var response 	= await fetchRestApi('save_2fa_settings', formdata);
+	var formData	= new FormData(form);
+	var response 	= await fetchRestApi('save_2fa_settings', formData);
 
 	if(response){
 		form.querySelectorAll('[id^="setup-"]:not(.hidden)').forEach(el=>el.classList.add('hidden'));
@@ -61,12 +61,12 @@ async function removeWebAuthenticator(target){
 	var table   = target.closest('table');
 	var row     = target.closest('tr');
 
-	var formdata	= new FormData();
-	formdata.append('key',target.dataset.key);
+	var formData	= new FormData();
+	formData.append('key',target.dataset.key);
 
 	main.showLoader(target, true);
 
-	var response 	= await fetchRestApi('remove_web_authenticator', formdata);
+	var response 	= await fetchRestApi('remove_web_authenticator', formData);
 
 	if(response){
 		if(table.rows.length==2){
@@ -89,7 +89,7 @@ async function registerBiometric(target){
 
     //show loader
     document.getElementById('add_webauthn').classList.add('hidden');
-    var loader_html = `<div id="loader_wrapper" style='margin-bottom:20px;'><span class="message"></span><img class="loadergif" src="${sim.loading_gif}" height="30px;"></div>`;
+    var loader_html = `<div id="loader_wrapper" style='margin-bottom:20px;'><span class="message"></span><img class="loadergif" src="${sim.loadingGif}" height="30px;"></div>`;
     document.getElementById('add_webauthn').insertAdjacentHTML('afterEnd',loader_html);
 	var message		= document.querySelector('#loader_wrapper .message');
 

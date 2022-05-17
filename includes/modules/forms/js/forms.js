@@ -1,4 +1,4 @@
-var re	= '';
+var re			= '';
 
 async function saveFormInput(target){
 	var form		= target.closest('form');
@@ -55,7 +55,7 @@ export function cloneNode(original_node, clear=true){
 	}
 	
 	//make a clone
-	var newnode = original_node.cloneNode(true);
+	var newNode = original_node.cloneNode(true);
 	
 	//Then add niceselects again after cloning took place
 	original_node.querySelectorAll('select').forEach(select => {
@@ -72,7 +72,7 @@ export function cloneNode(original_node, clear=true){
 	
 	//clear values in the clone
 	if(clear == true){
-		newnode.querySelectorAll('input,select,textarea').forEach(input => {
+		newNode.querySelectorAll('input,select,textarea').forEach(input => {
 			if(input.type == 'checkbox' || input.type == 'radio'){
 				input.checked = false;
 			}else if(input.type != 'hidden'){
@@ -89,42 +89,32 @@ export function cloneNode(original_node, clear=true){
 			}
 		});
 	}else{
-		newnode.querySelectorAll('select').forEach(select => {
+		newNode.querySelectorAll('select').forEach(select => {
 			select._niceselect = NiceSelect.bind(select,{searchable: true});
 		});
 	}
 	
-	return newnode;
+	return newNode;
 }
 
-function copy_form_input(original_node){
-	var newnode = cloneNode(original_node);
-	
-	//Find the node number
-	var nodenr = parseInt(original_node.dataset.divid)+1;
-	
-	if(original_node.getAttribute("data-type") != null){
-		var datatype = original_node.getAttribute("data-type").replace('[','\\[').replace(']','\\]');
-		re = new RegExp('('+datatype+'?\\]?\\[).*[0-9](.*)',"g");
-	}else{
-		re = new RegExp('(.*)[0-9](.*)',"g");
-	}
+export function copyFormInput(originalNode){
+	var newNode = cloneNode(originalNode);
 	
 	//update the data index
-	newnode.querySelectorAll('.upload-files').forEach(function(uploadbutton){
-		uploadbutton.dataset.index = nodenr;
+	newNode.querySelectorAll('.upload-files').forEach(function(uploadButton){
+		uploadButton.dataset.index = nodenr;
 	})
 	
 	//Clear contents of any document preview divs.
-	newnode.querySelectorAll('.documentpreview').forEach(function(previewdiv){
-		previewdiv.innerHTML = '';
+	newNode.querySelectorAll('.documentpreview').forEach(function(previewdiv){
+		previewDiv.innerHTML = '';
 	});
 
 	//Select
 	var i = 0;
-	newnode.querySelectorAll('select').forEach(select => {
+	newNode.querySelectorAll('select').forEach(select => {
 		//Find the value of the select we have cloned
-		var previous_val = original_node.getElementsByTagName('select')[i].selectedIndex;
+		var previousVal = originalNode.getElementsByTagName('select')[i].selectedIndex;
 		
 		//Hide the value in the clone
 		select.options[previous_val].style.display = 'none';
@@ -138,28 +128,28 @@ function copy_form_input(original_node){
 	});
 	
 	//Add remove buttons if they are not there
-	if(original_node.querySelector('.remove') == null){
- 		var add_element 	= newnode.querySelector('.add');
-		var element_class 	= add_element.className.replace('add','remove');
-		var id 				= add_element.id.replace('add','remove');
-		var content 		= add_element.textContent.replace('Add','Remove this').replace('an','').replace('+','-');
+	if(originalNode.querySelector('.remove') == null){
+ 		var addElement 		= newNode.querySelector('.add');
+		var elementClass 	= addElement.className.replace('add','remove');
+		var id 				= addElement.id.replace('add','remove');
+		var content 		= addElement.textContent.replace('Add','Remove this').replace('an','').replace('+','-');
 		
-		var html = '<button type="button" class="'+element_class+'" id="'+id+'" style="flex: 1;">'+content+'</button>';
+		var html = `<button type="button" class="${elementClass}" id="${id}" style="flex: 1;">${content}</button>`;
 		
 		//Add minus button to the first div
-		original_node.querySelector('.buttonwrapper').insertAdjacentHTML('beforeend',html);
+		originalNode.querySelector('.buttonwrapper').insertAdjacentHTML('beforeend', html);
 		//Add minus button to the second div
-		newnode.querySelector('.buttonwrapper').insertAdjacentHTML('beforeend',html)
+		newNode.querySelector('.buttonwrapper').insertAdjacentHTML('beforeend', html)
 	}	
 	
 	//Insert the clone
-	original_node.parentNode.insertBefore(newnode, original_node.nextSibling);
+	originalNode.parentNode.insertBefore(newNode, originalNode.nextSibling);
 	
-	return newnode;
+	return newNode;
 }
 
-function fix_numbering(clone_divs_wrapper){
-	clone_divs_wrapper.querySelectorAll(':scope > .clone_div').forEach((clone, index)=>{
+export function fixNumbering(cloneDivsWrapper){
+	cloneDivsWrapper.querySelectorAll(':scope > .clone_div').forEach((clone, index)=>{
 		//Update the new number	
 		//DIV
 		if(clone.id != ''){
@@ -202,43 +192,43 @@ function fix_numbering(clone_divs_wrapper){
 	})
 }
 
-function remove_node(target){
+function removeNode(target){
 	var node			= target.closest(".clone_div");
-	var parent_node		= node.closest('.clone_divs_wrapper');
-	var all_clone_divs	= parent_node.querySelectorAll('.clone_div');
+	var parentNode		= node.closest('.clone_divs_wrapper');
+	var allCloneDivs	= parentNode.querySelectorAll('.clone_div');
 	
 	//Check if we are removing the last element
-	if(all_clone_divs[all_clone_divs.length-1] == node){
-		var add_element = node.querySelector(".add");
+	if(allCloneDivs[allCloneDivs.length-1] == node){
+		var addElement = node.querySelector(".add");
 		
 		//Move the add button one up
 		var prev = node.previousElementSibling;
-		prev.querySelector('div').appendChild(add_element);
+		prev.querySelector('div').appendChild(addElement);
 	}
 	
 	//Check which number to update
 	if(node.getAttribute("data-type") != null){
-		var datatype = node.getAttribute("data-type").replace('[','\\[').replace(']','\\]');
-		re = new RegExp('('+datatype+'?\\]?\\[).*[0-9](.*)',"g");
+		var datatype	= node.getAttribute("data-type").replace('[','\\[').replace(']','\\]');
+		re 				= new RegExp('('+datatype+'?\\]?\\[).*[0-9](.*)',"g");
 	}else{
-		re = new RegExp('(.*)[0-9](.*)',"g");
+		re				= new RegExp('(.*)[0-9](.*)',"g");
 	}
 	
 	//Remove the node
 	node.remove();
 	
 	//update the collection
-	all_clone_divs	= parent_node.querySelectorAll('.clone_div');
+	allCloneDivs	= parentNode.querySelectorAll('.clone_div');
 	
 	//If there is only one div remaining, remove the remove button
-	if(all_clone_divs.length == 1){
-		var remove_element = parent_node.querySelector('.remove');
+	if(allCloneDivs.length == 1){
+		var remove_element = parentNode.querySelector('.remove');
 		remove_element.remove();
 	}
 	
 	//Loop over all the remaining nodes.
-	var nodenr = parseInt(all_clone_divs[0].dataset.divid);
-	all_clone_divs.forEach(function(clonenode){
+	var nodenr = parseInt(allCloneDivs[0].dataset.divid);
+	allCloneDivs.forEach(function(clonenode){
 		if(clonenode.dataset.type == 'understudies'){
 			//update the data index
 			clonenode.querySelectorAll('.upload-files').forEach(function(uploadbutton){
@@ -367,22 +357,27 @@ export function showTab(n, form) {
 //next form step clicked
 export function nextPrev(n) {
 	// This function will figure out which tab to display
-	var x 				= form.getElementsByClassName("formstep");
-	var stepindicators	= form.getElementsByClassName("step");
-	
-	//reset required fields
-	form.querySelectorAll('[required]').forEach(el=>{el.required = false;});
+	var x 				= form.querySelectorAll(".formstep");
+	var stepindicators	= form.querySelectorAll(".step");
+	var currentTab		= 0;
+	var valid;
+
+	// Find the current active tab
+	x.forEach((el, index)=>{if(!el.matches('.stephidden')){currentTab = index}});
 	
 	//Check validity of this step if going forward
 	if(n>0){
-		//make all required fields of this step required
-		x[currentTab].querySelectorAll('.required:not(.hidden) input, .required:not(.hidden) textarea, .required:not(.hidden) select').forEach(el=>{el.required = true});
-		//report validity to the user
-		form.reportValidity();
-		//if not valid return
-		if(form.checkValidity() == false){
-			return;
+		// Report validity of each required field
+		var elements	= x[currentTab].querySelectorAll('.required:not(.hidden) input, .required:not(.hidden) textarea, .required:not(.hidden) select');
+		for(var i = 0; i < elements.length; i++) {
+			elements[i].required		= true;
+			valid		= elements[i].reportValidity();
+			if(!valid){
+				break;
+			}
 		}
+
+		if(!valid) return;
 		
 		//mark the last step as finished
 		stepindicators[currentTab].classList.add("finish");
@@ -603,12 +598,12 @@ document.addEventListener('click',function(event) {
 	
 	//add element
 	if(target.matches('.add')){
-		var newnode = copy_form_input(target.closest(".clone_div"));
+		var newNode = copyFormInput(target.closest(".clone_div"));
 
-		fix_numbering(target.closest('.clone_divs_wrapper'));
+		fixNumbering(target.closest('.clone_divs_wrapper'));
 
 		//add tinymce's can only be done when node is inserted and id is unique
-		newnode.querySelectorAll('.wp-editor-area').forEach(el =>{
+		newNode.querySelectorAll('.wp-editor-area').forEach(el =>{
 			window.tinyMCE.execCommand('mceAddEditor',false, el.id);
 		});
 
@@ -619,9 +614,9 @@ document.addEventListener('click',function(event) {
 	if(target.matches('.remove')){
 		var wrapper	= target.closest('.clone_divs_wrapper');
 		//Remove node clicked
-		remove_node(target); 
+		removeNode(target); 
 
-		fix_numbering(wrapper);
+		fixNumbering(wrapper);
 	}
 
 	if(target.matches('.sim_form [name="submit_form"]')){

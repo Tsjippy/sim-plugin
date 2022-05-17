@@ -34,8 +34,8 @@ class ChildEmail extends ADMIN\MailSetting{
 
         $this->addUser($user);
 
-        $this->moduleSlug   = 'forms';
-        $this->keyword      = 'child_reminder';
+        $this->moduleSlug       = 'forms';
+        $this->keyword          = 'child_reminder';
 
         $this->defaultSubject   = "Please update the personal information of %first_name% on the %site_name% website";
 

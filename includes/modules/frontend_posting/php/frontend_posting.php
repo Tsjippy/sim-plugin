@@ -64,11 +64,11 @@ function add_page_edit_button(){
 		global $post;
 		
 		$user = wp_get_current_user();
-		$user_id = $user->ID;
+		$userId = $user->ID;
 
 		//Get current users ministry and compound
-		$userPageId 		= SIM\getUserPageId($user_id);
-		$ministries 		= get_user_meta($user_id, "user_ministries", true);
+		$userPageId 		= SIM\getUserPageId($userId);
+		$ministries 		= get_user_meta($userId, "user_ministries", true);
 		
 		//This is a draft
 		if(isset($_GET['p']) or isset($_GET['page_id'])){

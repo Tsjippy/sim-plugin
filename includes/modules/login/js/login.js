@@ -126,7 +126,7 @@ async function verifyWebauthn(methods){
 // Request email code for 2fa login
 async function requestEmailCode(){
 	//add new one
-	var loader				= "<img id='loader' src='"+sim.loading_gif+"' style='height:30px;margin-top:-6px;float:right;'>";
+	var loader				= "<img id='loader' src='"+sim.loadingGif+"' style='height:30px;margin-top:-6px;float:right;'>";
 	showMessage(`Sending e-mail... ${loader}`);
 
 	var username	= document.getElementById('username').value;

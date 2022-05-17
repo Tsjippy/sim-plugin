@@ -16,10 +16,10 @@ async function confirmPostDelete( event ) {
 		var post_id = parent.querySelector('[name="post_id"]').value;
 		event.target.closest('form').querySelector('.loadergif').classList.remove('hidden');
 	
-		var formdata = new FormData();
-		formdata.append('post_id',post_id);
+		var formData = new FormData();
+		formData.append('post_id',post_id);
 		
-		var response = await formsubmit.fetchRestApi('frontend_posting/remove_post', formdata);
+		var response = await formsubmit.fetchRestApi('frontend_posting/remove_post', formData);
 
 		if(response){
 			main.displayMessage(response);
@@ -31,9 +31,9 @@ async function refreshPostLock(){
 	var postid = document.querySelector('[name="post_id"]');
 
 	if(postid != null){
-		var formdata	= new FormData();
-		formdata.append('postid', postid.value);
-		formsubmit.fetchRestApi('frontend_posting/refresh_post_lock', formdata);
+		var formData	= new FormData();
+		formData.append('postid', postid.value);
+		formsubmit.fetchRestApi('frontend_posting/refresh_post_lock', formData);
 	}
 }
 
@@ -41,9 +41,9 @@ async function deletePostLock(){
 	var postid = document.querySelector('[name="post_id"]');
 
 	if(postid != null){
-		var formdata	= new FormData();
-		formdata.append('postid', postid.value);
-		var response = await formsubmit.fetchRestApi('frontend_posting/delete_post_lock', formdata);
+		var formData	= new FormData();
+		formData.append('postid', postid.value);
+		var response = await formsubmit.fetchRestApi('frontend_posting/delete_post_lock', formData);
 	}
 }
 
@@ -372,7 +372,7 @@ document.addEventListener("DOMContentLoaded",function() {
 							}).then((result) => {
 								Swal.fire({
 									title: 'Please wait...',
-									html: "<IMG src='"+sim.loading_gif+"' width=100 height=100>",
+									html: "<IMG src='"+sim.loadingGif+"' width=100 height=100>",
 									showConfirmButton: false,
 									showClass: {
 										backdrop: 'swal2-noanimation', // disable backdrop animation
@@ -406,7 +406,7 @@ document.addEventListener("click", event=>{
 	if(target.name == 'submit_post' || (target.parentNode != null && target.parentNode.name == 'submit_post')){
 		submitPost(target);
 	}
-	if(target.name == 'draft_post' || target.parentNode.name == 'draft_post'){
+	if(target.name == 'draft_post' || (target.parentNode != null && target.parentNode.name == 'draft_post')){
 		//change action value
 		target.closest('form').querySelector('[name="post_status"]').value = 'draft';
 		
@@ -633,10 +633,10 @@ document.addEventListener('change', event=>{
 
 //Retrieve file contents over AJAX
 async function read_file_contents(attachmentId){
-	var formdata	= new FormData();
-	formdata.append('attachment_id', attachmentId);
+	var formData	= new FormData();
+	formData.append('attachment_id', attachmentId);
 
-	var response	= await formsubmit.fetchRestApi('frontend_posting/get_attachment_contents', formdata);
+	var response	= await formsubmit.fetchRestApi('frontend_posting/get_attachment_contents', formData);
 
 	if(response){
 		// Get current content

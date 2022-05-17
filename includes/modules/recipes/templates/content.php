@@ -62,8 +62,7 @@ if(is_tax() or is_archive()){
 					
 					$url = plugins_url('pictures/recipe_category.png', __DIR__);
 					echo "<img src='$url' alt='category' class='recipe_icon'>";
-					
-					//print_array($categories);
+
 					$i = 1;
 					foreach($categories as $id=>$category){
 						if($i != 1) echo ', ';
@@ -114,7 +113,6 @@ if(is_tax() or is_archive()){
 				<ul class='ingredients'>
 				<?php
 				$ingredients = explode("\n", trim(get_post_meta(get_the_ID(),'ingredients',true)));
-				//print_array($ingredients);
 				
 				foreach($ingredients as $key=> $ingredient){
 					if($key == 4 and $archive){

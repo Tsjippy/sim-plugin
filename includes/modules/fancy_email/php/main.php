@@ -12,7 +12,7 @@ add_filter('wp_mail',function($args){
 
 // show wp_mail() errors
 add_action( 'wp_mail_failed', function( $wp_error ) {
-    SIM\print_array($wp_error);
+    SIM\printArray($wp_error);
 });
 
 add_action('clean_up_email_messages_action', function(){

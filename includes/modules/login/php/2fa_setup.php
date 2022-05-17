@@ -3,12 +3,12 @@ namespace SIM\LOGIN;
 use SIM;
 
 add_shortcode('twofa_setup', __NAMESPACE__.'\twofa_settings_form');
-function twofa_settings_form($user_id=''){
+function twofa_settings_form($userId=''){
 	//Load js
 	wp_enqueue_script('sim_2fa_script');
 
-	if(!is_numeric($user_id)){
-		$user_id = get_current_user_id();
+	if(!is_numeric($userId)){
+		$userId = get_current_user_id();
 	}
 
 	$secondfactor	= setupTimeCode();
@@ -17,8 +17,8 @@ function twofa_settings_form($user_id=''){
 	$publicKeyCredentialId	= $_SESSION["webautn_id"];
 
 	ob_start();
-	$twofa_methods	= (array)get_user_meta($user_id,'2fa_methods',true);
-	SIM\clean_up_nested_array($twofa_methods);
+	$twofa_methods	= (array)get_user_meta($userId,'2fa_methods',true);
+	SIM\cleanUpNestedArray($twofa_methods);
 
 	if($_GET['redirected']){
 		?>
@@ -99,7 +99,7 @@ function twofa_settings_form($user_id=''){
 		<div id='setup-email' class='twofa_option hidden'>
 			<p>
 				E-mail verification will be enabled for your account as soon as you click the 'Save 2fa settings' button<br>
-				E-mails will be send to <code><?php echo get_userdata($user_id)->user_email;?></code>.<br>
+				E-mails will be send to <code><?php echo get_userdata($userId)->user_email;?></code>.<br>
 			</p>
 		</div>
 		<?php

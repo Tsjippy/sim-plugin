@@ -30,7 +30,7 @@ function send_reimbursement_requests(){
 
 	//if there are reimbursements
 	if(empty($formtable->submission_data )){
-		SIM\print_array('No reimbursement requests found');
+		SIM\printArray('No reimbursement requests found');
 	}else{
 		//Get all files in the reimbursement dir as they are the receipts
 		$recieptsDir	= wp_upload_dir()['path']."/form_uploads/Reimbursement";
@@ -61,7 +61,7 @@ function send_reimbursement_requests(){
 
 			// Add attachments as urls so to not exceed the appendix limit of outlook
 			foreach($attachments as $attachment){
-				$message		.= SIM\path_to_url(str_replace($recieptsDir, "$recieptsDir/old", $attachment));
+				$message		.= SIM\pathToUrl(str_replace($recieptsDir, "$recieptsDir/old", $attachment));
 				$message		.= '<br><br>';
 			}
 			$email_headers	 = ["Bcc:enharmsen@gmail.com"];
@@ -100,7 +100,7 @@ function send_missonary_detail(){
 			'query_two' => 'ASC',
 		),
 	);
-	$users = SIM\get_user_accounts($return_family=false,$adults=true,$fields=[],$extra_args=$args);
+	$users = SIM\getUserAccounts($return_family=false,$adults=true,$fields=[],$extra_args=$args);
 	
 	//Loop over all users to add a row with their data to the table
 	$user_details = [];

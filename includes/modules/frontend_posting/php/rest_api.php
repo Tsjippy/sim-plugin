@@ -215,7 +215,6 @@ function get_attachment_contents(\WP_REST_Request $request ){
 			//syntax: <(some tagname)>(some text)</some tagname)0 or more spaces<(use tagname as found before + some extra symbols)>
 			'/<([^>]*)>([^<]*)<\/(\w+)>\s*<(\3[^>]*)>/m', 
 			function($matches){
-				//print_array($matches,true);
 				//If the opening tag is exactly like the next opening tag, remove the the duplicate
 				if($matches[1] == $matches[4] and ($matches[3] == 'span' or $matches[3] == 'strong' or $matches[3] == 'b')){
 					return $matches[2];
