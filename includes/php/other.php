@@ -3,7 +3,7 @@ namespace SIM;
 
 //Only show read more on home and news page
 add_filter( 'excerpt_more', function ( $more ) {
-		return '<a class="moretag" href="' . get_the_permalink() . '">Read More »</a>';
+	return '<a class="moretag" href="' . get_the_permalink() . '">Read More »</a>';
 }, 999  );
 
 //Change the timeout on post locks
@@ -11,11 +11,10 @@ add_filter( 'wp_check_post_lock_window', function(){ return 70;});
 
 //Change the extension of all jpg like files to jpe so that they are not directly available for non-logged in users
 add_filter('wp_handle_upload_prefilter', function ($file) {
-	global $post;
-    $info = pathinfo($file['name']);
-    $ext  = empty($info['extension']) ? '' : '.' . $info['extension'];
-	$name = basename($file['name'], $ext);
-	$ext = strtolower($ext);
+    $info 	= pathinfo($file['name']);
+    $ext  	= empty($info['extension']) ? '' : '.' . $info['extension'];
+	$name 	= basename($file['name'], $ext);
+	$ext 	= strtolower($ext);
 	
 	//Change the extension to jpe
 	if($ext == ".jpg" or $ext == ".jpeg" or $ext == ".jfif" or $ext == ".exif"){
@@ -57,11 +56,11 @@ if(get_option("wpstg_is_staging_site") == "true"){
 			//Get all users
 			$users = get_users();
 			//Only keep admins and editors
-			$allowed_roles = array('medicalinfo','administrator','editor');
+			$allowedRoles = array('medicalinfo','administrator','editor');
  			foreach($users as $user){
 				//If this user is not an admin or editor
-				if( !array_intersect($allowed_roles, $user->roles ) ) { 
-					error_log("Deleting user with id ".$user->ID." as this is an staging site");
+				if( !array_intersect($allowedRoles, $user->roles ) ) { 
+					error_log("Deleting user with id {$user->ID} as this is an staging site");
 					//Delete user and assign its contents to the admin user
 					wp_delete_user($user->ID,1);
 				}
@@ -76,10 +75,10 @@ if(get_option("wpstg_is_staging_site") == "true"){
 
 //Keep line breaks in excerpts
 remove_filter('get_the_excerpt', 'wp_trim_excerpt');
-add_filter('get_the_excerpt', 'SIM\custom_excerpt', 10, 2);
-add_filter('the_excerpt', 'SIM\custom_excerpt', 10, 2);
-function custom_excerpt($excerpt, $post=null) {
-	$raw_excerpt = $excerpt;
+add_filter('get_the_excerpt', __NAMESPACE__.'\customExcerpt', 10, 2);
+add_filter('the_excerpt', __NAMESPACE__.'\customExcerpt', 10, 2);
+function customExcerpt($excerpt, $post=null) {
+	$rawExcerpt = $excerpt;
 	
 	if ( empty($excerpt)) {
 		//Retrieve the post content. 
@@ -88,28 +87,28 @@ function custom_excerpt($excerpt, $post=null) {
 		//Delete all shortcode tags from the content. 
 		$excerpt = strip_shortcodes( $excerpt );
 		
-		$excerpt = str_replace(']]>', ']]&gt;', $excerpt);
-		$excerpt = str_replace("<p>","<br>", $excerpt);
-		$allowed_tags = '<br>,<strong>'; 
-		$excerpt = strip_tags($excerpt, $allowed_tags);
+		$excerpt 		= str_replace(']]>', ']]&gt;', $excerpt);
+		$excerpt 		= str_replace("<p>","<br>", $excerpt);
+		$allowedTags 	= '<br>,<strong>'; 
+		$excerpt 		= strip_tags($excerpt, $allowedTags);
 		 
-		$excerpt_word_count = 45; 
-		$excerpt_length = apply_filters('excerpt_length', $excerpt_word_count); 
+		$excerptWordCount 	= 45; 
+		$excerptLength 		= apply_filters('excerpt_length', $excerptWordCount); 
 		 
-		$excerpt_end = '[...]'; 
-		$excerpt_more = apply_filters('excerpt_more', ' ' . $excerpt_end);
+		$excerptEnd			= '[...]'; 
+		$excerptMore 		= apply_filters('excerpt_more', ' ' . $excerptEnd);
 		 
-		$words = preg_split("/[\n\r\t ]+/", $excerpt, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY);
-		if ( count($words) > $excerpt_length ) {
+		$words = preg_split("/[\n\r\t ]+/", $excerpt, $excerptLength + 1, PREG_SPLIT_NO_EMPTY);
+		if ( count($words) > $excerptLength ) {
 			array_pop($words);
 			$excerpt = implode(' ', $words);
-			$excerpt = $excerpt . $excerpt_more;
+			$excerpt = $excerpt . $excerptMore;
 		} else {
 			$excerpt = implode(' ', $words);
 		}
 	}
 
-	return apply_filters('wp_trim_excerpt', $excerpt, $raw_excerpt);
+	return apply_filters('wp_trim_excerpt', $excerpt, $rawExcerpt);
 }
 
 // Turn off heartbeat

@@ -1,5 +1,5 @@
 async function disableUserAccount(target){
-	var response	= await formsubmit.submitForm(target, 'user_management/disable_useraccount');
+	var response	= await FormSubmit.submitForm(target, 'user_management/disable_useraccount');
 
 	if(response){
 		if(target.textContent.includes('Disable')){
@@ -12,7 +12,7 @@ async function disableUserAccount(target){
 }
 
 async function updateUserRoles(target){
-    var response	= await formsubmit.submitForm(target, 'user_management/update_roles');
+    var response	= await FormSubmit.submitForm(target, 'user_management/update_roles');
 
 	if(response){
 		main.displayMessage(response);
@@ -20,7 +20,7 @@ async function updateUserRoles(target){
 }
 
 async function extendValidity(target){
-	var response	= await formsubmit.submitForm(target, 'user_management/extend_validity');
+	var response	= await FormSubmit.submitForm(target, 'user_management/extend_validity');
 
 	if(response){
 		main.displayMessage(response);
@@ -28,7 +28,7 @@ async function extendValidity(target){
 }
 
 async function createUserAccount(target){
-    var response	= await formsubmit.submitForm(target, 'user_management/add_useraccount');
+    var response	= await FormSubmit.submitForm(target, 'user_management/add_useraccount');
 
 	if(response){
 		main.displayMessage(response.message);

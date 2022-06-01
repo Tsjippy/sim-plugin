@@ -9,7 +9,7 @@ add_action( 'rest_api_init', function () {
 		'/get_attachment_contents', 
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> __NAMESPACE__.'\get_attachment_contents',
+			'callback' 				=> __NAMESPACE__.'\getAttachmentContents',
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'attachment_id'		=> array(
@@ -73,7 +73,7 @@ add_action( 'rest_api_init', function () {
 				),
 				'publish_date'	=> array(
 					'validate_callback' => function($param) {
-						return SIM\is_date($param);
+						return SIM\isDate($param);
 					}
 				),
 			)
@@ -110,11 +110,15 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				if(!function_exists('wp_set_post_lock')){
-					include ABSPATH . 'wp-admin/includes/post.php';
+				try{
+					if(!function_exists('wp_set_post_lock')){
+						include ABSPATH . 'wp-admin/includes/post.php';
+					}
+					wp_set_post_lock($_POST['postid']);
+					return 'Succes';
+				}catch (\Exception $e) {
+					return $e;
 				}
-				wp_set_post_lock($_POST['postid']);
-				return 'Succes';
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -176,7 +180,10 @@ add_action( 'rest_api_init', function () {
 	);
 } );
 
-function get_attachment_contents(\WP_REST_Request $request ){
+/**
+ * Converts a files contents to html
+ */
+function getAttachmentContents(\WP_REST_Request $request ){
 	$path	= get_attached_file($request['attachment_id']);
 
 	if(!file_exists($path)) return;
@@ -208,9 +215,9 @@ function get_attachment_contents(\WP_REST_Request $request ){
 		//Convert it to html
 		$htmlWriter = new \PhpOffice\PhpWord\Writer\HTML($phpWord);
 		
-		$html = $htmlWriter->getWriterPart('Body')->write();
+		$html 		= $htmlWriter->getWriterPart('Body')->write();
 		
-		$html = preg_replace_callback(
+		$html 		= preg_replace_callback(
 			//get all tags which are followed by the same tag 
 			//syntax: <(some tagname)>(some text)</some tagname)0 or more spaces<(use tagname as found before + some extra symbols)>
 			'/<([^>]*)>([^<]*)<\/(\w+)>\s*<(\3[^>]*)>/m', 
@@ -230,6 +237,9 @@ function get_attachment_contents(\WP_REST_Request $request ){
 	}
 }
 
+/**
+ * Add a new category to a post type
+ */
 function addCategory(\WP_REST_Request $request ){
 	$name		= $request->get_param('cat_name');
 	$parent		= $request->get_param('cat_parent');

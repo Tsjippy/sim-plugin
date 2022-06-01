@@ -108,17 +108,17 @@ get_header();
 
 			<div id='monthview' class='calendarview<?php if($view!='month') echo ' hidden';?>'>
 				<?php
-				echo $events->month_calendar($cat);
+				echo $events->monthCalendar($cat);
 				?>
 			</div>
 			<div id='weekview' class='calendarview<?php if($view!='week') echo ' hidden';?>'>
 				<?php
-				echo $events->week_calendar($cat);
+				echo $events->weekCalendar($cat);
 				?>
 			</div>
 			<div id='listview' class='calendarview<?php if($view!='list') echo ' hidden';?>'>
 				<?php
-				echo $events->list_calendar($cat);
+				echo $events->listCalendar($cat);
 				?>
 			</div>		
 		</div>

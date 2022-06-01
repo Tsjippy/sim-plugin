@@ -1,9 +1,9 @@
 async function hideColumn(cell){
 	// Hide the column
 	var table		= cell.closest('table');
-	var tablerows	= table.rows;
-	for (let i = 0; i < tablerows.length; i++) {
-		tablerows[i].cells[cell.cellIndex].classList.add('hidden')
+	var tableRows	= table.rows;
+	for (let i = 0; i < tableRows.length; i++) {
+		tableRows[i].cells[cell.cellIndex].classList.add('hidden')
 	}
 
 	//show the reset button
@@ -15,7 +15,7 @@ async function hideColumn(cell){
 	formData.append('formid', table.dataset.formid);
 	formData.append('column_name', cell.id);
 	
-	var response	= await formsubmit.fetchRestApi('forms/save_table_prefs', formData);
+	var response	= await FormSubmit.fetchRestApi('forms/save_table_prefs', formData);
 }
 
 async function showHiddenColumns(target){
@@ -30,7 +30,7 @@ async function showHiddenColumns(target){
 	var formData	= new FormData();
 	formData.append('formid', table.dataset.formid);
 
-	var response	= await formsubmit.fetchRestApi('forms/delete_table_prefs', formData);
+	var response	= await FormSubmit.fetchRestApi('forms/delete_table_prefs', formData);
 
 	if(response){
 		main.displayMessage(response);
@@ -39,7 +39,7 @@ async function showHiddenColumns(target){
 }
 
 async function saveColumnSettings(target){
-	var response = await formsubmit.submitForm(target, 'forms/save_column_settings');
+	var response = await FormSubmit.submitForm(target, 'forms/save_column_settings');
 
 	if(response){
 		main.displayMessage(response);
@@ -48,7 +48,7 @@ async function saveColumnSettings(target){
 }
 
 async function saveTableSettings(target){
-	var response = await formsubmit.submitForm(target, 'forms/save_table_settings');
+	var response = await FormSubmit.submitForm(target, 'forms/save_table_settings');
 
 	if(response){
 		main.displayMessage(response);
@@ -71,19 +71,19 @@ async function askConfirmation(text){
 
 async function removeSubmission(target){
 	if(askConfirmation('delete')){		
-		var submissionid	= target.closest('tr').dataset.id;
+		var submissionId	= target.closest('tr').dataset.id;
 		var table			= target.closest('table');
 
 		var formData = new FormData();
-		formData.append('submissionid', submissionid);
+		formData.append('submissionid', submissionId);
 		
 		//display loading gif
 		main.showLoader(target);
 
-		var response	= await formsubmit.fetchRestApi('forms/remove_submission', formData);
+		var response	= await FormSubmit.fetchRestApi('forms/remove_submission', formData);
 
 		if(response){
-			table.querySelectorAll(`.table-row[data-id="${submissionid}"]`).forEach(
+			table.querySelectorAll(`.table-row[data-id="${submissionId}"]`).forEach(
 				row=>row.remove()
 			);
 		}
@@ -92,19 +92,19 @@ async function removeSubmission(target){
 
 async function archiveSubmission(target){	
 	var table			= target.closest('table');
-	var table_row		= target.closest('tr');
-	var submissionid	= table_row.dataset.id;
-	var show_swal		= true;
+	var tableRow		= target.closest('tr');
+	var submissionId	= tableRow.dataset.id;
+	var showSwal		= true;
 	var action			= target.value;
 
 	var formData 		= new FormData();
 	formData.append('formid', table.dataset.formid);
-	formData.append('submissionid', submissionid);
+	formData.append('submissionid', submissionId);
 	formData.append('action', action);
 	
 	// Ask whether to archive one piece or the whole
-	if(table_row.dataset.subid != undefined){
-		show_swal = false;
+	if(tableRow.dataset.subid != undefined){
+		showSwal = false;
 		
 		var response = await Swal.fire({
 			title: `What do you want to ${action}?`,
@@ -118,7 +118,7 @@ async function archiveSubmission(target){
 		});
 
 		if (response.isConfirmed) {
-			formData.append('subid', table_row.dataset.subid);
+			formData.append('subid', tableRow.dataset.subid);
 		}
 		
 		// skip if denied
@@ -127,7 +127,7 @@ async function archiveSubmission(target){
 		}
 	}
 	
-	if(show_swal == true){
+	if(showSwal){
 		var confirmed = askConfirmation(action);
 
 		if(!confirmed){
@@ -138,7 +138,7 @@ async function archiveSubmission(target){
 	//display loading gif
 	main.showLoader(target);
 	
-	var response	= await formsubmit.fetchRestApi('forms/archive_submission', formData);
+	var response	= await FormSubmit.fetchRestApi('forms/archive_submission', formData);
 
 	if(response){
 		const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -147,7 +147,7 @@ async function archiveSubmission(target){
 		
 		// Delete all
 		if(formData.get('subid') == null){
-			table.querySelectorAll(`.table-row[data-id="${submissionid}"]`).forEach(row=>{
+			table.querySelectorAll(`.table-row[data-id="${submissionId}"]`).forEach(row=>{
 				// just change the button name
 				if(params.archived == 'true'){
 					var loader = row.querySelector('.loaderwrapper, .'+action);
@@ -158,7 +158,7 @@ async function archiveSubmission(target){
 			});
 		// Only delete subid
 		}else{
-			table.querySelectorAll(`.table-row[data-id="${submissionid}"][data-subid="${table_row.dataset.subid}"]`).forEach(row=>{
+			table.querySelectorAll(`.table-row[data-id="${submissionId}"][data-subid="${tableRow.dataset.subid}"]`).forEach(row=>{
 				// just change the button name
 				if(params.archived == 'true'){
 					var loader = row.querySelector('.loaderwrapper');
@@ -185,11 +185,10 @@ function changeArchiveButton(loader, action){
 
 async function getInputHtml(target){
 	var table			= target.closest('table');
-	var formid			= table.dataset.formid;
-    var submission_id	= target.closest('tr').dataset.id;
-    var cell_id			= target.dataset.id
-
-	old_text			= target.textContent;
+	var formId			= table.dataset.formid;
+    var submissionId	= target.closest('tr').dataset.id;
+    var cellId			= target.dataset.id
+	oldText				= target.textContent;
     
     main.showLoader(target.firstChild);
     
@@ -200,11 +199,11 @@ async function getInputHtml(target){
 	target.dataset.oldtext	 	= old_text;
 
 	var formData = new FormData();
-    formData.append('formid', formid);
-    formData.append('submissionid',submission_id);
-    formData.append('fieldname',cell_id);
+    formData.append('formid', formId);
+    formData.append('submissionid', submissionId);
+    formData.append('fieldname', cellId);
 
-	var response	= await formsubmit.fetchRestApi('forms/get_input_html', formData);
+	var response	= await FormSubmit.fetchRestApi('forms/get_input_html', formData);
 
 	if(response){
 		target.innerHTML	 = response;
@@ -217,7 +216,7 @@ async function getInputHtml(target){
 }
 
 function addFormsTableInputEventListeners(cell){
-	var inputs	= cell.querySelectorAll('input,select,textarea');
+	var inputs		= cell.querySelectorAll('input,select,textarea');
 
 	// get old value
 	var oldValue	= JSON.parse(cell.dataset.oldvalue);
@@ -227,25 +226,25 @@ function addFormsTableInputEventListeners(cell){
 		oldValue = [oldValue];
 	}
 		
-	inputs.forEach((inputnode, index)=>{
+	inputs.forEach((inputNode, index)=>{
 		var val	= oldValue[index];
 
-		if(inputnode.type == 'checkbox' || inputnode.type == 'radio'){
-			if(inputnode.value == val.trim()){
-				inputnode.checked = true;
+		if(inputNode.type == 'checkbox' || inputNode.type == 'radio'){
+			if(inputNode.value == val.trim()){
+				inputNode.checked = true;
 			}
-		}else if(inputnode.type == 'select'){
-			inputnode.querySelector('option[value="'+val+'"]').selected = true;
+		}else if(inputNode.type == 'select'){
+			inputNode.querySelector('option[value="'+val+'"]').selected = true;
 		}else{
-			inputnode.value	= val;
+			inputNode.value	= val;
 		}
 		
-		if(inputnode.type == 'select-one'){
-			inputnode._niceselect = NiceSelect.bind(inputnode,{searchable: true});
+		if(inputNode.type == 'select-one'){
+			inputNode._niceselect = NiceSelect.bind(inputNode,{searchable: true});
 		}
 		
 		//Add a keyboard
-		inputnode.addEventListener("keyup", function(event){
+		inputNode.addEventListener("keyup", function(event){
 			if (event.keyCode === 13) {
 				processFormsTableInput(event.target);
 			}
@@ -254,16 +253,16 @@ function addFormsTableInputEventListeners(cell){
 		//add a listener for clicks outside the cell
 		document.addEventListener('click', outsideFormsTableClicked);
 		
-		if(inputnode.type != 'checkbox' || inputs.length == 1){
-			if(inputnode.type == 'date'){
-				inputnode.addEventListener("blur", function(event){
+		if(inputNode.type != 'checkbox' || inputs.length == 1){
+			if(inputNode.type == 'date'){
+				inputNode.addEventListener("blur", function(event){
 					//only process if we added a value
 					if(event.target.value != ''){
 						processFormsTableInput(event.target);
 					}
 				});
 			}else{
-				inputnode.addEventListener("change", function(event){
+				inputNode.addEventListener("change", function(event){
 					//only process if we added a value
 					if(event.target.value != ''){
 						processFormsTableInput(event.target);
@@ -271,7 +270,7 @@ function addFormsTableInputEventListeners(cell){
 				});
 			}
 			
-			inputnode.focus();
+			inputNode.focus();
 		}
 	});
 }
@@ -295,10 +294,10 @@ async function processFormsTableInput(target){
 	setTimeout(function(){ running = false;}, 500);	
 
 	var table			= target.closest('table');
-	var formid			= table.dataset.formid;
+	var formId			= table.dataset.formid;
 	var cell			= target.closest('td');
     var cell_id			= cell.dataset.id
-	var value			= formFunctions.getFieldValue(target,false);
+	var value			= FormFunctions.getFieldValue(target,false);
 	var submission_id	= target.closest('tr').dataset.id;
 	var sub_id			= cell.dataset.subid;
 	
@@ -311,13 +310,13 @@ async function processFormsTableInput(target){
 		
 		// Submit new value and receive the filtered value back
 		var formData = new FormData();
-		formData.append('formid', formid);
+		formData.append('formid', formId);
 		formData.append('submissionid',submission_id);
 		formData.append('subid',sub_id);
 		formData.append('fieldname',cell_id);
 		formData.append('newvalue',value);
 		
-		var response	= await formsubmit.fetchRestApi('forms/edit_value', formData);
+		var response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
 	
 		if(response){
 			var value = response.newvalue;
@@ -447,6 +446,6 @@ document.addEventListener('change', event=>{
 		document.getElementById(target.value).classList.remove('hidden');
 
 		// position table
-		sim_table_functions.positionTable();
+		SimTableFunctions.positionTable();
 	}
 });

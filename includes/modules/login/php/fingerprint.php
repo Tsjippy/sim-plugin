@@ -28,7 +28,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
     public $user;
 
     function __construct($user){
-        $this->user_id = $user->ID;
+        $this->userId = $user->ID;
     }
 
     // Get one credential by credential ID
@@ -42,7 +42,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
 
     // Get one credential's meta by credential ID
     public function findOneMetaByCredentialId(string $publicKeyCredentialId): ?array {
-        $meta = unserialize(get_user_meta($this->user_id,"2fa_webautn_cred_meta",true));
+        $meta = unserialize(get_user_meta($this->userId,"2fa_webautn_cred_meta",true));
         if(isset($meta[$publicKeyCredentialId])){
             return $meta[$publicKeyCredentialId];
         }
@@ -54,7 +54,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
         $sources = [];
 
         //check if the platform matches
-        $metadata   = unserialize(get_user_meta($this->user_id,"2fa_webautn_cred_meta",true));
+        $metadata   = unserialize(get_user_meta($this->userId,"2fa_webautn_cred_meta",true));
         $os         = $this->get_os_info()['name'];
 
         foreach($this->read() as $key=>$data){
@@ -82,18 +82,18 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
         $credential = $this->findOneMetaByCredentialId($publicKeyCredentialId);
         if($credential !== null){
             $credential["last_used"] = date('Y-m-d H:i:s', current_time('timestamp'));
-            $meta = unserialize(get_user_meta($this->user_id,"2fa_webautn_cred_meta",true));
+            $meta = unserialize(get_user_meta($this->userId, "2fa_webautn_cred_meta", true));
             $meta[$publicKeyCredentialId] = $credential;
-            update_user_meta($this->user_id,"2fa_webautn_cred_meta", serialize($meta));
+            update_user_meta($this->userId, "2fa_webautn_cred_meta", serialize($meta));
 
             //store temporary so that we know we did webauth
-            store_in_transient("webautn_id",$publicKeyCredentialId);
+            storeInTransient("webautn_id", $publicKeyCredentialId);
         }
     }
 
     // List all authenticators
     public function getShowList(PublicKeyCredentialUserEntity $publicKeyCredentialUserEntity): array {
-        $data   = unserialize(get_user_meta($this->user_id,"2fa_webautn_cred_meta",true));
+        $data   = unserialize(get_user_meta($this->userId, "2fa_webautn_cred_meta", true));
         if($data){
             return $data;
         }else{
@@ -106,35 +106,35 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
         $data = $this->read();
         unset($data[$id]);
         if(empty($data)){
-            delete_user_meta($this->user_id, "2fa_webautn_cred");
-            delete_user_meta($this->user_id, "2fa_webautn_cred_meta");
-            delete_user_meta($this->user_id, "2fa_webautn_key");
+            delete_user_meta($this->userId, "2fa_webautn_cred");
+            delete_user_meta($this->userId, "2fa_webautn_cred_meta");
+            delete_user_meta($this->userId, "2fa_webautn_key");
     
-            $methods    = get_user_meta($this->user_id, "2fa_methods",true);
+            $methods    = get_user_meta($this->userId, "2fa_methods",true);
             unset($methods[array_search('webauthn', $methods)]);
             SIM\cleanUpNestedArray($methods);
 
             if(empty($methods)){
-                delete_user_meta($this->user_id, "2fa_methods");
+                delete_user_meta($this->userId, "2fa_methods");
             }else{
-                update_user_meta($this->user_id, "2fa_methods", $methods);
+                update_user_meta($this->userId, "2fa_methods", $methods);
             }
         }else{
-            update_user_meta($this->user_id,"2fa_webautn_cred",base64_encode(serialize($data)));
+            update_user_meta($this->userId, "2fa_webautn_cred", base64_encode(serialize($data)));
 
-            $meta = unserialize(get_user_meta($this->user_id,"2fa_webautn_cred_meta",true));
+            $meta = unserialize(get_user_meta($this->userId, "2fa_webautn_cred_meta", true));
             unset($meta[$id]);
 
-            update_user_meta($this->user_id, "2fa_webautn_cred_meta", serialize($meta));
+            update_user_meta($this->userId, "2fa_webautn_cred_meta", serialize($meta));
         }
     }
 
     // Read credential database
     private function read(): array {
-        $user_cred  = get_user_meta($this->user_id,"2fa_webautn_cred",true);
-        if($user_cred){
+        $userCred  = get_user_meta($this->userId, "2fa_webautn_cred", true);
+        if($userCred){
             try{
-                return unserialize(base64_decode($user_cred));
+                return unserialize(base64_decode($userCred));
             }catch(\Throwable $exception) {
                 return [];
             }
@@ -155,7 +155,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
             // Save credentials's meta separately
             $source = $data[$key]->getUserHandle();
             
-            $meta = unserialize(get_user_meta($this->user_id,"2fa_webautn_cred_meta",true));
+            $meta = unserialize(get_user_meta($this->userId, "2fa_webautn_cred_meta", true));
             if(!$meta) $meta    = [];
 
             //already exists
@@ -165,28 +165,28 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
                 $meta[$key]["user" ]    = $source;
             }else{
                 $meta[$key] = array(
-                    "identifier"    => get_from_transient("identifier"),
+                    "identifier"    => getFromTransient("identifier"),
                     "os_info"       => $this->get_os_info(),
                     "added"         => date('Y-m-d H:i:s', current_time('timestamp')), 
                     "user"          => $source, 
                     "last_used"     => "-"
                 );
             }
-            update_user_meta($this->user_id,"2fa_webautn_cred_meta", serialize($meta));
+            update_user_meta($this->userId, "2fa_webautn_cred_meta", serialize($meta));
         }
-        update_user_meta($this->user_id,"2fa_webautn_cred",base64_encode(serialize($data)));
+        update_user_meta($this->userId, "2fa_webautn_cred", base64_encode(serialize($data)));
     }
 }
 
-function get_profile_picture($userId){
-    $attachment_id  = get_user_meta($userId,'profile_picture',true);
+function getProfilePicture($userId){
+    $attachmentId  = get_user_meta($userId,'profile_picture',true);
     $image          = null;
 
-    if(is_numeric($attachment_id)){
-        $path   = get_attached_file($attachment_id);
+    if(is_numeric($attachmentId)){
+        $path   = get_attached_file($attachmentId);
         if($path){
             $type       = pathinfo($path, PATHINFO_EXTENSION);
-            $contents   = file_get_contents(get_attached_file($attachment_id));
+            $contents   = file_get_contents(get_attached_file($attachmentId));
             if(!empty($contents)){
                 $image = "data:image/$type;base64,".base64_encode($contents);
             }
@@ -198,8 +198,14 @@ function get_profile_picture($userId){
     return $image;
 }
 
-// Create random strings for user ID
-function generate_random_string($length = 10){
+/**
+ * Create random strings for user ID
+ * 
+ * @param   int $length 
+ * 
+ * @return  string  the string
+ */
+function generateRandomString($length = 10){
     // Use cryptographically secure pseudo-random generator in PHP 7+
     if(function_exists('random_bytes')){
         $bytes = random_bytes(round($length/2));
@@ -215,8 +221,10 @@ function generate_random_string($length = 10){
     }
 }
 
-// Format trackback
-function generate_call_trace($exception = false){
+/**
+ * Format trackback
+ */
+function generateCallTrace($exception = false){
     $e = $exception;
     if($exception === false){
         $e = new \Exception();
@@ -235,10 +243,15 @@ function generate_call_trace($exception = false){
     return "Traceback:\n                              ".implode("\n                              ", $result);
 }
 
-function get_rp_entity(){
+/**
+ * Creates a new rp entity
+ * 
+ * @return  object the rprntity
+ */
+function getRpEntity(){
     $logo       = null;
     $path       = get_attached_file(get_option( 'site_icon' ));
-    $type   = pathinfo($path, PATHINFO_EXTENSION);
+    $type       = pathinfo($path, PATHINFO_EXTENSION);
     if(!empty($path)){
         $data = file_get_contents($path);
         if(!empty($contents)){
@@ -256,7 +269,13 @@ function get_rp_entity(){
     return $rpEntity;
 }
 
-function store_in_transient($key, $value){
+/**
+ * Temporary store a value
+ * 
+ * @param   string  $key        The identifier
+ * @param   string|int|array|object     $value  The value
+ */
+function storeInTransient($key, $value){
     #$value=serialize(base64_encode(serialize($value)));
     #set_transient( $key, $value, 120 );
 
@@ -264,19 +283,30 @@ function store_in_transient($key, $value){
     $_SESSION[$key] = $value;
 }
 
-function get_from_transient($key){
+/**
+ * Retrieves a temporary stored value
+ * 
+ * @param   string  $key    The key the values was stored with
+ * 
+ * @return  string|int|array|object             The value
+ */
+function getFromTransient($key){
     #return unserialize(base64_decode(unserialize(get_transient( $key))));
 
     if(!isset($_SESSION)) session_start();
     return $_SESSION[$key];
 }
 
-// Get authenticator list
-function authenticator_list(){
-    $user_info = wp_get_current_user();
+/**
+ * Get authenticator list
+ * 
+ * @return  object The autenticator object
+ */
+function authenticatorList(){
+    $user = wp_get_current_user();
 
     if(!current_user_can("read")){
-        $name = $user_info->display_name;
+        $name = $user->display_name;
         SIM\printArray("$name has not enough permissions");
         return;
     }
@@ -288,22 +318,22 @@ function authenticator_list(){
             return new WP_Error('webauthn', "Bad Request.");
         }
 
-        if($user_info->ID !== $userId){
+        if($user->ID !== $userId){
             if(!current_user_can("edit_user", $userId)){
                 SIM\printArray("ajax_ajax_authenticator_list: (ERROR)No permission, exit");
                 return new WP_Error('webauthn', "Bad Request.");
             }
-            $user_info = get_user_by('id', $userId);
+            $user = get_user_by('id', $userId);
 
-            if($user_info === false){
+            if($user === false){
                 SIM\printArray("ajax_ajax_authenticator_list: (ERROR)Wrong user ID, exit");
                 return new WP_Error('webauthn', "Bad Request.");
             }
         }
     }
 
-    $user_key   = get_user_meta($user_info->ID, '2fa_webauthn_key', true);
-    if(!$user_key){
+    $userKey   = get_user_meta($user->ID, '2fa_webauthn_key', true);
+    if(!$userKey){
         // The user haven't bound any authenticator, return empty list
         if(defined('REST_REQUEST')){
             return "[]";
@@ -313,22 +343,29 @@ function authenticator_list(){
     }
 
     $userEntity = new PublicKeyCredentialUserEntity(
-        $user_info->user_login,
-        $user_key,
-        $user_info->display_name
+        $user->user_login,
+        $userKey,
+        $user->display_name
     );
 
-    $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user_info);
-    $authenticator_list   = $publicKeyCredentialSourceRepository->getShowList($userEntity);
+    $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user);
+    $authenticatorList   = $publicKeyCredentialSourceRepository->getShowList($userEntity);
     
-    return $authenticator_list;
+    return $authenticatorList;
 }
 
-function auth_table($auth_id=''){
-    $webauthn_list	= authenticator_list();
+/**
+ * Creates a table listing all the webauthn methods of an user
+ * 
+ * @param   int     $authId     The current used webauthn id
+ * 
+ * @return  string              The table html
+ */
+function authTable($authId=''){
+    $webauthnList	= authenticatorList();
 
     ob_start();
-	if(!empty($webauthn_list)){
+	if(!empty($webauthnList)){
 		?>
 		<div id='webautn_devices_wrapper'>
             <h4>Biometric authenticators overview</h4>
@@ -344,17 +381,17 @@ function auth_table($auth_id=''){
 				</thead>
 				<tbody>
 					<?php
-					foreach($webauthn_list as $key=>$device_meta){
-						$identifier		= $device_meta['identifier'];
-						$os_name		= $device_meta['os_info']['name'];
-						$added			= date('jS M Y', strtotime($device_meta['added']));
-                        $last_used      = $device_meta['last_used'];
+					foreach($webauthnList as $key=>$deviceMeta){
+						$identifier		= $deviceMeta['identifier'];
+						$osName		    = $deviceMeta['os_info']['name'];
+						$added			= date('jS M Y', strtotime($deviceMeta['added']));
+                        $lastUsed       = $deviceMeta['last_used'];
 
-                        if($last_used != '-'){
-						    $last_used		= date('jS M Y', strtotime($device_meta['last_used']));
+                        if($lastUsed != '-'){
+						    $lastUsed		= date('jS M Y', strtotime($deviceMeta['last_used']));
                         }
 
-                        if($key == $auth_id){
+                        if($key == $authId){
                             echo "<tr class='current_device'>";
                         }else{
                             echo "<tr>";
@@ -362,9 +399,9 @@ function auth_table($auth_id=''){
                         
 						?>
 							<td><?php echo $identifier;?></td>
-							<td><?php echo $os_name;?></td>
+							<td><?php echo $osName;?></td>
 							<td><?php echo $added;?></td>
-							<td><?php echo $last_used;?></td>
+							<td><?php echo $lastUsed;?></td>
 							<td>
 								<button type='button' class='button small remove_webauthn' title='Remove this method' data-key='<?php echo $key;?>'>-</button>
 							</td>

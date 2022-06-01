@@ -17,7 +17,10 @@ add_filter( 'login_url', function($login_url, $redirect, $force_reauth ){
     return add_query_arg(['showlogin' => '', 'redirect' => $redirect], home_url());
 },10,3);
 
-function login_modal($message='', $required=false, $username=''){	
+/**
+ * Creates a login form modal
+ */
+function loginModal($message='', $required=false, $username=''){	
     ob_start();
 
     ?>
@@ -117,9 +120,9 @@ add_filter( 'the_content', function ( $content ) {
     
 	if (!is_user_logged_in()){
         if(isset($_GET['showlogin'])){
-            $content .= login_modal('', true, $_GET['showlogin']);
+            $content .= loginModal('', true, $_GET['showlogin']);
         }else{
-            $content .= login_modal();
+            $content .= loginModal();
         }
     }
 
@@ -142,7 +145,7 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
 add_action( 'template_redirect', __NAMESPACE__.'\homepage_redirect' );
 function homepage_redirect(){
 	if( is_front_page() && is_user_logged_in() ){
-        $url    = SIM\getValidPageLink(SIM\get_module_option('frontpage', 'home_page'));
+        $url    = SIM\getValidPageLink(SIM\getModuleOption('frontpage', 'home_page'));
         if($url and $url != SIM\currentUrl()){ 
             wp_redirect(add_query_arg($_GET,$url));
             exit();

@@ -2,7 +2,7 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
-function send_pending_post_warning($post, $update){	
+function sendPendingPostWarning($post, $update){	
 	//Do not continue if already send
 	if(get_post_meta($post->ID, 'pending_notification_send',true) != '') return;
 	
@@ -20,14 +20,14 @@ function send_pending_post_warning($post, $update){
 	$type = $post->post_type;
 	
 	//send notification to all content managers
-	$url			= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
+	$url			= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting', 'publish_post_page'));
 	if(!$url)	 return;
 	$url			= add_query_arg( ['post_id' => $post->ID], $url );
 	$authorName	= get_userdata($post->post_author)->display_name;
 	
 	foreach($users as $user){
 		//send signal message
-		SIM\try_send_signal("$authorName just $actionText a $type. Please review it here:\n\n$url",$user->ID);
+		SIM\trySendSignal("$authorName just $actionText a $type. Please review it here:\n\n$url",$user->ID);
 
 		$pendinfPostEmail    = new PendingPostEmail($user, $authorName, $actionText, $type, $url);
 		$pendinfPostEmail->filterMail();
@@ -100,7 +100,7 @@ function add_page_edit_button(){
 			$type = $post->post_type;
 			$buttonText = "Edit this $type";
 			
-			$url	= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
+			$url	= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting', 'publish_post_page'));
 			if(!$url) return;
 			$url = add_query_arg( ['post_id' => $postId], $url );
 			echo "<a href='$url' class='button sim' id='pageedit'>$buttonText</a>";

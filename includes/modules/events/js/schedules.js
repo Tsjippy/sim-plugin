@@ -9,7 +9,7 @@
  * @return nothing
 */ 
 async function addSchedule(target){
-	var response = await formsubmit.submitForm(target, 'events/add_schedule');
+	var response = await FormSubmit.submitForm(target, 'events/add_schedule');
 
 	if(response){
 		target.closest('.schedules_wrapper').outerHTML=response.html;
@@ -33,7 +33,7 @@ function ShowPublishScheduleModal(target){
 }
 
 async function publishSchedule(target){
-	response	= await formsubmit.submitForm(target, 'events/publish_schedule');
+	response	= await FormSubmit.submitForm(target, 'events/publish_schedule');
 
 	if(response){
 		document.querySelectorAll('.schedule_actions .loadergif').forEach(el=>el.classList.add('hidden'));
@@ -45,15 +45,15 @@ async function publishSchedule(target){
 }
 
 // Removes an existing schedule
-async function remove_schedule(target){
-	schedule_id			= target.dataset["schedule_id"];
+async function removeSchedule(target){
+	var scheduleId		= target.dataset["schedule_id"];
 	var text 			= "Are you sure you want to remove this schedule";
 	var formData 		= new FormData();
-	formData.append('schedule_id', schedule_id);
+	formData.append('schedule_id', scheduleId);
 
 	var confirmed		= await checkConfirmation(text);
 	if(confirmed){
-		var response	= await formsubmit.fetchRestApi('events/remove_schedule', formData);
+		var response	= await FormSubmit.fetchRestApi('events/remove_schedule', formData);
 
 		if(response){
 			main.displayMessage(response);
@@ -69,17 +69,17 @@ function showAddHostModal(){
 	table												= target.closest('table');
 	var cell											= target.closest('td');
 	var date											= table.rows[0].cells[cell.cellIndex].dataset.isodate;
-	var starttime										= target.closest('tr').dataset.starttime;
+	var startTime										= target.closest('tr').dataset.starttime;
 	var modal											= target.closest('.schedules_wrapper').querySelector('[name="add_host"]');
 	modal.querySelector('[name="schedule_id"]').value	= table.dataset["id"];
 	modal.querySelector('[name="date"]').value			= date;
-	modal.querySelector('[name="starttime"]').value		= starttime;
+	modal.querySelector('[name="starttime"]').value		= startTime;
 	modal.classList.remove('hidden');
 }
 
 // Add a new host when the host form is submitted
 async function addHost(target){
-	var response 	= await formsubmit.submitForm(target, 'events/add_host');
+	var response 	= await FormSubmit.submitForm(target, 'events/add_host');
 
 	if(response){
 		addHostHtml(response);
@@ -90,10 +90,10 @@ async function addHost(target){
 async function addCurrentUserAsHost(target){
 	table				= target.closest('table');
 	var cell			= target.closest('td');
-	var scheduleowner	= table.dataset.target;
-	var date_str		= table.rows[0].cells[cell.cellIndex].dataset.date;
+	var scheduleOwner	= table.dataset.target;
+	var dateStr			= table.rows[0].cells[cell.cellIndex].dataset.date;
 	
-	var text 			= `Please confirm you want to be the host for ${scheduleowner} on ${date_str}`;
+	var text 			= `Please confirm you want to be the host for ${scheduleOwner} on ${dateStr}`;
 	var confirmed		= await checkConfirmation(text);
 
 	if(confirmed){
@@ -101,7 +101,7 @@ async function addCurrentUserAsHost(target){
 
 		var formData		= loadHostFormdata(target);
 
-		var response	= await formsubmit.fetchRestApi('events/add_host', formData);
+		var response	= await FormSubmit.fetchRestApi('events/add_host', formData);
 
 		if(response){
 			addHostHtml(response);
@@ -112,19 +112,19 @@ async function addCurrentUserAsHost(target){
 // Show the new host in the schedule
 function addHostHtml(response){
 	var target_cell			= document.querySelector('td.active');
-	target_cell.classList.remove('active');
+	targetCell.classList.remove('active');
 
-	if(target_cell.rowSpan>1){
-		var row		= target_cell.closest('tr');
-		var index	= target_cell.cellIndex;
+	if(targetCell.rowSpan>1){
+		var row		= targetCell.closest('tr');
+		var index	= targetCell.cellIndex;
 		//Loop over the next cells to add the hidden attribute
-		for (i = 1; i < target_cell.rowSpan; i++) {
+		for (i = 1; i < targetCell.rowSpan; i++) {
 			row = row.nextElementSibling;
 			row.cells[index].classList.add('hidden');
 		}
 	}
 
-	target_cell.outerHTML	= response.html;
+	targetCell.outerHTML	= response.html;
 
 	main.hideModals();
 
@@ -138,16 +138,16 @@ async function removeHost(target){
 	var formData		= loadHostFormdata(target);
 
 	table				= target.closest('table');
-	var scheduleowner	= table.dataset.target;
+	var scheduleOwner	= table.dataset.target;
 	var cell			= target.closest('td');
-	var date_str		= table.rows[0].cells[cell.cellIndex].dataset.date;
+	var dateStr			= table.rows[0].cells[cell.cellIndex].dataset.date;
 
 	if(target.classList.contains('orientation')){
 		var text 	= `Are you sure you want to remove this orientation session`;
 	}else if(target.classList.contains('admin')){
-		var text 	= `Please confirm host removal for ${scheduleowner} on ${date_str}`;
+		var text 	= `Please confirm host removal for ${scheduleOwner} on ${dateStr}`;
 	}else{
-		var text 	= `Please confirm you do not want to be the host for ${scheduleowner} on ${date_str} anymore`;
+		var text 	= `Please confirm you do not want to be the host for ${scheduleOwner} on ${dateStr} anymore`;
 	}
 
 	var confirmed	= await checkConfirmation(text);
@@ -155,7 +155,7 @@ async function removeHost(target){
 	if(confirmed){
 		main.showLoader(cell.firstChild);
 
-		var response = await formsubmit.fetchRestApi('events/remove_host', formData);
+		var response = await FormSubmit.fetchRestApi('events/remove_host', formData);
 
 		//Remove cell class
 		cell.classList.remove('selected');
@@ -184,21 +184,21 @@ async function removeHost(target){
 
 function showTimeslotModal(selected){
 	var modal 			= document.querySelector('[name="add_session"]');
-	var first_cell		= selected[0].node;
-	var last_cell		= selected[selected.length-1].node;
+	var firstCell		= selected[0].node;
+	var lastCell		= selected[selected.length-1].node;
 
-	first_cell.classList.add('active');
-	first_cell.rowSpan	= document.querySelectorAll('.ui-selected').length;
-	var endtime			= last_cell.closest('tr').dataset.endtime;
-	table				= first_cell.closest('table');
+	firstCell.classList.add('active');
+	firstCell.rowSpan	= document.querySelectorAll('.ui-selected').length;
+	var endTime			= lastCell.closest('tr').dataset.endtime;
+	table				= firstCell.closest('table');
 	var date			= table.rows[0].cells[first_cell.cellIndex].dataset.isodate;
 	
 	//Fill the modal values
 	modal.querySelector('[name="schedule_id"]').value		= table.dataset["id"];
 	modal.querySelector('[name="date"]').value				= date;
 	modal.querySelector('[name="olddate"]').value 			= date;
-	modal.querySelector('[name="starttime"]').value			= first_cell.closest('tr').dataset.starttime;
-	modal.querySelector('[name="endtime"]').value			= endtime;
+	modal.querySelector('[name="starttime"]').value			= firstCell.closest('tr').dataset.starttime;
+	modal.querySelector('[name="endtime"]').value			= endTime;
 	modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
 	modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
 	
@@ -215,7 +215,7 @@ async function editTimeSlot(selected){
 		denyButtonText: 'Remove timeslot',
 	});
 	
-	var first_cell	= selected[0].node;
+	var firstCell	= selected[0].node;
 
 	//swap and/or
 	if (answer.isConfirmed) {
@@ -224,19 +224,19 @@ async function editTimeSlot(selected){
 
 		// also prefill the other fields
 		var modal 		= document.querySelector('[name="add_session"]');
-		var endrow		= target.closest('tr').rowIndex + target.rowSpan - 1;
-		var endtime		= target.closest('table').rows[endrow].dataset.endtime;			
-		modal.querySelector('[name="subject"]').value			= first_cell.querySelector('.subject').textContent;
-		modal.querySelector('[name="endtime"]').value			= endtime;
+		var endRow		= target.closest('tr').rowIndex + target.rowSpan - 1;
+		var endTime		= target.closest('table').rows[endrow].dataset.firstCell;			
+		modal.querySelector('[name="subject"]').value			= firstCell.querySelector('.subject').textContent;
+		modal.querySelector('[name="endtime"]').value			= endTime;
 
 		//Fill locationfield
-		var locationttext = first_cell.querySelector('.location').textContent;
-		if(locationttext != 'Add location'){
-			modal.querySelector('[name="location"]').value			= locationttext;
+		var locationtText = first_cell.querySelector('.location').textContent;
+		if(locationtText != 'Add location'){
+			modal.querySelector('[name="location"]').value			= locationtText;
 		}
 		
 		//Fill userfield
-		var userid = first_cell.dataset.host;
+		var userid = firstCell.dataset.host;
 		if(userid != null){
 			el = modal.querySelector('[name="host"]');
 			if(el != null){
@@ -251,7 +251,7 @@ async function editTimeSlot(selected){
 		modal.querySelector('[name="add_timeslot"]').textContent	= 'Update time slot';
 	//add new rule after this one
 	}else if (answer.isDenied) {
-		removeHost(first_cell);
+		removeHost(firstCell);
 	}
 }
 
@@ -260,32 +260,32 @@ function showRecipeModal(target){
 	target.classList.add('active');
 
 	table				= target.closest('table');
-	schedule_id			= table.dataset["id"];
+	scheduleId			= table.dataset["id"];
 	var heading			= table.tHead.rows[0];
 	var cell			= target.closest('td');
 	var date			= heading.cells[cell.cellIndex].dataset.isodate;
-	var starttime		= target.closest('tr').dataset.starttime;
+	var startTime		= target.closest('tr').dataset.starttime;
 
 	//Fill the modal with the values of the clickes schedule
-	recipe_modal = document.querySelector('[name="recipe_keyword_modal"]');
+	recipeModal = document.querySelector('[name="recipe_keyword_modal"]');
 
-	formsubmit.formReset(recipe_modal.querySelector('form'));
+	FormSubmit.formReset(recipeModal.querySelector('form'));
 
-	recipe_modal.querySelector('[name="schedule_id"]').value 	= table.dataset["id"];
-	recipe_modal.querySelector('[name="date"]').value 			= date;
-	recipe_modal.querySelector('[name="starttime"]').value 		= starttime;
+	recipeModal.querySelector('[name="schedule_id"]').value 	= table.dataset["id"];
+	recipeModal.querySelector('[name="date"]').value 			= date;
+	recipeModal.querySelector('[name="starttime"]').value 		= startTime;
 
 	if(target.textContent != 'Enter recipe keyword'){
-		recipe_modal.querySelector('[name="recipe_keyword"]').value	= target.textContent;
+		recipeModal.querySelector('[name="recipe_keyword"]').value	= target.textContent;
 		document.querySelector('[name="add_recipe_keyword"]').textContent	= 'Update recipe keywords';
 	}
 	
-	recipe_modal.classList.remove('hidden');
+	recipeModal.classList.remove('hidden');
 }
 
 //submit the recipe form
 async function submitRecipe(target){
-	var response = await formsubmit.submitForm(target, 'events/add_menu');
+	var response = await FormSubmit.submitForm(target, 'events/add_menu');
 
 	document.querySelector('.active').textContent	= target.closest('form').querySelector('[name="recipe_keyword"]').value;
 
@@ -298,22 +298,22 @@ async function submitRecipe(target){
 
 function loadHostFormdata(target){
 	table				= target.closest('table');
-	schedule_id			= table.dataset["id"];
+	scheduleId			= table.dataset["id"];
 	var heading			= table.tHead.rows[0];
 	var cell			= target.closest('td');
 	var date			= heading.cells[cell.cellIndex].dataset.isodate;
-	var starttime		= target.closest('tr').dataset.starttime;
+	var startTime		= target.closest('tr').dataset.starttime;
 
 	var formData		= new FormData();
 	formData.append('date',date);
 	if(cell.dataset.host != null){
 		formData.append('host',cell.dataset.host);
 	}else{
-		formData.append('host',sim.userid);
+		formData.append('host',sim.userId);
 	}
 	
-	formData.append('starttime',starttime);
-	formData.append('schedule_id',schedule_id);
+	formData.append('starttime', startTime);
+	formData.append('schedule_id', scheduleId);
 
 	return formData;
 }
@@ -351,19 +351,19 @@ function hideRows() {
 	
 	//Loop over all tables
 	document.querySelectorAll('.sim-table').forEach(function(table){
-		var emptyrow = true;
+		var emptyRow = true;
 		
 		//DO not hide lunch or dinner rows
 		if(tr.dataset.starttime != 'dinner' && tr.dataset.starttime != 'lunch'){
 			//loop over all table cells to see if there is a cell with content
 			tr.querySelectorAll('td').forEach(function(cell,index){
 				if(index>0 && cell.textContent != 'Available' && cell.textContent != ' '){
-					emptyrow = false;
+					emptyRow = false;
 				}
 			});
 			
 			//If non of the cells have content
-			if(emptyrow == true){
+			if(emptyRow ){
 				//hide the row
 				tr.classList.add('hidden');
 			}
@@ -412,7 +412,7 @@ document.addEventListener('click',function(event){
 	if(target.classList.contains('remove_schedule')){
 		event.stopPropagation();
 
-		remove_schedule(target);
+		removeSchedule(target);
 	}
 
 	//publish the schedule
@@ -470,14 +470,14 @@ function afterSelect(e, selected, unselected){
 		addCurrentUserAsHost(target);
 	}else{
 		//we have selected something and there are no open modals
-		var open_modals	= document.querySelectorAll('.modal:not(.hidden)');
-		if((selected.length > 0 || target.classList.contains('orientation')) && (open_modals == null || open_modals.length == 0) ){	
+		var openModals	= document.querySelectorAll('.modal:not(.hidden)');
+		if((selected.length > 0 || target.classList.contains('orientation')) && (openModals == null || openModals.length == 0) ){	
 			//check if selection is valid
-			var column_nr	= selected[0].node.cellIndex;
-			var first_cell	= selected[0].node;
+			var columnNr	= selected[0].node.cellIndex;
+			var firstCell	= selected[0].node;
 
 			for (const selection of selected){
-				if(column_nr != selection.node.cellIndex){
+				if(columnNr != selection.node.cellIndex){
 					Swal.fire({
 						icon: 'error',
 						title: "You can not select times on multiple days!",
@@ -489,7 +489,7 @@ function afterSelect(e, selected, unselected){
 			};
 			
 			//We are dealing with a cell with a value
-			if(first_cell.classList.contains('selected')){
+			if(firstCell.classList.contains('selected')){
 				editTimeSlot(selected);
 			}else{
 				showTimeslotModal(selected);

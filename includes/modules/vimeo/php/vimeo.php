@@ -10,7 +10,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 	$vimeoId = get_post_meta( $post->ID, 'vimeo_id', true );
 
 	//Check if already uploaded
-	if(!SIM\get_module_option('vimeo', 'upload')){
+	if(!SIM\getModuleOption('vimeo', 'upload')){
 		//video already on vimeo
 		if(!is_numeric($vimeoId)){
 			$html    = "<div>";
@@ -72,7 +72,7 @@ add_action( 'edit_attachment', function($attachmentId){
 } );
 
 // Delete video from vimeo when attachemnt is deleted, if that option is enabled
-if(SIM\get_module_option('vimeo', 'remove')){
+if(SIM\getModuleOption('vimeo', 'remove')){
 	add_action( 'delete_attachment', function($postId, $post ){
 		if(explode('/', $post->post_mime_type)[0] == 'video'){
 			$VimeoApi = new VimeoApi();
@@ -81,7 +81,7 @@ if(SIM\get_module_option('vimeo', 'remove')){
 	},10,2);
 }
 
-add_action('before_visibility_change', function($attachment_id, $visibility){
+add_action('sim_before_visibility_change', function($attachment_id, $visibility){
 	if($visibility == 'private'){
 		$VimeoApi	= new VimeoApi();
 		$VimeoApi->hideVimeoVideo($attachment_id);
@@ -128,7 +128,7 @@ add_filter( 'wp_mime_type_icon', function ($icon, $mime, $post_id) {
 	return $icon;
 }, 10, 9 );
 
-if(SIM\get_module_option('vimeo', 'upload')){
+if(SIM\getModuleOption('vimeo', 'upload')){
 	//add filter
 	add_action('post-html-upload-ui', function(){
 		add_filter('gettext', 'SIM\VIMEO\change_upload_size_message', 10, 2);

@@ -9,25 +9,25 @@ function show_dashboard($userId, $admin=false){
 
 	ob_start();
 	$userdata	= get_userdata($userId);
-	$first_name	= $userdata->first_name;
+	$firstName	= $userdata->first_name;
 	
 	if($admin){
-		$login_count = get_user_meta( $userId, 'login_count', true);
-		$last_login = get_user_meta( $userId, 'last_login_date',true);
+		$loginCount = get_user_meta( $userId, 'login_count', true);
+		$lastLogin	= get_user_meta( $userId, 'last_login_date',true);
 
-		if(is_numeric($login_count)){
-			$time_string 	= strtotime($last_login);
-			if($time_string ) $last_login = date('d F Y', $time_string);
-			$message = "$first_name has logged in $login_count times.<br>Last login was $last_login.";
+		if(is_numeric($loginCount)){
+			$timeString 	= strtotime($lastLogin);
+			if($timeString ) $last_login = date('d F Y', $timeString);
+			$message = "$firstName has logged in $loginCount times.<br>Last login was $last_login.";
 		}else{
-			$message = "$first_name has never logged in.<br>";
+			$message = "$firstName has never logged in.<br>";
 		}
 		
 		//show last login date
 		echo "<p id='login_message' style='border: 3px solid #bd2919; padding: 10px; text-align: center;'>$message</p>";
 	}
 	
-	echo "<p>Hello $first_name</p>";
+	echo "<p>Hello $firstName</p>";
 	
 	?>
 	<div id="warnings">
@@ -43,44 +43,47 @@ function show_dashboard($userId, $admin=false){
 	<div id="ministrywarnings">
 		<?php
 		//Show warning about out of date ministry pages
-		$ministry_pages = get_pages([
+		$ministryPages = get_pages([
 			'meta_key'         => 'icon_id',
 			'meta_value'       => $MinistrieIconID
 		]);
 			
-		$html_start = "<h3>Notice</h3><p>Please update these pages:<br><ul>";
-		$post_age_warning_html = $html_start;
-		
+		$warningHtml	= '';
 		//Loop over all the pages
-		foreach ( $ministry_pages as $ministry_page ) {
+		foreach ( $ministryPages as $ministryPage ) {
 			//Get the ID of the current page
-			$post_id = $ministry_page->ID;
-			$post_title = $ministry_page->post_title;
+			$postId		= $ministryPage->ID;
+			$postTitle	= $ministryPage->post_title;
 			
 			//Get the last modified date
-			$date1=date_create($ministry_page->post_modified);
-			$today=date_create('now');
+			$date1		= date_create($ministryPage->post_modified);
+			$today		= date_create('now');
 			
 			//days since last modified
-			$page_age=date_diff($date1,$today);
-			$page_age = $page_age->format("%a");
+			$pageAge	= date_diff($date1,$today);
+			$pageAge 	= $pageAge->format("%a");
 			
 			//Get the first warning parameter and convert to days
-			$days = SIM\get_module_option('frontend_posting', 'max_page_age')*30;
+			$days 		= SIM\getModuleOption('frontend_posting', 'max_page_age') * 30;
 			
 			//If the page is not modified since the parameter
-			if ($page_age > $days ){
+			if ($pageAge > $days ){
 				//Get the edit page url
-				$url	= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page') );
-				if(!$url) $url = '';
-				$url = add_query_arg( ['post_id' => $post_id], $url );
+				$url			= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting', 'publish_post_page') );
+				if(!$url) $url 	= '';
+				$url			= add_query_arg( ['post_id' => $postId], $url );
 
-				$post_age_warning_html .= '<li><a href="'.$url.'">'.$post_title.'</a></li>';
+				$warningHtml 	.= "<li><a href='$url'>$postTitle</a></li>";
 			}
 		}
-		if ($post_age_warning_html != $html_start){
-			$post_age_warning_html .= "</ul></p>";
-			echo $post_age_warning_html;
+		if (!empty($warningHtml)){
+			echo "<h3>Notice</h3>";
+			echo "<p>";
+				echo "Please update these pages:<br>";
+				echo "<ul>";
+					echo $warningHtml;
+				echo "</ul>";
+			echo"</p>";
 		}
 	echo '</div>';
 

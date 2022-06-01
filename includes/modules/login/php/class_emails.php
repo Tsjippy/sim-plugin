@@ -6,15 +6,15 @@ use SIM\ADMIN;
 class TwoFaEmail extends ADMIN\MailSetting{
 
     public $user;
-    public $email_code;
+    public $emailCode;
 
-    public function __construct($user, $email_code='') {
+    public function __construct($user, $emailCode='') {
         // call parent constructor
 		parent::__construct();
 
         $this->addUser($user);
 
-        $this->replaceArray['%email_code%']    = $email_code;
+        $this->replaceArray['%email_code%']    = $emailCode;
 
         $this->moduleSlug        = 'login';
         $this->keyword           = 'email_code';

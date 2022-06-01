@@ -50,9 +50,9 @@ document.addEventListener("DOMContentLoaded",function() {
 			document.querySelector("#welcome-message").classList.add('hidden');
 
 			var formData = new FormData();
-			formData.append('_wpnonce', sim.restnonce);
+			formData.append('_wpnonce', sim.restNonce);
 			fetch(
-				sim.base_url+'/wp-json/sim/v1/frontpage/hide_welcome', 
+				sim.baseUrl+'/wp-json/sim/v1/frontpage/hide_welcome', 
 				{
 					method: 'POST',
 					credentials: 'same-origin',

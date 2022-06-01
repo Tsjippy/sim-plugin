@@ -3,17 +3,17 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 //Add availbale partners as default
-add_filter( 'add_form_multi_defaults', function($default_array_values, $userId, $formname){
-	if($formname != 'user_family') return $default_array_values;
+add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId, $formName){
+	if($formName != 'user_family') return $defaultArrayValues;
 	
 	$dropdowns = fill_family_dropdowns($userId);
 
-	$default_array_values['Potential fathers'] 	= $dropdowns['father'];
-	$default_array_values['Potential mothers'] 	= $dropdowns['mother'];
-	$default_array_values['Potential spouses']	= $dropdowns['spouse'];
-	$default_array_values['Potential children']	= $dropdowns['children'];
+	$defaultArrayValues['Potential fathers'] 	= $dropdowns['father'];
+	$defaultArrayValues['Potential mothers'] 	= $dropdowns['mother'];
+	$defaultArrayValues['Potential spouses']	= $dropdowns['spouse'];
+	$defaultArrayValues['Potential children']	= $dropdowns['children'];
 	
-	return $default_array_values;
+	return $defaultArrayValues;
 },10,3);
 
 //Function used in the backend and frontend (family.php)
@@ -134,12 +134,12 @@ function fill_family_dropdowns($userId){
 }
 
 //Save family
-add_filter('before_saving_formdata',function($formresults, $formname, $userId){
-	if($formname != 'user_family') return $formresults;
+add_filter('sim_before_saving_formdata',function($formResults, $formName, $userId){
+	if($formName != 'user_family') return $formResults;
 
 	$events	= new SIM\EVENTS\Events();
 	
-	$family = $formresults["family"];
+	$family = $formResults["family"];
 	
 	$old_family = (array)get_user_meta( $userId, 'family', true );
 	
@@ -155,7 +155,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $userId){
 				update_user_meta($family['partner'], 'family', $partner_family);
 			}
 
-			$events->create_celebration_event('Wedding anniversary', $userId, 'family[weddingdate]', $family['weddingdate']);
+			$events->createCelebrationEvent('Wedding anniversary', $userId, 'family[weddingdate]', $family['weddingdate']);
 		}
 
 		$user_gender = get_user_meta( $userId, 'gender', true );
@@ -179,7 +179,7 @@ add_filter('before_saving_formdata',function($formresults, $formname, $userId){
 				//If I am updating this user to have a partner and that partner has children adds them to the current user as well
 				if (isset($partner_family['children']) and !isset($family['children']) and !isset($old_family['children'])){
 					//Add the children of the partner to this user as well.
-					$formresults["family"]['children'] = $partner_family['children'];
+					$formResults["family"]['children'] = $partner_family['children'];
 				}
 			}
 		}
@@ -288,12 +288,12 @@ add_filter('before_saving_formdata',function($formresults, $formname, $userId){
 		}
 		
 		//update user page if needed
-		if(function_exists('SIM\USERPAGE\create_user_page')){
-			SIM\USERPAGE\create_user_page($userId);
+		if(function_exists('SIM\USERPAGE\createUserPage')){
+			SIM\USERPAGE\createUserPage($userId);
 		}
 	}
 	
-	return $formresults;
+	return $formResults;
 },10,3);
 
 //Save in db
@@ -314,8 +314,8 @@ function save_family_in_db($userId, $family){
 }
 
 // add a family member modal
-add_action('before_form',function ($formname){
-	if($formname != 'user_family') return;
+add_action('sim_before_form',function ($formName){
+	if($formName != 'user_family') return;
 	
 	if(isset($_GET['userid'])){
 		$lastname = get_userdata($_GET['userid'])->last_name;
@@ -345,7 +345,7 @@ add_action('before_form',function ($formname){
 					<input type="email" name="email">
 				</label>
 				
-				<?php echo SIM\add_save_button('adduseraccount', 'Add family member');?>
+				<?php echo SIM\addSaveButton('adduseraccount', 'Add family member');?>
 			</form>
 		</div>
 	</div>

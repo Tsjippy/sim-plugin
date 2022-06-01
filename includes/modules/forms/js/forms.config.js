@@ -9,7 +9,7 @@ module.exports = {
 		path: path.resolve(__dirname, ''),
 		filename: 'forms.min.js',
 		library: {
-			name: 'formFunctions',
+			name: 'FormFunctions',
 			type: 'umd',
 		},
 	},

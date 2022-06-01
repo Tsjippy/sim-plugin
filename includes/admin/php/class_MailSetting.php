@@ -20,8 +20,8 @@ abstract class MailSetting{
     }
 
     public function filterMail(){
-        $this->subject  = SIM\get_module_option($this->moduleSlug, $this->keyword."_subject");
-        $this->message  = SIM\get_module_option($this->moduleSlug, $this->keyword."_message");
+        $this->subject  = SIM\getModuleOption($this->moduleSlug, $this->keyword."_subject");
+        $this->message  = SIM\getModuleOption($this->moduleSlug, $this->keyword."_message");
         $this->subject  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->subject);
         $this->message  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->message);
     }

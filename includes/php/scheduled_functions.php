@@ -1,10 +1,15 @@
 <?php
 namespace SIM;
 
-function schedule_task($taskname, $recurrence){
+/**
+ * Schedule a function
+ * @param	string 		$taskName			The name to be used for the task
+ * @param	string		$recurrence			The recurence one of: weekly, monthly, threemonthly, sixmonthly,yearly. Default daily
+*/
+function scheduleTask($taskName, $recurrence){
 	// Clear before readding
-	if (wp_next_scheduled($taskname)) {
-		wp_clear_scheduled_hook( $taskname );
+	if (wp_next_scheduled($taskName)) {
+		wp_clear_scheduled_hook( $taskName );
 	}
 
 	switch ($recurrence) {
@@ -16,21 +21,21 @@ function schedule_task($taskname, $recurrence){
 			break;
 		case 'threemonthly':
 			//calculate start of next quarter
-			$monthcount = 0;
+			$monthCount = 0;
 			$month		= 0;
 			while(!in_array($month, [1,4,7,10])){
-				$monthcount++;
-				$time	= strtotime("first day of +$monthcount month");
+				$monthCount++;
+				$time	= strtotime("first day of +$monthCount month");
 				$month = date('n',$time);
 			}
 			break;
 		case 'sixmonthly':
 				//calculate start of next half year
-				$monthcount = 0;
+				$monthCount = 0;
 				$month		= 0;
 				while(!in_array($month, [1,7])){
-					$monthcount++;
-					$time	= strtotime("first day of +$monthcount month");
+					$monthCount++;
+					$time	= strtotime("first day of +$monthCount month");
 					$month	= date('n',$time);
 				}
 				break;
@@ -42,10 +47,10 @@ function schedule_task($taskname, $recurrence){
 	} 
 
 	//schedule
-	if(wp_schedule_event( $time, $recurrence, $taskname )){
-		printArray("Succesfully scheduled $taskname to run $recurrence");
+	if(wp_schedule_event( $time, $recurrence, $taskName )){
+		printArray("Succesfully scheduled $taskName to run $recurrence");
 	}else{
-		printArray("Scheduling of $taskname unsuccesfull");
+		printArray("Scheduling of $taskName unsuccesfull");
 	}
 }
 

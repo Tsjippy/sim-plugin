@@ -3,39 +3,37 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 //Multi default values used to prefil the compound dropdown
-add_filter( 'add_form_multi_defaults', function($default_array_values, $userId, $formname){
-	if($formname != 'user_location') return $default_array_values;
+add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId, $formName){
+	if($formName != 'user_location') return $defaultArrayValues;
 
 	$compounds = [];
 	foreach ( NIGERIASTATES as $name=>$state ) {
 		$compounds[$name] = str_replace('_',' ',$name);
 	}
-	$default_array_values['compounds'] 			= $compounds;
+	$defaultArrayValues['compounds'] 			= $compounds;
 	
-	return $default_array_values;
-},10,3);
+	return $defaultArrayValues;
+}, 10, 3);
 
 //create birthday and anniversary events
-add_filter('before_saving_formdata',function($formresults, $formname, $userId){
-	if($formname != 'user_location') return $formresults;
-
-	global $wpdb;
+add_filter('sim_before_saving_formdata',function($formResults, $formName, $userId){
+	if($formName != 'user_location') return $formResults;
 	
 	//Get the old values from the db
-	$old_location = get_user_meta( $userId, 'location', true );
+	$oldLocation = get_user_meta( $userId, 'location', true );
 	
 	//Get the location from the post array
 	$location = $_POST["location"];
 	
 	//Only update when needed and if valid coordinates
-	if(is_array($location) and $location != $old_location and !empty($location['latitude']) and !empty($location['longitude'])){
+	if(is_array($location) and $location != $oldLocation and !empty($location['latitude']) and !empty($location['longitude'])){
 		$latitude = $location['latitude'] = filter_var(
 			$location['latitude'], 
 			FILTER_SANITIZE_NUMBER_FLOAT,
 			FILTER_FLAG_ALLOW_FRACTION
 		);
 		
-		$longitude = $location['longitude'] = filter_var(
+		$location['longitude'] = filter_var(
 			$location['longitude'], 
 			FILTER_SANITIZE_NUMBER_FLOAT,
 			FILTER_FLAG_ALLOW_FRACTION
@@ -56,5 +54,5 @@ add_filter('before_saving_formdata',function($formresults, $formname, $userId){
 		do_action('sim_location_removal', $userId);
 	}
 	
-	return $formresults;
+	return $formResults;
 },10,3);

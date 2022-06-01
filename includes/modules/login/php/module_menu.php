@@ -2,7 +2,7 @@
 namespace SIM\LOGIN;
 use SIM;
 
-const ModuleVersion		= '7.0.6';
+const ModuleVersion		= '7.0.7';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
@@ -37,9 +37,9 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 		Use like this: <code>[twofa_setup]</code>
 	</p>
 	<?php
-	$page1Id	= SIM\get_module_option($moduleSlug, 'password_reset_page');
-	$page2Id	= SIM\get_module_option($moduleSlug, 'register_page');
-	$page3Id	= SIM\get_module_option($moduleSlug, '2fa_page');
+	$page1Id	= SIM\getModuleOption($moduleSlug, 'password_reset_page');
+	$page2Id	= SIM\getModuleOption($moduleSlug, 'register_page');
+	$page3Id	= SIM\getModuleOption($moduleSlug, '2fa_page');
 	if(is_numeric($page1Id) or is_numeric($page2Id) or is_numeric($page3Id)){
 		?>
 		<p>
@@ -119,21 +119,21 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	<br>
 	<br>
 
-	<input type='hidden' name='password_reset_page' value='<?php echo SIM\get_module_option($moduleSlug, 'password_reset_page');?>'>
-	<input type='hidden' name='register_page' value='<?php echo SIM\get_module_option($moduleSlug, 'register_page');?>'>
+	<input type='hidden' name='password_reset_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'password_reset_page');?>'>
+	<input type='hidden' name='register_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'register_page');?>'>
 	<?php
 }, 10, 3);
 
-add_filter('sim_module_updated', function($new_options, $moduleSlug, $old_options){
+add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $new_options;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $newOptions;
 
 	$public_cat	= get_cat_ID('Public');
 
 	// Create password reset page
-	$page_id	= SIM\get_module_option($moduleSlug, 'password_reset_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'password_reset_page');
 	// Only create if it does not yet exist
-	if(!$page_id or get_post_status($page_id) != 'publish'){
+	if(!$pageId or get_post_status($pageId) != 'publish'){
 		$post = array(
 			'post_type'		=> 'page',
 			'post_title'    => 'Change password',
@@ -145,18 +145,18 @@ add_filter('sim_module_updated', function($new_options, $moduleSlug, $old_option
 		$pageId 	= wp_insert_post( $post, true, false);
 
 		//Store page id in module options
-		$new_options['password_reset_page']	= $pageId;
+		$newOptions['password_reset_page']	= $pageId;
 
 		// Do not require page updates
 		update_post_meta($pageId,'static_content', true);
 	}
 
 	// Add registration page
-	if(isset($new_options['user_registration'])){
+	if(isset($newOptions['user_registration'])){
 		// Create register page
-		$page_id	= SIM\get_module_option($moduleSlug, 'register_page');
+		$pageId	= SIM\getModuleOption($moduleSlug, 'register_page');
 		// Only create if it does not yet exist
-		if(!$page_id or get_post_status($page_id) != 'publish'){
+		if(!$pageId or get_post_status($pageId) != 'publish'){
 			$post = array(
 				'post_type'		=> 'page',
 				'post_title'    => 'Request user account',
@@ -168,7 +168,7 @@ add_filter('sim_module_updated', function($new_options, $moduleSlug, $old_option
 			$pageId 	= wp_insert_post( $post, true, false);
 
 			//Store page id in module options
-			$new_options['register_page']	= $pageId;
+			$newOptions['register_page']	= $pageId;
 
 			// Do not require page updates
 			update_post_meta($pageId,'static_content', true);
@@ -176,9 +176,9 @@ add_filter('sim_module_updated', function($new_options, $moduleSlug, $old_option
 	}
 
 	// Add 2fa page
-	$page_id	= SIM\get_module_option($moduleSlug, '2fa_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, '2fa_page');
 	// Only create if it does not yet exist
-	if(!$page_id or get_post_status($page_id) != 'publish'){
+	if(!$pageId or get_post_status($pageId) != 'publish'){
 		$post = array(
 			'post_type'		=> 'page',
 			'post_title'    => 'Two Factor Authentication',
@@ -189,29 +189,29 @@ add_filter('sim_module_updated', function($new_options, $moduleSlug, $old_option
 		$pageId 	= wp_insert_post( $post, true, false);
 
 		//Store page id in module options
-		$new_options['2fa_page']	= $pageId;
+		$newOptions['2fa_page']	= $pageId;
 
 		// Do not require page updates
 		update_post_meta($pageId,'static_content', true);
 	}
 
 	// Remove registration page
-	if(isset($old_options['register_page']) and !isset($new_options['user_registration'])){
-		wp_delete_post($old_options['register_page'], true);
-		unset($new_options['register_page']);
+	if(isset($oldOptions['register_page']) and !isset($newOptions['user_registration'])){
+		wp_delete_post($oldOptions['register_page'], true);
+		unset($newOptions['register_page']);
 	}
 
-	return $new_options;
+	return $newOptions;
 
 }, 10, 3);
 
 add_filter('display_post_states', function ( $states, $post ) { 
     
-    if ( $post->ID == SIM\get_module_option('login', 'password_reset_page') ) {
+    if ( $post->ID == SIM\getModuleOption('login', 'password_reset_page') ) {
         $states[] = __('Password reset page'); 
-    }elseif ( $post->ID == SIM\get_module_option('login', 'register_page') ) {
+    }elseif ( $post->ID == SIM\getModuleOption('login', 'register_page') ) {
         $states[] = __('User register page'); 
-    }elseif ( $post->ID == SIM\get_module_option('login', '2fa_page') ) {
+    }elseif ( $post->ID == SIM\getModuleOption('login', '2fa_page') ) {
         $states[] = __('Two Factor Setup page'); 
     } 
 

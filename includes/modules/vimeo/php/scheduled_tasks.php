@@ -8,10 +8,10 @@ add_action('init', function(){
     add_action( 'createVimeoThumbnails', 'SIM\VIMEO\createVimeoThumbnails');
 });
 
-function schedule_tasks(){
-    SIM\schedule_task('createVimeoThumbnails', 'daily');
-    if(SIM\get_module_option('vimeo', 'sync')){
-        SIM\schedule_task('sync_vimeo_action', 'daily');
+function scheduleTasks(){
+    SIM\scheduleTask('createVimeoThumbnails', 'daily');
+    if(SIM\getModuleOption('vimeo', 'sync')){
+        SIM\scheduleTask('sync_vimeo_action', 'daily');
     }
 }
 

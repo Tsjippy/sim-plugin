@@ -223,7 +223,7 @@ add_action( 'rest_api_init', function () {
 function addFormElement(){
 	global $wpdb;
 
-	$formbuilder	= new Formbuilder();
+	$formBuilder	= new Formbuilder();
 
 	//Store form results if submitted
 	$element		= (object)$_POST["formfield"];
@@ -235,12 +235,12 @@ function addFormElement(){
 	
 	if($element->type == 'php'){
 		//we store the functionname in the html variable replace any double \ with a single \
-		$functionname 				= str_replace('\\\\','\\',$element->functionname);
-		$element->name			= $functionname;
-		$element->functionname	= $functionname;
+		$functionName 				= str_replace('\\\\', '\\', $element->functionname);
+		$element->name			= $functionName;
+		$element->functionname	= $functionName;
 		
 		//only continue if the function exists
-		if ( ! function_exists( $functionname ) ) return new WP_Error('forms', "A function with name $functionname does not exist!");
+		if ( ! function_exists( $functionName ) ) return new WP_Error('forms', "A function with name $functionName does not exist!");
 	}
 	
 	if(in_array($element->type, ['label','button'])){
@@ -253,7 +253,7 @@ function addFormElement(){
 	$element->name		= str_replace(" ","_",strtolower(trim($element->name)));
 
 	if(
-		in_array($element->type, $formbuilder->non_inputs) 		and // this is a non-input
+		in_array($element->type, $formBuilder->nonInputs) 		and // this is a non-input
 		$element->type != 'datalist'							and // but not a datalist
 		strpos($element->name,$element->type) === false				// and the type is not yet added to the name 
 	){
@@ -267,18 +267,18 @@ function addFormElement(){
 		$i = '';
 		while($unique == false){
 			if($i == ''){
-				$fieldname = $element->name;
+				$elementName = $element->name;
 			}else{
-				$fieldname = "{$element->name}_$i";
+				$elementName = "{$element->name}_$i";
 			}
 			
 			$unique = true;
 			//loop over all elements to check if the names are equal
-			foreach($formbuilder->formdata->elements as $index=>$field){
+			foreach($formBuilder->formData->elements as $index=>$element){
 				//don't compare with itself
 				if($update and $index == $_POST['element_id']) continue;
 				//we found a duplicate name
-				if($fieldname == $field['name']){
+				if($elementName == $element['name']){
 					$i++;
 					$unique = false;
 				}
@@ -301,27 +301,27 @@ function addFormElement(){
 		if(is_array($val)){
 			$val=serialize($val);
 		}else{
-			$val	= $formbuilder->deslash($val);
+			$val	= $formBuilder->deslash($val);
 		}
 	}
 	
 	if($update){
 		$message								= "Succesfully updated '{$element->name}'";
 		$element->id							= $_POST['element_id'];
-		$formbuilder->update_form_element($element);
+		$formBuilder->updateFormElement($element);
 	}else{
 		$message								= "Succesfully added '{$element->name}' to this form";
 		if(!is_numeric($_POST['insertafter'])){
-			$element->priority	= $wpdb->get_var( "SELECT COUNT(`id`) FROM `{$formbuilder->el_table_name}` WHERE `form_id`={$element->form_id}") +1;
+			$element->priority	= $wpdb->get_var( "SELECT COUNT(`id`) FROM `{$formBuilder->elTableName}` WHERE `form_id`={$element->form_id}") +1;
 		}else{
 			$element->priority	= $_POST['insertafter'];
-			$formbuilder->reorder_elements(-1, $element->priority, $element);
+			$formBuilder->reorderElements(-1, $element->priority, $element);
 		}
 
-		$element->id	= $formbuilder->insert_element($element);
+		$element->id	= $formBuilder->insertElement($element);
 	}
 		
-	$html = $formbuilder->buildhtml($element, $index);
+	$html = $formBuilder->buildHtml($element, $index);
 	
 	return [
 		'message'		=> $message,
@@ -333,24 +333,24 @@ function addFormElement(){
 function removeElement(){
 	global $wpdb;
 
-	$formbuilder	= new Formbuilder();
+	$formBuilder	= new Formbuilder();
 
-	$element_id	= $_POST['elementindex'];
+	$elementId	= $_POST['elementindex'];
 
 	$wpdb->delete(
-		$formbuilder->el_table_name,      
-		['id' => $element_id],           
+		$formBuilder->elTableName,      
+		['id' => $elementId],           
 	);
 
 	// Fix priorities
 	// Get all elements of this form
-	$formbuilder->get_all_form_elements('priority');
+	$formBuilder->getAllFormElements('priority');
 	
 	//Loop over all elements and give them the new priority
-	foreach($formbuilder->form_elements as $key=>$el){
+	foreach($formBuilder->formElements as $key=>$el){
 		if($el->priority != $key+1){
 			//Update the database
-			$result = $wpdb->update($formbuilder->el_table_name, 
+			$result = $wpdb->update($formBuilder->elTableName, 
 				array(
 					'priority'	=> $key+1
 				), 
@@ -370,73 +370,71 @@ function removeElement(){
 
 // DONE
 function requestFormElement(){
-	$formbuilder				= new Formbuilder();
+	$formBuilder				= new Formbuilder();
 	
 	$formId 				= $_POST['formid'];
 	$elementId 				= $_POST['elementid'];
 	
-	$formbuilder->loadformdata($formId);
+	$formBuilder->loadFormData($formId);
 	
-	$conditionForm			= $formbuilder->element_conditions_form($elementId);
+	$conditionForm			= $formBuilder->elementConditionsForm($elementId);
 
-	$elementForm			= $formbuilder->elementBuilderForm($elementId);
+	$elementForm			= $formBuilder->elementBuilderForm($elementId);
 	
 	return [
-		'element_form'		=> $elementForm,
-		'conditions_html'	=> $conditionForm
+		'elementForm'		=> $elementForm,
+		'conditionsHtml'	=> $conditionForm
 	];
 }
 
 // DONE
 function reorderFormElements(){
-	$formbuilder	= new Formbuilder();
+	$formBuilder	= new Formbuilder();
 	
-	$old_index 	= $_POST['old_index'];
-	$new_index	= $_POST['new_index'];
+	$oldIndex 	= $_POST['old_index'];
+	$newIndex	= $_POST['new_index'];
 	
-	$formbuilder->reorder_elements($old_index, $new_index, '');
+	$formBuilder->reorderElements($oldIndex, $newIndex, '');
 	
 	return "Succesfully saved new form order";
 }
 
 // DONE
 function editFormfieldWidth(){
-	$formbuilder	= new Formbuilder();
+	$formBuilder	= new Formbuilder();
 	
 	$elementId 		= $_POST['elementid'];
-	$element		= $formbuilder->getElementById($elementId);
+	$element		= $formBuilder->getElementById($elementId);
 	
 	$newwidth 		= $_POST['new_width'];
 	$element->width = min($newwidth,100);
 	
-	$formbuilder->update_form_element($element);
+	$formBuilder->updateFormElement($element);
 	
 	return "Succesfully updated formelement width to $newwidth%";
 }
 
 // DONE
 function requestFormConditionsHtml(){
-	$formbuilder	= new Formbuilder();
+	$formBuilder	= new Formbuilder();
 
 	$elementID = $_POST['elementid'];
 	
-	$formbuilder->loadformdata($_POST['formid']);
+	$formBuilder->loadFormData($_POST['formid']);
 	
-	$condition_html = $formbuilder->element_conditions_form($elementID);
-	
-	return $condition_html;
+	return $formBuilder->elementConditionsForm($elementID);
 }
 
 // DONE
 function saveElementConditions(){
-	$formbuilder	= new Formbuilder();
+	$formBuilder	= new Formbuilder();
 
 	$elementID 		= $_POST['elementid'];
 	$formID			= $_POST['formid'];
 	
-	$formbuilder->loadformdata($formID);
+	$formBuilder->loadFormData($formID);
 	
-	$element = $formbuilder->getElementById($elementID);
+	$element = $formBuilder->getElementById($elementID);
 	
 	$elementConditions	= $_POST['element_conditions'];
 	if(empty($elementConditions)){
@@ -449,10 +447,10 @@ function saveElementConditions(){
 		$message = "Succesfully updated conditions for {$element->name}";
 	}
 
-	$formbuilder->update_form_element($element);
+	$formBuilder->updateFormElement($element);
 	
 	//Create new js
-	$errors		 = $formbuilder->create_js();
+	$errors		 = $formBuilder->createJs();
 
 	if(!empty($errors)){
 		$message	.= "\n\nThere were some errors:\n";
@@ -464,22 +462,22 @@ function saveElementConditions(){
 
 // DONE
 function saveFormSettings(){
-	$formbuilder	= new Formbuilder();
+	$formBuilder	= new Formbuilder();
 
 	global $wpdb;
 	
-	$formbuilder->loadformdata($_POST['formid']);
+	$formBuilder->loadFormData($_POST['formid']);
 	
-	$form_settings = $_POST['settings'];
+	$formSettings = $_POST['settings'];
 	
 	//remove double slashes
-	$form_settings['upload_path']	= str_replace('\\\\','\\',$form_settings['upload_path']);
+	$formSettings['upload_path']	= str_replace('\\\\', '\\', $formSettings['upload_path']);
 	
-	$formbuilder->maybe_insert_form();
+	$formBuilder->maybeInsertForm();
 	
-	$wpdb->update($formbuilder->table_name, 
+	$wpdb->update($formBuilder->tableName, 
 		array(
-			'settings' 	=> maybe_serialize($form_settings)
+			'settings' 	=> maybe_serialize($formSettings)
 		), 
 		array(
 			'id'		=> $_POST['formid'],
@@ -496,137 +494,137 @@ function saveFormSettings(){
 function saveFormInput(){
 	global $wpdb;
 
-	$formbuilder	= new Formbuilder();
+	$formBuilder	= new Formbuilder();
 
-	$form_id		= $_POST['formid'];
+	$formId		= $_POST['formid'];
 	
-	$formbuilder->loadformdata($form_id);
+	$formBuilder->loadFormData($formId);
 	
-	$formbuilder->user_id	= 0;
+	$formBuilder->userId	= 0;
 	if(is_numeric($_POST['userid'])){
 		//If we are submitting for someone else and we do not have the right to save the form for someone else
 		if(
-			array_intersect($formbuilder->user_roles,$formbuilder->submit_roles) === false and 
-			$formbuilder->user->ID != $_POST['userid']
+			array_intersect($formBuilder->userRoles, $formBuilder->submitRoles) === false and 
+			$formBuilder->user->ID != $_POST['userid']
 		){
 			return new \WP_Error('Error', 'You do not have permission to save data for user with id '.$_POST['userid']);
 		}else{
-			$formbuilder->user_id = $_POST['userid'];
+			$formBuilder->userId = $_POST['userid'];
 		}
 	}
 	
-	$formbuilder->formresults = $_POST;
+	$formBuilder->formResults = $_POST;
 		
 	//remove the action and the formname
-	unset($formbuilder->formresults['formname']);
-	unset($formbuilder->formresults['fileupload']);
-	unset($formbuilder->formresults['userid']);
+	unset($formBuilder->formResults['formname']);
+	unset($formBuilder->formResults['fileupload']);
+	unset($formBuilder->formResults['userid']);
 	
-	$formbuilder->formresults = apply_filters('before_saving_formdata', $formbuilder->formresults, $formbuilder->formdata->name, $formbuilder->user_id);
+	$formBuilder->formResults = apply_filters('sim_before_saving_formdata', $formBuilder->formResults, $formBuilder->formData->name, $formBuilder->userId);
 	
-	$message = $formbuilder->formdata->settings['succesmessage'];
+	$message = $formBuilder->formData->settings['succesmessage'];
 	if(empty($message)) $message = 'succes';
 	
 	//save to submission table
-	if(empty($formbuilder->formdata->settings['save_in_meta'])){			
+	if(empty($formBuilder->formData->settings['save_in_meta'])){			
 		//Get the id from db before insert so we can use it in emails and file uploads
-		$formbuilder->formresults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$formbuilder->submissiontable_name}')");
+		$formBuilder->formResults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$formBuilder->submissionTableName}')");
 		
 		//sort arrays
-		foreach($formbuilder->formresults as $key=>$result){
+		foreach($formBuilder->formResults as $key=>$result){
 			if(is_array($result)){
 				//check if this a aray of uploaded files
 				if(!is_array(array_values($result)[0]) and strpos(array_values($result)[0],'wp-content/uploads/') !== false){
 					//rename the file
-					$formbuilder->process_files($result, $key);
+					$formBuilder->processFiles($result, $key);
 				}else{
 					//sort the array
 					ksort($result);
-					$formbuilder->formresults[$key] = $result;
+					$formBuilder->formResults[$key] = $result;
 				}
 			}
 		}
 
-		$creation_date	= date("Y-m-d H:i:s");
-		$form_url		= $_POST['formurl'];
+		$creationDate	= date("Y-m-d H:i:s");
+		$formUrl		= $_POST['formurl'];
 		
-		$formbuilder->formresults['formurl']			= $form_url;
-		$formbuilder->formresults['submissiontime']		= $creation_date;
-		$formbuilder->formresults['edittime']			= $creation_date;
+		$formBuilder->formResults['formurl']			= $formUrl;
+		$formBuilder->formResults['submissiontime']		= $creationDate;
+		$formBuilder->formResults['edittime']			= $creationDate;
 		
 		$wpdb->insert(
-			$formbuilder->submissiontable_name, 
+			$formBuilder->submissionTableName, 
 			array(
-				'form_id'			=> $form_id,
-				'timecreated'		=> $creation_date,
-				'timelastedited'	=> $creation_date,
-				'userid'			=> $formbuilder->user_id,
-				'formresults'		=> maybe_serialize($formbuilder->formresults),
+				'form_id'			=> $formId,
+				'timecreated'		=> $creationDate,
+				'timelastedited'	=> $creationDate,
+				'userid'			=> $formBuilder->userId,
+				'formresults'		=> maybe_serialize($formBuilder->formResults),
 				'archived'			=> false
 			)
 		);
 		
-		$formbuilder->send_email();
+		$formBuilder->sendEmail();
 			
 		if($wpdb->last_error !== ''){
 			$message	=  new \WP_Error('error', $wpdb->last_error);
 		}else{
-			$message	= "$message  \nYour id is {$formbuilder->formresults['id']}";
+			$message	= "$message  \nYour id is {$formBuilder->formResults['id']}";
 		}
 	//save to user meta
 	}else{
-		unset($formbuilder->formresults['formurl']);
+		unset($formBuilder->formResults['formurl']);
 		
 		//get user data as array
-		$userdata		= (array)get_userdata($formbuilder->user_id)->data;
-		foreach($formbuilder->formresults as $key=>$result){
+		$userData		= (array)get_userdata($formBuilder->userId)->data;
+		foreach($formBuilder->formResults as $key=>$result){
 			//remove empty elements from the array
 			if(is_array($result)){
 				SIM\cleanUpNestedArray($result);
-				$formbuilder->formresults[$key]	= $result;
+				$formBuilder->formResults[$key]	= $result;
 			}
 			//update in the _users table
-			if(isset($userdata[$key])){
-				if($userdata[$key]		!= $result){
-					$userdata[$key]		= $result;
-					$update_userdata	= true;
+			if(isset($userData[$key])){
+				if($userData[$key]		!= $result){
+					$userData[$key]		= $result;
+					$updateuserData		= true;
 				}
 			//update user meta
 			}else{
 				if(empty($result)){
-					delete_user_meta($formbuilder->user_id,$key);
+					delete_user_meta($formBuilder->userId, $key);
 				}else{
-					update_user_meta($formbuilder->user_id,$key,$result);
+					update_user_meta($formBuilder->userId, $key, $result);
 				}
 			}
 		}
 
-		if($update_userdata)wp_update_user($userdata);
+		if($updateuserData)wp_update_user($userData);
 	}
 
-	do_action('after_saving_formdata', $formbuilder->formresults, $formbuilder->datatype, $formbuilder->user_id);
+	do_action('sim_after_saving_formdata', $formBuilder->formResults, $formBuilder->formName, $formBuilder->userId);
 
 	return $message;
 }
 
 // DONE
 function saveFormEmails(){
-	$formbuilder	= new Formbuilder();
+	$formBuilder	= new Formbuilder();
 		
 	global $wpdb;
 	
-	$formbuilder->loadformdata($_POST['formid']);
+	$formBuilder->loadFormData($_POST['formid']);
 	
-	$form_emails = $_POST['emails'];
+	$formEmails = $_POST['emails'];
 	
-	foreach($form_emails as $index=>$email){
-		$form_emails[$index]['message'] = $formbuilder->deslash($email['message']);
+	foreach($formEmails as $index=>$email){
+		$formEmails[$index]['message'] = $formBuilder->deslash($email['message']);
 	}
 	
-	$formbuilder->maybe_insert_form();
-	$wpdb->update($formbuilder->table_name, 
+	$formBuilder->maybeInsertForm();
+	$wpdb->update($formBuilder->tableName, 
 		array(
-			'emails'	=> maybe_serialize($form_emails)
+			'emails'	=> maybe_serialize($formEmails)
 		), 
 		array(
 			'id'		=> $_POST['formid'],

@@ -2,17 +2,17 @@
 namespace SIM\FRONTPAGE;
 use SIM;
 
-use function SIM\get_module_option;
+use function SIM\getModuleOption;
 
 //generate_before_header
 // diplay buttons
-$hook_name	= SIM\get_module_option('frontpage','header_hook');
-if(!empty($hook_name)){
+$hookName	= SIM\getModuleOption('frontpage', 'header_hook');
+if(!empty($hookName)){
 	//Add a button to the header
-	add_action($hook_name, function(){
-		if (is_user_logged_in() and (is_page(SIM\get_module_option('frontpage','home_page')) or is_front_page())){
-			$button1	= SIM\get_module_option('frontpage', 'first_button');
-			$button2	= SIM\get_module_option('frontpage', 'second_button');
+	add_action($hookName, function(){
+		if (is_user_logged_in() and (is_page(SIM\getModuleOption('frontpage','home_page')) or is_front_page())){
+			$button1	= SIM\getModuleOption('frontpage', 'first_button');
+			$button2	= SIM\getModuleOption('frontpage', 'second_button');
 
 			$text1		= get_the_title($button1);
 			$text2		= get_the_title($button2);
@@ -31,22 +31,22 @@ if(!empty($hook_name)){
 
 //generate_after_main_content
 //display prayer message and birtdays
-$hook_name	= SIM\get_module_option('frontpage', 'after_main_content_hook');
-if(!empty($hook_name)){
-	add_action($hook_name, function(){
+$hookName	= SIM\getModuleOption('frontpage', 'after_main_content_hook');
+if(!empty($hookName)){
+	add_action($hookName, function(){
 		//if on home page and prayer module activated
-		if(is_page(SIM\get_module_option('frontpage','home_page')) and SIM\get_module_option('prayer','enable')){
+		if(is_page(SIM\getModuleOption('frontpage','home_page')) and SIM\getModuleOption('prayer','enable')){
 			
 			if (is_user_logged_in() and function_exists('SIM\PRAYER\prayerRequest')){
-				$prayerrequest = SIM\PRAYER\prayerRequest();
-				if (empty($prayerrequest)) return;
+				$prayerRequest = SIM\PRAYER\prayerRequest();
+				if (empty($prayerRequest)) return;
 			
 				echo "<article>";
 					echo "<div name='prayer_request' style='text-align: center; margin-left: auto; margin-right: auto; font-size: 18px; color:#999999; width:80%; max-width:800px;'>";
 						echo "<h3 id='prayertitle'>The prayer request of today:</h3>";
-						echo "<p>$prayerrequest</p>";
+						echo "<p>$prayerRequest</p>";
 					echo "</div>";
-					if(SIM\get_module_option('events', 'enable')){
+					if(SIM\getModuleOption('events', 'enable')){
 						echo SIM\EVENTS\birthday();
 					}
 				echo '</article>';
@@ -57,29 +57,29 @@ if(!empty($hook_name)){
 
 //Show the latest news
 //generate_before_footer
-$hook_name	= SIM\get_module_option('frontpage','before_footer_hook');
-if(!empty($hook_name)){
-	add_action($hook_name, function() {
+$hookName	= SIM\getModuleOption('frontpage','before_footer_hook');
+if(!empty($hookName)){
+	add_action($hookName, function() {
 		//if on home page
-		if(is_page(SIM\get_module_option('frontpage','home_page')) or is_front_page()){
+		if(is_page(SIM\getModuleOption('frontpage','home_page')) or is_front_page()){
 			// If not logged in and on the logged in homepage
-			if (!is_user_logged_in() and is_page(SIM\get_module_option('frontpage','home_page'))){
+			if (!is_user_logged_in() and is_page(SIM\getModuleOption('frontpage','home_page'))){
 				return;
 			}
 
 			//Show the ministry gallery
-			page_gallery();
+			pageGallery();
 			$args                   = array('ignore_sticky_posts' => true,);
-			$args['post_type'] 		= SIM\get_module_option('frontpage', 'news_post_types');
+			$args['post_type'] 		= SIM\getModuleOption('frontpage', 'news_post_types');
 			$args['post_status'] 	= 'publish';
 
 			//Only include posts who are published less than $max_news_age ago
-			$max_news_age	= SIM\get_module_option('frontpage', 'max_news_age');
+			$maxNewsAge	= SIM\getModuleOption('frontpage', 'max_news_age');
 			$args['date_query']		= array(
 				array(
 					'after' => array(
-						'year' => date('Y',strtotime("-$max_news_age")),
-						'month' => date('m',strtotime("-$max_news_age")),
+						'year' => date('Y',strtotime("-$maxNewsAge")),
+						'month' => date('m',strtotime("-$maxNewsAge")),
 						'day' => date('d'),
 					)
 				)
@@ -116,12 +116,12 @@ if(!empty($hook_name)){
 			//If not logged in..
 			if ( !is_user_logged_in() ) {
 				//Only get news wih the public category
-				$blog_categories = [get_cat_ID('Public')];
+				$blogCategories = [get_cat_ID('Public')];
 				$args['tax_query'] = array(
 					array(
 						'taxonomy' => 'category',
 						'field'    => 'term_id',
-						'terms'    => $blog_categories,
+						'terms'    => $blogCategories,
 					),
 				);
 				
@@ -184,7 +184,7 @@ if(!empty($hook_name)){
 				return;
 			}
 		
-			$allowed_html = array(
+			$allowedHtml = array(
 				'br'     => array(),
 				'em'     => array(),
 				'strong' => array(),
@@ -208,7 +208,7 @@ if(!empty($hook_name)){
 						<div class="content">
 							<h4 class="card-title entry-title">
 								<a class="blog-item-title-link" href="<?php echo esc_url( get_permalink() ); ?>" title="<?php the_title_attribute(); ?>" rel="bookmark">
-									<?php echo wp_kses( force_balance_tags( get_the_title() ), $allowed_html ); ?>
+									<?php echo wp_kses( force_balance_tags( get_the_title() ), $allowedHtml ); ?>
 								</a>
 							</h4>
 							<p class="card-description"><?php echo force_balance_tags(wp_kses_post( get_the_excerpt())); ?></p>
@@ -227,8 +227,10 @@ if(!empty($hook_name)){
 	});
 }
 
-//Function to show a gallery of 3 ministries
-function page_gallery(){
+/**
+ * Function to show a gallery of 3 ministries
+ */
+function pageGallery(){
 	?>
 	<article id="page-gallery">
 		<h3 id="page-gallery-title">See what we do:</h3>
@@ -241,12 +243,12 @@ function page_gallery(){
 					<div class="col-md-5">
 						<div class="card-image">
 							<?php
-							$pageId		= SIM\get_module_option('frontpage', "page$x");
+							$pageId		= SIM\getModuleOption('frontpage', "page$x");
 							$pictureUrl	= get_the_post_thumbnail_url($pageId);
 							$pageUrl	= get_permalink($pageId);
-							$title		= SIM\get_module_option('frontpage', "title$x");
+							$title		= SIM\getModuleOption('frontpage', "title$x");
 							if(!$title) $title	= get_the_title($pageId);
-							$text		= SIM\get_module_option('frontpage', "description$x");
+							$text		= SIM\getModuleOption('frontpage', "description$x");
 							if(!$text) $text	= get_the_excerpt($pageId);
 
 							echo "<a href='$pageUrl'>";
@@ -277,7 +279,7 @@ function page_gallery(){
 
 //Add the home class
 add_filter( 'body_class',function ( $classes ) {
-	if(is_page(SIM\get_module_option('frontpage','home_page')) or is_front_page()){
+	if(is_page(SIM\getModuleOption('frontpage','home_page')) or is_front_page()){
 		$classes[] = 'home';
 	}
     return $classes;

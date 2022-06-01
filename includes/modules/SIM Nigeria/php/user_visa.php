@@ -7,21 +7,28 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 //Multi default values used to prefil the compound dropdown
-add_filter( 'add_form_multi_defaults', function($default_array_values, $userId, $formname){
-	if($formname != 'user_visa') return $default_array_values;
+add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId, $formName){
+	if($formName != 'user_visa') return $defaultArrayValues;
 	
-	$default_array_values['quotanames'] 			= QUOTANAMES;
+	$defaultArrayValues['quotanames'] 			= QUOTANAMES;
 	
-	return $default_array_values;
+	return $defaultArrayValues;
 },10,3);
 
-function visa_page($userId, $message=false, $readonly=false){
+/**
+ * Creates the user visa page
+ * 
+ * @param	bool	$message	Whether to include the message
+ * 
+ * @return	string				html
+ */
+function visaPage($message=false){
 	ob_start();
 	?>
 	<div>		
 		<h3>Greencard information</h3>
 		
-		<?php if($message == false){?>
+		<?php if(!$message){?>
 		<p class="message">
 			Below you can fill in all information required for your greencard.<br>
 			Please add your own diploma copies as well as information for at least two understudies.
@@ -34,19 +41,19 @@ function visa_page($userId, $message=false, $readonly=false){
 		
 		<div id="greencard_info" class="tabcontent">
 			<?php
-			echo do_shortcode('[formbuilder datatype=user_visa]');
+			echo do_shortcode('[formbuilder formname=user_visa]');
 			?>
 		</div>
 		
 		<div id="understudy_1_info" class="tabcontent hidden">
 			<?php
-			echo do_shortcode('[formbuilder datatype=understudy_1]');
+			echo do_shortcode('[formbuilder formname=understudy_1]');
 			?>
 		</div>
 		
 		<div id="understudy_2_info" class="tabcontent hidden">
 			<?php
-			echo do_shortcode('[formbuilder datatype=understudy_2]');
+			echo do_shortcode('[formbuilder formname=understudy_2]');
 			?>
 		</div>
 	</div>
@@ -55,7 +62,10 @@ function visa_page($userId, $message=false, $readonly=false){
 	return ob_get_clean();
 }
 
-function export_visa_excel(){
+/**
+ * Export visa info to excel
+ */
+function exportVisaExcel(){
 	$filename = "VisaInfo.xlsx";
 	
 	$spreadsheet = new Spreadsheet();
@@ -86,14 +96,14 @@ function export_visa_excel(){
 		)
 	);
 	
-	$greencard_data		= ['greencard_expiry','name','nin','quota_position','accompanying'];
-	$understudy_data	= ['name','email','employing_institution','position','grade_level','salary','phonenumber1','phonenumber2','taxid','nin'];
+	$greencardData		= ['greencard_expiry','name','nin','quota_position','accompanying'];
+	$understudyData		= ['name','email','employing_institution','position','grade_level','salary','phonenumber1','phonenumber2','taxid','nin'];
 
-	foreach($greencard_data as $key=>$field){
+	foreach($greencardData as $key=>$field){
 		$sheet->setCellValueByColumnAndRow($key+2, 2, ucfirst(str_replace('_',' ',$field)));
 	}
 
-	foreach($understudy_data as $key=>$field){
+	foreach($understudyData as $key=>$field){
 		$sheet->setCellValueByColumnAndRow($key+8, 2, ucfirst(str_replace('_',' ',$field)));
 		$sheet->setCellValueByColumnAndRow($key+19, 2, ucfirst(str_replace('_',' ',$field)));
 	}
@@ -113,35 +123,32 @@ function export_visa_excel(){
 			continue;
 		}
 		
-		$display_name 	= get_userdata( $user->ID)->display_name;
-		$visa_info 		= get_user_meta( $user->ID, "visa_info",true);
-		$understudy_1	= get_user_meta( $user->ID, "understudy_1",true);
-		$understudy_2	= get_user_meta( $user->ID, "understudy_2",true);
+		$displayName 	= get_userdata( $user->ID)->display_name;
+		$visaInfo 		= get_user_meta( $user->ID, "visa_info",true);
+		$understudy1	= get_user_meta( $user->ID, "understudy_1",true);
+		$understudy2	= get_user_meta( $user->ID, "understudy_2",true);
 		
-		$sheet->setCellValueByColumnAndRow(1, $row, $display_name);
+		$sheet->setCellValueByColumnAndRow(1, $row, $displayName);
 		
 		//Skip if there is no data
-		if(!is_array($visa_info) or count($visa_info)==0){
+		if(!is_array($visaInfo) or count($visaInfo)==0){
 			$sheet->setCellValueByColumnAndRow(2, $row, 'No data');
 			continue;
 		}
 		
 		//Loop over the greencard values and write them to excel
-		foreach($greencard_data as $key=>$field){
-			$sheet->setCellValueByColumnAndRow($key+2, $row, $visa_info[$field]);
+		foreach($greencardData as $key=>$field){
+			$sheet->setCellValueByColumnAndRow($key+2, $row, $visaInfo[$field]);
 		}
 		
 		//Loop over the understudy values and write them to excel
-		foreach($understudy_data as $key=>$field){
-			$sheet->setCellValueByColumnAndRow($key+8 , $row, $understudy_1[$field]);
-			$sheet->setCellValueByColumnAndRow($key+19, $row, $understudy_2[$field]);
+		foreach($understudyData as $key=>$field){
+			$sheet->setCellValueByColumnAndRow($key+8 , $row, $understudy1[$field]);
+			$sheet->setCellValueByColumnAndRow($key+19, $row, $understudy2[$field]);
 		}
 
 		$row++;
 	}
-	
-	//Remove the default sheet
-	//$spreadsheet->removeSheetByIndex(0);
 	
 	//Now write it all to an excel file
 	$writer = new Xlsx($spreadsheet);
@@ -158,11 +165,18 @@ function export_visa_excel(){
 	exit;
 }
 
+/**
+ * Exports the visa info to pdf
+ * 
+ * @param	int		$userId		WP_user id
+ * @param	bool	$all		Whether to export all data or only for the give userId
+ * 
+ */
 function exportVisaInfoPdf($userId=0, $all=false) {
-	if($all == true){
+	if($all){
 		//Build the frontpage
 		$pdf = new SIM\PDF\PDF_HTML();
-		$pdf->frontpage("Visa user info","");
+		$pdf->frontpage("Visa user info", "");
 		
 		//Get all adult missionaries
 		$users = SIM\getUserAccounts();
@@ -174,16 +188,22 @@ function exportVisaInfoPdf($userId=0, $all=false) {
 	}else{
 		//Build the frontpage
 		$pdf = new SIM\PDF\PDF_HTML();
-		$pdf->frontpage("Visa user info for:",get_userdata($userId)->display_name);
+		$pdf->frontpage("Visa user info for:", get_userdata($userId)->display_name);
 		writeVisaPages($userId, $pdf);
 	}
 	
-	$pdf->printpdf();
+	$pdf->printPdf();
 }
 
+/**
+ * write visa page to pdf
+ * 
+ * @param	int		$userId		WP_User id
+ * @param	object	$pdf		PDF instance
+ */
 function writeVisaPages($userId, $pdf){
-	$visa_info = get_user_meta( $userId, "visa_info",true);
-	if(!is_array($visa_info)){
+	$visaInfo = get_user_meta( $userId, "visa_info",true);
+	if(!is_array($visaInfo)){
 		$pdf->Write(10,"No greencard information found.");
 		return;
 	}
@@ -191,55 +211,55 @@ function writeVisaPages($userId, $pdf){
 	// Post Content	
 	$pdf->SetFont( 'Arial', '', 12 );
 	
-	$qualificationsarray = $visa_info['qualifications'];
+	$qualificationsArray = $visaInfo['qualifications'];
 	//Visa info without qualifications
-	unset($visa_info['qualifications']);
+	unset($visaInfo['qualifications']);
 	
 	//Understudy info	
-	$understudies_documents = [];
+	$understudiesDocuments = [];
 
-	$understudiesarray	= [];
-	$info_1				= get_user_meta( $userId, "understudy_1",true);
-	$info_2				= get_user_meta( $userId, "understudy_2",true);
-	if(!empty($info_1)) $understudiesarray[1]	= $info_1;
-	if(!empty($info_2)) $understudiesarray[2]	= $info_2;
+	$understudiesArray	= [];
+	$info1				= get_user_meta( $userId, "understudy_1",true);
+	$info2				= get_user_meta( $userId, "understudy_2",true);
+	if(!empty($info1)) $understudiesArray[1]	= $info1;
+	if(!empty($info2)) $understudiesArray[2]	= $info2;
 
-	foreach($understudiesarray as $key=>$understudy){
-		$understudies_documents[$key] = $understudy['documents'];
-		unset($understudiesarray[$key]['documents']);
+	foreach($understudiesArray as $key=>$understudy){
+		$understudiesDocuments[$key] = $understudy['documents'];
+		unset($understudiesArray[$key]['documents']);
 	}
 	
-	if(count($visa_info)>0){
-		$pdf->WriteArray($visa_info);
+	if(count($visaInfo)>0){
+		$pdf->WriteArray($visaInfo);
 	}else{
 		$pdf->Write(10,'No greencard details found');
 		$pdf->Ln(10);
 	}
 
-	if(count($understudiesarray)>0){
+	if(count($understudiesArray)>0){
 		$pdf->PageTitle('Understudy information');
-		$pdf->WriteArray($understudiesarray);
+		$pdf->WriteArray($understudiesArray);
 	}else{
 		$pdf->Write(10,'No understudy information found');
 		$pdf->Ln(10);
 	}
 	
-	if(is_array($qualificationsarray) and count($qualificationsarray)>0){
+	if(is_array($qualificationsArray) and count($qualificationsArray)>0){
 		$pdf->PageTitle('Qualifications');
-		$pdf->WriteImageArray($qualificationsarray);
+		$pdf->WriteImageArray($qualificationsArray);
 	}else{
 		$pdf->Write(10,'No qualifications found');
 		$pdf->Ln(10);
 	}
 	
-	if(is_array($understudies_documents) and count($understudies_documents)>0){
+	if(is_array($understudiesDocuments) and count($understudiesDocuments)>0){
 		$pdf->AddPage();
 		
-		foreach($understudies_documents as $key=>$understudies_document){
-			if(count($understudies_document)>0){
+		foreach($understudiesDocuments as $key=>$understudiesDocument){
+			if(count($understudiesDocument)>0){
 				if($key>1) $pdf->Ln(10);
 				$pdf->PageTitle('Understudy documents for understudy '.$key,false);
-				$pdf->WriteImageArray($understudies_document);
+				$pdf->WriteImageArray($understudiesDocument);
 			}else{
 				$pdf->Write(10,'No understudy documents found for understudy '.$key);
 				$pdf->Ln(10);
@@ -275,7 +295,7 @@ add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $
 			}
 			
 			if( isset($_POST['export_visa_info'])){
-				export_visa_excel();
+				exportVisaExcel();
 			}
 		
 			//only active if not own data and has not the user management role
@@ -297,7 +317,7 @@ add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $
 			?>
 			<div id='visa_info' class='tabcontent <?php echo $class;?>'>
 				<?php
-				echo visa_page($user->ID, true);
+				echo visaPage(true);
 			
 				if(!$showCurrentUserData){
 					?>

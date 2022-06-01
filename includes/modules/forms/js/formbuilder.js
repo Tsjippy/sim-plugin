@@ -17,7 +17,7 @@ function clearFormInputs(){
 			}
 			
 			if(el.type == "select-one"){
-				formFunctions.removeDefaultSelect(el);
+				FormFunctions.removeDefaultSelect(el);
 				
 				if(el._niceselect != undefined){
 					el._niceselect.clear();
@@ -26,7 +26,7 @@ function clearFormInputs(){
 			}
 		});
 		
-		hide_conditionalfields(modal.querySelector('form'));
+		hideConditionalfields(modal.querySelector('form'));
 	}
 	catch(err) {
 		console.error(err);
@@ -43,15 +43,15 @@ function fixElementNumbering(form){
 async function showEmptyModal(target){
 	target.classList.add('clicked');
 
-	var formid					= target.dataset.formid;
-	if(formid == undefined){
-		formid = target.closest('.form_element_wrapper').dataset.formid;
+	var formId					= target.dataset.formid;
+	if(formId == undefined){
+		formId = target.closest('.form_element_wrapper').dataset.formid;
 	}
 	
 	clearFormInputs();
 	
-	if(form_element_wrapper != null){
-		modal.querySelector('[name="insertafter"]').value = form_element_wrapper.dataset.priority;
+	if(formElementWrapper != null){
+		modal.querySelector('[name="insertafter"]').value = formElementWrapper.dataset.priority;
 	}
 	
 	modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Update','Add');
@@ -61,9 +61,9 @@ async function showEmptyModal(target){
 	modal.classList.remove('hidden');
 
 	var formData = new FormData();
-	formData.append('elementid','-1');
-	formData.append('formid', formid);
-	var response = await formsubmit.fetchRestApi('forms/request_form_conditions_html', formData);
+	formData.append('elementid', '-1');
+	formData.append('formid', formId);
+	var response = await FormSubmit.fetchRestApi('forms/request_form_conditions_html', formData);
 
 	//fill the element conditions tab
 	modal.querySelector('.element_conditions_wrapper').innerHTML = response;
@@ -78,9 +78,9 @@ async function showEmptyModal(target){
 async function requestEditElementData(target){
 	target.classList.add('clicked');
 
-	var elementid		= form_element_wrapper.dataset.id;
-	var formid			= target.closest('.form_element_wrapper').dataset.formid;
-	modal.querySelector('[name="element_id"]').value = form_element_wrapper.dataset.id;
+	var elementId		= formElementWrapper.dataset.id;
+	var formId			= target.closest('.form_element_wrapper').dataset.formid;
+	modal.querySelector('[name="element_id"]').value = formElementWrapper.dataset.id;
 	modal.originalhtml	= target.outerHTML;
 
 	var editButton		= target.outerHTML;
@@ -90,28 +90,27 @@ async function requestEditElementData(target){
 	loader.querySelector('.loadergif').style.margin = '5px 19px 0px 19px';
 	
 	var formData = new FormData();
-	formData.append('elementid', elementid);
-	formData.append('formid', formid);
+	formData.append('elementid', elementId);
+	formData.append('formid', formId);
 	
-	var response = await formsubmit.fetchRestApi('forms/request_form_element', formData);
+	var response = await FormSubmit.fetchRestApi('forms/request_form_element', formData);
 
 	if(response){
 		//fill the form after we have clicked the edit button
 		if(modal.querySelector('[name="add_form_element_form"]') != null){
-			modal.querySelector('[name="add_form_element_form"]').innerHTML = response.element_form;
+			modal.querySelector('[name="add_form_element_form"]').innerHTML = response.elementForm;
 		}
 
 		showCondionalFields(modal.querySelector('[name="formfield[type]"]').value, modal.querySelector('[name="add_form_element_form"]'));
 
 		//fill the element conditions tab
-		modal.querySelector('.element_conditions_wrapper').innerHTML = response.conditions_html;
+		modal.querySelector('.element_conditions_wrapper').innerHTML = response.conditionsHtml;
 
 		// Add nice selects
 		modal.querySelectorAll('select').forEach(function(select){
 			select._niceselect = NiceSelect.bind(select,{searchable: true});
 		});
 		
-		//modal.querySelector('[name="element_id"]').value = elementid;
 		modal.classList.remove('hidden');
 		
 		//show edit button again
@@ -121,7 +120,7 @@ async function requestEditElementData(target){
 
 async function addFormElement(target){
 	var form		= target.closest('form');
-	var response	= await formsubmit.submitForm(target, 'forms/add_form_element');
+	var response	= await FormSubmit.submitForm(target, 'forms/add_form_element');
 
 	if(response){
 		if(form.querySelector('[name="element_id"]').value == ''){
@@ -135,7 +134,7 @@ async function addFormElement(target){
 			fixElementNumbering(form);
 			
 			//add resize listener
-			form.querySelectorAll('.resizer').forEach(el=>{resize_ob.observe(el);});
+			form.querySelectorAll('.resizer').forEach(el=>{resizeOb.observe(el);});
 		}else{
 			//Runs after an element update
 			document.querySelector('.form_elements .clicked').closest('.form_element_wrapper').outerHTML = response.html;
@@ -147,17 +146,17 @@ async function addFormElement(target){
 	}
 }
 
-async function sendElementSize(el, widthpercentage){
-	if(widthpercentage != el.dataset.widthpercentage && Math.abs(widthpercentage - el.dataset.widthpercentage)>5){
-		el.dataset.widthpercentage = widthpercentage;
+async function sendElementSize(el, widthPercentage){
+	if(widthPercentage != el.dataset.widthpercentage && Math.abs(widthPercentage - el.dataset.widthpercentage)>5){
+		el.dataset.widthpercentage = widthPercentage;
 		
 		//send new width over AJAX
 		var formData = new FormData();
-		formData.append('formid',el.closest('.form_element_wrapper').dataset.formid);
-		formData.append('elementid',el.closest('.form_element_wrapper').dataset.id);
-		formData.append('new_width',widthpercentage);
+		formData.append('formid', el.closest('.form_element_wrapper').dataset.formid);
+		formData.append('elementid', el.closest('.form_element_wrapper').dataset.id);
+		formData.append('new_width', widthPercentage);
 		
-		response = await formsubmit.fetchRestApi('forms/edit_formfield_width', formData);
+		response = await FormSubmit.fetchRestApi('forms/edit_formfield_width', formData);
 
 		if(response){
 			main.hideModals();
@@ -167,11 +166,11 @@ async function sendElementSize(el, widthpercentage){
 	}
 }
 
-async function remove_element(target){
+async function removeElement(target){
 	var parent			= target.parentNode;
-	var elementwrapper	= target.closest('.form_element_wrapper');
-	var formid			= elementwrapper.dataset.formid;
-	var elementindex 	= elementwrapper.dataset.id;
+	var elementWrapper	= target.closest('.form_element_wrapper');
+	var formId			= elementWrapper.dataset.formid;
+	var elementIndex 	= elementWrapper.dataset.id;
 	var form			= target.closest('form');
 
 	main.showLoader(target);
@@ -180,15 +179,15 @@ async function remove_element(target){
 	loader.classList.remove('loadergif');
 
 	var formData = new FormData();
-	formData.append('formid',formid);
+	formData.append('formid', formId);
 
-	formData.append('elementindex',elementindex);
+	formData.append('elementindex', elementIndex);
 	
-	response = await formsubmit.fetchRestApi('forms/remove_element', formData);
+	response = await FormSubmit.fetchRestApi('forms/remove_element', formData);
 
 	if(response){
 		//remove the formelement row
-		elementwrapper.remove();
+		elementWrapper.remove();
 		
 		fixElementNumbering(form);
 
@@ -198,24 +197,24 @@ async function remove_element(target){
 
  //Fires after element reorder
 async function reorderformelements(event){
-	if(reordering_busy == false){
-		reordering_busy = true;
+	if(reorderingBusy == false){
+		reorderingBusy = true;
 
-		var old_index	= parseInt(event.item.dataset.priority);
+		var oldIndex	= parseInt(event.item.dataset.priority);
 
 		fixElementNumbering(event.item.closest('form'));
 		
 		var difference = event.newIndex-event.oldIndex
 
 		var formData = new FormData();
-		formData.append('formid',event.item.dataset.formid);
-		formData.append('old_index', old_index);
-		formData.append('new_index',(old_index+difference));
+		formData.append('formid', event.item.dataset.formid);
+		formData.append('old_index', oldIndex);
+		formData.append('new_index',(oldIndex + difference));
 		
-		var response	= await formsubmit.fetchRestApi('forms/reorder_form_elements', formData);
+		var response	= await FormSubmit.fetchRestApi('forms/reorder_form_elements', formData);
 
 		if(response){
-			reordering_busy = false;
+			reorderingBusy = false;
 
 			main.displayMessage(response);
 		}
@@ -229,7 +228,7 @@ async function reorderformelements(event){
 }
 
 async function saveFormConditions(target){
-	var response	= await formsubmit.submitForm(target, 'forms/save_element_conditions');
+	var response	= await FormSubmit.submitForm(target, 'forms/save_element_conditions');
 
 	if(response){
 		main.hideModals();
@@ -239,7 +238,7 @@ async function saveFormConditions(target){
 }
 
 async function saveFormSettings(target){
-	var response	= await formsubmit.submitForm(target, 'forms/save_form_settings');
+	var response	= await FormSubmit.submitForm(target, 'forms/save_form_settings');
 
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
@@ -249,7 +248,7 @@ async function saveFormSettings(target){
 }
 
 async function saveFormEmails(target){
-	var response	= await formsubmit.submitForm(target, 'forms/save_form_emails');
+	var response	= await FormSubmit.submitForm(target, 'forms/save_form_emails');
 
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
@@ -260,28 +259,28 @@ async function saveFormEmails(target){
 
 //listen to element size changes
 var doit;
-const resize_ob = new ResizeObserver(function(entries) {
+const resizeOb = new ResizeObserver(function(entries) {
 	var element = entries[0].target;
 	if(element.parentNode != undefined){
 		var width	= entries[0].contentRect.width
-		var widthpercentage = Math.round(width/element.parentNode.offsetWidth*100);
+		var widthPercentage = Math.round(width/element.parentNode.offsetWidth * 100);
 		
 		//Show percentage on screen
 		var el	= element.querySelector('.widthpercentage');
-		if(widthpercentage <99){
-			el.textContent = widthpercentage+'%';
+		if(widthPercentage <99){
+			el.textContent = widthPercentage + '%';
 		}else if(el != null){
 			el.textContent = '';
 		}
 		
 		clearTimeout(doit);
-		doit = setTimeout(sendElementSize, 500,element,widthpercentage);
+		doit = setTimeout(sendElementSize, 500, element, widthPercentage);
 	}
 });
 
 //show conditional fields based on on the element type
 function showCondionalFields(type, form){
-	hide_conditionalfields(form);
+	hideConditionalfields(form);
 	
 	switch(type) {
 		case 'button':
@@ -338,7 +337,7 @@ function showCondionalFields(type, form){
 	} 
 }
 
-function hide_conditionalfields(form){
+function hideConditionalfields(form){
 	//hide all fields that should be hidden
 	form.querySelectorAll('.hide').forEach(function(el){
 		el.classList.replace('hide', 'hidden');
@@ -356,40 +355,40 @@ function hide_conditionalfields(form){
 	});
 }
 
-function show_or_hide_controls(target){
+function showOrHideControls(target){
 	if(target.dataset.action == 'show'){
-		formwrapper.querySelectorAll('.formfieldbutton').forEach(function(el){
+		formWrapper.querySelectorAll('.formfieldbutton').forEach(function(el){
 			el.classList.remove('hidden');
-			target.textContent	= 'Hide form edit controls';
+			target.textContent		= 'Hide form edit controls';
 			target.dataset.action	= 'hide';
 		});
 		
-		formwrapper.querySelectorAll('.resizer').forEach(function(el){
+		formWrapper.querySelectorAll('.resizer').forEach(function(el){
 			el.classList.add('show');
 		});
 		
 		//hide submit button
-		formwrapper.querySelector('[name="submit_form"]').classList.add('hidden');
+		formWrapper.querySelector('[name="submit_form"]').classList.add('hidden');
 		
 	}else{
-		formwrapper.querySelectorAll('.formfieldbutton').forEach(function(el){
+		formWrapper.querySelectorAll('.formfieldbutton').forEach(function(el){
 			el.classList.add('hidden');
-			target.textContent = 'Show form edit controls';
+			target.textContent 		= 'Show form edit controls';
 			target.dataset.action	= 'show';
 		});
 		
-		formwrapper.querySelectorAll('.resizer').forEach(function(el){
+		formWrapper.querySelectorAll('.resizer').forEach(function(el){
 			el.classList.remove('show');
 		});
 		
 		//show submit button
-		formwrapper.querySelector('[name="submit_form"]').classList.remove('hidden');
-		}
+		formWrapper.querySelector('[name="submit_form"]').classList.remove('hidden');
+	}
 }
 
-function maybe_remove_element(target){
+function maybeRemoveElement(target){
 	if(typeof(Swal)=='undefined'){
-		remove_element(target);
+		removeElement(target);
 	}else{
 		Swal.fire({
 			title: 'Are you sure?',
@@ -401,13 +400,13 @@ function maybe_remove_element(target){
 			confirmButtonText: 'Yes, delete it!'
 		}).then((result) => {
 			if (result.isConfirmed) {
-				remove_element(target);
+				removeElement(target);
 			}
 		})
 	}
 }
 
-function show_or_hide_condition_fields(target){
+function showOrHideConditionFields(target){
 	//showdefault conditional field
 	target.closest('.rule_row').querySelector('[name*="conditional_value"]').classList.remove('hidden');
 	
@@ -428,21 +427,21 @@ function show_or_hide_condition_fields(target){
 		//hide normal conditional value field
 		target.closest('.rule_row').querySelector('[name*="conditional_value"]').classList.add('hidden');
 	}else if(target.dataset.value != undefined && (
-		target.dataset.value.includes('changed') || 
-		target.dataset.value.includes('clicked') ||
-		target.dataset.value.includes('checked')
+			target.dataset.value.includes('changed') || 
+			target.dataset.value.includes('clicked') ||
+			target.dataset.value.includes('checked')
 		)){
 		target.closest('.rule_row').querySelector('[name*="conditional_value"]').classList.add('hidden');
 	}
 }
 
-function add_condition_rule(target){
+function addConditionRule(target){
 	var row				= target.closest('.rule_row');
-	var activebutton	= row.querySelector('.active');
+	var activeButton	= row.querySelector('.active');
 		
 	//there was alreay an next rule and we clicked on the button which was no active
-	if(activebutton != null && !target.classList.contains('active')){		
-		if(activebutton.textContent == 'AND'){
+	if(activeButton != null && !target.classList.contains('active')){		
+		if(activeButton.textContent == 'AND'){
 			var current		= 'AND';
 			var opposite	= 'OR';
 		}else{
@@ -454,13 +453,13 @@ function add_condition_rule(target){
 			title: 'What do you want to do?',
 			showDenyButton: true,
 			showCancelButton: true,
-			confirmButtonText: 'Change '+current+' to '+opposite,
+			confirmButtonText: `Change ${current} to ${opposite}`,
 			denyButtonText: 'Add a new rule',
 		}).then((result) => {
 			//swap and/or
 			if (result.isConfirmed) {
 				//make other button inactive
-				activebutton.classList.remove('active');
+				activeButton.classList.remove('active');
 				
 				//make the button active
 				target.classList.add('active');
@@ -469,12 +468,12 @@ function add_condition_rule(target){
 				row.querySelector('.combinator').value = target.textContent;
 			//add new rule after this one
 			}else if (result.isDenied) {
-				addrulerow(row);
+				addRuleRow(row);
 			}
 		});
 	//add new rule at the end
 	}else{
-		addrulerow(row);
+		addRuleRow(row);
 		
 		//make the button active
 		target.classList.add('active');
@@ -484,31 +483,31 @@ function add_condition_rule(target){
 	}
 }
 
-function addrulerow(row){
+function addRuleRow(row){
 	//Insert a new rule row
-	var clone		= formFunctions.cloneNode(row);
+	var clone		= FormFunctions.cloneNode(row);
 	
-	var cloneindex	= parseInt(row.dataset.rule_index) + 1;
+	var cloneIndex	= parseInt(row.dataset.rule_index) + 1;
 
-	clone.dataset.rule_index = cloneindex;
+	clone.dataset.rule_index = cloneIndex;
 
 	row.parentNode.insertBefore(clone, row.nextSibling);
 	
-	fix_rule_numbering(row.closest('.condition_row'));
+	fixRuleNumbering(row.closest('.condition_row'));
 }
 
-function add_condition(target){
+function addCondition(target){
 	var row = target.closest('.condition_row');
 	
 	if(target.classList.contains('opposite')){
-		clone = formFunctions.cloneNode(row, false);
+		clone = FormFunctions.cloneNode(row, false);
 	}else{
-		clone = formFunctions.cloneNode(row);
+		clone = FormFunctions.cloneNode(row);
 	}
 	
-	var cloneindex	= parseInt(row.dataset.condition_index) + 1;
+	var cloneIndex	= parseInt(row.dataset.condition_index) + 1;
 
-	clone.dataset.condition_index = cloneindex;
+	clone.dataset.condition_index = cloneIndex;
 	
 	if(!target.classList.contains('opposite')){
 		clone.querySelectorAll('.active').forEach(function(el){
@@ -521,18 +520,18 @@ function add_condition(target){
 		clone.querySelectorAll('.element_condition').forEach(function(el){
 			if(el.tagName == 'SELECT' && el.classList.contains('equation')){
 				//remove all default selected
-				formFunctions.removeDefaultSelect(el);
+				FormFunctions.removeDefaultSelect(el);
 				
 				//get the original value which was lost during cloning
-				var original_select = row.querySelector('.equation');
-				var selindex = original_select.selectedIndex;
+				var originalSelect 	= row.querySelector('.equation');
+				var selIndex		= originalSelect.selectedIndex;
 				
-				if(selindex != false){
+				if(selIndex != false){
 					//if odd the select the next one
-					if(selindex % 2){
-						el.options[(selindex+1)].defaultSelected = true;
+					if(selIndex % 2){
+						el.options[(selIndex + 1)].defaultSelected = true;
 					}else{
-						el.options[(selindex-1)].defaultSelected = true;
+						el.options[(selIndex - 1)].defaultSelected = true;
 					}
 				}
 				
@@ -550,9 +549,9 @@ function add_condition(target){
 	
 	
 	//store radio values
-	var radio_values = {};
+	var radioValues = {};
 	row.querySelectorAll('input[type="radio"]:checked').forEach(input=>{
-		radio_values[input.value]	= input.value;
+		radioValues[input.value]	= input.value;
 	});
 		
 	//insert in page
@@ -560,23 +559,23 @@ function add_condition(target){
 	
 	if(!target.classList.contains('opposite')){
 		//remove unnecessy rulerows works only after html insert
-		var rule_count = clone.querySelectorAll('.rule_row').length;
-		clone.querySelectorAll('.rule_row').forEach(function(rulerow){
+		var ruleCount = clone.querySelectorAll('.rule_row').length;
+		clone.querySelectorAll('.rule_row').forEach(function(ruleRow){
 			//only keep the last rule (as that one has the + button)
-			if(rulerow.dataset.rule_index != rule_count-1){
-				rulerow.remove();
+			if(ruleRow.dataset.rule_index != ruleCount - 1){
+				ruleRow.remove();
 			}else{
-				fix_rule_numbering(rulerow.closest('.condition_row'));
+				fixRuleNumbering(ruleRow.closest('.condition_row'));
 			}
 		});
 	}
 	
 	//fix numbering
-	fix_condition_numbering();
+	fixConditionNumbering();
 	
 	//fix radio's as they get unselected due to same names on insert
 	row.querySelectorAll('input[type="radio"]').forEach(input=>{
-		if(radio_values[input.value] != undefined){
+		if(radioValues[input.value] != undefined){
 			input.checked = true;
 		}
 	});
@@ -586,11 +585,11 @@ function add_condition(target){
 	target.style.display = 'none';
 }
 
-function remove_condition_rule(target){
-	var conditionrow = target.closest('.condition_row');
+function removeConditionRule(target){
+	var conditionRow = target.closest('.condition_row');
 	
 	//count rule rows in this condition row
-	if(conditionrow.querySelectorAll('.rule_row').length > 1){
+	if(conditionRow.querySelectorAll('.rule_row').length > 1){
 		Swal.fire({
 			title: 'What do you want to remove?',
 			showDenyButton: true,
@@ -602,28 +601,28 @@ function remove_condition_rule(target){
 			//remove a rule rowe
 			if (result.isConfirmed) {
 				//get the current row
-				var rule_row		= target.closest('.rule_row');
+				var ruleRow		= target.closest('.rule_row');
 				
 				//get the current row index
-				var rule_row_index	= rule_row.dataset.rule_index;
+				var ruleRowIndex	= ruleRow.dataset.rule_index;
 				
 				//Get previous row
-				var prev_row		= conditionrow.querySelector('[data-rule_index="'+(rule_row_index-1)+'"]')
+				var prevRow		= conditionrow.querySelector('[data-rule_index="'+(ruleRowIndex - 1)+'"]')
 				
-				if(prev_row != null){
+				if(prevRow != null){
 					//remove the active class from row above
-					prev_row.querySelectorAll('.active').forEach(el=>el.classList.remove('active'));
+					prevRow.querySelectorAll('.active').forEach(el=>el.classList.remove('active'));
 					
 					//clear the hidden input
-					prev_row.querySelector('.combinator').value	= '';
+					prevRow.querySelector('.combinator').value	= '';
 				}
 				
 				target.closest('.rule_row').remove();
 				
-				fix_rule_numbering(conditionrow);
+				fixRuleNumbering(conditionRow);
 			} else if (result.isDenied) {
 				conditionrow.remove();
-				fix_condition_numbering();
+				fixConditionNumbering();
 			}
 		});
 	}else{
@@ -637,22 +636,22 @@ function remove_condition_rule(target){
 			confirmButtonText: 'Yes, delete it!'
 		}).then((result) => {
 			if (result.isConfirmed) {
-				conditionrow.remove();
-				fix_condition_numbering();
+				conditionRow.remove();
+				fixConditionNumbering();
 			}
 		});
 	}
 }
 
-function fix_rule_numbering(condition_row){
-	var rulerows	= condition_row.querySelectorAll('.element_conditions_wrapper .rule_row');
+function fixRuleNumbering(conditionRow){
+	var ruleRows	= conditionRow.querySelectorAll('.element_conditions_wrapper .rule_row');
 	var i = 0;
 	
 	//loop over all rules in the condition
-	rulerows.forEach(rulerow =>{
-		rulerow.dataset.rule_index = i;
+	ruleRows.forEach(ruleRow =>{
+		ruleRow.dataset.rule_index = i;
 		
-		rulerow.querySelectorAll('.element_condition').forEach(function(el){
+		ruleRow.querySelectorAll('.element_condition').forEach(function(el){
 			//fix numbering
 			if(el.id != undefined){
 				el.id = el.id.replace(/([0-9]+\]\[rules\]\[)[0-9]+/g,"$1"+i);
@@ -667,12 +666,12 @@ function fix_rule_numbering(condition_row){
 	});
 }
 
-function fix_condition_numbering(){
-	var conditionrows	= modal.querySelectorAll('.element_conditions_wrapper .condition_row');
-	for (let i = 0; i < conditionrows.length; i++) {
-		conditionrows[i].dataset.condition_index = i;
+function fixConditionNumbering(){
+	var conditionRows	= modal.querySelectorAll('.element_conditions_wrapper .condition_row');
+	for (let i = 0; i < conditionRows.length; i++) {
+		conditionRows[i].dataset.condition_index = i;
 		
-		conditionrows[i].querySelectorAll('.element_condition').forEach(function(el){
+		conditionRows[i].querySelectorAll('.element_condition').forEach(function(el){
 			//fix numbering
 			if(el.id != undefined){
 				el.id = el.id.replace(/[0-9]+(\]\[rules\]\[[0-9]+)/g,i+"$1")
@@ -688,13 +687,12 @@ function fix_condition_numbering(){
 	}
 }
 
-function focus_first(){
+function focusFirst(){
 	modal.scrollTo(0,0);
 	modal.querySelector('[name="add_form_element_form"] .nice-select').focus();
 }
 
-reordering_busy = false;
-
+reorderingBusy = false;
 document.addEventListener("DOMContentLoaded",function() {
 	console.log("Formbuilder.js loaded");
 
@@ -708,25 +706,25 @@ document.addEventListener("DOMContentLoaded",function() {
 	document.querySelectorAll('.form_elements').forEach(el=>{Sortable.create(el, options);});
 	
 	//Listen to resize events on form_element_wrappers
-	document.querySelectorAll('.resizer').forEach(el=>{resize_ob.observe(el);});
+	document.querySelectorAll('.resizer').forEach(el=>{resizeOb.observe(el);});
 });
 
 //Catch click events
 window.addEventListener("click", event => {
 	var target = event.target;
 	
-	formwrapper				= target.closest('.sim_form.wrapper');
-	form_element_wrapper	= target.closest('.form_element_wrapper');
+	formWrapper				= target.closest('.sim_form.wrapper');
+	formElementWrapper		= target.closest('.form_element_wrapper');
 	
-	if(formwrapper != null){
-		modal = formwrapper.querySelector('.add_form_element_modal');
+	if(formWrapper != null){
+		modal = formWrapper.querySelector('.add_form_element_modal');
 	}
 	
 	/* ELEMENT ACTIONS */
 	
 	//Show form edit controls
 	if (target.name == 'editform'){
-		show_or_hide_controls(target);
+		showOrHideControls(target);
 	}
 	
 	//open the modal to add an element
@@ -757,7 +755,7 @@ window.addEventListener("click", event => {
 	}
 	
 	if (target.classList.contains('remove_form_element')){
-		maybe_remove_element(target);
+		maybeRemoveElement(target);
 	}
 	
 	//actions on element type select
@@ -772,22 +770,22 @@ window.addEventListener("click", event => {
 	/* ELEMENT CONDITION ACTIONS */
 	//actions on condition equation select
 	if (target.closest('.equation') != null){
-		show_or_hide_condition_fields(target);
+		showOrHideConditionFields(target);
 	}
 	
 	//add new conditions_rule
 	if (target.classList.contains('and_rule') || target.classList.contains('or_rule')){
-		add_condition_rule(target);
+		addConditionRule(target);
 	}
 	
 	//add new condition row
 	if (target.classList.contains('add_condition')){
-		add_condition(target);
+		addCondition(target);
 	}
 	
 	//remove  condition row
 	if (target.classList.contains('remove_condition')){
-		remove_condition_rule(target);
+		removeConditionRule(target);
 	}
 	
 	//show copy fields
@@ -873,9 +871,9 @@ window.addEventListener("click", event => {
 	//copy warning_conditions row
 	if(target.matches('.warn_cond')){
 		//copy the row
-		var new_node = formFunctions.cloneNode(target.closest('.warning_conditions'));
+		var newNode = FormFunctions.cloneNode(target.closest('.warning_conditions'));
 
-		target.closest('.conditions_wrapper').insertAdjacentElement('beforeEnd', new_node);
+		target.closest('.conditions_wrapper').insertAdjacentElement('beforeEnd', newNode);
 
 		//add the active class
 		target.classList.add('active');
@@ -909,22 +907,20 @@ window.addEventListener("click", event => {
 window.addEventListener('change', ev=>{
 	if(ev.target.matches('.meta_key')){
 		//if this option has a keys data value
-		var meta_indexes	= ev.target.list.querySelector("[value='"+ev.target.value+"' i]").dataset.keys;
-		if(meta_indexes != null){
+		var metaIndexes	= ev.target.list.querySelector("[value='"+ev.target.value+"' i]").dataset.keys;
+		if(metaIndexes != null){
 			parent	= ev.target.closest('.warning_conditions').querySelector('.index_wrapper');
 			//show the data key selector
 			parent.classList.remove('hidden');
 			
-			console.log(parent);
 			//remove all options and add new ones
 			var datalist	= parent.querySelector('.meta_key_index_list');
-			console.log(datalist);
 			for(var i=1; i<datalist.options.length; i++) {
 				datalist.options[i].remove();
 			}
 
 			//add the new options
-			meta_indexes.split(',').forEach(key=>{
+			metaIndexes.split(',').forEach(key=>{
 				var opt			= document.createElement('option');
 				opt.value 		= key;
 				datalist.appendChild(opt);
@@ -934,10 +930,10 @@ window.addEventListener('change', ev=>{
 });
 
 function fixWarningConditionNumbering(parent){
-	var warning_conditions	= parent.querySelectorAll('.warning_conditions');
+	var warningConditions	= parent.querySelectorAll('.warning_conditions');
 	var i = 0;
 	//loop over all rules in the condition
-	warning_conditions.forEach(condition =>{
+	warningConditions.forEach(condition =>{
 		condition.dataset.index = i;
 		
 		condition.querySelectorAll('.warning_condition').forEach(function(el){

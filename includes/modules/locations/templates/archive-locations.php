@@ -52,7 +52,7 @@ function displayLocationArchive(){
 		do_action('sim_before_archive', 'location');
 
 		if(is_user_logged_in()){
-			$map_id = SIM\get_module_option('locations', 'placesmapid');
+			$map_id = SIM\getModuleOption('locations', 'placesmapid');
 			echo do_shortcode("[ultimate_maps id='$map_id']");
 		}
 		

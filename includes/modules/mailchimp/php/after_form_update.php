@@ -7,10 +7,10 @@ add_action('sim_location_update', function($userId, $location){
     $mailchimp = new Mailchimp($userId);
     if(strpos(strtolower($location['address']),'jos') !== false){
         //Live in Jos, add the tags
-        $mailchimp->update_family_tags(['Jos'], 'active');
-        $mailchimp->update_family_tags(['not-Jos'], 'inactive');
+        $mailchimp->updateFamilyTags(['Jos'], 'active');
+        $mailchimp->updateFamilyTags(['not-Jos'], 'inactive');
     }else{
-        $mailchimp->update_family_tags(['Jos'], 'inactive');
-        $mailchimp->update_family_tags(['not-Jos'], 'active');
+        $mailchimp->updateFamilyTags(['Jos'], 'inactive');
+        $mailchimp->updateFamilyTags(['not-Jos'], 'active');
     }
 }, 10, 2);

@@ -7,11 +7,11 @@ class Schedule{
 	function __construct(){
 		global $wpdb;
 
-		$this->table_name		= $wpdb->prefix . 'sim_schedules';
+		$this->tableName		= $wpdb->prefix . 'sim_schedules';
 
-		$this->create_db_table();
+		$this->createDbTable();
 
-		$this->get_schedules();
+		$this->getSchedules();
 		
 		$this->user 			= wp_get_current_user();
 		
@@ -24,16 +24,19 @@ class Schedule{
 		$this->events		= new Events();
 	}
 	
-	function create_db_table(){
+	/**
+	 * Creates the table holding all schedules if it does not exist
+	*/
+	function createDbTable(){
 		if ( !function_exists( 'maybe_create_table' ) ) { 
 			require_once ABSPATH . '/wp-admin/install-helper.php'; 
 		} 
 		
 		//only create db if it does not exist
 		global $wpdb;
-		$charset_collate = $wpdb->get_charset_collate();
+		$charsetCollate = $wpdb->get_charset_collate();
 
-		$sql = "CREATE TABLE {$this->table_name} (
+		$sql = "CREATE TABLE {$this->tableName} (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			target mediumint(9) NOT NULL,
 			published boolean NOT NULL,
@@ -46,27 +49,42 @@ class Schedule{
 			starttime varchar(80) NOT NULL,
 			endtime varchar(80) NOT NULL,
 			PRIMARY KEY  (id)
-		) $charset_collate;";
+		) $charsetCollate;";
 
-		maybe_create_table($this->table_name, $sql );
+		maybe_create_table($this->tableName, $sql );
 	}
 
-	function get_schedules(){
+	/**
+	 * Get all schedules from the db
+	*/
+	function getSchedules(){
 		global $wpdb;
 
-		$query				= "SELECT * FROM {$this->table_name} WHERE 1";
+		$query				= "SELECT * FROM {$this->tableName} WHERE 1";
 		
 		$this->schedules	= $wpdb->get_results($query);
 	}
 
-	function find_schedule_by_id($id){
+	/**
+	 * Get a specific schedule from the db\
+	 * 
+	 * @param	int	$id		the schedule ID
+	 * 
+	 * @return 	object		the schedule
+	*/
+	function findScheduleById($id){
 		foreach($this->schedules as $schedule){
 			if($schedule->id == $id)
 				return $schedule;
 		}
 	}
 	
-	function add_modals(){
+	/**
+	 * Create all modals
+	 * 
+	 * @return 	string		the modal html
+	*/
+	function addModals(){
 		ob_start();
 		?>
 		<!-- Add host modal for admins -->
@@ -80,7 +98,7 @@ class Schedule{
 					<input type='hidden' name='starttime'>
 					<?php
 					echo SIM\userSelect('', $only_adults=true, $families=true, $class='', $id='host', $args=[], $userId='', $exclude_ids=[], $type='list');
-					echo SIM\add_save_button('add_host','Add host','update_schedule'); 
+					echo SIM\addSaveButton('add_host','Add host','update_schedule'); 
 					?>
 				</form>
 			</div>
@@ -100,7 +118,7 @@ class Schedule{
 					<input type='text' name='recipe_keyword'>
 					
 					<?php
-					echo SIM\add_save_button('add_recipe_keyword','Add recipe keywords','update_schedule'); 
+					echo SIM\addSaveButton('add_recipe_keyword','Add recipe keywords','update_schedule'); 
 					?>
 				</form>
 			</div>
@@ -150,7 +168,7 @@ class Schedule{
 						echo SIM\userSelect('', $only_adults=true, $families=false, $class='', $id='host', $args=[], $userId='', $exclude_ids=[], $type='list');
 					}
 					
-					echo SIM\add_save_button('add_timeslot','Add time slot','update_event add_schedule_row');
+					echo SIM\addSaveButton('add_timeslot','Add time slot','update_event add_schedule_row');
 					?>
 				</form>
 			</div>
@@ -160,7 +178,12 @@ class Schedule{
 		return ob_get_clean();
 	}
 
-	function add_schedule_form(){
+	/**	
+	 * Create the form to add a schedule
+	 * 
+	 * @return 	string		the form html
+	*/
+	function addScheduleForm(){
 		ob_start();
 		if($this->admin == true){
 			?>			
@@ -208,18 +231,23 @@ class Schedule{
 				</label><br>
 				
 				<?php
-				echo SIM\add_save_button('add_schedule', 'Add schedule');
+				echo SIM\addSaveButton('add_schedule', 'Add schedule');
 			echo '</form>';
 		}
 		return ob_get_clean();
 	}
 	
+	/**
+	 * Get all existing schedules
+	 * 
+	 * @return 	string		the schedules html
+	*/
 	function showschedules(){	
 		ob_start();
 		?>
 		<div class='schedules_wrapper' style='z-index: 99;position: relative;'>
 		<?php
-		echo $this->add_modals();
+		echo $this->addModals();
 		
 		//indicator if othing to show
 		$nothing	= true;
@@ -229,18 +257,18 @@ class Schedule{
 			if(($schedule->target == $this->user->ID or $schedule->target == SIM\hasPartner($this->user->ID)) and !$this->admin and !$schedule->published) continue;
 			
 			$nothing	= false;
-			$only_meals = true;
+			$onlyMeals = true;
 			
 			//Show also the orientation schedule if:
 			if(
 				//We are an admin
 				$this->admin	==	true									or
 				//We are in the schedule
-				!empty($this->get_personal_orientation_events($schedule)) 	or
+				!empty($this->getPersonalOrientationEvents($schedule)) 	or
 				//The schedule is meant for us
 				$schedule->target == $this->user->ID
 			){
-				$only_meals = false;
+				$onlyMeals = false;
 			}
 			
 			?>
@@ -259,7 +287,7 @@ class Schedule{
 							<?php
 							//if looking for a family
 							if(strpos($schedule->name,'family') !== false){
-								$args=array(
+								$args = array(
 									'meta_query' => array(
 										array(
 											'key'		=> 'last_name',
@@ -270,14 +298,14 @@ class Schedule{
 								);
 							//Full name
 							}else{
-								$args=array(
+								$args = array(
 									'search' => $schedule->name,
 									'search_columns' => ['display_name'],
 								);
 							}
 							
 							echo SIM\userSelect($text='',$only_adults=true,$families=true,$class='',$id='schedule_target',$args);
-							echo SIM\add_save_button('publish_schedule','Publish this schedule'); 
+							echo SIM\addSaveButton('publish_schedule','Publish this schedule'); 
 							?>
 						</form>
 					</div>
@@ -294,22 +322,22 @@ class Schedule{
 							<?php
 							$date		= $schedule->startdate;
 							while(true){	
-								$date_str	= date('d F Y',strtotime($date));	
-								$datetime	= strtotime($date);					
-								$dayname	= date('l', $datetime);
-								$formated_date	= date('d-m-Y', $datetime);
-								echo "<th data-date='$date_str' data-isodate='$date'>$dayname<br>$formated_date</th>";
+								$dateStr		= date('d F Y', strtotime($date));	
+								$dateTime		= strtotime($date);					
+								$dayName		= date('l', $dateTime);
+								$formatedDate	= date('d-m-Y', $dateTime);
+								echo "<th data-date='$dateStr' data-isodate='$date'>$dayName<br>$formatedDate</th>";
 
 								if($date == $schedule->enddate) break;
 
-								$date	= date('Y-m-d',strtotime('+1 day',$datetime));
+								$date	= date('Y-m-d',strtotime('+1 day', $dateTime));
 							}
 							?>
 						</tr>
 					</thead>
 					<tbody class="table-body">
 						<?php
-						echo $this->write_rows($schedule,$only_meals);
+						echo $this->writeRows($schedule, $onlyMeals);
 						?>
 					</tbody>
 				</table>
@@ -329,7 +357,7 @@ class Schedule{
 			</div>
 			<?php
 		}
-		$form	= $this->add_schedule_form();
+		$form	= $this->addScheduleForm();
 		if($nothing and empty($form)){
 			return "There are currently no signup requests.";
 		}else{
@@ -340,10 +368,20 @@ class Schedule{
 		return ob_get_clean();
 	}
 
-	//single event
-	function get_schedule_event($schedule, $startdate, $starttime){
+	/**
+	 * Get a single event on a specific date and time
+	 * 
+	 * @param	object	$schedule	the Schedule
+	 * @param 	string	$startDate	The Date the event starts
+	 * @param	string	#startTime	The time the event starts
+	 * 
+	 * @return 	object|false		The event or false if no event
+	*/
+	function getScheduleEvent($schedule, $startDate, $startTime){
 		//get event which starts on this date and time
-		$events = $this->get_schedule_events($schedule->id, $startdate, $starttime);
+		$events = $this->getScheduleEvents($schedule->id, $startDate, $startTime);
+
+		$event	= false;
 		foreach($events as $ev){
 			if($ev->onlyfor == $this->user->ID){
 				$event	= $ev;
@@ -358,114 +396,144 @@ class Schedule{
 		return $event;
 	}
 
-	//multiple events
-	function get_schedule_events($schedule_id, $startdate, $starttime){
+	/**
+	 * Get multiple events on a specific date and time
+	 * 
+	 * @param	int		$scheduleId		the Schedule id
+	 * @param 	string	$startDate		The Date the event starts
+	 * @param	string	#startTime		The time the event starts
+	 * 
+	 * @return 	object|false			The event or false if no event
+	*/
+	function getScheduleEvents($scheduleId, $startDate, $startTime){
 		global $wpdb;
 
-		$query	=  "SELECT * FROM {$this->events->table_name} WHERE `schedule_id` = '{$schedule_id}' AND startdate = '$startdate' AND starttime='$starttime'";
+		$query	=  "SELECT * FROM {$this->events->tableName} WHERE `schedule_id` = '{$scheduleId}' AND startdate = '$startDate' AND starttime='$startTime'";
 		return $wpdb->get_results($query);
 	}
 
-	//personal events
-	function get_personal_orientation_events($schedule){
+	/**
+	 * Get all personal events belonging to a schedule
+	 * 
+	 * @param	object	$schedule		the Schedule
+	 * 
+	 * @return 	array					Array of objects
+	*/
+	function getPersonalOrientationEvents($schedule){
 		global $wpdb;
 
-		$query	= "SELECT * FROM {$this->events->table_name} WHERE `schedule_id` = '{$schedule->id}' AND onlyfor={$this->user->ID} AND starttime != '18:00'";
+		$query	= "SELECT * FROM {$this->events->tableName} WHERE `schedule_id` = '{$schedule->id}' AND onlyfor={$this->user->ID} AND starttime != '18:00'";
 		if($schedule->lunch){
 			$query	.= " AND starttime != '12:00'";
 		}
 		return $wpdb->get_results();
 	}
 
-	function write_meal_cell($schedule, $date, $starttime){
+	/**
+	 * Creates a meal cell html
+	 * 
+	 * @param	object	$schedule		the Schedule
+	 * @param	string	$date			date string
+	 * @param	string	$startTime		time string
+	 * 
+	 * @return 	array					Cell html
+	*/
+	function writeMealCell($schedule, $date, $startTime){
 		//get event which starts on this date and time
-		$event	= $this->get_schedule_event($schedule, $date, $starttime);
+		$event	= $this->getScheduleEvent($schedule, $date, $startTime);
 		$class	= 'meal';
 
-		if($starttime == '12:00'){
-			$rowspan						= "rowspan='4'";
-			$this->nextstarttimes[$date]	= '13:00';
+		if($startTime == '12:00'){
+			$rowSpan						= "rowspan='4'";
+			$this->nextStartTimes[$date]	= '13:00';
 		}else{
-			$rowspan = '';
+			$rowSpan = '';
 		}
 		
 		if($event != null){
-			$host_id		= $event->organizer_id;
-			if(is_numeric($host_id)){
-				$hostdata	= "data-host=$host_id";
+			$hostId		= $event->organizer_id;
+			if(is_numeric($hostId)){
+				$hostData	= "data-host=$hostId";
 			}else{
-				$hostdata	= "";
+				$hostData	= "";
 			}
 			$title			= get_the_title($event->post_id);
 			$url			= get_permalink($event->post_id);
-			$celltext		= "<a href='$url'>$title</a>";
-			$date		= $event->startdate;
-			$starttime	= $event->starttime;
+			$cellText		= "<a href='$url'>$title</a>";
+			$date			= $event->startdate;
+			$startTime		= $event->starttime;
 
-			$class .= ' selected';
-			$partner_id = SIM\hasPartner($this->user->ID);
+			$class 			.= ' selected';
+			$partnerId 		= SIM\hasPartner($this->user->ID);
 			//Host is current user or the spouse
-			if($host_id == $this->user->ID or $host_id == $partner_id){				
+			if($hostId == $this->user->ID or $hostId == $partnerId){				
 				$menu		= get_post_meta($event->post_id,'recipe_keyword',true);
 				if(empty($menu)){
 					$menu	= 'Enter recipe keyword';
 				}
 			
-				$celltext .= "<span class='keyword'>$menu</span>";
+				$cellText .= "<span class='keyword'>$menu</span>";
 			//current user is the target or is admin
-			}elseif(!$this->admin and $schedule->target != $this->user->ID and $schedule->target != $partner_id){
-				$celltext = 'Taken';
+			}elseif(!$this->admin and $schedule->target != $this->user->ID and $schedule->target != $partnerId){
+				$cellText = 'Taken';
 			}
 		}else{
-			$celltext	 = 'Available';
+			$cellText	 = 'Available';
 		}
 
 		if($this->admin) $class .= ' admin';
-		return "<td class='$class' $rowspan $hostdata>$celltext</td>";
+		return "<td class='$class' $rowSpan $hostData>$cellText</td>";
 	}
 	
-	function write_orientation_cell($schedule, $date, $starttime){
-		//get event which starts on this date and time
-		$event	= $this->get_schedule_event($schedule, $date, $starttime);
-
-		$rowspan	= '';
+	/**
+	 * Creates a orientation cell html
+	 * 
+	 * @param	object	$schedule		the Schedule
+	 * @param	string	$date			date string
+	 * @param	string	$startTime		time string
+	 * 
+	 * @return 	array					Cell html
+	*/
+	function writeOrientationCell($schedule, $date, $startTime){
+		//get event which starts on this date and startTime
+		$event		= $this->getScheduleEvent($schedule, $date, $startTime);
+		$rowSpan	= '';
 		$class		= 'orientation'; 
 
 		if($event == null){
-			$celltext = 'Available';
+			$cellText = 'Available';
 		}else{
-			$host_id	= $event->organizer_id;
-			if(is_numeric($host_id)){
-				$hostdata	= "data-host=$host_id";
+			$hostId			= $event->organizer_id;
+			if(is_numeric($hostId)){
+				$hostData	= "data-host=$hostId";
 			}else{
-				$hostdata	= "";
+				$hostData	= "";
 			}
 			$title		= get_the_title($event->post_id);
 			$url		= get_permalink($event->post_id);
 			$date		= $event->startdate;
-			$starttime	= $event->starttime;
-			$endtime	= $event->endtime;
+			$endTime	= $event->endtime;
 			$class 		.= ' selected';
-			$celltext	= "<span class='subject' data-userid='$host_id'><a href='$url'>$title</a></span><br>";
+			$cellText	= "<span class='subject' data-userid='$hostId'><a href='$url'>$title</a></span><br>";
 		
-			if(!is_numeric($host_id)){
-				$celltext .= "<span class='person timeslot'>Add person</span>";
+			if(!is_numeric($hostId)){
+				$cellText .= "<span class='person timeslot'>Add person</span>";
 			}
 		
 			if(empty($event->location)){
-				$celltext .= "<span class='location timeslot'>Add location</span>";
+				$cellText .= "<span class='location timeslot'>Add location</span>";
 			}else{
-				$celltext .= "<span class='timeslot'>At <span class='location'>{$event->location}</span></span>";
+				$cellText .= "<span class='timeslot'>At <span class='location'>{$event->location}</span></span>";
 			}
 
 			////check how many rows this event should span
-			$to_time	= new \DateTime($event->endtime);
-			$from_time	= new \DateTime($event->starttime);
-			$interval	= $to_time->diff($from_time);
+			$toTime		= new \DateTime($event->endtime);
+			$fromTime	= new \DateTime($event->starttime);
+			$interval	= $toTime->diff($fromTime);
 			$value		= ($interval->h*60+$interval->i)/15;
-			$rowspan	= "rowspan='$value'";
+			$rowSpan	= "rowspan='$value'";
 
-			$this->nextstarttimes[$date] = $endtime;
+			$this->nextStartTimes[$date] = $endTime;
 		}
 
 		//Make the cell editable if:
@@ -475,65 +543,73 @@ class Schedule{
 			//We are the organizer
 			$this->user->ID == $event->organizer_id or 
 			//This cell  is available
-			$celltext == 'Available'			
+			$cellText == 'Available'			
 		){
 			if($this->admin) $class .= ' admin';
 		}
 		
-		return "<td class='$class' $rowspan $hostdata>$celltext</td>";
+		return "<td class='$class' $rowSpan $hostData>$cellText</td>";
 	}
 
-	function write_rows($schedule, $only_meals = false){
-		$html = '';
+	/**
+	 * Write all rws of a schedule table
+	 * 
+	 * @param	object	$schedule		the Schedule
+	 * @param	bool	$onlyMeals		Whether to only write the meal rows. Default false
+	 * 
+	 * @return 	array					Rows html
+	*/
+	function writeRows($schedule, $onlyMeals = false){
+		$html 					= '';
 		
-		$this->nextstarttimes	= [];
+		$this->nextStartTimes	= [];
 
 		//loop over the rows
-		$starttime	= $schedule->starttime;
+		$startTime	= $schedule->starttime;
 		//loop until we are at the endtime
 		while(true){
 			//If we do not have an orientation schedule, go strait to the dinner row
-			if($starttime >= '13:00' and $starttime < '18:00' and !$schedule->orientation)	$starttime = '18:00';
+			if($startTime >= '13:00' and $startTime < '18:00' and !$schedule->orientation)	$startTime = '18:00';
 			
 			$date				= $schedule->startdate;
-			$mealschedulerow	= false;
-			$endtime			= date("H:i", strtotime('+15 minutes', strtotime($starttime)));
+			$mealScheduleRow	= false;
+			$endTime			= date("H:i", strtotime('+15 minutes', strtotime($startTime)));
 			
-			if($starttime >= '12:00' and $starttime < '13:00' and $schedule->lunch){
-				$mealschedulerow	= true;
-				if($starttime >= '12:00'){
-					$rowspan			= 'rowspan="4"';
+			if($startTime >= '12:00' and $startTime < '13:00' and $schedule->lunch){
+				$mealScheduleRow	= true;
+				if($startTime >= '12:00'){
+					$rowSpan			= 'rowspan="4"';
 					$description		= 'Lunch';
 				}
-			}elseif($starttime == '18:00'){
-				$mealschedulerow	= true;
-				$rowspan			= '';
+			}elseif($startTime == '18:00'){
+				$mealScheduleRow	= true;
+				$rowSpan			= '';
 				$description		= 'Dinner';
 			}else{
 				$rowspan			= '';
-				$description		= $starttime;
+				$description		= $startTime;
 			}
 			
 			//Show the row if we can see all rows or the row is a mealschedule row
-			if(!$only_meals or $mealschedulerow){
-				$html  .= "<tr class='table-row' data-starttime='$starttime' data-endtime='$endtime'>";
-					if($starttime > '12:00' and $starttime < '13:00' and $schedule->lunch){
+			if(!$onlyMeals or $mealScheduleRow){
+				$html  .= "<tr class='table-row' data-starttime='$startTime' data-endtime='$endTime'>";
+					if($startTime > '12:00' and $startTime < '13:00' and $schedule->lunch){
 						$html .= "<td class='hidden'><b>$description</b></td>";
 					}else{
-						$html .= "<td $rowspan><b>$description</b></td>";
+						$html .= "<td $rowSpan><b>$description</b></td>";
 					}
 				
 					//loop over the dates to write a cell per date in this timerow
 					while(true){
-						if($this->nextstarttimes[$date] > $starttime){
+						if($this->nextStartTimes[$date] > $startTime){
 							$html .= "<td class='hidden'>Available</td>";
 						}else{
 							//mealschedule
-							if($mealschedulerow){
-								$html .= $this->write_meal_cell($schedule, $date, $starttime);
+							if($mealScheduleRow){
+								$html .= $this->writeMealCell($schedule, $date, $startTime);
 							//Orientation schedule
 							}else{
-								$html .= $this->write_orientation_cell($schedule, $date, $starttime);	
+								$html .= $this->writeOrientationCell($schedule, $date, $startTime);	
 							}
 						}
 
@@ -544,18 +620,25 @@ class Schedule{
 				$html .= "</tr>";
 			}
 
-			if($starttime == $schedule->endtime) break;
-			$starttime		= $endtime;
+			if($startTime == $schedule->endtime) break;
+			$startTime		= $endTime;
 		}//end row
 		
 		return $html;
 	}
 
-	function add_event_to_db($event){
+	/**
+	 * Add a new event to the db
+	 * 
+	 * @param	object	$event			the event
+	 * 
+	 * @return 	array					Rows html
+	*/
+	function addEventToDb($event){
 		global $wpdb;
 
 		$result = $wpdb->insert(
-			$this->events->table_name, 
+			$this->events->tableName, 
 			$event
 		);
 		
@@ -563,7 +646,7 @@ class Schedule{
 			return new WP_Error('schedules', $wpdb->print_error());
 		}
 
-		$event_id   = $wpdb->insert_id;
+		$eventId   = $wpdb->insert_id;
 
 		//Create event warning
 		$start	= new \DateTime($event['startdate'].' '.$event['starttime'], new \DateTimeZone(wp_timezone_string()));
@@ -571,84 +654,97 @@ class Schedule{
 		//Warn 15 minutes in advance
 		$start	= $start->getTimestamp() - 15 * MINUTE_IN_SECONDS;
 		
-		wp_schedule_single_event($start, 'send_event_reminder_action', [$event_id]);
+		wp_schedule_single_event($start, 'send_event_reminder_action', [$eventId]);
 	}
 
-	function add_schedule_events($title, $schedule, $add_host_partner=true, $add_partner=true){
+	/**
+	 * Add new events to the db when a new activity is schedules
+	 * 
+	 * @param	string	$title			the title of the event
+	 * @param	object	$schedule		the schedule of the event
+	 * @param	bool	$addHostPartner	Whether to add an event for the host partner as well. Default true
+	 * @param	bool	$addPartner		Whether to add an event for the schedule target partner as well. Default true
+	*/
+	function addScheduleEvents($title, $schedule, $addHostPartner=true, $addPartner=true){
 		$event							= [];	
 		$event['startdate']				= $this->date;
 		$event['starttime']				= $this->starttime;
 		$event['enddate']				= $this->date;
 		$event['endtime']				= $this->endtime;	
 		$event['location']				= $this->location;
-		$event['organizer_id']			= $this->host_id;
+		$event['organizer_id']			= $this->hostId;
 		$event['schedule_id']			= $this->schedule_id;
 		
-		$host_partner					= false;
-		if(is_numeric($this->host_id)){
-			if($add_host_partner and SIM\hasPartner($this->host_id)){
-				$host_partner	= true;
-				$event['organizer']				= get_userdata($this->host_id)->last_name.' family';
+		$hostPartner					= false;
+		if(is_numeric($this->hostId)){
+			if($addHostPartner and SIM\hasPartner($this->hostId)){
+				$hostPartner	= true;
+				$event['organizer']				= get_userdata($this->hostId)->last_name.' family';
 			}else{
-				$event['organizer']				= get_userdata($this->host_id)->display_name;
+				$event['organizer']				= get_userdata($this->hostId)->display_name;
 			}
 		}elseif(!empty($_POST['host'])){
 			$event['organizer']					= $_POST['host'];
 		}
 
-		if($add_partner){
-			$partner_id	= SIM\hasPartner($schedule->target);
+		if($addPartner){
+			$partnerId	= SIM\hasPartner($schedule->target);
 		}else{
-			$partner_id	= false;
+			$partnerId	= false;
 		}
 
 		//clean title
-		$title	= str_replace(" with {$event['organizer']}",'',$title);
-		$title	= str_replace("Hosting {$this->name} for ",'',$title);
+		$title	= str_replace(" with {$event['organizer']}", '', $title);
+		$title	= str_replace("Hosting {$this->name} for ", '', $title);
 
 		//New events
-		$eventarray		= [
+		$eventArray		= [
 			[
 				'title'		=>ucfirst($title)." with {$event['organizer']}",
-				'onlyfor'	=>[$schedule->target, $partner_id]
+				'onlyfor'	=>[$schedule->target, $partnerId]
 			]
 		];
 
-		if(is_numeric($this->host_id)){
-			$eventarray[] =
+		if(is_numeric($this->hostId)){
+			$eventArray[] =
 			[
 				'title'		=>"Hosting {$this->name} for $title",
-				'onlyfor'	=>[$this->host_id, $host_partner]
+				'onlyfor'	=>[$this->hostId, $hostPartner]
 			];
 		}
-		foreach($eventarray as $a){
+		foreach($eventArray as $a){
 			$post = array(
 				'post_type'		=> 'event',
 				'post_title'    => $a['title'],
 				'post_content'  => $a['title'],
 				'post_status'   => "publish",
-				'post_author'   => $this->host_id
+				'post_author'   => $this->hostId
 			);
-			$post_id 	= wp_insert_post( $post,true,false);
-			update_post_meta($post_id,'eventdetails',$event);
-			update_post_meta($post_id,'onlyfor',$a['onlyfor']);
+			$postId 	= wp_insert_post( $post,true,false);
+			update_post_meta($postId,'eventdetails',$event);
+			update_post_meta($postId,'onlyfor',$a['onlyfor']);
 
 			foreach($a['onlyfor'] as $userId){
 				if(is_numeric($userId)){
 					$event['onlyfor']	= $userId;
-					$event['post_id']	= $post_id;
-					$this->add_event_to_db($event);
+					$event['post_id']	= $postId;
+					$this->addEventToDb($event);
 				}
 			}
 		}
 	}
 	
-	function add_schedule(){
+	/**
+	 * Add a new schedule
+	 * 
+	 * @return array	text, new schedules list in html
+	*/
+	function addSchedule(){
 		global $wpdb;
 	
 		$name		= sanitize_text_field($_POST['target_name']);
 		//check if schedule already exists
-		if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `name` = '$name'") != null){
+		if($wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `name` = '$name'") != null){
 			return new WP_Error('schedule', "A schedule for $name already exists!");
 		}
 
@@ -666,65 +762,75 @@ class Schedule{
 			$orientation	= false;
 		}
 
-		$startdate_str	= $_POST['startdate'];
-		$startdate		= strtotime($startdate_str);
-		$enddate_str	= $_POST['enddate'];
-		$enddate		= strtotime($enddate_str);
+		$startDateStr	= $_POST['startdate'];
+		$startDate		= strtotime($startDateStr);
+		$endDateStr		= $_POST['enddate'];
+		$endDate		= strtotime($endDateStr);
 
 		if($orientation){
-			$starttime	= '08:00';
+			$startTime	= '08:00';
 		}elseif($lunch){
-			$starttime	= '12:00';
+			$startTime	= '12:00';
 		}else{
-			$starttime	= '18:00';
+			$startTime	= '18:00';
 		}						
 
-		if($startdate > $enddate) return new WP_Error('schedule', "Ending date cannot be before starting date");
+		if($startDate > $endDate) return new WP_Error('schedule', "Ending date cannot be before starting date");
 
 		$wpdb->insert(
-			$this->table_name, 
+			$this->tableName, 
 			array(
 				'target'		=> $_POST['target_id'],
 				'name'			=> $name,
 				'info'			=> $info,
 				'lunch'			=> $lunch,
 				'orientation'	=> $orientation,
-				'startdate'		=> $startdate_str,
-				'enddate'		=> $enddate_str,
-				'starttime'		=> $starttime,
+				'startdate'		=> $startDateStr,
+				'enddate'		=> $endDateStr,
+				'starttime'		=> $startTime,
 				'endtime'		=> '18:00',
 			)
 		);
 		
-		$this->get_schedules();
-		$schedules_html	= $this->showschedules();
-
+		$this->getSchedules();
 		return [
 			'message'		=> "Succesfully added a schedule for $name",
-			'html'			=> $schedules_html
+			'html'			=> $this->showschedules()
 		];
 	}
 
-	function publish_schedule(){
+	/**
+	 * Publishes a new schedule
+	 * 
+	 * @return string	success message
+	*/
+	function publishSchedule(){
 		global $wpdb;
 		
-		$schedule_id	= $_POST['schedule_id'];
+		$scheduleId	= $_POST['schedule_id'];
 
-		SIM\updateFamilyMeta($_POST['schedule_target'], 'schedule', $schedule_id);
+		SIM\updateFamilyMeta($_POST['schedule_target'], 'schedule', $scheduleId);
 
 		$wpdb->update(
-			$this->table_name, 
+			$this->tableName, 
 			array(
 				'published'	=> true
 			),
 			array(
-				'id'		=> $schedule_id
+				'id'		=> $scheduleId
 			)
 		);
 
 		return 'Succesfully published the schedule';
 	}
 	
+	/**
+	 * Removes a given schedule
+	 * 
+	 * @param int	$scheduleId	THe id of the schedule to remove	
+	 * 
+	 * @return string	success message
+	*/
 	function removeSchedule($scheduleId){
 		global $wpdb;
 
@@ -740,21 +846,21 @@ class Schedule{
 		}
 		
 		//Delete all the posts of this schedule
-		$events = $wpdb->get_results("SELECT * FROM {$this->events->table_name} WHERE schedule_id='$scheduleId'");
+		$events = $wpdb->get_results("SELECT * FROM {$this->events->tableName} WHERE schedule_id='$scheduleId'");
 		foreach($events as $event){
 			wp_delete_post($event->post_id,true);
 		}
 		
 		//Delete all events of this schedule
 		$wpdb->delete(
-			$this->events->table_name,      
+			$this->events->tableName,      
 			['schedule_id' => $scheduleId],           
 			['%d'],
 		);
 		
 		//Delete the schedule
 		$wpdb->delete(
-			$this->table_name,
+			$this->tableName,
 			['id' => $scheduleId],
 			['%d'],
 		);
@@ -763,42 +869,47 @@ class Schedule{
 		return 'Succesfully removed the schedule';
 	}
 
-	function add_host(){
+	/**
+	 * Add a new host for a session
+	 * 
+	 * @return string	success message and new cell html
+	*/
+	function addHost(){
 		$this->schedule_id	= $_POST['schedule_id'];
-		$schedule		= $this->find_schedule_by_id($this->schedule_id);
+		$schedule			= $this->findScheduleById($this->schedule_id);
 
 		if(is_numeric($_POST['host'])){
-			$this->host_id	= $_POST['host'];
-			$host			= get_userdata($this->host_id);
+			$this->hostId	= $_POST['host'];
+			$host			= get_userdata($this->hostId);
 
-			$partner_id		= SIM\hasPartner($this->host_id);
+			$partnerId		= SIM\hasPartner($this->hostId);
 
-			if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) return new WP_Error('No permission', 'No permission to do that!');
+			if($this->admin != true and $this->hostId != $this->user->ID and $this->hostId != $partnerId) return new WP_Error('No permission', 'No permission to do that!');
 			
-			if($partner_id){
-				$host_name		= $host->last_name.' family';
+			if($partnerId){
+				$hostName		= $host->last_name.' family';
 			}else{
-				$host_name		= $host->display_name;
+				$hostName		= $host->display_name;
 			}
 		}else{
-			$this->host_id	= '';
-			$host_name		= $_POST['host'];
+			$this->hostId	= '';
+			$hostName		= $_POST['host'];
 			if($this->admin != true) return new WP_Error('No permission', 'No permission to do that!');
 		}
 
 		$this->name			= $schedule->name;
 
 		$this->date			= $_POST['date'];
-		$date_str			= date('d F Y',strtotime($this->date));
+		$dateStr			= date('d F Y',strtotime($this->date));
 		$this->starttime	= $_POST['starttime'];
 		if($this->starttime == '12:00' and $schedule->lunch){
 			$this->endtime		= '13:00';
 			$title				= 'lunch';
-			$this->location		= "House of $host_name";
+			$this->location		= "House of $hostName";
 		}elseif($this->starttime == '18:00'){
 			$this->endtime		= '19:30'; 
 			$title				= 'dinner';
-			$this->location		= "House of $host_name";
+			$this->location		= "House of $hostName";
 		}else{
 			$title				= sanitize_text_field($_POST['subject']);
 			$this->location		= sanitize_text_field($_POST['location']);
@@ -806,17 +917,17 @@ class Schedule{
 		}
 
 		if($this->admin == true){
-			$message	= "Succesfully added $host_name as a host for {$this->name} on $date_str";
+			$message	= "Succesfully added $hostName as a host for {$this->name} on $dateStr";
 		}else{
-			$message	= "Succesfully added you as a host for {$this->name} on $date_str";
+			$message	= "Succesfully added you as a host for {$this->name} on $dateStr";
 		}
 
 		if($title == 'lunch' or $title == 'dinner'){
-			$this->add_schedule_events($title, $schedule);
-			$html	= $this->write_meal_cell($schedule, $this->date, $this->starttime);
+			$this->addScheduleEvents($title, $schedule);
+			$html	= $this->writeMealCell($schedule, $this->date, $this->starttime);
 		}else{
-			$this->add_schedule_events($title, $schedule, false);
-			$html	= $this->write_orientation_cell($schedule, $this->date, $this->starttime);
+			$this->addScheduleEvents($title, $schedule, false);
+			$html	= $this->writeOrientationCell($schedule, $this->date, $this->starttime);
 		}
 		
 		return [
@@ -825,54 +936,64 @@ class Schedule{
 		];
 	}
 
-	function remove_host(){
+	/**
+	 * Removes a host for a session
+	 * 
+	 * @return string	success message
+	*/
+	function removeHost(){
 		$this->schedule_id	= $_POST['schedule_id'];
-		$schedule		= $this->find_schedule_by_id($this->schedule_id);
+		$schedule		= $this->findScheduleById($this->schedule_id);
 
-		$this->host_id	= $_POST['host'];
+		$this->hostId	= $_POST['host'];
 
-		$partner_id		= SIM\hasPartner($this->host_id);
-		if($this->admin != true and $this->host_id != $this->user->ID and $this->host_id != $partner_id) return new \WP_Error('Permission error', 'No permission to do that!');
-		if($partner_id){
-			$host_name		= get_userdata($this->host_id)->last_name.' family';
+		$partnerId		= SIM\hasPartner($this->hostId);
+		if($this->admin != true and $this->hostId != $this->user->ID and $this->hostId != $partnerId) return new \WP_Error('Permission error', 'No permission to do that!');
+		if($partnerId){
+			$hostName		= get_userdata($this->hostId)->last_name.' family';
 		}else{
-			$host_name		= get_userdata($this->host_id)->display_name;
+			$hostName		= get_userdata($this->hostId)->display_name;
 		}
 
 		$this->date			= $_POST['date'];
-		$date_str			= date('d F Y',strtotime($this->date));
+		$dateStr			= date('d F Y',strtotime($this->date));
 		$this->starttime	= $_POST['starttime'];
 
-		$events	= $this->get_schedule_events($schedule->id, $this->date, $this->starttime);
+		$events	= $this->getScheduleEvents($schedule->id, $this->date, $this->starttime);
 		
 		foreach($events as $event){
 			//delete event_post
 			wp_delete_post($event->post_id);
 
 			//delete events
-			$this->events->remove_db_rows($event->post_id);
+			$this->events->removeDbRows($event->post_id);
 		}
 
 		if($this->admin == true){
-			$message	= "Succesfully removed $host_name as a host for {$schedule->name} on $date_str";
+			$message	= "Succesfully removed $hostName as a host for {$schedule->name} on $dateStr";
 		}else{
-			$message	= "Succesfully removed you as a host for {$this->name} on $date_str";
+			$message	= "Succesfully removed you as a host for {$this->name} on $dateStr";
 		}
 
 		return $message;
 	}
 
-	function add_menu(){
-		$schedule_id	= $_POST['schedule_id'];
-		$schedule		= $this->find_schedule_by_id($schedule_id);
+	/**
+	 * Adds a keyword to a meal session
+	 * 
+	 * @return string	success message
+	*/
+	function addMenu(){
+		$scheduleId		= $_POST['schedule_id'];
+		$schedule		= $this->findScheduleById($scheduleId);
 
-		$date	= sanitize_text_field($_POST['date']);
+		$date			= sanitize_text_field($_POST['date']);
 
-		$starttime	= sanitize_text_field($_POST['starttime']);
+		$startTime		= sanitize_text_field($_POST['starttime']);
 
-		$menu	= sanitize_text_field($_POST['recipe_keyword']);
+		$menu			= sanitize_text_field($_POST['recipe_keyword']);
 
-		$events	= $this->get_schedule_events($schedule->id, $date, $starttime);
+		$events			= $this->getScheduleEvents($schedule->id, $date, $startTime);
 		foreach($events as $event){
 			update_post_meta($event->post_id, 'recipe_keyword', $menu);
 		}

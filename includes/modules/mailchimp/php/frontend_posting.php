@@ -2,17 +2,16 @@
 namespace SIM\MAILCHIMP;
 use SIM;
 
-add_action('frontend_post_after_content', function($frontendcontend){
+add_action('sim_frontend_post_after_content', function($frontendcontend){
     // Only show when not yet published
-    if($frontendcontend->post->post_status != 'publish'){
+    if(!get_post_meta($frontendcontend->postId, 'mailchimp_message_send', true)){
 
         $mailchimpSegmentId	    = get_post_meta($frontendcontend->postId, 'mailchimp_segment_id', true);
         $mailchimpEmail		    = get_post_meta($frontendcontend->postId, 'mailchimp_email', true);
         $mailchimpExtraMessage  = get_post_meta($frontendcontend->postId, 'mailchimp_extra_message', true);
+        $Mailchimp              = new Mailchimp($frontendcontend->user->ID);
+        $segments               = $Mailchimp->getSegments();
 
-        $Mailchimp = new Mailchimp($frontendcontend->user->ID);
-
-        $segments = $Mailchimp->get_segments();
         if($segments){
             ?>
             <div id="mailchimp" class="frontendform">
@@ -76,8 +75,11 @@ add_action('sim_after_post_save', function($post){
 		if($post->post_status == 'publish'){
 			//Send mailchimp
 			$Mailchimp = new Mailchimp();
-			$result = $Mailchimp->sendEmail($post->ID, intval($_POST['mailchimp_segment_id']), $_POST['mailchimp_email'], $extraMessage);
+			$Mailchimp->sendEmail($post->ID, intval($_POST['mailchimp_segment_id']), $_POST['mailchimp_email'], $extraMessage);
 			
+            // Indicate as send
+            update_metadata( 'post', $post->ID, 'mailchimp_message_send', true);
+
 			//delete any post metakey
 			delete_post_meta($post->ID,'mailchimp_segment_id');
 			delete_post_meta($post->ID,'mailchimp_email');
@@ -93,5 +95,5 @@ add_action('sim_after_post_save', function($post){
 add_action('sim_roles_changed', function($user, $new_roles){
     //Check if new roles require mailchimp actions
     $Mailchimp = new Mailchimp($user->ID);
-    $Mailchimp->role_changed($new_roles);
+    $Mailchimp->roleChanged($new_roles);
 }, 10, 2);

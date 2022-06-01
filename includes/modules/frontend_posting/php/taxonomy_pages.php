@@ -3,7 +3,7 @@ namespace SIM\FRONTEND_POSTING;
 use SIM;
 
 add_action('sim_before_archive', function($type){
-    $pageId	= SIM\get_module_option('frontend_posting', 'publish_post_page');
+    $pageId	= SIM\getModuleOption('frontend_posting', 'publish_post_page');
 	if(is_numeric($pageId)){
 		if($type == 'event'){
 			$text	= "Add an event to the calendar";
@@ -16,7 +16,7 @@ add_action('sim_before_archive', function($type){
 });
 
 add_filter('sim_empty_description', function($message, $post){
-    $pageId	= SIM\get_module_option('frontend_posting', 'publish_post_page');
+    $pageId	= SIM\getModuleOption('frontend_posting', 'publish_post_page');
 	$message	= "<div style='margin-top:10px;'>";
 		$message	.= "This {$post->post_type} lacks a description.<br>";
 		$message	.= "Please add one.<br>";
@@ -27,7 +27,7 @@ add_filter('sim_empty_description', function($message, $post){
 }, 10, 2);
 
 add_filter('sim-empty-taxonomy', function($message, $type){
-	$pageId	= SIM\get_module_option('frontend_posting', 'publish_post_page');
+	$pageId	= SIM\getModuleOption('frontend_posting', 'publish_post_page');
 	$message	.= "<br><a href='".get_permalink($pageId)."?type=$type' class='button'>Add a $type</a>";
 	return $message;
 });

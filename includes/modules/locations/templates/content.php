@@ -153,7 +153,7 @@ if(is_tax() or is_archive()){
 					$cats = get_the_terms(get_the_ID(),'locations');
 					foreach($cats as $cat){						
 						if($cat->slug == 'ministry'){
-							echo ministry_description(get_the_ID());
+							echo ministryDescription(get_the_ID());
 						}
 					}
 				}

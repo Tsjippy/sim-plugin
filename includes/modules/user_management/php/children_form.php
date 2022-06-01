@@ -12,16 +12,16 @@ function show_children_fields($child_id){
 	<div id="profile_picture_child_info_<?php echo $child_id;?>" class="tabcontent hidden">
 		<?php 
 		//profile_picture
-		echo do_shortcode("[formbuilder datatype=profile_picture userid='$child_id']");
+		echo do_shortcode("[formbuilder formname=profile_picture userid='$child_id']");
 		?>
 	</div>
 	
 	<div id="medical_child_info_<?php echo $child_id;?>" class="tabcontent hidden">
-		<?php echo do_shortcode("[formbuilder datatype=user_medical userid=$child_id]"); ?>
+		<?php echo do_shortcode("[formbuilder formname=user_medical userid=$child_id]"); ?>
 	</div>
 	
 	<div id="generic_child_info_<?php echo $child_id;?>" class="tabcontent">
-		<?php echo do_shortcode("[formbuilder datatype=child_generic userid=$child_id]"); ?>
+		<?php echo do_shortcode("[formbuilder formname=child_generic userid=$child_id]"); ?>
 	</div>
 
 	<?php

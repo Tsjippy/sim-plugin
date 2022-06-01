@@ -7,7 +7,7 @@ async function markAsRead(event){
 		formData.append('userid',target.dataset.userid);
 		formData.append('postid',target.dataset.postid);
 
-        var response    = await formsubmit.fetchRestApi('mandatory_content/mark_as_read', formData);
+        var response    = await FormSubmit.fetchRestApi('mandatory_content/mark_as_read', formData);
 		
         if(response){
             main.displayMessage(response, 'success', false);
@@ -23,7 +23,7 @@ async function markAllAsRead(event){
     formData = new FormData();
     formData.append('userid', target.dataset.userid);
 
-    var response    = await formsubmit.fetchRestApi('mandatory_content/mark_all_as_read', formData);
+    var response    = await FormSubmit.fetchRestApi('mandatory_content/mark_all_as_read', formData);
     
     if(response){
         main.displayMessage(response, 'success', false);

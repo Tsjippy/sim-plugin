@@ -20,7 +20,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	
-    SIM\picture_selector('tc_signature',  'Signature of the travel coordinator', $settings);
+    SIM\pictureSelector('tc_signature',  'Signature of the travel coordinator', $settings);
 
 	?>
 	<label>How often should we send the contact list</label>
@@ -43,7 +43,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
-	schedule_tasks();
+	scheduleTasks();
 
 	return $options;
 }, 10, 2);

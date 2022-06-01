@@ -86,7 +86,7 @@ async function processInput(event, target){
 	}
 	
 	var cell 			= target.closest('td');	
-	var value			= formFunctions.getFieldValue(target, false);
+	var value			= FormFunctions.getFieldValue(target, false);
 	var table			= target.closest('table');
 	
 	//Only update when needed
@@ -104,7 +104,7 @@ async function processInput(event, target){
 		
 		main.showLoader(cell.firstChild);
 		
-		response = await formsubmit.fetchRestApi(table.dataset.url, formData);
+		response = await FormSubmit.fetchRestApi(table.dataset.url, formData);
 
 		if(response){
 			cell.innerHTML = value;

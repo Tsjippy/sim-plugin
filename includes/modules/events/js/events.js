@@ -1,4 +1,4 @@
-async function request_month(target, month, year){
+async function requestMonth(target, month, year){
     url.searchParams.set('month', month);
     url.searchParams.set('yr', year);
     window.history.pushState({}, '', url);
@@ -6,29 +6,29 @@ async function request_month(target, month, year){
     //hide all
     document.querySelectorAll('#monthview .events-wrap:not(hidden)').forEach(el=>el.classList.add('hidden'));
 
-    var calendar_page   = document.querySelector('.events-wrap[data-date="'+year+'-'+month+'"]');
-    if(calendar_page == null){
-        target.closest('.calendar-wrap').insertAdjacentHTML('beforeEnd','<img class="loader" src="'+sim.loadingGif+'" style="margin-left: auto;margin-right: auto;display: block;">');
+    var calendarPage   = document.querySelector(`.events-wrap[data-date="${year}-${month}"]`);
+    if(calendarPage == null){
+        target.closest('.calendar-wrap').insertAdjacentHTML('beforeEnd', `<img class="loader" src="${sim.loadingGif}" style="margin-left: auto;margin-right: auto;display: block;">`);
         
         var formData = new FormData();
-        formData.append('month',month);
-        formData.append('year',year);
+        formData.append('month', month);
+        formData.append('year', year);
 
-        var response    = await formsubmit.fetchRestApi('events/get_month_html', formData);
+        var response    = await FormSubmit.fetchRestApi('events/get_month_html', formData);
         
         if(response) {
             target.closest('.calendar-wrap').querySelector('.loader').remove();
             document.querySelector('#monthview').insertAdjacentHTML('beforeEnd', response);
         }
     }else{
-        calendar_page.classList.remove('hidden');
+        calendarPage.classList.remove('hidden');
     }
 
     document.querySelector('div.month_selector .current').textContent = document.querySelector('select.month_selector').options[month-1].text;
     document.querySelector('div.year_selector .current').textContent = year;
 }
 
-async function request_week(target, wknr, year){
+async function requestWeek(target, wknr, year){
     url.searchParams.set('yr', year);
     url.searchParams.set('week', wknr);
     window.history.pushState({}, '', url);
@@ -36,8 +36,8 @@ async function request_week(target, wknr, year){
     //hide all
     document.querySelectorAll('#weekview .events-wrap:not(hidden)').forEach(el=>el.classList.add('hidden'));
 
-    var calendar_page   = document.querySelector('.events-wrap[data-weeknr="'+wknr+'"]');
-    if(calendar_page == null){
+    var calendarPage   = document.querySelector(`.events-wrap[data-weeknr="${wknr}"]`);
+    if(calendarPage == null){
         target.closest('.calendar-wrap').insertAdjacentHTML(
             'beforeEnd',
             `<img class="loader" src="${sim.loadingGif}" style="margin-left: auto;margin-right: auto;display: block;">`
@@ -47,21 +47,21 @@ async function request_week(target, wknr, year){
         formData.append('wknr',wknr);
         formData.append('year',year);
 
-        var response    = await formsubmit.fetchRestApi('events/get_week_html', formData);
+        var response    = await FormSubmit.fetchRestApi('events/get_week_html', formData);
         
         if(response) {
             target.closest('.calendar-wrap').querySelector('.loader').remove();
             document.querySelector('#weekview').insertAdjacentHTML('beforeEnd',response);
         }
     }else{
-        calendar_page.classList.remove('hidden');
+        calendarPage.classList.remove('hidden');
     }
 
     document.querySelector('div.week_selector .current').textContent = wknr;
     document.querySelector('div.year_selector .current').textContent = year;
 }
 
-async function request_expand_list(offset, month='', year=''){
+async function requestExpandList(offset, month='', year=''){
     //remove any existing element when requesting specific date
     if(month != '' || year != ''){
         document.querySelectorAll('#listview article').forEach(el=>el.remove());
@@ -78,7 +78,7 @@ async function request_expand_list(offset, month='', year=''){
     formData.append('month',month);
     formData.append('year',year);
     
-    var response    = await formsubmit.fetchRestApi('events/get_list_html', formData);
+    var response    = await FormSubmit.fetchRestApi('events/get_list_html', formData);
         
     if(response) {
         document.querySelector('#listview').querySelector('.loader').remove();
@@ -118,9 +118,9 @@ function handleTouchMove(evt) {
         var year  = target.dataset.year;
         
         if(selected_view == 'weekview'){
-            request_week(evt.target, week, year);
+            requestWeek(evt.target, week, year);
         }else if(selected_view == 'monthview'){
-            request_month(target, month, year);
+            requestMonth(target, month, year);
         }
     }
     /* reset values */
@@ -136,17 +136,17 @@ document.addEventListener("DOMContentLoaded",function() {
 	console.log("Events.js loaded");
 });
 
-document.addEventListener("click",function(event) {
+document.addEventListener("click", function(event) {
 	var target = event.target;
     if(target.classList.contains('prevnext')){
-        var requested_month = target.dataset.month;
-        var requested_week  = target.dataset.weeknr;
-        var requested_year  = target.dataset.year;
+        var requestedMonth = target.dataset.month;
+        var requestedWeek  = target.dataset.weeknr;
+        var requestedYear  = target.dataset.year;
 
-        if(requested_month != null){
-            request_month(target, requested_month, requested_year);
-        }else if(requested_week != null){
-            request_week(target, requested_week, requested_year);
+        if(requestedMonth != null){
+            requestMonth(target, requestedMonth, requestedYear);
+        }else if(requestedWeek != null){
+            requestWeek(target, requestedWeek, requestedYear);
         }
     }
 
@@ -171,17 +171,17 @@ document.addEventListener("click",function(event) {
         event.stopPropagation();
 
         var date        = target.dataset.date;
-        var starttime   = target.dataset.starttime;
+        var startTime   = target.dataset.starttime;
 
         //hide all other events
         document.querySelectorAll('.event-details-wrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
         
         //show the event
-        var eventdetail = target.closest('.events-wrap').querySelector('.event-details-wrapper[data-date="'+date+'"][data-starttime="'+starttime+'"]');
-        if(eventdetail == null){
+        var eventDetail = target.closest('.events-wrap').querySelector(`.event-details-wrapper[data-date="${date}"][data-starttime="${startTime}"]`);
+        if(eventDetail == null){
             target.closest('.events-wrap').querySelector('.event-details-wrapper[data-date="empty"]').classList.remove('hidden');
         }else{
-            eventdetail.classList.remove('hidden');
+            eventDetail.classList.remove('hidden');
 
             //unselect previous selected date
             document.querySelectorAll('.calendar-hour.selected').forEach(el=>el.classList.remove('selected'));
@@ -189,10 +189,10 @@ document.addEventListener("click",function(event) {
             target.classList.add('selected');
 
             if(main.isMobileDevice()){
-                window.scrollTo(0, eventdetail.offsetTop);
+                window.scrollTo(0, eventDetail.offsetTop);
             }else{
                 //scroll the detail into view
-                window.scrollTo(0, eventdetail.offsetHeight);
+                window.scrollTo(0, eventDetail.offsetHeight);
             }
         }
     }
@@ -237,16 +237,16 @@ document.addEventListener("click",function(event) {
     }
 });
 
-document.addEventListener("change",function(event) {
+document.addEventListener("change", function(event) {
 	var target = event.target;
     if(target.classList.contains('week_selector')){
         event.stopPropagation();
 
         var year    = target.closest('.date-search').querySelector('.year_selector').value;
         if(document.querySelector('.viewselector.selected').dataset.type=='weekview'){
-            request_week(target, target.value, year);
+            requestWeek(target, target.value, year);
         }else if(document.querySelector('.viewselector.selected').dataset.type=='listview'){
-            request_expand_list(0,target.value,year);
+            requestExpandList(0,target.value,year);
         }
 
         //change url
@@ -258,9 +258,9 @@ document.addEventListener("change",function(event) {
 
         var year    = target.closest('.date-search').querySelector('.year_selector').value;
         if(document.querySelector('.viewselector.selected').dataset.type=='monthview'){
-            request_month(target, target.value, year);
+            requestMonth(target, target.value, year);
         }else if(document.querySelector('.viewselector.selected').dataset.type=='listview'){
-            request_expand_list(0,target.value, year);
+            requestExpandList(0,target.value, year);
         }
         url.searchParams.set('month', target.value);
     }
@@ -270,12 +270,12 @@ document.addEventListener("change",function(event) {
         
         var month   = target.closest('.date-search').querySelector('.month_selector').value;
         if(document.querySelector('.viewselector.selected').dataset.type=='monthview'){
-            request_month(target, month, target.value);
+            requestMonth(target, month, target.value);
         }else if(document.querySelector('.viewselector.selected').dataset.type=='listview'){
-            request_expand_list(0,month, target.value);
+            requestExpandList(0,month, target.value);
         }else if(document.querySelector('.viewselector.selected').dataset.type=='weekview'){
             var wknr  = target.closest('.date-search').querySelector('.week_selector').value;
-            request_week(target, wknr, target.value);
+            requestWeek(target, wknr, target.value);
         }
         url.searchParams.set('yr', target.value);
     }
@@ -284,15 +284,15 @@ document.addEventListener("change",function(event) {
 });
 
 window.onscroll = function() {
-    var d = document.documentElement;
-    var offset = d.scrollTop + window.innerHeight;
-    var height = d.offsetHeight;
+    var d       = document.documentElement;
+    var offset  = d.scrollTop + window.innerHeight;
+    var height  = d.offsetHeight;
   
     //if we scrolled to the bottom of the page and the list view is actve, and we are not currently loading, load more
     if (offset >= height-2 && document.querySelector('.viewselector.selected').dataset.type=='listview' && document.querySelector('#listview .loader') == null) {
         var skipcount  = document.querySelector("#listview").querySelectorAll('article').length;
 
-        request_expand_list(skipcount);
+        requestExpandList(skipcount);
     }
 };
 

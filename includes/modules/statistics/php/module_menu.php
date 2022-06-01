@@ -2,7 +2,7 @@
 namespace SIM\STATISTICS;
 use SIM;
 
-const ModuleVersion		= '7.0.2';
+const ModuleVersion		= '7.0.3';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
@@ -38,6 +38,6 @@ add_action('sim_module_activated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	
-	$formbuilder = new Statistics();
-	$formbuilder->create_db_table();
+	$statistics = new Statistics();
+	$statistics->createDbTable();
 }, 10, 2);

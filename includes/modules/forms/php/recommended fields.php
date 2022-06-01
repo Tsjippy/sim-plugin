@@ -16,9 +16,9 @@ function getAllFields($userId, $type){
 	$child				= SIM\isChild($userId);
 	if($child) $child_name	= get_userdata($userId)->first_name;
 
-	$formbuilder		= new Formbuilder();
+	$formBuilder		= new Formbuilder();
 
-	$query				= "SELECT * FROM {$formbuilder->el_table_name} WHERE ";
+	$query				= "SELECT * FROM {$formBuilder->elTableName} WHERE ";
 	if($type == 'all'){
 		$query			.= "`recommended`=1 OR `mandatory`=1";
 	}else{
@@ -32,21 +32,23 @@ function getAllFields($userId, $type){
 	$html				= '';
 	if(!empty($fields)){
 		$html				= '';
-		$form_urls			= [];
+		$formUrls			= [];
 
 		//check which of the fields are not yet filled in
 		foreach($fields as $field){
 			//check if this field applies to this user
-			$warning_condition	= maybe_unserialize($field->warning_conditions);
-			SIM\cleanUpNestedArray($warning_condition, true);
-			if(is_array($warning_condition)){
+			$warningCondition	= maybe_unserialize($field->warning_conditions);
+			SIM\cleanUpNestedArray($warningCondition, true);
+			if(is_array($warningCondition)){
 				$skip	= false;
 
-				foreach($warning_condition as $check){
+				foreach($warningCondition as $check){
 					$value		= get_user_meta($userId, $check['meta_key'], true);
 					if(!empty($check['meta_key_index'])){
 						$value		= $value[$check['meta_key_index']];
 					}
+
+					if(is_array($value) and isset($value[0]))	$value	= $value[0];
 
 					switch($check['equation']){
 						case '==':
@@ -93,45 +95,45 @@ function getAllFields($userId, $type){
 
 			if(empty($value)){
 				//get form url
-				if(isset($form_urls[$field->form_id])){
-					$form_url		= $form_urls[$field->form_id];
+				if(isset($formUrls[$field->form_id])){
+					$formUrl			= $formUrls[$field->form_id];
 				}else{
-					$query				= "SELECT * FROM {$formbuilder->table_name} WHERE `id`={$field->form_id}";
+					$query				= "SELECT * FROM {$formBuilder->tableName} WHERE `id`={$field->form_id}";
 					$form				= $wpdb->get_results($query)[0];
-					$form_url			= maybe_unserialize($form->settings)['formnurl'];
+					$formUrl			= maybe_unserialize($form->settings)['formnurl'];
 
 					//save in cache
-					$form_urls[$field->form_id]	= $form_url;
+					$formUrls[$field->form_id]	= $formUrl;
 				}
 
 				// Do not add if no form url given
-				if(empty($form_url)) continue;
+				if(empty($formUrl)) continue;
 
-				parse_str(parse_url($form_url, PHP_URL_QUERY), $params);
+				parse_str(parse_url($formUrl, PHP_URL_QUERY), $params);
 
 				//Show a nice name
 				$name	= str_replace(['[]', '_'], ['', ' '], $field->nicename);
-				$name	= ucfirst(str_replace(['[', ']'],[': ',''], $name));
+				$name	= ucfirst(str_replace(['[', ']'], [': ',''], $name));
 
-				$baseurl	= explode('main_tab=', $_SERVER['REQUEST_URI'])[0];
-				$main_tab	= $params['main_tab'];
+				$baseUrl	= explode('main_tab=', $_SERVER['REQUEST_URI'])[0];
+				$mainTab	= $params['main_tab'];
 				if($child){
 					$name 		.= " for $child_name";
-					$main_tab	 = strtolower($child_name);
-					$form_url	 = str_replace($params['main_tab'], $main_tab, $form_url);
+					$mainTab	 = strtolower($child_name);
+					$formUrl	 = str_replace($params['main_tab'], $mainTab, $formUrl);
 				}
 				
 				// If the url has no hash or we are not on the same url
-				if(empty($params['main_tab']) or strpos($form_url, $baseurl) === false){
-					$html .= "<li><a href='$form_url#{$field->name}'>$name</a></li>";
+				if(empty($params['main_tab']) or strpos($formUrl, $baseUrl) === false){
+					$html .= "<li><a href='$formUrl#{$field->name}'>$name</a></li>";
 				//We are on the same page, just change the hash
 				}else{
-					$second_tab	= '';
+					$secondTab	= '';
 					$names		= explode('[', $field->name);
 					if(count($names) > 1){
-						$second_tab	= $names[0];
+						$secondTab	= $names[0];
 					}
-					$html .= "<li><a onclick='main.changeUrl(this, `$second_tab`)' data-param_val='$main_tab' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
+					$html .= "<li><a onclick='main.changeUrl(this, `$secondTab`)' data-param_val='$mainTab' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
 				}
 			}
 		}
@@ -155,9 +157,9 @@ function add_child_fields($html, $userId){
 	if (isset($family["children"])){
 		// Loop over children
 		foreach($family["children"] as $key=>$child){
-			$userdata = get_userdata($child);
+			$userData = get_userdata($child);
 			// Valid user account
-			if ($userdata){
+			if ($userData){
 				// Add html for each field as well
 				$html	.= getAllFields($child, 'mandatory');
 			}

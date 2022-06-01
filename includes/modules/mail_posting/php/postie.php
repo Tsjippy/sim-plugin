@@ -19,7 +19,7 @@ add_filter('postie_post_before', function($post, $headers) {
 		$post['post_title'] = trim(str_replace("Fwd:","",$subject));
 	
 		//Set the category
-		if ($headers['from']['mailbox'].'@'.$headers['from']['host'] == SIM\get_module_option('mail_posting', 'finance_email')){
+		if ($headers['from']['mailbox'].'@'.$headers['from']['host'] == SIM\getModuleOption('mail_posting', 'finance_email')){
 			echo "Setting the category";
 			//Set the category to Finance
 			$post['post_category'] = [get_cat_ID('Finance')];
@@ -32,7 +32,7 @@ add_filter('postie_post_after', function($post){
 	//Only send message if post is published
 	if($post['post_status'] == 'publish' and function_exists('SIM\SIGNAL\sendPostNotification')){
 		SIM\SIGNAL\sendPostNotification($post['ID']);
-	}elseif(function_exists('SIM\FRONTEND_POSTING\send_pending_post_warning')){
-		SIM\FRONTEND_POSTING\send_pending_post_warning(get_post($post['ID']), false);
+	}elseif(function_exists('SIM\FRONTEND_POSTING\sendPendingPostWarning')){
+		SIM\FRONTEND_POSTING\sendPendingPostWarning(get_post($post['ID']), false);
 	}
 });

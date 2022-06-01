@@ -2,7 +2,7 @@
 namespace SIM\BULKCHANGE;
 use SIM;
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
@@ -26,4 +26,4 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 		Use like this: <code>[bulk_update_meta roles="visainfo,administrator" key="visa_info#nin#"]</code>
 	</p>
 	<?php
-}, 10, 2);
+});

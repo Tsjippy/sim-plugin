@@ -8,8 +8,9 @@ add_shortcode( 'content_filter', function ( $atts = array(), $content = null ) {
         'inversed' => false,
 		'roles' => "All",
     ), $atts );
+
 	$inversed 		= $a['inversed'];
-	$allowed_roles 	= explode(',',$a['roles']);
+	$allowedRoles 	= explode(',',$a['roles']);
 	$return = false;
 	
     //Get the current user
@@ -17,7 +18,7 @@ add_shortcode( 'content_filter', function ( $atts = array(), $content = null ) {
 	
 	//User is logged in
 	if(is_user_logged_in()){
-		if( in_array('All',$allowed_roles) or array_intersect($allowed_roles, $user->roles)) { 
+		if( in_array('All', $allowedRoles) or array_intersect($allowedRoles, $user->roles)) { 
 			// display content
 			$return = true;
 		}

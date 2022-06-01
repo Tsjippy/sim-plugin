@@ -21,16 +21,16 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
     return $formFields;
 },10,2);
 
-add_action( 'edit_attachment', function($attachment_id){
-    if ( isset( $_REQUEST['attachments'][$attachment_id]['gallery_visibility'] ) ) {
-        $visibility = $_REQUEST['attachments'][$attachment_id]['gallery_visibility'];
+add_action( 'edit_attachment', function($attachmentId){
+    if ( isset( $_REQUEST['attachments'][$attachmentId]['gallery_visibility'] ) ) {
+        $visibility = $_REQUEST['attachments'][$attachmentId]['gallery_visibility'];
 
         //check if changed
-        $prev_vis   = get_post_meta( $attachment_id, 'gallery_visibility',true);
+        $prevVis   = get_post_meta( $attachmentId, 'gallery_visibility',true);
 
-        if($prev_vis != $visibility){
+        if($prevVis != $visibility){
             //update post meta
-            update_post_meta( $attachment_id, 'gallery_visibility', $visibility );
+            update_post_meta( $attachmentId, 'gallery_visibility', $visibility );
         }
     }
 } );

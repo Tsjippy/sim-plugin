@@ -14,15 +14,15 @@ function show_statements(){
 		$userId = $current_user->ID;
 	}
 
-	$account_statements = get_user_meta($userId, "account_statements", true);
+	$accountStatements = get_user_meta($userId, "account_statements", true);
 	
-	if(SIM\isChild($userId) == false and is_array($account_statements)){
+	if(SIM\isChild($userId) == false and is_array($accountStatements)){
 		//Load js
 		wp_enqueue_style('sim_account_statements_style');
 		
 		wp_enqueue_script('sim_account_statements_script');
 
-		ksort($account_statements);
+		ksort($accountStatements);
 
 		ob_start();
 		
@@ -32,19 +32,19 @@ function show_statements(){
 			<table id="account_statements">
 				<tbody>
 					<?php
-					foreach($account_statements as $year=>$month_array){
+					foreach($accountStatements as $year=>$month_array){
 						if(date("Y") == $year){
-							$button_text 	= "Hide $year";
+							$buttonText 	= "Hide $year";
 							$visibility 	= '';
 						}else{
-							$button_text 	= "Show $year";
+							$buttonText 	= "Show $year";
 							$visibility 	= ' style="display:none;"';
 						}
 							
-						echo "<button type='button' class='statement_button button' data-target='_$year' style='margin-right: 10px; padding: 0px 10px;'>$button_text</button>";
+						echo "<button type='button' class='statement_button button' data-target='_$year' style='margin-right: 10px; padding: 0px 10px;'>$buttonText</button>";
 						if(is_array($month_array)){
-							$month_count = count($month_array);
-							$first_month = array_key_first($month_array);
+							$monthCount = count($month_array);
+							$firstMonth = array_key_first($month_array);
 							foreach($month_array as $month => $url){
 								$site_url	= site_url();
 								if(strpos($url, $site_url) === false){
@@ -52,8 +52,8 @@ function show_statements(){
 								}
 								
 								echo "<tr class='_$year'$visibility>";
-									if($first_month == $month){
-										echo "<td rowspan='$month_count'>";
+									if($firstMonth == $month){
+										echo "<td rowspan='$monthCount'>";
 											echo "<strong>$year<strong>";
 										echo "</td>";
 									}

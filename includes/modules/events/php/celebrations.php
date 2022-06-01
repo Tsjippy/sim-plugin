@@ -2,29 +2,37 @@
 namespace SIM\EVENTS;
 use SIM;
 
-function get_arriving_users(){
+/**
+ * Get all the users arriving today
+ * 
+ * @return	array	The WP_Users arriving today
+*/
+function getArrivingUsers(){
 	$date   = new \DateTime(); 
-	$arrival_users = get_users(array(
+	return get_users(array(
 		'meta_key'     => 'arrival_date',
 		'meta_value'   => $date->format('Y-m-d'),
 		'meta_compare' => '=',
 	));
-	
-	return $arrival_users;
 }
 
-function get_anniversaries(){
+/**
+ * Get all the anniversary events
+ * 
+ * @return	array	all messages
+*/
+function getAnniversaries(){
 	$messages = [];
 
 	$events = new Events();
-	$events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
+	$events->retrieveEvents(date('Y-m-d'), date('Y-m-d'));
 
 	foreach($events->events as $event){
-		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
-		if(!empty($start_year) and $start_year != date('Y-m-d')){
-			$title	= $event->post_title;
-			$age	= SIM\getAge($start_year);
-			$privacy= (array)get_user_meta($event->post_author, 'privacy_preference', true);
+		$startYear	= get_post_meta($event->ID,'celebrationdate',true);
+		if(!empty($startYear) and $startYear != date('Y-m-d')){
+			$title		= $event->post_title;
+			$age		= SIM\getAge($startYear);
+			$privacy	= (array)get_user_meta($event->post_author, 'privacy_preference', true);
 
 			if(substr($title,0,8) == 'Birthday' and in_array('hide_age', $privacy)){
 				$age	= '';
@@ -39,44 +47,44 @@ function get_anniversaries(){
 	return $messages;
 }
 
-// Add anniversaries
+// Add anniversaries to signal bot message
 add_filter('sim_after_bot_payer', function($args){
-	$anniversary_messages = get_anniversaries();
+	$anniversaryMessages = getAnniversaries();
 	//If there are anniversaries
-	if(count($anniversary_messages) > 0){
+	if(count($anniversaryMessages) > 0){
 		$args['message'] .= "\n\nToday is the ";
 
-		$message_string	= '';
+		$messageString	= '';
 
 		//Loop over the anniversary_messages
-		foreach($anniversary_messages as $userId=>$msg){
-			if(!empty($message_string))$message_string .= " and the ";
+		foreach($anniversaryMessages as $userId=>$msg){
+			if(!empty($messageString))$messageString .= " and the ";
 
-			$userdata	= get_userdata($userId);
-			$couple_string	= $userdata->first_name.' & '.get_userdata(SIM\hasPartner(($userdata->ID)))->display_name;
+			$userdata		= get_userdata($userId);
+			$coupleString	= $userdata->first_name.' & '.get_userdata(SIM\hasPartner(($userdata->ID)))->display_name;
 
-			$msg	= str_replace($couple_string,"of $couple_string",$msg);
+			$msg	= str_replace($coupleString,"of $coupleString",$msg);
 			$msg	= str_replace($userdata->display_name, "of {$userdata->display_name}", $msg);
 
-			$message_string .= $msg;
+			$messageString .= $msg;
 			$args['urls'] .= SIM\getUserPageUrl($userId)."\n";
 		}
-		$args['message'] .= $message_string.'.';
+		$args['message'] .= $messageString.'.';
 	}
 
-	$arrival_users = get_arriving_users();
+	$arrivalUsers = getArrivingUsers();
 	
 	//If there are arrivals
-	if(count($arrival_users) > 0){
-		if(count($arrival_users)==1){
-			$args['message'] .= "\n\n".$arrival_users[0]->display_name." arrives today.";
-			$args['urls'] .= SIM\getUserPageUrl($arrival_users[0]->ID)."\n";
+	if(count($arrivalUsers) > 0){
+		if(count($arrivalUsers)==1){
+			$args['message'] 	.= "\n\n".$arrivalUsers[0]->display_name." arrives today.";
+			$args['urls'] 		.= SIM\getUserPageUrl($arrivalUsers[0]->ID)."\n";
 		}else{
 			$args['message'] .= "\n\nToday the following people will arrive: ";
 			//Loop over the arrival_users
-			foreach($arrival_users as $user){
-				$args['message'] .= $user->display_name."\n";
-				$args['urls'] .= SIM\getUserPageUrl($user->ID)."\n";
+			foreach($arrivalUsers as $user){
+				$args['message'] 	.= $user->display_name."\n";
+				$args['urls'] 		.= SIM\getUserPageUrl($user->ID)."\n";
 			}
 		}
 	}
@@ -88,11 +96,11 @@ add_action('delete_user', function($userId){
 	$events = new Events();
 
 	//Remove birthday events
-	$birthday_post_id = get_user_meta($userId,'birthday_event_id',true);
-	if(is_numeric($birthday_post_id))	$events->remove_db_rows($birthday_post_id);
+	$birthdayPostId = get_user_meta($userId,'birthday_event_id',true);
+	if(is_numeric($birthdayPostId))	$events->removeDbRows($birthdayPostId);
 
-	$anniversary_id	= get_user_meta($userId, SITENAME.' anniversary_event_id',true);
-	if(is_numeric($anniversary_id))	$events->remove_db_rows($anniversary_id);
+	$anniversaryId	= get_user_meta($userId, SITENAME.' anniversary_event_id',true);
+	if(is_numeric($anniversaryId))	$events->removeDbRows($anniversaryId);
 });
 
 /**
@@ -106,7 +114,7 @@ function birthday() {
 	if (is_user_logged_in()){
 		$html				= "";
 		$currentUser		= wp_get_current_user();
-		$anniversaryMessages = get_anniversaries();
+		$anniversaryMessages = getAnniversaries();
 		
 		//If there are anniversaries
 		if(count($anniversaryMessages) >0){
@@ -140,7 +148,7 @@ function birthday() {
 			$html .= '.</p></div>';
 		}
 		
-		$arrivingUsers = get_arriving_users();
+		$arrivingUsers = getArrivingUsers();
 		//If there are arrivals
 		if(count($arrivingUsers) >0){
 			$html 	.= '<div name="arrivals" style="text-align: center; font-size: 18px;">';

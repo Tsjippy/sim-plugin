@@ -7,9 +7,9 @@ add_action('init', function(){
 	add_action( 'read_reminder_action', 'SIM\MANDATORY\read_reminder' );
 });
 
-function schedule_tasks(){
-    $freq   = SIM\get_module_option('mandatory_content', 'reminder_freq');
-    if($freq)   SIM\schedule_task('read_reminder_action', $freq);
+function scheduleTasks(){
+    $freq   = SIM\getModuleOption('mandatory_content', 'reminder_freq');
+    if($freq)   SIM\scheduleTask('read_reminder_action', $freq);
 }
 
 function read_reminder(){	
@@ -28,7 +28,7 @@ function read_reminder(){
 			if(strpos($to,'.empty') !== false) continue;
 
 			//Send Signal message
-			SIM\try_send_signal("Hi $user->first_name,\nPlease read some mandatory content.\n\nVisit ".SITEURL." to see the content",$user->ID);
+			SIM\trySendSignal("Hi $user->first_name,\nPlease read some mandatory content.\n\nVisit ".SITEURL." to see the content",$user->ID);
 			
 			//Send e-mail
 			$readReminder    = new ReadReminder($user, $html);

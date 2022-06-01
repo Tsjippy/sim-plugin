@@ -2,8 +2,8 @@
 namespace SIM\LOGIN;
 use SIM;
 
-add_shortcode('twofa_setup', __NAMESPACE__.'\twofa_settings_form');
-function twofa_settings_form($userId=''){
+add_shortcode('twofa_setup', __NAMESPACE__.'\twoFaSettingsForm');
+function twoFaSettingsForm($userId=''){
 	//Load js
 	wp_enqueue_script('sim_2fa_script');
 
@@ -11,14 +11,14 @@ function twofa_settings_form($userId=''){
 		$userId = get_current_user_id();
 	}
 
-	$secondfactor	= setupTimeCode();
+	$secondFactor	= setupTimeCode();
 
 	if(!isset($_SESSION)) session_start();
 	$publicKeyCredentialId	= $_SESSION["webautn_id"];
 
 	ob_start();
-	$twofa_methods	= (array)get_user_meta($userId,'2fa_methods',true);
-	SIM\cleanUpNestedArray($twofa_methods);
+	$twoFaMethods	= (array)get_user_meta($userId, '2fa_methods', true);
+	SIM\cleanUpNestedArray($twoFaMethods);
 
 	if($_GET['redirected']){
 		?>
@@ -31,12 +31,12 @@ function twofa_settings_form($userId=''){
 	}
 	?>
 	<form id="2fa-setup-wrapper">
-		<input type='hidden' name='secretkey' value='<?php echo $secondfactor->secretkey;?>'>
+		<input type='hidden' name='secretkey' value='<?php echo $secondFactor->secretKey;?>'>
 
 		<div id='2fa-options-wrapper' style='margin-bottom:20px;'>
 			<h4>Second login factor</h4>
 			<?php
-			if(empty($twofa_methods) or in_array('webauthn', $twofa_methods) and count($twofa_methods)==1){
+			if(empty($twoFaMethods) or in_array('webauthn', $twoFaMethods) and count($twoFaMethods)==1){
 				?>
 				<p>
 					Please setup an second login factor to keep this website safe.<br>
@@ -52,12 +52,12 @@ function twofa_settings_form($userId=''){
 			}
 			?>
 			<label>
-				<input type="radio" class="twofa_option_checkbox" name="2fa_methods[]" value="authenticator" <?php if(array_search('authenticator',$twofa_methods) !== false) echo "checked";?>> 
+				<input type="radio" class="twofa_option_checkbox" name="2fa_methods[]" value="authenticator" <?php if(array_search('authenticator', $twoFaMethods) !== false) echo "checked";?>> 
 				<span class="optionlabel">Authenticator app</span>
 			</label>
 			<br>
 			<label>
-				<input type="radio" class="twofa_option_checkbox" name="2fa_methods[]" value="email" <?php if(array_search('email',$twofa_methods) !== false) echo "checked";?>> 
+				<input type="radio" class="twofa_option_checkbox" name="2fa_methods[]" value="email" <?php if(array_search('email', $twoFaMethods) !== false) echo "checked";?>> 
 				<span class="optionlabel">E-mail</span>
 			</label>
 			<br>
@@ -77,17 +77,17 @@ function twofa_settings_form($userId=''){
 					<br>
 					Click the button below when you have an app installed.<br>
 					This will open the app and create a code.<br>
-					You can also manually add an entry using this code: <code><?php echo $secondfactor->secretkey;?></code>.
+					You can also manually add an entry using this code: <code><?php echo $secondFactor->secretKey;?></code>.
 					Copy the code created by the authenticator app in the field below.<br>
-					<?php echo $secondfactor->app_link;?><br>
+					<?php echo $secondFactor->appLink;?><br>
 				</p>
 			</div>
 			<div class='hidden desktop'>
 				<p>
 					Scan the qr code displayed below to open up your authenticator app.<br>
-					You can also manually add an entry using this code: <code><?php echo $secondfactor->secretkey;?></code>
+					You can also manually add an entry using this code: <code><?php echo $secondFactor->secretKey;?></code>
 					Copy the code created by the authenticator app in the field below.<br>
-					<?php echo $secondfactor->image_html;?>
+					<?php echo $secondFactor->imageHtml;?>
 				</p>
 			</div>
 			<label>
@@ -103,7 +103,7 @@ function twofa_settings_form($userId=''){
 			</p>
 		</div>
 		<?php
-		echo SIM\add_save_button('save2fa',"Save 2fa settings", 'hidden');
+		echo SIM\addSaveButton('save2fa',"Save 2fa settings", 'hidden');
 		?>
 	</form>
 
@@ -137,7 +137,7 @@ function twofa_settings_form($userId=''){
 		</div>
 		<?php
 		}
-		echo auth_table($publicKeyCredentialId);
+		echo authTable($publicKeyCredentialId);
 		?>
 	</div>
 	<?php

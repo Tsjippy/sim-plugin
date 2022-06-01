@@ -4,32 +4,32 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'send_reimbursement_requests_action', __NAMESPACE__.'\send_reimbursement_requests' );
-	add_action( 'send_missonary_detail_action', __NAMESPACE__.'\send_missonary_detail' );
+	add_action( 'send_reimbursement_requests_action', __NAMESPACE__.'\sendReimbursementRequests' );
+	add_action( 'send_missonary_detail_action', __NAMESPACE__.'\sendMissonaryDetail' );
 });
 
-function schedule_tasks(){
-    SIM\schedule_task('send_reimbursement_requests_action', 'monthly');
+function scheduleTasks(){
+    SIM\scheduleTask('send_reimbursement_requests_action', 'monthly');
 
-	$freq	= SIM\get_module_option('SIM Nigeria', 'freq');
-	if($freq) SIM\schedule_task('send_missonary_detail_action', $freq);
+	$freq	= SIM\getModuleOption('SIM Nigeria', 'freq');
+	if($freq) SIM\scheduleTask('send_missonary_detail_action', $freq);
 }
 
-function send_reimbursement_requests(){
+function sendReimbursementRequests(){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 	
 	//Export the excel file to temp
-	$formtable = new SIM\FORMS\FormTable();
+	$formTable = new SIM\FORMS\FormTable();
 
 	//make sure we have permission on the data
-	$formtable->table_edit_permissions = true;
+	$formTable->tableEditPermissions = true;
 
 	//fill the excel data
-	$formtable->show_formresults_table(['id'=>'6','datatype'=>'reimbursement']);
+	$formTable->showFormresultsTable(['id'=>'6','formname'=>'reimbursement']);
 
 	//if there are reimbursements
-	if(empty($formtable->submission_data )){
+	if(empty($formTable->submissionData )){
 		SIM\printArray('No reimbursement requests found');
 	}else{
 		//Get all files in the reimbursement dir as they are the receipts
@@ -37,13 +37,13 @@ function send_reimbursement_requests(){
 		$attachments	= glob("$recieptsDir/*.*");
 
 		//Create the excel
-		$excel	= $formtable->export_excel("Reimbursement requests - ".date("F Y", strtotime("previous month")).'.xlsx',false);
+		$excel	= $formTable->exportExcel("Reimbursement requests - ".date("F Y", strtotime("previous month")).'.xlsx',false);
 
 		//mark all entries as archived
-		foreach($formtable->submission_data as $id=>$sub_data){
-			$formtable->formresults		= maybe_unserialize($sub_data->formresults);
-			$formtable->submission_id	= $sub_data->id;
-			$formtable->update_submission_data(true);
+		foreach($formTable->submissionData as $id=>$sub_data){
+			$formTable->formResults		= maybe_unserialize($sub_data->formresults);
+			$formTable->submissionId	= $sub_data->id;
+			$formTable->updateSubmissionData(true);
 		}
 
 		//If there are any attachements
@@ -67,7 +67,7 @@ function send_reimbursement_requests(){
 			$email_headers	 = ["Bcc:enharmsen@gmail.com"];
 			
 			//Send the mail
-			$to				= SIM\get_module_option('mail_posting', 'finance_email');
+			$to				= SIM\getModuleOption('mail_posting', 'finance_email');
 			wp_mail($to, $subject, $message, $email_headers, $excel);
 
 			//Loop over the attachements and delete them from the server
@@ -80,7 +80,7 @@ function send_reimbursement_requests(){
 }
 
 //Send contact info
-function send_missonary_detail(){
+function sendMissonaryDetail(){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 	
@@ -103,14 +103,14 @@ function send_missonary_detail(){
 	$users = SIM\getUserAccounts($return_family=false,$adults=true,$fields=[],$extra_args=$args);
 	
 	//Loop over all users to add a row with their data to the table
-	$user_details = [];
-	$email_headers = array('Content-Type: text/html; charset=UTF-8');
+	$userDetails 	= [];
+	$emailHeaders 	= array('Content-Type: text/html; charset=UTF-8');
 
 	foreach($users as $user){
 		//skip admin
 		if ($user->ID != 1 and $user->display_name != 'Signal Bot'){
-			$privacy_preference = get_user_meta( $user->ID, 'privacy_preference', true );
-			if(!is_array($privacy_preference)) $privacy_preference = [];
+			$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
+			if(!is_array($privacyPreference)) $privacyPreference = [];
 			
 			$name		= $user->display_name; //Real name
 			$nickname	= get_user_meta($user->ID,'nickname',true); //persons name in case of a office account
@@ -120,25 +120,25 @@ function send_missonary_detail(){
 			
 			//Add to recipients
 			if (strpos($user->user_email,'.empty') === false){
-				$email_headers[] = "Bcc:".$email;
+				$emailheaders[] = "Bcc:".$email;
 			}else{
 				$email	= '';
 			}
 			
 			$phonenumbers = "";
 			if(empty($privacy_preference['hide_phone'])){
-				$user_phonenumbers = (array)get_user_meta ( $user->ID,"phonenumbers",true);
-				foreach($user_phonenumbers as $key=>$phonenumber){
+				$userPhonenumbers = (array)get_user_meta ( $user->ID,"phonenumbers",true);
+				foreach($userPhonenumbers as $key=>$phonenumber){
 					if ($key > 0) $phonenumbers .= "\n";
 					$phonenumbers .= $phonenumber;
 				}
 			}
 			
 			$ministries = "";
-			if(empty($privacy_preference['hide_ministry'])){
-				$user_ministries = (array)get_user_meta( $user->ID, "user_ministries", true);
+			if(empty($privacyPreference['hide_ministry'])){
+				$userMinistries = (array)get_user_meta( $user->ID, "user_ministries", true);
 				$i = 0;
-				foreach ($user_ministries as $key=>$user_ministry) {
+				foreach ($userMinistries as $key=>$userMinistry) {
 					if ($i > 0) $ministries .= "\n";
 					$ministries  .= str_replace("_"," ",$key);
 					$i++;
@@ -146,31 +146,31 @@ function send_missonary_detail(){
 			}
 			
 			$compound = "";
-			if(empty($privacy_preference['hide_location'])){
+			if(empty($privacyPreference['hide_location'])){
 				$location = (array)get_user_meta( $user->ID, 'location', true );
 				if(isset($location['compound'])){
 					$compound = $location['compound'];
 				}
 			}
-			$height = max(count($user_phonenumbers),count($user_ministries));
-			$user_details[] = [$name,$email,$phonenumbers,$ministries,$compound];
+			$height 		= max(count($userPhonenumbers), count($userMinistries));
+			$userDetails[] 	= [$name, $email, $phonenumbers, $ministries, $compound];
 		}
 	}
 	
 	//Headers of the table
-	$table_headers = ["Name"," E-mail"," Phone"," Ministries"," State"];
+	$tableHeaders = ["Name"," E-mail"," Phone"," Ministries"," State"];
 	//Create a pdf and add it to the mail
-	$attachments = array( create_contactlist_pdf($table_headers,$user_details));
+	$attachments = array( createContactlistPdf($tableHeaders, $userDetails));
 	
 	//Send e-mail
 	$contactList    = new ContactList($user);
 	$contactList->filterMail();
 						
-	wp_mail( get_option( 'admin_email' ), $contactList->subject, $contactList->message, $email_headers, $attachments);
+	wp_mail( get_option( 'admin_email' ), $contactList->subject, $contactList->message, $emailHeaders, $attachments);
 }
 
 //Export data in an PDF
-function create_contactlist_pdf($header, $data) {
+function createContactlistPdf($header, $data) {
 	// Column headings
 	$widths = array(30, 45, 28, 47,45);
 	
@@ -179,21 +179,21 @@ function create_contactlist_pdf($header, $data) {
 	$pdf->frontpage(SITENAME.' Contact List',date('F'));
 	
 	//Write the table headers
-	$pdf->table_headers($header,$widths);
+	$pdf->tableHeaders($header, $widths);
 	
     // Data
     $fill = false;
 	//Loop over all the rows
     foreach($data as $row){
-		$pdf->WriteTableRow($widths, $row, $fill,$header);		
+		$pdf->writeTableRow($widths, $row, $fill,$header);		
         $fill = !$fill;
     }
     // Closing line
     $pdf->Cell(array_sum($widths),0,'','T');
 	
-	$contact_list = get_temp_dir().SITENAME." Contactlist - ".date('F').".pdf";
-	$pdf->Output( $contact_list , "F");
-    return $contact_list; 
+	$contactList = get_temp_dir().SITENAME." Contactlist - ".date('F').".pdf";
+	$pdf->Output( $contactList , "F");
+    return $contactList; 
 }
 
 // Remove scheduled tasks upon module deactivatio

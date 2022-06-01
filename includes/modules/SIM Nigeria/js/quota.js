@@ -6,16 +6,16 @@ function updateDocumentName(target){
 	var parent				= target.closest('.clone_div');
 	parent.id				= 'quota_document_div_'+value;
 
-	var metakey_el			= parent.querySelector('[name="fileupload[metakey]"]');
-	metakey_el.value		= metakey_el.value.replace(re, '$1'+value+'$2');
+	var metaKeyEl			= parent.querySelector('[name="fileupload[metakey]"]');
+	metaKeyEl.value			= metaKeyEl.value.replace(re, '$1'+value+'$2');
 
 	//Set the value of the hidden input
-	var metakey_index_el 	= parent.querySelector('[name="fileupload[metakey_index]"]');
-	metakey_index_el.value	= metakey_index_el.value.replace(re, '$1'+value+'$2');
+	var metaKeyIndexEl 		= parent.querySelector('[name="fileupload[metakey_index]"]');
+	metaKeyIndexEl.value	= metaKeyIndexEl.value.replace(re, '$1'+value+'$2');
 	
 	//Set the new value of the labels
-	var label_el			= parent.querySelector('.quotalabel');
-	label_el.textContent	= label_el.textContent.replace(re, '$1'+value+'$2');
+	var labelEl			= parent.querySelector('.quotalabel');
+	labelEl.textContent	= labelEl.textContent.replace(re, '$1'+value+'$2');
 }
 
 document.addEventListener("DOMContentLoaded",function() {
@@ -26,7 +26,7 @@ document.addEventListener('click', async ev=>{
     var target  = ev.target;
 
     if(target.name == 'update_visa_documents'){
-        var response    = await formsubmit.submitForm(target, 'sim_nigeria/update_visa_documents');
+        var response    = await FormSubmit.submitForm(target, 'sim_nigeria/update_visa_documents');
         if(response){
             main.displayMessage(response, 'success');
         }

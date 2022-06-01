@@ -12,27 +12,27 @@ add_action('sim_after_category_add', function($postType, $name, $result){
 	global $Modules;
 
 	$Maps		= new Maps();
-	$map_id		= $Maps->add_map($name);
+	$mapId		= $Maps->addMap($name);
 
 	//Attach the map id to the term
-	update_term_meta($result['term_id'], 'map_id', $map_id);
+	update_term_meta($result['term_id'], 'map_id', $mapId);
 
-	$Modules['locations'][$name.'_map']	= $map_id;
+	$Modules['locations'][$name.'_map']	= $mapId;
 	
 	update_option('sim_modules', $Modules);
 }, 10, 3);
 
 add_filter(
 	'widget_categories_args',
-	function ( $cat_args, $instance  ) {
+	function ( $catArgs, $instance  ) {
 		//if we are on a locations page, change to display the location types
 		if(is_tax('locations') or is_page('location') or get_post_type()=='location'){
-			$cat_args['taxonomy'] 		= 'locations';
-			$cat_args['hierarchical']	= true;
-			$cat_args['hide_empty'] 	= false;
+			$catArgs['taxonomy'] 		= 'locations';
+			$catArgs['hierarchical']	= true;
+			$catArgs['hide_empty'] 	= false;
 		}
 		
-		return $cat_args;
+		return $catArgs;
 	},
 	10, 
 	2 
@@ -47,45 +47,49 @@ add_filter('widget_title', function ($title, $widget_id=null){
     return $title;
 }, 999, 2);
 
-//Default content for ministry pages
-function ministry_description($post_id){
-	$html = "";
+/**
+ * Default content for ministry pages
+ */
+function ministryDescription($postId){
+	$html		= "";
 	//Get the post id of the page the shortcode is on
-	$ministry = get_the_title($post_id);
+	$ministry	= get_the_title($postId);
 	//$ministry = strtolower($ministry);
-	$args = array(
-		'post_parent' => $post_id, // The parent id.
+	$args		= array(
+		'post_parent' => $postId, // The parent id.
 		'post_type'   => 'page',
 		'post_status' => 'publish',
 		'order'          => 'ASC',
 	);
-	$child_pages = get_children( $args, ARRAY_A);
-	$child_page_html = "";
-	if ($child_pages  != false){
-		$child_page_html .= "<p><strong>Some of our $ministry are:</strong></p><ul>";
-		foreach($child_pages as $child_page){
-			$child_page_html .= '<li><a href="'.$child_page['guid'].'">'.$child_page['post_title']."</a></li>";
+	$childPages 		= get_children( $args, ARRAY_A);
+	$childPageHtml 	= "";
+	if ($childPages  != false){
+		$childPageHtml .= "<p><strong>Some of our $ministry are:</strong></p><ul>";
+		foreach($childPages as $childPage){
+			$childPageHtml .= '<li><a href="'.$childPage['guid'].'">'.$childPage['post_title']."</a></li>";
 		}
-		$child_page_html .= "</ul>";
+		$childPageHtml .= "</ul>";
 	}		
 	
-	$html		.= get_location_employees($ministry);
-	$latitude 	= get_post_meta($post_id,'geo_latitude',true);
-	$longitude 	= get_post_meta($post_id,'geo_longitude',true);
+	$html		.= getLocationEmployees($ministry);
+	$latitude 	= get_post_meta($postId,'geo_latitude',true);
+	$longitude 	= get_post_meta($postId,'geo_longitude',true);
 	if ($latitude != "" and $longitude != ""){
 		$html .= "<p><a class='button' onclick='main.getRoute(this,$latitude,$longitude)'>Get directions to $ministry</a></p>";
 	}
 	
-	if(!empty($child_page_html)){
-		$html = $child_page_html."<br><br>".$html; 
+	if(!empty($childPageHtml)){
+		$html = $childPageHtml."<br><br>".$html; 
 	}
 	return $html;	
 }
 
-
-function get_location_employees($locationName){
+/**
+ * Get the people that work at a certain location
+ */
+function getLocationEmployees($locationName){
 	if (is_user_logged_in()){
-		$ministry_name 	= str_replace(" ", "_", $locationName);
+		$ministryName 	= str_replace(" ", "_", $locationName);
 
 		//Loop over all users to see if they work here
 		$users 			= get_users('orderby=display_name');
@@ -93,24 +97,24 @@ function get_location_employees($locationName){
 		$html 			= '';
 
 		foreach($users as $user){
-			$user_ministries = (array)get_user_meta( $user->ID, "user_ministries", true);
+			$userMinistries = (array)get_user_meta( $user->ID, "user_ministries", true);
 		
 			//If user works for this ministry, echo its name and position
-			if (isset($user_ministries[$ministry_name])){
-				$user_page_url		= SIM\getUserPageUrl($user->ID);
-				$privacy_preference = (array)get_user_meta( $user->ID, 'privacy_preference', true );
+			if (isset($userMinistries[$ministryName])){
+				$userPageUrl		= SIM\getUserPageUrl($user->ID);
+				$privacyPreference	= (array)get_user_meta( $user->ID, 'privacy_preference', true );
 				
-				if(!isset($privacy_preference['hide_ministry'])){
-					if(!isset($privacy_preference['hide_profile_picture'])){
+				if(!isset($privacyPreference['hide_ministry'])){
+					if(!isset($privacyPreference['hide_profile_picture'])){
 						$html .= SIM\displayProfilePicture($user->ID);
 						$style = "";
 					}else{
 						$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';
 					}
 					
-					$page_url = "<a class='user_link' href='$user_page_url'>$user->display_name</a>";
+					$pageUrl = "<a class='user_link' href='$userPageUrl'>$user->display_name</a>";
 					
-					$html .= "   <div $style>$page_url ({$user_ministries[$ministry_name]})</div>";
+					$html .= "   <div $style>$pageUrl ({$userMinistries[$ministryName]})</div>";
 					$html .= '<br>';
 				}					
 			}
@@ -124,3 +128,9 @@ function get_location_employees($locationName){
 		return $html;
 	}
 }
+
+//Remove marker when post is sent to trash
+add_action('wp_trash_post', function($postId){
+	$maps	= new Maps();
+	$maps->removePostMarkers($postId);
+});

@@ -45,7 +45,6 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 		<select name='board'>
 			<option value="">---</option>
 			<?php
-			$trello->getBoards();
 			foreach ($trello->getBoards() as $name=>$id){
 				if($settings["board"] == $id){
 					$selected = 'selected="selected"';
@@ -60,30 +59,32 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	}
 }, 10, 3);
 
-add_filter('sim_module_updated', function($new_options, $moduleSlug, $old_options){
+add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $new_options;
+	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $newOptions;
 
 	//Trello token has changed
-	if($old_options['token'] != $new_options['token']){
+	if($oldOptions['token'] != $newOptions['token']){
 		$trello	= new Trello();
 		//remove all webhooks from the old token
 		$trello->deleteAllWebhooks();
 
 		//Now that the new trello token is set, lets create new webhooks
-		$Modules[$moduleSlug]	= $new_options;
-		$new_trello = new trello();
+		$Modules[$moduleSlug]	= $newOptions;
+
+		// Inititate a new trello object with the new token
+		$trello = new trello();
 		
 		//remove all webhooks from the new token
-		$new_trello->deleteAllWebhooks();
+		$trello->deleteAllWebhooks();
 		
 		//Get the userid belonging to the new token
-		$trello_user_id = $new_trello->getTokenInfo()->id;
+		$trelloUserId = $trello->getTokenInfo()->id;
 		
 		//Create a webhook listening to the userid	
-		$trello->createWebhook(SITEURL.'/wp-json/sim/v1/trello', $trello_user_id, "Listens to all actions related to the user with id $trello_user_id");
+		$trello->createWebhook(SITEURL.'/wp-json/sim/v1/trello', $trelloUserId, "Listens to all actions related to the user with id $trelloUserId");
 	}
 
-	return $new_options;
+	return $newOptions;
 	
 }, 10, 3);

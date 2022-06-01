@@ -13,7 +13,7 @@ add_filter('sim_user_info_page', function($html, $showCurrentUserData, $user){
         
         //Content
         $twofaHtml = '<div id="twofa_info" class="tabcontent hidden">';
-            $twofaHtml .= twofa_settings_form($user->ID);
+            $twofaHtml .= twoFaSettingsForm($user->ID);
         $twofaHtml .= '</div>';
 
         $html['html']	.= $twofaHtml;	

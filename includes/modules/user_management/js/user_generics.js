@@ -4,27 +4,27 @@ function change_visibility(target) {
 }
 
 async function addNewMinistry(target){
-	var response = await formsubmit.submitForm(target, 'user_management/add_ministry');
+	var response = await FormSubmit.submitForm(target, 'user_management/add_ministry');
 	
 	if(response){
-		var ministry_name 		= target.closest('form').querySelector('[name="location_name"]').value;
-		ministry_name			= ministry_name.charAt(0).toUpperCase() + ministry_name.slice(1);
+		var ministryName 		= target.closest('form').querySelector('[name="location_name"]').value;
+		ministryName			= ministryName.charAt(0).toUpperCase() + ministryName.slice(1);
 		//Replace any spaces with underscore
-		ministry_key			= ministry_name.replace(/ /g,'_');
+		ministryKey			= ministryName.replace(/ /g,'_');
 
 		var html = `
 		<span>
 			<label>
-				<input type="checkbox" class="ministry_option_checkbox" name="ministries[]" value="${ministry_key}" checked>
-				<span class="optionlabel">${ministry_name}</span>
+				<input type="checkbox" class="ministry_option_checkbox" name="ministries[]" value="${ministryKey}" checked>
+				<span class="optionlabel">${ministryName}</span>
 			</label>
 			<label class="ministryposition" style="display:block;">
-				<h4 class="labeltext">Position at ${ministry_name}:</h4>
-				<input type="text" id="justadded" name="user_ministries[${ministry_key}]">
+				<h4 class="labeltext">Position at ${ministryName}:</h4>
+				<input type="text" id="justadded" name="user_ministries[${ministryKey}]">
 			</label>
 		</span>`;
 		
-		document.querySelector("#ministries_list").insertAdjacentHTML('beforeEnd',html);
+		document.querySelector("#ministries_list").insertAdjacentHTML('beforeEnd', html);
 		
 		//hide the SWAL window
 		setTimeout(function(){document.querySelectorAll('.swal2-container').forEach(el=>el.remove());}, 1500);
@@ -33,7 +33,7 @@ async function addNewMinistry(target){
 		document.getElementById('justadded').focus();
 		document.getElementById('justadded').select();
 
-		main.displayMessage(`Succesfully added ministry ${ministry_name}.`)
+		main.displayMessage(`Succesfully added ministry ${ministryName}.`)
 	}
 	
 	main.hideModals();

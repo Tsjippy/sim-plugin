@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.19';
+const StyleVersion		= '7.0.22';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
@@ -72,12 +72,12 @@ function enqueueScripts($hook){
 		'sim', 
 		array( 
 			'ajaxUrl' 		=> admin_url( 'admin-ajax.php' ),
-			"userid"		=> $UserID,
+			"userId"		=> $UserID,
 			'address' 		=> $address,
 			'loadingGif' 	=> LOADERIMAGEURL,
-			'base_url' 		=> get_home_url(),
-			'max_file_size'	=> wp_max_upload_size(),
-			'restnonce'		=> wp_create_nonce('wp_rest'),
+			'baseUrl' 		=> get_home_url(),
+			'maxFileSize'	=> wp_max_upload_size(),
+			'restNonce'		=> wp_create_nonce('wp_rest'),
 			'locations'		=> $locations
 		) 
 	);

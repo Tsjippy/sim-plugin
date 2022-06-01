@@ -113,38 +113,44 @@ add_action( 'rest_api_init', function () {
 	);
 });
 
-//add new ministry location via AJAX
+/**
+ * add new ministry location via rest api
+ */
 function addMinistry(){	
     //Get the post data
     $name = sanitize_text_field($_POST["location_name"]);
     
     //Build the ministry page
-    $ministry_page = array(
+    $ministryPage = array(
         'post_title'    => ucfirst($name),
         'post_content'  => '',
         'post_status'   => 'publish',
         'post_type'	    => 'location',
         'post_author'	=> get_current_user_id(),
     );
+
+	$ministryCatId	= get_term_by('name', 'Ministries', 'locations')->term_id;
         
     //Insert the page
-    $post_id = wp_insert_post( $ministry_page );
+    $postId = wp_insert_post( $ministryPage );
     
     //Add the ministry cat
-    wp_set_post_terms($post_id ,27,'locations');
+    wp_set_post_terms($postId , $ministryCatId, 'locations');
     
     //Store the ministry location
-    if ($post_id != 0){
+    if ($postId != 0){
         //Add the location to the page
-        do_action('sim_ministry_added', [27], $post_id);
+        do_action('sim_ministry_added', [$ministryCatId], $postId);
     }
 
-    $url = get_permalink($post_id);
+    $url = get_permalink($postId);
 
     return "Succesfully created new ministry page, see it <a href='$url'>here</a>";
 }
 
-// Update the users roles
+/**
+ * Update the users roles
+ */
 function updateRoles(){
 	$user 		= get_userdata($_POST['userid']);
     $userRoles 	= $user->roles;
@@ -159,7 +165,9 @@ function updateRoles(){
     return "Updated roles succesfully";
 }
 
-
+/**
+ * Creates a new useraccount from POST values
+ */
 function createUserAccount(){
     // Check if the current user has the right to create approved user accounts
     $user 		= wp_get_current_user();
@@ -201,10 +209,13 @@ function createUserAccount(){
 		
 	return [
         'message'	=> $message,
-        'user_id'		=> $userId
+        'user_id'	=> $userId
     ];
 }
 
+/**
+ * Extend the validity of an temporary account
+ */
 function extendValidity(){
 	$userId = $_POST['userid'];
     if(isset($_POST['unlimited']) and $_POST['unlimited'] == 'unlimited'){
@@ -212,10 +223,10 @@ function extendValidity(){
         $message    = "Marked the useraccount for ".get_userdata($userId)->first_name." to never expire.";
     }else{
         $date       = sanitize_text_field($_POST['new_expiry_date']);
-        $date_str   = date('d-m-Y', strtotime($date));
-        $message    = "Extended valitidy for ".get_userdata($userId)->first_name." till $date_str";
+        $dateStr   = date('d-m-Y', strtotime($date));
+        $message    = "Extended valitidy for ".get_userdata($userId)->first_name." till $dateStr";
     }
-    update_user_meta( $userId, 'account_validity',$date);
+    update_user_meta( $userId, 'account_validity', $date);
 	
     return $message;
 }

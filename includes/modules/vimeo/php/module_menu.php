@@ -3,7 +3,7 @@ namespace SIM\VIMEO;
 use SIM;
 use Vimeo\Vimeo;
 
-const ModuleVersion		= '7.0.5';
+const ModuleVersion		= '7.0.6';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
@@ -23,7 +23,7 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 				<input type="url" name="download_url" style='width:100%;'><br><br>
 			</label>
 			<?php
-			echo SIM\add_save_button('download_video', 'Submit download url');
+			echo SIM\addSaveButton('download_video', 'Submit download url');
 			?>
 		</form> 
 		<?php
@@ -182,7 +182,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
-	schedule_tasks();
+	scheduleTasks();
 
 	return $options;
 }, 10, 2);

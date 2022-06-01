@@ -238,13 +238,13 @@ function showMessage(message){
 	document.querySelector("#login_wrapper .message").innerHTML= message;
 }
 
-let webauthn_supported	= false;
+let webauthnSupported	= false;
 function checkWebauthnAvailable(){
 	if (window.PublicKeyCredential) {
 		PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then((available) => {
 			if (available) {
 				console.log("Supported.");
-				webauthn_supported = true;
+				webauthnSupported = true;
 			} else {
 				console.log("WebAuthn supported, Platform Authenticator not supported.");
 			}
@@ -307,7 +307,7 @@ function addMethods(result){
 		showMessage('');
 
 		if(result.find(element => element == 'webauthn')){
-			if(webauthn_supported){
+			if(webauthnSupported){
 				//correct creds and webauthn enabled
 				verifyWebauthn(result);
 			}else if(result.length == 1){

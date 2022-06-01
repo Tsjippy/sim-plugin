@@ -43,7 +43,7 @@ add_shortcode('your_posts',function(){
 			if($status == 'Publish') $status = 'Published';
 			
 			$url 		= get_permalink($post);
-			$editUrl	= SIM\getValidPageLink(SIM\get_module_option('frontend_posting','publish_post_page'));
+			$editUrl	= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting','publish_post_page'));
 			if(!$editUrl) $editUrl = '';
 			$editUrl 	= add_query_arg( ['post_id' => $post->ID], $editUrl);
 			if($post->post_status == 'publish'){
@@ -87,7 +87,7 @@ add_shortcode("pending_pages", function ($atts){
 		
 	);
 
-	$url			= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
+	$url			= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting', 'publish_post_page'));
 	if(!$url)	return;
 
 	$html='';

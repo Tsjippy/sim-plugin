@@ -5,8 +5,8 @@ use SIM;
 //Add a shortcode for the displayname
 add_shortcode( 'displayname', function ( $atts ) {
 	if (is_user_logged_in()){
-		$current_user = wp_get_current_user();
-		return $current_user->first_name;
+		$currentUser = wp_get_current_user();
+		return $currentUser->first_name;
 	}else{
 		return "visitor";	
 	}
@@ -14,11 +14,11 @@ add_shortcode( 'displayname', function ( $atts ) {
 
 //Shortcode to return the amount of loggins in words
 add_shortcode("login_count", function ($atts){
-	$UserID = get_current_user_id();
-	$current_loggin_count = get_user_meta( $UserID, 'login_count', true );
+	$UserID 			= get_current_user_id();
+	$currentLogginCount = get_user_meta( $UserID, 'login_count', true );
 	//Get the word from the array
-	if (is_numeric($current_loggin_count)){
-		return SIM\numberToWords($current_loggin_count);
+	if (is_numeric($currentLogginCount)){
+		return SIM\numberToWords($currentLogginCount);
 	//key not set, assume its the first time
 	}else{
 		return "your first";

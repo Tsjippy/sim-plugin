@@ -9,8 +9,8 @@ add_filter('sim_frontend_posting_modals', function($types){
 
 add_action('init', function(){
 	SIM\registerPostTypeAndTax('event', 'events');
-	add_action('frontend_post_before_content', __NAMESPACE__.'\event_specific_fields');
-	add_action('frontend_post_content_title', __NAMESPACE__.'\event_title');
+	add_action('sim_frontend_post_before_content', __NAMESPACE__.'\eventSpecificFields');
+	add_action('sim_frontend_post_content_title', __NAMESPACE__.'\eventTitle');
 	
 	add_filter(
 		'widget_categories_args',
@@ -29,16 +29,16 @@ add_action('init', function(){
 	);
 }, 999);
 
-function event_title($post_type){
+function eventTitle($postType){
 	$class = 'event';
-	if($post_type != 'event')	$class .= ' hidden';
+	if($postType != 'event')	$class .= ' hidden';
 	
 	echo "<label class='$class' name='event_content_label'>";
 		echo '<h4>Describe the event</h4>';
 	echo "</label>";
 }
 
-function event_specific_fields($frontEndContent){
+function eventSpecificFields($frontEndContent){
 	$categories	= get_categories( array(
 		'orderby' => 'name',
 		'order'   => 'ASC',
@@ -48,33 +48,33 @@ function event_specific_fields($frontEndContent){
 	
 	$frontEndContent->showCategories('event', $categories);
 	
-	$eventdetails	= (array)get_post_meta($frontEndContent->postId,'eventdetails',true);
-	$repeat_param	= $eventdetails['repeat'];
+	$eventDetails	= (array)get_post_meta($frontEndContent->postId,'eventDetails',true);
+	$repeatParam	= $eventDetails['repeat'];
 	
 	?>
 	<br>
 	<div class="event <?php if($frontEndContent->postType != 'event') echo 'hidden'; ?>">
 		<label>
-			<input type='checkbox' name='event[allday]' value='allday' <?php if(!empty($eventdetails['allday'])) echo 'checked'?> ;>
+			<input type='checkbox' name='event[allday]' value='allday' <?php if(!empty($eventDetails['allday'])) echo 'checked'?> ;>
 			All day event
 		</label>
 	
 		<label name="startdate_label">
 			<h4>Startdate</h4>
-			<input type='date'						name='event[startdate]' value='<?php echo $eventdetails['startdate']; ?>' required>
-			<input type='time' class='eventtime<?php if(!empty($eventdetails['allday'])) echo " hidden";?>'	name='event[starttime]' value='<?php echo $eventdetails['starttime']; ?>' required>
+			<input type='date'						name='event[startdate]' value='<?php echo $eventDetails['startdate']; ?>' required>
+			<input type='time' class='eventtime<?php if(!empty($eventDetails['allday'])) echo " hidden";?>'	name='event[starttime]' value='<?php echo $eventDetails['starttime']; ?>' required>
 		</label>
 		
-		<label name="enddate_label" <?php if(!empty($eventdetails['allday'])) echo "class='hidden'";?>>
+		<label name="enddate_label" <?php if(!empty($eventDetails['allday'])) echo "class='hidden'";?>>
 			<h4>Enddate</h4>
-			<input type='date'						name='event[enddate]' value='<?php echo $eventdetails['enddate']; ?>' required>
-			<input type='time' class='eventtime'	name='event[endtime]' value='<?php echo $eventdetails['endtime']; ?>' required>
+			<input type='date'						name='event[enddate]' value='<?php echo $eventDetails['enddate']; ?>' required>
+			<input type='time' class='eventtime'	name='event[endtime]' value='<?php echo $eventDetails['endtime']; ?>' required>
 		</label>
 
 		<label name="location">
 			<h4>Location</h4>
-			<input type='hidden' class='datalistvalue'	name='event[location_id]' 	value='<?php echo $eventdetails['location_id']; ?>'>
-			<input type='text'							name='event[location]' 		value='<?php echo $eventdetails['location']; ?>' list="locations">
+			<input type='hidden' class='datalistvalue'	name='event[location_id]' 	value='<?php echo $eventDetails['location_id']; ?>'>
+			<input type='text'							name='event[location]' 		value='<?php echo $eventDetails['location']; ?>' list="locations">
 			<datalist id="locations">
 				<?php
 				$locations = get_posts( 
@@ -94,8 +94,8 @@ function event_specific_fields($frontEndContent){
 
 		<label name="organizer">
 			<h4>Organizer</h4>
-			<input type='hidden' class='datalistvalue'	name='event[organizer_id]'	value='<?php echo $eventdetails['organizer_id']; ?>'>
-			<input type='text'							name='event[organizer]'		value='<?php echo $eventdetails['organizer']; ?>' list="users">
+			<input type='hidden' class='datalistvalue'	name='event[organizer_id]'	value='<?php echo $eventDetails['organizer_id']; ?>'>
+			<input type='text'							name='event[organizer]'		value='<?php echo $eventDetails['organizer']; ?>' list="users">
 			<datalist id="users">
 				<?php
 				foreach(SIM\getUserAccounts(false,true,true) as $user){
@@ -109,43 +109,43 @@ function event_specific_fields($frontEndContent){
 			<button class='button' type='button' name='enable_event_repeat'>
 				Repeat this event
 			</button>
-			<input type='hidden' name='event[repeated]' value='<?php echo $eventdetails['repeated'];?>'>
+			<input type='hidden' name='event[repeated]' value='<?php echo $eventDetails['repeated'];?>'>
 		</label>
 		
-		<fieldset class='repeat_wrapper <?php if(empty($eventdetails['repeated'])) echo 'hidden';?>'>
+		<fieldset class='repeat_wrapper <?php if(empty($eventDetails['repeated'])) echo 'hidden';?>'>
 			<legend>Repeat parameters</legend>
 			<h4>Select repeat type:</h4>
 			<select name="event[repeat][type]">
 				<option value="">---</option>
-				<option value="daily"		<?php if($repeat_param['type'] == 'daily') echo 'selected';?>>Daily</option>
-				<option value="weekly"		<?php if($repeat_param['type'] == 'weekly') echo 'selected';?>>Weekly</option>
-				<option value="monthly"		<?php if($repeat_param['type'] == 'monthly') echo 'selected';?>>Monthly</option>
-				<option value="yearly"		<?php if($repeat_param['type'] == 'yearly') echo 'selected';?>>Yearly</option>
-				<option value="custom_days"	<?php if($repeat_param['type'] == 'custom_days') echo 'selected';?>>Custom Days</option>
+				<option value="daily"		<?php if($repeatParam['type'] == 'daily') echo 'selected';?>>Daily</option>
+				<option value="weekly"		<?php if($repeatParam['type'] == 'weekly') echo 'selected';?>>Weekly</option>
+				<option value="monthly"		<?php if($repeatParam['type'] == 'monthly') echo 'selected';?>>Monthly</option>
+				<option value="yearly"		<?php if($repeatParam['type'] == 'yearly') echo 'selected';?>>Yearly</option>
+				<option value="custom_days"	<?php if($repeatParam['type'] == 'custom_days') echo 'selected';?>>Custom Days</option>
 			</select>
 
-			<div class='repeatdatetype <?php echo (($repeat_param['type'] == 'monthly' or $repeat_param['type'] == 'yearly') ? 'hide' : 'hidden');?>'>
+			<div class='repeatdatetype <?php echo (($repeatParam['type'] == 'monthly' or $repeatParam['type'] == 'yearly') ? 'hide' : 'hidden');?>'>
 				<h4>Select repeat pattern:</h4>
 				<label class='optionlabel'>
-					<input type='radio' name='event[repeat][datetype]' value='samedate' <?php if($repeat_param['datetype'] == 'samedate') echo 'checked';?>>
+					<input type='radio' name='event[repeat][datetype]' value='samedate' <?php if($repeatParam['datetype'] == 'samedate') echo 'checked';?>>
 					<?php
-					$monthday	= explode('-',$eventdetails['startdate'])[2];
-					if($repeat_param['type'] == 'monthly'){
-						$monthtext	= "a month";
-					}elseif($repeat_param['type'] == 'yearly'){
-						$monthnumber	= explode('-',$eventdetails['startdate'])[1];
-						$monthname		= date("F", mktime(0, 0, 0, $monthnumber, 10));
-						$monthtext		= "$monthname every year";
+					$monthDay	= explode('-',$eventDetails['startdate'])[2];
+					if($repeatParam['type'] == 'monthly'){
+						$monthText	= "a month";
+					}elseif($repeatParam['type'] == 'yearly'){
+						$monthNumber	= explode('-',$eventDetails['startdate'])[1];
+						$monthName		= date("F", mktime(0, 0, 0, $monthNumber, 10));
+						$monthText		= "$monthName every year";
 					}
 					
-					echo "On the <span class='monthday'>$monthday</span>th of <span class='monthoryear'>$monthtext</span>";
+					echo "On the <span class='monthday'>$monthDay</span>th of <span class='monthoryear'>$monthText</span>";
 					?>
 				</label>
 				<label class='optionlabel'>
-					<input type='radio' name='event[repeat][datetype]' value='patterned' <?php if($repeat_param['datetype'] == 'patterned') echo 'checked';?>>
+					<input type='radio' name='event[repeat][datetype]' value='patterned' <?php if($repeatParam['datetype'] == 'patterned') echo 'checked';?>>
 					<?php
 					echo "<span class='monthoryeartext'>";
-					if($repeat_param['type'] == 'monthly'){
+					if($repeatParam['type'] == 'monthly'){
 						echo "On a certain day and week of a month";
 					}else{
 						echo "On a certain day, week and month of a year";
@@ -155,22 +155,22 @@ function event_specific_fields($frontEndContent){
 				</label>
 			</div>
 						
-			<label class='repeatinterval <?php echo ($repeat_param['datetype'] == 'samedate' ? 'hide' : 'hidden');?>'>
+			<label class='repeatinterval <?php echo ($repeatParam['datetype'] == 'samedate' ? 'hide' : 'hidden');?>'>
 				<h4>Repeat every </h4>
 				<?php
-				if(empty($repeat_param['interval'])){
+				if(empty($repeatParam['interval'])){
 					$value	= 1;
 				}else{
-					$value	= $repeat_param['interval'];
+					$value	= $repeatParam['interval'];
 				}
 				?>
 				<input type='number' name='event[repeat][interval]' value='<?php echo $value;?>'>
 				<span id='repeattype'></span>
 			</label>
 
-			<div class="selector_wrapper months <?php echo ($repeat_param['datetype'] == 'patterned' ? 'hide' : 'hidden');?>">
+			<div class="selector_wrapper months <?php echo ($repeatParam['datetype'] == 'patterned' ? 'hide' : 'hidden');?>">
 				<?php
-				if($repeat_param['type'] == 'monthly'){
+				if($repeatParam['type'] == 'monthly'){
 					$type		= 'checkbox';
 					$hidden1	= 'hide';
 					$hidden2	= 'hidden';
@@ -185,21 +185,21 @@ function event_specific_fields($frontEndContent){
 				<label class='selectall_wrapper optionlabel <?php echo $hidden1;?>'><input type='<?php echo $type;?>' class='selectall' name='allmonths' value='all'>Select all months<br></label>
 				<?php
 				for ($m=1;$m<13;$m++){
-					$monthname = date("F", mktime(0, 0, 0, $m, 10));
-					if(is_array($eventdetails['repeat']['months']) and in_array($m,$eventdetails['repeat']['months'])){
+					$monthName = date("F", mktime(0, 0, 0, $m, 10));
+					if(is_array($eventDetails['repeat']['months']) and in_array($m,$eventDetails['repeat']['months'])){
 						$checked = 'checked';
 					}else{
 						$checked = '';
 					}
-					echo  "<label class='optionlabel month'><input type='$type' name='event[repeat][months][]' value='$m' $checked>$monthname</label>";
+					echo  "<label class='optionlabel month'><input type='$type' name='event[repeat][months][]' value='$m' $checked>$monthName</label>";
 					if($m  % 3 == 0) echo  '<br>';
 				}
 				?>
 			</div>
 			
-			<div class="selector_wrapper weeks <?php echo ($repeat_param['datetype'] == 'patterned' ? 'hide' : 'hidden');?>">
+			<div class="selector_wrapper weeks <?php echo ($repeatParam['datetype'] == 'patterned' ? 'hide' : 'hidden');?>">
 				<?php
-				if($repeat_param['type'] == 'weekly'){
+				if($repeatParam['type'] == 'weekly'){
 					$type		= 'checkbox';
 					$hidden1	= 'hide';
 					$hidden2	= 'hidden';
@@ -209,26 +209,26 @@ function event_specific_fields($frontEndContent){
 					$hidden2	= 'hide';
 				}
 
-				$weeknames = ['First','Second','Third','Fourth','Fifth','Last'];
+				$weekNames = ['First','Second','Third','Fourth','Fifth','Last'];
 				?>
 				<h4 class='checkbox <?php echo $hidden1;?>'>Select weeks(s) of the month this event should be repeated on</h4>
 				<h4 class='radio <?php echo $hidden2;?>'>Select the week of the month this event should be repeated on</h4>
 				<label class='selectall_wrapper optionlabel <?php echo $hidden1;?>'><input type='checkbox' class='selectall' name='allweekss' value='all'>Select all weeks<br></label>
 				<?php
-				foreach($weeknames as $index=>$weekname){
-					if(is_array($eventdetails['repeat']['weeks']) and in_array($weekname,$eventdetails['repeat']['weeks'])){
+				foreach($weekNames as $index=>$weekName){
+					if(is_array($eventDetails['repeat']['weeks']) and in_array($weekName, $eventDetails['repeat']['weeks'])){
 						$checked = 'checked';
 					}else{
 						$checked = '';
 					}
-					echo "<label class='optionlabel'><input type='$type' name='event[repeat][weeks][]' value='$weekname' $checked>$weekname</label>";
+					echo "<label class='optionlabel'><input type='$type' name='event[repeat][weeks][]' value='$weekName' $checked>$weekName</label>";
 				}
 				?>
 			</div>
 			
-			<div class="selector_wrapper day_selector <?php echo ($repeat_param['datetype'] == 'patterned' ? 'hide' : 'hidden');?>">
+			<div class="selector_wrapper day_selector <?php echo ($repeatParam['datetype'] == 'patterned' ? 'hide' : 'hidden');?>">
 				<?php
-				if($repeat_param['type'] == 'weekly'){
+				if($repeatParam['type'] == 'weekly'){
 					$type		= 'checkbox';
 					$hidden1	= 'hide';
 					$hidden2	= 'hidden';
@@ -242,32 +242,32 @@ function event_specific_fields($frontEndContent){
 				<h4 class='radio <?php echo $hidden2;?>'>Select the day this event should be repeated on</h4>
 				<label class='selectall_wrapper optionlabel <?php echo $hidden1;?>'><input type='checkbox' class='selectall' name='alldays' value='all'>Select all days<br></label>
 				<?php 
-				foreach(['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $index=>$dayname){
-					if(is_array($eventdetails['repeat']['weekdays']) and in_array($dayname,$eventdetails['repeat']['weekdays'])){
+				foreach(['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $index=>$dayName){
+					if(is_array($eventDetails['repeat']['weekdays']) and in_array($dayName, $eventDetails['repeat']['weekdays'])){
 						$checked	= 'checked';
 					}else{
 						$checked	= '';
 					}
-					echo"<label class='optionlabel'><input type='$type' name='event[repeat][weekdays][]' value='$dayname'$checked>$dayname</label>";
+					echo"<label class='optionlabel'><input type='$type' name='event[repeat][weekdays][]' value='$dayName'$checked>$dayName</label>";
 				}
 				?>
 			</div>
 			
-			<div class="custom_dates_selector <?php echo ($repeat_param['type'] == 'custom_days' ? 'hide' : 'hidden');?>">
+			<div class="custom_dates_selector <?php echo ($repeatParam['type'] == 'custom_days' ? 'hide' : 'hidden');?>">
 				<h4> Specify repeat days</h4>
 				<div class="clone_divs_wrapper">
 					<?php
-					$includedates	= $eventdetails['repeat']['includedates'];
-					if(!is_array($includedates)){
-						$includedates	= [''];
+					$includeDates	= $eventDetails['repeat']['includedates'];
+					if(!is_array($includeDates)){
+						$includeDates	= [''];
 					}
 					
-					foreach($includedates as $index=>$includedate){
+					foreach($includeDates as $index=>$includeDate){
 						?>
 						<div id="includedate_div_<?php echo $index;?>" class="clone_div" data-divid="<?php echo $index;?>">
 							<label>Include date <?php echo $index+1;?></label>
 							<div class='buttonwrapper'>
-								<input type="date" name="event[repeat][includedates][<?php echo $index;?>]" style="flex: 9;" value="<?php echo $includedate;?>">
+								<input type="date" name="event[repeat][includedates][<?php echo $index;?>]" style="flex: 9;" value="<?php echo $includeDates;?>">
 								<button type="button" class="add button" style="flex: 1;">+</button>
 							</div>
 						</div>
@@ -279,28 +279,28 @@ function event_specific_fields($frontEndContent){
 			
 			<h4>Stop repetition</h4>
 			<label>
-				<input type='radio' name='event[repeat][stop]' value='never' <?php if(empty($eventdetails['repeat']['stop']) or $eventdetails['repeat']['stop'] == 'never') echo 'checked';?>>
+				<input type='radio' name='event[repeat][stop]' value='never' <?php if(empty($eventDetails['repeat']['stop']) or $eventDetails['repeat']['stop'] == 'never') echo 'checked';?>>
 				Never
 			</label><br>
 			<div class='repeat_type_option'>
 				<label>
-					<input type='radio' name='event[repeat][stop]' value='date' <?php if($eventdetails['repeat']['stop'] == 'date') echo 'checked';?>>
+					<input type='radio' name='event[repeat][stop]' value='date' <?php if($eventDetails['repeat']['stop'] == 'date') echo 'checked';?>>
 					On this date:
 				</label><br>
 				
 				<label class='repeat_type_option_specifics hidden'>
-					<input type='date' name='event[repeat][enddate]' value='<?php echo $eventdetails['repeat']['enddate'];?>'>
+					<input type='date' name='event[repeat][enddate]' value='<?php echo $eventDetails['repeat']['enddate'];?>'>
 				</label>
 			</div>
 
 			<div class='repeat_type_option'>
 				<label>
-					<input type='radio' name='event[repeat][stop]' value='after' <?php if($eventdetails['repeat']['stop'] == 'after') echo 'checked';?>>
+					<input type='radio' name='event[repeat][stop]' value='after' <?php if($eventDetails['repeat']['stop'] == 'after') echo 'checked';?>>
 					After this amount of repeats:<br>
 				</label>
 				
 				<label class='repeat_type_option_specifics hidden'>
-					<input type='number' name='event[repeat][amount]' value='<?php echo $eventdetails['repeat']['amount'];?>'>
+					<input type='number' name='event[repeat][amount]' value='<?php echo $eventDetails['repeat']['amount'];?>'>
 				</label>
 			</div>
 			
@@ -308,17 +308,17 @@ function event_specific_fields($frontEndContent){
 				<h4>Exclude dates from this pattern</h4>
 				<div class="clone_divs_wrapper">
 				<?php
-				$excludedates	= (array)$eventdetails['repeat']['excludedates'];
-				if(empty($excludedates)){
-					$excludedates	= [''];
+				$excludeDates	= (array)$eventDetails['repeat']['excludedates'];
+				if(empty($excludeDates)){
+					$excludeDates	= [''];
 				}
 				
-				foreach($excludedates as $index=>$excludedate){
+				foreach($excludeDates as $index=>$excludeDate){
 					?>
 					<div id="excludedate_div_<?php echo $index;?>" class="clone_div" data-divid="<?php echo $index;?>">
 						<label>Exclude date <?php echo $index+1;?></label>
 						<div class='buttonwrapper'>
-							<input type="date" name="event[repeat][excludedates][<?php echo $index;?>]" style="flex: 9;" value="<?php echo $excludedate;?>">
+							<input type="date" name="event[repeat][excludedates][<?php echo $index;?>]" style="flex: 9;" value="<?php echo $excludeDate;?>">
 							<button type="button" class="add button" style="flex: 1;">+</button>
 						</div>
 					</div>
@@ -335,13 +335,13 @@ function event_specific_fields($frontEndContent){
 add_filter('sim_signal_post_notification_message', function($excerpt, $post){
 	if($post->post_type == 'event'){
 		$events		= new Events();
-		$event		= $events->retrieve_single_event($post->ID);
-		$startdate	= date('d-m-Y', strtotime($event->startdate));
+		$event		= $events->retrieveSingleEvent($post->ID);
+		$startDate	= date('d-m-Y', strtotime($event->startdate));
 		if($event->startdate == $event->enddate){
-			$excerpt .= "\n\nDate: $startdate";
+			$excerpt .= "\n\nDate: $startDate";
 		}else{
 			$enddate	 = date('d-m-Y', strtotime($event->enddate));
-			$excerpt 	.= "\n\nStart date: $startdate";
+			$excerpt 	.= "\n\nStart date: $startDate";
 			$excerpt 	.= "\nEnd date: $enddate";
 		}
 		if(!empty($event->starttime) and !empty($event->endtime)){
@@ -365,5 +365,5 @@ add_filter('sim_signal_post_notification_message', function($excerpt, $post){
 
 add_action('sim_after_post_save', function($post, $update){
     $events = new Events();
-    $events->store_event_meta($post, $update);
+    $events->storeEventMeta($post, $update);
 }, 1, 2);

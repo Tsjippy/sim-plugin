@@ -23,8 +23,8 @@ add_filter( 'wp_new_user_notification_email', function($args, $user){
 	$key		 = get_password_reset_key($user);
 	if(is_wp_error($key)) return $key;
 
-	$pageurl	 = get_permalink(SIM\get_module_option('login', 'password_reset_page'));
-	$url		 = "$pageurl?key=$key&login=$user->user_login";
+	$pageUrl	 = get_permalink(SIM\getModuleOption('login', 'password_reset_page'));
+	$url		 = "$pageUrl?key=$key&login=$user->user_login";
 
 	if(get_user_meta($user->ID, 'disabled', true) == 'pending'){
 		$mail = new AccountApproveddMail($user, $url);

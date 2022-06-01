@@ -27,9 +27,9 @@ function change_password_form($userId = null){
 	$name		= $user->display_name;
 	$disabled	= get_user_meta( $user->ID, 'disabled', true );
 	if($disabled){
-		$action_text	= 'enable';
+		$actionText	= 'enable';
 	}else{
-		$action_text	= 'disable';
+		$actionText	= 'disable';
 	}
 	
 	ob_start();
@@ -37,8 +37,8 @@ function change_password_form($userId = null){
 	//Check if action is needed
 	if(isset($_GET['action']) and isset($_GET['wp_2fa_nonce'])){
 		if($_GET['action'] == 'reset2fa' and wp_verify_nonce( $_GET['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_GET['user_id'])){
-			if($_GET['do'] == 'off' and function_exists('SIM\LOGIN\reset_2fa')){
-				SIM\LOGIN\reset_2fa($userId);
+			if($_GET['do'] == 'off' and function_exists('SIM\LOGIN\reset2fa')){
+				SIM\LOGIN\reset2fa($userId);
 				echo "<div class='success'>Succesfully turned off 2fa for $name</div>";
 			}elseif($_GET['do'] == 'email'){
 				update_user_meta($userId, '2fa_methods', ['email']);
@@ -59,13 +59,13 @@ function change_password_form($userId = null){
 			<form data-reset='true' class='sim_form'>
 				<input type="hidden" name="disable_useraccount"		value="<?php echo wp_create_nonce("disable_useraccount");?>">
 				<input type="hidden" name="userid"					value="<?php echo $userId; ?>">
-				<input type="hidden" name="action"					value="<?php echo $action_text;?>_useraccount">
+				<input type="hidden" name="action"					value="<?php echo $actionText;?>_useraccount">
 
 				<p style="margin:30px 0px 0px;">
-					Click the button below if you want to <?php echo $action_text;?> the useraccount for <?php echo $name;?>.
+					Click the button below if you want to <?php echo $actionText;?> the useraccount for <?php echo $name;?>.
 				</p>
 
-				<?php echo SIM\add_save_button('disable_useraccount', ucfirst($action_text)." useraccount for $name");?>
+				<?php echo SIM\addSaveButton('disable_useraccount', ucfirst($actionText)." useraccount for $name");?>
 			</form>
 			<?php
 		}
@@ -89,7 +89,7 @@ function change_password_form($userId = null){
 				<?php
 				if(!isset($methods['email'])){
 					$param['do']	= 'email';
-					$url = add_query_arg($param);
+					$url 			= add_query_arg($param);
 				?>
 				<p>
 					Use the button below to change the 2fa factor for <?php echo $name;?> to e-mail<br><br>

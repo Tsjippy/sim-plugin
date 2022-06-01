@@ -4,27 +4,26 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'birthday_check_action', __NAMESPACE__.'\birthday_check' );
-    add_action( 'vaccination_reminder_action', __NAMESPACE__.'\vaccination_reminder' );
-    add_action( 'greencard_reminder_action', __NAMESPACE__.'\greencard_reminder' );
-    add_action( 'check_details_mail_action', __NAMESPACE__.'\check_details_mail' );
-    add_action( 'account_expiry_check_action', __NAMESPACE__.'\account_expiry_check' );
-	add_action( 'review_reminders_action', __NAMESPACE__.'\review_reminders' );
-	add_action( 'check_last_login_date_action', __NAMESPACE__.'\check_last_login_date' );
-	
+	add_action( 'birthday_check_action', __NAMESPACE__.'\birthdayCheck' );
+    add_action( 'vaccination_reminder_action', __NAMESPACE__.'\vaccinationReminder' );
+    add_action( 'greencard_reminder_action', __NAMESPACE__.'\greencardReminder' );
+    add_action( 'check_details_mail_action', __NAMESPACE__.'\checkDetailsMail' );
+    add_action( 'account_expiry_check_action', __NAMESPACE__.'\accountExpiryCheck' );
+	add_action( 'review_reminders_action', __NAMESPACE__.'\reviewReminders' );
+	add_action( 'check_last_login_date_action', __NAMESPACE__.'\checkLastLoginDate' );
 });
 
-function schedule_tasks(){
-    SIM\schedule_task('birthday_check_action', 'daily');
-    SIM\schedule_task('account_expiry_check_action', 'daily');
-    SIM\schedule_task('vaccination_reminder_action', 'monthly');
-    //SIM\schedule_task('greencard_reminder_action', 'monthly');
-    SIM\schedule_task('check_details_mail_action', 'yearly');
-	//SIM\schedule_task('review_reminders_action', 'monthly');
-	SIM\schedule_task('check_last_login_date_action', 'monthly');
+function scheduleTasks(){
+    SIM\scheduleTask('birthday_check_action', 'daily');
+    SIM\scheduleTask('account_expiry_check_action', 'daily');
+    SIM\scheduleTask('vaccination_reminder_action', 'monthly');
+    //SIM\scheduleTask('greencard_reminder_action', 'monthly');
+    SIM\scheduleTask('check_details_mail_action', 'yearly');
+	//SIM\scheduleTask('review_reminders_action', 'monthly');
+	SIM\scheduleTask('check_last_login_date_action', 'monthly');
 }
 
-function birthday_check(){
+function birthdayCheck(){
 	//Change the user to the admin account otherwise get_users will not work
 	wp_set_current_user(1);
 
@@ -40,7 +39,7 @@ function birthday_check(){
 	
 	foreach($users as $user){
 		$userId 	= $user->ID;
-		$first_name = $user->first_name;
+		$firstName 	= $user->first_name;
 		
 		$family = get_user_meta( $userId, 'family', true );
 		if ($family == ""){
@@ -48,23 +47,23 @@ function birthday_check(){
 		}
 	
 		//Send birthday wish to the user
-		SIM\try_send_signal("Hi ".$first_name.",\nCongratulations with your birthday!",$userId);
+		SIM\trySendSignal("Hi $firstName,\nCongratulations with your birthday!", $userId);
 
 		//Send to parents
 		if (isset($family["father"]) or isset($family["mother"])){
-			$child_title = SIM\getChildTitle($user->ID);
+			$childTitle = SIM\getChildTitle($user->ID);
 			
-			$message = "Congratulations with the birthday of your $child_title ".get_userdata($user->ID)->first_name;
+			$message = "Congratulations with the birthday of your $childTitle ".get_userdata($user->ID)->first_name;
 		}
 		
 		if (isset($family["father"])){	
-			SIM\try_send_signal(
+			SIM\trySendSignal(
 				"Hi ".get_userdata($family["father"])->first_name.",\n$message",
 				$family["father"]
 			);
 		}
 		if (isset($family["mother"])){
-			SIM\try_send_signal(
+			SIM\trySendSignal(
 				"Hi ".get_userdata($family["mother"])->first_name.",\n$message",
 				$family["mother"]
 			);
@@ -72,8 +71,10 @@ function birthday_check(){
 	}
 }
 
-//loop over all users and scan for expiry vaccinations
-function vaccination_reminder(){	
+/**
+ * loop over all users and scan for expiry vaccinations
+ */
+function vaccinationReminder(){	
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 	
@@ -82,10 +83,10 @@ function vaccination_reminder(){
 	
 	//loop over the users
 	foreach($users as $user){
-		$reminder_html = vaccination_reminders($user->ID);
+		$reminderHtml = vaccinationReminders($user->ID);
 
 		//If there are reminders, send an e-mail
-		if (!empty($reminder_html)){
+		if (!empty($reminderHtml)){
 			$userdata = get_userdata($user->ID);
 			if($userdata != null){
 				$parents 	= SIM\getParents($user->ID);
@@ -94,14 +95,14 @@ function vaccination_reminder(){
 				//Is child
 				if($parents){
 					
-					$reminder_html = str_replace("Your",$userdata->first_name."'s",$reminder_html);
+					$reminderHtml = str_replace("Your", $userdata->first_name."'s", $reminderHtml);
 
 					$vaccinationWarningMail    	= new AdultVaccinationWarningMail($userdata);
 					$vaccinationWarningMail->filterMail();
 					$subject					= $vaccinationWarningMail->subject; 
 					$message					= $vaccinationWarningMail->message;
 					
-					$child_title = SIM\getChildTitle($user->ID);
+					$childTitle = SIM\getChildTitle($user->ID);
 					foreach($parents as $parent){
 						if(strpos($parent->user_email,'.empty') === false){
 							if($recipients != '') $recipients .= ', ';
@@ -109,8 +110,8 @@ function vaccination_reminder(){
 						}
 									
 						//Send OneSignal message
-						SIM\try_send_signal(
-							"Hi $parent->first_name,\nPlease renew the vaccinations  of your $child_title $userdata->first_name!\n\n".SITEURL,
+						SIM\trySendSignal(
+							"Hi $parent->first_name,\nPlease renew the vaccinations  of your $childTitle $userdata->first_name!\n\n".SITEURL,
 							$user->ID
 						);
 					}				
@@ -125,7 +126,7 @@ function vaccination_reminder(){
 					$message					= $vaccinationWarningMail->message;
 					
 					//Send Signal message
-					SIM\try_send_signal("Hi $userdata->first_name,\nPlease renew your vaccinations!\n\n".SITEURL, $user->ID);
+					SIM\trySendSignal("Hi $userdata->first_name,\nPlease renew your vaccinations!\n\n".SITEURL, $user->ID);
 				}
 				
 				
@@ -140,7 +141,7 @@ function vaccination_reminder(){
 						error_log("Please assign someone the health coorodinator role!");
 					}
 
-					$headers = ['Reply-To: '.$healtCoordinator->display_name.' <'.SIM\get_module_option('user_management', 'health_email').'>'];
+					$headers = ['Reply-To: '.$healtCoordinator->display_name.' <'.SIM\getModuleOption('user_management', 'health_email').'>'];
 					
 					//Send the mail
 					wp_mail($recipients , $subject, $message, $headers );
@@ -150,80 +151,97 @@ function vaccination_reminder(){
 	}
 }
 
-function vaccination_reminders($UserID){	
+/**
+ * Get the vaccination reminder html of an user
+ * 
+ * @param	int		$userId	WP_User id
+ * 
+ * @return	string	The html
+ */
+function vaccinationReminders($userId){	
 	//Get the current users medical data
-	$medical_user_info = (array)get_user_meta( $UserID, "medical",true);
+	$medicalUserInfo = (array)get_user_meta( $userId, "medical",true);
 
-	$reminder_html = "";
-	foreach($medical_user_info as $key=>$info){
+	$reminderHtml = "";
+	foreach($medicalUserInfo as $key=>$info){
 		if (strpos($key, 'expiry_date') !== false) {
 			//Its an array, so another vaccination
 			if(is_array($info)){
 				foreach($info as $date_key=>$date){
 					//Get the vaccination name of this other vaccination
-					$vaccination_name = $medical_user_info['other_vaccination'][$date_key];
+					$vaccinationName = $medicalUserInfo['other_vaccination'][$date_key];
 					if($date != ""){
-						$reminder_html .= check_expiry_date($date, "$vaccination_name vaccination");
+						$reminderHtml .= checkExpiryDate($date, "$vaccinationName vaccination");
 					}
 				}
 			}else{
 				//Get the clean vaccination name
-				$vaccination_name = str_replace('expiry_date_of_your_','',$key);
-				$vaccination_name = str_replace('_vaccination','',$vaccination_name);
-				$vaccination_name = ucwords(str_replace('_',' ',$vaccination_name));
-				$reminder_html .= check_expiry_date($info, "$vaccination_name vaccination");
+				$vaccinationName = str_replace('expiry_date_of_your_','', $key);
+				$vaccinationName = str_replace('_vaccination', '', $vaccinationName);
+				$vaccinationName = ucwords(str_replace('_', ' ', $vaccinationName));
+				$reminderHtml .= checkExpiryDate($info, "$vaccinationName vaccination");
 			}	
 		}
 	}
 	
-	return $reminder_html;
+	return $reminderHtml;
 }
 
-function check_expiry_date($date, $expiry_name){	
-	$vaccinationWarningTime	= SIM\get_module_option('user_management', 'vaccination_warning_time');
+/**
+ * Check expiry date of all vacination
+ * 
+ * @param	string	$date			The expiry date
+ * @param	string	$expiryName		The name of the vaccination
+ * 
+ * @return	string					Html listing all vaccination who are expired
+ */
+function checkExpiryDate($date, $expiryName){	
+	$vaccinationWarningTime	= SIM\getModuleOption('user_management', 'vaccination_warning_time');
 	if ($vaccinationWarningTime and !empty($date)){
-		$reminder_html = "";
+		$reminderHtml 	= "";
 		
 		//Date of first warning
-		$now = new \DateTime();
-		$interval = new \DateInterval('P'.$vaccinationWarningTime.'M');
-		$warning_date = $now->add($interval);
+		$now			= new \DateTime();
+		$interval		= new \DateInterval('P'.$vaccinationWarningTime.'M');
+		$warningDate 	= $now->add($interval);
 		
 		//todays date
 		//$now = new \DateTime();
 
 		//Vaccination expiry date
 		try{
-			$expiry_date = new \DateTime($date);
+			$expiryDate = new \DateTime($date);
 		}catch (\Exception $e) {
 			return;
 		}
 		
-		$nice_expiry_date = $expiry_date->format('j F Y');
+		$niceExpiryDate = $expiryDate->format('j F Y');
 		
 		//Expires today
-		if($nice_expiry_date == $now->format('j F Y')){
-			$reminder_html .= "<li>Your $expiry_name expires today.</li><br>";
+		if($niceExpiryDate == $now->format('j F Y')){
+			$reminderHtml .= "<li>Your $expiryName expires today.</li><br>";
 		//In the past
-		}elseif($expiry_date < $now){
-			$reminder_html .= "<li>Your $expiry_name is expired on $nice_expiry_date. </li><br>";
+		}elseif($expiryDate < $now){
+			$reminderHtml .= "<li>Your $expiryName is expired on $niceExpiryDate. </li><br>";
 		//In the near future
-		}elseif($expiry_date < $warning_date){
-			$diff=date_diff(date_create(date("Y-m-d")),$expiry_date)->format("%a");
+		}elseif($expiryDate < $warningDate){
+			$diff=date_diff(date_create(date("Y-m-d")), $expiryDate)->format("%a");
 			if($diff == 1){
 				$text = "tomorrow";
 			}else{
-				$text = "in $diff days on $nice_expiry_date";
+				$text = "in $diff days on $niceExpiryDate";
 			}
-			$reminder_html .= "<li>Your $expiry_name will expire $text.</li><br>";
+			$reminderHtml .= "<li>Your $expiryName will expire $text.</li><br>";
 		}
 		
-		return $reminder_html;
+		return $reminderHtml;
 	}
 }
 
-//loop over all users and scan for expiry greencards
-function greencard_reminder(){
+/**
+ * loop over all users and scan for expiry greencards, if so contact them
+ */
+function greencardReminder(){
 	//Get the current travel coordinator
 	$TravelCoordinator 			= get_users( array( 'role' => 'visainfo' ));
 	if($TravelCoordinator != null){
@@ -241,14 +259,14 @@ function greencard_reminder(){
 	
 	//loop over the users
 	foreach($users as $user){
-		$visa_info = get_user_meta( $user->ID, "visa_info",true);
+		$visaInfo = get_user_meta( $user->ID, "visa_info", true);
 
 		//If there are reminders, send an e-mail
-		if (is_array($visa_info) and isset($visa_info['greencard_expiry'])){
-			$reminder = check_expiry_date($visa_info['greencard_expiry'],'greencard');
-			$reminder = str_replace(['</li>','<li>'], "", $reminder);
+		if (is_array($visaInfo) and isset($visaInfo['greencard_expiry'])){
+			$reminder = checkExpiryDate($visaInfo['greencard_expiry'], 'greencard');
+			$reminder = str_replace(['</li>', '<li>'], "", $reminder);
 			
-			if(!empty($reminder_html)){		
+			if(!empty($reminder)){		
 				$to = $user->user_email;
 				
 				//Skip if not valid email
@@ -262,7 +280,7 @@ function greencard_reminder(){
 				wp_mail( $to, $greenCardReminderMail->subject, $greenCardReminderMail->message, $headers);
 				
 				//Send OneSignal message
-				SIM\try_send_signal("Hi $user->first_name,\nPlease renew your greencard!\n\n".SITEURL, $user->ID);
+				SIM\trySendSignal("Hi $user->first_name,\nPlease renew your greencard!\n\n".SITEURL, $user->ID);
 			}
 		}
 	}
@@ -279,15 +297,17 @@ add_action( 'save_post', function($post_ID, $post){
     }
 }, 10, 2);
 
-//send an e-mail with an overview of an users details for them to check
-function check_details_mail(){
+/**
+ * send an e-mail with an overview of an users details for them to check
+ */
+function checkDetailsMail(){
 	wp_set_current_user(1);
 	$subject	= 'Please review your website profile';
 	
 	//Retrieve all users
-	$users = SIM\getUserAccounts($return_family=false,$adults=true);
+	$users 			= SIM\getUserAccounts($return_family=false,$adults=true);
 
-	$accountPage	= SIM\get_module_option('user_management', 'account_page');
+	$accountPage	= SIM\getModuleOption('user_management', 'account_page');
 	$accountPageUrl	= get_permalink($accountPage);
 
 	if(!$accountPageUrl){
@@ -296,7 +316,7 @@ function check_details_mail(){
 	}	
 	$baseUrl		= "$accountPageUrl?main_tab=";
 
-	$style_string	= "style='text-decoration:none; color:#444;'";
+	$styleString	= "style='text-decoration:none; color:#444;'";
 
 	//Loop over the users
 	foreach($users as $user){
@@ -308,17 +328,17 @@ function check_details_mail(){
 		/* 
 		** PROFILE PICTURE
  		*/
-		$message .= "<a href='{$baseUrl}profile_picture' $style_string><b>Profile picture</b></a><br>";
-		$profile_picture	= get_profile_picture_url($user->ID);
-		if($profile_picture){
+		$message .= "<a href='{$baseUrl}profilePicture' $styleString><b>Profile picture</b></a><br>";
+		$profilePicture	= getProfilePictureUrl($user->ID);
+		if($profilePicture){
 			$message 		.= "This is your profile picture:<br>";
-			$message 		.= "<img src='$profile_picture' alt='$profile_picture' width='100px' height='100px'";
+			$message 		.= "<img src='$profilePicture' alt='$profilePicture' width='100px' height='100px'";
 			$message 		.= "<br><br>";
 		}else{
 			$message .= "<table>";
 				$message .= "<tr>";
 					$message .= "<td>";
-						$message .= "<a href='{$baseUrl}profile_picture' $style_string>You have not uploaded a picture</a>";
+						$message .= "<a href='{$baseUrl}profilePicture' $styleString>You have not uploaded a picture</a>";
 					$message .= "</td>";
 				$message .= "</tr>";
 			$message .= "</table>";
@@ -328,7 +348,7 @@ function check_details_mail(){
 		/* 
 		** PERSONAL DETAILS
  		*/
-		$message .= "<a href='{$baseUrl}generic_info' $style_string><b>Personal details</b></a><br>";
+		$message .= "<a href='{$baseUrl}generic_info' $styleString><b>Personal details</b></a><br>";
 		$message .= "<table>";
 			$message .= "<tr>";
 				$message .= "<td>";
@@ -339,7 +359,7 @@ function check_details_mail(){
 				$message .= "</td>";
 			$message .= "</tr>";
 
-			$birthday = get_user_meta($user->ID,'birthday',true);
+			$birthday = get_user_meta($user->ID, 'birthday', true);
 			if(empty($birthday)){
 				$birthday = 'No birthday specified.';
 			}else{
@@ -350,35 +370,35 @@ function check_details_mail(){
 					$message .= "Birthday:";
 				$message .= "</td>";
 				$message .= "<td>";
-					$message .= "<a href='{$baseUrl}generic_info#birthday' $style_string>$birthday</a>";
+					$message .= "<a href='{$baseUrl}generic_info#birthday' $styleString>$birthday</a>";
 				$message .= "</td>";
 			$message .= "</tr>";
 
 			$visaInfo = get_user_meta( $user->ID, 'visa_info', true );
 			if(!isset($visaInfo['permit_type']) or $visaInfo['permit_type'] == 'greencard'){
-				$sendingOffice = get_user_meta($user->ID,'sending_office',true);
+				$sendingOffice = get_user_meta($user->ID, 'sending_office', true);
 				if(empty($sendingOffice)) $sendingOffice = 'No sending office specified';
 				$message .= "<tr>";
 					$message .= "<td>";
 						$message .= "Sending office:";
 					$message .= "</td>";
 					$message .= "<td>";
-						$message .= "<a href='{$baseUrl}generic_info#sending_office' $style_string>$sendingOffice</a>";
+						$message .= "<a href='{$baseUrl}generic_info#sending_office' $styleString>$sendingOffice</a>";
 					$message .= "</td>";
 				$message .= "</tr>";
 
-				$arrivaldate = get_user_meta($user->ID,'arrival_date',true);
-				if(empty($arrivaldate)){
-					$arrivaldate = 'No arrival date specified';
+				$arrivalDate = get_user_meta($user->ID, 'arrival_date', true);
+				if(empty($arrivalDate)){
+					$arrivalDate = 'No arrival date specified';
 				}else{
-					$arrivaldate = date('d F Y', strtotime($arrivaldate));
+					$arrivalDate = date('d F Y', strtotime($arrivalDate));
 				}
 				$message .= "<tr>";
 					$message .= "<td>";
 						$message .= "Arrival date:";
 					$message .= "</td>";
 					$message .= "<td>";
-						$message .= "<a href='{$baseUrl}generic_info#arrival_date' $style_string>$arrivaldate</a>";
+						$message .= "<a href='{$baseUrl}generic_info#arrivalDate' $styleString>$arrivalDate</a>";
 					$message .= "</td>";
 				$message .= "</tr>";
 			}
@@ -388,23 +408,23 @@ function check_details_mail(){
 		/* 
 		** PHONENUMBERS
  		*/
-		$phonenumbers = (array)get_user_meta($user->ID,'phonenumbers',true);
+		$phonenumbers = (array)get_user_meta($user->ID, 'phonenumbers', true);
 		SIM\cleanUpNestedArray($phonenumbers);
 		$title	= 'Phonenumber';
 		if(count($phonenumbers)>1) $title .= 's';
 
-		$message .= "<a href='{$baseUrl}generic_info' $style_string><b>$title</b></a><br>";
+		$message .= "<a href='{$baseUrl}generic_info' $styleString><b>$title</b></a><br>";
 		$message .= "<table>";
 		if(empty($phonenumbers)){
 			$message .= "<tr>";
 				$message .= "<td>";
-					$message .= "<a href='{$baseUrl}generic_info#phonenumbers[0]' $style_string>No phonenumbers provided</a>";
+					$message .= "<a href='{$baseUrl}generic_info#phonenumbers[0]' $styleString>No phonenumbers provided</a>";
 				$message .= "</td>";
 			$message .= "</tr>";
 		}elseif(count($phonenumbers) == 1){
 			$message .= "<tr>";
 				$message .= "<td>";
-					$message .= "<a href='{$baseUrl}generic_info#phonenumbers[0]' $style_string>".array_values($phonenumbers)[0].'</a>';
+					$message .= "<a href='{$baseUrl}generic_info#phonenumbers[0]' $styleString>".array_values($phonenumbers)[0].'</a>';
 				$message .= "</td>";
 			$message .= "</tr>";
 		}else{
@@ -415,7 +435,7 @@ function check_details_mail(){
 						$message .= "Phonenumber $nr:";
 					$message .= "</td>";
 					$message .= "<td>";
-						$message .= "<a href='{$baseUrl}generic_info#phonenumbers[$key]' $style_string>$number</a>";
+						$message .= "<a href='{$baseUrl}generic_info#phonenumbers[$key]' $styleString>$number</a>";
 					$message .= "</td>";
 				$message .= "</tr>";
 			}
@@ -426,31 +446,31 @@ function check_details_mail(){
 		/* 
 		** MINISTRIES
  		*/
-		$user_ministries = (array)get_user_meta($user->ID,'user_ministries',true);
-		if(count($user_ministries)>1){
+		$userMinistries = (array)get_user_meta($user->ID, 'user_ministries', true);
+		if(count($userMinistries)>1){
 			$title	= 'Ministries';
 		}else{
 			$title	= 'Ministry';
 		}
-		$message .= "<a href='{$baseUrl}generic_info' $style_string><b>$title</b></a><br>";
+		$message .= "<a href='{$baseUrl}generic_info' $styleString><b>$title</b></a><br>";
 
 		$message .= "<table>";
-			SIM\cleanUpNestedArray($user_ministries);
-			if(empty($user_ministries)){
+			SIM\cleanUpNestedArray($userMinistries);
+			if(empty($userMinistries)){
 				$message .= "<tr>";
 					$message .= "<td>";
-						$message .= "<a href='{$baseUrl}generic_info#ministries[]' $style_string>No ministry provided</a>";
+						$message .= "<a href='{$baseUrl}generic_info#ministries[]' $styleString>No ministry provided</a>";
 					$message .= "</td>";
 				$message .= "</tr>";
 			}else{
-				foreach($user_ministries as $ministry=>$job){
-					$ministry = str_replace('_',' ',$ministry);
+				foreach($userMinistries as $ministry=>$job){
+					$ministry = str_replace('_', ' ', $ministry);
 					$message .= "<tr>";
 						$message .= "<td>";
 							$message .= "$ministry:";
 						$message .= "</td>";
 						$message .= "<td>";
-							$message .= "<a href='{$baseUrl}generic_info#ministries[]' $style_string>$job</a>";
+							$message .= "<a href='{$baseUrl}generic_info#ministries[]' $styleString>$job</a>";
 						$message .= "</td>";
 					$message .= "</tr>";
 				}
@@ -462,8 +482,8 @@ function check_details_mail(){
 		/* 
 		** LOCATION
  		*/
-		$message .= "<a href='{$baseUrl}location' $style_string><b>Location</b></a><br>";
-		$location= (array)get_user_meta($user->ID,'location',true);
+		$message	.= "<a href='{$baseUrl}location' $styleString><b>Location</b></a><br>";
+		$location	= (array)get_user_meta($user->ID, 'location', true);
 		SIM\cleanUpNestedArray($location);
 		if(empty($location['address'])){
 			$location = "No location provided";
@@ -474,7 +494,7 @@ function check_details_mail(){
 		$message .= "<table>";
 			$message .= "<tr>";
 				$message .= "<td>";
-					$message .= "<a href='{$baseUrl}location#location[compound]' $style_string>$location</a>" ;
+					$message .= "<a href='{$baseUrl}location#location[compound]' $styleString>$location</a>" ;
 				$message .= "</td>";
 			$message .= "</tr>";
 		$message .= "</table>";
@@ -509,19 +529,19 @@ function check_details_mail(){
 						$weddingDate .= "Wedding date:";
 					$weddingDate .= "</td>";
 					$weddingDate .= "<td>";
-						$weddingDate .= "<a href='{$baseUrl}family#family[weddingdate]' $style_string>$text</a>";
+						$weddingDate .= "<a href='{$baseUrl}family#family[weddingdate]' $styleString>$text</a>";
 					$weddingDate .= "</td>";
 				$weddingDate .= "</tr>";
 			}
 
-			$message .= "<a href='{$baseUrl}family' $style_string><b>Family details</b></a><br>";
+			$message .= "<a href='{$baseUrl}family' $styleString><b>Family details</b></a><br>";
 			$message .= "<table>";
 				$message .= "<tr>";
 					$message .= "<td>";
 						$message .= "Family picture:";
 					$message .= "</td>";
 					$message .= "<td>";
-						$message .= "<a href='{$baseUrl}family#family[picture]' $style_string>$picture</a>";
+						$message .= "<a href='{$baseUrl}family#family[picture]' $styleString>$picture</a>";
 					$message .= "</td>";
 				$message .= "</tr>";
 
@@ -530,7 +550,7 @@ function check_details_mail(){
 						$message .= "Spouse:";
 					$message .= "</td>";
 					$message .= "<td>";
-						$message .= "<a href='{$baseUrl}family#family[partner]' $style_string>$partner</a>";
+						$message .= "<a href='{$baseUrl}family#family[partner]' $styleString>$partner</a>";
 					$message .= "</td>";
 				$message .= "</tr>";
 
@@ -543,7 +563,7 @@ function check_details_mail(){
 							$message .= "Child $nr:";
 						$message .= "</td>";
 						$message .= "<td>";
-							$message .= "<a href='{$baseUrl}family#family[children][$key]' $style_string>".get_userdata($child)->display_name."</a>";
+							$message .= "<a href='{$baseUrl}family#family[children][$key]' $styleString>".get_userdata($child)->display_name."</a>";
 						$message .= "</td>";
 					$message .= "</tr>";
 				}
@@ -556,14 +576,17 @@ function check_details_mail(){
 	}
 }
 
-function account_expiry_check(){
+/**
+ * Notifies people that their account is about to expire or has been deleted
+ */
+function accountExpiryCheck(){
 	require_once(ABSPATH.'wp-admin/includes/user.php');
 	
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 
-	$personnelCoordinatorEmail	= SIM\get_module_option('user_management', 'personnel_email');
-	$staEmail					= SIM\get_module_option('user_management', 'sta_email');
+	$personnelCoordinatorEmail	= SIM\getModuleOption('user_management', 'personnel_email');
+	$staEmail					= SIM\getModuleOption('user_management', 'sta_email');
 	
 	//Get the users who will expire in 1 month
 	$users = get_users(
@@ -611,11 +634,11 @@ function account_expiry_check(){
 		wp_mail( $recipient, $accountExpiryMail->subject, $accountExpiryMail->message, $headers);
 		
 		//Send OneSignal message
-		SIM\try_send_signal("Hi ".$user->first_name.",\nThis is just a reminder that your account on simnigeria.org will be deleted on ".date("d F Y", strtotime(" +1 months")),$user->ID);
+		SIM\trySendSignal("Hi ".$user->first_name.",\nThis is just a reminder that your account on simnigeria.org will be deleted on ".date("d F Y", strtotime(" +1 months")),$user->ID);
 	}
 	
 	//Get the users who are expired
-	$expired_users = get_users(
+	$expiredUsers = get_users(
 		array(
 			'meta_query' => array(
 				'relation' => 'AND',
@@ -639,24 +662,26 @@ function account_expiry_check(){
 		)
 	);
 	
-	foreach($expired_users as $user){
+	foreach($expiredUsers as $user){
 		//Send Signal message
-		SIM\try_send_signal(
+		SIM\trySendSignal(
 			"Hi ".$user->first_name.",\nYour account is expired, as you are no longer in Nigeria.",
 			$user->ID
 		);
 		
 		//Delete the account
-		SIM\printArray("Deleting user with id ".$user->ID." and name ".$user->display_name." as it was a temporary account.");
+		SIM\printArray("Deleting user with id $user->ID and name $user->display_name as it was a temporary account.");
 		wp_delete_user($user->ID);
 	}
 }
 
-//send reminders about annual review
-function review_reminders(){	
-	$generic_documents = get_option('personnel_documents');
-	if(is_array($generic_documents) and !empty($generic_documents['Annual review form'])){
-		$personnelCoordinatorEmail	= SIM\get_module_option('user_management', 'personnel_email');
+/**
+ * send reminders about annual review
+ */
+function reviewReminders(){	
+	$genericDocuments = get_option('personnel_documents');
+	if(is_array($genericDocuments) and !empty($genericDocuments['Annual review form'])){
+		$personnelCoordinatorEmail	= SIM\getModuleOption('user_management', 'personnel_email');
 		//Change the user to the adminaccount otherwise get_users will not work
 		wp_set_current_user(1);
 		
@@ -666,14 +691,14 @@ function review_reminders(){
 		//loop over the users
 		foreach($users as $user){
 			//Check for upcoming reviews, but only if not set to be hidden for this year
-			if(get_user_meta($user->ID,'hide_annual_review',true) != date('Y')){
-				$personnel_info 				= get_user_meta($user->ID,"personnel",true);
-				$arrival_date					= get_user_meta($user->ID,'arrival_date',true);
+			if(get_user_meta($user->ID, 'hide_annual_review', true) != date('Y')){
+				$personnelInfo	= get_user_meta($user->ID, "personnel", true);
+				$arrivalDate	= get_user_meta($user->ID, 'arrival_date', true);
 				//Only do when not arriving this year
-				if(is_array($personnel_info) and !empty($personnel_info['review_date']) and strpos($arrival_date,date('Y')) === false){
-					$reviewdate	= date('m', strtotime($personnel_info['review_date']));
+				if(is_array($personnelInfo) and !empty($personnelInfo['review_date']) and strpos($arrivalDate, date('Y')) === false){
+					$reviewDate	= date('m', strtotime($personnelInfo['review_date']));
 					//Start sending the warning 1 month before until it is done.
-					if(($reviewdate -2)<date('m')){
+					if(($reviewDate - 2) < date('m')){
 						//Send e-mail
 						$to = $user->user_email;
 						//Skip if not valid email
@@ -683,14 +708,14 @@ function review_reminders(){
 						$message 	 = 'Hi '.$user->first_name.',<br><br>';
 
 						//Send Signal message
-						SIM\try_send_signal(
-							"Hi ".$user->first_name.",\n\nIt is time for your annual review.\nPlease fill in the annual review questionary:\n\n".SITEURL.'/'.$generic_documents['Annual review form']."\n\nThen send it to $personnelCoordinatorEmail",
+						SIM\trySendSignal(
+							"Hi ".$user->first_name.",\n\nIt is time for your annual review.\nPlease fill in the annual review questionary:\n\n".SITEURL.'/'.$genericDocuments['Annual review form']."\n\nThen send it to $personnelCoordinatorEmail",
 							$user->ID
 						);
 						
 						//Send e-mail
 						$message 	.= 'It is time for your annual review.<br>';
-						$message 	.= 'Please fill in the <a href="'.SITEURL.'/'.$generic_documents['Annual review form'].'">review questionaire</a> to prepare for the talk.<br>';
+						$message 	.= 'Please fill in the <a href="'.SITEURL.'/'.$genericDocuments['Annual review form'].'">review questionaire</a> to prepare for the talk.<br>';
 						$message 	.= 'When filled it in send it to me by replying to this e-mail<br><br>';
 						$message	.= 'Kind regards,<br><br>the personnel coordinator';
 						$headers 	 = array(
@@ -708,16 +733,18 @@ function review_reminders(){
 	}
 }
 
-//Send reminder to people to login
-function check_last_login_date(){
+/**
+ * Send reminder to people to login
+ */
+function checkLastLoginDate(){
 	wp_set_current_user(1);
 
 	$users = SIM\getUserAccounts();
 	foreach($users as $user){
-		$lastlogin				= get_user_meta( $user->ID, 'last_login_date',true);
+		$lastLogin				= get_user_meta( $user->ID, 'last_login_date',true);
 
 		//user has never logged in
-		if(empty($lastlogin)){
+		if(empty($lastLogin)){
 			//Send e-mail
 			$to = $user->user_email;
 			
@@ -727,33 +754,33 @@ function check_last_login_date(){
 			$key		 = get_password_reset_key($user);
 			if(is_wp_error($key)) return $key;
 
-			$pageurl	 = get_permalink(SIM\get_module_option('login', 'password_reset_page'));
-			$url		 = "$pageurl?key=$key&login=$user->user_login";
+			$pageUrl	 = get_permalink(SIM\getModuleOption('login', 'password_reset_page'));
+			$url		 = "$pageUrl?key=$key&login=$user->user_login";
 
 			$mail = new AccountCreatedMail($user, $url);
 			$mail->filterMail();
 
 			wp_mail( $to, $mail->subject, $mail->message);
 		}else{
-			$lastlogin_date			= date_create($lastlogin);
-			$now 	= new \DateTime();
-			$years_since_last_login = date_diff($lastlogin_date, $now)->format("%y");
+			$lastLoginDate			= date_create($lastLogin);
+			$now 					= new \DateTime();
+			$yearsSinceLastLogin 	= date_diff($lastLoginDate, $now)->format("%y");
 			
 			//User has not logged in in the last year
-			if($years_since_last_login > 0){
+			if($yearsSinceLastLogin > 0){
 				//Send e-mail
 				$to = $user->user_email;
 				//Skip if not valid email
 				if(strpos($to,'.empty') !== false) continue;
 
 				//Send Signal message
-				SIM\try_send_signal(
-					"Hi $user->first_name,\n\nWe miss you! We haven't seen you since $lastlogin\n\nPlease pay us a visit on\n".SITEURL,
+				SIM\trySendSignal(
+					"Hi $user->first_name,\n\nWe miss you! We haven't seen you since $lastLogin\n\nPlease pay us a visit on\n".SITEURL,
 					$user->ID
 				);
 				
 				//Send e-mail
-				$weMissYouMail    = new WeMissYouMail($user, $lastlogin);
+				$weMissYouMail    = new WeMissYouMail($user, $lastLogin);
 				$weMissYouMail->filterMail();
 									
 				wp_mail( $to, $weMissYouMail->subject, $weMissYouMail->message);

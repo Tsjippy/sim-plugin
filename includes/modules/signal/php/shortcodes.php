@@ -5,9 +5,9 @@ use SIM;
 
 //Add Signal messages overview shortcode
 add_shortcode('signal_messages',function(){
-	$signal_messages = get_option('signal_bot_messages');
+	$signalMessages = get_option('signal_bot_messages');
 	
-	$html = '';
+	$html 			= '';
 	
 	//Perform remove action
 	if(isset($_POST['recipient_number']) and isset($_POST['key'])){
@@ -17,16 +17,16 @@ add_shortcode('signal_messages',function(){
 		}else{
 			$html .= '<div class="success">Succesfully removed the message</div>';
 
-			unset($signal_messages[$_POST['recipient_number']][$_POST['key']]);
+			unset($signalMessages[$_POST['recipient_number']][$_POST['key']]);
 			
-			if(count($signal_messages[$_POST['recipient_number']]) == 0) unset($signal_messages[$_POST['recipient_number']]);
+			if(count($signalMessages[$_POST['recipient_number']]) == 0) unset($signalMessages[$_POST['recipient_number']]);
 			
-			update_option('signal_bot_messages',$signal_messages);
+			update_option('signal_bot_messages', $signalMessages);
 		}
 	}
 	
-	if(is_array($signal_messages) and count($signal_messages) >0){
-		foreach($signal_messages as $recipient_number=>$recipient){
+	if(is_array($signalMessages) and count($signalMessages) >0){
+		foreach($signalMessages as $recipient_number=>$recipient){
 			$html .= "<strong>Messages to $recipient_number</strong><br>";
 			foreach($recipient as $key=>$signal_message){
 				$html .= 'Message '.($key+1).":<br>";

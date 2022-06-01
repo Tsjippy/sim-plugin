@@ -9,13 +9,12 @@ export class VimeoUpload{
     }
 
     async findInStorage(){
-        this.fingerprint    = await this.getFingerprint(this.file, { endpoint: sim.base_url });
+        this.fingerprint    = await this.getFingerprint(this.file, { endpoint: sim.baseUrl });
         let storedEntries   = await this.urlStorage.findUploadsByFingerprint(this.fingerprint);
 
         if (storedEntries.length) {
             this.storedEntry = storedEntries[0];
             if (this.storedEntry.uploadUrl) {
-                console.debug('previous URL found: ' + this.storedEntry.uploadUrl);
                 return true;
             }
             // cleanup
@@ -31,7 +30,7 @@ export class VimeoUpload{
         formData.append('file_name', this.file.name);
         formData.append('file_type', this.file.type);
 
-        var response    = await formsubmit.fetchRestApi('vimeo/prepare_vimeo_upload', formData);
+        var response    = await FormSubmit.fetchRestApi('vimeo/prepare_vimeo_upload', formData);
 
         //Failed
         if(response){

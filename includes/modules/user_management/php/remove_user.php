@@ -9,10 +9,10 @@ add_action('delete_user', function ($userId){
 	
 	SIM\printArray("Deleting userdata for user $displayname");
 	
-	$attachment_id = get_user_meta($userId,'profile_picture',true);
-	if(is_numeric($attachment_id)){
+	$attachmentId = get_user_meta($userId, 'profile_picture', true);
+	if(is_numeric($attachmentId)){
 		//Remove profile picture
-		wp_delete_attachment($attachment_id,true);
+		wp_delete_attachment($attachmentId, true);
 		SIM\printArray("Removed profile picture for user $displayname");
 	}
 
@@ -22,37 +22,37 @@ add_action('delete_user', function ($userId){
 		//Remove user from the family arrays of its relatives
 		foreach($family as $relative){
 			//get the relatives family array
-			$relative_family = get_user_meta($relative,"family",true);
-			if (is_array($relative_family)){
+			$relativeFamily = get_user_meta($relative,"family",true);
+			if (is_array($relativeFamily)){
 				//Find the familyrelation to $userId
-				$result = array_search($userId, $relative_family);
+				$result = array_search($userId, $relativeFamily);
 				if($result){
 					//Remove the relation
-					unset($relative_family[$result]);
+					unset($relativeFamily[$result]);
 				}else{
 					//Not found, check children
-					if(is_array($relative_family['children'])){
-						$children = $relative_family['children'];
-						$result = array_search($userId, $children);
+					if(is_array($relativeFamily['children'])){
+						$children	= $relativeFamily['children'];
+						$result		= array_search($userId, $children);
 						if($result!==null){
 							//Remove the relation
 							unset($children[$result]);
 							//This was the only child, remove the whole children entry
 							if (count($children)==0){
-								unset($relative_family["children"]);
+								unset($relativeFamily["children"]);
 							}else{
 								//update the family
-								$relative_family['children'] = $children;
+								$relativeFamily['children'] = $children;
 							}
 						}
 					}
 				}
-				if (count($relative_family)==0){
+				if (count($relativeFamily)==0){
 					//remove from db, there is no family anymore
-					delete_user_meta($relative,"family");
+					delete_user_meta($relative, "family");
 				}else{
 					//Store in db
-					update_user_meta($relative,"family",$relative_family);					
+					update_user_meta($relative, "family", $relativeFamily);					
 				}
 			}
 		}

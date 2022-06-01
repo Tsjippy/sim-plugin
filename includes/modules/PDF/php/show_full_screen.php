@@ -3,12 +3,12 @@ namespace SIM\PDF;
 use SIM;
 
 //only load when checked
-if(!SIM\get_module_option('PDF', 'full_screen')) return;
+if(!SIM\getModuleOption('PDF', 'full_screen')) return;
 
 //Show PDFs full screen
 add_filter( 'the_content', function ( $content ) {
-    $post_id 	= get_the_ID();
-    $content	= str_replace('<p>&nbsp;</p>','',$content);
+    $postId 	= get_the_ID();
+    $content	= str_replace('<p>&nbsp;</p>', '', $content);
     
     //If the string starts with 0 or more spaces, then a <p> followed by a hyperlink ending in .pdf then the download text ending an optional download button followed with 0 or more spaces.
     $pattern = '/^\s*<p><a href="(.*?\.pdf)">([^<]*<\/a>)(.*\.pdf">Download<\/a>)?<\/p>\s*$/i';
@@ -18,22 +18,22 @@ add_filter( 'the_content', function ( $content ) {
     //If an url exists it means there is only a pdf on this page
     if(isset($matches[2])){
         /* IF PEOPLE HAVE TO READ IT, MARK AS READ */
-        $audience	= get_post_meta($post_id,"audience",true);
+        $audience	= get_post_meta($postId,"audience",true);
         
         if(!empty($audience)){
             //Get current user id
-            $userId = get_current_user_id();
+            $userId     = get_current_user_id();
             
             //get current alread read pages
-            $read_pages		= (array)get_user_meta( $userId, 'read_pages', true );
+            $readPages	= (array)get_user_meta( $userId, 'read_pages', true );
             
             //only add if not already there
-            if(!in_array($post_id, $read_pages)){
+            if(!in_array($postId, $readPages)){
                 //add current page
-                $read_pages[]	= $post_id;
+                $readPages[]	= $postId;
         
                 //update db
-                update_user_meta( $userId, 'read_pages', $read_pages);
+                update_user_meta( $userId, 'read_pages', $readPages);
             }
         }
 
@@ -41,10 +41,10 @@ add_filter( 'the_content', function ( $content ) {
         //Show the pdf fullscreen only if we are not a content manager
         if(!in_array('editor', wp_get_current_user()->roles)){
             //Get the url to the pdf
-            $pdf_url = $matches[1];
+            $pdfUrl = $matches[1];
             
             //Convert to path
-            $path = SIM\urlToPath($pdf_url);
+            $path = SIM\urlToPath($pdfUrl);
             
             //Echo the pdf to screen
             while(true){

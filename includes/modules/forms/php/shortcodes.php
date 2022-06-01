@@ -13,7 +13,7 @@ add_shortcode('formselector', function($atts){
     ), $atts );
 
     $FormTable	= new FormTable();
-    $FormTable->get_forms();
+    $FormTable->getForms();
 
     $forms          = $FormTable->forms;
 
@@ -66,26 +66,26 @@ add_shortcode('formselector', function($atts){
         <?php
         }
         if($_REQUEST['display'] == 'results'){
-            $form_vis       = ' hidden';
-            $result_vis     = '';
-            $form_active    = ' active';
-            $result_active  = '';
+            $formVis       = ' hidden';
+            $resultVis     = '';
+            $formActive    = ' active';
+            $resultActive  = '';
         }else{
-            $form_vis       = '';
-            $result_vis     = ' hidden';
-            $form_active    = ' active';
-            $result_active  = '';
+            $formVis       = '';
+            $resultVis     = ' hidden';
+            $formActive    = ' active';
+            $resultActive  = '';
         }
         // Loop over the forms to add the to the page
         foreach($forms as $form){
-		    $query			= "SELECT * FROM {$FormTable->shortcodetable} WHERE form_id= '{$form->id}'";
-		    $shortcodedata 	= $wpdb->get_results($query);
+		    $query			= "SELECT * FROM {$FormTable->shortcodeTable} WHERE form_id= '{$form->id}'";
+		    $shortcodeData 	= $wpdb->get_results($query);
 
             //Create shortcode data if not existing
-            if(empty($shortcodedata)){
-                $shortcode_id   = $FormTable->insert_in_db($form->id);
+            if(empty($shortcodeData)){
+                $shortcodeId   = $FormTable->insertInDb($form->id);
             }else{
-                $shortcode_id   = $shortcodedata[0]->id;
+                $shortcodeId   = $shortcodeData[0]->id;
             }
 
             //Check if this form should be displayed
@@ -98,16 +98,16 @@ add_shortcode('formselector', function($atts){
             echo "<div id='{$form->name}' class='main_form_wrapper$hidden'>";
                 //only show button if not queried
                 if(!isset($_REQUEST['display'])){
-                    echo "<button class='button tablink$form_active' id='show_{$form->name}_form' data-target='{$form->name}_form'>Show form</button>";
-                    echo "<button class='button formresults tablink$result_active' id='show_{$form->name}_results' data-target='{$form->name}_results'>Show form results</button>";
+                    echo "<button class='button tablink$formActive' id='show_{$form->name}_form' data-target='{$form->name}_form'>Show form</button>";
+                    echo "<button class='button formresults tablink$resultActive' id='show_{$form->name}_results' data-target='{$form->name}_results'>Show form results</button>";
                 }
 
-                echo "<div id='{$form->name}_form' class='form_wrapper$form_vis'>";
-                    echo do_shortcode("[formbuilder datatype=$form->name]");
+                echo "<div id='{$form->name}_form' class='form_wrapper$formVis'>";
+                    echo do_shortcode("[formbuilder formname=$form->name]");
                 echo "</div>";
 
-                echo "<div id='{$form->name}_results' class='form_results_wrapper$result_vis'>";
-                    echo do_shortcode("[formresults id=$shortcode_id datatype=$form->name]");
+                echo "<div id='{$form->name}_results' class='form_results_wrapper$resultVis'>";
+                    echo do_shortcode("[formresults id=$shortcodeId formname=$form->name]");
                 echo "</div>";
             echo "</div>";
         }
@@ -120,13 +120,13 @@ add_shortcode('formselector', function($atts){
 
 //shortcode to make forms
 add_shortcode( 'formbuilder', function($atts){
-    $formbuilder = new Formbuilder();
-    return $formbuilder->formbuilder($atts);
+    $formBuilder = new Formbuilder();
+    return $formBuilder->formBuilder($atts);
 });
 
 add_shortcode( 'formresults', function($atts){
-	$formtable = new FormTable();
-	return $formtable->show_formresults_table($atts);
+	$formTable = new FormTable();
+	return $formTable->showFormresultsTable($atts);
 });
 
 add_filter('sim_loggedin_homepage',  function($content){
@@ -144,13 +144,13 @@ function missingFormFields($atts){
 
 	$html	= '';
 
-    $field_html = getAllFields(get_current_user_id(), $a['type']);
+    $fieldHtml = getAllFields(get_current_user_id(), $a['type']);
 	
-	if (!empty($field_html)){
+	if (!empty($fieldHtml)){
 		$html .=  '<div id=recommendations style="margin-top:20px;">';
             $html .=  '<h3 class="frontpage">Recommendations</h3>';
             $html .=  '<p>It would be very helpfull if you could fill in the fields below:</p>';
-            $html .=  $field_html;
+            $html .=  $fieldHtml;
         $html .=  '</div>';
 	}
 	

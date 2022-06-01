@@ -4,7 +4,7 @@ async function confirmPostDelete( event ) {
 
 	var confirmed = await Swal.fire({
 		title: 'Are you sure?',
-		text: "Are you sure you want to remove this "+frontendpost.post_type+"?",
+		text: "Are you sure you want to remove this "+frontendpost.postType+"?",
 		icon: 'warning',
 		showCancelButton: true,
 		confirmButtonColor: '#3085d6',
@@ -13,13 +13,13 @@ async function confirmPostDelete( event ) {
 	});
 
 	if (confirmed.isConfirmed) {
-		var post_id = parent.querySelector('[name="post_id"]').value;
+		var postId = parent.querySelector('[name="post_id"]').value;
 		event.target.closest('form').querySelector('.loadergif').classList.remove('hidden');
 	
 		var formData = new FormData();
-		formData.append('post_id',post_id);
+		formData.append('post_id', postId);
 		
-		var response = await formsubmit.fetchRestApi('frontend_posting/remove_post', formData);
+		var response = await FormSubmit.fetchRestApi('frontend_posting/remove_post', formData);
 
 		if(response){
 			main.displayMessage(response);
@@ -28,27 +28,27 @@ async function confirmPostDelete( event ) {
 };
 
 async function refreshPostLock(){
-	var postid = document.querySelector('[name="post_id"]');
+	var postId = document.querySelector('[name="post_id"]');
 
-	if(postid != null){
+	if(postId != null){
 		var formData	= new FormData();
-		formData.append('postid', postid.value);
-		formsubmit.fetchRestApi('frontend_posting/refresh_post_lock', formData);
+		formData.append('postid', postId.value);
+		FormSubmit.fetchRestApi('frontend_posting/refresh_post_lock', formData);
 	}
 }
 
 async function deletePostLock(){
-	var postid = document.querySelector('[name="post_id"]');
+	var postId = document.querySelector('[name="post_id"]');
 
-	if(postid != null){
+	if(postId != null){
 		var formData	= new FormData();
-		formData.append('postid', postid.value);
-		var response = await formsubmit.fetchRestApi('frontend_posting/delete_post_lock', formData);
+		formData.append('postid', postId.value);
+		var response = await FormSubmit.fetchRestApi('frontend_posting/delete_post_lock', formData);
 	}
 }
 
 async function changePostType(target){
-	var response = await formsubmit.submitForm(target, 'frontend_posting/change_post_type');
+	var response = await FormSubmit.submitForm(target, 'frontend_posting/change_post_type');
 
 	if(response){
 		main.displayMessage(response);
@@ -59,18 +59,18 @@ function switchforms(target){
 	var parent 			= document.getElementById('frontend_upload_form');
 
 	if(target == null){
-		var post_type		= location.search.replace('?type=', '');
+		var postType		= location.search.replace('?type=', '');
 	}else{
-		var post_type 		= target.value;
+		var postType 		= target.value;
 	}
 				
-	var submit_button 	= parent.querySelector('[name="submit_post"]');
+	var submitButton 	= parent.querySelector('[name="submit_post"]');
 	
-	document.querySelector('#postform [name="post_type"]').value 	= post_type;
+	document.querySelector('#postform [name="post_type"]').value 	= postType;
 	
 	//Change button text
 	parent.querySelectorAll('.replaceposttype').forEach(function(el){
-		el.textContent = post_type;
+		el.textContent = postType;
 	});
 	
 	//Show the lite elements if there is no content
@@ -85,7 +85,7 @@ function switchforms(target){
 
 	parent.querySelectorAll('#wp-post_content-media-buttons, .advancedpublishoptions, #advancedpublishoptionsbutton').forEach(el=>el.classList.remove('hidden'));
 	
-	switch(post_type) {
+	switch(postType) {
 		case 'page':
 			//Show all page options
 			parent.querySelectorAll('.page:not(.page-template-default)').forEach(el=>el.classList.remove('hidden'));
@@ -147,7 +147,7 @@ function switchforms(target){
 			break;
 		default:
 			//Change button text
-			submit_button.textContent = submit_button.textContent.replace('page','post');
+			submitButton.textContent = submitButton.textContent.replace('page','post');
 	}
 }
 
@@ -252,7 +252,7 @@ function addFeaturedImage(event) {
 }
 
 function catChanged(target){
-	var parent_id = target.closest('.infobox').dataset.parent;
+	var parentId = target.closest('.infobox').dataset.parent;
 	
 	var parentDiv = target.closest('.categories');
 	
@@ -267,7 +267,7 @@ function catChanged(target){
 		});
 		
 	//If we just deselected a parent category
-	}else if(parent_id == undefined){
+	}else if(parentId == undefined){
 		//Hide the label if there is no category visible anymore
 		if(parentDiv.querySelector('.childtypes input[type="checkbox"]:checked') == null){
 			parentDiv.querySelector('#subcategorylabel').classList.add('hidden');
@@ -282,25 +282,25 @@ function catChanged(target){
 }
 
 async function addCatType(target){
-	var response	= await formsubmit.submitForm(target, 'frontend_posting/add_category');
+	var response	= await FormSubmit.submitForm(target, 'frontend_posting/add_category');
 
 	if(response){
 		//Get the newly added category parent id
-		var parent_cat  = target.closest('form').querySelector('[name="cat_parent"]').value;
-		var post_type	= target.closest('form').querySelector('[name="post_type"]').value;
-		var cat_name	= target.closest('form').querySelector('[name="cat_name"]').value;
+		var parentCat  	= target.closest('form').querySelector('[name="cat_parent"]').value;
+		var postType	= target.closest('form').querySelector('[name="post_type"]').value;
+		var catName		= target.closest('form').querySelector('[name="cat_name"]').value;
 		
 		//No parent category
-		if(parent_cat == ''){
-			var parent_div		= document.getElementById(post_type+'_parenttypes');
-			var parent_data		= '';
+		if(parentCat == ''){
+			var parentDiv		= document.getElementById(postType+'_parenttypes');
+			var parentData		= '';
 		//There is a parent
 		}else{
-			var parent_div	 	= document.getElementById(post_type+'_childtypes');
-			var parent_data		= 'data-parent="'+parent_cat+'"';
+			var parentDiv	 	= document.getElementById(postType+'_childtypes');
+			var parentData		= 'data-parent="'+parent_cat+'"';
 			
 			//Select parent if it is not checked already
-			var parent = document.querySelector('.'+post_type+'type[value="'+parent_cat+'"]');
+			var parent = document.querySelector('.'+postType+'type[value="'+parent_cat+'"]');
 			if(parent.checked == false){
 				parent.click();
 			}
@@ -308,21 +308,20 @@ async function addCatType(target){
 		
 		//Add the new category as checkbox
 		var html = `
-		<div class="infobox" ${parent_data}>
-			<input type="checkbox" class="${post_type}type" id="${post_type}type[]" value="${response.id}" checked>
-			<label class="option-label category-select">${cat_name}</label>
+		<div class="infobox" ${parentData}>
+			<input type="checkbox" class="${postType}type" id="${postType}type[]" value="${response.id}" checked>
+			<label class="option-label category-select">${catName}</label>
 		</div>
 		`
-		parent_div.insertAdjacentHTML('afterBegin', html);
+		parentDiv.insertAdjacentHTML('afterBegin', html);
 		main.hideModals();
 
-		main.displayMessage(`Succesfully added the ${cat_name} category`);
+		main.displayMessage(`Succesfully added the ${catName} category`);
 	}
 }
 
 async function submitPost(target){
-	console.log(target);
-	var response	= await formsubmit.submitForm(target, 'frontend_posting/submit_post');
+	var response	= await FormSubmit.submitForm(target, 'frontend_posting/submit_post');
 	if(response){
 		main.displayMessage(response);
 	}
@@ -505,9 +504,9 @@ document.addEventListener('change', event=>{
 		if(datalist_op != null){
 			var value = datalist_op.dataset.value;
 
-			var val_el	= target.closest('label').querySelector('.datalistvalue');
-			if(val_el != null){
-				val_el.value	= value;
+			var valEl	= target.closest('label').querySelector('.datalistvalue');
+			if(valEl != null){
+				valEl.value	= value;
 			}
 		}
 	}
@@ -518,34 +517,34 @@ document.addEventListener('change', event=>{
 	}
 
 	if(target.name == 'event[allday]'){
-		var starttime	= target.closest('.event').querySelector('[name="event[starttime]"]');
-		var endtime		= target.closest('.event').querySelector('[name="event[endtime]"]');
-		var enddate		= target.closest('.event').querySelector('[name="enddate_label"]');
+		var startTime	= target.closest('.event').querySelector('[name="event[starttime]"]');
+		var endTime		= target.closest('.event').querySelector('[name="event[endtime]"]');
+		var endDate		= target.closest('.event').querySelector('[name="enddate_label"]');
 
 		if(target.checked){
-			starttime.classList.add('hidden');
-			endtime.classList.add('hidden');
-			enddate.classList.add('hidden');
+			startTime.classList.add('hidden');
+			endTime.classList.add('hidden');
+			endDate.classList.add('hidden');
 
-			starttime.value	='00:00';
-			endtime.value	= '23:59';
+			startTime.value	='00:00';
+			endTime.value	= '23:59';
 		}else{
-			starttime.classList.remove('hidden');
-			endtime.classList.remove('hidden');
-			enddate.classList.remove('hidden');
+			startTime.classList.remove('hidden');
+			endTime.classList.remove('hidden');
+			endDate.classList.remove('hidden');
 
-			starttime.value	='';
-			endtime.value	= '';
+			startTime.value	='';
+			endTime.value	= '';
 		}
 	}
 
 	if(target.name == 'event[startdate]'){
-		var enddate		= target.closest('.event').querySelector('[name="event[enddate]"]');
+		var endDate		= target.closest('.event').querySelector('[name="event[enddate]"]');
 		var start		= new Date(target.value);
-		var end			= new Date(enddate.value);
+		var end			= new Date(endDate.value);
 
-		if(enddate.value == '' || start>end){
-			enddate.value	= target.value;
+		if(endDate.value == '' || start>end){
+			endDate.value	= target.value;
 		}
 		var firstWeekday	= new Date(start.getFullYear(), start.getMonth(), 1).getDay();
 		var offsetDate		= start.getDate() + firstWeekday - 1;
@@ -636,7 +635,7 @@ async function read_file_contents(attachmentId){
 	var formData	= new FormData();
 	formData.append('attachment_id', attachmentId);
 
-	var response	= await formsubmit.fetchRestApi('frontend_posting/get_attachment_contents', formData);
+	var response	= await FormSubmit.fetchRestApi('frontend_posting/get_attachment_contents', formData);
 
 	if(response){
 		// Get current content

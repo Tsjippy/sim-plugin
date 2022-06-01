@@ -74,18 +74,18 @@ function sendPostNotification($post){
 		$message .=	"\n\n$signalExtraMessage";
 	}
 
-	send_signal_message(
+	sendSignalMessage(
 		$message,
 		"all",
 		$post->ID
 	);
 }
 
-function send_signal_message($message, $recipient, $post_id=""){
+function sendSignalMessage($message, $recipient, $post_id=""){
 	//remove https from site urldecode
-	$url_without_https = str_replace('https://', '', SITEURL);
+	$urlWithoutHttps = str_replace('https://', '', SITEURL);
 	
-	$message = str_replace(SITEURL,$url_without_https,$message);
+	$message = str_replace(SITEURL, $urlWithoutHttps, $message);
 	
 	//Check if recipient is an existing userid
 	if(is_numeric($recipient) and get_userdata($recipient)){
@@ -97,7 +97,7 @@ function send_signal_message($message, $recipient, $post_id=""){
 			$recipient = array_values($phonenumbers)[0];
 		}elseif(is_array($phonenumbers) and count($phonenumbers) > 1){
 			foreach($phonenumbers as $phonenumber){
-				send_signal_message($message,$phonenumber,$post_id);
+				sendSignalMessage($message, $phonenumber, $post_id);
 			}
 			return;
 		}else{
@@ -126,12 +126,12 @@ function send_signal_message($message, $recipient, $post_id=""){
 
 //Function to add a checkbox for signal messages to a post
 add_action( 'add_meta_boxes',  function() {
-	add_meta_box( 'send-signal-message', 'Signal message', __NAMESPACE__.'\send_signal_message_meta_box', ['page','post','event'], 'side', 'high' );
-	add_meta_box( 'send-signal-message-bottom', 'Signal message', __NAMESPACE__.'\send_signal_message_meta_box', ['page','post','event'], 'normal', 'high' );
+	add_meta_box( 'send-signal-message', 'Signal message', __NAMESPACE__.'\sendSignalMessageMetaBox', ['page','post','event'], 'side', 'high' );
+	add_meta_box( 'send-signal-message-bottom', 'Signal message', __NAMESPACE__.'\sendSignalMessageMetaBox', ['page','post','event'], 'normal', 'high' );
 });
 
 //Display the send signal meta box
-function send_signal_message_meta_box() {
+function sendSignalMessageMetaBox() {
 	global $post;
 
 	// Add an nonce field so we can check for it later.

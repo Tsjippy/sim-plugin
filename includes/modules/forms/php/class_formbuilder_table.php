@@ -10,20 +10,23 @@ class FormTable extends Formbuilder{
 	function __construct(){
 		global $wpdb;
 		
-		$this->shortcodetable			= $wpdb->prefix . 'sim_form_shortcodes';
+		$this->shortcodeTable			= $wpdb->prefix . 'sim_form_shortcodes';
 		$this->enriched					= false;
 		
 		// call parent constructor
 		parent::__construct();
 		
 		if(is_user_logged_in()){
-			$this->user_roles[]	= 'everyone';//used to indicate view rights on permissions
+			$this->userRoles[]	= 'everyone';//used to indicate view rights on permissions
 			
-			$this->excel_content= [];
+			$this->excelContent= [];
 		}
 	}
 
-	function create_db_shortcode_table(){
+	/**
+	 * Creates the db table to hold the short codes and their settings
+	 */
+	function createDbShortcodeTable(){
 		if ( !function_exists( 'maybe_create_table' ) ) { 
 			require_once ABSPATH . '/wp-admin/install-helper.php'; 
 		}
@@ -31,20 +34,28 @@ class FormTable extends Formbuilder{
 		//create table for this form
 		global $wpdb;
 		
-		$charset_collate = $wpdb->get_charset_collate();
+		$charsetCollate = $wpdb->get_charset_collate();
 
-		$sql = "CREATE TABLE {$this->shortcodetable} (
+		$sql = "CREATE TABLE {$this->shortcodeTable} (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			table_settings text NOT NULL,
 			column_settings text NOT NULL,
 			form_id int NOT NULL,
 			PRIMARY KEY  (id)
-		) $charset_collate;";
+		) $charsetCollate;";
 
-		maybe_create_table($this->shortcodetable, $sql );
+		maybe_create_table($this->shortcodeTable, $sql );
 	}
 	
-	function transform_inputdata($string, $field_name){
+	/**
+	 * Transforms a given string to hyperlinks or other formats
+	 * 
+	 * @param 	string	$string		the string to convert
+	 * @param	string	$fieldname	The name of the value the string value belongs to
+	 * 
+	 * @return	string				The transformed string
+	 */
+	function transformInputData($string, $fieldName){
 		if(empty($string)) return $string;
 		
 		//convert arrays to strings
@@ -53,7 +64,7 @@ class FormTable extends Formbuilder{
 
 			foreach($string as $key=>$sub){
 				if($output != '') $output .= "\n";
-				$output .= $this->transform_inputdata($sub,$field_name);
+				$output .= $this->transformInputData($sub, $fieldName);
 			}
 			return $output;
 		}else{
@@ -82,52 +93,55 @@ class FormTable extends Formbuilder{
 				$output	= "<a href='https://signal.me/#p/$string'>$string</a>";
 			}
 		
-			$output = apply_filters('sim_transform_formtable_data',$output,$field_name);
+			$output = apply_filters('sim_transform_formtable_data', $output, $fieldName);
 			return $output;
 		}
 	}
 	
-	function enrich_column_settings(){
+	/**
+	 * Updates column settings with missing columns
+	 */
+	function enrichColumnSettings(){
 		if($this->enriched == false){
 			$this->enriched	= true;
 			
 			//If we should split an entry, define a regex patterns
-			if($this->form_settings['split'] != ''){
+			if($this->formSettings['split'] != ''){
 				//find the keyword followed by one or more numbers between [] followed by a  keyword between []
-				$pattern			= '/'.$this->form_settings['split']."\[[0-9]+\]\[([^\]]+)\]/i";
+				$pattern			= '/'.$this->formSettings['split']."\[[0-9]+\]\[([^\]]+)\]/i";
 				$processed			= [];
 			}
 			
 			//loop over all elements to build a new array
-			$element_ids	= [];
+			$elementIds	= [];
 			
-			foreach ($this->form_elements as $element){
-				$element_ids[]	= $element->id;
+			foreach ($this->formElements as $element){
+				$elementIds[]	= $element->id;
 				//check if the element is in the array, if not add it
-				if(!isset($this->column_settings[$element->id])){
+				if(!isset($this->columnSettings[$element->id])){
 					//do not show non-input elements
-					if(in_array($element->type,$this->non_inputs)) continue;
+					if(in_array($element->type, $this->nonInputs)) continue;
 					
 					//Do not show elements that will be splitted
 					//Execute the regex
-					if($this->form_settings['split'] != '' and preg_match($pattern, $element->name,$matches)){
+					if($this->formSettings['split'] != '' and preg_match($pattern, $element->name, $matches)){
 						//We found a keyword, check if we already got the same one
-						if(!in_array($matches[1],$processed)){
+						if(!in_array($matches[1], $processed)){
 							//Add to the processed array
 							$processed[]	= $matches[1];
 							
 							//replace the name
-							$name		= $this->form_settings['split'].'[%index%]['.$matches[1].']';
+							$name		= $this->formSettings['split'].'[%index%]['.$matches[1].']';
 							
 							//check if it was already added a previous time
-							$already_in_settings = false;
-							foreach($this->column_settings as $el){
+							$alreadyInSettings = false;
+							foreach($this->columnSettings as $el){
 								if($el['name'] == $name){
-									$already_in_settings = true;
+									$alreadyInSettings = true;
 									break;
 								}
 							}
-							if($already_in_settings) continue;
+							if($alreadyInSettings) continue;
 						}else{
 							//do not show this element
 							continue;
@@ -136,7 +150,7 @@ class FormTable extends Formbuilder{
 						$name			= $element->name;
 					}
 				
-					$this->column_settings[$element->id] = [
+					$this->columnSettings[$element->id] = [
 						'name'				=> $name,
 						'nice_name'			=> $name,
 						'show'				=> '',
@@ -144,32 +158,32 @@ class FormTable extends Formbuilder{
 						'view_right_roles'	=> []
 					];
 				}else{
-					if(!isset($this->column_settings[$element->id]['edit_right_roles'])){
-						$this->column_settings[$element->id]['edit_right_roles']	= [];
+					if(!isset($this->columnSettings[$element->id]['edit_right_roles'])){
+						$this->columnSettings[$element->id]['edit_right_roles']	= [];
 					}
-					if(!isset($this->column_settings[$element->id]['view_right_roles'])){
-						$this->column_settings[$element->id]['view_right_roles']	= [];
+					if(!isset($this->columnSettings[$element->id]['view_right_roles'])){
+						$this->columnSettings[$element->id]['view_right_roles']	= [];
 					}
 				}
 			}
 			
 			//check for removed elements
-			foreach(array_diff(array_keys($this->column_settings),$element_ids) as $condition){
+			foreach(array_diff(array_keys($this->columnSettings), $elementIds) as $condition){
 				//only unset elements
 				if(is_numeric($condition) and $condition > -1){
-					unset($this->column_settings[$condition]);
+					unset($this->columnSettings[$condition]);
 				}
 			}
 
 			//Add a row for each table action as well
 			$actions	= [];
-			foreach($this->form_settings['actions'] as $action){
+			foreach($this->formSettings['actions'] as $action){
 				$actions[$action]	= '';
 			}
-			$actions = apply_filters('form_actions',$actions);
+			$actions = apply_filters('sim_form_actions',$actions);
 			foreach($actions as $action=>$html){
-				if(!is_array($this->column_settings[$action])){
-					$this->column_settings[$action] = [
+				if(!is_array($this->columnSettings[$action])){
+					$this->columnSettings[$action] = [
 						'name'				=> $action,
 						'nice_name'			=> $action,
 						'show'				=> '',
@@ -180,8 +194,8 @@ class FormTable extends Formbuilder{
 			}
 			
 			//also add the id
-			if(!is_array($this->column_settings[-1])){
-				$this->column_settings[-1] = [
+			if(!is_array($this->columnSettings[-1])){
+				$this->columnSettings[-1] = [
 					'name'				=> 'id',
 					'nice_name'			=> 'ID',
 					'show'				=> '',
@@ -191,46 +205,54 @@ class FormTable extends Formbuilder{
 			}
 			
 			//put hidden columns on the end
-			foreach($this->column_settings as $key=>$setting){
+			foreach($this->columnSettings as $key=>$setting){
 				if($setting['show'] == 'hide'){
 					//remove the element
-					unset($this->column_settings[$key]);
+					unset($this->columnSettings[$key]);
 					//add it again, at the end of the array
-					$this->column_settings[$key] = $setting;
+					$this->columnSettings[$key] = $setting;
 				}
 			}
 		}
 	}
 	
-	function write_table_row($field_values, $index=-1, $is_archived=false){
-		$field_main_name	= $this->form_settings['split'];
+	/**
+	 * Writes a row of the table to the screen
+	 * 
+	 * @param	array	$fieldValues	Array containing all the values of a form submission
+	 * @param	int		$index			The index of the row. Default -1 for none
+	 * @param	bool	$isArchived		Whether the current submission is archived. Default false.
+	 */
+	function writeTableRow($fieldValues, $index=-1, $isArchived=false){
+		$fieldMainName	= $this->formSettings['split'];
 		//Loop over the fields in order of the defined columns
-		$rowcontents	= '';
+		$rowContents	= '';
+		$excelRow		= [];
 
-		if($field_values['userid'] == $this->user->ID or $field_values['userid'] == $this->user->partner_id){
-			$own_entry	= true;
+		if($fieldValues['userid'] == $this->user->ID or $fieldValues['userid'] == $this->user->partnerId){
+			$ownEntry	= true;
 		}else{
-			$own_entry	= false;
+			$ownEntry	= false;
 		}
 
-		foreach($this->column_settings as $id=>$column_setting){
-			$field_value	= '';
+		foreach($this->columnSettings as $id=>$columnSetting){
+			$fieldValue	= '';
 			//If the column is hidden, do not show this cell
-			if($column_setting['show'] == 'hide' or !is_numeric($id)) continue;
+			if($columnSetting['show'] == 'hide' or !is_numeric($id)) continue;
 			
 			//if we lack view permission, do not show this cell
 			if(
-				(!$own_entry or(																		//not our own entry
-					$own_entry and																		//or it is our own
-					!in_array('own',(array)$column_setting['view_right_roles'])							//but we are not allowed to see it
+				(!$ownEntry or(																		//not our own entry
+					$ownEntry and																		//or it is our own
+					!in_array('own', (array)$columnSetting['view_right_roles'])							//but we are not allowed to see it
 				))	and											
-				!$this->table_edit_permissions and														//no permission to edit the table and
-				!empty($column_setting['view_right_roles']) and 										// there are view right permissions defined
-				array_intersect($this->user_roles, (array)$column_setting['view_right_roles']) == false	// and we do not have the view right role
+				!$this->tableEditPermissions and														//no permission to edit the table and
+				!empty($columnSetting['view_right_roles']) and 										// there are view right permissions defined
+				array_intersect($this->userRoles, (array)$columnSetting['view_right_roles']) == false	// and we do not have the view right role
 			){
 				//later on there will be a row with data in this column
-				if($this->owndata and in_array('own',(array)$column_setting['view_right_roles'])){
-					$field_value = 'X';
+				if($this->ownData and in_array('own',(array)$columnSetting['view_right_roles'])){
+					$fieldValue = 'X';
 				}else{
 					continue;
 				}
@@ -238,67 +260,67 @@ class FormTable extends Formbuilder{
 			
 			//if this row has no value in this column remove the row
 			if(
-				!empty($this->table_settings['hiderow']) and												//There is a column defined
-				$column_setting['name'] == $this->table_settings['hiderow'] and 							//We are currently checking a cell in that column
-				$field_values[$this->table_settings['hiderow']] == '' and 									//The cell has no value
-				array_intersect($this->user_roles, (array)$column_setting['edit_right_roles']) == false and	//And we have no right to edit this specific column
-				!$this->table_edit_permissions																//and we have no right to edit all table data
+				!empty($this->tableSettings['hiderow']) and												//There is a column defined
+				$columnSetting['name'] == $this->tableSettings['hiderow'] and 							//We are currently checking a cell in that column
+				$fieldValues[$this->tableSettings['hiderow']] == '' and 									//The cell has no value
+				array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles']) == false and	//And we have no right to edit this specific column
+				!$this->tableEditPermissions																//and we have no right to edit all table data
 			){
 				return;
 			}
 
 			if(
-				in_array('own',(array)$column_setting['edit_right_roles']) and
-				$own_entry or
-				array_intersect($this->user_roles, (array)$column_setting['edit_right_roles']) != false or
-				$this->table_edit_permissions
+				in_array('own',(array)$columnSetting['edit_right_roles']) and
+				$ownEntry or
+				array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles']) != false or
+				$this->tableEditPermissions
 			){
-				$element_edit_rights = true;
+				$elementEditRights = true;
 			}else{
-				$element_edit_rights = false;
+				$elementEditRights = false;
 			}
 					
 			/* 
 					Write the content to the cell, convert to something if needed 
 			*/
-			$fieldname = str_replace('[]', '', $column_setting['name']);
+			$fieldName = str_replace('[]', '', $columnSetting['name']);
 			
 			//add field value if we are allowed to see it
-			if($field_value != 'X'){
+			if($fieldValue != 'X'){
 				//If we are dealing with an indexed field
-				$pattern = "/$field_main_name\[%index%\]\[([^\]]*)\]/i";
-				if(preg_match($pattern, $fieldname,$matches)){
-					$field_sub_name		= $matches[1];
-					$field_value		= $field_values[$field_main_name][$index][$field_sub_name];
+				$pattern = "/$fieldMainName\[%index%\]\[([^\]]*)\]/i";
+				if(preg_match($pattern, $fieldName,$matches)){
+					$fieldSubName		= $matches[1];
+					$fieldValue			= $fieldValues[$fieldMainName][$index][$fieldSubName];
 				
-					$fieldname			= str_replace('%index%',$index,$fieldname);
+					$fieldName			= str_replace('%index%', $index, $fieldName);
 				
-					$sub_id = "data-subid='$index'";
+					$subId = "data-subid='$index'";
 				}else{
 					//Get the field value from the array
-					$field_value	= $field_values[$fieldname];
+					$fieldValue	= $fieldValues[$fieldName];
 					
-					$sub_id = "";
+					$subId 		= "";
 				}
 
-				if($field_value == null)	$field_value = '';
+				if($fieldValue == null)	$fieldValue = '';
 				
 				//transform if needed
-				$org_field_value	= $field_value;
-				$field_value = $this->transform_inputdata($field_value,$fieldname);
+				$orgFieldValue	= $fieldValue;
+				$fieldValue = $this->transformInputData($fieldValue, $fieldName);
 				
 				//show original email in excel
-				if(strpos($field_value,'@') !== false){
-					$excelrow[]		= $org_field_value;
+				if(strpos($fieldValue,'@') !== false){
+					$excelRow[]		= $orgFieldValue;
 				}else{
-					$excelrow[]		= wp_strip_all_tags($field_value);
+					$excelRow[]		= wp_strip_all_tags($fieldValue);
 				}
 
 				//Display an X if there is nothing to show
-				if (empty($field_value))	$field_value = "X";
+				if (empty($fieldValue))	$fieldValue = "X";
 				
 				//Limit url cell width, for strings with a visible length of more then 30 characters
-				if(strlen(strip_tags($field_value))>30 and strpos($field_value, 'https://') === false){
+				if(strlen(strip_tags($fieldValue))>30 and strpos($fieldValue, 'https://') === false){
 					$style = 'style="min-width: 300px;white-space: pre-wrap;word-wrap: break-word;"';
 				}else{
 					$style = '';
@@ -307,62 +329,62 @@ class FormTable extends Formbuilder{
 
 			//Add classes to the cell
 			$class = '';
-			if($fieldname == "displayname") $class = 'sticky';
+			if($fieldName == "displayname") $class = 'sticky';
 
-			if(!empty($this->hidden_columns[$column_setting['name']])){
+			if(!empty($this->hiddenColumns[$columnSetting['name']])){
 				$class	.= ' hidden';
 			}
 			
 			//if the user has one of the roles diffined for this element
-			if($element_edit_rights and $fieldname != 'id'){
+			if($elementEditRights and $fieldName != 'id'){
 				$class	.= ' edit_forms_table';
-				$class	= " class='$class' data-id='$fieldname'";
+				$class	= " class='$class' data-id='$fieldName'";
 			}elseif($class != ''){
 				$class = " class='$class'";
 			}
 			
 			//Convert underscores to spaces, but not in urls
-			if(strpos($field_value,'href=') === false){
-				$field_value	= str_replace('_',' ',$field_value);
+			if(strpos($fieldValue, 'href=') === false){
+				$fieldValue	= str_replace('_',' ',$fieldValue);
 			}
 
-			$oldValue		= json_encode($org_field_value);
-			$rowcontents .= "<td $class $style data-oldvalue='$oldValue' $sub_id>$field_value</td>";
+			$oldValue		= json_encode($orgFieldValue);
+			$rowContents .= "<td $class $style data-oldvalue='$oldValue' $subId>$fieldValue</td>";
 		}
 		
-		$this->no_records = false;
+		$this->noRecords = false;
 		
 		//If this row should be written and it is the first cell then write 
 		if($index > -1){
-			$sub_id = "data-subid='$index'";
+			$subId = "data-subid='$index'";
 		}else{
-			$sub_id = "";
+			$subId = "";
 		}
-		echo "<tr class='table-row' data-id='{$field_values['id']}' $sub_id>";
+		echo "<tr class='table-row' data-id='{$fieldValues['id']}' $subId>";
 		
-		echo $rowcontents;
+		echo $rowContents;
 		
-		$this->excel_content[] = $excelrow;
+		$this->excelContent[] = $excelRow;
 
 		//if there are actions
-		if($this->form_settings['actions'] != ""){
+		if($this->formSettings['actions'] != ""){
 			//loop over all the actions
-			$buttons_html	= [];
+			$buttonsHtml	= [];
 			$buttons		= '';
-			foreach($this->form_settings['actions'] as $action){
-				if($action == 'archive' and $this->show_archived == 'true' and $is_archived){
+			foreach($this->formSettings['actions'] as $action){
+				if($action == 'archive' and $this->showArchived == 'true' and $isArchived){
 					$action = 'unarchive';
 				}
-				$buttons_html[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
+				$buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
 			}
-			$buttons_html = apply_filters('form_actions',$buttons_html,$field_values,$index);
+			$buttonsHtml = apply_filters('sim_form_actions', $buttonsHtml, $fieldValues, $index);
 			
 			//we have te html now, check for which one we have permission
-			foreach($buttons_html as $action=>$button){
+			foreach($buttonsHtml as $action=>$button){
 				if(
-					$this->table_edit_permissions or 																	//if we are allowed to do all actions
-					$field_values['userid'] == $this->user->ID or 														//or this is our own entry
-					array_intersect($this->user_roles, (array)$this->column_settings[$action]['edit_right_roles']) != false	//or we have permission for this specific button
+					$this->tableEditPermissions or 																			//if we are allowed to do all actions
+					$fieldValues['userid'] == $this->user->ID or 															//or this is our own entry
+					array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles']) != false	//or we have permission for this specific button
 				){
 					$buttons .= $button;
 				}
@@ -372,34 +394,40 @@ class FormTable extends Formbuilder{
 		echo '</tr>';
 	}
 	
-	function loadshortcodedata(){
+	/**
+	 * Get shortcode settings from db
+	 */
+	function loadShortcodeData(){
 		global $wpdb;
 		
-		$query						= "SELECT * FROM {$this->shortcodetable} WHERE id= '{$this->shortcode_id}'";
+		$query						= "SELECT * FROM {$this->shortcodeTable} WHERE id= '{$this->shortcodeId}'";
 		
-		$this->shortcodedata 		= $wpdb->get_results($query)[0];
+		$this->shortcodeData 		= $wpdb->get_results($query)[0];
 		
-		$this->table_settings		= unserialize($this->shortcodedata->table_settings);
-		$this->column_settings		= unserialize($this->shortcodedata->column_settings);
+		$this->tableSettings		= unserialize($this->shortcodeData->table_settings);
+		$this->columnSettings		= unserialize($this->shortcodeData->column_settings);
 	}
 
-	function clean_export_content(){
-		$hidden_columns		= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formdata->id, true);
+	/**
+	 * Clean excel Content from currenlty hidden columns
+	 */
+	function cleanExportContent(){
+		$hiddenColumns		= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 
-		$exclude_indexes	= [];
+		$excludeIndexes	= [];
 
-		$header				= $this->excel_content[0];
+		$header				= $this->excelContent[0];
 
-		foreach($this->column_settings as $setting){
+		foreach($this->columnSettings as $setting){
 			// If the name is found in the hidden columns, add the header index to the exclusion array
-			if(!empty($hidden_columns[$setting['name']])){
-				$exclude_indexes[]	= array_search($setting['nice_name'], $header);
+			if(!empty($hiddenColumns[$setting['name']])){
+				$excludeIndexes[]	= array_search($setting['nice_name'], $header);
 			}
 		}
 
 		//loop over the content and remove all needed
-		foreach($this->excel_content as &$row){
-			foreach($exclude_indexes as $i){
+		foreach($this->excelContent as &$row){
+			foreach($excludeIndexes as $i){
 				unset($row[$i]);
 			}
 
@@ -407,20 +435,20 @@ class FormTable extends Formbuilder{
 		}
 
 		// There is a custom sort column defined
-		if(is_numeric($this->table_settings['default_sort'])){
-			$sortElementId	= $this->table_settings['default_sort'];
-			$sortElement	= $this->getElementById($sortElementId);
-			$sortElementType= $sortElement->type;
-			$sortColumnName	= $this->column_settings[$sortElementId]['nice_name'];
-			$sortCol		= array_search($sortColumnName, $this->excel_content[0]);
+		if(is_numeric($this->tableSettings['default_sort'])){
+			$sortElementId		= $this->tableSettings['default_sort'];
+			$sortElement		= $this->getElementById($sortElementId);
+			$sortElementType	= $sortElement->type;
+			$sortColumnName		= $this->columnSettings[$sortElementId]['nice_name'];
+			$sortCol			= array_search($sortColumnName, $this->excelContent[0]);
 
 			// Sort
-			$header				= $this->excel_content[0];
+			$header				= $this->excelContent[0];
 			//remove header, as it should not be sorted
-			unset($this->excel_content[0]);
+			unset($this->excelContent[0]);
 	
 			//Sort the array
-			usort($this->excel_content, function($a, $b) use ($sortCol, $sortElementType){
+			usort($this->excelContent, function($a, $b) use ($sortCol, $sortElementType){
 				if($sortElementType == 'date'){
 					return strtotime($a[$sortCol]) <=> strtotime($b[$sortCol]);
 				}
@@ -428,56 +456,62 @@ class FormTable extends Formbuilder{
 			});
 	
 			//Add header again
-			$this->excel_content	= array_merge([$header], $this->excel_content);
+			$this->excelContent	= array_merge([$header], $this->excelContent);
 		}
 	}
 	
-	function export_excel($filename="", $download=true){
-		if($filename == "") $filename = get_the_title($this->form_id).".xlsx";
+	/**
+	 * Export the current table to excel
+	 * 
+	 * @param	string	$fileName	the name of the downloaded file. 	Default the formname
+	 * @param	bool	$download	Whether to download the excel or print it to screen
+	 */
+	function exportExcel($fileName="", $download=true){
+		if($fileName == "") $fileName = get_the_title($this->form_id).".xlsx";
 
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
 
 		//Write the column headers
-		$col = 0;
-		$row = 1;
-		$rowindex	= 1;
+		$col 		= 0;
+		$row		= 1;
+		$rowIndex	= 1;
 
-		$this->clean_export_content();
+		$this->cleanExportContent();
 
 		//loop over the rows
-		foreach($this->excel_content as $row){
+		foreach($this->excelContent as $row){
 			//Start column
-			$col=1;
+			$col	= 1;
 			//loop over the cells
 			foreach ($row as $cell) {
 				if(is_array($cell)){
 					SIM\cleanUpNestedArray($cell);
-					$cell	= implode(',',$cell);
+					$cell	= implode(',', $cell);
 				} 
 				/* 
 						Write the content to the cell
 				*/
-				$sheet->setCellValueByColumnAndRow($col, $rowindex, $cell);
+				$sheet->setCellValueByColumnAndRow($col, $rowIndex, $cell);
 
 				$col++;
 			}
 			//Consider new row for each entry here
-			$rowindex++;
+			$rowIndex++;
 		}
 		
 		//Create Styles Array
-		$styleArrayFirstRow = ['font' => ['bold' => true,]];
+		$styleArrayFirstRow		= ['font' => ['bold' => true,]];
 		//Retrieve Highest Column (e.g AE)
-		$highestColumn = $sheet->getHighestColumn();
+		$highestColumn			= $sheet->getHighestColumn();
 		//set first row bold
 		$sheet->getStyle('A1:' . $highestColumn . '1' )->applyFromArray($styleArrayFirstRow);
 		
-		$writer = new Xlsx($spreadsheet);
+		$writer					= new Xlsx($spreadsheet);
 		//Download excel file here
-		if($download == true){
+		if($download){
 			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-			header("Content-Disposition: attachment; filename=$filename");
+			header("Content-Disposition: attachment; filename=$fileName");
 			for ($i = 0; $i < ob_get_level(); $i++) {
 				ob_get_clean();
 			}
@@ -488,109 +522,109 @@ class FormTable extends Formbuilder{
 			die();
 		}else{
 			//Store xlsx file on server and return the path
-			$file = get_temp_dir().$filename;
+			$file = get_temp_dir().$fileName;
 			$writer->save($file);
 			return $file;
 		}
 	}
 
-	function export_pdf($filename=""){
+	/**
+	 * Export the current table to PDF
+	 * 
+	 * @param	string	$fileName	the name of the downloaded file. 	Default the formname
+	 */
+	function exportPdf($filename=""){
 		$pdf = new SIM\PDF\PDF_HTML();
 		$pdf->SetFont('Arial','B',15);
 
-		$this->clean_export_content();
+		$this->cleanExportContent();
 				
 		//Determine the column widths
-		$col_count	= count($this->excel_content[0]);
-		$col_widths	= [];
+		$colCount	= count($this->excelContent[0]);
+		$colWidths	= [];
 		
-		$header		= array_map('ucfirst', $this->excel_content[0]);
+		$header		= array_map('ucfirst', $this->excelContent[0]);
 
-		$title		= $this->form_settings['formname'].' export';
+		$title		= $this->formSettings['formname'].' export';
 		if(empty($title)) $title = 'Form export';
 
 		//loop over the data to check all cells for their length
-		foreach($this->excel_content as $index=>$row_data){
+		foreach($this->excelContent as $index=>$rowData){
 			//loop over the columns to check how wide they need to be
-			for ($x = 0; $x <= $col_count-1; $x++) {
+			for ($x = 0; $x <= $colCount-1; $x++) {
 				//Add the length to the array
-				if(is_array($row_data[$x])) $row_data[$x] = implode("\n", $row_data[$x]);
+				if(is_array($rowData[$x])) $rowData[$x] = implode("\n", $rowData[$x]);
 
-				//convert to hyperlink if needed
-			/* 				if(strpos($row_data[$x],SITEURL) !== false){
-					$this->excel_content[$index][$x]	= "<a href='{$row_data[$x]}'>Link</a>";
-				} */
-
-				$col_widths[$x][] = $pdf->GetStringWidth($row_data[$x]);
+				$colWidths[$x][] = $pdf->GetStringWidth($rowData[$x]);
 			}
 		}
 
 		//find the biggest cell per column
-		for ($x = 0; $x <= $col_count-1; $x++) {
-			$col_widths[$x] = max($col_widths[$x]);
+		for ($x = 0; $x <= $colCount-1; $x++) {
+			$colWidths[$x] = max($colWidths[$x]);
 		}
 
-		$small_coll_width	= 10;
-		$medium_coll_width	= 30;
+		$smallCollWidth		= 10;
+		$mediumCollWidth	= 30;
 
 		//count the columns smaller than 10
-		$small_coll_count = count(array_filter(
-			$col_widths,
-			function ($value) use($small_coll_width){
-				return ($value <= $small_coll_width);
+		$smallCollCount = count(array_filter(
+			$colWidths,
+			function ($value) use($smallCollWidth){
+				return ($value <= $smallCollWidth);
 			}
 		));
 
 		//page with minus the total width of all small collums
-		$remaining_width	= $pdf->GetPageWidth() - $small_coll_count*$small_coll_width;
+		$remainingWidth	= $pdf->GetPageWidth() - $smallCollCount * $smallCollWidth;
 
 		//width needed by all non-small columns
-		$required_width = array_sum(array_filter(
-			$col_widths,
-			function ($value) use($small_coll_width){
-				return ($value > $small_coll_width);
+		$requiredWidth = array_sum(array_filter(
+			$colWidths,
+			function ($value) use($smallCollWidth){
+				return ($value > $smallCollWidth);
 			}
 		));
 
 		//columns with a width smaller than 30
-		$inter_colls	= array_filter(
-			$col_widths,
-			function ($value) use($small_coll_width, $medium_coll_width){
-				return ($value > $small_coll_width and $value <= $medium_coll_width);
+		$interColls	= array_filter(
+			$colWidths,
+			function ($value) use($smallCollWidth, $mediumCollWidth){
+				return ($value > $smallCollWidth and $value <= $mediumCollWidth);
 			}
 		);
 
 		//count the columns with a proportional medium width of 30 or smaller but an actual width bigger than 30
-		$medium_coll_count = count(array_filter(
-			$col_widths,
-			function ($value) use($remaining_width,$required_width,$medium_coll_width){
-				$prop_width	= $remaining_width*($value/$required_width);
-				return ($value > $medium_coll_width and $prop_width <= $medium_coll_width);
+		$mediumCollCount = count(array_filter(
+			$colWidths,
+			function ($value) use($remainingWidth, $requiredWidth, $mediumCollWidth){
+				$propWidth	= $remainingWidth*($value/$requiredWidth);
+				return ($value > $mediumCollWidth and $propWidth <= $mediumCollWidth);
 			}
 		));
 
-		$big_colls = array_filter(
-			$col_widths,
-			function ($value) use($remaining_width,$required_width,$medium_coll_width){
-				$prop_width	= $remaining_width*($value/$required_width);
-				return ($prop_width > $medium_coll_width);
+		$bigColls = array_filter(
+			$colWidths,
+			function ($value) use($remainingWidth, $requiredWidth, $mediumCollWidth){
+				$propWidth	= $remainingWidth*($value/$requiredWidth);
+				return ($propWidth > $mediumCollWidth);
 			}
 		);
 
 		//Determine the page size
-		$min_width	= $small_coll_count*$small_coll_width + array_sum($inter_colls) + $medium_coll_count*$medium_coll_width + array_sum($big_colls)/6;
+		$minWidth	= $smallCollCount * $smallCollWidth + array_sum($interColls) + $mediumCollCount * $mediumCollWidth + array_sum($bigColls)/6;
 
-		if($min_width > 180){
-			if($min_width < 297){
+		if($minWidth > 180){
+			if($minWidth < 297){
 				//Landscape A4 pdf
 				$pdf = new SIM\PDF\PDF_HTML('L');
-			}elseif($min_width < 420){
+			}elseif($minWidth < 420){
 				//Landscape pdf A3 size
 				$pdf = new SIM\PDF\PDF_HTML('L','mm','A3');
-			}elseif($min_width < 594){
+			}elseif($minWidth < 594){
 				//Landscape pdf A2 size
 				$pdf = new SIM\PDF\PDF_HTML('L','mm',array(594,420));
-			}elseif($min_width < 841){
+			}elseif($minWidth < 841){
 				//Landscape pdf A1 size
 				$pdf = new SIM\PDF\PDF_HTML('L','mm',array(841,594));
 			}else{
@@ -602,64 +636,67 @@ class FormTable extends Formbuilder{
 			$pdf->SetFont('Arial','B',15);
 		}
 
-		$available_width_for_big_columns	= $pdf->GetPageWidth() -20 - $small_coll_count*$small_coll_width - array_sum($inter_colls) - $medium_coll_count*$medium_coll_width;
-		$big_coll_width						= $available_width_for_big_columns / count($big_colls);
+		$availableWidthForBigColumns	= $pdf->GetPageWidth() -20 - $smallCollCount*$smallCollWidth - array_sum($interColls) - $mediumCollCount * $mediumCollWidth;
+		$bigCollWidth					= $availableWidthForBigColumns / count($bigColls);
 
 		//now loop over all columns and set their maximum lengths
-		for ($x = 0; $x <= $col_count-1; $x++) {
-			if($col_widths[$x] < 10){
-				$col_widths[$x]	= 10;
+		for ($x = 0; $x <= $colCount-1; $x++) {
+			if($colWidths[$x] < 10){
+				$colWidths[$x]	= 10;
 			//min width for medium wide columns
-			}elseif($col_widths[$x] > $medium_coll_width and $remaining_width*($col_widths[$x]/$required_width) <= $medium_coll_width){
-				$col_widths[$x]	= min($col_widths[$x],$medium_coll_width);
-			}elseif($col_widths[$x] > 30){
+			}elseif($colWidths[$x] > $mediumCollWidth and $remainingWidth*($colWidths[$x]/$requiredWidth) <= $mediumCollWidth){
+				$colWidths[$x]	= min($colWidths[$x], $mediumCollWidth);
+			}elseif($colWidths[$x] > 30){
 				//equal spread for big columns
-				$col_widths[$x]	= min($big_coll_width,$col_widths[$x]);
+				$colWidths[$x]	= min($bigCollWidth, $colWidths[$x]);
 			}
 		}
 		
 		$pdf->frontpage($title);
 		
 		//Write the table headers
-		$pdf->table_headers($header, $col_widths);
+		$pdf->tableHeaders($header, $colWidths);
 		
 		// Data
 		$fill = false;
 		
-		unset($this->excel_content[0]);
-		foreach($this->excel_content as $row_data){
-			$pdf->WriteTableRow($col_widths, $row_data, $fill, $header);
+		unset($this->excelContent[0]);
+		foreach($this->excelContent as $rowData){
+			$pdf->writeTableRow($colWidths, $rowData, $fill, $header);
 			
 			$fill = !$fill;
 		}
 		
 		// Closing line which is the sum off all the column widths
-		$pdf->Cell(array_sum($col_widths),0,'','T');
+		$pdf->Cell(array_sum($colWidths),0,'','T');
 
-		$pdf->printpdf();
+		$pdf->printPdf();
 
 		exit;
 	}
 
-	function add_shortcode_settings_modal(){
+	/**
+	 * Print the modal to change table settings to the screen
+	 */
+	function addShortcodeSettingsModal(){
 		global $wp_roles;
 		
 		//Get all available roles
-		$user_roles = $wp_roles->role_names;
+		$userRoles 					= $wp_roles->role_names;
 		
-		$view_roles					= $user_roles;
-		$view_roles['everyone']		= 'Everyone';
-		$view_roles['own']	 		= 'Own entries';
+		$viewRoles					= $userRoles;
+		$viewRoles['everyone']		= 'Everyone';
+		$viewRoles['own']	 		= 'Own entries';
 		
-		$edit_roles					= $user_roles;
-		$edit_roles['own']	 		= 'Own entries';
+		$editRoles					= $userRoles;
+		$editRoles['own']	 		= 'Own entries';
 		
 		//Sort the roles
-		asort($view_roles);
-		asort($edit_roles);
+		asort($viewRoles);
+		asort($editRoles);
 		
 		//Table rights active
-		if(empty($this->table_settings)){
+		if(empty($this->tableSettings)){
 			$active1	= '';
 			$active2	= 'active';
 			$class1		= "hidden";
@@ -672,19 +709,19 @@ class FormTable extends Formbuilder{
 			$class2		= "hidden";
 		}
 		
-		$this->enrich_column_settings();
+		$this->enrichColumnSettings();
 		?>
 		<div class="modal form_shortcode_settings hidden">
 			<!-- Modal content -->
 			<div class="modal-content" style='max-width:90%;'>
 				<span id="modal_close" class="close">&times;</span>
 				
-				<button id="column_settings" class="button tablink <?php echo $active1;?>" data-target="column_settings_<?php echo $this->shortcodedata->id;?>">Column settings</button>
-				<button id="table_settings" class="button tablink <?php echo $active2;?>" data-target="table_rights_<?php echo $this->shortcodedata->id;?>">Table settings</button>
+				<button id="column_settings" class="button tablink <?php echo $active1;?>" data-target="column_settings_<?php echo $this->shortcodeData->id;?>">Column settings</button>
+				<button id="table_settings" class="button tablink <?php echo $active2;?>" data-target="table_rights_<?php echo $this->shortcodeData->id;?>">Table settings</button>
 				
-				<div class="tabcontent <?php echo $class1;?>" id="column_settings_<?php echo $this->shortcodedata->id;?>">
+				<div class="tabcontent <?php echo $class1;?>" id="column_settings_<?php echo $this->shortcodeData->id;?>">
 					<form class="sortable_column_settings_rows">
-						<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodedata->id;?>'>
+						<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodeData->id;?>'>
 						
 						<div class="column_setting_wrapper" style="display: flex;">
 							<label class="columnheading formfieldbutton">Sort</label>
@@ -695,10 +732,10 @@ class FormTable extends Formbuilder{
 							<label class="columnheading column_settings">Edit permissions</label>
 						</div>
 						<?php
-						foreach ($this->column_settings as $element_index=>$column_setting){
-							$nice_name	= $column_setting['nice_name'];
+						foreach ($this->columnSettings as $elementIndex=>$columnSetting){
+							$nice_name	= $columnSetting['nice_name'];
 							
-							if($column_setting['show'] == 'hide'){
+							if($columnSetting['show'] == 'hide'){
 								$visibility	= 'invisible';
 							}else{
 								$visibility	= 'visible';
@@ -706,26 +743,26 @@ class FormTable extends Formbuilder{
 							$icon			= "<img class='visibilityicon $visibility' src='".PICTURESURL."/$visibility.png'>";
 							
 							?>
-						<div class="column_setting_wrapper" data-id="<?php echo $element_index;?>" style="display: flex;">
-							<input type="hidden" class="visibilitytype" name="column_settings[<?php echo $element_index;?>][show]" 		value="<?php echo $column_setting['show'];?>">
-							<input type="hidden" name="column_settings[<?php echo $element_index;?>][name]"	value="<?php echo $column_setting['name'];?>">
+						<div class="column_setting_wrapper" data-id="<?php echo $elementIndex;?>" style="display: flex;">
+							<input type="hidden" class="visibilitytype" name="column_settings[<?php echo $elementIndex;?>][show]" 		value="<?php echo $columnSetting['show'];?>">
+							<input type="hidden" name="column_settings[<?php echo $elementIndex;?>][name]"	value="<?php echo $columnSetting['name'];?>">
 							<span class="movecontrol formfieldbutton" aria-hidden="true">:::</span>
-							<span class="column_settings"><?php echo $column_setting['name'];?></span>
-							<input type="text" class="column_settings" name="column_settings[<?php echo $element_index;?>][nice_name]" value="<?php echo $nice_name;?>">
+							<span class="column_settings"><?php echo $columnSetting['name'];?></span>
+							<input type="text" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][nice_name]" value="<?php echo $nice_name;?>">
 							<span class="visibilityicon"><?php echo $icon;?></span>
 							<?php
 							//only add view permission for numeric elements others are buttons
-							if(is_numeric($element_index)){
+							if(is_numeric($elementIndex)){
 							?>
-							<select class='column_settings' name='column_settings[<?php echo $element_index;?>][view_right_roles][]' multiple='multiple'>
+							<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][view_right_roles][]' multiple='multiple'>
 							<?php
-							foreach($view_roles as $key=>$role_name){
-								if(in_array($key,(array)$column_setting['view_right_roles'])){
+							foreach($viewRoles as $key=>$roleName){
+								if(in_array($key,(array)$columnSetting['view_right_roles'])){
 									$selected = 'selected';
 								}else{
 									$selected = '';
 								}
-								echo "<option value='$key' $selected>$role_name</option>";
+								echo "<option value='$key' $selected>$roleName</option>";
 							}
 							?>
 							</select>
@@ -737,15 +774,15 @@ class FormTable extends Formbuilder{
 							}
 							?>
 							
-							<select class='column_settings' name='column_settings[<?php echo $element_index;?>][edit_right_roles][]' multiple='multiple'>
+							<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][edit_right_roles][]' multiple='multiple'>
 							<?php
-							foreach($edit_roles as $key=>$role_name){
-								if(in_array($key,(array)$column_setting['edit_right_roles'])){
+							foreach($editRoles as $key=>$roleName){
+								if(in_array($key,(array)$columnSetting['edit_right_roles'])){
 									$selected = 'selected';
 								}else{
 									$selected = '';
 								}
-								echo "<option value='$key' $selected>$role_name</option>";
+								echo "<option value='$key' $selected>$roleName</option>";
 							}
 							?>
 							</select>
@@ -754,31 +791,31 @@ class FormTable extends Formbuilder{
 						}
 						?>
 						<?php
-						echo SIM\add_save_button('submit_column_setting','Save table column settings');
+						echo SIM\addSaveButton('submit_column_setting','Save table column settings');
 						?>
 					</form>
 				</div>
 				
-				<div class="tabcontent <?php echo $class2;?>" id="table_rights_<?php echo $this->shortcodedata->id;?>">
+				<div class="tabcontent <?php echo $class2;?>" id="table_rights_<?php echo $this->shortcodeData->id;?>">
 					<form>
-						<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodedata->id;?>'>
-						<input type='hidden' class='shortcode_settings' name='formid'		value='<?php echo $this->formdata->id;?>'>
+						<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodeData->id;?>'>
+						<input type='hidden' class='shortcode_settings' name='formid'		value='<?php echo $this->formData->id;?>'>
 						
 						<div class="table_rights_wrapper">
 							<label>Select the default column the table is sorted on</label>
 							<select name="table_settings[default_sort]">
 							<?php
-							if($this->table_settings['default_sort'] == ''){
+							if($this->tableSettings['default_sort'] == ''){
 								?><option value='' selected>---</option><?php
 							}else{
 								?><option value=''>---</option><?php
 							}
 							
-							foreach($this->column_settings as $key=>$element){
+							foreach($this->columnSettings as $key=>$element){
 								$name = $element['nice_name'];
 								
 								//Check which option is the selected one
-								if($this->table_settings['default_sort'] != '' and $this->table_settings['default_sort'] == $key){
+								if($this->tableSettings['default_sort'] != '' and $this->tableSettings['default_sort'] == $key){
 									$selected = 'selected';
 								}else{
 									$selected = '';
@@ -796,17 +833,17 @@ class FormTable extends Formbuilder{
 							</label>
 							<select name="table_settings[hiderow]">
 							<?php
-							if($this->table_settings['hiderow'] == ''){
+							if($this->tableSettings['hiderow'] == ''){
 								?><option value='' selected>---</option><?php
 							}else{
 								?><option value=''>---</option><?php
 							}
 							
-							foreach($this->column_settings as $key=>$element){
+							foreach($this->columnSettings as $key=>$element){
 								$name = $element['nice_name'];
 								
 								//Check which option is the selected one
-								if($this->table_settings['hiderow'] == $element['name']){
+								if($this->tableSettings['hiderow'] == $element['name']){
 									$selected = 'selected';
 								}else{
 									$selected = '';
@@ -821,25 +858,25 @@ class FormTable extends Formbuilder{
 							<label>Select a field with multiple answers where you want to create seperate rows for</label>
 							<select name="form_settings[split]">
 							<?php
-							if($this->form_settings['split'] == ''){
+							if($this->formSettings['split'] == ''){
 								?><option value='' selected>---</option><?php
 							}else{
 								?><option value=''>---</option><?php
 							}
 							
-							$found_elements = [];
-							foreach($this->form_elements as $key=>$element){
+							$foundElements = [];
+							foreach($this->formElements as $key=>$element){
 								$pattern = "/([^\[]+)\[[0-9]+\]/i";
 								
 								if(preg_match($pattern, $element->name, $matches)){
 									//Only add if not found before
-									if(!in_array($matches[1],$found_elements)){
-										$found_elements[]	= $matches[1];
-										$value 				= strtolower(str_replace('_',' ',$matches[1]));
+									if(!in_array($matches[1], $foundElements)){
+										$foundElements[]	= $matches[1];
+										$value 				= strtolower(str_replace('_', ' ', $matches[1]));
 										$name				= ucfirst($value);
 										
 										//Check which option is the selected one
-										if($this->form_settings['split'] == $value){
+										if($this->formSettings['split'] == $value){
 											$selected = 'selected';
 										}else{
 											$selected = '';
@@ -858,8 +895,8 @@ class FormTable extends Formbuilder{
 							</label>
 							<br>
 							<select name="table_settings[result_type]">
-								<option value="personal" <?php if($this->table_settings['result_type'] == 'personal') echo 'selected';?>>Only personal</option>
-								<option value="all" <?php if($this->table_settings['result_type'] == 'all') echo 'selected';?>>All the viewer has permission for</option>
+								<option value="personal" <?php if($this->tableSettings['result_type'] == 'personal') echo 'selected';?>>Only personal</option>
+								<option value="all" <?php if($this->tableSettings['result_type'] == 'all') echo 'selected';?>>All the viewer has permission for</option>
 							</select>
 						</div>
 						
@@ -867,7 +904,7 @@ class FormTable extends Formbuilder{
 							<label class="label">
 								Select if you want to view archived results<br>
 								<?php
-								if($this->table_settings['archived'] == 'true'){
+								if($this->tableSettings['archived'] == 'true'){
 									$checked1	= 'checked';
 									$checked2	= '';
 								}else{
@@ -891,7 +928,7 @@ class FormTable extends Formbuilder{
 							<label class="label">
 								Select if you want to auto archive results<br>
 								<?php
-								if($this->form_settings['autoarchive'] == 'true'){
+								if($this->formSettings['autoarchive'] == 'true'){
 									$checked1	= 'checked';
 									$checked2	= '';
 								}else{
@@ -914,17 +951,17 @@ class FormTable extends Formbuilder{
 								Auto archive a (sub) entry when field
 								<select name="form_settings[autoarchivefield]" style="margin-right:10px;">
 								<?php
-								if($this->form_settings['autoarchivefield'] == ''){
+								if($this->formSettings['autoarchivefield'] == ''){
 									?><option value='' selected>---</option><?php
 								}else{
 									?><option value=''>---</option><?php
 								}
 								
-								foreach($this->column_settings as $key=>$element){
+								foreach($this->columnSettings as $key=>$element){
 									$name = $element['nice_name'];
 									
 									//Check which option is the selected one
-									if($this->form_settings['autoarchivefield'] != '' and $this->form_settings['autoarchivefield'] == $key){
+									if($this->formSettings['autoarchivefield'] != '' and $this->formSettings['autoarchivefield'] == $key){
 										$selected = 'selected';
 									}else{
 										$selected = '';
@@ -934,7 +971,7 @@ class FormTable extends Formbuilder{
 								?>
 								</select>
 								<label style="margin:0 10px;">equals</label>
-								<input type='text' name="form_settings[autoarchivevalue]" value="<?php echo $this->form_settings['autoarchivevalue'];?>">
+								<input type='text' name="form_settings[autoarchivevalue]" value="<?php echo $this->formSettings['autoarchivevalue'];?>">
 								
 								<div class="infobox" name="info" style="min-width: fit-content;">
 									<div style="float:right">
@@ -953,16 +990,16 @@ class FormTable extends Formbuilder{
 							<label class="label">Select roles with permission to VIEW the table, finetune it per column on the 'column settings' tab</label>
 							<div class="role_info">
 							<?php
-							foreach($view_roles as $key=>$role_name){
-								if(in_array($key,array_keys((array)$this->table_settings['view_right_roles']))){
+							foreach($viewRoles as $key=>$roleName){
+								if(in_array($key,array_keys((array)$this->tableSettings['view_right_roles']))){
 									$checked = 'checked';
 								}else{
 									$checked = '';
 								}
 								
 								echo "<label class='option-label'>";
-									echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[view_right_roles][$key]' value='$role_name' $checked>";
-									echo "$role_name";
+									echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[view_right_roles][$key]' value='$roleName' $checked>";
+									echo "$roleName";
 								echo "</label><br>";
 							}
 							?>
@@ -973,22 +1010,22 @@ class FormTable extends Formbuilder{
 							<label class="label">Select roles with permission to edit ALL form submission data</label>
 							<div class="role_info">
 							<?php
-							foreach($edit_roles as $key=>$role_name){
-								if(in_array($key,array_keys((array)$this->table_settings['edit_right_roles']))){
+							foreach($editRoles as $key=>$roleName){
+								if(in_array($key,array_keys((array)$this->tableSettings['edit_right_roles']))){
 									$checked = 'checked';
 								}else{
 									$checked = '';
 								}
 								echo "<label class='option-label'>";
-									echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[edit_right_roles][$key]' value='$role_name' $checked>";
-									echo " $role_name";
+									echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[edit_right_roles][$key]' value='$roleName' $checked>";
+									echo " $roleName";
 								echo "</label><br>";
 							}
 							?>
 							</div>
 						</div>
 					<?php
-					echo SIM\add_save_button('submit_table_setting','Save table access settings');
+					echo SIM\addSaveButton('submit_table_setting','Save table access settings');
 					?>
 					</form>
 				</div>
@@ -997,63 +1034,70 @@ class FormTable extends Formbuilder{
 		<?php
 	}
 	
-	function show_formresults_table($atts){
+	/**
+	 * Creates the formresult table html
+	 * 
+	 * @param	array	$atts	WP Shortcode attributes
+	 * 
+	 * @return	string			The html
+	 */
+	function showFormresultsTable($atts){
 		ob_start();
 		
-		$this->process_atts($atts);
+		$this->processAtts($atts);
 		
 		//load shortcode settings
-		$this->loadshortcodedata();
+		$this->loadShortcodeData();
 		
 		//load form settings
-		$this->loadformdata();
+		$this->loadFormData();
 		
-		$this->form_settings		= $this->formdata->settings;
+		$this->formSettings		= $this->formData->settings;
 		
-		if($this->table_settings['archived'] == 'true' or $_GET['archived']){
-			$this->show_archived = true;
+		if($this->tableSettings['archived'] == 'true' or $_GET['archived']){
+			$this->showArchived = true;
 		}else{
-			$this->show_archived = false;
+			$this->showArchived = false;
 		}
 		
 		//check if we have rights on this form
-		if(!$this->form_edit_permissions){
+		if(!$this->formEditPermissions){
 			if(
-				array_intersect((array)$this->user_roles, array_keys((array)$this->form_settings['full_right_roles'])) != false	or
-				array_intersect((array)$this->user_roles, array_keys((array)$this->table_settings['full_right_roles'])) != false	or
-				$this->editrights
+				array_intersect((array)$this->userRoles, array_keys((array)$this->formSettings['full_right_roles'])) != false	or
+				array_intersect((array)$this->userRoles, array_keys((array)$this->tableSettings['full_right_roles'])) != false	or
+				$this->editRights
 			){
-				$this->form_edit_permissions = true;
+				$this->formEditPermissions = true;
 			}else{
-				$this->form_edit_permissions = false;
+				$this->formEditPermissions = false;
 			}
 		}
 		
 		//check if we have rights on this table
-		if(!$this->table_edit_permissions){
-			if(array_intersect($this->user_roles, array_keys((array)$this->table_settings['edit_right_roles'])) != false){
-				$this->table_edit_permissions = true;
+		if(!$this->tableEditPermissions){
+			if(array_intersect($this->userRoles, array_keys((array)$this->tableSettings['edit_right_roles'])) != false){
+				$this->tableEditPermissions = true;
 			}else{
-				$this->table_edit_permissions = false;
+				$this->tableEditPermissions = false;
 			}
 		}
 		
 		if(
 			$_GET['onlyown'] == 'true' or 
-			$this->table_settings['result_type'] == 'personal'	or
-			!$this->table_edit_permissions and
-			array_intersect($this->user_roles, array_keys((array)$this->table_settings['view_right_roles'])) == false
+			$this->tableSettings['result_type'] == 'personal'	or
+			!$this->tableEditPermissions and
+			array_intersect($this->userRoles, array_keys((array)$this->tableSettings['view_right_roles'])) == false
 		){
-			$this->table_view_permissions = false;
-			$this->get_submission_data($this->user->ID);
+			$this->tableViewPermissions = false;
+			$this->getSubmissionData($this->user->ID);
 		}else{
-			$this->table_view_permissions = true;
-			$this->get_submission_data();
+			$this->tableViewPermissions = true;
+			$this->getSubmissionData();
 		}
 		
 		//process any $_GET acions
-		do_action('formtable_GET_actions');
-		do_action('formtable_POST_actions');
+		do_action('sim_formtable_GET_actions');
+		do_action('sim_formtable_POST_actions');
 		
 		//Load js
 		wp_enqueue_script('sim_forms_table_script');
@@ -1062,23 +1106,23 @@ class FormTable extends Formbuilder{
 		if(!is_user_logged_in()) return;
 
 		//Get personal visibility
-		$this->hidden_columns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formdata->id, true);	
+		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);	
 		
 		?>
 		<div class='form-table-wrapper'>
-			<h2 class="table_title"><?php echo esc_html($this->form_settings['formname']); ?></h2><br>
+			<h2 class="table_title"><?php echo esc_html($this->formSettings['formname']); ?></h2><br>
 			
 			<div class="table-buttons-wrapper">
 				<?php
 				//Show form properties button if we have form edit permissions
-				if($this->form_edit_permissions){
+				if($this->formEditPermissions){
 					?>
 					<button class='button small edit_formshortcode_settings'>Edit settings</button>
 					<?php
-					$this->add_shortcode_settings_modal();
+					$this->addShortcodeSettingsModal();
 				}
 
-				if($this->show_archived){
+				if($this->showArchived){
 					if($_GET['archived']){
 					?>
 					<a href="." class="button sim">Hide archived entries</a>
@@ -1090,7 +1134,7 @@ class FormTable extends Formbuilder{
 					<?php
 				}
 
-				if($_GET['onlyown'] or $this->table_settings['result_type'] == 'personal'){
+				if($_GET['onlyown'] or $this->tableSettings['result_type'] == 'personal'){
 					?>
 					<a href="." class="button sim">Show all entries</a>
 					<?php
@@ -1101,7 +1145,7 @@ class FormTable extends Formbuilder{
 				}
 				
 				$hidden	= '';
-				if(empty($this->hidden_columns)){
+				if(empty($this->hiddenColumns)){
 					$hidden	= 'hidden';
 				}
 				?>
@@ -1110,90 +1154,90 @@ class FormTable extends Formbuilder{
 				
 			<?php
 
-			$this->no_records	= true;
-			if(count($this->submission_data) != 0){
-				$this->enrich_column_settings();
+			$this->noRecords	= true;
+			if(count($this->submissionData) != 0){
+				$this->enrichColumnSettings();
 				
 				/* 
 					Write the header row of the table 
 				*/
 				//first check if the data contains data of our own
-				$this->owndata	= false;
-				$this->user->partner_id		= SIM\hasPartner($this->user->ID);
-				foreach($this->submission_data as $key=>$submission_data){
+				$this->ownData	= false;
+				$this->user->partnerId		= SIM\hasPartner($this->user->ID);
+				foreach($this->submissionData as $key=>$submissionData){
 					//Our own entry or one of our partner
-					if($submission_data->userid == $this->user->ID or $submission_data->userid == $this->user->partner_id){
-						$this->owndata = true;
+					if($submissionData->userid == $this->user->ID or $submissionData->userid == $this->user->partnerId){
+						$this->ownData = true;
 						break;
 					}
 				}
 				
 				?>
-				<table class='sim-table form-data-table' data-formid='<?php echo $this->formdata->id;?>' data-shortcodeid='<?php echo $this->shortcode_id;?>'>
+				<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
 					<thead>
 						<tr>
 							<?php
 							//add normal fields
-							foreach($this->column_settings as $setting_id=>$column_setting){
+							foreach($this->columnSettings as $settingId=>$columnSetting){
 								if(
-									!is_numeric($setting_id) or
-									$column_setting['show'] == 'hide' or													//hidden column
+									!is_numeric($settingId) or
+									$columnSetting['show'] == 'hide' or													//hidden column
 									(
-										!$this->owndata or 																	//The table does not contain data of our own
+										!$this->ownData or 																	//The table does not contain data of our own
 										(
-											$this->owndata and 																//or it does contain our own data but
-											!in_array('own',(array)$column_setting['view_right_roles'])							//we are not allowed to see it
+											$this->ownData and 																//or it does contain our own data but
+											!in_array('own',(array)$columnSetting['view_right_roles'])							//we are not allowed to see it
 										)
 									) and																					
-									!$this->table_edit_permissions and														//no permission to edit the table and
-									!empty($column_setting['view_right_roles']) and 										// there are view right permissions defined
-									array_intersect($this->user_roles, (array)$column_setting['view_right_roles']) == false		// and we do not have the view right role and
+									!$this->tableEditPermissions and														//no permission to edit the table and
+									!empty($columnSetting['view_right_roles']) and 										// there are view right permissions defined
+									array_intersect($this->userRoles, (array)$columnSetting['view_right_roles']) == false		// and we do not have the view right role and
 								){ 
 									continue;
 								}
 								
-								$nice_name			= $column_setting['nice_name'];
+								$niceName			= $columnSetting['nice_name'];
 								
-								if($this->table_settings['default_sort']	== $setting_id){
+								if($this->tableSettings['default_sort']	== $settingId){
 									$class	= "defaultsort"; 
 								}else{
 									$class	= ""; 
 								}
 			
-								if(!empty($this->hidden_columns[$column_setting['name']])){
+								if(!empty($this->hiddenColumns[$columnSetting['name']])){
 									$class	.= ' hidden';
 								}
 								$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20>";
 								
 								//Add a heading for each column
-								echo "<th class='$class' id='{$column_setting['name']}' data-nicename='$nice_name'>$nice_name $icon</th>";
+								echo "<th class='$class' id='{$columnSetting['name']}' data-nicename='$niceName'>$niceName $icon</th>";
 								
-								$excelrow[]	= $nice_name;
+								$excelRow[]	= $niceName;
 							}
 							
 							//add a Actions heading if needed
-							$buttons_html = [];
-							foreach($this->form_settings['actions'] as $action){
-								$buttons_html[$action]	= "";
+							$buttonsHtml = [];
+							foreach($this->formSettings['actions'] as $action){
+								$buttonsHtml[$action]	= "";
 							}
 
 							//we have full permissions on this table
-							if($this->table_edit_permissions and !empty($buttons_html)){
-								$add_heading	= true;
+							if($this->tableEditPermissions and !empty($buttonsHtml)){
+								$addHeading	= true;
 							}else{
-								$buttons_html = apply_filters('form_actions',$buttons_html);
-								foreach($buttons_html as $action=>$button){
+								$buttonsHtml = apply_filters('sim_form_actions', $buttonsHtml);
+								foreach($buttonsHtml as $action=>$button){
 									//we have permission for this specific button
-									if(array_intersect($this->user_roles, (array)$this->column_settings[$action]['edit_right_roles']) != false){
-										$add_heading	= true;
+									if(array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles']) != false){
+										$addHeading	= true;
 									}else{
 										//Loop over all buttons to see if the current user has permission for them
-										foreach($this->submission_data as $key=>$submission_data){
-											$field_values			= unserialize($submission_data->formresults);
-											foreach($buttons_html as $action=>$button){
+										foreach($this->submissionData as $key=>$submissionData){
+											$fieldValues			= unserialize($submissionData->formresults);
+											foreach($buttonsHtml as $action=>$button){
 												//we have permission on this row for this button
-												if($field_values['userid'] == $this->user->ID){
-													$add_heading	= true;
+												if($fieldValues['userid'] == $this->user->ID){
+													$addHeading	= true;
 												}
 											}
 										}
@@ -1201,7 +1245,7 @@ class FormTable extends Formbuilder{
 								}
 							}
 
-							if($add_heading){
+							if($addHeading){
 								echo "<th id='actions' data-nicename='Actions'>Actions</th>";
 							}
 							?>
@@ -1212,30 +1256,30 @@ class FormTable extends Formbuilder{
 				
 					<?php
 					//write header to excel
-					$this->excel_content[] = $excelrow;
+					$this->excelContent[] = $excelRow;
 					/* 
 							WRITE THE CONTENT ROWS OF THE TABLE 
 					*/
 					//Loop over all the submissions of this form
-					foreach($this->submission_data as $key=>$submission_data){
-						$field_values			= unserialize($submission_data->formresults);
-						$field_values['id']		= $submission_data->id;
-						$field_values['userid']	= $submission_data->userid;
+					foreach($this->submissionData as $key=>$submissionData){
+						$fieldValues			= unserialize($submissionData->formresults);
+						$fieldValues['id']		= $submissionData->id;
+						$fieldValues['userid']	= $submissionData->userid;
 						
-						if(!empty($this->form_settings['split'])){
-							$field_main_name	= $this->form_settings['split'];
+						if(!empty($this->formSettings['split'])){
+							$field_main_name	= $this->formSettings['split'];
 							
 							//create table rows for as many entries there are for the split key
 							//first check for empty rows
-							foreach($field_values[$field_main_name] as $split_key=>$array){
+							foreach($fieldValues[$field_main_name] as $splitKey=>$array){
 								$skip = true;
 								//get the current row 
 								if(is_array($array)){
 									foreach($array as $row_key=>$value){
 										//If we should not see archived items, remove this row
-										if($row_key == 'archived' and $value == true and $this->show_archived == false){
+										if($row_key == 'archived' and $value == true and $this->showArchived == false){
 											//removed archived rows
-											unset($field_values[$field_main_name][$split_key]);
+											unset($fieldValues[$field_main_name][$splitKey]);
 										}else{
 											//we found at least one value in this row
 											if(!empty($value))	$skip = false;
@@ -1244,16 +1288,16 @@ class FormTable extends Formbuilder{
 								}
 								//Remove empty entry from array
 								if($skip){
-									unset($field_values[$field_main_name][$split_key]);
+									unset($fieldValues[$field_main_name][$splitKey]);
 								}
 							}
 							
 							//write the rows
-							foreach($field_values[$field_main_name] as $split_key=>$array){
-								$this->write_table_row($field_values,$split_key,$submission_data->archived);
+							foreach($fieldValues[$field_main_name] as $splitKey=>$array){
+								$this->writeTableRow($fieldValues, $splitKey, $submissionData->archived);
 							}
 						}else{
-							$this->write_table_row($field_values,-1,$submission_data->archived);
+							$this->writeTableRow($fieldValues,-1, $submissionData->archived);
 						}
 						
 					}
@@ -1265,14 +1309,14 @@ class FormTable extends Formbuilder{
 				
 				<?php
 				//Add excel export button if allowed
-				if($this->table_edit_permissions){
+				if($this->tableEditPermissions){
 					?>
 					<div>
 						<form method="post" class="exportform" id="export_xls">
 							<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
 						</form>
 						<?php
-						if(SIM\get_module_option('PDF', 'enable')){
+						if(SIM\getModuleOption('PDF', 'enable')){
 							?>
 							<form method="post" class="exportform" id="export_pdf">
 								<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
@@ -1285,7 +1329,7 @@ class FormTable extends Formbuilder{
 				}
 			}
 			
-			if($this->no_records	== true){
+			if($this->noRecords){
 				?><p><br><br><br>No records found</p><?php
 			}
 			
@@ -1294,59 +1338,70 @@ class FormTable extends Formbuilder{
 		<?php
 		
 		//now we have rendered all the content we can export the excel if requested
-		if(isset($_POST['export_xls']))		$this->export_excel();
+		if(isset($_POST['export_xls']))		$this->exportExcel();
 
 		//now we have rendered all the content we can export the excel if requested
-		if(isset($_POST['export_pdf']))		echo $this->export_pdf();
+		if(isset($_POST['export_pdf']))		echo $this->exportPdf();
 		
 		return ob_get_clean();
 	}
 
-	function insert_in_db($form_id){
+	/**
+	 * New form results table
+	 * 
+	 * @param	int		$formId		the id of the form
+	 * 
+	 * @return	int					The id of the new formtable
+	 */
+	function insertInDb($formId){
 		global $wpdb;
 
 		//add new row in db
 		$wpdb->insert(
-			$this->shortcodetable, 
+			$this->shortcodeTable, 
 			array(
 				'table_settings'	=> '',
-				'form_id'			=> $form_id,
+				'form_id'			=> $formId,
 			)
 		);
 
 		return $wpdb->insert_id;
 	}
 
-	//check for any formresults shortcode and add an id if needed
-	function check_for_form_shortcode($data , $postarr) {
+	/**
+	 * check for any formresults shortcode and add an id if needed
+	 * 
+	 * @param	array	$data	The post data
+	 * 
+	 * @return	array			The filtered post data	
+	 */
+	function checkForFormShortcode($data) {
 		global $wpdb;
 		
 		//find any formresults shortcode
-		$pattern = "/\[formresults([^\]]*datatype=([a-zA-Z]*)[^\]]*)\]/s";
+		$pattern = "/\[formresults([^\]]*formname=([a-zA-Z]*)[^\]]*)\]/s";
 		
 		//if there are matches
 		if(preg_match_all($pattern, $data['post_content'], $matches)) {			
 			//loop over all the matches
-			foreach($matches[1] as $key=>$shortcode_atts){
+			foreach($matches[1] as $key=>$shortcodeAtts){
 				//this shortcode has no id attribute
-				if (strpos($shortcode_atts, ' id=') === false) {
-					$shortcode = $matches[0][$key];
+				if (strpos($shortcodeAtts, ' id=') === false) {
+					$shortcode		= $matches[0][$key];
 					
-					$this->datatype = $matches[2][$key];
+					$this->formName = $matches[2][$key];
 
-					$this->loadformdata();
-
-					$this->create_db_shortcode_table();
+					$this->loadFormData();
 					
-					$this->insert_in_db($this->formdata->id);
+					$this->insertInDb($this->formData->id);
 					
-					$shortcode_id	= $wpdb->insert_id;
-					$new_shortcode	= str_replace('formresults',"formresults id=$shortcode_id",$shortcode);
+					$shortcodeId	= $wpdb->insert_id;
+					$newShortcode	= str_replace('formresults',"formresults id=$shortcodeId", $shortcode);
 					
 					//replace the old shortcode with the new one
 					$pos = strpos($data['post_content'], $shortcode);
 					if ($pos !== false) {
-						$data['post_content'] = substr_replace($data['post_content'], $new_shortcode, $pos, strlen($shortcode));
+						$data['post_content'] = substr_replace($data['post_content'], $newShortcode, $pos, strlen($shortcode));
 					}
 				}
 			}
@@ -1358,5 +1413,5 @@ class FormTable extends Formbuilder{
 
 add_filter( 'wp_insert_post_data', function($data , $postarr){
 	$formtable = new FormTable();
-	return $formtable->check_for_form_shortcode($data , $postarr);
+	return $formtable->checkForFormShortcode($data , $postarr);
 }, 10, 2 );

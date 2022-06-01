@@ -42,7 +42,7 @@ function password_reset_form($user){
 			<br>
 			<span style="text-align: center;" class="pass-strength-result hidden" id="pass-strength-result2">Strength indicator</span>
 		</div>
-		<?php echo SIM\add_save_button('update_password', 'Change password');?>
+		<?php echo SIM\addSaveButton('update_password', 'Change password');?>
 	</form>
 	
 	<?php
@@ -114,7 +114,7 @@ add_shortcode('request_account', function ($atts){
 			<input class="" type="email" name="email" required>
 		</label>
 		<?php 
-		echo SIM\add_save_button('request_account', 'Request an account');
+		echo SIM\addSaveButton('request_account', 'Request an account');
 		?>
 	</form>
 	<?php

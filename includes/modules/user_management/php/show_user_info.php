@@ -4,10 +4,10 @@ use SIM;
 
 /* HELPER FUNCTIONS */
 //add special js to the dynamic form js
-add_filter('form_extra_js', function($js, $formname, $minimized){
-	$path	= plugin_dir_path( __DIR__)."js/$formname.min.js";
+add_filter('sim_form_extra_js', function($js, $formName, $minimized){
+	$path	= plugin_dir_path( __DIR__)."js/$formName.min.js";
 	if(!$minimized or !file_exists($path)){
-		$path	= plugin_dir_path( __DIR__)."js/$formname.js";
+		$path	= plugin_dir_path( __DIR__)."js/$formName.js";
 	}
 
 	if(file_exists($path)){

@@ -2,7 +2,7 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
-const ModuleVersion		= '7.0.9';
+const ModuleVersion		= '7.0.10';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
@@ -22,7 +22,7 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	</p>
 
 	<?php
-	$pageId	= SIM\get_module_option($moduleSlug, 'publish_post_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'publish_post_page');
 	if(is_numeric($pageId)){
 		?>
 		<p>
@@ -83,7 +83,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	$pendingPostEmail->printInputs($settings);
     
 	?>
-	<input type='hidden' name='publish_post_page' value='<?php echo SIM\get_module_option($moduleSlug, 'publish_post_page');?>'>
+	<input type='hidden' name='publish_post_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'publish_post_page');?>'>
 	<?php
 }, 10, 3);
 
@@ -100,7 +100,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	// Create frontend posting page
-	$pageId	= SIM\get_module_option($moduleSlug, 'publish_post_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'publish_post_page');
 	// Only create if it does not yet exist
 	if(!$pageId or get_post_status($pageId) != 'publish'){
 		$post = array(
@@ -119,14 +119,14 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 		update_post_meta($pageId,'static_content', true);
 	}
 
-	schedule_tasks();
+	scheduleTasks();
 
 	return $options;
 }, 10, 2);
 
 add_filter('display_post_states', function ( $states, $post ) { 
     
-    if ( $post->ID == SIM\get_module_option('frontend_posting', 'publish_post_page') ) {
+    if ( $post->ID == SIM\getModuleOption('frontend_posting', 'publish_post_page') ) {
         $states[] = __('Frontend posting page'); 
     } 
 

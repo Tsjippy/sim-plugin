@@ -2,12 +2,12 @@
 namespace SIM\SIGNAL;
 use SIM;
 
-add_action('frontend_post_after_content', function($frontendcontend){
+add_action('sim_frontend_post_after_content', function($frontendContend){
     $hidden	= 'hidden';
-    if($frontendcontend->fullrights and ($frontendcontend->postId == null or !empty(get_post_meta($frontendcontend->postId,'signal',true)))){
+    if($frontendContend->fullrights and ($frontendContend->postId == null or !empty(get_post_meta($frontendContend->postId, 'signal', true)))){
         $checked 	    = 'checked';
         $hidden		    = '';
-        $messagetype	= get_post_meta($frontendcontend->postId,'signalmessagetype',true);
+        $messageType	= get_post_meta($frontendContend->postId,'signalmessagetype',true);
     }
 
     ?>
@@ -20,11 +20,11 @@ add_action('frontend_post_after_content', function($frontendcontend){
 
         <div class='signalmessagetype <?php echo $hidden;?>' style='margin-top:15px;'>
             <label>
-                <input type='radio' name='signalmessagetype' value='summary' <?php if($messagetype != 'all') echo 'checked';?>>
+                <input type='radio' name='signalmessagetype' value='summary' <?php if($messageType != 'all') echo 'checked';?>>
                 Send a summary
             </label>
             <label>
-                <input type='radio' name='signalmessagetype' value='all' <?php if($messagetype == 'all') echo 'checked';?>>
+                <input type='radio' name='signalmessagetype' value='all' <?php if($messageType == 'all') echo 'checked';?>>
                 Send the whole post content
             </label>
             <br>

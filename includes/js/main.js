@@ -2,10 +2,8 @@ console.log("Main.js loaded");
 
 export function changeUrl(target, secondTab=''){
 	var newParam	= target.dataset.param_val;
-
 	var hash		= target.dataset.hash;
-
-	const url = new URL(window.location);
+	const url 		= new URL(window.location);
 
 	//Change the url params
 	if(target.closest('.tabcontent') == null || target.parentNode.classList.contains('modal-content') == true){
@@ -41,7 +39,7 @@ function switchTab(event=null){
 	});
 	
 	var mainTab 	= params.main_tab;
-	var lastTab	= '';
+	var lastTab		= '';
 	if(mainTab != null){
 		//find the tab and display it
 		document.querySelectorAll('[data-param_val="'+mainTab+'"]').forEach(tabbutton=>{
@@ -109,8 +107,8 @@ function displayTab(tabButton){
 		}
 
 		// position any tables on this tab, as they can only be positioned when visible
-		if(typeof(sim_table_functions) != 'undefined'){
-			sim_table_functions.positionTable();
+		if(typeof(SimTableFunctions) != 'undefined'){
+			SimTableFunctions.positionTable();
 		}
 
 		return tab;

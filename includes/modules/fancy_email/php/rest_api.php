@@ -8,7 +8,7 @@ add_action( 'rest_api_init', function () {
 	//Route for e-mail tracking of today
 	register_rest_route( 'sim/v1', '/mailtracker', array(
 		'methods' => 'GET',
-		'callback' => __NAMESPACE__.'\mailtracker',
+		'callback' => __NAMESPACE__.'\mailTracker',
 		'permission_callback' => '__return_true',
 		)
 	);
@@ -21,7 +21,10 @@ add_filter('sim_allowed_rest_api_urls', function($urls){
 	return $urls;
 });
 
-function mailtracker(\WP_REST_Request $request) {
+/**
+ * Tracks if an e-mail is opened or not using an image with a url
+ */
+function mailTracker(\WP_REST_Request $request) {
 	global $wpdb;
 
 	$mailId		= $request->get_param('mailid');

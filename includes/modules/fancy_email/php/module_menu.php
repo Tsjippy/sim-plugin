@@ -17,18 +17,8 @@ add_action('sim_module_activated', function($moduleSlug, $options){
 
 	// Create the dbs
 	$fancyEmail     = new FancyEmail();
-	$fancyEmail->create_db_tables();
+	$fancyEmail->createDbTables();
 }, 10, 2);
-
-add_filter('sim_module_updated', function($options, $moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
-
-	//schedule_tasks();
-
-	return $options;
-}, 10, 2);
-
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
@@ -41,7 +31,7 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	It will also monitor how often an e-mail is opened.<br>
 	<?php
 
-	if(SIM\get_module_option($moduleSlug, 'enable')){
+	if(SIM\getModuleOption($moduleSlug, 'enable')){
 		echo email_stats();
 	}
 },10,2);
@@ -53,5 +43,5 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
     ?>
 	<label>Select a picture for the e-mail header.</label>
 	<?php
-	SIM\picture_selector('header_image', 'e-mail header', $settings);
+	SIM\pictureSelector('header_image', 'e-mail header', $settings);
 }, 10, 3);

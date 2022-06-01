@@ -4,15 +4,15 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'auto_archive_action', __NAMESPACE__.'\auto_archive_form_entries' );
+	add_action( 'auto_archive_action', __NAMESPACE__.'\autoArchiveFormEntries' );
     add_action( 'mandatory_fields_reminder_action', __NAMESPACE__.'\mandatory_fields_reminder' );
 });
 
-function schedule_tasks(){
-    SIM\schedule_task('auto_archive_action', 'daily');
+function scheduleTasks(){
+    SIM\scheduleTask('auto_archive_action', 'daily');
 
-    $freq   = SIM\get_module_option('forms', 'warning_freq');
-    if($freq)   SIM\schedule_task('mandatory_fields_reminder_action', $freq);
+    $freq   = SIM\getModuleOption('forms', 'warning_freq');
+    if($freq)   SIM\scheduleTask('mandatory_fields_reminder_action', $freq);
 }
 
 // Remove scheduled tasks upon module deactivatio

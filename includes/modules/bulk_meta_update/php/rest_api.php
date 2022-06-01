@@ -28,6 +28,9 @@ add_action( 'rest_api_init', function () {
 
 });
 
+/**
+ * Processes the meta value update
+*/
 function bulkUpdateMeta(){	
 	$userId 	= $_POST['user_id'];
 	$metaKey 	= sanitize_text_field($_POST['meta_key']);
@@ -38,17 +41,17 @@ function bulkUpdateMeta(){
 	//if($user->ID != $userId and !in_array('user_management',$user->roles)) wp_die('No permission', 500);
 
 	if (strpos($metaKey, '#') !== false){
-		$metaKeyBase = explode('#',$metaKey)[0];
-		$metaKeyName = explode('#',$metaKey)[1];
+		$metaKeyBase 			= explode('#',$metaKey)[0];
+		$metaKeyName 			= explode('#',$metaKey)[1];
 		
-		$array = (array)get_user_meta($userId,$metaKeyBase,true);
+		$array 					= (array)get_user_meta($userId,$metaKeyBase,true);
 		
-		$array[$metaKeyName] = $metaValue;
+		$array[$metaKeyName] 	= $metaValue;
 		
 		//Save in db
 		update_user_meta($userId, $metaKeyBase, $array);
 		
-		$metaKey = $metaKeyName;
+		$metaKey 				= $metaKeyName;
 	}else{
 		//Save in db
 		update_user_meta($userId, $metaKey, $metaValue);

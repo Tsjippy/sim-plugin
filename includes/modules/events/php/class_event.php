@@ -3,23 +3,28 @@ namespace SIM\EVENTS;
 use SIM;
 use WP_Error;
 
+use function SIM\getModuleOption;
+
 class Events{
 	function __construct(){
 		global $wpdb;
 		
-		$this->table_name		= $wpdb->prefix.'sim_events';
+		$this->tableName		= $wpdb->prefix.'sim_events';
 	}
-		
-	function create_events_table(){
+	
+	/**
+	 * Creates the table holding all events if it does not exist
+	*/
+	function createEventsTable(){
 		if ( !function_exists( 'maybe_create_table' ) ) { 
 			require_once ABSPATH . '/wp-admin/install-helper.php'; 
 		}
 
 		global $wpdb;
 		
-		$charset_collate = $wpdb->get_charset_collate();
+		$charsetCollate = $wpdb->get_charset_collate();
 
-		$sql = "CREATE TABLE {$this->table_name}(
+		$sql = "CREATE TABLE {$this->tableName}(
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			post_id mediumint(9) NOT NULL,
 			startdate varchar(80) NOT NULL,
@@ -32,14 +37,20 @@ class Events{
 			organizer_id mediumint(9),
 			onlyfor mediumint(9),
 			PRIMARY KEY  (id)
-		) $charset_collate;";
+		) $charsetCollate;";
 
-		maybe_create_table($this->table_name, $sql );
+		maybe_create_table($this->tableName, $sql );
 	}
 
-	function send_event_reminder($event_id){
+	/**
+	 * Sends a message to anyone who has an event which is about to start
+	 * @param  	int 	$eventId		The id of the event
+	 * 
+	 * @return	bool					true if succesfull false if no event found
+	*/
+	function sendEventReminder($eventId){
 		global $wpdb;
-		$query		= "SELECT * FROM $this->table_name WHERE id=$event_id";
+		$query		= "SELECT * FROM $this->tableName WHERE id=$eventId";
 		$results	= $wpdb->get_results($query);
 		
 		if(empty($results)){
@@ -49,12 +60,19 @@ class Events{
 		$event	= $results[0];
 
 		if(is_numeric($event->onlyfor)){
-			SIM\try_send_signal(get_the_title($event->post_title)." is about to start\nIt starts at $event->starttime", $event->onlyfor);
+			SIM\trySendSignal(get_the_title($event->post_title)." is about to start\nIt starts at $event->starttime", $event->onlyfor);
 		}
+
+		return true;
 	}
 
-	function store_event_meta($post, $update){
-		$this->post_id					= $post->ID;
+	/**
+	 * Stores all event details in the db, removes any existing events, and creates new ones.
+	 * @param  	int|WP_post  $post		The id of a post or the post itself
+	*/
+	function storeEventMeta($post){
+		if(is_numeric($post))	$post	= get_post($post);
+		$this->postId					= $post->ID;
 	
 		$event							= $_POST['event'];	
 		$event['allday']				= sanitize_text_field($event['allday']);
@@ -76,167 +94,189 @@ class Events{
 		$event['organizer_id']			= sanitize_text_field($event['organizer_id']);
 	
 		//check if anything has changed
-		if(get_post_meta($this->post_id,'eventdetails',true) != $event){
+		if(get_post_meta($this->postId, 'eventdetails', true) != $event){
 			// First delete any existing events
-			$this->remove_db_rows($this->post_id);
+			$this->removeDbRows($this->postId);
 
 			// Delete any existing events as well
-			wp_clear_scheduled_hook([$this, 'send_event_reminder'], $this->post_id);
+			wp_clear_scheduled_hook([$this, 'sendEventReminder'], $this->postId);
 
 			//store meta in db
-			update_metadata( 'post', $this->post_id, 'eventdetails', $event);
+			update_metadata( 'post', $this->postId, 'eventdetails', $event);
 		
 			//create events
-			$this->event_data		= $event;
-			$this->create_events();	
+			$this->eventData		= $event;
+			$this->createEvents();	
 		}
 	}
 
-	function maybe_create_row($startdate){
+	/**
+	 * Creatres a new event in db if it does not exist already
+	 * @param  	string  $startdate		The startdate of the event
+	*/
+	function maybeCreateRow($startdate){
 		global $wpdb;
 		
 		//check if form row already exists
-		if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `post_id` = '{$this->post_id}' AND startdate = '$startdate'") != true){
+		if($wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `post_id` = '{$this->postId}' AND startdate = '$startdate'") != true){
 			$result = $wpdb->insert(
-				$this->table_name, 
+				$this->tableName, 
 				array(
-					'post_id'			=> $this->post_id,
+					'post_id'			=> $this->postId,
 					'startdate'			=> $startdate
 				)
 			);
 		}
 	}
 
-	function remove_db_rows($post_id = null){
+	/**
+	 * Removes all events connected to an certain event post
+	 * @param  	int  $postId		Optional post id
+	*/
+	function removeDbRows($postId = null){
 		global $wpdb; 
  
-		if(!is_numeric($post_id)) $post_id = $this->post_id;
+		if(!is_numeric($postId)) $postId = $this->postId;
 		return $wpdb->delete(
-			$this->table_name,
-			['post_id' => $post_id],
+			$this->tableName,
+			['post_id' => $postId],
 			['%d']
 		);
 	}
 
+	/**
+	 * Retrieves the weeknumber from a certain date
+	 * @param  	int  $date		a date in epoch
+	 * 
+	 * @return	int				the weeknumber
+	*/
 	function yearWeek($date){
-		$weakYear	= intval(date('W',$date));
+		$weakYear	= intval(date('W', $date));
 		return $weakYear;
 	}
 
+	/**
+	 * Retrieves the weeknumber from a certain date
+	 * @param  	int  $date		a date in epoch
+	 * 
+	 * @return	int				the weeknumber
+	*/
 	function monthWeek($date){
-		$first_day_of_month	= strtotime(date('Y-m-01',$date));
-		return $this->yearWeek($first_day_of_month);
+		$firstDayOfMonth	= strtotime(date('Y-m-01', $date));
+		return $this->yearWeek($firstDayOfMonth);
 	}
 	
-	function create_events(){
+	/**
+	 * Creates events in the db
+	*/
+	function createEvents(){
 		global $wpdb;
 
-		$this->create_events_table();
+		$baseStartDateStr	= $this->eventData['startdate'];
+		$baseStartDate		= strtotime($baseStartDateStr);
+		$baseEndDate		= $this->eventData['enddate'];
+		$dayDiff 			= ((new \DateTime($baseStartDateStr))->diff((new \DateTime($baseEndDate))))->d;
 
-		$base_start_date_str= $this->event_data['startdate'];
-		$base_start_date	= strtotime($base_start_date_str);
-		$base_end_date		= $this->event_data['enddate'];
-		$day_diff 			= ((new \DateTime($base_start_date_str))->diff((new \DateTime($base_end_date))))->d;
-
-		$startdates			= [$base_start_date_str];
-		if(!empty($this->event_data['repeated'])){
+		$startDates			= [$baseStartDateStr];
+		if(!empty($this->eventData['repeated'])){
 			//first remove any existing events for this post
-			$this->remove_db_rows();
+			$this->removeDbRows();
 
 			//then create the new ones
-			$repeat_param	= $this->event_data['repeat'];
-			$interval		= max(1,(int)$repeat_param['interval']);
-			$months			= (array)$repeat_param['months'];
-			$weekdays		= (array)$repeat_param['weekdays'];
-			$weeks			= (array)$repeat_param['weeks'];
-			$amount			= $repeat_param['amount'];
+			$repeatParam	= $this->eventData['repeat'];
+			$interval		= max(1,(int)$repeatParam['interval']);
+			$months			= (array)$repeatParam['months'];
+			$weekDays		= (array)$repeatParam['weekDays'];
+			$weeks			= (array)$repeatParam['weeks'];
+			$amount			= $repeatParam['amount'];
 			if(!is_numeric($amount)) $amount = 200;
-			$repeat_stop	= $repeat_param['stop'];
-			switch($repeat_stop){
+			$repeatStop	= $repeatParam['stop'];
+
+			switch($repeatStop){
 				case 'never':
-					$rep_enddate	= strtotime("+90 year",$base_start_date);
+					$repEnddate	= strtotime("+90 year",$baseStartDate);
 					break;
 				case 'date':
-					$rep_enddate	= $repeat_param['enddate'];
+					$repEnddate	= $repeatParam['enddate'];
 					break;
 				case 'after':
-					$rep_enddate	= strtotime("+90 year",$base_start_date);
+					$repEnddate	= strtotime("+90 year",$baseStartDate);
 					break;
 				default:
-					$rep_enddate	= strtotime("+90 year",$base_start_date);
+					$repEnddate	= strtotime("+90 year",$baseStartDate);
 					break;
 			}
-			$excludedates	= (array)$repeat_param['excludedates'];	
-			$includedates	= (array)$repeat_param['includedates'];	
+			$excludeDates	= (array)$repeatParam['excludedates'];	
+			$includeDates	= (array)$repeatParam['includedates'];	
 						
-			$startdate		= $base_start_date;
+			$startDate		= $baseStartDate;
 			$i				= 1;
-			while($startdate < $rep_enddate and $amount > 0){
-				switch ($repeat_param['type']){
+			while($startDate < $repEnddate and $amount > 0){
+				switch ($repeatParam['type']){
 					case 'daily':
-						$startdate		= strtotime("+{$i} day",$base_start_date);
-						$startdate_str	= date('Y-m-d',$startdate);
-						if(!in_array(date('w', $startdate),$weekdays)){
+						$startDate		= strtotime("+{$i} day", $baseStartDate);
+						$startDateStr	= date('Y-m-d', $startDate);
+						if(!in_array(date('w', $startDate), $weekDays)){
 							continue 2;
 						}
 						break;
 					case 'weekly':
-						$startdate		= strtotime("+{$i} week",$base_start_date);
-						$startdate_str	= date('Y-m-d',$startdate);
-						$monthWeek		= $this->monthWeek($startdate);
+						$startDate		= strtotime("+{$i} week", $baseStartDate);
+						$startDateStr	= date('Y-m-d', $startDate);
+						$monthWeek		= $this->monthWeek($startDate);
 
-						$lastweek		= date('m',$startdate) == date('m', strtotime('+1 week', $startdate));
-						if($lastweek and in_array('last',$weeks)){
+						$lastWeek		= date('m',$startDate) == date('m', strtotime('+1 week', $startDate));
+						if($lastWeek and in_array('last', $weeks)){
 							$monthWeek	= 'last';
 						}
-						if(!in_array($monthWeek,$weeks)){
+						if(!in_array($monthWeek, $weeks)){
 							continue 2;
 						}
 						break;
 					case 'monthly':
-						$startdate		= strtotime("+{$i} month",$base_start_date);
-						$month		= date('m',$startdate);
-						if(!empty($months) and !in_array($month,$months)){
+						$startDate		= strtotime("+{$i} month", $baseStartDate);
+						$month			= date('m',$startDate);
+						if(!empty($months) and !in_array($month, $months)){
 							continue 2;
 						}
 
-						if(!empty($weeks) and !empty($weekdays)){
-							$startdate	= strtotime("{$weeks[0]} {$weekdays[0]} of this month",$startdate);
+						if(!empty($weeks) and !empty($weekDays)){
+							$startDate	= strtotime("{$weeks[0]} {$weekDays[0]} of this month", $startDate);
 						}
 						
-						$startdate_str	= date('Y-m-d',$startdate);
+						$startDateStr	= date('Y-m-d', $startDate);
 
 						break;
 					case 'yearly':
-						$startdate	= strtotime("+{$i} year",$base_start_date);
+						$startDate	= strtotime("+{$i} year", $baseStartDate);
 
-						if(!empty($weeks) and !empty($weekdays)){
-							$startdate	= strtotime("{$weeks[0]} {$weekdays[0]} of this month",$startdate);
+						if(!empty($weeks) and !empty($weekDays)){
+							$startDate	= strtotime("{$weeks[0]} {$weekDays[0]} of this month", $startDate);
 						}
-						$startdate_str	= date('Y-m-d',$startdate);
+						$startDateStr	= date('Y-m-d', $startDate);
 						break;
 					case 'custom_days':
-						$startdate_str	= $includedates[$i];
+						$startDateStr	= $includeDates[$i];
 						break;
 				}
 				
 				if(
-					!in_array($startdate_str,$excludedates)		and		//we should not exclude this date
-					$startdate < $rep_enddate					and 	//falls within the limits
+					!in_array($startDateStr, $includeDates)		and		//we should not exclude this date
+					$startDate < $repEnddate					and 	//falls within the limits
 					(!is_numeric($amount) or $amount > 0)				//We have not exeededthe amount
 				){
-					$startdates[]	= $startdate_str;
+					$startDates[]	= $startDateStr;
 				}
 				$i				= $i+$interval;
 				$amount			= $amount-1;
 			}
 		}
 		
-		foreach($startdates as $startdate){
-			$enddate	= date('Y-m-d',strtotime("+{$day_diff} day",strtotime($startdate)));
-			$this->maybe_create_row($startdate);
+		foreach($startDates as $startDate){
+			$enddate	= date('Y-m-d',strtotime("+{$dayDiff} day",strtotime($startDate)));
+			$this->maybeCreateRow($startDate);
 
-			$args	= $this->event_data;
+			$args	= $this->eventData;
 			unset($args['startdate']);
 			unset($args['repeated']);
 			unset($args['repeat']);
@@ -244,11 +284,11 @@ class Events{
 			$args['enddate']		= $enddate;
 
 			//Update the database
-			$result = $wpdb->update($this->table_name, 
+			$result = $wpdb->update($this->tableName, 
 				$args, 
 				array(
-					'post_id'		=> $this->post_id,
-					'startdate'		=> $startdate
+					'post_id'		=> $this->postId,
+					'startdate'		=> $startDate
 				),
 			);
 			
@@ -258,99 +298,100 @@ class Events{
 		}
 	}
 
-	function delete_old_cel_event($post_id, $metavalue, $userId, $type, $title){
-		if(is_numeric($post_id)){
-			$existing_event	= $this->retrieve_single_event($post_id);
+	/**
+	 * Deletes old celebration events
+	 * @param  	int  	$postId		WP_Post if
+	 * @param	string	$date		date string 
+	 * @param	int		$userId		WP_User id
+	 * @param	string	$type		the anniverasry type
+	 * @param	string	$title		the event title
+	*/
+	function deleteOldCelEvent($postId, $date, $userId, $type, $title){
+		if(is_numeric($postId)){
+			$existingEvent	= $this->retrieveSingleEvent($postId);
 			if(
-				date('-m-d',strtotime($existing_event->startdate)) == date('-m-d',strtotime($metavalue)) and
-				$title == $existing_event->post_title
+				date('-m-d', strtotime($existingEvent->startdate)) == date('-m-d', strtotime($date)) and
+				$title == $existingEvent->post_title
 			){
-				return false;//nothing changed
+				return false; //nothing changed
 			}else{
-				wp_delete_post($post_id,true);
-				delete_user_meta($userId,$type.'_event_id');
+				wp_delete_post($postId, true);
+				delete_user_meta($userId, $type.'_event_id');
 	
-				$this->remove_db_rows();
+				$this->removeDbRows();
 			}
 		}
 	}
 
-	function create_celebration_event($type, $user, $metakey='', $metavalue=''){
+	/**
+	 * Deletes old celebration events
+	 * @param	string		$type		the anniverasry type
+	 * @param	int|object	$userId		WP_User id or WP_User object
+	 * @param	string		$metaKey	the meta key key
+	 * @param	string		$metaValue	the meta value, should be a date string
+	*/
+	function createCelebrationEvent($type, $user, $metaKey='', $metaValue=''){
 		if(is_numeric($user)) $user = get_userdata($user);
 		
-		if(empty($metakey)) $metakey = $type;
+		if(empty($metaKey)) $metaKey = $type;
 
-		$metakeys	= explode('[', str_replace(']', '', $metakey));
+		$oldMetaValue	= SIM\getMetaArrayValue($user->ID, $metaKey);
 
-		$old_metavalue = get_user_meta($user->ID, $metakeys[0], true);
-
-		$i		= 1;
-		while ($i != count($metakeys)){
-			$old_metavalue	= $old_metavalue[$metakeys[$i]];
-			$i++;
-		}
-
-		if(empty($metavalue)){
-			$metavalue = $old_metavalue;
-		}elseif($metavalue == $old_metavalue){
+		if(empty($metaValue)){
+			$metaValue = $oldMetaValue;
+		}elseif($metaValue == $oldMetaValue){
 			//nothing changed return
 			return;
 		}
 
 		$title		= ucfirst($type).' '.$user->display_name;
-		$partner_id	= SIM\hasPartner($user->ID);
-		if($partner_id){
-			$partner_meta	= get_user_meta($partner_id, $metakeys[0], true);
-
-			$i		= 1;
-			while ($i != count($metakeys)){
-				$partner_meta	= $partner_meta[$metakeys[$i]];
-				$i++;
-			}
+		$partnerId	= SIM\hasPartner($user->ID);
+		if($partnerId){
+			$partnerMeta	= SIM\getMetaArrayValue($partnerId, $metaKey);
 
 			//only treat as a couples event if they both have the same value
-			if($partner_meta == $metavalue){
-				$partner_name	= get_userdata($partner_id)->first_name;
-				$title	= ucfirst($type)." {$user->first_name} & $partner_name {$user->last_name}";
+			if($partnerMeta == $metaValue){
+				$partnerName	= get_userdata($partnerId)->first_name;
+				$title			= ucfirst($type)." {$user->first_name} & $partnerName {$user->last_name}";
 			}else{
-				$partner_id	= false;
+				$partnerId	= false;
 			}
 		}
 
 		if($type == 'birthday'){
-			$cat_name = 'birthday';
+			$catName = 'birthday';
 		}else{
-			$cat_name = 'anniversary';
+			$catName = 'anniversary';
 			if(SIM\isChild($user->ID)) return;//do not create annversaries for children
 		}
-		$termid = get_term_by('slug', $cat_name,'events')->term_id;
-		if(empty($termid)) $termid = wp_insert_term(ucfirst($cat_name),'events')['term_id'];
+		$termId = get_term_by('slug', $catName,'events')->term_id;
+		if(empty($termId)) $termId = wp_insert_term(ucfirst($catName),'events')['term_id'];
 		
 		//get old post
-		$this->post_id	= get_user_meta($user->ID,$type.'_event_id',true);
-		$this->delete_old_cel_event($this->post_id, $metavalue, $user->ID, $type, $title);
+		$this->postId	= get_user_meta($user->ID,$type.'_event_id',true);
+		$this->deleteOldCelEvent($this->postId, $metaValue, $user->ID, $type, $title);
 
-		if($partner_id){
-			$this->delete_old_cel_event(get_user_meta($partner_id, $type.'_event_id',true), $metavalue, $user->ID, $type, $title);
+		if($partnerId){
+			$this->deleteOldCelEvent(get_user_meta($partnerId, $type.'_event_id',true), $metaValue, $user->ID, $type, $title);
 		}
 
-		if(!empty($metavalue)){
+		if(!empty($metaValue)){
 			//Get the upcoming celebration date
-			$startdate								= date(date('Y').'-m-d',strtotime($metavalue));
+			$startdate								= date(date('Y').'-m-d',strtotime($metaValue));
 
-			$this->event_data['startdate']			= $startdate;
-			$this->event_data['enddate']			= $startdate;
-			$this->event_data['location']			= '';
-			$this->event_data['organizer']			= $user->display_name;
-			$this->event_data['organizer_id']		= $user->ID;
-			$this->event_data['starttime']			= '00:00';
-			$this->event_data['endtime']			= '23:59';
-			$this->event_data['allday']				= true;
-			$this->event_data['repeated']			= 'Yes';
-			$this->event_data['repeat']['interval']	= 1;
-			$this->event_data['repeat']['amount']	= 90;
-			$this->event_data['repeat']['stop']		= 'never';
-			$this->event_data['repeat']['type']		= 'yearly';
+			$this->eventData['startdate']			= $startdate;
+			$this->eventData['enddate']			= $startdate;
+			$this->eventData['location']			= '';
+			$this->eventData['organizer']			= $user->display_name;
+			$this->eventData['organizer_id']		= $user->ID;
+			$this->eventData['starttime']			= '00:00';
+			$this->eventData['endtime']			= '23:59';
+			$this->eventData['allday']				= true;
+			$this->eventData['repeated']			= 'Yes';
+			$this->eventData['repeat']['interval']	= 1;
+			$this->eventData['repeat']['amount']	= 90;
+			$this->eventData['repeat']['stop']		= 'never';
+			$this->eventData['repeat']['type']		= 'yearly';
 
 			$post = array(
 				'post_type'		=> 'event',
@@ -360,29 +401,36 @@ class Events{
 				'post_author'   => $user->ID
 			);
 
-			$this->post_id 	= wp_insert_post( $post,true,false);
-			update_metadata( 'post', $this->post_id,'eventdetails',$this->event_data);
-			update_metadata( 'post', $this->post_id,'celebrationdate',$metavalue);
+			$this->postId 	= wp_insert_post( $post, true, false);
+			update_metadata( 'post', $this->postId,'eventdetails', $this->eventData);
+			update_metadata( 'post', $this->postId,'celebrationdate', $metaValue);
 
-			wp_set_object_terms($this->post_id,$termid,'events');
+			wp_set_object_terms($this->postId, $termId, 'events');
 
+			$pictureIds	= SIM\getModuleOption('events', 'picture_ids');
 			if($type == 'birthday'){
-				$mod_name = 'birthdaydefaultimage';
+				$pictureId = $pictureIds['birthday_image'];
 			}else{
-				$mod_name = 'anniversarydefaultimage';
+				$pictureId = $pictureIds['anniversary_image'];
 			}
-			set_post_thumbnail( $this->post_id, get_theme_mod($mod_name,''));
+			set_post_thumbnail( $this->postId, $pictureId);
 
-			update_user_meta($user->ID, $type.'_event_id',$this->post_id);
+			update_user_meta($user->ID, $type.'_event_id', $this->postId);
 
-			if($partner_id) update_user_meta($partner_id,$type.'_event_id',$this->post_id);
-			$this->create_events();
+			if($partnerId) update_user_meta($partnerId, $type.'_event_id', $this->postId);
+			$this->createEvents();
 		}
 	}
 
-	function retrieve_single_event($post_id){
+	/**
+	 * Gets an event from the db
+	 * @param	int			$postId		WP_Post id
+	 * 
+	 * @return	object|false			The event or false if no event found
+	*/
+	function retrieveSingleEvent($postId){
 		global $wpdb;
-		$query		= "SELECT * FROM {$wpdb->prefix}posts INNER JOIN `{$this->table_name}` ON {$wpdb->prefix}posts.ID={$this->table_name}.post_id WHERE post_id=$post_id ORDER BY ABS( DATEDIFF( startdate, CURDATE() ) ) LIMIT 1";
+		$query		= "SELECT * FROM {$wpdb->prefix}posts INNER JOIN `{$this->tableName}` ON {$wpdb->prefix}posts.ID={$this->tableName}.post_id WHERE post_id=$postId ORDER BY ABS( DATEDIFF( startdate, CURDATE() ) ) LIMIT 1";
 		$results	= $wpdb->get_results($query);
 		
 		if(empty($results)){
@@ -391,12 +439,21 @@ class Events{
 		return $results[0];
 	}
 
-	function retrieve_events($startdate = '', $enddate = '', $amount = '', $extra_query = '', $offset='', $cat=''){
+	/**
+	 * Get all events from the db, filtered by the optional parameters
+	 * @param	string			$startDate		The minimum start date
+	 * @param	string			$endDate		The maximum end date
+	 * @param	int				$amount			The amount of events to return
+	 * @param	string			$extraQuery		Any extra sql query
+	 * @param	int				$offset			The offset to apply to the results
+	 * @param	int				$cat			The category the events should have
+	*/
+	function retrieveEvents($startDate = '', $endDate = '', $amount = '', $extraQuery = '', $offset='', $cat=''){
 		global $wpdb;
 
 		//select all events attached to a post with publish status
 		$query	 = "SELECT * FROM {$wpdb->prefix}posts ";
-		$query	.= "INNER JOIN `{$this->table_name}` ON {$wpdb->prefix}posts.ID={$this->table_name}.post_id";
+		$query	.= "INNER JOIN `{$this->tableName}` ON {$wpdb->prefix}posts.ID={$this->tableName}.post_id";
 		
 		if(is_numeric($cat)){
 			$query	.= " INNER JOIN `{$wpdb->prefix}term_relationships` ON {$wpdb->prefix}posts.ID={$wpdb->prefix}term_relationships.object_id";
@@ -405,23 +462,23 @@ class Events{
 		$query	 .= " WHERE  {$wpdb->prefix}posts.post_status='publish'";
 		
 		//start date is greater than or the requested date falls in between a multiday event
-		if(!empty($startdate)) $query	.= " AND(`{$this->table_name}`.`startdate` >= '$startdate' OR '$startdate' BETWEEN `{$this->table_name}`.startdate and `{$this->table_name}`.enddate)";
+		if(!empty($startDate)) $query	.= " AND(`{$this->tableName}`.`startdate` >= '$startDate' OR '$startDate' BETWEEN `{$this->tableName}`.startdate and `{$this->tableName}`.enddate)";
 		
 		//any event who starts before the enddate
-		if(!empty($enddate)) $query		.= " AND `{$this->table_name}`.`startdate` <= '$enddate'";
+		if(!empty($endDate)) $query		.= " AND `{$this->tableName}`.`startdate` <= '$endDate'";
 
 		//get events with a specific category
 		if(is_numeric($cat)) $query		.= " AND `{$wpdb->prefix}term_relationships`.`term_taxonomy_id` = '$cat'";
 		
 		//extra query
-		if(!empty($extra_query)) $query	.= " AND $extra_query";
+		if(!empty($extraQuery)) $query	.= " AND $extraQuery";
 		
 		//exclude private events which are not ours
-		$userId	= get_current_user_id();
-		$query	.= " AND (`{$this->table_name}`.`onlyfor` IS NULL OR `{$this->table_name}`.`onlyfor`='$userId')";
+		$userId	 = get_current_user_id();
+		$query	.= " AND (`{$this->tableName}`.`onlyfor` IS NULL OR `{$this->tableName}`.`onlyfor`='$userId')";
 
 		//sort on startdate
-		$query	.= " ORDER BY `{$this->table_name}`.`startdate`, `{$this->table_name}`.`starttime` ASC";
+		$query	.= " ORDER BY `{$this->tableName}`.`startdate`, `{$this->tableName}`.`starttime` ASC";
 
 		//LIMIT must be the very last
 		if(is_numeric($amount)) $query	.= "  LIMIT $amount";
@@ -430,10 +487,15 @@ class Events{
 		$this->events 	=  $wpdb->get_results($query);
 	}
 
-	function upcomingevents(){
+	/**
+	 * Get all all events of the coming 3 months with a maximum of ten
+	 * 
+	 * @return	string					The html containg an event list
+	*/
+	function upcomingEvents(){
 		global $wpdb;
 
-		$this->retrieve_events($startdate = date("Y-m-d"), $enddate = date('Y-m-d', strtotime('+3 month')), $amount = 10, $extra_query = "endtime > '".date('H:i', current_time('U'))."' AND {$wpdb->prefix}posts.ID NOT IN ( SELECT `post_id` FROM `{$wpdb->prefix}postmeta` WHERE `meta_key`='celebrationdate')");
+		$this->retrieveEvents($startDate = date("Y-m-d"), $endDate = date('Y-m-d', strtotime('+3 month')), $amount = 10, $extraQuery = "endtime > '".date('H:i', current_time('U'))."' AND {$wpdb->prefix}posts.ID NOT IN ( SELECT `post_id` FROM `{$wpdb->prefix}postmeta` WHERE `meta_key`='celebrationdate')");
 
 		//do not list celebrations
 		foreach($this->events as $key=>$event){
@@ -457,29 +519,29 @@ class Events{
 				<div class="eventlist">
 					<?php
 					foreach($this->events as $event){
-						$startdate		= strtotime($event->startdate);
-						$event_day		= date('d',$startdate);
-						$eventDay		= date('l',$startdate);
-						$event_month	= date('M',$startdate);
-						$event_title	= get_the_title($event->post_id);
-						$enddate_str	= date('d M', strtotime(($event->enddate)));
+						$startDate		= strtotime($event->startdate);
+						$eventDayNr		= date('d', $startDate);
+						$eventDay		= date('l', $startDate);
+						$eventMonth		= date('M', $startDate);
+						$eventTitle		= get_the_title($event->post_id);
+						$endDateStr		= date('d M', strtotime(($event->enddate)));
 
 						$userId = get_post_meta($event->post_id,'user',true);
-						if(is_numeric($userId) and function_exists('SIM\USERPAGE\get_user_page_link')){
+						if(is_numeric($userId) and function_exists('SIM\USERPAGE\getUserPageLink')){
 							//Get the user page of this user
-							$event_url	= SIM\USERPAGE\get_user_page_link($userId);
+							$eventUrl	= SIM\USERPAGE\getUserPageLink($userId);
 						}else{
-							$event_url	= get_permalink($event->post_id);
+							$eventUrl	= get_permalink($event->post_id);
 						}
 					?>
 					<article class="event-article">
 						<div class="event-wrapper">
 							<div class="event-date">
-								<?php echo "<span>$event_day</span> $event_month";?>
+								<?php echo "<span>$eventDayNr</span> $eventMonth";?>
 							</div>
 							<h4 class="event-title">
-								<a href="<?php echo $event_url; ?>">
-									<?php echo $event_title;?>
+								<a href="<?php echo $eventUrl; ?>">
+									<?php echo $eventTitle;?>
 								</a>
 							</h4>
 							<div class="event-detail">
@@ -487,7 +549,7 @@ class Events{
 								if($event->startdate == $event->enddate){
 									echo "$eventDay {$event->starttime}";
 								}else{
-									echo "Until $enddate_str {$event->endtime}";
+									echo "Until $endDateStr {$event->endtime}";
 								}
 								?>
 							</div>
@@ -507,17 +569,31 @@ class Events{
 		return ob_get_clean();
 	}
 
-	function get_date($event){
+	/**
+	 * Get the date string of an event
+	 * 
+	 * @param	object		$event		The event to get the date of
+	 * 
+	 * @return	string					The date of the event. Startdate and end date in case of an multiday event
+	*/
+	function getDate($event){
 		if($event->startdate != $event->enddate){
-			$date		= date('d-m-Y',strtotime($event->startdate)).' - '.date('d-m-Y',strtotime($event->enddate));
+			$date		= date('d-m-Y', strtotime($event->startdate)).' - '.date('d-m-Y', strtotime($event->enddate));
 		}else{
-			$date		= date('d-m-Y',strtotime($event->startdate));
+			$date		= date('d-m-Y', strtotime($event->startdate));
 		}
 
 		return $date;
 	}
 
-	function get_time($event){
+	/**
+	 * Get the time string of an event
+	 * 
+	 * @param	object		$event		The event to get the time of
+	 * 
+	 * @return	string					The time of the event. Start time and end time in case of an multiday event
+	*/
+	function getTime($event){
 		if($event->startdate == $event->enddate){
 			if($event->allday or ($event->starttime == '00:00' and $event->endtime == '23:59')){
 				$time			= 'ALL DAY';
@@ -531,8 +607,15 @@ class Events{
 		return $time;
 	}
 
-	function get_author_detail($event){
-		$userId	= $event->organizer_id;
+	/**
+	 * Get the author details of an event
+	 * 
+	 * @param	object		$event		The event to get the author of
+	 * 
+	 * @return	string					Html with the author name linking to the user page of the author. E-mail and phonenumbers
+	*/
+	function getAuthorDetail($event){
+		$userId		= $event->organizer_id;
 		$user		= get_userdata($userId);
 
 		if(empty($userId)){
@@ -541,6 +624,7 @@ class Events{
 			$url	= SIM\getUserPageUrl($userId);
 			$email	= $user->user_email;
 			$phone	= get_user_meta($userId,'phonenumbers',true);
+
 			$html	= "<a href='$url'>{$user->display_name}</a><br>";
 			$html	.="<br><a href='mailto:$email'>$email</a>";
 			if(is_array($phone)){
@@ -552,14 +636,22 @@ class Events{
 		}
 	}
 
-	function get_location_detail($event){
-		$post_id	= $event->location_id;
-		$location	= get_post_meta($post_id,'location',true);
+	/**
+	 * Get the location details of an event
+	 * 
+	 * @param	object		$event		The event to get the location of
+	 * 
+	 * @return	string					The location name or location url linking to the location page
+	*/
+	function getLocationDetail($event){
+		$postId		= $event->location_id;
+		$location	= get_post_meta($postId,'location',true);
 
-		if(!is_numeric($post_id)){
+		if(!is_numeric($postId)){
 			return $event->location;
 		}else{
-			$url	= get_permalink($post_id);
+			$url	= get_permalink($postId);
+
 			$html	= "<href='$url'>{$event->location}</a><br>";
 			if(!empty($location['address'])){
 				$html	.="<br><a onclick='main.getRoute(this,{$location['latitude']},{$location['longitude']})'>{$location['address']}</a>";
@@ -568,44 +660,58 @@ class Events{
 		}
 	}
 
-	function get_repeat_detail($meta){
+	/**
+	 * Get the repitition details of an event
+	 * 
+	 * @param	object		$meta		The event meta data
+	 * 
+	 * @return	string					String describing the repetition
+	*/
+	function getRepeatDetail($meta){
 		$html = 'Repeats '.$meta['repeat']['type'];
 		if(!empty($meta['repeat']['enddate'])){
 			$html	.= " until ".date('j F Y',strtotime($meta['repeat']['enddate']));
 		}
 		if(!empty($meta['repeat']['amount'])){
-			$repeat_amount = $meta['repeat']['amount'];
-			if($repeat_amount != 90){
-				$html	.= " for $repeat_amount times";
+			$repeatAmount = $meta['repeat']['amount'];
+			if($repeatAmount != 90){
+				$html	.= " for $repeatAmount times";
 			}
 		}
 
 		return $html;
 	}
 
-	function event_export_html($event){
-		$event_meta		= (array)get_post_meta($event->post_id,'eventdetails',true);
+	/**
+	 * Get the export buttons for an event
+	 * 
+	 * @param	object		$meta		The event meta data
+	 * 
+	 * @return	string					Html containing buttons to export the event
+	*/
+	function eventExportHtml($event){
+		$eventMeta		= (array)get_post_meta($event->post_id, 'eventdetails', true);
 		//set the timezone
 		date_default_timezone_set(wp_timezone_string());
 
 		$title			= urlencode($event->post_title);
 		$description	= urlencode("<a href='".get_permalink($event->post_id)."'>Read more on simnigeria.org</a>");
 		$location		= urlencode($event->location);
-		$startdate		= date('Ymd',strtotime($event->startdate));
-		$enddate		= date('Ymd',strtotime($event->enddate));
+		$startDate		= date('Ymd',strtotime($event->startdate));
+		$endDate		= date('Ymd',strtotime($event->enddate));
 
 		if($event->allday){
 			$enddt		= date('Ymd',strtotime('+1 day',$event->enddate));
 		}else{
-			$startdt	= $startdate."T".gmdate('His',strtotime($event->starttime)).'Z';
-			$enddt		= $enddate."T".gmdate('His',strtotime($event->endtime)).'Z';
+			$startdt	= $startDate."T".gmdate('His',strtotime($event->starttime)).'Z';
+			$enddt		= $endDate."T".gmdate('His',strtotime($event->endtime)).'Z';
 		}
 
 		$gmail			= "https://calendar.google.com/calendar/render?action=TEMPLATE&text=$title&dates={$startdt}/{$enddt}&details={$description}&location={$location}&ctz=Africa/Lagos&sprop=website:simnigeria.org&sprop=name:SIM%20Nigeria";
- 		if(!empty($event_meta['repeated'])){
-			$gmail		.= "&recur=RRULE:FREQ=".strtoupper($event_meta['repeat']['type']).";INTERVAL=".$event_meta['repeat']['interval'].';';
-			$weeks 		= $event_meta['repeat']['weeks'];
-			$weekdays	= $event_meta['repeat']['weekdays'];
+ 		if(!empty($eventMeta['repeated'])){
+			$gmail		.= "&recur=RRULE:FREQ=".strtoupper($eventMeta['repeat']['type']).";INTERVAL=".$eventMeta['repeat']['interval'].';';
+			$weeks 		= $eventMeta['repeat']['weeks'];
+			$weekDays	= $eventMeta['repeat']['weekDays'];
 			if(is_array($weeks)){
 				$gmail	.= 'BYDAY=';
 				foreach($weeks as $index=>$week){
@@ -627,17 +733,17 @@ class Events{
 							$gmail	.= '-1';
 							break;
 					}
-					$gmail	.= substr($weekdays[0], 0, 2);
+					$gmail	.= substr($weekDays[0], 0, 2);
 				}
 
 				$gmail	.= ';';
 			}
 		} 
 
-		$starttime		= urlencode($event->starttime.':00');
-		$endtime		= urlencode($event->endtime.':00');
+		$startTime		= urlencode($event->starttime.':00');
+		$endTime		= urlencode($event->endtime.':00');
 
-		$sim			= "https://outlook.office.com/calendar/0/deeplink/compose/?path=/calendar/action/compose/&body={$description}&startdt={$event->startdate}T{$starttime}&enddt={$event->enddate}T{$endtime}&location={$location}&rru=addevent&subject=$title";
+		$sim			= "https://outlook.office.com/calendar/0/deeplink/compose/?path=/calendar/action/compose/&body={$description}&startdt={$event->startdate}T{$startTime}&enddt={$event->enddate}T{$endTime}&location={$location}&rru=addevent&subject=$title";
 		if($event->allday){
 			$sim .= '&amp;allday=true';
 		}
@@ -647,14 +753,22 @@ class Events{
 			$html .= "<br>";
 			$html .= "<a class='button agenda-export' href='$sim' target='_blank'>Add to your SIM agenda</a>";
 		$html	.= '</div>';
+
 		return $html;								
 	}
 
-	function month_calendar($cat=''){
+	/**
+	 * Get the month calendar
+	 * 
+	 * @param	int		$cat		The category of events to display
+	 * 
+	 * @return	string				Html of the calendar
+	*/
+	function monthCalendar($cat=''){
 		if(defined('REST_REQUEST')){
 			$month		= $_POST['month'];
 			$year		= $_POST['year'];
-			$date_str	= "$year-$month-01";
+			$dateStr	= "$year-$month-01";
 		}else{
 			//events
 			$day	= date('d');
@@ -666,48 +780,48 @@ class Events{
 			if(!is_numeric($year) or strlen($year)!=4){
 				$year	= date('Y');
 			}
-			$date_str	= "$year-$month-$day";
+			$dateStr	= "$year-$month-$day";
 		}
 		ob_start();
 		
-		$date			= strtotime($date_str);
-		$month_str		= date('m',$date);
-		$year_str		= date('Y',$date);
-		$minusmonth		= strtotime('-1 month',$date);
-		$minusmonth_str	= date('m',$minusmonth);
-		$minusyear_str	= date('Y',$minusmonth);
-		$plusmonth		= strtotime('+1 month',$date);
-		$plusmonth_str	= date('m',$plusmonth);
-		$plusyear_str	= date('Y',$plusmonth);
+		$date			= strtotime($dateStr);
+		$monthStr		= date('m', $date);
+		$yearStr		= date('Y', $date);
+		$minusMonth		= strtotime('-1 month', $date);
+		$minusMonthStr	= date('m', $minusMonth);
+		$minusYearStr	= date('Y', $minusMonth);
+		$plusMonth		= strtotime('+1 month', $date);
+		$plusMonthStr	= date('m', $plusMonth);
+		$plusYearStr	= date('Y', $plusMonth);
 
-		$weekday		= date("w", strtotime(date('Y-m-01',$date)));
-		$working_date	= strtotime("-$weekday day",strtotime(date('Y-m-01',$date)));
+		$weekDay		= date("w", strtotime(date('Y-m-01', $date)));
+		$workingDate	= strtotime("-$weekDay day", strtotime(date('Y-m-01', $date)));
 
-		$calendar_rows	= '';
-		$detail_html	= '';
+		$calendarRows	= '';
+		$detailHtml		= '';
 
 		$baseUrl	= plugins_url('pictures', __DIR__);
 
 		//loop over all weeks of a month
 		while(true){
-			$calendar_rows .= "<dl class='calendar-row'>";
+			$calendarRows .= "<dl class='calendar-row'>";
 
 			//loop over all days of a week
 			while(true){
-				$monthname			= date('F',$working_date);
-				$working_date_str	= date('Y-m-d',$working_date);
-				$month				= date('m',$working_date);
-				$day				= date('j',$working_date);
+				$monthName			= date('F', $workingDate);
+				$workingDateStr		= date('Y-m-d', $workingDate);
+				$month				= date('m', $workingDate);
+				$day				= date('j', $workingDate);
 				
 				//get the events for this day
-				$this->retrieve_events($working_date_str, $working_date_str, '', '', '', $cat);
+				$this->retrieveEvents($workingDateStr, $workingDateStr, '', '', '', $cat);
 
 				if(
-					$working_date_str== date('Y-m-d') or			// date is today
+					$workingDateStr == date('Y-m-d') or			// date is today
 					(
-						$month_str != date('m') and						// We are requesting another mont than this month
-						date('j',$working_date) == 1 and				// This is the first day of the month
-						date('m',$working_date) == $month_str			// We are in the requested month
+						$monthStr != date('m') and						// We are requesting another mont than this month
+						date('j', $workingDate) == 1 and				// This is the first day of the month
+						date('m', $workingDate) == $monthStr			// We are in the requested month
 					)
 				){
 					$class = 'selected';
@@ -720,90 +834,90 @@ class Events{
 				if($month != date('m',$date)) $class.= ' nullday';
 				if(!empty($this->events)) $class	.= ' has-event';
 				
-				$calendar_rows .=  "<dt class='calendar-day $class' data-date='".date('Ymd',$working_date)."'>";
-					$calendar_rows	.= $day;
-				$calendar_rows	.= "</dt>";
+				$calendarRows .=  "<dt class='calendar-day $class' data-date='".date('Ymd', $workingDate)."'>";
+					$calendarRows	.= $day;
+				$calendarRows	.= "</dt>";
 
-				$detail_html .= "<div class='event-details-wrapper $hidden' data-date='".date('Ymd',$working_date)."'>";
-					$detail_html .= "<h6 class='event-title'>";
-						$detail_html .= "Events for <span class='day'> ".date('j',$working_date)."st</span>$monthname";
-					$detail_html .= "</h6>";
+				$detailHtml .= "<div class='event-details-wrapper $hidden' data-date='".date('Ymd', $workingDate)."'>";
+					$detailHtml .= "<h6 class='event-title'>";
+						$detailHtml .= "Events for <span class='day'> ".date('j', $workingDate)."st</span>$monthName";
+					$detailHtml .= "</h6>";
 						if(empty($this->events)){
-							$detail_html .= "<article class='event-article'>";
-								$detail_html .= "<h4 class='event-title'><a>No Events</a></h4>";
-							$detail_html .= "</article>";
+							$detailHtml .= "<article class='event-article'>";
+								$detailHtml .= "<h4 class='event-title'><a>No Events</a></h4>";
+							$detailHtml .= "</article>";
 						}else{
 							foreach($this->events as $event){
 								$meta		= get_post_meta($event->ID,'eventdetails',true);
-								$detail_html .= "<article class='event-article'>";
-									$detail_html .= "<div class='event-header'>";
+								$detailHtml .= "<article class='event-article'>";
+									$detailHtml .= "<div class='event-header'>";
 										if(has_post_thumbnail($event->post_id)){
-											$detail_html .= "<div class='event-image'>";
-												$detail_html .= get_the_post_thumbnail($event->post_id);
-											$detail_html .= '</div>';
+											$detailHtml .= "<div class='event-image'>";
+												$detailHtml .= get_the_post_thumbnail($event->post_id);
+											$detailHtml .= '</div>';
 										}
-										$detail_html .= "<div class='event-time'>";
-											$detail_html .= "<img src='{$baseUrl}/time_red.png' alt='time' class='event_icon'>";
-											$detail_html .=  $this->get_time($event);
-										$detail_html .= "</div>";
-									$detail_html .= "</div>";
-									$detail_html .= "<h4 class='event-title'>";
+										$detailHtml .= "<div class='event-time'>";
+											$detailHtml .= "<img src='{$baseUrl}/time_red.png' alt='time' class='event_icon'>";
+											$detailHtml .=  $this->getTime($event);
+										$detailHtml .= "</div>";
+									$detailHtml .= "</div>";
+									$detailHtml .= "<h4 class='event-title'>";
 										$url	= get_permalink($event->ID);
-										$detail_html .= "<a href='$url'>";
-											$detail_html .= $event->post_title;
-										$detail_html .= "</a>";
-									$detail_html .= "</h4>";
-									$detail_html .= "<div class='event-detail'>";
+										$detailHtml .= "<a href='$url'>";
+											$detailHtml .= $event->post_title;
+										$detailHtml .= "</a>";
+									$detailHtml .= "</h4>";
+									$detailHtml .= "<div class='event-detail'>";
 									if(!empty($event->location)){
-										$detail_html .= "<div class='location'>";
-											$detail_html .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
-											$detail_html .= $this->get_location_detail($event);
-										$detail_html .= "</div>";
+										$detailHtml .= "<div class='location'>";
+											$detailHtml .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
+											$detailHtml .= $this->getLocationDetail($event);
+										$detailHtml .= "</div>";
 									}	
 									if(!empty($event->organizer)){
-										$detail_html .= "<div class='organizer'>";
-											$detail_html .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
-											$detail_html .= $this->get_author_detail($event);
-										$detail_html .= "</div>";
+										$detailHtml .= "<div class='organizer'>";
+											$detailHtml .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
+											$detailHtml .= $this->getAuthorDetail($event);
+										$detailHtml .= "</div>";
 									}
 									if(!empty($meta['repeat']['type'])){
-										$detail_html .= "<div class='repeat'>";
-											$detail_html .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
-											$detail_html .= $this->get_repeat_detail($meta);
-										$detail_html .= "</div>";
+										$detailHtml .= "<div class='repeat'>";
+											$detailHtml .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
+											$detailHtml .= $this->getRepeatDetail($meta);
+										$detailHtml .= "</div>";
 									}
-										$detail_html .= $this->event_export_html($event);
-								$detail_html .= "</article>";
+										$detailHtml .= $this->eventExportHtml($event);
+								$detailHtml .= "</article>";
 							}
 						} 
-				$detail_html .=  "</div>"; 
+				$detailHtml .=  "</div>"; 
 				
 				//calculate the next week
-				$working_date	= strtotime('+1 day', $working_date);
+				$workingDate	= strtotime('+1 day', $workingDate);
 				//if the next day is the first day of a new week
-				if(date('w',$working_date) == 0) break;
+				if(date('w', $workingDate) == 0) break;
 			}
-			$calendar_rows .= '</dl>';
+			$calendarRows .= '</dl>';
 
 			//stop if next month
 			if($month != date('m',$date)) break;
 		}
 
 		?>
-		<div class="events-wrap" data-date="<?php echo "$year_str-$month_str";?>">
+		<div class="events-wrap" data-date="<?php echo "$yearStr-$monthStr";?>">
 			<div class="event overview">
 				<div class="navigator">
 					<div class="prev">
-						<a href="#" class="prevnext" data-month="<?php echo $minusmonth_str;?>" data-year="<?php echo $minusyear_str;?>">
-							<span><</span> <?php echo date('F', $minusmonth);?>
+						<a href="#" class="prevnext" data-month="<?php echo $minusMonthStr;?>" data-year="<?php echo $minusYearStr;?>">
+							<span><</span> <?php echo date('F', $minusMonth);?>
 						</a>
 					</div>
 					<div class="current">
-						<?php echo date('F Y',$date);?>
+						<?php echo date('F Y', $date);?>
 					</div>
 					<div class="next">
-						<a href="#" class="prevnext" data-month="<?php echo $plusmonth_str;?>" data-year="<?php echo $plusyear_str;?>">
-							<?php echo date('F', $plusmonth);?> <span>></span>
+						<a href="#" class="prevnext" data-month="<?php echo $plusMonthStr;?>" data-year="<?php echo $plusYearStr;?>">
+							<?php echo date('F', $plusMonth);?> <span>></span>
 						</a>
 					</div>
 				</div>
@@ -811,23 +925,23 @@ class Events{
 					<div class="month-container">
 						<dl>
 							<?php
-							$working_date	= strtotime("-$weekday day",strtotime(date('Y-m-01',$date)));
+							$workingDate	= strtotime("-$weekDay day", strtotime(date('Y-m-01', $date)));
 							for ($y = 0; $y <= 6; $y++) {
-								$name	= date('D',$working_date);
+								$name	= date('D', $workingDate);
 								echo "<dt class='calendar-day-head'>$name</dt>";
-								$working_date	= strtotime("+1 days",$working_date);
+								$workingDate	= strtotime("+1 days",$workingDate);
 							}
 							?>
 						</dl>
 						<?php		
-						echo $calendar_rows;
+						echo $calendarRows;
 						?>
 					</div>
 				</div>
 			</div>
 			<div class="event details-wrapper">
 				<?php
-				echo $detail_html;
+				echo $detailHtml;
 				?>
 			</div>
 		</div>
@@ -836,68 +950,75 @@ class Events{
 		return ob_get_clean();
 	}
 
-	function week_calendar($cat=''){
+	/**
+	 * Get the week calendar
+	 * 
+	 * @param	int		$cat		The category of events to display
+	 * 
+	 * @return	string				Html of the calendar
+	*/
+	function weekCalendar($cat=''){
 		if(defined('REST_REQUEST')){
-			$week_nr	= $_POST['wknr'];
+			$weekNr		= $_POST['wknr'];
 			$year		= $_POST['year'];
 		}else{
-			$week_nr	= $_GET['week'];
+			$weekNr		= $_GET['week'];
 			$year		= $_GET['yr'];
-			if(!is_numeric($week_nr) or strlen($week_nr)>2){
-				$week_nr	= date('W');
+			if(!is_numeric($weekNr) or strlen($weekNr)>2){
+				$weekNr	= date('W');
 			}
 			if(!is_numeric($year) or strlen($year)!=4){
 				$year	= date('Y');
 			}
 		}
-		$dto = new \DateTime();
-		$dto->setISODate($year, $week_nr);
-		$date_str = $dto->format('Y-m-d');
+		$dto 		= new \DateTime();
+		$dto->setISODate($year, $weekNr);
+		$dateStr 	= $dto->format('Y-m-d');
 
 		ob_start();
 		
-		$date			= strtotime($date_str);
-		$week_nr		= date('W',$date);
-		$datetime		= new \DateTime();
-		$working_date	= $datetime->setISODate(date('Y',$date), $week_nr, "0")->getTimestamp();
-		$calendar_rows	= [];
-		$detail_html	= '';
+		$date			= strtotime($dateStr);
+		$weekNr			= date('W',$date);
+		$dateTime		= new \DateTime();
+		$workingDate	= $dateTime->setISODate(date('Y',$date), $weekNr, "0")->getTimestamp();
+		$calendarRows	= [];
+		$detailHtml		= '';
 
 		$baseUrl	= plugins_url('pictures', __DIR__);
 
 		//loop over all days of a week
 		while(true){
-			$working_date_str	= date('Y-m-d',$working_date);
-			$weekday			= date('w',$working_date);
-			$year				= date('Y',$working_date);
-			$prev_week_nr		= date("W",strtotime("-1 week",$working_date));
-			$next_week_nr		= date("W",strtotime("+1 week",$working_date));
+			$workingDateStr		= date('Y-m-d',$workingDate);
+			$weekDay			= date('w',$workingDate);
+			$year				= date('Y',$workingDate);
+			$prevWeekNr			= date("W",strtotime("-1 week",$workingDate));
+			$nextWeekNr			= date("W",strtotime("+1 week",$workingDate));
 			
 			//get the events for this day
-			$this->retrieve_events($working_date_str, $working_date_str, '', '', '', $cat);
+			$this->retrieveEvents($workingDateStr, $workingDateStr, '', '', '', $cat);
 
 			$events 		= $this->events;
 			if(!empty($events )){
 				$event			= $events[0];
-				$starttime		= $event->starttime;
-				$endtime		= $event->endtime;
+				$startTime		= $event->starttime;
+				$endTime		= $event->endtime;
 
 				//multi day event
 				if($event->startdate != $event->enddate){
-					if($event->startdate == $working_date_str){
-						$endtime	= '23:59';
-					}elseif($event->enddate == $working_date_str){
-						$starttime	= '00:00';
+					if($event->startdate == $workingDateStr){
+						$endTime	= '23:59';
+					}elseif($event->enddate == $workingDateStr){
+						$startTime	= '00:00';
 					}else{
-						$starttime	= '00:00';
-						$endtime	= '23:59';
+						$startTime	= '00:00';
+						$endTime	= '23:59';
 					}
 				}
 
 				//index is amount of hours times 2
-				$index			= date('H',strtotime($starttime))*2;
+				$index			= date('H', strtotime($startTime))*2;
 				//plus one if starting at :30
-				if(date('i',strtotime($starttime)) != '00') $index++;
+				if(date('i', strtotime($startTime)) != '00') $index++;
 			}else{
 				$index	= -1;
 			}
@@ -906,30 +1027,30 @@ class Events{
 			for ($x = 0; $x < 48; $x++) {
 				//there is an events starting now
 				if($x === $index){	
-					if($starttime=='00:00' and $endtime=='23:59' and $event->startdate == $event->enddate){
+					if($startTime=='00:00' and $endTime=='23:59' and $event->startdate == $event->enddate){
 						while($event->starttime == '00:00'){
-							if(!empty($calendar_rows['allday'][$weekday]))	$calendar_rows['allday'][$weekday] .="<br>";
-							$calendar_rows['allday'][$weekday]	.= $event->post_title;
+							if(!empty($calendarRows['allday'][$weekDay]))	$calendarRows['allday'][$weekDay] .="<br>";
+							$calendarRows['allday'][$weekDay]	.= $event->post_title;
 							unset($events[0]);
 							$events			= array_values($events);
 							$event			= $events[0];
 						}
-						$calendar_rows[$x][$weekday] = "<td class='calendar-hour'></td>";
+						$calendarRows[$x][$weekDay] = "<td class='calendar-hour'></td>";
 					}else{
-						$duration	= strtotime($endtime)-strtotime($starttime);
-						$half_hours	= round($duration/60/30);
-						$endindex	= (int)round($duration/60/30)+$index;
+						$duration	= strtotime($endTime)-strtotime($startTime);
+						$halfHours	= round($duration/60/30);
+						$endIndex	= (int)round($duration/60/30)+$index;
 
 						//add the event
-						$calendar_rows[$index][$weekday] .=  "<td rowspan='$half_hours' class='calendar-hour has-event' data-date='".date('Ymd',strtotime($event->startdate))."' data-starttime='{$event->starttime}'>";
-							$calendar_rows[$index][$weekday]	.= $event->post_title;
-						$calendar_rows[$index][$weekday]	.= "</td>";
+						$calendarRows[$index][$weekDay] .=  "<td rowspan='$halfHours' class='calendar-hour has-event' data-date='".date('Ymd',strtotime($event->startdate))."' data-starttime='{$event->starttime}'>";
+							$calendarRows[$index][$weekDay]	.= $event->post_title;
+						$calendarRows[$index][$weekDay]	.= "</td>";
 						
 						//add hidden cells as many as needed
-						for ($y = $index+1; $y < $endindex; $y++) {
-							$calendar_rows[$y][$weekday]	= "<td class='hidden'></td>";
+						for ($y = $index+1; $y < $endIndex; $y++) {
+							$calendarRows[$y][$weekDay]	= "<td class='hidden'></td>";
 						}
-						$x = $endindex-1;
+						$x = $endIndex-1;
 
 						unset($events[0]);
 					}
@@ -937,91 +1058,90 @@ class Events{
 					if(!empty($events)){
 						$events			= array_values($events);
 						$event			= $events[0];
-						$starttime		= $event->starttime;
-						$endtime		= $event->endtime;
+						$startTime		= $event->starttime;
+						$endTime		= $event->endtime;
 						//index is amount of hours times 2
-						$index			= date('H',strtotime($starttime))*2;
+						$index			= date('H',strtotime($startTime))*2;
 						//plus one if starting at :30
-						if(date('i',strtotime($starttime)) != '00') $index++;
+						if(date('i', strtotime($startTime)) != '00') $index++;
 					}
 				//write an empty cell
 				}else{
-					$calendar_rows[$x][$weekday] = "<td class='calendar-hour' data-date='".date('Ymd',$working_date)."'></td>";
+					$calendarRows[$x][$weekDay] = "<td class='calendar-hour' data-date='".date('Ymd', $workingDate)."'></td>";
 				}
 			}
 
 			foreach($this->events as $event){
-				$meta		= get_post_meta($event->ID,'eventdetails',true);
+				$meta	= get_post_meta($event->ID, 'eventdetails', true);
+				$url	= get_permalink($event->ID);
+
 				//do not re-add event details for a multiday event in the same week
-				if($event->startdate != $event->enddate and $event->startdate != $working_date_str and date('w',$working_date)>0) continue;
+				if($event->startdate != $event->enddate and $event->startdate != $workingDateStr and date('w', $workingDate)>0) continue;
 
-				$detail_html .= "<div class='event-details-wrapper hidden' data-date='".date('Ymd',strtotime($event->startdate))."' data-starttime='{$event->starttime}'>";
-					$detail_html .= "<article class='event-article'>";
+				$detailHtml .= "<div class='event-details-wrapper hidden' data-date='".date('Ymd', strtotime($event->startdate))."' data-starttime='{$event->starttime}'>";
+					$detailHtml .= "<article class='event-article'>";
 						if(has_post_thumbnail($event->post_id)){
-							$detail_html .= "<div class='event-image'>";
-								$detail_html .= get_the_post_thumbnail($event->post_id);
-							$detail_html .= '</div>';
+							$detailHtml .= "<div class='event-image'>";
+								$detailHtml .= get_the_post_thumbnail($event->post_id);
+							$detailHtml .= '</div>';
 						}
-						$detail_html .= "<div class='event-time'>";
-							$detail_html .= "<img src='{$baseUrl}/time_red.png' alt='time' class='event_icon'>";
-							$detail_html .=  $this->get_date($event).'   '.$this->get_time($event);
-						$detail_html .= "</div>";
+						$detailHtml .= "<div class='event-time'>";
+							$detailHtml .= "<img src='{$baseUrl}/time_red.png' alt='time' class='event_icon'>";
+							$detailHtml .=  $this->getDate($event).'   '.$this->getTime($event);
+						$detailHtml .= "</div>";
 
-						$detail_html .= "<h4 class='event-title'>";
-							$url	= get_permalink($event->ID);
-							$detail_html .= "<a href='$url'>";
-								$detail_html .= $event->post_title;
-							$detail_html .= "</a>";
-						$detail_html .= "</h4>";
-						$detail_html .= "<div class='event-detail'>";
+						$detailHtml .= "<h4 class='event-title'>";
+							$detailHtml .= "<a href='$url'>";
+								$detailHtml .= $event->post_title;
+							$detailHtml .= "</a>";
+						$detailHtml .= "</h4>";
+						$detailHtml .= "<div class='event-detail'>";
 						if(!empty($event->location)){
-							$detail_html .= "<div class='location'>";
-								$detail_html .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
-								$detail_html .= $this->get_location_detail($event);
-							$detail_html .= "</div>";
+							$detailHtml .= "<div class='location'>";
+								$detailHtml .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
+								$detailHtml .= $this->getLocationDetail($event);
+							$detailHtml .= "</div>";
 						}	
 						if(!empty($event->organizer)){
-							$detail_html .= "<div class='organizer'>";
-								$detail_html .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
-								$detail_html .= $this->get_author_detail($event);
-							$detail_html .= "</div>";
+							$detailHtml .= "<div class='organizer'>";
+								$detailHtml .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
+								$detailHtml .= $this->getAuthorDetail($event);
+							$detailHtml .= "</div>";
 						}
 
 						if(!empty($meta['repeat']['type'])){
-							$detail_html .= "<div class='repeat'>";
-								$detail_html .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
-								$detail_html .= $this->get_repeat_detail($meta);
-							$detail_html .= "</div>";
+							$detailHtml .= "<div class='repeat'>";
+								$detailHtml .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
+								$detailHtml .= $this->getRepeatDetail($meta);
+							$detailHtml .= "</div>";
 						}
-
-							
-							$detail_html .= $this->event_export_html($event);
-						$detail_html .= "</div>";
-					$detail_html .= "</article>";
-				$detail_html .= "</div>";
+							$detailHtml .= $this->eventExportHtml($event);
+						$detailHtml .= "</div>";
+					$detailHtml .= "</article>";
+				$detailHtml .= "</div>";
 			}
 			
 			//calculate the next week
-			$working_date	= strtotime('+1 day', $working_date);
+			$workingDate	= strtotime('+1 day', $workingDate);
 			//if the next day is the first day of a new week
-			if(date('w',$working_date) == 0) break;
+			if(date('w', $workingDate) == 0) break;
 		}
 
 		?>
-		<div class="events-wrap" data-weeknr="<?php echo $week_nr;?>" data-year="<?php echo $year;?>">
+		<div class="events-wrap" data-weeknr="<?php echo $weekNr;?>" data-year="<?php echo $year;?>">
 			<div class="event overview">
 				<div class="navigator">
 					<div class="prev">
-						<a href="#" class="prevnext" data-weeknr="<?php echo $prev_week_nr;?>" data-year="<?php echo $year;?>">
-							<span><</span> <?php echo $prev_week_nr;?>
+						<a href="#" class="prevnext" data-weeknr="<?php echo $prevWeekNr;?>" data-year="<?php echo $year;?>">
+							<span><</span> <?php echo $prevWeekNr;?>
 						</a>
 					</div>
 					<div class="current">
-						Week <?php echo $week_nr;?>
+						Week <?php echo $weekNr;?>
 					</div>
 					<div class="next">
-						<a href="#" class="prevnext" data-weeknr="<?php echo $next_week_nr;?>" data-year="<?php echo $year;?>">
-							<?php echo $next_week_nr;?> <span>></span>
+						<a href="#" class="prevnext" data-weeknr="<?php echo $nextWeekNr;?>" data-year="<?php echo $year;?>">
+							<?php echo $nextWeekNr;?> <span>></span>
 						</a>
 					</div>
 				</div>
@@ -1030,39 +1150,39 @@ class Events{
 						<thead>
 							<th> </th>
 							<?php
-							$working_date	= $datetime->setISODate(date('Y',$date), $week_nr, "0")->getTimestamp();
+							$workingDate	= $dateTime->setISODate(date('Y', $date), $weekNr, "0")->getTimestamp();
 							for ($y = 0; $y <= 6; $y++) {
-								$name	= date('D',$working_date);
-								$nr		= date('d',$working_date);
+								$name	= date('D', $workingDate);
+								$nr		= date('d', $workingDate);
 								echo "<th>$name<br>$nr</th>";
-								$working_date	= strtotime("+1 days",$working_date);
+								$workingDate	= strtotime("+1 days", $workingDate);
 							}
 							?>
 						</thead>
 
 						<tbody>
 						<?php
-						if(!empty($calendar_rows['allday'])){
+						if(!empty($calendarRows['allday'])){
 							echo "<tr class='calendar-row'>";
 								echo "<td class=''><b>All day</b></td>";
 							//loop over the dayweeks
-							$working_date	= $datetime->setISODate(date('Y',$date), $week_nr, "0")->getTimestamp();
+							$workingDate	= $dateTime->setISODate(date('Y', $date), $weekNr, "0")->getTimestamp();
 							for ($y = 0; $y <= 6; $y++) {
-								$content	= $calendar_rows['allday'][$y];
+								$content	= $calendarRows['allday'][$y];
 								if(empty($content)){
 									$class='';
 								}else{
 									$class=' has-event';
 								}
-								echo "<td class='calendar-hour$class' data-date='".date('Ymd',$working_date)."' data-starttime='00:00'>{$calendar_rows['allday'][$y]}</td>";
-								$working_date	= strtotime("+1 days",$working_date);
+								echo "<td class='calendar-hour$class' data-date='".date('Ymd', $workingDate)."' data-starttime='00:00'>{$calendarRows['allday'][$y]}</td>";
+								$workingDate	= strtotime("+1 days", $workingDate);
 							}
 							echo '</tr>';
 						}
 
-						unset($calendar_rows['allday']);
+						unset($calendarRows['allday']);
 						//one row per half an hour
-						foreach($calendar_rows as $i=>$row){
+						foreach($calendarRows as $i=>$row){
 							echo "<tr class='calendar-row'>";
 							$time	= $i/2;
 							if($i % 2 == 0){
@@ -1088,7 +1208,7 @@ class Events{
 					</article>
 				</div>
 				<?php
-				echo $detail_html;
+				echo $detailHtml;
 				?>
 			</div>
 		</div>
@@ -1097,7 +1217,14 @@ class Events{
 		return ob_get_clean();
 	}
 
-	function list_calendar($cat=''){
+	/**
+	 * Get the list calendar
+	 * 
+	 * @param	int		$cat		The category of events to display
+	 * 
+	 * @return	string				Html of the calendar
+	*/
+	function listCalendar($cat=''){
 		$offset='';
 		if(defined('REST_REQUEST')){
 			$offset	= $_POST['offset'];
@@ -1116,20 +1243,21 @@ class Events{
 		}
 		
 		$day	= date('d');
-		$date_str	= "$year-$month-$day";
+		$dateStr	= "$year-$month-$day";
 
-		$this->retrieve_events($date_str, '', 10, '', $offset, $cat);
+		$this->retrieveEvents($dateStr, '', 10, '', $offset, $cat);
 		$html ='';
 
 		$baseUrl	= plugins_url('pictures', __DIR__);
 
 		foreach($this->events as $event){
 			$meta		= get_post_meta($event->ID,'eventdetails',true);
+			$url		= get_permalink($event->ID);
+
 			$html .= "<article class='event-article'>";
 				$html .= "<div class='event-wrapper'>";
 					$html .= get_the_post_thumbnail($event->post_id,'medium');
 					$html .= "<h3 class='event-title'>";
-						$url	= get_permalink($event->ID);
 						$html .= "<a href='$url'>";
 							$html .= $event->post_title;
 						$html .= "</a>";
@@ -1137,36 +1265,36 @@ class Events{
 					$html .= "<div class='event-detail'>";
 						$html .= "<div class='date'>";
 							$html .="<img src='{$baseUrl}/date.png' alt='' class='event_icon'>";
-							$html .= $this->get_date($event);
+							$html .= $this->getDate($event);
 						$html .= "</div>";
 						$html .= "<div class='time'>";
 							$html .="<img src='{$baseUrl}/time_red.png' alt='' class='event_icon'>";
-							$html .= $this->get_time($event);
+							$html .= $this->getTime($event);
 						$html .= "</div>";
 					if(!empty($event->location)){
 						$html .= "<div class='location'>";
 							$html .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
-							$html .= $this->get_location_detail($event);
+							$html .= $this->getLocationDetail($event);
 						$html .= "</div>";
 					}
 					if(!empty($event->organizer)){
 						$html .= "<div class='organizer'>";
 							$html .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
-							$html .= $this->get_author_detail($event);
+							$html .= $this->getAuthorDetail($event);
 						$html .= "</div>";
 					}
 					if(!empty($meta['repeat']['type'])){
 						$html .= "<div class='repeat'>";
 							$html .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
-							$html .= $this->get_repeat_detail($meta);
+							$html .= $this->getRepeatDetail($meta);
 						$html .= "</div>";
 					}
 
-						$html .= $this->event_export_html($event);
+						$html .= $this->eventExportHtml($event);
 
 					$html .= "</div>";
 					$html .= "<div class='readmore'>";
-						$html .= "<a class='button' href='{$event->guid}'>Read more</a>";
+						$html .= "<a class='button' href='{$url}'>Read more</a>";
 					$html .= "</div>";
 				$html .= "</div>";
 			$html .= "</article>";

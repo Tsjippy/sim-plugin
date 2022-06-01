@@ -17,56 +17,71 @@ if(!class_exists('RobThree\Auth\TwoFactorAuth')){
 }
 
 //https://robthree.github.io/TwoFactorAuth/getting-started.html
+/**
+ * Setup the one time key for authenticator
+ * 
+ * @return  object       An object with the secret key and qr code
+ */
 function setupTimeCode(){
     $user                           = wp_get_current_user();
-    $userId                        = $user->ID;
+    $userId                         = $user->ID;
     $twofa                          = new TwoFactorAuth();
-    $setup_details                  = new stdClass();
-    $setup_details->secretkey       = $twofa->createSecret();
+    $setupDetails                   = new stdClass();
+    $setupDetails->secretKey        = $twofa->createSecret();
 
-    update_user_meta($userId,'2fa_hash',password_hash($setup_details->secretkey,PASSWORD_DEFAULT));
+    update_user_meta($userId, '2fa_hash', password_hash($setupDetails->secretKey, PASSWORD_DEFAULT));
 
     if (!extension_loaded('imagick')){
-        $setup_details->image_html     = "<img src=".$twofa->getQRCodeImageAsDataUri(SITENAME." (".get_userdata($userId)->user_login.")", $setup_details->secretkey).">";
+        $setupDetails->imageHtml    = "<img src=".$twofa->getQRCodeImageAsDataUri(SITENAME." (".get_userdata($userId)->user_login.")", $setupDetails->secretKey).">";
     }else{
-        $qrCodeUrl = $twofa->getQRText(SITENAME." (".get_userdata($userId)->user_login.")",$setup_details->secretkey);
+        $qrCodeUrl                  = $twofa->getQRText(SITENAME." (".get_userdata($userId)->user_login.")",$setupDetails->secretKey);
 
-        $renderer = new ImageRenderer(
+        $renderer                   = new ImageRenderer(
             new RendererStyle(400),
             new ImagickImageBackEnd()
         );
         $writer         = new Writer($renderer);
-        $qrcode_image   = base64_encode($writer->writeString($qrCodeUrl));
+        $qrcodeImage   = base64_encode($writer->writeString($qrCodeUrl));
 
-        $setup_details->image_html     = "<img src='data:image/png;base64, $qrcode_image'/>";
+        $setupDetails->imageHtml     = "<img src='data:image/png;base64, $qrcodeImage'/>";
     }
     otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example
 
-    $website_name                   = rawurlencode(get_bloginfo('name'));
-    $user_name                      = rawurlencode($user->display_name);
-    $totp_url                       = "otpauth://totp/$website_name:$user_name?secret={$setup_details->secretkey}&issuer=$website_name";
-    $setup_details->app_link        = "<a href='$totp_url' class='button' id='2fa-authenticator-link'>Go to authenticator app</a>";
+    $websiteName                   = rawurlencode(get_bloginfo('name'));
+    $userName                      = rawurlencode($user->display_name);
+    $totpUrl                       = "otpauth://totp/$websiteName:$userName?secret={$setupDetails->secretKey}&issuer=$websiteName";
+    $setupDetails->appLink        = "<a href='$totpUrl' class='button' id='2fa-authenticator-link'>Go to authenticator app</a>";
 
-    return $setup_details;
+    return $setupDetails;
 }
 
+/** 
+ * Create a randow code and send it via e-mail to an user
+ * 
+ * @param   object  WP_User
+*/
 function sendEmailCode($user){
-    $email_code  = mt_rand(1000000000,9999999999);
+    $emailCode  = mt_rand(1000000000,9999999999);
 
     if(!isset($_SESSION)) session_start();
-    $_SESSION['2fa_email_key']  = $email_code;
+    $_SESSION['2fa_email_key']  = $emailCode;
 
-    $twoFAEmail    = new TwoFAEmail($user, $email_code);
+    $twoFAEmail    = new TwoFAEmail($user, $emailCode);
 	$twoFAEmail->filterMail();
 						
 	wp_mail( $user->user_email, $twoFAEmail->subject, $twoFAEmail->message);
 }
 
+/**
+ * Verify the submitted e-mail code
+ * 
+ * @return  bool    true if valid code false otherwise
+ */
 function verifyEmailCode(){
     if(!isset($_SESSION)) session_start();
-    $email_code = $_SESSION['2fa_email_key'];
+    $emailCode = $_SESSION['2fa_email_key'];
 
-    if($email_code == $_POST['email_code'] or $_SERVER['HTTP_HOST'] == 'localhost'){
+    if($emailCode == $_POST['email_code'] or $_SERVER['HTTP_HOST'] == 'localhost'){
         return true;
         unset($_SESSION['2fa_email_key']);
     }else{
@@ -74,7 +89,12 @@ function verifyEmailCode(){
     }
 }
 
-function send_2fa_warning_email($user){
+/**
+ * Send an e-mail if two factor is not enabled and someone logs in
+ * 
+ * @param   object  $user       WP_User
+ */
+function send2faWarningEmail($user){
     //if this is the first time ever login we do not have to send a warning
     if(!get_user_meta($user->id, 'login_count', true)) return;
 
@@ -85,8 +105,12 @@ function send_2fa_warning_email($user){
 	wp_mail( $user->user_email, $unsafeLogin->subject, $unsafeLogin->message);
 }
 
-//Reset 2fa
-function reset_2fa($userId){
+/**
+ * Reset 2fa and send a message about it
+ * 
+ * @param int   $userID
+ */
+function reset2fa($userId){
 	global $wpdb;
 
 	//Remove all 2fa keys
@@ -94,7 +118,7 @@ function reset_2fa($userId){
 	
 	$userdata = get_userdata($userId);
 	//Send email and signal message
-	SIM\try_send_signal(
+	SIM\trySendSignal(
 		"Hi ".$userdata->first_name.",\n\nYour account is unlocked you can now login using your credentials. Please enable 2FA as soon as possible",
 		$_GET['user_id']
 	);
@@ -122,9 +146,9 @@ add_filter( 'authenticate', function ( $user) {
             //succesfull webauthentication done before
         }elseif(in_array('authenticator',$methods)){
             $twofa      = new TwoFactorAuth();
-            $secretkey  = get_user_meta($user->ID,'2fa_key',true);
+            $secretKey  = get_user_meta($user->ID,'2fa_key',true);
             /*$hash     = get_user_meta($user->ID,'2fa_hash',true);
-             if(!password_verify($secretkey,$hash)){
+             if(!password_verify($secretKey,$hash)){
                 $user = new \WP_Error(
                     '2fa error',
                     '2fa key has changed!<br>Please contact your site admin.' 
@@ -140,7 +164,7 @@ add_filter( 'authenticate', function ( $user) {
                     '2fa error',
                     'No 2FA code given' 
                 );
-            }elseif($twofa->verifyCode($secretkey, $authcode, 1, null, $timeslice)){
+            }elseif($twofa->verifyCode($secretKey, $authcode, 1, null, $timeslice)){
                 //timeslice should be larger then last2fa
                 if($timeslice<= $last2fa){
                     $user = new \WP_Error(
@@ -166,11 +190,11 @@ add_filter( 'authenticate', function ( $user) {
             }
         }else{
             //we have setup an authenticator method but did not use it
-            send_2fa_warning_email($user);
+            send2faWarningEmail($user);
         }
     }else{
         //no 2fa configured yet
-        send_2fa_warning_email($user);
+        send2faWarningEmail($user);
     }
 
     if(isset($_SESSION)){
@@ -206,7 +230,7 @@ add_action('wp_footer', function(){
             )
         )
     ){
-        $accountPageId  = SIM\get_module_option('login', '2fa_page');
+        $accountPageId  = SIM\getModuleOption('login', '2fa_page');
         $url            = SIM\getValidPageLink($accountPageId);
         if(!$url) return;
 

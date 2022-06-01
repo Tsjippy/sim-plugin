@@ -75,14 +75,14 @@ function showCalendar(){
 					<select class='month_selector<?php if($view=='week') echo ' hidden';?>' placeholder="Select month">
 						<?php
 						for ($m=1;$m<13;$m++){
-							$monthname	= date("F", mktime(0, 0, 0, $m, 10));
-							$monthnum	= sprintf("%02d", $m);
+							$monthName	= date("F", mktime(0, 0, 0, $m, 10));
+							$monthNum	= sprintf("%02d", $m);
 							if($_GET['month'] == $m){
 								$selected	= ' selected';
 							}else{
 								$selected	= '';
 							}
-							echo "<option value='$monthnum'$selected>$monthname</option>";
+							echo "<option value='$monthNum'$selected>$monthName</option>";
 						}
 						?>
 					</select>
@@ -103,7 +103,7 @@ function showCalendar(){
 						$start 	= date('Y');
 						$end	= date("Y",strtotime('+10 year'));
 						for ($y=$start;$y<$end;$y++){
-							$monthname = date("F", mktime(0, 0, 0, $m, 10));
+							$monthName = date("F", mktime(0, 0, 0, $m, 10));
 							if($y == $_GET['year']){
 								$selected = 'selected';
 							}else{
@@ -124,17 +124,17 @@ function showCalendar(){
 
 		<div id='monthview' class='calendarview<?php if($view!='month') echo ' hidden';?>'>
 			<?php
-			echo $events->month_calendar($cat);
+			echo $events->monthCalendar($cat);
 			?>
 		</div>
 		<div id='weekview' class='calendarview<?php if($view!='week') echo ' hidden';?>'>
 			<?php
-			echo $events->week_calendar($cat);
+			echo $events->weekCalendar($cat);
 			?>
 		</div>
 		<div id='listview' class='calendarview<?php if($view!='list') echo ' hidden';?>'>
 			<?php
-			echo $events->list_calendar($cat);
+			echo $events->listCalendar($cat);
 			?>
 		</div>		
 	</div>

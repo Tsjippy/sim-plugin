@@ -2,17 +2,25 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-add_filter('before_saving_formdata',function($formresults, $formname, $userId){
-	if($formname != 'profile_picture') return $formresults;	
+add_filter('sim_before_saving_formdata',function($formResults, $formName, $userId){
+	if($formName != 'profile_picture') return $formResults;	
 	
 	// Hide profile picture by default from media galery
-	$picture_id	=  $formresults['profile_picture'][0];
-	if(is_numeric($picture_id)) update_post_meta($picture_id, 'gallery_visibility', 'hide' );
+	$pictureId	=  $formResults['profile_picture'][0];
+	if(is_numeric($pictureId)) update_post_meta($pictureId, 'gallery_visibility', 'hide' );
 
-	return $formresults;
+	return $formResults;
 },10,3);
 
-function get_profile_picture_url($userId,$size=[50,50]){
+/**
+ * Get the url of the profile picture of a particular size
+ * 
+ * @param	int		$userId		The WP_User id
+ * @param	array	$size		length and width of the picture
+ * 
+ * @return	string				The url
+ */
+function getProfilePictureUrl($userId, $size=[50,50]){
 	$attachment_id	= get_user_meta($userId,'profile_picture',true);
 	$url			= false;
 	if(is_numeric($attachment_id)){
@@ -22,38 +30,45 @@ function get_profile_picture_url($userId,$size=[50,50]){
 	return $url;
 }
 
+/**
+ * Get the url of the profile picture of a particular size
+ * 
+ * @param	int		$userId		The WP_User id
+ * 
+ * @return	string|false		The path or false if no picture
+ */
 function getProfilePicturePath($userId){
-	$attachment_id	= get_user_meta($userId,'profile_picture',true);
+	$attachmentId	= get_user_meta($userId, 'profile_picture', true);
 	$path			= false;
-	if(is_numeric($attachment_id)){
-		$path = get_attached_file($attachment_id);
+	if(is_numeric($attachmentId)){
+		$path = get_attached_file($attachmentId);
 	}
 	
 	return $path;
 }
 
 // Apply filter
-add_filter( 'get_avatar' , function ( $avatar, $id_or_email, $size, $default, $alt ) {
+add_filter( 'get_avatar' , function ( $avatar, $idOrEmail, $size, $default, $alt ) {
     $user = false;
  
 	//CHeck if an, id, email or user is given
-    if ( is_numeric( $id_or_email ) ) {
-        $id = (int) $id_or_email;
+    if ( is_numeric( $idOrEmail ) ) {
+        $id = (int) $idOrEmail;
         $user = get_user_by( 'id' , $id );
  
-    } elseif ( is_object( $id_or_email ) ) {
-        if ( ! empty( $id_or_email->user_id ) ) {
-            $id = (int) $id_or_email->user_id;
+    } elseif ( is_object( $idOrEmail ) ) {
+        if ( ! empty( $idOrEmail->user_id ) ) {
+            $id = (int) $idOrEmail->user_id;
             $user = get_user_by( 'id' , $id );
         }
     } else {
-        $user = get_user_by( 'email', $id_or_email );   
+        $user = get_user_by( 'email', $idOrEmail );   
     }
 	
 	//If we have valid user, return there profile picture or the default
     if ( $user && is_object( $user ) ) {
 		//Get profile picture id from db
-		$url = get_profile_picture_url($user->ID);
+		$url = getProfilePictureUrl($user->ID);
 		if ( $url == '' ) $url = plugins_url('',__DIR__).'/../pictures/usericon.png';
 		$avatar = "<img alt='$alt' src='$url' class='avatar avatar-{$size} photo' height='$size' width='$size' />";
     }

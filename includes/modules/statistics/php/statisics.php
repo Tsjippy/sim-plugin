@@ -4,36 +4,34 @@ use SIM;
 
 // Adds statisics to a page about the current page
 add_filter( 'the_content', function ($content){
-    if(!is_main_query())    return $content;
+    if(!is_main_query() or !is_user_logged_in())    return $content;
 
-    if(!is_user_logged_in()) return $content;
-
-    $view_roles     = SIM\get_module_option('statistics', 'view_rights');
-    $user_roles     = wp_get_current_user()->roles;
+    $viewRoles     = SIM\getModuleOption('statistics', 'view_rights');
+    $userRoles     = wp_get_current_user()->roles;
 
     //only continue if we have the right so see the statistics
-    if(!array_intersect($view_roles, $user_roles)) return $content;
+    if(!array_intersect($viewRoles, $userRoles)) return $content;
     
     global $wpdb;
 
-    $table_name	= $wpdb->prefix . 'sim_statistics';
+    $tableName	= $wpdb->prefix . 'sim_statistics';
     $url        = str_replace(SITEURL,'', SIM\currentUrl());
 
-    $pageviews  = $wpdb->get_results( "SELECT * FROM $table_name WHERE url='$url' ORDER BY $table_name.`timelastedited` DESC" );
+    $pageViews  = $wpdb->get_results( "SELECT * FROM $tableName WHERE url='$url' ORDER BY $tableName.`timelastedited` DESC" );
     
-    $total_views                = 0;
-    $unique_views_last_months   = 0;
-    $now                        = new \DateTime();
-    foreach($pageviews as $view){
-        $total_views += $view->counter; 
+    $totalViews             = 0;
+    $uniqueViewsLastMonths  = 0;
+    $now                    = new \DateTime();
+    foreach($pageViews as $view){
+        $totalViews += $view->counter; 
 
         $date = new \DateTime($view->timelastedited);
         $interval = $now->diff($date)->format('%m months');
         if($interval<6){
-            $unique_views_last_months++;
+            $uniqueViewsLastMonths++;
         }
     }
-    $unique_views   = count($pageviews);
+    $uniqueViews   = count($pageViews);
 
     ob_start();
     ?>
@@ -47,7 +45,7 @@ add_filter( 'the_content', function ($content){
                         <b>Total views:</b>   
                     </td>
                     <td class='value'>
-                        <?php echo $total_views;?>  
+                        <?php echo $totalViews;?>  
                     </td>
                 </tr>
                 <tr>
@@ -55,7 +53,7 @@ add_filter( 'the_content', function ($content){
                         <b>Unique views:</b>   
                     </td>
                     <td class='value'>
-                        <?php echo $unique_views;?>  
+                        <?php echo $uniqueViews;?>  
                     </td>
                 </tr>
                 <tr>
@@ -63,7 +61,7 @@ add_filter( 'the_content', function ($content){
                         <b>Unique views last 6 months:</b>   
                     </td>
                     <td class='value'>
-                        <?php echo $unique_views_last_months;?>  
+                        <?php echo $uniqueViewsLastMonths;?>  
                     </td>
                 </tr>
             </tbody>

@@ -22,7 +22,7 @@ add_action( 'wp_enqueue_scripts', function(){
     // We cannot use the minified version as the dynamic js files depend on the function names
     wp_register_script('sim_XXXX_script',plugins_url('js/XXXX.js', __DIR__), array('sweetalert'), ModuleVersion,true);
 
-    $formbuilder_pages   = SIM\get_module_option('XXX', 'XXX_pages');
+    $formbuilder_pages   = SIM\getModuleOption('XXX', 'XXX_pages');
     if(in_array(get_the_ID(), $formbuilder_pages)){
         wp_enqueue_style('sim_XXX_style');
     }

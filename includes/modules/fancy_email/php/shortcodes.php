@@ -2,8 +2,8 @@
 namespace SIM\FANCYMAIL;
 use SIM;
 
-add_shortcode('email_stats', __NAMESPACE__.'\email_stats');
-function email_stats(){
+add_shortcode('email_stats', __NAMESPACE__.'\emailStats');
+function emailStats(){
     //Load js
 	wp_enqueue_script('sim_table_script');
 

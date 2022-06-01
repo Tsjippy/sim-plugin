@@ -1,7 +1,7 @@
 /*
     ADD FORM
 */
-add_form_shortcode_html = 
+addFormShortcodeHtml = 
 `<div  class="wp-editor-help">
     <label>
         Give the formname in one word:<br>
@@ -17,25 +17,25 @@ add_form_shortcode_html =
     <br>
 </div>`;
 
-var insert_form_shortcode_dialog = {
+var insertFormShortcodeDialog = {
     width: 350,
     height: 160,
     title: 'Insert form',
     items: {
         type: 'container',
         classes: 'wp-help',
-        html: add_form_shortcode_html
+        html: addFormShortcodeHtml
     },
     buttons: [{
         text: 'Insert shortcode',
         onclick: function(){
-            form_name		= document.querySelector("#form_name").value;
-            form_selector	= document.querySelector("[name='form_selector']").value;
-            if(form_name != ''){
-                tinymce.activeEditor.insertContent('[formbuilder datatype='+form_name+']');
+            formName		= document.querySelector("#form_name").value;
+            formSelector	= document.querySelector("[name='form_selector']").value;
+            if(formName != ''){
+                tinymce.activeEditor.insertContent(`[formbuilder formname=${formName}]`);
                 main.displayMessage("Form succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
             }else if(form_selector != ''){
-                tinymce.activeEditor.insertContent('[formresults datatype='+form_selector+']');
+                tinymce.activeEditor.insertContent(`[formresults formname=${formSelector}`);
                 
                 alert("Table succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
             }
@@ -56,7 +56,7 @@ tinymce.create(
         init:function(editor, url){
             editor.addCommand('mceInsert_form_shortcode',
                 function(){
-                    dialog = editor.windowManager.open(insert_form_shortcode_dialog);
+                    dialog = editor.windowManager.open(insertFormShortcodeDialog);
                 }
             );
             

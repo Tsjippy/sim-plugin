@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     entry: {
-		"sim_table_functions": './table.js',
+		"SimTableFunctions": './table.js',
 	},
     mode: 'production',
     output: {

@@ -18,7 +18,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> \WP_REST_Server::EDITABLE,
 			'callback' 				=> function(){
 				$statistics	= new Statistics();
-				$statistics->add_page_view();
+				$statistics->addPageView();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(

@@ -89,8 +89,8 @@ async function registerBiometric(target){
 
     //show loader
     document.getElementById('add_webauthn').classList.add('hidden');
-    var loader_html = `<div id="loader_wrapper" style='margin-bottom:20px;'><span class="message"></span><img class="loadergif" src="${sim.loadingGif}" height="30px;"></div>`;
-    document.getElementById('add_webauthn').insertAdjacentHTML('afterEnd',loader_html);
+    var loaderHtml = `<div id="loader_wrapper" style='margin-bottom:20px;'><span class="message"></span><img class="loadergif" src="${sim.loadingGif}" height="30px;"></div>`;
+    document.getElementById('add_webauthn').insertAdjacentHTML('afterEnd', loaderHtml);
 	var message		= document.querySelector('#loader_wrapper .message');
 
 	try{

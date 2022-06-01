@@ -3,22 +3,22 @@ namespace SIM\PRAYER;
 use SIM;
 
 //give prayer coordinator acces to prayer items		
-add_filter('sim_frontend_content_edit_rights', function($edit_right, $post_category){
+add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategory){
 	// If we currently have no edit right
-	if(!$edit_right){
+	if(!$editRight){
 		// If we have the prayer coordinator role and the post or page has the prayer category
 		if(
 			in_array('prayercoordinator', wp_get_current_user()->roles) and 
 			(
-				in_array(get_cat_ID('Prayer'), $post_category) or 
-				in_array('prayer', $post_category)
+				in_array(get_cat_ID('Prayer'), $postCategory) or 
+				in_array('prayer', $postCategory)
 			)
 		){
-			$edit_right = true;
+			$editRight = true;
 		}
 	}
 
-	return $edit_right;
+	return $editRight;
 }, 10, 2);
 
 /**

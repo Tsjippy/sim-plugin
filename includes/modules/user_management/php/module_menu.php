@@ -2,7 +2,7 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-const ModuleVersion		= '7.0.4';
+const ModuleVersion		= '7.0.5';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
@@ -35,8 +35,8 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 		Use like this: <code>[change_password]</code>
 	</p>
 	<?php
-	$page1Id	= SIM\get_module_option($moduleSlug, 'account_page');
-	$page2Id	= SIM\get_module_option($moduleSlug, 'user_edit_page');
+	$page1Id	= SIM\getModuleOption($moduleSlug, 'account_page');
+	$page2Id	= SIM\getModuleOption($moduleSlug, 'user_edit_page');
 	if(is_numeric($page1Id) or is_numeric($page2Id)){
 		?>
 		<p>
@@ -172,9 +172,9 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	// Create account page
-	$page_id	= SIM\get_module_option($moduleSlug, 'account_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'account_page');
 	// Only create if it does not yet exist
-	if(!$page_id or get_post_status($page_id) != 'publish'){
+	if(!$pageId or get_post_status($pageId) != 'publish'){
 		$post = array(
 			'post_type'		=> 'page',
 			'post_title'    => 'Account',
@@ -192,7 +192,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	}
 
 	// Create user edit page
-	$pageId	= SIM\get_module_option($moduleSlug, 'user_edit_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'user_edit_page');
 	// Only create if it does not yet exist
 	if(!$pageId or get_post_status($pageId) != 'publish'){
 		$post = array(
@@ -213,16 +213,16 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 	add_filter('display_post_states', function ( $states, $post ) { 
     
-		if ( $post->ID == SIM\get_module_option('user_management', 'account_page') ) {
+		if ( $post->ID == SIM\getModuleOption('user_management', 'account_page') ) {
 			$states[] = __('Account page'); 
-		}elseif ( $post->ID == SIM\get_module_option('user_management', 'user_edit_page') ) {
+		}elseif ( $post->ID == SIM\getModuleOption('user_management', 'user_edit_page') ) {
 			$states[] = __('User edit page'); 
 		}
 	
 		return $states;
 	}, 10, 2);
 
-	schedule_tasks();
+	scheduleTasks();
 
 	return $options;
 }, 10, 2);

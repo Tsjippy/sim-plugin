@@ -13,17 +13,21 @@ add_action( 'template_redirect', function() {
     if ( ! isset( $wp_query->query_vars['public_calendar'] ))     return;
  
     // include custom template
-    calendar_stream();
+    calendarStream();
 } );
 
 //outlook.com: https://outlook.office.com/calendar/addcalendar
 //google: https://calendar.google.com/calendar/u/1/r/settings/addbyurl
-function calendar_stream(){
+
+/**
+ * Creates an iCal feed
+*/
+function calendarStream(){
 	$userId		= $_GET['id'];
 	if(!is_numeric($userId))	$userId	= -1;
 
 	//see https://gist.github.com/jakebellacera/635416
-	$ICAL_FORMAT = 'Ymd\THis\Z';
+	$icalFormat = 'Ymd\THis\Z';
 
 	$events		= get_posts( 
 		array(
@@ -32,62 +36,62 @@ function calendar_stream(){
 		) 
 	);
 	
-	$ical_start		 = "BEGIN:VCALENDAR\r\n";
-	$ical_start		.= "VERSION:2.0\r\n";
-	$ical_start		.= "METHOD:PUBLISH\r\n";
-	$ical_start		.= "PRODID:-//sim//website//EN\r\n";
-	$ical_start		.= "X-WR-CALNAME: SIM events\r\n";
-	$ical_events	 = '';
+	$icalStart		 = "BEGIN:VCALENDAR\r\n";
+	$icalStart		.= "VERSION:2.0\r\n";
+	$icalStart		.= "METHOD:PUBLISH\r\n";
+	$icalStart		.= "PRODID:-//sim//website//EN\r\n";
+	$icalStart		.= "X-WR-CALNAME: SIM events\r\n";
+	$icalEvents	 = '';
 	
 	foreach($events as $event){
-		$onlyfor		= get_post_meta($event->ID,'onlyfor',true);
+		$onlyFor		= get_post_meta($event->ID, 'onlyfor', true);
 
 		//do not show events which are not meant for us
-		if(!empty($onlyfor) and !in_array($userId, $onlyfor)) continue;
+		if(!empty($onlyFor) and !in_array($userId, $onlyFor)) continue;
 
 		//skip events without meta data
 		$meta			= (array)get_post_meta($event->ID,'eventdetails',true);
 		if(empty($meta)) continue;
 
-		$ical_event	="BEGIN:VEVENT\r\n";
+		$icalEvent	="BEGIN:VEVENT\r\n";
 
 		//between times
 		if(empty($meta['allday'])){
-			$start			= date($ICAL_FORMAT,strtotime($meta['startdate'].' '.$meta['starttime']));
-			$end			= date($ICAL_FORMAT,strtotime($meta['enddate'].' '.$meta['endtime']));
+			$start			= date($icalFormat,strtotime($meta['startdate'].' '.$meta['starttime']));
+			$end			= date($icalFormat,strtotime($meta['enddate'].' '.$meta['endtime']));
 			$start			="DTSTART:$start\r\n";
 			$end			="DTEND:$end\r\n";
 		//all day
 		}else{
 			$start			= strtotime($meta['startdate']);
-			$startdate		= date('Ymd',$start);
+			$startDate		= date('Ymd',$start);
 
 			if($meta['startdate'] == $meta['enddate']){
-				$enddate		= date('Ymd',strtotime('+1 day',$start));
+				$endDate		= date('Ymd',strtotime('+1 day',$start));
 			}else{
-				$enddate		= date('Ymd',strtotime($meta['enddate']));
+				$endDate		= date('Ymd',strtotime($meta['enddate']));
 			}
-			$start				="DTSTART;VALUE=DATE:$startdate\r\n";
-			$end				="DTEND;VALUE=DATE:$enddate\r\n";
+			$start				="DTSTART;VALUE=DATE:$startDate\r\n";
+			$end				="DTEND;VALUE=DATE:$endDate\r\n";
 		}
-		$ical_event	.= $start.$end;
+		$icalEvent	.= $start.$end;
 		
-		$creationdate	 = date($ICAL_FORMAT,strtotime($event->post_date_gmt));
-		$ical_event	.="DTSTAMP:$creationdate\r\n";
-		$ical_event	.="SUMMARY:{$event->post_title}\r\n";
+		$creationdate	 = date($icalFormat,strtotime($event->post_date_gmt));
+		$icalEvent	.="DTSTAMP:$creationdate\r\n";
+		$icalEvent	.="SUMMARY:{$event->post_title}\r\n";
 
 		$url			 = get_permalink($event->ID);
 		//maxline length is 75
-		$ical_event	.= trim(chunk_split("DESCRIPTION:".$event->post_title." read more on $url",74,"\r\n "))."\r\n";
+		$icalEvent	.= trim(chunk_split("DESCRIPTION:".$event->post_title." read more on $url",74,"\r\n "))."\r\n";
 
 		$uid			 = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
-		$ical_event		.="UID:$uid\r\n";
+		$icalEvent		.="UID:$uid\r\n";
 
-		$moddate		 = date($ICAL_FORMAT,strtotime($event->post_modified_gmt));
-		$ical_event		.="LAST-MODIFIED:$moddate\r\n";
-		$ical_event		.="LOCATION:{$meta['location']}\r\n";
+		$moddate		 = date($icalFormat,strtotime($event->post_modified_gmt));
+		$icalEvent		.="LAST-MODIFIED:$moddate\r\n";
+		$icalEvent		.="LOCATION:{$meta['location']}\r\n";
 
-		$ical_event	.= trim(chunk_split("URL:$url",74,"\r\n "))."\r\n";
+		$icalEvent	.= trim(chunk_split("URL:$url",74,"\r\n "))."\r\n";
 
 		if(is_array($meta['repeat'])){
 			$freq			 = strtoupper($meta['repeat']['type']);
@@ -95,92 +99,92 @@ function calendar_stream(){
 			if($freq == 'CUSTOM_DAYS'){
 				if(is_array($meta['repeat']['includedates'])){
 					//copy the event for each includes date
-					$extra_ical_events	= '';
+					$extraIcalEvents	= '';
 					foreach($meta['repeat']['includedates'] as $key=>$date){
-						$extra_ical_events	.="END:VEVENT\r\n";
-						$new_start			 = date($ICAL_FORMAT,strtotime("$date ".$meta['starttime']));
-						$new_end			 = date($ICAL_FORMAT,strtotime("$date ".$meta['endtime']));
-						$new_start			 ="DTSTART:$new_start\r\n";
-						$new_end			 ="DTEND:$new_end\r\n";
+						$extraIcalEvents	.= "END:VEVENT\r\n";
+						$newStart			 = date($icalFormat, strtotime("$date ".$meta['starttime']));
+						$newEnd			 	 = date($icalFormat, strtotime("$date ".$meta['endtime']));
+						$newStart			 = "DTSTART:$newStart\r\n";
+						$newEnd			 	 = "DTEND:$newEnd\r\n";
 
-						$new_uid			 = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
+						$newUid			 = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
 
-						$extra_ical_events 		.= str_replace([$start,$end,$uid], [$new_start,$new_end,$new_uid] ,$ical_event);
+						$extraIcalEvents 	.= str_replace([$start, $end, $uid], [$newStart, $newEnd, $newUid] ,$icalEvent);
 					}
 
-					$ical_event .= $extra_ical_events;
+					$icalEvent .= $extraIcalEvents;
 				}
 			}else{
-				$intval			 = $meta['repeat']['interval'];
+				$intval		= $meta['repeat']['interval'];
 
-				$ical_event	.="RRULE:FREQ=$freq;INTERVAL=$intval;";
+				$icalEvent	.= "RRULE:FREQ=$freq;INTERVAL=$intval;";
 
 				if($freq == 'YEARLY' or $meta['repeat']['datetype'] == 'samedate'){
-					$month	= date('m',strtotime($meta['startdate']));
-					$day	= date('d',strtotime($meta['startdate']));
+					$month	= date('m', strtotime($meta['startdate']));
+					$day	= date('d', strtotime($meta['startdate']));
 					if($freq == 'YEARLY'){
-						$ical_event	.="BYMONTH=$month;";
+						$icalEvent	.="BYMONTH=$month;";
 					}
-					$ical_event	.="BYMONTHDAY=$day;";
+					$icalEvent	.="BYMONTHDAY=$day;";
 				}elseif($freq == 'MONTHLY' or $freq == 'WEEKLY'){
 					$weeks			 = $meta['repeat']['weeks'];
-					$weekdays		 = $meta['repeat']['weekdays'];
+					$weekDays		 = $meta['repeat']['weekdays'];
 					if(is_array($weeks)){
-						$ical_event	.="BYDAY=";
+						$icalEvent	.="BYDAY=";
 
 						foreach($weeks as $index=>$week){
-							if($index>0) $ical_event	.=",";
+							if($index>0) $icalEvent	.=",";
 
 							if($freq == 'MONTHLY'){
 								//number of the week in the month
-								$ical_event	.= SIM\numberToWords($week);
+								$icalEvent	.= SIM\numberToWords($week);
 							}
 
 							//add the first two letters of the weekday of the startdate as capitals (FR)
-							if(empty($weekdays[$index])){
-								$ical_event.= strtoupper(substr(date('D',strtotime($meta['startdate'])),0,2));
+							if(empty($weekDays[$index])){
+								$icalEvent	.= strtoupper(substr(date('D',strtotime($meta['startdate'])), 0, 2));
 							//add the first two letters as capitals (FR)
 							}else{
-								$ical_event.= strtoupper(substr($weekdays[$index],0,2));
+								$icalEvent	.= strtoupper(substr($weekDays[$index], 0, 2));
 							}
 						}
 
-						$ical_event	.=";";
+						$icalEvent	.=";";
 					}
 				}
 
 				if(!empty($meta['repeat']['enddate'])){
-					$enddate		 = date($ICAL_FORMAT,strtotime($meta['repeat']['enddate']));
-					$ical_event	.="UNTIL=$enddate;";
+					$endDate		 = date($icalFormat,strtotime($meta['repeat']['enddate']));
+					$icalEvent		.="UNTIL=$endDate;";
 				}elseif(is_numeric($meta['repeat']['amount'])){
-					$ical_event	.="COUNT={$meta['repeat']['amount']};";
+					$icalEvent		.="COUNT={$meta['repeat']['amount']};";
 				}
 
-				$ical_event	.="\r\n";
+				$icalEvent	.="\r\n";
 
 				if(!empty($meta['repeat']['excludedates'])){
-					$excludedates		= $meta['repeat']['excludedates'];
-					SIM\cleanUpNestedArray($excludedates);
-					if(!empty($excludedates)){
-						$ical_event	.="EXDATE:";
+					$excludeDates		= $meta['repeat']['excludedates'];
+					SIM\cleanUpNestedArray($excludeDates);
+					if(!empty($excludeDates)){
+						$icalEvent	.="EXDATE:";
 						
-						foreach($excludedates as $i=>$exdate){
-							if($i>0)$ical_event	.= ',';
-							$ical_event	.= date($ICAL_FORMAT,strtotime($exdate));
+						foreach($excludeDates as $i=>$exdate){
+							if($i>0)$icalEvent	.= ',';
+							$icalEvent	.= date($icalFormat, strtotime($exdate));
 						}
-						$ical_event	.= "\r\n";
+						$icalEvent	.= "\r\n";
 					}
 				}
 			}
 		}
 
-		$ical_event	.="END:VEVENT\r\n";
+		$icalEvent	.="END:VEVENT\r\n";
 
-		$ical_events .= $ical_event;
+		$icalEvents .= $icalEvent;
 	}
 	
 	// close calendar
-	$ical_end = "END:VCALENDAR\r\n";
+	$icalEnd = "END:VCALENDAR\r\n";
 
 	// Set the headers
 	header('Content-type: text/calendar; charset=utf-8');
@@ -190,7 +194,7 @@ function calendar_stream(){
 		ob_get_clean();
 	}
 	ob_start();
-	echo $ical_start.$ical_events.$ical_end;
+	echo $icalStart.$icalEvents.$icalEnd;
 	ob_end_flush();
 	exit;
 	die();

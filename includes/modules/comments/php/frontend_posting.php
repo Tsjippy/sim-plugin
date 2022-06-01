@@ -2,8 +2,8 @@
 namespace SIM\COMMENTS;
 use SIM;
 
-add_action('frontend_post_after_content', function($frontendcontend){
-    $allowedPostTypes     = SIM\get_module_option('comments', 'posttypes');
+add_action('sim_frontend_post_after_content', function($frontendcontend){
+    $allowedPostTypes     = SIM\getModuleOption('comments', 'posttypes');
 
     if(in_array($frontendcontend->postType, $allowedPostTypes)){
         $hidden = '';

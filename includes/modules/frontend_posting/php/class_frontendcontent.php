@@ -104,7 +104,7 @@ class FrontEndContent{
 			$this->postTypeSelector();
 			
 			$this->addModals();
-			do_action('frontend_post_modal');
+			do_action('sim_frontend_post_modal');
 
 			$this->showChanges();
 
@@ -121,7 +121,7 @@ class FrontEndContent{
 				<input type="text" name="post_title" class='block' value="<?php echo $this->postTitle;?>" required>
 				
 				<?php
-				do_action('frontend_post_before_content', $this);
+				do_action('sim_frontend_post_before_content', $this);
 				
 				$this->postCategories();
 				?>
@@ -138,7 +138,7 @@ class FrontEndContent{
 								'class' => 'postimage'
 							)
 						);
-						echo "<button type='button' class='remove_document button' data-url='$document' data-userid='{$this->user_id}' data-metakey='$metakey_string' $library_string>X</button>";
+						echo "<button type='button' class='remove_document button' data-url='$document' data-userid='{$this->userId}' data-metakey='$metakey_string' $library_string>X</button>";
 						echo "<img class='remove_document_loader src='".LOADERIMAGEURL."' style='display:none; height:40px;' >";
 						$text = 'Change';
 					}else{
@@ -164,7 +164,7 @@ class FrontEndContent{
 
 						echo "<h4 class='attachment hidden' name='attachment_content_label'>Description:</h4>";
 						
-						do_action('frontend_post_content_title',$this->postType);
+						do_action('sim_frontend_post_content_title',$this->postType);
 					echo "</div>";
 					
 					//make it possible to select or upload a featured image
@@ -219,7 +219,7 @@ class FrontEndContent{
 					echo "</div>";
 					
 				}
-				echo SIM\add_save_button('submit_post', $this->action);
+				echo SIM\addSaveButton('submit_post', $this->action);
 				?>
 			</form>
 			<?php
@@ -508,7 +508,7 @@ class FrontEndContent{
 				<input type="hidden" name="postid" value="<?php echo $this->postId; ?>">
 				<?php
 				echo $html;
-				echo SIM\add_save_button('change_post_type','Change the post type');
+				echo SIM\addSaveButton('change_post_type','Change the post type');
 				?>
 			</form>
 			<?php
@@ -562,7 +562,7 @@ class FrontEndContent{
 						</select>
 						
 						
-						<?php echo SIM\add_save_button('add_'.$type.'_type', "Add $type category"); ?>
+						<?php echo SIM\addSaveButton('add_'.$type.'_type', "Add $type category"); ?>
 					</form>
 				</div>
 			</div>
@@ -805,7 +805,7 @@ class FrontEndContent{
 			
 			$this->pageSpecificFields();
 				
-			do_action('frontend_post_after_content', $this);
+			do_action('sim_frontend_post_after_content', $this);
 			?>
 		</div>
 		<?php
@@ -841,7 +841,7 @@ class FrontEndContent{
 			//Save the image in the uploads folder
 			file_put_contents($newFilePath, $fileContents);
 			
-			SIM\add_to_library($newFilePath);
+			SIM\addToLibrary($newFilePath);
 		}else{
 			SIM\printArray('Not a valid image');
 		}
@@ -886,9 +886,9 @@ class FrontEndContent{
 
 		// Check if content is just an hyperlink
 		//find all urls in the page
-		$regex = '(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))';
+		$regex 	= '(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))';
 		preg_match_all("#$regex#i", $postContent, $matches);
-		$url = $matches[0][0];
+		$url 	= $matches[0][0];
 
 		//if the url is the only post content
 		if($url == strip_tags($postContent)){
@@ -993,6 +993,8 @@ class FrontEndContent{
 			
 			//Create a revision post
 			if($status == 'pending'){
+				$actionText = 'updated'; 
+
 				foreach($newPostData as $key=>$data){
 					$post->$key	= $data;
 				}
@@ -1014,13 +1016,14 @@ class FrontEndContent{
 				if(is_wp_error($result)){
 					return new WP_Error('Update failed', $result->get_error_message());
 				}elseif($post->post_status == 'draft' and $status == 'publish'){
-					$action_text = 'published';
+					$actionText = 'published';
 				}else{
-					$action_text = 'updated';
+					$actionText = 'updated';
 				}
 			}
 		}else{
-			$this->update = false;
+			$this->update	= false;
+			$actionText	= 'created';
 
 			//New post
 			$post = array(
@@ -1032,7 +1035,7 @@ class FrontEndContent{
 			);
 
 			if($this->postType == 'attachment'){
-				$this->postId 	= SIM\add_to_library(SIM\urlToPath($_POST['attachment'][0]), $this->postTitle, $postContent);
+				$this->postId 	= SIM\addToLibrary(SIM\urlToPath($_POST['attachment'][0]), $this->postTitle, $postContent);
 				$post['ID']	= $this->postId;
 			}else{				
 				if(is_numeric($_POST['parent_page'])){
@@ -1060,8 +1063,6 @@ class FrontEndContent{
 				return new WP_Error('Inserting post error', $this->postId->get_error_message());
 			}elseif($this->postId === 0){
 				return new WP_Error('Inserting post error', "Could not create the $this->postType!");
-			}else{
-				$action_text = 'created';
 			}
 		}
 		
@@ -1081,30 +1082,30 @@ class FrontEndContent{
 				$value = true;
 			}
 			
-			update_metadata( 'post', $this->postId,'static_content',$value);
+			update_metadata( 'post', $this->postId, 'static_content', $value);
 		}
 		
 		//Expiry date
 		if(isset($_POST['expirydate'])){
 			//Store expiry date
-			update_metadata( 'post', $this->postId,'expirydate',$_POST['expirydate']);
+			update_metadata( 'post', $this->postId, 'expirydate', $_POST['expirydate']);
 		}
 
 		if($post->post_status == 'pending'){
-			send_pending_post_warning($post, $this->update);
+			sendPendingPostWarning($post, $this->update);
 		}
 		
 		do_action('sim_after_post_save', (object)$post, $this->update);
 		
 		//Return result
 		if($status == 'publish'){
-			return "Succesfully $action_text the $this->postType, view it <a href='$url'>here</a>";
+			return "Succesfully $actionText the $this->postType, view it <a href='$url'>here</a>";
 		}elseif($status == 'draft'){
-			return "Succesfully $action_text the draft for this $this->postType, preview it <a href='$url'>here</a>";
+			return "Succesfully $actionText the draft for this $this->postType, preview it <a href='$url'>here</a>";
 		}elseif($_POST['publish_date'] > date('Y-m-d') and $status == 'future'){
-			return "Succesfully $action_text the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
+			return "Succesfully $actionText the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
 		}else{
-			return "Succesfully $action_text the $this->postType, it will be published after it has been reviewed";			
+			return "Succesfully $actionText the $this->postType, it will be published after it has been reviewed";			
 		}
 	}
 	

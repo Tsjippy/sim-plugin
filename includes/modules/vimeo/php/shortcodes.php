@@ -10,6 +10,7 @@ add_shortcode("vimeo_video", function($atts){
 function show_vimeo_video($vimeo_id){
 	// Load css
 	wp_enqueue_style( 'vimeo_style');
+	wp_enqueue_script('sim_vimeo_shortcode_script');
 
 	ob_start();
 	?>
@@ -20,7 +21,7 @@ function show_vimeo_video($vimeo_id){
 		</div>
 
 		<div class='vimeo-embed-container'>
-			<iframe src='https://player.vimeo.com/video/<?php echo $vimeo_id; ?>' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen onload = "this.closest('.vimeo-wrapper').querySelector('.loaderwrapper').remove();this.style.display='block';" style="display:none;"></iframe>
+			<iframe src='https://player.vimeo.com/video/<?php echo $vimeo_id; ?>' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen onload = "showVimeoIframe(this)" style="display:none;"></iframe>
 		</div>
 	</div>
 	<?php

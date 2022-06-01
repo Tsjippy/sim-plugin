@@ -42,7 +42,7 @@ async function logout(event){
             main.displayMessage(response,'success', false, true);
 
             //redirect to homepage
-            location.href	= sim.base_url;
+            location.href	= sim.baseUrl;
         }
     }
 }

@@ -11,7 +11,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$schedule		= new Schedule();
-				return $schedule->add_schedule();
+				return $schedule->addSchedule();
 			},
 			'permission_callback' 	=> function(){
 				$schedule	= new Schedule();
@@ -39,7 +39,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$schedule		= new Schedule();
-				return $schedule->publish_schedule();
+				return $schedule->publishSchedule();
 			},
 			'permission_callback' 	=> function(){
 				$schedule	= new Schedule();
@@ -89,7 +89,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$schedule		= new Schedule();
-				return $schedule->add_host();
+				return $schedule->addHost();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -103,13 +103,13 @@ add_action( 'rest_api_init', function () {
 				'date'		=> array(
 					'required'	=> true,
 					'validate_callback' => function($param){
-						return SIM\is_date($param);
+						return SIM\isDate($param);
 					}
 				),
 				'starttime'		=> array(
 					'required'	=> true,
 					'validate_callback' => function($param){
-						return SIM\is_time($param);
+						return SIM\isTime($param);
 					}
 				)
 			)
@@ -124,7 +124,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$schedule		= new Schedule();
-				return $schedule->remove_host();
+				return $schedule->removeHost();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -139,13 +139,13 @@ add_action( 'rest_api_init', function () {
 				'date'		=> array(
 					'required'	=> true,
 					'validate_callback' => function($param){
-						return SIM\is_date($param);
+						return SIM\isDate($param);
 					}
 				),
 				'starttime'		=> array(
 					'required'	=> true,
 					'validate_callback' => function($param){
-						return SIM\is_time($param);
+						return SIM\isTime($param);
 					}
 				)
 			)
@@ -160,7 +160,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$schedule		= new Schedule();
-				return $schedule->add_menu();
+				return $schedule->addMenu();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -171,7 +171,7 @@ add_action( 'rest_api_init', function () {
 				'date'		=> array(
 					'required'	=> true,
 					'validate_callback' => function($param){
-						return SIM\is_date($param);
+						return SIM\isDate($param);
 					}
 				),
 				'starttime'		=> array(

@@ -8,7 +8,7 @@ function showImage(index){
     document.querySelector('.large-image[data-index="'+index+'"]').classList.remove('hidden');
 }
 
-async function load_more(index, showfirst, skipAmount){
+async function load_more(index, showFirst, skipAmount){
     var amount  = document.querySelector('#media-amount').value;
     if(amount == skipAmount) return;
     var types   = [];
@@ -21,7 +21,7 @@ async function load_more(index, showfirst, skipAmount){
     formData.append('types', types);
     formData.append('startIndex', index+1);
 
-    var response    = await formsubmit.fetchRestApi('media_gallery/load_more_media', formData);
+    var response    = await FormSubmit.fetchRestApi('media_gallery/load_more_media', formData);
 
     document.querySelectorAll('#medialoaderwrapper:not(.hidden), .loaderwrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 
@@ -31,11 +31,11 @@ async function load_more(index, showfirst, skipAmount){
     }else{
         document.querySelector('.mediawrapper').insertAdjacentHTML('beforeEnd', response);
 
-        if(showfirst){
+        if(showFirst){
             var el      = document.querySelector('[data-index="'+index+'"]');
-            var next_el = el.nextElementSibling.nextElementSibling;
+            var nextEl = el.nextElementSibling.nextElementSibling;
 
-            showImage(next_el.dataset.index);
+            showImage(nextEl.dataset.index);
         }
 
         //hide the load more button if the last cell has no next button
@@ -50,14 +50,14 @@ async function mediaSearch(target){
     var amount          = document.querySelector('#media-amount').value;
     var types           = [];
     document.querySelectorAll('.media-type-selector:checked').forEach(el=>types.push(el.value));
-    var searchstring    = target.closest('.mediabuttons').querySelector('.searchtext').value;
+    var searchString    = target.closest('.mediabuttons').querySelector('.searchtext').value;
     
     var formData	= new FormData();
     formData.append('amount', amount);
     formData.append('types', types);
-    formData.append('search', searchstring);
+    formData.append('search', searchString);
 
-    var response    = await formsubmit.fetchRestApi('media_gallery/media_search', formData);
+    var response    = await FormSubmit.fetchRestApi('media_gallery/media_search', formData);
     
     if(!response){
         main.displayMessage('Nothing found', 'warning');
@@ -96,26 +96,26 @@ document.addEventListener('click', async ev=>{
 
     if(target.matches('.prevbtn')){
         var el      = target.closest('.large-image');
-        var prev_el = el.previousElementSibling.previousElementSibling;
+        var prevEl = el.previousElementSibling.previousElementSibling;
 
-        showImage(prev_el.dataset.index);
+        showImage(prevEl.dataset.index);
     }
 
     if(target.matches('.nextbtn')){
         var el      = target.closest('.large-image');
-        var next_el = el.nextElementSibling;
-        if(next_el != null){
-            var next_el = next_el.nextElementSibling;
+        var nextEl = el.nextElementSibling;
+        if(nextEl != null){
+            var nextEl = nextEl.nextElementSibling;
         }
 
         //load more
-        if(next_el == null){
+        if(nextEl == null){
             document.getElementById('medialoaderwrapper').classList.remove('hidden');
 
             document.getElementById('paged').value = parseInt(document.getElementById('paged').value)+1;
             load_more(el.dataset.index, true);
         }else{
-            showImage(next_el.dataset.index);
+            showImage(nextEl.dataset.index);
         }
     }
 
@@ -127,7 +127,7 @@ document.addEventListener('click', async ev=>{
 
         document.getElementById('paged').value = parseInt(document.getElementById('paged').value)+1;
 
-        load_more(media[media.length-1].firstChild.dataset.index, false);
+        load_more(media[media.length-1].dataset.index, false);
 
         main.showLoader(target, false);
     }
@@ -142,18 +142,18 @@ document.addEventListener('click', async ev=>{
             document.querySelectorAll('.cell.'+target.value).forEach(el=>el.classList.remove('hidden'));
 
             // remove all more than the maximum
-            var visible_cells   = document.querySelectorAll('.cell:not(.hidden)');
+            var visibleCells   = document.querySelectorAll('.cell:not(.hidden)');
             var amount          = document.querySelector('#media-amount').value;
-            for (let i = amount; i < visible_cells.length; i++) { 
-                visible_cells[i].remove();
+            for (let i = amount; i < visibleCells.length; i++) { 
+                visibleCells[i].remove();
             }
         }else{
             document.querySelectorAll('.cell.'+target.value).forEach(el=>el.classList.add('hidden'));
 
             var media = document.querySelectorAll('.cell');
             // load more of the remaining types untill we reach the maximum
-            var visible_cells   = document.querySelectorAll('.cell:not(.hidden)');
-            load_more(media[media.length-1].dataset.index, false, visible_cells.length);
+            var visibleCells   = document.querySelectorAll('.cell:not(.hidden)');
+            load_more(media[media.length-1].dataset.index, false, visibleCells.length);
         }
     }
 
@@ -232,12 +232,12 @@ function handleTouchMove(evt) {
         var el = document.querySelector('.large-image:not(.hidden)');
         if ( xDiff > 0 ) {
             /* right swipe */
-            var next_el = el.nextElementSibling.nextElementSibling;
+            var nextEl = el.nextElementSibling.nextElementSibling;
         } else {
             /* left swipe */
-            var next_el = el.previousElementSibling.previousElementSibling;
+            var nextEl = el.previousElementSibling.previousElementSibling;
         }
-        showImage(next_el.dataset.index);
+        showImage(nextEl.dataset.index);
     }
     /* reset values */
     xDown = null;

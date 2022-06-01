@@ -249,7 +249,7 @@ add_action ( 'wp_ajax_upload_files', function (){
 
 						//Add to library if needed
 						if(isset($fileParam['library']) and $fileParam['library'] == '1'){
-							$attachId	= add_to_library($targetFile);
+							$attachId	= addToLibrary($targetFile);
 
 							$newValue	= $attachId;
 							

@@ -12,27 +12,30 @@ class FancyEmail{
         $this->mailImagesFolder = wp_upload_dir()['path']."/email_pictures";
     }
 
-    function create_db_tables(){
+    /**
+     * Creates the tables for this module
+     */
+    function createDbTables(){
         if ( !function_exists( 'maybe_create_table' ) ) { 
             require_once ABSPATH . '/wp-admin/install-helper.php'; 
         }
         
         //only create db if it does not exist
         global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
+        $charsetCollate = $wpdb->get_charset_collate();
     
-        //Main table
+        //Email overview
         $sql = "CREATE TABLE $this->mailTable (
           id mediumint(9) NOT NULL AUTO_INCREMENT,
           subject tinytext NOT NULL,
           recipients longtext NOT NULL,
           time_send text NOT NULL,
           PRIMARY KEY  (id)
-        ) $charset_collate;";
+        ) $charsetCollate;";
     
         maybe_create_table($this->mailTable, $sql );
     
-        // Form element table
+        // Clicked links
         $sql = "CREATE TABLE $this->mailEventTable (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             email_id int NOT NULL,
@@ -40,12 +43,19 @@ class FancyEmail{
             time text NOT NULL,
             url text NOT NULL,
             PRIMARY KEY  (id)
-          ) $charset_collate;";
+          ) $charsetCollate;";
     
         maybe_create_table($this->mailEventTable, $sql );
     }
 
-    function filter_mail($args){
+    /**
+     * Filters all WP_Mail arguments
+     * 
+     * @param   array   $args   the array of wp_mail arguments
+     * 
+     * @return  array           The filtered args
+     */
+    function filterMail($args){
         global $wpdb;
 
         $this->subject      = &$args['subject'];
@@ -107,12 +117,21 @@ class FancyEmail{
         return $args;
     }
 
-    function clean_up_email_messages($email_id){
-        $target   = "$this->mailImagesFolder/$email_id/";
+    /**
+     * Removes any obsolete email images
+     */
+    function cleanUpEmailMessages($emailId){
+        $target   = "$this->mailImagesFolder/$emailId/";
         SIM\removeFiles($target);
     }
 
-    // Replace any private urls to public urls, add mail logging to all links
+    /**
+     * Replace any private urls to public urls, add mail logging to all links
+     * 
+     * @param   array   $matches    Matches from a regex
+     * 
+     * @return  string              Replace html
+     */ 
     function checkEmailImages($matches){
         if(empty($matches)) return false;
 
@@ -128,28 +147,34 @@ class FancyEmail{
         if(strpos($url, '/private/') !== false){
             $path       = SIM\urlToPath($url);
             $name       = basename($path);
-            $new_path   = "$this->mailImagesFolder/$this->emailId/";
+            $newPath    = "$this->mailImagesFolder/$this->emailId/";
 
             //create folder for this mailId
-            if (!is_dir($new_path)) {
-                mkdir($new_path, 0777, true);
+            if (!is_dir($newPath)) {
+                mkdir($newPath, 0777, true);
 
                 //Schedule a task to delete this folder in 1 month time
                 wp_schedule_single_event(strtotime(time(), '+1 minute'), 'clean_up_email_messages_action', [$this->emailId]);
             }
-            $new_path   = $new_path.$name;
+            $newPath   = $newPath.$name;
 
             // Copy the private picture to the public accesible folder
-            $result=copy($path, $new_path);
+            $result=copy($path, $newPath);
 
-            $new_url    = SIM\pathToUrl($new_path);
-            $html	    = str_replace($url, $new_url, $html);
+            $newUrl     = SIM\pathToUrl($newPath);
+            $html	    = str_replace($url, $newUrl, $html);
         }
 
         return $html;
     }
 
-    // Enable link tracking
+     /**
+     * Enable link tracking
+     * 
+     * @param   array   $matches    Matches from a regex
+     * 
+     * @return  string              Replace html
+     */ 
     function urlReplace($matches){
         if(empty($matches)) return false;
 
@@ -162,15 +187,18 @@ class FancyEmail{
         $url	    = $matches[1];
 
         // Change to rest-api url
-        $new_url    = "$this->mailTrackerUrl?mailid=$this->emailId&url=".urlencode($url);
+        $newUrl    = "$this->mailTrackerUrl?mailid=$this->emailId&url=".urlencode($url);
 
-        $html	    = str_replace($url, $new_url, $html);
+        $html	    = str_replace($url, $newUrl, $html);
         return $html;
     }
 
+    /**
+     * Converts plain text e-mail message to html
+     */
     function htmlEmail(){
         // Get the logo url and make public if private
-        $headerImageId    = SIM\get_module_option('fancy_email', 'picture_ids')['header_image'];
+        $headerImageId    = SIM\getModuleOption('fancy_email', 'picture_ids')['header_image'];
         if(!$headerImageId){
             $headerImageId= get_theme_mod( 'custom_logo' );
         }
@@ -239,6 +267,11 @@ class FancyEmail{
         $this->message = ob_get_clean();
     }
 
+    /**
+     * Get all e-mail statistics from the db
+     * 
+     * @return  object      all query results
+     */
     function getEmailStatistics(){
         global $wpdb;
         if($_POST['type'] == 'link-clicked'){
@@ -276,11 +309,12 @@ class FancyEmail{
         }
         $query  .= " ORDER BY $this->mailTable.time_send DESC";
 
-        $results    = $wpdb->get_results($query);
-
-        return $results;
+        return $wpdb->get_results($query);
     }
 
+    /**
+     * Clear all e-mail tables
+     */
     function clearTables(){
         global $wpdb;
 

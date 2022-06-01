@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         main.displayMessage('Download started please wait till it finishes');
 
-        var response    = await formsubmit.fetchRestApi('vimeo/download_to_server', formData);
+        var response    = await FormSubmit.fetchRestApi('vimeo/download_to_server', formData);
 
         //hide loader
         ev.target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');

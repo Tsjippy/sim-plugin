@@ -1,43 +1,49 @@
 <?php
 namespace SIM\USERMANAGEMENT;
 use SIM;
-
-function display_roles($userId){
+/**
+ * Creates the form to edit a users roles
+ * 
+ * @param	int		$userId
+ * 
+ * @return	string			The form html
+ */
+function displayRoles($userId){
 	global $wp_roles;
 
 	wp_enqueue_script( 'sim_user_management');
 	
 	//Get the roles this user currently has
-	$roles = get_userdata($userId)->roles;				
+	$roles 		= get_userdata($userId)->roles;				
 	//Get all available roles
-	$user_roles = $wp_roles->role_names;
+	$userRoles	= $wp_roles->role_names;
 	
 	//Remove these roles from the roles array
-	if(!in_array('administrator',(array)$roles)) 	unset($user_roles['administrator']);
+	if(!in_array('administrator', (array)$roles)) 	unset($userRoles['administrator']);
 	
 	//Sort the roles
-	asort($user_roles);
+	asort($userRoles);
 
 	ob_start();
 	//Content
 	?>
 	<style>
-		.infobox{
+		.role_info .infobox{
 			margin-top: -20px;
 		}
 
-		.info-icon-wrapper{
+		.role_info .info-icon-wrapper{
 			margin-bottom: 10px;
 		}
 
-		.info_icon{
+		.role_info .info_icon{
 			margin-bottom:0px;
 			position: absolute;
 			right: 10px;
 			max-width: 20px;
 		}
 
-		div .infobox .info_text{
+		.role_info .infobox .info_text{
 			position: absolute;
     		right: 40px;
 			bottom: unset;
@@ -53,14 +59,14 @@ function display_roles($userId){
 				If you want to disable a user go to the login info tab.
 			</p>
 			<?php
-		foreach($user_roles as $key=>$role_name){
+		foreach($userRoles as $key=>$roleName){
 			$checked = '';
 			if(in_array($key,(array)$roles))	$checked = 'checked';
 			?>
 			<label> 
-				<input type='checkbox' name='roles[<?php echo $key;?>]' value='<?php echo $role_name;?>' <?php echo $checked;?>>
+				<input type='checkbox' name='roles[<?php echo $key;?>]' value='<?php echo $roleName;?>' <?php echo $checked;?>>
 				<?php 
-				echo $role_name;
+				echo $roleName;
 				?>
 			<div class="infobox">
 				<div class="info-icon-wrapper">
@@ -70,7 +76,7 @@ function display_roles($userId){
 				</div>
 				<span class="info_text">
 					<?php
-					echo $role_name.' - <i>'.apply_filters('sim_role_description', '', $key).'</i>';
+					echo $roleName.' - <i>'.apply_filters('sim_role_description', '', $key).'</i>';
 					?>
 				</span>
 			</div>
@@ -79,7 +85,7 @@ function display_roles($userId){
 			<?php
 		}
 		
-		echo SIM\add_save_button('updateroles','Update roles');
+		echo SIM\addSaveButton('updateroles','Update roles');
 	
 		?>
 		</form>

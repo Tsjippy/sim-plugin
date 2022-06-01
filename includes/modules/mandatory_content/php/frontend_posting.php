@@ -6,7 +6,7 @@ use SIM;
  * Adding fields to the frontend posting screen
  * @param  object $frontendContend 	frontendContend instance            
 */
-add_action('frontend_post_after_content', function($frontendContend){
+add_action('sim_frontend_post_after_content', function($frontendContend){
     $audience = get_post_meta($frontendContend->postId, "audience", true);
 
     $checked	= '';

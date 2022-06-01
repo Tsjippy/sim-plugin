@@ -5,12 +5,12 @@ use SIM;
 add_action('init', function(){
 	//Add tinymce plugin
 	add_filter('mce_external_plugins', function($plugins){		
-		$formbuilder	= new Formbuilder();
+		$formBuilder	= new Formbuilder();
 
 		//Add extra variables to the main.js script
 		wp_localize_script( 'sim_script', 
 			'form_select', 
-			$formbuilder->form_select()
+			$formBuilder->formSelect()
 		);
 
 		$plugins['insert_form_shortcode']		= plugins_url("js/tiny_mce.js?ver=".ModuleVersion, __DIR__);

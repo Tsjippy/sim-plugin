@@ -2,45 +2,48 @@
 namespace SIM\DEFAULTPICTURE;
 use SIM;
 
-//Set the default picture
-function set_default_picture($post_id){
-    if(has_post_thumbnail($post_id)) return;
+/**
+ * Set the default picture of a post
+ * @param  	int 	$postId		The WP_Post id
+*/
+function setDefaultPicture($postId){
+    if(has_post_thumbnail($postId)) return;
 
-    $picture_ids    = SIM\get_module_option('default_pictures', 'picture_ids');
-    $categories     = get_the_category( $post_id );
+    $pictureIds    = SIM\getModuleOption('default_pictures', 'picture_ids');
+    $categories     = get_the_category( $postId );
 
-    $picture_set    = false;
+    $pictureSet    = false;
     # Loop over all categories of this post
     foreach($categories as $category){
         # If the current category has a default picture set
-        if(is_numeric($picture_ids[$category->slug])){
+        if(is_numeric($pictureIds[$category->slug])){
             # Set the picture
-            set_post_thumbnail( $post_id, $picture_ids[$category->slug]);
-            $picture_set    = true;
+            set_post_thumbnail( $postId, $pictureIds[$category->slug]);
+            $pictureSet    = true;
             break;
         }
     }
 	
     # Still no picture set
-    if(!$picture_set){
+    if(!$pictureSet){
         # If the posttype has a default picture set
-        $post_type      = get_post_type($post_id);
-        if(is_numeric($picture_ids[$post_type])){
+        $post_type      = get_post_type($postId);
+        if(is_numeric($pictureIds[$post_type])){
             # Set the picture
-            set_post_thumbnail( $post_id, $picture_ids[$post_type]);
+            set_post_thumbnail( $postId, $pictureIds[$post_type]);
         }
     }
 }
 
 add_action('sim_after_post_save', function($post){
     //check if we need to set an default image
-    set_default_picture($post->ID);
+    setDefaultPicture($post->ID);
 });
 
 
 //If no featured image on post is set, set one
-add_action( 'save_post', function ( $post_id, $post, $update ) {
+add_action( 'save_post', function ( $postId, $post, $update ) {
 	if($post->post_status == "publish"){
-        set_default_picture($post_id);
+        setDefaultPicture($postId);
 	}
 }, 10,3 );

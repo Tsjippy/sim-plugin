@@ -13,7 +13,7 @@ add_action('sim_module_activated', function($moduleSlug, $options){
 	wp_create_category('Confidential');
 }, 10, 2);
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
@@ -30,13 +30,13 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 		Use like this: <code>[content_filter roles='administrator, otherroles']This has limited visibility[/content_filter]</code>
 	</p>
 	<?php
-},10,2);
+});
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 
-	$default    = SIM\get_module_option('content_filter', 'default_status');
+	$default    = SIM\getModuleOption('content_filter', 'default_status');
 	
     ?>
 	<label>
@@ -44,4 +44,4 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 		Make uploaded media private by default
 	</label>
 	<?php
-}, 10, 3);
+});

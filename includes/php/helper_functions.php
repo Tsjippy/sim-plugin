@@ -1,6 +1,8 @@
 <?php
 namespace SIM;
 
+use WP_Error;
+
 //Update user meta of a user and all of its relatives
 
 /**
@@ -684,25 +686,41 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 	return $value;
 }
 
-function add_save_button($element_id, $button_text, $extraclass = ''){
+/**
+ * Creates a submit button with a loader gif
+ * @param	string	$elementId		The name or id of the button
+ * @param	string	$buttonText    	The text of the button
+ * @param	string	$extraClass		Any extra class to add to the button
+ * 
+ * @return string					The html
+*/
+function addSaveButton($elementId, $buttonText, $extraClass = ''){
 	$html = "<div class='submit_wrapper'>";
-		$html .= "<button type='button' class='button form_submit $extraclass' name='$element_id'>$button_text</button>";
+		$html .= "<button type='button' class='button form_submit $extraClass' name='$elementId'>$buttonText</button>";
 		$html .= "<img class='loadergif hidden' src='".LOADERIMAGEURL."'>";
 	$html .= "</div>";
 	
 	return $html;
 }
-	
-function add_to_library($target_file, $title='', $description=''){
+
+/**
+ * Creates a submit button with a loader gif
+ * @param	string	$targetFile		The path to a file
+ * @param	string	$title    		The title for the file
+ * @param	string	$description	The default description of the file
+ * 
+ * @return 	int|WP_Error			The post id of the created attachment, WP_Error on error
+*/
+function addToLibrary($targetFile, $title='', $description=''){
 	try{		 
 		// Check the type of file. We'll use this as the 'post_mime_type'.
-		$filetype = wp_check_filetype( basename( $target_file ), null );
+		$filetype = wp_check_filetype( basename( $targetFile ), null );
 
-		if(empty($title)) $title = preg_replace( '/\.[^.]+$/', '', basename( $target_file ) );
+		if(empty($title)) $title = preg_replace( '/\.[^.]+$/', '', basename( $targetFile ) );
 		 
 		// Prepare an array of post data for the attachment.
 		$attachment = array(
-			'guid'           =>	pathToUrl($target_file ), 
+			'guid'           =>	pathToUrl($targetFile ), 
 			'post_mime_type' => $filetype['type'],
 			'post_title'     => $title,
 			'post_content'   => $description,
@@ -710,38 +728,53 @@ function add_to_library($target_file, $title='', $description=''){
 		);
 		 
 		// Insert the attachment.
-		$post_id = wp_insert_attachment( $attachment, $target_file);
+		$postId = wp_insert_attachment( $attachment, $targetFile);
 
 		//Schedule the creation of subsizes as it can take some time.
 		// By doing it this way its asynchronous
-		wp_schedule_single_event( time(), 'process_images_action', [$post_id]);
+		wp_schedule_single_event( time(), 'process_images_action', [$postId]);
 		
-		return $post_id;
+		return $postId;
 	}catch(\GuzzleHttp\Exception\ClientException $e){
 		$result = json_decode($e->getResponse()->getBody()->getContents());
-		$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-		printArray($error_result);
-		if(isset($post_id)) return $post_id;
+		$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+		printArray($errorResult);
+		if(isset($postId)) return $postId;
+
+		return new WP_Error('library', $errorResult);
 	}catch(\Exception $e) {
-		$error_result = $e->getMessage();
-		printArray($error_result);
-		if(isset($post_id)) return $post_id;
+		$errorResult = $e->getMessage();
+		printArray($errorResult);
+		if(isset($postId)) return $postId;
+		return new WP_Error('library', $errorResult);
 	}
 }
 
 //Creates subimages
 //Add action
 add_action('init', function () {
-	add_action( 'process_images_action', __NAMESPACE__.'\process_images' );
+	add_action( 'process_images_action', __NAMESPACE__.'\processImages' );
 });
-function process_images($post){
+
+/**
+ * Creates sub images using wp_maybe_generate_attachment_metadata
+ * @param	int|WP_Post	$post		WP_Post or attachment id
+*/
+function processImages($post){
 	include_once( ABSPATH . 'wp-admin/includes/image.php' );
 
 	if(is_numeric($post)) $post	= get_post($post);
-	wp_maybe_generate_attachment_metadata($image);
+	wp_maybe_generate_attachment_metadata($post);
 }
  
-function get_module_option($moduleName, $option){
+/**
+ * Retrievs the value of a certain module setting
+ * @param	string 	$moduleName		The module name'
+ * @param	string	$option			The option name
+ * 
+ * @return	array|string|false			The option value or false if option is not found
+*/
+function getModuleOption($moduleName, $option){
 	global $Modules;
 
 	if(!empty($Modules[$moduleName][$option])){
@@ -751,13 +784,27 @@ function get_module_option($moduleName, $option){
 	}
 }
 
-function try_send_signal($message, $recipient, $post_id=""){
-	if (function_exists('SIM\SIGNAL\send_signal_message')) {
-		SIGNAL\send_signal_message($message, $recipient, $post_id);
+/**
+ * Checks if Signal module is enabled and if so sends the message
+ * @param	string 		$message		The module name'
+ * @param	int|WP_User	$recipient		The user or user id the message should be send to
+ * @param	int			$postId			Optional post id to add a link to
+*/
+function trySendSignal($message, $recipient, $postId=""){
+	if (function_exists('SIM\SIGNAL\sendSignalMessage')) {
+		SIGNAL\sendSignalMessage($message, $recipient, $postId);
 	}
 }
 
-function picture_selector($key, $name, $settings){
+/**
+ * Get html to select an image
+ * @param	string 		$key			the image key in the module settings
+ * @param	string		$name			Human readable name of the picture
+ * @param	array		$settings		The module settings array
+ * 
+ * @return	string						the selector html
+*/
+function pictureSelector($key, $name, $settings){
 	wp_enqueue_media();
 	wp_enqueue_script('sim_picture_selector_script', INCLUDESURL.'/js/select_picture.min.js', array(), '7.0.0',true);
 	wp_enqueue_style( 'sim_picture_selector_style', INCLUDESURL.'/css/picture_select.min.css', array(), '7.0.0');
@@ -784,6 +831,10 @@ function picture_selector($key, $name, $settings){
 	<?php
 }
 
+/**
+ * Remove a single file or a folder including all the files
+ * @param	string 		$target			The path to delete
+*/
 function removeFiles($target){
 	if(is_dir($target)){
 
@@ -799,7 +850,13 @@ function removeFiles($target){
 	}
 }
 
-function is_date($date){
+/**
+ * Checks if a string is a date
+ * @param	string 		$date			the date to check
+ * 
+ * @return	bool						Whether a date or not
+*/
+function isDate($date){
 	if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date)) {
 		return true;
 	} else {
@@ -807,7 +864,13 @@ function is_date($date){
 	}
 }
 
-function is_time($time){
+/**
+ * Checks if a string is a time
+ * @param	string 		$time			the time to check
+ * 
+ * @return	bool						Whether a time or not
+*/
+function isTime($time){
 	if (preg_match("/^[0-9]{2}:[0-9]{2}$/",$time)) {
 		return true;
 	} else {
@@ -816,42 +879,59 @@ function is_time($time){
 }
 
 // check if a given useraccount is not already used
-function getAvailableUsername($first_name, $last_name){
+
+/**
+ * Returns a unique username
+ * @param	string 		$firstName		First name of a new user
+ * @param	string 		$lastName		Last name of a new user
+ * 
+ * @return	string						An unique username
+*/
+function getAvailableUsername($firstName, $lastName){
 	//Check if a user with this username already exists
 	$i =1;
 	while (true){
 		//Create a username
-		$username = str_replace(' ', '', $first_name.substr($last_name, 0, $i));
+		$userName = str_replace(' ', '', $firstName.substr($lastName, 0, $i));
 		//Check for availability
-		if (get_user_by("login",$username) == ""){
+		if (get_user_by("login",$userName) == ""){
 			//available, return the username
-			return $username;
+			return $userName;
 		}
 		$i += 1;
 	}
 }
 
-// Create an user account
-function addUserAccount($first_name, $last_name, $email, $approved = false, $validity = 'unlimited'){
+/**
+ * Creates an useraccount
+ * @param	string 		$firstName		First name of a new user
+ * @param	string 		$lastName		Last name of a new user
+ * @param	string		$email			E-mail adres
+ * @param	bool		$approved		Whether the user is already approved or not. Default false
+ * @param	string		$validity		How long the account will be valid, default 'unlimited'
+ * 
+ * @return	int|WP_Error				The new user id or WP_Error on error
+*/
+function addUserAccount($firstName, $lastName, $email, $approved = false, $validity = 'unlimited'){
 	//Get the username based on the first and lastname
-	$username = getAvailableUsername($first_name, $last_name);
+	$username = getAvailableUsername($firstName, $lastName);
 	
 	//Build the user
-	$userdata = array(
+	$userData = array(
 		'user_login'    => $username,
-		'last_name'     => $last_name,
-		'first_name'    => $first_name,
+		'last_name'     => $lastName,
+		'first_name'    => $firstName,
 		'user_email'    => $email,
-		'display_name'  => "$first_name $last_name",
+		'display_name'  => "$firstName $lastName",
 		'user_pass'     => NULL
 	);
 	
 	//Give it the guest user role
 	if($validity != "unlimited"){
-		$userdata['role'] = 'subscriber';
+		$userData['role'] = 'subscriber';
 	}
 	//Insert the user
-	$userId = wp_insert_user( $userdata ) ;
+	$userId = wp_insert_user( $userData ) ;
 	// User creation failed
 	if(is_wp_error($userId)){
 		printArray($userId->get_error_message());
@@ -878,31 +958,50 @@ function addUserAccount($first_name, $last_name, $email, $approved = false, $val
 	return $userId;
 }
 
+/**
+ * Gets the page id describing an user
+ * @param	int 		$userId		WP_user id
+ * 
+ * @return	int|WP_Error			The page id
+*/
 function getUserPageId($userId){
-    return get_user_meta($userId,"user_page_id",true);
+    return get_user_meta($userId, "user_page_id", true);
 }
 
-// Get the users description page
+/**
+ * Get the users description page
+ * @param	int 		$userId		WP_user id
+ * 
+ * @return	string					user page url
+*/
 function getUserPageUrl($userId){
 	//Get the user page of this user
-	$user_page_id = getUserPageId($userId);
+	$userPageId = getUserPageId($userId);
 	
-	if(!is_numeric($user_page_id) or get_post_status($user_page_id ) != 'publish'){
-        if(function_exists('SIM\USERPAGE\create_user_page')){
-			$user_page_id = USERPAGE\create_user_page($userId);
+	if(!is_numeric($userPageId) or get_post_status($userPageId ) != 'publish'){
+        if(function_exists('SIM\USERPAGE\createUserPage')){
+			$userPageId = USERPAGE\createUserPage($userId);
 		}
 
-        if(!$user_page_id) return false;
+        if(!$userPageId) return false;
     }
 
-    $url = get_permalink($user_page_id);
-    $url_without_https = str_replace('https://','',$url);
+    $url				= get_permalink($userPageId);
+    $urlWithoutHttps	= str_replace('https://', '', $url);
     
     //return the url
-    return $url_without_https;
+    return $urlWithoutHttps;
 }
 
-// Get profile picture html
+/**
+ * Get profile picture html
+ * @param	int 		$userId				WP_user id
+ * @param	array 		$size				Size (width, height) of the image. Default [50,50]
+ * @param	bool		$showDefault		Whether to show a default pictur if no user picture is found. Default true
+ * @param	bool		$famillyPicture		Whether or not to use the family picture
+ * 
+ * @return	string|false					The picture html or false if no picture
+*/
 function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $famillyPicture=false){
 	
 	$attachmentId = get_user_meta($userId, 'profile_picture', true);
@@ -916,15 +1015,21 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 
 	if(is_numeric($attachmentId)){
 		$url = wp_get_attachment_image_url($attachmentId,'Full size');
-		return "<a href='$url'><img width='50' height='50' src='$url' class='attachment-50x50 size-50x50' loading='lazy'></a>";
+		return "<a href='$url'><img width='{$size[0]}' height='{$size[1]}' src='$url' class='attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'></a>";
 	}elseif($showDefault){
 		$url = plugins_url('pictures/usericon.png', __DIR__);
-		return "<img width='50' height='50' src='$url' class='attachment-50x50 size-50x50' loading='lazy'>";
+		return "<img width='{$size[0]}' height='{$size[1]}' src='$url' class='attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
 	}else{
 		return false;
 	}
 }
 
+/**
+ * Get profile picture html
+ * @param	int 		$postId				WP_post id
+ * 
+ * @return	string|false					The url or false if no valid page
+*/
 function getValidPageLink($postId){
 	if(!is_numeric($postId)) return false;
 

@@ -2,7 +2,7 @@
 namespace SIM\FRONTPAGE;
 use SIM;
 
-const ModuleVersion		= '7.0.2';
+const ModuleVersion		= '7.0.3';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
@@ -15,7 +15,7 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	</p>
 
 	<?php
-	$pageId	= SIM\get_module_option($moduleSlug, 'home_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'home_page');
 	if(is_numeric($pageId)){
 		?>
 		<p>
@@ -41,7 +41,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 
 	<br>
 	<?php
-	SIM\picture_selector('header_image',  'Header image frontpage', $settings);
+	SIM\pictureSelector('header_image',  'Header image frontpage', $settings);
 	?>
 	
 	<h5> First button</h5>
@@ -149,7 +149,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
 	// Create frontend posting page
-	$pageId	= SIM\get_module_option($moduleSlug, 'home_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'home_page');
 	// Only create if it does not yet exist
 	if(!$pageId or get_post_status($pageId) != 'publish'){
 		$content	= 'Hi [displayname],<br><br>I hope you have a great day!<br><br>[logged_home_page]<br><br>[welcome]';
@@ -159,7 +159,8 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 			'post_title'    => 'Home',
 			'post_content'  => $content,
 			'post_status'   => "publish",
-			'post_author'   => '1'
+			'post_author'   => '1',
+			'slug'			=> 'lhome'
 		);
 		$pageId 	= wp_insert_post( $post, true, false);
 
@@ -175,7 +176,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 add_filter('display_post_states', function ( $states, $post ) { 
     
-    if ( $post->ID == SIM\get_module_option('frontpage', 'home_page') ) {
+    if ( $post->ID == SIM\getModuleOption('frontpage', 'home_page') ) {
         $states[] = __('Home page for logged in users'); 
     } 
 
@@ -190,7 +191,7 @@ function welcomeMessage($atts){
 		$UserID = get_current_user_id();
 		//Check welcome message needs to be shown
 		if (empty(get_user_meta( $UserID, 'welcomemessage', true ))){
-			$welcome_message = SIM\get_module_option('frontpage', 'welcome_message'); 
+			$welcome_message = SIM\getModuleOption('frontpage', 'welcome_message'); 
 			if(!empty($welcome_message)){
 				//Html
 				$html = '<div id="welcome-message">';

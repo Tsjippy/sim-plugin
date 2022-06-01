@@ -5,16 +5,18 @@ use SIM;
 //Shortcode to download all contact info
 add_shortcode("all_contacts",function (){
 	global $post;
+
 	//Make vcard
 	if (isset($_GET['vcard'])){
 		if($_GET['vcard']=="all"){
 			ob_end_clean();
 			header('Content-Type: text/x-vcard');
 			header('Content-Disposition: inline; filename= "SIMContacts.vcf"');
+			
 			$vcard = "";
 			$users = SIM\getUserAccounts(false,true,true,['ID']);
 			foreach($users as $user){
-				$vcard .= build_vcard($user->ID);
+				$vcard .= buildVcard($user->ID);
 			}
 			echo $vcard;
 		}elseif($_GET['vcard']=="outlook"){
@@ -26,7 +28,7 @@ add_shortcode("all_contacts",function (){
 				
 				//Loop over the accounts and add their vcards
 				foreach($users as $user){
-					$zip->addFromString($user->display_name.'.vcf', build_vcard($user->ID));
+					$zip->addFromString($user->display_name.'.vcf', buildVcard($user->ID));
 				}	
 			 
 				// All files are added, so close the zip file.
@@ -42,22 +44,24 @@ add_shortcode("all_contacts",function (){
 			//remove the zip from the server
 			unlink('SIMContacts.zip');
 		}
-		//echo ob_get_contents();
+
 		die();
 	//Return vcard hyperlink
 	}else{
 		$url 			= add_query_arg( ['vcard' => "all"], get_permalink( $post->ID ) );
-		$all_button 	= '<a href="'.$url.'" class="button sim vcard">Gmail and others</a>';
+		$allButton 		= '<a href="'.$url.'" class="button sim vcard">Gmail and others</a>';
 		
 		$url 			= add_query_arg( ['vcard' => "outlook"], get_permalink( $post->ID ) );
-		$outlook_button	= '<a href="'.$url.'" class="button sim vcard">Outlook</a>';
+		$outlookButton	= '<a href="'.$url.'" class="button sim vcard">Outlook</a>';
 		
 		$html = "<div class='download contacts'>";
-		$html .= "<p>If you want to add the contact details of all website users to your addressbook, you can use one of the buttons below.<br>";
-		$html .= "For gmail and other programs you can just import the vcf file.	";
-		$html .= "For outlook you receive a zip file. Extract it, then click on each .vcf file to add it to your outlook.</p>";
-		$html .= "$outlook_button $all_button";
-		$html .= "<p>Be patient, preparing the download can take a while. </p>";
+			$html .= "<p>";
+				$html .= "If you want to add the contact details of all website users to your addressbook, you can use one of the buttons below.<br>";
+				$html .= "For gmail and other programs you can just import the vcf file.	";
+				$html .= "For outlook you receive a zip file. Extract it, then click on each .vcf file to add it to your outlook.";
+			$html .= "</p>";
+			$html .= "$outlookButton $allButton";
+			$html .= "<p>Be patient, preparing the download can take a while. </p>";
 		$html .= "</div>";
 		
 		return $html;
@@ -86,26 +90,26 @@ add_shortcode('user_link',function($atts){
 	
 	$html = "<div $style>";
 	
-	$userdata = get_userdata($userId);
-	$nickname = get_user_meta($userId,'nickname',true);
-	$display_name = "(".$userdata->display_name.")";
-	if($userdata->display_name == $nickname) $display_name = '';
-	$privacy_preference = get_user_meta( $userId, 'privacy_preference', true );
-	if(!is_array($privacy_preference)) $privacy_preference = [];
+	$userdata		= get_userdata($userId);
+	$nickname 		= get_user_meta($userId,'nickname',true);
+	$displayName 	= "(".$userdata->display_name.")";
+	if($userdata->display_name == $nickname) $displayName = '';
+	$privacyPreference = get_user_meta( $userId, 'privacy_preference', true );
+	if(!is_array($privacyPreference)) $privacyPreference = [];
 	
 	$url = SIM\getUserPageUrl($userId);
 	
-	if($a['picture'] == true and !isset($privacy_preference['hide_profile_picture'])){
-		$profile_picture = SIM\displayProfilePicture($userId);
+	if($a['picture'] == true and !isset($privacyPreference['hide_profile_picture'])){
+		$profilePicture = SIM\displayProfilePicture($userId);
 	}
-	$html .= "<a href='$url'>$profile_picture $nickname $display_name</a><br>";
+	$html .= "<a href='$url'>$profilePicture $nickname $displayName</a><br>";
 	
 	if($a['email'] == true){
 		$html .= '<p style="margin-top:1.5em;">E-mail: <a href="mailto:'.$userdata->user_email.'">'.$userdata->user_email.'</a></p>';
 	}
 		
 	if($a['phone'] == true){
-		$html .= show_phonenumbers($userId);
+		$html .= showPhonenumbers($userId);
 	}
 	return $html."</div>";
 });

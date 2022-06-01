@@ -3,7 +3,7 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 // Only load when option is activated
-if(!SIM\get_module_option('user_management', 'tempuser')) return;
+if(!SIM\getModuleOption('user_management', 'tempuser')) return;
 
 //Add expiry data column to users screen
 add_filter( 'manage_users_columns', function( $columns ) {

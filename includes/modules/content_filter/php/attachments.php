@@ -4,103 +4,110 @@ use SIM;
 
 //add public/private radio buttons to attachment page
 add_filter( 'attachment_fields_to_edit', function($form_fields, $post ){
-    $field_value = get_post_meta( $post->ID, 'visibility', true );
+    $fieldValue = get_post_meta( $post->ID, 'visibility', true );
 
-    if($field_value == 'public' or empty($field_value)) $checked    = 'checked';
+    if($fieldValue == 'public' or empty($fieldValue)) $checked    = 'checked';
+
     $html    = "<div>";
         $html   .= "<input $checked style='width: initial' type='radio' name='attachments[{$post->ID}][visibility]' value='public'>";
         $html   .= " Public";
     $html   .= "</div>";
 
     $checked    = '';
-    if($field_value == 'private') $checked    = 'checked';
+    if($fieldValue == 'private') $checked    = 'checked';
+
     $html   .= "<div>";
         $html   .= "<input $checked style='width: initial' type='radio' name='attachments[{$post->ID}][visibility]' value='private'>";
         $html   .= " Private";
     $html   .= "</div>";
 
-    $form_fields['visibility'] = array(
-        'value' => $field_value ? $field_value : '',
+    $formFields['visibility'] = array(
+        'value' => $fieldValue ? $fieldValue : '',
         'label' => __( 'Visibility' ),
         'input' => 'html',
         'html'  =>  $html
-      );  
-    return $form_fields;
+    );
+
+    return $formFields;
 },10,2);
 
 //change visibility of an attachment
-add_action( 'edit_attachment', function($attachment_id){
-    if ( isset( $_REQUEST['attachments'][$attachment_id]['visibility'] ) ) {
-        $visibility = $_REQUEST['attachments'][$attachment_id]['visibility'];
+add_action( 'edit_attachment', function($attachmentId){
+    if ( isset( $_REQUEST['attachments'][$attachmentId]['visibility'] ) ) {
+        $visibility     = $_REQUEST['attachments'][$attachmentId]['visibility'];
 
         //check if changed
-        $prev_vis   = get_post_meta( $attachment_id, 'visibility',true);
+        $prevVis        = get_post_meta( $attachmentId, 'visibility',true);
 
-        if($prev_vis != $visibility){
-            do_action('before_visibility_change', $attachment_id, $visibility);
+        if($prevVis != $visibility){
+            do_action('sim_before_visibility_change', $attachmentId, $visibility);
 
             //update post meta
-            update_metadata( 'post', $attachment_id, 'visibility', $visibility );
+            update_metadata( 'post', $attachmentId, 'visibility', $visibility );
 
             //Check if moving to public or to private
             if($visibility == 'public'){
-                $target_path = '';
+                $targetPath = '';
             }else{
-                $target_path = 'private';
+                $targetPath = 'private';
             }
-            move_attachment($attachment_id, $target_path);
+            moveAttachment($attachmentId, $targetPath);
         }
     }
 } );
 
-//Move picture to other folder
-function move_attachment($post_id, $sub_dir){
-    if(empty($sub_dir)){
-        $new_path   = wp_upload_dir()['path'];
+/**
+ * Move picture to other folder
+ * @param  	int 	$postId		    WP_Post id
+ * @param  	string	$subDir   	    The sub folder where the files should be uploaded 
+*/
+function moveAttachment($postId, $subDir){
+    if(empty($subDir)){
+        $newPath   = wp_upload_dir()['path'];
     }else{
-        $new_path   = wp_upload_dir()['path']."/$sub_dir";
-        $sub_dir    = rtrim($sub_dir,"/").'/';
+        $newPath   = wp_upload_dir()['path']."/$subDir";
+        $subDir     = rtrim($subDir,"/").'/';
     }
 
 	//get the file location of the attachment
-	$old_path   = get_attached_file($post_id);
-    if(!file_exists($old_path)) return false;
+	$oldPath   = get_attached_file($postId);
+    if(!file_exists($oldPath)) return false;
 
-    $filename   = basename ($old_path);
-    $extension  = '.'.pathinfo($old_path, PATHINFO_EXTENSION);
-    $base_dir   = dirname($old_path);
-    $base_name  = str_replace(["-scaled", $extension], "", $filename);
+    $filename   = basename ($oldPath);
+    $extension  = '.'.pathinfo($oldPath, PATHINFO_EXTENSION);
+    $baseDir    = dirname($oldPath);
+    $baseName   = str_replace(["-scaled", $extension], "", $filename);
 
 	//Update the location in the db
-	update_attached_file($post_id, "$new_path/$filename");
+	update_attached_file($postId, "$newPath/$filename");
 
     //update main path
-    update_metadata( 'post', $post_id, '_wp_attached_file', $sub_dir.$filename);
+    update_metadata( 'post', $postId, '_wp_attached_file', $subDir.$filename);
 	
 	//Open up the wp filesystem
 	WP_Filesystem();
 	global $wp_filesystem;
 	
 	//Move all the files to the private folder
-	$files = glob("$base_dir/$base_name*");
+	$files = glob("$baseDir/$baseName*");
 	foreach($files as $file){
-        $wp_filesystem->move($file, "$new_path/".basename ($file), true);
+        $wp_filesystem->move($file, "$newPath/".basename ($file), true);
 	}
 
-    wp_generate_attachment_metadata($post_id, "$new_path/$filename");
+    wp_generate_attachment_metadata($postId, "$newPath/$filename");
 
     //replace any url with new urls for this attachment
-    $old_url    = SIM\pathToUrl(str_replace($filename, $base_name, $old_path));
-    $new_url    = SIM\pathToUrl("$new_path/$base_name");
+    $oldUrl    = SIM\pathToUrl(str_replace($filename, $baseName, $oldPath));
+    $newUrl    = SIM\pathToUrl("$newPath/$baseName");
 
     // Search for any post with the old url
-    $query = new \WP_Query( array( 's' => $old_url ) );
+    $query = new \WP_Query( array( 's' => $oldUrl ) );
 
     foreach($query->posts as $post){        
         //if old url is found in the content of this post
-        if(strpos($post->post_content, $old_url) !== false){
+        if(strpos($post->post_content, $oldUrl) !== false){
             //replace with new url
-            $post->post_content = str_replace($old_url, $new_url, $post->post_content);
+            $post->post_content = str_replace($oldUrl, $newUrl, $post->post_content);
 
             $args = array(
                 'ID'           => $post->ID,
@@ -139,7 +146,7 @@ add_filter( 'ajax_query_attachments_args', function($query){
 
 // Make private by default if enabled
 add_action( 'add_attachment', function ( $postId) { 
-    $default    = SIM\get_module_option('content_filter', 'default_status');
+    $default    = SIM\getModuleOption('content_filter', 'default_status');
     $path       = get_attached_file($postId);
     
     if($default == 'private' or strpos($path, '/private/') !== false ){
@@ -147,7 +154,7 @@ add_action( 'add_attachment', function ( $postId) {
         
         // Move if not already in the private folder
         if(strpos($path, '/private/') === false ){
-            move_attachment($postId, 'private');
+            moveAttachment($postId, 'private');
         }
     }
 });

@@ -1,6 +1,7 @@
 <?php
 namespace SIM\MAILCHIMP;
 use SIM;
+use WP_Error;
 
 //https://mailchimp.com/developer/marketing
 
@@ -17,10 +18,10 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				$this->user			= get_userdata($userId);
 				
 				//Get phone number
-				$this->phonenumbers = get_user_meta( $this->user->ID, "phonenumbers",true);
+				$this->phonenumbers = get_user_meta( $this->user->ID, "phonenumbers", true);
 				
 				//Get mailchimp status from db
-				$this->mailchimpstatus = get_user_meta($this->user->ID,"MailchimpStatus",true);	
+				$this->mailchimpStatus = get_user_meta($this->user->ID, "MailchimpStatus", true);	
 			}
 
 			$api = explode('-', $this->settings['apikey']);
@@ -31,51 +32,63 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			]);
 		}
 		
-		function build_merge_tags(){
-			$merge_fields = array( 
+		/**
+		 * Creates Mailchimp merge tags
+		 * 
+		 * @return	array	merge tags
+		 */
+		function buildMergeTags(){
+			$mergeFields = array( 
 				'FNAME' 	=> $this->user->first_name,
 				'LNAME' 	=> $this->user->last_name,
 			);
 			
 			if(is_array($this->phonenumbers)){
-				$merge_fields['PHONE'] = $this->phonenumbers[1];
+				$mergeFields['PHONE'] = $this->phonenumbers[1];
 			}
 			
 			$birthday = get_user_meta( $this->user->ID, "birthday",true);
-			if($birthday != ""){
-				$birthday = explode('-',$birthday);
+			if(!empty($birthday)){
+				$birthday				= explode('-',$birthday);
 				//Mailchimp wants only the month and the day
-				$merge_fields['BIRTHDAY'] = $birthday[1].'/'.$birthday[2];
+				$mergeFields['BIRTHDAY'] = $birthday[1].'/'.$birthday[2];
 			}
 			
-			return $merge_fields;
+			return $mergeFields;
 		}
 		
-		//Add user to mailchimp list
-		function add_to_mailchimp(){			
+		/**
+		 * Add user to mailchimp list
+		 */
+		function addToMailchimp(){			
 			//Only do if valid e-mail
 			if($this->user->user_email != '' and strpos($this->user->user_email,'.empty') === false){
 				SIM\printArray("Adding '{$this->user->user_email}' to Mailchimp");
 				
 				//First add to the audience
-				$this->subscribe_member($this->build_merge_tags());
+				$this->subscribeMember($this->buildMergeTags());
 				
 				//Build tag list
 				$roles = $this->user->roles;
 			
 				if(!in_array('nigerianstaff',$roles)){
-					$TAGs = array_merge(explode(',',$this->settings['user_tags']),explode(',', $this->settings['missionary_tags']));
+					$TAGs = array_merge(explode(',', $this->settings['user_tags']), explode(',', $this->settings['missionary_tags']));
 				}else{
-					$TAGs = explode(',',$this->settings['user_tags']);
+					$TAGs = explode(',', $this->settings['user_tags']);
 				}
 				
-				$this->change_tags($TAGs, 'active');
+				$this->changeTags($TAGs, 'active');
 			}
 		}
 		
-		//Add or remove mailchimp tags
-		function change_tags($tags, $status){
-			if(!is_array($this->mailchimpstatus)) $this->mailchimpstatus = [];
+		/**
+		 * Add or remove mailchimp tags
+		 * 
+		 * @param	array	$tags	The tags to add to a user
+		 * @param	string	$status	On of active or inactive
+		 */
+		function changeTags($tags, $status){
+			if(!is_array($this->mailchimpStatus)) $this->mailchimpStatus = [];
 			
 			if($this->user->user_mail == '' or strpos($this->user->user_mail,'.empty') !== false) return;
 			
@@ -83,12 +96,12 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			foreach($tags as $tag){
 				//Only update if needed
 				if($tag != ""){
-					if($status == 'active' and (!isset($this->mailchimpstatus[$tag]) or $this->mailchimpstatus[$tag] != 'succes')){
+					if($status == 'active' and (!isset($this->mailchimpStatus[$tag]) or $this->mailchimpStatus[$tag] != 'succes')){
 						//Process tag
-						$response = $this->set_tag($tag, $status);
+						$response = $this->setTag($tag, $status);
 						
 						//Subscription succesfull
-						if( $response == 'succes' ){
+						if( $response){
 							SIM\printArray("Succesfully added the $tag tag to {$this->user->display_name}");
 						//Subscription failed
 						}else{
@@ -96,15 +109,15 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 						}
 					
 						//Store result
-						$this->mailchimpstatus[$tag] = $response;
-					}elseif($status == 'inactive' and isset($this->mailchimpstatus[$tag])){
+						$this->mailchimpStatus[$tag] = $response;
+					}elseif($status == 'inactive' and isset($this->mailchimpStatus[$tag])){
 						//Process tag
-						$response = $this->set_tag($tag, $status);
+						$response = $this->setTag($tag, $status);
 						
 						//Unsubscription succesfull
-						if( $response == 'succes' ){
+						if( $response){
 							SIM\printArray("Succesfully removed the $tag tag from {$this->user->display_name}");
-							unset($this->mailchimpstatus[$tag]);
+							unset($this->mailchimpStatus[$tag]);
 						//Subscription failed
 						}else{
 							SIM\printArray("Tag $tag  was not removed from user {$this->user->display_name} because: $response" );
@@ -114,56 +127,36 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			}
 			
 			//Store results in db
-			update_user_meta($this->user->ID,"MailchimpStatus",$this->mailchimpstatus);
+			update_user_meta($this->user->ID, "MailchimpStatus", $this->mailchimpStatus);
 		}
 		
-		function role_changed($new_roles){			
-			if(in_array('nigerianstaff',$new_roles)){
+		/**
+		 * Change tags if a users role is changed
+		 * 
+		 * @param	array	$newRoles	The new roles of the user
+		 */
+		function roleChanged($newRoles){			
+			if(in_array('nigerianstaff', $newRoles)){
 				//Role changed to nigerianstaff, remove tags
 				$tags = explode(',', $this->settings['missionary_tags']);
-				$this->change_tags($tags, 'inactive');
+				$this->changeTags($tags, 'inactive');
 				//Add office staff tags
-				$this->change_tags(explode(',', $this->settings['office_staff_tags']), 'active');
-				
+				$this->changeTags(explode(',', $this->settings['office_staff_tags']), 'active');
 			}
 			
-			if(in_array('nigerianstaff',$this->user->roles) and !in_array('nigerianstaff',$new_roles)){
+			if(in_array('nigerianstaff', $this->user->roles) and !in_array('nigerianstaff', $newRoles)){
 				//Nigerian staff role is removed
 				$tags = array_merge(explode(',', $this->settings['user_tags']), explode(',', $this->settings['missionary_tags']));
-				$this->change_tags($tags, 'active');
+				$this->changeTags($tags, 'active');
 			}
 		}
 
-		function update_merge_tags(){
-			try {
-				//Only do this if valid e-mail
-				if(strpos($this->user->user_email,'.empty') === false){
-					$merge_fields = $this->build_merge_tags();
-					$this->client->lists->updateListMember(
-						$this->settings['audienceids'][0], 
-						md5(strtolower($this->user->user_email)), 
-						[
-							'merge_fields'  => $merge_fields
-						]
-					);
-				}
-			}
-
-			//catch exception
-			catch(\GuzzleHttp\Exception\ClientException $e){
-				$result			= json_decode($e->getResponse()->getBody()->getContents());
-				$error_result	= $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\printArray($error_result);
-				return $error_result;
-			}catch(\Exception $e) {
-				$error_result	= $e->getMessage();
-				SIM\printArray($error_result);
-				return $error_result;
-			}
-		}
-
-		//Get a list of lists (audiences)
-		function get_lists(){
+		/**
+		 * Get a list of lists (audiences)
+		 * 
+		 * @return	array|string	the lists or an error string
+		 */
+		function getLists(){
 			try {
 				$lists = $this->client->lists->getAllLists();
 				return $lists->lists;
@@ -172,62 +165,22 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			//catch exception
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result			= json_decode($e->getResponse()->getBody()->getContents());
-				$error_result	= $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult	= $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+				SIM\printArray($errorResult);
+				return $errorResult;
 			}catch(\Exception $e) {
-				$error_result = $e->getMessage();
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $e->getMessage();
+				SIM\printArray($errorResult);
+				return $errorResult;
 			}
 		}
 
-		//Get a list of groups
-		function get_groups(){
-			try {
-				$response = $this->client->lists->getListInterestCategories($this->settings['audienceids'][0]);
-				return $response->categories;
-			}
-
-			//catch exception
-			//catch exception
-			catch(\GuzzleHttp\Exception\ClientException $e){
-				$result = json_decode($e->getResponse()->getBody()->getContents());
-				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\printArray($error_result);
-				return $error_result;
-			}catch(\Exception $e) {
-				$error_result = $e->getMessage();
-				SIM\printArray($error_result);
-				return $error_result;
-			}
-		}
-
-		//Get a list of interests within a group
-		function get_interests(){
-			try {
-				$response = $this->client->lists->listInterestCategoryInterests(
-					$this->settings['audienceids'][0],
-					"0dfcd34d95"
-				);
-				return $response->interests;
-			}
-
-			//catch exception
-			catch(\GuzzleHttp\Exception\ClientException $e){
-				$result = json_decode($e->getResponse()->getBody()->getContents());
-				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\printArray($error_result);
-				return $error_result;
-			}catch(\Exception $e) {
-				$error_result = $e->getMessage();
-				SIM\printArray($error_result);
-				return $error_result;
-			}
-		}
-
-		//Add someone to the audience
-		function subscribe_member($merge_fields){
+		/**
+		 * Add someone to the audience of Mailchimp
+		 * 
+		 * @return	array|string	The result or error
+		 */
+		function subscribeMember($mergeFields){
 			try {
 				$email = $this->user->user_email;
 				$response = $this->client->lists->setListMember(
@@ -236,7 +189,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					[
 						"email_address" => strtolower($email),
 						"status_if_new" => 'subscribed',
-						"merge_fields" => $merge_fields
+						"merge_fields" 	=> $mergeFields
 					]
 				);
 			
@@ -247,31 +200,25 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			//catch exception
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
-				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+				SIM\printArray($errorResult);
+				return $errorResult;
 			}catch(\Exception $e) {
-				$error_result = $e->getMessage();
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $e->getMessage();
+				SIM\printArray($errorResult);
+				return $errorResult;
 			}
 		}
 
-		//Function to deactivate someone from Mailchimp
-		function archive_user(){
-			try {
-				$response = $this->client->lists->deleteListMember($this->settings['audienceids'][0], md5(strtolower($this->user->user_email)),[]);
-				return "Deletion succesfull";
-			}
-
-			//catch exception
-			catch(\Exception $e) {
-				$response = $this->client->lists->getListMember($this->settings['audienceids'][0], md5(strtolower($this->user->user_email)));
-				return "Deletion unsuccesfull, status is already {$response->status}";
-			}
-		}
-
-		function set_tag($tagname, $status){
+		/**
+		 * Add a tag to the current user
+		 * 
+		 * @param	string	$tagname	the name of the tag
+		 * @param	string	$status		active or inactive
+		 * 
+		 * @return	true|WP_Error				true on succes else failure
+		 */
+		function setTag($tagname, $status){
 			try {
 				$this->client->lists->updateListMemberTags(
 					$this->settings['audienceids'][0],
@@ -284,7 +231,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					]]
 				);
 				
-				return 'succes';
+				return true;
 			}
 			
 			//catch exception
@@ -292,19 +239,27 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
 
 				if($result->detail == "The requested resource could not be found."){
-					$this->add_to_mailchimp();
+					$this->addToMailchimp();
 				}
 
-				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+				SIM\printArray($errorResult);
+				return new WP_Error('mailchimp', $errorResult);
 			}catch(\Exception $e) {
-				$error_result = $e->getMessage();
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $e->getMessage();
+				SIM\printArray($errorResult);
+				return new WP_Error('mailchimp', $errorResult);
 			}
 		}
 
+		/**
+		 * Send an e-mail via Mailchimp
+		 * 
+		 * @param	int		$postId			The post id to send 
+		 * @param	int		$segmentId		The id of the Mailchimp segment to e-mail to
+		 * @param	string	$from			The from e-mail to use
+		 * @param	string	$extraMessage	THe extra message to prepend the -mail contents with
+		 */
 		function sendEmail($postId, $segmentId, $from='', $extraMessage=''){
 			try {
 				$post 			= get_post($postId);
@@ -345,42 +300,42 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					);
 				}catch(\GuzzleHttp\Exception\ClientException $e){
 					$result = json_decode($e->getResponse()->getBody()->getContents());
-					$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-					SIM\printArray($error_result);
-					return $error_result;
+					$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+					SIM\printArray($errorResult);
+					return $errorResult;
 				}catch(\Exception $e) {
-					$error_result = $e->getMessage();
-					SIM\printArray($error_result);
-					return $error_result;
+					$errorResult = $e->getMessage();
+					SIM\printArray($errorResult);
+					return $errorResult;
 				}
 							
 				//Get the campain id
-				$campain_id = $response->id;
-				SIM\printArray("Campain_id is $campain_id");
+				$campainId = $response->id;
+				SIM\printArray("Campain_id is $campainId");
 				
 				//get the campain html
-				$response 			= $this->client->campaigns->getContent($campain_id);
+				$response 			= $this->client->campaigns->getContent($campainId);
 				
-				$campain_content 	= $response->html;
+				$campainContent 	= $response->html;
 				
 				//Update the html
-				$mail_content		= $extraMessage.'<br>'.$post->post_content;
+				$mailContent		= $extraMessage.'<br>'.$post->post_content;
 
-				$replace_text 		= '//*THIS WILL BE REPLACED BY THE WEBSITE *//';
-				$mail_content 		= str_replace($replace_text, $mail_content, $campain_content);
+				$replaceText 		= '//*THIS WILL BE REPLACED BY THE WEBSITE *//';
+				$mailContent 		= str_replace($replaceText, $mailContent, $campainContent);
 
-				$mail_content		= apply_filters('sim_before_mailchimp_send', $mail_content, $post);
+				$mailContent		= apply_filters('sim_before_mailchimp_send', $mailContent, $post);
 				
 				//Push the new content
 				$response = $this->client->campaigns->setContent(
-					$campain_id, 
+					$campainId, 
 					[
-						"html"	=> $mail_content,
+						"html"	=> $mailContent,
 					]
 				);
 				
 				//Send the campain
-				$response = $this->client->campaigns->send($campain_id);
+				$response = $this->client->campaigns->send($campainId);
 				
 				SIM\printArray("Mailchimp campain send succesfully");
 				return 'succes';
@@ -389,18 +344,22 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			//catch exception
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
-				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+				SIM\printArray($errorResult);
+				return $errorResult;
 			}catch(\Exception $e) {
-				$error_result = $e->getMessage();
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $e->getMessage();
+				SIM\printArray($errorResult);
+				return $errorResult;
 			}
 		}
 
-		//Get an array of available segements in the audience
-		function get_segments(){
+		/**
+		 * Get an array of available segements in the audience
+		 * 
+		 * @return	array|string	Segments array or error string
+		 */
+		function getSegments(){
 			if(empty($this->settings['audienceids'][0])){
 				$error	= 'No Audience defined in mailchimp module settings';
 				SIM\printArray($error);
@@ -423,28 +382,32 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			//catch exception
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
-				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+				$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
 				//printArray($result->detail);
-				return $error_result;
+				return $errorResult;
 			}catch(\Exception $e) {
-				$error_result = $e->getMessage();
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $e->getMessage();
+				SIM\printArray($errorResult);
+				return $errorResult;
 			}
 		}
 
-		//Get an array of templates
-		function get_templates(){
+		/**
+		 * Get an array of templates
+		 * 
+		 * @return	array|string	Templates or error string
+		 */
+		function getTemplates(){
 			try {
 				$response = $this->client->templates->list(
-					$fields = null, 
-					$exclude_fields = null, 
-					$count = '1000', 
-					$offset = '0', 
-					$created_by = null, 
-					$since_date_created = null, 
-					$before_date_created = null, 
-					$type = 'user'
+					$fields				= null, 
+					$excludeFields		= null, 
+					$count 				= '1000', 
+					$offset 			= '0', 
+					$createdBy 			= null, 
+					$sinceDateCreated 	= null, 
+					$beforeDateCreated 	= null, 
+					$type 				= 'user'
 				);
 
 				return $response->templates;
@@ -453,26 +416,30 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			//catch exception
 			catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
-				$error_result = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
+				SIM\printArray($errorResult);
+				return $errorResult;
 			}catch(\Exception $e) {
-				$error_result = $e->getMessage();
-				SIM\printArray($error_result);
-				return $error_result;
+				$errorResult = $e->getMessage();
+				SIM\printArray($errorResult);
+				return $errorResult;
 			}
 		}
 
-		//Add or remove mailchimp tags for families
-		function update_family_tags($tags, $status){
-			$this->change_tags($this->user->ID, $tags, $status);
+		/**
+		 * Add or remove mailchimp tags for families
+		 * @param	array	$tags	array of tags
+		 * @param	string	$status	active or inactive
+		 */
+		function updateFamilyTags($tags, $status){
+			$this->changeTags($this->user->ID, $tags, $status);
 				
 			//Update the meta key for all family members as well
 			$family = SIM\familyFlatArray($this->user->ID);
 			if (count($family)>0){
 				foreach($family as $relative){
 					//Update the marker for the relative as well
-					$this->change_tags($relative, $tags, $status);
+					$this->changeTags($relative, $tags, $status);
 				}
 			}
 		}

@@ -4,40 +4,40 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'auto_archive_action', __NAMESPACE__.'\auto_archive_form_entries' );
-    add_action( 'mandatory_fields_reminder_action', __NAMESPACE__.'\mandatory_fields_reminder' );
+	add_action( 'auto_archive_action', __NAMESPACE__.'\autoArchiveFormEntries' );
+    add_action( 'mandatory_fields_reminder_action', __NAMESPACE__.'\mandatoryFieldsReminder' );
 });
 
-function schedule_tasks(){
-    SIM\schedule_task('auto_archive_action', 'daily');
+function scheduleTasks(){
+    SIM\scheduleTask('auto_archive_action', 'daily');
 
-    $freq   = SIM\get_module_option('forms', 'reminder_freq');
-    if($freq)   SIM\schedule_task('mandatory_fields_reminder_action', $freq);
+    $freq   = SIM\getModuleOption('forms', 'reminder_freq');
+    if($freq)   SIM\scheduleTask('mandatory_fields_reminder_action', $freq);
 }
 
-function auto_archive_form_entries(){
+function autoArchiveFormEntries(){
 	$formbuilder = new Formbuilder();
-	$formbuilder->autoarchive();
+	$formbuilder->autoArchive();
 }
 
 //loop over all users and scan for missing info
-function mandatory_fields_reminder(){
+function mandatoryFieldsReminder(){
 	//Change the user to the admin account otherwise get_users will not work
 	wp_set_current_user(1);
 	
 	//Retrieve all users
-	$users = SIM\getUserAccounts(false,true,true);
+	$users = SIM\getUserAccounts(false, true, true);
 	//Loop over the users
  	foreach($users as $user){
 		//get the reminders for this user
-		$reminder_html = getAllFields($user->ID, 'mandatory');
+		$reminderHtml = getAllFields($user->ID, 'mandatory');
 		//If there are reminders, send an e-mail
-		if (!empty($reminder_html)){
-			$recipients = '';
-            $parents = SIM\getParents($user->ID);
+		if (!empty($reminderHtml)){
+			$recipients     = '';
+            $parents        = SIM\getParents($user->ID);
             //Is child
             if($parents){
-                $child_title    = SIM\getChildTitle($user->ID);
+                $childTitle    = SIM\getChildTitle($user->ID);
 
                 $childEmail    = new ChildEmail($user);
                 $childEmail->filterMail();
@@ -45,7 +45,7 @@ function mandatory_fields_reminder(){
                 $subject        = $childEmail->subject;
                 $message        = $childEmail->message;
 
-                $reminder_html  = str_replace("Your",$user->first_name."'s",$reminder_html);
+                $reminderHtml  = str_replace("Your",$user->first_name."'s", $reminderHtml);
                 
                 foreach($parents as $parent){
                     if(strpos($parent->user_email,'.empty') === false){
@@ -54,15 +54,15 @@ function mandatory_fields_reminder(){
                     }
                                 
                     //Send Signal message
-                    SIM\try_send_signal(
-                        "Hi $parent->first_name,\nPlease update the personal information of your $child_title $user->first_name here:\n\n".SITEURL."/account",
+                    SIM\trySendSignal(
+                        "Hi $parent->first_name,\nPlease update the personal information of your $childTitle $user->first_name here:\n\n".SITEURL."/account",
                         $user->ID
                     );
                 }				
             //not a child
             }else{			
                 //Send Signal message
-                SIM\try_send_signal(
+                SIM\trySendSignal(
                     "Hi $user->first_name,\nPlease update your personal information here:\n\n".SITEURL."/account",
                     $user->ID
                 );
@@ -80,7 +80,7 @@ function mandatory_fields_reminder(){
             
             //If there is an email set
             if(!empty($recipients)){                
-                $message .= $reminder_html;
+                $message .= $reminderHtml;
                 
                 wp_mail( $recipients, $subject, $message);
             }

@@ -5,7 +5,7 @@ use SIM;
 add_action('sim_user_description', function($user){
     //Add a useraccount edit button if the user has the usermanagement role
 	if (in_array('usermanagement', wp_get_current_user()->roles)){
-        $pageId  = SIM\get_module_option('user_management', 'user_edit_page');
+        $pageId  = SIM\getModuleOption('user_management', 'user_edit_page');
         $url     = SIM\getValidPageLink($pageId);
         if(!$url) return;
 

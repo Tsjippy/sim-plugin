@@ -30,9 +30,9 @@ get_footer();
 
 function event_contents(){
 	$events		= new Events();
-	$event		= $events->retrieve_single_event(get_the_ID());
-	$date		= $events->get_date($event);
-	$time		= $events->get_time($event);
+	$event		= $events->retrieveSingleEvent(get_the_ID());
+	$date		= $events->getDate($event);
+	$time		= $events->getTime($event);
 	$meta		= get_post_meta($event->ID,'eventdetails',true);
 	$baseUrl	= plugins_url('pictures', __DIR__);
 
@@ -166,7 +166,7 @@ function event_contents(){
 									<h4>LOCATION</h4>
 									<div class='location_details'>
 										<?php
-										echo $events->get_location_detail($event);
+										echo $events->getLocationDetail($event);
 										?>
 									</div>
 								</div>
@@ -181,13 +181,13 @@ function event_contents(){
 									<h4>ORGANIZER</h4>
 									<div class='author_details'>
 										<?php
-										echo $events->get_author_detail($event);
+										echo $events->getAuthorDetail($event);
 										?>
 									</div>
 								</div>
 							<?php
 							}
-							echo $events->event_export_html($event);	
+							echo $events->eventExportHtml($event);	
 							?>
 						</div>
 					</div>

@@ -41,13 +41,13 @@ add_action( 'wp_enqueue_scripts', function(){
 
     wp_register_script('sim_event_script', plugins_url('js/events.min.js', __DIR__), array('sim_formsubmit_script'), ModuleVersion,true);
 
-    $schedule_pages         = SIM\get_module_option('events', 'schedule_pages');
-    $upcomingevents_pages   = SIM\get_module_option('events', 'upcomingevents_pages');
-    if(in_array(get_the_ID(), $schedule_pages)){
+    $schedulePages         = SIM\getModuleOption('events', 'schedule_pages');
+    $upcomingEventsPages   = SIM\getModuleOption('events', 'upcomingevents_pages');
+    if(in_array(get_the_ID(), $schedulePages)){
         wp_enqueue_style('sim_schedules_css');
 
         wp_enqueue_script('sim_schedules_script');
-    }elseif(in_array(get_the_ID(), $upcomingevents_pages)){
+    }elseif(in_array(get_the_ID(), $upcomingEventsPages)){
         wp_enqueue_style('sim_events_css');
     }
 });

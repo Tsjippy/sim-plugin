@@ -2,7 +2,7 @@
 namespace SIM\forms;
 use SIM;
 
-const ModuleVersion		= '7.0.21';
+const ModuleVersion		= '7.0.22';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
@@ -21,13 +21,13 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	<h4>Formbuilder</h4>
 	<p>
 		This shortcode allows you to build a form with a unique name.<br>
-		Use like this: <code>[formbuilder datatype=SOMENAME]</code>.<br>
-		The datatype must supply a valid formname.<br>
+		Use like this: <code>[formbuilder formname=SOMENAME]</code>.<br>
+		The formname must supply a valid formname.<br>
 	</p>
 	<h4>Formresults</h4>
 	<p>
 		This shortcode allows you to display a form's results.<br>
-		Use like this: <code>[formresults datatype=SOMENAME]</code>
+		Use like this: <code>[formresults formname=SOMENAME]</code>
 	</p>
 	<h4>Formselector</h4>
 	<p>
@@ -52,20 +52,20 @@ add_action('sim_module_activated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
 	
-	$formbuilder = new Formbuilder();
-	$formbuilder->create_db_table();
+	$formBuilder = new Formbuilder();
+	$formBuilder->createDbTable();
 
-	$formtable = new FormTable();
-	$formtable->create_db_shortcode_table();
+	$formTable = new FormTable();
+	$formTable->createDbShortcodeTable();
 
-	schedule_tasks();
+	scheduleTasks();
 }, 10, 2);
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
-	schedule_tasks();
+	scheduleTasks();
 
 	return $options;
 }, 10, 2);

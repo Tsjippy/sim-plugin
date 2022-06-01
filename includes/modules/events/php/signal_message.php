@@ -5,7 +5,7 @@ use SIM;
 add_filter('sim_after_bot_payer', function($messages){
     $events		= new Events();
 
-    $events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
+    $events->retrieveEvents(date('Y-m-d'),date('Y-m-d'));
     foreach($events->events as $event){
         $start_year	= get_post_meta($event->ID,'celebrationdate',true);
         //only add events which are not a celebration and start today after curent time

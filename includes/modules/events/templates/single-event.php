@@ -31,9 +31,9 @@ if(!$skipFooter)	get_footer();
 
 function event_contents(){
 	$events		= new Events();
-	$event		= $events->retrieve_single_event(get_the_ID());
-	$date		= $events->get_date($event);
-	$time		= $events->get_time($event);
+	$event		= $events->retrieveSingleEvent(get_the_ID());
+	$date		= $events->getDate($event);
+	$time		= $events->getTime($event);
 	$meta		= get_post_meta($event->ID,'eventdetails',true);
 	$baseUrl	= plugins_url('pictures', __DIR__);
 
@@ -77,14 +77,14 @@ function event_contents(){
 								}
 								
 								//now loop over the array to print the categories
-								$last_key	 = array_key_last($categories);
+								$lastKey	 = array_key_last($categories);
 								foreach($categories as $id=>$category){
 									//Only show the category if all of its subcats are not there
 									$url = get_term_link($id);
 									$category = ucfirst($category);
 									echo "<a href='$url'>$category</a>";
 									
-									if($id != $last_key) echo ', ';
+									if($id != $lastKey) echo ', ';
 								}
 								?>
 							</span>
@@ -147,9 +147,9 @@ function event_contents(){
 												echo " until ".date('j F Y',strtotime($meta['repeat']['enddate']));
 											}
 											if(!empty($meta['repeat']['amount'])){
-												$repeat_amount = $meta['repeat']['amount'];
-												if($repeat_amount != 90){
-													echo " for $repeat_amount times";
+												$repeatAmount = $meta['repeat']['amount'];
+												if($repeatAmount != 90){
+													echo " for $repeatAmount times";
 												}
 											}
 											?>
@@ -167,7 +167,7 @@ function event_contents(){
 									<h4>LOCATION</h4>
 									<div class='location_details'>
 										<?php
-										echo $events->get_location_detail($event);
+										echo $events->getLocationDetail($event);
 										?>
 									</div>
 								</div>
@@ -182,13 +182,13 @@ function event_contents(){
 									<h4>ORGANIZER</h4>
 									<div class='author_details'>
 										<?php
-										echo $events->get_author_detail($event);
+										echo $events->getAuthorDetail($event);
 										?>
 									</div>
 								</div>
 							<?php
 							}
-							echo $events->event_export_html($event);	
+							echo $events->eventExportHtml($event);	
 							?>
 						</div>
 					</div>

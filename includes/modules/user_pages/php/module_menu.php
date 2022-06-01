@@ -28,11 +28,4 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 		Use like this: <code>[pending_user id="12"]</code>
 		<br>
 	<?php
-},10,2);
-
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
-	
-    
-}, 10, 3);
+}, 10, 2);

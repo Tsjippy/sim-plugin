@@ -4,40 +4,42 @@ use SIM;
 use WP_Embed;
 use WP_Error;
 
-if(!trait_exists('SIM\FORMS\create_js')){
+if(!trait_exists(__NAMESPACE__.'\CreateJs')){
 	require_once(__DIR__.'/js_builder.php');
 }
 
 class Formbuilder{
-	use create_js;
+	use CreateJs;
 
 	function __construct(){
 		global $wpdb;
-		$this->isformstep				= false;
-		$this->is_multi_step_form		= '';
-		$this->formstepcounter			= 0;
-		$this->submissiontable_name		= $wpdb->prefix . 'sim_form_submissions';
-		$this->table_name				= $wpdb->prefix . 'sim_forms';
-		$this->el_table_name			= $wpdb->prefix . 'sim_form_elements';
-		$this->non_inputs				= ['label','button','datalist','formstep','info','p','php','multi_start','multi_end'];
-		$this->multi_inputs_html		= [];
-
-		$this->user 		= wp_get_current_user();
-		$this->user_roles	= $this->user->roles;
-		$this->user_id		= $this->user->ID;
-
-		$this->create_db_table();
+		$this->isFormStep				= false;
+		$this->isMultiStepForm			= '';
+		$this->formStepCounter			= 0;
+		$this->submissionTableName		= $wpdb->prefix . 'sim_form_submissions';
+		$this->tableName				= $wpdb->prefix . 'sim_forms';
+		$this->elTableName				= $wpdb->prefix . 'sim_form_elements';
+		$this->nonInputs				= ['label','button','datalist','formstep','info','p','php','multi_start','multi_end'];
+		$this->multiInputsHtml			= [];
+		$this->user 					= wp_get_current_user();
+		$this->userRoles				= $this->user->roles;
+		$this->userId					= $this->user->ID;
 
 		//calculate full form rights
-		if(array_intersect(['editor'],$this->user_roles) != false){
-			$this->editrights		= true;
+		if(array_intersect(['editor'], $this->userRoles) != false){
+			$this->editRights		= true;
 		}else{
-			$this->editrights		= false;
+			$this->editRights		= false;
 		}
 	}
 	
-	function form_select(){
-		$this->get_forms();
+	/**
+	 * Creates a dropdown with all the forms
+	 * 
+	 * @return	string	the select html
+	 */
+	function formSelect(){
+		$this->getForms();
 		
 		$this->names				= [];
 		foreach($this->forms as $form){
@@ -45,7 +47,7 @@ class Formbuilder{
 		}
 		
 		$html = "<select name='form_selector'>";
-		$html .= "<option value=''>---</option>";
+			$html .= "<option value=''>---</option>";
 		foreach ($this->names as $name){
 			$html .= "<option value='$name'>$name</option>";
 		}
@@ -53,16 +55,22 @@ class Formbuilder{
 		
 		return $html;
 	}
-		
-	function get_forms(){
+	
+	/**
+	 * Gets all forms from the db
+	 */
+	function getForms(){
 		global $wpdb;
 		
-		$query							= "SELECT * FROM {$this->table_name} WHERE 1";
+		$query							= "SELECT * FROM {$this->tableName} WHERE 1";
 		
 		$this->forms					= $wpdb->get_results($query);
 	}
 	
-	function create_db_table(){
+	/**
+	 * Creates the tables for this module
+	 */
+	function createDbTable(){
 		if ( !function_exists( 'maybe_create_table' ) ) { 
 			require_once ABSPATH . '/wp-admin/install-helper.php'; 
 		} 
@@ -71,22 +79,22 @@ class Formbuilder{
 		
 		//only create db if it does not exist
 		global $wpdb;
-		$charset_collate = $wpdb->get_charset_collate();
+		$charsetCollate = $wpdb->get_charset_collate();
 
 		//Main table
-		$sql = "CREATE TABLE {$this->table_name} (
+		$sql = "CREATE TABLE {$this->tableName} (
 		  id mediumint(9) NOT NULL AUTO_INCREMENT,
 		  name tinytext NOT NULL,
 		  version text NOT NULL,
 		  settings text,
 		  emails text,
 		  PRIMARY KEY  (id)
-		) $charset_collate;";
+		) $charsetCollate;";
 
-		maybe_create_table($this->table_name, $sql );
+		maybe_create_table($this->tableName, $sql );
 
 		// Form element table
-		$sql = "CREATE TABLE {$this->el_table_name} (
+		$sql = "CREATE TABLE {$this->elTableName} (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			form_id int NOT NULL,
 			type text NOT NULL,
@@ -112,12 +120,12 @@ class Formbuilder{
 		  	conditions longtext,
 			warning_conditions longtext,
 			PRIMARY KEY  (id)
-		  ) $charset_collate;";
+		  ) $charsetCollate;";
   
-		maybe_create_table($this->el_table_name, $sql );
+		maybe_create_table($this->elTableName, $sql );
 
 		//submission table
-		$sql = "CREATE TABLE {$this->submissiontable_name} (
+		$sql = "CREATE TABLE {$this->submissionTableName} (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			form_id	int NOT NULL,
 			timecreated datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
@@ -126,16 +134,19 @@ class Formbuilder{
 			formresults longtext NOT NULL,
 			archived BOOLEAN,
 			PRIMARY KEY  (id)
-		) $charset_collate;";
+		) $charsetCollate;";
 
-		maybe_create_table($this->submissiontable_name, $sql );
+		maybe_create_table($this->submissionTableName, $sql );
 	}
 
-	function process_atts($atts){
-		if(!isset($this->datatype)){
+	/**
+	 * Parses all WP Shortcode attributes
+	 */
+	function processAtts($atts){
+		if(!isset($this->formName)){
 			shortcode_atts(
 				array(
-					'datatype'		=> '', 
+					'formname'		=> '', 
 					'userid'		=> '', 
 					'search'		=> '',
 					'id'			=> ''
@@ -143,27 +154,35 @@ class Formbuilder{
 				$atts
 			);
 			
-			$this->datatype 	= strtolower(sanitize_text_field($atts['datatype']));
-			$this->shortcode_id	= $atts['id'];
+			$this->formName 	= strtolower(sanitize_text_field($atts['formname']));
+			$this->shortcodeId	= $atts['id'];
 			
 			if(is_numeric($atts['userid'])){
-				$this->user_id	= $atts['userid'];
+				$this->userId	= $atts['userid'];
 			}
 		}
 	}
 	
+	/**
+	 * Finds an element by its id
+	 * 
+	 * @param	int		$id		the element id
+	 * @param	string	$key	A specific element attribute to return. Default empty
+	 * 
+	 * @return	object|array|string|false			The element or element property
+	 */
 	function getElementById($id, $key=''){
 		//load if needed
-		if(empty($this->formdata->element_mapping)) $this->loadformdata();
+		if(empty($this->formData->elementMapping)) $this->loadFormData();
 		
-		$elementindex	= $this->formdata->element_mapping[$id];
+		$elementIndex	= $this->formData->elementMapping[$id];
 
-		if(!isset($this->formdata->element_mapping[$id])){
+		if(!isset($this->formData->elementMapping[$id])){
 			SIM\printArray("Element with id $id not found");
 			return false;
 		}
 					
-		$element		= $this->form_elements[$elementindex];
+		$element		= $this->formElements[$elementIndex];
 		
 		if(empty($key)){
 			return $element;
@@ -172,31 +191,43 @@ class Formbuilder{
 		}
 	}
 
-	function get_all_form_elements($sort_col = ''){
+	/**
+	 * Get all elements belonging to the current form
+	 * 
+	 * @param	string	$sortCol	the column to sort on. Default empty
+	 */
+	function getAllFormElements($sortCol = ''){
 		global $wpdb;
 
-		if($this->formdata and is_numeric($this->formdata->id)){
-			$form_id	= $this->formdata->id;
+		if($this->formData and is_numeric($this->formData->id)){
+			$formId	= $this->formData->id;
 		}elseif(isset($_POST['formfield']['form_id'])){
-			$form_id	= $_POST['formfield']['form_id'];
+			$formId	= $_POST['formfield']['form_id'];
 		}elseif(isset($_POST['formid'])){
-			$form_id	= $_POST['formid'];
+			$formId	= $_POST['formid'];
 		}
 
 		// Get all form elements
-		$query						= "SELECT * FROM {$this->el_table_name} WHERE form_id= '$form_id'";
+		$query						= "SELECT * FROM {$this->elTableName} WHERE form_id= '$formId'";
 
-		if(!empty($sort_col))	$query .= " ORDER BY {$this->el_table_name}.`$sort_col` ASC";
-		$this->form_elements 		=  $wpdb->get_results($query);
+		if(!empty($sortCol))	$query .= " ORDER BY {$this->elTableName}.`$sortCol` ASC";
+		$this->formElements 		=  $wpdb->get_results($query);
 	}
 	
-	function insert_form($name=''){
+	/**
+	 * Inserts a new form in the db
+	 * 
+	 * @param	string	$name	The form name
+	 * 
+	 * @return	int|WP_Error	The form id or error ion failure
+	 */
+	function insertForm($name=''){
 		global $wpdb;
 
-		if(empty($name))	$name = $this->datatype;
+		if(empty($name))	$name = $this->formName;
 
 		$result = $wpdb->insert(
-			$this->table_name, 
+			$this->tableName, 
 			array(
 				'name'			=> $name,
 				'version' 		=> 1
@@ -206,72 +237,79 @@ class Formbuilder{
 		if(!empty($wpdb->last_error)){
 			return new \WP_Error('error', $wpdb->print_error());
 		}
+
+		return $wpdb->insert_id;
 	}
 
-	function loadformdata($form_id=''){
+	/**
+	 * Load a specific form
+	 * 
+	 * @param	int		$formId	the form id to load. Default empty
+	 */
+	function loadFormData($formId=''){
 		global $wpdb;
 
-		if(is_numeric($_POST['formid'])) $form_id	= $_POST['formid'];
+		if(is_numeric($_POST['formid'])) $formId	= $_POST['formid'];
 		
 		// Get the form data
-		$query				= "SELECT * FROM {$this->table_name} WHERE ";
-		if(is_numeric($form_id)){
-			$query	.= "id= '$form_id'";
+		$query				= "SELECT * FROM {$this->tableName} WHERE ";
+		if(is_numeric($formId)){
+			$query	.= "id= '$formId'";
 		}else{
-			$query	.= "name= '$this->datatype'";
+			$query	.= "name= '$this->formName'";
 		}
 
 		$result				= $wpdb->get_results($query);
 
 		// Form does not exit yet
 		if(empty($result)){
-			$this->insert_form();
-			$this->formdata 	=  new \stdClass();
+			$this->insertForm();
+			$this->formData 	=  new \stdClass();
 		}else{
-			$this->formdata 	=  (object)$result[0];
+			$this->formData 	=  (object)$result[0];
 		}
 
-		$this->get_all_form_elements('priority');
+		$this->getAllFormElements('priority');
 		
 		//used to find the index of an element based on its unique id
- 		$this->formdata->element_mapping	= [];
-		foreach($this->form_elements as $index=>$element){			
-			$this->formdata->element_mapping[$element->id]	= $index;
+ 		$this->formData->elementMapping	= [];
+		foreach($this->formElements as $index=>$element){			
+			$this->formData->elementMapping[$element->id]	= $index;
 		}
 		
-		if(empty($this->formdata->settings)){
+		if(empty($this->formData->settings)){
 			$settings['succesmessage']			= "";
 			$settings['formname']				= "";
 			$settings['roles']					= [];
 
-			$this->formdata->settings = $settings;
+			$this->formData->settings = $settings;
 		}else{
-			$this->formdata->settings = maybe_unserialize(utf8_encode($this->formdata->settings));
+			$this->formData->settings = maybe_unserialize(utf8_encode($this->formData->settings));
 		}
 
-		if(!$this->editrights){
-			$edit_roles	= ['editor'];
-			foreach($this->formdata->settings['full_right_roles'] as $key=>$role){
+		if(!$this->editRights){
+			$editRoles	= ['editor'];
+			foreach($this->formData->settings['full_right_roles'] as $key=>$role){
 				if(!empty($role)){
-					$edit_roles[] = $key;
+					$editRoles[] = $key;
 				}
 			}
 			//calculate full form rights
-			if(array_intersect($edit_roles,(array)$this->user_roles) != false){
-				$this->editrights		= true;
+			if(array_intersect($editRoles, (array)$this->userRoles) != false){
+				$this->editRights		= true;
 			}else{
-				$this->editrights		= false;
+				$this->editRights		= false;
 			}
 		}
 
-		$this->submit_roles	= [];
-		foreach($this->formdata->settings['submit_others_form'] as $key=>$role){
+		$this->submitRoles	= [];
+		foreach($this->formData->settings['submit_others_form'] as $key=>$role){
 			if(!empty($role)){
-				$this->submit_roles[] = $key;
+				$this->submitRoles[] = $key;
 			}
 		}
 		
-		if(empty($this->formdata->emails)){
+		if(empty($this->formData->emails)){
 			$emails[0]["from"]		= "";
 			$emails[0]["to"]			= "";
 			$emails[0]["subject"]	= "";
@@ -279,60 +317,83 @@ class Formbuilder{
 			$emails[0]["headers"]	= "";
 			$emails[0]["files"]		= "";
 
-			$this->formdata->emails = $emails;
+			$this->formData->emails = $emails;
 		}else{
-			$this->formdata->emails = maybe_unserialize($this->formdata->emails);
+			$this->formData->emails = maybe_unserialize($this->formData->emails);
 		}
 		
 		if($wpdb->last_error !== '')		SIM\printArray($wpdb->print_error());
 		
-		$this->jsfilename	= plugin_dir_path(__DIR__)."js/dynamic/{$this->formdata->name}forms";
+		$this->jsFileName	= plugin_dir_path(__DIR__)."js/dynamic/{$this->formData->name}forms";
 	}
 
-	function update_form_element($element){
+	/**
+	 * Change an existing form element
+	 * 
+	 * @param	object|array	$element	The new element data
+	 * 
+	 * @return	true|WP_Error				The result or error on failure
+	 */
+	function updateFormElement($element){
 		global $wpdb;
 		
 		//Update element
 		$result = $wpdb->update(
-			$this->el_table_name, 
+			$this->elTableName, 
 			(array)$element, 
 			array(
 				'id'		=> $element->id,
 			),
 		);
 
-		if($this->formdata == null){
-			$this->loadformdata($_POST['formid']);
+		if($this->formData == null){
+			$this->loadFormData($_POST['formid']);
 		}
 
 		//Update form version
 		$result = $wpdb->update(
-			$this->table_name, 
-			['version'	=> $this->formdata->version+1], 
-			['id'		=> $this->formdata->id],
+			$this->tableName, 
+			['version'	=> $this->formData->version+1], 
+			['id'		=> $this->formData->id],
 		);
 		
 		if($wpdb->last_error !== ''){
 			return new WP_Error('forms', $wpdb->print_error());
 		}
+
+		return $result;
 	}
 
-	function insert_element($element){
+	/**
+	 * Inserts a new element in the db
+	 * 
+	 * @param	object|array	$element	The new element to insert
+	 * 
+	 * @return	int							The new element id
+	 */
+	function insertElement($element){
 		global $wpdb;
 		
 		$result = $wpdb->insert(
-			$this->el_table_name, 
+			$this->elTableName, 
 			(array)$element
 		);
 
 		return $wpdb->insert_id;
 	}
 
-	function update_priority($element){
+	/**
+	 * Change the priority of an element
+	 * 
+	 * @param	object|array	$element	The element to change the priority of
+	 * 
+	 * @return	array|WP_Error				The result or error on failure
+	 */
+	function updatePriority($element){
 		global $wpdb;
 
 		//Update the database
-		$result = $wpdb->update($this->el_table_name, 
+		$result = $wpdb->update($this->elTableName, 
 			array(
 				'priority'	=> $element->priority
 			), 
@@ -344,17 +405,26 @@ class Formbuilder{
 		if($wpdb->last_error !== ''){
 			return new WP_Error('forms', $wpdb->print_error());
 		}
+
+		return $result;
 	}
 
-	function reorder_elements($old_priority, $new_priority, $element) {
-		if ($old_priority == $new_priority) return;
+	/**
+	 * Change the order of form elements
+	 * 
+	 * @param	int				$oldPriority	The old priority of the element
+	 * @param	int				$newPriority	The new priority of the element
+	 * @param	object|array	$element		The element to change the priority of
+	 */
+	function reorderElements($oldPriority, $newPriority, $element) {
+		if ($oldPriority == $newPriority) return;
 
 		// Get all elements of this form
-		$this->get_all_form_elements('priority');
+		$this->getAllFormElements('priority');
 
 		if(empty($element)){
-			foreach($this->form_elements as $el){
-				if($el->priority == $old_priority){
+			foreach($this->formElements as $el){
+				if($el->priority == $oldPriority){
 					$element = $el;
 					break;
 				}
@@ -362,113 +432,139 @@ class Formbuilder{
 		}
 
 		//No need to reorder if we are adding a new element at the end
-		if(count($this->form_elements) == $new_priority){
+		if(count($this->formElements) == $newPriority){
 			// First element is the element without priority
-			$el				= $this->form_elements[0];
-			$el->priority	= $new_priority;
-			$this->update_priority($el);
+			$el				= $this->formElements[0];
+			$el->priority	= $newPriority;
+			$this->updatePriority($el);
 			return;
 		}
 		
 		//Loop over all elements and give them the new priority
-		foreach($this->form_elements as $el){
+		foreach($this->formElements as $el){
 			if($el->name == $element->name){
-				$el->priority	= $new_priority;
-				$this->update_priority($el);
-			}elseif($old_priority == -1){
-				if($el->priority >= $new_priority){
+				$el->priority	= $newPriority;
+				$this->updatePriority($el);
+			}elseif($oldPriority == -1){
+				if($el->priority >= $newPriority){
 					$el->priority++;
-					$this->update_priority($el);
+					$this->updatePriority($el);
 				}
 			}elseif(
-				$old_priority > $new_priority	and 	//we are moving an element upward
-				$el->priority >= $new_priority	and		// current priority is bigger then the new prio
-				$el->priority < $old_priority			// current priority is smaller than the old prio
+				$oldPriority > $newPriority		and 	//we are moving an element upward
+				$el->priority >= $newPriority	and		// current priority is bigger then the new prio
+				$el->priority < $oldPriority			// current priority is smaller than the old prio
 			){
 				$el->priority++;
-				$this->update_priority($el);
+				$this->updatePriority($el);
 			}elseif(
-				$old_priority < $new_priority	and 	//we are moving an element downward
-				$el->priority > $old_priority	and		// current priority is bigger then the old prio
-				$el->priority < $new_priority			// current priority is smaller than the new prio
+				$oldPriority < $newPriority		and 	//we are moving an element downward
+				$el->priority > $oldPriority	and		// current priority is bigger then the old prio
+				$el->priority < $newPriority			// current priority is smaller than the new prio
 			){
 				$el->priority--;
-				$this->update_priority($el);
+				$this->updatePriority($el);
 			}
 		}
 	}
 
-	function is_multi_step(){
-		if(empty($this->is_multi_step_form)){
-			foreach($this->form_elements as $el){
+	/**
+	 * Checks if the current form is a multi step form
+	 * 
+	 * @return	bool	True if multistep false otherwise
+	 */
+	function isMultiStep(){
+		if(empty($this->isMultiStepForm)){
+			foreach($this->formElements as $el){
 				if($el->type == 'formstep'){
-					$this->is_multi_step_form	= true;
+					$this->isMultiStepForm	= true;
 					return true;
 				}
 			}
 
-			$this->is_multi_step_form	= false;
+			$this->isMultiStepForm	= false;
 			return false;
 		}else{
-			return $this->is_multi_step_form;
+			return $this->isMultiStepForm;
 		}
 	}
 	
-	function get_submission_data($userId=null, $submission_id=null){
+	/**
+	 * Get formresults of the current form
+	 * 
+	 * @param	int		$userId			Optional the user id to get the results of. Default null
+	 * @param	int		$submissionId	Optional a specific id. Default null
+	 * 
+	 * 
+	 */
+	function getSubmissionData($userId=null, $submissionId=null){
 		global $wpdb;
 		
-		$query				= "SELECT * FROM {$this->submissiontable_name} WHERE form_id={$this->formdata->id}";
-		if(is_numeric($submission_id)){
-			$query .= " and id='$submission_id'";
+		$query				= "SELECT * FROM {$this->submissionTableName} WHERE form_id={$this->formData->id}";
+		if(is_numeric($submissionId)){
+			$query .= " and id='$submissionId'";
 		}elseif(is_numeric($userId)){
 			$query .= " and userid='$userId'";
 		}
 		
-		if(!$this->show_archived and $submission_id == null){
+		if(!$this->showArchived and $submissionId == null){
 			$query .= " and archived=0";
 		}
 
-		$query	= apply_filters('formdata_retrieval_query', $query, $userId, $this->datatype);
+		$query	= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this->formName);
 
 		$result	= $wpdb->get_results($query);
-		$result	= apply_filters('retrieved_formdata', $result, $userId, $this->datatype);
+		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
 
-		$this->submission_data		= $result;
+		$this->submissionData		= $result;
 		
-		if(is_numeric($submission_id))	$this->submission_data = $this->submission_data[0];
+		if(is_numeric($submissionId))	$this->submissionData = $this->submissionData[0];
 
-		$this->formresults 			= maybe_unserialize($this->submission_data->formresults);
+		$this->formResults 			= maybe_unserialize($this->submissionData->formresults);
 		
 		if($wpdb->last_error !== '')		SIM\printArray($wpdb->print_error());
 	}
 	
-	function build_defaults_array(){
+	/**
+	 * Builds the array with default values for the current user
+	 */
+	function buildDefaultsArray(){
 		//Only create one time
-		if(empty($this->default_values)){
-			$this->default_values		= (array)get_userdata($this->user_id)->data;
+		if(empty($this->defaultValues)){
+			if(empty($this->formName)) $this->formName	= $this->formData->name;
+
+			$this->defaultValues		= (array)get_userdata($this->userId)->data;
 			//Change ID to userid because its a confusing name
-			$this->default_values['user_id']	= $this->default_values['ID'];
-			unset($this->default_values['ID']);
+			$this->defaultValues['user_id']	= $this->defaultValues['ID'];
+			unset($this->defaultValues['ID']);
 			
-			$this->default_array_values	= [];
+			$this->defaultArrayValues	= [];
 			
-			foreach(['user_pass','user_activation_key','user_status','user_level'] as $field){
-				unset($this->default_values[$field]);
+			foreach(['user_pass', 'user_activation_key', 'user_status', 'user_level'] as $field){
+				unset($this->defaultValues[$field]);
 			}
 			
 			//get defaults from filters
-			$this->default_values		= apply_filters('add_form_defaults', $this->default_values,$this->user_id,$this->datatype);
-			$this->default_array_values	= apply_filters('add_form_multi_defaults', $this->default_array_values,$this->user_id,$this->datatype);
+			$this->defaultValues		= apply_filters('sim_add_form_defaults', $this->defaultValues, $this->userId, $this->formName);
+			$this->defaultArrayValues	= apply_filters('sim_add_form_multi_defaults', $this->defaultArrayValues, $this->userId, $this->formName);
 			
-			ksort($this->default_values);
-			ksort($this->default_array_values);
+			ksort($this->defaultValues);
+			ksort($this->defaultArrayValues);
 		}
 	}
 	
-	function get_element_html($element, $width=100){
+	/**
+	 * Gets the html of form element
+	 * 
+	 * @param	object	$element	The element
+	 * @param	int		$width		The width of the element. Default 100
+	 * 
+	 * @return	string				The html
+	 */
+	function getElementHtml($element, $width=100){
 		$html		= '';
-		$el_class	= '';
-		$el_options	= '';
+		$elClass	= '';
+		$elOptions	= '';
 
 		/*
 			ELEMENT OPTIONS
@@ -482,21 +578,21 @@ class Formbuilder{
 				//Remove starting or ending spaces and make it lowercase
 				$option 		= trim($option);
 
-				$option_type	= explode('=',$option)[0];
-				$option_value	= str_replace('\\\\', '\\', explode('=',$option)[1]);
+				$optionType		= explode('=',$option)[0];
+				$optionValue	= str_replace('\\\\', '\\', explode('=',$option)[1]);
 
-				if($option_type == 'class'){
-					$el_class .= " $option_value";
+				if($optionType == 'class'){
+					$elClass .= " $optionValue";
 				}else{
-					if(!in_array($option_type, ['pattern', 'title', 'accept'])){
-						$option_value = str_replace([' ', ',', '(', ')'],['_', '', '', ''], $option_value);
+					if(!in_array($optionType, ['pattern', 'title', 'accept'])){
+						$optionValue = str_replace([' ', ',', '(', ')'],['_', '', '', ''], $optionValue);
 					}
 
 					//remove any leading "
-					$option_value	= trim($option_value, '\'"');
+					$optionValue	= trim($optionValue, '\'"');
 
 					//Write the corrected option as html
-					$el_options	.= " $option_type='$option_value'";
+					$elOptions	.= " $optionType='$optionValue'";
 				}
 			}
 		}
@@ -506,12 +602,12 @@ class Formbuilder{
 			$html = "<div name='{$element->name}'>".$this->deslash($html)."</div>";
 		}elseif($element->type == 'php'){
 			//we store the functionname in the html variable replace any double \ with a single \
-			$functionname 						= str_replace('\\\\','\\',$element->functionname);
+			$functionName 						= str_replace('\\\\','\\',$element->functionname);
 			//only continue if the function exists
-			if (function_exists( $functionname ) ){
-				$html	= $functionname($this->user_id);
+			if (function_exists( $functionName ) ){
+				$html	= $functionName($this->userId);
 			}else{
-				$html	= "php function '$functionname' not found";
+				$html	= "php function '$functionName' not found";
 			}
 		}elseif(in_array($element->type, ['multi_start','multi_end'])){
 			$html 		= "";
@@ -533,49 +629,49 @@ class Formbuilder{
 			// Element setting
 			if(!empty($element->foldername)){
 				if(strpos($element->foldername, "private/") !== false){
-					$targetdir	= $element->foldername;
+					$targetDir	= $element->foldername;
 				}else{
-					$targetdir	= "private/".$element->foldername;
+					$targetDir	= "private/".$element->foldername;
 				}
 			} 
 			// Form setting
-			if(empty($targetdir)) $targetdir = $this->formdata->settings['upload_path'];
+			if(empty($targetDir)) $targetDir = $this->formData->settings['upload_path'];
 			// Default setting
-			if(empty($targetdir)) $targetdir = 'form_uploads/'.$this->formdata->settings['formname'];
+			if(empty($targetDir)) $targetDir = 'form_uploads/'.$this->formData->settings['formname'];
 
-			if(empty($this->formdata->settings['save_in_meta'])){
+			if(empty($this->formData->settings['save_in_meta'])){
 				$library	= false;
 				$metakey	= '';
-				$userId	= '';
+				$userId		= '';
 			}else{
 				$library	= $element->library;
 				$metakey	= $name;
-				$userId	= $this->user_id;
+				$userId		= $this->userId;
 			}
 			//Load js			
-			$uploader = new SIM\Fileupload($userId, $name, $targetdir, $element->multiple, $metakey, $library, '', false);
+			$uploader = new SIM\Fileupload($userId, $name, $targetDir, $element->multiple, $metakey, $library, '', false);
 			
-			$html = $uploader->getUploadHtml($el_options);
+			$html = $uploader->getUploadHtml($elOptions);
 		}else{
 			/*
 				ELEMENT TAG NAME
 			*/
-			if(in_array($element->type,['formstep','info'])){
-				$el_type	= "div";
-			}elseif(in_array($element->type,array_merge($this->non_inputs,['select','textarea']))){
-				$el_type	= $element->type;
+			if(in_array($element->type, ['formstep','info'])){
+				$elType	= "div";
+			}elseif(in_array($element->type,array_merge($this->nonInputs,['select','textarea']))){
+				$elType	= $element->type;
 			}else{
-				$el_type	= "input type='{$element->type}'";
+				$elType	= "input type='{$element->type}'";
 			}
 			
 			/* 				
 				ELEMENT NAME
 			 */
 			//Get the field name, make it lowercase and replace any spaces with an underscore
-			$el_name	= $element->name;
+			$elName	= $element->name;
 			// [] not yet added to name
-			if(in_array($element->type,['radio','checkbox']) and strpos($el_name, '[]') === false) {
-				$el_name .= '[]';
+			if(in_array($element->type,['radio','checkbox']) and strpos($elName, '[]') === false) {
+				$elName .= '[]';
 			}
 			
 			/*
@@ -583,131 +679,131 @@ class Formbuilder{
 			*/
 			//datalist needs an id to work as well as mandatory elements for use in anchor links
 			if($element->type == 'datalist' or $element->mandatory or $element->recommended){
-				$el_id	= "id='$el_name'";
+				$elId	= "id='$elName'";
 			}
 			
 			/*
 				ELEMENT CLASS
 			*/
-			$el_class = " formfield";
+			$elClass = " formfield";
 			switch($element->type){
 				case 'label':
-					$el_class .= " formfieldlabel";
+					$elClass .= " formfieldlabel";
 					break;
 				case 'button':
-					$el_class .= " button";
+					$elClass .= " button";
 					break;
 				case 'formstep':
-					$el_class .= " formstep stephidden";
+					$elClass .= " formstep stephidden";
 					break;
 				default:
-					$el_class .= " formfieldinput";
+					$elClass .= " formfieldinput";
 			}
 			
 			/*
 				BUTTON TYPE
 			*/
 			if($element->type == 'button'){
-				$el_options	.= " type='button'";
+				$elOptions	.= " type='button'";
 			}
 			/*
 				ELEMENT VALUE
 			*/
-			$values	= $this->get_field_values($element);
+			$values	= $this->getFieldValues($element);
 			if($this->multiwrap or !empty($element->multiple)){
-				if(strpos($el_type,'input') !== false){
-					$el_value	= "value='%value%'";
+				if(strpos($elType,'input') !== false){
+					$elValue	= "value='%value%'";
 				}
 			}elseif(!empty($values)){				
 				//this is an input and there is a value for it
-				if(empty($this->formdata->settings['save_in_meta'])){
+				if(empty($this->formData->settings['save_in_meta'])){
 					$val		= array_values((array)$values['defaults'])[0];
 				}else{
 					$val		= array_values((array)$values['metavalue'])[0];
 				}
 				
-				if(strpos($el_type,'input') !== false and !empty($val)){
-					$el_value	= "value='$val'";
+				if(strpos($elType,'input') !== false and !empty($val)){
+					$elValue	= "value='$val'";
 				}else{
-					$el_value	= "";
+					$elValue	= "";
 				}
 			}
 			
 			/*
 				ELEMENT TAG CONTENTS
 			*/
-			$el_content = "";
+			$elContent = "";
 			if($element->type == 'textarea'){
-				$el_content = $values['metavalue'][0];
+				$elContent = $values['metavalue'][0];
 			}elseif(!empty($element->text)){
 				switch($element->type){
 					case 'formstep':
-						$el_content = "<h3>{$element->text}</h3>";
+						$elContent = "<h3>{$element->text}</h3>";
 						break;
 					case 'label':
-						$el_content = "<h4 class='labeltext'>{$element->text}</h4>";;
+						$elContent = "<h4 class='labeltext'>{$element->text}</h4>";;
 						break;
 					case 'button':
-						$el_content = $element->text;
+						$elContent = $element->text;
 						break;
 					default:
-						$el_content = "<label class='labeltext'>{$element->text}</label>";
+						$elContent = "<label class='labeltext'>{$element->text}</label>";
 				}
 			}
 			
 			switch($element->type){
 				case 'select':
-					$el_content .= "<option value=''>---</option>";
-					$options	= $this->get_field_options($element);
-					$sel_values		= array_map('strtolower', (array)$values['metavalue']);
+					$elContent .= "<option value=''>---</option>";
+					$options	= $this->getFieldOptions($element);
+					$selValues	= array_map('strtolower', (array)$values['metavalue']);
 		
 					foreach($options as $key=>$option){
-						if(in_array(strtolower($option),$sel_values) or in_array(strtolower($key),$sel_values)){
+						if(in_array(strtolower($option), $selValues) or in_array(strtolower($key), $selValues)){
 							$selected	= 'selected';
 						}else{
 							$selected	= '';
 						}
-						$el_content .= "<option value='$key' $selected>$option</option>";
+						$elContent .= "<option value='$key' $selected>$option</option>";
 					}
 					break;
 				case 'datalist':
-					$options	= $this->get_field_options($element);
+					$options	= $this->getFieldOptions($element);
 					foreach($options as $key=>$option){
-						$el_content .= "<option data-value='$key' value='$option'>";
+						$elContent .= "<option data-value='$key' value='$option'>";
 					}
 					break;
 				case 'radio':
 				case 'checkbox':
-					$options	= $this->get_field_options($element);
+					$options	= $this->getFieldOptions($element);
 					$html		= "<div class='checkbox_options_group formfield'>";
 					
-					$low_values	= [];
+					$lowValues	= [];
 					
 					$default_key				= $element->default_value;
 					if(!empty($default_key)){
-						$low_values[]	= strtolower($this->default_values[$default_key]);
+						$lowValues[]	= strtolower($this->defaultValues[$default_key]);
 					}
 					foreach((array)$values['metavalue'] as $key=>$val){
 						if(is_array($val)){
 							foreach($val as $v){
-								$low_values[] = strtolower($v);
+								$lowValues[] = strtolower($v);
 							}
 						}else{
-							$low_values[] = strtolower($val);
+							$lowValues[] = strtolower($val);
 						}
 					}
 
 					foreach($options as $key=>$option){
 						if($this->multiwrap){
 							$checked	= '%checked%';
-						}elseif(in_array(strtolower($option),$low_values) or in_array(strtolower($key),$low_values)){
+						}elseif(in_array(strtolower($option), $lowValues) or in_array(strtolower($key), $lowValues)){
 							$checked	= 'checked';
 						}else{
 							$checked	= '';
 						}
 						
 						$html .= "<label>";
-							$html .= "<$el_type name='$el_name' class='$el_class' $el_options value='$key' $checked>";
+							$html .= "<$elType name='$elName' class='$elClass' $elOptions value='$key' $checked>";
 							$html .= "<span class='optionlabel'>$option</span>";
 						$html .= "</label><br>";
 					}
@@ -715,19 +811,19 @@ class Formbuilder{
 					$html .= "</div>";
 					break;
 				default:
-					$el_content .= "";
+					$elContent .= "";
 			}
 			
 			//close the field
 			if(in_array($element->type,['select','textarea','button','datalist'])){
-				$el_close	= "</{$element->type}>";
+				$elClose	= "</{$element->type}>";
 			}else{
-				$el_close	= "";
+				$elClose	= "";
 			}
 			
 			//only close a label field if it is not wrapped
 			if($element->type == 'label' and empty($element->wrap)){
-				$el_close	= "</label>";
+				$elClose	= "</label>";
 			}
 			
 			/*
@@ -735,19 +831,19 @@ class Formbuilder{
 			*/
 			if(!empty($element->multiple)){
 				if($element->type == 'select'){
-					$html	= "<$el_type  name='$el_name' $el_id class='$el_class' $el_options>";
+					$html	= "<$elType  name='$elName' $elId class='$elClass' $elOptions>";
 				}else{
-					$html	= "<$el_type  name='$el_name' $el_id class='$el_class' $el_options value='%value%'>$el_content$el_close";
+					$html	= "<$elType  name='$elName' $elId class='$elClass' $elOptions value='%value%'>$elContent$elClose";
 				}
 					
-				$this->process_multi_fields($element, 'multifield', $width, $values, $html);
+				$this->processMultiFields($element, 'multifield', $width, $values, $html);
 				$html	= "<div class='clone_divs_wrapper'>";
-				foreach($this->multi_inputs_html as $h){
+				foreach($this->multiInputsHtml as $h){
 					$html	.= $h;
 				}
 				$html	.= '</div>';
 			}elseif(empty($html)){
-				$html	= "<$el_type  name='$el_name' $el_id class='$el_class' $el_options $el_value>$el_content$el_close";
+				$html	= "<$elType  name='$elName' $elId class='$elClass' $elOptions $elValue>$elContent$elClose";
 			}
 		}
 		
@@ -762,17 +858,24 @@ class Formbuilder{
 			//If the keyword is a valid date keyword
 			if(strtotime($keyword) != ''){
 				//convert to date
-				$date_string = date("Y-m-d", strtotime($keyword));
+				$dateString = date("Y-m-d", strtotime($keyword));
 				
 				//update form element
-				$html = str_replace($matches[0][$key],$date_string,$html);
+				$html = str_replace($matches[0][$key], $dateString, $html);
 			}
 		}
 
 		return $html;
 	}
 	
-	function get_field_values($element){
+	/**
+	 * Get the values of an element
+	 * 
+	 * @param	object	$element		The element
+	 * 
+	 * @return	array					The array of values
+	 */
+	function getFieldValues($element){
 		$values	= [];
 
 		// Do not return default values when requesting the html over rest api
@@ -780,35 +883,35 @@ class Formbuilder{
 			return $values;
 		}
 		
-		if(in_array($element->type,$this->non_inputs)) return [];
+		if(in_array($element->type,$this->nonInputs)) return [];
 
-		$this->build_defaults_array();
+		$this->buildDefaultsArray();
 
 		//get the fieldname, remove [] and split on remaining [
-		$fieldname	= str_replace(']','',explode('[',str_replace('[]','',$element->name)));
+		$fieldName	= str_replace(']', '', explode('[', str_replace('[]', '', $element->name)));
 		
 		//retrieve meta values if needed
-		if(!empty($this->formdata->settings['save_in_meta'])){
+		if(!empty($this->formData->settings['save_in_meta'])){
 			//only load usermeta once
 			if(!is_array($this->usermeta)){
 				//usermeta comes as arrays, only keep the first
 				$this->usermeta	= [];
-				foreach(get_user_meta($this->user_id) as $key=>$meta){
+				foreach(get_user_meta($this->userId) as $key=>$meta){
 					$this->usermeta[$key]	= $meta[0];
 				}
-				$this->usermeta	= apply_filters('forms_load_userdata',$this->usermeta,$this->user_id);
+				$this->usermeta	= apply_filters('sim_forms_load_userdata', $this->usermeta, $this->userId);
 			}
 		
-			if(count($fieldname) == 1){
+			if(count($fieldName) == 1){
 				//non array name
-				$fieldname	= $fieldname[0];
-				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$fieldname]);
+				$fieldName					= $fieldName[0];
+				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$fieldName]);
 			}else{
 				//an array of values, we only want a specific one
-				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$fieldname[0]]);
-				unset($fieldname[0]);
+				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$fieldName[0]]);
+				unset($fieldName[0]);
 				//loop over all the subkeys, and store the value until we have our final result
-				foreach($fieldname as $v){
+				foreach($fieldName as $v){
 					$values['metavalue'] = (array)$values['metavalue'][$v];
 				}
 			}
@@ -816,57 +919,70 @@ class Formbuilder{
 		
 		//add default values
 		if(empty($element->multiple) or in_array($element->type, ['select','checkbox'])){
-			$default_key				= $element->default_value;
-			if(!empty($default_key)){
-				$values['defaults']		= $this->default_values[$default_key];
+			$defaultKey					= $element->default_value;
+			if(!empty($defaultKey)){
+				$values['defaults']		= $this->defaultValues[$defaultKey];
 			}
 		}else{
-			$default_key				= $element->default_array_value;
-			if(!empty($default_key)){
-				$values['defaults']		= $this->default_array_values[$default_key];
+			$defaultKey					= $element->defaultArrayValue;
+			if(!empty($defaultKey)){
+				$values['defaults']		= $this->defaultArrayValues[$defaultKey];
 			}
 		}
 
 		return $values;
 	}
 	
-	function get_field_options($element){
+	/**
+	 * Gets the options of an element like styling etc.
+	 * 
+	 * @param	object	$element		The element
+	 * 
+	 * @return	array					Array of options
+	 */
+	function getFieldOptions($element){
 		$options	= [];
 		//add element values
-		$el_values	= explode("\n",$element->valuelist);
+		$elValues	= explode("\n", $element->valuelist);
 		
-		if(!empty($el_values[0])){
-			foreach($el_values as $key=>$value){
-				$split = explode('|',$value);
+		if(!empty($elValues[0])){
+			foreach($elValues as $key=>$value){
+				$split = explode('|', $value);
 				
 				//Remove starting or ending spaces and make it lowercase
-				$value = trim($split[0]);
-				$escaped_value = str_replace(' ','_',$value);
-				$escaped_value = str_replace(',','',$escaped_value);
-				$escaped_value = str_replace('(','',$escaped_value);
-				$escaped_value = str_replace(')','',$escaped_value);
+				$value 			= trim($split[0]);
+				$escapedValue 	= str_replace([' ', ',', '(', ')'], ['_', '', '', ''], $value);
 				
 				if(!empty($split[1])){
-					$display_name	= $split[1];
+					$displayName	= $split[1];
 				}else{
-					$display_name	= $value;
+					$displayName	= $value;
 				}
 				
-				$options[$escaped_value]	= $display_name;
+				$options[$escapedValue]	= $displayName;
 			}
 
 			asort($options);
 		}
 		
-		$default_array_key				= $element->default_array_value;
-		if(!empty($default_array_key)){
-			$options	= (array)$this->default_array_values[$default_array_key]+$options;
+		$defaultArrayKey				= $element->default_array_value;
+		if(!empty($defaultArrayKey)){
+			$options	= (array)$this->defaultArrayValues[$defaultArrayKey]+$options;
 		}
 		
 		return $options;
 	}
 	
-	function process_multi_fields($element, $key, $width, $values=null, $element_html=''){
+	/**
+	 * Renders the html for element who can have multiple inputs
+	 * 
+	 * @param	object	$element		The element
+	 * @param	int		$key			The index of the element list
+	 * @param	int		$width			The width of the elements
+	 * @param	array	$values			The values of the inputs. Default null
+	 * @param	string	$elementHtml	Existing element html. Default empty
+	 */
+	function processMultiFields($element, $key, $width, $values=null, $elementHtml=''){
 		if($this->multiwrap or !is_numeric($key)){
 			if(is_numeric($key)){
 				//Check if element needs to be hidden
@@ -880,41 +996,41 @@ class Formbuilder{
 				if(
 					!empty($element->required)	or
 					$element->type == 'label'		and
-					$this->next_element->required
+					$this->nextElement->required
 				){
 					$hidden .= ' required';
 				}
 		
-				$element_html = $this->get_element_html($element);
+				$elementHtml = $this->getElementHtml($element);
 				
 				//close the label element after the field element
 				if($this->wrap and !isset($element->wrap)){
-					$element_html .= "</div>";
+					$elementHtml .= "</div>";
 					if($this->wrap == 'label'){
-						$element_html .= "</label>";
+						$elementHtml .= "</label>";
 					}
 					$this->wrap = false;
 				}elseif(!$this->wrap){
 					if($element->type == 'info'){
-						$element_html .= "<div class='inputwrapper$hidden info'>";
+						$elementHtml .= "<div class='inputwrapper$hidden info'>";
 					}else{
 						if(!empty($element->wrap)){
 							$class	= 'flex';
 						}else{
 							$class	= '';
 						}
-						$element_html .= "<div class='inputwrapper$hidden $class' style='width:$width%;'>";
+						$elementHtml .= "<div class='inputwrapper$hidden $class' style='width:$width%;'>";
 					}
 				}
 				
-				if(in_array($element->type,$this->non_inputs)){	
+				if(in_array($element->type,$this->nonInputs)){	
 					//Get the field values of the next element as this does not have any
-					$values		= $this->get_field_values($this->next_element);
+					$values		= $this->getFieldValues($this->nextElement);
 				}else{
-					$values		= $this->get_field_values($element);
+					$values		= $this->getFieldValues($element);
 				}
 
-				if(empty($this->formdata->settings['save_in_meta'])){
+				if(empty($this->formData->settings['save_in_meta'])){
 					$values		= array_values((array)$values['defaults']);
 				}else{
 					$values		= array_values((array)$values['metavalue']);
@@ -923,41 +1039,41 @@ class Formbuilder{
 				if(
 					$this->wrap == false								and
 					isset($element->wrap)								and 			//we should wrap around next element
-					is_object($this->next_element)						and 			// and there is a next element
-					!in_array($this->next_element->type, ['select','php','formstep'])	// and the next element type is not a select or php element
+					is_object($this->nextElement)						and 			// and there is a next element
+					!in_array($this->nextElement->type, ['select','php','formstep'])	// and the next element type is not a select or php element
 				){
 					$this->wrap = $element->type;
 				}
 			//key is not numeric so we are dealing with a multi input field
 			}else{
 				//add label to each entry if prev element is a label and wrapped with this one
-				if($this->prev_element->type	== 'label' and !empty($this->prev_element->wrap)){
-					$this->prev_element->text = $this->prev_element->text.' %key%';
-					$prev_label = $this->get_element_html($this->prev_element).'</label>';
+				if($this->prevElement->type	== 'label' and !empty($this->prevElement->wrap)){
+					$this->prevElement->text = $this->prevElement->text.' %key%';
+					$prevLabel = $this->getElementHtml($this->prevElement).'</label>';
 				}else{
-					$prev_label	= '';
+					$prevLabel	= '';
 				}
 
-				if(empty($this->formdata->settings['save_in_meta'])){
+				if(empty($this->formData->settings['save_in_meta'])){
 					$values		= array_values((array)$values['defaults']);
 				}else{
 					$values		= array_values((array)$values['metavalue']);
 				}
 
 				//check how many elements we should render
-				$this->multi_wrap_value_count	= max(1,count((array)$values));
+				$this->multiWrapValueCount	= max(1,count((array)$values));
 			}
 
 			//create as many inputs as the maximum value found
-			for ($index = 0; $index < $this->multi_wrap_value_count; $index++) {
+			for ($index = 0; $index < $this->multiWrapValueCount; $index++) {
 				$val	= $values[$index];
 				//Add the key to the fields name
-				$html	= preg_replace("/(name='.*?)'/i", "\${1}[$index]'", $element_html);
+				$html	= preg_replace("/(name='.*?)'/i", "\${1}[$index]'", $elementHtml);
 				
 				//we are dealing with a select, add options
 				if($element->type == 'select'){
 					$html .= "<option value=''>---</option>";
-					$options	= $this->get_field_options($element);
+					$options	= $this->getFieldOptions($element);
 					foreach($options as $option_key=>$option){
 						if(strtolower($val) == strtolower($option_key) or strtolower($val) == strtolower($option)){
 							$selected	= 'selected';
@@ -969,12 +1085,12 @@ class Formbuilder{
 
 					$html  .= "</select>";
 				}elseif(in_array($element->type, ['radio','checkbox'])){
-					$options	= $this->get_field_options($element);
+					$options	= $this->getFieldOptions($element);
 
 					//make key and value lowercase
 					array_walk_recursive($options, function(&$item, &$key){
-						$item = strtolower($item);
-						$key = strtolower($key);
+						$item 	= strtolower($item);
+						$key 	= strtolower($key);
 					});
 					foreach($options as $option_key=>$option){
 						$found = false;
@@ -1007,62 +1123,71 @@ class Formbuilder{
 				
 				//open the clone div
 				if(!is_numeric($key)){
-					$this->multi_inputs_html[$index] .= "<div class='clone_div' data-divid='$index'>";
+					$this->multiInputsHtml[$index] .= "<div class='clone_div' data-divid='$index'>";
 				}
-				if($this->prev_element->type == 'multi_start'){
-					$this->multi_inputs_html[$index] .= "<div class='clone_div' data-divid='$index' style='display:flex'>";
-					$this->multi_inputs_html[$index] .= "<div class='multi_input_wrapper'>";
+
+				if($this->prevElement->type == 'multi_start'){
+					$this->multiInputsHtml[$index] .= "<div class='clone_div' data-divid='$index' style='display:flex'>";
+					$this->multiInputsHtml[$index] .= "<div class='multi_input_wrapper'>";
 				}
 				
 				//add flex to single multi items, re-add the label for each value
 				if(!is_numeric($key)){
-					$this->multi_inputs_html[$index] .= str_replace('%key%',$index+1,$prev_label);
+					$this->multiInputsHtml[$index] .= str_replace('%key%', $index+1, $prevLabel);
 					//wrap input AND buttons in a flex div
-					$this->multi_inputs_html[$index] .= "<div class='buttonwrapper' style='width:100%; display: flex;'>";
+					$this->multiInputsHtml[$index] .= "<div class='buttonwrapper' style='width:100%; display: flex;'>";
 				}
 				
 				if($element->type == 'label'){
 					$nr		= $index+1;
-					$html	= str_replace('</h4>'," $nr</h4>",$html);
+					$html	= str_replace('</h4>'," $nr</h4>", $html);
 				}
 				//write the element
-				$this->multi_inputs_html[$index] .= $html;
+				$this->multiInputsHtml[$index] .= $html;
 				
 				//end, write the buttons and closing div
-				if(!is_numeric($key) or $this->next_element->type == 'multi_end'){
+				if(!is_numeric($key) or $this->nextElement->type == 'multi_end'){
 					//close any label first before adding the buttons
 					if($this->wrap == 'label'){
-						$this->multi_inputs_html[$index] .= "</label>";
+						$this->multiInputsHtml[$index] .= "</label>";
 					}
 					
 					//close select
 					if($element->type == 'select'){
-						$this->multi_inputs_html[$index] .= "</select>";
+						$this->multiInputsHtml[$index] .= "</select>";
 					}
 					
 					//open the buttons div in case we have not written the flex div
 					if(is_numeric($key)){
-						$this->multi_inputs_html[$index] .= "</div>";//close multi_input_wrapper div
-						$this->multi_inputs_html[$index] .= "<div class='buttonwrapper' style='margin: auto;'>";
+						$this->multiInputsHtml[$index] .= "</div>";//close multi_input_wrapper div
+						$this->multiInputsHtml[$index] .= "<div class='buttonwrapper' style='margin: auto;'>";
 					}
-							$this->multi_inputs_html[$index] .= "<button type='button' class='add button' style='flex: 1;'>+</button>";
-							$this->multi_inputs_html[$index] .= "<button type='button' class='remove button' style='flex: 1;'>-</button>";
-						$this->multi_inputs_html[$index] .= "</div>";
-					$this->multi_inputs_html[$index] .= "</div>";//close clone_div
+							$this->multiInputsHtml[$index] .= "<button type='button' class='add button' style='flex: 1;'>+</button>";
+							$this->multiInputsHtml[$index] .= "<button type='button' class='remove button' style='flex: 1;'>-</button>";
+						$this->multiInputsHtml[$index] .= "</div>";
+					$this->multiInputsHtml[$index] .= "</div>";//close clone_div
 				}
 			}
 		}
 	}
 	
-	function buildhtml($element, $key=0){
-		if(empty($this->formdata))		$this->loadformdata();
-		if(empty($this->form_elements)) $this->get_all_form_elements();
-		$this->prev_element		= $this->form_elements[$key-1];
-		$this->next_element		= $this->form_elements[$key+1];
+	/**
+	 * Build all html for a particular elemnt including edit controls.
+	 * 
+	 * @param	object	$element		The element
+	 * @param	int		$key			The key in case of a multi element. Default 0
+	 * 
+	 * @return	string					The html
+	 */
+	function buildHtml($element, $key=0){
+		if(empty($this->formData))		$this->loadFormData();
+		if(empty($this->formElements)) $this->getAllFormElements();
+		$this->prevElement		= $this->formElements[$key-1];
+		$this->nextElement		= $this->formElements[$key+1];
 
 		if(
-			!empty($this->next_element->multiple) 	and // if next element is a multiple
-			$this->next_element->type != 'file' 	and // next element is not a file
+			!empty($this->nextElement->multiple) 	and // if next element is a multiple
+			$this->nextElement->type != 'file' 	and // next element is not a file
 			$element->type == 'label'				and // and this is a label
 			!empty($element->wrap)					and // and the label is wrapped around the next element
 			!isset($_GET['formbuilder']) 			and	// and we are not building the form
@@ -1071,15 +1196,15 @@ class Formbuilder{
 			return;
 		}
 		//store the prev rendered element before updating the current element
-		$this->prev_rendered_element	= $this->current_element;
-		$this->current_element			= $element;
+		$prevRenderedElement	= $this->currentElement;
+		$this->currentElement	= $element;
 				
 		//Set the element width to 85 percent so that the info icon floats next to it
-		if($key != 0 and $this->prev_rendered_element->type == 'info'){
+		if($key != 0 and $prevRenderedElement->type == 'info'){
 			$width = 85;
 		//We are dealing with a label which is wrapped around the next element
-		}elseif($element->type == 'label'	and !isset($element->wrap) and is_numeric($this->next_element->width)){
-			$width = $this->next_element->width;
+		}elseif($element->type == 'label'	and !isset($element->wrap) and is_numeric($this->nextElement->width)){
+			$width = $this->nextElement->width;
 		}elseif(is_numeric($element->width)){
 			$width = $element->width;
 		}else{
@@ -1087,7 +1212,7 @@ class Formbuilder{
 		}
 
 		//Load default values for this element
-		$element_html = $this->get_element_html($element,$width);
+		$elementHtml = $this->getElementHtml($element, $width);
 		
 		//Check if element needs to be hidden
 		if(!empty($element->hidden)){
@@ -1100,14 +1225,14 @@ class Formbuilder{
 		if(
 			!empty($element->required)	or
 			$element->type == 'label'		and
-			$this->next_element->required
+			$this->nextElement->required
 		){
 			$hidden .= ' required';
 		}
 		
 		//Add form edit controls if needed
-		if($this->editrights == true and (isset($_GET['formbuilder']) or defined('REST_REQUEST'))){
-			$html = " <div class='form_element_wrapper' data-id='{$element->id}' data-formid='{$this->formdata->id}' data-priority='{$element->priority}' style='display: flex;'>";
+		if($this->editRights and (isset($_GET['formbuilder']) or defined('REST_REQUEST'))){
+			$html = " <div class='form_element_wrapper' data-id='{$element->id}' data-formid='{$this->formData->id}' data-priority='{$element->priority}' style='display: flex;'>";
 				$html .= "<span class='movecontrol formfieldbutton' aria-hidden='true'>:::</span>";
 				$html .= "<div class='resizer_wrapper'>";
 					if($element->type == 'info'){
@@ -1122,14 +1247,14 @@ class Formbuilder{
 						$html .= ' ***datalist element***';
 					}elseif($element->type == 'multi_start'){
 						$html .= ' ***multi answer start***';
-						$element_html	= '';
+						$elementHtml	= '';
 					}elseif($element->type == 'multi_end'){
 						$html .= ' ***multi answer end***';
-						$element_html	= '';
+						$elementHtml	= '';
 					}
 					
 					
-					$html .= $element_html;
+					$html .= $elementHtml;
 						//Add a star if this field has conditions
 						if(!empty($element->conditions)){
 							$html .= "<div class='infobox'>";
@@ -1149,23 +1274,23 @@ class Formbuilder{
 			$html	= '';
 			//write a formstep div
 			if($element->type == 'formstep'){
-				//if there is already a formstep wrtten close that one first
-				if($this->isformstep == true){
+				//if there is already a formstep written close that one first
+				if($this->isFormStep){
 					$html .= "</div>";
 				//first part of the form, don't hide
 				}else{
-					$this->isformstep = true;
+					$this->isFormStep	= true;
 					$html .= "<img class='formsteploader' src='".LOADERIMAGEURL."'>";
 				}
 				
-				$this->formstepcounter	+= 1;
-				$html .= $element_html;
+				$this->formStepCounter	+= 1;
+				$html .= $elementHtml;
 			}elseif($element->type == 'multi_end'){
 				$this->multiwrap	= false;
 				//write down all the multi html
 				$name	= str_replace('end','start',$element->name);
 				$html  .= "<div class='clone_divs_wrapper' name='$name'>";
-				foreach($this->multi_inputs_html as $multihtml){
+				foreach($this->multiInputsHtml as $multihtml){
 					$html .= $multihtml;
 				}
 				$html .= '</div>';//close clone_divs_wrapper
@@ -1173,7 +1298,7 @@ class Formbuilder{
 
 			//just calculate the multi html
 			}elseif($this->multiwrap){
-				$this->process_multi_fields($element, $key, $width);
+				$this->processMultiFields($element, $key, $width);
 			//write other elements
 			}else{
 				//wrap an element and a folowing field in the same wrapper
@@ -1191,23 +1316,23 @@ class Formbuilder{
 					}
 				}
 				
-				$html .= $element_html;
+				$html .= $elementHtml;
 				if($element->type == 'multi_start'){
 					$this->multiwrap				= true;
 					
 					//we are wrapping so we need to find the max amount of filled in fields
 					$i								= $key+1;
-					$this->multi_wrap_value_count	= 1;
+					$this->multiWrapValueCount	= 1;
 					//loop over all consequent wrapped elements
 					while(true){
-						$type	= $this->form_elements[$i]->type;
+						$type	= $this->formElements[$i]->type;
 						if($type != 'multi_end'){
-							if(!in_array($type,$this->non_inputs)){
+							if(!in_array($type, $this->nonInputs)){
 								//Get the field values and count
-								$value_count		= count($this->get_field_values($this->form_elements[$i]));
+								$valueCount		= count($this->getFieldValues($this->formElements[$i]));
 								
-								if($value_count > $this->multi_wrap_value_count){
-									$this->multi_wrap_value_count = $value_count;
+								if($valueCount > $this->multiWrapValueCount){
+									$this->multiWrapValueCount = $valueCount;
 								}
 							}
 							$i++;
@@ -1220,11 +1345,11 @@ class Formbuilder{
 					if(
 						!$this->wrap									and
 						!empty($element->wrap)							and				//we should wrap around next element
-						is_object($this->next_element)					and 			// and there is a next element
-						!in_array($this->next_element->type, ['php','formstep'])	// and the next element type is not a select or php element
+						is_object($this->nextElement)					and 			// and there is a next element
+						!in_array($this->nextElement->type, ['php','formstep'])	// and the next element type is not a select or php element
 					){
 						//end a label if the next element is a select
-						if($element->type == 'label' and in_array($this->next_element->type, ['php','select'])){
+						if($element->type == 'label' and in_array($this->nextElement->type, ['php','select'])){
 							$html .= "</label></div>";
 						}else{
 							$this->wrap = $element->type;
@@ -1232,11 +1357,11 @@ class Formbuilder{
 					//we have not started a wrap
 					}else{		
 						//only close wrap if the current element is not wrapped or it is the last
-						if(empty($element->wrap) or !is_array($this->next_element)){
+						if(empty($element->wrap) or !is_array($this->nextElement)){
 							//close the label element after the field element or if this the last element of the form and a label
 							if(
 								$this->wrap == 'label' or 
-								($element->type == 'label' and !is_array($this->next_element))
+								($element->type == 'label' and !is_array($this->nextElement))
 							){
 								$html .= "</label>";
 							}
@@ -1250,6 +1375,13 @@ class Formbuilder{
 		return $html;
 	}
 
+	/**
+	 * Removes any unneeded slashes
+	 * 
+	 * @param	string	$content	The string to deslash
+	 * 
+	 * @return	string				The cleaned string
+	 */
 	function deslash( $content ) {
 		$content = preg_replace( "/\\\+'/", "'", $content );
 		$content = preg_replace( '/\\\+"/', '"', $content );
@@ -1258,32 +1390,39 @@ class Formbuilder{
 		return $content;
 	}
 
-	function update_submission_data($archive=false){
+	/**
+	 * Update an existing form submission
+	 * 
+	 * @param	bool	$archive	Whether we should archive the submission. Default false
+	 * 
+	 *  @return	true|WP_Error		The result or error on failure
+	 */
+	function updateSubmissionData($archive=false){
 		global $wpdb;
 
-		$submission_id	= $this->formresults['id'];
-		if(!is_numeric($submission_id)){
-			if(is_numeric($this->submission_id)){
-				$submission_id	= $this->submission_id;
+		$submissionId	= $this->formResults['id'];
+		if(!is_numeric($submissionId)){
+			if(is_numeric($this->submissionId)){
+				$submissionId	= $this->submissionId;
 			}elseif(is_numeric($_POST['submissionid'])){
-				$submission_id	= $_POST['submissionid'];
+				$submissionId	= $_POST['submissionid'];
 			}else{
 				SIM\printArray('No submission id found');
 				return false;
 			}
 		}	
 
-		$this->formresults['edittime']	= date("Y-m-d H:i:s");
+		$this->formResults['edittime']	= date("Y-m-d H:i:s");
 		//Update the database
 		$result = $wpdb->update(
-			$this->submissiontable_name, 
+			$this->submissionTableName, 
 			array(
 				'timelastedited'	=> date("Y-m-d H:i:s"),
-				'formresults'		=> maybe_serialize($this->formresults),
+				'formresults'		=> maybe_serialize($this->formResults),
 				'archived'			=> $archive
 			),
 			array(
-				'id'				=> $submission_id,
+				'id'				=> $submissionId,
 			)
 		);
 		
@@ -1295,27 +1434,34 @@ class Formbuilder{
 				SIM\printArray($message);
 			}
 		}elseif($result == false){
-			$message	= "No row with id $submission_id found";
+			$message	= "No row with id $submissionId found";
 			if(defined('REST_REQUEST')){
 				return new WP_Error('form error', $message);
 			}else{
 				SIM\printArray($message);
-				SIM\printArray($this->formresults);
+				SIM\printArray($this->formResults);
 			}
 		}
 		
-		return;
+		return $result;
 	}
 	
-	function find_conditional_email($conditions){
+	/**
+	 * Returns conditional e-mails with a valid condition
+	 * 
+	 * @param	array	$conditions		The conditions of a conditional e-mail
+	 * 
+	 * @return	string|false			The e-mail adres or false if none found
+	 */
+	function findConditionalEmail($conditions){
 		//loop over all conditions
 		foreach($conditions as $condition){
 			//loop over all elements to find the element with the id specified
-			foreach($this->form_elements as $element){
+			foreach($this->formElements as $element){
 				//we found the element with the correct id
 				if($element->id == $condition['fieldid']){
 					//get the submitted form value
-					$form_value = $this->formresults[$element->name];
+					$form_value = $this->formResults[$element->name];
 					
 					//if the value matches the conditional value
 					if(strtolower($form_value) == strtolower($condition['value'])){
@@ -1324,51 +1470,67 @@ class Formbuilder{
 				}
 			}
 		}
+
+		return false;
 	}
 
-	function email_footer($footer){
+	/**
+	 * Filters the e-mail footer url and text
+	 * 
+	 * @param	array	$footer		The footer array
+	 * 
+	 * @return	array				The filtered footer array
+	 */
+	function emailFooter($footer){
 		$footer['url']		= $_POST['formurl'];
 		$footer['text']		= $_POST['formurl'];
 		return $footer;
 	}
 
-	function send_email($trigger='submitted'){
-		$emails = $this->formdata->emails;
+	/**
+	 * Send an e-mail
+	 * 
+	 * @param	string	$trigger	One of 'submitted' or 'fieldchanged'. Default submitted
+	 */
+	function sendEmail($trigger='submitted'){
+		$emails = $this->formData->emails;
 		
 		foreach($emails as $key=>$email){
 			if($email['emailtrigger'] == $trigger){
 				if($trigger == 'fieldchanged'){
-					$form_value='';
+					$formValue	= '';
 					//loop over all elements to find the element with the id specified
-					foreach($this->form_elements as $element){
+					foreach($this->formElements as $element){
 						//we found the element with the correct id
 						if($element->id == $email['conditionalfield']){
 							//get the submitted form value
-							$form_value = $this->formresults[$element->name];
+							$formValue = $this->formResults[$element->name];
 							
 							break;
 						}
 					}
+
 					//do not proceed if there is no match
-					if(strtolower($form_value) != strtolower($email['conditionalvalue'])) continue;
+					if(strtolower($formValue) != strtolower($email['conditionalvalue'])) continue;
 				}
 				
 				$from	= '';
 				//Send e-mail from conditional e-mail adress
 				if($email['fromemail'] == 'conditional'){
-					$from = $this->find_conditional_email($email['conditionalfromemail']);
+					$from 	= $this->findConditionalEmail($email['conditionalfromemail']);
 				}elseif($email['fromemail'] == 'fixed'){
-					$from		= $this->process_placeholders($email['from']);
+					$from	= $this->processPlaceholders($email['from']);
 				}
-				if($from == ''){
+
+				if(empty($from)){
 					SIM\printArray("No from email found for email $key");
 				}
 								
 				$to		= '';
 				if($email['emailto'] == 'conditional'){
-					$to = $this->find_conditional_email($email['conditionalemailto']);
+					$to = $this->findConditionalEmail($email['conditionalemailto']);
 				}elseif($email['emailto'] == 'fixed'){
-					$to		= $this->process_placeholders($email['to']);
+					$to		= $this->processPlaceholders($email['to']);
 				}
 				
 				if(empty($to)){
@@ -1376,31 +1538,34 @@ class Formbuilder{
 					continue;
 				}
 
-				$subject	= $this->process_placeholders($email['subject']);
-				$message	= $this->process_placeholders($email['message']);
+				$subject	= $this->processPlaceholders($email['subject']);
+				$message	= $this->processPlaceholders($email['message']);
 				$headers	= explode("\n",$email['headers']);
 				if(!empty($from)){$headers[]	= "Reply-To: $from";}
 				
-				$files		= $this->process_placeholders($email['files']);
+				$files		= $this->processPlaceholders($email['files']);
 				
 				//Send the mail
 				if($_SERVER['HTTP_HOST'] != 'localhost'){
-					add_filter('sim_email_footer_url', [$this, 'email_footer']);
+					add_filter('sim_email_footer_url', [$this, 'emailFooter']);
 
 					SIM\printArray("Sending e-mail to $to");
 					$result = wp_mail($to , $subject, $message, $headers, $files);
 					if($result === false){
 						SIM\printArray("Sending the e-mail failed");
 					}
-					remove_filter('sim_email_footer_url', [$this, 'email_footer']);
+					remove_filter('sim_email_footer_url', [$this, 'emailFooter']);
 				}
 			}
 		}
 	}
 	
-	function autoarchive(){
+	/**
+	 * Auto archive form submission based on the form settings
+	 */
+	function autoArchive(){
 		//get all the forms
-		$this->get_forms();
+		$this->getForms();
 		
 		//loop over all the forms
 		foreach($this->forms as $form){
@@ -1408,23 +1573,23 @@ class Formbuilder{
 			
 			//check if auto archive is turned on for this form
 			if($settings['autoarchive'] == 'true'){
-				$this->datatype		= $form->name;
-				$field_main_name	= $settings['split'];
+				$this->formName		= $form->name;
+				$fieldMainName		= $settings['split'];
 				
 				//Get all submissions of this form
-				$this->get_submission_data();
+				$this->getSubmissionData();
 				
-				$trigger_name	= $this->getElementById($settings['autoarchivefield'],'name');
-				$trigger_value	= $settings['autoarchivevalue'];
-				$pattern		= '/'.$field_main_name."\[[0-9]+\]\[([^\]]+)\]/i";
-				if(preg_match($pattern, $trigger_name,$matches)){
-					$trigger_name	= $matches[1];
+				$triggerName	= $this->getElementById($settings['autoarchivefield'],'name');
+				$triggerValue	= $settings['autoarchivevalue'];
+				$pattern		= '/'.$fieldMainName."\[[0-9]+\]\[([^\]]+)\]/i";
+				if(preg_match($pattern, $triggerName,$matches)){
+					$triggerName	= $matches[1];
 				}
 				
 				//check if we need to transform a keyword to a date 
 				$pattern = '/%([^%;]*)%/i';
 				//Execute the regex
-				preg_match_all($pattern, $trigger_value,$matches);
+				preg_match_all($pattern, $triggerValue,$matches);
 				if(!is_array($matches[1])){
 					SIM\printArray($matches[1]);
 				}else{
@@ -1432,40 +1597,40 @@ class Formbuilder{
 						//If the keyword is a valid date keyword
 						if(strtotime($keyword)){
 							//convert to date
-							$trigger_value = date("Y-m-d", strtotime(str_replace('%','',$trigger_value)));
+							$triggerValue = date("Y-m-d", strtotime(str_replace('%', '', $triggerValue)));
 						}
 					}
 				}
 				
 				//loop over all submissions to see if we need to archive
-				foreach($this->submission_data as $id=>$sub_data){
-					$this->formresults		= maybe_unserialize($sub_data->formresults);
+				foreach($this->submissionData as $id=>$sub_data){
+					$this->formResults		= maybe_unserialize($sub_data->formresults);
 					
-					$this->submission_id	= $sub_data->id;
+					$this->submissionId	= $sub_data->id;
 					//there is no trigger value found in the results, check multi value array
-					if(empty($this->formresults[$trigger_name])){
+					if(empty($this->formResults[$triggerName])){
 						//loop over all multi values
-						foreach($this->formresults[$field_main_name] as $sub_id=>$sub){
+						foreach($this->formResults[$fieldMainName] as $sub_id=>$sub){
 							//we found a match for a sub entry, archive it
-							$val	= $sub[$trigger_name];						
+							$val	= $sub[$triggerName];						
 							if(
-								$val == $trigger_value or 						//value is the same as the trigger value or
+								$val == $triggerValue or 						//value is the same as the trigger value or
 								(
-									strtotime($trigger_value) and 				// trigger value is a date
+									strtotime($triggerValue) and 				// trigger value is a date
 									strtotime($val) and							// this value is a date
-									strtotime($val)<strtotime($trigger_value)	// value is smaller than the trigger value
+									strtotime($val)<strtotime($triggerValue)	// value is smaller than the trigger value
 								)
 							){
-								$this->formresults[$field_main_name][$sub_id]['archived'] = true;
+								$this->formResults[$fieldMainName][$sub_id]['archived'] = true;
 								
 								//update in db
-								$this->check_if_all_archived($this->formresults[$field_main_name]);
+								$this->checkIfAllArchived($this->formResults[$fieldMainName]);
 							}
 						}
 					}else{
 						//if the form value is equal to the trigger value it needs to be to be archived
-						if($this->formresults[$trigger_name] == $trigger_value){
-							$this->update_submission_data(true);
+						if($this->formResults[$triggerName] == $triggerValue){
+							$this->updateSubmissionData(true);
 						}
 					}
 				}
@@ -1473,43 +1638,56 @@ class Formbuilder{
 		}
 	}
 	
-	function check_if_all_archived($data){
+	/**
+	 * Checks if all sub entries are archived, if so archives the whole
+	 * 
+	 * @param	array	$data	the data to check
+	 */
+	function checkIfAllArchived($data){
 		//check if all subfields are archived or empty
-		$all_archived = true;
+		$allArchived = true;
 		//loop over all keys
-		foreach($data as $subfieldsarray){
+		foreach($data as $subFieldsArray){
 			//loop over all fields of this key
 			$empty = true;
-			foreach($subfieldsarray as $field){
+			foreach($subFieldsArray as $field){
 				if(!empty($field)) $empty = false;
 				break;
 			}
 			
 			//there are values and the sub entry is not archived
-			if($empty == false and empty($subfieldsarray['archived'])){
-				$all_archived = false;
+			if(!$empty and empty($subFieldsArray['archived'])){
+				$allArchived = false;
 				break;
 			}
 		}
 		
 		//update and mark as archived if all entries are empty or archived
-		$this->update_submission_data($all_archived);
+		$this->updateSubmissionData($allArchived);
 	}
 	
-	function input_dropdown($field_id, $element_id=-1){
-		if($field_id == ''){
+	/**
+	 * Creates a dropdown with all form elements
+	 * 
+	 * @param	int		$selectedId	The id of the current selected element in the dropdown. Default empty
+	 * @param	int		$elementId	the id of the element
+	 * 
+	 * @return	string				The dropdown html
+	 */
+	function inputDropdown($selectedId, $elementId=''){
+		if($selectedId == ''){
 			$html = "<option value='' selected>---</option>";
 		}else{
 			$html = "<option value=''>---</option>";
 		}
 		
-		foreach($this->form_elements as $key=>$element){
+		foreach($this->formElements as $key=>$element){
 			//do not include the element itself do not include non-input types
-			if($element->id != $element_id and !in_array($element->type,['label','info','datalist','formstep'])){
+			if($element->id != $elementId and !in_array($element->type, ['label','info','datalist','formstep'])){
 				$name = ucfirst(str_replace('_',' ',$element->name));
 				
 				//Check which option is the selected one
-				if($field_id != '' and $field_id == $element->id){
+				if($selectedId != '' and $selectedId == $element->id){
 					$selected = 'selected';
 				}else{
 					$selected = '';
@@ -1521,29 +1699,36 @@ class Formbuilder{
 		return $html;
 	}
 	
-	function process_placeholders($string){
+	/**
+	 * Replaces placeholder with the value
+	 * 
+	 * @param	string	$string		THe string to check for placeholders
+	 * 
+	 * @return	string				The filtered string
+	 */
+	function processPlaceholders($string){
 		if(empty($string)) return $string;
 
-		$this->formresults['submissiondate']	= date('d F y',strtotime($this->formresults['submissiontime']));
-		$this->formresults['editdate']			= date('d F y',strtotime($this->formresults['edittime']));
+		$this->formResults['submissiondate']	= date('d F y', strtotime($this->formResults['submissiontime']));
+		$this->formResults['editdate']			= date('d F y', strtotime($this->formResults['edittime']));
 
 		$pattern = '/%([^%;]*)%/i';
 		//Execute the regex
-		preg_match_all($pattern, $string,$matches);
+		preg_match_all($pattern, $string, $matches);
 		
 		//loop over the results
 		foreach($matches[1] as $key=>$match){
-			if(empty($this->formresults[$match])){
+			if(empty($this->formResults[$match])){
 				//remove the placeholder, there is no value
-				$string = str_replace("%$match%",'',$string);
-			}elseif(is_array($this->formresults[$match])){
-				$files	= $this->formresults[$match];
+				$string = str_replace("%$match%", '', $string);
+			}elseif(is_array($this->formResults[$match])){
+				$files	= $this->formResults[$match];
 				$string = array_map(function($value){
 					return ABSPATH.$value;
-				},$files);
+				}, $files);
 			}else{
 				//replace the placeholder with the value
-				$replaceValue	= str_replace('_', ' ', $this->formresults[$match]);
+				$replaceValue	= str_replace('_', ' ', $this->formResults[$match]);
 				$string 		= str_replace("%$match%", $replaceValue, $string);
 			}
 		}
@@ -1551,25 +1736,31 @@ class Formbuilder{
 		return $string;
 	}
 
-	function formbuilder($atts){
-		$this->process_atts($atts);
+	/**
+	 * Main function to show all
+	 * 
+	 * @param	array	$atts	The attribute array of the WP Shortcode
+	 */
+	function formBuilder($atts){
+		$this->processAtts($atts);
 				
-		$this->loadformdata();
+		$this->loadFormData();
 		
 		// We cannot use the minified version as the dynamic js files depend on the function names
 		wp_enqueue_script('sim_forms_script');
 
 		if(
-			array_intersect($this->user_roles,$this->submit_roles) != false	and	// we have the permission to submit on behalf on someone else
-			is_numeric($_GET['userid'])																				and // and the userid parameter is set in the url
-			empty($atts['userid'])																						// and the user id is not given in the shortcode 
+			array_intersect($this->userRoles, $this->submitRoles) != false	and	// we have the permission to submit on behalf on someone else
+			is_numeric($_GET['userid'])										and // and the userid parameter is set in the url
+			empty($atts['userid'])												// and the user id is not given in the shortcode 
 		){
-			$this->user_id	= $_GET['userid'];
+			$this->userId	= $_GET['userid'];
 		}
+
 		ob_start();
 
 		//add formbuilder.js
-		if($this->editrights == true and isset($_GET['formbuilder'])){
+		if($this->editRights and isset($_GET['formbuilder'])){
 			//Formbuilder js
 			wp_enqueue_script( 'sim_formbuilderjs');
 		}
@@ -1577,13 +1768,13 @@ class Formbuilder{
 		//Load conditional js if available and needed
 		if(!isset($_GET['formbuilder'])){
 			if($_SERVER['HTTP_HOST'] == 'localhost'){
-				$js_path		= $this->jsfilename.'.js';
+				$jsPath		= $this->jsFileName.'.js';
 			}else{
-				$js_path		= $this->jsfilename.'.min.js';
+				$jsPath		= $this->jsFileName.'.min.js';
 			}
 
-			if(!file_exists($js_path)){
-				SIM\printArray("$js_path does not exist!\nBuilding it now");
+			if(!file_exists($jsPath)){
+				SIM\printArray("$jsPath does not exist!\nBuilding it now");
 				
 				$path	= plugin_dir_path(__DIR__)."js/dynamic";
 				if (!is_dir($path)) {
@@ -1591,12 +1782,12 @@ class Formbuilder{
 				}
 				
 				//build initial js if it does not exist
-				$this->create_js();
+				$this->createJs();
 			}
 
 			//Only enqueue if there is content in the file
-			if(file_exists($js_path) and filesize($js_path) > 0){
-				wp_enqueue_script( "dynamic_{$this->datatype}forms", SIM\pathToUrl($js_path), array('sim_forms_script'), $this->formdata->version, true);
+			if(file_exists($jsPath) and filesize($jsPath) > 0){
+				wp_enqueue_script( "dynamic_{$this->formName}forms", SIM\pathToUrl($jsPath), array('sim_forms_script'), $this->formData->version, true);
 			}
 		}
 		
@@ -1604,9 +1795,9 @@ class Formbuilder{
 		<div class="sim_form wrapper">
 			<?php
 			
-			if($this->editrights == true){
+			if($this->editRights){
 				//redirect  to formbuilder if we have rights and no formfields defined yet
-				if(empty($this->form_elements) and !isset($_GET['formbuilder'])){
+				if(empty($this->formElements) and !isset($_GET['formbuilder'])){
 					$url = SIM\currentUrl();
 					if(strpos($url,'?') === false){
 						$url .= '/?';
@@ -1617,11 +1808,11 @@ class Formbuilder{
 				}
 				
 				if(isset($_GET['formbuilder'])){
-					$this->add_element_modal();
+					$this->addElementModal();
 
 					?>
-					<button class="button tablink formbuilderform<?php if(!empty($this->form_elements)) echo ' active';?>"	id="show_element_form" data-target="element_form">Form elements</button>
-					<button class="button tablink formbuilderform<?php if(empty($this->form_elements)) echo ' active';?>"	id="show_form_settings" data-target="form_settings">Form settings</button>
+					<button class="button tablink formbuilderform<?php if(!empty($this->formElements)) echo ' active';?>"	id="show_element_form" data-target="element_form">Form elements</button>
+					<button class="button tablink formbuilderform<?php if(empty($this->formElements)) echo ' active';?>"	id="show_form_settings" data-target="form_settings">Form settings</button>
 					<button class="button tablink formbuilderform"															id="show_form_emails" data-target="form_emails">Form emails</button>
 					<?php 
 				}else{
@@ -1630,14 +1821,14 @@ class Formbuilder{
 				}
 				?>
 				
-				<div class="tabcontent<?php if(empty($this->form_elements)) echo ' hidden';?>" id="element_form">
+				<div class="tabcontent<?php if(empty($this->formElements)) echo ' hidden';?>" id="element_form">
 					<?php
 					if(isset($_GET['formbuilder'])){
-						if(empty($this->form_elements)){
+						if(empty($this->formElements)){
 							?>
 							<div name="formbuildbutton">
 								<p>No formfield defined yet.</p>
-								<button name='createform' class='button' data-formname='<?php echo $this->datatype;?>'>Add fields to this form</button>
+								<button name='createform' class='button' data-formname='<?php echo $this->formName;?>'>Add fields to this form</button>
 							</div>
 							<?php
 						}else{
@@ -1651,17 +1842,17 @@ class Formbuilder{
 					}
 			}
 			
-			$this->showform();
-			if($this->editrights == true and isset($_GET['formbuilder'])){
+			$this->showForm();
+			if($this->editRights and isset($_GET['formbuilder'])){
 				?>
 				</div>
 				
-				<div class="tabcontent<?php if(!empty($this->form_elements)) echo ' hidden';?>" id="form_settings">
-					<?php $this->form_settings_form();?>
+				<div class="tabcontent<?php if(!empty($this->formElements)) echo ' hidden';?>" id="form_settings">
+					<?php $this->formSettingsForm();?>
 				</div>
 				
 				<div class="tabcontent hidden" id="form_emails">
-					<?php $this->form_emails_form();?>
+					<?php $this->formEmailsForm();?>
 				</div>
 			<?php
 			}
@@ -1677,7 +1868,10 @@ class Formbuilder{
 		return force_balance_tags($html);
 	}
 	
-	function add_element_modal(){
+	/**
+	 * The modal to add an element to the form
+	 */
+	function addElementModal(){
 		?>
 		<div class="modal add_form_element_modal hidden">
 			<!-- Modal content -->
@@ -1699,40 +1893,42 @@ class Formbuilder{
 		<?php
 	}
 	
-	function showform(){
-		$formname	= $this->formdata->settings['formname'];
-		$buttontext	= $this->formdata->settings['buttontext'];
-		if(empty($buttontext)) $buttontext = 'Submit the form';
+	/**
+	 * Show the form
+	 */
+	function showForm(){
+		$formName	= $this->formData->settings['formname'];
+		$buttonText	= $this->formData->settings['buttontext'];
+		if(empty($buttonText)) $buttonText = 'Submit the form';
 		
-		if(!empty($formname)) echo "<h3>$formname</h3>";	
+		if(!empty($formName)) echo "<h3>$formName</h3>";	
 
-		if(array_intersect($this->user_roles,$this->submit_roles) != false and !empty($this->formdata->settings['save_in_meta'])){
+		if(array_intersect($this->userRoles, $this->submitRoles) != false and !empty($this->formData->settings['save_in_meta'])){
 			echo SIM\userSelect("Select an user to show the data of:");
 		}
-		echo do_action('before_form',$this->datatype);
+		echo do_action('sim_before_form', $this->formName);
 
-		$form_class	= "sim_form";
-		if(isset($_GET['formbuilder'])) $form_class	.= ' builder';
+		$formClass	= "sim_form";
+		if(isset($_GET['formbuilder'])) $formClass	.= ' builder';
 
-		$dataset	= "data-formid=".$this->formdata->id;
-		if(!empty($this->formdata->settings['formreset']))		$dataset .= " data-reset='true'";
-		if(!empty($this->formdata->settings['save_in_meta']))	$dataset .= " data-addempty='true'";
+		$dataset	= "data-formid=".$this->formData->id;
+		if(!empty($this->formData->settings['formreset']))		$dataset .= " data-reset='true'";
+		if(!empty($this->formData->settings['save_in_meta']))	$dataset .= " data-addempty='true'";
 
 		?>
-		<form action='' method='post' class='<?php echo $form_class;?>' <?php echo $dataset;?>>
+		<form action='' method='post' class='<?php echo $formClass;?>' <?php echo $dataset;?>>
 			<div class='form_elements'>
-				<input type='hidden' name='formid'		value='<?php echo $this->formdata->id;?>'>
+				<input type='hidden' name='formid'		value='<?php echo $this->formData->id;?>'>
 				<input type='hidden' name='formurl'		value='<?php echo SIM\currentUrl();?>'>
-				<input type='hidden' name='userid'		value='<?php echo $this->user_id;?>'>
+				<input type='hidden' name='userid'		value='<?php echo $this->userId;?>'>
 		<?php		
-			$this->labelwritten = false;
-			foreach($this->form_elements as $key=>$element){
-				echo $this->buildhtml($element,$key);
+			foreach($this->formElements as $key=>$element){
+				echo $this->buildHtml($element, $key);
 			}
 			
 		//close the last formstep if needed
-		if($this->isformstep == true){
-		?>
+		if($this->isFormStep){
+			?>
 			</div>
 			<div class="multistepcontrols hidden">
 				<div class="multistepcontrols_wrapper">
@@ -1743,7 +1939,7 @@ class Formbuilder{
 					<!-- Circles which indicates the steps of the form: -->
 					<div style="flex:1;text-align:center;margin:auto;">
 					<?php
-					for ($x = 1; $x <= $this->formstepcounter; $x++) {
+					for ($x = 1; $x <= $this->formStepCounter; $x++) {
 						echo '<span class="step"></span>';
 					}
 					?>
@@ -1751,20 +1947,20 @@ class Formbuilder{
 				
 					<div style="flex:1;">
 						<button type="button" class="button nextBtn" name="nextBtn">Next</button>
-						<?php echo SIM\add_save_button('submit_form',$buttontext,'hidden form_submit');?>
+						<?php echo SIM\addSaveButton('submit_form', $buttonText, 'hidden form_submit');?>
 					</div>
 				</div>
 			</div>
-		<?php
-		}//close $this->formstepcounter
+			<?php
+		}
 			//only show submit button when not editing the form
-			if($this->editrights == true and isset($_GET['formbuilder'])){
+			if($this->editRights and isset($_GET['formbuilder'])){
 				$hidden = 'hidden';
 			}else{
 				$hidden = '';
 			}
-			if($this->isformstep == false and !empty($this->form_elements)){
-				echo SIM\add_save_button('submit_form',$buttontext,"$hidden form_submit");
+			if(!$this->isFormStep and !empty($this->formElements)){
+				echo SIM\addSaveButton('submit_form', $buttonText, "$hidden form_submit");
 			}
 			?>
 			</div>
@@ -1772,22 +1968,25 @@ class Formbuilder{
 		<?php
 	}
 	
-	function form_settings_form(){
+	/**
+	 * Form to change form settings
+	 */
+	function formSettingsForm(){
 		global $wp_roles;
 		
-		$settings = $this->formdata->settings;
+		$settings = $this->formData->settings;
 		
 		//Get all available roles
-		$user_roles = $wp_roles->role_names;
+		$userRoles = $wp_roles->role_names;
 		
 		//Sort the roles
-		asort($user_roles);
+		asort($userRoles);
 		
 		?>
 		<div class="element_settings_wrapper">
 			<form action='' method='post' class='sim_form builder'>
 				<div class='form_elements'>
-					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formdata->id;?>'>
+					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formData->id;?>'>
 					
 					<label class="block">
 						<h4>Submit button text</h4>
@@ -1834,15 +2033,15 @@ class Formbuilder{
 					
 					<?php
 					//check if we have any upload fields in this form
-					$hide_upload_el	= true;
-					foreach($this->form_elements as $el){
+					$hideUploadEl	= true;
+					foreach($this->formElements as $el){
 						if($el->type == 'file' or $el->type == 'image'){
-							$hide_upload_el	= false;
+							$hideUploadEl	= false;
 							break;
 						}
 					}
 					?>
-					<label class='block <?php if($hide_upload_el) echo 'hidden';?>'>
+					<label class='block <?php if($hideUploadEl) echo 'hidden';?>'>
 						<h4>Save form uploads in this subfolder of the uploads folder:<br>
 						If you leave it empty the default form_uploads will be used</h4>
 						<input type='text' class='formbuilder formfieldsetting' name='settings[upload_path]' value='<?php echo $settings['upload_path'];?>'>
@@ -1890,15 +2089,15 @@ class Formbuilder{
 						?><option value=''>---</option><?php
 					}
 					
-					$found_elements = [];
-					foreach($this->form_elements as $key=>$element){
+					$foundElements = [];
+					foreach($this->formElements as $key=>$element){
 						$pattern = "/([^\[]+)\[[0-9]+\]/i";
 						
 						if(preg_match($pattern, $element->name, $matches)){
 							//Only add if not found before
-							if(!in_array($matches[1],$found_elements)){
-								$found_elements[]	= $matches[1];
-								$value 				= strtolower(str_replace('_',' ',$matches[1]));
+							if(!in_array($matches[1], $foundElements)){
+								$foundElements[]	= $matches[1];
+								$value 				= strtolower(str_replace('_', ' ', $matches[1]));
 								$name				= ucfirst($value);
 								
 								//Check which option is the selected one
@@ -1947,8 +2146,8 @@ class Formbuilder{
 							}
 							
 							$processed = [];
-							foreach($this->form_elements as $key=>$element){
-								if(in_array($element->type,$this->non_inputs)) continue;
+							foreach($this->formElements as $key=>$element){
+								if(in_array($element->type, $this->nonInputs)) continue;
 								
 								$pattern			= "/\[[0-9]+\]\[([^\]]+)\]/i";
 								
@@ -1996,15 +2195,15 @@ class Formbuilder{
 					<h4>Select roles with form edit rights</h4>
 					<div class="role_info">
 					<?php
-					foreach($user_roles as $key=>$role_name){
+					foreach($userRoles as $key=>$roleName){
 						if(!empty($settings['full_right_roles'][$key])){
 							$checked = 'checked';
 						}else{
 							$checked = '';
 						}
 						echo "<label class='option-label'>";
-							echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[full_right_roles][$key]' value='$role_name' $checked>";
-							echo $role_name;
+							echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[full_right_roles][$key]' value='$roleName' $checked>";
+							echo $roleName;
 						echo"</label><br>";
 					}
 					?>
@@ -2014,29 +2213,32 @@ class Formbuilder{
 					<div class='submit_others_form_wrapper<?php if(empty($settings['save_in_meta'])) echo 'hidden';?>'>
 						<h4>Select who can submit this form on behalf of someone else</h4>
 						<?php
-						foreach($user_roles as $key=>$role_name){
+						foreach($userRoles as $key=>$roleName){
 							if(!empty($settings['submit_others_form'][$key])){
 								$checked = 'checked';
 							}else{
 								$checked = '';
 							}
 							echo "<label class='option-label'>";
-								echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[submit_others_form][$key]' value='$role_name' $checked>";
-								echo $role_name;
+								echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[submit_others_form][$key]' value='$roleName' $checked>";
+								echo $roleName;
 							echo"</label><br>";
 						}
 						?>
 					</div>
 				</div>
 				<?php
-				echo SIM\add_save_button('submit_form_setting','Save form settings');
+				echo SIM\addSaveButton('submit_form_setting',  'Save form settings');
 				?>
 			</form>
 		</div>
 		<?php
 	}
 	
-	function form_emails_form(){
+	/**
+	 * Form to setup form e-mails
+	 */
+	function formEmailsForm(){
 		/*Array structure:
 		emails			[
 			0 [
@@ -2048,12 +2250,12 @@ class Formbuilder{
 				files	= ''
 			]
 		]*/
-		$emails = $this->formdata->emails;
+		$emails = $this->formData->emails;
 		?>
 		<div class="emails_wrapper">
 			<form action='' method='post' class='sim_form builder'>
 				<div class='form_elements'>
-					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formdata->id;?>'>
+					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formData->id;?>'>
 					
 					<label class="formfield formfieldlabel">
 						Define any e-mails you want to send.<br>
@@ -2070,8 +2272,8 @@ class Formbuilder{
 					All your fieldvalues are available as well:
 					<select class='nonice placeholderselect'>
 						<option value=''>Select to copy to clipboard</option><?php
-					foreach($this->form_elements as $element){
-						if(!in_array($element->type,['label','info','button','datalist','formstep'])){
+					foreach($this->formElements as $element){
+						if(!in_array($element->type, ['label','info','button','datalist','formstep'])){
 							echo "<option>%{$element->name}%</option>";
 						}
 					}
@@ -2082,7 +2284,7 @@ class Formbuilder{
 					<div class='clone_divs_wrapper'>
 						<?php
 						foreach($emails as $key=>$email){
-							$default_from	=  get_option( 'admin_email' );
+							$defaultFrom	=  get_option( 'admin_email' );
 							
 							?>
 							<div class='clone_div' data-divid='<?php echo $key;?>'>
@@ -2110,7 +2312,7 @@ class Formbuilder{
 										<label class="formfield formfieldlabel">Field</label>
 										<select name='emails[<?php echo $key;?>][conditionalfield]'>
 											<?php
-											echo $this->input_dropdown($email['conditionalfield']);
+											echo $this->inputDropdown($email['conditionalfield']);
 											?>
 										</select>
 										
@@ -2136,7 +2338,7 @@ class Formbuilder{
 									<div class='emailfromfixed <?php if(!empty($email['fromemail']) and $email['fromemail'] != 'fixed') echo 'hidden';?>'>
 										<label class="formfield formfieldlabel">
 											From e-mail
-											<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][from]' value="<?php if(empty($email['from'])){echo $default_from;} else{echo $email['from'];} ?>">
+											<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][from]' value="<?php if(empty($email['from'])){echo $defaultFrom;} else{echo $email['from'];} ?>">
 										</label>
 									</div>
 									
@@ -2144,27 +2346,27 @@ class Formbuilder{
 										<div class='clone_divs_wrapper'>
 											<?php
 											if(!is_array($email['conditionalfromemail'])) $email['conditionalfromemail'] = [['fieldid'=>'','value'=>'','email'=>'']];
-											foreach(array_values($email['conditionalfromemail']) as $from_key=>$from_email){
+											foreach(array_values($email['conditionalfromemail']) as $fromKey=>$fromEmail){
 											?>
-											<div class='clone_div' data-divid='<?php echo $from_key;?>'>
+											<div class='clone_div' data-divid='<?php echo $fromKey;?>'>
 												<fieldset class='formemailfieldset'>
-													<legend class="formfield">Condition <?php echo $from_key+1;?>
+													<legend class="formfield">Condition <?php echo $fromKey+1;?>
 													<button type='button' class='add button' style='flex: 1;'>+</button>
 													<button type='button' class='remove button' style='flex: 1;'>-</button>
 													</legend>
 													If 
-													<select name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $from_key;?>][fieldid]'>
+													<select name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][fieldid]'>
 														<?php
-														echo $this->input_dropdown($from_email['fieldid']);
+														echo $this->inputDropdown($fromEmail['fieldid']);
 														?>
 													</select>
 													<label class="formfield formfieldlabel">
 														equals 
-														<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $from_key;?>][value]' value="<?php echo $from_email['value'];?>">
+														<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][value]' value="<?php echo $fromEmail['value'];?>">
 													</label>
 													<label class="formfield formfieldlabel">
 														then from e-mail address should be:<br>
-														<input type='email' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $from_key;?>][email]' value="<?php echo $from_email['email'];?>">
+														<input type='email' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][email]' value="<?php echo $fromEmail['email'];?>">
 													</label>
 												</fieldset>
 											</div>
@@ -2197,27 +2399,27 @@ class Formbuilder{
 										<div class='clone_divs_wrapper'>
 											<?php
 											if(!is_array($email['conditionalemailto'])) $email['conditionalemailto'] = [['fieldid'=>'','value'=>'','email'=>'']];
-											foreach($email['conditionalemailto'] as $to_key=>$to_email){
+											foreach($email['conditionalemailto'] as $toKey=>$toEmail){
 											?>
-											<div class='clone_div' data-divid='<?php echo $to_key;?>'>
+											<div class='clone_div' data-divid='<?php echo $toKey;?>'>
 												<fieldset class='formemailfieldset'>
-													<legend class="formfield">Condition <?php echo $to_key+1;?>
+													<legend class="formfield">Condition <?php echo $toKey+1;?>
 													<button type='button' class='add button' style='flex: 1;'>+</button>
 													<button type='button' class='remove button' style='flex: 1;'>-</button>
 													</legend>
 													If 
-													<select name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $to_key;?>][fieldid]'>
+													<select name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][fieldid]'>
 														<?php
-														echo $this->input_dropdown($to_email['fieldid']);
+														echo $this->inputDropdown($toEmail['fieldid']);
 														?>
 													</select>
 													<label class="formfield formfieldlabel">
 														equals 
-														<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $to_key;?>][value]' value="<?php echo $to_email['value'];?>">
+														<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][value]' value="<?php echo $toEmail['value'];?>">
 													</label>
 													<label class="formfield formfieldlabel">
 														then from e-mail address should be:<br>
-														<input type='email' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $to_key;?>][email]' value="<?php echo $to_email['email'];?>">
+														<input type='email' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][email]' value="<?php echo $toEmail['email'];?>">
 													</label>
 												</fieldset>
 											</div>
@@ -2247,7 +2449,7 @@ class Formbuilder{
 									
 										echo wp_editor(
 											$email['message'],
-											"{$this->datatype}_email_message_$key",
+											"{$this->formName}_email_message_$key",
 											$settings
 										);
 										?>
@@ -2276,13 +2478,16 @@ class Formbuilder{
 					</div>
 				</div>
 				<?php
-				echo SIM\add_save_button('submit_form_emails','Save form email configuration');
+				echo SIM\addSaveButton('submit_form_emails','Save form email configuration');
 				?>
 			</form>
 		</div>
 		<?php
 	}
 	
+	/**
+	 * Form to add or edit a new form element
+	 */
 	function elementBuilderForm($element=null){
 		ob_start();
 
@@ -2294,9 +2499,9 @@ class Formbuilder{
 			<div style="display: none;" class="error"></div>
 			<h4>Please fill in the form to add a new form element</h4><br>
 
-			<input type="hidden" name="formid" value="<?php echo $this->formdata->id;?>">
+			<input type="hidden" name="formid" value="<?php echo $this->formData->id;?>">
 
-			<input type="hidden" name="formfield[form_id]" value="<?php echo $this->formdata->id;?>">
+			<input type="hidden" name="formfield[form_id]" value="<?php echo $this->formData->id;?>">
 			
 			<input type="hidden" name="element_id" value="<?php if( $element != null) echo $element->id;?>">
 			
@@ -2434,7 +2639,7 @@ class Formbuilder{
 					}
 					echo wp_editor(
 						$content,
-						"{$this->datatype}_infotext",	//editor should always have an unique id
+						"{$this->formName}_infotext",	//editor should always have an unique id
 						$settings
 					);
 					?>
@@ -2465,8 +2670,8 @@ class Formbuilder{
 				<select class="formbuilder" name="formfield[default_array_value]">
 					<option value="">---</option>
 					<?php
-					$this->build_defaults_array();
-					foreach($this->default_array_values as $key=>$field){
+					$this->buildDefaultsArray();
+					foreach($this->defaultArrayValues as $key=>$field){
 						if($element != null and $element->default_array_value == $key){
 							$selected = 'selected';
 						}else{
@@ -2484,7 +2689,7 @@ class Formbuilder{
 				<select class="formbuilder" name="formfield[default_value]">
 					<option value="">---</option>
 					<?php
-					foreach($this->default_values as $key=>$field){
+					foreach($this->defaultValues as $key=>$field){
 						if($element != null and $element->default_value == $key){
 							$selected = 'selected';
 						}else{
@@ -2506,7 +2711,7 @@ class Formbuilder{
 				
 				<?php
 				$meta	= false;
-				if(!empty($this->formdata->settings['save_in_meta'])){
+				if(!empty($this->formData->settings['save_in_meta'])){
 					$meta	= true;
 				}
 
@@ -2559,14 +2764,19 @@ class Formbuilder{
 			}else{
 				$text	= "Change";
 			}	
-			echo SIM\add_save_button('submit_form_element',"$text form element"); ?>
+			echo SIM\addSaveButton('submit_form_element',"$text form element"); ?>
 		</form>
 		<?php
 
 		return ob_get_clean();
 	}	
 
-	function element_conditions_form($element_id = -1){
+	/**
+	 * Form to add conditions to an element
+	 * 
+	 * @param int	$elementId	The id of the element. Default -1 for empty
+	 */
+	function elementConditionsForm($elementId = -1){
 		/* 		
 		A field can have one or more conditions applied to it like:
 			1) hide when field X is Y
@@ -2590,37 +2800,37 @@ class Formbuilder{
 		It is also stored at the conditional fields to be able to create efficient JavaScript
 		*/
 
-		$element	= $this->getElementById($element_id);
+		$element	= $this->getElementById($elementId);
 
-		if($element_id == -1 or empty($element->conditions)){
-			$dummyfieldcondition['rules'][0]["conditional_field"]	= "";
-			$dummyfieldcondition['rules'][0]["equation"]				= "";
-			$dummyfieldcondition['rules'][0]["conditional_field_2"]	= "";
-			$dummyfieldcondition['rules'][0]["equation_2"]			= "";
-			$dummyfieldcondition['rules'][0]["conditional_value"]	= "";
-			$dummyfieldcondition["action"]					= "";
-			$dummyfieldcondition["target_field"]			= "";
+		if($elementId == -1 or empty($element->conditions)){
+			$dummyFieldCondition['rules'][0]["conditional_field"]	= "";
+			$dummyFieldCondition['rules'][0]["equation"]				= "";
+			$dummyFieldCondition['rules'][0]["conditional_field_2"]	= "";
+			$dummyFieldCondition['rules'][0]["equation_2"]			= "";
+			$dummyFieldCondition['rules'][0]["conditional_value"]	= "";
+			$dummyFieldCondition["action"]					= "";
+			$dummyFieldCondition["target_field"]			= "";
 			
-			if($element_id == -1) $element_id			= 0;
-			$element->conditions = [$dummyfieldcondition];
+			if($elementId == -1) $elementId			= 0;
+			$element->conditions = [$dummyFieldCondition];
 		}
 		
 		$conditions = maybe_unserialize($element->conditions);
 		
 		ob_start();
 		$counter = 0;
-		foreach($this->form_elements as $el){
-			if(in_array($element_id, (array)unserialize($el->conditions)['copyto'])){
+		foreach($this->formElements as $el){
+			if(in_array($elementId, (array)unserialize($el->conditions)['copyto'])){
 				$counter++;
 				?>
-				<div class="form_element_wrapper" data-id="<?php echo $el->id;?>" data-formid="<?php echo $this->formdata->id;?>">
+				<div class="form_element_wrapper" data-id="<?php echo $el->id;?>" data-formid="<?php echo $this->formData->id;?>">
 					<button type="button" class="edit_form_element button" title="Jump to conditions element">View conditions of '<?php echo $el->name;?>'</button>
 				</div>
 				<?php
 			}
 		}
 		if($counter>0){
-			$jumbbuttonhtml =  ob_get_clean();
+			$jumbButtonHtml =  ob_get_clean();
 			if($counter==1){
 				$counter	= 'another element';
 				$any 		= 'the';
@@ -2634,7 +2844,7 @@ class Formbuilder{
 			<div>
 				This element has some conditions defined by <?php echo $counter;?>.<br>
 				Click on <?php echo $any;?> button below to view.
-				<?php echo $jumbbuttonhtml;?>
+				<?php echo $jumbButtonHtml;?>
 			</div><br><br>
 			<?php
 		}
@@ -2642,32 +2852,32 @@ class Formbuilder{
 		
 		<form action='' method='post' name='add_form_element_conditions_form'>
 			<h3>Form element conditions</h3>
-			<input type='hidden' class='element_condition' name='formid' value='<?php echo $this->formdata->id;?>'>
+			<input type='hidden' class='element_condition' name='formid' value='<?php echo $this->formData->id;?>'>
 			
-			<input type='hidden' class='element_condition' name='elementid' value='<?php echo $element_id;?>'>
+			<input type='hidden' class='element_condition' name='elementid' value='<?php echo $elementId;?>'>
 
 			<?php
-			$lastcondtion_key = array_key_last($conditions);
-			foreach($conditions as $condition_index=>$condition){
-				if(!is_numeric($condition_index)) continue;
+			$lastCondtionKey = array_key_last($conditions);
+			foreach($conditions as $conditionIndex=>$condition){
+				if(!is_numeric($conditionIndex)) continue;
 			?>
-			<div class='condition_row' data-condition_index='<?php echo $condition_index;?>'>
+			<div class='condition_row' data-condition_index='<?php echo $conditionIndex;?>'>
 				<span style='font-weight: 600;'>If</span>
 				<br>
 				<?php
-				$lastrule_key = array_key_last($condition['rules']);
-				foreach($condition['rules'] as $rule_index=>$rule){
+				$lastRuleKey = array_key_last($condition['rules']);
+				foreach($condition['rules'] as $ruleIndex=>$rule){
 					?>
-					<div class='rule_row' data-rule_index='<?php echo $rule_index;?>'>
-						<input type='hidden' class='element_condition combinator' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][combinator]' value='<?php echo $rule['combinator']; ?>'>
+					<div class='rule_row' data-rule_index='<?php echo $ruleIndex;?>'>
+						<input type='hidden' class='element_condition combinator' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][combinator]' value='<?php echo $rule['combinator']; ?>'>
 					
-						<select class='element_condition condition_select conditional_field' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][conditional_field]' required>
+						<select class='element_condition condition_select conditional_field' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_field]' required>
 						<?php
-							echo $this->input_dropdown($rule['conditional_field'], $element_id);
+							echo $this->inputDropdown($rule['conditional_field'], $elementId);
 						?>
 						</select>
 
-						<select class='element_condition condition_select equation' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][equation]' required>
+						<select class='element_condition condition_select equation' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][equation]' required>
 							<option value=''		<?php if($rule['equation'] == '')			echo 'selected';?>>---</option>";
 							<option value='changed'	<?php if($rule['equation'] == 'changed')	echo 'selected';?>>has changed</option>
 							<option value='clicked'	<?php if($rule['equation'] == 'clicked')	echo 'selected';?>>is clicked</option>
@@ -2695,9 +2905,9 @@ class Formbuilder{
 						?>
 						
 						<span class='<?php echo $hidden;?> condition_form conditional_field_2'>
-							<select class='element_condition condition_select' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][conditional_field_2]'>
+							<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_field_2]'>
 							<?php
-								echo $this->input_dropdown($rule['conditional_field_2'],$element_id);
+								echo $this->inputDropdown($rule['conditional_field_2'], $elementId);
 							?>
 							</select>
 						</span>
@@ -2711,7 +2921,7 @@ class Formbuilder{
 						?>
 
 						<span class='<?php echo $hidden;?> condition_form equation_2'>
-							<select class='element_condition condition_select' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][equation_2]'>
+							<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][equation_2]'>
 								<option value=''	<?php if($rule['equation_2'] == '')		echo 'selected';?>>---</option>";
 								<option value='=='	<?php if($rule['equation_2'] == '==')	echo 'selected';?>>equals</option>
 								<option value='!='	<?php if($rule['equation_2'] == '!=')	echo 'selected';?>>is not</option>
@@ -2726,13 +2936,13 @@ class Formbuilder{
 							$hidden = '';
 						}
 						?>
-						<input  type='text'   class='<?php echo $hidden;?> element_condition condition_form' name='element_conditions[<?php echo $condition_index;?>][rules][<?php echo $rule_index;?>][conditional_value]' value="<?php echo $rule['conditional_value'];?>">
+						<input  type='text'   class='<?php echo $hidden;?> element_condition condition_form' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_value]' value="<?php echo $rule['conditional_value'];?>">
 						
 						<button type='button' class='element_condition and_rule condition_form button <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'AND') echo 'active';?>'	title='Add a new "AND" rule to this condition'>AND</button>
 						<button type='button' class='element_condition or_rule condition_form button  <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'OR') echo 'active';?>'	title='Add a new "OR"  rule to this condition'>OR</button>
 						<button type='button' class='remove_condition condition_form button' title='Remove rule or condition'>-</button>
 						<?php
-						if($condition_index == $lastcondtion_key and $rule_index == $lastrule_key){
+						if($conditionIndex == $lastCondtionKey and $ruleIndex == $lastRuleKey){
 							?>
 							<button type='button' class='add_condition condition_form button' title='Add a new condition'>+</button>
 							<button type='button' class='add_condition opposite condition_form button' title='Add a new condition, opposite to to the previous one'>Add opposite</button>
@@ -2749,33 +2959,33 @@ class Formbuilder{
 				<div class='action_row'>
 					<div class='radio_wrapper condition_form'>
 						<label>
-							<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='show' <?php if($condition['action'] == 'show') echo 'checked';?> required>
+							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='show' <?php if($condition['action'] == 'show') echo 'checked';?> required>
 							Show this element
 						</label><br>
 						
 						<label>
-							<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='hide' <?php if($condition['action'] == 'hide') echo 'checked';?> required>
+							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='hide' <?php if($condition['action'] == 'hide') echo 'checked';?> required>
 							Hide this element
 						</label><br>
 						
 						<label>
-							<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='toggle' <?php if($condition['action'] == 'toggle') echo 'checked';?> required>
+							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='toggle' <?php if($condition['action'] == 'toggle') echo 'checked';?> required>
 							Toggle this element
 						</label><br>
 						
 						<label>
-							<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='value' <?php if($condition['action'] == 'value') echo 'checked';?> required>
+							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='value' <?php if($condition['action'] == 'value') echo 'checked';?> required>
 							Set property
 						</label>
-						<input type="text" name="element_conditions[<?php echo $condition_index;?>][propertyname1]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname1'];?>">
+						<input type="text" name="element_conditions[<?php echo $conditionIndex;?>][propertyname1]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname1'];?>">
 						<label> to:</label>
-						<input type="text" name="element_conditions[<?php echo $condition_index;?>][action_value]" class='element_condition' value="<?php echo $condition['action_value'];?>">
+						<input type="text" name="element_conditions[<?php echo $conditionIndex;?>][action_value]" class='element_condition' value="<?php echo $condition['action_value'];?>">
 						<br>
 						
-						<input type='radio' name='element_conditions[<?php echo $condition_index;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property') echo 'checked';?> required>
+						<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property') echo 'checked';?> required>
 						<label for='property'>Set the</label>
 						
-						<input type="text" list="propertylist" name="element_conditions[<?php echo $condition_index;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
+						<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
 						<datalist id="propertylist">
 							<option value="value">
 							<option value="min">
@@ -2783,8 +2993,8 @@ class Formbuilder{
 						</datalist>
 						<label for='property'> property to the value of </label>
 						
-						<select class='element_condition condition_select' name='element_conditions[<?php echo $condition_index;?>][property_value]'>
-						<?php echo $this->input_dropdown($condition['property_value'], $element_id);?>
+						<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][property_value]'>
+						<?php echo $this->inputDropdown($condition['property_value'], $elementId);?>
 						</select><br>
 					</div>
 				</div>
@@ -2803,9 +3013,9 @@ class Formbuilder{
 					Check the fields these conditions should apply to as well,<br>
 					This holds only for visibility conditions (show, hide or toggle).<br><br>
 					<?php
-					foreach($this->form_elements as $key=>$element){
+					foreach($this->formElements as $key=>$element){
 						//do not show the current element itself or wrapped labels
-						if($element->id != $element_id and empty($element->wrap)){
+						if($element->id != $elementId and empty($element->wrap)){
 							if(!empty($conditions['copyto'][$element->id])){
 								$checked = 'checked';
 							}else{
@@ -2822,28 +3032,33 @@ class Formbuilder{
 				</div>
 			</div>
 			<?php
-			echo SIM\add_save_button('submit_form_condition','Save conditions'); ?>
+			echo SIM\addSaveButton('submit_form_condition','Save conditions'); ?>
 		</form>
 		<?php
 		$html = ob_get_clean();
 		return $html;
 	}
 
-	function warningConditionsForm($element_id = -1){
-		$element	= $this->getElementById($element_id);
+	/**
+	 * Form to add warning conditions to an element
+	 * 
+	 * @param	int		$elementId		The id to add warning conditions for. Default -1 for empty
+	 */
+	function warningConditionsForm($elementId = -1){
+		$element	= $this->getElementById($elementId);
 
-		if($element_id == -1 or empty($element->warning_conditions)){
+		if($elementId == -1 or empty($element->warning_conditions)){
 			$dummy[0]["user_meta_key"]	= "";
 			$dummy[0]["equation"]		= "";
 			
-			if($element_id == -1) $element_id			= 0;
+			if($elementId == -1) $elementId			= 0;
 			$element->warning_conditions = $dummy;
 		}
 		
 		$conditions 	= maybe_unserialize($element->warning_conditions);
 		
-		$usermeta_keys	= get_user_meta($this->user_id);
-		ksort($usermeta_keys);
+		$userMetaKeys	= get_user_meta($this->userId);
+		ksort($userMetaKeys);
 
 		ob_start();
 		?>
@@ -2853,16 +3068,16 @@ class Formbuilder{
 
 		<div class="conditions_wrapper">
 			<?php
-			foreach($conditions as $condition_index=>$condition){
-				if(!is_numeric($condition_index)) continue;
+			foreach($conditions as $conditionIndex=>$condition){
+				if(!is_numeric($conditionIndex)) continue;
 				?>
-				<div class='warning_conditions element_conditions' data-index='<?php echo $condition_index;?>'>
-					<input type="hidden" class='warning_condition combinator' name="formfield[warning_conditions][<?php echo $condition_index;?>][combinator]" value="<?php echo $condition['combinator'];?>">
+				<div class='warning_conditions element_conditions' data-index='<?php echo $conditionIndex;?>'>
+					<input type="hidden" class='warning_condition combinator' name="formfield[warning_conditions][<?php echo $conditionIndex;?>][combinator]" value="<?php echo $condition['combinator'];?>">
 
-					<input type="text" class="warning_condition meta_key" name="formfield[warning_conditions][<?php echo $condition_index;?>][meta_key]" value="<?php echo $condition['meta_key'];?>" list="meta_key" style="width: fit-content;">
+					<input type="text" class="warning_condition meta_key" name="formfield[warning_conditions][<?php echo $conditionIndex;?>][meta_key]" value="<?php echo $condition['meta_key'];?>" list="meta_key" style="width: fit-content;">
 					<datalist id="meta_key">
 						<?php
-						foreach($usermeta_keys as $key=>$value){
+						foreach($userMetaKeys as $key=>$value){
 							// Check if array, store array keys
 							$value 	= maybe_unserialize($value[0]);
 							$data	= '';
@@ -2877,15 +3092,15 @@ class Formbuilder{
 					</datalist>
 
 					<?php
-						$array_keys	= maybe_unserialize($usermeta_keys[$condition['meta_key']][0]);
+						$arrayKeys	= maybe_unserialize($userMetaKeys[$condition['meta_key']][0]);
 					?>
-					<span class="index_wrapper <?php if(!is_array($array_keys)) echo 'hidden';?>">
+					<span class="index_wrapper <?php if(!is_array($arrayKeys)) echo 'hidden';?>">
 						<span>and index</span>
-						<input type="text" class="warning_condition meta_key_index" name='formfield[warning_conditions][<?php echo $condition_index;?>][meta_key_index]' value="<?php echo $condition['meta_key_index'];?>" list="meta_key_index[<?php echo $condition_index;?>]" style="width: fit-content;">
-						<datalist class="meta_key_index_list warning_condition" id="meta_key_index[<?php echo $condition_index;?>]">
+						<input type="text" class="warning_condition meta_key_index" name='formfield[warning_conditions][<?php echo $conditionIndex;?>][meta_key_index]' value="<?php echo $condition['meta_key_index'];?>" list="meta_key_index[<?php echo $conditionIndex;?>]" style="width: fit-content;">
+						<datalist class="meta_key_index_list warning_condition" id="meta_key_index[<?php echo $conditionIndex;?>]">
 							<?php
-							if(is_array($array_keys)){
-								foreach(array_keys($array_keys) as $key){
+							if(is_array($arrayKeys)){
+								foreach(array_keys($arrayKeys) as $key){
 									echo "<option value='$key'>";
 								}
 							}
@@ -2893,14 +3108,14 @@ class Formbuilder{
 						</datalist>
 					</span>
 					
-					<select class="warning_condition" name='formfield[warning_conditions][<?php echo $condition_index;?>][equation]'>
+					<select class="warning_condition" name='formfield[warning_conditions][<?php echo $conditionIndex;?>][equation]'>
 						<option value=''		<?php if($condition['equation'] == '')			echo 'selected';?>>---</option>";
 						<option value='=='		<?php if($condition['equation'] == '==')		echo 'selected';?>>equals</option>
 						<option value='!='		<?php if($condition['equation'] == '!=')		echo 'selected';?>>is not</option>
 						<option value='>'		<?php if($condition['equation'] == '>')			echo 'selected';?>>greather than</option>
 						<option value='<'		<?php if($condition['equation'] == '<')			echo 'selected';?>>smaller than</option>
 					</select>
-					<input  type='text'   class='warning_condition' name='formfield[warning_conditions][<?php echo $condition_index;?>][conditional_value]' value="<?php echo $condition['conditional_value'];?>" style="width: fit-content;">
+					<input  type='text'   class='warning_condition' name='formfield[warning_conditions][<?php echo $conditionIndex;?>][conditional_value]' value="<?php echo $condition['conditional_value'];?>" style="width: fit-content;">
 					
 					<button type='button' class='warn_cond button <?php if(!empty($condition['combinator']) and $condition['combinator'] == 'and') echo 'active';?>'	title='Add a new "AND" rule' value="and">AND</button>
 					<button type='button' class='warn_cond button  <?php if(!empty($condition['combinator']) and $condition['combinator'] == 'or') echo 'active';?>'	title='Add a new "OR"  rule' value="or">OR</button>
@@ -2917,50 +3132,56 @@ class Formbuilder{
 		return $html;
 	}
 
-	function maybe_insert_form(){
+	/**
+	 * Checks if the current form exists in the db. If not, inserts it
+	 */
+	function maybeInsertForm(){
 		global $wpdb;
 		
 		//check if form row already exists
-		if($wpdb->get_var("SELECT * FROM {$this->table_name} WHERE `name` = '{$this->datatype}'") != true){
+		if($wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `name` = '{$this->formName}'") != true){
 			//Create a new form row
 			SIM\printArray("Inserting new form in db");
 			
-			$this->insert_form();
+			$this->insertForm();
 		}
 	}
 
-	function process_files($uploaded_files, $inputname){
+	/**
+	 * Rename any existing files to include the form id.
+	 */
+	function processFiles($uploadedFiles, $inputName){
 		//loop over all files uploaded in this fileinput
-		foreach ($uploaded_files as $key => $url){
-			$urlparts 	= explode('/',$url);
-			$filename	= end($urlparts);
+		foreach ($uploadedFiles as $key => $url){
+			$urlParts 	= explode('/',$url);
+			$fileName	= end($urlParts);
 			$path		= SIM\urlToPath($url);
-			$targetdir	= str_replace($filename,'',$path);
+			$targetDir	= str_replace($fileName,'',$path);
 			
 			//add input name to filename
-			$filename	= "{$inputname}_$filename";
+			$fileName	= "{$inputName}_$fileName";
 			
 			//also add submission id if not saving to meta
-			if(empty($this->formdata->settings['save_in_meta'])){
-				$filename	= $this->formresults['id']."_$filename";
+			if(empty($this->formData->settings['save_in_meta'])){
+				$fileName	= $this->formResults['id']."_$fileName";
 			}
 			
 			//Create the filename
 			$i = 0;
-			$target_file = $targetdir.$filename;
+			$targetFile = $targetDir.$fileName;
 			//add a number if the file already exists
-			while (file_exists($target_file)) {
+			while (file_exists($targetFile)) {
 				$i++;
-				$target_file = "$targetdir.$filename($i)";
+				$targetFile = "$targetDir.$fileName($i)";
 			}
 	
 			//if rename is succesfull
-			if (rename($path, $target_file)) {
+			if (rename($path, $targetFile)) {
 				//update in formdata
-				$this->formresults[$inputname][$key]	= str_replace(ABSPATH,'',$target_file);
+				$this->formResults[$inputName][$key]	= str_replace(ABSPATH, '', $targetFile);
 			}else {
 				//update in formdata
-				$this->formresults[$inputname][$key]	= str_replace(ABSPATH,'',$path);
+				$this->formResults[$inputName][$key]	= str_replace(ABSPATH,'',$path);
 			}
 		}
 	}

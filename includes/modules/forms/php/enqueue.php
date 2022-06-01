@@ -2,7 +2,7 @@
 namespace SIM\FORMS;
 use SIM;
 
-add_action( 'save_post', function($post_ID, $post){
+add_action( 'save_post', function($postId, $post){
     $hasFormbuilderShortcode    = has_shortcode($post->post_content, 'formbuilder');
 
     // Add the form if it does not exist yet
@@ -19,22 +19,22 @@ add_action( 'save_post', function($post_ID, $post){
             // Only continue if the current shortcode is a formbuilder shortcode
             if($shortcode[2] == 'formbuilder'){
                 // Get the formbuilder name from the shortcode
-                $formname       = shortcode_parse_atts($shortcode[3])['datatype'];
+                $formName       = shortcode_parse_atts($shortcode[3])['formname'];
 
                 $formbuilder    = new Formbuilder();
-                $formbuilder->get_forms();
+                $formbuilder->getForms();
 
                 // check if a form with this name already exists
                 $found  = false;
                 foreach($formbuilder->forms as $form){
-                    if($form->name == $formname){
+                    if($form->name == $formName){
                         $found  = true;
                         break;
                     }
                 }
 
                 // Only add a new form if it does not exist yet
-                if(!$found) $formbuilder->insert_form($formname);
+                if(!$found) $formbuilder->insertForm($formName);
             }
         }
     }
@@ -43,9 +43,9 @@ add_action( 'save_post', function($post_ID, $post){
         global $Modules;
 
         if(!is_array($Modules['forms']['formbuilder_pages'])){
-            $Modules['forms']['formbuilder_pages']    = [$post_ID];
-        }elseif(!in_array($post_ID, $Modules['forms']['formbuilder_pages'])){
-            $Modules['forms']['formbuilder_pages'][]  = $post_ID;
+            $Modules['forms']['formbuilder_pages']    = [$postId];
+        }elseif(!in_array($postId, $Modules['forms']['formbuilder_pages'])){
+            $Modules['forms']['formbuilder_pages'][]  = $postId;
         }
 
         update_option('sim_modules', $Modules);
@@ -61,8 +61,8 @@ add_action( 'wp_enqueue_scripts', function(){
     
     wp_register_script('sim_forms_table_script', plugins_url('js/forms_table.min.js', __DIR__), array('sim_forms_script', 'sim_table_script', 'sim_formsubmit_script'), ModuleVersion,true);
 
-    $formbuilder_pages   = SIM\get_module_option('forms', 'formbuilder_pages');
-    if(in_array(get_the_ID(), $formbuilder_pages)){
+    $formBuilderPages   = SIM\getModuleOption('forms', 'formbuilder_pages');
+    if(in_array(get_the_ID(), $formBuilderPages)){
         wp_enqueue_style('sim_forms_style');
     }
 });

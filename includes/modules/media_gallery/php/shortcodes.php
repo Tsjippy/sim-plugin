@@ -6,7 +6,7 @@ use SIM\VIMEO\VimeoApi;
 add_shortcode('mediagallery', function($atts){
     ob_start();
 
-    $url    = get_permalink( SIM\get_module_option('frontend_posting', 'publish_post_page'));
+    $url    = get_permalink( SIM\getModuleOption('frontend_posting', 'publish_post_page'));
     ?>
     <div class='mediabuttons'>
         <input type='hidden' id='paged' value=1>
@@ -59,21 +59,33 @@ add_shortcode('mediagallery', function($atts){
     return ob_get_clean();
 });
 
+/**
+ * Load more media items
+ * 
+ * @param   int     $amount         The amount to load. Default 20
+ * @param   int     $page           The current page we should load(as in skip the first X $amount). Default 1
+ * @param   int     $itemsToSkip    The amount of items to skip. Default false for none
+ * @param   array   $types          The media items to load. Default image, video and audio
+ * @param   int     $startIndex     The index to start loading from. Default 0
+ * @param   string  $search         The search words if any.
+ * 
+ * @return  string                  The html
+ */
 function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'video', 'audio'], $startIndex=0, $search=''){
     $canEdit            = in_array('editor', wp_get_current_user()->roles);
-    $all_mimes          = get_allowed_mime_types();
-    $accepted_mimes     = [];
-    foreach($all_mimes as $mime){
+    $allMimes          = get_allowed_mime_types();
+    $acceptedMimes     = [];
+    foreach($allMimes as $mime){
         $type   = explode('/', $mime)[0];
         if(in_array($type, $types)){
-            $accepted_mimes[]   = $mime;
+            $acceptedMimes[]   = $mime;
         }
     }
 
     $args = array(
         'post_status'       => 'inherit',
         'post_type'         => 'attachment',
-        'post_mime_type'    => $accepted_mimes,
+        'post_mime_type'    => $acceptedMimes,
         'posts_per_page'    => $amount, 
         'paged'             => $page,
         'meta_query'        => array(
@@ -87,17 +99,17 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
 
     if(!empty($search)) $args['s']  = $search;
     
-    $postslist = new \WP_Query( $args );
+    $postsList = new \WP_Query( $args );
 
-    $total  = $postslist->found_posts;
+    $total  = $postsList->found_posts;
 
-    if ( ! $postslist->have_posts() ) {
+    if ( ! $postsList->have_posts() ) {
         return false;
     }
 
     ob_start();
     $i  = ($page-1) * $amount-1;
-    while ( $postslist->have_posts() ) : $postslist->the_post();
+    while ( $postsList->have_posts() ) : $postsList->the_post();
         $i++;
 
         //skip if needed
@@ -105,7 +117,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
 
         $id             = get_the_ID();
         $url            = wp_get_attachment_url($id);
-        $icon_url       = $url;
+        $iconUrl        = $url;
         $title          = get_the_title();
         $mime           = get_post_mime_type();
         $type           = explode('/', $mime)[0];
@@ -117,9 +129,9 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
 
         // Replace icon with VIMEO icon
         if($type == 'video'){
-            $icon_url       = apply_filters( 'wp_mime_type_icon', SITEURL."/wp-includes/images/media/video.png", get_post_mime_type(), $id);
+            $iconUrl       = apply_filters( 'wp_mime_type_icon', SITEURL."/wp-includes/images/media/video.png", get_post_mime_type(), $id);
         }elseif($type == 'audio'){
-            $icon_url       = SITEURL."/wp-includes/images/media/audio.png";
+            $iconUrl       = SITEURL."/wp-includes/images/media/audio.png";
         }else{
             //skip if not existing, and send e-mail
             $path   = get_attached_file($id);
@@ -130,10 +142,10 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
             }
         }
 
-        $index=$startIndex+$i;
+        $index  = $startIndex + $i;
         ?>
         <div class='cell <?php echo $type;?>' data-index='<?php echo $index;?>'>
-                <img src='<?php echo $icon_url;?>' alt='<?php echo $title;?>' class='media-item' width='150' height='120' title='<?php echo $title;?>'>
+                <img src='<?php echo $iconUrl;?>' alt='<?php echo $title;?>' class='media-item' width='150' height='120' title='<?php echo $title;?>'>
             <?php
             if(!empty($description)){
             ?>

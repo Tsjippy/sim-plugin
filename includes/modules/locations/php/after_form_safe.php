@@ -9,7 +9,7 @@ add_action('sim_update_family_picture', function($userId, $attachmentId){
     $url        = wp_get_attachment_url($attachmentId);
     $iconTitle	= get_userdata($userId)->last_name.' family';
     
-    $maps->create_icon($markerId, $iconTitle, $url, 1);
+    $maps->createIcon($markerId, $iconTitle, $url, 1);
 
     //Save the marker id for all family members
     $partner    = SIM\hasPartner($userId);
@@ -32,7 +32,7 @@ add_action('sim_family_safe', function($userId){
         $title = get_userdata($userId)->last_name." family";
     }
     
-	$maps->update_marker_title($markerId, $title);
+	$maps->updateMarkerTitle($markerId, $title);
 });
 
 //Update marker whenever the location changes
@@ -54,10 +54,10 @@ add_action('sim_location_update', function($userId, $location){
     //Marker does not exist, create it
     if (!is_numeric($markerId)){			
         //Create a marker
-        $maps->create_marker($userId, $location);
+        $maps->createUserMarker($userId, $location);
     //Marker needs an update
     }else{
-        $maps->update_marker_location($markerId, $location);
+        $maps->updateMarkerLocation($markerId, $location);
     }
 }, 10, 2);
 
@@ -65,14 +65,14 @@ add_action('sim_location_update', function($userId, $location){
 add_action('sim_location_removal', function($userId){
 	//Delete the marker as well
     $maps   = new Maps();
-	$maps->remove_personal_marker($userId);
+	$maps->removePersonalMarker($userId);
     delete_user_meta( $userId, 'marker_id');
 });
 
 
 // Update marker icon when family picture is changed
-add_filter('before_saving_formdata',function($formresults, $formname, $userId){
-	if($formname != 'profile_picture') return $formresults;	
+add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
+	if($formName != 'profile_picture') return $formResults;	
 	
 	$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
 	$family				= get_user_meta($userId, 'family', true);
@@ -84,15 +84,15 @@ add_filter('before_saving_formdata',function($formresults, $formname, $userId){
 		
 		//New profile picture is set, update the marker icon
 		if(is_numeric(get_user_meta($userId,'profile_picture',true))){
-			$icon_url = SIM\USERMANAGEMENT\get_profile_picture_url($userId);
+			$icon_url = SIM\USERMANAGEMENT\getProfilePictureUrl($userId);
 			
 			//Save profile picture as icon
-			$maps->create_icon($markerId, get_userdata($userId)->user_login, $icon_url, 1);
+			$maps->createIcon($markerId, get_userdata($userId)->user_login, $icon_url, 1);
 		}else{
 			//remove the icon
-			$maps->remove_icon($markerId);
+			$maps->removeIcon($markerId);
 		}
 	}
 
-	return $formresults;
+	return $formResults;
 },10,3);

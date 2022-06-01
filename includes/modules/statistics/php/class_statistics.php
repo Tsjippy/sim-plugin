@@ -5,19 +5,22 @@ use SIM;
 class Statistics {
     function __construct(){
         global $wpdb;
-        $this->table_name				= $wpdb->prefix . 'sim_statistics';
+        $this->tableName				= $wpdb->prefix . 'sim_statistics';
     }
 
-    function create_db_table(){
+    /**
+     * Create the statistics table if it does not exist
+     */
+    function createDbTable(){
 		if ( !function_exists( 'maybe_create_table' ) ) { 
 			require_once ABSPATH . '/wp-admin/install-helper.php'; 
 		} 
 		
 		//only create db if it does not exist
 		global $wpdb;
-		$charset_collate = $wpdb->get_charset_collate();
+		$charsetCollate = $wpdb->get_charset_collate();
 
-		$sql = "CREATE TABLE {$this->table_name} (
+		$sql = "CREATE TABLE {$this->tableName} (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             timecreated datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
             timelastedited datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
@@ -25,25 +28,28 @@ class Statistics {
             url longtext NOT NULL,
             counter int NOT NULL,
             PRIMARY KEY  (id)
-		) $charset_collate;";
+		) $charsetCollate;";
 
-		maybe_create_table($this->table_name, $sql );
+		maybe_create_table($this->tableName, $sql );
 	}
 
-    function add_page_view(){
+    /**
+     * Add a viewed paged entry to db
+     */
+    function addPageView(){
         global $wpdb;
-        $userId        = get_current_user_id();
+        $userId         = get_current_user_id();
         $url            = str_replace(SITEURL,'',$_POST['url']);
-        $creation_date	= date("Y-m-d H:i:s");
+        $creationDate	= date("Y-m-d H:i:s");
 
-        $pageviews  = $wpdb->get_var( "SELECT counter FROM {$this->table_name} WHERE userid='$userId' AND url='$url'" );
+        $pageViews  = $wpdb->get_var( "SELECT counter FROM {$this->tableName} WHERE userid='$userId' AND url='$url'" );
         
-        if(is_numeric($pageviews)){
+        if(is_numeric($pageViews)){
             $wpdb->update(
-                $this->table_name, 
+                $this->tableName, 
                 array(
-                    'timelastedited'=> $creation_date,
-                    'counter'	 	=> $pageviews+1
+                    'timelastedited'=> $creationDate,
+                    'counter'	 	=> $pageViews + 1
                 ), 
                 array(
                     'userid'		=> $userId,
@@ -52,10 +58,10 @@ class Statistics {
             );
         }else{
             $wpdb->insert(
-				$this->table_name, 
+				$this->tableName, 
 				array(
-                    'timecreated'   => $creation_date,
-                    'timelastedited'=> $creation_date,
+                    'timecreated'   => $creationDate,
+                    'timelastedited'=> $creationDate,
 					'userid'		=> $userId,
                     'url'           => $url,
 					'counter'	    => 1

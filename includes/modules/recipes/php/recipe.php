@@ -15,47 +15,47 @@ add_action('init', function(){
 	SIM\registerPostTypeAndTax('recipe','recipes');
 }, 999);
 
-add_filter( 'widget_categories_args', function ( $cat_args, $instance  ) {
+add_filter( 'widget_categories_args', function ( $catArgs, $instance  ) {
 	//if we are on a recipes page, change to display the recipe types
 	if(is_tax('recipes') or is_page('recipes') or get_post_type()=='recipe'){
-		$cat_args['taxonomy'] 		= 'recipes';
-		$cat_args['hierarchical']	= true;
-		$cat_args['hide_empty'] 	= false;
+		$catArgs['taxonomy'] 		= 'recipes';
+		$catArgs['hierarchical']	= true;
+		$catArgs['hide_empty'] 		= false;
 	}
 		
-    return $cat_args;
+    return $catArgs;
 }, 10, 2 );
 
 //Add to frontend form
-add_action('frontend_post_before_content', __NAMESPACE__.'\recipe_specific_fields');
-add_action('frontend_post_content_title', __NAMESPACE__.'\recipe_title');
-add_action('sim_after_post_save', __NAMESPACE__.'\store_recipe_meta',10,2);
+add_action('sim_frontend_post_before_content', __NAMESPACE__.'\recipeSpecificFields');
+add_action('sim_frontend_post_content_title', __NAMESPACE__.'\recipeTitle');
+add_action('sim_after_post_save', __NAMESPACE__.'\storeRecipeMeta', 10, 2);
 
 add_filter('sim_frontend_posting_modals', function($types){
 	$types[]	= 'recipe';
 	return $types;
 });
 
-function recipe_title($post_type){
+function recipeTitle($postType){
 	//Recipe content title
 	$class = 'recipe';
-	if($post_type != 'recipe')	$class .= ' hidden';
+	if($postType != 'recipe')	$class .= ' hidden';
 	
 	echo "<h4 class='$class' name='recipe_content_label'>";
 		echo 'Recipe instructions (one per line)';
 	echo "</h4>";
 }
 
-function store_recipe_meta($post, $post_type){
+function storeRecipeMeta($post, $postType){
 	//store recipetype
-	$recipetypes = [];
+	$recipeTypes = [];
 	if(is_array($_POST['recipetype'])){
-		foreach($_POST['recipetype'] as $key=>$recipetype) {
-			if($recipetype != '') $recipetypes[] = $recipetype;
+		foreach($_POST['recipetype'] as $key=>$recipeType) {
+			if($recipeType != '') $recipetypes[] = $recipeType;
 		}
 		
 		//Store recipe type
-		wp_set_post_terms($post->ID,$recipetypes,'recipes');
+		wp_set_post_terms($post->ID, $recipeTypes, 'recipes');
 	}
 	
 	//ingredients
@@ -67,14 +67,14 @@ function store_recipe_meta($post, $post_type){
 			//0 or more numbers followed by 0 or more spaces followed by 1 or more digits followed by a / followed by 1 or more digits
 			'/([0-9]*)(\s*)([0-9]+)\/([0-9]+)/m', 
 			function($matches){
-				$fraction 			= round($matches[3]/$matches[4],2); //max 2 decimals
-				$preceeding_number 	= $matches[1];
+				$fraction 			= round($matches[3] / $matches[4], 2); //max 2 decimals
+				$preceedingNumber 	= $matches[1];
 				$space				= $matches[2];
 				
 				//If there is a number before the fraction
-				if($preceeding_number != ''){
+				if($preceedingNumber != ''){
 					//combine the two
-					$value = $preceeding_number + $fraction;
+					$value = $preceedingNumber + $fraction;
 					//do not return the space
 					$space = '';
 				}else{
@@ -99,23 +99,23 @@ function store_recipe_meta($post, $post_type){
 		);
 		
 		//Store ingredients
-		update_metadata( 'post', $post->ID,'ingredients',$ingredients);
+		update_metadata( 'post', $post->ID, 'ingredients', $ingredients);
 	}
 	
 	//time_needed
 	if(isset($_POST['time_needed']) and is_numeric($_POST['time_needed'])){
 		//Store time_needed
-		update_metadata( 'post', $post->ID,'time_needed',$_POST['time_needed']);
+		update_metadata( 'post', $post->ID, 'time_needed', $_POST['time_needed']);
 	}
 	
 	//serves
 	if(isset($_POST['serves']) and is_numeric($_POST['serves'])){
 		//Store serves
-		update_metadata( 'post', $post->ID,'serves',$_POST['serves']);
+		update_metadata( 'post', $post->ID,'serves', $_POST['serves']);
 	}
 }
 
-function recipe_specific_fields($frontEndContent){
+function recipeSpecificFields($frontEndContent){
 	$categories	= get_categories( array(
 		'orderby' => 'name',
 		'order'   => 'ASC',
@@ -150,18 +150,18 @@ function recipe_specific_fields($frontEndContent){
 add_action('sim_before_page_print', function($post, $pdf){
 	//If recipe
 	if($post->post_type == 'recipe'){
-		$pdf->print_image(get_the_post_thumbnail_url($post),-1,20,-1,-1,true,true);
+		$pdf->printImage(get_the_post_thumbnail_url($post),-1,20,-1,-1,true,true);
 
 		$baseUrl	= plugins_url('pictures', __DIR__);
 		
 		//Duration
 		$url = "{$baseUrl}/time.png";
-		$pdf->print_image($url,10,-1,10,10);
+		$pdf->printImage($url,10,-1,10,10);
 		$pdf->write(10,get_post_meta($post->ID,'time_needed',true).' minutes');
 		
 		//Serves
 		$url = "{$baseUrl}/recipe_serves.png";
-		$pdf->print_image($url,55,-1,10,10);
+		$pdf->printImage($url,55,-1,10,10);
 		
 		$persons = get_post_meta(get_the_ID(),'serves',true);
 		if($persons == 1){

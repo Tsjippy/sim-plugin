@@ -44,7 +44,7 @@ add_shortcode('create_user_account', function ($atts){
 				<?php 
 				do_action('sim_after_user_create_form');
 				
-				echo SIM\add_save_button('adduseraccount', 'Add user account');
+				echo SIM\addSaveButton('adduseraccount', 'Add user account');
 				?>
 			</form>
 		</div>
@@ -97,30 +97,32 @@ add_shortcode('pending_user',function ($atts){
 		}
 		
 		//Display pening user accounts
-		$initial_html = "";
-		$html = $initial_html;
+		$list = '';
 		//Get all the users who need approval
-		$pending_users = get_users(array(
+		$pendingUsers = get_users(array(
 			'meta_key'     => 'disabled',
 			'meta_value'   => 'pending',
 			'meta_compare' => '=',
 		));
 		
 		// Array of WP_User objects.
-		if ( $pending_users ) {
-			$html .= "<p><strong>Pending user accounts:</strong><br><ul>";
-			foreach ( $pending_users as $pending_user ) {
-				$userdata = get_userdata($pending_user->ID);
-				$approve_url = add_query_arg( 'activate_pending_user', $pending_user->ID);
-				$delete_url = add_query_arg( 'delete_pending_user', $pending_user->ID);
-				$html .= '<li>'.$pending_user->display_name.'  ('.$userdata->user_email.') <a href="'.$approve_url.'">Approve</a>   <a href="'.$delete_url.'">Delete</a></li>';
+		if ( $pendingUsers ) {
+			foreach ( $pendingUsers as $pendingUser ) {
+				$approveUrl	 = add_query_arg( 'activate_pending_user', $pendingUser->ID);
+				$deleteUrl	 = add_query_arg( 'delete_pending_user', $pendingUser->ID);
+				$list		.= "<li>$pendingUser->display_name  ($pendingUser->user_email) <a href='$approveUrl'>Approve</a>   <a href='$deleteUrl'>Delete</a></li>";
 			}
 		}else{
 			return "<p>There are no pending user accounts.</p>";
 		}
 		
-		if ($html != $initial_html){
-			$html.="</ul></p>";
+		if (!empty($html)){
+			$html 	 = "<p>";
+				$html	.= "<strong>Pending user accounts:</strong><br>";
+				$html	.= "<ul>";
+					$html	.= $list;
+				$html	.="</ul>";
+			$html	.= "</p>";
 			return $html;
 		}
 	}
@@ -128,68 +130,68 @@ add_shortcode('pending_user',function ($atts){
 
 //Shortcode to display number of pending user accounts
 add_shortcode('pending_user_icon',function ($atts){
-	$pending_users = get_users(array(
+	$pendingUsers = get_users(array(
 		'meta_key'     => 'disabled',
 		'meta_value'   => 'pending',
 		'meta_compare' => '=',
 	));
 	
-	if (count($pending_users) > 0){
-		return '<span class="numberCircle">'.count($pending_users).'</span>';
+	if (count($pendingUsers) > 0){
+		return '<span class="numberCircle">'.count($pendingUsers).'</span>';
 	}
 });
 
 //Shortcode for the dashboard
 add_action('sim_dashboard_warnings', function($userId){
-	$personnelCoordinatorEmail	= SIM\get_module_option('user_management', 'personnel_email');
+	$personnelCoordinatorEmail	= SIM\getModuleOption('user_management', 'personnel_email');
 
 	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
 		$userId	= $_GET["userid"];
 	}else{
 		$userId = get_current_user_id();
 	}
-	$remindercount = 0;
-	$reminder_html = "";
+	$reminderCount = 0;
+	$reminderHtml = "";
 	
-	$visa_info = get_user_meta( $userId, "visa_info",true);
-	if (is_array($visa_info) and isset($visa_info['greencard_expiry'])){
-		$reminder_html .= check_expiry_date($visa_info['greencard_expiry'],'greencard');
-		if($reminder_html != ""){
-			$remindercount = 1;
-			$reminder_html .= '<br>';
+	$visaInfo = get_user_meta( $userId, "visa_info",true);
+	if (is_array($visaInfo) and isset($visaInfo['greencard_expiry'])){
+		$reminderHtml .= checkExpiryDate($visaInfo['greencard_expiry'],'greencard');
+		if($reminderHtml != ""){
+			$reminderCount = 1;
+			$reminderHtml .= '<br>';
 		}
 	}
 		
-	$vaccination_reminder_html = vaccination_reminders($userId);
+	$vaccinationReminderHtml = vaccinationReminders($userId);
 	
-	if ($vaccination_reminder_html != ""){
-		$remindercount += 1;
-		$reminder_html .= $vaccination_reminder_html ;
+	if ($vaccinationReminderHtml != ""){
+		$reminderCount += 1;
+		$reminderHtml .= $vaccinationReminderHtml ;
 	}
 	
 	//Check for children
 	$family = get_user_meta($userId,"family",true);
 	//User has children
 	if (isset($family["children"])){
-		$child_vaccination_reminder_html = "";
+		$childVaccinationReminderHtml = "";
 		foreach($family["children"] as $key=>$child){
-			$result = vaccination_reminders($child);
+			$result = vaccinationReminders($child);
 			if ($result != ""){
-				$remindercount += 1;
-				$userdata = get_userdata($child);
-				$reminder_html .= str_replace("Your",$userdata->first_name."'s",$result);
+				$reminderCount	+= 1;
+				$userdata 		= get_userdata($child);
+				$reminderHtml	.= str_replace("Your", $userdata->first_name."'s", $result);
 			}
 		}
 	}
 	
 	//Check for upcoming reviews, but only if not set to be hidden for this year
-	if(get_user_meta($userId,'hide_annual_review',true) != date('Y')){
-		$personnel_info 				= get_user_meta($userId,"personnel",true);
-		if(is_array($personnel_info) and !empty($personnel_info['review_date'])){
+	if(get_user_meta($userId, 'hide_annual_review', true) != date('Y')){
+		$personnelInfo 				= get_user_meta($userId,"personnel",true);
+		if(is_array($personnelInfo) and !empty($personnelInfo['review_date'])){
 			//Hide annual review warning
 			if(isset($_GET['hide_annual_review']) and $_GET['hide_annual_review'] == date('Y')){
 				//Save in the db
-				update_user_meta($userId,'hide_annual_review',date('Y'));
+				update_user_meta($userId, 'hide_annual_review', date('Y'));
 				
 				//Get the current url withouth the get params
 				$url = str_replace('hide_annual_review='.date('Y'),'', SIM\currentUrl());
@@ -197,34 +199,40 @@ add_action('sim_dashboard_warnings', function($userId){
 				header ("Location: $url");
 			}
 			
-			$reviewdate	= date('F', strtotime($personnel_info['review_date']));
+			$reviewDate	= date('F', strtotime($personnelInfo['review_date']));
 			//If this month is the review month or the month before the review month
-			if($reviewdate == date('F') or date('F', strtotime('-1 month',strtotime($reviewdate))) == date('F')){			
-				$generic_documents = get_option('personnel_documents');
-				if(is_array($generic_documents) and !empty($generic_documents['Annual review form'])){
-					$reminder_html .= "Please fill in the annual review questionary.<br>";
-					$reminder_html .= 'Find it <a href="'.SITEURL.'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
-					$reminder_html .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
-					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\currentUrl() );
-					$reminder_html .= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
+			if($reviewDate == date('F') or date('F', strtotime('-1 month', strtotime($reviewDate))) == date('F')){			
+				$genericDocuments = get_option('personnel_documents');
+				if(is_array($genericDocuments) and !empty($genericDocuments['Annual review form'])){
+					$reminderHtml .= "Please fill in the annual review questionary.<br>";
+					$reminderHtml .= 'Find it <a href="'.SITEURL.'/'.$genericDocuments['Annual review form'].'">here</a>.<br>';
+					$reminderHtml .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
+					$url			= add_query_arg( 'hide_annual_review', date('Y'), SIM\currentUrl() );
+					$reminderHtml .= "<a class='button sim' href='$url' style='margin-top:10px;'>I already send it!</a><br>";
 				}
 			}
 		}
 	}
 	
-	if ($reminder_html != ""){
-		$html = '<h3 class="frontpage">';
-		if($remindercount > 1){
-			$html .= 'Reminders</h3><p>'.$reminder_html;
+	if (!empty($reminderHtml)){
+		$text	= 'Reminders';
+		
+		if($reminderCount < 2){
+			$reminderHtml = str_replace(['</li>','<li>'], '', $reminderHtml);
+			$text	= 'Reminder';
 		}else{
-			$reminder_html = str_replace('</li>','',str_replace('<li>',"",$reminder_html));
-			$html .= 'Reminder</h3><p>'.$reminder_html;
+			$reminderHtml = str_replace(['</li>','<li>'], '', $reminderHtml);
 		}
 		
-		$html =  '<div id=reminders>'.$html.'</p></div>';
+		?>
+		<div id=reminders>
+			<h3 class='frontpage'><?php echo $text;?></h3>
+			<p>
+				<?php echo $reminderHtml;?>
+			</p>
+		</div>
+		<?php
 	}
-	
-	echo $html;
 });
 
 
@@ -236,51 +244,50 @@ add_filter('sim_loggedin_homepage',  function($content){
 //Shortcode for expiry warnings
 add_shortcode("expiry_warnings", __NAMESPACE__.'\expiryWarnings');
 function expiryWarnings(){
-	$personnelCoordinatorEmail	= SIM\get_module_option('user_management', 'personnel_email');
+	$personnelCoordinatorEmail	= SIM\getModuleOption('user_management', 'personnel_email');
 
 	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
 		$userId	= $_GET["userid"];
 	}else{
 		$userId = get_current_user_id();
 	}
-	$remindercount = 0;
-	$reminder_html = "";
+	$reminderCount	= 0;
+	$reminderHtml	= "";
 	
-	$visa_info = get_user_meta( $userId, "visa_info",true);
-	if (is_array($visa_info) and isset($visa_info['greencard_expiry'])){
-		$reminder_html .= check_expiry_date($visa_info['greencard_expiry'],'greencard');
-		if($reminder_html != ""){
-			$remindercount = 1;
-			$reminder_html .= '<br>';
+	$visaInfo = get_user_meta( $userId, "visa_info",true);
+	if (is_array($visaInfo) and isset($visaInfo['greencard_expiry'])){
+		$reminderHtml .= checkExpiryDate($visaInfo['greencard_expiry'],'greencard');
+		if($reminderHtml != ""){
+			$reminderCount = 1;
+			$reminderHtml .= '<br>';
 		}
 	}
 		
-	$vaccination_reminder_html = vaccination_reminders($userId);
+	$vaccinationReminderHtml = vaccinationReminders($userId);
 	
-	if ($vaccination_reminder_html != ""){
-		$remindercount += 1;
-		$reminder_html .= $vaccination_reminder_html ;
+	if ($vaccinationReminderHtml != ""){
+		$reminderCount += 1;
+		$reminderHtml .= $vaccinationReminderHtml ;
 	}
 	
 	//Check for children
 	$family = get_user_meta($userId,"family",true);
 	//User has children
 	if (isset($family["children"])){
-		$child_vaccination_reminder_html = "";
 		foreach($family["children"] as $key=>$child){
-			$result = vaccination_reminders($child);
+			$result = vaccinationReminders($child);
 			if ($result != ""){
-				$remindercount += 1;
-				$userdata = get_userdata($child);
-				$reminder_html .= str_replace("Your",$userdata->first_name."'s",$result);
+				$reminderCount += 1;
+				$userdata 		= get_userdata($child);
+				$reminderHtml	.= str_replace("Your",$userdata->first_name."'s",$result);
 			}
 		}
 	}
 	
 	//Check for upcoming reviews, but only if not set to be hidden for this year
 	if(get_user_meta($userId,'hide_annual_review',true) != date('Y')){
-		$personnel_info 				= get_user_meta($userId,"personnel",true);
-		if(is_array($personnel_info) and !empty($personnel_info['review_date'])){
+		$personnelInfo 				= get_user_meta($userId,"personnel",true);
+		if(is_array($personnelInfo) and !empty($personnelInfo['review_date'])){
 			//Hide annual review warning
 			if(isset($_GET['hide_annual_review']) and $_GET['hide_annual_review'] == date('Y')){
 				//Save in the db
@@ -292,31 +299,31 @@ function expiryWarnings(){
 				header ("Location: $url");
 			}
 			
-			$reviewdate	= date('F', strtotime($personnel_info['review_date']));
+			$reviewDate	= date('F', strtotime($personnelInfo['review_date']));
 			//If this month is the review month or the month before the review month
-			if($reviewdate == date('F') or date('F', strtotime('-1 month',strtotime($reviewdate))) == date('F')){			
-				$generic_documents = get_option('personnel_documents');
-				if(is_array($generic_documents) and !empty($generic_documents['Annual review form'])){
-					$reminder_html .= "Please fill in the annual review questionary.<br>";
-					$reminder_html .= 'Find it <a href="'.SITEURL.'/'.$generic_documents['Annual review form'].'">here</a>.<br>';
-					$reminder_html .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
-					$url = add_query_arg( 'hide_annual_review', date('Y'), SIM\currentUrl() );
-					$reminder_html .= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
+			if($reviewDate == date('F') or date('F', strtotime('-1 month', strtotime($reviewDate))) == date('F')){			
+				$genericDocuments = get_option('personnel_documents');
+				if(is_array($genericDocuments) and !empty($genericDocuments['Annual review form'])){
+					$reminderHtml 	.= "Please fill in the annual review questionary.<br>";
+					$reminderHtml 	.= 'Find it <a href="'.SITEURL.'/'.$genericDocuments['Annual review form'].'">here</a>.<br>';
+					$reminderHtml 	.= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
+					$url 			= add_query_arg( 'hide_annual_review', date('Y'), SIM\currentUrl() );
+					$reminderHtml 	.= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
 				}
 			}
 		}
 	}
 	
-	if ($reminder_html != ""){
+	if ($reminderHtml != ""){
 		$html = '<h3 class="frontpage">';
-		if($remindercount > 1){
-			$html .= 'Reminders</h3><p>'.$reminder_html;
+		if($reminderCount > 1){
+			$html 			.= 'Reminders</h3><p>'.$reminderHtml;
 		}else{
-			$reminder_html = str_replace('</li>','',str_replace('<li>',"",$reminder_html));
-			$html .= 'Reminder</h3><p>'.$reminder_html;
+			$reminderHtml 	= str_replace('</li>','',str_replace('<li>',"",$reminderHtml));
+			$html 			.= 'Reminder</h3><p>'.$reminderHtml;
 		}
 		
-		$html =  '<div id=reminders>'.$html.'</p></div>';
+		$html 				=  '<div id=reminders>'.$html.'</p></div>';
 	}
 	
 	return $html;
@@ -332,27 +339,26 @@ function user_info_page($atts){
 		$a = shortcode_atts( array(
 			'currentuser' => false,
 		), $atts );
-		$show_current_user_data = $a['currentuser'];
+		$showCurrentUserData = $a['currentuser'];
 		
 		//Variables
-		$medical_roles		= ["medicalinfo"];
-		$generic_info_roles = array_merge(['usermanagement'],$medical_roles,['administrator']);
+		$medicalRoles		= ["medicalinfo"];
+		$genericInfoRoles = array_merge(['usermanagement'],$medicalRoles,['administrator']);
 
 		$user 				= wp_get_current_user();
-		$user_roles 		= $user->roles;
+		$userRoles 			= $user->roles;
 		$tabs				= [];
-		$select_user_html	= '';
 		$html				= '';
-		$user_age 			= 19;
+		$userAge 			= 19;
 	
 		//Showing data for current user
-		if($show_current_user_data){
+		if($showCurrentUserData){
 			$userId = get_current_user_id();
 		//Display a select to choose which users data should be shown
 		}else{
-			$userSelectRoles	= apply_filters('sim_user_page_dropdown', $generic_info_roles);
+			$userSelectRoles	= apply_filters('sim_user_page_dropdown', $genericInfoRoles);
 			//Show the select user to allowed user only
-			if(array_intersect($userSelectRoles, $user_roles )){
+			if(array_intersect($userSelectRoles, $userRoles )){
 				$a = shortcode_atts( 
 					array('id' => '', ), 
 					$atts 
@@ -365,8 +371,8 @@ function user_info_page($atts){
 					echo SIM\userSelect("Select an user to show the data of:");
 				}
 
-				$user_birthday = get_user_meta($userId, "birthday", true);
-				if($user_birthday != "")	$user_age = date_diff(date_create(date("Y-m-d")),date_create($user_birthday))->y;
+				$userBirthday = get_user_meta($userId, "birthday", true);
+				if($userBirthday != "")	$userAge = date_diff(date_create(date("Y-m-d")),date_create($userBirthday))->y;
 				
 			}else{
 				return "<p>You do not have permission to see this, sorry.</p>";
@@ -378,8 +384,8 @@ function user_info_page($atts){
 			/*
 				Dashboard
 			*/
-			if(in_array('usermanagement', $user_roles ) or $show_current_user_data){
-				if($show_current_user_data){
+			if(in_array('usermanagement', $userRoles ) or $showCurrentUserData){
+				if($showCurrentUserData){
 					$admin 		= false;
 				}else{
 					$admin 		= true;
@@ -393,27 +399,27 @@ function user_info_page($atts){
 			/*
 				Family Info
 			*/
-			if(array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data){
-				if($user_age > 18){
+			if(array_intersect($genericInfoRoles, $userRoles ) or $showCurrentUserData){
+				if($userAge > 18){
 					//Tab button
 					$tabs[]	= '<li class="tablink" id="show_family_info" data-target="family_info">Family</li>';
 					
 					//Content
-					$family_html = '<div id="family_info" class="tabcontent hidden">';
+					$familyHtml = '<div id="family_info" class="tabcontent hidden">';
 
-						$family_html .= do_shortcode('[formbuilder datatype=user_family]');
+						$familyHtml .= do_shortcode('[formbuilder formname=user_family]');
 						
-					$family_html .= '</div>';
+					$familyHtml .= '</div>';
 				}
 
-				$html.= $family_html;
+				$html.= $familyHtml;
 			}
 			
 			/*
 				GENERIC Info
 			*/
-			if(array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data){
-				$account_validity = get_user_meta( $userId, 'account_validity',true);
+			if(array_intersect($genericInfoRoles, $userRoles ) or $showCurrentUserData){
+				$accountValidity = get_user_meta( $userId, 'account_validity',true);
 				
 				//Add a tab button
 				$tabs[]	= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
@@ -425,36 +431,36 @@ function user_info_page($atts){
 				?>
 				<div id="generic_info" class="tabcontent hidden">
 					<?php
-					if($account_validity != '' and $account_validity != 'unlimited' and !is_numeric($account_validity)){
-						$removal_date 	= date_create($account_validity);
+					if($accountValidity != '' and $accountValidity != 'unlimited' and !is_numeric($accountValidity)){
+						$removalDate 	= date_create($accountValidity);
 						?>
 					
 						<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'>
 							<?php
-							if(array_intersect($generic_info_roles, $user_roles )){
+							if(array_intersect($genericInfoRoles, $userRoles )){
 								wp_enqueue_script( 'sim_user_management');
 								?>
 								<form>
 									<input type="hidden" name="userid" value="<?php echo $userId = $_GET['userid'];?>">
-									This user account is only valid till <?php echo date_format($removal_date,"d F Y");?>
+									This user account is only valid till <?php echo date_format($removalDate,"d F Y");?>
 									<br>
 									<br>
 									Change expiry date to
-									<input type='date' name='new_expiry_date' min='<?php echo $account_validity;?>' style='width:auto; display: initial; padding:0px; margin:0px;'>
+									<input type='date' name='new_expiry_date' min='<?php echo $accountValidity;?>' style='width:auto; display: initial; padding:0px; margin:0px;'>
 									<br>
 									<input type='checkbox' name='unlimited' value='unlimited' style='width:auto; display: initial; padding:0px; margin:0px;'>
 									<label for='unlimited'> Check if the useraccount should never expire.</label>
 									<br>
 									<?php
 								
-									echo SIM\add_save_button('extend_validity', 'Change validity');
+									echo SIM\addSaveButton('extend_validity', 'Change validity');
 									?>
 								</form>
 								<?php
 							}else{
 								?>
 								<p>
-									Your user account will be automatically deactivated on <?php echo date_format($removal_date,"d F Y");?>.
+									Your user account will be automatically deactivated on <?php echo date_format($removalDate,"d F Y");?>.
 								</p>
 								<?php
 							}
@@ -463,7 +469,7 @@ function user_info_page($atts){
 						<?php
 					}
 
-					echo do_shortcode('[formbuilder datatype=user_generics]');
+					echo do_shortcode('[formbuilder formname=user_generics]');
 					?>
 				</div>
 				<?php
@@ -475,21 +481,21 @@ function user_info_page($atts){
 			/*
 				Location Info
 			*/
-			if(array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data){
+			if(array_intersect($genericInfoRoles, $userRoles ) or $showCurrentUserData){
 				//Add tab button
 				$tabs[]	= '<li class="tablink" id="show_location_info" data-target="location_info">Location</li>';
 				
 				//Content
-				$location_html = '<div id="location_info" class="tabcontent hidden">';
-				$location_html .= do_shortcode('[formbuilder datatype=user_location]');
-				$location_html .= '</div>';
-				$html	.= $location_html;
+				$locationHtml = '<div id="location_info" class="tabcontent hidden">';
+					$locationHtml .= do_shortcode('[formbuilder formname=user_location]');
+				$locationHtml .= '</div>';
+				$html	.= $locationHtml;
 			}
 			
 			/*
 				LOGIN Info
 			*/
-			if(in_array('usermanagement', $user_roles )){				
+			if(in_array('usermanagement', $userRoles )){				
 				//Add a tab button
 				$tabs[]	= '<li class="tablink" id="show_login_info" data-target="login_info">Login info</li>';
 				
@@ -499,43 +505,43 @@ function user_info_page($atts){
 			/*
 				PROFILE PICTURE Info
 			*/
-			if(in_array('usermanagement',$user_roles ) or $show_current_user_data){
+			if(in_array('usermanagement',$userRoles ) or $showCurrentUserData){
 				//Add tab button
 				$tabs[]	= '<li class="tablink" id="show_profile_picture_info" data-target="profile_picture_info">Profile picture</li>';
 				
 				//Content
-				$picture_html = '<div id="profile_picture_info" class="tabcontent hidden">';
-					$picture_html .= do_shortcode('[formbuilder datatype=profile_picture]');
-				$picture_html .= '</div>';
+				$pictureHtml = '<div id="profile_picture_info" class="tabcontent hidden">';
+					$pictureHtml .= do_shortcode('[formbuilder formname=profile_picture]');
+				$pictureHtml .= '</div>';
 
-				$html	.= $picture_html;
+				$html	.= $pictureHtml;
 			}
 			
 			/*
 				Roles
 			*/
-			if(in_array('rolemanagement', $user_roles ) or in_array('administrator', $user_roles )){
+			if(in_array('rolemanagement', $userRoles ) or in_array('administrator', $userRoles )){
 				//Add a tab button
 				$tabs[]	= '<li class="tablink" id="show_roles" data-target="role_info">Roles</li>';
 				
 				//Content
-				$role_html = '<div id="role_info" class="tabcontent hidden">'; 
-				$role_html .= display_roles($userId);
-				$role_html .= '</div>';
+				$roleHtml = '<div id="role_info" class="tabcontent hidden">'; 
+					$roleHtml .= displayRoles($userId);
+				$roleHtml .= '</div>';
 
-				$html	.= $role_html;
+				$html	.= $roleHtml;
 			}
 				
 			/*
 				SECURITY INFO
 			*/
-			if((array_intersect($generic_info_roles, $user_roles ) or $show_current_user_data)){				
+			if((array_intersect($genericInfoRoles, $userRoles ) or $showCurrentUserData)){				
 				//Tab button
 				$tabs[]	= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
 				
 				//Content
 				$security = "<div id='security_info' class='tabcontent hidden'>";
-					$security .= do_shortcode('[formbuilder datatype=security_questions]');
+					$security .= do_shortcode('[formbuilder formname=security_questions]');
 				$security .= '</div>';
 
 				$html	.= $security;
@@ -544,8 +550,8 @@ function user_info_page($atts){
 			/*
 				Vaccinations Info
 			*/
-			if((array_intersect($medical_roles, $user_roles) or $show_current_user_data)){
-				if($show_current_user_data){
+			if((array_intersect($medicalRoles, $userRoles) or $showCurrentUserData)){
+				if($showCurrentUserData){
 					$active = '';
 					$class = 'class="hidden"';
 				}else{
@@ -560,7 +566,7 @@ function user_info_page($atts){
 				ob_start();
 				?>
 				<div id='medical_info' <?php echo $class;?>>
-					<?php echo do_shortcode('[formbuilder datatype=user_medical]');?>
+					<?php echo do_shortcode('[formbuilder formname=user_medical]');?>
 					<form method="post" id="print_medicals-form">
 						<input type="hidden" name="userid" id="userid" value="'.$userId.'">
 						<button class="button button-primary" type="submit" name="print_medicals" value="generate">Export data as PDF</button>
@@ -575,33 +581,32 @@ function user_info_page($atts){
 			}
 
 			//  Add filter to add extra pages, children tabs should always be last
-			$filtered_html	= apply_filters('sim_user_info_page', ['tabs'=>$tabs, 'html'=>$html], $show_current_user_data, $user, $user_age);
-			$tabs		 	= $filtered_html['tabs'];
-			$html	 		= $filtered_html['html'];
+			$filteredHtml	= apply_filters('sim_user_info_page', ['tabs'=>$tabs, 'html'=>$html], $showCurrentUserData, $user, $userAge);
+			$tabs		 	= $filteredHtml['tabs'];
+			$html	 		= $filteredHtml['html'];
 			
 			/*
 				CHILDREN TABS
 			*/
-			if($show_current_user_data){
+			if($showCurrentUserData){
 				$family = get_user_meta($userId,'family',true);
 				if(is_array($family) and isset($family['children']) and is_array($family['children'])){
 					foreach($family['children'] as $child_id){
-						$first_name = get_userdata($child_id)->first_name;
+						$firstName = get_userdata($child_id)->first_name;
 						//Add tab button
-						$tabs[]	= "<li class='tablink' id='show_child_info_$child_id' data-target='child_info_$child_id'>$first_name</li>";
+						$tabs[]	= "<li class='tablink' id='show_child_info_$child_id' data-target='child_info_$child_id'>$firstName</li>";
 						
 						//Content
-						$child_html = "<div id='child_info_$child_id' class='tabcontent hidden'>";
-							$child_html .= show_children_fields($child_id);
-						$child_html .= '</div>';
+						$childHtml = "<div id='child_info_$child_id' class='tabcontent hidden'>";
+							$childHtml .= show_children_fields($child_id);
+						$childHtml .= '</div>';
 						
-						$html	.= $child_html;
+						$html	.= $childHtml;
 					}
 				}
 			}
 		}
 
-		$result	= $select_user_html;
 		$result	.= "<nav id='profile_menu'>";
 			$result	.= "<ul id='profile_menu_list'>";
 			foreach($tabs as $tab){
@@ -616,8 +621,8 @@ function user_info_page($atts){
 		$result	.= "</div>";
 
 		return $result;
-	}elseif(function_exists('SIM\LOGIN\login_modal')){
-		echo SIM\LOGIN\login_modal("You do not have permission to see this, sorry.");
+	}elseif(function_exists('SIM\LOGIN\loginModal')){
+		echo SIM\LOGIN\loginModal("You do not have permission to see this, sorry.");
 	}
 }
 
@@ -637,13 +642,13 @@ add_shortcode( 'delete_user', function(){
 			$userdata = get_userdata($userId);
 			if($userdata != null){
 				$family = get_user_meta($userId,"family",true);
-				$nonce_string = 'delete_user_'.$userId.'_nonce';
+				$nonceString = 'delete_user_'.$userId.'_nonce';
 				
 				if(!isset($_GET["confirm"])){
 					echo '<script>
 					var remove = confirm("Are you sure you want to remove the useraccount for '.$userdata->display_name.'?");
 					if(remove){
-						var url=window.location+"&'.$nonce_string.'='.wp_create_nonce($nonce_string).'";';
+						var url=window.location+"&'.$nonceString.'='.wp_create_nonce($nonceString).'";';
 						if (is_array($family) and count($family)>0){
 							echo '
 							var family = confirm("Do you want to delete all useraccounts for the familymembers of '.$userdata->display_name.' as well?");
@@ -658,13 +663,13 @@ add_shortcode( 'delete_user', function(){
 					echo '}
 					</script>';
 				}elseif($_GET["confirm"] == "true"){
-					if(!isset($_GET[$nonce_string]) or !wp_create_nonce($_GET[$nonce_string],$nonce_string)){
+					if(!isset($_GET[$nonceString]) or !wp_create_nonce($_GET[$nonceString],$nonceString)){
 						$html .='<div class="error">Invalid nonce! Refresh the page</div>';
 					}else{
-						$deleted_name = $userdata->display_name;
+						$deletedName = $userdata->display_name;
 						if(isset($_GET["family"]) and $_GET["family"] == "true"){
 							if (is_array($family) and count($family)>0){
-								$deleted_name .= " and all the family";
+								$deletedName .= " and all the family";
 								if (isset($family["children"])){
 									$family = array_merge($family["children"],$family);
 									unset($family["children"]);
@@ -677,10 +682,10 @@ add_shortcode( 'delete_user', function(){
 						}
 						//Remove user account
 						wp_delete_user($userId,1);
-						$html .= '<div class="success">Useraccount for '.$deleted_name.' succcesfully deleted.</div>';
+						$html .= '<div class="success">Useraccount for '.$deletedName.' succcesfully deleted.</div>';
 						echo "<script>
 							setTimeout(function(){
-								window.location = window.location.href.replace('/?userid=$userId&delete_user_{$userId}_nonce=".$_GET[$nonce_string]."&confirm=true','').replace('&family=true','');
+								window.location = window.location.href.replace('/?userid=$userId&delete_user_{$userId}_nonce=".$_GET[$nonceString]."&confirm=true','').replace('&family=true','');
 							}, 3000);
 						</script>";
 					}
@@ -704,7 +709,7 @@ add_shortcode("userstatistics",function ($atts){
 
 	$users 		= SIM\getUserAccounts($return_family=false,$adults=true);
 
-	$baseUrl	= SIM\getValidPageLink(SIM\get_module_option('user_management', 'user_edit_page'));
+	$baseUrl	= SIM\getValidPageLink(SIM\getModuleOption('user_management', 'user_edit_page'));
 	?>
 	<br>
 	<div class='form-table-wrapper'>
@@ -723,23 +728,23 @@ add_shortcode("userstatistics",function ($atts){
 			<tbody>
 				<?php
 				foreach($users as $user){
-					$login_count= get_user_meta($user->ID,'login_count',true);
-					if(!is_numeric(($login_count))) $login_count = 0;
+					$loginCount= get_user_meta($user->ID,'login_count',true);
+					if(!is_numeric(($loginCount))) $loginCount = 0;
 
-					$last_login_date	= get_user_meta($user->ID,'last_login_date',true);
-					if(empty($last_login_date)){
-						$last_login_date	= 'Never';
+					$lastLoginDate	= get_user_meta($user->ID,'last_login_date',true);
+					if(empty($lastLoginDate)){
+						$lastLoginDate	= 'Never';
 					}else{
-						$time_string 	= strtotime($last_login_date);
-						if($time_string ) $last_login_date = date('d F Y', $time_string);
+						$timeString 	= strtotime($lastLoginDate);
+						if($timeString ) $lastLoginDate = date('d F Y', $timeString);
 					}
 
 					$picture = SIM\displayProfilePicture($user->ID);
 
 					echo "<tr class='table-row'>";
 						echo "<td>$picture <a href='$baseUrl/?userid=$user->ID'>{$user->display_name}</a></td>";
-						echo "<td>$login_count</td>";
-						echo "<td>$last_login_date</td>";
+						echo "<td>$loginCount</td>";
+						echo "<td>$lastLoginDate</td>";
 						if(function_exists('SIM\MANDATORY\mustReadDocuments')){
 							echo "<td>".SIM\MANDATORY\mustReadDocuments($user->ID,true)."</td>";
 						}

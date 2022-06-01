@@ -18,27 +18,30 @@ class Trello{
 		$this->request		= new Request();
 		
 		//Initialization
-		$this->api_key 		= $this->settings['key'];
-		$this->api_token	= $this->settings['token'];
+		$this->apiKey 		= $this->settings['key'];
+		$this->apiToken		= $this->settings['token'];
 		$this->query 		= array(
-			'key' 	=> $this->api_key,
-			'token' => $this->api_token
+			'key' 	=> $this->apiKey,
+			'token' => $this->apiToken
 		);
 		$this->headers = array(
 		  'Accept' => 'application/json'
 		);
-		$this->member_id	= $this->getTokenInfo()->id;
+		$this->memberId	= $this->getTokenInfo()->id;
 	}
 
-	//Get active boards
+	/**
+	 * Get active boards
+	 * 
+	 * @return	array	boards
+	 */
 	function getBoards(){
 		try{
 			if (!isset($this->boards)){
-				$this->boards	= [];
-
-				$query = $this->query;
-				$query['filter'] = 'open';
-				$response = $this->request->get(
+				$this->boards		= [];
+				$query				= $this->query;
+				$query['filter']	= 'open';
+				$response			= $this->request->get(
 					"https://api.trello.com/1/members/me/boards",
 					$this->headers,
 					$query
@@ -62,7 +65,11 @@ class Trello{
 		}
 	}
 	
-	//Get all the lists for all the active boards
+	/**
+	 * Get all the lists for all the active boards
+	 * 
+	 * @return array	The lists
+	 */
 	function getAllLists(){
 		$this->getBoards();
 		
@@ -75,7 +82,13 @@ class Trello{
 		return $this->lists;
 	}
 	
-	//Get lists for specific board
+	/**
+	 * Get lists for specific board
+	 * 
+	 * @param	int	$boardId	the id oft the board you want the lists for
+	 * 
+	 * @param	array			The lists
+	 */
 	function getBoardList($boardId){
 		try{
 			if (!isset($this->lists[$boardId])){			
@@ -106,7 +119,13 @@ class Trello{
 		}
 	}
 	
-	//Get all cards from a list
+	/**
+	 * Get all cards from a list
+	 * 
+	 * @param	int		$listId		The id of the list
+	 * 
+	 * @return	array				The cards
+	 */
 	function getListCards($listId){
 		try{
 			$response = $this->request->get(
@@ -127,7 +146,13 @@ class Trello{
 		}
 	}
 	
-	//Get a card
+	/**
+	 * Get a card
+	 * 
+	 * @param	int		$cardId 	the id of an card
+	 * 
+	 * @return	array				the card
+	 */
 	function getCard($cardId){
 		try{
 			$response = $this->request->get(
@@ -148,14 +173,22 @@ class Trello{
 		}
 	}
 	
-	//update a field on a card
+	/**
+	 * update a field on a card
+	 * 
+	 * @param	int		$cardId 	the id of an card
+	 * @param	string	$fieldname	The field to update
+	 * @param	string	$fieldValue	The new value
+	 * 
+	 * @return	object				Result
+	 */
 	function updateCard($cardId, $fieldName, $fieldValue){
 		try{
 			//Make sure linebreaks stay there
 			$fieldValue = str_replace("\n",'%0A',$fieldValue);
 			
 			$response = $this->request->put(
-				"https://api.trello.com/1/cards/$cardId?key={$this->api_key}&token={$this->api_token}&$fieldName=$fieldValue"
+				"https://api.trello.com/1/cards/$cardId?key={$this->apiKey}&token={$this->apiToken}&$fieldName=$fieldValue"
 			);
 			
 			return $response->body;
@@ -170,7 +203,14 @@ class Trello{
 		}
 	}
 	
-	//Ge specific field on the card
+	/**
+	 * Get specific field on the card
+	 * 
+	 * @param	int		$cardId 	the id of an card
+	 * @param	string	$field		The field 
+	 * 
+	 * @param	object				Response
+	 */
 	function getCardField($cardId, $field){
 		try{
 			$response = $this->request->get(
@@ -191,13 +231,17 @@ class Trello{
 		}
 	}
 	
-	//Remove member from a card
-	function removeCardMember($cardId, $memberId=''){
-		try{
-			if(empty($memberId))  $memberId = $this->member_id;
-			
+	/**
+	 * Remove member from a card
+	 * @param	int		$cardId 	the id of an card
+	 * @param	int		$memberId	The member to remove
+	 * 
+	 * @param	object				Response
+	 */
+	function removeCardMember($cardId, $memberId){
+		try{			
 			$response = $this->request->delete(
-				"https://api.trello.com/1/cards/$cardId/idMembers/$memberId?key={$this->api_key}&token={$this->api_token}"
+				"https://api.trello.com/1/cards/$cardId/idMembers/$memberId?key={$this->apiKey}&token={$this->apiToken}"
 			);
 			
 			return $response->body;
@@ -212,11 +256,18 @@ class Trello{
 		}
 	}
 	
-	//Move card to another list
+	/**
+	 * Move card to another list
+	 * 
+	 * @param	int		$cardId 	the id of an card
+	 * @param	int		$listId		The id of the lis to move to
+	 * 
+	 * @param	object				Response
+	 */
 	function moveCardToList($cardId, $listId){
 		try{
 			$response = $this->request->put(
-				"https://api.trello.com/1/cards/$cardId?key={$this->api_key}&token={$this->api_token}&idList=$listId"
+				"https://api.trello.com/1/cards/$cardId?key={$this->apiKey}&token={$this->apiToken}&idList=$listId"
 			);
 			
 			return $response->body;
@@ -231,7 +282,13 @@ class Trello{
 		}
 	}
 	
-	//Get checklist on a card
+	/**
+	 * Get checklist on a card
+	 * 
+	 * @param	int		$cardId 	the id of an card
+	 * 
+	 * @return	array				The checklist
+	 */
 	function getCardChecklist($cardId){
 		try{
 			$response = $this->request->get(
@@ -252,7 +309,14 @@ class Trello{
 		}
 	}
 	
-	//Create a checklist on a card
+	/**
+	 * Create a checklist on a card
+	 * 
+	 * @param	int		$cardId 	the id of an card
+	 * @param	string	$name		Name for the checklist
+	 * 
+	 * @return	object				The reponse
+	 */
 	function createChecklist($cardId, $name){
 		try{
 			$query 			= $this->query;
@@ -277,8 +341,15 @@ class Trello{
 		}
 	}
 	
-	//Add checklist options
-	function addChecklistItem($checklistId,$itemName){
+	/**
+	 * Add checklist options
+	 * 
+	 * @param	int		$checklistId	The id of the checklist
+	 * @param	string	$itemName		The name of the item to add
+	 * 
+	 * @return object					Response
+	 */
+	function addChecklistItem($checklistId, $itemName){
 		try{
 			$query				= $this->query;
 			$query['name']		= $itemName;
@@ -302,11 +373,18 @@ class Trello{
 		}
 	}
 	
-	//Make an option checked
+	/**
+	 * Make an option checked
+	 * 
+	 * @param	int		$cardId			The id of the card
+	 * @param	int		$checkItemId	The id of the checklist item
+	 * 
+	 * @return object					Response
+	 */
 	function checkChecklistItem($cardId, $checkItemId){
 		try{
 			$response = $this->request->put(
-				"https://api.trello.com/1/cards/$cardId/checkItem/$checkItemId?key={$this->api_key}&token={$this->api_token}&state=complete",
+				"https://api.trello.com/1/cards/$cardId/checkItem/$checkItemId?key={$this->apiKey}&token={$this->apiToken}&state=complete",
 			);
 			
 			return $response;
@@ -321,7 +399,15 @@ class Trello{
 		}
 	}
 	
-	//add or update checlist options
+	/**
+	 * add or update checlist options
+	 * 
+	 * @param	int		$cardId		the card id
+	 * @param	object	$checklist	The checklist
+	 * @param	string	$itemNam	THe name
+	 * 
+	 * @return bool					True on creation false if already exists
+	 */
 	function changeChecklistOption($cardId, $checklist, $itemName){
 		$exists			= false;
 		
@@ -332,10 +418,10 @@ class Trello{
 				if($item->state == 'incomplete'){
 					//check the item
 					$this->checkChecklistItem($cardId, $item->id);
-					return 'Updated';
+					return true;
 				}
 				//Item already exists and is already checked
-				return "Exists already";
+				return false;
 			}
 		}
 		
@@ -347,7 +433,14 @@ class Trello{
 		return 'Not found';
 	}
 	
-	//Add comment to card
+	/**
+	 * Add comment to card
+	 * 
+	 * @param	int		$cardId		the card id
+	 * @param	string	$comment	The comment
+	 * 
+	 * @return object					Response
+	 */
 	function addComment($cardId, $comment){
 		try{
 			$query			= $this->query;
@@ -370,14 +463,20 @@ class Trello{
 		}
 	}
 	
-	//Get cover image
+	/**
+	 * Get cover image
+	 * 
+	 * @param	int		$cardId		the card id
+	 * 
+	 * @return	string				The url
+	 */
 	function getCoverImage($cardId){
 		try{
 			$query 				= $this->query;
 			$query['filter'] 	= 'cover';
 			
 			$response = $this->request->get(
-				"https://api.trello.com/1/cards/$cardId/attachments?key={$this->api_key}&token={$this->api_token}",
+				"https://api.trello.com/1/cards/$cardId/attachments?key={$this->apiKey}&token={$this->apiToken}",
 			);
 			
 			return $response->body[0]->url;
@@ -392,11 +491,15 @@ class Trello{
 		}
 	}
 	
-	//get info about the user a token belongs to
+	/**
+	 * get info about the user a token belongs to
+	 *
+	 * @return object					Response
+	 */
 	function getTokenInfo(){
 		try{
 			$response = $this->request->get(
-				'https://api.trello.com/1/tokens/'.$this->api_token.'/member',
+				'https://api.trello.com/1/tokens/'.$this->apiToken.'/member',
 				$this->headers,
 				$this->query
 			);
@@ -413,11 +516,15 @@ class Trello{
 		}
 	}
 	
-	//list webhooks
+	/**
+	 * list webhooks
+	 * 
+	 * @return object					Response
+	 */
 	function getWebhooks(){
 		try{
 			$response = $this->request->get(
-				"https://api.trello.com/1/tokens/{$this->api_token}/webhooks",
+				"https://api.trello.com/1/tokens/{$this->apiToken}/webhooks",
 				$this->headers,
 				$this->query
 			);
@@ -434,12 +541,20 @@ class Trello{
 		}
 	}
 	
-	//create a new webhooks
-	function createWebhook($url, $modelid, $description=''){
+	/**
+	 * create a new webhooks
+	 * 
+	 * @param	string	$url		The webhook url
+	 * @param	int		$modelId	The trello id
+	 * @param	string	$description	Optional description
+	 * 
+	 * @return object					Response
+	 */
+	function createWebhook($url, $modelId, $description=''){
 		try{
 			$query 					= $this->query;
 			$query['callbackURL']	= $url;
-			$query['idModel']		= $modelid;
+			$query['idModel']		= $modelId;
 			$query['description']	= $description;
 
 			$response = $this->request->post(
@@ -460,13 +575,20 @@ class Trello{
 		}
 	}
 	
-	//Change webhook id
+	/**
+	 * Change webhook id
+	 * 
+	 * @param	int		$webhookId	The id of the webhook to change
+	 * @param	int		$pageId		WP_Post id
+	 * 
+	 * @return object					Response
+	 */
 	function changeWebhookId($webhookid, $pageId){
 		try{
 			$url			= get_page_link($pageId);
 			$trelloUserId = $this->getTokenInfo()->id;
 			$response 		= $this->request->put(
-				"https://api.trello.com/1/webhooks/$webhookid?key={$this->api_key}&token={$this->api_token}&callbackURL={$url}&idModel=$trelloUserId"
+				"https://api.trello.com/1/webhooks/$webhookid?key={$this->apiKey}&token={$this->apiToken}&callbackURL={$url}&idModel=$trelloUserId"
 			);
 			
 			return $response->body;
@@ -485,7 +607,7 @@ class Trello{
 	function deleteWebhook($webhookId){
 		try{
 			$response = $this->request->delete(
-				"https://api.trello.com/1/webhooks/$webhookId?key={$this->api_key}&token={$this->api_token}"
+				"https://api.trello.com/1/webhooks/$webhookId?key={$this->apiKey}&token={$this->apiToken}"
 			);
 			
 			return $response->body;
@@ -500,7 +622,11 @@ class Trello{
 		}
 	}
 	
-	//delete all webhooks
+	/**
+	 * delete all webhooks
+	 * 
+	 * @return object					Response
+	 */
 	function deleteAllWebhooks(){
 		$webhooks = $this->getWebhooks();
 		
@@ -512,6 +638,12 @@ class Trello{
 		return $result;
 	}
 	
+	/**
+	 * @param	int		$cardId		the card id
+	 * @param	string	$searchKey	The search param
+	 * 
+	 * @return	array				The found cards
+	 */
 	function searchCardItem($cardId, $searchKey){
 		try{
 			$query				= $this->query;

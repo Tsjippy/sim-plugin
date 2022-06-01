@@ -11,18 +11,18 @@ wp.media.view.Attachment.Details.prototype.render = function() {
 	wp.media.mixin.removeAllPlayers();
 	this.$( 'audio, video' ).each( function (i, elem) {
 		var el = wp.media.view.MediaDetails.prepareSrc( elem );
-		load_vimeo_video(el);
+		loadVimeoVideo(el);
 
 		new window.MediaElementPlayer( el, wp.media.mixin.mejsSettings );
 	} );
 }
 
 //replace preview with vimeo iframe
-function load_vimeo_video(el) {
+function loadVimeoVideo(el) {
 	var vimeo_link	= el.src;
 	if(vimeo_link == ''){
 		//try again after a few miliseconds till the el.src is available
-		setTimeout(load_vimeo_video, 20, el);
+		setTimeout(loadVimeoVideo, 20, el);
 	}else{
 		//if this is a vimeo item
 		if(vimeo_link.includes('https://vimeo.com/')){
@@ -126,7 +126,7 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
         formData.append('post_id', uploader.storedEntry.postId);
     
         var request = new XMLHttpRequest();
-        request.open('POST', sim.base_url+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
+        request.open('POST', sim.baseUrl+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
         request.send(formData);
     
         //mark as uploaded

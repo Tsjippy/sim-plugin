@@ -44,7 +44,7 @@ function displayLocationTax(){
 		//only show the map if logged in
 		if(is_user_logged_in() ){
 			$mapName			= $name."_map";
-			$mapId				= SIM\get_module_option('locations', $mapName);
+			$mapId				= SIM\getModuleOption('locations', $mapName);
 
 			if(is_numeric($mapId)){
 				//Show the map of this category

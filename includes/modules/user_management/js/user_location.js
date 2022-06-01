@@ -1,6 +1,6 @@
 console.log("Location.js loaded");
 
-function filllocationfields(event){
+function fillLocationFields(event){
 	var target	= event.target;
 	var form	= target.closest('form');
 	
@@ -20,7 +20,7 @@ function filllocationfields(event){
 }
 
 //dynamically load google maps script only when needed
-function load_google_maps_script(){
+function loadGoogleMapsScript(){
 	if(document.getElementById('googlemaps') == null){
 		const script = document.createElement('script');
 		script.id = 'googlemaps';
@@ -31,11 +31,11 @@ function load_google_maps_script(){
 }
 
 document.addEventListener("DOMContentLoaded",function() {
-	load_google_maps_script();
+	loadGoogleMapsScript();
 
 	//Set coordinates if compound is selected
 	document.querySelectorAll("[name='location[compound]'").forEach(function(element){
-		element.addEventListener('change', filllocationfields);
+		element.addEventListener('change', fillLocationFields);
 	});
 
 	
@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded",function() {
 	function setAddress(){
 		var lat = document.querySelector(".latitude").value;
 		var lon = document.querySelector(".longitude").value;
-		var address_field = document.querySelector(".address");
 		
 		var geocoder = new google.maps.Geocoder();
 		if (lat != "" && lon != ""){
@@ -81,7 +80,7 @@ document.addEventListener("DOMContentLoaded",function() {
 	}
 	
 	//Only fill the coordinates after someone stopped typing in the address field
-	var timer = null;
+	var timer 	= null;
 	var element = document.querySelector(".address");
 	if (typeof(element) != 'undefined' && element != null){
 		element.addEventListener('keydown', function(e) {

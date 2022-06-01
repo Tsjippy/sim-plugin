@@ -279,7 +279,7 @@ function biometricOptions(){
         $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user);
 
         $server = new Server(
-            get_rp_entity(),
+            getRpEntity(),
             $publicKeyCredentialSourceRepository,
             null
         );
@@ -287,7 +287,7 @@ function biometricOptions(){
         // Get user ID or create one
         $webauthnKey = get_user_meta($user->ID, '2fa_webauthn_key', true);
         if(!$webauthnKey){
-            $webauthnKey = hash("sha256", $user->user_login."-".$user->display_name."-".generate_random_string(10));
+            $webauthnKey = hash("sha256", $user->user_login."-".$user->display_name."-".generateRandomString(10));
             update_user_meta($user->ID, '2fa_webauthn_key',$webauthnKey);
         }
 
@@ -295,7 +295,7 @@ function biometricOptions(){
             $user->user_login,
             $webauthnKey,
             $user->display_name,
-            get_profile_picture($user->ID)
+            getProfilePicture($user->ID)
         );
 
         $credentialSourceRepository = new PublicKeyCredentialSourceRepository($user);
@@ -331,19 +331,19 @@ function biometricOptions(){
             $authenticatorSelectionCriteria
         );
 
-        store_in_transient('pkcco', $publicKeyCredentialCreationOptions);
-        store_in_transient('userEntity', $userEntity);
-        store_in_transient('username', $user->user_login);
-        store_in_transient('identifier', $identifier);
+        storeInTransient('pkcco', $publicKeyCredentialCreationOptions);
+        storeInTransient('userEntity', $userEntity);
+        storeInTransient('username', $user->user_login);
+        storeInTransient('identifier', $identifier);
 
         return $publicKeyCredentialCreationOptions;
     }catch(\Exception $exception){
         SIM\printArray("ajax_create: (ERROR)".$exception->getMessage());
-        SIM\printArray(generate_call_trace($exception));
+        SIM\printArray(generateCallTrace($exception));
         return new WP_Error('Error',"Something went wrong.");
     }catch(\Error $error){
         SIM\printArray("ajax_create: (ERROR)".$error->getMessage());
-        SIM\printArray(generate_call_trace($error));
+        SIM\printArray(generateCallTrace($error));
         return new WP_Error('Error',"Something went wrong.");
     }
 }
@@ -360,15 +360,15 @@ function storeBiometric(){
 
         $user                                   = wp_get_current_user();
         $username                               = $user->user_login;
-        $userEntity                             = get_from_transient('userEntity');
-        $publicKeyCredentialCreationOptions     = get_from_transient('pkcco');
+        $userEntity                             = getFromTransient('userEntity');
+        $publicKeyCredentialCreationOptions     = getFromTransient('pkcco');
 
         // May not get the challenge yet
         if(empty($publicKeyCredentialCreationOptions) or empty($userEntity)){
             return new WP_Error('Logged in error', "No challenge given");
         }
 
-        if(strtolower(get_from_transient('username')) !== strtolower($username)){
+        if(strtolower(getFromTransient('username')) !== strtolower($username)){
             return new WP_Error('Logged in error', "Invalid username given");
         }
 
@@ -390,7 +390,7 @@ function storeBiometric(){
         $serverRequest = $creator->fromGlobals();
 
         $server = new Server(
-            get_rp_entity(),
+            getRpEntity(),
             $publicKeyCredentialSourceRepository,
             null
         );
@@ -427,7 +427,7 @@ function storeBiometric(){
         }catch(\Throwable $exception){
             // Failed to verify
             SIM\printArray("ajax_create_response: (ERROR)".$exception->getMessage());
-            SIM\printArray(generate_call_trace($exception));
+            SIM\printArray(generateCallTrace($exception));
             return new \WP_Error('error', $exception->getMessage(), ['status'=> 500]);
         }
 
@@ -439,14 +439,14 @@ function storeBiometric(){
         }
         
         // Success
-        return auth_table();
+        return authTable();
     }catch(\Exception $exception){
         SIM\printArray("ajax_create_response: (ERROR)".$exception->getMessage());
-        SIM\printArray(generate_call_trace($exception));
+        SIM\printArray(generateCallTrace($exception));
         return new WP_Error('Logged in error', "Something went wrong.");
     }catch(\Error $error){
         SIM\printArray("ajax_create_response: (ERROR)".$error->getMessage());
-        SIM\printArray(generate_call_trace($error));
+        SIM\printArray(generateCallTrace($error));
         return new WP_Error('Logged in error', "Something went wrong.");
     }
 }
@@ -472,13 +472,13 @@ function startAuthentication(){
             $user->user_login,
             $webauthnKey,
             $user->display_name,
-            get_profile_picture($user->ID)
+            getProfilePicture($user->ID)
         );
 
         $credentialSourceRepository = new PublicKeyCredentialSourceRepository($user);
 
         $server = new Server(
-            get_rp_entity(),
+            getRpEntity(),
             $credentialSourceRepository,
             null
         );
@@ -510,19 +510,19 @@ function startAuthentication(){
         );
 
         // Save for future use
-        store_in_transient("pkcco_auth", $publicKeyCredentialRequestOptions);
-        store_in_transient("user_name_auth", $user->user_login);
-        store_in_transient("user_auth", $userEntity);
-        store_in_transient("user", $user);
+        storeInTransient("pkcco_auth", $publicKeyCredentialRequestOptions);
+        storeInTransient("user_name_auth", $user->user_login);
+        storeInTransient("user_auth", $userEntity);
+        storeInTransient("user", $user);
 
         return $publicKeyCredentialRequestOptions;
     }catch(\Exception $exception){
         SIM\printArray("ajax_auth: (ERROR)".$exception->getMessage());
-        SIM\printArray(generate_call_trace($exception));
+        SIM\printArray(generateCallTrace($exception));
         return new WP_Error('webauthn error',"Something went wrong.");
     }catch(\Error $error){
         SIM\printArray("ajax_auth: (ERROR)".$error->getMessage());
-        SIM\printArray(generate_call_trace($error));
+        SIM\printArray(generateCallTrace($error));
         return new WP_Error('webauthn error',"Something went wrong.");
     }
 }
@@ -532,10 +532,10 @@ function finishAuthentication(){
     try{
         $publicKeyCredential                = sanitize_text_field(stripslashes($_POST['publicKeyCredential']));
 
-        $publicKeyCredentialRequestOptions  = get_from_transient("pkcco_auth");
-        $user_name_auth                     = get_from_transient("user_name_auth");
-        $userEntity                         = get_from_transient("user_auth");
-        $user                               = get_from_transient("user");
+        $publicKeyCredentialRequestOptions  = getFromTransient("pkcco_auth");
+        $user_name_auth                     = getFromTransient("user_name_auth");
+        $userEntity                         = getFromTransient("user_auth");
+        $user                               = getFromTransient("user");
 
         // May not get the challenge yet
         if(empty($publicKeyCredentialRequestOptions) or empty($user_name_auth) or empty($userEntity)){
@@ -565,11 +565,11 @@ function finishAuthentication(){
             $user->user_login,
             $webauthnKey,
             $user->display_name,
-            get_profile_picture($user->ID)
+            getProfilePicture($user->ID)
         );
 
         $server = new Server(
-            get_rp_entity(),
+            getRpEntity(),
             $publicKeyCredentialSourceRepository,
             null
         );
@@ -601,16 +601,16 @@ function finishAuthentication(){
         }catch(\Throwable $exception){
             // Failed to verify
             SIM\printArray("ajax_auth_response: (ERROR)".$exception->getMessage());
-            SIM\printArray(generate_call_trace($exception));
+            SIM\printArray(generateCallTrace($exception));
             return new WP_Error('webauthn', "Something went wrong.");
         }
     }catch(\Exception $exception){
         SIM\printArray("ajax_auth_response: (ERROR)".$exception->getMessage());
-        SIM\printArray(generate_call_trace($exception));
+        SIM\printArray(generateCallTrace($exception));
         return new WP_Error('webauthn', "Something went wrong.");
     }catch(\Error $error){
         SIM\printArray("ajax_auth_response: (ERROR)".$error->getMessage());
-        SIM\printArray(generate_call_trace($error));
+        SIM\printArray(generateCallTrace($error));
         return new WP_Error('webauthn', "Something went wrong.");
     }
 }
@@ -686,7 +686,7 @@ function saveTwoFaSettings(){
     if(in_array('email', $new_methods) and !in_array('email', $old_methods)){
         $userdata   = get_userdata($userId);
 
-        SIM\try_send_signal(
+        SIM\trySendSignal(
             "Hi ".$userdata->first_name.",\n\nYou have succesfully setup e-mail verification on ".SITENAME,
             $userId
         );
@@ -754,7 +754,7 @@ function userLogin(){
     //store login date
     update_user_meta( $user->ID, 'last_login_date',date('Y-m-d'));
 
-    $accountPageId  = SIM\get_module_option('user_management', 'account_page');
+    $accountPageId  = SIM\getModuleOption('user_management', 'account_page');
 
     // GEt mandatory or recommended fields
     if(function_exists('SIM\FORMS\getAllFields') and is_numeric($accountPageId)){
@@ -772,7 +772,7 @@ function userLogin(){
 
         //Redirect to account page if 2fa is not set
         if(!$methods or count($methods ) == 0){
-            $twofaPage      = SIM\getValidPageLink(SIM\get_module_option('login', '2fa_page'));
+            $twofaPage      = SIM\getValidPageLink(SIM\getModuleOption('login', '2fa_page'));
             if($twofaPage) return $twofaPage;
         }
         
@@ -798,7 +798,7 @@ function requestPasswordReset(){
 	$email  = $user->user_email;
     if(!$email or strpos('.empty', $email) !== false) return new WP_Error('email error',"No valid e-mail found for user $username");
 
-	$result = send_password_reset_message($user);
+	$result = sendPasswordResetMessage($user);
 
     if(is_wp_error($result)){
         return new WP_Error('pw reset error', $result->get_error_message());

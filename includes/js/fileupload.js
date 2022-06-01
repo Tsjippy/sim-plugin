@@ -40,7 +40,7 @@ function addPreview(link, value){
 }
 
 async function fileUpload(target){
-	fileUploadWrap = target.closest('.fileUploadWrap');
+	fileUploadWrap = target.closest('.file_upload_wrap');
 	
 	//Create a formData element
 	var formData = new FormData();
@@ -68,8 +68,8 @@ async function fileUpload(target){
 				//update post id on a postform
 				await uploadVideo(target.files[index]);
 			// file to big
-			}else if(target.files[index].size > sim.max_file_size){
-				main.displayMessage('File too big, max file size is '+(parseInt(sim.max_file_size)/1024/1024)+'MB','error');
+			}else if(target.files[index].size > sim.maxFileSize){
+				main.displayMessage('File too big, max file size is '+(parseInt(sim.maxFileSize)/1024/1024)+'MB','error');
 				target.value = '';
 				return;
 			}else{
@@ -173,7 +173,7 @@ function fileUploadSucces(result){
 		
 		var fileName 	= src.split("/")[src.split("/").length-1];
 		
-		var url 		= sim.base_url+'/'+src;
+		var url 		= sim.baseUrl+'/'+src;
 
 		if(imgUrls[index]['id'] == undefined){
 			var value		= url;
@@ -224,11 +224,11 @@ async function removeDocument(target){
 	//show loader
 	target.parentNode.querySelector('.remove_document_loader').classList.remove('hidden');
 	
-	var response	= await formsubmit.fetchRestApi('remove_document', data);
+	var response	= await FormSubmit.fetchRestApi('remove_document', data);
 
 	if(response){
 		var docWrapper			= target.closest('.document');
-		var fileUploadWrap	= docwrapper.closest('.fileUploadWrap');
+		var fileUploadWrap		= docwrapper.closest('.file_upload_wrap');
 		
 		//hide the loading gif
 		docwrapper.querySelector('.remove_document_loader').classList.add('hidden');
@@ -308,7 +308,7 @@ async function uploadVideo(file){
         formData.append('post_id', postId);
     
         var request = new XMLHttpRequest();
-        request.open('POST', sim.base_url+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
+        request.open('POST', sim.baseUrl+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
         request.send(formData);
 
 		//Remove progress barr

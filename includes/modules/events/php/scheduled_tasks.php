@@ -4,74 +4,91 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'remove_old_events_action', __NAMESPACE__.'\remove_old_events');
-	add_action( 'anniversary_check_action', __NAMESPACE__.'\anniversary_check');
+	add_action( 'remove_old_events_action', __NAMESPACE__.'\removeOldEvents');
+	add_action( 'anniversary_check_action', __NAMESPACE__.'\anniversaryCheck');
 	add_action( 'remove_old_schedules_action', __NAMESPACE__.'\removeOldSchedules');
 });
 
-function schedule_tasks(){
-	SIM\schedule_task('anniversary_check_action', 'daily');
-	SIM\schedule_task('remove_old_schedules_action', 'daily');
+/**
+ * Schedules the tasks for this module
+ * 
+*/
+function scheduleTasks(){
+	SIM\scheduleTask('anniversary_check_action', 'daily');
+	SIM\scheduleTask('remove_old_schedules_action', 'daily');
 
-    $freq   = SIM\get_module_option('events', 'freq');
+    $freq   = SIM\getModuleOption('events', 'freq');
 
-    if($freq)   SIM\schedule_task('remove_old_events_action', $freq);
+    if($freq)   SIM\scheduleTask('remove_old_events_action', $freq);
 }
 
-//clean up events, in events table. Not the post
-function remove_old_events(){
+/**
+ * Clean up events, in events table. Not the post
+ * 
+*/
+function removeOldEvents(){
 	global $wpdb;
 
-	$max_age   = SIM\get_module_option('events', 'max_age');
+	$maxAge   	= SIM\getModuleOption('events', 'max_age');
 
 	$events		= new Events();
 
-	$query	= "DELETE FROM {$events->table_name} WHERE startdate<'".date('Y-m-d',strtotime("- $max_age"))."'";
+	$query		= "DELETE FROM {$events->tableName} WHERE startdate<'".date('Y-m-d', strtotime("- $maxAge"))."'";
 
-	$expired_events	= $wpdb->get_results( $query);
-	foreach($expired_events as $event){
+	$expiredEvents	= $wpdb->get_results( $query);
+	foreach($expiredEvents as $event){
 		wp_delete_post($event->ID);
 
-		$events->remove_db_rows($event->ID);
+		$events->removeDbRows($event->ID);
 	}
 }
 
-function anniversary_check(){
+/**
+ * Get all the events of today and check if they are an anniversary.
+ * If so, send a concratulation message
+ * 
+*/
+function anniversaryCheck(){
 	$events		= new Events();
 
-	$events->retrieve_events(date('Y-m-d'),date('Y-m-d'));
+	// Get all the events of today
+	$events->retrieveEvents(date('Y-m-d'), date('Y-m-d'));
 
 	foreach($events->events as $event){
-		$start_year	= get_post_meta($event->ID,'celebrationdate',true);
-		if(!empty($start_year)){
-			$userdata		= get_userdata($event->post_author);
-			$first_name		= $userdata->first_name;
-			$event_title	= $event->post_title;
-			$partner_id		= SIM\hasPartner($event->post_author);
+		$startYear	= get_post_meta($event->ID, 'celebrationdate', true);
 
-			if($partner_id){
-				$partnerdata	= get_userdata($partner_id);
-				$couple_string	= $first_name.' & '.$partnerdata->display_name;
-				$event_title	= trim(str_replace($couple_string,"", $event_title));
+		if(!empty($startYear)){
+			$userData		= get_userdata($event->post_author);
+			$firstName		= $userData->first_name;
+			$eventTitle		= $event->post_title;
+			$partnerId		= SIM\hasPartner($event->post_author);
+
+			if($partnerId){
+				$partnerData	= get_userdata($partnerId);
+				$coupleString	= $firstName.' & '.$partnerData->display_name;
+				$eventTitle		= trim(str_replace($coupleString, "", $eventTitle));
 			}
 			
-			$event_title	= trim(str_replace($userdata->display_name,"", $event_title));
+			$eventTitle	= trim(str_replace($userData->display_name, "", $eventTitle));
 
-			$age	= SIM\getAge($start_year);
+			$age	= SIM\getAge($startYear);
 
-			SIM\try_send_signal("Hi $first_name,\nCongratulations with your $age $event_title!", $event->post_author);
+			SIM\trySendSignal("Hi $firstName,\nCongratulations with your $age $eventTitle!", $event->post_author);
 
 			//If the author has a partner and this events applies to both of them
-			if($partner_id and strpos($event->post_title, $couple_string)){
-				SIM\try_send_signal("Hi {$partnerdata->first_name},\nCongratulations with your $event_title!", $partner_id);
+			if($partnerId and strpos($event->post_title, $coupleString)){
+				SIM\trySendSignal("Hi {$partnerData->first_name},\nCongratulations with your $eventTitle!", $partnerId);
 			}
 		}
 	}
 }
 
+/**
+ * Get all schedules with an enddate in the past and deletes them
+*/
 function removeOldSchedules(){
 	$schedules	= new Schedule();
-	$schedules->get_schedules();
+	$schedules->getSchedules();
 
 	foreach($schedules->schedules as $schedule){
 		if($schedule->enddate < date('Y-m-d')){

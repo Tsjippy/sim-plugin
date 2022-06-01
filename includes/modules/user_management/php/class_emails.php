@@ -6,9 +6,9 @@ use SIM\ADMIN;
 class AccountCreatedMail extends ADMIN\MailSetting{
 
     public $user;
-    public $login_url;
+    public $loginUrl;
 
-    public function __construct($user, $login_url='') {
+    public function __construct($user, $loginUrl='') {
         // call parent constructor
 		parent::__construct();
 
@@ -17,7 +17,7 @@ class AccountCreatedMail extends ADMIN\MailSetting{
         $this->moduleSlug        = 'user_management';
         $this->keyword           = 'account_created';
 
-        $this->replaceArray['%login_url%']    = $login_url;
+        $this->replaceArray['%login_url%']    = $loginUrl;
         $this->replaceArray['%user_name%']    = $user->user_login;
 
         $this->defaultSubject    = 'We have created an account for you on %site_name%';
@@ -33,9 +33,9 @@ class AccountCreatedMail extends ADMIN\MailSetting{
 class AccountApproveddMail extends ADMIN\MailSetting{
 
     public $user;
-    public $login_url;
+    public $loginUrl;
 
-    public function __construct($user, $login_url='') {
+    public function __construct($user, $loginUrl='') {
         // call parent constructor
 		parent::__construct();
 
@@ -44,7 +44,7 @@ class AccountApproveddMail extends ADMIN\MailSetting{
         $this->moduleSlug        = 'user_management';
         $this->keyword           = 'account_approved';
 
-        $this->replaceArray['%login_url%']    = $login_url;
+        $this->replaceArray['%login_url%']    = $loginUrl;
         $this->replaceArray['%user_name%']    = $user->user_login;
 
         $this->defaultSubject    = 'We have approved your account on %site_name%';
@@ -72,8 +72,8 @@ class AccountExpiryMail extends ADMIN\MailSetting{
         $this->keyword           = 'account_expiry';
 
         
-		$expiry_date		= date("d-m-Y", strtotime(" +1 months"));
-        $this->replaceArray['%expiry_date%']    = $expiry_date;
+		$expiryDate		                        = date("d-m-Y", strtotime(" +1 months"));
+        $this->replaceArray['%expiry_date%']    = $expiryDate;
 
         $this->defaultSubject    = 'Your account will expire on %expiry_date%';
 
@@ -96,7 +96,7 @@ class AccountRemoveMail extends ADMIN\MailSetting{
         $this->moduleSlug        = 'user_management';
         $this->keyword           = 'account_removal';
 
-        $this->replaceArray['%account_page%']    = get_permalink(SIM\get_module_option($this->moduleSlug, 'account_page'));
+        $this->replaceArray['%account_page%']    = get_permalink(SIM\getModuleOption($this->moduleSlug, 'account_page'));
 
         $this->defaultSubject    = 'Your account on %site_name% has been deleted';
 
@@ -109,9 +109,9 @@ class AccountRemoveMail extends ADMIN\MailSetting{
 class AdultVaccinationWarningMail extends ADMIN\MailSetting{
 
     public $user;
-    public $reminder_html;
+    public $reminderHtml;
 
-    public function __construct($user, $reminder_html='') {
+    public function __construct($user, $reminderHtml='') {
         // call parent constructor
 		parent::__construct();
 
@@ -120,7 +120,7 @@ class AdultVaccinationWarningMail extends ADMIN\MailSetting{
         $this->moduleSlug        = 'user_management';
         $this->keyword           = 'adult_vacc_warning';
 
-        $this->replaceArray['%reminder_html%']    = $reminder_html;
+        $this->replaceArray['%reminder_html%']    = $reminderHtml;
 
         $this->defaultSubject    = "Please renew your vaccinations";
 
@@ -134,9 +134,9 @@ class AdultVaccinationWarningMail extends ADMIN\MailSetting{
 class ChildVaccinationWarningMail extends ADMIN\MailSetting{
 
     public $user;
-    public $reminder_html;
+    public $reminderHtml;
 
-    public function __construct($user, $reminder_html='') {
+    public function __construct($user, $reminderHtml='') {
         // call parent constructor
 		parent::__construct();
 
@@ -145,7 +145,7 @@ class ChildVaccinationWarningMail extends ADMIN\MailSetting{
         $this->moduleSlug        = 'user_management';
         $this->keyword           = 'child_vacc_warning';
 
-        $this->replaceArray['%reminder_html%']    = $reminder_html;
+        $this->replaceArray['%reminder_html%']    = $reminderHtml;
 
         $this->defaultSubject    = "Please renew the vaccinations of %first_name%";
 
@@ -184,9 +184,9 @@ class GreenCardReminderMail extends ADMIN\MailSetting{
 class WeMissYouMail extends ADMIN\MailSetting{
 
     public $user;
-    public $lastlogin;
+    public $lastLogin;
 
-    public function __construct($user, $lastlogin='') {
+    public function __construct($user, $lastLogin='') {
         // call parent constructor
 		parent::__construct();
 
@@ -195,7 +195,7 @@ class WeMissYouMail extends ADMIN\MailSetting{
         $this->moduleSlug        = 'user_management';
         $this->keyword           = 'miss_you';
 
-        $this->replaceArray['%lastlogin%']    = $lastlogin;
+        $this->replaceArray['%lastlogin%']    = $lastLogin;
 
         $this->defaultSubject    = "We miss you!";
 

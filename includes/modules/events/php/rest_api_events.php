@@ -11,7 +11,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$events		= new Events();
-				return $events->month_calendar();
+				return $events->monthCalendar();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -39,7 +39,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function (){
 				$events		= new Events();
-				return $events->week_calendar();
+				return $events->weekCalendar();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -63,7 +63,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$events		= new Events();
-				return $events->list_calendar();
+				return $events->listCalendar();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(

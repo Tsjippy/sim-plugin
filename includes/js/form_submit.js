@@ -30,7 +30,7 @@ export function formReset(form){
 		form.querySelectorAll('.multistepcontrols .step.finish').forEach(el=>el.classList.remove('finish'));
 	
 		//go back to the first part of the form in case of multistep
-		formFunctions.showTab(0,form);
+		FormFunctions.showTab(0,form);
 	}
 }
 
@@ -76,10 +76,10 @@ export async function submitForm(target, url){
 }
 
 export async function fetchRestApi(url, formData){
-	formData.append('_wpnonce', sim.restnonce);
+	formData.append('_wpnonce', sim.restNonce);
 
 	var result = await fetch(
-		sim.base_url+'/wp-json/sim/v1/'+url,
+		sim.baseUrl+'/wp-json/sim/v1/'+url,
 		{
 			method: 'POST',
 			credentials: 'same-origin',
@@ -92,6 +92,9 @@ export async function fetchRestApi(url, formData){
 
 		if(result.ok){
 			return response;
+		}else if(response.code == 'rest_cookie_invalid_nonce'){
+			main.displayMessage('Please refresh the page and try again!', 'error');
+			return false;
 		}else{
 			console.error(response);
 			main.displayMessage(response.message, 'error');
@@ -100,7 +103,7 @@ export async function fetchRestApi(url, formData){
 	}catch(error){
 		console.error(error);
 		console.error(result);
-		main.displayMessage(`Url ${sim.base_url}/wp-json/sim/v1/${url} not found`, 'error');
+		main.displayMessage(`Url ${sim.baseUrl}/wp-json/sim/v1/${url} not found`, 'error');
 		return false;
 	}
 }

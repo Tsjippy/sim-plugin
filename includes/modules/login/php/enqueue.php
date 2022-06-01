@@ -33,9 +33,9 @@ add_action( 'wp_enqueue_scripts', function(){
 
 	wp_register_script('sim_2fa_script', plugins_url('js/2fa.min.js', __DIR__), array('sim_table_script'), ModuleVersion, true);
 
-    $password_reset_page    = SIM\get_module_option('login', 'password_reset_page');
-    $register_page          = SIM\get_module_option('login', 'register_page');
-    if(get_the_ID() == $password_reset_page or get_the_ID() == $register_page){
+    $passwordResetPage    = SIM\getModuleOption('login', 'password_reset_page');
+    $registerPage          = SIM\getModuleOption('login', 'register_page');
+    if(get_the_ID() == $passwordResetPage or get_the_ID() == $registerPage){
         wp_enqueue_style('sim_pw_reset_style');
         
 	    wp_enqueue_script('sim_password_strength_script');

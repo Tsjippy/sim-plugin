@@ -2,7 +2,7 @@ var re			= '';
 
 async function saveFormInput(target){
 	var form		= target.closest('form');
-	var response	= await formsubmit.submitForm(target, 'forms/save_form_input');
+	var response	= await FormSubmit.submitForm(target, 'forms/save_form_input');
 
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
@@ -10,7 +10,7 @@ async function saveFormInput(target){
 		main.displayMessage(response);
 
 		if(form.dataset.reset == 'true'){
-			formsubmit.formReset(form);
+			FormSubmit.formReset(form);
 		}
 	}
 }
@@ -21,9 +21,9 @@ export function removeDefaultSelect(el){
 	});
 }
 
-export function cloneNode(original_node, clear=true){
+export function cloneNode(originalNode, clear=true){
 	//First remove any nice selects
-	original_node.querySelectorAll('select').forEach(select => {
+	originalNode.querySelectorAll('select').forEach(select => {
 		//remove defaults if it has changed
 		if(select.selectedIndex != -1){
 			if(select.options[select.selectedIndex].defaultSelected == false){
@@ -43,11 +43,11 @@ export function cloneNode(original_node, clear=true){
 	
 	//also remove any tinymce's
 	if(typeof(tinymce) != 'undefined'){
-		var tinymce_settings = [];
-		original_node.querySelectorAll('.wp-editor-area').forEach(el =>{
+		var tinymceSettings = [];
+		originalNode.querySelectorAll('.wp-editor-area').forEach(el =>{
 			var tn = tinymce.get(el.id);
 			if(tn != null){
-				tinymce_settings[el.id] = tn.settings
+				tinymceSettings[el.id] = tn.settings
 				tn.save();
 				tn.remove();
 			}
@@ -55,10 +55,10 @@ export function cloneNode(original_node, clear=true){
 	}
 	
 	//make a clone
-	var newNode = original_node.cloneNode(true);
+	var newNode = originalNode.cloneNode(true);
 	
 	//Then add niceselects again after cloning took place
-	original_node.querySelectorAll('select').forEach(select => {
+	originalNode.querySelectorAll('select').forEach(select => {
 		select._niceselect = NiceSelect.bind(select,{searchable: true});
 		if(select.value == ''){
 			select._niceselect.clear();
@@ -66,8 +66,8 @@ export function cloneNode(original_node, clear=true){
 	});
 	
 	//add tinymce's again
-	original_node.querySelectorAll('.wp-editor-area').forEach(el =>{
-		tinymce.init(tinymce_settings[el.id]);
+	originalNode.querySelectorAll('.wp-editor-area').forEach(el =>{
+		tinymce.init(tinymceSettings[el.id]);
 	});
 	
 	//clear values in the clone
@@ -102,7 +102,7 @@ export function copyFormInput(originalNode){
 	
 	//update the data index
 	newNode.querySelectorAll('.upload-files').forEach(function(uploadButton){
-		uploadButton.dataset.index = nodenr;
+		uploadButton.dataset.index = nodeNr;
 	})
 	
 	//Clear contents of any document preview divs.
@@ -117,7 +117,7 @@ export function copyFormInput(originalNode){
 		var previousVal = originalNode.getElementsByTagName('select')[i].selectedIndex;
 		
 		//Hide the value in the clone
-		select.options[previous_val].style.display = 'none';
+		select.options[previousVal].style.display = 'none';
 		
 		//Add nice select
 		select._niceselect.update();
@@ -208,8 +208,8 @@ function removeNode(target){
 	
 	//Check which number to update
 	if(node.getAttribute("data-type") != null){
-		var datatype	= node.getAttribute("data-type").replace('[','\\[').replace(']','\\]');
-		re 				= new RegExp('('+datatype+'?\\]?\\[).*[0-9](.*)',"g");
+		var dataType	= node.getAttribute("data-type").replace('[','\\[').replace(']','\\]');
+		re 				= new RegExp('('+dataType+'?\\]?\\[).*[0-9](.*)',"g");
 	}else{
 		re				= new RegExp('(.*)[0-9](.*)',"g");
 	}
@@ -222,53 +222,53 @@ function removeNode(target){
 	
 	//If there is only one div remaining, remove the remove button
 	if(allCloneDivs.length == 1){
-		var remove_element = parentNode.querySelector('.remove');
-		remove_element.remove();
+		var removeElement = parentNode.querySelector('.remove');
+		removeElement.remove();
 	}
 	
 	//Loop over all the remaining nodes.
-	var nodenr = parseInt(allCloneDivs[0].dataset.divid);
-	allCloneDivs.forEach(function(clonenode){
-		if(clonenode.dataset.type == 'understudies'){
+	var nodeNr = parseInt(allCloneDivs[0].dataset.divid);
+	allCloneDivs.forEach(function(cloneNode){
+		if(cloneNode.dataset.type == 'understudies'){
 			//update the data index
-			clonenode.querySelectorAll('.upload-files').forEach(function(uploadbutton){
-				uploadbutton.dataset.index = nodenr;
+			cloneNode.querySelectorAll('.upload-files').forEach(function(uploadButton){
+				uploadButton.dataset.index = nodeNr;
 			})
 		}
 			
 		//DIV
-		if(clonenode.id != ''){
-			clonenode.id = clonenode.id.replace(re, '$1'+nodenr+'$2');
+		if(cloneNode.id != ''){
+			cloneNode.id = cloneNode.id.replace(re, '$1'+nodeNr+'$2');
 		}
 		
-		clonenode.dataset.divid = nodenr;
+		cloneNode.dataset.divid = nodeNr;
 		
 		//Update the title
-		clonenode.querySelectorAll('h3').forEach(title => {
-			title.textContent = title.textContent.replace(/[0-9]/g, nodenr);
+		cloneNode.querySelectorAll('h3').forEach(title => {
+			title.textContent = title.textContent.replace(/[0-9]/g, nodeNr);
 		});
 		
 		//Update the label
-		clonenode.querySelectorAll('label').forEach(label => {
-			if(all_clone_divs[0].dataset.divid == 0){
-				labelnr = nodenr + 1;
+		cloneNode.querySelectorAll('label').forEach(label => {
+			if(allCloneDivs[0].dataset.divid == 0){
+				labelNr = nodeNr + 1;
 			}else{
-				labelnr = nodenr;
+				labelNr = nodeNr;
 			}
-			label.innerHTML = label.innerHTML.replace(/ ([0-9])/g, function($1) {return ' '+labelnr});
+			label.innerHTML = label.innerHTML.replace(/ ([0-9])/g, function($1) {return ' '+labelNr});
 		});
 		
 		//Update the elements
-		clonenode.querySelectorAll('input,select,textarea').forEach(input => {
+		cloneNode.querySelectorAll('input,select,textarea').forEach(input => {
 			if(input.id != ''){
 				//Update the id
-				input.id = input.id.replace(re, '$1'+nodenr+'$2');
+				input.id = input.id.replace(re, '$1'+nodeNr+'$2');
 			}
 			//Update the name
-			input.name = input.name.replace(re, '$1'+nodenr+'$2');
+			input.name = input.name.replace(re, '$1'+nodeNr+'$2');
 		});	
 
-		nodenr += 1;
+		nodeNr += 1;
 	})
 }
 
@@ -278,19 +278,19 @@ function removeNode(target){
 export function tidyMultiInputs(){
 	//remove unnecessary buttons on inputs with multiple values
 	document.querySelectorAll('.clone_divs_wrapper').forEach(function(div){
-		var clone_div_arr	= div.querySelectorAll('.clone_div');
+		var cloneDivArr	= div.querySelectorAll('.clone_div');
 		
-		if(clone_div_arr.length == 1){
-			clone_div_arr[0].querySelectorAll('.remove').forEach(el=>el.remove());
+		if(cloneDivArr.length == 1){
+			cloneDivArr[0].querySelectorAll('.remove').forEach(el=>el.remove());
 		}
 		
-		clone_div_arr.forEach(function(clone_div, index, array){
+		cloneDivArr.forEach(function(cloneDiv, index, array){
 			//update dataset
-			clone_div.dataset.divid = index;
+			cloneDiv.dataset.divid = index;
 			
 			//remove add button for all but the last
 			if(index != array.length - 1){
-				clone_div.querySelectorAll('.add').forEach(el=>el.remove());
+				cloneDiv.querySelectorAll('.add').forEach(el=>el.remove());
 			}
 		})
 	});
@@ -358,7 +358,7 @@ export function showTab(n, form) {
 export function nextPrev(n) {
 	// This function will figure out which tab to display
 	var x 				= form.querySelectorAll(".formstep");
-	var stepindicators	= form.querySelectorAll(".step");
+	var stepIndicators	= form.querySelectorAll(".step");
 	var currentTab		= 0;
 	var valid;
 
@@ -380,17 +380,17 @@ export function nextPrev(n) {
 		if(!valid) return;
 		
 		//mark the last step as finished
-		stepindicators[currentTab].classList.add("finish");
+		stepIndicators[currentTab].classList.add("finish");
 	}else{
 		//mark the last step as unfinished
-		stepindicators[currentTab].classList.remove("finish");
+		stepIndicators[currentTab].classList.remove("finish");
 	}
 	
 	//loop over all the formsteps to hide stepindicators of them if needed
 	Array.from(x).forEach((formstep,index) =>{
 		if(formstep.classList.contains('hidden')){
 			//hide the corresponding circle
-			stepindicators[index].classList.add('hidden');
+			stepIndicators[index].classList.add('hidden');
 		}
 	});
 
@@ -411,20 +411,20 @@ export function nextPrev(n) {
 	showTab(currentTab,form);
 }
 
-export function getFieldValue(orgname, checkdatalist=true, comparevalue=null, lowercase=false){
+export function getFieldValue(orgName, checkDatalist=true, compareValue=null, lowercase=false){
 	//name is not a name but a node
-	if(orgname instanceof Element){
-		var el			= orgname;		
+	if(orgName instanceof Element){
+		var el			= orgName;		
 		//check if valid input type
 		if(el.tagName != 'INPUT' && el.tagName != 'TEXTAREA' && el.tagName != 'SELECT' && el.closest('.nice-select-dropdown') == null){
 			el = el.querySelector('input, select, textarea');
 		}
 		if(el == null){
-			el			= orgname;
+			el			= orgName;
 		}
 		var name		= el.name;
 	}else{
-		var name		= orgname;
+		var name		= orgName;
 		var el			= form.querySelector('[name=\"'+name+'\" i]');
 	}
 	
@@ -442,7 +442,7 @@ export function getFieldValue(orgname, checkdatalist=true, comparevalue=null, lo
 		
 		if(el.type == 'checkbox'){
 			//we are dealing with a specific checkbox
-			if(orgname.type == 'checkbox' ){
+			if(orgName.type == 'checkbox' ){
 				if(el.checked){
 					return el.value;
 				}else{
@@ -451,14 +451,14 @@ export function getFieldValue(orgname, checkdatalist=true, comparevalue=null, lo
 			//we should return all checked checkboxes
 			}else{
 				//we should find the checkbox with this value and check if it is checked
-				if(comparevalue != null){
-					var els		= form.querySelector('[name=\"'+name+'\" i][value="'+comparevalue+'" i]:checked');
+				if(compareValue != null){
+					var els		= form.querySelector(`[name='${name}' i][value="${compareValue}" i]:checked`);
 					if(els != null){
-						value = comparevalue;
+						value = compareValue;
 					}
 				//no compare value give just return all checked values
 				}else{
-					var els		= form.querySelectorAll('[name=\"'+name+'\" i]:checked');
+					var els		= form.querySelectorAll(`[name="${name}" i]:checked`);
 					
 					els.forEach(el=>{
 						if(value != ''){
@@ -474,13 +474,13 @@ export function getFieldValue(orgname, checkdatalist=true, comparevalue=null, lo
 		}else if(el.closest('.nice-select-dropdown') != null && el.dataset.value != undefined){
 			value = el.dataset.value
 		//value of datalist
-		}else if(el.list != null && checkdatalist){
-			var orig_input = el.list.querySelector("[value='"+el.value+"' i]");
+		}else if(el.list != null && checkDatalist){
+			var origInput = el.list.querySelector("[value='"+el.value+"' i]");
 			
-			if(orig_input == null){
+			if(origInput == null){
 				value =  el.value;
 			}else{
-				value = orig_input.dataset.value;
+				value = origInput.dataset.value;
 				if(value == ''){
 					value =  el.value;
 				}
@@ -505,19 +505,19 @@ export function getFieldValue(orgname, checkdatalist=true, comparevalue=null, lo
 	}
 }
 
-export function changeFieldValue(orgname, value, function_ref){
-	if(orgname instanceof Element){
-		var name	= orgname.name;
-		var target	= orgname;
+export function changeFieldValue(orgName, value, function_ref){
+	if(orgName instanceof Element){
+		var name	= orgName.name;
+		var target	= orgName;
 	}else{
-		var name = orgname;
+		var name = orgName;
 		//get the target
-		var target = form.querySelector('[name="'+name+'" i]');
+		var target = form.querySelector(`[name="${name}" i]`);
 	}
 	
 	if(target.type == 'radio' || target.type == 'checkbox'){
-		if(!(orgname instanceof Element)){
-			targets = form.querySelectorAll('[name="'+name+'" i]');
+		if(!(orgName instanceof Element)){
+			targets = form.querySelectorAll(`[name="${name}" i]`);
 			for (let i = 0; i < targets.length; i++) {
 				if(targets[i].value.toLowerCase() == value.toLowerCase()){
 					target = targets[i];
@@ -531,7 +531,7 @@ export function changeFieldValue(orgname, value, function_ref){
 		}
 	//the target has a list attached to it
 	}else if(target.list != null){
-		var datalistoption = target.list.querySelector('[data-value="'+value+'" i]');
+		var datalistoption = target.list.querySelector(`[data-value="${value}" i]`);
 		//we found a match
 		if(datalistoption != null){
 			target.value = datalistoption.value;
@@ -542,7 +542,6 @@ export function changeFieldValue(orgname, value, function_ref){
 		target.value = value;
 	}
 	
-	var prev_el = '';
 	//create a new event
 	var evt = new Event('input');
 	//attach the target
@@ -553,19 +552,17 @@ export function changeFieldValue(orgname, value, function_ref){
 	function_ref(target);
 }
 
-export function changeFieldProperty(name, att, value, function_ref){
+export function changeFieldProperty(name, att, value){
 	//first change the value
-	var target = form.querySelector('[name="'+name+'" i]');
+	var target = form.querySelector(`[name="${name}" i]`);
 	
-	form.querySelector('[name="'+name+'"]')[att] = value;
+	form.querySelector(`[name="${name}"]`)[att] = value;
 	
-	var prev_el = '';
 	//create a new event
 	var evt = new Event('input');
 	//attach the target
 	target.dispatchEvent(evt);
 	//run the originating function with this event
-	//window[arguments.callee.caller.name](target);
 	function_ref(target);
 }
 

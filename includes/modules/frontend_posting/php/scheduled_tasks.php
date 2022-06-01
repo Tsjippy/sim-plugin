@@ -4,22 +4,25 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'expired_posts_check_action', __NAMESPACE__.'\expired_posts_check' );
-	add_action( 'page_age_warning_action', __NAMESPACE__.'\page_age_warning' );
-	add_action( 'publish_posts_action', __NAMESPACE__.'\publish_post' );
+	add_action( 'expired_posts_check_action', __NAMESPACE__.'\expiredPostsCheck' );
+	add_action( 'page_age_warning_action', __NAMESPACE__.'\pageAgeWarning' );
+	add_action( 'publish_posts_action', __NAMESPACE__.'\publishPost' );
 	
 });
 
-function schedule_tasks(){
-    SIM\schedule_task('expired_posts_check_action', 'daily');
+function scheduleTasks(){
+    SIM\scheduleTask('expired_posts_check_action', 'daily');
 
-	$freq	= SIM\get_module_option('frontend_posting', 'page_age_reminder');
+	$freq	= SIM\getModuleOption('frontend_posting', 'page_age_reminder');
 	if($freq){
-		SIM\schedule_task('page_age_warning_action', $freq);
+		SIM\scheduleTask('page_age_warning_action', $freq);
 	}
 }
 
-function expired_posts_check(){
+/**
+ * Checks for expired posts and removes them
+ */
+function expiredPostsCheck(){
 	//Get all posts with the expirydate meta key with a value equal or before today
 	$posts = get_posts(array(
 		'numberposts'      => -1,
@@ -44,9 +47,10 @@ function expired_posts_check(){
 	}
 }
 
-//Function to check for old ministry pages
-//Whoever checked the box for that ministry on their account gets an email to remind them about the update
-function page_age_warning(){
+/**
+ * Checks for page who are not updated for a long time
+*/
+function pageAgeWarning(){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 
@@ -68,7 +72,7 @@ function page_age_warning(){
 	));
 	
 	//Months converted to seconds (days*hours*minutes*seconds)
-	$maxAgeInSeconds		= SIM\get_module_option('frontend_posting', 'max_page_age') * 30.4375 *24 *60 * 60;
+	$maxAgeInSeconds		= SIM\getModuleOption('frontend_posting', 'max_page_age') * 30.4375 *24 *60 * 60;
 	
 	//Loop over all the pages
 	foreach ( $pages as $page ) {
@@ -82,11 +86,11 @@ function page_age_warning(){
 		//If it is X days since last modified
 		if ($secondsSinceUpdated > $maxAgeInSeconds){
 			//Get the edit page url
-			$url		= SIM\getValidPageLink(SIM\get_module_option('frontend_posting', 'publish_post_page'));
+			$url		= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting', 'publish_post_page'));
 			$url 		= add_query_arg( ['post_id' => $postId], $url );		
 			
 			//Send an e-mail
-			$recipients = get_page_recipients($postTitle);
+			$recipients = getPageRecipients($postTitle);
 			foreach($recipients as $recipient){
 				//Only email if valid email
 				if(strpos($recipient->user_email,'.empty') === false){
@@ -100,8 +104,10 @@ function page_age_warning(){
 	}
 }
 
-//Function to check who the recipients should be for the page update mail
-function get_page_recipients($page_title){
+/**
+ * Function to check who the recipients should be for the page update mail
+ */
+function getPageRecipients($page_title){
 
 	$recipients = [];
 	

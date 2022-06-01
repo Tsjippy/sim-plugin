@@ -2,7 +2,7 @@
 namespace SIM\EVENTS;
 use SIM;
 
-const ModuleVersion		= '7.0.5';
+const ModuleVersion		= '7.0.6';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
@@ -49,14 +49,25 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 		<option value='3 months' <?php if($settings["max_age"] == '3 months') echo 'selected';?>>3 months</option>
 		<option value='1 year' <?php if($settings["max_age"] == '1 year') echo 'selected';?>>1 year</option>
 	</select>	
+
+	<br>
+	<br>
+	<h4>Default picture for birthdays</h4>
 	<?php
+	SIM\pictureSelector('birthday_image', 'Birthday', $settings);
+	?>
+	<br>
+	<br>
+	<h4>Default picture for anniversaries</h4>
+	<?php
+	SIM\pictureSelector('anniversary_image', 'Anniversary', $settings);
 }, 10, 3);
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
 
-	schedule_tasks();
+	scheduleTasks();
 
 	return $options;
 }, 10, 2);
