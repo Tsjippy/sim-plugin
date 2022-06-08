@@ -244,11 +244,13 @@ function addCategory(\WP_REST_Request $request ){
 	$name		= $request->get_param('cat_name');
 	$parent		= $request->get_param('cat_parent');
 	$postType	= $request->get_param('post_type');
+
+	$taxonomy	= get_object_taxonomies($postType)[0];
 	
 	$args 		= ['slug' => strtolower($name)];
 	if(is_numeric($parent)) $args['parent'] = $parent;
 	
-	$result = wp_insert_term( ucfirst($name), $postType."s", $args);
+	$result 	= wp_insert_term( ucfirst($name), $taxonomy, $args);
 
 	do_action('sim_after_category_add', $postType, strtolower($name), $result);
 	
@@ -257,7 +259,7 @@ function addCategory(\WP_REST_Request $request ){
 	}else{
 		return [
 			'id'		=> $result['term_id'],
-			'message'	=> "Added $name succesfully as en $postType category"
+			'message'	=> "Added $name succesfully as a $postType category"
 		];
 	}
 }

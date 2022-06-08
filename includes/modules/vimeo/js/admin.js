@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const vimeoUrl   = ev.target.closest('form').querySelector('[name="download_url"]').value;
 
         if(vimeoUrl==''){
-            main.displayMessage('Please give an url to download from', 'error');
+            Main.displayMessage('Please give an url to download from', 'error');
             return;
         }
 
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
         formData.append('vimeoid', vidmeoId);
         formData.append('download_url', vimeoUrl);
 
-        main.displayMessage('Download started please wait till it finishes');
+        Main.displayMessage('Download started please wait till it finishes');
 
         var response    = await FormSubmit.fetchRestApi('vimeo/download_to_server', formData);
 
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
         ev.target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
 
         if(response){
-            main.displayMessage(response, 'success');
+            Main.displayMessage(response, 'success');
             ev.target.closest('form').remove();
         }else{
             ev.target.closest('form').querySelector('[name="download_url"]').value = '';

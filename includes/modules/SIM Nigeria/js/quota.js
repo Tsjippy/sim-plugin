@@ -28,7 +28,7 @@ document.addEventListener('click', async ev=>{
     if(target.name == 'update_visa_documents'){
         var response    = await FormSubmit.submitForm(target, 'sim_nigeria/update_visa_documents');
         if(response){
-            main.displayMessage(response, 'success');
+            Main.displayMessage(response, 'success');
         }
     }
 });

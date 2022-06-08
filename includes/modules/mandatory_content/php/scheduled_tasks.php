@@ -4,7 +4,7 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'read_reminder_action', 'SIM\MANDATORY\read_reminder' );
+	add_action( 'read_reminder_action', __NAMESPACE__.'\readReminder' );
 });
 
 function scheduleTasks(){
@@ -12,7 +12,10 @@ function scheduleTasks(){
     if($freq)   SIM\scheduleTask('read_reminder_action', $freq);
 }
 
-function read_reminder(){	
+/**
+ * Send an e-mail to remind people to read their mandatory content
+ */
+function readReminder(){	
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 	

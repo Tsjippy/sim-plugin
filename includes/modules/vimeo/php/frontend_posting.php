@@ -27,3 +27,14 @@ add_action('sim_after_post_save', function($post){
         }
     }    
 });
+
+add_filter('sim_attachment_preview', function($image, $postId){
+    $vimeo      = new VimeoApi();
+    $vimeoId    = $vimeo->getVimeoId($postId);
+
+    if($vimeoId){
+        return showVimeoVideo($vimeoId);
+    }
+
+    return  $image;
+}, 10, 2);

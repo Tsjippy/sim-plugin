@@ -423,59 +423,38 @@ function user_info_page($atts){
 				
 				//Add a tab button
 				$tabs[]	= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
-				
-				//Content
-				$result	= ob_get_clean();
 
-				ob_start();
-				?>
-				<div id="generic_info" class="tabcontent hidden">
-					<?php
+				$html	.= "<div id='generic_info' class='tabcontent hidden'>";
 					if($accountValidity != '' and $accountValidity != 'unlimited' and !is_numeric($accountValidity)){
 						$removalDate 	= date_create($accountValidity);
-						?>
-					
-						<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'>
-							<?php
+						
+						$html	.= "<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'>";
 							if(array_intersect($genericInfoRoles, $userRoles )){
 								wp_enqueue_script( 'sim_user_management');
-								?>
-								<form>
-									<input type="hidden" name="userid" value="<?php echo $userId = $_GET['userid'];?>">
-									This user account is only valid till <?php echo date_format($removalDate,"d F Y");?>
-									<br>
-									<br>
-									Change expiry date to
-									<input type='date' name='new_expiry_date' min='<?php echo $accountValidity;?>' style='width:auto; display: initial; padding:0px; margin:0px;'>
-									<br>
-									<input type='checkbox' name='unlimited' value='unlimited' style='width:auto; display: initial; padding:0px; margin:0px;'>
-									<label for='unlimited'> Check if the useraccount should never expire.</label>
-									<br>
-									<?php
 								
-									echo SIM\addSaveButton('extend_validity', 'Change validity');
-									?>
-								</form>
-								<?php
+								$html	.= "<form>";
+									$html	.= "<input type='hidden' name='userid' value='$userId'>";
+									$html	.= "This user account is only valid till ".date_format($removalDate, "d F Y");
+									$html	.= "<br><br>";
+									$html	.= "Change expiry date to";
+									$html	.= "<input type='date' name='new_expiry_date' min='$accountValidity' style='width:auto; display: initial; padding:0px; margin:0px;'>";
+									$html	.= "<br>";
+									$html	.= "<input type='checkbox' name='unlimited' value='unlimited' style='width:auto; display: initial; padding:0px; margin:0px;'>";
+									$html	.= "<label for='unlimited'> Check if the useraccount should never expire.</label>";
+									$html	.= "<br>";
+									$html	.= SIM\addSaveButton('extend_validity', 'Change validity');
+								$html	.= "</form>";
 							}else{
-								?>
-								<p>
-									Your user account will be automatically deactivated on <?php echo date_format($removalDate,"d F Y");?>.
-								</p>
-								<?php
+								$html	.= "<p>";
+									$html	.= "Your user account will be automatically deactivated on ".date_format($removalDate, "d F Y").".";
+								$html	.= "</p>";
 							}
-							?>
-						</div>
-						<?php
+						$html	.= "</div>";
 					}
 
-					echo do_shortcode('[formbuilder formname=user_generics]');
-					?>
-				</div>
-				<?php
+					$html	.= do_shortcode('[formbuilder formname=user_generics]');
 
-				$result	= ob_get_clean();
-				$html	.= $result;
+				$html	.= "</div>";
 			}
 			
 			/*
@@ -563,21 +542,13 @@ function user_info_page($atts){
 				$tabs[]	= "<li class='tablink $active' id='show_medical_info' data-target='medical_info'>Vaccinations</li>";
 				
 				//Content
-				ob_start();
-				?>
-				<div id='medical_info' <?php echo $class;?>>
-					<?php echo do_shortcode('[formbuilder formname=user_medical]');?>
-					<form method="post" id="print_medicals-form">
-						<input type="hidden" name="userid" id="userid" value="'.$userId.'">
-						<button class="button button-primary" type="submit" name="print_medicals" value="generate">Export data as PDF</button>
-					</form>
-				</div>
-
-				<?php
-
-				$result	= ob_get_clean();
-
-				$html	.= $result;
+				$html	.= "<div id='medical_info' $class>";
+					$html	.= do_shortcode('[formbuilder formname=user_medical]');
+					$html	.= "<form method='post' id='print_medicals-form'>";
+						$html	.= "<input type='hidden' name='userid' id='userid' value='$userId'>";
+						$html	.= "<button class='button button-primary' type='submit' name='print_medicals' value='generate'>Export data as PDF</button>";
+					$html	.= "</form>";
+				$html	.= "</div>";
 			}
 
 			//  Add filter to add extra pages, children tabs should always be last
@@ -607,7 +578,7 @@ function user_info_page($atts){
 			}
 		}
 
-		$result	.= "<nav id='profile_menu'>";
+		$result	= "<nav id='profile_menu'>";
 			$result	.= "<ul id='profile_menu_list'>";
 			foreach($tabs as $tab){
 				$result	.= $tab;

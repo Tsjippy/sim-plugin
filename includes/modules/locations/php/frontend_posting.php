@@ -28,19 +28,9 @@ add_action('sim_frontend_post_content_title', function ($postType){
     echo "</h4>";
 });
 
-add_action('sim_after_post_save', function($post){
-    //store locations
-    $locationTypes = [];
-    if(is_array($_POST['locationtype'])){
-        foreach($_POST['locationtype'] as $key=>$locationType) {
-            if($locationType != '') $locationTypes[] = $locationType;
-        }
-        
-        //Store types
-        $locationTypes = array_map( 'intval', $locationTypes );
-        
-        wp_set_post_terms($post->ID, $locationTypes, 'locations');
-    }
+add_action('sim_after_post_save', function($post, $frontEndPost){
+    //store categories
+    $frontEndPost->storeCustomCategories($post, 'locations');
     
     //tel
     if(isset($_POST['tel'])){
@@ -54,11 +44,11 @@ add_action('sim_after_post_save', function($post){
         update_metadata( 'post', $post->ID, 'url', $_POST['url']);
     }
     
-    locationAddress($locationTypes, $post->ID);
-});
+    locationAddress($post->ID);
+}, 10, 2);
 
 add_action('sim_ministry_added', __NAMESPACE__.'\locationAddress', 10, 2);
-function locationAddress($locationTypes, $postId){
+function locationAddress($postId){
     global $wpdb;
 
     $maps   = new Maps();
@@ -69,43 +59,36 @@ function locationAddress($locationTypes, $postId){
         isset($_POST['location']['longitude'])
     ){
         $title			= sanitize_text_field($_POST['post_title']);
-        $oldLocation 	= get_post_meta($postId,'location',true);
+        $oldLocation 	= get_post_meta($postId, 'location', true);
         $newLocation	= $_POST['location'];
         
         $address	= $newLocation["address"]		= sanitize_text_field($newLocation["address"]);
         $latitude	= $newLocation["latitude"]		= sanitize_text_field($newLocation["latitude"]);
         $longitude	= $newLocation["longitude"]	    = sanitize_text_field($newLocation["longitude"]);
         
-        $mapId		= get_post_meta($postId,'map_id',true);
+        $mapId		= get_post_meta($postId, 'map_id', true);
 
         //Get marker array
-        $markerIds = get_post_meta($postId,"marker_ids",true);
+        $markerIds = get_post_meta($postId, "marker_ids", true);
         if(!is_array($markerIds)) $markerIds = [];
         
         //Only update if needed
         if($oldLocation != $newLocation and $latitude != '' and $longitude != ''){
+
+            $categories = $_POST['locations_ids'];
+
             update_metadata( 'post', $postId, 'location', $newLocation);
 
-            //Add the profile picture to the marker content
-            $postThumbnail = get_the_post_thumbnail($postId, 'thumbnail', array( 'class' => 'aligncenter markerpicture' , 'style' => 'max-height:100px;',));
-            
-            //Add a directions button to the marker content
-            $directionsForm = "<p><a class='button' onclick='zgetRoute(this,$latitude,$longitude)'>Get directions</a></p>";
-            
-            //Add the post excerpt to the marker content
-            $description    = $postThumbnail.wp_trim_words(wp_trim_excerpt("", $postId), 25);
-            //Add the post link to the marker content
-            $url            = get_permalink($postId);
-            $description    .= "<a href='$url' style='display:block;' class='page_link'>Show full descripion</a><br>$directionsForm";
-            
+            $description    = "[location_description id=$postId]";
+
             //Get url of the featured image
             $iconUrl        = get_the_post_thumbnail_url($postId);
             
             //Get the first category name
-            $name = get_term( $locationTypes[0], 'locations' )->slug.'_icon';
+            $name = get_term( $categories[0], 'locations' )->slug.'_icon';
             
             //If there is a location category set and an custom icon for this category is set
-            if(count($locationTypes) > 0 and !empty(SIM\getModuleOption('locations', $name))){
+            if(count($categories) > 0 and !empty(SIM\getModuleOption('locations', $name))){
                 $iconId = SIM\getModuleOption('locations', $name);
             }else{
                 $iconId = 1;
@@ -168,7 +151,7 @@ function locationAddress($locationTypes, $postId){
                 $result = $wpdb->update($wpdb->prefix . 'ums_markers', 
                     array(
                         'title' 		=> $title,
-                        'description'	=> $postThumbnail.$directionsForm,
+                        'description'	=> "[location_description id=$postId basic=true]",
                         'coord_x'		=> $latitude,
                         'coord_y'		=> $longitude,
                         'address'		=> $address,
@@ -204,7 +187,7 @@ function locationAddress($locationTypes, $postId){
                 //Add the marker to this map
                 $wpdb->insert($wpdb->prefix . 'ums_markers', array(
                     'title' 		=> $title,
-                    'description'	=> $postThumbnail.$directionsForm,
+                    'description'	=> "[location_description id=$postId basic=true]",
                     'coord_x'		=> $latitude,
                     'coord_y'		=> $longitude,
                     'icon' 			=> $customIconId,
@@ -227,7 +210,7 @@ function locationAddress($locationTypes, $postId){
             //loop over all available the categories
             foreach($categories as $locationType){
                 //If the current cat is set for this post
-                if(in_array($locationType->cat_ID, $locationTypes)){
+                if(in_array($locationType->cat_ID, $categories)){
                     $name 				= $locationType->slug;
                     $mapName			= $name."_map";
                     $mapId				= SIM\getModuleOption('locations', $mapName);
@@ -298,7 +281,7 @@ function locationAddress($locationTypes, $postId){
             }
             
             //Store marker ids in db
-            delete_post_meta($postId,"marker_ids");
+            delete_post_meta($postId, "marker_ids");
         }
     }
 }

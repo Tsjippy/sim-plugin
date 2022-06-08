@@ -21,25 +21,42 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
         if($frontendContend->postId != null){
             if(is_array($audience) and count($audience)>0){
                 ?>
-                <input type="checkbox" name="pagetype[normal]" value="normal" <?php echo $checked; ?>>
+                <input type="checkbox" name="audience[normal]" value="normal" <?php echo $checked; ?>>
                 <label for="normal">Normal</label><br>
                 <?php
             }
-        } 
-        ?>
+        }
         
-        <label>
-            <input type="checkbox" name="pagetype[beforearrival]" value="beforearrival" <?php if(isset($audience['beforearrival'])) echo 'checked'; ?>>
-            People should read this before arriving in the country (pre-field)
-        </label><br>
-        <label>
-            <input type="checkbox" name="pagetype[afterarrival]" value="afterarrival" <?php if(isset($audience['afterarrival'])) echo 'checked'; ?>>
-            People should read this after arriving in the country
-        </label><br>
-        <label>
-            <input type="checkbox" name="pagetype[everyone]" value="everyone" <?php if(isset($audience['everyone'])) echo 'checked'; ?>>
-            Everyone must read this no matter how long in the country
-        </label><br>
+        $audienceHtml	= "<label>";
+			if(isset($audience['beforearrival'])){
+				$checked	= 'checked';
+			}else{
+				$checked	= '';
+			}
+			$audienceHtml	.= "<input type='checkbox' name='audience[beforearrival]' value='beforearrival' $checked>";
+			$audienceHtml	.= "People should read this before arriving in the country (pre-field)";
+        $audienceHtml	.= "</label><br>";
+        $audienceHtml	.= "<label>";
+			if(isset($audience['afterarrival'])){
+				$checked	= 'checked';
+			}else{
+				$checked	= '';
+			}
+			$audienceHtml	.= "<input type='checkbox' name='audience[afterarrival]' value='afterarrival' $checked>";
+			$audienceHtml	.= "People should read this after arriving in the country";
+        $audienceHtml	.= "</label><br>";
+        $audienceHtml	.= "<label>";
+			if(isset($audience['everyone'])){
+				$checked	= 'checked';
+			}else{
+				$checked	= '';
+			}
+			$audienceHtml	.= "<input type='checkbox' name='audience[everyone]' value='everyone' $checked>";
+			$audienceHtml	.= "Everyone must read this no matter how long in the country";
+        $audienceHtml	.= "</label><br>";
+
+		echo apply_filters('sim_mandatory_audience_param', $audienceHtml, $audience);
+	?>
     </div>
     <?php
 });
@@ -50,15 +67,14 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 */
 add_action('sim_after_post_save', function($post){
 	//store audience
-	if(is_array($_POST['pagetype'])) {
-		$pageType = $_POST['pagetype'];
+	if(is_array($_POST['audience'])) {
+		$audiences = $_POST['audience'];
 		
 		//Reset to normal if that box is ticked
-		if(isset($pageType['normal']) and $pageType['normal'] == 'normal'){
+		if(isset($audiences['normal']) and $audiences['normal'] == 'normal'){
 			delete_post_meta($post->ID, "audience");
 		//Store in DB
 		}else{
-			$audiences = $_POST['pagetype'];
 			SIM\cleanUpNestedArray($audiences);
 			
 			//Only continue if there are audiences defined
@@ -90,6 +106,8 @@ add_action('sim_after_post_save', function($post){
 						update_user_meta( $user->ID, 'read_pages', $readPages);
 					}
 				}
+
+				do_action('sim_mandatory_save_audience_param', $audiences, $post);
 			}
 		}
 	}else{

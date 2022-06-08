@@ -4,10 +4,10 @@ use SIM;
 
 //shortcode to display vimeo video's
 add_shortcode("vimeo_video", function($atts){
-	return show_vimeo_video($atts['id']);
+	return showVimeoVideo($atts['id']);
 });
 
-function show_vimeo_video($vimeo_id){
+function showVimeoVideo($vimeoId){
 	// Load css
 	wp_enqueue_style( 'vimeo_style');
 	wp_enqueue_script('sim_vimeo_shortcode_script');
@@ -21,7 +21,7 @@ function show_vimeo_video($vimeo_id){
 		</div>
 
 		<div class='vimeo-embed-container'>
-			<iframe src='https://player.vimeo.com/video/<?php echo $vimeo_id; ?>' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen onload = "showVimeoIframe(this)" style="display:none;"></iframe>
+			<iframe src='https://player.vimeo.com/video/<?php echo $vimeoId; ?>' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen onload = "showVimeoIframe(this)" style="display:none;"></iframe>
 		</div>
 	</div>
 	<?php

@@ -130,7 +130,7 @@ export function getRoute(target,lat,lon){
 }
 
 //Check if on mobile
-function isMobileDevice() {
+export function isMobileDevice() {
 	return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 };
 

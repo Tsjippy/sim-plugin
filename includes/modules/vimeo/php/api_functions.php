@@ -17,14 +17,14 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             }
 
             $settings               = $Modules['vimeo'];
-            $this->client_id		= $settings['client_id'];
-            $this->client_secret	= $settings['client_secret'];
-            $this->access_token     = $settings['access_token'];
-            $this->files_dir        = WP_CONTENT_DIR.'/vimeo_files';
-            $this->pictures_dir     = $this->files_dir."/thumbnails/";
-            $this->backup_dir       = $this->files_dir."/backup/";
+            $this->clientId		= $settings['client_id'];
+            $this->clientSecret	= $settings['client_secret'];
+            $this->accessToken     = $settings['access_token'];
+            $this->filesDir        = WP_CONTENT_DIR.'/vimeo_files';
+            $this->picturesDir     = $this->filesDir."/thumbnails/";
+            $this->backupDir       = $this->filesDir."/backup/";
 
-            $this->api = new \Vimeo\Vimeo($this->client_id, $this->client_secret, $this->access_token);
+            $this->api = new \Vimeo\Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
 
             $this->isConnected();
         }
@@ -40,7 +40,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             $this->status = get_transient( 'vimeo_connected' );
             if ( $this->status === false or $this->status == 'offline' or empty($this->status)) {
                 try {
-                    if($this->api == null)  $this->api = new \Vimeo\Vimeo($this->client_id, $this->client_secret, $this->access_token);
+                    if($this->api == null)  $this->api = new \Vimeo\Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
                     $response = $this->api->request( '/oauth/verify', [], 'GET' );
         
                     $this->status       = 'online';
@@ -543,10 +543,10 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         function downloadFromVimeo($url, $postId) {
             $extension  = pathinfo(parse_url($url)['path'], PATHINFO_EXTENSION);
             if($extension == 'webp'){
-                $path       = $this->pictures_dir;
+                $path       = $this->picturesDir;
                 $filename   = $this->getVimeoId($postId);
             }else{
-                $path       = $this->backup_dir;
+                $path       = $this->backupDir;
 
                 $filename   = $this->getVimeoId($postId)."_".get_the_title($postId);
 

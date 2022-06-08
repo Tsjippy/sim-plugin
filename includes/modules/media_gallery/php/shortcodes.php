@@ -122,6 +122,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
         $mime           = get_post_mime_type();
         $type           = explode('/', $mime)[0];
         $description    = ucfirst(get_the_content());
+        $attachmentUrl  = get_attachment_link();
 
         /* 
         **** PREVIEW GRID ****
@@ -232,6 +233,10 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                     <button type='button' class='button small description' data-description='<?php echo $description;?>' title='<?php echo $description;?>'>Description</button>
                     <?php
                 }
+
+                ?>
+                    <a class='button small' href="<?php echo $attachmentUrl;?>">Link</a>
+                <?php
 
                 $url            = apply_filters('sim_media_gallery_download_url', $url, $id);
 

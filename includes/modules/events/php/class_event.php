@@ -3,7 +3,6 @@ namespace SIM\EVENTS;
 use SIM;
 use WP_Error;
 
-use function SIM\getModuleOption;
 
 class Events{
 	function __construct(){
@@ -73,6 +72,19 @@ class Events{
 	function storeEventMeta($post){
 		if(is_numeric($post))	$post	= get_post($post);
 		$this->postId					= $post->ID;
+
+		//store categories
+		$cats = [];
+		if(is_array($_POST['events_ids'])){
+			foreach($_POST['events_ids'] as $key=>$catId) {
+				if(is_numeric($catId)) $cats[] = $catId;
+			}
+			
+			//Store types
+			$cats = array_map( 'intval', $cats );
+			
+			wp_set_post_terms($post->ID, $cats, 'events');
+		}
 	
 		$event							= $_POST['event'];	
 		$event['allday']				= sanitize_text_field($event['allday']);
@@ -654,7 +666,7 @@ class Events{
 
 			$html	= "<href='$url'>{$event->location}</a><br>";
 			if(!empty($location['address'])){
-				$html	.="<br><a onclick='main.getRoute(this,{$location['latitude']},{$location['longitude']})'>{$location['address']}</a>";
+				$html	.="<br><a onclick='Main.getRoute(this,{$location['latitude']},{$location['longitude']})'>{$location['address']}</a>";
 			}
 			return $html;
 		}

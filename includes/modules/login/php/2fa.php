@@ -81,7 +81,7 @@ function verifyEmailCode(){
     if(!isset($_SESSION)) session_start();
     $emailCode = $_SESSION['2fa_email_key'];
 
-    if($emailCode == $_POST['email_code'] or $_SERVER['HTTP_HOST'] == 'localhost'){
+    if($emailCode == $_POST['email_code']){
         return true;
         unset($_SESSION['2fa_email_key']);
     }else{
@@ -141,10 +141,10 @@ add_filter( 'authenticate', function ( $user) {
             unset($_SESSION['webautn_id']);
         }
         
-        //we did a succesfull webauthn
-        if(in_array('webauthn',$methods) and $_SESSION['webauthn'] == 'success'){
+        //we did a succesfull webauthn or are on localhost
+        if($_SERVER['HTTP_HOST'] == 'localhost' or in_array('webauthn', $methods) and $_SESSION['webauthn'] == 'success'){
             //succesfull webauthentication done before
-        }elseif(in_array('authenticator',$methods)){
+        }elseif(in_array('authenticator', $methods)){
             $twofa      = new TwoFactorAuth();
             $secretKey  = get_user_meta($user->ID,'2fa_key',true);
             /*$hash     = get_user_meta($user->ID,'2fa_hash',true);
@@ -181,7 +181,7 @@ add_filter( 'authenticate', function ( $user) {
                     'Invalid 2FA code given' 
                 );
             }
-        }elseif(in_array('email',$methods)){
+        }elseif(in_array('email', $methods)){
             if(!verifyEmailCode()){
                 $user = new \WP_Error(
                     '2fa error',

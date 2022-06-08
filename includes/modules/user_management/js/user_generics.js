@@ -33,10 +33,10 @@ async function addNewMinistry(target){
 		document.getElementById('justadded').focus();
 		document.getElementById('justadded').select();
 
-		main.displayMessage(`Succesfully added ministry ${ministryName}.`)
+		Main.displayMessage(`Succesfully added ministry ${ministryName}.`)
 	}
 	
-	main.hideModals();
+	Main.hideModals();
 }
 
 //listen to all clicks
@@ -49,7 +49,7 @@ document.addEventListener('click',function(event) {
 		target.closest('.ministryposition').classList.add('hidden');
 
 		//Show the modal
-		main.showModal('add_ministry');
+		Main.showModal('add_ministry');
 	}
 	
 	if(target.classList.contains('ministry_option_checkbox')){

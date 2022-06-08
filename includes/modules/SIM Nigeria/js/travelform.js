@@ -11,7 +11,7 @@ document.addEventListener('change', async ev=>{
         
         var response    = await FormSubmit.fetchRestApi('sim_nigeria/verify_traveldate', formData);
         if(response){
-            main.displayMessage(response, 'warning');
+            Main.displayMessage(response, 'warning');
         }
     }
 });

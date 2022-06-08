@@ -14,7 +14,7 @@ async function addSchedule(target){
 	if(response){
 		target.closest('.schedules_wrapper').outerHTML=response.html;
 		
-		main.displayMessage(response.message);
+		Main.displayMessage(response.message);
 
 		add_selectable();
 	}
@@ -26,7 +26,7 @@ function ShowPublishScheduleModal(target){
 	if(target.dataset.target != null){
 		modal.querySelector('[name="schedule_target"]').value = target.dataset.target;
 		modal.querySelector('[name="publish_schedule"]').click();
-		main.showLoader(target,true);
+		Main.showLoader(target,true);
 	}else{
 		modal.classList.remove('hidden');
 	}
@@ -38,9 +38,9 @@ async function publishSchedule(target){
 	if(response){
 		document.querySelectorAll('.schedule_actions .loadergif').forEach(el=>el.classList.add('hidden'));
 		
-		main.hideModals();
+		Main.hideModals();
 
-		main.displayMessage(response);
+		Main.displayMessage(response);
 	}
 }
 
@@ -56,7 +56,7 @@ async function removeSchedule(target){
 		var response	= await FormSubmit.fetchRestApi('events/remove_schedule', formData);
 
 		if(response){
-			main.displayMessage(response);
+			Main.displayMessage(response);
 
 			document.querySelector('.schedules_wrapper .loaderwrapper:not(.hidden)').remove();
 		}
@@ -126,11 +126,11 @@ function addHostHtml(response){
 
 	targetCell.outerHTML	= response.html;
 
-	main.hideModals();
+	Main.hideModals();
 
 	add_selectable();
 
-	main.displayMessage(response.message);
+	Main.displayMessage(response.message);
 }
 
 // Remove a host
@@ -153,7 +153,7 @@ async function removeHost(target){
 	var confirmed	= await checkConfirmation(text);
 
 	if(confirmed){
-		main.showLoader(cell.firstChild);
+		Main.showLoader(cell.firstChild);
 
 		var response = await FormSubmit.fetchRestApi('events/remove_host', formData);
 
@@ -178,7 +178,7 @@ async function removeHost(target){
 			target.rowSpan = 1;
 		}
 
-		main.displayMessage(response);
+		Main.displayMessage(response);
 	}
 }
 
@@ -291,9 +291,9 @@ async function submitRecipe(target){
 
 	document.querySelector('.active').classList.remove('active');
 
-	main.hideModals();
+	Main.hideModals();
 
-	main.displayMessage(response);
+	Main.displayMessage(response);
 }
 
 function loadHostFormdata(target){
@@ -333,9 +333,9 @@ async function checkConfirmation(text){
 			document.querySelectorAll('.modal:not(.hidden)').forEach(modal=>modal.classList.add('hidden'));
 			//display loading gif
 			if(target.classList.contains('remove_schedule')){
-				main.showLoader(target.closest('.schedules_div'));
+				Main.showLoader(target.closest('.schedules_div'));
 			}else{
-				main.showLoader(target.firstChild);
+				Main.showLoader(target.firstChild);
 			}
 			
 			return true;

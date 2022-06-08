@@ -85,7 +85,7 @@ async function requestEditElementData(target){
 
 	var editButton		= target.outerHTML;
 
-	var loader			= main.showLoader(target);
+	var loader			= Main.showLoader(target);
 
 	loader.querySelector('.loadergif').style.margin = '5px 19px 0px 19px';
 	
@@ -140,9 +140,9 @@ async function addFormElement(target){
 			document.querySelector('.form_elements .clicked').closest('.form_element_wrapper').outerHTML = response.html;
 		}
 
-		main.hideModals();
+		Main.hideModals();
 
-		main.displayMessage(response.message);
+		Main.displayMessage(response.message);
 	}
 }
 
@@ -159,9 +159,9 @@ async function sendElementSize(el, widthPercentage){
 		response = await FormSubmit.fetchRestApi('forms/edit_formfield_width', formData);
 
 		if(response){
-			main.hideModals();
+			Main.hideModals();
 
-			main.displayMessage(response);
+			Main.displayMessage(response);
 		}
 	}
 }
@@ -173,7 +173,7 @@ async function removeElement(target){
 	var elementIndex 	= elementWrapper.dataset.id;
 	var form			= target.closest('form');
 
-	main.showLoader(target);
+	Main.showLoader(target);
 	var loader			= parent.querySelector('.loadergif');
 	loader.style.paddingRight = '10px';
 	loader.classList.remove('loadergif');
@@ -191,7 +191,7 @@ async function removeElement(target){
 		
 		fixElementNumbering(form);
 
-		main.displayMessage(response);
+		Main.displayMessage(response);
 	}
 }
 
@@ -216,7 +216,7 @@ async function reorderformelements(event){
 		if(response){
 			reorderingBusy = false;
 
-			main.displayMessage(response);
+			Main.displayMessage(response);
 		}
 	}else{
 		Swal.fire({
@@ -231,9 +231,9 @@ async function saveFormConditions(target){
 	var response	= await FormSubmit.submitForm(target, 'forms/save_element_conditions');
 
 	if(response){
-		main.hideModals();
+		Main.hideModals();
 
-		main.displayMessage(response);
+		Main.displayMessage(response);
 	}
 }
 
@@ -243,7 +243,7 @@ async function saveFormSettings(target){
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
 
-		main.displayMessage(response);
+		Main.displayMessage(response);
 	}
 }
 
@@ -253,7 +253,7 @@ async function saveFormEmails(target){
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
 
-		main.displayMessage(response);
+		Main.displayMessage(response);
 	}
 }
 

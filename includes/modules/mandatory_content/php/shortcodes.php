@@ -110,7 +110,7 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 	
 
 	if(!empty($html)){
-		if($userId != get_current_user_id()){
+		if($userId != get_current_user_id() and !wp_doing_cron()){
 			$html	= "<button type'button' class='button small mark-all-as-read' data-userid='$userId'>Mark all pages as read for {$user->display_name}</button>".$html;
 		}
 

@@ -923,6 +923,7 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
 		'first_name'    => $firstName,
 		'user_email'    => $email,
 		'display_name'  => "$firstName $lastName",
+		'nickname'  	=> "$firstName $lastName",
 		'user_pass'     => NULL
 	);
 	

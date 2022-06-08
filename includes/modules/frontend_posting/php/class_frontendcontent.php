@@ -83,8 +83,7 @@ class FrontEndContent{
 		wp_localize_script( 'sim_script', 
 			'frontendpost', 
 			array( 
-				'user_select' 		=> SIM\userSelect("Select a person to show the link to",true),
-				'post_type'			=> $this->postType,
+				'postType'			=> $this->postType,
 			) 
 		);
 
@@ -124,7 +123,34 @@ class FrontEndContent{
 				do_action('sim_frontend_post_before_content', $this);
 				
 				$this->postCategories();
+				
+				$categories	= get_categories( array(
+					'orderby' 		=> 'name',
+					'order'   		=> 'ASC',
+					'taxonomy'		=> 'attachment_cat',
+					'hide_empty' 	=> false,
+				) );
+				
+				$this->showCategories('attachment', $categories);
+
 				?>
+				<div class='attachment hidden'>
+					<?php
+					//Existing media
+					if(is_numeric($this->postId)){
+						$image	= wp_get_attachment_image($this->postId);
+						
+						echo "<h4>Attachment preview</h4>";
+						echo apply_filters('sim_attachment_preview', $image, $this->postId);
+					}else{
+						?>
+						<h4>Upload your file</h4>
+						<?php
+						$uploader = new SIM\Fileupload($this->user->ID, 'attachment', 'private', false);
+						echo $uploader->getUploadHtml();
+					}
+					?>
+				</div>
 				
 		 		<div id="featured-image-div" <?php if($this->postImageId == 0) echo ' class="hidden"';?>>
 					<h4 name="post_image_label">Featured image:</h4>
@@ -186,15 +212,7 @@ class FrontEndContent{
 						'textarea_name'				=> "post_content",
 						'textarea_rows'				=> 10
 					);
-					echo wp_editor($this->postContent,'post_content',$settings);
-					?>
-				</div>
-
-				<div class='attachment hidden'>
-					<h4>Upload your file</h4>
-					<?php
-					$uploader = new SIM\Fileupload($this->user->ID, 'attachment', 'private', false);
-					echo $uploader->getUploadHtml();
+					echo wp_editor($this->postContent, 'post_content', $settings);
 					?>
 				</div>
 				
@@ -255,7 +273,7 @@ class FrontEndContent{
 	**/
 	function addTinymcePlugin($plugins) {
 		wp_localize_script( 'sim_script', 
-			'user_select', 
+			'userSelect', 
 			SIM\userSelect("Select a person to show the link to",true),
 		);
 
@@ -523,7 +541,7 @@ class FrontEndContent{
 	 *
 	**/
 	function addModals(){
-		$postTypes		= apply_filters('sim_frontend_posting_modals', []);
+		$postTypes		= apply_filters('sim_frontend_posting_modals', ['attachment']);
 
 		foreach($postTypes as $type){
 			$categories = get_categories( array(
@@ -582,14 +600,14 @@ class FrontEndContent{
 			'hide_empty' => false,
 		) );
 		?>
-		<div id="post-category" class="categorywrapper post page <?php if($this->postType != 'post' and $this->postType != 'page') echo 'hidden'; ?>">
+		<div id="post-category" class="categorywrapper post page <?php if(!in_array($this->postType, ['post', 'page', 'attachment'])) echo 'hidden'; ?>">
 			<h4>
 				<span class="capitalize replaceposttype"><?php echo $this->postType;?></span> category
 			</h4>
 			<div class='categorieswrapper'>
 				<?php
 				foreach($categories as $category){
-					$name 				= $category->name;
+					$name 			= $category->name;
 					$catId 			= $category->cat_ID;
 					$catDescription	= $category->description;
 					$class			= 'infobox post';
@@ -694,28 +712,28 @@ class FrontEndContent{
 						$parent				= $category->parent;
 						$checked			= '';
 						$class				= 'infobox';
+						$taxonomy			= get_object_taxonomies($type)[0];
 						
 						//This category is a not a child
 						if($parent == 0){
-							$html = 'parent_category_html';
+							$html = 'parentCategoryHtml';
 						//has a parent
 						}else{
-							$html = 'child_category_html';
+							$html = 'childCategoryHtml';
 						}
 						
 						//if this cat belongs to this post
-						if(has_term($catId,$type.'type',$this->postId)){
+						if(has_term($catId, $taxonomy, $this->postId)){
 							$checked = 'checked';
 							
 							//If this type has child types, show the label
-							if(count(get_term_children($category->cat_ID, $type.'type'))>0) $hidden = '';
+							if(count(get_term_children($category->cat_ID, $taxonomy))>0) $hidden = '';
 						}
 						
-						
-						//if this is a child, hide it and atach the parent id as attribute
+						//if this is a child, hide it and attach the parent id as attribute
 						if($parent != 0){
 							//Hide subcategory if parent is not in the cat array
-							if(!has_term($parent, $type.'type', $this->postId))	$class .= " hidden";
+							if(!has_term($parent, $taxonomy, $this->postId))	$class .= " hidden";
 							
 							//Store cat parent
 							$class .= "' data-parent='$parent";
@@ -724,8 +742,8 @@ class FrontEndContent{
 						//$$html --> use the value of $html as variable name
 						$$html .= "<div class='$class'>";
 							$checkboxClass = "{$type}type";
-							if(count(get_term_children($category->cat_ID, $type.'type'))>0) $checkboxClass .= " parent_cat";
-							$$html .= "<input type='checkbox' class='$checkboxClass' name='{$type}type[]' value='$catId' $checked>";
+							if(count(get_term_children($category->cat_ID, $taxonomy)) > 0) $checkboxClass .= " parent_cat";
+							$$html .= "<input type='checkbox' class='$checkboxClass' name='{$taxonomy}_ids[]' value='$catId' $checked>";
 						
 							//Name of the category
 							$$html .= "<label class='option-label category-select'>$name</label>";
@@ -735,7 +753,6 @@ class FrontEndContent{
 
 						$$html .= '</div>';
 					}
-					
 					
 					?>
 					<div id='<?php echo $type;?>_parenttypes'>
@@ -849,6 +866,27 @@ class FrontEndContent{
 		//Return the image url
 		$url = wp_get_attachment_image_url($uploadId,'');
 		return '"'.$url;
+	}
+
+	/**
+	 * Store categories of custom post type
+	 * 
+	 * @param	string	$taxonomy	The name of the categorie taxonomy
+	 * 
+	 */
+	function storeCustomCategories($post, $taxonomy){
+		$cats = [];
+		if(is_array($_POST[$taxonomy.'_ids'])){
+			foreach($_POST[$taxonomy.'_ids'] as $key=>$catId) {
+				if(is_numeric($catId)) $cats[] = $catId;
+			}
+			
+			//Make sure we only send integers
+			$cats = array_map( 'intval', $cats );
+			
+			// Store
+			wp_set_post_terms($post->ID, $cats, $taxonomy);
+		}
 	}
 
 	/**
@@ -1094,8 +1132,11 @@ class FrontEndContent{
 		if($post->post_status == 'pending'){
 			sendPendingPostWarning($post, $this->update);
 		}
+
+		//store attachment categories
+		$this->storeCustomCategories($post, 'attachment_cat');
 		
-		do_action('sim_after_post_save', (object)$post, $this->update);
+		do_action('sim_after_post_save', (object)$post, $this);
 		
 		//Return result
 		if($status == 'publish'){

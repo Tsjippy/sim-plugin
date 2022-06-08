@@ -2,6 +2,17 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
+add_action( 'init', function () {
+
+    $taxonomies = array( 'category', 'post_tag' ); // add the 2 tax to ...
+    foreach ( $taxonomies as $tax ) {
+        //register_taxonomy_for_object_type( $tax, 'attachment' ); // add to post type attachment
+		register_taxonomy_for_object_type( $tax, 'page' );
+    }
+
+	SIM\createTaxonomies('attachment_cat', 'attachment', 'attachments');
+});
+
 add_action('sim_before_archive', function($type){
     $pageId	= SIM\getModuleOption('frontend_posting', 'publish_post_page');
 	if(is_numeric($pageId)){

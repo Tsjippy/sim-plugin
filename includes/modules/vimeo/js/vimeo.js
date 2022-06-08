@@ -69,7 +69,7 @@ window.wp.Uploader.prototype.init = function() { // plupload 'PostInit'
 	this.uploader.bind('FileFiltered', function(up, files) {
 		//show vimeo loader
 		try{
-			main.showLoader(document.querySelector('.upload-inline-status'), false, '<span class="vimeo" style="font-size:x-large;">Preparing upload to Vimeo</span>');
+			Main.showLoader(document.querySelector('.upload-inline-status'), false, '<span class="vimeo" style="font-size:x-large;">Preparing upload to Vimeo</span>');
 		}catch(error){
 			console.error(error);
 		}

@@ -29,7 +29,7 @@ export async function fetchRestApi(url, formData){
 		return response;
 	}else{
 		console.error(response);
-		main.displayMessage(response.message, 'error');
+		Main.displayMessage(response.message, 'error');
 		return false;
 	};
 }

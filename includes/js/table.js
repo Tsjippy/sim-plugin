@@ -102,7 +102,7 @@ async function processInput(event, target){
 			formData.append(key, target.closest('tr').dataset[key]);
 		}
 		
-		main.showLoader(cell.firstChild);
+		Main.showLoader(cell.firstChild);
 		
 		response = await FormSubmit.fetchRestApi(table.dataset.url, formData);
 

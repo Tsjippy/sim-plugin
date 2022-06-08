@@ -42,7 +42,6 @@ tinymce.create(
     'tinymce.plugins.insert_embed_shortcode',
     {
         init:function(editor, url){
-            console.log(url+'/../pictures/embed.png');
             editor.addCommand('mceInsert_embed_shortcode',
                 function(){
                     dialog = editor.windowManager.open(pageEmbedDialog);

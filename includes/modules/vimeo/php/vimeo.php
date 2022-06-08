@@ -17,7 +17,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 				$html   .= "<input style='width: initial' type='checkbox' name='attachments[{$post->ID}][vimeo]' value='upload'>";
 			$html   .= "</div>";
 
-			$form_fields['visibility'] = array(
+			$formFields['visibility'] = array(
 				'value' => 'upload',
 				'label' => __( 'Upload this video to vimeo' ),
 				'input' => 'html',
@@ -100,24 +100,24 @@ add_filter( 'wp_get_attachment_url', function( $url, $att_id ) {
 //change hyperlink to shortcode for vimeo videos
 add_filter( 'media_send_to_editor', function ($html, $id, $attachment) {
 	if(strpos($attachment['url'], 'https://vimeo.com') !== false){
-		$vimeo_id	= str_replace('https://vimeo.com/','',$attachment['url']);
+		$vimeoId	= str_replace('https://vimeo.com/', '', $attachment['url']);
 
 		/* $html = '<!-- wp:video {"id":'.$attachment['id'].'} -->';
 			$html .= '<figure class="wp-block-video"><video src="https://vimeo.com/'.$vimeo_id.'" controls="controls" width="300" height="150"></video></figure>';
 		$html .= '<!-- /wp:video -->'; */
 
-		$html	= "[vimeo_video id=$vimeo_id]";
+		$html	= "[vimeo_video id=$vimeoId]";
 	}
 	
 	return $html;
 }, 10, 9 );
 
 //change vimeo thumbnails
-add_filter( 'wp_mime_type_icon', function ($icon, $mime, $post_id) {
+add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
 	if(strpos($icon, 'video.png')){
 		try{
 			$VimeoApi	= new VimeoApi();
-			$path		= $VimeoApi->getThumbnail($post_id);
+			$path		= $VimeoApi->getThumbnail($postId);
 			if(!$path)  return $icon;
 			$icon		= SIM\pathToUrl($path);
 		}catch(\Exception $e){
@@ -155,14 +155,14 @@ if(SIM\getModuleOption('vimeo', 'upload')){
 }
 
 //change the default output for a local video to a vimeo iframe
-add_filter( 'render_block', function( $block_content,  $block ){
+add_filter( 'render_block', function( $blockContent,  $block ){
 	//if this is a video block
 	if($block['blockName'] == 'core/video'){
-		$post_id	= $block['attrs']['id'];
-		$vimeo_id	= get_post_meta($post_id, 'vimeo_id', true);
+		$postId		= $block['attrs']['id'];
+		$vimeoId	= get_post_meta($postId, 'vimeo_id', true);
 
 		//if this video is an vimeo video
-		if(is_numeric($vimeo_id)){
+		if(is_numeric($vimeoId)){
 			//return a vimeo block
 			ob_start();
 			?>
@@ -178,5 +178,5 @@ add_filter( 'render_block', function( $block_content,  $block ){
         }
 	}
 
-	return $block_content;
+	return $blockContent;
 },10,2);

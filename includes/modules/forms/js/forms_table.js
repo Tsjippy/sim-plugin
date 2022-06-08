@@ -33,7 +33,7 @@ async function showHiddenColumns(target){
 	var response	= await FormSubmit.fetchRestApi('forms/delete_table_prefs', formData);
 
 	if(response){
-		main.displayMessage(response);
+		Main.displayMessage(response);
 		location.reload();
 	}
 }
@@ -42,7 +42,7 @@ async function saveColumnSettings(target){
 	var response = await FormSubmit.submitForm(target, 'forms/save_column_settings');
 
 	if(response){
-		main.displayMessage(response);
+		Main.displayMessage(response);
 		location.reload();
 	}
 }
@@ -51,7 +51,7 @@ async function saveTableSettings(target){
 	var response = await FormSubmit.submitForm(target, 'forms/save_table_settings');
 
 	if(response){
-		main.displayMessage(response);
+		Main.displayMessage(response);
 	}
 }
 
@@ -78,7 +78,7 @@ async function removeSubmission(target){
 		formData.append('submissionid', submissionId);
 		
 		//display loading gif
-		main.showLoader(target);
+		Main.showLoader(target);
 
 		var response	= await FormSubmit.fetchRestApi('forms/remove_submission', formData);
 
@@ -136,7 +136,7 @@ async function archiveSubmission(target){
 	}
 
 	//display loading gif
-	main.showLoader(target);
+	Main.showLoader(target);
 	
 	var response	= await FormSubmit.fetchRestApi('forms/archive_submission', formData);
 
@@ -190,7 +190,7 @@ async function getInputHtml(target){
     var cellId			= target.dataset.id
 	oldText				= target.textContent;
     
-    main.showLoader(target.firstChild);
+    Main.showLoader(target.firstChild);
     
     /* if (old_value == "Click to update" || old_value == "X"){
         old_value = "";
@@ -306,7 +306,7 @@ async function processFormsTableInput(target){
 	
 	//Only update when needed
 	if (value != JSON.parse(cell.dataset.oldvalue)){
-		main.showLoader(cell.firstChild);
+		Main.showLoader(cell.firstChild);
 		
 		// Submit new value and receive the filtered value back
 		var formData = new FormData();
@@ -333,7 +333,7 @@ async function processFormsTableInput(target){
 				cell.innerHTML = value;
 			}
 	
-			main.displayMessage(response.message)
+			Main.displayMessage(response.message)
 		}
 	}else{
 		console.log(value)

@@ -2,4 +2,4 @@
 namespace SIM\MEDIAGALLERY;
 use SIM;
 
-const ModuleVersion		= '7.0.20';
+const ModuleVersion		= '7.0.21';

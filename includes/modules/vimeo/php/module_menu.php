@@ -3,7 +3,7 @@ namespace SIM\VIMEO;
 use SIM;
 use Vimeo\Vimeo;
 
-const ModuleVersion		= '7.0.6';
+const ModuleVersion		= '7.0.7';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name

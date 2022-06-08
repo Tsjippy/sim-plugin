@@ -133,7 +133,7 @@ function getAllFields($userId, $type){
 					if(count($names) > 1){
 						$secondTab	= $names[0];
 					}
-					$html .= "<li><a onclick='main.changeUrl(this, `$secondTab`)' data-param_val='$mainTab' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
+					$html .= "<li><a onclick='Main.changeUrl(this, `$secondTab`)' data-param_val='$mainTab' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
 				}
 			}
 		}

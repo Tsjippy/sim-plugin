@@ -8,19 +8,28 @@ add_action('loop_start',function(){
 });
 
 add_action('wp_footer', function(){
+	global	$post;
 	$user				= wp_get_current_user();
-	$publicCategoryId	= get_cat_ID('Public');
+	$taxonomy			= get_post_taxonomies()[0];
+
+	$public				= false;
+	foreach(get_the_terms($post, $taxonomy) as $term){
+		if($term->slug	== 'public'){
+			$public	= true;
+			break;
+		}
+	}
 
 	//If this page or post does not have the public category and the user is not logged in, redirect them to the login page
 	if(
 		http_response_code() != 404			and		//we try to visit an existing page
 		!is_tax()							and		
 		!is_user_logged_in()				and
-		!has_category($publicCategoryId)	and 
+		!$public							and 
 		!is_search()						and
 		!is_home()							or 
 		(
-			is_tax()							and 
+			is_tax()						and 
 			!is_user_logged_in()
 		)
 	){
@@ -41,7 +50,7 @@ add_action('wp_footer', function(){
 	}
 	
 	//If not a valid e-mail then only allow the account page to reset the email
-	if(strpos($user->user_email, ".empty") !== false and !has_category($publicCategoryId) and !is_search() and !is_home() and strpos($_SERVER['REQUEST_URI'],'account') === false ){
+	if(strpos($user->user_email, ".empty") !== false and !$public and !is_search() and !is_home() and strpos($_SERVER['REQUEST_URI'],'account') === false ){
 		wp_die("Your e-mail address is not valid please change it <a href='".SITEURL."/account/?section=generic'>here</a>.");
 	}
 	

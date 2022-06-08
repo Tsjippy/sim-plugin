@@ -10,7 +10,7 @@ add_filter('sim_media_gallery_item_html', function($mediaHtml, $type, $postId){
 
     // Vimeo video
     if(is_numeric($vimeoId)){
-        return show_vimeo_video($vimeoId);
+        return showVimeoVideo($vimeoId);
     }
 
     return $mediaHtml;

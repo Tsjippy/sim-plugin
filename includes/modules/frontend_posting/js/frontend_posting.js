@@ -22,7 +22,7 @@ async function confirmPostDelete( event ) {
 		var response = await FormSubmit.fetchRestApi('frontend_posting/remove_post', formData);
 
 		if(response){
-			main.displayMessage(response);
+			Main.displayMessage(response);
 		}
 	}
 };
@@ -51,7 +51,7 @@ async function changePostType(target){
 	var response = await FormSubmit.submitForm(target, 'frontend_posting/change_post_type');
 
 	if(response){
-		main.displayMessage(response);
+		Main.displayMessage(response);
 	}
 }
 
@@ -314,16 +314,33 @@ async function addCatType(target){
 		</div>
 		`
 		parentDiv.insertAdjacentHTML('afterBegin', html);
-		main.hideModals();
+		Main.hideModals();
 
-		main.displayMessage(`Succesfully added the ${catName} category`);
+		Main.displayMessage(`Succesfully added the ${catName} category`);
 	}
 }
 
 async function submitPost(target){
 	var response	= await FormSubmit.submitForm(target, 'frontend_posting/submit_post');
 	if(response){
-		main.displayMessage(response);
+		Main.displayMessage(response);
+	}
+}
+
+//Retrieve file contents over AJAX
+async function readFileContents(attachmentId){
+	var formData	= new FormData();
+	formData.append('attachment_id', attachmentId);
+
+	var response	= await FormSubmit.fetchRestApi('frontend_posting/get_attachment_contents', formData);
+
+	if(response){
+		// Get current content
+		var content	= tinyMCE.activeEditor.getContent();
+		//Add contents to editor
+		tinymce.activeEditor.setContent(content+response);
+
+		Swal.close();
 	}
 }
 		
@@ -348,52 +365,9 @@ document.addEventListener("DOMContentLoaded",function() {
 			deletePostLock();
 		}
 	};
-
-	document.querySelector('#insert-media-button').addEventListener('click', function(){
-		if(typeof(wp.media.frame) == 'undefined'){
-			setTimeout(
-				function(){
-					wp.media.frame.on('insert', function(e) {
-						var selection = wp.media.frame.state().get('selection').first().toJSON(); 
-						if (['.txt', '.doc', '.rtf'].some(v => selection.url.includes(v))) {
-							Swal.fire({
-								title: 'Question',
-								text: 'Do you want to insert the contents of this file into the post?',
-								icon: 'question',
-								showCancelButton: true,
-								confirmButtonColor: "#bd2919",
-								cancelButtonColor: '#d33',
-								confirmButtonText: 'Yes please',
-								cancelButtonText: 'No thanks',
-								hideClass: {
-									popup: '',                     // disable popup fade-out animation
-								  },
-							}).then((result) => {
-								Swal.fire({
-									title: 'Please wait...',
-									html: "<IMG src='"+sim.loadingGif+"' width=100 height=100>",
-									showConfirmButton: false,
-									showClass: {
-										backdrop: 'swal2-noanimation', // disable backdrop animation
-										popup: '',                     // disable popup animation
-										icon: ''                       // disable icon animation
-									  },
-									
-								});
-								if (result.isConfirmed) {
-									read_file_contents(selection.id);
-								}
-							});
-						}
-					});
-				},
-				100
-			);
-		}
-	})
 	
 	// run js if we open a specific post type
-	if(location.search.includes('?type')){
+	if(location.search.includes('?type') || location.search.includes('?post_id')){
 		switchforms(document.querySelector('#post_type_selector'));
 	}
 	
@@ -487,6 +461,49 @@ document.addEventListener("click", event=>{
 
 	if(target.matches('button.show-diff')){
 		target.parentNode.querySelector('.post-diff-wrapper').classList.toggle('hidden');
+	}
+
+	if(target.id == 'insert-media-button'){
+		if(typeof(wp.media.frame) == 'undefined'){
+			setTimeout(
+				function(){
+					wp.media.frame.on('insert', function(e) {
+						var selection = wp.media.frame.state().get('selection').first().toJSON(); 
+						if (['.txt', '.doc', '.rtf'].some(v => selection.url.includes(v))) {
+							Swal.fire({
+								title: 'Question',
+								text: 'Do you want to insert the contents of this file into the post?',
+								icon: 'question',
+								showCancelButton: true,
+								confirmButtonColor: "#bd2919",
+								cancelButtonColor: '#d33',
+								confirmButtonText: 'Yes please',
+								cancelButtonText: 'No thanks',
+								hideClass: {
+									popup: '',                     // disable popup fade-out animation
+								  },
+							}).then((result) => {
+								Swal.fire({
+									title: 'Please wait...',
+									html: "<IMG src='"+sim.loadingGif+"' width=100 height=100>",
+									showConfirmButton: false,
+									showClass: {
+										backdrop: 'swal2-noanimation', // disable backdrop animation
+										popup: '',                     // disable popup animation
+										icon: ''                       // disable icon animation
+									  },
+									
+								});
+								if (result.isConfirmed) {
+									readFileContents(selection.id);
+								}
+							});
+						}
+					});
+				},
+				100
+			);
+		}
 	}
 });
 
@@ -629,20 +646,3 @@ document.addEventListener('change', event=>{
 		}
 	}
 });
-
-//Retrieve file contents over AJAX
-async function read_file_contents(attachmentId){
-	var formData	= new FormData();
-	formData.append('attachment_id', attachmentId);
-
-	var response	= await FormSubmit.fetchRestApi('frontend_posting/get_attachment_contents', formData);
-
-	if(response){
-		// Get current content
-		var content	= tinyMCE.activeEditor.getContent();
-		//Add contents to editor
-		tinymce.activeEditor.setContent(content+response);
-
-		Swal.close();
-	}
-}

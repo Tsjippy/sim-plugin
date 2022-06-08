@@ -112,12 +112,12 @@ add_action('delete_user', function($userId){
 **/
 function birthday() {
 	if (is_user_logged_in()){
-		$html				= "";
-		$currentUser		= wp_get_current_user();
-		$anniversaryMessages = getAnniversaries();
+		$html					= "";
+		$currentUser			= wp_get_current_user();
+		$anniversaryMessages 	= getAnniversaries();
 		
 		//If there are anniversaries
-		if(count($anniversaryMessages) >0){
+		if(count($anniversaryMessages) > 0){
 			$html .= '<div name="anniversaries" style="text-align: center; font-size: 18px;">';
 				$html .= '<h3>Celebrations:</h3>';
 				$html .= '<p>';

@@ -48,7 +48,7 @@ function eventSpecificFields($frontEndContent){
 	
 	$frontEndContent->showCategories('event', $categories);
 	
-	$eventDetails	= (array)get_post_meta($frontEndContent->postId,'eventDetails',true);
+	$eventDetails	= (array)get_post_meta($frontEndContent->postId, 'eventdetails', true);
 	$repeatParam	= $eventDetails['repeat'];
 	
 	?>
@@ -363,7 +363,9 @@ add_filter('sim_signal_post_notification_message', function($excerpt, $post){
 	return $excerpt;
 }, 10, 2);
 
-add_action('sim_after_post_save', function($post, $update){
+add_action('sim_after_post_save', function($post, $frontEndPost){
     $events = new Events();
-    $events->storeEventMeta($post, $update);
+    $events->storeEventMeta($post, $frontEndPost->update);
+
+	$frontEndPost->storeCustomCategories($post, 'events');
 }, 1, 2);

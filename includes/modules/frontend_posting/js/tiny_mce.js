@@ -2,9 +2,9 @@
 	SELECT USER DATA
 */
 
-select_user_html = 
+selectUserHtml = 
 `<div class="wp-editor-help">
-	${user_select}
+	${userSelect}
 	
 	<label>
 		<input type="checkbox" id="insert_picture">
@@ -22,14 +22,14 @@ select_user_html =
 	</label>
 </div>`;
 
-var select_user_dialog = {
+var selectUserDialog = {
 	width: 350,
 	height: 160,
 	title: 'Insert user data',
 	items: {
 		type: 'container',
 		classes: 'wp-help',
-		html: select_user_html
+		html: selectUserHtml
 	},
 	buttons: [{
 		text: 'Insert link',
@@ -64,7 +64,7 @@ tinymce.create(
 		init:function(editor, url){	
 			editor.addCommand('mceSelect_user',
 				function(){
-					dialog 							= editor.windowManager.open(select_user_dialog);
+					dialog 							= editor.windowManager.open(selectUserDialog);
 					select							= document.querySelector('.wp-editor-help [name="user_selection"]');
 					select._niceselect 				= NiceSelect.bind(select, {searchable: true});
 					var niceselect 					= select._niceselect.dropdown

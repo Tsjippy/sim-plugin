@@ -7,7 +7,7 @@ async function saveFormInput(target){
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
 
-		main.displayMessage(response);
+		Main.displayMessage(response);
 
 		if(form.dataset.reset == 'true'){
 			FormSubmit.formReset(form);

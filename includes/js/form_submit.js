@@ -93,17 +93,17 @@ export async function fetchRestApi(url, formData){
 		if(result.ok){
 			return response;
 		}else if(response.code == 'rest_cookie_invalid_nonce'){
-			main.displayMessage('Please refresh the page and try again!', 'error');
+			Main.displayMessage('Please refresh the page and try again!', 'error');
 			return false;
 		}else{
 			console.error(response);
-			main.displayMessage(response.message, 'error');
+			Main.displayMessage(response.message, 'error');
 			return false;
 		};
 	}catch(error){
 		console.error(error);
 		console.error(result);
-		main.displayMessage(`Url ${sim.baseUrl}/wp-json/sim/v1/${url} not found`, 'error');
+		Main.displayMessage(`Url ${sim.baseUrl}/wp-json/sim/v1/${url} not found`, 'error');
 		return false;
 	}
 }

@@ -55,8 +55,6 @@ add_action( 'rest_api_init', function () {
 				if(is_wp_error($post)){
 					return $post;
 				}else{
-					$title	= $post->post_title;
-
 					$result		= $vimeo->downloadFromVimeo($_POST['download_url'], $post->ID);
 					if(is_wp_error($result)){
 						return $result;
@@ -78,63 +76,72 @@ add_action( 'rest_api_init', function () {
 	);
 });
 
-//create a video on vimeo to upload to
+/**
+ * create a video on vimeo to upload to
+ * 
+ * @return	array		arra containing the upload link, post id and vimeo id
+ * 
+ */
 function prepareVimeoUpload(){
 	global $wpdb;
 
-	$file_name	= $_POST['file_name'];
+	$fileName	= $_POST['file_name'];
 	$mime		= $_POST['file_type'];
 
-	$url			= '';
-	$post_id		= 0;
+	$url		= '';
+	$postId		= 0;
 
 	//check if post already exists
 	$results = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $wpdb->postmeta WHERE meta_key = 'vimeo_upload_data'"));
 	foreach($results as $result){
 		$data	= unserialize($result->meta_value);
-		if($data['filename'] == $file_name){
+		if($data['filename'] == $fileName){
 			$url			= $data['url'];
-			$post_id		= $result->post_id;
-			$vimeo_id      	= $data['vimeo_id'];
+			$postId			= $result->post_id;
+			$vimeoId      	= $data['vimeo_id'];
 		}
 	}
 
     // If there is no file with the same name, create a new video on vimeo
 	if(empty($url)){
 		$VimeoApi	= new VimeoApi();
-		$result	= $VimeoApi->createVimeoVideo($file_name, $mime);
+		$result		= $VimeoApi->createVimeoVideo($fileName, $mime);
     // Return a previous created vimeo video link and post id
 	}else{
 		$result = [
 			'upload_link'	=> $url,
-			'post_id'		=> $post_id,
-			'vimeo_id'      => $vimeo_id
+			'post_id'		=> $postId,
+			'vimeo_id'      => $vimeoId
 		];
 	}
 
 	return $result;
 }
 
-//After upload to vimeo was succesfull
+/**
+ * After upload to vimeo was succesfull
+ * 
+ * @return	array with succes and the attachment data
+ */
 function addUploadedVimeo(){
-	$post_id		= $_POST['post_id'];
+	$postId		= $_POST['post_id'];
 
     // Get the attachement data
-	$attachment = wp_prepare_attachment_for_js( $post_id );
+	$attachment = wp_prepare_attachment_for_js( $postId );
 	if ( ! $attachment ) {
 		return new WP_Error('attachemnt', 'Something went wrong');
 	}
     // Replace the icon if needed
 	$attachment['icon']	= str_replace('default', 'video', $attachment['icon']);
 
-	update_post_meta($post_id, '_wp_attached_file', $attachment['title']);
+	update_post_meta($postId, '_wp_attached_file', $attachment['title']);
 
     // remove upload data
-    delete_post_meta($post_id, 'vimeo_upload_data');
+    delete_post_meta($postId, 'vimeo_upload_data');
 
 	// Download a backup or send an e-mail if that is not possible
 	$VimeoApi	= new VimeoApi();
-	$VimeoApi->downloadVideo($post_id);
+	$VimeoApi->downloadVideo($postId);
 
     // Media libray expects the below array!
     return [

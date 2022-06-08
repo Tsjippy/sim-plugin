@@ -69,7 +69,7 @@ async function fileUpload(target){
 				await uploadVideo(target.files[index]);
 			// file to big
 			}else if(target.files[index].size > sim.maxFileSize){
-				main.displayMessage('File too big, max file size is '+(parseInt(sim.maxFileSize)/1024/1024)+'MB','error');
+				Main.displayMessage('File too big, max file size is '+(parseInt(sim.maxFileSize)/1024/1024)+'MB','error');
 				target.value = '';
 				return;
 			}else{
@@ -77,7 +77,7 @@ async function fileUpload(target){
 			}
 		}
 	}else{
-		main.displayMessage("Please select some files before hitting the uplad button!", 'error');
+		Main.displayMessage("Please select some files before hitting the uplad button!", 'error');
 		return;
 	}
 
@@ -98,7 +98,7 @@ async function fileUpload(target){
 				fileUploadSucces(request.responseText)
 			//Error
 			}else{
-				main.displayMessage(JSON.parse(request.responseText).error,'error');
+				Main.displayMessage(JSON.parse(request.responseText).error,'error');
 			}
 			
 			//Hide loading gif
@@ -164,11 +164,11 @@ function fileUploadProgress(e){
 function fileUploadSucces(result){
 	var imgUrls			= JSON.parse(result);
 	
-	for(var index = 0; index < imgurls.length; index++) {
-		var src = imgurls[index]['url'];
+	for(var index = 0; index < imgUrls.length; index++) {
+		var src = imgUrls[index]['url'];
 		
 		if(imgUrls[index]['id'] != undefined){
-			datasetString += ' data-libraryid="'+imgurls[index]['id']+'"'
+			datasetString += ' data-libraryid="'+imgUrls[index]['id']+'"'
 		}
 		
 		var fileName 	= src.split("/")[src.split("/").length-1];
@@ -195,9 +195,9 @@ function fileUploadSucces(result){
 	}
 	
 	if(imgUrls.length==1){
-		main.displayMessage(`The file ${fileName} has been uploaded succesfully.`,'success',true);
+		Main.displayMessage(`The file ${fileName} has been uploaded succesfully.`,'success',true);
 	}else{
-		main.displayMessage("The files have been uploaded succesfully.",'success',true);
+		Main.displayMessage("The files have been uploaded succesfully.",'success',true);
 	}
 	
 	//Hide upload button if only one file allowed
@@ -251,7 +251,7 @@ async function removeDocument(target){
 			el.name = el.name.replace(re, '$1'+index+'$2');
 		});
 
-		main.displayMessage(response);
+		Main.displayMessage(response);
 	}
 }
 
@@ -326,7 +326,7 @@ async function uploadVideo(file){
 		// Hide the loader
 		document.querySelector('.loadergif_wrapper:not(.hidden)').classList.add('hidden');
 
-		main.displayMessage(`The file ${file.name} has been uploaded succesfully.`,'success',true);
+		Main.displayMessage(`The file ${file.name} has been uploaded succesfully.`,'success',true);
 		
 		//Hide upload button if only one file allowed
 		if(fileUploadWrap.querySelector('.file_upload').multiple == false){

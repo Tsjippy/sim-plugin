@@ -47,16 +47,18 @@ function recipeTitle($postType){
 }
 
 function storeRecipeMeta($post, $postType){
-	//store recipetype
-	$recipeTypes = [];
-	if(is_array($_POST['recipetype'])){
-		foreach($_POST['recipetype'] as $key=>$recipeType) {
-			if($recipeType != '') $recipetypes[] = $recipeType;
-		}
-		
-		//Store recipe type
-		wp_set_post_terms($post->ID, $recipeTypes, 'recipes');
-	}
+	//store categories
+    $cats = [];
+    if(is_array($_POST['recipes_ids'])){
+        foreach($_POST['recipes_ids'] as $key=>$catId) {
+            if(is_numeric($catId)) $cats[] = $catId;
+        }
+        
+        //Store types
+        $cats = array_map( 'intval', $cats );
+        
+        wp_set_post_terms($post->ID, $cats, 'recipes');
+    }
 	
 	//ingredients
 	if(isset($_POST['ingredients'])){

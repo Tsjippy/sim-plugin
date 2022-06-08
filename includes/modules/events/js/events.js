@@ -188,7 +188,7 @@ document.addEventListener("click", function(event) {
             //make this date selected
             target.classList.add('selected');
 
-            if(main.isMobileDevice()){
+            if(Main.isMobileDevice()){
                 window.scrollTo(0, eventDetail.offsetTop);
             }else{
                 //scroll the detail into view

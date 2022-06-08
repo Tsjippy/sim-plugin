@@ -46,7 +46,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 
 
 // Send Signal message about the new or updated post
-add_action('sim_after_post_save', function($post, $update){
+add_action('sim_after_post_save', function($post){
     if(isset($_POST['signal']) and $_POST['signal'] == 'send_signal'){
         update_metadata( 'post', $post->ID, 'signal','checked');
         update_metadata( 'post', $post->ID, 'signalmessagetype', $_POST['signalmessagetype']);
@@ -58,4 +58,4 @@ add_action('sim_after_post_save', function($post, $update){
             sendPostNotification($post);
         }
     }
-}, 999, 2);
+}, 999);

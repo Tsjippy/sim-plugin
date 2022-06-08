@@ -35,15 +35,15 @@ async function submitAddAccountForm(event){
 			select._niceselect.update();
 		});
 
-		main.displayMessage(response.message, 'success');
+		Main.displayMessage(response.message, 'success');
 	}
 
-	main.hideModals();
+	Main.hideModals();
 };
 
 document.addEventListener("DOMContentLoaded",function() {
 	document.querySelectorAll('[name="add_user_account_button"]').forEach(el=>el.addEventListener('click',function(event){
-		main.showModal('add_account');
+		Main.showModal('add_account');
 	}));
 
 	document.querySelectorAll('[name="adduseraccount"]').forEach(el=>el.addEventListener('click', ev=>{

@@ -52,11 +52,12 @@ function event_contents(){
 						'fields'    => 'id=>name'
 					) 
 				);
+				
 				if(is_user_logged_in()){
 					?>
 					<div class="description event">
 						<?php 
-						if(!empty($categories)){
+						if(!empty($categories) and !is_wp_error($categories)){
 						?>
 							<span class='category eventmeta'> 
 								<?php

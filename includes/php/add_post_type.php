@@ -17,7 +17,6 @@ function registerPostTypeAndTax($single, $plural){
 	global $taxnames;
 	$taxnames[$single]	= $plural;
 
-	$lowerPlural		= $plural;
 	$plural				= ucfirst($plural);
 	$single				= ucfirst($single);
 	
@@ -62,6 +61,23 @@ function registerPostTypeAndTax($single, $plural){
 	//Create the custom post type
 	register_post_type( $single, $args );
 	
+	//create categories
+	createTaxonomies($plural, $single, $plural);
+}
+
+/**
+ * Register taxonomy for an existing posttype
+ * 
+ * @param  string 	$taxonomyName	the name of the taxonomy
+ * @param  string 	$postType		the single name of the posttype
+ * @param  string	$plural     	the plural name of the post type  
+ */
+function createTaxonomies($taxonomyName, $postType, $plural){
+	$taxonomyName		= strtolower($taxonomyName);
+	$postType			= strtolower($postType);
+	$plural				= strtolower($plural);
+	$lowerPlural		= $plural;
+	$plural				= ucfirst($plural);
 	/*
 		CREATE CATEGORIES
 	*/
@@ -71,16 +87,16 @@ function registerPostTypeAndTax($single, $plural){
 		'search_items' 					=> "Search $plural Types",
 		'popular_items' 				=> "Popular $plural Types",
 		'all_items' 					=> "All $plural Types",
-		'parent_item' 					=> "Parent $single Type",
-		'parent_item_colon' 			=> "Parent $single Type:",
-		'edit_item' 					=> "Edit $single Type",
-		'update_item' 					=> "Update $single Type",
-		'add_new_item' 					=> "Add New $single Type",
-		'new_item_name' 				=> "New $single Type Name",
-		'separate_items_with_commas' 	=> "Separate $single type with commas",
-		'add_or_remove_items' 			=> "Add or remove $single type",
-		'choose_from_most_used' 		=> "Choose from the most used $single types",
-		'menu_name' 					=> "$single Types",
+		'parent_item' 					=> "Parent $postType Type",
+		'parent_item_colon' 			=> "Parent $postType Type:",
+		'edit_item' 					=> "Edit $postType Type",
+		'update_item' 					=> "Update $postType Type",
+		'add_new_item' 					=> "Add New $postType Type",
+		'new_item_name' 				=> "New $postType Type Name",
+		'separate_items_with_commas' 	=> "Separate $postType type with commas",
+		'add_or_remove_items' 			=> "Add or remove $postType type",
+		'choose_from_most_used' 		=> "Choose from the most used $postType types",
+		'menu_name' 					=> ucfirst($postType)." Categories",
 	);
 	
 	$args = array(
@@ -100,10 +116,10 @@ function registerPostTypeAndTax($single, $plural){
 	);
 	
 	//register taxonomy category
-	register_taxonomy( $lowerPlural, $single, $args );
+	register_taxonomy( $taxonomyName, $postType, $args );
 
 	//redirect plural to archive page as well
-	add_rewrite_rule($lowerPlural.'/?$','index.php?post_type='.$single,'top');
+	add_rewrite_rule($taxonomyName.'/?$','index.php?post_type='.$postType,'top');
 }
 
 add_filter( 'single_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
