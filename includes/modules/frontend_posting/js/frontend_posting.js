@@ -226,8 +226,10 @@ function addFeaturedImage(event) {
 		parent.querySelector('[name="post_image_id"]').value = attachment.id;
 		
 		//Show the image
-		//post, page or recipe
-		var imgdiv = parent.querySelector('#featured-image-div');
+	
+		document.getElementById('featured-image-div').classList.remove('hidden');
+
+		var imgdiv = document.getElementById('featured_image_wrapper');
 		
 		//If already an image set, remove it
 		if(imgdiv.querySelector('img') != null){
@@ -235,7 +237,6 @@ function addFeaturedImage(event) {
 		}
 		
 		imgdiv.insertAdjacentHTML('beforeEnd','<img width="150" height="150" src="'+attachment.url+'">');
-		imgdiv.classList.remove('hidden');
 		
 		//Change button text
 		parent.querySelectorAll('[name="add-featured-image"]' ).forEach(function(el){
@@ -396,6 +397,14 @@ document.addEventListener("click", event=>{
 
 	if(target.name == "add-featured-image"){
 		addFeaturedImage(event);
+	}
+
+	if(target.matches('.remove_featured_image')){
+		var parent	= document.getElementById('featured-image-div');
+		parent.classList.add('hidden');
+		parent.querySelector('img').remove();
+
+		document.querySelector('[name="add-featured-image"]').textContent = 'Add featured image';
 	}
 	
 	if(target.id == 'showallfields'){

@@ -267,7 +267,7 @@ function eventSpecificFields($frontEndContent){
 						<div id="includedate_div_<?php echo $index;?>" class="clone_div" data-divid="<?php echo $index;?>">
 							<label>Include date <?php echo $index+1;?></label>
 							<div class='buttonwrapper'>
-								<input type="date" name="event[repeat][includedates][<?php echo $index;?>]" style="flex: 9;" value="<?php echo $includeDates;?>">
+								<input type="date" name="event[repeat][includedates][<?php echo $index;?>]" style="flex: 9;" value="<?php echo $includeDate;?>">
 								<button type="button" class="add button" style="flex: 1;">+</button>
 							</div>
 						</div>

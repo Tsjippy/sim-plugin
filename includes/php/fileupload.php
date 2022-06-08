@@ -316,8 +316,8 @@ function removeDocument(){
 		if(isset($_POST['metakey']))	$metaKey = sanitize_text_field($_POST['metakey']);
 		
 		if(isset($metaKey)){
-			$metaKeys = str_replace(']','',explode('[', $metaKey));
-			$baseMetaKey = $metaKeys[0];
+			$metaKeys 		= str_replace(']','',explode('[', $metaKey));
+			$baseMetaKey 	= $metaKeys[0];
 			unset($metaKeys[0]);
 		}
 		
@@ -327,6 +327,7 @@ function removeDocument(){
 			if(isset($_POST['libraryid']) and is_numeric($_POST['libraryid'])){
 				wp_delete_attachment($_POST['libraryid']);
 			}else{
+				
 				unlink($path);
 			}
 			

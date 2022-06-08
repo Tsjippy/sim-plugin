@@ -3085,7 +3085,7 @@ class Formbuilder{
 								$keys	= implode(',', array_keys($value));
 								$data	= "data-keys=$keys";
 							}
-							echo "<option value='$key' $data>";
+							echo esc_html("<option value='$key' $data>");
 						}
 
 						?>
@@ -3101,7 +3101,7 @@ class Formbuilder{
 							<?php
 							if(is_array($arrayKeys)){
 								foreach(array_keys($arrayKeys) as $key){
-									echo "<option value='$key'>";
+									echo esc_html("<option value='$key'>");
 								}
 							}
 							?>

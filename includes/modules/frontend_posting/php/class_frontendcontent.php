@@ -154,23 +154,25 @@ class FrontEndContent{
 				
 		 		<div id="featured-image-div" <?php if($this->postImageId == 0) echo ' class="hidden"';?>>
 					<h4 name="post_image_label">Featured image:</h4>
-					<?php 
-					if($this->postImageId != 0){
-						echo get_the_post_thumbnail(
-							$this->postId, 
-							'thumbnail', 
-							array(
-								'title' => 'Featured Image',
-								'class' => 'postimage'
-							)
-						);
-						echo "<button type='button' class='remove_document button' data-url='$document' data-userid='{$this->userId}' data-metakey='$metakey_string' $library_string>X</button>";
-						echo "<img class='remove_document_loader src='".LOADERIMAGEURL."' style='display:none; height:40px;' >";
-						$text = 'Change';
-					}else{
-						$text = 'Add';
-					}
-					?>
+
+					<span id='featured_image_wrapper'>
+						<?php 
+						if($this->postImageId != 0){
+							echo get_the_post_thumbnail(
+								$this->postId, 
+								'thumbnail', 
+								array(
+									'title' => 'Featured Image',
+									'class' => 'postimage'
+								)
+							);
+							$text 	= 'Change';
+						}else{
+							$text = 'Add';
+						}
+						?>
+					</span>
+					<button type='button' class='remove_featured_image button'>X</button>
 				</div>
 				
 				<?php

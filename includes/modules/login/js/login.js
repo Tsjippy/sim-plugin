@@ -235,7 +235,7 @@ async function requestAccount(target){
 }
 
 function showMessage(message){
-	document.querySelector("#login_wrapper .message").innerHTML= dompurify(message);
+	document.querySelector("#login_wrapper .message").innerHTML= dompurify.sanitize(message);
 }
 
 let webauthnSupported	= false;
