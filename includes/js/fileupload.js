@@ -1,5 +1,3 @@
-import escape from 'lodash.escape';
-
 console.log("Fileupload.js loaded");
 
 let totalFiles			= 0;
@@ -358,7 +356,7 @@ async function uploadVideo(file){
 		}
 		var response	= await result.json();
 
-		preview.querySelector('.vimeo-wrapper').innerHTML = escape(response.html);
+		preview.querySelector('.vimeo-wrapper').innerHTML = dompurify.sanitize(response.html);
 	}
 
 	upload.options.onError      = function(error) {

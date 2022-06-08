@@ -23,8 +23,11 @@ function registerScripts(){
 	//Sweet alert https://sweetalert2.github.io/
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
 
+	// purify library
+	wp_register_script('sim_purify', plugins_url('js/purify.min.js', __DIR__), array(), '2.3.8', true);
+
 	//Submit forms
-	wp_register_script('sim_user_select_script',plugins_url('js/user_select.min.js', __DIR__), array('sweetalert'), StyleVersion,true);
+	wp_register_script('sim_user_select_script', plugins_url('js/user_select.min.js', __DIR__), array('sweetalert'), StyleVersion,true);
 	wp_register_script('sim_formsubmit_script', plugins_url('js/formsubmit.min.js', __DIR__), array(), StyleVersion,true);
 
 	//table request shortcode
@@ -34,7 +37,7 @@ function registerScripts(){
 	wp_register_script('sim_script',plugins_url('js/main.min.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
 	
 	//File upload js
-	wp_register_script('sim_fileupload_script',plugins_url('js/fileupload.min.js', __DIR__), array('sim_formsubmit_script'),StyleVersion,true);
+	wp_register_script('sim_fileupload_script', plugins_url('js/fileupload.min.js', __DIR__), array('sim_formsubmit_script', 'sim_purify'), StyleVersion, true);
 
 	wp_register_style('sim_taxonomy_style', plugins_url('css/taxonomy.min.css', __DIR__), array(), StyleVersion);
 }
