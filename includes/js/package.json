@@ -16,5 +16,8 @@
   "devDependencies": {
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2"
+  },
+  "dependencies": {
+    "lodash.escape": "^4.0.1"
   }
 }
