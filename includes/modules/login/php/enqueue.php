@@ -22,7 +22,7 @@ add_action( 'wp_enqueue_scripts', function(){
 	    wp_register_style( 'sim_login_style', plugins_url('css/login.min.css', __DIR__), array(), ModuleVersion);
         wp_enqueue_style( 'sim_login_style');
         
-        wp_enqueue_script('sim_login_script', plugins_url('js/login.min.js', __DIR__), array('sim_script'), ModuleVersion, true);
+        wp_enqueue_script('sim_login_script', plugins_url('js/login.min.js', __DIR__), array('sim_script', 'sim_purify'), ModuleVersion, true);
     }else{
         wp_enqueue_script('sim_logout_script', plugins_url('js/logout.min.js', __DIR__), array(), ModuleVersion, true);
     }

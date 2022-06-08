@@ -799,7 +799,7 @@ class FrontEndContent{
 			// Show change author dropdown 
 			$authorId	= $this->post->post_author;
 			if(!is_numeric($authorId)) $authorId = $this->user->ID;
-			echo SIM\userSelect('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $userId=$authorId);
+			echo esc_html(SIM\userSelect('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $userId=$authorId));
 			
 			// Only show publish date if not yet published
 			if(!in_array($this->post->post_status, ['publish', 'inherit'])){
