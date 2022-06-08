@@ -651,7 +651,7 @@ class FrontEndContent{
 			<div id="expirydate_div" class="frontendform">
 				<h4>Expiry date</h4>
 				<label>
-					<input type='date' class='' name='expirydate' min="<?php echo date("Y-m-d"); ?>" value="<?php echo get_post_meta($this->postId,'expirydate', true); ?>" style="display: unset; width:unset;">
+					<input type='date' class='' name='expirydate' min="<?php echo date("Y-m-d"); ?>" value="<?php echo get_post_meta($this->postId, 'expirydate', true); ?>" style="display: unset; width:unset;">
 					Set an optional expiry date of this post
 				</label>
 			</div>

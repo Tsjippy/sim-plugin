@@ -612,27 +612,26 @@ add_shortcode( 'delete_user', function(){
 			$userId = $_GET["userid"];
 			$userdata = get_userdata($userId);
 			if($userdata != null){
-				$family = get_user_meta($userId,"family",true);
-				$nonceString = 'delete_user_'.$userId.'_nonce';
+				$family 		= get_user_meta($userId,"family",true);
+				$nonceString 	= 'delete_user_'.$userId.'_nonce';
 				
 				if(!isset($_GET["confirm"])){
-					echo '<script>
-					var remove = confirm("Are you sure you want to remove the useraccount for '.$userdata->display_name.'?");
-					if(remove){
-						var url=window.location+"&'.$nonceString.'='.wp_create_nonce($nonceString).'";';
-						if (is_array($family) and count($family)>0){
-							echo '
-							var family = confirm("Do you want to delete all useraccounts for the familymembers of '.$userdata->display_name.' as well?");
-							if(family){
-								window.location = url+"&confirm=true&family=true";
+					$html	.="<script>";
+						$html	.= "var remove = confirm('Are you sure you want to remove the useraccount for $userdata->display_name?)";
+						$html	.= "if(remove){";
+							$html	.= "var url=`\${window.location}&$nonceString=".wp_create_nonce($nonceString)."`;";
+							if (is_array($family) and count($family)>0){
+								$html	.= "var family = confirm('Do you want to delete all useraccounts for the familymembers of '.$userdata->display_name.' as well?')";
+								$html	.= "if(family){";
+									$html	.= "window.location = url+'&confirm=true&family=true'";
+								$html	.= "}else{";
+									$html	.= "window.location = url+'&confirm=true'";
+								$html	.= "}";
 							}else{
-								window.location = url+"&confirm=true";
-							}';
-						}else{
-							echo 'window.location = url+"&confirm=true"';
-						}
-					echo '}
-					</script>';
+								$html	.= "window.location = url+'&confirm=true'";
+							}
+						$html	.= "}";
+					$html	.= "</script>";
 				}elseif($_GET["confirm"] == "true"){
 					if(!isset($_GET[$nonceString]) or !wp_create_nonce($_GET[$nonceString],$nonceString)){
 						$html .='<div class="error">Invalid nonce! Refresh the page</div>';
@@ -653,12 +652,12 @@ add_shortcode( 'delete_user', function(){
 						}
 						//Remove user account
 						wp_delete_user($userId,1);
-						$html .= '<div class="success">Useraccount for '.$deletedName.' succcesfully deleted.</div>';
-						echo "<script>
-							setTimeout(function(){
-								window.location = window.location.href.replace('/?userid=$userId&delete_user_{$userId}_nonce=".$_GET[$nonceString]."&confirm=true','').replace('&family=true','');
-							}, 3000);
-						</script>";
+						$html .= "<div class='success'>Useraccount for $deletedName succcesfully deleted.</div>";
+						$html .= "<script>";
+							$html .= "setTimeout(function(){";
+								$html .= "window.location = window.location.href.replace('/?userid=$userId&delete_user_{$userId}_nonce=".$_GET[$nonceString]."&confirm=true','').replace('&family=true','');";
+							$html .= "}, 3000);";
+						$html .= "</script>";
 					}
 				}
 				

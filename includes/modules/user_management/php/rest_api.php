@@ -76,9 +76,7 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\createUserAccount',
-			'permission_callback' 	=> function(){
-                return in_array('usermanagement', wp_get_current_user()->roles);
-            },
+			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'first_name'		=> array(
 					'required'	=> true
