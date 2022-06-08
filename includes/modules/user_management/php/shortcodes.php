@@ -57,74 +57,74 @@ add_shortcode('create_user_account', function ($atts){
 });
 
 //Shortcode to display the pending user accounts
-add_shortcode('pending_user',function ($atts){
-	if ( current_user_can( 'edit_others_pages' ) ) {
-		//Delete user account if there is an url parameter for it
-		if(isset($_GET['delete_pending_user'])){
-			//Get user id from url parameter
-			$UserId = $_GET['delete_pending_user'];
-			//Check if the user account is still pending
-			if(get_user_meta($UserId,'disabled',true) == 'pending'){
-				//Load delete function
-				require_once(ABSPATH.'wp-admin/includes/user.php');
-				
-				//Delete the account
-				$result = wp_delete_user($UserId);
-				if ($result == true){
-					//show succesmessage
-					echo '<div class="success">User succesfully removed</div>';
-				}
-			}
-		}
-		
-		//Activate useraccount
-		if(isset($_GET['activate_pending_user'])){
-			//Get user id from url parameter
-			$UserId = $_GET['activate_pending_user'];
-			//Check if the user account is still pending
-			if(get_user_meta($UserId,'disabled',true) == 'pending'){
-				//Send welcome-email
-				wp_new_user_notification($UserId, null, 'user');
+add_shortcode('pending_user', function ($atts){
+	if ( !current_user_can( 'edit_others_pages' ) ) return "No permission!";
 
-				//Make approved
-				delete_user_meta( $UserId, 'disabled');
+	//Delete user account if there is an url parameter for it
+	if(isset($_GET['delete_pending_user'])){
+		//Get user id from url parameter
+		$UserId = $_GET['delete_pending_user'];
+		//Check if the user account is still pending
+		if(get_user_meta($UserId,'disabled',true) == 'pending'){
+			//Load delete function
+			require_once(ABSPATH.'wp-admin/includes/user.php');
+			
+			//Delete the account
+			$result = wp_delete_user($UserId);
+			if ($result == true){
+				//show succesmessage
+				echo '<div class="success">User succesfully removed</div>';
+			}
+		}
+	}
+	
+	//Activate useraccount
+	if(isset($_GET['activate_pending_user'])){
+		//Get user id from url parameter
+		$UserId = $_GET['activate_pending_user'];
+		//Check if the user account is still pending
+		if(get_user_meta($UserId,'disabled',true) == 'pending'){
+			//Send welcome-email
+			wp_new_user_notification($UserId, null, 'user');
 
-				// 
-				do_action('sim_after_user_approval', $userId);
-				
-				echo '<div class="success">Useraccount succesfully activated</div>';
-			}
+			//Make approved
+			delete_user_meta( $UserId, 'disabled');
+
+			// 
+			do_action('sim_after_user_approval', $userId);
+			
+			echo '<div class="success">Useraccount succesfully activated</div>';
 		}
-		
-		//Display pening user accounts
-		$list = '';
-		//Get all the users who need approval
-		$pendingUsers = get_users(array(
-			'meta_key'     => 'disabled',
-			'meta_value'   => 'pending',
-			'meta_compare' => '=',
-		));
-		
-		// Array of WP_User objects.
-		if ( $pendingUsers ) {
-			foreach ( $pendingUsers as $pendingUser ) {
-				$approveUrl	 = add_query_arg( 'activate_pending_user', $pendingUser->ID);
-				$deleteUrl	 = add_query_arg( 'delete_pending_user', $pendingUser->ID);
-				$list		.= "<li>$pendingUser->display_name  ($pendingUser->user_email) <a href='$approveUrl'>Approve</a>   <a href='$deleteUrl'>Delete</a></li>";
-			}
-		}else{
-			return "<p>There are no pending user accounts.</p>";
+	}
+	
+	//Display pening user accounts
+	$list = '';
+	//Get all the users who need approval
+	$pendingUsers = get_users(array(
+		'meta_key'     => 'disabled',
+		'meta_value'   => 'pending',
+		'meta_compare' => '=',
+	));
+	
+	// Array of WP_User objects.
+	if ( $pendingUsers ) {
+		foreach ( $pendingUsers as $pendingUser ) {
+			$approveUrl	 = add_query_arg( 'activate_pending_user', $pendingUser->ID);
+			$deleteUrl	 = add_query_arg( 'delete_pending_user', $pendingUser->ID);
+			$list		.= "<li>$pendingUser->display_name  ($pendingUser->user_email) <a href='$approveUrl'>Approve</a>   <a href='$deleteUrl'>Delete</a></li>";
 		}
-		
-		if (!empty($html)){
-			$html 	 = "<p>";
-				$html	.= "<strong>Pending user accounts:</strong><br>";
-				$html	.= "<ul>";
-					$html	.= $list;
-				$html	.="</ul>";
-			$html	.= "</p>";
-			return $html;
-		}
+	}else{
+		return "<p>There are no pending user accounts.</p>";
+	}
+	
+	if (!empty($list)){
+		$html 	 = "<p>";
+			$html	.= "<strong>Pending user accounts:</strong><br>";
+			$html	.= "<ul>";
+				$html	.= $list;
+			$html	.="</ul>";
+		$html	.= "</p>";
+		return $html;
 	}
 });
 
@@ -617,7 +617,7 @@ add_shortcode( 'delete_user', function(){
 				
 				if(!isset($_GET["confirm"])){
 					$html	.="<script>";
-						$html	.= "var remove = confirm('Are you sure you want to remove the useraccount for $userdata->display_name?)";
+						$html	.= "var remove = confirm('Are you sure you want to remove the useraccount for $userdata->display_name?');";
 						$html	.= "if(remove){";
 							$html	.= "var url=`\${window.location}&$nonceString=".wp_create_nonce($nonceString)."`;";
 							if (is_array($family) and count($family)>0){

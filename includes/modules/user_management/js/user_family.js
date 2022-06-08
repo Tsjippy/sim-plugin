@@ -5,7 +5,6 @@ async function submitAddAccountForm(event){
 
 	if(response){
 		var form		= target.closest('form');
-		var familyForm	= document.querySelector('#sim_form_user_family');
 
 		var firstName	= form.querySelector('[name="first_name"]').value;
 		var lastName	= form.querySelector('[name="last_name"]').value;
@@ -13,17 +12,17 @@ async function submitAddAccountForm(event){
 
 		//check if we should add a new child field
 		var emptyFound	= false;
-		familyForm.querySelectorAll('select').forEach(select=>{if(select.value==''){emptyFound=true}});
+		document.querySelectorAll('select[name^="family"]').forEach(select=>{if(select.value==''){emptyFound=true}});
 
 		if(!emptyFound){
-			familyForm.querySelector('.add.button').click();
+			document.querySelector('select[name^="family"]').closest('form').querySelector('.add.button').click();
 		}
 
-		var opt = document.createElement('option');
-		opt.value = userId;
-		opt.innerHTML = firstName+' '+lastName;
+		var opt 		= document.createElement('option');
+		opt.value 		= userId;
+		opt.innerHTML 	= firstName+' '+lastName;
 
-		familyForm.querySelectorAll('select').forEach(select=>{
+		document.querySelectorAll('select[name^="family"]').forEach(select=>{
 			select.appendChild(opt);
 
 			// Make the new name selected if the there is no selection currently
@@ -47,6 +46,9 @@ document.addEventListener("DOMContentLoaded",function() {
 	}));
 
 	document.querySelectorAll('[name="adduseraccount"]').forEach(el=>el.addEventListener('click', ev=>{
+		
+		ev.preventDefault();
+		ev.stopPropagation();
 		submitAddAccountForm(ev);
 	}));
 });

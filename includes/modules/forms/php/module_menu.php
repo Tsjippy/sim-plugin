@@ -2,7 +2,7 @@
 namespace SIM\forms;
 use SIM;
 
-const ModuleVersion		= '7.0.23';
+const ModuleVersion		= '7.0.24';
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name

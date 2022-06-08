@@ -149,6 +149,8 @@ export function copyFormInput(originalNode){
 }
 
 export function fixNumbering(cloneDivsWrapper){
+	var re	= new RegExp('(.*)[0-9](.*)',"g");
+
 	cloneDivsWrapper.querySelectorAll(':scope > .clone_div').forEach((clone, index)=>{
 		//Update the new number	
 		//DIV
