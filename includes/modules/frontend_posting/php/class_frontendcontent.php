@@ -159,7 +159,7 @@ class FrontEndContent{
 						<?php 
 						if($this->postImageId != 0){
 							echo get_the_post_thumbnail(
-								$this->postId, 
+								esc_html($this->postId), 
 								'thumbnail', 
 								array(
 									'title' => 'Featured Image',
@@ -187,12 +187,12 @@ class FrontEndContent{
 						$class = 'post page';
 						if($this->postType != 'post' and $this->postType != 'page') $class .= ' hidden';
 						echo "<h4 class='$class' name='post_content_label'>";
-							echo '<span class="capitalize replaceposttype">'.ucfirst($this->postType).'</span> content';
+							echo  esc_html('<span class="capitalize replaceposttype">'.ucfirst($this->postType).'</span> content');
 						echo "</h4>";
 
 						echo "<h4 class='attachment hidden' name='attachment_content_label'>Description:</h4>";
 						
-						do_action('sim_frontend_post_content_title',$this->postType);
+						do_action('sim_frontend_post_content_title', $this->postType);
 					echo "</div>";
 					
 					//make it possible to select or upload a featured image
@@ -214,7 +214,7 @@ class FrontEndContent{
 						'textarea_name'				=> "post_content",
 						'textarea_rows'				=> 10
 					);
-					echo wp_editor($this->postContent, 'post_content', $settings);
+					echo  esc_html(wp_editor($this->postContent, 'post_content', $settings));
 					?>
 				</div>
 				
@@ -239,7 +239,7 @@ class FrontEndContent{
 					echo "</div>";
 					
 				}
-				echo SIM\addSaveButton('submit_post', $this->action);
+				echo  esc_html(SIM\addSaveButton('submit_post', $this->action));
 				?>
 			</form>
 			<?php
@@ -249,9 +249,9 @@ class FrontEndContent{
 				?>
 				<div class='submit_wrapper' style='display: flex; margin-top:20px;float:right;margin-right:0px;'>
 					<form>
-						<input hidden name='post_id' value='<?php echo $this->postId; ?>'>
+						<input hidden name='post_id' value='<?php echo  esc_html($this->postId); ?>'>
 
-						<button type='submit' class='button' name='delete_post'>Delete <?php echo $this->post->post_type; ?></button>
+						<button type='submit' class='button' name='delete_post'>Delete <?php echo  esc_html($this->post->post_type); ?></button>
 						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>'>
 					</form>
 				</div>
@@ -475,8 +475,8 @@ class FrontEndContent{
 			</legend>
 				<?php
 				foreach($result as $r){
-					echo "<h4>{$r['name']}</h4>";
-					echo $r['diff'];
+					echo  esc_html("<h4>{$r['name']}</h4>");
+					echo  esc_html($r['diff']);
 				}
 				?>
 			</fieldset>
@@ -524,16 +524,16 @@ class FrontEndContent{
 		if(is_numeric($this->postId)){
 			?>
 			<form action="" method="post" name="change_post_type">
-				<input type="hidden" name="userid" value="<?php echo $this->user->ID; ?>">
-				<input type="hidden" name="postid" value="<?php echo $this->postId; ?>">
+				<input type="hidden" name="userid" value="<?php echo  esc_html($this->user->ID); ?>">
+				<input type="hidden" name="postid" value="<?php echo  esc_html($this->postId); ?>">
 				<?php
-				echo $html;
+				echo  esc_html($html);
 				echo SIM\addSaveButton('change_post_type','Change the post type');
 				?>
 			</form>
 			<?php
 		}else{
-			echo $html;
+			echo  esc_html($html);
 		}
 	}
 	
@@ -604,7 +604,7 @@ class FrontEndContent{
 		?>
 		<div id="post-category" class="categorywrapper post page <?php if(!in_array($this->postType, ['post', 'page', 'attachment'])) echo 'hidden'; ?>">
 			<h4>
-				<span class="capitalize replaceposttype"><?php echo $this->postType;?></span> category
+				<span class="capitalize replaceposttype"><?php echo  esc_html($this->postType);?></span> category
 			</h4>
 			<div class='categorieswrapper'>
 				<?php
@@ -651,7 +651,7 @@ class FrontEndContent{
 			<div id="expirydate_div" class="frontendform">
 				<h4>Expiry date</h4>
 				<label>
-					<input type='date' class='' name='expirydate' min="<?php echo date("Y-m-d"); ?>" value="<?php echo get_post_meta($this->postId, 'expirydate', true); ?>" style="display: unset; width:unset;">
+					<input type='date' class='' name='expirydate' min="<?php echo date("Y-m-d"); ?>" value="<?php echo esc_html(get_post_meta($this->postId, 'expirydate', true)); ?>" style="display: unset; width:unset;">
 					Set an optional expiry date of this post
 				</label>
 			</div>
@@ -914,7 +914,7 @@ class FrontEndContent{
 			}
 		}
 		
-		$this->postType 	= $_POST['post_type'];
+		$this->postType 	= sanitize_text_field($_POST['post_type']);
 		
 		//First letter should be capital in the title
 		$this->postTitle 	= ucfirst(sanitize_text_field($_POST['post_title']));
