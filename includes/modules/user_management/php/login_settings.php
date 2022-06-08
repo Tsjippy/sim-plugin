@@ -70,8 +70,8 @@ function change_password_form($userId = null){
 			<?php
 		}
 		
-		if(function_exists('SIM\LOGIN\password_reset_form')){
-			echo SIM\LOGIN\password_reset_form($user);
+		if(function_exists('SIM\LOGIN\passwordResetForm')){
+			echo SIM\LOGIN\passwordResetForm($user);
 		}
 		
 		$methods	= get_user_meta($userId, '2fa_methods', true);

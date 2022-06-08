@@ -2,10 +2,14 @@
 namespace SIM\LOGIN;
 use SIM;
 
-#####
-# PASSWORD RESET #
-#####
-function password_reset_form($user){
+/**
+ * Displays the password reset form for an user
+ * 
+ * @param	object	$user	WP_User
+ * 
+ * @return	string			The html
+ */
+function passwordResetForm($user){
 	//Load js
 	wp_enqueue_script('sim_password_strength_script');
 
@@ -70,7 +74,7 @@ add_shortcode("change_password", function(){
 		$user	= wp_get_current_user();
 	}
 
-	return password_reset_form($user);
+	return passwordResetForm($user);
 });
 
 #####
