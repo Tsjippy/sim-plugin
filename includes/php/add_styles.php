@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.25';
+const StyleVersion		= '7.0.26';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');

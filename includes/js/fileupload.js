@@ -356,7 +356,7 @@ async function uploadVideo(file){
 		}
 		var response	= await result.json();
 
-		preview.querySelector('.vimeo-wrapper').innerHTML = dompurify.sanitize(response.html);
+		preview.querySelector('.vimeo-wrapper').innerHTML = DOMPurify.sanitize(response.html);
 	}
 
 	upload.options.onError      = function(error) {
