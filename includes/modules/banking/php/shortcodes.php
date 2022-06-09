@@ -3,12 +3,17 @@ namespace SIM\BANKING;
 use SIM;
 
 //Shortcode for financial items
-add_shortcode("account_statements", __NAMESPACE__.'\show_statements');
+add_shortcode("account_statements", __NAMESPACE__.'\showStatements');
 
-function show_statements(){
+/**
+ * show an users bank statements
+ * 
+ * @return string html containing the staement overview 
+ */
+function showStatements(){
 	global $current_user;
 	
-	if(isset($_GET["id"])){
+	if(isset($_GET["id"]) and is_numeric($_GET["id"])){
 		$userId = $_GET["id"];
 	}else{
 		$userId = $current_user->ID;
@@ -32,7 +37,7 @@ function show_statements(){
 			<table id="account_statements">
 				<tbody>
 					<?php
-					foreach($accountStatements as $year=>$month_array){
+					foreach($accountStatements as $year=>$monthArray){
 						if(date("Y") == $year){
 							$buttonText 	= "Hide $year";
 							$visibility 	= '';
@@ -42,13 +47,13 @@ function show_statements(){
 						}
 							
 						echo "<button type='button' class='statement_button button' data-target='_$year' style='margin-right: 10px; padding: 0px 10px;'>$buttonText</button>";
-						if(is_array($month_array)){
-							$monthCount = count($month_array);
-							$firstMonth = array_key_first($month_array);
-							foreach($month_array as $month => $url){
-								$site_url	= site_url();
-								if(strpos($url, $site_url) === false){
-									$url = $site_url.$url;
+						if(is_array($monthArray)){
+							$monthCount = count($monthArray);
+							$firstMonth = array_key_first($monthArray);
+							foreach($monthArray as $month => $url){
+								$siteUrl	= site_url();
+								if(strpos($url, $siteUrl) === false){
+									$url = $siteUrl.$url;
 								}
 								
 								echo "<tr class='_$year'$visibility>";
