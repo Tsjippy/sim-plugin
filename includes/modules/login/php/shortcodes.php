@@ -61,7 +61,7 @@ add_filter( 'password_reset_expiration', function($expirationDuration){
 // Display password reset
 add_shortcode("change_password", function(){
 	if(!is_user_logged_in()){
-		$user	= check_password_reset_key($_GET['key'], $_GET['login']);
+		$user	= check_password_reset_key($_GET['key'], esc_html($_GET['login']));
 		
 		if(is_wp_error($user)){
 			if($user->get_error_message() == "Invalid key."){
