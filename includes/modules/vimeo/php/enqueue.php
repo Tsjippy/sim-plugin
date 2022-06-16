@@ -4,7 +4,7 @@ use SIM;
 
 // admin js
 add_action( 'admin_enqueue_scripts', function(){
-	wp_register_script('sim_vimeo_admin_script', plugins_url('js/admin.js', __DIR__), ['sim_formsubmit_script', 'sim_script'], ModuleVersion);
+	wp_register_script('sim_vimeo_admin_script', plugins_url('js/admin.js', __DIR__), ['sim_formsubmit_script', 'sim_script'], MODULE_VERSION);
 	wp_localize_script( 'sim_vimeo_admin_script', 
 		'sim', 
 		array(
@@ -18,13 +18,13 @@ add_action( 'admin_enqueue_scripts', function(){
 
 add_action( 'wp_enqueue_scripts', function(){
     // Load css
-    wp_register_style( 'vimeo_style', plugins_url('css/style.css', __DIR__), array(), ModuleVersion);
+    wp_register_style( 'vimeo_style', plugins_url('css/style.css', __DIR__), array(), MODULE_VERSION);
 
-	wp_register_script('sim_vimeo_script', plugins_url('js/vimeo.min.js', __DIR__), ['media-audiovideo', 'sweetalert'], ModuleVersion);
+	wp_register_script('sim_vimeo_script', plugins_url('js/vimeo.min.js', __DIR__), ['media-audiovideo', 'sweetalert'], MODULE_VERSION, true);
 
-	wp_register_script('sim_vimeo_uploader_script', plugins_url('js/vimeo_upload.min.js', __DIR__), [], ModuleVersion);
+	wp_register_script('sim_vimeo_uploader_script', plugins_url('js/vimeo_upload.min.js', __DIR__), [], MODULE_VERSION, true);
 
-	wp_register_script('sim_vimeo_shortcode_script', plugins_url('js/vimeo_shortcode.js', __DIR__), [], ModuleVersion);
+	wp_register_script('sim_vimeo_shortcode_script', plugins_url('js/vimeo_shortcode.js', __DIR__), [], MODULE_VERSION);
 });
 
 //auto upload via js if enabled

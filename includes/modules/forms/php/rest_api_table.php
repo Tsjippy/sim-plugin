@@ -334,9 +334,14 @@ function archiveSubmission(){
 function getInputHtml(){
 	$formTable	= new FormTable();
 	$formTable->loadFormData($_POST['formid']);
+
+	$elementName	= sanitize_text_field($_POST['fieldname']);
+	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
+		$elementName	= $formTable->formData->settings['split']."[{$_POST['subid']}][$elementName]";
+	}
 	
-	foreach ($formTable->formElements as $key=>$element){
-		if(str_replace('[]','',$element->name) == $_POST['fieldname']){
+	foreach ($formTable->formElements as $element){
+		if(str_replace('[]', '', $element->name) == $elementName){
 			//Load default values for this element
 			return $formTable->getElementHtml($element);
 		}
@@ -359,17 +364,12 @@ function editValue(){
 
 	$transValue		= $formTable->transformInputData($newValue, $fieldName);
 	
-	$sub_id			= $_POST['subid'];
+	$subId			= $_POST['subid'];
 	//Update the current value
-	if(is_numeric($sub_id)){
-		$field_main_name	= $formTable->formData->settings['split'];
-		$pattern = "/$field_main_name\[[0-9]\]\[([^\]]*)\]/i";
-		if(preg_match($pattern, $fieldName,$matches)){
-			$formTable->formResults[$field_main_name][$sub_id][$matches[1]]	= $newValue;
-			$message = "Succesfully updated '{$matches[1]}' to $transValue";
-		}else{
-			return new \WP_Error('No element founc', "Could not find $fieldName");
-		}
+	if(is_numeric($subId)){
+		$fieldMainName	= $formTable->formData->settings['split'];
+		$formTable->formResults[$fieldMainName][$subId][$fieldName]	= $newValue;
+		$message = "Succesfully updated '$fieldName' to $transValue";
 	}else{
 		$formTable->formResults[$fieldName]	= $newValue;
 		$message = "Succesfully updated '$fieldName' to $transValue";

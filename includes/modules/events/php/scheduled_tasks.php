@@ -19,7 +19,9 @@ function scheduleTasks(){
 
     $freq   = SIM\getModuleOption('events', 'freq');
 
-    if($freq)   SIM\scheduleTask('remove_old_events_action', $freq);
+    if($freq){
+		SIM\scheduleTask('remove_old_events_action', $freq);
+	}
 }
 
 /**
@@ -31,7 +33,7 @@ function removeOldEvents(){
 
 	$maxAge   	= SIM\getModuleOption('events', 'max_age');
 
-	$events		= new Events();
+	$events		= new CreateEvents();
 
 	$query		= "DELETE FROM {$events->tableName} WHERE startdate<'".date('Y-m-d', strtotime("- $maxAge"))."'";
 
@@ -49,7 +51,7 @@ function removeOldEvents(){
  * 
 */
 function anniversaryCheck(){
-	$events		= new Events();
+	$events		= new DisplayEvents();
 
 	// Get all the events of today
 	$events->retrieveEvents(date('Y-m-d'), date('Y-m-d'));
@@ -76,7 +78,7 @@ function anniversaryCheck(){
 			SIM\trySendSignal("Hi $firstName,\nCongratulations with your $age $eventTitle!", $event->post_author);
 
 			//If the author has a partner and this events applies to both of them
-			if($partnerId and strpos($event->post_title, $coupleString)){
+			if($partnerId && strpos($event->post_title, $coupleString)){
 				SIM\trySendSignal("Hi {$partnerData->first_name},\nCongratulations with your $eventTitle!", $partnerId);
 			}
 		}
@@ -87,7 +89,7 @@ function anniversaryCheck(){
  * Get all schedules with an enddate in the past and deletes them
 */
 function removeOldSchedules(){
-	$schedules	= new Schedule();
+	$schedules	= new CreateSchedule();
 	$schedules->getSchedules();
 
 	foreach($schedules->schedules as $schedule){
@@ -98,10 +100,10 @@ function removeOldSchedules(){
 }
 
 // Remove scheduled tasks upon module deactivatio
-add_action('sim_module_deactivated', function($moduleSlug, $options){
+add_action('sim_module_deactivated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	wp_clear_scheduled_hook( 'anniversary_check_action' );
 	wp_clear_scheduled_hook( 'remove_old_events_action' );
-}, 10, 2);
+});

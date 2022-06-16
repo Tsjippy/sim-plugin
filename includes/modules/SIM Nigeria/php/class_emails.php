@@ -9,12 +9,9 @@ class ContactList extends ADMIN\MailSetting{
 
     public function __construct($user) {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('contactlist', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'SIM Nigeria';
-        $this->keyword           = 'contactlist';
 
         $this->defaultSubject    = "Contact list";
 

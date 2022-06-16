@@ -10,11 +10,11 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$schedule		= new Schedule();
+				$schedule		= new CreateSchedule();
 				return $schedule->addSchedule();
 			},
 			'permission_callback' 	=> function(){
-				$schedule	= new Schedule();
+				$schedule	= new CreateSchedule();
 				return $schedule->admin;
 			},
 			'args'					=> array(
@@ -38,11 +38,11 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$schedule		= new Schedule();
+				$schedule		= new CreateSchedule();
 				return $schedule->publishSchedule();
 			},
 			'permission_callback' 	=> function(){
-				$schedule	= new Schedule();
+				$schedule	= new CreateSchedule();
 				return $schedule->admin;
 			},
 			'args'					=> array(
@@ -65,11 +65,11 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$schedule		= new Schedule();
+				$schedule		= new CreateSchedule();
 				return $schedule->removeSchedule($_POST['schedule_id']);
 			},
 			'permission_callback' 	=> function(){
-				$schedule	= new Schedule();
+				$schedule	= new CreateSchedule();
 				return $schedule->admin;
 			},
 			'args'					=> array(
@@ -88,7 +88,7 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$schedule		= new Schedule();
+				$schedule		= new CreateSchedule();
 				return $schedule->addHost();
 			},
 			'permission_callback' 	=> '__return_true',
@@ -123,7 +123,7 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$schedule		= new Schedule();
+				$schedule		= new CreateSchedule();
 				return $schedule->removeHost();
 			},
 			'permission_callback' 	=> '__return_true',
@@ -159,7 +159,7 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$schedule		= new Schedule();
+				$schedule		= new CreateSchedule();
 				return $schedule->addMenu();
 			},
 			'permission_callback' 	=> '__return_true',

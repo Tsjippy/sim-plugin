@@ -187,20 +187,18 @@ async function getInputHtml(target){
 	var table			= target.closest('table');
 	var formId			= table.dataset.formid;
     var submissionId	= target.closest('tr').dataset.id;
+	var subId			= target.dataset.subid;
     var cellId			= target.dataset.id
 	oldText				= target.textContent;
     
     Main.showLoader(target.firstChild);
-    
-    /* if (old_value == "Click to update" || old_value == "X"){
-        old_value = "";
-    } */
 	
-	target.dataset.oldtext	 	= old_text;
+	target.dataset.oldtext	 	= oldText;
 
 	var formData = new FormData();
     formData.append('formid', formId);
     formData.append('submissionid', submissionId);
+	formData.append('subid', subId);
     formData.append('fieldname', cellId);
 
 	var response	= await FormSubmit.fetchRestApi('forms/get_input_html', formData);
@@ -379,7 +377,7 @@ document.addEventListener("click", event=>{
 	
 	//Open settings modal
 	if(target.classList.contains('edit_formshortcode_settings')){
-		target.parentNode.querySelector('.form_shortcode_settings').classList.remove('hidden');
+		document.querySelector('.modal.form_shortcode_settings').classList.remove('hidden');
 	}
 	
 	//Edit data

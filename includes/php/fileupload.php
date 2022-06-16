@@ -214,11 +214,6 @@ add_action ( 'wp_ajax_upload_files', function (){
 				}
 				
 				while (file_exists($targetFile)) {
- 					/*// Set http header error
-					header('HTTP/1.0 422 File exists');
-					// Return error message
-					die(json_encode(array('error' => "The file '$file_name' already exists."))); */
-					
 					$i++;
 
 					if(strtolower(substr($fileName, 0, strlen($username))) == strtolower($username)){

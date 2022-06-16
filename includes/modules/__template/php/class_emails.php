@@ -9,14 +9,11 @@ class Email extends ADMIN\MailSetting{
 
     public function __construct($user) {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('adult_reminder', MODULE_SLUG);
 
         $this->addUser($user);
 
         $this->replaceArray['%first_name%']  = $user->first_name;
-
-        $this->moduleSlug       = 'forms';
-        $this->keyword          = 'adult_reminder';
 
         $this->defaultSubject   = "Please update your personal information on the %site_name% website";
 

@@ -2,16 +2,24 @@
 namespace SIM\ADMIN;
 use SIM;
 
+/**
+ * Removes unnescearry content from a string
+ * 
+ * @param   string  $content    Reference to a string
+ */
 function deslash( &$content ) {
     $content = preg_replace( "/\\\+'/", "'", $content );
     $content = preg_replace( '/\\\+"/', '"', $content );
     $content = preg_replace( '/https?:\/\/https?:\/\//i', 'https://', $content );
 }
 
-function save_settings(){
+/**
+ * Saves modules settings from $_POST
+ */
+function saveSettings(){
 	global $Modules;
 
-    $moduleSlug	= $_POST['module'];
+    $moduleSlug	    = $_POST['module'];
     $options		= $_POST;
     unset($options['module']);
 

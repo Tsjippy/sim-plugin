@@ -2,17 +2,19 @@
 namespace SIM\ADMIN;
 use SIM;
 
-const ModuleVersion		= '7.0.1';
+const MODULE_VERSION		= '7.0.1';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
 /**
  * Register a custom menu page.
  */
 add_action( 'admin_menu', function() {
 	if(isset($_POST['module'])){
-		save_settings();
+		saveSettings();
 	}
 
-	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\main_menu");
+	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");
 
 	//get all modules based on folder name
 	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
@@ -24,7 +26,9 @@ add_action( 'admin_menu', function() {
 		$moduleName	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
 		
 		//do not load admin and template menu
-		if(in_array($moduleSlug, ['__template', 'admin'])) continue;
+		if(in_array($moduleSlug, ['__template', 'admin'])){
+			continue;
+		}
 		
 		//check module page exists
 		if(!file_exists($module.'/php/module_menu.php')){
@@ -34,19 +38,24 @@ add_action( 'admin_menu', function() {
 
 		//load the menu page php file
 		require_once($module.'/php/module_menu.php');
-		if(file_exists($module.'/php/class_emails.php'))	include_once($module.'/php/class_emails.php');
+		if(file_exists($module.'/php/class_emails.php')){
+			include_once($module.'/php/class_emails.php');
+		}
 
-		add_submenu_page('sim', $moduleName." module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\build_submenu");
+		add_submenu_page('sim', $moduleName." module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
 	}
 });
 
-function build_submenu(){
+/**
+ *Builds the submenu for each module
+ */
+function buildSubMenu(){
 	global $plugin_page;
 	global $Modules;
 
 	$moduleSlug	= str_replace('sim_','',$plugin_page);
 	$moduleName	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
-	$settings		= $Modules[$moduleSlug];
+	$settings	= $Modules[$moduleSlug];
 
 	echo '<div class="module-settings">';
 
@@ -75,12 +84,12 @@ function build_submenu(){
 			<input type='hidden' name='module' value='<?php echo $moduleSlug;?>'>
 			Enable <?php echo $moduleName;?> module 
 			<label class="switch">
-				<input type="checkbox" name="enable" <?php if($settings['enable']) echo 'checked';?>>
+				<input type="checkbox" name="enable" <?php if($settings['enable']){echo 'checked';}?>>
 				<span class="slider round"></span>
 			</label>
 			<br>
 			<br>
-			<div class='options' <?php if(!$settings['enable']) echo "style='display:none'";?>>
+			<div class='options' <?php if(!$settings['enable']){echo "style='display:none'";}?>>
 				<?php 
 				ob_start();
 				do_action('sim_submenu_options', $moduleSlug, $moduleName, $settings);
@@ -101,7 +110,10 @@ function build_submenu(){
 	<?php
 }
 
-function main_menu(){
+/**
+ * The main plugin menu
+ */
+function mainMenu(){
 	global $Modules;
 
 	//get all modules based on folder name
@@ -124,7 +136,7 @@ function main_menu(){
 	ob_start();
 	?>
 	<div>
-		<b>Current active modules</b><br>
+		<strong>Current active modules</strong><br>
 		<ul class="sim-list">
 		<?php
 		foreach($active as $slug=>$name){
@@ -133,7 +145,7 @@ function main_menu(){
 		}
 		?>
 		</ul>
-		<b>Current inactive modules</b><br>
+		<strong>Current inactive modules</strong><br>
 		<ul class="sim-list">
 		<?php
 		if(empty($inactive)){

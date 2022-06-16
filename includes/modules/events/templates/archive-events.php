@@ -37,7 +37,7 @@ function showCalendar(){
 		$view = 'month';
 	}
 
-	$events	= new Events();
+	$events	= new DisplayEvents();
 
 	global $wp_query;
 	$cat	= $wp_query->queried_object_id;

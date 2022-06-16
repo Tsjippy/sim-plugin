@@ -6,3 +6,5 @@ function showVimeoIframe(iframe){
 	
 	iframe.style.display='block';
 }
+
+console.log('vimeoshortcode js loaded');

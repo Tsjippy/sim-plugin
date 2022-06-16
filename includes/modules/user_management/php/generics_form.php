@@ -17,7 +17,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 	if($formName != 'user_generics') return $formResults;
 	
 	if(class_exists('SIM\EVENTS\Events')){
-		$events	= new SIM\EVENTS\Events();
+		$events	= new SIM\EVENTS\CreateEvents();
 		$events->createCelebrationEvent('birthday', $userId, 'birthday', $_POST['birthday']);
 		$events->createCelebrationEvent(SITENAME.' anniversary', $userId,'arrival_date',$_POST['arrival_date']);
 	}

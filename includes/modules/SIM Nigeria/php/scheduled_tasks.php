@@ -26,7 +26,9 @@ function sendReimbursementRequests(){
 	$formTable->tableEditPermissions = true;
 
 	//fill the excel data
-	$formTable->showFormresultsTable(['id'=>'6','formname'=>'reimbursement']);
+	
+    $formTable->processAtts(['id'=>'6','formname'=>'reimbursement']);
+	$formTable->showFormresultsTable();
 
 	//if there are reimbursements
 	if(empty($formTable->submissionData )){
@@ -199,7 +201,7 @@ function createContactlistPdf($header, $data) {
 // Remove scheduled tasks upon module deactivatio
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	wp_clear_scheduled_hook( 'send_reimbursement_requests_action' );
 	wp_clear_scheduled_hook( 'send_missonary_detail_action' );

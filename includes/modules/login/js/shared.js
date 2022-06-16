@@ -27,6 +27,9 @@ export async function fetchRestApi(url, formData){
 
 	if(result.ok){
 		return response;
+	}else if(response.code == 'rest_cookie_invalid_nonce'){
+			Main.displayMessage('Please refresh the page and try again!', 'error');
+			return false;
 	}else{
 		console.error(response);
 		Main.displayMessage(response.message, 'error');

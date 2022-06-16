@@ -126,7 +126,8 @@ add_shortcode( 'formbuilder', function($atts){
 
 add_shortcode( 'formresults', function($atts){
 	$formTable = new FormTable();
-	return $formTable->showFormresultsTable($atts);
+    $formTable->processAtts($atts);
+	return $formTable->showFormresultsTable();
 });
 
 add_filter('sim_loggedin_homepage',  function($content){

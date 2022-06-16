@@ -2,11 +2,13 @@
 namespace SIM\forms;
 use SIM;
 
-const ModuleVersion		= '7.0.24';
+const MODULE_VERSION		= '7.0.26';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	?>
 	<p>
@@ -46,11 +48,11 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	</p>
 	<?php
 
-},10,2);
+});
 
-add_action('sim_module_activated', function($moduleSlug, $options){
+add_action('sim_module_activated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 	
 	$formBuilder = new Formbuilder();
 	$formBuilder->createDbTable();
@@ -59,7 +61,7 @@ add_action('sim_module_activated', function($moduleSlug, $options){
 	$formTable->createDbShortcodeTable();
 
 	scheduleTasks();
-}, 10, 2);
+});
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
@@ -72,7 +74,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	?>
 	<label for="reminder_freq">How often should people be reminded of remaining form fields to fill?</label>

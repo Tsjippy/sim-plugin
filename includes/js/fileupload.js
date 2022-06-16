@@ -4,7 +4,7 @@ let totalFiles			= 0;
 let fileUploadWrap		= '';
 let datasetString		= '';
 
-function createProgressBar(target, filetype){
+function createProgressBar(target){
 	//Show loading gif
 	target.closest('.upload_div').querySelectorAll(".loadergif_wrapper").forEach(loader =>{
 		loader.classList.remove('hidden');
@@ -14,7 +14,7 @@ function createProgressBar(target, filetype){
 		});
 	});
 	
-	html	= ` 
+	var html	= ` 
 	<div id="progress-wrapper" class="hidden">
 		<progress id="upload_progress" value="0" max="100"></progress>
 		<span id="progress_percentage">   0%</span>
@@ -40,7 +40,8 @@ function addPreview(link, value){
 }
 
 async function fileUpload(target){
-	fileUploadWrap = target.closest('.file_upload_wrap');
+	var s			= "";
+	fileUploadWrap	= target.closest('.file_upload_wrap');
 	
 	//Create a formData element
 	var formData = new FormData();
@@ -63,7 +64,7 @@ async function fileUpload(target){
 		for (var index = 0; index < totalFiles; index++) {
 			// file is a video and vimeo enabled
 			if(target.files[index].type.split('/')[0] == 'video' && typeof(vimeoUploader) == 'object'){
-				createProgressBar(target, 'video');
+				createProgressBar(target);
 
 				//update post id on a postform
 				await uploadVideo(target.files[index]);
@@ -119,13 +120,11 @@ async function fileUpload(target){
 	request.open('POST', sim.ajaxUrl, true);
 	
 	//Create a progressbar
-	createProgressBar(target, 'file');
+	createProgressBar(target);
 	
 	//Send AJAX request
 	if (totalFiles > 1){
-		var s = "s";
-	}else{
-		var s = "";
+		s = "s";
 	}
 	target.closest('.upload_div').querySelector('.uploadmessage').textContent = "Uploading document"+s;
 	document.getElementById('progress-wrapper').classList.remove('hidden');
@@ -184,14 +183,14 @@ function fileUploadSucces(result){
 		//is image
 		if (src.toLowerCase().match(/\.(jpe|jpeg|jpg|gif|png)$/) != null){
 			//Add the image
-			var link	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="width:150px;height:150px;"></a>`;
+			var anchorLink	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="width:150px;height:150px;"></a>`;
 		}else{
 			//Add a link
-			var link	= `<a class="fileupload" href="${url}">${filename}</a>`;
+			var anchorLink	= `<a class="fileupload" href="${url}">${filename}</a>`;
 		}
-		link += `<button type="button" class="remove_document button" data-url="${src}" ${datasetString}>X</button>`;
+		anchorLink += `<button type="button" class="remove_document button" data-url="${src}" ${datasetString}>X</button>`;
 
-		addPreview(link, value);
+		addPreview(anchorLink, value);
 	}
 	
 	if(imgUrls.length==1){

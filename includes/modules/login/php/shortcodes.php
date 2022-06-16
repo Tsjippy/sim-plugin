@@ -13,7 +13,7 @@ function passwordResetForm($user){
 	//Load js
 	wp_enqueue_script('sim_password_strength_script');
 
-	if(get_current_user_id() == $user->id or !is_user_logged_in()){
+	if(get_current_user_id() == $user->id || !is_user_logged_in()){
 		$message		 = "Change your password using the fields below.<br>";
 		$message		.= "<br>Your username is $user->user_login.";
 	}else{
@@ -54,7 +54,7 @@ function passwordResetForm($user){
 }
 
 // Make password reset links valid for 7 days
-add_filter( 'password_reset_expiration', function($expirationDuration){
+add_filter( 'password_reset_expiration', function(){
 	return DAY_IN_SECONDS * 7;
 });
 
@@ -81,7 +81,7 @@ add_shortcode("change_password", function(){
 # ACCOUNT REQUEST #
 #####
 //Shortcode for people to register themselves
-add_shortcode('request_account', function ($atts){
+add_shortcode('request_account', function (){
 	ob_start();
 	?>
 	<form class='request-account'>

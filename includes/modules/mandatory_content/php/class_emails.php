@@ -10,14 +10,11 @@ class ReadReminder extends ADMIN\MailSetting{
 
     public function __construct($user, $html='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct( 'read_reminder', MODULE_SLUG);
 
         $this->addUser($user);
 
         $this->replaceArray['%pages_to_read%']    = $html;
-
-        $this->moduleSlug        = 'mandatory_content';
-        $this->keyword           = 'read_reminder';
 
         $this->defaultSubject    = "Please read some website content";
 

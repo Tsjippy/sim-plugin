@@ -3,10 +3,12 @@ namespace SIM\CONTENTFILTER;
 use SIM;
 
 //add public/private radio buttons to attachment page
-add_filter( 'attachment_fields_to_edit', function($form_fields, $post ){
+add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
     $fieldValue = get_post_meta( $post->ID, 'visibility', true );
 
-    if($fieldValue == 'public' or empty($fieldValue)) $checked    = 'checked';
+    if($fieldValue == 'public' || empty($fieldValue)){
+        $checked    = 'checked';
+    }
 
     $html    = "<div>";
         $html   .= "<input $checked style='width: initial' type='radio' name='attachments[{$post->ID}][visibility]' value='public'>";
@@ -14,7 +16,9 @@ add_filter( 'attachment_fields_to_edit', function($form_fields, $post ){
     $html   .= "</div>";
 
     $checked    = '';
-    if($fieldValue == 'private') $checked    = 'checked';
+    if($fieldValue == 'private'){
+        $checked    = 'checked';
+    }
 
     $html   .= "<div>";
         $html   .= "<input $checked style='width: initial' type='radio' name='attachments[{$post->ID}][visibility]' value='private'>";
@@ -71,7 +75,9 @@ function moveAttachment($postId, $subDir){
 
 	//get the file location of the attachment
 	$oldPath   = get_attached_file($postId);
-    if(!file_exists($oldPath)) return false;
+    if(!file_exists($oldPath)){
+        return false;
+    }
 
     $filename   = basename ($oldPath);
     $extension  = '.'.pathinfo($oldPath, PATHINFO_EXTENSION);
@@ -149,7 +155,7 @@ add_action( 'add_attachment', function ( $postId) {
     $default    = SIM\getModuleOption('content_filter', 'default_status');
     $path       = get_attached_file($postId);
     
-    if($default == 'private' or strpos($path, '/private/') !== false ){
+    if($default == 'private' || strpos($path, '/private/') !== false ){
         update_metadata( 'post',  $postId, 'visibility', 'private' );
         
         // Move if not already in the private folder

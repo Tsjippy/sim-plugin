@@ -2,11 +2,13 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
-const ModuleVersion		= '7.0.12';
+const MODULE_VERSION		= '7.0.13';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	?>
 	<p>
@@ -35,7 +37,7 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 
 add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 	
 	?>
 	<label>How often should people be reminded of content which should be updated?</label>
@@ -89,7 +91,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	// Remove the auto created page
 	wp_delete_post($options['publish_post_page'], true);

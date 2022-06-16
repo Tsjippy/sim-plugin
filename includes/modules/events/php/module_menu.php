@@ -2,11 +2,13 @@
 namespace SIM\EVENTS;
 use SIM;
 
-const ModuleVersion		= '7.0.7';
+const MODULE_VERSION		= '7.0.7';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	?>
 	<p>
@@ -20,15 +22,15 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	</p>
 
 	<p>
-		<b>Auto created page:</b><br>
+		<strong>Auto created page:</strong><br>
 		<a href='<?php echo home_url('/events');?>'>Calendar</a><br>
 	</p>
 	<?php
-},10,2);
+});
 
 add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 	
     ?>
 	<label for="freq">How often should we check for expired events?</label>
@@ -43,11 +45,24 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	<label>Minimum age of events before they get removed:<br></label>
 	<select name="max_age">
 		<option value=''>---</option>
-		<option value='1 day' <?php if($settings["max_age"] == '1 day') echo 'selected';?>>1 day</option>
-		<option value='1 week' <?php if($settings["max_age"] == '1 week') echo 'selected';?>>1 week</option>
-		<option value='1 month' <?php if($settings["max_age"] == '1 month') echo 'selected';?>>1 month</option>
-		<option value='3 months' <?php if($settings["max_age"] == '3 months') echo 'selected';?>>3 months</option>
-		<option value='1 year' <?php if($settings["max_age"] == '1 year') echo 'selected';?>>1 year</option>
+		<?php
+			$strings	= [
+				'1 day',
+				'1 week',
+				'1 month',
+				'3 months',
+				'1 year'
+			];
+
+			foreach($strings as $string){
+				$selected	= '';
+				if($settings["max_age"] == $string){
+					$selected	= 'selected';
+				}
+
+				echo "<option value='$string' $selected>$string</option>";
+			}
+		?>
 	</select>	
 
 	<br>
@@ -65,7 +80,15 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
+
+	$events	= new Events();
+	$events->createEventsTable();
+
+	$schedules	= new Schedules();
+	$schedules->createDbTable();
 
 	scheduleTasks();
 

@@ -10,14 +10,11 @@ class TwoFaEmail extends ADMIN\MailSetting{
 
     public function __construct($user, $emailCode='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct( 'email_code', MODULE_SLUG);
 
         $this->addUser($user);
 
         $this->replaceArray['%email_code%']    = $emailCode;
-
-        $this->moduleSlug        = 'login';
-        $this->keyword           = 'email_code';
 
         $this->defaultSubject    = "Verification code for %site_name% login";
 
@@ -33,12 +30,9 @@ class UnsafeLogin extends ADMIN\MailSetting{
 
     public function __construct($user) {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('unsafe_login', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'login';
-        $this->keyword           = 'unsafe_login';
 
         $this->defaultSubject    = "Unsafe login detected on %site_name%";
 
@@ -54,12 +48,9 @@ class TwoFaReset extends ADMIN\MailSetting{
 
     public function __construct($user) {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('twofa_reset', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug                   = 'login';
-        $this->keyword                      = 'twofa_reset';
 
         $this->replaceArray['%user_login%'] = $user->user_login;
 
@@ -78,12 +69,9 @@ class EmailVerfEnabled extends ADMIN\MailSetting{
 
     public function __construct($user) {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('email_enabled', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug                   = 'login';
-        $this->keyword                      = 'email_enabled';
 
         $this->replaceArray['%user_login%'] = $user->user_login;
 
@@ -101,12 +89,9 @@ class PasswordResetMail extends ADMIN\MailSetting{
 
     public function __construct($user, $url='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('password_reset', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'login';
-        $this->keyword           = 'password_reset';
 
         $this->replaceArray['%url%']    = $url;
 

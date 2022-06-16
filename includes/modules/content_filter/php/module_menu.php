@@ -2,20 +2,22 @@
 namespace SIM\CONTENTFILTER;
 use SIM;
 
-const ModuleVersion		= '7.0.2';
+const MODULE_VERSION		= '7.0.2';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_module_activated', function($moduleSlug, $options){
+add_action('sim_module_activated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 	
 	//Create a public category if it does not exist
 	wp_create_category('Public');
 	wp_create_category('Confidential');
-}, 10, 2);
+});
 
 add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	?>
 	<p>
@@ -34,13 +36,13 @@ add_action('sim_submenu_description', function($moduleSlug){
 
 add_action('sim_submenu_options', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	$default    = SIM\getModuleOption('content_filter', 'default_status');
 	
     ?>
 	<label>
-		<input type="checkbox" name="default_status" value="private" <?php if($default == 'private') echo 'checked';?>>
+		<input type="checkbox" name="default_status" value="private" <?php if($default == 'private'){echo 'checked';}?>>
 		Make uploaded media private by default
 	</label>
 	<?php

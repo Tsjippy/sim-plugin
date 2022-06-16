@@ -7,7 +7,9 @@ use SIM;
  * @param  	int 	$postId		The WP_Post id
 */
 function setDefaultPicture($postId){
-    if(has_post_thumbnail($postId)) return;
+    if(has_post_thumbnail($postId)){
+         return;
+    }
 
     $pictureIds    = SIM\getModuleOption('default_pictures', 'picture_ids');
     $categories     = get_the_category( $postId );
@@ -42,8 +44,8 @@ add_action('sim_after_post_save', function($post){
 
 
 //If no featured image on post is set, set one
-add_action( 'save_post', function ( $postId, $post, $update ) {
+add_action( 'save_post', function ( $postId, $post) {
 	if($post->post_status == "publish"){
         setDefaultPicture($postId);
 	}
-}, 10,3 );
+}, 10, 2 );

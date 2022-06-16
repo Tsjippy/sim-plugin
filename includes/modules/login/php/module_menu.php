@@ -2,11 +2,12 @@
 namespace SIM\LOGIN;
 use SIM;
 
-const ModuleVersion		= '7.0.10';
+const MODULE_VERSION		= '7.0.10';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+add_action('sim_submenu_description', function($moduleSlug){
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	?>
 	<p>
@@ -40,10 +41,10 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	$page1Id	= SIM\getModuleOption($moduleSlug, 'password_reset_page');
 	$page2Id	= SIM\getModuleOption($moduleSlug, 'register_page');
 	$page3Id	= SIM\getModuleOption($moduleSlug, '2fa_page');
-	if(is_numeric($page1Id) or is_numeric($page2Id) or is_numeric($page3Id)){
+	if(is_numeric($page1Id) || is_numeric($page2Id) || is_numeric($page3Id)){
 		?>
 		<p>
-			<b>Auto created pages:</b><br>
+			<strong>Auto created pages:</strong><br>
 			<a href='<?php echo get_permalink($page1Id);?>'>Change password</a><br>
 			<a href='<?php echo get_permalink($page2Id);?>'>Request user account</a><br>
 			<a href='<?php echo get_permalink($page3Id);?>'>Two Factor Authentication</a><br>
@@ -51,11 +52,11 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 		<?php
 	}
 
-},10,2);
+});
 
 add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 	?>
 	<p>
 		You can enable user registration if you want.<br>
@@ -220,7 +221,7 @@ add_filter('display_post_states', function ( $states, $post ) {
 
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	// Remove the auto created page
 	wp_delete_post($options['password_reset_page'], true);

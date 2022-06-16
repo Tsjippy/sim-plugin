@@ -11,7 +11,7 @@ add_action('init', function(){
 			SIM\pageSelect('page-selector')
 		);
 
-		$plugins['insert_embed_shortcode']		= plugins_url("js/tiny_mce.js?ver=".ModuleVersion, __DIR__);
+		$plugins['insert_embed_shortcode']		= plugins_url("js/tiny_mce.js?ver=".MODULE_VERSION, __DIR__);
 
 		return $plugins;
 	},999);

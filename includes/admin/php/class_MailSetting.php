@@ -3,12 +3,21 @@ namespace SIM\ADMIN;
 use SIM;
 
 abstract class MailSetting{
+    public $keyword;
 
-    protected function __construct() {
-        $this->replaceArray   = [
+    protected function __construct($keyword, $moduleSlug) {
+        $this->replaceArray     = [
             '%site_url%'    => SITEURL,
             '%site_name%'   => SITENAME
         ];
+
+        $this->keyword          = $keyword;
+        $this->moduleSlug       = $moduleSlug;
+        $this->subjectKey       = $this->keyword."_subject";
+        $this->messageKey       = $this->keyword."_message";
+
+        $this->subject          = SIM\getModuleOption($this->moduleSlug, $this->subjectKey);
+        $this->message          = SIM\getModuleOption($this->moduleSlug, $this->messageKey);
     }
 
     protected function addUser($user){
@@ -20,14 +29,12 @@ abstract class MailSetting{
     }
 
     public function filterMail(){
-        $this->subject  = SIM\getModuleOption($this->moduleSlug, $this->keyword."_subject");
-        $this->message  = SIM\getModuleOption($this->moduleSlug, $this->keyword."_message");
         $this->subject  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->subject);
         $this->message  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->message);
     }
 
     private function printSubjectInput($settings){
-        $subject  = $settings[$this->keyword."_subject"];
+        $subject  = $settings[$this->subjectKey];
         if(empty($subject)){
             $subject  = $this->defaultSubject;
         }
@@ -42,7 +49,7 @@ abstract class MailSetting{
     }
 
     private function printMessageInput($settings){
-        $message  = $settings[$this->keyword."_message"];
+        $message  = $settings[$this->messageKey];
         if(empty($message)){
             $message  = $this->defaultMessage;
         }
@@ -52,17 +59,17 @@ abstract class MailSetting{
             E-mail content
             <?php
             $settings = array(
-                'wpautop' => false,
-                'media_buttons' => false,
-                'forced_root_block' => true,
-                'convert_newlines_to_brs'=> true,
-                'textarea_name' => $this->keyword."_message",
-                'textarea_rows' => 10
+                'wpautop'                   => false,
+                'media_buttons'             => false,
+                'forced_root_block'         => true,
+                'convert_newlines_to_brs'   => true,
+                'textarea_name'             => $this->messageKey,
+                'textarea_rows'             => 10
             );
 
             echo wp_editor(
                 $message,
-                $this->keyword."_message",
+                $this->messageKey,
                 $settings
             );
             ?>

@@ -2,11 +2,13 @@
 namespace SIM\STATISTICS;
 use SIM;
 
-const ModuleVersion		= '7.0.3';
+const MODULE_VERSION		= '7.0.3';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	?>
 	<p>
@@ -20,7 +22,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	global $wp_roles;
 
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 	?>
     <label>Who should see the statistics?</label><br>
 	<?php
@@ -36,7 +38,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 
 add_action('sim_module_activated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 	
 	$statistics = new Statistics();
 	$statistics->createDbTable();

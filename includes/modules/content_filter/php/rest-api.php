@@ -11,10 +11,7 @@ add_filter( 'rest_authentication_errors', function( $result ) {
     }
     
     // No authentication has been performed yet return an error if user is not logged in, exception for wp-mail-smtp
-    if ( 
-		is_user_logged_in() or 
-		is_allowed_rest_api_url()
-	) {
+    if ( is_user_logged_in() || isAllowedRestApiUrl()) {
 		// Our custom authentication check should have no effect on logged-in requests
 		return $result;
     }else{
@@ -22,7 +19,7 @@ add_filter( 'rest_authentication_errors', function( $result ) {
 	}
 });
 
-function is_allowed_rest_api_url(){
+function isAllowedRestApiUrl(){
 	$urls	= [
 		'wp-mail-smtp/v1'
 	];

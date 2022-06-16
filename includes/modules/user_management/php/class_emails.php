@@ -10,12 +10,9 @@ class AccountCreatedMail extends ADMIN\MailSetting{
 
     public function __construct($user, $loginUrl='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('account_created', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'user_management';
-        $this->keyword           = 'account_created';
 
         $this->replaceArray['%login_url%']    = $loginUrl;
         $this->replaceArray['%user_name%']    = $user->user_login;
@@ -37,12 +34,9 @@ class AccountApproveddMail extends ADMIN\MailSetting{
 
     public function __construct($user, $loginUrl='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('account_approved', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'user_management';
-        $this->keyword           = 'account_approved';
 
         $this->replaceArray['%login_url%']    = $loginUrl;
         $this->replaceArray['%user_name%']    = $user->user_login;
@@ -64,13 +58,9 @@ class AccountExpiryMail extends ADMIN\MailSetting{
 
     public function __construct($user) {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('account_expiry', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'user_management';
-        $this->keyword           = 'account_expiry';
-
         
 		$expiryDate		                        = date("d-m-Y", strtotime(" +1 months"));
         $this->replaceArray['%expiry_date%']    = $expiryDate;
@@ -89,12 +79,9 @@ class AccountRemoveMail extends ADMIN\MailSetting{
 
     public function __construct($user) {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('account_removal', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'user_management';
-        $this->keyword           = 'account_removal';
 
         $this->replaceArray['%account_page%']    = get_permalink(SIM\getModuleOption($this->moduleSlug, 'account_page'));
 
@@ -113,12 +100,9 @@ class AdultVaccinationWarningMail extends ADMIN\MailSetting{
 
     public function __construct($user, $reminderHtml='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('adult_vacc_warning', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'user_management';
-        $this->keyword           = 'adult_vacc_warning';
 
         $this->replaceArray['%reminder_html%']    = $reminderHtml;
 
@@ -138,12 +122,9 @@ class ChildVaccinationWarningMail extends ADMIN\MailSetting{
 
     public function __construct($user, $reminderHtml='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('child_vacc_warning', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'user_management';
-        $this->keyword           = 'child_vacc_warning';
 
         $this->replaceArray['%reminder_html%']    = $reminderHtml;
 
@@ -163,12 +144,9 @@ class GreenCardReminderMail extends ADMIN\MailSetting{
 
     public function __construct($user, $reminder='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('greencard_warning', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'user_management';
-        $this->keyword           = 'greencard_warning';
 
         $this->replaceArray['%reminder%']    = $reminder;
 
@@ -188,12 +166,9 @@ class WeMissYouMail extends ADMIN\MailSetting{
 
     public function __construct($user, $lastLogin='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('miss_you', MODULE_SLUG);
 
         $this->addUser($user);
-
-        $this->moduleSlug        = 'user_management';
-        $this->keyword           = 'miss_you';
 
         $this->replaceArray['%lastlogin%']    = $lastLogin;
 

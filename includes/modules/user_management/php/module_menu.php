@@ -2,11 +2,13 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-const ModuleVersion		= '7.0.6';
+const MODULE_VERSION		= '7.0.6';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	?>
 	<p>
@@ -50,7 +52,7 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 
 add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 	
 	?>
 	<label>
@@ -230,7 +232,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	// Remove the auto created page
 	wp_delete_post($options['user_info_page'], true);

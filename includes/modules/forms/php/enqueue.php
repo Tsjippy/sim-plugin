@@ -39,7 +39,7 @@ add_action( 'save_post', function($postId, $post){
         }
     }
 
-    if($hasFormbuilderShortcode or has_shortcode($post->post_content, 'formselector')){
+    if($hasFormbuilderShortcode || has_shortcode($post->post_content, 'formselector')){
         global $Modules;
 
         if(!is_array($Modules['forms']['formbuilder_pages'])){
@@ -53,13 +53,13 @@ add_action( 'save_post', function($postId, $post){
 }, 10, 2);
 
 add_action( 'wp_enqueue_scripts', function(){
-    wp_register_style( 'sim_forms_style', plugins_url('css/forms.min.css', __DIR__), array(), ModuleVersion);
+    wp_register_style( 'sim_forms_style', plugins_url('css/forms.min.css', __DIR__), array(), MODULE_VERSION);
 
-    wp_register_script('sim_forms_script',plugins_url('js/forms.min.js', __DIR__), array('sweetalert', 'sim_formsubmit_script'), ModuleVersion,true);
+    wp_register_script('sim_forms_script', plugins_url('js/forms.min.js', __DIR__), array('sweetalert', 'sim_formsubmit_script'), MODULE_VERSION,true);
 
-    wp_register_script( 'sim_formbuilderjs', plugins_url('js/formbuilder.min.js', __DIR__), array('sim_forms_script','sortable','sweetalert', 'sim_formsubmit_script'), ModuleVersion,true);
+    wp_register_script( 'sim_formbuilderjs', plugins_url('js/formbuilder.min.js', __DIR__), array('sim_forms_script','sortable','sweetalert', 'sim_formsubmit_script'), MODULE_VERSION,true);
     
-    wp_register_script('sim_forms_table_script', plugins_url('js/forms_table.min.js', __DIR__), array('sim_forms_script', 'sim_table_script', 'sim_formsubmit_script'), ModuleVersion,true);
+    wp_register_script('sim_forms_table_script', plugins_url('js/forms_table.js', __DIR__), array('sim_forms_script', 'sim_table_script', 'sim_formsubmit_script'), MODULE_VERSION,true);
 
     $formBuilderPages   = SIM\getModuleOption('forms', 'formbuilder_pages');
     if(in_array(get_the_ID(), $formBuilderPages)){

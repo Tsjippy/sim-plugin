@@ -17,11 +17,9 @@ add_shortcode( 'content_filter', function ( $atts = array(), $content = null ) {
 	$user = wp_get_current_user();
 	
 	//User is logged in
-	if(is_user_logged_in()){
-		if( in_array('All', $allowedRoles) or array_intersect($allowedRoles, $user->roles)) { 
-			// display content
-			$return = true;
-		}
+	if(is_user_logged_in() && in_array('All', $allowedRoles) || array_intersect($allowedRoles, $user->roles)) { 
+		// display content
+		$return = true;
 	}
     
 	//If inversed
@@ -31,7 +29,7 @@ add_shortcode( 'content_filter', function ( $atts = array(), $content = null ) {
 	}
 	
 	//If return is true
-	if($return == true){
+	if($return){
 		//return the shortcode content
 		return do_shortcode($content);
 	}

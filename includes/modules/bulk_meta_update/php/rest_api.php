@@ -38,7 +38,6 @@ function bulkUpdateMeta(){
 	
 	// Check if permissions to edit
 	$user	= wp_get_current_user();
-	//if($user->ID != $userId and !in_array('user_management',$user->roles)) wp_die('No permission', 500);
 
 	if (strpos($metaKey, '#') !== false){
 		$metaKeyBase 			= explode('#',$metaKey)[0];

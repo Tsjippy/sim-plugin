@@ -22,7 +22,7 @@ if(empty($view)){
 global $wp_query;
 $cat	= $wp_query->queried_object_id;
 
-$events	= new Events();
+$events	= new DisplayEvents();
 
 get_header(); 
 ?>
@@ -56,7 +56,7 @@ get_header();
 						$baseUrl	= plugins_url('pictures', __DIR__);
 						echo "<img src='{$baseUrl}/date.png' alt='time' class='event_icon'>";
 						?>
-						<select class='month_selector<?php if($view=='week') echo ' hidden';?>' placeholder="Select month">
+						<select class='month_selector<?php if($view=='week'){echo ' hidden';}?>' placeholder="Select month">
 							<?php
 							for ($m=1;$m<13;$m++){
 								$monthname	= date("F", mktime(0, 0, 0, $m, 10));

@@ -592,28 +592,25 @@ document.addEventListener('change', event=>{
 		switch(target.value){
 			case 'daily':
 				//show
-				parent.querySelectorAll('.repeatinterval, .day_selector, .day_selector h4.checkbox, .day_selector .selectall_wrapper').forEach(el=>el.classList.replace('hidden', 'hide'));
+				parent.querySelectorAll('.repeatinterval, .days, .days h4.checkbox, .pattern-wrapper, .days .selectall_wrapper, .daily').forEach(el=>el.classList.replace('hidden', 'hide'));
 				parent.querySelector('#repeattype').textContent	= 'days';
-
-				//change radio to checkbox
-				parent.querySelectorAll('.day_selector input[type="radio"]').forEach(el=>el.type = 'checkbox');
 				break;
 			case 'weekly':
-				parent.querySelectorAll('.repeatinterval, .weeks, .weeks h4.checkbox, .weeks .selectall_wrapper').forEach(el=>el.classList.replace('hidden', 'hide')); 
+				parent.querySelectorAll('.repeatinterval, .weeks, .weeks h4.checkbox, .weeks .selectall_wrapper, .pattern-wrapper, .weekly, .days').forEach(el=>el.classList.replace('hidden', 'hide')); 
 				parent.querySelector('#repeattype').textContent	= 'week(s)';
 
 				//change radio to checkbox
 				parent.querySelectorAll('.weeks input[type="radio"]').forEach(el=>el.type = 'checkbox');
 				break;
 			case 'monthly':
-				parent.querySelectorAll('.repeatdatetype').forEach(el=>el.classList.replace('hidden', 'hide')); 
-				parent.querySelector('#repeattype').textContent		= 'month(s)';
+				parent.querySelectorAll('.repeatdatetype, .pattern-wrapper, .monthly, .months, .weeks, .days').forEach(el=>el.classList.replace('hidden', 'hide')); 
+				parent.querySelector('#repeattype').textContent			= 'month(s)';
 				parent.querySelector('.monthoryeartext').textContent	= 'On a certain day and week of a month';
 
 				parent.querySelector('.monthoryear').textContent	= 'a month';
 				break;
 			case 'yearly':
-				parent.querySelectorAll('.repeatdatetype').forEach(el=>el.classList.replace('hidden', 'hide')); 
+				parent.querySelectorAll('.repeatdatetype, .pattern-wrapper, .yearly, .months, .weeks, .days').forEach(el=>el.classList.replace('hidden', 'hide')); 
 				parent.querySelector('#repeattype').textContent		= 'year(s)';
 				parent.querySelector('.monthoryeartext').textContent	= 'On a certain day, week and month of a year';
 				
@@ -631,27 +628,27 @@ document.addEventListener('change', event=>{
 		var parent	= target.closest('.repeat_wrapper');
 		
 		//hide all what should be hidden
-		parent.querySelectorAll('.repeatinterval, .day_selector, .weeks, .months').forEach(el=>el.classList.replace('hide','hidden'));
+		parent.querySelectorAll('.repeatinterval, .days, .weeks, .months').forEach(el=>el.classList.replace('hide','hidden'));
 		
 		if(target.value == 'samedate'){
 			parent.querySelectorAll('.repeatinterval').forEach(el=>el.classList.replace('hidden', 'hide'));
 		}else if(parent.querySelector('[name="event[repeat][type]"]').value == 'monthly'){
-			parent.querySelectorAll('.day_selector, .weeks, .months, .months h4.checkbox, .day_selector h4.radio, .weeks h4.radio').forEach(el=>el.classList.replace('hidden', 'hide'));
+			parent.querySelectorAll('.days, .weeks, .months, .months h4.checkbox, .days h4.radio, .weeks h4.radio').forEach(el=>el.classList.replace('hidden', 'hide'));
 
-			parent.querySelectorAll('.day_selector h4.checkbox, .weeks h4.checkbox').forEach(el=>el.classList.replace('hide', 'hidden'));
+			parent.querySelectorAll('.days h4.checkbox, .weeks h4.checkbox').forEach(el=>el.classList.replace('hide', 'hidden'));
 
 			//change radio to checkbox
 			parent.querySelectorAll('.months input[type="radio"]').forEach(el=>el.type = 'checkbox');
 
 			//change checkbox to radio
-			parent.querySelectorAll('.day_selector input[type="checkbox"], .weeks input[type="checkbox"]').forEach(el=>el.type = 'radio');
+			parent.querySelectorAll('.days input[type="checkbox"], .weeks input[type="checkbox"]').forEach(el=>el.type = 'radio');
 		}else{
-			parent.querySelectorAll('.day_selector, .weeks, .months, .day_selector h4.radio, .weeks h4.radio, .months h4.radio').forEach(el=>el.classList.replace('hidden', 'hide'));
+			parent.querySelectorAll('.days, .weeks, .months, .days h4.radio, .weeks h4.radio, .months h4.radio').forEach(el=>el.classList.replace('hidden', 'hide'));
 
-			parent.querySelectorAll('.day_selector h4.checkbox, .weeks h4.checkbox, .months h4.checkbox').forEach(el=>el.classList.replace('hide', 'hidden'));
+			parent.querySelectorAll('.days h4.checkbox, .weeks h4.checkbox, .months h4.checkbox').forEach(el=>el.classList.replace('hide', 'hidden'));
 
 			//change checkbox to radio
-			parent.querySelectorAll('.day_selector input[type="checkbox"], .weeks input[type="checkbox"], .months input[type="checkbox"]').forEach(el=>el.type = 'radio');
+			parent.querySelectorAll('.days input[type="checkbox"], .weeks input[type="checkbox"], .months input[type="checkbox"]').forEach(el=>el.type = 'radio');
 		}
 	}
 });

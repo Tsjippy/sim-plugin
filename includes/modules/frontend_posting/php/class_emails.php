@@ -13,7 +13,7 @@ class PendingPostEmail extends ADMIN\MailSetting{
 
     public function __construct($user, $authorName='', $actionText='', $postType='', $url='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('pending_post', MODULE_SLUG);
 
         $this->addUser($user);
 
@@ -21,9 +21,6 @@ class PendingPostEmail extends ADMIN\MailSetting{
         $this->replaceArray['%action_text%']    = $actionText;
         $this->replaceArray['%post_type%']      = $postType;
         $this->replaceArray['%url%']            = $url;
-
-        $this->moduleSlug        = 'frontend_posting';
-        $this->keyword           = 'pending_post';
 
         $this->defaultSubject    = "Please review a %post_type%";
 
@@ -41,16 +38,13 @@ class PostOutOfDateEmail extends ADMIN\MailSetting{
 
     public function __construct($user, $postTitle='', $pageAge='', $url='') {
         // call parent constructor
-		parent::__construct();
+		parent::__construct('page_age', MODULE_SLUG);
 
         $this->addUser($user);
 
         $this->replaceArray['%post_title%']     = $postTitle;
         $this->replaceArray['%page_age%']       = $pageAge;
         $this->replaceArray['%url%']            = $url;
-
-        $this->moduleSlug        = 'frontend_posting';
-        $this->keyword           = 'page_age';
 
         $this->defaultSubject    = "Please update the contents of '%post_title%'";
 

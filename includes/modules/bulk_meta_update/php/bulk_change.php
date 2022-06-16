@@ -25,7 +25,7 @@ function bulkchangeMeta($metaKey, $allowedRoles, $returnFamily){
 	$displayName = ucfirst(str_replace('_',' ',$metaKeyName));
 	
 	//User is logged in and has the correct role
-	if($user->ID != 0 and array_intersect($allowedRoles, $user->roles ) ) {
+	if($user->ID != 0 && array_intersect($allowedRoles, $user->roles ) ) {
 		//Load js
 		wp_enqueue_script('sim_table_script');
 		
@@ -48,12 +48,18 @@ function bulkchangeMeta($metaKey, $allowedRoles, $returnFamily){
 				$value 	= get_user_meta( $user->ID, $metaKeyBase, true );
 				
 				//Check if the value is an array
-				if(is_array($value))	$value 	= $value[$metaKeyName];
+				if(is_array($value)){
+					$value 	= $value[$metaKeyName];
+				}
 				
 				//Now the value should not be an array
-				if(is_array($value)) return 'Please provide single value not an array';
+				if(is_array($value)){
+					return 'Please provide single value not an array';
+				}
 					
-				if($value == "") $value = "Click to update";			
+				if($value == ""){
+					$value = "Click to update";	
+				}		
 				
 				?>
 				<tr class='table-row' data-meta_key='<?php echo $metaKey;?>'>
@@ -93,7 +99,7 @@ function bulkChangeUpload($metaKey, $targetDir){
 	$users	= SIM\getUserAccounts();
 	$html	= '';
 	foreach($users as $user){
-		$value 	= get_user_meta( $user->ID, $metaKeyName, true );
+		$value 	= get_user_meta( $user->ID, $metaKeyBase, true );
 
 		if (strpos($metaKey, '#') !== false){
 			$value			= $value[$metaKeyName];

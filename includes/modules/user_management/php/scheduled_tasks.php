@@ -793,7 +793,7 @@ function checkLastLoginDate(){
 // Remove scheduled tasks upon module deactivatio
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	wp_clear_scheduled_hook( 'birthday_check_action' );
 	wp_clear_scheduled_hook( 'account_expiry_check_action' );

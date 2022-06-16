@@ -32,15 +32,16 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 
 	// skip if user has the no mandatory pages role
 	$user	= get_userdata($userId);
-	if(in_array('no_man_docs', $user->roles)) return '';
-	
+	if(in_array('no_man_docs', $user->roles)){
+		return '';
+	}
 	
 	//Get all the pages this user already read
 	$readPages		= (array)get_user_meta( $userId, 'read_pages', true );
 	
 	//Get the users arrival date
 	$arrivalDate 	= strtotime(get_user_meta( $userId, 'arrival_date', true ));
-	if($arrivalDate != false and $arrivalDate < time()){
+	if(!$arrivalDate || $arrivalDate < time()){
 		$arrived = true;
 	}else{
 		$arrived = false;
@@ -67,23 +68,40 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 			$audience =  get_post_meta($page->ID, "audience", true);
 			
 			//Add a link if not yet in the country and should read before arriving
-			if(isset($audience['beforearrival']) and !$arrived){
+			if(isset($audience['beforearrival']) && !$arrived){
 				$beforeHtml .= '<li><a href="'.get_permalink($page->ID).'">'.$page->post_title.'</a></li>';
 			}
 			
-			//Page has not been read and should be read by all users
-			if(isset($audience['afterarrival']) or isset($audience['everyone'])){
-				//If this page also needs to be read by users who are not yet arrived, do not show again
-				if(!isset($audience['beforearrival']) or ($arrived and isset($audience['beforearrival']))){
-					$arrivedHtml .= '<li><a href="'.get_permalink($page->ID).'">'.$page->post_title.'</a></li>';
-					$arrivedPagesCount++;
-				}
+			//Page has not been read, scheck if it should be read
+			$mustRead	= false;
+			if(
+				(
+					isset($audience['afterarrival']) 	||		// People should read this after arrival
+					isset($audience['everyone'])				// Or everyone should read this
+				)										&&		// AND
+				(
+					!isset($audience['beforearrival'])	|| 		// The before arrival is not set
+					(
+						isset($audience['beforearrival'])	&&	// Or it is set but we have arrived
+						$arrived						
+					)
+				)
+			){
+				$mustRead	= true;
+			}
+
+			// filter the value
+			$mustRead	= apply_filters('sim_should_read_mandatory_page', $mustRead, $audience, $userId);
+
+			if($mustRead){
+				$arrivedHtml .= '<li><a href="'.get_permalink($page->ID).'">'.$page->post_title.'</a></li>';
+				$arrivedPagesCount++;
 			}
 		}
 	}
 	
 	///Documents to read before arrival
-	if(!empty($beforeHtml) and !$arrived){
+	if(!empty($beforeHtml) && !$arrived){
 		if(!$excludeHeading){
 			$html .= "<h3>Welcome!</h3>";
 			$html .= "<p>";
@@ -110,7 +128,7 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 	
 
 	if(!empty($html)){
-		if($userId != get_current_user_id() and !wp_doing_cron()){
+		if($userId != get_current_user_id() && !wp_doing_cron()){
 			$html	= "<button type'button' class='button small mark-all-as-read' data-userid='$userId'>Mark all pages as read for {$user->display_name}</button>".$html;
 		}
 

@@ -185,9 +185,12 @@ class FrontEndContent{
 					echo "<div class='titlewrapper'>";
 						//Post content title
 						$class = 'post page';
-						if($this->postType != 'post' and $this->postType != 'page') $class .= ' hidden';
+						if($this->postType != 'post' && $this->postType != 'page'){
+							$class .= ' hidden';
+						}
+						
 						echo "<h4 class='$class' name='post_content_label'>";
-							echo  esc_html('<span class="capitalize replaceposttype">'.ucfirst($this->postType).'</span> content');
+							echo  '<span class="capitalize replaceposttype">'.ucfirst($this->postType).'</span> content';
 						echo "</h4>";
 
 						echo "<h4 class='attachment hidden' name='attachment_content_label'>Description:</h4>";
@@ -214,7 +217,7 @@ class FrontEndContent{
 						'textarea_name'				=> "post_content",
 						'textarea_rows'				=> 10
 					);
-					echo  esc_html(wp_editor($this->postContent, 'post_content', $settings));
+					echo  wp_editor($this->postContent, 'post_content', $settings);
 					?>
 				</div>
 				
@@ -239,7 +242,7 @@ class FrontEndContent{
 					echo "</div>";
 					
 				}
-				echo  esc_html(SIM\addSaveButton('submit_post', $this->action));
+				echo  SIM\addSaveButton('submit_post', $this->action);
 				?>
 			</form>
 			<?php
@@ -279,7 +282,7 @@ class FrontEndContent{
 			SIM\userSelect("Select a person to show the link to",true),
 		);
 
-		$plugins['select_user'] = plugins_url("js/tiny_mce.js?ver=".ModuleVersion, __DIR__);
+		$plugins['select_user'] = plugins_url("js/tiny_mce.js?ver=".MODULE_VERSION, __DIR__);
 		
 		return $plugins;
 	}
@@ -475,8 +478,8 @@ class FrontEndContent{
 			</legend>
 				<?php
 				foreach($result as $r){
-					echo  esc_html("<h4>{$r['name']}</h4>");
-					echo  esc_html($r['diff']);
+					echo  "<h4>{$r['name']}</h4>";
+					echo  $r['diff'];
 				}
 				?>
 			</fieldset>
@@ -491,10 +494,14 @@ class FrontEndContent{
 	**/
 	function postTypeSelector(){
 		//do not show for lite posts
-		if($this->lite) return;
+		if($this->lite){
+			return;
+		}
 
 		// Only show type selector if we do not query a specific one
-		if(!empty($_GET['type'])) return;
+		if(!empty($_GET['type'])){
+			return;
+		}
 
 		if($this->postId == null){
 			$labelText = 'Select the content type you want to create:';
@@ -527,13 +534,13 @@ class FrontEndContent{
 				<input type="hidden" name="userid" value="<?php echo  esc_html($this->user->ID); ?>">
 				<input type="hidden" name="postid" value="<?php echo  esc_html($this->postId); ?>">
 				<?php
-				echo  esc_html($html);
+				echo  $html;
 				echo SIM\addSaveButton('change_post_type','Change the post type');
 				?>
 			</form>
 			<?php
 		}else{
-			echo  esc_html($html);
+			echo  $html;
 		}
 	}
 	
@@ -800,8 +807,11 @@ class FrontEndContent{
 			<?php	
 			// Show change author dropdown 
 			$authorId	= $this->post->post_author;
-			if(!is_numeric($authorId)) $authorId = $this->user->ID;
-			echo esc_html(SIM\userSelect('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $userId=$authorId));
+			if(!is_numeric($authorId)){
+				$authorId = $this->user->ID;
+			}
+
+			echo SIM\userSelect('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $userId=$authorId);
 			
 			// Only show publish date if not yet published
 			if(!in_array($this->post->post_status, ['publish', 'inherit'])){

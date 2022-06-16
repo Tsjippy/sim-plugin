@@ -240,7 +240,9 @@ function addFormElement(){
 		$element->functionname	= $functionName;
 		
 		//only continue if the function exists
-		if ( ! function_exists( $functionName ) ) return new WP_Error('forms', "A function with name $functionName does not exist!");
+		if ( ! function_exists( $functionName ) ){
+			return new WP_Error('forms', "A function with name $functionName does not exist!");
+		}
 	}
 	
 	if(in_array($element->type, ['label','button'])){
@@ -253,19 +255,19 @@ function addFormElement(){
 	$element->name		= str_replace(" ","_",strtolower(trim($element->name)));
 
 	if(
-		in_array($element->type, $formBuilder->nonInputs) 		and // this is a non-input
-		$element->type != 'datalist'							and // but not a datalist
+		in_array($element->type, $formBuilder->nonInputs) 		&& // this is a non-input
+		$element->type != 'datalist'							&& // but not a datalist
 		strpos($element->name,$element->type) === false				// and the type is not yet added to the name 
 	){
 		$element->name	.= '_'.$element->type;
 	}
 	
 	//Give an unique name
-	if(strpos($element->name, '[]') === false and !$update){
+	if(strpos($element->name, '[]') === false && !$update){
 		$unique = false;
 		
 		$i = '';
-		while($unique == false){
+		while(!$unique){
 			if($i == ''){
 				$elementName = $element->name;
 			}else{
@@ -285,7 +287,9 @@ function addFormElement(){
 			}
 		}
 		//update the name
-		if($i != '') $element->name .= "_$i";
+		if($i != ''){
+			$element->name .= "_$i";
+		}
 	}
 
 	//Store info text in text column
@@ -296,7 +300,9 @@ function addFormElement(){
 	unset($element->infotext);
 
 	foreach($element as &$val){
-		if($val == "true") $val=true;
+		if($val == "true"){
+			$val=true;
+		}
 
 		if(is_array($val)){
 			$val=serialize($val);

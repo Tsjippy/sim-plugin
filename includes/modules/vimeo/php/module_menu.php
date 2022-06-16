@@ -3,11 +3,13 @@ namespace SIM\VIMEO;
 use SIM;
 use Vimeo\Vimeo;
 
-const ModuleVersion		= '7.0.7';
+const MODULE_VERSION		= '7.0.7';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
 add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	//display url form
 	if(is_numeric($_GET['vimeoid'])){
@@ -41,7 +43,7 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 
 add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	if(!class_exists('SIM\VIMEO\VimeoApi')){
 		require(__DIR__.'/api_functions.php');

@@ -10,20 +10,20 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$events		= new Events();
+				$events		= new DisplayEvents();
 				return $events->monthCalendar();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'month'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
+					'validate_callback' => function($param) {
 						return is_numeric( $param );
 					}
 				),
 				'year'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
+					'validate_callback' => function($param) {
 						return is_numeric( $param );
 					}
 				),
@@ -38,7 +38,7 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function (){
-				$events		= new Events();
+				$events		= new DisplayEvents();
 				return $events->weekCalendar();
 			},
 			'permission_callback' 	=> '__return_true',
@@ -62,7 +62,7 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$events		= new Events();
+				$events		= new DisplayEvents();
 				return $events->listCalendar();
 			},
 			'permission_callback' 	=> '__return_true',

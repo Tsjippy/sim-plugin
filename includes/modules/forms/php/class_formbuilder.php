@@ -24,9 +24,10 @@ class Formbuilder{
 		$this->user 					= wp_get_current_user();
 		$this->userRoles				= $this->user->roles;
 		$this->userId					= $this->user->ID;
+		$this->pageSize					= 100;
 
 		//calculate full form rights
-		if(array_intersect(['editor'], $this->userRoles) != false){
+		if(array_intersect(['editor'], $this->userRoles)){
 			$this->editRights		= true;
 		}else{
 			$this->editRights		= false;
@@ -249,7 +250,9 @@ class Formbuilder{
 	function loadFormData($formId=''){
 		global $wpdb;
 
-		if(is_numeric($_POST['formid'])) $formId	= $_POST['formid'];
+		if(is_numeric($_POST['formid'])){
+			$formId	= $_POST['formid'];
+		}
 		
 		// Get the form data
 		$query				= "SELECT * FROM {$this->tableName} WHERE ";
@@ -322,7 +325,9 @@ class Formbuilder{
 			$this->formData->emails = maybe_unserialize($this->formData->emails);
 		}
 		
-		if($wpdb->last_error !== '')		SIM\printArray($wpdb->print_error());
+		if($wpdb->last_error !== ''){
+			SIM\printArray($wpdb->print_error());
+		}
 		
 		$this->jsFileName	= plugin_dir_path(__DIR__)."js/dynamic/{$this->formData->name}forms";
 	}
@@ -507,22 +512,57 @@ class Formbuilder{
 			$query .= " and userid='$userId'";
 		}
 		
-		if(!$this->showArchived and $submissionId == null){
+		if(!$this->showArchived && $submissionId == null){
 			$query .= " and archived=0";
+		}
+
+		// Limit the amount to 100
+		if(isset($_POST['pagenumber']) && is_numeric($_POST['pagenumber'])){
+			$this->currentPage	= $_POST['pagenumber'];
+
+			if(isset($_POST['prev'])){
+				$this->currentPage--;
+			}
+			if(isset($_POST['next'])){
+				$this->currentPage++;
+			}
+			$start	= $this->currentPage * $this->pageSize;
+		}else{
+			$start				= 0;
+			$this->currentPage	= 0;
 		}
 
 		$query	= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this->formName);
 
+		// Get the total
+		$result	= $wpdb->get_results(str_replace('*', 'count(*) as total', $query));
+		if(empty($result)){
+			$this->total	= 0;
+		}else{
+			$this->total	= $result[0]->total;
+		}
+
+		$query	.= " LIMIT $start, $this->pageSize";
+
+		// Get results
 		$result	= $wpdb->get_results($query);
 		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
 
 		$this->submissionData		= $result;
 		
-		if(is_numeric($submissionId))	$this->submissionData = $this->submissionData[0];
-
-		$this->formResults 			= maybe_unserialize($this->submissionData->formresults);
+		if(is_numeric($submissionId)){
+			$this->submissionData	= $this->submissionData[0];
+			$this->formResults 		= maybe_unserialize($this->submissionData->formresults);
+		}else{
+			// unserialize
+			foreach($this->submissionData as &$data){
+				$data->formresults	= unserialize($data->formresults);
+			}
+		}
 		
-		if($wpdb->last_error !== '')		SIM\printArray($wpdb->print_error());
+		if($wpdb->last_error !== ''){
+			SIM\printArray($wpdb->print_error());
+		}
 	}
 	
 	/**
@@ -1461,10 +1501,10 @@ class Formbuilder{
 				//we found the element with the correct id
 				if($element->id == $condition['fieldid']){
 					//get the submitted form value
-					$form_value = $this->formResults[$element->name];
+					$formValue = $this->formResults[$element->name];
 					
 					//if the value matches the conditional value
-					if(strtolower($form_value) == strtolower($condition['value'])){
+					if(strtolower($formValue) == strtolower($condition['value'])){
 						return $condition['email'];
 					}
 				}
@@ -1603,10 +1643,10 @@ class Formbuilder{
 				}
 				
 				//loop over all submissions to see if we need to archive
-				foreach($this->submissionData as $id=>$sub_data){
-					$this->formResults		= maybe_unserialize($sub_data->formresults);
+				foreach($this->submissionData as $subData){
+					$this->formResults		= $subData->formresults;
 					
-					$this->submissionId	= $sub_data->id;
+					$this->submissionId	= $subData->id;
 					//there is no trigger value found in the results, check multi value array
 					if(empty($this->formResults[$triggerName])){
 						//loop over all multi values

@@ -137,7 +137,7 @@ function fill_family_dropdowns($userId){
 add_filter('sim_before_saving_formdata',function($formResults, $formName, $userId){
 	if($formName != 'user_family') return $formResults;
 
-	$events	= new SIM\EVENTS\Events();
+	$events	= new SIM\EVENTS\CreateEvents();
 	
 	$family = $formResults["family"];
 	

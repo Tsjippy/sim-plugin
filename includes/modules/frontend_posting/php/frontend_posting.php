@@ -21,9 +21,12 @@ function sendPendingPostWarning($post, $update){
 	
 	//send notification to all content managers
 	$url			= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting', 'publish_post_page'));
-	if(!$url)	 return;
+	if(!$url){
+		return;
+	}
+
 	$url			= add_query_arg( ['post_id' => $post->ID], $url );
-	$authorName	= get_userdata($post->post_author)->display_name;
+	$authorName		= get_userdata($post->post_author)->display_name;
 	
 	foreach($users as $user){
 		//send signal message

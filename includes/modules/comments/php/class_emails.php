@@ -9,10 +9,7 @@ class ApprovedCommentEmail extends ADMIN\MailSetting{
 
     public function __construct($commentData) {
         // call parent constructor
-		parent::__construct();
-
-        $this->moduleSlug       = 'comments';
-        $this->keyword          = 'approved_comment';
+		parent::__construct('approved_comment', MODULE_SLUG);
 
         $postId                 = $commentData['comment_post_ID'];
         $postTitle              = get_the_title($postId);
@@ -44,10 +41,7 @@ class CommentWarningEmail extends ADMIN\MailSetting{
 
     public function __construct($commentData) {
         // call parent constructor
-		parent::__construct();
-
-        $this->moduleSlug       = 'comments';
-        $this->keyword          = 'unapproved_comment';
+		parent::__construct('unapproved_comment', MODULE_SLUG);
 
         $postId                 = $commentData['comment_post_ID'];
         $postTitle              = get_the_title($postId);
@@ -84,10 +78,7 @@ class CommentReplyEmail extends ADMIN\MailSetting{
 
     public function __construct($commentData) {
         // call parent constructor
-		parent::__construct();
-
-        $this->moduleSlug       = 'comments';
-        $this->keyword          = 'replied_comment';
+		parent::__construct('replied_comment', MODULE_SLUG);
 
         $postId                 = $commentData['comment_post_ID'];
         $postTitle              = get_the_title($postId);

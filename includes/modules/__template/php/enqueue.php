@@ -3,7 +3,7 @@ namespace SIM\ADMIN;
 use SIM;
 
 add_action( 'save_post', function($post_ID, $post){
-    if(has_shortcode($post->post_content, 'formbuilder') or has_shortcode($post->post_content, 'formselector')){
+    if(has_shortcode($post->post_content, 'formbuilder') || has_shortcode($post->post_content, 'formselector')){
         global $Modules;
 
         if(!is_array($Modules['forms']['formbuilder_pages'])){
@@ -17,13 +17,13 @@ add_action( 'save_post', function($post_ID, $post){
 }, 10, 2);
 
 add_action( 'wp_enqueue_scripts', function(){
-    wp_register_style( 'sim_XXX_style', plugins_url('css/XXX.min.css', __DIR__), array(), ModuleVersion);
+    wp_register_style( 'sim_XXX_style', plugins_url('css/XXX.min.css', __DIR__), array(), MODULE_VERSION);
 
     // We cannot use the minified version as the dynamic js files depend on the function names
-    wp_register_script('sim_XXXX_script',plugins_url('js/XXXX.js', __DIR__), array('sweetalert'), ModuleVersion,true);
+    wp_register_script('sim_XXXX_script',plugins_url('js/XXXX.js', __DIR__), array('sweetalert'), MODULE_VERSION,true);
 
-    $formbuilder_pages   = SIM\getModuleOption('XXX', 'XXX_pages');
-    if(in_array(get_the_ID(), $formbuilder_pages)){
+    $formbuilderPages   = SIM\getModuleOption('XXX', 'XXX_pages');
+    if(in_array(get_the_ID(), $formbuilderPages)){
         wp_enqueue_style('sim_XXX_style');
     }
 });

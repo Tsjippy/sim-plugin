@@ -2,17 +2,13 @@
 namespace SIM\COMMENTS;
 use SIM;
 
-const ModuleVersion		= '7.0.0';
+const MODULE_VERSION		= '7.0.0';
+//module slug is the same as grandparent folder name
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-//run on module deactivation
-add_action('sim_module_deactivated', function($moduleSlug, $options){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
-}, 10, 2);
-
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	?>
 	<p>
@@ -21,11 +17,11 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 		You can turn on or off comments also on a per page level.
 	</p>
 	<?php
-},10,2);
+});
 
 add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return;
+	if($moduleSlug != MODULE_SLUG)	{return;}
 	
     ?>
 	<label>Which post types should have comments allowed by default?</label><br>
@@ -33,7 +29,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	foreach(get_post_types() as $type){
 		?>
 		<label>
-			<input type='checkbox' name='posttypes[]' value='<?php echo $type;?>' <?php if(in_array($type, $settings['posttypes'])) echo 'checked';?>>
+			<input type='checkbox' name='posttypes[]' value='<?php echo $type;?>' <?php if(in_array($type, $settings['posttypes'])){echo 'checked';}?>>
 			<?php echo $type;?>
 		</label>
 		<br>

@@ -35,22 +35,12 @@ $hookName	= SIM\getModuleOption('frontpage', 'after_main_content_hook');
 if(!empty($hookName)){
 	add_action($hookName, function(){
 		//if on home page and prayer module activated
-		if(is_page(SIM\getModuleOption('frontpage','home_page')) and SIM\getModuleOption('prayer','enable')){
-			
-			if (is_user_logged_in() and function_exists('SIM\PRAYER\prayerRequest')){
-				$prayerRequest = SIM\PRAYER\prayerRequest();
-				if (empty($prayerRequest)) return;
-			
-				echo "<article>";
-					echo "<div name='prayer_request' style='text-align: center; margin-left: auto; margin-right: auto; font-size: 18px; color:#999999; width:80%; max-width:800px;'>";
-						echo "<h3 id='prayertitle'>The prayer request of today:</h3>";
-						echo "<p>$prayerRequest</p>";
-					echo "</div>";
-					if(SIM\getModuleOption('events', 'enable')){
-						echo SIM\EVENTS\birthday();
-					}
-				echo '</article>';
-			}
+		if(is_page(SIM\getModuleOption('frontpage','home_page')) && is_user_logged_in()){
+			$message	= apply_filters('sim_frontpage_message', '');
+				
+			echo "<article>";
+				echo $message;
+			echo '</article>';
 		}
 	});
 }

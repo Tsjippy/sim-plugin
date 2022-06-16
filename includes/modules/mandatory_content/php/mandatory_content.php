@@ -9,7 +9,9 @@ use SIM;
  * @return string $content	post content                
 */
 add_filter( 'the_content', function ($content){
-	if (!is_user_logged_in()) return $content;
+	if (!is_user_logged_in()){
+		return $content;
+	}
 
 	$postId 	= get_the_ID();
 	$userId 	= get_current_user_id();
@@ -19,19 +21,17 @@ add_filter( 'the_content', function ($content){
 	//Get the users arrival date
 	$arrivalDate 	= strtotime(get_user_meta( $userId, 'arrival_date', true ));
 	$arrived 		= false;
-	if($arrivalDate){
-		if($arrivalDate < time()){
-			$arrived = true;
-		}
+	if($arrivalDate && $arrivalDate < time()){
+		$arrived = true;
 	}
 	
 	//People should read this, and have not read it yet
 	if(
-		get_the_author_meta('ID') != $userId					and
-		!in_array($postId, $readPages)							and 
+		get_the_author_meta('ID') != $userId					&&
+		!in_array($postId, $readPages)							&& 
 		(
-			(isset($audience['beforearrival']) and !$arrived)	or 
-			isset($audience['afterarrival']) 					or
+			(isset($audience['beforearrival']) && !$arrived)	|| 
+			isset($audience['afterarrival']) 					||
 			isset($audience['everyone'])
 		)
 	){
