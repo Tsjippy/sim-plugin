@@ -840,13 +840,14 @@ class FormTable extends Formbuilder{
 							<label>Select the fields the table can be filtered on</label>
 							<div class='clone_divs_wrapper'>
 								<?php
+								$filters	= $this->tableSettings['filter'];
+
 								if(!is_array($this->tableSettings['filter'])){
-									$this->tableSettings['filter']	= [
-										""
-									];
+									$this->tableSettings['filter']	= [];
+									$filters	= [''];
 								}
 
-								foreach($this->tableSettings['filter'] as $index=>$filter){
+								foreach($filters as $index=>$filter){
 									echo "<div class='clone_div' data-divid='$index'>";									
 										echo "<select name='table_settings[filter][$index][element]' class='inline'>";
 											foreach($this->columnSettings as $key=>$element){
