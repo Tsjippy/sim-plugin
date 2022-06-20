@@ -170,19 +170,21 @@ class CreateEvents extends Events{
 	 * @param	string	$title		the event title
 	*/
 	protected function deleteOldCelEvent($postId, $date, $userId, $type, $title){
-		if(is_numeric($postId)){
-			$existingEvent	= $this->retrieveSingleEvent($postId);
-			if(
-				date('-m-d', strtotime($existingEvent->startdate)) == date('-m-d', strtotime($date)) &&
-				$title == $existingEvent->post_title
-			){
-				return false; //nothing changed
-			}else{
-				wp_delete_post($postId, true);
-				delete_user_meta($userId, $type.'_event_id');
-	
-				$this->removeDbRows();
-			}
+		if(!is_numeric($postId)){
+			return false;
+		}
+		
+		$existingEvent	= $this->retrieveSingleEvent($postId);
+		if(
+			date('-m-d', strtotime($existingEvent->startdate)) == date('-m-d', strtotime($date)) &&
+			$title == $existingEvent->post_title
+		){
+			return false; //nothing changed
+		}else{
+			wp_delete_post($postId, true);
+			delete_user_meta($userId, $type.'_event_id');
+
+			$this->removeDbRows();
 		}
 	}
 
@@ -203,6 +205,9 @@ class CreateEvents extends Events{
 		}
 
 		$oldMetaValue	= SIM\getMetaArrayValue($user->ID, $metaKey);
+		if(!is_array($metaValue) && is_array($oldMetaValue) && count($oldMetaValue) == 1){
+			$oldMetaValue	= array_values($oldMetaValue)[0];
+		}
 
 		if(empty($metaValue) && empty($oldMetaValue) || $metaValue == $oldMetaValue){
 			// nothing to work with or no update

@@ -103,7 +103,13 @@ export async function fetchRestApi(url, formData){
 	}catch(error){
 		console.error(error);
 		console.error(result);
-		Main.displayMessage(`Url ${sim.baseUrl}/wp-json/sim/v1/${url} not found`, 'error');
+
+		if(result.ok){
+			Main.displayMessage(`Problem parsing the json`, 'error');
+		}else{
+			Main.displayMessage(`Url ${sim.baseUrl}/wp-json/sim/v1/${url} not found`, 'error');
+		}
+		
 		return false;
 	}
 }

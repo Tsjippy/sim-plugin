@@ -3,6 +3,8 @@ namespace SIM\FORMS;
 use SIM;
 
 add_action( 'save_post', function($postId, $post){
+    global $Modules;
+
     $hasFormbuilderShortcode    = has_shortcode($post->post_content, 'formbuilder');
 
     // Add the form if it does not exist yet
@@ -34,14 +36,14 @@ add_action( 'save_post', function($postId, $post){
                 }
 
                 // Only add a new form if it does not exist yet
-                if(!$found) $formbuilder->insertForm($formName);
+                if(!$found){
+                    $formbuilder->insertForm($formName);
+                }
             }
         }
     }
 
     if($hasFormbuilderShortcode || has_shortcode($post->post_content, 'formselector')){
-        global $Modules;
-
         if(!is_array($Modules['forms']['formbuilder_pages'])){
             $Modules['forms']['formbuilder_pages']    = [$postId];
         }elseif(!in_array($postId, $Modules['forms']['formbuilder_pages'])){
@@ -50,10 +52,21 @@ add_action( 'save_post', function($postId, $post){
 
         update_option('sim_modules', $Modules);
     }
+
+    if(has_shortcode($post->post_content, 'formresults') || has_shortcode($post->post_content, 'formselector')){
+        if(!is_array($Modules['forms']['formtable_pages'])){
+            $Modules['forms']['formtable_pages']    = [$postId];
+        }elseif(!in_array($postId, $Modules['forms']['formtable_pages'])){
+            $Modules['forms']['formtable_pages'][]  = $postId;
+        }
+
+        update_option('sim_modules', $Modules);
+    }
 }, 10, 2);
 
 add_action( 'wp_enqueue_scripts', function(){
     wp_register_style( 'sim_forms_style', plugins_url('css/forms.min.css', __DIR__), array(), MODULE_VERSION);
+    wp_register_style( 'sim_formtable_style', plugins_url('css/formtable.min.css', __DIR__), array(), MODULE_VERSION);
 
     wp_register_script('sim_forms_script', plugins_url('js/forms.min.js', __DIR__), array('sweetalert', 'sim_formsubmit_script'), MODULE_VERSION,true);
 
@@ -65,4 +78,10 @@ add_action( 'wp_enqueue_scripts', function(){
     if(in_array(get_the_ID(), $formBuilderPages)){
         wp_enqueue_style('sim_forms_style');
     }
+
+    $formtablePages   = SIM\getModuleOption('forms', 'formtable_pages');
+    if(in_array(get_the_ID(), $formtablePages)){
+        wp_enqueue_style('sim_formtable_style');
+    }
+    
 });

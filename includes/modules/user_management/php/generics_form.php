@@ -14,7 +14,9 @@ add_filter('sim_forms_load_userdata',function($usermeta,$userId){
 
 //create  events
 add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
-	if($formName != 'user_generics') return $formResults;
+	if($formName != 'user_generics'){
+		return $formResults;
+	}
 	
 	if(class_exists('SIM\EVENTS\Events')){
 		$events	= new SIM\EVENTS\CreateEvents();

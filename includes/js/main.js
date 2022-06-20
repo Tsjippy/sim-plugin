@@ -46,7 +46,7 @@ function switchTab(event=null){
 			//only process non-modal tabs
 			if(tabbutton.closest('.modal') == null){
 				var result	= displayTab(tabbutton);
-				if(result != false){
+				if(result){
 					lastTab	= result;
 				}
 			}
@@ -56,7 +56,7 @@ function switchTab(event=null){
 	var secondTab = params.secondTab;
 	if(secondTab != null){
 		//find the tab and display it
-		last_tab.querySelectorAll('[data-param_val="'+secondTab+'"]').forEach(tabbutton=>{
+		lastTab.querySelectorAll(`[data-param_val="${secondTab}"]`).forEach(tabbutton=>{
 			displayTab(tabbutton);
 		});
 	}
@@ -292,7 +292,7 @@ window.addEventListener("click", function(event) {
 	var target = event.target;
 
 	//close modal on close click
-	if(target.matches(".close")){
+	if(target.matches(".modal .close")){
 		target.closest('.modal').classList.add('hidden');
 	}
 	

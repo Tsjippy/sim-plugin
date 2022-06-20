@@ -5,24 +5,24 @@ use SIM;
 const MODULE_VERSION		= '7.0.0';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
-define('ImageFolder', wp_upload_dir()['path'].'/email_pictures');
+define('IMAGE_FOLDER', wp_upload_dir()['path'].'/email_pictures');
 
 //run on module activation
-add_action('sim_module_activated', function($moduleSlug, $options){
+add_action('sim_module_activated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	//create folder for temporary e-mail messages
-	if (!is_dir(ImageFolder)) {
-		mkdir(ImageFolder, 0777, true);
+	if (!is_dir(IMAGE_FOLDER)) {
+		mkdir(IMAGE_FOLDER, 0777, true);
 	}
 
 	// Create the dbs
 	$fancyEmail     = new FancyEmail();
 	$fancyEmail->createDbTables();
-}, 10, 2);
+});
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -36,11 +36,13 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	if(SIM\getModuleOption($moduleSlug, 'enable')){
 		echo emailStats();
 	}
-},10,2);
+});
 
 add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
 	
     ?>
 	<label>Select a picture for the e-mail header.</label>

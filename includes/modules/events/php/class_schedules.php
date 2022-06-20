@@ -109,6 +109,8 @@ class Schedules{
 	}
 
 	function showSchedule($schedule){
+		ob_start();
+
 		if(
 			(
 				$schedule->target == $this->user->ID 					||		// Target is me
@@ -151,7 +153,7 @@ class Schedules{
 		}
 		
 		?>
-		<div class='schedules_div form-table-wrapper'>
+		<div class='schedules_div table-wrapper'>
 			<div class="modal publish_schedule hidden">
 				<div class="modal-content">
 					<span id="modal_close" class="close">&times;</span>
@@ -220,6 +222,8 @@ class Schedules{
 			?>
 		</div>
 		<?php
+
+		return ob_get_clean();
 	}
 
 	/**

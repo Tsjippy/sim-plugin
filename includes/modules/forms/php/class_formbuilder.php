@@ -174,7 +174,9 @@ class Formbuilder{
 	 */
 	function getElementById($id, $key=''){
 		//load if needed
-		if(empty($this->formData->elementMapping)) $this->loadFormData();
+		if(empty($this->formData->elementMapping)){
+			$this->loadFormData();
+		}
 		
 		$elementIndex	= $this->formData->elementMapping[$id];
 
@@ -211,7 +213,9 @@ class Formbuilder{
 		// Get all form elements
 		$query						= "SELECT * FROM {$this->elTableName} WHERE form_id= '$formId'";
 
-		if(!empty($sortCol))	$query .= " ORDER BY {$this->elTableName}.`$sortCol` ASC";
+		if(!empty($sortCol)){
+			$query .= " ORDER BY {$this->elTableName}.`$sortCol` ASC";
+		}
 		$this->formElements 		=  $wpdb->get_results($query);
 	}
 	
@@ -225,7 +229,9 @@ class Formbuilder{
 	function insertForm($name=''){
 		global $wpdb;
 
-		if(empty($name))	$name = $this->formName;
+		if(empty($name)){
+			$name = $this->formName;
+		}
 
 		$result = $wpdb->insert(
 			$this->tableName, 
@@ -422,7 +428,9 @@ class Formbuilder{
 	 * @param	object|array	$element		The element to change the priority of
 	 */
 	function reorderElements($oldPriority, $newPriority, $element) {
-		if ($oldPriority == $newPriority) return;
+		if ($oldPriority == $newPriority){
+			return;
+		}
 
 		// Get all elements of this form
 		$this->getAllFormElements('priority');
@@ -502,7 +510,7 @@ class Formbuilder{
 	 * 
 	 * 
 	 */
-	function getSubmissionData($userId=null, $submissionId=null){
+	function getSubmissionData($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
 		
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE form_id={$this->formData->id}";
@@ -542,7 +550,9 @@ class Formbuilder{
 			$this->total	= $result[0]->total;
 		}
 
-		$query	.= " LIMIT $start, $this->pageSize";
+		if(!$all){
+			$query	.= " LIMIT $start, $this->pageSize";
+		}
 
 		// Get results
 		$result	= $wpdb->get_results($query);
@@ -558,10 +568,67 @@ class Formbuilder{
 			foreach($this->submissionData as &$data){
 				$data->formresults	= unserialize($data->formresults);
 			}
+
+			$this->processSplittedData();
 		}
 		
 		if($wpdb->last_error !== ''){
 			SIM\printArray($wpdb->print_error());
+		}
+	}
+
+	/**
+	 * This function creates seperated entries from entries with an splitted value
+	 */
+	function processSplittedData(){
+		if(!empty($this->formData->settings['split'])){
+			$fieldMainName	= $this->formData->settings['split'];
+			
+			//loop over all submissions
+			foreach($this->submissionData as $key=>$entry){
+				// loop over all entries of the split key
+				foreach($entry->formresults[$fieldMainName] as $subKey=>$array){
+					// Should always be an array
+					if(is_array($array)){
+						// Check if it has data
+						$hasData	= false;
+						foreach($array as $value){
+							if(!empty($value)){
+								$hasData = true;
+								break;
+							}
+						}
+
+						// If it has data add as a seperate item to the submission data
+						if($hasData){
+							$newSubmission	= clone $entry;
+							// Mark this submission as archived if needed
+							if(isset($array['archived'])){
+								if($this->showArchived){
+									$newSubmission->archived	= true;
+									unset($array['archived']);
+								}else{
+									continue;
+								}
+							}
+							// Add the array to the formresults array
+							$newSubmission->formresults = array_merge($entry->formresults, $array);
+
+							// remove the index value from the copy
+							unset($newSubmission->formresults[$fieldMainName]);
+
+							// Add the subkey
+							$newSubmission->sub_id	= $subKey;
+
+							// Copy the entry
+							$this->submissionData[]	= $newSubmission;
+						}
+					}
+				}
+
+				// remove the original entry
+				unset($this->submissionData[$key]);
+			}
 		}
 	}
 	
@@ -571,7 +638,9 @@ class Formbuilder{
 	function buildDefaultsArray(){
 		//Only create one time
 		if(empty($this->defaultValues)){
-			if(empty($this->formName)) $this->formName	= $this->formData->name;
+			if(empty($this->formName)){
+				$this->formName	= $this->formData->name;
+			}
 
 			$this->defaultValues		= (array)get_userdata($this->userId)->data;
 			//Change ID to userid because its a confusing name
@@ -675,9 +744,13 @@ class Formbuilder{
 				}
 			} 
 			// Form setting
-			if(empty($targetDir)) $targetDir = $this->formData->settings['upload_path'];
+			if(empty($targetDir)){
+				$targetDir = $this->formData->settings['upload_path'];
+			}
 			// Default setting
-			if(empty($targetDir)) $targetDir = 'form_uploads/'.$this->formData->settings['formname'];
+			if(empty($targetDir)){
+				$targetDir = 'form_uploads/'.$this->formData->settings['formname'];
+			}
 
 			if(empty($this->formData->settings['save_in_meta'])){
 				$library	= false;
@@ -923,7 +996,9 @@ class Formbuilder{
 			return $values;
 		}
 		
-		if(in_array($element->type,$this->nonInputs)) return [];
+		if(in_array($element->type,$this->nonInputs)){
+			return [];
+		}
 
 		$this->buildDefaultsArray();
 
@@ -1220,8 +1295,12 @@ class Formbuilder{
 	 * @return	string					The html
 	 */
 	function buildHtml($element, $key=0){
-		if(empty($this->formData))		$this->loadFormData();
-		if(empty($this->formElements)) $this->getAllFormElements();
+		if(empty($this->formData)){
+			$this->loadFormData();
+		}
+		if(empty($this->formElements)){
+			$this->getAllFormElements();
+		}
 		$this->prevElement		= $this->formElements[$key-1];
 		$this->nextElement		= $this->formElements[$key+1];
 
@@ -1453,6 +1532,7 @@ class Formbuilder{
 		}	
 
 		$this->formResults['edittime']	= date("Y-m-d H:i:s");
+
 		//Update the database
 		$result = $wpdb->update(
 			$this->submissionTableName, 
@@ -1551,7 +1631,9 @@ class Formbuilder{
 					}
 
 					//do not proceed if there is no match
-					if(strtolower($formValue) != strtolower($email['conditionalvalue'])) continue;
+					if(strtolower($formValue) != strtolower($email['conditionalvalue'])){
+						continue;
+					}
 				}
 				
 				$from	= '';
@@ -1613,13 +1695,16 @@ class Formbuilder{
 			
 			//check if auto archive is turned on for this form
 			if($settings['autoarchive'] == 'true'){
-				$this->formName		= $form->name;
+				$this->formName				= $form->name;
+				$this->formData				= $form;
+				$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
+
 				$fieldMainName		= $settings['split'];
 				
 				//Get all submissions of this form
-				$this->getSubmissionData();
+				$this->getSubmissionData(null, null, true);
 				
-				$triggerName	= $this->getElementById($settings['autoarchivefield'],'name');
+				$triggerName	= $this->getElementById($settings['autoarchivefield'], 'name');
 				$triggerValue	= $settings['autoarchivevalue'];
 				$pattern		= '/'.$fieldMainName."\[[0-9]+\]\[([^\]]+)\]/i";
 				if(preg_match($pattern, $triggerName,$matches)){
@@ -1633,7 +1718,7 @@ class Formbuilder{
 				if(!is_array($matches[1])){
 					SIM\printArray($matches[1]);
 				}else{
-					foreach((array)$matches[1] as $key=>$keyword){
+					foreach((array)$matches[1] as $keyword){
 						//If the keyword is a valid date keyword
 						if(strtotime($keyword)){
 							//convert to date
@@ -1643,25 +1728,26 @@ class Formbuilder{
 				}
 				
 				//loop over all submissions to see if we need to archive
-				foreach($this->submissionData as $subData){
+				foreach($this->submissionData as &$subData){
 					$this->formResults		= $subData->formresults;
 					
-					$this->submissionId	= $subData->id;
+					$this->submissionId		= $subData->id;
+
 					//there is no trigger value found in the results, check multi value array
 					if(empty($this->formResults[$triggerName])){
 						//loop over all multi values
-						foreach($this->formResults[$fieldMainName] as $sub_id=>$sub){
+						foreach($this->formResults[$fieldMainName] as $subId=>$sub){
 							//we found a match for a sub entry, archive it
 							$val	= $sub[$triggerName];						
 							if(
-								$val == $triggerValue or 						//value is the same as the trigger value or
+								$val == $triggerValue || 						//value is the same as the trigger value or
 								(
-									strtotime($triggerValue) and 				// trigger value is a date
-									strtotime($val) and							// this value is a date
-									strtotime($val)<strtotime($triggerValue)	// value is smaller than the trigger value
+									strtotime($triggerValue) && 				// trigger value is a date
+									strtotime($val) &&							// this value is a date
+									strtotime($val) < strtotime($triggerValue)	// value is smaller than the trigger value
 								)
 							){
-								$this->formResults[$fieldMainName][$sub_id]['archived'] = true;
+								$this->formResults[$fieldMainName][$subId]['archived'] = true;
 								
 								//update in db
 								$this->checkIfAllArchived($this->formResults[$fieldMainName]);
@@ -1670,7 +1756,13 @@ class Formbuilder{
 					}else{
 						//if the form value is equal to the trigger value it needs to be to be archived
 						if($this->formResults[$triggerName] == $triggerValue){
-							$this->updateSubmissionData(true);
+							//Check if we are dealing with an subvalue
+							if($subData->sub_id){
+								$subData->archived	= true;
+								$this->checkIfAllArchived($subData);
+							}else{
+								$this->updateSubmissionData(true);
+							}
 						}
 					}
 				}
@@ -1681,26 +1773,26 @@ class Formbuilder{
 	/**
 	 * Checks if all sub entries are archived, if so archives the whole
 	 * 
-	 * @param	array	$data	the data to check
+	 * @param	object	$data	the data to check
 	 */
 	function checkIfAllArchived($data){
 		//check if all subfields are archived or empty
 		$allArchived = true;
-		//loop over all keys
-		foreach($data as $subFieldsArray){
-			//loop over all fields of this key
-			$empty = true;
-			foreach($subFieldsArray as $field){
-				if(!empty($field)) $empty = false;
-				break;
-			}
-			
-			//there are values and the sub entry is not archived
-			if(!$empty and empty($subFieldsArray['archived'])){
+
+		// check if we have a subsubmission who is not yet archived
+		foreach($this->submissionData as $submission){
+			// If this submission belomgs to the same as the given submission and it is not archived
+			if($submission->id == $data->id && !$submission->archived){
 				$allArchived = false;
 				break;
 			}
 		}
+
+		// Get the original submission
+		$this->getSubmissionData(null, $submission->id);
+
+		// Update the original
+		$this->formResults[$this->formData->settings['split']][$data->sub_id]['archived']	= true;
 		
 		//update and mark as archived if all entries are empty or archived
 		$this->updateSubmissionData($allArchived);
@@ -1747,7 +1839,9 @@ class Formbuilder{
 	 * @return	string				The filtered string
 	 */
 	function processPlaceholders($string){
-		if(empty($string)) return $string;
+		if(empty($string)){
+			return $string;
+		}
 
 		$this->formResults['submissiondate']	= date('d F y', strtotime($this->formResults['submissiontime']));
 		$this->formResults['editdate']			= date('d F y', strtotime($this->formResults['edittime']));
@@ -1851,8 +1945,8 @@ class Formbuilder{
 					$this->addElementModal();
 
 					?>
-					<button class="button tablink formbuilderform<?php if(!empty($this->formElements)) echo ' active';?>"	id="show_element_form" data-target="element_form">Form elements</button>
-					<button class="button tablink formbuilderform<?php if(empty($this->formElements)) echo ' active';?>"	id="show_form_settings" data-target="form_settings">Form settings</button>
+					<button class="button tablink formbuilderform<?php if(!empty($this->formElements)){echo ' active';}?>"	id="show_element_form" data-target="element_form">Form elements</button>
+					<button class="button tablink formbuilderform<?php if(empty($this->formElements)){echo ' active';}?>"	id="show_form_settings" data-target="form_settings">Form settings</button>
 					<button class="button tablink formbuilderform"															id="show_form_emails" data-target="form_emails">Form emails</button>
 					<?php 
 				}else{
@@ -1861,7 +1955,7 @@ class Formbuilder{
 				}
 				?>
 				
-				<div class="tabcontent<?php if(empty($this->formElements)) echo ' hidden';?>" id="element_form">
+				<div class="tabcontent<?php if(empty($this->formElements)){echo ' hidden';}?>" id="element_form">
 					<?php
 					if(isset($_GET['formbuilder'])){
 						if(empty($this->formElements)){
@@ -1887,7 +1981,7 @@ class Formbuilder{
 				?>
 				</div>
 				
-				<div class="tabcontent<?php if(!empty($this->formElements)) echo ' hidden';?>" id="form_settings">
+				<div class="tabcontent<?php if(!empty($this->formElements)){echo ' hidden';}?>" id="form_settings">
 					<?php $this->formSettingsForm();?>
 				</div>
 				
@@ -1939,9 +2033,13 @@ class Formbuilder{
 	function showForm(){
 		$formName	= $this->formData->settings['formname'];
 		$buttonText	= $this->formData->settings['buttontext'];
-		if(empty($buttonText)) $buttonText = 'Submit the form';
+		if(empty($buttonText)){
+			$buttonText = 'Submit the form';
+		}
 		
-		if(!empty($formName)) echo "<h3>$formName</h3>";	
+		if(!empty($formName)){
+			echo "<h3>$formName</h3>";
+		}	
 
 		if(array_intersect($this->userRoles, $this->submitRoles) != false and !empty($this->formData->settings['save_in_meta'])){
 			echo SIM\userSelect("Select an user to show the data of:");
@@ -1949,11 +2047,17 @@ class Formbuilder{
 		echo do_action('sim_before_form', $this->formName);
 
 		$formClass	= "sim_form";
-		if(isset($_GET['formbuilder'])) $formClass	.= ' builder';
+		if(isset($_GET['formbuilder'])){
+			$formClass	.= ' builder';
+		}
 
 		$dataset	= "data-formid=".$this->formData->id;
-		if(!empty($this->formData->settings['formreset']))		$dataset .= " data-reset='true'";
-		if(!empty($this->formData->settings['save_in_meta']))	$dataset .= " data-addempty='true'";
+		if(!empty($this->formData->settings['formreset'])){
+			$dataset .= " data-reset='true'";
+		}
+		if(!empty($this->formData->settings['save_in_meta'])){
+			$dataset .= " data-addempty='true'";
+		}
 
 		?>
 		<form action='' method='post' class='<?php echo $formClass;?>' <?php echo $dataset;?>>
@@ -2081,7 +2185,7 @@ class Formbuilder{
 						}
 					}
 					?>
-					<label class='block <?php if($hideUploadEl) echo 'hidden';?>'>
+					<label class='block <?php if($hideUploadEl){echo 'hidden';}?>'>
 						<h4>Save form uploads in this subfolder of the uploads folder:<br>
 						If you leave it empty the default form_uploads will be used</h4>
 						<input type='text' class='formbuilder formfieldsetting' name='settings[upload_path]' value='<?php echo $settings['upload_path'];?>'>

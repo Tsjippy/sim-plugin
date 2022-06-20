@@ -8,7 +8,7 @@ async function hideColumn(cell){
 
 	//show the reset button
 
-	cell.closest('.form-table-wrapper').querySelector('.reset-col-vis').classList.remove('hidden');
+	cell.closest('.table-wrapper').querySelector('.reset-col-vis').classList.remove('hidden');
 
 	// store as preference
 	var formData	= new FormData();
@@ -20,10 +20,10 @@ async function hideColumn(cell){
 
 async function showHiddenColumns(target){
 	//hiden the reset button
-	target.closest('.form-table-wrapper').querySelector('.reset-col-vis').classList.add('hidden');
+	target.closest('.table-wrapper').querySelector('.reset-col-vis').classList.add('hidden');
 
 	// Show the columns again
-	var table		= target.closest('.form-table-wrapper').querySelector('table');
+	var table		= target.closest('.table-wrapper').querySelector('table');
 	table.querySelectorAll('th.hidden, td.hidden').forEach(el=>el.classList.remove('hidden'));
 
 	// store as preference

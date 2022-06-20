@@ -659,9 +659,11 @@ function cleanUpNestedArray(&$array, $delEmptyArrays=false){
  * @return string					The value
 */
 function getMetaArrayValue($userId, $metaKey, $values=null){
-	if(empty($metaKey)) return $values;
+	if(empty($metaKey)){
+		return $values;
+	}
 	
-	if($values === null and !empty($metaKey)){
+	if($values === null && !empty($metaKey)){
 		//get the basemetakey in case of an indexed one
 		if(preg_match('/(.*?)\[/', $metaKey, $match)){
 			$baseMetaKey	= $match[1];
@@ -677,7 +679,10 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 	if(is_array($matches[1])){
 		$value	= $values;
 		foreach($matches[1] as $match){
-			if(!is_array($value)) break;
+			if(!is_array($value)){
+				break;
+			}
+			
 			if(!isset($value[$match])){
 				$match	= str_replace('_files', '', $match);
 			}

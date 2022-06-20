@@ -65,7 +65,6 @@ foreach ($files as $file) {
 // run on activation
 add_action( 'activated_plugin', function ( $plugin ) {
     if( $plugin == plugin_basename( __FILE__ ) ) {
-        $dir=__DIR__;
 
         // create must use plugins folder if it does not exist
         if (!is_dir(WP_CONTENT_DIR.'/mu-plugins')) {

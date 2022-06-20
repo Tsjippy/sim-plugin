@@ -62,12 +62,14 @@ class FancyEmail{
 
         $this->recipients   = &$args['to'];
         //Do not send an e-mail when the adres contains .empty
-        if(strpos($this->recipients,'.empty') !== false or $_SERVER['HTTP_HOST'] == 'localhost'){
+        if(strpos($this->recipients,'.empty') !== false || $_SERVER['HTTP_HOST'] == 'localhost'){
             $args['to'] = '';
             return $args;
         }
 
-        if(!is_array($args['headers'])) $args['headers'] = [];
+        if(!is_array($args['headers'])){
+            $args['headers'] = [];
+        }
         $this->headers      = &$args['headers'];
 
         $this->message      = &$args['message'];
@@ -91,7 +93,7 @@ class FancyEmail{
     
         // Add site greetings if not given
         if(
-            strpos(strtolower($this->message), 'kind regards,') === false and 
+            strpos(strtolower($this->message), 'kind regards,') === false && 
             strpos(strtolower($this->message), 'cheers,') === false
         ){
             $this->message	.= "<br><br><br>Kind regards,<br><br>".SITENAME;
@@ -133,7 +135,9 @@ class FancyEmail{
      * @return  string              Replace html
      */ 
     function checkEmailImages($matches){
-        if(empty($matches)) return false;
+        if(empty($matches)){
+            return false;
+        }
 
         // Convert to array in case of a pure url
         if(!is_array($matches)){
@@ -159,7 +163,7 @@ class FancyEmail{
             $newPath   = $newPath.$name;
 
             // Copy the private picture to the public accesible folder
-            $result=copy($path, $newPath);
+            copy($path, $newPath);
 
             $newUrl     = SIM\pathToUrl($newPath);
             $html	    = str_replace($url, $newUrl, $html);
@@ -176,7 +180,9 @@ class FancyEmail{
      * @return  string              Replace html
      */ 
     function urlReplace($matches){
-        if(empty($matches)) return false;
+        if(empty($matches)){
+            return false;
+        }
 
         // Convert to array in case of a pure url
         if(!is_array($matches)){
@@ -296,11 +302,11 @@ class FancyEmail{
                     }else{
                         $timespan   = $_POST['timespan'];
                     }
-                    $max_time   = strtotime("-$timespan days");
+                    $maxTime   = strtotime("-$timespan days");
                 }else{
-                    $max_time   = strtotime($_POST['date']);
+                    $maxTime   = strtotime($_POST['date']);
                 }
-                $query  .= " WHERE $where AND $this->mailTable.time_send >= $max_time";
+                $query  .= " WHERE $where AND $this->mailTable.time_send >= $maxTime";
             }
         }
 

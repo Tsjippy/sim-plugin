@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const StyleVersion		= '7.0.26';
+const STYLE_VERSION		= '7.0.28';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
@@ -9,16 +9,16 @@ add_action( 'admin_enqueue_scripts', __NAMESPACE__.'\registerScripts');
 
 // Style the buttons in the media library
 add_action( 'wp_enqueue_media', function(){
-    wp_enqueue_style('sim_media_style', plugins_url('css/media.min.css', __DIR__), [], StyleVersion);
+    wp_enqueue_style('sim_media_style', plugins_url('css/media.min.css', __DIR__), [], STYLE_VERSION);
 });
 
 function registerScripts(){
 	//LIBRARIES
 	//Nice select https://github.com/bluzky/nice-select2
-	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(),StyleVersion,true);
+	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(),STYLE_VERSION,true);
 
 	//sortable library: https://github.com/SortableJS/Sortable#bs
-	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(),StyleVersion,true);
+	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(),STYLE_VERSION,true);
 	
 	//Sweet alert https://sweetalert2.github.io/
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
@@ -27,19 +27,19 @@ function registerScripts(){
 	wp_register_script('sim_purify', plugins_url('js/purify.min.js', __DIR__), array(), '2.3.8', true);
 
 	//Submit forms
-	wp_register_script('sim_user_select_script', plugins_url('js/user_select.min.js', __DIR__), array('sweetalert'), StyleVersion,true);
-	wp_register_script('sim_formsubmit_script', plugins_url('js/formsubmit.min.js', __DIR__), array(), StyleVersion,true);
+	wp_register_script('sim_user_select_script', plugins_url('js/user_select.min.js', __DIR__), array('sweetalert'), STYLE_VERSION,true);
+	wp_register_script('sim_formsubmit_script', plugins_url('js/formsubmit.min.js', __DIR__), array(), STYLE_VERSION,true);
 
 	//table request shortcode
-	wp_register_script('sim_table_script',plugins_url('js/table.min.js', __DIR__), array('sortable','sim_formsubmit_script','sim_forms_script'),StyleVersion,true);
+	wp_register_script('sim_table_script',plugins_url('js/table.min.js', __DIR__), array('sortable','sim_formsubmit_script','sim_forms_script'),STYLE_VERSION,true);
 
 	//add main.js
-	wp_register_script('sim_script',plugins_url('js/main.min.js', __DIR__),array('niceselect', 'sweetalert'),StyleVersion, true);
+	wp_register_script('sim_script',plugins_url('js/main.min.js', __DIR__),array('niceselect', 'sweetalert'),STYLE_VERSION, true);
 	
 	//File upload js
-	wp_register_script('sim_fileupload_script', plugins_url('js/fileupload.min.js', __DIR__), array('sim_formsubmit_script', 'sim_purify'), StyleVersion, true);
+	wp_register_script('sim_fileupload_script', plugins_url('js/fileupload.min.js', __DIR__), array('sim_formsubmit_script', 'sim_purify'), STYLE_VERSION, true);
 
-	wp_register_style('sim_taxonomy_style', plugins_url('css/taxonomy.min.css', __DIR__), array(), StyleVersion);
+	wp_register_style('sim_taxonomy_style', plugins_url('css/taxonomy.min.css', __DIR__), array(), STYLE_VERSION);
 }
 
 function enqueueScripts($hook){
@@ -48,7 +48,7 @@ function enqueueScripts($hook){
 
 	registerScripts();
 
-	if ( is_home() or is_search() or is_category() or is_tax()){
+	if ( is_home() || is_search() || is_category() || is_tax()){
 		wp_enqueue_style('sim_taxonomy_style');
 	}
 
@@ -56,12 +56,12 @@ function enqueueScripts($hook){
 	//add main css
 	add_editor_style(plugins_url('css/sim.min.css', __DIR__));
 	//style fo main site
-	wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(),StyleVersion);
+	wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(), STYLE_VERSION);
 	
 	//Get current users location
 	$location = get_user_meta( $UserID, 'location', true );
 	if (isset($location['address'])){
-		$address = $location['address'];;
+		$address = $location['address'];
 	}else{
 		$address = "";
 	}

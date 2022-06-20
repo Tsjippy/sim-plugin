@@ -3,7 +3,7 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 //Shortcode for adding user accounts
-add_shortcode('create_user_account', function ($atts){
+add_shortcode('create_user_account', function (){
 	wp_enqueue_script( 'sim_user_management');
 
 	$user = wp_get_current_user();
@@ -57,8 +57,10 @@ add_shortcode('create_user_account', function ($atts){
 });
 
 //Shortcode to display the pending user accounts
-add_shortcode('pending_user', function ($atts){
-	if ( !current_user_can( 'edit_others_pages' ) ) return "No permission!";
+add_shortcode('pending_user', function (){
+	if ( !current_user_can( 'edit_others_pages' ) ){
+		return "No permission!";
+	}
 
 	//Delete user account if there is an url parameter for it
 	if(isset($_GET['delete_pending_user'])){
@@ -71,7 +73,7 @@ add_shortcode('pending_user', function ($atts){
 			
 			//Delete the account
 			$result = wp_delete_user($UserId);
-			if ($result == true){
+			if ($result){
 				//show succesmessage
 				echo '<div class="success">User succesfully removed</div>';
 			}
@@ -129,7 +131,7 @@ add_shortcode('pending_user', function ($atts){
 });
 
 //Shortcode to display number of pending user accounts
-add_shortcode('pending_user_icon',function ($atts){
+add_shortcode('pending_user_icon',function (){
 	$pendingUsers = get_users(array(
 		'meta_key'     => 'disabled',
 		'meta_value'   => 'pending',
@@ -145,7 +147,7 @@ add_shortcode('pending_user_icon',function ($atts){
 add_action('sim_dashboard_warnings', function($userId){
 	$personnelCoordinatorEmail	= SIM\getModuleOption('user_management', 'personnel_email');
 
-	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
+	if(is_numeric($_GET["userid"]) && in_array('usermanagement', wp_get_current_user()->roles )){
 		$userId	= $_GET["userid"];
 	}else{
 		$userId = get_current_user_id();
@@ -154,7 +156,7 @@ add_action('sim_dashboard_warnings', function($userId){
 	$reminderHtml = "";
 	
 	$visaInfo = get_user_meta( $userId, "visa_info",true);
-	if (is_array($visaInfo) and isset($visaInfo['greencard_expiry'])){
+	if (is_array($visaInfo) && isset($visaInfo['greencard_expiry'])){
 		$reminderHtml .= checkExpiryDate($visaInfo['greencard_expiry'],'greencard');
 		if($reminderHtml != ""){
 			$reminderCount = 1;
@@ -174,7 +176,7 @@ add_action('sim_dashboard_warnings', function($userId){
 	//User has children
 	if (isset($family["children"])){
 		$childVaccinationReminderHtml = "";
-		foreach($family["children"] as $key=>$child){
+		foreach($family["children"] as $child){
 			$result = vaccinationReminders($child);
 			if ($result != ""){
 				$reminderCount	+= 1;
@@ -187,9 +189,9 @@ add_action('sim_dashboard_warnings', function($userId){
 	//Check for upcoming reviews, but only if not set to be hidden for this year
 	if(get_user_meta($userId, 'hide_annual_review', true) != date('Y')){
 		$personnelInfo 				= get_user_meta($userId,"personnel",true);
-		if(is_array($personnelInfo) and !empty($personnelInfo['review_date'])){
+		if(is_array($personnelInfo) && !empty($personnelInfo['review_date'])){
 			//Hide annual review warning
-			if(isset($_GET['hide_annual_review']) and $_GET['hide_annual_review'] == date('Y')){
+			if(isset($_GET['hide_annual_review']) && $_GET['hide_annual_review'] == date('Y')){
 				//Save in the db
 				update_user_meta($userId, 'hide_annual_review', date('Y'));
 				
@@ -201,9 +203,9 @@ add_action('sim_dashboard_warnings', function($userId){
 			
 			$reviewDate	= date('F', strtotime($personnelInfo['review_date']));
 			//If this month is the review month or the month before the review month
-			if($reviewDate == date('F') or date('F', strtotime('-1 month', strtotime($reviewDate))) == date('F')){			
+			if($reviewDate == date('F') || date('F', strtotime('-1 month', strtotime($reviewDate))) == date('F')){			
 				$genericDocuments = get_option('personnel_documents');
-				if(is_array($genericDocuments) and !empty($genericDocuments['Annual review form'])){
+				if(is_array($genericDocuments) && !empty($genericDocuments['Annual review form'])){
 					$reminderHtml .= "Please fill in the annual review questionary.<br>";
 					$reminderHtml .= 'Find it <a href="'.SITEURL.'/'.$genericDocuments['Annual review form'].'">here</a>.<br>';
 					$reminderHtml .= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
@@ -246,7 +248,7 @@ add_shortcode("expiry_warnings", __NAMESPACE__.'\expiryWarnings');
 function expiryWarnings(){
 	$personnelCoordinatorEmail	= SIM\getModuleOption('user_management', 'personnel_email');
 
-	if(is_numeric($_GET["userid"]) and in_array('usermanagement', wp_get_current_user()->roles )){
+	if(is_numeric($_GET["userid"]) && in_array('usermanagement', wp_get_current_user()->roles )){
 		$userId	= $_GET["userid"];
 	}else{
 		$userId = get_current_user_id();
@@ -255,7 +257,7 @@ function expiryWarnings(){
 	$reminderHtml	= "";
 	
 	$visaInfo = get_user_meta( $userId, "visa_info",true);
-	if (is_array($visaInfo) and isset($visaInfo['greencard_expiry'])){
+	if (is_array($visaInfo) && isset($visaInfo['greencard_expiry'])){
 		$reminderHtml .= checkExpiryDate($visaInfo['greencard_expiry'],'greencard');
 		if($reminderHtml != ""){
 			$reminderCount = 1;
@@ -274,7 +276,7 @@ function expiryWarnings(){
 	$family = get_user_meta($userId,"family",true);
 	//User has children
 	if (isset($family["children"])){
-		foreach($family["children"] as $key=>$child){
+		foreach($family["children"] as $child){
 			$result = vaccinationReminders($child);
 			if ($result != ""){
 				$reminderCount += 1;
@@ -287,9 +289,9 @@ function expiryWarnings(){
 	//Check for upcoming reviews, but only if not set to be hidden for this year
 	if(get_user_meta($userId,'hide_annual_review',true) != date('Y')){
 		$personnelInfo 				= get_user_meta($userId,"personnel",true);
-		if(is_array($personnelInfo) and !empty($personnelInfo['review_date'])){
+		if(is_array($personnelInfo) && !empty($personnelInfo['review_date'])){
 			//Hide annual review warning
-			if(isset($_GET['hide_annual_review']) and $_GET['hide_annual_review'] == date('Y')){
+			if(isset($_GET['hide_annual_review']) && $_GET['hide_annual_review'] == date('Y')){
 				//Save in the db
 				update_user_meta($userId,'hide_annual_review',date('Y'));
 				
@@ -301,14 +303,14 @@ function expiryWarnings(){
 			
 			$reviewDate	= date('F', strtotime($personnelInfo['review_date']));
 			//If this month is the review month or the month before the review month
-			if($reviewDate == date('F') or date('F', strtotime('-1 month', strtotime($reviewDate))) == date('F')){			
+			if($reviewDate == date('F') || date('F', strtotime('-1 month', strtotime($reviewDate))) == date('F')){			
 				$genericDocuments = get_option('personnel_documents');
-				if(is_array($genericDocuments) and !empty($genericDocuments['Annual review form'])){
+				if(is_array($genericDocuments) && !empty($genericDocuments['Annual review form'])){
 					$reminderHtml 	.= "Please fill in the annual review questionary.<br>";
 					$reminderHtml 	.= 'Find it <a href="'.SITEURL.'/'.$genericDocuments['Annual review form'].'">here</a>.<br>';
 					$reminderHtml 	.= 'Then send it to the <a href="mailto:'.$personnelCoordinatorEmail.'?subject=Annual review questionary">Personnel coordinator</a><br>';
 					$url 			= add_query_arg( 'hide_annual_review', date('Y'), SIM\currentUrl() );
-					$reminderHtml 	.= '<a class="button sim" href="'.$url.'" style="margin-top:10px;">I already send it!</a><br>';
+					$reminderHtml 	.= " <a class='button sim' href='$url' style='margin-top:10px;'>I already send it!</a><br>";
 				}
 			}
 		}
@@ -365,14 +367,16 @@ function user_info_page($atts){
 				);
 				$userId = $a['id'];
 				
-				if(isset($_GET["userid"]) and get_userdata($_GET["userid"])){
+				if(isset($_GET["userid"]) && get_userdata($_GET["userid"])){
 					$userId = $_GET["userid"];
 				}else{
 					echo SIM\userSelect("Select an user to show the data of:");
 				}
 
 				$userBirthday = get_user_meta($userId, "birthday", true);
-				if($userBirthday != "")	$userAge = date_diff(date_create(date("Y-m-d")),date_create($userBirthday))->y;
+				if(!empty($userBirthday)){
+					$userAge = date_diff(date_create(date("Y-m-d")),date_create($userBirthday))->y;
+				}
 				
 			}else{
 				return "<p>You do not have permission to see this, sorry.</p>";
@@ -384,7 +388,7 @@ function user_info_page($atts){
 			/*
 				Dashboard
 			*/
-			if(in_array('usermanagement', $userRoles ) or $showCurrentUserData){
+			if(in_array('usermanagement', $userRoles ) || $showCurrentUserData){
 				if($showCurrentUserData){
 					$admin 		= false;
 				}else{
@@ -399,7 +403,7 @@ function user_info_page($atts){
 			/*
 				Family Info
 			*/
-			if(array_intersect($genericInfoRoles, $userRoles ) or $showCurrentUserData){
+			if(array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData){
 				if($userAge > 18){
 					//Tab button
 					$tabs[]	= '<li class="tablink" id="show_family_info" data-target="family_info">Family</li>';
@@ -418,14 +422,14 @@ function user_info_page($atts){
 			/*
 				GENERIC Info
 			*/
-			if(array_intersect($genericInfoRoles, $userRoles ) or $showCurrentUserData){
+			if(array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData){
 				$accountValidity = get_user_meta( $userId, 'account_validity',true);
 				
 				//Add a tab button
 				$tabs[]	= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
 
 				$html	.= "<div id='generic_info' class='tabcontent hidden'>";
-					if($accountValidity != '' and $accountValidity != 'unlimited' and !is_numeric($accountValidity)){
+					if($accountValidity != '' && $accountValidity != 'unlimited' && !is_numeric($accountValidity)){
 						$removalDate 	= date_create($accountValidity);
 						
 						$html	.= "<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'>";
@@ -460,7 +464,7 @@ function user_info_page($atts){
 			/*
 				Location Info
 			*/
-			if(array_intersect($genericInfoRoles, $userRoles ) or $showCurrentUserData){
+			if(array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData){
 				//Add tab button
 				$tabs[]	= '<li class="tablink" id="show_location_info" data-target="location_info">Location</li>';
 				
@@ -484,7 +488,7 @@ function user_info_page($atts){
 			/*
 				PROFILE PICTURE Info
 			*/
-			if(in_array('usermanagement',$userRoles ) or $showCurrentUserData){
+			if(in_array('usermanagement',$userRoles ) || $showCurrentUserData){
 				//Add tab button
 				$tabs[]	= '<li class="tablink" id="show_profile_picture_info" data-target="profile_picture_info">Profile picture</li>';
 				
@@ -499,7 +503,7 @@ function user_info_page($atts){
 			/*
 				Roles
 			*/
-			if(in_array('rolemanagement', $userRoles ) or in_array('administrator', $userRoles )){
+			if(in_array('rolemanagement', $userRoles ) || in_array('administrator', $userRoles )){
 				//Add a tab button
 				$tabs[]	= '<li class="tablink" id="show_roles" data-target="role_info">Roles</li>';
 				
@@ -514,7 +518,7 @@ function user_info_page($atts){
 			/*
 				SECURITY INFO
 			*/
-			if((array_intersect($genericInfoRoles, $userRoles ) or $showCurrentUserData)){				
+			if(array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData){				
 				//Tab button
 				$tabs[]	= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
 				
@@ -529,7 +533,7 @@ function user_info_page($atts){
 			/*
 				Vaccinations Info
 			*/
-			if((array_intersect($medicalRoles, $userRoles) or $showCurrentUserData)){
+			if(array_intersect($medicalRoles, $userRoles) || $showCurrentUserData){
 				if($showCurrentUserData){
 					$active = '';
 					$class = 'class="hidden"';
@@ -560,8 +564,8 @@ function user_info_page($atts){
 				CHILDREN TABS
 			*/
 			if($showCurrentUserData){
-				$family = get_user_meta($userId,'family',true);
-				if(is_array($family) and isset($family['children']) and is_array($family['children'])){
+				$family = get_user_meta($userId, 'family', true);
+				if(is_array($family) && isset($family['children']) && is_array($family['children'])){
 					foreach($family['children'] as $child_id){
 						$firstName = get_userdata($child_id)->first_name;
 						//Add tab button
@@ -612,7 +616,7 @@ add_shortcode( 'delete_user', function(){
 			$userId = $_GET["userid"];
 			$userdata = get_userdata($userId);
 			if($userdata != null){
-				$family 		= get_user_meta($userId,"family",true);
+				$family 		= get_user_meta($userId, "family", true);
 				$nonceString 	= 'delete_user_'.$userId.'_nonce';
 				
 				if(!isset($_GET["confirm"])){
@@ -620,7 +624,7 @@ add_shortcode( 'delete_user', function(){
 						$html	.= "var remove = confirm('Are you sure you want to remove the useraccount for $userdata->display_name?');";
 						$html	.= "if(remove){";
 							$html	.= "var url=`\${window.location}&$nonceString=".wp_create_nonce($nonceString)."`;";
-							if (is_array($family) and count($family)>0){
+							if (is_array($family) && !empty($family)){
 								$html	.= "var family = confirm('Do you want to delete all useraccounts for the familymembers of '.$userdata->display_name.' as well?')";
 								$html	.= "if(family){";
 									$html	.= "window.location = url+'&confirm=true&family=true'";
@@ -633,21 +637,19 @@ add_shortcode( 'delete_user', function(){
 						$html	.= "}";
 					$html	.= "</script>";
 				}elseif($_GET["confirm"] == "true"){
-					if(!isset($_GET[$nonceString]) or !wp_create_nonce($_GET[$nonceString],$nonceString)){
+					if(!isset($_GET[$nonceString]) || !wp_create_nonce($_GET[$nonceString],$nonceString)){
 						$html .='<div class="error">Invalid nonce! Refresh the page</div>';
 					}else{
 						$deletedName = $userdata->display_name;
-						if(isset($_GET["family"]) and $_GET["family"] == "true"){
-							if (is_array($family) and count($family)>0){
-								$deletedName .= " and all the family";
-								if (isset($family["children"])){
-									$family = array_merge($family["children"],$family);
-									unset($family["children"]);
-								}
-								foreach($family as $relative){
-									//Remove user account
-									wp_delete_user($relative,1);
-								}
+						if(isset($_GET["family"]) && $_GET["family"] == "true" && is_array($family) && !empty($family)){
+							$deletedName .= " and all the family";
+							if (isset($family["children"])){
+								$family = array_merge($family["children"],$family);
+								unset($family["children"]);
+							}
+							foreach($family as $relative){
+								//Remove user account
+								wp_delete_user($relative,1);
 							}
 						}
 						//Remove user account
@@ -672,17 +674,17 @@ add_shortcode( 'delete_user', function(){
 	}
 });
 
-add_shortcode("userstatistics",function ($atts){
+add_shortcode("userstatistics",function (){
 	wp_enqueue_script('sim_table_script');
 
 	ob_start();
 
-	$users 		= SIM\getUserAccounts($return_family=false,$adults=true);
+	$users 		= SIM\getUserAccounts(false, true);
 
 	$baseUrl	= SIM\getValidPageLink(SIM\getModuleOption('user_management', 'user_edit_page'));
 	?>
 	<br>
-	<div class='form-table-wrapper'>
+	<div class='table-wrapper'>
 		<table class='sim-table' style='max-height:500px;'>
 			<thead>
 				<tr>
@@ -699,14 +701,18 @@ add_shortcode("userstatistics",function ($atts){
 				<?php
 				foreach($users as $user){
 					$loginCount= get_user_meta($user->ID,'login_count',true);
-					if(!is_numeric(($loginCount))) $loginCount = 0;
+					if(!is_numeric(($loginCount))){
+						$loginCount = 0;
+					}
 
 					$lastLoginDate	= get_user_meta($user->ID,'last_login_date',true);
 					if(empty($lastLoginDate)){
 						$lastLoginDate	= 'Never';
 					}else{
 						$timeString 	= strtotime($lastLoginDate);
-						if($timeString ) $lastLoginDate = date('d F Y', $timeString);
+						if($timeString ){
+							$lastLoginDate = date('d F Y', $timeString);
+						}
 					}
 
 					$picture = SIM\displayProfilePicture($user->ID);

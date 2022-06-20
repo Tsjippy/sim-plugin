@@ -224,9 +224,66 @@ function setTableLabel() {
 	});
 }
 
+function showFullscreen(target){
+	target.textContent	= 'Close full screen';
+	target.classList.replace('show', 'close');
+
+	var parent	= target.closest('.table-wrapper');
+
+	//store current y position
+	window.lastY	= window.pageYOffset;
+
+	window.scrollTo(0,0);
+
+	// remove scrollbars from body
+	document.querySelector('body').style.overflow	= 'hidden';
+
+	document.querySelector('header').style.zIndex	= 'unset';
+
+	parent.classList.add('fullscreen');
+
+	parent.style.marginLeft	= '0px';
+
+	var url = new URL(window.location);
+
+	url.searchParams.set('fullscreen', parent.querySelector('table').dataset.formid);
+
+	window.history.pushState({}, '', url);
+}
+
+function closeFullscreen(target){
+	var lastY	= 100;
+
+	target.textContent	= 'Show full screen';
+	target.classList.replace('close','show');
+
+	if(window.lastY != undefined){
+		var lastY	= window.lastY;
+	}
+	window.scrollTo(0, lastY);
+
+	// remove scrollbars from body
+	document.querySelector('body').style.overflow	= 'unset';
+
+	document.querySelector('header').style.zIndex	= '99999';
+
+	target.closest('.table-wrapper').classList.remove('fullscreen');
+
+	positionTable();
+
+	var url = new URL(window.location);
+
+	url.searchParams.delete('fullscreen');
+
+	window.history.pushState({}, '', url);
+}
+
 export function positionTable(){
 	//use whole page width for tables
-	document.querySelectorAll(".form-table-wrapper").forEach(wrapper=>{
+	document.querySelectorAll(".table-wrapper").forEach(wrapper=>{
+		var offset		= '';
+		var newX		= 0;
+
 		var table	= wrapper.querySelector('table');
 		if(table == null){
 			return;
@@ -238,7 +295,7 @@ export function positionTable(){
 		
 		// If on small width use full screen
 		if(window.innerWidth < 570){
-			var offset	= wrapper.getBoundingClientRect().x
+			offset	= wrapper.getBoundingClientRect().x
 		}else{
 			var diff	= window.innerWidth - width;
 			
@@ -251,10 +308,10 @@ export function positionTable(){
 				document.querySelectorAll('#right-sidebar').forEach(el=>el.style.zIndex=0);
 				//Table needs full screen width
 				if(diff<20){
-					var new_x = 10;
+					newX = 10;
 				//center the table
 				}else{
-					var new_x = diff/2; 
+					newX = diff/2; 
 				}
 			}
 			
@@ -265,10 +322,10 @@ export function positionTable(){
 			}
 			
 			//then calculate the required offset
-			var offset	= parseInt(wrapper.getBoundingClientRect().x)-new_x;
+			offset	= parseInt(wrapper.getBoundingClientRect().x)-newX;
 		}
 
-		wrapper.style.marginLeft = '-'+offset+'px';
+		wrapper.style.marginLeft = `-${offset}px`;
 	});
 }
 
@@ -287,6 +344,10 @@ document.addEventListener("click", event=>{
 	}else if(td != null && td.matches('td.edit') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
 		event.stopPropagation();
 		editTd(target.closest('td'));
+	}else if(target.matches('.show.fullscreenbutton')){
+		showFullscreen(target);
+	}else if(target.matches('.close.fullscreenbutton')){
+		closeFullscreen(target);
 	}
 });
 
@@ -298,7 +359,11 @@ document.addEventListener("DOMContentLoaded",function() {
 	
 	//add label attribute
 	setTableLabel();
-	
-	//sort the table
-	document.querySelectorAll('th.defaultsort').forEach(column=>sortTable(column));
+
+	const urlParams = new URLSearchParams(window.location.search);
+	var	fullscreen	= decodeURI(urlParams.get('fullscreen'));
+
+	if(fullscreen){
+		showFullscreen(document.querySelector(`table[data-formid="${fullscreen}"]`).closest('.table-wrapper').querySelector('.fullscreenbutton')); 
+	}
 });

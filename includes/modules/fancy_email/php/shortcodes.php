@@ -23,7 +23,7 @@ function emailStats(){
 
     ?>
     <h2>E-mail statistics</h2>
-    <div class='form-table-wrapper'>
+    <div class='table-wrapper'>
         <form method="POST" action="">
             <input type="hidden" name="clear_email_stat_table" value="true">
             <button class="button small" id="clear_email_stat_table">Clear e-mail statistics</button>
@@ -32,16 +32,16 @@ function emailStats(){
 			<div class="alignleft">
 			    <select name="timespan" class="nonice">
 				    <option value="7">Last 7 days</option>
-                    <option value="14" <?php if($_POST['timespan'] == "14")echo 'selected';?>>Last 14 days</option>
-                    <option value="30" <?php if($_POST['timespan'] == "30")echo 'selected';?>>Last 30 days</option>
-                    <option value="custom" <?php if($_POST['timespan'] == "custom")echo 'selected';?>>Custom Date Range</option>
+                    <option value="14" <?php if($_POST['timespan'] == "14"){echo 'selected';}?>>Last 14 days</option>
+                    <option value="30" <?php if($_POST['timespan'] == "30"){echo 'selected';}?>>Last 30 days</option>
+                    <option value="custom" <?php if($_POST['timespan'] == "custom"){echo 'selected';}?>>Custom Date Range</option>
                 </select>
 
-			    <input type="date" name="date" class="" value="<?php echo $_POST['date'];?>" <?php if($_POST['timespan'] != "custom")echo 'style="display:none;"';?>>
+			    <input type="date" name="date" class="" value="<?php echo $_POST['date'];?>" <?php if($_POST['timespan'] != "custom"){echo 'style="display:none;"';}?>>
 
                 <select name="type" class="nonice">
 				    <option value="mail-opened">Openend</option>
-                    <option value="link-clicked" <?php if($_POST['type'] == "link-clicked")echo 'selected';?>>Clicked links</option>
+                    <option value="link-clicked" <?php if($_POST['type'] == "link-clicked"){echo 'selected';}?>>Clicked links</option>
                 </select>
 
 			    <button type="submit" class="button">Filter</button>

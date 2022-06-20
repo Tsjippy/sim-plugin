@@ -9,7 +9,7 @@ add_action( 'rest_api_init', function () {
 		'/verify_traveldate', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
-			'callback' 				=> __NAMESPACE__.'\verify_traveldate',
+			'callback' 				=> __NAMESPACE__.'\verifyTraveldate',
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'userid'		=> array('required'	=> true),
@@ -33,7 +33,7 @@ add_action( 'rest_api_init', function () {
 	);
 } );
 
-function verify_traveldate( \WP_REST_Request $request ) {
+function verifyTyraveldate( \WP_REST_Request $request ) {
 	if (is_user_logged_in()) {
 		$formBuilder	= new SIM\FORMS\Formbuilder();
 
@@ -43,11 +43,8 @@ function verify_traveldate( \WP_REST_Request $request ) {
 
 		$formBuilder->getSubmissionData();
 
-		$formBuilder->submissionData;
-
 		foreach($formBuilder->submissionData as $submission){
-			$formResults	= unserialize($submission->formresults);
-
+			$formResults	= $submission->formresults;
 			if($formResults['departuredate1'] == $request['departuredate']){
 				if($formResults['user_id'] == $request['userid']){
 					return 'You already have a travel request on '.date('d F Y', strtotime($request['departuredate'])).'!';

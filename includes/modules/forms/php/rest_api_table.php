@@ -211,7 +211,9 @@ function saveColumnSettings(){
 		//if there are edit rights defined
 		if(is_array($setting['edit_right_roles'])){
 			//create view array if it does not exist
-			if(!is_array($setting['view_right_roles'])) $setting['view_right_roles'] = [];
+			if(!is_array($setting['view_right_roles'])){
+				$setting['view_right_roles'] = [];
+			}
 			
 			//merge and save
 			$settings[$key]['view_right_roles'] = array_merge($setting['view_right_roles'],$setting['edit_right_roles']);
@@ -254,7 +256,7 @@ function saveTableSettings(){
 	
 	//also update form setings if needed
 	$formSettings = $_POST['form_settings'];
-	if(is_array($formSettings) and is_numeric($_POST['formid'])){
+	if(is_array($formSettings) && is_numeric($_POST['formid'])){
 		$formTable->loadFormData($_POST['formid']);
 		
 		//update existing
