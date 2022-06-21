@@ -92,7 +92,7 @@ function buildSubMenu(){
 			<div class='options' <?php if(!$settings['enable']){echo "style='display:none'";}?>>
 				<?php 
 				ob_start();
-				do_action('sim_submenu_options', $moduleSlug, $moduleName, $settings);
+				do_action('sim_submenu_options', $moduleSlug, $settings, $moduleName);
 				$html	= ob_get_clean();
 				if(empty($html)){
 					$html = '<div>No special settings needed for this module</div>';

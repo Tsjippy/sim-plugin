@@ -6,7 +6,7 @@ const MODULE_VERSION		= '7.0.13';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -28,14 +28,14 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	if(is_numeric($pageId)){
 		?>
 		<p>
-			<b>Auto created page:</b><br>
+			<strong>Auto created page:</strong><br>
 			<a href='<?php echo get_permalink($pageId);?>'>Add content</a>
 		</p>
 		<?php
 	}
-},10,2);
+});
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 	
@@ -87,7 +87,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	?>
 	<input type='hidden' name='publish_post_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'publish_post_page');?>'>
 	<?php
-}, 10, 3);
+}, 10, 2);
 
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
@@ -99,12 +99,14 @@ add_action('sim_module_deactivated', function($moduleSlug, $options){
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
 
 	// Create frontend posting page
 	$pageId	= SIM\getModuleOption($moduleSlug, 'publish_post_page');
 	// Only create if it does not yet exist
-	if(!$pageId or get_post_status($pageId) != 'publish'){
+	if(!$pageId || get_post_status($pageId) != 'publish'){
 		$post = array(
 			'post_type'		=> 'page',
 			'post_title'    => 'Add content',

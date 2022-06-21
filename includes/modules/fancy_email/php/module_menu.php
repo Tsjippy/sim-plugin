@@ -38,7 +38,7 @@ add_action('sim_submenu_description', function($moduleSlug){
 	}
 });
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{
 		return;
@@ -48,4 +48,4 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	<label>Select a picture for the e-mail header.</label>
 	<?php
 	SIM\pictureSelector('header_image', 'e-mail header', $settings);
-}, 10, 3);
+}, 10, 2);

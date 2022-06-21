@@ -2,8 +2,8 @@
 namespace SIM\FRONTPAGE;
 use SIM;
 
-add_action( 'wp_enqueue_scripts', function($hook){
-	if(is_page(SIM\getModuleOption('frontpage','home_page')) or is_front_page()){
+add_action( 'wp_enqueue_scripts', function(){
+	if(is_page(SIM\getModuleOption('frontpage','home_page')) || is_front_page()){
 		wp_enqueue_style( 'sim_frontpage_style', plugins_url('css/frontpage.min.css', __DIR__), array(), MODULE_VERSION);
 
 		//Add header image selected in customizer to homepage using inline css

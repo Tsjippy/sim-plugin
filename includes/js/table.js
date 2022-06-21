@@ -86,7 +86,7 @@ async function processInput(event, target){
 	}
 	
 	var cell 			= target.closest('td');	
-	var value			= FormFunctions.getFieldValue(target, false);
+	var value			= FormFunctions.getFieldValue(target, cell, false);
 	var table			= target.closest('table');
 	
 	//Only update when needed
@@ -299,22 +299,24 @@ export function positionTable(){
 		}else{
 			var diff	= window.innerWidth - width;
 			
-			//calculate if room for sidebar
-			if((width/window.innerWidth)<0.7){
-				diff	= (window.innerWidth*0.7) - width;
+			//calculate if room for sidebar if one exists
+			if((width/window.innerWidth) < 0.7){
+				if(document.querySelector('.is-right-sidebar') != null){
+					diff	= (window.innerWidth*0.7) - width;
+				}
 			}else{
 				document.getElementById('primary').style.zIndex=1;
 				//sidebar behind table
 				document.querySelectorAll('#right-sidebar').forEach(el=>el.style.zIndex=0);
-				//Table needs full screen width
-				if(diff<20){
-					newX = 10;
-				//center the table
-				}else{
-					newX = diff/2; 
-				}
 			}
-			
+
+			//Table needs full screen width
+			if(diff<20){
+				newX = 10;
+			//center the table
+			}else{
+				newX = diff/2; 
+			}			
 			
 			//first set it back to default
 			if(wrapper.style.marginLeft != ''){
@@ -361,9 +363,13 @@ document.addEventListener("DOMContentLoaded",function() {
 	setTableLabel();
 
 	const urlParams = new URLSearchParams(window.location.search);
-	var	fullscreen	= decodeURI(urlParams.get('fullscreen'));
+	var	fullscreen	= urlParams.get('fullscreen');
 
-	if(fullscreen){
-		showFullscreen(document.querySelector(`table[data-formid="${fullscreen}"]`).closest('.table-wrapper').querySelector('.fullscreenbutton')); 
+	if(fullscreen != null){
+		try{
+			showFullscreen(document.querySelector(`table[data-formid="${fullscreen}"]`).closest('.table-wrapper').querySelector('.fullscreenbutton')); 
+		}catch{
+			console.error(`table[data-formid="${fullscreen}"]`);
+		}
 	}
 });

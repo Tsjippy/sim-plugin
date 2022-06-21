@@ -7,14 +7,14 @@ const MODULE_VERSION		= '7.0.0';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
 //run on module activation
-add_action('sim_module_activated', function($moduleSlug, $options){
+add_action('sim_module_activated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	wp_create_category('Finance');
-}, 10, 2);
+});
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -23,9 +23,9 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	It makes it possible to publish content via the mail.<br>
 	E-mails coming from the finance department will automatically get the finance category.<br>
 	<?php
-},10,2);
+});
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 	
@@ -35,4 +35,4 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 		<input type="email" name="finance_email" value="<?php echo $settings['finance_email'];?>">
 	</label>
 	<?php
-}, 10, 3);
+}, 10, 2);

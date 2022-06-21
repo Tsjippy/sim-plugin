@@ -14,7 +14,9 @@ function getAllFields($userId, $type){
 	global $wpdb;
 
 	$child				= SIM\isChild($userId);
-	if($child) $child_name	= get_userdata($userId)->first_name;
+	if($child){
+		$childName	= get_userdata($userId)->first_name;
+	}
 
 	$formBuilder		= new Formbuilder();
 
@@ -48,7 +50,9 @@ function getAllFields($userId, $type){
 						$value		= $value[$check['meta_key_index']];
 					}
 
-					if(is_array($value) and isset($value[0]))	$value	= $value[0];
+					if(is_array($value) && isset($value[0])){
+						$value	= $value[0];
+					}
 
 					switch($check['equation']){
 						case '==':
@@ -107,7 +111,9 @@ function getAllFields($userId, $type){
 				}
 
 				// Do not add if no form url given
-				if(empty($formUrl)) continue;
+				if(empty($formUrl)){
+					continue;
+				}
 
 				parse_str(parse_url($formUrl, PHP_URL_QUERY), $params);
 
@@ -118,13 +124,13 @@ function getAllFields($userId, $type){
 				$baseUrl	= explode('main_tab=', $_SERVER['REQUEST_URI'])[0];
 				$mainTab	= $params['main_tab'];
 				if($child){
-					$name 		.= " for $child_name";
-					$mainTab	 = strtolower($child_name);
+					$name 		.= " for $childName";
+					$mainTab	 = strtolower($childName);
 					$formUrl	 = str_replace($params['main_tab'], $mainTab, $formUrl);
 				}
 				
 				// If the url has no hash or we are not on the same url
-				if(empty($params['main_tab']) or strpos($formUrl, $baseUrl) === false){
+				if(empty($params['main_tab']) || strpos($formUrl, $baseUrl) === false){
 					$html .= "<li><a href='$formUrl#{$field->name}'>$name</a></li>";
 				//We are on the same page, just change the hash
 				}else{
@@ -156,7 +162,7 @@ function add_child_fields($html, $userId){
 	//User has children
 	if (isset($family["children"])){
 		// Loop over children
-		foreach($family["children"] as $key=>$child){
+		foreach($family["children"] as $child){
 			$userData = get_userdata($child);
 			// Valid user account
 			if ($userData){

@@ -15,13 +15,13 @@ add_action( 'init', function() {
 add_action( 'after_setup_theme', function() {
 	//on all page except the newspage
 	add_filter( 'generate_show_title', function (){
-		if ( is_home() or is_search() or is_category() or is_tax()) {
+		if ( is_home() || is_search() || is_category() || is_tax()) {
 			//Show the title on the news page
 			return true;
-		}else{
-			//Hide the title
-			return false;
 		}
+		
+		//Hide the title
+		return false;
 	});
 });
 
@@ -43,9 +43,9 @@ add_action('generate_after_header',function (){
 	if ( is_home()) {
 		$title = "News";
 	//Or an archive page (category of news)
-	}elseif(is_category() or is_tax() or is_archive()){
-		$category = get_queried_object();
-		$title = $category->name;
+	}elseif(is_category() || is_tax() || is_archive()){
+		$category	= get_queried_object();
+		$title		= $category->name;
 		if($title == 'event'){
 			$title = 'Calendar';
 		}elseif(is_tax('recipes')){
@@ -60,14 +60,14 @@ add_action('generate_after_header',function (){
 	}
 	
 	//change title of all pages except the frontpage
-	if($title != 'Home' and !is_page(SIM\getModuleOption('frontpage', 'home_page'))){
+	if($title != 'Home' && !is_page(SIM\getModuleOption('frontpage', 'home_page'))){
 		//Display featured image in title if it has one
 		if ( 
-			has_post_thumbnail() 	and 
-			!is_home() 				and 
-			!is_category() 			and 
-			!is_tax() 				and
-			!is_archive()			and
+			has_post_thumbnail() 	&& 
+			!is_home() 				&& 
+			!is_category() 			&& 
+			!is_tax() 				&&
+			!is_archive()			&&
 			get_post_type() != 'recipe'
 		) {
 			echo '<div id="page-title-image" style="background-image: url('.get_the_post_thumbnail_url().');"></div>';

@@ -12,7 +12,9 @@ function scheduleTasks(){
     SIM\scheduleTask('auto_archive_action', 'daily');
 
     $freq   = SIM\getModuleOption('forms', 'reminder_freq');
-    if($freq)   SIM\scheduleTask('mandatory_fields_reminder_action', $freq);
+    if($freq){
+        SIM\scheduleTask('mandatory_fields_reminder_action', $freq);
+    }
 }
 
 function autoArchiveFormEntries(){
@@ -49,7 +51,9 @@ function mandatoryFieldsReminder(){
                 
                 foreach($parents as $parent){
                     if(strpos($parent->user_email,'.empty') === false){
-                        if($recipients != '') $recipients .= ', ';
+                        if(!empty($recipients)){
+                            $recipients .= ', ';
+                        }
                         $recipients .= $parent->user_email;
                     }
                                 
@@ -68,7 +72,9 @@ function mandatoryFieldsReminder(){
                 );
                 
                 //If this not a valid email skip this email
-                if(strpos($user->user_email,'.empty') !== false) continue;
+                if(strpos($user->user_email,'.empty') !== false){
+                    continue;
+                }
 
                 $adultEmail    = new AdultEmail($user);
                 $adultEmail->filterMail();
@@ -89,10 +95,10 @@ function mandatoryFieldsReminder(){
 }
 
 // Remove scheduled tasks upon module deactivatio
-add_action('sim_module_deactivated', function($moduleSlug, $options){
+add_action('sim_module_deactivated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	wp_clear_scheduled_hook( 'auto_archive_action' );
 	wp_clear_scheduled_hook( 'mandatory_fields_reminder_action' );
-}, 10, 2);
+});

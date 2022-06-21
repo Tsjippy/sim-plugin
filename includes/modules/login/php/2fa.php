@@ -63,7 +63,9 @@ function setupTimeCode(){
 function sendEmailCode($user){
     $emailCode  = mt_rand(1000000000,9999999999);
 
-    if(!isset($_SESSION)) session_start();
+    if(!isset($_SESSION)){
+        session_start();
+    }
     $_SESSION['2fa_email_key']  = $emailCode;
 
     $twoFAEmail    = new TwoFAEmail($user, $emailCode);
@@ -78,15 +80,17 @@ function sendEmailCode($user){
  * @return  bool    true if valid code false otherwise
  */
 function verifyEmailCode(){
-    if(!isset($_SESSION)) session_start();
+    if(!isset($_SESSION)){
+        session_start();
+    }
     $emailCode = $_SESSION['2fa_email_key'];
 
     if($emailCode == $_POST['email_code']){
-        return true;
         unset($_SESSION['2fa_email_key']);
-    }else{
-        return false;
+        return true;
     }
+    
+    return false;
 }
 
 /**
@@ -96,7 +100,9 @@ function verifyEmailCode(){
  */
 function send2faWarningEmail($user){
     //if this is the first time ever login we do not have to send a warning
-    if(!get_user_meta($user->id, 'login_count', true)) return;
+    if(!get_user_meta($user->id, 'login_count', true)){
+        return;
+    }
 
     //Send e-mail
     $unsafeLogin    = new UnsafeLogin($user);
@@ -134,15 +140,17 @@ function reset2fa($userId){
 add_filter( 'authenticate', function ( $user) {
     $methods    = get_user_meta($user->ID,'2fa_methods',true);
     if(!empty($methods)){
-        if(!isset($_SESSION)) session_start();
+        if(!isset($_SESSION)){
+            session_start();
+        }
 
         // Remove webautn_id if webauthn was unsuccesfull
-        if($_SESSION['webautn_id'] and $_SESSION['webauthn'] != 'success'){
+        if($_SESSION['webautn_id'] && $_SESSION['webauthn'] != 'success'){
             unset($_SESSION['webautn_id']);
         }
         
         //we did a succesfull webauthn or are on localhost
-        if($_SERVER['HTTP_HOST'] == 'localhost' or in_array('webauthn', $methods) and $_SESSION['webauthn'] == 'success'){
+        if($_SERVER['HTTP_HOST'] == 'localhost' || in_array('webauthn', $methods) && $_SESSION['webauthn'] == 'success'){
             //succesfull webauthentication done before
         }elseif(in_array('authenticator', $methods)){
             $twofa      = new TwoFactorAuth();
@@ -216,23 +224,27 @@ add_action('wp_footer', function(){
 
     //If 2fa not enabled and we are not on the account page
     $methods	= get_user_meta($user->ID,'2fa_methods',true);
-    if(!isset($_SESSION)) session_start();
+    if(!isset($_SESSION)){
+        session_start();
+    }
     if (
-        is_user_logged_in() and 							// we are logged in
-        strpos($user->user_email,'.empty') === false and 	// we have a valid email
+        is_user_logged_in()                             &&	// we are logged in
+        strpos($user->user_email,'.empty') === false    && 	// we have a valid email
         (
-            !$methods or									// and we have no 2fa enabled or
+            !$methods                                   ||	// and we have no 2fa enabled or
             (
-                isset($_SESSION['webauthn']) and
-                $_SESSION['webauthn'] == 'failed' and 		// we have a failed webauthn
-                count($methods) == 1 and					// and we only have one 2fa method
-                in_array('webauthn',$methods)				// and that method is webauthn
+                isset($_SESSION['webauthn'])            &&
+                $_SESSION['webauthn'] == 'failed'       && 	// we have a failed webauthn
+                count($methods) == 1                    &&	// and we only have one 2fa method
+                in_array('webauthn', $methods)				// and that method is webauthn
             )
         )
     ){
         $accountPageId  = SIM\getModuleOption('login', '2fa_page');
         $url            = SIM\getValidPageLink($accountPageId);
-        if(!$url) return;
+        if(!$url){
+            return;
+        }
 
         SIM\printArray("Redirecting from ".SIM\currentUrl()." to $url");
         wp_redirect($url);

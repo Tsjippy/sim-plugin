@@ -642,7 +642,7 @@ class Formbuilder{
 				$this->formName	= $this->formData->name;
 			}
 
-			$this->defaultValues		= (array)get_userdata($this->userId)->data;
+			$this->defaultValues		= (array)$this->user->data;
 			//Change ID to userid because its a confusing name
 			$this->defaultValues['user_id']	= $this->defaultValues['ID'];
 			unset($this->defaultValues['ID']);
@@ -823,7 +823,7 @@ class Formbuilder{
 				ELEMENT VALUE
 			*/
 			$values	= $this->getFieldValues($element);
-			if($this->multiwrap or !empty($element->multiple)){
+			if($this->multiwrap || !empty($element->multiple)){
 				if(strpos($elType,'input') !== false){
 					$elValue	= "value='%value%'";
 				}
@@ -835,7 +835,7 @@ class Formbuilder{
 					$val		= array_values((array)$values['metavalue'])[0];
 				}
 				
-				if(strpos($elType,'input') !== false and !empty($val)){
+				if(strpos($elType,'input') !== false && !empty($val)){
 					$elValue	= "value='$val'";
 				}else{
 					$elValue	= "";
@@ -868,10 +868,14 @@ class Formbuilder{
 				case 'select':
 					$elContent .= "<option value=''>---</option>";
 					$options	= $this->getFieldOptions($element);
-					$selValues	= array_map('strtolower', (array)$values['metavalue']);
+
+					$selValues	= '';
+					if(!empty($values['metavalue'])){
+						$selValues	= array_map('strtolower', (array)$values['metavalue']);
+					}
 		
 					foreach($options as $key=>$option){
-						if(in_array(strtolower($option), $selValues) or in_array(strtolower($key), $selValues)){
+						if(in_array(strtolower($option), $selValues) || in_array(strtolower($key), $selValues)){
 							$selected	= 'selected';
 						}else{
 							$selected	= '';
@@ -1061,7 +1065,7 @@ class Formbuilder{
 		$elValues	= explode("\n", $element->valuelist);
 		
 		if(!empty($elValues[0])){
-			foreach($elValues as $key=>$value){
+			foreach($elValues as $value){
 				$split = explode('|', $value);
 				
 				//Remove starting or ending spaces and make it lowercase
@@ -1082,6 +1086,7 @@ class Formbuilder{
 		
 		$defaultArrayKey				= $element->default_array_value;
 		if(!empty($defaultArrayKey)){
+			$this->buildDefaultsArray();
 			$options	= (array)$this->defaultArrayValues[$defaultArrayKey]+$options;
 		}
 		
@@ -2681,7 +2686,7 @@ class Formbuilder{
 					];
 
 					foreach($options as $key=>$option){
-						if($element != null and $element->type == $key){
+						if($element != null && $element->type == $key){
 							$selected = 'selected';
 						}else{
 							$selected = '';
@@ -2705,7 +2710,7 @@ class Formbuilder{
 					];
 
 					foreach($options as $key=>$option){
-						if($element != null and $element->type == $key){
+						if($element != null && $element->type == $key){
 							$selected = 'selected';
 						}else{
 							$selected = '';
@@ -2776,14 +2781,14 @@ class Formbuilder{
 						'editor_class'				=> 'formbuilder'
 					);
 				
-					if(empty($element->infotext)){
+					if(empty($element->text)){
 						$content	= '';
 					}else{
-						$content	= $element->infotext;
+						$content	= $element->text;
 					}
 					echo wp_editor(
 						$content,
-						"{$this->formName}_infotext",	//editor should always have an unique id
+						$this->formData->name."_infotext",	//editor should always have an unique id
 						$settings
 					);
 					?>
@@ -2834,7 +2839,7 @@ class Formbuilder{
 					<option value="">---</option>
 					<?php
 					foreach($this->defaultValues as $key=>$field){
-						if($element != null and $element->default_value == $key){
+						if($element != null && $element->default_value == $key){
 							$selected = 'selected';
 						}else{
 							$selected = '';

@@ -2,21 +2,21 @@
 namespace SIM\FRONTEND_POSTING;
 use SIM;
 
-add_action( 'save_post', function($post_ID, $post){
+add_action( 'save_post', function($postId, $post){
     if(has_shortcode($post->post_content, 'front_end_post')){
         global $Modules;
 
         if(!is_array($Modules['frontend_posting']['front_end_post_pages'])){
-            $Modules['frontend_posting']['front_end_post_pages']    = [$post_ID];
+            $Modules['frontend_posting']['front_end_post_pages']    = [$postId];
         }else{
-            $Modules['frontend_posting']['front_end_post_pages'][]  = $post_ID;
+            $Modules['frontend_posting']['front_end_post_pages'][]  = $postId;
         }
 
         update_option('sim_modules', $Modules);
     }
 }, 10, 2);
 
-add_action( 'wp_enqueue_scripts', function ($hook) {
+add_action( 'wp_enqueue_scripts', function () {
     wp_register_style('sim_frontend_style', plugins_url('css/frontend_posting.min.css', __DIR__), array(), MODULE_VERSION);
 	
     //Load js

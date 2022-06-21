@@ -4,7 +4,9 @@ use SIM;
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
 
 	$roleSet = get_role( 'contributor' )->capabilities;
 
@@ -84,6 +86,7 @@ add_filter('sim_role_description', function($description, $role){
             return 'Acces to travel form results';
 		case 'visainfo':
 			return 'Access to Immigration data';
+		default:
+			return $description;
     }
-    return $description;
 }, 10, 2);

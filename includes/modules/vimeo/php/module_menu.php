@@ -41,7 +41,7 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 
 },10,2);
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -49,11 +49,11 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 		require(__DIR__.'/api_functions.php');
 	}
 
-	$client_id		= $settings['client_id'];
-	$client_secret	= $settings['client_secret'];
-	$access_token	= $settings['access_token'];
+	$clientId		= $settings['client_id'];
+	$clientSecret	= $settings['client_secret'];
+	$accessToken	= $settings['access_token'];
 
-	if(empty($client_id) or empty($client_secret)){
+	if(empty($clientId) || empty($clientSecret)){
 		?>
 		<div id='set_vimeo_id'>
 			<h2>Connect to vimeo</h2>
@@ -69,7 +69,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 			</p>
 		</div>
 		<?php
-	}elseif(empty($access_token)){
+	}elseif(empty($accessToken)){
 		if(!empty($_GET['error'])){
 			?>
 			<div class='error'>
@@ -78,18 +78,18 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 				</p>
 			</div>
 			<?php
-		}elseif(!empty($_GET['code']) and !empty($_GET['state'])){
+		}elseif(!empty($_GET['code']) && !empty($_GET['state'])){
 			$VimeoApi		= new VimeoApi();
 			if(get_option('vimeo_state') != $_GET['state']){
 				?>
 				<div class='error'>
 					<p>
-						Something went wrong <a href="<?php echo $VimeoApi->getAuthorizeUrl($client_id, $client_secret);?>">try again</a>.
+						Something went wrong <a href="<?php echo $VimeoApi->getAuthorizeUrl($clientId, $clientSecret);?>">try again</a>.
 					</p>
 				</div>
 				<?php
 			}else{
-				$access_token = $VimeoApi->storeAccessToken($client_id, $client_secret, $_GET['code'], admin_url( "admin.php?page=".$_GET["page"] ));
+				$accessToken = $VimeoApi->storeAccessToken($clientId, $clientSecret, $_GET['code'], admin_url( "admin.php?page=".$_GET["page"] ));
 				?>
 				<div id='set_vimeo_token'>
 					<h2>Succesfully connect to vimeo</h2>
@@ -102,7 +102,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 			}
 		}else{
 			$VimeoApi		= new VimeoApi();
-			$link	= $VimeoApi->getAuthorizeUrl($client_id, $client_secret);
+			$link	= $VimeoApi->getAuthorizeUrl($clientId, $clientSecret);
 			?>
 			<div id='set_vimeo_token'>
 				<h2>Connect to vimeo</h2>
@@ -131,43 +131,37 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 		<h2>API Settings</h2>
 		<label>
 			Client ID<br>
-			<input type="text" name="client_id" value="<?php echo $client_id;?>">
+			<input type="text" name="client_id" value="<?php echo $clientId;?>">
 		</label>
 		<br>
 
 		<label>
 			Client Secret<br>
-			<input type="text" name="client_secret" value="<?php echo $client_secret;?>">
+			<input type="text" name="client_secret" value="<?php echo $clientSecret;?>">
 		</label>
 		<br>
 
-		<label <?php if(empty($client_secret)) echo 'style="display:none;"';?>>
+		<label <?php if(empty($clientSecret)){echo 'style="display:none;"';}?>>
 			Access Token<br>
-			<input type="text" name="access_token" value="<?php echo $access_token;?>">
+			<input type="text" name="access_token" value="<?php echo $accessToken;?>">
 		</label>
 		
 	</div>
 
-	<div class="settings-section" <?php if(empty($access_token)) echo 'style="display:none;"';?>>
+	<div class="settings-section" <?php if(empty($accessToken)){echo 'style="display:none;"';}?>>
 		<h2>Vimeo Settings</h2>
 
 		<label>
-			<input type="checkbox" name="upload" <?php if($settings['upload']) echo 'checked';?>>
+			<input type="checkbox" name="upload" <?php if($settings['upload']){echo 'checked';}?>>
 			Automatically upload all video's to Vimeo
 		</label>
 		<br>
 
 		<label>
-			<input type="checkbox" name="remove" <?php if($settings['remove']) echo 'checked';?>>
+			<input type="checkbox" name="remove" <?php if($settings['remove']){echo 'checked';}?>>
 			Automatically remove video from Vimeo when deleted in library
 		</label>
 		<br>
-
-		<!--<label>
-			<input type="checkbox" name="recyclebin" <?php if($settings['recyclebin']) echo 'checked';?>>
-			Keep deleted video's in local recycle bin
-		</label>
-		<br> -->
 
 		<label>
 			<input type="checkbox" name="sync" <?php if($settings['sync']) echo 'checked';?>>
@@ -176,13 +170,13 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	</div>
 	<br>
 	<?php
-
-	return;
-}, 10, 3);
+}, 10, 2);
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
 
 	scheduleTasks();
 

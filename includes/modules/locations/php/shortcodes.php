@@ -33,7 +33,9 @@ add_shortcode('ministry_description', function($atts){
 
 add_shortcode("location_description", function($atts){
     $postId     = $atts['id'];
-    if(!is_numeric($postId))    return '';
+    if(!is_numeric($postId)){
+        return '';
+    }
 
     $location 	= get_post_meta($postId, 'location', true);
     $latitude   = $location['latitude'];
@@ -48,7 +50,9 @@ add_shortcode("location_description", function($atts){
     //Add the post excerpt to the marker content
     $description    = $postThumbnail;
     
-    if(!isset($atts['basic']))  $description    .= wp_trim_words(wp_trim_excerpt("", $postId), 25);
+    if(!isset($atts['basic'])){
+        $description    .= wp_trim_words(wp_trim_excerpt("", $postId), 25);
+    }
 
     //Add the post link to the marker content
     $url            = get_permalink($postId);

@@ -305,8 +305,10 @@ class FormTable extends Formbuilder{
 				//Get the field value from the array
 				$fieldValue	= $fieldValues[$fieldName];
 					
+				// Add sub id if this is an sub value
 				$subId 		= "";
-				if($index > -1){
+				$element	= $this->getElementById($id);
+				if($index > -1 && strpos($element->name, $this->formSettings['split'].'[') !== false){
 					$subId = "data-subid='$index'";
 				}
 
@@ -316,7 +318,7 @@ class FormTable extends Formbuilder{
 				
 				//transform if needed
 				$orgFieldValue	= $fieldValue;
-				$fieldValue = $this->transformInputData($fieldValue, $fieldName);
+				$fieldValue 	= $this->transformInputData($fieldValue, $fieldName);
 				
 				//show original email in excel
 				if(strpos($fieldValue,'@') !== false){

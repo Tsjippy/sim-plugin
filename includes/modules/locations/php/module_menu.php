@@ -6,9 +6,11 @@ const MODULE_VERSION		= '7.0.1';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
 
 	?>
 	<p>
@@ -20,13 +22,13 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 		<code>[ministry_description name=SOMENAME]</code>
 	</p>
 	<p>
-		<b>Auto created page:</b><br>
+		<strong>Auto created page:</strong><br>
 		<a href='<?php echo home_url('/locations');?>'>Locations</a><br>
 	</p>
 	<?php
-},10,2);
+});
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	global $wpdb;
 
 	//module slug should be the same as grandparent folder name
@@ -67,23 +69,23 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	) );
 	foreach($categories as $locationtype){
 		$name 				= $locationtype->slug;
-		$map_name			= $name."_map";
-		$icon_name			= $name."_icon";
+		$mapName			= $name."_map";
+		$iconName			= $name."_icon";
 		?>
-		<label for="<?php echo $map_name;?>">Map showing <?php echo strtolower($name);?></label>
-		<select name="<?php echo $map_name;?>" id="<?php echo $map_name;?>">
+		<label for="<?php echo $mapName;?>">Map showing <?php echo strtolower($name);?></label>
+		<select name="<?php echo $mapName;?>" id="<?php echo $mapName;?>">
 			<option value="">---</option>
-			<?php echo get_maps($settings[$map_name]); ?>
+			<?php echo get_maps($settings[$mapName]); ?>
 		</select>
 		
 		<label>Icon on the map used for <?php echo $name;?></label>
 		<div class='icon_select_wrapper'>
-			<input type='hidden' class='icon_url' name='<?php echo $icon_name;?>' value='<?php echo $settings[$icon_name];?>'>
+			<input type='hidden' class='icon_url' name='<?php echo $iconName;?>' value='<?php echo $settings[$iconName];?>'>
 			<br>
 			<div class="dropdown">
 				<?php
-				if($settings[$icon_name]){
-					$img			= "<img src='{$settings[$icon_name]}' class='icon'>";
+				if($settings[$iconName]){
+					$img			= "<img src='{$settings[$iconName]}' class='icon'>";
 					$button_text	= "Change";
 				}else{
 					$img	= "";
@@ -99,7 +101,9 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 				<div class="dropdown-content">
 					<?php
 					foreach($icons as $icon){
-						if($icon->description == 'custom icon') continue;
+						if($icon->description == 'custom icon'){
+							continue;
+						}
 						$url = plugins_url('ultimate-maps-by-supsystic/modules/icons/icons_files/def_icons/'.$icon->path);
 						echo "<div class='icon'><img src='$url' class='icon'> $icon->description</div><br>";
 					}
@@ -114,7 +118,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	?>
 
 	<?php
-}, 10, 3);
+}, 10, 2);
 
 //Location maps
 function get_maps($option_value){

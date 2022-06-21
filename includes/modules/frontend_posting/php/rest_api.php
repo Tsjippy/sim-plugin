@@ -36,7 +36,7 @@ add_action( 'rest_api_init', function () {
 				),
 				'post_type'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
+					'validate_callback' => function($param) {
 						return in_array($param, get_post_types());
 					}
 				),
@@ -58,7 +58,7 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'post_type'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
+					'validate_callback' => function($param) {
 						return in_array($param, get_post_types());
 					}
 				),
@@ -202,7 +202,9 @@ function addCategory(\WP_REST_Request $request ){
 	$taxonomy	= get_object_taxonomies($postType)[0];
 	
 	$args 		= ['slug' => strtolower($name)];
-	if(is_numeric($parent)) $args['parent'] = $parent;
+	if(is_numeric($parent)){
+		$args['parent'] = $parent;
+	}
 	
 	$result 	= wp_insert_term( ucfirst($name), $taxonomy, $args);
 

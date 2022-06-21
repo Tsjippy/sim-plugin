@@ -11,7 +11,9 @@ use SIM;
  */
 function sendPasswordResetMessage($user){
 	$key		 = get_password_reset_key($user);
-	if(is_wp_error($key)) return $key;
+	if(is_wp_error($key)){
+		return $key;
+	}
 
 	$pageurl	 = get_permalink(SIM\getModuleOption('login', 'password_reset_page'));
 	$url		 = "$pageurl?key=$key&login=$user->user_login";

@@ -226,6 +226,9 @@ function addFormsTableInputEventListeners(cell){
 		
 	inputs.forEach((inputNode, index)=>{
 		var val	= oldValue[index];
+		if(oldValue.length == 1 && index > 0){
+			var val	= oldValue[0];
+		}
 
 		if(inputNode.type == 'checkbox' || inputNode.type == 'radio'){
 			if(inputNode.value == val.trim()){
@@ -294,10 +297,10 @@ async function processFormsTableInput(target){
 	var table			= target.closest('table');
 	var formId			= table.dataset.formid;
 	var cell			= target.closest('td');
-    var cell_id			= cell.dataset.id
-	var value			= FormFunctions.getFieldValue(target,false);
-	var submission_id	= target.closest('tr').dataset.id;
-	var sub_id			= cell.dataset.subid;
+    var cellId			= cell.dataset.id
+	var value			= FormFunctions.getFieldValue(target, cell, false);
+	var submissionId	= target.closest('tr').dataset.id;
+	var subId			= cell.dataset.subid;
 	
 	//remove all event listeners
 	document.removeEventListener("click", outsideFormsTableClicked);
@@ -309,10 +312,12 @@ async function processFormsTableInput(target){
 		// Submit new value and receive the filtered value back
 		var formData = new FormData();
 		formData.append('formid', formId);
-		formData.append('submissionid',submission_id);
-		formData.append('subid',sub_id);
-		formData.append('fieldname',cell_id);
-		formData.append('newvalue',value);
+		formData.append('submissionid', submissionId);
+		if(subId != undefined){
+			formData.append('subid', subId);
+		}
+		formData.append('fieldname', cellId);
+		formData.append('newvalue', value);
 		
 		var response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
 	
@@ -322,11 +327,9 @@ async function processFormsTableInput(target){
 			if(value == "") value = "X";
 	
 			//Update all occurences of this field
-			if(sub_id == null){
-				var target	= table.querySelectorAll(`tr[data-id="${submission_id}"] td[data-id="${cell_id}"]`);
-				target.forEach(cell=>{
-					cell.innerHTML = value;
-				});
+			if(subId == null){
+				var target	= table.querySelectorAll(`tr[data-id="${submissionId}"] td[data-id="${cellId}"]`);
+				target.forEach(cell=>{cell.innerHTML = value;});
 			}else{
 				cell.innerHTML = value;
 			}
@@ -338,7 +341,9 @@ async function processFormsTableInput(target){
 		cell.innerHTML = cell.dataset.oldtext;
 	}
 
-	delete target.dataset.oldtext;
+	if(target.dataset.oldtext != undefined){
+		delete target.dataset.oldtext;
+	}
 }
 
 document.addEventListener("click", event=>{

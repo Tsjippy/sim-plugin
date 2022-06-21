@@ -59,7 +59,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
 
         foreach($this->read() as $key=>$data){
             if(
-                $data->getUserHandle() === $publicKeyCredentialUserEntity->getId() and  //should always be true
+                $data->getUserHandle() === $publicKeyCredentialUserEntity->getId() &&  //should always be true
                 $os == $metadata[$key]['os_info']['name']                               // Only return same OS
             ){
                 $sources[] = $data;
@@ -156,12 +156,16 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
             $source = $data[$key]->getUserHandle();
             
             $meta = unserialize(get_user_meta($this->userId, "2fa_webautn_cred_meta", true));
-            if(!$meta) $meta    = [];
+            if(!$meta){
+                $meta    = [];
+            }
 
             //already exists
             if(is_array($meta[$key])){
                 //nothing updated
-                if($meta[$key]["user" ] == $source) return;
+                if($meta[$key]["user" ] == $source){
+                    return;
+                }
                 $meta[$key]["user" ]    = $source;
             }else{
                 $meta[$key] = array(
@@ -259,14 +263,12 @@ function getRpEntity(){
         }
     }
 
-    $rpEntity = new PublicKeyCredentialRpEntity(
+    return new PublicKeyCredentialRpEntity(
         get_bloginfo('name').' Webauthn Server', // The application name
         $_SERVER['SERVER_NAME'],       // The application ID = the domain
         //$logo
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAAwFBMVEXm7NK41k3w8fDv7+q01Tyy0zqv0DeqyjOszDWnxjClxC6iwCu11z6y1DvA2WbY4rCAmSXO3JZDTxOiwC3q7tyryzTs7uSqyi6tzTCmxSukwi9aaxkWGga+3FLv8Ozh6MTT36MrMwywyVBziSC01TbT5ZW9z3Xi6Mq2y2Xu8Oioxy7f572qxzvI33Tb6KvR35ilwTmvykiwzzvV36/G2IPw8O++02+btyepyDKvzzifvSmw0TmtzTbw8PAAAADx8fEC59dUAAAA50lEQVQYV13RaXPCIBAG4FiVqlhyX5o23vfVqUq6mvD//1XZJY5T9xPzzLuwgKXKslQvZSG+6UXgCnFePtBE7e/ivXP/nRvUUl7UqNclvO3rpLqofPDAD8xiu2pOntjamqRy/RqZxs81oeVzwpCwfyA8A+8mLKFku9XfI0YnSKXnSYZ7ahSII+AwrqoMmEFKriAeVrqGM4O4Z+ADZIhjg3R6LtMpWuW0ERs5zunKVHdnnnMLNQqaUS0kyKkjE1aE98b8y9x9JYHH8aZXFMKO6JFMEvhucj3Wj0kY2D92HlHbE/9Vk77mD6srRZqmVEAZAAAAAElFTkSuQmCC'
     );
-
-    return $rpEntity;
 }
 
 /**
@@ -279,7 +281,9 @@ function storeInTransient($key, $value){
     #$value=serialize(base64_encode(serialize($value)));
     #set_transient( $key, $value, 120 );
 
-    if(!isset($_SESSION)) session_start();
+    if(!isset($_SESSION)){
+        session_start();
+    }
     $_SESSION[$key] = $value;
 }
 
@@ -293,7 +297,9 @@ function storeInTransient($key, $value){
 function getFromTransient($key){
     #return unserialize(base64_decode(unserialize(get_transient( $key))));
 
-    if(!isset($_SESSION)) session_start();
+    if(!isset($_SESSION)){
+        session_start();
+    }
     return $_SESSION[$key];
 }
 
@@ -349,9 +355,7 @@ function authenticatorList(){
     );
 
     $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user);
-    $authenticatorList   = $publicKeyCredentialSourceRepository->getShowList($userEntity);
-    
-    return $authenticatorList;
+    return $publicKeyCredentialSourceRepository->getShowList($userEntity);
 }
 
 /**

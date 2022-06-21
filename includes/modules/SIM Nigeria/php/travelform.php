@@ -5,10 +5,12 @@ use SIM;
 //add js special to the travelform
 add_filter('sim_form_extra_js', function($js, $formName, $minimized){
 
-	if($formName != 'travel') return $js;
+	if($formName != 'travel'){
+		return $js;
+	}
 
 	$path	= plugin_dir_path( __DIR__)."js/travelform.min.js";
-	if(!$minimized or !file_exists($path)){
+	if(!$minimized || !file_exists($path)){
 		$path	= plugin_dir_path( __DIR__)."js/travelform.js";
 	}
 
@@ -20,7 +22,7 @@ add_filter('sim_form_extra_js', function($js, $formName, $minimized){
 }, 10, 3);
 
 //Single default values used to prefil the travel form
-add_filter( 'sim_add_form_defaults', function($default_values,$userId){
+add_filter( 'sim_add_form_defaults', function($defaultValues, $userId){
 	$usermeta = get_user_meta($userId);
 	
 	//fields to retrieve from usermeta
@@ -49,7 +51,7 @@ add_filter( 'sim_add_form_defaults', function($default_values,$userId){
 		
 		if(is_array($values)){
 			//if we are dealing with muliples without nested values
-			if(is_numeric(array_key_first($values)) and !is_array(array_values($values)[0])){
+			if(is_numeric(array_key_first($values)) && !is_array(array_values($values)[0])){
 				$defaultValues[$field] = implode("\n", $values);
 				//also add the count
 				$defaultValues[$field.'_count'] = count($values);
@@ -74,7 +76,9 @@ add_filter( 'sim_add_form_defaults', function($default_values,$userId){
 						$defaultValues[$field.'_'.$key] = $value;
 					}else{
 						$defaultValues[$field] .= $value;
-						if($key != $lastValue)	$defaultValues[$field] .= "\n";
+						if($key != $lastValue){
+							$defaultValues[$field] .= "\n";
+						}
 					}
 				}
 			}
@@ -125,7 +129,7 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 		}
 	}
 	
-	foreach(SIM\getUserAccounts($returnFamily=false,$adults=true) as $user){
+	foreach(SIM\getUserAccounts(false, true) as $user){
 		$defaultArrayValues['all_users'][$user->ID] = $user->display_name;
 	}
 
@@ -133,7 +137,7 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 		$defaultArrayValues['missionaries'][$user->ID] = $user->display_name;
 	}
 
-	foreach(SIM\getUserAccounts($return_family=true) as $user){
+	foreach(SIM\getUserAccounts(true) as $user){
 		$defaultArrayValues['families'][$user->ID] = $user->display_name;
 	}
 
@@ -160,7 +164,9 @@ add_filter('sim_transform_formtable_data',function($string,$field_name){
 				if(is_numeric($value)){
 					$output 			 = SIM\USERPAGE\getUserPageLink($value);
 					if($output){
-						if($key != $lastKey) $output .= ", ";
+						if($key != $lastKey){
+							$output .= ", ";
+						}
 					}else{
 						$output .= $value;
 					}
@@ -184,7 +190,7 @@ add_filter('sim_transform_formtable_data',function($string,$field_name){
 
 //first make sure we request all the data
 add_filter('sim_formdata_retrieval_query', function($query, $userId, $formName){
-	if($formName == 'travel' and $_GET['onlyown'] == 'true'){
+	if($formName == 'travel' && $_GET['onlyown'] == 'true'){
 		//remove userid from query
 		$query	= str_replace(" userid='$userId' and", '', $query);
 	}
@@ -194,12 +200,12 @@ add_filter('sim_formdata_retrieval_query', function($query, $userId, $formName){
 
 //then remove all unwanted data
 add_filter('sim_retrieved_formdata', function($formdata, $userId, $formName){
-	if($formName == 'travel' and $_GET['onlyown'] == 'true'){
+	if($formName == 'travel' && $_GET['onlyown'] == 'true'){
 		//remove userid from query
 		foreach($formdata as $key=>$entry){
 			$passengers	= (array)unserialize($entry->formresults)['passengers'];
 			//if this entry does not belong to this user and the user is no passenger
-			if($entry->userid != $userId and !in_array($userId, $passengers)){
+			if($entry->userid != $userId && !in_array($userId, $passengers)){
 				//remove
 				unset($formdata[$key]);
 			}
@@ -211,7 +217,9 @@ add_filter('sim_retrieved_formdata', function($formdata, $userId, $formName){
 
 //Add a print button
 add_filter('sim_form_actions', function($buttonsHtml, $fieldValues=null, $index=-1){
-	if(!in_array($index,[1,4])) return $buttonsHtml;
+	if(!in_array($index,[1,4])){
+		return $buttonsHtml;
+	}
 
 	if($fieldValues == null){
 		$buttonsHtml['print']	= '';
@@ -231,12 +239,16 @@ add_filter('sim_form_actions', function($buttonsHtml, $fieldValues=null, $index=
 			}
 
 			$dayDiff	= (strtotime($end)-strtotime($start))/ 86400;
-			if($dayDiff<7) return $buttonsHtml;
+			if($dayDiff < 7){
+				return $buttonsHtml;
+			}
 		}
 		
 		//Add the current user to the passengers
 		$passengers			= implode(',',(array)$fieldValues['passengers']);
-		if(!empty($passengers))	$passengers .= ',';
+		if(!empty($passengers)){
+			$passengers .= ',';
+		}
 		$passengers		   .= $fieldValues['userid'];
 		
 		$destination		= str_replace('_', ' ', $tripDetails[$index]['to']);
@@ -296,7 +308,7 @@ function generateImmigrationLetters(){
 	$traveltType	= $_POST['traveltype'];
 	$travelDate		= $_POST['travel_date'];
 	
-	$pdf = new IMMIGRATION_LETTER();
+	$pdf = new ImmigrationLetter();
 	
 	try{
 		$pdf->AddFont('NSimSun','');
@@ -319,7 +331,7 @@ function generateImmigrationLetters(){
 if(!class_exists('SIM\PDF\PDF_HTML')){
 	include_once(INCLUDESPATH.'modules/PDF/php/pdf_helper_functions.php');
 }
-class IMMIGRATION_LETTER extends SIM\PDF\PDF_HTML{
+class ImmigrationLetter extends SIM\PDF\PDF_HTML{
 	function __construct($orientation='P', $unit='mm', $format='A4'){
 		//Call parent constructor
 		parent::__construct($orientation,$unit,$format);
@@ -364,7 +376,9 @@ class IMMIGRATION_LETTER extends SIM\PDF\PDF_HTML{
 			$destination 	= ucfirst(trim($destination));
 		}
 		
-		if ($transportType == '')	$transportType	= "UNKNOWN";
+		if ($transportType == ''){
+			$transportType	= "UNKNOWN";
+		}
 		if ($date == ''){
 			$date 			= "UNKNOWN";
 		}else{
@@ -390,7 +404,7 @@ class IMMIGRATION_LETTER extends SIM\PDF\PDF_HTML{
 		}else{
 			//If arrival is on Friday or Saturday take the next Monday
 			$weekday = date('D', $date);
-			if($weekday == 'Fri' or $weekday == 'Sat'){
+			if($weekday == 'Fri' || $weekday == 'Sat'){
 				$letterDate = date('d-F-Y', strtotime('next Monday', $date));
 			//Else take the next day
 			}else{
@@ -459,9 +473,9 @@ class IMMIGRATION_LETTER extends SIM\PDF\PDF_HTML{
 		}
 		
 		//Add passport picture
-		if(isset($visa_info['passport'])){
+		if(isset($visaInfo['passport'])){
 			$this->AddPage();
-			foreach($visa_info['passport'] as $path){
+			foreach($visaInfo['passport'] as $path){
 				$this->printImage($path);
 			}
 		}
@@ -490,7 +504,9 @@ add_shortcode( 'quotadocuments', function (){
 	if(!isset($_GET['id'])){
 		$quotaDocuments = (array)get_option('quota_documents');
 		
-		if(!isset($quotaDocuments['quotafiles']) or !is_array($quotaDocuments['quotafiles'])) $quotaDocuments['quotafiles'] = [1 => ""];
+		if(!isset($quotaDocuments['quotafiles']) || !is_array($quotaDocuments['quotafiles'])){
+			$quotaDocuments['quotafiles'] = [1 => ""];
+		}
 		
 		ob_start();
 		?>	
@@ -573,7 +589,7 @@ function quoata_document_upload($quotaDocuments){
 					<?php
 					$name	= "quota_documents[quotafiles][$key]";
 
-					$uploader = new SIM\Fileupload($userId='', $documentname=$name, $targetdir='visa_uploads', $multiple=true, $metakey=$name);
+					$uploader = new SIM\Fileupload('', $name, 'visa_uploads', true, $name);
 					echo $uploader->getUploadHtml();
 					echo $button;
 					?>

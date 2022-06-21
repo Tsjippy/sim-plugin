@@ -13,9 +13,9 @@ add_action('init',function(){
 });
 
 //make sure wp_login_url returns correct url
-add_filter( 'login_url', function($login_url, $redirect, $force_reauth ){
+add_filter( 'login_url', function($loginUrl, $redirect ){
     return add_query_arg(['showlogin' => '', 'redirect' => $redirect], home_url());
-},10,3);
+}, 10, 2);
 
 /**
  * Creates a login form modal
@@ -24,10 +24,10 @@ function loginModal($message='', $required=false, $username=''){
     ob_start();
 
     ?>
-    <div id="login_modal" class="modal <?php if(!$required) echo 'hidden';?>">
+    <div id="login_modal" class="modal <?php if(!$required){echo 'hidden';}?>">
 		<div class="modal-content">
             <?php
-            if($required == false){
+            if(!$required){
                 echo '<span class="close">×</span>';
             }
             ?>
@@ -36,7 +36,7 @@ function loginModal($message='', $required=false, $username=''){
                     Login form
                 </h3>
                 <p class="message"><?php
-                    if(!empty($message))echo $message;
+                    if(!empty($message)){echo $message;}
                 ?></p>
                 <form id="loginform" action="login" method="post">
                     <input type='hidden' name='action' value='request_login'>
@@ -53,7 +53,7 @@ function loginModal($message='', $required=false, $username=''){
                                 <input id="password" type="password" name="password" required>
                             </label>
                             <button type="button" id='toggle_pwd_view' data-toggle="0" title="Show password">
-                                <img src="<?php echo PICTURESURL.'/invisible.png';?>">
+                                <img src="<?php echo PICTURESURL.'/invisible.png';?>" alt='togglepasword'>
                             </button>
                         </div>
                         <div id='check_cred_wrapper'>
@@ -62,18 +62,18 @@ function loginModal($message='', $required=false, $username=''){
                                 Remember Me
                             </label>
                             <button type='button' id='check_cred' class='button'>Verify credentials</button>
-                            <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>'>
+                            <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' alt='loader'>
                         </div>
                     </div>
 
                     <div id='logging_in_wrapper' class='hidden'>
                         <h4 class='status_message'>Logging in...</h4>
-                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>'>
+                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>' alt='loader'>
                     </div>
 
                     <div id='webauthn_wrapper' class='authenticator_wrapper hidden'>
                         <h4 class='status_message'>Please authenticate...</h4>
-                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>'>
+                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>' alt='loader'>
                     </div>
 
                     <div id='authenticator_wrapper' class='authenticator_wrapper hidden'>
@@ -93,7 +93,7 @@ function loginModal($message='', $required=false, $username=''){
                     <div id='submit_login_wrapper' class='hidden'>                       
                         <div class='submit_wrapper'>
 		                    <button type='button' class='button' id='login_button' disabled>Login</button>
-		                    <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>'>
+		                    <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' alt='loader'>
 	                    </div>
                     </div>
                 </form>
@@ -116,7 +116,9 @@ function loginModal($message='', $required=false, $username=''){
 
 //add hidden login modal to page if not logged in
 add_filter( 'the_content', function ( $content ) {
-    if(!is_main_query())    return $content;
+    if(!is_main_query()){
+        return $content;
+    }
     
 	if (!is_user_logged_in()){
         if(isset($_GET['showlogin'])){
@@ -146,7 +148,7 @@ add_action( 'template_redirect', __NAMESPACE__.'\homepage_redirect' );
 function homepage_redirect(){
 	if( is_front_page() && is_user_logged_in() ){
         $url    = SIM\getValidPageLink(SIM\getModuleOption('frontpage', 'home_page'));
-        if($url and $url != SIM\currentUrl()){ 
+        if($url && $url != SIM\currentUrl()){ 
             wp_redirect(add_query_arg($_GET,$url));
             exit();
         }

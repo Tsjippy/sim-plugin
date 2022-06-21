@@ -99,6 +99,11 @@ async function requestEditElementData(target){
 		//fill the form after we have clicked the edit button
 		if(modal.querySelector('[name="add_form_element_form"]') != null){
 			modal.querySelector('[name="add_form_element_form"]').innerHTML = response.elementForm;
+
+			//activate tiny mce's
+			modal.querySelectorAll('.wp-editor-area').forEach(el =>{
+				window.tinyMCE.execCommand('mceAddEditor',false, el.id);
+			});
 		}
 
 		showCondionalFields(modal.querySelector('[name="formfield[type]"]').value, modal.querySelector('[name="add_form_element_form"]'));

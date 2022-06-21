@@ -21,7 +21,9 @@ add_action('sim_frontend_post_before_content', function($frontEndContent){
 add_action('sim_frontend_post_content_title', function ($postType){
     //Location content title
     $class = 'location';
-    if($postType != 'location')	$class .= ' hidden';
+    if($postType != 'location'){
+        $class .= ' hidden';
+    }
     
     echo "<h4 class='$class' name='location_content_label'>";
         echo 'Please describe the location';
@@ -54,8 +56,8 @@ function locationAddress($postId){
     $maps   = new Maps();
     
     if(
-        isset($_POST['location'])				and
-        isset($_POST['location']['latitude'])	and
+        isset($_POST['location'])				&&
+        isset($_POST['location']['latitude'])	&&
         isset($_POST['location']['longitude'])
     ){
         $title			= sanitize_text_field($_POST['post_title']);
@@ -70,10 +72,12 @@ function locationAddress($postId){
 
         //Get marker array
         $markerIds = get_post_meta($postId, "marker_ids", true);
-        if(!is_array($markerIds)) $markerIds = [];
+        if(!is_array($markerIds)){
+            $markerIds = [];
+        }
         
         //Only update if needed
-        if($oldLocation != $newLocation and $latitude != '' and $longitude != ''){
+        if($oldLocation != $newLocation && !empty($latitude) && !empty($longitude)){
 
             $categories = $_POST['locations_ids'];
 
@@ -88,7 +92,7 @@ function locationAddress($postId){
             $name = get_term( $categories[0], 'locations' )->slug.'_icon';
             
             //If there is a location category set and an custom icon for this category is set
-            if(count($categories) > 0 and !empty(SIM\getModuleOption('locations', $name))){
+            if(!empty($categories) && !empty(SIM\getModuleOption('locations', $name))){
                 $iconId = SIM\getModuleOption('locations', $name);
             }else{
                 $iconId = 1;
@@ -111,11 +115,8 @@ function locationAddress($postId){
                 );
                 
                 //Failed
-                if($result == false){
-                    //Check if marker exist, if not delete the metakey
-                    if(!$maps->markerExists($markerIds['generic'])){
-                        unset($markerIds['generic']);
-                    }
+                if(!$result && !$maps->markerExists($markerIds['generic'])){
+                    unset($markerIds['generic']);
                 }
             }
             
@@ -146,7 +147,7 @@ function locationAddress($postId){
             //First try to update
             if(isset($markerIds['page_marker'])){
                 //Create an icon for this marker
-                $customIconId = $maps->createIcon($markerId=$markerIds['page_marker'], $title=$title, $iconUrl, $defaultIconId=$iconId);
+                $maps->createIcon($markerIds['page_marker'], $title, $iconUrl, $iconId);
                     
                 $result = $wpdb->update($wpdb->prefix . 'ums_markers', 
                     array(
@@ -160,7 +161,7 @@ function locationAddress($postId){
                 );
                 
                 //Failed
-                if($result == false){
+                if(!$result){
                     //Check if marker exist, if not delete the metakey
                     if(!$maps->markerExists($markerIds['page_marker'])){
                         unset($markerIds['page_marker']);
@@ -175,14 +176,14 @@ function locationAddress($postId){
                 
                 if(!is_numeric($mapId)){
                     //Create a custom map for this location
-                    $mapId = $maps->addMap($title, $latitude, $longitude, $address, $height='300', $zoom=10);
+                    $mapId = $maps->addMap($title, $latitude, $longitude, $address, '300', 10);
                     
                     //Save the map id in db
                     update_metadata( 'post', $postId,'map_id', $mapId);
                 }					
                 
                 //Create an icon for this marker
-                $customIconId = $maps->createIcon($markerId=null, $title=$title, $iconUrl, $defaultIconId=$iconId);
+                $customIconId = $maps->createIcon(null, $title, $iconUrl, $iconId);
                 
                 //Add the marker to this map
                 $wpdb->insert($wpdb->prefix . 'ums_markers', array(
@@ -220,7 +221,7 @@ function locationAddress($postId){
                     //Checking if this marker exists
                     if(is_numeric($markerIds[$name])){
                         //Create an icon for this marker
-                        $customIconId = $maps->createIcon($markerId=$markerIds[$name], $title=$title, $iconUrl, $defaultIconId=$iconId);
+                        $maps->createIcon($markerIds[$name], $title, $iconUrl, $iconId);
                         
                         //Update the marker in db
                         $result = $wpdb->update($wpdb->prefix . 'ums_markers', 
@@ -235,7 +236,7 @@ function locationAddress($postId){
                         );
                         
                         //Failed
-                        if($result == false){
+                        if(!$result){
                             //Check if marker exist, if not delete the metakey
                             if(!$maps->markerExists($markerIds[$name])){
                                 unset($markerIds[$name]);
@@ -247,7 +248,7 @@ function locationAddress($postId){
                     
                     if(!is_numeric($markerIds[$name])){
                         //Create an icon for this marker
-                        $customIconId = $maps->createIcon($markerId=null, $title=$title, $iconUrl, $defaultIconId=$iconId);
+                        $customIconId = $maps->createIcon(null, $title, $iconUrl, $iconId);
                         
                         //Add marker for this map
                         $wpdb->insert($wpdb->prefix . 'ums_markers', array(
@@ -270,14 +271,14 @@ function locationAddress($postId){
             
             //Store marker ids in db
             update_metadata( 'post', $postId,"marker_ids", $markerIds);
-        }elseif($latitude == '' and $longitude == '' and is_numeric($mapId)){
+        }elseif(empty($latitude) && empty($longitude) && is_numeric($mapId)){
             //Delete the custom map for this post
             delete_post_meta($postId, 'map_id');
             $maps->removeMap($mapId);
             
             //Remove all markers related to this post
-            foreach($markerIds as $marker_id){
-                $maps->removeMarker($marker_id);
+            foreach($markerIds as $markerId){
+                $maps->removeMarker($markerId);
             }
             
             //Store marker ids in db
@@ -314,7 +315,9 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
     }
     
     $url = get_post_meta($postId,'url',true);
-    if($url == '') $url = 'https://www.';
+    if(empty($url)){
+        $url = 'https://www.';
+    }
     
     ?>
     <style>
@@ -325,7 +328,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
             text-align: left;
         }
     </style>
-    <div id="location-attributes" class="location<?php if($postName != 'location') echo ' hidden'; ?>">
+    <div id="location-attributes" class="location<?php if($postName != 'location'){echo ' hidden';} ?>">
         <fieldset id="location" class="frontendform">
             <legend>
                 <h4>Location details</h4>

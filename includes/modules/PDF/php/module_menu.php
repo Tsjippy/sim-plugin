@@ -6,7 +6,7 @@ const MODULE_VERSION		= '7.0.0';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -19,25 +19,27 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	</p>
 	<?php
 
-},10,2);
+});
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG){
+		return;
+	}
 	
     ?>
 	<label>
-		<input type='checkbox' name='full_screen' <?php if(isset($settings['full_screen'])) echo 'checked';?>>
+		<input type='checkbox' name='full_screen' <?php if(isset($settings['full_screen'])){echo 'checked';}?>>
 		Show PDF documents full screen if that is the only page content
 	</label>
 	<br>
 	<br>
 	<label>
-		<input type='checkbox' name='pdf_print' <?php if(isset($settings['pdf_print'])) echo 'checked';?>>
+		<input type='checkbox' name='pdf_print' <?php if(isset($settings['pdf_print'])){echo 'checked';}?>>
 		Add a "Print to PDF" button option
 	</label>
 	<br>
 	<br>
 	<?php
 	SIM\pictureSelector('logo',  'Logo for use in PDF headers', $settings);
-}, 10, 3);
+}, 10, 2);

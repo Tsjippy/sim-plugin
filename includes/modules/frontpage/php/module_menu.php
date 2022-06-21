@@ -6,7 +6,7 @@ const MODULE_VERSION		= '7.0.3';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -21,14 +21,14 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	if(is_numeric($pageId)){
 		?>
 		<p>
-			<b>Auto created page:</b><br>
+			<strong>Auto created page:</strong><br>
 			<a href='<?php echo get_permalink($pageId);?>'>Home page for logged in users</a>
 		</p>
 		<?php
 	}
-},10,2);
+});
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -83,11 +83,11 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 
 	<label>Max news age of news items.</label>
 	<select name="max_news_age">
-		<option value="1 day" <?php if($settings['max_news_age'] == '1 day') echo 'selected';?>>One day</option>
-		<option value="1 week" <?php if($settings['max_news_age'] == '1 week') echo 'selected';?>>One week</option>
-		<option value="2 weeks" <?php if($settings['max_news_age'] == '2 weeks') echo 'selected';?>>Two weeks</option>
-		<option value="1 month" <?php if($settings['max_news_age'] == '1 month') echo 'selected';?>>One month</option>
-		<option value="2 months" <?php if($settings['max_news_age'] == '2 months') echo 'selected';?>>Two months</option>
+		<option value="1 day" <?php if($settings['max_news_age'] == '1 day'){echo 'selected';}?>>One day</option>
+		<option value="1 week" <?php if($settings['max_news_age'] == '1 week'){echo 'selected';}?>>One week</option>
+		<option value="2 weeks" <?php if($settings['max_news_age'] == '2 weeks'){echo 'selected';}?>>Two weeks</option>
+		<option value="1 month" <?php if($settings['max_news_age'] == '1 month'){echo 'selected';}?>>One month</option>
+		<option value="2 months" <?php if($settings['max_news_age'] == '2 months'){echo 'selected';}?>>Two months</option>
 	</select>
 	<br>
 
@@ -144,16 +144,18 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	</label>
 	<?php
 
-}, 10, 3);
+}, 10, 2);
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
 
 	// Create frontend posting page
 	$pageId	= SIM\getModuleOption($moduleSlug, 'home_page');
 	// Only create if it does not yet exist
-	if(!$pageId or get_post_status($pageId) != 'publish'){
+	if(!$pageId || get_post_status($pageId) != 'publish'){
 		$content	= 'Hi [displayname],<br><br>I hope you have a great day!<br><br>[logged_home_page]<br><br>[welcome]';
 
 		$post = array(
@@ -188,7 +190,7 @@ add_filter('display_post_states', function ( $states, $post ) {
 //Shortcode for the welcome message on the homepage
 add_shortcode("welcome", __NAMESPACE__.'\welcomeMessage');
 
-function welcomeMessage($atts){
+function welcomeMessage(){
 	if (is_user_logged_in()){
 		$UserID = get_current_user_id();
 		//Check welcome message needs to be shown

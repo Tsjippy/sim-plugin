@@ -54,7 +54,7 @@ add_action('sim_submenu_description', function($moduleSlug){
 
 });
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 	?>
@@ -64,7 +64,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 		Once that account is approved they will be able to login.<br>
 	</p>
 	<label>
-		<input type="checkbox" name="user_registration" value="enabled" <?php if($settings['user_registration']) echo 'checked';?>>
+		<input type="checkbox" name="user_registration" value="enabled" <?php if($settings['user_registration']){echo 'checked';}?>>
 		Enable user registration
 	</label>
 	<br>
@@ -123,18 +123,20 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	<input type='hidden' name='password_reset_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'password_reset_page');?>'>
 	<input type='hidden' name='register_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'register_page');?>'>
 	<?php
-}, 10, 3);
+}, 10, 2);
 
 add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $newOptions;
+	if($moduleSlug != MODULE_SLUG){
+		return $newOptions;
+	}
 
 	$public_cat	= get_cat_ID('Public');
 
 	// Create password reset page
 	$pageId	= SIM\getModuleOption($moduleSlug, 'password_reset_page');
 	// Only create if it does not yet exist
-	if(!$pageId or get_post_status($pageId) != 'publish'){
+	if(!$pageId || get_post_status($pageId) != 'publish'){
 		$post = array(
 			'post_type'		=> 'page',
 			'post_title'    => 'Change password',
@@ -157,7 +159,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 		// Create register page
 		$pageId	= SIM\getModuleOption($moduleSlug, 'register_page');
 		// Only create if it does not yet exist
-		if(!$pageId or get_post_status($pageId) != 'publish'){
+		if(!$pageId || get_post_status($pageId) != 'publish'){
 			$post = array(
 				'post_type'		=> 'page',
 				'post_title'    => 'Request user account',
@@ -179,7 +181,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 	// Add 2fa page
 	$pageId	= SIM\getModuleOption($moduleSlug, '2fa_page');
 	// Only create if it does not yet exist
-	if(!$pageId or get_post_status($pageId) != 'publish'){
+	if(!$pageId || get_post_status($pageId) != 'publish'){
 		$post = array(
 			'post_type'		=> 'page',
 			'post_title'    => 'Two Factor Authentication',
@@ -197,7 +199,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 	}
 
 	// Remove registration page
-	if(isset($oldOptions['register_page']) and !isset($newOptions['user_registration'])){
+	if(isset($oldOptions['register_page']) && !isset($newOptions['user_registration'])){
 		wp_delete_post($oldOptions['register_page'], true);
 		unset($newOptions['register_page']);
 	}

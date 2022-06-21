@@ -5,7 +5,9 @@ use WP_Error;
 
 function checkPermissions(){
 	$user	= wp_get_current_user();
-	if(in_array('editor', $user->roles)) return true;
+	if(in_array('editor', $user->roles)){
+		return true;
+	}
 
 	return false;
 }
@@ -278,7 +280,10 @@ function addFormElement(){
 			//loop over all elements to check if the names are equal
 			foreach($formBuilder->formData->elements as $index=>$element){
 				//don't compare with itself
-				if($update and $index == $_POST['element_id']) continue;
+				if($update && $index == $_POST['element_id']){
+					continue;
+				}
+
 				//we found a duplicate name
 				if($elementName == $element['name']){
 					$i++;
@@ -356,7 +361,7 @@ function removeElement(){
 	foreach($formBuilder->formElements as $key=>$el){
 		if($el->priority != $key+1){
 			//Update the database
-			$result = $wpdb->update($formBuilder->elTableName, 
+			$wpdb->update($formBuilder->elTableName, 
 				array(
 					'priority'	=> $key+1
 				), 
@@ -510,7 +515,7 @@ function saveFormInput(){
 	if(is_numeric($_POST['userid'])){
 		//If we are submitting for someone else and we do not have the right to save the form for someone else
 		if(
-			array_intersect($formBuilder->userRoles, $formBuilder->submitRoles) === false and 
+			array_intersect($formBuilder->userRoles, $formBuilder->submitRoles) === false && 
 			$formBuilder->user->ID != $_POST['userid']
 		){
 			return new \WP_Error('Error', 'You do not have permission to save data for user with id '.$_POST['userid']);
@@ -529,7 +534,9 @@ function saveFormInput(){
 	$formBuilder->formResults = apply_filters('sim_before_saving_formdata', $formBuilder->formResults, $formBuilder->formData->name, $formBuilder->userId);
 	
 	$message = $formBuilder->formData->settings['succesmessage'];
-	if(empty($message)) $message = 'succes';
+	if(empty($message)){
+		$message = 'succes';
+	}
 	
 	//save to submission table
 	if(empty($formBuilder->formData->settings['save_in_meta'])){			
@@ -540,7 +547,7 @@ function saveFormInput(){
 		foreach($formBuilder->formResults as $key=>$result){
 			if(is_array($result)){
 				//check if this a aray of uploaded files
-				if(!is_array(array_values($result)[0]) and strpos(array_values($result)[0],'wp-content/uploads/') !== false){
+				if(!is_array(array_values($result)[0]) && strpos(array_values($result)[0],'wp-content/uploads/') !== false){
 					//rename the file
 					$formBuilder->processFiles($result, $key);
 				}else{
@@ -605,7 +612,9 @@ function saveFormInput(){
 			}
 		}
 
-		if($updateuserData)wp_update_user($userData);
+		if($updateuserData){
+			wp_update_user($userData);
+		}
 	}
 
 	do_action('sim_after_saving_formdata', $formBuilder->formResults, $formBuilder->formName, $formBuilder->userId);

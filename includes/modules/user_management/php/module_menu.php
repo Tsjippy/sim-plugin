@@ -6,7 +6,7 @@ const MODULE_VERSION		= '7.0.6';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -39,24 +39,24 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	<?php
 	$page1Id	= SIM\getModuleOption($moduleSlug, 'account_page');
 	$page2Id	= SIM\getModuleOption($moduleSlug, 'user_edit_page');
-	if(is_numeric($page1Id) or is_numeric($page2Id)){
+	if(is_numeric($page1Id) || is_numeric($page2Id)){
 		?>
 		<p>
-			<b>Auto created page:</b><br>
+			<strong>Auto created page:</strong><br>
 			<a href='<?php echo get_permalink($page1Id);?>'>Account</a><br>
 			<a href='<?php echo get_permalink($page2Id);?>'>Edit users</a><br>
 		</p>
 		<?php
 	}
-},10,2);
+});
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 	
 	?>
 	<label>
-		<input type='checkbox' name='tempuser' value='tempuser' <?php if(isset($settings['tempuser'])) echo 'checked';?>>
+		<input type='checkbox' name='tempuser' value='tempuser' <?php if(isset($settings['tempuser'])){echo 'checked';}?>>
 		Enable temporary user accounts
 	</label>
 	<br>
@@ -167,16 +167,18 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	$greenCardReminderMail    = new GreenCardReminderMail(wp_get_current_user());
 	$greenCardReminderMail->printPlaceholders();
 	$greenCardReminderMail->printInputs($settings);
-}, 10, 3);
+}, 10, 2);
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
 
 	// Create account page
 	$pageId	= SIM\getModuleOption($moduleSlug, 'account_page');
 	// Only create if it does not yet exist
-	if(!$pageId or get_post_status($pageId) != 'publish'){
+	if(!$pageId || get_post_status($pageId) != 'publish'){
 		$post = array(
 			'post_type'		=> 'page',
 			'post_title'    => 'Account',
@@ -196,7 +198,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	// Create user edit page
 	$pageId	= SIM\getModuleOption($moduleSlug, 'user_edit_page');
 	// Only create if it does not yet exist
-	if(!$pageId or get_post_status($pageId) != 'publish'){
+	if(!$pageId || get_post_status($pageId) != 'publish'){
 		$post = array(
 			'post_type'		=> 'page',
 			'post_title'    => 'Edit users',

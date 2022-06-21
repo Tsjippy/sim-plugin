@@ -2,7 +2,7 @@
 namespace SIM\forms;
 use SIM;
 
-const MODULE_VERSION		= '7.0.26';
+const MODULE_VERSION		= '7.0.30';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
@@ -65,14 +65,16 @@ add_action('sim_module_activated', function($moduleSlug){
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
 
 	scheduleTasks();
 
 	return $options;
 }, 10, 2);
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -111,4 +113,4 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	$formAdultEmails    = new ChildEmail(wp_get_current_user());
 
 	$formAdultEmails->printInputs($settings);
-}, 10, 3);
+}, 10, 2);

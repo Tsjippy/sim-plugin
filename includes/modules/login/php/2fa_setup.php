@@ -13,7 +13,9 @@ function twoFaSettingsForm($userId=''){
 
 	$secondFactor	= setupTimeCode();
 
-	if(!isset($_SESSION)) session_start();
+	if(!isset($_SESSION)){
+		session_start();
+	}
 	$publicKeyCredentialId	= $_SESSION["webautn_id"];
 
 	ob_start();
@@ -36,7 +38,7 @@ function twoFaSettingsForm($userId=''){
 		<div id='2fa-options-wrapper' style='margin-bottom:20px;'>
 			<h4>Second login factor</h4>
 			<?php
-			if(empty($twoFaMethods) or in_array('webauthn', $twoFaMethods) and count($twoFaMethods)==1){
+			if(empty($twoFaMethods) || in_array('webauthn', $twoFaMethods) && count($twoFaMethods)==1){
 				?>
 				<p>
 					Please setup an second login factor to keep this website safe.<br>
@@ -52,12 +54,12 @@ function twoFaSettingsForm($userId=''){
 			}
 			?>
 			<label>
-				<input type="radio" class="twofa_option_checkbox" name="2fa_methods[]" value="authenticator" <?php if(array_search('authenticator', $twoFaMethods) !== false) echo "checked";?>> 
+				<input type="radio" class="twofa_option_checkbox" name="2fa_methods[]" value="authenticator" <?php if(array_search('authenticator', $twoFaMethods) !== false){echo "checked";}?>> 
 				<span class="optionlabel">Authenticator app</span>
 			</label>
 			<br>
 			<label>
-				<input type="radio" class="twofa_option_checkbox" name="2fa_methods[]" value="email" <?php if(array_search('email', $twoFaMethods) !== false) echo "checked";?>> 
+				<input type="radio" class="twofa_option_checkbox" name="2fa_methods[]" value="email" <?php if(array_search('email', $twoFaMethods) !== false){echo "checked";}?>> 
 				<span class="optionlabel">E-mail</span>
 			</label>
 			<br>

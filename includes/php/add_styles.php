@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const STYLE_VERSION		= '7.0.28';
+const STYLE_VERSION		= '7.0.29';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
@@ -84,7 +84,7 @@ function enqueueScripts($hook){
 			'locations'		=> $locations
 		) 
 	);
-};
+}
 
 //add_action('wp_print_scripts', 'SIM\inspect_script_styles');
 function inspect_script_styles() {

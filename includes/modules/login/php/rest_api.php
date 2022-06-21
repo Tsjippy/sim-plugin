@@ -364,7 +364,7 @@ function storeBiometric(){
         $publicKeyCredentialCreationOptions     = getFromTransient('pkcco');
 
         // May not get the challenge yet
-        if(empty($publicKeyCredentialCreationOptions) or empty($userEntity)){
+        if(empty($publicKeyCredentialCreationOptions) || empty($userEntity)){
             return new WP_Error('Logged in error', "No challenge given");
         }
 
@@ -456,13 +456,17 @@ function startAuthentication(){
     try{
         $user           = get_user_by('login', $_POST['username']);
         
-        if(!$user) return new WP_Error('User error', "No user with user name {$_POST['username']} found.");
+        if(!$user){
+            return new WP_Error('User error', "No user with user name {$_POST['username']} found.");
+        }
         
         $webauthnKey    = get_user_meta($user->ID, '2fa_webauthn_key', true);
         
         //User has no webauthn yet
         if(!$webauthnKey){
-            if(!isset($_SESSION)) session_start();
+            if(!isset($_SESSION)){
+                session_start();
+            }
             //indicate a failed webauth for content filtering
             $_SESSION['webauthn'] = 'failed';
             return;
@@ -538,7 +542,7 @@ function finishAuthentication(){
         $user                               = getFromTransient("user");
 
         // May not get the challenge yet
-        if(empty($publicKeyCredentialRequestOptions) or empty($user_name_auth) or empty($userEntity)){
+        if(empty($publicKeyCredentialRequestOptions) || empty($user_name_auth) || empty($userEntity)){
             SIM\printArray("ajax_auth_response: (ERROR)Challenge not found in transient, exit");
             return new WP_Error('webauthn',"Bad request.");
         }
@@ -595,7 +599,9 @@ function finishAuthentication(){
             // Store last used
             $publicKeyCredentialSourceRepository->updateCredentialLastUsed($publicKeyCredential);
 
-            if(!isset($_SESSION)) session_start();
+            if(!isset($_SESSION)){
+                session_start();
+            }
             $_SESSION['webauthn']   = 'success';
             return "true";
         }catch(\Throwable $exception){
@@ -624,7 +630,7 @@ function checkCredentials(){
     $user   = get_user_by('login',$username);
 
     //validate credentials
-    if($user and wp_check_password($password, $user->data->user_pass, $user->ID)){
+    if($user && wp_check_password($password, $user->data->user_pass, $user->ID)){
         //get 2fa methods for this user
         $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
@@ -646,16 +652,16 @@ function checkCredentials(){
 function saveTwoFaSettings(){    
     $userId = get_current_user_id();
 
-    $new_methods    = $_POST['2fa_methods'];
+    $newMethods    = $_POST['2fa_methods'];
 
-    $old_methods    = (array)get_user_meta($userId,'2fa_methods', true);
+    $oldMethods    = (array)get_user_meta($userId,'2fa_methods', true);
     
     $twofa          = new TwoFactorAuth();
 
     $message        = 'Nothing to update';
 
     //we just enabled the authenticator
-    if(in_array('authenticator', $new_methods) and !in_array('authenticator', $old_methods)){
+    if(in_array('authenticator', $newMethods) && !in_array('authenticator', $oldMethods)){
         $secret     = $_POST['auth_secret'];
         $secretkey  = $_POST['secretkey'];
         $hash       = get_user_meta($userId,'2fa_hash',true);
@@ -683,7 +689,7 @@ function saveTwoFaSettings(){
     }
 
     //we just enabled email verification
-    if(in_array('email', $new_methods) and !in_array('email', $old_methods)){
+    if(in_array('email', $newMethods) && !in_array('email', $oldMethods)){
         $userdata   = get_userdata($userId);
 
         SIM\trySendSignal(
@@ -701,12 +707,12 @@ function saveTwoFaSettings(){
     }
 
     //make sure we keep webauthn enabled
-    if(in_array('webauthn',$old_methods)){
-        $new_methods[]  = 'webauthn';
+    if(in_array('webauthn',$oldMethods)){
+        $newMethods[]  = 'webauthn';
     }
 
     //store all methods. We will not come here if one of the failed
-    update_user_meta($userId,'2fa_methods',$new_methods);
+    update_user_meta($userId, '2fa_methods', $newMethods);
 
     return $message;
 }
@@ -757,7 +763,7 @@ function userLogin(){
     $accountPageId  = SIM\getModuleOption('user_management', 'account_page');
 
     // GEt mandatory or recommended fields
-    if(function_exists('SIM\FORMS\getAllFields') and is_numeric($accountPageId)){
+    if(function_exists('SIM\FORMS\getAllFields') && is_numeric($accountPageId)){
         $fieldList   = SIM\FORMS\getAllFields($user->ID, 'all');
     }
 
@@ -771,32 +777,40 @@ function userLogin(){
         $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
         //Redirect to account page if 2fa is not set
-        if(!$methods or count($methods ) == 0){
+        if(!$methods || empty($methods)){
             $twofaPage      = SIM\getValidPageLink(SIM\getModuleOption('login', '2fa_page'));
-            if($twofaPage) return $twofaPage;
+            if($twofaPage){
+                return $twofaPage;
+            }
         }
         
         //redirect to account page to fill in required fields
-        if (!isset($_SESSION['showpage']) and !empty($fieldList) and is_numeric($accountPageId)){
+        if (!isset($_SESSION['showpage']) && !empty($fieldList) && is_numeric($accountPageId)){
             return get_permalink($accountPageId);
         }else{
-            if(isset($_SESSION['showpage'])) unset($_SESSION['showpage']);
+            if(isset($_SESSION['showpage'])){
+                unset($_SESSION['showpage']);
+            }
             return 'Login successful';
         }
     }else{
         return 'Login successful';
     }
-};
+}
 
 // Send password reset e-mail
 function requestPasswordReset(){
     $username   = sanitize_text_field($_POST['username']);
 
 	$user	= get_user_by('login', $username);
-    if(!$user)	return new WP_Error('Username error', 'Invalid username');
+    if(!$user){
+        return new WP_Error('Username error', 'Invalid username');
+    }
 
 	$email  = $user->user_email;
-    if(!$email or strpos('.empty', $email) !== false) return new WP_Error('email error',"No valid e-mail found for user $username");
+    if(!$email || strpos('.empty', $email) !== false){
+        return new WP_Error('email error',"No valid e-mail found for user $username");
+    }
 
 	$result = sendPasswordResetMessage($user);
 
@@ -811,10 +825,14 @@ function requestPasswordReset(){
 function processPasswordUpdate(){
 	$userId	= $_POST['userid'];
 
-	$userdata	= get_userdata($userId);	
-	if(!$userdata)	return new WP_Error('userid error','Invalid user id given');
+	$user   = get_userdata($userId);	
+	if(!$user){
+        return new WP_Error('userid error','Invalid user id given');
+    }
 
-	if($_POST['pass1'] != $_POST['pass2'])	return new WP_Error('Password error', "Passwords do not match, try again.");
+	if($_POST['pass1'] != $_POST['pass2']){
+        return new WP_Error('Password error', "Passwords do not match, try again.");
+    }
 	
 	wp_set_password( $_POST['pass1'], $userId );
 
@@ -824,7 +842,7 @@ function processPasswordUpdate(){
     }
 	return [
         'message'	=> $message,
-        'redirect'	=> SITEURL."/?showlogin=$userdata->user_login"
+        'redirect'	=> SITEURL."/?showlogin=$user->user_login"
     ];
 }
 
@@ -836,7 +854,9 @@ function requestUserAccount(){
 	$pass1	    = $_POST['pass1'];
 	$pass2	    = $_POST['pass2'];
 
-	if($pass1 != $pass2)	return new WP_Error('Password error', "Passwords do not match, try again.");
+	if($pass1 != $pass2){
+        return new WP_Error('Password error', "Passwords do not match, try again.");
+    }
 
 	$username	= SIM\getAvailableUsername($first_name, $last_name);
 

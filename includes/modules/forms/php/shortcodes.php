@@ -18,18 +18,16 @@ add_shortcode('formselector', function($atts){
     $forms          = $FormTable->forms;
 
     // Remove any unwanted forms
-    if(!empty($a['exclude']) or $a['no_meta']){
+    if(!empty($a['exclude']) || $a['no_meta']){
         $exclusions = explode(',', $a['exclude']);
         foreach($forms as $key=>$form){
-            if(in_array($form->name, $exclusions) or empty($form->name)){
+            if(in_array($form->name, $exclusions) || empty($form->name)){
                 unset($forms[$key]);
             }
 
             // Remove any form that saves its data in the usermeta
-            if($a['no_meta']){
-                if(unserialize($form->settings)['save_in_meta']){
-                    unset($forms[$key]);
-                }
+            if($a['no_meta'] && unserialize($form->settings)['save_in_meta']){
+                unset($forms[$key]);
             }
         }
     }
@@ -52,7 +50,7 @@ add_shortcode('formselector', function($atts){
             <?php
             foreach($forms as $form){
                 $name   = ucfirst(str_replace('_', ' ', $form->name));
-                if($_REQUEST['form'] == $form->name or $_REQUEST['form'] == $form->id){
+                if($_REQUEST['form'] == $form->name || $_REQUEST['form'] == $form->id){
                     $selected = 'selected';
                 }else{
                     $selected = '';
@@ -89,7 +87,7 @@ add_shortcode('formselector', function($atts){
             }
 
             //Check if this form should be displayed
-            if($_REQUEST['form'] == $form->name or $_REQUEST['form'] == $form->id){
+            if($_REQUEST['form'] == $form->name || $_REQUEST['form'] == $form->id){
                 $hidden = '';
             }else{
                 $hidden = ' hidden';

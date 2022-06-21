@@ -10,7 +10,7 @@ $hookName	= SIM\getModuleOption('frontpage', 'header_hook');
 if(!empty($hookName)){
 	//Add a button to the header
 	add_action($hookName, function(){
-		if (is_user_logged_in() and (is_page(SIM\getModuleOption('frontpage','home_page')) or is_front_page())){
+		if (is_user_logged_in() && (is_page(SIM\getModuleOption('frontpage','home_page')) || is_front_page())){
 			$button1	= SIM\getModuleOption('frontpage', 'first_button');
 			$button2	= SIM\getModuleOption('frontpage', 'second_button');
 
@@ -51,9 +51,9 @@ $hookName	= SIM\getModuleOption('frontpage','before_footer_hook');
 if(!empty($hookName)){
 	add_action($hookName, function() {
 		//if on home page
-		if(is_page(SIM\getModuleOption('frontpage','home_page')) or is_front_page()){
+		if(is_page(SIM\getModuleOption('frontpage','home_page')) || is_front_page()){
 			// If not logged in and on the logged in homepage
-			if (!is_user_logged_in() and is_page(SIM\getModuleOption('frontpage','home_page'))){
+			if (!is_user_logged_in() && is_page(SIM\getModuleOption('frontpage','home_page'))){
 				return;
 			}
 
@@ -236,10 +236,16 @@ function pageGallery(){
 							$pageId		= SIM\getModuleOption('frontpage', "page$x");
 							$pictureUrl	= get_the_post_thumbnail_url($pageId);
 							$pageUrl	= get_permalink($pageId);
+
 							$title		= SIM\getModuleOption('frontpage', "title$x");
-							if(!$title) $title	= get_the_title($pageId);
+							if(!$title){
+								$title	= get_the_title($pageId);
+							}
 							$text		= SIM\getModuleOption('frontpage', "description$x");
-							if(!$text) $text	= get_the_excerpt($pageId);
+
+							if(!$text){
+								$text	= get_the_excerpt($pageId);
+							}
 
 							echo "<a href='$pageUrl'>";
 								echo "<img class='img' src='$pictureUrl' alt='' title='$title'>";
@@ -269,7 +275,7 @@ function pageGallery(){
 
 //Add the home class
 add_filter( 'body_class',function ( $classes ) {
-	if(is_page(SIM\getModuleOption('frontpage','home_page')) or is_front_page()){
+	if(is_page(SIM\getModuleOption('frontpage','home_page')) || is_front_page()){
 		$classes[] = 'home';
 	}
     return $classes;

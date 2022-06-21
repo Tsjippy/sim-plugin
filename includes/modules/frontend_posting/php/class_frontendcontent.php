@@ -54,7 +54,7 @@ class FrontEndContent{
 		
 		//Show warning if not allowed to edit
 		$this->hasEditRights();
-		if(!$this->editRight and is_numeric($_GET['post_id'])){
+		if(!$this->editRight && is_numeric($_GET['post_id'])){
 			return '<div class="error">You do not have permission to edit this page.</div>';
 		}
 		
@@ -69,7 +69,7 @@ class FrontEndContent{
 		$secondsSinceUpdated = time()-get_post_modified_time('U', true, $this->post);
 		
 		//Show warning when post has been updated recently
-		if($secondsSinceUpdated < 3600 and $secondsSinceUpdated > -1){
+		if($secondsSinceUpdated < 3600 && $secondsSinceUpdated > -1){
 			$minutes = intval($secondsSinceUpdated/60);
 			echo "<div class='warning'>This {$this->postType} has been updated <span id='minutes'>$minutes</span> minutes ago.</div>";
 		}
@@ -90,12 +90,12 @@ class FrontEndContent{
 		?>
 		<div id="frontend_upload_form">			
 			<?php
-			if($this->lite == false){
+			if(!$this->lite){
 				$hidden = 'hidden';
 			}
 
 			$this->update	= 'false';
-			if(is_numeric($this->postId) and $this->post->post_status == 'publish'){
+			if(is_numeric($this->postId) && $this->post->post_status == 'publish'){
 				$this->update	= 'true';
 			}
 			echo "<button class='button sim $hidden show' id='showallfields'>Show all fields</button>";
@@ -152,7 +152,7 @@ class FrontEndContent{
 					?>
 				</div>
 				
-		 		<div id="featured-image-div" <?php if($this->postImageId == 0) echo ' class="hidden"';?>>
+		 		<div id="featured-image-div" <?php if($this->postImageId == 0){echo ' class="hidden"';}?>>
 					<h4 name="post_image_label">Featured image:</h4>
 
 					<span id='featured_image_wrapper'>
@@ -177,7 +177,7 @@ class FrontEndContent{
 				
 				<?php
 				//Content wrapper
-				if($this->lite == true){
+				if($this->lite){
 					echo "<div class='hidden postcontentwrapper lite'>";
 				}else{
 					echo "<div class='postcontentwrapper lite'>";
@@ -229,7 +229,7 @@ class FrontEndContent{
 				}
 				
 				//Add a draft button for new posts
-				if($this->postId == null or ($this->post->post_status != 'publish' and $this->post->post_status != 'inherit')){
+				if($this->postId == null || ($this->post->post_status != 'publish' && $this->post->post_status != 'inherit')){
 					if($this->postId == null){
 						$button_text = "Save <span class='replaceposttype'>{$this->post_name}</span> as draft";
 					}else{
@@ -248,7 +248,7 @@ class FrontEndContent{
 			<?php
 						
 			//Only show delete button for existing posts and not yet deleted
-			if($this->postId != null and $this->post->post_status != 'trash' and $this->fullrights){
+			if($this->postId != null && $this->post->post_status != 'trash' && $this->fullrights){
 				?>
 				<div class='submit_wrapper' style='display: flex; margin-top:20px;float:right;margin-right:0px;'>
 					<form>
@@ -319,9 +319,9 @@ class FrontEndContent{
 				
 			//Check if allowed to edit this
 			if(
-				$postAuthor != $this->user->ID 									and 
-				!isset($ministries[str_replace(" ","_",$this->postTitle )])		and  
-				$userPageId != $this->ID										and
+				$postAuthor != $this->user->ID 									&& 
+				!isset($ministries[str_replace(" ","_",$this->postTitle )])		&&  
+				$userPageId != $this->ID										&&
 				!$this->fullrights
 			){
 				$this->editRight	= false;
@@ -359,7 +359,9 @@ class FrontEndContent{
 			}
 			$this->postParent 									= $this->post->post_parent;
 			$this->postType 									= $this->post->post_type;
-			if($this->postType == 'change')	$this->postType = get_post_type($this->postParent);
+			if($this->postType == 'change'){
+				$this->postType = get_post_type($this->postParent);
+			}
 			$this->postTitle 									= $this->post->post_title;
 			$this->postContent 									= $this->post->post_content;
 			$this->postImageId									= get_post_thumbnail_id($this->postId);
@@ -373,12 +375,12 @@ class FrontEndContent{
 		$this->postCategory 									= $this->post->post_category;
 		
 		//show lite version of location by default
-		if($this->postName == 'location' and $this->postContent == '' or strpos($this->postType, '_lite') !== false){
+		if($this->postName == 'location' && $this->postContent == '' || strpos($this->postType, '_lite') !== false){
 			$this->lite 		= true;
 		}
 		
-		if($this->fullrights == true){
-			if($this->postId == null or ($this->post->post_status != 'publish' and $this->post->post_status != 'inherit')){
+		if($this->fullrights){
+			if($this->postId == null || ($this->post->post_status != 'publish' && $this->post->post_status != 'inherit')){
 				$this->action = "Publish <span class='replaceposttype'>{$this->postName}</span>";
 			}else{
 				$this->action = "Update <span class='replaceposttype'>{$this->postName}</span>";
@@ -393,9 +395,12 @@ class FrontEndContent{
 	 *
 	**/
 	function showChanges(){
-		if($this->update and $this->post->post_type == 'change'){
+		if($this->update && $this->post->post_type == 'change'){
 			// Get changes in title and content
-			if(!function_exists('wp_get_revision_ui_diff')) include_once ABSPATH . 'wp-admin/includes/revision.php';
+			if(!function_exists('wp_get_revision_ui_diff')){
+				include_once ABSPATH . 'wp-admin/includes/revision.php';
+			}
+
 			$result		= wp_get_revision_ui_diff($this->post->post_parent, $this->post->post_parent, $this->post->ID);
 
 			// Get changes in meta values
@@ -522,7 +527,9 @@ class FrontEndContent{
 			}
 
 			$typeName	= ucfirst($postType);
-			if($postType == 'attachment') $typeName = 'Picture/Video/Audio';
+			if($postType == 'attachment'){
+				$typeName = 'Picture/Video/Audio';
+			}
 			$html	.= "<option value='$postType' $selected>$typeName</option>";
 		}
 			
@@ -609,7 +616,7 @@ class FrontEndContent{
 			'hide_empty' => false,
 		) );
 		?>
-		<div id="post-category" class="categorywrapper post page <?php if(!in_array($this->postType, ['post', 'page', 'attachment'])) echo 'hidden'; ?>">
+		<div id="post-category" class="categorywrapper post page <?php if(!in_array($this->postType, ['post', 'page', 'attachment'])){echo 'hidden';} ?>">
 			<h4>
 				<span class="capitalize replaceposttype"><?php echo  esc_html($this->postType);?></span> category
 			</h4>
@@ -621,7 +628,7 @@ class FrontEndContent{
 					$catDescription	= $category->description;
 					$class			= 'infobox post';
 
-					if($catId == get_cat_ID('Public') or $catId == get_cat_ID('Confidential') ){
+					if($catId == get_cat_ID('Public') || $catId == get_cat_ID('Confidential') ){
 						$class	.= 'page';
 					//do not show categories other than public and confidential to non-post types
 					}elseif($this->postType != 'post'){
@@ -629,7 +636,9 @@ class FrontEndContent{
 					}
 
 					$checked	= '';
-					if(is_array($this->postCategory) and in_array($catId, $this->postCategory)) $checked 	= 'checked';
+					if(is_array($this->postCategory) && in_array($catId, $this->postCategory)){
+						$checked 	= 'checked';
+					}
 					
 					echo "<div class='$class'>";
 					
@@ -637,7 +646,9 @@ class FrontEndContent{
 					
 						echo "<label class='option-label category-select'>$name</label>";
 
-						if(!empty($catDescription))	echo "<span class='info_text'>$catDescription</span>";
+						if(!empty($catDescription)){
+							echo "<span class='info_text'>$catDescription</span>";
+						}
 
 					echo '</div>';
 				}
@@ -654,7 +665,7 @@ class FrontEndContent{
 	**/
 	function postSpecificFields(){
 		?>
-		<div id="post-attributes"  class="post<?php if($this->postType != 'post') echo ' hidden'; ?>">
+		<div id="post-attributes"  class="post<?php if($this->postType != 'post'){echo ' hidden';}?>">
 			<div id="expirydate_div" class="frontendform">
 				<h4>Expiry date</h4>
 				<label>
@@ -673,7 +684,7 @@ class FrontEndContent{
 	**/
 	function pageSpecificFields(){
 		?>		
-		<div id="page-attributes" class="page<?php if($this->postType != 'page') echo ' hidden'; ?>">
+		<div id="page-attributes" class="page<?php if($this->postType != 'page'){echo ' hidden';}?>">
 			<div id="parentpage" class="frontendform">
 				<h4>Select a parent page</h4>
 				<?php 
@@ -687,7 +698,7 @@ class FrontEndContent{
 			<div id="static_content" class="frontendform">
 				<h4>Update warnings</h4>	
 				<label>
-					<input type='checkbox' name='static_content' value='static_content' <?php if(get_post_meta($this->postId,'static_content',true) != '') echo 'checked';?>>
+					<input type='checkbox' name='static_content' value='static_content' <?php if(get_post_meta($this->postId,'static_content',true) != ''){echo 'checked';}?>>
 					Do not send update warnings for this page
 				</label>
 			</div>
@@ -705,7 +716,7 @@ class FrontEndContent{
 	**/
 	function showCategories($type, $categories){
 		?>
-		<div class="<?php echo $type; if($this->postType != $type) echo ' hidden'; ?>">
+		<div class="<?php echo $type; if($this->postType != $type){echo ' hidden';} ?>">
 			<div class="frontendform">
 				<h4><?php echo ucfirst($type);?> type</h4>
 				<div class='categories'>
@@ -736,13 +747,17 @@ class FrontEndContent{
 							$checked = 'checked';
 							
 							//If this type has child types, show the label
-							if(count(get_term_children($category->cat_ID, $taxonomy))>0) $hidden = '';
+							if(count(get_term_children($category->cat_ID, $taxonomy))>0){
+								$hidden = '';
+							}
 						}
 						
 						//if this is a child, hide it and attach the parent id as attribute
 						if($parent != 0){
 							//Hide subcategory if parent is not in the cat array
-							if(!has_term($parent, $taxonomy, $this->postId))	$class .= " hidden";
+							if(!has_term($parent, $taxonomy, $this->postId)){
+								$class .= " hidden";
+							}
 							
 							//Store cat parent
 							$class .= "' data-parent='$parent";
@@ -751,14 +766,18 @@ class FrontEndContent{
 						//$$html --> use the value of $html as variable name
 						$$html .= "<div class='$class'>";
 							$checkboxClass = "{$type}type";
-							if(count(get_term_children($category->cat_ID, $taxonomy)) > 0) $checkboxClass .= " parent_cat";
+							if(count(get_term_children($category->cat_ID, $taxonomy)) > 0){
+								$checkboxClass .= " parent_cat";
+							}
 							$$html .= "<input type='checkbox' class='$checkboxClass' name='{$taxonomy}_ids[]' value='$catId' $checked>";
 						
 							//Name of the category
 							$$html .= "<label class='option-label category-select'>$name</label>";
 							
 							//Add infobox if needed
-							if($catDescription != '')	$$html .= "<span class='info_text'>$catDescription</span>";
+							if(!empty($catDescription)){
+								$$html .= "<span class='info_text'>$catDescription</span>";
+							}
 
 						$$html .= '</div>';
 					}
@@ -798,7 +817,9 @@ class FrontEndContent{
 		
 		$buttontext			= 'Show';
 		
-		if(empty($hidden)) $buttontext		= 'Hide';
+		if(empty($hidden)){
+			$buttontext		= 'Hide';
+		}
 		
 		?>
 		<button type="button" class="button" id="advancedpublishoptionsbutton" style='display:block; margin-top:15px;'><span><?php echo $buttontext;?></span> advanced options</button>
@@ -811,7 +832,7 @@ class FrontEndContent{
 				$authorId = $this->user->ID;
 			}
 
-			echo SIM\userSelect('Author', $only_adults=true, $families=false, $class='', $id='post_author', $args=[], $userId=$authorId);
+			echo SIM\userSelect('Author', true, false, '', 'post_author', [], $authorId);
 			
 			// Only show publish date if not yet published
 			if(!in_array($this->post->post_status, ['publish', 'inherit'])){
@@ -889,8 +910,10 @@ class FrontEndContent{
 	function storeCustomCategories($post, $taxonomy){
 		$cats = [];
 		if(is_array($_POST[$taxonomy.'_ids'])){
-			foreach($_POST[$taxonomy.'_ids'] as $key=>$catId) {
-				if(is_numeric($catId)) $cats[] = $catId;
+			foreach($_POST[$taxonomy.'_ids'] as $catId) {
+				if(is_numeric($catId)){
+					$cats[] = $catId;
+				}
 			}
 			
 			//Make sure we only send integers
@@ -914,7 +937,7 @@ class FrontEndContent{
 			$status = 'draft';
 		}elseif(empty($status)){
 			if($this->fullrights){
-				if(!isset($_POST['publish_date']) or $_POST['publish_date'] == date('Y-m-d')){
+				if(!isset($_POST['publish_date']) || $_POST['publish_date'] == date('Y-m-d')){
 					$status = 'publish';
 				}else{
 					$status = 'future';
@@ -970,7 +993,9 @@ class FrontEndContent{
 		$categories = [];
 		if(is_array($_POST['category_id'])){
 			foreach($_POST['category_id'] as $categoryId) {
-				if(!empty($categoryId)) $categories[] = $categoryId;
+				if(!empty($categoryId)){
+					$categories[] = $categoryId;
+				}
 			}
 		}
 			
@@ -982,7 +1007,7 @@ class FrontEndContent{
 			$post = get_post($this->postId);
 
 			// Check if this is a post revison
-			if($this->fullrights and $post->post_type == 'change'){
+			if($this->fullrights && $post->post_type == 'change'){
 				// delete revision
 				$delete = wp_delete_post( $this->postId );
 				if ( $delete ) {
@@ -1028,18 +1053,34 @@ class FrontEndContent{
 				$newPostData['post_name'] 	= $postName;
 
 				//attached file
-				if($_POST['post_type'] == 'attachment' and explode('/', $post->post_mime_type)[0] == 'video'){
+				if($_POST['post_type'] == 'attachment' && explode('/', $post->post_mime_type)[0] == 'video'){
 					$newPostData['_wp_attached_file'] 	= $this->postTitle;
 				}
 			}
-			if($postContent != $post->post_content) 		$newPostData['post_content'] 	= $postContent;
-			if($status != $post->post_status)				$newPostData['post_status'] 	= $status;
-			if( $_POST['post_author'] != $post->post_author)$newPostData['post_author']		= $_POST['post_author'];
-			if($_POST['parent_page'] != $post->post_parent)	$newPostData['post_parent'] 	= $_POST['parent_page'];
-			if($categories != $post->post_category)			$newPostData['post_category'] 	= $categories;
+			if($postContent != $post->post_content){
+				$newPostData['post_content'] 	= $postContent;
+			}
+
+			if($status != $post->post_status){
+				$newPostData['post_status'] 	= $status;
+			}
+
+			if( $_POST['post_author'] != $post->post_author){
+				$newPostData['post_author']		= $_POST['post_author'];
+			}
+
+			if($_POST['parent_page'] != $post->post_parent){
+				$newPostData['post_parent'] 	= $_POST['parent_page'];
+			}
+
+			if($categories != $post->post_category){
+				$newPostData['post_category'] 	= $categories;
+			}
 
 			//we cannot change the post type here
-			if($post->post_type != $this->postType and $post->post_type != 'revision') return new WP_Error('frontend_contend', 'You can not change the post type like that!');
+			if($post->post_type != $this->postType && $post->post_type != 'revision'){
+				return new WP_Error('frontend_contend', 'You can not change the post type like that!');
+			}
 			
 			//Create a revision post
 			if($status == 'pending'){
@@ -1065,7 +1106,7 @@ class FrontEndContent{
 				$result = wp_update_post($newPostData, true, false);
 				if(is_wp_error($result)){
 					return new WP_Error('Update failed', $result->get_error_message());
-				}elseif($post->post_status == 'draft' and $status == 'publish'){
+				}elseif($post->post_status == 'draft' && $status == 'publish'){
 					$actionText = 'published';
 				}else{
 					$actionText = 'updated';
@@ -1092,7 +1133,7 @@ class FrontEndContent{
 					$post['post_parent'] = $_POST['parent_page'];
 				}
 			
-				if(count($categories)>0){
+				if(!empty(count($categories))){
 					$post['post_category'] = $categories;
 				}
 
@@ -1155,7 +1196,7 @@ class FrontEndContent{
 			return "Succesfully $actionText the $this->postType, view it <a href='$url'>here</a>";
 		}elseif($status == 'draft'){
 			return "Succesfully $actionText the draft for this $this->postType, preview it <a href='$url'>here</a>";
-		}elseif($_POST['publish_date'] > date('Y-m-d') and $status == 'future'){
+		}elseif($_POST['publish_date'] > date('Y-m-d') && $status == 'future'){
 			return "Succesfully $actionText the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
 		}else{
 			return "Succesfully $actionText the $this->postType, it will be published after it has been reviewed";			

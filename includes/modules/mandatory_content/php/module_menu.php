@@ -6,7 +6,7 @@ const MODULE_VERSION		= '7.0.5';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -22,9 +22,9 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	</p>
 	<?php
 
-},10,2);
+});
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 	
@@ -44,11 +44,13 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	$readReminder    = new ReadReminder(wp_get_current_user());
 	$readReminder->printPlaceholders();
 	$readReminder->printInputs($settings);
-}, 10, 3);
+}, 10, 2);
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $options;
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
 
 	scheduleTasks();
 

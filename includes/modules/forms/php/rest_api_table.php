@@ -339,11 +339,12 @@ function getInputHtml(){
 
 	$elementName	= sanitize_text_field($_POST['fieldname']);
 	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
-		$elementName	= $formTable->formData->settings['split']."[{$_POST['subid']}][$elementName]";
+		$elementIndexedName	= $formTable->formData->settings['split']."[{$_POST['subid']}][$elementName]";
 	}
 	
 	foreach ($formTable->formElements as $element){
-		if(str_replace('[]', '', $element->name) == $elementName){
+		$name	= str_replace('[]', '', $element->name);
+		if($name == $elementName || $name == $elementIndexedName){
 			//Load default values for this element
 			return $formTable->getElementHtml($element);
 		}
@@ -367,9 +368,12 @@ function editValue(){
 	$transValue		= $formTable->transformInputData($newValue, $fieldName);
 	
 	$subId			= $_POST['subid'];
-	//Update the current value
+
+	// If there is a sub id set and this field is not a main field
 	if(is_numeric($subId)){
 		$fieldMainName	= $formTable->formData->settings['split'];
+		//check if this is a main field
+
 		$formTable->formResults[$fieldMainName][$subId][$fieldName]	= $newValue;
 		$message = "Succesfully updated '$fieldName' to $transValue";
 	}else{

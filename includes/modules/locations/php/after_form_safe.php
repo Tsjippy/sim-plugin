@@ -13,7 +13,10 @@ add_action('sim_update_family_picture', function($userId, $attachmentId){
 
     //Save the marker id for all family members
     $partner    = SIM\hasPartner($userId);
-	if(empty($markerId) and $partner)	$markerId = get_user_meta($partner ,"marker_id", true);
+	if(empty($markerId) && $partner){
+        $markerId = get_user_meta($partner ,"marker_id", true);
+    }
+
 	SIM\updateFamilyMeta( $userId, "marker_id", $markerId);
 }, 10, 2);
 
@@ -47,7 +50,9 @@ add_action('sim_location_update', function($userId, $location){
         $markerIconId = $wpdb->get_var($query);
         
         //Set the marker_id to null if not found in the db
-        if($markerIconId == null) $markerId = null;
+        if($markerIconId == null){
+            $markerId = null;
+        }
     }
 
     $maps   = new Maps();
@@ -72,18 +77,20 @@ add_action('sim_location_removal', function($userId){
 
 // Update marker icon when family picture is changed
 add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
-	if($formName != 'profile_picture') return $formResults;	
+	if($formName != 'profile_picture'){
+        return $formResults;	
+    }
 	
 	$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
 	$family				= get_user_meta($userId, 'family', true);
     $maps               = new Maps();
 	
 	//update a marker icon only if privacy allows and no family picture is set
-	if (empty($privacyPreference['hide_profile_picture']) and !is_numeric($family['picture'][0])){
-		$markerId = get_user_meta($userId,"marker_id",true);
+	if (empty($privacyPreference['hide_profile_picture']) && !is_numeric($family['picture'][0])){
+		$markerId = get_user_meta($userId, "marker_id", true);
 		
 		//New profile picture is set, update the marker icon
-		if(is_numeric(get_user_meta($userId,'profile_picture',true))){
+		if(is_numeric(get_user_meta($userId, 'profile_picture', true))){
 			$icon_url = SIM\USERMANAGEMENT\getProfilePictureUrl($userId);
 			
 			//Save profile picture as icon

@@ -4,7 +4,9 @@ use SIM;
 
 function sendPendingPostWarning($post, $update){	
 	//Do not continue if already send
-	if(get_post_meta($post->ID, 'pending_notification_send',true) != '') return;
+	if(!empty(get_post_meta($post->ID, 'pending_notification_send', true))){
+		return;
+	}
 	
 	//get all the content managers
 	$users = get_users( array(
@@ -45,7 +47,7 @@ function sendPendingPostWarning($post, $update){
 
 //Delete the indicator that the warning has been send
 add_action(  'transition_post_status',  function ( $newStatus, $oldStatus, $post ) {
-	if ($newStatus == 'publish' and $oldStatus == 'pending'){
+	if ($newStatus == 'publish' && $oldStatus == 'pending'){
 		delete_post_meta($post->ID,'pending_notification_send');
 	}
 }, 10, 3 );
@@ -63,7 +65,7 @@ function add_page_edit_button(){
 	$content = get_the_content();
 	
 	//Only show if logged in and not already on the post edit page and it is a single page, not a archive page
-	if (is_user_logged_in() and strpos($content,'[front_end_post]') === false and is_singular() and !is_tax()){
+	if (is_user_logged_in() && strpos($content,'[front_end_post]') === false && is_singular() && !is_tax()){
 		global $post;
 		
 		$user = wp_get_current_user();
@@ -74,7 +76,7 @@ function add_page_edit_button(){
 		$ministries 		= get_user_meta($userId, "user_ministries", true);
 		
 		//This is a draft
-		if(isset($_GET['p']) or isset($_GET['page_id'])){
+		if(isset($_GET['p']) || isset($_GET['page_id'])){
 			if(isset($_GET['p'])){
 				$postId 		= $_GET['p'];
 			}else{
@@ -94,17 +96,19 @@ function add_page_edit_button(){
 			
 		//Add an edit page button if this page a page describing a ministry this person is working for or a comound an user lives on, or the personal page
 		if (
-			$postAuthor == $user->display_name 													or 
-			isset($ministries[str_replace(" ", "_", $postTitle)])								or 
-			$userPageId == $postId																or
-			apply_filters('sim_frontend_content_edit_rights', false, $postCategory) == true		or
+			$postAuthor == $user->display_name 													|| 
+			isset($ministries[str_replace(" ", "_", $postTitle)])								|| 
+			$userPageId == $postId																||
+			apply_filters('sim_frontend_content_edit_rights', false, $postCategory)				||
 			in_array('editor', $user->roles)
 		){
 			$type = $post->post_type;
 			$buttonText = "Edit this $type";
 			
 			$url	= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting', 'publish_post_page'));
-			if(!$url) return;
+			if(!$url){
+				return;
+			}
 			$url = add_query_arg( ['post_id' => $postId], $url );
 			echo "<a href='$url' class='button sim' id='pageedit'>$buttonText</a>";
 		}

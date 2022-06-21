@@ -94,7 +94,7 @@ class Maps{
 		global $wpdb;
 		
 		//remove the map
-		$result = $wpdb->delete( $this->mapTable, array( 'id' => $mapId ) );
+		$wpdb->delete( $this->mapTable, array( 'id' => $mapId ) );
 		
 		//Remove all markers on this map
 		$query 		= $wpdb->prepare("SELECT id FROM {$this->markerTable} WHERE map_id = %d ", $mapId);
@@ -121,9 +121,9 @@ class Maps{
 		
 		if($result == null){
 			return false;
-		}else{
-			return true;
 		}
+
+		return true;
 	}
 	
 	/**
@@ -136,16 +136,18 @@ class Maps{
 	function createUserMarker($userId, $location){
 		global $wpdb;
 		
-		if(!empty($location['latitude']) and !empty($location['longitude'])){
+		if(!empty($location['latitude']) && !empty($location['longitude'])){
 			$userdata = get_userdata($userId);
 			
 			$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
 			
 			//Do not continue if privacy dictates so
-			if($privacyPreference == "show_none") return;
+			if($privacyPreference == "show_none"){
+				return;
+			}
 			
 			$family = SIM\familyFlatArray($userId);
-			if (count($family)>0){
+			if (!empty($family)){
 				$title = $userdata->last_name . " family";
 			}else{
 				$title = $userdata->display_name;
@@ -154,7 +156,7 @@ class Maps{
 			//Add the profile picture to the marker description if it is set, and allowed by privacy
 			if (empty($privacyPreference['hide_profile_picture'])){
 				$loginName = $userdata->user_login;
-				if ( is_numeric(get_user_meta($userId,'profile_picture',true)) and function_exists('SIM\USERMANAGEMENT\getProfilePictureUrl')) {
+				if ( is_numeric(get_user_meta($userId,'profile_picture',true)) && function_exists('SIM\USERMANAGEMENT\getProfilePictureUrl')) {
 					$iconUrl = SIM\USERMANAGEMENT\getProfilePictureUrl($userId, 'thumbnail');
 				}else{
 					$iconUrl = "";
@@ -199,7 +201,7 @@ class Maps{
 	function updateMarkerLocation($markerId, $location){
 		global $wpdb;
 		
-		if(is_numeric($markerId) and is_array($location) and !empty($location['latitude']) and !empty($location['longitude'])){
+		if(is_numeric($markerId) && is_array($location) && !empty($location['latitude']) && !empty($location['longitude'])){
 			//Update the marker
 			$wpdb->update($this->markerTable, 
 				array(
@@ -243,7 +245,7 @@ class Maps{
 		$this->removeIcon($markerId);
 		
 		$result = $wpdb->delete( $this->markerTable, array( 'id' => $markerId ) );
-		if($result != false){
+		if($result){
 			SIM\printArray("Removed the marker with id $markerId");
 		}
 	}
@@ -350,14 +352,14 @@ class Maps{
 		//check if an icon with this title exist
 		$icon	 	= $wpdb->get_results($iconQuery);
 
-		if(!empty($icon) and $icon[0]->path == $url){
+		if(!empty($icon) && $icon[0]->path == $url){
 			//no update needed
 			return $icon->id;
 		}
 		
 		//Marker icon is still the default and there is no icon with this id
 		//Potentially the profile image of the partner is used
-		if($currentMarkerIconId == $defaultId and empty($icon)){
+		if($currentMarkerIconId == $defaultId && empty($icon)){
 			//Create new icon if there is an icon url
 			if ( $url != "") {
 				//Insert picture as icon in the database
@@ -374,13 +376,13 @@ class Maps{
 				$iconId = $wpdb->insert_id;
 				
 				//Update the marker to use the new icon
-				$updated = $wpdb->update($this->markerTable, 
+				$wpdb->update($this->markerTable, 
 					array( 'icon' 	=> $iconId, ), 
 					array( 'id' 	=> $markerId),
 				);
 			}else{
 				//No icon url, use default icon
-				$icon_id = $defaultId;
+				$iconId = $defaultId;
 			}
 		//Only update if there is an icon url
 		}elseif(!empty($url)){

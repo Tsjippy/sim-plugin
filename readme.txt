@@ -63,6 +63,7 @@ Here to summarize the solution for remote debugging iOS devices > iOS 11:
     Install Node.js
 
     Download the most recent ZIP release file of the remotedebug-ios-webkit-adapter
+    https://github.com/google/ios-webkit-debug-proxy/releases
 
     Create a new folder named "ios-webkit-debug-proxy-1.8.8-win64-bin" at the following location (assumes you installed Node.js in the default directory):
 
@@ -76,7 +77,7 @@ Here to summarize the solution for remote debugging iOS devices > iOS 11:
 
     Open the file from the following location: %AppData%\npm\node_modules\remotedebug-ios-webkit-adapter\out\adapters\iosAdapter.js
 
-On line 125ff., change the proxy variable to the following value (path to the ois_webkit_debug_proxy.exe):
+On line 123., change the proxy variable to the following value (path to the ois_webkit_debug_proxy.exe):
 
 const proxy = path.resolve(__dirname, '../../node_modules/vs-libimobile/ios-webkit-debug-proxy-1.8.8-win64-bin/ios_webkit_debug_proxy.exe');
 

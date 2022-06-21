@@ -40,11 +40,15 @@ add_shortcode('your_posts',function(){
 			$title 		= $post->post_title;
 			
 			$status		= ucfirst($post->post_status);
-			if($status == 'Publish') $status = 'Published';
+			if($status == 'Publish'){
+				$status = 'Published';
+			}
 			
 			$url 		= get_permalink($post);
 			$editUrl	= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting','publish_post_page'));
-			if(!$editUrl) $editUrl = '';
+			if(!$editUrl){
+				$editUrl = '';
+			}
 			$editUrl 	= add_query_arg( ['post_id' => $post->ID], $editUrl);
 			if($post->post_status == 'publish'){
 				$view = 'View';
@@ -67,7 +71,7 @@ add_shortcode('your_posts',function(){
 });
 
 //Shortcode to display all pages and post who are pending
-add_shortcode("pending_pages", function ($atts){
+add_shortcode("pending_pages", function (){
 	//Get all the posts with a pending status
 	$pendingPosts 	= get_posts( 
 		array(
@@ -88,7 +92,9 @@ add_shortcode("pending_pages", function ($atts){
 	);
 
 	$url			= SIM\getValidPageLink(SIM\getModuleOption('frontend_posting', 'publish_post_page'));
-	if(!$url)	return;
+	if(!$url){
+		return '';
+	}
 
 	$html='';
 	//Only if there are any pending posts
@@ -119,13 +125,15 @@ add_shortcode("pending_pages", function ($atts){
 		$html .= "</ul>";
 	}
 
-	if(!empty($html))	return "<p>$html</p>";
+	if(!empty($html)){
+		return "<p>$html</p>";
+	}
 	
 	return "<p>No pending posts or pages found</p>";
 });
 
 //Shortcode to display number of pending posts and pages
-add_shortcode('pending_post_icon', function ($atts){
+add_shortcode('pending_post_icon', function (){
 	//Get all the posts with a pending status
 	$pendingPosts 	= get_posts( 
 		array(
@@ -144,7 +152,7 @@ add_shortcode('pending_post_icon', function ($atts){
 		)
 	);
 
-	if ( $pendingPosts or $pendingRevisions) {
+	if ( $pendingPosts || $pendingRevisions) {
 		$pendingTotal = count($pendingPosts) + count($pendingRevisions);
 		return "<span class='numberCircle'>$pendingTotal</span>";
 	}

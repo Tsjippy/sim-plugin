@@ -8,7 +8,9 @@ add_action('init', function(){
 
 //Add a map when a location category is added
 add_action('sim_after_category_add', function($postType, $name, $result){
-	if($postType != 'location') return;
+	if($postType != 'location'){
+		return;
+	}
 	global $Modules;
 
 	$Maps		= new Maps();
@@ -24,23 +26,21 @@ add_action('sim_after_category_add', function($postType, $name, $result){
 
 add_filter(
 	'widget_categories_args',
-	function ( $catArgs, $instance  ) {
+	function ( $catArgs ) {
 		//if we are on a locations page, change to display the location types
-		if(is_tax('locations') or is_page('location') or get_post_type()=='location'){
+		if(is_tax('locations') || is_page('location') || get_post_type()=='location'){
 			$catArgs['taxonomy'] 		= 'locations';
 			$catArgs['hierarchical']	= true;
-			$catArgs['hide_empty'] 	= false;
+			$catArgs['hide_empty'] 		= false;
 		}
 		
 		return $catArgs;
-	},
-	10, 
-	2 
+	}
 );
 
-add_filter('widget_title', function ($title, $widget_id=null){
+add_filter('widget_title', function ($title, $widgetId=null){
 	//Change the title of the location category widget if not logged in
-	if(is_tax('locations') and $widget_id == 'categories' and !is_user_logged_in()){
+	if(is_tax('locations') && $widgetId == 'categories' && !is_user_logged_in()){
 		$url = SITEURL.'/locations/ministry/';
 		return "<a href='$url'>Ministries</a>";
 	}
@@ -63,7 +63,7 @@ function ministryDescription($postId){
 	);
 	$childPages 		= get_children( $args, ARRAY_A);
 	$childPageHtml 	= "";
-	if ($childPages  != false){
+	if ($childPages){
 		$childPageHtml .= "<p><strong>Some of our $ministry are:</strong></p><ul>";
 		foreach($childPages as $childPage){
 			$childPageHtml .= '<li><a href="'.$childPage['guid'].'">'.$childPage['post_title']."</a></li>";
@@ -74,7 +74,7 @@ function ministryDescription($postId){
 	$html		.= getLocationEmployees($ministry);
 	$latitude 	= get_post_meta($postId,'geo_latitude',true);
 	$longitude 	= get_post_meta($postId,'geo_longitude',true);
-	if ($latitude != "" and $longitude != ""){
+	if (!empty($latitude) && !empty($longitude)){
 		$html .= "<p><a class='button' onclick='Main.getRoute(this,$latitude,$longitude)'>Get directions to $ministry</a></p>";
 	}
 	

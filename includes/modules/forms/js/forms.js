@@ -413,7 +413,7 @@ export function nextPrev(n) {
 	showTab(currentTab,form);
 }
 
-export function getFieldValue(orgName, checkDatalist=true, compareValue=null, lowercase=false){
+export function getFieldValue(orgName, form, checkDatalist=true, compareValue=null, lowercase=false){
 	//name is not a name but a node
 	if(orgName instanceof Element){
 		var el			= orgName;		
@@ -507,7 +507,7 @@ export function getFieldValue(orgName, checkDatalist=true, compareValue=null, lo
 	}
 }
 
-export function changeFieldValue(orgName, value, function_ref){
+export function changeFieldValue(orgName, value, functionRef){
 	if(orgName instanceof Element){
 		var name	= orgName.name;
 		var target	= orgName;
@@ -550,11 +550,10 @@ export function changeFieldValue(orgName, value, function_ref){
 	target.dispatchEvent(evt);
 	
 	//run the originating function with this event
-	//window[arguments.callee.caller.name](target);
-	function_ref(target);
+	functionRef(target);
 }
 
-export function changeFieldProperty(name, att, value){
+export function changeFieldProperty(name, att, value, functionRef){
 	//first change the value
 	var target = form.querySelector(`[name="${name}" i]`);
 	
@@ -562,10 +561,12 @@ export function changeFieldProperty(name, att, value){
 	
 	//create a new event
 	var evt = new Event('input');
+
 	//attach the target
 	target.dispatchEvent(evt);
+
 	//run the originating function with this event
-	function_ref(target);
+	functionRef(target);
 }
 
 //Main code

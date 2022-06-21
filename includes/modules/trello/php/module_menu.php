@@ -6,7 +6,7 @@ const MODULE_VERSION		= '7.0.0';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
+add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -19,7 +19,7 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 
 },10,2);
 
-add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
+add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
@@ -39,7 +39,7 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 	</label>
 	<br>
 	<?php
-	if(isset($settings["key"]) and isset($settings["token"]) and strpos(SITEURL, 'localhost') === false){
+	if(isset($settings["key"]) && isset($settings["token"]) && strpos(SITEURL, 'localhost') === false){
 		?>
 		<label>
 			Trello board you want listen to
@@ -59,11 +59,13 @@ add_action('sim_submenu_options', function($moduleSlug, $moduleName, $settings){
 		</select>
 		<?php
 	}
-}, 10, 3);
+}, 10, 2);
 
 add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != basename(dirname(dirname(__FILE__))))	return $newOptions;
+	if($moduleSlug != MODULE_SLUG){
+		return $newOptions;
+	}
 
 	//Trello token has changed
 	if($oldOptions['token'] != $newOptions['token']){
