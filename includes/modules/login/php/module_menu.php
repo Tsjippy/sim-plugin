@@ -2,12 +2,31 @@
 namespace SIM\LOGIN;
 use SIM;
 
-const MODULE_VERSION		= '7.0.10';
+const MODULE_VERSION		= '7.0.12';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
 add_action('sim_submenu_description', function($moduleSlug){
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
+	$menus			= wp_get_nav_menus();
+	$menuLocations	= get_nav_menu_locations();
+	$menuActivated	= false;
+
+	// loop over all menus
+	foreach ( (array) $menus as $menu ) {
+		// check if this menu has a location
+		if ( array_search( $menu->term_id, $menuLocations ) ) {
+			$menuActivated	= true;
+		}
+	}
+
+	if(!$menuActivated){
+		echo "<div class='error'>";
+			echo "<br>You have no active menu, please activate one to have login and logout menu items<br><br>";
+		echo "</div>";
+	}
 
 	?>
 	<p>
@@ -120,8 +139,9 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	<br>
 	<br>
 
-	<input type='hidden' name='password_reset_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'password_reset_page');?>'>
-	<input type='hidden' name='register_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'register_page');?>'>
+	<input type='hidden' name='password_reset_page' value='<?php echo $settings['password_reset_page'];?>'>
+	<input type='hidden' name='register_page' value='<?php echo $settings['register_page'];?>'>
+	<input type='hidden' name='2fa_page' value='<?php echo $settings['2fa_page'];?>'>
 	<?php
 }, 10, 2);
 
@@ -131,7 +151,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 		return $newOptions;
 	}
 
-	$public_cat	= get_cat_ID('Public');
+	$publicCat	= get_cat_ID('Public');
 
 	// Create password reset page
 	$pageId	= SIM\getModuleOption($moduleSlug, 'password_reset_page');
@@ -143,7 +163,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 			'post_content'  => '[change_password]',
 			'post_status'   => "publish",
 			'post_author'   => '1',
-			'post_category'	=> [$public_cat]
+			'post_category'	=> [$publicCat]
 		);
 		$pageId 	= wp_insert_post( $post, true, false);
 
@@ -151,7 +171,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 		$newOptions['password_reset_page']	= $pageId;
 
 		// Do not require page updates
-		update_post_meta($pageId,'static_content', true);
+		update_post_meta($pageId, 'static_content', true);
 	}
 
 	// Add registration page
@@ -166,7 +186,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 				'post_content'  => '[request_account]',
 				'post_status'   => "publish",
 				'post_author'   => '1',
-				'post_category'	=> [$public_cat]
+				'post_category'	=> [$publicCat]
 			);
 			$pageId 	= wp_insert_post( $post, true, false);
 
@@ -195,7 +215,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 		$newOptions['2fa_page']	= $pageId;
 
 		// Do not require page updates
-		update_post_meta($pageId,'static_content', true);
+		update_post_meta($pageId, 'static_content', true);
 	}
 
 	// Remove registration page

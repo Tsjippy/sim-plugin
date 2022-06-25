@@ -40,32 +40,43 @@ function getAllFields($userId, $type){
 		foreach($fields as $field){
 			//check if this field applies to this user
 			$warningCondition	= maybe_unserialize($field->warning_conditions);
-			SIM\cleanUpNestedArray($warningCondition, true);
 			if(is_array($warningCondition)){
+				SIM\cleanUpNestedArray($warningCondition, true);
 				$skip	= false;
 
 				foreach($warningCondition as $check){
 					$value		= get_user_meta($userId, $check['meta_key'], true);
+
 					if(!empty($check['meta_key_index'])){
-						$value		= $value[$check['meta_key_index']];
+						if(isset($value[$check['meta_key_index']])){
+							$value		= $value[$check['meta_key_index']];
+						}else{
+							$value		= '';
+						}
 					}
 
 					if(is_array($value) && isset($value[0])){
 						$value	= $value[0];
 					}
 
+					if(isset($check['conditional_value'])){
+						$checkValue	= $check['conditional_value'];
+					}else{
+						$checkValue	= '';
+					}
+
 					switch($check['equation']){
 						case '==':
-							$result	= $value == $check['conditional_value'];
+							$result	= $value == $checkValue;
 							break;
 						case '!=':
-							$result	= $value != $check['conditional_value'];
+							$result	= $value != $checkValue;
 							break;
 						case '>':
-							$result	= $value > $check['conditional_value'];
+							$result	= $value > $checkValue;
 							break;
 						case '<':
-							$result	= $value < $check['conditional_value'];
+							$result	= $value < $checkValue;
 							break;
 						default:
 							$result = false;
@@ -75,7 +86,7 @@ function getAllFields($userId, $type){
 					if($result){
 						$skip = true;
 						//break this loop when when already know we should skip this field
-						if($check['combinator'] == 'or'){
+						if(!empty($check['combinator']) && $check['combinator'] == 'or'){
 							break;
 						}
 					}else{
@@ -83,7 +94,7 @@ function getAllFields($userId, $type){
 					}
 				}
 				
-				//if we should check the next on
+				//if we should check the next one
 				if($skip ){
 					continue;
 				}
@@ -104,7 +115,7 @@ function getAllFields($userId, $type){
 				}else{
 					$query				= "SELECT * FROM {$formBuilder->tableName} WHERE `id`={$field->form_id}";
 					$form				= $wpdb->get_results($query)[0];
-					$formUrl			= maybe_unserialize($form->settings)['formnurl'];
+					$formUrl			= maybe_unserialize($form->settings)['formurl'];
 
 					//save in cache
 					$formUrls[$field->form_id]	= $formUrl;

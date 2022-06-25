@@ -1,5 +1,7 @@
 <?php
 namespace SIM;
+
+use SIM\FORMS\Formbuilder;
 use SMTPValidateEmail\Validator as SmtpEmailValidator;
 
 //Shortcode for testing
@@ -31,5 +33,7 @@ add_shortcode("test",function ($atts){
 	//$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_email_events` ADD `url` TEXT NOT NULL AFTER `time`;"); 
 	//$wpdb->query("DROP TABLE `{$wpdb->prefix}sim_emails`");
 
+	$formbuilder	= new Formbuilder();
+	$formbuilder->exportForm(15);
 	return '';
 });

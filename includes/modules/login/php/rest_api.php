@@ -96,15 +96,7 @@ add_action( 'rest_api_init', function () {
 		'/request_email_code', 
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> function(){
-                $username   = sanitize_text_field($_POST['username']);
-                $user       = get_user_by('login', $username);
-                if($user){
-                    sendEmailCode($user);
-
-                    return "E-mail send to ".$user->user_email;
-                }
-            },
+			'callback' 				=>  __NAMESPACE__.'\requestEmailCode',
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'username'		=> array(
@@ -158,13 +150,7 @@ add_action( 'rest_api_init', function () {
 		'/remove_web_authenticator', 
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> function(){
-                $key        = sanitize_text_field($_POST['key']);
-                $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository(wp_get_current_user());
-                $publicKeyCredentialSourceRepository->removeCredential($key);
-
-                return 'Succesfull removed the authenticator';
-            },
+			'callback' 				=> __NAMESPACE__.'\removeWebAuthenticator',
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
                 'key'		=> array(
@@ -268,6 +254,31 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 });
+
+function requestEmailCode(){
+    $username   = sanitize_text_field($_POST['username']);
+    if(is_numeric($username)){
+        $user       = get_user_by('id', $username);
+    }else{
+        $user       = get_user_by('login', $username);
+    }
+
+    if($user){
+        sendEmailCode($user);
+
+        return "E-mail send to ".$user->user_email;
+    }else{
+        return new WP_Error('login', 'Invalid username given');
+    }
+}
+
+function removeWebAuthenticator(){
+    $key        = sanitize_text_field($_POST['key']);
+    $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository(wp_get_current_user());
+    $publicKeyCredentialSourceRepository->removeCredential($key);
+
+    return 'Succesfull removed the authenticator';
+}
 
 // Bind an authenticator
 function biometricOptions(){
@@ -690,20 +701,25 @@ function saveTwoFaSettings(){
 
     //we just enabled email verification
     if(in_array('email', $newMethods) && !in_array('email', $oldMethods)){
-        $userdata   = get_userdata($userId);
+        // verify the code
+        if(verifyEmailCode()){
+            $userdata   = get_userdata($userId);
 
-        SIM\trySendSignal(
-            "Hi ".$userdata->first_name.",\n\nYou have succesfully setup e-mail verification on ".SITENAME,
-            $userId
-        );
+            SIM\trySendSignal(
+                "Hi ".$userdata->first_name.",\n\nYou have succesfully setup e-mail verification on ".SITENAME,
+                $userId
+            );
 
-        //Send e-mail
-        $emailVerfEnabled    = new EmailVerfEnabled($userdata);
-	    $emailVerfEnabled->filterMail();
-						
-	    wp_mail( $userdata->user_email, $emailVerfEnabled->subject, $emailVerfEnabled->message);
+            //Send e-mail
+            $emailVerfEnabled    = new EmailVerfEnabled($userdata);
+            $emailVerfEnabled->filterMail();
+                            
+            wp_mail( $userdata->user_email, $emailVerfEnabled->subject, $emailVerfEnabled->message);
 
-        $message    = 'Enabled e-mail verification';
+            $message    = 'Enabled e-mail verification';
+        }else{
+            return new WP_Error('login', 'Invalid e-mail code');
+        }
     }
 
     //make sure we keep webauthn enabled

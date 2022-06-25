@@ -13,7 +13,7 @@ add_action('wp_footer', function(){
 	$taxonomy			= get_post_taxonomies()[0];
 
 	$public				= false;
-	foreach(get_the_terms($post, $taxonomy) as $term){
+	foreach((array)get_the_terms($post, $taxonomy) as $term){
 		if($term->slug	== 'public'){
 			$public	= true;
 			break;
@@ -67,6 +67,11 @@ add_action('wp_footer', function(){
 
 //Make sure is_user_logged_in function is available by only running this when init
 add_action('init', function (){
+	// do not run during rest request
+    if(SIM\isRestApiRequest()){
+        return;
+    }
+	
 	//Function to only show newsittems on the news page the user is allowed to see
 	add_action( 'pre_get_posts', function ( $query ) {
 		if ( $query->is_home() && $query->is_main_query() ) {

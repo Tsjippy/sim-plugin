@@ -44,6 +44,10 @@ add_action( 'rest_api_init', function () {
 				'elementindex'		=> array(
 					'required'	=> true,
 					'validate_callback' => 'is_numeric'
+				),
+				'formid'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
 				)
 			)
 		)
@@ -226,6 +230,7 @@ function addFormElement(){
 	global $wpdb;
 
 	$formBuilder	= new Formbuilder();
+	$formBuilder->getForm($_POST['formid']);
 
 	//Store form results if submitted
 	$element		= (object)$_POST["formfield"];
@@ -259,7 +264,7 @@ function addFormElement(){
 	if(
 		in_array($element->type, $formBuilder->nonInputs) 		&& // this is a non-input
 		$element->type != 'datalist'							&& // but not a datalist
-		strpos($element->name,$element->type) === false				// and the type is not yet added to the name 
+		strpos($element->name, $element->type) === false				// and the type is not yet added to the name 
 	){
 		$element->name	.= '_'.$element->type;
 	}
@@ -278,7 +283,7 @@ function addFormElement(){
 			
 			$unique = true;
 			//loop over all elements to check if the names are equal
-			foreach($formBuilder->formData->elements as $index=>$element){
+			foreach($formBuilder->formElements as $index=>$element){
 				//don't compare with itself
 				if($update && $index == $_POST['element_id']){
 					continue;
@@ -346,7 +351,7 @@ function removeElement(){
 
 	$formBuilder	= new Formbuilder();
 
-	$elementId	= $_POST['elementindex'];
+	$elementId		= $_POST['elementindex'];
 
 	$wpdb->delete(
 		$formBuilder->elTableName,      
@@ -355,7 +360,7 @@ function removeElement(){
 
 	// Fix priorities
 	// Get all elements of this form
-	$formBuilder->getAllFormElements('priority');
+	$formBuilder->getAllFormElements('priority', $_POST['formid']);
 	
 	//Loop over all elements and give them the new priority
 	foreach($formBuilder->formElements as $key=>$el){
@@ -386,7 +391,7 @@ function requestFormElement(){
 	$formId 				= $_POST['formid'];
 	$elementId 				= $_POST['elementid'];
 	
-	$formBuilder->loadFormData($formId);
+	$formBuilder->getForm($formId);
 	
 	$conditionForm			= $formBuilder->elementConditionsForm($elementId);
 
@@ -405,7 +410,7 @@ function reorderFormElements(){
 	$oldIndex 	= $_POST['old_index'];
 	$newIndex	= $_POST['new_index'];
 	
-	$formBuilder->reorderElements($oldIndex, $newIndex, '');
+	$formBuilder->reorderElements($oldIndex, $newIndex, '', $_POST['formid']);
 	
 	return "Succesfully saved new form order";
 }
@@ -431,7 +436,7 @@ function requestFormConditionsHtml(){
 
 	$elementID = $_POST['elementid'];
 	
-	$formBuilder->loadFormData($_POST['formid']);
+	$formBuilder->getForm($_POST['formid']);
 	
 	return $formBuilder->elementConditionsForm($elementID);
 }
@@ -443,7 +448,7 @@ function saveElementConditions(){
 	$elementID 		= $_POST['elementid'];
 	$formID			= $_POST['formid'];
 	
-	$formBuilder->loadFormData($formID);
+	$formBuilder->getForm($formID);
 	
 	$element = $formBuilder->getElementById($elementID);
 	
@@ -477,7 +482,7 @@ function saveFormSettings(){
 
 	global $wpdb;
 	
-	$formBuilder->loadFormData($_POST['formid']);
+	$formBuilder->getForm($_POST['formid']);
 	
 	$formSettings = $_POST['settings'];
 	
@@ -507,9 +512,9 @@ function saveFormInput(){
 
 	$formBuilder	= new Formbuilder();
 
-	$formId		= $_POST['formid'];
+	$formId			= $_POST['formid'];
 	
-	$formBuilder->loadFormData($formId);
+	$formBuilder->getForm($formId);
 	
 	$formBuilder->userId	= 0;
 	if(is_numeric($_POST['userid'])){
@@ -628,7 +633,7 @@ function saveFormEmails(){
 		
 	global $wpdb;
 	
-	$formBuilder->loadFormData($_POST['formid']);
+	$formBuilder->getForm($_POST['formid']);
 	
 	$formEmails = $_POST['emails'];
 	

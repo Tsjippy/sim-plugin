@@ -8,9 +8,10 @@ add_action('init', function(){
 		$formBuilder	= new Formbuilder();
 
 		//Add extra variables to the main.js script
-		wp_localize_script( 'sim_script', 
-			'form_select', 
-			$formBuilder->formSelect()
+		wp_localize_script(
+			'sim_script', 
+			'formSelect', 
+			[$formBuilder->formSelect()]
 		);
 
 		$plugins['insert_form_shortcode']		= plugins_url("js/tiny_mce.js?ver=".MODULE_VERSION, __DIR__);

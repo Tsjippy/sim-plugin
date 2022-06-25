@@ -39,8 +39,10 @@ document.addEventListener('click', ev=>{
     const target    = ev.target;
 
     if(target.name == "disable_useraccount"){	
+		ev.preventDefault();
         disableUserAccount(target);
     }else if(target.name == 'updateroles'){
+		ev.preventDefault();
         updateUserRoles(target);
     }else if(target.name == 'extend_validity'){
         extendValidity(target);

@@ -16,13 +16,18 @@ function twoFaSettingsForm($userId=''){
 	if(!isset($_SESSION)){
 		session_start();
 	}
-	$publicKeyCredentialId	= $_SESSION["webautn_id"];
+
+	if(!empty($_SESSION["webautn_id"])){
+		$publicKeyCredentialId	= $_SESSION["webautn_id"];
+	}else{
+		$publicKeyCredentialId	= null;
+	}
 
 	ob_start();
 	$twoFaMethods	= (array)get_user_meta($userId, '2fa_methods', true);
 	SIM\cleanUpNestedArray($twoFaMethods);
 
-	if($_GET['redirected']){
+	if(!empty($_GET['redirected'])){
 		?>
 		<div class='error'>
 			<p style='border-left: 4px solid #bd2919;padding: 5px;'>
@@ -99,10 +104,18 @@ function twoFaSettingsForm($userId=''){
 			<p>Not sure what to do? Check the <a href="<?php echo SITEURL;?>'/manuals/">manuals!</a></p>
 		</div>
 		<div id='setup-email' class='twofa_option hidden'>
+			<input type='hidden' id='username' value='<?php echo $userId;?>'>
 			<p>
-				E-mail verification will be enabled for your account as soon as you click the 'Save 2fa settings' button<br>
-				E-mails will be send to <code><?php echo get_userdata($userId)->user_email;?></code>.<br>
+				Click the button below to enable e-mail verification <br>
+				You will receive an e-mail on <code><?php echo get_userdata($userId)->user_email;?></code>.<br>
+				Copy the code from that e-mail.<br>
+				<button type='button' class='button small' id='email-code-button'>E-mail the code</button>
+				<div id='email-message'></div>
 			</p>
+			<label id='email-code-validation' class='hidden'>
+				Insert the code e-mailed to you here.<br>
+				<input type='text' name='email_code' required>
+			</label>
 		</div>
 		<?php
 		echo SIM\addSaveButton('save2fa',"Save 2fa settings", 'hidden');

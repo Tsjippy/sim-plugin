@@ -9,6 +9,18 @@ class Maps{
 		$this->mapTable		= $wpdb->prefix .'ums_maps';
 		$this->markerTable	= $wpdb->prefix .'ums_markers';
 	}
+
+	/**
+	 * Function to retrive all maps from the db
+	 * 
+	 * @return	array		array of map objects
+	 */
+	function getMaps($where=1){
+		global $wpdb;
+
+		$query = "SELECT  `id`,`title` FROM `$this->mapTable` WHERE $where ORDER BY `title` ASC";
+		return $wpdb->get_results($query);
+	}
 	
 	/**
 	 * 
@@ -175,7 +187,7 @@ class Maps{
 				'coord_x'		=> $location['latitude'],
 				'coord_y'		=> $location['longitude'],
 				'icon'			=> $IconId,
-				'map_id'		=> SIM\getModuleOption('locations', 'missionariesmapid')
+				'map_id'		=> SIM\getModuleOption('locations', 'users_map_id')
 			));
 			
 			//Get the marker id

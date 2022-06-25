@@ -219,11 +219,16 @@ add_filter( 'authenticate', function ( $user) {
 }, 40); 
 
 //Redirect to 2fa page if not setup
-add_action('wp_footer', function(){
+add_action('init', function(){
+    // do not run during rest request
+    if(SIM\isRestApiRequest()){
+        return;
+    }
+
     $user		= wp_get_current_user();
 
     //If 2fa not enabled and we are not on the account page
-    $methods	= get_user_meta($user->ID,'2fa_methods',true);
+    $methods	= get_user_meta($user->ID, '2fa_methods', true);
     if(!isset($_SESSION)){
         session_start();
     }

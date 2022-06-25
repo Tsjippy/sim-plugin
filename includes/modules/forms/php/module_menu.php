@@ -10,6 +10,11 @@ add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
+	if(isset($_POST['import-form'])){
+		$formBuilder	= new FormBuilder();
+		$formBuilder->importForm($_FILES['formfile']['tmp_name']);
+	}
+
 	?>
 	<p>
 		This module adds 4 shortcodes:<br>
@@ -46,6 +51,21 @@ add_action('sim_submenu_description', function($moduleSlug){
 		The type should be 'all', 'mandatory' or 'recommended'.<br>
 		Use like this: <code>[missing_form_fields type="recommended"]</code>
 	</p>
+
+	<h4>Form import</h4>
+	<p>
+		It is possible to import forms exported from this plugin previously.<br>
+		Use the button below to do so.
+	</p>
+	<form method='POST' enctype="multipart/form-data">
+		<label>
+			Select a form export file
+			<input type='file' name='formfile'>
+		</label>
+		<br>
+		<button type='submit' name='import-form'>Import the form</button>
+	</form>
+	<br><br>
 	<?php
 
 });
@@ -76,7 +96,13 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG){
+		return;
+	}
+
+	if(!class_exists(__NAMESPACE__.'\AdultEmail')){
+		require_once(__DIR__.'/class_Emails.php');
+	}
 
 	?>
 	<label for="reminder_freq">How often should people be reminded of remaining form fields to fill?</label>

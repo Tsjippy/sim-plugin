@@ -293,7 +293,7 @@ add_action ( 'wp_ajax_upload_files', function (){
 add_action( 'rest_api_init', function () {	
 	//Route for first names
 	register_rest_route( 
-		'sim/v1/', 
+		'sim/v1', 
 		'/remove_document', 
 		array(
 			'methods'				=> 'POST',

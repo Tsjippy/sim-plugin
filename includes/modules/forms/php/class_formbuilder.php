@@ -25,6 +25,7 @@ class Formbuilder{
 		$this->userRoles				= $this->user->roles;
 		$this->userId					= $this->user->ID;
 		$this->pageSize					= 100;
+		$this->multiwrap				= '';
 
 		//calculate full form rights
 		if(array_intersect(['editor'], $this->userRoles)){
@@ -49,9 +50,9 @@ class Formbuilder{
 		
 		$html = "<select name='form_selector'>";
 			$html .= "<option value=''>---</option>";
-		foreach ($this->names as $name){
-			$html .= "<option value='$name'>$name</option>";
-		}
+			foreach ($this->names as $name){
+				$html .= "<option value='$name'>$name</option>";
+			}
 		$html .= "</select>";
 		
 		return $html;
@@ -66,6 +67,99 @@ class Formbuilder{
 		$query							= "SELECT * FROM {$this->tableName} WHERE 1";
 		
 		$this->forms					= $wpdb->get_results($query);
+	}
+
+	/**
+	 * Load a specific form
+	 * 
+	 * @param	int		$formId	the form id to load. Default empty
+	 */
+	function getForm($formId=''){
+		global $wpdb;
+		
+		// Get the form data
+		$query				= "SELECT * FROM {$this->tableName} WHERE ";
+		if(is_numeric($formId)){
+			$query	.= "id= '$formId'";
+		}elseif(!empty($this->formName)){
+			$query	.= "name= '$this->formName'";
+		}else{
+			return new WP_Error('forms', 'No form name or id given');
+		}
+
+		$result				= $wpdb->get_results($query);
+
+		// Form does not exit yet
+		if(empty($result)){
+			$this->insertForm();
+			$this->formData 	=  new \stdClass();
+		}else{
+			$this->formData 	=  (object)$result[0];
+		}
+
+		$this->getAllFormElements('priority', $formId);
+		
+		//used to find the index of an element based on its unique id
+ 		$this->formData->elementMapping	= [];
+		foreach($this->formElements as $index=>$element){			
+			$this->formData->elementMapping[$element->id]	= $index;
+		}
+		
+		if(empty($this->formData->settings)){
+			$settings['succesmessage']			= "";
+			$settings['formname']				= "";
+			$settings['roles']					= [];
+
+			$this->formData->settings = $settings;
+		}else{
+			$this->formData->settings = maybe_unserialize(utf8_encode($this->formData->settings));
+
+			if(isset($this->formData->settings['formnurl'])){
+				$this->formData->settings['formurl']	= $this->formData->settings['formnurl'];
+				unset($this->formData->settings['formnurl']);
+			}
+		}
+
+		if(!$this->editRights){
+			$editRoles	= ['editor'];
+			foreach($this->formData->settings['full_right_roles'] as $key=>$role){
+				if(!empty($role)){
+					$editRoles[] = $key;
+				}
+			}
+			//calculate full form rights
+			if(array_intersect($editRoles, (array)$this->userRoles) != false){
+				$this->editRights		= true;
+			}else{
+				$this->editRights		= false;
+			}
+		}
+
+		$this->submitRoles	= [];
+		foreach($this->formData->settings['submit_others_form'] as $key=>$role){
+			if(!empty($role)){
+				$this->submitRoles[] = $key;
+			}
+		}
+		
+		if(empty($this->formData->emails)){
+			$emails[0]["from"]		= "";
+			$emails[0]["to"]			= "";
+			$emails[0]["subject"]	= "";
+			$emails[0]["message"]	= "";
+			$emails[0]["headers"]	= "";
+			$emails[0]["files"]		= "";
+
+			$this->formData->emails = $emails;
+		}else{
+			$this->formData->emails = maybe_unserialize($this->formData->emails);
+		}
+		
+		if($wpdb->last_error !== ''){
+			SIM\printArray($wpdb->print_error());
+		}
+		
+		$this->jsFileName	= plugin_dir_path(__DIR__)."js/dynamic/{$this->formData->name}forms";
 	}
 	
 	/**
@@ -145,7 +239,7 @@ class Formbuilder{
 	 */
 	function processAtts($atts){
 		if(!isset($this->formName)){
-			shortcode_atts(
+			$atts	= shortcode_atts(
 				array(
 					'formname'		=> '', 
 					'userid'		=> '', 
@@ -158,7 +252,7 @@ class Formbuilder{
 			$this->formName 	= strtolower(sanitize_text_field($atts['formname']));
 			$this->shortcodeId	= $atts['id'];
 			
-			if(is_numeric($atts['userid'])){
+			if(!empty($atts['userid']) && is_numeric($atts['userid'])){
 				$this->userId	= $atts['userid'];
 			}
 		}
@@ -175,7 +269,7 @@ class Formbuilder{
 	function getElementById($id, $key=''){
 		//load if needed
 		if(empty($this->formData->elementMapping)){
-			$this->loadFormData();
+			$this->getForm();
 		}
 		
 		$elementIndex	= $this->formData->elementMapping[$id];
@@ -199,15 +293,15 @@ class Formbuilder{
 	 * 
 	 * @param	string	$sortCol	the column to sort on. Default empty
 	 */
-	function getAllFormElements($sortCol = ''){
+	function getAllFormElements($sortCol = '', $formId=''){
 		global $wpdb;
 
-		if($this->formData and is_numeric($this->formData->id)){
+		if(!is_numeric($formId) && $this->formData && is_numeric($this->formData->id)){
 			$formId	= $this->formData->id;
-		}elseif(isset($_POST['formfield']['form_id'])){
-			$formId	= $_POST['formfield']['form_id'];
-		}elseif(isset($_POST['formid'])){
-			$formId	= $_POST['formid'];
+		}
+
+		if(!is_numeric($formId)){
+			return new WP_Error('forms', 'No form id given');
 		}
 
 		// Get all form elements
@@ -233,7 +327,7 @@ class Formbuilder{
 			$name = $this->formName;
 		}
 
-		$result = $wpdb->insert(
+		$wpdb->insert(
 			$this->tableName, 
 			array(
 				'name'			=> $name,
@@ -249,96 +343,6 @@ class Formbuilder{
 	}
 
 	/**
-	 * Load a specific form
-	 * 
-	 * @param	int		$formId	the form id to load. Default empty
-	 */
-	function loadFormData($formId=''){
-		global $wpdb;
-
-		if(is_numeric($_POST['formid'])){
-			$formId	= $_POST['formid'];
-		}
-		
-		// Get the form data
-		$query				= "SELECT * FROM {$this->tableName} WHERE ";
-		if(is_numeric($formId)){
-			$query	.= "id= '$formId'";
-		}else{
-			$query	.= "name= '$this->formName'";
-		}
-
-		$result				= $wpdb->get_results($query);
-
-		// Form does not exit yet
-		if(empty($result)){
-			$this->insertForm();
-			$this->formData 	=  new \stdClass();
-		}else{
-			$this->formData 	=  (object)$result[0];
-		}
-
-		$this->getAllFormElements('priority');
-		
-		//used to find the index of an element based on its unique id
- 		$this->formData->elementMapping	= [];
-		foreach($this->formElements as $index=>$element){			
-			$this->formData->elementMapping[$element->id]	= $index;
-		}
-		
-		if(empty($this->formData->settings)){
-			$settings['succesmessage']			= "";
-			$settings['formname']				= "";
-			$settings['roles']					= [];
-
-			$this->formData->settings = $settings;
-		}else{
-			$this->formData->settings = maybe_unserialize(utf8_encode($this->formData->settings));
-		}
-
-		if(!$this->editRights){
-			$editRoles	= ['editor'];
-			foreach($this->formData->settings['full_right_roles'] as $key=>$role){
-				if(!empty($role)){
-					$editRoles[] = $key;
-				}
-			}
-			//calculate full form rights
-			if(array_intersect($editRoles, (array)$this->userRoles) != false){
-				$this->editRights		= true;
-			}else{
-				$this->editRights		= false;
-			}
-		}
-
-		$this->submitRoles	= [];
-		foreach($this->formData->settings['submit_others_form'] as $key=>$role){
-			if(!empty($role)){
-				$this->submitRoles[] = $key;
-			}
-		}
-		
-		if(empty($this->formData->emails)){
-			$emails[0]["from"]		= "";
-			$emails[0]["to"]			= "";
-			$emails[0]["subject"]	= "";
-			$emails[0]["message"]	= "";
-			$emails[0]["headers"]	= "";
-			$emails[0]["files"]		= "";
-
-			$this->formData->emails = $emails;
-		}else{
-			$this->formData->emails = maybe_unserialize($this->formData->emails);
-		}
-		
-		if($wpdb->last_error !== ''){
-			SIM\printArray($wpdb->print_error());
-		}
-		
-		$this->jsFileName	= plugin_dir_path(__DIR__)."js/dynamic/{$this->formData->name}forms";
-	}
-
-	/**
 	 * Change an existing form element
 	 * 
 	 * @param	object|array	$element	The new element data
@@ -349,7 +353,7 @@ class Formbuilder{
 		global $wpdb;
 		
 		//Update element
-		$result = $wpdb->update(
+		$wpdb->update(
 			$this->elTableName, 
 			(array)$element, 
 			array(
@@ -358,7 +362,7 @@ class Formbuilder{
 		);
 
 		if($this->formData == null){
-			$this->loadFormData($_POST['formid']);
+			$this->getForm($_POST['formid']);
 		}
 
 		//Update form version
@@ -369,7 +373,7 @@ class Formbuilder{
 		);
 		
 		if($wpdb->last_error !== ''){
-			return new WP_Error('forms', $wpdb->print_error());
+			return new WP_Error('forms', $wpdb->last_error());
 		}
 
 		return $result;
@@ -427,13 +431,13 @@ class Formbuilder{
 	 * @param	int				$newPriority	The new priority of the element
 	 * @param	object|array	$element		The element to change the priority of
 	 */
-	function reorderElements($oldPriority, $newPriority, $element) {
+	function reorderElements($oldPriority, $newPriority, $element, $formId='') {
 		if ($oldPriority == $newPriority){
 			return;
 		}
 
 		// Get all elements of this form
-		$this->getAllFormElements('priority');
+		$this->getAllFormElements('priority', $formId);
 
 		if(empty($element)){
 			foreach($this->formElements as $el){
@@ -783,15 +787,16 @@ class Formbuilder{
 			//Get the field name, make it lowercase and replace any spaces with an underscore
 			$elName	= $element->name;
 			// [] not yet added to name
-			if(in_array($element->type,['radio','checkbox']) and strpos($elName, '[]') === false) {
+			if(in_array($element->type, ['radio','checkbox']) && strpos($elName, '[]') === false) {
 				$elName .= '[]';
 			}
 			
 			/*
 				ELEMENT ID
 			*/
+			$elId	= "";
 			//datalist needs an id to work as well as mandatory elements for use in anchor links
-			if($element->type == 'datalist' or $element->mandatory or $element->recommended){
+			if($element->type == 'datalist' || $element->mandatory || $element->recommended){
 				$elId	= "id='$elName'";
 			}
 			
@@ -939,7 +944,7 @@ class Formbuilder{
 			}
 			
 			//only close a label field if it is not wrapped
-			if($element->type == 'label' and empty($element->wrap)){
+			if($element->type == 'label' && empty($element->wrap)){
 				$elClose	= "</label>";
 			}
 			
@@ -968,12 +973,12 @@ class Formbuilder{
 		$html = preg_replace('/\s+/', ' ', $html);
 		
 		//check if we need to transform a keyword to date 
-		preg_match_all('/%([^%;]*)%/i', $html,$matches);
+		preg_match_all('/%([^%;]*)%/i', $html, $matches);
 		foreach($matches[1] as $key=>$keyword){
-			$keyword = str_replace('_',' ',$keyword);
+			$keyword = str_replace('_',' ', $keyword);
 			
 			//If the keyword is a valid date keyword
-			if(strtotime($keyword) != ''){
+			if(!empty(strtotime($keyword))){
 				//convert to date
 				$dateString = date("Y-m-d", strtotime($keyword));
 				
@@ -1037,13 +1042,13 @@ class Formbuilder{
 		}
 		
 		//add default values
-		if(empty($element->multiple) or in_array($element->type, ['select','checkbox'])){
+		if(empty($element->multiple) || in_array($element->type, ['select','checkbox'])){
 			$defaultKey					= $element->default_value;
 			if(!empty($defaultKey)){
 				$values['defaults']		= $this->defaultValues[$defaultKey];
 			}
 		}else{
-			$defaultKey					= $element->defaultArrayValue;
+			$defaultKey					= $element->default_array_value;
 			if(!empty($defaultKey)){
 				$values['defaults']		= $this->defaultArrayValues[$defaultKey];
 			}
@@ -1103,7 +1108,7 @@ class Formbuilder{
 	 * @param	string	$elementHtml	Existing element html. Default empty
 	 */
 	function processMultiFields($element, $key, $width, $values=null, $elementHtml=''){
-		if($this->multiwrap or !is_numeric($key)){
+		if($this->multiwrap || !is_numeric($key)){
 			if(is_numeric($key)){
 				//Check if element needs to be hidden
 				if(!empty($element->hidden)){
@@ -1114,8 +1119,8 @@ class Formbuilder{
 				
 				//if the current element is required or this is a label and the next element is required
 				if(
-					!empty($element->required)	or
-					$element->type == 'label'		and
+					!empty($element->required)		||
+					$element->type == 'label'		&&
 					$this->nextElement->required
 				){
 					$hidden .= ' required';
@@ -1124,7 +1129,7 @@ class Formbuilder{
 				$elementHtml = $this->getElementHtml($element);
 				
 				//close the label element after the field element
-				if($this->wrap and !isset($element->wrap)){
+				if($this->wrap && !isset($element->wrap)){
 					$elementHtml .= "</div>";
 					if($this->wrap == 'label'){
 						$elementHtml .= "</label>";
@@ -1157,17 +1162,17 @@ class Formbuilder{
 				}
 				
 				if(
-					$this->wrap == false								and
-					isset($element->wrap)								and 			//we should wrap around next element
-					is_object($this->nextElement)						and 			// and there is a next element
+					!$this->wrap											&&
+					isset($element->wrap)									&& 			//we should wrap around next element
+					is_object($this->nextElement)							&& 			// and there is a next element
 					!in_array($this->nextElement->type, ['select','php','formstep'])	// and the next element type is not a select or php element
 				){
 					$this->wrap = $element->type;
 				}
-			//key is not numeric so we are dealing with a multi input field
+				//key is not numeric so we are dealing with a multi input field
 			}else{
 				//add label to each entry if prev element is a label and wrapped with this one
-				if($this->prevElement->type	== 'label' and !empty($this->prevElement->wrap)){
+				if($this->prevElement->type	== 'label' && !empty($this->prevElement->wrap) && $this->prevElement != $element){
 					$this->prevElement->text = $this->prevElement->text.' %key%';
 					$prevLabel = $this->getElementHtml($this->prevElement).'</label>';
 				}else{
@@ -1217,11 +1222,11 @@ class Formbuilder{
 
 						if(is_array($val)){
 							foreach($val as $v){
-								if(strtolower($v) == $option_key or strtolower($v) == $option){
+								if(strtolower($v) == $option_key || strtolower($v) == $option){
 									$found 	= true;
 								}
 							}
-						}elseif(strtolower($val) == $option_key or strtolower($val) == $option){
+						}elseif(strtolower($val) == $option_key || strtolower($val) == $option){
 							$found 	= true;
 						}
 						
@@ -1266,7 +1271,7 @@ class Formbuilder{
 				$this->multiInputsHtml[$index] .= $html;
 				
 				//end, write the buttons and closing div
-				if(!is_numeric($key) or $this->nextElement->type == 'multi_end'){
+				if(!is_numeric($key) || $this->nextElement->type == 'multi_end'){
 					//close any label first before adding the buttons
 					if($this->wrap == 'label'){
 						$this->multiInputsHtml[$index] .= "</label>";
@@ -1301,20 +1306,30 @@ class Formbuilder{
 	 */
 	function buildHtml($element, $key=0){
 		if(empty($this->formData)){
-			$this->loadFormData();
+			$this->getForm();
 		}
 		if(empty($this->formElements)){
 			$this->getAllFormElements();
 		}
-		$this->prevElement		= $this->formElements[$key-1];
-		$this->nextElement		= $this->formElements[$key+1];
+
+		if(isset($this->formElements[$key-1])){
+			$this->prevElement		= $this->formElements[$key-1];
+		}else{
+			$this->prevElement		= '';
+		}
+
+		if(isset($this->formElements[$key+1])){
+			$this->nextElement		= $this->formElements[$key+1];
+		}else{
+			$this->nextElement		= '';
+		}
 
 		if(
-			!empty($this->nextElement->multiple) 	and // if next element is a multiple
-			$this->nextElement->type != 'file' 	and // next element is not a file
-			$element->type == 'label'				and // and this is a label
-			!empty($element->wrap)					and // and the label is wrapped around the next element
-			!isset($_GET['formbuilder']) 			and	// and we are not building the form
+			!empty($this->nextElement->multiple) 	&& // if next element is a multiple
+			$this->nextElement->type != 'file' 		&& // next element is not a file
+			$element->type == 'label'				&& // and this is a label
+			!empty($element->wrap)					&& // and the label is wrapped around the next element
+			!isset($_GET['formbuilder']) 			&&	// and we are not building the form
 			!defined('REST_REQUEST')				// and we are not doing a REST call
 		){
 			return;
@@ -1324,10 +1339,10 @@ class Formbuilder{
 		$this->currentElement	= $element;
 				
 		//Set the element width to 85 percent so that the info icon floats next to it
-		if($key != 0 and $prevRenderedElement->type == 'info'){
+		if($key != 0 && $prevRenderedElement->type == 'info'){
 			$width = 85;
 		//We are dealing with a label which is wrapped around the next element
-		}elseif($element->type == 'label'	and !isset($element->wrap) and is_numeric($this->nextElement->width)){
+		}elseif($element->type == 'label'	&& !isset($element->wrap) && is_numeric($this->nextElement->width)){
 			$width = $this->nextElement->width;
 		}elseif(is_numeric($element->width)){
 			$width = $element->width;
@@ -1347,15 +1362,15 @@ class Formbuilder{
 		
 		//if the current element is required or this is a label and the next element is required
 		if(
-			!empty($element->required)	or
-			$element->type == 'label'		and
+			!empty($element->required)		||
+			$element->type == 'label'		&&
 			$this->nextElement->required
 		){
 			$hidden .= ' required';
 		}
 		
 		//Add form edit controls if needed
-		if($this->editRights and (isset($_GET['formbuilder']) or defined('REST_REQUEST'))){
+		if($this->editRights && (isset($_GET['formbuilder']) || defined('REST_REQUEST'))){
 			$html = " <div class='form_element_wrapper' data-id='{$element->id}' data-formid='{$this->formData->id}' data-priority='{$element->priority}' style='display: flex;'>";
 				$html .= "<span class='movecontrol formfieldbutton' aria-hidden='true'>:::</span>";
 				$html .= "<div class='resizer_wrapper'>";
@@ -1467,13 +1482,13 @@ class Formbuilder{
 				}else{
 					//do not close the div if wrap is turned on
 					if(
-						!$this->wrap									and
-						!empty($element->wrap)							and				//we should wrap around next element
-						is_object($this->nextElement)					and 			// and there is a next element
+						!$this->wrap									&&
+						!empty($element->wrap)							&&				//we should wrap around next element
+						is_object($this->nextElement)					&& 			// and there is a next element
 						!in_array($this->nextElement->type, ['php','formstep'])	// and the next element type is not a select or php element
 					){
 						//end a label if the next element is a select
-						if($element->type == 'label' and in_array($this->nextElement->type, ['php','select'])){
+						if($element->type == 'label' && in_array($this->nextElement->type, ['php','select'])){
 							$html .= "</label></div>";
 						}else{
 							$this->wrap = $element->type;
@@ -1484,8 +1499,8 @@ class Formbuilder{
 						if(empty($element->wrap) or !is_array($this->nextElement)){
 							//close the label element after the field element or if this the last element of the form and a label
 							if(
-								$this->wrap == 'label' or 
-								($element->type == 'label' and !is_array($this->nextElement))
+								$this->wrap == 'label' || 
+								($element->type == 'label' && !is_array($this->nextElement))
 							){
 								$html .= "</label>";
 							}
@@ -1883,15 +1898,16 @@ class Formbuilder{
 	function formBuilder($atts){
 		$this->processAtts($atts);
 				
-		$this->loadFormData();
+		$this->getForm();
 		
 		// We cannot use the minified version as the dynamic js files depend on the function names
 		wp_enqueue_script('sim_forms_script');
 
 		if(
-			array_intersect($this->userRoles, $this->submitRoles) != false	and	// we have the permission to submit on behalf on someone else
-			is_numeric($_GET['userid'])										and // and the userid parameter is set in the url
-			empty($atts['userid'])												// and the user id is not given in the shortcode 
+			array_intersect($this->userRoles, $this->submitRoles) 	&&	// we have the permission to submit on behalf on someone else
+			!empty(($_GET['userid']))								&& 
+			is_numeric($_GET['userid'])								&& // and the userid parameter is set in the url
+			empty($atts['userid'])										// and the user id is not given in the shortcode 
 		){
 			$this->userId	= $_GET['userid'];
 		}
@@ -1899,9 +1915,14 @@ class Formbuilder{
 		ob_start();
 
 		//add formbuilder.js
-		if($this->editRights and isset($_GET['formbuilder'])){
-			//Formbuilder js
-			wp_enqueue_script( 'sim_formbuilderjs');
+		if($this->editRights){
+			if(isset($_POST['export-form']) && is_numeric($_POST['export-form'])){
+				$this->exportForm($_POST['export-form']);
+			}
+			if(isset($_GET['formbuilder'])){
+				//Formbuilder js
+				wp_enqueue_script( 'sim_formbuilderjs');
+			}
 		}
 		
 		//Load conditional js if available and needed
@@ -1925,7 +1946,7 @@ class Formbuilder{
 			}
 
 			//Only enqueue if there is content in the file
-			if(file_exists($jsPath) and filesize($jsPath) > 0){
+			if(file_exists($jsPath) && filesize($jsPath) > 0){
 				wp_enqueue_script( "dynamic_{$this->formName}forms", SIM\pathToUrl($jsPath), array('sim_forms_script'), $this->formData->version, true);
 			}
 		}
@@ -1936,7 +1957,7 @@ class Formbuilder{
 			
 			if($this->editRights){
 				//redirect  to formbuilder if we have rights and no formfields defined yet
-				if(empty($this->formElements) and !isset($_GET['formbuilder'])){
+				if(empty($this->formElements) && !isset($_GET['formbuilder'])){
 					$url = SIM\currentUrl();
 					if(strpos($url,'?') === false){
 						$url .= '/?';
@@ -1982,7 +2003,7 @@ class Formbuilder{
 			}
 			
 			$this->showForm();
-			if($this->editRights and isset($_GET['formbuilder'])){
+			if($this->editRights && isset($_GET['formbuilder'])){
 				?>
 				</div>
 				
@@ -2036,8 +2057,14 @@ class Formbuilder{
 	 * Show the form
 	 */
 	function showForm(){
-		$formName	= $this->formData->settings['formname'];
-		$buttonText	= $this->formData->settings['buttontext'];
+		$formName	= '';
+		if(!empty($this->formData->settings['formname'])){
+			$formName	= $this->formData->settings['formname'];
+		}
+		$buttonText	= '';
+		if(!empty($this->formData->settings['buttontext'])){
+			$buttonText	= $this->formData->settings['buttontext'];
+		}
 		if(empty($buttonText)){
 			$buttonText = 'Submit the form';
 		}
@@ -2046,7 +2073,7 @@ class Formbuilder{
 			echo "<h3>$formName</h3>";
 		}	
 
-		if(array_intersect($this->userRoles, $this->submitRoles) != false and !empty($this->formData->settings['save_in_meta'])){
+		if(array_intersect($this->userRoles, $this->submitRoles) && !empty($this->formData->settings['save_in_meta'])){
 			echo SIM\userSelect("Select an user to show the data of:");
 		}
 		echo do_action('sim_before_form', $this->formName);
@@ -2103,12 +2130,12 @@ class Formbuilder{
 			<?php
 		}
 			//only show submit button when not editing the form
-			if($this->editRights and isset($_GET['formbuilder'])){
+			if($this->editRights && isset($_GET['formbuilder'])){
 				$hidden = 'hidden';
 			}else{
 				$hidden = '';
 			}
-			if(!$this->isFormStep and !empty($this->formElements)){
+			if(!$this->isFormStep && !empty($this->formElements)){
 				echo SIM\addSaveButton('submit_form', $buttonText, "$hidden form_submit");
 			}
 			?>
@@ -2169,14 +2196,14 @@ class Formbuilder{
 					<label class="block">
 						<h4>Form url</h4>
 						<?php
-						if(!empty($settings['formnurl'])){
-							$url	= $settings['formnurl'];
+						if(!empty($settings['formurl'])){
+							$url	= $settings['formurl'];
 						}else{
 							$url	= str_replace(['?formbuilder=yes', '&formbuilder=yes'], '', SIM\currentUrl());
 						}
 
 						?>
-						<input type='url' class='formbuilder formfieldsetting' name='settings[formnurl]' value="<?php echo $url?>">
+						<input type='url' class='formbuilder formfieldsetting' name='settings[formurl]' value="<?php echo $url?>">
 					</label>
 					<br>
 					
@@ -2284,7 +2311,7 @@ class Formbuilder{
 							</label>
 						</label>
 						<br>
-						<div class='autoarchivelogic <?php if($checked1 == '') echo 'hidden';?>' style="display: flex;width: 100%;">
+						<div class='autoarchivelogic <?php if(empty($checked1)){echo 'hidden';}?>' style="display: flex;width: 100%;">
 							Auto archive a (sub) entry when field
 							<select name="settings[autoarchivefield]" style="margin-right:10px;">
 							<?php
@@ -2296,7 +2323,9 @@ class Formbuilder{
 							
 							$processed = [];
 							foreach($this->formElements as $key=>$element){
-								if(in_array($element->type, $this->nonInputs)) continue;
+								if(in_array($element->type, $this->nonInputs)){
+									continue;
+								}
 								
 								$pattern			= "/\[[0-9]+\]\[([^\]]+)\]/i";
 								
@@ -2359,7 +2388,7 @@ class Formbuilder{
 					</div>
 					<br>
 
-					<div class='submit_others_form_wrapper<?php if(empty($settings['save_in_meta'])) echo 'hidden';?>'>
+					<div class='submit_others_form_wrapper<?php if(empty($settings['save_in_meta'])){echo 'hidden';}?>'>
 						<h4>Select who can submit this form on behalf of someone else</h4>
 						<?php
 						foreach($userRoles as $key=>$roleName){
@@ -2379,6 +2408,9 @@ class Formbuilder{
 				<?php
 				echo SIM\addSaveButton('submit_form_setting',  'Save form settings');
 				?>
+			</form>
+			<form method="POST">
+				<button type='submit' class='button' name="export-form" value='<?php echo $this->formData->id;?>'>Export this form</button>
 			</form>
 		</div>
 		<?php
@@ -2444,20 +2476,20 @@ class Formbuilder{
 									<div class="formfield formfieldlabel" style="margin-top:10px;">
 										Send e-mail when:<br>
 										<label>
-											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='submitted' <?php if(empty($email['emailtrigger']) or $email['emailtrigger'] == 'submitted') echo 'checked';?>>
+											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='submitted' <?php if(empty($email['emailtrigger']) || $email['emailtrigger'] == 'submitted'){echo 'checked';}?>>
 											The form is submitted
 										</label><br>
 										<label>
-											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='fieldchanged' <?php if($email['emailtrigger'] == 'fieldchanged') echo 'checked';?>>
+											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='fieldchanged' <?php if($email['emailtrigger'] == 'fieldchanged'){echo 'checked';}?>>
 											A field has changed to a value
 										</label><br>
 										<label>
-											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='disabled' <?php if($email['emailtrigger'] == 'disabled') echo 'checked';?>>
+											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='disabled' <?php if($email['emailtrigger'] == 'disabled'){echo 'checked';}?>>
 											Do not send this e-mail
 										</label><br>
 									</div>
 									
-									<div class='emailfieldcondition <?php if($email['emailtrigger'] != 'fieldchanged') echo 'hidden';?>'>
+									<div class='emailfieldcondition <?php if($email['emailtrigger'] != 'fieldchanged'){echo 'hidden';}?>'>
 										<label class="formfield formfieldlabel">Field</label>
 										<select name='emails[<?php echo $key;?>][conditionalfield]'>
 											<?php
@@ -2475,26 +2507,33 @@ class Formbuilder{
 									<div class="formfield formfieldlabel">
 										Sender e-mail should be:<br>
 										<label>
-											<input type='radio' name='emails[<?php echo $key;?>][fromemail]' class='fromemail' value='fixed' <?php if(empty($email['fromemail']) or $email['fromemail'] == 'fixed') echo 'checked';?>>
+											<input type='radio' name='emails[<?php echo $key;?>][fromemail]' class='fromemail' value='fixed' <?php if(empty($email['fromemail']) || $email['fromemail'] == 'fixed'){echo 'checked';}?>>
 											Fixed e-mail adress
 										</label><br>
 										<label>
-											<input type='radio' name='emails[<?php echo $key;?>][fromemail]' class='fromemail' value='conditional' <?php if($email['fromemail'] == 'conditional') echo 'checked';?>>
+											<input type='radio' name='emails[<?php echo $key;?>][fromemail]' class='fromemail' value='conditional' <?php if($email['fromemail'] == 'conditional'){echo 'checked';}?>>
 											Conditional e-mail adress
 										</label><br>
 									</div>
 									
-									<div class='emailfromfixed <?php if(!empty($email['fromemail']) and $email['fromemail'] != 'fixed') echo 'hidden';?>'>
+									<div class='emailfromfixed <?php if(!empty($email['fromemail']) && $email['fromemail'] != 'fixed'){echo 'hidden';}?>'>
 										<label class="formfield formfieldlabel">
 											From e-mail
 											<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][from]' value="<?php if(empty($email['from'])){echo $defaultFrom;} else{echo $email['from'];} ?>">
 										</label>
 									</div>
 									
-									<div class='emailfromconditional <?php if($email['fromemail'] != 'conditional') echo 'hidden';?>'>
+									<div class='emailfromconditional <?php if($email['fromemail'] != 'conditional'){echo 'hidden';}?>'>
 										<div class='clone_divs_wrapper'>
 											<?php
-											if(!is_array($email['conditionalfromemail'])) $email['conditionalfromemail'] = [['fieldid'=>'','value'=>'','email'=>'']];
+											if(!is_array($email['conditionalfromemail'])){
+												$email['conditionalfromemail'] = [
+													[
+														'fieldid'	=> '',
+														'value'		=> '',
+														'email'		=> '']
+												];
+											}
 											foreach(array_values($email['conditionalfromemail']) as $fromKey=>$fromEmail){
 											?>
 											<div class='clone_div' data-divid='<?php echo $fromKey;?>'>
@@ -2529,25 +2568,33 @@ class Formbuilder{
 									<div class="formfield tofieldlabel">
 										Recipient e-mail should be:<br>
 										<label>
-											<input type='radio' name='emails[<?php echo $key;?>][emailto]' class='emailto' value='fixed' <?php if(empty($email['emailto']) or $email['emailto'] == 'fixed') echo 'checked';?>>
+											<input type='radio' name='emails[<?php echo $key;?>][emailto]' class='emailto' value='fixed' <?php if(empty($email['emailto']) || $email['emailto'] == 'fixed'){echo 'checked';}?>>
 											Fixed e-mail adress
 										</label><br>
 										<label>
-											<input type='radio' name='emails[<?php echo $key;?>][emailto]' class='emailto' value='conditional' <?php if($email['emailto'] == 'conditional') echo 'checked';?>>
+											<input type='radio' name='emails[<?php echo $key;?>][emailto]' class='emailto' value='conditional' <?php if($email['emailto'] == 'conditional'){echo 'checked';}?>>
 											Conditional e-mail adress
 										</label><br>
 									</div>
 									<br>
-									<div class='emailtofixed <?php if(!empty($email['emailto']) and $email['emailto'] != 'fixed') echo 'hidden';?>'>
+									<div class='emailtofixed <?php if(!empty($email['emailto']) && $email['emailto'] != 'fixed'){echo 'hidden';}?>'>
 										<label class="formfield formfieldlabel">
 											To e-mail
 											<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][to]' value="<?php if(empty($email['to'])){echo '%email%';}else{echo $email['to'];} ?>">
 										</label>
 									</div>
-									<div class='emailtoconditional <?php if($email['emailto'] != 'conditional') echo 'hidden';?>'>
+									<div class='emailtoconditional <?php if($email['emailto'] != 'conditional'){echo 'hidden';}?>'>
 										<div class='clone_divs_wrapper'>
 											<?php
-											if(!is_array($email['conditionalemailto'])) $email['conditionalemailto'] = [['fieldid'=>'','value'=>'','email'=>'']];
+											if(!is_array($email['conditionalemailto'])){
+												$email['conditionalemailto'] = [
+													[
+														'fieldid'	=> '',
+														'value'		=> '',
+														'email'		=> ''
+													]
+												];
+											}
 											foreach($email['conditionalemailto'] as $toKey=>$toEmail){
 											?>
 											<div class='clone_div' data-divid='<?php echo $toKey;?>'>
@@ -2652,7 +2699,7 @@ class Formbuilder{
 
 			<input type="hidden" name="formfield[form_id]" value="<?php echo $this->formData->id;?>">
 			
-			<input type="hidden" name="element_id" value="<?php if( $element != null) echo $element->id;?>">
+			<input type="hidden" name="element_id" value="<?php if( $element != null){echo $element->id;}?>">
 			
 			<input type="hidden" name="insertafter">
 			
@@ -2725,7 +2772,7 @@ class Formbuilder{
 			<div name='elementname' class='labelhide hide'>
 				<label>
 					<div>Specify a name for the element</div>
-					<input type="text" class="formbuilder" name="formfield[name]" value="<?php if($element != null) echo $element->name;?>">
+					<input type="text" class="formbuilder" name="formfield[name]" value="<?php if($element != null){echo $element->name;}?>">
 				</label>
 				<br><br>
 			</div>
@@ -2733,7 +2780,7 @@ class Formbuilder{
 			<div name='functionname' class='hidden'>
 				<label>
 					Specify the functionname
-					<input type="text" class="formbuilder" name="formfield[functionname]" value="<?php if($element != null) echo $element->functionname;?>">
+					<input type="text" class="formbuilder" name="formfield[functionname]" value="<?php if($element != null){echo $element->functionname;}?>">
 				</label>
 				<br><br>
 			</div>
@@ -2741,27 +2788,27 @@ class Formbuilder{
 			<div name='labeltext' class='hidden'>
 				<label>
 					<div>Specify the <span class='elementtype'>label</span> text</div>
-					<input type="text" class="formbuilder" name="formfield[text]" value="<?php if($element != null) echo $element->text;?>">
+					<input type="text" class="formbuilder" name="formfield[text]" value="<?php if($element != null){echo $element->text;}?>">
 				</label>
 				<br><br>
 			</div>
 
 			<div name='upload-options' class='hidden'>
 				<label>
-					<input type="checkbox" class="formbuilder" name="formfield[library]" value="true" <?php if($element != null and $element->library) echo 'checkec';?>>
+					<input type="checkbox" class="formbuilder" name="formfield[library]" value="true" <?php if($element != null && $element->library){echo 'checked';}?>>
 					Add the <span class='filetype'>file</span> to the library
 				</label>
 				<br><br>
 
 				<label>
 					Name of the folder the <span class='filetype'>file</span> should be uploaded to.<br>
-					<input type="text" class="formbuilder" name="formfield[foldername]" value="<?php if($element != null) echo $element->foldername;?>">
+					<input type="text" class="formbuilder" name="formfield[foldername]" value="<?php if($element != null){echo $element->foldername;}?>">
 				</label>
 			</div>
 			
 			<div name='wrap'>
 				<label>
-					<input type="checkbox" class="formbuilder" name="formfield[wrap]" value="true" <?php if($element != null and $element->wrap) echo 'checked';?>>
+					<input type="checkbox" class="formbuilder" name="formfield[wrap]" value="true" <?php if($element != null && $element->wrap){echo 'checked';}?>>
 					Group together with next element
 				</label>
 				<br><br>
@@ -2799,7 +2846,7 @@ class Formbuilder{
 			
 			<div name='multiple' class='labelhide hide'>
 				<label>
-					<input type="checkbox" class="formbuilder" name="formfield[multiple]" value="true" <?php if($element != null and $element->multiple) echo 'checked';?>>
+					<input type="checkbox" class="formbuilder" name="formfield[multiple]" value="true" <?php if($element != null && $element->multiple){echo 'checked';}?>>
 					Allow multiple answers
 				</label>
 				<br>
@@ -2809,7 +2856,7 @@ class Formbuilder{
 			<div name='valuelist' class='hidden'>
 				<label>
 					Specify the values, one per line
-					<textarea class="formbuilder" name="formfield[valuelist]"><?php if($element != null) echo trim($element->valuelist);?></textarea>
+					<textarea class="formbuilder" name="formfield[valuelist]"><?php if($element != null){echo trim($element->valuelist);}?></textarea>
 				</label>
 				<br>
 			</div>
@@ -2821,12 +2868,12 @@ class Formbuilder{
 					<?php
 					$this->buildDefaultsArray();
 					foreach($this->defaultArrayValues as $key=>$field){
-						if($element != null and $element->default_array_value == $key){
+						if($element != null && $element->default_array_value == $key){
 							$selected = 'selected';
 						}else{
 							$selected = '';
 						}
-						$optionName	= ucfirst(str_replace('_',' ',$key));
+						$optionName	= ucfirst(str_replace('_', ' ', $key));
 						echo "<option value='$key' $selected>$optionName</option>";
 					}
 					?>
@@ -2854,7 +2901,7 @@ class Formbuilder{
 			<div name='elementoptions' class='labelhide hide'>
 				<label>
 					Specify any options like styling
-					<textarea class="formbuilder" name="formfield[options]"><?php if($element != null) echo trim($element->options);?></textarea>
+					<textarea class="formbuilder" name="formfield[options]"><?php if($element != null){echo trim($element->options);}?></textarea>
 				</label><br>
 				<br>
 				
@@ -2868,18 +2915,18 @@ class Formbuilder{
 					?>
 					<h3>Warning conditions</h3>
 					<label class="option-label">
-						<input type="checkbox" class="formbuilder" name="formfield[mandatory]" value="true" <?php if($element != null and $element->mandatory) echo 'checked';?>>
+						<input type="checkbox" class="formbuilder" name="formfield[mandatory]" value="true" <?php if($element != null && $element->mandatory){echo 'checked';}?>>
 						Check if people should be warned by e-mail/signal if they have not filled in this field.
 					</label><br>
 					<br>
 
 					<label class="option-label">
-						<input type="checkbox" class="formbuilder" name="formfield[recommended]" value="true" <?php if($element != null and $element->recommended) echo 'checked';?>>
+						<input type="checkbox" class="formbuilder" name="formfield[recommended]" value="true" <?php if($element != null && $element->recommended){echo 'checked';}?>>
 						Check if people should be notified on their homepage if they have not filled in this field.
 					</label><br>
 					<br>
 
-					<div <?php if($element == null or (!$element->mandatory and !$element->recommended)) echo "class='hidden'";?>>
+					<div <?php if($element == null or (!$element->mandatory && !$element->recommended)){echo "class='hidden'";}?>>
 						<?php
 						if($element == null){
 							$elementId	= -1;
@@ -2893,7 +2940,7 @@ class Formbuilder{
 				}else{
 					?>
 					<label class="option-label">
-						<input type="checkbox" class="formbuilder" name="formfield[required]" value="true" <?php if($element != null and $element->required) echo 'checked';?>>
+						<input type="checkbox" class="formbuilder" name="formfield[required]" value="true" <?php if($element != null && $element->required){echo 'checked';}?>>
 						Check if this should be a required field
 					</label><br>
 					<br>
@@ -2903,7 +2950,7 @@ class Formbuilder{
 			</div>
 			<br>
 			<label class="option-label">
-				<input type="checkbox" class="formbuilder" name="formfield[hidden]" value="true" <?php if($element != null and $element->hidden) echo 'checked';?>>
+				<input type="checkbox" class="formbuilder" name="formfield[hidden]" value="true" <?php if($element != null && $element->hidden){echo 'checked';}?>>
 				Check if this should be a hidden field
 			</label><br>
 
@@ -3333,5 +3380,206 @@ class Formbuilder{
 				$this->formResults[$inputName][$key]	= str_replace(ABSPATH,'',$path);
 			}
 		}
+	}
+
+	function exportForm($formId){
+		global $wpdb;
+
+		$this->getForm($formId);
+
+		$tableName		= str_replace($wpdb->prefix, '%PREFIX%', $this->tableName);
+		$elTableName	= str_replace($wpdb->prefix, '%PREFIX%', $this->elTableName);
+
+		// Fix the settings
+		$settings						= $this->formData->settings;
+		SIM\cleanUpNestedArray($settings, true);
+
+		if(is_array($settings)){
+			if(!empty($settings['formurl'])){
+				$settings['formurl']			= "%FORMURL%";
+			}
+
+			$settings						= "'".serialize($settings)."'";
+		}else{
+			$settings	= "''";
+		}
+
+		if(is_array($this->formData->emails)){
+			foreach($this->formData->emails as &$email){
+				foreach($email as &$setting){
+					$setting	= trim($setting);
+				}
+			}
+
+			$emails				= "'".serialize($this->formData->emails)."'";
+		}else{
+			$emails				= "''";
+		}
+
+		$queries			= [];
+
+		$queries[]			= "INSERT INTO `$tableName` VALUES ('','{$this->formData->name}',{$this->formData->version},$settings,$emails)";
+
+		foreach($this->formElements as $element){
+			$query	= "INSERT INTO `$elTableName` VALUES (";
+			foreach($element as $name=>$property){
+				if($name == 'form_id'){
+					$query	.= "'%FORMID%'";
+				}elseif($property === null){
+					$query	.= 'NULL';
+				}elseif(is_numeric($property)){
+					$query	.= $property;
+				}else{
+					$query	.= "'$property'";
+				}
+
+				if($name != 'warning_conditions'){
+					$query	.= ',';
+				}
+			}
+			$query	.= ");";
+
+			$queries[]	= $query;
+		}
+
+		$content	= '';
+		foreach($queries as $query){
+			$content	.= str_replace(["\n","\r"], ['\n', '\r'], $query)."\n";
+		}
+
+		$backupName = $this->formData->name.".sform";
+		while(true){
+			//ob_get_clean only returns false when there is absolutely nothing anymore
+			$result	= ob_get_clean();
+			if($result === false){
+				break;
+			}
+		}
+
+        header('Content-Type: application/octet-stream');   
+        header("Content-Transfer-Encoding: Binary"); 
+        header("Content-disposition: attachment; filename=$backupName");  
+
+
+        echo $content; 
+		//exit;
+	}
+
+	function importForm($path){
+		global $wpdb;
+
+		$formId				= -1;
+		$elementIdMapping	= [];
+		$pattern			= '/VALUES \((\d*),/i';
+		$wpdb->show_errors (true);
+
+		// Import the form and elements
+		foreach(file($path) as $line) {
+			$oldId	= -1;
+			if(!empty($line)){
+				$query	= str_replace(['%PREFIX%', '%SITEURL%', '%FORMID%'], [$wpdb->prefix, SITEURL, $formId], $line);
+				
+				if(!empty(trim($query))){
+					// Find the old id
+					if(preg_match($pattern, $query, $matches)){
+						$oldId	= $matches[1];
+						$query	= preg_replace($pattern, "VALUES ('',", $query);
+					}
+
+					$result	= $wpdb->query($query);
+
+					if(!$result){
+						SIM\printArray("query failed: ".$query."\n{$wpdb->last_error}");
+
+						echo "<div class='error'>Import failed.<br>{$wpdb->last_error}</div>";
+					}else{
+						// First line it the form
+						if($formId == -1){
+							$formId						= $wpdb->insert_id;
+						// Get the new element id
+						}elseif($oldId	!= -1){
+							$elementIdMapping[$oldId]	= $wpdb->insert_id;
+						}
+					}
+				}
+			}
+		}
+
+		// Load the new form
+		$this->getForm($formId);
+
+		if(!empty($this->formData->settings['autoarchivefield'])){
+			$this->formData->settings['autoarchivefield']	= $elementIdMapping[$this->formData->settings['autoarchivefield']];
+
+			$wpdb->update(
+				$this->tableName, 
+				array(
+					'settings' 	=> maybe_serialize($this->formData->settings)
+				), 
+				array(
+					'id'		=> $this->formData->id,
+				),
+			);
+		}
+
+		// Update old element ids with new ones
+		foreach($this->formElements as $element){
+			$update	= false;
+
+			if(!empty($element->conditions)){
+				$element->conditions	= unserialize($element->conditions);
+				foreach($element->conditions as $condition){
+					if(is_numeric($condition['property_value'])){
+						$condition['property_value']	= $elementIdMapping[$condition['property_value']];
+						$update							= true;
+					}
+
+					foreach($condition['rules'] as $rule){
+						if(is_numeric($rule['conditional_field'])){
+							$rule['conditional_field']	= $elementIdMapping[$rule['conditional_field']];
+							$update						= true;
+						}
+
+						if(is_numeric($rule['conditional_field_2'])){
+							$rule['conditional_field_2']	= $elementIdMapping[$rule['conditional_field_2']];
+							$update							= true;
+						}
+
+						if(is_numeric($rule['conditional_value'])){
+							$rule['conditional_value']	= $elementIdMapping[$rule['conditional_value']];
+							$update						= true;
+						}
+					}
+				}
+				$element->conditions	= serialize($element->conditions);
+			}
+
+			if($update){
+				$result = $wpdb->update(
+					$this->elTableName, 
+					(array)$element, 
+					array(
+						'id'		=> $element->id,
+					),
+				);
+
+				if(!$result){
+					SIM\printArray("query failed: ".$query."\n{$wpdb->last_error}");
+				}
+			}
+		}
+
+		// add a new page
+		$formName	= ucfirst(str_replace('_', ' ', $this->formData->name));
+		$post = array(
+			'post_type'		=> 'page',
+			'post_title'    => "$formName form",
+			'post_content'  => "[formbuilder formname={$this->formData->name}]",
+			'post_status'   => "publish",
+			'post_author'   => '1'
+		);
+		$url	= get_permalink(wp_insert_post( $post, true, false));
+
+		echo "<div class='success'>Import finished successfully.<br>Visit the created form <a href='$url'>here</a></div>";
 	}
 }

@@ -50,19 +50,17 @@ function updateFamilyMeta($userId, $metaKey, $value){
  * 
  * @return	string						The html
 */
-function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[], $type='select'){
+function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select'){
 	wp_enqueue_script('sim_user_select_script');
 	$html = "";
 
-	if(!is_numeric($userId)){
+	if(!empty($_GET["userid"]) && !is_numeric($userId)){
 		$userId = $_GET["userid"];
 	}
 	
 	//Get the id and the displayname of all users
 	$users 			= getUserAccounts($families, $onlyAdults, true, [], $args);
 	$existsArray 	= array();
-
-	$excludeIds[]	= 1;
 	
 	//Loop over all users to find duplicate displaynames
 	foreach($users as $key=>$user){
@@ -97,6 +95,12 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	if(!empty($title)){
 		$html .= "<h4>$title</h4>";
 	}
+	
+	if(empty($user->first_name) || empty($user->last_name)){
+		$name	= $user->display_name;
+	}else{
+		$name	= "$user->first_name $user->last_name";
+	}
 
 	if($type == 'select'){
 		$html .= "<select name='$id' class='$class user_selection'>";
@@ -107,7 +111,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 				}else{
 					$selected="";
 				}
-				$html .= "<option value='$user->ID' $selected>$user->first_name $user->last_name</option>";
+				$html .= "<option value='$user->ID' $selected>$name</option>";
 			}
 		$html .= '</select>';
 	}elseif($type == 'list'){
@@ -118,7 +122,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 					//Make this user the selected user
 					$value	= $user->display_name;
 				}
-				$datalist .= "<option value='$user->first_name $user->last_name' data-userid='$user->ID'>";
+				$datalist .= "<option value='$name' data-userid='$user->ID'>";
 			}
 		$datalist .= '</datalist>';
 
@@ -540,18 +544,18 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 		'meta_key'	=> 'last_name'
 	);
 	
-	if(is_array($fields) and count($fields)>0){
+	if(is_array($fields) && count($fields)>0){
 		$arg['fields'] = $fields;
 	}
 	
-	$arg = array_merge_recursive($arg, $extraArgs);
+	$arg 	= array_merge_recursive($arg, $extraArgs);
 	
 	$users  = get_users($arg);
 	
 	//Loop over the users
 	foreach($users as $user){
 		//If we should only return families
-		if($returnFamily == true){
+		if($returnFamily){
 			$family = get_user_meta( $user->ID, 'family', true );
 			if ($family == ""){
 				$family = [];
@@ -569,7 +573,7 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 				}
 			}
 		//Only returning adults, but this is a child
-		}elseif($adults == true and isChild($user->ID)){
+		}elseif($adults && isChild($user->ID)){
 			$doNotProcess[] = $user->ID;
 		}
 	}
@@ -756,12 +760,6 @@ function addToLibrary($targetFile, $title='', $description=''){
 		return new WP_Error('library', $errorResult);
 	}
 }
-
-//Creates subimages
-//Add action
-add_action('init', function () {
-	add_action( 'process_images_action', __NAMESPACE__.'\processImages' );
-});
 
 /**
  * Creates sub images using wp_maybe_generate_attachment_metadata
@@ -1100,3 +1098,19 @@ function readTextFile($path){
 		return $html;
 	}
 }
+
+function isRestApiRequest() {
+    if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+        // Probably a CLI request
+        return false;
+    }
+
+    $restPrefix         = trailingslashit( rest_get_url_prefix() );
+    return strpos( $_SERVER['REQUEST_URI'], $restPrefix ) !== false;
+}
+
+//Creates subimages
+//Add action
+add_action('init', function () {
+	add_action( 'process_images_action', __NAMESPACE__.'\processImages' );
+});

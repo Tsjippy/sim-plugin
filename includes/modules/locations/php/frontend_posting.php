@@ -122,7 +122,7 @@ function locationAddress($postId){
             
             //Marker does not exist, create it
             if(!isset($markerIds['generic'])){			
-                $mapId	=  SIM\getModuleOption('locations', 'placesmapid');		
+                $mapId	=  SIM\getModuleOption('locations', 'directions_map_id');		
                 //First create the marker on the generic map
                 $wpdb->insert($wpdb->prefix . 'ums_markers', array(
                     'title' 		=> $title,

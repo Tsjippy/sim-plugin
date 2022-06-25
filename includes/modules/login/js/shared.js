@@ -147,4 +147,3 @@ export const preparePublicKeyCredentials = data => {
 
 	return publicKeyCredential;
 };
-  

@@ -26,15 +26,7 @@ add_action( 'rest_api_init', function () {
 		'/disable_useraccount', 
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> 	function(){
-                if(empty(get_user_meta( $_POST['userid'], 'disabled', true ))){
-                    update_user_meta( $_POST['userid'], 'disabled', true );
-                    return 'Succesfully disabled the user account';
-                }else{
-                    delete_user_meta( $_POST['userid'], 'disabled');
-                    return 'Succesfully enabled the user account';
-                }
-            },
+			'callback' 				=> 	__NAMESPACE__.'\disableUserAccount',
 			'permission_callback' 	=> function(){
                 return in_array('usermanagement', wp_get_current_user()->roles);
             },
@@ -55,7 +47,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\updateRoles',
 			'permission_callback' 	=> function(){
-                return in_array('usermanagement', wp_get_current_user()->roles);
+                return (bool)array_intersect(['usermanagement', 'administrator'], wp_get_current_user()->roles);
             },
 			'args'					=> array(
 				'userid'		=> array(
@@ -110,6 +102,16 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 });
+
+function disableUserAccount(){
+	if(empty(get_user_meta( $_POST['userid'], 'disabled', true ))){
+		update_user_meta( $_POST['userid'], 'disabled', true );
+		return 'Succesfully disabled the user account';
+	}else{
+		delete_user_meta( $_POST['userid'], 'disabled');
+		return 'Succesfully enabled the user account';
+	}
+}
 
 /**
  * add new ministry location via rest api

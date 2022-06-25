@@ -147,7 +147,7 @@ add_shortcode('pending_user_icon',function (){
 add_action('sim_dashboard_warnings', function($userId){
 	$personnelCoordinatorEmail	= SIM\getModuleOption('user_management', 'personnel_email');
 
-	if(is_numeric($_GET["userid"]) && in_array('usermanagement', wp_get_current_user()->roles )){
+	if(!empty($_GET["userid"]) && is_numeric($_GET["userid"]) && in_array('usermanagement', wp_get_current_user()->roles )){
 		$userId	= $_GET["userid"];
 	}else{
 		$userId = get_current_user_id();
@@ -339,14 +339,15 @@ function user_info_page($atts){
 		wp_enqueue_style('sim_forms_style');
 		
 		$a = shortcode_atts( array(
-			'currentuser' => false,
+			'currentuser' 	=> false,
+			'id' 			=> '', 
 		), $atts );
+
 		$showCurrentUserData = $a['currentuser'];
 		
 		//Variables
 		$medicalRoles		= ["medicalinfo"];
-		$genericInfoRoles = array_merge(['usermanagement'],$medicalRoles,['administrator']);
-
+		$genericInfoRoles 	= array_merge(['usermanagement'],$medicalRoles,['administrator']);
 		$user 				= wp_get_current_user();
 		$userRoles 			= $user->roles;
 		$tabs				= [];
@@ -361,21 +362,17 @@ function user_info_page($atts){
 			$userSelectRoles	= apply_filters('sim_user_page_dropdown', $genericInfoRoles);
 			//Show the select user to allowed user only
 			if(array_intersect($userSelectRoles, $userRoles )){
-				$a = shortcode_atts( 
-					array('id' => '', ), 
-					$atts 
-				);
 				$userId = $a['id'];
 				
 				if(isset($_GET["userid"]) && get_userdata($_GET["userid"])){
 					$userId = $_GET["userid"];
 				}else{
-					echo SIM\userSelect("Select an user to show the data of:");
+					echo SIM\userSelect("Select an user to show the data of:", false, false, '', 'user_selection', [], '', []);
 				}
 
 				$userBirthday = get_user_meta($userId, "birthday", true);
 				if(!empty($userBirthday)){
-					$userAge = date_diff(date_create(date("Y-m-d")),date_create($userBirthday))->y;
+					$userAge = date_diff(date_create(date("Y-m-d")), date_create($userBirthday))->y;
 				}
 				
 			}else{

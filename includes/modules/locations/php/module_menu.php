@@ -6,10 +6,32 @@ const MODULE_VERSION		= '7.0.1';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
+// check for dependicies
 add_action('sim_submenu_description', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{
 		return;
+	}
+
+	if ( !in_array( 'ultimate-maps-by-supsystic/ums.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+		// ultimate maps is not installed
+		$action	= 'install-plugin';
+		$slug	= 'ultimate-maps-by-supsystic';
+		$url	= wp_nonce_url(
+			add_query_arg(
+				array(
+					'action' => $action,
+					'plugin' => $slug
+				),
+				admin_url( 'update.php' )
+			),
+			$action.'_'.$slug
+		);
+		echo "<div class='error'>";
+			echo "This module needs the '<strong>Ultimate Maps by Supsystic</strong>' plugin to work correctly<br><br>";
+			echo "Please install it by using the button below<br><br>";
+			echo "<a href='$url' class='button'>Click here to install</a><br><br>";
+		echo "</div>";
 	}
 
 	?>
@@ -39,27 +61,6 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 
 	wp_enqueue_style('sim_locations_admin_style', plugins_url('css/admin.min.css', __DIR__), array(), MODULE_VERSION);
 	wp_enqueue_script('sim_locations_admin_script', plugins_url('js/locations_admin.min.js', __DIR__), array(), MODULE_VERSION, true);
-	?>
-    <p>
-		Below you can select the map and icon id for each location category.
-	</p>
-	<label for="placesmapid">Map showing all markers</label>
-	<select name="placesmapid" id="placesmapid">
-		<option value="">---</option>
-		<?php echo get_maps($settings["placesmapid"]); ?>
-	</select>
-	<br>
-	<br>
-
-	<label for="missionariesmapid">Map showing all missionaries</label>
-	<select name="missionariesmapid" id="missionariesmapid">
-		<option value="">---</option>
-		<?php echo get_maps($settings["missionariesmapid"]); ?>
-	</select>
-	<br>
-	<br>
-				
-	<?php
 	
 	$categories = get_categories( array(
 		'orderby' 	=> 'name',
@@ -75,7 +76,7 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 		<label for="<?php echo $mapName;?>">Map showing <?php echo strtolower($name);?></label>
 		<select name="<?php echo $mapName;?>" id="<?php echo $mapName;?>">
 			<option value="">---</option>
-			<?php echo get_maps($settings[$mapName]); ?>
+			<?php echo getMaps($settings[$mapName]); ?>
 		</select>
 		
 		<label>Icon on the map used for <?php echo $name;?></label>
@@ -120,20 +121,52 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	<?php
 }, 10, 2);
 
-//Location maps
-function get_maps($option_value){
-	global $wpdb;
-	$map_options = "";
+/**
+ * Location maps
+ */
+function getMaps($optionValue){
+	$mapOptions = "";
 
-	$query = 'SELECT  `id`,`title` FROM `'.$wpdb->prefix .'ums_maps` WHERE 1  ORDER BY `title` ASC';
-	$result = $wpdb->get_results($query);
-	foreach ( $result as $map ) {
-		if ($option_value == $map->id){
+	$maps	= new Maps();
+	
+	foreach ( $maps->getMaps() as $map ) {
+		if ($optionValue == $map->id){
 			$selected='selected=selected';
 		}else{
 			$selected="";
 		}
-		$map_options .= "<option value='$map->id' $selected>$map->title</option>";
+		$mapOptions .= "<option value='$map->id' $selected>$map->title</option>";
 	}
-	return $map_options;
+	return $mapOptions;
 }
+
+//run on module activation
+add_filter('sim_module_updated', function($options, $moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
+
+	$maps		= new Maps();
+
+	foreach(['Directions', 'Users'] as $title){
+		$mapKey	= strtolower($title).'_map_id';
+
+		//Check if defined in settings already
+		if($options[$mapKey]){
+			// Double check the defined map exists
+			$map	= $maps->getMaps("`id`='{$options[$mapKey]}'");
+
+			// map exist
+			if(!empty($map)){
+				continue;
+			}
+
+		}
+
+		// create the map
+		$options[$mapKey]	= $maps->addMap($title, '9.910260', '8.889170', '', '400', 6);
+	}
+
+	return $options;
+}, 10, 2);

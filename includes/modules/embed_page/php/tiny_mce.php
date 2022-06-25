@@ -3,6 +3,11 @@ namespace SIM\FORMS;
 use SIM;
 
 add_action('init', function(){
+	// do not run during rest request
+    if(SIM\isRestApiRequest()){
+        return;
+    }
+	
 	//Add tinymce plugin
 	add_filter('mce_external_plugins', function($plugins){		
 		//Add extra variables to the main.js script

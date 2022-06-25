@@ -195,7 +195,7 @@ function sortTable(target){
 }
 
 //Store the table headers as td attribute for use on smaller screens
-function setTableLabel() {
+export function setTableLabel() {
 	//Loop over all tables
 	document.querySelectorAll('.sim-table').forEach(function(table){
 		//Get all heading elements

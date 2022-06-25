@@ -4,6 +4,11 @@ use SIM;
 
 //disable wp-login.php
 add_action('init',function(){
+    // do not run during rest request
+    if(SIM\isRestApiRequest()){
+        return;
+    }
+    
     global $pagenow;
 	if( $pagenow == 'wp-login.php'){
         //redirect to login screen
@@ -114,6 +119,18 @@ function loginModal($message='', $required=false, $username=''){
     return ob_get_clean();
 }
 
+add_action( 'loop_start', function() {
+    if ( is_front_page() ) {    
+        if (!is_user_logged_in()){
+            if(isset($_GET['showlogin'])){
+                echo loginModal('', true, $_GET['showlogin']);
+            }else{
+                echo loginModal();
+            }
+        }
+    }
+});
+
 //add hidden login modal to page if not logged in
 add_filter( 'the_content', function ( $content ) {
     if(!is_main_query()){
@@ -132,16 +149,14 @@ add_filter( 'the_content', function ( $content ) {
 }, 99999);
 
 //add login and logout buttons to main menu
-add_filter('wp_nav_menu_items', function ($items, $args) {
-    if( $args->container_id == 'primary-menu' ){
-        if(is_user_logged_in()){
-            $items .= '<li id="logout" class="menu-item logout"><a href="#logout" class="logout">Log out</a></li>';
-        }else{
-            $items .= '<li id="login" class="menu-item login"><a href="#login">Login</a></li>';
-        }
+add_filter('wp_nav_menu_items', function ($items) {
+    if(is_user_logged_in()){
+        $items .= '<li id="logout" class="menu-item logout"><a href="#logout" class="logout">Log out</a></li>';
+    }else{
+        $items .= '<li id="login" class="menu-item login"><a href="#login">Login</a></li>';
     }
   return $items;
-}, 10, 2);
+});
 
 //Redirect to frontpage for logged in users
 add_action( 'template_redirect', __NAMESPACE__.'\homepage_redirect' );

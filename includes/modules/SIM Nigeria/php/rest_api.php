@@ -39,7 +39,7 @@ function verifyTraveldate( \WP_REST_Request $request ) {
 
 		$formBuilder->formName	= 'travel';
 
-		$formBuilder->loadFormData();
+		$formBuilder->getForm();
 
 		$formBuilder->getSubmissionData();
 

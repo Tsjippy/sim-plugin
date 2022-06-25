@@ -25,7 +25,7 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	if($moduleSlug != MODULE_SLUG)	{return;}
 	
 	if(!class_exists(__NAMESPACE__.'\Mailchimp')){
-		require(__DIR__.'/mailchimp.php');
+		require(__DIR__.'/class_Mailchimp.php');
 	}
 
 	?>

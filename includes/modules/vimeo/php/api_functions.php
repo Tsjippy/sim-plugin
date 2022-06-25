@@ -17,16 +17,19 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             }
 
             $settings               = $Modules['vimeo'];
-            $this->clientId		= $settings['client_id'];
-            $this->clientSecret	= $settings['client_secret'];
-            $this->accessToken     = $settings['access_token'];
-            $this->filesDir        = WP_CONTENT_DIR.'/vimeo_files';
-            $this->picturesDir     = $this->filesDir."/thumbnails/";
-            $this->backupDir       = $this->filesDir."/backup/";
 
-            $this->api = new \Vimeo\Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+            if(!empty($settings['client_id']) && !empty($settings['client_secret']) && !empty($settings['access_token'])){
+                $this->clientId		    = $settings['client_id'];
+                $this->clientSecret	    = $settings['client_secret'];
+                $this->accessToken      = $settings['access_token'];
+                $this->filesDir         = WP_CONTENT_DIR.'/vimeo_files';
+                $this->picturesDir      = $this->filesDir."/thumbnails/";
+                $this->backupDir        = $this->filesDir."/backup/";
 
-            $this->isConnected();
+                $this->api = new \Vimeo\Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+
+                $this->isConnected();
+            }
         }
 
         /**
@@ -38,9 +41,11 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         **/
         function isConnected(){
             $this->status = get_transient( 'vimeo_connected' );
-            if ( $this->status === false or $this->status == 'offline' or empty($this->status)) {
+            if ( $this->status === false || $this->status == 'offline' || empty($this->status)) {
                 try {
-                    if($this->api == null)  $this->api = new \Vimeo\Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+                    if($this->api == null){
+                        $this->api = new \Vimeo\Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+                    }
                     $response = $this->api->request( '/oauth/verify', [], 'GET' );
         
                     $this->status       = 'online';
@@ -92,11 +97,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         
             $api = new \Vimeo\Vimeo($clientId, $clientSecret);
         
-            //$token = $api->clientCredentials($scopes);
-        
-            $url = $api->buildAuthorizationEndpoint($redirectUri, $scopes, $state);
-        
-            return $url;
+            return $api->buildAuthorizationEndpoint($redirectUri, $scopes, $state);
         }
         
         /**
@@ -213,7 +214,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 }
             }
         
-            if($total != count($videos)) return false;
+            if($total != count($videos)){
+                return false;
+            }
             return $videos;
         }
 
@@ -228,7 +231,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             if ( $this->isConnected() ) {
                 $vimeoId   = $this->getVimeoId($postId);
 
-                if(!is_numeric($vimeoId)) return false;
+                if(!is_numeric($vimeoId)){
+                    return false;
+                }
 
                 //Deleting video on vimeo
                 if($_SERVER['HTTP_HOST'] != 'localhost'){
@@ -354,13 +359,15 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          *
         **/
         function upload($postId){
-            if(!is_numeric($postId)) return false;
-
             // only continue if not on vimeo yet
-            if(is_numeric($this->getVimeoId($postId))) return false;
+            if(!is_numeric($postId) || is_numeric($this->getVimeoId($postId))){
+                return false;
+            }
 
             $path   = get_attached_file($postId);
-            if(!file_exists($path)) return false;
+            if(!file_exists($path)){
+                return false;
+            }
 
             $post   = get_post($postId);
 
@@ -387,7 +394,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          *
         **/
         function saveVideoPath($postId, $filePath){
-            if(!is_numeric($postId)) return false;
+            if(!is_numeric($postId)){
+                return false;
+            }
 
             return update_post_meta($postId, 'video_path', $filePath);
         }
@@ -401,11 +410,15 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          *
         **/
         function getVideoPath($postId){
-            if(!is_numeric($postId)) return false;
+            if(!is_numeric($postId)){
+                return false;
+            }
 
             $filePath   = get_post_meta($postId, 'video_path', true);
 
-            if(empty($filePath)) return false;
+            if(empty($filePath)){
+                return false;
+            }
 
             return $filePath;
         }
@@ -422,8 +435,8 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             $vimeoId   = $this->getVimeoId($postId);
 
             // Save meta on vimeo
-            if($vimeoId and $this->isConnected()){
-                $response = $this->api->request("/videos/$vimeoId", $data, 'PATCH');
+            if($vimeoId && $this->isConnected()){
+                $this->api->request("/videos/$vimeoId", $data, 'PATCH');
             }
 
             // If we are updating the title
@@ -456,9 +469,11 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             try {
                 $vimeoId   = $this->getVimeoId($postId);
 
-                if(!is_numeric($vimeoId) or !$this->isConnected()) return false;
+                if(!is_numeric($vimeoId) || !$this->isConnected()){
+                    return false;
+                }
 
-                $response 	= $this->api->request( "/videos/$vimeoId", array(
+                $this->api->request( "/videos/$vimeoId", array(
                     'privacy' => array(
                         'view' => "disable"
                     )
@@ -479,12 +494,14 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         function getThumbnail($postId){
             $thumbnail  = get_post_meta($postId, 'thumbnail', true);
 
-            if(file_exists($thumbnail)) return $thumbnail;
+            if(file_exists($thumbnail)){
+                return $thumbnail;
+            }
 
             //no thumbnail found, create one
             $vimeoId   = $this->getVimeoId($postId);
 
-            if($vimeoId and $this->isConnected()){
+            if($vimeoId && $this->isConnected()){
                 //Get thumbnails
                 $data	= $this->api->request("/videos/$vimeoId/pictures?sizes=48x64", [], 'GET')['body']['data'][0];
                 if($data['active']){
@@ -550,7 +567,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
                 $filename   = $this->getVimeoId($postId)."_".get_the_title($postId);
 
-                if(empty($extension )) $extension = 'mp4';
+                if(empty($extension )){
+                    $extension = 'mp4';
+                }
             }
 
             // Create folder if it does not exist
@@ -565,7 +584,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             $filePath  = str_replace('\\', '/', $path.$filename.'.'.$extension);
 
             // save filepath in meta
-            if($extension == 'mp4') $this->saveVideoPath($postId, $filePath);
+            if($extension == 'mp4'){
+                $this->saveVideoPath($postId, $filePath);
+            }
 
             if (file_exists($filePath)) {
                 return new WP_Error('vimeo', "The video is already downloaded", ['path' => $filePath]);

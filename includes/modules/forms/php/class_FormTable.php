@@ -1106,7 +1106,7 @@ class FormTable extends Formbuilder{
 		$this->loadShortcodeData();
 		
 		//load form settings
-		$this->loadFormData();
+		$this->getForm();
 		
 		$this->formSettings		= $this->formData->settings;
 		
@@ -1542,7 +1542,7 @@ class FormTable extends Formbuilder{
 					
 					$this->formName = $matches[2][$key];
 
-					$this->loadFormData();
+					$this->getForm();
 					
 					$this->insertInDb($this->formData->id);
 					

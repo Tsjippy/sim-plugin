@@ -52,8 +52,8 @@ function displayLocationArchive(){
 		do_action('sim_before_archive', 'location');
 
 		if(is_user_logged_in()){
-			$map_id = SIM\getModuleOption('locations', 'placesmapid');
-			echo do_shortcode("[ultimate_maps id='$map_id']");
+			$mapId = SIM\getModuleOption('locations', 'directions_map_id');
+			echo do_shortcode("[ultimate_maps id='$mapId']");
 		}
 		
 		while ( $locationsQuery->have_posts() ) :

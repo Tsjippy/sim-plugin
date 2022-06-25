@@ -257,7 +257,7 @@ function saveTableSettings(){
 	//also update form setings if needed
 	$formSettings = $_POST['form_settings'];
 	if(is_array($formSettings) && is_numeric($_POST['formid'])){
-		$formTable->loadFormData($_POST['formid']);
+		$formTable->getForm($_POST['formid']);
 		
 		//update existing
 		foreach($formSettings as $key=>$setting){
@@ -303,7 +303,7 @@ function removeSubmission(){
 // Archive or unarchive a (sub)submission
 function archiveSubmission(){
 	$formTable	= new FormTable();
-	$formTable->loadFormData($_POST['formid']);
+	$formTable->getForm($_POST['formid']);
 	$formTable->submissionId	= $_POST['submissionid'];
 
 	$formTable->getSubmissionData(null, $formTable->submissionId);
@@ -335,7 +335,7 @@ function archiveSubmission(){
 
 function getInputHtml(){
 	$formTable	= new FormTable();
-	$formTable->loadFormData($_POST['formid']);
+	$formTable->getForm($_POST['formid']);
 
 	$elementName	= sanitize_text_field($_POST['fieldname']);
 	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
@@ -356,7 +356,7 @@ function getInputHtml(){
 function editValue(){
 	$formTable	= new FormTable();
 		
-	$formTable->loadFormData($_POST['formid']);	
+	$formTable->getForm($_POST['formid']);	
 	$formTable->submissionId		= $_POST['submissionid'];
 	
 	$formTable->getSubmissionData(null, $formTable->submissionId);

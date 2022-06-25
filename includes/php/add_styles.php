@@ -4,7 +4,7 @@ namespace SIM;
 const STYLE_VERSION		= '7.0.29';
 
 //Add js and css files
-add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
+add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts', 1);
 add_action( 'admin_enqueue_scripts', __NAMESPACE__.'\registerScripts');
 
 // Style the buttons in the media library
@@ -31,10 +31,10 @@ function registerScripts(){
 	wp_register_script('sim_formsubmit_script', plugins_url('js/formsubmit.min.js', __DIR__), array(), STYLE_VERSION,true);
 
 	//table request shortcode
-	wp_register_script('sim_table_script',plugins_url('js/table.min.js', __DIR__), array('sortable','sim_formsubmit_script','sim_forms_script'),STYLE_VERSION,true);
+	wp_register_script('sim_table_script', plugins_url('js/table.min.js', __DIR__), array('sortable', 'sim_formsubmit_script'), STYLE_VERSION,true);
 
 	//add main.js
-	wp_register_script('sim_script',plugins_url('js/main.min.js', __DIR__),array('niceselect', 'sweetalert'),STYLE_VERSION, true);
+	wp_register_script('sim_script', plugins_url('js/main.min.js', __DIR__), array('niceselect', 'sweetalert'), STYLE_VERSION, true);
 	
 	//File upload js
 	wp_register_script('sim_fileupload_script', plugins_url('js/fileupload.min.js', __DIR__), array('sim_formsubmit_script', 'sim_purify'), STYLE_VERSION, true);
@@ -42,9 +42,9 @@ function registerScripts(){
 	wp_register_style('sim_taxonomy_style', plugins_url('css/taxonomy.min.css', __DIR__), array(), STYLE_VERSION);
 }
 
-function enqueueScripts($hook){
+function enqueueScripts(){
 	$currentUser	= wp_get_current_user();
-	$UserID			= $currentUser->id;
+	$UserID			= $currentUser->ID;
 
 	registerScripts();
 

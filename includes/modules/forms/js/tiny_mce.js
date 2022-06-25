@@ -12,7 +12,7 @@ addFormShortcodeHtml =
     <label>
         Or add a table to display<br>
         the data of an existing form:<br>
-        ${form_select}
+        ${formSelect}
     </label>
     <br>
 </div>`;
@@ -34,7 +34,7 @@ var insertFormShortcodeDialog = {
             if(formName != ''){
                 tinymce.activeEditor.insertContent(`[formbuilder formname=${formName}]`);
                 Main.displayMessage("Form succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
-            }else if(form_selector != ''){
+            }else if(formSelector != ''){
                 tinymce.activeEditor.insertContent(`[formresults formname=${formSelector}`);
                 
                 alert("Table succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");

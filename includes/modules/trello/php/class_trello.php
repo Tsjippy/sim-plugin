@@ -73,7 +73,9 @@ class Trello{
 	function getAllLists(){
 		$this->getBoards();
 		
-		if(!isset($this->lists)) $this->lists = [];
+		if(!isset($this->lists)){
+			$this->lists = [];
+		}
 		
 		foreach($this->boards as $boardId){
 			$this->getBoardList($boardId);
@@ -355,13 +357,11 @@ class Trello{
 			$query['name']		= $itemName;
 			$query['checked']	= true;
 			
-			$response = $this->request->post(
+			return $this->request->post(
 				"https://api.trello.com/1/checklists/$checklistId/checkItems",
 				$this->headers,
 				$query
 			);
-			
-			return $response;
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
@@ -383,11 +383,9 @@ class Trello{
 	 */
 	function checkChecklistItem($cardId, $checkItemId){
 		try{
-			$response = $this->request->put(
+			return $this->request->put(
 				"https://api.trello.com/1/cards/$cardId/checkItem/$checkItemId?key={$this->apiKey}&token={$this->apiToken}&state=complete",
 			);
-			
-			return $response;
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
@@ -425,7 +423,7 @@ class Trello{
 			}
 		}
 		
-		if($exists == false){
+		if(!$exists){
 			$this->addChecklistItem($checklist->id, $itemName);
 			return "Created";
 		}
@@ -445,13 +443,12 @@ class Trello{
 		try{
 			$query			= $this->query;
 			$query['text']	= $comment;
-			$response = $this->request->post(
+			
+			return $this->request->post(
 				"https://api.trello.com/1/cards/$cardId/actions/comments",
 				$this->headers,
 				$query
 			);
-			
-			return $response;
 		}catch(\GuzzleHttp\Exception\ClientException $e){
 			$result = json_decode($e->getResponse()->getBody()->getContents());
 			$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";

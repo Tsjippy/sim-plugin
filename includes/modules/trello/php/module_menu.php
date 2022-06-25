@@ -21,7 +21,13 @@ add_action('sim_submenu_description', function($moduleSlug){
 
 add_action('sim_submenu_options', function($moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
+
+	if(!class_exists(__NAMESPACE__.'\Trello')){
+		require_once(__DIR__.'/class_Trello.php');
+	}
 
 	$trello	= new Trello();
 	

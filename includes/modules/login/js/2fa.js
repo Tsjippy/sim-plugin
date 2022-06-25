@@ -11,13 +11,23 @@ async function saveTwofaSettings(target){
 	loader.classList.remove('hidden');
 
 	var form		= target.closest('form');
-	var formData	= new FormData(form);
-	var response 	= await fetchRestApi('save_2fa_settings', formData);
 
-	if(response){
-		form.querySelectorAll('[id^="setup-"]:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+	form.querySelectorAll('.hidden [required], select[required]').forEach(el=>{el.required = false});
 
-		Main.displayMessage(response);
+	var validity	= form.reportValidity();
+
+	if(validity){
+		var formData	= new FormData(form);
+		var response 	= await fetchRestApi('save_2fa_settings', formData);
+
+		if(response){
+			form.querySelectorAll('[id^="setup-"]:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+
+			Main.displayMessage(response, 'success');
+
+			//Show submit button
+			target.closest('form').querySelector('.form_submit').classList.add('hidden');
+		}
 	}
 
 	loader.classList.add('hidden');
@@ -53,8 +63,10 @@ function showTwofaSetup(target) {
 		wrapper.querySelectorAll('.desktop.hidden').forEach(el=>el.classList.remove('hidden'));
 	}
 
-	//Show submit button
-	target.closest('form').querySelector('.form_submit').classList.remove('hidden');
+	if(target.value == 'authenticator'){
+		//Show submit button
+		target.closest('form').querySelector('.form_submit').classList.remove('hidden');
+	}
 }
 
 async function removeWebAuthenticator(target){
@@ -132,7 +144,7 @@ async function registerBiometric(target){
 		}
   
 		//labels for use
-		setTableLabel();
+		SimTableFunctions.setTableLabel();
   
 		Main.displayMessage('Registration success');
 	}catch(error){
@@ -141,6 +153,33 @@ async function registerBiometric(target){
 	}
 
     document.querySelector('#loader_wrapper').remove();
+}
+
+async function sendValidationEmail(target){
+	// Request email code for 2fa login setup
+	var loader				= `<img id='loader' src='${sim.loadingGif}' style='height:30px;margin-top:-6px;float:right;'>`;
+
+	document.getElementById('email-message').innerHTML	= `Sending e-mail... ${loader}`;
+
+	var username	= document.getElementById('username').value;
+	var formData	= new FormData();
+	formData.append('username', username);
+
+	var response	= await fetchRestApi('request_email_code', formData);
+
+	if(response){
+		document.getElementById('email-message').innerHTML	= response;
+		document.getElementById('email-message').classList.add('success');
+
+		document.getElementById('email-code-validation').classList.remove('hidden');
+
+		target.classList.add('hidden');
+
+		//Show submit button
+		target.closest('form').querySelector('.form_submit').classList.remove('hidden');
+
+		document.getElementById('email-code-validation').focus();
+	}
 }
 
 document.addEventListener("DOMContentLoaded",function() {
@@ -170,5 +209,9 @@ document.addEventListener('click', ev =>{
 
 	if(target.name == 'save2fa'){
 		saveTwofaSettings(target);
+	}
+
+	if(target.id == 'email-code-button'){
+		sendValidationEmail(target);
 	}
 })
