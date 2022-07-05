@@ -2,16 +2,20 @@
 namespace SIM\forms;
 use SIM;
 
-const MODULE_VERSION		= '7.0.30';
+const MODULE_VERSION		= '7.0.31';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
+
+	ob_start();
 
 	if(isset($_POST['import-form'])){
-		$formBuilder	= new FormBuilder();
+		$formBuilder	= new FormBuilderForm();
 		$formBuilder->importForm($_FILES['formfile']['tmp_name']);
 	}
 
@@ -67,17 +71,17 @@ add_action('sim_submenu_description', function($moduleSlug){
 	</form>
 	<br><br>
 	<?php
-
-});
+	return ob_get_clean();
+}, 10, 2);
 
 add_action('sim_module_activated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 	
-	$formBuilder = new Formbuilder();
-	$formBuilder->createDbTable();
+	$simForms = new SimForms();
+	$simForms->createDbTable();
 
-	$formTable = new FormTable();
+	$formTable = new DisplayFormResults();
 	$formTable->createDbShortcodeTable();
 
 	scheduleTasks();
@@ -94,15 +98,13 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	return $options;
 }, 10, 2);
 
-add_action('sim_submenu_options', function($moduleSlug, $settings){
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
-		return;
+		return $optionsHtml;
 	}
 
-	if(!class_exists(__NAMESPACE__.'\AdultEmail')){
-		require_once(__DIR__.'/class_Emails.php');
-	}
+	ob_start();
 
 	?>
 	<label for="reminder_freq">How often should people be reminded of remaining form fields to fill?</label>
@@ -113,7 +115,22 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 		?>
 	</select>
 
-	<br>
+	<?php
+	return ob_get_clean();
+}, 10, 3);
+
+add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
+
+	if(!class_exists(__NAMESPACE__.'\AdultEmail')){
+		require_once(__DIR__.'/class_Emails.php');
+	}
+	?>
 	<label>
 		Define the e-mail people get when they need to fill in some mandatory form information.<br>
 		There is one e-mail to adults, and one to parents of children with missing info.<br>
@@ -139,4 +156,6 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	$formAdultEmails    = new ChildEmail(wp_get_current_user());
 
 	$formAdultEmails->printInputs($settings);
-}, 10, 2);
+
+	return ob_get_clean();
+}, 10, 3);

@@ -46,7 +46,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> \WP_REST_Server::EDITABLE,
 			'callback' 				=> __NAMESPACE__.'\saveColumnSettings',
 			'permission_callback' 	=> function(){
-				$formsTable		= new FormTable();
+				$formsTable		= new DisplayFormResults();
 				return $formsTable->editRights;
 			},
 			'args'					=> array(
@@ -69,7 +69,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> \WP_REST_Server::EDITABLE,
 			'callback' 				=> __NAMESPACE__.'\saveTableSettings',
 			'permission_callback' 	=> function(){
-				$formsTable		= new FormTable();
+				$formsTable		= new DisplayFormResults();
 				return $formsTable->editRights;
 			},
 			'args'					=> array(
@@ -220,7 +220,7 @@ function saveColumnSettings(){
 		}
 	}
 	
-	$formTable	= new FormTable();
+	$formTable	= new DisplayFormResults();
 	$wpdb->update($formTable->shortcodeTable, 
 		array(
 			'column_settings'	 	=> maybe_serialize($settings)
@@ -243,7 +243,7 @@ function saveTableSettings(){
 	//update table settings
 	$tableSettings = $_POST['table_settings'];
 
-	$formTable	= new FormTable();
+	$formTable	= new DisplayFormResults();
 	
 	$wpdb->update($formTable->shortcodeTable, 
 		array(
@@ -285,7 +285,7 @@ function saveTableSettings(){
 function removeSubmission(){
 	global $wpdb;
 
-	$formTable	= new FormTable();
+	$formTable	= new DisplayFormResults();
 	
 	$result = $wpdb->delete(
 		$formTable->submissionTableName, 
@@ -302,7 +302,7 @@ function removeSubmission(){
 
 // Archive or unarchive a (sub)submission
 function archiveSubmission(){
-	$formTable	= new FormTable();
+	$formTable	= new EditFormResults();
 	$formTable->getForm($_POST['formid']);
 	$formTable->submissionId	= $_POST['submissionid'];
 
@@ -334,7 +334,7 @@ function archiveSubmission(){
 }
 
 function getInputHtml(){
-	$formTable	= new FormTable();
+	$formTable	= new DisplayForm();
 	$formTable->getForm($_POST['formid']);
 
 	$elementName	= sanitize_text_field($_POST['fieldname']);
@@ -354,7 +354,7 @@ function getInputHtml(){
 }
 
 function editValue(){
-	$formTable	= new FormTable();
+	$formTable	= new EditFormResults();
 		
 	$formTable->getForm($_POST['formid']);	
 	$formTable->submissionId		= $_POST['submissionid'];
@@ -384,7 +384,8 @@ function editValue(){
 	$formTable->updateSubmissionData();
 	
 	//send email if needed
-	$formTable->sendEmail('fieldchanged');
+	$submitForm	= new SubmitForm();
+	$submitForm->sendEmail('fieldchanged');
 	
 	//send message back to js
 	return [

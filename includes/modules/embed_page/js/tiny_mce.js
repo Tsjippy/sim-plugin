@@ -7,7 +7,7 @@ var pageEmbedHtml =
         Select a page to embed
     </label>
     <br>
-    ${page_select}
+    ${pageSelect}
     <br>
 </div>`;
 

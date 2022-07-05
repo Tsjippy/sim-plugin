@@ -18,8 +18,8 @@ function scheduleTasks(){
 }
 
 function autoArchiveFormEntries(){
-	$formbuilder = new Formbuilder();
-	$formbuilder->autoArchive();
+	$editFormResults = new EditFormResults();
+	$editFormResults->autoArchive();
 }
 
 //loop over all users and scan for missing info

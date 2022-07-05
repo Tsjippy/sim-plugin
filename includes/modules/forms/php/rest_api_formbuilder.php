@@ -229,8 +229,10 @@ add_action( 'rest_api_init', function () {
 function addFormElement(){
 	global $wpdb;
 
-	$formBuilder	= new Formbuilder();
-	$formBuilder->getForm($_POST['formid']);
+	$simForms	= new SaveFormSettings();
+	$simForms->getForm($_POST['formid']);
+
+	$index		= 0;
 
 	//Store form results if submitted
 	$element		= (object)$_POST["formfield"];
@@ -252,7 +254,7 @@ function addFormElement(){
 		}
 	}
 	
-	if(in_array($element->type, ['label','button'])){
+	if(in_array($element->type, ['label','button','formstep'])){
 		$element->name	= $element->text;
 	}elseif(empty($element->name)){
 		return new \WP_Error('Error', "Please enter a formfieldname");
@@ -262,7 +264,7 @@ function addFormElement(){
 	$element->name		= str_replace(" ","_",strtolower(trim($element->name)));
 
 	if(
-		in_array($element->type, $formBuilder->nonInputs) 		&& // this is a non-input
+		in_array($element->type, $simForms->nonInputs) 		&& // this is a non-input
 		$element->type != 'datalist'							&& // but not a datalist
 		strpos($element->name, $element->type) === false				// and the type is not yet added to the name 
 	){
@@ -283,14 +285,14 @@ function addFormElement(){
 			
 			$unique = true;
 			//loop over all elements to check if the names are equal
-			foreach($formBuilder->formElements as $index=>$element){
+			foreach($simForms->formElements as $index=>$el){
 				//don't compare with itself
 				if($update && $index == $_POST['element_id']){
 					continue;
 				}
 
 				//we found a duplicate name
-				if($elementName == $element['name']){
+				if($elementName == $el->name){
 					$i++;
 					$unique = false;
 				}
@@ -317,27 +319,30 @@ function addFormElement(){
 		if(is_array($val)){
 			$val=serialize($val);
 		}else{
-			$val	= $formBuilder->deslash($val);
+			$val	= $simForms->deslash($val);
 		}
 	}
 	
 	if($update){
 		$message								= "Succesfully updated '{$element->name}'";
 		$element->id							= $_POST['element_id'];
-		$formBuilder->updateFormElement($element);
+		$simForms->updateFormElement($element);
 	}else{
 		$message								= "Succesfully added '{$element->name}' to this form";
 		if(!is_numeric($_POST['insertafter'])){
-			$element->priority	= $wpdb->get_var( "SELECT COUNT(`id`) FROM `{$formBuilder->elTableName}` WHERE `form_id`={$element->form_id}") +1;
+			$element->priority	= $wpdb->get_var( "SELECT COUNT(`id`) FROM `{$simForms->elTableName}` WHERE `form_id`={$element->form_id}") +1;
 		}else{
 			$element->priority	= $_POST['insertafter'];
-			$formBuilder->reorderElements(-1, $element->priority, $element);
+			$simForms->reorderElements(-1, $element->priority, $element);
 		}
 
-		$element->id	= $formBuilder->insertElement($element);
+		$element->id	= $simForms->insertElement($element);
 	}
 		
-	$html = $formBuilder->buildHtml($element, $index);
+	$formBuilderForm	= new FormBuilderForm();
+	$formBuilderForm->getForm($_POST['formid']);
+
+	$html = $formBuilderForm->buildHtml($element, $index);
 	
 	return [
 		'message'		=> $message,
@@ -349,7 +354,7 @@ function addFormElement(){
 function removeElement(){
 	global $wpdb;
 
-	$formBuilder	= new Formbuilder();
+	$formBuilder	= new SaveFormSettings();
 
 	$elementId		= $_POST['elementindex'];
 
@@ -386,16 +391,16 @@ function removeElement(){
 
 // DONE
 function requestFormElement(){
-	$formBuilder				= new Formbuilder();
+	$formBuilderForm				= new FormBuilderForm();
 	
 	$formId 				= $_POST['formid'];
 	$elementId 				= $_POST['elementid'];
 	
-	$formBuilder->getForm($formId);
+	$formBuilderForm->getForm($formId);
 	
-	$conditionForm			= $formBuilder->elementConditionsForm($elementId);
+	$conditionForm			= $formBuilderForm->elementConditionsForm($elementId);
 
-	$elementForm			= $formBuilder->elementBuilderForm($elementId);
+	$elementForm			= $formBuilderForm->elementBuilderForm($elementId);
 	
 	return [
 		'elementForm'		=> $elementForm,
@@ -405,7 +410,7 @@ function requestFormElement(){
 
 // DONE
 function reorderFormElements(){
-	$formBuilder	= new Formbuilder();
+	$formBuilder	= new SaveFormSettings();
 	
 	$oldIndex 	= $_POST['old_index'];
 	$newIndex	= $_POST['new_index'];
@@ -417,7 +422,7 @@ function reorderFormElements(){
 
 // DONE
 function editFormfieldWidth(){
-	$formBuilder	= new Formbuilder();
+	$formBuilder	= new SaveFormSettings();
 	
 	$elementId 		= $_POST['elementid'];
 	$element		= $formBuilder->getElementById($elementId);
@@ -432,7 +437,7 @@ function editFormfieldWidth(){
 
 // DONE
 function requestFormConditionsHtml(){
-	$formBuilder	= new Formbuilder();
+	$formBuilder	= new FormBuilderForm();
 
 	$elementID = $_POST['elementid'];
 	
@@ -443,7 +448,7 @@ function requestFormConditionsHtml(){
 
 // DONE
 function saveElementConditions(){
-	$formBuilder	= new Formbuilder();
+	$formBuilder	= new SaveFormSettings();
 
 	$elementID 		= $_POST['elementid'];
 	$formID			= $_POST['formid'];
@@ -478,7 +483,7 @@ function saveElementConditions(){
 
 // DONE
 function saveFormSettings(){
-	$formBuilder	= new Formbuilder();
+	$formBuilder	= new SaveFormSettings();
 
 	global $wpdb;
 	
@@ -510,7 +515,7 @@ function saveFormSettings(){
 function saveFormInput(){
 	global $wpdb;
 
-	$formBuilder	= new Formbuilder();
+	$formBuilder	= new SubmitForm();
 
 	$formId			= $_POST['formid'];
 	
@@ -629,7 +634,7 @@ function saveFormInput(){
 
 // DONE
 function saveFormEmails(){
-	$formBuilder	= new Formbuilder();
+	$formBuilder	= new SaveFormSettings();
 		
 	global $wpdb;
 	

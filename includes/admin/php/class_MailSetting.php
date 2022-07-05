@@ -5,6 +5,12 @@ use SIM;
 abstract class MailSetting{
     public $keyword;
 
+
+    /**
+     * Initiates the class
+     * 
+     * @param   string  $keyword    The keyword to use in the settings array
+     */
     protected function __construct($keyword, $moduleSlug) {
         $this->replaceArray     = [
             '%site_url%'    => SITEURL,
@@ -15,11 +21,27 @@ abstract class MailSetting{
         $this->moduleSlug       = $moduleSlug;
         $this->subjectKey       = $this->keyword."_subject";
         $this->messageKey       = $this->keyword."_message";
+        $this->subject          = '';
+        $this->message          = '';
 
-        $this->subject          = SIM\getModuleOption($this->moduleSlug, $this->subjectKey);
-        $this->message          = SIM\getModuleOption($this->moduleSlug, $this->messageKey);
+        $emailSettings          = SIM\getModuleOption($this->moduleSlug, 'emails');
+        if($emailSettings){
+            if(isset($emailSettings[$this->subjectKey])){
+                $this->subject  = $emailSettings[$this->subjectKey];
+            }
+
+            if(isset($emailSettings[$this->messageKey])){
+                $this->message  = $emailSettings[$this->messageKey];
+            }
+        }
+        
     }
 
+    /**
+     * Add replacements for user names
+     * 
+     * @param object    $user   WP_User
+     */
     protected function addUser($user){
         if(!empty($user)){
             $this->replaceArray['%first_name%']  = $user->first_name;
@@ -28,13 +50,19 @@ abstract class MailSetting{
         }
     }
 
+    /**
+     * Replaces all places holders in subject and message
+     */
     public function filterMail(){
         $this->subject  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->subject);
         $this->message  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->message);
     }
 
-    private function printSubjectInput($settings){
-        $subject  = $settings[$this->subjectKey];
+    /**
+     * Prints the e-mail subject input
+     */
+    private function printSubjectInput(){
+        $subject  = $this->subject;
         if(empty($subject)){
             $subject  = $this->defaultSubject;
         }
@@ -42,14 +70,17 @@ abstract class MailSetting{
         ?>
         <label>
             E-mail subject:<br>
-            <input type='text' name="<?php echo $this->keyword;?>_subject" value="<?php echo $subject;?>" style="width:100%;">
+            <input type='text' name="emails[<?php echo $this->keyword;?>_subject]" value="<?php echo $subject;?>" style="width:100%;">
         </label>
         <br>
         <?php
     }
 
-    private function printMessageInput($settings){
-        $message  = $settings[$this->messageKey];
+    /**
+     * Prints the e-mail message input to screen
+     */
+    private function printMessageInput(){
+        $message  = $this->message;
         if(empty($message)){
             $message  = $this->defaultMessage;
         }
@@ -63,13 +94,13 @@ abstract class MailSetting{
                 'media_buttons'             => false,
                 'forced_root_block'         => true,
                 'convert_newlines_to_brs'   => true,
-                'textarea_name'             => $this->messageKey,
+                'textarea_name'             => "emails[$this->messageKey]",
                 'textarea_rows'             => 10
             );
 
             echo wp_editor(
                 $message,
-                $this->messageKey,
+                "emails[$this->messageKey]",
                 $settings
             );
             ?>
@@ -77,12 +108,20 @@ abstract class MailSetting{
         <?php
     }
 
+    /**
+     * Prints both the subject and the content inputs to screen
+     * 
+     * @param   array   $settings   The module settings array
+     */
     public function printInputs($settings){
         $this->printSubjectInput($settings);
 
         $this->printMessageInput($settings);
     }
 
+    /**
+     * Prints all available placeholders to screen
+     */
     public function printPlaceholders(){
         ?>
         <p>

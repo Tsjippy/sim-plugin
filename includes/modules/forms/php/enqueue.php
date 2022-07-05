@@ -23,12 +23,12 @@ add_action( 'save_post', function($postId, $post){
                 // Get the formbuilder name from the shortcode
                 $formName       = shortcode_parse_atts($shortcode[3])['formname'];
 
-                $formbuilder    = new Formbuilder();
-                $formbuilder->getForms();
+                $simForms    = new SimForms();
+                $simForms->getForms();
 
                 // check if a form with this name already exists
                 $found  = false;
-                foreach($formbuilder->forms as $form){
+                foreach($simForms->forms as $form){
                     if($form->name == $formName){
                         $found  = true;
                         break;
@@ -37,7 +37,7 @@ add_action( 'save_post', function($postId, $post){
 
                 // Only add a new form if it does not exist yet
                 if(!$found){
-                    $formbuilder->insertForm($formName);
+                    $simForms->insertForm($formName);
                 }
             }
         }

@@ -1,7 +1,6 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
-use MatthiasMullie\Minify;
 
 trait CreateJs{
     /** 
@@ -133,15 +132,15 @@ trait CreateJs{
                             
                             if($equation == 'checked'){
                                 if(count($condition['rules'])==1){
-                                    $conditionIf .= "el.checked == true";
+                                    $conditionIf .= "el.checked";
                                 }else{
-                                    $conditionIf .= "form.querySelector('[name=\"$conditionalFieldName\"]').checked == true";
+                                    $conditionIf .= "form.querySelector('[name=\"$conditionalFieldName\"]').checked";
                                 }
                             }elseif($equation == '!checked'){
                                 if(count($condition['rules'])==1){
-                                    $conditionIf .= "el.checked == false";
+                                    $conditionIf .= "!el.checked";
                                 }else{
-                                    $conditionIf .= "form.querySelector('[name=\"$conditionalFieldName\"]').checked == false";
+                                    $conditionIf .= "!form.querySelector('[name=\"$conditionalFieldName\"]').checked";
                                 }
                             }elseif($equation != 'changed' && $equation != 'clicked'){
                                 $conditionIf .= "$compareValue1 $equation $compareValue2";

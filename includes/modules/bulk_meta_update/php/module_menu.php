@@ -5,10 +5,13 @@ use SIM;
 const MODULE_VERSION		= '7.0.1';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
 
+	ob_start();
 	?>
 	<p>
 		This module add one shortcode: 'bulk_update_meta'.<br>
@@ -29,4 +32,7 @@ add_action('sim_submenu_description', function($moduleSlug){
 		Use like this: <code>[bulk_update_meta roles="visainfo,administrator" key="visa_info#nin#"]</code>
 	</p>
 	<?php
-});
+
+	return ob_get_clean();
+
+}, 10, 2);

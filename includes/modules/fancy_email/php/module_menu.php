@@ -22,10 +22,13 @@ add_action('sim_module_activated', function($moduleSlug){
 	$fancyEmail->createDbTables();
 });
 
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
 
+	ob_start();
 	?>
 	This module will place all e-mails send in a nice format.<br>
 	It will also add a warning to the bottom of the e-mail about it being an automated e-mail.<br>
@@ -36,16 +39,22 @@ add_action('sim_submenu_description', function($moduleSlug){
 	if(SIM\getModuleOption($moduleSlug, 'enable')){
 		echo emailStats();
 	}
-});
 
-add_action('sim_submenu_options', function($moduleSlug, $settings){
+	return ob_get_clean();
+}, 10, 2);
+
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{
-		return;
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
 	}
+
+	ob_start();
 	
     ?>
 	<label>Select a picture for the e-mail header.</label>
 	<?php
 	SIM\pictureSelector('header_image', 'e-mail header', $settings);
-}, 10, 2);
+
+	return ob_get_clean();
+}, 10, 3);

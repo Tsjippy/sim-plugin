@@ -4,9 +4,9 @@ console.log('admin.js loaded');
 document.addEventListener("DOMContentLoaded",function() {
 	document.querySelector('[name="enable"]').addEventListener('change', function(event){
         if(event.target.checked){
-            document.querySelector('.options').style.display    = 'block';
+            document.querySelectorAll('.options, .tablink-wrapper').forEach(el=>el.style.display    = 'block');
         }else{
-            document.querySelector('.options').style.display    = 'none';
+            document.querySelectorAll('.options, .tablink-wrapper').forEach(el=>el.style.display    = 'none');
         }
     })
 
@@ -38,5 +38,15 @@ window.addEventListener("click", event => {
             })
             navigator.clipboard.writeText(value);
         }
+    }
+
+    if(target.matches('.tablink:not(.active)')){
+        var curActive   = target.closest('.tablink-wrapper').querySelector('.active');
+        curActive.classList.remove('active');
+        document.getElementById(curActive.dataset.target).classList.add('hidden');
+
+        target.classList.add('active');
+        document.getElementById(target.dataset.target).classList.remove('hidden');
+
     }
 });

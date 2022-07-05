@@ -6,9 +6,13 @@ const MODULE_VERSION		= '7.0.5';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
+
+	ob_start();
 
 	?>
 	<p>
@@ -22,12 +26,16 @@ add_action('sim_submenu_description', function($moduleSlug){
 	</p>
 	<?php
 
-});
+	return ob_get_clean();
+}, 10, 2);
 
-add_action('sim_submenu_options', function($moduleSlug, $settings){
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
-	
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
     ?>
 	<label for="reminder_freq">How often should people be reminded of remaining content to read</label>
 	<br>
@@ -36,15 +44,28 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 		SIM\ADMIN\recurrenceSelector($settings['reminder_freq']);
 		?>
 	</select>
-	<br>
-	<br>
+	<?php
+
+	return ob_get_clean();
+}, 10, 3);
+
+add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
+    ?>
 	<h4>E-mail with read reminders</h4>
 	<label>Define the e-mail people get when they shour read some mandatory content.</label>
 	<?php
 	$readReminder    = new ReadReminder(wp_get_current_user());
 	$readReminder->printPlaceholders();
 	$readReminder->printInputs($settings);
-}, 10, 2);
+
+	return ob_get_clean();
+}, 10, 3);
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name

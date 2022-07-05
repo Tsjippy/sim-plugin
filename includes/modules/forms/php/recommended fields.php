@@ -18,9 +18,9 @@ function getAllFields($userId, $type){
 		$childName	= get_userdata($userId)->first_name;
 	}
 
-	$formBuilder		= new Formbuilder();
+	$simForms		= new SimForms();
 
-	$query				= "SELECT * FROM {$formBuilder->elTableName} WHERE ";
+	$query				= "SELECT * FROM {$simForms->elTableName} WHERE ";
 	if($type == 'all'){
 		$query			.= "`recommended`=1 OR `mandatory`=1";
 	}else{
@@ -113,7 +113,7 @@ function getAllFields($userId, $type){
 				if(isset($formUrls[$field->form_id])){
 					$formUrl			= $formUrls[$field->form_id];
 				}else{
-					$query				= "SELECT * FROM {$formBuilder->tableName} WHERE `id`={$field->form_id}";
+					$query				= "SELECT * FROM {$simForms->tableName} WHERE `id`={$field->form_id}";
 					$form				= $wpdb->get_results($query)[0];
 					$formUrl			= maybe_unserialize($form->settings)['formurl'];
 

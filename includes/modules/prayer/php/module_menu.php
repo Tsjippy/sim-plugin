@@ -16,11 +16,13 @@ add_action('sim_module_activated', function($moduleSlug){
 	wp_create_category('Prayer');
 });
 
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{
-		return;
+		return $description;
 	}
+
+	ob_start();
 
 	?>
 	<p>
@@ -42,4 +44,5 @@ add_action('sim_submenu_description', function($moduleSlug){
 	</p>
 	<?php
 
-});
+	return ob_get_clean();
+}, 10, 2);

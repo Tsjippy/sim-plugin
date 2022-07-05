@@ -33,7 +33,6 @@ export function changeUrl(target, secondTab=''){
 }
 
 function switchTab(event=null){
-	const url = new URL(window.location);
 	const params = new Proxy(new URLSearchParams(window.location.search), {
 		get: (searchParams, prop) => searchParams.get(prop),
 	});
@@ -42,7 +41,7 @@ function switchTab(event=null){
 	var lastTab		= '';
 	if(mainTab != null){
 		//find the tab and display it
-		document.querySelectorAll('[data-param_val="'+mainTab+'"]').forEach(tabbutton=>{
+		document.querySelectorAll(`[data-param_val="${mainTab}"]`).forEach(tabbutton=>{
 			//only process non-modal tabs
 			if(tabbutton.closest('.modal') == null){
 				var result	= displayTab(tabbutton);

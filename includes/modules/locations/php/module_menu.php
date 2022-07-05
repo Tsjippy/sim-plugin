@@ -7,11 +7,13 @@ const MODULE_VERSION		= '7.0.1';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
 // check for dependicies
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{
-		return;
+		return $description;
 	}
+
+	ob_start();
 
 	if ( !in_array( 'ultimate-maps-by-supsystic/ums.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 		// ultimate maps is not installed
@@ -48,13 +50,19 @@ add_action('sim_submenu_description', function($moduleSlug){
 		<a href='<?php echo home_url('/locations');?>'>Locations</a><br>
 	</p>
 	<?php
-});
 
-add_action('sim_submenu_options', function($moduleSlug, $settings){
+	return ob_get_clean();
+}, 10, 2);
+
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	global $wpdb;
 
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
 	
 	$query = 'SELECT * FROM `'.$wpdb->prefix .'ums_icons` WHERE 1';
 	$icons = $wpdb->get_results($query);
@@ -119,7 +127,8 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	?>
 
 	<?php
-}, 10, 2);
+	return ob_get_clean();
+}, 10, 3);
 
 /**
  * Location maps

@@ -7,10 +7,13 @@ const MODULE_VERSION		= '7.0.7';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
 
+	ob_start();
 	//display url form
 	if(is_numeric($_GET['vimeoid'])){
 		wp_enqueue_script('sim_vimeo_admin_script');
@@ -39,11 +42,17 @@ add_action('sim_submenu_description', function($moduleSlug, $moduleName){
 	</p>
 	<?php
 
+	return ob_get_clean();
+
 },10,2);
 
-add_action('sim_submenu_options', function($moduleSlug, $settings){
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
 
 	if(!class_exists('SIM\VIMEO\VimeoApi')){
 		require(__DIR__.'/api_functions.php');
@@ -170,7 +179,9 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	</div>
 	<br>
 	<?php
-}, 10, 2);
+
+	return ob_get_clean();
+}, 10, 3);
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name

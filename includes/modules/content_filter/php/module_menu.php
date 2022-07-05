@@ -15,10 +15,13 @@ add_action('sim_module_activated', function($moduleSlug){
 	wp_create_category('Confidential');
 });
 
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
 
+	ob_start();
 	?>
 	<p>
 		This module filters all content to be only available to logged-in users.<br>
@@ -32,11 +35,17 @@ add_action('sim_submenu_description', function($moduleSlug){
 		Use like this: <code>[content_filter roles='administrator, otherroles']This has limited visibility[/content_filter]</code>
 	</p>
 	<?php
-});
 
-add_action('sim_submenu_options', function($moduleSlug){
+	return ob_get_clean();
+}, 10, 2);
+
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
 
 	$default    = SIM\getModuleOption('content_filter', 'default_status');
 	
@@ -46,4 +55,5 @@ add_action('sim_submenu_options', function($moduleSlug){
 		Make uploaded media private by default
 	</label>
 	<?php
-});
+	return ob_get_clean();
+}, 10, 2);

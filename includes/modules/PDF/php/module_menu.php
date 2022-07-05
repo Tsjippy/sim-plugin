@@ -6,10 +6,13 @@ const MODULE_VERSION		= '7.0.0';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
 
+	ob_start();
 	?>
 	<p>
 		This module adds the possibility to have a print button on pages or posts.<br>
@@ -19,13 +22,16 @@ add_action('sim_submenu_description', function($moduleSlug){
 	</p>
 	<?php
 
-});
+	return ob_get_clean();
+}, 10, 2);
 
-add_action('sim_submenu_options', function($moduleSlug, $settings){
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
-		return;
+		return $optionsHtml;
 	}
+
+	ob_start();
 	
     ?>
 	<label>
@@ -42,4 +48,6 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	<br>
 	<?php
 	SIM\pictureSelector('logo',  'Logo for use in PDF headers', $settings);
-}, 10, 2);
+
+	return ob_get_clean();
+}, 10, 3);

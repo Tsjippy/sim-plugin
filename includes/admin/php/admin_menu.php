@@ -2,7 +2,7 @@
 namespace SIM\ADMIN;
 use SIM;
 
-const MODULE_VERSION		= '7.0.1';
+const MODULE_VERSION		= '7.0.2';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
@@ -11,7 +11,11 @@ DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
  */
 add_action( 'admin_menu', function() {
 	if(isset($_POST['module'])){
-		saveSettings();
+		if(isset($_POST['emails'])){
+			saveEmails();
+		}else{
+			saveSettings();
+		}
 	}
 
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");
@@ -53,61 +57,115 @@ function buildSubMenu(){
 	global $plugin_page;
 	global $Modules;
 
-	$moduleSlug	= str_replace('sim_','',$plugin_page);
+	$moduleSlug	= str_replace('sim_', '', $plugin_page);
 	$moduleName	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
-	$settings	= $Modules[$moduleSlug];
+
+	if(isset($Modules[$moduleSlug]) && is_array($Modules[$moduleSlug])){
+		$settings	= $Modules[$moduleSlug];
+	}else{
+		$settings	= [];
+	}
 
 	echo '<div class="module-settings">';
 
 		if(isset($_POST['module'])){
-			?>
-			<div class='success'>
-				Settings succesfully saved
-			</div>
-			<?php
+			$message	= "Settings succesfully saved";
+			if(isset($_POST['emails'])){
+				$message	= "E-mail settings succesfully saved";
+			}
+			echo "<div class='success'>$message</div>";
 		}
 		?>
 		<h1><?php echo $moduleName;?> module</h1>
-		<?php 
-		ob_start();
-		do_action('sim_submenu_description', $moduleSlug, $moduleName);
-		$description = ob_get_clean();
+
+		<?php
+		$description = apply_filters('sim_submenu_description', '', $moduleSlug, $moduleName);
 
 		if(!empty($description)){
 			echo "<h2>Description</h2>";
 			echo $description;
 		}
-		?>
-		<h2>Settings</h2>
 		
+		$settingsTab		= settingsTab($moduleSlug, $moduleName, $settings);
+		$emailSettingsTab	= emailSettingsTab($moduleSlug, $moduleName, $settings);
+
+		if(!empty($emailSettingsTab)){
+			?>
+			<div class='tablink-wrapper <?php if(!isset($settings['enable'])){echo 'hidden';}?>'>
+				<button class="tablink active" id="show_settings" data-target="settings">Settings</button>
+				<button class="tablink" id="show_emails" data-target="emails">E-mail settings</button>
+			</div>
+			<?php
+		}
+
+		echo $settingsTab;
+		if(!empty($emailSettingsTab)){
+			echo $emailSettingsTab;
+		}
+}
+
+function settingsTab($moduleSlug, $moduleName, $settings){
+	ob_start();
+	?>
+	<div class='tabcontent' id='settings'>
+		<h2>Settings</h2>
+			
 		<form action="" method="post">
 			<input type='hidden' name='module' value='<?php echo $moduleSlug;?>'>
 			Enable <?php echo $moduleName;?> module 
 			<label class="switch">
-				<input type="checkbox" name="enable" <?php if($settings['enable']){echo 'checked';}?>>
+				<input type="checkbox" name="enable" <?php if(isset($settings['enable'])){echo 'checked';}?>>
 				<span class="slider round"></span>
 			</label>
 			<br>
 			<br>
-			<div class='options' <?php if(!$settings['enable']){echo "style='display:none'";}?>>
-				<?php 
-				ob_start();
-				do_action('sim_submenu_options', $moduleSlug, $settings, $moduleName);
-				$html	= ob_get_clean();
+			<div class='options' <?php if(!isset($settings['enable'])){echo "style='display:none'";}?>>
+				<?php
+				$html	= apply_filters('sim_submenu_options', '', $moduleSlug, $settings, $moduleName);
 				if(empty($html)){
 					$html = '<div>No special settings needed for this module</div>';
 				}
-
 				echo $html;
 				?>
 			</div>
 			<br>
 			<br>
-			<input type="submit" value="Save <?php echo $moduleName;?> options">
+			<input type="submit" value="Save <?php echo $moduleName;?> settings">
 		</form> 
 		<br>
 	</div>
 	<?php
+
+	return ob_get_clean();
+}
+
+function emailSettingsTab($moduleSlug, $moduleName, $settings){
+	$html	= apply_filters('sim_email_settings', '', $moduleSlug, $settings, $moduleName);
+
+	if(empty($html)){
+		return '';
+	}
+
+	ob_start();
+
+	?>
+	<div class='tabcontent hidden' id='emails'>
+		<h2>E-mail settings</h2>
+			
+		<form action="" method="post">
+			<input type='hidden' name='module' value='<?php echo $moduleSlug;?>'>
+			<?php 
+			echo $html;
+			?>
+			<br>
+			<br>
+			<input type="submit" name="save-email-settings" value="Save <?php echo $moduleName;?> e-mail settings">
+		</form> 
+		<br>
+	</div>
+	<?php
+
+	return ob_get_clean();
 }
 
 /**

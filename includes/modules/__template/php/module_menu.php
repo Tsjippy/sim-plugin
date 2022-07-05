@@ -40,22 +40,41 @@ add_action('sim_module_deactivated', function($moduleSlug, $options){
 	}
 }, 10, 2);
 
-add_action('sim_submenu_description', function($moduleSlug, $moduleName){
-	//module slug should be the same as grandparent folder name
+add_filter('sim_submenu_description', function($description, $moduleSlug, $moduleName){
+	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{
-		return;
+		return $description;
 	}
 
-	?>
-
-	<?php
+	return $description;
 },10,2);
 
-add_action('sim_submenu_options', function($moduleSlug, $settings, $moduleName,){
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings, $moduleName){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
 	
     ?>
 
 	<?php
-}, 10, 3);
+
+	return ob_get_clean();
+}, 10, 4);
+
+add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings, $moduleName){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return;
+	}
+
+	ob_start();
+	
+    ?>
+
+	<?php
+
+	return ob_get_clean();
+}, 10, 4);

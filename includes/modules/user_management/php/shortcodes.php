@@ -353,6 +353,7 @@ function user_info_page($atts){
 		$tabs				= [];
 		$html				= '';
 		$userAge 			= 19;
+		$availableForms		= (array)SIM\getModuleOption(MODULE_SLUG, 'enabled-forms');
 	
 		//Showing data for current user
 		if($showCurrentUserData){
@@ -400,7 +401,7 @@ function user_info_page($atts){
 			/*
 				Family Info
 			*/
-			if(array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData){
+			if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('family', $availableForms) ){
 				if($userAge > 18){
 					//Tab button
 					$tabs[]	= '<li class="tablink" id="show_family_info" data-target="family_info">Family</li>';
@@ -419,7 +420,7 @@ function user_info_page($atts){
 			/*
 				GENERIC Info
 			*/
-			if(array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData){
+			if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('generic', $availableForms)){
 				$accountValidity = get_user_meta( $userId, 'account_validity',true);
 				
 				//Add a tab button
@@ -461,7 +462,7 @@ function user_info_page($atts){
 			/*
 				Location Info
 			*/
-			if(array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData){
+			if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('location', $availableForms)){
 				//Add tab button
 				$tabs[]	= '<li class="tablink" id="show_location_info" data-target="location_info">Location</li>';
 				
@@ -485,7 +486,7 @@ function user_info_page($atts){
 			/*
 				PROFILE PICTURE Info
 			*/
-			if(in_array('usermanagement',$userRoles ) || $showCurrentUserData){
+			if((in_array('usermanagement',$userRoles ) || $showCurrentUserData) && in_array('profile picture', $availableForms)){
 				//Add tab button
 				$tabs[]	= '<li class="tablink" id="show_profile_picture_info" data-target="profile_picture_info">Profile picture</li>';
 				
@@ -515,7 +516,7 @@ function user_info_page($atts){
 			/*
 				SECURITY INFO
 			*/
-			if(array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData){				
+			if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('security', $availableForms)){				
 				//Tab button
 				$tabs[]	= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
 				
@@ -530,7 +531,7 @@ function user_info_page($atts){
 			/*
 				Vaccinations Info
 			*/
-			if(array_intersect($medicalRoles, $userRoles) || $showCurrentUserData){
+			if((array_intersect($medicalRoles, $userRoles) || $showCurrentUserData) && in_array('vaccinations', $availableForms)){
 				if($showCurrentUserData){
 					$active = '';
 					$class = 'class="hidden"';
@@ -544,6 +545,9 @@ function user_info_page($atts){
 				
 				//Content
 				$html	.= "<div id='medical_info' $class>";
+				 
+
+				SIM\printArray(do_shortcode('[formbuilder formname=user_medical]'));
 					$html	.= do_shortcode('[formbuilder formname=user_medical]');
 					$html	.= "<form method='post' id='print_medicals-form'>";
 						$html	.= "<input type='hidden' name='userid' id='userid' value='$userId'>";
@@ -570,7 +574,7 @@ function user_info_page($atts){
 						
 						//Content
 						$childHtml = "<div id='child_info_$child_id' class='tabcontent hidden'>";
-							$childHtml .= show_children_fields($child_id);
+							$childHtml .= showChildrenFields($child_id);
 						$childHtml .= '</div>';
 						
 						$html	.= $childHtml;

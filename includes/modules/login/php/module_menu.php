@@ -6,10 +6,13 @@ const MODULE_VERSION		= '7.0.12';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug){
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{
-		return;
+		return $description;
 	}
+
+	ob_start();
 	$menus			= wp_get_nav_menus();
 	$menuLocations	= get_nav_menu_locations();
 	$menuActivated	= false;
@@ -71,11 +74,16 @@ add_action('sim_submenu_description', function($moduleSlug){
 		<?php
 	}
 
-});
+	return ob_get_clean();
+}, 10, 2);
 
-add_action('sim_submenu_options', function($moduleSlug, $settings){
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
 	?>
 	<p>
 		You can enable user registration if you want.<br>
@@ -86,9 +94,22 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 		<input type="checkbox" name="user_registration" value="enabled" <?php if($settings['user_registration']){echo 'checked';}?>>
 		Enable user registration
 	</label>
-	<br>
-	<br>
 
+	<input type='hidden' name='password_reset_page' value='<?php echo $settings['password_reset_page'];?>'>
+	<input type='hidden' name='register_page' value='<?php echo $settings['register_page'];?>'>
+	<input type='hidden' name='2fa_page' value='<?php echo $settings['2fa_page'];?>'>
+	<?php
+	return ob_get_clean();
+}, 10, 3);
+
+add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
+	?>
 	<h4>E-mail with the two factor login code</h4>
 	<label>Define the e-mail people get when they requested a code for login.</label>
 	<?php
@@ -138,12 +159,9 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	?>
 	<br>
 	<br>
-
-	<input type='hidden' name='password_reset_page' value='<?php echo $settings['password_reset_page'];?>'>
-	<input type='hidden' name='register_page' value='<?php echo $settings['register_page'];?>'>
-	<input type='hidden' name='2fa_page' value='<?php echo $settings['2fa_page'];?>'>
 	<?php
-}, 10, 2);
+	return ob_get_clean();
+}, 10, 3);
 
 add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name

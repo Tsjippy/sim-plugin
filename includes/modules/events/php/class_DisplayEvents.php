@@ -76,13 +76,17 @@ class DisplayEvents extends Events{
 	public function upcomingEvents(){
 		global $wpdb;
 
-		$this->retrieveEvents(date("Y-m-d"), date('Y-m-d', strtotime('+3 month')), 10, "endtime > '".date('H:i', current_time('U'))."' AND {$wpdb->prefix}posts.ID NOT IN ( SELECT `post_id` FROM `{$wpdb->prefix}postmeta` WHERE `meta_key`='celebrationdate')");
+		$this->retrieveEvents(date("Y-m-d"), date('Y-m-d', strtotime('+3 month')), 10, "{$wpdb->prefix}posts.ID NOT IN ( SELECT `post_id` FROM `{$wpdb->prefix}postmeta` WHERE `meta_key`='celebrationdate')");
 
 		//do not list celebrations
 		foreach($this->events as $key=>$event){
-			if(!empty(get_post_meta($event->post_id, 'celebrationdate', true))){
+			// do not keep events who already happened
+			if($event->startdate == date("Y-m-d") && $event->endtime < date('H:i', current_time('U'))){
 				unset($this->events[$key]);
 			}
+			/* if(!empty(get_post_meta($event->post_id, 'celebrationdate', true))){
+				unset($this->events[$key]);
+			} */
 		}
 
 		ob_start();

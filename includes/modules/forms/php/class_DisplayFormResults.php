@@ -2,16 +2,19 @@
 namespace SIM\FORMS;
 use SIM;
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 ob_start();
 
-if(!class_exists('Formbuilder')){
-	require_once(__DIR__.'/class_Formbuilder.php');
+if(!class_exists('SimForms')){
+	require_once(__DIR__.'/class_SimForms.php');
 }
 
-class FormTable extends Formbuilder{
+if(!trait_exists(__NAMESPACE__.'\ExportFormResults')){
+	require_once(__DIR__.'/trait_ExportFormResults.php');
+}
+
+class DisplayFormResults extends SimForms{
+	use ExportFormResults;
+
 	function __construct(){
 		global $wpdb;
 		
@@ -25,6 +28,136 @@ class FormTable extends Formbuilder{
 			$this->userRoles[]	= 'everyone';//used to indicate view rights on permissions
 			
 			$this->excelContent= [];
+		}
+	}
+
+	/**
+	 * Get formresults of the current form
+	 * 
+	 * @param	int		$userId			Optional the user id to get the results of. Default null
+	 * @param	int		$submissionId	Optional a specific id. Default null
+	 * 
+	 * 
+	 */
+	function getSubmissionData($userId=null, $submissionId=null, $all=false){
+		global $wpdb;
+		
+		$query				= "SELECT * FROM {$this->submissionTableName} WHERE form_id={$this->formData->id}";
+		if(is_numeric($submissionId)){
+			$query .= " and id='$submissionId'";
+		}elseif(is_numeric($userId)){
+			$query .= " and userid='$userId'";
+		}
+		
+		if(!$this->showArchived && $submissionId == null){
+			$query .= " and archived=0";
+		}
+
+		// Limit the amount to 100
+		if(isset($_POST['pagenumber']) && is_numeric($_POST['pagenumber'])){
+			$this->currentPage	= $_POST['pagenumber'];
+
+			if(isset($_POST['prev'])){
+				$this->currentPage--;
+			}
+			if(isset($_POST['next'])){
+				$this->currentPage++;
+			}
+			$start	= $this->currentPage * $this->pageSize;
+		}else{
+			$start				= 0;
+			$this->currentPage	= 0;
+		}
+
+		$query	= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this->formName);
+
+		// Get the total
+		$result	= $wpdb->get_results(str_replace('*', 'count(*) as total', $query));
+		if(empty($result)){
+			$this->total	= 0;
+		}else{
+			$this->total	= $result[0]->total;
+		}
+
+		if(!$all){
+			$query	.= " LIMIT $start, $this->pageSize";
+		}
+
+		// Get results
+		$result	= $wpdb->get_results($query);
+		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
+
+		$this->submissionData		= $result;
+		
+		if(is_numeric($submissionId)){
+			$this->submissionData	= $this->submissionData[0];
+			$this->formResults 		= maybe_unserialize($this->submissionData->formresults);
+		}else{
+			// unserialize
+			foreach($this->submissionData as &$data){
+				$data->formresults	= unserialize($data->formresults);
+			}
+
+			$this->processSplittedData();
+		}
+		
+		if($wpdb->last_error !== ''){
+			SIM\printArray($wpdb->print_error());
+		}
+	}
+
+	/**
+	 * This function creates seperated entries from entries with an splitted value
+	 */
+	function processSplittedData(){
+		if(!empty($this->formData->settings['split'])){
+			$fieldMainName	= $this->formData->settings['split'];
+			
+			//loop over all submissions
+			foreach($this->submissionData as $key=>$entry){
+				// loop over all entries of the split key
+				foreach($entry->formresults[$fieldMainName] as $subKey=>$array){
+					// Should always be an array
+					if(is_array($array)){
+						// Check if it has data
+						$hasData	= false;
+						foreach($array as $value){
+							if(!empty($value)){
+								$hasData = true;
+								break;
+							}
+						}
+
+						// If it has data add as a seperate item to the submission data
+						if($hasData){
+							$newSubmission	= clone $entry;
+							// Mark this submission as archived if needed
+							if(isset($array['archived'])){
+								if($this->showArchived){
+									$newSubmission->archived	= true;
+									unset($array['archived']);
+								}else{
+									continue;
+								}
+							}
+							// Add the array to the formresults array
+							$newSubmission->formresults = array_merge($entry->formresults, $array);
+
+							// remove the index value from the copy
+							unset($newSubmission->formresults[$fieldMainName]);
+
+							// Add the subkey
+							$newSubmission->sub_id	= $subKey;
+
+							// Copy the entry
+							$this->submissionData[]	= $newSubmission;
+						}
+					}
+				}
+
+				// remove the original entry
+				unset($this->submissionData[$key]);
+			}
 		}
 	}
 
@@ -70,7 +203,9 @@ class FormTable extends Formbuilder{
 			$output = '';
 
 			foreach($string as $sub){
-				if($output != '') $output .= "\n";
+				if(!empty($output)){
+					$output .= "\n";
+				}
 				$output .= $this->transformInputData($sub, $fieldName);
 			}
 			return $output;
@@ -398,12 +533,14 @@ class FormTable extends Formbuilder{
 				if(
 					$this->tableEditPermissions || 																			//if we are allowed to do all actions
 					$fieldValues['userid'] == $this->user->ID || 															//or this is our own entry
-					array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles']) != false	//or we have permission for this specific button
+					array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])			//or we have permission for this specific button
 				){
 					$buttons .= $button;
 				}
 			}
-			if(!empty($buttons))	echo "<td>$buttons</td>";
+			if(!empty($buttons)){
+				echo "<td>$buttons</td>";
+			}
 		}
 		echo '</tr>';
 	}
@@ -420,275 +557,6 @@ class FormTable extends Formbuilder{
 		
 		$this->tableSettings		= unserialize($this->shortcodeData->table_settings);
 		$this->columnSettings		= unserialize($this->shortcodeData->column_settings);
-	}
-
-	/**
-	 * Clean excel Content from currenlty hidden columns
-	 */
-	function cleanExportContent(){
-		$hiddenColumns		= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
-
-		$excludeIndexes	= [];
-
-		$header				= $this->excelContent[0];
-
-		foreach($this->columnSettings as $setting){
-			// If the name is found in the hidden columns, add the header index to the exclusion array
-			if(!empty($hiddenColumns[$setting['name']])){
-				$excludeIndexes[]	= array_search($setting['nice_name'], $header);
-			}
-		}
-
-		//loop over the content and remove all needed
-		foreach($this->excelContent as &$row){
-			foreach($excludeIndexes as $i){
-				unset($row[$i]);
-			}
-
-			$row	= array_values($row);
-		}
-
-		// There is a custom sort column defined
-		if(is_numeric($this->tableSettings['default_sort'])){
-			$sortElementId		= $this->tableSettings['default_sort'];
-			$sortElement		= $this->getElementById($sortElementId);
-			$sortElementType	= $sortElement->type;
-			$sortColumnName		= $this->columnSettings[$sortElementId]['nice_name'];
-			$sortCol			= array_search($sortColumnName, $this->excelContent[0]);
-
-			// Sort
-			$header				= $this->excelContent[0];
-			//remove header, as it should not be sorted
-			unset($this->excelContent[0]);
-	
-			//Sort the array
-			usort($this->excelContent, function($a, $b) use ($sortCol, $sortElementType){
-				if($sortElementType == 'date'){
-					return strtotime($a[$sortCol]) <=> strtotime($b[$sortCol]);
-				}
-				return $a[$sortCol] > $b[$sortCol];
-			});
-	
-			//Add header again
-			$this->excelContent	= array_merge([$header], $this->excelContent);
-		}
-	}
-	
-	/**
-	 * Export the current table to excel
-	 * 
-	 * @param	string	$fileName	the name of the downloaded file. 	Default the formname
-	 * @param	bool	$download	Whether to download the excel or print it to screen
-	 */
-	function exportExcel($fileName="", $download=true){
-		if($fileName == "") $fileName = get_the_title($this->form_id).".xlsx";
-
-		$spreadsheet = new Spreadsheet();
-		$sheet = $spreadsheet->getActiveSheet();
-
-		//Write the column headers
-		$col 		= 0;
-		$row		= 1;
-		$rowIndex	= 1;
-
-		$this->cleanExportContent();
-
-		//loop over the rows
-		foreach($this->excelContent as $row){
-			//Start column
-			$col	= 1;
-			//loop over the cells
-			foreach ($row as $cell) {
-				if(is_array($cell)){
-					SIM\cleanUpNestedArray($cell);
-					$cell	= implode(',', $cell);
-				} 
-				/* 
-						Write the content to the cell
-				*/
-				$sheet->setCellValueByColumnAndRow($col, $rowIndex, $cell);
-
-				$col++;
-			}
-			//Consider new row for each entry here
-			$rowIndex++;
-		}
-		
-		//Create Styles Array
-		$styleArrayFirstRow		= ['font' => ['bold' => true,]];
-		//Retrieve Highest Column (e.g AE)
-		$highestColumn			= $sheet->getHighestColumn();
-		//set first row bold
-		$sheet->getStyle('A1:' . $highestColumn . '1' )->applyFromArray($styleArrayFirstRow);
-		
-		$writer					= new Xlsx($spreadsheet);
-		//Download excel file here
-		if($download){
-			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-			header("Content-Disposition: attachment; filename=$fileName");
-			for ($i = 0; $i < ob_get_level(); $i++) {
-				ob_get_clean();
-			}
-			ob_start();
-			$writer->save('php://output');
-			ob_end_flush();
-			exit;
-			die();
-		}else{
-			//Store xlsx file on server and return the path
-			$file = get_temp_dir().$fileName;
-			$writer->save($file);
-			return $file;
-		}
-	}
-
-	/**
-	 * Export the current table to PDF
-	 * 
-	 * @param	string	$fileName	the name of the downloaded file. 	Default the formname
-	 */
-	function exportPdf($filename=""){
-		$pdf = new SIM\PDF\PDF_HTML();
-		$pdf->SetFont('Arial','B',15);
-
-		$this->cleanExportContent();
-				
-		//Determine the column widths
-		$colCount	= count($this->excelContent[0]);
-		$colWidths	= [];
-		
-		$header		= array_map('ucfirst', $this->excelContent[0]);
-
-		$title		= $this->formSettings['formname'].' export';
-		if(empty($title)){
-			$title = 'Form export';
-		}
-
-		//loop over the data to check all cells for their length
-		foreach($this->excelContent as $rowData){
-			//loop over the columns to check how wide they need to be
-			for ($x = 0; $x <= $colCount-1; $x++) {
-				//Add the length to the array
-				if(is_array($rowData[$x])) $rowData[$x] = implode("\n", $rowData[$x]);
-
-				$colWidths[$x][] = $pdf->GetStringWidth($rowData[$x]);
-			}
-		}
-
-		//find the biggest cell per column
-		for ($x = 0; $x <= $colCount-1; $x++) {
-			$colWidths[$x] = max($colWidths[$x]);
-		}
-
-		$smallCollWidth		= 10;
-		$mediumCollWidth	= 30;
-
-		//count the columns smaller than 10
-		$smallCollCount = count(array_filter(
-			$colWidths,
-			function ($value) use($smallCollWidth){
-				return ($value <= $smallCollWidth);
-			}
-		));
-
-		//page with minus the total width of all small collums
-		$remainingWidth	= $pdf->GetPageWidth() - $smallCollCount * $smallCollWidth;
-
-		//width needed by all non-small columns
-		$requiredWidth = array_sum(array_filter(
-			$colWidths,
-			function ($value) use($smallCollWidth){
-				return ($value > $smallCollWidth);
-			}
-		));
-
-		//columns with a width smaller than 30
-		$interColls	= array_filter(
-			$colWidths,
-			function ($value) use($smallCollWidth, $mediumCollWidth){
-				return ($value > $smallCollWidth && $value <= $mediumCollWidth);
-			}
-		);
-
-		//count the columns with a proportional medium width of 30 or smaller but an actual width bigger than 30
-		$mediumCollCount = count(array_filter(
-			$colWidths,
-			function ($value) use($remainingWidth, $requiredWidth, $mediumCollWidth){
-				$propWidth	= $remainingWidth*($value/$requiredWidth);
-				return ($value > $mediumCollWidth && $propWidth <= $mediumCollWidth);
-			}
-		));
-
-		$bigColls = array_filter(
-			$colWidths,
-			function ($value) use($remainingWidth, $requiredWidth, $mediumCollWidth){
-				$propWidth	= $remainingWidth*($value/$requiredWidth);
-				return ($propWidth > $mediumCollWidth);
-			}
-		);
-
-		//Determine the page size
-		$minWidth	= $smallCollCount * $smallCollWidth + array_sum($interColls) + $mediumCollCount * $mediumCollWidth + array_sum($bigColls)/6;
-
-		if($minWidth > 180){
-			if($minWidth < 297){
-				//Landscape A4 pdf
-				$pdf = new SIM\PDF\PDF_HTML('L');
-			}elseif($minWidth < 420){
-				//Landscape pdf A3 size
-				$pdf = new SIM\PDF\PDF_HTML('L','mm','A3');
-			}elseif($minWidth < 594){
-				//Landscape pdf A2 size
-				$pdf = new SIM\PDF\PDF_HTML('L','mm',array(594,420));
-			}elseif($minWidth < 841){
-				//Landscape pdf A1 size
-				$pdf = new SIM\PDF\PDF_HTML('L','mm',array(841,594));
-			}else{
-				//Landscape pdf A0 size
-				$pdf = new SIM\PDF\PDF_HTML('L','mm',array(1189,841));
-			}
-			
-			//Set font again
-			$pdf->SetFont('Arial','B',15);
-		}
-
-		$availableWidthForBigColumns	= $pdf->GetPageWidth() -20 - $smallCollCount*$smallCollWidth - array_sum($interColls) - $mediumCollCount * $mediumCollWidth;
-		$bigCollWidth					= $availableWidthForBigColumns / count($bigColls);
-
-		//now loop over all columns and set their maximum lengths
-		for ($x = 0; $x <= $colCount-1; $x++) {
-			if($colWidths[$x] < 10){
-				$colWidths[$x]	= 10;
-			//min width for medium wide columns
-			}elseif($colWidths[$x] > $mediumCollWidth && $remainingWidth*($colWidths[$x]/$requiredWidth) <= $mediumCollWidth){
-				$colWidths[$x]	= min($colWidths[$x], $mediumCollWidth);
-			}elseif($colWidths[$x] > 30){
-				//equal spread for big columns
-				$colWidths[$x]	= min($bigCollWidth, $colWidths[$x]);
-			}
-		}
-		
-		$pdf->frontpage($title);
-		
-		//Write the table headers
-		$pdf->tableHeaders($header, $colWidths);
-		
-		// Data
-		$fill = false;
-		
-		unset($this->excelContent[0]);
-		foreach($this->excelContent as $rowData){
-			$pdf->writeTableRow($colWidths, $rowData, $fill, $header);
-			
-			$fill = !$fill;
-		}
-		
-		// Closing line which is the sum off all the column widths
-		$pdf->Cell(array_sum($colWidths),0,'','T');
-
-		$pdf->printPdf();
-
-		exit;
 	}
 
 	/**
@@ -959,8 +827,8 @@ class FormTable extends Formbuilder{
 							</label>
 							<br>
 							<select name="table_settings[result_type]">
-								<option value="personal" <?php if($this->tableSettings['result_type'] == 'personal') echo 'selected';?>>Only personal</option>
-								<option value="all" <?php if($this->tableSettings['result_type'] == 'all') echo 'selected';?>>All the viewer has permission for</option>
+								<option value="personal" <?php if($this->tableSettings['result_type'] == 'personal'){echo 'selected';}?>>Only personal</option>
+								<option value="all" <?php if($this->tableSettings['result_type'] == 'all'){echo 'selected';}?>>All the viewer has permission for</option>
 							</select>
 						</div>
 						
@@ -1489,7 +1357,7 @@ class FormTable extends Formbuilder{
 			$this->exportExcel();
 		}
 
-		//now we have rendered all the content we can export the excel if requested
+		//now we have rendered all the content we can export the pdf if requested
 		if(isset($_POST['export_pdf'])){
 			echo $this->exportPdf();
 		}
@@ -1563,6 +1431,6 @@ class FormTable extends Formbuilder{
 }
 
 add_filter( 'wp_insert_post_data', function($data , $postarr){
-	$formtable = new FormTable();
+	$formtable = new DisplayFormResults();
 	return $formtable->checkForFormShortcode($data , $postarr);
 }, 10, 2 );

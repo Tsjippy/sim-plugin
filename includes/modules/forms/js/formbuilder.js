@@ -45,7 +45,11 @@ async function showEmptyModal(target){
 
 	var formId					= target.dataset.formid;
 	if(formId == undefined){
-		formId = target.closest('.form_element_wrapper').dataset.formid;
+		if(target.closest('.form_element_wrapper') != null){
+			formId = target.closest('.form_element_wrapper').dataset.formid;
+		}else{
+			formId = document.querySelector('input[type=hidden][name="formid"').value;
+		}
 	}
 	
 	clearFormInputs();
@@ -124,6 +128,7 @@ async function requestEditElementData(target){
 }
 
 async function addFormElement(target){
+	console.log(target);
 	var form		= target.closest('form');
 	var response	= await FormSubmit.submitForm(target, 'forms/add_form_element');
 
@@ -132,7 +137,10 @@ async function addFormElement(target){
 			//First clear any previous input
 			clearFormInputs();
 
-			referenceNode		= document.querySelector('.form_elements .clicked');
+			var referenceNode		= document.querySelector('.form_elements .clicked');
+			if(referenceNode == null){
+				window.location.href = window.location.href+'&formbuilder=true';
+			}
 			referenceNode.classList.remove('clicked');
 			referenceNode.closest('.form_element_wrapper').insertAdjacentHTML('afterEnd', response.html)
 			

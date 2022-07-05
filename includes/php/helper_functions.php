@@ -95,16 +95,16 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	if(!empty($title)){
 		$html .= "<h4>$title</h4>";
 	}
-	
-	if(empty($user->first_name) || empty($user->last_name)){
-		$name	= $user->display_name;
-	}else{
-		$name	= "$user->first_name $user->last_name";
-	}
 
 	if($type == 'select'){
 		$html .= "<select name='$id' class='$class user_selection'>";
 			foreach($users as $key=>$user){
+				if(empty($user->first_name) || empty($user->last_name)){
+					$name	= $user->display_name;
+				}else{
+					$name	= "$user->first_name $user->last_name";
+				}
+
 				if ($userId == $user->ID){
 					//Make this user the selected user
 					$selected='selected="selected"';
@@ -118,6 +118,12 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 		$value	= '';
 		$datalist = "<datalist id='$id' class='$class user_selection'>";
 			foreach($users as $key=>$user){
+				if(empty($user->first_name) || empty($user->last_name)){
+					$name	= $user->display_name;
+				}else{
+					$name	= "$user->first_name $user->last_name";
+				}
+				
 				if ($userId == $user->ID){
 					//Make this user the selected user
 					$value	= $user->display_name;

@@ -6,13 +6,16 @@ const MODULE_VERSION		= '7.0.6';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
 
+	ob_start();
 	?>
 	<p>
-		This module depends on the forms module. Only activate this module when the forms module is active already.<br>
+		This module depends on the forms module. The forms module will be automatically activated upon activation.<br>
 		<br>
 		This module adds 5 shortcodes:
 		<h4>user-info</h4>
@@ -48,12 +51,17 @@ add_action('sim_submenu_description', function($moduleSlug){
 		</p>
 		<?php
 	}
-});
 
-add_action('sim_submenu_options', function($moduleSlug, $settings){
+	return ob_get_clean();
+}, 10, 2);
+
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
-	
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
 	?>
 	<label>
 		<input type='checkbox' name='tempuser' value='tempuser' <?php if(isset($settings['tempuser'])){echo 'checked';}?>>
@@ -90,7 +98,34 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	</label>
 	<br>
 	<br>
+	<label>Select any forms you want to be available on the account page</label>
+	<br>
+	<?php
 
+	foreach(['family', 'generic', 'location', 'profile picture', 'security', 'vaccinations'] as $form){
+		if(in_array($form, $settings['enabled-forms'])){
+			$checked	= 'checked';
+		}else{
+			$checked	= '';
+		}
+
+		echo "<label>";
+			echo "<input type='checkbox' name='enabled-forms[]' value='$form' $checked>";
+			echo ucfirst($form);
+		echo "</label><br>";
+	}
+
+	return ob_get_clean();
+}, 10, 3);
+
+add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
+	?>
 	<h4>E-mail to people who's account is just approved</h4>
 	<label>Define the e-mail people get when they are added to the website</label>
 	<?php
@@ -167,7 +202,9 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	$greenCardReminderMail    = new GreenCardReminderMail(wp_get_current_user());
 	$greenCardReminderMail->printPlaceholders();
 	$greenCardReminderMail->printInputs($settings);
-}, 10, 2);
+
+	return ob_get_clean();
+}, 10, 3);
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
@@ -239,3 +276,23 @@ add_action('sim_module_deactivated', function($moduleSlug, $options){
 	// Remove the auto created page
 	wp_delete_post($options['user_info_page'], true);
 }, 10, 2);
+
+add_action('sim_module_activated', function($moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
+
+	// Enable forms module
+	if(!SIM\getModuleOption('forms', 'enable')){
+		SIM\ADMIN\enableModule('forms', ['enable'=>'on']);
+	}
+
+	// Import the forms
+	$formBuilder	= new SIM\FORMS\FormBuilder();
+
+	$files = glob(__DIR__  . "/../imports/*.sform");
+	foreach ($files as $file) {
+		$formBuilder->importForm($file);   
+	}
+});

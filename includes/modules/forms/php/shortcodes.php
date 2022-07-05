@@ -12,7 +12,7 @@ add_shortcode('formselector', function($atts){
         'no_meta'   => true
     ), $atts );
 
-    $FormTable	= new FormTable();
+    $FormTable	= new DisplayFormResults();
     $FormTable->getForms();
 
     $forms          = $FormTable->forms;
@@ -118,14 +118,14 @@ add_shortcode('formselector', function($atts){
 
 //shortcode to make forms
 add_shortcode( 'formbuilder', function($atts){
-    $formBuilder = new Formbuilder();
-    return $formBuilder->formBuilder($atts);
+    $simForms = new SimForms();
+    return $simForms->determineForm($atts);
 });
 
 add_shortcode( 'formresults', function($atts){
-	$formTable = new FormTable();
-    $formTable->processAtts($atts);
-	return $formTable->showFormresultsTable();
+	$displayFormResults = new DisplayFormResults();
+    $displayFormResults->processAtts($atts);
+	return $displayFormResults->showFormresultsTable();
 });
 
 add_filter('sim_loggedin_homepage',  function($content){

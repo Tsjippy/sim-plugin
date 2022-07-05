@@ -163,13 +163,13 @@ export function fixNumbering(cloneDivsWrapper){
 		}
 		
 		//Update the title
-		clone.querySelectorAll('h3').forEach(title => {
+		clone.querySelectorAll('h3, h4').forEach(title => {
 			title.textContent = title.textContent.replace(/([0-9])/g, index+1);
 		});
 		
-		//Update the label
-		clone.querySelectorAll('label, legend').forEach(label => {
-			label.innerHTML = label.innerHTML.replace(/ ([0-9])/g, ' '+(index+1));
+		//Update the legend
+		clone.querySelectorAll('legend').forEach(legend => {
+			legend.innerHTML = legend.innerHTML.replace(/ ([0-9])/g, ' '+(index+1));
 		});
 		
 		//Update the elements
@@ -208,70 +208,16 @@ function removeNode(target){
 		prev.querySelector('div').appendChild(addElement);
 	}
 	
-	//Check which number to update
-	if(node.getAttribute("data-type") != null){
-		var dataType	= node.getAttribute("data-type").replace('[','\\[').replace(']','\\]');
-		re 				= new RegExp('('+dataType+'?\\]?\\[).*[0-9](.*)',"g");
-	}else{
-		re				= new RegExp('(.*)[0-9](.*)',"g");
-	}
-	
 	//Remove the node
 	node.remove();
-	
-	//update the collection
-	allCloneDivs	= parentNode.querySelectorAll('.clone_div');
-	
+
 	//If there is only one div remaining, remove the remove button
-	if(allCloneDivs.length == 1){
+	if(parentNode.querySelectorAll('.clone_div').length == 1){
 		var removeElement = parentNode.querySelector('.remove');
 		removeElement.remove();
 	}
-	
-	//Loop over all the remaining nodes.
-	var nodeNr = parseInt(allCloneDivs[0].dataset.divid);
-	allCloneDivs.forEach(function(cloneNode){
-		if(cloneNode.dataset.type == 'understudies'){
-			//update the data index
-			cloneNode.querySelectorAll('.upload-files').forEach(function(uploadButton){
-				uploadButton.dataset.index = nodeNr;
-			})
-		}
-			
-		//DIV
-		if(cloneNode.id != ''){
-			cloneNode.id = cloneNode.id.replace(re, '$1'+nodeNr+'$2');
-		}
-		
-		cloneNode.dataset.divid = nodeNr;
-		
-		//Update the title
-		cloneNode.querySelectorAll('h3').forEach(title => {
-			title.textContent = title.textContent.replace(/[0-9]/g, nodeNr);
-		});
-		
-		//Update the label
-		cloneNode.querySelectorAll('label').forEach(label => {
-			if(allCloneDivs[0].dataset.divid == 0){
-				labelNr = nodeNr + 1;
-			}else{
-				labelNr = nodeNr;
-			}
-			label.innerHTML = label.innerHTML.replace(/ ([0-9])/g, function($1) {return ' '+labelNr});
-		});
-		
-		//Update the elements
-		cloneNode.querySelectorAll('input,select,textarea').forEach(input => {
-			if(input.id != ''){
-				//Update the id
-				input.id = input.id.replace(re, '$1'+nodeNr+'$2');
-			}
-			//Update the name
-			input.name = input.name.replace(re, '$1'+nodeNr+'$2');
-		});	
 
-		nodeNr += 1;
-	})
+	fixNumbering(parentNode)
 }
 
 /* 
@@ -414,9 +360,12 @@ export function nextPrev(n) {
 }
 
 export function getFieldValue(orgName, form, checkDatalist=true, compareValue=null, lowercase=false){
+	var el		= ''; 
+	var name	= '';
+
 	//name is not a name but a node
 	if(orgName instanceof Element){
-		var el			= orgName;		
+		el			= orgName;		
 		//check if valid input type
 		if(el.tagName != 'INPUT' && el.tagName != 'TEXTAREA' && el.tagName != 'SELECT' && el.closest('.nice-select-dropdown') == null){
 			el = el.querySelector('input, select, textarea');
@@ -424,10 +373,10 @@ export function getFieldValue(orgName, form, checkDatalist=true, compareValue=nu
 		if(el == null){
 			el			= orgName;
 		}
-		var name		= el.name;
+		name		= el.name;
 	}else{
-		var name		= orgName;
-		var el			= form.querySelector('[name=\"'+name+'\" i]');
+		name		= orgName;
+		el			= form.querySelector('[name=\"'+name+'\" i]');
 	}
 	
 	if(el != null){
@@ -612,11 +561,8 @@ document.addEventListener('click',function(event) {
 	
 	//remove element
 	if(target.matches('.remove')){
-		var wrapper	= target.closest('.clone_divs_wrapper');
 		//Remove node clicked
-		removeNode(target); 
-
-		fixNumbering(wrapper);
+		removeNode(target);
 	}
 
 	if(target.matches('.sim_form [name="submit_form"]')){

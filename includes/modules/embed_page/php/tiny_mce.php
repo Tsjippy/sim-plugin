@@ -12,7 +12,12 @@ add_action('init', function(){
 	add_filter('mce_external_plugins', function($plugins){		
 		//Add extra variables to the main.js script
 		wp_localize_script( 'sim_script', 
-			'page_select', 
+			'pageSelect', 
+			SIM\pageSelect('page-selector')
+		);
+
+		wp_localize_script( 'sim_admin_js', 
+			'pageSelect', 
 			SIM\pageSelect('page-selector')
 		);
 

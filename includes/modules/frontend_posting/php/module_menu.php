@@ -6,9 +6,13 @@ const MODULE_VERSION		= '7.0.13';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
-add_action('sim_submenu_description', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
+
+	ob_start();
 
 	?>
 	<p>
@@ -33,12 +37,17 @@ add_action('sim_submenu_description', function($moduleSlug){
 		</p>
 		<?php
 	}
-});
 
-add_action('sim_submenu_options', function($moduleSlug, $settings){
+	return ob_get_clean();
+}, 10, 2);
+
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
-	
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
 	?>
 	<label>How often should people be reminded of content which should be updated?</label>
 	<select name="page_age_reminder">
@@ -62,6 +71,19 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	</select>
 	<br>
 
+	<input type='hidden' name='publish_post_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'publish_post_page');?>'>
+	<?php
+	return ob_get_clean();
+}, 10, 3);
+
+add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
+	?>
 	<h4>E-mail send to people when a page is out of date</h4>
 	<label>
 		Define the e-mail people get when they are responsible for a page which is out of date.<br>
@@ -87,7 +109,8 @@ add_action('sim_submenu_options', function($moduleSlug, $settings){
 	?>
 	<input type='hidden' name='publish_post_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'publish_post_page');?>'>
 	<?php
-}, 10, 2);
+	return ob_get_clean();
+}, 10, 3);
 
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
