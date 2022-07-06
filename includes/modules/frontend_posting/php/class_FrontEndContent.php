@@ -839,7 +839,7 @@ class FrontEndContent{
 				if(empty($this->post)){
 					$publishDate	= date("Y-m-d");
 				}else{
-					$publishDate	= date("Y-m-d", strtotime($this->post->post_date));
+					$publishDate	= max(date("Y-m-d", strtotime($this->post->post_date)), date("Y-m-d"));
 				}
 
 				?>
