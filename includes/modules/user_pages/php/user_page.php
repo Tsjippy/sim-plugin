@@ -15,10 +15,14 @@ function createUserPage($userId){
 	$userdata   = get_userdata($userId);
 	
     //return false when $userId is not valid
-    if(!$userdata) return false;
+    if(!$userdata){
+		return false;
+	}
 
 	//Check if this page exists and is published
-	if(get_post_status ($pageId) != 'publish' ) $pageId = null;
+	if(get_post_status ($pageId) != 'publish' ){
+		$pageId = null;
+	}
 	
 	$family = SIM\familyFlatArray($userId);
 	if (count($family)>0){
@@ -53,17 +57,19 @@ function createUserPage($userId){
         $update = updateUserPageTitle($userId, $title);
 	}
 	
-	if($update == true and count($family)>0){
+	if($update && !empty($family)){
 		//Check if family has other pages who should be deleted
 		foreach($family as $familyMember){
 			//get the current page
 			$memberPageId = get_user_meta($familyMember,"user_page_id",true);
 			
 			//Check if this page exists and is already trashed
-			if(get_post_status ($memberPageId) == 'trash' ) $memberPageId = null;
+			if(get_post_status ($memberPageId) == 'trash' ){
+				$memberPageId = null;
+			}
 			
 			//If there a page exists for this family member and its not the same page
-			if($memberPageId != null and $memberPageId != $pageId){
+			if($memberPageId != null && $memberPageId != $pageId){
 				//Remove the current user page
 				wp_delete_post($memberPageId);
 				
@@ -89,7 +95,9 @@ function createUserPage($userId){
 function getUserPageLink($user){
     if(is_numeric($user)){
         $user   = get_userdata($user);
-        if(!$user) return false;
+        if(!$user){
+			return false;
+		}
     }
     $url    = SIM\getUserPageUrl($user->ID);
     if($url){
@@ -141,7 +149,7 @@ function updateUserPageTitle($userId, $title){
  * @return	string				The html
  */
 function userDescription($userId){
-	$html = "";
+	$html 	= "";
 
 	$user	= get_userdata($userId);
 
@@ -150,38 +158,41 @@ function userDescription($userId){
 	//get the family details
 	$family = get_user_meta( $userId, 'family', true );
 	
-	//Find compound or address
-	$location = get_user_meta( $userId, 'location', true );
-	if(is_array($location)){
-		if (empty($location["compound"])){
-			if (empty($location["address"])){
-				$address = "No clue, since no address is given";
-			}else{
-				$address = $location["address"];
-			}
-		}else{
-			$address = $location["compound"];
-		}
-	}else{
-		$address = "No clue, since no address is given";
-	}
-	
 	$privacyPreference = get_user_meta( $userId, 'privacy_preference', true );
-	if(!is_array($privacyPreference)) $privacyPreference = [];
+	if(!is_array($privacyPreference)){
+		$privacyPreference = [];
+	}
 
 	$sendingOffice 	= get_user_meta( $userId, 'sending_office', true );
 	$officeHtml		= '';
-	if($sendingOffice != "")	$officeHtml = "<p>Sending office: $sendingOffice</p>";
+	if(!empty($sendingOffice)){
+		$officeHtml = "<p>Sending office: $sendingOffice</p>";
+	}
 
 	$arrivalDate 	= get_user_meta( $userId, 'arrival_date', true );
 	$arrivalHtml	= '';
-	if($arrivalDate != "" and !isset($privacyPreference['hide_anniversary'])){
+	$arrived		= true;
+	if(!empty($arrivalDate) && !isset($privacyPreference['hide_anniversary'])){
 		$arrivalEpoch	= strtotime($arrivalDate);
 		$arrivalDate	= date('F Y', $arrivalEpoch);
 		if($arrivalEpoch < time()){
-			$arrivalHtml = "<p>In Nigeria since $arrivalDate</p>";
+			$arrivalHtml 	= "<p>In Nigeria since $arrivalDate</p>";
 		}else{
-			$arrivalHtml = "<p>Expected arrival in Nigeria: $arrivalDate</p>";
+			$arrivalHtml 	= "<p>Expected arrival in Nigeria: $arrivalDate</p>";
+			$arrived		= false;
+		}
+	}
+
+	//Find compound or address
+	$location = get_user_meta( $userId, 'location', true );
+	$address = "No clue, since no address is given";
+	if(is_array($location)){
+		if (empty($location["compound"])){
+			if (!empty($location["address"])){
+				$address = $location["address"].' State';
+			}
+		}else{
+			$address = $location["compound"].' State';
 		}
 	}
 	//Build the html
@@ -194,22 +205,24 @@ function userDescription($userId){
 			$html .= "<a href='$url'><img src=$url width=200 height=200></a>";
 		}
 		
-		$html .= "<p>
-					Lives in: ";
-		$html .= $address.' State';
-		$html .= "</p>";
+		if($arrived){
+			$html .= "<p>";
+				$html	.= " Lives in: ";
+				$html .= $address;
+			$html .= "</p>";
+		}
 
 		$html .= $officeHtml;
 
 		$html .= $arrivalHtml;
 		
 		//Partner data
-		if (isset($family['partner']) and is_numeric($family['partner'])){
-			$html .= showUserInfo($family['partner']);
+		if (isset($family['partner']) && is_numeric($family['partner'])){
+			$html .= showUserInfo($family['partner'], $arrived);
 		}
 		
 		//User data
-		$html .= showUserInfo($userId);
+		$html .= showUserInfo($userId, $arrived);
 			
 		//Children
 		if (isset($family["children"])){
@@ -245,10 +258,10 @@ function userDescription($userId){
 				$html	.= "  $displayname";
 			$html	.= "</h1>";
 			$html	.= "<br>";
-			if(!isset($privacyPreference['hide_location'])){ 
+			if(!isset($privacyPreference['hide_location']) && $arrived){ 
 				$html .= "<p>Lives on: $address</p>";
 			}
-			if(!isset($privacyPreference['hide_ministry'])){ 
+			if(!isset($privacyPreference['hide_ministry']) && $arrived){ 
 				$html .= "<p>Works with: <br>".addMinistryLinks($userId)."</p>";
 			}
 			
@@ -271,7 +284,7 @@ function userDescription($userId){
  * 
  * @return	string				The html
  */
-function showUserInfo($userId){
+function showUserInfo($userId, $arrived){
 	$html = ""; 
 	
 	$userdata = get_userdata($userId);
@@ -293,7 +306,7 @@ function showUserInfo($userId){
 			$style = ' style="margin-left: 55px;"';
 		}
 		
-		if(!isset($privacyPreference['hide_ministry'])){ 
+		if(!isset($privacyPreference['hide_ministry']) & $arrived){ 
 			$html .= "<span class='person_work' $style> $displayname works with: </span><br>";
 			$html .= addMinistryLinks($userId);
 		}
@@ -462,13 +475,13 @@ function buildVcard($userId){
  * 
  * @return	string				The html
  */
-function addMinistryLinks($UserID){
-	$userMinistries = (array)get_user_meta( $UserID, "user_ministries", true);
+function addMinistryLinks($userID){
+	$userMinistries = (array)get_user_meta( $userID, "user_ministries", true);
 
 	$html = "";
 	foreach($userMinistries as $key=>$userMinistry){
 		if(!empty($userMinistry)){
-			$ministry 		= str_replace("_"," ",$key);
+			$ministry 		= str_replace("_", " ", $key);
 			$ministryPage 	= get_page_by_title( $ministry);
 			if (!empty($ministryPage)){
 				$pageUrl = get_post_permalink($ministryPage->ID);
@@ -480,18 +493,23 @@ function addMinistryLinks($UserID){
 		}
 	}
 
-	if(empty($html)) $html = "No clue, since no one told me.";
-	
+	if(empty($html)){
+		$html = "No clue, since no one told me.";
+	}	
+
 	return $html;
 }
 
 // Add description if the current page is attached to a user id
 add_filter( 'the_content', function ( $content ) {
 	if (is_user_logged_in()){
-		$post_id 	= get_the_ID();
+		$postId 	= get_the_ID();
+
 		//user page
-		$userId = get_post_meta($post_id,'user_id',true);
-		if(is_numeric($userId)) $content .= userDescription($userId);
+		$userId = get_post_meta($postId, 'user_id', true);
+		if(is_numeric($userId)){
+			$content .= userDescription($userId);
+		}
 	}
 
 	return $content;

@@ -42,6 +42,12 @@ function addPreview(link, value){
 async function fileUpload(target){
 	var s			= "";
 	fileUploadWrap	= target.closest('.file_upload_wrap');
+	totalFiles 		= target.files.length;
+
+	if (totalFiles < 0){
+		Main.displayMessage("Please select some files before hitting the uplad button!", 'error');
+		return;
+	}
 	
 	//Create a formData element
 	var formData = new FormData();
@@ -50,36 +56,28 @@ async function fileUpload(target){
 	formData.append('action', 'upload_files');
 	
 	//Loop over the dataset attributes and add them to post
-	target.parentNode.querySelectorAll('input').forEach(
-		function(input){
+	target.parentNode.querySelectorAll('input').forEach( input =>{
 			formData.append(input.name, input.value);
 			datasetString += `data-${input.name}="${input.value}`;
 		}
 	);
 
-	// Read selected files
-	totalFiles = target.files.length;
-	if (totalFiles > 0){
-		//Add all the files to the formData
-		for (var index = 0; index < totalFiles; index++) {
-			// file is a video and vimeo enabled
-			if(target.files[index].type.split('/')[0] == 'video' && typeof(vimeoUploader) == 'object'){
-				createProgressBar(target);
+	//Add all the files to the formData
+	for (var index = 0; index < totalFiles; index++) {
+		// file is a video and vimeo enabled
+		if(target.files[index].type.split('/')[0] == 'video' && typeof(vimeoUploader) == 'object'){
+			createProgressBar(target);
 
-				//update post id on a postform
-				await uploadVideo(target.files[index]);
-			// file to big
-			}else if(target.files[index].size > sim.maxFileSize){
-				Main.displayMessage('File too big, max file size is '+(parseInt(sim.maxFileSize)/1024/1024)+'MB','error');
-				target.value = '';
-				return;
-			}else{
-				formData.append('files[]', target.files[index]);
-			}
+			//update post id on a postform
+			await uploadVideo(target.files[index]);
+		// file to big
+		}else if(target.files[index].size > sim.maxFileSize){
+			Main.displayMessage('File too big, max file size is '+(parseInt(sim.maxFileSize)/1024/1024)+'MB','error');
+			target.value = '';
+			return;
+		}else{
+			formData.append('files[]', target.files[index]);
 		}
-	}else{
-		Main.displayMessage("Please select some files before hitting the uplad button!", 'error');
-		return;
 	}
 
 	// No files remaining to upload
@@ -161,32 +159,32 @@ function fileUploadProgress(e){
 }
 
 function fileUploadSucces(result){
-	var imgUrls			= JSON.parse(result);
+	var imgUrls		= JSON.parse(result);
+	var src			= '';
 	
-	for(var index = 0; index < imgUrls.length; index++) {
-		var src = imgUrls[index]['url'];
-		
-		if(imgUrls[index]['id'] != undefined){
-			datasetString += ' data-libraryid="'+imgUrls[index]['id']+'"'
-		}
-		
-		var fileName 	= src.split("/")[src.split("/").length-1];
-		
+	for(const element of imgUrls) {
+		src 			= element['url'];
 		var url 		= sim.baseUrl+'/'+src;
+		var value		= '';
+		var anchorLink	= '';
+		
+		if(element['id'] != undefined){
+			datasetString += ' data-libraryid="'+element['id']+'"'
+		}
 
-		if(imgUrls[index]['id'] == undefined){
-			var value		= url;
+		if(element['id'] == undefined){
+			value		= url;
 		}else{
-			var value		= imgUrls[index]['id'];
+			value		= element['id'];
 		}
 
 		//is image
 		if (src.toLowerCase().match(/\.(jpe|jpeg|jpg|gif|png)$/) != null){
 			//Add the image
-			var anchorLink	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="width:150px;height:150px;"></a>`;
+			anchorLink	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="width:150px;height:150px;"></a>`;
 		}else{
 			//Add a link
-			var anchorLink	= `<a class="fileupload" href="${url}">${filename}</a>`;
+			anchorLink	= `<a class="fileupload" href="${url}">${filename}</a>`;
 		}
 		anchorLink += `<button type="button" class="remove_document button" data-url="${src}" ${datasetString}>X</button>`;
 
@@ -194,13 +192,14 @@ function fileUploadSucces(result){
 	}
 	
 	if(imgUrls.length==1){
+		var fileName 	= src.split("/")[src.split("/").length-1];
 		Main.displayMessage(`The file ${fileName} has been uploaded succesfully.`,'success',true);
 	}else{
 		Main.displayMessage("The files have been uploaded succesfully.",'success',true);
 	}
 	
 	//Hide upload button if only one file allowed
-	if(fileUploadWrap.querySelector('.file_upload').multiple == false){
+	if(!fileUploadWrap.querySelector('.file_upload').multiple){
 		fileUploadWrap.querySelector('.upload_div').classList.add('hidden');
 	}
 }
@@ -226,11 +225,11 @@ async function removeDocument(target){
 	var response	= await FormSubmit.fetchRestApi('remove_document', data);
 
 	if(response){
-		var docWrapper			= target.closest('.document');
-		var fileUploadWrap		= docwrapper.closest('.file_upload_wrap');
+		var docWrapper		= target.closest('.document');
+		fileUploadWrap		= docWrapper.closest('.file_upload_wrap');
 		
 		//hide the loading gif
-		docwrapper.querySelector('.remove_document_loader').classList.add('hidden');
+		docWrapper.querySelector('.remove_document_loader').classList.add('hidden');
 			
 		// If successful
 		try{
@@ -244,10 +243,11 @@ async function removeDocument(target){
 		//remove the document/picture
 		docWrapper.remove();
 		
-		var re = new RegExp('(.*)[0-9](.*)',"g");
+		//var re = new RegExp('(.*)[0-9](.*)',"g");
 		//reindex documents
 		fileUploadWrap.querySelectorAll('.file_url').forEach((el,index)=>{
-			el.name = el.name.replace(re, '$1'+index+'$2');
+			//el.name = el.name.replace(re, '$1'+index+'$2');
+			el.name = el.name.replace(/(\d)/g, index);
 		});
 
 		Main.displayMessage(response);
@@ -257,6 +257,7 @@ async function removeDocument(target){
 function refreshVimeoiFrame(){
 	// Show the vimeo video after 60 seconds when the video is hopefully rendered
 	document.querySelectorAll('.vimeo-embed-container.loading iframe').forEach(el=>{
+		// replace the src with itself to refresh the iframe
 		el.src	= el.src;
 	});
 }
@@ -264,6 +265,7 @@ function refreshVimeoiFrame(){
 async function uploadVideo(file){
 	var uploader	= new vimeoUploader.VimeoUpload(file);
 	var upload		= await uploader.tusUploader();
+	var s			= '';
 
 	// Could not upload
 	if(!upload){
@@ -281,9 +283,9 @@ async function uploadVideo(file){
 
 	// Upload started
 	if (totalFiles > 1){
-		var s = "s";
+		s = "s";
 	}else{
-		var s = "";
+		s = "";
 	}
 
 	upload.options.onProgress   = function(bytesUploaded, bytesTotal) {
@@ -320,7 +322,7 @@ async function uploadVideo(file){
 			</div>
 		</div>`;
 
-		var preview		= addPreview(link, postId, postId);
+		var preview		= addPreview(link, postId);
 
 		// Hide the loader
 		document.querySelector('.loadergif_wrapper:not(.hidden)').classList.add('hidden');
@@ -328,7 +330,7 @@ async function uploadVideo(file){
 		Main.displayMessage(`The file ${file.name} has been uploaded succesfully.`,'success',true);
 		
 		//Hide upload button if only one file allowed
-		if(fileUploadWrap.querySelector('.file_upload').multiple == false){
+		if(!fileUploadWrap.querySelector('.file_upload').multiple){
 			fileUploadWrap.querySelector('.upload_div').classList.add('hidden');
 		}
 
@@ -348,7 +350,7 @@ async function uploadVideo(file){
 		var result	= '';
 		while(!result.ok){
 			await new Promise(res => setTimeout(res, 10000));
-			var result = await fetch(
+			result = await fetch(
 				`https://vimeo.com/api/oembed.json?url=https%3A//vimeo.com/${uploader.storedEntry.vimeoId}`,
 				{method: 'GET'}
 			);
@@ -360,7 +362,6 @@ async function uploadVideo(file){
 
 	upload.options.onError      = function(error) {
 		console.error("Failed because: " + error);				
-		return;
 	}
 
 	document.querySelector('.upload-message').textContent = "Uploading video"+s;

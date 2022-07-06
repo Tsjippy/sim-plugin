@@ -57,26 +57,28 @@ class Fileupload{
 		}
 		
 		if($this->multiple){
-			$multiple = 'multiple="multiple"';
+			$multipleString = 'multiple="multiple"';
 			$class = '';
 		}else{
-			$multiple = '';
-			if(!empty($documentArray)) $class = "hidden";
+			$multipleString = '';
+			if(!empty($documentArray)){
+				$class = "hidden";
+			}
 		}
 		
 		$this->html = '<div class="file_upload_wrap">';
 			$this->html .= '<div class="documentpreview">';
-			if(is_array($documentArray) and count($documentArray)>0){
+			if(is_array($documentArray) && count($documentArray)>0){
 				foreach($documentArray as $documentKey => $document){
-					$this->html .= $this->documentPreview($document, $documentKey);
+					$this->documentPreview($document, $documentKey);
 				}
-			}elseif(!is_array($documentArray) and $documentArray != ""){
-				$this->html .= $this->documentPreview($documentArray, -1);
+			}elseif(!is_array($documentArray) && $documentArray != ""){
+				$this->documentPreview($documentArray, -1);
 			}
 			$this->html .= '</div>';
 		
 			$this->html .= "<div class='upload_div $class'>";
-				$this->html .= "<input class='file_upload' type='file' name='{$this->documentName}_files[]' $multiple $options>";
+				$this->html .= "<input class='file_upload' type='file' name='{$this->documentName}_files[]' $multipleString $options>";
 				$this->html .= "<div style='width:100%; display: flex;'>";
 					if(is_numeric($this->userId)){
 						$this->html .= "<input type='hidden' name='fileupload[userid]' 			value='{$this->userId}'>";
@@ -108,7 +110,7 @@ class Fileupload{
 	//Function to render the already uploaded images or show the link to a file
 	function documentPreview($documentPath, $index){
 		$metaValue	= $documentPath;
-		if(is_numeric($documentPath) and $this->library){
+		if(is_numeric($documentPath) && $this->library){
 			$url = wp_get_attachment_url($documentPath);
 
 			if($url === false){
@@ -172,122 +174,134 @@ class Fileupload{
 
 //Make upload_files function availbale for AJAX request
 add_action ( 'wp_ajax_upload_files', function (){
-	if (!empty($_FILES["files"])) {
-		$fileParam	= (array)$_POST['fileupload'];
-		$files		= $_FILES["files"];
-		$maxSize	= wp_max_upload_size();
-		if(!empty($fileParam['targetDir'])){
-			$targetDir 		= wp_upload_dir()['path'].'/'.sanitize_text_field($fileParam['targetDir']).'/';
-		}else{
-			$targetDir 		= wp_upload_dir()['path'].'/';
-		}
-		
-		//create folder if it does not exist
-		if (!is_dir($targetDir)) {
-			mkdir($targetDir, 0777, true);
-		}
-		
-		if(!empty($fileParam['userid'])){
-			$userId 	= sanitize_text_field($fileParam['userid']);
-			$username 	= get_userdata($userId)->user_login;
-		}
-		
-		if(isset($fileParam['metakey']))		$metaKey 		= sanitize_text_field($fileParam['metakey']);
-		if(isset($fileParam['metakey_index']))	$metaKeyIndex 	= sanitize_text_field($fileParam['metakey_index']);
-		
-		$filesArr = [];
-		foreach ($files['name'] as $key => $fileName) {
-			//check file size
-			if($files['size'][$key] > $maxSize){
-				wp_die('File to big, max file size is '.$maxSize/1024/1024 .'MB');
-			}
-			
-			if ($files['name'][$key]) {
-				$fileName 	= sanitize_file_name($fileName);
-				
-				//Create the filename
-				$i = 0;
-				if(strtolower(substr($fileName, 0, strlen($username))) == strtolower($username)){
-					$targetFile = $targetDir.$fileName;
-				}else{
-					$targetFile = $targetDir.$username.'-'.$fileName;
-				}
-				
-				while (file_exists($targetFile)) {
-					$i++;
-
-					if(strtolower(substr($fileName, 0, strlen($username))) == strtolower($username)){
-						$targetFile = $targetDir.$i.'-'.$fileName;
-					}else{
-						$targetFile = $targetDir.$username.'-'.$i.'-'.$fileName;
-					}
-				}
-
-				//Move the file
-				$moved = move_uploaded_file($files['tmp_name'][$key], $targetFile);
-				if ($moved) {
-					
-					$size = array_push($filesArr, ['url' => str_replace(ABSPATH, '', $targetFile)]);
-
-					//Only store url in db if a metakey isset
-					if(isset($metaKey)){
-						//get the basemetakey in case of an indexed one
-						if(preg_match_all('/(.*?)\[(.*?)\]/i', $metaKey, $matches)){
-							$baseMetaKey	= $matches[1][0];
-							$keys			= $matches[2];
-						}else{
-							//just use the whole, it is not indexed
-							$baseMetaKey	= $metaKey;
-						}
-
-						$newValue	= $targetFile;
-
-						//Add to library if needed
-						if(isset($fileParam['library']) and $fileParam['library'] == '1'){
-							$attachId	= addToLibrary($targetFile);
-
-							$newValue	= $attachId;
-							
-							//store the id in the array
-							$files_arr[$size-1]['id'] = $attachId;
-						}
-						
-						if(!is_numeric($userId)){
-							//generic documents
-							$metaValue = get_option($baseMetaKey);
-						}else{
-							$metaValue = get_user_meta( $userId, $baseMetaKey,true);
-						}
-						
-						if(isset($keys)) addToNestedArray($keys, $metaValue, $newValue);
-						
-						if($metaKeyIndex)	$metaValue[$metaKeyIndex] = $newValue;
-						
-						if(!is_numeric($userId)){
-							//generic documents
-							update_option($baseMetaKey, $metaValue);
-						}elseif($fileParam['updatemeta']){
-							update_user_meta( $userId, $baseMetaKey, $metaValue);
-						}
-					}
-				}else {
-					header('HTTP/1.1 500 Internal Server Booboo');
-					header('Content-Type: application/json; charset=UTF-8');
-					die(json_encode(array('error' => "File is not uploaded")));
-				}
-			}
-		}
-		
-		if(isset($fileParam['callback'])) call_user_func($fileParam['callback'], $userId);
-		
-		echo json_encode($filesArr);
-		wp_die();
-	}else{
+	if (empty($_FILES["files"])) {
 		// Set http header error
 		header('HTTP/1.0 422 Unprocessable Entity');
 		// Return error message
 		die(json_encode(array('error' => 'No files found')));
 	}
+
+	$fileParam	= (array)$_POST['fileupload'];
+	$files		= $_FILES["files"];
+	$maxSize	= wp_max_upload_size();
+	if(!empty($fileParam['targetDir'])){
+		$targetDir 		= wp_upload_dir()['path'].'/'.sanitize_text_field($fileParam['targetDir']).'/';
+	}else{
+		$targetDir 		= wp_upload_dir()['path'].'/';
+	}
+	
+	//create folder if it does not exist
+	if (!is_dir($targetDir)) {
+		mkdir($targetDir, 0777, true);
+	}
+	
+	if(!empty($fileParam['userid'])){
+		$userId 	= sanitize_text_field($fileParam['userid']);
+		$username 	= get_userdata($userId)->user_login;
+	}
+	
+	if(isset($fileParam['metakey'])){
+		$metaKey 		= sanitize_text_field($fileParam['metakey']);
+	}
+
+	if(isset($fileParam['metakey_index'])){
+		$metaKeyIndex 	= sanitize_text_field($fileParam['metakey_index']);
+	}
+	
+	$filesArr = [];
+	foreach ($files['name'] as $key => $fileName) {
+		//check file size
+		if($files['size'][$key] > $maxSize){
+			wp_die('File to big, max file size is '.$maxSize/1024/1024 .'MB');
+		}
+		
+		if ($files['name'][$key]) {
+			$fileName 	= sanitize_file_name($fileName);
+			
+			//Create the filename
+			$i = 0;
+			if(strtolower(substr($fileName, 0, strlen($username))) == strtolower($username)){
+				$targetFile = $targetDir.$fileName;
+			}else{
+				$targetFile = $targetDir.$username.'-'.$fileName;
+			}
+			
+			while (file_exists($targetFile)) {
+				$i++;
+
+				if(strtolower(substr($fileName, 0, strlen($username))) == strtolower($username)){
+					$targetFile = $targetDir.$i.'-'.$fileName;
+				}else{
+					$targetFile = $targetDir.$username.'-'.$i.'-'.$fileName;
+				}
+			}
+
+			//Move the file
+			$moved = move_uploaded_file($files['tmp_name'][$key], $targetFile);
+			if ($moved) {
+				
+				$size = array_push($filesArr, ['url' => str_replace(ABSPATH, '', $targetFile)]);
+
+				//Only store url in db if a metakey isset
+				if(isset($metaKey)){
+					//get the basemetakey in case of an indexed one
+					if(preg_match_all('/(.*?)\[(.*?)\]/i', $metaKey, $matches)){
+						$baseMetaKey	= $matches[1][0];
+						$keys			= $matches[2];
+					}else{
+						//just use the whole, it is not indexed
+						$baseMetaKey	= $metaKey;
+					}
+
+					$newValue	= $targetFile;
+
+					//Add to library if needed
+					if(isset($fileParam['library']) && $fileParam['library'] == '1'){
+						$attachId	= addToLibrary($targetFile);
+
+						$newValue	= $attachId;
+						
+						//store the id in the array
+						$filesArr[$size-1]['id'] = $attachId;
+					}
+					
+					if(!is_numeric($userId)){
+						//generic documents
+						$metaValue = get_option($baseMetaKey);
+					}else{
+						$metaValue = get_user_meta( $userId, $baseMetaKey,true);
+					}
+					
+					if(isset($keys)){
+						addToNestedArray($keys, $metaValue, $newValue);
+					}
+					
+					if($metaKeyIndex){
+						$metaValue[$metaKeyIndex] = $newValue;
+					}
+					
+					if(!is_numeric($userId)){
+						//generic documents
+						update_option($baseMetaKey, $metaValue);
+					}elseif($fileParam['updatemeta']){
+						update_user_meta( $userId, $baseMetaKey, $metaValue);
+					}
+				}
+			}else {
+				header('HTTP/1.1 500 Internal Server Booboo');
+				header('Content-Type: application/json; charset=UTF-8');
+				die(json_encode(array('error' => "File is not uploaded")));
+			}
+		}
+	}
+	
+	if(isset($fileParam['callback'])){
+		call_user_func($fileParam['callback'], $userId);
+	}
+	
+	echo json_encode($filesArr);
+	wp_die();
+
 });
 
 add_action( 'rest_api_init', function () {	
@@ -307,8 +321,12 @@ function removeDocument(){
 	if(!empty($_POST['url'])){
 		$path = ABSPATH.$_POST['url'];
 
-		if(isset($_POST['userid']))		$userId = sanitize_text_field($_POST["userid"]);
-		if(isset($_POST['metakey']))	$metaKey = sanitize_text_field($_POST['metakey']);
+		if(isset($_POST['userid'])){
+			$userId = sanitize_text_field($_POST["userid"]);
+		}
+		if(isset($_POST['metakey'])){
+			$metaKey = sanitize_text_field($_POST['metakey']);
+		}
 		
 		if(isset($metaKey)){
 			$metaKeys 		= str_replace(']','',explode('[', $metaKey));
@@ -319,7 +337,7 @@ function removeDocument(){
 		//Just an extra check
 		if (strpos($path, 'wp-content/uploads') !== false){
 			//remove the file
-			if(isset($_POST['libraryid']) and is_numeric($_POST['libraryid'])){
+			if(isset($_POST['libraryid']) && is_numeric($_POST['libraryid'])){
 				wp_delete_attachment($_POST['libraryid']);
 			}else{
 				
@@ -337,8 +355,7 @@ function removeDocument(){
 			}
 			
 			//remove from array
-			if(is_array($metaKeys) and count($metaKeys)>0){
-				
+			if(is_array($metaKeys) && !empty($metaKeys)){
 				removeFromNestedArray($documentsArray, $metaKeys);
 			}else{
 				$documentsArray = '';

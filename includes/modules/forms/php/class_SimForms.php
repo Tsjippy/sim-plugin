@@ -361,15 +361,6 @@ class SimForms{
 	function determineForm($atts){
 		global $wpdb;
 
-		if(
-			array_intersect($this->userRoles, $this->submitRoles) 	&&	// we have the permission to submit on behalf on someone else
-			!empty(($_GET['userid']))								&& 
-			is_numeric($_GET['userid'])								&& // and the userid parameter is set in the url
-			empty($atts['userid'])										// and the user id is not given in the shortcode 
-		){
-			$this->userId	= $_GET['userid'];
-		}
-
 		$this->processAtts($atts);
 
 		$query				= "SELECT * FROM {$this->elTableName} WHERE `form_id`=(SELECT `id` FROM {$this->tableName} WHERE name='$this->formName')";

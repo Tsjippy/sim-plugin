@@ -2,8 +2,7 @@
 namespace SIM\FORMS;
 use SIM;
 
-trait ElementHtml{
-    	
+trait ElementHtml{    	
 	/**
 	 * Builds the array with default values for the current user
 	 */
@@ -230,7 +229,7 @@ trait ElementHtml{
 
 		//create as many inputs as the maximum value found
 		for ($index = 0; $index < $this->multiWrapValueCount; $index++) {
-			$elementHtml	= $this->prepareElementHtml($element, $index, $elementHtml, $values[$index]);
+			$elementItemHtml	= $this->prepareElementHtml($element, $index, $elementHtml, $values[$index]);
 			
 			//open the clone div
 			$html	= "<div class='clone_div' data-divid='$index'>";
@@ -241,7 +240,7 @@ trait ElementHtml{
 				$html .= "<div class='buttonwrapper' style='width:100%; display: flex;'>";
 			
 					//write the element
-					$html .= $elementHtml;
+					$html .= $elementItemHtml;
 			
 					//close any label first before adding the buttons
 					if($this->wrap == 'label'){
@@ -549,16 +548,16 @@ trait ElementHtml{
 			*/
 			if(!empty($element->multiple)){
 				if($element->type == 'select'){
-					$html	= "<$elType  name='$elName' $elId class='$elClass' $elOptions>";
+					$html	= "<$elType name='$elName' $elId class='$elClass' $elOptions>";
 				}else{
-					$html	= "<$elType  name='$elName' $elId class='$elClass' $elOptions value='%value%'>$elContent$elClose";
+					$html	= "<$elType name='$elName' $elId class='$elClass' $elOptions value='%value%'>$elContent$elClose";
 				}
 					
 				$this->multiInput($element, $values, $html);
 				$html	= "<div class='clone_divs_wrapper'>";
-				foreach($this->multiInputsHtml as $h){
-					$html	.= $h;
-				}
+					foreach($this->multiInputsHtml as $h){
+						$html	.= $h;
+					}
 				$html	.= '</div>';
 			}elseif(empty($html)){
 				$html	= "<$elType  name='$elName' $elId class='$elClass' $elOptions $elValue>$elContent$elClose";

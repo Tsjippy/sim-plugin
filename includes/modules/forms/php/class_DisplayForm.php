@@ -1,8 +1,6 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
-use WP_Embed;
-use WP_Error;
 
 if(!class_exists('SimForms')){
 	require_once(__DIR__.'/class_SimForms.php');
@@ -31,6 +29,23 @@ class DisplayForm extends SimForms{
 			$this->processAtts($atts);
 			$this->getForm();
 			$this->getAllFormElements();
+
+			$this->getUserId($atts);
+		}
+	}
+
+	/**
+	 * Check if we are editing on behalf of someone else, and we have permission for that
+	 * 
+	 */
+	function getUserId($atts=[]){
+		if(
+			array_intersect($this->userRoles, $this->submitRoles) 	&&	// we have the permission to submit on behalf on someone else
+			!empty(($_GET['userid']))								&& 
+			is_numeric($_GET['userid'])								&& // and the userid parameter is set in the url
+			empty($atts['userid'])										// and the user id is not given in the shortcode 
+		){
+			$this->userId	= $_GET['userid'];
 		}
 	}
 	

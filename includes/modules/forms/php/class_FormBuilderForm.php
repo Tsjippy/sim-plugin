@@ -1387,7 +1387,7 @@ class FormBuilderForm extends SimForms{
 		
 		$conditions 	= maybe_unserialize($element->warning_conditions);
 		
-		$userMetaKeys	= get_user_meta($this->userId);
+		$userMetaKeys	= get_user_meta($this->user->ID);
 		ksort($userMetaKeys);
 
 		ob_start();
