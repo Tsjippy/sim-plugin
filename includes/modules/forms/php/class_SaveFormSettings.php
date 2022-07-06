@@ -66,7 +66,7 @@ class SaveFormSettings extends SimForms{
 	function insertElement($element){
 		global $wpdb;
 		
-		$result = $wpdb->insert(
+		$wpdb->insert(
 			$this->elTableName, 
 			(array)$element
 		);
@@ -145,15 +145,15 @@ class SaveFormSettings extends SimForms{
 					$this->updatePriority($el);
 				}
 			}elseif(
-				$oldPriority > $newPriority		and 	//we are moving an element upward
-				$el->priority >= $newPriority	and		// current priority is bigger then the new prio
+				$oldPriority > $newPriority		&& 	//we are moving an element upward
+				$el->priority >= $newPriority	&&		// current priority is bigger then the new prio
 				$el->priority < $oldPriority			// current priority is smaller than the old prio
 			){
 				$el->priority++;
 				$this->updatePriority($el);
 			}elseif(
-				$oldPriority < $newPriority		and 	//we are moving an element downward
-				$el->priority > $oldPriority	and		// current priority is bigger then the old prio
+				$oldPriority < $newPriority		&& 	//we are moving an element downward
+				$el->priority > $oldPriority	&&		// current priority is bigger then the old prio
 				$el->priority < $newPriority			// current priority is smaller than the new prio
 			){
 				$el->priority--;
@@ -314,7 +314,7 @@ class SaveFormSettings extends SimForms{
 		global $wpdb;
 		
 		//check if form row already exists
-		if($wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `name` = '{$this->formName}'") != true){
+		if(!$wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `name` = '{$this->formName}'")){
 			//Create a new form row
 			SIM\printArray("Inserting new form in db");
 			

@@ -217,6 +217,50 @@ function printArray($message, $display=false){
 	}
 }
 
+function printHtml($html){
+	$tabs	= 0;
+
+	$html		= explode('>', $html);
+	$newHtml	= '';
+
+	foreach($html as $el){
+		if(empty($el)){
+			continue;
+		}
+
+		$lines= explode('</', $el);
+
+		if(!empty($lines[0])){
+			$newHtml	.= "\n";
+			
+			for ($x = 0; $x <= $tabs; $x++) {
+				$newHtml	.= "\t";
+			}
+
+			$newHtml	.= $lines[0];
+		}
+
+		if(substr($el, 0, 1) == '<' && substr($el, 0, 2) != '</' && substr($el, 0, 6) != '<input' && $el != '<br'){
+			$tabs++;
+		}
+		
+		if(isset($lines[1])){
+			$tabs--;
+
+			$newHtml	.= "\n";
+
+			for ($x = 0; $x <= $tabs; $x++) {
+				$newHtml	.= "\t";
+			}
+			$newHtml	.= '</'.$lines[1].'>';
+		}else{
+			$newHtml	.= '>';
+		}
+	}
+
+	printArray($newHtml);
+}
+
 /**
  * Creates s dropdown to select a page
  * @param 	string		$selectId	 	The id or name of the dropown

@@ -110,54 +110,61 @@ class DisplayFormResults extends SimForms{
 	 * This function creates seperated entries from entries with an splitted value
 	 */
 	function processSplittedData(){
-		if(!empty($this->formData->settings['split'])){
-			$fieldMainName	= $this->formData->settings['split'];
-			
-			//loop over all submissions
-			foreach($this->submissionData as $key=>$entry){
-				// loop over all entries of the split key
-				foreach($entry->formresults[$fieldMainName] as $subKey=>$array){
-					// Should always be an array
-					if(is_array($array)){
-						// Check if it has data
-						$hasData	= false;
-						foreach($array as $value){
-							if(!empty($value)){
-								$hasData = true;
-								break;
-							}
-						}
+		if(empty($this->formData->settings['split'])){
+			return;
+		}
 
-						// If it has data add as a seperate item to the submission data
-						if($hasData){
-							$newSubmission	= clone $entry;
-							// Mark this submission as archived if needed
-							if(isset($array['archived'])){
-								if($this->showArchived){
-									$newSubmission->archived	= true;
-									unset($array['archived']);
-								}else{
-									continue;
-								}
-							}
-							// Add the array to the formresults array
-							$newSubmission->formresults = array_merge($entry->formresults, $array);
+		$fieldMainName	= $this->formData->settings['split'];
+		
+		//loop over all submissions
+		foreach($this->submissionData as $key=>$entry){
+			// loop over all entries of the split key
+			foreach($entry->formresults[$fieldMainName] as $subKey=>$array){
+				// Should always be an array
+				if(!is_array($array)){
+					continue;
+				}
 
-							// remove the index value from the copy
-							unset($newSubmission->formresults[$fieldMainName]);
-
-							// Add the subkey
-							$newSubmission->sub_id	= $subKey;
-
-							// Copy the entry
-							$this->submissionData[]	= $newSubmission;
-						}
+				// Check if it has data
+				$hasData	= false;
+				foreach($array as $value){
+					if(!empty($value)){
+						$hasData = true;
+						break;
 					}
 				}
 
-				// remove the original entry
-				unset($this->submissionData[$key]);
+				if(!$hasData){
+					continue;
+				}
+
+				// If it has data add as a seperate item to the submission data
+				$newSubmission	= clone $entry;
+				// Mark this submission as archived if needed
+				if(isset($array['archived'])){
+					if($this->showArchived){
+						$newSubmission->archived	= true;
+						unset($array['archived']);
+					}else{
+						continue;
+					}
+				}
+
+				// Add the array to the formresults array
+				$newSubmission->formresults = array_merge($entry->formresults, $array);
+
+				// remove the index value from the copy
+				unset($newSubmission->formresults[$fieldMainName]);
+
+				// Add the subkey
+				$newSubmission->sub_id	= $subKey;
+
+				// Copy the entry
+				$this->submissionData[]	= $newSubmission;
 			}
+
+			// remove the original entry
+			unset($this->submissionData[$key]);
 		}
 	}
 
@@ -241,136 +248,140 @@ class DisplayFormResults extends SimForms{
 	}
 	
 	/**
-	 * Updates column settings with missing columns
+	 * Adds a new column setting for a new element
+	 * 
+	 * @param object	$element	the element to check if column settings exists for
 	 */
-	function enrichColumnSettings(){
-		if(!$this->enriched){
-			$this->enriched	= true;
-			
-			//If we should split an entry, define a regex patterns
-			if(!empty($this->formSettings['split'])){
-				//find the keyword followed by one or more numbers between [] followed by a  keyword between []
-				$pattern			= '/'.$this->formSettings['split']."\[[0-9]+\]\[([^\]]+)\]/i";
-				$processed			= [];
+	function addColumnSetting($element){
+		//do not show non-input elements
+		if(in_array($element->type, $this->nonInputs)){
+			return;
+		}
+
+		//If we should split an entry, define a regex patterns
+		if(!empty($this->formSettings['split'])){
+			//find the keyword followed by one or more numbers between [] followed by a  keyword between []
+			$pattern	= '/'.$this->formSettings['split']."\[[0-9]+\]\[([^\]]+)\]/i";
+			$processed	= [];
+		}
+
+		$name	= $element->name;
+
+		//Do not show elements that will be splitted
+		//Execute the regex
+		if(!empty($this->formSettings['split']) && preg_match($pattern, $element->name, $matches)){
+			//We found a keyword, check if we already got the same one
+			if(in_array($matches[1], $processed)){
+				//do not show this element
+				return;
 			}
+
+			//Add to the processed array
+			$processed[]	= $matches[1];
 			
-			//loop over all elements to build a new array
-			$elementIds	= [];
+			//replace the name
+			$name		= $matches[1];
 			
-			foreach ($this->formElements as $element){
-				$elementIds[]	= $element->id;
-				//check if the element is in the array, if not add it
-				if(!isset($this->columnSettings[$element->id])){
-					//do not show non-input elements
-					if(in_array($element->type, $this->nonInputs)){
-						continue;
-					}
-					
-					//Do not show elements that will be splitted
-					//Execute the regex
-					if(!empty($this->formSettings['split']) && preg_match($pattern, $element->name, $matches)){
-						//We found a keyword, check if we already got the same one
-						if(!in_array($matches[1], $processed)){
-							//Add to the processed array
-							$processed[]	= $matches[1];
-							
-							//replace the name
-							$name		= $matches[1];
-							
-							//check if it was already added a previous time
-							$alreadyInSettings = false;
-							foreach($this->columnSettings as $el){
-								if($el['name'] == $name){
-									$alreadyInSettings = true;
-									break;
-								}
-							}
-							if($alreadyInSettings){
-								continue;
-							}
-						}else{
-							//do not show this element
-							continue;
-						}
-					}else{
-						$name			= $element->name;
-					}
-				
-					$this->columnSettings[$element->id] = [
-						'name'				=> $name,
-						'nice_name'			=> $name,
-						'show'				=> '',
-						'edit_right_roles'	=> [],
-						'view_right_roles'	=> []
-					];
-				}else{
-					if(!isset($this->columnSettings[$element->id]['edit_right_roles'])){
-						$this->columnSettings[$element->id]['edit_right_roles']	= [];
-					}
-					if(!isset($this->columnSettings[$element->id]['view_right_roles'])){
-						$this->columnSettings[$element->id]['view_right_roles']	= [];
-					}
-				}
-			}
-			
-			//check for removed elements
-			foreach(array_diff(array_keys($this->columnSettings), $elementIds) as $condition){
-				//only unset elements
-				if(is_numeric($condition) && $condition > -1){
-					unset($this->columnSettings[$condition]);
+			//check if it was already added a previous time
+			$alreadyInSettings = false;
+			foreach($this->columnSettings as $el){
+				if($el['name'] == $name){
+					$alreadyInSettings = true;
+					break;
 				}
 			}
 
-			//Add a row for each table action as well
-			$actions	= [];
-			foreach($this->formSettings['actions'] as $action){
-				$actions[$action]	= '';
+			if($alreadyInSettings){
+				return;
 			}
-			$actions = apply_filters('sim_form_actions',$actions);
-			foreach($actions as $action=>$html){
-				if(!is_array($this->columnSettings[$action])){
-					$this->columnSettings[$action] = [
-						'name'				=> $action,
-						'nice_name'			=> $action,
-						'show'				=> '',
-						'edit_right_roles'	=> [],
-						'view_right_roles'	=> []
-					];
+		}
+
+		$this->columnSettings[$element->id] = [
+			'name'				=> $name,
+			'nice_name'			=> $name,
+			'show'				=> '',
+			'edit_right_roles'	=> [],
+			'view_right_roles'	=> []
+		];
+	}
+
+	/**
+	 * Updates column settings with missing columns
+	 */
+	function enrichColumnSettings(){
+		if($this->enriched){
+			return;
+		}
+
+		$this->enriched	= true;
+		$elementIds		= [];
+		
+		//loop over all elements to build a new array		
+		foreach ($this->formElements as $element){
+			$elementIds[]	= $element->id;
+
+			//check if the element is in the array, if not add it
+			if(!isset($this->columnSettings[$element->id])){
+				$this->addColumnSetting($element);
+			}else{
+				if(!isset($this->columnSettings[$element->id]['edit_right_roles'])){
+					$this->columnSettings[$element->id]['edit_right_roles']	= [];
+				}
+				if(!isset($this->columnSettings[$element->id]['view_right_roles'])){
+					$this->columnSettings[$element->id]['view_right_roles']	= [];
 				}
 			}
-			
-			//also add the id
-			if(!is_array($this->columnSettings[-1])){
-				$this->columnSettings[-1] = [
-					'name'				=> 'id',
-					'nice_name'			=> 'ID',
+		}
+		
+		//check for removed elements
+		foreach(array_diff(array_keys($this->columnSettings), $elementIds) as $condition){
+			//only unset elements
+			if(is_numeric($condition) && $condition > -1){
+				unset($this->columnSettings[$condition]);
+			}
+		}
+
+		//Add a row for each table action as well
+		$actions	= [];
+		foreach($this->formSettings['actions'] as $action){
+			$actions[$action]	= '';
+		}
+		$actions = apply_filters('sim_form_actions',$actions);
+		foreach($actions as $action=>$html){
+			if(!is_array($this->columnSettings[$action])){
+				$this->columnSettings[$action] = [
+					'name'				=> $action,
+					'nice_name'			=> $action,
 					'show'				=> '',
 					'edit_right_roles'	=> [],
 					'view_right_roles'	=> []
 				];
 			}
-			
-			//put hidden columns on the end
-			foreach($this->columnSettings as $key=>$setting){
-				if($setting['show'] == 'hide'){
-					//remove the element
-					unset($this->columnSettings[$key]);
-					//add it again, at the end of the array
-					$this->columnSettings[$key] = $setting;
-				}
+		}
+		
+		//also add the id
+		if(!is_array($this->columnSettings[-1])){
+			$this->columnSettings[-1] = [
+				'name'				=> 'id',
+				'nice_name'			=> 'ID',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
+		
+		//put hidden columns on the end
+		foreach($this->columnSettings as $key=>$setting){
+			if($setting['show'] == 'hide'){
+				//remove the element
+				unset($this->columnSettings[$key]);
+				//add it again, at the end of the array
+				$this->columnSettings[$key] = $setting;
 			}
 		}
 	}
-	
-	/**
-	 * Writes a row of the table to the screen
-	 * 
-	 * @param	array	$fieldValues	Array containing all the values of a form submission
-	 * @param	int		$index			The index of the row. Default -1 for none
-	 * @param	bool	$isArchived		Whether the current submission is archived. Default false.
-	 */
-	function writeTableRow($fieldValues, $index=-1, $isArchived=false){
-		//Loop over the fields in order of the defined columns
+
+	function getRowContents($fieldValues, $index){
 		$rowContents	= '';
 		$excelRow		= [];
 
@@ -382,6 +393,7 @@ class DisplayFormResults extends SimForms{
 
 		foreach($this->columnSettings as $id=>$columnSetting){
 			$fieldValue	= '';
+
 			//If the column is hidden, do not show this cell
 			if($columnSetting['show'] == 'hide' || !is_numeric($id)){
 				continue;
@@ -389,11 +401,12 @@ class DisplayFormResults extends SimForms{
 			
 			//if we lack view permission, do not show this cell
 			if(
-				(!$ownEntry ||
-				(																						//not our own entry
-					$ownEntry &&																		//or it is our own
-					!in_array('own', (array)$columnSetting['view_right_roles'])							//but we are not allowed to see it
-				)
+				(
+					!$ownEntry ||
+					(																						//not our own entry
+						$ownEntry &&																		//or it is our own
+						!in_array('own', (array)$columnSetting['view_right_roles'])							//but we are not allowed to see it
+					)
 				)	&&											
 				!$this->tableEditPermissions &&															//no permission to edit the table and
 				!empty($columnSetting['view_right_roles']) && 											// there are view right permissions defined
@@ -415,7 +428,7 @@ class DisplayFormResults extends SimForms{
 				!array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles'])	&&	//And we have no right to edit this specific column
 				!$this->tableEditPermissions																//and we have no right to edit all table data
 			){
-				return;
+				return '';
 			}
 
 			if(
@@ -500,6 +513,21 @@ class DisplayFormResults extends SimForms{
 			$oldValue		= json_encode($orgFieldValue);
 			$rowContents .= "<td $class data-oldvalue='$oldValue' $subId>$fieldValue</td>";
 		}
+
+		$this->excelContent[] = $excelRow;
+
+		return $rowContents;
+	}
+	
+	/**
+	 * Writes a row of the table to the screen
+	 * 
+	 * @param	array	$fieldValues	Array containing all the values of a form submission
+	 * @param	int		$index			The index of the row. Default -1 for none
+	 * @param	bool	$isArchived		Whether the current submission is archived. Default false.
+	 */
+	function writeTableRow($fieldValues, $index=-1, $isArchived=false){
+		//Loop over the fields in order of the defined columns	
 		
 		$this->noRecords = false;
 		
@@ -511,9 +539,7 @@ class DisplayFormResults extends SimForms{
 		}
 		echo "<tr class='table-row' data-id='{$fieldValues['id']}' $subId>";
 		
-		echo $rowContents;
-		
-		$this->excelContent[] = $excelRow;
+		echo $this->getRowContents($fieldValues, $index);
 
 		//if there are actions
 		if($this->formSettings['actions'] != ""){
@@ -557,6 +583,373 @@ class DisplayFormResults extends SimForms{
 		
 		$this->tableSettings		= unserialize($this->shortcodeData->table_settings);
 		$this->columnSettings		= unserialize($this->shortcodeData->column_settings);
+	}
+
+	function columnSettingsForm($class, $viewRoles, $editRoles){
+		?>
+		<div class="tabcontent <?php echo $class;?>" id="column_settings_<?php echo $this->shortcodeData->id;?>">
+			<form class="sortable_column_settings_rows">
+				<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodeData->id;?>'>
+				
+				<div class="column_setting_wrapper">
+					<label class="columnheading formfieldbutton">Sort</label>
+					<label class="columnheading column_settings">Field name</label>
+					<label class="columnheading column_settings">Display name</label>
+					<label style="width: 30px;"></label>
+					<label class="columnheading column_settings">Display permissions</label>
+					<label class="columnheading column_settings">Edit permissions</label>
+				</div>
+				<?php
+				foreach ($this->columnSettings as $elementIndex=>$columnSetting){
+					$niceName	= $columnSetting['nice_name'];
+					
+					if($columnSetting['show'] == 'hide'){
+						$visibility	= 'invisible';
+					}else{
+						$visibility	= 'visible';
+					}
+					$icon			= "<img class='visibilityicon $visibility' src='".PICTURESURL."/$visibility.png'>";
+					
+					?>
+					<div class="column_setting_wrapper" data-id="<?php echo $elementIndex;?>">
+						<input type="hidden" class="visibilitytype" name="column_settings[<?php echo $elementIndex;?>][show]" 		value="<?php echo $columnSetting['show'];?>">
+						<input type="hidden" name="column_settings[<?php echo $elementIndex;?>][name]"	value="<?php echo $columnSetting['name'];?>">
+						<span class="movecontrol formfieldbutton" aria-hidden="true">:::</span>
+						<span class="column_settings"><?php echo $columnSetting['name'];?></span>
+						<input type="text" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][nice_name]" value="<?php echo $niceName;?>">
+						<span class="visibilityicon"><?php echo $icon;?></span>
+						<?php
+						//only add view permission for numeric elements others are buttons
+						if(is_numeric($elementIndex)){
+						?>
+						<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][view_right_roles][]' multiple='multiple'>
+							<?php
+							foreach($viewRoles as $key=>$roleName){
+								if(in_array($key,(array)$columnSetting['view_right_roles'])){
+									$selected = 'selected';
+								}else{
+									$selected = '';
+								}
+								echo "<option value='$key' $selected>$roleName</option>";
+							}
+							?>
+						</select>
+						<?php
+						}else{
+							?>
+							<div class='column_settings'></div>
+							<?php
+						}
+						?>
+						
+						<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][edit_right_roles][]' multiple='multiple'>
+						<?php
+						foreach($editRoles as $key=>$roleName){
+							if(in_array($key,(array)$columnSetting['edit_right_roles'])){
+								$selected = 'selected';
+							}else{
+								$selected = '';
+							}
+							echo "<option value='$key' $selected>$roleName</option>";
+						}
+						?>
+						</select>
+					</div>
+					<?php
+				}
+				?>
+				<?php
+				echo SIM\addSaveButton('submit_column_setting','Save table column settings');
+				?>
+			</form>
+		</div>
+		<?php
+	}
+
+	function tableRightsForm($class, $viewRoles, $editRoles){
+		?>
+		<div class="tabcontent <?php echo $class;?>" id="table_rights_<?php echo $this->shortcodeData->id;?>">
+			<form>
+				<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodeData->id;?>'>
+				<input type='hidden' class='shortcode_settings' name='formid'		value='<?php echo $this->formData->id;?>'>
+				
+				<div class="table_rights_wrapper">
+					<label>Select the default column the table is sorted on</label>
+					<select name="table_settings[default_sort]">
+						<?php
+						if($this->tableSettings['default_sort'] == ''){
+							?><option value='' selected>---</option><?php
+						}else{
+							?><option value=''>---</option><?php
+						}
+						
+						foreach($this->columnSettings as $key=>$element){
+							$name = $element['nice_name'];
+							
+							//Check which option is the selected one
+							if($this->tableSettings['default_sort'] != '' && $this->tableSettings['default_sort'] == $key){
+								$selected = 'selected';
+							}else{
+								$selected = '';
+							}
+							echo "<option value='$key' $selected>$name</option>";
+						}
+						?>
+					</select>
+				</div>
+
+				<div class="table_filters_wrapper">
+					<label>Select the fields the table can be filtered on</label>
+					<div class='clone_divs_wrapper'>
+						<?php
+						$filters	= $this->tableSettings['filter'];
+
+						if(!is_array($this->tableSettings['filter'])){
+							$this->tableSettings['filter']	= [];
+							$filters	= [''];
+						}
+
+						foreach($filters as $index=>$filter){
+							echo "<div class='clone_div' data-divid='$index'>";									
+								echo "<select name='table_settings[filter][$index][element]' class='inline'>";
+									foreach($this->columnSettings as $key=>$element){
+										$name = $element['nice_name'];
+										
+										//Check which option is the selected one
+										if($this->tableSettings['filter'][$index]['element'] == $key){
+											$selected = 'selected';
+										}else{
+											$selected = '';
+										}
+										echo "<option value='$key' $selected>$name</option>";
+									}
+								echo "</select>";
+
+								echo "   filter type";
+								echo "<select name='table_settings[filter][$index][type]' class='inline'>";
+									foreach(['>=', '<', '==', 'like'] as $type){
+										if($this->tableSettings['filter'][$index]['type'] == $type){
+											$selected = 'selected';
+										}else{
+											$selected = '';
+										}
+										echo "<option value='$type' $selected>$type</option>";
+									}
+								echo "</select>";
+								echo "   Filter name  ";
+								echo "<input name='table_settings[filter][$index][name]' value='{$this->tableSettings['filter'][$index]['name']}'>";
+								echo "  <button type='button' class='add button'>+</button>";
+								echo "<button type='button' class='remove button'>-</button>";
+							echo "</div>";
+						}
+						?>
+					</div>
+				</div>
+				
+				<div class="table_rights_wrapper">
+					<label>
+						Select a column which determines if a row should be shown.<br>
+						The row will be hidden if a cell in this column has no value and the viewer has no right to edit.
+					</label>
+					<select name="table_settings[hiderow]">
+					<?php
+					if($this->tableSettings['hiderow'] == ''){
+						?><option value='' selected>---</option><?php
+					}else{
+						?><option value=''>---</option><?php
+					}
+					
+					foreach($this->columnSettings as $key=>$element){
+						$name = $element['nice_name'];
+						
+						//Check which option is the selected one
+						if($this->tableSettings['hiderow'] == $element['name']){
+							$selected = 'selected';
+						}else{
+							$selected = '';
+						}
+						echo "<option value='{$element['name']}' $selected>$name</option>";
+					}
+					?>
+					</select>
+				</div>
+				
+				<div class="table_rights_wrapper">
+					<label>Select a field with multiple answers where you want to create seperate rows for</label>
+					<select name="form_settings[split]">
+					<?php
+					if($this->formSettings['split'] == ''){
+						?><option value='' selected>---</option><?php
+					}else{
+						?><option value=''>---</option><?php
+					}
+					
+					$foundElements = [];
+					foreach($this->formElements as $key=>$element){
+						$pattern = "/([^\[]+)\[\d+\]/i";
+						
+						if(preg_match($pattern, $element->name, $matches)){
+							//Only add if not found before
+							if(!in_array($matches[1], $foundElements)){
+								$foundElements[]	= $matches[1];
+								$value 				= strtolower(str_replace('_', ' ', $matches[1]));
+								$name				= ucfirst($value);
+								
+								//Check which option is the selected one
+								if($this->formSettings['split'] == $value){
+									$selected = 'selected';
+								}else{
+									$selected = '';
+								}
+								echo "<option value='$value' $selected>$name</option>";
+							}
+						}
+					}
+					?>
+					</select>
+				</div>
+
+				<div class="table_rights_wrapper">
+					<label class="label">
+						Select which results to display
+					</label>
+					<br>
+					<select name="table_settings[result_type]">
+						<option value="personal" <?php if($this->tableSettings['result_type'] == 'personal'){echo 'selected';}?>>Only personal</option>
+						<option value="all" <?php if($this->tableSettings['result_type'] == 'all'){echo 'selected';}?>>All the viewer has permission for</option>
+					</select>
+				</div>
+				
+				<div class="table_rights_wrapper">
+					<label class="label">
+						Select if you want to view archived results by default<br>
+						<?php
+						if($this->tableSettings['archived'] == 'true'){
+							$checked1	= 'checked';
+							$checked2	= '';
+						}else{
+							$checked1	= '';
+							$checked2	= 'checked';
+						}
+						?>
+						<label>
+							<input type="radio" name="table_settings[archived]" value="true" <?php echo $checked1;?>>
+							Yes
+						</label>
+						<label>
+							<input type="radio" name="table_settings[archived]" value="false" <?php echo $checked2;?>>
+							No
+						</label>
+					</label>
+				</div>
+				
+				<!-- We can define auto archive field both on table and on form settings-->
+				<div class="table_rights_wrapper">
+					<label class="label">
+						Select if you want to auto archive results<br>
+						<?php
+						if($this->formSettings['autoarchive'] == 'true'){
+							$checked1	= 'checked';
+							$checked2	= '';
+						}else{
+							$checked1	= '';
+							$checked2	= 'checked';
+						}
+						?>
+						<label>
+							<input type="radio" name="form_settings[autoarchive]" value="true" <?php echo $checked1;?>>
+							Yes
+						</label>
+						<label>
+							<input type="radio" name="form_settings[autoarchive]" value="false" <?php echo $checked2;?>>
+							No
+						</label>
+					</label>
+					<br>
+					<br>
+					<div class='autoarchivelogic <?php if($checked1 == ''){echo 'hidden';}?>'>
+						Auto archive a (sub) entry when field
+						<select name="form_settings[autoarchivefield]" style="margin-right:10px;">
+						<?php
+						if($this->formSettings['autoarchivefield'] == ''){
+							?><option value='' selected>---</option><?php
+						}else{
+							?><option value=''>---</option><?php
+						}
+						
+						foreach($this->columnSettings as $key=>$element){
+							$name = $element['nice_name'];
+							
+							//Check which option is the selected one
+							if($this->formSettings['autoarchivefield'] != '' && $this->formSettings['autoarchivefield'] == $key){
+								$selected = 'selected';
+							}else{
+								$selected = '';
+							}
+							echo "<option value='$key' $selected>$name</option>";
+						}
+						?>
+						</select>
+						<label style="margin:0 10px;">equals</label>
+						<input type='text' name="form_settings[autoarchivevalue]" value="<?php echo $this->formSettings['autoarchivevalue'];?>">
+						
+						<div class="infobox" name="info">
+							<div>
+								<p class="info_icon">
+									<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL."/info.png";?>">
+								</p>
+							</div>
+							<span class="info_text">
+								You can use placeholders like '%today%+3days' for a value
+							</span>
+						</div>
+					</div>
+				</div>
+				
+				<div class="table_rights_wrapper">
+					<label class="label">Select roles with permission to VIEW the table, finetune it per column on the 'column settings' tab</label>
+					<div class="role_info">
+					<?php
+					foreach($viewRoles as $key=>$roleName){
+						if(in_array($key,array_keys((array)$this->tableSettings['view_right_roles']))){
+							$checked = 'checked';
+						}else{
+							$checked = '';
+						}
+						
+						echo "<label class='option-label'>";
+							echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[view_right_roles][$key]' value='$roleName' $checked>";
+							echo "$roleName";
+						echo "</label><br>";
+					}
+					?>
+					</div>
+				</div>
+				
+				<div class="table_rights_wrapper">
+					<label class="label">Select roles with permission to edit ALL form submission data</label>
+					<div class="role_info">
+					<?php
+					foreach($editRoles as $key=>$roleName){
+						if(in_array($key,array_keys((array)$this->tableSettings['edit_right_roles']))){
+							$checked = 'checked';
+						}else{
+							$checked = '';
+						}
+						echo "<label class='option-label'>";
+							echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[edit_right_roles][$key]' value='$roleName' $checked>";
+							echo " $roleName";
+						echo "</label><br>";
+					}
+					?>
+					</div>
+				</div>
+			<?php
+			echo SIM\addSaveButton('submit_table_setting','Save table access settings');
+			?>
+			</form>
+		</div>
+		<?php
 	}
 
 	/**
@@ -603,364 +996,11 @@ class DisplayFormResults extends SimForms{
 				<button id="column_settings" class="button tablink <?php echo $active1;?>" data-target="column_settings_<?php echo $this->shortcodeData->id;?>">Column settings</button>
 				<button id="table_settings" class="button tablink <?php echo $active2;?>" data-target="table_rights_<?php echo $this->shortcodeData->id;?>">Table settings</button>
 				
-				<div class="tabcontent <?php echo $class1;?>" id="column_settings_<?php echo $this->shortcodeData->id;?>">
-					<form class="sortable_column_settings_rows">
-						<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodeData->id;?>'>
-						
-						<div class="column_setting_wrapper">
-							<label class="columnheading formfieldbutton">Sort</label>
-							<label class="columnheading column_settings">Field name</label>
-							<label class="columnheading column_settings">Display name</label>
-							<label style="width: 30px;"></label>
-							<label class="columnheading column_settings">Display permissions</label>
-							<label class="columnheading column_settings">Edit permissions</label>
-						</div>
-						<?php
-						foreach ($this->columnSettings as $elementIndex=>$columnSetting){
-							$nice_name	= $columnSetting['nice_name'];
-							
-							if($columnSetting['show'] == 'hide'){
-								$visibility	= 'invisible';
-							}else{
-								$visibility	= 'visible';
-							}
-							$icon			= "<img class='visibilityicon $visibility' src='".PICTURESURL."/$visibility.png'>";
-							
-							?>
-						<div class="column_setting_wrapper" data-id="<?php echo $elementIndex;?>">
-							<input type="hidden" class="visibilitytype" name="column_settings[<?php echo $elementIndex;?>][show]" 		value="<?php echo $columnSetting['show'];?>">
-							<input type="hidden" name="column_settings[<?php echo $elementIndex;?>][name]"	value="<?php echo $columnSetting['name'];?>">
-							<span class="movecontrol formfieldbutton" aria-hidden="true">:::</span>
-							<span class="column_settings"><?php echo $columnSetting['name'];?></span>
-							<input type="text" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][nice_name]" value="<?php echo $nice_name;?>">
-							<span class="visibilityicon"><?php echo $icon;?></span>
-							<?php
-							//only add view permission for numeric elements others are buttons
-							if(is_numeric($elementIndex)){
-							?>
-							<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][view_right_roles][]' multiple='multiple'>
-							<?php
-							foreach($viewRoles as $key=>$roleName){
-								if(in_array($key,(array)$columnSetting['view_right_roles'])){
-									$selected = 'selected';
-								}else{
-									$selected = '';
-								}
-								echo "<option value='$key' $selected>$roleName</option>";
-							}
-							?>
-							</select>
-							<?php
-							}else{
-								?>
-								<div class='column_settings'></div>
-								<?php
-							}
-							?>
-							
-							<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][edit_right_roles][]' multiple='multiple'>
-							<?php
-							foreach($editRoles as $key=>$roleName){
-								if(in_array($key,(array)$columnSetting['edit_right_roles'])){
-									$selected = 'selected';
-								}else{
-									$selected = '';
-								}
-								echo "<option value='$key' $selected>$roleName</option>";
-							}
-							?>
-							</select>
-						</div>
-						<?php
-						}
-						?>
-						<?php
-						echo SIM\addSaveButton('submit_column_setting','Save table column settings');
-						?>
-					</form>
-				</div>
-				
-				<div class="tabcontent <?php echo $class2;?>" id="table_rights_<?php echo $this->shortcodeData->id;?>">
-					<form>
-						<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodeData->id;?>'>
-						<input type='hidden' class='shortcode_settings' name='formid'		value='<?php echo $this->formData->id;?>'>
-						
-						<div class="table_rights_wrapper">
-							<label>Select the default column the table is sorted on</label>
-							<select name="table_settings[default_sort]">
-								<?php
-								if($this->tableSettings['default_sort'] == ''){
-									?><option value='' selected>---</option><?php
-								}else{
-									?><option value=''>---</option><?php
-								}
-								
-								foreach($this->columnSettings as $key=>$element){
-									$name = $element['nice_name'];
-									
-									//Check which option is the selected one
-									if($this->tableSettings['default_sort'] != '' && $this->tableSettings['default_sort'] == $key){
-										$selected = 'selected';
-									}else{
-										$selected = '';
-									}
-									echo "<option value='$key' $selected>$name</option>";
-								}
-								?>
-							</select>
-						</div>
+				<?php
+				$this->columnSettingsForm($class1, $viewRoles, $editRoles);
 
-						<div class="table_filters_wrapper">
-							<label>Select the fields the table can be filtered on</label>
-							<div class='clone_divs_wrapper'>
-								<?php
-								$filters	= $this->tableSettings['filter'];
-
-								if(!is_array($this->tableSettings['filter'])){
-									$this->tableSettings['filter']	= [];
-									$filters	= [''];
-								}
-
-								foreach($filters as $index=>$filter){
-									echo "<div class='clone_div' data-divid='$index'>";									
-										echo "<select name='table_settings[filter][$index][element]' class='inline'>";
-											foreach($this->columnSettings as $key=>$element){
-												$name = $element['nice_name'];
-												
-												//Check which option is the selected one
-												if($this->tableSettings['filter'][$index]['element'] == $key){
-													$selected = 'selected';
-												}else{
-													$selected = '';
-												}
-												echo "<option value='$key' $selected>$name</option>";
-											}
-										echo "</select>";
-
-										echo "   filter type";
-										echo "<select name='table_settings[filter][$index][type]' class='inline'>";
-											foreach(['>=', '<', '==', 'like'] as $type){
-												if($this->tableSettings['filter'][$index]['type'] == $type){
-													$selected = 'selected';
-												}else{
-													$selected = '';
-												}
-												echo "<option value='$type' $selected>$type</option>";
-											}
-										echo "</select>";
-										echo "   Filter name  ";
-										echo "<input name='table_settings[filter][$index][name]' value='{$this->tableSettings['filter'][$index]['name']}'>";
-										echo "  <button type='button' class='add button'>+</button>";
-										echo "<button type='button' class='remove button'>-</button>";
-									echo "</div>";
-								}
-								?>
-							</div>
-						</div>
-						
-						<div class="table_rights_wrapper">
-							<label>
-								Select a column which determines if a row should be shown.<br>
-								The row will be hidden if a cell in this column has no value and the viewer has no right to edit.
-							</label>
-							<select name="table_settings[hiderow]">
-							<?php
-							if($this->tableSettings['hiderow'] == ''){
-								?><option value='' selected>---</option><?php
-							}else{
-								?><option value=''>---</option><?php
-							}
-							
-							foreach($this->columnSettings as $key=>$element){
-								$name = $element['nice_name'];
-								
-								//Check which option is the selected one
-								if($this->tableSettings['hiderow'] == $element['name']){
-									$selected = 'selected';
-								}else{
-									$selected = '';
-								}
-								echo "<option value='{$element['name']}' $selected>$name</option>";
-							}
-							?>
-							</select>
-						</div>
-						
-						<div class="table_rights_wrapper">
-							<label>Select a field with multiple answers where you want to create seperate rows for</label>
-							<select name="form_settings[split]">
-							<?php
-							if($this->formSettings['split'] == ''){
-								?><option value='' selected>---</option><?php
-							}else{
-								?><option value=''>---</option><?php
-							}
-							
-							$foundElements = [];
-							foreach($this->formElements as $key=>$element){
-								$pattern = "/([^\[]+)\[[0-9]+\]/i";
-								
-								if(preg_match($pattern, $element->name, $matches)){
-									//Only add if not found before
-									if(!in_array($matches[1], $foundElements)){
-										$foundElements[]	= $matches[1];
-										$value 				= strtolower(str_replace('_', ' ', $matches[1]));
-										$name				= ucfirst($value);
-										
-										//Check which option is the selected one
-										if($this->formSettings['split'] == $value){
-											$selected = 'selected';
-										}else{
-											$selected = '';
-										}
-										echo "<option value='$value' $selected>$name</option>";
-									}
-								}
-							}
-							?>
-							</select>
-						</div>
-
-						<div class="table_rights_wrapper">
-							<label class="label">
-								Select which results to display
-							</label>
-							<br>
-							<select name="table_settings[result_type]">
-								<option value="personal" <?php if($this->tableSettings['result_type'] == 'personal'){echo 'selected';}?>>Only personal</option>
-								<option value="all" <?php if($this->tableSettings['result_type'] == 'all'){echo 'selected';}?>>All the viewer has permission for</option>
-							</select>
-						</div>
-						
-						<div class="table_rights_wrapper">
-							<label class="label">
-								Select if you want to view archived results by default<br>
-								<?php
-								if($this->tableSettings['archived'] == 'true'){
-									$checked1	= 'checked';
-									$checked2	= '';
-								}else{
-									$checked1	= '';
-									$checked2	= 'checked';
-								}
-								?>
-								<label>
-									<input type="radio" name="table_settings[archived]" value="true" <?php echo $checked1;?>>
-									Yes
-								</label>
-								<label>
-									<input type="radio" name="table_settings[archived]" value="false" <?php echo $checked2;?>>
-									No
-								</label>
-							</label>
-						</div>
-						
-						<!-- We can define auto archive field both on table and on form settings-->
-						<div class="table_rights_wrapper">
-							<label class="label">
-								Select if you want to auto archive results<br>
-								<?php
-								if($this->formSettings['autoarchive'] == 'true'){
-									$checked1	= 'checked';
-									$checked2	= '';
-								}else{
-									$checked1	= '';
-									$checked2	= 'checked';
-								}
-								?>
-								<label>
-									<input type="radio" name="form_settings[autoarchive]" value="true" <?php echo $checked1;?>>
-									Yes
-								</label>
-								<label>
-									<input type="radio" name="form_settings[autoarchive]" value="false" <?php echo $checked2;?>>
-									No
-								</label>
-							</label>
-							<br>
-							<br>
-							<div class='autoarchivelogic <?php if($checked1 == ''){echo 'hidden';}?>'>
-								Auto archive a (sub) entry when field
-								<select name="form_settings[autoarchivefield]" style="margin-right:10px;">
-								<?php
-								if($this->formSettings['autoarchivefield'] == ''){
-									?><option value='' selected>---</option><?php
-								}else{
-									?><option value=''>---</option><?php
-								}
-								
-								foreach($this->columnSettings as $key=>$element){
-									$name = $element['nice_name'];
-									
-									//Check which option is the selected one
-									if($this->formSettings['autoarchivefield'] != '' && $this->formSettings['autoarchivefield'] == $key){
-										$selected = 'selected';
-									}else{
-										$selected = '';
-									}
-									echo "<option value='$key' $selected>$name</option>";
-								}
-								?>
-								</select>
-								<label style="margin:0 10px;">equals</label>
-								<input type='text' name="form_settings[autoarchivevalue]" value="<?php echo $this->formSettings['autoarchivevalue'];?>">
-								
-								<div class="infobox" name="info">
-									<div>
-										<p class="info_icon">
-											<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL."/info.png";?>">
-										</p>
-									</div>
-									<span class="info_text">
-										You can use placeholders like '%today%+3days' for a value
-									</span>
-								</div>
-							</div>
-						</div>
-						
-						<div class="table_rights_wrapper">
-							<label class="label">Select roles with permission to VIEW the table, finetune it per column on the 'column settings' tab</label>
-							<div class="role_info">
-							<?php
-							foreach($viewRoles as $key=>$roleName){
-								if(in_array($key,array_keys((array)$this->tableSettings['view_right_roles']))){
-									$checked = 'checked';
-								}else{
-									$checked = '';
-								}
-								
-								echo "<label class='option-label'>";
-									echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[view_right_roles][$key]' value='$roleName' $checked>";
-									echo "$roleName";
-								echo "</label><br>";
-							}
-							?>
-							</div>
-						</div>
-						
-						<div class="table_rights_wrapper">
-							<label class="label">Select roles with permission to edit ALL form submission data</label>
-							<div class="role_info">
-							<?php
-							foreach($editRoles as $key=>$roleName){
-								if(in_array($key,array_keys((array)$this->tableSettings['edit_right_roles']))){
-									$checked = 'checked';
-								}else{
-									$checked = '';
-								}
-								echo "<label class='option-label'>";
-									echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[edit_right_roles][$key]' value='$roleName' $checked>";
-									echo " $roleName";
-								echo "</label><br>";
-							}
-							?>
-							</div>
-						</div>
-					<?php
-					echo SIM\addSaveButton('submit_table_setting','Save table access settings');
-					?>
-					</form>
-				</div>
+				$this->tableRightsForm($class2, $viewRoles, $editRoles);
+				?>
 			</div>
 		</div>
 		<?php
@@ -1185,163 +1225,169 @@ class DisplayFormResults extends SimForms{
 			</div>
 			<?php
 
-			if(count($this->submissionData) != 0){
-				$this->enrichColumnSettings();
-
-				// Check if we should sort the data
-				if($this->tableSettings['default_sort']){
-					$defaultSortElement	= $this->tableSettings['default_sort'];
-					$sortElement		= $this->getElementById($defaultSortElement);
-					$sort				= str_replace(']', '', end(explode('[', $sortElement->name)));
-					$sortElementType	= $sortElement->type;
-					//Sort the array
-					usort($this->submissionData, function($a, $b) use ($sort, $sortElementType){
-						if($sortElementType == 'date'){
-							return strtotime($a->formresults[$sort]) <=> strtotime($b->formresults[$sort]);
-						}
-						return $a->formresults[$sort] > $b->formresults[$sort];
-					});
-				}
-
-				/* 
-					Write the header row of the table 
-				*/
-				//first check if the data contains data of our own
-				$this->ownData	= false;
-				$this->user->partnerId		= SIM\hasPartner($this->user->ID);
-				foreach($this->submissionData as $submissionData){
-					//Our own entry or one of our partner
-					if($submissionData->userid == $this->user->ID || $submissionData->userid == $this->user->partnerId){
-						$this->ownData = true;
-						break;
-					}
-				}
-				
+			if(empty($this->submissionData)){
 				?>
-				<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
-					<thead>
-						<tr>
-							<?php
-							//add normal fields
-							foreach($this->columnSettings as $settingId=>$columnSetting){
-								if(
-									!is_numeric($settingId)				||
-									$columnSetting['show'] == 'hide'	||													//hidden column
-									(
-										!$this->ownData				|| 																	//The table does not contain data of our own
-										(
-											$this->ownData			&& 																//or it does contain our own data but
-											!in_array('own',(array)$columnSetting['view_right_roles'])							//we are not allowed to see it
-										)
-									) &&																					
-									!$this->tableEditPermissions 				&&														//no permission to edit the table and
-									!empty($columnSetting['view_right_roles']) 	&& 										// there are view right permissions defined
-									!array_intersect($this->userRoles, (array)$columnSetting['view_right_roles'])		// and we do not have the view right role and
-								){ 
-									continue;
-								}
-								
-								$niceName			= $columnSetting['nice_name'];
-								
-								if($this->tableSettings['default_sort']	== $settingId){
-									$class	= "defaultsort"; 
-								}else{
-									$class	= ""; 
-								}
+				<p><br><br><br>No records found</p>
+				<?php
+
+				return;
+			}
+
+			$this->enrichColumnSettings();
+
+			// Check if we should sort the data
+			if($this->tableSettings['default_sort']){
+				$defaultSortElement	= $this->tableSettings['default_sort'];
+				$sortElement		= $this->getElementById($defaultSortElement);
+				$sort				= str_replace(']', '', end(explode('[', $sortElement->name)));
+				$sortElementType	= $sortElement->type;
+				//Sort the array
+				usort($this->submissionData, function($a, $b) use ($sort, $sortElementType){
+					if($sortElementType == 'date'){
+						return strtotime($a->formresults[$sort]) <=> strtotime($b->formresults[$sort]);
+					}
+					return $a->formresults[$sort] > $b->formresults[$sort];
+				});
+			}
+
+			/* 
+				Write the header row of the table 
+			*/
+			//first check if the data contains data of our own
+			$this->ownData	= false;
+			$this->user->partnerId		= SIM\hasPartner($this->user->ID);
+			foreach($this->submissionData as $submissionData){
+				//Our own entry or one of our partner
+				if($submissionData->userid == $this->user->ID || $submissionData->userid == $this->user->partnerId){
+					$this->ownData = true;
+					break;
+				}
+			}
 			
-								if(!empty($this->hiddenColumns[$columnSetting['name']])){
-									$class	.= ' hidden';
-								}
-								$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20>";
-								
-								//Add a heading for each column
-								echo "<th class='$class' id='{$columnSetting['name']}' data-nicename='$niceName'>$niceName $icon</th>";
-								
-								$excelRow[]	= $niceName;
+			?>
+			<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
+				<thead>
+					<tr>
+						<?php
+						//add normal fields
+						foreach($this->columnSettings as $settingId=>$columnSetting){
+							if(
+								!is_numeric($settingId)				||
+								$columnSetting['show'] == 'hide'	||													//hidden column
+								(
+									!$this->ownData				|| 																	//The table does not contain data of our own
+									(
+										$this->ownData			&& 																//or it does contain our own data but
+										!in_array('own',(array)$columnSetting['view_right_roles'])							//we are not allowed to see it
+									)
+								) &&																					
+								!$this->tableEditPermissions 				&&														//no permission to edit the table and
+								!empty($columnSetting['view_right_roles']) 	&& 										// there are view right permissions defined
+								!array_intersect($this->userRoles, (array)$columnSetting['view_right_roles'])		// and we do not have the view right role and
+							){ 
+								continue;
 							}
 							
-							//add a Actions heading if needed
-							$buttonsHtml = [];
-							foreach($this->formSettings['actions'] as $action){
-								$buttonsHtml[$action]	= "";
-							}
-
-							//we have full permissions on this table
-							if($this->tableEditPermissions && !empty($buttonsHtml)){
-								$addHeading	= true;
+							$niceName			= $columnSetting['nice_name'];
+							
+							if($this->tableSettings['default_sort']	== $settingId){
+								$class	= "defaultsort"; 
 							}else{
-								$buttonsHtml = apply_filters('sim_form_actions', $buttonsHtml);
-								foreach($buttonsHtml as $action=>$button){
-									//we have permission for this specific button
-									if(array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])){
-										$addHeading	= true;
-									}else{
-										//Loop over all buttons to see if the current user has permission for them
-										foreach($this->submissionData as $submissionData){
-											foreach($buttonsHtml as $action=>$button){
-												//we have permission on this row for this button
-												if($submissionData->formresults['userid'] == $this->user->ID){
-													$addHeading	= true;
-												}
+								$class	= ""; 
+							}
+		
+							if(!empty($this->hiddenColumns[$columnSetting['name']])){
+								$class	.= ' hidden';
+							}
+							$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20>";
+							
+							//Add a heading for each column
+							echo "<th class='$class' id='{$columnSetting['name']}' data-nicename='$niceName'>$niceName $icon</th>";
+							
+							$excelRow[]	= $niceName;
+						}
+						
+						//add a Actions heading if needed
+						$buttonsHtml = [];
+						foreach($this->formSettings['actions'] as $action){
+							$buttonsHtml[$action]	= "";
+						}
+
+						//we have full permissions on this table
+						if($this->tableEditPermissions && !empty($buttonsHtml)){
+							$addHeading	= true;
+						}else{
+							$buttonsHtml = apply_filters('sim_form_actions', $buttonsHtml);
+							foreach($buttonsHtml as $action=>$button){
+								//we have permission for this specific button
+								if(array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])){
+									$addHeading	= true;
+								}else{
+									//Loop over all buttons to see if the current user has permission for them
+									foreach($this->submissionData as $submissionData){
+										foreach($buttonsHtml as $action=>$button){
+											//we have permission on this row for this button
+											if($submissionData->formresults['userid'] == $this->user->ID){
+												$addHeading	= true;
 											}
 										}
 									}
 								}
 							}
-
-							if($addHeading){
-								echo "<th id='actions' data-nicename='Actions'>Actions</th>";
-							}
-							?>
-						</tr>
-					</thead>
-					
-					<tbody class="table-body">
-				
-					<?php
-					//write header to excel
-					$this->excelContent[] = $excelRow;
-					/* 
-							WRITE THE CONTENT ROWS OF THE TABLE 
-					*/
-					//Loop over all the submissions of this form
-					foreach($this->submissionData as $submissionData){
-						$fieldValues			= $submissionData->formresults;
-						$fieldValues['id']		= $submissionData->id;
-						$fieldValues['userid']	= $submissionData->userid;
-						$index					= -1;
-						if(is_numeric($submissionData->sub_id)){
-							$index				= $submissionData->sub_id;
 						}
-						
-						$this->writeTableRow($fieldValues, $index, $submissionData->archived);						
-					}
-					?>
-					</tbody>
-				</table>
-					
-				<p id="table_remark">Click on any cell with <span class="edit">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>
-				
-				<?php
-				//Add excel export button if allowed
-				if($this->tableEditPermissions){
-					?>
-					<div>
-						<form method="post" class="exportform" id="export_xls">
-							<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
-						</form>
-						<?php
-						if(SIM\getModuleOption('PDF', 'enable')){
-							?>
-							<form method="post" class="exportform" id="export_pdf">
-								<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
-							</form>
-							<?php
+
+						if($addHeading){
+							echo "<th id='actions' data-nicename='Actions'>Actions</th>";
 						}
 						?>
-					</div>
+					</tr>
+				</thead>
+				
+				<tbody class="table-body">
+			
 				<?php
+				//write header to excel
+				$this->excelContent[] = $excelRow;
+				/* 
+						WRITE THE CONTENT ROWS OF THE TABLE 
+				*/
+				//Loop over all the submissions of this form
+				foreach($this->submissionData as $submissionData){
+					$fieldValues			= $submissionData->formresults;
+					$fieldValues['id']		= $submissionData->id;
+					$fieldValues['userid']	= $submissionData->userid;
+					$index					= -1;
+					if(is_numeric($submissionData->sub_id)){
+						$index				= $submissionData->sub_id;
+					}
+					
+					$this->writeTableRow($fieldValues, $index, $submissionData->archived);						
 				}
+				?>
+				</tbody>
+			</table>
+				
+			<p id="table_remark">Click on any cell with <span class="edit">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>
+			
+			<?php
+			//Add excel export button if allowed
+			if($this->tableEditPermissions){
+				?>
+				<div>
+					<form method="post" class="exportform" id="export_xls">
+						<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
+					</form>
+					<?php
+					if(SIM\getModuleOption('PDF', 'enable')){
+						?>
+						<form method="post" class="exportform" id="export_pdf">
+							<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
+						</form>
+						<?php
+					}
+					?>
+				</div>
+				<?php
 			}
 			
 			if($this->noRecords){

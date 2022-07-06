@@ -149,7 +149,7 @@ class SubmitForm extends SimForms{
 		preg_match_all($pattern, $string, $matches);
 		
 		//loop over the results
-		foreach($matches[1] as $key=>$match){
+		foreach($matches[1] as $match){
 			if(empty($this->formResults[$match])){
 				//remove the placeholder, there is no value
 				$string = str_replace("%$match%", '', $string);

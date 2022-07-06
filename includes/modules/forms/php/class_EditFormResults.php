@@ -81,75 +81,77 @@ class EditFormResults extends DisplayFormResults{
 			$settings = maybe_unserialize($form->settings);
 			
 			//check if auto archive is turned on for this form
-			if($settings['autoarchive'] == 'true'){
-				$this->formName				= $form->name;
-				$this->formData				= $form;
-				$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
+			if($settings['autoarchive'] != 'true'){
+				continue;
+			}
 
-				$fieldMainName		= $settings['split'];
-				
-				//Get all submissions of this form
-				$this->getSubmissionData(null, null, true);
-				
-				$triggerName	= $this->getElementById($settings['autoarchivefield'], 'name');
-				$triggerValue	= $settings['autoarchivevalue'];
-				$pattern		= '/'.$fieldMainName."\[[0-9]+\]\[([^\]]+)\]/i";
-				if(preg_match($pattern, $triggerName,$matches)){
-					$triggerName	= $matches[1];
-				}
-				
-				//check if we need to transform a keyword to a date 
-				$pattern = '/%([^%;]*)%/i';
-				//Execute the regex
-				preg_match_all($pattern, $triggerValue,$matches);
-				if(!is_array($matches[1])){
-					SIM\printArray($matches[1]);
-				}else{
-					foreach((array)$matches[1] as $keyword){
-						//If the keyword is a valid date keyword
-						if(strtotime($keyword)){
-							//convert to date
-							$triggerValue = date("Y-m-d", strtotime(str_replace('%', '', $triggerValue)));
-						}
+			$this->formName				= $form->name;
+			$this->formData				= $form;
+			$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
+
+			$fieldMainName		= $settings['split'];
+			
+			//Get all submissions of this form
+			$this->getSubmissionData(null, null, true);
+			
+			$triggerName	= $this->getElementById($settings['autoarchivefield'], 'name');
+			$triggerValue	= $settings['autoarchivevalue'];
+			$pattern		= '/'.$fieldMainName."\[[0-9]+\]\[([^\]]+)\]/i";
+			if(preg_match($pattern, $triggerName,$matches)){
+				$triggerName	= $matches[1];
+			}
+			
+			//check if we need to transform a keyword to a date 
+			$pattern = '/%([^%;]*)%/i';
+			//Execute the regex
+			preg_match_all($pattern, $triggerValue,$matches);
+			if(!is_array($matches[1])){
+				SIM\printArray($matches[1]);
+			}else{
+				foreach((array)$matches[1] as $keyword){
+					//If the keyword is a valid date keyword
+					if(strtotime($keyword)){
+						//convert to date
+						$triggerValue = date("Y-m-d", strtotime(str_replace('%', '', $triggerValue)));
 					}
 				}
+			}
+			
+			//loop over all submissions to see if we need to archive
+			foreach($this->submissionData as &$subData){
+				$this->formResults		= $subData->formresults;
 				
-				//loop over all submissions to see if we need to archive
-				foreach($this->submissionData as &$subData){
-					$this->formResults		= $subData->formresults;
-					
-					$this->submissionId		= $subData->id;
+				$this->submissionId		= $subData->id;
 
-					//there is no trigger value found in the results, check multi value array
-					if(empty($this->formResults[$triggerName])){
-						//loop over all multi values
-						foreach($this->formResults[$fieldMainName] as $subId=>$sub){
-							//we found a match for a sub entry, archive it
-							$val	= $sub[$triggerName];						
-							if(
-								$val == $triggerValue || 						//value is the same as the trigger value or
-								(
-									strtotime($triggerValue) && 				// trigger value is a date
-									strtotime($val) &&							// this value is a date
-									strtotime($val) < strtotime($triggerValue)	// value is smaller than the trigger value
-								)
-							){
-								$this->formResults[$fieldMainName][$subId]['archived'] = true;
-								
-								//update in db
-								$this->checkIfAllArchived($this->formResults[$fieldMainName]);
-							}
+				//there is no trigger value found in the results, check multi value array
+				if(empty($this->formResults[$triggerName])){
+					//loop over all multi values
+					foreach($this->formResults[$fieldMainName] as $subId=>$sub){
+						//we found a match for a sub entry, archive it
+						$val	= $sub[$triggerName];						
+						if(
+							$val == $triggerValue || 						//value is the same as the trigger value or
+							(
+								strtotime($triggerValue) && 				// trigger value is a date
+								strtotime($val) &&							// this value is a date
+								strtotime($val) < strtotime($triggerValue)	// value is smaller than the trigger value
+							)
+						){
+							$this->formResults[$fieldMainName][$subId]['archived'] = true;
+							
+							//update in db
+							$this->checkIfAllArchived($this->formResults[$fieldMainName]);
 						}
-					}else{
-						//if the form value is equal to the trigger value it needs to be to be archived
-						if($this->formResults[$triggerName] == $triggerValue){
-							//Check if we are dealing with an subvalue
-							if($subData->sub_id){
-								$subData->archived	= true;
-								$this->checkIfAllArchived($subData);
-							}else{
-								$this->updateSubmissionData(true);
-							}
+					}
+				}else{
+					//if the form value is equal to the trigger value it needs to be to be archived
+					if($this->formResults[$triggerName] == $triggerValue){
+						//Check if we are dealing with an subvalue
+						if($subData->sub_id){
+							$subData->archived	= true;
+							$this->checkIfAllArchived($subData);
+						}else{
+							$this->updateSubmissionData(true);
 						}
 					}
 				}

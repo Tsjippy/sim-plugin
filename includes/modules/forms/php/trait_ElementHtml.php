@@ -270,7 +270,7 @@ trait ElementHtml{
 	 * 
 	 * @return	string				The html
 	 */
-	function getElementHtml($element, $width=100){
+	function getElementHtml($element){
 		$html		= '';
 		$elClass	= '';
 		$elOptions	= '';
@@ -455,7 +455,7 @@ trait ElementHtml{
 						$elContent = "<h3>{$element->text}</h3>";
 						break;
 					case 'label':
-						$elContent = "<h4 class='labeltext'>{$element->text}</h4>";;
+						$elContent = "<h4 class='labeltext'>{$element->text}</h4>";
 						break;
 					case 'button':
 						$elContent = $element->text;
@@ -514,7 +514,7 @@ trait ElementHtml{
 					foreach($options as $key=>$option){
 						if($this->multiwrap){
 							$checked	= '%checked%';
-						}elseif(in_array(strtolower($option), $lowValues) or in_array(strtolower($key), $lowValues)){
+						}elseif(in_array(strtolower($option), $lowValues) || in_array(strtolower($key), $lowValues)){
 							$checked	= 'checked';
 						}else{
 							$checked	= '';

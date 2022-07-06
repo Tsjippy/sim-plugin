@@ -551,7 +551,7 @@ function saveFormInput(){
 	//save to submission table
 	if(empty($formBuilder->formData->settings['save_in_meta'])){			
 		//Get the id from db before insert so we can use it in emails and file uploads
-		$formBuilder->formResults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$formBuilder->submissionTableName}')");
+		$formBuilder->formResults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$formBuilder->submissionTableName}') AND table_schema='$wpdb->dbname'");
 		
 		//sort arrays
 		foreach($formBuilder->formResults as $key=>$result){

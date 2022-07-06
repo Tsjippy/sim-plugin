@@ -20,36 +20,17 @@ class DisplayForm extends SimForms{
 	use ElementHtml;
 	use CreateJs;
 
-	function __construct($atts){
+	function __construct($atts=[]){
 		parent::__construct();
 
 		$this->isFormStep				= false;
 		$this->wrap						= false;
 		$this->isMultiStepForm			= '';
 		$this->formStepCounter			= 0;
-		$this->processAtts($atts);
-		$this->getForm();
-		$this->getAllFormElements();
-	}
-
-	/**
-	 * Checks if the current form is a multi step form
-	 * 
-	 * @return	bool	True if multistep false otherwise
-	 */
-	function isMultiStep(){
-		if(empty($this->isMultiStepForm)){
-			foreach($this->formElements as $el){
-				if($el->type == 'formstep'){
-					$this->isMultiStepForm	= true;
-					return true;
-				}
-			}
-
-			$this->isMultiStepForm	= false;
-			return false;
-		}else{
-			return $this->isMultiStepForm;
+		if(!empty($atts)){
+			$this->processAtts($atts);
+			$this->getForm();
+			$this->getAllFormElements();
 		}
 	}
 	
@@ -60,11 +41,11 @@ class DisplayForm extends SimForms{
 	 * @param	int		$width			The width of the elements
 	 */
 	function processMultiFields($element, $width){
+		$class	= 'inputwrapper';
+
 		//Check if element needs to be hidden
 		if(!empty($element->hidden)){
-			$hidden = ' hidden';
-		}else{
-			$hidden = '';
+			$class .= ' hidden';
 		}
 		
 		//if the current element is required or this is a label and the next element is required
@@ -73,13 +54,13 @@ class DisplayForm extends SimForms{
 			$element->type == 'label'		&&
 			$this->nextElement->required
 		){
-			$hidden .= ' required';
+			$class .= ' required';
 		}
 
 		$elementHtml = $this->getElementHtml($element);
 		
 		//close the label element after the field element
-		if($this->wrap && !isset($element->wrap)){
+		if($this->wrap && !$element->wrap){
 			$elementHtml .= "</div>";
 			if($this->wrap == 'label'){
 				$elementHtml .= "</label>";
@@ -87,14 +68,12 @@ class DisplayForm extends SimForms{
 			$this->wrap = false;
 		}elseif(!$this->wrap){
 			if($element->type == 'info'){
-				$elementHtml .= "<div class='inputwrapper$hidden info'>";
+				$elementHtml .= "<div class='$class info'>";
 			}else{
 				if(!empty($element->wrap)){
-					$class	= 'flex';
-				}else{
-					$class	= '';
+					$class	.= ' flex';
 				}
-				$elementHtml .= "<div class='inputwrapper$hidden $class' style='width:$width%;'>";
+				$elementHtml .= "<div class='$class' style='width:$width%;'>";
 			}
 		}
 		
@@ -115,7 +94,7 @@ class DisplayForm extends SimForms{
 		// Determine if we should wrap
 		if(
 			!$this->wrap											&&			// We are currently not wrapping
-			isset($element->wrap)									&& 			// we should wrap around next element
+			$element->wrap											&& 			// we should wrap around next element
 			is_object($this->nextElement)							&& 			// and there is a next element
 			!in_array($this->nextElement->type, ['select','php','formstep'])	// and the next element type is not a select or php element
 		){
@@ -263,14 +242,17 @@ class DisplayForm extends SimForms{
 
 			//write down all the multi html
 			$name	= str_replace('end', 'start', $element->name);
-			$html	= "<div class='clone_divs_wrapper' name='$name'>";
-				foreach($this->multiInputsHtml as $multihtml){
-					$html .= $multihtml;
-				}
-			$html .= '</div>';//close clone_divs_wrapper
-			$html .= '</div>';//close inputwrapper
-
-			return $html;
+				$elementHtml	= "<div class='clone_divs_wrapper' name='$name'>";
+					foreach($this->multiInputsHtml as $multihtml){
+						$elementHtml .= $multihtml;
+					}
+					if($this->wrap){
+						if($this->wrap	== 'label'){
+							$elementHtml .= '</label>';
+						}
+						$this->wrap	= false;
+					}
+				$elementHtml	.= '</div>';
 		}
 		
 		// wrap an element and a folowing field in the same wrapper
@@ -280,7 +262,7 @@ class DisplayForm extends SimForms{
 
 			//Check if element needs to be hidden
 			if(!empty($element->hidden)){
-				$class = ' hidden';
+				$class .= ' hidden';
 			}
 			
 			//if the current element is required or this is a label and the next element is required
@@ -307,7 +289,7 @@ class DisplayForm extends SimForms{
 		//do not close the div if wrap is turned on
 		if(
 			!$this->wrap									&&
-			!empty($element->wrap)							&&				//we should wrap around next element
+			$element->wrap									&&				//we should wrap around next element
 			is_object($this->nextElement)					&& 				// and there is a next element
 			!in_array($this->nextElement->type, ['php','formstep'])			// and the next element type is not a select or php element
 		){
@@ -323,18 +305,18 @@ class DisplayForm extends SimForms{
 		
 		//we have not started a wrap	
 		//only close wrap if the current element is not wrapped or it is the last
-		if(empty($element->wrap) || !is_array($this->nextElement)){
+		if(!$element->wrap || !is_object($this->nextElement)){
 			//close the label element after the field element or if this the last element of the form and a label
 			if(
 				$this->wrap == 'label' || 
 				($element->type == 'label' && !is_object($this->nextElement))
 			){
-				$html .= "</label>";
+ 				$html .= "</label>";
 			}
 			$this->wrap = false;
 			
 			$html .= "</div>";
-		}	
+		}
 
 		return $html;
 	}

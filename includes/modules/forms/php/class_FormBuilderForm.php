@@ -38,13 +38,13 @@ class FormBuilderForm extends SimForms{
 			$html = "<option value=''>---</option>";
 		}
 		
-		foreach($this->formElements as $key=>$element){
+		foreach($this->formElements as $element){
 			//do not include the element itself do not include non-input types
-			if($element->id != $elementId and !in_array($element->type, ['label','info','datalist','formstep'])){
+			if($element->id != $elementId && !in_array($element->type, ['label','info','datalist','formstep'])){
 				$name = ucfirst(str_replace('_',' ',$element->name));
 				
 				//Check which option is the selected one
-				if($selectedId != '' and $selectedId == $element->id){
+				if(!empty($selectedId) && $selectedId == $element->id){
 					$selected = 'selected';
 				}else{
 					$selected = '';
@@ -324,7 +324,7 @@ class FormBuilderForm extends SimForms{
 					//check if we have any upload fields in this form
 					$hideUploadEl	= true;
 					foreach($this->formElements as $el){
-						if($el->type == 'file' or $el->type == 'image'){
+						if($el->type == 'file' || $el->type == 'image'){
 							$hideUploadEl	= false;
 							break;
 						}
@@ -458,7 +458,7 @@ class FormBuilderForm extends SimForms{
 								}
 								
 								//Check which option is the selected one
-								if(!empty($settings['autoarchivefield']) and $settings['autoarchivefield'] == $element->id){
+								if(!empty($settings['autoarchivefield']) && $settings['autoarchivefield'] == $element->id){
 									$selected = 'selected';
 								}else{
 									$selected = '';
@@ -537,17 +537,6 @@ class FormBuilderForm extends SimForms{
 	 * Form to setup form e-mails
 	 */
 	function formEmailsForm(){
-		/*Array structure:
-		emails			[
-			0 [
-				from	= ''
-				to		= ''
-				subject	= ''
-				message	= ''
-				headers	= ''
-				files	= ''
-			]
-		]*/
 		$emails = $this->formData->emails;
 		?>
 		<div class="emails_wrapper">
@@ -1043,7 +1032,7 @@ class FormBuilderForm extends SimForms{
 					</label><br>
 					<br>
 
-					<div <?php if($element == null or (!$element->mandatory && !$element->recommended)){echo "class='hidden'";}?>>
+					<div <?php if($element == null || (!$element->mandatory && !$element->recommended)){echo "class='hidden'";}?>>
 						<?php
 						if($element == null){
 							$elementId	= -1;
@@ -1087,35 +1076,33 @@ class FormBuilderForm extends SimForms{
 	/**
 	 * Form to add conditions to an element
 	 * 
+	 * A field can have one or more conditions applied to it like:
+	*		1) hide when field X is Y
+	*		2) Show when field X is Z
+	*	Each condition can have multiple rules like:
+	*		Hide when field X is Y and field A is B 
+	*		
+	*	The array structure is therefore:
+	*		[
+	*			[0][
+	*				[rules]	
+	*						[0]
+	*						[1]
+	*				[action]
+	*			[1]
+	*				[rules]	
+	*						[0]
+	*				[action]
+	*		]
+	*	
+	*	It is also stored at the conditional fields to be able to create efficient JavaScript
+	 * 
 	 * @param int	$elementId	The id of the element. Default -1 for empty
 	 */
 	function elementConditionsForm($elementId = -1){
-		/* 		
-		A field can have one or more conditions applied to it like:
-			1) hide when field X is Y
-			2) Show when field X is Z
-		Each condition can have multiple rules like:
-			Hide when field X is Y and field A is B 
-			
-		The array structure is therefore:
-			[
-				[0][
-					[rules]	
-							[0]
-							[1]
-					[action]
-				[1]
-					[rules]	
-							[0]
-					[action]
-			]
-		
-		It is also stored at the conditional fields to be able to create efficient JavaScript
-		*/
-
 		$element	= $this->getElementById($elementId);
 
-		if($elementId == -1 or empty($element->conditions)){
+		if($elementId == -1 || empty($element->conditions)){
 			$dummyFieldCondition['rules'][0]["conditional_field"]	= "";
 			$dummyFieldCondition['rules'][0]["equation"]				= "";
 			$dummyFieldCondition['rules'][0]["conditional_field_2"]	= "";
@@ -1124,7 +1111,9 @@ class FormBuilderForm extends SimForms{
 			$dummyFieldCondition["action"]					= "";
 			$dummyFieldCondition["target_field"]			= "";
 			
-			if($elementId == -1) $elementId			= 0;
+			if($elementId == -1){
+				$elementId			= 0;
+			}
 			$element->conditions = [$dummyFieldCondition];
 		}
 		
@@ -1172,7 +1161,9 @@ class FormBuilderForm extends SimForms{
 			<?php
 			$lastCondtionKey = array_key_last($conditions);
 			foreach($conditions as $conditionIndex=>$condition){
-				if(!is_numeric($conditionIndex)) continue;
+				if(!is_numeric($conditionIndex)){
+					continue;
+				}
 			?>
 			<div class='condition_row' data-condition_index='<?php echo $conditionIndex;?>'>
 				<span style='font-weight: 600;'>If</span>
@@ -1191,26 +1182,39 @@ class FormBuilderForm extends SimForms{
 						</select>
 
 						<select class='element_condition condition_select equation' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][equation]' required>
-							<option value=''		<?php if($rule['equation'] == '')			echo 'selected';?>>---</option>";
-							<option value='changed'	<?php if($rule['equation'] == 'changed')	echo 'selected';?>>has changed</option>
-							<option value='clicked'	<?php if($rule['equation'] == 'clicked')	echo 'selected';?>>is clicked</option>
-							<option value='=='		<?php if($rule['equation'] == '==')			echo 'selected';?>>equals</option>
-							<option value='!='		<?php if($rule['equation'] == '!=')			echo 'selected';?>>is not</option>
-							<option value='>'		<?php if($rule['equation'] == '>')			echo 'selected';?>>greather than</option>
-							<option value='<'		<?php if($rule['equation'] == '<')			echo 'selected';?>>smaller than</option>
-							<option value='checked'	<?php if($rule['equation'] == 'checked')	echo 'selected';?>>is checked</option>
-							<option value='!checked'<?php if($rule['equation'] == '!checked')	echo 'selected';?>>is not checked</option>
-							<option value='== value'<?php if($rule['equation'] == '== value')	echo 'selected';?>>equals the value of</option>
-							<option value='!= value'<?php if($rule['equation'] == '!= value')	echo 'selected';?>>is not the value of</option>
-							<option value='> value'	<?php if($rule['equation'] == '> value')	echo 'selected';?>>greather than the value of</option>
-							<option value='< value'	<?php if($rule['equation'] == '< value')	echo 'selected';?>>smaller than the value of</option>
-							<option value='-'		<?php if($rule['equation'] == '-')			echo 'selected';?>>minus the value of</option>
-							<option value='+'		<?php if($rule['equation'] == '+')			echo 'selected';?>>plus the value of</option>
+							<?php
+								$optionArray	= [
+									''			=> '---',
+									'changed'	=> 'has changed',
+									'clicked'	=> 'is clicked',
+									'=='		=> 'equals',
+									'!='		=> 'is not',
+									'>'			=> 'greather than',
+									'<'			=> 'smaller than',
+									'checked'	=> 'is checked',
+									'!checked'	=> 'is not checked',
+									'== value'	=> 'equals the value of',
+									'!= value'	=> 'is not the value of',
+									'> value'	=> 'greather than the value of',
+									'< value'	=> 'smaller than the value of',
+									'-'			=> 'minus the value of',
+									'+'			=> 'plus the value of',
+								];
+
+								foreach($optionArray as $option=>$optionLabel){
+									if($rule['equation'] == $option){
+										$selected	= 'selected';
+									}else{
+										$selected	= '';
+									}
+									echo "<option value='$option' $selected>$optionLabel</option>";
+								}
+							?>							
 						</select>
 
 						<?php
 						//show if -, + or value field istarget value
-						if($rule['equation'] == '-' or $rule['equation'] == '+' or strpos($rule['equation'], 'value') !== false){
+						if($rule['equation'] == '-' || $rule['equation'] == '+' || strpos($rule['equation'], 'value') !== false){
 							$hidden = '';
 						}else{
 							$hidden = 'hidden';
@@ -1226,7 +1230,7 @@ class FormBuilderForm extends SimForms{
 						</span>
 						
 						<?php
-						if($rule['equation'] == '-' or $rule['equation'] == '+'){
+						if($rule['equation'] == '-' || $rule['equation'] == '+'){
 							$hidden = '';
 						}else{
 							$hidden = 'hidden';
@@ -1235,15 +1239,27 @@ class FormBuilderForm extends SimForms{
 
 						<span class='<?php echo $hidden;?> condition_form equation_2'>
 							<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][equation_2]'>
-								<option value=''	<?php if($rule['equation_2'] == '')		echo 'selected';?>>---</option>";
-								<option value='=='	<?php if($rule['equation_2'] == '==')	echo 'selected';?>>equals</option>
-								<option value='!='	<?php if($rule['equation_2'] == '!=')	echo 'selected';?>>is not</option>
-								<option value='>'	<?php if($rule['equation_2'] == '>')	echo 'selected';?>>greather than</option>
-								<option value='<'	<?php if($rule['equation_2'] == '<')	echo 'selected';?>>smaller than</option>
+								<?php
+									$optionArray	= [
+										''			=> '---',
+										'=='		=> 'equals',
+										'!='		=> 'is not',
+										'>'			=> 'greather than',
+										'<'			=> 'smaller than',
+									];
+									foreach($optionArray as $option=>$optionLabel){
+										if($rule['equation_2'] == $option){
+											$selected	= 'selected';
+										}else{
+											$selected	= '';
+										}
+										echo "<option value='$option' $selected>$optionLabel</option>";
+									}
+								?>
 							</select>
 						</span>
 						<?php 
-						if(strpos($rule['equation'], 'value') !== false or in_array($rule['equation'], ['changed','checked','!checked'])){
+						if(strpos($rule['equation'], 'value') !== false || in_array($rule['equation'], ['changed','checked','!checked'])){
 							$hidden = 'hidden';
 						}else{
 							$hidden = '';
@@ -1251,11 +1267,11 @@ class FormBuilderForm extends SimForms{
 						?>
 						<input  type='text'   class='<?php echo $hidden;?> element_condition condition_form' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_value]' value="<?php echo $rule['conditional_value'];?>">
 						
-						<button type='button' class='element_condition and_rule condition_form button <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'AND') echo 'active';?>'	title='Add a new "AND" rule to this condition'>AND</button>
-						<button type='button' class='element_condition or_rule condition_form button  <?php if(!empty($rule['combinator']) and $rule['combinator'] == 'OR') echo 'active';?>'	title='Add a new "OR"  rule to this condition'>OR</button>
+						<button type='button' class='element_condition and_rule condition_form button <?php if(!empty($rule['combinator']) && $rule['combinator'] == 'AND'){echo 'active';}?>'	title='Add a new "AND" rule to this condition'>AND</button>
+						<button type='button' class='element_condition or_rule condition_form button  <?php if(!empty($rule['combinator']) && $rule['combinator'] == 'OR'){echo 'active';}?>'	title='Add a new "OR"  rule to this condition'>OR</button>
 						<button type='button' class='remove_condition condition_form button' title='Remove rule or condition'>-</button>
 						<?php
-						if($conditionIndex == $lastCondtionKey and $ruleIndex == $lastRuleKey){
+						if($conditionIndex == $lastCondtionKey && $ruleIndex == $lastRuleKey){
 							?>
 							<button type='button' class='add_condition condition_form button' title='Add a new condition'>+</button>
 							<button type='button' class='add_condition opposite condition_form button' title='Add a new condition, opposite to to the previous one'>Add opposite</button>
@@ -1272,22 +1288,22 @@ class FormBuilderForm extends SimForms{
 				<div class='action_row'>
 					<div class='radio_wrapper condition_form'>
 						<label>
-							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='show' <?php if($condition['action'] == 'show') echo 'checked';?> required>
+							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='show' <?php if($condition['action'] == 'show'){echo 'checked';}?> required>
 							Show this element
 						</label><br>
 						
 						<label>
-							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='hide' <?php if($condition['action'] == 'hide') echo 'checked';?> required>
+							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='hide' <?php if($condition['action'] == 'hide'){echo 'checked';}?> required>
 							Hide this element
 						</label><br>
 						
 						<label>
-							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='toggle' <?php if($condition['action'] == 'toggle') echo 'checked';?> required>
+							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='toggle' <?php if($condition['action'] == 'toggle'){echo 'checked';}?> required>
 							Toggle this element
 						</label><br>
 						
 						<label>
-							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='value' <?php if($condition['action'] == 'value') echo 'checked';?> required>
+							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='value' <?php if($condition['action'] == 'value'){echo 'checked';}?> required>
 							Set property
 						</label>
 						<input type="text" name="element_conditions[<?php echo $conditionIndex;?>][propertyname1]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname1'];?>">
@@ -1295,7 +1311,7 @@ class FormBuilderForm extends SimForms{
 						<input type="text" name="element_conditions[<?php echo $conditionIndex;?>][action_value]" class='element_condition' value="<?php echo $condition['action_value'];?>">
 						<br>
 						
-						<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property') echo 'checked';?> required>
+						<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property'){echo 'checked';}?> required>
 						<label for='property'>Set the</label>
 						
 						<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
@@ -1318,17 +1334,17 @@ class FormBuilderForm extends SimForms{
 			<br>
 			<div class="copyfieldswrapper">
 				<label>
-					<input type='checkbox' class="showcopyfields" <?php if(!empty($conditions['copyto'])) echo 'checked';?>>
+					<input type='checkbox' class="showcopyfields" <?php if(!empty($conditions['copyto'])){echo 'checked';}?>>
 					Apply visibility conditions to other fields
 				</label><br><br>
 				
-				<div class='copyfields <?php if(empty($conditions['copyto'])) echo 'hidden';?>'>
+				<div class='copyfields <?php if(empty($conditions['copyto'])){echo 'hidden';}?>'>
 					Check the fields these conditions should apply to as well,<br>
 					This holds only for visibility conditions (show, hide or toggle).<br><br>
 					<?php
-					foreach($this->formElements as $key=>$element){
+					foreach($this->formElements as $element){
 						//do not show the current element itself or wrapped labels
-						if($element->id != $elementId and empty($element->wrap)){
+						if($element->id != $elementId && empty($element->wrap)){
 							if(!empty($conditions['copyto'][$element->id])){
 								$checked = 'checked';
 							}else{
@@ -1348,8 +1364,7 @@ class FormBuilderForm extends SimForms{
 			echo SIM\addSaveButton('submit_form_condition','Save conditions'); ?>
 		</form>
 		<?php
-		$html = ob_get_clean();
-		return $html;
+		return ob_get_clean();
 	}
 
 	/**
@@ -1360,11 +1375,13 @@ class FormBuilderForm extends SimForms{
 	function warningConditionsForm($elementId = -1){
 		$element	= $this->getElementById($elementId);
 
-		if($elementId == -1 or empty($element->warning_conditions)){
+		if($elementId == -1 || empty($element->warning_conditions)){
 			$dummy[0]["user_meta_key"]	= "";
 			$dummy[0]["equation"]		= "";
 			
-			if($elementId == -1) $elementId			= 0;
+			if($elementId == -1){
+				$elementId			= 0;
+			}
 			$element->warning_conditions = $dummy;
 		}
 		
@@ -1382,7 +1399,9 @@ class FormBuilderForm extends SimForms{
 		<div class="conditions_wrapper">
 			<?php
 			foreach($conditions as $conditionIndex=>$condition){
-				if(!is_numeric($conditionIndex)) continue;
+				if(!is_numeric($conditionIndex)){
+					continue;
+				}
 				?>
 				<div class='warning_conditions element_conditions' data-index='<?php echo $conditionIndex;?>'>
 					<input type="hidden" class='warning_condition combinator' name="formfield[warning_conditions][<?php echo $conditionIndex;?>][combinator]" value="<?php echo $condition['combinator'];?>">
@@ -1407,7 +1426,7 @@ class FormBuilderForm extends SimForms{
 					<?php
 						$arrayKeys	= maybe_unserialize($userMetaKeys[$condition['meta_key']][0]);
 					?>
-					<span class="index_wrapper <?php if(!is_array($arrayKeys)) echo 'hidden';?>">
+					<span class="index_wrapper <?php if(!is_array($arrayKeys)){echo 'hidden';}?>">
 						<span>and index</span>
 						<input type="text" class="warning_condition meta_key_index" name='formfield[warning_conditions][<?php echo $conditionIndex;?>][meta_key_index]' value="<?php echo $condition['meta_key_index'];?>" list="meta_key_index[<?php echo $conditionIndex;?>]" style="width: fit-content;">
 						<datalist class="meta_key_index_list warning_condition" id="meta_key_index[<?php echo $conditionIndex;?>]">
@@ -1422,16 +1441,28 @@ class FormBuilderForm extends SimForms{
 					</span>
 					
 					<select class="warning_condition" name='formfield[warning_conditions][<?php echo $conditionIndex;?>][equation]'>
-						<option value=''		<?php if($condition['equation'] == '')			echo 'selected';?>>---</option>";
-						<option value='=='		<?php if($condition['equation'] == '==')		echo 'selected';?>>equals</option>
-						<option value='!='		<?php if($condition['equation'] == '!=')		echo 'selected';?>>is not</option>
-						<option value='>'		<?php if($condition['equation'] == '>')			echo 'selected';?>>greather than</option>
-						<option value='<'		<?php if($condition['equation'] == '<')			echo 'selected';?>>smaller than</option>
+						<?php
+						$optionArray	= [
+							''			=> '---',
+							'=='		=> 'equals',
+							'!='		=> 'is not',
+							'>'			=> 'greather than',
+							'<'			=> 'smaller than',
+						];
+						foreach($optionArray as $option=>$optionLabel){
+							if($condition['equation'] == $option){
+								$selected	= 'selected';
+							}else{
+								$selected	= '';
+							}
+							echo "<option value='$option' $selected>$optionLabel</option>";
+						}
+						?>
 					</select>
 					<input  type='text'   class='warning_condition' name='formfield[warning_conditions][<?php echo $conditionIndex;?>][conditional_value]' value="<?php echo $condition['conditional_value'];?>" style="width: fit-content;">
 					
-					<button type='button' class='warn_cond button <?php if(!empty($condition['combinator']) and $condition['combinator'] == 'and') echo 'active';?>'	title='Add a new "AND" rule' value="and">AND</button>
-					<button type='button' class='warn_cond button  <?php if(!empty($condition['combinator']) and $condition['combinator'] == 'or') echo 'active';?>'	title='Add a new "OR"  rule' value="or">OR</button>
+					<button type='button' class='warn_cond button <?php if(!empty($condition['combinator']) && $condition['combinator'] == 'and'){echo 'active';}?>'	title='Add a new "AND" rule' value="and">AND</button>
+					<button type='button' class='warn_cond button  <?php if(!empty($condition['combinator']) && $condition['combinator'] == 'or'){echo 'active';}?>'	title='Add a new "OR"  rule' value="or">OR</button>
 					<button type='button' class='remove_warn_cond  button' title='Remove rule'>-</button>
 
 					<br>
@@ -1441,8 +1472,7 @@ class FormBuilderForm extends SimForms{
 			?>
 		</div>
 		<?php
-		$html = ob_get_clean();
-		return $html;
+		return ob_get_clean();
 	}
 
 	function exportForm($formId){

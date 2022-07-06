@@ -82,7 +82,14 @@ function displayTab(tabButton){
 				child.classList.remove("active");
 					
 				//Hide the tab
-				child.closest('div').querySelector('#'+child.dataset.target).classList.add('hidden');
+				var childTab	= child.closest('div').querySelector('#'+child.dataset.target);
+				if(childTab == null){
+					console.error('Tab to hide not found:');
+					console.error(child.closest('div'));
+					console.error('#'+child.dataset.target);
+				}else{
+					childTab.classList.add('hidden');
+				}
 			});
 			
 			//Mark the tabbutton as active

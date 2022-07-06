@@ -21,12 +21,13 @@ export function removeDefaultSelect(el){
 	});
 }
 
-export function cloneNode(originalNode, clear=true){
+var tinymceSettings = [];
+function prepareForCloning(originalNode){
 	//First remove any nice selects
 	originalNode.querySelectorAll('select').forEach(select => {
 		//remove defaults if it has changed
 		if(select.selectedIndex != -1){
-			if(select.options[select.selectedIndex].defaultSelected == false){
+			if(!select.options[select.selectedIndex].defaultSelected){
 				//remove all default selected
 				removeDefaultSelect(select);
 			}
@@ -40,10 +41,9 @@ export function cloneNode(originalNode, clear=true){
 		//remove the original
 		select._niceselect.destroy()
 	});
-	
+
 	//also remove any tinymce's
 	if(typeof(tinymce) != 'undefined'){
-		var tinymceSettings = [];
 		originalNode.querySelectorAll('.wp-editor-area').forEach(el =>{
 			var tn = tinymce.get(el.id);
 			if(tn != null){
@@ -53,6 +53,10 @@ export function cloneNode(originalNode, clear=true){
 			}
 		});
 	}
+}
+
+export function cloneNode(originalNode, clear=true){
+	prepareForCloning(originalNode);
 	
 	//make a clone
 	var newNode = originalNode.cloneNode(true);
@@ -71,7 +75,7 @@ export function cloneNode(originalNode, clear=true){
 	});
 	
 	//clear values in the clone
-	if(clear == true){
+	if(clear){
 		newNode.querySelectorAll('input,select,textarea').forEach(input => {
 			if(input.type == 'checkbox' || input.type == 'radio'){
 				input.checked = false;
@@ -106,7 +110,7 @@ export function copyFormInput(originalNode){
 	})
 	
 	//Clear contents of any document preview divs.
-	newNode.querySelectorAll('.documentpreview').forEach(function(previewdiv){
+	newNode.querySelectorAll('.documentpreview').forEach(function(previewDiv){
 		previewDiv.innerHTML = '';
 	});
 
@@ -149,13 +153,11 @@ export function copyFormInput(originalNode){
 }
 
 export function fixNumbering(cloneDivsWrapper){
-	var re	= new RegExp('(.*)[0-9](.*)',"g");
-
 	cloneDivsWrapper.querySelectorAll(':scope > .clone_div').forEach((clone, index)=>{
 		//Update the new number	
 		//DIV
 		if(clone.id != ''){
-			clone.id = clone.id.replace(re, '$1'+index+'$2');
+			clone.id = clone.id.replace(/(\d)/g, index);
 		}
 		
 		if(clone.dataset.divid  != null){
@@ -164,12 +166,12 @@ export function fixNumbering(cloneDivsWrapper){
 		
 		//Update the title
 		clone.querySelectorAll('h3, h4').forEach(title => {
-			title.textContent = title.textContent.replace(/([0-9])/g, index+1);
+			title.textContent = title.textContent.replace(/(\d)/g, index+1);
 		});
 		
 		//Update the legend
 		clone.querySelectorAll('legend').forEach(legend => {
-			legend.innerHTML = legend.innerHTML.replace(/ ([0-9])/g, ' '+(index+1));
+			legend.innerHTML = legend.innerHTML.replace(/ (\d)/g, ' '+(index+1));
 		});
 		
 		//Update the elements
@@ -178,16 +180,16 @@ export function fixNumbering(cloneDivsWrapper){
 			if(!input.classList.contains('nice-select-search')){
 				//Update the id
 				if(input.id != '' && input.id != undefined){
-					input.id = input.id.replace(re, '$1'+index+'$2');
+					input.id = input.id.replace(/(\d)/g, index);
 				}
 				//Update the name
 				if(input.name != '' && input.name != undefined){
-					input.name = input.name.replace(re, '$1'+index+'$2');
+					input.name = input.name.replace(/(\d)/g, index);
 				}
 				
 				//Reset the select to the default
 				if(input.type == 'button'){
-					input.value = input.value.replace(/[0-9]/g, index);
+					input.value = input.value.replace(/\d/g, index);
 				}
 			}
 		});
@@ -279,7 +281,7 @@ export function showTab(n, form) {
 		form.querySelectorAll(".step.active").forEach(el=>{el.classList.remove('active');});
 
 		//... and adds the "active" class to the current step:
-		var x = form.getElementsByClassName("step");
+		x = form.getElementsByClassName("step");
 		x[n].classList.add("active");
 
 		// ... and fix the Previous/Next buttons:
@@ -317,9 +319,9 @@ export function nextPrev(n) {
 	if(n>0){
 		// Report validity of each required field
 		var elements	= x[currentTab].querySelectorAll('.required:not(.hidden) input, .required:not(.hidden) textarea, .required:not(.hidden) select');
-		for(var i = 0; i < elements.length; i++) {
-			elements[i].required		= true;
-			valid		= elements[i].reportValidity();
+		for(const element of elements) {
+			element.required		= true;
+			valid		= element.reportValidity();
 			if(!valid){
 				break;
 			}
@@ -359,9 +361,72 @@ export function nextPrev(n) {
 	showTab(currentTab,form);
 }
 
+function getRadioValue(form, name){
+	var el	= form.querySelector(`[name='${name}' i]:checked`);
+
+	//There is no radio selected currently
+	if(el == null){
+		//return an empty value
+		return '';
+	}
+
+	return el.value;
+}
+
+function getCheckboxValue(form, name, compareValue, orgName){
+	var value		= '';
+	var elements	= '';
+
+	//we are dealing with a specific checkbox
+	if(orgName.type == 'checkbox' ){
+		if(el.checked){
+			return el.value;
+		}
+		
+		return '';
+	}
+
+	//we should find the checkbox with this value and check if it is checked
+	if(compareValue != null){
+		elements	= form.querySelector(`[name='${name}' i][value="${compareValue}" i]:checked`);
+		if(elements != null){
+			value = compareValue;
+		}
+	//no compare value give just return all checked values
+	}else{
+		elements	= form.querySelectorAll(`[name="${name}" i]:checked`);
+		
+		elements.forEach(el=>{
+			if(value != ''){
+				value += ', ';
+			}
+			value += el.value;
+		});
+	}
+
+	return value;
+}
+
+function getDataListValue(el){
+	var value		= '';
+	var origInput 	= el.list.querySelector("[value='"+el.value+"' i]");
+			
+	if(origInput == null){
+		value =  el.value;
+	}else{
+		value = origInput.dataset.value;
+		if(value == ''){
+			value =  el.value;
+		}
+	}
+
+	return value;
+}
+
 export function getFieldValue(orgName, form, checkDatalist=true, compareValue=null, lowercase=false){
 	var el		= ''; 
 	var name	= '';
+	var value 	= '';
 
 	//name is not a name but a node
 	if(orgName instanceof Element){
@@ -376,105 +441,60 @@ export function getFieldValue(orgName, form, checkDatalist=true, compareValue=nu
 		name		= el.name;
 	}else{
 		name		= orgName;
-		el			= form.querySelector('[name=\"'+name+'\" i]');
+		el			= form.querySelector(`[name='${name}' i]`);
 	}
 	
-	if(el != null){
-		var value = '';
-		if(el.type == 'radio'){
-			el		= form.querySelector('[name=\"'+name+'\" i]:checked');
-			
-			//There is no radio selected currently
-			if(el == null){
-				//return an empty value
-				return '';
-			}
-		}
-		
-		if(el.type == 'checkbox'){
-			//we are dealing with a specific checkbox
-			if(orgName.type == 'checkbox' ){
-				if(el.checked){
-					return el.value;
-				}else{
-					return '';
-				}
-			//we should return all checked checkboxes
-			}else{
-				//we should find the checkbox with this value and check if it is checked
-				if(compareValue != null){
-					var els		= form.querySelector(`[name='${name}' i][value="${compareValue}" i]:checked`);
-					if(els != null){
-						value = compareValue;
-					}
-				//no compare value give just return all checked values
-				}else{
-					var els		= form.querySelectorAll(`[name="${name}" i]:checked`);
-					
-					els.forEach(el=>{
-						if(value != ''){
-							value += ', ';
-						}
-						value += el.value;
-					});
-				}
-				
-				
-			}
-		//get the value of niceselect
-		}else if(el.closest('.nice-select-dropdown') != null && el.dataset.value != undefined){
-			value = el.dataset.value
-		//value of datalist
-		}else if(el.list != null && checkDatalist){
-			var origInput = el.list.querySelector("[value='"+el.value+"' i]");
-			
-			if(origInput == null){
-				value =  el.value;
-			}else{
-				value = origInput.dataset.value;
-				if(value == ''){
-					value =  el.value;
-				}
-			}
-		}else if(el.type == 'checkbox'){
-			if(el.checked){
-				value = el.value;
-			}else{
-				value = '';
-			}
-		}else if(el.value != null && el.value != 'undefined'){
-			value = el.value;
-		}
-		
-		if(lowercase){
-			return value.toLowerCase();
-		}
-		return value;
-	}else{
+	if(el == null){
 		console.trace();
 		console.log("cannot find element with name "+name);
+
+		return value;
+	}
+
+	if(el.type == 'radio'){
+		value	= getRadioValue(form, name);
+	}else if(el.type == 'checkbox'){
+		value	= getCheckboxValue(form, name, compareValue, orgName);	
+	}else if(el.closest('.nice-select-dropdown') != null && el.dataset.value != undefined){
+		//nice select
+		value = el.dataset.value
+	}else if(el.list != null && checkDatalist){
+		value =  getDataListValue(el);
+	}else if(el.value != null && el.value != 'undefined'){
+		value = el.value;
+	}
+	
+	if(lowercase){
+		return value.toLowerCase();
+	}
+	return value;
+}
+
+function findcheckboxTarget(form, name, value){
+	var targets = form.querySelectorAll(`[name="${name}" i]`);
+	for (const element of targets) {
+		if(element.value.toLowerCase() == value.toLowerCase()){
+			return element;
+		}
 	}
 }
 
 export function changeFieldValue(orgName, value, functionRef){
+	var name	= '';
+	var target	= '';
+
 	if(orgName instanceof Element){
-		var name	= orgName.name;
-		var target	= orgName;
+		name	= orgName.name;
+		target	= orgName;
 	}else{
-		var name = orgName;
+		name 	= orgName;
 		//get the target
-		var target = form.querySelector(`[name="${name}" i]`);
+		target 	= form.querySelector(`[name="${name}" i]`);
 	}
 	
 	if(target.type == 'radio' || target.type == 'checkbox'){
 		if(!(orgName instanceof Element)){
-			targets = form.querySelectorAll(`[name="${name}" i]`);
-			for (let i = 0; i < targets.length; i++) {
-				if(targets[i].value.toLowerCase() == value.toLowerCase()){
-					target = targets[i];
-					break;
-				}
-			}
+			target	= findcheckboxTarget(form, name, value);
 		}
 		
 		if(target.value.toLowerCase() == value.toLowerCase()){
@@ -482,10 +502,11 @@ export function changeFieldValue(orgName, value, functionRef){
 		}
 	//the target has a list attached to it
 	}else if(target.list != null){
-		var datalistoption = target.list.querySelector(`[data-value="${value}" i]`);
+		var dataListOption = target.list.querySelector(`[data-value="${value}" i]`);
+
 		//we found a match
-		if(datalistoption != null){
-			target.value = datalistoption.value;
+		if(dataListOption != null){
+			target.value = dataListOption.value;
 		}else{
 			target.value = value;
 		}

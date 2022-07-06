@@ -567,14 +567,14 @@ function user_info_page($atts){
 			if($showCurrentUserData){
 				$family = get_user_meta($userId, 'family', true);
 				if(is_array($family) && isset($family['children']) && is_array($family['children'])){
-					foreach($family['children'] as $child_id){
-						$firstName = get_userdata($child_id)->first_name;
+					foreach($family['children'] as $childId){
+						$firstName = get_userdata($childId)->first_name;
 						//Add tab button
-						$tabs[]	= "<li class='tablink' id='show_child_info_$child_id' data-target='child_info_$child_id'>$firstName</li>";
+						$tabs[]	= "<li class='tablink' id='show_child_info_$childId' data-target='child_info_$childId'>$firstName</li>";
 						
 						//Content
-						$childHtml = "<div id='child_info_$child_id' class='tabcontent hidden'>";
-							$childHtml .= showChildrenFields($child_id);
+						$childHtml = "<div id='child_info_$childId' class='tabcontent hidden'>";
+							$childHtml .= showChildrenFields($childId);
 						$childHtml .= '</div>';
 						
 						$html	.= $childHtml;

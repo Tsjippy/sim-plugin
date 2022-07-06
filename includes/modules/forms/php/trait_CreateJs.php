@@ -3,6 +3,27 @@ namespace SIM\FORMS;
 use SIM;
 
 trait CreateJs{
+    	/**
+	 * Checks if the current form is a multi step form
+	 * 
+	 * @return	bool	True if multistep false otherwise
+	 */
+	function isMultiStep(){
+		if(empty($this->isMultiStepForm)){
+			foreach($this->formElements as $el){
+				if($el->type == 'formstep'){
+					$this->isMultiStepForm	= true;
+					return true;
+				}
+			}
+
+			$this->isMultiStepForm	= false;
+			return false;
+		}else{
+			return $this->isMultiStepForm;
+		}
+	}
+    
     /** 
      * Builds the js files for the current form
     */

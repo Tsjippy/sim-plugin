@@ -3,7 +3,7 @@ namespace SIM\VIMEO;
 use SIM;
 use Vimeo\Vimeo;
 
-const MODULE_VERSION		= '7.0.7';
+const MODULE_VERSION		= '7.0.8';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 
@@ -173,7 +173,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		<br>
 
 		<label>
-			<input type="checkbox" name="sync" <?php if($settings['sync']) echo 'checked';?>>
+			<input type="checkbox" name="sync" <?php if($settings['sync']){echo 'checked';}?>>
 			Automatically sync local video's with video's on Vimeo
 		</label>
 	</div>

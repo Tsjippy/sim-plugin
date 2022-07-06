@@ -385,6 +385,7 @@ function editValue(){
 	
 	//send email if needed
 	$submitForm	= new SubmitForm();
+	$submitForm->getForm($_POST['formid']);
 	$submitForm->sendEmail('fieldchanged');
 	
 	//send message back to js

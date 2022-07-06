@@ -12,7 +12,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
     <input type='radio' name='attachments[<?php echo $post->ID;?>][gallery_visibility]' value='hide' <?php if($fieldValue != 'show') echo 'checked';?>> Hide
     <?php
 
-    $formFields['visibility'] = array(
+    $formFields['gallery_visibility'] = array(
         'value' => $fieldValue,
         'label' => __( 'Gallery visibility' ),
         'input' => 'html',

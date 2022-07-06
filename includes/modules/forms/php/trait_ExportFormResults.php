@@ -67,7 +67,9 @@ trait ExportFormResults{
 	 * @param	bool	$download	Whether to download the excel or print it to screen
 	 */
 	function exportExcel($fileName="", $download=true){
-		if($fileName == "") $fileName = get_the_title($this->form_id).".xlsx";
+		if(empty($fileName)){
+			$fileName = get_the_title($this->form_id).".xlsx";
+		}
 
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
@@ -133,7 +135,7 @@ trait ExportFormResults{
 	 * 
 	 * @param	string	$fileName	the name of the downloaded file. 	Default the formname
 	 */
-	function exportPdf($filename=""){
+	function exportPdf(){
 		$pdf = new SIM\PDF\PDF_HTML();
 		$pdf->SetFont('Arial','B',15);
 
@@ -155,7 +157,9 @@ trait ExportFormResults{
 			//loop over the columns to check how wide they need to be
 			for ($x = 0; $x <= $colCount-1; $x++) {
 				//Add the length to the array
-				if(is_array($rowData[$x])) $rowData[$x] = implode("\n", $rowData[$x]);
+				if(is_array($rowData[$x])){
+					$rowData[$x] = implode("\n", $rowData[$x]);
+				}
 
 				$colWidths[$x][] = $pdf->GetStringWidth($rowData[$x]);
 			}

@@ -35,7 +35,7 @@ add_action( 'rest_api_init', function () {
 
 function verifyTraveldate( \WP_REST_Request $request ) {
 	if (is_user_logged_in()) {
-		$formBuilder	= new SIM\FORMS\Formbuilder();
+		$formBuilder	= new SIM\FORMS\DisplayFormResults();
 
 		$formBuilder->formName	= 'travel';
 
