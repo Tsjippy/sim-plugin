@@ -285,10 +285,9 @@ function userDescription($userId){
  * @return	string				The html
  */
 function showUserInfo($userId, $arrived){
-	$html = ""; 
-	
-	$userdata = get_userdata($userId);
-	$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
+	$html				= ""; 
+	$userdata			= get_userdata($userId);
+	$privacyPreference 	= (array)get_user_meta( $userId, 'privacy_preference', true );
 	
 	//If it is a valid user and privacy allows us to show it
 	if ($userdata != null){
@@ -299,17 +298,19 @@ function showUserInfo($userId, $arrived){
 		}
 		
 		$html .= "<p>";
-		if(empty($privacyPreference['hide_profile_picture'])){
-			$html .= SIM\displayProfilePicture($userId);
-			$style = "";
-		}else{
-			$style = ' style="margin-left: 55px;"';
-		}
-		
-		if(!isset($privacyPreference['hide_ministry']) & $arrived){ 
-			$html .= "<span class='person_work' $style> $displayname works with: </span><br>";
-			$html .= addMinistryLinks($userId);
-		}
+			if(empty($privacyPreference['hide_profile_picture'])){
+				$html .= SIM\displayProfilePicture($userId);
+				$style = "";
+			}else{
+				$style = ' style="margin-left: 55px;"';
+			}
+			
+			if(!isset($privacyPreference['hide_ministry']) & $arrived){ 
+				$html .= "<span class='person_work' $style> $displayname works with: </span><br>";
+				$html .= addMinistryLinks($userId);
+			}else{
+				$html .= "<span $style> $displayname</span><br>";
+			}
 		$html .= "</p>";
 		$html .= showPhonenumbers($userId);
 	}
