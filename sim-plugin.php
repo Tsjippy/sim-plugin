@@ -2,7 +2,7 @@
 /**
  * Plugin Name:  SIM plugin
  * Description:  Some hacks
- * Version:      1.0
+ * Version:      2.0
  * Author:       Ewald Harmsen
  * Requires at least: 4.0
  * 
