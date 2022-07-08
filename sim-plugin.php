@@ -5,7 +5,9 @@
  * Version:      1.0
  * Author:       Ewald Harmsen
  * Requires at least: 4.0
- *
+ * 
+ * GitHub Plugin URI: Tsjippy/sim-plugin
+ * GitHub Plugin URI: https://github.com/Tsjippy/sim-plugin
  *
  * @author Ewald Harmsen
  */
@@ -42,17 +44,6 @@ $Modules		= get_option('sim_modules', []);
 //Load all main files
 $files = glob(__DIR__  . '/includes/php/*.php');
 $files = array_merge($files, glob(__DIR__  . '/includes/admin/php/*.php'));
-
-// Only the requested module if this is a rest request
-/* if(strpos($_SERVER['REQUEST_URI'], '/wp-json/sim/v1') !== false){
-    $moduleName    = explode('/', explode('sim/v1/',$_SERVER['REQUEST_URI'])[1])[0]; 
-    $files          = array_merge($files, glob(__DIR__  . "/includes/modules/$moduleName/php/*.php"));
-}else{
-    //Load files for enabled modules
-    foreach($Modules as $slug=>$settings){
-        $files = array_merge($files, glob(__DIR__  . "/includes/modules/$slug/php/*.php"));
-    }
-} */
 
 foreach($Modules as $slug=>$settings){
     $files = array_merge($files, glob(__DIR__  . "/includes/modules/$slug/php/*.php"));

@@ -136,14 +136,11 @@ class AccountStatement{
 		$datestring		= date_format($this->postDate, "Y-m");
 		
 		//move to account_statements folder
-		$newLocation	= str_replace("uploads/", "uploads/private/account_statements/$this->loginName-$datestring-", $filePath);
-		
-		//Open up the wp filesystem
-		WP_Filesystem();
-		global $wp_filesystem;
-		$wp_filesystem->move($filePath, $newLocation);
+		$newPath		= "uploads/private/account_statements/$this->loginName-$datestring-";
+		$newLocation	= preg_replace('[uploads/private/|uploads/]', $newPath, $filePath);
+		rename($filePath, $newLocation);
 
-		//remove the old one
+		//remove the attachment as it should be private
 		wp_delete_attachment($attachment->ID, true);
 
 		$this->statementUrl = str_replace(wp_get_upload_dir()["basedir"], wp_get_upload_dir()["baseurl"], $newLocation);

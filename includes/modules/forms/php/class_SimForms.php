@@ -266,6 +266,10 @@ class SimForms{
 	 * @return	object|array|string|false			The element or element property
 	 */
 	function getElementById($id, $key=''){
+		if($id == -1){
+			return false;
+		}
+		
 		//load if needed
 		if(empty($this->formData->elementMapping)){
 			$this->getForm();

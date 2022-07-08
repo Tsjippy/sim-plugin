@@ -24,7 +24,7 @@ class DisplayFormResults extends SimForms{
 		// call parent constructor
 		parent::__construct();
 		
-		if(is_user_logged_in()){
+		if(function_exists('is_user_logged_in') && is_user_logged_in()){
 			$this->userRoles[]	= 'everyone';//used to indicate view rights on permissions
 			
 			$this->excelContent= [];
@@ -1477,6 +1477,10 @@ class DisplayFormResults extends SimForms{
 }
 
 add_filter( 'wp_insert_post_data', function($data , $postarr){
-	$formtable = new DisplayFormResults();
-	return $formtable->checkForFormShortcode($data , $postarr);
+	if(function_exists('wp_get_current_user')){
+		$formtable = new DisplayFormResults();
+		return $formtable->checkForFormShortcode($data , $postarr);
+	}
+
+	return $data;
 }, 10, 2 );

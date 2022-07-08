@@ -61,7 +61,7 @@ add_action( 'edit_attachment', function($attachmentId){
 } );
 
 /**
- * Move picture to other folder
+ * Move attachment to other folder
  * @param  	int 	$postId		    WP_Post id
  * @param  	string	$subDir   	    The sub folder where the files should be uploaded 
 */
@@ -90,16 +90,15 @@ function moveAttachment($postId, $subDir){
     //update main path
     update_metadata( 'post', $postId, '_wp_attached_file', $subDir.$filename);
 	
-	//Open up the wp filesystem
-	WP_Filesystem();
-	global $wp_filesystem;
-	
 	//Move all the files to the private folder
 	$files = glob("$baseDir/$baseName*");
 	foreach($files as $file){
-        $wp_filesystem->move($file, "$newPath/".basename ($file), true);
+        rename($file, "$newPath/".basename ($file));
 	}
 
+    if(!function_exists('wp_generate_attachment_metadata')){
+        require_once(ABSPATH.'/wp-admin/includes/image.php');
+    }
     wp_generate_attachment_metadata($postId, "$newPath/$filename");
 
     //replace any url with new urls for this attachment

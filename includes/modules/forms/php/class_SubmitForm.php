@@ -141,8 +141,10 @@ class SubmitForm extends SimForms{
 			return $string;
 		}
 
-		$this->formResults['submissiondate']	= date('d F y', strtotime($this->formResults['submissiontime']));
-		$this->formResults['editdate']			= date('d F y', strtotime($this->formResults['edittime']));
+		if(empty($this->formResults['submissiondate'])){
+			$this->formResults['submissiondate']	= date('d F y', strtotime($this->formResults['submissiontime']));
+			$this->formResults['editdate']			= date('d F y', strtotime($this->formResults['edittime']));
+		}
 
 		$pattern = '/%([^%;]*)%/i';
 		//Execute the regex

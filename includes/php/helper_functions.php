@@ -777,7 +777,9 @@ function addToLibrary($targetFile, $title='', $description=''){
 		// Check the type of file. We'll use this as the 'post_mime_type'.
 		$filetype = wp_check_filetype( basename( $targetFile ), null );
 
-		if(empty($title)) $title = preg_replace( '/\.[^.]+$/', '', basename( $targetFile ) );
+		if(empty($title)){
+			$title = preg_replace( '/\.[^.]+$/', '', basename( $targetFile ) );
+		}
 		 
 		// Prepare an array of post data for the attachment.
 		$attachment = array(
@@ -800,7 +802,9 @@ function addToLibrary($targetFile, $title='', $description=''){
 		$result = json_decode($e->getResponse()->getBody()->getContents());
 		$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
 		printArray($errorResult);
-		if(isset($postId)) return $postId;
+		if(isset($postId)){
+			return $postId;
+		}
 
 		return new WP_Error('library', $errorResult);
 	}catch(\Exception $e) {

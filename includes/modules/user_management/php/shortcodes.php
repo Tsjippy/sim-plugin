@@ -545,9 +545,6 @@ function user_info_page($atts){
 				
 				//Content
 				$html	.= "<div id='medical_info' $class>";
-				 
-
-				SIM\printArray(do_shortcode('[formbuilder formname=user_medical]'));
 					$html	.= do_shortcode('[formbuilder formname=user_medical]');
 					$html	.= "<form method='post' id='print_medicals-form'>";
 						$html	.= "<input type='hidden' name='userid' id='userid' value='$userId'>";
