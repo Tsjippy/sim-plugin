@@ -1,6 +1,6 @@
 function updateDocumentName(target){
 	//All characters who are not a digit, all digits, followed by all character gives the numbers
-	re = new RegExp('([\D]*)[0-9]{1,}(.*)',"g");
+	var re = new RegExp('([\D]*)[0-9]{1,}(.*)',"g");
 	
 	var value				= target.value
 	var parent				= target.closest('.clone_div');
