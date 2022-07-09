@@ -27,15 +27,9 @@ First public release on github
 ### Changed
   
 - Lots of code changed for better readability
+- Split code into modules for better maintability
 
  
 ## [1.0.0] - 2020-06-15
   
 Initial release
- 
-### Added
- 
-### Changed
-  
-- [PROJECTNAME-ZZZZ](http://tickets.projectname.com/browse/PROJECTNAME-ZZZZ)
-  PATCH Drupal.org is now used for composer.
