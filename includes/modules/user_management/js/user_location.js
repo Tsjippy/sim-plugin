@@ -30,7 +30,7 @@ function loadGoogleMapsScript(){
 	}
 }
 
-document.addEventListener("DOMContentLoaded",function() {
+document.addEventListener("DOMContentLoaded", function() {
 	loadGoogleMapsScript();
 	
 	//Add event listener to the latitude field
