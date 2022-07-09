@@ -21,10 +21,10 @@ function fillLocationFields(event){
 
 //dynamically load google maps script only when needed
 function loadGoogleMapsScript(){
-	if(document.getElementById('googlemaps') == null){
+	if(document.getElementById('googlemaps') == null && typeof(mapsApi) == 'string'){
 		const script = document.createElement('script');
 		script.id = 'googlemaps';
-		script.src = '//maps.googleapis.com/maps/api/js?key=AIzaSyD3dqw3LpbuaOa6WDT6thIyvX61T--BqIc';
+		script.src = '//maps.googleapis.com/maps/api/js?key='+mapsApi;
 		script.async = true;
 		document.body.append(script);
 	}
