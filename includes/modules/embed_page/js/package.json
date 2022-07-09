@@ -1,10 +1,10 @@
 {
-  "name": "forms",
+  "name": "tinymce",
   "version": "1.0.0",
-  "description": "Forms",
-  "main": "./forms.js",
+  "description": "tinymce",
+  "main": "./tiny_mce.js",
   "scripts": {
-    "formbuilder": "webpack --watch --entry ./formbuilder.js --output-path . --output-filename formbuilder.min.js --progress --mode=production --devtool source-map"
+    "build": "webpack --watch --entry ./tiny_mce.js --output-path . --output-filename tiny_mce.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

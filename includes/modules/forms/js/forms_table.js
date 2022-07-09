@@ -2,8 +2,8 @@ async function hideColumn(cell){
 	// Hide the column
 	var table		= cell.closest('table');
 	var tableRows	= table.rows;
-	for (let i = 0; i < tableRows.length; i++) {
-		tableRows[i].cells[cell.cellIndex].classList.add('hidden')
+	for (const element of tableRows) {
+		element.cells[cell.cellIndex].classList.add('hidden')
 	}
 
 	//show the reset button
@@ -15,7 +15,7 @@ async function hideColumn(cell){
 	formData.append('formid', table.dataset.formid);
 	formData.append('column_name', cell.id);
 	
-	var response	= await FormSubmit.fetchRestApi('forms/save_table_prefs', formData);
+	await FormSubmit.fetchRestApi('forms/save_table_prefs', formData);
 }
 
 async function showHiddenColumns(target){
@@ -88,7 +88,7 @@ async function removeSubmission(target){
 			);
 		}
 	}
-};
+}
 
 async function archiveSubmission(target){	
 	var table			= target.closest('table');
@@ -106,7 +106,7 @@ async function archiveSubmission(target){
 	if(tableRow.dataset.subid != undefined){
 		showSwal = false;
 		
-		var response = await Swal.fire({
+		let response = await Swal.fire({
 			title: `What do you want to ${action}?`,
 			text: `Do you want to ${action} just this one or the whole request?`,
 			icon: 'question',
@@ -138,7 +138,7 @@ async function archiveSubmission(target){
 	//display loading gif
 	Main.showLoader(target);
 	
-	var response	= await FormSubmit.fetchRestApi('forms/archive_submission', formData);
+	let response	= await FormSubmit.fetchRestApi('forms/archive_submission', formData);
 
 	if(response){
 		const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -170,9 +170,11 @@ async function archiveSubmission(target){
 			);
 		}
 	}
-};
+}
 
 function changeArchiveButton(loader, action){
+	var text;
+
 	if(action == 'archive'){
 		action 	= 'unarchive';
 		text	= 'Unarchive';
@@ -189,7 +191,7 @@ async function getInputHtml(target){
     var submissionId	= target.closest('tr').dataset.id;
 	var subId			= target.dataset.subid;
     var cellId			= target.dataset.id
-	oldText				= target.textContent;
+	var oldText			= target.textContent;
     
     Main.showLoader(target.firstChild);
 	
@@ -227,7 +229,7 @@ function addFormsTableInputEventListeners(cell){
 	inputs.forEach((inputNode, index)=>{
 		var val	= oldValue[index];
 		if(oldValue.length == 1 && index > 0){
-			var val	= oldValue[0];
+			val	= oldValue[0];
 		}
 
 		if(inputNode.type == 'checkbox' || inputNode.type == 'radio'){
@@ -256,19 +258,9 @@ function addFormsTableInputEventListeners(cell){
 		
 		if(inputNode.type != 'checkbox' || inputs.length == 1){
 			if(inputNode.type == 'date'){
-				inputNode.addEventListener("blur", function(event){
-					//only process if we added a value
-					if(event.target.value != ''){
-						processFormsTableInput(event.target);
-					}
-				});
+				inputNode.addEventListener("blur", processFormsTableInput);
 			}else{
-				inputNode.addEventListener("change", function(event){
-					//only process if we added a value
-					if(event.target.value != ''){
-						processFormsTableInput(event.target);
-					}
-				});
+				inputNode.addEventListener("change", processFormsTableInput);
 			}
 			
 			inputNode.focus();
@@ -287,7 +279,12 @@ function outsideFormsTableClicked(event){
 //function to get the temp input value and save it over AJAX
 var running = false;
 async function processFormsTableInput(target){	
-	if(running == target){
+	// target is an event
+	if(target.target != undefined){
+		target = target.target;
+	}
+	
+	if(running == target || target.value == ''){
 		return;
 	}
 	running = target;
@@ -322,16 +319,16 @@ async function processFormsTableInput(target){
 		var response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
 	
 		if(response){
-			var value = response.newvalue;
+			var newValue = response.newvalue;
 			//Replace the input element with its value
-			if(value == "") value = "X";
+			if(newValue == "") newValue = "X";
 	
 			//Update all occurences of this field
 			if(subId == null){
-				var target	= table.querySelectorAll(`tr[data-id="${submissionId}"] td[data-id="${cellId}"]`);
-				target.forEach(cell=>{cell.innerHTML = value;});
+				target	= table.querySelectorAll(`tr[data-id="${submissionId}"] td[data-id="${cellId}"]`);
+				target.forEach(td=>{td.innerHTML = newValue;});
 			}else{
-				cell.innerHTML = value;
+				cell.innerHTML = newValue;
 			}
 	
 			Main.displayMessage(response.message)
@@ -372,7 +369,7 @@ document.addEventListener("click", event=>{
 	
 	//show auto archive fields
 	if(target.name == 'form_settings[autoarchive]'){
-		el = target.closest('.table_rights_wrapper').querySelector('.autoarchivelogic');
+		let el = target.closest('.table_rights_wrapper').querySelector('.autoarchivelogic');
 		if(target.value == 'true'){
 			el.classList.remove('hidden');
 		}else{

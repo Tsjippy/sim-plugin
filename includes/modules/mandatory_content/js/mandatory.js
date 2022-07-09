@@ -3,7 +3,7 @@ async function markAsRead(event){
 	if(target.dataset.postid != undefined){
 		Main.showLoader(target);
 		
-		formData = new FormData();
+		var formData = new FormData();
 		formData.append('userid',target.dataset.userid);
 		formData.append('postid',target.dataset.postid);
 
@@ -20,7 +20,7 @@ async function markAllAsRead(event){
     var target  = event.target;
     var loader  = Main.showLoader(target);
     
-    formData = new FormData();
+    var formData = new FormData();
     formData.append('userid', target.dataset.userid);
 
     var response    = await FormSubmit.fetchRestApi('mandatory_content/mark_all_as_read', formData);

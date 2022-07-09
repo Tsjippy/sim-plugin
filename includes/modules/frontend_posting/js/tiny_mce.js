@@ -1,8 +1,9 @@
+var dialog;
 /*
 	SELECT USER DATA
 */
 
-selectUserHtml = 
+var selectUserHtml = 
 `<div class="wp-editor-help">
 	${userSelect}
 	
@@ -34,7 +35,7 @@ var selectUserDialog = {
 	buttons: [{
 		text: 'Insert link',
 		onclick: function(){
-			userid = document.querySelector('.wp-editor-help [name="user_selection"]').value;
+			var userid = document.querySelector('.wp-editor-help [name="user_selection"]').value;
 			if(userid != ''){
 				var options = '';
 				if(document.getElementById('insert_picture').checked){
@@ -65,7 +66,7 @@ tinymce.create(
 			editor.addCommand('mceSelect_user',
 				function(){
 					dialog 							= editor.windowManager.open(selectUserDialog);
-					select							= document.querySelector('.wp-editor-help [name="user_selection"]');
+					var select						= document.querySelector('.wp-editor-help [name="user_selection"]');
 					select._niceselect 				= NiceSelect.bind(select, {searchable: true});
 					var niceselect 					= select._niceselect.dropdown
 					niceselect.style.position		= 'relative';
@@ -86,7 +87,7 @@ tinymce.create(
 		
 		},
 		
-		createControl:function(n,a){
+		createControl:function(){
 			return null
 		},
 	}

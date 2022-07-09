@@ -24,7 +24,7 @@ function loadGoogleMapsScript(){
 	if(document.getElementById('googlemaps') == null){
 		const script = document.createElement('script');
 		script.id = 'googlemaps';
-		script.src = '//maps.googleapis.com/maps/api/js?key=AIzaSyC0FgB-vZ1p3dgKEBwPxb7UgqVvN8zNNms'
+		script.src = '//maps.googleapis.com/maps/api/js?key=AIzaSyD3dqw3LpbuaOa6WDT6thIyvX61T--BqIc';
 		script.async = true;
 		document.body.append(script);
 	}
@@ -32,12 +32,6 @@ function loadGoogleMapsScript(){
 
 document.addEventListener("DOMContentLoaded",function() {
 	loadGoogleMapsScript();
-
-	//Set coordinates if compound is selected
-	document.querySelectorAll("[name='location[compound]'").forEach(function(element){
-		element.addEventListener('change', fillLocationFields);
-	});
-
 	
 	//Add event listener to the latitude field
 	var element = document.querySelector(".latitude");
@@ -46,14 +40,14 @@ document.addEventListener("DOMContentLoaded",function() {
 	}
 	
 	//Add event listener to the longitude field
-	var element = document.querySelector(".longitude");
+	element = document.querySelector(".longitude");
 	if (typeof(element) != 'undefined' && element != null){
 		element.addEventListener('keydown', setTimer);
 	}
 	
 	//Only continue if typing has stopped for 1 second
 	var timer = null;
-	function setTimer(e) {
+	function setTimer() {
 		clearTimeout(timer); 
 		timer = setTimeout(setAddress, 1000)
 	}
@@ -80,8 +74,8 @@ document.addEventListener("DOMContentLoaded",function() {
 	}
 	
 	//Only fill the coordinates after someone stopped typing in the address field
-	var timer 	= null;
-	var element = document.querySelector(".address");
+	timer 	= null;
+	element = document.querySelector(".address");
 	if (typeof(element) != 'undefined' && element != null){
 		element.addEventListener('keydown', function(e) {
 			clearTimeout(timer); 
@@ -101,7 +95,7 @@ document.addEventListener("DOMContentLoaded",function() {
 				}
 			}
 		);
-	};
+	}
 	
 	//If the current locationbutton is clicked, get the location, and fill the form
 	document.addEventListener('click',function(event) {

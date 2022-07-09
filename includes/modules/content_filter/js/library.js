@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded",function() {
 		id: 'visibility-filter',
 		createFilters: function() {
 			var filters = {};
-			var that = this;
 
 			// Add the option to select ALL
 			filters.all = {
@@ -42,7 +41,6 @@ document.addEventListener("DOMContentLoaded",function() {
 	wp.media.view.AttachmentsBrowser = wp.media.view.AttachmentsBrowser.extend({
 		createToolbar: function() {
 			var that = this;
-			i = 1;
 
 			// Make sure to load the original toolbar
 			AttachmentsBrowser.prototype.createToolbar.call(this);
@@ -51,7 +49,7 @@ document.addEventListener("DOMContentLoaded",function() {
 			that.toolbar.set( 'VisibilityFilter', new VisibilityFilter({
 				controller: that.controller,
 				model: that.collection.props,
-				priority: -80 + 10*i++,
+				priority: -70,
 			}).render() );
 		}
 	});

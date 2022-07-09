@@ -1,11 +1,12 @@
 document.addEventListener('click',function(event) {
 	var target = event.target;
     if(target.classList.contains('icon')){
+        var url;
         var parent  = target.closest('.icon_select_wrapper');
         if(target.tagName == 'DIV'){
-            var url = target.querySelector('img').src;
+            url = target.querySelector('img').src;
         }else{
-            var url     = target.src;
+            url     = target.src;
         }
 
         parent.querySelector('.icon_url').value         = url;

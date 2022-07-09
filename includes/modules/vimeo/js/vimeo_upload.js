@@ -78,7 +78,7 @@ export class VimeoUpload{
             }
         }
 
-        var upload = new tus.Upload(this.file, {
+        return new tus.Upload(this.file, {
             uploadUrl: this.storedEntry.url,
             headers: {
                 // https://developer.vimeo.com/api/upload/videos#resumable-approach-step-2
@@ -86,8 +86,6 @@ export class VimeoUpload{
             },
             chunkSize: 50000000, // required
         });
-
-        return upload;
     }
 
     removeFromStorage(){

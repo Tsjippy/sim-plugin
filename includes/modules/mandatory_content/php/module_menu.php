@@ -2,7 +2,7 @@
 namespace SIM\MANDATORY;
 use SIM;
 
-const MODULE_VERSION		= '7.0.5';
+const MODULE_VERSION		= '7.0.6';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
 

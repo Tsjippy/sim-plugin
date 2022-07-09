@@ -38,10 +38,10 @@ async function submitAddAccountForm(event){
 	}
 
 	Main.hideModals();
-};
+}
 
 document.addEventListener("DOMContentLoaded",function() {
-	document.querySelectorAll('[name="add_user_account_button"]').forEach(el=>el.addEventListener('click',function(event){
+	document.querySelectorAll('[name="add_user_account_button"]').forEach(el=>el.addEventListener('click',function(){
 		Main.showModal('add_account');
 	}));
 

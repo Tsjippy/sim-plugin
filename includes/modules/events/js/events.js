@@ -90,12 +90,14 @@ function handleTouchStart(evt) {
     const firstTouch = evt.touches[0];                                      
     xDown = firstTouch.clientX;                                      
     yDown = firstTouch.clientY;                                      
-};                                                
+}                                              
                                                                            
 function handleTouchMove(evt) {
     if ( ! xDown || ! yDown ) {
         return;
     }
+
+    var target;
 
     var xUp = evt.touches[0].clientX;                                    
     var yUp = evt.touches[0].clientY;
@@ -108,10 +110,10 @@ function handleTouchMove(evt) {
 
         if ( xDiff > 0 ) {
             /* right swipe */
-            var target  = evt.target.closest('.events-wrap').querySelector('.next a');
+            target  = evt.target.closest('.events-wrap').querySelector('.next a');
         } else {
             /* left swipe */
-            var target  = evt.target.closest('.events-wrap').querySelector('.prev a');
+            target  = evt.target.closest('.events-wrap').querySelector('.prev a');
         }
         var month = target.dataset.month;
         var week  = target.dataset.weeknr;
@@ -126,7 +128,7 @@ function handleTouchMove(evt) {
     /* reset values */
     xDown = null;
     yDown = null;                                             
-};
+}
 
 const url = new URL(window.location);
 var xDown = null;                                                        
@@ -136,87 +138,102 @@ document.addEventListener("DOMContentLoaded",function() {
 	console.log("Events.js loaded");
 });
 
+function prevNext(target){
+    var requestedMonth = target.dataset.month;
+    var requestedWeek  = target.dataset.weeknr;
+    var requestedYear  = target.dataset.year;
+
+    if(requestedMonth != null){
+        requestMonth(target, requestedMonth, requestedYear);
+    }else if(requestedWeek != null){
+        requestWeek(target, requestedWeek, requestedYear);
+    }
+}
+
+function calendarDayClicked(target){
+    var date    = target.dataset.date;
+
+    //hide events of all days
+    document.querySelectorAll('.event-details-wrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+    
+    //show the events of this day
+    target.closest('.events-wrap').querySelector('.event-details-wrapper[data-date="'+date+'"]').classList.remove('hidden');
+
+    //unselect previous slected date
+    document.querySelectorAll('.calendar-day.selected').forEach(el=>el.classList.remove('selected'));
+    //make this date selected
+    target.classList.add('selected');
+}
+
+function hourClicked(target){
+    var date        = target.dataset.date;
+    var startTime   = target.dataset.starttime;
+
+    //hide all other events
+    document.querySelectorAll('.event-details-wrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+    
+    //show the event
+    var eventDetail = target.closest('.events-wrap').querySelector(`.event-details-wrapper[data-date="${date}"][data-starttime="${startTime}"]`);
+    if(eventDetail == null){
+        target.closest('.events-wrap').querySelector('.event-details-wrapper[data-date="empty"]').classList.remove('hidden');
+    }else{
+        eventDetail.classList.remove('hidden');
+
+        //unselect previous selected date
+        document.querySelectorAll('.calendar-hour.selected').forEach(el=>el.classList.remove('selected'));
+        //make this date selected
+        target.classList.add('selected');
+
+        if(Main.isMobileDevice()){
+            window.scrollTo(0, eventDetail.offsetTop);
+        }else{
+            //scroll the detail into view
+            window.scrollTo(0, eventDetail.offsetHeight);
+        }
+    }
+
+}
+
+function viewChanged(target){
+    var parent  = target.closest('.search-form');
+    if(target.dataset.type  == 'weekview' || target.dataset.type  == 'monthview'){
+        parent.querySelector('div.week_selector').classList.toggle('hidden');
+        parent.querySelector('div.month_selector').classList.toggle('hidden');
+    }
+
+    //select class
+    document.querySelectorAll('.viewselector.selected').forEach(el=>el.classList.remove('selected'));
+    target.classList.add('selected');
+
+    //show view
+    document.querySelectorAll('.calendarview').forEach(el=>el.classList.add('hidden'));
+    document.getElementById(target.dataset.type).classList.remove('hidden');
+
+    //change url
+    url.searchParams.set('view', target.dataset.type.replace('view',''));
+    window.history.pushState({}, '', url);
+}
+
 document.addEventListener("click", function(event) {
 	var target = event.target;
     if(target.classList.contains('prevnext')){
-        var requestedMonth = target.dataset.month;
-        var requestedWeek  = target.dataset.weeknr;
-        var requestedYear  = target.dataset.year;
-
-        if(requestedMonth != null){
-            requestMonth(target, requestedMonth, requestedYear);
-        }else if(requestedWeek != null){
-            requestWeek(target, requestedWeek, requestedYear);
-        }
+        prevNext(target);
     }
 
     if(target.classList.contains('calendar-day')){
         event.stopPropagation();
 
-        var date    = target.dataset.date;
-
-        //hide events of all days
-        document.querySelectorAll('.event-details-wrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
-        
-        //show the events of this day
-        target.closest('.events-wrap').querySelector('.event-details-wrapper[data-date="'+date+'"]').classList.remove('hidden');
-
-        //unselect previous slected date
-        document.querySelectorAll('.calendar-day.selected').forEach(el=>el.classList.remove('selected'));
-        //make this date selected
-        target.classList.add('selected');
+        calendarDayClicked(target)
     }
 
     if(target.classList.contains('calendar-hour')){
         event.stopPropagation();
-
-        var date        = target.dataset.date;
-        var startTime   = target.dataset.starttime;
-
-        //hide all other events
-        document.querySelectorAll('.event-details-wrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
-        
-        //show the event
-        var eventDetail = target.closest('.events-wrap').querySelector(`.event-details-wrapper[data-date="${date}"][data-starttime="${startTime}"]`);
-        if(eventDetail == null){
-            target.closest('.events-wrap').querySelector('.event-details-wrapper[data-date="empty"]').classList.remove('hidden');
-        }else{
-            eventDetail.classList.remove('hidden');
-
-            //unselect previous selected date
-            document.querySelectorAll('.calendar-hour.selected').forEach(el=>el.classList.remove('selected'));
-            //make this date selected
-            target.classList.add('selected');
-
-            if(Main.isMobileDevice()){
-                window.scrollTo(0, eventDetail.offsetTop);
-            }else{
-                //scroll the detail into view
-                window.scrollTo(0, eventDetail.offsetHeight);
-            }
-        }
+        hourClicked(target);
     }
 
     if(target.classList.contains('viewselector')){
         event.stopPropagation();
-
-        var parent  = target.closest('.search-form');
-        if(target.dataset.type  == 'weekview' || target.dataset.type  == 'monthview'){
-            parent.querySelector('div.week_selector').classList.toggle('hidden');
-            parent.querySelector('div.month_selector').classList.toggle('hidden');
-        }
-
-        //select class
-        document.querySelectorAll('.viewselector.selected').forEach(el=>el.classList.remove('selected'));
-        target.classList.add('selected');
-
-        //show view
-        document.querySelectorAll('.calendarview').forEach(el=>el.classList.add('hidden'));
-        document.getElementById(target.dataset.type).classList.remove('hidden');
-
-        //change url
-        url.searchParams.set('view', target.dataset.type.replace('view',''));
-        window.history.pushState({}, '', url);
+        viewChanged(target);
     }
 
     if(target.id=='add_calendar'){
@@ -242,7 +259,7 @@ document.addEventListener("change", function(event) {
     if(target.classList.contains('week_selector')){
         event.stopPropagation();
 
-        var year    = target.closest('.date-search').querySelector('.year_selector').value;
+        let year    = target.closest('.date-search').querySelector('.year_selector').value;
         if(document.querySelector('.viewselector.selected').dataset.type=='weekview'){
             requestWeek(target, target.value, year);
         }else if(document.querySelector('.viewselector.selected').dataset.type=='listview'){
@@ -256,7 +273,7 @@ document.addEventListener("change", function(event) {
     if(target.classList.contains('month_selector')){
         event.stopPropagation();
 
-        var year    = target.closest('.date-search').querySelector('.year_selector').value;
+        let year    = target.closest('.date-search').querySelector('.year_selector').value;
         if(document.querySelector('.viewselector.selected').dataset.type=='monthview'){
             requestMonth(target, target.value, year);
         }else if(document.querySelector('.viewselector.selected').dataset.type=='listview'){

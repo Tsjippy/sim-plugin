@@ -1,3 +1,5 @@
+var reorderingBusy, formWrapper, formElementWrapper, modal;
+
 /* FUNCTIONS */
 function clearFormInputs(){
 	try {
@@ -169,7 +171,7 @@ async function sendElementSize(el, widthPercentage){
 		formData.append('elementid', el.closest('.form_element_wrapper').dataset.id);
 		formData.append('new_width', widthPercentage);
 		
-		response = await FormSubmit.fetchRestApi('forms/edit_formfield_width', formData);
+		var response = await FormSubmit.fetchRestApi('forms/edit_formfield_width', formData);
 
 		if(response){
 			Main.hideModals();
@@ -196,7 +198,7 @@ async function removeElement(target){
 
 	formData.append('elementindex', elementIndex);
 	
-	response = await FormSubmit.fetchRestApi('forms/remove_element', formData);
+	var response = await FormSubmit.fetchRestApi('forms/remove_element', formData);
 
 	if(response){
 		//remove the formelement row
@@ -210,7 +212,7 @@ async function removeElement(target){
 
  //Fires after element reorder
 async function reorderformelements(event){
-	if(reorderingBusy == false){
+	if(!reorderingBusy){
 		reorderingBusy = true;
 
 		var oldIndex	= parseInt(event.item.dataset.priority);
@@ -346,7 +348,7 @@ function showCondionalFields(type, form){
 			form.querySelectorAll('.filetype').forEach(el=>{el.textContent = type;});
 			break;
 		default:
-			//console.log(type);
+			break;
 	} 
 }
 
@@ -453,13 +455,12 @@ function addConditionRule(target){
 	var activeButton	= row.querySelector('.active');
 		
 	//there was alreay an next rule and we clicked on the button which was no active
-	if(activeButton != null && !target.classList.contains('active')){		
+	if(activeButton != null && !target.classList.contains('active')){	
+		var current		= 'OR';
+		var opposite	= 'AND';	
 		if(activeButton.textContent == 'AND'){
-			var current		= 'AND';
-			var opposite	= 'OR';
-		}else{
-			var current		= 'OR';
-			var opposite	= 'AND';
+			current		= 'AND';
+			opposite	= 'OR';
 		}
 		
 		Swal.fire({
@@ -509,11 +510,47 @@ function addRuleRow(row){
 	fixRuleNumbering(row.closest('.condition_row'));
 }
 
+function addOppositeCondition(clone){
+	//Set values to opposite
+	clone.querySelectorAll('.element_condition').forEach(function(el){
+		if(el.tagName == 'SELECT' && el.classList.contains('equation')){
+			//remove all default selected
+			FormFunctions.removeDefaultSelect(el);
+			
+			//get the original value which was lost during cloning
+			var originalSelect 	= row.querySelector('.equation');
+			var selIndex		= originalSelect.selectedIndex;
+			
+			if(selIndex){
+				//if odd the select the next one
+				if(selIndex % 2){
+					el.options[(selIndex + 1)].defaultSelected = true;
+				}else{
+					el.options[(selIndex - 1)].defaultSelected = true;
+				}
+			}
+			
+			//reflect changes in niceselect
+			el._niceselect.update();
+		}else if(el.type == 'radio' && el.classList.contains('element_condition') && (el.value == 'show' || el.value == 'hide')){
+			if(!el.checked){
+				el.checked = true;
+			}else{
+				el.checked = false;
+			}
+		}
+	});
+
+	return clone;
+}
+
 function addCondition(target){
+	var clone;
 	var row = target.closest('.condition_row');
 	
 	if(target.classList.contains('opposite')){
 		clone = FormFunctions.cloneNode(row, false);
+		clone = addOppositeCondition(clone);
 	}else{
 		clone = FormFunctions.cloneNode(row);
 	}
@@ -526,40 +563,7 @@ function addCondition(target){
 		clone.querySelectorAll('.active').forEach(function(el){
 			el.classList.remove('active');
 		});
-	}
-	
-	if(target.classList.contains('opposite')){
-		//Set values to opposite
-		clone.querySelectorAll('.element_condition').forEach(function(el){
-			if(el.tagName == 'SELECT' && el.classList.contains('equation')){
-				//remove all default selected
-				FormFunctions.removeDefaultSelect(el);
-				
-				//get the original value which was lost during cloning
-				var originalSelect 	= row.querySelector('.equation');
-				var selIndex		= originalSelect.selectedIndex;
-				
-				if(selIndex != false){
-					//if odd the select the next one
-					if(selIndex % 2){
-						el.options[(selIndex + 1)].defaultSelected = true;
-					}else{
-						el.options[(selIndex - 1)].defaultSelected = true;
-					}
-				}
-				
-				//reflect changes in niceselect
-				el._niceselect.update();
-			}else if(el.type == 'radio' && el.classList.contains('element_condition') && (el.value == 'show' || el.value == 'hide')){
-				if(el.checked == false){
-					el.checked = true;
-				}else{
-					el.checked = false;
-				}
-			}
-		});
-	}
-	
+	}	
 	
 	//store radio values
 	var radioValues = {};
@@ -722,6 +726,84 @@ document.addEventListener("DOMContentLoaded",function() {
 	document.querySelectorAll('.resizer').forEach(el=>{resizeOb.observe(el);});
 });
 
+function fromEmailClicked(target){
+	var div1 = target.closest('.clone_div').querySelector('.emailfromfixed');
+	var div2 = target.closest('.clone_div').querySelector('.emailfromconditional');
+
+	if(target.value == 'fixed'){
+		div1.classList.remove('hidden');
+		div2.classList.add('hidden');
+	}else{
+		div2.classList.remove('hidden');
+		div1.classList.add('hidden');
+	}
+}
+
+function toEmailClicked(target){
+	var div1 = target.closest('.clone_div').querySelector('.emailtofixed');
+	var div2 = target.closest('.clone_div').querySelector('.emailtoconditional');
+
+	if(target.value == 'fixed'){
+		div1.classList.remove('hidden');
+		div2.classList.add('hidden');
+	}else{
+		div2.classList.remove('hidden');
+		div1.classList.add('hidden');
+	}
+}
+
+function placeholderSelect(target){
+	var value = '';
+	if(target.classList.contains('placeholders')){
+		value = target.textContent;
+	}else if(target.value != ''){
+		value = target.value;
+		target.selectedIndex = '0';
+	}
+	
+	if(value != ''){
+		Swal.fire({
+			icon: 'success',
+			title: 'Copied '+value,
+			showConfirmButton: false,
+			timer: 1500
+		})
+		navigator.clipboard.writeText(value);
+	}
+}
+
+function copyWarningCondition(target){
+	//copy the row
+	var newNode = FormFunctions.cloneNode(target.closest('.warning_conditions'));
+
+	target.closest('.conditions_wrapper').insertAdjacentElement('beforeEnd', newNode);
+
+	//add the active class
+	target.classList.add('active');
+
+	//store the value
+	target.closest('.warning_conditions').querySelector('.combinator').value = target.value;
+
+	fixWarningConditionNumbering(target.closest('.conditions_wrapper'));
+}
+
+function removeWarningCondition(target){
+	var condition	= target.closest('.warning_conditions');
+
+	// Remove the active class of the previous conditions
+	if(condition.nextElementSibling == null){
+		condition.previousElementSibling.querySelector('.active').classList.remove('active');
+
+		//clear the value
+		condition.previousElementSibling.querySelector('.combinator').value='';
+	}
+
+	// remove the condition
+	condition.remove();
+
+	fixWarningConditionNumbering(target.closest('.conditions_wrapper'));
+}
+
 //Catch click events
 window.addEventListener("click", event => {
 	var target = event.target;
@@ -738,28 +820,26 @@ window.addEventListener("click", event => {
 	//Show form edit controls
 	if (target.name == 'editform'){
 		showOrHideControls(target);
-	}
-	
-	//open the modal to add an element
-	if (target.classList.contains('add_form_element') || target.name == 'createform'){
-		showEmptyModal(target);
-	}
-	
-	if(target.name == 'submit_form_element'){
+	}else if(target.name == 'submit_form_element'){
 		event.stopPropagation();
 		addFormElement(target);
-	}
-
-	if(target.name == 'submit_form_condition'){
+	}else if(target.name == 'submit_form_condition'){
 		saveFormConditions(target);
-	}
-
-	if(target.name == 'submit_form_setting'){
+	}else if(target.name == 'submit_form_setting'){
 		saveFormSettings(target);
-	}
-
-	if(target.name == 'submit_form_emails'){
+	}else if(target.name == 'submit_form_emails'){
 		saveFormEmails(target);
+	}else if(target.name == 'settings[autoarchive]'){
+		let el = target.closest('.formsettings_wrapper').querySelector('.autoarchivelogic');
+		if(target.value == 'true'){
+			el.classList.remove('hidden');
+		}else{
+			el.classList.add('hidden');
+		}
+	}else if(target.name == 'settings[save_in_meta]'){
+		target.closest('.sim_form.builder').querySelector('.submit_others_form_wrapper').classList.toggle('hidden');
+	}else if(target.name == 'formfield[mandatory]' && target.checked){
+		target.closest('div').querySelector('[name="formfield[recommended]"]').checked=true;
 	}
 	
 	//request form values via AJAX
@@ -769,6 +849,11 @@ window.addEventListener("click", event => {
 	
 	if (target.classList.contains('remove_form_element')){
 		maybeRemoveElement(target);
+	}
+
+	//open the modal to add an element
+	if (target.classList.contains('add_form_element') || target.name == 'createform'){
+		showEmptyModal(target);
 	}
 	
 	//actions on element type select
@@ -811,7 +896,7 @@ window.addEventListener("click", event => {
 	}
 	
 	if(target.classList.contains('emailtrigger')){
-		el = target.closest('.clone_div').querySelector('.emailfieldcondition');
+		let el = target.closest('.clone_div').querySelector('.emailfieldcondition');
 		if(target.value == 'fieldchanged'){
 			el.classList.remove('hidden');
 		}else{
@@ -820,99 +905,24 @@ window.addEventListener("click", event => {
 	}
 	
 	if(target.classList.contains('fromemail')){
-		div1 = target.closest('.clone_div').querySelector('.emailfromfixed');
-		div2 = target.closest('.clone_div').querySelector('.emailfromconditional');
-		if(target.value == 'fixed'){
-			div1.classList.remove('hidden');
-			div2.classList.add('hidden');
-		}else{
-			div2.classList.remove('hidden');
-			div1.classList.add('hidden');
-		}
+		fromEmailClicked(target);
 	}
 	
 	if(target.classList.contains('emailto')){
-		div1 = target.closest('.clone_div').querySelector('.emailtofixed');
-		div2 = target.closest('.clone_div').querySelector('.emailtoconditional');
-		if(target.value == 'fixed'){
-			div1.classList.remove('hidden');
-			div2.classList.add('hidden');
-		}else{
-			div2.classList.remove('hidden');
-			div1.classList.add('hidden');
-		}
+		toEmailClicked(target);
 	}
 	
 	if(target.classList.contains('placeholderselect') || target.classList.contains('placeholders')){
-		var value = '';
-		if(target.classList.contains('placeholders')){
-			value = target.textContent;
-		}else if(target.value != ''){
-			value = target.value;
-			target.selectedIndex = '0';
-		}
-		
-		if(value != ''){
-			Swal.fire({
-				icon: 'success',
-				title: 'Copied '+value,
-				showConfirmButton: false,
-				timer: 1500
-			})
-			navigator.clipboard.writeText(value);
-		}
-	}
-	
-	//show auto archive fields
-	if(target.name == 'settings[autoarchive]'){
-		el = target.closest('.formsettings_wrapper').querySelector('.autoarchivelogic');
-		if(target.value == 'true'){
-			el.classList.remove('hidden');
-		}else{
-			el.classList.add('hidden');
-		}
-	}
-
-	if(target.name == 'settings[save_in_meta]'){
-		target.closest('.sim_form.builder').querySelector('.submit_others_form_wrapper').classList.toggle('hidden');
-	}
-
-	if(target.name == 'formfield[mandatory]' && target.checked){
-		target.closest('div').querySelector('[name="formfield[recommended]"]').checked=true;
+		placeholderSelect(target);
 	}
 
 	//copy warning_conditions row
 	if(target.matches('.warn_cond')){
-		//copy the row
-		var newNode = FormFunctions.cloneNode(target.closest('.warning_conditions'));
-
-		target.closest('.conditions_wrapper').insertAdjacentElement('beforeEnd', newNode);
-
-		//add the active class
-		target.classList.add('active');
-
-		//store the value
-		target.closest('.warning_conditions').querySelector('.combinator').value = target.value;
-
-		fixWarningConditionNumbering(target.closest('.conditions_wrapper'));
+		copyWarningCondition(target);
 	}
 
 	if(target.matches('.remove_warn_cond')){
-		var condition	= target.closest('.warning_conditions');
-
-		// Remove the active class of the previous conditions
-		if(condition.nextElementSibling == null){
-			console.log(condition.previousElementSibling);
-			condition.previousElementSibling.querySelector('.active').classList.remove('active');
-
-			//clear the value
-			condition.previousElementSibling.querySelector('.combinator').value='';
-		}
-
-		// remove the condition
-		condition.remove();
-
-		fixWarningConditionNumbering(target.closest('.conditions_wrapper'));
+		removeWarningCondition(target)
 	}
 	
 });

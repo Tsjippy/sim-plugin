@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:  SIM plugin
- * Description:  Some hacks
+ * Description:  A bundle of 25 modules to add AJAX login, forms and other functionality
  * Version:      2.0.1
  * Author:       Ewald Harmsen
  * Requires at least: 4.0
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 //do not run for other stuff then documents
 if(!isset($_SERVER['HTTP_SEC_FETCH_DEST'])){
 	//error_log(print_r($_SERVER,true));
-}elseif(!in_array($_SERVER['HTTP_SEC_FETCH_DEST'], ['document','empty'])){
+}elseif(!in_array($_SERVER['HTTP_SEC_FETCH_DEST'], ['document','empty','iframe'])){
 	exit;
 }else{
 	//error_log(print_r($_SERVER,true));

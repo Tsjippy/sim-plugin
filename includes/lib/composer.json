@@ -13,6 +13,8 @@
         "matomo/device-detector": "^5.0",
         "vimeo/vimeo-api": "^3.0",
         "garfix/js-minify": "^1.0",
-        "squizlabs/php_codesniffer": "*"
+        "squizlabs/php_codesniffer": "*",
+        "guzzlehttp/guzzle": "^7.4",
+        "psr/http-client-implementation": "*"
     }
 }

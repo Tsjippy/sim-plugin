@@ -43,7 +43,10 @@ function checkWebauthnAvailable(){
 				console.log("WebAuthn supported, Platform Authenticator not supported.");
 			}
 		})
-		.catch((err) => console.log("Something went wrong."));
+		.catch((err) => {
+			console.error("Something went wrong.");
+			console.error(err);
+		});
 	} else {
 		console.log("Not supported.");
 	}
@@ -111,7 +114,7 @@ async function registerBiometric(target){
 		formData.append('identifier', identifier);
 		var response			= await fetchRestApi('fingerprint_options', formData);
 		if(!response){
-			throw 'Options retrieval failed';
+			throw new Error('Options retrieval failed');
 		}
 		var publicKey 			= preparePublicKeyOptions(response);
 
@@ -127,11 +130,11 @@ async function registerBiometric(target){
 		// Store result
 		var publicKeyCredential = preparePublicKeyCredentials(credentials);
 		
-		var formData			= new FormData();
+		formData			= new FormData();
 		formData.append('publicKeyCredential', JSON.stringify(publicKeyCredential));
-		var response			= await fetchRestApi('store_fingerprint', formData);
+		response			= await fetchRestApi('store_fingerprint', formData);
 		if(!response){
-			throw 'Storing biometric failed';
+			throw new Error('Storing biometric failed');
 		}
 
 		var wrapper 			= document.getElementById('webautn_devices_wrapper');

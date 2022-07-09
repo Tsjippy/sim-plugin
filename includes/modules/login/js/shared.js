@@ -7,6 +7,7 @@ export function closeMobileMenu(){
 
 // get response from rest api server
 export async function fetchRestApi(url, formData){
+	var response;
 	formData.append('_wpnonce', sim.restNonce);
 
 	var result = await fetch(
@@ -19,7 +20,7 @@ export async function fetchRestApi(url, formData){
 	);
 
 	try{
-		var response	= await result.json();
+		response	= await result.json();
 	}catch (error){
 		console.error(error);
 		return false;
@@ -34,7 +35,7 @@ export async function fetchRestApi(url, formData){
 		console.error(response);
 		Main.displayMessage(response.message, 'error');
 		return false;
-	};
+	}
 }
 
 // Decodes a Base64Url string

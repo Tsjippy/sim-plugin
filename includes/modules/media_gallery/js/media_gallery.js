@@ -12,7 +12,7 @@ async function load_more(index, showFirst, skipAmount){
     var amount  = document.querySelector('#media-amount').value;
     if(amount == skipAmount) return;
     var types   = [];
-    document.querySelectorAll('.media-type-selector:checked').forEach(el=>types.push(el.value));
+    document.querySelectorAll('.media-type-selector:checked').forEach(element=>types.push(element.value));
     
     var formData	= new FormData();
     formData.append('amount', amount);
@@ -23,7 +23,7 @@ async function load_more(index, showFirst, skipAmount){
 
     var response    = await FormSubmit.fetchRestApi('media_gallery/load_more_media', formData);
 
-    document.querySelectorAll('#medialoaderwrapper:not(.hidden), .loaderwrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+    document.querySelectorAll('#medialoaderwrapper:not(.hidden), .loaderwrapper:not(.hidden)').forEach(element=>element.classList.add('hidden'));
 
     if(!response){
         Main.displayMessage('All media are loaded', 'info');
@@ -74,6 +74,73 @@ document.querySelectorAll('.searchtext').forEach(el=>{
     });
 });
 
+function nextButtonClicked(target){
+    let el      = target.closest('.large-image');
+    let nextEl = el.nextElementSibling;
+    if(nextEl != null){
+        nextEl = nextEl.nextElementSibling;
+    }
+
+    //load more
+    if(nextEl == null){
+        document.getElementById('medialoaderwrapper').classList.remove('hidden');
+
+        document.getElementById('paged').value = parseInt(document.getElementById('paged').value)+1;
+        load_more(el.dataset.index, true);
+    }else{
+        showImage(nextEl.dataset.index);
+    }
+}
+
+function loadMoreMedia(){
+    //find the last image
+    let media = document.querySelectorAll('.cell');
+
+    document.getElementById('paged').value = parseInt(document.getElementById('paged').value)+1;
+
+    load_more(media[media.length-1].dataset.index, false);
+
+    Main.showLoader(target, false);
+}
+
+function mediaTypeSelected(target){
+    var visibleCells;
+
+    if(target.checked){
+        document.querySelectorAll('.cell.'+target.value).forEach(el=>el.classList.remove('hidden'));
+
+        // remove all more than the maximum
+        visibleCells   = document.querySelectorAll('.cell:not(.hidden)');
+        var amount          = document.querySelector('#media-amount').value;
+        for (let i = amount; i < visibleCells.length; i++) { 
+            visibleCells[i].remove();
+        }
+    }else{
+        document.querySelectorAll('.cell.'+target.value).forEach(el=>el.classList.add('hidden'));
+
+        var media = document.querySelectorAll('.cell');
+        // load more of the remaining types untill we reach the maximum
+        visibleCells   = document.querySelectorAll('.cell:not(.hidden)');
+        load_more(media[media.length-1].dataset.index, false, visibleCells.length);
+    }
+}
+
+async function downloadMedia(target){
+    var answer = await Swal.fire({
+        title: 'Warning',
+        html: "Downloading of materials is only allowed for use in presentations. <br>You should not share this file with others as it may contain privacy sensitive information",
+        showCancelButton: true,
+        confirmButtonText: 'I promise not to share this file',
+        confirmButtonColor: "#bd2919"
+    });
+
+    //swap and/or
+    if (answer.isConfirmed) {
+        target.querySelector('a').click();
+    }
+
+}
+
 document.addEventListener('click', async ev=>{
     var target  = ev.target;
     var parent  = target.closest('.large-image');
@@ -90,46 +157,27 @@ document.addEventListener('click', async ev=>{
         //stop any video's
         var iframe  = parent.querySelector( 'iframe');
         if(iframe != null){
+            // refresh iframe
             iframe.src  = iframe.src;
         }
     }
 
     if(target.matches('.prevbtn')){
-        var el      = target.closest('.large-image');
-        var prevEl = el.previousElementSibling.previousElementSibling;
+        let el      = target.closest('.large-image');
+        let prevEl = el.previousElementSibling.previousElementSibling;
 
         showImage(prevEl.dataset.index);
     }
 
     if(target.matches('.nextbtn')){
-        var el      = target.closest('.large-image');
-        var nextEl = el.nextElementSibling;
-        if(nextEl != null){
-            var nextEl = nextEl.nextElementSibling;
-        }
-
-        //load more
-        if(nextEl == null){
-            document.getElementById('medialoaderwrapper').classList.remove('hidden');
-
-            document.getElementById('paged').value = parseInt(document.getElementById('paged').value)+1;
-            load_more(el.dataset.index, true);
-        }else{
-            showImage(nextEl.dataset.index);
-        }
+        nextButtonClicked(target);
     }
 
     if(target.id == 'loadmoremedia'){
         ev.preventDefault();
 		ev.stopPropagation();
-        //find the last image
-        var media = document.querySelectorAll('.cell');
 
-        document.getElementById('paged').value = parseInt(document.getElementById('paged').value)+1;
-
-        load_more(media[media.length-1].dataset.index, false);
-
-        Main.showLoader(target, false);
+        loadMoreMedia();
     }
 
     if(target.matches('.buttonwrapper .description')){
@@ -138,23 +186,7 @@ document.addEventListener('click', async ev=>{
 
     // media type selector
     if(target.matches('.media-type-selector')){
-        if(target.checked){
-            document.querySelectorAll('.cell.'+target.value).forEach(el=>el.classList.remove('hidden'));
-
-            // remove all more than the maximum
-            var visibleCells   = document.querySelectorAll('.cell:not(.hidden)');
-            var amount          = document.querySelector('#media-amount').value;
-            for (let i = amount; i < visibleCells.length; i++) { 
-                visibleCells[i].remove();
-            }
-        }else{
-            document.querySelectorAll('.cell.'+target.value).forEach(el=>el.classList.add('hidden'));
-
-            var media = document.querySelectorAll('.cell');
-            // load more of the remaining types untill we reach the maximum
-            var visibleCells   = document.querySelectorAll('.cell:not(.hidden)');
-            load_more(media[media.length-1].dataset.index, false, visibleCells.length);
-        }
+        mediaTypeSelected(target);
     }
 
     if(target.matches('.mediabuttons .search')){
@@ -165,18 +197,7 @@ document.addEventListener('click', async ev=>{
 
     if(target.matches('.download')){
         ev.preventDefault();
-        var answer = await Swal.fire({
-            title: 'Warning',
-            html: "Downloading of materials is only allowed for use in presentations. <br>You should not share this file with others as it may contain privacy sensitive information",
-            showCancelButton: true,
-            confirmButtonText: 'I promise not to share this file',
-            confirmButtonColor: "#bd2919"
-        });
-    
-        //swap and/or
-        if (answer.isConfirmed) {
-            target.querySelector('a').click();
-        }
+        downloadMedia(target)
     }
 });
 
@@ -215,7 +236,7 @@ function handleTouchStart(evt) {
     const firstTouch = evt.touches[0];                                      
     xDown = firstTouch.clientX;                                      
     yDown = firstTouch.clientY;                                      
-};                                                
+}                                              
                                                                            
 function handleTouchMove(evt) {
     if ( ! xDown || ! yDown ) {
@@ -229,21 +250,21 @@ function handleTouchMove(evt) {
     var yDiff = yDown - yUp;
                                                                         
     if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {
+        var nextEl;
         var el = document.querySelector('.large-image:not(.hidden)');
         if ( xDiff > 0 ) {
             /* right swipe */
-            var nextEl = el.nextElementSibling.nextElementSibling;
+            nextEl = el.nextElementSibling.nextElementSibling;
         } else {
             /* left swipe */
-            var nextEl = el.previousElementSibling.previousElementSibling;
+            nextEl = el.previousElementSibling.previousElementSibling;
         }
         showImage(nextEl.dataset.index);
     }
     /* reset values */
     xDown = null;
     yDown = null;                                             
-};
-
+}
 
 var xDown = null;                                                        
 var yDown = null;

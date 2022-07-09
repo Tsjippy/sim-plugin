@@ -1,7 +1,9 @@
+var dialog;
+
 /*
     ADD FORM
 */
-addFormShortcodeHtml = 
+var addFormShortcodeHtml = 
 `<div  class="wp-editor-help">
     <label>
         Give the formname in one word:<br>
@@ -29,8 +31,8 @@ var insertFormShortcodeDialog = {
     buttons: [{
         text: 'Insert shortcode',
         onclick: function(){
-            formName		= document.querySelector("#form_name").value;
-            formSelector	= document.querySelector("[name='form_selector']").value;
+            var formName		= document.querySelector("#form_name").value;
+            var formSelector	= document.querySelector("[name='form_selector']").value;
             if(formName != ''){
                 tinymce.activeEditor.insertContent(`[formbuilder formname=${formName}]`);
                 Main.displayMessage("Form succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
@@ -71,7 +73,7 @@ tinymce.create(
         
         },
         
-        createControl:function(n,a){
+        createControl:function(){
             return null
         },
     }

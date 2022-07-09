@@ -10,7 +10,7 @@ async function addNewMinistry(target){
 		var ministryName 		= target.closest('form').querySelector('[name="location_name"]').value;
 		ministryName			= ministryName.charAt(0).toUpperCase() + ministryName.slice(1);
 		//Replace any spaces with underscore
-		ministryKey			= ministryName.replace(/ /g,'_');
+		var ministryKey			= ministryName.replace(/ /g,'_');
 
 		var html = `
 		<span>

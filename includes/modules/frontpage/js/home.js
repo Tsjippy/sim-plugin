@@ -22,21 +22,22 @@ document.addEventListener("DOMContentLoaded",function() {
 
 	//Make the menu sticky after scroll
 	window.onscroll = function() {
+		var changeY;
 		//Small screen value
 		if (window.outerWidth < 768){
-			var changey = 200;
+			changeY = 200;
 		//Other value
 		}else{
-			var changey = 120;
+			changeY = 120;
 		}
 		
 		//Change to sticky menu
-		if(scrollTop == 0 && document.documentElement.scrollTop > changey){
+		if(scrollTop == 0 && document.documentElement.scrollTop > changeY){
 			scrollTop = document.documentElement.scrollTop;
 			document.querySelector('body').classList.add("sticky");
-			document.getElementById('page').style['padding-top']= changey+"px";
+			document.getElementById('page').style['padding-top']= changeY+"px";
 		//CHange back to normal menu
-		}else if(scrollTop > 0 && document.documentElement.scrollTop < changey){
+		}else if(scrollTop > 0 && document.documentElement.scrollTop < changeY){
 			scrollTop = 0;
 			document.querySelector('body').classList.remove("sticky");
 			document.getElementById('page').style['padding-top']= '0px';

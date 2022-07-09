@@ -9,11 +9,9 @@ wp.media.view.Attachment.Details.prototype.render = function() {
 	wp.media.view.Attachment.prototype.render.apply( this, arguments );
 
 	wp.media.mixin.removeAllPlayers();
-	this.$( 'audio, video' ).each( function (i, elem) {
+	this.$( 'audio, video' ).each( function (elem) {
 		var el = wp.media.view.MediaDetails.prepareSrc( elem );
 		loadVimeoVideo(el);
-
-		new window.MediaElementPlayer( el, wp.media.mixin.mejsSettings );
 	} );
 }
 
@@ -26,10 +24,12 @@ function loadVimeoVideo(el) {
 	}else{
 		//if this is a vimeo item
 		if(vimeo_link.includes('https://vimeo.com/')){
+			var wrapper	= document.querySelector('#loaderwrapper');
+
 			//make sure there is not already a loader
 			if(document.querySelector('#loaderwrapper') == null){
 				//create a div container holding the loading gif
-				var wrapper				= document.createElement("DIV");
+				wrapper				= document.createElement("DIV");
 				wrapper.id				='loaderwrapper';
 				wrapper.style.margin	= 'auto';
 				wrapper.style.width		= 'fit-content';
@@ -45,7 +45,7 @@ function loadVimeoVideo(el) {
 			var vimeoId = vimeo_link.replace('https://vimeo.com/','');
 
 			//build an iframe element to show the vimeo video
-			var iframe			= document.createElement("iframe");
+			var iframe	= document.createElement("iframe");
 
 			//run when iframe is loaded
 			iframe.onload		= function(){
@@ -63,17 +63,17 @@ function loadVimeoVideo(el) {
 			wrapper.parentNode.insertBefore(iframe, wrapper.nextSibling);
 		}
 	}
-};
+}
 
 window.wp.Uploader.prototype.init = function() { // plupload 'PostInit'
-	this.uploader.bind('FileFiltered', function(up, files) {
+	this.uploader.bind('FileFiltered', function(_up, _files) {
 		//show vimeo loader
 		try{
 			Main.showLoader(document.querySelector('.upload-inline-status'), false, '<span class="vimeo" style="font-size:x-large;">Preparing upload to Vimeo</span>');
 		}catch(error){
 			console.error(error);
 		}
-	});
+	})
 
 	this.uploader.bind('BeforeUpload', function(up, file) {
 		if(file.type.split("/")[0] == 'video'){
@@ -101,8 +101,6 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
     document.querySelector('.upload-details .upload-index').textContent    = wp_uploader.total.uploaded+1;
     
     document.querySelector('.upload-details .upload-filename').textContent = wp_uploader.files[wp_uploader.total.uploaded].name;
-    
-    //var upload = await tusUploader(file);
 
 	var uploader	= new VimeoUpload(file);
 	var upload		= await uploader.tusUploader();
@@ -137,8 +135,6 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
     upload.options.onError      = function(error) {
         console.error("Failed because: " + error);
         wp_uploader.dispatchEvent('fileUploaded', plupload_file, '');
-    
-        return;
     }
 
     upload.start();

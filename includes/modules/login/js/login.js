@@ -45,22 +45,7 @@ async function requestLogin(){
 
 		document.querySelector('.current-method').classList.remove('hidden');
 	}
-/* 
-
-	if(response.ok){
-		
-	}else{
-		document.querySelectorAll('.authenticator_wrapper input').forEach(el=>{
-			if(el.value != ''){
-				el.closest('.authenticator_wrapper').classList.remove('hidden');
-				el.value	= '';
-			}
-		})
-		document.getElementById('logging_in_wrapper').classList.add('hidden');
-		document.getElementById('logging_in_wrapper').classList.add('hidden');
-		showMessage(message,'error');
-	} */
-};
+}
 
 // Send request to start webauthn
 async function verifyWebauthn(methods){	
@@ -75,7 +60,7 @@ async function verifyWebauthn(methods){
 
 		var response			= await fetchRestApi('auth_start', formData);
 		if(!response){
-			throw 'auth_start failed';
+			throw new Error('auth_start failed');
 		}
 
 		var publicKey			= preparePublicKeyOptions(response);
@@ -89,11 +74,11 @@ async function verifyWebauthn(methods){
 
 		// Verify on the server
 		const publicKeyCredential 	= preparePublicKeyCredentials(credentials);
-		var formData				= new FormData();
+		formData					= new FormData();
 		formData.append('publicKeyCredential', JSON.stringify(publicKeyCredential));
-		var response				= await fetchRestApi('auth_finish', formData);
+		response					= await fetchRestApi('auth_finish', formData);
 		if(!response){
-			throw 'auth_finish failed';
+			throw new Error('auth_finish failed');
 		}
 
 		//authentication success
@@ -108,10 +93,11 @@ async function verifyWebauthn(methods){
 			showMessage('Authentication failed, please setup an additional login factor.');
 			requestLogin();
 		}else{
+			var message;
 			if(error['message'] == "No authenticator available"){
-				var message = "No biometric login for this device found. <br>Give verification code.";
+				message = "No biometric login for this device found. <br>Give verification code.";
 			}else{
-				var message = 'Web authentication failed, please give verification code.';
+				message = 'Web authentication failed, please give verification code.';
 				message += '<button type="button" class="button small" id="retry_webauthn" style="float:right;margin-top:-20px;">Retry</button>';
 				console.error('Authentication failure: '+error['message']);
 			}
@@ -141,7 +127,7 @@ async function requestEmailCode(){
 }
 
 // Check if a valid username and password is submitted
-async function verifyCreds(target){
+async function verifyCreds(){
 	var username	= document.getElementById('username').value;
 	var password	= document.getElementById('password').value;
 
@@ -210,7 +196,7 @@ async function resetPassword(target){
 		loader.remove();
 		target.classList.remove('hidden');
 	}
-};
+}
 
 // request a new user account
 async function requestAccount(target){
@@ -249,7 +235,10 @@ function checkWebauthnAvailable(){
 				console.log("WebAuthn supported, Platform Authenticator not supported.");
 			}
 		})
-		.catch((err) => console.log("Something went wrong."));
+		.catch((err) => {
+			console.error("Something went wrong.");
+			console.error(err);
+		});
 	} else {
 		console.log("Not supported.");
 	}
@@ -262,12 +251,12 @@ function showTwoFaFields(methods){
 	}
 
 	//show 2fa fields
-	for(var x=0; x<methods.length; x++){
-		if(methods[x] == 'webauthn'){
+	for(const element of methods){
+		if(element == 'webauthn'){
 			//do not show webauthn
 			continue;
 		}
-		var wrapper	= document.getElementById(methods[x]+'_wrapper');
+		var wrapper	= document.getElementById(element+'_wrapper');
 		if(wrapper != null){
 			wrapper.classList.remove('hidden');
 			wrapper.querySelectorAll('input').forEach(el=>window.setTimeout(() => el.focus(), 0));
@@ -283,7 +272,7 @@ function showTwoFaFields(methods){
 function addMethods(result){
 	document.querySelector('#check_cred_wrapper .loadergif').classList.add('hidden');
 	
-	if(typeof(result) == 'string' && result != false){
+	if(typeof(result) == 'string' && result){
 		//hide login form
 		document.querySelectorAll("#usercred_wrapper, #login_nav").forEach(el=>el.classList.add('hidden'));
 
@@ -296,7 +285,7 @@ function addMethods(result){
 			//close login modal
 			Main.hideModals();
 		}
-	}else if(result == false){
+	}else if(!result){
 		//incorrect creds add message, but only once
 		showMessage('Invalid username or password!');
 	}else if(typeof(result) == 'object'){
@@ -329,7 +318,7 @@ function addMethods(result){
 document.addEventListener('keypress', function (e) {
     if (e.key === 'Enter'){
 		if(!document.querySelector("#usercred_wrapper").classList.contains('hidden')) {
-			verifyCreds(e.target);
+			verifyCreds();
 		}else if(!document.querySelector("#submit_login_wrapper").classList.contains('hidden')){
 			requestLogin();
 		}
@@ -337,10 +326,10 @@ document.addEventListener('keypress', function (e) {
 });
 
 function togglePassworView(ev){
+	var target	= ev.target;
+
 	if(ev.target.tagName == 'IMG'){
-		var target	= ev.target.parentNode;
-	}else{
-		var target	= ev.target;
+		target	= ev.target.parentNode;
 	}
 
 	if(target.dataset.toggle == '0'){
@@ -354,7 +343,7 @@ function togglePassworView(ev){
 		target.innerHTML							= target.innerHTML.replace('visible', 'invisible');
 		document.getElementById('password').type	= 'password';
 	}
-};
+}
 
 // Show the modal with the login form
 function openLoginModal(){
@@ -414,7 +403,7 @@ document.addEventListener("click", function(event){
 		openLoginModal();
 	}else if(target.id == 'check_cred'){
 		// Check if a valid username and password is submitted
-		verifyCreds(target);
+		verifyCreds();
 	}else if(target.id == "login_button"){
 		// Submit the login form when averything is ok
 		requestLogin();

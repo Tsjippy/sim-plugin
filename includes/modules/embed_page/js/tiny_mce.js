@@ -1,3 +1,5 @@
+var dialog;
+
 /*
     ADD FORM
 */
@@ -24,7 +26,7 @@ var pageEmbedDialog = {
         text: 'Embed another page',
         onclick: function(){
             // Get page id
-            pageId	= document.querySelector("[name='page-selector']").value;
+            var pageId	= document.querySelector("[name='page-selector']").value;
 
             // Insert the shortcode at the end
             tinymce.activeEditor.setContent(tinymce.activeEditor.getContent()+`<br>[embed_page id=${pageId}]`);
@@ -45,7 +47,7 @@ tinymce.create(
             editor.addCommand('mceInsert_embed_shortcode',
                 function(){
                     dialog = editor.windowManager.open(pageEmbedDialog);
-                    select							= document.querySelector('.wp-editor-help [name="page-selector"]');
+                    var select						= document.querySelector('.wp-editor-help [name="page-selector"]');
 					select._niceselect 				= NiceSelect.bind(select, {searchable: true});
 					var niceselect 					= select._niceselect.dropdown
 					niceselect.style.position		= 'relative';
@@ -66,7 +68,7 @@ tinymce.create(
         
         },
         
-        createControl:function(n,a){
+        createControl:function(){
             return null
         },
     }

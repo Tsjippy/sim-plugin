@@ -72,7 +72,7 @@
    * @return {string}
    */
   function interpolate (str, args) {
-    return str.replace(/\$(\d{1,2})/g, function (match, index) {
+    return str.replace(/\$(\d{1,2})/g, function (_match, index) {
       return args[index] || '';
     });
   }
@@ -153,7 +153,7 @@
   /**
    * Check if a word is part of the map.
    */
-  function checkWord (replaceMap, keepMap, rules, bool) {
+  function checkWord (replaceMap, keepMap, rules) {
     return function (word) {
       var token = word.toLowerCase();
 
@@ -512,7 +512,7 @@ document.addEventListener("DOMContentLoaded",function() {
 	document.querySelectorAll(".serves_select").forEach(function(el){
 		
 		//Add change event listener
-		el.addEventListener('change', function(event){
+		el.addEventListener('change', function(){
 			//Get the original value
 			var originalvalue 	= parseFloat(this.dataset.originalvalue);
 			//get the current value
@@ -536,16 +536,16 @@ document.addEventListener("DOMContentLoaded",function() {
 				var value = Math.round(parseFloat(span.dataset.value) * factor *10)/10;
 				
 				var word = span.dataset.word;
-				
+				var newWord;
 				//If the new number is one, make the word singular
 				if(value == 1){
-					new_word = pluralize.singular(word);
+					newWord = pluralize.singular(word);
 				}else{
-					new_word = pluralize(word);
+					newWord = pluralize(word);
 				}
 				
 				//Replace the content
-				span.textContent = value + ' ' + new_word;
+				span.textContent = value + ' ' + newWord;
 			});
 		})
 	});
