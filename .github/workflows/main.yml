@@ -2,14 +2,12 @@ name: MasterDeployCI
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Zip Folder
-      run: zip -r release.zip . -x ".git/*" ".github/*" "phpcs.xml" "composer.json" "composer.lock" ".gitignore"
     - name: Release to Github
       run: echo "Release"
     - name: Create Release Folder
@@ -18,6 +16,9 @@ jobs:
       run: |
         cd release
         ls -la
+    - name: Build zip
+    - name: Zip Folder
+      run: zip -r release.zip . -x ".git/*" ".github/*" "phpcs.xml" "composer.json" "composer.lock" ".gitignore"
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@master
       env:
