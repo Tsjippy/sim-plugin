@@ -315,9 +315,7 @@ class SaveFormSettings extends SimForms{
 		
 		//check if form row already exists
 		if(!$wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `name` = '{$this->formName}'")){
-			//Create a new form row
-			SIM\printArray("Inserting new form in db");
-			
+			//Create a new form row			
 			$this->insertForm();
 		}
 	}

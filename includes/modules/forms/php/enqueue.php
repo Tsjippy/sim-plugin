@@ -16,7 +16,7 @@ add_action( 'save_post', function($postId, $post){
             PREG_SET_ORDER
         );
 
-        // loop over all the found the shortcodes
+        // loop over all the found shortcodes
         foreach($shortcodes as $shortcode){
             // Only continue if the current shortcode is a formbuilder shortcode
             if($shortcode[2] == 'formbuilder'){
@@ -38,6 +38,21 @@ add_action( 'save_post', function($postId, $post){
                 // Only add a new form if it does not exist yet
                 if(!$found){
                     $simForms->insertForm($formName);
+
+                    // Check if we should adjust the name
+                    if($formName != $simForms->formName){
+                        $newShortcode  = str_replace($formName, $simForms->formName, $shortcode[0]);
+
+                        $content        = str_replace($shortcode[0], $newShortcode, $post->post_content);
+                        wp_update_post(
+                            array(
+                                'ID'           => $postId,
+                                'post_content' => $content,
+                            ),
+                            false,
+                            false
+                        );
+                    }
                 }
             }
         }

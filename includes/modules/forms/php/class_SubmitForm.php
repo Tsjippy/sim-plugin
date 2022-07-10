@@ -117,8 +117,7 @@ class SubmitForm extends SimForms{
 				//Send the mail
 				if($_SERVER['HTTP_HOST'] != 'localhost'){
 					add_filter('sim_email_footer_url', [$this, 'emailFooter']);
-
-					SIM\printArray("Sending e-mail to $to");
+					
 					$result = wp_mail($to , $subject, $message, $headers, $files);
 					if($result === false){
 						SIM\printArray("Sending the e-mail failed");

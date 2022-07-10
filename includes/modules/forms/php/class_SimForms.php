@@ -42,10 +42,29 @@ class SimForms{
 			$name = $this->formName;
 		}
 
+		$name	= strtolower($name);
+
+		// Check if name already exists
+		$newName	= $name;
+		$i			= 1;
+		while(true){
+			$query	= "SELECT * FROM {$this->tableName} WHERE name = '$newName'";
+			$result	= $wpdb->get_results($query);
+
+			if(empty($result)){
+				break;
+			}
+
+			$newName	= "$name$i";
+			$i++;
+		}
+
+		$this->formName	= $newName;
+
 		$wpdb->insert(
 			$this->tableName, 
 			array(
-				'name'			=> $name,
+				'name'			=> $this->formName,
 				'version' 		=> 1
 			)
 		);
@@ -162,7 +181,8 @@ class SimForms{
 		return true;
 	}
 
-		/**
+
+	/**
 	 * Creates a dropdown with all the forms
 	 * 
 	 * @return	string	the select html
