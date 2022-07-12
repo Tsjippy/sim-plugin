@@ -1,17 +1,6 @@
-# Change Log
+# Changelog
 
-## [Unreleased] - yyyy-mm-dd
-
-Here we write upgrading notes for brands. It's a team effort to make them as
-straightforward as possible.
-
-### Added
-
-- 
-
-### Changed
-
-### Fixed
+All notable changes to this project will be documented in this file.
 
 ## [2.0.0] - 2022-06-21
 
@@ -24,4 +13,4 @@ First public release on github
 
 ## [1.0.0] - 2020-06-15
 
-Initial release
+- Initial release
