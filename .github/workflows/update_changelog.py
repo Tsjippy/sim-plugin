@@ -9,6 +9,8 @@ newLine.split(' - ', 1)
 type    = newLine[0]
 text    = newLine[1]
 
+print(text)
+
 # load plugin file
 changelog = Path(file).read_text()
 
@@ -26,12 +28,10 @@ elif(type == 'FIXED'):
     newFixed    = fixed+text
     newTotal    = total.replace(fixed, newFixed)
 else:
-    newTotal    = total + text
+    print("You should start your commit message with eithetr 'ADDED - ', 'CHANGED - ' or 'FIXED - '")
+    exit(1)
 
 changelog = changelog.replace(total, newTotal)
-
-print(total)
-print(changelog)
 
 # Write changes
 f = open(file, "w")
