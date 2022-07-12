@@ -1,0 +1,22 @@
+name: Update Plugin Version2
+on:
+    release:
+        types: [released]
+jobs:
+  resources:
+    name: Update resources
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v1
+
+        - uses: actions/setup-node@v1
+
+        - name: Update version
+          run: python ./.github/workflows/update_version.py ${{ github.event.release.name }}
+
+        - name: Update resources
+          uses: test-room-7/action-update-file@v1
+          with:
+              file-path: sim-plugin.php
+              commit-msg: Update resources
+              github-token: ${{ secrets.GITHUB_TOKEN }}
