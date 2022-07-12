@@ -1,4 +1,4 @@
-name: 'Update Changelog'
+name: Update Changelog
 on:
   release:
     types: [published, deleted]
@@ -13,7 +13,7 @@ jobs:
               with:
                   ref: main
 
-            - name: Update Changelog
+            - name: Update Changelog2
               uses: stefanzweifel/changelog-updater-action@v1
               with:
                   release-notes: ${{ github.event.release.body }}
