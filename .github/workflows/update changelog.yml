@@ -1,8 +1,7 @@
 name: 'Update Changelog'
 on: [
-    on:
-        release:
-            types: [published]
+    release:
+        types: [published]
     , workflow_dispatch
 ]
 
