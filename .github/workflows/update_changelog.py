@@ -46,6 +46,9 @@ else:
     print("ERROR: \nYou should start your commit message with either 'ADDED: ', 'CHANGED: ' or 'FIXED: '")
     exit(1)
 
+print(changelog)
+print(total)
+print(newTotal)
 changelog = changelog.replace(total, newTotal)
 
 # Write changes
