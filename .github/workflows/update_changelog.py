@@ -9,9 +9,6 @@ lines   = newLine.split(': ', 1)
 type    = lines[0].lower()
 text    = lines[1]
 
-print(newLine)
-print(text)
-
 # load plugin file
 changelog = Path(file).read_text()
 
