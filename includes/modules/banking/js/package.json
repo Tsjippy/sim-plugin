@@ -1,0 +1,15 @@
+{
+  "name": "account_statements",
+  "version": "1.0.0",
+  "description": "account_statements",
+  "main": "./account_statements.js",
+  "scripts": {
+    "build": "webpack --watch --entry ./account_statements.js --output-path . --output-filename account_statements.min.js --progress --mode=production --devtool source-map"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

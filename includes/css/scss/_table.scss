@@ -1,0 +1,217 @@
+@use 'global' as *;
+
+%shared-table{
+	border: 1px solid black;
+	text-align: center !important;
+}
+
+.sim-table{
+	@extend %shared-table;
+
+	@media screen and (max-width: $mobilewidth){
+		width: 100vw;
+
+		.mobile-hidden{
+			display: none;
+		}
+	}
+	@media screen and (min-width: $mobilewidth){
+		width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+		width: -moz-max-content;    /* Firefox/Gecko */
+		width: -webkit-max-content;
+		width: max-content;
+		max-width: -webkit-calc(100vw - 40px);
+		max-width:    -moz-calc(100vw - 40px);
+		max-width:         calc(100vw - 40px);
+		overflow: auto;
+		white-space: nowrap;
+		display: block;
+	}
+	
+	#displayname{
+		left:0;
+		z-index: 999;
+	}
+
+	.edit{
+		text-decoration: underline;
+		text-decoration-color: $primary_color;
+	}
+	
+	td{
+		padding: 5px;
+		
+		&:empty {
+			border-style: none;
+		}
+	}
+	
+	&.mealschedule{
+		display: block;
+	}
+	
+	> thead{
+		background-color: #dddddd;
+		> tr > th {
+			cursor: pointer;
+			position: sticky;
+			top:0;
+			background-color: #dddddd;
+			z-index: 8;
+			font-weight: 900;
+			padding: 5px 25px 5px 5px;
+			
+			&:after{
+				content: ' ';
+				position: absolute;
+				height: 0;
+				width: 0;
+				right: 10px;
+				top: 5px;
+				border-left: 5px solid transparent;
+				border-right: 5px solid transparent;
+				border-top: 5px solid #333;
+				border-bottom: 5px solid transparent;
+			}
+
+			&.dsc:after {    
+				border-top: 5px solid transparent;
+				border-bottom: 5px solid #333;
+			}
+
+			&:hover:after {
+				border-top: 5px solid #bd2919;
+				}
+
+			&.dsc:hover:after {
+				border-top: 5px solid transparent;
+				border-bottom: 5px solid #bd2919;
+			}
+		}
+	}
+
+	tr:nth-child(even), 
+	tr:nth-child(even) .sticky{
+	background-color: #dddddd;
+	}
+
+	tr:nth-child(odd),
+	tr:nth-child(odd) .sticky{
+	background-color: white;
+	}
+}
+
+.table-row-final {
+	background-color: #dddddd;
+}
+
+.table_action{
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.table_title{
+	margin:0px; 
+	text-align:center;
+	float: left;
+	margin-right: 30px;
+}
+
+.edit_formshortcode_settings{
+	float: left;
+}
+
+#message{
+	width:600px; 
+	text-align: center; 
+	margin:0px; 
+	height: 57px;
+}
+
+#table_remark{
+	margin-left:10px;
+}
+
+#account_id_table input{
+	width: 100%;
+}
+
+/*
+* === Table settings ===
+*/
+
+.placeholders{
+	margin-right: 10px;
+	white-space: nowrap;
+}
+
+.table_rights_wrapper{
+	margin-top: 20px;
+}
+
+.column_settings{
+	width: 250px;
+	margin-right: 10px;
+}
+
+.column_setting_wrapper{
+	margin-bottom: 10px;
+}
+
+.column_setting_wrapper .dashicons{
+	margin: 0px 10px;
+}
+
+.columnheading {
+	font-weight: bold;
+    text-align: center;
+}
+
+.movecontrol{
+	min-width: 40px;
+	cursor: grab;
+}
+
+@media (min-width: 801px){
+	td.sticky{
+		display: table-cell;
+		position: sticky;
+		left:0;
+	}
+}
+
+/* Mobile settings*/
+@media screen and (max-width: 800px){
+	.sim-table thead {
+		display: none;
+	}
+	
+	.sim-table td::before{
+		content: attr(label);
+		font-weight: bold;
+		min-width: 200px;
+	}
+	
+	.sim-table td, .sim-table td.sticky{
+		display: flex;
+	}
+}
+
+.exportform{
+	display: inline-block;
+}
+
+.statistics_table{
+	width: fit-content;
+    &,tr,td{
+		border: none;
+	}
+
+	.value{
+		float: right;
+	}
+}
+
+.table-buttons-wrapper{
+	margin-bottom: 10px;
+}

@@ -1,0 +1,199 @@
+@use '../../../css/scss/global' as *;
+
+/*remove sidebar*/
+.site-content{
+    .sidebar{
+        width: unset;
+    }
+
+    #primary{
+        width: 100%;
+    }
+}
+
+.mediabuttons{
+    .search{
+        margin-left: -35px;
+        height: 30px;
+        padding-top: 15px;
+    }
+}
+
+.mediawrapper{
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+
+    .cell {
+        padding: 10px;
+      
+        /* Style the images inside the grid */
+        img {
+            opacity: 0.8;
+            cursor: pointer;
+    
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        &:hover{
+            background-color: lightgray;
+
+            .media-description{
+                display: block !important;
+                background-color: lightgray;
+            }
+        }
+
+        .media-description{
+            position: absolute;
+            left: 12px;
+            width: calc(100% - 20px);
+            color: white;
+            padding: 10px;
+            z-index: 10;
+            border-radius: 10px;
+        }
+    }    
+}
+
+
+#medialoaderwrapper{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    background: #f0f0f0ed;
+    z-index: 999999;
+    text-align: center;
+}
+  
+  /* The expanding image container (positioning is needed to position the close button and the text) */
+.large-image {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    background: #f0f0f0ed;
+    z-index: 99999;
+
+    .prevbtn, .nextbtn{
+        position: absolute;
+        z-index: 9;
+
+        @media screen and (min-width: $mobilewidth){
+            -ms-transform: translateY(50%);
+            transform: translateY(50%);
+            font-size: 40vh;
+        }
+        @media screen and (max-width: $mobilewidth){
+            font-size: 100px;
+            bottom: 50px;
+        }
+    }
+
+    .prevbtn{
+        left: 10px;
+    }
+
+    .nextbtn{
+        right: 10px;
+    }
+
+    .fullscreen-media-wrapper{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+
+        @media screen and (min-width: $mobilewidth){
+            height: calc(100% - 30px);
+        }
+
+        img{
+            width: auto;
+            margin: auto;
+            max-height: calc(100% - 30px);
+            position: relative;
+        }
+
+        iframe, #loaderwrapper{
+
+            @media screen and (min-width: $mobilewidth){
+                width: 100%;
+                height: calc(100vh - 30px);
+            }
+        }
+
+        #loaderwrapper{
+            @media screen and (min-width: $mobilewidth){
+                transform: translateY(30vh);
+            }
+
+            @media screen and (max-width: $mobilewidth){
+                transform: translateY(0vh);
+            }
+        }
+    }
+    
+    /* Expanding image text */
+    #imgtext {
+        position: absolute;
+        bottom: 15px;
+        width: 100%;
+        @media screen and (max-width: $mobilewidth){
+            bottom: 60px;
+            width: 80%;
+            left: 10%;
+        }
+        color: $secundary_color;
+        font-size: 20px;
+        padding: 10px;
+
+        .wrapper{
+            width: fit-content;
+            background-color: white;
+            margin: auto;
+            padding: 10px;
+            border-radius: 15px;
+        }
+    }
+
+    /* Closable button inside the image */
+    .closebtn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        color: $secundary_color;
+        font-size: 35px;
+        cursor: pointer;
+        z-index: 9999;
+
+        &:hover{
+            color: $primary_color;
+        }
+    }
+
+    .buttonwrapper{
+        position: absolute;
+        bottom: 15px;
+        width: 100vw;
+        display: flex;
+        flex-wrap: wrap;
+        height: 30px;
+    
+        .editmedia{
+            margin-left: 20px;
+        }
+
+        .description{
+            margin-right: 20px;
+        }
+    }
+}

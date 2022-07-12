@@ -1,0 +1,18 @@
+{
+  "name": "login",
+  "version": "1.0.0",
+  "description": "login",
+  "main": "./login.js",
+  "scripts": {
+    "login": "webpack --watch --entry ./login.js --output-path . --output-filename login.min.js --progress --mode=production --devtool source-map",
+    "2fa": "webpack  --watch --entry ./2fa.js --output-path . --output-filename 2fa.min.js --progress --mode=production --devtool source-map",
+    "logout": "webpack  --watch --entry ./logout.js --output-path . --output-filename logout.min.js --progress --mode=production --devtool source-map",
+    "password": "webpack --watch --entry ./password_strength.js --output-path . --output-filename password_strength.min.js --progress --mode=production --devtool source-map"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

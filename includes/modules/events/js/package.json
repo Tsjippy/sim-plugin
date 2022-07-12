@@ -1,0 +1,16 @@
+{
+  "name": "events",
+  "version": "1.0.0",
+  "description": "Events",
+  "main": "./events.js",
+  "scripts": {
+    "events": "webpack --watch --entry ./events.js --output-path . --output-filename events.min.js --progress --mode=production --devtool source-map",
+    "schedule": "webpack --watch --entry ./schedules.js --output-path . --output-filename schedules.min.js --progress --mode=production --devtool source-map"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

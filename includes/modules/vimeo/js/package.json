@@ -1,0 +1,20 @@
+{
+  "name": "vimeo",
+  "version": "1.0.0",
+  "description": "Vimeo",
+  "main": "./vimeo.js",
+  "scripts": {
+    "vimeo": "webpack --watch --entry ./vimeo.js --output-path . --output-filename vimeo.min.js --progress --mode=production --devtool source-map",
+    "upload": "webpack --watch --config vimeo.config.js",
+    "shortcode": "webpack --watch --entry ./vimeo_shortcode.js --output-path . --output-filename vimeo_shortcode.min.js --progress --mode=production --devtool source-map"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  },
+  "dependencies": {
+    "tus-js-client": "^2.3.2"
+  }
+}

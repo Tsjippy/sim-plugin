@@ -1,0 +1,1 @@
+sass --watch --style=compressed ".\module.scss" "frontend_posting.min.css"

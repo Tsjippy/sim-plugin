@@ -1,0 +1,148 @@
+@use 'global' as *;
+#profile_menu{
+	width: 30%;
+    float: left;
+	margin-bottom: 20px;
+}
+
+#profile_forms{
+	width: 70%;
+    float: left;
+}
+
+#profile_menu_list{
+	list-style: none;
+	margin: 0px;
+	margin-right: 30px;
+	font-weight: 600;
+	
+	li{
+		padding-top: 10px;
+	}
+	
+	li.active{
+		color: black;
+		text-decoration: underline;
+		-webkit-text-decoration-color: #bd2919;
+		text-decoration-color: #bd2919;
+	}
+	
+	&:hover{
+		cursor: -webkit-grab; 
+		cursor: grab;
+	}
+}
+
+@media (min-width: 991px){
+	.profile{
+		width: 70%;
+		margin-left: 30%;
+	}
+}
+
+/*Profile menu on small screens */
+@media (max-width: 991px){
+	#profile_forms {
+		width: 100%;
+		padding: 10px;
+	}
+
+	#profile_menu{
+		width: 100%;
+		margin-bottom: 30px;
+		overflow-x: auto !important;
+		overflow-y: hidden;
+		-webkit-overflow-scrolling: property;
+		-ms-overflow-style: -ms-autohiding-scrollbar;
+		
+		ul{
+			display: flex;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			
+			li{
+				margin: 0 7px;
+				display: inline-block;
+				padding-bottom: 2px;
+				flex-shrink: 0;
+				flex-grow: 1;
+				max-width: 1500px;
+			}
+		}
+	}
+}
+ 
+/*Hide the dummy child tab*/
+.dummychild{
+	display: none !important;
+}
+
+a.statement{
+	background-color: $primary_color;
+	padding: 1px 5px;
+	border-radius: 10px;
+	color: white;
+}
+
+a.statement:hover{
+	color: white;
+	background-color:$secundary_color;
+}
+
+/*
+* == 2FA tab ==
+*/
+
+#twofa_info{
+	/* Hide table border */
+	.wp-2fa-user-profile-form, .wp-2fa-user-profile-form th, .wp-2fa-user-profile-form td{
+		border: none;
+	}
+
+	/*Use full width on small screens*/
+	@media only screen and (max-width: 500px) {
+		#configure-2fa > div > div{
+			min-width: 100%;
+		}
+	}
+
+	.wp-2fa-configuration-form .button{
+		background-color: $primary_color;
+		&:hover{
+			background-color:$secundary_color;
+		}
+	}
+
+
+	#modal-1-content > div.wizard-step.active > button{
+		padding: 5px 10px !important;
+	}
+
+	/*Move button to the left*/
+	#your-profile > table > tbody > tr > td{
+		padding-left: 0px;
+	}
+
+	a.remove-2fa, .wp-2fa-nag > p > a.button{
+		display: block;
+		max-width: 230px;
+		margin-top: 10px;
+		font-size: 12px;
+	}
+
+	/*Prevent QR code overflow on small screens*/
+	@media only screen and (max-width: 1200px) {
+		#wp-2fa-totp-qrcode{
+			position: inherit !important;
+		}
+	}
+}
+	
+/*
+* == Visa tab ==
+*/
+
+.understudytitle{
+	margin-top: 15px;
+}

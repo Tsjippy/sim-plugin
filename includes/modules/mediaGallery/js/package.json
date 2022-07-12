@@ -1,0 +1,15 @@
+{
+  "name": "mediagallery",
+  "version": "1.0.0",
+  "description": "Media gallery",
+  "main": "./media_gallery.js",
+  "scripts": {
+    "build": "webpack --watch --entry ./media_gallery.js --output-path . --output-filename media_gallery.min.js --progress --mode=production --devtool source-map"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

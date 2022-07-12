@@ -1,0 +1,1 @@
+sass --watch --style=compressed ".\formtable.scss" "formtable.min.css"

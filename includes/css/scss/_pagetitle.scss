@@ -1,0 +1,49 @@
+@use 'global';
+
+/* other pages header*/
+#page-title-div{
+	text-align: center;
+	color:white;
+	min-height: 100px;
+	background-color: global.$primary_color;
+}
+
+/* background color for titles with a picture */
+#page-title-image + #page-title-div{
+	background-color: transparent;
+}
+
+/* position text in the header*/
+#page-title{
+	padding-top: 20px
+}
+
+/* title picture layout */
+#page-title-image{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: -1;
+	background-position: center center;
+	background-size: cover;
+	max-height: 210px;
+}
+
+/* add an overlay so the title is always readable */
+#page-title-image::before, 
+#page-title-image::after 
+{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    content: "";
+}
+
+#page-title-image::before {
+    background-color: rgba(0, 0, 0, 0.5);
+}

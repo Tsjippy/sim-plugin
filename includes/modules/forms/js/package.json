@@ -1,0 +1,18 @@
+{
+  "name": "forms",
+  "version": "1.0.0",
+  "description": "Forms",
+  "main": "./forms.js",
+  "scripts": {
+    "formbuilder": "webpack --watch --entry ./formbuilder.js --output-path . --output-filename formbuilder.min.js --progress --mode=production --devtool source-map",
+    "formtable": "webpack --watch --entry ./forms_table.js --output-path . --output-filename forms_table.min.js --progress --mode=production --devtool source-map",
+    "forms": "webpack --watch --config forms.config.js",
+    "tinymce": "webpack --watch --entry ./tiny_mce.js --output-path . --output-filename tiny_mce.min.js --progress --mode=production --devtool source-map"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

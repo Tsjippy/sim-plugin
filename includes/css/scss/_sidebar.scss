@@ -1,0 +1,29 @@
+@use 'global';
+
+/*
+* === Sidebar menu settings ===
+*/
+
+/*Make the items color black */
+.child-sidebar-menu .page_item a{
+	color: black;
+}
+
+/*Make current page bold in side menu */
+.advanced-sidebar-menu{
+	li.current_page_item > a:first-child {
+		font-weight: bold;
+		color: global.$primary_color;
+	}
+
+	/*Make the title of the sidebar menu bold*/
+	h5:nth-child(1){
+		font-weight:bold !important;
+	}
+}
+
+/* children in sidebar layout*/
+ul.child-sidebar-menu a{
+    font-size: 14px;
+    line-height: 2;
+}
