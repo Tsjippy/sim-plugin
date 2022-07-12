@@ -2,13 +2,13 @@
 
 ## [Unreleased] - yyyy-mm-dd
 
-### Added
+changelog.py### Added
 
-### Changed
+changelog.py### Changed
 
-### Fixed
+changelog.py### Fixed
 
-## [2.0.0] - 2022-06-21
+changelog.py## [2.0.0] - 2022-06-21
 
 First public release on github
 

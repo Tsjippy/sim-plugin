@@ -5,9 +5,9 @@ from pathlib import Path
 
 file    = 'CHANGELOG.md'
 newLine = sys.argv[1]
-newLine.split(': ', 1)
-type    = newLine[0].lower
-text    = newLine[1]
+lines   = newLine.split(': ', 1)
+type    = lines[0].lower()
+text    = lines[1]
 
 print(newLine)
 print(text)
