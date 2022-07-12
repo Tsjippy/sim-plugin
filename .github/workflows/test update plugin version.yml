@@ -1,12 +1,14 @@
-name: GitHub Actions Demo
-on: [push]
+name: Update Plugin Version
+on:
+    release:
+        types: [released]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Run a one-line script
-      run: python ./.github/workflows/todo_List.py
+      run: python ./.github/workflows/update_version.py ${{ github.event.release.name }}
     - name: switching from HTTPS to SSH
       run: git remote set-url origin ${{ secrets.ssh }}
     - name: check for changes
