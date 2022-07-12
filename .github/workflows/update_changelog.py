@@ -20,10 +20,19 @@ if(type == 'added'):
 elif(type == 'changed'):
     changed = re.search(r'### Changed([\s\S]*?)###', total).group(1)
     newChanged  = changed + "\n- " + text
+
+    print("Replacing")
+    print(changed)
+    print('with')
+    print(newChanged)
     newTotal    = total.replace(changed, newChanged)
 elif(type == 'fixed'):
     fixed       = re.search(r'### Fixed([\s\S]*)', total).group(1)
     newFixed    = fixed + "\n- " + text
+    print("Replacing")
+    print(fixed)
+    print('with')
+    print(newFixed)
     newTotal    = total.replace(fixed, newFixed)
 else:
     print("ERROR: \nYou should start your commit message with either 'ADDED: ', 'CHANGED: ' or 'FIXED: '")
