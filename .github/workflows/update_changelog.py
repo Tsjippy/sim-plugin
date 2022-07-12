@@ -17,6 +17,11 @@ if(type == 'added'):
     added       = re.search(r'### Added([\s\S]*?)###', total).group(1)
     newAdded    = added + "\n- " + text
     newTotal    = total.replace(added, newAdded)
+
+    print("Replacing")
+    print(added)
+    print('with')
+    print(newAdded)
 elif(type == 'changed'):
     changed = re.search(r'### Changed([\s\S]*?)###', total).group(1)
     newChanged  = changed + "\n- " + text
