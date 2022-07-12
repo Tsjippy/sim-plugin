@@ -10,7 +10,7 @@ jobs:
         - uses: actions/setup-node@v1
 
         - name: Update file
-          run: python ./.github/workflows/update_changelog.py ${{ github.event.head_commit.message }}
+          run: python ./.github/workflows/update_changelog.py "${{ github.event.head_commit.message }}"
 
         - name: Commit file
           uses: test-room-7/action-update-file@v1
