@@ -15,9 +15,6 @@ jobs:
             - name: "Build Changelog"
                 id: build_changelog
                 uses: mikepenz/release-changelog-builder-action@{latest-release}
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
             - name: Update Changelog2
               uses: stefanzweifel/changelog-updater-action@v1
               with:
