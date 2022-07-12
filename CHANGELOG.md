@@ -1,13 +1,5 @@
 # Change Log
 
-## 2.0.2.1 - 2022-07-12
-
-2.0.2.1
-
-## 2.0.3 - 2022-07-12
-
-2.0.3
-
 ## [Unreleased] - yyyy-mm-dd
 
 Here we write upgrading notes for brands. It's a team effort to make them as
