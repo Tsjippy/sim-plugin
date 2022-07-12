@@ -9,6 +9,7 @@ newLine.split(' - ', 1)
 type    = newLine[0]
 text    = newLine[1]
 
+print(newLine)
 print(text)
 
 # load plugin file
@@ -28,7 +29,7 @@ elif(type == 'FIXED'):
     newFixed    = fixed+text
     newTotal    = total.replace(fixed, newFixed)
 else:
-    print("ERROR: \nYou should start your commit message with eithetr 'ADDED - ', 'CHANGED - ' or 'FIXED - '")
+    print("ERROR: \nYou should start your commit message with either 'ADDED - ', 'CHANGED - ' or 'FIXED - '")
     exit(1)
 
 changelog = changelog.replace(total, newTotal)
