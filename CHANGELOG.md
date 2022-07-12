@@ -3,7 +3,6 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- something
 
 ### Changed
 
