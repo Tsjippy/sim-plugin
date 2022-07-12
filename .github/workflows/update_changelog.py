@@ -18,29 +18,15 @@ changelog = Path(file).read_text()
 total   = re.search(r'## \[Unreleased\] - yyyy-mm-dd([\s\S]*?)## \[', changelog).group(1)
 if(type == 'added'):
     added       = re.search(r'(### Added[\s\S]*?)###', total).group(1)
-    newAdded    = added + "\n- " + text
+    newAdded    = added + "\n- " + text + "\n"
     newTotal    = total.replace(added, newAdded)
-
-    print("Replacing")
-    print(added)
-    print('with')
-    print(newAdded)
 elif(type == 'changed'):
     changed = re.search(r'(### Changed[\s\S]*?)###', total).group(1)
-    newChanged  = changed + "\n- " + text
-
-    print("Replacing")
-    print(changed)
-    print('with')
-    print(newChanged)
+    newChanged  = changed + "\n- " + text + "\n"
     newTotal    = total.replace(changed, newChanged)
 elif(type == 'fixed'):
     fixed       = re.search(r'(### Fixed[\s\S]*)', total).group(1)
-    newFixed    = fixed + "\n- " + text
-    print("Replacing")
-    print(fixed)
-    print('with')
-    print(newFixed)
+    newFixed    = fixed + "\n- " + text + "\n"
     newTotal    = total.replace(fixed, newFixed)
 else:
     print("ERROR: \nYou should start your commit message with either 'ADDED: ', 'CHANGED: ' or 'FIXED: '")
