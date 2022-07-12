@@ -16,13 +16,13 @@ jobs:
                 id: build_changelog
                 uses: mikepenz/release-changelog-builder-action@{latest-release}
             - name: Update Changelog2
-              uses: stefanzweifel/changelog-updater-action@v1
+              uses: stefanzweifel/changelog-updater-action@{latest-release}
               with:
                   release-notes: ${{steps.build_changelog.outputs.changelog}}
                   latest-version: ${{ github.event.release.name }}
 
             - name: Commit updated CHANGELOG
-              uses: stefanzweifel/git-auto-commit-action@v4
+              uses: stefanzweifel/git-auto-commit-action@{latest-release}
               with:
                   branch: main
                   commit_message: Update CHANGELOG
