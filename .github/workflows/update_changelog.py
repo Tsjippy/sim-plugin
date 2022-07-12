@@ -7,6 +7,9 @@ file    = 'CHANGELOG.md'
 newLine = sys.argv[1]
 lines   = newLine.split(': ', 1)
 type    = lines[0].lower()
+if(len(type) == 1):
+    print("ERROR: \nYou should start your commit message with either 'ADDED: ', 'CHANGED: ' or 'FIXED: '")
+    exit(0)
 text    = lines[1]
 
 # load plugin file
