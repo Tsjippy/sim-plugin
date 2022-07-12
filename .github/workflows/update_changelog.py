@@ -30,6 +30,9 @@ else:
 
 changelog = changelog.replace(total, newTotal)
 
+print(total)
+print(changelog)
+
 # Write changes
 f = open(file, "w")
 f.write(changelog)
