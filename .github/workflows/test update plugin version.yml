@@ -14,13 +14,9 @@ jobs:
         - name: Update version
           run: python ./.github/workflows/update_version.py ${{ github.event.release.name }}
 
-        - name: Modifiy the specific files using action
-        -  uses: action-owner/action-repo@ref
-          - name: Commit and push changes
-            run: |
-              git config --global user.name "tjippy"
-              git config --global user.email "ewaldha@hotmail.com"
-
-              git add -A
-              git commit -m "commit message"
-              git push
+        - name: Update resources
+          uses: test-room-7/action-update-file@v1
+          with:
+              file-path: sim-plugin.php
+              commit-msg: Update resources
+              github-token: ${{ secrets.GITHUB_TOKEN }}
