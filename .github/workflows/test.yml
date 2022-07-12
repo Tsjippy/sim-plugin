@@ -14,4 +14,8 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
+      - uses: vimtor/action-zip@v1
+        with:
+          files: dist/ manifest.json
+          dest: result.zip
       - run: echo "🍏 This job's status is ${{ job.status }}."
