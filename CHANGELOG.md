@@ -2,13 +2,13 @@
 
 ## [Unreleased] - yyyy-mm-dd
 
-changelog.pychangelog script### Added
+### Added
 
-changelog.pychangelog script### Changed
+### Changed
 
-changelog.pychangelog script### Fixed
+### Fixed
 
-changelog.pychangelog script## [2.0.0] - 2022-06-21
+## [2.0.0] - 2022-06-21
 
 First public release on github
 
