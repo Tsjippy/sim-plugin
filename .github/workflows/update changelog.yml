@@ -1,5 +1,6 @@
 name: 'Update Changelog'
-on: [release]
+on: [release, workflow_dispatch]
+
 jobs:
     update:
         runs-on: ubuntu-latest
