@@ -12,11 +12,16 @@ jobs:
               uses: actions/checkout@v3
               with:
                   ref: main
+            - name: "Build Changelog"
+                id: build_changelog
+                uses: mikepenz/release-changelog-builder-action@{latest-release}
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Update Changelog2
               uses: stefanzweifel/changelog-updater-action@v1
               with:
-                  release-notes: ${{ github.event.release.body }}
+                  release-notes: ${{steps.build_changelog.outputs.changelog}}
                   latest-version: ${{ github.event.release.name }}
 
             - name: Commit updated CHANGELOG
