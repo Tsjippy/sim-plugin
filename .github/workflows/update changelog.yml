@@ -1,5 +1,10 @@
 name: 'Update Changelog'
-on: [release, workflow_dispatch]
+on: [
+    on:
+        release:
+            types: [published]
+    , workflow_dispatch
+]
 
 jobs:
     update:
