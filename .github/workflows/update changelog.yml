@@ -1,7 +1,5 @@
 name: 'Update Changelog'
-on:
-    release:
-        types: [released]
+on: [release]
 jobs:
     update:
         runs-on: ubuntu-latest
