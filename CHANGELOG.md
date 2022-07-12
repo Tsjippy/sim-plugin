@@ -2,21 +2,13 @@
 
 ## [Unreleased] - yyyy-mm-dd
 
+### Added
 
-- changelog update on release
-- changelog script again### Added
+### Changed
 
+### Fixed
 
-- changelog update on release
-- changelog script again### Changed
-
-
-- changelog update on release
-- changelog script again### Fixed
-
-
-- changelog update on release
-- changelog script again## [2.0.0] - 2022-06-21
+## [2.0.0] - 2022-06-21
 
 First public release on github
 
