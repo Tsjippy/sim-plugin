@@ -4,7 +4,7 @@ on:
         types: [released]
 jobs:
   resources:
-    name: Update resources
+    name: Update wp plugin version
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v1
@@ -14,9 +14,9 @@ jobs:
         - name: Update version
           run: python ./.github/workflows/update_version.py ${{ github.event.release.name }}
 
-        - name: Update resources
+        - name: Update wp plugin version
           uses: test-room-7/action-update-file@v1
           with:
               file-path: sim-plugin.php
-              commit-msg: Update resources
+              commit-msg: Update wp plugin version
               github-token: ${{ secrets.GITHUB_TOKEN }}
