@@ -1,7 +1,7 @@
 name: Update Changelog
 on:
   release:
-    types: [published, deleted, edited]
+    types: [published]
 
 jobs:
     update:

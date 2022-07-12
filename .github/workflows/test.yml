@@ -1,7 +1,5 @@
 name: GitHub Actions Demo
-on:
-  release:
-    types: [published, deleted, edited]
+on: [push]
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
