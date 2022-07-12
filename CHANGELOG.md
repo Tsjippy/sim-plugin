@@ -4,6 +4,8 @@
 ### Added
 
 ### Changed
+- Libraries are now on a per module basis
+- Javascript optimalization
 
 ### Fixed
 
