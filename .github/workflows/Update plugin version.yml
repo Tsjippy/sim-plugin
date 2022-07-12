@@ -1,4 +1,4 @@
-name: Update Plugin Version2
+name: Update Plugin Version
 on:
     release:
         types: [released]
