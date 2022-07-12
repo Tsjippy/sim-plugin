@@ -1,6 +1,2 @@
-includes/modules/forms/js/dynamic/reimbursementforms.js
-includes/modules/forms/js/dynamic/reimbursementforms.min.js
-includes/modules/forms/js/dynamic/accomodationforms.js
-includes/modules/forms/js/dynamic/accomodationforms.min.js
-includes/modules/forms/js/dynamic/travelforms.js
-includes/modules/forms/js/dynamic/travelforms.min.js
+dynamic/
+node_modules/
