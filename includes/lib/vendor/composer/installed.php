@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '8de02fff97b9058555d6d6fa446e78e56c82019f',
+        'reference' => 'f02e817af313d43a08a70f0f1a2c3eef2c13ec74',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '8de02fff97b9058555d6d6fa446e78e56c82019f',
+            'reference' => 'f02e817af313d43a08a70f0f1a2c3eef2c13ec74',
             'dev_requirement' => false,
         ),
         'clue/stream-filter' => array(
@@ -146,12 +146,12 @@
             'dev_requirement' => false,
         ),
         'php-http/discovery' => array(
-            'pretty_version' => '1.14.2',
-            'version' => '1.14.2.0',
+            'pretty_version' => '1.14.3',
+            'version' => '1.14.3.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../php-http/discovery',
             'aliases' => array(),
-            'reference' => 'c8d48852fbc052454af42f6de27635ddd916b959',
+            'reference' => '31d8ee46d0215108df16a8527c7438e96a4d7735',
             'dev_requirement' => false,
         ),
         'php-http/httplug' => array(
