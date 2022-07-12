@@ -1,20 +1,9 @@
 {
     "require": {
         "phpoffice/phpspreadsheet": "^1.16",
-        "mailchimp/marketing": "^3.0",
         "phpoffice/phpword": "^0.18.0",
-        "setasign/fpdf": "^1.8",
-        "mashape/unirest-php": "^3.0",
-        "bacon/bacon-qr-code": "^2.0",
-        "robthree/twofactorauth": "^1.8",
-        "web-auth/webauthn-lib": "^3.3",
-        "nyholm/psr7-server": "^1.0",
-        "nyholm/psr7": "^1.4",
-        "matomo/device-detector": "^5.0",
-        "vimeo/vimeo-api": "^3.0",
-        "garfix/js-minify": "^1.0",
-        "squizlabs/php_codesniffer": "*",
-        "guzzlehttp/guzzle": "^7.4",
-        "psr/http-client-implementation": "*"
+        "knplabs/github-api": "3.0",
+        "guzzlehttp/guzzle": "7.0.1",
+        "http-interop/http-factory-guzzle": "1.0"
     }
 }

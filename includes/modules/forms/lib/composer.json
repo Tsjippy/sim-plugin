@@ -1,0 +1,5 @@
+{
+    "require": {
+        "garfix/js-minify": "^1.0"
+    }
+}

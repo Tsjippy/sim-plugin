@@ -11,7 +11,7 @@ add_action('init', function(){
 function scheduleTasks(){
     SIM\scheduleTask('auto_archive_action', 'daily');
 
-    $freq   = SIM\getModuleOption('forms', 'reminder_freq');
+    $freq   = SIM\getModuleOption(MODULE_SLUG, 'reminder_freq');
     if($freq){
         SIM\scheduleTask('mandatory_fields_reminder_action', $freq);
     }

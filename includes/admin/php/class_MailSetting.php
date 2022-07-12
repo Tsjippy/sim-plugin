@@ -5,7 +5,6 @@ use SIM;
 abstract class MailSetting{
     public $keyword;
 
-
     /**
      * Initiates the class
      * 

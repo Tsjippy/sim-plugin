@@ -15,7 +15,7 @@ function sendPasswordResetMessage($user){
 		return $key;
 	}
 
-	$pageurl	 = get_permalink(SIM\getModuleOption('login', 'password_reset_page'));
+	$pageurl	 = get_permalink(SIM\getModuleOption(MODULE_SLUG, 'password_reset_page'));
 	$url		 = "$pageurl?key=$key&login=$user->user_login";
 
 	//Send e-mail

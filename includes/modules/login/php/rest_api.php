@@ -776,7 +776,7 @@ function userLogin(){
     //store login date
     update_user_meta( $user->ID, 'last_login_date',date('Y-m-d'));
 
-    $accountPageId  = SIM\getModuleOption('user_management', 'account_page');
+    $accountPageId  = SIM\getModuleOption('usermanagement', 'account_page');
 
     // GEt mandatory or recommended fields
     if(function_exists('SIM\FORMS\getAllFields') && is_numeric($accountPageId)){
@@ -794,7 +794,7 @@ function userLogin(){
 
         //Redirect to account page if 2fa is not set
         if(!$methods || empty($methods)){
-            $twofaPage      = SIM\getValidPageLink(SIM\getModuleOption('login', '2fa_page'));
+            $twofaPage      = SIM\getValidPageLink(SIM\getModuleOption(MODULE_SLUG, '2fa_page'));
             if($twofaPage){
                 return $twofaPage;
             }

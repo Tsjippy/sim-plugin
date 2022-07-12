@@ -17,7 +17,7 @@ function scheduleTasks(){
 	SIM\scheduleTask('anniversary_check_action', 'daily');
 	SIM\scheduleTask('remove_old_schedules_action', 'daily');
 
-    $freq   = SIM\getModuleOption('events', 'freq');
+    $freq   = SIM\getModuleOption(MODULE_SLUG, 'freq');
 
     if($freq){
 		SIM\scheduleTask('remove_old_events_action', $freq);
@@ -31,7 +31,7 @@ function scheduleTasks(){
 function removeOldEvents(){
 	global $wpdb;
 
-	$maxAge   	= SIM\getModuleOption('events', 'max_age');
+	$maxAge   	= SIM\getModuleOption(MODULE_SLUG, 'max_age');
 
 	$events		= new CreateEvents();
 

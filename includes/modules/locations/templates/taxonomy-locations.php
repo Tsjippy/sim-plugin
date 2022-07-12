@@ -23,7 +23,9 @@ if($wp_query->is_embed){
 if($skipWrapper){
 	displayLocationTax();
 }else{
-	if(!isset($skipHeader) or !$skipHeader)	get_header(); 
+	if(!isset($skipHeader) || !$skipHeader){
+		get_header(); 
+	}
 	?>
 	<div id="primary" <?php generate_do_element_classes( 'content' ); ?>>
 		<main id="main" class='taxonomy inside-article'<?php generate_do_element_classes( 'main' ); ?>>
@@ -33,7 +35,9 @@ if($skipWrapper){
 	<?php
 	generate_construct_sidebars();
 
-	if(!isset($skipFooter) or !$skipFooter)	get_footer();
+	if(!isset($skipFooter) || !$skipFooter){
+		get_footer();
+	}
 }
 
 function displayLocationTax(){
@@ -44,7 +48,7 @@ function displayLocationTax(){
 		//only show the map if logged in
 		if(is_user_logged_in() ){
 			$mapName			= $name."_map";
-			$mapId				= SIM\getModuleOption('locations', $mapName);
+			$mapId				= SIM\getModuleOption(MODULE_SLUG, $mapName);
 
 			if(is_numeric($mapId)){
 				//Show the map of this category
@@ -54,7 +58,6 @@ function displayLocationTax(){
 			}
 		}
 	
-		//$archive	= true;
 		while ( have_posts() ) :
 			the_post();
 			include(__DIR__.'/content.php');

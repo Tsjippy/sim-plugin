@@ -5,31 +5,30 @@ use SIM;
 // Add upload to vimeo button to attachment page if auto upload is not on
 add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 	//only work on video's
-	if(explode('/',$post->post_mime_type)[0] != 'video') return $formFields;
+	if(explode('/',$post->post_mime_type)[0] != 'video'){
+		return $formFields;
+	}
 
 	$vimeoId = get_post_meta( $post->ID, 'vimeo_id', true );
 
 	//Check if already uploaded
-	if(!SIM\getModuleOption('vimeo', 'upload')){
-		//video already on vimeo
-		if(!is_numeric($vimeoId)){
-			$html    = "<div>";
-				$html   .= "<input style='width: initial' type='checkbox' name='attachments[{$post->ID}][vimeo]' value='upload'>";
-			$html   .= "</div>";
+	if(!SIM\getModuleOption(MODULE_SLUG, 'upload') && !is_numeric($vimeoId)){
+		$html    = "<div>";
+			$html   .= "<input style='width: initial' type='checkbox' name='attachments[{$post->ID}][vimeo]' value='upload'>";
+		$html   .= "</div>";
 
-			$formFields['visibility'] = array(
-				'value' => 'upload',
-				'label' => __( 'Upload this video to vimeo' ),
-				'input' => 'html',
-				'html'  =>  $html
-			);  
-		}
+		$formFields['visibility'] = array(
+			'value' => 'upload',
+			'label' => __( 'Upload this video to vimeo' ),
+			'input' => 'html',
+			'html'  =>  $html
+		);  
 	}
 
 	//check if backup already exists
 	$vimeo	= new VimeoApi();
 	$path	= $vimeo->getVideoPath($post->ID);
-	if(is_numeric($vimeoId) and !file_exists($path)){
+	if(is_numeric($vimeoId) && !file_exists($path)){
 		$formFields['vimeo_url'] = array(
 			'label' => "Video url",
 			'input' => 'text',
@@ -72,7 +71,7 @@ add_action( 'edit_attachment', function($attachmentId){
 } );
 
 // Delete video from vimeo when attachemnt is deleted, if that option is enabled
-if(SIM\getModuleOption('vimeo', 'remove')){
+if(SIM\getModuleOption(MODULE_SLUG, 'remove')){
 	add_action( 'delete_attachment', function($postId, $post ){
 		if(explode('/', $post->post_mime_type)[0] == 'video'){
 			$VimeoApi = new VimeoApi();
@@ -118,7 +117,9 @@ add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
 		try{
 			$VimeoApi	= new VimeoApi();
 			$path		= $VimeoApi->getThumbnail($postId);
-			if(!$path)  return $icon;
+			if(!$path) {
+				return $icon;
+			}
 			$icon		= SIM\pathToUrl($path);
 		}catch(\Exception $e){
 			SIM\printArray($e);
@@ -128,7 +129,7 @@ add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
 	return $icon;
 }, 10, 9 );
 
-if(SIM\getModuleOption('vimeo', 'upload')){
+if(SIM\getModuleOption(MODULE_SLUG, 'upload')){
 	//add filter
 	add_action('post-html-upload-ui', function(){
 		add_filter('gettext', 'SIM\VIMEO\change_upload_size_message', 10, 2);

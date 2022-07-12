@@ -3,7 +3,9 @@ namespace SIM\PDF;
 use SIM;
 
 //only load when checked
-if(!SIM\getModuleOption('PDF', 'full_screen')) return;
+if(!SIM\getModuleOption(MODULE_SLUG, 'full_screen')){
+    return;
+}
 
 //Show PDFs full screen
 add_filter( 'the_content', function ( $content ) {
@@ -50,7 +52,9 @@ add_filter( 'the_content', function ( $content ) {
             while(true){
                 //ob_get_clean only returns false when there is absolutely nothing anymore
                 $result	= ob_get_clean();
-                if($result === false) break;
+                if($result === false){
+                    break;
+                }
             }
             ob_start();
             header("Content-type: application/pdf");

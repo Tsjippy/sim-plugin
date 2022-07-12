@@ -10,7 +10,7 @@ add_action('init', function(){
 
 function scheduleTasks(){
     SIM\scheduleTask('createVimeoThumbnails', 'daily');
-    if(SIM\getModuleOption('vimeo', 'sync')){
+    if(SIM\getModuleOption(MODULE_SLUG, 'sync')){
         SIM\scheduleTask('sync_vimeo_action', 'daily');
     }
 }
@@ -46,7 +46,9 @@ function vimeoSync(){
     
     if ( $vimeoApi->isConnected() ) {
         $vimeoVideos	= $vimeoApi->getUploadedVideos();
-        if(!$vimeoVideos) return;
+        if(!$vimeoVideos){
+            return;
+        }
 
         $args = array(
             'post_type'  	=> 'attachment',
@@ -91,10 +93,10 @@ function vimeoSync(){
 }
 
 // Remove scheduled tasks upon module deactivatio
-add_action('sim_module_deactivated', function($moduleSlug, $options){
+add_action('sim_module_deactivated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{return;}
 
 	wp_clear_scheduled_hook( 'createVimeoThumbnails' );
 	wp_clear_scheduled_hook( 'sync_vimeo_action' );
-}, 10, 2);
+});

@@ -3,11 +3,11 @@ namespace SIM\FRONTPAGE;
 use SIM;
 
 add_action( 'wp_enqueue_scripts', function(){
-	if(is_page(SIM\getModuleOption('frontpage','home_page')) || is_front_page()){
+	if(is_page(SIM\getModuleOption(MODULE_SLUG,'home_page')) || is_front_page()){
 		wp_enqueue_style( 'sim_frontpage_style', plugins_url('css/frontpage.min.css', __DIR__), array(), MODULE_VERSION);
 
 		//Add header image selected in customizer to homepage using inline css
-		$headerImageId	= SIM\getModuleOption('frontpage', 'picture_ids')['header_image'];
+		$headerImageId	= SIM\getModuleOption(MODULE_SLUG, 'picture_ids')['header_image'];
 		$headerImageUrl	= wp_get_attachment_url($headerImageId);
 		if($headerImageUrl){
 			$extraCss			= ".home:not(.sticky) #masthead{background-image: url($headerImageUrl);";

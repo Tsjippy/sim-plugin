@@ -175,7 +175,7 @@ class AccountStatement{
 			update_user_meta($user->ID, "account_statements", $accountStatements);
 			
 			// Get account page
-			$accountUrl		= SIM\getValidPageLink(SIM\getModuleOption('user_management', 'account_page'));
+			$accountUrl		= SIM\getValidPageLink(SIM\getModuleOption('usermanagement', 'account_page'));
 			if($accountUrl){
 				$message	= "See it here: \n\n$accountUrl";
 			}else{

@@ -6,13 +6,13 @@ use function SIM\getModuleOption;
 
 //generate_before_header
 // diplay buttons
-$hookName	= SIM\getModuleOption('frontpage', 'header_hook');
+$hookName	= SIM\getModuleOption(MODULE_SLUG, 'header_hook');
 if(!empty($hookName)){
 	//Add a button to the header
 	add_action($hookName, function(){
-		if (is_user_logged_in() && (is_page(SIM\getModuleOption('frontpage','home_page')) || is_front_page())){
-			$button1	= SIM\getModuleOption('frontpage', 'first_button');
-			$button2	= SIM\getModuleOption('frontpage', 'second_button');
+		if (is_user_logged_in() && (is_page(SIM\getModuleOption(MODULE_SLUG,'home_page')) || is_front_page())){
+			$button1	= SIM\getModuleOption(MODULE_SLUG, 'first_button');
+			$button2	= SIM\getModuleOption(MODULE_SLUG, 'second_button');
 
 			$text1		= get_the_title($button1);
 			$text2		= get_the_title($button2);
@@ -31,11 +31,11 @@ if(!empty($hookName)){
 
 //generate_after_main_content
 //display prayer message and birtdays
-$hookName	= SIM\getModuleOption('frontpage', 'after_main_content_hook');
+$hookName	= SIM\getModuleOption(MODULE_SLUG, 'after_main_content_hook');
 if(!empty($hookName)){
 	add_action($hookName, function(){
 		//if on home page and prayer module activated
-		if(is_page(SIM\getModuleOption('frontpage','home_page')) && is_user_logged_in()){
+		if(is_page(SIM\getModuleOption(MODULE_SLUG,'home_page')) && is_user_logged_in()){
 			$message	= apply_filters('sim_frontpage_message', '');
 				
 			echo "<article>";
@@ -47,24 +47,24 @@ if(!empty($hookName)){
 
 //Show the latest news
 //generate_before_footer
-$hookName	= SIM\getModuleOption('frontpage','before_footer_hook');
+$hookName	= SIM\getModuleOption(MODULE_SLUG,'before_footer_hook');
 if(!empty($hookName)){
 	add_action($hookName, function() {
 		//if on home page
-		if(is_page(SIM\getModuleOption('frontpage','home_page')) || is_front_page()){
+		if(is_page(SIM\getModuleOption(MODULE_SLUG,'home_page')) || is_front_page()){
 			// If not logged in and on the logged in homepage
-			if (!is_user_logged_in() && is_page(SIM\getModuleOption('frontpage','home_page'))){
+			if (!is_user_logged_in() && is_page(SIM\getModuleOption(MODULE_SLUG,'home_page'))){
 				return;
 			}
 
 			//Show the ministry gallery
 			pageGallery();
 			$args                   = array('ignore_sticky_posts' => true,);
-			$args['post_type'] 		= SIM\getModuleOption('frontpage', 'news_post_types');
+			$args['post_type'] 		= SIM\getModuleOption(MODULE_SLUG, 'news_post_types');
 			$args['post_status'] 	= 'publish';
 
 			//Only include posts who are published less than $max_news_age ago
-			$maxNewsAge	= SIM\getModuleOption('frontpage', 'max_news_age');
+			$maxNewsAge	= SIM\getModuleOption(MODULE_SLUG, 'max_news_age');
 			$args['date_query']		= array(
 				array(
 					'after' => array(
@@ -233,15 +233,15 @@ function pageGallery(){
 					<div class="col-md-5">
 						<div class="card-image">
 							<?php
-							$pageId		= SIM\getModuleOption('frontpage', "page$x");
+							$pageId		= SIM\getModuleOption(MODULE_SLUG, "page$x");
 							$pictureUrl	= get_the_post_thumbnail_url($pageId);
 							$pageUrl	= get_permalink($pageId);
 
-							$title		= SIM\getModuleOption('frontpage', "title$x");
+							$title		= SIM\getModuleOption(MODULE_SLUG, "title$x");
 							if(!$title){
 								$title	= get_the_title($pageId);
 							}
-							$text		= SIM\getModuleOption('frontpage', "description$x");
+							$text		= SIM\getModuleOption(MODULE_SLUG, "description$x");
 
 							if(!$text){
 								$text	= get_the_excerpt($pageId);

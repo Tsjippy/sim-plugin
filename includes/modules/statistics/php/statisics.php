@@ -4,13 +4,17 @@ use SIM;
 
 // Adds statisics to a page about the current page
 add_filter( 'the_content', function ($content){
-    if(!is_main_query() or !is_user_logged_in())    return $content;
+    if(!is_main_query() || !is_user_logged_in()){
+        return $content;
+    }
 
-    $viewRoles     = SIM\getModuleOption('statistics', 'view_rights');
+    $viewRoles     = SIM\getModuleOption(MODULE_SLUG, 'view_rights');
     $userRoles     = wp_get_current_user()->roles;
 
     //only continue if we have the right so see the statistics
-    if(!array_intersect($viewRoles, $userRoles)) return $content;
+    if(!array_intersect($viewRoles, $userRoles)){
+        return $content;
+    }
     
     global $wpdb;
 
@@ -42,7 +46,7 @@ add_filter( 'the_content', function ($content){
             <tbody>
                 <tr>
                     <td>
-                        <b>Total views:</b>   
+                        <strong>Total views:</strong>   
                     </td>
                     <td class='value'>
                         <?php echo $totalViews;?>  
@@ -50,7 +54,7 @@ add_filter( 'the_content', function ($content){
                 </tr>
                 <tr>
                     <td>
-                        <b>Unique views:</b>   
+                        <strong>Unique views:</strong>   
                     </td>
                     <td class='value'>
                         <?php echo $uniqueViews;?>  
@@ -58,7 +62,7 @@ add_filter( 'the_content', function ($content){
                 </tr>
                 <tr>
                     <td>
-                        <b>Unique views last 6 months:</b>   
+                        <strong>Unique views last 6 months:</strong>   
                     </td>
                     <td class='value'>
                         <?php echo $uniqueViewsLastMonths;?>  

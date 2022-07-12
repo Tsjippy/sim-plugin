@@ -4,7 +4,15 @@ use SIM;
 
 const MODULE_VERSION		= '7.0.2';
 //module slug is the same as grandparent folder name
-DEFINE(__NAMESPACE__.'\MODULE_SLUG', basename(dirname(dirname(__FILE__))));
+DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
+
+/**
+ * Gets the module name based on the slug
+ */
+function getModuleName($slug){
+	$pieces 	= preg_split('/(?=[A-Z])/', ucwords($slug));
+	return trim(implode(' ', $pieces));
+}
 
 /**
  * Register a custom menu page.
@@ -26,27 +34,25 @@ add_action( 'admin_menu', function() {
 	sort($modules, SORT_STRING | SORT_FLAG_CASE);
 
 	foreach($modules as $module){
-		$moduleSlug	= basename($module);
-		$moduleName	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
+		$moduleSlug	= strtolower(basename($module));
 		
+		$moduleName	= getModuleName(basename($module));
+
 		//do not load admin and template menu
 		if(in_array($moduleSlug, ['__template', 'admin'])){
 			continue;
 		}
 		
 		//check module page exists
-		if(!file_exists($module.'/php/module_menu.php')){
+		if(!file_exists($module.'/php/__module_menu.php')){
 			SIM\printArray("Module page does not exist for module $moduleName");
 			continue;
 		}
 
 		//load the menu page php file
-		require_once($module.'/php/module_menu.php');
-		if(file_exists($module.'/php/class_emails.php')){
-			include_once($module.'/php/class_emails.php');
-		}
+		require_once($module.'/php/__module_menu.php');
 
-		add_submenu_page('sim', $moduleName." module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
+		add_submenu_page('sim', "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
 	}
 });
 
@@ -58,7 +64,7 @@ function buildSubMenu(){
 	global $Modules;
 
 	$moduleSlug	= str_replace('sim_', '', $plugin_page);
-	$moduleName	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
+	$moduleName	= str_replace(' module', '', get_admin_page_title());
 
 	if(isset($Modules[$moduleSlug]) && is_array($Modules[$moduleSlug])){
 		$settings	= $Modules[$moduleSlug];
@@ -174,6 +180,41 @@ function emailSettingsTab($moduleSlug, $moduleName, $settings){
 function mainMenu(){
 	global $Modules;
 
+	unset($Modules['extra_post_types']);
+	unset($Modules['template_specific']);
+	unset($Modules['pdf']);
+
+	foreach(['frontend_posting',
+	'user_management',
+	'user_pages',
+	'SIM Nigeria',
+	'PDF',
+	'default_pictures',
+	'mail_posting',
+	'fancy_email',
+	'content_filter',
+	'media_gallery',
+	'embed_page'] as $key){
+		if(isset($Modules[$key])){
+			$newkey	= str_replace(['_',' '], '', strtolower($key));
+
+			$Modules[$newkey]	= $Modules[$key];
+			unset($Modules[$key]);
+		}
+	}
+
+	if(isset($Modules['bulk_meta_update'])){
+		$Modules['bulkchange']	= $Modules['bulk_meta_update'];
+		unset($Modules['bulk_meta_update']);
+	}
+
+	if(isset($Modules['mandatory_content'])){
+		$Modules['mandatory']	= $Modules['mandatory_content'];
+		unset($Modules['mandatory_content']);
+	}
+
+	update_option('sim_modules', $Modules);
+
 	//get all modules based on folder name
 	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
 	sort($modules, SORT_STRING | SORT_FLAG_CASE);
@@ -181,8 +222,8 @@ function mainMenu(){
 	$active		= [];
 	$inactive	= [];
 	foreach($modules as $module){
-		$moduleSlug	= basename($module);
-		$moduleName	= ucwords(str_replace(['_', '-'], ' ', $moduleSlug));
+		$moduleSlug	= strtolower(basename($module));
+		$moduleName	= getModuleName(basename($module));
 		
 		if(in_array($moduleSlug, array_keys($Modules))){
 			$active[$moduleSlug]	= $moduleName;

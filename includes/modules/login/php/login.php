@@ -120,14 +120,9 @@ function loginModal($message='', $required=false, $username=''){
 }
 
 add_action( 'loop_start', function() {
-    if ( is_front_page() ) {    
-        if (!is_user_logged_in()){
-            if(isset($_GET['showlogin'])){
-                echo loginModal('', true, $_GET['showlogin']);
-            }else{
-                echo loginModal();
-            }
-        }
+    // Add the login modal if we are on the home page, we are not logged in and the show login param is not set (in that case it will added by the content filter)
+    if ( is_front_page() && !is_user_logged_in() && !isset($_GET['showlogin'])){
+        echo loginModal();
     }
 });
 

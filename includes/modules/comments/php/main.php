@@ -49,7 +49,7 @@ add_action( 'comment_post', function( $commentID, $approved, $commentdata ){
  * @param string $comment_type Type of comment. Default is `comment`.
  */
 add_filter( 'get_default_comment_status', function ( $status, $post_type) {
-    $allowedPostTypes     = SIM\getModuleOption('comments', 'posttypes');
+    $allowedPostTypes     = SIM\getModuleOption(MODULE_SLUG, 'posttypes');
     if ( in_array($post_type, $allowedPostTypes)) {
         return 'open';
     }

@@ -28,7 +28,7 @@ add_action( 'wp_enqueue_scripts', function(){
 });
 
 //auto upload via js if enabled
-if(SIM\getModuleOption('vimeo', 'upload')){
+if(SIM\getModuleOption(MODULE_SLUG, 'upload')){
 	//load js script to change media screen
 	add_action( 'wp_enqueue_media', function(){
 		wp_enqueue_script('sim_vimeo_script');

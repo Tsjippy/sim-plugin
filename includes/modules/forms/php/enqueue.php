@@ -89,12 +89,12 @@ add_action( 'wp_enqueue_scripts', function(){
     
     wp_register_script('sim_forms_table_script', plugins_url('js/forms_table.js', __DIR__), array('sim_forms_script', 'sim_table_script', 'sim_formsubmit_script'), MODULE_VERSION,true);
 
-    $formBuilderPages   = SIM\getModuleOption('forms', 'formbuilder_pages');
+    $formBuilderPages   = SIM\getModuleOption(MODULE_SLUG, 'formbuilder_pages');
     if(in_array(get_the_ID(), $formBuilderPages)){
         wp_enqueue_style('sim_forms_style');
     }
 
-    $formtablePages   = SIM\getModuleOption('forms', 'formtable_pages');
+    $formtablePages   = SIM\getModuleOption(MODULE_SLUG, 'formtable_pages');
     if(in_array(get_the_ID(), $formtablePages)){
         wp_enqueue_style('sim_formtable_style');
     }

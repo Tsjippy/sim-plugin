@@ -20,7 +20,7 @@ function updateFamilyMeta($userId, $metaKey, $value){
 		
 	//Update the meta key for all family members as well
 	$family = get_user_meta($userId,"family",true);
-	if (is_array($family) and count($family)>0){
+	if (is_array($family) && !empty($family)){
 		if (isset($family["children"])){
 			$family = array_merge($family["children"], $family);
 			unset($family["children"]);
@@ -59,7 +59,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	}
 	
 	//Get the id and the displayname of all users
-	$users 			= getUserAccounts($families, $onlyAdults, true, [], $args);
+	$users 			= getUserAccounts($families, $onlyAdults, [], $args);
 	$existsArray 	= array();
 	
 	//Loop over all users to find duplicate displaynames
@@ -167,8 +167,7 @@ function urlToPath($url){
 	$siteUrl	= str_replace(['https://', 'http://'], '', SITEURL);
 	$url		= str_replace(['https://', 'http://'], '', $url);
 	
-	$path = str_replace(trailingslashit($siteUrl), ABSPATH, $url);
-	return $path;
+	return str_replace(trailingslashit($siteUrl), ABSPATH, $url);
 }
 
 /**
@@ -201,7 +200,7 @@ function printArray($message, $display=false){
 	error_log("Called from file {$caller['file']} line {$caller['line']}");
 	//file_put_contents(__DIR__.'/simlog.log',"Called from file {$caller['file']} line {$caller['line']}\n",FILE_APPEND);
 
-	if(is_array($message) or is_object($message)){
+	if(is_array($message) || is_object($message)){
 		error_log(print_r($message,true));
 		//file_put_contents(__DIR__.'/simlog.log',print_r($message,true),FILE_APPEND);
 	}else{
@@ -366,7 +365,7 @@ function familyFlatArray($userId){
 function hasPartner($userId) {
 	$family = get_user_meta($userId, "family", true);
 	if(is_array($family)){
-		if (isset($family['partner']) and is_numeric($family['partner'])){
+		if (isset($family['partner']) && is_numeric($family['partner'])){
 			return $family['partner'];
 		}else{
 			return false;
@@ -394,7 +393,9 @@ function getParents($userId){
 		}
 	}
 
-	if(empty($parents)) return false;
+	if(empty($parents)){
+		return false;
+	}
 	return $parents;
 }
 
@@ -406,15 +407,10 @@ function getParents($userId){
 */
 function isChild($userId) {
 	$family = get_user_meta($userId, "family", true);
-	if(is_array($family)){
-		if(isset($family["father"]) or isset($family["mother"])){
-			return true;
-		}else{
-			return false;
-		}
-	}else{
-		return false;
+	if(is_array($family) && (isset($family["father"]) || isset($family["mother"]))){
+		return true;
 	}
+	return false;
 }
 
 /**
@@ -425,7 +421,9 @@ function isChild($userId) {
 */
 function getAge($userId){
 	$birthday = get_user_meta( $userId, 'birthday', true );
-	if(empty($birthday)) return false;
+	if(empty($birthday)){
+		return false;
+	}
 
 	$birthDate = explode("-", $birthday);
 	if (date("md", date("U", mktime(0, 0, 0, $birthDate[1], $birthDate[2], $birthDate[0]))) > date("md")){
@@ -648,11 +646,15 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 function addToNestedArray($keys, &$array=array(), $value=null) {
 	//$temp point to the same content as $array
 	$temp =& $array;
-	if(!is_array($temp)) $temp = [];
+	if(!is_array($temp)){
+		$temp = [];
+	}
 	
 	//loop over all the keys
 	foreach($keys as $key) {
-		if(!isset($temp[$key]))	$temp[$key]	= [];
+		if(!isset($temp[$key])){
+			$temp[$key]	= [];
+		}
 		//$temp points now to $array[$key]
 		$temp =& $temp[$key];
 	}
@@ -669,7 +671,9 @@ function addToNestedArray($keys, &$array=array(), $value=null) {
  * @return array						The array
 */
 function removeFromNestedArray(&$array, $arrayKeys){
-	if(!is_array($array)) return $array;
+	if(!is_array($array)){
+		return $array;
+	}
 
 	$last 		= array_key_last($arrayKeys);
 	$current 	=& $array;
@@ -693,7 +697,7 @@ function cleanUpNestedArray(&$array, $delEmptyArrays=false){
 	foreach ($array as $key => $value){
         if(is_array($value)){
             cleanUpNestedArray($value);
-			if(empty($value) and $delEmptyArrays){
+			if(empty($value) && $delEmptyArrays){
 				unset($array[$key]);
 			}else{
 				$array[$key] = $value;
@@ -810,7 +814,9 @@ function addToLibrary($targetFile, $title='', $description=''){
 	}catch(\Exception $e) {
 		$errorResult = $e->getMessage();
 		printArray($errorResult);
-		if(isset($postId)) return $postId;
+		if(isset($postId)){
+			return $postId;
+		}
 		return new WP_Error('library', $errorResult);
 	}
 }
@@ -822,7 +828,9 @@ function addToLibrary($targetFile, $title='', $description=''){
 function processImages($post){
 	include_once( ABSPATH . 'wp-admin/includes/image.php' );
 
-	if(is_numeric($post)) $post	= get_post($post);
+	if(is_numeric($post)){
+		$post	= get_post($post);
+	}
 	wp_maybe_generate_attachment_metadata($post);
 }
  
@@ -882,7 +890,7 @@ function pictureSelector($key, $name, $settings){
 	?>
 	<div class='picture_selector_wrapper'>
 		<div class='image-preview-wrapper <?php echo $hidden;?>'>
-			<img class='image-preview' src='<?php echo $src;?>'>
+			<img class='image-preview' src='<?php echo $src;?>' alt=''>
 		</div>
 		<input type="button" class="button select_image_button" value="<?php echo $text;?> picture for <?php echo strtolower($name);?>" />
 		<input type='hidden' class="image_attachment_id" name='picture_ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
@@ -916,11 +924,11 @@ function removeFiles($target){
  * @return	bool						Whether a date or not
 */
 function isDate($date){
-	if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date)) {
+	if (preg_match("/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])$/",$date)) {
 		return true;
-	} else {
-		return false;
 	}
+		
+	return false;
 }
 
 /**
@@ -930,11 +938,10 @@ function isDate($date){
  * @return	bool						Whether a time or not
 */
 function isTime($time){
-	if (preg_match("/^[0-9]{2}:[0-9]{2}$/",$time)) {
+	if (preg_match("/^\d{2}:\d{2}$/",$time)) {
 		return true;
-	} else {
-		return false;
 	}
+	return false;
 }
 
 // check if a given useraccount is not already used
@@ -1038,19 +1045,19 @@ function getUserPageUrl($userId){
 	//Get the user page of this user
 	$userPageId = getUserPageId($userId);
 	
-	if(!is_numeric($userPageId) or get_post_status($userPageId ) != 'publish'){
+	if(!is_numeric($userPageId) || get_post_status($userPageId ) != 'publish'){
         if(function_exists('SIM\USERPAGE\createUserPage')){
 			$userPageId = USERPAGE\createUserPage($userId);
 		}
 
-        if(!$userPageId) return false;
+        if(!$userPageId){
+			return false;
+		}
     }
 
-    $url				= get_permalink($userPageId);
-    $urlWithoutHttps	= str_replace('https://', '', $url);
-    
-    //return the url
-    return $urlWithoutHttps;
+    $url	= get_permalink($userPageId);
+    return str_replace('https://', '', $url);
+
 }
 
 /**
@@ -1069,9 +1076,13 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 	if($famillyPicture){
 		$family			= get_user_meta($userId, 'family', true);
 
-		if(isset($family['picture']) and is_numeric($family['picture']))	$attachmentId	= $family['picture'];
+		if(isset($family['picture']) && is_numeric($family['picture'])){
+			$attachmentId	= $family['picture'];
+		}
 	}
-	if(!empty($attachmentId) and is_array($attachmentId)) $attachmentId	= $attachmentId[0];
+	if(!empty($attachmentId) && is_array($attachmentId)){
+		$attachmentId	= $attachmentId[0];
+	}
 
 	if(is_numeric($attachmentId)){
 		$url = wp_get_attachment_image_url($attachmentId,'Full size');
@@ -1091,14 +1102,20 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
  * @return	string|false					The url or false if no valid page
 */
 function getValidPageLink($postId){
-	if(!is_numeric($postId)) return false;
+	if(!is_numeric($postId)){
+		return false;
+	}
 
-	if(get_post_status($postId) != 'publish') return false;
+	if(get_post_status($postId) != 'publish'){
+		return false;
+	}
 
 	$link      = get_page_link($postId);
 
 	//Only redirect if we are not currently on the page already
-	if(strpos(currentUrl(), $link) !== false) return false;
+	if(strpos(currentUrl(), $link) !== false){
+		return false;
+	}
 
 	return $link;
 }
@@ -1139,7 +1156,7 @@ function readTextFile($path){
 			'/<([^>]*)>([^<]*)<\/(\w+)>\s*<(\3[^>]*)>/m', 
 			function($matches){
 				//If the opening tag is exactly like the next opening tag, remove the the duplicate
-				if($matches[1] == $matches[4] and ($matches[3] == 'span' or $matches[3] == 'strong' or $matches[3] == 'b')){
+				if($matches[1] == $matches[4] && ($matches[3] == 'span' || $matches[3] == 'strong' || $matches[3] == 'b')){
 					return $matches[2];
 				}else{
 					return $matches[0];

@@ -3,7 +3,9 @@ namespace SIM\PDF;
 use SIM;
 
 //only load this if the pdf print is enabled
-if(!SIM\getModuleOption('PDF', 'pdf_print')) return;
+if(!SIM\getModuleOption(MODULE_SLUG, 'pdf_print')){
+    return;
+}
 
 /**
  * Create a pdf of a post 
@@ -12,7 +14,7 @@ if(!SIM\getModuleOption('PDF', 'pdf_print')) return;
 function createPagePdf(){
 	global $post;
 	
-	$pdf = new PDF_HTML();
+	$pdf = new PdfHtml();
 	$pdf->SetFont('Arial', 'B', 15);
 	
 	$pdf->skipFirstPage = false;
@@ -31,12 +33,16 @@ function createPagePdf(){
 // Add print to PDF button
 add_filter( 'the_content', function ( $content ) {
     //Print to screen if the button is clicked
-    if( isset($_POST['print_as_pdf']))	createPagePdf();
+    if( isset($_POST['print_as_pdf'])){
+        createPagePdf();
+    }
 
-    if(!is_main_query())    return $content;
+    if(!is_main_query()){
+        return $content;
+    }
     
     //pdf button
-    if(!empty(get_post_meta(get_the_ID(), 'add_print_button',true))){
+    if(!empty(get_post_meta(get_the_ID(), 'add_print_button', true))){
         $content .= "<div class='print_as_pdf_div' style='float:right;'>";
             $content .= "<form method='post' id='print_as_pdf_form'>";
                 $content .= "<button type='submit' class='button' name='print_as_pdf'>Print this page</button>";
@@ -53,7 +59,7 @@ add_action('sim_page_specific_fields', function($postId){
 	<div id="add_print_button_div" class="frontendform">
         <h4>PDF button</h4>	
         <label>
-            <input type='checkbox'  name='add_print_button' value='add_print_button' <?php if(get_post_meta($postId, 'add_print_button', true) != '') echo 'checked';?>>
+            <input type='checkbox'  name='add_print_button' value='add_print_button' <?php if(!empty(get_post_meta($postId, 'add_print_button', true))){echo 'checked';}?>>
             Add a 'Save as PDF' button
         </label>
     </div>

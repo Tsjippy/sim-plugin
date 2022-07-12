@@ -92,8 +92,8 @@ function locationAddress($postId){
             $name = get_term( $categories[0], 'locations' )->slug.'_icon';
             
             //If there is a location category set and an custom icon for this category is set
-            if(!empty($categories) && !empty(SIM\getModuleOption('locations', $name))){
-                $iconId = SIM\getModuleOption('locations', $name);
+            if(!empty($categories) && !empty(SIM\getModuleOption(MODULE_SLUG, $name))){
+                $iconId = SIM\getModuleOption(MODULE_SLUG, $name);
             }else{
                 $iconId = 1;
             }
@@ -122,7 +122,7 @@ function locationAddress($postId){
             
             //Marker does not exist, create it
             if(!isset($markerIds['generic'])){			
-                $mapId	=  SIM\getModuleOption('locations', 'directions_map_id');		
+                $mapId	=  SIM\getModuleOption(MODULE_SLUG, 'directions_map_id');		
                 //First create the marker on the generic map
                 $wpdb->insert($wpdb->prefix . 'ums_markers', array(
                     'title' 		=> $title,
@@ -214,9 +214,9 @@ function locationAddress($postId){
                 if(in_array($locationType->cat_ID, $categories)){
                     $name 				= $locationType->slug;
                     $mapName			= $name."_map";
-                    $mapId				= SIM\getModuleOption('locations', $mapName);
+                    $mapId				= SIM\getModuleOption(MODULE_SLUG, $mapName);
                     $iconName			= $name."_icon";
-                    $iconId			    = SIM\getModuleOption('locations', $iconName);
+                    $iconId			    = SIM\getModuleOption(MODULE_SLUG, $iconName);
                     
                     //Checking if this marker exists
                     if(is_numeric($markerIds[$name])){

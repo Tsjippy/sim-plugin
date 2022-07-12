@@ -39,8 +39,30 @@ define('PICTURESPATH', INCLUDESPATH.'pictures');
 //load all libraries
 require( __DIR__  . '/includes/lib/vendor/autoload.php');
 
-$Modules		= get_option('sim_modules', []);
+spl_autoload_register(function ($classname) {
+    $path       = explode('\\', $classname);
 
+    if($path[0] != 'SIM' || !isset($path[1])){
+        return;
+    }
+
+    $module     = strtolower($path[1]);
+    $fileName   = $path[2];
+
+    $modulePath = __DIR__."/includes/modules/$module/php";
+    
+	$classFile	= "$modulePath/classes/$fileName.php";
+    $traitFile	= "$modulePath/traits/$fileName.php";
+	if(file_exists($classFile)){
+		require_once($classFile);
+	}elseif(file_exists($traitFile)){
+		require_once($traitFile);
+	}else{
+        SIM\printArray($classFile.' not found');
+    }
+});
+
+$Modules		= get_option('sim_modules', []);
 //Load all main files
 $files = glob(__DIR__  . '/includes/php/*.php');
 $files = array_merge($files, glob(__DIR__  . '/includes/admin/php/*.php'));
