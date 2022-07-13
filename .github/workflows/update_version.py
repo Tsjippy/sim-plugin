@@ -47,6 +47,8 @@ changelog   = changelog.replace(total, newTotal)
 newSection  = "## [Unreleased] - yyyy-mm-dd\n\n### Added\n\n### Changed\n\n### Fixed\n\n## [" + newVersion + "] - " + datetime.datetime.now().strftime("%Y-%m-%d")+"\n"
 changelog    = changelog.replace('## [Unreleased] - yyyy-mm-dd', newSection)
 
+print("Writing new changelog")
+print(changelog)
 # Write changes
 f = open(file, "w")
 f.write(changelog)
