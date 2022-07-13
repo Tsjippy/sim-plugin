@@ -2,13 +2,16 @@ import re
 import sys
 from pathlib import Path
 
+def failure():
+    print("ERROR: \nYou should start your commit message with either 'ADDED: ', 'CHANGED: ' or 'FIXED: '")
+    exit(1)
+
 file    = 'CHANGELOG.md'
 newLine = sys.argv[1]
 lines   = newLine.split(': ', 1)
 type    = lines[0].lower()
 if(len(lines) == 1):
-    print("ERROR: \nYou should start your commit message with either 'ADDED: ', 'CHANGED: ' or 'FIXED: '")
-    exit(0)
+    failure()
 text    = lines[1]
 
 # load plugin file
@@ -28,8 +31,7 @@ elif(type == 'fixed'):
     newFixed    = fixed + "\n- " + text
     newTotal    = total.replace(fixed, newFixed)
 else:
-    print("ERROR: \nYou should start your commit message with either 'ADDED: ', 'CHANGED: ' or 'FIXED: '")
-    exit(1)
+    failure()
 
 print(text)
 changelog = changelog.replace(total, newTotal)
