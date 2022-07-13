@@ -17,6 +17,8 @@ jobs:
         - name: Update wp plugin version
           uses: test-room-7/action-update-file@v1
           with:
-              file-path: sim-plugin.php
+              file-path: |
+                sim-plugin.php
+                CHANGELOG.md
               commit-msg: Update wp plugin version
               github-token: ${{ secrets.GITHUB_TOKEN }}

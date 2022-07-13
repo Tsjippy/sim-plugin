@@ -27,16 +27,19 @@ changelog = Path(file).read_text()
 
 # Get the whole unrelease section
 total       = re.search(r'## \[Unreleased\] - yyyy-mm-dd([\s\S]*?)## \[', changelog).group(1)
-newTotal    = total.rstrip("\n")
+newTotal    = total
 
 # Remove emty sections
 for x in ["Added", "Changed", "Fixed"]:
-    pattern = r'(### '+x+'[\s\S]*?)'
+    pattern = r'(### '+x+'[\s\S]*'
 
     if(x != 'Fixed'):
-        pattern = pattern+'###'
+        pattern = pattern+'?)###'
+    else:
+        pattern = pattern+')'
 
     added   = re.search(pattern, total).group(1)
+
     if(added.rstrip("\n") == '### '+x):
         newTotal    = newTotal.replace(added, '')
 
@@ -50,6 +53,6 @@ changelog    = changelog.replace('## [Unreleased] - yyyy-mm-dd', newSection)
 print("Writing new changelog")
 print(changelog)
 # Write changes
-f = open(file, "w")
+""" f = open(file, "w")
 f.write(changelog)
-f.close()
+f.close() """
