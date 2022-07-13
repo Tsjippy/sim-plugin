@@ -1,4 +1,3 @@
-from hashlib import new
 import re
 import sys
 from pathlib import Path
@@ -8,10 +7,10 @@ import datetime
 txt = Path('sim-plugin.php').read_text()
 newVersion  = sys.argv[1]
 
-#get old version
+# get old version
 oldVersion = re.search(r'\* Version:[ \t]*([\d.]+)', txt).group(1)
 
-# replcae with new
+# replace with new
 txt = txt.replace(oldVersion, newVersion)
 
 # Write changes
@@ -26,11 +25,27 @@ file    = 'CHANGELOG.md'
 # load plugin file
 changelog = Path(file).read_text()
 
-unreleased   = re.search(r'(## \[Unreleased\] - yyyy-mm-dd)', changelog).group(1)
+# Get the whole unrelease section
+total       = re.search(r'## \[Unreleased\] - yyyy-mm-dd([\s\S]*?)## \[', changelog).group(1)
+newTotal    = total.rstrip("\n")
 
-new            = "## [Unreleased] - yyyy-mm-dd\n\n### Added\n\n### Changed\n\n### Fixed\n\n## [" + newVersion + "] - " + datetime.datetime.now().strftime("%Y-%m-%d")
+# Remove emty sections
+for x in ["Added", "Changed", "Fixed"]:
+    pattern = r'(### '+x+'[\s\S]*?)'
 
-changelog = changelog.replace(unreleased, new)
+    if(x != 'Fixed'):
+        pattern = pattern+'###'
+
+    added   = re.search(pattern, total).group(1)
+    if(added.rstrip("\n") == '### '+x):
+        newTotal    = newTotal.replace(added, '')
+
+# Update in changelog
+changelog   = changelog.replace(total, newTotal)
+
+# Add new unreleased section
+newSection  = "## [Unreleased] - yyyy-mm-dd\n\n### Added\n\n### Changed\n\n### Fixed\n\n## [" + newVersion + "] - " + datetime.datetime.now().strftime("%Y-%m-%d")+"\n"
+changelog    = changelog.replace('## [Unreleased] - yyyy-mm-dd', newSection)
 
 # Write changes
 f = open(file, "w")
