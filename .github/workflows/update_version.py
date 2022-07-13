@@ -53,6 +53,6 @@ changelog    = changelog.replace('## [Unreleased] - yyyy-mm-dd', newSection)
 print("Writing new changelog")
 print(changelog)
 # Write changes
-""" f = open(file, "w")
+f = open(file, "w")
 f.write(changelog)
-f.close() """
+f.close()
