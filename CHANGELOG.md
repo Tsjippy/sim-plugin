@@ -12,6 +12,7 @@
 ### Fixed
 - better error handling
 - changelog script for releases
+- class loader on Linux systems
 
 ## [2.0.0] - 2022-06-21
 
