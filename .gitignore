@@ -2,3 +2,4 @@ dynamic/
 node_modules/
 **/package-lock.json
 SignalBot.py
+signalbot.db
