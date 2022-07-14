@@ -19,7 +19,9 @@ function displayRoles($userId){
 	$userRoles	= $wp_roles->role_names;
 	
 	//Remove these roles from the roles array
-	if(!in_array('administrator', (array)$roles)) 	unset($userRoles['administrator']);
+	if(!in_array('administrator', (array)$roles)){
+		unset($userRoles['administrator']);
+	}
 	
 	//Sort the roles
 	asort($userRoles);
@@ -59,33 +61,35 @@ function displayRoles($userId){
 				If you want to disable a user go to the login info tab.
 			</p>
 			<?php
-		foreach($userRoles as $key=>$roleName){
-			$checked = '';
-			if(in_array($key,(array)$roles))	$checked = 'checked';
-			?>
-			<label> 
-				<input type='checkbox' name='roles[<?php echo $key;?>]' value='<?php echo $roleName;?>' <?php echo $checked;?>>
-				<?php 
-				echo $roleName;
+			foreach($userRoles as $key=>$roleName){
+				$checked = '';
+				if(in_array($key,(array)$roles)){
+					$checked = 'checked';
+				}
 				?>
-			<div class="infobox">
-				<div class="info-icon-wrapper">
-					<p class="info_icon">
-						<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL;?>/info.png">
-					</p>
-				</div>
-				<span class="info_text">
-					<?php
-					echo $roleName.' - <i>'.apply_filters('sim_role_description', '', $key).'</i>';
+				<label> 
+					<input type='checkbox' name='roles[<?php echo $key;?>]' value='<?php echo $roleName;?>' <?php echo $checked;?>>
+					<?php 
+					echo $roleName;
 					?>
-				</span>
-			</div>
-			</label>
-			<br>
-			<?php
-		}
+					<div class="infobox">
+						<div class="info-icon-wrapper">
+							<p class="info_icon">
+								<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL;?>/info.png">
+							</p>
+						</div>
+						<span class="info_text">
+							<?php
+							echo $roleName.' - <i>'.apply_filters('sim_role_description', '', $key).'</i>';
+							?>
+						</span>
+					</div>
+				</label>
+				<br>
+				<?php
+			}
 		
-		echo SIM\addSaveButton('updateroles','Update roles');
+			echo SIM\addSaveButton('updateroles','Update roles');
 	
 		?>
 		</form>

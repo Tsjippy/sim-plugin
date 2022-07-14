@@ -1,8 +1,6 @@
-var re			= '';
-
 async function saveFormInput(target){
-	var form		= target.closest('form');
-	var response	= await FormSubmit.submitForm(target, 'forms/save_form_input');
+	let form		= target.closest('form');
+	let response	= await FormSubmit.submitForm(target, 'forms/save_form_input');
 
 	if(response){
 		target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
@@ -21,7 +19,7 @@ export function removeDefaultSelect(el){
 	});
 }
 
-var tinymceSettings = [];
+let tinymceSettings = [];
 function prepareForCloning(originalNode){
 	//First remove any nice selects
 	originalNode.querySelectorAll('select').forEach(select => {
@@ -45,7 +43,7 @@ function prepareForCloning(originalNode){
 	//also remove any tinymce's
 	if(typeof(tinymce) != 'undefined'){
 		originalNode.querySelectorAll('.wp-editor-area').forEach(el =>{
-			var tn = tinymce.get(el.id);
+			let tn = tinymce.get(el.id);
 			if(tn != null){
 				tinymceSettings[el.id] = tn.settings
 				tn.save();
@@ -59,7 +57,7 @@ export function cloneNode(originalNode, clear=true){
 	prepareForCloning(originalNode);
 	
 	//make a clone
-	var newNode = originalNode.cloneNode(true);
+	let newNode = originalNode.cloneNode(true);
 	
 	//Then add niceselects again after cloning took place
 	originalNode.querySelectorAll('select').forEach(select => {
@@ -102,7 +100,7 @@ export function cloneNode(originalNode, clear=true){
 }
 
 export function copyFormInput(originalNode){
-	var newNode = cloneNode(originalNode);
+	let newNode = cloneNode(originalNode);
 	
 	//update the data index
 	newNode.querySelectorAll('.upload-files').forEach(function(uploadButton){
@@ -115,10 +113,10 @@ export function copyFormInput(originalNode){
 	});
 
 	//Select
-	var i = 0;
+	let i = 0;
 	newNode.querySelectorAll('select').forEach(select => {
 		//Find the value of the select we have cloned
-		var previousVal = originalNode.getElementsByTagName('select')[i].selectedIndex;
+		let previousVal = originalNode.getElementsByTagName('select')[i].selectedIndex;
 		
 		//Hide the value in the clone
 		select.options[previousVal].style.display = 'none';
@@ -133,12 +131,12 @@ export function copyFormInput(originalNode){
 	
 	//Add remove buttons if they are not there
 	if(originalNode.querySelector('.remove') == null){
- 		var addElement 		= newNode.querySelector('.add');
-		var elementClass 	= addElement.className.replace('add','remove');
-		var id 				= addElement.id.replace('add','remove');
-		var content 		= addElement.textContent.replace('Add','Remove this').replace('an','').replace('+','-');
+ 		let addElement 		= newNode.querySelector('.add');
+		let elementClass 	= addElement.className.replace('add','remove');
+		let id 				= addElement.id.replace('add','remove');
+		let content 		= addElement.textContent.replace('Add','Remove this').replace('an','').replace('+','-');
 		
-		var html = `<button type="button" class="${elementClass}" id="${id}" style="flex: 1;">${content}</button>`;
+		let html = `<button type="button" class="${elementClass}" id="${id}" style="flex: 1;">${content}</button>`;
 		
 		//Add minus button to the first div
 		originalNode.querySelector('.buttonwrapper').insertAdjacentHTML('beforeend', html);
@@ -196,18 +194,18 @@ export function fixNumbering(cloneDivsWrapper){
 	})
 }
 
-function removeNode(target){
-	var node			= target.closest(".clone_div");
-	var parentNode		= node.closest('.clone_divs_wrapper');
-	var allCloneDivs	= parentNode.querySelectorAll('.clone_div');
+export function removeNode(target){
+	let node			= target.closest(".clone_div");
+	let parentNode		= node.closest('.clone_divs_wrapper');
+	let allCloneDivs	= parentNode.querySelectorAll('.clone_div');
 	
 	//Check if we are removing the last element
 	if(allCloneDivs[allCloneDivs.length-1] == node){
-		var addElement = node.querySelector(".add");
+		let addElement = node.querySelector(".add");
 		
 		//Move the add button one up
-		var prev = node.previousElementSibling;
-		prev.querySelector('div').appendChild(addElement);
+		let prev = node.previousElementSibling;
+		prev.querySelector('.buttonwrapper').appendChild(addElement);
 	}
 	
 	//Remove the node
@@ -215,7 +213,7 @@ function removeNode(target){
 
 	//If there is only one div remaining, remove the remove button
 	if(parentNode.querySelectorAll('.clone_div').length == 1){
-		var removeElement = parentNode.querySelector('.remove');
+		let removeElement = parentNode.querySelector('.remove');
 		removeElement.remove();
 	}
 
@@ -228,7 +226,7 @@ function removeNode(target){
 export function tidyMultiInputs(){
 	//remove unnecessary buttons on inputs with multiple values
 	document.querySelectorAll('.clone_divs_wrapper').forEach(function(div){
-		var cloneDivArr	= div.querySelectorAll('.clone_div');
+		let cloneDivArr	= div.querySelectorAll('.clone_div');
 		
 		if(cloneDivArr.length == 1){
 			cloneDivArr[0].querySelectorAll('.remove').forEach(el=>el.remove());
@@ -250,7 +248,7 @@ export function tidyMultiInputs(){
 export function showTab(n, form) {
 	if(typeof(form) != 'undefined'){
 		if(n == 0){
-			var loader = form.querySelector('.formsteploader');
+			let loader = form.querySelector('.formsteploader');
 			//hide loader
 			if(loader != null){
 				loader.classList.add('hidden');
@@ -264,14 +262,14 @@ export function showTab(n, form) {
 		form.querySelectorAll('.formstep:not(.stephidden)').forEach(step=>step.classList.add('stephidden'));
 		
 		// Show the specified formstep of the form ...
-		var x = form.getElementsByClassName("formstep");
+		let x = form.getElementsByClassName("formstep");
 		
 		if(x.length == 0){
 			return;
 		}
 		
 		//scroll back to top
-		var y = x[n].offsetTop - document.querySelector("#masthead").offsetHeight
+		let y = x[n].offsetTop - document.querySelector("#masthead").offsetHeight
 		window.scrollTo({ top: y, behavior: 'auto'});
 		
 		//show
@@ -307,10 +305,10 @@ export function showTab(n, form) {
 //next form step clicked
 export function nextPrev(n) {
 	// This function will figure out which tab to display
-	var x 				= form.querySelectorAll(".formstep");
-	var stepIndicators	= form.querySelectorAll(".step");
-	var currentTab		= 0;
-	var valid;
+	let x 				= form.querySelectorAll(".formstep");
+	let stepIndicators	= form.querySelectorAll(".step");
+	let currentTab		= 0;
+	let valid;
 
 	// Find the current active tab
 	x.forEach((el, index)=>{if(!el.matches('.stephidden')){currentTab = index}});
@@ -318,7 +316,7 @@ export function nextPrev(n) {
 	//Check validity of this step if going forward
 	if(n>0){
 		// Report validity of each required field
-		var elements	= x[currentTab].querySelectorAll('.required:not(.hidden) input, .required:not(.hidden) textarea, .required:not(.hidden) select');
+		let elements	= x[currentTab].querySelectorAll('.required:not(.hidden) input, .required:not(.hidden) textarea, .required:not(.hidden) select');
 		for(const element of elements) {
 			element.required		= true;
 			valid		= element.reportValidity();
@@ -362,7 +360,7 @@ export function nextPrev(n) {
 }
 
 function getRadioValue(form, name){
-	var el	= form.querySelector(`[name='${name}' i]:checked`);
+	let el	= form.querySelector(`[name='${name}' i]:checked`);
 
 	//There is no radio selected currently
 	if(el == null){
@@ -374,8 +372,8 @@ function getRadioValue(form, name){
 }
 
 function getCheckboxValue(form, name, compareValue, orgName){
-	var value		= '';
-	var elements	= '';
+	let value		= '';
+	let elements	= '';
 
 	//we are dealing with a specific checkbox
 	if(orgName.type == 'checkbox' ){
@@ -408,8 +406,8 @@ function getCheckboxValue(form, name, compareValue, orgName){
 }
 
 function getDataListValue(el){
-	var value		= '';
-	var origInput 	= el.list.querySelector("[value='"+el.value+"' i]");
+	let value		= '';
+	let origInput 	= el.list.querySelector("[value='"+el.value+"' i]");
 			
 	if(origInput == null){
 		value =  el.value;
@@ -424,9 +422,9 @@ function getDataListValue(el){
 }
 
 export function getFieldValue(orgName, form, checkDatalist=true, compareValue=null, lowercase=false){
-	var el		= ''; 
-	var name	= '';
-	var value 	= '';
+	let el		= ''; 
+	let name	= '';
+	let value 	= '';
 
 	//name is not a name but a node
 	if(orgName instanceof Element){
@@ -471,7 +469,7 @@ export function getFieldValue(orgName, form, checkDatalist=true, compareValue=nu
 }
 
 function findcheckboxTarget(form, name, value){
-	var targets = form.querySelectorAll(`[name="${name}" i]`);
+	let targets = form.querySelectorAll(`[name="${name}" i]`);
 	for (const element of targets) {
 		if(element.value.toLowerCase() == value.toLowerCase()){
 			return element;
@@ -480,8 +478,8 @@ function findcheckboxTarget(form, name, value){
 }
 
 export function changeFieldValue(orgName, value, functionRef){
-	var name	= '';
-	var target	= '';
+	let name	= '';
+	let target	= '';
 
 	if(orgName instanceof Element){
 		name	= orgName.name;
@@ -502,7 +500,7 @@ export function changeFieldValue(orgName, value, functionRef){
 		}
 	//the target has a list attached to it
 	}else if(target.list != null){
-		var dataListOption = target.list.querySelector(`[data-value="${value}" i]`);
+		let dataListOption = target.list.querySelector(`[data-value="${value}" i]`);
 
 		//we found a match
 		if(dataListOption != null){
@@ -515,7 +513,7 @@ export function changeFieldValue(orgName, value, functionRef){
 	}
 	
 	//create a new event
-	var evt = new Event('input');
+	let evt = new Event('input');
 	//attach the target
 	target.dispatchEvent(evt);
 	
@@ -525,12 +523,12 @@ export function changeFieldValue(orgName, value, functionRef){
 
 export function changeFieldProperty(name, att, value, functionRef){
 	//first change the value
-	var target = form.querySelector(`[name="${name}" i]`);
+	let target = form.querySelector(`[name="${name}" i]`);
 	
 	form.querySelector(`[name="${name}"]`)[att] = value;
 	
 	//create a new event
-	var evt = new Event('input');
+	let evt = new Event('input');
 
 	//attach the target
 	target.dispatchEvent(evt);
@@ -564,11 +562,11 @@ window.addEventListener('offline',function(){
 });
 
 document.addEventListener('click',function(event) {
-	var target = event.target;
+	let target = event.target;
 	
 	//add element
 	if(target.matches('.add')){
-		var newNode = copyFormInput(target.closest(".clone_div"));
+		let newNode = copyFormInput(target.closest(".clone_div"));
 
 		fixNumbering(target.closest('.clone_divs_wrapper'));
 

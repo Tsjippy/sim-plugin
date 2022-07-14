@@ -10,10 +10,10 @@ add_action(  'transition_post_status',  function( $newStatus, $oldStatus, $post 
 			//Get the nonce from the post array
 			$nonce = $_POST['signal_message_meta_box_nonce'];
 			// Verify that the nonce is valid and checkbox to send is checked.
-			if (wp_verify_nonce( $nonce, 'signal_message_meta_box') and isset($_POST['signal_message'])) {
+			if (wp_verify_nonce( $nonce, 'signal_message_meta_box') && isset($_POST['signal_message'])) {
 				sendPostNotification($post);
 			}
-		}elseif($oldStatus != 'publish' and $oldStatus != 'new'){
+		}elseif($oldStatus != 'publish' && $oldStatus != 'new'){
 			sendPostNotification($post);
 		}
 	}
@@ -31,7 +31,9 @@ function sendPostNotification($post){
 		$post = get_post($post);
 	}
 
-	if(empty(get_post_meta($post->ID, 'signal','checked'))) return;
+	if(empty(get_post_meta($post->ID, 'signal', 'checked'))){
+		return;
+	}
 
     $signalMessageType	= get_post_meta($post->ID, 'signalmessagetype', true);
 	$signalUrl			= get_post_meta($post->ID, 'signal_url', true);
@@ -74,30 +76,29 @@ function sendPostNotification($post){
 		$message .=	"\n\n$signalExtraMessage";
 	}
 
-	sendSignalMessage(
-		$message,
-		"all",
-		$post->ID
-	);
+	$recipients		= SIM\getModuleOption(MODULE_SLUG, 'groups');
+
+	foreach($recipients as $recipient){
+		sendSignalMessage($message, $recipient, $post->ID);
+	}
 }
 
-function sendSignalMessage($message, $recipient, $post_id=""){
+function sendSignalMessage($message, $recipient, $postId=""){
 	//remove https from site urldecode
-	$urlWithoutHttps = str_replace('https://', '', SITEURL);
-	
-	$message = str_replace(SITEURL, $urlWithoutHttps, $message);
+	$urlWithoutHttps	= str_replace('https://', '', SITEURL);
+	$message			= str_replace(SITEURL, $urlWithoutHttps, $message);
 	
 	//Check if recipient is an existing userid
-	if(is_numeric($recipient) and get_userdata($recipient)){
+	if(is_numeric($recipient) && get_userdata($recipient)){
 		$phonenumbers = get_user_meta( $recipient, 'phonenumbers', true );
 		
 		//If this user has more than 1 phone number add them all
-		if(is_array($phonenumbers) and count($phonenumbers) == 1){
+		if(is_array($phonenumbers) && count($phonenumbers) == 1){
 			//Store the first and only phonenumber as recipient
 			$recipient = array_values($phonenumbers)[0];
-		}elseif(is_array($phonenumbers) and count($phonenumbers) > 1){
+		}elseif(is_array($phonenumbers) && count($phonenumbers) > 1){
 			foreach($phonenumbers as $phonenumber){
-				sendSignalMessage($message, $phonenumber, $post_id);
+				sendSignalMessage($message, $phonenumber, $postId);
 			}
 			return;
 		}else{
@@ -107,21 +108,26 @@ function sendSignalMessage($message, $recipient, $post_id=""){
 	
 	$notifications = get_option('signal_bot_messages');
 	//Notifications should be an array of recipients
-	if(!is_array($notifications)) $notifications = [];
+	if(!is_array($notifications)){
+		$notifications = [];
+	}
 
 	//The recipient should be an array of messages
-	if(!isset($notifications[$recipient]) or !is_array($notifications[$recipient])) $notifications[$recipient]=[];
-	
-	if(is_numeric($post_id) and has_post_thumbnail($post_id)){
-		$image = base64_encode(file_get_contents(get_attached_file(get_post_thumbnail_id($post_id))));
-	}else{
-		$image = "";
+	if(!isset($notifications[$recipient]) || !is_array($notifications[$recipient])){
+		$notifications[$recipient]	= [];
 	}
+	
+	$image = "";
+	if(is_numeric($postId) && has_post_thumbnail($postId)){
+		$image = base64_encode(file_get_contents(get_attached_file(get_post_thumbnail_id($postId))));
+	}
+
 	$notifications[$recipient][] = [
 		$message,
 		$image
 	];
-	update_option('signal_bot_messages',$notifications);
+	
+	update_option('signal_bot_messages', $notifications);
 }
 
 //Function to add a checkbox for signal messages to a post
@@ -138,7 +144,7 @@ function sendSignalMessageMetaBox() {
 	wp_nonce_field( 'signal_message_meta_box', 'signal_message_meta_box_nonce' );
 	
 	//Check the box by default for posts
-	if($post->post_type == 'post' and $post->post_status != 'publish'){
+	if($post->post_type == 'post' && $post->post_status != 'publish'){
 		$checked = "checked";
 	}else{
 		$checked = "";

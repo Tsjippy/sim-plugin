@@ -218,7 +218,6 @@ function expiryWarnings(){
 add_shortcode("user-info", __NAMESPACE__.'\user_info_page');
 function user_info_page($atts){
 	if(is_user_logged_in()){
-
 		wp_enqueue_style('sim_forms_style');
 		
 		$a = shortcode_atts( array(
@@ -230,7 +229,7 @@ function user_info_page($atts){
 		
 		//Variables
 		$medicalRoles		= ["medicalinfo"];
-		$genericInfoRoles 	= array_merge(['usermanagement'],$medicalRoles,['administrator']);
+		$genericInfoRoles 	= array_merge(['usermanagement'], $medicalRoles,['administrator']);
 		$user 				= wp_get_current_user();
 		$userRoles 			= $user->roles;
 		$tabs				= [];
@@ -248,7 +247,11 @@ function user_info_page($atts){
 			if(array_intersect($userSelectRoles, $userRoles )){
 				$userId = $a['id'];
 				
-				if(isset($_GET["userid"]) && get_userdata($_GET["userid"])){
+				if(isset($_GET["userid"])){
+					$user	= get_userdata($_GET["userid"]);
+				}
+
+				if($user){
 					$userId = $_GET["userid"];
 				}else{
 					echo SIM\userSelect("Select an user to show the data of:", false, false, '', 'user_selection', [], '', []);

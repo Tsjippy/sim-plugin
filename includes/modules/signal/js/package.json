@@ -1,0 +1,16 @@
+{
+  "name": "signal",
+  "version": "1.0.0",
+  "description": "signal",
+  "main": "./signal.js",
+  "scripts": {
+    "signal": "webpack --watch --entry ./signal.js --output-path . --output-filename signal.min.js --progress --mode=production --devtool source-map",
+    "admin": "webpack --watch --entry ./admin.js --output-path . --output-filename admin.min.js --progress --mode=production --devtool source-map"
+  },
+  "author": "Ewald Harmsen",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  }
+}

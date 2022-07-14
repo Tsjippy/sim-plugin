@@ -35,6 +35,12 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		return $optionsHtml;
 	}
 
+	if(empty($settings['groups'])){
+		$groups	= [''];
+	}else{
+		$groups	= $settings['groups'];
+	}
+
 	ob_start();
 	
 	?>
@@ -42,6 +48,34 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		Link to join the Signal group
 		<input type='url' name='group_link' value='<?php echo $settings["group_link"]; ?>' style='width:100%'>
 	</label>
+
+	<div class="">
+		<h4>Give optional Signal group name(s) to send new content messages to:</h4>
+		<div class="clone_divs_wrapper">
+			<?php			
+			foreach($groups as $index=>$group){
+				?>
+				<div class="clone_div" data-divid="<?php echo $index;?>">
+					<label>
+						<h4 style='margin: 0px;'>Signal groupname <?php echo $index+1;?></h4>
+						<input type='text' name="groups[<?php echo $index;?>]" value='<?php echo $group;?>'>
+					</label>
+					<span class='buttonwrapper' style='margin:auto;'>
+						<button type="button" class="add button" style="flex: 1;">+</button>
+						<?php
+						if(count($groups)> 1){
+							?>
+							<button type="button" class="remove button" style="flex: 1;">-</button>
+							<?php
+						}
+						?>
+					</span>
+				</div>
+				<?php
+			}
+			?>
+		</div>
+	</div>
 	<?php
 
 	return ob_get_clean();

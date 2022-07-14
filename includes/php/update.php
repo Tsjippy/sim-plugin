@@ -75,7 +75,7 @@ function checkForUpdate( $updatePlugins ) {
 	}
 
 	$pluginVersion  = '';
-	$pluginFile     = PLUGINNAME.'/'.PLUGINNAME.'.php';
+	$pluginFile     = 'sim-plugin/sim-plugin.php';
 	if(isset($updatePlugins->checked) && isset($updatePlugins->checked[$pluginFile])){
 		$pluginVersion  = $updatePlugins->checked[$pluginFile];
 	}

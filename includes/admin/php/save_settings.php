@@ -8,6 +8,10 @@ use SIM;
  * @param   string  $content    Reference to a string
  */
 function deslash( &$content ) {
+    if(is_array($content)){
+        return;
+    }
+
     $content = preg_replace( "/\\\+'/", "'", $content );
     $content = preg_replace( '/\\\+"/', '"', $content );
     $content = preg_replace( '/https?:\/\/https?:\/\//i', 'https://', $content );

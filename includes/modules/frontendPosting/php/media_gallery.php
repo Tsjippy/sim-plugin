@@ -1,5 +1,5 @@
 <?php
-namespace SIM\FRONTEND_POSTING;
+namespace SIM\FRONTENDPOSTING;
 use SIM;
 
 add_filter('sim-media-edit-link', function($link, $id){

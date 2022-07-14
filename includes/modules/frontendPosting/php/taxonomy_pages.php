@@ -1,5 +1,5 @@
 <?php
-namespace SIM\FRONTEND_POSTING;
+namespace SIM\FRONTENDPOSTING;
 use SIM;
 
 add_action( 'init', function () {

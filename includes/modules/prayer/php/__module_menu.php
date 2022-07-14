@@ -13,6 +13,8 @@ add_action('sim_module_activated', function($moduleSlug){
 		return;
 	}
 
+	scheduleTasks();
+	
 	wp_create_category('Prayer');
 });
 
@@ -46,3 +48,58 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 
 	return ob_get_clean();
 }, 10, 2);
+
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
+	
+	
+	if(empty($settings['groups'])){
+		$groups	= [''];
+	}else{
+		$groups	= $settings['groups'];
+	}
+
+    ?>
+	<div class="">
+		<h4>Give optional Signal group name(s) to send a daily prayer message to:</h4>
+		<div class="clone_divs_wrapper">
+			<?php			
+			foreach($groups as $index=>$group){
+				?>
+				<div class="clone_div" data-divid="<?php echo $index;?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
+					<div class="multi_input_wrapper">
+						<label>
+							<h4 style='margin: 0px;'>Signal groupname <?php echo $index+1;?></h4>
+							<input type='text' name="groups[<?php echo $index;?>][name]" value='<?php echo $group['name'];?>'>
+						</label>
+						<label>
+							<h4 style='margin-bottom: 0px;'>Time the message should be send</h4>
+							<input type='time' name="groups[<?php echo $index;?>][time]" value='<?php echo $group['time'];?>'>
+						</label>
+					</div>
+					<div class='buttonwrapper' style='margin:auto;'>
+						<button type="button" class="add button" style="flex: 1;">+</button>
+						<?php
+						if(count($groups)> 1){
+							?>
+							<button type="button" class="remove button" style="flex: 1;">-</button>
+							<?php
+						}
+						?>
+					</div>
+				</div>
+				<?php
+			}
+			?>
+		</div>
+	</div>
+
+	<?php
+
+	return ob_get_clean();
+}, 10, 3);

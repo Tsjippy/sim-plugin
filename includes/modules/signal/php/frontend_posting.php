@@ -4,7 +4,7 @@ use SIM;
 
 add_action('sim_frontend_post_after_content', function($frontendContend){
     $hidden	= 'hidden';
-    if($frontendContend->fullrights and ($frontendContend->postId == null or !empty(get_post_meta($frontendContend->postId, 'signal', true)))){
+    if($frontendContend->fullrights && ($frontendContend->postId == null || !empty(get_post_meta($frontendContend->postId, 'signal', true)))){
         $checked 	    = 'checked';
         $hidden		    = '';
         $messageType	= get_post_meta($frontendContend->postId,'signalmessagetype',true);
@@ -20,11 +20,11 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 
         <div class='signalmessagetype <?php echo $hidden;?>' style='margin-top:15px;'>
             <label>
-                <input type='radio' name='signalmessagetype' value='summary' <?php if($messageType != 'all') echo 'checked';?>>
+                <input type='radio' name='signalmessagetype' value='summary' <?php if($messageType != 'all'){echo 'checked';}?>>
                 Send a summary
             </label>
             <label>
-                <input type='radio' name='signalmessagetype' value='all' <?php if($messageType == 'all') echo 'checked';?>>
+                <input type='radio' name='signalmessagetype' value='all' <?php if($messageType == 'all'){echo 'checked';}?>>
                 Send the whole post content
             </label>
             <br>
@@ -47,7 +47,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 
 // Send Signal message about the new or updated post
 add_action('sim_after_post_save', function($post){
-    if(isset($_POST['signal']) and $_POST['signal'] == 'send_signal'){
+    if(isset($_POST['signal']) && $_POST['signal'] == 'send_signal'){
         update_metadata( 'post', $post->ID, 'signal','checked');
         update_metadata( 'post', $post->ID, 'signalmessagetype', $_POST['signalmessagetype']);
         update_metadata( 'post', $post->ID, 'signal_url', $_POST['signal_url']);

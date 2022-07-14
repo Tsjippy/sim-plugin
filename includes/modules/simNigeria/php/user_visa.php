@@ -8,12 +8,14 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 //Multi default values used to prefil the compound dropdown
 add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId, $formName){
-	if($formName != 'user_visa') return $defaultArrayValues;
+	if($formName != 'user_visa'){
+		return $defaultArrayValues;
+	}
 	
 	$defaultArrayValues['quotanames'] 			= QUOTANAMES;
 	
 	return $defaultArrayValues;
-},10,3);
+}, 10, 3);
 
 /**
  * Creates the user visa page
@@ -131,7 +133,7 @@ function exportVisaExcel(){
 		$sheet->setCellValueByColumnAndRow(1, $row, $displayName);
 		
 		//Skip if there is no data
-		if(!is_array($visaInfo) or count($visaInfo)==0){
+		if(!is_array($visaInfo) || empty($visaInfo)){
 			$sheet->setCellValueByColumnAndRow(2, $row, 'No data');
 			continue;
 		}
@@ -157,7 +159,9 @@ function exportVisaExcel(){
 	while(true){
 		//ob_get_clean only returns false when there is absolutely nothing anymore
 		$result	= ob_get_clean();
-		if($result === false) break;
+		if($result === false){
+			break;
+		}
 	}
 	ob_start();
 	$writer->save('php://output');
@@ -202,10 +206,11 @@ function exportVisaInfoPdf($userId=0, $all=false) {
  * @param	object	$pdf		PDF instance
  */
 function writeVisaPages($userId, $pdf){
-	$visaInfo = get_user_meta( $userId, "visa_info",true);
+	$visaInfo = get_user_meta( $userId, "visa_info", true);
+
 	if(!is_array($visaInfo)){
 		$pdf->Write(10,"No greencard information found.");
-		return;
+		return $pdf;
 	}
 	
 	// Post Content	
@@ -221,22 +226,26 @@ function writeVisaPages($userId, $pdf){
 	$understudiesArray	= [];
 	$info1				= get_user_meta( $userId, "understudy_1",true);
 	$info2				= get_user_meta( $userId, "understudy_2",true);
-	if(!empty($info1)) $understudiesArray[1]	= $info1;
-	if(!empty($info2)) $understudiesArray[2]	= $info2;
+	if(!empty($info1)){
+		$understudiesArray[1]	= $info1;
+	}
+	if(!empty($info2)){
+		$understudiesArray[2]	= $info2;
+	}
 
 	foreach($understudiesArray as $key=>$understudy){
 		$understudiesDocuments[$key] = $understudy['documents'];
 		unset($understudiesArray[$key]['documents']);
 	}
 	
-	if(count($visaInfo)>0){
+	if(!empty($visaInfo)){
 		$pdf->WriteArray($visaInfo);
 	}else{
 		$pdf->Write(10,'No greencard details found');
 		$pdf->Ln(10);
 	}
 
-	if(count($understudiesArray)>0){
+	if(!empty($understudiesArray)){
 		$pdf->PageTitle('Understudy information');
 		$pdf->WriteArray($understudiesArray);
 	}else{
@@ -244,7 +253,7 @@ function writeVisaPages($userId, $pdf){
 		$pdf->Ln(10);
 	}
 	
-	if(is_array($qualificationsArray) and count($qualificationsArray)>0){
+	if(is_array($qualificationsArray) && count($qualificationsArray)>0){
 		$pdf->PageTitle('Qualifications');
 		$pdf->WriteImageArray($qualificationsArray);
 	}else{
@@ -252,12 +261,14 @@ function writeVisaPages($userId, $pdf){
 		$pdf->Ln(10);
 	}
 	
-	if(is_array($understudiesDocuments) and count($understudiesDocuments)>0){
+	if(is_array($understudiesDocuments) && !empty($understudiesDocuments)){
 		$pdf->AddPage();
 		
 		foreach($understudiesDocuments as $key=>$understudiesDocument){
 			if(count($understudiesDocument)>0){
-				if($key>1) $pdf->Ln(10);
+				if($key>1){
+					$pdf->Ln(10);
+				}
 				$pdf->PageTitle('Understudy documents for understudy '.$key,false);
 				$pdf->WriteImageArray($understudiesDocument);
 			}else{
@@ -284,66 +295,66 @@ add_filter('sim_user_page_dropdown', function($genericInfoRoles){
 	Add a visa Info page to user management screen
 */
 add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $user, $userAge){
-	if((array_intersect(["visainfo"], $user->roles ) or $showCurrentUserData)){
-		if($userAge > 18){
-			if( isset($_POST['print_visa_info'])){
-				if(isset($_POST['userid']) and is_numeric($_POST['userid'])){
-					exportVisaInfoPdf($_POST['userid']);
-				}else{
-					exportVisaInfoPdf($_POST['userid'], true);//export for all people
-				}
-			}
-			
-			if( isset($_POST['export_visa_info'])){
-				exportVisaExcel();
-			}
-		
-			//only active if not own data and has not the user management role
-			if(!array_intersect(["usermanagement"], $user->roles ) and !$showCurrentUserData){
-				$active = "active";
-				$class = '';
-				$tabclass = 'hidden';
-			}else{
-				$active = "";
-				$class = 'hidden';
-				$tabclass = '';
-			}
-			
-			//Add an extra tab button on position 3
-			$filteredHtml['tabs']['Immigration']	= "<li class='tablink $active $tabclass' id='show_visa_info' data-target='visa_info'>Immigration</li>";
-			
-			//Content
-			ob_start();
-			?>
-			<div id='visa_info' class='tabcontent <?php echo $class;?>'>
-				<?php
-				echo visaPage(true);
-			
-				if(!$showCurrentUserData){
-					?>
-					<div class='export_button_wrapper' style='margin-top:50px;'>
-						<form  method='post'>
-							<input type='hidden' name='userid' id='userid' value='$userId'>
-							<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export user data as PDF</button>
-						</form>
-						<form method='post'>
-							<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export ALL data as PDF</button>
-						</form>
-						<form method='post'>
-							<button class='button button-primary' type='submit' name='export_visa_info' value='generate'>Export ALL data to excel</button>
-						</form>
-					</div>
-					<?php
-				}
-			?>
-			</div>
-			<?php
+	if((!array_intersect(["visainfo"], $user->roles ) && !$showCurrentUserData) || $userAge < 18){
+		return $filteredHtml;
+	}
 
-			$result	= ob_get_clean();
-
-			$filteredHtml['html']	.= $result;
+	if( isset($_POST['print_visa_info'])){
+		if(isset($_POST['userid']) && is_numeric($_POST['userid'])){
+			exportVisaInfoPdf($_POST['userid']);
+		}else{
+			exportVisaInfoPdf($_POST['userid'], true);//export for all people
 		}
 	}
+	
+	if( isset($_POST['export_visa_info'])){
+		exportVisaExcel();
+	}
+
+	//only active if not own data and has not the user management role
+	if(!array_intersect(["usermanagement"], $user->roles ) && !$showCurrentUserData){
+		$active = "active";
+		$class = '';
+		$tabclass = 'hidden';
+	}else{
+		$active = "";
+		$class = 'hidden';
+		$tabclass = '';
+	}
+	
+	//Add an extra tab button on position 3
+	$filteredHtml['tabs']['Immigration']	= "<li class='tablink $active $tabclass' id='show_visa_info' data-target='visa_info'>Immigration</li>";
+	
+	//Content
+	ob_start();
+	?>
+	<div id='visa_info' class='tabcontent <?php echo $class;?>'>
+		<?php
+		echo visaPage(true);
+	
+		if(!$showCurrentUserData){
+			?>
+			<div class='export_button_wrapper' style='margin-top:50px;'>
+				<form  method='post'>
+					<input type='hidden' name='userid' id='userid' value='<?php echo $user->ID;?>'>
+					<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export user data as PDF</button>
+				</form>
+				<form method='post'>
+					<button class='button button-primary' type='submit' name='print_visa_info' value='generate'>Export ALL data as PDF</button>
+				</form>
+				<form method='post'>
+					<button class='button button-primary' type='submit' name='export_visa_info' value='generate'>Export ALL data to excel</button>
+				</form>
+			</div>
+			<?php
+		}
+	?>
+	</div>
+	<?php
+
+	$result	= ob_get_clean();
+
+	$filteredHtml['html']	.= $result;
 
 	return $filteredHtml;
 }, 10, 4);
