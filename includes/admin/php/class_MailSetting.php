@@ -99,7 +99,7 @@ abstract class MailSetting{
 
             echo wp_editor(
                 $message,
-                "emails[$this->messageKey]",
+                $this->messageKey,
                 $settings
             );
             ?>
