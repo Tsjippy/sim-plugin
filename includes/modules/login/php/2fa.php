@@ -68,10 +68,10 @@ function sendEmailCode($user){
     }
     $_SESSION['2fa_email_key']  = $emailCode;
 
-    $twoFAEmail    = new TwoFAEmail($user, $emailCode);
-	$twoFAEmail->filterMail();
+    $twoFaEmail    = new TwoFaEmail($user, $emailCode);
+	$twoFaEmail->filterMail();
 						
-	wp_mail( $user->user_email, $twoFAEmail->subject, $twoFAEmail->message);
+	return wp_mail( $user->user_email, $twoFaEmail->subject, $twoFaEmail->message);
 }
 
 /**

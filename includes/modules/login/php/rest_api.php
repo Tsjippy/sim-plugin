@@ -264,9 +264,12 @@ function requestEmailCode(){
     }
 
     if($user){
-        sendEmailCode($user);
+        $result = sendEmailCode($user);
 
-        return "E-mail send to ".$user->user_email;
+        if($result){
+            return "E-mail send to ".$user->user_email;
+        }
+        return new WP_Error('login', 'Sending e-mail failed');
     }else{
         return new WP_Error('login', 'Invalid username given');
     }
