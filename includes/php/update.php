@@ -67,25 +67,15 @@ add_filter( 'transient_update_plugins', __NAMESPACE__.'\checkForUpdate' );
 function checkForUpdate( $updatePlugins ) {
 
 	if ( ! is_object( $updatePlugins ) ){
-			return $updatePlugins;
+		return $updatePlugins;
 	}
 
 	if ( ! isset( $updatePlugins->response ) || ! is_array( $updatePlugins->response ) ){
 		$updatePlugins->response = array();
 	}
 
-	$pluginVersion  = '';
-	$pluginFile     = 'sim-plugin/sim-plugin.php';
-	if(isset($updatePlugins->checked) && isset($updatePlugins->checked[$pluginFile])){
-		$pluginVersion  = $updatePlugins->checked[$pluginFile];
-	}
-	if(isset($updatePlugins->no_update) && empty($pluginVersion) && isset($updatePlugins->no_update[$pluginFile])){
-		$pluginVersion  = $updatePlugins->no_update[$pluginFile];
-	}
-
-	if(!is_numeric($pluginVersion)){
-		return $updatePlugins;
-	}
+	$pluginVersion  = get_plugin_data(PLUGINPATH.PLUGINNAME.'.php')['Version'];
+	$pluginFile     = PLUGINNAME.'/'.PLUGINNAME.'.php';
 
 	$release		= getLatestRelease();
 

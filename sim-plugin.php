@@ -28,12 +28,14 @@ if(!isset($_SERVER['HTTP_SEC_FETCH_DEST'])){
 remove_action( 'wp_head', 'adjacent_posts_rel_link');
 
 // Define constants
+define('PLUGINNAME', 'sim-plugin');
 define('SITEURL', site_url( '', 'https' ));
 define('SITENAME', get_bloginfo());
 define('INCLUDESURL', plugins_url('includes',__FILE__));
 define('PICTURESURL', INCLUDESURL.'/pictures');
 define('LOADERIMAGEURL', PICTURESURL.'/loading.gif');
-define('INCLUDESPATH', plugin_dir_path(__FILE__).'includes/');
+define('PLUGINPATH', plugin_dir_path(__FILE__));
+define('INCLUDESPATH', PLUGINPATH.'includes/');
 define('MODULESPATH', INCLUDESPATH.'modules/');
 define('PICTURESPATH', INCLUDESPATH.'pictures/');
 

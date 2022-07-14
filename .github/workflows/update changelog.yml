@@ -16,5 +16,5 @@ jobs:
           uses: test-room-7/action-update-file@v1
           with:
               file-path: CHANGELOG.md
-              commit-msg: Updatechangelog with commit message
+              commit-msg: Update changelog with commit message
               github-token: ${{ secrets.GITHUB_TOKEN }}
