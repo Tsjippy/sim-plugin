@@ -37,7 +37,7 @@ function sendReimbursementRequests(){
 		SIM\printArray('No reimbursement requests found');
 	}else{
 		//Get all files in the reimbursement dir as they are the receipts
-		$recieptsDir	= wp_upload_dir()['path']."/form_uploads/Reimbursement";
+		$recieptsDir	= wp_upload_dir()['basedir']."/form_uploads/Reimbursement";
 		$attachments	= glob("$recieptsDir/*.*");
 
 		//Create the excel

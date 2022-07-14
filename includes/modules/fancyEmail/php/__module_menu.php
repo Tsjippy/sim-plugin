@@ -5,7 +5,7 @@ use SIM;
 const MODULE_VERSION		= '7.0.0';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
-define('IMAGE_FOLDER', wp_upload_dir()['path'].'/email_pictures');
+define('IMAGE_FOLDER', wp_upload_dir()['basedir'].'/email_pictures');
 
 //run on module activation
 add_action('sim_module_activated', function($moduleSlug){

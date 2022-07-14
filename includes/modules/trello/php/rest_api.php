@@ -112,9 +112,11 @@ function trelloActions( \WP_REST_Request $request ) {
 				$ext = pathinfo($url, PATHINFO_EXTENSION);
 				
 				//Save the picture
-				$filepath 	= wp_upload_dir()['path']."/private/profile_pictures/$username.$ext";
+				$filepath 	= wp_upload_dir()['basedir']."/private/profile_pictures/$username.$ext";
 				
-				if(file_exists($filepath)) unlink($filepath);
+				if(file_exists($filepath)){
+					unlink($filepath);
+				}
 				
 				file_put_contents($filepath, file_get_contents($url));
 				

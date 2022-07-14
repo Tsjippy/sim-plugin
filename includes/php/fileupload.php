@@ -185,9 +185,9 @@ add_action ( 'wp_ajax_upload_files', function (){
 	$files		= $_FILES["files"];
 	$maxSize	= wp_max_upload_size();
 	if(!empty($fileParam['targetDir'])){
-		$targetDir 		= wp_upload_dir()['path'].'/'.sanitize_text_field($fileParam['targetDir']).'/';
+		$targetDir 		= wp_upload_dir()['basedir'].'/'.sanitize_text_field($fileParam['targetDir']).'/';
 	}else{
-		$targetDir 		= wp_upload_dir()['path'].'/';
+		$targetDir 		= wp_upload_dir()['basedir'].'/';
 	}
 	
 	//create folder if it does not exist

@@ -282,7 +282,7 @@ class FrontEndContent{
 			SIM\userSelect("Select a person to show the link to",true),
 		);
 
-		$plugins['select_user'] = plugins_url("js/tiny_mce.js?ver=".MODULE_VERSION, __DIR__);
+		$plugins['select_user'] = plugins_url("../js/tiny_mce.js?ver=".MODULE_VERSION, __DIR__);
 		
 		return $plugins;
 	}
@@ -872,7 +872,7 @@ class FrontEndContent{
 	function uploadImages($matches) {
 		$ext 			= $matches[1];
 		$filename 		= "frontend_picture";
-		$basedir 		= wp_upload_dir()['path'];
+		$basedir 		= wp_upload_dir()['basedir'];
 		$newFilePath 	= "$basedir/$filename.$ext";
 		$i 				= 0;
 		$uploadId		= 0;

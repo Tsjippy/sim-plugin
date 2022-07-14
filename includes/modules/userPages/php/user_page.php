@@ -457,7 +457,7 @@ function buildVcard($userId){
 	
 	//User has an profile picture add it
 	if (is_numeric(get_user_meta($userId, 'profile_picture', true)) && empty($privacyPreference['hide_profile_picture'])){
-		$pictureUrl 			= str_replace(wp_upload_dir()['url'], wp_upload_dir()['path'], SIM\USERMANAGEMENT\getProfilePictureUrl($userId, "large"));
+		$pictureUrl 			= str_replace(wp_upload_dir()['url'], wp_upload_dir()['basedir'], SIM\USERMANAGEMENT\getProfilePictureUrl($userId, "large"));
 		$photo               	= file_get_contents($pictureUrl);
 		$b64vcard               = base64_encode($photo);
 		$b64mline               = chunk_split($b64vcard,74,"\n");

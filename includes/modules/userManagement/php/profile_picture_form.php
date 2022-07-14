@@ -69,7 +69,9 @@ add_filter( 'get_avatar' , function ( $avatar, $idOrEmail, $size, $default, $alt
     if ( $user && is_object( $user ) ) {
 		//Get profile picture id from db
 		$url = getProfilePictureUrl($user->ID);
-		if ( $url == '' ) $url = plugins_url('',__DIR__).'/../pictures/usericon.png';
+		if ( empty($url )){
+			$url = plugins_url('', __DIR__).'/pictures/usericon.png';
+		}
 		$avatar = "<img alt='$alt' src='$url' class='avatar avatar-{$size} photo' height='$size' width='$size' />";
     }
     return $avatar;

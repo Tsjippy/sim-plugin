@@ -67,9 +67,9 @@ add_action( 'edit_attachment', function($attachmentId){
 */
 function moveAttachment($postId, $subDir){
     if(empty($subDir)){
-        $newPath   = wp_upload_dir()['path'];
+        $newPath   = wp_upload_dir()['basedir'];
     }else{
-        $newPath   = wp_upload_dir()['path']."/$subDir";
+        $newPath   = wp_upload_dir()['basedir']."/$subDir";
         $subDir     = rtrim($subDir,"/").'/';
     }
 
