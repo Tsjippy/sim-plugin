@@ -1,4 +1,4 @@
 dynamic/
 node_modules/
 **/package-lock.json
-other/SignalBot.py
+SignalBot.py
