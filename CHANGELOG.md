@@ -7,8 +7,14 @@
 ### Changed
 
 ### Fixed
+
+## [2.2.2] - 2022-07-14
+
+
+### Fixed
 - module activation actions on Linux systems
 - e-mail content settings field
+- module settings not saved properly
 
 ## [2.2.1] - 2022-07-14
 
