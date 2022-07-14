@@ -34,23 +34,38 @@ define('INCLUDESURL', plugins_url('includes',__FILE__));
 define('PICTURESURL', INCLUDESURL.'/pictures');
 define('LOADERIMAGEURL', PICTURESURL.'/loading.gif');
 define('INCLUDESPATH', plugin_dir_path(__FILE__).'includes/');
-define('PICTURESPATH', INCLUDESPATH.'pictures');
+define('MODULESPATH', INCLUDESPATH.'modules/');
+define('PICTURESPATH', INCLUDESPATH.'pictures/');
+
+// Store all modulefolders
+$dirs    = scandir(MODULESPATH);
+unset($dirs[0]);
+unset($dirs[1]);
+
+//Sort alphabeticalyy, ignore case
+sort($dirs, SORT_STRING | SORT_FLAG_CASE);
+
+$moduleDirs  = [];
+foreach($dirs as $dir){
+    $moduleDirs[strtolower($dir)] = $dir;
+}
 
 //load all libraries
 require( __DIR__  . '/includes/lib/vendor/autoload.php');
 
 spl_autoload_register(function ($classname) {
+    global $moduleDirs;
+
     $path       = explode('\\', $classname);
 
     if($path[0] != 'SIM' || !isset($path[1])){
         return;
     }
 
-    $module     = strtolower($path[1]);
+    $module     = $moduleDirs[strtolower($path[1])];
     $fileName   = $path[2];
 
-    $modulePath = __DIR__."/includes/modules/$module/php";
-    
+    $modulePath = MODULESPATH."$module/php";    
 	$classFile	= "$modulePath/classes/$fileName.php";
     $traitFile	= "$modulePath/traits/$fileName.php";
 	if(file_exists($classFile)){

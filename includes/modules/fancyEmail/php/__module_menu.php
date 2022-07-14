@@ -37,6 +37,10 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	<?php
 
 	if(SIM\getModuleOption($moduleSlug, 'enable')){
+		echo 'test';
+		if(!function_exists(__NAMESPACE__.'\emailStats')){
+			require_once(__DIR__.'/shortcodes.php');
+		}
 		echo emailStats();
 	}
 

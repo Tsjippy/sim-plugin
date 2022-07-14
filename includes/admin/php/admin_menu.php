@@ -18,6 +18,8 @@ function getModuleName($slug){
  * Register a custom menu page.
  */
 add_action( 'admin_menu', function() {
+	global $moduleDirs;
+
 	if(isset($_POST['module'])){
 		if(isset($_POST['emails'])){
 			saveEmails();
@@ -26,31 +28,24 @@ add_action( 'admin_menu', function() {
 		}
 	}
 
-	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");
+	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");	
 
-	//get all modules based on folder name
-	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
-	//Sort alphabeticalyy, ignore case
-	sort($modules, SORT_STRING | SORT_FLAG_CASE);
-
-	foreach($modules as $module){
-		$moduleSlug	= strtolower(basename($module));
-		
-		$moduleName	= getModuleName(basename($module));
-
+	foreach($moduleDirs as $moduleSlug=>$moduleName){
 		//do not load admin and template menu
 		if(in_array($moduleSlug, ['__template', 'admin'])){
 			continue;
 		}
+
+		$moduleName	= getModuleName($moduleName);
 		
 		//check module page exists
-		if(!file_exists($module.'/php/__module_menu.php')){
+		if(!file_exists(MODULESPATH.$moduleSlug.'/php/__module_menu.php')){
 			SIM\printArray("Module page does not exist for module $moduleName");
 			continue;
 		}
 
 		//load the menu page php file
-		require_once($module.'/php/__module_menu.php');
+		require_once(MODULESPATH.$moduleSlug.'/php/__module_menu.php');
 
 		add_submenu_page('sim', "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
 	}
@@ -179,6 +174,7 @@ function emailSettingsTab($moduleSlug, $moduleName, $settings){
  */
 function mainMenu(){
 	global $Modules;
+	global $moduleDirs;
 
 	unset($Modules['extra_post_types']);
 	unset($Modules['template_specific']);
@@ -215,15 +211,10 @@ function mainMenu(){
 
 	update_option('sim_modules', $Modules);
 
-	//get all modules based on folder name
-	$modules	= glob(__DIR__ . '/../../modules/*' , GLOB_ONLYDIR);
-	sort($modules, SORT_STRING | SORT_FLAG_CASE);
-
 	$active		= [];
 	$inactive	= [];
-	foreach($modules as $module){
-		$moduleSlug	= strtolower(basename($module));
-		$moduleName	= getModuleName(basename($module));
+	foreach($moduleDirs as $moduleSlug=>$moduleName){
+		$moduleName	= getModuleName($moduleName);
 		
 		if(in_array($moduleSlug, array_keys($Modules))){
 			$active[$moduleSlug]	= $moduleName;
