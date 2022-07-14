@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.2.1] - 2022-07-14
+
+
+### Fixed
 - update routine
 
 ## [2.1.1] - 2022-07-14
