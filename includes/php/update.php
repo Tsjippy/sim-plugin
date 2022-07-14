@@ -74,6 +74,9 @@ function checkForUpdate( $updatePlugins ) {
 		$updatePlugins->response = array();
 	}
 
+	if( !function_exists('get_plugin_data') ){
+		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	}
 	$pluginVersion  = get_plugin_data(PLUGINPATH.PLUGINNAME.'.php')['Version'];
 	$pluginFile     = PLUGINNAME.'/'.PLUGINNAME.'.php';
 

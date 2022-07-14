@@ -2,20 +2,6 @@
 namespace SIM\LOGIN;
 use SIM;
 
-add_action( 'save_post', function($post_ID, $post){
-    if(has_shortcode($post->post_content, 'formbuilder')){
-        global $Modules;
-
-        if(!is_array($Modules['forms']['formbuilder_pages'])){
-            $Modules['forms']['formbuilder_pages']    = [$post_ID];
-        }elseif(!in_array($post_ID, $Modules['forms']['formbuilder_pages'])){
-            $Modules['forms']['formbuilder_pages'][]  = $post_ID;
-        }
-
-        update_option('sim_modules', $Modules);
-    }
-}, 10, 2);
-
 add_action( 'wp_enqueue_scripts', function(){
     if(!is_user_logged_in()){
 	    //login form

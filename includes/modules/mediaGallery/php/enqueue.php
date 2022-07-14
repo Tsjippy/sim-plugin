@@ -6,11 +6,11 @@ add_action( 'save_post', function($post_ID, $post){
     if(has_shortcode($post->post_content, 'mediagallery')){
         global $Modules;
 
-        if(!is_array($Modules['mediagallery']['mediagallery_pages'])){
-            $Modules['mediagallery']['mediagallery_pages']    = [$post_ID];
+        if(!is_array($Modules[MODULE_SLUG]['mediagallery_pages'])){
+            $Modules[MODULE_SLUG]['mediagallery_pages']    = [$post_ID];
 			update_option('sim_modules', $Modules);
-        }elseif(!in_array($post_ID, $Modules['mediagallery']['mediagallery_pages'])){
-            $Modules['mediagallery']['mediagallery_pages'][]  = $post_ID;
+        }elseif(!in_array($post_ID, $Modules[MODULE_SLUG]['mediagallery_pages'])){
+            $Modules[MODULE_SLUG]['mediagallery_pages'][]  = $post_ID;
 			update_option('sim_modules', $Modules);
         }
     }

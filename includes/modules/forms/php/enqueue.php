@@ -59,20 +59,20 @@ add_action( 'save_post', function($postId, $post){
     }
 
     if($hasFormbuilderShortcode || has_shortcode($post->post_content, 'formselector')){
-        if(!is_array($Modules['forms']['formbuilder_pages'])){
-            $Modules['forms']['formbuilder_pages']    = [$postId];
-        }elseif(!in_array($postId, $Modules['forms']['formbuilder_pages'])){
-            $Modules['forms']['formbuilder_pages'][]  = $postId;
+        if(!is_array($Modules[MODULE_SLUG]['formbuilder_pages'])){
+            $Modules[MODULE_SLUG]['formbuilder_pages']    = [$postId];
+        }elseif(!in_array($postId, $Modules[MODULE_SLUG]['formbuilder_pages'])){
+            $Modules[MODULE_SLUG]['formbuilder_pages'][]  = $postId;
         }
 
         update_option('sim_modules', $Modules);
     }
 
     if(has_shortcode($post->post_content, 'formresults') || has_shortcode($post->post_content, 'formselector')){
-        if(!is_array($Modules['forms']['formtable_pages'])){
-            $Modules['forms']['formtable_pages']    = [$postId];
-        }elseif(!in_array($postId, $Modules['forms']['formtable_pages'])){
-            $Modules['forms']['formtable_pages'][]  = $postId;
+        if(!is_array($Modules[MODULE_SLUG]['formtable_pages'])){
+            $Modules[MODULE_SLUG]['formtable_pages']    = [$postId];
+        }elseif(!in_array($postId, $Modules[MODULE_SLUG]['formtable_pages'])){
+            $Modules[MODULE_SLUG]['formtable_pages'][]  = $postId;
         }
 
         update_option('sim_modules', $Modules);

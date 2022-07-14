@@ -6,10 +6,10 @@ add_action( 'save_post', function($post_ID, $post){
     if(has_shortcode($post->post_content, 'schedules')){
         global $Modules;
 
-        if(!is_array($Modules['events']['schedule_pages'])){
-            $Modules['events']['schedule_pages']    = [$post_ID];
+        if(!is_array($Modules[MODULE_SLUG]['schedule_pages'])){
+            $Modules[MODULE_SLUG]['schedule_pages']    = [$post_ID];
         }else{
-            $Modules['events']['schedule_pages'][]  = $post_ID;
+            $Modules[MODULE_SLUG]['schedule_pages'][]  = $post_ID;
         }
 
         update_option('sim_modules', $Modules);
@@ -18,10 +18,10 @@ add_action( 'save_post', function($post_ID, $post){
     if(has_shortcode($post->post_content, 'upcomingevents')){
         global $Modules;
 
-        if(!is_array($Modules['events']['upcomingevents_pages'])){
-            $Modules['events']['upcomingevents_pages']    = [$post_ID];
+        if(!is_array($Modules[MODULE_SLUG]['upcomingevents_pages'])){
+            $Modules[MODULE_SLUG]['upcomingevents_pages']    = [$post_ID];
         }else{
-            $Modules['events']['upcomingevents_pages'][]  = $post_ID;
+            $Modules[MODULE_SLUG]['upcomingevents_pages'][]  = $post_ID;
         }
 
         update_option('sim_modules', $Modules);

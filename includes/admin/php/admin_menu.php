@@ -180,6 +180,8 @@ function mainMenu(){
 	unset($Modules['extra_post_types']);
 	unset($Modules['template_specific']);
 	unset($Modules['pdf']);
+	unset($Modules['celebrations']);
+	unset($Modules['schedules']);
 
 	foreach(['frontend_posting',
 	'user_management',

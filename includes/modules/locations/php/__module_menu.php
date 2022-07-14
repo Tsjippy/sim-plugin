@@ -42,7 +42,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		Locations can be used to share shops, hotels ministries etc.<br>
 		They will bevisible on a map.<br>
 		<br>
-		It add one shortcode:<br>
+		It adds one shortcode:<br>
 		<code>[ministry_description name=SOMENAME]</code>
 	</p>
 	<p>

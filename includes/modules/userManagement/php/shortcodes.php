@@ -143,8 +143,6 @@ add_shortcode('pending_user_icon',function (){
 	}
 });
 
-
-
 //Shortcode for the dashboard
 add_action('sim_dashboard_warnings', function($userId){
 	$dashboardWarnings	= new DashboardWarnings($userId);
@@ -175,7 +173,6 @@ add_action('sim_dashboard_warnings', function($userId){
 		<?php
 	}
 });
-
 
 add_filter('sim_loggedin_homepage',  function($content){
 	$content	.= expiryWarnings();
@@ -215,274 +212,282 @@ function expiryWarnings(){
 }
 
 //Shortcode for userdata forms
-add_shortcode("user-info", __NAMESPACE__.'\user_info_page');
-function user_info_page($atts){
-	if(is_user_logged_in()){
-		wp_enqueue_style('sim_forms_style');
-		
-		$a = shortcode_atts( array(
-			'currentuser' 	=> false,
-			'id' 			=> '', 
-		), $atts );
-
-		$showCurrentUserData = $a['currentuser'];
-		
-		//Variables
-		$medicalRoles		= ["medicalinfo"];
-		$genericInfoRoles 	= array_merge(['usermanagement'], $medicalRoles,['administrator']);
-		$user 				= wp_get_current_user();
-		$userRoles 			= $user->roles;
-		$tabs				= [];
-		$html				= '';
-		$userAge 			= 19;
-		$availableForms		= (array)SIM\getModuleOption(MODULE_SLUG, 'enabled-forms');
-	
-		//Showing data for current user
-		if($showCurrentUserData){
-			$userId = get_current_user_id();
-		//Display a select to choose which users data should be shown
-		}else{
-			$userSelectRoles	= apply_filters('sim_user_page_dropdown', $genericInfoRoles);
-			//Show the select user to allowed user only
-			if(array_intersect($userSelectRoles, $userRoles )){
-				$userId = $a['id'];
-				
-				if(isset($_GET["userid"])){
-					$user	= get_userdata($_GET["userid"]);
-				}
-
-				if($user){
-					$userId = $_GET["userid"];
-				}else{
-					echo SIM\userSelect("Select an user to show the data of:", false, false, '', 'user_selection', [], '', []);
-				}
-
-				$userBirthday = get_user_meta($userId, "birthday", true);
-				if(!empty($userBirthday)){
-					$userAge = date_diff(date_create(date("Y-m-d")), date_create($userBirthday))->y;
-				}
-				
-			}else{
-				return "<p>You do not have permission to see this, sorry.</p>";
-			}
-		}
-	
-		//Continue only if there is a selected user
-		if(is_numeric($userId)){			
-			/*
-				Dashboard
-			*/
-			if(in_array('usermanagement', $userRoles ) || $showCurrentUserData){
-				if($showCurrentUserData){
-					$admin 		= false;
-				}else{
-					$admin 		= true;
-				}
-				
-				//Add a tab button
-				$tabs[]	= "<li class='tablink active' id='show_dashboard' data-target='dashboard'>Dashboard</li>";
-				$html .= "<div id='dashboard'>".showDashboard($userId, $admin).'</div>';
-			}
-
-			/*
-				Family Info
-			*/
-			if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('family', $availableForms) ){
-				if($userAge > 18){
-					//Tab button
-					$tabs[]	= '<li class="tablink" id="show_family_info" data-target="family_info">Family</li>';
-					
-					//Content
-					$familyHtml = '<div id="family_info" class="tabcontent hidden">';
-
-						$familyHtml .= do_shortcode('[formbuilder formname=user_family]');
-						
-					$familyHtml .= '</div>';
-				}
-
-				$html.= $familyHtml;
-			}
-			
-			/*
-				GENERIC Info
-			*/
-			if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('generic', $availableForms)){
-				$accountValidity = get_user_meta( $userId, 'account_validity',true);
-				
-				//Add a tab button
-				$tabs[]	= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
-
-				$html	.= "<div id='generic_info' class='tabcontent hidden'>";
-					if($accountValidity != '' && $accountValidity != 'unlimited' && !is_numeric($accountValidity)){
-						$removalDate 	= date_create($accountValidity);
-						
-						$html	.= "<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'>";
-							if(array_intersect($genericInfoRoles, $userRoles )){
-								wp_enqueue_script( 'sim_user_management');
-								
-								$html	.= "<form>";
-									$html	.= "<input type='hidden' name='userid' value='$userId'>";
-									$html	.= "This user account is only valid till ".date_format($removalDate, "d F Y");
-									$html	.= "<br><br>";
-									$html	.= "Change expiry date to";
-									$html	.= "<input type='date' name='new_expiry_date' min='$accountValidity' style='width:auto; display: initial; padding:0px; margin:0px;'>";
-									$html	.= "<br>";
-									$html	.= "<input type='checkbox' name='unlimited' value='unlimited' style='width:auto; display: initial; padding:0px; margin:0px;'>";
-									$html	.= "<label for='unlimited'> Check if the useraccount should never expire.</label>";
-									$html	.= "<br>";
-									$html	.= SIM\addSaveButton('extend_validity', 'Change validity');
-								$html	.= "</form>";
-							}else{
-								$html	.= "<p>";
-									$html	.= "Your user account will be automatically deactivated on ".date_format($removalDate, "d F Y").".";
-								$html	.= "</p>";
-							}
-						$html	.= "</div>";
-					}
-
-					$html	.= do_shortcode('[formbuilder formname=user_generics]');
-
-				$html	.= "</div>";
-			}
-			
-			/*
-				Location Info
-			*/
-			if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('location', $availableForms)){
-				//Add tab button
-				$tabs[]	= '<li class="tablink" id="show_location_info" data-target="location_info">Location</li>';
-				
-				//Content
-				$locationHtml = '<div id="location_info" class="tabcontent hidden">';
-					$locationHtml .= do_shortcode('[formbuilder formname=user_location]');
-				$locationHtml .= '</div>';
-				$html	.= $locationHtml;
-			}
-			
-			/*
-				LOGIN Info
-			*/
-			if(in_array('usermanagement', $userRoles )){				
-				//Add a tab button
-				$tabs[]	= '<li class="tablink" id="show_login_info" data-target="login_info">Login info</li>';
-				
-				$html .= change_password_form($userId);
-			}
-						
-			/*
-				PROFILE PICTURE Info
-			*/
-			if((in_array('usermanagement',$userRoles ) || $showCurrentUserData) && in_array('profile picture', $availableForms)){
-				//Add tab button
-				$tabs[]	= '<li class="tablink" id="show_profile_picture_info" data-target="profile_picture_info">Profile picture</li>';
-				
-				//Content
-				$pictureHtml = '<div id="profile_picture_info" class="tabcontent hidden">';
-					$pictureHtml .= do_shortcode('[formbuilder formname=profile_picture]');
-				$pictureHtml .= '</div>';
-
-				$html	.= $pictureHtml;
-			}
-			
-			/*
-				Roles
-			*/
-			if(in_array('rolemanagement', $userRoles ) || in_array('administrator', $userRoles )){
-				//Add a tab button
-				$tabs[]	= '<li class="tablink" id="show_roles" data-target="role_info">Roles</li>';
-				
-				//Content
-				$roleHtml = '<div id="role_info" class="tabcontent hidden">'; 
-					$roleHtml .= displayRoles($userId);
-				$roleHtml .= '</div>';
-
-				$html	.= $roleHtml;
-			}
-				
-			/*
-				SECURITY INFO
-			*/
-			if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('security', $availableForms)){				
-				//Tab button
-				$tabs[]	= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
-				
-				//Content
-				$security = "<div id='security_info' class='tabcontent hidden'>";
-					$security .= do_shortcode('[formbuilder formname=security_questions]');
-				$security .= '</div>';
-
-				$html	.= $security;
-			}
-
-			/*
-				Vaccinations Info
-			*/
-			if((array_intersect($medicalRoles, $userRoles) || $showCurrentUserData) && in_array('vaccinations', $availableForms)){
-				if($showCurrentUserData){
-					$active = '';
-					$class = 'class="hidden"';
-				}else{
-					$active = 'active';
-					$class = '';
-				}
-				
-				//Add tab button
-				$tabs[]	= "<li class='tablink $active' id='show_medical_info' data-target='medical_info'>Vaccinations</li>";
-				
-				//Content
-				$html	.= "<div id='medical_info' $class>";
-					$html	.= do_shortcode('[formbuilder formname=user_medical]');
-					$html	.= "<form method='post' id='print_medicals-form'>";
-						$html	.= "<input type='hidden' name='userid' id='userid' value='$userId'>";
-						$html	.= "<button class='button button-primary' type='submit' name='print_medicals' value='generate'>Export data as PDF</button>";
-					$html	.= "</form>";
-				$html	.= "</div>";
-			}
-
-			//  Add filter to add extra pages, children tabs should always be last
-			$filteredHtml	= apply_filters('sim_user_info_page', ['tabs'=>$tabs, 'html'=>$html], $showCurrentUserData, $user, $userAge);
-			$tabs		 	= $filteredHtml['tabs'];
-			$html	 		= $filteredHtml['html'];
-			
-			/*
-				CHILDREN TABS
-			*/
-			if($showCurrentUserData){
-				$family = get_user_meta($userId, 'family', true);
-				if(is_array($family) && isset($family['children']) && is_array($family['children'])){
-					foreach($family['children'] as $childId){
-						$firstName = get_userdata($childId)->first_name;
-						//Add tab button
-						$tabs[]	= "<li class='tablink' id='show_child_info_$childId' data-target='child_info_$childId'>$firstName</li>";
-						
-						//Content
-						$childHtml = "<div id='child_info_$childId' class='tabcontent hidden'>";
-							$childHtml .= showChildrenFields($childId);
-						$childHtml .= '</div>';
-						
-						$html	.= $childHtml;
-					}
-				}
-			}
+add_shortcode("user-info", __NAMESPACE__.'\userInfoPage');
+function userInfoPage($atts){
+	if(!is_user_logged_in()){
+		if(function_exists('SIM\LOGIN\loginModal')){
+			echo SIM\LOGIN\loginModal("You do not have permission to see this, sorry.");
+			return'';
 		}
 
-		$result	= "<nav id='profile_menu'>";
-			$result	.= "<ul id='profile_menu_list'>";
-			foreach($tabs as $tab){
-				$result	.= $tab;
-			}
-			$result	.= "</ul>";
-		$result	.= "</nav>";
-
-		$result	.= "<div id='profile_forms'>";
-			$result .= "<input type='hidden' class='input-text' name='userid' value='$userId'>";
-			$result	.= $html;
-		$result	.= "</div>";
-
-		return $result;
-	}elseif(function_exists('SIM\LOGIN\loginModal')){
-		echo SIM\LOGIN\loginModal("You do not have permission to see this, sorry.");
+		return "<p>You do not have permission to see this, sorry.</p>";
 	}
+
+	wp_enqueue_style('sim_forms_style');
+	
+	$a = shortcode_atts( array(
+		'currentuser' 	=> false,
+		'id' 			=> '', 
+	), $atts );
+
+	$showCurrentUserData = $a['currentuser'];
+	
+	//Variables
+	$medicalRoles		= ["medicalinfo"];
+	$genericInfoRoles 	= array_merge(['usermanagement'], $medicalRoles,['administrator']);
+	$user 				= wp_get_current_user();
+	$userRoles 			= $user->roles;
+	$tabs				= [];
+	$html				= '';
+	$userAge 			= 19;
+	$availableForms		= (array)SIM\getModuleOption(MODULE_SLUG, 'enabled-forms');
+	$userSelectRoles	= apply_filters('sim_user_page_dropdown', $genericInfoRoles);
+
+	//Showing data for current user
+	if($showCurrentUserData){
+		$userId = get_current_user_id();
+	//Display a select to choose which users data should be shown
+	}elseif(array_intersect($userSelectRoles, $userRoles )){
+		$userId	= $a['id'];
+		$user	= false;
+		
+		if(isset($_GET["userid"])){
+			$userId	= $_GET['userid'];
+		}
+
+		if(is_numeric($userId)){
+			$user	= get_userdata($userId);
+		}
+
+		if($user){
+			$userId = $_GET["userid"];
+		}else{
+			return SIM\userSelect("Select an user to show the data of:", false, false, '', 'user_selection', [], '', []);
+		}
+
+		$userBirthday = get_user_meta($userId, "birthday", true);
+		if(!empty($userBirthday)){
+			$userAge = date_diff(date_create(date("Y-m-d")), date_create($userBirthday))->y;
+		}
+	}else{
+		return "<div class='error'>You do not have permission to see this, sorry.</div>";
+	}
+
+	//Continue only if there is a selected user
+	if(!is_numeric($userId)){
+		return "<div class='error'>No user to display</div>";
+	}
+
+	/*
+		Dashboard
+	*/
+	if(in_array('usermanagement', $userRoles ) || $showCurrentUserData){
+		if($showCurrentUserData){
+			$admin 		= false;
+		}else{
+			$admin 		= true;
+		}
+		
+		//Add a tab button
+		$tabs[]	= "<li class='tablink active' id='show_dashboard' data-target='dashboard'>Dashboard</li>";
+		$html .= "<div id='dashboard'>".showDashboard($userId, $admin).'</div>';
+	}
+
+	/*
+		Family Info
+	*/
+	if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('family', $availableForms) ){
+		if($userAge > 18){
+			//Tab button
+			$tabs[]	= '<li class="tablink" id="show_family_info" data-target="family_info">Family</li>';
+			
+			//Content
+			$familyHtml = '<div id="family_info" class="tabcontent hidden">';
+
+				$familyHtml .= do_shortcode('[formbuilder formname=user_family]');
+				
+			$familyHtml .= '</div>';
+		}
+
+		$html.= $familyHtml;
+	}
+	
+	/*
+		GENERIC Info
+	*/
+	if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('generic', $availableForms)){
+		$accountValidity = get_user_meta( $userId, 'account_validity',true);
+		
+		//Add a tab button
+		$tabs[]	= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
+
+		$html	.= "<div id='generic_info' class='tabcontent hidden'>";
+			if($accountValidity != '' && $accountValidity != 'unlimited' && !is_numeric($accountValidity)){
+				$removalDate 	= date_create($accountValidity);
+				
+				$html	.= "<div id='validity_warning' style='border: 3px solid #bd2919; padding: 10px;'>";
+					if(array_intersect($genericInfoRoles, $userRoles )){
+						wp_enqueue_script( 'sim_user_management');
+						
+						$html	.= "<form>";
+							$html	.= "<input type='hidden' name='userid' value='$userId'>";
+							$html	.= "This user account is only valid till ".date_format($removalDate, "d F Y");
+							$html	.= "<br><br>";
+							$html	.= "Change expiry date to";
+							$html	.= "<input type='date' name='new_expiry_date' min='$accountValidity' style='width:auto; display: initial; padding:0px; margin:0px;'>";
+							$html	.= "<br>";
+							$html	.= "<input type='checkbox' name='unlimited' value='unlimited' style='width:auto; display: initial; padding:0px; margin:0px;'>";
+							$html	.= "<label for='unlimited'> Check if the useraccount should never expire.</label>";
+							$html	.= "<br>";
+							$html	.= SIM\addSaveButton('extend_validity', 'Change validity');
+						$html	.= "</form>";
+					}else{
+						$html	.= "<p>";
+							$html	.= "Your user account will be automatically deactivated on ".date_format($removalDate, "d F Y").".";
+						$html	.= "</p>";
+					}
+				$html	.= "</div>";
+			}
+
+			$html	.= do_shortcode('[formbuilder formname=user_generics]');
+
+		$html	.= "</div>";
+	}
+	
+	/*
+		Location Info
+	*/
+	if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('location', $availableForms)){
+		//Add tab button
+		$tabs[]	= '<li class="tablink" id="show_location_info" data-target="location_info">Location</li>';
+		
+		//Content
+		$locationHtml = '<div id="location_info" class="tabcontent hidden">';
+			$locationHtml .= do_shortcode('[formbuilder formname=user_location]');
+		$locationHtml .= '</div>';
+		$html	.= $locationHtml;
+	}
+	
+	/*
+		LOGIN Info
+	*/
+	if(in_array('usermanagement', $userRoles )){				
+		//Add a tab button
+		$tabs[]	= '<li class="tablink" id="show_login_info" data-target="login_info">Login info</li>';
+		
+		$html .= change_password_form($userId);
+	}
+				
+	/*
+		PROFILE PICTURE Info
+	*/
+	if((in_array('usermanagement',$userRoles ) || $showCurrentUserData) && in_array('profile picture', $availableForms)){
+		//Add tab button
+		$tabs[]	= '<li class="tablink" id="show_profile_picture_info" data-target="profile_picture_info">Profile picture</li>';
+		
+		//Content
+		$pictureHtml = '<div id="profile_picture_info" class="tabcontent hidden">';
+			$pictureHtml .= do_shortcode('[formbuilder formname=profile_picture]');
+		$pictureHtml .= '</div>';
+
+		$html	.= $pictureHtml;
+	}
+	
+	/*
+		Roles
+	*/
+	if(in_array('rolemanagement', $userRoles ) || in_array('administrator', $userRoles )){
+		//Add a tab button
+		$tabs[]	= '<li class="tablink" id="show_roles" data-target="role_info">Roles</li>';
+		
+		//Content
+		$roleHtml = '<div id="role_info" class="tabcontent hidden">'; 
+			$roleHtml .= displayRoles($userId);
+		$roleHtml .= '</div>';
+
+		$html	.= $roleHtml;
+	}
+		
+	/*
+		SECURITY INFO
+	*/
+	if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('security', $availableForms)){				
+		//Tab button
+		$tabs[]	= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
+		
+		//Content
+		$security = "<div id='security_info' class='tabcontent hidden'>";
+			$security .= do_shortcode('[formbuilder formname=security_questions]');
+		$security .= '</div>';
+
+		$html	.= $security;
+	}
+
+	/*
+		Vaccinations Info
+	*/
+	if((array_intersect($medicalRoles, $userRoles) || $showCurrentUserData) && in_array('vaccinations', $availableForms)){
+		if($showCurrentUserData){
+			$active = '';
+			$class = 'class="hidden"';
+		}else{
+			$active = 'active';
+			$class = '';
+		}
+		
+		//Add tab button
+		$tabs[]	= "<li class='tablink $active' id='show_medical_info' data-target='medical_info'>Vaccinations</li>";
+		
+		//Content
+		$html	.= "<div id='medical_info' $class>";
+			$html	.= do_shortcode('[formbuilder formname=user_medical]');
+			$html	.= "<form method='post' id='print_medicals-form'>";
+				$html	.= "<input type='hidden' name='userid' id='userid' value='$userId'>";
+				$html	.= "<button class='button button-primary' type='submit' name='print_medicals' value='generate'>Export data as PDF</button>";
+			$html	.= "</form>";
+		$html	.= "</div>";
+	}
+
+	//  Add filter to add extra pages, children tabs should always be last
+	$filteredHtml	= apply_filters('sim_user_info_page', ['tabs'=>$tabs, 'html'=>$html], $showCurrentUserData, $user, $userAge);
+	$tabs		 	= $filteredHtml['tabs'];
+	$html	 		= $filteredHtml['html'];
+	
+	/*
+		CHILDREN TABS
+	*/
+	if($showCurrentUserData){
+		$family = get_user_meta($userId, 'family', true);
+		if(is_array($family) && isset($family['children']) && is_array($family['children'])){
+			foreach($family['children'] as $childId){
+				$firstName = get_userdata($childId)->first_name;
+				//Add tab button
+				$tabs[]	= "<li class='tablink' id='show_child_info_$childId' data-target='child_info_$childId'>$firstName</li>";
+				
+				//Content
+				$childHtml = "<div id='child_info_$childId' class='tabcontent hidden'>";
+					$childHtml .= showChildrenFields($childId);
+				$childHtml .= '</div>';
+				
+				$html	.= $childHtml;
+			}
+		}
+	}
+
+	$result	= "<nav id='profile_menu'>";
+		$result	.= "<ul id='profile_menu_list'>";
+		foreach($tabs as $tab){
+			$result	.= $tab;
+		}
+		$result	.= "</ul>";
+	$result	.= "</nav>";
+
+	$result	.= "<div id='profile_forms'>";
+		$result .= "<input type='hidden' class='input-text' name='userid' value='$userId'>";
+		$result	.= $html;
+	$result	.= "</div>";
+
+	return $result;
 }
 
 //Delete user shortcode

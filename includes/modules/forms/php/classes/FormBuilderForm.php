@@ -1569,7 +1569,7 @@ class FormBuilderForm extends SimForms{
 
 						echo "<div class='error'>Import failed.<br>{$wpdb->last_error}</div>";
 					}else{
-						// First line it the form
+						// First line of the form
 						if($formId == -1){
 							$formId						= $wpdb->insert_id;
 						// Get the new element id
@@ -1665,6 +1665,18 @@ class FormBuilderForm extends SimForms{
 			'post_author'   => '1'
 		);
 		$url	= get_permalink(wp_insert_post( $post, true, false));
+
+		// Update the form url
+		$this->formData->settings['formurl']	= $url;
+
+		$wpdb->update($this->tableName, 
+			array(
+				'settings' 	=> maybe_serialize($this->formData->settings)
+			), 
+			array(
+				'id'		=> $this->formData->id,
+			),
+		);
 
 		echo "<div class='success'>Import of the form '$formName' finished successfully.<br>Visit the created form <a href='$url' target='_blank'>here</a></div>";
 	}

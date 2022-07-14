@@ -19,7 +19,7 @@ add_action('sim_after_category_add', function($postType, $name, $result){
 	//Attach the map id to the term
 	update_term_meta($result['term_id'], 'map_id', $mapId);
 
-	$Modules['locations'][$name.'_map']	= $mapId;
+	$Modules[MODULE_SLUG][$name.'_map']	= $mapId;
 	
 	update_option('sim_modules', $Modules);
 }, 10, 3);

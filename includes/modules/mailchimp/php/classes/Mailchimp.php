@@ -14,7 +14,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		function __construct($userId=''){
 			global $Modules;
 
-			$this->settings		= $Modules['mailchimp'];
+			$this->settings		= $Modules[MODULE_SLUG];
 			
 			if(is_numeric($userId)){
 				$this->user			= get_userdata($userId);

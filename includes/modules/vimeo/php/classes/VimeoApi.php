@@ -18,7 +18,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 return false;
             }
 
-            $settings               = $Modules['vimeo'];
+            $settings               = $Modules[MODULE_SLUG];
 
             if(!empty($settings['client_id']) && !empty($settings['client_secret']) && !empty($settings['access_token'])){
                 $this->clientId		    = $settings['client_id'];

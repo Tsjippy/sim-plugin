@@ -297,7 +297,7 @@ add_action( 'save_post', function($post_ID, $post){
     if(has_shortcode($post->post_content, 'user-info')){
         global $Modules;
 
-        $Modules['user_management']['account_page']    = $post_ID;
+        $Modules[MODULE_SLUG]['account_page']    = $post_ID;
 
         update_option('sim_modules', $Modules);
     }

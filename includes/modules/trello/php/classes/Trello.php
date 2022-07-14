@@ -14,7 +14,7 @@ require( __DIR__  . '/../../lib/vendor/autoload.php');
 class Trello{
 	function __construct(){
 		global $Modules;
-		$this->settings		= $Modules['trello'];
+		$this->settings		= $Modules[MODULE_SLUG];
 
 		$this->request		= new \Unirest\Request();
 		
