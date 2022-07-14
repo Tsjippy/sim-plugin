@@ -1,6 +1,15 @@
 # Changelog
 
 ## [Unreleased] - yyyy-mm-dd
+
+### Added
+
+### Changed
+
+### Fixed
+
+## [2.0.2.12] - 2022-07-14
+
 ### Added
 - Signal Prayer Time now defined on website
 
