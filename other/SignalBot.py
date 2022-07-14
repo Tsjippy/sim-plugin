@@ -150,7 +150,6 @@ def get_websiteinfo(command):
         error_line = str(e.__traceback__.tb_lineno)
         print('Error on line '+error_line+': '+str(e))
                         
-    
 #determine the part of the day
 def get_part_of_day():
     hour = datetime.datetime.now().hour
@@ -373,9 +372,6 @@ def checkwebsite():
     #Every 300 seconds (5 minutes)
     GLib.timeout_add(300000, checkwebsite)
     
-    #Check if there are prayers to be send
-    send_prayer_message()
-    
     print_to_log('Checking for website messages')
     
     notifications = get_websiteinfo('notifications')
@@ -442,42 +438,7 @@ def storelasttime(hour):
 
     return
 
-def send_prayer_message():
-    now = datetime.datetime.now()
-
-    #if not run this hour
-    prev_hour = get_db_data('select value FROM OTHER where name="prayersend";')
-
-    if  len(prev_hour) == 0 or str(now.hour) != prev_hour[0][0]:
-        storelasttime(now.hour)
-
-        print_to_log('Getting prayermessage')
-        prayermessage = get_websiteinfo('prayermessage')
-        
-        ng_holidays = holidays.NG()
-        if now in ng_holidays:
-            prayermessage += "\n\nHappy "+ng_holidays.get(now)
-
-        data = get_db_data("SELECT * FROM RECIPIENT WHERE hour = "+str(now.hour))
-        for recipient in data:
-            if recipient[1] == 'group':
-                signal.sendGroupMessage("Good "+get_part_of_day()+",\n\n"+prayermessage, [], json.loads(recipient[3]))
-            else:
-                try:
-                    message = "Good "+get_part_of_day()+" "+recipient[2]+",\n\n"+prayermessage
-                    signal.sendMessage(message, [], [recipient[3]])
-                except Exception as e:
-                    print_to_log('Send prayermessage to'+str(recipient[3])+' failed')
-                    
-                    error_line = str(e.__traceback__.tb_lineno)
-                    print('Error on line '+error_line+': '+str(e))
-                        
-                    if str(e) == 'Must be string, not list':
-                        signal.sendMessage(message, [], recipient[3])
-                        
-        print_to_log('Getting prayermessage finished')
-    return
-    
+ 
 #################################################
 # CODE
 #################################################
@@ -504,7 +465,6 @@ stored_groupmembers = {}
 for GroupID in GroupIds:
     stored_groupmembers[signal.getGroupName(GroupID)] = signal.getGroupMembers(GroupID)
 
-#send_prayer_message()
 
 #CHeck for website messages
 checkwebsite()
