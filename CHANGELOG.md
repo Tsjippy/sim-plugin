@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- module activation actions on Linux systems
 
 ## [2.2.1] - 2022-07-14
 
