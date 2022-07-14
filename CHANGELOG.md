@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- sending e-mail containing 2fa code on linux
 
 ## [2.2.2] - 2022-07-14
 
