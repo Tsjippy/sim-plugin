@@ -10,7 +10,9 @@ define('IMAGE_FOLDER', wp_upload_dir()['path'].'/email_pictures');
 //run on module activation
 add_action('sim_module_activated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
 
 	//create folder for temporary e-mail messages
 	if (!is_dir(IMAGE_FOLDER)) {

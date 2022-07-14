@@ -73,8 +73,11 @@ function saveEmails(){
 
 function enableModule($slug, $options){
     global $Modules;
+    global $moduleDirs;
+
     // Load module files as they might contain activation actions
-    $files = glob(__DIR__  . "/../../modules/$slug/php/*.php");
+    $dir    = $moduleDirs[$slug];
+    $files = glob(MODULESPATH  . "$dir/php/*.php");
     foreach ($files as $file) {
         require_once($file);   
     }	

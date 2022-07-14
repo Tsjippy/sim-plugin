@@ -30,22 +30,23 @@ add_action( 'admin_menu', function() {
 
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");	
 
-	foreach($moduleDirs as $moduleSlug=>$moduleName){
+	foreach($moduleDirs as $moduleSlug=>$folderName){
 		//do not load admin and template menu
 		if(in_array($moduleSlug, ['__template', 'admin'])){
 			continue;
 		}
 
-		$moduleName	= getModuleName($moduleName);
+		$moduleName	= getModuleName($folderName);
 		
 		//check module page exists
-		if(!file_exists(MODULESPATH.$moduleSlug.'/php/__module_menu.php')){
+		if(!file_exists(MODULESPATH.$folderName.'/php/__module_menu.php')){
 			SIM\printArray("Module page does not exist for module $moduleName");
+			SIM\printArray("File: ".MODULESPATH.$folderName.'/php/__module_menu.php');
 			continue;
 		}
 
 		//load the menu page php file
-		require_once(MODULESPATH.$moduleSlug.'/php/__module_menu.php');
+		require_once(MODULESPATH.$folderName.'/php/__module_menu.php');
 
 		add_submenu_page('sim', "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
 	}
