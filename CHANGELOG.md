@@ -2,6 +2,7 @@
 
 ## [Unreleased] - yyyy-mm-dd
 ### Added
+- Signal Prayer Time now defined on website
 
 ### Changed
 - Libraries are now on a per module basis
