@@ -1522,13 +1522,7 @@ class FormBuilderForm extends SimForms{
 		}
 
 		$backupName = $this->formData->name.".sform";
-		while(true){
-			//ob_get_clean only returns false when there is absolutely nothing anymore
-			$result	= ob_get_clean();
-			if($result === false){
-				break;
-			}
-		}
+		SIM\clearOutput();
 
         header('Content-Type: application/octet-stream');   
         header("Content-Transfer-Encoding: Binary"); 

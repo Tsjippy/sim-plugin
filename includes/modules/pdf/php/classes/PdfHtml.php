@@ -40,6 +40,41 @@ class PdfHtml extends \FPDF{
 	}
 
 	/**
+	 * returns an associative array (keys: R,G,B) from
+	 * a hex html code (e.g. #3FE5AA)
+	 * 
+	 * @param	string	$color	The Color to process
+	 * 
+	 * @return	array			The RGB array
+	 */
+	function hex2dec($color = "#000000"){
+		$R 				= substr($color, 1, 2);
+		$red 			= hexdec($R);
+		$V 				= substr($color, 3, 2);
+		$green 			= hexdec($V);
+		$B 				= substr($color, 5, 2);
+		$blue 			= hexdec($B);
+		$tblColor 		= array();
+		$tblColor['R']	= $red;
+		$tblColor['G']	= $green;
+		$tblColor['B']	= $blue;
+		return $tblColor;
+	}
+
+	/**
+	 * Get text from html
+	 * 
+	 * @param	string	$html	The html to parse
+	 * 
+	 * @return	string			the text
+	 */
+	function txtentities($html){
+		$trans = get_html_translation_table(HTML_ENTITIES);
+		$trans = array_flip($trans);
+		return strtr($html, $trans);
+	}
+
+	/**
 	 * Write html to pdf
 	 * 
 	 * @param	string	$html	the html
@@ -63,9 +98,9 @@ class PdfHtml extends \FPDF{
 				if($this->HREF){
 					$this->PutLink($this->HREF,$e);
 				}elseif($parsed !== null){
-					$parsed.=stripslashes(txtentities($e));
+					$parsed.=stripslashes($this->txtentities($e));
 				}else{
-					$this->Write(5,utf8_decode(stripslashes(txtentities($e))));
+					$this->Write(5,utf8_decode(stripslashes($this->txtentities($e))));
 				}
 			}else{
 				//Tag
@@ -85,6 +120,17 @@ class PdfHtml extends \FPDF{
 				}
 			}
 		}
+	}
+
+	/**
+	 * conversion pixel -> millimeter at 72 dpi
+	 * 
+	 * @param	int		$px		The pixel amount
+	 * 
+	 * @return	float			The mm
+	 */
+	function px2mm($px){
+		return $px*25.4/72;
 	}
 
 	/**
@@ -123,8 +169,8 @@ class PdfHtml extends \FPDF{
 						if($ext == 'JPE'){
 							$ext = 'JPG';
 						}
-						$this->Image($attr['SRC'],$this->GetX(),$this->GetY(),px2mm($attr['WIDTH']), px2mm($attr['HEIGHT']),$ext);
-						$this->SetY($this->GetY()+px2mm($attr['HEIGHT'])+2);
+						$this->Image($attr['SRC'],$this->GetX(),$this->GetY(), $this->px2mm($attr['WIDTH']), $this->px2mm($attr['HEIGHT']),$ext);
+						$this->SetY($this->GetY()+$this->px2mm($attr['HEIGHT'])+2);
 					}catch (\Exception $e) {
 						SIM\printArray("PDF_HELPER_Functions.php: {$attr['SRC']} is not a valid image");
 					}
@@ -140,7 +186,7 @@ class PdfHtml extends \FPDF{
 				break;
 			case 'FONT':
 				if (isset($attr['COLOR']) && $attr['COLOR']!='') {
-					$colour=hex2dec($attr['COLOR']);
+					$colour=$this->hex2dec($attr['COLOR']);
 					$this->SetTextColor($colour['R'],$colour['G'],$colour['B']);
 					$this->issetcolor=true;
 				}
@@ -700,13 +746,7 @@ class PdfHtml extends \FPDF{
 	 */
 	function printPdf(){
 		// CLear the complete queue
-		while(true){
-			//ob_get_clean only returns false when there is absolutely nothing anymore
-			$result	= ob_get_clean();
-			if($result === false){
-				break;
-			}
-		}
+		SIM\clearOutput();
 
 		ob_start();
 		$this->Output();

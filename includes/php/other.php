@@ -17,7 +17,7 @@ add_filter('wp_handle_upload_prefilter', function ($file) {
 	$ext 	= strtolower($ext);
 	
 	//Change the extension to jpe
-	if($ext == ".jpg" or $ext == ".jpeg" or $ext == ".jfif" or $ext == ".exif"){
+	if($ext == ".jpg" || $ext == ".jpeg" || $ext == ".jfif" || $ext == ".exif"){
 		$ext = ".jpe";
 	}
 	
@@ -125,3 +125,9 @@ add_filter( 'post_password_required',
 	}
 	, 10, 2 
 );
+
+// Make sure only the rest api response is echood and nothing else
+add_filter( 'rest_request_after_callbacks', function($response){
+	clearOutput();
+	return $response;
+});

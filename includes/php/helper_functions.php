@@ -1180,6 +1180,19 @@ function isRestApiRequest() {
     return strpos( $_SERVER['REQUEST_URI'], $restPrefix ) !== false;
 }
 
+/**
+ * Clears the output queue
+ */
+function clearOutput(){
+	while(true){
+        //ob_get_clean only returns false when there is absolutely nothing anymore
+        $result	= ob_get_clean();
+        if($result === false){
+            break;
+        }
+    }
+}
+
 //Creates subimages
 //Add action
 add_action('init', function () {
