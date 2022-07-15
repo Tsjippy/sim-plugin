@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.2.3] - 2022-07-15
+
+
+### Added
 - select attachment cat in backend
 
 ### Changed
