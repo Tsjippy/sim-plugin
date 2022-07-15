@@ -16,6 +16,26 @@ add_action( 'save_post', function($postId, $post){
     }
 }, 10, 2);
 
+add_action( 'wp_trash_post', function($postId){
+    global $Modules;
+    $index  = array_search($postId, $Modules[MODULE_SLUG]['front_end_post_pages']);
+    if($index){
+        unset($Modules[MODULE_SLUG]['front_end_post_pages'][$index]);
+        $Modules[MODULE_SLUG]['front_end_post_pages']   = array_values($Modules[MODULE_SLUG]['front_end_post_pages']);
+        update_option('sim_modules', $Modules);
+    }
+} );
+
+add_action( 'wp_trash_post', function($postId){
+    global $Modules;
+    $index  = array_search($postId, $Modules[MODULE_SLUG]['front_end_post_pages']);
+    if($index){
+        unset($Modules[MODULE_SLUG]['front_end_post_pages'][$index]);
+        $Modules[MODULE_SLUG]['front_end_post_pages']   = array_values($Modules[MODULE_SLUG]['front_end_post_pages']);
+        update_option('sim_modules', $Modules);
+    }
+} );
+
 add_action( 'wp_enqueue_scripts', function () {
     wp_register_style('sim_frontend_style', plugins_url('css/frontend_posting.min.css', __DIR__), array(), MODULE_VERSION);
 	

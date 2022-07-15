@@ -62,9 +62,9 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		Use like this: <code>[twofa_setup]</code>
 	</p>
 	<?php
-	$page1Id	= SIM\getModuleOption($moduleSlug, 'password_reset_page');
-	$page2Id	= SIM\getModuleOption($moduleSlug, 'register_page');
-	$page3Id	= SIM\getModuleOption($moduleSlug, '2fa_page');
+	$page1Id	= SIM\getModuleOption($moduleSlug, 'password_reset_page')[0];
+	$page2Id	= SIM\getModuleOption($moduleSlug, 'register_page')[0];
+	$page3Id	= SIM\getModuleOption($moduleSlug, '2fa_page')[0];
 	if(is_numeric($page1Id) || is_numeric($page2Id) || is_numeric($page3Id)){
 		?>
 		<p>
@@ -177,7 +177,9 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 	$newOptions	= SIM\ADMIN\createDefaultPage($newOptions, 'password_reset_page', 'Change password', '[change_password]', $oldOptions);
 
 	// Add registration page
-	$newOptions	= SIM\ADMIN\createDefaultPage($newOptions, 'register_page', 'Request user account', '[request_account]', $oldOptions, ['post_category' => [$publicCat]]);
+	if(isset($newOptions['user_registration'])){
+		$newOptions	= SIM\ADMIN\createDefaultPage($newOptions, 'register_page', 'Request user account', '[request_account]', $oldOptions, ['post_category' => [$publicCat]]);
+	}
 
 	// Add 2fa page
 	$newOptions	= SIM\ADMIN\createDefaultPage($newOptions, '2fa_page', 'Two Factor Authentication', '[twofa_setup]', $oldOptions);
@@ -194,11 +196,11 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 
 add_filter('display_post_states', function ( $states, $post ) { 
     
-    if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'password_reset_page')[0] ) {
+    if(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'password_reset_page')) ) {
         $states[] = __('Password reset page'); 
-    }elseif ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'register_page')[0] ) {
+    }elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'register_page'))) {
         $states[] = __('User register page'); 
-    }elseif ( $post->ID == SIM\getModuleOption(MODULE_SLUG, '2fa_page')[0] ) {
+    }elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, '2fa_page')) ) {
         $states[] = __('Two Factor Setup page'); 
     } 
 

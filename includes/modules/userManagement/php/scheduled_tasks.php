@@ -297,11 +297,21 @@ add_action( 'save_post', function($post_ID, $post){
     if(has_shortcode($post->post_content, 'user-info')){
         global $Modules;
 
-        $Modules[MODULE_SLUG]['account_page']    = $post_ID;
+        $Modules[MODULE_SLUG]['account_page'][]    = $post_ID;
 
         update_option('sim_modules', $Modules);
     }
 }, 10, 2);
+
+add_action( 'wp_trash_post', function($postId){
+    global $Modules;
+    $index  = array_search($postId, $Modules[MODULE_SLUG]['account_page']);
+    if($index){
+        unset($Modules[MODULE_SLUG]['account_page'][$index]);
+        $Modules[MODULE_SLUG]['account_page']   = array_values($Modules[MODULE_SLUG]['account_page']);
+        update_option('sim_modules', $Modules);
+    }
+} );
 
 /**
  * send an e-mail with an overview of an users details for them to check

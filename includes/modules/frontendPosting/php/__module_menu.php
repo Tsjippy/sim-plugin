@@ -28,7 +28,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 
 	<?php
-	$pageId	= SIM\getModuleOption($moduleSlug, 'publish_post_page')[0];
+	$pageId	= SIM\getModuleOption($moduleSlug, 'front_end_post_pages')[0];
 	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
 		?>
 		<p>
@@ -136,7 +136,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 
 add_filter('display_post_states', function ( $states, $post ) { 
     
-    if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages')[0] ) {
+    if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages'))) {
         $states[] = __('Frontend posting page'); 
     } 
 

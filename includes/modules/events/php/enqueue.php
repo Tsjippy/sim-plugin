@@ -28,6 +28,23 @@ add_action( 'save_post', function($post_ID, $post){
     }
 }, 10, 2);
 
+add_action( 'wp_trash_post', function($postId){
+    global $Modules;
+    $index  = array_search($postId, $Modules[MODULE_SLUG]['upcomingevents_pages']);
+    if($index){
+        unset($Modules[MODULE_SLUG]['upcomingevents_pages'][$index]);
+        $Modules[MODULE_SLUG]['upcomingevents_pages']   = array_values($Modules[MODULE_SLUG]['upcomingevents_pages']);
+        update_option('sim_modules', $Modules);
+    }
+
+    $index  = array_search($postId, $Modules[MODULE_SLUG]['schedule_pages']);
+    if($index){
+        unset($Modules[MODULE_SLUG]['schedule_pages'][$index]);
+        $Modules[MODULE_SLUG]['schedule_pages']   = array_values($Modules[MODULE_SLUG]['schedule_pages']);
+        update_option('sim_modules', $Modules);
+    }
+} );
+
 add_action( 'wp_enqueue_scripts', function(){
     //css
     wp_register_style('sim_schedules_css', plugins_url('css/schedules.min.css', __DIR__), array(), MODULE_VERSION);
