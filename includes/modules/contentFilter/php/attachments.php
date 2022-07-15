@@ -65,7 +65,7 @@ add_action( 'edit_attachment', function($attachmentId){
  * @param  	int 	$postId		    WP_Post id
  * @param  	string	$subDir   	    The sub folder where the files should be uploaded 
 */
-function moveAttachment($postId, $subDir){
+function moveAttachment($postId, $subDir, $generate=true){
     if(empty($subDir)){
         $newPath   = wp_upload_dir()['basedir'];
     }else{
@@ -96,10 +96,12 @@ function moveAttachment($postId, $subDir){
         rename($file, "$newPath/".basename ($file));
 	}
 
-    if(!function_exists('wp_generate_attachment_metadata')){
-        require_once(ABSPATH.'/wp-admin/includes/image.php');
+    if($generate){
+        if(!function_exists('wp_generate_attachment_metadata')){
+            require_once(ABSPATH.'/wp-admin/includes/image.php');
+        }
+        wp_generate_attachment_metadata($postId, "$newPath/$filename");
     }
-    wp_generate_attachment_metadata($postId, "$newPath/$filename");
 
     //replace any url with new urls for this attachment
     $oldUrl    = SIM\pathToUrl(str_replace($filename, $baseName, $oldPath));
@@ -149,17 +151,32 @@ add_filter( 'ajax_query_attachments_args', function($query){
     return $query;
 } );
 
-// Make private by default if enabled
+/**
+ * Make private by default if enabled
+ */
+
+// Move the file to the private dir
+add_filter('wp_handle_upload', function($file){
+    $default    = SIM\getModuleOption(MODULE_SLUG, 'default_status');
+    
+    if($default == 'private' && strpos($file['file'], 'private') === false){
+        $newPath    = wp_upload_dir()['basedir'].'/private/'.basename($file['file']);
+        $newUrl     = SIM\pathToUrl($newPath);
+
+        rename($file['file'], $newPath);
+
+        $file['file']   = $newPath;
+        $file['url']    = $newUrl;
+    }
+
+    return $file;
+});
+
+// Set the visibility key
 add_action( 'add_attachment', function ( $postId) { 
     $default    = SIM\getModuleOption(MODULE_SLUG, 'default_status');
-    $path       = get_attached_file($postId);
     
-    if($default == 'private' || strpos($path, '/private/') !== false ){
+    if($default == 'private'){
         update_metadata( 'post',  $postId, 'visibility', 'private' );
-        
-        // Move if not already in the private folder
-        if(strpos($path, '/private/') === false ){
-            moveAttachment($postId, 'private');
-        }
     }
 });
