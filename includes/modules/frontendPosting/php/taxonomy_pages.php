@@ -42,7 +42,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 			if(!empty($catNames)){
 				$catNames	.= ',';
 			}
-			$catNames		.= $name;
+			$catNames		.= $category->slug;
 		}
 
 		$checkboxes	.= "<input $checked style='width: initial' type='checkbox' class='attachment_cat_checkbox' value='{$category->slug}' onchange='attachmentChanged(this)'>";
