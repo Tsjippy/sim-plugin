@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- message no permission to delete accounts
 
 ## [2.2.3] - 2022-07-15
 
