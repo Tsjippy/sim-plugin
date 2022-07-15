@@ -8,6 +8,7 @@
 
 ### Fixed
 - message no permission to delete accounts
+- better auto page creation
 
 ## [2.2.3] - 2022-07-15
 
