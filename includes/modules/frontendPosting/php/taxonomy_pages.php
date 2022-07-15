@@ -57,7 +57,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 				$html	.= "if(element.checked){";
 					$html	.= "catEl.value	= catEl.value + ','+val;";
 				$html	.= "} else{";
-					$html	.= "catEl.value	= catEl.value.replace(','+val, '');";
+					$html	.= "catEl.value	= catEl.value.replace(','+val, '').replace(val, '');";
 				$html	.= "}";
 			$html	.= "}";
 		$html	.= "</script>";
