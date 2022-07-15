@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- select attachment cat in backend
 
 ### Changed
 
