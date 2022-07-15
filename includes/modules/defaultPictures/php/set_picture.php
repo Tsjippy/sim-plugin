@@ -12,7 +12,7 @@ function setDefaultPicture($postId){
     }
 
     $pictureIds    = SIM\getModuleOption(MODULE_SLUG, 'picture_ids');
-    $categories     = get_the_category( $postId );
+    $categories    = get_the_category( $postId );
 
     $pictureSet    = false;
     # Loop over all categories of this post

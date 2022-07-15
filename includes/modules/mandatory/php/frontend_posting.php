@@ -19,7 +19,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
         <h4>Audience</h4>				
         <?php
         if($frontendContend->postId != null){
-            if(is_array($audience) and count($audience)>0){
+            if(is_array($audience) && !empty($audience)){
                 ?>
                 <input type="checkbox" name="audience[normal]" value="normal" <?php echo $checked; ?>>
                 <label for="normal">Normal</label><br>
@@ -78,11 +78,11 @@ add_action('sim_after_post_save', function($post){
 			SIM\cleanUpNestedArray($audiences);
 			
 			//Only continue if there are audiences defined
-			if(count($audiences)>0){
+			if(!empty($audiences)){
 				update_metadata( 'post', $post->ID, "audience", $audiences);
 			
 				//Mark existing users as if they have read the page if this pages should be read by new people after arrival
-				if(isset($audiences['afterarrival']) and !isset($audiences['everyone'])){
+				if(isset($audiences['afterarrival']) && !isset($audiences['everyone'])){
 					//Get all users who are longer than 1 month in the country
 					$users = get_users(array(
 						'meta_query' => array(

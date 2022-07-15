@@ -42,7 +42,7 @@ function sendPendingPostWarning($post, $update){
 	}
 	
 	//Mark warning as send
-	update_metadata( 'post', $post->ID,'pending_notification_send',true);
+	update_metadata( 'post', $post->ID, 'pending_notification_send', true);
 }
 
 //Delete the indicator that the warning has been send

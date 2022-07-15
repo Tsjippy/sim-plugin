@@ -732,7 +732,7 @@ class FrontEndContent{
 						$parent				= $category->parent;
 						$checked			= '';
 						$class				= 'infobox';
-						$taxonomy			= get_object_taxonomies($type)[0];
+						$taxonomy			= $category->taxonomy;
 						
 						//This category is a not a child
 						if($parent == 0){
@@ -1166,20 +1166,19 @@ class FrontEndContent{
 		
 		//Static content
 		if(isset($_POST['static_content'])){
-			//Store static content option
-			if($_POST['static_content'] == ''){
-				$value = false;
-			}else{
-				$value = true;
-			}
-			
-			update_metadata( 'post', $this->postId, 'static_content', $value);
+			update_metadata( 'post', $this->postId, 'static_content', true);		
+		}else{
+			delete_post_meta($this->postId, 'static_content');
 		}
 		
 		//Expiry date
 		if(isset($_POST['expirydate'])){
-			//Store expiry date
-			update_metadata( 'post', $this->postId, 'expirydate', $_POST['expirydate']);
+			if(empty($_POST['expirydate'])){
+				delete_post_meta($this->postId, 'expirydate');
+			}else{
+				//Store expiry date
+				update_metadata( 'post', $this->postId, 'expirydate', $_POST['expirydate']);
+			}
 		}
 
 		if($post->post_status == 'pending'){

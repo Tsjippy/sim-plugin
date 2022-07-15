@@ -71,11 +71,8 @@ add_action('sim_after_post_save', function($post){
     //PDF button
     if(isset($_POST['add_print_button'])){
         //Store pdf button
-        if($_POST['add_print_button'] == ''){
-            $value = false;
-        }else{
-            $value = true;
-        }
-        update_metadata( 'post', $post->ID,'add_print_button', $value);
+        update_metadata( 'post', $post->ID,'add_print_button', true);
+    }else{
+        delete_post_meta( $post->ID,'add_print_button');
     }
 });

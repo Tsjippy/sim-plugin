@@ -36,14 +36,22 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
     
     //tel
     if(isset($_POST['tel'])){
-        //Store serves
-        update_metadata( 'post', $post->ID, 'tel', $_POST['tel']);
+        if(empty($_POST['tel'])){
+            delete_post_meta($post->ID, 'tel');
+        }else{
+            //Store serves
+            update_metadata( 'post', $post->ID, 'tel', $_POST['tel']);
+        }
     }
     
     //url
     if(isset($_POST['url'])){
-        //Store serves
-        update_metadata( 'post', $post->ID, 'url', $_POST['url']);
+        if(empty($_POST['url'])){
+            delete_post_meta($post->ID, 'url');
+        }else{
+            //Store serves
+            update_metadata( 'post', $post->ID, 'url', $_POST['url']);
+        }
     }
     
     locationAddress($post->ID);
@@ -270,7 +278,7 @@ function locationAddress($postId){
             }
             
             //Store marker ids in db
-            update_metadata( 'post', $postId,"marker_ids", $markerIds);
+            update_metadata( 'post', $postId, "marker_ids", $markerIds);
         }elseif(empty($latitude) && empty($longitude) && is_numeric($mapId)){
             //Delete the custom map for this post
             delete_post_meta($postId, 'map_id');

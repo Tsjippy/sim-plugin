@@ -101,19 +101,31 @@ function storeRecipeMeta($post, $postType){
 		);
 		
 		//Store ingredients
-		update_metadata( 'post', $post->ID, 'ingredients', $ingredients);
+		if(empty($ingredients)){
+			delete_post_meta($post->ID, 'ingredients');
+		}else{
+			update_metadata( 'post', $post->ID, 'ingredients', $ingredients);
+		}
 	}
 	
 	//time_needed
-	if(isset($_POST['time_needed']) and is_numeric($_POST['time_needed'])){
-		//Store time_needed
-		update_metadata( 'post', $post->ID, 'time_needed', $_POST['time_needed']);
+	if(isset($_POST['time_needed'])){
+		if(is_numeric($_POST['time_needed'])){
+			//Store time_needed
+			update_metadata( 'post', $post->ID, 'time_needed', $_POST['time_needed']);
+		}else{
+			delete_post_meta($post->ID, 'time_needed');
+		}
 	}
 	
 	//serves
-	if(isset($_POST['serves']) and is_numeric($_POST['serves'])){
-		//Store serves
-		update_metadata( 'post', $post->ID,'serves', $_POST['serves']);
+	if(isset($_POST['serves'])){
+		if(is_numeric($_POST['serves'])){
+			//Store serves
+			update_metadata( 'post', $post->ID, 'serves', $_POST['serves']);
+		}else{
+			delete_post_meta($post->ID, 'serves');
+		}
 	}
 }
 

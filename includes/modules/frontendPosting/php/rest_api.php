@@ -186,7 +186,9 @@ add_action( 'rest_api_init', function () {
 function getAttachmentContents(\WP_REST_Request $request ){
 	$path	= get_attached_file($request['attachment_id']);
 
-	if(!file_exists($path)){ return;}
+	if(!file_exists($path)){ 
+		return '';
+	}
 
 	return SIM\readTextFile($path);
 }
