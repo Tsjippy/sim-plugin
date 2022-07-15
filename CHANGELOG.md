@@ -6,6 +6,7 @@
 - select attachment cat in backend
 
 ### Changed
+- do not store empty values
 
 ### Fixed
 - sending e-mail containing 2fa code on linux
