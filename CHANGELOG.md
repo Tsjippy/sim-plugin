@@ -7,9 +7,13 @@
 ### Changed
 
 ### Fixed
+
+## [2.2.4] - 2022-07-15
+
+
+### Fixed
 - message no permission to delete accounts
 - better auto page creation
-- issue with auto created pages
 
 ## [2.2.3] - 2022-07-15
 
