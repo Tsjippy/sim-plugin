@@ -103,8 +103,13 @@ function checkForUpdate( $updatePlugins ) {
  * @return	array	Array containing information about the latest release
  */
 function getLatestRelease(){
-	//check github version
-	$release    = get_transient('sim-git-release');
+	if(isset($_GET['update'])){
+		$release	= false;
+	}else{
+		//check github version
+		$release    = get_transient('sim-git-release');
+	}
+	
 	// if not in transient
 	if(!$release){
 		$client 	    = new \Github\Client();

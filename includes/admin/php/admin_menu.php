@@ -28,6 +28,17 @@ add_action( 'admin_menu', function() {
 		}
 	}
 
+	if(isset($_GET['update'])){
+		$updates	= SIM\checkForUpdate( new \stdClass() );
+
+		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
+			include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+			include_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
+			$plugin_Upgrader	= new \Plugin_Upgrader();
+			$plugin_Upgrader->upgrade(PLUGINNAME.'/'.PLUGINNAME.'.php');
+		}
+	}
+
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");	
 
 	foreach($moduleDirs as $moduleSlug=>$folderName){
@@ -227,8 +238,10 @@ function mainMenu(){
 	}
 	
 	ob_start();
+	$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
 	?>
 	<div>
+		<a href='<?php echo $url;?>' class='button'>Check for update</a><br><br>
 		<strong>Current active modules</strong><br>
 		<ul class="sim-list">
 		<?php
