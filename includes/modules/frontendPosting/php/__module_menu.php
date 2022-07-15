@@ -29,7 +29,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 
 	<?php
 	$pageId	= SIM\getModuleOption($moduleSlug, 'publish_post_page');
-	if(is_numeric($pageId)){
+	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
 		?>
 		<p>
 			<strong>Auto created page:</strong><br>
@@ -120,36 +120,19 @@ add_action('sim_module_deactivated', function($moduleSlug, $options){
 	wp_delete_post($options['publish_post_page'], true);
 }, 10, 2);
 
-add_filter('sim_module_updated', function($options, $moduleSlug){
+add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
 	}
 
 	// Create frontend posting page
-	$pageId	= SIM\getModuleOption($moduleSlug, 'publish_post_page');
-	// Only create if it does not yet exist
-	if(!$pageId || get_post_status($pageId) != 'publish'){
-		$post = array(
-			'post_type'		=> 'page',
-			'post_title'    => 'Add content',
-			'post_content'  => '[front_end_post]',
-			'post_status'   => "publish",
-			'post_author'   => '1'
-		);
-		$pageId 	= wp_insert_post( $post, true, false);
-
-		//Store page id in module options
-		$options['publish_post_page']	= $pageId;
-
-		// Do not require page updates
-		update_post_meta($pageId,'static_content', true);
-	}
+	$options	= SIM\ADMIN\createDefaultPage($options, 'publish_post_page', 'Add content', '[front_end_post]', $oldOptions);
 
 	scheduleTasks();
 
 	return $options;
-}, 10, 2);
+}, 10, 3);
 
 add_filter('display_post_states', function ( $states, $post ) { 
     

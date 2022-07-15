@@ -6,32 +6,42 @@ const MODULE_VERSION		= '7.0.22';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
-add_filter('sim_module_updated', function($options, $moduleSlug){
+add_filter('sim_submenu_description', function($description, $moduleSlug){
+	//module slug should be the same as the constant
+	if($moduleSlug != MODULE_SLUG)	{
+		return $description;
+	}
+
+	ob_start();
+	?>
+	<p>
+		This module adds a media gallery of downloadable pictures, video's and audio files.
+	</p>
+	<?php
+	$pageId	= SIM\getModuleOption($moduleSlug, 'mediagallery');
+	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
+		?>
+		<p>
+			<strong>Auto created page:</strong><br>
+			<a href='<?php echo get_permalink($pageId);?>'>Media gallery</a><br>
+		</p>
+		<?php
+	}
+
+	return ob_get_clean();
+}, 10, 2);
+
+add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
 	}
 
 	// Create account page
-	$pageId	= SIM\getModuleOption($moduleSlug, 'mediagallery');
-	// Only create if it does not yet exist
-	if(!$pageId || get_post_status($pageId) != 'publish'){
-		$post = array(
-			'post_type'		=> 'page',
-			'post_title'    => 'Media Gallery',
-			'post_content'  => '[mediagallery]',
-			'post_status'   => "publish",
-			'post_author'   => '1'
-		);
-		$pageId 	= wp_insert_post( $post, true, false);
+	$options	= SIM\ADMIN\createDefaultPage($options, 'mediagallery', 'Media Gallery', '[mediagallery]', $oldOptions);
 
-		//Store page id in module options
-		$options['mediagallery']	= $pageId;
-
-		// Do not require page updates
-		update_post_meta($pageId,'static_content', true);
-	}
-}, 10, 2);
+	return $options;
+}, 10, 3);
 
 add_filter('display_post_states', function ( $states, $post ) { 
     

@@ -42,12 +42,14 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	<?php
 	$page1Id	= SIM\getModuleOption($moduleSlug, 'account_page');
 	$page2Id	= SIM\getModuleOption($moduleSlug, 'user_edit_page');
-	if(is_numeric($page1Id) || is_numeric($page2Id)){
+	$page3Id	= SIM\getModuleOption($moduleSlug, 'account_create_page');
+	if(is_numeric($page1Id) && get_post_status($page1Id) == 'publish'){
 		?>
 		<p>
 			<strong>Auto created page:</strong><br>
 			<a href='<?php echo get_permalink($page1Id);?>'>Account</a><br>
 			<a href='<?php echo get_permalink($page2Id);?>'>Edit users</a><br>
+			<a href='<?php echo get_permalink($page3Id);?>'>Create user accounts</a><br>
 		</p>
 		<?php
 	}
@@ -213,76 +215,25 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 	return ob_get_clean();
 }, 10, 3);
 
-add_filter('sim_module_updated', function($options, $moduleSlug){
+add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
 	}
 
 	// Create account page
-	$pageId	= SIM\getModuleOption($moduleSlug, 'account_page');
-	// Only create if it does not yet exist
-	if(!$pageId || get_post_status($pageId) != 'publish'){
-		$post = array(
-			'post_type'		=> 'page',
-			'post_title'    => 'Account',
-			'post_content'  => '[user-info currentuser=true]',
-			'post_status'   => "publish",
-			'post_author'   => '1'
-		);
-		$pageId 	= wp_insert_post( $post, true, false);
-
-		//Store page id in module options
-		$options['account_page']	= $pageId;
-
-		// Do not require page updates
-		update_post_meta($pageId,'static_content', true);
-	}
+	$options	= SIM\ADMIN\createDefaultPage($options, 'account_page', 'Account', '[user-info currentuser=true]', $oldOptions);
 
 	// Create user edit page
-	$pageId	= SIM\getModuleOption($moduleSlug, 'user_edit_page');
-	// Only create if it does not yet exist
-	if(!$pageId || get_post_status($pageId) != 'publish'){
-		$post = array(
-			'post_type'		=> 'page',
-			'post_title'    => 'Edit users',
-			'post_content'  => '[user-info]',
-			'post_status'   => "publish",
-			'post_author'   => '1'
-		);
-		$pageId 	= wp_insert_post( $post, true, false);
-
-		//Store page id in module options
-		$options['user_edit_page']	= $pageId;
-
-		// Do not require page updates
-		update_post_meta($pageId, 'static_content', true);
-	}
+	$options	= SIM\ADMIN\createDefaultPage($options, 'user_edit_page', 'Edit users', '[user-info]', $oldOptions);
 
 	// Create user create page
-	$pageId	= SIM\getModuleOption($moduleSlug, 'account_create_page');
-	// Only create if it does not yet exist
-	if(!$pageId || get_post_status($pageId) != 'publish'){
-		$post = array(
-			'post_type'		=> 'page',
-			'post_title'    => 'Add user account',
-			'post_content'  => '[create_user_account]',
-			'post_status'   => "publish",
-			'post_author'   => '1'
-		);
-		$pageId 	= wp_insert_post( $post, true, false);
-
-		//Store page id in module options
-		$options['account_create_page']	= $pageId;
-
-		// Do not require page updates
-		update_post_meta($pageId, 'static_content', true);
-	}
+	$options	= SIM\ADMIN\createDefaultPage($options, 'account_create_page', 'Add user account', '[create_user_account]', $oldOptions);
 
 	scheduleTasks();
 
 	return $options;
-}, 10, 2);
+}, 10, 3);
 
 add_filter('display_post_states', function ( $states, $post ) { 
     

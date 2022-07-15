@@ -22,7 +22,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 
 	<?php
 	$pageId	= SIM\getModuleOption($moduleSlug, 'home_page');
-	if(is_numeric($pageId)){
+	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
 		?>
 		<p>
 			<strong>Auto created page:</strong><br>
@@ -155,37 +155,18 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	return ob_get_clean();
 }, 10, 3);
 
-add_filter('sim_module_updated', function($options, $moduleSlug){
+add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
 	}
 
 	// Create frontend posting page
-	$pageId	= SIM\getModuleOption($moduleSlug, 'home_page');
-	// Only create if it does not yet exist
-	if(!$pageId || get_post_status($pageId) != 'publish'){
-		$content	= 'Hi [displayname],<br><br>I hope you have a great day!<br><br>[logged_home_page]<br><br>[welcome]';
-
-		$post = array(
-			'post_type'		=> 'page',
-			'post_title'    => 'Home',
-			'post_content'  => $content,
-			'post_status'   => "publish",
-			'post_author'   => '1',
-			'slug'			=> 'lhome'
-		);
-		$pageId 	= wp_insert_post( $post, true, false);
-
-		//Store page id in module options
-		$options['home_page']	= $pageId;
-
-		// Do not require page updates
-		update_post_meta($pageId, 'static_content', true);
-	}
+	$content	= 'Hi [displayname],<br><br>I hope you have a great day!<br><br>[logged_home_page]<br><br>[welcome]';
+	$options	= SIM\ADMIN\createDefaultPage($options, 'home_page', 'Home', $content, $oldOptions, ['post_name'=>'lhome']);
 
 	return $options;
-}, 10, 2);
+}, 10, 3);
 
 add_filter('display_post_states', function ( $states, $post ) { 
     

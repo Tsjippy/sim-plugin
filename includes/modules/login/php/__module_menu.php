@@ -174,69 +174,13 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 	$publicCat	= get_cat_ID('Public');
 
 	// Create password reset page
-	$pageId	= SIM\getModuleOption($moduleSlug, 'password_reset_page');
-	// Only create if it does not yet exist
-	if(!$pageId || get_post_status($pageId) != 'publish'){
-		$post = array(
-			'post_type'		=> 'page',
-			'post_title'    => 'Change password',
-			'post_content'  => '[change_password]',
-			'post_status'   => "publish",
-			'post_author'   => '1',
-			'post_category'	=> [$publicCat]
-		);
-		$pageId 	= wp_insert_post( $post, true, false);
-
-		//Store page id in module options
-		$newOptions['password_reset_page']	= $pageId;
-
-		// Do not require page updates
-		update_post_meta($pageId, 'static_content', true);
-	}
+	$options	= SIM\ADMIN\createDefaultPage($newOptions, 'password_reset_page', 'Change password', '[change_password]', $oldOptions);
 
 	// Add registration page
-	if(isset($newOptions['user_registration'])){
-		// Create register page
-		$pageId	= SIM\getModuleOption($moduleSlug, 'register_page');
-		// Only create if it does not yet exist
-		if(!$pageId || get_post_status($pageId) != 'publish'){
-			$post = array(
-				'post_type'		=> 'page',
-				'post_title'    => 'Request user account',
-				'post_content'  => '[request_account]',
-				'post_status'   => "publish",
-				'post_author'   => '1',
-				'post_category'	=> [$publicCat]
-			);
-			$pageId 	= wp_insert_post( $post, true, false);
-
-			//Store page id in module options
-			$newOptions['register_page']	= $pageId;
-
-			// Do not require page updates
-			update_post_meta($pageId,'static_content', true);
-		}
-	}
+	$options	= SIM\ADMIN\createDefaultPage($newOptions, 'register_page', 'Request user account', '[request_account]', $oldOptions, ['post_category' => [$publicCat]]);
 
 	// Add 2fa page
-	$pageId	= SIM\getModuleOption($moduleSlug, '2fa_page');
-	// Only create if it does not yet exist
-	if(!$pageId || get_post_status($pageId) != 'publish'){
-		$post = array(
-			'post_type'		=> 'page',
-			'post_title'    => 'Two Factor Authentication',
-			'post_content'  => '[twofa_setup]',
-			'post_status'   => "publish",
-			'post_author'   => '1'
-		);
-		$pageId 	= wp_insert_post( $post, true, false);
-
-		//Store page id in module options
-		$newOptions['2fa_page']	= $pageId;
-
-		// Do not require page updates
-		update_post_meta($pageId, 'static_content', true);
-	}
+	$options	= SIM\ADMIN\createDefaultPage($newOptions, '2fa_page', 'Two Factor Authentication', '[twofa_setup]', $oldOptions);
 
 	// Remove registration page
 	if(isset($oldOptions['register_page']) && !isset($newOptions['user_registration'])){
