@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- page removal action
 
 ## [2.2.6] - 2022-07-15
 
