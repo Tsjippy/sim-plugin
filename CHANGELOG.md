@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.2.7] - 2022-07-15
+
+
+### Fixed
 - page removal action
 
 ## [2.2.6] - 2022-07-15
