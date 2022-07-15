@@ -28,7 +28,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 
 	<?php
-	$pageId	= SIM\getModuleOption($moduleSlug, 'publish_post_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'publish_post_page')[0];
 	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
 		?>
 		<p>
@@ -127,7 +127,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	}
 
 	// Create frontend posting page
-	$options	= SIM\ADMIN\createDefaultPage($options, 'publish_post_page', 'Add content', '[front_end_post]', $oldOptions);
+	$options	= SIM\ADMIN\createDefaultPage($options, 'front_end_post_pages', 'Add content', '[front_end_post]', $oldOptions);
 
 	scheduleTasks();
 
@@ -136,7 +136,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 
 add_filter('display_post_states', function ( $states, $post ) { 
     
-    if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'publish_post_page') ) {
+    if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages') ) {
         $states[] = __('Frontend posting page'); 
     } 
 

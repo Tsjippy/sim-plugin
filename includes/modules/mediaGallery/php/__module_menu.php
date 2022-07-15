@@ -18,7 +18,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		This module adds a media gallery of downloadable pictures, video's and audio files.
 	</p>
 	<?php
-	$pageId	= SIM\getModuleOption($moduleSlug, 'mediagallery');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'mediagallery_pages')[0];
 	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
 		?>
 		<p>
@@ -38,14 +38,14 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	}
 
 	// Create account page
-	$options	= SIM\ADMIN\createDefaultPage($options, 'mediagallery', 'Media Gallery', '[mediagallery]', $oldOptions);
+	$options	= SIM\ADMIN\createDefaultPage($options, 'mediagallery_pages', 'Media Gallery', '[mediagallery]', $oldOptions);
 
 	return $options;
 }, 10, 3);
 
 add_filter('display_post_states', function ( $states, $post ) { 
     
-	if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'mediagallery') ) {
+	if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'mediagallery_pages') ) {
 		$states[] = __('Media gallery page'); 
 	}
 

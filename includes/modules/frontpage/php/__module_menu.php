@@ -21,7 +21,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 
 	<?php
-	$pageId	= SIM\getModuleOption($moduleSlug, 'home_page');
+	$pageId	= SIM\getModuleOption($moduleSlug, 'home_page')[0];
 	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
 		?>
 		<p>
@@ -107,7 +107,10 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		<input type="text" name="before_footer_hook" value="<?php echo $settings['before_footer_hook'];?>">
 	</label>
 	<br>
-
+	<label>
+		Select three different pages below. Optionally you can give cutom titles and summaries.<br>
+		If these fields are empty the page title and content will be used.
+	</label>
 	<?php
 	for ($x = 1; $x <= 3; $x++) {
 		?>
@@ -117,13 +120,15 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		echo SIM\pageSelect("page$x", $settings["page$x"]);
 		?>
 		<label>
-			Type a short title.<br>
+			Type a short title (optional).<br>
 			<input type="text" name="title<?php echo $x;?>" value="<?php echo $settings["title$x"];?>">
 		</label>
 		<br>
 		<label>
-			Type a short description.<br>
-			<input type="text" name="description<?php echo $x;?>" value="<?php echo $settings["description$x"];?>">
+			Type a short description (optional).<br>
+			<textarea name="description<?php echo $x;?>">
+				<?php echo $settings["description$x"];?>
+			</textarea>
 		</label>
 		<br>
 

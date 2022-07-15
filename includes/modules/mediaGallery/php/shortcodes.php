@@ -212,7 +212,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
             </div>
             
             <?php
-            if(empty($videoUrl)){
+           // if(empty($videoUrl)){
                 //only show image text on images
                 ?>
                 <div id="imgtext">
@@ -223,7 +223,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                     </div>
                 </div>
                 <?php
-            }
+            //}
 
             if($i != $total-1){
                 ?>
