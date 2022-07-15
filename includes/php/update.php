@@ -110,7 +110,7 @@ function getLatestRelease(){
 		$client 	    = new \Github\Client();
 		$release 	    = $client->api('repo')->releases()->latest('tsjippy', PLUGINNAME);
 		
-		// Store for 24 hours
+		// Store for 1 hours
 		set_transient( 'sim-git-release', $release, 3600 );
 	}
 

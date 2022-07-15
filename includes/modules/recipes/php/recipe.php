@@ -15,16 +15,16 @@ add_action('init', function(){
 	SIM\registerPostTypeAndTax('recipe','recipes');
 }, 999);
 
-add_filter( 'widget_categories_args', function ( $catArgs, $instance  ) {
+add_filter( 'widget_categories_args', function ( $catArgs ) {
 	//if we are on a recipes page, change to display the recipe types
-	if(is_tax('recipes') or is_page('recipes') or get_post_type()=='recipe'){
+	if(is_tax('recipes') || is_page('recipes') || get_post_type()=='recipe'){
 		$catArgs['taxonomy'] 		= 'recipes';
 		$catArgs['hierarchical']	= true;
 		$catArgs['hide_empty'] 		= false;
 	}
 		
     return $catArgs;
-}, 10, 2 );
+});
 
 //Add to frontend form
 add_action('sim_frontend_post_before_content', __NAMESPACE__.'\recipeSpecificFields');
@@ -39,19 +39,23 @@ add_filter('sim_frontend_posting_modals', function($types){
 function recipeTitle($postType){
 	//Recipe content title
 	$class = 'recipe';
-	if($postType != 'recipe')	$class .= ' hidden';
+	if($postType != 'recipe'){
+		$class .= ' hidden';
+	}
 	
 	echo "<h4 class='$class' name='recipe_content_label'>";
 		echo 'Recipe instructions (one per line)';
 	echo "</h4>";
 }
 
-function storeRecipeMeta($post, $postType){
+function storeRecipeMeta($post){
 	//store categories
     $cats = [];
     if(is_array($_POST['recipes_ids'])){
-        foreach($_POST['recipes_ids'] as $key=>$catId) {
-            if(is_numeric($catId)) $cats[] = $catId;
+        foreach($_POST['recipes_ids'] as $catId) {
+            if(is_numeric($catId)){
+				$cats[] = $catId;
+			}
         }
         
         //Store types
@@ -139,7 +143,7 @@ function recipeSpecificFields($frontEndContent){
 	
 	$frontEndContent->showCategories('recipe', $categories);
 	?>
-	<div class="recipe <?php if($frontEndContent->post_type != 'recipe') echo 'hidden'; ?>">
+	<div class="recipe <?php if($frontEndContent->post_type != 'recipe'){echo 'hidden';} ?>">
 		<h4 name="ingredients_label">Recipe ingredients (one per line)</h4>
 		<textarea name="ingredients" rows="10">
 			<?php echo wp_strip_all_tags(get_post_meta($frontEndContent->post_id,'ingredients',true)); ?>
