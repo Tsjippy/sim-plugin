@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- default pages for login module
 
 ## [2.2.4] - 2022-07-15
 
