@@ -497,7 +497,7 @@ add_shortcode( 'delete_user', function(){
 	$user = wp_get_current_user();
 
 	if ( !in_array('usermanagement', $user->roles)){
-		return;
+		return "<div class='error'>You have no permission to delete user accounts</div>";
 	}
 
 	//Load js	
