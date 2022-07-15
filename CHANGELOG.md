@@ -10,6 +10,7 @@
 ### Fixed
 - sending e-mail containing 2fa code on linux
 - issue with uploads organised in date folder
+- rest api response when errors on screen
 
 ## [2.2.2] - 2022-07-14
 
