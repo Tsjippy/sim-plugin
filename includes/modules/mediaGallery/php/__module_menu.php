@@ -45,7 +45,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 
 add_filter('display_post_states', function ( $states, $post ) { 
     
-	if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'mediagallery_pages') ) {
+	if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'mediagallery_pages')[0] ) {
 		$states[] = __('Media gallery page'); 
 	}
 

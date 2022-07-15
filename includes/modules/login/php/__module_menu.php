@@ -194,11 +194,11 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 
 add_filter('display_post_states', function ( $states, $post ) { 
     
-    if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'password_reset_page') ) {
+    if ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'password_reset_page')[0] ) {
         $states[] = __('Password reset page'); 
-    }elseif ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'register_page') ) {
+    }elseif ( $post->ID == SIM\getModuleOption(MODULE_SLUG, 'register_page')[0] ) {
         $states[] = __('User register page'); 
-    }elseif ( $post->ID == SIM\getModuleOption(MODULE_SLUG, '2fa_page') ) {
+    }elseif ( $post->ID == SIM\getModuleOption(MODULE_SLUG, '2fa_page')[0] ) {
         $states[] = __('Two Factor Setup page'); 
     } 
 
