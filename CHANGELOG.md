@@ -3,11 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- manual update possibility
 
 ### Changed
 
 ### Fixed
+
+## [2.2.6] - 2022-07-15
+
+
+### Added
+- manual update possibility
 
 ## [2.2.5] - 2022-07-15
 
