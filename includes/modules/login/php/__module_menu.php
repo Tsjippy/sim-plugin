@@ -174,13 +174,13 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 	$publicCat	= get_cat_ID('Public');
 
 	// Create password reset page
-	$options	= SIM\ADMIN\createDefaultPage($newOptions, 'password_reset_page', 'Change password', '[change_password]', $oldOptions);
+	$newOptions	= SIM\ADMIN\createDefaultPage($newOptions, 'password_reset_page', 'Change password', '[change_password]', $oldOptions);
 
 	// Add registration page
-	$options	= SIM\ADMIN\createDefaultPage($newOptions, 'register_page', 'Request user account', '[request_account]', $oldOptions, ['post_category' => [$publicCat]]);
+	$newOptions	= SIM\ADMIN\createDefaultPage($newOptions, 'register_page', 'Request user account', '[request_account]', $oldOptions, ['post_category' => [$publicCat]]);
 
 	// Add 2fa page
-	$options	= SIM\ADMIN\createDefaultPage($newOptions, '2fa_page', 'Two Factor Authentication', '[twofa_setup]', $oldOptions);
+	$newOptions	= SIM\ADMIN\createDefaultPage($newOptions, '2fa_page', 'Two Factor Authentication', '[twofa_setup]', $oldOptions);
 
 	// Remove registration page
 	if(isset($oldOptions['register_page']) && !isset($newOptions['user_registration'])){
