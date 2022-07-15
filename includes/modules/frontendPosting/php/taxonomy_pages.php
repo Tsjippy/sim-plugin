@@ -29,7 +29,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 	) );
 
 	$checkboxes		= '';
-	$catIds			= '';
+	$catNames			= '';
 	foreach($categories as $category){
 		$name 				= ucfirst($category->slug);
 		$catId 				= $category->cat_ID;
@@ -39,10 +39,10 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 		//if this cat belongs to this post
 		if(has_term($catId, $taxonomy, $post->ID)){
 			$checked 	 = 'checked';
-			if(!empty($catIds)){
-				$catIds	.= ',';
+			if(!empty($catNames)){
+				$catNames	.= ',';
 			}
-			$catIds		.= $catId;
+			$catNames		.= $name;
 		}
 
 		$checkboxes	.= "<input $checked style='width: initial' type='checkbox' class='attachment_cat_checkbox' value='{$category->slug}' onchange='attachmentChanged(this)'>";
@@ -61,7 +61,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 				$html	.= "}";
 			$html	.= "}";
 		$html	.= "</script>";
-		$html	.= "<input type='hidden' name='attachments[{$post->ID}][attachment_cat]' id='attachments[{$post->ID}][attachment_cat]' value='$catIds'>";
+		$html	.= "<input type='hidden' name='attachments[{$post->ID}][attachment_cat]' id='attachments[{$post->ID}][attachment_cat]' value='$catNames'>";
         $html   .= $checkboxes;
     $html   .= "</div>";
 
