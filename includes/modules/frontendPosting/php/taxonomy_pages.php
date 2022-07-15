@@ -16,7 +16,7 @@ add_action( 'init', function () {
 /**
  * Add categories to attachment page
  * 
- * WP expects a comma seperated list of cat ids, so
+ * WP expects a comma seperated list of cat slugs, so
  * we create a checkbox who update a hidden input wiht the comma seperated checkboxes
  */
 
@@ -45,7 +45,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 			$catIds		.= $catId;
 		}
 
-		$checkboxes	.= "<input $checked style='width: initial' type='checkbox' class='attachment_cat_checkbox' value='$catId' onchange='attachmentChanged(this)'>";
+		$checkboxes	.= "<input $checked style='width: initial' type='checkbox' class='attachment_cat_checkbox' value='{$category->slug}' onchange='attachmentChanged(this)'>";
 		$checkboxes	.= $name;
 	}
 
