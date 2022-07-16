@@ -116,7 +116,7 @@ function getLatestRelease(){
 		$release 	    = $client->api('repo')->releases()->latest('tsjippy', PLUGINNAME);
 		
 		// Store for 1 hours
-		set_transient( 'sim-git-release', $release, 3600 );
+		set_transient( 'sim-git-release', $release, DAY_IN_SECONDS );
 	}
 
 	return $release;
