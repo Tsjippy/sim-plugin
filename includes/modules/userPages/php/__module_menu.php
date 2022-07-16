@@ -38,7 +38,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		?>
 		<p>
 			<strong>Auto created page:</strong><br>
-			<a href='<?php echo $url;?>'>Media gallery</a><br>
+			<a href='<?php echo $url;?>'>User overview page</a><br>
 		</p>
 		<?php
 	}

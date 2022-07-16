@@ -6,34 +6,67 @@ use SMTPValidateEmail\Validator as SmtpEmailValidator;
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
-	global $wpdb;
-	/* //update all posts where this is attached
- 	$users = get_users();
-    foreach($users as $user){
-		$pageID	= get_user_meta($user->ID, "missionary_page_id", true);
-		delete_user_meta($user->ID, "missionary_page_id");
+	global $Modules;
 
-		update_user_meta($user->ID, "user_page_id", $pageID);
+	unset($Modules['extra_post_types']);
+	unset($Modules['template_specific']);
+	unset($Modules['pdf']);
+	unset($Modules['celebrations']);
+	unset($Modules['schedules']);
+
+	foreach(['frontend_posting',
+	'user_management',
+	'user_pages',
+	'SIM Nigeria',
+	'PDF',
+	'default_pictures',
+	'mail_posting',
+	'fancy_email',
+	'content_filter',
+	'media_gallery',
+	'embed_page'] as $key){
+		if(isset($Modules[$key])){
+			$newkey	= str_replace(['_',' '], '', strtolower($key));
+
+			$Modules[$newkey]	= $Modules[$key];
+			unset($Modules[$key]);
+		}
 	}
 
-	$posts=get_posts(array(
-		'meta_key'=>'missionary_id',
-		'post_type'		=> 'any',
-		'numberposts'	=> -1
+	if(isset($Modules['bulk_meta_update'])){
+		$Modules['bulkchange']	= $Modules['bulk_meta_update'];
+		unset($Modules['bulk_meta_update']);
+	}
 
-	));
+	if(isset($Modules['mandatory_content'])){
+		$Modules['mandatory']	= $Modules['mandatory_content'];
+		unset($Modules['mandatory_content']);
+	}
 
-	foreach($posts as $post){
-		$id	= get_post_meta($post->ID, 'missionary_id', true);
-		update_post_meta($post->ID, 'user_id', $id);
-		delete_post_meta($post->ID, 'missionary_id');
-	} */
+	if(!is_array($Modules['frontendposting']["front_end_post_pages"])){
+		$Modules['frontendposting']["front_end_post_pages"] = (array)$Modules['frontendposting']["publish_post_page"];
+		unset($Modules['frontendposting']["publish_post_page"]);
+	}
 
-	//$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_emails` CHANGE `reciepients` `recipients` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL;"); 
-	//$wpdb->query("ALTER TABLE `{$wpdb->prefix}sim_email_events` ADD `url` TEXT NOT NULL AFTER `time`;"); 
-	//$wpdb->query("DROP TABLE `{$wpdb->prefix}sim_emails`");
+	if(!is_array($Modules['frontpage']["home_page"])){
+		$Modules['frontpage']["home_page"] = (array)$Modules['frontpage']["home_page"];
+	}
 
-	BANKING\testMailImport();
+	if(!is_array($Modules['login']["password_reset_page"])){
+		$Modules['login']["password_reset_page"] = (array)$Modules['login']["password_reset_page"];
+	}
+
+	if(!is_array($Modules['login']["register_page"])){
+		$Modules['login']["register_page"] = (array)$Modules['login']["register_page"];
+	}
+
+	if(!is_array($Modules['login']["2fa_page"])){
+		$Modules['login']["2fa_page"] = (array)$Modules['login']["2fa_page"];
+	}
+
+	$Modules['userpages']["allcontacts_pages"] = [204];
+
+	update_option('sim_modules', $Modules);
 
 	return '';
 });

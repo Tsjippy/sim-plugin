@@ -193,43 +193,6 @@ function mainMenu(){
 	global $Modules;
 	global $moduleDirs;
 
-	unset($Modules['extra_post_types']);
-	unset($Modules['template_specific']);
-	unset($Modules['pdf']);
-	unset($Modules['celebrations']);
-	unset($Modules['schedules']);
-
-	foreach(['frontend_posting',
-	'user_management',
-	'user_pages',
-	'SIM Nigeria',
-	'PDF',
-	'default_pictures',
-	'mail_posting',
-	'fancy_email',
-	'content_filter',
-	'media_gallery',
-	'embed_page'] as $key){
-		if(isset($Modules[$key])){
-			$newkey	= str_replace(['_',' '], '', strtolower($key));
-
-			$Modules[$newkey]	= $Modules[$key];
-			unset($Modules[$key]);
-		}
-	}
-
-	if(isset($Modules['bulk_meta_update'])){
-		$Modules['bulkchange']	= $Modules['bulk_meta_update'];
-		unset($Modules['bulk_meta_update']);
-	}
-
-	if(isset($Modules['mandatory_content'])){
-		$Modules['mandatory']	= $Modules['mandatory_content'];
-		unset($Modules['mandatory_content']);
-	}
-
-	update_option('sim_modules', $Modules);
-
 	$active		= [];
 	$inactive	= [];
 	foreach($moduleDirs as $moduleSlug=>$moduleName){
