@@ -62,16 +62,31 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		Use like this: <code>[twofa_setup]</code>
 	</p>
 	<?php
-	$page1Id	= SIM\getModuleOption($moduleSlug, 'password_reset_page')[0];
-	$page2Id	= SIM\getModuleOption($moduleSlug, 'register_page')[0];
-	$page3Id	= SIM\getModuleOption($moduleSlug, '2fa_page')[0];
-	if(is_numeric($page1Id) || is_numeric($page2Id) || is_numeric($page3Id)){
+	$links		= [];
+	$url		= SIM\ADMIN\getDefaultPageLink('password_reset_page', $moduleSlug);
+	if(!empty($url)){
+		$links[]	= "<a href='$url'>Change password</a><br>";
+	}
+
+	$url		= SIM\ADMIN\getDefaultPageLink('register_page', $moduleSlug);
+	if(!empty($url)){
+		$links[]	= "<a href='$url'>Request user account</a><br>";
+	}
+
+	$url		= SIM\ADMIN\getDefaultPageLink('2fa_page', $moduleSlug);
+	if(!empty($url)){
+		$links[]	= "<a href='$url'>Two Factor Authentication</a><br>";
+	}
+
+	if(!empty($links)){
 		?>
 		<p>
 			<strong>Auto created pages:</strong><br>
-			<a href='<?php echo get_permalink($page1Id);?>'>Change password</a><br>
-			<a href='<?php echo get_permalink($page2Id);?>'>Request user account</a><br>
-			<a href='<?php echo get_permalink($page3Id);?>'>Two Factor Authentication</a><br>
+			<?php
+			foreach($links as $link){
+				echo $link;
+			}
+			?>
 		</p>
 		<?php
 	}
@@ -97,9 +112,6 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		Enable user registration
 	</label>
 
-	<input type='hidden' name='password_reset_page' value='<?php echo $settings['password_reset_page'];?>'>
-	<input type='hidden' name='register_page' value='<?php echo $settings['register_page'];?>'>
-	<input type='hidden' name='2fa_page' value='<?php echo $settings['2fa_page'];?>'>
 	<?php
 	return ob_get_clean();
 }, 10, 3);

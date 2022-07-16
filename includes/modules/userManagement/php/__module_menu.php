@@ -7,6 +7,8 @@ const MODULE_VERSION		= '7.0.6';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
 add_filter('sim_submenu_description', function($description, $moduleSlug){
+	global $Modules;
+	
 	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{
 		return $description;
@@ -40,16 +42,36 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		Use like this: <code>[change_password]</code>
 	</p>
 	<?php
-	$page1Id	= SIM\getModuleOption($moduleSlug, 'account_page');
-	$page2Id	= SIM\getModuleOption($moduleSlug, 'user_edit_page');
-	$page3Id	= SIM\getModuleOption($moduleSlug, 'account_create_page');
-	if(is_numeric($page1Id) && get_post_status($page1Id) == 'publish'){
+	$links		= [];
+	$url		= SIM\ADMIN\getDefaultPageLink('account_page', $moduleSlug);
+	if(!empty($url)){
+		$links[]	= "<a href='$url'>Account</a><br>";
+	}
+
+	$url		= SIM\ADMIN\getDefaultPageLink('user_edit_page', $moduleSlug);
+	if(!empty($url)){
+		$links[]	= "<a href='$url'>Edit users</a><br>";
+	}
+
+	$url		= SIM\ADMIN\getDefaultPageLink('account_create_page', $moduleSlug);
+	if(!empty($url)){
+		$links[]	= "<a href='$url'>Create user accounts</a><br>";
+	}
+
+	$url		= SIM\ADMIN\getDefaultPageLink('pending_users_page', $moduleSlug);
+	if(!empty($url)){
+		$links[]	= "<a href='$url'>Pending user accounts</a><br>";
+	}
+
+	if(!empty($links)){
 		?>
 		<p>
-			<strong>Auto created page:</strong><br>
-			<a href='<?php echo get_permalink($page1Id);?>'>Account</a><br>
-			<a href='<?php echo get_permalink($page2Id);?>'>Edit users</a><br>
-			<a href='<?php echo get_permalink($page3Id);?>'>Create user accounts</a><br>
+			<strong>Auto created pages:</strong><br>
+			<?php
+			foreach($links as $link){
+				echo $link;
+			}
+			?>
 		</p>
 		<?php
 	}
@@ -230,6 +252,9 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	// Create user create page
 	$options	= SIM\ADMIN\createDefaultPage($options, 'account_create_page', 'Add user account', '[create_user_account]', $oldOptions);
 
+	// Create pending users page
+	$options	= SIM\ADMIN\createDefaultPage($options, 'pending_users_page', 'Pending user accounts', '[pending_user]', $oldOptions);
+	
 	scheduleTasks();
 
 	return $options;
@@ -243,6 +268,8 @@ add_filter('display_post_states', function ( $states, $post ) {
 		$states[] = __('User edit page'); 
 	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'account_create_page'))) {
 		$states[] = __('Account create page'); 
+	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'pending_users_page'))) {
+		$states[] = __('Pending users page'); 
 	}
 
 	return $states;

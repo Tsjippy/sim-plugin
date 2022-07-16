@@ -28,12 +28,12 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 
 	<?php
-	$pageId	= SIM\getModuleOption($moduleSlug, 'front_end_post_pages')[0];
-	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
+	$url		= SIM\ADMIN\getDefaultPageLink('front_end_post_pages', $moduleSlug);
+	if(!empty($url)){
 		?>
 		<p>
 			<strong>Auto created page:</strong><br>
-			<a href='<?php echo get_permalink($pageId);?>'>Add content</a>
+			<a href='<?php echo $url;?>'>Add content</a>
 		</p>
 		<?php
 	}

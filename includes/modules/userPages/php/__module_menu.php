@@ -30,8 +30,38 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 			<li>'email' Whether the users e-mail addresses should be displayed or not.</li>
 			<li>'style' Any additional html styling.</li>
 		</ul>
-		Use like this: <code>[pending_user id="12"]</code>
+		Use like this: <code>[user_link id="12"]</code>
 		<br>
-	<?php
+		<?php
+	$url		= SIM\ADMIN\getDefaultPageLink('allcontacts_pages', $moduleSlug);
+	if(!empty($url)){
+		?>
+		<p>
+			<strong>Auto created page:</strong><br>
+			<a href='<?php echo $url;?>'>Media gallery</a><br>
+		</p>
+		<?php
+	}
 	return ob_get_clean();
+}, 10, 2);
+
+add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
+
+	// Create account page
+	$options	= SIM\ADMIN\createDefaultPage($options, 'allcontacts_pages', 'All Users', '[all_contacts]', $oldOptions);
+
+	return $options;
+}, 10, 3);
+
+add_filter('display_post_states', function ( $states, $post ) { 
+    
+	if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'allcontacts_pages')) ) {
+		$states[] = __('Page showing all users'); 
+	}
+
+	return $states;
 }, 10, 2);

@@ -18,12 +18,12 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		This module adds a media gallery of downloadable pictures, video's and audio files.
 	</p>
 	<?php
-	$pageId	= SIM\getModuleOption($moduleSlug, 'mediagallery_pages')[0];
-	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
+	$url		= SIM\ADMIN\getDefaultPageLink('mediagallery_pages', $moduleSlug);
+	if(!empty($url)){
 		?>
 		<p>
 			<strong>Auto created page:</strong><br>
-			<a href='<?php echo get_permalink($pageId);?>'>Media gallery</a><br>
+			<a href='<?php echo $url;?>'>Media gallery</a><br>
 		</p>
 		<?php
 	}

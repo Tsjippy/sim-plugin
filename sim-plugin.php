@@ -85,7 +85,9 @@ $files = glob(__DIR__  . '/includes/php/*.php');
 $files = array_merge($files, glob(__DIR__  . '/includes/admin/php/*.php'));
 
 foreach($Modules as $slug=>$settings){
-    $files = array_merge($files, glob(__DIR__  . "/includes/modules/{$moduleDirs[$slug]}/php/*.php"));
+    if(isset($moduleDirs[$slug])){
+        $files = array_merge($files, glob(__DIR__  . "/includes/modules/{$moduleDirs[$slug]}/php/*.php"));
+    }
 }
 
 foreach ($files as $file) {

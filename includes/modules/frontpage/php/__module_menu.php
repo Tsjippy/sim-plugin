@@ -21,12 +21,12 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 
 	<?php
-	$pageId	= SIM\getModuleOption($moduleSlug, 'home_page')[0];
-	if(is_numeric($pageId) && get_post_status($pageId) == 'publish'){
+	$url		= SIM\ADMIN\getDefaultPageLink('home_page', $moduleSlug);
+	if(!empty($url)){
 		?>
 		<p>
 			<strong>Auto created page:</strong><br>
-			<a href='<?php echo get_permalink($pageId);?>'>Home page for logged in users</a>
+			<a href='<?php echo $url;?>'>Home page for logged in users</a>
 		</p>
 		<?php
 	}
