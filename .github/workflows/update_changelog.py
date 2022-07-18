@@ -31,8 +31,8 @@ elif(type == 'fixed'):
     fixed       = re.search(r'(### Fixed[\s\S]*)', total).group(1).rstrip("\n")
     newFixed    = fixed + "\n- " + text
     newTotal    = total.replace(fixed, newFixed)
-elif(type != 'skip' and type != 'skipped'):
-    failure()
+elif(type != 'skip' and type != 'skipped' and '' != newLine):
+    exit()
 
 changelog = changelog.replace(total, newTotal)
 
