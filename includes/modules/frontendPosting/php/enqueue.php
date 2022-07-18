@@ -44,8 +44,8 @@ add_action( 'wp_enqueue_scripts', function () {
 
 	wp_register_script('sim_frontend_script', plugins_url('js/frontend_posting.min.js', __DIR__), array('sim_fileupload_script', 'sim_forms_script'), MODULE_VERSION, true);
 
-    $frontEndPostPages   = SIM\getModuleOption(MODULE_SLUG, 'publish_post_page');
-    if(get_the_ID() == $frontEndPostPages){
+    $frontEndPostPages   = SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages');
+    if(in_array(get_the_ID(), $frontEndPostPages)){
         wp_enqueue_style('sim_frontend_style');
     }
 });

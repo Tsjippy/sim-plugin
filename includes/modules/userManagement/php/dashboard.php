@@ -82,7 +82,7 @@ function showDashboard($userId, $admin=false){
 			//If the page is not modified since the parameter
 			if ($pageAge > $days ){
 				//Get the edit page url
-				$url			= SIM\getValidPageLink(SIM\getModuleOption('frontendposting', 'publish_post_page') );
+				$url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
 				if(!$url){
 					$url 	= '';
 				}

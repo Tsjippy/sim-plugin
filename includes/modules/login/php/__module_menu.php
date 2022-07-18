@@ -198,7 +198,10 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 
 	// Remove registration page
 	if(isset($oldOptions['register_page']) && !isset($newOptions['user_registration'])){
-		wp_delete_post($oldOptions['register_page'], true);
+		foreach($oldOptions['register_page'] as $page){
+			// Remove the auto created page
+			wp_delete_post($page, true);
+		}
 		unset($newOptions['register_page']);
 	}
 
@@ -221,9 +224,27 @@ add_filter('display_post_states', function ( $states, $post ) {
 
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
 
-	// Remove the auto created page
-	wp_delete_post($options['password_reset_page'], true);
-	wp_delete_post($options['register_page'], true);
+	$removePages	= [];
+
+	if(is_array($options['password_reset_page'])){
+		$removePages	= array_merge($removePages, $options['password_reset_page']);
+	}
+
+	if(is_array($options['register_page'])){
+		$removePages	= array_merge($removePages, $options['register_page']);
+	}
+
+	if(is_array($options['2fa_page'])){
+		$removePages	= array_merge($removePages, $options['2fa_page']);
+	}
+
+	// Remove the auto created pages
+	foreach($removePages as $page){
+		// Remove the auto created page
+		wp_delete_post($page, true);
+	}
 }, 10, 2);

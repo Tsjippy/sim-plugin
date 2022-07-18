@@ -70,8 +70,6 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		?>
 	</select>
 	<br>
-
-	<input type='hidden' name='publish_post_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'publish_post_page');?>'>
 	<?php
 	return ob_get_clean();
 }, 10, 3);
@@ -106,19 +104,8 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 	$pendingPostEmail->printPlaceholders();
 	$pendingPostEmail->printInputs($settings);
     
-	?>
-	<input type='hidden' name='publish_post_page' value='<?php echo SIM\getModuleOption($moduleSlug, 'publish_post_page');?>'>
-	<?php
 	return ob_get_clean();
 }, 10, 3);
-
-add_action('sim_module_deactivated', function($moduleSlug, $options){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
-
-	// Remove the auto created page
-	wp_delete_post($options['publish_post_page'], true);
-}, 10, 2);
 
 add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
@@ -141,4 +128,16 @@ add_filter('display_post_states', function ( $states, $post ) {
     } 
 
     return $states;
+}, 10, 2);
+
+add_action('sim_module_deactivated', function($moduleSlug, $options){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
+
+	foreach($options['front_end_post_pages'] as $page){
+		// Remove the auto created page
+		wp_delete_post($page, true);
+	}
 }, 10, 2);

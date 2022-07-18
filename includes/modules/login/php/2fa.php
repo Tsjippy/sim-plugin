@@ -245,8 +245,7 @@ add_action('init', function(){
             )
         )
     ){
-        $accountPageId  = SIM\getModuleOption(MODULE_SLUG, '2fa_page');
-        $url            = SIM\getValidPageLink($accountPageId);
+        $url		= SIM\ADMIN\getDefaultPageLink('2fa_page', MODULE_SLUG);
         if(!$url){
             return;
         }

@@ -73,31 +73,31 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 }, 10, 2);
 
 add_action('sim_before_archive', function($type){
-    $pageId	= SIM\getModuleOption(MODULE_SLUG, 'publish_post_page')[0];
-	if(is_numeric($pageId)){
+    $url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
+	if(is_numeric($url)){
 		if($type == 'event'){
 			$text	= "Add an event to the calendar";
 		}else{
 			$text	= "Add a new $type";
 		}
 
-		echo "<a href='".get_permalink($pageId)."?type=$type' class='button'>$text</a><br>";
+		echo "<a href='$url?type=$type' class='button'>$text</a><br>";
 	}
 });
 
 add_filter('sim_empty_description', function($message, $post){
-    $pageId	= SIM\getModuleOption(MODULE_SLUG, 'publish_post_page')[0];
+    $url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
 	$message	= "<div style='margin-top:10px;'>";
 		$message	.= "This {$post->post_type} lacks a description.<br>";
 		$message	.= "Please add one.<br>";
-		$message	.= "<a href='".get_permalink($pageId)."?post_id={$post->ID}' class='button'>Add discription</a>";
+		$message	.= "<a href='$url?post_id={$post->ID}' class='button'>Add discription</a>";
 	$message	.= '</div>';
 
 	return $message;
 }, 10, 2);
 
 add_filter('sim-empty-taxonomy', function($message, $type){
-	$pageId	= SIM\getModuleOption(MODULE_SLUG, 'publish_post_page')[0];
-	$message	.= "<br><a href='".get_permalink($pageId)."?type=$type' class='button'>Add a $type</a>";
+	$url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
+	$message	.= "<br><a href='$url?type=$type' class='button'>Add a $type</a>";
 	return $message;
 });

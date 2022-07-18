@@ -45,7 +45,7 @@ add_shortcode('your_posts',function(){
 			}
 			
 			$url 		= get_permalink($post);
-			$editUrl	= SIM\getValidPageLink(SIM\getModuleOption(MODULE_SLUG,'publish_post_page'));
+			$editUrl	= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
 			if(!$editUrl){
 				$editUrl = '';
 			}
@@ -91,7 +91,7 @@ add_shortcode("pending_pages", function (){
 		
 	);
 
-	$url			= SIM\getValidPageLink(SIM\getModuleOption(MODULE_SLUG, 'publish_post_page'));
+	$url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
 	if(!$url){
 		return '';
 	}

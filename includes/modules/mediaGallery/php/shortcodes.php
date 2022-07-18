@@ -6,7 +6,7 @@ use SIM\VIMEO\VimeoApi;
 add_shortcode('mediagallery', function(){
     ob_start();
 
-    $url    = get_permalink( SIM\getModuleOption('frontendposting', 'publish_post_page'));
+    $url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
     ?>
     <div class='mediabuttons'>
         <input type='hidden' id='paged' value=1>

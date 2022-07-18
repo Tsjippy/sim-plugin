@@ -278,10 +278,33 @@ add_filter('display_post_states', function ( $states, $post ) {
 
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
 
-	// Remove the auto created page
-	wp_delete_post($options['user_info_page'], true);
+	$removePages	= [];
+	
+	if(is_array($options['account_page'])){
+		$removePages	= array_merge($removePages, $options['2fa_page']);
+	}
+
+	if(is_array($options['user_edit_page'])){
+		$removePages	= array_merge($removePages, $options['user_edit_page']);
+	}
+
+	if(is_array($options['account_create_page'])){
+		$removePages	= array_merge($removePages, $options['account_create_page']);
+	}
+
+	if(is_array($options['pending_users_page'])){
+		$removePages	= array_merge($removePages, $options['pending_users_page']);
+	}
+
+	// Remove the auto created pages
+	foreach($removePages as $page){
+		// Remove the auto created page
+		wp_delete_post($page, true);
+	}
 }, 10, 2);
 
 add_action('sim_module_activated', function($moduleSlug){

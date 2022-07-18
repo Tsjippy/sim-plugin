@@ -86,7 +86,7 @@ function pageAgeWarning(){
 		//If it is X days since last modified
 		if ($secondsSinceUpdated > $maxAgeInSeconds){
 			//Get the edit page url
-			$url		= SIM\getValidPageLink(SIM\getModuleOption(MODULE_SLUG, 'publish_post_page'));
+			$url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
 			$url 		= add_query_arg( ['post_id' => $postId], $url );		
 			
 			//Send an e-mail

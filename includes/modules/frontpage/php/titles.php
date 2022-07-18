@@ -60,7 +60,7 @@ add_action('generate_after_header', function (){
 	}
 	
 	//change title of all pages except the frontpage
-	if($title != 'Home' && !is_page(SIM\getModuleOption(MODULE_SLUG, 'home_page'))){
+	if($title != 'Home' && !in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page'))){
 		//Display featured image in title if it has one
 		if ( 
 			has_post_thumbnail() 	&& 

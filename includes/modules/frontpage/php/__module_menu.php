@@ -182,23 +182,14 @@ add_filter('display_post_states', function ( $states, $post ) {
     return $states;
 }, 10, 2);
 
-//Shortcode for the welcome message on the homepage
-add_shortcode("welcome", __NAMESPACE__.'\welcomeMessage');
-
-function welcomeMessage(){
-	if (is_user_logged_in()){
-		$UserID = get_current_user_id();
-		//Check welcome message needs to be shown
-		if (empty(get_user_meta( $UserID, 'welcomemessage', true ))){
-			$welcome_message = SIM\getModuleOption(MODULE_SLUG, 'welcome_message'); 
-			if(!empty($welcome_message)){
-				//Html
-				$html = '<div id="welcome-message">';
-					$html .= do_shortcode($welcome_message);
-					$html .= '<button type="button" class="button" id="welcome-message-button">Do not show again</button>';
-				$html .= '</div>';
-				return $html;
-			}
-		}
+add_action('sim_module_deactivated', function($moduleSlug, $options){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
 	}
-}
+
+	foreach($options['home_page'] as $page){
+		// Remove the auto created page
+		wp_delete_post($page, true);
+	}
+}, 10, 2);

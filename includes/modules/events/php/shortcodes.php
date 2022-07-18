@@ -8,7 +8,7 @@ add_shortcode("schedules",function(){
 });
 
 add_shortcode("upcomingevents", function(){
-	if(!is_page(SIM\getModuleOption('frontpage', 'home_page'))){
+	if(!in_array(get_the_ID(), SIM\getModuleOption('frontpage', 'home_page'))){
 		return;
 	}
 

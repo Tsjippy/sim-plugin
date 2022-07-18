@@ -56,6 +56,18 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		Use like this: <code>[missing_form_fields type="recommended"]</code>
 	</p>
 
+	<?php
+	$url		= SIM\ADMIN\getDefaultPageLink('forms_pages', $moduleSlug);
+	if(!empty($url)){
+		?>
+		<p>
+			<strong>Auto created page:</strong><br>
+			<a href='<?php echo $url;?>'>Form selector page</a>
+		</p>
+		<?php
+	}
+	?>
+
 	<h4>Form import</h4>
 	<p>
 		It is possible to import forms exported from this plugin previously.<br>
@@ -74,24 +86,14 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	return ob_get_clean();
 }, 10, 2);
 
-add_action('sim_module_activated', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
-	
-	$simForms = new SimForms();
-	$simForms->createDbTable();
-
-	$formTable = new DisplayFormResults();
-	$formTable->createDbShortcodeTable();
-
-	scheduleTasks();
-});
-
-add_filter('sim_module_updated', function($options, $moduleSlug){
+add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
 	}
+
+	// Create frontend posting page
+	$options	= SIM\ADMIN\createDefaultPage($options, 'forms_pages', 'Form selector', '[formselector]', $oldOptions);
 
 	scheduleTasks();
 
@@ -156,3 +158,37 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 
 	return ob_get_clean();
 }, 10, 3);
+
+add_filter('display_post_states', function ( $states, $post ) { 
+    
+    if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'forms_pages'))) {
+        $states[] = __('Form selector page'); 
+    } 
+
+    return $states;
+}, 10, 2);
+
+add_action('sim_module_activated', function($moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG)	{return;}
+	
+	$simForms = new SimForms();
+	$simForms->createDbTable();
+
+	$formTable = new DisplayFormResults();
+	$formTable->createDbShortcodeTable();
+
+	scheduleTasks();
+});
+
+add_action('sim_module_deactivated', function($moduleSlug, $options){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
+
+	foreach($options['forms_pages'] as $page){
+		// Remove the auto created page
+		wp_delete_post($page, true);
+	}
+}, 10, 2);

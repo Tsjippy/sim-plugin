@@ -797,9 +797,9 @@ function userLogin(){
 
         //Redirect to account page if 2fa is not set
         if(!$methods || empty($methods)){
-            $twofaPage      = SIM\getValidPageLink(SIM\getModuleOption(MODULE_SLUG, '2fa_page'));
-            if($twofaPage){
-                return $twofaPage;
+            $url		= SIM\ADMIN\getDefaultPageLink('2fa_page', MODULE_SLUG);
+            if($url){
+                return $url;
             }
         }
         

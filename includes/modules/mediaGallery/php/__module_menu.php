@@ -51,3 +51,15 @@ add_filter('display_post_states', function ( $states, $post ) {
 
 	return $states;
 }, 10, 2);
+
+add_action('sim_module_deactivated', function($moduleSlug, $options){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
+
+	foreach($options['mediagallery_pages'] as $page){
+		// Remove the auto created page
+		wp_delete_post($page, true);
+	}
+}, 10, 2);

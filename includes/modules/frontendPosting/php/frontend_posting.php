@@ -22,7 +22,7 @@ function sendPendingPostWarning($post, $update){
 	$type = $post->post_type;
 	
 	//send notification to all content managers
-	$url			= SIM\getValidPageLink(SIM\getModuleOption(MODULE_SLUG, 'publish_post_page'));
+	$url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
 	if(!$url){
 		return;
 	}
@@ -64,11 +64,16 @@ add_action( 'sim_before_content', __NAMESPACE__.'\add_page_edit_button');
 function add_page_edit_button(){
 	$content = get_the_content();
 	
-	//Only show if logged in and not already on the post edit page and it is a single page, not a archive page
-	if (is_user_logged_in() && strpos($content,'[front_end_post]') === false && is_singular() && !is_tax()){
+	//Only show if:
+	if (
+		is_user_logged_in() 							&&	// logged in and 
+		strpos($content,'[front_end_post]') === false 	&&	// not already on the post edit page 
+		is_singular() 									&& // it is a single page 
+		!is_tax()											//not a archive page
+	){
 		global $post;
 		
-		$user = wp_get_current_user();
+		$user 	= wp_get_current_user();
 		$userId = $user->ID;
 
 		//Get current users ministry and compound
@@ -94,18 +99,18 @@ function add_page_edit_button(){
 		
 		$postCategory 	= $post->post_category;
 			
-		//Add an edit page button if this page a page describing a ministry this person is working for or a comound an user lives on, or the personal page
+		//Add an edit page button if:
 		if (
-			$postAuthor == $user->display_name 													|| 
-			isset($ministries[str_replace(" ", "_", $postTitle)])								|| 
-			$userPageId == $postId																||
-			apply_filters('sim_frontend_content_edit_rights', false, $postCategory)				||
-			in_array('editor', $user->roles)
+			$postAuthor == $user->display_name 													|| 	// Own page
+			isset($ministries[str_replace(" ", "_", $postTitle)])								||	// ministry pafe 
+			$userPageId == $postId																||	// pseronal user page
+			apply_filters('sim_frontend_content_edit_rights', false, $postCategory)				||	// external filter
+			in_array('editor', $user->roles)														// user is an editor
 		){
 			$type = $post->post_type;
 			$buttonText = "Edit this $type";
 			
-			$url	= SIM\getValidPageLink(SIM\getModuleOption(MODULE_SLUG, 'publish_post_page'));
+			$url	= SIM\getValidPageLink(SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages')[0]);
 			if(!$url){
 				return;
 			}
