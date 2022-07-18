@@ -31,7 +31,7 @@ add_filter( 'protected_title_format', function () {
 });
 
 //Add a title section below the menu
-add_action('generate_after_header',function (){
+add_action('generate_after_header', function (){
 	global $post;
 	if($post){		
 		$title = $post->post_title;

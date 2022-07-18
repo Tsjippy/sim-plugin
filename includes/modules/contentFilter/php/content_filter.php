@@ -3,7 +3,7 @@ namespace SIM\CONTENTFILTER;
 use SIM;
 
 //function to redirect user to login page if they are not allowed to see it
-add_action('loop_start',function(){
+add_action('loop_start', function(){
 	ob_start();
 });
 
@@ -23,15 +23,10 @@ add_action('wp_footer', function(){
 	//If this page or post does not have the public category and the user is not logged in, redirect them to the login page
 	if(
 		http_response_code() != 404			&&		//we try to visit an existing page
-		!is_tax()							&&		
 		!is_user_logged_in()				&&
 		!$public							&& 
 		!is_search()						&&
-		!is_home()							|| 
-		(
-			is_tax()						&& 
-			!is_user_logged_in()
-		)
+		!is_home()							
 	){
 		//prevent the output 
 		ob_get_clean();
@@ -51,7 +46,7 @@ add_action('wp_footer', function(){
 		return;
 	}
 	
-	//If not a valid e-mail then only allow the account page to reset the email
+	// If not a valid e-mail then only allow the account page to reset the email
 	if(strpos($user->user_email, ".empty") !== false && !$public && !is_search() && !is_home() && strpos($_SERVER['REQUEST_URI'],'account') === false ){
 		wp_die("Your e-mail address is not valid please change it <a href='".SITEURL."/account/?section=generic'>here</a>.");
 	}

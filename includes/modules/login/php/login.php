@@ -152,15 +152,3 @@ add_filter('wp_nav_menu_items', function ($items) {
     }
   return $items;
 });
-
-//Redirect to frontpage for logged in users
-add_action( 'template_redirect', __NAMESPACE__.'\homepage_redirect' );
-function homepage_redirect(){
-	if( is_front_page() && is_user_logged_in() ){
-        $url    = SIM\getValidPageLink(SIM\getModuleOption('frontpage', 'home_page'));
-        if($url && $url != SIM\currentUrl()){ 
-            wp_redirect(add_query_arg($_GET,$url));
-            exit();
-        }
-	}
-}

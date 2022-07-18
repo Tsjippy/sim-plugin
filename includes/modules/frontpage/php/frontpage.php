@@ -2,8 +2,6 @@
 namespace SIM\FRONTPAGE;
 use SIM;
 
-use function SIM\getModuleOption;
-
 //generate_before_header
 // diplay buttons
 $hookName	= SIM\getModuleOption(MODULE_SLUG, 'header_hook');
@@ -275,7 +273,7 @@ function pageGallery(){
 
 //Add the home class
 add_filter( 'body_class',function ( $classes ) {
-	if(is_page(SIM\getModuleOption('frontpage','home_page')) || is_front_page()){
+	if(is_page(SIM\getModuleOption(MODULE_SLUG,'home_page')) || is_front_page()){
 		$classes[] = 'home';
 	}
     return $classes;
