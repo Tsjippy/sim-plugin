@@ -38,10 +38,13 @@ add_action( 'admin_menu', function() {
 			$plugin_Upgrader	= new \Plugin_Upgrader();
 			$plugin_Upgrader->upgrade(PLUGINNAME.'/'.PLUGINNAME.'.php');
 			ob_get_clean();
-			if(activate_plugin( PLUGINNAME.'/'.PLUGINNAME.'.php')){
-				echo "<div class='success'>Update succesfull</div>";
-			}
+			
+			activate_plugin( PLUGINNAME.'/'.PLUGINNAME.'.php');
+
+			header("Refresh:0");
 		}
+
+		echo "<div class='success'>Update succesfull</div>";
 	}
 
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");	

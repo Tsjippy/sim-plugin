@@ -85,7 +85,7 @@ function checkForUpdate( $updatePlugins ) {
 	$gitVersion     = $release['tag_name'];
 
 	// Git has a newer version
-	if($gitVersion > $pluginVersion){
+	if(version_compare($gitVersion, $pluginVersion)){
 		$updatePlugins->response[$pluginFile] = (object)array(
 			'slug'         => PLUGINNAME, 
 			'new_version'  => $gitVersion,
