@@ -33,6 +33,8 @@ elif(type == 'fixed'):
     newTotal    = total.replace(fixed, newFixed)
 elif(type != 'skip' and type != 'skipped' and '' != newLine):
     failure()
+else:
+    exit()
 
 changelog = changelog.replace(total, newTotal)
 
