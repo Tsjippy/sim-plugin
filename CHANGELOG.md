@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.2.10] - 2022-07-18
+
+
+### Fixed
 - default page redirection and css enqueue
 
 ## [2.2.9] - 2022-07-18
