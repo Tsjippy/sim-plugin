@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.2.9] - 2022-07-18
+
+
+### Fixed
 - home page redirect
 
 ## [2.2.8] - 2022-07-16
