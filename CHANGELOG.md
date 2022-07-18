@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.2.11] - 2022-07-18
+
+
+### Fixed
 - updating with version larger than 9
 
 ## [2.2.10] - 2022-07-18
