@@ -204,7 +204,7 @@ class DisplayEvents extends Events{
 		if(empty($userId)){
 			return $event->organizer;
 		}else{
-			$url	= SIM\getUserPageUrl($userId);
+			$url	= SIM\maybeGetUserPageUrl($userId);
 			$email	= $user->user_email;
 			$phone	= get_user_meta($userId,'phonenumbers',true);
 

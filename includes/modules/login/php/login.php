@@ -25,8 +25,12 @@ add_filter( 'login_url', function($loginUrl, $redirect ){
 /**
  * Creates a login form modal
  */
-function loginModal($message='', $required=false, $username=''){	
-    ob_start();
+function loginModal($message='', $required=false, $username=''){
+    // Login modal already added
+    if(isset($GLOBALS['loginadded'])){
+        return;
+    }
+    $GLOBALS['loginadded']   = 'true';
 
     ?>
     <div id="login_modal" class="modal <?php if(!$required){echo 'hidden';}?>">
@@ -115,32 +119,21 @@ function loginModal($message='', $required=false, $username=''){
 		</div>
 	</div>
     <?php
-
-    return ob_get_clean();
 }
 
-add_action( 'loop_start', function() {
-    // Add the login modal if we are on the home page, we are not logged in and the show login param is not set (in that case it will added by the content filter)
-    if ( is_front_page() && !is_user_logged_in() && !isset($_GET['showlogin'])){
-        echo loginModal();
-    }
-});
-
 //add hidden login modal to page if not logged in
-add_filter( 'the_content', function ( $content ) {
+add_filter( 'wp_footer', function () {
     if(!is_main_query()){
-        return $content;
+        return;
     }
     
 	if (!is_user_logged_in()){
         if(isset($_GET['showlogin'])){
-            $content .= loginModal('', true, $_GET['showlogin']);
+            loginModal('', true, $_GET['showlogin']);
         }else{
-            $content .= loginModal();
+            loginModal();
         }
     }
-
-    return $content;
 }, 99999);
 
 //add login and logout buttons to main menu

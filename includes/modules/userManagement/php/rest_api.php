@@ -196,16 +196,16 @@ function createUserAccount(){
 	
 	//Create the account
 	$userId = SIM\addUserAccount($firstName, $lastName, $email, $approved, $validity);
-	if(is_wp_error($userId))   return $userId;
+	if(is_wp_error($userId)){
+		return $userId;
+	}
 	
     if(in_array('usermanagement', $userRoles)){
-        $url = SITEURL."/update-personal-info/?userid=$userId";
+        $url		= SIM\ADMIN\getDefaultPageLink('user_edit_page', MODULE_SLUG)." /?userid=$userId";
         $message = "Succesfully created an useraccount for $firstName<br>You can edit the deails <a href='$url'>here</a>";
     }else{
         $message = "Succesfully created useraccount for $firstName<br>You can now select $firstName in the dropdowns";
     }
-
-	do_action('sim_after_user_account_creation', $userId);
 		
 	return [
         'message'	=> $message,

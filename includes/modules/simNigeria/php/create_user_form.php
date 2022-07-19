@@ -35,6 +35,6 @@ add_action('sim_after_user_create_form', function(){
 });
 
 // store the results of the form above
-add_action('sim_after_user_account_creation', function($userId){
+add_action('user_register', function($userId){
     update_user_meta($userId, 'visa_info', $_POST['visa_info']);
 });

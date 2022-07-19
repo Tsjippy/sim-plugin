@@ -11,7 +11,7 @@ use SIM;
  */
 function createUserPage($userId){	
 	//get the current page
-	$pageId    = SIM\getUserPageId($userId);
+	$pageId		= getUserPageId($userId);
 	$userdata   = get_userdata($userId);
 	
     //return false when $userId is not valid
@@ -99,7 +99,7 @@ function getUserPageLink($user){
 			return false;
 		}
     }
-    $url    = SIM\getUserPageUrl($user->ID);
+    $url    = getUserPageUrl($user->ID);
     if($url){
         $html   = "<a href='$url'>$user->display_name</a>";
     }else{
@@ -118,27 +118,27 @@ function getUserPageLink($user){
  * @return	bool				True on succces false on failure
  */
 function updateUserPageTitle($userId, $title){
-    $pageId    = SIM\getUserPageId($userId);
+    $pageId    = getUserPageId($userId);
 
-    if(is_numeric($pageId)){
-        $page = get_post($pageId);
+    if(!is_numeric($pageId)){
+		return createUserPage($userId);
+	}
 
-        //update page title if needed
-		if($page->post_title != $title){
-            wp_update_post(
-                array (
-                    'ID'         => $pageId,
-                    'post_title' => $title
-                )
-            );
+	$page = get_post($pageId);
 
-            return true;
-        }else{
-            return false;
-        }
-    }else{
-        return createUserPage($userId);  
-    } 
+	//update page title if needed
+	if($page->post_title != $title){
+		wp_update_post(
+			array (
+				'ID'         => $pageId,
+				'post_title' => $title
+			)
+		);
+
+		return true;
+	}
+	
+	return false;
 }
 
 /**
@@ -515,3 +515,36 @@ add_filter( 'the_content', function ( $content ) {
 
 	return $content;
 });
+
+/**
+ * Gets the page id describing an user
+ * @param	int 		$userId		WP_user id
+ * 
+ * @return	int|WP_Error			The page id
+*/
+function getUserPageId($userId){
+    return get_user_meta($userId, "user_page_id", true);
+}
+
+/**
+ * Get the users description page
+ * @param	int 		$userId		WP_user id
+ * 
+ * @return	string					user page url
+*/
+function getUserPageUrl($userId){
+	//Get the user page of this user
+	$userPageId = getUserPageId($userId);
+	
+	if(!is_numeric($userPageId) || get_post_status($userPageId ) != 'publish'){
+        $userPageId = createUserPage($userId);
+
+        if(!$userPageId){
+			return false;
+		}
+    }
+
+    $url	= get_permalink($userPageId);
+    return str_replace('https://', '', $url);
+
+}

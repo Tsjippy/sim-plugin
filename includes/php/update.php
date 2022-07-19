@@ -22,7 +22,7 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 	$res->slug 				= PLUGINNAME;
 	$res->version 			= $release['tag_name'];
 	$res->author 			= $release['author']['login'];
-	$res->tested			= '6.0.0';
+	$res->tested			= '6.1.0';
 	$res->requires 			= '5.5';
 	$res->author_profile 	= $release['author']['url'];
 	$res->requires_php 		= '7.1';

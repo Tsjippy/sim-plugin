@@ -97,7 +97,7 @@ add_shortcode('user_link',function($atts){
 	$privacyPreference = get_user_meta( $userId, 'privacy_preference', true );
 	if(!is_array($privacyPreference)) $privacyPreference = [];
 	
-	$url = SIM\getUserPageUrl($userId);
+	$url = SIM\maybeGetUserPageUrl($userId);
 	
 	if($a['picture'] == true and !isset($privacyPreference['hide_profile_picture'])){
 		$profilePicture = SIM\displayProfilePicture($userId);

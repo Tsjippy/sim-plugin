@@ -311,7 +311,7 @@ class FrontEndContent{
 	function hasEditRights(){
 		//Only set this once
 		if(!isset($this->editRight)){			
-			$userPageId 	= SIM\getUserPageId($this->user->ID);
+			$userPageId 	= SIM\maybeGetUserPageId($this->user->ID);
 			
 			$ministries 	= get_user_meta( $this->user->ID, "user_ministries", true);
 			
@@ -981,7 +981,7 @@ class FrontEndContent{
 			//only replace the name with a link if privacy allows
 			if(empty($privacyPreference['hide_name'])){
 				//Replace the name with a hyperlink
-				$url			= SIM\getUserPageUrl($user->ID);
+				$url			= SIM\maybeGetUserPageUrl($user->ID);
 				$link			= "<a href='$url'>{$user->display_name}</a>";
 				$postContent	= str_replace($user->display_name, $link, $postContent);
 			}

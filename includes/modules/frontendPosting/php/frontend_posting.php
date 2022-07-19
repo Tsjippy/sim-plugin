@@ -77,7 +77,8 @@ function add_page_edit_button(){
 		$userId = $user->ID;
 
 		//Get current users ministry and compound
-		$userPageId 		= SIM\getUserPageId($userId);
+		$userPageId 		= SIM\maybeGetUserPageId($userId);
+
 		$ministries 		= get_user_meta($userId, "user_ministries", true);
 		
 		//This is a draft

@@ -39,7 +39,7 @@ if(is_tax() or is_archive()){
 			</div>
 			
 			<div class='author'>
-				Shared by: <a href='<?php echo SIM\getUserPageUrl(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
+				Shared by: <a href='<?php echo SIM\maybeGetUserPageUrl(get_the_author_meta('ID')) ?>'><?php the_author(); ?></a>
 			</div>
 			
 			<div class='recipe metas'>

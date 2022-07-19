@@ -6,9 +6,9 @@ add_action('delete_user', function ($userId){
     $family = SIM\familyFlatArray($userId);
 
 	//Only remove if there is no family
-	if (count($family) == 0){
+	if (empty($family)){
         //Check if a page exists for this person
-        $userPage    = SIM\getUserPageId($userId);
+        $userPage    = getUserPageId($userId);
         if (is_numeric($userPage)){
             //page exists, delete it
             wp_delete_post($userPage);

@@ -5,9 +5,6 @@
  * Version:      2.2.10
  * Author:       Ewald Harmsen
  * Requires at least: 4.0
- * 
- * GitHub Plugin URI: Tsjippy/sim-plugin
- * GitHub Plugin URI: https://github.com/Tsjippy/sim-plugin
  *
  * @author Ewald Harmsen
  */

@@ -20,7 +20,7 @@ add_shortcode("markerdescription", 	function ($atts){
         }
         
         //Add the post link to the marker content
-        $url			 = SIM\getUserPageUrl($userId);
+        $url			 = SIM\maybeGetUserPageUrl($userId);
         $description	.= "<a href='$url' style='display:block;' class='page_link'>More info</a><br>";
         
         return $description;

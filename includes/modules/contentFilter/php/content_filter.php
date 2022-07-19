@@ -41,7 +41,7 @@ add_action('wp_footer', function(){
 
 		//show login modal
 		if(function_exists('SIM\LOGIN\loginModal')){
-			echo SIM\LOGIN\loginModal($message, true);
+			SIM\LOGIN\loginModal($message, true);
 		}
 		return;
 	}

@@ -69,7 +69,7 @@ add_filter('sim_after_bot_payer', function($args){
 			$msg	= str_replace($userdata->display_name, "of {$userdata->display_name}", $msg);
 
 			$messageString .= $msg;
-			$args['urls'] .= SIM\getUserPageUrl($userId)."\n";
+			$args['urls'] .= SIM\maybeGetUserPageUrl($userId)."\n";
 		}
 		$args['message'] .= $messageString.'.';
 	}
@@ -80,13 +80,13 @@ add_filter('sim_after_bot_payer', function($args){
 	if(!empty($arrivalUsers)){
 		if(count($arrivalUsers)==1){
 			$args['message'] 	.= "\n\n".$arrivalUsers[0]->display_name." arrives today.";
-			$args['urls'] 		.= SIM\getUserPageUrl($arrivalUsers[0]->ID)."\n";
+			$args['urls'] 		.= SIM\maybeGetUserPageUrl($arrivalUsers[0]->ID)."\n";
 		}else{
 			$args['message'] .= "\n\nToday the following people will arrive: ";
 			//Loop over the arrival_users
 			foreach($arrivalUsers as $user){
 				$args['message'] 	.= $user->display_name."\n";
-				$args['urls'] 		.= SIM\getUserPageUrl($user->ID)."\n";
+				$args['urls'] 		.= SIM\maybeGetUserPageUrl($user->ID)."\n";
 			}
 		}
 	}
@@ -162,7 +162,7 @@ function anniversaryMessages(){
 			$userdata	= get_userdata($userId);
 
 			//Get the url of the user page
-			$url		= SIM\getUserPageUrl($userId);
+			$url		= SIM\maybeGetUserPageUrl($userId);
 			if(is_numeric($partnerId)){
 				$message	= str_replace($coupleString, "of <a href='$url'>$coupleString</a>", $message);
 			}
@@ -202,13 +202,13 @@ function arrivingUsersMessage(){
 		
 				if(count($arrivingUsers)==1){
 					//Get the url of the user page
-					$url	 = SIM\getUserPageUrl($arrivingUsers[0]->ID);
+					$url	 = SIM\maybeGetUserPageUrl($arrivingUsers[0]->ID);
 					$html	.= '<a href="'.$url.'">'.$arrivingUsers[0]->display_name."</a> arrives today!";
 				}else{
 					$html 	.= 'The following people arrive today:<br>';
 					//Loop over the birthdays
 					foreach($arrivingUsers as $user){
-						$url 	 = SIM\getUserPageUrl($user->ID);
+						$url 	 = SIM\maybeGetUserPageUrl($user->ID);
 						$html 	.= '<a href="'.$url.'">'.$user->display_name."</a><br>";
 					}
 				}

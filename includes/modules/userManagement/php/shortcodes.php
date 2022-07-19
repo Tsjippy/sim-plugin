@@ -93,7 +93,7 @@ add_shortcode('pending_user', function (){
 			delete_user_meta( $UserId, 'disabled');
 
 			// 
-			do_action('sim_after_user_approval', $userId);
+			do_action('user_register', $userId);
 			
 			echo '<div class="success">Useraccount succesfully activated</div>';
 		}
@@ -216,7 +216,7 @@ add_shortcode("user-info", __NAMESPACE__.'\userInfoPage');
 function userInfoPage($atts){
 	if(!is_user_logged_in()){
 		if(function_exists('SIM\LOGIN\loginModal')){
-			echo SIM\LOGIN\loginModal("You do not have permission to see this, sorry.");
+			SIM\LOGIN\loginModal("You do not have permission to see this, sorry.");
 			return'';
 		}
 

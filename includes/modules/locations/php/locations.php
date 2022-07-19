@@ -101,7 +101,7 @@ function getLocationEmployees($locationName){
 		
 			//If user works for this ministry, echo its name and position
 			if (isset($userMinistries[$ministryName])){
-				$userPageUrl		= SIM\getUserPageUrl($user->ID);
+				$userPageUrl		= SIM\maybeGetUserPageUrl($user->ID);
 				$privacyPreference	= (array)get_user_meta( $user->ID, 'privacy_preference', true );
 				
 				if(!isset($privacyPreference['hide_ministry'])){

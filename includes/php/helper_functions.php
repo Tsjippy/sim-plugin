@@ -833,35 +833,6 @@ function processImages($post){
 	}
 	wp_maybe_generate_attachment_metadata($post);
 }
- 
-/**
- * Retrievs the value of a certain module setting
- * @param	string 	$moduleName		The module name'
- * @param	string	$option			The option name
- * 
- * @return	array|string|false			The option value or false if option is not found
-*/
-function getModuleOption($moduleName, $option){
-	global $Modules;
-
-	if(!empty($Modules[$moduleName][$option])){
-		return $Modules[$moduleName][$option];
-	}else{
-		return false;
-	}
-}
-
-/**
- * Checks if Signal module is enabled and if so sends the message
- * @param	string 		$message		The module name'
- * @param	int|WP_User	$recipient		The user or user id the message should be send to
- * @param	int			$postId			Optional post id to add a link to
-*/
-function trySendSignal($message, $recipient, $postId=""){
-	if (function_exists('SIM\SIGNAL\sendSignalMessage')) {
-		SIGNAL\sendSignalMessage($message, $recipient, $postId);
-	}
-}
 
 /**
  * Get html to select an image
@@ -944,8 +915,6 @@ function isTime($time){
 	return false;
 }
 
-// check if a given useraccount is not already used
-
 /**
  * Returns a unique username
  * @param	string 		$firstName		First name of a new user
@@ -1009,7 +978,8 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
 		delete_user_meta( $userId, 'disabled');
 		wp_send_new_user_notifications($userId, 'user');
 
-		do_action('sim_after_user_approval', $userId);
+		//Force an account update
+		do_action( 'user_register', $userId);
 	}else{
 		//Make the useraccount inactive
 		update_user_meta( $userId, 'disabled', 'pending');
@@ -1018,46 +988,8 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
 	//Store the validity
 	update_user_meta( $userId, 'account_validity', $validity);
 	
-	//Force an account update
-	do_action( 'profile_update', $userId, get_userdata($userId));
-	
 	// Return the user id
 	return $userId;
-}
-
-/**
- * Gets the page id describing an user
- * @param	int 		$userId		WP_user id
- * 
- * @return	int|WP_Error			The page id
-*/
-function getUserPageId($userId){
-    return get_user_meta($userId, "user_page_id", true);
-}
-
-/**
- * Get the users description page
- * @param	int 		$userId		WP_user id
- * 
- * @return	string					user page url
-*/
-function getUserPageUrl($userId){
-	//Get the user page of this user
-	$userPageId = getUserPageId($userId);
-	
-	if(!is_numeric($userPageId) || get_post_status($userPageId ) != 'publish'){
-        if(function_exists('SIM\USERPAGE\createUserPage')){
-			$userPageId = USERPAGE\createUserPage($userId);
-		}
-
-        if(!$userPageId){
-			return false;
-		}
-    }
-
-    $url	= get_permalink($userPageId);
-    return str_replace('https://', '', $url);
-
 }
 
 /**
