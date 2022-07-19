@@ -8,6 +8,7 @@
 
 ### Fixed
 - login on non-home page
+- exclude family from family dropdown
 
 ## [2.2.11] - 2022-07-18
 
