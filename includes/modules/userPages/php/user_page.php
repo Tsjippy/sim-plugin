@@ -25,18 +25,14 @@ function createUserPage($userId){
 	}
 	
 	$family = SIM\familyFlatArray($userId);
-	if (count($family)>0){
+	if (!empty($family)){
 		$title = $userdata->last_name." family";
 	}else{
 		$title = $userdata->last_name.', '.$userdata->first_name;
 	}
 	
-	$update = false;
-	
 	//Only create a page if the page does not exist
 	if ($pageId == null){
-		$update = true;
-
 		// Create post object
 		$userPage = array(
 		  'post_title'    => $title,
@@ -54,10 +50,10 @@ function createUserPage($userId){
 		
 		SIM\printArray("Created user page with id $pageId");
 	}else{
-        $update = updateUserPageTitle($userId, $title);
+        updateUserPageTitle($userId, $title, $pageId);
 	}
 	
-	if($update && !empty($family)){
+	if(!empty($family)){
 		//Check if family has other pages who should be deleted
 		foreach($family as $familyMember){
 			//get the current page
@@ -69,9 +65,9 @@ function createUserPage($userId){
 			}
 			
 			//If there a page exists for this family member and its not the same page
-			if($memberPageId != null && $memberPageId != $pageId){
+			if(is_numeric($memberPageId) && $memberPageId != $pageId){
 				//Remove the current user page
-				wp_delete_post($memberPageId);
+				wp_delete_post($memberPageId, true);
 				
 				SIM\printArray("Removed user page with id $memberPageId");
 			}
@@ -117,8 +113,11 @@ function getUserPageLink($user){
  * 
  * @return	bool				True on succces false on failure
  */
-function updateUserPageTitle($userId, $title){
-    $pageId    = getUserPageId($userId);
+function updateUserPageTitle($userId, $title, $pageId=null){
+    
+	if(!is_numeric($pageId)){
+		$pageId    = getUserPageId($userId);
+	}
 
     if(!is_numeric($pageId)){
 		return createUserPage($userId);
@@ -156,7 +155,8 @@ function userDescription($userId){
 	do_action('sim_user_description', $user);
 	
 	//get the family details
-	$family = get_user_meta( $userId, 'family', true );
+	$family = (array)get_user_meta( $userId, 'family', true );
+	SIM\cleanUpNestedArray($family, true);
 	
 	$privacyPreference = get_user_meta( $userId, 'privacy_preference', true );
 	if(!is_array($privacyPreference)){

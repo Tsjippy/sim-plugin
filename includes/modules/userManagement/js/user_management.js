@@ -45,8 +45,10 @@ document.addEventListener('click', ev=>{
 		ev.preventDefault();
         updateUserRoles(target);
     }else if(target.name == 'extend_validity'){
+		ev.preventDefault();
         extendValidity(target);
     }else if(target.name == 'adduseraccount'){
+		ev.preventDefault();
 		createUserAccount(target);
 	}
 });

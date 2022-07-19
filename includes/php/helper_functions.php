@@ -19,12 +19,8 @@ function updateFamilyMeta($userId, $metaKey, $value){
 	}
 		
 	//Update the meta key for all family members as well
-	$family = get_user_meta($userId,"family",true);
+	$family = familyFlatArray($userId);
 	if (is_array($family) && !empty($family)){
-		if (isset($family["children"])){
-			$family = array_merge($family["children"], $family);
-			unset($family["children"]);
-		}
 		foreach($family as $relative){
 			if($value == 'delete'){
 				delete_user_meta($relative, $metaKey);
@@ -984,7 +980,7 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
 		wp_send_new_user_notifications($userId, 'user');
 
 		//Force an account update
-		do_action( 'user_register', $userId);
+		do_action( 'sim_approved_user', $userId);
 	}else{
 		//Make the useraccount inactive
 		update_user_meta( $userId, 'disabled', 'pending');

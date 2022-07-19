@@ -5,7 +5,7 @@ use SIM;
 /**
  * Create a user page on user registration or approval
  */
-add_action( 'user_register', function($userId){
+add_action( 'sim_approved_user', function($userId){
     if(get_user_meta( $userId, 'disabled', true) == 'pending'){
         return;
     }
