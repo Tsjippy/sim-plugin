@@ -378,17 +378,22 @@ function hasPartner($userId) {
 /**
  * Get users parents
  * @param 	int		$userId	 	WP User_ID
+ * @param	bool	$onlyId		Whether to return the parent user or just the user id. Default false
  * 
  * @return	array|false			Array containing the id of the father and the mother, or false if no parents
 */
-function getParents($userId){
+function getParents($userId, $onlyId=false){
 	$family 	= get_user_meta( $userId, 'family', true );
 	$parents 	= [];
 	foreach (["father","mother"] as $parent) {
 		if (isset($family[$parent])) {
-			$parent_userdata = get_userdata($family[$parent]);
-			if($parent_userdata != null){
-				$parents[] = $parent_userdata;
+			$parent = get_userdata($family[$parent]);
+			if($parent){
+				if($onlyId){
+					$parents[]	= $parent->ID;
+				}else{
+					$parents[]	= $parent;
+				}
 			}
 		}
 	}
