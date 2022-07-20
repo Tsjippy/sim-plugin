@@ -14,12 +14,6 @@ class PotentialFamilyMembers{
         $this->potentialChildren	= [];
 
         $this->getUsers();
-
-        $this->potentialParents();
-
-        $this->potentialSpouses();
-
-        $this->potentialChildren();
     }
 
     /**
@@ -114,6 +108,8 @@ class PotentialFamilyMembers{
 				$this->potentialSpouses[$user->ID] = $user->display_name;
 			}
         }
+
+        return $this->potentialSpouses;
     }
 
     /**
@@ -137,5 +133,7 @@ class PotentialFamilyMembers{
 				$this->potentialChildren[$user->ID]	= $user->display_name;
 			}
         }
+
+        return $this->potentialChildren;
     }
 }

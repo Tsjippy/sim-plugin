@@ -10,10 +10,11 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 	
 	$potentials	= new PotentialFamilyMembers($userId);
 
+	$potentials->potentialParents();
 	$defaultArrayValues['Potential fathers'] 	= $potentials->potentialFathers;
 	$defaultArrayValues['Potential mothers'] 	= $potentials->potentialMothers;
-	$defaultArrayValues['Potential spouses']	= $potentials->potentialSpouses;
-	$defaultArrayValues['Potential children']	= $potentials->potentialChildren;
+	$defaultArrayValues['Potential spouses']	= $potentials->potentialSpouses();
+	$defaultArrayValues['Potential children']	= $potentials->potentialChildren();
 	
 	return $defaultArrayValues;
 }, 10, 3);

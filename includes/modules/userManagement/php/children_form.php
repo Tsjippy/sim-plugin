@@ -44,7 +44,7 @@ function showChildrenFields($childId){
 	}
 
 	if(in_array('profile picture', $availableForms)){
-		echo	"<div id='profile_picture_child_info_<?php echo $childId;?>' class='tabcontent $hidden'>";
+		echo	"<div id='profile_picture_child_info_$childId' class='tabcontent $hidden'>";
 			echo do_shortcode("[formbuilder formname=profile_picture userid='$childId']");
 		echo	"</div>";
 	}
