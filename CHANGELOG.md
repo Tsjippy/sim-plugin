@@ -11,6 +11,7 @@
 ### Fixed
 - login on non-home page
 - exclude family from family dropdown
+- banking module
 
 ## [2.2.11] - 2022-07-18
 
