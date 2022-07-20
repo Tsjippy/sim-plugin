@@ -36,9 +36,6 @@ function registerScripts(){
 	//add main.js
 	wp_register_script('sim_script', plugins_url('js/main.min.js', __DIR__), array('niceselect', 'sweetalert'), STYLE_VERSION, true);
 	
-	//File upload js
-	wp_register_script('sim_fileupload_script', plugins_url('js/fileupload.min.js', __DIR__), array('sim_formsubmit_script', 'sim_purify'), STYLE_VERSION, true);
-
 	wp_register_style('sim_taxonomy_style', plugins_url('css/taxonomy.min.css', __DIR__), array(), STYLE_VERSION);
 }
 
@@ -84,31 +81,6 @@ function enqueueScripts(){
 			'locations'		=> $locations
 		) 
 	);
-}
-
-//add_action('wp_print_scripts', 'SIM\inspect_script_styles');
-function inspect_script_styles() {
-	
-	global $wp_scripts, $wp_styles;
-	
-	echo "\n" .'<!--'. "\n\n";
-	printArray('\n SCRIPT IDs:');
-	echo 'SCRIPT IDs:'. "\n";
-	
-	foreach($wp_scripts->queue as $handle){
-		echo $handle . "\n";
-		printArray($handle);
-	}
-	
-	echo '\n STYLE IDs:';
-	printArray( "\n" .'STYLE IDs:'. "\n");
-	foreach($wp_styles->queue as $handle){
-		echo $handle . "\n";
-		printArray($handle);
-	}
-	
-	echo "\n" .'-->'. "\n\n";
-	
 }
 
 add_action('wp_enqueue_scripts', function() {		

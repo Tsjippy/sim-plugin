@@ -17,11 +17,11 @@ document.addEventListener("DOMContentLoaded",function() {
 });
 
 window.addEventListener("click", event => {
-	var target = event.target;
+	let target = event.target;
     if(target.classList.contains('placeholderselect') || target.classList.contains('placeholders')){
         event.preventDefault();
 
-        var value = '';
+        let value = '';
         if(target.classList.contains('placeholders')){
             value = target.textContent;
         }else if(target.value != ''){
@@ -41,7 +41,7 @@ window.addEventListener("click", event => {
     }
 
     if(target.matches('.tablink:not(.active)')){
-        var curActive   = target.closest('.tablink-wrapper').querySelector('.active');
+        let curActive   = target.closest('.tablink-wrapper').querySelector('.active');
         curActive.classList.remove('active');
         document.getElementById(curActive.dataset.target).classList.add('hidden');
 

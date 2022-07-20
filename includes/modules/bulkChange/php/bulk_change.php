@@ -107,11 +107,11 @@ function bulkChangeUpload($metaKey, $targetDir){
 		
 		//Only show if value not set
 		if(empty($value)){
-			$uploader = new SIM\Fileupload($user->ID, $metaKey, $targetDir, true, $metaKey);
+			$uploader = new SIM\FILEUPLOAD\FileUpload($user->ID, $metaKey);
 
 			$html .= "<div style='margin-top:50px;'>";
 				$html .= "<strong>{$user->display_name}</strong>";
-				$html .= $uploader->getUploadHtml();
+				$html .= $uploader->getUploadHtml($metaKey, $targetDir, true);
 			$html .= '</div>';
 		}
 	}

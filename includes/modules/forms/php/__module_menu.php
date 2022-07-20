@@ -98,7 +98,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	scheduleTasks();
 
 	return $options;
-}, 10, 2);
+}, 10, 3);
 
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name

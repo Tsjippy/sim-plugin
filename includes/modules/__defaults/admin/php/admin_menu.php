@@ -10,6 +10,7 @@ DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
  * Gets the module name based on the slug
  */
 function getModuleName($slug){
+	$slug		= str_replace('__defaults/', '', $slug);
 	$pieces 	= preg_split('/(?=[A-Z])/', ucwords($slug));
 	return trim(implode(' ', $pieces));
 }
@@ -126,6 +127,10 @@ function buildSubMenu(){
 }
 
 function settingsTab($moduleSlug, $moduleName, $settings){
+	global $defaultModules;
+
+	
+
 	ob_start();
 	?>
 	<div class='tabcontent' id='settings'>
@@ -133,25 +138,45 @@ function settingsTab($moduleSlug, $moduleName, $settings){
 			
 		<form action="" method="post">
 			<input type='hidden' name='module' value='<?php echo $moduleSlug;?>'>
-			Enable <?php echo $moduleName;?> module 
-			<label class="switch">
-				<input type="checkbox" name="enable" <?php if(isset($settings['enable'])){echo 'checked';}?>>
-				<span class="slider round"></span>
-			</label>
-			<br>
-			<br>
+			<?php
+			if(isset($defaultModules[$moduleSlug])){
+				echo "<input type='hidden' name='enable' value='on'>";
+				echo "This module is enabled by default<br>";
+			}else{
+				?>
+				Enable <?php echo $moduleName;?> module
+				<label class="switch">
+					<input type="checkbox" name="enable" <?php if(isset($settings['enable'])){echo 'checked';}?>>
+					<span class="slider round"></span>
+				</label>
+				<br>
+				<br>
+				<?php
+			}
+
+			?>
 			<div class='options' <?php if(!isset($settings['enable'])){echo "style='display:none'";}?>>
 				<?php
-				$html	= apply_filters('sim_submenu_options', '', $moduleSlug, $settings, $moduleName);
-				if(empty($html)){
-					$html = '<div>No special settings needed for this module</div>';
+				$options	= apply_filters('sim_submenu_options', '', $moduleSlug, $settings, $moduleName);
+				if(empty($options)){
+					echo '<div>No special settings needed for this module</div>';
+				}else{
+					echo $options;
 				}
-				echo $html;
+				
 				?>
 			</div>
-			<br>
-			<br>
-			<input type="submit" value="Save <?php echo $moduleName;?> settings">
+
+			<?php
+			// Only show submit button if there is something to submit
+			if(!isset($defaultModules[$moduleSlug]) || !empty($options)){
+				?>
+				<br>
+				<br>
+				<input type="submit" value="Save <?php echo $moduleName;?> settings">
+				<?php
+			}
+			?>
 		</form> 
 		<br>
 	</div>

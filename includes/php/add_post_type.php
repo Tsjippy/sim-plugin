@@ -146,15 +146,21 @@ function getTemplateFile($template, $type, $name=''){
 	//check what we are dealing with
 	switch ($type) {
 		case 'single':
-			if(empty($name))	$name	= $post->post_type;
+			if(empty($name)){
+				$name	= $post->post_type;
+			}
 			$templateFile	= "$baseDir/{$name}s/templates/$type-$name.php";
 			break;
 		case 'archive':
-			if(empty($name))	$name	= get_queried_object()->name.'s';
+			if(empty($name)){
+				$name	= get_queried_object()->name.'s';
+			}
 			$templateFile	= "$baseDir/{$name}/templates/$type-$name.php";
 			break;
 		case 'taxonomy':
-			if(empty($name))	$name	= get_queried_object()->taxonomy;
+			if(empty($name)){
+				$name	= get_queried_object()->taxonomy;
+			}
 			$templateFile	= "$baseDir/$name/templates/$type-$name.php";
 			break;
 		case 'page';
@@ -164,9 +170,9 @@ function getTemplateFile($template, $type, $name=''){
 	}
 
 	if ( 
-		empty($template)												or
-		(!empty($name)													and		// current posttype is an enabled post type
-		locate_template( array( "$type-$name.php" ) ) !== $template)	and		// and template is not found in theme folder
+		empty($template)												||
+		(!empty($name)													&&		// current posttype is an enabled post type
+		locate_template( array( "$type-$name.php" ) ) !== $template)	&&		// and template is not found in theme folder
 		file_exists($templateFile)												// template file exists
 	) {
 		return $templateFile;

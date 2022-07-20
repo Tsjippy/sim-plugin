@@ -67,17 +67,15 @@ function saveExtraUserRoles( $userId ) {
 add_filter('sim_role_description', function($description, $role){
     switch($role){
         case 'administrator':
-            return 'Access to all the administration features';
+            $description    = 'Access to all the administration features';
         case 'editor':
-            return 'Can publish and edit all posts';
+            $description    = 'Can publish and edit all posts';
         case 'author':
-            return 'Can publish and edit own content';
+            $description    = 'Can publish and edit own content';
         case 'contributor':
-            return 'Can write and manage their own posts but cannot publish them';
+            $description    = 'Can write and manage their own posts but cannot publish them';
         case 'subscriber':
-            return 'Can only view';
-        case 'author':
-            return 'Can publish own content';
+            $description    = 'Can only view';
     }
     return $description;
 }, 10, 2);

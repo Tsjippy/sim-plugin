@@ -420,8 +420,8 @@ function quoata_document_upload($quotaDocuments){
 					<?php
 					$name	= "quota_documents[quotafiles][$key]";
 
-					$uploader = new SIM\Fileupload('', $name, 'visa_uploads', true, $name);
-					echo $uploader->getUploadHtml();
+					$uploader = new SIM\FILEUPLOAD\FileUpload('', $name);
+					echo $uploader->getUploadHtml($name, 'visa_uploads', true);
 					echo $button;
 					?>
 				</div>

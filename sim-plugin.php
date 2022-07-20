@@ -36,17 +36,30 @@ define('INCLUDESPATH', PLUGINPATH.'includes/');
 define('MODULESPATH', INCLUDESPATH.'modules/');
 define('PICTURESPATH', INCLUDESPATH.'pictures/');
 
+$defaultModules = [
+    'admin'         => 'admin',
+    'fileupload'    => 'fileUpload'
+];
+
 // Store all modulefolders
 $dirs    = scandir(MODULESPATH);
-unset($dirs[0]);
-unset($dirs[1]);
+$dirs    = array_merge($dirs, scandir(MODULESPATH.'/__defaults'));
+foreach($dirs as $key=>$dir){
+    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
+        unset($dirs[$key]);
+    }
+}
 
 //Sort alphabeticalyy, ignore case
 sort($dirs, SORT_STRING | SORT_FLAG_CASE);
 
 $moduleDirs  = [];
 foreach($dirs as $dir){
-    $moduleDirs[strtolower($dir)] = $dir;
+    if(in_array($dir, $defaultModules)){
+        $moduleDirs[strtolower($dir)] = "__defaults/$dir";
+    }else{
+        $moduleDirs[strtolower($dir)] = $dir;
+    }
 }
 
 //load all libraries
@@ -64,7 +77,8 @@ spl_autoload_register(function ($classname) {
     $module     = $moduleDirs[strtolower($path[1])];
     $fileName   = $path[2];
 
-    $modulePath = MODULESPATH."$module/php";    
+    $modulePath = MODULESPATH."$module/php";
+
 	$classFile	= "$modulePath/classes/$fileName.php";
     $traitFile	= "$modulePath/traits/$fileName.php";
 	if(file_exists($classFile)){
@@ -77,9 +91,21 @@ spl_autoload_register(function ($classname) {
 });
 
 $Modules		= get_option('sim_modules', []);
+//Make sure the default modules are enabled always
+foreach($defaultModules as $module){
+    $module = strtolower($module);
+    if(!isset($Modules[$module])){
+        $Modules[$module]  = [
+            'enable'    => 'on'
+        ];
+
+        update_option('sim_modules', $Modules);
+    }
+}
+unset($module);
+
 //Load all main files
 $files = glob(__DIR__  . '/includes/php/*.php');
-$files = array_merge($files, glob(__DIR__  . '/includes/admin/php/*.php'));
 
 foreach($Modules as $slug=>$settings){
     if(isset($moduleDirs[$slug])){

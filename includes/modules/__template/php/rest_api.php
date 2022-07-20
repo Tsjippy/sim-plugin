@@ -19,7 +19,7 @@ add_action( 'rest_api_init', function () {
 				),
 				'post_type'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($param, $request, $key) {
+					'validate_callback' => function($param) {
 						return in_array($param, get_post_types());
 					}
 				),

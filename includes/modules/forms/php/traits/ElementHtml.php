@@ -361,9 +361,9 @@ trait ElementHtml{
 				$userId		= $this->userId;
 			}
 			//Load js			
-			$uploader = new SIM\Fileupload($userId, $name, $targetDir, $element->multiple, $metakey, $library, '', false);
+			$uploader = new SIM\FILEUPLOAD\FileUpload($userId, $metakey, $library, '', false);
 			
-			$html = $uploader->getUploadHtml($elOptions);
+			$html = $uploader->getUploadHtml($name, $targetDir, $element->multiple, $elOptions);
 		}else{
 			/*
 				ELEMENT TAG NAME
