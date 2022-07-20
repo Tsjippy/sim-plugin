@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- family function layout
 
 ### Fixed
 - login on non-home page
