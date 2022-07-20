@@ -33,14 +33,7 @@ add_action( 'admin_menu', function() {
 		$updates	= SIM\checkForUpdate( new \stdClass() );
 
 		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
-			ob_start();
-			include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-			include_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
-			$plugin_Upgrader	= new \Plugin_Upgrader();
-			$plugin_Upgrader->upgrade(PLUGINNAME.'/'.PLUGINNAME.'.php');
-			ob_get_clean();
-			
-			activate_plugin( PLUGINNAME.'/'.PLUGINNAME.'.php');
+			updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
 
 			header("Refresh:0");
 		}
@@ -72,6 +65,29 @@ add_action( 'admin_menu', function() {
 	}
 });
 
+function handlePost(){
+	if(!isset($_POST['module'])){
+		return;
+	}
+	
+	$message	= "Settings succesfully saved";
+	if(isset($_POST['emails'])){
+		$message	= "E-mail settings succesfully saved";
+	}
+
+	if(isset($_SESSION['plugin'])){
+		if(isset($_SESSION['plugin']['installed'])){
+			$name	= ucfirst($_SESSION['plugin']['installed']);
+			$message	.= "<br><br>Dependend plugin '$name' succesfully installed and activated";
+		}elseif(isset($_SESSION['plugin']['activated'])){
+			$name	= ucfirst($_SESSION['plugin']['activated']);
+			$message	.= "<br><br>Dependend plugin '$name' succesfully activated";
+		}
+		unset($_SESSION['plugin']);
+	}
+	echo "<div class='success'>$message</div>";
+}
+
 /**
  *Builds the submenu for each module
  */
@@ -90,13 +106,7 @@ function buildSubMenu(){
 
 	echo '<div class="module-settings">';
 
-		if(isset($_POST['module'])){
-			$message	= "Settings succesfully saved";
-			if(isset($_POST['emails'])){
-				$message	= "E-mail settings succesfully saved";
-			}
-			echo "<div class='success'>$message</div>";
-		}
+		handlePost();
 		?>
 		<h1><?php echo $moduleName;?> module</h1>
 
@@ -128,8 +138,6 @@ function buildSubMenu(){
 
 function settingsTab($moduleSlug, $moduleName, $settings){
 	global $defaultModules;
-
-	
 
 	ob_start();
 	?>
@@ -225,11 +233,12 @@ function mainMenu(){
 	$inactive	= [];
 	foreach($moduleDirs as $moduleSlug=>$moduleName){
 		$moduleName	= getModuleName($moduleName);
-		
-		if(in_array($moduleSlug, array_keys($Modules))){
-			$active[$moduleSlug]	= $moduleName;
-		}elseif($moduleSlug != "__template"){
-			$inactive[$moduleSlug]	= $moduleName;
+		if(!in_array($moduleSlug, ["__template", "admin"])){
+			if(in_array($moduleSlug, array_keys($Modules))){
+				$active[$moduleSlug]	= $moduleName;
+			}else{
+				$inactive[$moduleSlug]	= $moduleName;
+			}
 		}
 	}
 	

@@ -15,27 +15,6 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 
 	ob_start();
 
-	if ( !in_array( 'ultimate-maps-by-supsystic/ums.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-		// ultimate maps is not installed
-		$action	= 'install-plugin';
-		$slug	= 'ultimate-maps-by-supsystic';
-		$url	= wp_nonce_url(
-			add_query_arg(
-				array(
-					'action' => $action,
-					'plugin' => $slug
-				),
-				admin_url( 'update.php' )
-			),
-			$action.'_'.$slug
-		);
-		echo "<div class='error'>";
-			echo "This module needs the '<strong>Ultimate Maps by Supsystic</strong>' plugin to work correctly<br><br>";
-			echo "Please install it by using the button below<br><br>";
-			echo "<a href='$url' class='button'>Click here to install</a><br><br>";
-		echo "</div>";
-	}
-
 	?>
 	<p>
 		This module adds a custom post type 'locations'.<br>
@@ -155,6 +134,8 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
 	}
+
+	SIM\ADMIN\installPlugin('ultimate-maps-by-supsystic/ums.php');
 
 	$maps		= new Maps();
 

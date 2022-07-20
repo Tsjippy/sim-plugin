@@ -10,13 +10,9 @@ add_shortcode("account_statements", __NAMESPACE__.'\showStatements');
  * 
  * @return string html containing the staement overview 
  */
-function showStatements(){
-	global $current_user;
-	
+function showStatements($userId=''){
 	if(isset($_GET["id"]) && is_numeric($_GET["id"])){
 		$userId = $_GET["id"];
-	}else{
-		$userId = $current_user->ID;
 	}
 
 	$accountStatements = get_user_meta($userId, "account_statements", true);

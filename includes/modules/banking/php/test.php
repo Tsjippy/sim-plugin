@@ -4,7 +4,7 @@ use SIM;
 
 /**
  * Test import of account statments
- * Make sure the file \wp-content\uploads\Account-Statement.rtf exists
+ * Make sure the file \wp-content\uploads\Account Statement.rtf exists
  */
 function testMailImport(){
     // Insert the post into the database.

@@ -4,6 +4,7 @@ use SIM;
 
 const MODULE_VERSION		= '7.0.1';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
+DEFINE(__NAMESPACE__.'\STATEMENT_FOLDER', wp_get_upload_dir()["basedir"]."/private/account_statements/");
 
 add_filter('sim_submenu_description', function($description, $moduleSlug){
 	//module slug should be the same as the constant
@@ -24,4 +25,15 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	<?php
 
 	return ob_get_clean();
+}, 10, 2);
+
+add_filter('sim_module_updated', function($options, $moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
+
+	SIM\ADMIN\installPlugin('postie/postie.php');
+
+	return $options;
 }, 10, 2);

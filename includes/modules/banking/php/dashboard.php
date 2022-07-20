@@ -7,7 +7,7 @@ add_action('sim_user_dashboard', function($userId, $admin) {
         ?>
         <div id="Account statements" style="margin-top:20px;">
             <?php
-            echo showStatements();
+            echo showStatements($userId);
             ?>
         </div>
         <?php

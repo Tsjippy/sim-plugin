@@ -44,8 +44,6 @@ function customTopPage( $topPageId){
 				$topPageId	= $grandParentPageId;
 			}
 		}
-		//Else return the current page
-		$topPageId	= get_queried_object()->ID;
 	}
 	
     return $topPageId;
