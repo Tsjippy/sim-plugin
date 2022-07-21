@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.2.14] - 2022-07-21
+
+
+### Fixed
+- personal prayer schedule
+
 ## [2.2.13] - 2022-07-21
 
 
