@@ -42,7 +42,7 @@ function createNewSchedule($schedule){
  * a seperate schedule for each day to be sure everyone gets what they requested
  */
 function sendPrayerRequests(){
-	//Change the user to the adminaccount otherwise get_users will not work
+	//Change the user to the admin account otherwise get_users will not work
 	wp_set_current_user(1);
 
 	$request	= prayerRequest(true);
@@ -62,7 +62,21 @@ function sendPrayerRequests(){
 			}
 
 			foreach($users as $user){
-				SIM\trySendSignal($request, $user);
+				$dayPart	= "morning";
+				$hour		= current_time('H');
+				if($hour > 11 && $hour < 18){
+					$dayPart	= 'afternoon';
+				}elseif($hour > 17){
+					$dayPart	= 'evening';
+				}elseif($hour < 7){
+					$dayPart	= 'night';
+				}
+
+				if(is_numeric($user)){
+					$dayPart	.= " ".get_userdata($user)->first_name;
+				}
+				$message 	= "Good $dayPart,\n$request";
+				SIM\trySendSignal($message, $user);
 			}
 		}
 

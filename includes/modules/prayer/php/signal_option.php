@@ -40,4 +40,27 @@ add_action('sim_signal_before_pref_save', function($userId, $prefs){
     }
 
     update_option('signal_prayers', $prayerTimes);
+
+    // Also add to todays schedule if time is later today
+    $curTime	= current_time('H:i');
+    if($time > $curTime){
+        $date			= \Date('y-m-d');
+        $schedule		= (array)get_option("prayer_schedule_$date");
+
+        // Remove the old time
+        if(isset($schedule[$oldTime])){
+            $key    = array_search($userId, $schedule[$oldTime]);
+            unset($schedule[$oldTime][$key]);
+        }
+
+        // There is already an user with a prayer schedule for this time
+        if(isset($schedule[$time])){
+            $schedule[$time][]   = $userId;
+        }else{
+            $schedule[$time]  = [$userId];
+        }
+
+        update_option("prayer_schedule_$date", $schedule);
+    }
+
 }, 10, 2);
