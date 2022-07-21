@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- forms wrong order when adding element
 
 ## [2.2.14] - 2022-07-21
 
