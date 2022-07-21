@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- wrong usage of getDefaultPageLink
 
 ## [2.2.12] - 2022-07-21
 
