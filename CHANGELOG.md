@@ -8,6 +8,7 @@
 
 ### Fixed
 - wrong usage of getDefaultPageLink
+- scheduled prayer
 
 ## [2.2.12] - 2022-07-21
 
