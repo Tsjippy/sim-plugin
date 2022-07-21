@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.2.13] - 2022-07-21
+
+
+### Fixed
 - wrong usage of getDefaultPageLink
 - scheduled prayer
 
