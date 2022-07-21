@@ -103,3 +103,59 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	return ob_get_clean();
 }, 10, 3);
+
+add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $newOptions;
+	}
+
+	$date			= \Date('y-m-d');
+	$schedule		= (array)get_option("prayer_schedule_$date");
+
+	// add newly added groups to todays schedule
+	$added		= [];
+	foreach($newOptions['groups'] as $group){
+		// Check in old groups
+		$found	= false;
+		foreach($oldOptions['groups'] as $key=>$oldGroup){
+			if($oldGroup['name'] == $group['name']){
+				if($oldGroup['time'] == $group['time']){
+					$found	= true;
+				}else{
+					// Time has changed remove the old one
+					if(isset($schedule[$oldGroup['time']])){
+						$key    = array_search($oldGroup['name'], $schedule[$oldGroup['time']]);
+						unset($schedule[$oldGroup['time']][$key]);
+					}
+
+					// remove the time if its an empty entry
+					if(empty($schedule[$oldGroup['time']])){
+						unset($schedule[$oldGroup['time']]);
+					}
+				}
+				break;
+			}
+		}
+
+		if(!$found){
+			$added[]	= $group;
+		}
+	}
+
+	$curTime	= current_time('H:i');
+	foreach($added as $key=>$group){
+		// only add times in the future
+		if($group['time'] > $curTime){
+			// There is already an user with a prayer schedule for this time
+			if(isset($schedule[$group['time']])){
+				$schedule[$group['time']][]   = $group['name'];
+			}else{
+				$schedule[$group['time']]  = [$group['name']];
+			}
+		}
+	}
+	update_option("prayer_schedule_$date", $schedule);
+
+	return $newOptions;
+}, 10, 3);

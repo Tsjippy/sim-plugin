@@ -51,9 +51,11 @@ function sendPrayerRequests(){
 	$date			= \Date('y-m-d');
 	$schedule		= get_option("prayer_schedule_$date");
 	
-	createNewSchedule($schedule);
+	$schedule		= createNewSchedule($schedule);
 
 	$time	= current_time('H:i');
+	SIM\printArray("Time is $time");
+	SIM\printArray($schedule);
 	foreach($schedule as $t=>$users){
 		if(is_array($users)){
 			// Do not continue for times in the future
@@ -75,7 +77,7 @@ function sendPrayerRequests(){
 				if(is_numeric($user)){
 					$dayPart	.= " ".get_userdata($user)->first_name;
 				}
-				$message 	= "Good $dayPart,\n$request";
+				$message 	= "Good $dayPart,\n\n$request";
 				SIM\trySendSignal($message, $user);
 			}
 		}

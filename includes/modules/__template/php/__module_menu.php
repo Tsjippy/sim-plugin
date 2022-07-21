@@ -21,16 +21,16 @@ add_action('sim_module_activated', function($moduleSlug, $options){
 	}
 }, 10, 2);
 
-add_filter('sim_module_updated', function($options, $moduleSlug){
+add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
-		return $options;
+		return $newOptions;
 	}
 
 	scheduleTasks();
 
-	return $options;
-}, 10, 2);
+	return $newOptions;
+}, 10, 3);
 
 //run on module deactivation
 add_action('sim_module_deactivated', function($moduleSlug, $options){
