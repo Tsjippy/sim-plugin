@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.2.12] - 2022-07-21
+
+
+### Changed
 - family function layout
 - convert file upload to default module
 
