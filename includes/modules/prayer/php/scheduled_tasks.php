@@ -12,7 +12,8 @@ function scheduleTasks(){
 }
 
 function createNewSchedule($schedule){
-	if(!empty($schedule)){
+
+	if($schedule !== false){
 		return $schedule;
 	}
 
@@ -48,9 +49,10 @@ function sendPrayerRequests(){
 	$request	= prayerRequest(true);
 	
 	// Get the schedule for today
+	
 	$date			= \Date('y-m-d');
 	$schedule		= get_option("prayer_schedule_$date");
-	
+
 	$schedule		= createNewSchedule($schedule);
 
 	$time	= current_time('H:i');
