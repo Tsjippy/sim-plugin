@@ -63,17 +63,17 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 	<?php
 	$links		= [];
-	$url		= SIM\ADMIN\getDefaultPageLink('password_reset_page', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'password_reset_page');
 	if(!empty($url)){
 		$links[]	= "<a href='$url'>Change password</a><br>";
 	}
 
-	$url		= SIM\ADMIN\getDefaultPageLink('register_page', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'register_page');
 	if(!empty($url)){
 		$links[]	= "<a href='$url'>Request user account</a><br>";
 	}
 
-	$url		= SIM\ADMIN\getDefaultPageLink('2fa_page', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, '2fa_page');
 	if(!empty($url)){
 		$links[]	= "<a href='$url'>Two Factor Authentication</a><br>";
 	}

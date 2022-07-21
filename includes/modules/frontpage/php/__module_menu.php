@@ -21,7 +21,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 
 	<?php
-	$url		= SIM\ADMIN\getDefaultPageLink('home_page', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'home_page');
 	if(!empty($url)){
 		?>
 		<p>

@@ -43,22 +43,22 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 	<?php
 	$links		= [];
-	$url		= SIM\ADMIN\getDefaultPageLink('account_page', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'account_page');
 	if(!empty($url)){
 		$links[]	= "<a href='$url'>Account</a><br>";
 	}
 
-	$url		= SIM\ADMIN\getDefaultPageLink('user_edit_page', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'user_edit_page');
 	if(!empty($url)){
 		$links[]	= "<a href='$url'>Edit users</a><br>";
 	}
 
-	$url		= SIM\ADMIN\getDefaultPageLink('account_create_page', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'account_create_page');
 	if(!empty($url)){
 		$links[]	= "<a href='$url'>Create user accounts</a><br>";
 	}
 
-	$url		= SIM\ADMIN\getDefaultPageLink('pending_users_page', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'pending_users_page');
 	if(!empty($url)){
 		$links[]	= "<a href='$url'>Pending user accounts</a><br>";
 	}

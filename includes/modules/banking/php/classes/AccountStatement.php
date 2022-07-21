@@ -166,7 +166,7 @@ class AccountStatement{
 			update_user_meta($user->ID, "account_statements", $accountStatements);
 			
 			// Get account page
-			$accountUrl		= SIM\ADMIN\getDefaultPageLink('account_page', 'usermanagement');
+			$accountUrl		= SIM\ADMIN\getDefaultPageLink('usermanagement', 'account_page');
             
 			if($accountUrl){
 				$message	= "See it here: \n\n$accountUrl";

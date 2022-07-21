@@ -572,7 +572,7 @@ add_shortcode("userstatistics",function (){
 
 	$users 		= SIM\getUserAccounts(false, true);
 
-	$baseUrl	= SIM\ADMIN\getDefaultPageLink('user_edit_page', MODULE_SLUG);
+	$baseUrl	= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'user_edit_page');
 	?>
 	<br>
 	<div class='table-wrapper'>

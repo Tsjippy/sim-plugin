@@ -67,16 +67,66 @@ class CreateEvents extends Events{
 		}
 	}
 
+	function calculateStartDate($repeatParam, $baseStartDate, $index){
+		$months			= (array)$repeatParam['months'];
+		$weekDays		= (array)$repeatParam['weekDays'];
+		$weeks			= (array)$repeatParam['weeks'];
+
+		switch ($repeatParam['type']){
+			case 'daily':
+				$startDate		= strtotime("+{$index} day", $baseStartDate);
+				if(!in_array(date('w', $startDate), $weekDays)){
+					return false;
+				}
+				break;
+			case 'weekly':
+				$startDate		= strtotime("+{$index} week", $baseStartDate);
+				$monthWeek		= $this->monthWeek($startDate);
+
+				$lastWeek		= date('m', $startDate) == date('m', strtotime('+1 week', $startDate));
+				if($lastWeek && in_array('last', $weeks)){
+					$monthWeek	= 'last';
+				}
+				if(!in_array($monthWeek, $weeks)){
+					return false;
+				}
+				break;
+			case 'monthly':
+				$startDate		= strtotime("+{$index} month", $baseStartDate);
+				$month			= date('m', $startDate);
+				if(!empty($months) && !in_array($month, $months)){
+					return false;
+				}
+
+				if(!empty($weeks) && !empty($weekDays)){
+					$startDate	= strtotime("{$weeks[0]} {$weekDays[0]} of this month", $startDate);
+				}
+
+				break;
+			case 'yearly':
+				$startDate	= strtotime("+{$index} year", $baseStartDate);
+
+				if(!empty($weeks) && !empty($weekDays)){
+					$startDate	= strtotime("{$weeks[0]} {$weekDays[0]} of this month", $startDate);
+				}
+				break;
+			case 'custom_days':
+				break;
+			default:
+				$startDate	= strtotime("+{$index} year", $baseStartDate);
+				break;
+		}
+
+		return $startDate;
+	}
+
 	function createRepeatedEvents($baseStartDate){
 		//first remove any existing events for this post
 		$this->removeDbRows();
 
 		//then create the new ones
 		$repeatParam	= $this->eventData['repeat'];
-		$interval		= max(1,(int)$repeatParam['interval']);
-		$months			= (array)$repeatParam['months'];
-		$weekDays		= (array)$repeatParam['weekDays'];
-		$weeks			= (array)$repeatParam['weeks'];
+		$interval		= max(1, (int)$repeatParam['interval']);
 		$amount			= $repeatParam['amount'];
 		if(!is_numeric($amount)){
 			$amount = 200;
@@ -94,53 +144,15 @@ class CreateEvents extends Events{
 		$startDate		= $baseStartDate;
 		$i				= 1;
 		while($startDate < $repEnddate && $amount > 0){
-			switch ($repeatParam['type']){
-				case 'daily':
-					$startDate		= strtotime("+{$i} day", $baseStartDate);
-					if(!in_array(date('w', $startDate), $weekDays)){
-						continue 2;
-					}
-					break;
-				case 'weekly':
-					$startDate		= strtotime("+{$i} week", $baseStartDate);
-					$monthWeek		= $this->monthWeek($startDate);
-
-					$lastWeek		= date('m', $startDate) == date('m', strtotime('+1 week', $startDate));
-					if($lastWeek && in_array('last', $weeks)){
-						$monthWeek	= 'last';
-					}
-					if(!in_array($monthWeek, $weeks)){
-						continue 2;
-					}
-					break;
-				case 'monthly':
-					$startDate		= strtotime("+{$i} month", $baseStartDate);
-					$month			= date('m',$startDate);
-					if(!empty($months) && !in_array($month, $months)){
-						continue 2;
-					}
-
-					if(!empty($weeks) && !empty($weekDays)){
-						$startDate	= strtotime("{$weeks[0]} {$weekDays[0]} of this month", $startDate);
-					}
-
-					break;
-				case 'yearly':
-					$startDate	= strtotime("+{$i} year", $baseStartDate);
-
-					if(!empty($weeks) && !empty($weekDays)){
-						$startDate	= strtotime("{$weeks[0]} {$weekDays[0]} of this month", $startDate);
-					}
-					break;
-				case 'custom_days':
-					$startDateStr	= $includeDates[$i];
-					break;
-				default:
-					$startDate	= strtotime("+{$i} year", $baseStartDate);
-					break;
+			$startDate	= $this->calculateStartDate($repeatParam, $baseStartDate, $i);
+			if(!$startDate || in_array($startDate, $excludeDates)){
+				$i				= $i+$interval;
+				continue;
 			}
 
-			if($repeatParam['type'] != 'custom_days'){
+			if($repeatParam['type'] == 'custom_days'){
+				$startDateStr	= $includeDates[$i];
+			}else{
 				$startDateStr	= date('Y-m-d', $startDate);
 			}
 			
@@ -200,6 +212,11 @@ class CreateEvents extends Events{
 			$metaKey = $type;
 		}
 
+		if($type != 'birthday' && SIM\isChild($user->ID)){
+			//do not create annversaries for children
+			return;
+		}
+
 		$oldMetaValue	= SIM\getMetaArrayValue($user->ID, $metaKey);
 		if(!is_array($metaValue) && is_array($oldMetaValue) && count($oldMetaValue) == 1){
 			$oldMetaValue	= array_values($oldMetaValue)[0];
@@ -214,32 +231,17 @@ class CreateEvents extends Events{
 
 		$eventIdMetaKey	= $type.'_event_id';
 		$title			= ucfirst($type).' '.$user->display_name;
-		$partnerId		= SIM\hasPartner($user->ID);
-		if($partnerId){
-			$partnerMeta	= SIM\getMetaArrayValue($partnerId, $metaKey);
+		$this->partnerId		= SIM\hasPartner($user->ID);
+		if($this->partnerId){
+			$partnerMeta	= SIM\getMetaArrayValue($this->partnerId, $metaKey);
 
 			//only treat as a couples event if they both have the same value
 			if($partnerMeta == $metaValue){
-				$partnerName	= get_userdata($partnerId)->first_name;
+				$partnerName	= get_userdata($this->partnerId)->first_name;
 				$title			= ucfirst($type)." {$user->first_name} & $partnerName {$user->last_name}";
 			}else{
 				$partnerId	= false;
 			}
-		}
-
-		if($type == 'birthday'){
-			$catName = 'birthday';
-		}else{
-			$catName = 'anniversary';
-			if(SIM\isChild($user->ID)){
-				//do not create annversaries for children
-				return;
-			}
-		}
-
-		$termId = get_term_by('slug', $catName,'events')->term_id;
-		if(empty($termId)){
-			$termId = wp_insert_term(ucfirst($catName), 'events')['term_id'];
 		}
 		
 		//get old post
@@ -247,9 +249,18 @@ class CreateEvents extends Events{
 		$this->deleteOldCelEvent($this->postId, $metaValue, $user->ID, $type, $title);
 
 		if($partnerId){
-			$this->deleteOldCelEvent(get_user_meta($partnerId, $eventIdMetaKey, true), $metaValue, $partnerId, $type, $title);
+			$this->deleteOldCelEvent(get_user_meta($this->partnerId, $eventIdMetaKey, true), $metaValue, $this->partnerId, $type, $title);
 		}
 
+		// Create the post
+		$this->createCelebrationPost($user, $metaValue, $title, $type, $eventIdMetaKey);
+
+		
+
+		$this->createEvents();
+	}
+
+	function createCelebrationPost($user, $metaValue, $title, $type, $eventIdMetaKey){
 		//Get the upcoming celebration date
 		$startdate								= date(date('Y').'-m-d', strtotime($metaValue));
 
@@ -279,8 +290,20 @@ class CreateEvents extends Events{
 		update_metadata( 'post', $this->postId, 'eventdetails', $this->eventData);
 		update_metadata( 'post', $this->postId, 'celebrationdate', $metaValue);
 
+		// Set the categories
+		if($type == 'birthday'){
+			$catName = 'birthday';
+		}else{
+			$catName = 'anniversary';
+		}
+		$termId = get_term_by('slug', $catName,'events')->term_id;
+		if(empty($termId)){
+			$termId = wp_insert_term(ucfirst($catName), 'events')['term_id'];
+		}
+
 		wp_set_object_terms($this->postId, $termId, 'events');
 
+		// Set the featured image
 		$pictureIds	= SIM\getModuleOption(MODULE_SLUG, 'picture_ids');
 		if($type == 'birthday'){
 			$pictureId = $pictureIds['birthday_image'];
@@ -289,16 +312,15 @@ class CreateEvents extends Events{
 		}
 		set_post_thumbnail( $this->postId, $pictureId);
 
+		//Store the post id for the user
 		update_user_meta($user->ID, $eventIdMetaKey, $this->postId);
 
-		if($partnerId){
-			update_user_meta($partnerId, $eventIdMetaKey, $this->postId);
+		if($this->partnerId){
+			update_user_meta($this->partnerId, $eventIdMetaKey, $this->postId);
 		}
-
-		$this->createEvents();
 	}
 
-		/**
+	/**
 	 * Stores all event details in the db, removes any existing events, and creates new ones.
 	 * @param  	int|WP_post  $post		The id of a post or the post itself
 	*/

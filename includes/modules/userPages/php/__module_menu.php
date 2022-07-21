@@ -33,7 +33,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		Use like this: <code>[user_link id="12"]</code>
 		<br>
 		<?php
-	$url		= SIM\ADMIN\getDefaultPageLink('allcontacts_pages', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'allcontacts_pages');
 	if(!empty($url)){
 		?>
 		<p>

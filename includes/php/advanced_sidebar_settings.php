@@ -20,31 +20,3 @@ add_filter( 'widget_title', function ($title, $instance=[]){
 	
 	return $title;
 }, 10, 2);
-
-//Only show direct parent if the user is not logged in
-add_action('init', function() {
-	if (!is_user_logged_in()){
-		add_action('advanced-sidebar-menu/menus/page/top-parent','customTopPage', 10, 4);
-	}
-});
-
-//Funcion to return the parent page is the advanced side bar menu
-function customTopPage( $topPageId){
-	global $DirectionsPageID;
-	
-	if ( is_page() ) {
-		//Get the parent page id
-		$parentPageId 		= get_queried_object()->post_parent;
-		$grandParentPageId 	= wp_get_post_parent_id($parentPageId);
-		//If there is a parent page and the parentpage is not the directions page
-		if ( $parentPageId  != 0 && $parentPageId != $DirectionsPageID) {
-			if($grandParentPageId == $DirectionsPageID){
-				return $parentPageId;
-			}else{
-				$topPageId	= $grandParentPageId;
-			}
-		}
-	}
-	
-    return $topPageId;
-}

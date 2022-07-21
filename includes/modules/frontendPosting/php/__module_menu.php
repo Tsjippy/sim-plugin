@@ -28,7 +28,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 
 	<?php
-	$url		= SIM\ADMIN\getDefaultPageLink('front_end_post_pages', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'front_end_post_pages');
 	if(!empty($url)){
 		?>
 		<p>

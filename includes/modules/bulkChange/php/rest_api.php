@@ -36,8 +36,7 @@ function bulkUpdateMeta(){
 	$metaKey 	= sanitize_text_field($_POST['meta_key']);
 	$metaValue	= sanitize_text_field($_POST['value']);
 	
-	// Check if permissions to edit
-	$user	= wp_get_current_user();
+	// To do: Check if permissions to edit
 
 	if (strpos($metaKey, '#') !== false){
 		$metaKeyBase 			= explode('#',$metaKey)[0];

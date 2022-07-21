@@ -56,12 +56,12 @@ function createDefaultPage($options, $optionKey, $title, $content, $oldOptions, 
 /**
  * Checks if all pages are valid in the default pages option array and returns the first valid one as a link
  * 
+ * @param   string  $moduleSlug     The slug of the module 
  * @param   string  $optionKey      The key in the module option array
- * @param   string  $moduleSlug     The slug of the module
  * 
  * @return  string                  The url
  */
-function getDefaultPageLink($optionKey, $moduleSlug){
+function getDefaultPageLink($moduleSlug, $optionKey){
     global $Modules;
 
     $url		= '';

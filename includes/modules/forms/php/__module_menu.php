@@ -57,7 +57,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	</p>
 
 	<?php
-	$url		= SIM\ADMIN\getDefaultPageLink('forms_pages', $moduleSlug);
+	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'forms_pages');
 	if(!empty($url)){
 		?>
 		<p>
