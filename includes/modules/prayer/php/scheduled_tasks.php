@@ -11,6 +11,31 @@ function scheduleTasks(){
     SIM\scheduleTask('send_prayer_action', 'quarterly');
 }
 
+function createNewSchedule($schedule){
+	if(!empty($schedule)){
+		return $schedule;
+	}
+
+	// add the new schedule
+	$prayerTimes    = (array)get_option('signal_prayers');
+	$schedule		= $prayerTimes;
+
+	$groups			= SIM\getModuleOption(MODULE_SLUG, 'groups');
+	foreach($groups as $group){
+		if(isset($schedule[$group['time']])){
+			$schedule[$group['time']][]	= $group['name'];
+		}else{
+			$schedule[$group['time']]	= [$group['name']];
+		}
+	}
+
+	// remove the old schedule
+	$yesterday	= date('Y-m-d', strtotime('-1 day'));
+	delete_option("prayer_schedule_$yesterday");
+
+	return $schedule;
+}
+
 /**
  * We will send the prayer request based on the times as given by people
  * As we are not sure about the timeliness of the cron schedule we keep
@@ -25,26 +50,10 @@ function sendPrayerRequests(){
 	// Get the schedule for today
 	$date			= \Date('y-m-d');
 	$schedule		= get_option("prayer_schedule_$date");
-	if(empty($schedule)){
-		// add the new schedule
-		$prayerTimes    = (array)get_option('signal_prayers');
-		$schedule		= $prayerTimes;
-
-		$groups			= SIM\getModuleOption(MODULE_SLUG, 'groups');
-		foreach($groups as $group){
-			if(isset($schedule[$group['time']])){
-				$schedule[$group['time']][]	= $group['name'];
-			}else{
-				$schedule[$group['time']]	= [$group['name']];
-			}
-		}
-
-		// remove the old schedule
-		$yesterday	= date('Y-m-d', strtotime('-1 day'));
-		delete_option("prayer_schedule_$yesterday");
-	}
 	
-	$time	= \Date('H:i');
+	createNewSchedule($schedule);
+
+	$time	= current_time('H:i');
 	foreach($schedule as $t=>$users){
 		if(is_array($users)){
 			// Do not continue for times in the future
