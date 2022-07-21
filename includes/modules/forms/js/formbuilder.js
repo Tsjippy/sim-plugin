@@ -45,7 +45,7 @@ function fixElementNumbering(form){
 async function showEmptyModal(target){
 	target.classList.add('clicked');
 
-	var formId					= target.dataset.formid;
+	let formId					= target.dataset.formid;
 	if(formId == undefined){
 		if(target.closest('.form_element_wrapper') != null){
 			formId = target.closest('.form_element_wrapper').dataset.formid;

@@ -332,7 +332,7 @@ function addFormElement(){
 		if(!is_numeric($_POST['insertafter'])){
 			$element->priority	= $wpdb->get_var( "SELECT COUNT(`id`) FROM `{$simForms->elTableName}` WHERE `form_id`={$element->form_id}") +1;
 		}else{
-			$element->priority	= $_POST['insertafter'];
+			$element->priority	= $_POST['insertafter'] + 1;
 			$simForms->reorderElements(-1, $element->priority, $element);
 		}
 

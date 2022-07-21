@@ -56,13 +56,11 @@ function sendPrayerRequests(){
 	$schedule		= createNewSchedule($schedule);
 
 	$time	= current_time('H:i');
-	SIM\printArray("Time is $time");
-	SIM\printArray($schedule);
 	foreach($schedule as $t=>$users){
 		if(is_array($users)){
 			// Do not continue for times in the future
 			if($t > $time){
-				break;
+				continue;
 			}
 
 			foreach($users as $user){
