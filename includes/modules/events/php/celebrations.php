@@ -142,11 +142,6 @@ function anniversaryMessages(){
 	}
 
 	$messageString	= '';
-	$partnerId		= SIM\hasPartner(($currentUser->ID));
-	if(is_numeric($partnerId)){
-		$partner		= get_userdata($partnerId);
-		$coupleString	= $currentUser->first_name.' & '.$partner->display_name;
-	}
 
 	//Loop over the anniversary_messages
 	foreach($anniversaryMessages as $userId=>$message){
@@ -155,12 +150,23 @@ function anniversaryMessages(){
 		}
 
 		if($userId  == $currentUser->ID){
+			$partnerId		= SIM\hasPartner($currentUser->ID);
+			if(is_numeric($partnerId)){
+				$partner		= get_userdata($partnerId);
+				$coupleString	= $currentUser->first_name.' & '.$partner->display_name;
+			}
 			if(is_numeric($partnerId)){
 				$message	= str_replace($coupleString, "of you and your spouse my dear ".$currentUser->first_name."!<br>", $message);
 			}
 			$message	= str_replace($currentUser->display_name, "of you my dear $currentUser->first_name!<br>", $message);
 		}else{
 			$userdata	= get_userdata($userId);
+
+			$partnerId		= SIM\hasPartner($userId);
+			if(is_numeric($partnerId)){
+				$partner		= get_userdata($partnerId);
+				$coupleString	= $userdata->first_name.' & '.$partner->display_name;
+			}
 
 			//Get the url of the user page
 			$url		= SIM\maybeGetUserPageUrl($userId);
