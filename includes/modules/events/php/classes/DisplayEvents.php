@@ -11,17 +11,17 @@ class DisplayEvents extends Events{
 	 * @param	int				$amount			The amount of events to return
 	 * @param	string			$extraQuery		Any extra sql query
 	 * @param	int				$offset			The offset to apply to the results
-	 * @param	int				$cat			The category the events should have
+	 * @param	array			$cats			The categories the events should have
 	*/
-	public function retrieveEvents($startDate = '', $endDate = '', $amount = '', $extraQuery = '', $offset='', $cat=''){
+	public function retrieveEvents($startDate = '', $endDate = '', $amount = '', $extraQuery = '', $offset='', $cats=[]){
 		global $wpdb;
 
 		//select all events attached to a post with publish status
 		$query	 = "SELECT * FROM {$wpdb->prefix}posts ";
 		$query	.= "INNER JOIN `{$this->tableName}` ON {$wpdb->prefix}posts.ID={$this->tableName}.post_id";
 		
-		if(is_numeric($cat)){
-			$query	.= " INNER JOIN `{$wpdb->prefix}term_relationships` ON {$wpdb->prefix}posts.ID={$wpdb->prefix}term_relationships.object_id";
+		if(!empty($cats)){
+			$query	.= " LEFT JOIN `{$wpdb->prefix}term_relationships` ON {$wpdb->prefix}posts.ID={$wpdb->prefix}term_relationships.object_id";
 		}
 		
 		$query	 .= " WHERE  {$wpdb->prefix}posts.post_status='publish'";
@@ -37,8 +37,9 @@ class DisplayEvents extends Events{
 		}
 
 		//get events with a specific category
-		if(is_numeric($cat)){
-			$query		.= " AND `{$wpdb->prefix}term_relationships`.`term_taxonomy_id` = '$cat'";
+		if(!empty($cats)){
+			$cats		= implode(', ', $cats);
+			$query		.= " AND (`{$wpdb->prefix}term_relationships`.`term_taxonomy_id` IN ($cats) OR `{$wpdb->prefix}term_relationships`.`term_taxonomy_id` IS NULL)";
 		}
 		
 		//extra query
@@ -65,14 +66,18 @@ class DisplayEvents extends Events{
 	}
 
 	/**
-	 * Get all all events of the coming 3 months with a maximum of ten
+	 * Get all all events of the coming X months with a maximum of X
+	 * 
+	 * @param	int		$max			The maximum total of items
+	 * @param	int		$months			The amount of months we should get events for
+	 * @param	array	$include		The categories to include
 	 * 
 	 * @return	string					The html containg an event list
 	*/
-	public function upcomingEvents(){
+	public function upcomingEvents($max, $months, $include){
 		global $wpdb;
 
-		$this->retrieveEvents(date("Y-m-d"), date('Y-m-d', strtotime('+3 month')), 10, "{$wpdb->prefix}posts.ID NOT IN ( SELECT `post_id` FROM `{$wpdb->prefix}postmeta` WHERE `meta_key`='celebrationdate')");
+		$this->retrieveEvents(date("Y-m-d"), date('Y-m-d', strtotime("+$months month")), $max, "", '', $include);
 
 		//do not list celebrations
 		foreach($this->events as $key=>$event){
@@ -84,17 +89,16 @@ class DisplayEvents extends Events{
 
 		ob_start();
 		?>
-		<aside class='event'>
-			<h4 class="title">Upcoming events</h4>
-			<div class="upcomingevents_wrapper">
-				<?php
-				if(empty($this->events)){
+		<h4 class="title">Upcoming events</h4>
+		<div class="upcomingevents_wrapper">
+			<?php
+			if(empty($this->events)){
 				?>
 				<div class="no-events">
 					No events found!    
 				</div>
 				<?php
-				}else{
+			}else{
 				?>
 				<div class="eventlist">
 					<?php
@@ -113,38 +117,39 @@ class DisplayEvents extends Events{
 						}else{
 							$eventUrl	= get_permalink($event->post_id);
 						}
-					?>
-					<article class="event-article">
-						<div class="event-wrapper">
-							<div class="event-date">
-								<?php echo "<span>$eventDayNr</span> $eventMonth";?>
+						?>
+						<article class="event-article">
+							<div class="event-wrapper">
+								<div class="event-date">
+									<?php echo "<span>$eventDayNr</span> $eventMonth";?>
+								</div>
+								<h4 class="event-title">
+									<a href="<?php echo $eventUrl; ?>">
+										<?php echo $eventTitle;?>
+									</a>
+								</h4>
+								<div class="event-detail">
+									<?php
+									if($event->startdate == $event->enddate){
+										echo "$eventDay {$event->starttime}";
+									}else{
+										echo "Until $endDateStr {$event->endtime}";
+									}
+									?>
+								</div>
 							</div>
-							<h4 class="event-title">
-								<a href="<?php echo $eventUrl; ?>">
-									<?php echo $eventTitle;?>
-								</a>
-							</h4>
-							<div class="event-detail">
-								<?php
-								if($event->startdate == $event->enddate){
-									echo "$eventDay {$event->starttime}";
-								}else{
-									echo "Until $endDateStr {$event->endtime}";
-								}
-								?>
-							</div>
-						</div>
-					</article>
-					<?php
+						</article>
+						<?php
 					}
-				}
 				?>
 				</div>
-				<a class='calendar button' href="<?php echo SITEURL;?>/events" class="button sim">
-					Calendar
-				</a>
-			</div>
-		</aside>
+				<?php
+			}
+			?>
+			<a class='calendar button' href="<?php echo SITEURL;?>/events" class="button sim">
+				Calendar
+			</a>
+		</div>
 		<?php
 		return ob_get_clean();
 	}
@@ -437,7 +442,7 @@ class DisplayEvents extends Events{
 		$calendarRows	= '';
 		$detailHtml		= '';
 
-		$baseUrl	= plugins_url('pictures', __DIR__);
+		$baseUrl	= plugins_url('../pictures', __DIR__);
 
 		//loop over all weeks of a month
 		while(true){
