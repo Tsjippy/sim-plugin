@@ -60,7 +60,7 @@ add_action( 'rest_api_init', function () {
 		'sim/v1/events', 
 		'/get_list_html', 
 		array(
-			'methods' 				=> 'POST',
+			'methods' 				=> 'POST,GET',
 			'callback' 				=> function(){
 				$events		= new DisplayEvents();
 				return $events->listCalendar();
@@ -72,6 +72,20 @@ add_action( 'rest_api_init', function () {
 					'validate_callback' => 'is_numeric'
 				),
 			)
+		)
+	);
+
+	// Upcoming events
+	register_rest_route( 
+		'sim/v1/events', 
+		'/upcoming_events', 
+		array(
+			'methods' 				=> 'POST,GET',
+			'callback' 				=> function(){
+				$events		= new DisplayEvents();
+				return $events->upcomingEventsArray();
+			},
+			'permission_callback' 	=> '__return_true',
 		)
 	);
 } );

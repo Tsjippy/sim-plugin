@@ -29,13 +29,14 @@ function createDefaultPage($options, $optionKey, $title, $content, $oldOptions, 
         }
     }
 
-    // Create account page
+    // Create the page
     $post = array(
         'post_type'		=> 'page',
         'post_title'    => $title,
         'post_content'  => $content,
         'post_status'   => "publish",
-        'post_author'   => '1'
+        'post_author'   => '1',
+        'comment_status'=> 'closed'
     );
 
     if(!empty($arg)){

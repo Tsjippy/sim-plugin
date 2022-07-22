@@ -49,6 +49,7 @@ function getAnniversaries(){
 
 // Add anniversaries to signal bot message
 add_filter('sim_after_bot_payer', function($args){
+	return $args;
 	$anniversaryMessages = getAnniversaries();
 	//If there are anniversaries
 	if(count($anniversaryMessages) > 0){
@@ -212,8 +213,8 @@ function arrivingUsersMessage(){
 						$html 	.= '<a href="'.$url.'">'.$user->display_name."</a><br>";
 					}
 				}
-			$html .= '.</p></div>';
-		$html .= '.</p></div>';
+			$html .= '.</p>';
+		$html .= '</div>';
 	}
 
 	return $html;

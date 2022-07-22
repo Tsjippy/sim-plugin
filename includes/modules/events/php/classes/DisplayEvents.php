@@ -80,9 +80,6 @@ class DisplayEvents extends Events{
 			if($event->startdate == date("Y-m-d") && $event->endtime < date('H:i', current_time('U'))){
 				unset($this->events[$key]);
 			}
-			/* if(!empty(get_post_meta($event->post_id, 'celebrationdate', true))){
-				unset($this->events[$key]);
-			} */
 		}
 
 		ob_start();
@@ -150,6 +147,58 @@ class DisplayEvents extends Events{
 		</aside>
 		<?php
 		return ob_get_clean();
+	}
+
+	public function upcomingEventsArray(){
+		global $wpdb;
+
+		$this->retrieveEvents(date("Y-m-d"), date('Y-m-d', strtotime('+3 month')), 10, "{$wpdb->prefix}posts.ID NOT IN ( SELECT `post_id` FROM `{$wpdb->prefix}postmeta` WHERE `meta_key`='celebrationdate')");
+
+		//do not list celebrations
+		foreach($this->events as $key=>$event){
+			// do not keep events who already happened
+			if($event->startdate == date("Y-m-d") && $event->endtime < date('H:i', current_time('U'))){
+				unset($this->events[$key]);
+			}
+		}
+
+		if(empty($this->events)){
+			return false;
+		}
+
+		$events	= [];
+		foreach($this->events as $event){
+			$startDate		= strtotime($event->startdate);
+			$eventDayNr		= date('d', $startDate);
+			$eventDay		= date('l', $startDate);
+			$eventMonth		= date('M', $startDate);
+			$eventTitle		= get_the_title($event->post_id);
+			$endDateStr		= date('d M', strtotime(($event->enddate)));
+
+			$userId = get_post_meta($event->post_id,'user',true);
+			if(is_numeric($userId) && function_exists('SIM\USERPAGE\getUserPageLink')){
+				//Get the user page of this user
+				$eventUrl	= SIM\USERPAGE\getUserPageLink($userId);
+			}else{
+				$eventUrl	= get_permalink($event->post_id);
+			}
+
+			$e	= [
+				'day'			=> $eventDayNr,
+				'month'			=> $eventMonth,
+				'url'			=> $eventUrl,
+				'title'			=> $eventTitle
+			];
+
+			if($event->startdate == $event->enddate){
+				$e['time']	= "$eventDay {$event->starttime}";
+			}else{
+				$e['time']	= "Until $endDateStr {$event->endtime}";
+			}
+
+			$events[]	= $e;
+		}
+		return $events;
 	}
 
 	/**
