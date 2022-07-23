@@ -9,6 +9,7 @@
 
 ### Fixed
 - forms wrong order when adding element
+- frontpage layout when arriving users
 
 ## [2.2.14] - 2022-07-21
 
