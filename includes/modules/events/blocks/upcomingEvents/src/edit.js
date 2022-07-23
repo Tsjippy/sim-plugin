@@ -67,11 +67,19 @@ const Edit = ({attributes, setAttributes}) => {
 
 
 	// variable, function name to set variable
-	const [events, storeEvents] = useState('');
+	const [events, storeEvents] = useState([]);
 
 	const fetchEvents = async () => {
-		const path = items ? `${apiPath}?items=${items}&months=${months}&categories=${categories}` : apiPath;
-		const fetchedEvents = await apiFetch({path});
+		let catString	= '';
+		for (const key in categories) {catString += key+','}
+
+		const path = items ? `${apiPath}?items=${items}&months=${months}&categories=${catString}` : apiPath;
+
+		let fetchedEvents = await apiFetch({path});
+
+		if(!fetchedEvents){
+			fetchedEvents	= [];
+		}
 		storeEvents(fetchedEvents);
 	}
 
@@ -104,10 +112,6 @@ const Edit = ({attributes, setAttributes}) => {
 				);
 			})
 		)
-	}
-
-	if ( events.length === 0 ) {
-		return <div {...useBlockProps()}>Loading events...</div>;
 	}
 
 	return (

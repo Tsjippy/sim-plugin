@@ -154,10 +154,9 @@ class DisplayEvents extends Events{
 		return ob_get_clean();
 	}
 
-	public function upcomingEventsArray(){
-		global $wpdb;
+	public function upcomingEventsArray($max, $months, $include){
 
-		$this->retrieveEvents(date("Y-m-d"), date('Y-m-d', strtotime('+3 month')), 10, "{$wpdb->prefix}posts.ID NOT IN ( SELECT `post_id` FROM `{$wpdb->prefix}postmeta` WHERE `meta_key`='celebrationdate')");
+		$this->retrieveEvents(date("Y-m-d"), date('Y-m-d', strtotime("+$months month")), $max, "", '', $include);
 
 		//do not list celebrations
 		foreach($this->events as $key=>$event){

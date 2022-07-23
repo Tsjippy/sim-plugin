@@ -83,7 +83,39 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST,GET',
 			'callback' 				=> function(){
 				$events		= new DisplayEvents();
-				return $events->upcomingEventsArray();
+
+				$items	= 10;
+				$months	= 3;
+				$cats	= [];
+
+				if(!empty($_GET['items']) && is_numeric($_GET['items'])){
+					$items	= $_GET['items'];
+				}
+
+				if(!empty($_GET['months']) && is_numeric($_GET['months'])){
+					$months	= $_GET['months'];
+				}
+
+				if(!empty($_GET['cats'])){
+					$cats	= explode(',', trim($_GET['categories'], ','));
+
+					$categories	= get_categories( array(
+						'taxonomy'		=> 'events',
+						'hide_empty' 	=> false,
+					) );
+				
+					$exclude	= $cats;
+				
+					$include	= [];
+				
+					foreach($categories as $category){
+						if(!isset($exclude[$category->term_id])){
+							$include[]	= $category->term_id;
+						}
+					}
+
+				}
+				return $events->upcomingEventsArray($items, $months, $include);
 			},
 			'permission_callback' 	=> '__return_true',
 		)
