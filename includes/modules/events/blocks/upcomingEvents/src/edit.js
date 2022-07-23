@@ -92,7 +92,7 @@ const Edit = ({attributes, setAttributes}) => {
 								<span>{event.day}</span> {event.month}
 							</div>
 							<h4 class="event-title">
-								<a href='${event.url}'>
+								<a href={event.url}>
 									{event.title}
 								</a>
 							</h4>

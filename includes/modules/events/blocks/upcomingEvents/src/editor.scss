@@ -4,6 +4,18 @@
  * Replace them with your own styles or remove the file completely.
  */
 
-.wp-block-sim-events-sim-events {
-	border: 1px dotted #f00;
+.event {
+	h4.title,  h4.event-title{
+		font-weight: bold;
+		color: #bd2919;
+		margin: 15px 5px 5px;
+	}
+
+	a.button {
+		background-color: #bd2919;
+		border-radius: 3px;
+		text-align: center;
+		margin-right: 10px;
+		color: #ffffff;
+	}
 }

@@ -20,6 +20,10 @@ function displayUpcomingEvents($attributes, $content) {
 		'home'			=> false
 	));
 
+	if($args['home'] && (!in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page')) && !is_front_page())){
+		return "";
+	}
+
 	$categories	= get_categories( array(
 		'taxonomy'		=> 'events',
 		'hide_empty' 	=> false,

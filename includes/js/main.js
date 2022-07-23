@@ -275,6 +275,13 @@ export async function waitForInternet(){
 
 //Load after page load
 document.addEventListener("DOMContentLoaded",function() {
+	// remove any empty widgets
+	document.querySelectorAll('.widget').forEach(w=>{
+		if(w.innerHTML == ''){
+			w.remove();
+		}
+	});
+
 	//loop over all the tab buttons
 	document.querySelectorAll('.tablink').forEach(function(tabButton){
 		//Add the dataset if it does not exist yet.
