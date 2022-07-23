@@ -3,10 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- upcoming events widget
-- remove empty widgets
 
 ### Changed
+
+### Fixed
+
+## [2.2.15] - 2022-07-23
+
+
+### Added
+- upcoming events widget
+- remove empty widgets
 
 ### Fixed
 - forms wrong order when adding element
