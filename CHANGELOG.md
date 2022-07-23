@@ -4,6 +4,7 @@
 
 ### Added
 - upcoming events widget
+- remove empty widgets
 
 ### Changed
 
