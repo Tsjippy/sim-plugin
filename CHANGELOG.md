@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.0.2.17] - 2022-07-25
+
+
+### Fixed
 - issue with upcoming events
 
 ## [2.0.2.16] - 2022-07-23
