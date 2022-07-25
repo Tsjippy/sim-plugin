@@ -11,16 +11,16 @@ add_action('init', function () {
 	);
 });
 
-function displayUpcomingEvents($attributes, $content) {
+function displayUpcomingEvents($attributes) {
 
 	$args = wp_parse_args($attributes, array(
-		'items' 		=> 1,
-		'months'		=> 2,
+		'items' 		=> 10,
+		'months'		=> 3,
 		'categories'	=> [],
 		'home'			=> false
 	));
 
-	if($args['home'] && (!in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page')) && !is_front_page())){
+	if($args['home'] && (!in_array(get_the_ID(), SIM\getModuleOption('frontpage','home_page')) && !is_front_page())){
 		return "";
 	}
 

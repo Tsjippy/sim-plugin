@@ -369,12 +369,15 @@ class CreateEvents extends Events{
 		$event['organizer_id']			= sanitize_text_field($event['organizer_id']);
 	
 		//check if anything has changed
-		if(get_post_meta($this->postId, 'eventdetails', true) != $event){
-			// First delete any existing events
-			$this->removeDbRows($this->postId);
+		$oldMeta	= get_post_meta($this->postId, 'eventdetails', true);
+		if($oldMeta != $event){
+			if(!empty($oldMeta)){
+				// First delete any existing events
+				$this->removeDbRows($this->postId);
 
-			// Delete any existing events as well
-			wp_clear_scheduled_hook([$this, 'sendEventReminder'], $this->postId);
+				// Delete any existing events as well
+				wp_clear_scheduled_hook([$this, 'sendEventReminder'], $this->postId);
+			}
 
 			//store meta in db
 			update_metadata( 'post', $this->postId, 'eventdetails', $event);

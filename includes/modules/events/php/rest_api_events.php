@@ -80,7 +80,7 @@ add_action( 'rest_api_init', function () {
 		'sim/v1/events', 
 		'/upcoming_events', 
 		array(
-			'methods' 				=> 'POST,GET',
+			'methods' 				=> 'GET,POST',
 			'callback' 				=> function(){
 				$events		= new DisplayEvents();
 
@@ -96,7 +96,7 @@ add_action( 'rest_api_init', function () {
 					$months	= $_GET['months'];
 				}
 
-				if(!empty($_GET['cats'])){
+				if(!empty($_GET['categories'])){
 					$cats	= explode(',', trim($_GET['categories'], ','));
 
 					$categories	= get_categories( array(
@@ -109,7 +109,7 @@ add_action( 'rest_api_init', function () {
 					$include	= [];
 				
 					foreach($categories as $category){
-						if(!isset($exclude[$category->term_id])){
+						if(!in_array($category->term_id, $exclude)){
 							$include[]	= $category->term_id;
 						}
 					}

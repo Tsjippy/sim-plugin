@@ -75,24 +75,15 @@ class DisplayEvents extends Events{
 	 * @return	string					The html containg an event list
 	*/
 	public function upcomingEvents($max, $months, $include){
-		global $wpdb;
 
-		$this->retrieveEvents(date("Y-m-d"), date('Y-m-d', strtotime("+$months month")), $max, "", '', $include);
-
-		//do not list celebrations
-		foreach($this->events as $key=>$event){
-			// do not keep events who already happened
-			if($event->startdate == date("Y-m-d") && $event->endtime < date('H:i', current_time('U'))){
-				unset($this->events[$key]);
-			}
-		}
+		$events	= $this->upcomingEventsArray($max, $months, $include);
 
 		ob_start();
 		?>
 		<h4 class="title">Upcoming events</h4>
 		<div class="upcomingevents_wrapper">
 			<?php
-			if(empty($this->events)){
+			if(!$events){
 				?>
 				<div class="no-events">
 					No events found!    
@@ -102,39 +93,21 @@ class DisplayEvents extends Events{
 				?>
 				<div class="eventlist">
 					<?php
-					foreach($this->events as $event){
-						$startDate		= strtotime($event->startdate);
-						$eventDayNr		= date('d', $startDate);
-						$eventDay		= date('l', $startDate);
-						$eventMonth		= date('M', $startDate);
-						$eventTitle		= get_the_title($event->post_id);
-						$endDateStr		= date('d M', strtotime(($event->enddate)));
-
-						$userId = get_post_meta($event->post_id,'user',true);
-						if(is_numeric($userId) && function_exists('SIM\USERPAGE\getUserPageLink')){
-							//Get the user page of this user
-							$eventUrl	= SIM\USERPAGE\getUserPageLink($userId);
-						}else{
-							$eventUrl	= get_permalink($event->post_id);
-						}
+					foreach($events as $event){
 						?>
 						<article class="event-article">
 							<div class="event-wrapper">
 								<div class="event-date">
-									<?php echo "<span>$eventDayNr</span> $eventMonth";?>
+									<?php echo "<span>{$event['day']}</span> {$event['month']}";?>
 								</div>
 								<h4 class="event-title">
-									<a href="<?php echo $eventUrl; ?>">
-										<?php echo $eventTitle;?>
+									<a href="<?php echo $event['url'] ?>">
+										<?php echo $event['title'];?>
 									</a>
 								</h4>
 								<div class="event-detail">
 									<?php
-									if($event->startdate == $event->enddate){
-										echo "$eventDay {$event->starttime}";
-									}else{
-										echo "Until $endDateStr {$event->endtime}";
-									}
+									echo $event['time'];
 									?>
 								</div>
 							</div>
@@ -158,7 +131,6 @@ class DisplayEvents extends Events{
 
 		$this->retrieveEvents(date("Y-m-d"), date('Y-m-d', strtotime("+$months month")), $max, "", '', $include);
 
-		//do not list celebrations
 		foreach($this->events as $key=>$event){
 			// do not keep events who already happened
 			if($event->startdate == date("Y-m-d") && $event->endtime < date('H:i', current_time('U'))){

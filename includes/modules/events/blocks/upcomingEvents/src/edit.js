@@ -39,8 +39,7 @@ const apiPath	= "/sim/v1/events/upcoming_events";
 const catsPath	= "/wp/v2/events";
 
 const Edit = ({attributes, setAttributes}) => {
-
-	let {items, months, categories, home} = attributes;
+	var {items, months, categories, home} = attributes;
 
 	if(categories == undefined){
 		categories	= [];
@@ -70,12 +69,32 @@ const Edit = ({attributes, setAttributes}) => {
 	const [events, storeEvents] = useState([]);
 
 	const fetchEvents = async () => {
-		let catString	= '';
-		for (const key in categories) {catString += key+','}
+		let param	= '';
+		
+		if(items != undefined){
+			param += "?items"+items;
+		}
 
-		const path = items ? `${apiPath}?items=${items}&months=${months}&categories=${catString}` : apiPath;
+		if(months != undefined){
+			if(param == ''){
+				param += "?";
+			}else{
+				param += "&";
+			}
+			param += "months="+months;
+		}
 
-		let fetchedEvents = await apiFetch({path});
+		if(categories != undefined){
+			if(param == ''){
+				param += "?";
+			}else{
+				param += "&";
+			}
+			param += "categories=";
+			for (const key in categories) {param += key+','}
+		}
+		
+		let fetchedEvents = await apiFetch({path: apiPath+param});
 
 		if(!fetchedEvents){
 			fetchedEvents	= [];
