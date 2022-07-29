@@ -40,7 +40,19 @@ function getAnniversaries(){
 			if(substr($title, 0, 3) != 'SIM'){
 				$title	= lcfirst($title);
 			}
-			$messages[$event->post_author] = trim("$age $title");
+
+			//there happen to be more celeberations on the same day for one person
+			if(isset($messages[$event->post_author])){
+				$name	= get_userdata($event->post_author)->display_name;
+				// remove the name of the previous text
+				if(strpos($title, $name) !== false){
+					$messages[$event->post_author]	= trim(str_replace($name, '', $messages[$event->post_author]));
+				}
+				$messages[$event->post_author]	.= ' and the ';
+			}else{
+				$messages[$event->post_author]	= '';
+			}
+			$messages[$event->post_author] .= trim("$age $title");
 		}
 	}
 
@@ -52,7 +64,7 @@ add_filter('sim_after_bot_payer', function($args){
 	$anniversaryMessages = getAnniversaries();
 
 	//If there are anniversaries
-	if(count($anniversaryMessages) > 0){
+	if(!empty($anniversaryMessages)){
 		$args['message'] .= "\n\nToday is the ";
 
 		$messageString	= '';
