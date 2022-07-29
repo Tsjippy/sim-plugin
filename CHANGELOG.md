@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- remove images fileupload plugin
 
 ### Fixed
 - wrong query on events page
