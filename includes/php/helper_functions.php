@@ -421,9 +421,13 @@ function isChild($userId) {
  * @return	int					Age in years
 */
 function getAge($userId){
-	$birthday = get_user_meta( $userId, 'birthday', true );
-	if(empty($birthday)){
-		return false;
+	if(is_numeric($userId)){
+		$birthday = get_user_meta( $userId, 'birthday', true );
+		if(empty($birthday)){
+			return false;
+		}
+	}else{
+		$birthday = $userId;
 	}
 
 	$birthDate = explode("-", $birthday);
@@ -433,7 +437,7 @@ function getAge($userId){
 		$age = (date("Y") - $birthDate[0]);
 	}
 	
-	return $age;
+	return numberToWords($age);
 }
 
 /**

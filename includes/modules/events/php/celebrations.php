@@ -28,16 +28,16 @@ function getAnniversaries(){
 	$events->retrieveEvents(date('Y-m-d'), date('Y-m-d'));
 
 	foreach($events->events as $event){
-		$startYear	= get_post_meta($event->ID,'celebrationdate',true);
+		$startYear	= get_post_meta($event->ID, 'celebrationdate', true);
 		if(!empty($startYear) && $startYear != date('Y-m-d')){
 			$title		= $event->post_title;
 			$age		= SIM\getAge($startYear);
 			$privacy	= (array)get_user_meta($event->post_author, 'privacy_preference', true);
 
-			if(substr($title,0,8) == 'Birthday' && in_array('hide_age', $privacy)){
+			if(substr($title, 0, 8) == 'Birthday' && in_array('hide_age', $privacy)){
 				$age	= '';
 			}
-			if(substr($title,0,3) != 'SIM'){
+			if(substr($title, 0, 3) != 'SIM'){
 				$title	= lcfirst($title);
 			}
 			$messages[$event->post_author] = trim("$age $title");
@@ -49,8 +49,8 @@ function getAnniversaries(){
 
 // Add anniversaries to signal bot message
 add_filter('sim_after_bot_payer', function($args){
-	return $args;
 	$anniversaryMessages = getAnniversaries();
+	
 	//If there are anniversaries
 	if(count($anniversaryMessages) > 0){
 		$args['message'] .= "\n\nToday is the ";

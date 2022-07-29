@@ -138,8 +138,16 @@ class CreateEvents extends Events{
 		}else{
 			$repEnddate	= strtotime("+90 year", $baseStartDate);
 		}
-		$excludeDates	= (array)$repeatParam['excludedates'];	
-		$includeDates	= (array)$repeatParam['includedates'];	
+
+		$excludeDates	= [];
+		if(isset($repeatParam['excludedates'])){
+			$excludeDates	= (array)$repeatParam['excludedates'];
+		}
+
+		$includeDates	= [];
+		if(isset($repeatParam['includedates'])){
+			$includeDates	= (array)$repeatParam['includedates'];
+		}
 					
 		$startDate		= $baseStartDate;
 		$i				= 1;
