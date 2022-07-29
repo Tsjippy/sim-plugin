@@ -11,6 +11,7 @@
 - wrong query on events page
 - prayerrequest filter is not applied
 -  2 celebrations on 1 day for 1 person
+- issue when multiple same forms on page
 
 ## [2.0.2.18] - 2022-07-29
 
