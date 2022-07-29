@@ -9,6 +9,7 @@
 
 ### Fixed
 - wrong query on events page
+- prayerrequest filter is not applied
 
 ## [2.0.2.18] - 2022-07-29
 
