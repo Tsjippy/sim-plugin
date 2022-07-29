@@ -359,19 +359,22 @@ trait CreateJs{
         $newJs   = "\n\tdocument.addEventListener('DOMContentLoaded', function() {";
             $newJs.= "\n\t\tconsole.log('Dynamic $this->formName forms js loaded');";
             $newJs.= "\n\t\tFormFunctions.tidyMultiInputs();";
-            $newJs.= "\n\t\tform = document.querySelector('[data-formid=\"{$this->formData->id}\"]');";
-            if($this->isMultiStep()){
-                $newJs.= "\n\t\t//show first tab";
-                $newJs.= "\n\t\t// Display the current tab// Current tab is set to be the first tab (0)";
-                $newJs.= "\n\t\tcurrentTab = 0; ";
-                $newJs.= "\n\t\t// Display the current tab";
-                $newJs.= "\n\t\tFormFunctions.showTab(currentTab,form); ";
-            }
-            if(!empty($this->formData->settings['save_in_meta'])){
-                $newJs.= "\n\t\tform.querySelectorAll('select, input, textarea').forEach(";
-                    $newJs.= "\n\t\t\tel=>{$this->formName}.processFields(el)";
-                $newJs.= "\n\t\t);";
-            }
+            $newJs.= "\n\t\tlet forms = document.querySelectorAll('[data-formid=\"{$this->formData->id}\"]');";
+
+            $newJs.= "\n\t\tforms.forEach(form=>{";
+                if($this->isMultiStep()){
+                    $newJs.= "\n\t\t\t//show first tab";
+                    $newJs.= "\n\t\t\t// Display the current tab// Current tab is set to be the first tab (0)";
+                    $newJs.= "\n\t\t\tcurrentTab = 0; ";
+                    $newJs.= "\n\t\t\t// Display the current tab";
+                    $newJs.= "\n\t\t\tFormFunctions.showTab(currentTab,form); ";
+                }
+                if(!empty($this->formData->settings['save_in_meta'])){
+                    $newJs.= "\n\t\t\tform.querySelectorAll('select, input, textarea').forEach(";
+                        $newJs.= "\n\t\t\t\tel=>{$this->formName}.processFields(el)";
+                    $newJs.= "\n\t\t\t);";
+                }
+            $newJs.= "\n\t\t});";
         $newJs.= "\n\t});";
 
         $js         .= $newJs;
@@ -430,6 +433,7 @@ trait CreateJs{
         $newJs   = '';
         $newJs  .= "\n\n\tthis.processFields    = function(el){";
             $newJs  .= "\n\t\tvar elName = el.name;\n";
+            $newJs  .= "\n\t\tvar form	= el.closest('form');\n";
             foreach($checks as $if => $check){
                 $prevVar   = [];
                 $newJs  .= "\t\t$if\n";
@@ -444,7 +448,7 @@ trait CreateJs{
 
                 foreach($check['actions'] as $index=>$action){
                     if($index === 'querystrings'){
-                        $newJs  .= buildQuerySelector($action);
+                        $newJs  .= buildQuerySelector($action, "\t\t\t");
                     }else{
                         $newJs  .= "\t\t\t$action\n";
                     }
@@ -455,7 +459,7 @@ trait CreateJs{
                     foreach($prop['variables'] as $variable){
                         //Only write same var definition once
                         $varParts  = explode(' = ', $variable);
-                        if($prevVar[$varParts[0]] != $varParts[1]){
+                        if(!isset($prevVar[$varParts[0]]) || $prevVar[$varParts[0]] != $varParts[1]){
                             $newJs  .= "\t\t\t$variable\n";
                             $prevVar[$varParts[0]] = $varParts[1];
                         }
@@ -465,7 +469,7 @@ trait CreateJs{
                         $newJs  .= "\n\t\t\t$if\n";
                         foreach($prop['actions'] as $index=>$action){
                             if($index === 'querystrings'){
-                                $newJs  .= buildQuerySelector($action);
+                                $newJs  .= buildQuerySelector($action, "\t\t\t\t");
                             }else{
                                 $newJs  .= "\t\t\t\t$action\n";
                             }
@@ -540,12 +544,12 @@ trait CreateJs{
     }
 }
 
-function buildQuerySelector($queryStrings){
+function buildQuerySelector($queryStrings, $prefix){
     $actionCode    = '';
     foreach($queryStrings as $action=>$names){
         //multiple
-        if(count($names)>1){
-            $actionCode    .= "\t\t\tform.querySelectorAll('";
+        if(count($names) > 1){
+            $actionCode    .= "{$prefix}form.querySelectorAll('";
             $last           = array_key_last($names);
             foreach($names as $key=>$name){
                 $actionCode    .= $name;
@@ -554,20 +558,20 @@ function buildQuerySelector($queryStrings){
                 }
             }
             $actionCode    .= "').forEach(el=>{\n";
-                $actionCode    .= "\t\t\t\ttry{\n";
-                    $actionCode    .= "\t\t\t\t\t//Make sure we only do each wrapper once by adding a temp class\n";
-                    $actionCode    .= "\t\t\t\t\tif(!el.closest('.inputwrapper').matches('.action-processed')){\n";
-                        $actionCode    .= "\t\t\t\t\t\tel.closest('.inputwrapper').classList.add('action-processed');\n";
-                        $actionCode    .= "\t\t\t\t\t\tel.closest('.inputwrapper').classList.$action('hidden');\n";
-                    $actionCode    .= "\t\t\t\t\t}\n";
-                $actionCode    .= "\t\t\t\t}catch(e){\n";
-                    $actionCode    .= "\t\t\t\t\tel.classList.$action('hidden');\n";
-                $actionCode    .= "\t\t\t\t}\n";
-            $actionCode    .= "\t\t\t});\n";
-            $actionCode    .= "\t\t\tdocument.querySelectorAll('.action-processed').forEach(el=>{el.classList.remove('action-processed')});\n";
+                $actionCode    .= "{$prefix}\ttry{\n";
+                    $actionCode    .= "{$prefix}\t\t//Make sure we only do each wrapper once by adding a temp class\n";
+                    $actionCode    .= "{$prefix}\t\tif(!el.closest('.inputwrapper').matches('.action-processed')){\n";
+                        $actionCode    .= "{$prefix}\t\t\tel.closest('.inputwrapper').classList.add('action-processed');\n";
+                        $actionCode    .= "{$prefix}\t\t\tel.closest('.inputwrapper').classList.$action('hidden');\n";
+                    $actionCode    .= "{$prefix}\t\t}\n";
+                $actionCode    .= "{$prefix}\t}catch(e){\n";
+                    $actionCode    .= "{$prefix}\t\tel.classList.$action('hidden');\n";
+                $actionCode    .= "{$prefix}\t}\n";
+            $actionCode    .= "{$prefix}});\n";
+            $actionCode    .= "{$prefix}document.querySelectorAll('.action-processed').forEach(el=>{el.classList.remove('action-processed')});\n";
         //just one
         }elseif(count($names)==1){
-            $actionCode    .= "\t\t\tform.querySelector('{$names[0]}')";
+            $actionCode    .= "{$prefix}form.querySelector('{$names[0]}')";
             $actionCode    .= ".closest('.inputwrapper').classList.$action('hidden');\n";
         }
     }
