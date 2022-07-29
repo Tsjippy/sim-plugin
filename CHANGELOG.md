@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- retieve events with a category
 
 ## [2.0.2.17] - 2022-07-25
 
