@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.0.2.18] - 2022-07-29
+
+
+### Fixed
 - retieve events with a category
 - anniversary messages
 
