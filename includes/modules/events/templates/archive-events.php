@@ -40,7 +40,10 @@ function showCalendar(){
 	$events	= new DisplayEvents();
 
 	global $wp_query;
-	$cat	= [$wp_query->queried_object_id];
+	$cat	= [];
+	if(!empty($wp_query->queried_object_id)){
+		$cat	= [$wp_query->queried_object_id];
+	}
 
 	while ( have_posts() ) :
 		the_post();

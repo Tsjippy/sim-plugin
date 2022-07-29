@@ -20,7 +20,10 @@ if(empty($view)){
 }
 
 global $wp_query;
-$cat	= [$wp_query->queried_object_id];
+$cat	= [];
+if(!empty($wp_query->queried_object_id)){
+	$cat	= [$wp_query->queried_object_id];
+}
 
 $events	= new DisplayEvents();
 
