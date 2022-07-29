@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.0.2.19] - 2022-07-29
+
+
+### Changed
 - remove images fileupload plugin
 
 ### Fixed
