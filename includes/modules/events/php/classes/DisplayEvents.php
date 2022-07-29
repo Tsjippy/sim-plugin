@@ -377,7 +377,7 @@ class DisplayEvents extends Events{
 	 * 
 	 * @return	string				Html of the calendar
 	*/
-	public function monthCalendar($cat=''){
+	public function monthCalendar($cat=[]){
 		if(defined('REST_REQUEST')){
 			$month		= $_POST['month'];
 			$year		= $_POST['year'];
@@ -579,7 +579,7 @@ class DisplayEvents extends Events{
 	 * 
 	 * @return	string				Html of the calendar
 	*/
-	public function weekCalendar($cat=''){
+	public function weekCalendar($cat=[]){
 		if(defined('REST_REQUEST')){
 			$weekNr		= $_POST['wknr'];
 			$year		= $_POST['year'];
@@ -856,7 +856,7 @@ class DisplayEvents extends Events{
 	 * 
 	 * @return	string				Html of the calendar
 	*/
-	public function listCalendar($cat=''){
+	public function listCalendar($cat=[]){
 		$offset='';
 		if(defined('REST_REQUEST')){
 			$offset	= $_POST['offset'];
