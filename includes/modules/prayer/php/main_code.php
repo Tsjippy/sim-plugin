@@ -44,7 +44,9 @@ function prayerRequest($plainText = false) {
 		//Loop over them to find the post for this month
 		foreach($posts as $post){
 			// double check if the current month is in the title as the s parameter searches everywhere
-			if(strpos($post->post_title, date("F Y")) === false) continue;
+			if(strpos($post->post_title, date("F Y")) === false){
+				continue;
+			}
 
 			//Content of page with all prayer requests of this month
 			if($plainText){
@@ -71,7 +73,7 @@ function prayerRequest($plainText = false) {
 				preg_match_all($re, strip_tags($content), $matches, PREG_SET_ORDER, 0);
 				
 				//No prayer request found
-				if (isset($matches[0][1]) and !empty($matches[0][1])){
+				if (isset($matches[0][1]) && !empty($matches[0][1])){
 					//Return the prayer request
 					$prayer = $matches[0][1];
 				}

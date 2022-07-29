@@ -417,10 +417,11 @@ function isChild($userId) {
 /**
  * Get an users age
  * @param 	int		$userId	 	WP User_ID
+ * @param	bool	$numeric	Whether to return the age as a number or a word. Default false
  * 
  * @return	int					Age in years
 */
-function getAge($userId){
+function getAge($userId, $numeric=false){
 	if(is_numeric($userId)){
 		$birthday = get_user_meta( $userId, 'birthday', true );
 		if(empty($birthday)){
@@ -437,6 +438,9 @@ function getAge($userId){
 		$age = (date("Y") - $birthDate[0]);
 	}
 	
+	if($numeric){
+		return $age;
+	}
 	return numberToWords($age);
 }
 

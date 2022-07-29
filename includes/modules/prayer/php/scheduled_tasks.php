@@ -46,7 +46,10 @@ function sendPrayerRequests(){
 	//Change the user to the admin account otherwise get_users will not work
 	wp_set_current_user(1);
 
-	$request	= prayerRequest(true);
+	$message	 = "The prayer request of today is:\n";
+	$message 	.= prayerRequest(true);	
+	$params		 = apply_filters('sim_after_bot_payer', ['message'=>$message, 'urls'=>'']);
+	$message	 = $params['message']."\n\n".$params['urls'];
 	
 	// Get the schedule for today
 	
@@ -77,7 +80,7 @@ function sendPrayerRequests(){
 				if(is_numeric($user)){
 					$dayPart	.= " ".get_userdata($user)->first_name;
 				}
-				$message 	= "Good $dayPart,\n\n$request";
+				$message 	= "Good $dayPart,\n\n$message";
 				SIM\trySendSignal($message, $user);
 			}
 		}

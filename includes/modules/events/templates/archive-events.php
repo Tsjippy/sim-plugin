@@ -18,7 +18,9 @@ global $wp_query;
 if($wp_query->is_embed){
 	showCalendar();
 }else{
-	if(!isset($skipHeader) or !$skipHeader)	get_header(); 
+	if(!isset($skipHeader) || !$skipHeader){
+		get_header();
+	}
 	?>
 	<div id="primary" style="width:100%;">
 		<main id="main" class='inside-article'<?php generate_do_element_classes( 'main' ); ?>>
@@ -28,7 +30,9 @@ if($wp_query->is_embed){
 	
 	<?php
 	
-	if(!$skipFooter)	get_footer();
+	if(!$skipFooter){
+		get_footer();
+	}
 }
 
 function showCalendar(){
@@ -75,7 +79,7 @@ function showCalendar(){
 					$baseUrl	= plugins_url('pictures', __DIR__);
 					echo "<img src='{$baseUrl}/date.png' alt='time' class='event_icon'>";
 					?>
-					<select class='month_selector<?php if($view=='week') echo ' hidden';?>' placeholder="Select month">
+					<select class='month_selector<?php if($view=='week'){echo ' hidden';}?>' placeholder="Select month">
 						<?php
 						for ($m=1;$m<13;$m++){
 							$monthName	= date("F", mktime(0, 0, 0, $m, 10));
@@ -89,7 +93,7 @@ function showCalendar(){
 						}
 						?>
 					</select>
-					<select class='week_selector<?php if($view!='week') echo ' hidden';?>' placeholder="Select week">
+					<select class='week_selector<?php if($view!='week'){echo ' hidden';}?>' placeholder="Select week">
 						<?php
 						for ($w=1;$w<=53;$w++){
 							if($_GET['week'] == $w){
@@ -106,7 +110,6 @@ function showCalendar(){
 						$start 	= date('Y');
 						$end	= date("Y",strtotime('+10 year'));
 						for ($y=$start;$y<$end;$y++){
-							$monthName = date("F", mktime(0, 0, 0, $m, 10));
 							if($y == $_GET['year']){
 								$selected = 'selected';
 							}else{
@@ -119,23 +122,23 @@ function showCalendar(){
 				</div>
 			</div>
 			<div class="view-style">
-				<span class="viewselector<?php if($view=='month') echo ' selected';?>" data-type="monthview">Monthly</span>
-				<span class="viewselector<?php if($view=='week') echo ' selected';?>" data-type="weekview">Weekly</span>
-				<span class="viewselector<?php if($view=='list') echo ' selected';?>" data-type="listview">List</span>
+				<span class="viewselector<?php if($view=='month'){echo ' selected';}?>" data-type="monthview">Monthly</span>
+				<span class="viewselector<?php if($view=='week'){echo ' selected';}?>" data-type="weekview">Weekly</span>
+				<span class="viewselector<?php if($view=='list'){echo ' selected';}?>" data-type="listview">List</span>
 			</div>
 		</div>
 
-		<div id='monthview' class='calendarview<?php if($view!='month') echo ' hidden';?>'>
+		<div id='monthview' class='calendarview<?php if($view!='month'){echo ' hidden';}?>'>
 			<?php
 			echo $events->monthCalendar($cat);
 			?>
 		</div>
-		<div id='weekview' class='calendarview<?php if($view!='week') echo ' hidden';?>'>
+		<div id='weekview' class='calendarview<?php if($view!='week'){echo ' hidden';}?>'>
 			<?php
 			echo $events->weekCalendar($cat);
 			?>
 		</div>
-		<div id='listview' class='calendarview<?php if($view!='list') echo ' hidden';?>'>
+		<div id='listview' class='calendarview<?php if($view!='list'){echo ' hidden';}?>'>
 			<?php
 			echo $events->listCalendar($cat);
 			?>

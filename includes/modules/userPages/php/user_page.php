@@ -230,7 +230,7 @@ function userDescription($userId){
 			$html .= " They have the following children:<br>";
 			foreach($family["children"] as $child){
 				$childdata	= get_userdata($child);
-				$age		= SIM\getAge($child);
+				$age		= SIM\getAge($child, true);
 				if($age !== false){
 					$age = "($age)";
 				}

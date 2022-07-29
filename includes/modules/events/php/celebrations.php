@@ -50,7 +50,7 @@ function getAnniversaries(){
 // Add anniversaries to signal bot message
 add_filter('sim_after_bot_payer', function($args){
 	$anniversaryMessages = getAnniversaries();
-	
+
 	//If there are anniversaries
 	if(count($anniversaryMessages) > 0){
 		$args['message'] .= "\n\nToday is the ";
@@ -66,7 +66,7 @@ add_filter('sim_after_bot_payer', function($args){
 			$userdata		= get_userdata($userId);
 			$coupleString	= $userdata->first_name.' & '.get_userdata(SIM\hasPartner(($userdata->ID)))->display_name;
 
-			$msg	= str_replace($coupleString,"of $coupleString",$msg);
+			$msg	= str_replace($coupleString, "of $coupleString", $msg);
 			$msg	= str_replace($userdata->display_name, "of {$userdata->display_name}", $msg);
 
 			$messageString .= $msg;
