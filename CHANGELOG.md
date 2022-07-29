@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- wrong query on events page
 
 ## [2.0.2.18] - 2022-07-29
 
