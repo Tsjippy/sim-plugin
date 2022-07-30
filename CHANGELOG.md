@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- multiple good mornings in prayer
 
 ## [2.0.2.19] - 2022-07-29
 
