@@ -304,10 +304,10 @@ class DisplayEvents extends Events{
 		date_default_timezone_set(wp_timezone_string());
 
 		$title			= urlencode($event->post_title);
-		$description	= urlencode("<a href='".get_permalink($event->post_id)."'>Read more on simnigeria.org</a>");
+		$description	= urlencode("<a href='".get_permalink($event->post_id)."'>Read more on ".SITEURLWITHOUTSCHEME."</a>");
 		$location		= urlencode($event->location);
-		$startDate		= date('Ymd',strtotime($event->startdate));
-		$endDate		= date('Ymd',strtotime($event->enddate));
+		$startDate		= date('Ymd', strtotime($event->startdate));
+		$endDate		= date('Ymd', strtotime($event->enddate));
 
 		if($event->allday){
 			$enddt		= date('Ymd',strtotime('+1 day', $event->enddate));
@@ -316,7 +316,7 @@ class DisplayEvents extends Events{
 			$enddt		= $endDate."T".gmdate('His',strtotime($event->endtime)).'Z';
 		}
 
-		$gmail			= "https://calendar.google.com/calendar/render?action=TEMPLATE&text=$title&dates={$startdt}/{$enddt}&details={$description}&location={$location}&ctz=Africa/Lagos&sprop=website:simnigeria.org&sprop=name:SIM%20Nigeria";
+		$gmail			= "https://calendar.google.com/calendar/render?action=TEMPLATE&text=$title&dates={$startdt}/{$enddt}&details={$description}&location={$location}&ctz=Africa/Lagos&sprop=website:".SITEURLWITHOUTSCHEME."&sprop=name:SIM";
  		if(!empty($eventMeta['repeated'])){
 			$gmail		.= "&recur=RRULE:FREQ=".strtoupper($eventMeta['repeat']['type']).";INTERVAL=".$eventMeta['repeat']['interval'].';';
 			$weeks 		= $eventMeta['repeat']['weeks'];

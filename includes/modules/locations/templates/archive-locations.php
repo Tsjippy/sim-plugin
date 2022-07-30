@@ -3,7 +3,7 @@ namespace SIM\LOCATIONS;
 use SIM;
 
 /**
- * The layout specific for the page with the slug 'locations' i.e. simnigeria.org/locations.
+ * The layout specific for the page with the slug 'locations' i.e. sim.org/locations.
  * Displays all the post of the location type
  * 
  */

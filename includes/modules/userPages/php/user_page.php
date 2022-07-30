@@ -176,9 +176,9 @@ function userDescription($userId){
 		$arrivalEpoch	= strtotime($arrivalDate);
 		$arrivalDate	= date('F Y', $arrivalEpoch);
 		if($arrivalEpoch < time()){
-			$arrivalHtml 	= "<p>In Nigeria since $arrivalDate</p>";
+			$arrivalHtml 	= "<p>In the country since $arrivalDate</p>";
 		}else{
-			$arrivalHtml 	= "<p>Expected arrival in Nigeria: $arrivalDate</p>";
+			$arrivalHtml 	= "<p>Expected arrival date: $arrivalDate</p>";
 			$arrived		= false;
 		}
 	}

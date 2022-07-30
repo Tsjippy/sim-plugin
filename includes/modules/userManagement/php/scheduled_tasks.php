@@ -654,7 +654,7 @@ function accountExpiryCheck(){
 		wp_mail( $recipient, $accountExpiryMail->subject, $accountExpiryMail->message, $headers);
 		
 		//Send OneSignal message
-		SIM\trySendSignal("Hi ".$user->first_name.",\nThis is just a reminder that your account on simnigeria.org will be deleted on ".date("d F Y", strtotime(" +1 months")),$user->ID);
+		SIM\trySendSignal("Hi ".$user->first_name.",\nThis is just a reminder that your account on ".SITEURLWITHOUTSCHEME." will be deleted on ".date("d F Y", strtotime(" +1 months")),$user->ID);
 	}
 	
 	//Get the users who are expired
@@ -685,7 +685,7 @@ function accountExpiryCheck(){
 	foreach($expiredUsers as $user){
 		//Send Signal message
 		SIM\trySendSignal(
-			"Hi ".$user->first_name.",\nYour account is expired, as you are no longer in Nigeria.",
+			"Hi ".$user->first_name.",\nYour account is expired, as you are no longer in country.",
 			$user->ID
 		);
 		

@@ -3,7 +3,7 @@ namespace SIM\RECIPES;
 use SIM;
 
 /**
- * The layout specific for the page with the slug 'recipes' i.e. simnigeria.org/recipes.
+ * The layout specific for the page with the slug 'recipes' i.e. sim.org/recipes.
  * Displays all the post of the recipe type
  * 
  */
