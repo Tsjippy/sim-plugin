@@ -52,7 +52,6 @@ function sendPrayerRequests(){
 	$message	 = $params['message']."\n\n".$params['urls'];
 	
 	// Get the schedule for today
-	
 	$date			= \Date('y-m-d');
 	$schedule		= get_option("prayer_schedule_$date");
 
@@ -80,8 +79,7 @@ function sendPrayerRequests(){
 				if(is_numeric($user)){
 					$dayPart	.= " ".get_userdata($user)->first_name;
 				}
-				$message 	= "Good $dayPart,\n\n$message";
-				SIM\trySendSignal($message, $user);
+				SIM\trySendSignal("Good $dayPart,\n\n$message", $user);
 			}
 		}
 
