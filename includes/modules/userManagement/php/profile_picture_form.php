@@ -3,14 +3,18 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 add_filter('sim_before_saving_formdata',function($formResults, $formName, $userId){
-	if($formName != 'profile_picture') return $formResults;	
+	if($formName != 'profile_picture'){
+		return $formResults;
+	}
 	
 	// Hide profile picture by default from media galery
 	$pictureId	=  $formResults['profile_picture'][0];
-	if(is_numeric($pictureId)) update_post_meta($pictureId, 'gallery_visibility', 'hide' );
+	if(is_numeric($pictureId)){
+		update_post_meta($pictureId, 'gallery_visibility', 'hide' );
+	}
 
 	return $formResults;
-},10,3);
+}, 10, 3);
 
 /**
  * Get the url of the profile picture of a particular size

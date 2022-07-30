@@ -25,9 +25,9 @@ function createProgressBar(target){
 }
 
 function addPreview(link, value){
-	var name		= fileUploadWrap.querySelector('.file_upload').name.replace('_files','');
+	let name		= fileUploadWrap.querySelector('.file_upload').name.replace('_files','');
 
-	var html = `
+	let html = `
 	<div class='document'>
 		<input type='hidden' name='${name}' value='${value}'>
 		${link}
@@ -50,20 +50,24 @@ async function fileUpload(target){
 	}
 	
 	//Create a formData element
-	var formData = new FormData();
+	let formData = new FormData();
 	
 	//Add the ajax action name
 	formData.append('action', 'upload_files');
 	
 	//Loop over the dataset attributes and add them to post
-	target.parentNode.querySelectorAll('input').forEach( input =>{
+	datasetString	= '';
+	target.parentNode.querySelectorAll('input').forEach( 
+		input => {
 			formData.append(input.name, input.value);
-			datasetString += `data-${input.name}="${input.value}`;
+			if(input.type != 'file' && !input.name.includes('fileupload')){
+				datasetString += `data-${input.name}="${input.value}"`;
+			}
 		}
 	);
 
 	//Add all the files to the formData
-	for (var index = 0; index < totalFiles; index++) {
+	for (let index = 0; index < totalFiles; index++) {
 		// file is a video and vimeo enabled
 		if(target.files[index].type.split('/')[0] == 'video' && typeof(vimeoUploader) == 'object'){
 			createProgressBar(target);
@@ -86,7 +90,7 @@ async function fileUpload(target){
 	}
 	
 	//AJAX request
-	var request = new XMLHttpRequest();
+	let request = new XMLHttpRequest();
 	
 	//Listen to the state changes
 	request.onreadystatechange = function(){
@@ -159,17 +163,17 @@ function fileUploadProgress(e){
 }
 
 function fileUploadSucces(result){
-	var imgUrls		= JSON.parse(result);
-	var src			= '';
+	let imgUrls		= JSON.parse(result);
+	let src			= '';
 	
 	for(const element of imgUrls) {
 		src 			= element['url'];
-		var url 		= sim.baseUrl+'/'+src;
-		var value		= '';
-		var anchorLink	= '';
+		let url 		= sim.baseUrl+'/'+src;
+		let value		= '';
+		let anchorLink	= '';
 		
 		if(element['id'] != undefined){
-			datasetString += ' data-libraryid="'+element['id']+'"'
+			datasetString += ' data-libraryid="'+element['id']+'"';
 		}
 
 		if(element['id'] == undefined){
@@ -192,7 +196,7 @@ function fileUploadSucces(result){
 	}
 	
 	if(imgUrls.length==1){
-		var fileName 	= src.split("/")[src.split("/").length-1];
+		let fileName 	= src.split("/")[src.split("/").length-1];
 		Main.displayMessage(`The file ${fileName} has been uploaded succesfully.`,'success',true);
 	}else{
 		Main.displayMessage("The files have been uploaded succesfully.",'success',true);
@@ -205,9 +209,9 @@ function fileUploadSucces(result){
 }
 
 async function removeDocument(target){
-	var data = new FormData();		
+	let data = new FormData();		
 	//Loop over the dataset attributes and add them to post
-	for(var d in target.dataset){
+	for(let d in target.dataset){
 		if(target.dataset[d] != ''){
 			data.append(d,target.dataset[d]);
 		}
@@ -222,10 +226,10 @@ async function removeDocument(target){
 	//show loader
 	target.parentNode.querySelector('.remove_document_loader').classList.remove('hidden');
 	
-	var response	= await FormSubmit.fetchRestApi('remove_document', data);
+	let response	= await FormSubmit.fetchRestApi('remove_document', data);
 
 	if(response){
-		var docWrapper		= target.closest('.document');
+		let docWrapper		= target.closest('.document');
 		fileUploadWrap		= docWrapper.closest('.file_upload_wrap');
 		
 		//hide the loading gif
