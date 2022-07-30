@@ -343,7 +343,7 @@ document.addEventListener("DOMContentLoaded",function() {
 	
 	// run js if we open a specific post type
 	if(location.search.includes('?type') || location.search.includes('?post_id')){
-		switchforms(document.querySelector('#post_type_selector'));
+		switchforms(document.querySelector('#postform [name="post_type"]'));
 	}
 	
 });

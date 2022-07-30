@@ -255,7 +255,7 @@ class FrontEndContent{
 						<input hidden name='post_id' value='<?php echo  esc_html($this->postId); ?>'>
 
 						<button type='submit' class='button' name='delete_post'>Delete <?php echo  esc_html($this->post->post_type); ?></button>
-						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>'>
+						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt=''>
 					</form>
 				</div>
 				<?php 
