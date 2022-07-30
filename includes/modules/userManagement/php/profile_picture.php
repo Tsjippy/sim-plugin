@@ -2,7 +2,7 @@
 namespace SIM\USERMANAGEMENT;
 use SIM;
 
-add_filter('sim_before_saving_formdata',function($formResults, $formName, $userId){
+add_filter('sim_before_saving_formdata',function($formResults, $formName){
 	if($formName != 'profile_picture'){
 		return $formResults;
 	}
@@ -14,7 +14,7 @@ add_filter('sim_before_saving_formdata',function($formResults, $formName, $userI
 	}
 
 	return $formResults;
-}, 10, 3);
+}, 10, 2);
 
 /**
  * Get the url of the profile picture of a particular size
@@ -25,10 +25,11 @@ add_filter('sim_before_saving_formdata',function($formResults, $formName, $userI
  * @return	string				The url
  */
 function getProfilePictureUrl($userId, $size=[50,50]){
-	$attachment_id	= get_user_meta($userId,'profile_picture',true);
+	$attachmentId	= (array)get_user_meta($userId, 'profile_picture', true);
+
 	$url			= false;
-	if(is_numeric($attachment_id)){
-		$url = wp_get_attachment_image_url($attachment_id,$size);
+	if(is_numeric($attachmentId[0])){
+		$url = wp_get_attachment_image_url($attachmentId[0], $size);
 	}
 	
 	return $url;
@@ -55,7 +56,7 @@ function getProfilePicturePath($userId){
 add_filter( 'get_avatar' , function ( $avatar, $idOrEmail, $size, $default, $alt ) {
     $user = false;
  
-	//CHeck if an, id, email or user is given
+	//Check if an, id, email or user is given
     if ( is_numeric( $idOrEmail ) ) {
         $id = (int) $idOrEmail;
         $user = get_user_by( 'id' , $id );
