@@ -363,14 +363,14 @@ function repetitionIntervalSettings($eventDetails){
 			</label>
 
 			<?php 
-			foreach(['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $dayName){
+			foreach(['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $key=>$dayName){
 				if(is_array($eventDetails['repeat']['weekdays']) && in_array($dayName, $eventDetails['repeat']['weekdays'])){
 					$checked	= 'checked';
 				}else{
 					$checked	= '';
 				}
 				echo "<label class='optionlabel'>";
-					echo "<input type='checkbox' name='event[repeat][weekdays][]' value='$dayName'$checked>$dayName";
+					echo "<input type='checkbox' name='event[repeat][weekdays][]' value='$key'$checked>$dayName";
 				echo "</label>";
 			}
 			?>

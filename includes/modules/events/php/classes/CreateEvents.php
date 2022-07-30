@@ -36,12 +36,12 @@ class CreateEvents extends Events{
 		$baseEndDate		= $this->eventData['enddate'];
 		$dayDiff 			= ((new \DateTime($baseStartDateStr))->diff((new \DateTime($baseEndDate))))->d;
 
-		$startDates			= [$baseStartDateStr];
+		$this->startDates			= [$baseStartDateStr];
 		if(!empty($this->eventData['repeated'])){
 			$this->createRepeatedEvents($baseStartDate);
 		}
 		
-		foreach($startDates as $startDate){
+		foreach($this->startDates as $startDate){
 			$enddate	= date('Y-m-d', strtotime("+{$dayDiff} day", strtotime($startDate)));
 			$this->maybeCreateRow($startDate);
 
@@ -68,9 +68,17 @@ class CreateEvents extends Events{
 	}
 
 	function calculateStartDate($repeatParam, $baseStartDate, $index){
-		$months			= (array)$repeatParam['months'];
-		$weekDays		= (array)$repeatParam['weekDays'];
-		$weeks			= (array)$repeatParam['weeks'];
+		$weekDays	= [];
+		if(!empty($repeatParam['weekdays'])){
+			$weekDays		= (array)$repeatParam['weekdays'];
+		}
+
+		$weeks	= [];
+		if(!empty($repeatParam['weeks'])){
+			$weeks			= (array)$repeatParam['weeks'];
+		}
+
+		$weekDayNames	= ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 		switch ($repeatParam['type']){
 			case 'daily':
@@ -83,15 +91,25 @@ class CreateEvents extends Events{
 				$startDate		= strtotime("+{$index} week", $baseStartDate);
 				$monthWeek		= $this->monthWeek($startDate);
 
-				$lastWeek		= date('m', $startDate) == date('m', strtotime('+1 week', $startDate));
-				if($lastWeek && in_array('last', $weeks)){
-					$monthWeek	= 'last';
+				$firstWeek		= date('m', $startDate) != date('m', strtotime('-1 week', $startDate));
+				if($firstWeek && in_array('First', $weeks)){
+					$monthWeek	= 'First';
+				}
+
+				$lastWeek		= date('m', $startDate) != date('m', strtotime('+1 week', $startDate));
+				if($lastWeek && in_array('Last', $weeks)){
+					$monthWeek	= 'Last';
 				}
 				if(!in_array($monthWeek, $weeks)){
 					return false;
 				}
 				break;
 			case 'monthly':
+				$repeatParam['months']	= [];
+				if(isset($repeatParam['months'])){
+					$months			= (array)$repeatParam['months'];
+				}
+
 				$startDate		= strtotime("+{$index} month", $baseStartDate);
 				$month			= date('m', $startDate);
 				if(!empty($months) && !in_array($month, $months)){
@@ -99,7 +117,8 @@ class CreateEvents extends Events{
 				}
 
 				if(!empty($weeks) && !empty($weekDays)){
-					$startDate	= strtotime("{$weeks[0]} {$weekDays[0]} of this month", $startDate);
+					$day		= $weekDayNames[$weekDays[0]];
+					$startDate	= strtotime("{$weeks[0]} $day of this month", $startDate);
 				}
 
 				break;
@@ -107,7 +126,8 @@ class CreateEvents extends Events{
 				$startDate	= strtotime("+{$index} year", $baseStartDate);
 
 				if(!empty($weeks) && !empty($weekDays)){
-					$startDate	= strtotime("{$weeks[0]} {$weekDays[0]} of this month", $startDate);
+					$day		= $weekDayNames[$weekDays[0]];
+					$startDate	= strtotime("{$weeks[0]} $day of this month", $startDate);
 				}
 				break;
 			case 'custom_days':
@@ -169,12 +189,12 @@ class CreateEvents extends Events{
 				$startDate < $repEnddate					&& 		//falls within the limits
 				(!is_numeric($amount) || $amount > 0)				//We have not exeededthe amount
 			){
-				$startDates[]	= $startDateStr;
+				$this->startDates[]	= $startDateStr;
 			}
 
 			$i				= $i+$interval;
 			$amount			= $amount-1;
-		}	
+		}
 	}
 
 	/**
