@@ -12,6 +12,7 @@
 - issue when resubmitting a image
 - backend profile image
 - issue with wrong page urls in e-mail
+- issues with repeating events
 
 ## [2.0.2.19] - 2022-07-29
 
