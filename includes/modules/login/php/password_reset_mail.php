@@ -15,7 +15,7 @@ function sendPasswordResetMessage($user){
 		return $key;
 	}
 
-	$pageurl	 = get_permalink(SIM\getModuleOption(MODULE_SLUG, 'password_reset_page'));
+	$pageurl	 = get_permalink(SIM\getModuleOption(MODULE_SLUG, 'password_reset_page')[0]);
 	$url		 = "$pageurl?key=$key&login=$user->user_login";
 
 	//Send e-mail
@@ -28,3 +28,17 @@ function sendPasswordResetMessage($user){
 		return new \WP_Error('sending email failed', 'Sending e-mail failed');
 	}
 }
+
+add_filter( 'retrieve_password_message', function($message, $key, $userLogin, $user){
+	$pageurl	 = get_permalink(SIM\getModuleOption(MODULE_SLUG, 'password_reset_page')[0]);
+
+	if(!$pageurl){
+		return $message;
+	}
+	
+	$url		 = "$pageurl?key=$key&login=$userLogin";
+	$mail		= new PasswordResetMail($user, $url);
+	$mail->filterMail();
+
+	return $mail->message;
+}, 10, 4);

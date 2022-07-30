@@ -780,7 +780,7 @@ function checkLastLoginDate(){
 				return $key;
 			}
 
-			$pageUrl	 = get_permalink(SIM\getModuleOption('login', 'password_reset_page'));
+			$pageUrl	 = get_permalink(SIM\getModuleOption('login', 'password_reset_page')[0]);
 			$url		 = "$pageUrl?key=$key&login=$user->user_login";
 
 			$mail = new AccountCreatedMail($user, $url);
