@@ -9,6 +9,7 @@
 ### Fixed
 - multiple good mornings in prayer
 - editing location type
+- issue when resubmitting a image
 
 ## [2.0.2.19] - 2022-07-29
 
