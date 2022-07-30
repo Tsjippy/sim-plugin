@@ -40,7 +40,7 @@ function addPreview(link, value){
 }
 
 async function fileUpload(target){
-	var s			= "";
+	let s			= "";
 	fileUploadWrap	= target.closest('.file_upload_wrap');
 	totalFiles 		= target.files.length;
 
@@ -93,28 +93,7 @@ async function fileUpload(target){
 	let request = new XMLHttpRequest();
 	
 	//Listen to the state changes
-	request.onreadystatechange = function(){
-		//If finished
-		if(request.readyState == 4){
-			//Success
-			if (request.status >= 200 && request.status < 400) {
-				fileUploadSucces(request.responseText)
-			//Error
-			}else{
-				Main.displayMessage(JSON.parse(request.responseText).error,'error');
-			}
-			
-			//Hide loading gif
-			document.querySelectorAll(".loadergif_wrapper").forEach(
-				function(loader){
-					loader.classList.add('hidden');
-				}
-			);
-				
-			//Clear the input
-			fileUploadWrap.querySelector('.file_upload').value = "";
-		}
-	};
+	request.onreadystatechange = readyStateChanged;
 	
 	//Listen to the upload status
 	request.upload.addEventListener('progress', fileUploadProgress, false);
@@ -160,6 +139,31 @@ function fileUploadProgress(e){
 			});
 		}
 	}  
+}
+
+function readyStateChanged(e){
+	let request	= e.target;
+	
+	//If finished
+	if(request.readyState == 4){
+		//Success
+		if (request.status >= 200 && request.status < 400) {
+			fileUploadSucces(request.responseText)
+		//Error
+		}else{
+			Main.displayMessage(JSON.parse(request.responseText).error,'error');
+		}
+		
+		//Hide loading gif
+		document.querySelectorAll(".loadergif_wrapper").forEach(
+			function(loader){
+				loader.classList.add('hidden');
+			}
+		);
+			
+		//Clear the input
+		fileUploadWrap.querySelector('.file_upload').value = "";
+	}
 }
 
 function fileUploadSucces(result){
@@ -385,7 +389,7 @@ window.addEventListener("click", function(event) {
 });
 
 window.addEventListener("change", event => {
-	var target = event.target;
+	let target = event.target;
 
 	if (target.className.includes("file_upload")){
 		event.preventDefault();
