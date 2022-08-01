@@ -21,11 +21,11 @@ class ApprovedCommentEmail extends ADMIN\MailSetting{
 
         $this->replaceArray['%comment_author%']     = $commentData['comment_author'];
         $this->replaceArray['%comment_content%']    = $commentData['comment_content'];
-        $this->replaceArray['%post_author%']        = $author;
+        $this->replaceArray['%post_author%']        = $author->display_name;
         $this->replaceArray['%post_title%']         = $postTitle;
         $this->replaceArray['%reply_link%']         = $replyLink;
 
-        $this->defaultSubject   = "A new comment has been made on %post_title%";
+        $this->defaultSubject    = "A new comment has been made on %post_title%";
 
         $this->defaultMessage    = 'Hi %first_name%,<br><br>';
 		$this->defaultMessage   .= "%comment_author% just left a comment on %post_title%.<br>";

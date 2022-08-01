@@ -53,6 +53,14 @@ abstract class MailSetting{
      * Replaces all places holders in subject and message
      */
     public function filterMail(){
+        if(empty($this->subject)){
+            $this->subject  = $this->defaultSubject;
+        }
+
+        if(empty($this->message)){
+            $this->message  = $this->defaultMessage;
+        }
+
         $this->subject  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->subject);
         $this->message  = str_replace(array_keys($this->replaceArray), array_values($this->replaceArray), $this->message);
     }
