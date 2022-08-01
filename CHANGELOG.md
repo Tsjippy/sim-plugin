@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- mail problem in comments module
 
 ## [2.0.3.1] - 2022-07-30
 
