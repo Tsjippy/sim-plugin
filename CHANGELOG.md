@@ -9,6 +9,7 @@
 
 ### Fixed
 - mail problem in comments module
+- better name finding in content
 
 ## [2.0.3.1] - 2022-07-30
 
