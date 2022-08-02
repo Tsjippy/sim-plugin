@@ -866,6 +866,7 @@ class FrontEndContent{
 	 * saves base64 images as images and adds them to the library
 	 *
 	 * @param    array     $matches	Array of matches from a regex
+	 * 
 	 * @return   string     		Image url
 	 *
 	**/
@@ -897,7 +898,7 @@ class FrontEndContent{
 		}
 		
 		//Return the image url
-		$url = wp_get_attachment_image_url($uploadId,'');
+		$url = wp_get_attachment_image_url($uploadId, '');
 		return '"'.$url;
 	}
 
@@ -925,35 +926,25 @@ class FrontEndContent{
 	}
 
 	/**
-	 *
-	 * Saves or publishes a new post or updates an existing one
-	 *
-	 * @param    string     $status	Desired post status
-	 * @return   string|WP_Error     		Result message
-	 *
-	**/
-	function submitPost($status=''){
-		if($_POST['post_status'] == 'draft'){
-			$status = 'draft';
-		}elseif(empty($status)){
-			if($this->fullrights){
-				if(!isset($_POST['publish_date']) || $_POST['publish_date'] == date('Y-m-d')){
-					$status = 'publish';
-				}else{
-					$status = 'future';
-				}
-			}else{
-				$status = 'pending';
+	 * Several checks and adjustments to the post contents
+	 */
+	function preparePostContent($postContent){
+		//Sanitize the post content
+		$postContent = wp_kses_post($postContent);
+
+		// Checks for opening and closing formating tags
+		$tags	= ['b', 'strong', 'i', 'em', 'mark', 'small', 'sub', 'sup'];
+		$pattern		= '';
+		foreach($tags as $tag){
+			if(!empty($pattern)){
+				$pattern	.= "|";
 			}
+			$pattern	.= "<\/$tag>\s*<$tag>";	// Closing tag, followed by zero or more spaces followed by an opening tag
 		}
-		
-		$this->postType 	= sanitize_text_field($_POST['post_type']);
-		
-		//First letter should be capital in the title
-		$this->postTitle 	= ucfirst(sanitize_text_field($_POST['post_title']));
-		
-		$postContent 		= $_POST['post_content'];
-		
+		$postContent 	= preg_replace_callback("/$pattern/i", function(){
+			return ' ';
+		}, $postContent);
+
 		//Find any base64 encoded images in the post content and replace the url
 		$postContent 	= preg_replace_callback('/"data:image\/(\w+);base64,([^"]*)/m', array($this,'uploadImages'), $postContent);
 
@@ -963,7 +954,7 @@ class FrontEndContent{
 		preg_match_all("#$regex#i", $postContent, $matches);
 		$url 	= $matches[0][0];
 
-		//if the url is the only post content
+		//if the found url is the only post content
 		if($url == strip_tags($postContent)){
 			//find the post id of the url
 			$postId	= url_to_postid($url);
@@ -973,178 +964,227 @@ class FrontEndContent{
 				$postContent	= "[showotherpost postid='$postId']";
 			}
 		}
-		
-		//Sanitize the post content
-		$postContent = wp_kses_post($postContent);
-		
-		//Find display names in content
+
+		//Find display names in content and replaces them with a link
 		$postContent	= SIM\userPageLinks($postContent);
+
+		return $postContent;
+	}
+
+	/**
+	 * Update an existing post
+	 */
+	function updateExistingPost(){
+		$this->postId = $_POST['post_id'];
+
+		//Retrieve the old post data
+		$post = get_post($this->postId);
+
+		// Check if this is a post revison
+		if($this->fullrights && $post->post_type == 'change'){
+			// delete revision
+			$delete = wp_delete_post( $this->postId );
+			if ( $delete ) {
+				do_action( 'wp_delete_post_revision', $this->postId, $post);
+			}
+
+			// Use parent page as post id
+			$this->postId	= $post->post_parent;
+
+			// Load parent post data
+			$post = get_post($this->postId);
+		}
 		
-		$categories = [];
+		$this->update = true;
+		
+		$newPostData = ['ID'=>$this->postId];
+		
+		//Check for updates
+		if($this->postTitle != $post->post_title){
+			//title
+			$newPostData['post_title'] 	= $this->postTitle;
+
+			// name
+			$postName	= urldecode($this->postTitle);
+
+			//check if name is unique as it used as slug
+			$args	= array(
+				'post_type'		=> get_post_types(),
+				'post_status'	=> 'any',
+				'name'          => $postName,
+				'numberposts'	=> -1,
+			);
+			$posts	= get_posts( $args);
+
+			$i=1;
+			while(!empty($posts)){
+				$postName	= urldecode($this->postTitle.'_'.$i);
+				$args['name']	= $postName;
+				$i++;
+				$posts	= get_posts( $args);
+			}
+
+			$newPostData['post_name'] 	= $postName;
+
+			//attached file
+			if($_POST['post_type'] == 'attachment' && explode('/', $post->post_mime_type)[0] == 'video'){
+				$newPostData['_wp_attached_file'] 	= $this->postTitle;
+			}
+		}
+		
+		if($this->postContent != $post->post_content){
+			$newPostData['post_content'] 	= $this->postContent;
+		}
+
+		if($this->status != $post->post_status){
+			$newPostData['post_status'] 	= $this->status;
+		}
+
+		if( $_POST['post_author'] != $post->post_author){
+			$newPostData['post_author']		= $_POST['post_author'];
+		}
+
+		if($_POST['parent_page'] != $post->post_parent){
+			$newPostData['post_parent'] 	= $_POST['parent_page'];
+		}
+
+		if($this->categories != $post->post_category){
+			$newPostData['post_category'] 	= $this->categories;
+		}
+
+		//we cannot change the post type here
+		if($post->post_type != $this->postType && $post->post_type != 'revision'){
+			return new WP_Error('frontend_contend', 'You can not change the post type like that!');
+		}
+		
+		//Create a revision post
+		if($this->status == 'pending'){
+			$this->actionText = 'updated'; 
+
+			foreach($newPostData as $key=>$data){
+				$post->$key	= $data;
+			}
+
+			// Mark new post as inherit
+			$post->post_status	= 'inherit';
+			$post->post_name	= $post->ID.'-revision-v1';
+			$post->post_parent	= $post->ID;
+			$post->post_type	= 'change';
+			unset($post->ID);
+
+			// Insert the post into the database.
+			$postId 	= wp_insert_post( $post, true, false);
+
+			$post->ID	= $postId;
+		//Update the post only if we have the rights to so
+		}else{
+			$result = wp_update_post($newPostData, true, false);
+			if(is_wp_error($result)){
+				return new WP_Error('Update failed', $result->get_error_message());
+			}elseif($post->post_status == 'draft' && $this->status == 'publish'){
+				$this->actionText = 'published';
+			}else{
+				$this->actionText = 'updated';
+			}
+		}
+
+		return $post;
+	}
+
+	/**
+	 * Create a new post
+	 */
+	function createNewPost(){
+		$this->update		= false;
+		$this->actionText	= 'created';
+
+		//New post
+		$post = array(
+			'post_type'		=> $this->postType,
+			'post_title'    => $this->postTitle,
+			'post_content'  => $this->postContent,
+			'post_status'   => $this->status,
+			'post_author'   => $_POST['post_author']
+		);
+
+		if($this->postType == 'attachment'){
+			$this->postId 	= SIM\addToLibrary(SIM\urlToPath($_POST['attachment'][0]), $this->postTitle, $this->postContent);
+			$post['ID']	= $this->postId;
+		}else{				
+			if(is_numeric($_POST['parent_page'])){
+				$post['post_parent'] = $_POST['parent_page'];
+			}
+		
+			if(!empty(count($this->categories))){
+				$post['post_category'] = $this->categories;
+			}
+
+			//Schedule the post
+			if($_POST['publish_date'] != date('Y-m-d')){
+				$publishDate			= date("Y-m-d 08:00:00", strtotime($_POST['publish_date']));
+
+				$post['post_date'] 		= $publishDate;
+				$post['post_date_gmt'] 	= $publishDate;
+			}
+			
+			// Insert the post into the database.
+			$this->postId 	= wp_insert_post( $post,true,false);
+			$post['ID']		= $this->postId;
+		}
+		
+		if(is_wp_error($this->postId)){
+			return new WP_Error('Inserting post error', $this->postId->get_error_message());
+		}elseif($this->postId === 0){
+			return new WP_Error('Inserting post error', "Could not create the $this->postType!");
+		}
+
+		return $post;
+	}
+
+	/**
+	 *
+	 * Saves or publishes a new post or updates an existing one
+	 *
+	 * @param    string     $status	Desired post status
+	 * @return   string|WP_Error     		Result message
+	 *
+	**/
+	function submitPost($status=''){
+		if($_POST['post_status'] == 'draft'){
+			$this->status = 'draft';
+		}elseif(empty($status)){
+			if($this->fullrights){
+				if(!isset($_POST['publish_date']) || $_POST['publish_date'] == date('Y-m-d')){
+					$this->status = 'publish';
+				}else{
+					$this->status = 'future';
+				}
+			}else{
+				$this->status = 'pending';
+			}
+		}
+		
+		$this->postType 	= sanitize_text_field($_POST['post_type']);
+		
+		//First letter should be capital in the title
+		$this->postTitle 	= ucfirst(sanitize_text_field($_POST['post_title']));
+		
+		$this->postContent 	= $this->preparePostContent($_POST['post_content']);
+		
+		$this->categories = [];
 		if(is_array($_POST['category_id'])){
 			foreach($_POST['category_id'] as $categoryId) {
 				if(!empty($categoryId)){
-					$categories[] = $categoryId;
+					$this->categories[] = $categoryId;
 				}
 			}
 		}
 			
 		//Check if editing an existing post
 		if(is_numeric($_POST['post_id'])){
-			$this->postId = $_POST['post_id'];
-
-			//Retrieve the old post data
-			$post = get_post($this->postId);
-
-			// Check if this is a post revison
-			if($this->fullrights && $post->post_type == 'change'){
-				// delete revision
-				$delete = wp_delete_post( $this->postId );
-				if ( $delete ) {
-					do_action( 'wp_delete_post_revision', $this->postId, $post);
-				}
-
-				// Use parent page as post id
-				$this->postId	= $post->post_parent;
-
-				// Load parent post data
-				$post = get_post($this->postId);
-			}
-			
-			$this->update = true;
-			
-			$newPostData = ['ID'=>$this->postId];
-			
-			//Check for updates
-			if($this->postTitle != $post->post_title){
-				//title
-				$newPostData['post_title'] 	= $this->postTitle;
-
-				// name
-				$postName	= urldecode($this->postTitle);
-
-				//check if name is unique as it used as slug
-				$args	= array(
-					'post_type'		=> get_post_types(),
-					'post_status'	=> 'any',
-					'name'          => $postName,
-					'numberposts'	=> -1,
-				);
-				$posts	= get_posts( $args);
-
-				$i=1;
-				while(!empty($posts)){
-					$postName	= urldecode($this->postTitle.'_'.$i);
-					$args['name']	= $postName;
-					$i++;
-					$posts	= get_posts( $args);
-				}
-
-				$newPostData['post_name'] 	= $postName;
-
-				//attached file
-				if($_POST['post_type'] == 'attachment' && explode('/', $post->post_mime_type)[0] == 'video'){
-					$newPostData['_wp_attached_file'] 	= $this->postTitle;
-				}
-			}
-			if($postContent != $post->post_content){
-				$newPostData['post_content'] 	= $postContent;
-			}
-
-			if($status != $post->post_status){
-				$newPostData['post_status'] 	= $status;
-			}
-
-			if( $_POST['post_author'] != $post->post_author){
-				$newPostData['post_author']		= $_POST['post_author'];
-			}
-
-			if($_POST['parent_page'] != $post->post_parent){
-				$newPostData['post_parent'] 	= $_POST['parent_page'];
-			}
-
-			if($categories != $post->post_category){
-				$newPostData['post_category'] 	= $categories;
-			}
-
-			//we cannot change the post type here
-			if($post->post_type != $this->postType && $post->post_type != 'revision'){
-				return new WP_Error('frontend_contend', 'You can not change the post type like that!');
-			}
-			
-			//Create a revision post
-			if($status == 'pending'){
-				$actionText = 'updated'; 
-
-				foreach($newPostData as $key=>$data){
-					$post->$key	= $data;
-				}
-
-				// Mark new post as inherit
-				$post->post_status	= 'inherit';
-				$post->post_name	= $post->ID.'-revision-v1';
-				$post->post_parent	= $post->ID;
-				$post->post_type	= 'change';
-				unset($post->ID);
-
-				// Insert the post into the database.
-				$postId 	= wp_insert_post( $post, true, false);
-
-				$post->ID	= $postId;
-			//Update the post only if we have the rights to so
-			}else{
-				$result = wp_update_post($newPostData, true, false);
-				if(is_wp_error($result)){
-					return new WP_Error('Update failed', $result->get_error_message());
-				}elseif($post->post_status == 'draft' && $status == 'publish'){
-					$actionText = 'published';
-				}else{
-					$actionText = 'updated';
-				}
-			}
+			$post	= $this->updateExistingPost();
 		}else{
-			$this->update	= false;
-			$actionText	= 'created';
-
-			//New post
-			$post = array(
-				'post_type'		=> $this->postType,
-				'post_title'    => $this->postTitle,
-				'post_content'  => $postContent,
-				'post_status'   => $status,
-				'post_author'   => $_POST['post_author']
-			);
-
-			if($this->postType == 'attachment'){
-				$this->postId 	= SIM\addToLibrary(SIM\urlToPath($_POST['attachment'][0]), $this->postTitle, $postContent);
-				$post['ID']	= $this->postId;
-			}else{				
-				if(is_numeric($_POST['parent_page'])){
-					$post['post_parent'] = $_POST['parent_page'];
-				}
-			
-				if(!empty(count($categories))){
-					$post['post_category'] = $categories;
-				}
-
-				//Schedule the post
-				if($_POST['publish_date'] != date('Y-m-d')){
-					$publishDate			= date("Y-m-d 08:00:00", strtotime($_POST['publish_date']));
-
-					$post['post_date'] 		= $publishDate;
-					$post['post_date_gmt'] 	= $publishDate;
-				}
-				
-				// Insert the post into the database.
-				$this->postId 	= wp_insert_post( $post,true,false);
-				$post['ID']		= $this->postId;
-			}
-			
-			if(is_wp_error($this->postId)){
-				return new WP_Error('Inserting post error', $this->postId->get_error_message());
-			}elseif($this->postId === 0){
-				return new WP_Error('Inserting post error', "Could not create the $this->postType!");
-			}
+			$post	= $this->createNewPost();
 		}
 		
 		$url 		= get_permalink($this->postId);
@@ -1182,13 +1222,13 @@ class FrontEndContent{
 		
 		//Return result
 		if($status == 'publish'){
-			return "Succesfully $actionText the $this->postType, view it <a href='$url'>here</a>";
+			return "Succesfully $this->actionText the $this->postType, view it <a href='$url'>here</a>";
 		}elseif($status == 'draft'){
-			return "Succesfully $actionText the draft for this $this->postType, preview it <a href='$url'>here</a>";
+			return "Succesfully $this->actionText the draft for this $this->postType, preview it <a href='$url'>here</a>";
 		}elseif($_POST['publish_date'] > date('Y-m-d') && $status == 'future'){
-			return "Succesfully $actionText the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
+			return "Succesfully $this->actionText the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
 		}else{
-			return "Succesfully $actionText the $this->postType, it will be published after it has been reviewed";			
+			return "Succesfully $this->actionText the $this->postType, it will be published after it has been reviewed";			
 		}
 	}
 	
