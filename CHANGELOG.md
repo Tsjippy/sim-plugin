@@ -6,6 +6,7 @@
 
 ### Changed
 - main file structure
+- remove dublicate tags during posting post
 
 ### Fixed
 - mail problem in comments module
