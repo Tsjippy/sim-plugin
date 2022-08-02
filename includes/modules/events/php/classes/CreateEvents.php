@@ -257,9 +257,9 @@ class CreateEvents extends Events{
 			$metaValue = $oldMetaValue;
 		}
 
-		$eventIdMetaKey	= $type.'_event_id';
-		$title			= ucfirst($type).' '.$user->display_name;
-		$this->partnerId		= SIM\hasPartner($user->ID);
+		$eventIdMetaKey		= $type.'_event_id';
+		$title				= ucfirst($type).' '.$user->display_name;
+		$this->partnerId	= SIM\hasPartner($user->ID);
 		if($this->partnerId){
 			$partnerMeta	= SIM\getMetaArrayValue($this->partnerId, $metaKey);
 
@@ -282,8 +282,6 @@ class CreateEvents extends Events{
 
 		// Create the post
 		$this->createCelebrationPost($user, $metaValue, $title, $type, $eventIdMetaKey);
-
-		
 
 		$this->createEvents();
 	}

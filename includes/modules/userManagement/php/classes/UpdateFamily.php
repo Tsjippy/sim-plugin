@@ -75,12 +75,17 @@ class UpdateFamily{
     }
 
     function updateWeddingDate(){
+        if(!class_exists('SIM\EVENTS\CreateEvents')){
+            return;
+        }
+
         $events		= new SIM\EVENTS\CreateEvents();
 
         //save wedding date to partner as well
         if (isset($this->family['partner'])){
             //Get the partners family
             $this->partnerFamily['weddingdate']	= $this->family['weddingdate'];
+            update_user_meta($this->family['partner'], 'family', $this->partnerFamily);
         }
 
         $events->createCelebrationEvent('Wedding anniversary', $this->userId, 'family[weddingdate]', $this->family['weddingdate']);
