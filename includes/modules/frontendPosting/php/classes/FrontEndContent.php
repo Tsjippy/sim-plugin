@@ -389,6 +389,7 @@ class FrontEndContent{
 			$this->action = "Submit <span class='replaceposttype'>{$this->postName}</span> for review";
 		}
 	}
+
 	/**
 	 *
 	 * Prints pending changes to the screen
@@ -401,6 +402,10 @@ class FrontEndContent{
 				include_once ABSPATH . 'wp-admin/includes/revision.php';
 			}
 
+			add_filter( "_wp_post_revision_field_post_content", function($text, $field, $compare_to, $context){
+				return preg_replace('/<!-- .* -->/i', '', $text);
+			}, 10, 4);
+
 			$result		= wp_get_revision_ui_diff($this->post->post_parent, $this->post->post_parent, $this->post->ID);
 
 			// Get changes in meta values
@@ -408,7 +413,7 @@ class FrontEndContent{
 			$oldMeta	= get_post_meta($this->postParent);
 
 			//exclude certain keys
-			$exclusion	= ['pending_notification_send', '_edit_lock'];
+			$exclusion	= ['pending_notification_send', '_edit_lock', '_edit_last', '_themeisle_gutenberg_block_stylesheet', '_wp_page_template'];
 			foreach($exclusion as $exclude){
 				if(isset($oldMeta[$exclude])){
 					unset($oldMeta[$exclude]);
@@ -419,25 +424,42 @@ class FrontEndContent{
 				}
 			}
 
-			$added		= array_diff_assoc($newMeta, $oldMeta);
-			SIM\cleanUpNestedArray($added, true);
-			$removed	= array_diff_assoc($oldMeta, $newMeta);
-			SIM\cleanUpNestedArray($removed, true);
-			$changed	= [];
+			// Unserialize the meta values
+ 			foreach($newMeta as &$meta){
+				$meta[0]	= maybe_unserialize($meta[0]);
 
-			foreach($added as $key=>$add){
-				$changed[$key]	= ['old'=>$add[0], 'new'=>''];
+				if(empty($meta[0])){
+					$meta[0]	= '';
+				}
+
+				$meta	= trim(maybe_serialize($meta[0]));
 			}
 
-			foreach($removed as $key=>$del){
-				$changed[$key]	= ['old'=>'', 'new'=>$del[0]];
+			foreach($oldMeta as &$meta){
+				$meta[0]	= maybe_unserialize($meta[0]);
+				if(empty($meta[0])){
+					$meta[0]	= '';
+				}
+
+				$meta	= trim(maybe_serialize($meta[0]));
+			} 
+
+			$changed	= [];
+
+			foreach($oldMeta as $key=>$meta){
+				if(!isset($newMeta[$key]) && !empty($meta)){
+					$changed[$key]	= ['old'=>$meta, 'new'=>''];
+				}
+			}
+
+			foreach($newMeta as $key=>$meta){
+				if(!isset($oldMeta[$key]) && !empty($meta)){
+					$changed[$key]	= ['old'=>'', 'new'=>$meta];
+				}
 			}
 			
 			foreach(array_intersect($newMeta, $oldMeta) as $key=>$value){
 				if($oldMeta[$key] != $value){
-					$newValue = maybe_unserialize($value[0]);
-					$oldValue = maybe_unserialize($oldMeta[$key][0]);
-
 					if(is_array($newValue)){
 						foreach($newValue as $k=>$v){
 							$newV	= maybe_unserialize($v);
@@ -455,6 +477,9 @@ class FrontEndContent{
 
 			foreach($changed as $key=>$change){
 				$diff	= wp_text_diff($change['old'], $change['new']);
+				if(empty($diff)){
+					continue;
+				}
 
 				// picture id to picture html
 				if($key == '_thumbnail_id'){

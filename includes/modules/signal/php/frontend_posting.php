@@ -44,7 +44,6 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
     <?php
 });
 
-
 // Send Signal message about the new or updated post
 add_action('sim_after_post_save', function($post){
     if(isset($_POST['signal']) && $_POST['signal'] == 'send_signal'){
