@@ -20,7 +20,7 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
                         target.closest('.frontendform').querySelector('.mailchimp-wrapper').classList.toggle('hidden');
                     }
                 </script>
-                <h4>Send <span class="replaceposttype"><?php echo $frontendcontend->postType;?></span> contents to the following Mailchimp group on publish:</h4>
+                <h4>Send <span class="replaceposttype"><?php echo $frontendcontend->postType;?></span> contents to the following Mailchimp group on <?php echo $frontendcontend->update == 'true' ? 'update' : 'publish';?>:</h4>
                 <select name='mailchimp_segment_id' onchange="showMailChimp(this)">
                     <option value="">---</option>
                     <?php
