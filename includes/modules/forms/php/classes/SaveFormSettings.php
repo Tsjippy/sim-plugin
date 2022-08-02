@@ -285,21 +285,6 @@ class SaveFormSettings extends SimForms{
 	}
 
 	/**
-	 * Removes any unneeded slashes
-	 * 
-	 * @param	string	$content	The string to deslash
-	 * 
-	 * @return	string				The cleaned string
-	 */
-	function deslash( $content ) {
-		$content = preg_replace( "/\\\+'/", "'", $content );
-		$content = preg_replace( '/\\\+"/', '"', $content );
-		$content = preg_replace( '/https?:\/\/https?:\/\//i', 'https://', $content );
-	
-		return $content;
-	}
-
-	/**
 	 * Checks if the current form exists in the db. If not, inserts it
 	 */
 	function maybeInsertForm(){

@@ -974,21 +974,11 @@ class FrontEndContent{
 			}
 		}
 		
-		//Find display names in content
-		$users = SIM\getUserAccounts(false,false,true);
-		foreach($users as $user){
-			$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
-			//only replace the name with a link if privacy allows
-			if(empty($privacyPreference['hide_name'])){
-				//Replace the name with a hyperlink
-				$url			= SIM\maybeGetUserPageUrl($user->ID);
-				$link			= "<a href='$url'>{$user->display_name}</a>";
-				$postContent	= str_replace($user->display_name, $link, $postContent);
-			}
-		}
-		
 		//Sanitize the post content
 		$postContent = wp_kses_post($postContent);
+		
+		//Find display names in content
+		$postContent	= SIM\userPageLinks($postContent);
 		
 		$categories = [];
 		if(is_array($_POST['category_id'])){

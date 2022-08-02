@@ -319,7 +319,7 @@ function addFormElement(){
 		if(is_array($val)){
 			$val=serialize($val);
 		}else{
-			$val	= $simForms->deslash($val);
+			$val	= SIM\deslash($val);
 		}
 	}
 	
@@ -643,7 +643,7 @@ function saveFormEmails(){
 	$formEmails = $_POST['emails'];
 	
 	foreach($formEmails as $index=>$email){
-		$formEmails[$index]['message'] = $formBuilder->deslash($email['message']);
+		$formEmails[$index]['message'] = SIM\deslash($email['message']);
 	}
 	
 	$formBuilder->maybeInsertForm();

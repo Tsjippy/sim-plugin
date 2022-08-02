@@ -307,7 +307,7 @@ trait ElementHtml{
 		
 		if($element->type == 'p'){
 			$html = wp_kses_post($element->text);
-			$html = "<div name='{$element->name}'>".$this->deslash($html)."</div>";
+			$html = "<div name='{$element->name}'>".SIM\deslash($html)."</div>";
 		}elseif($element->type == 'php'){
 			//we store the functionname in the html variable replace any double \ with a single \
 			$functionName 						= str_replace('\\\\','\\',$element->functionname);
@@ -323,7 +323,7 @@ trait ElementHtml{
 			//remove any paragraphs
 			$content = str_replace('<p>','',$element->text);
 			$content = str_replace('</p>','',$content);
-			$content = $this->deslash($content);
+			$content = SIM\deslash($content);
 			
 			$html = "<div class='infobox' name='{$element->name}'>";
 				$html .= '<div style="float:right">';

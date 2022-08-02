@@ -1134,6 +1134,71 @@ function clearOutput(){
     }
 }
 
+/**
+ * Replace a users name with a link to the user page
+ * 
+ * @param	string	$string		The string to scan for users
+ * 
+ * @return	string				The string with userpagelinks
+ */
+function userPageLinks($string){
+	//Find display names in content
+	$users = getUserAccounts(false, false);
+	foreach($users as $user){
+		$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
+
+		//only replace the name with a link if privacy allows
+		if(empty($privacyPreference['hide_name'])){
+			//Replace the name with a hyperlink
+			$url		= maybeGetUserPageUrl($user->ID);
+			if(!$url){
+				continue;
+			}
+
+			$link		= "<a href=\"$url\">$user->display_name</a>";
+			$name		= "$user->first_name $user->last_name";
+			$pattern	= "/$name(?!<\/a>)"; // Look for the name not followed by the ending of a hyperlink
+			if($user->display_name != $name){
+				$pattern	.= "|$user->display_name(?!<\/a>)";
+			}
+			$pattern	.= "/i";
+			$string		= preg_replace($pattern, $link, $string);
+
+			$partnerId	= hasPartner($user->ID);
+			if(is_numeric($partnerId)){
+				$partner	= get_userdata($partnerId);
+
+				// In case first names are used
+				$pattern	= "/{$user->first_name}.*{$partner->display_name}(?!<\/a>)/i";
+				$link		= "<a href=\"$url\">$user->first_name & $partner->display_name</a>";
+				$string		= preg_replace($pattern, $link, $string);
+
+				// family
+				$pattern	= "/$user->last_name family(?!<\/a>)/i";
+				$link		= "<a href=\"$url\">$user->last_name family</a>";
+				$string		= preg_replace($pattern, $link, $string);
+			}
+		}
+	}
+
+	return $string;
+}
+
+/**
+ * Removes any unneeded slashes
+ * 
+ * @param	string	$content	The string to deslash
+ * 
+ * @return	string				The cleaned string
+ */
+function deslash( $content ) {
+	$content = preg_replace( "/\\\+'/", "'", $content );
+	$content = preg_replace( '/\\\+"/', '"', $content );
+	$content = preg_replace( '/https?:\/\/https?:\/\//i', 'https://', $content );
+
+	return $content;
+}
+
 //Creates subimages
 //Add action
 add_action('init', function () {

@@ -3,21 +3,6 @@ namespace SIM\ADMIN;
 use SIM;
 
 /**
- * Removes unnescearry content from a string
- * 
- * @param   string  $content    Reference to a string
- */
-function deslash( &$content ) {
-    if(is_array($content)){
-        return;
-    }
-
-    $content = preg_replace( "/\\\+'/", "'", $content );
-    $content = preg_replace( '/\\\+"/', '"', $content );
-    $content = preg_replace( '/https?:\/\/https?:\/\//i', 'https://', $content );
-}
-
-/**
  * Saves modules settings from $_POST
  */
 function saveSettings(){
@@ -28,7 +13,7 @@ function saveSettings(){
     unset($options['module']);
 
     foreach($options as &$option){
-        deslash($option);
+        $option = SIM\deslash($option);
     }
 
     // Add e-mail settings
@@ -63,7 +48,7 @@ function saveEmails(){
     unset($options['module']);
 
     foreach($options as &$option){
-        deslash($option);
+        $option = SIM\deslash($option);
     }
 
     $Modules[$moduleSlug]['emails']	= $options;

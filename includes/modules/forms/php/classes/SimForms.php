@@ -341,21 +341,6 @@ class SimForms{
 	}
 
 	/**
-	 * Removes any unneeded slashes
-	 * 
-	 * @param	string	$content	The string to deslash
-	 * 
-	 * @return	string				The cleaned string
-	 */
-	function deslash( $content ) {
-		$content = preg_replace( "/\\\+'/", "'", $content );
-		$content = preg_replace( '/\\\+"/', '"', $content );
-		$content = preg_replace( '/https?:\/\/https?:\/\//i', 'https://', $content );
-	
-		return $content;
-	}
-
-	/**
 	 * Parses all WP Shortcode attributes
 	 */
 	function processAtts($atts){
