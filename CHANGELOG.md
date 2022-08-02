@@ -13,6 +13,7 @@
 - better name finding in content
 - errors in post comparisson
 - userpage links on frontpage
+- issue with wedding anniversaries
 
 ## [2.0.3.1] - 2022-07-30
 
