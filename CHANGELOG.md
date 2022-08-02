@@ -12,6 +12,7 @@
 - mail problem in comments module
 - better name finding in content
 - errors in post comparisson
+- userpage links on frontpage
 
 ## [2.0.3.1] - 2022-07-30
 
