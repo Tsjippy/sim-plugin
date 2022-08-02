@@ -3,7 +3,7 @@ namespace SIM\PRAYER;
 use SIM;
 
 add_filter('sim_frontpage_message', function($message){
-    $prayerRequest = prayerRequest();
+    $prayerRequest = SIM\userPageLinks(prayerRequest());
     if (empty($prayerRequest)){
         return $message;
     }
