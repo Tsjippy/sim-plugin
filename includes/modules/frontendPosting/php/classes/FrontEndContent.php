@@ -1031,7 +1031,7 @@ class FrontEndContent{
 				$newPostData['_wp_attached_file'] 	= $this->postTitle;
 			}
 		}
-		
+
 		if($this->postContent != $post->post_content){
 			$newPostData['post_content'] 	= $this->postContent;
 		}
@@ -1221,11 +1221,11 @@ class FrontEndContent{
 		do_action('sim_after_post_save', (object)$post, $this);
 		
 		//Return result
-		if($status == 'publish'){
+		if($this->status == 'publish'){
 			return "Succesfully $this->actionText the $this->postType, view it <a href='$url'>here</a>";
-		}elseif($status == 'draft'){
+		}elseif($this->status == 'draft'){
 			return "Succesfully $this->actionText the draft for this $this->postType, preview it <a href='$url'>here</a>";
-		}elseif($_POST['publish_date'] > date('Y-m-d') && $status == 'future'){
+		}elseif($_POST['publish_date'] > date('Y-m-d') && $this->status == 'future'){
 			return "Succesfully $this->actionText the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
 		}else{
 			return "Succesfully $this->actionText the $this->postType, it will be published after it has been reviewed";			
