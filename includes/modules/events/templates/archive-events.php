@@ -36,8 +36,10 @@ if($wp_query->is_embed){
 }
 
 function showCalendar(){
-	$view 		= $_GET['view'];
-	if(empty($view)){
+	
+	if(isset($_GET['view'])){
+		$view 		= $_GET['view'];
+	}else{
 		$view = 'month';
 	}
 
@@ -81,10 +83,10 @@ function showCalendar(){
 					?>
 					<select class='month_selector<?php if($view=='week'){echo ' hidden';}?>' placeholder="Select month">
 						<?php
-						for ($m=1;$m<13;$m++){
+						for ($m=1; $m<13; $m++){
 							$monthName	= date("F", mktime(0, 0, 0, $m, 10));
 							$monthNum	= sprintf("%02d", $m);
-							if($_GET['month'] == $m){
+							if(isset($_GET['month']) && $_GET['month'] == $m){
 								$selected	= ' selected';
 							}else{
 								$selected	= '';

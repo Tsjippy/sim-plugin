@@ -8,7 +8,5 @@ use SMTPValidateEmail\Validator as SmtpEmailValidator;
 add_shortcode("test",function ($atts){
 	global $Modules;
 
-
-
 	return '';
 });

@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if(!isset($_SERVER['HTTP_SEC_FETCH_DEST'])){
 	//error_log(print_r($_SERVER,true));
 }elseif(!in_array($_SERVER['HTTP_SEC_FETCH_DEST'], ['document','empty','iframe'])){
+	// Do not run plugin when requesting an image
 	exit;
 }else{
 	//error_log(print_r($_SERVER,true));

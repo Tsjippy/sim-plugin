@@ -4,6 +4,13 @@ use SIM;
 use WP_Error;
 
 class DisplayEvents extends Events{
+
+	function __construct(){
+		parent::__construct();
+		
+		$this->calendarRows	= [];
+	}
+
 	/**
 	 * Get all events from the db, filtered by the optional parameters
 	 * @param	string			$startDate		The minimum start date
@@ -573,6 +580,174 @@ class DisplayEvents extends Events{
 	}
 
 	/**
+	 * Builds the event detail html for each events
+	 * 
+	 * @param	string	$workingDateStr	The date in this format: yyyy-mm-dd
+	 * @param	int		$workingDate	timesamp'
+	 * 
+	 * @return	string					The detail html
+	 */
+	function weekDetails($workingDateStr, $workingDate){
+		
+		$detailHtml		= '';
+		$baseUrl		= plugins_url('../pictures', __DIR__);
+
+		foreach($this->events as $event){
+			$meta	= get_post_meta($event->ID, 'eventdetails', true);
+			$url	= get_permalink($event->ID);
+
+			//do not re-add event details for a multiday event in the same week
+			if($event->startdate != $event->enddate && $event->startdate != $workingDateStr && date('w', $workingDate)>0){
+				continue;
+			}
+
+			$detailHtml .= "<div class='event-details-wrapper hidden' data-date='".date('Ymd', strtotime($event->startdate))."' data-starttime='{$event->starttime}'>";
+				$detailHtml .= "<article class='event-article'>";
+					if(has_post_thumbnail($event->post_id)){
+						$detailHtml .= "<div class='event-image'>";
+							$detailHtml .= get_the_post_thumbnail($event->post_id);
+						$detailHtml .= '</div>';
+					}
+					$detailHtml .= "<div class='event-time'>";
+						$detailHtml .= "<img src='{$baseUrl}/time_red.png' alt='time' class='event_icon'>";
+						$detailHtml .=  $this->getDate($event).'   '.$this->getTime($event);
+					$detailHtml .= "</div>";
+
+					$detailHtml .= "<h4 class='event-title'>";
+						$detailHtml .= "<a href='$url'>";
+							$detailHtml .= $event->post_title;
+						$detailHtml .= "</a>";
+					$detailHtml .= "</h4>";
+					$detailHtml .= "<div class='event-detail'>";
+					if(!empty($event->location)){
+						$detailHtml .= "<div class='location'>";
+							$detailHtml .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
+							$detailHtml .= $this->getLocationDetail($event);
+						$detailHtml .= "</div>";
+					}	
+					if(!empty($event->organizer)){
+						$detailHtml .= "<div class='organizer'>";
+							$detailHtml .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
+							$detailHtml .= $this->getAuthorDetail($event);
+						$detailHtml .= "</div>";
+					}
+
+					if(!empty($meta['repeat']['type'])){
+						$detailHtml .= "<div class='repeat'>";
+							$detailHtml .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
+							$detailHtml .= $this->getRepeatDetail($meta);
+						$detailHtml .= "</div>";
+					}
+						$detailHtml .= $this->eventExportHtml($event);
+					$detailHtml .= "</div>";
+				$detailHtml .= "</article>";
+			$detailHtml .= "</div>";
+		}
+
+		return $detailHtml;
+	}
+
+	function prepareWeekTable(){
+		$this->calendarRows['allday']	= [];
+
+		for ($x = 0; $x < 48; $x++) {
+			$this->calendarRows[$x]	= [];
+
+			for ($day = 0; $day < 7; $day++) {
+				$this->calendarRows['allday'][$day]	= [];
+			
+				$this->calendarRows[$x][$day]	= [];
+			}
+		}
+	}
+
+	function getWeekDayEvents($weekDayTimestamp){
+		if(empty($this->events )){
+			return;
+		}
+
+		$weekDay		= date('w', $weekDayTimestamp);
+		$dateStr		= date('Y-m-d', $weekDayTimestamp);
+
+		// Add each event
+		foreach($this->events as $event){
+			$startTime			= $event->starttime;
+			$endTime			= $event->endtime;
+			$timeIndex			= date('H', strtotime($startTime)) * 2; //index is amount of hours times 2
+
+			//multi day event
+			if($event->startdate != $event->enddate){
+				if($event->startdate == $dateStr){
+					$endTime	= $this->dayEndTime;
+				}elseif($event->enddate == $dateStr){
+					$startTime	= $this->dayStartTime;
+				}else{
+					$startTime	= $this->dayStartTime;
+					$endTime	= $this->dayEndTime;
+				}
+			}
+
+			//plus one if starting at :30
+			if(date('i', strtotime($startTime)) != '00'){
+				$timeIndex++;
+			}
+
+			// Check if whole day event
+			if(
+				$startTime == $this->dayStartTime		&&	
+				$endTime == $this->dayEndTime			&& 
+				$event->startdate == $event->enddate
+			){
+				$this->calendarRows['allday'][$weekDay][]	= $event->post_title;
+			}else{
+				$duration	= strtotime($endTime) - strtotime($startTime);
+				$halfHours	= round($duration/60/30);
+				$endIndex	= (int)round($duration/60/30) + $timeIndex;
+				$dateString	= date('Ymd', strtotime($event->startdate));
+
+				//add the event
+				$td =  "<td rowspan='$halfHours' class='calendar-hour has-event' data-date='$dateString' data-starttime='{$event->starttime}'>";
+					$td	.= $event->post_title;
+				$td	.= "</td>"; 
+
+				$this->calendarRows[$timeIndex][$weekDay][]	= $td;
+				
+				//add hidden cells as many as needed
+				for ($y = $timeIndex + 1; $y < $endIndex; $y++) {
+					$this->calendarRows[$y][$weekDay][] = "<td class='hidden'></td>";
+				}
+			}
+		}
+		
+	}
+
+	function getCalendarRows($weekDayTimestamp, $cat){
+		$detailHtml		= '';
+
+		//loop over all days of a week
+		while(true){
+			$weekDayStr		= date('Y-m-d', $weekDayTimestamp);
+
+			//get the events for this day
+			$this->retrieveEvents($weekDayStr, $weekDayStr, '', '', '', $cat);
+			
+			$this->getWeekDayEvents($weekDayTimestamp);
+
+			$detailHtml	.= $this->weekDetails($weekDayStr, $weekDayTimestamp);
+			
+			//calculate the next week
+			$weekDayTimestamp	= strtotime('+1 day', $weekDayTimestamp);
+
+			//if the next day is the first day of a new week
+			if(date('w', $weekDayTimestamp) == 0){
+				break;
+			}
+		}
+
+		return $detailHtml;
+	}
+
+	/**
 	 * Get the week calendar
 	 * 
 	 * @param	int		$cat		The category of events to display
@@ -580,184 +755,52 @@ class DisplayEvents extends Events{
 	 * @return	string				Html of the calendar
 	*/
 	public function weekCalendar($cat=[]){
+		$weekNr	= date('W');
+		$year	= date('Y');
+
 		if(defined('REST_REQUEST')){
 			$weekNr		= $_POST['wknr'];
 			$year		= $_POST['year'];
 		}else{
-			$weekNr		= $_GET['week'];
-			$year		= $_GET['yr'];
-			if(!is_numeric($weekNr) || strlen($weekNr)>2){
-				$weekNr	= date('W');
+			if(isset($_GET['week']) && strlen($_GET['week']) == 2){
+				$weekNr		= $_GET['week'];
 			}
-			if(!is_numeric($year) || strlen($year)!=4){
-				$year	= date('Y');
+			if(isset($_GET['yr']) && strlen($_GET['yr']) == 4){
+				$year		= $_GET['yr'];
 			}
 		}
 		$dto 		= new \DateTime();
 		$dto->setISODate($year, $weekNr);
 		$dateStr 	= $dto->format('Y-m-d');
 
-		ob_start();
-		
+		$this->prepareWeekTable();
+
 		$date			= strtotime($dateStr);
-		$weekNr			= date('W',$date);
+		$weekNr			= date('W', $date);
 		$dateTime		= new \DateTime();
-		$workingDate	= $dateTime->setISODate(date('Y',$date), $weekNr, "0")->getTimestamp();
-		$calendarRows	= [];
-		$detailHtml		= '';
-		$baseUrl		= plugins_url('pictures', __DIR__);
 
-		//loop over all days of a week
-		while(true){
-			$workingDateStr		= date('Y-m-d', $workingDate);
-			$weekDay			= date('w', $workingDate);
-			$year				= date('Y', $workingDate);
-			$prevWeekNr			= date("W", strtotime("-1 week", $workingDate));
-			$nextWeekNr			= date("W", strtotime("+1 week", $workingDate));
-			
-			//get the events for this day
-			$this->retrieveEvents($workingDateStr, $workingDateStr, '', '', '', $cat);
+		// Get the date of the first day of this week
+		$firstWeekDay	= $dateTime->setISODate(date('Y', $date), $weekNr, "0")->getTimestamp();
 
-			$events 		= $this->events;
-			if(!empty($events )){
-				$event			= $events[0];
-				$startTime		= $event->starttime;
-				$endTime		= $event->endtime;
+		$detailHtml		= $this->getCalendarRows($firstWeekDay, $cat);
 
-				//multi day event
-				if($event->startdate != $event->enddate){
-					if($event->startdate == $workingDateStr){
-						$endTime	= $this->dayEndTime;
-					}elseif($event->enddate == $workingDateStr){
-						$startTime	= $this->dayStartTime;
-					}else{
-						$startTime	= $this->dayStartTime;
-						$endTime	= $this->dayEndTime;
-					}
-				}
+		$year				= date('Y', $firstWeekDay);
+		$prevWeekNr			= strftime("%U", strtotime("-1 week", $firstWeekDay));
+		$nextWeekNr			= strftime("%U", strtotime("+1 week", $firstWeekDay));
 
-				//index is amount of hours times 2
-				$index			= date('H', strtotime($startTime))*2;
-				//plus one if starting at :30
-				if(date('i', strtotime($startTime)) != '00'){
-					$index++;
-				}
-			}else{
-				$index	= -1;
+		// Calculate the amount of columns
+		$colSizes	= [1,1,1,1,1,1,1];
+		foreach($this->calendarRows as $index=>$row){
+			if($index == 'allday'){
+				continue;
 			}
 
-			// loop over all timeslots
-			for ($x = 0; $x < 48; $x++) {
-				//there is an events starting now
-				if($x === $index){	
-					if($startTime == $this->dayStartTime && $endTime == $this->dayEndTime && $event->startdate == $event->enddate){
-						while($event->starttime == $this->dayStartTime){
-							if(!empty($calendarRows['allday'][$weekDay])){
-								$calendarRows['allday'][$weekDay] .= "<br>";
-							}
-
-							$calendarRows['allday'][$weekDay]	.= $event->post_title;
-							unset($events[0]);
-							$events			= array_values($events);
-							$event			= $events[0];
-						}
-						$calendarRows[$x][$weekDay] = "<td class='calendar-hour'></td>";
-					}else{
-						$duration	= strtotime($endTime)-strtotime($startTime);
-						$halfHours	= round($duration/60/30);
-						$endIndex	= (int)round($duration/60/30)+$index;
-
-						//add the event
-						$calendarRows[$index][$weekDay] .=  "<td rowspan='$halfHours' class='calendar-hour has-event' data-date='".date('Ymd',strtotime($event->startdate))."' data-starttime='{$event->starttime}'>";
-							$calendarRows[$index][$weekDay]	.= $event->post_title;
-						$calendarRows[$index][$weekDay]	.= "</td>";
-						
-						//add hidden cells as many as needed
-						for ($y = $index+1; $y < $endIndex; $y++) {
-							$calendarRows[$y][$weekDay]	= "<td class='hidden'></td>";
-						}
-						$x = $endIndex-1;
-
-						unset($events[0]);
-					}
-
-					if(!empty($events)){
-						$events			= array_values($events);
-						$event			= $events[0];
-						$startTime		= $event->starttime;
-						$endTime		= $event->endtime;
-						//index is amount of hours times 2
-						$index			= date('H',strtotime($startTime))*2;
-						//plus one if starting at :30
-						if(date('i', strtotime($startTime)) != '00'){
-							$index++;
-						}
-					}
-				//write an empty cell
-				}else{
-					$calendarRows[$x][$weekDay] = "<td class='calendar-hour' data-date='".date('Ymd', $workingDate)."'></td>";
-				}
-			}
-
-			foreach($this->events as $event){
-				$meta	= get_post_meta($event->ID, 'eventdetails', true);
-				$url	= get_permalink($event->ID);
-
-				//do not re-add event details for a multiday event in the same week
-				if($event->startdate != $event->enddate && $event->startdate != $workingDateStr && date('w', $workingDate)>0){
-					continue;
-				}
-
-				$detailHtml .= "<div class='event-details-wrapper hidden' data-date='".date('Ymd', strtotime($event->startdate))."' data-starttime='{$event->starttime}'>";
-					$detailHtml .= "<article class='event-article'>";
-						if(has_post_thumbnail($event->post_id)){
-							$detailHtml .= "<div class='event-image'>";
-								$detailHtml .= get_the_post_thumbnail($event->post_id);
-							$detailHtml .= '</div>';
-						}
-						$detailHtml .= "<div class='event-time'>";
-							$detailHtml .= "<img src='{$baseUrl}/time_red.png' alt='time' class='event_icon'>";
-							$detailHtml .=  $this->getDate($event).'   '.$this->getTime($event);
-						$detailHtml .= "</div>";
-
-						$detailHtml .= "<h4 class='event-title'>";
-							$detailHtml .= "<a href='$url'>";
-								$detailHtml .= $event->post_title;
-							$detailHtml .= "</a>";
-						$detailHtml .= "</h4>";
-						$detailHtml .= "<div class='event-detail'>";
-						if(!empty($event->location)){
-							$detailHtml .= "<div class='location'>";
-								$detailHtml .= "<img src='{$baseUrl}/location_red.png' alt='time' class='event_icon'>";
-								$detailHtml .= $this->getLocationDetail($event);
-							$detailHtml .= "</div>";
-						}	
-						if(!empty($event->organizer)){
-							$detailHtml .= "<div class='organizer'>";
-								$detailHtml .= "<img src='{$baseUrl}/organizer.png' alt='time' class='event_icon'>";
-								$detailHtml .= $this->getAuthorDetail($event);
-							$detailHtml .= "</div>";
-						}
-
-						if(!empty($meta['repeat']['type'])){
-							$detailHtml .= "<div class='repeat'>";
-								$detailHtml .= "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
-								$detailHtml .= $this->getRepeatDetail($meta);
-							$detailHtml .= "</div>";
-						}
-							$detailHtml .= $this->eventExportHtml($event);
-						$detailHtml .= "</div>";
-					$detailHtml .= "</article>";
-				$detailHtml .= "</div>";
-			}
-			
-			//calculate the next week
-			$workingDate	= strtotime('+1 day', $workingDate);
-			//if the next day is the first day of a new week
-			if(date('w', $workingDate) == 0){
-				break;
+			foreach($row as $i=>$day){
+				$colSizes[$i]	= max(count($day), $colSizes[$i]);
 			}
 		}
+
+		ob_start();
 
 		?>
 		<div class="events-wrap" data-weeknr="<?php echo $weekNr;?>" data-year="<?php echo $year;?>">
@@ -779,56 +822,96 @@ class DisplayEvents extends Events{
 				</div>
 				<div class="calendar-table">
 					<table class="week-container">
+						<caption>Week overview for week <?php echo $weekNr;?></caption>
 						<thead>
 							<th> </th>
 							<?php
-							$workingDate	= $dateTime->setISODate(date('Y', $date), $weekNr, "0")->getTimestamp();
-							for ($y = 0; $y <= 6; $y++) {
-								$name	= date('D', $workingDate);
-								$nr		= date('d', $workingDate);
-								echo "<th>$name<br>$nr</th>";
-								$workingDate	= strtotime("+1 days", $workingDate);
+							$weekDayTimestamp	= $firstWeekDay;
+							for ($day = 0; $day <= 6; $day++) {
+								$name		= date('D', $weekDayTimestamp);
+								$nr			= date('d', $weekDayTimestamp);
+								$colspan	= '';
+
+								if($colSizes[$day] > 1){
+									$colspan	= " colspan='{$colSizes[$day]}'";
+								}
+								echo "<th$colspan>$name<br>$nr</th>";
+								$weekDayTimestamp	= strtotime("+1 days", $weekDayTimestamp);
 							}
 							?>
 						</thead>
 
 						<tbody>
-						<?php
-						if(!empty($calendarRows['allday'])){
-							echo "<tr class='calendar-row'>";
-								echo "<td class=''><b>All day</b></td>";
-							//loop over the dayweeks
-							$workingDate	= $dateTime->setISODate(date('Y', $date), $weekNr, "0")->getTimestamp();
-							for ($y = 0; $y <= 6; $y++) {
-								$content	= $calendarRows['allday'][$y];
-								if(empty($content)){
-									$class='';
-								}else{
-									$class=' has-event';
-								}
-								echo "<td class='calendar-hour$class' data-date='".date('Ymd', $workingDate)."' data-starttime='$this->dayStartTime'>{$calendarRows['allday'][$y]}</td>";
-								$workingDate	= strtotime("+1 days", $workingDate);
-							}
-							echo '</tr>';
-						}
+							<?php
+							// Write all day events
+							if(!empty($this->calendarRows['allday'])){
+								echo "<tr class='calendar-row'>";
+									echo "<td class=''><strong>All day</strong></td>";
+									//loop over the dayweeks
+									$weekDayTimestamp	= $firstWeekDay;
+									for ($day = 0; $day <= 6; $day++) {
+										$content	= $this->calendarRows['allday'][$day];
+										$dateString	= date('Ymd', $weekDayTimestamp);
 
-						unset($calendarRows['allday']);
-						//one row per half an hour
-						foreach($calendarRows as $i=>$row){
-							echo "<tr class='calendar-row'>";
-							$time	= $i/2;
-							if($i % 2 == 0){
-								echo "<td class='calendar-hour-head' rowspan='2'><b>$time:00</b></td>";
-							}else{
-								echo "<td class='hidden'></td>";
+										if(empty($content)){
+											$class = '';
+										}else{
+											$class = ' has-event';
+										}
+
+										$colspan	= '';
+										if($colSizes[$day] > 1){
+											$colspan	= " colspan='{$colSizes[$day]}'";
+										}
+
+										echo "<td class='calendar-hour$class' data-date='$dateString' data-starttime='$this->dayStartTime'$colspan>";
+											foreach($this->calendarRows['allday'][$day] as $event){
+												echo "$event<br>";
+											}
+										echo "</td>";
+										$weekDayTimestamp	= strtotime("+1 days", $weekDayTimestamp);
+									}
+								echo '</tr>';
 							}
-							//loop over the dayweeks
-							foreach($row as $cell){
-								echo $cell;
+
+							// make sure we do not output them again
+							unset($this->calendarRows['allday']);
+
+							//one row per half an hour
+							foreach($this->calendarRows as $i=>$row){
+								$time	= $i/2;
+								echo "<tr class='calendar-row'>";
+									if($i % 2 == 0){
+										// Write the whole hour
+										echo "<td class='calendar-hour-head' rowspan='2'><strong>$time:00</strong></td>";
+									}else{
+										// add an hidden cell as the first cell with the hour has a rowspan of 2
+										echo "<td class='hidden'></td>";
+									}
+
+									//loop over the dayweeks
+									$weekDayTimestamp	= $firstWeekDay;
+									foreach($row as $day=>$cell){
+										$colspan	= $colSizes[$day];
+										for ($col = 0; $col < $colspan; $col++) {
+											if(isset($cell[$col])){
+												echo $cell[$col];
+											}else{
+												$span	= $colspan-$col;
+												if($span > 1){
+													$span	= " colspan='$span'";
+												}else{
+													$span	= '';
+												}
+												echo "<td class='calendar-hour' data-date='".date('Ymd', $weekDayTimestamp)."'$span></td>";
+												break;
+											}
+											$weekDayTimestamp	= strtotime("+1 days", $weekDayTimestamp);
+										}
+									}
+								echo "</tr>";
 							}
-							echo "</tr>";
-						}
-						?>
+							?>
 						</tbody>
 					</table>
 				</div>
@@ -880,7 +963,7 @@ class DisplayEvents extends Events{
 		$this->retrieveEvents($dateStr, '', 10, '', $offset, $cat);
 		$html ='';
 
-		$baseUrl	= plugins_url('pictures', __DIR__);
+		$baseUrl	= plugins_url('../pictures', __DIR__);
 
 		foreach($this->events as $event){
 			$meta		= get_post_meta($event->ID,'eventdetails',true);
