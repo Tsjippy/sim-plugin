@@ -11,6 +11,7 @@
 ### Fixed
 - mail problem in comments module
 - better name finding in content
+- errors in post comparisson
 
 ## [2.0.3.1] - 2022-07-30
 
