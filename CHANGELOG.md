@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.0.3.2] - 2022-08-02
+
+
+### Changed
 - main file structure
 - remove dublicate tags during posting post
 
