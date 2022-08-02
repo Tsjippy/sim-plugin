@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- main file structure
 
 ### Fixed
 - mail problem in comments module
