@@ -21,10 +21,10 @@ function fillLocationFields(event){
 
 //dynamically load google maps script only when needed
 function loadGoogleMapsScript(){
-	if(document.getElementById('googlemaps') == null && typeof(mapsApi) == 'string'){
+	if(document.getElementById('googlemaps') == null && typeof(mapsApi) == 'object'){
 		const script = document.createElement('script');
 		script.id = 'googlemaps';
-		script.src = '//maps.googleapis.com/maps/api/js?key='+mapsApi;
+		script.src = '//maps.googleapis.com/maps/api/js?key='+mapsApi.key;
 		script.async = true;
 		document.body.append(script);
 	}
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	loadGoogleMapsScript();
 	
 	//Add event listener to the latitude field
-	var element = document.querySelector(".latitude");
+	let element = document.querySelector(".latitude");
 	if (typeof(element) != 'undefined' && element != null){
 		element.addEventListener('keydown', setTimer);
 	}

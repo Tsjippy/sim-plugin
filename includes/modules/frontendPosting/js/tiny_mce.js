@@ -3,9 +3,9 @@ var dialog;
 	SELECT USER DATA
 */
 
-var selectUserHtml = 
+let selectUserHtml = 
 `<div class="wp-editor-help">
-	${userSelect}
+	${userSelect.html}
 	
 	<label>
 		<input type="checkbox" id="insert_picture">
@@ -23,7 +23,7 @@ var selectUserHtml =
 	</label>
 </div>`;
 
-var selectUserDialog = {
+let selectUserDialog = {
 	width: 350,
 	height: 160,
 	title: 'Insert user data',

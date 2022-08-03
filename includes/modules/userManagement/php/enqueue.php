@@ -9,7 +9,7 @@ add_action( 'wp_enqueue_scripts', function(){
     if($apiKey){
         wp_localize_script( 'sim_script', 
             'mapsApi', 
-            $apiKey
+            ['key'=>$apiKey]
         );
     }
 }, 99);

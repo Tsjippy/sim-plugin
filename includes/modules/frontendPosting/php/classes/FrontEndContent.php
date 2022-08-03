@@ -279,7 +279,7 @@ class FrontEndContent{
 	function addTinymcePlugin($plugins) {
 		wp_localize_script( 'sim_script', 
 			'userSelect', 
-			SIM\userSelect("Select a person to show the link to",true),
+			['html'=>SIM\userSelect("Select a person to show the link to",true)],
 		);
 
 		$plugins['select_user'] = plugins_url("../js/tiny_mce.js?ver=".MODULE_VERSION, __DIR__);

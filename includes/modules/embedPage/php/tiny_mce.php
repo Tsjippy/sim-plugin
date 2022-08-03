@@ -13,12 +13,12 @@ add_action('init', function(){
 		//Add extra variables to the main.js script
 		wp_localize_script( 'sim_script', 
 			'pageSelect', 
-			SIM\pageSelect('page-selector')
+			['html'=>SIM\pageSelect('page-selector')]
 		);
 
 		wp_localize_script( 'sim_admin_js', 
 			'pageSelect', 
-			SIM\pageSelect('page-selector')
+			['html'=>SIM\pageSelect('page-selector')]
 		);
 
 		$plugins['insert_embed_shortcode']		= plugins_url("js/tiny_mce.js?ver=".MODULE_VERSION, __DIR__);

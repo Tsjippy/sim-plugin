@@ -3,17 +3,17 @@ var dialog;
 /*
     ADD FORM
 */
-var pageEmbedHtml = 
+let pageEmbedHtml = 
 `<div  class="wp-editor-help">
     <label>
         Select a page to embed
     </label>
     <br>
-    ${pageSelect}
+    ${pageSelect.html}
     <br>
 </div>`;
 
-var pageEmbedDialog = {
+let pageEmbedDialog = {
     width: 350,
     height: 160,
     title: 'Embed another page',
