@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.0.3.2] - 2022-08-02
+
+
+### Changed
 - main file structure
 - remove dublicate tags during posting post
 
@@ -13,6 +20,7 @@
 - better name finding in content
 - errors in post comparisson
 - userpage links on frontpage
+- issue with wedding anniversaries
 
 ## [2.0.3.1] - 2022-07-30
 
