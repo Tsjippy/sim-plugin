@@ -256,14 +256,14 @@ function catChanged(target){
 }
 
 async function addCatType(target){
-	var parentDiv, parentData;
-	var response	= await FormSubmit.submitForm(target, 'frontend_posting/add_category');
+	let parentDiv, parentData;
+	let response	= await FormSubmit.submitForm(target, 'frontend_posting/add_category');
 
 	if(response){
 		//Get the newly added category parent id
-		var parentCat  	= target.closest('form').querySelector('[name="cat_parent"]').value;
-		var postType	= target.closest('form').querySelector('[name="post_type"]').value;
-		var catName		= target.closest('form').querySelector('[name="cat_name"]').value;
+		let parentCat  	= target.closest('form').querySelector('[name="cat_parent"]').value;
+		let postType	= target.closest('form').querySelector('[name="post_type"]').value;
+		let catName		= target.closest('form').querySelector('[name="cat_name"]').value;
 		
 		//No parent category
 		if(parentCat == ''){
@@ -275,14 +275,14 @@ async function addCatType(target){
 			parentData		= 'data-parent="'+parent_cat+'"';
 			
 			//Select parent if it is not checked already
-			var parent = document.querySelector('.'+postType+'type[value="'+parent_cat+'"]');
+			let parent = document.querySelector('.'+postType+'type[value="'+parent_cat+'"]');
 			if(!parent.checked){
 				parent.click();
 			}
 		}
 		
 		//Add the new category as checkbox
-		var html = `
+		let html = `
 		<div class="infobox" ${parentData}>
 			<input type="checkbox" class="${postType}type" id="${postType}type[]" value="${response.id}" checked>
 			<label class="option-label category-select">${catName}</label>
@@ -296,7 +296,7 @@ async function addCatType(target){
 }
 
 async function submitPost(target){
-	var response	= await FormSubmit.submitForm(target, 'frontend_posting/submit_post');
+	let response	= await FormSubmit.submitForm(target, 'frontend_posting/submit_post');
 	if(response){
 		Main.displayMessage(response);
 	}
@@ -304,70 +304,50 @@ async function submitPost(target){
 
 //Retrieve file contents over AJAX
 async function readFileContents(attachmentId){
-	var formData	= new FormData();
+	let formData	= new FormData();
 	formData.append('attachment_id', attachmentId);
 
-	var response	= await FormSubmit.fetchRestApi('frontend_posting/get_attachment_contents', formData);
+	let response	= await FormSubmit.fetchRestApi('frontend_posting/get_attachment_contents', formData);
 
 	if(response){
 		// Get current content
-		var content	= tinyMCE.activeEditor.getContent();
+		let content	= tinyMCE.activeEditor.getContent();
+		
 		//Add contents to editor
 		tinymce.activeEditor.setContent(content+response);
 
 		Swal.close();
 	}
 }
-		
-document.addEventListener("DOMContentLoaded",function() {
-	console.log("Frontendposting.js loaded");
-	
-	//Update minutes
-	var minutes = document.getElementById("minutes");
-	if(minutes != null){
-		setInterval(function() {
-			minutes.innerHTML = parseInt(minutes.innerHTML)+1;
-		}, 60000);
-	}
-	
-	refreshPostLock();
-	//Refresh the post lock every minute
-	setInterval(refreshPostLock, 60000);
-	
-	//Remove post lock when move away from the page
-	window.onbeforeunload = function(){
-		if(document.getElementById('post_lock_warning') == null){
-			deletePostLock();
-		}
-	};
-	
-	// run js if we open a specific post type
-	if(location.search.includes('?type') || location.search.includes('?post_id')){
-		switchforms(document.querySelector('#postform [name="post_type"]'));
-	}
-	
-});
 
+/**
+ * Checks every 0.1 second if wp.media.frame is available.
+ * If available adds an on insert function
+ */
 function insertMediaContents(){
-	if(typeof(wp.media.frame) == 'undefined'){
-		setTimeout(
-			function(){
-				wp.media.frame.on('insert', function() {
-					var selection = wp.media.frame.state().get('selection').first().toJSON(); 
-					if (['.txt', '.doc', '.rtf'].some(v => selection.url.includes(v))) {
-						Swal.fire({
-							title: 'Question',
-							text: 'Do you want to insert the contents of this file into the post?',
-							icon: 'question',
-							showCancelButton: true,
-							confirmButtonColor: "#bd2919",
-							cancelButtonColor: '#d33',
-							confirmButtonText: 'Yes please',
-							cancelButtonText: 'No thanks',
-							hideClass: {
-								popup: '',                     // disable popup fade-out animation
-							},
-						}).then((result) => {
+	setTimeout(
+		function(){
+			if(wp.media.frame == undefined){
+				insertMediaContents();
+				return;
+			}
+			wp.media.frame.on('insert', function() {
+				let selection = wp.media.frame.state().get('selection').first().toJSON(); 
+				if (['.txt', '.doc', '.rtf'].some(v => selection.url.includes(v))) {
+					Swal.fire({
+						title: 'Question',
+						text: 'Do you want to insert the contents of this file into the post?',
+						icon: 'question',
+						showCancelButton: true,
+						confirmButtonColor: "#bd2919",
+						cancelButtonColor: '#d33',
+						confirmButtonText: 'Yes please',
+						cancelButtonText: 'No thanks',
+						hideClass: {
+							popup: '',                     // disable popup fade-out animation
+						},
+					}).then((result) => {
+						if (result.isConfirmed) {
 							Swal.fire({
 								title: 'Please wait...',
 								html: "<IMG src='"+sim.loadingGif+"' width=100 height=100>",
@@ -379,16 +359,15 @@ function insertMediaContents(){
 								},
 								
 							});
-							if (result.isConfirmed) {
-								readFileContents(selection.id);
-							}
-						});
-					}
-				});
-			},
-			100
-		);
-	}
+
+							readFileContents(selection.id);
+						}
+					});
+				}
+			});
+		},
+		100
+	);
 }
 
 function repeatTypeChosen(target){
@@ -422,7 +401,7 @@ function repeatTypeChosen(target){
 			parent.querySelector('#repeattype').textContent		= 'year(s)';
 			parent.querySelector('.monthoryeartext').textContent	= 'On a certain day, week and month of a year';
 			
-			var start		= new Date(document.querySelector('[name="event[startdate]"]').value);
+			let start		= new Date(document.querySelector('[name="event[startdate]"]').value);
 			parent.querySelector('.monthoryear').textContent	= start.toLocaleString('en', { month: 'long' })+' every year';
 			break;
 		case 'custom_days':
@@ -461,9 +440,9 @@ function startDateChanged(target){
 	if(endDate.value == '' || start>end){
 		endDate.value	= target.value;
 	}
-	var firstWeekday	= new Date(start.getFullYear(), start.getMonth(), 1).getDay();
-	var offsetDate		= start.getDate() + firstWeekday - 1;
-	var montWeek		= Math.floor(offsetDate / 7);
+	let firstWeekday	= new Date(start.getFullYear(), start.getMonth(), 1).getDay();
+	let offsetDate		= start.getDate() + firstWeekday - 1;
+	let montWeek		= Math.floor(offsetDate / 7);
 
 	document.querySelectorAll('.weeks [name="event[repeat][weeks][]"]')[montWeek].checked	= true;
 
@@ -498,8 +477,40 @@ function dateTypeChosen(target){
 		parent.querySelectorAll('.days input[type="checkbox"], .weeks input[type="checkbox"], .months input[type="checkbox"]').forEach(el=>el.type = 'radio');
 	}
 }
+
+document.addEventListener("DOMContentLoaded",function() {
+	console.log("Frontendposting.js loaded");
+	
+	//Update minutes
+	let minutes = document.getElementById("minutes");
+	if(minutes != null){
+		setInterval(function() {
+			minutes.innerHTML = parseInt(minutes.innerHTML)+1;
+		}, 60000);
+	}
+	
+	refreshPostLock();
+	//Refresh the post lock every minute
+	setInterval(refreshPostLock, 60000);
+	
+	//Remove post lock when move away from the page
+	window.onbeforeunload = function(){
+		if(document.getElementById('post_lock_warning') == null){
+			deletePostLock();
+		}
+	};
+	
+	// run js if we open a specific post type
+	if(location.search.includes('?type') || location.search.includes('?post_id')){
+		switchforms(document.querySelector('#postform [name="post_type"]'));
+	}
+
+	// Listen to insert media actions
+	insertMediaContents();
+});
+
 document.addEventListener("click", event=>{
-	var target = event.target;
+	let target = event.target;
 
 	if(target.name == 'submit_post' || (target.parentNode != null && target.parentNode.name == 'submit_post')){
 		submitPost(target);
@@ -534,7 +545,7 @@ document.addEventListener("click", event=>{
 		}
 	}else if(target.name == 'enable_event_repeat'){
 		document.querySelector('.repeat_wrapper').classList.toggle('hidden');
-		var repeated	= target.parentNode.querySelector('[name="event[repeated]"]');
+		let repeated	= target.parentNode.querySelector('[name="event[repeated]"]');
 		if(repeated.value == 'yes'){
 			repeated.value = '';
 		}else{
@@ -547,8 +558,6 @@ document.addEventListener("click", event=>{
 		});
 		//show the selected
 		target.closest('.repeat_type_option').querySelector('.repeat_type_option_specifics').classList.remove('hidden');
-	}else if(target.id == 'insert-media-button'){
-		insertMediaContents();
 	}
 
 	if(target.classList.contains('selectall')){
@@ -556,7 +565,7 @@ document.addEventListener("click", event=>{
 	}
 	
 	if(target.matches('.remove_featured_image')){
-		var parent	= document.getElementById('featured-image-div');
+		let parent	= document.getElementById('featured-image-div');
 		parent.classList.add('hidden');
 		parent.querySelector('img').remove();
 
@@ -583,7 +592,7 @@ document.addEventListener("click", event=>{
 });
 
 document.addEventListener('change', event=>{
-	var target = event.target;
+	let target = event.target;
 
 	//listen to change of post type
 	if(target.id == 'post_type_selector'){
@@ -602,11 +611,11 @@ document.addEventListener('change', event=>{
 
 	if(target.list != null){
 		//find the relevant datalist option
-		var datalist_op = target.list.querySelector("[value='"+target.value+"' i]");
+		let datalist_op = target.list.querySelector("[value='"+target.value+"' i]");
 		if(datalist_op != null){
-			var value = datalist_op.dataset.value;
+			let value = datalist_op.dataset.value;
 
-			var valEl	= target.closest('label').querySelector('.datalistvalue');
+			let valEl	= target.closest('label').querySelector('.datalistvalue');
 			if(valEl != null){
 				valEl.value	= value;
 			}

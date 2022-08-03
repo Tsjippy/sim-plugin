@@ -1204,6 +1204,9 @@ class FrontEndContent{
 				}
 			}
 		}
+
+		// Create the possibility of pre-publish checks
+		$warning	= apply_filters('sim_frontend_content_validation', false, $this); 
 			
 		//Check if editing an existing post
 		if(is_numeric($_POST['post_id'])){
