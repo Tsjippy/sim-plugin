@@ -187,7 +187,7 @@ function getAttachmentContents(\WP_REST_Request $request ){
 	$path	= get_attached_file($request['attachment_id']);
 
 	if(!file_exists($path)){ 
-		return new \WP_Error('frontendposting', 'File does not exist!');
+		return new \WP_Error('frontendposting', "File $path does not exist!");
 	}
 
 	return SIM\readTextFile($path);
