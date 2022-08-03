@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug when inserting a non-existing file
 
 ## [2.0.3.2] - 2022-08-02
 
