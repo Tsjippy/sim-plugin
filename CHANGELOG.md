@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- check for title for prayerpost
 
 ### Changed
 
