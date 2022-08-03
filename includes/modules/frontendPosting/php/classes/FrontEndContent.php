@@ -1221,8 +1221,10 @@ class FrontEndContent{
 		$url 		= get_permalink($this->postId);
 		
 		//Set the featured image
-		if(is_numeric($_POST['post_image_id'])){
+		if(isset($_POST['post_image_id']) && $_POST['post_image_id'] != 0){
 			set_post_thumbnail($this->postId, $_POST['post_image_id']);
+		}elseif($this->update){
+			delete_post_thumbnail($this->postId);
 		}
 		
 		//Static content

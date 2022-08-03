@@ -565,6 +565,8 @@ document.addEventListener("click", event=>{
 	}
 	
 	if(target.matches('.remove_featured_image')){
+		document.querySelector('[name="post_image_id"]').value	= 0;
+		
 		let parent	= document.getElementById('featured-image-div');
 		parent.classList.add('hidden');
 		parent.querySelector('img').remove();
