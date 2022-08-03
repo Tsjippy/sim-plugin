@@ -10,6 +10,7 @@
 ### Fixed
 - bug when inserting a non-existing file
 - bug with wp_localize_script
+- issue with urls on events
 
 ## [2.0.3.2] - 2022-08-02
 
