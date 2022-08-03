@@ -544,7 +544,5 @@ function getUserPageUrl($userId){
 		}
     }
 
-    $url	= get_permalink($userPageId);
-    return str_replace('https://', '', $url);
-
+   	return get_permalink($userPageId);
 }

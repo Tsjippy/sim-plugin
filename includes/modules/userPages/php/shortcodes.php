@@ -70,8 +70,8 @@ add_shortcode("all_contacts",function (){
 
 // Shortcode to display a user in a page or post
 add_shortcode('user_link',function($atts){
-	$html = "";
-	$a = shortcode_atts( array(
+	$html 	= "";
+	$a 		= shortcode_atts( array(
         'id' => '',
 		'picture' => false,
 		'phone' => false,
@@ -80,7 +80,9 @@ add_shortcode('user_link',function($atts){
     ), $atts );
 	
 	$userId = $a['id'];
-    if(!is_numeric($userId)) return '';
+    if(!is_numeric($userId)){
+		return '';
+	}
 	
 	if(!empty($a['style'])){
 		$style = "style='".$a['style']."'";
@@ -91,24 +93,25 @@ add_shortcode('user_link',function($atts){
 	$html = "<div $style>";
 	
 	$userdata		= get_userdata($userId);
-	$nickname 		= get_user_meta($userId,'nickname',true);
+	$nickname 		= get_user_meta($userId, 'nickname', true);
 	$displayName 	= "(".$userdata->display_name.")";
-	if($userdata->display_name == $nickname) $displayName = '';
-	$privacyPreference = get_user_meta( $userId, 'privacy_preference', true );
-	if(!is_array($privacyPreference)) $privacyPreference = [];
+	if($userdata->display_name == $nickname){
+		$displayName = '';
+	}
+	$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
 	
 	$url = SIM\maybeGetUserPageUrl($userId);
 	
-	if($a['picture'] == true and !isset($privacyPreference['hide_profile_picture'])){
+	if($a['picture'] && !isset($privacyPreference['hide_profile_picture'])){
 		$profilePicture = SIM\displayProfilePicture($userId);
 	}
 	$html .= "<a href='$url'>$profilePicture $nickname $displayName</a><br>";
 	
-	if($a['email'] == true){
+	if($a['email']){
 		$html .= '<p style="margin-top:1.5em;">E-mail: <a href="mailto:'.$userdata->user_email.'">'.$userdata->user_email.'</a></p>';
 	}
 		
-	if($a['phone'] == true){
+	if($a['phone']){
 		$html .= showPhonenumbers($userId);
 	}
 	return $html."</div>";

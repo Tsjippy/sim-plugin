@@ -82,7 +82,7 @@ add_filter('sim_after_bot_payer', function($args){
 			$msg	= str_replace($userdata->display_name, "of {$userdata->display_name}", $msg);
 
 			$messageString .= $msg;
-			$args['urls'] .= SIM\maybeGetUserPageUrl($userId)."\n";
+			$args['urls'] .= str_replace('https://', '', SIM\maybeGetUserPageUrl($userId))."\n";
 		}
 		$args['message'] .= $messageString.'.';
 	}
@@ -93,13 +93,13 @@ add_filter('sim_after_bot_payer', function($args){
 	if(!empty($arrivalUsers)){
 		if(count($arrivalUsers)==1){
 			$args['message'] 	.= "\n\n".$arrivalUsers[0]->display_name." arrives today.";
-			$args['urls'] 		.= SIM\maybeGetUserPageUrl($arrivalUsers[0]->ID)."\n";
+			$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($arrivalUsers[0]->ID))."\n";
 		}else{
 			$args['message'] .= "\n\nToday the following people will arrive: ";
 			//Loop over the arrival_users
 			foreach($arrivalUsers as $user){
 				$args['message'] 	.= $user->display_name."\n";
-				$args['urls'] 		.= SIM\maybeGetUserPageUrl($user->ID)."\n";
+				$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($user->ID))."\n";
 			}
 		}
 	}
