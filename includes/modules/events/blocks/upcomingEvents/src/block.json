@@ -19,9 +19,6 @@
 		},
 		"categories": {
 			"type": "object"
-		},
-		"home": {
-			"type": "boolean"
 		}
 	}
 }

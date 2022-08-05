@@ -39,7 +39,7 @@ const apiPath	= "/sim/v1/events/upcoming_events";
 const catsPath	= "/wp/v2/events";
 
 const Edit = ({attributes, setAttributes}) => {
-	var {items, months, categories, home} = attributes;
+	var {items, months, categories} = attributes;
 
 	if(categories == undefined){
 		categories	= [];
@@ -153,11 +153,6 @@ const Edit = ({attributes, setAttributes}) => {
 							onChange	= {(val) => setAttributes({months: parseInt(val)})}
 							min			= {1}
 							max			= {12}
-						/>
-						<CheckboxControl
-							label		= {__("Only show on homepage", "sim")}
-							onChange	= {(val) => setAttributes({home: val})}
-							checked		= {home}
 						/>
 					</PanelBody>
 				</Panel>

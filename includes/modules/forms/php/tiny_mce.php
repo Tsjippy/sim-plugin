@@ -4,7 +4,13 @@ use SIM;
 
 add_action('init', function(){
 	//Add tinymce plugin
-	add_filter('mce_external_plugins', function($plugins){		
+	add_filter('mce_external_plugins', function($plugins){	
+		global $wp_scripts;
+		
+		if(!isset($wp_scripts->registered['sim_script'])){
+			return $plugins;
+		}
+		
 		$simForms	= new SimForms();
 
 		//Add extra variables to the main.js script
@@ -23,7 +29,7 @@ add_action('init', function(){
 		$plugins['insert_form_shortcode']		= plugins_url("js/tiny_mce.js?ver=".MODULE_VERSION, __DIR__);
 
 		return $plugins;
-	},999);
+	}, 999);
 			
 	//add tinymce button
 	add_filter('mce_buttons', function($buttons){

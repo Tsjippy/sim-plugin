@@ -16,13 +16,8 @@ function displayUpcomingEvents($attributes) {
 	$args = wp_parse_args($attributes, array(
 		'items' 		=> 10,
 		'months'		=> 3,
-		'categories'	=> [],
-		'home'			=> false
+		'categories'	=> []
 	));
-
-	if($args['home'] && (!in_array(get_the_ID(), SIM\getModuleOption('frontpage','home_page')) && !is_front_page())){
-		return "";
-	}
 
 	$categories	= get_categories( array(
 		'taxonomy'		=> 'events',

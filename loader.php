@@ -71,6 +71,7 @@ unset($module);
 
 //Load all main files
 $files = glob(__DIR__  . '/includes/php/*.php');
+$files = array_merge($files, glob(__DIR__  . "/includes/blocks/*.php"));
 
 foreach($Modules as $slug=>$settings){
     if(isset($moduleDirs[$slug])){

@@ -9,7 +9,13 @@ add_action('init', function(){
     }
 	
 	//Add tinymce plugin
-	add_filter('mce_external_plugins', function($plugins){		
+	add_filter('mce_external_plugins', function($plugins){
+		global $wp_scripts;
+		
+		if(!isset($wp_scripts->registered['sim_script'])){
+			return $plugins;
+		}
+			
 		//Add extra variables to the main.js script
 		wp_localize_script( 'sim_script', 
 			'pageSelect', 
