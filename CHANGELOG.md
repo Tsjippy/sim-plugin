@@ -4,6 +4,7 @@
 
 ### Added
 - check for title for prayerpost
+- block filters
 
 ### Changed
 
