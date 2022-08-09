@@ -42,16 +42,7 @@ wp.hooks.addFilter(
 // Add controls to panel
 const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
     return ( props ) => {
-        const { attributes, setAttributes, isSelected } = props;
-
-        // Only work on selected blocks
-        if(!isSelected){
-            return (
-                <Fragment>
-                    <BlockEdit { ...props } />
-                </Fragment>
-            );
-        }
+        const { attributes, setAttributes } = props;
 
         if(attributes.onlyOn == undefined){
             attributes.onlyOn = [];
@@ -61,13 +52,13 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
         const [ searchTerm, setSearchTerm ]     = useState( '' );
 
         // Selected page list
-        const { initialSelectedPages, selectedPagesResolved} = useSelect(
+        let { selectedPages, selectedPagesResolved} = useSelect(
             ( select) => {
                 // Find all selected pages
                 const selectedPagesArgs = [ 'postType', 'page', {include : attributes.onlyOn} ];
 
                 return {
-                    initialSelectedPages: select( coreDataStore ).getEntityRecords(
+                    selectedPages: select( coreDataStore ).getEntityRecords(
                         ...selectedPagesArgs
                     ),
                     selectedPagesResolved: select( coreDataStore ).hasFinishedResolution(
@@ -82,20 +73,11 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
         // Search page list
         const { pages, pagesResolved } = useSelect(
             ( select) => {
-                // do not show results if not searching
-                if ( !searchTerm ) {
-                    return{
-                        pages: true,
-                        pagesResolved: []
-                    }
-                }
-
                 // find all pages excluding the already selected pages
-                const query = {
-                    exclude : attributes.onlyOn,
-                    search  : searchTerm
-                };
-
+                const query = {exclude : attributes.onlyOn};
+                if ( searchTerm ) {
+                    query.search = searchTerm;
+                }
                 const pagesArgs         = [ 'postType', 'page', query ];
 
                 return {
@@ -119,9 +101,7 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                 newPages.push(this);
 
                 // Add to selected pages list
-                let newSelectedPages    = [...selectedPages];
-                newSelectedPages.push(pages.find( p => p.id == this));
-                setSelectedPages(newSelectedPages);
+                selectedPages.push(pages.find( p => p.id == this));
             }else{
                 newPages    = newPages.filter( p => {return p != this} );
             }
@@ -129,22 +109,9 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
             setAttributes({onlyOn: newPages});
         }
 
-        const GetSelectedPagesControls = function(){
-            if(attributes.onlyOn.length > 0){
-                return (
-                    <>
-                        <i> {__('Currently selected pages', 'sim')}:</i>
-                        <br></br>
-                        
-                        <BuildCheckboxControls hasResolved={ selectedPagesResolved } items={initialSelectedPages} showNoResults={false}/>
-                    </>
-                );
-            }else{
-                return '';
-            }
-        }
+        const PagesList = function ( { hasResolved, pageArray, showLoader = true } ) {
+            console.log(pageArray);
 
-        const BuildCheckboxControls = function({ hasResolved, items, showNoResults= true }){
             if ( ! hasResolved ) {
                 return(
                     <>
@@ -154,32 +121,46 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                 );
             }
         
-            if ( ! items?.length ) {
-                if(showNoResults){
-                    if ( !searchTerm ) {
-                        return '';
-                    }
+            if ( ! pageArray?.length ) {
+                if(showLoader){
                     return <div> {__('No search results', 'sim')}</div>;
                 }
 
                 return '';
             }
-            
-            return items?.map( ( page ) => {
-            
-                return (<CheckboxControl
-                    label		= {decodeEntities( page.title.rendered )}
-                    onChange	= {PageSelected.bind(page.id)}
-                    checked		= {attributes.onlyOn.includes(page.id)}
-                />)
-            } )
+        
+            return (
+                pageArray?.map( ( page ) => {
+        
+                    return (<CheckboxControl
+                        label		= {decodeEntities( page.title.rendered )}
+                        onChange	= {PageSelected.bind(page.id)}
+                        checked		= {attributes.onlyOn.includes(page.id)}
+                    />)
+                } )
+            );
+        }
+
+        const GetSelectedPagesControls = function(){
+            console.log(attributes.onlyOn)
+            if(attributes.onlyOn.length > 0){
+                return (
+                    <>
+                        <i> {__('Currently selected pages', 'sim')}:</i>
+                        <br></br>
+                        <PagesList hasResolved={ selectedPagesResolved } pageArray={selectedPages} props={ props } showLoader={false}/>
+                    </>
+                );
+            }else{
+                return '';
+            }
         }
 
         const onPhpFiltersChanged	= function(newValue){
             let oldValue    = this;
 
             // add a new value
-            if(oldValue == '' && !attributes.phpFilters.includes(newValue)){
+            if(oldValue == ''){
                 attributes.phpFilters.push(newValue);
             // value removed
             }else if(newValue == ''){
@@ -210,31 +191,36 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
         let phpFilterControls   = '';
         if(attributes.phpFilters != undefined){
             phpFilterControls   = createFilterControls(attributes.phpFilters);
-        }else{
-            attributes.phpFilters   = [];
         }
 
         /** HOOKS */
-        const [ selectedPages, setSelectedPages ]                   = useState( [] );
         const [ selectedPagesControls, setSelectedPagesControls ]   = useState( GetSelectedPagesControls() );
         const [ pageFilters, setPageFilters ]                       = useState( phpFilterControls );
 
         // Update selectedPagesControls on page resolve
         useEffect(() => {
-            setSelectedPages(initialSelectedPages);
+            setSelectedPagesControls(GetSelectedPagesControls());
         }, [ selectedPagesResolved ]);
 
         // Update selectedPagesControls on check/uncheck
-        useEffect(() => {            
-            setSelectedPages( selectedPages.filter( p => {return attributes.onlyOn.includes(p.id)} ));
-        }, [ attributes.onlyOn ]);
+        useEffect(() => {
+            if(selectedPages == null){
+                return;
+            }
+            
+            setSelectedPagesControls( state => {
+                console.log(state);
 
-        useEffect( 
-            () => {
-                setSelectedPagesControls(BuildCheckboxControls({hasResolved: selectedPagesResolved, items: selectedPages, showNoResults: false}));
-            }, 
-            [selectedPages]
-        );
+                return selectedPages.filter( p => {return attributes.onlyOn.includes(p.id)} )?.map( ( page ) => {
+        
+                    return (<CheckboxControl
+                        label		= {decodeEntities( page.title.rendered )}
+                        onChange	= {PageSelected.bind(page.id)}
+                        checked		= {attributes.onlyOn.includes(page.id)}
+                    />)
+                } )
+            });
+        }, [ attributes.onlyOn ]);
 
         return (
             <Fragment>
@@ -244,19 +230,19 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                     <ToggleControl
                             label={__('Hide on mobile', 'sim')}
                             checked={!!attributes.hideOnMobile}
-                            onChange={() => setAttributes({ hideOnMobile: !attributes.hideOnMobile })}
+                            onChange={(newval) => setAttributes({ hideOnMobile: !attributes.hideOnMobile })}
                         />
 
                         <ToggleControl
                             label={__('Only on home page', 'sim')}
                             checked={!!attributes.onlyOnHomePage}
-                            onChange={() => setAttributes({ onlyOnHomePage: !attributes.onlyOnHomePage })}
+                            onChange={(newval) => setAttributes({ onlyOnHomePage: !attributes.onlyOnHomePage })}
                         />
 
                         <ToggleControl
                             label={__('Hide if not logged in', 'sim')}
                             checked={!!attributes.onlyLoggedIn}
-                            onChange={() => setAttributes({ onlyLoggedIn: !attributes.onlyLoggedIn })}
+                            onChange={(newval) => setAttributes({ onlyLoggedIn: !attributes.onlyLoggedIn })}
                         />
                         
                         <InputControl
@@ -274,8 +260,8 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                         <br></br>
                         {selectedPagesControls}
                         <i>{__('Use searchbox below to search for more pages to include', 'sim')}</i>
-                        < SearchControl onChange={ setSearchTerm } value={ searchTerm } />
-                        < BuildCheckboxControls hasResolved= {pagesResolved} items= {pages} />
+                        <SearchControl onChange={ setSearchTerm } value={ searchTerm } />
+                        <PagesList hasResolved={ pagesResolved } pageArray={ pages } props={ props }/>
 	                </PanelBody>
                 </InspectorControls>
             </Fragment>

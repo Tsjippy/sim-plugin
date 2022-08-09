@@ -30,5 +30,10 @@ add_filter('render_block', function($blockContent, $block){
 		return '';
 	}
 
+	// add hide on mobile class
+	if(isset($block['attrs']['hideOnMobile']) && $block['attrs']['hideOnMobile']){
+		return "<span class='hide-on-mobile'>$blockContent</span>";
+	}
+
 	return $blockContent;
 }, 10, 2);

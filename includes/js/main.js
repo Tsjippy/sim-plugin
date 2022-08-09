@@ -138,7 +138,7 @@ export function getRoute(target,lat,lon){
 //Check if on mobile
 export function isMobileDevice() {
 	return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
-};
+}
 
 function bodyScrolling(type){
 	//don't do anything on homepage
@@ -297,6 +297,11 @@ document.addEventListener("DOMContentLoaded",function() {
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
 		select._niceselect = NiceSelect.bind(select,{searchable: true});
 	});
+
+	// hide mobile hidden
+	if(isMobileDevice()){
+		document.querySelectorAll('.hide-on-mobile').forEach(el=>el.classList.add('hidden'));
+	}
 });
 
 
