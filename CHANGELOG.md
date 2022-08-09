@@ -7,6 +7,7 @@
 - block filters
 
 ### Changed
+- better block filters
 
 ### Fixed
 - bug when inserting a non-existing file
