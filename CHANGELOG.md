@@ -5,6 +5,7 @@
 ### Added
 - check for title for prayerpost
 - block filters
+- category block
 
 ### Changed
 - better block filters
