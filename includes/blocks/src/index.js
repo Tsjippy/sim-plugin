@@ -16,9 +16,6 @@ function addFilterAttribute(settings) {
             hideOnMobile: {
                 type: 'boolean',
             },
-            onlyOnHomePage: {
-                type: 'boolean',
-            },
             onlyLoggedIn: {
                 type: 'boolean',
             },
@@ -93,7 +90,9 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                 // find all pages excluding the already selected pages
                 const query = {
                     exclude : attributes.onlyOn,
-                    search  : searchTerm
+                    search  : searchTerm,
+                    per_page: 100,
+                    orderby : 'relevance'
                 };
 
                 const pagesArgs         = [ 'postType', 'page', query ];
@@ -112,21 +111,15 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
         );
 
         const PageSelected = function(checked){
-            let newPages    = [...attributes.onlyOn];
-
             if(checked){
                 // Add to stored page ids
-                newPages.push(this);
+                setAttributes({onlyOn: [...attributes.onlyOn, this]});
 
                 // Add to selected pages list
-                let newSelectedPages    = [...selectedPages];
-                newSelectedPages.push(pages.find( p => p.id == this));
-                setSelectedPages(newSelectedPages);
+                setSelectedPages([...selectedPages, pages.find( p => p.id == this)]);
             }else{
-                newPages    = newPages.filter( p => {return p != this} );
+                setAttributes({onlyOn: attributes.onlyOn.filter( p => {return p != this} )});
             }
-
-            setAttributes({onlyOn: newPages});
         }
 
         const GetSelectedPagesControls = function(){
@@ -178,22 +171,24 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
         const onPhpFiltersChanged	= function(newValue){
             let oldValue    = this;
 
+            let newFilters  = [...attributes.phpFilters];
             // add a new value
             if(oldValue == '' && !attributes.phpFilters.includes(newValue)){
-                attributes.phpFilters.push(newValue);
+                newFilters.push(newValue);
             // value removed
             }else if(newValue == ''){
-                let index   = attributes.phpFilters.findIndex(el=>el==oldValue);
-                attributes.phpFilters.splice(index, 1);
+                newFilters   = attributes.phpFilters.filter(el => el != oldValue);
             // value changed
             }else{
-                let index   = attributes.phpFilters.findIndex(el=>el==oldValue);
-                attributes.phpFilters[index]  = newValue;
+                let index   = attributes.phpFilters.findIndex(el => el == oldValue);
+                newFilters[index]  = newValue;
             }
     
-            setAttributes({ phpFilters: attributes.phpFilters });
+            setAttributes({ phpFilters: newFilters });
+
+            setPhpFilter('');
     
-            setPageFilters(createFilterControls(attributes.phpFilters));
+            setPageFilters(createFilterControls(newFilters));
         }
 
         const createFilterControls  = function(filters){
@@ -218,6 +213,7 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
         const [ selectedPages, setSelectedPages ]                   = useState( [] );
         const [ selectedPagesControls, setSelectedPagesControls ]   = useState( GetSelectedPagesControls() );
         const [ pageFilters, setPageFilters ]                       = useState( phpFilterControls );
+        const [ phpFilter, setPhpFilter]                            = useState('');
 
         // Update selectedPagesControls on page resolve
         useEffect(() => {
@@ -248,12 +244,6 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                         />
 
                         <ToggleControl
-                            label={__('Only on home page', 'sim')}
-                            checked={!!attributes.onlyOnHomePage}
-                            onChange={() => setAttributes({ onlyOnHomePage: !attributes.onlyOnHomePage })}
-                        />
-
-                        <ToggleControl
                             label={__('Hide if not logged in', 'sim')}
                             checked={!!attributes.onlyLoggedIn}
                             onChange={() => setAttributes({ onlyLoggedIn: !attributes.onlyLoggedIn })}
@@ -261,8 +251,8 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                         
                         <InputControl
                             isPressEnterToChange={true}
-                            label="Add php filters like 'isPage(12)'"
-                            value={ '' }
+                            label="Add php filters by name. I.e 'is_tax'"
+                            value={ phpFilter }
                             onChange={onPhpFiltersChanged.bind('')}
                         />
 

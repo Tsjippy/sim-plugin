@@ -15,11 +15,10 @@ add_action( 'enqueue_block_editor_assets', function() {
 // Filter block visibility
 add_filter('render_block', function($blockContent, $block){
 	if(
-		// not on a home page
+		// not on a specific page
 		(
-			isset($block['attrs']['onlyOnHomePage']) && 
-			!in_array(get_the_ID(), getModuleOption('frontpage','home_page')) && 
-			!is_front_page()
+			!empty($block['attrs']['onlyOn']) && 
+			!in_array(get_the_ID(), $block['attrs']['onlyOn'])
 		)	||
 		// or not logged in
 		(
@@ -28,6 +27,21 @@ add_filter('render_block', function($blockContent, $block){
 		)
 	){
 		return '';
+	}
+
+	// Run php filters
+	if(!empty($block['attrs']['phpFilters']) ){
+		$show	= false;
+		foreach($block['attrs']['phpFilters'] as $filter){
+			if(function_exists($filter) && $filter(get_the_ID())){
+				$show	= true;
+				break;
+			}
+		}
+
+		if(!$show){
+			return '';
+		}
 	}
 
 	// add hide on mobile class
