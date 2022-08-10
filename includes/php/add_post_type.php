@@ -55,7 +55,7 @@ function registerPostTypeAndTax($single, $plural){
 		'menu_position' 		=> 5,
 		'show_in_rest'			=> true,
 		'delete_with_user'		=> false,
-		'taxonomies'  			=> array( $single."type" ),
+		'taxonomies'  			=> array( strtolower($plural)),
 	);
 	
 	//Create the custom post type

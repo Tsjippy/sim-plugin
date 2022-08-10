@@ -5,7 +5,7 @@ namespace SIM;
 add_action( 'enqueue_block_editor_assets', function() {
     wp_register_script(
         'sim-block-filter',
-        plugins_url('blocks/build/index.js', __DIR__),
+        plugins_url('blocks/block_filters/build/index.js', __DIR__),
         [ 'wp-blocks', 'wp-dom', 'wp-dom-ready', 'wp-edit-post' ],
         STYLE_VERSION
     );

@@ -16,9 +16,6 @@ function addFilterAttribute(settings) {
             hideOnMobile: {
                 type: 'boolean',
             },
-            onlyOnHomePage: {
-                type: 'boolean',
-            },
             onlyLoggedIn: {
                 type: 'boolean',
             },
@@ -66,8 +63,6 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                 // Find all selected pages
                 const selectedPagesArgs = [ 'postType', 'page', {include : attributes.onlyOn} ];
 
-                console.log(attributes.onlyOn);
-
                 return {
                     initialSelectedPages: select( coreDataStore ).getEntityRecords(
                         ...selectedPagesArgs
@@ -95,7 +90,9 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                 // find all pages excluding the already selected pages
                 const query = {
                     exclude : attributes.onlyOn,
-                    search  : searchTerm
+                    search  : searchTerm,
+                    per_page: 100,
+                    orderby : 'relevance'
                 };
 
                 const pagesArgs         = [ 'postType', 'page', query ];
@@ -114,19 +111,15 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
         );
 
         const PageSelected = function(checked){
-            let newPages    = [...attributes.onlyOn];
-
             if(checked){
                 // Add to stored page ids
-                newPages.push(this);
+                setAttributes({onlyOn: [...attributes.onlyOn, this]});
 
                 // Add to selected pages list
-                selectedPages.push(pages.find( p => p.id == this));
+                setSelectedPages([...selectedPages, pages.find( p => p.id == this)]);
             }else{
-                newPages    = newPages.filter( p => {return p != this} );
+                setAttributes({onlyOn: attributes.onlyOn.filter( p => {return p != this} )});
             }
-
-            setAttributes({onlyOn: newPages});
         }
 
         const GetSelectedPagesControls = function(){
@@ -143,37 +136,6 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                 return '';
             }
         }
-
-        const onPhpFiltersChanged	= function(newValue){
-            let oldValue    = this;
-
-            // add a new value
-            if(oldValue == ''){
-                attributes.phpFilters.push(newValue);
-            // value removed
-            }else if(newValue == ''){
-                let index   = attributes.phpFilters.findIndex(el=>el==oldValue);
-                attributes.phpFilters.splice(index, 1);
-            // value changed
-            }else{
-                let index   = attributes.phpFilters.findIndex(el=>el==oldValue);
-                attributes.phpFilters[index]  = newValue;
-            }
-    
-            setAttributes({ phpFilters: attributes.phpFilters });
-    
-            setPageFilters(createFilterControls(attributes.phpFilters));
-        }
-
-        const createFilterControls  = function(filters){
-            return filters.map( filter =>
-                <InputControl
-                    isPressEnterToChange={true}
-                    value={ filter }
-                    onChange={ onPhpFiltersChanged.bind(filter) }
-                />
-            )
-        };
 
         const BuildCheckboxControls = function({ hasResolved, items, showNoResults= true }){
             if ( ! hasResolved ) {
@@ -206,16 +168,52 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
             } )
         }
 
+        const onPhpFiltersChanged	= function(newValue){
+            let oldValue    = this;
+
+            let newFilters  = [...attributes.phpFilters];
+            // add a new value
+            if(oldValue == '' && !attributes.phpFilters.includes(newValue)){
+                newFilters.push(newValue);
+            // value removed
+            }else if(newValue == ''){
+                newFilters   = attributes.phpFilters.filter(el => el != oldValue);
+            // value changed
+            }else{
+                let index   = attributes.phpFilters.findIndex(el => el == oldValue);
+                newFilters[index]  = newValue;
+            }
+    
+            setAttributes({ phpFilters: newFilters });
+
+            setPhpFilter('');
+    
+            setPageFilters(createFilterControls(newFilters));
+        }
+
+        const createFilterControls  = function(filters){
+            return filters.map( filter =>
+                <InputControl
+                    isPressEnterToChange={true}
+                    value={ filter }
+                    onChange={ onPhpFiltersChanged.bind(filter) }
+                />
+            )
+        };
+
         /** Variables */    
         let phpFilterControls   = '';
         if(attributes.phpFilters != undefined){
             phpFilterControls   = createFilterControls(attributes.phpFilters);
+        }else{
+            attributes.phpFilters   = [];
         }
 
         /** HOOKS */
         const [ selectedPages, setSelectedPages ]                   = useState( [] );
         const [ selectedPagesControls, setSelectedPagesControls ]   = useState( GetSelectedPagesControls() );
         const [ pageFilters, setPageFilters ]                       = useState( phpFilterControls );
+        const [ phpFilter, setPhpFilter]                            = useState('');
 
         // Update selectedPagesControls on page resolve
         useEffect(() => {
@@ -223,42 +221,26 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
         }, [ selectedPagesResolved ]);
 
         // Update selectedPagesControls on check/uncheck
-        useEffect(() => {
-            if(selectedPages == null){
-                return;
-            }
-            
-            setSelectedPages( state => {
-                //console.log(state);
-
-                return selectedPages.filter( p => {return attributes.onlyOn.includes(p.id)} );
-            });
+        useEffect(() => {            
+            setSelectedPages( selectedPages.filter( p => {return attributes.onlyOn.includes(p.id)} ));
         }, [ attributes.onlyOn ]);
 
         useEffect( 
             () => {
-                //console.log(selectedPages);
                 setSelectedPagesControls(BuildCheckboxControls({hasResolved: selectedPagesResolved, items: selectedPages, showNoResults: false}));
             }, 
             [selectedPages]
         );
 
-
         return (
             <Fragment>
                 <BlockEdit { ...props } />
                 <InspectorControls>
-                	<PanelBody title={ __( 'Block Visibility' ) }>
+                	<PanelBody title={ __( 'Block Visibility', 'sim' ) }>
                         <ToggleControl
                             label={__('Hide on mobile', 'sim')}
                             checked={!!attributes.hideOnMobile}
                             onChange={() => setAttributes({ hideOnMobile: !attributes.hideOnMobile })}
-                        />
-
-                        <ToggleControl
-                            label={__('Only on home page', 'sim')}
-                            checked={!!attributes.onlyOnHomePage}
-                            onChange={() => setAttributes({ onlyOnHomePage: !attributes.onlyOnHomePage })}
                         />
 
                         <ToggleControl
@@ -269,8 +251,8 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                         
                         <InputControl
                             isPressEnterToChange={true}
-                            label="Add php filters like 'isPage(12)'"
-                            value={ '' }
+                            label="Add php filters by name. I.e 'is_tax'"
+                            value={ phpFilter }
                             onChange={onPhpFiltersChanged.bind('')}
                         />
 

@@ -39,20 +39,24 @@ const apiPath	= "/sim/v1/events/upcoming_events";
 const catsPath	= "/wp/v2/events";
 
 const Edit = ({attributes, setAttributes}) => {
-	var {items, months, categories} = attributes;
-
-	if(categories == undefined){
-		categories	= [];
-	}
+	const {items, months, categories} = attributes;
 
 	const onCatChanged	= function(checked){
-		let copy = Object.assign({}, categories);
+		let copy;
+
+		if(categories == undefined){
+			copy	= {};
+		}else{
+			copy	= Object.assign({}, categories)
+		}
+
 		// this is the cat id
 		copy[this]	= checked;
 		setAttributes({categories: copy});
 	}
 
 	const [cats, setCats] = useState([]);
+
 	useEffect( async () => {
 		const fetchedCats = await apiFetch({path: catsPath});
 		setCats( fetchedCats.map( c => (
@@ -62,7 +66,7 @@ const Edit = ({attributes, setAttributes}) => {
 				checked		= {categories[c.id]}
 			/>
 		)));
-	} , []);
+	} , [attributes.categories]);
 
 
 	// variable, function name to set variable
