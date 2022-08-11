@@ -2,7 +2,6 @@
 namespace SIM\EVENTS;
 use SIM;
 
-add_shortcode("schedules",function(){
-	$schedule	= new Schedules();
-	return $schedule->showSchedules();
+add_shortcode("schedules", function(){
+	displaySchedules();
 });

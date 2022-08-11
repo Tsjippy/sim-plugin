@@ -184,4 +184,18 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
+
+	// show schedules
+	register_rest_route( 
+		'sim/v1/events', 
+		'/show_schedules', 
+		array(
+			'methods' 				=> 'GET',
+			'callback' 				=> function(){
+				$schedule		= new Schedules();
+				return $schedule->showSchedules();
+			},
+			'permission_callback' 	=> '__return_true',
+		)
+	);
 } );

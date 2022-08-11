@@ -9,6 +9,13 @@ add_action('init', function () {
 			'render_callback' => __NAMESPACE__.'\displayUpcomingEvents',
 		)
 	);
+
+	register_block_type(
+		__DIR__ . '/schedules/build',
+		array(
+			'render_callback' => __NAMESPACE__.'\displaySchedules',
+		)
+	);
 });
 
 function displayUpcomingEvents($attributes) {
@@ -36,4 +43,9 @@ function displayUpcomingEvents($attributes) {
 	
 	$events		= new DisplayEvents();
 	return $events->upcomingEvents($args['items'], $args['months'], $include);
+}
+
+function displaySchedules(){
+	$schedule	= new Schedules();
+	return $schedule->showSchedules();
 }
