@@ -54,6 +54,13 @@ function showStatements($userId=''){
 	return ob_get_clean();
 }
 
+/**
+ * Prints the year buttons
+ * 
+ * @param	int	$year	The year to output
+ * 
+ * @param	bool		Whether the year is visible or not
+ */
 function printYears($year){
 	if(date("Y") == $year){
 		$buttonText 	= "Hide $year";
@@ -68,14 +75,21 @@ function printYears($year){
 	return $visibility;
 }
 
+/**
+ * Prints all the account statement links for a given year
+ * 
+ * @param	array	$monthArray	The months
+ * @param	int		$year		The year
+ * @param	bool	$visibility	Whether the links should be shown
+ * 
+ * 
+ */
 function printRows($monthArray, $year, $visibility){
 	$monthCount = count($monthArray);
 	$firstMonth = array_key_first($monthArray);
+
 	foreach($monthArray as $month => $url){
-		$siteUrl	= site_url();
-		if(strpos($url, $siteUrl) === false){
-			$url = $siteUrl.$url;
-		}
+		$url	= SIM\pathToUrl(STATEMENT_FOLDER.$url);
 		
 		echo "<tr class='_$year'$visibility>";
 			if($firstMonth == $month){
