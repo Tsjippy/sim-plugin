@@ -1,18 +1,18 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 2,
-	"name": "sim/events",
+	"name": "sim/embed-page",
 	"version": "0.1.0",
-	"title": "Upcoming Events",
+	"title": "Embed another page",
 	"category": "widgets",
-	"description": "Upcoming 10 events",
+	"description": "Embed another site page so it shows in multiple locations",
 	"textdomain": "sim",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"attributes": {
-		"items": {
-		  "type": "integer"
+		"page": {
+		  "type": "object"
 		}
 	}
 }

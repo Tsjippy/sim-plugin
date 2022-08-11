@@ -82,8 +82,8 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                 // do not show results if not searching
                 if ( !searchTerm ) {
                     return{
-                        pages: true,
-                        pagesResolved: []
+                        pages: [],
+                        pagesResolved: true
                     }
                 }
 
@@ -96,6 +96,7 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                 };
 
                 const pagesArgs         = [ 'postType', 'page', query ];
+                console.log(pagesArgs);
 
                 return {
                     pages: select( coreDataStore ).getEntityRecords(

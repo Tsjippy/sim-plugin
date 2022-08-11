@@ -13,11 +13,16 @@ add_shortcode("account_statements", __NAMESPACE__.'\showStatements');
 function showStatements($userId=''){
 	if(isset($_GET["id"]) && is_numeric($_GET["id"])){
 		$userId = $_GET["id"];
+	}else{
+		$userId	= get_current_user_id();
 	}
 
 	$accountStatements = get_user_meta($userId, "account_statements", true);
 	
 	if(SIM\isChild($userId) || !is_array($accountStatements)){
+		if(defined('REST_REQUEST')){
+			return 'No statements found';
+		}
 		return '';
 	}
 

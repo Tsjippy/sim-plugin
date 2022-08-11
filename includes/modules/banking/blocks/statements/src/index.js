@@ -5,7 +5,7 @@ import metadata from './block.json';
 
 
 registerBlockType( metadata.name, {
-	icon: 'calendar',
+	icon: 'money',
 	/**
 	 * @see ./edit.js
 	 */

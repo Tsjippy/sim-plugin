@@ -25,7 +25,10 @@ add_shortcode("login_count", function (){
 	}
 });
 
-// Wrapper function for the home page for logged in users
+/**
+ * Wrapper function for the home page for logged in users
+ * Modules add their contetn via the  sim_loggedin_homepage filter
+ */ 
 add_shortcode('logged_home_page', function(){
 	return apply_filters('sim_loggedin_homepage', '');
 });
