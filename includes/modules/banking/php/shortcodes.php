@@ -70,7 +70,7 @@ function printYears($year){
 		$visibility 	= ' style="display:none;"';
 	}
 		
-	echo "<button type='button' class='statement_button button' data-target='_$year' style='margin-right: 10px; padding: 0px 10px;'>$buttonText</button>";
+	echo "<button type='button' class='statement_button button' data-target='_$year'>$buttonText</button>";
 	
 	return $visibility;
 }
