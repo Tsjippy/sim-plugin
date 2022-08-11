@@ -15,6 +15,7 @@
 - bug with wp_localize_script
 - issue with urls on events
 - removing featured image
+- account statement download links
 
 ## [2.0.3.2] - 2022-08-02
 
