@@ -124,7 +124,6 @@ async function processInput(event, target){
 
 //function to sort a table by column
 function sortTable(target){
-	//console.log(target);
 	let table 			= target.closest('table');
 	let switching	 	= true;
 	let shouldSwitch 	= false;
