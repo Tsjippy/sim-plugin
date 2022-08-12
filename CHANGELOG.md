@@ -18,6 +18,7 @@
 - issue with urls on events
 - removing featured image
 - account statement download links
+- bug in checkboxes formresults
 
 ## [2.0.3.2] - 2022-08-02
 
