@@ -23,14 +23,14 @@ async function showHiddenColumns(target){
 	target.closest('.table-wrapper').querySelector('.reset-col-vis').classList.add('hidden');
 
 	// Show the columns again
-	var table		= target.closest('.table-wrapper').querySelector('table');
+	let table		= target.closest('.table-wrapper').querySelector('table');
 	table.querySelectorAll('th.hidden, td.hidden').forEach(el=>el.classList.remove('hidden'));
 
 	// store as preference
-	var formData	= new FormData();
+	let formData	= new FormData();
 	formData.append('formid', table.dataset.formid);
 
-	var response	= await FormSubmit.fetchRestApi('forms/delete_table_prefs', formData);
+	let response	= await FormSubmit.fetchRestApi('forms/delete_table_prefs', formData);
 
 	if(response){
 		Main.displayMessage(response);
@@ -39,7 +39,7 @@ async function showHiddenColumns(target){
 }
 
 async function saveColumnSettings(target){
-	var response = await FormSubmit.submitForm(target, 'forms/save_column_settings');
+	let response = await FormSubmit.submitForm(target, 'forms/save_column_settings');
 
 	if(response){
 		Main.displayMessage(response);
@@ -48,7 +48,7 @@ async function saveColumnSettings(target){
 }
 
 async function saveTableSettings(target){
-	var response = await FormSubmit.submitForm(target, 'forms/save_table_settings');
+	let response = await FormSubmit.submitForm(target, 'forms/save_table_settings');
 
 	if(response){
 		Main.displayMessage(response);
@@ -56,7 +56,7 @@ async function saveTableSettings(target){
 }
 
 async function askConfirmation(text){
-	var result = await Swal.fire({
+	let result = await Swal.fire({
 		title: 'Are you sure?',
 		text: `Are you sure you want to ${text} this?`,
 		icon: 'warning',
@@ -71,16 +71,16 @@ async function askConfirmation(text){
 
 async function removeSubmission(target){
 	if(askConfirmation('delete')){		
-		var submissionId	= target.closest('tr').dataset.id;
-		var table			= target.closest('table');
+		let submissionId	= target.closest('tr').dataset.id;
+		let table			= target.closest('table');
 
-		var formData = new FormData();
+		let formData = new FormData();
 		formData.append('submissionid', submissionId);
 		
 		//display loading gif
 		Main.showLoader(target);
 
-		var response	= await FormSubmit.fetchRestApi('forms/remove_submission', formData);
+		let response	= await FormSubmit.fetchRestApi('forms/remove_submission', formData);
 
 		if(response){
 			table.querySelectorAll(`.table-row[data-id="${submissionId}"]`).forEach(
@@ -91,13 +91,13 @@ async function removeSubmission(target){
 }
 
 async function archiveSubmission(target){	
-	var table			= target.closest('table');
-	var tableRow		= target.closest('tr');
-	var submissionId	= tableRow.dataset.id;
-	var showSwal		= true;
-	var action			= target.value;
+	let table			= target.closest('table');
+	let tableRow		= target.closest('tr');
+	let submissionId	= tableRow.dataset.id;
+	let showSwal		= true;
+	let action			= target.value;
 
-	var formData 		= new FormData();
+	let formData 		= new FormData();
 	formData.append('formid', table.dataset.formid);
 	formData.append('submissionid', submissionId);
 	formData.append('action', action);
@@ -106,7 +106,7 @@ async function archiveSubmission(target){
 	if(tableRow.dataset.subid != undefined){
 		showSwal = false;
 		
-		let response = await Swal.fire({
+		response = await Swal.fire({
 			title: `What do you want to ${action}?`,
 			text: `Do you want to ${action} just this one or the whole request?`,
 			icon: 'question',
@@ -128,7 +128,7 @@ async function archiveSubmission(target){
 	}
 	
 	if(showSwal){
-		var confirmed = askConfirmation(action);
+		let confirmed = askConfirmation(action);
 
 		if(!confirmed){
 			return;
@@ -150,7 +150,7 @@ async function archiveSubmission(target){
 			table.querySelectorAll(`.table-row[data-id="${submissionId}"]`).forEach(row=>{
 				// just change the button name
 				if(params.archived == 'true'){
-					var loader = row.querySelector('.loaderwrapper, .'+action);
+					let loader = row.querySelector('.loaderwrapper, .'+action);
 					changeArchiveButton(loader, action);
 				}else{
 					row.remove();
@@ -161,7 +161,7 @@ async function archiveSubmission(target){
 			table.querySelectorAll(`.table-row[data-id="${submissionId}"][data-subid="${tableRow.dataset.subid}"]`).forEach(row=>{
 				// just change the button name
 				if(params.archived == 'true'){
-					var loader = row.querySelector('.loaderwrapper');
+					let loader = row.querySelector('.loaderwrapper');
 					changeArchiveButton(loader, action);
 				}else{
 					row.remove();
@@ -173,7 +173,7 @@ async function archiveSubmission(target){
 }
 
 function changeArchiveButton(loader, action){
-	var text;
+	let text;
 
 	if(action == 'archive'){
 		action 	= 'unarchive';
@@ -186,24 +186,24 @@ function changeArchiveButton(loader, action){
 }
 
 async function getInputHtml(target){
-	var table			= target.closest('table');
-	var formId			= table.dataset.formid;
-    var submissionId	= target.closest('tr').dataset.id;
-	var subId			= target.dataset.subid;
-    var cellId			= target.dataset.id
-	var oldText			= target.textContent;
+	let table			= target.closest('table');
+	let formId			= table.dataset.formid;
+    let submissionId	= target.closest('tr').dataset.id;
+	let subId			= target.dataset.subid;
+    let cellId			= target.dataset.id
+	let oldText			= target.textContent;
     
     Main.showLoader(target.firstChild);
 	
 	target.dataset.oldtext	 	= oldText;
 
-	var formData = new FormData();
+	let formData = new FormData();
     formData.append('formid', formId);
     formData.append('submissionid', submissionId);
 	formData.append('subid', subId);
     formData.append('fieldname', cellId);
 
-	var response	= await FormSubmit.fetchRestApi('forms/get_input_html', formData);
+	let response	= await FormSubmit.fetchRestApi('forms/get_input_html', formData);
 
 	if(response){
 		target.innerHTML	 = response;
@@ -219,7 +219,10 @@ function addFormsTableInputEventListeners(cell){
 	var inputs		= cell.querySelectorAll('input,select,textarea');
 
 	// get old value
-	var oldValue	= JSON.parse(cell.dataset.oldvalue);
+	let oldValue	= '';
+	if(cell.dataset.oldvalue != undefined){
+		oldValue	= JSON.parse(cell.dataset.oldvalue);
+	}
 
 	// make it an array if not an array
 	if(!Array.isArray(oldValue)){
@@ -227,7 +230,7 @@ function addFormsTableInputEventListeners(cell){
 	}
 		
 	inputs.forEach((inputNode, index)=>{
-		var val	= oldValue[index];
+		let val	= oldValue[index];
 		if(oldValue.length == 1 && index > 0){
 			val	= oldValue[0];
 		}
@@ -278,7 +281,7 @@ function outsideFormsTableClicked(event){
 
 //function to get the temp input value and save it over AJAX
 var running = false;
-async function processFormsTableInput(target){	
+async function processFormsTableInput(target){
 	// target is an event
 	if(target.target != undefined){
 		target = target.target;
@@ -291,13 +294,13 @@ async function processFormsTableInput(target){
 	
 	setTimeout(function(){ running = false;}, 500);	
 
-	var table			= target.closest('table');
-	var formId			= table.dataset.formid;
-	var cell			= target.closest('td');
-    var cellId			= cell.dataset.id
-	var value			= FormFunctions.getFieldValue(target, cell, false);
-	var submissionId	= target.closest('tr').dataset.id;
-	var subId			= cell.dataset.subid;
+	let table			= target.closest('table');
+	let formId			= table.dataset.formid;
+	let cell			= target.closest('td');
+    let cellId			= cell.dataset.id
+	let value			= FormFunctions.getFieldValue(target, cell, false);
+	let submissionId	= target.closest('tr').dataset.id;
+	let subId			= cell.dataset.subid;
 	
 	//remove all event listeners
 	document.removeEventListener("click", outsideFormsTableClicked);
@@ -307,7 +310,7 @@ async function processFormsTableInput(target){
 		Main.showLoader(cell.firstChild);
 		
 		// Submit new value and receive the filtered value back
-		var formData = new FormData();
+		let formData = new FormData();
 		formData.append('formid', formId);
 		formData.append('submissionid', submissionId);
 		if(subId != undefined){
@@ -316,17 +319,17 @@ async function processFormsTableInput(target){
 		formData.append('fieldname', cellId);
 		formData.append('newvalue', value);
 		
-		var response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
+		let response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
 	
 		if(response){
-			var newValue = response.newvalue;
+			let newValue = response.newvalue;
 			//Replace the input element with its value
 			if(newValue == "") newValue = "X";
 	
 			//Update all occurences of this field
 			if(subId == null){
-				target	= table.querySelectorAll(`tr[data-id="${submissionId}"] td[data-id="${cellId}"]`);
-				target.forEach(td=>{td.innerHTML = newValue;});
+				let targets	= table.querySelectorAll(`tr[data-id="${submissionId}"] td[data-id="${cellId}"]`);
+				targets.forEach(td=>{td.innerHTML = newValue;});
 			}else{
 				cell.innerHTML = newValue;
 			}
@@ -337,6 +340,8 @@ async function processFormsTableInput(target){
 		console.log(value)
 		cell.innerHTML = cell.dataset.oldtext;
 	}
+
+	addFormsTableInputEventListeners(target);
 
 	if(target.dataset.oldtext != undefined){
 		delete target.dataset.oldtext;
@@ -383,8 +388,8 @@ document.addEventListener("click", event=>{
 	}
 	
 	//Edit data
-	var td = target.closest('td');
-	if(target.matches('td.edit_forms_table') && target.dataset.oldtext == null){
+	let td = target.closest('td');
+	if(target.matches('td.edit_forms_table') && (target.dataset.oldtext == null || target.dataset.oldtext == 'X')){
 		event.stopPropagation();
 		getInputHtml(target);
 	}else if(td != null  && target.dataset.oldtext == null && td.matches('td.edit_forms_table') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){

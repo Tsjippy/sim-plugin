@@ -377,8 +377,8 @@ function getCheckboxValue(form, name, compareValue, orgName){
 
 	//we are dealing with a specific checkbox
 	if(orgName.type == 'checkbox' ){
-		if(el.checked){
-			return el.value;
+		if(orgName.checked){
+			return orgName.value;
 		}
 		
 		return '';
