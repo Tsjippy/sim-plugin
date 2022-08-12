@@ -216,7 +216,7 @@ async function getInputHtml(target){
 }
 
 function addFormsTableInputEventListeners(cell){
-	var inputs		= cell.querySelectorAll('input,select,textarea');
+	let inputs		= cell.querySelectorAll('input,select,textarea');
 
 	// get old value
 	let oldValue	= '';
@@ -349,7 +349,7 @@ async function processFormsTableInput(target){
 }
 
 document.addEventListener("click", event=>{
-	var target = event.target;
+	let target = event.target;
 
 	if(target.name == 'submit_column_setting'){
 		saveColumnSettings(target);
@@ -430,7 +430,7 @@ document.addEventListener("DOMContentLoaded",function() {
 	
 	if(typeof(Sortable) != 'undefined'){
 		//Make the sortable_column_settings_rows div sortable
-		var options = {
+		let options = {
 			handle: '.movecontrol',
 			animation: 150,
 		};
@@ -442,7 +442,7 @@ document.addEventListener("DOMContentLoaded",function() {
 });
 
 document.addEventListener('change', event=>{
-	var target = event.target;
+	let target = event.target;
 
 	if(target.id == 'sim-forms-selector'){
 		document.querySelectorAll('.main_form_wrapper').forEach(el=>{

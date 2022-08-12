@@ -26,6 +26,16 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
+	register_rest_route( 
+		'sim/v1/bulkchange', 
+		'/bulk_change_meta_html', 
+		array(
+			'methods' 				=> 'GET',
+			'callback' 				=> __NAMESPACE__.'\showBulkChangeForm',
+			'permission_callback' 	=> '__return_true',
+		)
+	);
+
 });
 
 /**
@@ -39,10 +49,10 @@ function bulkUpdateMeta(){
 	// To do: Check if permissions to edit
 
 	if (strpos($metaKey, '#') !== false){
-		$metaKeyBase 			= explode('#',$metaKey)[0];
-		$metaKeyName 			= explode('#',$metaKey)[1];
+		$metaKeyBase 			= explode('#', $metaKey)[0];
+		$metaKeyName 			= explode('#', $metaKey)[1];
 		
-		$array 					= (array)get_user_meta($userId,$metaKeyBase,true);
+		$array 					= (array)get_user_meta($userId, $metaKeyBase, true);
 		
 		$array[$metaKeyName] 	= $metaValue;
 		

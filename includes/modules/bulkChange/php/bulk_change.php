@@ -63,7 +63,7 @@ function bulkchangeMeta($metaKey, $allowedRoles, $returnFamily){
 				
 				?>
 				<tr class='table-row' data-meta_key='<?php echo $metaKey;?>'>
-					<td><?php echo $user->displayName;?></td>
+					<td><?php echo $user->display_name;?></td>
 					<td class='edit' data-user_id='<?php echo $user->ID;?>'><?php echo $value;?></td>
 				</tr>
 				<?php

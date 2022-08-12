@@ -1,4 +1,6 @@
-var oldValue;
+import {getFieldValue} from '/../modules/forms/js/forms';
+
+let oldValue;
 
 function outsideClicked(event){
 	if(event.target.closest('td') == null || !event.target.closest('td').matches('.editing')){
@@ -11,7 +13,7 @@ function outsideClicked(event){
 }
 
 function addInputEventListeners(cell){
-	var inputs	= cell.querySelectorAll('input,select,textarea');
+	let inputs	= cell.querySelectorAll('input,select,textarea');
 		
 	inputs.forEach(inputnode=>{
 		//add old value
@@ -81,36 +83,36 @@ function editTd(target){
 
 //function to get the temp input value and save it using the rest api
 async function processInput(event, target){
-	if(typeof(target)=='undefined'){
-		var target	= event.target;
+	if(typeof(target) == 'undefined'){
+		target	= event.target;
 	}
 	
-	var cell 			= target.closest('td');	
-	var value			= FormFunctions.getFieldValue(target, cell, false);
-	var table			= target.closest('table');
+	let cell 			= target.closest('td');	
+	let value			= getFieldValue(target, cell, false);
+	let table			= target.closest('table');
 	
 	//Only update when needed
 	if (value != oldValue){		
 		//get the updated fieldname from the column header
-		var formData = new FormData();
+		let formData = new FormData();
 		formData.append('value', value);
 
-		for( var key in cell.dataset){
+		for( let key in cell.dataset){
 			formData.append(key, cell.dataset[key]);
 		}
-		for( var key in target.closest('tr').dataset){
+		for( let key in target.closest('tr').dataset){
 			formData.append(key, target.closest('tr').dataset[key]);
 		}
 		
 		Main.showLoader(cell.firstChild);
 		
-		response = await FormSubmit.fetchRestApi(table.dataset.url, formData);
+		let response = await FormSubmit.fetchRestApi(table.dataset.url, formData);
 
 		if(response){
 			cell.innerHTML = value;
 
 			//reset editing indicator
-			editedel = '';
+			//let editedel = '';
 		}
 	}else{
 		console.log(value)
@@ -123,16 +125,16 @@ async function processInput(event, target){
 //function to sort a table by column
 function sortTable(target){
 	//console.log(target);
-	var table 			= target.closest('table');
-	var switching	 	= true;
-	var shouldSwitch 	= false;
-	var x,y, rows;
+	let table 			= target.closest('table');
+	let switching	 	= true;
+	let shouldSwitch 	= false;
+	let x,y, rows;
 	
 	//Check the sort order
 	if (target.classList.contains('dsc')){
-		var sort 			= 'dsc';
+		let sort 			= 'dsc';
 	}else{
-		var sort 		= 'asc';
+		let sort 		= 'asc';
 	}
 	
 	/*Make a loop that will continue until
@@ -143,7 +145,7 @@ function sortTable(target){
 		rows		= table.rows;
 		/*Loop through all table rows (except the
 		first, which contains table headers):*/
-		for (var i = 1; i < (rows.length - 1); i++) {
+		for (let i = 1; i < (rows.length - 1); i++) {
 			//start by saying there should be no switching:
 			shouldSwitch = false;
 			// Get the lowercase cell contents
@@ -156,8 +158,8 @@ function sortTable(target){
 				y = parseFloat(y);
 			}else{
 				//check if these are dates
-				var datex = new Date(x);
-				var datey = new Date(y);
+				let datex = new Date(x);
+				let datey = new Date(y);
 				if(datex !== "Invalid Date" && !isNaN(datex) && datex.getYear()!=70 && datey !== "Invalid Date" && !isNaN(datey) && datey.getYear()!=70){
 					x = datex.getTime();
 					y = datey.getTime();
@@ -199,7 +201,7 @@ export function setTableLabel() {
 	//Loop over all tables
 	document.querySelectorAll('.sim-table').forEach(function(table){
 		//Get all heading elements
-		var tdLabels = [];
+		let tdLabels = [];
 		table.querySelectorAll('thead th').forEach((el,index) => {
 			if(el.dataset.nicename != null){
 				tdLabels[index]	= el.dataset.nicename;
@@ -228,7 +230,7 @@ function showFullscreen(target){
 	target.textContent	= 'Close full screen';
 	target.classList.replace('show', 'close');
 
-	var parent	= target.closest('.table-wrapper');
+	let parent	= target.closest('.table-wrapper');
 
 	//store current y position
 	window.lastY	= window.pageYOffset;
@@ -244,7 +246,7 @@ function showFullscreen(target){
 
 	parent.style.marginLeft	= '0px';
 
-	var url = new URL(window.location);
+	let url = new URL(window.location);
 
 	url.searchParams.set('fullscreen', parent.querySelector('table').dataset.formid);
 
@@ -252,13 +254,13 @@ function showFullscreen(target){
 }
 
 function closeFullscreen(target){
-	var lastY	= 100;
+	let lastY	= 100;
 
 	target.textContent	= 'Show full screen';
 	target.classList.replace('close','show');
 
 	if(window.lastY != undefined){
-		var lastY	= window.lastY;
+		lastY	= window.lastY;
 	}
 	window.scrollTo(0, lastY);
 
@@ -271,7 +273,7 @@ function closeFullscreen(target){
 
 	positionTable();
 
-	var url = new URL(window.location);
+	let url = new URL(window.location);
 
 	url.searchParams.delete('fullscreen');
 
@@ -281,14 +283,14 @@ function closeFullscreen(target){
 export function positionTable(){
 	//use whole page width for tables
 	document.querySelectorAll(".table-wrapper").forEach(wrapper=>{
-		var offset		= '';
-		var newX		= 0;
+		let offset		= '';
+		let newX		= 0;
 
-		var table	= wrapper.querySelector('table');
+		let table	= wrapper.querySelector('table');
 		if(table == null){
 			return;
 		}
-		var width	= table.scrollWidth;
+		let width	= table.scrollWidth;
 		if(width == 0){
 			return;
 		}
@@ -297,7 +299,7 @@ export function positionTable(){
 		if(window.innerWidth < 570){
 			offset	= wrapper.getBoundingClientRect().x
 		}else{
-			var diff	= window.innerWidth - width;
+			let diff	= window.innerWidth - width;
 			
 			//calculate if room for sidebar if one exists
 			if((width/window.innerWidth) < 0.7){
@@ -332,14 +334,14 @@ export function positionTable(){
 }
 
 document.addEventListener("click", event=>{
-	var target = event.target;
+	let target = event.target;
 	
 	if(target.tagName == 'TH'){
 		sortTable(target);
 	}
 	
 	//Edit data]
-	var td = target.closest('td');
+	let td = target.closest('td');
 	if(target.matches('td.edit')){
 		event.stopPropagation();
 		editTd(target);
@@ -363,7 +365,7 @@ document.addEventListener("DOMContentLoaded",function() {
 	setTableLabel();
 
 	const urlParams = new URLSearchParams(window.location.search);
-	var	fullscreen	= urlParams.get('fullscreen');
+	let	fullscreen	= urlParams.get('fullscreen');
 
 	if(fullscreen != null){
 		try{
