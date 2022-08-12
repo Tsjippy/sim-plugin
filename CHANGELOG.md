@@ -7,6 +7,7 @@
 - block filters
 - category block
 - schedules block
+- form selector block
 
 ### Changed
 - better block filters
