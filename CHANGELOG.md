@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.0.4] - 2022-08-12
+
+
+### Added
 - check for title for prayerpost
 - block filters
 - category block
@@ -18,6 +27,7 @@
 - issue with urls on events
 - removing featured image
 - account statement download links
+- bug in checkboxes formresults
 
 ## [2.0.3.2] - 2022-08-02
 
