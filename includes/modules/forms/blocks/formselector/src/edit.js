@@ -10,7 +10,7 @@ const Edit = () => {
 
 	useEffect( 
 		async () => {
-			const response = await apiFetch({path: '/sim/v1/events/show_schedules'});
+			const response = await apiFetch({path: '/sim/v1/forms/form_selector'});
 			setHtml( response );
 		} ,
 		[]

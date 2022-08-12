@@ -2,7 +2,8 @@
 namespace SIM\FORMS;
 use SIM;
 
-add_shortcode('formselector', function($atts){
+add_shortcode('formselector', __NAMESPACE__.'\showFormSelector');
+function showFormSelector($atts=[]){
     global $wpdb;
 
     ob_start();
@@ -114,7 +115,7 @@ add_shortcode('formselector', function($atts){
     <?php
 
     return ob_get_clean();
-});
+};
 
 //shortcode to make forms
 add_shortcode( 'formbuilder', function($atts){
