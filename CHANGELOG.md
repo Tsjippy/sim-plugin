@@ -6,6 +6,7 @@
 - check for title for prayerpost
 - block filters
 - category block
+- schedules block
 
 ### Changed
 - better block filters
