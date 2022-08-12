@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.0.4] - 2022-08-12
+
+
+### Added
 - check for title for prayerpost
 - block filters
 - category block
