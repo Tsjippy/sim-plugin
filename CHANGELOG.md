@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- first login on staging site
 
 ## [2.0.4] - 2022-08-12
 
