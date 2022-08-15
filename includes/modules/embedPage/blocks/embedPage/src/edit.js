@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
 import {useState, useEffect} from "@wordpress/element";
-import {Panel,SearchControl, TextControl,PanelBody, Spinner, CheckboxControl, FocusableIframe} from "@wordpress/components";
+import {SearchControl,PanelBody, Spinner, CheckboxControl} from "@wordpress/components";
 import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
 import { decodeEntities } from '@wordpress/html-entities';	
@@ -24,7 +24,7 @@ const Edit = ({attributes, setAttributes}) => {
 				}
 			}
 
-			// find all pages excluding the already selected pages
+			// find all pages
 			const query = {
 				search  : searchTerm,
 				per_page: 100,
@@ -88,12 +88,11 @@ const Edit = ({attributes, setAttributes}) => {
 		}
 		
 		return pages?.map( ( p ) => {
-		
 			return (
 			<CheckboxControl
 				label		= {decodeEntities( p.title.rendered )}
 				onChange	= {PageSelected.bind(p)}
-				checked		= {false}
+				checked		= {attributes.page==p}
 			/>)
 		} )
 	}

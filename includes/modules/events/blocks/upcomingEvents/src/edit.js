@@ -59,13 +59,16 @@ const Edit = ({attributes, setAttributes}) => {
 
 	useEffect( async () => {
 		const fetchedCats = await apiFetch({path: catsPath});
-		setCats( fetchedCats.map( c => (
-			<CheckboxControl
-				label		= {c.name}
-				onChange	= {onCatChanged.bind(c.id)}
-				checked		= {categories[c.id]}
-			/>
-		)));
+
+		if(categories != undefined){
+			setCats( fetchedCats.map( c => (
+				<CheckboxControl
+					label		= {c.name}
+					onChange	= {onCatChanged.bind(c.id)}
+					checked		= {categories[c.id]}
+				/>
+			)));
+		}
 	} , [attributes.categories]);
 
 

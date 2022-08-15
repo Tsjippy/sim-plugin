@@ -113,6 +113,8 @@ class FancyEmail{
         if(strpos($this->message, '<!doctype html>') === false){
             $this->htmlEmail();
         }
+
+        SIM\printArray($args);
         
         return $args;
     }

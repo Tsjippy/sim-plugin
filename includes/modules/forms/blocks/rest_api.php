@@ -1,15 +1,15 @@
 <?php
-namespace SIM\BANKING;
+namespace SIM\FORMS;
 use SIM;
 
 add_action( 'rest_api_init', function () {
 	// add element to form
 	register_rest_route( 
-		'sim/v1/banking', 
-		'/get_statements', 
+		'sim/v1/forms', 
+		'/form_selector', 
 		array(
-			'methods' 				=> 'POST,GET',
-			'callback' 				=> 	__NAMESPACE__.'\showStatements',
+			'methods' 				=> 'GET',
+			'callback' 				=> 	__NAMESPACE__.'\showFormSelector',
 			'permission_callback' 	=> '__return_true',
 		)
 	);

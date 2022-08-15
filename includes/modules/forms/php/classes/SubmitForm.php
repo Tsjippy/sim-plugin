@@ -105,19 +105,26 @@ class SubmitForm extends SimForms{
 
 				$subject	= $this->processPlaceholders($email['subject']);
 				$message	= $this->processPlaceholders($email['message']);
-				$headers	= explode("\n",$email['headers']);
-				if(!empty($from)){$headers[]	= "Reply-To: $from";}
+
+				$headers	= [];
+				if(!empty(trim($email['headers']))){
+					$headers	= explode("\n", trim($email['headers']));
+				}
+
+				if(!empty($from)){
+					$headers[]	= "Reply-To: $from";
+				}
 				
 				$files		= $this->processPlaceholders($email['files']);
-				
+
 				//Send the mail
 				if($_SERVER['HTTP_HOST'] != 'localhost'){
 					add_filter('sim_email_footer_url', [$this, 'emailFooter']);
-					
 					$result = wp_mail($to , $subject, $message, $headers, $files);
 					if($result === false){
 						SIM\printArray("Sending the e-mail failed");
 					}
+
 					remove_filter('sim_email_footer_url', [$this, 'emailFooter']);
 				}
 			}

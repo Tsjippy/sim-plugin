@@ -96,7 +96,6 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                 };
 
                 const pagesArgs         = [ 'postType', 'page', query ];
-                console.log(pagesArgs);
 
                 return {
                     pages: select( coreDataStore ).getEntityRecords(

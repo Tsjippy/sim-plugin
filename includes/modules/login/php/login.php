@@ -10,7 +10,7 @@ add_action('init',function(){
     }
     
     global $pagenow;
-	if( $pagenow == 'wp-login.php'){
+	if( $pagenow == 'wp-login.php' && get_option("wpstg_is_staging_site") != "true"){
         //redirect to login screen
         wp_redirect(SITEURL."/?showlogin");
         exit;
