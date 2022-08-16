@@ -4,7 +4,7 @@ use SIM;
 
 add_action( 'rest_api_init', function () {	
 	//Route for notification messages
-	register_rest_route( 'sim/v1', '/notifications', array(
+	register_rest_route( RESTAPIPREFIX, '/notifications', array(
 		'methods' => 'GET',
 		'callback' => __NAMESPACE__.'\botMessages',
 		'permission_callback' => '__return_true',
@@ -12,7 +12,7 @@ add_action( 'rest_api_init', function () {
 	);
 	
 	//Route for first names
-	register_rest_route( 'sim/v1', '/firstname', array(
+	register_rest_route( RESTAPIPREFIX, '/firstname', array(
 		'methods'				=> 'GET',
 		'callback'				=> __NAMESPACE__.'\findFirstname',
 		'permission_callback' 	=> '__return_true',
@@ -37,7 +37,7 @@ add_action( 'rest_api_init', function () {
 
 	// Update quota documents
 	register_rest_route( 
-		'sim/v1/signal', 
+		RESTAPIPREFIX.'/signal', 
 		'/save_preferences', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,

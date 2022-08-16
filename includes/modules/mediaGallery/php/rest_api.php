@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {	
 	//Route for first names
 	register_rest_route( 
-		'sim/v1/media_gallery', 
+		RESTAPIPREFIX.'/media_gallery', 
 		'/load_more_media', 
 		array(
 			'methods'				=> 'POST',
@@ -22,7 +22,7 @@ add_action( 'rest_api_init', function () {
 	);
 
 	register_rest_route( 
-		'sim/v1/media_gallery', 
+		RESTAPIPREFIX.'/media_gallery', 
 		'/media_search', 
 		array(
 			'methods'				=> 'POST',

@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {	
 	//Route for first names
 	register_rest_route( 
-		'sim/v1', 
+		RESTAPIPREFIX, 
 		'/remove_document', 
 		array(
 			'methods'				=> 'POST',

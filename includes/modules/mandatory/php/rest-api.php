@@ -4,7 +4,7 @@ use SIM;
 
 // Make mark as read rest api publicy available
 add_filter('sim_allowed_rest_api_urls', function($urls){
-	$urls[]	= 'sim/v1/markasread';
+	$urls[]	= RESTAPIPREFIX.'/markasread';
 
 	return $urls;
 });
@@ -12,7 +12,7 @@ add_filter('sim_allowed_rest_api_urls', function($urls){
 add_action( 'rest_api_init', function () {
 	//Route to update mark as read from mailchimp
 	register_rest_route( 
-		'sim/v1/mandatory_content', 
+		RESTAPIPREFIX.'/mandatory_content', 
 		'/mark_as_read_public', 
 		array(
 			'methods' => 'GET',
@@ -32,7 +32,7 @@ add_action( 'rest_api_init', function () {
 
 	// Mark as read from website
 	register_rest_route( 
-		'sim/v1/mandatory_content', 
+		RESTAPIPREFIX.'/mandatory_content', 
 		'/mark_as_read', 
 		array(
 			'methods' => 'POST',
@@ -53,7 +53,7 @@ add_action( 'rest_api_init', function () {
 
 	// Mark all as read
 	register_rest_route( 
-		'sim/v1/mandatory_content', 
+		RESTAPIPREFIX.'/mandatory_content', 
 		'/mark_all_as_read', array(
 			'methods' => 'POST',
 			'callback' => __NAMESPACE__.'\markAllAsRead',
@@ -71,7 +71,7 @@ add_action( 'rest_api_init', function () {
 add_filter('sim_before_mailchimp_send', function($mailContent, $post){
     ///add button if mandatory message
     if(!empty($_POST['pagetype']['everyone'])){
-        $url			= SITEURL."/wp-json/sim/v1/mandatory_content/mark_as_read_public?email=*|EMAIL|*&postid={$post->ID}";
+        $url			= SITEURL."/wp-json/".RESTAPIPREFIX."/mandatory_content/mark_as_read_public?email=*|EMAIL|*&postid={$post->ID}";
         $style			= "color: white; background-color: #bd2919; border-radius: 3px; text-align: center; margin-right: 10px; padding: 5px 10px;";
         $mailContent	.= "<br><a href='$url' style='$style'>I have read this</a>";
     }

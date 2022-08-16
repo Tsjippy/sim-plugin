@@ -2,7 +2,9 @@
 namespace SIM\FRONTENDPOSTING;
 use SIM;
 
-add_shortcode('your_posts',function(){
+add_shortcode('your_posts', __NAMESPACE__.'\yourPosts');
+
+function yourPosts(){
 	//load js
 	wp_enqueue_script('sim_table_script');
 	
@@ -68,7 +70,7 @@ add_shortcode('your_posts',function(){
 		$html .= "</table>";
 	
 	return $html;
-});
+}
 
 //Shortcode to display all pages and post who are pending
 add_shortcode("pending_pages", function (){

@@ -12,7 +12,7 @@ const Edit = ({attributes, setAttributes}) => {
 
 	useEffect( 
 		async () => {
-			const response = await apiFetch({path: `/sim/v1/forms/missing_form_fields?type=${type}`});
+			const response = await apiFetch({path: `${sim.restApiPrefix}/forms/missing_form_fields?type=${type}`});
 			setHtml( response );
 		} ,
 		[type]

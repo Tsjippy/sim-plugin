@@ -7,7 +7,7 @@ use WP_User;
 add_action( 'rest_api_init', function () {
 	// prepare video upload
 	register_rest_route( 
-		'sim/v1/vimeo', 
+		RESTAPIPREFIX.'/vimeo', 
 		'/prepare_vimeo_upload', 
 		array(
 			'methods' 				=> 'POST',
@@ -26,7 +26,7 @@ add_action( 'rest_api_init', function () {
 
     // Save uploaded video details
     register_rest_route( 
-		'sim/v1/vimeo', 
+		RESTAPIPREFIX.'/vimeo', 
 		'/add_uploaded_vimeo', 
 		array(
 			'methods' 				=> 'POST',
@@ -43,7 +43,7 @@ add_action( 'rest_api_init', function () {
 
 	// Save uploaded video details
     register_rest_route( 
-		'sim/v1/vimeo', 
+		RESTAPIPREFIX.'/vimeo', 
 		'/download_to_server', 
 		array(
 			'methods' 				=> 'POST',

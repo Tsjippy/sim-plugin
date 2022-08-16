@@ -3,7 +3,7 @@ namespace SIM;
 
 add_action( 'rest_api_init', function () {
 	register_rest_route( 
-		'sim/v1/', 
+		RESTAPIPREFIX.'/', 
 		'/user_roles', 
 		array(
 			'methods' 				=> 'GET',

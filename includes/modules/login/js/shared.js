@@ -7,11 +7,11 @@ export function closeMobileMenu(){
 
 // get response from rest api server
 export async function fetchRestApi(url, formData){
-	var response;
+	let response;
 	formData.append('_wpnonce', sim.restNonce);
 
-	var result = await fetch(
-		sim.baseUrl+'/wp-json/sim/v1/login/'+url,
+	let result = await fetch(
+		`${sim.baseUrl}/wp-json${sim.restApiPrefix}/login/${url}`,
 		{
 			method: 'POST',
 			credentials: 'same-origin',

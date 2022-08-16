@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	//Route for notification messages
 	register_rest_route( 
-		'sim/v1', 
+		RESTAPIPREFIX.'', 
 		'/trello', 
 		array(
 			'methods' 				=> \WP_REST_Server::ALLMETHODS,
@@ -135,7 +135,7 @@ function trelloActions( \WP_REST_Request $request ) {
 
 // Make mailtracker rest api url publicy available
 add_filter('sim_allowed_rest_api_urls', function($urls){
-	$urls[]	= 'sim/v1/trello';
+	$urls[]	= RESTAPIPREFIX.'/trello';
 
 	return $urls;
 });

@@ -5,7 +5,7 @@ use SIM;
 //Save a meta key via rest api
 add_action( 'rest_api_init', function () {
 	register_rest_route( 
-		'sim/v1/bulkchange', 
+		RESTAPIPREFIX.'/bulkchange', 
 		'/bulk_change_meta', 
 		array(
 			'methods' 				=> 'POST',

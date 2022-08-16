@@ -35,7 +35,7 @@ import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
 import {Panel, PanelBody, CheckboxControl, __experimentalNumberControl as NumberControl} from "@wordpress/components";
 
-const apiPath	= "/sim/v1/events/upcoming_events";
+const apiPath	= sim.restApiPrefix+"/events/upcoming_events";
 const catsPath	= "/wp/v2/events";
 
 const Edit = ({attributes, setAttributes}) => {

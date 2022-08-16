@@ -35,8 +35,8 @@ export function formReset(form){
 }
 
 export async function submitForm(target, url){
-	var form		= target.closest('form');
-	var validity 	= true;
+	let form		= target.closest('form');
+	let validity 	= true;
 	
 	//first get all hidden required inputs and unrequire them
 	form.querySelectorAll('.hidden [required], select[required]').forEach(el=>{el.required = false});
@@ -53,7 +53,7 @@ export async function submitForm(target, url){
 			tinymce.get().forEach((tn)=>tn.save());
 		}
 		
-		var formData = new FormData(form);
+		let formData = new FormData(form);
 
 		if(form.dataset.addempty == 'true'){
 			//also append at least one off all checkboxes
@@ -65,7 +65,7 @@ export async function submitForm(target, url){
 			});
 		}
 
-		var response = await fetchRestApi(url, formData);
+		let response = await fetchRestApi(url, formData);
 
 		form.querySelectorAll('.submit_wrapper .loadergif').forEach(loader => loader.classList.add('hidden'));
 
@@ -79,7 +79,7 @@ export async function fetchRestApi(url, formData){
 	formData.append('_wpnonce', sim.restNonce);
 
 	let result = await fetch(
-		sim.baseUrl+'/wp-json/sim/v1/'+url,
+		`${sim.baseUrl}/wp-json${sim.restApiPrefix}/${url}`,
 		{
 			method: 'POST',
 			credentials: 'same-origin',
@@ -107,7 +107,7 @@ export async function fetchRestApi(url, formData){
 		if(result.ok){
 			Main.displayMessage(`Problem parsing the json`, 'error');
 		}else{
-			Main.displayMessage(`Url ${sim.baseUrl}/wp-json/sim/v1/${url} not found`, 'error');
+			Main.displayMessage(`Url ${sim.baseUrl}/wp-json${sim.restApiPrefix}/${url} not found`, 'error');
 		}
 		
 		return false;

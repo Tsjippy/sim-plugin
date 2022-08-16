@@ -2,7 +2,7 @@
 namespace SIM\FILEUPLOAD;
 use SIM;
 
-const MODULE_VERSION		= '7.0.0';
+const MODULE_VERSION		= '7.0.1';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
 add_filter('sim_submenu_description', function($description, $moduleSlug){

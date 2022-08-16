@@ -9,7 +9,7 @@ import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
 import { decodeEntities } from '@wordpress/html-entities';
 
-const apiPath	= "/sim/v1/events/upcoming_events";
+const apiPath	= "/events/upcoming_events";
 const catsPath	= "/wp/v2/events";
 
 const Edit = ({attributes, setAttributes}) => {

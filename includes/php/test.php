@@ -12,7 +12,7 @@ add_shortcode("test",function ($atts){
 add_action( 'rest_api_init', function () {
 	// add element to form
 	register_rest_route( 
-		'si/v2', 
+		'sim/v2', 
 		'/sendtest', 
 		array(
 			'methods' 				=> 'GET',

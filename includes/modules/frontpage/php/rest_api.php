@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	// get_attachment_contents
 	register_rest_route( 
-		'sim/v1/frontpage', 
+		RESTAPIPREFIX.'/frontpage', 
 		'/hide_welcome', 
 		array(
 			'methods' 				=> 'POST',

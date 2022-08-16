@@ -4,7 +4,7 @@ use SIM;
 
 // Allow rest api urls for non-logged in users
 add_filter('sim_allowed_rest_api_urls', function($urls){
-    $urls[]	= 'sim/v1/statistics/add_page_view';
+    $urls[]	= RESTAPIPREFIX.'/statistics/add_page_view';
 
     return $urls;
 });
@@ -12,7 +12,7 @@ add_filter('sim_allowed_rest_api_urls', function($urls){
 add_action( 'rest_api_init', function () {
 	// Check for existing travel request
 	register_rest_route( 
-		'sim/v1/statistics', 
+		RESTAPIPREFIX.'/statistics', 
 		'/add_page_view', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,

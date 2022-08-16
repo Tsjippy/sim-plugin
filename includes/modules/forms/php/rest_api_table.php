@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	//save_table_prefs
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/save_table_prefs', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
@@ -23,7 +23,7 @@ add_action( 'rest_api_init', function () {
 
 	//delete_table_prefs
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/delete_table_prefs', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
@@ -40,7 +40,7 @@ add_action( 'rest_api_init', function () {
 
 	//save_column_settings
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/save_column_settings', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
@@ -63,7 +63,7 @@ add_action( 'rest_api_init', function () {
 
 	//delete_table_prefs
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/save_table_settings', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
@@ -86,7 +86,7 @@ add_action( 'rest_api_init', function () {
 
 	//remove submission
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/remove_submission', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
@@ -103,7 +103,7 @@ add_action( 'rest_api_init', function () {
 
 	//remove submission
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/archive_submission', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
@@ -124,7 +124,7 @@ add_action( 'rest_api_init', function () {
 
 	// edit value
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/edit_value', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
@@ -151,7 +151,7 @@ add_action( 'rest_api_init', function () {
 
 	//get_input_html
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/get_input_html', 
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,

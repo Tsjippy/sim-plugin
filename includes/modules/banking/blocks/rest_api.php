@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	// add element to form
 	register_rest_route( 
-		'sim/v1/banking', 
+		RESTAPIPREFIX.'/banking', 
 		'/get_statements', 
 		array(
 			'methods' 				=> 'GET',

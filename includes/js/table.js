@@ -15,7 +15,7 @@ function outsideClicked(event){
 function addInputEventListeners(cell){
 	let inputs	= cell.querySelectorAll('input,select,textarea');
 		
-	inputs.forEach(inputnode=>{
+	inputs.forEach(inputnode => {
 		//add old value
 		oldValue.split(',').forEach(val=>{
 			if(inputnode.type == 'checkbox' || inputnode.type == 'radio'){
@@ -128,12 +128,11 @@ function sortTable(target){
 	let switching	 	= true;
 	let shouldSwitch 	= false;
 	let x,y, rows;
+	var sort 		= 'asc';
 	
 	//Check the sort order
 	if (target.classList.contains('dsc')){
-		let sort 			= 'dsc';
-	}else{
-		let sort 		= 'asc';
+		sort 		= 'dsc';
 	}
 	
 	/*Make a loop that will continue until
@@ -166,21 +165,11 @@ function sortTable(target){
 			}
 			
 			//check if the two rows should switch place ASC:
-			if (sort == 'asc' && x > y) {
-				//if so, mark as a switch and break the loop:
-				shouldSwitch = true;
-				break;
-			//check if the two rows should switch place DSC:
-			}else if (sort == 'dsc'  && y > x) {
-				shouldSwitch = true;
-				break;
+			if ((sort == 'asc' && x > y) || (sort == 'dsc'  && y > x)) {
+				//Switch positions of the rows and start over
+				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+				switching = true;
 			}
-		}
-		
-		if (shouldSwitch) {
-			//Switch positions of the rows and start over
-			rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-			switching = true;
 		}
 	}
 	

@@ -29,7 +29,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	?>
 	<p>
 		This module adds 1 url to the rest api:<br>
-		sim/v1/prayermessage to get the current prayer request<br>
+		sim/v2/prayermessage to get the current prayer request<br>
 		It also adds 1 post category: 'Prayer'<br>
 		You should add a new post with the prayer category each month.
 		This post should have a prayer request for each day on seperate lines.<br>

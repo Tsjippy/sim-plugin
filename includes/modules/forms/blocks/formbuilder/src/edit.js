@@ -13,7 +13,7 @@ const Edit = ({attributes, setAttributes}) => {
 	useEffect( 
 		async () => {
 			if(formname != undefined){
-				let response = await apiFetch({path: `/sim/v1/forms/form_builder?formname=${formname}`});
+				let response = await apiFetch({path: `${sim.restApiPrefix}/forms/form_builder?formname=${formname}`});
 				setHtml( response );
 			}
 		} ,

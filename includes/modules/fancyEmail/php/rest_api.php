@@ -6,7 +6,7 @@ global $wpdb;
 
 add_action( 'rest_api_init', function () {
 	//Route for e-mail tracking of today
-	register_rest_route( 'sim/v1', '/mailtracker', array(
+	register_rest_route( RESTAPIPREFIX, '/mailtracker', array(
 		'methods' => 'GET',
 		'callback' => __NAMESPACE__.'\mailTracker',
 		'permission_callback' => '__return_true',
@@ -16,7 +16,7 @@ add_action( 'rest_api_init', function () {
 
 // Make mailtracker rest api url publicy available
 add_filter('sim_allowed_rest_api_urls', function($urls){
-	$urls[]	= 'sim/v1/mailtracker';
+	$urls[]	= RESTAPIPREFIX.'/mailtracker';
 
 	return $urls;
 });

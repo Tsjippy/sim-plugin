@@ -15,7 +15,7 @@ function checkPermissions(){
 add_action( 'rest_api_init', function () {
 	// add element to form
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/add_form_element', 
 		array(
 			'methods' 				=> 'POST',
@@ -34,7 +34,7 @@ add_action( 'rest_api_init', function () {
 
 	// delete element
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/remove_element', 
 		array(
 			'methods' 				=> 'POST',
@@ -55,7 +55,7 @@ add_action( 'rest_api_init', function () {
 
 	// request form element
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/request_form_element', 
 		array(
 			'methods' 				=> 'POST',
@@ -76,7 +76,7 @@ add_action( 'rest_api_init', function () {
 
 	// reorder form elements
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/reorder_form_elements', 
 		array(
 			'methods' 				=> 'POST',
@@ -101,7 +101,7 @@ add_action( 'rest_api_init', function () {
 
 	// edit formfield width
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/edit_formfield_width', 
 		array(
 			'methods' 				=> 'POST',
@@ -126,7 +126,7 @@ add_action( 'rest_api_init', function () {
 
 	// form conditions html
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/request_form_conditions_html', 
 		array(
 			'methods' 				=> 'POST',
@@ -147,7 +147,7 @@ add_action( 'rest_api_init', function () {
 
 	// save_element_conditions
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/save_element_conditions', 
 		array(
 			'methods' 				=> 'POST',
@@ -168,7 +168,7 @@ add_action( 'rest_api_init', function () {
 
 	// save_form_settings
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/save_form_settings', 
 		array(
 			'methods' 				=> 'POST',
@@ -188,7 +188,7 @@ add_action( 'rest_api_init', function () {
 
 	// save_form_input
 	register_rest_route( 
-		'sim/v1/forms', 
+		'sim/v2/forms', 
 		'/save_form_input', 
 		array(
 			'methods' 				=> 'POST',
@@ -205,7 +205,7 @@ add_action( 'rest_api_init', function () {
 
 	// save_form_emails
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/save_form_emails', 
 		array(
 			'methods' 				=> 'POST',

@@ -11,7 +11,7 @@ const Edit = ({attributes, setAttributes}) => {
 	const [forms, setForms] = useState([]);
 
 	useEffect( async () => {
-		const fetchedForms = await apiFetch({path: '/sim/v1/forms/get_forms'});
+		const fetchedForms = await apiFetch({path: sim.restApiPrefix+'/forms/get_forms'});
 
 		let options	= fetchedForms.map( c => (
 			{ label: c.name, value: c.id }
@@ -29,11 +29,11 @@ const Edit = ({attributes, setAttributes}) => {
 			if(formid != undefined){
 				// add shortcode id if not given
 				if(tableid == undefined){
-					tableid = await apiFetch({path: `/sim/v1/forms/add_form_table?formid=${formid}`});
+					tableid = await apiFetch({path: `${sim.restApiPrefix}/forms/add_form_table?formid=${formid}`});
 					setAttributes({tableid: tableid});
 				}
 
-				let response = await apiFetch({path: `/sim/v1/forms/show_form_results?formid=${formid}&tableid=${String(tableid)}`});
+				let response = await apiFetch({path: `${sim.restApiPrefix}/forms/show_form_results?formid=${formid}&tableid=${String(tableid)}`});
 				setHtml( response );
 			}
 		} ,

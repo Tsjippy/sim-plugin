@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const STYLE_VERSION		= '7.0.31';
+const STYLE_VERSION		= '7.0.32';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts', 1);
@@ -82,7 +82,8 @@ function enqueueScripts(){
 			'baseUrl' 		=> get_home_url(),
 			'maxFileSize'	=> wp_max_upload_size(),
 			'restNonce'		=> wp_create_nonce('wp_rest'),
-			'locations'		=> $locations
+			'locations'		=> $locations,
+			'restApiPrefix'	=> '/'.RESTAPIPREFIX
 		) 
 	);
 }

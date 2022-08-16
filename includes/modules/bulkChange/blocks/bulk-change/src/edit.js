@@ -16,12 +16,12 @@ const Edit = ({attributes, setAttributes}) => {
 	const [availableRoles, setAvailableRoles] = useState(<Spinner />);
 
 	useEffect( async () => {
-		const result = await apiFetch({path: "/sim/v1/bulkchange/bulk_change_meta_html"});
+		const result = await apiFetch({path: `${sim.restApiPrefix}/bulkchange/bulk_change_meta_html`});
 		setHtml(result);
 	} , []);
 
 	useEffect( async () => {
-		const result = await apiFetch({path: "/sim/v1/user_roles"});
+		const result = await apiFetch({path: `${sim.restApiPrefix}/user_roles`});
 		setAvailableRoles(result);
 	} , []);
 

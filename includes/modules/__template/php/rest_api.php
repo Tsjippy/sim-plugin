@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	//Route for notification messages
 	register_rest_route( 
-		'sim/v1/MODULENAME', 
+		RESTAPIPREFIX.'/MODULENAME', 
 		'/add_category', 
 		array(
 			'methods' 				=> 'POST',

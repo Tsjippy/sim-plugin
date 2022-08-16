@@ -107,7 +107,7 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
 
     upload.options.onProgress   = function(bytesUploaded, bytesTotal) {
         //calculate percentage
-        var percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
+        let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
     
         //show percentage in progressbar
         document.querySelectorAll('.attachments-wrapper .uploading:first-child .media-progress-bar > div, .selection-view .uploading:first-child .media-progress-bar > div, .media-uploader-status.uploading .media-progress-bar > div').forEach(div=>{
@@ -120,11 +120,11 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
         uploader.removeFromStorage();
         
         //get wp post details
-        var formData = new FormData();
+        let formData = new FormData();
         formData.append('post_id', uploader.storedEntry.postId);
     
-        var request = new XMLHttpRequest();
-        request.open('POST', sim.baseUrl+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
+        let request = new XMLHttpRequest();
+        request.open('POST', `${sim.baseUrl}/wp-json${sim.restApiPrefix}/vimeo/add_uploaded_vimeo`, false);
         request.send(formData);
     
         //mark as uploaded

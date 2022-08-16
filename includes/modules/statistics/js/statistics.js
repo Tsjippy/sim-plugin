@@ -15,7 +15,7 @@ function sendStatistics(){
     formData.append('_wpnonce', sim.restNonce);
 
 	fetch(
-		sim.baseUrl+'/wp-json/sim/v1/statistics/add_page_view',
+		`${sim.baseUrl}/wp-json${sim.restApiPrefix}/statistics/add_page_view`,
 		{
 			method: 'POST',
 			credentials: 'same-origin',

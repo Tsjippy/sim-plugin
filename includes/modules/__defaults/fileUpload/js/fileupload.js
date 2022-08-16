@@ -311,13 +311,13 @@ async function uploadVideo(file){
 	};
 
 	upload.options.onSuccess    = async function() {
-		var postId	= uploader.storedEntry.postId;
+		let postId	= uploader.storedEntry.postId;
 		// Add post id of the video to the form
-		var formData = new FormData();
+		let formData = new FormData();
         formData.append('post_id', postId);
     
-        var request = new XMLHttpRequest();
-        request.open('POST', sim.baseUrl+'/wp-json/sim/v1/vimeo/add_uploaded_vimeo', false);
+        let request = new XMLHttpRequest();
+        request.open('POST', `${sim.baseUrl}/wp-json${sim.restApiPrefix}/vimeo/add_uploaded_vimeo`, false);
         request.send(formData);
 
 		//Remove progress barr

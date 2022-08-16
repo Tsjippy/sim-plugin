@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	//add_schedule
 	register_rest_route(
-		'sim/v1/events', 
+		RESTAPIPREFIX.'/events', 
 		'/add_schedule', 
 		array(
 			'methods' 				=> 'POST',
@@ -33,7 +33,7 @@ add_action( 'rest_api_init', function () {
 
 	//publish_schedule
 	register_rest_route( 
-		'sim/v1/events', 
+		RESTAPIPREFIX.'/events', 
 		'/publish_schedule', 
 		array(
 			'methods' 				=> 'POST',
@@ -60,7 +60,7 @@ add_action( 'rest_api_init', function () {
 
 	//remove_schedule
 	register_rest_route( 
-		'sim/v1/events', 
+		RESTAPIPREFIX.'/events', 
 		'/remove_schedule', 
 		array(
 			'methods' 				=> 'POST',
@@ -83,7 +83,7 @@ add_action( 'rest_api_init', function () {
 
 	//add_host
 	register_rest_route( 
-		'sim/v1/events', 
+		RESTAPIPREFIX.'/events', 
 		'/add_host', 
 		array(
 			'methods' 				=> 'POST',
@@ -118,7 +118,7 @@ add_action( 'rest_api_init', function () {
 
 	//remove_host
 	register_rest_route( 
-		'sim/v1/events', 
+		RESTAPIPREFIX.'/events', 
 		'/remove_host', 
 		array(
 			'methods' 				=> 'POST',
@@ -154,7 +154,7 @@ add_action( 'rest_api_init', function () {
 
 	//add_menu
 	register_rest_route( 
-		'sim/v1/events', 
+		RESTAPIPREFIX.'/events', 
 		'/add_menu', 
 		array(
 			'methods' 				=> 'POST',

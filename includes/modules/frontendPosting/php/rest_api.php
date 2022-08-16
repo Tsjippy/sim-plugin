@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	// get_attachment_contents
 	register_rest_route( 
-		'sim/v1/frontend_posting', 
+		RESTAPIPREFIX.'/frontend_posting', 
 		'/get_attachment_contents', 
 		array(
 			'methods' 				=> 'POST',
@@ -22,7 +22,7 @@ add_action( 'rest_api_init', function () {
 
 	// add_category
 	register_rest_route( 
-		'sim/v1/frontend_posting', 
+		RESTAPIPREFIX.'/frontend_posting', 
 		'/add_category', 
 		array(
 			'methods' 				=> 'POST',
@@ -46,7 +46,7 @@ add_action( 'rest_api_init', function () {
 
 	//submit_post
 	register_rest_route( 
-		'sim/v1/frontend_posting', 
+		RESTAPIPREFIX.'/frontend_posting', 
 		'/submit_post', 
 		array(
 			'methods' 				=> 'POST',
@@ -82,7 +82,7 @@ add_action( 'rest_api_init', function () {
 
 	// remove_post
 	register_rest_route( 
-		'sim/v1/frontend_posting', 
+		RESTAPIPREFIX.'/frontend_posting', 
 		'/remove_post', 
 		array(
 			'methods' 				=> 'POST',
@@ -105,7 +105,7 @@ add_action( 'rest_api_init', function () {
 
 	// refresh post lock
 	register_rest_route( 
-		'sim/v1/frontend_posting', 
+		RESTAPIPREFIX.'/frontend_posting', 
 		'/refresh_post_lock', 
 		array(
 			'methods' 				=> 'POST',
@@ -132,7 +132,7 @@ add_action( 'rest_api_init', function () {
 
 	// delete post lock
 	register_rest_route( 
-		'sim/v1/frontend_posting', 
+		RESTAPIPREFIX.'/frontend_posting', 
 		'/delete_post_lock', 
 		array(
 			'methods' 				=> 'POST',
@@ -152,7 +152,7 @@ add_action( 'rest_api_init', function () {
 
 	// change post type
 	register_rest_route( 
-		'sim/v1/frontend_posting', 
+		RESTAPIPREFIX.'/frontend_posting', 
 		'/change_post_type', 
 		array(
 			'methods' 				=> 'POST',

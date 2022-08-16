@@ -22,8 +22,8 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		Use this shortcode to display all pending Signal messages and delete them if needed.<br>
 		<br>
 		Adds 2 urls to the rest api:<br>
-		sim/v1/notifications to get any other messages<br>
-		sim/v1/firstname to find a users name by phonenumber<br>
+		sim/v2/notifications to get any other messages<br>
+		sim/v2/firstname to find a users name by phonenumber<br>
 	</p>
 	<?php
 	return ob_get_clean();

@@ -13,14 +13,14 @@ use WP_Error;
 
 // Allow rest api urls for non-logged in users
 add_filter('sim_allowed_rest_api_urls', function($urls){
-    $urls[]	= 'sim/v1/login/auth_finish';
-    $urls[]	= 'sim/v1/login/auth_start';
-    $urls[] = 'sim/v1/login/request_email_code';
-    $urls[] = 'sim/v1/login/check_cred';
-    $urls[] = 'sim/v1/login/request_login'; 
-    $urls[] = 'sim/v1/login/request_pwd_reset';    
-    $urls[] = 'sim/v1/login/update_password';
-    $urls[] = 'sim/v1/login/request_user_account'; 
+    $urls[]	= RESTAPIPREFIX.'/login/auth_finish';
+    $urls[]	= RESTAPIPREFIX.'/login/auth_start';
+    $urls[] = RESTAPIPREFIX.'/login/request_email_code';
+    $urls[] = RESTAPIPREFIX.'/login/check_cred';
+    $urls[] = RESTAPIPREFIX.'/login/request_login'; 
+    $urls[] = RESTAPIPREFIX.'/login/request_pwd_reset';    
+    $urls[] = RESTAPIPREFIX.'/login/update_password';
+    $urls[] = RESTAPIPREFIX.'/login/request_user_account'; 
 
     return $urls;
 });
@@ -28,7 +28,7 @@ add_filter('sim_allowed_rest_api_urls', function($urls){
 add_action( 'rest_api_init', function () {
     // Send authentication request for storing fingerprint
 	register_rest_route( 
-        'sim/v1/login', 
+        RESTAPIPREFIX.'/login', 
         '/fingerprint_options', 
         array(
             'methods'               => 'POST,GET',
@@ -44,7 +44,7 @@ add_action( 'rest_api_init', function () {
 
     // Verify and store fingerprint
     register_rest_route( 
-        'sim/v1/login', 
+        RESTAPIPREFIX.'/login', 
         '/store_fingerprint', 
         array(
             'methods'               => 'POST,GET',
@@ -60,7 +60,7 @@ add_action( 'rest_api_init', function () {
 
     // Send authentication request for login
     register_rest_route( 
-        'sim/v1/login', 
+        RESTAPIPREFIX.'/login', 
         '/auth_start', 
         array(
             'methods' => 'POST',
@@ -76,7 +76,7 @@ add_action( 'rest_api_init', function () {
 
     //verify fingerprint for login
     register_rest_route( 
-        'sim/v1/login', 
+        RESTAPIPREFIX.'/login', 
         '/auth_finish', 
         array(
             'methods' => 'POST,GET',
@@ -92,7 +92,7 @@ add_action( 'rest_api_init', function () {
 
 	// send email code
 	register_rest_route( 
-		'sim/v1/login', 
+		RESTAPIPREFIX.'/login', 
 		'/request_email_code', 
 		array(
 			'methods' 				=> 'POST',
@@ -108,7 +108,7 @@ add_action( 'rest_api_init', function () {
 
     // check credentials
 	register_rest_route( 
-		'sim/v1/login', 
+		RESTAPIPREFIX.'/login', 
 		'/check_cred', 
 		array(
 			'methods' 				=> 'POST',
@@ -127,7 +127,7 @@ add_action( 'rest_api_init', function () {
 
     // save_2fa_settings
 	register_rest_route( 
-		'sim/v1/login', 
+		RESTAPIPREFIX.'/login', 
 		'/save_2fa_settings', 
 		array(
 			'methods' 				=> 'GET,POST',
@@ -146,7 +146,7 @@ add_action( 'rest_api_init', function () {
 
     // remove_web_authenticator
 	register_rest_route( 
-		'sim/v1/login', 
+		RESTAPIPREFIX.'/login', 
 		'/remove_web_authenticator', 
 		array(
 			'methods' 				=> 'POST',
@@ -162,7 +162,7 @@ add_action( 'rest_api_init', function () {
 
     // request_login
 	register_rest_route( 
-		'sim/v1/login', 
+		RESTAPIPREFIX.'/login', 
 		'/request_login', 
 		array(
 			'methods' 				=> 'POST',
@@ -181,7 +181,7 @@ add_action( 'rest_api_init', function () {
 
     // logout
 	register_rest_route( 
-		'sim/v1/login', 
+		RESTAPIPREFIX.'/login', 
 		'/logout', 
 		array(
 			'methods' 				=> 'POST',
@@ -195,7 +195,7 @@ add_action( 'rest_api_init', function () {
 
     // request_pwd_reset
 	register_rest_route( 
-		'sim/v1/login', 
+		RESTAPIPREFIX.'/login', 
 		'/request_pwd_reset', 
 		array(
 			'methods' 				=> 'POST',
@@ -211,7 +211,7 @@ add_action( 'rest_api_init', function () {
 
     // update password
 	register_rest_route( 
-		'sim/v1/login', 
+		RESTAPIPREFIX.'/login', 
 		'/update_password', 
 		array(
 			'methods' 				=> 'POST',
@@ -234,7 +234,7 @@ add_action( 'rest_api_init', function () {
 
     // request_user_account
 	register_rest_route( 
-		'sim/v1/login', 
+		RESTAPIPREFIX.'/login', 
 		'/request_user_account', 
 		array(
 			'methods' 				=> 'POST',

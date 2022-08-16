@@ -8,7 +8,7 @@ class FancyEmail{
 
         $this->mailTable        = $wpdb->prefix."sim_emails";
         $this->mailEventTable   = $wpdb->prefix."sim_email_events";
-        $this->mailTrackerUrl   = SITEURL."/wp-json/sim/v1/mailtracker";
+        $this->mailTrackerUrl   = SITEURL."/wp-json/".RESTAPIPREFIX."/mailtracker";
         $this->mailImagesFolder = wp_upload_dir()['basedir']."/email_pictures";
     }
 

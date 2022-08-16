@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	// add element to form
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/form_selector', 
 		array(
 			'methods' 				=> 'GET',
@@ -16,7 +16,7 @@ add_action( 'rest_api_init', function () {
 
 	// form builder
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/form_builder', 
 		array(
 			'methods' 				=> 'POST,GET',
@@ -27,7 +27,7 @@ add_action( 'rest_api_init', function () {
 
 	// Get all forms
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/get_forms', 
 		array(
 			'methods' 				=> 'POST,GET',
@@ -38,7 +38,7 @@ add_action( 'rest_api_init', function () {
 
 	 // Show form results
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/show_form_results', 
 		array(
 			'methods' 				=> 'POST,GET',
@@ -49,7 +49,7 @@ add_action( 'rest_api_init', function () {
 
 	// Add new form table
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/add_form_table', 
 		array(
 			'methods' 				=> 'POST,GET',
@@ -63,7 +63,7 @@ add_action( 'rest_api_init', function () {
 
 	// Add new form table
 	register_rest_route( 
-		'sim/v1/forms', 
+		RESTAPIPREFIX.'/forms', 
 		'/missing_form_fields', 
 		array(
 			'methods' 				=> 'POST,GET',

@@ -13,3 +13,4 @@ define('PLUGINPATH', plugin_dir_path(__FILE__));
 define('INCLUDESPATH', PLUGINPATH.'includes/');
 define('MODULESPATH', INCLUDESPATH.'modules/');
 define('PICTURESPATH', INCLUDESPATH.'pictures/');
+define('RESTAPIPREFIX', 'sim/v2');

@@ -5,7 +5,7 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	// Month calendar
 	register_rest_route( 
-		'sim/v1/events', 
+		RESTAPIPREFIX.'/events', 
 		'/get_month_html', 
 		array(
 			'methods' 				=> 'POST',
@@ -33,7 +33,7 @@ add_action( 'rest_api_init', function () {
 
 	// Week calendar
 	register_rest_route( 
-		'sim/v1/events', 
+		RESTAPIPREFIX.'/events', 
 		'/get_week_html', 
 		array(
 			'methods' 				=> 'POST',
@@ -57,7 +57,7 @@ add_action( 'rest_api_init', function () {
 
 	// List calendar
 	register_rest_route( 
-		'sim/v1/events', 
+		RESTAPIPREFIX.'/events', 
 		'/get_list_html', 
 		array(
 			'methods' 				=> 'POST,GET',

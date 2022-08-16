@@ -95,7 +95,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 		$trelloUserId = $trello->getTokenInfo()->id;
 		
 		//Create a webhook listening to the userid	
-		$trello->createWebhook(SITEURL.'/wp-json/sim/v1/trello', $trelloUserId, "Listens to all actions related to the user with id $trelloUserId");
+		$trello->createWebhook(SITEURL.'/wp-json/'.RESTAPIPREFIX.'/trello', $trelloUserId, "Listens to all actions related to the user with id $trelloUserId");
 	}
 
 	return $newOptions;
