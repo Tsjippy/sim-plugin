@@ -6,6 +6,7 @@
 - bulk change module
 
 ### Changed
+- switch form ver ajax
 
 ### Fixed
 - first login on staging site
