@@ -3,17 +3,19 @@ namespace SIM\FRONTPAGE;
 use SIM;
 
 //Add a shortcode for the displayname
-add_shortcode( 'displayname', function () {
+add_shortcode( 'displayname', __NAMESPACE__.'\displayName');
+function displayName() {
 	if (is_user_logged_in()){
 		$currentUser = wp_get_current_user();
 		return $currentUser->first_name;
 	}else{
 		return "visitor";	
 	}
-});
+}
 
 //Shortcode to return the amount of loggins in words
-add_shortcode("login_count", function (){
+add_shortcode("login_count", __NAMESPACE__.'\loginCount');
+function loginCount(){
 	$UserID 			= get_current_user_id();
 	$currentLogginCount = get_user_meta( $UserID, 'login_count', true );
 	//Get the word from the array
@@ -23,7 +25,7 @@ add_shortcode("login_count", function (){
 	}else{
 		return "your first";
 	}
-});
+}
 
 /**
  * Wrapper function for the home page for logged in users
@@ -34,7 +36,8 @@ add_shortcode('logged_home_page', function(){
 });
 
 //Shortcode for the welcome message on the homepage
-add_shortcode("welcome", function (){
+add_shortcode("welcome", __NAMESPACE__.'\welcomeMessage');
+function welcomeMessage(){
 	if (is_user_logged_in()){
 		$userId = get_current_user_id();
 		//Check welcome message needs to be shown
@@ -50,4 +53,6 @@ add_shortcode("welcome", function (){
 			}
 		}
 	}
-});
+
+	return '';
+}

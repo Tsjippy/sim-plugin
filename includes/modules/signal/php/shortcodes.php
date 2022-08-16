@@ -10,7 +10,7 @@ add_shortcode('signal_messages',function(){
 	$html 			= '';
 	
 	//Perform remove action
-	if(isset($_POST['recipient_number']) and isset($_POST['key'])){
+	if(isset($_POST['recipient_number']) && isset($_POST['key'])){
 		if($_SERVER['HTTP_HOST'] == 'localhost'){
 			$html .= '<div class="success">Succesfully removed all the messages</div>';
 			delete_option('signal_bot_messages');
@@ -25,7 +25,7 @@ add_shortcode('signal_messages',function(){
 		}
 	}
 	
-	if(is_array($signalMessages) and count($signalMessages) >0){
+	if(is_array($signalMessages) && !empty($signalMessages)){
 		foreach($signalMessages as $recipient_number=>$recipient){
 			$html .= "<strong>Messages to $recipient_number</strong><br>";
 			foreach($recipient as $key=>$signal_message){

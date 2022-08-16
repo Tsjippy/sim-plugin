@@ -1,6 +1,6 @@
 console.log("Home.js loaded");
 document.addEventListener("DOMContentLoaded",function() {
-	// SHow message 
+	// Show message 
  	if(location['search'].includes('?message=')){
 		var param	= location.search.substr(1).split("&");
 		var text 	= decodeURIComponent(param[0].split("=")[1]);

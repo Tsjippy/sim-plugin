@@ -1,0 +1,13 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "sim/welcome",
+	"version": "0.1.0",
+	"title": "Welcome message",
+	"category": "widgets",
+	"description": "The welcome message to show to new users of the website",
+	"textdomain": "sim",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

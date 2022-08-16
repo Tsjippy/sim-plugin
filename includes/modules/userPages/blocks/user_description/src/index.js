@@ -5,7 +5,7 @@ import metadata from './block.json';
 
 
 registerBlockType( metadata.name, {
-	icon: 'admin-post',
+	icon: 'page',
 	/**
 	 * @see ./edit.js
 	 */
