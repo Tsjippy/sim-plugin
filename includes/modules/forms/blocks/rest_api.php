@@ -19,30 +19,106 @@ add_action( 'rest_api_init', function () {
 		'sim/v1/forms', 
 		'/form_builder', 
 		array(
-			'methods' 				=> 'GET,POST',
+			'methods' 				=> 'POST,GET',
 			'callback' 				=> 	__NAMESPACE__.'\showFormBuilder',
 			'permission_callback' 	=> '__return_true',
 		)
 	);
 
-	
+	// Get all forms
+	register_rest_route( 
+		'sim/v1/forms', 
+		'/get_forms', 
+		array(
+			'methods' 				=> 'POST,GET',
+			'callback' 				=> 	__NAMESPACE__.'\getAllForms',
+			'permission_callback' 	=> '__return_true',
+		)
+	);
+
+	 // Show form results
+	register_rest_route( 
+		'sim/v1/forms', 
+		'/show_form_results', 
+		array(
+			'methods' 				=> 'POST,GET',
+			'callback' 				=> 	__NAMESPACE__.'\showFormResults',
+			'permission_callback' 	=> '__return_true',
+		)
+	);
+
+	// Add new form table
+	register_rest_route( 
+		'sim/v1/forms', 
+		'/add_form_table', 
+		array(
+			'methods' 				=> 'POST,GET',
+			'callback' 				=> 	function(){
+				$displayFormResults	= new DisplayFormResults();
+				return $displayFormResults->insertInDb($_REQUEST['formid']);
+			},
+			'permission_callback' 	=> '__return_true',
+		)
+	);
 });
 
 function showFormBuilder($attributes){
 
 	if($attributes instanceof \WP_REST_Request){
-		if(!empty($_REQUEST['name'])){
-			$attributes = ['formname' => $_REQUEST['name']];
+		if(!empty($_REQUEST['formname'])){
+			$attributes = ['formname' => $_REQUEST['formname']];
 		}elseif(!empty($_REQUEST['formid'])){
 			$attributes = ['formid' => $_REQUEST['formid']];
 		}else{
 			return false;
 		}
-	}elseif(!isset($attributes['name'])){
+	}elseif(!isset($attributes['formname'])){
 		return false;
 	}
 	
 	$simForms = new SimForms();
 
-	return $simForms->determineForm($attributes);
+	$html	= $simForms->determineForm($attributes);
+	if(is_wp_error($html)){
+		$html = $html->get_error_message();
+	}
+
+	return $html;
+}
+
+function showFormResults($attributes){
+
+	if($attributes instanceof \WP_REST_Request){
+		if(!empty($_REQUEST['formid'])){
+			$attributes = [
+				'formid' 	=> $_REQUEST['formid'],
+				'id'		=> $_REQUEST['id']
+			];
+		}else{
+			return false;
+		}
+	}elseif(!isset($attributes['formid'])){
+		return false;
+	}
+
+	if(isset($attributes['tableid'])){
+		$attributes['id']	= $attributes['tableid'];
+	}
+	
+	$displayFormResults = new DisplayFormResults();
+    $displayFormResults->processAtts($attributes);
+	$html	= $displayFormResults->showFormresultsTable();
+	
+	if(is_wp_error($html)){
+		$html = $html->get_error_message();
+	}
+
+	return $html;
+}
+
+function getAllForms(){
+	$simForms	= new SimForms();
+	$simForms->getForms();
+
+	return $simForms->forms;
 }

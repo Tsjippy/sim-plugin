@@ -2,22 +2,22 @@ import { __ } from '@wordpress/i18n';
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {Panel, PanelBody, Spinner, CheckboxControl, __experimentalNumberControl as NumberControl, __experimentalInputControl as InputControl} from "@wordpress/components";
+import {Panel, PanelBody, __experimentalInputControl as InputControl} from "@wordpress/components";
 import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 
 const Edit = ({attributes, setAttributes}) => {
-	const {name} = attributes;
+	const {formname} = attributes;
 
 	const [html, setHtml] = useState('');
 
 	useEffect( 
 		async () => {
-			if(name != undefined){
-				const response = await apiFetch({path: `/sim/v1/forms/form_builder?name=${name}`});
+			if(formname != undefined){
+				let response = await apiFetch({path: `/sim/v1/forms/form_builder?formname=${formname}`});
 				setHtml( response );
 			}
 		} ,
-		[name]
+		[formname]
 	);
 
 	function ShowResult(){
@@ -25,8 +25,8 @@ const Edit = ({attributes, setAttributes}) => {
 			return <InputControl
 				label={__('Form name', 'sim')}
 				isPressEnterToChange={true}
-				value={name}
-				onChange={(value) => setAttributes({ name: value })}
+				value={formname}
+				onChange={(value) => setAttributes({ formname: value })}
 			/>
 		}
 
@@ -41,8 +41,8 @@ const Edit = ({attributes, setAttributes}) => {
 						<InputControl
                             label={__('Form name', 'sim')}
 							isPressEnterToChange={true}
-                            value={name}
-                            onChange={(value) => setAttributes({ name: value })}
+                            value={formname}
+                            onChange={(value) => setAttributes({ formname: value })}
                         />
 					</PanelBody>
 				</Panel>

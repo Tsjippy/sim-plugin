@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
+use WP_Error;
 
 ob_start();
 
@@ -568,6 +569,10 @@ class DisplayFormResults extends SimForms{
 	 */
 	function loadShortcodeData(){
 		global $wpdb;
+
+		if(!is_numeric($this->shortcodeId)){
+			return new WP_Error('forms', 'no shortcoode id');
+		}
 		
 		$query						= "SELECT * FROM {$this->shortcodeTable} WHERE id= '{$this->shortcodeId}'";
 		
@@ -1010,14 +1015,14 @@ class DisplayFormResults extends SimForms{
 		
 		$this->formSettings		= $this->formData->settings;
 		
-		if($this->tableSettings['archived'] == 'true' || $_GET['archived']){
+		if($this->tableSettings['archived'] == 'true' || $_REQUEST['archived']){
 			$this->showArchived = true;
 		}else{
 			$this->showArchived = false;
 		}
 		
 		//check if we have rights on this form
-		if(!$this->formEditPermissions){
+		if(!isset($this->formEditPermissions) || !$this->formEditPermissions){
 			if(
 				array_intersect((array)$this->userRoles, array_keys((array)$this->formSettings['full_right_roles']))	||
 				array_intersect((array)$this->userRoles, array_keys((array)$this->tableSettings['full_right_roles']))	||
@@ -1030,7 +1035,7 @@ class DisplayFormResults extends SimForms{
 		}
 		
 		//check if we have rights on this table
-		if(!$this->tableEditPermissions){
+		if(!isset($this->tableEditPermissions) || !$this->tableEditPermissions){
 			if(array_intersect($this->userRoles, array_keys((array)$this->tableSettings['edit_right_roles']))){
 				$this->tableEditPermissions = true;
 			}else{
@@ -1039,7 +1044,7 @@ class DisplayFormResults extends SimForms{
 		}
 		
 		if(
-			$_GET['onlyown'] == 'true'							|| 
+			$_REQUEST['onlyown'] == 'true'						|| 
 			$this->tableSettings['result_type'] == 'personal'	||
 			!$this->tableEditPermissions						&&
 			!array_intersect($this->userRoles, array_keys((array)$this->tableSettings['view_right_roles']))
@@ -1222,7 +1227,7 @@ class DisplayFormResults extends SimForms{
 				<p><br><br><br>No records found</p>
 				<?php
 
-				return;
+				return ob_get_clean();
 			}
 
 			$this->enrichColumnSettings();
@@ -1467,12 +1472,3 @@ class DisplayFormResults extends SimForms{
 		return $data;
 	}
 }
-
-add_filter( 'wp_insert_post_data', function($data , $postarr){
-	if(function_exists('wp_get_current_user')){
-		$formtable = new DisplayFormResults();
-		return $formtable->checkForFormShortcode($data , $postarr);
-	}
-
-	return $data;
-}, 10, 2 );

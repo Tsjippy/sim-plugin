@@ -1,18 +1,14 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 2,
-	"name": "sim/formbuilder",
+	"name": "sim/formresults",
 	"version": "0.1.0",
-	"title": "Build a form",
+	"title": "Submission results of a given form",
 	"category": "widgets",
-	"description": "Build or display a form",
+	"description": "Submission results of a given form",
 	"textdomain": "sim",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css",
-	"attributes": {
-		"formname": {
-		  "type": "string"
-		}
-	}
+	"style": "file:./style-index.css"
+	
 }

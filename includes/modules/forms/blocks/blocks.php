@@ -16,8 +16,33 @@ add_action('init', function () {
 			'render_callback' => __NAMESPACE__.'\showFormBuilder',
 		)
 	);
+
+	register_block_type(
+		__DIR__ . '/formresults/build',
+		array(
+			'render_callback' => __NAMESPACE__.'\showFormResults',
+			'attributes'      => [
+				'formid' => [
+					'type' => 'string'
+				],
+				'onlyOwn'  => [
+					'type'  => 'boolean',
+					'default' => false,
+				],
+				'archived'  => [
+					'type'  => 'boolean',
+					'default' => false,
+				],
+				'tableid'  => [
+					'type'  => 'integer'
+				],
+			]
+		)
+	);
 });
 
 add_action( 'enqueue_block_editor_assets', function(){
 	wp_enqueue_script( 'sim_formbuilderjs');
+
+	wp_enqueue_script('sim_forms_table_script');
 } );

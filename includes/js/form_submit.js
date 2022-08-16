@@ -99,7 +99,7 @@ export async function fetchRestApi(url, formData){
 			console.error(response);
 			Main.displayMessage(response.message, 'error');
 			return false;
-		};
+		}
 	}catch(error){
 		console.error(error);
 		console.error(result);

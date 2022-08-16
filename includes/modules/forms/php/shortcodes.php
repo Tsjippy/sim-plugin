@@ -156,3 +156,12 @@ function missingFormFields($atts){
 	
 	return $html;
 }
+
+add_filter( 'wp_insert_post_data', function($data , $postarr){
+	if(function_exists('wp_get_current_user')){
+		$formtable  = new DisplayFormResults();
+        return $formtable->checkForFormShortcode($data , $postarr);
+	}
+
+	return $data;
+}, 10, 2 );
