@@ -24,7 +24,8 @@ add_action('init', function () {
 					'default' 	=> true,
 				],
 				'style'  => [
-					'type'  => 'string'
+					'type'  	=> 'string',
+					'default' 	=> '',
 				],
 			]
 		)
