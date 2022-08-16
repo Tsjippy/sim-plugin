@@ -537,6 +537,39 @@ export function changeFieldProperty(name, att, value, functionRef){
 	functionRef(target);
 }
 
+async function formbuilderSwitch(target){
+	let wrapper	= target.closest('.sim_form.wrapper');
+	let button	= target.outerHTML;
+
+	let formData = new FormData();
+	let formId;
+
+	const url 		= new URL(window.location);
+	if(target.matches('.formbuilder-switch')){
+		formData.append('formbuilder', true);
+		url.searchParams.set('formbuilder', true);
+
+		formId	= wrapper.querySelector('form.sim_form').dataset.formid;
+	}else{
+		url.searchParams.delete('formbuilder');
+		formId	= wrapper.querySelector('[name="formid"]').value;
+	}
+	window.history.pushState({}, '', url);
+
+	formData.append('formid', formId);
+
+	let loader	= Main.showLoader(target, false, 'Requesting form...');
+	wrapper.innerHTML	= loader.outerHTML;
+
+	let response = await FormSubmit.fetchRestApi('forms/form_builder', formData);
+
+	if(response){
+		wrapper.innerHTML	= response;
+	}else{
+		loader.outerHTML	= button;
+	}
+}
+
 //Main code
 document.addEventListener("DOMContentLoaded",function() {
 	console.log('Forms.js is loaded');
@@ -588,5 +621,9 @@ document.addEventListener('click',function(event) {
 		event.stopPropagation();
 		
 		saveFormInput(target);
+	}
+
+	if(target.matches('.formbuilder-switch') || target.matches('.formbuilder-switch-back')){
+		formbuilderSwitch(target);
 	}
 });

@@ -289,6 +289,10 @@ class SaveFormSettings extends SimForms{
 	 */
 	function maybeInsertForm(){
 		global $wpdb;
+
+		if(!isset($this->formName)){
+			return new WP_ERROR('forms', 'No formname given');
+		}
 		
 		//check if form row already exists
 		if(!$wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `name` = '{$this->formName}'")){

@@ -370,7 +370,7 @@ class DisplayForm extends SimForms{
 		$html	= '<div class="sim_form wrapper">';
 			// Formbuilder button
 			if($this->editRights){
-				$html	.= "<a href='?formbuilder=yes' class='button sim'>Show formbuilder</a>";
+				$html	.= "<button type='button' class='button small formbuilder-switch'>Switch to formbuilder</button>";
 			}
 		
 			$html	.= "<h3>$formName</h3>";	

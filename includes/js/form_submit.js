@@ -78,7 +78,7 @@ export async function submitForm(target, url){
 export async function fetchRestApi(url, formData){
 	formData.append('_wpnonce', sim.restNonce);
 
-	var result = await fetch(
+	let result = await fetch(
 		sim.baseUrl+'/wp-json/sim/v1/'+url,
 		{
 			method: 'POST',
@@ -88,7 +88,7 @@ export async function fetchRestApi(url, formData){
 	);
 
 	try{
-		var response	= await result.json();
+		let response	= await result.json();
 
 		if(result.ok){
 			return response;

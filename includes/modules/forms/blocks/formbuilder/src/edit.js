@@ -1,25 +1,54 @@
 import { __ } from '@wordpress/i18n';
-import {useBlockProps} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
+import {Panel, PanelBody, Spinner, CheckboxControl, __experimentalNumberControl as NumberControl, __experimentalInputControl as InputControl} from "@wordpress/components";
+import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 
-const Edit = () => {
+const Edit = ({attributes, setAttributes}) => {
+	const {name} = attributes;
 
-	const [html, setHtml] = useState([]);
+	const [html, setHtml] = useState('');
 
 	useEffect( 
 		async () => {
-			const response = await apiFetch({path: '/sim/v1/forms/form_selector'});
-			setHtml( response );
+			if(name != undefined){
+				const response = await apiFetch({path: `/sim/v1/forms/form_builder?name=${name}`});
+				setHtml( response );
+			}
 		} ,
-		[]
+		[name]
 	);
+
+	function ShowResult(){
+		if(html == '' || !html){
+			return <InputControl
+				label={__('Form name', 'sim')}
+				isPressEnterToChange={true}
+				value={name}
+				onChange={(value) => setAttributes({ name: value })}
+			/>
+		}
+
+		return wp.element.RawHTML( { children: html })
+	}
 
 	return (
 		<>
+			<InspectorControls>
+				<Panel>
+					<PanelBody>
+						<InputControl
+                            label={__('Form name', 'sim')}
+							isPressEnterToChange={true}
+                            value={name}
+                            onChange={(value) => setAttributes({ name: value })}
+                        />
+					</PanelBody>
+				</Panel>
+			</InspectorControls>
 			<div {...useBlockProps()}>
-				{wp.element.RawHTML( { children: html })}
+				{ShowResult()}
 			</div>
 		</>
 	);

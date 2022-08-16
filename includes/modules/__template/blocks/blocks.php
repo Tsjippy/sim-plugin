@@ -10,3 +10,7 @@ add_action('init', function () {
 		)
 	);
 });
+
+add_action( 'enqueue_block_editor_assets', function(){
+	wp_enqueue_script( 'sim_formbuilderjs');
+} );

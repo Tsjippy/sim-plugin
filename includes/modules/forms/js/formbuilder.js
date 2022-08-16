@@ -12,7 +12,7 @@ function clearFormInputs(){
 			}
 
 			if(el.type == 'textarea' && el.id != ''){
-				var editor = tinyMCE.get(el.id);
+				let editor = tinyMCE.get(el.id);
 				if(editor != null){
 					editor.setContent('');
 				}
@@ -84,22 +84,22 @@ async function showEmptyModal(target){
 async function requestEditElementData(target){
 	target.classList.add('clicked');
 
-	var elementId		= formElementWrapper.dataset.id;
-	var formId			= target.closest('.form_element_wrapper').dataset.formid;
+	let elementId		= formElementWrapper.dataset.id;
+	let formId			= target.closest('.form_element_wrapper').dataset.formid;
 	modal.querySelector('[name="element_id"]').value = formElementWrapper.dataset.id;
 	modal.originalhtml	= target.outerHTML;
 
-	var editButton		= target.outerHTML;
+	let editButton		= target.outerHTML;
 
-	var loader			= Main.showLoader(target);
+	let loader			= Main.showLoader(target);
 
 	loader.querySelector('.loadergif').style.margin = '5px 19px 0px 19px';
 	
-	var formData = new FormData();
+	let formData = new FormData();
 	formData.append('elementid', elementId);
 	formData.append('formid', formId);
 	
-	var response = await FormSubmit.fetchRestApi('forms/request_form_element', formData);
+	let response = await FormSubmit.fetchRestApi('forms/request_form_element', formData);
 
 	if(response){
 		//fill the form after we have clicked the edit button
@@ -922,8 +922,7 @@ window.addEventListener("click", event => {
 
 	if(target.matches('.remove_warn_cond')){
 		removeWarningCondition(target)
-	}
-	
+	}	
 });
 
 window.addEventListener('change', ev=>{
@@ -976,3 +975,4 @@ function fixWarningConditionNumbering(parent){
 		i++;
 	});
 }
+

@@ -1,12 +1,12 @@
 console.log("Main.js loaded");
 
 export function changeUrl(target, secondTab=''){
-	var newParam	= target.dataset.param_val;
-	var hash		= target.dataset.hash;
+	let newParam	= target.dataset.param_val;
+	let hash		= target.dataset.hash;
 	const url 		= new URL(window.location);
 
 	//Change the url params
-	if(target.closest('.tabcontent') == null || target.parentNode.classList.contains('modal-content') == true){
+	if(target.closest('.tabcontent') == null || target.parentNode.classList.contains('modal-content')){
 		//Add query_arg if it is a main tab
 		url.searchParams.set('main_tab', newParam);
 		url.searchParams.delete('second_tab');
@@ -37,14 +37,14 @@ function switchTab(event=null){
 		get: (searchParams, prop) => searchParams.get(prop),
 	});
 	
-	var mainTab 	= params.main_tab;
-	var lastTab		= '';
+	let mainTab 	= params.main_tab;
+	let lastTab		= '';
 	if(mainTab != null){
 		//find the tab and display it
 		document.querySelectorAll(`[data-param_val="${mainTab}"]`).forEach(tabbutton=>{
 			//only process non-modal tabs
 			if(tabbutton.closest('.modal') == null){
-				var result	= displayTab(tabbutton);
+				let result	= displayTab(tabbutton);
 				if(result){
 					lastTab	= result;
 				}
@@ -52,7 +52,7 @@ function switchTab(event=null){
 		});
 	}
 
-	var secondTab = params.secondTab;
+	let secondTab = params.secondTab;
 	if(secondTab != null){
 		//find the tab and display it
 		lastTab.querySelectorAll(`[data-param_val="${secondTab}"]`).forEach(tabbutton=>{
@@ -178,13 +178,13 @@ export function showLoader(element, replace=true, message=''){
 		return;
 	}
 	
-	var wrapper	= document.createElement("DIV");
+	let wrapper	= document.createElement("DIV");
 	wrapper.setAttribute('class','loaderwrapper');
 	if(message != ''){
 		wrapper.innerHTML	= message;
 	}
 
-	var loader	= document.createElement("IMG");
+	let loader	= document.createElement("IMG");
 	loader.setAttribute('class','loadergif');
 	loader.setAttribute("src", sim.loadingGif);
 	loader.style["height"]= "30px";

@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
+use WP_Error;
 
 class SimForms{
 	function __construct(){
@@ -88,7 +89,7 @@ class SimForms{
 	}
 
 	/**
-	 * Load a specific form
+	 * Load a specific form or creates it if it does not exist
 	 * 
 	 * @param	int		$formId	the form id to load. Default empty
 	 */
@@ -99,6 +100,8 @@ class SimForms{
 		$query				= "SELECT * FROM {$this->tableName} WHERE ";
 		if(is_numeric($formId)){
 			$query	.= "id= '$formId'";
+		}elseif(is_numeric($this->formId)){
+			$query	.= "id= '$this->formId'";
 		}elseif(!empty($this->formName)){
 			$query	.= "name= '$this->formName'";
 		}else{
@@ -107,7 +110,7 @@ class SimForms{
 
 		$result				= $wpdb->get_results($query);
 
-		// Form does not exit yet
+		// Form does not exist yet
 		if(empty($result)){
 			$this->insertForm();
 			$this->formData 	=  new \stdClass();
@@ -180,7 +183,6 @@ class SimForms{
 
 		return true;
 	}
-
 
 	/**
 	 * Creates a dropdown with all the forms
@@ -350,12 +352,14 @@ class SimForms{
 					'formname'		=> '', 
 					'userid'		=> '', 
 					'search'		=> '',
-					'id'			=> ''
+					'id'			=> '',
+					'formid'		=> ''
 				),
 				$atts
 			);
 			
 			$this->formName 	= strtolower(sanitize_text_field($atts['formname']));
+			$this->formId		= sanitize_text_field($atts['formid']);
 			$this->shortcodeId	= $atts['id'];
 			
 			if(!empty($atts['userid']) && is_numeric($atts['userid'])){
@@ -372,10 +376,19 @@ class SimForms{
 
 		$this->processAtts($atts);
 
-		$query				= "SELECT * FROM {$this->elTableName} WHERE `form_id`=(SELECT `id` FROM {$this->tableName} WHERE name='$this->formName')";
+		$query				= "SELECT * FROM {$this->elTableName} WHERE `form_id`=";
+
+		if(is_numeric($this->formId)){
+			$query	.= $this->formId; 
+		}elseif(!empty($this->formName)){
+			$query	.= "(SELECT `id` FROM {$this->tableName} WHERE name='$this->formName')";
+		}else{
+			return new WP_Error('forms', 'Which form do you have?');
+		}
+		
 		$formElements 		=  $wpdb->get_results($query);
 
-		if((isset($_GET['formbuilder']) || empty($formElements)) && $this->editRights){
+		if((isset($_REQUEST['formbuilder']) || empty($formElements)) && $this->editRights){
 			$formBuilderForm	= new FormBuilderForm($atts);
 
 			return $formBuilderForm->showForm();

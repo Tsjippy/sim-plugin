@@ -12,7 +12,7 @@ add_action( 'wp_enqueue_media', function(){
     wp_enqueue_style('sim_media_style', plugins_url('css/media.min.css', __DIR__), [], STYLE_VERSION);
 });
 
-function registerScripts(){
+function registerScripts($hook=''){
 	//LIBRARIES
 	//Nice select https://github.com/bluzky/nice-select2
 	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(),STYLE_VERSION,true);
@@ -37,6 +37,10 @@ function registerScripts(){
 	wp_register_script('sim_script', plugins_url('js/main.min.js', __DIR__), array('niceselect', 'sweetalert'), STYLE_VERSION, true);
 	
 	wp_register_style('sim_taxonomy_style', plugins_url('css/taxonomy.min.css', __DIR__), array(), STYLE_VERSION);
+
+	if($hook == 'post.php'){
+		enqueueScripts();
+	}
 }
 
 function enqueueScripts(){

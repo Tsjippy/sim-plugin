@@ -79,7 +79,10 @@ add_action( 'save_post', function($postId, $post){
     }
 }, 10, 2);
 
-add_action( 'wp_enqueue_scripts', function(){
+add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\registerScripts');
+add_action( 'admin_enqueue_scripts', __NAMESPACE__.'\registerScripts');
+
+function registerScripts(){
     wp_register_style( 'sim_forms_style', plugins_url('css/forms.min.css', __DIR__), array(), MODULE_VERSION);
     wp_register_style( 'sim_formtable_style', plugins_url('css/formtable.min.css', __DIR__), array(), MODULE_VERSION);
 
@@ -98,5 +101,4 @@ add_action( 'wp_enqueue_scripts', function(){
     if(in_array(get_the_ID(), $formtablePages)){
         wp_enqueue_style('sim_formtable_style');
     }
-    
-});
+}

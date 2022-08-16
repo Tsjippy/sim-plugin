@@ -187,7 +187,7 @@ class FormBuilderForm extends SimForms{
 					?>
 					<div class="formeditbuttons_wrapper">
 						<button name='editform' class='button' data-action='hide' style='padding-top:0px;padding-bottom:0px;'>Hide form edit controls</button>
-						<a href="." class="button sim">Show enduser form</a>
+						<button class='button formbuilder-switch-back'>Show enduser form</button>
 					</div>
 					<?php
 				}
