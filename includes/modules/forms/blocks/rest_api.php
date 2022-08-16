@@ -94,6 +94,14 @@ function showFormResults($attributes){
 				'formid' 	=> $_REQUEST['formid'],
 				'id'		=> $_REQUEST['id']
 			];
+
+			if(isset($_REQUEST['archived'])){
+				$attributes['archived']	= $_REQUEST['archived'];
+			}
+
+			if(isset($_REQUEST['onlyown'])){
+				$attributes['onlyOwn']	= $_REQUEST['onlyown'];
+			}
 		}else{
 			return false;
 		}

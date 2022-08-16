@@ -570,6 +570,61 @@ async function formbuilderSwitch(target){
 	}
 }
 
+async function requestNewFormResults(target){
+	let wrapper		= target.closest('.form.table-wrapper');
+	let button		= target.outerHTML;
+
+	let formData 	= new FormData();
+	let formId		= wrapper.querySelector('.sim-table.form-data-table').dataset.formid;
+	let shortcodeId	= wrapper.querySelector('.sim-table.form-data-table').dataset.shortcodeid;
+
+	formData.append('formid', formId);
+	formData.append('id', shortcodeId);
+
+	const url 		= new URL(window.location);
+	if(url.searchParams.get('onlyown')){
+		formData.append('onlyown', true);
+	}
+	if(url.searchParams.get('archived')){
+		formData.append('archived', true);
+	}
+
+	let loader	= Main.showLoader(target, false, 'Requesting form results...');
+	wrapper.innerHTML	= loader.outerHTML;
+
+	let response = await FormSubmit.fetchRestApi('forms/show_form_results', formData);
+
+	if(response){
+		wrapper.innerHTML	= response;
+	}else{
+		loader.outerHTML	= button;
+	}
+}
+
+async function archivedEntriesSwitch(target){
+	const url 		= new URL(window.location);
+	if(target.matches('.archive-switch-show')){
+		url.searchParams.set('archived', true);
+	}else{
+		url.searchParams.delete('archived');
+	}
+	window.history.pushState({}, '', url);
+
+	requestNewFormResults(target);
+}
+
+async function onlyOwnSwitch(target){
+	const url 		= new URL(window.location);
+	if(target.matches('.onlyown-switch-on')){
+		url.searchParams.set('onlyown', true);
+	}else{
+		url.searchParams.delete('onlyown');
+	}
+	window.history.pushState({}, '', url);
+
+	requestNewFormResults(target);
+}
+
 //Main code
 document.addEventListener("DOMContentLoaded",function() {
 	console.log('Forms.js is loaded');
@@ -625,5 +680,13 @@ document.addEventListener('click',function(event) {
 
 	if(target.matches('.formbuilder-switch') || target.matches('.formbuilder-switch-back')){
 		formbuilderSwitch(target);
+	}
+
+	if(target.matches('.archive-switch-hide') || target.matches('.archive-switch-show')){
+		archivedEntriesSwitch(target);
+	}
+
+	if(target.matches('.onlyown-switch-all') || target.matches('.onlyown-switch-on')){
+		onlyOwnSwitch(target);
 	}
 });

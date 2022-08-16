@@ -1039,7 +1039,7 @@ class DisplayFormResults extends SimForms{
 		
 		//check if we have rights on this table
 		if(!isset($this->tableEditPermissions) || !$this->tableEditPermissions){
-			if(array_intersect($this->userRoles, array_keys((array)$this->tableSettings['edit_right_roles']))){
+			if(isset($this->tableSettings['edit_right_roles']) && array_intersect($this->userRoles, array_keys((array)$this->tableSettings['edit_right_roles']))){
 				$this->tableEditPermissions = true;
 			}else{
 				$this->tableEditPermissions = false;
@@ -1074,17 +1074,17 @@ class DisplayFormResults extends SimForms{
 			}
 
 			// Archived button
-			if($this->archived){
-				$html	.= "<a href='.' class='button sim'>Hide archived entries</a>";
-			}elseif(!$this->showArchived){
-				$html	.= "<a href='?archived=true' class='button sim'>Show archived entries</a>";
+			if($this->showArchived){
+				$html	.= "<button class='button sim small archive-switch-hide'>Hide archived entries</button>";
+			}else{
+				$html	.= "<button class='button sim small archive-switch-show'>Show archived entries</button>";
 			}
 
 			// Only own button
-			if($_GET['onlyown'] || $this->tableSettings['result_type'] == 'personal'){
-				$html	.= "<a href='.' class='button sim'>Show all entries</a>";
+			if($this->onlyOwn || $this->tableSettings['result_type'] == 'personal'){
+				$html	.= "<button class='button sim small onlyown-switch-all'>Show all entries</button>";
 			}else{
-				$html	.= "<a href='?onlyown=true' class='button sim'>Show only my own entries</a>";
+				$html	.= "<button class='button sim small onlyown-switch-on'>Show only my own entries</button>";
 			}
 
 			$html	.= "<button type='button' class='button small show fullscreenbutton'>Show full screen</button>";
