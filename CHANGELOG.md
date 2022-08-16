@@ -5,6 +5,8 @@
 ### Added
 - missing form fields block
 - pending pages block
+- pening pages, your posts, displayname, login count,
+welcome message, mandatory pages blocks
 
 ### Changed
 - table buttons result in ajax refresh
