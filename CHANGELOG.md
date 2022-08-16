@@ -4,6 +4,7 @@
 
 ### Added
 - missing form fields block
+- pending pages block
 
 ### Changed
 - table buttons result in ajax refresh
