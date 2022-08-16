@@ -7,6 +7,7 @@
 - pending pages block
 - pening pages, your posts, displayname, login count,
 welcome message, mandatory pages blocks
+- user description block
 
 ### Changed
 - table buttons result in ajax refresh
