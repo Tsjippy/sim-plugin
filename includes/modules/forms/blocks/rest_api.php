@@ -60,6 +60,26 @@ add_action( 'rest_api_init', function () {
 			'permission_callback' 	=> '__return_true',
 		)
 	);
+
+	// Add new form table
+	register_rest_route( 
+		'sim/v1/forms', 
+		'/missing_form_fields', 
+		array(
+			'methods' 				=> 'POST,GET',
+			'callback' 				=> 	function($attributes){
+				if($attributes instanceof \WP_REST_Request){
+					$attributes	= $_REQUEST;
+				}
+				$result	= missingFormFields($attributes);
+				if(empty($result)){
+					return "No {$attributes['type']} fields found";
+				}
+				return $result;
+			},
+			'permission_callback' 	=> '__return_true',
+		)
+	);
 });
 
 function showFormBuilder($attributes){

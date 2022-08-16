@@ -39,6 +39,19 @@ add_action('init', function () {
 			]
 		)
 	);
+
+	register_block_type(
+		__DIR__ . '/missing_form_fields/build',
+		array(
+			'render_callback' => __NAMESPACE__.'\missingFormFields',
+			'attributes'      => [
+				'type'  => [
+					'type'  	=> 'string',
+					'default' 	=> 'mandatory',
+				]
+			]
+		)
+	);
 });
 
 add_action( 'enqueue_block_editor_assets', function(){

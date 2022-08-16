@@ -134,11 +134,6 @@ class SimForms{
 			$this->formData->settings = $settings;
 		}else{
 			$this->formData->settings = maybe_unserialize(utf8_encode($this->formData->settings));
-
-			if(isset($this->formData->settings['formnurl'])){
-				$this->formData->settings['formurl']	= $this->formData->settings['formnurl'];
-				unset($this->formData->settings['formnurl']);
-			}
 		}
 
 		if(!$this->editRights){
@@ -391,6 +386,20 @@ class SimForms{
 		}
 		
 		$formElements 		=  $wpdb->get_results($query);
+
+		// preload the formbuilder in case we need it later
+		if($this->editRights){
+			wp_enqueue_script( 'sim_formbuilderjs');
+
+			// Add a hidden tiny mce so that we have it when we need it
+			echo "<div class='hidden'>";
+				echo wp_editor( '', 'unique_id', array(
+					'media_buttons' => false,
+					'textarea_rows' => 10,
+					'teeny' => true,
+				) );
+			echo "</div>";
+		}
 
 		if((isset($_REQUEST['formbuilder']) || empty($formElements)) && $this->editRights){
 			$formBuilderForm	= new FormBuilderForm($atts);

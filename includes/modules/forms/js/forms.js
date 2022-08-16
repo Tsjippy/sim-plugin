@@ -477,7 +477,7 @@ function findcheckboxTarget(form, name, value){
 	}
 }
 
-export function changeFieldValue(orgName, value, functionRef){
+export function changeFieldValue(orgName, value, functionRef, form){
 	let name	= '';
 	let target	= '';
 
@@ -521,7 +521,7 @@ export function changeFieldValue(orgName, value, functionRef){
 	functionRef(target);
 }
 
-export function changeFieldProperty(name, att, value, functionRef){
+export function changeFieldProperty(name, att, value, functionRef, form){
 	//first change the value
 	let target = form.querySelector(`[name="${name}" i]`);
 	

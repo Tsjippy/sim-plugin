@@ -333,12 +333,12 @@ trait CreateJs{
                             }
                             
                             if($propertyName == 'value'){
-                                $actionCode    = "FormFunctions.changeFieldValue('$fieldName', $varName, {$this->formName}.processFields);";
+                                $actionCode    = "FormFunctions.changeFieldValue('$fieldName', $varName, {$this->formName}.processFields, form);";
                                 if(!in_array($actionCode, $actionArray)){
                                     $actionArray[] = $actionCode;
                                 }
                             }else{
-                                $actionCode    = "FormFunctions.changeFieldProperty('$fieldName', '$propertyName', $varName, {$this->formName}.processFields);";
+                                $actionCode    = "FormFunctions.changeFieldProperty('$fieldName', '$propertyName', $varName, {$this->formName}.processFields, form);";
                                 if(!in_array($actionCode, $actionArray)){
                                     $actionArray[] = $actionCode;
                                 }

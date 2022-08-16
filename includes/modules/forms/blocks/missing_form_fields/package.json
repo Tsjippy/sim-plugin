@@ -1,7 +1,7 @@
 {
-	"name": "sim-events",
+	"name": "sim-missing-form-fields",
 	"version": "0.1.0",
-	"description": "Upcoming 10 events",
+	"description": "Displays the mandatory fields still to be filled in",
 	"author": "The WordPress Contributors",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
