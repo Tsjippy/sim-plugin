@@ -4,6 +4,9 @@ import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
 import {ToggleControl, Panel, PanelBody, Spinner, CheckboxControl, __experimentalNumberControl as NumberControl, __experimentalInputControl as InputControl} from "@wordpress/components";
+import { store as coreDataStore } from '@wordpress/core-data';
+import { decodeEntities } from '@wordpress/html-entities';
+import { useSelect } from '@wordpress/data';
 
 const catsPath	= "/wp/v2/events";
 
@@ -23,6 +26,56 @@ const Edit = ({attributes, setAttributes}) => {
 		)));
 	} , [attributes.categories]);
 
+	const { pages, hasResolved} = useSelect(
+		( select) => {
+			const query = {
+				per_page: 100,
+				orderby : 'title'
+			};
+
+			// Find all selected pages
+			const args = [ 'taxonomy', 'category'];
+
+			return {
+				pages: select( coreDataStore ).getEntityRecords(
+					...args
+				),
+				hasResolved: select( coreDataStore ).hasFinishedResolution(
+					'getEntityRecords',
+					args
+				)
+			};
+		},
+		[]
+	);
+
+	const BuildCategoryList = function(){
+		if ( ! hasResolved ) {
+			return(
+				<>
+				<Spinner />
+				<br></br>
+				</>
+			);
+		}
+	
+		if ( ! pages?.length ) {
+			return <div> {__('No categories found', 'sim')}</div>;
+		}
+		
+		return (
+			<ul>
+			{pages?.map( ( category ) => {
+				let nr	= '';
+				if(count){
+					nr	= <>  (<span class='cat-count'>{category.count}</span>)</>;
+				}
+				return (<li><a href={category.link}>{category.name}{nr}</a></li>);
+			} )}
+			</ul>
+		)
+	}
+
 
 	// variable, function name to set variable
 	const [events, storeEvents] = useState([]);
@@ -34,19 +87,31 @@ const Edit = ({attributes, setAttributes}) => {
 					<PanelBody>
 						Select an category you want to exclude from the list
 						{cats}
-						<NumberControl
-							label		= {__("Select the maximum amount of events", "sim")}
-							value		= {items || 10}
-							onChange	= {(val) => setAttributes({items: parseInt(val)})}
-							min			= {1}
-							max			= {20}
-						/>
+						<ToggleControl
+                            label={__('Hide on mobile', 'sim')}
+                            checked={!!attributes.hideOnMobile}
+                            onChange={() => setAttributes({ hideOnMobile: !attributes.hideOnMobile })}
+                        />
+						<InputControl
+                            isPressEnterToChange={true}
+                            label="Add php filters by name. I.e 'is_tax'"
+                            value={ phpFilter }
+                            onChange={onPhpFiltersChanged.bind('')}
+                        />
 						<NumberControl
 							label		= {__("Select the range in months we will retrieve", "sim")}
 							value		= {months || 2}
 							onChange	= {(val) => setAttributes({months: parseInt(val)})}
 							min			= {1}
 							max			= {12}
+						/>
+						{__('Select the form you want to show the results of', 'sim')}
+						<SelectControl
+							label	= {__('Form to show', 'sim')}
+							value={ formid }
+							options={ forms }
+							onChange={ (value) => {setAttributes({formid: value})} }
+							__nextHasNoMarginBottom
 						/>
 					</PanelBody>
 				</Panel>

@@ -69,21 +69,25 @@ add_shortcode("all_contacts",function (){
 });
 
 // Shortcode to display a user in a page or post
-add_shortcode('user_link', __NAMESPACE__.'\userDescription');
+add_shortcode('user_link', __NAMESPACE__.'\linkedUserDescription');
 
-function userDescription($atts){
+function linkedUserDescription($atts){
 	$html 	= "";
 	$a 		= shortcode_atts( array(
-        'id' => '',
-		'picture' => false,
-		'phone' => false,
-		'email' => false,
-		'style' => '',
+        'id' 		=> '',
+		'picture' 	=> false,
+		'phone' 	=> false,
+		'email' 	=> false,
+		'style' 	=> '',
     ), $atts );
+
+	$a['picture']	= filter_var($a['picture'], FILTER_VALIDATE_BOOLEAN);
+	$a['phone']	= filter_var($a['phone'], FILTER_VALIDATE_BOOLEAN);
+	$a['email']	= filter_var($a['email'], FILTER_VALIDATE_BOOLEAN);
 	
 	$userId = $a['id'];
     if(!is_numeric($userId)){
-		return '';
+		return 'Please enter an user to show the details of';
 	}
 	
 	if(!empty($a['style'])){
@@ -104,6 +108,7 @@ function userDescription($atts){
 	
 	$url = SIM\maybeGetUserPageUrl($userId);
 	
+	$profilePicture	= '';
 	if($a['picture'] && !isset($privacyPreference['hide_profile_picture'])){
 		$profilePicture = SIM\displayProfilePicture($userId);
 	}
