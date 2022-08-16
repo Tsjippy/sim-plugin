@@ -29,6 +29,7 @@ function getAllFields($userId, $type){
 
 	$fields				= $wpdb->get_results($query);
 
+	// Filters the list of fields
 	$fields				= apply_filters("sim_{$type}_fields_filter", $fields, $userId);
 
 	$html				= '';
@@ -100,7 +101,7 @@ function getAllFields($userId, $type){
 				}
 			}
 
-			$metakey 	= explode('[',$field->name)[0];
+			$metakey 	= explode('[', $field->name)[0];
 			$value		= get_user_meta($userId, $metakey, true);
 
 			$name		= str_replace('[]', '', $field->name);
