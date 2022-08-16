@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.0.5] - 2022-08-16
+
+
+### Added
 - bulk change module
 
 ### Changed
