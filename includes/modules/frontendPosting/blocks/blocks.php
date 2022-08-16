@@ -9,6 +9,13 @@ add_action('init', function () {
 			'render_callback' => __NAMESPACE__.'\yourPosts',
 		)
 	);
+
+	register_block_type(
+		__DIR__ . '/pending_pages/build',
+		array(
+			'render_callback' => __NAMESPACE__.'\pendingPages',
+		)
+	);
 });
 
 add_action( 'enqueue_block_editor_assets', function(){

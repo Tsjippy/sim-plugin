@@ -73,7 +73,9 @@ function yourPosts(){
 }
 
 //Shortcode to display all pages and post who are pending
-add_shortcode("pending_pages", function (){
+add_shortcode("pending_pages", __NAMESPACE__.'\pendingPages');
+
+function pendingPages(){
 	//Get all the posts with a pending status
 	$pendingPosts 	= get_posts( 
 		array(
@@ -132,7 +134,7 @@ add_shortcode("pending_pages", function (){
 	}
 	
 	return "<p>No pending posts or pages found</p>";
-});
+}
 
 //Shortcode to display number of pending posts and pages
 add_shortcode('pending_post_icon', function (){
