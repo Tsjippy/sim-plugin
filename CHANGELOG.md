@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- missing form fields block
 
 ### Changed
 - table buttons result in ajax refresh
