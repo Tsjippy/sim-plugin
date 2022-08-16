@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- table buttons result in ajax refresh
 
 ### Fixed
 
