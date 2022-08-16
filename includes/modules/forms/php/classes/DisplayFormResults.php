@@ -1015,7 +1015,7 @@ class DisplayFormResults extends SimForms{
 		
 		$this->formSettings		= $this->formData->settings;
 		
-		if($this->tableSettings['archived'] == 'true' || $_REQUEST['archived']){
+		if((isset($this->tableSettings['archived']) && $this->tableSettings['archived'] == 'true') || $this->showArchived){
 			$this->showArchived = true;
 		}else{
 			$this->showArchived = false;
@@ -1025,7 +1025,10 @@ class DisplayFormResults extends SimForms{
 		if(!isset($this->formEditPermissions) || !$this->formEditPermissions){
 			if(
 				array_intersect((array)$this->userRoles, array_keys((array)$this->formSettings['full_right_roles']))	||
-				array_intersect((array)$this->userRoles, array_keys((array)$this->tableSettings['full_right_roles']))	||
+				(
+					isset($this->tableSettings['full_right_roles']) && 
+					array_intersect((array)$this->userRoles, array_keys((array)$this->tableSettings['full_right_roles']))
+				)	||
 				$this->editRights
 			){
 				$this->formEditPermissions = true;
@@ -1044,7 +1047,7 @@ class DisplayFormResults extends SimForms{
 		}
 		
 		if(
-			$_REQUEST['onlyown'] == 'true'						|| 
+			$this->onlyOwn										|| 
 			$this->tableSettings['result_type'] == 'personal'	||
 			!$this->tableEditPermissions						&&
 			!array_intersect($this->userRoles, array_keys((array)$this->tableSettings['view_right_roles']))
@@ -1071,7 +1074,7 @@ class DisplayFormResults extends SimForms{
 			}
 
 			// Archived button
-			if($_GET['archived']){
+			if($this->archived){
 				$html	.= "<a href='.' class='button sim'>Hide archived entries</a>";
 			}elseif(!$this->showArchived){
 				$html	.= "<a href='?archived=true' class='button sim'>Show archived entries</a>";

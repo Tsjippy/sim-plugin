@@ -353,7 +353,9 @@ class SimForms{
 					'userid'		=> '', 
 					'search'		=> '',
 					'id'			=> '',
-					'formid'		=> ''
+					'formid'		=> '',
+					'onlyOwn'		=> false,
+					'archived'		=> false
 				),
 				$atts
 			);
@@ -361,6 +363,8 @@ class SimForms{
 			$this->formName 	= strtolower(sanitize_text_field($atts['formname']));
 			$this->formId		= sanitize_text_field($atts['formid']);
 			$this->shortcodeId	= $atts['id'];
+			$this->onlyOwn		= $atts['onlyOwn'];
+			$this->showArchived	= $atts['archived'];
 			
 			if(!empty($atts['userid']) && is_numeric($atts['userid'])){
 				$this->userId	= $atts['userid'];
