@@ -9,6 +9,7 @@
 - table buttons result in ajax refresh
 
 ### Fixed
+- mail issue
 
 ## [2.0.5] - 2022-08-16
 
