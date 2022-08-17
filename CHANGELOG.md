@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.0.6] - 2022-08-17
+
+
+### Added
 - missing form fields block
 - pending pages block
 - pening pages, your posts, displayname, login count,
