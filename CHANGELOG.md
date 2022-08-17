@@ -11,6 +11,8 @@ welcome message, mandatory pages blocks
 
 ### Changed
 - table buttons result in ajax refresh
+- removed simnigeria/v1/notifications
+ from rest api
 
 ### Fixed
 - mail issue
