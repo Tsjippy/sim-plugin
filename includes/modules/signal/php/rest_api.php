@@ -18,22 +18,6 @@ add_action( 'rest_api_init', function () {
 		'permission_callback' 	=> '__return_true',
 		)
 	);
-	
-	//Route for notification messages
-	register_rest_route( 'simnigeria/v1', '/notifications', array(
-		'methods' 				=> 'GET',
-		'callback' 				=> __NAMESPACE__.'\botMessages',
-		'permission_callback' 	=> '__return_true',
-		)
-	);
-	
-	//Route for first names
-	register_rest_route( 'simnigeria/v1', '/firstname', array(
-		'methods' => 'GET',
-		'callback' => __NAMESPACE__.'\findFirstname',
-		'permission_callback' => '__return_true',
-		)
-	);
 
 	// Update quota documents
 	register_rest_route( 

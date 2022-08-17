@@ -9,7 +9,9 @@ namespace SIM;
 $taxnames=[];
 
 /**
- * Addm a new post type and taxonomy
+ * Adds a new post type and taxonomy
+ * Make sure to also register a template with the name sim/{$single}meta
+ * 
  * @param  string 	$single		the single name of the posttype
  * @param  string	$plural     the plural name of the post type         
 */
@@ -17,28 +19,28 @@ function registerPostTypeAndTax($single, $plural){
 	global $taxnames;
 	$taxnames[$single]	= $plural;
 
-	$plural				= ucfirst($plural);
-	$single				= ucfirst($single);
+	$Plural				= ucfirst($plural);
+	$Single				= ucfirst($single);
 	
 	/*
 		CREATE POST TYPE
 	*/
 	//Text to show for buttons
 	$labels = array(
-		'name' 					=> $single,
-		'singular_name' 		=> $single,
-		'menu_name' 			=> $plural,
-		'add_new' 				=> "Add $single",
-		'add_new_item' 			=> "Add New $single",
+		'name' 					=> $Single,
+		'singular_name' 		=> $Single,
+		'menu_name' 			=> $Plural,
+		'add_new' 				=> "Add $Single",
+		'add_new_item' 			=> "Add New $Single",
 		'edit' 					=> 'Edit',
-		'edit_item' 			=> "Edit $single",
-		'new_item' 				=> "New $single",
-		'view' 					=> "View $single",
-		'view_item' 			=> "View $single",
-		'search_items' 			=> "Search $plural",
-		'not_found' 			=> "No $plural Found",
-		'not_found_in_trash' 	=> "No $plural Found in Trash",
-		'parent' 				=> "Parent $plural",
+		'edit_item' 			=> "Edit $Single",
+		'new_item' 				=> "New $Single",
+		'view' 					=> "View $Single",
+		'view_item' 			=> "View $Single",
+		'search_items' 			=> "Search $Plural",
+		'not_found' 			=> "No $Plural Found",
+		'not_found_in_trash' 	=> "No $Plural Found in Trash",
+		'parent' 				=> "Parent $Plural",
 	);
 	
 	$args = array(
@@ -55,7 +57,10 @@ function registerPostTypeAndTax($single, $plural){
 		'menu_position' 		=> 5,
 		'show_in_rest'			=> true,
 		'delete_with_user'		=> false,
-		'taxonomies'  			=> array( strtolower($plural)),
+		'taxonomies'  			=> array( $plural),
+		'template' => array(
+            array( "sim/{$single}meta" )
+        ),
 	);
 	
 	//Create the custom post type
@@ -74,19 +79,16 @@ function registerPostTypeAndTax($single, $plural){
  */
 function createTaxonomies($taxonomyName, $postType, $plural){
 	$taxonomyName		= strtolower($taxonomyName);
-	$postType			= strtolower($postType);
-	$plural				= strtolower($plural);
-	$lowerPlural		= $plural;
-	$plural				= ucfirst($plural);
+	$Plural				= ucfirst($plural);
 	/*
 		CREATE CATEGORIES
 	*/
 	$labels = array(
-		'name' 							=> "$plural Types",
-		'singular_name' 				=> "$plural Types",
-		'search_items' 					=> "Search $plural Types",
-		'popular_items' 				=> "Popular $plural Types",
-		'all_items' 					=> "All $plural Types",
+		'name' 							=> "$Plural Types",
+		'singular_name' 				=> "$Plural Types",
+		'search_items' 					=> "Search $Plural Types",
+		'popular_items' 				=> "Popular $Plural Types",
+		'all_items' 					=> "All $Plural Types",
 		'parent_item' 					=> "Parent $postType Type",
 		'parent_item_colon' 			=> "Parent $postType Type:",
 		'edit_item' 					=> "Edit $postType Type",
@@ -106,7 +108,7 @@ function createTaxonomies($taxonomyName, $postType, $plural){
 		'show_in_rest' 		=> true,
 		'hierarchical' 		=> true,
 		'rewrite' 			=> array( 
-			'slug' 			=> $lowerPlural,	//archive pages on /plural/
+			'slug' 			=> $plural,	//archive pages on /plural/
 			'hierarchical' 	=> true,
 			'has_archive'	=> true
 		),

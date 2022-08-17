@@ -16,6 +16,25 @@ add_action('init', function () {
 			'render_callback' => __NAMESPACE__.'\displaySchedules',
 		)
 	);
+
+	register_block_type(
+		__DIR__ . '/metadata/build',
+		array(
+			"attributes"	=>  [
+				"lock"	=> [
+					"type"	=> "object",
+					"default"	=> [
+						"move"		=> true,
+						"remove"	=> true
+					]
+				],
+				'event'	=> [
+					'type'	=> 'string',
+					'default'	=> 'hoi daar'
+				] 
+			]
+		)
+	);
 });
 
 function displayUpcomingEvents($attributes) {
@@ -49,3 +68,15 @@ function displaySchedules(){
 	$schedule	= new Schedules();
 	return $schedule->showSchedules();
 }
+
+// register custom meta tag field
+add_action( 'init', function(){
+	register_post_meta( 'event', 'event', array(
+        'show_in_rest' 	=> true,
+        'single' 		=> true,
+        'type' 			=> 'string',
+		'sanitize_callback' => function($text) {
+            return sanitize_text_field($text);
+        }
+    ) );
+} );

@@ -2,9 +2,8 @@ import { __ } from '@wordpress/i18n';
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {SearchControl, RadioControl, ToggleControl, Panel, PanelBody, Spinner, CheckboxControl, __experimentalNumberControl as NumberControl, __experimentalInputControl as InputControl} from "@wordpress/components";
+import {SearchControl, RadioControl, ToggleControl, Panel, PanelBody, Spinner, __experimentalInputControl as InputControl} from "@wordpress/components";
 import { store as coreDataStore } from '@wordpress/core-data';
-import { decodeEntities } from '@wordpress/html-entities';
 import { useSelect } from '@wordpress/data';
 import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 
@@ -70,7 +69,6 @@ const Edit = ({attributes, setAttributes}) => {
 			</>
 		)
 	}
-
 
 	const [html, setHtml] = useState(< Spinner />);
 
