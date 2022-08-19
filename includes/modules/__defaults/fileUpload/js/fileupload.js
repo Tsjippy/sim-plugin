@@ -151,6 +151,7 @@ function readyStateChanged(e){
 			fileUploadSucces(request.responseText)
 		//Error
 		}else{
+			console.error(request.responseText);
 			Main.displayMessage(JSON.parse(request.responseText).error,'error');
 		}
 		
