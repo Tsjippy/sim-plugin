@@ -212,6 +212,7 @@ async function getInputHtml(target){
 
 		//add a listener for clicks outside the cell
 		document.addEventListener('click', outsideFormsTableClicked);
+		target.querySelector('.file_upload_wrap').addEventListener('uploadfinished', uploadFinished);
 	}
 }
 
@@ -241,8 +242,8 @@ function addFormsTableInputEventListeners(cell){
 			}
 		}else if(inputNode.type == 'select'){
 			inputNode.querySelector('option[value="'+val+'"]').selected = true;
-		}else{
-			inputNode.value	= val;
+		}else if(inputNode.type != 'file'){
+			return;
 		}
 		
 		if(inputNode.type == 'select-one'){
@@ -262,7 +263,7 @@ function addFormsTableInputEventListeners(cell){
 		if(inputNode.type != 'checkbox' || inputs.length == 1){
 			if(inputNode.type == 'date'){
 				inputNode.addEventListener("blur", processFormsTableInput);
-			}else{
+			}else if(inputNode.type != 'file'){
 				inputNode.addEventListener("change", processFormsTableInput);
 			}
 			
@@ -275,6 +276,14 @@ function outsideFormsTableClicked(event){
 	if(event.target.closest('td') == null || event.target.closest('td').dataset.oldtext == null){
 		//remove as soon as we come here
 		this.removeEventListener("click", arguments.callee);
+		processFormsTableInput(document.querySelector('[data-oldtext]'));
+	}
+}
+
+function uploadFinished(event){
+	if(event.target.closest('td') != null){
+		//remove as soon as we come here
+		document.removeEventListener('uploadfinished', uploadFinished);
 		processFormsTableInput(document.querySelector('[data-oldtext]'));
 	}
 }
@@ -448,6 +457,7 @@ document.addEventListener('change', event=>{
 		document.querySelectorAll('.main_form_wrapper').forEach(el=>{
 			el.classList.add('hidden');
 		});
+
 		document.getElementById(target.value).classList.remove('hidden');
 
 		// position table

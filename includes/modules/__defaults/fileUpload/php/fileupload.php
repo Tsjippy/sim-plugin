@@ -15,5 +15,4 @@ add_action ( 'wp_ajax_upload_files', function (){
 
 	echo json_encode($fileUploader->filesArr);
 	wp_die();
-
 });

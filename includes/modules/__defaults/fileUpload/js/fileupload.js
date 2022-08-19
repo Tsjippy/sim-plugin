@@ -192,6 +192,7 @@ function fileUploadSucces(result){
 			anchorLink	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="width:150px;height:150px;"></a>`;
 		}else{
 			//Add a link
+			let filename	= url.split('/')[url.split('/').length-1]
 			anchorLink	= `<a class="fileupload" href="${url}">${filename}</a>`;
 		}
 		anchorLink += `<button type="button" class="remove_document button" data-url="${src}" ${datasetString}>X</button>`;
@@ -210,6 +211,11 @@ function fileUploadSucces(result){
 	if(!fileUploadWrap.querySelector('.file_upload').multiple){
 		fileUploadWrap.querySelector('.upload_div').classList.add('hidden');
 	}
+
+	// Create a custom event so others can listen to it.
+	// Used by formstable uploads
+	const event = new Event('uploadfinished');
+	fileUploadWrap.dispatchEvent(event);
 }
 
 async function removeDocument(target){
