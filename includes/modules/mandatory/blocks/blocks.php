@@ -4,7 +4,7 @@ use SIM;
 
 add_action('init', function () {
 	register_block_type(
-		__DIR__ . '/upcomingEvents/build',
+		__DIR__ . '/mandatory/build',
 		array(
 			'render_callback' => __NAMESPACE__.'\mustReadDocuments',
 		)

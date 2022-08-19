@@ -59,6 +59,9 @@ function registerPostTypeAndTax($single, $plural){
 		'delete_with_user'		=> false,
 		'taxonomies'  			=> array( $plural),
 		'template' => array(
+            array( 'core/paragraph', array(
+                'placeholder' => 'Add a Description...',
+            ) ),
             array( "sim/{$single}meta" )
         ),
 	);

@@ -188,14 +188,14 @@
 	}
 }
 
-div input[type="text"],
-div input[type="email"],
-div input[type="tel"],
-div input[type="month"],
-div input[type="password"],
-div input[type="search"],
-div input[type="number"],
-div input[type="url"]
+.sim_form input[type="text"],
+.sim_form input[type="email"],
+.sim_form input[type="tel"],
+.sim_form input[type="month"],
+.sim_form input[type="password"],
+.sim_form input[type="search"],
+.sim_form input[type="number"],
+.sim_form input[type="url"]
 {
 	&:not(.column_settings, .element_condition){
 		width: 100%;

@@ -134,19 +134,26 @@ const Edit = ({attributes, setAttributes}) => {
 		[pageResolved]
 	)
 
+	const SearchPage	= () => {
+		return(
+			<>
+				< SearchControl onChange={setSearchTerm} value={ searchTerm } autoFocus={true}/>
+				< SearchResults hasResolved= {resolved} pageList= {pages} />
+			</>
+		)
+	}
+
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Page Embed Settings', 'sim' ) }>
 					< BuildCheckboxControls  />
 					<i>{__('Use searchbox below to search for a page', 'sim')}</i>
-					< SearchControl onChange={setSearchTerm} value={ searchTerm } autoFocus={true}/>
-					< SearchResults hasResolved= {resolved} pageList= {pages} />
+					{ SearchPage() }
 				</PanelBody>
 			</InspectorControls>
 			<div {...useBlockProps()}>
-				< SearchControl onChange={setSearchTerm} value={ searchTerm } autoFocus={true}/>
-				< SearchResults hasResolved= {resolved} pageList= {pages} />
+				{ SearchPage() }
 				{embededPage}
 			</div>
 		</>

@@ -30,7 +30,7 @@ add_action('init', function () {
 				],
 				'event'	=> [
 					'type'	=> 'string',
-					'default'	=> 'hoi daar'
+					'default'	=> ''
 				] 
 			]
 		)
@@ -71,12 +71,41 @@ function displaySchedules(){
 
 // register custom meta tag field
 add_action( 'init', function(){
-	register_post_meta( 'event', 'event', array(
+	register_post_meta( 'event', 'eventdetails', array(
         'show_in_rest' 	=> true,
         'single' 		=> true,
         'type' 			=> 'string',
-		'sanitize_callback' => function($text) {
-            return sanitize_text_field($text);
-        }
+		'sanitize_callback' => 'sanitize_text_field'
     ) );
 } );
+
+add_action( 'added_post_meta', __NAMESPACE__.'\createEvents', 10, 4);
+add_action( 'updated_postmeta', __NAMESPACE__.'\createEvents', 10, 4);
+
+function createEvents($metaId, $postId,  $metaKey,  $metaValue ){
+	if($metaKey != 'eventdetails'){
+		return;
+	}
+
+	if(empty($metaValue)){
+		return;
+	}
+
+	$metaValue	= json_decode($metaValue, true);
+
+	$events = new CreateEvents();
+	$events->postId	= $postId;
+    //check if anything has changed
+	$events->removeDbRows();
+
+	// Delete any existing events as well
+	wp_clear_scheduled_hook([$events, 'sendEventReminder'], $postId);
+	
+	//create events
+	$events->eventData		= $metaValue;
+	$result	= $events->createEvents();	
+
+	if(is_wp_error($result)){
+		SIM\printArray($result);
+	}
+}

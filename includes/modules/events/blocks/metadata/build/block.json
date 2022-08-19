@@ -18,8 +18,8 @@
         "remove": true
       }
     },
-    "event": {
-      "type": "string",
+    "eventdetails": {
+      "type": "array",
       "default": ""
     }
   }

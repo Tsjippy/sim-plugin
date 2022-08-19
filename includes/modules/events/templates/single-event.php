@@ -122,7 +122,7 @@ function displayEventMeta(){
 	$event		= $events->retrieveSingleEvent(get_the_ID());
 	$date		= $events->getDate($event);
 	$time		= $events->getTime($event);
-	$meta		= get_post_meta($event->ID,'eventdetails',true);
+	$meta		= json_decode(get_post_meta($event->ID, 'eventdetails', true), true);
 	$baseUrl	= plugins_url('pictures', __DIR__);
 
 	?>

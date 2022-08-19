@@ -284,9 +284,17 @@ class DisplayEvents extends Events{
 	*/
 	public function getRepeatDetail($meta){
 		$html = 'Repeats '.$meta['repeat']['type'];
+
+		if($meta['repeat']['type'] == 'weekly' && !empty($meta['repeat']['weeks'])){
+			$when	= strtolower(implode(' and ', $meta['repeat']['weeks']));
+			$day	= strtolower(Date('l', strtotime($meta['startdate'])));
+			$html	.= " on the $when $day of the month";
+		}
+
 		if(!empty($meta['repeat']['enddate'])){
 			$html	.= " until ".date('j F Y',strtotime($meta['repeat']['enddate']));
 		}
+
 		if(!empty($meta['repeat']['amount'])){
 			$repeatAmount = $meta['repeat']['amount'];
 			if($repeatAmount != 90){
@@ -305,7 +313,7 @@ class DisplayEvents extends Events{
 	 * @return	string					Html containing buttons to export the event
 	*/
 	public function eventExportHtml($event){
-		$eventMeta		= (array)get_post_meta($event->post_id, 'eventdetails', true);
+		$eventMeta		= (array)json_decode(get_post_meta($event->post_id, 'eventdetails', true), true);
 
 		//set the timezone
 		date_default_timezone_set(wp_timezone_string());
@@ -473,7 +481,7 @@ class DisplayEvents extends Events{
 							$detailHtml .= "</article>";
 						}else{
 							foreach($this->events as $event){
-								$meta		= get_post_meta($event->ID,'eventdetails',true);
+								$meta		= json_decode(get_post_meta($event->ID, 'eventdetails', true), true);
 								$detailHtml .= "<article class='event-article'>";
 									$detailHtml .= "<div class='event-header'>";
 										if(has_post_thumbnail($event->post_id)){
@@ -593,7 +601,7 @@ class DisplayEvents extends Events{
 		$baseUrl		= plugins_url('../pictures', __DIR__);
 
 		foreach($this->events as $event){
-			$meta	= get_post_meta($event->ID, 'eventdetails', true);
+			$meta	= json_decode(get_post_meta($event->ID, 'eventdetails', true), true);
 			$url	= get_permalink($event->ID);
 
 			//do not re-add event details for a multiday event in the same week
@@ -966,7 +974,7 @@ class DisplayEvents extends Events{
 		$baseUrl	= plugins_url('../pictures', __DIR__);
 
 		foreach($this->events as $event){
-			$meta		= get_post_meta($event->ID,'eventdetails',true);
+			$meta		= json_decode(get_post_meta($event->ID, 'eventdetails', true), true);
 			$url		= get_permalink($event->ID);
 
 			$html .= "<article class='event-article'>";

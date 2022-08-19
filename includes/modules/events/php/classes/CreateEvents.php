@@ -28,7 +28,7 @@ class CreateEvents extends Events{
 	/**
 	 * Creates events in the db
 	*/
-	protected function createEvents(){
+	public function createEvents(){
 		global $wpdb;
 
 		$baseStartDateStr	= $this->eventData['startdate'];
@@ -37,7 +37,7 @@ class CreateEvents extends Events{
 		$dayDiff 			= ((new \DateTime($baseStartDateStr))->diff((new \DateTime($baseEndDate))))->d;
 
 		$this->startDates			= [$baseStartDateStr];
-		if(!empty($this->eventData['repeated'])){
+		if(!empty($this->eventData['isrepeated'])){
 			$this->createRepeatedEvents($baseStartDate);
 		}
 		
@@ -47,7 +47,7 @@ class CreateEvents extends Events{
 
 			$args	= $this->eventData;
 			unset($args['startdate']);
-			unset($args['repeated']);
+			unset($args['isrepeated']);
 			unset($args['repeat']);
 			unset($args['allday']);
 			$args['enddate']		= $enddate;
@@ -62,9 +62,11 @@ class CreateEvents extends Events{
 			);
 			
 			if($wpdb->last_error !== ''){
-				return new WP_Error('event', $wpdb->print_error());
+				return new WP_Error('event', $wpdb->last_error);
 			}
 		}
+
+		return true;
 	}
 
 	function calculateStartDate($repeatParam, $baseStartDate, $index){
@@ -83,7 +85,7 @@ class CreateEvents extends Events{
 		switch ($repeatParam['type']){
 			case 'daily':
 				$startDate		= strtotime("+{$index} day", $baseStartDate);
-				if(!in_array(date('w', $startDate), $weekDays)){
+				if(!empty($weekDays) && !in_array(date('w', $startDate), $weekDays)){
 					return false;
 				}
 				break;
@@ -105,20 +107,46 @@ class CreateEvents extends Events{
 				}
 				break;
 			case 'monthly':
-				$repeatParam['months']	= [];
 				if(isset($repeatParam['months'])){
 					$months			= (array)$repeatParam['months'];
+				}else{
+					$repeatParam['months']	= [];
 				}
 
-				$startDate		= strtotime("+{$index} month", $baseStartDate);
+				// Get the next month
+				$startDate		= strtotime("first day of +{$index} month", $baseStartDate);
+
+				// Skip this month if needed
 				$month			= date('m', $startDate);
-				if(!empty($months) && !in_array($month, $months)){
+				if(!empty($months) && !in_array($month, $months) && !in_array('All', $months)){
 					return false;
 				}
 
-				if(!empty($weeks) && !empty($weekDays)){
-					$day		= $weekDayNames[$weekDays[0]];
-					$startDate	= strtotime("{$weeks[0]} $day of this month", $startDate);
+				// Find the correct day of the month by datetype
+
+				// same day number
+				if($repeatParam['datetype'] == 'samedate'){
+					// The new month does not have this date
+					if(Date('t', $startDate) < Date('d', $baseStartDate)){
+						return false;
+					}
+
+					$day		= Date('d', $baseStartDate)-1;
+					$startDate	= strtotime("+$day days", $startDate);
+				// Same week and day i.e. first friday
+				}elseif($repeatParam['datetype'] == 'patterned'){
+					$firstWeek	= Date('W', strtotime("first day of 0 month", $baseStartDate));
+					$targetWeek	= SIM\numberToWords(Date("W", $baseStartDate)-$firstWeek);
+					$dayName	= Date('l', $baseStartDate);
+
+					$startDate	= strtotime("$targetWeek $dayName of +{$index} month", $baseStartDate);
+				// last day of the month
+				}elseif($repeatParam['datetype'] == 'lastday'){
+					$startDate	= strtotime("last day +$index month", $baseStartDate);
+				// Same last day i.e. last Friday
+				}else{
+					$dayName	= Date('l', $baseStartDate);
+					$startDate	= strtotime("last $dayName of +{$index} month", $baseStartDate);
 				}
 
 				break;
@@ -147,11 +175,12 @@ class CreateEvents extends Events{
 		//then create the new ones
 		$repeatParam	= $this->eventData['repeat'];
 		$interval		= max(1, (int)$repeatParam['interval']);
-		$amount			= $repeatParam['amount'];
-		if(!is_numeric($amount)){
-			$amount = 200;
-		}
+		$amount			= 200;
+		
 		$repeatStop	= $repeatParam['stop'];
+		if($repeatParam['stop'] == 'after' && !empty($repeatParam['amount']) && is_numeric($amount)){
+			$amount = intval($repeatParam['amount'])-1;// The first event is already created
+		}
 
 		if($repeatStop == 'date'){
 			$repEnddate	= $repeatParam['enddate'];
@@ -173,21 +202,22 @@ class CreateEvents extends Events{
 		$i				= 1;
 		while($startDate < $repEnddate && $amount > 0){
 			$startDate	= $this->calculateStartDate($repeatParam, $baseStartDate, $i);
-			if(!$startDate || in_array($startDate, $excludeDates)){
-				$i				= $i+$interval;
-				continue;
-			}
 
 			if($repeatParam['type'] == 'custom_days'){
 				$startDateStr	= $includeDates[$i];
-			}else{
+			}elseif($startDate){
 				$startDateStr	= date('Y-m-d', $startDate);
+			}
+
+			if(!$startDate || in_array($startDateStr, $excludeDates)){
+				$i				= $i+$interval;
+				continue;
 			}
 			
 			if(
 				!in_array($startDateStr, $includeDates)		&&		//we should not exclude this date
 				$startDate < $repEnddate					&& 		//falls within the limits
-				(!is_numeric($amount) || $amount > 0)				//We have not exeededthe amount
+				(!is_numeric($amount) || $amount > 0)				//We have not exeeded the amount
 			){
 				$this->startDates[]	= $startDateStr;
 			}
@@ -298,7 +328,7 @@ class CreateEvents extends Events{
 		$this->eventData['starttime']			= '00:00';
 		$this->eventData['endtime']				= '23:59';
 		$this->eventData['allday']				= true;
-		$this->eventData['repeated']			= 'Yes';
+		$this->eventData['isrepeated']			= 'Yes';
 		$this->eventData['repeat']['interval']	= 1;
 		$this->eventData['repeat']['amount']	= 90;
 		$this->eventData['repeat']['stop']		= 'never';
@@ -313,7 +343,7 @@ class CreateEvents extends Events{
 		);
 
 		$this->postId 	= wp_insert_post( $post, true, false);
-		update_metadata( 'post', $this->postId, 'eventdetails', $this->eventData);
+		update_metadata( 'post', $this->postId, 'eventdetails', json_encode($this->eventData));
 		update_metadata( 'post', $this->postId, 'celebrationdate', $metaValue);
 
 		// Set the categories
@@ -395,7 +425,7 @@ class CreateEvents extends Events{
 		$event['organizer_id']			= sanitize_text_field($event['organizer_id']);
 	
 		//check if anything has changed
-		$oldMeta	= get_post_meta($this->postId, 'eventdetails', true);
+		$oldMeta	= json_decode(get_post_meta($this->postId, 'eventdetails', true), true);
 		if($oldMeta != $event){
 			if(!empty($oldMeta)){
 				// First delete any existing events
@@ -406,7 +436,7 @@ class CreateEvents extends Events{
 			}
 
 			//store meta in db
-			update_metadata( 'post', $this->postId, 'eventdetails', $event);
+			update_metadata( 'post', $this->postId, 'eventdetails', json_encode($event));
 		
 			//create events
 			$this->eventData		= $event;

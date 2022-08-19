@@ -1,10 +1,1 @@
-/*!****************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/editor.scss ***!
-  \****************************************************************************************************************************************************************************************************************************************/
-/**
- * The following styles get applied inside the editor only.
- *
- * Replace them with your own styles or remove the file completely.
- */
-
-/*# sourceMappingURL=index.css.map*/
+.flex{display:flex;flex-direction:row}.center{display:inline-block;text-align:center;width:100%}.month-selector .components-checkbox-control__label,.week-selector .components-checkbox-control__label{margin-right:10px}.components-datetime__time>fieldset:first-child{display:none}.components-datetime__time>fieldset:nth-child(2){border:none;margin:0 30px 0 0;padding:0}.components-datetime__time>fieldset:nth-child(2) .components-datetime__time-wrapper{padding-left:30px}.time-pickers .components-checkbox-control{margin-top:20px}

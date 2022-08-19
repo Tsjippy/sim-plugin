@@ -112,11 +112,15 @@ function getLatestRelease(){
 	
 	// if not in transient
 	if(!$release){
-		$client 	    = new \Github\Client();
-		$release 	    = $client->api('repo')->releases()->latest('tsjippy', PLUGINNAME);
-		
-		// Store for 1 hours
-		set_transient( 'sim-git-release', $release, DAY_IN_SECONDS );
+		try{
+			$client 	    = new \Github\Client();
+			$release 	    = $client->api('repo')->releases()->latest('tsjippy', PLUGINNAME);
+			
+			// Store for 1 hours
+			set_transient( 'sim-git-release', $release, DAY_IN_SECONDS );
+		}catch(\Exception $exception){
+			printArray($exception);
+		}
 	}
 
 	return $release;

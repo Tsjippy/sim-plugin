@@ -48,7 +48,7 @@ function eventSpecificFields($frontEndContent){
 	
 	$frontEndContent->showCategories('event', $categories);
 	
-	$eventDetails	= (array)get_post_meta($frontEndContent->postId, 'eventdetails', true);
+	$eventDetails	= (array)json_decode(get_post_meta($frontEndContent->postId, 'eventdetails', true), true);
 	
 	?>
 	<br>
@@ -150,30 +150,29 @@ function displayRepetitionParameters($eventDetails){
 			<h4>Select repeat pattern:</h4>
 			<label class='optionlabel'>
 				<input type='radio' name='event[repeat][datetype]' value='samedate' <?php if($repeatParam['datetype'] == 'samedate'){echo 'checked';}?>>
-				<?php
-				$monthDay	= explode('-',$eventDetails['startdate'])[2];
-				if($repeatParam['type'] == 'monthly'){
-					$monthText	= "a month";
-				}elseif($repeatParam['type'] == 'yearly'){
-					$monthNumber	= explode('-',$eventDetails['startdate'])[1];
-					$monthName		= date("F", mktime(0, 0, 0, $monthNumber, 10));
-					$monthText		= "$monthName every year";
-				}
-				
-				echo "On the <span class='monthday'>$monthDay</span>th of <span class='monthoryear'>$monthText</span>";
-				?>
+				On the same day
 			</label>
 			<label class='optionlabel'>
 				<input type='radio' name='event[repeat][datetype]' value='patterned' <?php if($repeatParam['datetype'] == 'patterned'){echo 'checked';}?>>
-				<?php
-				echo "<span class='monthoryeartext'>";
-				if($repeatParam['type'] == 'monthly'){
-					echo "On a certain day and week of a month";
-				}else{
-					echo "On a certain day, week and month of a year";
-				}
+				On the <?php
+				echo "<span class='weekword'>";
+				echo "</span> ";
+				echo "<span class='dayname'>";
 				echo "</span>";
 				?>
+				of the month
+			</label>
+			<label class='optionlabel'>
+				<input type='radio' name='event[repeat][datetype]' value='last' <?php if($repeatParam['datetype'] == 'last'){echo 'checked';}?>>
+				On the last <?php
+				echo "<span class='dayname'>";
+				echo "</span>";
+				?>
+				 of the month
+			</label>
+			<label class='optionlabel'>
+				<input type='radio' name='event[repeat][datetype]' value='lastday' <?php if($repeatParam['datetype'] == 'lastday'){echo 'checked';}?>>
+				On the last day of the month
 			</label>
 		</div>
 					

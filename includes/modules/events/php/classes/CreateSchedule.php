@@ -98,7 +98,7 @@ class CreateSchedule extends Schedules{
 				'post_author'   => $this->hostId
 			);
 			$postId 	= wp_insert_post( $post,true,false);
-			update_post_meta($postId,'eventdetails',$event);
+			update_post_meta($postId, 'eventdetails', json_encode($event));
 			update_post_meta($postId,'onlyfor',$a['onlyfor']);
 
 			foreach($a['onlyfor'] as $userId){
