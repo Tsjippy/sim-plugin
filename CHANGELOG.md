@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.07] - 2022-08-19
+
+
+### Added
+- events metadata block
+
 ## [2.0.6] - 2022-08-17
 
 
