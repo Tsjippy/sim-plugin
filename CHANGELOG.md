@@ -9,6 +9,7 @@
 
 ### Fixed
 - better error handling while upload
+- location lookup by google
 
 ## [2.07] - 2022-08-19
 
