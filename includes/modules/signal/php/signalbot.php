@@ -2,23 +2,6 @@
 namespace SIM\SIGNAL;
 use SIM;
 
-//Post is published from backend
-add_action(  'transition_post_status',  function( $newStatus, $oldStatus, $post ) {
-	// Check if signal nonce is set.
-	if ($newStatus == 'publish'){
-		if(isset( $_POST['signal_message_meta_box_nonce'] ) ) {
-			//Get the nonce from the post array
-			$nonce = $_POST['signal_message_meta_box_nonce'];
-			// Verify that the nonce is valid and checkbox to send is checked.
-			if (wp_verify_nonce( $nonce, 'signal_message_meta_box') && isset($_POST['signal_message'])) {
-				sendPostNotification($post);
-			}
-		}elseif($oldStatus != 'publish' && $oldStatus != 'new'){
-			sendPostNotification($post);
-		}
-	}
-}, 10, 3 );
-
 /**
  *
  * Sends a summary or full post to the Signal group when post is published
@@ -128,29 +111,4 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	];
 	
 	update_option('signal_bot_messages', $notifications);
-}
-
-//Function to add a checkbox for signal messages to a post
-add_action( 'add_meta_boxes',  function() {
-	add_meta_box( 'send-signal-message', 'Signal message', __NAMESPACE__.'\sendSignalMessageMetaBox', ['page','post','event'], 'side', 'high' );
-	add_meta_box( 'send-signal-message-bottom', 'Signal message', __NAMESPACE__.'\sendSignalMessageMetaBox', ['page','post','event'], 'normal', 'high' );
-});
-
-//Display the send signal meta box
-function sendSignalMessageMetaBox() {
-	global $post;
-
-	// Add an nonce field so we can check for it later.
-	wp_nonce_field( 'signal_message_meta_box', 'signal_message_meta_box_nonce' );
-	
-	//Check the box by default for posts
-	if($post->post_type == 'post' && $post->post_status != 'publish'){
-		$checked = "checked";
-	}else{
-		$checked = "";
-	}
-	
-	//Output the checkbox
-	echo "<input type='checkbox' id='signal_message' name='signal_message' value='sent' $checked>";
-	echo '<label for="signal_message"> Send Signal message on publish</label><br>';
 }

@@ -33,12 +33,12 @@ const Edit = ({ setAttributes, attributes } ) => {
 
 				setEvent( data );
 
-				if(data['organizer-label'] ){
-					setLocationSearchTerm(data['organizer-label']);
+				if(data['organizer'] ){
+					setLocationSearchTerm(data['organizer']);
 				}
 
-				if(data['location-label'] ){
-					setLocationSearchTerm(data['location-label']);
+				if(data['location'] ){
+					setLocationSearchTerm(data['location']);
 				}
 			}
 		} ,

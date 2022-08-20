@@ -34,23 +34,23 @@ add_action('init', function () {
 // register custom meta tag field
 add_action( 'init', function(){
 	register_post_meta( 'location', 'tel', array(
-        'show_in_rest' 	=> true,
-        'single' 		=> true,
-        'type' 			=> 'string',
+        'show_in_rest' 		=> true,
+        'single' 			=> true,
+        'type' 				=> 'string',
 		'sanitize_callback' => 'sanitize_text_field'
     ) );
 
 	register_post_meta( 'location', 'url', array(
-        'show_in_rest' 	=> true,
-        'single' 		=> true,
-        'type' 			=> 'string',
+        'show_in_rest' 		=> true,
+        'single' 			=> true,
+        'type' 				=> 'string',
 		'sanitize_callback' => 'sanitize_text_field'
     ) );
 
 	register_post_meta( 'location', 'location', array(
-        'show_in_rest' 	=> true,
-        'single' 		=> true,
-        'type' 			=> 'string',
+        'show_in_rest' 		=> true,
+        'single' 			=> true,
+        'type' 				=> 'string',
 		'sanitize_callback' => 'sanitize_text_field'
     ) );
 } );
