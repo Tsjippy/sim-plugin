@@ -1,3 +1,5 @@
+import './../../locations/js/user_location.js';
+
 async function confirmPostDelete( event ) {
 	event.preventDefault();
 	parent = event.target.closest('#frontend_upload_form');
