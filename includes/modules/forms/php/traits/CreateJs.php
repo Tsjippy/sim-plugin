@@ -313,20 +313,20 @@ trait CreateJs{
                                 $copyfieldid	= $condition['property_value'];
                                 
                                 //find the element with the right id
-                                $copy_element = $this->getElementById($copyfieldid);
-                                if(!$copy_element){
+                                $copyElement = $this->getElementById($copyfieldid);
+                                if(!$copyElement){
                                     $errors[]   = "Element $element->name has an invalid rule";
                                     continue;
                                 }
 
-                                $copyfieldname	= $copy_element->name;
-                                if($copy_element->type == 'checkbox'){
-                                    $copyfieldname .= '[]';
+                                $copyFieldName	= $copyElement->name;
+                                if($copyElement->type == 'checkbox'){
+                                    $copyFieldName .= '[]';
                                 }
                                 
-                                $varName = str_replace(['[]','[',']'],['','_',''],$copyfieldname);
+                                $varName = str_replace(['[]', '[', ']'], ['', '_', ''], $copyFieldName);
 
-                                $varCode = "var $varName = FormFunctions.getFieldValue('$copyfieldname', form);";
+                                $varCode = "var $varName = FormFunctions.getFieldValue('$copyFieldName', form);";
                                 if(!in_array($varCode, $checks[$fieldCheckIf]['variables'])){
                                     $checks[$fieldCheckIf]['variables'][] = $varCode;
                                 }

@@ -139,13 +139,6 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		echo "</label><br>";
 	}
 
-	if(in_array('location', $settings['enabled-forms'])){
-		echo "<label>";
-			echo "Give Google API key for location lookup. See <a href='https://developers.google.com/maps/documentation/javascript/get-api-key'>here</a><br>";
-			echo "<input type='text' name='google-maps-api-key' value='{$settings['google-maps-api-key']}' style='width:400px;'>";
-		echo "</label><br>";
-	}
-
 	return ob_get_clean();
 }, 10, 3);
 

@@ -48,6 +48,11 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	wp_enqueue_style('sim_locations_admin_style', plugins_url('css/admin.min.css', __DIR__), array(), MODULE_VERSION);
 	wp_enqueue_script('sim_locations_admin_script', plugins_url('js/locations_admin.min.js', __DIR__), array(), MODULE_VERSION, true);
+
+	echo "<label>";
+		echo "Give Google API key for location lookup. See <a href='https://developers.google.com/maps/documentation/javascript/get-api-key'>here</a><br>";
+		echo "<input type='text' name='google-maps-api-key' value='{$settings['google-maps-api-key']}' style='width:400px;'>";
+	echo "</label><br>";
 	
 	$categories = get_categories( array(
 		'orderby' 	=> 'name',

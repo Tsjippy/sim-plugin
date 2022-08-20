@@ -9,4 +9,12 @@ add_action( 'wp_enqueue_scripts', function(){
     if(in_array(get_the_ID(), $pages)){
         wp_enqueue_style('sim_locations_style');
     }
-});
+
+    $apiKey = SIM\getModuleOption(MODULE_SLUG, 'google-maps-api-key');
+    if($apiKey){
+        wp_localize_script( 'sim_script', 
+            'mapsApi', 
+            ['key'=>$apiKey]
+        );
+    }
+}, 99);

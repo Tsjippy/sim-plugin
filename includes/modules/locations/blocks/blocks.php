@@ -33,6 +33,7 @@ add_action('init', function () {
 
 // register custom meta tag field
 add_action( 'init', function(){
+
 	register_post_meta( 'location', 'tel', array(
         'show_in_rest' 		=> true,
         'single' 			=> true,
@@ -53,4 +54,9 @@ add_action( 'init', function(){
         'type' 				=> 'string',
 		'sanitize_callback' => 'sanitize_text_field'
     ) );
+} );
+
+add_action( 'enqueue_block_editor_assets', function(){
+	$apiKey = SIM\getModuleOption(MODULE_SLUG, 'google-maps-api-key');
+	wp_enqueue_script( 'googlemaps', "//maps.googleapis.com/maps/api/js?key=$apiKey", [], MODULE_VERSION, true);
 } );
