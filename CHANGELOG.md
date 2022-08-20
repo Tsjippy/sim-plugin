@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better error handling while upload
 
 ## [2.07] - 2022-08-19
 
