@@ -22,7 +22,9 @@ const Edit = ({ setAttributes, attributes } ) => {
 	const serves			= meta[ 'serves' ];
 
 	const updateMetaValue = ( value, key ) => {
-		setMeta( { ...meta, key: value } );
+		let newMeta	= { ...meta };
+		newMeta[key]	= value;
+		setMeta( newMeta );
 	};	
 
 	return (
@@ -31,22 +33,19 @@ const Edit = ({ setAttributes, attributes } ) => {
 			
 			<h3>{__('Ingredients')}</h3>
 			<TextareaControl
-				label="Ingredients"
-				help="One per line"
+				label="One per line"
 				value={ ingredients }
 				onChange={(value) => updateMetaValue(value, 'ingredients')}
 			/>
 
 			<h3>{__('Time needed')}</h3>
 			<NumberControl
-				label={__('time needed')}
 				value={ time_needed }
 				onChange={(value) => updateMetaValue(value, 'time_needed')}
 			/>
 
 			<h3>{__('Serves')}</h3>
 			<NumberControl
-				label={__('Serves')}
 				value={ serves }
 				onChange={(value) => updateMetaValue(value, 'serves')}
 			/>
