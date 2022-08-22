@@ -11,6 +11,7 @@
 - better error handling while upload
 - location lookup by google
 - issue with creating events
+- location pages not showing a map
 
 ## [2.07] - 2022-08-19
 
