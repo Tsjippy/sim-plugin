@@ -2,7 +2,7 @@
 namespace SIM\EVENTS;
 use SIM;
 
-add_action( 'save_post', function($post_ID, $post){
+add_action( 'wp_after_insert_post', function($post_ID, $post){
     if(has_shortcode($post->post_content, 'schedules')){
         global $Modules;
 

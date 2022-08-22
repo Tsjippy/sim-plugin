@@ -410,6 +410,10 @@ add_filter('sim_signal_post_notification_message', function($excerpt, $post){
 }, 10, 2);
 
 add_action('sim_after_post_save', function($post, $frontEndPost){
+	if($post->post_type != 'event'){
+		return;
+	}
+	
     $events = new CreateEvents();
     $events->storeEventMeta($post, $frontEndPost->update);
 

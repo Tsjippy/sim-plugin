@@ -43,7 +43,7 @@ add_action('sim_after_post_save', function($post){
 });
 
 //If no featured image on post is set, set one
-add_action( 'save_post', function ( $postId, $post) {
+add_action( 'wp_after_insert_post', function ( $postId, $post) {
 	if($post->post_status == "publish"){
         setDefaultPicture($postId);
 	}

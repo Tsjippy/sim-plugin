@@ -31,6 +31,10 @@ add_action('sim_frontend_post_content_title', function ($postType){
 });
 
 add_action('sim_after_post_save', function($post, $frontEndPost){
+    if($post->post_type != 'location'){
+        return;
+    }
+    
     //store categories
     $frontEndPost->storeCustomCategories($post, 'locations');
     
@@ -269,7 +273,7 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $metaValue){
 }
 
 // Removes a map when post data is deleted
-add_action( 'delete_post_meta', function($metaIds, $postId, $metaKey, $_metaValue ){
+add_action( 'delete_post_meta', function($metaIds, $postId, $metaKey, $metaValue ){
     if($metaKey != 'location'){
         return;
     }
@@ -376,3 +380,18 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
     </div>
     <?php
 }, 10, 2);
+
+// Update marker icon
+add_action( 'wp_after_insert_post', function( $postId, $post, $update ){
+    if($post->post_type != 'location'){
+        return;
+    }
+
+    $url        = get_the_post_thumbnail_url($postId);
+    $markerIds  = get_post_meta($postId, "marker_ids", true);
+
+    $maps   = new Maps();
+
+    // Update the url
+    $maps->createIcon($markerIds['page_marker'], $post->post_title, $url, 1);
+}, 10,3 );

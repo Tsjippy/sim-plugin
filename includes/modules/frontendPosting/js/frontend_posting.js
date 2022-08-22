@@ -184,13 +184,7 @@ function addFeaturedImage(event) {
 	
 	var parent = event.target.closest('#frontend_upload_form');
 
-	// if the file_frame has already been created, just reuse it
-	if ( typeof file_frame == 'object' ) {
-		file_frame.open();
-		return;
-	} 
-
-	file_frame = wp.media.frames.file_frame = wp.media({
+	let file_frame = wp.media.frames.file_frame = wp.media({
 		title: 'Select featured image' ,
 		button: {
 			text: 'Save featured image',

@@ -358,22 +358,28 @@ class Maps{
 			//check if marker icon id exists
 			if(is_numeric($currentMarkerIconId)){
 				$iconQuery 	= $wpdb->prepare("SELECT * FROM {$wpdb->prefix}ums_icons WHERE id = %d ", $currentMarkerIconId);
+			}else{
+				$currentMarkerIconId 	= $defaultId;
 			}
 		}
 
-		//check if an icon with this title exist
+		//check if an icon exists
 		$icon	 	= $wpdb->get_results($iconQuery);
 
-		if(!empty($icon) && $icon[0]->path == $url){
+		if(!empty($icon)){
+			$icon	= $icon[0];
+		}
+		
+		if($icon->path == $url){
 			//no update needed
 			return $icon->id;
 		}
 		
 		//Marker icon is still the default and there is no icon with this id
 		//Potentially the profile image of the partner is used
-		if($currentMarkerIconId == $defaultId && empty($icon)){
+		if($currentMarkerIconId == $defaultId){
 			//Create new icon if there is an icon url
-			if ( $url != "") {
+			if ( !empty($url)) {
 				//Insert picture as icon in the database
 				$wpdb->insert($wpdb->prefix . 'ums_icons', array(
 					'title'			=> $title,

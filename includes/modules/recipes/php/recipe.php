@@ -49,6 +49,10 @@ function recipeTitle($postType){
 }
 
 function storeRecipeMeta($post){
+	if($post->post_type != 'recipe'){
+		return;
+	}
+	
 	//store categories
     $cats = [];
     if(is_array($_POST['recipes_ids'])){

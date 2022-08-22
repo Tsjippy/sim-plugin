@@ -2,7 +2,7 @@
 namespace SIM\FRONTENDPOSTING;
 use SIM;
 
-add_action( 'save_post', function($postId, $post){
+add_action( 'wp_after_insert_post', function($postId, $post){
     if(has_shortcode($post->post_content, 'front_end_post')){
         global $Modules;
 
