@@ -390,6 +390,10 @@ add_action( 'wp_after_insert_post', function( $postId, $post, $update ){
     $url        = get_the_post_thumbnail_url($postId);
     $markerIds  = get_post_meta($postId, "marker_ids", true);
 
+    if(!is_array($markerIds) || !isset($markerIds['page_marker'])){
+        return;
+    }
+
     $maps   = new Maps();
 
     // Update the url

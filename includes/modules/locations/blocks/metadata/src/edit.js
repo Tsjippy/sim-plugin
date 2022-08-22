@@ -59,7 +59,7 @@ const Edit = ( ) => {
 
 	const tel				= meta[ 'tel' ];
 	const url				= meta[ 'url' ];
-	const locationDetails	= meta[ 'location' ] == '' ? {} : JSON.parse(meta[ 'location' ]);
+	const locationDetails	= meta[ 'location' ] == undefined || meta[ 'location' ] == '' ? {} : JSON.parse(meta[ 'location' ]);
 
 	const updateMetaValue = ( value, key ) => {
 		let newMeta	= { ...meta };

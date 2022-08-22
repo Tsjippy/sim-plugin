@@ -3,7 +3,7 @@
 	"apiVersion": 2,
 	"name": "sim/eventmeta",
 	"version": "0.1.0",
-	"title": "Meta data",
+	"title": "Events meta data",
 	"category": "widgets",
 	"description": "All event details",
 	"textdomain": "sim",

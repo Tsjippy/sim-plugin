@@ -24,7 +24,7 @@ add_action('init', function () {
 				],
 				'location'	=> [
 					'type'	=> 'string',
-					'default'	=> ''
+					'default'	=> '{"address":""}'
 				],
 			]
 		)
@@ -33,7 +33,6 @@ add_action('init', function () {
 
 // register custom meta tag field
 add_action( 'init', function(){
-
 	register_post_meta( 'location', 'tel', array(
         'show_in_rest' 		=> true,
         'single' 			=> true,

@@ -3,7 +3,7 @@
   "apiVersion": 2,
   "name": "sim/locationmeta",
   "version": "0.1.0",
-  "title": "Meta data",
+  "title": "Location meta data",
   "category": "widgets",
   "description": "All location details",
   "textdomain": "sim",
@@ -17,6 +17,10 @@
         "move": true,
         "remove": true
       }
+    },
+    "location": {
+      "type": "string",
+      "default": ""
     }
   }
 }

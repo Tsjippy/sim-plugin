@@ -3,7 +3,7 @@
   "apiVersion": 2,
   "name": "sim/recipemeta",
   "version": "0.1.0",
-  "title": "Meta data",
+  "title": "Recipe meta data",
   "category": "widgets",
   "description": "All recipe details",
   "textdomain": "sim",
