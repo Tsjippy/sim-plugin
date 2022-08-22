@@ -22,9 +22,6 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		If anyone without publish rights tries to add or edit a page, it will be stored as pending.<br>
 		An overview of pending content can be shown using the <code>[pending_pages]</code> shortcode.<br>
 		You can use the <code>[pending_post_icon]</code> shortcode as an indicator, displaying the amount of pending posts in menu items.<br>
-		<br>
-		If a post only contains an url leading to another page, that url will be replaced with the shortcode <code>[showotherpost postid=XX]</code>.<br>
-		In that way the post content of another post can be shown.
 	</p>
 
 	<?php

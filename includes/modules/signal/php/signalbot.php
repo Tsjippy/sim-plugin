@@ -18,12 +18,12 @@ function sendPostNotification($post){
 		return;
 	}
 
-    $signalMessageType	= get_post_meta($post->ID, 'signalmessagetype', true);
+    $signalMessageType	= get_post_meta($post->ID, 'signal_message_type', true);
 	$signalUrl			= get_post_meta($post->ID, 'signal_url', true);
 	$signalExtraMessage	= get_post_meta($post->ID, 'signal_extra_message', true);
 
 	delete_post_meta($post->ID, 'signal');
-	delete_post_meta($post->ID, 'signalmessagetype');
+	delete_post_meta($post->ID, 'signal_message_type');
 	delete_post_meta($post->ID, 'signal_url');
 	delete_post_meta($post->ID, 'signal_extra_message');
 	

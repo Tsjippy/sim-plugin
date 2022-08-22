@@ -1,7 +1,7 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 2,
-	"name": "sim-events/sim-events",
+	"name": "sim/upcomingevents",
 	"version": "0.1.0",
 	"title": "Upcoming Events",
 	"category": "widgets",

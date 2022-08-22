@@ -7,7 +7,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
     if($frontendContend->fullrights && ($frontendContend->postId == null || !empty(get_post_meta($frontendContend->postId, 'signal', true)))){
         $checked 	    = 'checked';
         $hidden		    = '';
-        $messageType	= get_post_meta($frontendContend->postId,'signalmessagetype',true);
+        $messageType	= get_post_meta($frontendContend->postId,'signal_message_type',true);
     }
 
     ?>
@@ -48,7 +48,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 add_action('sim_after_post_save', function($post){
     if(isset($_POST['signal']) && $_POST['signal'] == 'send_signal'){
         update_metadata( 'post', $post->ID, 'signal','checked');
-        update_metadata( 'post', $post->ID, 'signalmessagetype', $_POST['signalmessagetype']);
+        update_metadata( 'post', $post->ID, 'signal_message_type', $_POST['signalmessagetype']);
         update_metadata( 'post', $post->ID, 'signal_url', $_POST['signal_url']);
         update_metadata( 'post', $post->ID, 'signal_extra_message', $_POST['signal_extra_message']);
 
