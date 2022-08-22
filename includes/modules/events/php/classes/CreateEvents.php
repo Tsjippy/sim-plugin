@@ -387,21 +387,6 @@ class CreateEvents extends Events{
 		}
 
 		$this->postId					= $post->ID;
-
-		//store categories
-		$cats = [];
-		if(is_array($_POST['events_ids'])){
-			foreach($_POST['events_ids'] as $catId) {
-				if(is_numeric($catId)){
-					$cats[] = $catId;
-				}
-			}
-			
-			//Store types
-			$cats = array_map( 'intval', $cats );
-			
-			wp_set_post_terms($post->ID, $cats, 'events');
-		}
 	
 		$event							= $_POST['event'];	
 		$event['allday']				= sanitize_text_field($event['allday']);
@@ -427,20 +412,8 @@ class CreateEvents extends Events{
 		//check if anything has changed
 		$oldMeta	= json_decode(get_post_meta($this->postId, 'eventdetails', true), true);
 		if($oldMeta != $event){
-			if(!empty($oldMeta)){
-				// First delete any existing events
-				$this->removeDbRows($this->postId);
-
-				// Delete any existing events as well
-				wp_clear_scheduled_hook([$this, 'sendEventReminder'], $this->postId);
-			}
-
 			//store meta in db
-			update_metadata( 'post', $this->postId, 'eventdetails', json_encode($event));
-		
-			//create events
-			$this->eventData		= $event;
-			$this->createEvents();	
+			update_metadata( 'post', $this->postId, 'eventdetails', json_encode($event));	
 		}
 	}
 

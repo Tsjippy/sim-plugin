@@ -108,7 +108,7 @@ function eventSpecificFields($frontEndContent){
 			<button class='button' type='button' name='enable_event_repeat'>
 				Repeat this event
 			</button>
-			<input type='hidden' name='event[repeated]' value='<?php echo $eventDetails['repeated'];?>'>
+			<input type='hidden' name='event[isrepeated]' value='<?php echo $eventDetails['isrepeated'];?>'>
 		</label>
 		
 		<?php
@@ -129,7 +129,7 @@ function displayRepetitionParameters($eventDetails){
 	);
 
 	?>
-	<fieldset class='repeat_wrapper <?php if(empty($eventDetails['repeated'])){echo 'hidden';}?>'>
+	<fieldset class='repeat_wrapper <?php if(empty($eventDetails['isrepeated'])){echo 'hidden';}?>'>
 		<legend>Repeat parameters</legend>
 		<h4>Select repeat type:</h4>
 		<select name="event[repeat][type]">

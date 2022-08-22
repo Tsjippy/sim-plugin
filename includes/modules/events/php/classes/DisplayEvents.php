@@ -192,6 +192,9 @@ class DisplayEvents extends Events{
 	 * @return	string					The date of the event. Startdate and end date in case of an multiday event
 	*/
 	public function getDate($event){
+		if(empty($event->enddate)){
+			$event->enddate	= $event->startdate;
+		}
 		if($event->startdate != $event->enddate){
 			$date		= date('d-m-Y', strtotime($event->startdate)).' - '.date('d-m-Y', strtotime($event->enddate));
 		}else{

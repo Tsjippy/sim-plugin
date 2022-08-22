@@ -935,7 +935,7 @@ class FrontEndContent{
 	 */
 	function storeCustomCategories($post, $taxonomy){
 		$cats = [];
-		if(is_array($_POST[$taxonomy.'_ids'])){
+		if(isset($_POST[$taxonomy.'_ids']) && is_array($_POST[$taxonomy.'_ids'])){
 			foreach($_POST[$taxonomy.'_ids'] as $catId) {
 				if(is_numeric($catId)){
 					$cats[] = $catId;
