@@ -5,6 +5,7 @@
 ### Added
 - recipe metadata block
 - Signal block
+- mailchimp block
 
 ### Changed
 - embed page content to embed page module
