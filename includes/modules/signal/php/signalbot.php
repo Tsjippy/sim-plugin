@@ -14,7 +14,7 @@ function sendPostNotification($post){
 		$post = get_post($post);
 	}
 
-	if(empty(get_post_meta($post->ID, 'signal', 'checked'))){
+	if(empty(get_post_meta($post->ID, 'signal_message_type', true))){
 		return;
 	}
 

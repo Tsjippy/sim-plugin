@@ -3,11 +3,13 @@ const { createHigherOrderComponent }    = wp.compose;
 const { Fragment }                      = wp.element;
 const { InspectorControls }             = wp.blockEditor;
 const { PanelBody, ToggleControl, CheckboxControl }      = wp.components;
-import { SearchControl, Spinner, __experimentalInputControl as InputControl } from '@wordpress/components';
+import { RadioControl, TextareaControl, SearchControl, Spinner, __experimentalInputControl as InputControl } from '@wordpress/components';
 import {useState, useEffect } from "@wordpress/element";
 import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
 import { decodeEntities } from '@wordpress/html-entities';	
+import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
+import { useEntityProp } from '@wordpress/core-data';
 
 // Add attributes
 function addSignalAttribute(settings) {
@@ -16,11 +18,14 @@ function addSignalAttribute(settings) {
             send_signal: {
                 type: 'boolean',
             },
-            signalmessagetype: {
+            signal_message_type: {
                 type: 'string',
             },
             signal_extra_message: {
                 type: 'string'
+            },
+            signal_url: {
+                type: 'boolean'
             }
         });
     }
@@ -36,17 +41,6 @@ wp.hooks.addFilter(
 // Add controls to panel
 const signalControls = createHigherOrderComponent((BlockEdit) => {
     return ( props ) => {
-        const { attributes, setAttributes, isSelected } = props;
-
-        // Only work on selected blocks
-        if(!isSelected){
-            return (
-                <Fragment>
-                    <BlockEdit { ...props } />
-                </Fragment>
-            );
-        }
-
         const postType = useSelect(
             ( select ) => select( 'core/editor' ).getCurrentPostType(),
             []
@@ -57,6 +51,7 @@ const signalControls = createHigherOrderComponent((BlockEdit) => {
         const sendSignal			= meta[ 'send_signal' ];
 	    const signalMessageType		= meta[ 'signal_message_type' ];
 	    const signalExtraMessage	= meta[ 'signal_extra_message' ];
+        const signalUrl	            = meta[ 'signal_url' ];
 
         const updateMetaValue = ( value, key ) => {
             let newMeta	= { ...meta };
@@ -65,34 +60,44 @@ const signalControls = createHigherOrderComponent((BlockEdit) => {
     
             setMeta( newMeta );
         };	
-        
+
         return (
             <Fragment>
                 <BlockEdit { ...props } />
-                <InspectorControls>
-                	<PanelBody title={ __( 'Signal Options', 'sim' ) }>
-                        <ToggleControl
-                            label={__('Send signal message on publish', 'sim')}
-                            checked={sendSignal}
-                            onChange={(value) => updateMetaValue(value, 'send_signal')}
-                        />
-                        
-                        <RadioControl
-                            selected= { signalMessageType }
-                            options = {[
-                                { label: __('Send a summary'), value: 'summary' },
-                                { label: __('Send the whole post content'), value: 'all' }
-                            ]}
-                            onChange={ (value) => updateMetaValue( value, 'signal_message_type')}
-                        />
-                        
-                        <TextareaControl
-                            label={ __('Add this sentence to the signal message') }
-                            value={ signalExtraMessage }
-                            onChange={ (value) => updateMetaValue( value, 'signal_extra_message') }
-                        />
-	                </PanelBody>
-                </InspectorControls>
+                <PluginDocumentSettingPanel
+                    name="signal-options"
+                    title={ __( 'Signal Options', 'sim' ) }
+                    className="signal-options"
+                >
+                    <ToggleControl
+                        label={__('Send signal message on publish', 'sim')}
+                        checked={sendSignal}
+                        onChange={(value) => updateMetaValue(value, 'send_signal')}
+                    />
+                    
+                    <RadioControl
+                        selected= { signalMessageType }
+                        options = {[
+                            { label: __('Send a summary'), value: 'summary' },
+                            { label: __('Send the whole post content'), value: 'all' }
+                        ]}
+                        onChange={ (value) => updateMetaValue( value, 'signal_message_type')}
+                    />
+
+                    <br></br>
+                    
+                    <TextareaControl
+                        label={ __('Add this sentence to the signal message:') }
+                        value={ signalExtraMessage }
+                        onChange={ (value) => updateMetaValue( value, 'signal_extra_message') }
+                    />
+
+                    <ToggleControl
+                        label={__('Include the url in the message even if the whole content is posted', 'sim')}
+                        checked={signalUrl}
+                        onChange={(value) => updateMetaValue(value, 'signal_url')}
+                    />
+                </PluginDocumentSettingPanel>
             </Fragment>
         );
     };

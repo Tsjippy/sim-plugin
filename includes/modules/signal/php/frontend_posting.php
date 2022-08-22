@@ -51,10 +51,12 @@ add_action('sim_after_post_save', function($post){
         update_metadata( 'post', $post->ID, 'signal_message_type', $_POST['signalmessagetype']);
         update_metadata( 'post', $post->ID, 'signal_url', $_POST['signal_url']);
         update_metadata( 'post', $post->ID, 'signal_extra_message', $_POST['signal_extra_message']);
-
-        if(in_array($post->post_status, ['publish', 'inherit'])){
-            //Send signal message
-            sendPostNotification($post);
-        }
     }
 }, 999);
+
+add_action( 'wp_after_insert_post', function( $postId, $post ){
+    if(in_array($post->post_status, ['publish', 'inherit'])){
+        //Send signal message
+        sendPostNotification($post);
+    }
+}, 10, 3);
