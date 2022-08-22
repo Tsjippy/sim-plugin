@@ -37,15 +37,12 @@ add_shortcode("location_description", function($atts){
         return '';
     }
 
-    $location 	= get_post_meta($postId, 'location', true);
+    $location 	= json_decode(get_post_meta($postId, 'location', true), true);
     $latitude   = $location['latitude'];
     $longitude  = $location['longitude'];
 
     //Add the profile picture to the marker content
     $postThumbnail = get_the_post_thumbnail($postId, 'thumbnail', array( 'class' => 'aligncenter markerpicture' , 'style' => 'max-height:100px;',));
-            
-    //Add a directions button to the marker content
-    $directionsForm = "<p><a class='button' onclick='getRoute(this,$latitude,$longitude)'>Get directions</a></p>";
 
     //Add the post excerpt to the marker content
     $description    = $postThumbnail;
@@ -56,7 +53,12 @@ add_shortcode("location_description", function($atts){
 
     //Add the post link to the marker content
     $url            = get_permalink($postId);
-    $description    .= "<a href='$url' style='display:block;' class='page_link'>Show full descripion</a><br>$directionsForm";
+
+    if(get_the_ID() != $postId){
+        $description    .= "<a href='$url' style='display:block;' class='page_link'>Show full descripion</a><br>";
+    }
+
+    $description    .= "<p><a class='button' onclick='getRoute(this, $latitude, $longitude)'>Get directions</a></p>";;
     
     return $description;
 });

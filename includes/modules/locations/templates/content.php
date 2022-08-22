@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $archive	= false;
-if(is_tax() or is_archive()){
+if(is_tax() || is_archive()){
 	$archive	= true;
 }
 
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
-	<div class="cat_card<?php if($archive) echo ' inside-article';?>">
+	<div class="cat_card<?php if($archive){echo ' inside-article';}?>">
 		
 		<?php 
 		if($archive){
@@ -78,14 +78,16 @@ if(is_tax() or is_archive()){
 					}
 					
 					//now loop over the array to print the categories
-					$last_key	 = array_key_last($categories);
+					$lastKey	 = array_key_last($categories);
 					foreach($categories as $id=>$category){
 						//Only show the category if all of its subcats are not there
 						$url = get_term_link($id);
 						$category = ucfirst($category);
 						echo "<a href='$url'>$category</a>";
 						
-						if($id != $last_key) echo ', ';
+						if($id != $lastKey){
+							echo ', ';
+						}
 					}
 					?>
 				</span>
@@ -93,9 +95,9 @@ if(is_tax() or is_archive()){
 				<span class='category locationmeta'>
 					<?php
 					$tel		= get_post_meta(get_the_ID(),'tel',true);
-					if($tel != ''){
-						$image_url = plugins_url('pictures/tel.png', __DIR__);
-						$icon = "<img src='$image_url' alt='telephone' class='location_icon'>";
+					if(!empty($tel)){
+						$imageUrl = plugins_url('pictures/tel.png', __DIR__);
+						$icon = "<img src='$imageUrl' alt='telephone' class='location_icon'>";
 						echo "<a href='tel:$tel'>$icon Call them  »</a>";
 					}
 					?>
@@ -104,9 +106,9 @@ if(is_tax() or is_archive()){
 				<span class='category locationmeta'>
 					<?php
 					$url		= get_post_meta(get_the_ID(),'url',true);
-					if($url != '' and $url != 'https://www.'){
-						$image_url = plugins_url('pictures/url.png', __DIR__);
-						$icon = "<img src='$image_url' alt='location' class='location_icon'>";
+					if(!empty($url) && $url != 'https://www.'){
+						$imageUrl 	= plugins_url('pictures/url.png', __DIR__);
+						$icon 		= "<img src='$imageUrl' alt='location' class='location_icon'>";
 						echo "<a href='$url'>$icon Visit website  »</a>";
 					}
 					?>
@@ -116,14 +118,14 @@ if(is_tax() or is_archive()){
 			<?php
 			
 			//only show a map on the item page and if we are logged in
-			if($archive and is_user_logged_in()){
+			if(!$archive && is_user_logged_in()){
 				//Show a map if one is defined
-				$custom_map_id = get_post_meta(get_the_ID(),'map_id',true);
-				if(is_numeric($custom_map_id)){
+				$customMapId = get_post_meta(get_the_ID(),'map_id',true);
+				if(is_numeric($customMapId)){
 				?>
 				<div class='location_map' style='margin-top:15px;margin-bottom:25px;'>
 					<?php
-					echo do_shortcode("[ultimate_maps id='$custom_map_id']");
+					echo do_shortcode("[ultimate_maps id='$customMapId']");
 					?>
 				</div>
 				<?php
@@ -136,7 +138,7 @@ if(is_tax() or is_archive()){
 				//Only show summary on archive pages
 				if($archive){
 					$excerpt = get_the_excerpt();
-					if($excerpt == ''){
+					if(empty($excerpt)){
 						$url = get_permalink();
 						echo "<br><a href='$url'>View description »</a>";
 					}else{

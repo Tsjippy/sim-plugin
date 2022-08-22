@@ -2,6 +2,7 @@
 namespace SIM\LOCATIONS;
 use SIM;
 
+// Create the location custom post type 
 add_action('init', function(){
 	SIM\registerPostTypeAndTax('location', 'locations');
 }, 999);

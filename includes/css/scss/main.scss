@@ -55,11 +55,15 @@ body div .button:not(.small):focus{
 	color: white;
 	border-color: unset;
 	
-	&:hover,&:active{
+	&:hover, &:active{
 		background-color: $secundary_color;
 		color: white;
 		border-color: unset;
 	}
+}
+
+.leaflet-container a.button{
+	color: white;
 }
 
 .button.small{

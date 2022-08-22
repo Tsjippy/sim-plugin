@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if(!isset($skipHeader) or !$skipHeader)	get_header(); 
+if(!isset($skipHeader) || !$skipHeader)	get_header(); 
 ?>
 	<div id="primary">
 		<main id="main">

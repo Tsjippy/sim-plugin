@@ -1255,14 +1255,19 @@ class FrontEndContent{
 		
 		//Return result
 		if($this->status == 'publish'){
-			return "Succesfully $this->actionText the $this->postType, view it <a href='$url'>here</a>";
+			$message	= "Succesfully $this->actionText the $this->postType, view it <a href='$url'>here</a>";
 		}elseif($this->status == 'draft'){
-			return "Succesfully $this->actionText the draft for this $this->postType, preview it <a href='$url'>here</a>";
+			$message	= "Succesfully $this->actionText the draft for this $this->postType, preview it <a href='$url'>here</a>";
 		}elseif($_POST['publish_date'] > date('Y-m-d') && $this->status == 'future'){
-			return "Succesfully $this->actionText the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
+			$message	= "Succesfully $this->actionText the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
 		}else{
-			return "Succesfully $this->actionText the $this->postType, it will be published after it has been reviewed";			
+			$message	= "Succesfully $this->actionText the $this->postType, it will be published after it has been reviewed";			
 		}
+
+		return [
+			'message'	=> $message,
+			'id'		=> $this->postId
+		];
 	}
 	
 	/**

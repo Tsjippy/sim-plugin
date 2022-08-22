@@ -300,7 +300,12 @@ async function addCatType(target){
 async function submitPost(target){
 	let response	= await FormSubmit.submitForm(target, 'frontend_posting/submit_post');
 	if(response){
-		Main.displayMessage(response);
+		// Update the url
+		const url 		= new URL(window.location);
+		url.searchParams.set('post_id', response.id);
+		window.history.pushState({}, '', url);
+
+		Main.displayMessage(response.message);
 	}
 }
 
