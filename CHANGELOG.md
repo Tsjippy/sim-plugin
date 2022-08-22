@@ -12,6 +12,8 @@
 - location lookup by google
 - issue with creating events
 - location pages not showing a map
+- when update featured image
+update icon image to
 
 ## [2.07] - 2022-08-19
 
