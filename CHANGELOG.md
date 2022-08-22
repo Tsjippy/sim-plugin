@@ -6,6 +6,7 @@
 - recipe metadata block
 
 ### Changed
+- embed page content to embed page module
 
 ### Fixed
 - better error handling while upload
