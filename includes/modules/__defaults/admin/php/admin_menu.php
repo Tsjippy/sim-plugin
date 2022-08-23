@@ -35,9 +35,7 @@ add_action( 'admin_menu', function() {
 		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
 			updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
 
-			echo "<script>location.reload();</script>";
-
-			header("Refresh:0");
+			echo "<script>document.addEventListener('DOMContentLoaded',function() {location.reload();})</script>";
 		}
 
 		echo "<div class='success'>Update succesfull</div>";

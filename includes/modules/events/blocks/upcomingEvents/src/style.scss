@@ -12,6 +12,14 @@
         font-size: larger;
     }
 
+    .eventlist .event-article{
+        margin-bottom: 10px;
+    }
+
+    .event-wrapper{
+        display:            flex;
+    }
+
     .event-date{
         color:              #e0d0d0;
         margin-right:       24px;
@@ -22,6 +30,7 @@
         text-align:         center;
         text-transform:     uppercase;
         border-radius:      3px;
+        max-height:         40px;
 
         span{
             font-size: 12px;
