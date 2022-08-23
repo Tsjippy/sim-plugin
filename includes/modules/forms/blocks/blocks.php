@@ -18,13 +18,6 @@ add_action('init', function () {
 	);
 
 	register_block_type(
-		__DIR__ . '/test/build',
-		array(
-			'render_callback' => __NAMESPACE__.'\showFormBuilder',
-		)
-	);
-
-	register_block_type(
 		__DIR__ . '/formresults/build',
 		array(
 			'render_callback' => __NAMESPACE__.'\showFormResults',

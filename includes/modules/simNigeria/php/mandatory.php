@@ -1,30 +1,11 @@
 <?php
 
-add_filter('sim_mandatory_audience_param', function($audienceHtml, $audience){
+add_filter('sim_mandatory_audience_param', function($keys){
+    $keys['nolocal']    = "Exclude Nigerians";
+    $keys['noshort']    = "Exclude people coming for a vision trip";
 
-    $audienceHtml	.= "<label>";
-        if(isset($audience['nolocal'])){
-            $checked	= 'checked';
-        }else{
-            $checked	= '';
-        }
-        $audienceHtml	.= "<input type='checkbox' name='audience[nolocal]' value='nolocal' $checked>";
-        $audienceHtml	.= "Exclude Nigerians";
-    $audienceHtml	.= "</label><br>";
-
-    $audienceHtml	.= "<label>";
-        if(isset($audience['noshort'])){
-            $checked	= 'checked';
-        }else{
-            $checked	= '';
-        }
-        $audienceHtml	.= "<input type='checkbox' name='audience[noshort]' value='noshort' $checked>";
-        $audienceHtml	.= "Exclude people coming for a vision trip";
-    $audienceHtml	.= "</label><br>";
-
-    return  $audienceHtml;
-}, 10, 2);
-
+    return  $keys;
+});
 
 add_action('sim_mandatory_save_audience_param', function($audiences, $post){
     if(isset($audiences['nolocal'])){

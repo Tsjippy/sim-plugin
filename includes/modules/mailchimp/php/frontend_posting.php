@@ -84,6 +84,10 @@ add_action( 'wp_after_insert_post', function( $postId, $post ){
         $from           = get_post_meta($postId, 'mailchimp_email', true);
         $extraMessage   = get_post_meta($postId, 'mailchimp_extra_message', true);
 
+        if(empty($segmentId) || empty($from)){
+            return;
+        }
+
         //Send mailchimp message
         $Mailchimp = new Mailchimp();
         $Mailchimp->sendEmail($postId, intval($segmentId), $from, $extraMessage);

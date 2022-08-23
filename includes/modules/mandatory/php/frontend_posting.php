@@ -3,57 +3,48 @@ namespace SIM\MANDATORY;
 use SIM;
 
 /**
+ * Get the mandatory audience options
+ */
+function getAudienceOptions($audience, $postId){	
+	$keys	= [
+		'beforearrival'		=> "People should read this before arriving in the country (pre-field)",
+		'afterarrival'		=> "People should read this after arriving in the country",
+		'everyone'			=> "Everyone must read this no matter how long in the country"
+	];
+
+	
+	if($postId != null && is_array($audience) && !empty($audience)){
+		$keys['normal'] = "normal";
+	}
+
+	return apply_filters('sim_mandatory_audience_param', $keys);
+}
+
+/**
  * Adding fields to the frontend posting screen
  * @param  object $frontendContend 	frontendContend instance            
 */
 add_action('sim_frontend_post_after_content', function($frontendContend){
-    $audience = get_post_meta($frontendContend->postId, "audience", true);
-
-    $checked	= '';
-    if(isset($audience['normal']) || !is_array($audience)){
-        $checked	= 'checked';
-    }
+    $audience = json_decode( get_post_meta($frontendContend->postId, "audience", true), true);
 
     ?>
     <div id="recipients" class="frontendform post page<?php if($frontendContend->postType != 'page' && $frontendContend->postType != 'post'){echo ' hidden'; }?>">
         <h4>Audience</h4>				
         <?php
-        if($frontendContend->postId != null && is_array($audience) && !empty($audience)){
-			?>
-			<input type="checkbox" name="audience[normal]" value="normal" <?php echo $checked; ?>>
-			<label for="normal">Normal</label><br>
-			<?php
-        }
-        
-        $audienceHtml	= "<label>";
-			if(isset($audience['beforearrival'])){
-				$checked	= 'checked';
-			}else{
-				$checked	= '';
-			}
-			$audienceHtml	.= "<input type='checkbox' name='audience[beforearrival]' value='beforearrival' $checked>";
-			$audienceHtml	.= "People should read this before arriving in the country (pre-field)";
-        $audienceHtml	.= "</label><br>";
-        $audienceHtml	.= "<label>";
-			if(isset($audience['afterarrival'])){
-				$checked	= 'checked';
-			}else{
-				$checked	= '';
-			}
-			$audienceHtml	.= "<input type='checkbox' name='audience[afterarrival]' value='afterarrival' $checked>";
-			$audienceHtml	.= "People should read this after arriving in the country";
-        $audienceHtml	.= "</label><br>";
-        $audienceHtml	.= "<label>";
-			if(isset($audience['everyone'])){
-				$checked	= 'checked';
-			}else{
-				$checked	= '';
-			}
-			$audienceHtml	.= "<input type='checkbox' name='audience[everyone]' value='everyone' $checked>";
-			$audienceHtml	.= "Everyone must read this no matter how long in the country";
-        $audienceHtml	.= "</label><br>";
+		$keys	= getAudienceOptions($audience, $frontendContend->postId);
 
-		echo apply_filters('sim_mandatory_audience_param', $audienceHtml, $audience);
+		foreach($keys as $key=>$label){
+			if(isset($audience[$key])){
+				$checked	= 'checked';
+			}else{
+				$checked	= '';
+			}
+
+			echo "<label>";
+				echo "<input type='checkbox' name='audience[$key]' value='$key' $checked>";
+				echo $label;
+			echo "</label><br>";
+		}
 	?>
     </div>
     <?php
@@ -81,7 +72,7 @@ add_action('sim_after_post_save', function($post){
 		
 		//Only continue if there are audiences defined
 		if(!empty($audiences)){
-			update_metadata( 'post', $post->ID, "audience", $audiences);
+			update_metadata( 'post', $post->ID, "audience", json_encode($audiences));
 		
 			//Mark existing users as if they have read the page if this pages should be read by new people after arrival
 			if(isset($audiences['afterarrival']) && !isset($audiences['everyone'])){
@@ -120,7 +111,7 @@ add_action('sim_after_post_save', function($post){
  * @return string			The message         
 */
 add_filter('sim_signal_post_notification_message', function($message, $post){
-	$audience	= get_post_meta($post->ID, "audience", true);
+	$audience	= json_decode( get_post_meta($post->ID, "audience", true), true);
 	if(is_array($audience) && !empty($audience['everyone'])){
 		$message	.= "\n\nThis is a mandatory message, please read it straight away.";
 	}
