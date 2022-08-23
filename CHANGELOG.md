@@ -22,6 +22,7 @@ update icon image to
 - issue with  metadata blocks
 - &amp; in signal messages
 - lists are shown again
+- issue in widget blocks page
 
 ## [2.07] - 2022-08-19
 
