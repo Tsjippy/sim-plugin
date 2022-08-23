@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- upcoming events block layout
 
 ## [2.0.8.2] - 2022-08-23
 
