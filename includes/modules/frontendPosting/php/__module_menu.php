@@ -26,11 +26,14 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 
 	<?php
 	$url		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'front_end_post_pages');
+	$url2		= SIM\ADMIN\getDefaultPageLink($moduleSlug, 'pending_pages');
+	
 	if(!empty($url)){
 		?>
 		<p>
-			<strong>Auto created page:</strong><br>
-			<a href='<?php echo $url;?>'>Add content</a>
+			<strong>Auto created pages:</strong><br>
+			<a href='<?php echo $url;?>'>Add content</a><br>
+			<a href='<?php echo $url2;?>'>Pending pages</a>
 		</p>
 		<?php
 	}
@@ -113,6 +116,8 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	// Create frontend posting page
 	$options	= SIM\ADMIN\createDefaultPage($options, 'front_end_post_pages', 'Add content', '[front_end_post]', $oldOptions);
 
+	$options	= SIM\ADMIN\createDefaultPage($options, 'pending_pages', 'Pending Posts', '[pending_pages]', $oldOptions);
+
 	scheduleTasks();
 
 	return $options;
@@ -122,6 +127,8 @@ add_filter('display_post_states', function ( $states, $post ) {
     
     if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages'))) {
         $states[] = __('Frontend posting page'); 
+    }elseif ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'pending_pages'))) {
+        $states[] = __('Pending posts page'); 
     } 
 
     return $states;

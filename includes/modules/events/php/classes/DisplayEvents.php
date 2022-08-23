@@ -690,6 +690,11 @@ class DisplayEvents extends Events{
 		foreach($this->events as $event){
 			$startTime			= $event->starttime;
 			$endTime			= $event->endtime;
+
+			if(empty($startTime) || empty($endTime)){
+				continue;
+			}
+			
 			$timeIndex			= date('H', strtotime($startTime)) * 2; //index is amount of hours times 2
 
 			//multi day event
@@ -801,9 +806,9 @@ class DisplayEvents extends Events{
 
 		$detailHtml		= $this->getCalendarRows($firstWeekDay, $cat);
 
-		$year				= date('Y', $firstWeekDay);
-		$prevWeekNr			= strftime("%U", strtotime("-1 week", $firstWeekDay));
-		$nextWeekNr			= strftime("%U", strtotime("+1 week", $firstWeekDay));
+		$year			= date('Y', $firstWeekDay);
+		$prevWeekNr		= strftime("%U", strtotime("-1 week", $firstWeekDay));
+		$nextWeekNr		= strftime("%U", strtotime("+1 week", $firstWeekDay));
 
 		// Calculate the amount of columns
 		$colSizes	= [1,1,1,1,1,1,1];
