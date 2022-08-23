@@ -9,6 +9,7 @@
 
 ### Fixed
 - upcoming events block layout
+- tinyMce fields in formbuilder
 
 ## [2.0.8.2] - 2022-08-23
 
