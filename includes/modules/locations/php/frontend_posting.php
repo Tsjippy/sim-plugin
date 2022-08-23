@@ -338,6 +338,14 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         }
     </style>
     <div id="location-attributes" class="location<?php if($postName != 'location'){echo ' hidden';} ?>">
+        <div class="frontendform">
+            <h4>Update warnings</h4>	
+            <label>
+                <input type='checkbox' name='static_content' value='static_content' <?php if(!empty(get_post_meta($postId, 'static_content', true))){echo 'checked';}?>>
+                Do not send update warnings for this location
+            </label>
+        </div>
+
         <fieldset id="location" class="frontendform">
             <legend>
                 <h4>Location details</h4>
