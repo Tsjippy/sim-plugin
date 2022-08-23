@@ -23,6 +23,7 @@ update icon image to
 - &amp; in signal messages
 - lists are shown again
 - issue in widget blocks page
+- do not show categories if there are none
 
 ## [2.07] - 2022-08-19
 
