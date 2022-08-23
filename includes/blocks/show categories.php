@@ -29,7 +29,7 @@ function displayCategories($attributes) {
 		$taxonomy	= '';
 	}
 
-	return	'<style> li {list-style-type: none;}</style>'.wp_list_categories( array(
+	return	'<style> .widget li {list-style-type: none;}</style>'.wp_list_categories( array(
 		'echo'				=> 0,
 		'taxonomy' 			=> $taxonomy,
 		'current_category'	=> get_queried_object()->term_id,
