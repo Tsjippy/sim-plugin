@@ -27,6 +27,8 @@ update icon image to
 - upcoming events layout & all day events
 - warning when someone submits a
 post for review
+- do not send pendngpost warning when
+publishing it
 
 ## [2.07] - 2022-08-19
 
