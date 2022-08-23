@@ -1148,7 +1148,7 @@ class FrontEndContent{
 			return new WP_Error('Inserting post error', "Could not create the $this->postType!");
 		}
 
-		return $post;
+		return (object) $post;
 	}
 
 	/**

@@ -2,7 +2,7 @@
 namespace SIM\FRONTENDPOSTING;
 use SIM;
 
-function sendPendingPostWarning($post, $update){	
+function sendPendingPostWarning( object $post, $update){	
 	//Do not continue if already send
 	if(!empty(get_post_meta($post->ID, 'pending_notification_send', true))){
 		return;
@@ -48,7 +48,7 @@ function sendPendingPostWarning($post, $update){
 //Delete the indicator that the warning has been send
 add_action(  'transition_post_status',  function ( $newStatus, $oldStatus, $post ) {
 	if ($newStatus == 'publish' && $oldStatus == 'pending'){
-		delete_post_meta($post->ID,'pending_notification_send');
+		delete_post_meta($post->ID, 'pending_notification_send');
 	}
 }, 10, 3 );
 
