@@ -20,6 +20,7 @@ block settings
 - when update featured image
 update icon image to
 - issue with  metadata blocks
+- &amp; in signal messages
 
 ## [2.07] - 2022-08-19
 
