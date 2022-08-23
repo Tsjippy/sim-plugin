@@ -8,6 +8,8 @@
 
 ### Fixed
 - bug in calendar when no times set
+- issue with single events with small
+content body
 
 ## [2.0.8.3] - 2022-08-23
 
