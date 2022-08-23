@@ -25,6 +25,8 @@ update icon image to
 - issue in widget blocks page
 - do not show categories if there are none
 - upcoming events layout & all day events
+- warning when someone submits a
+post for review
 
 ## [2.07] - 2022-08-19
 
