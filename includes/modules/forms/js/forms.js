@@ -565,6 +565,11 @@ async function formbuilderSwitch(target){
 
 	if(response){
 		wrapper.innerHTML	= response;
+
+		// Activate tinyMce's again
+		wrapper.querySelectorAll('.wp-editor-area').forEach(el =>{
+			window.tinyMCE.execCommand('mceAddEditor',false, el.id);
+		})
 	}else{
 		loader.outerHTML	= button;
 	}
