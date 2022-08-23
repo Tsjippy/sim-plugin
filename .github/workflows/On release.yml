@@ -23,7 +23,7 @@ jobs:
               commit-msg: Update wp plugin version
               github-token: ${{ secrets.GITHUB_TOKEN }}
         - name: Zip Folder
-          run: zip -r ${{ github.event.repository.name }}.zip . -x ".git/*" ".github/*" "phpcs.xml" "composer.json" "composer.lock" ".gitignore" "signalbot.db" "SignalBot.py" "CHANGELOG.md" "README.md" "*.code-workspace" "*.cmd"
+          run: zip -r ${{ github.event.repository.name }}.zip . -x ".git/*" ".github/*" "phpcs.xml" "composer.json" "composer.lock" ".gitignore" "signalbot.db" "SignalBot.py" "CHANGELOG.md" "README.md" "*.code-workspace" "*.cmd" "test.php"
 
         - name: Release
           uses: softprops/action-gh-release@v1
