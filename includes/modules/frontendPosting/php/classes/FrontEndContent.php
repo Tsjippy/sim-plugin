@@ -1229,7 +1229,7 @@ class FrontEndContent{
 			}
 		}
 
-		if($post->post_status == 'pending'){
+		if($post->post_status == 'pending' && $this->status == 'pending'){
 			sendPendingPostWarning($post, $this->update);
 		}
 
