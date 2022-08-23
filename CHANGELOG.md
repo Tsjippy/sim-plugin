@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.0.8] - 2022-08-23
+
+
+### Added
 - recipe metadata block
 - Signal block
 - mailchimp block
@@ -27,6 +36,8 @@ update icon image to
 - upcoming events layout & all day events
 - warning when someone submits a
 post for review
+- do not send pendngpost warning when
+publishing it
 
 ## [2.07] - 2022-08-19
 
