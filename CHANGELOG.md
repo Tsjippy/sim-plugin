@@ -3,12 +3,20 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- static content for locations
 
 ### Changed
 
 ### Fixed
+
+## [2.0.8.3] - 2022-08-23
+
+
+### Added
+- static content for locations
+
+### Fixed
 - upcoming events block layout
+- tinyMce fields in formbuilder
 
 ## [2.0.8.2] - 2022-08-23
 
