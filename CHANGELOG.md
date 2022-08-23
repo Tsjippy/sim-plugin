@@ -24,6 +24,7 @@ update icon image to
 - lists are shown again
 - issue in widget blocks page
 - do not show categories if there are none
+- upcoming events layout & all day events
 
 ## [2.07] - 2022-08-19
 
