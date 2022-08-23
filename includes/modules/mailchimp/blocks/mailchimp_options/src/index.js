@@ -22,6 +22,10 @@ registerPlugin( 'mailchimp-options', {
             []
         );
     
+        if(postType == null){
+            return '';
+        }
+
         const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
 
         const mailchimpSegmentId	= meta[ 'mailchimp_segment_id' ];

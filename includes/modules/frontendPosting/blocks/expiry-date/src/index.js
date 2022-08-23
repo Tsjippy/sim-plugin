@@ -11,6 +11,10 @@ registerPlugin( 'expiry-date', {
             ( select ) => select( 'core/editor' ).getCurrentPostType(),
             []
         );
+
+        if(postType == null){
+            return '';
+        }
     
         const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
 

@@ -11,8 +11,11 @@ registerPlugin( 'mandatory-audience', {
             ( select ) => select( 'core/editor' ).getCurrentPostType(),
             []
         );
-    
         const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
+
+        if(meta == undefined){
+            return '';
+        }
 
         const audience	= meta[ 'audience' ] == undefined ? {} : JSON.parse(meta[ 'audience' ]);
 

@@ -70,7 +70,7 @@ const Edit = ({attributes, setAttributes}) => {
 			for (const key in categories) {param += key+','}
 		}
 		
-		let fetchedEvents = await apiFetch({path: `${sim.restApiPrefix}/events/upcoming_events${param}`});
+		let fetchedEvents = await apiFetch({path: `sim/v2/events/upcoming_events${param}`});
 
 		if(!fetchedEvents){
 			fetchedEvents	= [];
