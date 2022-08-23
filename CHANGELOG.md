@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- static content for locations
 
 ### Changed
 
