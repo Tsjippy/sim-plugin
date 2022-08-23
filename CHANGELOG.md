@@ -6,6 +6,8 @@
 - recipe metadata block
 - Signal block
 - mailchimp block
+- expiry date and update warnings
+block settings
 
 ### Changed
 - embed page content to embed page module
