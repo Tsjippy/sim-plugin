@@ -27,6 +27,9 @@ function displayCategories($attributes) {
 		}
 	}elseif(is_tax()){
 		$taxonomy	= '';
+	}else{
+		// We are on place without categories
+		return '';
 	}
 
 	return	'<style> .widget li {list-style-type: none;}</style>'.wp_list_categories( array(
