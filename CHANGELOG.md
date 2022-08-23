@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.0.8] - 2022-08-23
+
+
+### Added
 - recipe metadata block
 - Signal block
 - mailchimp block
