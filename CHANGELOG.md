@@ -7,7 +7,9 @@
 ### Changed
 
 ### Fixed
-- issue with upcoming event list block
+
+## [2.0.8.1] - 2022-08-23
+
 
 ## [2.0.8] - 2022-08-23
 
