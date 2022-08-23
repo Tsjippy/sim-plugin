@@ -11,7 +11,7 @@ if(!isset($skipHeader) || !$skipHeader){
 	get_header(); 
 }
 ?>
-	<div id="primary">
+	<div id="primary" style="width:100vw;">
 		<main>
 			<?php
 			while ( have_posts() ) :
