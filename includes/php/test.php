@@ -5,19 +5,7 @@ namespace SIM;
 add_shortcode("test",function ($atts){
 	global $Modules;
 
+	PRAYER\sendPrayerRequests();
 
 	return 'e-mail send';
-});
-
-add_action( 'rest_api_init', function () {
-	// add element to form
-	register_rest_route( 
-		'sim/v2', 
-		'/sendtest', 
-		array(
-			'methods' 				=> 'GET',
-			'callback' 				=> 	function(){wp_mail('enharmsen@gmail.com' , 'test e-mail', 'test');},
-			'permission_callback' 	=> '__return_true',
-		)
-	);
 });

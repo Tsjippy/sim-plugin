@@ -71,6 +71,7 @@ add_filter('sim_after_bot_payer', function($args){
 
 		//Loop over the anniversary_messages
 		foreach($anniversaryMessages as $userId=>$msg){
+			$msg	= html_entity_decode($msg);
 			if(!empty($messageString)){
 				$messageString .= " and the ";
 			}
