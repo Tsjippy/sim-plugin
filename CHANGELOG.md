@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug in calendar when no times set
 
 ## [2.0.8.3] - 2022-08-23
 
