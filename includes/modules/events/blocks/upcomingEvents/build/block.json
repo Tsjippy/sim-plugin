@@ -18,7 +18,8 @@
       "type": "integer"
     },
     "categories": {
-      "type": "object"
+      "type": "object",
+      "default": "{}"
     }
   }
 }

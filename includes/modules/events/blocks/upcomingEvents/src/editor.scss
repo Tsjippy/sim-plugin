@@ -18,4 +18,16 @@
 		margin-right: 10px;
 		color: #ffffff;
 	}
+
+	.eventlist .event-article{
+        margin-bottom: 10px;
+    }
+
+    .event-wrapper{
+        display:            flex;
+    }
+
+	.event-date{
+		max-height:         40px;
+	}
 }

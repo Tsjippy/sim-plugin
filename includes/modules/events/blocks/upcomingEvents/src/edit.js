@@ -11,13 +11,7 @@ const Edit = ({attributes, setAttributes}) => {
 	const {items, months, categories} = attributes;
 
 	const onCatChanged	= function(checked){
-		let copy;
-
-		if(categories == undefined){
-			copy	= {};
-		}else{
-			copy	= Object.assign({}, categories)
-		}
+		let copy =	{ ...categories }
 
 		// this is the cat id
 		copy[this]	= checked;
@@ -29,15 +23,13 @@ const Edit = ({attributes, setAttributes}) => {
 	useEffect( async () => {
 		const fetchedCats = await apiFetch({path: catsPath});
 
-		if(categories != undefined){
-			setCats( fetchedCats.map( c => (
-				<CheckboxControl
-					label		= {c.name}
-					onChange	= {onCatChanged.bind(c.id)}
-					checked		= {categories[c.id]}
-				/>
-			)));
-		}
+		setCats( fetchedCats.map( c => (
+			<CheckboxControl
+				label		= {c.name}
+				onChange	= {onCatChanged.bind(c.id)}
+				checked		= {categories[c.id]}
+			/>
+		)));
 	} , [attributes.categories]);
 
 
@@ -94,13 +86,15 @@ const Edit = ({attributes, setAttributes}) => {
 							<div class="event-date">
 								<span>{event.day}</span> {event.month}
 							</div>
-							<h4 class="event-title">
-								<a href={event.url}>
-									{event.title}
-								</a>
-							</h4>
-							<div class="event-detail">
-								{event.time}
+							<div>
+								<h4 class="event-title">
+									<a href={event.url}>
+										{event.title}
+									</a>
+								</h4>
+								<div class="event-detail">
+									{event.time}
+								</div>
 							</div>
 						</div>
 					</article>

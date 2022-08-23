@@ -35,6 +35,8 @@ add_action( 'admin_menu', function() {
 		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
 			updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
 
+			echo "<script>location.reload();</script>";
+
 			header("Refresh:0");
 		}
 
@@ -243,10 +245,13 @@ function mainMenu(){
 	}
 	
 	ob_start();
-	$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
+	if(current_user_can('update_plugins')){
+		$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
+		echo "<a href='$url' class='button'>Check for update</a><br><br>";
+	}
 	?>
 	<div>
-		<a href='<?php echo $url;?>' class='button'>Check for update</a><br><br>
+		
 		<strong>Current active modules</strong><br>
 		<ul class="sim-list">
 		<?php

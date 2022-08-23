@@ -69,8 +69,9 @@ add_action( 'rest_api_init', function () {
 });
 
 add_filter('sim_before_mailchimp_send', function($mailContent, $post){
+	$audience	= json_decode(get_post_meta($post->ID, 'audience', true), true);
     ///add button if mandatory message
-    if(!empty($_POST['pagetype']['everyone'])){
+    if(!empty($audience['everyone'])){
         $url			= SITEURL."/wp-json/".RESTAPIPREFIX."/mandatory_content/mark_as_read_public?email=*|EMAIL|*&postid={$post->ID}";
         $style			= "color: white; background-color: #bd2919; border-radius: 3px; text-align: center; margin-right: 10px; padding: 5px 10px;";
         $mailContent	.= "<br><a href='$url' style='$style'>I have read this</a>";

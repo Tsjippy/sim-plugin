@@ -262,7 +262,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		 * @param	string	$from			The from e-mail to use
 		 * @param	string	$extraMessage	THe extra message to prepend the -mail contents with
 		 */
-		function sendEmail($postId, $segmentId, $from='', $extraMessage=''){
+		function sendEmail(int $postId, int $segmentId, $from='', $extraMessage=''){
 			try {
 				$post 			= get_post($postId);
 				
@@ -324,9 +324,10 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				$mailContent		= $extraMessage.'<br>'.$post->post_content;
 
 				$replaceText 		= '//*THIS WILL BE REPLACED BY THE WEBSITE *//';
-				$mailContent 		= str_replace($replaceText, $mailContent, $campainContent);
 
 				$mailContent		= apply_filters('sim_before_mailchimp_send', $mailContent, $post);
+				
+				$mailContent 		= str_replace($replaceText, $mailContent, $campainContent);
 				
 				//Push the new content
 				$response = $this->client->campaigns->setContent(
