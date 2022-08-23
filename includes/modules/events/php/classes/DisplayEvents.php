@@ -107,6 +107,7 @@ class DisplayEvents extends Events{
 								<div class="event-date">
 									<?php echo "<span>{$event['day']}</span> {$event['month']}";?>
 								</div>
+								<div>
 								<h4 class="event-title">
 									<a href="<?php echo $event['url'] ?>">
 										<?php echo $event['title'];?>
@@ -116,6 +117,7 @@ class DisplayEvents extends Events{
 									<?php
 									echo $event['time'];
 									?>
+								</div>
 								</div>
 							</div>
 						</article>
@@ -174,7 +176,11 @@ class DisplayEvents extends Events{
 			];
 
 			if($event->startdate == $event->enddate){
-				$e['time']	= "$eventDay {$event->starttime}";
+				if($event->starttime == $this->dayStartTime && $event->endtime == $this->dayEndTime){
+					$e['time']	= 'All day';
+				}else{
+					$e['time']	= "$eventDay {$event->starttime}";
+				}
 			}else{
 				$e['time']	= "Until $endDateStr {$event->endtime}";
 			}
