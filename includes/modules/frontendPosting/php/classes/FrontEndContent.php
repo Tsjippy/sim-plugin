@@ -40,6 +40,8 @@ class FrontEndContent{
 	 *
 	**/
 	function frontendPost(){
+		global $wp_scripts;
+
 		if(!function_exists('_wp_translate_postdata')){
 			include ABSPATH . 'wp-admin/includes/post.php';
 		}

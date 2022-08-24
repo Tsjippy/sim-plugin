@@ -115,8 +115,10 @@ function add_page_edit_button(){
 			if(!$url){
 				return;
 			}
-			$url = add_query_arg( ['post_id' => $postId], $url );
-			echo "<a href='$url' class='button sim' id='pageedit'>$buttonText</a>";
+			//$url = add_query_arg( ['post_id' => $postId], $url );
+			//echo "<a href='$url' class='button sim' id='pageedit'>$buttonText</a>";
+
+			echo "<button class='button small hidden' id='page-edit' data-id='$postId'>$buttonText</button>";
 		}
 	}
 }

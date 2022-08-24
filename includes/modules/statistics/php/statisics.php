@@ -39,7 +39,6 @@ add_filter( 'the_content', function ($content){
 
     ob_start();
     ?>
-    <br>
     <div class='pagestatistics'>
         <h4>Page statistics</h4>
         <table class='statistics_table'>

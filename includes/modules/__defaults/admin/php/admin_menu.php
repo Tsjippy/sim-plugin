@@ -33,9 +33,9 @@ add_action( 'admin_menu', function() {
 		$updates	= SIM\checkForUpdate( new \stdClass() );
 
 		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
-			updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
-
 			echo "<script>document.addEventListener('DOMContentLoaded',function() {location.reload();})</script>";
+			
+			updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
 		}
 
 		echo "<div class='success'>Update succesfull</div>";

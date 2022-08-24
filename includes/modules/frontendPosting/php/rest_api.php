@@ -178,6 +178,26 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
+
+	// Get frontend content form
+	register_rest_route( 
+		RESTAPIPREFIX.'/frontend_posting', 
+		'/post_edit', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> __NAMESPACE__.'\sendForm',
+			'permission_callback' 	=> function(){
+				$frontEndContent	= new FrontEndContent();
+				return $frontEndContent->fullrights;
+			},
+			'args'					=> array(
+				'postid'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+				)
+			)
+		)
+	);
 } );
 
 /**
@@ -220,4 +240,63 @@ function addCategory(\WP_REST_Request $request ){
 			'message'	=> "Added $name succesfully as a $postType category"
 		];
 	}
+}
+
+function sendForm(){
+	global $wp_scripts;
+
+	$frontEndContent	= new FrontEndContent();
+	$frontEndContent->postId	= $_REQUEST['postid'];
+	$html				= $frontEndContent->frontendPost();
+	
+	enqueueScripts();
+	wp_enqueue_editor();
+
+	// Find the js files to load over AJAX
+	$deps	= [
+		"jquery"	=> [
+			'src'	=> site_url()."/wp-includes/js/jquery/jquery.min.js",
+			'deps'	=> []
+		],
+		"tiny-mce"	=> [
+			'src'	=> site_url()."/wp-includes/js/tinymce/tinymce.min.js",
+			'deps'	=> []
+		]
+	];
+	$extras = [];
+	foreach($wp_scripts->queue as $handle){
+		$extras   = array_merge($extras, SIM\getJsDependicies($deps, $handle));
+	}
+
+	$vars	= [];
+	foreach($extras as $extra){
+		if(is_array($extra) && !empty($extra)){
+			if(isset($extra['data']) && !in_array($extra['data'], $vars)){
+				$vars[]	= $extra['data'];
+			}
+
+			if(is_array($extra['before'])){
+				foreach($extra['before'] as $e){
+					if($e && !in_array($e, $vars)){
+						$vars[]	= $e;
+					}
+				}
+				
+			}
+
+			if(is_array($extra['after'])){
+				foreach($extra['after'] as $e){
+					if($e){
+						$html	= "<script>$e</script>$html";
+					}
+				}
+				
+			}
+		}
+	}
+	return [
+		'html'		=> $html,
+		'vars'		=> $vars,
+		'deps'		=> $deps
+	];
 }

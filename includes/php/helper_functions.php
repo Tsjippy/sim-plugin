@@ -1199,6 +1199,43 @@ function deslash( $content ) {
 	return $content;
 }
 
+/**
+ * Find all depency urls of a given js handle
+ * 
+ * @param	array	$scripts	the current urls array
+ * @param	string	$handle			the handle of the js to find all urls for
+ * 
+ * @return	array					array containing all urls to the js files
+ */
+function getJsDependicies(&$scripts, $handle, $extras = []){
+    global $wp_scripts;
+
+	$url	= $wp_scripts->registered[$handle]->src;
+	if(!$url){
+		return $extras;
+	}
+
+	if(strpos($url, '//') === false){
+		$url	= $wp_scripts->base_url.$url;
+	}
+	$scripts[$handle]	= [
+		'src'	=> $url,
+		'deps'	=> []
+	];
+
+
+	$extra	= $wp_scripts->registered[$handle]->extra;
+	if(!empty($extra)){
+		$extras[]	= $extra;
+	}
+
+    foreach($wp_scripts->registered[$handle]->deps as $dep){
+        $extras	= getJsDependicies($scripts[$handle]['deps'], $dep, $extras );
+    }
+
+    return $extras;
+}
+
 //Creates subimages
 //Add action
 add_action('init', function () {
