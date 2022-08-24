@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.0.8.4] - 2022-08-24
+
+
+### Fixed
 - bug in calendar when no times set
 - issue with single events with small
 content body
