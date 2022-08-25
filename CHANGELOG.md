@@ -7,6 +7,7 @@
 reloading the entire page
 
 ### Changed
+- edit post now over AJAX
 
 ### Fixed
 
