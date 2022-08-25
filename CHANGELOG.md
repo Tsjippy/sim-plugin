@@ -3,6 +3,8 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- edit page over AJAX instead of
+reloading the entire page
 
 ### Changed
 
