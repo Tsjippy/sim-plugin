@@ -3,13 +3,20 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.0.9] - 2022-08-25
+
+
+### Added
 - edit page over AJAX instead of
 reloading the entire page
 
 ### Changed
 - edit post now over AJAX
-
-### Fixed
 
 ## [2.0.8.4] - 2022-08-24
 
