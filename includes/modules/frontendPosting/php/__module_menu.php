@@ -2,7 +2,7 @@
 namespace SIM\FRONTENDPOSTING;
 use SIM;
 
-const MODULE_VERSION		= '7.0.20';
+const MODULE_VERSION		= '7.0.21';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
