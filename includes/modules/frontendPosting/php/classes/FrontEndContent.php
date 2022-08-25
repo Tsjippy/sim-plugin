@@ -40,8 +40,6 @@ class FrontEndContent{
 	 *
 	**/
 	function frontendPost(){
-		global $wp_scripts;
-
 		if(!function_exists('_wp_translate_postdata')){
 			include ABSPATH . 'wp-admin/includes/post.php';
 		}
@@ -279,7 +277,9 @@ class FrontEndContent{
 	 *
 	**/
 	function addTinymcePlugin($plugins) {
-		wp_localize_script( 'sim_script', 
+		global $wp_scripts;
+		
+		wp_localize_script( 'sim_frontend_script', 
 			'userSelect', 
 			['html'=>SIM\userSelect("Select a person to show the link to",true)],
 		);
@@ -1242,9 +1242,9 @@ class FrontEndContent{
 		
 		//Return result
 		if($this->status == 'publish'){
-			$message	= "Succesfully $this->actionText the $this->postType, view it <a href='$url'>here</a>";
+			$message	= "Succesfully $this->actionText the $this->postType";
 		}elseif($this->status == 'draft'){
-			$message	= "Succesfully $this->actionText the draft for this $this->postType, preview it <a href='$url'>here</a>";
+			$message	= "Succesfully $this->actionText the draft for this $this->postType";
 		}elseif($_POST['publish_date'] > date('Y-m-d') && $this->status == 'future'){
 			$message	= "Succesfully $this->actionText the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
 		}else{

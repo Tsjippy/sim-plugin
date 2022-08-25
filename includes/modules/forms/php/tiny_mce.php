@@ -15,7 +15,7 @@ add_action('init', function(){
 
 		//Add extra variables to the main.js script
 		wp_localize_script(
-			'sim_script', 
+			'sim_forms_script', 
 			'formSelect', 
 			[$simForms->formSelect()]
 		);

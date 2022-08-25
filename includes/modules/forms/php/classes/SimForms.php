@@ -390,15 +390,8 @@ class SimForms{
 		// preload the formbuilder in case we need it later
 		if($this->editRights){
 			wp_enqueue_script( 'sim_formbuilderjs');
-
-			// Add a hidden tiny mce so that we have it when we need it
-			echo "<div class='hidden'>";
-				echo wp_editor( '', 'unique_id', array(
-					'media_buttons' => false,
-					'textarea_rows' => 10,
-					'teeny' => true,
-				) );
-			echo "</div>";
+			// Enqueue tinymce
+			wp_enqueue_script('sim-tinymce', "/wp-includes/js/tinymce/tinymce.min.js", [], false, true);
 		}
 
 		if((isset($_REQUEST['formbuilder']) || empty($formElements)) && $this->editRights){

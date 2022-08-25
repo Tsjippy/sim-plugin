@@ -294,10 +294,35 @@ async function addCatType(target){
 async function submitPost(target){
 	let response	= await FormSubmit.submitForm(target, 'frontend_posting/submit_post');
 	if(response){
+		// If no html found, reload the page
+		if(!response.html){
+			Main.displayMessage(response.message);
+
+			location.href	= response.url;
+			return;
+		}	
+
 		// Update the url
-		const url 		= new URL(window.location);
-		url.searchParams.set('post_id', response.id);
+		const url 		= new URL(response.url);
 		window.history.pushState({}, '', url);
+
+		let div	= document.getElementById('page-title-image');
+
+		// Update the header image if there is one
+		if(response.picture){
+			if( div == null ){
+				div	= document.createElement('div');
+				div.id	= 'page-title-image';
+			}
+			div.style.backgroundImage	= `url("${response.picture}")`;
+		}
+
+		document.querySelector('main').innerHTML	= response.html;
+
+		// Scroll page to top
+		window.scrollTo(0,0);
+
+		document.getElementById('page-edit').classList.remove('hidden');
 
 		Main.displayMessage(response.message);
 	}

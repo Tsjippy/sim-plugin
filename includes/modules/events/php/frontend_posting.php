@@ -48,7 +48,14 @@ function eventSpecificFields($frontEndContent){
 	
 	$frontEndContent->showCategories('event', $categories);
 	
-	$eventDetails	= (array)json_decode(get_post_meta($frontEndContent->postId, 'eventdetails', true), true);
+	$eventDetails	= get_post_meta($frontEndContent->postId, 'eventdetails', true);
+	if(!is_array($eventDetails)){
+		if(!empty($eventDetails)){
+			$eventDetails	= (array)json_decode($eventDetails, true);
+		}else{
+			$eventDetails	= [];
+		}
+	}
 	
 	?>
 	<br>

@@ -36,9 +36,7 @@ add_action( 'wp_trash_post', function($postId){
     }
 } );
 
-add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts');
-function enqueueScripts() {
-    SIM\enqueueScripts();
+add_action( 'wp_enqueue_scripts', function () {
 
     wp_register_style('sim_frontend_style', plugins_url('css/frontend_posting.min.css', __DIR__), array(), MODULE_VERSION);
 	
@@ -53,4 +51,4 @@ function enqueueScripts() {
     if(in_array(get_the_ID(), $frontEndPostPages)){
         wp_enqueue_style('sim_frontend_style');
     }
-}
+});

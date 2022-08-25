@@ -86,18 +86,19 @@ export async function fetchRestApi(url, formData){
 			body: formData
 		}
 	);
-
+	
+	let response	= await result.text();
 	try{
-		let response	= await result.json();
+		let json		= JSON.parse(response);
 
 		if(result.ok){
-			return response;
-		}else if(response.code == 'rest_cookie_invalid_nonce'){
+			return json;
+		}else if(json.code == 'rest_cookie_invalid_nonce'){
 			Main.displayMessage('Please refresh the page and try again!', 'error');
 			return false;
 		}else{
-			console.error(response);
-			Main.displayMessage(response.message, 'error');
+			console.error(json);
+			Main.displayMessage(json.message, 'error');
 			return false;
 		}
 	}catch(error){
@@ -106,6 +107,7 @@ export async function fetchRestApi(url, formData){
 
 		if(result.ok){
 			Main.displayMessage(`Problem parsing the json`, 'error');
+			console.error(response);
 		}else{
 			Main.displayMessage(`Url ${sim.baseUrl}/wp-json${sim.restApiPrefix}/${url} not found`, 'error');
 		}

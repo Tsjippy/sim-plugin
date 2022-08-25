@@ -51,8 +51,38 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
+				global $post;
+
 				$frontEndContent	= new FrontEndContent();
-				return $frontEndContent->submitPost();
+				$result =  $frontEndContent->submitPost();
+
+				// Load the post in the loop
+				$posts = new \WP_Query( array( 'p' => $frontEndContent->postId, 'post_type' => 'any' ) );
+				$GLOBALS['wp_query'] = $posts;
+				$post = $posts->post;
+
+				// Find the the correct template
+				$baseTemplate	= locate_template(["content-{$post->post_type}.php",'content.php']);
+				$template 		= apply_filters( "content_template", $baseTemplate, 'content' );
+
+				if(empty($template)){
+					$html	= false;
+				}else{
+					// Get the html from the template
+					ob_start();
+					include_once($template);
+					$html=ob_get_clean();
+				}
+
+				// Get the picture
+				$result['picture']	= get_the_post_thumbnail_url($frontEndContent->postId, 'full');
+
+				// Get  the content apply_filters( 'the_content', get_the_content(null, false, $frontEndContent->postId) )
+				$result['html'] = $html;
+
+				$result['url']	= get_permalink();
+
+				return $result;
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -198,6 +228,23 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
+
+	// Get post
+	register_rest_route( 
+		RESTAPIPREFIX.'/frontend_posting', 
+		'/post_result', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> __NAMESPACE__.'\sendPost',
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'postid'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+				)
+			)
+		)
+	);
 } );
 
 /**
@@ -242,61 +289,53 @@ function addCategory(\WP_REST_Request $request ){
 	}
 }
 
+/**
+ * Get the front posting form
+ */
 function sendForm(){
-	global $wp_scripts;
+	do_action('wp_enqueue_scripts');
+	wp_enqueue_media();
+	
+	wp_enqueue_editor();
 
 	$frontEndContent	= new FrontEndContent();
 	$frontEndContent->postId	= $_REQUEST['postid'];
 	$html				= $frontEndContent->frontendPost();
-	
-	enqueueScripts();
-	wp_enqueue_editor();
 
-	// Find the js files to load over AJAX
-	$deps	= [
-		"jquery"	=> [
-			'src'	=> site_url()."/wp-includes/js/jquery/jquery.min.js",
-			'deps'	=> []
-		],
-		"tiny-mce"	=> [
-			'src'	=> site_url()."/wp-includes/js/tinymce/tinymce.min.js",
-			'deps'	=> []
-		]
-	];
-	$extras = [];
-	foreach($wp_scripts->queue as $handle){
-		$extras   = array_merge($extras, SIM\getJsDependicies($deps, $handle));
-	}
+	\_WP_Editors::enqueue_scripts();
+	ob_start();
+	$handles=wp_print_scripts(["sim_frontend_script"]);
+	$handles=array_merge($handles, print_footer_scripts());
+	\_WP_Editors::editor_js();
+	wp_print_media_templates();
+	$js	= ob_get_clean();
 
-	$vars	= [];
-	foreach($extras as $extra){
-		if(is_array($extra) && !empty($extra)){
-			if(isset($extra['data']) && !in_array($extra['data'], $vars)){
-				$vars[]	= $extra['data'];
-			}
+	do_action('wp_enqueue_style');
+	ob_start();
+	wp_print_styles();
+	$css	= ob_get_clean();
 
-			if(is_array($extra['before'])){
-				foreach($extra['before'] as $e){
-					if($e && !in_array($e, $vars)){
-						$vars[]	= $e;
-					}
-				}
-				
-			}
-
-			if(is_array($extra['after'])){
-				foreach($extra['after'] as $e){
-					if($e){
-						$html	= "<script>$e</script>$html";
-					}
-				}
-				
-			}
-		}
-	}
 	return [
-		'html'		=> $html,
-		'vars'		=> $vars,
-		'deps'		=> $deps
+		'html'	=>	$html,
+		'js'	=> $js,
+		'css'	=> $css
+	];
+}
+
+/**
+ * Gets a post
+ */
+function sendPost(){
+	$postId	= $_REQUEST['postid'];
+
+	// Get the picture
+	$url	= get_the_post_thumbnail_url($postId, 'full');
+
+	// Get  the content
+	$content = apply_filters( 'the_content', get_the_content() );
+
+	return [
+		'url'		=> $url,
+		'content'	=> $content
 	];
 }

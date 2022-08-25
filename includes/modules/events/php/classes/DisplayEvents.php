@@ -322,7 +322,14 @@ class DisplayEvents extends Events{
 	 * @return	string					Html containing buttons to export the event
 	*/
 	public function eventExportHtml($event){
-		$eventMeta		= (array)json_decode(get_post_meta($event->post_id, 'eventdetails', true), true);
+		$eventMeta		= get_post_meta($event->post_id, 'eventdetails', true);
+		if(!is_array($eventMeta)){
+			if(!empty($eventMeta)){
+				$eventMeta	= (array)json_decode($eventMeta, true);
+			}else{
+				$eventMeta	= [];
+			}
+		}
 
 		//set the timezone
 		date_default_timezone_set(wp_timezone_string());
@@ -490,7 +497,15 @@ class DisplayEvents extends Events{
 							$detailHtml .= "</article>";
 						}else{
 							foreach($this->events as $event){
-								$meta		= json_decode(get_post_meta($event->ID, 'eventdetails', true), true);
+								$meta		= get_post_meta($event->ID, 'eventdetails', true);
+								if(!is_array($meta)){
+									if(!empty($meta)){
+										$meta	= (array)json_decode($meta, true);
+									}else{
+										$meta	= [];
+									}
+								}
+
 								$detailHtml .= "<article class='event-article'>";
 									$detailHtml .= "<div class='event-header'>";
 										if(has_post_thumbnail($event->post_id)){
@@ -610,7 +625,15 @@ class DisplayEvents extends Events{
 		$baseUrl		= plugins_url('../pictures', __DIR__);
 
 		foreach($this->events as $event){
-			$meta	= json_decode(get_post_meta($event->ID, 'eventdetails', true), true);
+			$meta		= get_post_meta($event->ID, 'eventdetails', true);
+			if(!is_array($meta)){
+				if(!empty($meta)){
+					$meta	= (array)json_decode($meta, true);
+				}else{
+					$meta	= [];
+				}
+			}
+
 			$url	= get_permalink($event->ID);
 
 			//do not re-add event details for a multiday event in the same week
@@ -988,7 +1011,15 @@ class DisplayEvents extends Events{
 		$baseUrl	= plugins_url('../pictures', __DIR__);
 
 		foreach($this->events as $event){
-			$meta		= json_decode(get_post_meta($event->ID, 'eventdetails', true), true);
+			$meta		= get_post_meta($event->ID, 'eventdetails', true);
+			if(!is_array($meta)){
+				if(!empty($meta)){
+					$meta	= (array)json_decode($meta, true);
+				}else{
+					$meta	= [];
+				}
+			}
+
 			$url		= get_permalink($event->ID);
 
 			$html .= "<article class='event-article'>";

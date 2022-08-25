@@ -134,13 +134,16 @@ add_filter( 'part_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 add_filter( 'archive_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 add_filter( 'category_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 add_filter( 'singular_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
+add_filter( 'content_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 
 /**
  * Finds a template file for a custom post type
  * Checks the theme folder, then the plugin folder
+ * 
  * @param  string 	$template	the current template file
  * @param  string	$type     	the requested page type
  * @param  string	$name     	the requested page name 
+ * 
  * @return string				the template file 
 */
 function getTemplateFile($template, $type, $name=''){
@@ -155,6 +158,12 @@ function getTemplateFile($template, $type, $name=''){
 				$name	= $post->post_type;
 			}
 			$templateFile	= "$baseDir/{$name}s/templates/$type-$name.php";
+			break;
+		case 'content':
+			if(empty($name)){
+				$name	= $post->post_type;
+			}
+			$templateFile	= "$baseDir/{$name}s/templates/$type.php";
 			break;
 		case 'archive':
 			if(empty($name)){
@@ -175,10 +184,12 @@ function getTemplateFile($template, $type, $name=''){
 	}
 
 	if ( 
-		empty($template)												||
-		(!empty($name)													&&		// current posttype is an enabled post type
-		locate_template( array( "$type-$name.php" ) ) !== $template)	&&		// and template is not found in theme folder
-		file_exists($templateFile)												// template file exists
+		file_exists($templateFile)										&&		// template file exists
+		(empty($template)												||
+		(
+			!empty($name)												&&		// current posttype is an enabled post type
+			locate_template( array( "$type-$name.php" ) ) !== $template			// and template is not found in theme folder
+		))															
 	) {
 		return $templateFile;
 	}

@@ -359,6 +359,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 
 		/**
 		 * Get an array of available segements in the audience
+		 * Store in transient for 24 hours as this is a slow action
 		 * 
 		 * @return	array|string	Segments array or error string
 		 */
@@ -366,7 +367,12 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			if(empty($this->settings['audienceids'][0])){
 				$error	= 'No Audience defined in mailchimp module settings';
 				SIM\printArray($error);
-				return $error;
+				return new \WP_Error('mailchimp', $error);
+			}
+
+			$segments	= get_transient( 'mailchimp_segments' );
+			if(is_array($segments)){
+				return $segments;
 			}
 
 			try {
@@ -378,6 +384,8 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					0,							// Offset
 					'saved'						// Only export segments, not tags
 				);
+
+				set_transient( 'mailchimp_segments', $response->segments, DAY_IN_SECONDS );
 
 				return $response->segments;
 			}

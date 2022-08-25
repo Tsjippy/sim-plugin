@@ -410,7 +410,14 @@ class CreateEvents extends Events{
 		$event['organizer_id']			= sanitize_text_field($event['organizer_id']);
 	
 		//check if anything has changed
-		$oldMeta	= json_decode(get_post_meta($this->postId, 'eventdetails', true), true);
+		$oldMeta	= get_post_meta($this->postId, 'eventdetails', true);
+		if(!is_array($oldMeta)){
+			if(!empty($oldMeta)){
+				$oldMeta	= (array)json_decode($oldMeta, true);
+			}else{
+				$oldMeta	= [];
+			}
+		}
 		if($oldMeta != $event){
 			//store meta in db
 			update_metadata( 'post', $this->postId, 'eventdetails', json_encode($event));	

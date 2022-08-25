@@ -41,7 +41,10 @@ class IcalFeed{
 			}
 
 			//skip events without meta data
-			$meta			= json_decode(get_post_meta($event->ID, 'eventdetails', true), true);
+			$meta		= get_post_meta($event->ID, 'eventdetails', true);
+			if(!is_array($meta) && !empty($meta)){
+				$meta	= (array)json_decode($meta, true);
+			}
 			if(!is_array($meta)){
 				continue;
 			}

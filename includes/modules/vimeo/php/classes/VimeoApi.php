@@ -29,8 +29,6 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 $this->backupDir        = $this->filesDir."/backup/";
 
                 $this->api = new \Vimeo\Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
-
-                $this->isConnected();
             }
         }
 

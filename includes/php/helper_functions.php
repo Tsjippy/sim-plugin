@@ -47,6 +47,8 @@ function updateFamilyMeta($userId, $metaKey, $value){
  * @return	string						The html
 */
 function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select'){
+	global $wp_scripts;
+	
 	wp_enqueue_script('sim_user_select_script');
 	$html = "";
 
