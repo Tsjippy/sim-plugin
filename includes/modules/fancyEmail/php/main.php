@@ -11,8 +11,10 @@ add_filter('wp_mail',function($args){
 }, 10, 1);
 
 // show wp_mail() errors
-add_action( 'wp_mail_failed', function( $wp_error ) {
-    SIM\printArray($wp_error);
+add_action( 'wp_mail_failed', function( $wpError ) {
+    if(!isset($wpError->errors['wp_mail_failed'][0]) || $wpError->errors['wp_mail_failed'][0] != 'You must provide at least one recipient email address.'){
+        SIM\printArray($wpError);
+    }
 });
 
 add_action('clean_up_email_messages_action', function(){
