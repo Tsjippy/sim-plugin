@@ -1230,7 +1230,7 @@ class DisplayFormResults extends SimForms{
 				<p><br><br><br>No records found</p>
 				<?php
 
-				return ob_get_clean();
+				return ob_get_clean().'</div>';
 			}
 
 			$this->enrichColumnSettings();

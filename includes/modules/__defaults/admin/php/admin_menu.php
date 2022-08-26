@@ -29,14 +29,6 @@ add_action( 'admin_menu', function() {
 		}
 	}
 
-	if(isset($_GET['update'])){
-		$updates	= SIM\checkForUpdate( new \stdClass() );
-
-		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){			
-			updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
-		}		
-	}
-
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");	
 
 	foreach($moduleDirs as $moduleSlug=>$folderName){
@@ -245,8 +237,21 @@ function mainMenu(){
 	}
 
 	if(current_user_can('update_plugins')){
-		$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
-		echo "<a href='$url' class='button'>Check for update</a><br><br>";
+		if(isset($_GET['update'])){
+			$updates	= SIM\checkForUpdate( new \stdClass() );
+			
+			if($_GET['update']	== 'check'){
+				$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
+				echo "<a href='$url' class='button'>Update to version {$updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php']->new_version}</a><br><br>";
+			}elseif(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){			
+				updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
+			}		
+		}
+
+		if(!isset($_GET['update'])){
+			$url	= add_query_arg(['update' => 'check'], SIM\currentUrl());
+			echo "<a href='$url' class='button'>Check for update</a><br><br>";
+		}
 	}
 	?>
 	<div>

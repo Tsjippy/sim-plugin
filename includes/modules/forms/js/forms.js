@@ -569,7 +569,11 @@ async function formbuilderSwitch(target){
 		// Activate tinyMce's again
 		wrapper.querySelectorAll('.wp-editor-area').forEach(el =>{
 			window.tinyMCE.execCommand('mceAddEditor',false, el.id);
-		})
+		});
+
+		wrapper.querySelectorAll('select').forEach(function(select){
+			select._niceselect = NiceSelect.bind(select, {searchable: true});
+		});
 	}else{
 		loader.outerHTML	= button;
 	}

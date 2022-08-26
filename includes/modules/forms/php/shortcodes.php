@@ -43,27 +43,27 @@ function showFormSelector($atts=[]){
         <?php
         //only show selector if not queried
         if(!isset($_REQUEST['form'])){
-        ?>
-        <div id="form-selector-wrapper">
-            <label>Select the form you want to submit or view the results of</label>
-            <br>
-            <select id="sim-forms-selector">
-            <?php
-            foreach($forms as $form){
-                $name   = ucfirst(str_replace('_', ' ', $form->name));
-                if($_REQUEST['form'] == $form->name || $_REQUEST['form'] == $form->id){
-                    $selected = 'selected';
-                }else{
-                    $selected = '';
-                }
-                echo "<option value='$form->name' $selected>$name</option>";
-            }
             ?>
-            </select>
-        </div>
-
-        <?php
+            <div id="form-selector-wrapper">
+                <label>Select the form you want to submit or view the results of</label>
+                <br>
+                <select id="sim-forms-selector">
+                    <?php
+                        foreach($forms as $form){
+                            $name   = ucfirst(str_replace('_', ' ', $form->name));
+                            if($_REQUEST['form'] == $form->name || $_REQUEST['form'] == $form->id){
+                                $selected = 'selected';
+                            }else{
+                                $selected = '';
+                            }
+                            echo "<option value='$form->name' $selected>$name</option>";
+                        }
+                    ?>
+                </select>
+            </div>
+            <?php
         }
+
         if($_REQUEST['display'] == 'results'){
             $formVis       = ' hidden';
             $resultVis     = '';
@@ -75,6 +75,7 @@ function showFormSelector($atts=[]){
             $formActive    = ' active';
             $resultActive  = '';
         }
+
         // Loop over the forms to add the to the page
         foreach($forms as $form){
 		    $query			= "SELECT * FROM {$FormTable->shortcodeTable} WHERE form_id= '{$form->id}'";
@@ -88,7 +89,7 @@ function showFormSelector($atts=[]){
             }
 
             //Check if this form should be displayed
-            if($_REQUEST['form'] == $form->name || $_REQUEST['form'] == $form->id){
+            if(isset($_REQUEST['form']) && ($_REQUEST['form'] == $form->name || $_REQUEST['form'] == $form->id)){
                 $hidden = '';
             }else{
                 $hidden = ' hidden';
@@ -101,10 +102,11 @@ function showFormSelector($atts=[]){
                     echo "<button class='button formresults tablink$resultActive' id='show_{$form->name}_results' data-target='{$form->name}_results'>Show form results</button>";
                 }
 
-                echo "<div id='{$form->name}_form' class='form_wrapper$formVis'>";
+                 echo "<div id='{$form->name}_form' class='form_wrapper$formVis'>";
                     echo do_shortcode("[formbuilder formname=$form->name]");
                 echo "</div>";
 
+                
                 echo "<div id='{$form->name}_results' class='form_results_wrapper$resultVis'>";
                     echo do_shortcode("[formresults id=$shortcodeId formname=$form->name]");
                 echo "</div>";
