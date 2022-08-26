@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- do not print recipe details if not a recipe
 
 ## [2.1.5.1] - 2022-08-26
 
