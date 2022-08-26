@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- update mu-plugin on update
 
 ### Fixed
 
