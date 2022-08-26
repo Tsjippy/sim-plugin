@@ -78,6 +78,7 @@ function checkForUpdate( $updatePlugins ) {
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
 	$pluginVersion  = get_plugin_data(PLUGINPATH.PLUGINNAME.'.php')['Version'];
+	
 	$pluginFile     = PLUGINNAME.'/'.PLUGINNAME.'.php';
 
 	$release		= getLatestRelease();
