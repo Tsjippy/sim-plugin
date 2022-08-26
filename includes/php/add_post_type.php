@@ -125,6 +125,9 @@ function createTaxonomies($taxonomyName, $postType, $plural){
 
 	//redirect plural to archive page as well
 	add_rewrite_rule($taxonomyName.'/?$','index.php?post_type='.$postType,'top');
+
+	// Clear the permalinks after the post type has been registered.
+    flush_rewrite_rules(); 
 }
 
 add_filter( 'single_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );

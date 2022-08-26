@@ -33,14 +33,12 @@ add_action( 'admin_menu', function() {
 		$updates	= SIM\checkForUpdate( new \stdClass() );
 
 		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
-			echo "<script>console.log('dsfds');document.addEventListener('DOMContentLoaded',function() {location.reload();})</script>";
+			echo "<script>console.log('dsfds');document.addEventListener('DOMContentLoaded',function() {location.href=location.href+'&message=Updated succesfull to version {$updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php']->new_version}';})</script>";
 			wp_ob_end_flush_all();
 			flush();
 			
 			updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
-		}
-
-		echo "<div class='success'>Update succesfull</div>";
+		}		
 	}
 
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");	
@@ -245,6 +243,11 @@ function mainMenu(){
 	}
 	
 	ob_start();
+
+	if(isset($_GET['message'])){
+		echo "<div class='success'>".sanitize_text_field($_GET['message'])."</div>";
+	}
+
 	if(current_user_can('update_plugins')){
 		$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
 		echo "<a href='$url' class='button'>Check for update</a><br><br>";

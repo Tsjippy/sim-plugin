@@ -34,6 +34,11 @@ foreach ($files as $file) {
     require_once($file);   
 }
 
+add_action( 'upgrader_process_complete', function( $upgraderObject, $options ) {
+    // inspect $options
+	$opions='';
+}, 10, 2 );
+
 //Register a function to run on plugin deactivation
 register_deactivation_hook( __FILE__, function() {	
 	printArray("Removing cron schedules");
