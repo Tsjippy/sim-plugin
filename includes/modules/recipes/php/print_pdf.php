@@ -3,6 +3,10 @@ namespace SIM\RECIPES;
 use SIM;
 
 add_action('sim-before-print-content', function($post, $pdf){
+    if($post->post_type != 'recipe'){
+        return;
+    }
+    
     $pdf->printImage(get_the_post_thumbnail_url($post), -1, 20, -1, -1, true, true);
 		
     //Duration
