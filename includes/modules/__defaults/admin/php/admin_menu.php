@@ -221,7 +221,7 @@ function mainMenu(){
 	$inactive	= [];
 	foreach($moduleDirs as $moduleSlug=>$moduleName){
 		$moduleName	= getModuleName($moduleName);
-		if(!in_array($moduleSlug, ["__template", "admin"])){
+		if(!in_array($moduleSlug, ["__template", "admin", "__defaults"])){
 			if(in_array($moduleSlug, array_keys($Modules))){
 				$active[$moduleSlug]	= $moduleName;
 			}else{
