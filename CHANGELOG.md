@@ -7,7 +7,9 @@
 ### Changed
 
 ### Fixed
-- pdf printing og pages
+
+## [2.1.4] - 2022-08-26
+
 
 ## [2.1.3] - 2022-08-26
 
