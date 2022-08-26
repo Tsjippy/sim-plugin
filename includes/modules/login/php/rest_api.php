@@ -106,24 +106,6 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-    register_rest_route( 
-		'sim/v3/login', 
-		'/request_login_code', 
-		array(
-			'methods' 				=> 'GET',
-			'callback' 				=>  function(){
-                wp_mail('ewald.harmsen@sim.org', 'test1', 'test1');
-                return 'mail sent';
-            },
-			'permission_callback' 	=> '__return_true',
-			'args'					=> array(
-				'username'		=> array(
-					'required'	=> true
-				),
-			)
-		)
-	);
-
     // check credentials
 	register_rest_route( 
 		RESTAPIPREFIX.'/login', 

@@ -26,3 +26,6 @@ add_action( 'rest_api_init', function () {
         )
     );
 });
+
+// turn off incorrect error
+add_filter( 'wp_mail_smtp_core_wp_mail_function_incorrect_location_notice', '__return_false' );

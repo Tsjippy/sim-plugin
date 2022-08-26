@@ -136,7 +136,7 @@ class CreateEvents extends Events{
 				// Same week and day i.e. first friday
 				}elseif($repeatParam['datetype'] == 'patterned'){
 					$firstWeek	= Date('W', strtotime("first day of 0 month", $baseStartDate));
-					$targetWeek	= SIM\numberToWords(Date("W", $baseStartDate)-$firstWeek);
+					$targetWeek	= SIM\numberToWords(Date("W", $baseStartDate)-$firstWeek +1);
 					$dayName	= Date('l', $baseStartDate);
 
 					$startDate	= strtotime("$targetWeek $dayName of +{$index} month", $baseStartDate);
