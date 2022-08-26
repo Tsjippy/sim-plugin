@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with edit page over AJAX
 
 ## [2.0.9] - 2022-08-25
 
