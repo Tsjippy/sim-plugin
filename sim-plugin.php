@@ -34,17 +34,13 @@ foreach ($files as $file) {
     require_once($file);   
 }
 
-add_filter( 'upgrader_post_install', function($response, $hook_extra, $result ){
-	printArray('upgrader_post_install');
-	return $response;
-});
+// Check if is updated
+if(get_option('sim_version') != get_plugin_data(PLUGINPATH.PLUGINNAME.'.php')['Version']){
+	update_option('sim_version', get_plugin_data(PLUGINPATH.PLUGINNAME.'.php')['Version']);
 
-add_action( 'upgrader_process_complete', function( $upgraderObject, $options ) {
-	printArray($options);
-
-    // inspect $options
-	$opions='';
-}, 10, 2 );
+	// Update the mu plugin file
+	copy(__DIR__.'/other/sim.php', WP_CONTENT_DIR.'/mu-plugins/sim.php');
+}
 
 //Register a function to run on plugin deactivation
 register_deactivation_hook( __FILE__, function() {	
