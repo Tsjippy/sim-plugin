@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- mu-pluigin problem
 
 ## [2.0.10.1] - 2022-08-26
 
