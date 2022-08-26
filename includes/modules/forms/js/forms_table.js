@@ -96,6 +96,7 @@ async function archiveSubmission(target){
 	let submissionId	= tableRow.dataset.id;
 	let showSwal		= true;
 	let action			= target.value;
+	let response;
 
 	let formData 		= new FormData();
 	formData.append('formid', table.dataset.formid);
@@ -138,7 +139,7 @@ async function archiveSubmission(target){
 	//display loading gif
 	Main.showLoader(target);
 	
-	let response	= await FormSubmit.fetchRestApi('forms/archive_submission', formData);
+	response	= await FormSubmit.fetchRestApi('forms/archive_submission', formData);
 
 	if(response){
 		const params = new Proxy(new URLSearchParams(window.location.search), {
