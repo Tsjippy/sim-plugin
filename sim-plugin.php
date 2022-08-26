@@ -35,8 +35,11 @@ foreach ($files as $file) {
 }
 
 // Check if is updated
-if(get_option('sim_version') != get_plugin_data(PLUGINPATH.PLUGINNAME.'.php')['Version']){
-	update_option('sim_version', get_plugin_data(PLUGINPATH.PLUGINNAME.'.php')['Version']);
+if( ! function_exists('get_plugin_data') ){
+	require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+}
+if(get_option('sim_version') != get_plugin_data(__FILE__)['Version']){
+	update_option('sim_version', get_plugin_data(__FILE__)['Version']);
 
 	// Update the mu plugin file
 	copy(__DIR__.'/other/sim.php', WP_CONTENT_DIR.'/mu-plugins/sim.php');
