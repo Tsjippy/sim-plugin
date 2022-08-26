@@ -32,11 +32,7 @@ add_action( 'admin_menu', function() {
 	if(isset($_GET['update'])){
 		$updates	= SIM\checkForUpdate( new \stdClass() );
 
-		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
-			echo "<script>console.log('dsfds');document.addEventListener('DOMContentLoaded',function() {location.href=location.href+'&message=Updated succesfull to version {$updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php']->new_version}';})</script>";
-			wp_ob_end_flush_all();
-			flush();
-			
+		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){			
 			updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
 		}		
 	}
