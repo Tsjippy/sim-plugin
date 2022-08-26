@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with form selector when no results
 
 ## [2.0.10.6] - 2022-08-26
 
