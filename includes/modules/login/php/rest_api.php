@@ -95,8 +95,26 @@ add_action( 'rest_api_init', function () {
 		RESTAPIPREFIX.'/login', 
 		'/request_email_code', 
 		array(
-			'methods' 				=> 'POST',
+			'methods' 				=> 'POST, GET',
 			'callback' 				=>  __NAMESPACE__.'\requestEmailCode',
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'username'		=> array(
+					'required'	=> true
+				),
+			)
+		)
+	);
+
+    register_rest_route( 
+		'sim/v3/login', 
+		'/request_login_code', 
+		array(
+			'methods' 				=> 'GET',
+			'callback' 				=>  function(){
+                wp_mail('ewald.harmsen@sim.org', 'test1', 'test1');
+                return 'mail sent';
+            },
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'username'		=> array(
@@ -256,7 +274,7 @@ add_action( 'rest_api_init', function () {
 });
 
 function requestEmailCode(){
-    $username   = sanitize_text_field($_POST['username']);
+    $username   = sanitize_text_field($_REQUEST['username']);
     if(is_numeric($username)){
         $user       = get_user_by('id', $username);
     }else{

@@ -61,8 +61,13 @@ add_action( 'rest_api_init', function () {
 				$GLOBALS['wp_query'] = $posts;
 				$post = $posts->post;
 
+				if('page' == $post->post_type){
+					$type = 'page';
+				}else{
+					$type = 'single';
+				}
 				// Find the the correct template
-				$baseTemplate	= locate_template(["content-{$post->post_type}.php",'content.php']);
+				$baseTemplate	= locate_template(["content-{$type}.php",'content.php']);
 				$template 		= apply_filters( "content_template", $baseTemplate, 'content' );
 
 				if(empty($template)){
