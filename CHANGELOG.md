@@ -5,9 +5,14 @@
 ### Added
 
 ### Changed
-- update mu-plugin on update
 
 ### Fixed
+
+## [2.0.10.3] - 2022-08-26
+
+
+### Changed
+- update mu-plugin on update
 
 ## [2.0.10.2] - 2022-08-26
 
