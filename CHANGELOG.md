@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.0.10.1] - 2022-08-26
+
+
+### Fixed
 - bug when creating repeating events
 - issue with upcoming events block
 date layout
