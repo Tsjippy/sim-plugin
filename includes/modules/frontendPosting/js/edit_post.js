@@ -63,7 +63,7 @@ let editPostSwitch = async function (event){
     let postId      = button.dataset.id;
     formData.append('postid', postId);
 
-	const url 		= new URL('https://localhost/simnigeria/add-content/');
+	const url 		= new URL(edit_post_url);
 	url.searchParams.set('post_id', postId);
 
 	window.history.pushState({}, '', url);
@@ -97,7 +97,7 @@ let editPostSwitch = async function (event){
 	}
 }
 
-document.addEventListener("DOMContentLoaded",function() {
+document.addEventListener("DOMContentLoaded", function() {
 	console.log("Edit post.js loaded");
 	
 	document.querySelectorAll('#page-edit').forEach(el=>{
