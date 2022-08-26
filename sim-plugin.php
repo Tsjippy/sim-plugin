@@ -4,7 +4,7 @@ namespace SIM;
 /**
  * Plugin Name:  SIM plugin
  * Description:  A bundle of 25 modules to add AJAX login, forms and other functionality
- * Version:      2.0.10.1
+ * Version:      2.0.9
  * Author:       Ewald Harmsen
  * Requires at least: 4.0
  *
@@ -33,6 +33,10 @@ $files = glob(__DIR__  . '/*.php');
 foreach ($files as $file) {
     require_once($file);   
 }
+
+add_filter( 'upgrader_post_install', function($response, $hook_extra, $result ){
+	return $response;
+});
 
 add_action( 'upgrader_process_complete', function( $upgraderObject, $options ) {
     // inspect $options
