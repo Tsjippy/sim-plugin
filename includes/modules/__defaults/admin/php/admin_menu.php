@@ -239,16 +239,17 @@ function mainMenu(){
 	if(current_user_can('update_plugins')){
 		if(isset($_GET['update'])){
 			$updates	= SIM\checkForUpdate( new \stdClass() );
+			$pluginName	= 'sim-plugin';
 			
 			if($_GET['update']	== 'check'){
-				if(isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
+				if(isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
 					$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
-					echo "<a href='$url' class='button'>Update to version {$updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php']->new_version}</a><br><br>";
+					echo "<a href='$url' class='button'>Update to version {$updates->response[$pluginName.'/'.$pluginName.'.php']->new_version}</a><br><br>";
 				}else{
 					echo "No update available";
 				}
-			}elseif(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){			
-				updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
+			}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){			
+				updatePlugin($pluginName.'/'.$pluginName.'.php');
 			}		
 		}
 
