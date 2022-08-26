@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug when creating repeating events
 
 ## [2.0.10] - 2022-08-26
 
