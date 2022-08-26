@@ -33,7 +33,9 @@ add_action( 'admin_menu', function() {
 		$updates	= SIM\checkForUpdate( new \stdClass() );
 
 		if(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
-			echo "<script>document.addEventListener('DOMContentLoaded',function() {location.reload();})</script>";
+			echo "<script>console.log('dsfds');document.addEventListener('DOMContentLoaded',function() {location.reload();})</script>";
+			wp_ob_end_flush_all();
+			flush();
 			
 			updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
 		}
