@@ -15,13 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Load js
 wp_enqueue_script('sim_plurarize_script');
 
-if(is_tax() or is_archive()){
+if(is_tax() || is_archive()){
 	$archive	= true;
 }
 
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
-	<div class="cat_card<?php if(!$archive) echo ' inside-article';?>">
+	<div class="cat_card<?php if(!$archive){echo ' inside-article';}?>">
 		
 		<?php 
 		if($archive){
@@ -31,10 +31,10 @@ if(is_tax() or is_archive()){
 			do_action( 'sim_before_content');
 		}
 		?>
-		<div class='entry-content<?php if($archive) echo ' archive';?>'>
+		<div class='entry-content<?php if($archive){echo ' archive';}?>'>
 			<div class='picture'>
 				<?php
-				the_post_thumbnail([250,200]);
+				the_post_thumbnail([250, 200]);
 				?>
 			</div>
 			
@@ -60,14 +60,17 @@ if(is_tax() or is_archive()){
 						) 
 					);
 					
-					$url = plugins_url('pictures/recipe_category.png', __DIR__);
+					$url = plugins_url('pictures/category.png', __DIR__);
 					echo "<img src='$url' alt='category' class='recipe_icon'>";
 
 					$i = 1;
 					foreach($categories as $id=>$category){
-						if($i != 1) echo ', ';
-						$url = get_term_link($id);
-						$category = strtolower($category);
+						if($i != 1){
+							echo ', ';
+						}
+
+						$url 		= get_term_link($id);
+						$category 	= strtolower($category);
 						echo "<a href='$url'>$category</a>";
 						$i++;
 					}
@@ -81,18 +84,22 @@ if(is_tax() or is_archive()){
 					$url = plugins_url('pictures/time.png', __DIR__);
 					echo "<img src='$url' alt='category' class='recipe_icon'>";
 					echo get_post_meta(get_the_ID(),'time_needed',true); 
-					if(!$archive) echo 'minutes';
+					if(!$archive){
+						echo 'minutes';
+					}
 					?>
 				</span>
 				<span class='serves recipemeta'>
 					<?php
-					$url = plugins_url('pictures/recipe_serves.png', __DIR__);
+					$url = plugins_url('pictures/serves.png', __DIR__);
 					echo "<img src='$url' alt='category' class='recipe_icon'>";
 					$persons = get_post_meta(get_the_ID(),'serves',true);
 					echo "<select class='serves_select' data-originalvalue='$persons' style='padding:0px;'>";
 					for($i = 1; $i<=10; $i++) {
 						echo "<option value='$i'";
-						if($i == $persons) echo " selected";
+						if($i == $persons){
+							echo " selected";
+						}
 						echo ">$i</option>"; 
 					}
 					echo "</select>";
@@ -114,8 +121,8 @@ if(is_tax() or is_archive()){
 				<?php
 				$ingredients = explode("\n", trim(get_post_meta(get_the_ID(),'ingredients',true)));
 				
-				foreach($ingredients as $key=> $ingredient){
-					if($key == 4 and $archive){
+				foreach($ingredients as $key => $ingredient){
+					if($key == 4 && $archive){
 						echo "<li>...</li>";
 						break;
 					}else{

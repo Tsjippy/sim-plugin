@@ -80,7 +80,8 @@ spl_autoload_register(function ($classname) {
 $Modules		= get_option('sim_modules', []);
 //Load all main files
 $files = glob(__DIR__  . '/includes/php/*.php');
-$files = array_merge($files, glob(__DIR__  . '/includes/admin/php/*.php'));
+$path=__DIR__  . '/includes/__defaults/admin/php/*.php';
+$files = array_merge($files, glob(__DIR__  . '/includes/modules/__defaults/*/php/*.php'));
 
 foreach($Modules as $slug=>$settings){
     $files = array_merge($files, glob(__DIR__  . "/includes/modules/$slug/php/*.php"));

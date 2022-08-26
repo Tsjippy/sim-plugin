@@ -47,7 +47,7 @@ add_action( 'wp_enqueue_scripts', function () {
 
     wp_enqueue_script('sim_edit_post_script', plugins_url('js/edit_post.min.js', __DIR__), array('sim_formsubmit_script'), MODULE_VERSION, true);
     $frontendEditUrl    = SIM\getValidPageLink(SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages')[0]);
-    wp_localize_script('sim_edit_post_script', 'edit_post_url', $frontendEditUrl);
+    wp_add_inline_script('sim_edit_post_script', "var edit_post_url = '$frontendEditUrl'", 'before');
 
     $frontEndPostPages   = SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages');
     if(in_array(get_the_ID(), $frontEndPostPages)){

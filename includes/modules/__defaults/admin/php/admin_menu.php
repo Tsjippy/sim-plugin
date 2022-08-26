@@ -241,8 +241,12 @@ function mainMenu(){
 			$updates	= SIM\checkForUpdate( new \stdClass() );
 			
 			if($_GET['update']	== 'check'){
-				$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
-				echo "<a href='$url' class='button'>Update to version {$updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php']->new_version}</a><br><br>";
+				if(isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){
+					$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
+					echo "<a href='$url' class='button'>Update to version {$updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php']->new_version}</a><br><br>";
+				}else{
+					echo "No update available";
+				}
 			}elseif(!empty($updates->response) && isset($updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php'])){			
 				updatePlugin(PLUGINNAME.'/'.PLUGINNAME.'.php');
 			}		

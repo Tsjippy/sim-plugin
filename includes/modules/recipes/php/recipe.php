@@ -182,8 +182,8 @@ add_action('sim_before_page_print', function($post, $pdf){
 		$pdf->write(10,get_post_meta($post->ID,'time_needed',true).' minutes');
 		
 		//Serves
-		$url = "{$baseUrl}/recipe_serves.png";
-		$pdf->printImage($url,55,-1,10,10);
+		$url = "{$baseUrl}/serves.png";
+		$pdf->printImage($url, 55, -1, 10, 10);
 		
 		$persons = get_post_meta(get_the_ID(),'serves',true);
 		if($persons == 1){
@@ -199,7 +199,8 @@ add_action('sim_before_page_print', function($post, $pdf){
 		$pdf->Ln(5);
 		$ingredients = explode("\n", trim(get_post_meta(get_the_ID(),'ingredients',true)));
 		foreach($ingredients as $ingredient){
-			$pdf->write(10,chr(127).' '.$ingredient);
+			$pdf->write(10, chr(127).' '.$ingredient);
+			$pdf->WriteHTML(chr(127).' '.$ingredient);
 			$pdf->Ln(5);
 		}
 		
