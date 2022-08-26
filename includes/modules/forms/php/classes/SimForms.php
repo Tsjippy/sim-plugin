@@ -389,6 +389,7 @@ class SimForms{
 
 		// preload the formbuilder in case we need it later
 		if($this->editRights){
+			wp_enqueue_style( 'sim_formtable_style');
 			wp_enqueue_script( 'sim_formbuilderjs');
 			// Enqueue tinymce
 			wp_enqueue_script('sim-tinymce', "/wp-includes/js/tinymce/tinymce.min.js", [], false, true);
