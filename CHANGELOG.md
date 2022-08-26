@@ -9,19 +9,19 @@
 ### Fixed
 - do not print recipe details if not a recipe
 
-## [2.0.10.4] - 2022-08-26
+## [2.10.4] - 2022-08-26
 
 
 ### Changed
 - update mu-plugin on update
 
-## [2.0.10.2] - 2022-08-26
+## [2.10.2] - 2022-08-26
 
 
 ### Fixed
 - mu-pluigin problem
 
-## [2.0.10.1] - 2022-08-26
+## [2.10.1] - 2022-08-26
 
 
 ### Fixed
@@ -29,13 +29,13 @@
 - issue with upcoming events block
 date layout
 
-## [2.0.10] - 2022-08-26
+## [2.10.0] - 2022-08-26
 
 
 ### Fixed
 - issue with edit page over AJAX
 
-## [2.0.9] - 2022-08-25
+## [2.9.0] - 2022-08-25
 
 
 ### Added
@@ -45,7 +45,7 @@ reloading the entire page
 ### Changed
 - edit post now over AJAX
 
-## [2.0.8.4] - 2022-08-24
+## [2.8.4] - 2022-08-24
 
 
 ### Fixed
@@ -53,7 +53,7 @@ reloading the entire page
 - issue with single events with small
 content body
 
-## [2.0.8.3] - 2022-08-23
+## [2.8.3] - 2022-08-23
 
 
 ### Added
@@ -63,13 +63,8 @@ content body
 - upcoming events block layout
 - tinyMce fields in formbuilder
 
-## [2.0.8.2] - 2022-08-23
 
-
-## [2.0.8.1] - 2022-08-23
-
-
-## [2.0.8] - 2022-08-23
+## [2.8.0] - 2022-08-23
 
 
 ### Added
@@ -100,13 +95,13 @@ post for review
 - do not send pendngpost warning when
 publishing it
 
-## [2.07] - 2022-08-19
+## [2.7.0] - 2022-08-19
 
 
 ### Added
 - events metadata block
 
-## [2.0.6] - 2022-08-17
+## [2.6.0] - 2022-08-17
 
 
 ### Added
@@ -124,7 +119,7 @@ welcome message, mandatory pages blocks
 ### Fixed
 - mail issue
 
-## [2.0.5] - 2022-08-16
+## [2.5.0] - 2022-08-16
 
 
 ### Added
@@ -136,7 +131,7 @@ welcome message, mandatory pages blocks
 ### Fixed
 - first login on staging site
 
-## [2.0.4] - 2022-08-12
+## [2.4.0] - 2022-08-12
 
 
 ### Added
@@ -157,7 +152,7 @@ welcome message, mandatory pages blocks
 - account statement download links
 - bug in checkboxes formresults
 
-## [2.0.3.2] - 2022-08-02
+## [2.3.2] - 2022-08-02
 
 
 ### Changed
@@ -171,7 +166,7 @@ welcome message, mandatory pages blocks
 - userpage links on frontpage
 - issue with wedding anniversaries
 
-## [2.0.3.1] - 2022-07-30
+## [2.3.1] - 2022-07-30
 
 
 ### Fixed
@@ -182,7 +177,7 @@ welcome message, mandatory pages blocks
 - issue with wrong page urls in e-mail
 - issues with repeating events
 
-## [2.0.2.19] - 2022-07-29
+## [2.2.19] - 2022-07-29
 
 
 ### Changed
@@ -194,20 +189,20 @@ welcome message, mandatory pages blocks
 -  2 celebrations on 1 day for 1 person
 - issue when multiple same forms on page
 
-## [2.0.2.18] - 2022-07-29
+## [2.2.18] - 2022-07-29
 
 
 ### Fixed
 - retieve events with a category
 - anniversary messages
 
-## [2.0.2.17] - 2022-07-25
+## [2.2.17] - 2022-07-25
 
 
 ### Fixed
 - issue with upcoming events
 
-## [2.0.2.16] - 2022-07-23
+## [2.2.16] - 2022-07-23
 
 
 ### Fixed
