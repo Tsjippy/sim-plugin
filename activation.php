@@ -7,6 +7,8 @@ add_action( 'activated_plugin', function ( $plugin ) {
         return;
     }
 
+    error_log('Running activation');
+
     // create must use plugins folder if it does not exist
     if (!is_dir(WP_CONTENT_DIR.'/mu-plugins')) {
         mkdir(WP_CONTENT_DIR.'/mu-plugins', 0777, true);
