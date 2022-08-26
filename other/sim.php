@@ -10,9 +10,7 @@ add_filter( 'option_active_plugins', function( $plugins ){
             "really-simple-ssl/rlrsssl-really-simple-ssl.php"
         ];
         
-        return [
-            
-        ];
+        return array_intersect($whiteList, $plugins);
     }
     return $plugins;
 });
