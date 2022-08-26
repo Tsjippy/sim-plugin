@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.0.10] - 2022-08-26
+
+
+### Fixed
 - issue with edit page over AJAX
 
 ## [2.0.9] - 2022-08-25
