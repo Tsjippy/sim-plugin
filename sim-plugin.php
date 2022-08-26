@@ -35,10 +35,13 @@ foreach ($files as $file) {
 }
 
 add_filter( 'upgrader_post_install', function($response, $hook_extra, $result ){
+	printArray('upgrader_post_install');
 	return $response;
 });
 
 add_action( 'upgrader_process_complete', function( $upgraderObject, $options ) {
+	printArray($options);
+
     // inspect $options
 	$opions='';
 }, 10, 2 );
