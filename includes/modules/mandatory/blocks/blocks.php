@@ -22,7 +22,11 @@ add_action( 'enqueue_block_editor_assets', function(){
     );
 
 	$postId		= get_the_ID();
-    $audience 	= json_decode(get_post_meta($postId, "audience", true), true);
+
+    $audience   = get_post_meta($postId, 'audience', true);
+    if(!is_array($audience) && !empty($audience)){
+        $audience  = json_decode($audience, true);
+    }
 
     wp_localize_script(
         'sim-mandatory-block',

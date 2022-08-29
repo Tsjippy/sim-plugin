@@ -25,7 +25,10 @@ function getAudienceOptions($audience, $postId){
  * @param  object $frontendContend 	frontendContend instance            
 */
 add_action('sim_frontend_post_after_content', function($frontendContend){
-    $audience = json_decode( get_post_meta($frontendContend->postId, "audience", true), true);
+	$audience   = get_post_meta($frontendContend->postId, 'audience', true);
+    if(!is_array($audience) && !empty($audience)){
+        $audience  = json_decode($audience, true);
+    }
 
     ?>
     <div id="recipients" class="frontendform post page<?php if($frontendContend->postType != 'page' && $frontendContend->postType != 'post'){echo ' hidden'; }?>">
@@ -111,7 +114,10 @@ add_action('sim_after_post_save', function($post){
  * @return string			The message         
 */
 add_filter('sim_signal_post_notification_message', function($message, $post){
-	$audience	= json_decode( get_post_meta($post->ID, "audience", true), true);
+	$audience   = get_post_meta($post->ID, 'audience', true);
+    if(!is_array($audience) && !empty($audience)){
+        $audience  = json_decode($audience, true);
+    }
 	if(is_array($audience) && !empty($audience['everyone'])){
 		$message	.= "\n\nThis is a mandatory message, please read it straight away.";
 	}

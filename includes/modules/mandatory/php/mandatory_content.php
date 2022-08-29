@@ -15,7 +15,10 @@ add_filter( 'the_content', function ($content){
 
 	$postId 	= get_the_ID();
 	$userId 	= get_current_user_id();
-	$audience 	= (array)json_decode(get_post_meta($postId, "audience", true), true);
+	$audience   = get_post_meta($postId, 'audience', true);
+    if(!is_array($audience) && !empty($audience)){
+        $audience  = json_decode($audience, true);
+    }
 	$readPages	= (array)get_user_meta( $userId, 'read_pages', true );
 	
 	//Get the users arrival date

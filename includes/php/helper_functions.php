@@ -1045,6 +1045,15 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
  * @return	string|false					The url or false if no valid page
 */
 function getValidPageLink($postId){
+	if(is_array($postId)){
+		foreach($postId as $id){
+			$url	= getValidPageLink($id);
+			if($url){
+				return $url;
+			}
+		}
+	}
+
 	if(!is_numeric($postId)){
 		return false;
 	}

@@ -88,7 +88,7 @@ function setLocationAddress($postId){
  */
 add_action( 'added_post_meta', __NAMESPACE__.'\createLocationMarker', 10, 4);
 add_action( 'updated_postmeta', __NAMESPACE__.'\createLocationMarker', 10, 4);
-function createLocationMarker($metaId, $postId,  $metaKey,  $metaValue){
+function createLocationMarker($metaId, $postId,  $metaKey,  $location){
     if($metaKey != 'location'){
         return;
     }
@@ -97,11 +97,13 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $metaValue){
 
     $maps   = new Maps();
 
-    $location   = json_decode($metaValue, true);
+    if(!is_array($location) && !empty($location)){
+        $location   = json_decode($location, true);
+    }
         
-    $address	= $metaValue["address"]		= sanitize_text_field($location["address"]);
-    $latitude	= $metaValue["latitude"]	= sanitize_text_field($location["latitude"]);
-    $longitude	= $metaValue["longitude"]	= sanitize_text_field($location["longitude"]);
+    $address	= $location["address"]		= sanitize_text_field($location["address"]);
+    $latitude	= $location["latitude"]	    = sanitize_text_field($location["latitude"]);
+    $longitude	= $location["longitude"]	= sanitize_text_field($location["longitude"]);
     
     //Only update if needed
     if(empty($latitude) || empty($longitude)){
@@ -301,9 +303,12 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
     //Load js
     wp_enqueue_script('sim_location_script');
 
-    $postId    = $frontendcontend->postId;
-    $postName  = $frontendcontend->postName;
-    $location  = json_decode(get_post_meta($postId, 'location', true), true);
+    $postId     = $frontendcontend->postId;
+    $postName   = $frontendcontend->postName;
+    $location   = get_post_meta($postId, 'location', true);
+    if(!is_array($location) && !empty($location)){
+        $location  = json_decode($location, true);
+    }
     
     if(isset($location['address'])){
         $address = $location['address'];

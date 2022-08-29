@@ -37,7 +37,10 @@ add_shortcode("location_description", function($atts){
         return '';
     }
 
-    $location 	= json_decode(get_post_meta($postId, 'location', true), true);
+    $location   = get_post_meta($postId, 'location', true);
+    if(!is_array($location) && !empty($location)){
+        $location  = json_decode($location, true);
+    }
     $latitude   = $location['latitude'];
     $longitude  = $location['longitude'];
 

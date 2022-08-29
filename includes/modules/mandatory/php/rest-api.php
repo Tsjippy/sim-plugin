@@ -69,7 +69,11 @@ add_action( 'rest_api_init', function () {
 });
 
 add_filter('sim_before_mailchimp_send', function($mailContent, $post){
-	$audience	= json_decode(get_post_meta($post->ID, 'audience', true), true);
+	$audience   = get_post_meta($post->Id, 'audience', true);
+    if(!is_array($audience) && !empty($audience)){
+        $audience  = json_decode($audience, true);
+    }
+
     ///add button if mandatory message
     if(!empty($audience['everyone'])){
         $url			= SITEURL."/wp-json/".RESTAPIPREFIX."/mandatory_content/mark_as_read_public?email=*|EMAIL|*&postid={$post->ID}";

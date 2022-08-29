@@ -65,7 +65,10 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 	foreach($pages as $page){
 		//check if already read
 		if(!in_array($page->ID, $readPages)){
-			$audience =  json_decode( get_post_meta($page->ID, "audience", true), true);
+			$audience   = get_post_meta($page->ID, 'audience', true);
+			if(!is_array($audience) && !empty($audience)){
+				$audience  = json_decode($audience, true);
+			}
 			
 			//Add a link if not yet in the country and should read before arriving
 			if(isset($audience['beforearrival']) && !$arrived){
