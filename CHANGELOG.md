@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.11.3] - 2022-08-29
+
+
+### Fixed
+- reload page when response is not an url
+
 ## [2.11.2] - 2022-08-29
 
 
