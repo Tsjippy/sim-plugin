@@ -34,8 +34,8 @@ async function requestLogin(){
 
 	if(response){
 		document.querySelector('#logging_in_wrapper .status_message').textContent='Succesfully logged in, redirecting...';
-		
-		if(response == 'Login successful'){
+
+		if(!response.startsWith('http')){
 			location.reload();
 		}else{
 			location.href = response;

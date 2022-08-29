@@ -65,18 +65,18 @@ class FancyEmail{
         if(
             strpos($this->recipients,'.empty') !== false        ||
             (
-                !SIM\getModuleOption(MODULE_SLUG, 'no-localhost') && 
+                SIM\getModuleOption(MODULE_SLUG, 'no-localhost') && 
                 $_SERVER['HTTP_HOST'] == 'localhost'
             )                                                   ||
             (
-                !SIM\getModuleOption(MODULE_SLUG, 'no-staging') && 
+                SIM\getModuleOption(MODULE_SLUG, 'no-staging') && 
                 get_option("wpstg_is_staging_site") == "true"
             )   
         ){
             $args['to'] = '';
             return $args;
         }
-        
+
         if(!is_array($args['headers'])){
             $args['headers'] = [];
         }

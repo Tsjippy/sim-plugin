@@ -186,7 +186,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 	$publicCat	= get_cat_ID('Public');
 
 	// Create password reset page
-	$newOptions	= SIM\ADMIN\createDefaultPage($newOptions, 'password_reset_page', 'Change password', '[change_password]', $oldOptions);
+	$newOptions	= SIM\ADMIN\createDefaultPage($newOptions, 'password_reset_page', 'Change password', '[change_password]', $oldOptions, ['post_category' => [$publicCat]]);
 
 	// Add registration page
 	if(isset($newOptions['user_registration'])){

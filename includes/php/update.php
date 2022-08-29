@@ -1,5 +1,6 @@
 <?php
 namespace SIM;
+use Github\Exception\ApiLimitExceedException;
 
 // https://github.com/KnpLabs/php-github-api 	-- github api
 // https://github.com/michelf/php-markdown		-- convert markdown to html
@@ -86,7 +87,7 @@ function checkForUpdate( $updatePlugins ) {
 	$gitVersion     = $release['tag_name'];
 
 	// Git has a newer version
-	if(version_compare($gitVersion, $pluginVersion)){
+	if(version_compare($gitVersion, $pluginVersion) && !empty($release['assets'][0]['browser_download_url'])){
 		$updatePlugins->response[$pluginFile] = (object)array(
 			'slug'         => PLUGINNAME, 
 			'new_version'  => $gitVersion,
@@ -115,14 +116,16 @@ function getLatestRelease(){
 	if(!$release){
 		try{
 			$client 	    = new \Github\Client();
+
 			$release 	    = $client->api('repo')->releases()->latest('tsjippy', PLUGINNAME);
 			
 			// Store for 1 hours
 			set_transient( 'sim-git-release', $release, DAY_IN_SECONDS );
+		} catch (ApiLimitExceedException $e) {
+			printArray('Rate limit reached, please try agin in an hour', true);
 		}catch(\Exception $exception){
-			printArray($exception);
+			printArray($exception, true);
 		}
 	}
-
 	return $release;
 }
