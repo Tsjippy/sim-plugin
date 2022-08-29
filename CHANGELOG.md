@@ -8,6 +8,13 @@
 
 ### Fixed
 
+## [2.11.2] - 2022-08-29
+
+
+### Fixed
+- make not sending e-mails from staing
+site optional
+
 ## [2.11.1] - 2022-08-29
 
 
