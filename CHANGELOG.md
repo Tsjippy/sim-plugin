@@ -3,11 +3,13 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- mandatory pages overview in module menu
 
 ### Changed
 
 ### Fixed
+
+## [2.11.1] - 2022-08-29
+
 
 ## [2.11.0] - 2022-08-29
 
