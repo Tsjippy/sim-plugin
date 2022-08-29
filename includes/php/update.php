@@ -17,6 +17,10 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 
 	$client 	    		= new \Github\Client();
 	$release				= getLatestRelease();
+	if(is_wp_error($release)){
+		return $res;
+	}
+
 	$res 					= new \stdClass();
 
 	$res->name 				= 'SIM Plugin';
@@ -63,9 +67,9 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
  * Checks github for updates of this plugin
  * 
  */
-add_filter( 'site_transient_update_plugins', __NAMESPACE__.'\checkForUpdate' );
-add_filter( 'transient_update_plugins', __NAMESPACE__.'\checkForUpdate' );
-function checkForUpdate( $updatePlugins ) {
+add_filter( 'site_transient_update_plugins', __NAMESPACE__.'\checkForUpdate', 10);
+add_filter( 'transient_update_plugins', __NAMESPACE__.'\checkForUpdate', 10);
+function checkForUpdate( $updatePlugins) {
 
 	if ( ! is_object( $updatePlugins ) ){
 		return $updatePlugins;
@@ -83,6 +87,10 @@ function checkForUpdate( $updatePlugins ) {
 	$pluginFile     = PLUGINNAME.'/'.PLUGINNAME.'.php';
 
 	$release		= getLatestRelease();
+
+	if(is_wp_error($release)){
+		return $release;
+	}
 
 	$gitVersion     = $release['tag_name'];
 
@@ -122,9 +130,11 @@ function getLatestRelease(){
 			// Store for 1 hours
 			set_transient( 'sim-git-release', $release, DAY_IN_SECONDS );
 		} catch (ApiLimitExceedException $e) {
-			printArray('Rate limit reached, please try agin in an hour', true);
+			printArray('Rate limit reached, please try again in an hour');
+			return new \WP_Error('update', 'Rate limit reached, please try again in an hour');
 		}catch(\Exception $exception){
-			printArray($exception, true);
+			printArray($exception);
+			return new \WP_Error('update', $exception->getMessage());
 		}
 	}
 	return $release;

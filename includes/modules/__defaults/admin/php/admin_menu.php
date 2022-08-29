@@ -298,20 +298,24 @@ function mainMenu(){
 	if(current_user_can('update_plugins')){
 		if(isset($_GET['update'])){
 			$updates	= SIM\checkForUpdate( new \stdClass() );
-			$pluginName	= 'sim-plugin';
-			
-			if($_GET['update']	== 'check'){
-				if(isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
-					$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
-					echo "<a href='$url' class='button'>Update to version {$updates->response[$pluginName.'/'.$pluginName.'.php']->new_version}</a><br><br>";
-				}else{
-					echo "No update available";
+			if(is_wp_error($updates)){
+				echo "<div class='error'>".$updates->get_error_message()."</div>";
+			}else{
+				$pluginName	= 'sim-plugin';
+				
+				if($_GET['update']	== 'check'){
+					if(isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
+						$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
+						echo "<a href='$url' class='button'>Update to version {$updates->response[$pluginName.'/'.$pluginName.'.php']->new_version}</a><br><br>";
+					}else{
+						echo "No update available";
+					}
+				}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
+					ob_start();		
+					updatePlugin($pluginName.'/'.$pluginName.'.php');
+					ob_get_clean();
+					echo "<div class='success'>Updated</div>";
 				}
-			}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
-				ob_start();		
-				updatePlugin($pluginName.'/'.$pluginName.'.php');
-				ob_get_clean();
-				echo "<div class='success'>Updated</div>";
 			}		
 		}
 
