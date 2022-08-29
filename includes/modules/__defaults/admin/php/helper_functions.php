@@ -22,10 +22,6 @@ function updatePlugin($pluginFile){
 	
 	activate_plugin( $pluginFile);
 
-	/* echo "<script>console.log('dsfds');document.addEventListener('DOMContentLoaded',function() {location.href=location.href+'&message=Updated+succesfull+to+version+{$updates->response[PLUGINNAME.'/'.PLUGINNAME.'.php']->new_version}';})</script>";
-	wp_ob_end_flush_all();
-	flush(); */
-
 	printJs();
 }
 

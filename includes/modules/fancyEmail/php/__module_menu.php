@@ -50,6 +50,17 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	ob_start();
 	
     ?>
+	<label>
+		<input type='checkbox' name='no-staging' value='true' <?php if(isset($settings['no-staging'])){echo 'checked';}?>>
+		Do not send e-mails from staging websites
+	</label>
+	<br>
+	<label>
+		<input type='checkbox' name='no-localhost' value='true' <?php if(isset($settings['no-localhost'])){echo 'checked';}?>>
+		Do not send e-mails from localhost
+	</label>
+	<br>
+	<br>
 	<label>Select a picture for the e-mail header.</label>
 	<?php
 	SIM\pictureSelector('header_image', 'e-mail header', $settings);

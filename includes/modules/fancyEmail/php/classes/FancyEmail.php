@@ -62,11 +62,21 @@ class FancyEmail{
 
         $this->recipients   = &$args['to'];
         //Do not send an e-mail when the adres contains .empty, or is localhost or is staging
-        if(strpos($this->recipients,'.empty') !== false || $_SERVER['HTTP_HOST'] == 'localhost' || get_option("wpstg_is_staging_site") == "true"){
+        if(
+            strpos($this->recipients,'.empty') !== false        ||
+            (
+                !SIM\getModuleOption(MODULE_SLUG, 'no-localhost') && 
+                $_SERVER['HTTP_HOST'] == 'localhost'
+            )                                                   ||
+            (
+                !SIM\getModuleOption(MODULE_SLUG, 'no-staging') && 
+                get_option("wpstg_is_staging_site") == "true"
+            )   
+        ){
             $args['to'] = '';
             return $args;
         }
-
+        
         if(!is_array($args['headers'])){
             $args['headers'] = [];
         }
