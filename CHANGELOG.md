@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.11.4] - 2022-08-29
+
+
+### Fixed
 - better update error handling
 
 ## [2.11.3] - 2022-08-29
