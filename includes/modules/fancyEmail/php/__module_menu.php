@@ -38,14 +38,6 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	It will also monitor how often an e-mail is opened.<br>
 	<?php
 
-	if(SIM\getModuleOption($moduleSlug, 'enable')){
-		echo 'test';
-		if(!function_exists(__NAMESPACE__.'\emailStats')){
-			require_once(__DIR__.'/shortcodes.php');
-		}
-		echo emailStats();
-	}
-
 	return ob_get_clean();
 }, 10, 2);
 
@@ -63,4 +55,13 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	SIM\pictureSelector('header_image', 'e-mail header', $settings);
 
 	return ob_get_clean();
+}, 10, 3);
+	
+add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $dataHtml;
+	}
+
+	return $dataHtml.emailStats();
 }, 10, 3);

@@ -64,6 +64,15 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings,
 	return ob_get_clean();
 }, 10, 4);
 
+add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $dataHtml;
+	}
+
+	return $dataHtml;
+}, 10, 3);
+
 add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings, $moduleName){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){

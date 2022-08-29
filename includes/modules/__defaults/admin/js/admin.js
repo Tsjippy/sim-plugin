@@ -41,11 +41,16 @@ window.addEventListener("click", event => {
     }
 
     if(target.matches('.tablink:not(.active)')){
+        const url 		= new URL(window.location);
+        url.searchParams.set('tab', target.dataset.target);
+	    window.history.pushState({}, '', url);
+
         let curActive   = target.closest('.tablink-wrapper').querySelector('.active');
         curActive.classList.remove('active');
         document.getElementById(curActive.dataset.target).classList.add('hidden');
 
         target.classList.add('active');
+        console.log(target);
         document.getElementById(target.dataset.target).classList.remove('hidden');
 
     }

@@ -8,6 +8,22 @@
 	color: darkgreen;
 }
 
+.warning{
+	background-color: #d8a354;
+    color: black;
+    padding: 10px;
+    margin: 10px 0 20px 0;
+    text-align: center;
+}
+
+.error{
+	border: 3px solid $secundary_color;
+    color: $primary_color;
+    padding: 10px;
+    margin: 10px 0 20px 0;
+    text-align: center;
+}
+
 .module-settings{
     margin: 20px 20px 0px 0px;
 }

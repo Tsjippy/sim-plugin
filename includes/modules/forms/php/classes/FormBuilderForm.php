@@ -156,7 +156,7 @@ class FormBuilderForm extends SimForms{
 
 		if(isset($_POST['delete-form']) && is_numeric($_POST['delete-form'])){
 			$saveFormSettings	= new SaveFormSettings();
-			$saveFormSettings->deleteForm($_POST['delete-form'], $_POST['page-id']);
+			$saveFormSettings->deleteForm($_POST['delete-form']);
 
 			return "<div class='success'>Form successfully deleted.</div>";
 		}

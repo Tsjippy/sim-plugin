@@ -14,11 +14,6 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 
 	ob_start();
 
-	if(isset($_POST['import-form'])){
-		$formBuilder	= new FormBuilderForm();
-		$formBuilder->importForm($_FILES['formfile']['tmp_name']);
-	}
-
 	?>
 	<p>
 		This module adds 4 shortcodes:<br>
@@ -67,21 +62,6 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		<?php
 	}
 	?>
-
-	<h4>Form import</h4>
-	<p>
-		It is possible to import forms exported from this plugin previously.<br>
-		Use the button below to do so.
-	</p>
-	<form method='POST' enctype="multipart/form-data">
-		<label>
-			Select a form export file
-			<input type='file' name='formfile'>
-		</label>
-		<br>
-		<button type='submit' name='import-form'>Import the form</button>
-	</form>
-	<br><br>
 	<?php
 	return ob_get_clean();
 }, 10, 2);
@@ -107,8 +87,21 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	}
 
 	ob_start();
-
 	?>
+	<h4>Form import</h4>
+	<p>
+		It is possible to import forms exported from this plugin previously.<br>
+		Use the button below to do so.
+	</p>
+	<form method='POST' enctype="multipart/form-data">
+		<label>
+			Select a form export file
+			<input type='file' name='formfile'>
+		</label>
+		<br>
+		<button type='submit' name='import-form'>Import the form</button>
+	</form>
+	<br><br>
 	<label for="reminder_freq">How often should people be reminded of remaining form fields to fill?</label>
 	<br>
 	<select name="reminder_freq">
@@ -158,6 +151,64 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 
 	return ob_get_clean();
 }, 10, 3);
+
+add_action('sim_module_actions', function(){
+	if(isset($_POST['import-form'])){
+		$formBuilder	= new FormBuilderForm();
+		$formBuilder->importForm($_FILES['formfile']['tmp_name']);
+	}
+
+	if(isset($_POST['export']) && is_numeric($_POST['export'])){
+		$simForms	= new FormBuilderForm();
+		$simForms->exportForm($_POST['export']);
+	}
+
+	if(isset($_POST['delete']) && is_numeric($_POST['delete'])){
+		$simForms	= new SaveFormSettings();
+		$simForms->deleteForm($_POST['delete']);
+	}
+});
+
+add_filter('sim_module_data', function($dataHtml, $moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $dataHtml;
+	}
+	$html	= '';
+
+	if(isset($_POST['delete'])){
+		$html	.= "<div class='success' style='margin-top:20px;'>Form succesfully deleted</div>";
+	}
+
+	$simForms	= new SaveFormSettings();
+	$simForms->getForms();
+
+	$html	.= "<table class='formoverview'>";
+		$html	.= "<thead>";
+			$html	.= "<tr>";
+				$html	.= "<th>Form name</th>";
+				$html	.= "<th>Actions</th>";
+			$html	.= "</tr>";
+		$html	.= "</thead>";
+		$html	.= "<tbody>";
+			foreach($simForms->forms as $form){
+				$html	.= "<tr>";
+					$html	.= "<td>".str_replace('_', ' ', ucfirst($form->name))."</td>";
+					$html	.= "<td>";
+						$html	.= "<form action='' method='post' style='display: inline-block; margin-right:10px;'>";
+							$html	.= "<button class='small' name='export' value='{$form->id}'>Export</button>";
+						$html	.= "</form>";
+						$html	.= "<form action='' method='post' style='display: inline-block;'>";
+							$html	.= "<button class='small' name='delete' value='{$form->id}'>Delete</button>";
+						$html	.= "</form>";
+					$html	.= "</td>";
+				$html	.= "</tr>";
+			}
+		$html	.= "</tbody>";
+	$html	.= "</table>";
+
+	return $dataHtml.$html;
+}, 10, 2);
 
 add_filter('display_post_states', function ( $states, $post ) { 
     

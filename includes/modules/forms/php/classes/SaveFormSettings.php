@@ -305,10 +305,11 @@ class SaveFormSettings extends SimForms{
 	 * Deletes a form
 	 * 
 	 * @param	int		$formId	The id of the form to be deleted
+	 * @param	int		$pageId	The id of a page with a formbuilder shortcode
 	 * 
 	 * @return	string			The deletion result
 	*/
-	function deleteForm($formId, $pageId=''){
+	function deleteForm($formId){
 		global $wpdb;
 
 		if(!isset($this->formData)){
@@ -336,9 +337,12 @@ class SaveFormSettings extends SimForms{
 			['%d']
 		);
 
+		$query		= "SELECT ID FROM {$wpdb->posts} WHERE post_content LIKE '%[formbuilder formname={$this->formData->name}]%'";
+		$results	= $wpdb->get_results ($query);
+
 		// remove the shortcode from the page
-		if(is_numeric($pageId)){
-			$post	= get_post($pageId);
+		foreach($results as $postId){
+			$post	= get_post($postId);
 
 			$post->post_content	= str_replace("[formbuilder formname={$this->formData->name}]", '', $post->post_content);
 

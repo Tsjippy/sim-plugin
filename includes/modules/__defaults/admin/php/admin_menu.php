@@ -29,6 +29,8 @@ add_action( 'admin_menu', function() {
 		}
 	}
 
+	do_action('sim_module_actions');
+
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");	
 
 	foreach($moduleDirs as $moduleSlug=>$folderName){
@@ -93,43 +95,76 @@ function buildSubMenu(){
 	}
 
 	echo '<div class="module-settings">';
-
 		handlePost();
 		?>
 		<h1><?php echo $moduleName;?> module</h1>
 
 		<?php
-		$description = apply_filters('sim_submenu_description', '', $moduleSlug, $moduleName);
-
-		if(!empty($description)){
-			echo "<h2>Description</h2>";
-			echo $description;
-		}
 		
-		$settingsTab		= settingsTab($moduleSlug, $moduleName, $settings);
-		$emailSettingsTab	= emailSettingsTab($moduleSlug, $moduleName, $settings);
-
-		if(!empty($emailSettingsTab)){
-			?>
-			<div class='tablink-wrapper <?php if(!isset($settings['enable'])){echo 'hidden';}?>'>
-				<button class="tablink active" id="show_settings" data-target="settings">Settings</button>
-				<button class="tablink" id="show_emails" data-target="emails">E-mail settings</button>
-			</div>
-			<?php
+		$tab	= 'description';
+		if(isset($_GET['tab'])){
+			$tab	= $_GET['tab'];
 		}
 
+		$descriptionsTab	= descriptionsTab($moduleSlug, $moduleName, $tab);
+		$settingsTab		= settingsTab($moduleSlug, $moduleName, $settings, $tab);
+		$emailSettingsTab	= emailSettingsTab($moduleSlug, $moduleName, $settings, $tab);
+		$dataTab			= dataTab($moduleSlug, $moduleName, $settings, $tab);
+
+		?>
+		<div class='tablink-wrapper <?php if(!isset($settings['enable'])){echo 'hidden';}?>'>
+			<button class="tablink <?php if($tab == 'description'){echo 'active';}?>" id="show_description" data-target="description">Description</button>
+			<button class="tablink <?php if($tab == 'settings'){echo 'active';}?>" id="show_settings" data-target="settings">Settings</button>
+			<?php
+			if(!empty($emailSettingsTab)){
+				?>
+				<button class="tablink <?php if($tab == 'emails'){echo 'active';}?>" id="show_emails" data-target="emails">E-mail settings</button>
+				<?php
+			}
+			if(!empty($dataTab)){
+				?>
+				<button class="tablink <?php if($tab == 'data'){echo 'active';}?>" id="show_data" data-target="data">Module data</button>
+			<?php
+			}
+			?>
+		</div>
+		<?php
+
+		echo $descriptionsTab;
 		echo $settingsTab;
 		if(!empty($emailSettingsTab)){
 			echo $emailSettingsTab;
 		}
+		if(!empty($dataTab)){
+			echo $dataTab;
+		}
 }
 
-function settingsTab($moduleSlug, $moduleName, $settings){
+function descriptionsTab($moduleSlug, $moduleName, $tab){
+	ob_start();
+	$description = apply_filters('sim_submenu_description', '', $moduleSlug, $moduleName);
+
+	if(!empty($description)){
+		?>
+		<div class='tabcontent <?php if($tab != 'description'){echo 'hidden';}?>' id='description'>
+			<h2>Description</h2>
+			
+			<?php echo $description; ?>
+			
+			<br>
+		</div>
+		<?php
+	}
+	
+	return ob_get_clean();
+}
+
+function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 	global $defaultModules;
 
 	ob_start();
 	?>
-	<div class='tabcontent' id='settings'>
+	<div class='tabcontent <?php if($tab != 'settings'){echo 'hidden';}?>' id='settings'>
 		<h2>Settings</h2>
 			
 		<form action="" method="post">
@@ -181,7 +216,7 @@ function settingsTab($moduleSlug, $moduleName, $settings){
 	return ob_get_clean();
 }
 
-function emailSettingsTab($moduleSlug, $moduleName, $settings){
+function emailSettingsTab($moduleSlug, $moduleName, $settings, $tab){
 	$html	= apply_filters('sim_email_settings', '', $moduleSlug, $settings, $moduleName);
 
 	if(empty($html)){
@@ -191,7 +226,7 @@ function emailSettingsTab($moduleSlug, $moduleName, $settings){
 	ob_start();
 
 	?>
-	<div class='tabcontent hidden' id='emails'>
+	<div class='tabcontent <?php if($tab != 'emails'){echo 'hidden';}?>' id='emails'>
 		<h2>E-mail settings</h2>
 			
 		<form action="" method="post">
@@ -204,6 +239,30 @@ function emailSettingsTab($moduleSlug, $moduleName, $settings){
 			<input type="submit" name="save-email-settings" value="Save <?php echo $moduleName;?> e-mail settings">
 		</form> 
 		<br>
+	</div>
+	<?php
+
+	return ob_get_clean();
+}
+
+function dataTab($moduleSlug, $moduleName, $settings, $tab){
+	if(!SIM\getModuleOption($moduleSlug, 'enable')){
+		return '';
+	}
+
+	$html	= apply_filters('sim_module_data', '', $moduleSlug, $settings, $moduleName);
+
+	if(empty($html)){
+		return '';
+	}
+
+	ob_start();
+
+	?>
+	<div class='tabcontent <?php if($tab != 'data'){echo 'hidden';}?>' id='data'>
+		<?php 
+		echo $html;
+		?>
 	</div>
 	<?php
 
