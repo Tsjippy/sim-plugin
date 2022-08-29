@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- mandatory pages overview in module menu
 
 ### Changed
 
