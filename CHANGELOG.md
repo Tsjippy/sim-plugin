@@ -3,11 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- statistics overview
 
 ### Changed
 
 ### Fixed
+
+## [2.11.0] - 2022-08-29
+
+
+### Added
+- statistics overview
 
 ## [2.10.4] - 2022-08-26
 
