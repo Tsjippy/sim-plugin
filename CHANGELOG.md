@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- media gallery block
 
 ### Changed
+
+### Fixed
+
+## [2.12.0] - 2022-08-31
+
+
+### Added
+- media gallery block
 
 ### Fixed
 - better description when media is missing
