@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better description when media is missing
 
 ## [2.11.4] - 2022-08-29
 
