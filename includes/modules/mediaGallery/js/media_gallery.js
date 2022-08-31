@@ -185,7 +185,7 @@ document.addEventListener('click', async ev=>{
     }
 
     if(target.matches('.buttonwrapper .description')){
-        Main.displayMessage(target.dataset.description);
+        Main.displayMessage(atob(target.dataset.description));
     }
 
     // media type selector

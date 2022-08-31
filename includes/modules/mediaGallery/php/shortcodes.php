@@ -243,7 +243,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
 
                 if(!empty($description)){
                     ?>
-                    <button type='button' class='button small description' data-description='<?php echo $description;?>' title='<?php echo $description;?>'>Description</button>
+                    <button type='button' class='button small description' data-description='<?php echo base64_encode($description);?>' title='<?php echo strip_tags($title);?>'>Description</button>
                     <?php
                 }
 
