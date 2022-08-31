@@ -309,6 +309,7 @@ function mainMenu(){
 						echo "<a href='$url' class='button'>Update to version {$updates->response[$pluginName.'/'.$pluginName.'.php']->new_version}</a><br><br>";
 					}else{
 						echo "No update available";
+						unset($_GET['update']);
 					}
 				}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
 					ob_start();		

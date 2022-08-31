@@ -148,7 +148,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
             $path   = get_attached_file($id);
             if(!file_exists($path)){
                 SIM\printArray("Check file with id $id");
-                wp_mail(get_option('admin_email'), 'Missing file', "Hi Admin,<br><br>A file seems to be missing: $path");
+                wp_mail(get_option('admin_email'), 'Missing file', "Hi Admin,<br><br>A file is registered in the media gallery but does not exist: $path");
                 continue;
             }
         }

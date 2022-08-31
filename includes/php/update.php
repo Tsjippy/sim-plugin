@@ -67,8 +67,8 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
  * Checks github for updates of this plugin
  * 
  */
-add_filter( 'site_transient_update_plugins', __NAMESPACE__.'\checkForUpdate', 10);
-add_filter( 'transient_update_plugins', __NAMESPACE__.'\checkForUpdate', 10);
+add_filter( 'site_transient_update_plugins', __NAMESPACE__.'\checkForUpdate');
+add_filter( 'transient_update_plugins', __NAMESPACE__.'\checkForUpdate');
 function checkForUpdate( $updatePlugins) {
 
 	if ( ! is_object( $updatePlugins ) ){
@@ -126,6 +126,8 @@ function getLatestRelease(){
 			$client 	    = new \Github\Client();
 
 			$release 	    = $client->api('repo')->releases()->latest('tsjippy', PLUGINNAME);
+
+			$client->removeCache();
 			
 			// Store for 1 hours
 			set_transient( 'sim-git-release', $release, DAY_IN_SECONDS );
