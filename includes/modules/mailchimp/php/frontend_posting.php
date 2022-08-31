@@ -3,68 +3,77 @@ namespace SIM\MAILCHIMP;
 use SIM;
 
 add_action('sim_frontend_post_after_content', function($frontendcontend){
-    // Only show when not yet published
-    if(!get_post_meta($frontendcontend->postId, 'mailchimp_message_send', true)){
+    $mailchimpSegmentId	    = get_post_meta($frontendcontend->postId, 'mailchimp_segment_id', true);
+    $mailchimpEmail		    = get_post_meta($frontendcontend->postId, 'mailchimp_email', true);
+    $mailchimpExtraMessage  = get_post_meta($frontendcontend->postId, 'mailchimp_extra_message', true);
+    $Mailchimp              = new Mailchimp($frontendcontend->user->ID);
+    $segments               = $Mailchimp->getSegments();
 
-        $mailchimpSegmentId	    = get_post_meta($frontendcontend->postId, 'mailchimp_segment_id', true);
-        $mailchimpEmail		    = get_post_meta($frontendcontend->postId, 'mailchimp_email', true);
-        $mailchimpExtraMessage  = get_post_meta($frontendcontend->postId, 'mailchimp_extra_message', true);
-        $Mailchimp              = new Mailchimp($frontendcontend->user->ID);
-        $segments               = $Mailchimp->getSegments();
-
-        if($segments){
-            ?>
-            <div id="mailchimp" class="frontendform">
-                <script>
-                    function showMailChimp(target){
-                        target.closest('.frontendform').querySelector('.mailchimp-wrapper').classList.toggle('hidden');
+    if($segments){
+        ?>
+        <div id="mailchimp" class="frontendform">
+            <h4>Send <span class="replaceposttype"><?php echo $frontendcontend->postType;?></span> contents to the following Mailchimp group on <?php echo $frontendcontend->update == 'true' ? 'update' : 'publish';?>:</h4>
+            <?php
+            $sendSegment    = get_post_meta($frontendcontend->postId, 'mailchimp_message_send', true);
+            if(is_numeric($sendSegment)){
+                foreach($segments as $segment){
+                    if($sendSegment == $segment->id){
+                        $sendSegment    = $segment->name;
                     }
-                </script>
-                <h4>Send <span class="replaceposttype"><?php echo $frontendcontend->postType;?></span> contents to the following Mailchimp group on <?php echo $frontendcontend->update == 'true' ? 'update' : 'publish';?>:</h4>
-                <select name='mailchimp_segment_id' onchange="showMailChimp(this)">
-                    <option value="">---</option>
+                }
+                ?>
+                <div class='warning' style='width: fit-content;'>
+                    An e-mail has already been send to the <?php echo $sendSegment;?> group.
+                </div>
+                <?php
+            }
+            ?>
+            <select name='mailchimp_segment_id' onchange="showMailChimp(this)">
+                <option value="">---</option>
+                <?php
+                foreach($segments as $segment){
+                    // Do not send it to the same group twice
+                    if($sendSegment == $segment->id){
+                        continue;
+                    }elseif($mailchimpSegmentId == $segment->id){
+                        $selected = 'selected';
+                    }else{
+                        $selected = '';
+                    }
+                    echo "<option value='{$segment->id}' $selected>{$segment->name}</option>";
+                }
+                ?>
+            </select>
+            
+            <div class='mailchimp-wrapper hidden'>
+                <h4>Use this from email address</h4>
+                <select name='mailchimp_email'>
+                    <option value=''>---</option>
+                    
                     <?php
-                    foreach($segments as $segment){
-                        if($mailchimpSegmentId == $segment->id){
+                    $emails = [
+                        'jos.personnel@sim.org'	=> 'jos.personnel',
+                        'jos.dirassist@sim.org'	=> 'jos.dirassist',
+                        'jos.director@sim.org'	=> 'jos.director',
+                    ];
+                    foreach($emails as $email=>$text){
+                        if($mailchimpEmail == $email){
                             $selected = 'selected';
                         }else{
                             $selected = '';
                         }
-                        echo "<option value='{$segment->id}' $selected>{$segment->name}</option>";
+                        echo "<option value='$email' $selected>$text</option>";
                     }
                     ?>
                 </select>
-                
-                <div class='mailchimp-wrapper hidden'>
-                    <h4>Use this from email address</h4>
-                    <select name='mailchimp_email'>
-                        <option value=''>---</option>
-                        
-                        <?php
-                        $emails = [
-                            'jos.personnel@sim.org'	=> 'jos.personnel',
-                            'jos.dirassist@sim.org'	=> 'jos.dirassist',
-                            'jos.director@sim.org'	=> 'jos.director',
-                        ];
-                        foreach($emails as $email=>$text){
-                            if($mailchimpEmail == $email){
-                                $selected = 'selected';
-                            }else{
-                                $selected = '';
-                            }
-                            echo "<option value='$email' $selected>$text</option>";
-                        }
-                        ?>
-                    </select>
 
-                    <h4>Prepend the e-mail with this message:</h4>
-                    <textarea name='mailchimp-extra-message'><?php
-                        echo $mailchimpExtraMessage;
-                    ?></textarea>
-                </div>
+                <h4>Prepend the e-mail with this message:</h4>
+                <textarea name='mailchimp-extra-message'><?php
+                    echo $mailchimpExtraMessage;
+                ?></textarea>
             </div>
-            <?php 
-        }
+        </div>
+        <?php 
     }
 });
 
@@ -93,7 +102,7 @@ add_action( 'wp_after_insert_post', function( $postId, $post ){
         $Mailchimp->sendEmail($postId, intval($segmentId), $from, $extraMessage);
         
         // Indicate as send
-        update_metadata( 'post', $postId, 'mailchimp_message_send', true);
+        update_metadata( 'post', $postId, 'mailchimp_message_send', $segmentId);
 
         //delete any post metakey
         delete_post_meta($postId,'mailchimp_segment_id');
