@@ -157,14 +157,16 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
         $index  = $startIndex + $i;
         ?>
         <div class='cell <?php echo $type;?>' data-index='<?php echo $index;?>'>
+            <div class='image-wrapper'>
                 <img src='<?php echo $iconUrl;?>' alt='<?php echo $title;?>' class='media-item' width='150' height='120' title='<?php echo $title;?>'>
-            <?php
-            if(!empty($description)){
-            ?>
-            <div class='media-description hidden'>
-                <?php echo $description;?>
             </div>
             <?php
+            if(!empty($description)){
+                ?>
+                <div class='media-description hidden'>
+                    <?php echo $description;?>
+                </div>
+                <?php
             }
             ?>
         </div>
