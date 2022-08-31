@@ -3,10 +3,23 @@ namespace SIM\MEDIAGALLERY;
 use SIM;
 use SIM\VIMEO\VimeoApi;
 
-add_shortcode('mediagallery', function(){
+add_shortcode('mediagallery', __NAMESPACE__.'\showMediaGallery');
+function showMediaGallery($atts){
+    $a = shortcode_atts( array(
+        'categories' 	=> []
+    ), $atts );
+
     ob_start();
 
     $url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
+
+    $categories	= get_categories( array(
+        'orderby' 		=> 'name',
+        'order'   		=> 'ASC',
+        'taxonomy'		=> 'attachment_cat',
+        'hide_empty' 	=> false,
+    ) );
+
     ?>
     <div class='mediabuttons'>
         <input type='hidden' id='paged' value=1>
@@ -46,6 +59,23 @@ add_shortcode('mediagallery', function(){
         <input class="searchtext" type="text" placeholder="Search..">
         <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" alt="magnifier">
     </div>
+    <div class='categories <?php if(!empty($a['categories'])){ echo 'hidden'; }?>'>
+        Categories: 
+        <?php
+        foreach($categories as $cat){
+            $checked    = '';
+            if(empty($a['categories']) || $a['categories'][$cat->term_id]){
+                $checked    = 'checked';
+            }
+            ?>
+            <label>
+                <input type='checkbox' name='media-category' class='media-cat-selector' value='<?php echo $cat->term_id;?>' <?php echo $checked;?>>
+                <?php echo $cat->name;?>
+            </label>
+            <?php
+        }
+        ?>
+    </div>
     <div id="medialoaderwrapper" class="hidden">
         <img src="<?php echo LOADERIMAGEURL;?>" alt=''>
         <div>Loading more...</div>
@@ -53,18 +83,27 @@ add_shortcode('mediagallery', function(){
 
     <div class="mediawrapper">
         <?php
-        echo loadMedia();
+        $mediaHtml  = loadMedia(20, 1, false, ['image', 'video', 'audio'], $a['categories']);
+        if($mediaHtml){
+            echo $mediaHtml;
+        }else{
+            echo "No media found";
+        }
         ?>
     </div>
 
-    <div style='text-align:center; margin-top:20px;'>
-        <button id='loadmoremedia' type='button' class='button'>
-            Load more
-        </button>
-    </div><?php
+    <?php
+    if($mediaHtml){
+        ?>
+        <div style='text-align:center; margin-top:20px;'>
+            <button id='loadmoremedia' type='button' class='button'>
+                Load more
+            </button>
+        </div><?php
+    }
 
     return ob_get_clean();
-});
+}
 
 /**
  * Load more media items
@@ -73,12 +112,13 @@ add_shortcode('mediagallery', function(){
  * @param   int     $page           The current page we should load(as in skip the first X $amount). Default 1
  * @param   int     $itemsToSkip    The amount of items to skip. Default false for none
  * @param   array   $types          The media items to load. Default image, video and audio
+ * @param   array   $categories     The categories to display
  * @param   int     $startIndex     The index to start loading from. Default 0
  * @param   string  $search         The search words if any.
  * 
  * @return  string                  The html
  */
-function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'video', 'audio'], $startIndex=0, $search=''){
+function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'video', 'audio'], array $cats=[], $startIndex=0, $search=''){
     $canEdit           = in_array('editor', wp_get_current_user()->roles);
     $allMimes          = get_allowed_mime_types();
     $acceptedMimes     = [];
@@ -103,6 +143,10 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
             )
         )    
     );
+
+    if(!empty($cats) && !in_array(-1, $cats)){
+        $args['category__in']   = $cats;
+    }
 
     if(!empty($search)){
         $args['s']  = $search;

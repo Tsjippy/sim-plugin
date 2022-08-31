@@ -8,17 +8,20 @@ function showImage(index){
     document.querySelector('.large-image[data-index="'+index+'"]').classList.remove('hidden');
 }
 
-async function loadMore(index, showFirst, skipAmount){
+async function loadMore(index, showFirst, skipAmount=0){
     var amount  = document.querySelector('#media-amount').value;
     if(amount == skipAmount) return;
     var types   = [];
     document.querySelectorAll('.media-type-selector:checked').forEach(element=>types.push(element.value));
-    
+    var cats   = [];
+    document.querySelectorAll('.media-cat-selector:checked').forEach(element=>cats.push(element.value));
+
     var formData	= new FormData();
     formData.append('amount', amount);
     formData.append('page', document.querySelector('#paged').value);
     formData.append('skipAmount', skipAmount);
     formData.append('types', types);
+    formData.append('categories', cats);
     formData.append('startIndex', index+1);
 
     var response    = await FormSubmit.fetchRestApi('media_gallery/load_more_media', formData);

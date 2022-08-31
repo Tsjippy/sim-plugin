@@ -11,7 +11,7 @@ add_action( 'rest_api_init', function () {
 			'methods'				=> 'POST',
 			'callback'				=> function(\WP_REST_Request $request){
 				$param	= $request->get_params();
-				return loadMedia($param['amount'], $param['page'], $param['skipAmount'], explode(',', $param['types']), $param['startIndex']);
+				return loadMedia($param['amount'], $param['page'], $param['skipAmount'], explode(',', $param['types']), $param['categories'], $param['startIndex']);
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -28,7 +28,7 @@ add_action( 'rest_api_init', function () {
 			'methods'				=> 'POST',
 			'callback'				=> function(\WP_REST_Request $request){
 				$param	= $request->get_params();
-				return loadMedia($param['amount'], 1, false, explode(',', $param['types']), 0, $param['search']);
+				return loadMedia($param['amount'], 1, false, explode(',', $param['types']), $param['categories'], 0, $param['search']);
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(

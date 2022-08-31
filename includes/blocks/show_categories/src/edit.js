@@ -2,15 +2,9 @@
 import { __ } from '@wordpress/i18n';
 import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
-import apiFetch from "@wordpress/api-fetch";
-import {useState, useEffect} from "@wordpress/element";
-import {Panel, PanelBody, CheckboxControl,ToggleControl, Spinner, __experimentalNumberControl as NumberControl} from "@wordpress/components";
+import {Panel, PanelBody, ToggleControl, Spinner} from "@wordpress/components";
 import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
-import { decodeEntities } from '@wordpress/html-entities';
-
-const apiPath	= "/events/upcoming_events";
-const catsPath	= "/wp/v2/events";
 
 const Edit = ({attributes, setAttributes}) => {
 	const {count} = attributes;

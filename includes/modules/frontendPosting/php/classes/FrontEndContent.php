@@ -959,6 +959,10 @@ class FrontEndContent{
 		//Sanitize the post content
 		$postContent = wp_kses_post($postContent);
 
+		// Remove some tags
+		$postContent	= str_replace(['&lt;', '&gt;'], ['<', '>'], $postContent);
+		$postContent 	= preg_replace("/<(del|ins) [^>]+>/im", "", $postContent); 
+
 		// Checks for opening and closing formating tags
 		$tags	= ['b', 'strong', 'i', 'em', 'mark', 'small', 'sub', 'sup'];
 		$pattern		= '';
@@ -1204,8 +1208,6 @@ class FrontEndContent{
 		}else{
 			$post	= $this->createNewPost();
 		}
-		
-		$url 		= get_permalink($this->postId);
 		
 		//Set the featured image
 		if(isset($_POST['post_image_id']) && $_POST['post_image_id'] != 0){
