@@ -8,7 +8,7 @@ function showImage(index){
     document.querySelector('.large-image[data-index="'+index+'"]').classList.remove('hidden');
 }
 
-async function load_more(index, showFirst, skipAmount){
+async function loadMore(index, showFirst, skipAmount){
     var amount  = document.querySelector('#media-amount').value;
     if(amount == skipAmount) return;
     var types   = [];
@@ -23,7 +23,11 @@ async function load_more(index, showFirst, skipAmount){
 
     var response    = await FormSubmit.fetchRestApi('media_gallery/load_more_media', formData);
 
-    document.querySelectorAll('#medialoaderwrapper:not(.hidden), .loaderwrapper:not(.hidden)').forEach(element=>element.classList.add('hidden'));
+    // Hide the full screen loader
+    document.getElementById('medialoaderwrapper').classList.add('hidden');
+
+    //Re-add load more button 
+    document.querySelectorAll('.loaderwrapper').forEach(e=>e.outerHTML = '<button id="loadmoremedia" type="button" class="button">Load more</button>'); 
 
     if(!response){
         Main.displayMessage('All media are loaded', 'info');
@@ -86,21 +90,21 @@ function nextButtonClicked(target){
         document.getElementById('medialoaderwrapper').classList.remove('hidden');
 
         document.getElementById('paged').value = parseInt(document.getElementById('paged').value)+1;
-        load_more(el.dataset.index, true);
+        loadMore(el.dataset.index, true);
     }else{
         showImage(nextEl.dataset.index);
     }
 }
 
-function loadMoreMedia(){
+function loadMoreMedia(target){
     //find the last image
     let media = document.querySelectorAll('.cell');
 
     document.getElementById('paged').value = parseInt(document.getElementById('paged').value)+1;
 
-    load_more(media[media.length-1].dataset.index, false);
+    loadMore(media[media.length-1].dataset.index, false);
 
-    Main.showLoader(target, false);
+    Main.showLoader(target);
 }
 
 function mediaTypeSelected(target){
@@ -121,7 +125,7 @@ function mediaTypeSelected(target){
         var media = document.querySelectorAll('.cell');
         // load more of the remaining types untill we reach the maximum
         visibleCells   = document.querySelectorAll('.cell:not(.hidden)');
-        load_more(media[media.length-1].dataset.index, false, visibleCells.length);
+        loadMore(media[media.length-1].dataset.index, false, visibleCells.length);
     }
 }
 
@@ -177,7 +181,7 @@ document.addEventListener('click', async ev=>{
         ev.preventDefault();
 		ev.stopPropagation();
 
-        loadMoreMedia();
+        loadMoreMedia(target);
     }
 
     if(target.matches('.buttonwrapper .description')){
@@ -215,7 +219,7 @@ document.addEventListener('change', ev=>{
         // We need to add more
         if(target.value > curAmount){
             var start   = parseInt(media[media.length-1].dataset.index);
-            load_more(start, false, curAmount);
+            loadMore(start, false, curAmount);
         // We need to remove some
         }else if(target.value < curAmount){
             var i = 1;
