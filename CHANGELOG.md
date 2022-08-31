@@ -7,8 +7,9 @@
 ### Changed
 
 ### Fixed
-- do not show full screen pdf
-user has when editor role
+
+## [2.12.2] - 2022-08-31
+
 
 ## [2.12.1] - 2022-08-31
 
