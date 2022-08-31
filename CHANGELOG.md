@@ -8,6 +8,7 @@
 
 ### Fixed
 - better description when media is missing
+- bug whith page edit button on media gallery
 
 ## [2.11.4] - 2022-08-29
 
