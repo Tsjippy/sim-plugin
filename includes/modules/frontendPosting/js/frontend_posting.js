@@ -609,6 +609,9 @@ document.addEventListener("click", event=>{
 document.addEventListener('change', event=>{
 	let target = event.target;
 
+	
+	console.log(target);
+
 	//listen to change of post type
 	if(target.id == 'post_type_selector'){
 		switchforms(target);
@@ -623,7 +626,7 @@ document.addEventListener('change', event=>{
 
 	if(target.list != null){
 		//find the relevant datalist option
-		let datalist_op = target.list.querySelector("[value='"+target.value+"' i]");
+		let datalist_op = target.list.querySelector(`[value='${target.value}' i]`);
 		if(datalist_op != null){
 			let value = datalist_op.dataset.value;
 
@@ -634,8 +637,17 @@ document.addEventListener('change', event=>{
 		}
 	}
 	
-	//listen for recipe type select
+	//listen for parent type select
 	if(target.classList.contains('parent_cat')){
 		catChanged(target);
-	}	
+	}
+
+	// Mailchimp
+	if(target.name == 'mailchimp_segment_id'){
+		if(target.value == ''){
+			document.querySelectorAll('.mailchimp-wrapper').forEach(el => el.classList.add('hidden'));
+		}else{
+			document.querySelectorAll('.mailchimp-wrapper').forEach(el => el.classList.remove('hidden'));
+		}
+	}
 });
