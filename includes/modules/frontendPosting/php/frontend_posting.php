@@ -112,4 +112,4 @@ add_filter( 'the_content', function ( $content ) {
 	}
 
 	return $content;
-});
+}, 15);

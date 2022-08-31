@@ -44,10 +44,10 @@ add_shortcode('mediagallery', function(){
             Audio
         </label>
         <input class="searchtext" type="text" placeholder="Search..">
-        <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>">
+        <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" alt="magnifier">
     </div>
     <div id="medialoaderwrapper" class="hidden">
-        <img src="<?php echo LOADERIMAGEURL;?>">
+        <img src="<?php echo LOADERIMAGEURL;?>" alt=''>
         <div>Loading more...</div>
     </div>
 
@@ -58,9 +58,10 @@ add_shortcode('mediagallery', function(){
     </div>
 
     <div style='text-align:center; margin-top:20px;'>
-        <button id='loadmoremedia' type='button' class='button'>Load more</button>
-    </div>
-    <?php
+        <button id='loadmoremedia' type='button' class='button'>
+            Load more
+        </button>
+    </div><?php
 
     return ob_get_clean();
 });
@@ -78,7 +79,7 @@ add_shortcode('mediagallery', function(){
  * @return  string                  The html
  */
 function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'video', 'audio'], $startIndex=0, $search=''){
-    $canEdit            = in_array('editor', wp_get_current_user()->roles);
+    $canEdit           = in_array('editor', wp_get_current_user()->roles);
     $allMimes          = get_allowed_mime_types();
     $acceptedMimes     = [];
     foreach($allMimes as $mime){

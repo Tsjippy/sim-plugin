@@ -3,8 +3,11 @@ namespace SIM\CONTENTFILTER;
 use SIM;
 
 //function to redirect user to login page if they are not allowed to see it
-add_action('loop_start', function(){
-	ob_start();
+add_action('loop_start', function($query){
+	// Only run when this is the main query
+	if($query->is_main_query()){
+		ob_start();
+	}
 });
 
 add_action('wp_footer', function(){
