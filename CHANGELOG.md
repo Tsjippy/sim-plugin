@@ -11,6 +11,7 @@
 - bug whith page edit button on media gallery
 - issue with loading more media button
 - issue with mailchimp on frontend editor
+- media gallery info box layout
 
 ## [2.11.4] - 2022-08-29
 
