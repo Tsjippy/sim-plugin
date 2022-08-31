@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.12.1] - 2022-08-31
+
+
+### Changed
 - do not send to the same
 mailchimp group again
 
