@@ -41,7 +41,7 @@ add_filter( 'the_content', function ( $content ) {
 
         /* SHOW THE PDF */
         //Show the pdf fullscreen only if we are not a content manager
-        if(!in_array('contentmanager', wp_get_current_user()->roles)){
+        if(!in_array('editor', wp_get_current_user()->roles)){
             //Get the url to the pdf
             $pdfUrl = $matches[1];
             

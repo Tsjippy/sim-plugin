@@ -314,8 +314,8 @@ function mainMenu(){
 				}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
 					ob_start();		
 					updatePlugin($pluginName.'/'.$pluginName.'.php');
-					ob_get_clean();
 					echo "<div class='success'>Updated</div>";
+					ob_get_clean();
 				}
 			}		
 		}
