@@ -10,6 +10,7 @@
 - better description when media is missing
 - bug whith page edit button on media gallery
 - issue with loading more media button
+- issue with mailchimp on frontend editor
 
 ## [2.11.4] - 2022-08-29
 
