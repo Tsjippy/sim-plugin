@@ -46,11 +46,10 @@ add_filter( 'the_content', function ( $content ) {
             $pdfUrl = $matches[1];
             
             //Convert to path
-            $path = SIM\url_to_path($pdfUrl);
+            $path = SIM\urlToPath($pdfUrl);
             
             //Echo the pdf to screen
-            ob_clean();
-            ob_start();
+            SIM\clearOutput();
             header("Content-type: application/pdf");
             header("Content-Disposition: inline; filename=".$matches[2]);
             @readfile($path);
