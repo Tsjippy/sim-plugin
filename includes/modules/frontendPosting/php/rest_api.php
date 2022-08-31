@@ -56,7 +56,7 @@ add_action( 'rest_api_init', function () {
 				$frontEndContent	= new FrontEndContent();
 				$result =  $frontEndContent->submitPost();
 
-				// Load the post in the loop
+				// Load the updated  post in the loop
 				$posts = new \WP_Query( array( 'p' => $frontEndContent->postId, 'post_type' => 'any' ) );
 				$GLOBALS['wp_query'] = $posts;
 				$post = $posts->post;

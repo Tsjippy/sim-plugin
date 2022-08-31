@@ -7,6 +7,12 @@ let editPostSwitch = async function (event){
 			window.tinyMCE.execCommand('mceAddEditor', false, el.id);
 		});
 
+		// invoke dom content loaded events
+		window.document.dispatchEvent(new Event("DOMContentLoaded", {
+			bubbles: true,
+			cancelable: true
+		}));
+
 		loader.remove();
 	}
 	
@@ -86,11 +92,6 @@ let editPostSwitch = async function (event){
 		temp.innerHTML = response.css;
 		[...temp.children].forEach(el => {
 			document.head.appendChild(el);
-		})
-
-		// Add nice selects
-		wrapper.querySelectorAll('select').forEach(function(select){
-			select._niceselect = NiceSelect.bind(select,{searchable: true});
 		});
 	}else{
 		loader.outerHTML	= button.outerHTML;
@@ -105,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	});
 });
 
-document.addEventListener("click",function(ev) {	
+document.addEventListener("click", function(ev) {	
 	if(ev.target.id == 'page-edit'){
 		editPostSwitch(ev);
 	}

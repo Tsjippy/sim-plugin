@@ -960,8 +960,7 @@ class FrontEndContent{
 		$postContent = wp_kses_post($postContent);
 
 		// Remove some tags
-		$postContent	= str_replace(['&lt;', '&gt;'], ['<', '>'], $postContent);
-		$postContent 	= preg_replace("/<(del|ins) [^>]+>/im", "", $postContent); 
+		$postContent 	= preg_replace("/(&lt;|<)(del|ins) .*?(>|&gt;)/im", "", $postContent); 
 
 		// Checks for opening and closing formating tags
 		$tags	= ['b', 'strong', 'i', 'em', 'mark', 'small', 'sub', 'sup'];
