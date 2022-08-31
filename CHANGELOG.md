@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug in fullscreen pdf
 
 ## [2.12.0] - 2022-08-31
 
