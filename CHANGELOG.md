@@ -5,6 +5,8 @@
 ### Added
 
 ### Changed
+- do not send to the same
+mailchimp group again
 
 ### Fixed
 - bug in fullscreen pdf
