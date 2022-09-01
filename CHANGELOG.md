@@ -10,6 +10,7 @@ form when fully loaded
 
 ### Fixed
 - issue with categories in mediagallery
+- custom post types can have parents
 
 ## [2.12.2] - 2022-08-31
 
