@@ -1,7 +1,6 @@
 <?php
 namespace SIM\MEDIAGALLERY;
 use SIM;
-use SIM\VIMEO\VimeoApi;
 
 add_shortcode('mediagallery', __NAMESPACE__.'\showMediaGallery');
 function showMediaGallery($atts){
@@ -68,7 +67,7 @@ function showMediaGallery($atts){
         <?php
         foreach($categories as $cat){
             $checked    = '';
-            if(empty($a['categories']) || $a['categories'][$cat->term_id]){
+            if(empty($a['categories']) || in_array($cat->term_id, $a['categories'])){
                 $checked    = 'checked';
             }
             ?>
@@ -97,7 +96,7 @@ function showMediaGallery($atts){
     </div>
 
     <?php
-    if($mediaHtml){
+    if($mediaHtml && substr_count($mediaHtml, "class='cell") == 20){
         ?>
         <div style='text-align:center; margin-top:20px;'>
             <button id='loadmoremedia' type='button' class='button'>
