@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.12.3] - 2022-09-01
+
+
+### Changed
 - only show post edit
 form when fully loaded
 
