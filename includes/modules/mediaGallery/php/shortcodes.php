@@ -9,6 +9,10 @@ function showMediaGallery($atts){
         'categories' 	=> []
     ), $atts );
 
+    if(!is_array($a['categories'])){
+        $a['categories']    = explode(',', $a['categories']);
+    }
+
     ob_start();
 
     $url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');

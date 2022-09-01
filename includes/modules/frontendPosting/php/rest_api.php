@@ -227,7 +227,7 @@ add_action( 'rest_api_init', function () {
 			},
 			'args'					=> array(
 				'postid'		=> array(
-					'required'	=> true,
+					'required'			=> true,
 					'validate_callback' => 'is_numeric'
 				)
 			)
@@ -303,9 +303,9 @@ function sendForm(){
 	
 	wp_enqueue_editor();
 
-	$frontEndContent	= new FrontEndContent();
+	$frontEndContent			= new FrontEndContent();
 	$frontEndContent->postId	= $_REQUEST['postid'];
-	$html				= $frontEndContent->frontendPost();
+	$html						= $frontEndContent->frontendPost(true);
 
 	\_WP_Editors::enqueue_scripts();
 	ob_start();

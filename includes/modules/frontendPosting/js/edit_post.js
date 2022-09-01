@@ -13,6 +13,8 @@ let editPostSwitch = async function (event){
 			cancelable: true
 		}));
 
+		document.getElementById('frontend_upload_form').classList.remove('hidden');
+
 		loader.remove();
 	}
 	
@@ -63,7 +65,7 @@ let editPostSwitch = async function (event){
 	let scripts;
 
 	let button	= event.target;
-	let wrapper	= button.closest('main').querySelector('.entry-content');
+	let wrapper	= button.closest('main').querySelector('.content-wrapper');
 
 	let formData    = new FormData();
     let postId      = button.dataset.id;

@@ -108,7 +108,7 @@ add_filter( 'the_content', function ( $content ) {
 		$type = $post->post_type;
 		$buttonText = "Edit this $type";
 
-		return "<button class='button small hidden' id='page-edit' data-id='$postId'>$buttonText</button>$content";
+		return "<button class='button small hidden' id='page-edit' data-id='$postId'>$buttonText</button><div class='content-wrapper'>$content</div>";
 	}
 
 	return $content;

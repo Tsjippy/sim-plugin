@@ -39,7 +39,7 @@ class FrontEndContent{
 	 * @return   string     The form html
 	 *
 	**/
-	function frontendPost(){
+	function frontendPost($hide=false){
 		if(!function_exists('_wp_translate_postdata')){
 			include ABSPATH . 'wp-admin/includes/post.php';
 		}
@@ -88,7 +88,7 @@ class FrontEndContent{
 		);
 
 		?>
-		<div id="frontend_upload_form">			
+		<div id="frontend_upload_form" <?php if($hide){ echo 'class="hidden"';}?>>			
 			<?php
 			if(!$this->lite){
 				$hidden = 'hidden';
