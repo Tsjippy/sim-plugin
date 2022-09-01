@@ -9,6 +9,7 @@
 form when fully loaded
 
 ### Fixed
+- issue with categories in mediagallery
 
 ## [2.12.2] - 2022-08-31
 
