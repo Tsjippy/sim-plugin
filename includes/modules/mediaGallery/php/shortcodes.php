@@ -260,7 +260,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                     $ratio  = $height/$width;
 
                     //Center the image vertically
-                    $mediaHtml  =  "<img src='$url' with='100%' height='100vh' style='top: max(0px, calc( 50vh - 50vw * $ratio));'>";
+                    $mediaHtml  =  "<a href='$url'><img src='$url' with='100%' height='100vh' style='top: max(0px, calc( 50vh - 50vw * $ratio));'></a>";
                 }
 
                 echo apply_filters('sim_media_gallery_item_html', $mediaHtml, $type, $id);
