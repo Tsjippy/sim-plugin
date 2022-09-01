@@ -16,7 +16,8 @@ add_action( 'admin_enqueue_scripts', function(){
 });
 
 
-add_action( 'wp_enqueue_scripts', function(){
+add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueVimeoScripts');
+function enqueueVimeoScripts(){
     // Load css
     wp_register_style( 'vimeo_style', plugins_url('css/style.css', __DIR__), array(), MODULE_VERSION);
 
@@ -25,7 +26,7 @@ add_action( 'wp_enqueue_scripts', function(){
 	wp_register_script('sim_vimeo_uploader_script', plugins_url('js/vimeo_upload.min.js', __DIR__), [], MODULE_VERSION, true);
 
 	wp_register_script('sim_vimeo_shortcode_script', plugins_url('js/vimeo_shortcode.js', __DIR__), [], MODULE_VERSION, false);
-});
+}
 
 //auto upload via js if enabled
 if(SIM\getModuleOption(MODULE_SLUG, 'upload')){

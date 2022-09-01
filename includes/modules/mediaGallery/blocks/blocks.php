@@ -18,7 +18,11 @@ add_action('init', function () {
 });
 
 add_action( 'enqueue_block_editor_assets', function(){
-	do_action( 'wp_enqueue_scripts');
-	wp_enqueue_script( 'sim_gallery_script');
+	SIM\enqueueScripts();
+	enqueueMediaGalleryScripts();
+	if(function_exists('SIM\VIMEO\enqueueVimeoScripts')){
+		SIM\VIMEO\enqueueVimeoScripts();
+	}
+
 	wp_enqueue_script('sim_vimeo_shortcode_script');
 } );

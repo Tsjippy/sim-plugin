@@ -54,10 +54,14 @@ function enqueueScripts(){
 	}
 
 	wp_enqueue_script('sim_script');
+
 	//add main css
 	add_editor_style(plugins_url('css/sim.min.css', __DIR__));
+
 	//style fo main site
-	wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(), STYLE_VERSION);
+	if(strpos(currentUrl(), 'wp-admin') === false){
+		wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(), STYLE_VERSION);
+	}
 	
 	//Get current users location
 	$location = get_user_meta( $UserID, 'location', true );

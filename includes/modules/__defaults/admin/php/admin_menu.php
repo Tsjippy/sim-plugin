@@ -316,6 +316,13 @@ function mainMenu(){
 					updatePlugin($pluginName.'/'.$pluginName.'.php');
 					echo "<div class='success'>Updated</div>";
 					ob_get_clean();
+
+					echo "<div class='success'>Updated</div>";
+					echo "<script type='text/javascript'>";
+					echo "window.location = '".self_admin_url( 'about.php?updated' )."'";
+					echo "</script>";
+					wp_ob_end_flush_all();
+					flush();
 				}
 			}		
 		}

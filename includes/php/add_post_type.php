@@ -44,6 +44,7 @@ function registerPostTypeAndTax($single, $plural){
 	);
 	
 	$args = array(
+		'hierarchical' 			=> true,
 		'labels' 				=> $labels,
 		'description' 			=> "Post to display $plural",
 		'public' 				=> true,
@@ -53,7 +54,7 @@ function registerPostTypeAndTax($single, $plural){
 		'has_archive' 			=> true,
 		'rewrite' 				=> true,	//archive page on /single
 		'query_var' 			=> true,
-		'supports' 				=> array('title','editor','author','excerpt','custom-fields','thumbnail','revisions','comments'),
+		'supports' 				=> array('title','editor','author','excerpt','custom-fields','thumbnail','revisions','comments','page-attributes'),
 		'menu_position' 		=> 5,
 		'show_in_rest'			=> true,
 		'delete_with_user'		=> false,

@@ -21,7 +21,8 @@ add_action( 'wp_trash_post', function($postId){
     }
 } );
 
-add_action( 'wp_enqueue_scripts', function(){
+add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueMediaGalleryScripts');
+function enqueueMediaGalleryScripts(){
     wp_register_style( 'sim_gallery_style', plugins_url('css/media_gallery.min.css', __DIR__), array(), MODULE_VERSION);
 
     wp_register_script('sim_gallery_script', plugins_url('js/media_gallery.min.js', __DIR__), array('sim_formsubmit_script'), MODULE_VERSION, true);
@@ -31,4 +32,4 @@ add_action( 'wp_enqueue_scripts', function(){
         wp_enqueue_style('sim_gallery_style');
 		wp_enqueue_script('sim_gallery_script');
     }
-});
+}
