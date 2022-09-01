@@ -5,11 +5,19 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.12.3] - 2022-09-01
+
+
+### Changed
 - only show post edit
 form when fully loaded
 
 ### Fixed
 - issue with categories in mediagallery
+- custom post types can have parents
 
 ## [2.12.2] - 2022-08-31
 
