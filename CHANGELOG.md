@@ -5,6 +5,8 @@
 ### Added
 
 ### Changed
+- only show post edit
+form when fully loaded
 
 ### Fixed
 
