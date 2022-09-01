@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- form validation
 
 ## [2.12.3] - 2022-09-01
 
