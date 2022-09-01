@@ -38,10 +38,18 @@ export async function submitForm(target, url){
 	let form		= target.closest('form');
 	let validity 	= true;
 	
-	//first get all hidden required inputs and unrequire them
+	//get all hidden required inputs and unrequire them
 	form.querySelectorAll('.hidden [required], select[required]').forEach(el=>{el.required = false});
+
+	// Unhide required selects show the warning can be shown
+	form.querySelectorAll('select[required]').forEach(el=>{
+		el.style.display	= 'block'}
+	);
 	
 	validity	= form.reportValidity();
+
+	// Hide again
+	form.querySelectorAll('select[required]').forEach(el=>el.style.display	= 'none');
 
 	//only continue if valid
 	if(validity){

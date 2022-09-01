@@ -1,5 +1,11 @@
 async function saveFormInput(target){
 	let form		= target.closest('form');
+
+	// make all inputs required if needed
+	form.querySelectorAll('.required:not(hidden) input, .required:not(hidden) textarea, .required:not(hidden) select').forEach(el=>{
+		el.required	= true;
+	})
+
 	let response	= await FormSubmit.submitForm(target, 'forms/save_form_input');
 
 	if(response){
