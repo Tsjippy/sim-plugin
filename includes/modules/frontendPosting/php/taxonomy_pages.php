@@ -10,7 +10,6 @@ add_action( 'init', function () {
     }
 
 	SIM\createTaxonomies('attachment_cat', 'attachment', 'attachments');
-	register_taxonomy_for_object_type( 'attachment_cat', 'attachment' );
 });
 
 /**
