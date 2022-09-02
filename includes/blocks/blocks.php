@@ -114,7 +114,7 @@ function displayCategories($attributes) {
 }
 
 function displayChildren($attributes) {
-	if(is_home() || is_archive() || is_tax()){
+	if(!is_page()){
 		return '';
 	}
 
@@ -124,8 +124,6 @@ function displayChildren($attributes) {
 	}
 
 	$parentId	= get_the_ID();
-
-	$html	= "<style>li.current_page_item > a, li.current_page_ancestor > a{font-weight: bold;}.childpost > ul{padding-left: 20px;}</style>";
 
 	if(has_post_parent($parentId)){
 		if($attributes['grantparents']){
@@ -137,7 +135,24 @@ function displayChildren($attributes) {
 		}
 	}
 
-	$html	.= wp_list_pages(array(
+	$script	= "<script>";
+		$script	.= "document.addEventListener('DOMContentLoaded', () => {";
+			$script	.= "button = document.createElement('button');";
+			$script	.= "button.innerText = '+';";
+			$script	.= "button.classList.add('button');";
+			$script	.= "button.classList.add('small');";
+			$script	.= "button.classList.add('expand-children');";
+			$script	.= "document.querySelectorAll('.childpost .page_item_has_children > a').forEach(el=>el.parentNode.insertBefore(button.cloneNode(true), el.nextSibling));";
+			$script	.= "document.addEventListener('click', ev=>{";
+				$script	.= "if(ev.target.matches('.expand-children')){";
+					$script	.= "ev.target.closest('li').querySelector('.children').classList.toggle('hidden');";
+					$script	.= "ev.target.textContent = '-'";
+				$script	.= "}";
+			$script	.= "});";
+		$script	.= "})";
+	$script	.= "</script>";
+
+	$html	= wp_list_pages(array(
 		'depth'			=> $depth,
 		'child_of' 		=> $parentId,
 		'echo'			=> false,
@@ -147,8 +162,9 @@ function displayChildren($attributes) {
 	));
 
 	if(!empty($html)){
+		$html	= str_replace("class='children'", "class='children hidden'", $html);
 		$title	= get_the_title($parentId);
-		return "<div class='childpost'><h4>$title</h4><ul>$html</ul></div>";
+		return "<div class='childpost'><h4>$title</h4><ul>$html</ul></div>$script";
 	}
 }
 

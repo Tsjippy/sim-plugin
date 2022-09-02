@@ -4,3 +4,14 @@
  *
  * Replace them with your own styles or remove the file completely.
  */
+ li.current_page_item > a, li.current_page_ancestor > a{
+    font-weight: bold;
+}
+
+.childpost > ul{
+    padding-left: 20px;
+}
+
+.expand-children{
+    margin-left: 10px;
+}
