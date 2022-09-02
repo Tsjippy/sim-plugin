@@ -6,11 +6,11 @@ add_action( 'init', function () {
 
     $taxonomies = array( 'category', 'post_tag' ); // add the 2 tax to ...
     foreach ( $taxonomies as $tax ) {
-        //register_taxonomy_for_object_type( $tax, 'attachment' ); // add to post type attachment
 		register_taxonomy_for_object_type( $tax, 'page' );
     }
 
 	SIM\createTaxonomies('attachment_cat', 'attachment', 'attachments');
+	register_taxonomy_for_object_type( 'attachment_cat', 'attachment' );
 });
 
 /**
