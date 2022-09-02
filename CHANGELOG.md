@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue when adding a category
 
 ## [2.12.4] - 2022-09-02
 
