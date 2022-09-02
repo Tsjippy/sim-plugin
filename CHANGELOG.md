@@ -5,6 +5,7 @@
 ### Added
 - warning when editing a gutenberg
 post in frontend
+- show post chidren block
 
 ### Changed
 
