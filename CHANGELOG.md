@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- attachment categorie screen to backend
 
 ### Changed
 
