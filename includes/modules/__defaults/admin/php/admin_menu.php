@@ -311,15 +311,10 @@ function mainMenu(){
 						echo "No update available";
 						unset($_GET['update']);
 					}
-				}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
-					ob_start();		
+				}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){	
 					updatePlugin($pluginName.'/'.$pluginName.'.php');
-					echo "<div class='success'>Updated</div>";
-					ob_get_clean();
-
-					echo "<div class='success'>Updated</div>";
 					echo "<script type='text/javascript'>";
-					echo "window.location = '".self_admin_url( 'about.php?updated' )."'";
+						echo "location.href=location.href+'&message=Updated+succesfull+to+version+{$updates->response[$pluginName.'/'.$pluginName.'.php']->new_version}'";
 					echo "</script>";
 					wp_ob_end_flush_all();
 					flush();
