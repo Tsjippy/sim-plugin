@@ -268,10 +268,10 @@ async function addCatType(target){
 		//There is a parent
 		}else{
 			parentDiv	 	= document.getElementById(postType+'_childtypes');
-			parentData		= 'data-parent="'+parent_cat+'"';
+			parentData		= `data-parent="${parentCat}"`;
 			
 			//Select parent if it is not checked already
-			let parent = document.querySelector('.'+postType+'type[value="'+parent_cat+'"]');
+			let parent = document.querySelector(`.${postType}type[value="${parentCat}"]`);
 			if(!parent.checked){
 				parent.click();
 			}
