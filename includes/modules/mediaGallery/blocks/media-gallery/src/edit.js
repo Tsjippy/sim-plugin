@@ -33,7 +33,6 @@ const Edit = ({attributes, setAttributes}) => {
 		if(checked && !categories.includes(id)){
 			copy = [ ...categories, id];
 		}else if(!checked){
-			console.log(categories)
 			copy = categories.filter(val => val != id);
 		}
 
@@ -42,13 +41,6 @@ const Edit = ({attributes, setAttributes}) => {
 
 	useEffect( 
 		async () => {
-			const response = await apiFetch({
-				path: sim.restApiPrefix+'/mediagallery/show',
-				method: 'POST',
-    			data: { categories: categories },
-			});
-			setHtml( response );
-
 			setCats( fetchedCats.map( c => (
 				<CheckboxControl
 					label		= {c.name}
@@ -56,6 +48,13 @@ const Edit = ({attributes, setAttributes}) => {
 					checked		= {categories.includes(c.id)}
 				/>
 			)));
+			
+			const response = await apiFetch({
+				path: sim.restApiPrefix+'/mediagallery/show',
+				method: 'POST',
+    			data: { categories: categories },
+			});
+			setHtml( response );
 		} ,
 		[fetchedCats, attributes.categories]
 	);
