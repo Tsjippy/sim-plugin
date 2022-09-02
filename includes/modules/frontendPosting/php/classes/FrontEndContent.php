@@ -587,10 +587,12 @@ class FrontEndContent{
 		$postTypes		= apply_filters('sim_frontend_posting_modals', ['attachment']);
 
 		foreach($postTypes as $type){
+			$taxonomy	= get_object_taxonomies($type)[0];
+
 			$categories = get_categories( array(
 				'orderby' 	=> 'name',
 				'order'   	=> 'ASC',
-				'taxonomy'	=> $type.'type',
+				'taxonomy'	=> $taxonomy,
 				'hide_empty'=> false,
 			) );
 
