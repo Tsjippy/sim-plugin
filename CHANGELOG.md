@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.12.4] - 2022-09-02
+
+
+### Changed
 - link pictures to full srceen picture
 mediagallery
 
