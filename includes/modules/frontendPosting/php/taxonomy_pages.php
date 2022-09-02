@@ -31,7 +31,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 	$checkboxes		= '';
 	$catNames			= '';
 	foreach($categories as $category){
-		$name 				= ucfirst($category->slug);
+		$name 				= str_replace('-', ' ', ucfirst($category->slug));
 		$catId 				= $category->cat_ID;
 		$checked			= '';
 		$taxonomy			= $category->taxonomy;
