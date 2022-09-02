@@ -13,6 +13,7 @@ mediagallery
 - tinymce over ajax
 - warnig for prayer when not including
 month or year in title
+- issue with attachment categories
 
 ## [2.12.3] - 2022-09-01
 
