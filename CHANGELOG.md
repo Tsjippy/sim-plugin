@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.12.4] - 2022-09-02
+
+
+### Changed
 - link pictures to full srceen picture
 mediagallery
 
@@ -14,6 +21,7 @@ mediagallery
 - warnig for prayer when not including
 month or year in title
 - issue with attachment categories
+- manual update screen
 
 ## [2.12.3] - 2022-09-01
 
