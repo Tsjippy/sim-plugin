@@ -3,11 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.13.0] - 2022-09-02
+
+
+### Added
 - warning when editing a gutenberg
 post in frontend
 - show post chidren block
-
-### Changed
 
 ### Fixed
 - issue with righ sidebar too small
