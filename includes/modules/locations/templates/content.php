@@ -27,7 +27,7 @@ if(is_tax() || is_archive()){
 			do_action( 'sim_before_content');
 		}
 		?>
-		<div class='entry-content<?php if($archive) echo ' archive';?>'>
+		<div class='entry-content<?php if($archive){echo ' archive';}?>'>
 			<?php
 			if(is_user_logged_in()){
 			?>

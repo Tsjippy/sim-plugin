@@ -522,7 +522,7 @@ document.addEventListener("DOMContentLoaded",function() {
 	insertMediaContents();
 });
 
-document.addEventListener("click", event=>{
+document.addEventListener("click", event =>{
 	let target = event.target;
 
 	if(target.name == 'submit_post' || (target.parentNode != null && target.parentNode.name == 'submit_post')){

@@ -309,8 +309,8 @@ function sendForm(){
 
 	\_WP_Editors::enqueue_scripts();
 	ob_start();
-	$handles=wp_print_scripts(["sim_frontend_script"]);
-	$handles=array_merge($handles, print_footer_scripts());
+	wp_print_scripts(["sim_frontend_script"]);
+	print_footer_scripts();
 	\_WP_Editors::editor_js();
 	wp_print_media_templates();
 	$js	= ob_get_clean();
@@ -321,7 +321,7 @@ function sendForm(){
 	$css	= ob_get_clean();
 
 	return [
-		'html'	=>	$html,
+		'html'	=>$html,
 		'js'	=> $js,
 		'css'	=> $css
 	];

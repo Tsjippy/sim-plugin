@@ -1,71 +1,16 @@
+import { callback, addStyles } from './../../../js/ajax_import.js';
+
 let editPostSwitch = async function (event){
-	let afterScriptsLoaded	= function (){
-		tinymce.editors.forEach(ed=>ed.remove());
-
-		// Activate tinyMce's again
-		document.querySelectorAll('.entry-content .wp-editor-area').forEach(el =>{
-			window.tinyMCE.execCommand('mceAddEditor', false, el.id);
-		});
-
-		// invoke dom content loaded events
-		window.document.dispatchEvent(new Event("DOMContentLoaded", {
-			bubbles: true,
-			cancelable: true
-		}));
-
+	let afterScriptsLoadedFinal	= function (){
 		document.getElementById('frontend_upload_form').classList.remove('hidden');
 
+		wrapper.classList.remove('hidden');
 		loader.remove();
 	}
-	
-	let addScripts	= function () {
-		let el	= scripts.shift();
-	
-		// only add if needed
-		if(document.getElementById(el.id) == null && el.tagName == 'SCRIPT'){
-			var s = document.createElement('script');
-
-			if(el.type == ''){
-				s.type	= 'text/javascript';
-			}else{
-				s.type	= el.type;
-			}
-
-			if(el.src != ''){
-				s.src 	= el.src;
-			}else{
-				s.innerHTML	= el.innerHTML;
-			}
-			
-			s.id	= el.id;
-			
-			document.head.appendChild(s);
-
-			if(scripts.length > 0){
-				if(el.src != ''){
-					s.addEventListener('load', addScripts);
-				}else{
-					addScripts();
-				}
-			}else{
-				if(el.src != ''){
-					s.addEventListener('load', afterScriptsLoaded);
-				}else{
-					afterScriptsLoaded();
-				}			
-			}
-		}else if(scripts.length > 0){
-			//run again when this script is loaded
-			addScripts();
-		}else{
-			afterScriptsLoaded();
-		}
-	}
-
-	let scripts;
 
 	let button	= event.target;
 	let wrapper	= button.closest('main').querySelector('.content-wrapper');
+	wrapper.classList.add('hidden');
 
 	let formData    = new FormData();
     let postId      = button.dataset.id;
@@ -82,19 +27,9 @@ let editPostSwitch = async function (event){
 
 	if(response){
 		wrapper.innerHTML	= response.html;
+		callback	= afterScriptsLoadedFinal;
 
-		var temp = document.createElement('div');
-
-		temp.innerHTML =  response.js;
-
-		scripts	= [...temp.children];
-
-		addScripts();
-
-		temp.innerHTML = response.css;
-		[...temp.children].forEach(el => {
-			document.head.appendChild(el);
-		});
+		addStyles(response);
 	}else{
 		loader.outerHTML	= button.outerHTML;
 	}

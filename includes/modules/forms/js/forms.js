@@ -1,3 +1,6 @@
+import { addStyles } from './../../../js/ajax_import.js';
+
+
 async function saveFormInput(target){
 	let form		= target.closest('form');
 
@@ -570,16 +573,18 @@ async function formbuilderSwitch(target){
 	let response = await FormSubmit.fetchRestApi('forms/form_builder', formData);
 
 	if(response){
-		wrapper.innerHTML	= response;
+		wrapper.innerHTML	= response.html;
+
+		addStyles(response);
 
 		// Activate tinyMce's again
-		wrapper.querySelectorAll('.wp-editor-area').forEach(el =>{
-			window.tinyMCE.execCommand('mceAddEditor',false, el.id);
+	/* 	wrapper.querySelectorAll('.wp-editor-area').forEach(el =>{
+			window.tinyMCE.execCommand('mceAddEditor', false, el.id);
 		});
 
 		wrapper.querySelectorAll('select').forEach(function(select){
 			select._niceselect = NiceSelect.bind(select, {searchable: true});
-		});
+		}); */
 	}else{
 		loader.outerHTML	= button;
 	}

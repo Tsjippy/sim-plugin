@@ -83,6 +83,7 @@ add_action( 'rest_api_init', function () {
 });
 
 function showFormBuilder($attributes){
+	global $wp_scripts;
 
 	if($attributes instanceof \WP_REST_Request){
 		if(!empty($_REQUEST['formname'])){
@@ -103,7 +104,31 @@ function showFormBuilder($attributes){
 		$html = $html->get_error_message();
 	}
 
-	return $html;
+	do_action('wp_enqueue_scripts');
+
+	wp_enqueue_style( 'sim_formtable_style');
+	wp_enqueue_script( 'sim_formbuilderjs');
+
+	wp_enqueue_editor();
+
+	\_WP_Editors::enqueue_scripts();
+	wp_enqueue_editor();
+	ob_start();
+	\_WP_Editors::editor_js();
+	wp_print_scripts(["sim_formbuilderjs"]);
+	print_footer_scripts();
+	$js	= ob_get_clean();
+
+	do_action('wp_enqueue_style');
+	ob_start();
+	wp_print_styles();
+	$css	= ob_get_clean();
+
+	return [
+		'html'	=>	$html,
+		'js'	=> $js,
+		'css'	=> $css
+	];
 }
 
 function showFormResults($attributes){
