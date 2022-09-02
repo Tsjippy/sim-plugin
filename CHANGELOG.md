@@ -12,6 +12,7 @@
 - show spaces in category name
 - postie notifications
 - postie
+- show loader in gallery block settings
 
 ## [2.12.5] - 2022-09-02
 
