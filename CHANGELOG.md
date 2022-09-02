@@ -14,6 +14,7 @@
 - postie
 - show loader in gallery block settings
 - issue with edit content rights
+- faster check in media gallery block
 
 ## [2.12.5] - 2022-09-02
 
