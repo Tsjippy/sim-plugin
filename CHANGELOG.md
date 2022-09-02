@@ -11,6 +11,8 @@ mediagallery
 ### Fixed
 - form validation
 - tinymce over ajax
+- warnig for prayer when not including
+month or year in title
 
 ## [2.12.3] - 2022-09-01
 
