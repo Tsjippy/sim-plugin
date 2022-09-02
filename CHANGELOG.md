@@ -8,6 +8,7 @@
 
 ### Fixed
 - better attachment category list
+- show spaces in category name
 
 ## [2.12.5] - 2022-09-02
 
