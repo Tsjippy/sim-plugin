@@ -9,6 +9,7 @@ post in frontend
 ### Changed
 
 ### Fixed
+- issue with righ sidebar too small
 
 ## [2.12.6] - 2022-09-02
 
