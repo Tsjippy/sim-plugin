@@ -3,6 +3,8 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- warning when editing a gutenberg
+post in frontend
 
 ### Changed
 
