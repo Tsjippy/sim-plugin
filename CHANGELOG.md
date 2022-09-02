@@ -10,6 +10,7 @@ mediagallery
 
 ### Fixed
 - form validation
+- tinymce over ajax
 
 ## [2.12.3] - 2022-09-01
 
