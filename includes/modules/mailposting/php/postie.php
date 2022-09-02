@@ -22,7 +22,7 @@ add_filter('postie_post_before', function($post, $headers) {
 		//Set the category
 		SIM\printArray($headers);
 		if ($headers['from']['mailbox'].'@'.$headers['from']['host'] == SIM\getModuleOption(MODULE_SLUG, 'finance_email')){
-			SIM\printArray($headers);
+			SIM\printArray(get_cat_ID('Finance'));
 			echo "Setting the category";
 			//Set the category to Finance
 			$post['post_category'] = [get_cat_ID('Finance')];
