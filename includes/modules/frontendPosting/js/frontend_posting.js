@@ -609,9 +609,6 @@ document.addEventListener("click", event =>{
 document.addEventListener('change', event=>{
 	let target = event.target;
 
-	
-	console.log(target);
-
 	//listen to change of post type
 	if(target.id == 'post_type_selector'){
 		switchforms(target);

@@ -755,7 +755,7 @@ class FrontEndContent{
 					$hidden					= 'hidden';
 				
 					foreach($categories as $category){
-						$name 				= ucfirst($category->slug);
+						$name 				= str_replace('-', ' ', ucfirst($category->slug));
 						$catId 				= $category->cat_ID;
 						$catDescription		= $category->description;
 						$parent				= $category->parent;

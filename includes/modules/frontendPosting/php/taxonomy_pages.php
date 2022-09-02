@@ -45,8 +45,10 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 			$catNames		.= $category->slug;
 		}
 
-		$checkboxes	.= "<input $checked style='width: initial' type='checkbox' class='attachment_cat_checkbox' value='{$category->slug}' onchange='attachmentChanged(this)'>";
-		$checkboxes	.= $name;
+		$checkboxes	.= "<label>";
+			$checkboxes	.= "<input $checked style='width: initial' type='checkbox' class='attachment_cat_checkbox' value='{$category->slug}' onchange='attachmentChanged(this)'>";
+			$checkboxes	.= $name;
+		$checkboxes	.= "</label><br>";
 	}
 
     $html   = "<div class='attachment_cat_wrapper'>";
