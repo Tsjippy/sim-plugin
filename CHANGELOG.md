@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- attachment categorie screen to backend
 
 ### Changed
+
+### Fixed
+
+## [2.12.6] - 2022-09-02
+
+
+### Added
+- attachment categorie screen to backend
 
 ### Fixed
 - better attachment category list
@@ -14,7 +21,6 @@
 - postie
 - show loader in gallery block settings
 - issue with edit content rights
-- faster check in media gallery block
 
 ## [2.12.5] - 2022-09-02
 
