@@ -51,3 +51,130 @@ add_filter('render_block', function($blockContent, $block){
 
 	return $blockContent;
 }, 10, 2);
+
+add_action('init', function () {
+	register_block_type(
+		__DIR__ . '/show_categories/build',
+		array(
+			'render_callback' => __NAMESPACE__.'\displayCategories',
+		)
+	);
+
+	register_block_type(
+		__DIR__ . '/show_children/build',
+		array(
+			'render_callback' => __NAMESPACE__.'\displayChildren',
+			'attributes'      => [
+				'grandchildren' => [
+					'type' 		=> 'boolean',
+					'default'	=> false
+				],
+				'parents' => [
+					'type' 		=> 'boolean',
+					'default'	=> true
+				],
+				'grantparents' => [
+					'type' 		=> 'int',
+					'default'	=> 2
+				],
+			]
+		)
+	);
+});
+
+function displayCategories($attributes) {
+
+	$args = wp_parse_args($attributes, array(
+		'count' 		=> false
+	));
+
+	if(is_home()){
+		$taxonomy	= 'category';
+	}elseif(is_archive()){
+
+		if(isset(get_queried_object()->taxonomy)){
+			$taxonomy	= get_queried_object()->taxonomy;
+		}else{
+			$taxonomy	= get_queried_object()->taxonomies[0];
+		}
+	}elseif(is_tax()){
+		$taxonomy	= '';
+	}else{
+		// We are on place without categories
+		return '';
+	}
+
+	return	'<style> .widget li {list-style-type: none;}</style>'.wp_list_categories( array(
+		'echo'				=> 0,
+		'taxonomy' 			=> $taxonomy,
+		'current_category'	=> get_queried_object()->term_id,
+		'show_count'		=> $args['count'],
+		'title_li' 			=> '<h4>' . __( 'Categories', 'sim' ) . '</h4>'
+	));
+}
+
+function displayChildren($attributes) {
+	if(is_home() || is_archive() || is_tax()){
+		return '';
+	}
+
+	$depth	= 1;
+	if($attributes['grandchildren']){
+		$depth	= 0;
+	}
+
+	$parentId	= get_the_ID();
+
+	$html	= "<style>li.current_page_item > a, li.current_page_ancestor > a{font-weight: bold;}.childpost > ul{padding-left: 20px;}</style>";
+
+	if(has_post_parent($parentId)){
+		if($attributes['grantparents']){
+			$ancestors	= get_post_ancestors($parentId);
+			$level		= min($attributes['grantparents'], count($ancestors))-1;
+			$parentId	= $ancestors[$level];
+		}elseif($attributes['parents']){
+			$parentId	= wp_get_post_parent_id($parentId);
+		}
+	}
+
+	$html	.= wp_list_pages(array(
+		'depth'			=> $depth,
+		'child_of' 		=> $parentId,
+		'echo'			=> false,
+		'post_type'		=> get_post_type(),
+		'title_li'		=> null,
+		'hierarchical' => true,
+	));
+
+	if(!empty($html)){
+		$title	= get_the_title($parentId);
+		return "<div class='childpost'><h4>$title</h4><ul>$html</ul></div>";
+	}
+}
+
+/**
+ * Creates children html
+ * 
+ * @param	int		$postId		The postId of the post to get children for
+ * @param	boolean	$recursive	Whether or not to add children of children
+ */
+function getGrantChildren($postId, $recursive, $level=1){
+	$html		= '';
+	$children	= get_children($postId);
+	if(empty($children)){
+		return '';
+	}
+
+	$html	.= "<ul>";
+	foreach($children as $child){
+		$url	= get_permalink($child->ID);
+		$html	.= "<li><a href='$url'>{$child->post_title}</a></li>";
+
+		if($recursive){
+			$html	.= getGrantChildren($child->ID, $level+1);
+		}
+	}
+	$html	.= "</ul>";
+
+	return $html;
+}

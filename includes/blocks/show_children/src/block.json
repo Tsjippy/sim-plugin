@@ -1,0 +1,13 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "sim/show-children",
+	"version": "0.1.0",
+	"title": "Show child posts",
+	"category": "widgets",
+	"description": "Shows any (grant) children of the current post",
+	"textdomain": "sim",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}

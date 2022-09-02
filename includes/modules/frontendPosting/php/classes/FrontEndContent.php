@@ -717,7 +717,7 @@ class FrontEndContent{
 			<div id="parentpage" class="frontendform">
 				<h4>Select a parent page</h4>
 				<?php 
-				echo SIM\pageSelect('parent_page', $this->postParent);
+				echo SIM\pageSelect('parent_page', $this->postParent, '', ['page']);
 				?>
 			</div>
 
@@ -1295,6 +1295,21 @@ class FrontEndContent{
 		$result		= set_post_type($postId, $postType);
 
 		// remove the parent as parents need to be of the same type
+		$this->removeParents($postId);
+
+		if($result){
+			return "Succesfully updated the type to $postType";
+		}else{
+			return new WP_Error('Update failed', "Could not update the type");
+		}
+	}
+
+	/**
+	 * Removes the parent from a post
+	 * 
+	 * @param	int		$postId	The WP_Post id	
+	 */
+	function removeParents($postId){
 		if(has_post_parent($postId)){
 			wp_update_post(
 				array(
@@ -1306,19 +1321,7 @@ class FrontEndContent{
 
 		// Remove as parent from any children
 		foreach(get_children($postId) as $child){
-			wp_update_post(
-				array(
-					'ID'            => $child->ID, 
-					'post_parent'   => 0
-				)
-			);
-		}
-
-		if($result){
-			return "Succesfully updated the type to $postType";
-		}else{
-			return new WP_Error('Update failed', "Could not update the type");
+			$this->removeParents($child->ID);
 		}
 	}
-
 }

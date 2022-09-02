@@ -361,7 +361,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         <div id="parentpage" class="frontendform">
             <h4>Select a parent location</h4>
             <?php 
-            echo SIM\pageSelect('parent_location', $frontendcontend->postParent);
+            echo SIM\pageSelect('parent_location', $frontendcontend->postParent, '', ['location']);
             ?>
         </div>
         <div class="frontendform">
