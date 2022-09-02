@@ -712,7 +712,7 @@ class FrontEndContent{
 	 *
 	**/
 	function pageSpecificFields(){
-		?>		
+		?>
 		<div id="page-attributes" class="page<?php if($this->postType != 'page'){echo ' hidden';}?>">
 			<div id="parentpage" class="frontendform">
 				<h4>Select a parent page</h4>

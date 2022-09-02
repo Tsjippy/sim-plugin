@@ -1,16 +1,5 @@
 @use '../../../css/scss/global' as *;
 
-/*remove sidebar*/
-.site-content{
-    .sidebar{
-        width: unset;
-    }
-
-    #primary{
-        width: 100%;
-    }
-}
-
 .mediabuttons{
     .search{
         margin-left: -35px;

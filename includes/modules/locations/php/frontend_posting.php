@@ -38,6 +38,22 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
     //store categories
     $frontEndPost->storeCustomCategories($post, 'locations');
     
+    //parent
+    if(isset($_POST['parent_location'])){
+        if(empty($_POST['parent_location'])){
+            $parent = 0;
+        }else{
+            $parent = $_POST['parent_location'];
+        }
+
+        wp_update_post(
+            array(
+                'ID'            => $post->ID, 
+                'post_parent'   => $parent
+            )
+        );
+    }
+
     //tel
     if(isset($_POST['tel'])){
         if(empty($_POST['tel'])){
@@ -297,7 +313,6 @@ add_action( 'delete_post_meta', function($metaIds, $postId, $metaKey, $metaValue
     $maps->removeMap($mapId);
 }, 10, 4);
 
-
 //add meta data fields
 add_action('sim_frontend_post_after_content', function ($frontendcontend){
     //Load js
@@ -343,6 +358,12 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         }
     </style>
     <div id="location-attributes" class="location<?php if($postName != 'location'){echo ' hidden';} ?>">
+        <div id="parentpage" class="frontendform">
+            <h4>Select a parent location</h4>
+            <?php 
+            echo SIM\pageSelect('parent_location', $frontendcontend->postParent);
+            ?>
+        </div>
         <div class="frontendform">
             <h4>Update warnings</h4>	
             <label>
