@@ -5,6 +5,8 @@
 ### Added
 
 ### Changed
+- link pictures to full srceen picture
+mediagallery
 
 ### Fixed
 - form validation
