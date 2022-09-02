@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better attachment category list
 
 ## [2.12.5] - 2022-09-02
 
