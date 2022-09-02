@@ -17,7 +17,7 @@ class FrontEndContent{
 		$this->postImageId		= 0;
 		$this->lite 			= false;
 		
-		if(in_array('editor', $this->user->roles)){
+		if($this->user->has_cap( 'edit_others_posts' )){
 			$this->fullrights		= true;
 		}else{
 			$this->fullrights		= false;
@@ -312,18 +312,10 @@ class FrontEndContent{
 	**/
 	function hasEditRights(){
 		//Only set this once
-		if(!isset($this->editRight)){			
-			$userPageId 	= SIM\maybeGetUserPageId($this->user->ID);
-			
-			$ministries 	= get_user_meta( $this->user->ID, "user_ministries", true);
-			
-			$postAuthor		= $this->post->post_author;
-				
+		if(!isset($this->editRight)){				
 			//Check if allowed to edit this
 			if(
-				$postAuthor != $this->user->ID 									&& 
-				!isset($ministries[str_replace(" ","_",$this->postTitle )])		&&  
-				$userPageId != $this->ID										&&
+				!allowedToEdit($this->post)										&&
 				!$this->fullrights
 			){
 				$this->editRight	= false;

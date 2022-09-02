@@ -58,6 +58,42 @@ add_filter( 'safe_style_css', function( $styles ) {
     return $styles;
 } );
 
+/**
+ * Checks if the current user is allowed to edit a post
+ * 
+ * @return	boolean			True if allowed
+ */
+function allowedToEdit($post){
+	if(is_numeric($post)){
+		$post	= get_post($post);
+	}
+
+	$postId	= $post->ID;
+	$user 	= wp_get_current_user();
+
+	$postTitle 		= $post->post_title;
+	$postAuthor 	= get_the_author($postId);
+	
+	$postCategory 	= $post->post_category;
+
+	//Get current users ministry
+	$userPageId 		= SIM\maybeGetUserPageId($user->ID);
+
+	$ministries 		= get_user_meta($user->ID, "user_ministries", true);
+
+	if (
+		$postAuthor == $user->display_name 													|| 	// Own page
+		isset($ministries[str_replace(" ", "_", $postTitle)])								||	// ministry pafe 
+		$userPageId == $postId																||	// pseronal user page
+		apply_filters('sim_frontend_content_edit_rights', false, $postCategory)				||	// external filter
+		$user->has_cap( 'edit_others_posts' )													// user has permission to edit any post
+	){
+		return true;
+	}
+
+	return false;
+}
+
 //Add post edit button
 add_filter( 'the_content', function ( $content ) {
 	//Do not show if:
@@ -65,20 +101,12 @@ add_filter( 'the_content', function ( $content ) {
 		!is_user_logged_in() 							||	// not logged in or 
 		strpos($content,'[front_end_post]') !== false 	||	// already on the post edit page 
 		!is_singular() 									||  // it is not a single page 
-		is_tax()											// not a archive page
+		is_tax()											// not an archive page
 	){
 		return $content;
 	}
 
 	global $post;
-		
-	$user 	= wp_get_current_user();
-	$userId = $user->ID;
-
-	//Get current users ministry
-	$userPageId 		= SIM\maybeGetUserPageId($userId);
-
-	$ministries 		= get_user_meta($userId, "user_ministries", true);
 	
 	//This is a draft
 	if(isset($_GET['p']) || isset($_GET['page_id'])){
@@ -91,20 +119,9 @@ add_filter( 'the_content', function ( $content ) {
 	}else{
 		$postId 		= get_the_ID();
 	}
-	
-	$postTitle 		= get_the_title($postId);
-	$postAuthor 	= get_the_author($postId);
-	
-	$postCategory 	= $post->post_category;
 		
 	//Add an edit page button if:
-	if (
-		$postAuthor == $user->display_name 													|| 	// Own page
-		isset($ministries[str_replace(" ", "_", $postTitle)])								||	// ministry pafe 
-		$userPageId == $postId																||	// pseronal user page
-		apply_filters('sim_frontend_content_edit_rights', false, $postCategory)				||	// external filter
-		in_array('editor', $user->roles)														// user is an editor
-	){
+	if ( allowedToEdit($postId) ){
 		$type = $post->post_type;
 		$buttonText = "Edit this $type";
 

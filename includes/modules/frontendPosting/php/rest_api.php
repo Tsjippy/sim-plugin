@@ -225,8 +225,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\sendForm',
 			'permission_callback' 	=> function(){
-				$frontEndContent	= new FrontEndContent();
-				return $frontEndContent->fullrights;
+				return allowedToEdit($_REQUEST['postid']);
 			},
 			'args'					=> array(
 				'postid'		=> array(
