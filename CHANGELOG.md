@@ -10,6 +10,7 @@ post in frontend
 
 ### Fixed
 - issue with righ sidebar too small
+- remove parent when changing post type
 
 ## [2.12.6] - 2022-09-02
 
