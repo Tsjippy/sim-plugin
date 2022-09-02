@@ -3,18 +3,23 @@ namespace SIM\LOCATIONS;
 use SIM;
 
 /**
- * The Template for displaying all single recipes.
- *
- * @package GeneratePress
+ * The Template for displaying all single locations
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if(!isset($skipHeader) || !$skipHeader)	get_header(); 
+if(!isset($skipHeader) || !$skipHeader){
+	get_header();
+}
 ?>
 	<div id="primary">
+		<style>
+			#primary:not(:only-child){
+				width: 70%;
+			}
+		</style>
 		<main id="main">
 			<?php
 			while ( have_posts() ) :
@@ -45,4 +50,6 @@ if(!isset($skipHeader) || !$skipHeader)	get_header();
 
 	get_sidebar();
 
-	if(!isset($skipFooter) or !$skipFooter)	get_footer();
+	if(!isset($skipFooter) || !$skipFooter){
+		get_footer();
+	}

@@ -12,11 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if(!isset($skipHeader) or !$skipHeader)	get_header(); 
+if(!isset($skipHeader) || !$skipHeader){
+	get_header(); 
+}
 ?>
 
-	<div id="primary" <?php generate_do_element_classes( 'content' ); ?>>
-		<main id="main" <?php generate_do_element_classes( 'main' ); ?>>
+	<div id="primary">
+		<main id="main">
+			<style>
+				#primary:not(:only-child){
+					width: 70%;
+				}
+			</style>
 			<?php
 			$archive	= false;
 			while ( have_posts() ) :
