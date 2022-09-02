@@ -56,6 +56,10 @@ add_action( 'rest_api_init', function () {
 				$frontEndContent	= new FrontEndContent();
 				$result =  $frontEndContent->submitPost();
 
+				if(is_wp_error($result)){
+					return $result;
+				}
+
 				// Load the updated  post in the loop
 				$posts = new \WP_Query( array( 'p' => $frontEndContent->postId, 'post_type' => 'any' ) );
 				$GLOBALS['wp_query'] = $posts;
@@ -82,7 +86,6 @@ add_action( 'rest_api_init', function () {
 				// Get the picture
 				$result['picture']	= get_the_post_thumbnail_url($frontEndContent->postId, 'full');
 
-				// Get  the content apply_filters( 'the_content', get_the_content(null, false, $frontEndContent->postId) )
 				$result['html'] = $html;
 
 				$result['url']	= get_permalink();
