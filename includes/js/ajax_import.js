@@ -29,6 +29,13 @@ export let afterScriptsLoaded	= function (){
         }
     }));
 
+    //add niceselects
+	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
+        if(select._niceselect == undefined){
+		    select._niceselect = NiceSelect.bind(select,{searchable: true});
+        }
+	});
+
     if(typeof callback == 'function'){
         callback();
     }

@@ -1,4 +1,5 @@
 import './../../locations/js/user_location.js';
+import { callback, addStyles } from './../../../js/ajax_import.js';
 
 async function confirmPostDelete( event ) {
 	event.preventDefault();
@@ -318,6 +319,8 @@ async function submitPost(target){
 		}
 
 		document.querySelector('main').innerHTML	= response.html;
+
+		addStyles(response);
 
 		// Scroll page to top
 		window.scrollTo(0,0);

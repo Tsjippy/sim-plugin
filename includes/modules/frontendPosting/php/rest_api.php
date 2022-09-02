@@ -51,6 +51,7 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
+				global $wp_scripts;
 				global $post;
 
 				$frontEndContent	= new FrontEndContent();
@@ -89,6 +90,17 @@ add_action( 'rest_api_init', function () {
 				$result['html'] = $html;
 
 				$result['url']	= get_permalink();
+
+				do_action('wp_enqueue_scripts');
+				ob_start();
+				wp_print_scripts();
+				print_footer_scripts();
+				$result['js']	= ob_get_clean();
+
+				do_action('wp_enqueue_style');
+				ob_start();
+				wp_print_styles();
+				$result['css']	= ob_get_clean();
 
 				return $result;
 			},

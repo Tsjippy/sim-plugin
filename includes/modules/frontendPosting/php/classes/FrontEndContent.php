@@ -94,6 +94,14 @@ class FrontEndContent{
 				$hidden = 'hidden';
 			}
 
+			if(has_blocks($this->postContent)){
+				$url	= get_edit_post_link($this->postId);
+				echo "<div class='warning'>";
+					echo "This {$this->postType} contains some Gutenberg blocks.<br>";
+					echo "Click <a href='$url'>here</a> if you want to switch to the Gutenberg editor<br>";
+				echo "</div>";
+			}
+
 			$this->update	= 'false';
 			if(is_numeric($this->postId) && $this->post->post_status == 'publish'){
 				$this->update	= 'true';
@@ -951,13 +959,13 @@ class FrontEndContent{
 	 */
 	function preparePostContent($postContent){
 		//Sanitize the post content
-		$postContent = wp_kses_post($postContent);
+		$postContent = wp_kses_post(wp_kses_stripslashes($postContent));
 
 		// Remove some tags
 		$postContent 	= preg_replace("/(&lt;|<)(del|ins) .*?(>|&gt;)/im", "", $postContent); 
 
 		// Checks for opening and closing formating tags
-		$tags	= ['b', 'strong', 'i', 'em', 'mark', 'small', 'sub', 'sup'];
+		$tags	= ['b', 'strong', 'i', 'em', 'mark', 'small', 'sub', 'sup', 'span'];
 		$pattern		= '';
 		foreach($tags as $tag){
 			if(!empty($pattern)){
