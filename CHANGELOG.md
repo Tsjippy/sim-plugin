@@ -11,6 +11,7 @@
 - better attachment category list
 - show spaces in category name
 - postie notifications
+- postie
 
 ## [2.12.5] - 2022-09-02
 
