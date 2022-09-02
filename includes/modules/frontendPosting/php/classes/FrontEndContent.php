@@ -1290,9 +1290,30 @@ class FrontEndContent{
 	function changePostType(){
 		$postType	= $_POST['post_type_selector'];
 		
-		$postId	= $_POST['postid'];
+		$postId		= $_POST['postid'];
 
 		$result		= set_post_type($postId, $postType);
+
+		// remove the parent as parents need to be of the same type
+		if(has_post_parent($postId)){
+			wp_update_post(
+				array(
+					'ID'            => $postId, 
+					'post_parent'   => 0
+				)
+			);
+		}
+
+		// Remove as parent from any children
+		foreach(get_children($postId) as $child){
+			wp_update_post(
+				array(
+					'ID'            => $child->ID, 
+					'post_parent'   => 0
+				)
+			);
+		}
+
 		if($result){
 			return "Succesfully updated the type to $postType";
 		}else{
