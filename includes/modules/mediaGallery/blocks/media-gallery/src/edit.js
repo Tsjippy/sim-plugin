@@ -3,7 +3,7 @@ import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {Panel, PanelBody, CheckboxControl} from "@wordpress/components";
+import {Panel, PanelBody, CheckboxControl, Spinner} from "@wordpress/components";
 
 // Hide the gutenberg top bar when full screen
 document.addEventListener('click', async ev=>{
@@ -23,7 +23,7 @@ const Edit = ({attributes, setAttributes}) => {
 
 	const [html, setHtml] = useState([]);
 
-	const [cats, setCats] = useState([]);
+	const [cats, setCats] = useState(< Spinner />);
 
 	const [fetchedCats, storeFetchedCats] = useState([]);
 
