@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better child pages layout
 
 ## [2.13.0] - 2022-09-02
 
