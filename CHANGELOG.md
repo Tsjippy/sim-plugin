@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better styling of the child post block
 
 ## [2.13.1] - 2022-09-02
 
