@@ -311,11 +311,20 @@ function mainMenu(){
 						echo "No update available";
 						unset($_GET['update']);
 					}
-				}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){	
+				}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
+					echo 'test1';
+					wp_ob_end_flush_all();
+					flush();
 					updatePlugin($pluginName.'/'.$pluginName.'.php');
+					echo 'test2';
+					wp_ob_end_flush_all();
+					flush();
 					echo "<script type='text/javascript'>";
 						echo "location.href=location.href+'&message=Updated+succesfull+to+version+{$updates->response[$pluginName.'/'.$pluginName.'.php']->new_version}'";
 					echo "</script>";
+					wp_ob_end_flush_all();
+					flush();
+					echo 'test3';
 					wp_ob_end_flush_all();
 					flush();
 				}

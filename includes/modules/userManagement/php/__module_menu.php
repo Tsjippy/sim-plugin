@@ -93,9 +93,16 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	</label>
 	<br>
 	<label>How long in advance (in months) should we warn people about vaccinations who are about to expire?</label>
-	<select name="vaccination_warning_freq">
+	<select name="vaccination_warning_time">
 		<?php
-		SIM\ADMIN\recurrenceSelector($settings['vaccination_warning_freq']);
+		for ($x = 0; $x <= 12; $x++) {
+			if($settings['vaccination_warning_time'] === strval($x)){
+				$selected = 'selected';
+			}else{
+				$selected = '';
+			}
+			echo "<option value='$x' $selected>$x</option>";
+		}
 		?>
 	</select>
 	<br>

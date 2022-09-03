@@ -16,13 +16,10 @@ add_action('init', function(){
 function scheduleTasks(){
     SIM\scheduleTask('birthday_check_action', 'daily');
     SIM\scheduleTask('account_expiry_check_action', 'daily');
+    SIM\scheduleTask('vaccination_reminder_action', 'monthly');
 	//SIM\scheduleTask('review_reminders_action', 'monthly');
 	SIM\scheduleTask('check_last_login_date_action', 'monthly');
 
-	$freq	= SIM\getModuleOption(MODULE_SLUG, 'vaccination_warning_freq');
-	if($freq){
-		SIM\scheduleTask('vaccination_reminder_action', $freq);
-	}
 	$freq	= SIM\getModuleOption(MODULE_SLUG, 'greencard_reminder_freq');
 	if($freq){
 		SIM\scheduleTask('greencard_reminder_action', $freq);
