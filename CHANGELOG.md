@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.13.3] - 2022-09-03
+
+
+### Fixed
 - another issue with the child post block
 
 ## [2.13.2] - 2022-09-03
