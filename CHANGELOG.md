@@ -3,6 +3,8 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- selector for scheduled task frequencies
+at the usermanagement module
 
 ### Changed
 
