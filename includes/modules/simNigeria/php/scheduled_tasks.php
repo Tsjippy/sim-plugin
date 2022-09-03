@@ -11,7 +11,7 @@ add_action('init', function(){
 function scheduleTasks(){
     SIM\scheduleTask('send_reimbursement_requests_action', 'monthly');
 
-	$freq	= SIM\getModuleOption(MODULE_SLUG, 'freq');
+	$freq	= SIM\getModuleOption(MODULE_SLUG, 'contactlist_freq');
 	if($freq){
 		SIM\scheduleTask('send_missonary_detail_action', $freq);
 	}

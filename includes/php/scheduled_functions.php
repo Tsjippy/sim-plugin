@@ -7,7 +7,7 @@ namespace SIM;
  * @param	string		$recurrence			The recurence one of: weekly, monthly, threemonthly, sixmonthly,yearly. Default daily
 */
 function scheduleTask($taskName, $recurrence){
-	// Clear before readding
+	// Clear before re-adding
 	if (wp_next_scheduled($taskName)) {
 		wp_clear_scheduled_hook( $taskName );
 	}

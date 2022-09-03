@@ -30,6 +30,16 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	}
 
 	ob_start();
+
+	?>
+	<label for="contactlist_freq">How often should the contact list be send?</label>
+	<br>
+	<select name="contactlist_freq">
+		<?php
+		SIM\ADMIN\recurrenceSelector($settings['contactlist_freq']);
+		?>
+	</select>
+	<?php
 	
     SIM\pictureSelector('tc_signature',  'Signature of the travel coordinator', $settings);
 

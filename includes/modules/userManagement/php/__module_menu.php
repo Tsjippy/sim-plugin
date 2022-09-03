@@ -93,16 +93,25 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	</label>
 	<br>
 	<label>How long in advance (in months) should we warn people about vaccinations who are about to expire?</label>
-	<select name="vaccination_warning_time">
+	<select name="vaccination_warning_freq">
 		<?php
-		for ($x = 0; $x <= 12; $x++) {
-			if($settings['vaccination_warning_time'] === strval($x)){
-				$selected = 'selected';
-			}else{
-				$selected = '';
-			}
-			echo "<option value='$x' $selected>$x</option>";
-		}
+		SIM\ADMIN\recurrenceSelector($settings['vaccination_warning_freq']);
+		?>
+	</select>
+	<br>
+	<label for="greencard_reminder_freq">How often should people be reminded of their greencard expiry?</label>
+	<br>
+	<select name="greencard_reminder_freq">
+		<?php
+		SIM\ADMIN\recurrenceSelector($settings['greencard_reminder_freq']);
+		?>
+	</select>
+	<br>
+	<label for="check_details_mail_freq">How often should people asked to check their details for changes?</label>
+	<br>
+	<select name="check_details_mail_freq">
+		<?php
+		SIM\ADMIN\recurrenceSelector($settings['check_details_mail_freq']);
 		?>
 	</select>
 	<br>
