@@ -137,16 +137,22 @@ function displayChildren($attributes) {
 
 	$script	= "<script>";
 		$script	.= "document.addEventListener('DOMContentLoaded', () => {";
+			$script	.= "document.querySelectorAll('.childpost .current_page_ancestor .children.hidden').forEach(el=>el.classList.remove('hidden'));";
 			$script	.= "button = document.createElement('button');";
 			$script	.= "button.innerText = '+';";
 			$script	.= "button.classList.add('button');";
 			$script	.= "button.classList.add('small');";
 			$script	.= "button.classList.add('expand-children');";
 			$script	.= "document.querySelectorAll('.childpost .page_item_has_children > a').forEach(el=>el.parentNode.insertBefore(button.cloneNode(true), el.nextSibling));";
+			$script	.= "document.querySelectorAll('.childpost .current_page_ancestor .expand-children').forEach(el=>el.textContent = '-');";
 			$script	.= "document.addEventListener('click', ev=>{";
 				$script	.= "if(ev.target.matches('.expand-children')){";
 					$script	.= "ev.target.closest('li').querySelector('.children').classList.toggle('hidden');";
-					$script	.= "ev.target.textContent = '-'";
+					$script	.= "if(ev.target.textContent == '-'){";
+						$script	.= "ev.target.textContent = '+'";
+					$script	.= "}else{";
+						$script	.= "ev.target.textContent = '-'";
+					$script	.= "}";
 				$script	.= "}";
 			$script	.= "});";
 		$script	.= "})";
@@ -163,8 +169,9 @@ function displayChildren($attributes) {
 
 	if(!empty($html)){
 		$html	= str_replace("class='children'", "class='children hidden'", $html);
+		$url	= get_permalink(($parentId));
 		$title	= get_the_title($parentId);
-		return "<div class='childpost'><h4>$title</h4><ul>$html</ul></div>$script";
+		return "<div class='childpost'><h4><a href='$url'>$title</a></h4><ul>$html</ul></div>$script";
 	}
 }
 

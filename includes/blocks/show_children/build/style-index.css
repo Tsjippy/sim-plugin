@@ -1,1 +1,1 @@
-li.current_page_ancestor>a,li.current_page_item>a{font-weight:700}.childpost>ul{padding-left:20px}.expand-children{margin-left:10px}
+.childpost li.current_page_ancestor>a,.childpost li.current_page_item>a{font-weight:700}.childpost>ul{padding-left:20px}.childpost .expand-children{float:right;line-height:1;margin-left:10px;padding:0 5px}
