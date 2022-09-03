@@ -3,10 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- selector for scheduled task frequencies
-at the usermanagement module
 
 ### Changed
+
+### Fixed
+
+## [2.13.2] - 2022-09-03
+
+
+### Added
+- selector for scheduled task frequencies
+at the usermanagement module
 
 ### Fixed
 - better styling of the child post block
