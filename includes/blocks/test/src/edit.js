@@ -1,9 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import {useBlockProps} from "@wordpress/block-editor";
 import './editor.scss';
-import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-const { PanelBody, ToggleControl, CheckboxControl }      = wp.components;
+const { PanelBody}      = wp.components;
 import { SearchControl, Spinner, __experimentalInputControl as InputControl } from '@wordpress/components';
 const { InspectorControls }             = wp.blockEditor;
 

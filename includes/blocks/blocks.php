@@ -64,7 +64,15 @@ add_action('init', function () {
 		__DIR__ . '/show_children/build',
 		array(
 			'render_callback' => __NAMESPACE__.'\displayChildren',
-			'attributes'      => [
+			'attributes'		=> [
+				'title'			=> [
+					'type' 		=> 'boolean',
+					'default'	=> false
+				],
+				'listtype'			=> [
+					'type' 		=> 'string',
+					'default'	=> 'none'
+				],
 				'grandchildren' => [
 					'type' 		=> 'boolean',
 					'default'	=> false
@@ -114,16 +122,19 @@ function displayCategories($attributes) {
 }
 
 function displayChildren($attributes) {
-	if(!is_page()){
-		return '';
-	}
-
 	$depth	= 1;
 	if($attributes['grandchildren']){
 		$depth	= 0;
 	}
 
 	$parentId	= get_the_ID();
+	if(!$parentId){
+		if(isset($attributes['postid']) && is_numeric($attributes['postid'])){
+			$parentId	= $attributes['postid'];
+		}else{
+			return 'Here the children will be shown';
+		}
+	}
 
 	if(has_post_parent($parentId)){
 		if($attributes['grantparents']){
@@ -158,21 +169,35 @@ function displayChildren($attributes) {
 		$script	.= "})";
 	$script	.= "</script>";
 
+	if(!empty($attributes['listtype'])){
+		$script	.= "<style>";
+			$script	.= "div.childpost ul li{";
+				$script	.= "list-style-type: {$attributes['listtype']} !important";
+			$script	.= "}";
+		$script	.= "</style>";
+	}
+
 	$html	= wp_list_pages(array(
 		'depth'			=> $depth,
 		'child_of' 		=> $parentId,
 		'echo'			=> false,
-		'post_type'		=> get_post_type(),
+		'post_type'		=> get_post_type($parentId),
 		'title_li'		=> null,
 		'hierarchical' => true,
 	));
 
 	if(!empty($html)){
 		$html	= str_replace("class='children'", "class='children hidden'", $html);
-		$url	= get_permalink(($parentId));
-		$title	= get_the_title($parentId);
-		return "<div class='childpost'><h4><a href='$url'>$title</a></h4><ul>$html</ul></div>$script";
+		$title	= '';
+
+		if($attributes['title']){
+			$url	= get_permalink(($parentId));
+			$title	= "<h4><a href='$url'>".get_the_title($parentId)."</a></h4>";
+		}
+		return "<div class='childpost'>$title<ul>$html</ul></div>$script";
 	}
+	
+	return '';
 }
 
 /**
