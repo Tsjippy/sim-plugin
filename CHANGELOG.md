@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better layout child post
 
 ## [2.13.3] - 2022-09-03
 
