@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- added spinners to all blocks
 
 ### Fixed
 
