@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.13.4] - 2022-09-04
+
+
+### Fixed
+- better layout child post
+
 ## [2.13.3] - 2022-09-03
 
 
