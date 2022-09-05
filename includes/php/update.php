@@ -63,28 +63,13 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 
 }, 10, 3);
 
-/**
- * Checks github for updates of this plugin
- * 
- */
-add_filter( 'site_transient_update_plugins', __NAMESPACE__.'\checkForUpdate');
-add_filter( 'transient_update_plugins', __NAMESPACE__.'\checkForUpdate');
-function checkForUpdate( $updatePlugins) {
-
-	if ( ! is_object( $updatePlugins ) ){
-		return $updatePlugins;
-	}
-
-	if ( ! isset( $updatePlugins->response ) || ! is_array( $updatePlugins->response ) ){
-		$updatePlugins->response = array();
-	}
+add_filter( 'pre_set_site_transient_update_plugins', function ( $transient) {
+	$plugin = explode('/', PLUGIN)[0];
 
 	if( !function_exists('get_plugin_data') ){
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
-	$pluginVersion  = get_plugin_data(PLUGINPATH.PLUGINNAME.'.php')['Version'];
-	
-	$pluginFile     = PLUGINNAME.'/'.PLUGINNAME.'.php';
+	$pluginVersion  = get_plugin_data(PLUGIN)['Version'];
 
 	$release		= getLatestRelease();
 
@@ -94,18 +79,26 @@ function checkForUpdate( $updatePlugins) {
 
 	$gitVersion     = $release['tag_name'];
 
+	$item			= (object) array(
+		'slug'          => $plugin,
+		'new_version'   => $pluginVersion,
+		'url'           => 'https://api.github.com/repos/Tsjippy/sim-plugin',
+		'package'       => '',
+		'plugin'		=> PLUGIN
+	);
+
 	// Git has a newer version
 	if(version_compare($gitVersion, $pluginVersion) && !empty($release['assets'][0]['browser_download_url'])){
-		$updatePlugins->response[$pluginFile] = (object)array(
-			'slug'         => PLUGINNAME, 
-			'new_version'  => $gitVersion,
-			'url'          => 'https://api.github.com/repos/Tsjippy/sim-plugin',
-			'package'      => $release['assets'][0]['browser_download_url'], 
-		);
+		$item->new_version	= $gitVersion;
+		$item->package		= $release['assets'][0]['browser_download_url'];
+
+		$transient->response[PLUGIN]	= $item;
+	}else{
+		$transient->no_update[PLUGIN]	= $item;
 	}
 
-	return $updatePlugins;
-}
+	return $transient;
+});
 
 /**
  * Retrieves the latest github release from cache or github
