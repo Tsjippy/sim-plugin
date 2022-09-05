@@ -121,7 +121,7 @@ function getMinistries(){
 	]);
 	$ministries = [];
 	foreach ( $ministryPages as $ministryPage ) {
-		$ministries[] = $ministryPage->post_title;
+		$ministries[$ministryPage->ID] = $ministryPage->post_title;
 	}
 	//Sort in alphabetical order
 	asort($ministries);
@@ -138,20 +138,19 @@ function getMinistries(){
  * @return	srtring				html
  */
 function displayMinistryPositions($userId){
-	$userMinistries 	= (array)get_user_meta( $userId, "user_ministries", true);
+	$userMinistries 	= (array)get_user_meta( $userId, "jobs", true);
 	
 	ob_start();
 	?>
 	<div id="ministries_list">
 	<?php		
 		//Retrieve all the ministries from the database
-		foreach (getMinistries() as $ministry) {
-			$ministryName = str_replace(" ", "_", $ministry);
+		foreach (getMinistries() as $pageId=>$ministry) {
 			//Check which option should be a checked ministry
-			if (!empty($userMinistries[$ministryName])){
+			if (!empty($userMinistries[$pageId])){
 				$checked	= 'checked';
 				$class		= '';
-				$position	= $userMinistries[$ministryName];
+				$position	= $userMinistries[$pageId];
 			}else{
 				$checked	= '';
 				$class		= 'hidden';
@@ -161,14 +160,14 @@ function displayMinistryPositions($userId){
 			?>
 			<span>
 				<label>
-					<input type='checkbox' class='ministry_option_checkbox' name='ministries[]' value='<?php echo $ministryName;?>' <?php echo $checked;?>>
+					<input type='checkbox' class='ministry_option_checkbox' name='ministries[]' value='<?php echo $pageId;?>' <?php echo $checked;?>>
 					<span class='optionlabel'><?php echo $ministry;?></span>
 				</label>
 				<label class='ministryposition <?php echo $class;?>' style='display:block;'>
 					<h4 class='labeltext'>Position at <?php echo $ministry;?>:</h4>
-					<input type='text' name='user_ministries[<?php echo $ministryName;?>]' value='<?php echo $position;?>'>
+					<input type='text' name='jobs[<?php echo $pageId;?>]' value='<?php echo $position;?>'>
 					<?php
-					if ($ministryName == "Other"){
+					if ($ministry == "Other"){
 						?>
 						<p>Is your ministry not listed? Just add it! <button type='button' class='button' id='add-ministry-button'>Add Ministry</button></p>
 						<?php

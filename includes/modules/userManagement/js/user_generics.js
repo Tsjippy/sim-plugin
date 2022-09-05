@@ -9,18 +9,16 @@ async function addNewMinistry(target){
 	if(response){
 		var ministryName 		= target.closest('form').querySelector('[name="location_name"]').value;
 		ministryName			= ministryName.charAt(0).toUpperCase() + ministryName.slice(1);
-		//Replace any spaces with underscore
-		var ministryKey			= ministryName.replace(/ /g,'_');
 
 		var html = `
 		<span>
 			<label>
-				<input type="checkbox" class="ministry_option_checkbox" name="ministries[]" value="${ministryKey}" checked>
+				<input type="checkbox" class="ministry_option_checkbox" name="ministries[]" value="${response.postId}" checked>
 				<span class="optionlabel">${ministryName}</span>
 			</label>
 			<label class="ministryposition" style="display:block;">
 				<h4 class="labeltext">Position at ${ministryName}:</h4>
-				<input type="text" id="justadded" name="user_ministries[${ministryKey}]">
+				<input type="text" id="justadded" name="jobs[${postId}]">
 			</label>
 		</span>`;
 		
@@ -33,7 +31,7 @@ async function addNewMinistry(target){
 		document.getElementById('justadded').focus();
 		document.getElementById('justadded').select();
 
-		Main.displayMessage(`Succesfully added ministry ${ministryName}.`)
+		Main.displayMessage(response.html)
 	}
 	
 	Main.hideModals();

@@ -68,22 +68,16 @@ function allowedToEdit($post){
 		$post	= get_post($post);
 	}
 
-	$postId	= $post->ID;
-	$user 	= wp_get_current_user();
-
-	$postTitle 		= $post->post_title;
-	$postAuthor 	= get_the_author($postId);
-	
+	$postId			= $post->ID;
+	$user 			= wp_get_current_user();
+	$postAuthor 	= get_the_author($postId);	
 	$postCategory 	= $post->post_category;
-
-	//Get current users ministry
-	$userPageId 		= SIM\maybeGetUserPageId($user->ID);
-
-	$ministries 		= get_user_meta($user->ID, "user_ministries", true);
+	$userPageId 	= SIM\maybeGetUserPageId($user->ID);
+	$ministries 	= (array)get_user_meta($user->ID, "jobs", true);
 
 	if (
 		$postAuthor == $user->display_name 													|| 	// Own page
-		isset($ministries[str_replace(" ", "_", $postTitle)])								||	// ministry pafe 
+		in_array($post->ID, array_keys($ministries))										||	// ministry pafe 
 		$userPageId == $postId																||	// pseronal user page
 		apply_filters('sim_frontend_content_edit_rights', false, $postCategory)				||	// external filter
 		$user->has_cap( 'edit_others_posts' )													// user has permission to edit any post

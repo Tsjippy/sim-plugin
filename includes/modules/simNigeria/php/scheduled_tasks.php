@@ -146,13 +146,13 @@ function sendMissonaryDetail(){
 			
 			$ministries = "";
 			if(empty($privacyPreference['hide_ministry'])){
-				$userMinistries = (array)get_user_meta( $user->ID, "user_ministries", true);
+				$userMinistries = (array)get_user_meta( $user->ID, "jobs", true);
 				$i = 0;
 				foreach ($userMinistries as $key=>$userMinistry) {
 					if ($i > 0){
 						$ministries .= "\n";
 					}
-					$ministries  .= str_replace("_"," ",$key);
+					$ministries  .= get_the_title($key);
 					$i++;
 				}
 			}

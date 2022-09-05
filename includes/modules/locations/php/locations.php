@@ -72,7 +72,7 @@ function ministryDescription($postId){
 		$childPageHtml .= "</ul>";
 	}		
 	
-	$html		.= getLocationEmployees($ministry);
+	$html		.= getLocationEmployees($postId);
 	$latitude 	= get_post_meta($postId,'geo_latitude',true);
 	$longitude 	= get_post_meta($postId,'geo_longitude',true);
 	if (!empty($latitude) && !empty($longitude)){
@@ -87,47 +87,63 @@ function ministryDescription($postId){
 
 /**
  * Get the people that work at a certain location
+ * 
+ * @param 	int	$postId		The WP_Post id
  */
-function getLocationEmployees($locationName){
-	if (is_user_logged_in()){
-		$ministryName 	= str_replace(" ", "_", $locationName);
-
-		//Loop over all users to see if they work here
-		$users 			= get_users('orderby=display_name');
-		
-		$html 			= '';
-
-		foreach($users as $user){
-			$userMinistries = (array)get_user_meta( $user->ID, "user_ministries", true);
-		
-			//If user works for this ministry, echo its name and position
-			if (isset($userMinistries[$ministryName])){
-				$userPageUrl		= SIM\maybeGetUserPageUrl($user->ID);
-				$privacyPreference	= (array)get_user_meta( $user->ID, 'privacy_preference', true );
-				
-				if(!isset($privacyPreference['hide_ministry'])){
-					if(!isset($privacyPreference['hide_profile_picture'])){
-						$html .= SIM\displayProfilePicture($user->ID);
-						$style = "";
-					}else{
-						$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';
-					}
-					
-					$pageUrl = "<a class='user_link' href='$userPageUrl'>$user->display_name</a>";
-					
-					$html .= "   <div $style>$pageUrl ({$userMinistries[$ministryName]})</div>";
-					$html .= '<br>';
-				}					
-			}
-		}
-		if(empty($html)){
-			$html .= "No one dares to say they are working here!";
-		}
-
-		$html 	= "<p><strong>People working at $locationName are:</strong><br><br>$html</p>";
-		
-		return $html;
+function getLocationEmployees($post){
+	if (!is_user_logged_in()){
+		return '';
 	}
+
+	if(is_numeric($post)){
+		$post	= get_post($post);
+	}
+
+	$locations		= array_keys(get_children(array(
+		'post_parent'	=> $post->ID,
+		'post_type'   	=> 'location',
+		'post_status' 	=> 'publish',
+	)));
+	$locations[]	= $post->ID;
+
+	//Loop over all users to see if they work here
+	$users 			= get_users('orderby=display_name');
+	
+	$html 			= '';
+
+	foreach($users as $user){
+		$userLocations 	= (array)get_user_meta( $user->ID, "jobs", true);
+
+		$intersect		= array_intersect(array_keys($userLocations), $locations);
+	
+		//If a user works for this ministry, echo its name and position
+		if ($intersect){
+			$userPageUrl		= SIM\maybeGetUserPageUrl($user->ID);
+			$privacyPreference	= (array)get_user_meta( $user->ID, 'privacy_preference', true );
+			
+			if(!isset($privacyPreference['hide_ministry'])){
+				if(!isset($privacyPreference['hide_profile_picture'])){
+					$html .= SIM\displayProfilePicture($user->ID);
+					$style = "";
+				}else{
+					$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';
+				}
+				
+				$pageUrl = "<a class='user_link' href='$userPageUrl'>$user->display_name</a>";
+				foreach($intersect as $postId){
+					$html .= "   <div $style>$pageUrl ({$userLocations[$postId]})</div>";
+				}
+				$html .= '<br>';
+			}					
+		}
+	}
+	if(empty($html)){
+		$html .= "No one dares to say they are working here!";
+	}
+
+	$html 	= "<p><strong>People working at $post->post_title are:</strong><br><br>$html</p>";
+	
+	return $html;
 }
 
 //Remove marker when post is sent to trash

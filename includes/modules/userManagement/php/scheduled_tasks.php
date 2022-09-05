@@ -473,7 +473,7 @@ function checkDetailsMail(){
 		/* 
 		** MINISTRIES
  		*/
-		$userMinistries = (array)get_user_meta($user->ID, 'user_ministries', true);
+		$userMinistries = (array)get_user_meta($user->ID, 'jobs', true);
 		if(count($userMinistries)>1){
 			$title	= 'Ministries';
 		}else{
@@ -491,10 +491,9 @@ function checkDetailsMail(){
 				$message .= "</tr>";
 			}else{
 				foreach($userMinistries as $ministry=>$job){
-					$ministry = str_replace('_', ' ', $ministry);
 					$message .= "<tr>";
 						$message .= "<td>";
-							$message .= "$ministry:";
+							$message .= get_the_title($ministry).":";
 						$message .= "</td>";
 						$message .= "<td>";
 							$message .= "<a href='{$baseUrl}generic_info#ministries[]' $styleString>$job</a>";

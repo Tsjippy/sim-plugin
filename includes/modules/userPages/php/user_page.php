@@ -477,18 +477,17 @@ function buildVcard($userId){
  * @return	string				The html
  */
 function addMinistryLinks($userID){
-	$userMinistries = (array)get_user_meta( $userID, "user_ministries", true);
+	$userMinistries = (array)get_user_meta( $userID, "jobs", true);
 
 	$html = "";
 	foreach($userMinistries as $key=>$userMinistry){
 		if(!empty($userMinistry)){
-			$ministry 		= str_replace("_", " ", $key);
-			$ministryPage 	= get_page_by_title( $ministry);
-			if (!empty($ministryPage)){
-				$pageUrl = get_post_permalink($ministryPage->ID);
-				$pageUrl = "<a class='ministry_link' href='$pageUrl'>$ministry</a>";
+			$page	= get_post($key);
+			if (!empty($page)){
+				$pageUrl = get_post_permalink($page->ID);
+				$pageUrl = "<a class='ministry_link' href='$pageUrl'>$page->post_title</a>";
 			}else{
-				$pageUrl = $ministry;
+				$pageUrl = 'Not found';
 			}
 			$html .= "$pageUrl as $userMinistry<br>";
 		}

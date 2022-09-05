@@ -5,20 +5,33 @@ namespace SIM;
 add_shortcode("test",function ($atts){
 	global $Modules;
 
-	$settings = array(
-		'wpautop'                   => false,
-		'media_buttons'             => false,
-		'forced_root_block'         => true,
-		'convert_newlines_to_brs'   => true,
-		'textarea_name'             => "testname",
-		'textarea_rows'             => 10
-	);
+	$missingPages	= [];
+	foreach(get_users() as $user){
+		$jobs=[];
+		$userMinistries 	= (array)get_user_meta( $user->ID, "user_ministries", true);
 
-	return wp_editor(
-		'test',
-		'testid',
-		$settings
-	);
+		foreach($userMinistries as $key=>$ministry){
+			if($key == "Other"){
+				$jobs['other']	= $ministry;
+			}else{
+				$key	= str_replace('_', ' ', $key);
+				$page	= get_page_by_title($key, 'OBJECT', 'location');
+				if(empty($page)){
+					if(!in_array($key, $missingPages)){
+						$missingPages[]	= $key;
+					}
+				}else{
+					$jobs[$page->ID]	= $ministry;
+				}
+			}
+		}
+
+		cleanUpNestedArray($jobs);
+
+		update_user_meta( $user->ID, "jobs", $jobs);
+	}
+
+	printArray($missingPages);
 });
 
 // turn off incorrect error on localhost

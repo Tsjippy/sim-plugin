@@ -267,7 +267,7 @@ function printHtml($html){
  * 
  * @return	string						The dropdown html
 */
-function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'location']){	
+function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'location'], $includeTax=true){	
 	$pages = get_posts(
 		array(
 			'orderby' 		=> 'post_title',
@@ -278,25 +278,27 @@ function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'loc
 		)
 	);
 
-	$taxonomies = get_taxonomies(
-		array(
-		'public'   => true,
-		'_builtin' => false	 
-		)
-	);
-
-	$terms		= get_terms(['hide_empty'=>false]);
-
 	$options	= [];
 	foreach ( $pages as $page ) {
 		$options[$page->ID]	= $page->post_title;
 	}
-	foreach ( $taxonomies as $taxonomy ) {
-		$options[$taxonomy]	= ucfirst($taxonomy);
-	}
-	foreach ( $terms as $term ) {
-		$options[$term->taxonomy.'/'.$term->slug]	= $term->name;
-	}
+
+	if($includeTax){
+		$taxonomies = get_taxonomies(
+			array(
+			'public'   => true,
+			'_builtin' => false	 
+			)
+		);
+		foreach ( $taxonomies as $taxonomy ) {
+			$options[$taxonomy]	= ucfirst($taxonomy);
+		}
+
+		$terms		= get_terms(['hide_empty'=>false]);
+		foreach ( $terms as $term ) {
+			$options[$term->taxonomy.'/'.$term->slug]	= $term->name;
+		}
+	}	
 
 	asort($options);
 

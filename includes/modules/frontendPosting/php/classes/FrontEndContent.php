@@ -717,7 +717,7 @@ class FrontEndContent{
 			<div id="parentpage" class="frontendform">
 				<h4>Select a parent page</h4>
 				<?php 
-				echo SIM\pageSelect('parent_page', $this->postParent, '', ['page']);
+				echo SIM\pageSelect('parent_page', $this->postParent, '', ['page'], false);
 				?>
 			</div>
 

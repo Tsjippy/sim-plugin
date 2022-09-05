@@ -78,7 +78,7 @@ function pageAgeWarning(){
 	foreach ( $pages as $page ) {
 		//Get the ID of the current page
 		$postId 				= $page->ID;
-		$postTitle 			= $page->post_title;
+		$postTitle 				= $page->post_title;
 		//Get the last modified date
 		$secondsSinceUpdated 	= time()-get_post_modified_time('U',true,$page);
 		$pageAge				= round($secondsSinceUpdated/60/60/24);
@@ -90,7 +90,7 @@ function pageAgeWarning(){
 			$url 		= add_query_arg( ['post_id' => $postId], $url );		
 			
 			//Send an e-mail
-			$recipients = getPageRecipients($postTitle);
+			$recipients = getPageRecipients($page);
 			foreach($recipients as $recipient){
 				//Only email if valid email
 				if(strpos($recipient->user_email,'.empty') === false){
@@ -107,20 +107,20 @@ function pageAgeWarning(){
 /**
  * Function to check who the recipients should be for the page update mail
  */
-function getPageRecipients($page_title){
+function getPageRecipients($page){
 
 	$recipients = [];
 	
 	//Get all the users with a ministry set
 	$users = get_users( 
 		array( 
-			'meta_key'     => 'user_ministries'
+			'meta_key'     => 'jobs'
 		)	
 	);
 	
 	//Loop over the users to see if they have this ministry set
 	foreach($users as $user){
-		if (isset(get_user_meta( $user->ID, 'user_ministries', true)[$page_title])){
+		if (in_array($page->ID, array_keys(get_user_meta( $user->ID, 'jobs', true)))){
 			$recipients[] = $user;
 		}
 	}

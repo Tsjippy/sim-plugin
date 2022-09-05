@@ -28,7 +28,8 @@ add_shortcode("markerdescription", 	function ($atts){
 } );
 
 add_shortcode('ministry_description', function($atts){
-    return getLocationEmployees($atts['name']);
+    $post = get_page_by_title($atts['name'], 'OBJECT', 'location');
+    return getLocationEmployees($post);
 });
 
 add_shortcode("location_description", function($atts){

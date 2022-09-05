@@ -145,7 +145,10 @@ function addMinistry(){
 
     $url = get_permalink($postId);
 
-    return "Succesfully created new ministry page, see it <a href='$url'>here</a>";
+    return [
+		'html'		=> "Succesfully created new ministry page, see it <a href='$url'>here</a>",
+		'postId'	=> $postId
+	];
 }
 
 /**
