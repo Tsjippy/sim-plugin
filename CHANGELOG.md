@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- auto updates
 
 ## [2.13.6] - 2022-09-05
 
