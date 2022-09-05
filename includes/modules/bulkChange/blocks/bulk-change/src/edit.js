@@ -16,6 +16,7 @@ const Edit = ({attributes, setAttributes}) => {
 	const [availableRoles, setAvailableRoles] = useState(<Spinner />);
 
 	useEffect( async () => {
+		setHtml(<Spinner />);
 		const result = await apiFetch({path: `${sim.restApiPrefix}/bulkchange/bulk_change_meta_html`});
 		setHtml(result);
 	} , []);

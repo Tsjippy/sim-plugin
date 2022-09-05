@@ -74,6 +74,7 @@ const Edit = ({attributes, setAttributes}) => {
 
 	useEffect( 
 		async () => {
+			setHtml( < Spinner /> );
 			const response = await apiFetch({path: `${sim.restApiPrefix}/userpage/linked_user_description?id=${id}&picture=${picture}&phone=${phone}&email=${email}&style=${style}`});
 			setHtml( response );
 		} ,

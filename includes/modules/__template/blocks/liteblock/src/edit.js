@@ -3,12 +3,14 @@ import {useBlockProps} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
+import {Spinner} from "@wordpress/components";
 
 const Edit = () => {
-	const [html, setHtml] = useState([]);
+	const [html, setHtml] = useState(< Spinner />);
 
 	useEffect( 
 		async () => {
+			setHtml( < Spinner /> );
 			const response = await apiFetch({path: sim.restApiPrefix+'/frontendposting/pending_pages'});
 			setHtml( response );
 		} ,

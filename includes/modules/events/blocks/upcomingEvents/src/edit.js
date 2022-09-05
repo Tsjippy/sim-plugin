@@ -3,9 +3,7 @@ import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {Panel, PanelBody, CheckboxControl, __experimentalNumberControl as NumberControl} from "@wordpress/components";
-
-const catsPath	= "/wp/v2/events";
+import {Spinner, Panel, PanelBody, CheckboxControl, __experimentalNumberControl as NumberControl} from "@wordpress/components";
 
 const Edit = ({attributes, setAttributes}) => {
 	const {items, months, categories} = attributes;
@@ -18,10 +16,11 @@ const Edit = ({attributes, setAttributes}) => {
 		setAttributes({categories: copy});
 	}
 
-	const [cats, setCats] = useState([]);
+	const [cats, setCats] = useState( < Spinner /> );
 
 	useEffect( async () => {
-		const fetchedCats = await apiFetch({path: catsPath});
+		setCats( <Spinner />);
+		const fetchedCats = await apiFetch({path: "/wp/v2/events"});
 
 		setCats( fetchedCats.map( c => (
 			<CheckboxControl
@@ -37,6 +36,8 @@ const Edit = ({attributes, setAttributes}) => {
 	const [events, storeEvents] = useState([]);
 
 	const fetchEvents = async () => {
+		storeEvents(fetchedEvents);
+		
 		let param	= '';
 		
 		if(items != undefined){

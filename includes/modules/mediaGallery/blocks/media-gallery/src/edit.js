@@ -21,11 +21,11 @@ document.addEventListener('click', async ev=>{
 const Edit = ({attributes, setAttributes}) => {
 	const {categories} = attributes;
 
-	const [html, setHtml] = useState([]);
+	const [html, setHtml] = useState(< Spinner />);
 
 	const [cats, setCats] = useState(< Spinner />);
 
-	const [fetchedCats, storeFetchedCats] = useState([]);
+	const [fetchedCats, storeFetchedCats] = useState(<Spinner/>);
 
 	const onCatChanged	= function(checked, id){
 		let copy;
@@ -41,6 +41,8 @@ const Edit = ({attributes, setAttributes}) => {
 
 	useEffect( 
 		async () => {
+			setHtml(< Spinner />);
+
 			setCats( fetchedCats.map( c => (
 				<CheckboxControl
 					label		= {c.name}

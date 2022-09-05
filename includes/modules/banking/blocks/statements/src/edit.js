@@ -11,6 +11,7 @@ const Edit = () => {
 	const [html, setHtml] = useState(<Spinner />);
 
 	useEffect( async () => {
+		setHtml(<Spinner />);
 		const statementHtml = await apiFetch({path: `${sim.restApiPrefix}/banking/get_statements`});
 		setHtml(statementHtml);
 	} , []);

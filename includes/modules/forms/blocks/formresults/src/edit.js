@@ -3,7 +3,7 @@ import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {ToggleControl, SelectControl, Panel, PanelBody, Spinner, CheckboxControl, __experimentalNumberControl as NumberControl, __experimentalInputControl as InputControl} from "@wordpress/components";
+import {ToggleControl, SelectControl, Panel, PanelBody, Spinner} from "@wordpress/components";
 
 const Edit = ({attributes, setAttributes}) => {
 	let {formid, onlyOwn, archived, tableid} = attributes;
@@ -22,11 +22,13 @@ const Edit = ({attributes, setAttributes}) => {
 		setForms( options );
 	} , []);
 
-	const [html, setHtml] = useState('');
+	const [html, setHtml] = useState(< Spinner />);
 
 	useEffect( 
 		async () => {
 			if(formid != undefined){
+				setHtml( < Spinner /> );
+
 				// add shortcode id if not given
 				if(tableid == undefined){
 					tableid = await apiFetch({path: `${sim.restApiPrefix}/forms/add_form_table?formid=${formid}`});

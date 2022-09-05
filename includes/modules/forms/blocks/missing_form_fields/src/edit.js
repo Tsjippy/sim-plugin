@@ -12,6 +12,7 @@ const Edit = ({attributes, setAttributes}) => {
 
 	useEffect( 
 		async () => {
+			setHtml( < Spinner />);
 			const response = await apiFetch({path: `${sim.restApiPrefix}/forms/missing_form_fields?type=${type}`});
 			setHtml( response );
 		} ,

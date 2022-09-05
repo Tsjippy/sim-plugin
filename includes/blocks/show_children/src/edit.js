@@ -15,6 +15,7 @@ const Edit = ({attributes, setAttributes, context}) => {
 
 	useEffect( 
 		async () => {
+			setHtml( < Spinner /> );
 			const response = await apiFetch({
 				path: sim.restApiPrefix+'/show_children',
 				method: 'POST',

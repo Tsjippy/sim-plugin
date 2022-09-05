@@ -13,9 +13,10 @@ const catsPath	= "/wp/v2/events";
 const Edit = ({attributes, setAttributes}) => {
 	const {items, months, categories} = attributes;
 
-	const [cats, setCats] = useState([]);
+	const [cats, setCats] = useState(< Spinner />);
 
 	useEffect( async () => {
+		setCats( < Spinner />);
 		const fetchedCats = await apiFetch({path: catsPath});
 		setCats( fetchedCats.map( c => (
 			<CheckboxControl

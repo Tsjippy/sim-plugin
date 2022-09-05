@@ -67,7 +67,7 @@ add_action('init', function () {
 			'attributes'		=> [
 				'title'			=> [
 					'type' 		=> 'boolean',
-					'default'	=> false
+					'default'	=> true
 				],
 				'listtype'			=> [
 					'type' 		=> 'string',
@@ -169,14 +169,6 @@ function displayChildren($attributes) {
 		$script	.= "})";
 	$script	.= "</script>";
 
-	if(!empty($attributes['listtype'])){
-		$script	.= "<style>";
-			$script	.= "div.childpost ul li{";
-				$script	.= "list-style-type: {$attributes['listtype']} !important";
-			$script	.= "}";
-		$script	.= "</style>";
-	}
-
 	$html	= wp_list_pages(array(
 		'depth'			=> $depth,
 		'child_of' 		=> $parentId,
@@ -187,6 +179,10 @@ function displayChildren($attributes) {
 	));
 
 	if(!empty($html)){
+		if(!empty($attributes['listtype'])){
+			$html	= str_replace("<li ", "<li style='list-style-type: {$attributes['listtype']}'", $html);
+		}
+
 		$html	= str_replace("class='children'", "class='children hidden'", $html);
 		$title	= '';
 

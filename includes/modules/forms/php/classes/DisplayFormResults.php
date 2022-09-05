@@ -1190,7 +1190,7 @@ class DisplayFormResults extends SimForms{
 	 * 
 	 * @param	array	$atts	WP Shortcode attributes
 	 * 
-	 * @return	string			The html
+	 * @return	string|WP_Error			The html or error on failure
 	 */
 	function showFormresultsTable(){
 		//do not show if not logged in
