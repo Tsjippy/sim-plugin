@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.13.5] - 2022-09-05
+
+
+### Changed
+- added spinners to all blocks
+
 ## [2.13.4] - 2022-09-04
 
 
