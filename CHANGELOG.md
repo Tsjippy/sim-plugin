@@ -5,9 +5,14 @@
 ### Added
 
 ### Changed
-- test update
 
 ### Fixed
+
+## [2.13.6] - 2022-09-05
+
+
+### Changed
+- test update
 
 ## [2.13.5] - 2022-09-05
 
