@@ -308,7 +308,7 @@ function mainMenu(){
 						$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
 						echo "<a href='$url' class='button'>Update to version {$updates->response[$pluginName.'/'.$pluginName.'.php']->new_version}</a><br><br>";
 					}else{
-						echo "No update available";
+						echo "<div class='warning'>No update available<br></div>";
 						unset($_GET['update']);
 					}
 				}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
@@ -316,7 +316,7 @@ function mainMenu(){
 					wp_ob_end_flush_all();
 					flush();
 					updatePlugin($pluginName.'/'.$pluginName.'.php');
-					echo 'test2';
+					echo 'test5';
 					wp_ob_end_flush_all();
 					flush();
 					echo "<script type='text/javascript'>";
@@ -324,7 +324,7 @@ function mainMenu(){
 					echo "</script>";
 					wp_ob_end_flush_all();
 					flush();
-					echo 'test3';
+					echo 'test6';
 					wp_ob_end_flush_all();
 					flush();
 				}
