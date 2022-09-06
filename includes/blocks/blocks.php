@@ -195,6 +195,10 @@ function displayChildren($attributes) {
 		return "<div class='childpost'>$title<ul>$html</ul></div>$script";
 	}
 	
+	if ( function_exists( 'get_current_screen' ) && get_current_screen()->is_block_editor()){
+		return "This page has no children";
+	}
+
 	return '';
 }
 

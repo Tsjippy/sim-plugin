@@ -236,7 +236,7 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
             <Fragment>
                 <BlockEdit { ...props } />
                 <InspectorControls>
-                	<PanelBody title={ __( 'Block Visibility', 'sim' ) }>
+                	<PanelBody title={ __( 'Block Visibility', 'sim' ) } initialOpen={false}>
                         <ToggleControl
                             label={__('Hide on mobile', 'sim')}
                             checked={!!attributes.hideOnMobile}
