@@ -302,6 +302,9 @@ function mainMenu(){
 				echo "<div class='error'>".$updates->get_error_message()."</div>";
 			}else{
 				if($_GET['update']	== 'check'){
+					// Reset updates cache
+					delete_option('_site_transient_update_plugins');
+					
 					if(isset($updates->response[PLUGIN])){
 						$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
 						echo "<a href='$url' class='button'>Update to version ".$updates->response[PLUGIN]->new_version."</a><br><br>";
@@ -313,7 +316,6 @@ function mainMenu(){
 					wp_ob_end_flush_all();
 					flush();
 					updatePlugin(PLUGIN);
-					echo 'test5';
 					wp_ob_end_flush_all();
 					flush();
 					echo "<script type='text/javascript'>";

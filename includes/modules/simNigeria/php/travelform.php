@@ -114,7 +114,7 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 				//Loop over the values
 				foreach($values as $key=>$value){
 					//If this too is an array
-					if(is_array($value)){
+					if(is_array($value) && !empty($value)){
 						//check if not dictionary
 						if(is_numeric(array_keys($value)[0])){
 							//numeric key so add the array as a whole
