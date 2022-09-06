@@ -213,7 +213,7 @@ async function getInputHtml(target){
 
 		//add a listener for clicks outside the cell
 		document.addEventListener('click', outsideFormsTableClicked);
-		target.querySelector('.file_upload_wrap').addEventListener('uploadfinished', uploadFinished);
+		target.querySelectorAll('.file_upload_wrap').forEach(el=>el.addEventListener('uploadfinished', uploadFinished));
 	}
 }
 
