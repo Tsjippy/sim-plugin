@@ -9,6 +9,7 @@
 ### Fixed
 - display of pictures in form results
 - bug in formstable
+- bug in schedules
 
 ## [2.13.7] - 2022-09-05
 
