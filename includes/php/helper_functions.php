@@ -275,6 +275,7 @@ function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'loc
 			'post_status' 	=> 'publish',
 			'post_type'     => $postTypes,
 			'posts_per_page'=> -1,
+			'exclude'		=> [get_the_ID()]
 		)
 	);
 

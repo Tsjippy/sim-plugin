@@ -204,7 +204,7 @@ class DisplayFormResults extends SimForms{
 
 			foreach($string as $sub){
 				if(!empty($output)){
-					$output .= "\n";
+					$output .= "<br>";
 				}
 				$output .= $this->transformInputData($sub, $fieldName);
 			}
@@ -218,7 +218,7 @@ class DisplayFormResults extends SimForms{
 			}elseif(strpos($string, 'https://') !== false && strpos($string, 'href') === false) {
 				$output 	= "<a href='$string'>Link</a>";
 			//display dates in a nice way
-			}elseif(strtotime($string)){
+			}elseif(strtotime($string) && Date('Y', strtotime($string)) < 2200){
 				$date		= date_parse($string);
 
 				//Only transform if everything is there
@@ -226,10 +226,13 @@ class DisplayFormResults extends SimForms{
 					$output		= date('d-M-Y',strtotime($string));
 				}
 			//show file uploads as links
-			}elseif(strpos($string,'uploads/form_uploads') !== false){
+			}elseif(strpos($string, 'uploads/form_uploads') !== false){
 				$url		= SITEURL."/$string";
-				$filename	= end(explode('/',$string));
-				$output		= "<a href='$url'>$filename</a>";
+				$text		= 'Link';
+				if(getimagesize(SIM\urlToPath($url)) !== false) {
+					$text	= "<img src='$url' alt='form_upload' style='width:150px;height:150px;'>";
+				}
+				$output		= "<a href='$url'>$text</a>";
 			// Convert phonenumber to signal link
 			}elseif($string[0] == '+'){
 				$output	= "<a href='https://signal.me/#p/$string'>$string</a>";

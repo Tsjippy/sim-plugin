@@ -47,7 +47,7 @@ function mandatoryFieldsReminder(){
                 $subject        = $childEmail->subject;
                 $message        = $childEmail->message;
 
-                $reminderHtml  = str_replace("Your",$user->first_name."'s", $reminderHtml);
+                $reminderHtml  = str_replace("Your", $user->first_name."'s", $reminderHtml);
                 
                 foreach($parents as $parent){
                     if(strpos($parent->user_email,'.empty') === false){
