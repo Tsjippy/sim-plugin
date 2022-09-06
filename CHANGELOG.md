@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.13.8] - 2022-09-06
+
+
+### Fixed
 - display of pictures in form results
 - bug in formstable
 - bug in schedules
