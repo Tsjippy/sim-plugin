@@ -8,6 +8,7 @@
 
 ### Fixed
 - display of pictures in form results
+- bug in formstable
 
 ## [2.13.7] - 2022-09-05
 
