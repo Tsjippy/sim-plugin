@@ -10,6 +10,7 @@
 - display of pictures in form results
 - bug in formstable
 - bug in schedules
+- collapse visibility settings by default
 
 ## [2.13.7] - 2022-09-05
 
