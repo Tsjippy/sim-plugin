@@ -301,26 +301,23 @@ function mainMenu(){
 			if(is_wp_error($updates)){
 				echo "<div class='error'>".$updates->get_error_message()."</div>";
 			}else{
-				$pluginName	= 'sim-plugin';
-				
 				if($_GET['update']	== 'check'){
-					if(isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
+					if(isset($updates->response[PLUGIN])){
 						$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
-						echo "<a href='$url' class='button'>Update to version {$updates->response[$pluginName.'/'.$pluginName.'.php']->new_version}</a><br><br>";
+						echo "<a href='$url' class='button'>Update to version ".$updates->response[PLUGIN]->new_version."</a><br><br>";
 					}else{
 						echo "<div class='warning'>No update available<br></div>";
 						unset($_GET['update']);
 					}
-				}elseif(!empty($updates->response) && isset($updates->response[$pluginName.'/'.$pluginName.'.php'])){
-					echo 'test1';
+				}elseif(!empty($updates->response) && isset($updates->response[PLUGIN])){
 					wp_ob_end_flush_all();
 					flush();
-					updatePlugin($pluginName.'/'.$pluginName.'.php');
+					updatePlugin(PLUGIN);
 					echo 'test5';
 					wp_ob_end_flush_all();
 					flush();
 					echo "<script type='text/javascript'>";
-						echo "location.href=location.href+'&message=Updated+succesfull+to+version+{$updates->response[$pluginName.'/'.$pluginName.'.php']->new_version}'";
+						echo "location.href=location.href+'&message=Updated+succesfull+to+version+".$updates->response[PLUGIN]->new_version."'";
 					echo "</script>";
 					wp_ob_end_flush_all();
 					flush();

@@ -18,14 +18,16 @@ function updatePlugin($pluginFile){
 	include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 	include_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
 	$plugin_Upgrader	= new \Plugin_Upgrader();
-	echo 'test2';
 	wp_ob_end_flush_all();
 	flush();
 	$plugin_Upgrader->upgrade($pluginFile);
-	echo 'test3';
+	echo 'test1';
 	wp_ob_end_flush_all();
 	flush();
+	echo 'test2';
 	activate_plugin( $pluginFile);
+	wp_ob_end_flush_all();
+	flush();
 	echo 'test4';
 	wp_ob_end_flush_all();
 	flush();
