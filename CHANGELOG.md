@@ -7,6 +7,14 @@
 ### Changed
 
 ### Fixed
+
+## [2.13.7] - 2022-09-05
+
+
+### Added
+- show people working at child ministries
+
+### Fixed
 - auto updates
 
 ## [2.13.6] - 2022-09-05
