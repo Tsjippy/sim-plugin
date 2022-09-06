@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- display of pictures in form results
 
 ## [2.13.7] - 2022-09-05
 
