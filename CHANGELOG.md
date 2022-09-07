@@ -8,6 +8,7 @@
 
 ### Fixed
 - reset update info on manual info check
+- issue with private event creation
 
 ## [2.13.8] - 2022-09-06
 
