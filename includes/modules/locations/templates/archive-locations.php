@@ -27,14 +27,18 @@ if($skipWrapper){
 	}
 
 	?>
-	<div id="primary" <?php generate_do_element_classes( 'content' ); ?>>
-		<main id="main" class='inside-article'<?php generate_do_element_classes( 'main' ); ?>>
+	<div id="primary">
+		<style>
+			#primary:not(:only-child){
+				width: 70%;
+			}
+		</style>
+		<main id="main" class='inside-article'>
 			<?php displayLocationArchive();?>
 		</main>
 	</div>
 	<?php
-
-	generate_construct_sidebars();
+	get_sidebar();
 
 	if(!isset($skipFooter) || !$skipFooter){
 		get_footer();

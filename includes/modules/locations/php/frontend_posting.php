@@ -126,6 +126,11 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
         return;
     }
 
+    $check	= $maps->checkCoordinates($latitude, $longitude);
+    if(is_wp_error($check)){
+        return $check;
+    }
+
     //Get marker array
     $markerIds = get_post_meta($postId, "marker_ids", true);
     if(!is_array($markerIds)){

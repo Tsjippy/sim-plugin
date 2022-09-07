@@ -120,12 +120,17 @@ if(is_tax() || is_archive()){
 			//only show a map on the item page and if we are logged in
 			if(!$archive && is_user_logged_in()){
 				//Show a map if one is defined
-				$customMapId = get_post_meta(get_the_ID(),'map_id',true);
+				$customMapId = get_post_meta(get_the_ID(), 'map_id', true);
 				if(is_numeric($customMapId)){
 				?>
 				<div class='location_map' style='margin-top:15px;margin-bottom:25px;'>
 					<?php
-					echo do_shortcode("[ultimate_maps id='$customMapId']");
+					$markers	= get_post_meta(get_the_ID(), 'marker_ids', true);
+					$markerId	= '';
+					if(is_array($markers) && isset($markers['page_marker'])){
+						$markerId	= $markers['page_marker'];
+					}
+					echo do_shortcode("[ultimate_maps id='$customMapId' map_center='$markerId']");
 					?>
 				</div>
 				<?php

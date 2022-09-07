@@ -137,6 +137,14 @@ class Maps{
 
 		return true;
 	}
+
+	function checkCoordinates($lattitude, $longitude){
+		if(strlen($lattitude) < 3 || strlen($longitude) < 3 || strpos($lattitude, '.') === false || strpos($longitude, '.') === false){
+			return new \WP_Error('maps', 'Please give valid coordinates');
+		}
+
+		return true;
+	}
 	
 	/**
 	 * Creates a marker for a given user
@@ -149,6 +157,11 @@ class Maps{
 		global $wpdb;
 		
 		if(!empty($location['latitude']) && !empty($location['longitude'])){
+			$check	= $this->checkCoordinates($location['latitude'], $location['longitude']);
+			if(is_wp_error($check)){
+				return $check;
+			}
+
 			$userdata = get_userdata($userId);
 			
 			$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
@@ -214,6 +227,11 @@ class Maps{
 		global $wpdb;
 		
 		if(is_numeric($markerId) && is_array($location) && !empty($location['latitude']) && !empty($location['longitude'])){
+			$check	= $this->checkCoordinates($location['latitude'], $location['longitude']);
+			if(is_wp_error($check)){
+				return $check;
+			}
+			
 			//Update the marker
 			$wpdb->update($this->markerTable, 
 				array(

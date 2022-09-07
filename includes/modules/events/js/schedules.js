@@ -71,9 +71,14 @@ function showAddHostModal(){
 	var date											= table.rows[0].cells[cell.cellIndex].dataset.isodate;
 	var startTime										= target.closest('tr').dataset.starttime;
 	var modal											= target.closest('.schedules_wrapper').querySelector('[name="add_host"]');
+	// Clear
+	modal.querySelectorAll('input:not([type="hidden"])').forEach(el=>el.value='')
+
+	// Add new values
 	modal.querySelector('[name="schedule_id"]').value	= table.dataset["id"];
 	modal.querySelector('[name="date"]').value			= date;
 	modal.querySelector('[name="starttime"]').value		= startTime;
+
 	modal.classList.remove('hidden');
 }
 
@@ -192,7 +197,7 @@ function showTimeslotModal(selected){
 	firstCell.rowSpan	= document.querySelectorAll('.ui-selected').length;
 	var endTime			= lastCell.closest('tr').dataset.endtime;
 	var table			= firstCell.closest('table');
-	var date			= table.rows[0].cells[first_cell.cellIndex].dataset.isodate;
+	var date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 	
 	//Fill the modal values
 	modal.querySelector('[name="schedule_id"]').value		= table.dataset["id"];
@@ -231,7 +236,7 @@ async function editTimeSlot(selected){
 		modal.querySelector('[name="endtime"]').value			= endTime;
 
 		//Fill locationfield
-		var locationtText = first_cell.querySelector('.location').textContent;
+		var locationtText = firstCell.querySelector('.location').textContent;
 		if(locationtText != 'Add location'){
 			modal.querySelector('[name="location"]').value			= locationtText;
 		}
@@ -449,8 +454,11 @@ document.addEventListener('change', function(event){
 
 		target.closest('form').querySelector('[name="target_id"]').value	= userid;
 	}else if(target.name == 'host'){
-		let userId	= target.list.querySelector(`[value="${target.value}"]`).dataset.userid;
-		console.log(userId);
+		let host	= target.list.querySelector(`[value="${target.value}"]`);
+		let userId	= '';
+		if(host != null){
+			userId	= host.dataset.userid;
+		}
 
 		target.closest('form').querySelector('[name="host_id"]').value	= userId;
 	}

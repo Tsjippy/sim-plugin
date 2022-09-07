@@ -87,7 +87,9 @@ add_action( 'rest_api_init', function () {
 				// Get the picture
 				$result['picture']	= get_the_post_thumbnail_url($frontEndContent->postId, 'full');
 
-				$result['html'] = $html;
+				global $shortcode_tags;
+				$shortcode_tags['ultimate_maps'];
+				$result['html'] = do_shortcode($html);
 
 				$result['url']	= get_permalink();
 

@@ -176,7 +176,7 @@ class Schedules{
 			<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule'>
 				<thead>
 					<tr>
-						<th>Dates</th>
+						<th class='sticky'>Dates</th>
 						<?php
 						$date		= $schedule->startdate;
 						while(true){
@@ -484,7 +484,7 @@ class Schedules{
 			//Show the row if we can see all rows or the row is a mealschedule row
 			if(!$onlyMeals || $mealScheduleRow){
 				$html  .= "<tr class='table-row' data-starttime='$startTime' data-endtime='$endTime'>";
-					$html 	.= "<td $extra><b>$description</b></td>";
+					$html 	.= "<td $extra class='sticky'><b>$description</b></td>";
 					$html	.= $cells;
 				$html .= "</tr>";
 			}
@@ -551,6 +551,7 @@ class Schedules{
 				<form action="" method="post">
 					<input type='hidden' name='schedule_id'>
 					<input type='hidden' name='olddate'>
+					<input type='hidden' name='host_id'>
 					
 					<h3>Add an orientation session</h3>
 

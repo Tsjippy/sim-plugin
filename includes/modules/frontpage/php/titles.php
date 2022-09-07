@@ -45,15 +45,19 @@ add_action('generate_after_header', function (){
 	//Or an archive page (category of news)
 	}elseif(is_category() || is_tax() || is_archive()){
 		$category	= get_queried_object();
-		$title		= $category->name;
-		if($title == 'event'){
+		$title		= ucfirst($category->name);
+		if($title == 'Event'){
 			$title = 'Calendar';
 		}elseif(is_tax('recipes')){
-			$title .= ' recipies';
+			$title .= ' Recipies';
 		}elseif(is_tax('events')){
-			$title .= ' events';
-		}elseif(is_tax('locations')){
+			$title .= ' Events';
+		}elseif(is_tax('Locations')){
 			//nothing
+		}elseif(is_post_type_archive('location')){
+			$title = 'Locations';
+		}elseif(is_post_type_archive('recipe')){
+			$title = 'Recipes';
 		}else{
 			$title .= " posts";
 		}
