@@ -7,13 +7,13 @@ set_error_handler(function ( $errno, $errstr, $errfile, $errline ) {
         $message = 'You have an error notice: "%s" in file "%s" at line: "%s".' ;
         $message = sprintf($message, $errstr, $errfile, $errline);
 
-        error_log(print_r($message,true));
-        error_log(print_r(wpse_288408_generate_stack_trace(), true));
+        error_log(print_r($message, true));
+        error_log(print_r(generateStackTrace(), true));
     }
 });
 
 // Function from php.net http://php.net/manual/en/function.debug-backtrace.php#112238
-function wpse_288408_generate_stack_trace() {
+function generateStackTrace() {
 
     $e = new \Exception();
 

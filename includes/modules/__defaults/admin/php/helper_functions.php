@@ -21,17 +21,9 @@ function updatePlugin($pluginFile){
 	wp_ob_end_flush_all();
 	flush();
 	$plugin_Upgrader->upgrade($pluginFile);
-	echo 'test1';
-	wp_ob_end_flush_all();
-	flush();
-	echo 'test2';
 	activate_plugin( $pluginFile);
 	wp_ob_end_flush_all();
 	flush();
-	echo 'test4';
-	wp_ob_end_flush_all();
-	flush();
-
 	printJs();
 }
 
