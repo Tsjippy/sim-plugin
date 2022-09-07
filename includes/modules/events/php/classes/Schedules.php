@@ -91,9 +91,6 @@ class Schedules{
 	function showschedules(){
 		$schedules	= '';
 		$form	= $this->addScheduleForm();
-		if(empty($form)){
-			return "There are currently no signup requests.";
-		}
 
 		foreach($this->schedules as $schedule){
 			$schedules	.= $this->showSchedule($schedule);
@@ -280,9 +277,9 @@ class Schedules{
 	function getPersonalOrientationEvents($schedule){
 		global $wpdb;
 
-		$query	= "SELECT * FROM {$this->events->tableName} WHERE `schedule_id` = '{$schedule->id}' AND onlyfor={$this->user->ID} AND starttime != $this->dinerTime";
+		$query	= "SELECT * FROM {$this->events->tableName} WHERE `schedule_id` = '{$schedule->id}' AND onlyfor={$this->user->ID} AND starttime != '$this->dinerTime'";
 		if($schedule->lunch){
-			$query	.= " AND starttime != $this->lunchStartTime";
+			$query	.= " AND starttime != '$this->lunchStartTime'";
 		}
 		return $wpdb->get_results($query);
 	}
@@ -606,55 +603,57 @@ class Schedules{
 	*/
 	function addScheduleForm(){
 		ob_start();
-		if($this->admin){
-			?>			
-			<h3 style='text-align:center;'>Add a schedule</h3>
-			<form id='add-schedule-form'>
-				<input type="hidden" name="target_id">
-				
-				<label>
-					<h4>Name of the person the schedule is for</h4>
-					<input type='text' name='target_name' list="website_users" required>
-				</label>
-				
-				<datalist id="website_users">
-					<?php
-					foreach(SIM\getUserAccounts(true) as $user){
-						echo "<option value='{$user->display_name}' data-value='{$user->ID}'></option>";
-					}
-					?>
-				</datalist>
-
-				<label>
-					<h4>Extra info or subtitle for this schedule</h4>
-					<input type='text' name='schedule_info'>
-				</label>
-				
-				<label>
-					<h4>Date the schedule should start</h4>
-					<input type='date' name='startdate' required>
-				</label>
-				
-				<label>
-					<h4>Date the schedule should end</h4>
-					<input type='date' name='enddate' required>
-				</label>
-				
-				<br>
-				<label class='option-label'>
-					<input type='checkbox' name='skiplunch' style="display: inline;width: auto;">
-					Do not include a lunch in the schedule
-				</label>
-				<br>
-				<label class='option-label'>
-					<input type='checkbox' name='skiporientation' style="display: inline;width: auto;">
-					Do not include an orientation schedule
-				</label><br>
-				
-				<?php
-				echo SIM\addSaveButton('add_schedule', 'Add schedule');
-			echo '</form>';
+		if(!$this->admin){
+			return '';
 		}
+
+		?>			
+		<h3 style='text-align:center;'>Add a schedule</h3>
+		<form id='add-schedule-form'>
+			<input type="hidden" name="target_id">
+			
+			<label>
+				<h4>Name of the person the schedule is for</h4>
+				<input type='text' name='target_name' list="website_users" required>
+			</label>
+			
+			<datalist id="website_users">
+				<?php
+				foreach(SIM\getUserAccounts(true) as $user){
+					echo "<option value='{$user->display_name}' data-value='{$user->ID}'></option>";
+				}
+				?>
+			</datalist>
+
+			<label>
+				<h4>Extra info or subtitle for this schedule</h4>
+				<input type='text' name='schedule_info'>
+			</label>
+			
+			<label>
+				<h4>Date the schedule should start</h4>
+				<input type='date' name='startdate' required>
+			</label>
+			
+			<label>
+				<h4>Date the schedule should end</h4>
+				<input type='date' name='enddate' required>
+			</label>
+			
+			<br>
+			<label class='option-label'>
+				<input type='checkbox' name='skiplunch' style="display: inline;width: auto;">
+				Do not include a lunch in the schedule
+			</label>
+			<br>
+			<label class='option-label'>
+				<input type='checkbox' name='skiporientation' style="display: inline;width: auto;">
+				Do not include an orientation schedule
+			</label><br>
+			
+			<?php
+			echo SIM\addSaveButton('add_schedule', 'Add schedule');
+		echo '</form>';
 		return ob_get_clean();
 	}
 }
