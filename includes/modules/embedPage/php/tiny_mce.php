@@ -3,6 +3,8 @@ namespace SIM\FORMS;
 use SIM;
 
 add_action('init', function(){
+	global $wp_scripts;
+	
 	// do not run during rest request
     if(SIM\isRestApiRequest()){
         return;
@@ -19,7 +21,7 @@ add_action('init', function(){
 		//Add extra variables to the main.js script
 		wp_localize_script( 'sim_script', 
 			'pageSelect', 
-			['html'=>SIM\pageSelect('page-selector')]
+			['html'=> SIM\pageSelect('page-selector')]
 		);
 
 		wp_localize_script( 'sim_admin_js', 

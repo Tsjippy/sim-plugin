@@ -442,22 +442,4 @@ class CreateEvents extends Events{
 			);
 		}
 	}
-
-	/**
-	 * Removes all events connected to an certain event post
-	 * @param  	int  $postId		Optional post id
-	*/
-	public function removeDbRows($postId = null){
-		global $wpdb; 
- 
-		if(!is_numeric($postId)){
-			$postId = $this->postId;
-		}
-
-		return $wpdb->delete(
-			$this->tableName,
-			['post_id' => $postId],
-			['%d']
-		);
-	}
 }

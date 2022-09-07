@@ -93,10 +93,14 @@ class DisplayFormResults extends SimForms{
 
 			$this->processSplittedData();
 		}
+
+		//Get personal visibility
+		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 		
 		if($wpdb->last_error !== ''){
 			SIM\printArray($wpdb->print_error());
 		}
+
 	}
 
 	/**
@@ -1213,10 +1217,7 @@ class DisplayFormResults extends SimForms{
 		do_action('sim_formtable_POST_actions');
 		
 		//Load js
-		wp_enqueue_script('sim_forms_table_script');
-
-		//Get personal visibility
-		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);	
+		wp_enqueue_script('sim_forms_table_script');	
 		
 		?>
 		<div class='form table-wrapper'>

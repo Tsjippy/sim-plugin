@@ -516,6 +516,7 @@ class Schedules{
 					<input type='hidden' name='schedule_id'>
 					<input type='hidden' name='date'>
 					<input type='hidden' name='starttime'>
+					<input type='hidden' name='host_id'>
 					<?php
 					echo SIM\userSelect('', true, true, '', 'host', [], '', [], 'list');
 					echo SIM\addSaveButton('add_host','Add host','update_schedule'); 

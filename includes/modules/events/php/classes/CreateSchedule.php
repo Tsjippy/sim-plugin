@@ -99,7 +99,12 @@ class CreateSchedule extends Schedules{
 			);
 			$postId 	= wp_insert_post( $post,true,false);
 			update_post_meta($postId, 'eventdetails', json_encode($event));
-			update_post_meta($postId,'onlyfor',$a['onlyfor']);
+			update_post_meta($postId, 'onlyfor', $a['onlyfor']);
+
+			// setting the eventdetails meta value also creates the event. Remove it
+			$events = new CreateEvents();
+			$events->postId	= $postId;
+			$events->removeDbRows();
 
 			foreach($a['onlyfor'] as $userId){
 				if(is_numeric($userId)){
@@ -257,8 +262,8 @@ class CreateSchedule extends Schedules{
 		$this->scheduleId	= $_POST['schedule_id'];
 		$schedule			= $this->findScheduleById($this->scheduleId);
 
-		if(is_numeric($_POST['host'])){
-			$this->hostId	= $_POST['host'];
+		if(is_numeric($_POST['host_id'])){
+			$this->hostId	= $_POST['host_id'];
 			$host			= get_userdata($this->hostId);
 			$partnerId		= SIM\hasPartner($this->hostId);
 

@@ -78,14 +78,6 @@ class FrontEndContent{
 		if($this->post->post_status == 'trash'){
 			echo "<div class='warning'>This {$this->postType} has been deleted.<br>You can republish if that should not be the case.</div>";
 		}
-		
-		//Add extra variables to the main.js script
-		wp_localize_script( 'sim_script', 
-			'frontendpost', 
-			array( 
-				'postType'			=> $this->postType,
-			) 
-		);
 
 		?>
 		<div id="frontend_upload_form" <?php if($hide){ echo 'class="hidden"';}?>>			

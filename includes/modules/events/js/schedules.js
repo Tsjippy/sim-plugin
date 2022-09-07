@@ -307,9 +307,9 @@ function loadHostFormdata(target){
 	var formData		= new FormData();
 	formData.append('date',date);
 	if(cell.dataset.host != null){
-		formData.append('host',cell.dataset.host);
+		formData.append('host', cell.dataset.host);
 	}else{
-		formData.append('host',sim.userId);
+		formData.append('host', sim.userId);
 	}
 	
 	formData.append('starttime', startTime);
@@ -407,12 +407,22 @@ document.addEventListener('click',function(event){
 		event.stopPropagation();
 
 		addSchedule(target);
-	}
-
-	if(target.classList.contains('remove_schedule')){
+	}else if(target.name == 'publish_schedule'){
 		event.stopPropagation();
 
-		removeSchedule(target);
+		publishSchedule(target);
+	}else if(target.name == 'add_recipe_keyword'){
+		event.stopPropagation();
+
+		submitRecipe(target);
+	}else if(target.name == 'add_host' || target.name == 'add_timeslot'){
+		event.stopPropagation();
+		
+		addHost(target);
+	}
+	
+	if(target.classList.contains('keyword')){
+		showRecipeModal(target);
 	}
 
 	//publish the schedule
@@ -422,36 +432,27 @@ document.addEventListener('click',function(event){
 		ShowPublishScheduleModal(target);
 	}
 
-	if(target.name == 'publish_schedule'){
+	if(target.classList.contains('remove_schedule')){
 		event.stopPropagation();
 
-		publishSchedule(target);
-	}
-	
-	if(target.classList.contains('keyword')){
-		showRecipeModal(target);
-	}
-
-	if(target.name == 'add_recipe_keyword'){
-		event.stopPropagation();
-
-		submitRecipe(target);
-	}
-
-	if(target.name == 'add_host' || target.name == 'add_timeslot'){
-		event.stopPropagation();
-		
-		addHost(target);
+		removeSchedule(target);
 	}
 });
 
-document.addEventListener('change',function(event){
+document.addEventListener('change', function(event){
+
 	target = event.target;
+
 	//Direct table actions
 	if(target.name=='target_name'){
-		var userid = target.list.querySelector("[value='"+target.value+"' i]").dataset.value;
+		var userid = target.list.querySelector(`[value='${target.value}' i]`).dataset.value;
 
 		target.closest('form').querySelector('[name="target_id"]').value	= userid;
+	}else if(target.name == 'host'){
+		let userId	= target.list.querySelector(`[value="${target.value}"]`).dataset.userid;
+		console.log(userId);
+
+		target.closest('form').querySelector('[name="host_id"]').value	= userId;
 	}
 });
 

@@ -32,6 +32,12 @@ html body:not(.home) #masthead{
 
 	.inside-navigation{
 		justify-content: normal !important;
+		max-height: 80px;
+	}
+
+	.menu-bar-items{
+		position: absolute;
+    	right: -50px;
 	}
 
 	/* COlor the search image*/
@@ -95,11 +101,6 @@ html body:not(.home) #masthead{
 			font: 10px Arial, sans-serif;
 		}
 	}
-}
-
-/* Max width of the menu to allow for the search icon*/
-.logged-in #primary-menu{
-	width: 91%;
 }
 
 /* background of submenus*/
