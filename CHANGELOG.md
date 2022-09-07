@@ -11,6 +11,7 @@
 - issue with private event creation
 - alwasy show 'reset visibility' button
 when needed
+- issue with non admin submitting host
 
 ## [2.13.8] - 2022-09-06
 
