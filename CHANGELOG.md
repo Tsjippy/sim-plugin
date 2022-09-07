@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.14.0] - 2022-09-07
+
+
+### Fixed
 - reset update info on manual info check
 - issue with private event creation
 - alwasy show 'reset visibility' button
