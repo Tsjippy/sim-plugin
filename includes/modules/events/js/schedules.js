@@ -309,7 +309,7 @@ function loadHostFormdata(target){
 	if(cell.dataset.host != null){
 		formData.append('host', cell.dataset.host);
 	}else{
-		formData.append('host', sim.userId);
+		formData.append('host_id', sim.userId);
 	}
 	
 	formData.append('starttime', startTime);
@@ -490,13 +490,13 @@ function afterSelect(e, selected, _unselected){
 	target = e.target;
 
 	//remove a meal host
-	if(target.matches('.meal.selected')){
+	if(target.matches('.meal.selected.own, .meal.selected.admin')){
 		removeHost(target);
 	//Add a host
 	}else if(target.matches('.meal.admin')){
 		showAddHostModal();
 	//orientation slot
-	}else if(target.matches('.meal:not(.admin)')){
+	}else if(target.matches('.meal:not(.admin, .selected)')){
 		addCurrentUserAsHost(target);
 	}else{
 		checkIfValidSelection(target, selected, e); 

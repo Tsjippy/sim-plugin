@@ -321,8 +321,10 @@ class Schedules{
 			$class 			.= ' selected';
 			$partnerId 		= SIM\hasPartner($this->user->ID);
 			//Host is current user or the spouse
-			if($hostId == $this->user->ID || $hostId == $partnerId){				
-				$menu		= get_post_meta($event->post_id,'recipe_keyword',true);
+			if($hostId == $this->user->ID || $hostId == $partnerId){	
+				$class 			.= ' own';
+							
+				$menu		= get_post_meta($event->post_id, 'recipe_keyword', true);
 				if(empty($menu)){
 					$menu	= 'Enter recipe keyword';
 				}

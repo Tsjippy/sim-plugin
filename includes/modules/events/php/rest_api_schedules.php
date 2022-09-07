@@ -97,9 +97,6 @@ add_action( 'rest_api_init', function () {
 					'required'	=> true,
 					'validate_callback' => 'is_numeric'
 				),
-				'host'		=> array(
-					'required'	=> true,
-				),
 				'date'		=> array(
 					'required'	=> true,
 					'validate_callback' => function($param){
