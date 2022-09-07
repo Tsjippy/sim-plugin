@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug in show_children validation
 
 ## [2.14.1] - 2022-09-07
 
