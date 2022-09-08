@@ -63,6 +63,23 @@ async function removeSchedule(target){
 	}
 }
 
+function applyRowSpan(target){
+	if(target.rowSpan > 1){
+		var row		= target.closest('tr');
+		var index	= target.cellIndex;
+		//Loop over the next cells to add the hidden attribute
+		for (var i = 1; i < target.rowSpan; i++) {
+			row = row.nextElementSibling;
+			row.cells[index].classList.add('hidden');
+		}
+	}
+}
+
+function removeRowSpan(target){
+	document.querySelectorAll('.ui-selected').forEach(el=>el.classList.remove('ui-selected', 'active', 'hidden'));
+	target.rowSpan = 1;
+}
+
 //shows the modal to select a user as host
 function showAddHostModal(){
 	target.classList.add('active');
@@ -118,16 +135,6 @@ async function addCurrentUserAsHost(target){
 function addHostHtml(response){
 	var targetCell			= document.querySelector('td.active');
 	targetCell.classList.remove('active');
-
-	if(targetCell.rowSpan>1){
-		var row		= targetCell.closest('tr');
-		var index	= targetCell.cellIndex;
-		//Loop over the next cells to add the hidden attribute
-		for (var i = 1; i < targetCell.rowSpan; i++) {
-			row = row.nextElementSibling;
-			row.cells[index].classList.add('hidden');
-		}
-	}
 
 	targetCell.outerHTML	= response.html;
 
@@ -195,6 +202,8 @@ function showTimeslotModal(selected){
 
 	firstCell.classList.add('active');
 	firstCell.rowSpan	= document.querySelectorAll('.ui-selected').length;
+	applyRowSpan(firstCell);
+	firstCell.style.display	= '';
 	var endTime			= lastCell.closest('tr').dataset.endtime;
 	var table			= firstCell.closest('table');
 	var date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
@@ -407,7 +416,7 @@ document.addEventListener("DOMContentLoaded",function() {
 
 document.addEventListener('click',function(event){
 	target = event.target;
-	
+
 	if(target.name == 'add_schedule'){
 		event.stopPropagation();
 
@@ -424,6 +433,8 @@ document.addEventListener('click',function(event){
 		event.stopPropagation();
 		
 		addHost(target);
+	}else if(target.matches('.close') && target.closest('.modal') != null && target.closest('.modal').attributes.name.value == 'add_session'){
+		removeRowSpan(document.querySelector('td.active'));
 	}
 	
 	if(target.classList.contains('keyword')){
@@ -435,9 +446,7 @@ document.addEventListener('click',function(event){
 		event.stopPropagation();
 
 		ShowPublishScheduleModal(target);
-	}
-
-	if(target.classList.contains('remove_schedule')){
+	}else if(target.classList.contains('remove_schedule')){
 		event.stopPropagation();
 
 		removeSchedule(target);
