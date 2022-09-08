@@ -46,7 +46,7 @@ try:
 
     # Update in changelog
     changelog   = changelog.replace(total, newTotal)
-except:
+except Exception as e:
     pass
 
 # Add new unreleased section
