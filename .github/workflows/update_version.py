@@ -8,7 +8,10 @@ txt = Path('sim-plugin.php').read_text()
 newVersion  = sys.argv[1]
 
 # get old version
-oldVersion = re.search(r'\* Version:[ \t]*([\d.]+)', txt).group(1)
+try:
+    oldVersion = re.search(r'\* Version:[ \t]*([\d.]+)', txt).group(1)
+except Exception as e:
+    exit()
 
 # replace with new
 txt = txt.replace(oldVersion, newVersion)
