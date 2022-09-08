@@ -16,7 +16,7 @@ async function addSchedule(target){
 		
 		Main.displayMessage(response.message);
 
-		add_selectable();
+		addSelectable();
 	}
 }
 
@@ -63,15 +63,16 @@ async function removeSchedule(target){
 	}
 }
 
-function applyRowSpan(target){
-	if(target.rowSpan > 1){
+function applyRowSpan(target, count){
+	if(count > 1){
 		var row		= target.closest('tr');
 		var index	= target.cellIndex;
 		//Loop over the next cells to add the hidden attribute
-		for (var i = 1; i < target.rowSpan; i++) {
+		for (var i = 1; i < count; i++) {
 			row = row.nextElementSibling;
 			row.cells[index].classList.add('hidden');
 		}
+		target.rowSpan	= count;
 	}
 }
 
@@ -89,7 +90,7 @@ function showAddHostModal(){
 	var startTime										= target.closest('tr').dataset.starttime;
 	var modal											= target.closest('.schedules_wrapper').querySelector('[name="add_host"]');
 	// Clear
-	modal.querySelectorAll('input:not([type="hidden"])').forEach(el=>el.value='')
+	modal.querySelectorAll('input:not([type="hidden"])').forEach(el=>el.value='');
 
 	// Add new values
 	modal.querySelector('[name="schedule_id"]').value	= table.dataset["id"];
@@ -135,14 +136,13 @@ async function addCurrentUserAsHost(target){
 function addHostHtml(response){
 	var targetCell			= document.querySelector('td.active');
 	targetCell.classList.remove('active');
-
 	targetCell.outerHTML	= response.html;
 
 	Main.hideModals();
 
-	add_selectable();
-
 	Main.displayMessage(response.message);
+
+	addSelectable();
 }
 
 // Remove a host
@@ -201,13 +201,17 @@ function showTimeslotModal(selected){
 	var lastCell		= selected[selected.length-1].node;
 
 	firstCell.classList.add('active');
-	firstCell.rowSpan	= document.querySelectorAll('.ui-selected').length;
-	applyRowSpan(firstCell);
-	firstCell.style.display	= '';
+	let rowCount		= document.querySelectorAll('.ui-selected').length;
+	applyRowSpan(firstCell, rowCount);
+	Main.showLoader(firstCell.firstChild);
+
 	var endTime			= lastCell.closest('tr').dataset.endtime;
 	var table			= firstCell.closest('table');
 	var date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 	
+	// Clear
+	modal.querySelectorAll('input:not([type="hidden"])').forEach(el=>el.value='')
+
 	//Fill the modal values
 	modal.querySelector('[name="schedule_id"]').value		= table.dataset["id"];
 	modal.querySelector('[name="date"]').value				= date;
@@ -385,11 +389,15 @@ function hideRows() {
 	});
 }
 
-function add_selectable(){
+function addSelectable(){
 	//Add selectable on non-mobile devices
 	//if(!isMobileDevice()){
 		//loop over all the schedule tables
 		document.querySelectorAll('.sim-table.schedule').forEach(function(table){
+			if(table._selectable != undefined){
+				table._selectable.destroy();
+			}
+
 			//Load selectable and attach it to the table
 			table._selectable = new Selectable({
 			   filter:		".orientation.admin",
@@ -411,7 +419,7 @@ function add_selectable(){
 document.addEventListener("DOMContentLoaded",function() {
 	console.log("Schedule.js loaded");
 	
-	add_selectable();
+	addSelectable();
 });
 
 document.addEventListener('click',function(event){

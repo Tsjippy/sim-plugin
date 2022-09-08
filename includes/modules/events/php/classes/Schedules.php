@@ -586,7 +586,7 @@ class Schedules{
 						?>
 						<label for="host"><h4>Who is in charge</h4></label>
 						<?php
-						echo SIM\userSelect('', true, false, '', 'admin_host', [], '', [], 'list');
+						echo SIM\userSelect('', true, false, '', 'host', [], '', [], 'list', 'admin_host');
 					}
 					
 					echo SIM\addSaveButton('add_timeslot','Add time slot','update_event add_schedule_row');

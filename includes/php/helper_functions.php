@@ -46,7 +46,7 @@ function updateFamilyMeta($userId, $metaKey, $value){
  * 
  * @return	string						The html
 */
-function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select'){
+function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select', $listId=''){
 	global $wp_scripts;
 	
 	wp_enqueue_script('sim_user_select_script');
@@ -114,7 +114,12 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 		$html .= '</select>';
 	}elseif($type == 'list'){
 		$value	= '';
-		$datalist = "<datalist id='$id' class='$class user_selection'>";
+
+		if(empty($listId)){
+			$listId = $id;
+		}
+
+		$datalist = "<datalist id='$listId' class='$class user_selection'>";
 			foreach($users as $key=>$user){
 				if(empty($user->first_name) || empty($user->last_name)){
 					$name	= $user->display_name;
@@ -130,7 +135,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 			}
 		$datalist .= '</datalist>';
 
-		$html	.= "<input type='text' name='$id' list='$id' value='$value'>";
+		$html	.= "<input type='text' name='$id' list='$listId' value='$value'>";
 		$html	.= $datalist;
 	}
 	
