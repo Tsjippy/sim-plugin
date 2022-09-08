@@ -364,11 +364,12 @@ class Schedules{
 		}else{
 			$hostId			= $event->organizer_id;
 			if(is_numeric($hostId)){
-				$hostData	= "data-host=$hostId";
+				$dataset	= "data-host='".get_userdata($hostId)->display_name."' data-host_id='$hostId'";
 			}else{
-				$hostData	= "";
+				$dataset	= "";
 			}
 			$title		= get_the_title($event->post_id);
+			$dataset	.= " data-subject='".explode(' with ', $title)[0]."'";
 			$url		= get_permalink($event->post_id);
 			$date		= $event->startdate;
 			$endTime	= $event->endtime;
@@ -383,6 +384,7 @@ class Schedules{
 				$cellText .= "<span class='location timeslot'>Add location</span>";
 			}else{
 				$cellText .= "<span class='timeslot'>At <span class='location'>{$event->location}</span></span>";
+				$dataset	.= " data-location='{$event->location}'";
 			}
 
 			////check how many rows this event should span
@@ -404,7 +406,7 @@ class Schedules{
 			$class .= ' admin';
 		}
 		
-		return "<td class='$class' $rowSpan $hostData>$cellText</td>";
+		return "<td class='$class' $rowSpan $dataset>$cellText</td>";
 	}
 
 	/**

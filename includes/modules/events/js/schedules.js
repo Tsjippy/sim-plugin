@@ -203,7 +203,11 @@ function showTimeslotModal(selected){
 	firstCell.classList.add('active');
 	let rowCount		= document.querySelectorAll('.ui-selected').length;
 	applyRowSpan(firstCell, rowCount);
-	Main.showLoader(firstCell.firstChild);
+
+	// Only show loader when the cell is empty
+	if(!firstCell.matches('.selected')){
+		Main.showLoader(firstCell.firstChild);
+	}
 
 	var endTime			= lastCell.closest('tr').dataset.endtime;
 	var table			= firstCell.closest('table');
@@ -220,6 +224,27 @@ function showTimeslotModal(selected){
 	modal.querySelector('[name="endtime"]').value			= endTime;
 	modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
 	modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
+
+	let hostId			= firstCell.dataset.host_id;
+	let subject			= firstCell.dataset.subject;
+	let location		= firstCell.dataset.location;
+	let hostName		= firstCell.dataset.host;
+
+	if(hostId	!= undefined){
+		modal.querySelector('[name="host_id"]').value			= hostId;
+	}
+
+	if(subject	!= undefined){
+		modal.querySelector('[name="subject"]').value			= subject;
+	}
+
+	if(location	!= undefined){
+		modal.querySelector('[name="location"]').value			= location;
+	}
+
+	if(hostName	!= undefined){
+		modal.querySelector('[name="host"]').value				= hostName;
+	}
 	
 	modal.classList.remove('hidden');
 }
@@ -240,33 +265,9 @@ async function editTimeSlot(selected){
 	if (answer.isConfirmed) {
 		// Show modal and prefill the default fields
 		showTimeslotModal(selected);
-
-		// also prefill the other fields
-		var modal 		= document.querySelector('[name="add_session"]');
-		var endRow		= target.closest('tr').rowIndex + target.rowSpan - 1;
-		var endTime		= target.closest('table').rows[endRow].dataset.firstCell;			
-		modal.querySelector('[name="subject"]').value			= firstCell.querySelector('.subject').textContent;
-		modal.querySelector('[name="endtime"]').value			= endTime;
-
-		//Fill locationfield
-		var locationtText = firstCell.querySelector('.location').textContent;
-		if(locationtText != 'Add location'){
-			modal.querySelector('[name="location"]').value			= locationtText;
-		}
-		
-		//Fill userfield
-		var userid = firstCell.dataset.host;
-		if(userid != null){
-			let el = modal.querySelector('[name="host"]');
-			if(el != null){
-				el.value	= userid;
-			}
-			el.selectedOptions[0].defaultSelected=true;
-			el._niceselect.update();
-			el.selectedOptions[0].defaultSelected=false;
-		}
 		
 		//change button text
+		var modal 			= document.querySelector('[name="add_session"]');
 		modal.querySelector('[name="add_timeslot"]').textContent	= 'Update time slot';
 	//add new rule after this one
 	}else if (answer.isDenied) {
