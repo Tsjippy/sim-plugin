@@ -63,8 +63,7 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 
 }, 10, 3);
 
-add_filter( 'pre_set_site_transient_update_plugins', __NAMESPACE__.'checkForUpdate');
-function checkForUpdate( $transient) {
+add_filter( 'pre_set_site_transient_update_plugins', function($transient){
 	$plugin = explode('/', PLUGIN)[0];
 
 	if( !function_exists('get_plugin_data') ){
@@ -99,7 +98,7 @@ function checkForUpdate( $transient) {
 	}
 
 	return $transient;
-}
+});
 
 /**
  * Retrieves the latest github release from cache or github

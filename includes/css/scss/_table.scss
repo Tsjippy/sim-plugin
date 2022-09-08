@@ -173,7 +173,7 @@
 }
 
 @media (min-width: 801px){
-	td.sticky{
+	td.sticky, th.sticky{
 		display: table-cell;
 		position: sticky;
 		left:0;

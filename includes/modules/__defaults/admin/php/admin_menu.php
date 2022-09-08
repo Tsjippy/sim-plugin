@@ -291,53 +291,8 @@ function mainMenu(){
 	
 	ob_start();
 
-	if(isset($_GET['message'])){
-		echo "<div class='success'>".sanitize_text_field($_GET['message'])."</div>";
-	}
-
-	if(current_user_can('update_plugins')){
-		if(isset($_GET['update'])){
-			$updates	= SIM\checkForUpdate( new \stdClass() );
-			if(is_wp_error($updates)){
-				echo "<div class='error'>".$updates->get_error_message()."</div>";
-			}else{
-				if($_GET['update']	== 'check'){
-					// Reset updates cache
-					delete_option('_site_transient_update_plugins');
-					
-					if(isset($updates->response[PLUGIN])){
-						$url	= add_query_arg(['update' => 'yes'], SIM\currentUrl());
-						echo "<a href='$url' class='button'>Update to version ".$updates->response[PLUGIN]->new_version."</a><br><br>";
-					}else{
-						echo "<div class='warning'>No update available<br></div>";
-						unset($_GET['update']);
-					}
-				}elseif(!empty($updates->response) && isset($updates->response[PLUGIN])){
-					wp_ob_end_flush_all();
-					flush();
-					updatePlugin(PLUGIN);
-					wp_ob_end_flush_all();
-					flush();
-					echo "<script type='text/javascript'>";
-						echo "location.href=location.href+'&message=Updated+succesfull+to+version+".$updates->response[PLUGIN]->new_version."'";
-					echo "</script>";
-					wp_ob_end_flush_all();
-					flush();
-					echo 'test6';
-					wp_ob_end_flush_all();
-					flush();
-				}
-			}		
-		}
-
-		if(!isset($_GET['update'])){
-			$url	= add_query_arg(['update' => 'check'], SIM\currentUrl());
-			echo "<a href='$url' class='button'>Check for update</a><br><br>";
-		}
-	}
 	?>
 	<div>
-		
 		<strong>Current active modules</strong><br>
 		<ul class="sim-list">
 		<?php

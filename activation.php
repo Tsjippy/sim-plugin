@@ -42,8 +42,43 @@ add_action( 'activated_plugin', function ( $plugin ) {
 
 //Add setting link
 add_filter("plugin_action_links_".PLUGIN, function ($links) { 
+    // Settings Link
     $url            = admin_url( 'admin.php?page=sim' );
-    $settings_link  = "<a href='$url'>Settings</a>"; 
-    array_unshift($links, $settings_link); 
+    $link           = "<a href='$url'>Settings</a>"; 
+    array_unshift($links, $link); 
+
+    // Details link
+    $url            = admin_url( 'plugin-install.php?tab=plugin-information&plugin=sim-plugin&section=changelog' );
+    $link  = "<a href='$url'>Details</a>"; 
+    array_unshift($links, $link); 
+
+    // Update links
+    if(isset($_GET['update'])){
+        if($_GET['update'] == 'check'){
+            // Reset updates cache
+            delete_site_transient( 'update_plugins' );
+            delete_transient('sim-git-release');
+
+            wp_update_plugins();
+
+            $updates    = get_site_transient( 'update_plugins' );
+            if(is_wp_error($updates)){
+                $link = "<div class='error'>".$updates->get_error_message()."</div>";
+            }elseif(isset($updates->response[PLUGIN])){
+                $url            = admin_url( 'plugins.php?update=update' );
+                $link  = "<a href='$url'>Update to ".$updates->response[PLUGIN]->new_version."</a>"; 
+            }else{
+                $link  = "";
+            }
+        }else{
+            \Plugin_Upgrader::upgrade(PLUGIN);
+            $link  = "Upgraded";
+        }
+    }else{
+        $url            = admin_url( 'plugins.php?update=check' );
+        $link  = "<a href='$url'>Check for update</a>"; 
+    }
+    array_unshift($links, $link);
+
     return $links; 
 });

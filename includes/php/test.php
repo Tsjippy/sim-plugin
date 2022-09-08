@@ -5,33 +5,7 @@ namespace SIM;
 add_shortcode("test",function ($atts){
 	global $Modules;
 
-	$missingPages	= [];
-	foreach(get_users() as $user){
-		$jobs=[];
-		$userMinistries 	= (array)get_user_meta( $user->ID, "user_ministries", true);
-
-		foreach($userMinistries as $key=>$ministry){
-			if($key == "Other"){
-				$jobs['other']	= $ministry;
-			}else{
-				$key	= str_replace('_', ' ', $key);
-				$page	= get_page_by_title($key, 'OBJECT', 'location');
-				if(empty($page)){
-					if(!in_array($key, $missingPages)){
-						$missingPages[]	= $key;
-					}
-				}else{
-					$jobs[$page->ID]	= $ministry;
-				}
-			}
-		}
-
-		cleanUpNestedArray($jobs);
-
-		update_user_meta( $user->ID, "jobs", $jobs);
-	}
-
-	printArray($missingPages);
+	wp_update_plugins();
 });
 
 // turn off incorrect error on localhost
