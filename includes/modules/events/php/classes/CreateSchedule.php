@@ -275,7 +275,7 @@ class CreateSchedule extends Schedules{
 				return new WP_Error('No permission', $this->noPermissionText);
 			}
 			
-			if($partnerId){
+			if($partnerId && !isset($_POST['subject'])){
 				$hostName		= $host->last_name.' family';
 			}else{
 				$hostName		= $host->display_name;
