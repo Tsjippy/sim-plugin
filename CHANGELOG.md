@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- check for updates from plugins page
 
 ### Changed
+
+### Fixed
+
+## [2.14.3] - 2022-09-08
+
+
+### Added
+- check for updates from plugins page
 
 ### Fixed
 - force update
