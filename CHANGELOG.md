@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- check for updates from plugins page
 
 ### Changed
 
