@@ -7,7 +7,9 @@
 ### Changed
 
 ### Fixed
-- issues with schedules
+
+## [2.14.6] - 2022-09-08
+
 
 ## [2.14.5] - 2022-09-08
 
