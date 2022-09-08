@@ -175,7 +175,7 @@ function displayChildren($attributes) {
 			$url	= get_permalink(($parentId));
 			$title	= "<h4><a href='$url'>".get_the_title($parentId)."</a></h4>";
 		}
-		return "<div class='childpost'>$title<ul>$html</ul></div>";
+		return "<style>.expand-children{font-size: 8px;}</style><div class='childpost'>$title<ul>$html</ul></div>";
 	}
 	
 	if ( function_exists( 'get_current_screen' ) && get_current_screen()->is_block_editor()){

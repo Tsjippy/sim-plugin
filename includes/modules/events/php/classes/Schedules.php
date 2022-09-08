@@ -168,12 +168,12 @@ class Schedules{
 				</div>
 			</div>
 			<h3 class="table_title">
-				Schedule for <?php echo $schedule->name;?><br>
-				<?php echo $schedule->info;?>
+				Schedule for <?php echo $schedule->name;?>
 			</h3>
+			<h3 class="table_title sub-title"><?php echo $schedule->info;?></h3>
 			<p>Click on an available date to indicate you want to host.<br>Click on any date you are subscribed for to unsubscribe</p>
 
-			<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule'>
+			<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule' data-lunch='<?php echo $schedule->lunch ? 'true' : 'false';?>'>
 				<thead>
 					<tr>
 						<th class='sticky'>Dates</th>
@@ -206,6 +206,7 @@ class Schedules{
 			if($this->admin){
 				?>
 				<div class='schedule_actions'>
+					<button type='button' class='button schedule_action edit_schedule' data-schedule_id='<?php echo $schedule->id;?>'>Edit</button>
 					<button type='button' class='button schedule_action remove_schedule' data-schedule_id='<?php echo $schedule->id;?>'>Remove</button>
 					<?php
 					//schedule is not yet set.
@@ -596,8 +597,22 @@ class Schedules{
 				</form>
 			</div>
 		</div>
-		
+
 		<?php
+		if($this->admin){
+			?>
+			<!-- Edit schedule modal -->
+			<div id='edit_schedule_modal' class="modal hidden">
+				<div class="modal-content">
+					<span class="close">&times;</span>
+					<?php
+						echo $this->addScheduleForm(true);
+					?>
+				</div>
+			</div>
+			
+		<?php
+		}
 		return ob_get_clean();
 	}
 
@@ -606,7 +621,7 @@ class Schedules{
 	 * 
 	 * @return 	string		the form html
 	*/
-	function addScheduleForm(){
+	function addScheduleForm($update=false){
 		ob_start();
 		if(!$this->admin){
 			return '';
@@ -616,6 +631,7 @@ class Schedules{
 		<h3 style='text-align:center;'>Add a schedule</h3>
 		<form id='add-schedule-form'>
 			<input type="hidden" name="target_id">
+			<input type="hidden" name="update" value="<?php echo $update;?>">
 			
 			<label>
 				<h4>Name of the person the schedule is for</h4>
@@ -657,7 +673,11 @@ class Schedules{
 			</label><br>
 			
 			<?php
-			echo SIM\addSaveButton('add_schedule', 'Add schedule');
+			$action = 'Add';
+			if($update){
+				$action = 'Update';
+			}
+			echo SIM\addSaveButton('add_schedule', "$action schedule");
 		echo '</form>';
 		return ob_get_clean();
 	}

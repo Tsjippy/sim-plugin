@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create a button
     button = document.createElement('button');
-    button.innerText = '+';
+    button.innerHTML = '&#x25BC;';
     button.classList.add('button');
     button.classList.add('small');
     button.classList.add('expand-children');
@@ -18,17 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Expand al ancestors and children of the current page
-    document.querySelectorAll('.childpost .current_page_ancestor > .expand-children, .current_page_item > .children.hidden').forEach(el=>el.textContent = '-');
+    //document.querySelectorAll('.childpost .current_page_ancestor > .expand-children, .current_page_item > .children.hidden').forEach(el=>el.textContent = '-');
 
     // Add event listeners to the buttons
     document.addEventListener('click', ev=>{
         if(ev.target.matches('.expand-children')){
             ev.target.closest('li').querySelector('.children').classList.toggle('hidden');
-            if(ev.target.textContent == '-'){
-                ev.target.textContent = '+'
-            }else{
-                ev.target.textContent = '-'
-            }
         }
     });
 })

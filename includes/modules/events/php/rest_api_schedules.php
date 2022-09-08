@@ -11,7 +11,7 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$schedule		= new CreateSchedule();
-				return $schedule->addSchedule();
+				return $schedule->addSchedule($_POST['update']);
 			},
 			'permission_callback' 	=> function(){
 				$schedule	= new CreateSchedule();

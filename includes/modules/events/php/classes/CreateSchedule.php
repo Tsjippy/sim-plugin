@@ -121,12 +121,12 @@ class CreateSchedule extends Schedules{
 	 * 
 	 * @return array	text, new schedules list in html
 	*/
-	public function addSchedule(){
+	public function addSchedule($update=false){
 		global $wpdb;
 	
 		$name		= sanitize_text_field($_POST['target_name']);
 		//check if schedule already exists
-		if($wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `name` = '$name'") != null){
+		if(!$update && $wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `name` = '$name'") != null){
 			return new WP_Error('schedule', "A schedule for $name already exists!");
 		}
 
@@ -161,24 +161,36 @@ class CreateSchedule extends Schedules{
 			return new WP_Error('schedule', "Ending date cannot be before starting date");
 		}
 
-		$wpdb->insert(
-			$this->tableName, 
-			array(
-				'target'		=> $_POST['target_id'],
-				'name'			=> $name,
-				'info'			=> $info,
-				'lunch'			=> $lunch,
-				'orientation'	=> $orientation,
-				'startdate'		=> $startDateStr,
-				'enddate'		=> $endDateStr,
-				'starttime'		=> $startTime,
-				'endtime'		=> $this->dinerTime,
-			)
+		$arg	= array(
+			'target'		=> $_POST['target_id'],
+			'name'			=> $name,
+			'info'			=> $info,
+			'lunch'			=> $lunch,
+			'orientation'	=> $orientation,
+			'startdate'		=> $startDateStr,
+			'enddate'		=> $endDateStr,
+			'starttime'		=> $startTime,
+			'endtime'		=> $this->dinerTime,
 		);
+
+		if($update){
+			$wpdb->update(
+				$this->tableName, 
+				$arg,
+				array( 'ID' => $_POST['target_id'] )
+			);
+			$action	= 'updated';
+		}else{
+			$wpdb->insert(
+				$this->tableName, 
+				$arg
+			);
+			$action	= 'added';
+		}
 		
 		$this->getSchedules();
 		return [
-			'message'		=> "Succesfully added a schedule for $name",
+			'message'		=> "Succesfully $action a schedule for $name",
 			'html'			=> $this->showschedules()
 		];
 	}

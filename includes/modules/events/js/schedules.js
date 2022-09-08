@@ -417,6 +417,21 @@ function addSelectable(){
 	hideRows();
 }
 
+function showEditScheduleModal(target){
+	let modal	= document.getElementById('edit_schedule_modal');
+	let wrapper	= target.closest('.schedules_div');
+	let table	= wrapper.querySelector('table.schedule');
+	modal.querySelector(`[name="target_id"]`).value			= table.dataset.id;
+	modal.querySelector(`[name="target_name"]`).value		= table.dataset.target;
+	modal.querySelector(`[name="schedule_info"]`).value		= wrapper.querySelector('.table_title.sub-title').textContent;
+	modal.querySelector(`[name="startdate"]`).value			= table.tHead.querySelector('tr').cells[1].dataset.isodate;
+	modal.querySelector(`[name="enddate"]`).value			= table.tHead.querySelector('tr').cells[table.tHead.querySelector('tr').cells.length-1].dataset.isodate;
+	modal.querySelector(`[name="skiplunch"]`).checked		= table.dataset.lunch;
+	modal.querySelector(`[name="skiporientation"]`).checked	= table.rows.length<3;
+
+	modal.classList.remove('hidden');
+}
+
 document.addEventListener("DOMContentLoaded",function() {
 	console.log("Schedule.js loaded");
 	
@@ -443,6 +458,7 @@ document.addEventListener('click',function(event){
 		
 		addHost(target);
 	}else if(target.matches('.close') && target.closest('.modal') != null && target.closest('.modal').attributes.name.value == 'add_session'){
+		console.log(target)
 		removeRowSpan(document.querySelector('td.active'));
 	}
 	
@@ -459,6 +475,10 @@ document.addEventListener('click',function(event){
 		event.stopPropagation();
 
 		removeSchedule(target);
+	}else if(target.matches('.edit_schedule')){
+		event.stopPropagation();
+
+		showEditScheduleModal(target);
 	}
 });
 
