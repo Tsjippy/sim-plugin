@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- now possible to edit a schedule
 
 ### Changed
 
