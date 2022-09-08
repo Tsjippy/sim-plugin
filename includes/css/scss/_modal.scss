@@ -18,6 +18,10 @@
 		border: 1px solid #888;
 		max-width: min(500px,100%);
 		background-color: #fefefe;
+
+		input{
+			width: 100%;
+		}
 		
 		.form-row label{
 			display: block;

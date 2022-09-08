@@ -17,7 +17,7 @@ function recurrenceSelector($curFreq){
 function updatePlugin($pluginFile){
 	include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 	include_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
-	$plugin_Upgrader	= new \Plugin_Upgrader();
+	$plugin_Upgrader	= new \Plugin_Upgrader(new \Plugin_Installer_Skin( compact('title', 'url', 'nonce', 'plugin', 'api')));
 	$plugin_Upgrader->upgrade($pluginFile);
 	activate_plugin( $pluginFile);
 }

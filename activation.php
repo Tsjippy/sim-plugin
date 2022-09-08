@@ -53,26 +53,22 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
     array_unshift($links, $link); 
 
     // Update links
-    if(isset($_GET['update'])){
-        if($_GET['update'] == 'check'){
-            // Reset updates cache
-            delete_site_transient( 'update_plugins' );
-            delete_transient('sim-git-release');
+    if(isset($_GET['update']) && $_GET['update'] == 'check'){
+        // Reset updates cache
+        delete_site_transient( 'update_plugins' );
+        delete_transient('sim-git-release');
 
-            wp_update_plugins();
+        wp_update_plugins();
 
-            $updates    = get_site_transient( 'update_plugins' );
-            if(is_wp_error($updates)){
-                $link = "<div class='error'>".$updates->get_error_message()."</div>";
-            }elseif(isset($updates->response[PLUGIN])){
-                $url            = admin_url( 'plugins.php?update=update' );
-                $link  = "<a href='$url'>Update to ".$updates->response[PLUGIN]->new_version."</a>"; 
-            }else{
-                $link  = "";
-            }
+        $updates    = get_site_transient( 'update_plugins' );
+        if(is_wp_error($updates)){
+            $link = "<div class='error'>".$updates->get_error_message()."</div>";
+        }elseif(isset($updates->response[PLUGIN])){
+            $url    = self_admin_url( 'update.php?action=update-selected&amp;plugin=' . urlencode( PLUGIN ) );
+            $url    = wp_nonce_url( $url, 'bulk-update-plugins' );
+            $link   = "<a href='$url'>Update to ".$updates->response[PLUGIN]->new_version."</a>"; 
         }else{
-            ADMIN\updatePlugin(PLUGIN);
-            $link  = "Upgraded";
+            $link  = "Up to date";
         }
     }else{
         $url   = admin_url( 'plugins.php?update=check' );
