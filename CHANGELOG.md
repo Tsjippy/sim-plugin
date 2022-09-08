@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- force update
 
 ## [2.14.2] - 2022-09-07
 
