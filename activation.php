@@ -71,11 +71,11 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
                 $link  = "";
             }
         }else{
-            \Plugin_Upgrader::upgrade(PLUGIN);
+            ADMIN\updatePlugin(PLUGIN);
             $link  = "Upgraded";
         }
     }else{
-        $url            = admin_url( 'plugins.php?update=check' );
+        $url   = admin_url( 'plugins.php?update=check' );
         $link  = "<a href='$url'>Check for update</a>"; 
     }
     array_unshift($links, $link);

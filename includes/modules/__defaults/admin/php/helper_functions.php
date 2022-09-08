@@ -15,15 +15,11 @@ function recurrenceSelector($curFreq){
 }
 
 function updatePlugin($pluginFile){
-	SIM\printArray($pluginFile);
 	include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 	include_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
 	$plugin_Upgrader	= new \Plugin_Upgrader();
 	$plugin_Upgrader->upgrade($pluginFile);
 	activate_plugin( $pluginFile);
-/* 	wp_ob_end_flush_all();
-	flush();
-	printJs(); */
 }
 
 /**
