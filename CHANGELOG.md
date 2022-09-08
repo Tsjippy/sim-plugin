@@ -8,6 +8,7 @@
 
 ### Fixed
 - issue in message of schedules
+- reduce column size in schedules table
 
 ## [2.14.7] - 2022-09-08
 
