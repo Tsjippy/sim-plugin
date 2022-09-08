@@ -11,8 +11,8 @@ file    = 'CHANGELOG.md'
 newLine = sys.argv[1]
 lines   = newLine.split(': ', 1)
 type    = lines[0].lower()
-#if(len(lines) == 1):
-    #failure()
+if(len(lines) == 1):
+    exit()
 text    = lines[1]
 
 # load plugin file
