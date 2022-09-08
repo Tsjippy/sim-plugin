@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue when editing schedule event
 
 ## [2.14.6] - 2022-09-08
 
