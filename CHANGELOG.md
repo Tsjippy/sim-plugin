@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- now possible to edit a schedule
 
 ### Changed
+
+### Fixed
+
+## [2.14.9] - 2022-09-08
+
+
+### Added
+- now possible to edit a schedule
 
 ### Fixed
 - issue in message of schedules
