@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue in message of schedules
 
 ## [2.14.7] - 2022-09-08
 
