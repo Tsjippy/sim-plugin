@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- update check when up to date
 
 ## [2.14.10] - 2022-09-09
 
