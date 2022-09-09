@@ -81,5 +81,9 @@ foreach($Modules as $slug=>$settings){
 }
 
 foreach ($files as $file) {
-    require_once($file);   
+    $result = require_once($file);
+
+    if(is_wp_error($result)){
+        echo "<div class='error' style='background-color:white;'>".$result->get_error_message()."</div>";
+    }
 }

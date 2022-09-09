@@ -229,6 +229,8 @@ add_action('init', function(){
 
     //If 2fa not enabled and we are not on the account page
     $methods	= get_user_meta($user->ID, '2fa_methods', true);
+    SIM\cleanUpNestedArray($methods);
+
     if(!isset($_SESSION)){
         session_start();
     }
@@ -238,8 +240,7 @@ add_action('init', function(){
         (
             !$methods                                   ||	// and we have no 2fa enabled or
             (
-                isset($_SESSION['webauthn'])            &&
-                $_SESSION['webauthn'] == 'failed'       && 	// we have a failed webauthn
+                !isset($_SESSION['webauthn'])           &&
                 count($methods) == 1                    &&	// and we only have one 2fa method
                 in_array('webauthn', $methods)				// and that method is webauthn
             )
@@ -250,8 +251,10 @@ add_action('init', function(){
             return;
         }
 
-        SIM\printArray("Redirecting from ".SIM\currentUrl()." to $url");
-        wp_redirect($url);
-        exit();
+        if(SIM\currentUrl() != $url){
+            SIM\printArray("Redirecting from ".SIM\currentUrl()." to $url");
+            wp_redirect($url);
+            exit();
+        }
     }
 });

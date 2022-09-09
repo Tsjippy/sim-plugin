@@ -32,6 +32,10 @@ class ComposerStaticInit9b69c6e9c6420665ee303f26012f4b7b
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\OptionsResolver\\' => 34,
         ),
+        'R' => 
+        array (
+            'RobThree\\Auth\\' => 14,
+        ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
@@ -69,10 +73,18 @@ class ComposerStaticInit9b69c6e9c6420665ee303f26012f4b7b
             'GuzzleHttp\\' => 11,
             'Github\\' => 7,
         ),
+        'D' => 
+        array (
+            'DASPRiD\\Enum\\' => 13,
+        ),
         'C' => 
         array (
             'Complex\\' => 8,
             'Clue\\StreamFilter\\' => 18,
+        ),
+        'B' => 
+        array (
+            'BaconQrCode\\' => 12,
         ),
     );
 
@@ -96,6 +108,10 @@ class ComposerStaticInit9b69c6e9c6420665ee303f26012f4b7b
         'Symfony\\Component\\OptionsResolver\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/options-resolver',
+        ),
+        'RobThree\\Auth\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/robthree/twofactorauth/lib',
         ),
         'Psr\\SimpleCache\\' => 
         array (
@@ -187,6 +203,10 @@ class ComposerStaticInit9b69c6e9c6420665ee303f26012f4b7b
         array (
             0 => __DIR__ . '/..' . '/knplabs/github-api/lib/Github',
         ),
+        'DASPRiD\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dasprid/enum/src',
+        ),
         'Complex\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
@@ -194,6 +214,10 @@ class ComposerStaticInit9b69c6e9c6420665ee303f26012f4b7b
         'Clue\\StreamFilter\\' => 
         array (
             0 => __DIR__ . '/..' . '/clue/stream-filter/src',
+        ),
+        'BaconQrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
         ),
     );
 

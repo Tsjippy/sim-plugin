@@ -54,7 +54,9 @@ add_action('wp_footer', function(){
 	
 	// If not a valid e-mail then only allow the account page to reset the email
 	if(strpos($user->user_email, ".empty") !== false && !$public && !is_search() && !is_home() && strpos($_SERVER['REQUEST_URI'],'account') === false ){
-		wp_die("Your e-mail address is not valid please change it <a href='".SITEURL."/account/?section=generic'>here</a>.");
+		ob_get_clean();
+		echo "<div class='error'>Your e-mail address is not valid please change it <a href='".SITEURL."/account/?section=generic'>here</a>.</div>";
+		return;
 	}
 	
 	//block access to confidential pages
