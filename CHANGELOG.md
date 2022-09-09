@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.15.1] - 2022-09-09
+
+
+### Changed
 - confidential roles
 
 ### Fixed
