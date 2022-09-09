@@ -8,6 +8,7 @@
 - confidential roles
 
 ### Fixed
+- bug in 2fa
 
 ## [2.15.0] - 2022-09-09
 
