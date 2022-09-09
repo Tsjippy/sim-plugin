@@ -90,3 +90,22 @@ add_filter('sim_role_description', function($description, $role){
 			return $description;
     }
 }, 10, 2);
+
+add_action('sim_roles_changed', function($user, $newRoles){
+    //Check if new roles require mailchimp actions
+    $Mailchimp = new SIM\MAILCHIMP\Mailchimp($user->ID);
+
+	if(in_array('nigerianstaff', $newRoles)){
+		//Role changed to nigerianstaff, remove tags
+		$tags = explode(',', $Mailchimp->settings['missionary_tags']);
+		$Mailchimp->changeTags($tags, 'inactive');
+		//Add office staff tags
+		$Mailchimp->changeTags(explode(',', $Mailchimp->settings['office_staff_tags']), 'active');
+	}
+	
+	if(in_array('nigerianstaff', $Mailchimp->user->roles) && !in_array('nigerianstaff', $newRoles)){
+		//Nigerian staff role is removed
+		$tags = array_merge(explode(',', $Mailchimp->settings['user_tags']), explode(',', $Mailchimp->settings['missionary_tags']));
+		$Mailchimp->changeTags($tags, 'active');
+	}
+}, 10, 2);

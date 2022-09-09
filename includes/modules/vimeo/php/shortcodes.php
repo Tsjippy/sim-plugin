@@ -21,7 +21,7 @@ function showVimeoVideo($vimeoId){
 		</div>
 
 		<div class='vimeo-embed-container'>
-			<iframe src='https://player.vimeo.com/video/<?php echo $vimeoId; ?>' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen onload = "showVimeoIframe(this)" style="display:none;"></iframe>
+			<iframe src='https://player.vimeo.com/video/<?php echo $vimeoId; ?>' loading='lazy' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen onload = "showVimeoIframe(this)" style="display:none;"></iframe>
 		</div>
 	</div>
 	<?php

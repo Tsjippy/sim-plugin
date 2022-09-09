@@ -110,9 +110,3 @@ add_action( 'wp_after_insert_post', function( $postId, $post ){
         delete_post_meta($postId,'mailchimp_extra_message');
     }
 }, 10, 3);
-
-add_action('sim_roles_changed', function($user, $new_roles){
-    //Check if new roles require mailchimp actions
-    $Mailchimp = new Mailchimp($user->ID);
-    $Mailchimp->roleChanged($new_roles);
-}, 10, 2);

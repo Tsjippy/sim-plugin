@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const STYLE_VERSION		= '7.0.37';
+const STYLE_VERSION		= '7.0.38';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts', 1);
@@ -15,10 +15,10 @@ add_action( 'wp_enqueue_media', function(){
 function registerScripts($hook=''){
 	//LIBRARIES
 	//Nice select https://github.com/bluzky/nice-select2
-	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(),STYLE_VERSION,true);
+	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(), STYLE_VERSION,true);
 
 	//sortable library: https://github.com/SortableJS/Sortable#bs
-	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(),STYLE_VERSION,true);
+	wp_register_script('sortable', 'https://SortableJS.github.io/Sortable/Sortable.js', array(), STYLE_VERSION,true);
 	
 	//Sweet alert https://sweetalert2.github.io/
 	wp_register_script('sweetalert', '//cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.1.4', true);
@@ -27,11 +27,11 @@ function registerScripts($hook=''){
 	wp_register_script('sim_purify', plugins_url('js/purify.min.js', __DIR__), array(), '2.3.8', true);
 
 	//Submit forms
-	wp_register_script('sim_user_select_script', plugins_url('js/user_select.min.js', __DIR__), array('sweetalert'), STYLE_VERSION,true);
-	wp_register_script('sim_formsubmit_script', plugins_url('js/formsubmit.min.js', __DIR__), array(), STYLE_VERSION,true);
+	wp_register_script('sim_user_select_script', plugins_url('js/user_select.min.js', __DIR__), array('sweetalert'), STYLE_VERSION, true);
+	wp_register_script('sim_formsubmit_script', plugins_url('js/formsubmit.min.js', __DIR__), array(), STYLE_VERSION, true);
 
 	//table request shortcode
-	wp_register_script('sim_table_script', plugins_url('js/table.min.js', __DIR__), array('sortable', 'sim_formsubmit_script'), STYLE_VERSION,true);
+	wp_register_script('sim_table_script', plugins_url('js/table.min.js', __DIR__), array('sortable', 'sim_formsubmit_script'), STYLE_VERSION, true);
 
 	//add main.js
 	wp_register_script('sim_script', plugins_url('js/main.min.js', __DIR__), array('niceselect', 'sweetalert'), STYLE_VERSION, true);

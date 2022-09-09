@@ -246,6 +246,11 @@ export function hideModals(){
 
 //check internet
 async function hasInternet(){
+	if(location.href.includes('localhost')){
+		window['online'] = true;
+		return window['online'];
+	}
+
 	await fetch('https://google.com', {
 		method: 'GET', // *GET, POST, PUT, DELETE, etc.
 		mode: 'no-cors',
@@ -287,9 +292,7 @@ function positionSubSubMenus(){
 		let width	= el.getBoundingClientRect()['width'];
 
 		// move to left if not fitting on screen
-		console.log(startPos + width);
 		if(startPos + width > vw){
-			console.log(el)
 			el.style.right	= '100%';
 			el.style.left	= 'unset';
 		}else{

@@ -2,6 +2,9 @@
 namespace SIM\CONTENTFILTER;
 use SIM;
 
+use function SIM\ADMIN\getModuleName;
+use function SIM\getModuleOption;
+
 //function to redirect user to login page if they are not allowed to see it
 add_action('loop_start', function($query){
 	// Only run when this is the main query
@@ -55,8 +58,12 @@ add_action('wp_footer', function(){
 	}
 	
 	//block access to confidential pages
-	if(is_page() && has_category('Confidential') && in_array('nigerianstaff',$user->roles)){
-		wp_die("You do not have the permission to see this.");
+	$confidentialGroups	= getModuleOption(MODULE_SLUG, 'confidential-roles');
+	if(is_page() && has_category('Confidential') && array_intersect($confidentialGroups, $user->roles)){
+		//prevent the output 
+		ob_get_clean();
+		echo "<div class='error'>You do not have the permission to see this.</div>";
+		return;
 	}
 
 	//we are good, print everything to screen
@@ -80,7 +87,8 @@ add_action('init', function (){
 				$query->set( 'has_password', false );
 			}else{
 				$user = wp_get_current_user();
-				if(in_array('nigerianstaff',$user->roles)){
+				$confidentialGroups	= getModuleOption(MODULE_SLUG, 'confidential-roles');
+				if(array_intersect($confidentialGroups, $user->roles)){
 					//Hide confidential items
 					$query->set( 'category__not_in', [get_cat_ID('Confidential')] );
 				}

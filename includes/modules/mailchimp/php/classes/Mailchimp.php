@@ -73,10 +73,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				//Build tag list
 				$roles = $this->user->roles;
 			
-				if(!in_array('nigerianstaff',$roles)){
-					$TAGs = array_merge(explode(',', $this->settings['user_tags']), explode(',', $this->settings['missionary_tags']));
-				}else{
+				$confidentialGroups	= (array)SIM\getModuleOption('contentfilter', 'confidential-roles');
+				if(array_intersect($confidentialGroups, $roles)){
 					$TAGs = explode(',', $this->settings['user_tags']);
+				}else{
+					$TAGs = array_merge(explode(',', $this->settings['user_tags']), explode(',', $this->settings['missionary_tags']));
 				}
 				
 				$this->changeTags($TAGs, 'active');
@@ -130,27 +131,6 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			
 			//Store results in db
 			update_user_meta($this->user->ID, "MailchimpStatus", $this->mailchimpStatus);
-		}
-		
-		/**
-		 * Change tags if a users role is changed
-		 * 
-		 * @param	array	$newRoles	The new roles of the user
-		 */
-		function roleChanged($newRoles){			
-			if(in_array('nigerianstaff', $newRoles)){
-				//Role changed to nigerianstaff, remove tags
-				$tags = explode(',', $this->settings['missionary_tags']);
-				$this->changeTags($tags, 'inactive');
-				//Add office staff tags
-				$this->changeTags(explode(',', $this->settings['office_staff_tags']), 'active');
-			}
-			
-			if(in_array('nigerianstaff', $this->user->roles) and !in_array('nigerianstaff', $newRoles)){
-				//Nigerian staff role is removed
-				$tags = array_merge(explode(',', $this->settings['user_tags']), explode(',', $this->settings['missionary_tags']));
-				$this->changeTags($tags, 'active');
-			}
 		}
 
 		/**

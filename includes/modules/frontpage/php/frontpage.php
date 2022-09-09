@@ -132,7 +132,9 @@ if(!empty($hookName)){
 				);
 
 				//Hide confidential items
-				if(in_array('nigerianstaff',$user->roles)){
+				$confidentialGroups	= (array)SIM\getModuleOption('contentfilter', 'confidential-roles');
+				
+				if(array_intersect($confidentialGroups, $user->roles)){
 					$args['tax_query'][] = 
 						array(
 							'taxonomy' => 'events',

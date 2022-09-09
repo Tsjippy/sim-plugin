@@ -39,7 +39,9 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	return ob_get_clean();
 }, 10, 2);
 
-add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug){
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
+	global $wp_roles;
+
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $optionsHtml;
@@ -47,13 +49,28 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug){
 
 	ob_start();
 
-	$default    = SIM\getModuleOption($moduleSlug, 'default_status');
-	
+	$roles	= $wp_roles->role_names;
     ?>
 	<label>
-		<input type="checkbox" name="default_status" value="private" <?php if($default == 'private'){echo 'checked';}?>>
+		<input type="checkbox" name="default_status" value="private" <?php if(isset($settings['default_status']) && $settings['default_status'] == 'private'){echo 'checked';}?>>
 		Make uploaded media private by default
+	</label>
+	<br>
+	<br>
+	<label>
+		Disallow acces to pages with the confidential category for the following user roles:<br>
+			<?php
+			foreach($roles as $key=>$role){
+				?>
+				<label>
+					<input type="checkbox" name="confidential-roles[]" value="<?php echo $key;?>" <?php if(in_array($key, $settings['confidential-roles'])){echo 'checked';}?>>
+					<?php echo $role;?>
+				</label>
+				<br>
+				<?php
+			}
+			?>
 	</label>
 	<?php
 	return ob_get_clean();
-}, 10, 2);
+}, 10, 3);
