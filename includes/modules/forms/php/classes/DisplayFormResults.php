@@ -234,7 +234,7 @@ class DisplayFormResults extends SimForms{
 				$url		= SITEURL."/$string";
 				$text		= 'Link';
 				if(getimagesize(SIM\urlToPath($url)) !== false) {
-					$text	= "<img src='$url' alt='form_upload' style='width:150px;height:150px;'>";
+					$text	= "<img src='$url' alt='form_upload' style='width:150px;'>";
 				}
 				$output		= "<a href='$url'>$text</a>";
 			// Convert phonenumber to signal link
