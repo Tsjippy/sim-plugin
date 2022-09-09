@@ -20,6 +20,7 @@ class SimForms{
 		$this->pageSize					= 100;
 		$this->multiwrap				= '';
 		$this->submitRoles				= [];
+		$this->showArchived				= false;
 
 		//calculate full form rights
 		if(array_intersect(['editor'], $this->userRoles)){

@@ -6,6 +6,9 @@ add_shortcode("test",function ($atts){
 	global $Modules;
 
 	wp_update_plugins();
+	$test=new FORMS\EditFormResults();
+
+	$test->autoArchive();
 });
 
 // turn off incorrect error on localhost

@@ -373,8 +373,11 @@ function editValue(){
 	if(is_numeric($subId)){
 		$fieldMainName	= $formTable->formData->settings['split'];
 		//check if this is a main field
-
-		$formTable->formResults[$fieldMainName][$subId][$fieldName]	= $newValue;
+		if(isset($formTable->formResults[$fieldMainName][$subId][$fieldName])){
+			$formTable->formResults[$fieldMainName][$subId][$fieldName]	= $newValue;
+		}else{
+			$formTable->formResults[$fieldName]= $newValue;
+		}
 		$message = "Succesfully updated '$fieldName' to $transValue";
 	}else{
 		$formTable->formResults[$fieldName]	= $newValue;

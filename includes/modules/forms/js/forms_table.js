@@ -243,6 +243,8 @@ function addFormsTableInputEventListeners(cell){
 			}
 		}else if(inputNode.type == 'select'){
 			inputNode.querySelector('option[value="'+val+'"]').selected = true;
+		}else if(inputNode.type == 'date'){
+			inputNode.value = oldValue;
 		}else if(inputNode.type != 'file'){
 			return;
 		}
