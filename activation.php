@@ -66,7 +66,7 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
         }elseif(isset($updates->response[PLUGIN])){
             $url    = self_admin_url( 'update.php?action=update-selected&amp;plugin=' . urlencode( PLUGIN ) );
             $url    = wp_nonce_url( $url, 'bulk-update-plugins' );
-            $link   = "<a href='$url'>Update to ".$updates->response[PLUGIN]->new_version."</a>"; 
+            $link   = "<a href='$url' class='update-link'>Update to ".$updates->response[PLUGIN]->new_version."</a>"; 
         }else{
             $link  = "Up to date";
         }

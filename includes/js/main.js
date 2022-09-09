@@ -273,6 +273,34 @@ export async function waitForInternet(){
 	}
 }
 
+function positionSubSubMenus(){
+	const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+
+	document.querySelectorAll('#primary-menu .sub-menu .sub-menu').forEach(el=>{
+		el.style.left		= '100%';
+		el.parentNode.closest('ul').style.left	= '100%';
+
+		// Get parent right coordinate
+		let startPos	= el.parentNode.getBoundingClientRect()['right'];
+		
+		// el with
+		let width	= el.getBoundingClientRect()['width'];
+
+		// move to left if not fitting on screen
+		console.log(startPos + width);
+		if(startPos + width > vw){
+			console.log(el)
+			el.style.right	= '100%';
+			el.style.left	= 'unset';
+		}else{
+			el.style.removeProperty('left');
+		}
+
+		// Reset left
+		el.parentNode.closest('ul').style.removeProperty('left');
+	});
+}
+
 //Load after page load
 document.addEventListener("DOMContentLoaded",function() {
 	// remove any empty widgets
@@ -301,7 +329,9 @@ document.addEventListener("DOMContentLoaded",function() {
 	// hide mobile hidden
 	if(isMobileDevice()){
 		document.querySelectorAll('.hide-on-mobile').forEach(el=>el.classList.add('hidden'));
-	}
+	}else{
+		positionSubSubMenus();
+	}	
 });
 
 
