@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- confidential roles
 
 ### Fixed
 
