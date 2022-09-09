@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- sub sub menu to left when needed
 
 ## [2.14.9] - 2022-09-08
 
