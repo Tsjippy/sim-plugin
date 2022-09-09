@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.14.10] - 2022-09-09
+
+
+### Fixed
 - sub sub menu to left when needed
 - broken layout
 - better images in results table
