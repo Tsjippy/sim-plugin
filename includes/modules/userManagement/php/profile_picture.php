@@ -77,7 +77,7 @@ add_filter( 'get_avatar' , function ( $avatar, $idOrEmail, $size, $default, $alt
 		if ( empty($url )){
 			$url = plugins_url('', __DIR__).'/pictures/usericon.png';
 		}
-		$avatar = "<img alt='$alt' src='$url' class='avatar avatar-{$size} photo' height='$size' width='$size' />";
+		$avatar = "<img alt='$alt' src='$url' loading='lazy' class='avatar avatar-{$size} photo' height='$size' width='$size' />";
     }
     return $avatar;
 }, 1 , 5 );

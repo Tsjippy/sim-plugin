@@ -79,7 +79,7 @@ function showCalendar(){
 				<div class="date-search">
 					<?php
 					$baseUrl	= plugins_url('pictures', __DIR__);
-					echo "<img src='{$baseUrl}/date.png' alt='time' class='event_icon'>";
+					echo "<img src='{$baseUrl}/date.png' alt='time' loading='lazy' class='event_icon'>";
 					?>
 					<select class='month_selector<?php if($view=='week'){echo ' hidden';}?>' placeholder="Select month">
 						<?php

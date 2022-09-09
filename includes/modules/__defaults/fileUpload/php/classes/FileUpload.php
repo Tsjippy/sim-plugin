@@ -118,7 +118,7 @@ class FileUpload{
 
 					$this->html .= "<input type='hidden' name='fileupload[updatemeta]' 		value='{$this->updatemeta}'>";
 					
-					$this->html .= "<div class='loadergif_wrapper hidden'><span class='uploadmessage'></span><img class='loadergif' src='".LOADERIMAGEURL."'></div>";
+					$this->html .= "<div class='loadergif_wrapper hidden'><span class='uploadmessage'></span><img class='loadergif' src='".LOADERIMAGEURL."' loading='lazy'></div>";
 				$this->html .= "</div>";
 			$this->html .= "</div>";
 		$this->html .= "</div>";
@@ -159,7 +159,7 @@ class FileUpload{
 		//Check if file is an image
 		if(getimagesize(SIM\urlToPath($url)) !== false) {
 			//Display the image
-			$this->html .= "<a href='$url'><img src='$url' alt='picture' style='width:150px;height:150px;'></a>";
+			$this->html .= "<a href='$url'><img src='$url' alt='picture' loading='lazy' style='width:150px;height:150px;'></a>";
 		//File is not an image
 		} else {
 			//Display an link to the file
@@ -192,7 +192,7 @@ class FileUpload{
 		$libraryString .= " data-updatemeta='{$this->updatemeta}'";
 		
 		$this->html .= "<button type='button' class='remove_document button' data-url='$documentPath' data-userid='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
-		$this->html .= "<img class='remove_document_loader hidden' src='".LOADERIMAGEURL."' style='height:40px;' >";
+		$this->html .= "<img class='remove_document_loader hidden' src='".LOADERIMAGEURL."' loading='lazy' style='height:40px;' >";
 		$this->html .= "</div>";
 	}
 }

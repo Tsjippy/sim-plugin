@@ -61,7 +61,7 @@ if(is_tax() || is_archive()){
 					);
 					
 					$url = plugins_url('pictures/category.png', __DIR__);
-					echo "<img src='$url' alt='category' class='recipe_icon'>";
+					echo "<img src='$url' loading='lazy' alt='category' class='recipe_icon'>";
 
 					$i = 1;
 					foreach($categories as $id=>$category){
@@ -82,7 +82,7 @@ if(is_tax() || is_archive()){
 				<span class='cooking_time recipemeta'>
 					<?php 
 					$url = plugins_url('pictures/time.png', __DIR__);
-					echo "<img src='$url' alt='category' class='recipe_icon'>";
+					echo "<img src='$url' loading='lazy' alt='category' class='recipe_icon'>";
 					echo get_post_meta(get_the_ID(),'time_needed',true); 
 					if(!$archive){
 						echo 'minutes';
@@ -92,7 +92,7 @@ if(is_tax() || is_archive()){
 				<span class='serves recipemeta'>
 					<?php
 					$url = plugins_url('pictures/serves.png', __DIR__);
-					echo "<img src='$url' alt='category' class='recipe_icon'>";
+					echo "<img src='$url' loading='lazy' alt='category' class='recipe_icon'>";
 					$persons = get_post_meta(get_the_ID(),'serves',true);
 					echo "<select class='serves_select' data-originalvalue='$persons' style='padding:0px;'>";
 					for($i = 1; $i<=10; $i++) {

@@ -60,7 +60,7 @@ function showMediaGallery($atts){
             Audio
         </label>
         <input class="searchtext" type="text" placeholder="Search..">
-        <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" alt="magnifier">
+        <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" loading='lazy' alt="magnifier">
     </div>
     <div class='categories <?php if(!empty($a['categories'])){ echo 'hidden'; }?>'>
         Categories: 
@@ -80,7 +80,7 @@ function showMediaGallery($atts){
         ?>
     </div>
     <div id="medialoaderwrapper" class="hidden">
-        <img src="<?php echo LOADERIMAGEURL;?>" alt=''>
+        <img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' alt=''>
         <div>Loading more...</div>
     </div>
 
@@ -211,7 +211,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
         ?>
         <div class='cell <?php echo $type;?>' data-index='<?php echo $index;?>'>
             <div class='image-wrapper'>
-                <img src='<?php echo $iconUrl;?>' alt='<?php echo $title;?>' class='media-item' width='150' height='120' title='<?php echo $title;?>'>
+                <img src='<?php echo $iconUrl;?>' alt='<?php echo $title;?>' loading='lazy' class='media-item' width='150' height='120' title='<?php echo $title;?>'>
             </div>
             <?php
             if(!empty($description)){
@@ -260,7 +260,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
                     $ratio  = $height/$width;
 
                     //Center the image vertically
-                    $mediaHtml  =  "<a href='$url'><img src='$url' with='100%' height='100vh' style='top: max(0px, calc( 50vh - 50vw * $ratio));'></a>";
+                    $mediaHtml  =  "<a href='$url'><img src='$url' loading='lazy' with='100%' height='100vh' style='top: max(0px, calc( 50vh - 50vw * $ratio));'></a>";
                 }
 
                 echo apply_filters('sim_media_gallery_item_html', $mediaHtml, $type, $id);

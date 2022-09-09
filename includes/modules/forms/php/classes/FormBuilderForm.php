@@ -465,7 +465,7 @@ class FormBuilderForm extends SimForms{
 							<div class="infobox" name="info" style="min-width: fit-content;">
 								<div style="float:right">
 									<p class="info_icon">
-										<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL;?>/info.png">
+										<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL;?>/info.png" loading='lazy' >
 									</p>
 								</div>
 								<span class="info_text">

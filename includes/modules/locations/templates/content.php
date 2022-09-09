@@ -61,7 +61,7 @@ if(is_tax() || is_archive()){
 					);
 					
 					$url	= plugins_url('pictures/location.png', __DIR__);
-					echo "<img src='$url' alt='category' class='location_icon'>";
+					echo "<img src='$url' alt='category' loading='lazy' class='location_icon'>";
 					
 					//First loop over the cat to see if any parent cat needs to be removed
 					foreach($categories as $id=>$category){
@@ -97,7 +97,7 @@ if(is_tax() || is_archive()){
 					$tel		= get_post_meta(get_the_ID(),'tel',true);
 					if(!empty($tel)){
 						$imageUrl = plugins_url('pictures/tel.png', __DIR__);
-						$icon = "<img src='$imageUrl' alt='telephone' class='location_icon'>";
+						$icon = "<img src='$imageUrl' alt='telephone' loading='lazy' class='location_icon'>";
 						echo "<a href='tel:$tel'>$icon Call them  »</a>";
 					}
 					?>
@@ -108,7 +108,7 @@ if(is_tax() || is_archive()){
 					$url		= get_post_meta(get_the_ID(),'url',true);
 					if(!empty($url) && $url != 'https://www.'){
 						$imageUrl 	= plugins_url('pictures/url.png', __DIR__);
-						$icon 		= "<img src='$imageUrl' alt='location' class='location_icon'>";
+						$icon 		= "<img src='$imageUrl' alt='location' loading='lazy' class='location_icon'>";
 						echo "<a href='$url'>$icon Visit website  »</a>";
 					}
 					?>

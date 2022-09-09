@@ -238,7 +238,7 @@ class FrontEndContent{
 					
 					echo "<div class='submit_wrapper' style='display: flex;'>";
 						echo "<button type='button' class='button savedraft' name='draft_post'>$button_text</button>";
-						echo "<img class='loadergif hidden' src='".LOADERIMAGEURL."'>";
+						echo "<img class='loadergif hidden' src='".LOADERIMAGEURL."' loading='lazy'>";
 					echo "</div>";
 					
 				}
@@ -255,7 +255,7 @@ class FrontEndContent{
 						<input hidden name='post_id' value='<?php echo  esc_html($this->postId); ?>'>
 
 						<button type='submit' class='button' name='delete_post'>Delete <?php echo  esc_html($this->post->post_type); ?></button>
-						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt=''>
+						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt='' loading='lazy'>
 					</form>
 				</div>
 				<?php 

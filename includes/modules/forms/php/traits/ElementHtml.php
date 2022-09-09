@@ -327,7 +327,7 @@ trait ElementHtml{
 			
 			$html = "<div class='infobox' name='{$element->name}'>";
 				$html .= '<div style="float:right">';
-					$html .= '<p class="info_icon"><img draggable="false" role="img" class="emoji" alt="ℹ" src="'.PICTURESURL.'/info.png"></p>';
+					$html .= '<p class="info_icon"><img draggable="false" role="img" class="emoji" alt="ℹ" src="'.PICTURESURL.'/info.png" loading="lazy" ></p>';
 				$html .= '</div>';
 				$html .= "<span class='info_text'>$content</span>";
 			$html .= '</div>';

@@ -202,7 +202,7 @@ function userDescription($userId){
 
 		$url 	= wp_get_attachment_url($family['picture'][0]);
 		if($url){
-			$html .= "<a href='$url'><img src=$url width=200 height=200></a>";
+			$html .= "<a href='$url'><img src='$url' loading='lazy' width=200 height=200></a>";
 		}
 		
 		if($arrived){

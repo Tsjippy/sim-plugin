@@ -75,7 +75,7 @@ function displayRoles($userId){
 					<div class="infobox">
 						<div class="info-icon-wrapper">
 							<p class="info_icon">
-								<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL;?>/info.png">
+								<img draggable="false" role="img" class="emoji" alt="ℹ" loading='lazy' src="<?php echo PICTURESURL;?>/info.png">
 							</p>
 						</div>
 						<span class="info_text">

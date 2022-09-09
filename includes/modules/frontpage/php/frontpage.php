@@ -246,7 +246,7 @@ function pageGallery(){
 							}
 
 							echo "<a href='$pageUrl'>";
-								echo "<img class='img' src='$pictureUrl' alt='' title='$title'>";
+								echo "<img class='img' src='$pictureUrl' alt='' title='$title' loading='lazy'>";
 							?>
 							</a>
 						</div>

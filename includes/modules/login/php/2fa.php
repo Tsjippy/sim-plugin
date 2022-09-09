@@ -32,7 +32,7 @@ function setupTimeCode(){
     update_user_meta($userId, '2fa_hash', password_hash($setupDetails->secretKey, PASSWORD_DEFAULT));
 
     if (!extension_loaded('imagick')){
-        $setupDetails->imageHtml    = "<img src=".$twofa->getQRCodeImageAsDataUri(SITENAME." (".get_userdata($userId)->user_login.")", $setupDetails->secretKey).">";
+        $setupDetails->imageHtml    = "<img src=".$twofa->getQRCodeImageAsDataUri(SITENAME." (".get_userdata($userId)->user_login.")", $setupDetails->secretKey)." loading='lazy'>";
     }else{
         $qrCodeUrl                  = $twofa->getQRText(SITENAME." (".get_userdata($userId)->user_login.")",$setupDetails->secretKey);
 
@@ -43,7 +43,7 @@ function setupTimeCode(){
         $writer         = new Writer($renderer);
         $qrcodeImage   = base64_encode($writer->writeString($qrCodeUrl));
 
-        $setupDetails->imageHtml     = "<img src='data:image/png;base64, $qrcodeImage'/>";
+        $setupDetails->imageHtml     = "<img loading='lazy' src='data:image/png;base64, $qrcodeImage'/>";
     }
     otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example
 

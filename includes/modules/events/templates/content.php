@@ -55,7 +55,7 @@ function displayEventCategories(){
 		?>
 		<span class='category eventmeta'> 
 			<?php
-			echo "<img src='{$baseUrl}/event_category.png' alt='category' class='event_icon'>";
+			echo "<img src='{$baseUrl}/event_category.png' alt='category' loading='lazy' class='event_icon'>";
 			
 			//First loop over the cat to see if any parent cat needs to be removed
 			foreach($categories as $id=>$category){
@@ -109,7 +109,7 @@ function displayEventMeta(){
 		<div class="event-meta">
 			<div class="single-event-date">
 				<?php
-				echo "<img src='{$baseUrl}/date.png' alt='date' class='event_icon'>";
+				echo "<img src='{$baseUrl}/date.png' alt='date' loading='lazy' class='event_icon'>";
 				?>
 				<h4>DATE</h4>
 				<dl>
@@ -122,7 +122,7 @@ function displayEventMeta(){
 			</div>
 			<div class="event-time">
 				<?php
-				echo "<img src='{$baseUrl}/time_red.png' alt='time' class='event_icon'>";
+				echo "<img src='{$baseUrl}/time_red.png' alt='time' loading='lazy' class='event_icon'>";
 				?>
 				<h4 class="time">TIME</h4>
 				<dl>
@@ -139,7 +139,7 @@ function displayEventMeta(){
 			?>
 				<div class="event-repeat">
 					<?php
-					echo "<img src='{$baseUrl}/repeat_small.png' alt='repeat' class='event_icon'>";
+					echo "<img src='{$baseUrl}/repeat_small.png' alt='repeat' loading='lazy' class='event_icon'>";
 					?>
 					<h4 class="repeat">REPEATS</h4>
 					<dl>
@@ -165,7 +165,7 @@ function displayEventMeta(){
 			?>
 				<div class="event-location">
 					<?php
-					echo "<img src='{$baseUrl}/location_red.png' alt='' class='event_icon'>";
+					echo "<img src='{$baseUrl}/location_red.png' alt='' loading='lazy' class='event_icon'>";
 					?>
 					<h4>LOCATION</h4>
 					<div class='location_details'>
@@ -180,7 +180,7 @@ function displayEventMeta(){
 			?>
 				<div class="event-organizer">
 					<?php
-					echo "<img src='{$baseUrl}/organizer.png' alt='' class='event_icon'>";
+					echo "<img src='{$baseUrl}/organizer.png' alt='' loading='lazy' class='event_icon'>";
 					?>
 					<h4>ORGANIZER</h4>
 					<div class='author_details'>

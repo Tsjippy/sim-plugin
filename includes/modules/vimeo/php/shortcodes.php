@@ -16,7 +16,7 @@ function showVimeoVideo($vimeoId){
 	?>
 	<div class="vimeo-wrapper">
 		<div class="loaderwrapper" style="margin:auto; width:fit-content;">
-			<img src="<?php echo LOADERIMAGEURL;?>" style="max-height: 100px;"><br>
+			<img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' style="max-height: 100px;"><br>
 			<b>Loading Vimeo video</b>
 		</div>
 

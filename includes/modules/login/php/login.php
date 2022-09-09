@@ -62,7 +62,7 @@ function loginModal($message='', $required=false, $username=''){
                                 <input id="password" type="password" name="password" required>
                             </label>
                             <button type="button" id='toggle_pwd_view' data-toggle="0" title="Show password">
-                                <img src="<?php echo PICTURESURL.'/invisible.png';?>" alt='togglepasword'>
+                                <img src="<?php echo PICTURESURL.'/invisible.png';?>" loading='lazy' alt='togglepasword'>
                             </button>
                         </div>
                         <div id='check_cred_wrapper'>
@@ -71,18 +71,18 @@ function loginModal($message='', $required=false, $username=''){
                                 Remember Me
                             </label>
                             <button type='button' id='check_cred' class='button'>Verify credentials</button>
-                            <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' alt='loader'>
+                            <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy' alt='loader'>
                         </div>
                     </div>
 
                     <div id='logging_in_wrapper' class='hidden'>
                         <h4 class='status_message'>Logging in...</h4>
-                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>' alt='loader'>
+                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>' loading='lazy' alt='loader'>
                     </div>
 
                     <div id='webauthn_wrapper' class='authenticator_wrapper hidden'>
                         <h4 class='status_message'>Please authenticate...</h4>
-                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>' alt='loader'>
+                        <img class='loadergif center' src='<?php echo LOADERIMAGEURL; ?>' loading='lazy' alt='loader'>
                     </div>
 
                     <div id='authenticator_wrapper' class='authenticator_wrapper hidden'>
@@ -102,7 +102,7 @@ function loginModal($message='', $required=false, $username=''){
                     <div id='submit_login_wrapper' class='hidden'>                       
                         <div class='submit_wrapper'>
 		                    <button type='button' class='button' id='login_button' disabled>Login</button>
-		                    <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' alt='loader'>
+		                    <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy' alt='loader'>
 	                    </div>
                     </div>
                 </form>

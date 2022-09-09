@@ -78,7 +78,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			<div class="dropdown">
 				<?php
 				if($settings[$iconName]){
-					$img			= "<img src='{$settings[$iconName]}' class='icon'>";
+					$img			= "<img src='{$settings[$iconName]}' class='icon' loading='lazy'>";
 					$button_text	= "Change";
 				}else{
 					$img	= "";
@@ -98,7 +98,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 							continue;
 						}
 						$url = plugins_url('ultimate-maps-by-supsystic/modules/icons/icons_files/def_icons/'.$icon->path);
-						echo "<div class='icon'><img src='$url' class='icon'> $icon->description</div><br>";
+						echo "<div class='icon'><img src='$url' class='icon' loading='lazy'> $icon->description</div><br>";
 					}
 					?>
 				</div>

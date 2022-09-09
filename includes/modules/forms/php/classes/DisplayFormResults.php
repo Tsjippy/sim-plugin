@@ -234,7 +234,7 @@ class DisplayFormResults extends SimForms{
 				$url		= SITEURL."/$string";
 				$text		= 'Link';
 				if(getimagesize(SIM\urlToPath($url)) !== false) {
-					$text	= "<img src='$url' alt='form_upload' style='width:150px;'>";
+					$text	= "<img src='$url' alt='form_upload' style='width:150px;' loading='lazy'>";
 				}
 				$output		= "<a href='$url'>$text</a>";
 			// Convert phonenumber to signal link
@@ -612,7 +612,7 @@ class DisplayFormResults extends SimForms{
 					}else{
 						$visibility	= 'visible';
 					}
-					$icon			= "<img class='visibilityicon $visibility' src='".PICTURESURL."/$visibility.png'>";
+					$icon			= "<img class='visibilityicon $visibility' src='".PICTURESURL."/$visibility.png' loading='lazy' >";
 					
 					?>
 					<div class="column_setting_wrapper" data-id="<?php echo $elementIndex;?>">
@@ -900,7 +900,7 @@ class DisplayFormResults extends SimForms{
 						<div class="infobox" name="info">
 							<div>
 								<p class="info_icon">
-									<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL."/info.png";?>">
+									<img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL."/info.png";?>" loading='lazy' >
 								</p>
 							</div>
 							<span class="info_text">
@@ -1303,7 +1303,7 @@ class DisplayFormResults extends SimForms{
 							if(!empty($this->hiddenColumns[$columnSetting['name']])){
 								$class	.= ' hidden';
 							}
-							$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20>";
+							$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20 loading='lazy' >";
 							
 							//Add a heading for each column
 							echo "<th class='$class' id='{$columnSetting['name']}' data-nicename='$niceName'>$niceName $icon</th>";

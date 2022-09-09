@@ -780,7 +780,7 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 function addSaveButton($elementId, $buttonText, $extraClass = ''){
 	$html = "<div class='submit_wrapper'>";
 		$html .= "<button type='button' class='button form_submit $extraClass' name='$elementId'>$buttonText</button>";
-		$html .= "<img class='loadergif hidden' src='".LOADERIMAGEURL."'>";
+		$html .= "<img loading='lazy' class='loadergif hidden' src='".LOADERIMAGEURL."'>";
 	$html .= "</div>";
 	
 	return $html;
@@ -879,7 +879,7 @@ function pictureSelector($key, $name, $settings){
 	?>
 	<div class='picture_selector_wrapper'>
 		<div class='image-preview-wrapper <?php echo $hidden;?>'>
-			<img class='image-preview' src='<?php echo $src;?>' alt=''>
+			<img loading='lazy' class='image-preview' src='<?php echo $src;?>' alt=''>
 		</div>
 		<input type="button" class="button select_image_button" value="<?php echo $text;?> picture for <?php echo strtolower($name);?>" />
 		<input type='hidden' class="image_attachment_id" name='picture_ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
@@ -1036,10 +1036,10 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 
 	if(is_numeric($attachmentId)){
 		$url = wp_get_attachment_image_url($attachmentId,'Full size');
-		return "<a href='$url'><img width='{$size[0]}' height='{$size[1]}' src='$url' class='attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'></a>";
+		return "<a href='$url'><img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'></a>";
 	}elseif($showDefault){
 		$url = plugins_url('pictures/usericon.png', __DIR__);
-		return "<img width='{$size[0]}' height='{$size[1]}' src='$url' class='attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
+		return "<img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
 	}else{
 		return false;
 	}
