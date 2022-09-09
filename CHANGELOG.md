@@ -7,6 +7,14 @@
 ### Changed
 
 ### Fixed
+
+## [2.15.0] - 2022-09-09
+
+
+### Added
+- lazy loading to all images
+
+### Fixed
 - update check when up to date
 
 ## [2.14.10] - 2022-09-09
