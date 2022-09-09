@@ -69,7 +69,7 @@ add_filter( 'pre_set_site_transient_update_plugins', function($transient){
 	if( !function_exists('get_plugin_data') ){
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
-	$pluginVersion  = get_plugin_data(PLUGIN)['Version'];
+	$pluginVersion  = get_plugin_data(WP_PLUGIN_DIR.'/'.PLUGIN)['Version'];
 
 	$release		= getLatestRelease();
 
