@@ -9,6 +9,7 @@
 ### Fixed
 - sub sub menu to left when needed
 - broken layout
+- better images in results table
 
 ## [2.14.9] - 2022-09-08
 
