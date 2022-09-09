@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- lazy loading to all images
 
 ### Changed
+
+### Fixed
+
+## [2.15.0] - 2022-09-09
+
+
+### Added
+- lazy loading to all images
 
 ### Fixed
 - update check when up to date
