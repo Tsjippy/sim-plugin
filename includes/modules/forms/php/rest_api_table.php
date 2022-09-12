@@ -334,7 +334,7 @@ function archiveSubmission(){
 }
 
 function getInputHtml(){
-	$formTable	= new DisplayForm();
+	$formTable	= new DisplayFormResults();
 	$formTable->getForm($_POST['formid']);
 
 	$elementName	= sanitize_text_field($_POST['fieldname']);
@@ -345,8 +345,15 @@ function getInputHtml(){
 	foreach ($formTable->formElements as $element){
 		$name	= str_replace('[]', '', $element->name);
 		if($name == $elementName || $name == $elementIndexedName){
+			$formTable->getSubmissionData(null, $_POST['submissionid']);
+
+			$curValue	= '';
+			if(isset($formTable->formResults[$element->name])){
+				$curValue	= $formTable->formResults[$element->name];
+			}
+
 			//Load default values for this element
-			return $formTable->getElementHtml($element);
+			return $formTable->getElementHtml($element, $curValue);
 		}
 	}
 	

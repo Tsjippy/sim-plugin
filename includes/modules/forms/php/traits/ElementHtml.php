@@ -472,9 +472,19 @@ trait ElementHtml{
 					$elContent .= "<option value=''>---</option>";
 					$options	= $this->getFieldOptions($element);
 
-					$selValues	= '';
+					$selValues	= [];
 					if(!empty($values['metavalue'])){
 						$selValues	= array_map('strtolower', (array)$values['metavalue']);
+					}
+
+					if(!empty($value)){
+						if(is_array($value)){
+							foreach($value as $v){
+								$selValues[] = strtolower($v);
+							}
+						}else{
+							$selValues[] = strtolower($value);
+						}
 					}
 		
 					foreach($options as $key=>$option){

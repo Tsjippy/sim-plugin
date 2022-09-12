@@ -188,6 +188,17 @@ function changeArchiveButton(loader, action){
 
 async function getInputHtml(target){
 	let table			= target.closest('table');
+
+	// First make sure we have processed all others
+	document.querySelectorAll('td.active').forEach(td=>{
+		if(td != target){
+			processFormsTableInput(td);
+		}
+	});
+
+	// There can only be one active cell per page
+	target.classList.add('active');
+
 	let formId			= table.dataset.formid;
     let submissionId	= target.closest('tr').dataset.id;
 	let subId			= target.dataset.subid;
@@ -231,26 +242,9 @@ function addFormsTableInputEventListeners(cell){
 		oldValue = [oldValue];
 	}
 		
-	inputs.forEach((inputNode, index)=>{
-		let val	= oldValue[index];
-		if(oldValue.length == 1 && index > 0){
-			val	= oldValue[0];
-		}
-
-		if(inputNode.type == 'checkbox' || inputNode.type == 'radio'){
-			if(inputNode.value == val.trim()){
-				inputNode.checked = true;
-			}
-		}else if(inputNode.type == 'select'){
-			inputNode.querySelector('option[value="'+val+'"]').selected = true;
-		}else if(inputNode.type == 'date'){
-			inputNode.value = oldValue;
-		}else if(inputNode.type != 'file'){
-			return;
-		}
-		
+	inputs.forEach((inputNode)=>{
 		if(inputNode.type == 'select-one'){
-			inputNode._niceselect = NiceSelect.bind(inputNode,{searchable: true});
+			inputNode._niceselect = NiceSelect.bind(inputNode, {searchable: true});
 		}
 		
 		//Add a keyboard
@@ -264,6 +258,7 @@ function addFormsTableInputEventListeners(cell){
 		document.addEventListener('click', outsideFormsTableClicked);
 		
 		if(inputNode.type != 'checkbox' || inputs.length == 1){
+
 			if(inputNode.type == 'date'){
 				inputNode.addEventListener("blur", processFormsTableInput);
 			}else if(inputNode.type != 'file'){
@@ -276,10 +271,10 @@ function addFormsTableInputEventListeners(cell){
 }
 
 function outsideFormsTableClicked(event){
-	if(event.target.closest('td') == null || event.target.closest('td').dataset.oldtext == null){
+	if(event.target.closest('td') == null){
 		//remove as soon as we come here
 		this.removeEventListener("click", arguments.callee);
-		processFormsTableInput(document.querySelector('[data-oldtext]'));
+		processFormsTableInput(document.querySelector('.active'));
 	}
 }
 
@@ -309,6 +304,7 @@ async function processFormsTableInput(target){
 	let table			= target.closest('table');
 	let formId			= table.dataset.formid;
 	let cell			= target.closest('td');
+	cell.classList.remove('active');
     let cellId			= cell.dataset.id
 	let value			= FormFunctions.getFieldValue(target, cell, false);
 	let submissionId	= target.closest('tr').dataset.id;
@@ -318,8 +314,6 @@ async function processFormsTableInput(target){
 	document.removeEventListener("click", outsideFormsTableClicked);
 	
 	//Only update when needed
-	console.log(value)
-	console.log(cell.dataset.oldvalue)
 	if (value != cell.dataset.oldvalue){
 		Main.showLoader(cell.firstChild);
 		
@@ -336,7 +330,8 @@ async function processFormsTableInput(target){
 		let response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
 	
 		if(response){
-			let newValue = response.newvalue;
+			let newValue = response.newvalue.replace('_', ' ');
+
 			//Replace the input element with its value
 			if(newValue == "") newValue = "X";
 	
@@ -367,10 +362,16 @@ document.addEventListener("click", event=>{
 
 	if(target.name == 'submit_column_setting'){
 		saveColumnSettings(target);
-	}
-
-	if(target.name == 'submit_table_setting'){
+	}else if(target.name == 'submit_table_setting'){
 		saveTableSettings(target);
+	}else if(target.name == 'form_settings[autoarchive]'){
+		//show auto archive fields
+		let el = target.closest('.table_rights_wrapper').querySelector('.autoarchivelogic');
+		if(target.value == 'true'){
+			el.classList.remove('hidden');
+		}else{
+			el.classList.add('hidden');
+		}
 	}
 
 	//Actions
@@ -386,16 +387,6 @@ document.addEventListener("click", event=>{
 		window.location.href = window.location.href.split('?')[0]+"?print=true&table_id="+table.dataset.id+"&submission_id="+table_row.querySelector("[id='id' i]").textContent;
 	}
 	
-	//show auto archive fields
-	if(target.name == 'form_settings[autoarchive]'){
-		let el = target.closest('.table_rights_wrapper').querySelector('.autoarchivelogic');
-		if(target.value == 'true'){
-			el.classList.remove('hidden');
-		}else{
-			el.classList.add('hidden');
-		}
-	}
-	
 	//Open settings modal
 	if(target.classList.contains('edit_formshortcode_settings')){
 		document.querySelector('.modal.form_shortcode_settings').classList.remove('hidden');
@@ -403,12 +394,14 @@ document.addEventListener("click", event=>{
 	
 	//Edit data
 	let td = target.closest('td');
-	if(target.matches('td.edit_forms_table') && (target.dataset.oldtext == null || target.dataset.oldtext == 'X')){
-		event.stopPropagation();
-		getInputHtml(target);
-	}else if(td != null  && target.dataset.oldtext == null && td.matches('td.edit_forms_table') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
-		event.stopPropagation();
-		getInputHtml(target.closest('td'));
+	if(td && !td.matches('.active')){
+		if( target.matches('td.edit_forms_table')){
+			event.stopPropagation();
+			getInputHtml(target);
+		}else if(td.matches('td.edit_forms_table') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
+			event.stopPropagation();
+			getInputHtml(target.closest('td'));
+		}
 	}
 	
 	//Hide column
@@ -439,7 +432,7 @@ document.addEventListener("click", event=>{
 	}
 });
 
-document.addEventListener("DOMContentLoaded",function() {
+document.addEventListener("DOMContentLoaded", function() {
 	console.log("Formstable.js loaded");
 	
 	if(typeof(Sortable) != 'undefined'){
