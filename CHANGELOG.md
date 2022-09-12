@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- select in form results table
 
 ## [2.15.4] - 2022-09-12
 
