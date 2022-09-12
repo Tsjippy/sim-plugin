@@ -3,65 +3,73 @@ import {VimeoUpload} from './vimeo_upload.js';
 /* 
 		Show vimeo in wp library
 */
-
 //replace preview with vimeo iframe
+// copied from C:\xampp\htdocs\simnigeria\wp-includes\js\media-views.js
 wp.media.view.Attachment.Details.prototype.render = function() {
 	wp.media.view.Attachment.prototype.render.apply( this, arguments );
 
 	wp.media.mixin.removeAllPlayers();
-	this.$( 'audio, video' ).each( function (elem) {
+	this.$( 'audio, video' ).each( function (i, elem) {
+		
 		var el = wp.media.view.MediaDetails.prepareSrc( elem );
-		loadVimeoVideo(el);
+		new window.MediaElementPlayer( el, wp.media.mixin.mejsSettings );
+		if(elem.tagName == 'VIDEO'){
+			loadVimeoVideo(el);
+		}
 	} );
-}
+} 
 
 //replace preview with vimeo iframe
 function loadVimeoVideo(el) {
-	var vimeo_link	= el.src;
-	if(vimeo_link == ''){
+	var vimeoLink	= el.src;
+	if(el.querySelector('source') != null){
+		vimeoLink	= el.querySelector('source').src;
+	}
+	if(vimeoLink == '' || document.querySelector('.wp-media-wrapper.wp-video') == null){
 		//try again after a few miliseconds till the el.src is available
 		setTimeout(loadVimeoVideo, 20, el);
-	}else{
-		//if this is a vimeo item
-		if(vimeo_link.includes('https://vimeo.com/')){
-			var wrapper	= document.querySelector('#loaderwrapper');
+	//if this is a vimeo item
+	}else if(vimeoLink.includes('https://vimeo.com/')){
+		var wrapper	= document.querySelector('#loaderwrapper');
 
-			//make sure there is not already a loader
-			if(document.querySelector('#loaderwrapper') == null){
-				//create a div container holding the loading gif
-				wrapper				= document.createElement("DIV");
-				wrapper.id				='loaderwrapper';
-				wrapper.style.margin	= 'auto';
-				wrapper.style.width		= 'fit-content';
+		//make sure there is not already a loader
+		if(document.querySelector('#loaderwrapper') == null){
+			//create a div container holding the loading gif
+			wrapper					= document.createElement("DIV");
+			wrapper.id				='loaderwrapper';
+			wrapper.style.margin	= 'auto';
+			wrapper.style.width		= 'fit-content';
 
-				wrapper.innerHTML	= '<img src="'+media_vars.loadingGif+'" style="max-height: 100px;"><br><b>Loading Vimeo video</b>';
-		
-				//add the div replacing the default video screen
-				var element	= document.querySelector('.wp-media-wrapper.wp-video');
-				element.parentNode.replaceChild(wrapper, element);
-			}
-
-			//get the vimeo id
-			var vimeoId = vimeo_link.replace('https://vimeo.com/','');
-
-			//build an iframe element to show the vimeo video
-			var iframe	= document.createElement("iframe");
-
-			//run when iframe is loaded
-			iframe.onload		= function(){
-				//show iframe
-				iframe.style.display= '';
-				//remove loading gif
-				wrapper.remove();
-			};
-			iframe.src			= 'https://player.vimeo.com/video/'+vimeoId;
-			iframe.style.width	= '100%';
-			iframe.style.height	= '100%';
-			iframe.style.display= 'none';
-
-			//add the loader image after the loading gif, it is hidden until fully loaded 
-			wrapper.parentNode.insertBefore(iframe, wrapper.nextSibling);
+			wrapper.innerHTML		= `<img src="${media_vars.loadingGif}" style="max-height: 100px;"><br><b>Loading Vimeo video</b>`;
+	
+			//add the div replacing the default video screen
+			var element	= document.querySelector('.wp-media-wrapper.wp-video');
+			element.parentNode.replaceChild(wrapper, element);
 		}
+
+		//get the vimeo id
+		var vimeoId = vimeoLink.replace('https://vimeo.com/','');
+
+		//build an iframe element to show the vimeo video
+		var iframe	= document.createElement("iframe");
+
+		//run when iframe is loaded
+		iframe.onload		= function(){
+			//show iframe
+			iframe.style.display= '';
+			//remove loading gif
+			wrapper.remove();
+		};
+		iframe.src			= 'https://player.vimeo.com/video/'+vimeoId;
+		iframe.style.width	= '100%';
+		iframe.style.height	= '100%';
+		iframe.style.display= 'none';
+
+		//add the loader image after the loading gif, it is hidden until fully loaded 
+		wrapper.parentNode.insertBefore(iframe, wrapper.nextSibling);
+	}else{
+		var el = wp.media.view.MediaDetails.prepareSrc( elem );
+		new window.MediaElementPlayer( el, wp.media.mixin.mejsSettings );
 	}
 }
 
