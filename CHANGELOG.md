@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- mobile menu
 
 ## [2.15.3] - 2022-09-12
 
