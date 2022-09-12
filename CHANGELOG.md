@@ -9,6 +9,7 @@
 ### Fixed
 - mobile menu
 - empty column settings in results table
+- filter table on array
 
 ## [2.15.3] - 2022-09-12
 
