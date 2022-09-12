@@ -147,11 +147,19 @@ function showFormResults($attributes){
 			if(isset($_REQUEST['onlyown'])){
 				$attributes['onlyOwn']	= $_REQUEST['onlyown'];
 			}
+
+			if(isset($_REQUEST['all'])){
+				$attributes['all']	= $_REQUEST['all'];
+			}
 		}else{
 			return false;
 		}
 	}elseif(!isset($attributes['formid'])){
 		return false;
+	}
+
+	if(isset($attributes['tableid'])){
+		$attributes['id']	= $attributes['tableid'];
 	}
 
 	if(isset($attributes['tableid'])){

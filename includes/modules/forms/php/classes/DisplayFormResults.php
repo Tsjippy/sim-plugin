@@ -5,7 +5,7 @@ use WP_Error;
 
 ob_start();
 
-class DisplayFormResults extends SimForms{
+class DisplayFormResults extends DisplayForm{
 	use ExportFormResults;
 
 	function __construct(){
@@ -1055,7 +1055,10 @@ class DisplayFormResults extends SimForms{
 		
 		if(
 			$this->onlyOwn										|| 
-			$this->tableSettings['result_type'] == 'personal'	||
+			(
+				$this->tableSettings['result_type'] == 'personal'	&&
+				!$this->all
+			)	||
 			!$this->tableEditPermissions						&&
 			!array_intersect($this->userRoles, array_keys((array)$this->tableSettings['view_right_roles']))
 		){
@@ -1088,7 +1091,7 @@ class DisplayFormResults extends SimForms{
 			}
 
 			// Only own button
-			if($this->onlyOwn || $this->tableSettings['result_type'] == 'personal'){
+			if($this->onlyOwn || ( $this->tableSettings['result_type'] == 'personal' && !$this->all)){
 				$html	.= "<button class='button sim small onlyown-switch-all'>Show all entries</button>";
 			}else{
 				$html	.= "<button class='button sim small onlyown-switch-on'>Show only my own entries</button>";
@@ -1118,7 +1121,10 @@ class DisplayFormResults extends SimForms{
 
 					foreach($this->tableSettings['filter'] as $filter){
 						$filterElement	= $this->getElementById($filter['element']);
-						$filterValue	= $_POST[$filter['name']];
+						$filterValue	= '';
+						if(!empty($_POST[$filter['name']])){
+							$filterValue	= $_POST[$filter['name']];
+						}
 
 						$name			= str_replace(']', '', end(explode('[', $filterElement->name)));
 
@@ -1136,10 +1142,11 @@ class DisplayFormResults extends SimForms{
 						}
 
 						$html	.= "<span class='filteroption'>";
-							$html	.= ucfirst($filter['name'])." <input type='{$filterElement->type}' name='{$filter['name']}' value='$filterValue'>";
+							$html	.= "<label>".ucfirst($filter['name']).": </label>";
+							$html	.= $this->getElementHtml($filterElement);
 						$html	.= "</span>";
 					}
-					$html	.= "<button class='button'>Filter</button>";
+					$html	.= "<button class='button' style='height: fit-content;'>Filter</button>";
 				$html	.= "</div>";
 			}
 
@@ -1207,7 +1214,7 @@ class DisplayFormResults extends SimForms{
 
 		$this->loadTableSettings();
 
-		$buttons	= $this->renderTableButtons();
+		$buttons			= $this->renderTableButtons();
 
 		$this->noRecords	= true;
 

@@ -351,7 +351,8 @@ class SimForms{
 					'id'			=> '',
 					'formid'		=> '',
 					'onlyOwn'		=> false,
-					'archived'		=> false
+					'archived'		=> false,
+					'all'			=> false,
 				),
 				$atts
 			);
@@ -360,7 +361,12 @@ class SimForms{
 			$this->formId		= sanitize_text_field($atts['formid']);
 			$this->shortcodeId	= $atts['id'];
 			$this->onlyOwn		= $atts['onlyOwn'];
+			$this->all			= $atts['all'];
 			$this->showArchived	= $atts['archived'];
+
+			if(isset($_GET['all'])){
+				$this->all	= $_GET['all'];
+			}
 			
 			if(!empty($atts['userid']) && is_numeric($atts['userid'])){
 				$this->userId	= $atts['userid'];

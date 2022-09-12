@@ -3,7 +3,7 @@ namespace SIM\VIMEO;
 use SIM;
 use Vimeo\Vimeo;
 
-const MODULE_VERSION		= '7.0.10';
+const MODULE_VERSION		= '7.0.11';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 

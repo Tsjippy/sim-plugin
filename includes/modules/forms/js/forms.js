@@ -1,4 +1,5 @@
 import { addStyles } from './../../../js/ajax_import.js';
+export { getFieldValue } from  '../../../js/field_value.js';
 
 
 async function saveFormInput(target){
@@ -368,115 +369,6 @@ export function nextPrev(n) {
 	showTab(currentTab,form);
 }
 
-function getRadioValue(form, name){
-	let el	= form.querySelector(`[name='${name}' i]:checked`);
-
-	//There is no radio selected currently
-	if(el == null){
-		//return an empty value
-		return '';
-	}
-
-	return el.value;
-}
-
-function getCheckboxValue(form, name, compareValue, orgName){
-	let value		= '';
-	let elements	= '';
-
-	//we are dealing with a specific checkbox
-	if(orgName.type == 'checkbox' ){
-		if(orgName.checked){
-			return orgName.value;
-		}
-		
-		return '';
-	}
-
-	//we should find the checkbox with this value and check if it is checked
-	if(compareValue != null){
-		elements	= form.querySelector(`[name='${name}' i][value="${compareValue}" i]:checked`);
-		if(elements != null){
-			value = compareValue;
-		}
-	//no compare value give just return all checked values
-	}else{
-		elements	= form.querySelectorAll(`[name="${name}" i]:checked`);
-		
-		elements.forEach(el=>{
-			if(value != ''){
-				value += ', ';
-			}
-			value += el.value;
-		});
-	}
-
-	return value;
-}
-
-function getDataListValue(el){
-	let value		= '';
-	let origInput 	= el.list.querySelector("[value='"+el.value+"' i]");
-			
-	if(origInput == null){
-		value =  el.value;
-	}else{
-		value = origInput.dataset.value;
-		if(value == ''){
-			value =  el.value;
-		}
-	}
-
-	return value;
-}
-
-export function getFieldValue(orgName, form, checkDatalist=true, compareValue=null, lowercase=false){
-	let el		= ''; 
-	let name	= '';
-	let value 	= '';
-
-	//name is not a name but a node
-	if(orgName instanceof Element){
-		el			= orgName;		
-		//check if valid input type
-		if(el.tagName != 'INPUT' && el.tagName != 'TEXTAREA' && el.tagName != 'SELECT' && el.closest('.nice-select-dropdown') == null){
-			el = el.querySelector('input, select, textarea');
-		}
-		if(el == null){
-			el			= orgName;
-		}
-		name		= el.name;
-	}else{
-		name		= orgName;
-		el			= form.querySelector(`[name='${name}' i]`);
-	}
-	
-	if(el == null){
-		console.trace();
-		console.log("cannot find element with name "+name);
-
-		return value;
-	}
-
-	if(el.type == 'radio'){
-		value	= getRadioValue(form, name);
-	}else if(el.type == 'checkbox'){
-		value	= getCheckboxValue(form, name, compareValue, orgName);	
-	}else if(el.closest('.nice-select-dropdown') != null && el.dataset.value != undefined){
-		//nice select
-		value = el.dataset.value
-	}else if(el.list != null && checkDatalist){
-		value =  getDataListValue(el);
-	}else if(el.value != null && el.value != 'undefined'){
-		value = el.value;
-	}
-	
-	if(lowercase){
-		return value.toLowerCase();
-	}
-	return value;
-}
-
 function findcheckboxTarget(form, name, value){
 	let targets = form.querySelectorAll(`[name="${name}" i]`);
 	for (const element of targets) {
@@ -605,6 +497,12 @@ async function requestNewFormResults(target){
 	if(url.searchParams.get('onlyown')){
 		formData.append('onlyown', true);
 	}
+
+	if(url.searchParams.get('all')){
+		console.log('dsf')
+		formData.append('all', true);
+	}
+
 	if(url.searchParams.get('archived')){
 		formData.append('archived', true);
 	}
@@ -637,7 +535,9 @@ async function onlyOwnSwitch(target){
 	const url 		= new URL(window.location);
 	if(target.matches('.onlyown-switch-on')){
 		url.searchParams.set('onlyown', true);
+		url.searchParams.delete('all', true);
 	}else{
+		url.searchParams.set('all', true);
 		url.searchParams.delete('onlyown');
 	}
 	window.history.pushState({}, '', url);
@@ -698,6 +598,7 @@ document.addEventListener('click',function(event) {
 		saveFormInput(target);
 	}
 
+	console.log(target)
 	if(target.matches('.formbuilder-switch') || target.matches('.formbuilder-switch-back')){
 		formbuilderSwitch(target);
 	}

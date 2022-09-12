@@ -1,4 +1,4 @@
-import {getFieldValue} from '/../modules/forms/js/forms';
+import { getFieldValue } from '/field_value.js';
 
 let oldValue;
 

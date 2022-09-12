@@ -84,7 +84,10 @@ window.wp.Uploader.prototype.init = function() { // plupload 'PostInit'
 	})
 
 	this.uploader.bind('BeforeUpload', function(up, file) {
+		console.log(file)
 		if(file.type.split("/")[0] == 'video'){
+			console.log(file)
+			
 			wpMediaUpload(file, up);
 
 			//mark plupload as finished
@@ -148,6 +151,7 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
     upload.start();
 }
 
+// Exclude videos from max size filter
 plupload.addFileFilter('max_file_size', function(maxSize, file, cb) {
 	var undef;
    

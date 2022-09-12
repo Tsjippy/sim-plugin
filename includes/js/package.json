@@ -1,8 +1,8 @@
 {
-  "name": "picture_select",
+  "name": "Base scripts",
   "version": "1.0.0",
   "description": "Pictures selector",
-  "main": "./select_picture.js",
+  "main": "",
   "scripts": {
     "picture": "webpack --watch --entry ./select_picture.js --output-path . --output-filename select_picture.min.js --progress --mode=production --devtool source-map",
     "user": "webpack --watch --entry ./user_select.js --output-path . --output-filename user_select.min.js --progress --mode=production --devtool source-map",
