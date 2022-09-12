@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issues with forms.js
 
 ## [2.15.2] - 2022-09-12
 
