@@ -605,6 +605,10 @@ class DisplayFormResults extends DisplayForm{
 				</div>
 				<?php
 				foreach ($this->columnSettings as $elementIndex=>$columnSetting){
+					if(!isset($columnSetting['name'])){
+						continue;
+					}
+					
 					$niceName	= $columnSetting['nice_name'];
 					
 					if($columnSetting['show'] == 'hide'){
