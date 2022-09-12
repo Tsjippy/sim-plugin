@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.15.2] - 2022-09-12
+
+
+### Fixed
+- vimeo video preview in media gallery
+
 ## [2.15.1] - 2022-09-09
 
 
