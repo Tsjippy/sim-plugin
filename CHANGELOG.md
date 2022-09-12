@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- vimeo video preview in media gallery
 
 ## [2.15.1] - 2022-09-09
 
