@@ -32,12 +32,13 @@ function getCheckboxValue(form, name, compareValue, orgName){
 	//no compare value give just return all checked values
 	}else{
 		elements	= form.querySelectorAll(`[name="${name}" i]:checked`);
-		
+		value		= [];
 		elements.forEach(el=>{
-			if(value != ''){
+			value.push(el.value);
+			/* if(value != ''){
 				value += ', ';
 			}
-			value += el.value;
+			value += el.value; */
 		});
 	}
 

@@ -598,7 +598,6 @@ document.addEventListener('click',function(event) {
 		saveFormInput(target);
 	}
 
-	console.log(target)
 	if(target.matches('.formbuilder-switch') || target.matches('.formbuilder-switch-back')){
 		formbuilderSwitch(target);
 	}

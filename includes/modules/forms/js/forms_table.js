@@ -318,7 +318,9 @@ async function processFormsTableInput(target){
 	document.removeEventListener("click", outsideFormsTableClicked);
 	
 	//Only update when needed
-	if (value != JSON.parse(cell.dataset.oldvalue)){
+	console.log(value)
+	console.log(cell.dataset.oldvalue)
+	if (value != cell.dataset.oldvalue){
 		Main.showLoader(cell.firstChild);
 		
 		// Submit new value and receive the filtered value back
@@ -329,7 +331,7 @@ async function processFormsTableInput(target){
 			formData.append('subid', subId);
 		}
 		formData.append('fieldname', cellId);
-		formData.append('newvalue', value);
+		formData.append('newvalue', JSON.stringify(value));
 		
 		let response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
 	

@@ -608,7 +608,7 @@ class DisplayFormResults extends DisplayForm{
 					if(!isset($columnSetting['name'])){
 						continue;
 					}
-					
+
 					$niceName	= $columnSetting['nice_name'];
 					
 					if($columnSetting['show'] == 'hide'){
@@ -1126,8 +1126,9 @@ class DisplayFormResults extends DisplayForm{
 					foreach($this->tableSettings['filter'] as $filter){
 						$filterElement	= $this->getElementById($filter['element']);
 						$filterValue	= '';
-						if(!empty($_POST[$filter['name']])){
-							$filterValue	= $_POST[$filter['name']];
+						$filterKey		= strtolower($filter['name']);
+						if(!empty($_POST[$filterKey])){
+							$filterValue	= $_POST[$filterKey];
 						}
 
 						$name			= str_replace(']', '', end(explode('[', $filterElement->name)));
@@ -1135,7 +1136,10 @@ class DisplayFormResults extends DisplayForm{
 						// Filter the current submission data
 						if(!empty($filterValue)){
 							foreach($this->submissionData as $key=>$entry){
-								if(!$this->compareFilterValue($entry->formresults[$name], $filter['type'], $filterValue)){
+								if(
+									!isset($entry->formresults[$name])	||													// The filter value is not set at all
+									!$this->compareFilterValue($filterValue, $filter['type'], $entry->formresults[$name])	// The filter value does not match the value
+								){
 									unset($this->submissionData[$key]);
 								}
 							}
@@ -1146,8 +1150,8 @@ class DisplayFormResults extends DisplayForm{
 						}
 
 						$html	.= "<span class='filteroption'>";
-							$html	.= "<label>".ucfirst($filter['name']).": </label>";
-							$html	.= $this->getElementHtml($filterElement);
+							$html	.= "<label>".ucfirst($filterKey).": </label>";
+							$html	.= $this->getElementHtml($filterElement, $filterValue);
 						$html	.= "</span>";
 					}
 					$html	.= "<button class='button' style='height: fit-content;'>Filter</button>";
@@ -1191,6 +1195,15 @@ class DisplayFormResults extends DisplayForm{
 		if(empty($var1) || empty($var2)){
 			return true;
 		}
+
+		if(is_array($var1) && $op == 'like'){
+			if(is_array($var2)){
+				return array_intersect($var1, $var2);
+			}
+
+			return in_array($var2, $var1);
+		}
+
 		switch ($op) {
 			case "=":  		return $var1 == $var2;
 			case "!=": 		return $var1 != $var2;
@@ -1200,7 +1213,7 @@ class DisplayFormResults extends DisplayForm{
 			case "<":  		return $var1 <  $var2;
 			case "like":	return strpos(strtolower($var1), strtolower($var2)) !== false;
 			default:       return true;
-		}   
+		} 
 	}
 
 	/**

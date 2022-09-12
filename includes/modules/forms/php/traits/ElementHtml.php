@@ -265,11 +265,11 @@ trait ElementHtml{
 	 * Gets the html of form element
 	 * 
 	 * @param	object	$element	The element
-	 * @param	int		$width		The width of the element. Default 100
+	 * @param	mixed	$value		The value of the element
 	 * 
 	 * @return	string				The html
 	 */
-	function getElementHtml($element){
+	function getElementHtml($element, $value =''){
 		$html		= '';
 		$elClass	= '';
 		$elOptions	= '';
@@ -427,15 +427,18 @@ trait ElementHtml{
 				if(strpos($elType,'input') !== false){
 					$elValue	= "value='%value%'";
 				}
-			}elseif(!empty($values)){				
-				//this is an input and there is a value for it
-				if(empty($this->formData->settings['save_in_meta'])){
-					$val		= array_values((array)$values['defaults'])[0];
-				}else{
-					$val		= array_values((array)$values['metavalue'])[0];
+			}elseif(!empty($values) || !empty($value)){
+				$val	= $value;	
+				if(empty($value)){		
+					//this is an input and there is a value for it
+					if(empty($this->formData->settings['save_in_meta'])){
+						$val		= array_values((array)$values['defaults'])[0];
+					}elseif(isset($values['metavalue'])){
+						$val		= array_values((array)$values['metavalue'])[0];
+					}
 				}
 				
-				if(strpos($elType,'input') !== false && !empty($val)){
+				if(strpos($elType, 'input') !== false && !empty($val) && !in_array($elType, ['radio', 'checkbox'])){
 					$elValue	= "value='$val'";
 				}else{
 					$elValue	= "";
@@ -496,10 +499,11 @@ trait ElementHtml{
 					
 					$lowValues	= [];
 					
-					$default_key				= $element->default_value;
-					if(!empty($default_key)){
-						$lowValues[]	= strtolower($this->defaultValues[$default_key]);
+					$defaultKey				= $element->default_value;
+					if(!empty($defaultKey)){
+						$lowValues[]	= strtolower($this->defaultValues[$defaultKey]);
 					}
+
 					foreach((array)$values['metavalue'] as $key=>$val){
 						if(is_array($val)){
 							foreach($val as $v){
@@ -507,6 +511,16 @@ trait ElementHtml{
 							}
 						}else{
 							$lowValues[] = strtolower($val);
+						}
+					}
+
+					if(!empty($value)){
+						if(is_array($value)){
+							foreach($value as $v){
+								$lowValues[] = strtolower($v);
+							}
+						}else{
+							$lowValues[] = strtolower($value);
 						}
 					}
 

@@ -363,7 +363,7 @@ function editValue(){
 		
 	//update an existing entry
 	$fieldName 		= sanitize_text_field($_POST['fieldname']);
-	$newValue 		= sanitize_text_field($_POST['newvalue']);
+	$newValue 		= json_decode(sanitize_text_field(stripslashes($_POST['newvalue'])));
 
 	$transValue		= $formTable->transformInputData($newValue, $fieldName);
 	

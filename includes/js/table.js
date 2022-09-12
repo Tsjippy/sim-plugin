@@ -95,7 +95,7 @@ async function processInput(event, target){
 	if (value != oldValue){		
 		//get the updated fieldname from the column header
 		let formData = new FormData();
-		formData.append('value', value);
+		formData.append('value', JSON.stringify(value));
 
 		for( let key in cell.dataset){
 			formData.append(key, cell.dataset[key]);
