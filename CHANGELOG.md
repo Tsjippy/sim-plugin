@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with nested clone containers
 
 ## [2.15.6] - 2022-09-13
 
