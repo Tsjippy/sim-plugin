@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.15.6] - 2022-09-13
+
+
+### Fixed
 - some formfields should not be required
 
 ## [2.15.5] - 2022-09-12
