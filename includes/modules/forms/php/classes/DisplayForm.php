@@ -184,7 +184,7 @@ class DisplayForm extends SimForms{
 		}
 
 		//Load default values for this element
-		$elementHtml 	= $this->getElementHtml($element, $width);
+		$elementHtml 	= $this->getElementHtml($element);
 
 		$html			= '';
 

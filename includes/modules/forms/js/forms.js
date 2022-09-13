@@ -7,8 +7,11 @@ async function saveFormInput(target){
 
 	// make all inputs required if needed
 	form.querySelectorAll('.required:not(hidden) input, .required:not(hidden) textarea, .required:not(hidden) select').forEach(el=>{
-		el.required	= true;
-	})
+		// do not make nice select inputs required
+		if(el.closest('div.nice-select') == null){
+			el.required	= true;
+		}
+	});
 
 	let response	= await FormSubmit.submitForm(target, 'forms/save_form_input');
 
