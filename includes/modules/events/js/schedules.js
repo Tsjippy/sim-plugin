@@ -500,6 +500,47 @@ document.addEventListener('change', function(event){
 
 		target.closest('form').querySelector('[name="host_id"]').value	= userId;
 	}
+
+	if(target.matches('[name="add_session"] .time')){
+		// get the active cell
+		let cell		= document.querySelector('td.active');
+		let table		= cell.closest('table');
+
+		// validate the time
+		if(
+			(target.name == 'starttime' && table.querySelector(`tr[data-starttime="${target.value}"]`) == null) ||
+			(target.name == 'endtime' && table.querySelector(`tr[data-endtime="${target.value}"]`) == null) 
+		){
+			return;
+		}
+
+		let form		= target.closest('form');
+		let d			= new Date();
+		let starttime	= form.querySelector('[name="starttime"]').value.split(':');
+		starttime		= new Date(d.getFullYear(), 0, 1, starttime[0], starttime[1]);
+		let endtime		= form.querySelector('[name="endtime"]').value.split(':');
+		endtime			= new Date(d.getFullYear(), 0, 1, endtime[0], endtime[1]);
+		// calculate the quarters between end and starttime
+		let rowSpan		= (endtime-starttime)/1000/60/15
+
+		// starttime changed
+		if(starttime != target.value){
+			// adjust the current cell
+			cell.removeAttribute('rowspan');
+			cell.classList.remove('ui-selected', 'active');
+
+			// find the new cell
+			let newRow	= cell.closest('table').querySelector('tr[data-starttime="'+form.querySelector('[name="starttime"]').value+'"]');
+			let newCell	= newRow.cells[cell.cellIndex];
+
+			newCell.innerHTML	= cell.innerHTML;
+			newCell.classList.add('ui-selected', 'active');
+			applyRowSpan(newCell, rowSpan);
+		// endtime changed
+		}else{
+			applyRowSpan(cell, rowSpan);
+		}
+	}
 });
 
 function checkIfValidSelection(target, selected, e){

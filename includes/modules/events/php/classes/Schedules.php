@@ -565,12 +565,12 @@ class Schedules{
 
 					<label>
 						<h4>Select a start time:</h4>
-						<input type="time" name="starttime" step="900" min="08:00" max="18:00" required>
+						<input type="time" name="starttime" class="time" step="900" min="08:00" max="18:00" required>
 					</label>
 					
 					<label>
 						<h4>Select an end time:</h4>
-						<input type="time" name="endtime"  step="900" min="08:00" max="18:00" required>
+						<input type="time" name="endtime" class="time" step="900" min="08:00" max="18:00" required>
 					</label>
 					
 					<label>
