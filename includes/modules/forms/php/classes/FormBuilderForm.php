@@ -551,12 +551,12 @@ class FormBuilderForm extends SimForms{
 					All your fieldvalues are available as well:
 					<select class='nonice placeholderselect'>
 						<option value=''>Select to copy to clipboard</option><?php
-					foreach($this->formElements as $element){
-						if(!in_array($element->type, ['label','info','button','datalist','formstep'])){
-							echo "<option>%{$element->name}%</option>";
+						foreach($this->formElements as $element){
+							if(!in_array($element->type, ['label','info','button','datalist','formstep'])){
+								echo "<option>%{$element->name}%</option>";
+							}
 						}
-					}
-					?>
+						?>
 					</select>
 					
 					<br>
@@ -591,7 +591,7 @@ class FormBuilderForm extends SimForms{
 										<label class="formfield formfieldlabel">Field</label>
 										<select name='emails[<?php echo $key;?>][conditionalfield]'>
 											<?php
-											echo $this->inputDropdown($email['conditionalfield']);
+											echo $this->inputDropdown( $email['conditionalfield'] );
 											?>
 										</select>
 										
@@ -629,34 +629,36 @@ class FormBuilderForm extends SimForms{
 													[
 														'fieldid'	=> '',
 														'value'		=> '',
-														'email'		=> '']
+														'email'		=> ''
+													]
 												];
 											}
 											foreach(array_values($email['conditionalfromemail']) as $fromKey=>$fromEmail){
-											?>
-											<div class='clone_div' data-divid='<?php echo $fromKey;?>'>
-												<fieldset class='formemailfieldset'>
-													<legend class="formfield">Condition <?php echo $fromKey+1;?>
-													<button type='button' class='add button' style='flex: 1;'>+</button>
-													<button type='button' class='remove button' style='flex: 1;'>-</button>
-													</legend>
-													If 
-													<select name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][fieldid]'>
-														<?php
-														echo $this->inputDropdown($fromEmail['fieldid']);
-														?>
-													</select>
-													<label class="formfield formfieldlabel">
-														equals 
-														<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][value]' value="<?php echo $fromEmail['value'];?>">
-													</label>
-													<label class="formfield formfieldlabel">
-														then from e-mail address should be:<br>
-														<input type='email' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][email]' value="<?php echo $fromEmail['email'];?>">
-													</label>
-												</fieldset>
-											</div>
-											<?php
+												?>
+												<div class='clone_div' data-divid='<?php echo $fromKey;?>'>
+													<fieldset class='formemailfieldset'>
+														<legend class="formfield">
+															Condition <?php echo $fromKey+1;?>
+															<button type='button' class='add button' style='flex: 1;'>+</button>
+															<button type='button' class='remove button' style='flex: 1;'>-</button>
+														</legend>
+														If 
+														<select name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][fieldid]'>
+															<?php
+															echo $this->inputDropdown($fromEmail['fieldid']);
+															?>
+														</select>
+														<label class="formfield formfieldlabel">
+															equals 
+															<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][value]' value="<?php echo $fromEmail['value'];?>">
+														</label>
+														<label class="formfield formfieldlabel">
+															then from e-mail address should be:<br>
+															<input type='email' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][email]' value="<?php echo $fromEmail['email'];?>">
+														</label>
+													</fieldset>
+												</div>
+												<?php
 											}
 											?>
 										</div>

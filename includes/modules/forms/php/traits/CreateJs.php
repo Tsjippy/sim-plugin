@@ -359,22 +359,26 @@ trait CreateJs{
         $newJs   = "\n\tdocument.addEventListener('DOMContentLoaded', function() {";
             $newJs.= "\n\t\tconsole.log('Dynamic $this->formName forms js loaded');";
             $newJs.= "\n\t\tFormFunctions.tidyMultiInputs();";
-            $newJs.= "\n\t\tlet forms = document.querySelectorAll('[data-formid=\"{$this->formData->id}\"]');";
 
-            $newJs.= "\n\t\tforms.forEach(form=>{";
+            $tabJs  = '';
                 if($this->isMultiStep()){
-                    $newJs.= "\n\t\t\t//show first tab";
-                    $newJs.= "\n\t\t\t// Display the current tab// Current tab is set to be the first tab (0)";
-                    $newJs.= "\n\t\t\tcurrentTab = 0; ";
-                    $newJs.= "\n\t\t\t// Display the current tab";
-                    $newJs.= "\n\t\t\tFormFunctions.showTab(currentTab,form); ";
+                    $tabJs.= "\n\t\t\t//show first tab";
+                    $tabJs.= "\n\t\t\t// Display the current tab// Current tab is set to be the first tab (0)";
+                    $tabJs.= "\n\t\t\tcurrentTab = 0; ";
+                    $tabJs.= "\n\t\t\t// Display the current tab";
+                    $tabJs.= "\n\t\t\tFormFunctions.showTab(currentTab,form); ";
                 }
                 if(!empty($this->formData->settings['save_in_meta'])){
-                    $newJs.= "\n\t\t\tform.querySelectorAll('select, input, textarea').forEach(";
-                        $newJs.= "\n\t\t\t\tel=>{$this->formName}.processFields(el)";
-                    $newJs.= "\n\t\t\t);";
+                    $tabJs.= "\n\t\t\tform.querySelectorAll('select, input, textarea').forEach(";
+                        $tabJs.= "\n\t\t\t\tel=>{$this->formName}.processFields(el)";
+                    $tabJs.= "\n\t\t\t);";
                 }
-            $newJs.= "\n\t\t});";
+            if(!empty($tabJs)){
+                $newJs.= "\n\t\tlet forms = document.querySelectorAll('[data-formid=\"{$this->formData->id}\"]');";
+                $newJs.= "\n\t\tforms.forEach(form=>{";
+                    $newJs.= $tabJs;
+                $newJs.= "\n\t\t});";
+            }
         $newJs.= "\n\t});";
 
         $js         .= $newJs;

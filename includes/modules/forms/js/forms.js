@@ -238,8 +238,8 @@ export function removeNode(target){
  */
 export function tidyMultiInputs(){
 	//remove unnecessary buttons on inputs with multiple values
-	document.querySelectorAll('.clone_divs_wrapper').forEach(function(div){
-		let cloneDivArr	= div.querySelectorAll('.clone_div');
+	document.querySelectorAll('.clone_divs_wrapper').forEach( function(div){
+		let cloneDivArr	= div.querySelectorAll(':scope > .clone_div');
 		
 		if(cloneDivArr.length == 1){
 			cloneDivArr[0].querySelectorAll('.remove').forEach(el=>el.remove());
@@ -251,7 +251,8 @@ export function tidyMultiInputs(){
 			
 			//remove add button for all but the last
 			if(index != array.length - 1){
-				cloneDiv.querySelectorAll('.add').forEach(el=>el.remove());
+				// Select all add buttons but not the any nested buttons
+				cloneDiv.querySelectorAll('.add:not(:scope .clone_divs_wrapper .add)').forEach(el=>el.remove());
 			}
 		})
 	});

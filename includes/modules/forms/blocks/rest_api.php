@@ -83,8 +83,6 @@ add_action( 'rest_api_init', function () {
 });
 
 function showFormBuilder($attributes){
-	global $wp_scripts;
-
 	if($attributes instanceof \WP_REST_Request){
 		if(!empty($_REQUEST['formname'])){
 			$attributes = ['formname' => $_REQUEST['formname']];
@@ -125,7 +123,7 @@ function showFormBuilder($attributes){
 	$css	= ob_get_clean();
 
 	return [
-		'html'	=>	$html,
+		'html'	=> $html,
 		'js'	=> $js,
 		'css'	=> $css
 	];
