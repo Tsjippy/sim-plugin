@@ -8,6 +8,7 @@
 
 ### Fixed
 - issue with nested clone containers
+- edit time after selecting schedule
 
 ## [2.15.6] - 2022-09-13
 
