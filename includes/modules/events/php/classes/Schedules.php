@@ -364,10 +364,9 @@ class Schedules{
 			$cellText = 'Available';
 		}else{
 			$hostId			= $event->organizer_id;
+			$dataset	= "data-time='{$event->starttime}' data-endtime='{$event->endtime}'";
 			if(is_numeric($hostId)){
-				$dataset	= "data-host='".get_userdata($hostId)->display_name."' data-host_id='$hostId'";
-			}else{
-				$dataset	= "";
+				$dataset	.= " data-host='".get_userdata($hostId)->display_name."' data-host_id='$hostId'";
 			}
 			$title		= get_the_title($event->post_id);
 			$dataset	.= " data-subject='".explode(' with ', $title)[0]."'";
@@ -555,6 +554,7 @@ class Schedules{
 					<input type='hidden' name='schedule_id'>
 					<input type='hidden' name='olddate'>
 					<input type='hidden' name='host_id'>
+					<input type='hidden' name='oldtime'>
 					
 					<h3>Add an orientation session</h3>
 
@@ -575,12 +575,12 @@ class Schedules{
 					
 					<label>
 						<h4>What is the subject</h4>
-						<input type="text" name="subject" required>
+						<input type="text" name="subject" class="wide" required>
 					</label>
 					
 					<label>
 						<h4>Location</h4>
-						<input type="text"  name="location">
+						<input type="text"  name="location" class="wide">
 					</label>
 					
 					<?php
@@ -589,7 +589,7 @@ class Schedules{
 						?>
 						<label for="host"><h4>Who is in charge</h4></label>
 						<?php
-						echo SIM\userSelect('', true, false, '', 'host', [], '', [], 'list', 'admin_host');
+						echo SIM\userSelect('', true, false, 'wide', 'host', [], '', [], 'list', 'admin_host');
 					}
 					
 					echo SIM\addSaveButton('add_timeslot','Add time slot','update_event add_schedule_row');

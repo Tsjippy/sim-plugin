@@ -89,6 +89,7 @@ function showAddHostModal(){
 	var date											= table.rows[0].cells[cell.cellIndex].dataset.isodate;
 	var startTime										= target.closest('tr').dataset.starttime;
 	var modal											= target.closest('.schedules_wrapper').querySelector('[name="add_host"]');
+
 	// Clear
 	modal.querySelectorAll('input:not([type="hidden"])').forEach(el=>el.value='');
 
@@ -100,8 +101,27 @@ function showAddHostModal(){
 	modal.classList.remove('hidden');
 }
 
-// Add a new host when the host form is submitted
+// Add a new host/ updates an existing entry when the host form is submitted
 async function addHost(target){
+	let form	= target.closest('form');
+	let oldtime	= form.querySelector('[name="oldtime"]').value;
+	if(oldtime != ''){
+		// remove the old event
+		let cell	= document.querySelector('td.active');
+		cell.classList.remove('ui-selected', 'active', 'selected');
+		cell.removeAttribute('rowspan');
+
+		let date	= form.querySelector('[name="date"]').value;
+		let time	= form.querySelector('[name="starttime"]').value;
+		let columnNr= cell.closest('table').tHead.querySelector(`[data-isodate="${date}"]`).cellIndex;
+		// Add the new one
+		let newCell	= cell.closest('table').querySelector(`tr[data-starttime="${time}"]`).cells[columnNr];
+		newCell.classList.add('ui-selected', 'active', 'selected');
+		newCell.innerHTML	= cell.innerHTML;
+
+		cell.innerHTML	= 'Available';
+	}
+
 	var response 	= await FormSubmit.submitForm(target, 'events/add_host');
 
 	if(response){
@@ -198,7 +218,6 @@ async function removeHost(target){
 function showTimeslotModal(selected){
 	var modal 			= document.querySelector('[name="add_session"]');
 	var firstCell		= selected[0].node;
-	var lastCell		= selected[selected.length-1].node;
 
 	firstCell.classList.add('active');
 	let rowCount		= document.querySelectorAll('.ui-selected').length;
@@ -209,7 +228,7 @@ function showTimeslotModal(selected){
 		Main.showLoader(firstCell.firstChild);
 	}
 
-	var endTime			= lastCell.closest('tr').dataset.endtime;
+	var endTime			= firstCell.dataset.endtime;
 	var table			= firstCell.closest('table');
 	var date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 	
@@ -226,12 +245,17 @@ function showTimeslotModal(selected){
 	modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
 
 	let hostId			= firstCell.dataset.host_id;
+	let time			= firstCell.dataset.time;
 	let subject			= firstCell.dataset.subject;
 	let location		= firstCell.dataset.location;
 	let hostName		= firstCell.dataset.host;
 
 	if(hostId	!= undefined){
 		modal.querySelector('[name="host_id"]').value			= hostId;
+	}
+
+	if(time	!= undefined){
+		modal.querySelector('[name="oldtime"]').value			= time;
 	}
 
 	if(subject	!= undefined){

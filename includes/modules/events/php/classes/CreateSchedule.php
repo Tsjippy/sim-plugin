@@ -71,8 +71,7 @@ class CreateSchedule extends Schedules{
 		}
 
 		//clean title
-		$title	= str_replace(" with {$event['organizer']}", '', $title);
-		$title	= str_replace("Hosting {$this->name} for ", '', $title);
+		$title	= str_replace([" with", $event['organizer'], "Hosting {$this->name} for "], '', $title);
 
 		//New events
 		$eventArray		= [
@@ -89,6 +88,7 @@ class CreateSchedule extends Schedules{
 				'onlyfor'	=>[$this->hostId, $hostPartner]
 			];
 		}
+
 		foreach($eventArray as $a){
 			$post = array(
 				'post_type'		=> 'event',
@@ -97,7 +97,9 @@ class CreateSchedule extends Schedules{
 				'post_status'   => "publish",
 				'post_author'   => $this->hostId
 			);
-			$postId 	= wp_insert_post( $post,true,false);
+
+			$postId 	= wp_insert_post( $post, true, false);
+			
 			update_post_meta($postId, 'eventdetails', json_encode($event));
 			update_post_meta($postId, 'onlyfor', $a['onlyfor']);
 
@@ -271,6 +273,7 @@ class CreateSchedule extends Schedules{
 	 * @return string	success message and new cell html
 	*/
 	public function addHost(){
+		$message			= '';
 		$this->scheduleId	= $_POST['schedule_id'];
 		$schedule			= $this->findScheduleById($this->scheduleId);
 
@@ -300,6 +303,15 @@ class CreateSchedule extends Schedules{
 			}
 		}
 
+		// remove any existing events
+		if(isset($_POST['oldtime'])){
+			$this->date			= $_POST['olddate'];
+			$this->starttime	= $_POST['oldtime'];
+			$this->removeHost();
+
+			$message	= "Succesfully updated this entry";
+		}
+
 		$this->name			= $schedule->name;
 		$this->date			= $_POST['date'];
 		$dateStr			= date('d F Y',strtotime($this->date));
@@ -318,17 +330,21 @@ class CreateSchedule extends Schedules{
 			$this->endtime		= $_POST['endtime'];
 		}
 
-		if($this->admin){
-			$message	= "Succesfully added $hostName as a host for {$this->name} on $dateStr";
-		}else{
-			$message	= "Succesfully added you as a host for {$this->name} on $dateStr";
+		if(empty($message)){
+			if($this->admin){
+				$message	= "Succesfully added $hostName as a host for {$this->name} on $dateStr";
+			}else{
+				$message	= "Succesfully added you as a host for {$this->name} on $dateStr";
+			}
 		}
 
 		if($title == 'lunch' || $title == 'dinner'){
 			$this->addScheduleEvents($title, $schedule);
+			
 			$html	= $this->writeMealCell($schedule, $this->date, $this->starttime);
 		}else{
 			$this->addScheduleEvents($title, $schedule, false);
+
 			$html	= $this->writeOrientationCell($schedule, $this->date, $this->starttime);
 		}
 		
@@ -345,11 +361,11 @@ class CreateSchedule extends Schedules{
 	*/
 	public function removeHost(){
 		$this->scheduleId	= $_POST['schedule_id'];
-		$schedule		= $this->findScheduleById($this->scheduleId);
+		$schedule			= $this->findScheduleById($this->scheduleId);
 
-		$this->hostId	= $_POST['host'];
+		$this->hostId		= $_POST['host_id'];
 
-		$partnerId		= SIM\hasPartner($this->hostId);
+		$partnerId			= SIM\hasPartner($this->hostId);
 		if(
 			!$this->admin 						&& 
 			$this->hostId != $this->user->ID 	&& 
@@ -363,12 +379,10 @@ class CreateSchedule extends Schedules{
 		}else{
 			$hostName		= get_userdata($this->hostId)->display_name;
 		}
+		
+		$dateStr			= date('d F Y', strtotime($this->date));
 
-		$this->date			= $_POST['date'];
-		$dateStr			= date('d F Y',strtotime($this->date));
-		$this->starttime	= $_POST['starttime'];
-
-		$events	= $this->getScheduleEvents($schedule->id, $this->date, $this->starttime);
+		$events				= $this->getScheduleEvents($schedule->id, $this->date, $this->starttime);
 		
 		foreach($events as $event){
 			//delete event_post

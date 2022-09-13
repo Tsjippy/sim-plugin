@@ -120,7 +120,9 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$schedule		= new CreateSchedule();
+				$schedule				= new CreateSchedule();
+				$schedule->date			= $_POST['date'];
+				$schedule->starttime	= $_POST['starttime'];
 				return $schedule->removeHost();
 			},
 			'permission_callback' 	=> '__return_true',
