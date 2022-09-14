@@ -45,7 +45,7 @@ if(!empty($hookName)){
 
 //Show the latest news
 //generate_before_footer
-$hookName	= SIM\getModuleOption(MODULE_SLUG,'before_footer_hook');
+$hookName	= SIM\getModuleOption(MODULE_SLUG, 'before_footer_hook');
 if(!empty($hookName)){
 	add_action($hookName, function() {
 		//if on home page

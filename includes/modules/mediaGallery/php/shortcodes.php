@@ -150,7 +150,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
     if(!empty($cats) && !in_array(-1, $cats)){
         $args['tax_query'] = array(
             array(
-                'taxonomy'  => 'attachment_cat',
+                'taxonomy'  => 'attachments',
                 'field'     => 'ID',
                 'terms'     => $cats
             )

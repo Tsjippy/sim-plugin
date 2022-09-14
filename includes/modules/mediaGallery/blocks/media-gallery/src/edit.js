@@ -62,7 +62,7 @@ const Edit = ({attributes, setAttributes}) => {
 	);
 
 	useEffect( async () => {
-		let fetchedCategories 	= await apiFetch({path: '/wp/v2/attachment_cat'});
+		let fetchedCategories 	= await apiFetch({path: '/wp/v2/attachments'});
 		fetchedCategories.unshift({name:'All', id:-1});
 		storeFetchedCats( fetchedCategories);
 	} , []);

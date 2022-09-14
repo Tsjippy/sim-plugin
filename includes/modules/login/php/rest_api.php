@@ -787,11 +787,20 @@ function userLogin(){
     }
 
     /* check if we should redirect */
-    if(rtrim( $_SERVER['HTTP_REFERER'], '/' ) == rtrim(home_url(), '/')){
-        if(!empty($_GET['redirect'])){
-            return $_GET['redirect'];
+    $urlComp    = parse_url($_SERVER['HTTP_REFERER']);
+    $redirect   = '';
+    if(isset($urlComp['query'])){
+        parse_str($urlComp['query'], $urlParam);
+        if(isset($urlParam['redirect'])){
+            $redirect   = $urlParam['redirect'];
         }
-        
+    }elseif(!empty($_GET['redirect'])){
+        $redirect   = $_GET['redirect'];
+    }
+
+    if(!empty($redirect)){
+        return $redirect;
+    }elseif(rtrim( $_SERVER['HTTP_REFERER'], '/' ) == rtrim(home_url(), '/')){        
         //get 2fa methods for this user
         $methods  = get_user_meta($user->ID,'2fa_methods',true);
 

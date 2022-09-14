@@ -87,9 +87,7 @@ const Edit = ({attributes, setAttributes, context}) => {
 				</Panel>
 			</InspectorControls>
 			<div {...useBlockProps()}>
-				<div {...useBlockProps()}>
-					{wp.element.RawHTML( { children: html })}
-				</div>
+				{wp.element.RawHTML( { children: html })}
 			</div>
 		</>
 	);

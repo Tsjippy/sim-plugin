@@ -23,7 +23,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
     $categories	= get_categories( array(
 		'orderby' 		=> 'name',
 		'order'   		=> 'ASC',
-		'taxonomy'		=> 'attachment_cat',
+		'taxonomy'		=> 'attachment',
 		'hide_empty' 	=> false,
 	) );
 

@@ -59,7 +59,7 @@ function enqueueScripts(){
 	add_editor_style(plugins_url('css/sim.min.css', __DIR__));
 
 	//style fo main site
-	if(strpos(currentUrl(), 'wp-admin') === false){
+	if(!is_admin()){
 		wp_enqueue_style( 'sim_style', plugins_url('css/sim.min.css', __DIR__), array(), STYLE_VERSION);
 	}
 	
