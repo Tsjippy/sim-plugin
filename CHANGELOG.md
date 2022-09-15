@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- implemented refresher for gallery block
 
 ### Fixed
 
