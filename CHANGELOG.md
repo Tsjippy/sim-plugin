@@ -8,7 +8,6 @@
 ### Changed
 
 ### Fixed
-- schedule event reminder
 
 ## [2.15.7] - 2022-09-15
 
