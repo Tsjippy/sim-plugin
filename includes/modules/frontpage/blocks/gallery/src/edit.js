@@ -3,7 +3,7 @@ import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {Panel, PanelBody, Spinner, CheckboxControl} from "@wordpress/components";
+import {Panel, PanelBody, Spinner, CheckboxControl, __experimentalNumberControl as NumberControl, __experimentalInputControl as InputControl} from "@wordpress/components";
 import { store as coreDataStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 
@@ -18,9 +18,9 @@ const Edit = ({ setAttributes, attributes, context }) => {
 
 	const [html, setHtml] 								= useState(< Spinner /> );
 
-	const [postTypeCheckboxes, setPostTypeCheckboxes]	= useState( < Spinner /> );
+	const [postTypeCheckboxes, setPostTypeCheckboxes]	= useState( <> <br></br>< Spinner /> </>);
 
-	const [catCheckboxes, setCatCheckboxes]				= useState( < Spinner /> );
+	const [catCheckboxes, setCatCheckboxes]				= useState( <> <br></br>< Spinner /> </>);
 
 	const [trigger, setTrigger] 						= useState(false); // dummy to fore rerender
 
@@ -73,6 +73,8 @@ const Edit = ({ setAttributes, attributes, context }) => {
 			newPostTypes.push(slug)
 		}
 
+		console.log(newPostTypes)
+
 		setAttributes({postTypes: newPostTypes});
 	}
 
@@ -98,7 +100,7 @@ const Edit = ({ setAttributes, attributes, context }) => {
 	// build the checkboxes for the post type selections
 	useEffect( async () => {
 
-		if(postTypes == null){
+		if(usedPostTypes.length == 0){
 			return;
 		}
 
@@ -111,7 +113,7 @@ const Edit = ({ setAttributes, attributes, context }) => {
 				/>
 			))
 		);
-	} , [ postTypes, attributes.postTypes]);
+	} , [ usedPostTypes, attributes.postTypes]);
 
 	// build the checkboxes for the category selection
 	useEffect( 
@@ -170,13 +172,56 @@ const Edit = ({ setAttributes, attributes, context }) => {
 		[ availableCats, attributes.categories, attributes.postTypes, trigger ]
 	);
 
+	// retrieve the html
+	useEffect( async () => {
+		setHtml(<Spinner />);
+		const response = await apiFetch({
+			path: sim.restApiPrefix+'/frontpage/show_page_gallery',
+			method: 'POST',
+			data: { 
+				'postTypes'	: selPostTypes,
+				'amount'	: attributes.amount,
+				'categories': selCategories,
+				'speed'		: attributes.speed,
+				'title'		: attributes.title,
+			},
+		});
+
+		setHtml(wp.element.RawHTML( { children: response }));
+	} , [attributes]);
+
 	return (
 		<>
 			<InspectorControls>
 					<Panel>
 						<PanelBody>
+							<InputControl
+								label				= {__('Title', 'sim') }
+								isPressEnterToChange= { true }
+								value				= { attributes.title }
+								onChange			= { (value) => setAttributes({ title: value }) }
+							/>
+
+							{__('How many pages should be shown at once', 'sim')}
+							<NumberControl
+								label		= {__('Page count', 'sim')}
+								value		= {attributes.amount}
+								onChange	= {(val) => setAttributes({amount: parseInt(val)})}
+								min			= {1}
+								max			= {12}
+							/>
+							<br></br>
+							{__('How often should we refresh in seconds', 'sim')}
+							<NumberControl
+								label		= {__('Refresh rate', 'sim')}
+								value		= {attributes.speed}
+								onChange	= {(val) => setAttributes({speed: parseInt(val)})}
+								min			= {30}
+							/>
+							<br></br>
 							Select the post types you want to include in the gallery:
 							{ postTypeCheckboxes }
+							<br></br>
 							Select the categories you want from any post type.
 							Leave empty for all
 							{ catCheckboxes }
@@ -184,8 +229,7 @@ const Edit = ({ setAttributes, attributes, context }) => {
 					</Panel>
 			</InspectorControls>
 			<div {...useBlockProps()}>
-				Test
-				{wp.element.RawHTML( { children: html })}
+				{ html }
 			</div>
 		</>
 	);

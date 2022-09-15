@@ -56,7 +56,7 @@ if(!empty($hookName)){
 			}
 
 			//Show the ministry gallery
-			pageGallery();
+			echo pageGallery('See what we do:');
 			$args                   = array('ignore_sticky_posts' => true,);
 			$args['post_type'] 		= SIM\getModuleOption(MODULE_SLUG, 'news_post_types');
 			$args['post_status'] 	= 'publish';
@@ -219,58 +219,124 @@ if(!empty($hookName)){
 
 /**
  * Function to show a gallery of 3 ministries
+ * 
+ * @param	array	$postTypes		Array of posttypes to include or an array of fixed post ids
+ * @param	int		$amount			The amount of pages to show
+ * @param	array	$categories		The categories of this page type to include
+ * @param	int		$speed			The speed the pages should change
+ * 
+ * @return	string					The html
  */
-function pageGallery(){
+function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed = 60){
+	ob_start();
+
+	$posts	= [];
+
+	if(empty($postTypes) || !is_array($postTypes)){
+		return '';
+	}elseif(is_numeric($postTypes[0])){
+		foreach($postTypes as $postId){
+			$posts[]	= get_post($postId);
+		}
+	}else{		
+		foreach($postTypes as $type){
+			$args = array(
+				'post_type'			=> $type,
+				'orderby'			=> 'rand',
+				'posts_per_page' 	=> $amount,
+				'meta_query' 		=> array(
+					array(
+						'key' 		=> '_thumbnail_id',
+						'compare' 	=> 'EXISTS'
+					),
+				)
+			);
+
+			if(!empty($categories[$type])){
+				$args['tax_query'] = ['relation' => 'OR'];
+
+				foreach($categories[$type] as $tax => $cats){
+					$args['tax_query'][]	= [
+						'taxonomy' 			=> $tax,
+						'field' 			=> 'slug',
+						'terms' 			=> $cats,
+						'include_children' 	=> false // Remove if you need posts from term 7 child terms
+					];
+				}
+			}
+
+			$posts	= array_merge($posts, get_posts($args));
+		}
+	}
+
+	if(empty($posts)){
+		?>
+		<article id="page-gallery">
+			<h3 id="page-gallery-title"><?php echo $title;?></h3>
+			<p>No pages found...</p>
+		</article>
+		<?php
+		return ob_get_clean();
+	}
+
+	// make sure we only try to display as many pages as available
+	$amount	= min(count($posts), $amount);
+
+	$list	= $postTypes;
 	?>
 	<article id="page-gallery">
-		<h3 id="page-gallery-title">See what we do:</h3>
+		<h3 id="page-gallery-title"><?php echo $title;?></h3>
 		<div class="row">
 		<?php
-		for ($x = 1; $x <= 3; $x++) {
+		while($amount > 0) {
+			// find the first post of this type
+			foreach($posts as $index=>$post){
+				if($post->post_type == $list[0]){
+					// remove this type from the working list, so we take another posttype the next time
+					unset($list[0]);
+					if(empty($list)){
+						$list	= $postTypes;
+					}else{
+						$list	= array_values($list);
+					}
+
+					// Remove the post from the post list so we do not use it again
+					unset($posts[$index]);
+					break;
+				}
+			}
+			$pageId		= $post->ID;
+			$pictureUrl	= get_the_post_thumbnail_url($pageId);
+			$pageUrl	= get_permalink($pageId);
+			$title		= $post->post_title;
 			?>
 			<div class="page-gallery">
 				<div class="card card-profile card-plain">
 					<div class="col-md-5">
 						<div class="card-image">
-							<?php
-							$pageId		= SIM\getModuleOption(MODULE_SLUG, "page$x");
-							$pictureUrl	= get_the_post_thumbnail_url($pageId);
-							$pageUrl	= get_permalink($pageId);
-
-							$title		= SIM\getModuleOption(MODULE_SLUG, "title$x");
-							if(!$title){
-								$title	= get_the_title($pageId);
-							}
-							$text		= SIM\getModuleOption(MODULE_SLUG, "description$x");
-
-							if(!$text){
-								$text	= get_the_excerpt($pageId);
-							}
-
-							echo "<a href='$pageUrl'>";
-								echo "<img class='img' src='$pictureUrl' alt='' title='$title' loading='lazy'>";
-							?>
+							<a href='<?php echo $pageUrl;?>'>
+								<img class='img' src='<?php echo $pictureUrl;?>' alt='' title='<?php echo $title;?>' loading='lazy'>
 							</a>
 						</div>
 					</div>
 					<div class="col-md-7">
 						<div class="content">
-							<?php
-							echo "<a href='$pageUrl'>";
-								echo "<h4 class='card-title'>$title</h4>";
-								echo "<p class='card-description'>$text</p>";
-							?>
+							<a href='<?php echo $pageUrl;?>'>
+								<h4 class='card-title'><?php echo $title;?></h4>
+								<p class='card-description'><?php echo get_the_excerpt($pageId);?></p>
 							</a>
 						</div>
 					</div>
 				</div>
 			</div>
 			<?php
+			$amount--;
 		}
 		?>
 		</div>
 	</article>
 	<?php
+	return ob_get_clean();
 }
 
 //Add the home class

@@ -22,14 +22,14 @@ add_action('init', function () {
 		array(
 			"attributes"	=>  [
 				"lock"	=> [
-					"type"	=> "object",
+					"type"		=> "object",
 					"default"	=> [
 						"move"		=> true,
 						"remove"	=> true
 					]
 				],
 				'event'	=> [
-					'type'	=> 'string',
+					'type'		=> 'string',
 					'default'	=> ''
 				] 
 			]

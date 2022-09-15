@@ -16,12 +16,12 @@ function showVimeoVideo($vimeoId){
 	?>
 	<div class="vimeo-wrapper">
 		<div class="loaderwrapper" style="margin:auto; width:fit-content;">
-			<img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' style="max-height: 100px;"><br>
-			<b>Loading Vimeo video</b>
+			<img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' style="max-height: 100px;" alt=''><br>
+			<strong>Loading Vimeo video</strong>
 		</div>
 
 		<div class='vimeo-embed-container'>
-			<iframe src='https://player.vimeo.com/video/<?php echo $vimeoId; ?>' loading='lazy' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen onload = "showVimeoIframe(this)" style="display:none;"></iframe>
+			<iframe title='' loading='lazy' src='https://player.vimeo.com/video/<?php echo $vimeoId; ?>' loading='lazy' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen onload = "showVimeoIframe(this)" style="display:none;"></iframe>
 		</div>
 	</div>
 	<?php

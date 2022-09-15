@@ -25,13 +25,29 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-	// show schedules
+	// show welcome_message
 	register_rest_route( 
 		RESTAPIPREFIX.'/frontpage', 
 		'/show_welcome_message', 
 		array(
 			'methods' 				=> 'GET',
 			'callback' 				=> __NAMESPACE__.'\welcomeMessage',
+			'permission_callback' 	=> '__return_true',
+		)
+	);
+
+	// show page gallery
+	register_rest_route( 
+		RESTAPIPREFIX.'/frontpage', 
+		'/show_page_gallery', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function($wp_rest_request){
+				$params			= $wp_rest_request->get_params();
+				$categories		= $params['categories'];
+
+				return pageGallery($params['title'], $params['postTypes'], $params['amount'], $categories, $params['speed']);
+			},
 			'permission_callback' 	=> '__return_true',
 		)
 	);
