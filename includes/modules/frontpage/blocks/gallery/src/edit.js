@@ -9,19 +9,20 @@ import { useSelect } from '@wordpress/data';
 
 const Edit = ({ setAttributes, attributes, context }) => {
 	let selPostTypes									= attributes.postTypes;
+	let selCategories									= JSON.parse(attributes.categories);
 	const curPostType									= context['postType'];
 
-	if(selPostTypes.length == 0){
-		setAttributes({postTypes: [curPostType]});
-	}
+	const [usedPostTypes, setUsedPostTypes]				= useState( [] );
+
+	const [availableCats, setAvailableCats]				= useState( {} );
 
 	const [html, setHtml] 								= useState(< Spinner /> );
 
 	const [postTypeCheckboxes, setPostTypeCheckboxes]	= useState( < Spinner /> );
 
-	const [catCheckboxes, setCatCheckboxes]				= useState( {} );
+	const [catCheckboxes, setCatCheckboxes]				= useState( < Spinner /> );
 
-	const [fetchedCats, storeFetchedCats]				= useState( < Spinner /> );
+	const [trigger, setTrigger] 						= useState(false); // dummy to fore rerender
 
 	const taxonomies = useSelect(
 		( select) => {
@@ -37,17 +38,31 @@ const Edit = ({ setAttributes, attributes, context }) => {
 		[]
 	);
 
-	const catSelected	= function(checked, id){
-		let copy;
+	// Get all categories
+	useEffect( 
+		() => {
+			if( postTypes == null || taxonomies == null){
+				return;
+			}
+			let usedPostTypes	= postTypes.filter( type => !['revision','nav_menu_item','custom_css','customize_changeset','oembed_cache','user_request','wp_block','wp_template', 'wp_template_part', 'wp_navigation'].includes(type.slug));
+			setUsedPostTypes(usedPostTypes);
+			let copy	= {...availableCats}
 
-		if(checked && !categories.includes(id)){
-			copy = [ ...categories, id];
-		}else if(!checked){
-			copy = categories.filter(val => val != id);
-		}
+			usedPostTypes.map( type =>{
+				let tax	= taxonomies.filter(cat => cat.types.includes(type.slug));
 
-		setAttributes({categories: copy});
-	}
+				if(copy[type.slug] == undefined){
+					copy[type.slug] = {};
+				}
+
+ 				tax.map(async t => {
+					copy[type.slug][t.slug] =  await apiFetch({path: `/${t.rest_namespace}/${t.rest_base}`});
+				});
+			});
+			setAvailableCats(copy);
+		} ,
+		[ postTypes, taxonomies ]
+	);
 
 	const postTypeSelected = function (slug, checked){
 		let newPostTypes	= [...selPostTypes];
@@ -61,75 +76,98 @@ const Edit = ({ setAttributes, attributes, context }) => {
 		setAttributes({postTypes: newPostTypes});
 	}
 
+	const postCatSelected = function (type, tax, slug, checked){
+		let newSelCategories	= {...selCategories};
+
+		if(newSelCategories[type] == undefined){
+			newSelCategories[type]	= {};
+		}
+
+		if(newSelCategories[type][tax] == undefined){
+			newSelCategories[type][tax]	= [];
+		}
+
+		if( !checked){
+			newSelCategories   = newSelCategories[type][tax].filter(el => el != slug);
+		}else if(!newSelCategories[type][tax].includes(slug)){
+			newSelCategories[type][tax].push(slug)
+		}
+		setAttributes({categories: JSON.stringify(newSelCategories)});
+	}
+
+	// build the checkboxes for the post type selections
 	useEffect( async () => {
+
 		if(postTypes == null){
 			return;
 		}
 
 		setPostTypeCheckboxes(
-			postTypes.filter( type => !['revision','nav_menu_item','custom_css','customize_changeset','oembed_cache','user_request','wp_block','wp_template', 'wp_template_part', 'wp_navigation'].includes(type.slug)).map( c => (
+			usedPostTypes.map( c => (
 				<CheckboxControl
 					label		= { c.name }
 					onChange	= { (checked) => {postTypeSelected(c.slug, checked)} }
-					checked		= { selPostTypes.includes(c.slug) || c.slug == curPostType }
+					checked		= { selPostTypes.includes(c.slug) }
 				/>
 			))
 		);
 	} , [ postTypes, attributes.postTypes]);
 
-	useEffect( () => {	
-		if(taxonomies == null){
-			return;
-		}
-
-		selPostTypes.forEach(async(type) => {
-
-			// find the tax page
-			let tax	= taxonomies.filter(cat => cat.types.includes(type));
-
-			tax.map(async t => {
-				let cats =  await apiFetch({path: `/${t.rest_namespace}/${t.rest_base}`});
-
-				let checkboxes	= {...catCheckboxes};
-
-				if(checkboxes[type] == undefined){
-					checkboxes[type] = {};
-				}
-				
-				console.log(checkboxes[type][t.slug]);
-
-				checkboxes[type][t.slug] = cats.map(c => {
-					<CheckboxControl
-						label		= { c.name }
-						onChange	= { (checked) => {catSelected(c.slug, checked)} }
-						checked		= { false }
-					/>
-				});
-				console.log(checkboxes);
-
-				setCatCheckboxes( checkboxes);
-				console.log(catCheckboxes);
-			})
-
-			/* let cats;
-			tax.forEach(async t => {
-				cats = await apiFetch({path: `/${t.rest_namespace}/${t.rest_base}`});
-			}) */
-
-			//console.log(catCheckboxes);
-		});
-
-		
-		
-	} , [ postTypes, selPostTypes ]);
-
+	// build the checkboxes for the category selection
 	useEffect( 
-		async () => {
-			setHtml( < Spinner /> );
-			const response = await apiFetch({path: sim.restApiPrefix+'/frontendposting/pending_pages'});
-			setHtml( response );
+		() => {
+			let selected	= true;
+			
+			if(Object.keys(availableCats).length == 0){
+				setCatCheckboxes(< Spinner />);
+				return;
+			}
+
+			let rendered	= [];
+
+			if(selPostTypes.length == 0 && availableCats[curPostType] != undefined ){
+				setAttributes({postTypes: [curPostType]});
+			}
+
+			selPostTypes.forEach(postType =>{
+				rendered.push(<h2>{postType.charAt(0).toUpperCase() + postType.slice(1)}</h2>);
+
+				if(availableCats[postType] == undefined || Object.entries(availableCats[postType]).length == 0){
+					setCatCheckboxes(< Spinner />);
+
+					// Check every second
+					setTimeout(
+						setTrigger,
+						1000,
+						!trigger
+					);
+					return;
+				}
+
+				Object.keys(availableCats[postType]).forEach(tax=>{
+					rendered.push(tax.charAt(0).toUpperCase() + tax.slice(1));
+					Object.values(availableCats[postType][tax]).map(c=>{
+						selected	= true;
+						try{
+							selected	= selCategories[postType][tax].includes(c.slug);
+						}catch (e) {
+							selected	= false;
+						}
+						rendered.push(
+							<CheckboxControl
+								label		= { c.name }
+								onChange	= { (checked) => { postCatSelected(postType, tax, c.slug, checked) } }
+								checked		= { selected }
+							/>
+						)
+					});
+				});
+				
+			});
+
+			setCatCheckboxes(rendered);
 		} ,
-		[]
+		[ availableCats, attributes.categories, attributes.postTypes, trigger ]
 	);
 
 	return (
@@ -139,10 +177,14 @@ const Edit = ({ setAttributes, attributes, context }) => {
 						<PanelBody>
 							Select the post types you want to include in the gallery:
 							{ postTypeCheckboxes }
+							Select the categories you want from any post type.
+							Leave empty for all
+							{ catCheckboxes }
 						</PanelBody>
 					</Panel>
 			</InspectorControls>
 			<div {...useBlockProps()}>
+				Test
 				{wp.element.RawHTML( { children: html })}
 			</div>
 		</>

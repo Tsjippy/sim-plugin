@@ -1090,7 +1090,7 @@ class DisplayEvents extends Events{
 		$event	= $results[0];
 
 		if(is_numeric($event->onlyfor)){
-			SIM\trySendSignal(get_the_title($event->post_title)." is about to start\nIt starts at $event->starttime", $event->onlyfor);
+			SIM\trySendSignal($event->post_title." is about to start\nIt starts at $event->starttime", $event->onlyfor);
 		}
 
 		return true;
