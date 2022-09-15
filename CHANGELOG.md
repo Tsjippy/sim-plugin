@@ -11,6 +11,7 @@
 - edit time after selecting schedule
 - move a schedule event
 - redirection on login
+- reminder schedule message title
 
 ## [2.15.6] - 2022-09-13
 
