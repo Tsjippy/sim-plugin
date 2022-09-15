@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.16.1] - 2022-09-15
+
+
+### Fixed
 - some frontpage layouts
 
 ## [2.16.0] - 2022-09-15
