@@ -87,7 +87,7 @@
 			height: unset;
 		}
 
-		.content a{
+		.content a:not(.moretag){
 			color: gray;
 		}
 	}

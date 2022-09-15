@@ -27,7 +27,20 @@ let reloadPageGallery   = async function(gallery, first=false){
             let div = document.createElement('div');
             div.innerHTML   = response;
             newGallery      = div.querySelector('.page-gallery-article');
-            gallery.replaceWith(newGallery);
+
+            let imgs    = newGallery.querySelectorAll('img');
+            let amount  = imgs.length;
+            imgs.forEach(img=>{
+                img.addEventListener('load', () => {
+                    amount--;
+
+                    if(amount == 0){
+                        gallery.replaceWith(newGallery);
+                    }
+                });
+                img.src=img.src
+            });
+            
         }
     }
 

@@ -56,7 +56,7 @@ const Edit = ({ setAttributes, attributes, context }) => {
 				}
 
  				tax.map(async t => {
-					copy[type.slug][t.slug] =  await apiFetch({path: `/${t.rest_namespace}/${t.rest_base}`});
+					copy[type.slug][t.slug] =  await apiFetch({path: `/${t.rest_namespace}/${t.rest_base}/?per_page=100`});
 				});
 			});
 			setAvailableCats(copy);
@@ -72,8 +72,6 @@ const Edit = ({ setAttributes, attributes, context }) => {
 		}else if(!newPostTypes.includes(slug)){
 			newPostTypes.push(slug)
 		}
-
-		console.log(newPostTypes)
 
 		setAttributes({postTypes: newPostTypes});
 	}

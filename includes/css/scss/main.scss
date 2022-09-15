@@ -9,6 +9,27 @@
 @use 'sidebar';
 @use 'table';
 
+/* moretag layout */
+.moretag{
+	font-size: 15px;
+	border-radius: 30px;
+	color: white;
+	text-transform: uppercase;
+	text-align: center;
+	padding: 10px 20px;
+	display: block;
+	max-width: 133px;
+	margin: 20px auto 0 auto;
+	white-space: nowrap;
+	background-color: $primary_color;
+	
+	/* on hover of the more tag*/
+	&:hover{
+		background-color:$secundary_color;
+		color:white;
+	}
+}
+
 /* paragraph text color*/
 p{
 	color: #676666;

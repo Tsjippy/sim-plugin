@@ -147,18 +147,10 @@
 	}
 
 	/* the news area*/
-	%shared_gallery{
+	#news{
 		overflow:hidden;
 		width: 100%;
 		text-align: center;
-	} 
-	
-	#page-gallery{
-		@extend %shared_gallery
-	}
-
-	#news{
-		@extend %shared_gallery;
 		
 		background-color: lightgray;
 		
@@ -175,13 +167,12 @@
 	}
 
 	/* the heading of the news area*/
-	#news-title,
-	#page-gallery-title{
+	#news-title{
 		padding-top:30px;
 	}
 
 	/* news items*/
-	.row{
+	#news .row{
 		padding-top:30px;
 		display: -webkit-inline-box;
 		scrollbar-color: $primary_color transparent;
@@ -206,14 +197,10 @@
 	}
 
 	/* layout of the news cards */
-	%shared-newscard{
+	.news-article{
 		white-space: normal;
 		border-radius:3%;
 		overflow: hidden;
-	}
-
-	.news-article{
-		@extend %shared-newscard;
 		background-color: whitesmoke;
 		max-height: 500px;
 		
@@ -264,31 +251,6 @@
 		color: #444444;
 		font-weight: 500;
 	}
-
-	.page-gallery {
-		@extend %shared-newscard;
-		
-		position: relative;
-		min-height: 1px;
-		padding-left: 15px;
-		padding-right: 15px;
-		text-align: center;
-		
-		.card-image{
-			height: 100px;
-			overflow: hidden;
-		}
-		
-		.img{
-			border-radius: 50%;
-			width: 50%;
-			height: unset;
-		}
-
-		.content a{
-			color: gray;
-		}
-	}
 	
 	.logged-in{
 		/*Hide the login button, team section and ribbon section */
@@ -313,40 +275,23 @@
 		}
 	}
 	
-	/*Ministry gallery*/
-	@media (min-width: 480px){
-		.page-gallery {
-			display: inline-block;
-			float: none !important;
-			margin-right: -4px;
-			margin-left: -4px;
-			vertical-align: top;
-		}
-	}
-	
-		/* show newsitems below each other on small screens */
+	/* show newsitems below each other on small screens */
 	@media (max-width: 600px){ 
 		#news .row{
 			display: inline-block;
-		}
-		
-		#news .row .news-article{
-			margin-bottom: 30px;
-		}
-		
-		.row{
 			display: unset;
-		}
- 
-		.news-article, .page-gallery {
-			width: 90%;
-			margin-left: 5%;
+
+			.news-article{
+				margin-bottom: 30px;
+				width: 90%;
+				margin-left: 5%;
+			}
 		}
 	}
 
 	/*50% width if only two item*/
 	@media (min-width: 601px){
-		.news-article, .page-gallery  {
+		.news-article{
 			width: 45.5vw;
 			margin-left:3vw;
 		}
@@ -354,22 +299,22 @@
 
 	/*32% width*/
 	@media (min-width: $fullwidth){
-		.news-article, .page-gallery {
+		.news-article {
 			width: 30.7vw;
 			margin-left:2vw;
 		}
 		
-		#news, #page-gallery{
+		#new{
 			white-space: nowrap;
 		}
 	}
 
 	@media (min-width: 1245px){
-		.row{
+		#news .row{
 			max-width: 1200px;
 			overflow: hidden;
 		}
-		.news-article, .page-gallery {
+		.news-article {
 			width: 370px;
 			margin-left:45px;
 		}
@@ -378,7 +323,7 @@
 			margin-left:0px;
 		}
 		
-		#news, #page-gallery{
+		#news{
 			white-space: nowrap;
 		}
 	}

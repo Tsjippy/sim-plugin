@@ -30,27 +30,6 @@ article.location, article.recipe{
 /*Do not show the public category in the category widget*/
 .section-blog-info, li.cat-item-6 { display: none; }
 
-/* moretag layout */
-.moretag{
-	font-size: 15px;
-	border-radius: 30px;
-	color: white;
-	text-transform: uppercase;
-	text-align: center;
-	padding: 10px 20px;
-	display: block;
-	max-width: 133px;
-	margin: 20px auto 0 auto;
-	white-space: nowrap;
-	background-color: $primary_color;
-	
-	/* on hover of the more tag*/
-	&:hover{
-		background-color:$secundary_color;
-		color:white;
-	}
-}
-
 %icon-shared{
 	height: 30px;
 	margin-right: 5px;
