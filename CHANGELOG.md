@@ -10,6 +10,7 @@
 - issue with nested clone containers
 - edit time after selecting schedule
 - move a schedule event
+- redirection on login
 
 ## [2.15.6] - 2022-09-13
 
