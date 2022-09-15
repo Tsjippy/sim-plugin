@@ -3,11 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- page gallery block
 
 ### Changed
 
 ### Fixed
+
+## [2.15.8] - 2022-09-15
+
+
+### Added
+- page gallery block
 
 ## [2.15.7] - 2022-09-15
 
