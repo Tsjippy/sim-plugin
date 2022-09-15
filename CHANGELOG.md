@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.15.7] - 2022-09-15
+
+
+### Fixed
 - issue with nested clone containers
 - edit time after selecting schedule
 - move a schedule event
