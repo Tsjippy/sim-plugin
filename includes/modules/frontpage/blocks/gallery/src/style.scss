@@ -1,6 +1,6 @@
 @use '../../../../css/scss/global' as *;
 
-#page-gallery{
+.page-gallery-article{
     overflow:hidden;
     width: 100%;
     text-align: center;
@@ -13,7 +13,7 @@
 	
 
 	/* the heading of the news area*/
-	#page-gallery-title{
+	.page-gallery-title{
 		padding-top:30px;
 	}
 
@@ -116,7 +116,7 @@
 
 	/*32% width*/
 	@media (min-width: $fullwidth){	
-		#page-gallery{
+		.page-gallery-article{
 			white-space: nowrap;
 		}
 	}
@@ -127,7 +127,7 @@
 			overflow: hidden;
 		}
 		
-		#page-gallery{
+		.page-gallery-article{
 			white-space: nowrap;
 		}
 	}

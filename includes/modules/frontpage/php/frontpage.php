@@ -228,6 +228,8 @@ if(!empty($hookName)){
  * @return	string					The html
  */
 function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed = 60){
+	wp_enqueue_script('sim_page_gallery_script');
+
 	ob_start();
 
 	$posts	= [];
@@ -271,8 +273,8 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 
 	if(empty($posts)){
 		?>
-		<article id="page-gallery">
-			<h3 id="page-gallery-title"><?php echo $title;?></h3>
+		<article class="page-gallery-article">
+			<h3 class="page-gallery-title"><?php echo $title;?></h3>
 			<p>No pages found...</p>
 		</article>
 		<?php
@@ -284,8 +286,8 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 
 	$list	= $postTypes;
 	?>
-	<article id="page-gallery">
-		<h3 id="page-gallery-title"><?php echo $title;?></h3>
+	<article class="page-gallery-article" data-posttypes='<?php echo json_encode($postTypes);?>' data-categories='<?php echo json_encode($categories);?>' data-speed='<?php echo $speed;?>'>
+		<h3 class="page-gallery-title"><?php echo $title;?></h3>
 		<div class="row">
 		<?php
 		while($amount > 0) {
