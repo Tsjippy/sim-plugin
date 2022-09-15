@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.16.0] - 2022-09-15
+
+
+### Changed
+- implemented refresher for gallery block
+
 ## [2.15.8] - 2022-09-15
 
 
