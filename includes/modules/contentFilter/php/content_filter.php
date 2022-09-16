@@ -7,15 +7,20 @@ use function SIM\getModuleOption;
 
 //function to redirect user to login page if they are not allowed to see it
 add_action('loop_start', function($query){
-	// Only run when this is the main query
 	if($query->is_main_query()){
 		ob_start();
 	}
 });
 
-add_action('wp_footer', function(){
+// Add meta tag so this page is not indexed by search machines
+add_action ( 'wp_head', function(){
+	if(isProtected()){
+		echo '<meta name="robots" content="noindex">';
+	}
+});
+
+function isProtected(){
 	global	$post;
-	$user				= wp_get_current_user();
 	$taxonomy			= get_post_taxonomies()[0];
 
 	$public				= false;
@@ -34,6 +39,27 @@ add_action('wp_footer', function(){
 		!is_search()						&&
 		!is_home()							
 	){
+		return true;
+	}
+
+	return false;
+}
+
+add_action('wp_footer', function(){
+	$user				= wp_get_current_user();
+	global	$post;
+	$taxonomy			= get_post_taxonomies()[0];
+
+	$public				= false;
+	foreach((array)get_the_terms($post, $taxonomy) as $term){
+		if($term->slug	== 'public'){
+			$public	= true;
+			break;
+		}
+	}
+
+	//If this page or post does not have the public category and the user is not logged in, redirect them to the login page
+	if(	isProtected() ){
 		//prevent the output 
 		ob_get_clean();
 
