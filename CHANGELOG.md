@@ -8,6 +8,8 @@
 
 ### Fixed
 - file upload enqueu in wrong namespace
+- keep form submission display settings
+ on refresh
 
 ## [2.16.3] - 2022-09-16
 
