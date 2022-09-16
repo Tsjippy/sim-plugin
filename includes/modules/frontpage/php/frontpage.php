@@ -261,8 +261,7 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 					$args['tax_query'][]	= [
 						'taxonomy' 			=> $tax,
 						'field' 			=> 'slug',
-						'terms' 			=> $cats,
-						'include_children' 	=> false // Remove if you need posts from term 7 child terms
+						'terms' 			=> $cats
 					];
 				}
 			}

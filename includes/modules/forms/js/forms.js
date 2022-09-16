@@ -7,8 +7,8 @@ async function saveFormInput(target){
 
 	// make all inputs required if needed
 	form.querySelectorAll('.required:not(hidden) input, .required:not(hidden) textarea, .required:not(hidden) select').forEach(el=>{
-		// do not make nice select inputs required
-		if(el.closest('div.nice-select') == null){
+		// do not make nice select inputs nor file uploads required
+		if(el.closest('div.nice-select') == null && (el.type != 'file' || el.closest('.file_upload_wrap').querySelector('.documentpreview input') == null)){
 			el.required	= true;
 		}
 	});

@@ -31,16 +31,19 @@ let reloadPageGallery   = async function(gallery, first=false){
             let imgs    = newGallery.querySelectorAll('img');
             let amount  = imgs.length;
             imgs.forEach(img=>{
+                img.removeAttribute('loading');
                 img.addEventListener('load', () => {
                     amount--;
 
-                    if(amount == 0){
-                        gallery.replaceWith(newGallery);
-                    }
+                    console.log('Current amount is '+amount);
                 });
                 img.src=img.src
+
+                if(amount === 0){
+                    console.log('Updating ');
+                    gallery.replaceWith(newGallery);
+                }
             });
-            
         }
     }
 
