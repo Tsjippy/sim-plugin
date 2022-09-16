@@ -10,6 +10,7 @@
 - file upload enqueu in wrong namespace
 - keep form submission display settings
  on refresh
+- request not to index hidden pages
 
 ## [2.16.3] - 2022-09-16
 
