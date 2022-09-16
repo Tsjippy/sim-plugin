@@ -32,6 +32,11 @@ add_filter( 'protected_title_format', function () {
 
 //Add a title section below the menu
 add_action('generate_after_header', function (){
+
+	if(SIM\CONTENTFILTER\isProtected()){
+		return '';
+	}
+
 	global $post;
 	if($post){		
 		$title = $post->post_title;
