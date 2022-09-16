@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- problem with required file upload fields
 
 ## [2.16.1] - 2022-09-15
 
