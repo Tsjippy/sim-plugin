@@ -5,13 +5,6 @@
 ### Added
 
 ### Changed
-
-### Fixed
-
-## [2.16.4] - 2022-09-16
-
-
-### Changed
 - console log removal
 
 ### Fixed
