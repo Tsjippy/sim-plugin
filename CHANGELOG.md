@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- console log removal
 
 ### Fixed
 - file upload enqueu in wrong namespace
