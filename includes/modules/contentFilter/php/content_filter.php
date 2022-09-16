@@ -91,11 +91,7 @@ add_action('wp_footer', function(){
 		//prevent the output 
 		ob_get_clean();
 		echo "<div class='error'>You do not have the permission to see this.</div>";
-		return '';
 	}
-
-	//we are good, print everything to screen
-	//ob_end_flush();
 });
 
 //Make sure is_user_logged_in function is available by only running this when init
