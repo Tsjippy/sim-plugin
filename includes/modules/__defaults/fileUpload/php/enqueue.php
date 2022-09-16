@@ -1,5 +1,5 @@
 <?php
-namespace SIM\ADMIN;
+namespace SIM\FILEUPLOAD;
 use SIM;
 
 add_action( 'wp_enqueue_scripts', function(){
