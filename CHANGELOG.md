@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- file upload enqueu in wrong namespace
 
 ## [2.16.3] - 2022-09-16
 
