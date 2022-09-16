@@ -36,13 +36,13 @@ let reloadPageGallery   = async function(gallery, first=false){
                     amount--;
 
                     console.log('Current amount is '+amount);
+
+                    if(amount === 0){
+                        console.log('Updating ');
+                        gallery.replaceWith(newGallery);
+                    }
                 });
                 img.src=img.src
-
-                if(amount === 0){
-                    console.log('Updating ');
-                    gallery.replaceWith(newGallery);
-                }
             });
         }
     }

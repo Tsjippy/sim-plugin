@@ -1255,7 +1255,9 @@ class DisplayFormResults extends DisplayForm{
 
 			if(empty($this->submissionData)){
 				?>
-				<p><br><br><br>No records found</p>
+				<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
+					<td>No records found</td>
+				</table>
 				<?php
 
 				return ob_get_clean().'</div>';

@@ -361,8 +361,14 @@ class SimForms{
 			$this->formId		= sanitize_text_field($atts['formid']);
 			$this->shortcodeId	= $atts['id'];
 			$this->onlyOwn		= $atts['onlyOwn'];
+			if(isset($_GET['onlyown'])){
+				$this->onlyOwn	= $_GET['onlyown'];
+			}
 			$this->all			= $atts['all'];
 			$this->showArchived	= $atts['archived'];
+			if(isset($_GET['archived'])){
+				$this->showArchived	= $_GET['archived'];
+			}
 
 			if(isset($_GET['all'])){
 				$this->all	= $_GET['all'];
