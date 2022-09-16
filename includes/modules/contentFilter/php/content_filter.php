@@ -7,7 +7,7 @@ use function SIM\getModuleOption;
 
 //function to redirect user to login page if they are not allowed to see it
 add_action('loop_start', function($query){
-	if($query->is_main_query()){
+	if($query->is_main_query() && isProtected()){
 		ob_start();
 	}
 });
@@ -79,7 +79,7 @@ add_action('wp_footer', function(){
 	}
 	
 	// If not a valid e-mail then only allow the account page to reset the email
-	if(strpos($user->user_email, ".empty") !== false && !$public && !is_search() && !is_home() && strpos($_SERVER['REQUEST_URI'],'account') === false ){
+	if(strpos($user->user_email, ".empty") !== false && !$public && !is_search() && !is_home() && strpos($_SERVER['REQUEST_URI'], 'account') === false ){
 		ob_get_clean();
 		echo "<div class='error'>Your e-mail address is not valid please change it <a href='".SITEURL."/account/?section=generic'>here</a>.</div>";
 		return;
@@ -91,11 +91,11 @@ add_action('wp_footer', function(){
 		//prevent the output 
 		ob_get_clean();
 		echo "<div class='error'>You do not have the permission to see this.</div>";
-		return;
+		return '';
 	}
 
 	//we are good, print everything to screen
-	ob_end_flush();
+	//ob_end_flush();
 });
 
 //Make sure is_user_logged_in function is available by only running this when init
