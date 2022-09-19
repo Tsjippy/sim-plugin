@@ -384,6 +384,7 @@ class DisplayFormResults extends DisplayForm{
 		//put hidden columns on the end
 		foreach($this->columnSettings as $key=>$setting){
 			if($setting['show'] == 'hide'){
+				
 				//remove the element
 				unset($this->columnSettings[$key]);
 
