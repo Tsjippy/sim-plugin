@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- remove marker when hidding location
 
 ## [2.16.5] - 2022-09-19
 
