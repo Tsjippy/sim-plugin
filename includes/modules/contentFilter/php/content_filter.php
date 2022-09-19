@@ -15,7 +15,7 @@ add_action('loop_start', function($query){
 // Add meta tag so this page is not indexed by search machines
 add_action ( 'wp_head', function(){
 	if(isProtected()){
-		echo '<meta name="robots" content="noindex">';
+		echo '<meta name="robots" content="noindex, nofollow">';
 	}
 });
 
