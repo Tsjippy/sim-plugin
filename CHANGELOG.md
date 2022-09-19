@@ -10,6 +10,7 @@ to formresults table
 
 ### Fixed
 - remove marker when hidding location
+- run actions after post publish
 
 ## [2.16.5] - 2022-09-19
 
