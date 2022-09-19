@@ -130,6 +130,12 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	<div id='dynamic-options' <?php if($settings['galery-type'] != 'dynamic'){echo 'class="hidden"';}?>>
 		<label>
+			How often should the gallery be refreshed in seconds?<br>
+			<input type='number' name='speed' value ='<?php echo $settings['speed'];?>'>
+		</label>
+		<br>
+		<br>
+		<label>
 			Select the posttypes you want to see pages of below.<br>
 		</label>
 		<br>

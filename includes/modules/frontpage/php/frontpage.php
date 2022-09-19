@@ -59,7 +59,7 @@ if(!empty($hookName)){
 				$postTypes	= SIM\getModuleOption(MODULE_SLUG, "post_types");
 				$categories	= SIM\getModuleOption(MODULE_SLUG, "categories");
 	
-				echo pageGallery('See what we do:', $postTypes, 3, $categories);
+				echo pageGallery('See what we do:', $postTypes, 3, $categories, SIM\getModuleOption(MODULE_SLUG, "speed"));
 			}elseif(SIM\getModuleOption(MODULE_SLUG,'galery-type') == 'static'){
 				//Show the ministry gallery
 				$pageIds	= [
