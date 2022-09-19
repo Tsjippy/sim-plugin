@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.16.5] - 2022-09-19
+
+
+### Changed
 - console log removal
 
 ### Fixed
@@ -13,6 +20,7 @@
  on refresh
 - request not to index hidden pages
 - page gallery on frontpage
+- added speed parameter
 
 ## [2.16.3] - 2022-09-16
 
