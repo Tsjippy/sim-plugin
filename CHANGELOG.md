@@ -5,6 +5,8 @@
 ### Added
 
 ### Changed
+- add submitted by column
+to formresults table
 
 ### Fixed
 - remove marker when hidding location
