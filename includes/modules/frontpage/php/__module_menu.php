@@ -40,6 +40,14 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		return $optionsHtml;
 	}
 
+	if(!isset($settings['post_types'])){
+		$settings['post_types'] = [];
+	}
+
+	if(!isset($settings['categories'])){
+		$settings['categories'] = [];
+	}
+
 	ob_start();
 	?>
 	<h4>Homepage buttons</h4>
@@ -108,35 +116,133 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	</label>
 	<br>
 	<label>
-		Select three different pages below. Optionally you can give cutom titles and summaries.<br>
-		If these fields are empty the page title and content will be used.
+		Do you want to display a gallery of highligted pages with static pages or random selected ones?
 	</label>
-	<?php
-	for ($x = 1; $x <= 3; $x++) {
-		?>
-		<h5> Highlight page <?php echo $x;?></h5>
-		Select the page you want to show on frontpage.<br>
-		<?php
-		echo SIM\pageSelect("page$x", $settings["page$x"]);
-		?>
-		<label>
-			Type a short title (optional).<br>
-			<input type="text" name="title<?php echo $x;?>" value="<?php echo $settings["title$x"];?>">
-		</label>
-		<br>
-		<label>
-			Type a short description (optional).<br>
-			<textarea name="description<?php echo $x;?>">
-				<?php echo $settings["description$x"];?>
-			</textarea>
-		</label>
-		<br>
-
-		<?php
-	}
-	?>
 	<br>
+	<label>
+		<input type='radio' name='galery-type' value='dynamic' <?php if($settings['galery-type'] == 'dynamic'){echo 'checked';}?>>
+		Dynamic
+	</label>
+	<label>
+		<input type='radio' name='galery-type' value='static' <?php if($settings['galery-type'] == 'static'){echo 'checked';}?>>
+		Static
+	</label>
 
+	<div id='dynamic-options' <?php if($settings['galery-type'] != 'dynamic'){echo 'class="hidden"';}?>>
+		<label>
+			Select the posttypes you want to see pages of below.<br>
+		</label>
+		<br>
+		<?php
+		$categoryHtml	= '';
+
+		foreach(get_post_types(['public' => true]) as $postType){
+			
+			$taxonomies 	= get_object_taxonomies($postType);
+
+			// create checkbox to create this posttype
+			$checked	= '';
+			$hidden		= 'hidden';
+			if(in_array($postType, $settings['post_types'] )){
+				$checked	= 'checked';
+				$hidden		= '';
+			}
+			?>
+			<label>
+				<input type='checkbox' name='post_types[]' value='<?php echo $postType;?>' <?php echo $checked;?>>
+				<?php echo $postType;?>
+			</label>
+			<br>
+			<?php
+			$categoryHtml	.= "<div class='category-wrapper $postType $hidden'>";
+				$categoryHtml	.= '<h3>'.ucfirst($postType).'</h3>';
+				foreach ( $taxonomies as $taxonomy ) {
+					// create a list of sub-categories
+					$categories	= get_categories( array(
+						'taxonomy'		=> $taxonomy,
+						'hide_empty' 	=> false,
+					) );
+
+					if(!empty($categories)){
+						$categoryHtml	.= '<strong>'.ucfirst($taxonomy).'</strong><br>';
+					}
+
+					foreach ( $categories as $category ) {
+						$checked	= '';
+						if(isset($settings['categories'][$postType][$taxonomy]) && in_array($category->term_id, $settings['categories'][$postType][$taxonomy] )){
+							$checked	= 'checked';
+						}
+						$categoryHtml	.= "<label>";
+							$categoryHtml	.= "<input type='checkbox' name='categories[$postType][$taxonomy][]' value='$category->term_id' $checked>";
+							$categoryHtml	.= "$category->name";
+						$categoryHtml	.= "</label>";
+						$categoryHtml	.= "<br>";
+					}
+				}
+				
+			$categoryHtml	.= "</div>";
+			?>
+		<?php
+		}
+
+		echo $categoryHtml;
+		?>
+	</div>
+
+	<div id='static-options' <?php if($settings['galery-type'] != 'static'){echo 'class="hidden"';}?>>
+		<br>
+		<label>
+			Select three different pages below. Optionally you can give cutom titles and summaries.<br>
+			If these fields are empty the page title and content will be used.
+		</label>
+		<?php
+		for ($x = 1; $x <= 3; $x++) {
+			?>
+			<h5> Highlight page <?php echo $x;?></h5>
+			Select the page you want to show on frontpage.<br>
+			<?php
+			echo SIM\pageSelect("page$x", $settings["page$x"]);
+			?>
+			<label>
+				Type a short title (optional).<br>
+				<input type="text" name="title<?php echo $x;?>" value="<?php echo $settings["title$x"];?>">
+			</label>
+			<br>
+			<label>
+				Type a short description (optional).<br>
+				<textarea name="description<?php echo $x;?>">
+					<?php echo $settings["description$x"];?>
+				</textarea>
+			</label>
+			<br>
+			<?php
+		}
+		?>
+	</div>
+	<script>
+		document.querySelectorAll('[name="galery-type"]').forEach(radio=>radio.addEventListener('click', ev=>{
+			if(ev.target.value == 'dynamic'){
+				document.getElementById('dynamic-options').classList.remove('hidden');
+				document.getElementById('static-options').classList.add('hidden');
+			}else{
+				document.getElementById('static-options').classList.remove('hidden');
+				document.getElementById('dynamic-options').classList.add('hidden');
+			}
+		}));
+
+		document.querySelectorAll('[name="post_types[]"]').forEach(radio=>radio.addEventListener('click', ev=>{
+			let wrapper	= document.querySelector('.category-wrapper.'+ev.target.value)
+			if(ev.target.checked){
+				wrapper.classList.remove('hidden');
+			}else{
+				wrapper.classList.add('hidden');
+			}
+		}));
+
+	</script>
+	<br>
+	<br>
+	<br>
 	<label>
 		Welcome message on homepage
 		<?php

@@ -1210,6 +1210,10 @@ function userPageLinks($string){
  * @return	string				The cleaned string
  */
 function deslash( $content ) {
+	if(is_array($content)){
+		return $content;
+	}
+	
 	$content = preg_replace( "/\\\+'/", "'", $content );
 	$content = preg_replace( '/\\\+"/', '"', $content );
 	$content = preg_replace( '/https?:\/\/https?:\/\//i', 'https://', $content );

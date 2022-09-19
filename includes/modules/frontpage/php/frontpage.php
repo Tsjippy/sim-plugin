@@ -55,8 +55,22 @@ if(!empty($hookName)){
 				return;
 			}
 
-			//Show the ministry gallery
-			echo pageGallery('See what we do:');
+			if(SIM\getModuleOption(MODULE_SLUG,'galery-type') == 'dynamic'){
+				$postTypes	= SIM\getModuleOption(MODULE_SLUG, "post_types");
+				$categories	= SIM\getModuleOption(MODULE_SLUG, "categories");
+	
+				echo pageGallery('See what we do:', $postTypes, 3, $categories);
+			}elseif(SIM\getModuleOption(MODULE_SLUG,'galery-type') == 'static'){
+				//Show the ministry gallery
+				$pageIds	= [
+					SIM\getModuleOption(MODULE_SLUG, "title1"),
+					SIM\getModuleOption(MODULE_SLUG, "title2"),
+					SIM\getModuleOption(MODULE_SLUG, "title3"),
+				];
+
+				echo pageGallery('See what we do:', $pageIds);
+			}
+			
 			$args                   = array('ignore_sticky_posts' => true,);
 			$args['post_type'] 		= SIM\getModuleOption(MODULE_SLUG, 'news_post_types');
 			$args['post_status'] 	= 'publish';
@@ -260,9 +274,12 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 				foreach($categories[$type] as $tax => $cats){
 					$args['tax_query'][]	= [
 						'taxonomy' 			=> $tax,
-						'field' 			=> 'slug',
 						'terms' 			=> $cats
 					];
+
+					if(!is_numeric(array_values($cats)[0])){
+						$args['tax_query']['field']	= 'slug';
+					}
 				}
 			}
 
