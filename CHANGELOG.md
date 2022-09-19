@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.16.5] - 2022-09-19
+
+
+### Changed
 - console log removal
 
 ### Fixed
