@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.16.6] - 2022-09-19
+
+
+### Changed
 - add submitted by column
 to formresults table
 
