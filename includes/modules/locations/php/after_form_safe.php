@@ -103,3 +103,22 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 
 	return $formResults;
 },10,3);
+
+
+// Update marker  whenprivacy options are changed
+add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
+	if($formName != 'user_generics'){
+        return $formResults;	
+    }
+
+    if(is_array($formResults['privacy_preference']) && in_array("hide_location", $formResults['privacy_preference'])){
+        $markerId = get_user_meta($userId, "marker_id", true);
+
+        if(is_numeric($markerId)){
+            $maps = new Maps();
+            $maps->removeMarker($markerId);
+        }
+    }
+
+	return $formResults;
+},10,3);

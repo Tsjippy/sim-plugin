@@ -369,12 +369,24 @@ class DisplayFormResults extends DisplayForm{
 				'view_right_roles'	=> []
 			];
 		}
+
+		//also add the submitted by
+		if(!is_array($this->columnSettings[-2])){
+			$this->columnSettings[-2] = [
+				'name'				=> 'userid',
+				'nice_name'			=> 'Submitted By',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
 		
 		//put hidden columns on the end
 		foreach($this->columnSettings as $key=>$setting){
 			if($setting['show'] == 'hide'){
 				//remove the element
 				unset($this->columnSettings[$key]);
+
 				//add it again, at the end of the array
 				$this->columnSettings[$key] = $setting;
 			}
@@ -425,8 +437,8 @@ class DisplayFormResults extends DisplayForm{
 				!empty($this->tableSettings['hiderow']) &&												//There is a column defined
 				$columnSetting['name'] == $this->tableSettings['hiderow'] && 							//We are currently checking a cell in that column
 				$fieldValues[$this->tableSettings['hiderow']] == '' && 									//The cell has no value
-				!array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles'])	&&	//And we have no right to edit this specific column
-				!$this->tableEditPermissions																//and we have no right to edit all table data
+				!array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles'])	&&		//And we have no right to edit this specific column
+				!$this->tableEditPermissions															//and we have no right to edit all table data
 			){
 				return '';
 			}
