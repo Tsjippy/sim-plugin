@@ -12,6 +12,7 @@
 - keep form submission display settings
  on refresh
 - request not to index hidden pages
+- page gallery on frontpage
 
 ## [2.16.3] - 2022-09-16
 
