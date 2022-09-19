@@ -13,6 +13,7 @@
  on refresh
 - request not to index hidden pages
 - page gallery on frontpage
+- added speed parameter
 
 ## [2.16.3] - 2022-09-16
 
