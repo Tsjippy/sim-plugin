@@ -6,7 +6,7 @@ use SIM;
 	Add a signal page to user management screen
 */
 add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $user){	
-	//Add an extra tab button on position 3
+	//Add an extra tab
 	$filteredHtml['tabs']['Signal']	= "<li class='tablink' id='show_signal_options' data-target='signal_options'>Signal options</li>";
 	
     wp_enqueue_script( 'sim_signal_options');

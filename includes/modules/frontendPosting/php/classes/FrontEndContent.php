@@ -1137,7 +1137,7 @@ class FrontEndContent{
 			}
 			
 			// Insert the post into the database.
-			$this->postId 	= wp_insert_post( $post,true,false);
+			$this->postId 	= wp_insert_post( $post, true, false);
 			$post['ID']		= $this->postId;
 		}
 		
@@ -1194,7 +1194,9 @@ class FrontEndContent{
 		if(is_wp_error($error)){
 			return $error;
 		}
-			
+		
+		$oldPost	= get_post($_POST['post_id']);
+
 		//Check if editing an existing post
 		if(is_numeric($_POST['post_id'])){
 			$post	= $this->updateExistingPost();
@@ -1234,6 +1236,8 @@ class FrontEndContent{
 		$this->storeCustomCategories($post, 'attachments');
 		
 		do_action('sim_after_post_save', (object)$post, $this);
+
+		wp_after_insert_post( $post, $this->update, $oldPost );
 		
 		//Return result
 		if($this->status == 'publish'){

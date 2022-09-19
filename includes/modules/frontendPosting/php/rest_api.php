@@ -51,7 +51,6 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				global $wp_scripts;
 				global $post;
 
 				$frontEndContent	= new FrontEndContent();
