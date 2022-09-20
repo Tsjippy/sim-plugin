@@ -70,7 +70,7 @@ async function askConfirmation(text){
 }
 
 async function removeSubmission(target){
-	if(askConfirmation('delete')){		
+	if(await askConfirmation('delete')){		
 		let submissionId	= target.closest('tr').dataset.id;
 		let table			= target.closest('table');
 
@@ -129,9 +129,7 @@ async function archiveSubmission(target){
 	}
 	
 	if(showSwal){
-		let confirmed = askConfirmation(action);
-
-		if(!confirmed){
+		if(!await askConfirmation(action)){
 			return;
 		}
 	}

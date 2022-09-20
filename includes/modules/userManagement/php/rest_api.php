@@ -155,11 +155,17 @@ function addMinistry(){
  * Update the users roles
  */
 function updateRoles(){
+	if ( !function_exists( 'populate_roles' ) ) {
+		require_once( ABSPATH . 'wp-admin/includes/schema.php' );
+	  }
+	  
+	  populate_roles();
+	  
 	$user 		= get_userdata($_POST['userid']);
     $userRoles 	= $user->roles;
     $newRoles	= (array)$_POST['roles'];
 
-    if(empty(array_diff($userRoles, array_keys($newRoles)) ) and empty(array_diff(array_keys($newRoles), $userRoles))){
+    if(empty(array_diff($userRoles, array_keys($newRoles)) ) && empty(array_diff(array_keys($newRoles), $userRoles))){
         return "Nothing to update";
     }
 

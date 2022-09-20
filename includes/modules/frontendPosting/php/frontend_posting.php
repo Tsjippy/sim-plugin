@@ -70,13 +70,13 @@ function allowedToEdit($post){
 
 	$postId			= $post->ID;
 	$user 			= wp_get_current_user();
-	$postAuthor 	= get_the_author($postId);	
+	$postAuthor 	= $post->post_author;	
 	$postCategory 	= $post->post_category;
 	$userPageId 	= SIM\maybeGetUserPageId($user->ID);
 	$ministries 	= (array)get_user_meta($user->ID, "jobs", true);
 
 	if (
-		$postAuthor == $user->display_name 													|| 	// Own page
+		$postAuthor == $user->ID 															|| 	// Own page
 		in_array($post->ID, array_keys($ministries))										||	// ministry pafe 
 		$userPageId == $postId																||	// pseronal user page
 		apply_filters('sim_frontend_content_edit_rights', false, $postCategory)				||	// external filter

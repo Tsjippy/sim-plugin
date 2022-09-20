@@ -1090,8 +1090,19 @@ class FrontEndContent{
 			$result = wp_update_post($newPostData, true, false);
 			if(is_wp_error($result)){
 				return new WP_Error('Update failed', $result->get_error_message());
-			}elseif($post->post_status == 'draft' && $this->status == 'publish'){
+			}elseif(($post->post_status == 'draft' || $post->post_status == 'pending') && $this->status == 'publish'){
 				$this->actionText = 'published';
+
+				// If we publish a post which was pending before send an notification to the author
+				if( $post->post_status == 'pending'){
+					$author		= get_userdata($post->author);
+					$url		= get_permalink($post);
+					$email    	= new ApprovedPostMail($author->display_name, $post->post_type, $url);
+					$email->filterMail();
+						
+					//Send e-mail
+					wp_mail( $author->user_email, $email->subject, $email->message);
+				}
 			}else{
 				$this->actionText = 'updated';
 			}
@@ -1195,7 +1206,8 @@ class FrontEndContent{
 			return $error;
 		}
 		
-		$oldPost	= get_post($_POST['post_id']);
+		$oldPost			= get_post($_POST['post_id']);
+		$this->oldStatus	= $oldPost->post_status;
 
 		//Check if editing an existing post
 		if(is_numeric($_POST['post_id'])){

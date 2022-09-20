@@ -89,9 +89,9 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 		These ones are available (click on any of them to copy):
 	</label>
 	<?php
-	$postOutOfDateEmail    = new PostOutOfDateEmail(wp_get_current_user());
-	$postOutOfDateEmail->printPlaceholders();
-	$postOutOfDateEmail->printInputs($settings);
+	$email    = new PostOutOfDateEmail(wp_get_current_user());
+	$email->printPlaceholders();
+	$email->printInputs($settings);
 	?>
 	<br>
 	<br>
@@ -100,9 +100,20 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 		Define the e-mail content managers get when someone has submitted a post or post update for review<br>
 	</label>
 	<?php
-	$pendingPostEmail    = new PendingPostEmail(wp_get_current_user());
-	$pendingPostEmail->printPlaceholders();
-	$pendingPostEmail->printInputs($settings);
+	$email    = new PendingPostEmail(wp_get_current_user());
+	$email->printPlaceholders();
+	$email->printInputs($settings);
+	?>
+	<br>
+	<br>
+	<h4>E-mail send to authors when their content is approved</h4>
+	<label>
+		Define the e-mail authors when their post is approved<br>
+	</label>
+	<?php
+	$email    = new ApprovedPostMail(wp_get_current_user());
+	$email->printPlaceholders();
+	$email->printInputs($settings);
     
 	return ob_get_clean();
 }, 10, 3);
