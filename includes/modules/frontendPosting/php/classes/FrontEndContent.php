@@ -993,6 +993,7 @@ class FrontEndContent{
 		if($this->fullrights && $post->post_type == 'change'){
 			// delete revision
 			$delete = wp_delete_post( $this->postId );
+
 			if ( $delete ) {
 				do_action( 'wp_delete_post_revision', $this->postId, $post);
 			}
@@ -1062,7 +1063,7 @@ class FrontEndContent{
 		}
 
 		//we cannot change the post type here
-		if($post->post_type != $this->postType && $post->post_type != 'revision'){
+		if($post->post_type != $this->postType && !in_array($post->post_type, ['revision', 'change'])){
 			return new WP_Error('frontend_contend', 'You can not change the post type like that!');
 		}
 		
@@ -1082,9 +1083,12 @@ class FrontEndContent{
 			unset($post->ID);
 
 			// Insert the post into the database.
-			$postId 	= wp_insert_post( $post, true, false);
+			$postId 		= wp_insert_post( $post, true, false);
 
-			$post->ID	= $postId;
+			$post->ID		= $postId;
+
+			$this->postId	= $postId;
+
 		//Update the post only if we have the rights to so
 		}else{
 			$result = wp_update_post( $newPostData, true, false);
@@ -1166,7 +1170,7 @@ class FrontEndContent{
 	 * Saves or publishes a new post or updates an existing one
 	 *
 	 * @param    string     $status	Desired post status
-	 * @return   string|WP_Error     		Result message
+	 * @return   array|WP_Error     		Result message
 	 *
 	**/
 	function submitPost($status=''){
@@ -1182,6 +1186,12 @@ class FrontEndContent{
 			}else{
 				$this->status = 'pending';
 			}
+		}
+
+		$this->oldPost		= get_post($_POST['post_id']);
+		// find the parent with a correct posttype
+		while(in_array($this->oldPost->post_type, ['change', 'revision'])){
+			$this->oldPost	= get_post($this->oldPost->post_parent);
 		}
 		
 		$this->postType 	= sanitize_text_field($_POST['post_type']);
@@ -1205,9 +1215,6 @@ class FrontEndContent{
 		if(is_wp_error($error)){
 			return $error;
 		}
-		
-		$oldPost			= get_post($_POST['post_id']);
-		$this->oldStatus	= $oldPost->post_status;
 
 		//Check if editing an existing post
 		if(is_numeric($_POST['post_id'])){
@@ -1249,7 +1256,7 @@ class FrontEndContent{
 		
 		do_action('sim_after_post_save', (object)$post, $this);
 
-		wp_after_insert_post( $post, $this->update, $oldPost );
+		wp_after_insert_post( $post, $this->update, $this->oldPost );
 		
 		//Return result
 		if($this->status == 'publish'){
@@ -1264,7 +1271,8 @@ class FrontEndContent{
 
 		return [
 			'message'	=> $message,
-			'id'		=> $this->postId
+			'id'		=> $this->postId,
+			'post'		=> $post
 		];
 	}
 	

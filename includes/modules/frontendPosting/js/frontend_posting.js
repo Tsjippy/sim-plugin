@@ -296,7 +296,7 @@ async function submitPost(target){
 	let response	= await FormSubmit.submitForm(target, 'frontend_posting/submit_post');
 	if(response){
 		// If no html found, reload the page
-		if(!response.html){
+		if(!response.html || !response.js){
 			Main.displayMessage(response.message);
 
 			location.href	= response.url;

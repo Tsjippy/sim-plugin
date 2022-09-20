@@ -61,9 +61,20 @@ add_action( 'rest_api_init', function () {
 				}
 
 				// Load the updated  post in the loop
-				$posts = new \WP_Query( array( 'p' => $frontEndContent->postId, 'post_type' => 'any' ) );
-				$GLOBALS['wp_query'] = $posts;
-				$post = $posts->post;
+				if($result['post']->post_type  == 'change'){
+					$p	= $frontEndContent->oldPost->ID;
+				}else{
+					$p	= $frontEndContent->postId;
+				}
+
+				$posts	= new \WP_Query( array( 
+					'p'			=> $p, 
+					'post_type' => 'any'
+				) );
+
+				$GLOBALS['wp_query']= $posts;
+				$post				= $posts->post;
+				$GLOBALS['post']	= $post;
 
 				if('page' == $post->post_type){
 					$type = 'page';
@@ -84,24 +95,28 @@ add_action( 'rest_api_init', function () {
 				}
 
 				// Get the picture
-				$result['picture']	= get_the_post_thumbnail_url($frontEndContent->postId, 'full');
+				$result['picture']	= get_the_post_thumbnail_url($post->ID, 'full');
 
-				global $shortcode_tags;
-				$shortcode_tags['ultimate_maps'];
 				$result['html'] = do_shortcode($html);
 
-				$result['url']	= get_permalink();
+				if($post->post_status == 'pending'){
+					$result['url']	= get_preview_post_link($post->ID);
+				}else{
+					$result['url']	= get_permalink($post->ID);
+				}
+				
+				if($frontEndContent->update){
+					do_action('wp_enqueue_scripts');
+					ob_start();
+					wp_print_scripts();
+					print_footer_scripts();
+					$result['js']	= ob_get_clean();
 
-				do_action('wp_enqueue_scripts');
-				ob_start();
-				wp_print_scripts();
-				print_footer_scripts();
-				$result['js']	= ob_get_clean();
-
-				do_action('wp_enqueue_style');
-				ob_start();
-				wp_print_styles();
-				$result['css']	= ob_get_clean();
+					do_action('wp_enqueue_style');
+					ob_start();
+					wp_print_styles();
+					$result['css']	= ob_get_clean();
+				}
 
 				return $result;
 			},
