@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- to many permissions for revisors
 
 ## [2.16.6] - 2022-09-19
 
