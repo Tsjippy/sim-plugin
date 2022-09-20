@@ -313,7 +313,7 @@ function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'loc
 	
 		foreach ( $options as $id=>$name ) {
 			$selected	= "";
-			if (!empty($pageId) && $pageId === $id){
+			if (!empty($pageId) && $pageId == $id){
 				$selected='selected=selected';
 			}
 			$html .= "<option value='$id' $selected>$name</option>";
