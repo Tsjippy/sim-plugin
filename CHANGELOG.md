@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.16.8] - 2022-09-20
+
+
+### Fixed
 - frontpage button selection
 
 ## [2.16.7] - 2022-09-20
