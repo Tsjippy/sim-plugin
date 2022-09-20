@@ -10,6 +10,7 @@
 
 ### Fixed
 - to many permissions for revisors
+- better experience when posting for review
 
 ## [2.16.6] - 2022-09-19
 
