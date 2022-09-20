@@ -4,6 +4,7 @@
 
 ### Added
 - post author to signal messages
+- send e-mail when post approved
 
 ### Changed
 
