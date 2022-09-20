@@ -3,10 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- post author to signal messages
-- send e-mail when post approved
 
 ### Changed
+
+### Fixed
+
+## [2.16.7] - 2022-09-20
+
+
+### Added
+- post author to signal messages
+- send e-mail when post approved
 
 ### Fixed
 - to many permissions for revisors
