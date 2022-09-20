@@ -1087,7 +1087,7 @@ class FrontEndContent{
 			$post->ID	= $postId;
 		//Update the post only if we have the rights to so
 		}else{
-			$result = wp_update_post($newPostData, true, false);
+			$result = wp_update_post( $newPostData, true, false);
 			if(is_wp_error($result)){
 				return new WP_Error('Update failed', $result->get_error_message());
 			}elseif(($post->post_status == 'draft' || $post->post_status == 'pending') && $this->status == 'publish'){
@@ -1095,8 +1095,8 @@ class FrontEndContent{
 
 				// If we publish a post which was pending before send an notification to the author
 				if( $post->post_status == 'pending'){
-					$author		= get_userdata($post->author);
-					$url		= get_permalink($post);
+					$author		= get_userdata($post->post_author);
+					$url		= get_permalink($post->ID);
 					$email    	= new ApprovedPostMail($author->display_name, $post->post_type, $url);
 					$email->filterMail();
 						
