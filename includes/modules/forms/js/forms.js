@@ -143,16 +143,12 @@ export function copyFormInput(originalNode){
 	});
 	
 	//Add remove buttons if they are not there
-	if(originalNode.querySelector('.remove') == null){
- 		let addElement 		= newNode.querySelector('.add');
-		let elementClass 	= addElement.className.replace('add', 'remove');
-		let id 				= addElement.id.replace('add','remove');
-		let content 		= addElement.textContent.replace('Add','Remove this').replace('an','').replace('+','-');
-		
-		let html = `<button type="button" class="${elementClass}" id="${id}" style="flex: 1;">${content}</button>`;
-		
+	if(originalNode.querySelector('.remove') == null && newNode.querySelector('.remove') == null){
+ 		let html = `<button type="button" class="remove button" style="flex: 1;">-</button>`;
+
 		//Add minus button to the first div
 		originalNode.querySelector('.buttonwrapper').insertAdjacentHTML('beforeend', html);
+
 		//Add minus button to the second div
 		newNode.querySelector('.buttonwrapper').insertAdjacentHTML('beforeend', html)
 	}	
@@ -218,7 +214,9 @@ export function removeNode(target){
 		
 		//Move the add button one up
 		let prev = node.previousElementSibling;
-		prev.querySelector('.buttonwrapper').appendChild(addElement);
+		if(prev.querySelector('.buttonwrapper .add') == null){
+			prev.querySelector('.buttonwrapper').appendChild(addElement);
+		}
 	}
 	
 	//Remove the node
