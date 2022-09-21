@@ -380,6 +380,17 @@ class DisplayFormResults extends DisplayForm{
 				'view_right_roles'	=> []
 			];
 		}
+
+		//also add the submission date
+		if(!is_array($this->columnSettings[-3])){
+			$this->columnSettings[-3] = [
+				'name'				=> 'submissiontime',
+				'nice_name'			=> 'Submission date',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
 		
 		//put hidden columns on the end
 		foreach($this->columnSettings as $key=>$setting){

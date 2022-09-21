@@ -284,7 +284,7 @@ class SimForms{
 	 * @return	object|array|string|false			The element or element property
 	 */
 	function getElementById($id, $key=''){
-		if($id == -1 || $id == -2){
+		if($id < 0){
 			return false;
 		}
 		
