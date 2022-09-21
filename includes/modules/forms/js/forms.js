@@ -145,7 +145,7 @@ export function copyFormInput(originalNode){
 	//Add remove buttons if they are not there
 	if(originalNode.querySelector('.remove') == null){
  		let addElement 		= newNode.querySelector('.add');
-		let elementClass 	= addElement.className.replace('add','remove');
+		let elementClass 	= addElement.className.replace('add', 'remove');
 		let id 				= addElement.id.replace('add','remove');
 		let content 		= addElement.textContent.replace('Add','Remove this').replace('an','').replace('+','-');
 		
@@ -393,6 +393,27 @@ export function changeFieldValue(orgName, value, functionRef, form){
 		name 	= orgName;
 		//get the target
 		target 	= form.querySelector(`[name="${name}" i]`);
+
+		// Check if we are dealing with a multi input field
+		if(target == null){
+			let targets 	= form.querySelectorAll(`.clone_div [name^="${name}" i]`);
+			if(targets.length === 0){
+				return;
+			}else if(targets.length == 1){
+				target	= targets[0];
+				targets	= '';
+			}else{
+				target	= targets[0];
+
+				targets.forEach((el, index) =>{
+					if(index == 0){
+						changeFieldValue(el, '', '', form);
+					}else{
+						removeNode(el);
+					}
+				});
+			}
+		}
 	}
 	
 	if(target.type == 'radio' || target.type == 'checkbox'){
@@ -409,7 +430,21 @@ export function changeFieldValue(orgName, value, functionRef, form){
 
 		//we found a match
 		if(dataListOption != null){
-			target.value = dataListOption.value;
+			// We found a cloned field, add as many inputs as needed
+			if(target.closest('.clone_div') != null){
+				let clone;
+				dataListOption.value.split(';').forEach(val=>{
+					clone = copyFormInput(target.closest('.clone_div'));
+
+					changeFieldValue(clone.querySelector(target.tagName), val, '', form);
+				});
+
+				fixNumbering(target.closest('.clone_divs_wrapper'));
+
+				target.closest('.clone_div').remove();
+			}else{
+				target.value = dataListOption.value;
+			}
 		}else{
 			target.value = value;
 		}
@@ -423,7 +458,9 @@ export function changeFieldValue(orgName, value, functionRef, form){
 	target.dispatchEvent(evt);
 	
 	//run the originating function with this event
-	functionRef(target);
+	if(typeof functionRef == 'function'){
+		functionRef(target);
+	}
 }
 
 export function changeFieldProperty(name, att, value, functionRef, form){
