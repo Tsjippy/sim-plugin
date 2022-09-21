@@ -7,6 +7,8 @@
 ### Changed
 
 ### Fixed
+- do not show hidden pages in page gallery
+when not logged in
 
 ## [2.16.8] - 2022-09-20
 
