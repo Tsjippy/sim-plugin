@@ -112,12 +112,10 @@ trait ExportFormResults{
 		$writer					= new Xlsx($spreadsheet);
 		//Download excel file here
 		if($download){
+			SIM\clearOutput();
+			ob_start();
 			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 			header("Content-Disposition: attachment; filename=$fileName");
-			for ($i = 0; $i < ob_get_level(); $i++) {
-				ob_get_clean();
-			}
-			ob_start();
 			$writer->save('php://output');
 			ob_end_flush();
 			exit;

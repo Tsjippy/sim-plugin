@@ -221,22 +221,14 @@ async function getInputHtml(target){
 		addFormsTableInputEventListeners(target);
 
 		target.querySelectorAll('.file_upload_wrap').forEach(el=>el.addEventListener('uploadfinished', uploadFinished));
+	}else{
+		target.innerHTML	= target.dataset.oldtext;
+		target.classList.remove('active');
 	}
 }
 
 function addFormsTableInputEventListeners(cell){
 	let inputs		= cell.querySelectorAll('input,select,textarea');
-
-	// get old value
-	let oldValue	= '';
-	if(cell.dataset.oldvalue != undefined){
-		oldValue	= JSON.parse(cell.dataset.oldvalue);
-	}
-
-	// make it an array if not an array
-	if(!Array.isArray(oldValue)){
-		oldValue = [oldValue];
-	}
 		
 	inputs.forEach((inputNode)=>{
 		if(inputNode.type == 'select-one'){

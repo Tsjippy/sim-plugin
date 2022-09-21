@@ -154,9 +154,9 @@ function exportVisaExcel(){
 	
 	//Now write it all to an excel file
 	$writer = new Xlsx($spreadsheet);
+	SIM\clearOutput();
 	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 	header("Content-Disposition: attachment; filename=$filename");
-	SIM\clearOutput();
 	ob_start();
 	$writer->save('php://output');
 	ob_end_flush();
