@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.17.4] - 2022-09-21
+
+
+### Fixed
 - do not add 'add' button twice
 
 ## [2.17.3] - 2022-09-21
