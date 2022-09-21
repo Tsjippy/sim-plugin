@@ -10,6 +10,7 @@
 - do not add 'add' button twice
 - better event handling in form results table
 - excel export
+- show username instead of user id
 
 ## [2.17.3] - 2022-09-21
 
