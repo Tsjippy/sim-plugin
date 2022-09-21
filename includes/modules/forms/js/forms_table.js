@@ -220,8 +220,6 @@ async function getInputHtml(target){
 
 		addFormsTableInputEventListeners(target);
 
-		//add a listener for clicks outside the cell
-		document.addEventListener('click', outsideFormsTableClicked);
 		target.querySelectorAll('.file_upload_wrap').forEach(el=>el.addEventListener('uploadfinished', uploadFinished));
 	}
 }
@@ -245,35 +243,15 @@ function addFormsTableInputEventListeners(cell){
 			inputNode._niceselect = NiceSelect.bind(inputNode, {searchable: true});
 		}
 		
-		//Add a keyboard
-		inputNode.addEventListener("keyup", function(event){
-			if (event.keyCode === 13) {
-				processFormsTableInput(event.target);
-			}
-		});
-		
-		//add a listener for clicks outside the cell
-		document.addEventListener('click', outsideFormsTableClicked);
-		
 		if(inputNode.type != 'checkbox' || inputs.length == 1){
 
 			if(inputNode.type == 'date'){
 				inputNode.addEventListener("blur", processFormsTableInput);
-			}else if(inputNode.type != 'file'){
-				inputNode.addEventListener("change", processFormsTableInput);
 			}
 			
 			inputNode.focus();
 		}
 	});
-}
-
-function outsideFormsTableClicked(event){
-	if(event.target.closest('td') == null){
-		//remove as soon as we come here
-		this.removeEventListener("click", arguments.callee);
-		processFormsTableInput(document.querySelector('.active'));
-	}
 }
 
 function uploadFinished(event){
@@ -307,9 +285,6 @@ async function processFormsTableInput(target){
 	let value			= FormFunctions.getFieldValue(target, cell, false);
 	let submissionId	= target.closest('tr').dataset.id;
 	let subId			= cell.dataset.subid;
-	
-	//remove all event listeners
-	document.removeEventListener("click", outsideFormsTableClicked);
 	
 	//Only update when needed
 	if (value != cell.dataset.oldvalue){
@@ -428,6 +403,12 @@ document.addEventListener("click", event=>{
 	if(target.matches('.reset-col-vis')){
 		showHiddenColumns(target);
 	}
+
+	// If we clicked somewhere and there is an active cell
+	let activeCell	= document.querySelector('td.active');
+	if(activeCell != null && td == null){
+		processFormsTableInput(activeCell);
+	}
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -459,4 +440,29 @@ document.addEventListener('change', event=>{
 		// position table
 		SimTableFunctions.positionTable();
 	}
+
+	if(target.closest('td.active') != null && target.type != 'file'){
+		processFormsTableInput(target);
+	}
+
+});
+
+//Add a keyboard listener
+document.addEventListener("keyup", function(event){
+	if (['Enter', 'NumpadEnter'].includes(event.key) && keysPressed.Shift == undefined) {
+
+		let activeCell	= document.querySelector('td.active');
+		if(activeCell != null){
+			processFormsTableInput(activeCell);
+		}
+	}
+
+	delete keysPressed[event.key];
+});
+
+
+// Keep track of which keys are pressed
+let keysPressed = {};
+document.addEventListener('keydown', (event) => {
+   keysPressed[event.key] = true;
 });
