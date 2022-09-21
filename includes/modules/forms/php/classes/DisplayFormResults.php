@@ -240,6 +240,11 @@ class DisplayFormResults extends DisplayForm{
 			// Convert phonenumber to signal link
 			}elseif($string[0] == '+'){
 				$output	= "<a href='https://signal.me/#p/$string'>$string</a>";
+			}elseif($fieldName == 'userid'){
+				$output				= SIM\USERPAGE\getUserPageLink($string);
+				if(!$output){
+					$output	= $string;
+				}
 			}
 		
 			$output = apply_filters('sim_transform_formtable_data', $output, $fieldName);
