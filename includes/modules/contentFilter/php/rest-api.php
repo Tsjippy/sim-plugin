@@ -15,7 +15,7 @@ add_filter( 'rest_authentication_errors', function( $result ) {
 		// Our custom authentication check should have no effect on logged-in requests
 		return $result;
     }else{
-		return new WP_Error( 'forbidden_access', __( 'You should be logged in to perform this request' ), array( 'status' => rest_authorization_required_code() ) );
+		return new WP_Error( 'content filter', __( 'You should be logged in to perform this request' ), array( 'status' => rest_authorization_required_code() ) );
 	}
 });
 

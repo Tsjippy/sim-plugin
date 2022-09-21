@@ -141,7 +141,7 @@ add_filter('wp_nav_menu_items', function ($items) {
     if(is_user_logged_in()){
         $items .= '<li id="logout" class="menu-item logout"><a href="#logout" class="logout">Log out</a></li>';
     }else{
-        $items .= '<li id="login" class="menu-item login"><a href="#login">Login</a></li>';
+        $items .= '<li id="login" class="menu-item login hidden"><a href="#login">Login</a></li>';
     }
   return $items;
 });

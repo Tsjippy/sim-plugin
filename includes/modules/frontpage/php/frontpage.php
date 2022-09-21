@@ -283,6 +283,8 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 				}
 			}
 
+			$args	= apply_filters('sim-frontpage-post-gallery-posts', $args, $postTypes);
+
 			$posts	= array_merge($posts, get_posts($args));
 		}
 	}

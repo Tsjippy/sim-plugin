@@ -61,3 +61,10 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 } );
+
+// Allow non-logged in use
+add_filter('sim_allowed_rest_api_urls', function($urls){
+	$urls[]		= RESTAPIPREFIX.'/frontpage/show_page_gallery';
+
+	return $urls;
+});

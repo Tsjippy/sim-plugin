@@ -442,3 +442,5 @@ const checkIsIOS = () =>/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.
 if (checkIsIOS()) {
 	addMaximumScaleToMetaViewport();
 }
+
+document.getElementById('login').classList.remove('hidden');
