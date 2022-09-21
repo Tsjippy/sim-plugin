@@ -7,6 +7,8 @@
 ### Changed
 
 ### Fixed
+- prefill text area in form result table
+during edit
 
 ## [2.16.9] - 2022-09-21
 
