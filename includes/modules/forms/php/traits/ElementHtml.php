@@ -450,7 +450,11 @@ trait ElementHtml{
 			*/
 			$elContent = "";
 			if($element->type == 'textarea'){
-				$elContent = $values['metavalue'][0];
+				if(!empty($value)){
+					$elContent = $value;
+				}elseif(isset($values['metavalue'][0])){
+					$elContent = $values['metavalue'][0];
+				}
 			}elseif(!empty($element->text)){
 				switch($element->type){
 					case 'formstep':
