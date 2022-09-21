@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- set value of clone divs
 
 ## [2.17.0] - 2022-09-21
 
