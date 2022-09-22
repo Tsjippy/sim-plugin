@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- send e-mail on sumission deletion
 
 ## [2.17.5] - 2022-09-22
 
