@@ -2,6 +2,23 @@
 namespace SIM\FRONTENDPOSTING;
 use SIM;
 
+// filter library if needed
+add_filter( 'ajax_query_attachments_args', function($query){
+    if(!empty($_REQUEST['query']['category'])){
+        $category = $_REQUEST['query']['category'];
+
+		$query['tax_query'] = array(
+			array (
+				'taxonomy' 	=> 'attachment_cat',
+				'field' 	=> 'slug',
+				'terms' 	=> $category ,
+			)
+		);
+    }
+
+    return $query;
+} );
+
 add_action( 'init', function () {
 
     $taxonomies = array( 'category', 'post_tag' ); // add the 2 tax to ...

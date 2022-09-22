@@ -5,7 +5,8 @@
   "main": "./frontend_posting.js",
   "scripts": {
     "frontend": "webpack --watch --entry ./frontend_posting.js --output-path . --output-filename frontend_posting.min.js --progress --mode=production --devtool source-map",
-    "edit": "webpack --watch --entry ./edit_post.js --output-path . --output-filename edit_post.min.js --progress --mode=production --devtool source-map"
+    "edit": "webpack --watch --entry ./edit_post.js --output-path . --output-filename edit_post.min.js --progress --mode=production --devtool source-map",
+    "library": "webpack --watch --entry ./library.js --output-path . --output-filename library.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

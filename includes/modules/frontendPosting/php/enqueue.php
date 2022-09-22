@@ -54,3 +54,15 @@ add_action( 'wp_enqueue_scripts', function () {
         wp_enqueue_style('sim_frontend_style');
     }
 });
+
+add_action( 'wp_enqueue_media', function(){
+    wp_enqueue_script('sim_library_cat_script', plugins_url('js/library.min.js', __DIR__), [], MODULE_VERSION);
+    wp_localize_script(
+        'sim_library_cat_script',
+        'categories',
+        get_categories( array(
+            'taxonomy'		=> 'attachment_cat',
+            'hide_empty' 	=> false
+        ) )
+    );
+});
