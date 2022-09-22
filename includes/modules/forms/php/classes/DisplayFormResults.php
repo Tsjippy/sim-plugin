@@ -317,12 +317,21 @@ class DisplayFormResults extends DisplayForm{
 			}
 		}
 
+		$editRightRoles	= [];
+		$viewRightRoles	= [];
+		$show			= '';
+
+		if(isset($this->columnSettings[$element->id])){
+			$show			= $this->columnSettings[$element->id]['show'];
+			$editRightRoles	= $this->columnSettings[$element->id]['edit_right_roles'];
+			$viewRightRoles = $this->columnSettings[$element->id]['view_right_roles'];
+		}
 		$this->columnSettings[$element->id] = [
 			'name'				=> $name,
 			'nice_name'			=> $name,
-			'show'				=> '',
-			'edit_right_roles'	=> [],
-			'view_right_roles'	=> []
+			'show'				=> $show,
+			'edit_right_roles'	=> $editRightRoles,
+			'view_right_roles'	=> $viewRightRoles
 		];
 	}
 

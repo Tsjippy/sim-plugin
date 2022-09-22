@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
+use stdClass;
 use WP_Error;
 
 function checkPermissions(){
@@ -233,18 +234,23 @@ function addFormElement(){
 	$simForms->getForm($_POST['formid']);
 
 	$index		= 0;
+	$oldElement	= new stdClass();
 
 	//Store form results if submitted
 	$element		= (object)$_POST["formfield"];
 	if(is_numeric($_POST['element_id'])){
-		$update	= true;
+		$update		= true;
+
+		$oldElement	= $simForms->getElementById($_POST['element_id']);
+
+		$element->id	= $_POST['element_id'];
 	}else{
 		$update	= false;
 	}
 	
 	if($element->type == 'php'){
 		//we store the functionname in the html variable replace any double \ with a single \
-		$functionName 				= str_replace('\\\\', '\\', $element->functionname);
+		$functionName 			= str_replace('\\\\', '\\', $element->functionname);
 		$element->name			= $functionName;
 		$element->functionname	= $functionName;
 		
@@ -264,15 +270,17 @@ function addFormElement(){
 	$element->name		= str_replace(" ","_",strtolower(trim($element->name)));
 
 	if(
-		in_array($element->type, $simForms->nonInputs) 		&& // this is a non-input
-		$element->type != 'datalist'							&& // but not a datalist
-		strpos($element->name, $element->type) === false				// and the type is not yet added to the name 
+		in_array($element->type, $simForms->nonInputs) 		&& 	// this is a non-input
+		$element->type != 'datalist'						&& 	// but not a datalist
+		strpos($element->name, $element->type) === false		// and the type is not yet added to the name 
 	){
 		$element->name	.= '_'.$element->type;
 	}
 	
 	//Give an unique name
-	if(strpos($element->name, '[]') === false && !$update){
+	if(strpos($element->name, '[]') === false && (!$update || $oldElement->name != $element->name)){
+		global $wpdb;
+
 		$unique = false;
 		
 		$i = '';
@@ -301,6 +309,58 @@ function addFormElement(){
 		//update the name
 		if($i != ''){
 			$element->name .= "_$i";
+		}
+
+		if($update){
+			// update splitted field
+			if($simForms->formData->settings['split'] == $oldElement->name){
+				// update the splitted field
+				$simForms->formData->settings['split']	= $element->name;
+
+				$result	= $simForms->updateFormSettings();
+		
+				if(is_wp_error($result)){
+					return $result;
+				}
+			}
+
+			// update js
+			$simForms->createJs();
+
+			// Update column settings
+			$displayFormResults	= new DisplayFormResults();
+
+			$query						= "SELECT * FROM {$displayFormResults->shortcodeTable} WHERE form_id= '{$simForms->formData->id}'";
+			foreach($wpdb->get_results($query) as $data){
+				$displayFormResults->shortcodeId	= $data->id;
+				$displayFormResults->loadShortcodeData();
+				$displayFormResults->addColumnSetting($element);
+
+				saveColumnSettings($displayFormResults->columnSettings, $displayFormResults->shortcodeId);
+			}
+
+			// Update submission data
+			$displayFormResults->showArchived	= true;
+			$displayFormResults->getForm($simForms->formData->id);
+			$displayFormResults->getSubmissionData(null, null, true);
+
+			$submitForm	= new SubmitForm();
+
+			foreach($displayFormResults->submissionData as $data){
+				if(isset($data->formresults[$oldElement->name])){
+					$data->formresults[$element->name]	= $data->formresults[$oldElement->name];
+					unset($data->formresults[$oldElement->name]);
+				}
+				$wpdb->update(
+					$submitForm->submissionTableName, 
+					array(
+						'formresults'	=> maybe_serialize($data->formresults),
+					),
+					array(
+						'id'			=> $data->id
+					)
+					);
+			}
 		}
 	}
 
@@ -483,32 +543,22 @@ function saveElementConditions(){
 
 // DONE
 function saveFormSettings(){
-	$formBuilder	= new SaveFormSettings();
+	$formBuilder			= new SaveFormSettings();
+	
+	$formSettings 			= $_POST['settings'];
 
-	global $wpdb;
-	
-	$formBuilder->getForm($_POST['formid']);
-	
-	$formSettings = $_POST['settings'];
+	$formBuilder->formName	= $formSettings['formname'];
 	
 	//remove double slashes
 	$formSettings['upload_path']	= str_replace('\\\\', '\\', $formSettings['upload_path']);
 	
 	$formBuilder->maybeInsertForm();
 	
-	$wpdb->update($formBuilder->tableName, 
-		array(
-			'settings' 	=> maybe_serialize($formSettings)
-		), 
-		array(
-			'id'		=> $_POST['formid'],
-		),
-	);
+	$result	= $formBuilder->updateFormSettings($_POST['formid'], $formSettings);
 	
-	if($wpdb->last_error !== ''){
-		return new \WP_Error('Error', $wpdb->print_error());
+	if(is_wp_error($result)){
+		return $result;
 	}
-	
 	return "Succesfully saved your form settings";
 }
 

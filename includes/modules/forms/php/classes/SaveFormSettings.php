@@ -354,4 +354,42 @@ class SaveFormSettings extends SimForms{
 			}
 		}
 	}
+
+	/**
+	 * Update form settings
+	 */
+	function updateFormSettings($formId='', $formSettings=''){
+		global $wpdb;
+
+		if(empty($formId)){
+			if(!empty($this->formData->id)){
+				$formId	= $this->formData->id;
+			}else{
+				return new \WP_Error('Error', 'Please supply a form id'); 
+			}
+		}
+
+		if(empty($formSettings)){
+			if(!empty($this->formData->settings)){
+				$formSettings	= $this->formData->settings;
+			}else{
+				return new \WP_Error('Error', 'Please supply a the form settings'); 
+			}
+		}
+
+		$wpdb->update($this->tableName, 
+			array(
+				'settings' 	=> maybe_serialize($formSettings)
+			), 
+			array(
+				'id'		=> $formId,
+			),
+		);
+		
+		if($wpdb->last_error !== ''){
+			return new \WP_Error('Error', $wpdb->print_error());
+		}
+
+		return true;
+	}
 }

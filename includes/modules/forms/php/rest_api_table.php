@@ -202,14 +202,28 @@ function deleteTablePrefs( \WP_REST_Request $request ) {
 	}
 }
 
-function saveColumnSettings(){
+function saveColumnSettings($settings='', $shortcodeId=''){
 	global $wpdb;
+
+	if($settings instanceof \WP_REST_Request){
+		$params			= $settings->get_params();
+
+		$settings 		= $params['column_settings'];
+		$shortcodeId 	= $params['shortcode_id'];
+	}
 	
 	//copy edit right roles to view right roles
-	$settings = $_POST['column_settings'];
+	if(empty($settings)){
+		return new \WP_Error('forms', 'No settings provided');
+	}
+
+	if(empty($shortcodeId)){
+		return new \WP_Error('forms', 'No shortcode id provided');
+	}
+
 	foreach($settings as $key=>$setting){
 		//if there are edit rights defined
-		if(is_array($setting['edit_right_roles'])){
+		if(isset($setting['edit_right_roles']) && is_array($setting['edit_right_roles'])){
 			//create view array if it does not exist
 			if(!is_array($setting['view_right_roles'])){
 				$setting['view_right_roles'] = [];
@@ -223,10 +237,10 @@ function saveColumnSettings(){
 	$formTable	= new DisplayFormResults();
 	$wpdb->update($formTable->shortcodeTable, 
 		array(
-			'column_settings'	 	=> maybe_serialize($settings)
+			'column_settings'	=> maybe_serialize($settings)
 		), 
 		array(
-			'id'		=> $_POST['shortcode_id'],
+			'id'				=> $shortcodeId,
 		),
 	);
 	
