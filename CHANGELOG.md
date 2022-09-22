@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- send e-mail on submission removal
 
 ### Changed
 
