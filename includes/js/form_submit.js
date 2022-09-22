@@ -112,7 +112,7 @@ export async function fetchRestApi(url, formData){
 		console.error(result);
 
 		if(result.ok){
-			Main.displayMessage(`Problem parsing the json`, 'error');
+			Main.displayMessage(`Problem parsing the json, refresh the page or try again.`, 'error');
 			console.error(response);
 		}else{
 			Main.displayMessage(`Url ${sim.baseUrl}/wp-json${sim.restApiPrefix}/${url} not found`, 'error');

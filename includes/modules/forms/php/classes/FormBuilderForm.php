@@ -582,6 +582,10 @@ class FormBuilderForm extends SimForms{
 											A field has changed to a value
 										</label><br>
 										<label>
+											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='removed' <?php if($email['emailtrigger'] == 'removed'){echo 'checked';}?>>
+											The submission is archived or deleted
+										</label><br>
+										<label>
 											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='disabled' <?php if($email['emailtrigger'] == 'disabled'){echo 'checked';}?>>
 											Do not send this e-mail
 										</label><br>

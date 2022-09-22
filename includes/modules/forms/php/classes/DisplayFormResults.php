@@ -219,8 +219,26 @@ class DisplayFormResults extends DisplayForm{
 			if (strpos($string, '@') !== false) {
 				$output 	= "<a href='mailto:$string'>Send email</a>";
 			//Convert link to clickable link if not already
-			}elseif(strpos($string, 'https://') !== false && strpos($string, 'href') === false) {
-				$output 	= "<a href='$string'>Link</a>";
+			}elseif(
+				(
+					strpos($string, 'https://') !== false	|| 
+					strpos($string, 'http://') !== false	||
+					strpos($string, '/form_uploads/') !== false
+				) && 
+				strpos($string, 'href') === false && 
+				strpos($string, '<img') === false
+			) {
+				$url	= str_replace(['https://', 'http://'], '', SITEURL);
+				if(strpos($string, $url) === false){
+					$string		= SITEURL."/$string";
+				}
+
+				$text	= "Link";
+
+				if(getimagesize(SIM\urlToPath($string)) !== false) {
+					$text	= "<img src='$string' alt='form_upload' style='width:150px;' loading='lazy'>";
+				}
+				$output		= "<a href='$string'>$text</a>";
 			//display dates in a nice way
 			}elseif(strtotime($string) && Date('Y', strtotime($string)) < 2200){
 				$date		= date_parse($string);
@@ -229,14 +247,6 @@ class DisplayFormResults extends DisplayForm{
 				if($date['year'] && $date['month'] && $date['day']){
 					$output		= date('d-M-Y',strtotime($string));
 				}
-			//show file uploads as links
-			}elseif(strpos($string, 'uploads/form_uploads') !== false){
-				$url		= SITEURL."/$string";
-				$text		= 'Link';
-				if(getimagesize(SIM\urlToPath($url)) !== false) {
-					$text	= "<img src='$url' alt='form_upload' style='width:150px;' loading='lazy'>";
-				}
-				$output		= "<a href='$url'>$text</a>";
 			// Convert phonenumber to signal link
 			}elseif($string[0] == '+'){
 				$output	= "<a href='https://signal.me/#p/$string'>$string</a>";

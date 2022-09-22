@@ -32,31 +32,53 @@ function sendReimbursementRequests(){
     $formTable->processAtts(['id'=>'6','formname'=>'reimbursement']);
 	$formTable->showFormresultsTable();
 
+	//Get all files in the reimbursement dir as they are the receipts
+	$recieptsDir	= "/form_uploads/Reimbursement";
+	$dir			= wp_upload_dir()['basedir'].$recieptsDir;
+	$oldDir			= $dir.'/old';
+	$privateDir		= wp_upload_dir()['basedir'].'/private'.$recieptsDir;
+	$attachments	= glob("$dir/*.*");
+	$oldAttachments	= glob("$oldDir/*.*");
+
+	// Check if we need to make a folder
+	if (!is_dir($oldDir)) {
+		mkdir($oldDir, 0777, true);
+	}
+
+	if (!is_dir($privateDir)) {
+		mkdir($privateDir, 0777, true);
+	}
+
+	// Move all the files in the old dir to the private dir
+	// They belong to last months request
+	foreach($oldAttachments as $file){
+		//Remove the upload attached to the form
+		rename($file, str_replace($oldDir, $privateDir, $file));
+	}
+
 	//if there are reimbursements
 	if(empty($formTable->submissionData )){
 		SIM\printArray('No reimbursement requests found');
 	}else{
-		//Get all files in the reimbursement dir as they are the receipts
-		$recieptsDir	= wp_upload_dir()['basedir']."/form_uploads/Reimbursement";
-		$attachments	= glob("$recieptsDir/*.*");
-
 		//Create the excel
 		$excel	= $formTable->exportExcel("Reimbursement requests - ".date("F Y", strtotime("previous month")).'.xlsx',false);
 
 		//mark all entries as archived
-		foreach($formTable->submissionData as $sub_data){
-			$formTable->formResults		= maybe_unserialize($sub_data->formresults);
-			$formTable->submissionId	= $sub_data->id;
+		foreach($formTable->submissionData as $data){
+			$formTable->formResults		= maybe_unserialize($data->formresults);
+			$formTable->submissionId	= $data->id;
+
+			// update the reciept url
+			if(isset($formTable->formResults['receipts'])){
+				foreach($formTable->formResults['receipts'] as &$receipt){
+					$receipt	= str_replace($recieptsDir, '/private'.$recieptsDir, $receipt);
+				}
+			}
 			$formTable->updateSubmissionData(true);
 		}
 
 		//If there are any attachements
 		if(!empty($attachments)){
-			// Check if we need to make a folder
-			if (!is_dir("$recieptsDir/old")) {
-                mkdir("$recieptsDir/old", 0777, true);
-            }
-
 			//Send e-mail
 			$subject		 = "Reimbursements for ".date("F Y", strtotime("previous month"));
 			$message		 = 'Dear finance team,<br><br>';
@@ -74,10 +96,10 @@ function sendReimbursementRequests(){
 			$to				= SIM\getModuleOption('mailposting', 'finance_email');
 			wp_mail($to, $subject, $message, $email_headers, $excel);
 
-			//Loop over the attachements and delete them from the server
-			foreach($attachments as $attachment){
+			//Loop over the attachements and move them
+			foreach($attachments as $file){
 				//Remove the upload attached to the form
-				rename($attachment, str_replace($recieptsDir, "$recieptsDir/old", $attachment));
+				rename($file, str_replace($recieptsDir, $oldDir, $file));
 			}
 		}
 	}
