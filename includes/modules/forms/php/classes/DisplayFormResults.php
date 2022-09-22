@@ -35,7 +35,13 @@ class DisplayFormResults extends DisplayForm{
 	function getSubmissionData($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
 		
-		$query				= "SELECT * FROM {$this->submissionTableName} WHERE form_id={$this->formData->id}";
+		$query				= "SELECT * FROM {$this->submissionTableName} WHERE ";
+
+		if(isset($this->formData->id)){
+			$query	.= "form_id={$this->formData->id}";
+		}else{
+			$query	.= "1=1";
+		}
 		if(is_numeric($submissionId)){
 			$query .= " and id='$submissionId'";
 		}elseif(is_numeric($userId)){

@@ -216,7 +216,7 @@ function saveColumnSettings(){
 			}
 			
 			//merge and save
-			$settings[$key]['view_right_roles'] = array_merge($setting['view_right_roles'],$setting['edit_right_roles']);
+			$settings[$key]['view_right_roles'] = array_merge($setting['view_right_roles'], $setting['edit_right_roles']);
 		}
 	}
 	
@@ -283,8 +283,6 @@ function saveTableSettings(){
 }
 
 function removeSubmission(){
-	global $wpdb;
-
 	$formTable	= new EditFormResults();
 
 	$result		= $formTable->deleteSubmission($_POST['submissionid']);
