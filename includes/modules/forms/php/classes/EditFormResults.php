@@ -197,6 +197,11 @@ class EditFormResults extends DisplayFormResults{
 	function deleteSubmission($submissionId){
 		global $wpdb;
 
+		if(!isset($this->formData) || $this->formData == null){
+			$this->getSubmissionData(null, $submissionId);
+			$this->getForm($this->submissionData->form_id);
+		}
+
 		$result = $wpdb->delete(
 			$this->submissionTableName, 
 			array(
