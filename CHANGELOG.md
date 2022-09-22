@@ -11,6 +11,7 @@
 - better event handling in form results table
 - excel export
 - show username instead of user id
+- reimbursement pictures urls
 
 ## [2.17.3] - 2022-09-21
 
