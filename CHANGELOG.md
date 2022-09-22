@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- filter backend media on category
 
 ### Changed
+
+### Fixed
+
+## [2.17.6] - 2022-09-22
+
+
+### Added
+- filter backend media on category
 
 ### Fixed
 - send e-mail on sumission deletion
