@@ -8,6 +8,8 @@
 
 ### Fixed
 - send e-mail on sumission deletion
+- keep colum settings, split field value and
+submission data when changing name of form element
 
 ## [2.17.5] - 2022-09-22
 
