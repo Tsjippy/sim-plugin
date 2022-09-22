@@ -285,19 +285,14 @@ function saveTableSettings(){
 function removeSubmission(){
 	global $wpdb;
 
-	$formTable	= new DisplayFormResults();
+	$formTable	= new EditFormResults();
+
+	$result		= $formTable->deleteSubmission($_POST['submissionid']);
 	
-	$result = $wpdb->delete(
-		$formTable->submissionTableName, 
-		array(
-			'id'		=> $_POST['submissionid']
-		)
-	);
-	
-	if($result === false){
-		return new \WP_Error('db error', "Removal failed"); 
+	if(is_wp_error($result)){
+		return $result;
 	}
-	return "Entry with id {$formTable->submissionId} succesfully removed";
+	return "Entry with id {$_POST['submissionid']} succesfully removed";
 }
 
 // Archive or unarchive a (sub)submission

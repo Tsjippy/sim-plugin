@@ -61,6 +61,10 @@ class EditFormResults extends DisplayFormResults{
 				SIM\printArray($this->formResults);
 			}
 		}
+
+		if($archive){
+			$this->sendEmail('removed');
+		}
 		
 		return $result;
 	}
@@ -181,5 +185,31 @@ class EditFormResults extends DisplayFormResults{
 		
 		//update and mark as archived if all entries are empty or archived
 		$this->updateSubmissionData($allArchived);
+	}
+
+	/**
+	 * Removes an existing submission from the database
+	 * 
+	 * @param	int	$submissionId		The id of the submission to delete
+	 * 
+	 * @return	int|WP_Error			The number of rows updated, or an WP_Error on error.
+	 */
+	function deleteSubmission($submissionId){
+		global $wpdb;
+
+		$result = $wpdb->delete(
+			$this->submissionTableName, 
+			array(
+				'id'		=> $submissionId
+			)
+		);
+		
+		if($result === false){
+			return new \WP_Error('sim forms', "Submission removal failed"); 
+		}
+
+		$this->sendEmail('removed');
+
+		return $result;
 	}
 }

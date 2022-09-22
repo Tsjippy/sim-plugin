@@ -2,7 +2,7 @@
 namespace SIM\FORMS;
 use SIM;
 
-class DisplayForm extends SimForms{
+class DisplayForm extends SubmitForm{
 	use ElementHtml;
 	use CreateJs;
 
