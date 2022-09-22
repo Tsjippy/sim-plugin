@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- send e-mail on submission removal
 
 ### Changed
+
+### Fixed
+
+## [2.17.5] - 2022-09-22
+
+
+### Added
+- send e-mail on submission removal
 
 ### Fixed
 - do not add 'add' button twice
