@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better posttype selection in frontenteditor
 
 ## [2.18.0] - 2022-09-23
 
