@@ -3,10 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- projects post type
-- support for printing a location
 
 ### Changed
+
+### Fixed
+
+## [2.18.0] - 2022-09-23
+
+
+### Added
+- projects post type
+- support for printing a location
 
 ### Fixed
 - media gallery category selection
