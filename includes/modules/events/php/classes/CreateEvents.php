@@ -275,6 +275,8 @@ class CreateEvents extends Events{
 			return;
 		}
 
+		$eventIdMetaKey		= $type.'_event_id';
+
 		$oldMetaValue	= SIM\getMetaArrayValue($user->ID, $metaKey);
 		if(!is_array($metaValue) && is_array($oldMetaValue) && count($oldMetaValue) == 1){
 			$oldMetaValue	= array_values($oldMetaValue)[0];
@@ -285,9 +287,20 @@ class CreateEvents extends Events{
 			return;
 		}elseif(empty($metaValue)){
 			$metaValue = $oldMetaValue;
+		}else{
+			// check if just the year was updated
+			$oldTime	= strtotime($oldMetaValue);
+			$newTime	= strtotime($metaValue);
+
+			if(Date('Y', $oldTime) != Date('Y', $newTime) && Date('m-d', $oldTime) == Date('m-d', $newTime)){
+				// no need to create new events, just update the meta value
+				$postId	= get_user_meta($user->ID, $eventIdMetaKey, true);
+
+				update_post_meta($postId, 'celebrationdate', $metaValue);
+				return;
+			}
 		}
 
-		$eventIdMetaKey		= $type.'_event_id';
 		$title				= ucfirst($type).' '.$user->display_name;
 		$this->partnerId	= SIM\hasPartner($user->ID);
 		if($this->partnerId){
