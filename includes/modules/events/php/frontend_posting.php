@@ -28,7 +28,7 @@ add_action('init', function(){
 }, 999);
 
 function eventTitle($postType){
-	$class = 'event';
+	$class = 'property event';
 	if($postType != 'event'){
 		$class .= ' hidden';
 	}
@@ -59,7 +59,7 @@ function eventSpecificFields($frontEndContent){
 	
 	?>
 	<br>
-	<div class="event <?php if($frontEndContent->postType != 'event'){echo 'hidden';} ?>">
+	<div class="property event <?php if($frontEndContent->postType != 'event'){echo 'hidden';} ?>">
 		<label>
 			<input type='checkbox' name='event[allday]' value='allday' <?php if(!empty($eventDetails['allday'])){echo 'checked';}?>>
 			All day event
