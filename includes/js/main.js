@@ -1,5 +1,7 @@
 console.log("Main.js loaded");
 
+export {displayMessage} from '.\imports.js';
+
 export function changeUrl(target, secondTab=''){
 	let newParam	= target.dataset.param_val;
 	let hash		= target.dataset.hash;
@@ -197,37 +199,6 @@ export function showLoader(element, replace=true, message=''){
 	}
 
 	return wrapper;
-}
-
-export function displayMessage(message, icon, autoclose=false, no_ok=false, timer=1500){
-	if(message == undefined){
-		return;
-	}
-	
-	if(typeof(Swal) != 'undefined'){
-		var options = {
-			icon: icon,
-			title: message.trim(),
-			confirmButtonColor: "#bd2919",
-			cancelButtonColor: 'Crimson'
-		};
-
-		if(no_ok){
-			options['showConfirmButton'] = false;
-		}
-		
-		if(typeof(callback) == 'function'){
-			options['didClose'] = () => callback();
-		}
-		
-		if(autoclose){
-			options['timer'] = timer;
-		}
-		
-		Swal.fire(options);
-	}else{
-		alert(message.trim());
-	}
 }
 
 export function showModal(modal_id){

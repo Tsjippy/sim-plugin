@@ -310,7 +310,7 @@ class PdfHtml extends \FPDF{
 			$logo	= get_attached_file(SIM\getModuleOption(MODULE_SLUG, 'picture_ids')['logo']);
 			try{
 				// Logo
-				$this->Image($logo,10,6,30,0,'JPG');
+				$this->Image($logo, 10, 6, 30, 0, 'JPG');
 			}catch (\Exception $e) {
 				SIM\printArray("PDF_HELPER_Functions.php: $logo is not a valid image");
 			}
@@ -321,9 +321,9 @@ class PdfHtml extends \FPDF{
 			
 			// Title
 			if($this->headertitle == ""){
-				$this->Cell(30,10,$this->metadata['Title'],0,0,'C');
+				$this->Cell(30, 10, $this->metadata['Title'], 0, 0, 'C');
 			}else{
-				$this->Cell(30,10,$this->headertitle,0,0,'C');
+				$this->Cell(30, 10, $this->headertitle, 0, 0, 'C');
 			}
 			
 			// Line break

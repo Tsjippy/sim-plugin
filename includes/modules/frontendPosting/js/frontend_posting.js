@@ -1,5 +1,5 @@
 import './../../locations/js/user_location.js';
-import { callback, addStyles } from './../../../js/ajax_import.js';
+import { callback, addStyles } from './../../../js/imports.js';
 
 async function confirmPostDelete( event ) {
 	event.preventDefault();
@@ -630,7 +630,7 @@ document.addEventListener('change', event=>{
 		if(datalist_op != null){
 			let value = datalist_op.dataset.value;
 
-			let valEl	= target.closest('label').querySelector('.datalistvalue');
+			let valEl	= target.parentNode.querySelector('.datalistvalue');
 			if(valEl != null){
 				valEl.value	= value;
 			}

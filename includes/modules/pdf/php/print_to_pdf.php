@@ -19,6 +19,9 @@ function createPagePdf(){
 	$pdf->SetTitle($post->post_title);
 	$pdf->AddPage();
 
+    $pdf->skipFirstPage = false;
+    $pdf->Header();
+
 	do_action('sim-before-print-content', $post, $pdf);
 	
 	$pdf->WriteHTML($post->post_content);
@@ -73,3 +76,11 @@ add_action('sim_after_post_save', function($post){
         update_post_meta($post->ID, 'add_print_button', $value);
     }
 });
+
+add_filter('sim-single-template-bottom', function($html, $postType){
+    return "<div class='print_as_pdf_div'>
+        <form method='post' id='print_as_pdf_form'>
+            <button type='submit' class='button' name='print_as_pdf' id='print_as_pdf'>Print this $postType</button>
+        </form>
+    </div>";
+}, 10, 2);

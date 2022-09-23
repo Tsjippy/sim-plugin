@@ -47,7 +47,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<br>
 	<br>
 	<?php
-	SIM\pictureSelector('logo',  'Logo for use in PDF headers', $settings);
+	SIM\pictureSelector('logo', 'Logo for use in PDF headers', $settings, 'jpe');
 
 	return ob_get_clean();
 }, 10, 3);

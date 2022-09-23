@@ -1,4 +1,4 @@
-import { addStyles } from './../../../js/ajax_import.js';
+import { addStyles } from './../../../js/imports.js';
 export { getFieldValue } from  '../../../js/field_value.js';
 
 

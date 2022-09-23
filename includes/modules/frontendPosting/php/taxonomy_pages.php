@@ -118,4 +118,4 @@ add_filter('sim-empty-taxonomy', function($message, $type){
 	$url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
 	$message	.= "<br><a href='$url?type=$type' class='button'>Add a $type</a>";
 	return $message;
-});
+}, 10, 2);

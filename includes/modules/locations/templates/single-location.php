@@ -36,11 +36,9 @@ if(!isset($skipHeader) || !$skipHeader){
 				</span>
 			</nav>
 			
-			<div class='print_as_pdf_div'>
-				<form method='post' id='print_as_pdf_form'>
-					<button type='submit' class='button' name='print_as_pdf' id='print_as_pdf'>Print this location</button>
-				</form>
-			</div>
+			<?php
+			echo apply_filters('sim-single-template-bottom', '', 'location');
+			?>
 		</main>
 		
 		<?php SIM\showComments(); ?>

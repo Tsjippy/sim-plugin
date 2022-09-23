@@ -101,3 +101,35 @@ export let addScripts	= function () {
         afterScriptsLoaded();
     }
 }
+
+
+export function displayMessage(message, icon, autoclose=false, no_ok=false, timer=1500){
+	if(message == undefined){
+		return;
+	}
+	
+	if(typeof(Swal) != 'undefined'){
+		var options = {
+			icon: icon,
+			title: message.trim(),
+			confirmButtonColor: "#bd2919",
+			cancelButtonColor: 'Crimson'
+		};
+
+		if(no_ok){
+			options['showConfirmButton'] = false;
+		}
+		
+		if(typeof(callback) == 'function'){
+			options['didClose'] = () => callback();
+		}
+		
+		if(autoclose){
+			options['timer'] = timer;
+		}
+		
+		Swal.fire(options);
+	}else{
+		alert(message.trim());
+	}
+}

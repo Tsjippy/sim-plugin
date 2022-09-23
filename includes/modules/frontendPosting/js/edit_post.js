@@ -1,4 +1,4 @@
-import { callback, addStyles } from './../../../js/ajax_import.js';
+import { callback, addStyles } from './../../../js/imports.js';
 
 let editPostSwitch = async function (event){
 	let afterScriptsLoadedFinal	= function (){

@@ -1,39 +1,58 @@
-function selectImage(event) {
+import { displayMessage } from './imports.js';
+
+console.log("select picture.js loaded");
+function selectImage(event, type='') {
 	event.preventDefault();
 
-	// if the file_frame has already been created, just reuse it
-	if ( typeof file_frame == 'object' ) {
-		file_frame.open();
-		return;
-	} 
-
-	file_frame = wp.media.frames.file_frame = wp.media({
+	let frame = wp.media.frames.frame = wp.media({
 		title: 'Select image' ,
 		button: {
 			text: 'Save image',
 		},
-		multiple: false
+		multiple: false,
+		library: {
+			type: 'image'
+		},
 	});
 
-	file_frame.on( 'select', function(help) {
-		//Get the selected image
-		attachment = file_frame.state().get('selection').first().toJSON();
+	// check file type
+	console.log(type)
+	if(type != ''){
+		frame.on( 'selection:toggle', function(ev) {
+			let selection	= frame.state().get('selection').first();
+	
+			if(selection != undefined){
+				let attachment = selection.toJSON();
 
-		parent		= button.closest('.picture_selector_wrapper');
+				if(attachment.subtype != type){
+					displayMessage(`Please select an image with the ${type} extension!`, 'error');
+					document.querySelectorAll('.swal2-container').forEach(el=>el.style.zIndex= 999999);
+
+					selection.destroy();
+				}
+			}
+		})
+	}
+
+	frame.on( 'select', function() {
+		//Get the selected image
+		let attachment = frame.state().get('selection').first().toJSON();
+
+		let parent		= button.closest('.picture_selector_wrapper');
 		
 		//Store the id
 		parent.querySelector('.image_attachment_id').value = attachment.id;
 		
 		//Show the image
-		var imgdiv = parent.querySelector('.image-preview-wrapper');
+		let imgdiv = parent.querySelector('.image-preview-wrapper');
 		imgdiv.querySelector('img').src= attachment.url;
 		imgdiv.classList.remove('hidden');
 		
 		//Change button text
-		parent.querySelector('.select_image_button' ).innerHTML = el.innerHTML.replace("Add",'Replace');
+		parent.querySelector('.select_image_button' ).innerHTML = parent.querySelector('.select_image_button' ).innerHTML.replace("Add", 'Replace');
 	});
 
-	file_frame.open();
+	frame.open();
 }
 
 var button = '';
@@ -41,6 +60,12 @@ window.addEventListener('click', event=>{
 	if(event.target.classList.contains('select_image_button')){
 		event.preventDefault();
 		button		= event.target;
-		selectImage(event);
+
+		let type = '';
+
+		if(button.dataset.type != undefined){
+			type	= button.dataset.type;
+		}
+		selectImage(event, type);
 	}
 })

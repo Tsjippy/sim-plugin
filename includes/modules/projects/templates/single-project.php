@@ -1,11 +1,9 @@
 <?php
-namespace SIM\RECIPES;
+namespace SIM\PROJECTS;
 use SIM;
 
 /**
- * The Template for displaying all single recipes.
- *
- * @package GeneratePress
+ * The Template for displaying all single locations
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,24 +11,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if(!isset($skipHeader) || !$skipHeader){
-	get_header(); 
+	get_header();
 }
 ?>
-
 	<div id="primary">
+		<style>
+			#primary:not(:only-child){
+				width: 70%;
+			}
+		</style>
 		<main id="main">
-			<style>
-				#primary:not(:only-child){
-					width: 70%;
-				}
-			</style>
 			<?php
-			$archive	= false;
 			while ( have_posts() ) :
 				the_post();
-
-				include(__DIR__.'/content.php');	
-
+				include(__DIR__.'/content.php');
 			endwhile;
 			
 			?> <nav id='post_navigation'>
@@ -43,15 +37,17 @@ if(!isset($skipHeader) || !$skipHeader){
 			</nav>
 			
 			<?php
-			echo apply_filters('sim-single-template-bottom', '', 'recipe');
+			echo apply_filters('sim-single-template-bottom', '', 'project');
 			?>
 		</main>
 		
-		<?php generate_do_comments_template( 'single' ); ?>
+		<?php SIM\showComments(); ?>
 	</div>
 
 	<?php
 
-	generate_construct_sidebars();
+	get_sidebar();
 
-	if(!isset($skipFooter) or !$skipFooter)	get_footer();
+	if(!isset($skipFooter) || !$skipFooter){
+		get_footer();
+	}

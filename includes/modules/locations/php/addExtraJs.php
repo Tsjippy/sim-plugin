@@ -1,5 +1,5 @@
 <?php
-namespace SIM\USERMANAGEMENT;
+namespace SIM\LOCATIONS;
 use SIM;
 
 /* HELPER FUNCTIONS */

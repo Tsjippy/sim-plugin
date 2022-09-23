@@ -857,10 +857,11 @@ function processImages($post){
  * @param	string 		$key			the image key in the module settings
  * @param	string		$name			Human readable name of the picture
  * @param	array		$settings		The module settings array
+ * @param	string		$type			The image type you allow
  * 
  * @return	string						the selector html
 */
-function pictureSelector($key, $name, $settings){
+function pictureSelector($key, $name, $settings, $type=''){
 	wp_enqueue_media();
 	wp_enqueue_script('sim_picture_selector_script', INCLUDESURL.'/js/select_picture.min.js', array(), '7.0.0',true);
 	wp_enqueue_style( 'sim_picture_selector_style', INCLUDESURL.'/css/picture_select.min.css', array(), '7.0.0');
@@ -881,7 +882,7 @@ function pictureSelector($key, $name, $settings){
 		<div class='image-preview-wrapper <?php echo $hidden;?>'>
 			<img loading='lazy' class='image-preview' src='<?php echo $src;?>' alt=''>
 		</div>
-		<input type="button" class="button select_image_button" value="<?php echo $text;?> picture for <?php echo strtolower($name);?>" />
+		<input type="button" class="button select_image_button" value="<?php echo $text;?> picture for <?php echo strtolower($name);?>" <?php if(!empty($type)){echo "data-type='$type'";}?>/>
 		<input type='hidden' class="image_attachment_id" name='picture_ids[<?php echo $key;?>]' value='<?php echo $id;?>'>
 	</div>
 	<?php

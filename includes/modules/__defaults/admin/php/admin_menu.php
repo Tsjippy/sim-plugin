@@ -112,18 +112,18 @@ function buildSubMenu(){
 		$dataTab			= dataTab($moduleSlug, $moduleName, $settings, $tab);
 
 		?>
-		<div class='tablink-wrapper <?php if(!isset($settings['enable'])){echo 'hidden';}?>'>
+		<div class='tablink-wrapper'>
 			<button class="tablink <?php if($tab == 'description'){echo 'active';}?>" id="show_description" data-target="description">Description</button>
 			<button class="tablink <?php if($tab == 'settings'){echo 'active';}?>" id="show_settings" data-target="settings">Settings</button>
 			<?php
 			if(!empty($emailSettingsTab)){
 				?>
-				<button class="tablink <?php if($tab == 'emails'){echo 'active';}?>" id="show_emails" data-target="emails">E-mail settings</button>
+				<button class="tablink <?php if($tab == 'emails'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show_emails" data-target="emails">E-mail settings</button>
 				<?php
 			}
 			if(!empty($dataTab)){
 				?>
-				<button class="tablink <?php if($tab == 'data'){echo 'active';}?>" id="show_data" data-target="data">Module data</button>
+				<button class="tablink <?php if($tab == 'data'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show_data" data-target="data">Module data</button>
 			<?php
 			}
 			?>
