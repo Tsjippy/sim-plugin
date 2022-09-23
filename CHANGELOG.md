@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- crosslinking between ministry and project
 
 ### Changed
+
+### Fixed
+
+## [2.18.1] - 2022-09-23
+
+
+### Added
+- crosslinking between ministry and project
 
 ### Fixed
 - better posttype selection in frontenteditor
