@@ -9,6 +9,7 @@ function showImage(index){
 }
 
 async function loadMore(index, showFirst, skipAmount=0){
+    document.getElementById('loadmoremedia').classList.add('hidden');
     var amount  = document.querySelector('#media-amount').value;
     if(amount == skipAmount) return;
     var types   = [];
@@ -28,14 +29,11 @@ async function loadMore(index, showFirst, skipAmount=0){
 
     // Hide the full screen loader
     document.getElementById('medialoaderwrapper').classList.add('hidden');
-
-    //Re-add load more button 
-    document.querySelectorAll('.loaderwrapper').forEach(e=>e.outerHTML = '<button id="loadmoremedia" type="button" class="button">Load more</button>'); 
-
+    
     if(!response){
         Main.displayMessage('All media are loaded', 'info');
-        document.getElementById('loadmoremedia').classList.add('hidden');
     }else{
+        document.getElementById('loadmoremedia').classList.remove('hidden');
         document.querySelector('.mediawrapper').insertAdjacentHTML('beforeEnd', response);
 
         if(showFirst){
@@ -51,6 +49,33 @@ async function loadMore(index, showFirst, skipAmount=0){
             document.getElementById('loadmoremedia').classList.add('hidden');
         }
     }
+
+    document.getElementById('loadmoremedia').parentNode.querySelector('.loaderwrapper').remove();
+}
+
+async function catChanged(target){
+    document.querySelector('.mediawrapper').innerHTML   = '';
+
+    let loader  = Main.showLoader(document.querySelector('.mediawrapper'), false, 'Loading');
+
+    var amount  = document.querySelector('#media-amount').value;
+    var types   = [];
+    document.querySelectorAll('.media-type-selector:checked').forEach(element=>types.push(element.value));
+    var cats   = [];
+    document.querySelectorAll('.media-cat-selector:checked').forEach(element=>cats.push(element.value));
+
+    var formData	= new FormData();
+    formData.append('amount', amount);
+    formData.append('types', types);
+    formData.append('categories', cats);
+
+    var response    = await FormSubmit.fetchRestApi('media_gallery/change_cats', formData);
+
+    if(response){
+        document.querySelector('.mediawrapper').innerHTML   = response;
+    }
+
+    loader.remove();
 }
 
 async function mediaSearch(target){
@@ -107,28 +132,42 @@ function loadMoreMedia(target){
 
     loadMore(media[media.length-1].dataset.index, false);
 
-    Main.showLoader(target);
+    Main.showLoader(target, false);
 }
 
 function mediaTypeSelected(target){
-    var visibleCells;
+    let visibleCells;
+    let amount     = document.querySelector('#media-amount').value;
 
-    if(target.checked){
-        document.querySelectorAll('.cell.'+target.value).forEach(el=>el.classList.remove('hidden'));
+    // we should show a new type or show all
+    if(target.checked || document.querySelectorAll('.media-type-selector:checked').length==0){
+        // show all hidden ones
+        document.querySelectorAll(`.cell.${target.value}.hidden`).forEach(el=>el.classList.remove('hidden'));
 
-        // remove all more than the maximum
+        if(target.checked){
+            // hide all needed
+            document.querySelectorAll('.media-type-selector:not(:checked)').forEach(type=>{
+                document.querySelectorAll(`.cell.${type.value}:not(.hidden)`).forEach(el=>el.classList.add('hidden'));
+            });
+        }
+
+        // remove all more than the maximum in case we have too many
         visibleCells   = document.querySelectorAll('.cell:not(.hidden)');
-        var amount          = document.querySelector('#media-amount').value;
         for (let i = amount; i < visibleCells.length; i++) { 
-            visibleCells[i].remove();
+            // remove the cell and the larger-image
+            document.querySelector(`.mediawrapper [data-index="${visibleCells[i].dataset.index}"`).remove();
         }
     }else{
-        document.querySelectorAll('.cell.'+target.value).forEach(el=>el.classList.add('hidden'));
+        document.querySelectorAll(`.cell.${target.value}`).forEach(el=>el.classList.add('hidden'));
+    }
 
-        var media = document.querySelectorAll('.cell');
-        // load more of the remaining types untill we reach the maximum
-        visibleCells   = document.querySelectorAll('.cell:not(.hidden)');
-        loadMore(media[media.length-1].dataset.index, false, visibleCells.length);
+    let media               = document.querySelectorAll('.cell');
+    // load more of the remaining types untill we reach the maximum
+    let visibleCellsCount    = document.querySelectorAll('.cell:not(.hidden)').length;
+
+    if(visibleCellsCount < amount){
+        Main.showLoader(document.getElementById('loadmoremedia'), false, 'Loading more...');
+        loadMore(media[media.length-1].dataset.index, false, visibleCellsCount);
     }
 }
 
@@ -205,6 +244,10 @@ document.addEventListener('click', async ev=>{
     if(target.matches('.download')){
         ev.preventDefault();
         downloadMedia(target)
+    }
+
+    if(target.matches('.media-cat-selector')){
+        catChanged(target);
     }
 });
 

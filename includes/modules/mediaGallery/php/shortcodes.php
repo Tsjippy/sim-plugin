@@ -48,15 +48,15 @@ function showMediaGallery($atts){
             <option value='100'>100</option>
         </select>
         <label>
-            <input type='checkbox' name='media_type' class='media-type-selector' value='image' checked>
+            <input type='checkbox' name='media_type' class='media-type-selector' value='image'>
             Pictures
         </label>
         <label>
-            <input type='checkbox' name='media_type' class='media-type-selector' value='video' checked>
+            <input type='checkbox' name='media_type' class='media-type-selector' value='video'>
             Videos
         </label>
         <label>
-            <input type='checkbox' name='media_type' class='media-type-selector' value='audio' checked>
+            <input type='checkbox' name='media_type' class='media-type-selector' value='audio'>
             Audio
         </label>
         <input class="searchtext" type="text" placeholder="Search..">
@@ -67,7 +67,7 @@ function showMediaGallery($atts){
         <?php
         foreach($categories as $cat){
             $checked    = '';
-            if(empty($a['categories']) || in_array($cat->term_id, $a['categories'])){
+            if(in_array($cat->term_id, $a['categories'])){
                 $checked    = 'checked';
             }
             ?>
@@ -150,7 +150,7 @@ function loadMedia($amount=20, $page=1, $itemsToSkip=false, $types=['image', 'vi
     if(!empty($cats) && !in_array(-1, $cats)){
         $args['tax_query'] = array(
             array(
-                'taxonomy'  => 'attachments',
+                'taxonomy'  => 'attachment_cat',
                 'field'     => 'ID',
                 'terms'     => $cats
             )
