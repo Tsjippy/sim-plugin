@@ -60,10 +60,6 @@ if(is_tax() || is_archive()){
 						) 
 					);
 					
-					$url	= plugins_url('pictures/project.png', __DIR__);
-					echo "<img src='$url' alt='category' loading='lazy' class='project_icon'>";
-					echo get_post_meta(get_the_ID(), 'number', true);
-					
 					//First loop over the cat to see if any parent cat needs to be removed
 					foreach($categories as $id=>$category){
 						//Get the child categories of this category
@@ -95,6 +91,21 @@ if(is_tax() || is_archive()){
 				
 				<span class='category projectmeta'>
 					<?php
+
+					$url	= plugins_url('pictures/project.png', __DIR__);
+					echo "<img src='$url' alt='category' loading='lazy' class='project_icon'>";
+					echo get_post_meta(get_the_ID(), 'number', true);
+
+					$ministry = get_post_meta(get_the_ID(), 'ministry', true);
+
+					if(!empty($ministry)){
+						$imageUrl = plugins_url('pictures/ministry.png', __DIR__);
+						$icon 	= "<img src='$imageUrl' alt='email' loading='lazy' class='project_icon'>";
+						$url	= get_permalink($ministry);
+						$title	= get_the_title($ministry);
+						echo "<a href='$url'>$icon $title</a><br>";
+					}
+
 					$manager		= get_post_meta(get_the_ID(), 'manager', true);
 					
 					$imageUrl = plugins_url('pictures/manager.png', __DIR__);

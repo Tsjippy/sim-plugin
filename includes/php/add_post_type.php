@@ -187,6 +187,8 @@ function getTemplateFile($template, $type, $name=''){
 			printArray("Not sure which template to load for $type");
 	}
 
+	$templateFile	= apply_filters('sim-template-filter', $templateFile);
+
 	if ( 
 		file_exists($templateFile)										&&		// template file exists
 		(empty($template)												||

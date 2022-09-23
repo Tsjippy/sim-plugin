@@ -133,3 +133,29 @@ export function displayMessage(message, icon, autoclose=false, no_ok=false, time
 		alert(message.trim());
 	}
 }
+
+export function showLoader(element, replace=true, message=''){
+	if(element == null){
+		return;
+	}
+	
+	let wrapper	= document.createElement("DIV");
+	wrapper.setAttribute('class','loaderwrapper');
+	if(message != ''){
+		wrapper.innerHTML	= message;
+	}
+
+	let loader	= document.createElement("IMG");
+	loader.setAttribute('class','loadergif');
+	loader.setAttribute("src", sim.loadingGif);
+	loader.style["height"]= "30px";
+
+	wrapper.insertAdjacentElement('beforeEnd', loader);
+	if(replace){
+		element.parentNode.replaceChild(wrapper, element);
+	}else{
+		element.parentNode.insertBefore(wrapper, element.nextSibling);
+	}
+
+	return wrapper;
+}

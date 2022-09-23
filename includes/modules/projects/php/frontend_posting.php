@@ -83,6 +83,16 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
             update_metadata( 'post', $post->ID, 'url', $_POST['url']);
         }
     }
+
+    // ministry
+    if(isset($_POST['ministry'])){
+        if(empty($_POST['ministry'])){
+            delete_post_meta($post->ID, 'ministry');
+        }else{
+            //Store serves
+            update_metadata( 'post', $post->ID, 'ministry', $_POST['ministry']);
+        }
+    }
 }, 10, 2);
 
 //add meta data fields
@@ -98,6 +108,24 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
     $url = get_post_meta($postId, 'url', true);
 
     $number = get_post_meta($postId, 'number', true);
+
+    //Get all pages describing a ministry
+	$ministries = get_posts([
+		'post_type'			=> 'location',
+		'posts_per_page'	=> -1,
+		'post_status'		=> 'publish',
+        'orderby'           => 'title',
+        'order'             => 'ASC',
+		'tax_query' => array(
+            array(
+                'taxonomy'	=> 'locations',
+				'field' => 'term_id',
+				'terms' => get_term_by('name', 'Ministries', 'locations')->term_id
+            )
+        )
+	]);
+
+    $selectedMinistry = get_post_meta($postId, 'ministry', true);
     
     ?>
     <style>
@@ -166,6 +194,22 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
                     <th><label for="url">Project Url</label></th>
                     <td>
                         <input type='url' class='formbuilder' name='url' value='<?php echo $url; ?>'>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="ministry">Ministry this project is connected to</label></th>
+                    <td>
+                        <select name='ministry'>
+                            <?php
+                            foreach($ministries as $ministry){
+                                $selected   = '';
+                                if($ministry->ID == $selectedMinistry){
+                                    $selected   = 'selected';
+                                }
+                                echo "<option value='$ministry->ID' $selected>$ministry->post_title</option>";
+                            }
+                            ?>
+                        </select>
                     </td>
                 </tr>
             </table> 

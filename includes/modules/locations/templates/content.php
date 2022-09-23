@@ -156,13 +156,6 @@ if(is_tax() || is_archive()){
 					}
 
 					the_content();
-				
-					$cats = get_the_terms(get_the_ID(),'locations');
-					foreach($cats as $cat){						
-						if($cat->slug == 'ministry'){
-							echo ministryDescription(get_the_ID());
-						}
-					}
 				}
 
 				wp_link_pages(

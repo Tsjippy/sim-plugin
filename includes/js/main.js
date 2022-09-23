@@ -1,6 +1,6 @@
 console.log("Main.js loaded");
 
-export {displayMessage} from '.\imports.js';
+export {displayMessage, showLoader} from '.\imports.js';
 
 export function changeUrl(target, secondTab=''){
 	let newParam	= target.dataset.param_val;
@@ -173,32 +173,6 @@ function bodyScrolling(type){
 		menu.style.bottom		= '';
 		menu.style.position		= '';
 	}
-}
-
-export function showLoader(element, replace=true, message=''){
-	if(element == null){
-		return;
-	}
-	
-	let wrapper	= document.createElement("DIV");
-	wrapper.setAttribute('class','loaderwrapper');
-	if(message != ''){
-		wrapper.innerHTML	= message;
-	}
-
-	let loader	= document.createElement("IMG");
-	loader.setAttribute('class','loadergif');
-	loader.setAttribute("src", sim.loadingGif);
-	loader.style["height"]= "30px";
-
-	wrapper.insertAdjacentElement('beforeEnd', loader);
-	if(replace){
-		element.parentNode.replaceChild(wrapper, element);
-	}else{
-		element.parentNode.insertBefore(wrapper, element.nextSibling);
-	}
-
-	return wrapper;
 }
 
 export function showModal(modal_id){

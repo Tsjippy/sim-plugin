@@ -163,5 +163,9 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 		$options[$mapKey]	= $maps->addMap($title, '9.910260', '8.889170', '', '400', 6);
 	}
 
+	if(!get_term_by('slug', 'ministry', 'locations')){
+		wp_insert_term( 'Ministries', 'locations', ['slug' => 'ministry']);
+	}
+
 	return $options;
 }, 10, 2);

@@ -7,7 +7,7 @@ async function confirmPostDelete( event ) {
 
 	var confirmed = await Swal.fire({
 		title: 'Are you sure?',
-		text: `Are you sure you want to remove this ${document.getElementById('post_type_selector').value}}?`,
+		text: `Are you sure you want to remove this ${document.querySelector('[name="post_type"]').value}}?`,
 		icon: 'warning',
 		showCancelButton: true,
 		confirmButtonColor: '#3085d6',

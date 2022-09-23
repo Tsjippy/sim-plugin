@@ -348,11 +348,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         $longitude = get_post_meta($postId, 'geo_longitude', true);
     }
     
-    $url = get_post_meta($postId,'url',true);
-    if(empty($url)){
-        $url = 'https://www.';
-    }
-    
+    $url = get_post_meta($postId, 'url', true);
     ?>
     <style>
         .form-table, .form-table th, .form-table, td{

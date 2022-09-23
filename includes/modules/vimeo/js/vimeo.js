@@ -1,4 +1,5 @@
 import {VimeoUpload} from './vimeo_upload.js';
+import { showLoader } from './../../../js/imports.js';
 
 /* 
 		Show vimeo in wp library
@@ -77,7 +78,7 @@ window.wp.Uploader.prototype.init = function() { // plupload 'PostInit'
 	this.uploader.bind('FileFiltered', function(_up, _files) {
 		//show vimeo loader
 		try{
-			Main.showLoader(document.querySelector('.upload-inline-status'), false, '<span class="vimeo" style="font-size:x-large;">Preparing upload to Vimeo</span>');
+			showLoader(document.querySelector('.upload-inline-status'), false, '<span class="vimeo" style="font-size:x-large;">Preparing upload to Vimeo</span>');
 		}catch(error){
 			console.error(error);
 		}
