@@ -166,13 +166,12 @@ function anniversaryMessages(){
 		if(is_numeric($partnerId)){
 			$partner		= get_userdata($partnerId);
 		}
+		$userdata	= get_userdata($userId);
 
 		if($userId  == $currentUser->ID){
 			$coupleLink	= "of you and your spouse my dear $currentUser->first_name!<br>";
 			$link		= str_replace($currentUser->display_name, "of you my dear $currentUser->first_name!<br>", $message);
 		}else{
-			$userdata	= get_userdata($userId);
-
 			//Get the url of the user page
 			$url		= SIM\maybeGetUserPageUrl($userId);
 			$coupleLink	= "of <a href='$url'>{$userdata->first_name} & {$partner->display_name}</a>";
@@ -222,10 +221,10 @@ function arrivingUsersMessage(){
 					$html	.= '<a href="'.$url.'">'.$arrivingUsers[0]->display_name."</a> arrives today!";
 				}else{
 					$html 	.= 'The following people arrive today:<br>';
-					//Loop over the birthdays
+					//Loop over the arrivals
 					foreach($arrivingUsers as $user){
 						$url 	 = SIM\maybeGetUserPageUrl($user->ID);
-						$html 	.= '<a href="'.$url.'">'.$user->display_name."</a><br>";
+						$html 	.= "<a href='$url'>$user->display_name</a><br>";
 					}
 				}
 			$html .= '.</p>';
