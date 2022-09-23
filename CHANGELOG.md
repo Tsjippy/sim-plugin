@@ -8,6 +8,8 @@
 
 ### Fixed
 - media gallery category selection
+- celebration date only update year
+results in 2 events
 
 ## [2.17.6] - 2022-09-22
 
