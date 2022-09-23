@@ -7,6 +7,14 @@
 ### Changed
 
 ### Fixed
+
+## [2.17.6] - 2022-09-22
+
+
+### Added
+- filter backend media on category
+
+### Fixed
 - send e-mail on sumission deletion
 - keep colum settings, split field value and
 submission data when changing name of form element
