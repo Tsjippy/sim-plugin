@@ -4,6 +4,7 @@
 
 ### Added
 - projects post type
+- support for printing a location
 
 ### Changed
 
