@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- media gallery category selection
 
 ## [2.17.6] - 2022-09-22
 
