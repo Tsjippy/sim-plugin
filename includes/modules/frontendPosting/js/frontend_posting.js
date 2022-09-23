@@ -89,69 +89,25 @@ function switchforms(target){
 
 	parent.querySelectorAll('#wp-post_content-media-buttons, .advancedpublishoptions, #advancedpublishoptionsbutton').forEach(el=>el.classList.remove('hidden'));
 	
-	switch(postType) {
-		case 'page':
-			//Show all page options
-			parent.querySelectorAll('.page:not(.page-template-default)').forEach(el=>el.classList.remove('hidden'));
+	//Show all page options
+	parent.querySelectorAll(`.property.${postType}`).forEach(el=>el.classList.remove('hidden'));
 
-			//Hide other options
-			parent.querySelectorAll('.post:not(.page), .recipe, .event, .location, .attachment').forEach(el=>el.classList.add('hidden'));
-			
-			break;
-		case 'post':
-			//Show all post options
-			parent.querySelectorAll('.post').forEach(el=>el.classList.remove('hidden'));
-			
-			//Hide other options
-			parent.querySelectorAll('.page:not(.post, .page-template-default), .recipe, .event, .location, .attachment').forEach(el=>el.classList.add('hidden'));
-			
-			break;
-		case 'location':
-			//Show all post options
-			parent.querySelectorAll('.location').forEach(el=>el.classList.remove('hidden'));
-			
-			//Hide other options
-			parent.querySelectorAll('.page, .post, .recipe, .event, .attachment').forEach(el=>el.classList.add('hidden'));
-			
-			//Hide the lite elements if there is no content
-			if(tinymce.activeEditor == null || tinymce.activeEditor.getContent() == ""){
-				parent.querySelectorAll('.lite').forEach(function(el){
-					el.classList.add('hidden');
-				});
-				
-				//show the button to show all fields again
-				parent.querySelector('#showallfields').classList.remove('hidden');
-			}
-			
-			break;
-		case 'event':
-			//Show all event options
-			parent.querySelectorAll('.event').forEach(el=>el.classList.remove('hidden'));
-			
-			//Hide other options
-			parent.querySelectorAll('.post, .page, .recipe, .location, .attachment').forEach(el=>el.classList.add('hidden'));
-			
-			break;
-		case 'recipe':
-			//Show all recipe options
-			parent.querySelectorAll('.recipe').forEach(el=>el.classList.remove('hidden'));
-			
-			//Hide other options
-			parent.querySelectorAll('.post, .page, .event, .location, .attachment').forEach(el=>el.classList.add('hidden'));
-			break;
-		case 'attachment':
-			//Show all attachment options
-			parent.querySelectorAll('.attachment').forEach(el=>el.classList.remove('hidden'));
+	//Hide other options
+	parent.querySelectorAll(`.property:not(.${postType})`).forEach(el=>el.classList.add('hidden'));
 
-			//Hide other options
-			parent.querySelectorAll('.post, .page, .event, .location, .recipe, #wp-post_content-media-buttons').forEach(el=>el.classList.add('hidden'));
-
-			// tick the box to always include the url
-			parent.querySelector('[name="signal_url"]').checked=true;
-			break;
-		default:
-			//Change button text
-			submitButton.textContent = submitButton.textContent.replace('page','post');
+	if(postType == 'location') {
+		//Hide the lite elements if there is no content
+		if(tinymce.activeEditor == null || tinymce.activeEditor.getContent() == ""){
+			parent.querySelectorAll('.lite').forEach(function(el){
+				el.classList.add('hidden');
+			});
+			
+			//show the button to show all fields again
+			parent.querySelector('#showallfields').classList.remove('hidden');
+		}
+	}else if(postType == 'attachment') {
+		// tick the box to always include the url
+		parent.querySelector('[name="signal_url"]').checked=true;
 	}
 }
 

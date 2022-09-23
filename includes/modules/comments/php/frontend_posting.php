@@ -18,7 +18,7 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
     }
     
     ?>
-    <div id="comments" class="frontendform <?php echo $hidden;?>">
+    <div id="comments" class="property frontendform <?php echo $hidden; echo implode(' ', $allowedPostTypes);?>">
         <h4>Comments</h4>	
         <label>
             <input type='checkbox' name='comments' value='allow' <?php echo $checked; ?>>

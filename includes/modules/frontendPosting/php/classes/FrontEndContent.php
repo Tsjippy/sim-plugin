@@ -134,7 +134,7 @@ class FrontEndContent{
 				$this->showCategories('attachment', $categories);
 
 				?>
-				<div class='attachment hidden'>
+				<div class='property attachment hidden'>
 					<?php
 					//Existing media
 					if(is_numeric($this->postId)){
@@ -184,7 +184,7 @@ class FrontEndContent{
 				}
 					echo "<div class='titlewrapper'>";
 						//Post content title
-						$class = 'post page';
+						$class = 'post page property';
 						if($this->postType != 'post' && $this->postType != 'page'){
 							$class .= ' hidden';
 						}
@@ -193,7 +193,7 @@ class FrontEndContent{
 							echo  '<span class="capitalize replaceposttype">'.ucfirst($this->postType).'</span> content';
 						echo "</h4>";
 
-						echo "<h4 class='attachment hidden' name='attachment_content_label'>Description:</h4>";
+						echo "<h4 class='property attachment hidden' name='attachment_content_label'>Description:</h4>";
 						
 						do_action('sim_frontend_post_content_title', $this->postType);
 					echo "</div>";
@@ -276,9 +276,7 @@ class FrontEndContent{
 	 * @return   array     			Array of new plugins
 	 *
 	**/
-	function addTinymcePlugin($plugins) {
-		global $wp_scripts;
-		
+	function addTinymcePlugin($plugins) {		
 		wp_localize_script( 'sim_frontend_script', 
 			'userSelect', 
 			['html'=>SIM\userSelect("Select a person to show the link to",true)],
@@ -637,7 +635,7 @@ class FrontEndContent{
 			'hide_empty' => false,
 		) );
 		?>
-		<div id="post-category" class="categorywrapper post page <?php if(!in_array($this->postType, ['post', 'page', 'attachment'])){echo 'hidden';} ?>">
+		<div id="post-category" class="categorywrapper property post page <?php if(!in_array($this->postType, ['post', 'page', 'attachment'])){echo 'hidden';} ?>">
 			<h4>
 				<span class="capitalize replaceposttype"><?php echo  esc_html($this->postType);?></span> category
 			</h4>
@@ -647,10 +645,10 @@ class FrontEndContent{
 					$name 			= $category->name;
 					$catId 			= $category->cat_ID;
 					$catDescription	= $category->description;
-					$class			= 'infobox post';
+					$class			= 'property infobox post';
 
 					if($catId == get_cat_ID('Public') || $catId == get_cat_ID('Confidential') ){
-						$class	.= 'page';
+						$class	.= ' page';
 					//do not show categories other than public and confidential to non-post types
 					}elseif($this->postType != 'post'){
 						$class	.= ' hidden';
@@ -686,7 +684,7 @@ class FrontEndContent{
 	**/
 	function postSpecificFields(){
 		?>
-		<div id="post-attributes"  class="post<?php if($this->postType != 'post'){echo ' hidden';}?>">
+		<div id="post-attributes"  class="property post<?php if($this->postType != 'post'){echo ' hidden';}?>">
 			<div id="expirydate_div" class="frontendform">
 				<h4>Expiry date</h4>
 				<label>
@@ -705,7 +703,7 @@ class FrontEndContent{
 	**/
 	function pageSpecificFields(){
 		?>
-		<div id="page-attributes" class="page<?php if($this->postType != 'page'){echo ' hidden';}?>">
+		<div id="page-attributes" class="property page<?php if($this->postType != 'page'){echo ' hidden';}?>">
 			<div id="parentpage" class="frontendform">
 				<h4>Select a parent page</h4>
 				<?php 
@@ -737,7 +735,7 @@ class FrontEndContent{
 	**/
 	function showCategories($type, $categories){
 		?>
-		<div class="<?php echo $type; if($this->postType != $type){echo ' hidden';} ?>">
+		<div class="property <?php echo $type; if($this->postType != $type){echo ' hidden';} ?>">
 			<div class="frontendform">
 				<h4><?php echo ucfirst($type);?> type</h4>
 				<div class='categories'>

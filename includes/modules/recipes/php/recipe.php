@@ -38,7 +38,7 @@ add_filter('sim_frontend_posting_modals', function($types){
 
 function recipeTitle($postType){
 	//Recipe content title
-	$class = 'recipe';
+	$class = 'property recipe';
 	if($postType != 'recipe'){
 		$class .= ' hidden';
 	}
@@ -147,7 +147,7 @@ function recipeSpecificFields($frontEndContent){
 	
 	$frontEndContent->showCategories('recipe', $categories);
 	?>
-	<div class="recipe <?php if($frontEndContent->post_type != 'recipe'){echo 'hidden';} ?>">
+	<div class="property recipe <?php if($frontEndContent->post_type != 'recipe'){echo 'hidden';} ?>">
 		<h4 name="ingredients_label">Recipe ingredients (one per line)</h4>
 		<textarea name="ingredients" rows="10">
 			<?php echo wp_strip_all_tags(get_post_meta($frontEndContent->post_id,'ingredients',true)); ?>

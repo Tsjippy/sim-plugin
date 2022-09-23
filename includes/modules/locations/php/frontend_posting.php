@@ -20,7 +20,7 @@ add_action('sim_frontend_post_before_content', function($frontEndContent){
 
 add_action('sim_frontend_post_content_title', function ($postType){
     //Location content title
-    $class = 'location';
+    $class = 'property location';
     if($postType != 'location'){
         $class .= ' hidden';
     }
@@ -362,7 +362,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
             text-align: left;
         }
     </style>
-    <div id="location-attributes" class="location<?php if($postName != 'location'){echo ' hidden';} ?>">
+    <div id="location-attributes" class="property location<?php if($postName != 'location'){echo ' hidden';} ?>">
         <div id="parentpage" class="frontendform">
             <h4>Select a parent location</h4>
             <?php 

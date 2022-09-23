@@ -19,8 +19,8 @@ add_action('sim_frontend_post_before_content', function($frontEndContent){
 });
 
 add_action('sim_frontend_post_content_title', function ($postType){
-    //Location content title
-    $class = 'project';
+    //Property content title
+    $class = 'property project';
     if($postType != 'project'){
         $class .= ' hidden';
     }
@@ -108,7 +108,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
             text-align: left;
         }
     </style>
-    <div id="project-attributes" class="project<?php if($postName != 'project'){echo ' hidden';} ?>">
+    <div id="project-attributes" class="property project<?php if($postName != 'project'){echo ' hidden';} ?>">
         <div id="parentpage" class="frontendform">
             <h4>Select a parent project</h4>
             <?php 
