@@ -47,8 +47,8 @@ if(is_tax() || is_archive()){
 			}
 			?>
 
-			<div class='project metas' style='margin-top:10px;'>
-				<span class='category projectmeta'> 
+			<div class='project metas' style="margin-top:10px;display: flex;flex-wrap: wrap;">
+				<div class='category projectmeta'> 
 					<?php
 					$categories = wp_get_post_terms(
 						get_the_ID(), 
@@ -87,27 +87,30 @@ if(is_tax() || is_archive()){
 						}
 					}
 					?>
-				</span>
+				</div>
 				
-				<span class='category projectmeta'>
+				<div class='number projectmeta' style='margin-right: 10px;'>
 					<?php
-
 					$url	= plugins_url('pictures/project.png', __DIR__);
 					echo "<img src='$url' alt='category' loading='lazy' class='project_icon'>";
 					echo get_post_meta(get_the_ID(), 'number', true);
+				echo "</div>";
 
-					$ministry = get_post_meta(get_the_ID(), 'ministry', true);
+				$ministry = get_post_meta(get_the_ID(), 'ministry', true);
 
-					if(!empty($ministry)){
+				if(!empty($ministry)){
+					echo "<div class='ministry projectmeta' style='margin-right: 10px;'>";
 						$imageUrl = plugins_url('pictures/ministry.png', __DIR__);
 						$icon 	= "<img src='$imageUrl' alt='email' loading='lazy' class='project_icon'>";
 						$url	= get_permalink($ministry);
 						$title	= get_the_title($ministry);
 						echo "<a href='$url'>$icon $title</a><br>";
-					}
+					echo "</div>";
+				}
 
-					$manager		= get_post_meta(get_the_ID(), 'manager', true);
-					
+				$manager		= get_post_meta(get_the_ID(), 'manager', true);
+				
+				echo "<div class='number projectmeta' style='margin-right: 10px;'>";
 					$imageUrl = plugins_url('pictures/manager.png', __DIR__);
 					$icon = "<img src='$imageUrl' alt='manager' loading='lazy' class='project_icon'>";
 					if(!empty($manager['userid'])){
@@ -116,22 +119,24 @@ if(is_tax() || is_archive()){
 					}else{
 						echo $icon.$manager['name'];
 					}
+				echo "</div>";
 
-					if(!empty($manager['tel'])){
+				if(!empty($manager['tel'])){
+					echo "<div class='tel projectmeta' style='margin-right: 10px;'>";
 						$imageUrl = plugins_url('pictures/tel.png', __DIR__);
 						$icon = "<img src='$imageUrl' alt='telephone' loading='lazy' class='project_icon'>";
 						echo "<a href='tel:{$manager['tel']}'>$icon {$manager['tel']}</a>";
-					}
+				}
 
-					if(!empty($manager['email'])){
+				if(!empty($manager['email'])){
+					echo "<div class='email projectmeta' style='margin-right: 10px;'>";
 						$imageUrl = plugins_url('pictures/email.png', __DIR__);
 						$icon = "<img src='$imageUrl' alt='email' loading='lazy' class='project_icon'>";
 						echo "<a href='mailto:{$manager['email']}'>$icon {$manager['email']}</a>";
-					}
-					?>
-				</span>
+				}
+				?>
 				
-				<span class='category projectmeta'>
+				<div class='url projectmeta' style='margin-right: 10px;'>
 					<?php
 					$url		= get_post_meta(get_the_ID(),'url',true);
 					if(!empty($url)){
@@ -140,7 +145,7 @@ if(is_tax() || is_archive()){
 						echo "<a href='$url'>$icon Visit website  »</a>";
 					}
 					?>
-				</span>
+				</div>
 			</div>
 				
 			<div class="description project">
