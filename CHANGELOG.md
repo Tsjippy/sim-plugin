@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better project layout
 
 ## [2.18.1] - 2022-09-23
 
