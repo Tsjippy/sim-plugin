@@ -1,3 +1,5 @@
+import { isMobileDevice } from './../../../js/imports.js';
+
 console.log("Location.js loaded");
 
 function fillLocationFields(event){
@@ -65,7 +67,11 @@ document.addEventListener("DOMContentLoaded", function() {
 				function(results, status) {
 					if (status === "OK") {
 					  if (results[0]) {
-						  document.querySelectorAll(".address").forEach(function(field){field.value = results[0].formatted_address});
+						  document.querySelectorAll(".address").forEach(function(address){
+							if(address.value == ''){
+								address.value = results[0].formatted_address
+							}
+						});
 					  }
 					}
 				}
@@ -98,16 +104,15 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 	
 	//If the current locationbutton is clicked, get the location, and fill the form
-	document.addEventListener('click',function(event) {
-		//Check user location
-		if(event.target.name=='use_current_location_button'){
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(showPosition);
-			} else { 
-				Main.displayMessage("Geolocation is not supported by your browser.");
-			}
+	let el 	= document.querySelector('.current-location');
+	if(el != null){
+		console.log(isMobileDevice());
+		if (isMobileDevice() && navigator.geolocation) {
+			el.addEventListener('click', ev=>navigator.geolocation.getCurrentPosition(showPosition));
+		} else { 
+			el.classList.add('hide');
 		}
-	});
+	}
 
 	function showPosition(position) {
 		var lat = (position.coords.latitude).toFixed(7);

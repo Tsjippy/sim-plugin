@@ -29,8 +29,10 @@ if($skipWrapper){
 	?>
 	<div id="primary">
 		<style>
-			#primary:not(:only-child){
-				width: 70%;
+			@media (min-width: 991px){
+				#primary:not(:only-child){
+					width: 70%;
+				}
 			}
 		</style>
 		<main id="main" class='inside-article'>

@@ -15,7 +15,26 @@ if(is_tax() || is_archive()){
 	$archive	= true;
 }
 
+$class	= '';
+if(!$archive){
+	$class	= '';
+}
 ?>
+<style>
+	.metas{
+		margin-top:10px;
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.project.meta{
+		margin-right: 10px;
+	}
+
+	.cat_card{
+		padding: 10px;
+	}
+</style>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<div class="cat_card<?php if($archive){echo ' inside-article';}?>">
 		
@@ -47,8 +66,8 @@ if(is_tax() || is_archive()){
 			}
 			?>
 
-			<div class='project metas' style="margin-top:10px;display: flex;flex-wrap: wrap;">
-				<div class='category projectmeta'> 
+			<div class='project metas'>
+				<div class='category project meta'> 
 					<?php
 					$categories = wp_get_post_terms(
 						get_the_ID(), 
@@ -89,7 +108,7 @@ if(is_tax() || is_archive()){
 					?>
 				</div>
 				
-				<div class='number projectmeta' style='margin-right: 10px;'>
+				<div class='number project meta'>
 					<?php
 					$url	= plugins_url('pictures/project.png', __DIR__);
 					echo "<img src='$url' alt='category' loading='lazy' class='project_icon'>";
@@ -99,7 +118,7 @@ if(is_tax() || is_archive()){
 				$ministry = get_post_meta(get_the_ID(), 'ministry', true);
 
 				if(!empty($ministry)){
-					echo "<div class='ministry projectmeta' style='margin-right: 10px;'>";
+					echo "<div class='ministry project meta'>";
 						$imageUrl = plugins_url('pictures/ministry.png', __DIR__);
 						$icon 	= "<img src='$imageUrl' alt='email' loading='lazy' class='project_icon'>";
 						$url	= get_permalink($ministry);
@@ -110,7 +129,7 @@ if(is_tax() || is_archive()){
 
 				$manager		= get_post_meta(get_the_ID(), 'manager', true);
 				
-				echo "<div class='number projectmeta' style='margin-right: 10px;'>";
+				echo "<div class='number project meta'>";
 					$imageUrl = plugins_url('pictures/manager.png', __DIR__);
 					$icon = "<img src='$imageUrl' alt='manager' loading='lazy' class='project_icon'>";
 					if(!empty($manager['userid'])){
@@ -122,21 +141,21 @@ if(is_tax() || is_archive()){
 				echo "</div>";
 
 				if(!empty($manager['tel'])){
-					echo "<div class='tel projectmeta' style='margin-right: 10px;'>";
+					echo "<div class='tel project meta'>";
 						$imageUrl = plugins_url('pictures/tel.png', __DIR__);
 						$icon = "<img src='$imageUrl' alt='telephone' loading='lazy' class='project_icon'>";
 						echo "<a href='tel:{$manager['tel']}'>$icon {$manager['tel']}</a>";
 				}
 
 				if(!empty($manager['email'])){
-					echo "<div class='email projectmeta' style='margin-right: 10px;'>";
+					echo "<div class='email project meta'>";
 						$imageUrl = plugins_url('pictures/email.png', __DIR__);
 						$icon = "<img src='$imageUrl' alt='email' loading='lazy' class='project_icon'>";
 						echo "<a href='mailto:{$manager['email']}'>$icon {$manager['email']}</a>";
 				}
 				?>
 				
-				<div class='url projectmeta' style='margin-right: 10px;'>
+				<div class='url project meta'>
 					<?php
 					$url		= get_post_meta(get_the_ID(),'url',true);
 					if(!empty($url)){

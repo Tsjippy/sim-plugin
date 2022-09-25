@@ -1,6 +1,6 @@
 console.log("Main.js loaded");
 
-export {displayMessage, showLoader} from '.\imports.js';
+export {displayMessage, showLoader, isMobileDevice} from '.\imports.js';
 
 export function changeUrl(target, secondTab=''){
 	let newParam	= target.dataset.param_val;
@@ -135,11 +135,6 @@ export function getRoute(target,lat,lon){
 	var url = 'https://www.google.com/maps/dir/?api=1&destination='+lat+','+lon+origin;
 	var win = window.open(url, '_blank');
 	win.focus();
-}
-
-//Check if on mobile
-export function isMobileDevice() {
-	return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 }
 
 function bodyScrolling(type){

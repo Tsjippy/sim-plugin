@@ -82,7 +82,6 @@ export async function submitForm(target, url){
 }
 
 export async function fetchRestApi(url, formData){
-	console.log(url);
 	formData.append('_wpnonce', sim.restNonce);
 
 	let result = await fetch(

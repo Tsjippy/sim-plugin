@@ -16,8 +16,10 @@ if(!isset($skipHeader) || !$skipHeader){
 ?>
 	<div id="primary">
 		<style>
-			#primary:not(:only-child){
-				width: 70%;
+			@media (min-width: 991px){
+				#primary:not(:only-child){
+					width: 70%;
+				}
 			}
 		</style>
 		<main id="main">
@@ -151,7 +153,7 @@ function getLocationEmployees($post){
 		$html .= "No one dares to say they are working here!";
 	}
 
-	$html 	= "<p><strong>People working at $post->post_title are:</strong><br><br>$html</p>";
+	$html 	= "<p style='padding:10px;'><strong>People working at $post->post_title are:</strong><br><br>$html</p>";
 	
 	return $html;
 }

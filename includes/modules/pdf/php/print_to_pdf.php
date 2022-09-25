@@ -80,7 +80,7 @@ add_action('sim_after_post_save', function($post){
 add_filter('sim-single-template-bottom', function($html, $postType){
     return "<div class='print_as_pdf_div'>
         <form method='post' id='print_as_pdf_form'>
-            <button type='submit' class='button' name='print_as_pdf' id='print_as_pdf'>Print this $postType</button>
+            <button type='submit' class='button' name='print_as_pdf' id='print_as_pdf' style='margin-left: 10px;'>Print this $postType</button>
         </form>
     </div>";
 }, 10, 2);

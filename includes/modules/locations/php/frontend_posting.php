@@ -376,7 +376,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         <fieldset id="location" class="frontendform">
             <legend>
                 <h4>Location details</h4>
-            </legend>					
+            </legend>
         
             <table class="form-table">
                 <tr>
@@ -395,9 +395,16 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
                     <th><label for="address">Address</label></th>
                     <td>
                         <input type="text" class='formbuilder address' name="location[address]" value="<?php echo $address; ?>">
-                        <span class="description">Will be filled based on the coordinates</span>
                     </td>
                 </tr>
+            
+                <tr>
+                    <th>
+                        <button class='current-location button small' type='button'>Use current location</button>
+                    </th>
+                    <td></td>
+                </tr>
+
                 <tr>
                     <th><label for="latitude">Latitude</label></th>
                     <td>

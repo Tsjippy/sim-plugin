@@ -20,8 +20,10 @@ if(!isset($skipHeader) || !$skipHeader){
 	<div id="primary">
 		<main id="main">
 			<style>
-				#primary:not(:only-child){
-					width: 70%;
+				@media (min-width: 991px){
+					#primary:not(:only-child){
+						width: 70%;
+					}
 				}
 			</style>
 			<?php

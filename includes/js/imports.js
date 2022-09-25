@@ -159,3 +159,8 @@ export function showLoader(element, replace=true, message=''){
 
 	return wrapper;
 }
+
+//Check if on mobile
+export function isMobileDevice() {
+	return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+}

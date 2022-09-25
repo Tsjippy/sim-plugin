@@ -20,6 +20,21 @@ if(is_tax() || is_archive()){
 }
 
 ?>
+<style>
+	.metas{
+		margin-top:10px;
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.project.meta{
+		margin-right: 10px;
+	}
+
+	.cat_card{
+		padding: 10px;
+	}
+</style>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
 	<div class="cat_card<?php if(!$archive){echo ' inside-article';}?>">
 		

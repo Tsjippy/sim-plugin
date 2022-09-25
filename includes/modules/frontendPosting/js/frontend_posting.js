@@ -1,5 +1,5 @@
 import './../../locations/js/user_location.js';
-import { callback, addStyles } from './../../../js/imports.js';
+import { addStyles } from './../../../js/imports.js';
 
 async function confirmPostDelete( event ) {
 	event.preventDefault();

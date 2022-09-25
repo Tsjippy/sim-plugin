@@ -16,6 +16,21 @@ if(is_tax() || is_archive()){
 }
 
 ?>
+<style>
+	.metas{
+		margin-top:10px;
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.location.meta{
+		margin-right: 10px;
+	}
+
+	.cat_card{
+		padding: 10px;
+	}
+</style>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
 	<div class="cat_card<?php if($archive){echo ' inside-article';}?>">
 		
@@ -47,8 +62,8 @@ if(is_tax() || is_archive()){
 			}
 			?>
 
-			<div class='location metas' style='margin-top:10px;'>
-				<span class='category locationmeta'> 
+			<div class='location metas'>
+				<div class='category location meta'> 
 					<?php
 					$categories = wp_get_post_terms(
 						get_the_ID(), 
@@ -90,9 +105,9 @@ if(is_tax() || is_archive()){
 						}
 					}
 					?>
-				</span>
+				</div>
 				
-				<span class='category locationmeta'>
+				<div class='tel location meta'>
 					<?php
 					$tel		= get_post_meta(get_the_ID(),'tel',true);
 					if(!empty($tel)){
@@ -101,18 +116,18 @@ if(is_tax() || is_archive()){
 						echo "<a href='tel:$tel'>$icon Call them  »</a>";
 					}
 					?>
-				</span>
+				</div>
 				
-				<span class='category locationmeta'>
+				<div class='url location meta'>
 					<?php
 					$url		= get_post_meta(get_the_ID(),'url',true);
-					if(!empty($url) && $url != 'https://www.'){
+					if(!empty($url)){
 						$imageUrl 	= plugins_url('pictures/url.png', __DIR__);
 						$icon 		= "<img src='$imageUrl' alt='location' loading='lazy' class='location_icon'>";
 						echo "<a href='$url'>$icon Visit website  »</a>";
 					}
 					?>
-				</span>
+				</div>
 			</div>
 			
 			<?php

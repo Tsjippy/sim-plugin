@@ -80,7 +80,7 @@ class FrontEndContent{
 		}
 
 		?>
-		<div id="frontend_upload_form" <?php if($hide){ echo 'class="hidden"';}?>>			
+		<div id="frontend_upload_form" <?php if($hide){ echo 'class="hidden"';}?> style='margin-top: 10px;'>			
 			<?php
 			if(!$this->lite){
 				$hidden = 'hidden';
