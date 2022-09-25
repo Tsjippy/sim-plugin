@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better mobile layout
 
 ## [2.18.2] - 2022-09-24
 
