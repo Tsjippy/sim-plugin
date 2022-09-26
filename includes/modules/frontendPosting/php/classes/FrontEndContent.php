@@ -1110,7 +1110,7 @@ class FrontEndContent{
 			}
 		}
 
-		return $post;
+		return get_post($post->ID);
 	}
 
 	/**

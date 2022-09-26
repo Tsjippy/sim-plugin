@@ -55,7 +55,7 @@ add_action('sim_after_post_save', function($post){
 }, 999);
 
 add_action( 'wp_after_insert_post', function( $postId, $post ){
-    if(in_array($post->post_status, ['publish', 'inherit'])){
+    if(in_array($post->post_status, ['publish'])){
         //Send signal message
         sendPostNotification($post);
     }
