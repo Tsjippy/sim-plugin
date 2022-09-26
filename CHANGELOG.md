@@ -9,6 +9,8 @@
 ### Fixed
 - signal message after pending post
  is published
+- updating of published post which
+should be reviewed
 
 ## [2.18.3] - 2022-09-26
 
