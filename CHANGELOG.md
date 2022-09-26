@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.18.3] - 2022-09-26
+
+
+### Fixed
 - better mobile layout
 
 ## [2.18.2] - 2022-09-24
