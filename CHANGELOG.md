@@ -7,6 +7,8 @@
 ### Changed
 
 ### Fixed
+- signal message after pending post
+ is published
 
 ## [2.18.3] - 2022-09-26
 
