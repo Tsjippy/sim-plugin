@@ -1065,8 +1065,8 @@ class FrontEndContent{
 			return new WP_Error('frontend_contend', 'You can not change the post type like that!');
 		}
 		
-		//Create a revision post
-		if($this->status == 'pending'){
+		//Create a revision post if we are updating an already published post
+		if($this->status == 'pending' && $post->post_status == 'publish'){
 			$this->actionText = 'updated'; 
 
 			foreach($newPostData as $key=>$data){
@@ -1086,8 +1086,6 @@ class FrontEndContent{
 			$post->ID		= $postId;
 
 			$this->postId	= $postId;
-
-		//Update the post only if we have the rights to so
 		}else{
 			$result = wp_update_post( $newPostData, true, false);
 			if(is_wp_error($result)){
