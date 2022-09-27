@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- bookings module
 
 ### Changed
+
+### Fixed
+
+## [2.19.0] - 2022-09-27
+
+
+### Added
+- bookings module
 
 ### Fixed
 - signal message after pending post
