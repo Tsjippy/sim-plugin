@@ -11,6 +11,8 @@
  is published
 - updating of published post which
 should be reviewed
+- now possible to schedule
+diner/lunch at home
 
 ## [2.18.3] - 2022-09-26
 
