@@ -1,7 +1,7 @@
 <?php
 namespace SIM;
 
-const STYLE_VERSION		= '7.0.44';
+const STYLE_VERSION		= '7.0.45';
 
 //Add js and css files
 add_action( 'wp_enqueue_scripts', __NAMESPACE__.'\enqueueScripts', 1);
@@ -14,6 +14,10 @@ add_action( 'wp_enqueue_media', function(){
 
 function registerScripts($hook=''){
 	//LIBRARIES
+	
+    //selectable select table cells https://github.com/Mobius1/Selectable
+	wp_register_script('selectable', "https://unpkg.com/selectable.js@latest/selectable.min.js", array(), null, true);
+
 	//Nice select https://github.com/bluzky/nice-select2
 	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(), STYLE_VERSION,true);
 

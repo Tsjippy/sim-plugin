@@ -312,6 +312,10 @@ function addCategory(\WP_REST_Request $request ){
 	
 	$result 	= wp_insert_term( ucfirst($name), $taxonomy, $args);
 
+	if(is_wp_error($result)){
+		return $result;
+	}
+
 	do_action('sim_after_category_add', $postType, strtolower($name), $result);
 	
 	if(is_wp_error($result)){

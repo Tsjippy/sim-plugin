@@ -26,12 +26,16 @@ class CreateSchedule extends Schedules{
 		$eventId   = $wpdb->insert_id;
 
 		//Create event warning
-		$start	= new \DateTime($event['startdate'].' '.$event['starttime'], new \DateTimeZone(wp_timezone_string()));
+		if(isset($_POST['reminders'])){
+			foreach($_POST['reminders'] as $minutes){
+				$start	= new \DateTime($event['startdate'].' '.$event['starttime'], new \DateTimeZone(wp_timezone_string()));
 
-		//Warn 15 minutes in advance
-		$start	= $start->getTimestamp() - 15 * MINUTE_IN_SECONDS;
-		
-		wp_schedule_single_event($start, 'send_event_reminder_action', [$eventId]);
+				//Warn minutes in advance
+				$start	= $start->getTimestamp() - $minutes * MINUTE_IN_SECONDS;
+				
+				wp_schedule_single_event($start, 'send_event_reminder_action', [$eventId]);
+			}
+		}
 	}
 
 	/**
@@ -110,6 +114,7 @@ class CreateSchedule extends Schedules{
 			
 			update_post_meta($postId, 'eventdetails', json_encode($event));
 			update_post_meta($postId, 'onlyfor', $a['onlyfor']);
+			update_post_meta($postId, 'reminders', $_POST['reminders']);
 
 			// setting the eventdetails meta value also creates the event. Remove it
 			$events = new CreateEvents();

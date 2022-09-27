@@ -96,7 +96,7 @@ class Schedules{
 			$schedules	.= $this->showSchedule($schedule);
 		}
 
-		$html	= "<div class='schedules_wrapper' style='z-index: 99;position: relative;'>";
+		$html	= "<div class='schedules_wrapper' style='position: relative;'>";
 			$html	.= $this->addModals();
 			$html	.= $schedules;
 			$html	.= $form;
@@ -575,7 +575,7 @@ class Schedules{
 					</label>
 					
 					<label>
-						<h4>What is the subject</h4>
+						<h4>Subject</h4>
 						<input type="text" name="subject" class="wide" required>
 					</label>
 					
@@ -592,6 +592,20 @@ class Schedules{
 						<?php
 						echo SIM\userSelect('', true, false, 'wide', 'host', [], '', [], 'list', 'admin_host');
 					}
+
+					?>
+					<h4>Warnings</h4>
+					<label>
+						<input type="checkbox" name="reminders[]" value="15" checked>
+						Send a remider 15 minutes before the start
+					</label>
+					<br>
+					<label>
+						<input type="checkbox" name="reminders[]" value="1440">
+						Send a remider 1 day before the start
+					</label>
+					<br>
+					<?php
 					
 					echo SIM\addSaveButton('add_timeslot','Add time slot','update_event add_schedule_row');
 					?>

@@ -849,7 +849,7 @@ class FormBuilderForm extends SimForms{
 				</optgroup>
 				<optgroup label="Special elements">
 					<?php
-					$options=[
+					$options	= [
 						"captcha"		=> "Captcha",
 						"php"			=> "Custom code",
 						"datalist"		=> "Datalist",
@@ -859,6 +859,8 @@ class FormBuilderForm extends SimForms{
 						"formstep"		=> "Multistep",
 						"p"				=> "Paragraph"
 					];
+
+					$options	= apply_filters('sim-special-form-elements', $options);
 
 					foreach($options as $key=>$option){
 						if($element != null && $element->type == $key){

@@ -416,7 +416,7 @@ function hideRows() {
 
 function addSelectable(){
 	//Add selectable on non-mobile devices
-	//if(!isMobileDevice()){
+	if(!Main.isMobileDevice()){
 		//loop over all the schedule tables
 		document.querySelectorAll('.sim-table.schedule').forEach(function(table){
 			if(table._selectable != undefined){
@@ -436,7 +436,7 @@ function addSelectable(){
 			//Run the function afterSelect when selection is final
 			table._selectable.on('end', afterSelect);
 		});
-	//}
+	}
 
 	hideRows();
 }

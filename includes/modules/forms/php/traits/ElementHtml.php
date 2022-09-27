@@ -591,6 +591,9 @@ trait ElementHtml{
 				$html	= "<$elType  name='$elName' $elId class='$elClass' $elOptions $elValue>$elContent$elClose";
 			}
 		}
+
+		// filter the element html
+		$html	= apply_filters('sim-forms-element-html', $html, $element, $this);
 		
 		//remove unnessary whitespaces
 		$html = preg_replace('/\s+/', ' ', $html);

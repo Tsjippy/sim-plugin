@@ -154,7 +154,12 @@ export function showLoader(element, replace=true, message=''){
 	if(replace){
 		element.parentNode.replaceChild(wrapper, element);
 	}else{
-		element.parentNode.insertBefore(wrapper, element.nextSibling);
+        let el  = element.nextElementSibling;
+        if(el == null){
+            element.parentNode.insertAdjacentElement('beforeEnd', wrapper);
+        }else{
+            element.parentNode.insertBefore(wrapper, el);
+        }
 	}
 
 	return wrapper;
