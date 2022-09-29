@@ -199,7 +199,7 @@ class Bookings{
      * Displays a date selector modal
      */
     function dateSelectorModal($subject){
-        if(defined('REST_REQUEST')){
+        if(defined('REST_REQUEST') && isset($_POST['month']) && isset($_POST['year'])){
 			$month		= $_POST['month'];
 			$year		= $_POST['year'];
 			$dateStr	= "$year-$month-01";
