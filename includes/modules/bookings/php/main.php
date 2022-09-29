@@ -69,7 +69,7 @@ add_filter('sim-forms-elements', function($elements, $displayFormResults){
 }, 10, 2);
 
 // Display the date selector in the form
-add_filter('sim-forms-element-html', function($html, $element){
+add_filter('sim-forms-element-html', function($html, $element, $formBuilderForm){
     if($element->type == 'booking_selector'){
         $bookingDetails = maybe_unserialize($element->booking_details);
 
@@ -81,7 +81,7 @@ add_filter('sim-forms-element-html', function($html, $element){
 
         $html   = '';
 
-        $hidden     = 'hidden';
+         $hidden     = 'hidden';
         $buttonText = 'Change';
         $required   = '';
         if($element->required){
@@ -128,10 +128,9 @@ add_filter('sim-forms-element-html', function($html, $element){
         foreach($subjects as $subject){
             $html   .= $booking->dateSelectorModal($subject);
         }
-        
-    }
+    }  
     return $html;
-}, 10, 2);
+}, 10, 3); 
 
 // the choice for table view or calendar view
 add_action('sim-formstable-after-table-settings', function($displayFormResults){

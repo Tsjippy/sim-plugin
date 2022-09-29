@@ -5,8 +5,6 @@ use SIM;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-ob_start();
-
 trait ExportFormResults{
 	/**
 	 * Clean excel Content from currenlty hidden columns

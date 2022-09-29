@@ -3,8 +3,6 @@ namespace SIM\FORMS;
 use SIM;
 use WP_Error;
 
-ob_start();
-
 class DisplayFormResults extends DisplayForm{
 	use ExportFormResults;
 
