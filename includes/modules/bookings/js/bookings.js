@@ -47,6 +47,7 @@ async function getMonth(target){
             // hide current navigator and add new one
             wrapper.querySelector('.navigators .navigator:not(.hidden)').classList.add('hidden');
             wrapper.querySelector('.navigators').insertAdjacentHTML('beforeEnd', response.navigator);
+            wrapper.querySelector('.booking.details-wrapper').insertAdjacentHTML('beforeEnd', response.details);
         }
     }else{
         wrapper.querySelector('.navigators .navigator:not(.hidden)').classList.add('hidden');
@@ -86,6 +87,10 @@ function storeDates(target){
 
 function showDateSelectorModal(target){ 
     let modal   = target.closest('.modal');
+
+    if(modal == null){
+        return;
+    }
 
     // we already have an selection
     if(modal.querySelector('.calendar.day.startdate') != null && modal.querySelector('.calendar.day.enddate') != null){

@@ -17,7 +17,8 @@ add_action( 'rest_api_init', function () {
 				$date		= strtotime($_POST['year'].'-'.$_POST['month'].'-01');
 				return [
 					'month'		=> $bookings->monthCalendar($subject, $date),
-					'navigator'	=> $bookings->getNavigator($date, 1)
+					'navigator'	=> $bookings->getNavigator($date, 1),
+					'details'	=> $bookings->detailHtml()
 				];
 			},
 			'permission_callback' 	=> '__return_true',

@@ -132,7 +132,7 @@ class Bookings{
                 ?>
                 <div class="booking details-wrapper">
                     <?php
-                    $this->detailHtml();
+                    echo $this->detailHtml();
                     ?>
                 </div>
                 <?php
@@ -333,6 +333,8 @@ class Bookings{
     function detailHtml(){
         $baseUrl	= plugins_url('../pictures', __DIR__);
 
+        ob_start();
+
         foreach($this->bookings as $booking){
             // Retrieve booking details
             $this->forms->getSubmissionData(null, $booking->submission_id);
@@ -428,6 +430,8 @@ class Bookings{
             </div>
             <?php
         }
+
+        return ob_get_clean();
     }
 
     /**
