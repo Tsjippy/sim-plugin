@@ -30,6 +30,7 @@ async function getMonth(target){
         formData.append('month', target.dataset.month);
         formData.append('year', target.dataset.year);
         formData.append('subject', target.closest('.bookings-wrap').dataset.subject);
+        formData.append('shortcodeid', target.closest('.bookings-wrap').dataset.shortcodeid);
 
         let loaderWrapper	= document.createElement("DIV");
         loaderWrapper.setAttribute('class','loaderwrapper');

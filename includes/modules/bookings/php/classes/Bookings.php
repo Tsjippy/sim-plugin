@@ -96,7 +96,7 @@ class Bookings{
         ob_start();
 
         ?>
-        <div class="bookings-wrap <?php if($hidden){echo 'hidden';}?>" data-date="<?php echo "$yearStr-$monthStr";?>" data-subject="<?php echo $cleanSubject;?>">
+        <div class="bookings-wrap <?php if($hidden){echo 'hidden';}?>" data-date="<?php echo "$yearStr-$monthStr";?>" data-subject="<?php echo $cleanSubject;?>" data-shortcodeid="<?php echo $this->forms->shortcodeId;?>">
             <div class="booking overview">
                 <h4 style='text-align:center;'><?php echo $subject;?> Calendar</h4>
                 
@@ -332,6 +332,10 @@ class Bookings{
      */
     function detailHtml(){
         $baseUrl	= plugins_url('../pictures', __DIR__);
+
+        if($this->forms->columnSettings == null){
+            $this->forms->loadShortcodeData();
+        }
 
         ob_start();
 

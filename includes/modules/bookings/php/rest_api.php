@@ -12,6 +12,8 @@ add_action( 'rest_api_init', function () {
 			'callback' 				=> function(){
 				$bookings	= new Bookings();
 
+				$bookings->forms->shortcodeId	= $_POST['shortcodeid'];
+
 				$subject	= sanitize_text_field($_POST['subject']);
 
 				$date		= strtotime($_POST['year'].'-'.$_POST['month'].'-01');
