@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded",function() {
 
 
 //Hide or show the clicked tab
-window.addEventListener("click", function(event) {	
+window.addEventListener("mousedown", function(event) {	
 	var target = event.target;
 
 	//close modal on close click
@@ -320,7 +320,7 @@ window.addEventListener("click", function(event) {
 		//show the tab
 		displayTab(target);
 	}	
-	
+
 	//close modal if clicked outside of modal
 	if(target.closest('.modal-content') == null && target.closest('.swal2-container') == null && target.tagName=='DIV'){
 		hideModals();
