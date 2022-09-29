@@ -297,7 +297,7 @@ class Bookings{
 			$calendarRows .= '</dl>';
 
 			// Break if next month
-			if($workingMonth > date('m', $date)){
+			if(date('Ym', $workingDate) > date('Ym', $date)){
 				break;
 			}
 		}

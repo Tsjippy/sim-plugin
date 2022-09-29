@@ -23,7 +23,6 @@ async function getMonth(target){
     }else{
         wrapper.querySelectorAll('.calendar.table .month-container:not(.hidden)')[0].classList.add('hidden');
     }
-    
 
     // month does not exist yet
     if(monthContainer == null){
@@ -39,12 +38,12 @@ async function getMonth(target){
         loader.setAttribute("src", sim.loadingGif);
 
         loaderWrapper.insertAdjacentElement('beforeEnd', loader);
-        wrapper.querySelector('.calendar.table .month-container:not(.hidden)').parentNode.insertAdjacentElement('beforeEnd', loaderWrapper);
+        wrapper.querySelector('.calendar.table').insertAdjacentElement('beforeEnd', loaderWrapper);
             
         let response = await FormSubmit.fetchRestApi('bookings/get_next_month', formData);
 
         if(response){
-            loader.outerHTML                                = response.month;
+            loaderWrapper.outerHTML                                = response.month;
             // hide current navigator and add new one
             wrapper.querySelector('.navigators .navigator:not(.hidden)').classList.add('hidden');
             wrapper.querySelector('.navigators').insertAdjacentHTML('beforeEnd', response.navigator);
