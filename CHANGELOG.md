@@ -9,6 +9,7 @@
 ### Fixed
 - edit bookings
 - do not close modal when selecting
+- issue whith wrong booking date
 
 ## [2.19.0] - 2022-09-27
 
