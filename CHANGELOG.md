@@ -7,6 +7,14 @@
 ### Changed
 
 ### Fixed
+
+## [2.19.0] - 2022-09-27
+
+
+### Added
+- bookings module
+
+### Fixed
 - signal message after pending post
  is published
 - updating of published post which
