@@ -67,6 +67,8 @@ function changeBookingData(target){
 }
 
 function storeDates(target){
+    let modal   = target.closest('.modal');
+    
     let startEl     = target.closest('form').querySelector('[name="booking-startdate"]');
     let endEl       = target.closest('form').querySelector('[name="booking-enddate"]');
 

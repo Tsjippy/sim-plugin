@@ -2,7 +2,7 @@
 namespace SIM\BOOKINGS;
 use SIM;
 
-const MODULE_VERSION		= '7.0.2';
+const MODULE_VERSION		= '7.0.3';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
 //run on module activation
