@@ -18,7 +18,12 @@ async function getMonth(target){
     let monthContainer  = wrapper.querySelector(`.month-container[data-month="${target.dataset.month}"][data-year="${target.dataset.year}"]`);
 
     // hide the first month
-    wrapper.querySelector('.calendar.table .month-container:first-of-type').classList.add('hidden');
+    if(target.closest('.prev') != null){
+        wrapper.querySelectorAll('.calendar.table .month-container:not(.hidden)')[1].classList.add('hidden');
+    }else{
+        wrapper.querySelectorAll('.calendar.table .month-container:not(.hidden)')[0].classList.add('hidden');
+    }
+    
 
     // month does not exist yet
     if(monthContainer == null){
@@ -27,24 +32,142 @@ async function getMonth(target){
         formData.append('year', target.dataset.year);
         formData.append('subject', target.closest('.bookings-wrap').dataset.subject);
 
-        let loader  = Main.showLoader(wrapper.querySelector('.calendar.table .month-container:not(.hidden)'), false);
+        let loaderWrapper	= document.createElement("DIV");
+        loaderWrapper.setAttribute('class','loaderwrapper');
+
+        let loader	= document.createElement("IMG");
+        loader.setAttribute("src", sim.loadingGif);
+
+        loaderWrapper.insertAdjacentElement('beforeEnd', loader);
+        wrapper.querySelector('.calendar.table .month-container:not(.hidden)').parentNode.insertAdjacentElement('beforeEnd', loaderWrapper);
             
         let response = await FormSubmit.fetchRestApi('bookings/get_next_month', formData);
 
         if(response){
             loader.outerHTML                                = response.month;
-            wrapper.querySelector('.navigator').outerHTML   = response.navigator;
+            // hide current navigator and add new one
+            wrapper.querySelector('.navigators .navigator:not(.hidden)').classList.add('hidden');
+            wrapper.querySelector('.navigators').insertAdjacentHTML('beforeEnd', response.navigator);
         }
     }else{
+        wrapper.querySelector('.navigators .navigator:not(.hidden)').classList.add('hidden');
+        wrapper.querySelector(`.navigator[data-month="${target.dataset.month}"][data-year="${target.dataset.year}"]`).classList.remove('hidden');
         monthContainer.classList.remove('hidden');
+    }
+}
+
+function changeBookingData(target){
+    let selector    = '';
+    let el  = document.querySelector(`.booking-subject-selector`);
+    if(el == null){
+        selector    = '.booking.modal';
+    }else{
+        selector    = `[name="${el.value}-modal"]`;
+    }
+    document.querySelector(selector).classList.remove('hidden');
+}
+
+function storeDates(target){
+    let startEl     = target.closest('form').querySelector('[name="booking-startdate"]');
+    let endEl       = target.closest('form').querySelector('[name="booking-enddate"]');
+
+    startEl.value   = modal.querySelector('.booking-startdate').dataset.isodate;
+    endEl.value     = modal.querySelector('.booking-enddate').dataset.isodate;
+
+    startEl.closest('.selected-booking-dates').classList.remove('hidden');
+
+    modal.classList.add('hidden');
+
+    target.closest('form').querySelector('.change-booking-date').textContent    = 'Change';
+
+    reset(modal);
+}
+
+function showDateSelectorModal(target){ 
+    let modal   = target.closest('.modal');
+
+    // we already have an selection
+    if(modal.querySelector('.calendar.day.startdate') != null && modal.querySelector('.calendar.day.enddate') != null){
+        let onlyEnd = false;
+        if(target.matches('.inbetween')){
+            onlyEnd = true;
+        }
+        
+        reset(modal, onlyEnd);
+    }
+
+    if(modal.querySelector('.calendar.day.startdate') == null){
+        modal.querySelector('.booking-startdate').value             = target.dataset.date;
+        modal.querySelector('.booking-startdate').dataset.isodate   = target.dataset.isodate;
+
+        target.classList.add('startdate');
+        modal.querySelectorAll('.booking-date-label-wrapper.disabled').forEach(el=>el.classList.remove('disabled'));
+
+        // do not allow any date before the startdate to be the enddate
+        let dts     = target.closest('.calendar.table').querySelectorAll('dt.calendar.day:not(.head, .unavailable)');
+        let skip    = false;
+        for (i = 0; i < dts.length; ++i) {
+            // all dates after the selected date are available
+            if(dts[i] == target){
+                skip = true;
+            // until we encounter another selected date
+            }else if(skip && dts[i].matches('.selected')){
+                skip = false;
+            }
+
+            if(!skip){
+                dts[i].classList.add('selected');
+            }
+        }
+    }else{
+        // store enddate
+        modal.querySelector('.booking-enddate').value               = target.dataset.date;
+        modal.querySelector('.booking-enddate').dataset.isodate     = target.dataset.isodate;
+        target.classList.add('enddate');
+
+        // make other dates available again
+        target.closest('.calendar.table').querySelectorAll('.available.selected').forEach(dt=>dt.classList.remove('selected'));
+
+        // color the dates between start and end
+        let dts     = target.closest('.calendar.table').querySelectorAll('dt.calendar.day:not(.head)');
+        let skip    = true;
+        for (i = 0; i < dts.length; ++i) {
+            
+            // until we encounter another selected date
+            if(dts[i] == target){
+                break;
+            }
+
+            if(!skip){
+                dts[i].classList.add('inbetween');
+            }
+
+            // all dates after the selected date are available
+            if(dts[i].matches('.startdate')){
+                skip = false;
+            }
+        }
+
+        modal.querySelectorAll('.actions .action.disabled').forEach(el=>el.classList.remove('disabled'));
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Bookings.js loaded");
 
-    document.querySelector(`[name="accomodation"]`).addEventListener(`change`, (ev)=>{
+    // show booking date selector
+    document.querySelectorAll(`.booking-subject-selector`).forEach(el=>el.addEventListener(`change`, (ev)=>{
         document.querySelector(`[name="${ev.target.value}-modal"]`).classList.remove('hidden');
+    }));
+
+    // show booking calendar
+    document.querySelectorAll(`.admin-booking-subject-selector`).forEach(el=>el.addEventListener(`change`, (ev)=>{
+        document.querySelector(`.bookings-wrap[data-subject="${ev.target.value}"]`).classList.toggle('hidden');
+    }));
+
+    document.querySelectorAll(".tables-wrapper").forEach(wrapper=>{
+        offset	= wrapper.getBoundingClientRect().x;
+        wrapper.style.marginLeft = `-${offset}px`;
     });
 });
 
@@ -61,92 +184,27 @@ document.addEventListener('click', (ev) => {
     }
 
     if(target.matches('.prevnext')){
-        getMonth(target)
+        getMonth(target);
     }
 
     if(target.matches('.change-booking-date')){
-        document.querySelector(`[name="${document.querySelector(`[name="accomodation"]`).value}-modal"]`).classList.remove('hidden');
+        changeBookingData(target);
     }
 
     if(target.matches('.action.confirm')){
-        let startEl     = target.closest('form').querySelector('[name="booking[startdate]"]');
-        let endEl       = target.closest('form').querySelector('[name="booking[enddate]"]');
-
-        startEl.value   = modal.querySelector('.booking-startdate').dataset.isodate;
-        endEl.value     = modal.querySelector('.booking-enddate').dataset.isodate;
-
-        startEl.closest('.selected-booking-dates').classList.remove('hidden');
-
-        modal.classList.add('hidden');
-
-        reset(modal);
+        storeDates(target);
     }
 
     if(target.matches('.bookings-wrap .available:not(.selected)')){
-        // we already have an selection
-        if(modal.querySelector('.calendar.day.startdate') != null && modal.querySelector('.calendar.day.enddate') != null){
-            let onlyEnd = false;
-            if(target.matches('.inbetween')){
-                onlyEnd = true;
+        showDateSelectorModal(target);
+    }
 
-            }
-            
-            reset(modal, onlyEnd);
-        }
+    if(target.matches('.form.table-wrapper .selected')){
+        // Show the details
+        target.closest('.bookings-wrap').querySelector(`.booking-detail-wrapper[data-bookingid="${target.dataset.bookingid}"]`).classList.remove('hidden');
+    }
 
-        if(modal.querySelector('.calendar.day.startdate') == null){
-            modal.querySelector('.booking-startdate').value             = target.dataset.date;
-            modal.querySelector('.booking-startdate').dataset.isodate   = target.dataset.isodate;
-
-            target.classList.add('startdate');
-            modal.querySelectorAll('.booking-date-label-wrapper.disabled').forEach(el=>el.classList.remove('disabled'));
-
-            // do not allow any date before the startdate to be the enddate
-            let dts     = target.closest('.calendar.table').querySelectorAll('dt.calendar.day:not(.head, .unavailable)');
-            let skip    = false;
-            for (i = 0; i < dts.length; ++i) {
-                // all dates after the selected date are available
-                if(dts[i] == target){
-                    skip = true;
-                // until we encounter another selected date
-                }else if(skip && dts[i].matches('.selected')){
-                    skip = false;
-                }
-
-                if(!skip){
-                    dts[i].classList.add('selected');
-                }
-            }
-        }else{
-            // store enddate
-            modal.querySelector('.booking-enddate').value               = target.dataset.date;
-            modal.querySelector('.booking-enddate').dataset.isodate     = target.dataset.isodate;
-            target.classList.add('enddate');
-
-            // make other dates available again
-            target.closest('.calendar.table').querySelectorAll('.available.selected').forEach(dt=>dt.classList.remove('selected'));
-
-            // color the dates between start and end
-            let dts     = target.closest('.calendar.table').querySelectorAll('dt.calendar.day:not(.head)');
-            let skip    = true;
-            for (i = 0; i < dts.length; ++i) {
-                
-                // until we encounter another selected date
-                if(dts[i] == target){
-                    break;
-                }
-
-                if(!skip){
-                    dts[i].classList.add('inbetween');
-                }
-
-                // all dates after the selected date are available
-                if(dts[i].matches('.startdate')){
-                    skip = false;
-                }
-            }
-
-            modal.querySelectorAll('.actions .action.disabled').forEach(el=>el.classList.remove('disabled'));
-        }
+    if(target.matches('.booking-detail .edit')){
+        console.log(target)
     }
 });

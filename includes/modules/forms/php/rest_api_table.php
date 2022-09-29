@@ -399,6 +399,8 @@ function editValue(){
 	}
 	
 	$formTable->updateSubmissionData();
+
+	do_action('sim-forms-submission-updated', $formTable, $fieldName, $newValue);
 	
 	//send email if needed
 	$submitForm	= new SubmitForm();

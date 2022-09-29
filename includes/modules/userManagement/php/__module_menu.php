@@ -324,7 +324,7 @@ add_action('sim_module_activated', function($moduleSlug){
 
 	// Enable forms module
 	if(!SIM\getModuleOption('forms', 'enable')){
-		SIM\ADMIN\enableModule('forms', ['enable'=>'on']);
+		SIM\ADMIN\enableModule('forms');
 	}
 
 	// Import the forms

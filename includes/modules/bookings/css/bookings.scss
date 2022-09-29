@@ -1,28 +1,65 @@
 @use '../../../css/scss/global' as *;
 
-.calendar.day:not(.selected, .startdate, .enddate, .unavailable):hover, .calendar.day.inbetween{
-    background-color: $primary_color;
-    color: white;
-    border-radius: 30px;
+.booking-data-wrapper{
+    display: inline-block;
 }
 
-.calendar.day.startdate{
-    background: linear-gradient(to right,rgba(189, 41, 25, 1) 0%, rgba(189, 41, 25, 1) 30%, rgba(189, 41, 25, 0.7) 100%);
-    color: white;
-    border-bottom-left-radius: 30px;
-    border-top-left-radius: 30px;
-} 
+.tables-wrapper{
+    width: 100vw;
+    z-index: 99;
+    position: relative;
 
-.calendar.day.enddate{
-    background: linear-gradient(to right,rgba(189, 41, 25, 0.7) 0%, rgba(189, 41, 25, 1) 70%, rgba(189, 41, 25, 1) 100%);
-    color: white;
-    border-bottom-right-radius: 30px;
-    border-top-right-radius: 30px;
+    .form-data-table{
+        .bookings-wrap{
+            display: flex;
+            justify-content: center;
+
+            .booking.overview{
+                width: 500px;
+            }
+            
+            .booking.details-wrapper{
+                width: 500px;
+                margin-top: 20px;
+            }
+
+        }
+    }
+
+    .selected{
+        cursor: pointer;
+    }
 }
 
-.calendar.day.inbetween{
-    border-radius: unset;
-    opacity: 0.7;
+.calendar.day{
+    &:not(.selected, .startdate, .enddate, .unavailable):hover, &.inbetween{
+        background-color: $primary_color;
+        color: white;
+        border-radius: 30px;
+    }
+
+    &.startdate{
+        background: linear-gradient(to right,rgba(189, 41, 25, 1) 0%, rgba(189, 41, 25, 1) 30%, rgba(189, 41, 25, 0.7) 100%);
+        color: white;
+        border-bottom-left-radius: 30px;
+        border-top-left-radius: 30px;
+    } 
+
+    &.enddate{
+        background: linear-gradient(to right,rgba(189, 41, 25, 0.7) 0%, rgba(189, 41, 25, 1) 70%, rgba(189, 41, 25, 1) 100%);
+        color: white;
+        border-bottom-right-radius: 30px;
+        border-top-right-radius: 30px;
+    }
+
+    &.inbetween{
+        border-radius: unset;
+        opacity: 0.7;
+    }
+
+    .selected{
+        cursor: pointer;
+    }
 }
 
 .actions{
@@ -72,7 +109,6 @@ button.change-booking-date{
 }
 
 .booking-icon{
-    vertical-align: middle;
     height: 30px;
     margin-right: 5px;
 }
@@ -137,6 +173,7 @@ article.booking{
         letter-spacing: 1px;
         text-transform: uppercase;
         padding: 10px;
+        cursor: pointer;
 
         span{
             color: $primary_color;
@@ -169,7 +206,7 @@ article.booking{
 }
 
 .overview{
-    width: 100%;
+    /*width: 100%;*/
 
     @media (min-width: $fullwidth){
         float: left;
@@ -254,17 +291,6 @@ article.booking{
     }
 
     article{
-        margin-bottom: 0;
-        padding-bottom: 25px;
-        padding-top: 26px;
-        background-color: unset;
-        display: block;
-        width: 100%;
-
-        .booking-header{
-            display: flex;
-        }
-
         .booking-image{
             margin-right: 20px;
             width: 65px;
@@ -288,12 +314,12 @@ article.booking{
         }
 
         .booking-detail{
-            div{
+            >div{
                 margin-bottom: 10px;
             }
 
-            .phone{
-                display: flex;
+            table, tr, td{
+                border: none;
             }
         }        
     }

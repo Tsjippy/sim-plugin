@@ -43,7 +43,13 @@ export async function submitForm(target, url){
 
 	// Unhide required selects so the warning can be shown
 	form.querySelectorAll('select[required]').forEach( el=>el.style.display	= 'block' );
-	
+
+	// enable disabled fields so it gets included and warnings are shown
+	form.querySelectorAll('[disabled][required]').forEach( el=>{
+		el.disabled	= false;
+		el.classList.add('was-disabled'); 
+	});
+
 	validity	= form.reportValidity();
 
 	// Hide again
@@ -60,6 +66,12 @@ export async function submitForm(target, url){
 		}
 		
 		let formData = new FormData(form);
+
+		// disable fields again
+		form.querySelectorAll('.was-disabled').forEach( el=>{
+			el.disabled	= true;
+			el.classList.remove('was-disabled'); 
+		});
 
 		if(form.dataset.addempty == 'true'){
 			//also append at least one off all checkboxes

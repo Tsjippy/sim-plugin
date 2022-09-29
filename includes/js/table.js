@@ -328,7 +328,7 @@ document.addEventListener("click", event=>{
 		sortTable(target);
 	}
 	
-	//Edit data]
+	//Edit data
 	let td = target.closest('td');
 	if(target.matches('td.edit')){
 		event.stopPropagation();

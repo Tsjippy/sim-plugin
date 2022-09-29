@@ -376,7 +376,7 @@ class DisplayFormResults extends DisplayForm{
 		foreach($this->formSettings['actions'] as $action){
 			$actions[$action]	= '';
 		}
-		$actions = apply_filters('sim_form_actions',$actions);
+		$actions = apply_filters('sim_form_actions', $actions);
 		foreach($actions as $action=>$html){
 			if(!is_array($this->columnSettings[$action])){
 				$this->columnSettings[$action] = [
@@ -760,7 +760,7 @@ class DisplayFormResults extends DisplayForm{
 					</select>
 				</div>
 
-				<div class="table_filters_wrapper">
+				<div class="table_filters_wrapper" style='margin-top:10px;'>
 					<label>Select the fields the table can be filtered on</label>
 					<div class='clone_divs_wrapper'>
 						<?php
@@ -835,41 +835,6 @@ class DisplayFormResults extends DisplayForm{
 					?>
 					</select>
 				</div>
-				
-				<div class="table_rights_wrapper">
-					<label>Select a field with multiple answers where you want to create seperate rows for</label>
-					<select name="form_settings[split]">
-					<?php
-					if($this->formSettings['split'] == ''){
-						?><option value='' selected>---</option><?php
-					}else{
-						?><option value=''>---</option><?php
-					}
-					
-					$foundElements = [];
-					foreach($this->formElements as $key=>$element){
-						$pattern = "/([^\[]+)\[\d+\]/i";
-						
-						if(preg_match($pattern, $element->name, $matches)){
-							//Only add if not found before
-							if(!in_array($matches[1], $foundElements)){
-								$foundElements[]	= $matches[1];
-								$value 				= strtolower(str_replace('_', ' ', $matches[1]));
-								$name				= ucfirst($value);
-								
-								//Check which option is the selected one
-								if($this->formSettings['split'] == $value){
-									$selected = 'selected';
-								}else{
-									$selected = '';
-								}
-								echo "<option value='$value' $selected>$name</option>";
-							}
-						}
-					}
-					?>
-					</select>
-				</div>
 
 				<div class="table_rights_wrapper">
 					<label class="label">
@@ -930,30 +895,30 @@ class DisplayFormResults extends DisplayForm{
 					<br>
 					<br>
 					<div class='autoarchivelogic <?php if($checked1 == ''){echo 'hidden';}?>'>
-						Auto archive a (sub) entry when field
+						Auto archive a (sub) entry when field<br>
 						<select name="form_settings[autoarchivefield]" style="margin-right:10px;">
-						<?php
-						if($this->formSettings['autoarchivefield'] == ''){
-							?><option value='' selected>---</option><?php
-						}else{
-							?><option value=''>---</option><?php
-						}
-						
-						foreach($this->columnSettings as $key=>$element){
-							$name = $element['nice_name'];
-							
-							//Check which option is the selected one
-							if($this->formSettings['autoarchivefield'] != '' && $this->formSettings['autoarchivefield'] == $key){
-								$selected = 'selected';
+							<?php
+							if($this->formSettings['autoarchivefield'] == ''){
+								?><option value='' selected>---</option><?php
 							}else{
-								$selected = '';
+								?><option value=''>---</option><?php
 							}
-							echo "<option value='$key' $selected>$name</option>";
-						}
-						?>
+							
+							foreach($this->columnSettings as $key=>$element){
+								$name = $element['nice_name'];
+								
+								//Check which option is the selected one
+								if($this->formSettings['autoarchivefield'] != '' && $this->formSettings['autoarchivefield'] == $key){
+									$selected = 'selected';
+								}else{
+									$selected = '';
+								}
+								echo "<option value='$key' $selected>$name</option>";
+							}
+							?>
 						</select>
 						<label style="margin:0 10px;">equals</label>
-						<input type='text' name="form_settings[autoarchivevalue]" value="<?php echo $this->formSettings['autoarchivevalue'];?>">
+						<input type='text' class='wide' name="form_settings[autoarchivevalue]" value="<?php echo $this->formSettings['autoarchivevalue'];?>">
 						
 						<div class="infobox" name="info">
 							<div>
@@ -967,47 +932,91 @@ class DisplayFormResults extends DisplayForm{
 						</div>
 					</div>
 				</div>
+
+				<?php
+				do_action('sim-formstable-after-table-settings', $this);
+				?>
 				
-				<div class="table_rights_wrapper">
-					<label class="label">Select roles with permission to VIEW the table, finetune it per column on the 'column settings' tab</label>
-					<div class="role_info">
-					<?php
-					foreach($viewRoles as $key=>$roleName){
-						if(in_array($key,array_keys((array)$this->tableSettings['view_right_roles']))){
-							$checked = 'checked';
-						}else{
-							$checked = '';
-						}
+				<div style='margin-top:10px;'>
+					<button class='button permissins-rights-form' type='button'>Advanced</button>
+					<div class='permission-wrapper hidden'>
+						<div class="table_rights_wrapper" style='margin-bottom:10px;'>
+							<label>Select a field with multiple answers where you want to create seperate rows for</label>
+							<select name="form_settings[split]">
+								<?php
+								if($this->formSettings['split'] == ''){
+									?><option value='' selected>---</option><?php
+								}else{
+									?><option value=''>---</option><?php
+								}
+								
+								$foundElements = [];
+								foreach($this->formElements as $key=>$element){
+									$pattern = "/([^\[]+)\[\d+\]/i";
+									
+									if(preg_match($pattern, $element->name, $matches)){
+										//Only add if not found before
+										if(!in_array($matches[1], $foundElements)){
+											$foundElements[]	= $matches[1];
+											$value 				= strtolower(str_replace('_', ' ', $matches[1]));
+											$name				= ucfirst($value);
+										
+											//Check which option is the selected one
+											if($this->formSettings['split'] == $value){
+												$selected = 'selected';
+											}else{
+												$selected = '';
+											}
+											echo "<option value='$value' $selected>$name</option>";
+										}
+									}
+								}
+								?>
+							</select>
+						</div>
+
+						<div class="table_rights_wrapper">
+							<label class="label">Select roles with permission to VIEW the table, finetune it per column on the 'column settings' tab</label>
+							<div class="role_info">
+							<?php
+							foreach($viewRoles as $key=>$roleName){
+								if(in_array($key,array_keys((array)$this->tableSettings['view_right_roles']))){
+									$checked = 'checked';
+								}else{
+									$checked = '';
+								}
+								
+								echo "<label class='option-label'>";
+									echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[view_right_roles][$key]' value='$roleName' $checked>";
+									echo "$roleName";
+								echo "</label><br>";
+							}
+							?>
+							</div>
+						</div>
 						
-						echo "<label class='option-label'>";
-							echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[view_right_roles][$key]' value='$roleName' $checked>";
-							echo "$roleName";
-						echo "</label><br>";
-					}
-					?>
-					</div>
-				</div>
-				
-				<div class="table_rights_wrapper">
-					<label class="label">Select roles with permission to edit ALL form submission data</label>
-					<div class="role_info">
-					<?php
-					foreach($editRoles as $key=>$roleName){
-						if(in_array($key,array_keys((array)$this->tableSettings['edit_right_roles']))){
-							$checked = 'checked';
-						}else{
-							$checked = '';
-						}
-						echo "<label class='option-label'>";
-							echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[edit_right_roles][$key]' value='$roleName' $checked>";
-							echo " $roleName";
-						echo "</label><br>";
-					}
-					?>
+						<div class="table_rights_wrapper">
+							<label class="label">Select roles with permission to edit ALL form submission data</label>
+							<div class="role_info">
+							<?php
+							foreach($editRoles as $key=>$roleName){
+								if(in_array($key,array_keys((array)$this->tableSettings['edit_right_roles']))){
+									$checked = 'checked';
+								}else{
+									$checked = '';
+								}
+								echo "<label class='option-label'>";
+									echo "<input type='checkbox' class='formbuilder formfieldsetting' name='table_settings[edit_right_roles][$key]' value='$roleName' $checked>";
+									echo " $roleName";
+								echo "</label><br>";
+							}
+							?>
+							</div>
+						</div>
 					</div>
 				</div>
 			<?php
-			echo SIM\addSaveButton('submit_table_setting','Save table access settings');
+			echo SIM\addSaveButton('submit_table_setting','Save table settings');
 			?>
 			</form>
 		</div>
@@ -1346,6 +1355,12 @@ class DisplayFormResults extends DisplayForm{
 					$this->ownData = true;
 					break;
 				}
+			}
+
+			$shouldShow	= apply_filters('sim-formstable-should-show', true, $this);
+			if($shouldShow !== true){
+				echo $shouldShow;
+				return ob_get_clean().'</div>';
 			}
 			
 			?>

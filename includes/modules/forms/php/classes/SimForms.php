@@ -122,9 +122,12 @@ class SimForms{
 		$this->getAllFormElements('priority', $formId);
 		
 		//used to find the index of an element based on its unique id
- 		$this->formData->elementMapping	= [];
+ 		$this->formData->elementMapping				= [];
+		 $this->formData->elementMapping['type']	= [];
 		foreach($this->formElements as $index=>$element){			
-			$this->formData->elementMapping[$element->id]	= $index;
+			$this->formData->elementMapping['id'][$element->id]			= $index;
+			$this->formData->elementMapping['name'][$element->name] 	= $index;
+			$this->formData->elementMapping['type'][$element->type][] 	= $index;
 		}
 		
 		if(empty($this->formData->settings)){
@@ -293,12 +296,12 @@ class SimForms{
 			$this->getForm();
 		}
 		
-		$elementIndex	= $this->formData->elementMapping[$id];
 
-		if(!isset($this->formData->elementMapping[$id])){
+		if(!isset($this->formData->elementMapping['id'][$id])){
 			SIM\printArray("Element with id $id not found");
 			return false;
 		}
+		$elementIndex	= $this->formData->elementMapping['id'][$id];
 					
 		$element		= $this->formElements[$elementIndex];
 		
@@ -307,6 +310,67 @@ class SimForms{
 		}else{
 			return $element->$key;
 		}
+	}
+
+	/**
+	 * Finds an element by its name
+	 * 
+	 * @param	string	$name	The element name
+	 * @param	string	$key	A specific element attribute to return. Default empty
+	 * 
+	 * @return	object|array|string|false			The element or element property
+	 */
+	function getElementByName($name, $key=''){
+		if(empty($name)){
+			return false;
+		}
+		
+		//load if needed
+		if(empty($this->formData->elementMapping)){
+			$this->getForm();
+		}
+		
+
+		if(!isset($this->formData->elementMapping['name'][$name])){
+			SIM\printArray("Element with id $name not found");
+			return false;
+		}
+		$elementIndex	= $this->formData->elementMapping['name'][$name];
+					
+		$element		= $this->formElements[$elementIndex];
+		
+		if(empty($key)){
+			return $element;
+		}else{
+			return $element->$key;
+		}
+	}
+
+	/**
+	 * Finds an element by its type
+	 * 
+	 * @param	string	$name	The element type
+	 * @param	string	$key	A specific element attribute to return. Default empty
+	 * 
+	 * @return	object|array|string|false			The element or element property
+	 */
+	function getElementByType($type, $key=''){
+		if(empty($type)){
+			return false;
+		}
+		
+		//load if needed
+		if(empty($this->formData->elementMapping)){
+			$this->getForm();
+		}
+		
+
+		if(!isset($this->formData->elementMapping['type'][$type])){
+			SIM\printArray("Element with id $type not found");
+			return false;
+		}
+		
+		return $this->formData->elementMapping['type'][$type];
 	}
 
 	/**
@@ -335,7 +399,9 @@ class SimForms{
 		if(!empty($sortCol)){
 			$query .= " ORDER BY {$this->elTableName}.`$sortCol` ASC";
 		}
-		$this->formElements 		=  $wpdb->get_results($query);
+		$this->formElements 		=  apply_filters('sim-forms-elements', $wpdb->get_results($query), $this);
+
+
 	}
 
 	/**

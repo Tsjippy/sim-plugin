@@ -2,7 +2,7 @@
 namespace SIM\BOOKINGS;
 use SIM;
 
-const MODULE_VERSION		= '7.0.0';
+const MODULE_VERSION		= '7.0.1';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
 //run on module activation
@@ -14,9 +14,19 @@ add_action('sim_module_activated', function($moduleSlug, $options){
 }, 10, 2);
 
 add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
+	global $wpdb;
+
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $newOptions;
+	}
+
+	// enable forms and events modules
+	if(!SIM\getModuleOption('forms', 'enable')){
+		SIM\ADMIN\enableModule('forms');
+	}
+	if(!SIM\getModuleOption('events', 'enable')){
+		SIM\ADMIN\enableModule('events');
 	}
 
 	// Create the table
@@ -30,6 +40,15 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 			'Booking manager', 
 			get_role( 'contributor' )->capabilities
 		);
+	}
+
+	// Add columns to forms table
+	$forms	= new SIM\FORMS\SimForms();
+	$row = $wpdb->get_results(  "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+	WHERE table_name = '$forms->elTableName' AND column_name = 'booking_details'"  );
+
+	if(empty($row)){
+		$wpdb->query("ALTER TABLE $forms->elTableName ADD booking_details text NOT NULL");
 	}
 
 	scheduleTasks();
@@ -55,7 +74,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug, $modul
 	?>
 	<p>
 		This module is dependend on the events and forms module.<br>
-		It add the possibility to book something thrue a form.<br>
+		It adds the possibility to book something thrue a form.<br>
 		It will display a calendar showing available dates
 	</p>
 
@@ -87,18 +106,3 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 
 	return $dataHtml;
 }, 10, 3);
-
-add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings, $moduleName){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
-		return;
-	}
-
-	ob_start();
-	
-    ?>
-
-	<?php
-
-	return ob_get_clean();
-}, 10, 4);

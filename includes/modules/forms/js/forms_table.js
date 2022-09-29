@@ -277,9 +277,9 @@ async function processFormsTableInput(target){
 	let value			= FormFunctions.getFieldValue(target, cell, false);
 	let submissionId	= target.closest('tr').dataset.id;
 	let subId			= cell.dataset.subid;
-	
+
 	//Only update when needed
-	if (value != cell.dataset.oldvalue){
+	if (value != JSON.parse(cell.dataset.oldvalue)){
 		Main.showLoader(cell.firstChild);
 		
 		// Submit new value and receive the filtered value back
@@ -311,7 +311,6 @@ async function processFormsTableInput(target){
 			Main.displayMessage(response.message)
 		}
 	}else{
-		console.log(value)
 		cell.innerHTML = cell.dataset.oldtext;
 	}
 
@@ -401,6 +400,10 @@ document.addEventListener("click", event=>{
 	if(activeCell != null && td == null){
 		processFormsTableInput(activeCell);
 	}
+
+	if(target.matches('.permissins-rights-form')){
+		target.closest('div').querySelector('.permission-wrapper').classList.toggle('hidden');
+	}
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -433,7 +436,7 @@ document.addEventListener('change', event=>{
 		SimTableFunctions.positionTable();
 	}
 
-	if(target.closest('td.active') != null && target.type != 'file'){
+	if(target.closest('td.active') != null && target.type != 'file' && target.type != 'date'){
 		processFormsTableInput(target);
 	}
 

@@ -295,55 +295,31 @@ const resizeOb = new ResizeObserver(function(entries) {
 //show conditional fields based on on the element type
 function showCondionalFields(type, form){
 	hideConditionalfields(form);
-	
+
+	form.querySelectorAll(`.elementoption:not(.${type}, .reverse), .elementoption.not${type}`).forEach(el=>el.classList.replace('hide', 'hidden'));
+	form.querySelectorAll(`.elementoption.${type}`).forEach(el=>el.classList.replace('hidden', 'hide'));
+
 	switch(type) {
 		case 'button':
 		case 'formstep':
 		case 'label':
-			form.querySelector('[name="labeltext"]').classList.replace('hidden', 'hide');
 			form.querySelector('[name="labeltext"] .elementtype').textContent = type;
-			
-			form.querySelectorAll('.labelhide').forEach(function(el){
-				el.classList.replace('hide','hidden');
-			});
-			
 			break;
 		case 'info':
-			form.querySelector('[name="infotext"]').classList.replace('hidden', 'hide');
 			form.querySelector('[name="infotext"] .type').textContent = 'infobox';
 			break;
 		case 'radio':
 		case 'select':
 		case 'checkbox':
 		case 'datalist':
-			//show manual options field
-			form.querySelector('[name="valuelist"]').classList.replace('hidden', 'hide');
-			
-			//show option array select
-			form.querySelector('[name="select_options"]').classList.replace('hidden', 'hide');
-
-			//show selected option select
-			form.querySelector('[name="defaults"]').classList.replace('hidden', 'hide');
-			
-			if(type != 'select'){
-				form.querySelector('[name="multiple"]').classList.replace('hide','hidden');
-			}
-			
 			break;
 		case 'p':
-			form.querySelectorAll('[name="labeltext"],[name="wrap"],[name="multiple"],[name="defaults"],[name="elementoptions"]').forEach(div=>div.classList.add('hidden'))
-			form.querySelector('[name="infotext"]').classList.replace('hidden', 'hide');
 			form.querySelector('[name="infotext"] .type').textContent = 'Paragraph';
 			break;
 		case 'php':
-			form.querySelectorAll('[name="elementname"],[name="infotext"],[name="labeltext"],[name="wrap"],[name="multiple"],[name="defaults"],[name="elementoptions"]').forEach(div=>div.classList.add('hidden'))
-			form.querySelector('[name="functionname"]').classList.replace('hidden', 'hide');
 			break;
 		case 'file':
 		case 'image':
-			form.querySelectorAll('[name="functionname"],[name="infotext"],[name="labeltext"],[name="wrap"],[name="defaults"]').forEach(div=>div.classList.add('hidden'))
-			form.querySelector('[name="upload-options"]').classList.replace('hidden', 'hide');
-
 			form.querySelectorAll('.filetype').forEach(el=>{el.textContent = type;});
 			break;
 		default:
@@ -352,21 +328,7 @@ function showCondionalFields(type, form){
 }
 
 function hideConditionalfields(form){
-	//hide all fields that should be hidden
-	form.querySelectorAll('.hide').forEach(function(el){
-		el.classList.replace('hide', 'hidden');
-	});
-	
-	//show the default value selector
-	//form.querySelectorAll('.nice-select.formbuilder.flat').forEach(el=>{el.classList.replace('hidden', 'hide')});
-	//form.querySelector('select.formbuilder.flat').classList.replace('hidden', 'hide');
-	
-	//show the multiple
-	form.querySelector('[name="multiple"]').classList.replace('hidden', 'hide');
-
-	form.querySelectorAll('.labelhide').forEach(function(el){
-		el.classList.replace('hidden','hide');
-	});
+	form.querySelectorAll(`.elementoption.reverse`).forEach(el=>el.classList.replace('hidden', 'hide'));
 }
 
 function showOrHideControls(target){

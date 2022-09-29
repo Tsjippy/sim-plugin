@@ -3,11 +3,15 @@ namespace SIM\BOOKINGS;
 use SIM;
 
 class Bookings{
-    function __construct(){
+    function __construct($DisplayFormResults=''){
         global $wpdb;
 		$this->tableName		= $wpdb->prefix.'sim_bookings';
 
-        $this->forms            = new SIM\FORMS\DisplayFormResults();
+        if(getType($DisplayFormResults) == 'object' && get_class($DisplayFormResults) == "SIM\FORMS\DisplayFormResults"){
+            $this->forms            = $DisplayFormResults;
+        }else{
+            $this->forms            = new SIM\FORMS\DisplayFormResults();
+        }
 
         wp_enqueue_style( 'sim_bookings_style');
     }
@@ -39,34 +43,154 @@ class Bookings{
 		maybe_create_table($this->tableName, $sql );
 	}
 
-    function getNavigator($date){
-        $minusMonth		= strtotime('-1 month', $date);
+    function getNavigator($date, $plus=2){
+        if($plus == 2){
+            $min    = 1;
+        }else{
+            $min    = 2;
+        }
+        $minusMonth		= strtotime("-$min month", $date);
 		$minusMonthStr	= date('m', $minusMonth);
 		$minusYearStr	= date('Y', $minusMonth);
-		$plusMonth		= strtotime('+2 month', $date);
+		$plusMonth		= strtotime("+$plus month", $date);
 		$plusMonthStr	= date('m', $plusMonth);
 		$plusYearStr	= date('Y', $plusMonth);
 
         $hidden         = '';
-        if($minusMonth < $date){
+        if(date('ym', $minusMonth) < date('ym')){
             $hidden = 'hidden';
         }
         ob_start();
         ?>
-        <div class="navigator">
+        <div class="navigator" data-month='<?php echo date('m', $date);?>' data-year='<?php echo date('Y', $date);?>'>
             <div class="prev <?php echo $hidden;?>">
-                <a href="#" class="prevnext" data-month="<?php echo $minusMonthStr;?>" data-year="<?php echo $minusYearStr;?>">
+                <a class="prevnext" data-month="<?php echo $minusMonthStr;?>" data-year="<?php echo $minusYearStr;?>">
                     <span><</span> <?php echo date('F', $minusMonth);?>
                 </a>
             </div>
             <div class="next">
-                <a href="#" class="prevnext" data-month="<?php echo $plusMonthStr;?>" data-year="<?php echo $plusYearStr;?>">
+                <a class="prevnext" data-month="<?php echo $plusMonthStr;?>" data-year="<?php echo $plusYearStr;?>">
                     <?php echo date('F', $plusMonth);?> <span>></span>
                 </a>
             </div>
         </div>
 
         <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Displays the booking calendars
+     * @param   string      $subject    The subject of the calendar
+     * @param   int         $date       The date to retrieve the calendar for
+     * @param   boolean     $isAdmin    Wheter to show for admin puposes
+     * @param   boolean     $hidden     Wheter to hide the calendar by default
+     * 
+     * @return  string                  The html
+     */
+    function modalContent($subject, $date, $isAdmin = false, $hidden = false){
+		$monthStr		= date('m', $date);
+		$yearStr		= date('Y', $date);
+        $cleanSubject   = trim(str_replace(' ', '_', $subject));
+
+        ob_start();
+
+        ?>
+        <div class="bookings-wrap <?php if($hidden){echo 'hidden';}?>" data-date="<?php echo "$yearStr-$monthStr";?>" data-subject="<?php echo $cleanSubject;?>">
+            <div class="booking overview">
+                <h4 style='text-align:center;'><?php echo $subject;?> Calendar</h4>
+                
+                <?php 
+                if(!$isAdmin){
+                    echo $this->showSelectedModalDates();
+                }
+                ?>
+                <div class="navigators">
+                    <?php
+                    echo $this->getNavigator($date);
+                    ?>
+                </div>
+                <div class="calendar table">
+                    <?php
+                    echo $this->monthCalendar($subject, $date);
+                    echo $this->monthCalendar($subject, strtotime('+1 month', $date));
+                    ?>
+                </div>
+                <?php 
+                if(!$isAdmin){
+                    ?>
+                    <div class="actions">
+                        <button class="button action reset disabled" type='button'>Reset</button>
+                        <button class="button action confirm disabled" type='button'>Confirm</button>
+                    </div>
+                    <?php
+                }
+                ?>
+            </div>
+            <?php 
+            if($isAdmin){
+                ?>
+                <div class="booking details-wrapper">
+                    <?php
+                    $this->detailHtml();
+                    ?>
+                </div>
+                <?php
+            }
+            ?>
+        </div>
+        
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Displays the selected dates
+     */
+    function showSelectedModalDates(){
+        ob_start();
+
+        ?>
+        <div class="booking-date-wrapper">
+            <div class="booking-dates-input-wrapper">
+                <div class="_h0i9fjw">
+                    <div class="booking-date-label-wrapper">
+                        <label class="booking-date-label" for="booking-startdate">
+                            <div class="booking-date-label-text">Arrival</div>
+                            <div dir="ltr">
+                                <div class="booking-date-label-input-wrapper">
+                                    <input class="booking-date-label-input booking-startdate" placeholder="Select a date" type="text" value="" disabled>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div></div>
+                    <div class="booking-date-label-wrapper disabled enddate">
+                        <label class="booking-date-label" for="booking-enddate">
+                            <div class="booking-date-label-text">Departure</div>
+                            <div dir="ltr">
+                                <div class="booking-date-label-input-wrapper">
+                                    <input class="booking-date-label-input booking-enddate" placeholder="Select a date" type="text" value="" disabled>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions-wrapper">
+                <div>
+                    <div class="sewcpu6 dir dir-ltr" style="--spacingBottom:0;">
+                        <div class="s1bh1tge dir dir-ltr">
+                            <div class="_uxnsba" data-testid="availability-calendar-date-range">Please select your arrival and departure date</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <?php
+
         return ob_get_clean();
     }
 
@@ -93,8 +217,6 @@ class Bookings{
 		}
 
         $date			= strtotime($dateStr);
-		$monthStr		= date('m', $date);
-		$yearStr		= date('Y', $date);
 
         ob_start();
         $cleanSubject    = trim(str_replace(' ', '_', $subject));
@@ -103,67 +225,7 @@ class Bookings{
         <div name='<?php echo $cleanSubject;?>-modal' class="booking modal hidden">
 			<div class="modal-content">
 				<span class="close">&times;</span>
-                <div class="bookings-wrap" data-date="<?php echo "$yearStr-$monthStr";?>" data-subject="<?php echo $cleanSubject;?>">
-                    <h4 style='text-align:center;'><?php echo $subject;?> Calendar</h4>
-                    <div class="booking-date-wrapper">
-                        <div class="booking-dates-input-wrapper">
-                            <div class="_h0i9fjw">
-                                <div class="booking-date-label-wrapper">
-                                    <label class="booking-date-label" for="booking-startdate">
-                                        <div class="booking-date-label-text">Arrival</div>
-                                        <div dir="ltr">
-                                            <div class="booking-date-label-input-wrapper">
-                                                <input class="booking-date-label-input booking-startdate" placeholder="Select a date" type="text" value="" disabled>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                                <div></div>
-                                <div class="booking-date-label-wrapper disabled enddate">
-                                    <label class="booking-date-label" for="booking-enddate">
-                                        <div class="booking-date-label-text">Departure</div>
-                                        <div dir="ltr">
-                                            <div class="booking-date-label-input-wrapper">
-                                                <input class="booking-date-label-input booking-enddate" placeholder="Select a date" type="text" value="" disabled>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="instructions-wrapper">
-                            <div>
-                                <div class="sewcpu6 dir dir-ltr" style="--spacingBottom:0;">
-                                    <div class="s1bh1tge dir dir-ltr">
-                                        <div class="_uxnsba" data-testid="availability-calendar-date-range">Please select your arrival and departure date</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="booking overview">
-                        <?php
-                        echo $this->getNavigator($date);
-                        ?>
-                        <div class="calendar table">
-                            <?php
-                            echo $this->monthCalendar($subject, $date);
-                            echo $this->monthCalendar($subject, strtotime('+1 month', $date));
-                            ?>
-                        </div>
-                        <div class="actions">
-                            <button class="button action reset disabled" type='button'>Reset</button>
-                            <button class="button action confirm disabled" type='button'>Confirm</button>
-                        </div>
-                    </div>
-                    <div class="booking details-wrapper">
-                        <?php
-                        $this->detailHtml();
-                        ?>
-                    </div>
-                </div>
+                <?php echo $this->modalContent($subject, $date);?>
             </div>
 		</div>
         <?php
@@ -210,15 +272,17 @@ class Bookings{
                     if($workingMonth != $month){
                         $calendarRows .=  "<dt class='empty'></dt>";
                     }else{
+                        $data   = '';
                         if(date('md', $workingDate) < date('md', $curDate)){
                             $class	.= 'unavailable';
-                        }elseif(!in_array($workingDateStr, $this->unavailable)){
+                        }elseif(!isset($this->unavailable[$workingDateStr])){
                             $class	.= 'available';
                         }else{
                             $class	.= 'selected';
+                            $data   .= "data-bookingid='{$this->unavailable[$workingDateStr]}'";
                         }
                         
-                        $calendarRows .=  "<dt class='calendar day $class' data-date='".date('d-m-Y', $workingDate)."' data-isodate='".date('Y-m-d', $workingDate)."'>";
+                        $calendarRows .=  "<dt class='calendar day $class' data-date='".date('d-m-Y', $workingDate)."' data-isodate='".date('Y-m-d', $workingDate)."' $data>";
                             $calendarRows	.= "<span class='day-nr'>$workingDay</span>";
                         $calendarRows	.= "</dt>";
                     }
@@ -272,89 +336,93 @@ class Bookings{
         foreach($this->bookings as $booking){
             // Retrieve booking details
             $this->forms->getSubmissionData(null, $booking->submission_id);
-            $this->forms->submissionData;
-
-            $booker     = maybe_unserialize($booking->user_details);
-
-            // Booker is an user
-            if(is_numeric($booker)){
-                $user   = get_userdata($booker);
-                $url	= SIM\maybeGetUserPageUrl($booker);
-                $email	= $user->user_email;
-                $tel	= get_user_meta($booker, 'phonenumbers', true);
-    
-                $name	= "<a href='$url'>{$user->display_name}</a><br>";
-                $email	= "<a href='mailto:$email'>$email</a>";
-                
-                $phone  = '';
-                if(is_array($tel)){
-                    foreach($tel as $p){
-                        $phone	.="<a href='https://signal.me/#p/$p'>$p</a><br>";
-                    }
-                }
-            }else{
-                $name  = '';
-                if(!empty($booker['name'])){
-                    $name  = $booker['name'];
-                }
-
-                $email  = '';
-                if(!empty($booker['email'])){
-                    $email  = $booker['email'];
-                }
-
-                $phone  = '';
-                if(!empty($booker['phone'])){
-                    $phone  = $booker['phone'];
-                }
-            }
-
-            $adults = '';
-            $kids   = '';
-            if(is_numeric($this->forms->submissionData->adultcount)){
-                $adults = $this->forms->submissionData->adultcount;
-            }
-            if(is_numeric($this->forms->submissionData->childcount)){
-                $kids   = $this->forms->submissionData->childcount;
-            }
+            $bookingData    = $this->forms->formResults;            
 
             ?>
-            <div class='booking-details-wrapper hidden' data-id='<?php echo $booking->id;?>'>
+            <div class='booking-detail-wrapper hidden' data-bookingid='<?php echo $booking->id;?>'>
                 <h6 class='booking-title'>
                     Booking details
                 </h6>
 
                 <article class='booking'>
-                    <h4 class='booking-title'><?php echo $name;?></h4>
-                    <div class='booking-header'>
-                        <div class='booking-date'>
-                            <img src='<?php echo $baseUrl;?>/date.png' loading='lazy' alt='date' class='booking-icon'>
-                            <?php echo date('d-m-Y', strtotime($booking->startdate)).' - '.date('d-m-Y',strtotime($booking->enddate));?>
-                        </div>
-                    </div>
+                    <h4 class='booking-title'><?php echo $bookingData['name'];?></h4>
                     <div class='booking-detail'>
-                        <div class='email'>
-                            <img src='<?php echo $baseUrl;?>/email.png' loading='lazy' alt='email' class='booking-icon'>
-                            <?php echo $email;?>
-                        </div>
-                        
-                        <div class='phone'>
-                            
-                            <img src='<?php echo $baseUrl;?>/phone.png' alt='phone' loading='lazy' class='booking-icon'>
-                            <div>
-                                <?php echo $phone;?>
-                            </div>
-                        </div>
+                        <table data-formid='<?php echo $this->forms->formResults['formid'];?>' style='width: unset;'>
+                            <thead></thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <img src='<?php echo $baseUrl;?>/date.png' loading='lazy' alt='date' class='booking-icon'>
+                                    </td>
+                                    <td class='booking-data-wrapper edit_forms_table'>
+                                        <table data-formid='<?php echo $this->forms->formResults['formid'];?>' style='margin-bottom: 0px; width:unset;'>
+                                            <tr data-id='<?php echo $this->forms->formResults['id'];?>'>
+                                                <td data-id='booking-startdate' data-oldvalue='<?php echo json_encode($booking->startdate);?>' class='edit_forms_table'>
+                                                    <?php echo date('d-M-Y', strtotime($booking->startdate));?>
+                                                </td>
+                                            </tr>
+                                            <tr data-id='<?php echo $this->forms->formResults['id'];?>'>
+                                                <td data-id='booking-enddate' data-oldvalue='<?php echo json_encode($booking->enddate);?>' class='edit_forms_table'>
+                                                    <?php echo date('d-M-Y',strtotime($booking->enddate));?>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        
+                                    </td>
+                                </tr>
+                                <?php
+                                    foreach($this->forms->columnSettings as $key=>$setting){
+                                        if($setting['show'] == 'hide' || !is_numeric($key) || in_array($setting['name'], ['formid', 'formurl', '_wpnonce', 'id', 'submissiontime', 'edittime', 'booking-startdate', 'booking-enddate', 'name'])){
+                                            continue;
+                                        }
 
-                        <div class='adults'>
-                            <img src='<?php echo $baseUrl;?>/adults.png' alt='adults' loading='lazy' class='booking-icon'>
-                            <?php echo $adults;?>
-                        </div>
+                                        $index  = $setting['nice_name'];
+                                        $data   = $bookingData[$setting['name']];
+                                        $transformedData   = $this->forms->transformInputData($data, $index);
+                                        echo "<tr class='$index' data-id='{$this->forms->formResults['id']}'>";
+                                            if(file_exists(SIM\urlToPath("$baseUrl/$index.png"))){
+                                                echo "<td><img src='$baseUrl/$index.png' loading='lazy' alt='$index' class='booking-icon'></td>";
+                                            }else{
+                                                echo "<td>$index:</td>";
+                                            }
+                                            echo "<td class='booking-data-wrapper edit_forms_table' data-id='$index' data-oldvalue='".json_encode($data)."'>";
+                                                echo $transformedData;
+                                            echo "</td>";
+                                        echo "</tr>";
+                                    }
 
-                        <div class='kids'>
-                            <img src='<?php echo $baseUrl;?>/kids.png' alt='kids' loading='lazy' class='booking-icon'>
-                            <?php echo $kids;?>
-                        </div>
+                                    //if there are actions
+                                    if(!empty($this->forms->formSettings['actions'])){
+                                        //loop over all the actions
+                                        $buttonsHtml	= [];
+                                        $buttons		= '';
+                                        foreach($this->forms->formSettings['actions'] as $action){
+                                            if($action == 'archive' && $this->showArchived == 'true' && $this->forms->submissionData->archived){
+                                                $action = 'unarchive';
+                                            }
+                                            $buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
+                                        }
+                                        $buttonsHtml = apply_filters('sim_form_actions', $buttonsHtml, $bookingData, $index);
+                                        
+                                        //we have te html now, check for which one we have permission
+                                        foreach($buttonsHtml as $action=>$button){
+                                            if(
+                                                $this->tableEditPermissions || 																			//if we are allowed to do all actions
+                                                $bookingData['userid'] == $this->user->ID || 															//or this is our own entry
+                                                array_intersect($this->userRoles, (array)$this->forms->columnSettings[$action]['edit_right_roles'])			//or we have permission for this specific button
+                                            ){
+                                                $buttons .= $button;
+                                            }
+                                        }
+                                        if(!empty($buttons)){
+                                            echo "<tr data-id='{$this->forms->formResults['id']}'>";
+                                                echo "<td>$buttons</td>";
+                                            echo "</tr>";
+                                        }
+                                    }
+                                    ?>
+                            </tbody>
+                        </table>
                     </div>
                 </article>
             </div>
@@ -365,21 +433,47 @@ class Bookings{
     /**
      * Insert a new booking
      */
-    function insertBooking($startdate, $enddate, $subject, $submissionId, $userDetails){
+    function insertBooking($startDate, $endDate, $subject, $submissionId){
         global $wpdb;
 
-        $wpdb->insert(
-            $this->tableName, 
-            array(
-                'startdate'			=> $startdate,
-                'enddate'			=> $enddate,
-                'subject'			=> $subject,
-                'submission_id'	    => $submissionId,
-                'user_details'		=> $userDetails
-            )
-        );
+        // First check if a booking on these dates doesn't exist
+        $query	    = "SELECT * FROM $this->tableName WHERE ('$startDate' BETWEEN startdate and enddate) OR ('$endDate' BETWEEN startdate and enddate) AND subject = '$subject' ";
+
+        //sort on startdate
+		$query	.= " ORDER BY `startdate`, `starttime` ASC";
+
+		if(empty($wpdb->get_results($query))){
+            // Insert in db
+            $wpdb->insert(
+                $this->tableName, 
+                array(
+                    'startdate'			=> $startDate,
+                    'enddate'			=> $endDate,
+                    'subject'			=> $subject,
+                    'submission_id'	    => $submissionId
+                )
+            );
+        }else{
+            return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
+        }
     }
 
+    /**
+     * Update an existing booking
+     * 
+     * @param   int     $bookingId  The booking id
+     * @param   array   $values     The values to update
+     */
+    function updateBooking($bookingId, $values){
+        global $wpdb;
+
+        $wpdb->update($this->tableName, 
+            $values,
+            array(
+                'id'		=> $bookingId
+            ),
+        );
+    }
     /**
      * Retrieve the bookings for a certain month
      * 
@@ -411,9 +505,19 @@ class Bookings{
             $last       = strtotime($booking->enddate);
 
             while( $current <= $last ) {
-                $this->unavailable[]    = date('Y-m-d', $current);
+                $this->unavailable[date('Y-m-d', $current)] = $booking->id;
                 $current                = strtotime('+1 day', $current);
             }
         }
+    }
+
+
+    /** Get a booking by submission id */
+    function getBookingBySubmission($id){
+        global $wpdb;
+
+		$query	    = "SELECT * FROM $this->tableName WHERE submission_id=$id ";
+
+		return  $wpdb->get_results($query)[0];
     }
 }

@@ -56,7 +56,7 @@ function saveEmails(){
     update_option('sim_modules', $Modules);
 }
 
-function enableModule($slug, $options){
+function enableModule($slug, $options=['enable'=>'on']){
     global $Modules;
     global $moduleDirs;
 
