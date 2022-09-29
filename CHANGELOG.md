@@ -7,7 +7,6 @@
 ### Changed
 
 ### Fixed
-- bug in booking date confimation
 
 ## [2.19.2] - 2022-09-29
 
