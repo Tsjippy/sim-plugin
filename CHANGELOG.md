@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.19.5] - 2022-09-29
+
+
+### Fixed
 - show future months details too
 
 ## [2.19.4] - 2022-09-29
