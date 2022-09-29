@@ -8,6 +8,7 @@
 
 ### Fixed
 - edit bookings
+- do not close modal when selecting
 
 ## [2.19.0] - 2022-09-27
 
