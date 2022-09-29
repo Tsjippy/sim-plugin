@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.19.2] - 2022-09-29
+
+
+### Fixed
 - edit bookings
 - do not close modal when selecting
 - issue whith wrong booking date
