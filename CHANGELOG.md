@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- display issues
 
 ## [2.19.3] - 2022-09-29
 
