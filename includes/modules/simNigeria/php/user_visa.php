@@ -289,7 +289,7 @@ add_filter('sim_user_page_dropdown', function($genericInfoRoles){
 	Add a visa Info page to user management screen
 */
 add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $user, $userAge){
-	if((!array_intersect(["visainfo"], $user->roles ) && !$showCurrentUserData) || $userAge < 18){
+	if((!array_intersect(["visainfo"], wp_get_current_user()->roles ) && !$showCurrentUserData) || $userAge < 18){
 		return $filteredHtml;
 	}
 
@@ -304,25 +304,14 @@ add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $
 	if( isset($_POST['export_visa_info'])){
 		exportVisaExcel();
 	}
-
-	//only active if not own data and has not the user management role
-	if(!array_intersect(["usermanagement"], $user->roles ) && !$showCurrentUserData){
-		$active = "active";
-		$class = '';
-		$tabclass = 'hidden';
-	}else{
-		$active = "";
-		$class = 'hidden';
-		$tabclass = '';
-	}
 	
 	//Add an extra tab button on position 3
-	$filteredHtml['tabs']['Immigration']	= "<li class='tablink $active $tabclass' id='show_visa_info' data-target='visa_info'>Immigration</li>";
+	$filteredHtml['tabs']['Immigration']	= "<li class='tablink' id='show_visa_info' data-target='visa_info'>Immigration</li>";
 	
 	//Content
 	ob_start();
 	?>
-	<div id='visa_info' class='tabcontent <?php echo $class;?>'>
+	<div id='visa_info' class='tabcontent hidden'>
 		<?php
 		echo visaPage(true);
 	

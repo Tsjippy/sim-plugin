@@ -3,7 +3,8 @@ namespace SIM;
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
-
+    $test   = maybe_unserialize(get_option('sidebars_widgets'));
+    echo '';
 });
 
 // turn off incorrect error on localhost
