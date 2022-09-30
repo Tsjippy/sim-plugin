@@ -13,6 +13,8 @@
  on big screens
 - mark new ministry as pending
 - better modal layouts
+- bug when booking with overlapping
+end and startdates
 
 ## [2.19.8] - 2022-09-30
 
