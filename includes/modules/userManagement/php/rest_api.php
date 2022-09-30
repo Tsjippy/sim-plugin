@@ -119,12 +119,17 @@ function disableUserAccount(){
 function addMinistry(){	
     //Get the post data
     $name = sanitize_text_field($_POST["location_name"]);
+
+	$status	= 'pending';
+	if(wp_get_current_user()->has_cap( 'publish_post' )){
+		$status	= 'publish';
+	}
     
     //Build the ministry page
     $ministryPage = array(
         'post_title'    => ucfirst($name),
         'post_content'  => '',
-        'post_status'   => 'publish',
+        'post_status'   => $status,
         'post_type'	    => 'location',
         'post_author'	=> get_current_user_id(),
     );
