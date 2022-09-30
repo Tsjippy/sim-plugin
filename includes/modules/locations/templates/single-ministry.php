@@ -124,7 +124,7 @@ function getLocationEmployees($post){
 	//Loop over all users to see if they work here
 	$users 			= get_users('orderby=display_name');
 	
-	$html 			= '';
+	$html 			= "";
 
 	foreach($users as $user){
 		$userLocations 	= (array)get_user_meta( $user->ID, "jobs", true);
@@ -137,7 +137,7 @@ function getLocationEmployees($post){
 			$privacyPreference	= (array)get_user_meta( $user->ID, 'privacy_preference', true );
 			
 			if(!isset($privacyPreference['hide_ministry'])){
-				$html .=	"<div class='person-wrapper'>";
+				$html .=	"<div class='person-wrapper' style='margin: 0px 10px 10px 0px;display:flex;width:25%;'>";
 					if(!isset($privacyPreference['hide_profile_picture'])){
 						$html .= SIM\displayProfilePicture($user->ID);
 						$style = "";
@@ -147,14 +147,18 @@ function getLocationEmployees($post){
 					
 					$pageUrl = "<a class='user_link' href='$userPageUrl'>$user->display_name</a>";
 					foreach($intersect as $postId){
-						$html .= "   <div $style>$pageUrl ({$userLocations[$postId]})</div>";
+						$html .= "   <div $style>$pageUrl <br>({$userLocations[$postId]})</div>";
 					}
 				$html .= '</div>';
 			}					
 		}
 	}
+	
+
 	if(empty($html)){
 		$html .= "No one dares to say they are working here!";
+	}else{
+		$html	= "<div class='employee-gallery' style='display:flex;flex-wrap:wrap'>$html</div>";
 	}
 
 	$html 	= "<p style='padding:10px;'><strong>People working at $post->post_title are:</strong><br><br>$html</p>";
