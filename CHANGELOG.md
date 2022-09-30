@@ -6,6 +6,7 @@
 - min and max to edit booking dates inputs
 
 ### Changed
+- cleaner form settings form
 
 ### Fixed
 - load shortcode data over ajax
