@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- min and max to edit booking dates inputs
 
 ### Changed
 
