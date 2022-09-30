@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- make next years months available
 
 ## [2.19.6] - 2022-09-30
 
