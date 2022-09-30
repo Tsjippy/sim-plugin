@@ -93,7 +93,7 @@ function storeDates(target){
     reset(modal);
 }
 
-function showDateSelectorModal(target){ 
+function daySelected(target){ 
     let modal   = target.closest('.modal');
 
     if(modal == null){
@@ -125,7 +125,7 @@ function showDateSelectorModal(target){
             if(dts[i] == target){
                 skip = true;
             // until we encounter another booked date
-            }else if(skip && dts[i].matches('.booked')){
+            }else if(skip && dts[i].matches('.booked:not(.available)')){
                 skip = false;
             }
 
@@ -140,7 +140,7 @@ function showDateSelectorModal(target){
         target.classList.add('enddate');
 
         // make other dates available again
-        target.closest('.calendar.table').querySelectorAll('.available.booked').forEach(dt=>dt.classList.remove('booked'));
+        target.closest('.calendar.table').querySelectorAll('.available.booked:not(.enddate, .startdate)').forEach(dt=>dt.classList.remove('booked'));
 
         // color the dates between start and end
         let dts     = target.closest('.calendar.table').querySelectorAll('dt.calendar.day:not(.head)');
@@ -210,7 +210,7 @@ document.addEventListener('click', (ev) => {
     }
 
     if(target.matches('.bookings-wrap .available:not(.unavailable)')){
-        showDateSelectorModal(target);
+        daySelected(target);
     }
 
     if(target.matches('.form.table-wrapper .booked')){
