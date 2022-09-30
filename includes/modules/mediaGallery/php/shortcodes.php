@@ -24,6 +24,22 @@ function showMediaGallery($atts){
     ) );
 
     ?>
+    <div id="medialoaderwrapper" class="hidden">
+        <img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' alt=''>
+        <div>Loading more...</div>
+    </div>
+
+    <div class="mediawrapper">
+        <?php
+        $mediaHtml  = loadMedia(20, 1, false, ['image', 'video', 'audio'], $a['categories']);
+        if($mediaHtml){
+            echo $mediaHtml;
+        }else{
+            echo "No media found";
+        }
+        ?>
+    </div>
+
     <div class='mediabuttons'>
         <input type='hidden' id='paged' value=1>
 
@@ -62,6 +78,7 @@ function showMediaGallery($atts){
         <input class="searchtext" type="text" placeholder="Search..">
         <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" loading='lazy' alt="magnifier">
     </div>
+
     <div class='categories <?php if(!empty($a['categories'])){ echo 'hidden'; }?>'>
         Categories: 
         <?php
@@ -76,21 +93,6 @@ function showMediaGallery($atts){
                 <?php echo $cat->name;?>
             </label>
             <?php
-        }
-        ?>
-    </div>
-    <div id="medialoaderwrapper" class="hidden">
-        <img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' alt=''>
-        <div>Loading more...</div>
-    </div>
-
-    <div class="mediawrapper">
-        <?php
-        $mediaHtml  = loadMedia(20, 1, false, ['image', 'video', 'audio'], $a['categories']);
-        if($mediaHtml){
-            echo $mediaHtml;
-        }else{
-            echo "No media found";
         }
         ?>
     </div>

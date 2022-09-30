@@ -28,11 +28,11 @@ if(!isset($skipHeader) || !$skipHeader){
 				the_post();
 				include(__DIR__.'/content.php');
 
+				// Show any projects linked to this
+                projectList();
+
                 // Show the people working here
                 echo ministryDescription();
-
-                // Show any projects linked to this
-                projectList();
 			endwhile;
 			
 			?> <nav id='post_navigation'>
@@ -66,13 +66,14 @@ if(!isset($skipHeader) || !$skipHeader){
 function ministryDescription(){
     $postId     = get_the_ID();
 	$html		= "";
-	//Get the post id of the page the shortcode is on
+
+	// Show sub ministry gallery
 	$ministry	= get_the_title($postId);
 	$args		= array(
 		'post_parent' => $postId, // The parent id.
 		'post_type'   => 'page',
 		'post_status' => 'publish',
-		'order'          => 'ASC',
+		'order'       => 'ASC',
 	);
 	$childPages 		= get_children( $args, ARRAY_A);
 	$childPageHtml 	= "";
@@ -84,7 +85,6 @@ function ministryDescription(){
 		$childPageHtml .= "</ul>";
 	}		
 	
-	$html		.= getLocationEmployees($postId);
 	$latitude 	= get_post_meta($postId,'geo_latitude',true);
 	$longitude 	= get_post_meta($postId,'geo_longitude',true);
 	if (!empty($latitude) && !empty($longitude)){
@@ -94,6 +94,9 @@ function ministryDescription(){
 	if(!empty($childPageHtml)){
 		$html = $childPageHtml."<br><br>".$html; 
 	}
+
+	$html	   .= getLocationEmployees($postId);
+
 	return $html;	
 }
 
@@ -134,18 +137,19 @@ function getLocationEmployees($post){
 			$privacyPreference	= (array)get_user_meta( $user->ID, 'privacy_preference', true );
 			
 			if(!isset($privacyPreference['hide_ministry'])){
-				if(!isset($privacyPreference['hide_profile_picture'])){
-					$html .= SIM\displayProfilePicture($user->ID);
-					$style = "";
-				}else{
-					$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';
-				}
-				
-				$pageUrl = "<a class='user_link' href='$userPageUrl'>$user->display_name</a>";
-				foreach($intersect as $postId){
-					$html .= "   <div $style>$pageUrl ({$userLocations[$postId]})</div>";
-				}
-				$html .= '<br>';
+				$html .=	"<div class='person-wrapper'>";
+					if(!isset($privacyPreference['hide_profile_picture'])){
+						$html .= SIM\displayProfilePicture($user->ID);
+						$style = "";
+					}else{
+						$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';
+					}
+					
+					$pageUrl = "<a class='user_link' href='$userPageUrl'>$user->display_name</a>";
+					foreach($intersect as $postId){
+						$html .= "   <div $style>$pageUrl ({$userLocations[$postId]})</div>";
+					}
+				$html .= '</div>';
 			}					
 		}
 	}

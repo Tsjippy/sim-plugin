@@ -19,7 +19,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
         'html'  =>  ob_get_clean()
       );  
     return $formFields;
-},10,2);
+}, 10, 2);
 
 add_action( 'edit_attachment', function($attachmentId){
     if ( isset( $_REQUEST['attachments'][$attachmentId]['gallery_visibility'] ) ) {
