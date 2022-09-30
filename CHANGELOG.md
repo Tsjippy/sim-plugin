@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bugs in bookings module
 
 ## [2.19.8] - 2022-09-30
 
