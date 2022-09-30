@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- people gallery display
 
 ## [2.19.7] - 2022-09-30
 
