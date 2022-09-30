@@ -276,7 +276,7 @@ class Bookings{
                     }else{
                         $data   = '';
                         // date is in the past
-                        if(date('md', $workingDate) < date('md', $curDate)){
+                        if(date('Ymd', $workingDate) < date('Ymd', $curDate)){
                             $class	.= 'unavailable';
                         // not booked
                         }elseif(!isset($this->unavailable[$workingDateStr])){

@@ -35,6 +35,10 @@ add_action('sim-after-formbuilder-element-options', function($element){
 
 // add extra elements for displaying in results table
 add_filter('sim-forms-elements', function($elements, $displayFormResults){
+    if(!in_array(get_class($displayFormResults), ["SIM\FORMS\DisplayFormResults", "SIM\FORMS\SubmitForm"])){
+        return $elements;
+    }
+
     // Check if it has an booking selector
     $hasBookingSelector = false;
 
