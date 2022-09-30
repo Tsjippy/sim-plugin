@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.19.9] - 2022-09-30
+
+
+### Changed
 - ministry list on generics form
 
 ### Fixed
