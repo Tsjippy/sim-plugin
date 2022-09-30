@@ -35,10 +35,6 @@ add_action('sim-after-formbuilder-element-options', function($element){
 
 // add extra elements for displaying in results table
 add_filter('sim-forms-elements', function($elements, $displayFormResults){
-    if(get_class($displayFormResults) != "SIM\FORMS\DisplayFormResults"){
-        return $elements;
-    }
-
     // Check if it has an booking selector
     $hasBookingSelector = false;
 
@@ -246,4 +242,38 @@ add_action('sim-forms-submission-updated', function($formTable, $fieldName, $new
     }
 
     $bookings->updateBooking($booking->id, [$fieldName => $newValue]);
+}, 10, 3);
+
+// add a min and a max to booking dates on edit
+add_filter('sim-forms-element-html', function($html, $element, $displayFormResults){
+    global $wpdb;
+
+    if($element->name == 'booking-enddate'){
+        // Get the subject
+        $subject    = $displayFormResults->formResults[$displayFormResults->formElements[$displayFormResults->getElementByType('booking_selector')[0]]->name];
+        
+        // get the first event after this one
+        $query  = "SELECT startdate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND startdate > '{$displayFormResults->formResults[$element->name]}' ORDER BY startdate LIMIT 1";
+        $max    = $wpdb->get_var($query);
+
+        if(!empty($max)){
+            $max    = "max='$max'";
+        }
+
+        return str_replace('>', "min='{$displayFormResults->formResults['booking-startdate']}' $max>", $html);
+    }elseif($element->name == 'booking-startdate'){
+        // Get the subject
+        $subject    = $displayFormResults->formResults[$displayFormResults->formElements[$displayFormResults->getElementByType('booking_selector')[0]]->name];
+
+        // get the first event before this one
+        $query  = "SELECT enddate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND enddate <= '{$displayFormResults->formResults[$element->name]}' ORDER BY enddate LIMIT 1";
+        $min    = $wpdb->get_var($query);
+
+        if(!empty($min)){
+            $min    = "min='$min'";
+        }
+
+        return str_replace('>', "$min max='{$displayFormResults->formResults['booking-enddate']}'>", $html);
+    }
+    return $html;
 }, 10, 3);
