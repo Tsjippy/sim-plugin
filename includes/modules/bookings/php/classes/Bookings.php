@@ -404,7 +404,7 @@ class Bookings{
                                             if(file_exists(SIM\urlToPath("$baseUrl/$index.png"))){
                                                 echo "<td><img src='$baseUrl/$index.png' loading='lazy' alt='{$setting['nice_name']}' class='booking-icon'></td>";
                                             }else{
-                                                echo "<td>$index:</td>";
+                                                echo "<td>{$setting['nice_name']}:</td>";
                                             }
                                             echo "<td class='booking-data-wrapper edit_forms_table' data-id='$index' data-oldvalue='".json_encode($data)."'>";
                                                 echo $transformedData;

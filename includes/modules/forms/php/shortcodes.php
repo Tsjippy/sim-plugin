@@ -126,8 +126,7 @@ add_shortcode( 'formbuilder', function($atts){
 });
 
 add_shortcode( 'formresults', function($atts){
-	$displayFormResults = new DisplayFormResults();
-    $displayFormResults->processAtts($atts);
+	$displayFormResults = new DisplayFormResults($atts);
 	return $displayFormResults->showFormresultsTable();
 });
 

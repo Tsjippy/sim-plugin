@@ -221,7 +221,7 @@ class DisplayFormResults extends DisplayForm{
 			$output		= $string;	
 			//open mail programm on click on email
 			if (strpos($string, '@') !== false) {
-				$output 	= "<a href='mailto:$string'>Send email</a>";
+				$output 	= "<a href='mailto:$string'>$string</a>";
 			//Convert link to clickable link if not already
 			}elseif(
 				(

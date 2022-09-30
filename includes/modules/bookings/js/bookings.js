@@ -214,11 +214,10 @@ document.addEventListener('click', (ev) => {
     }
 
     if(target.matches('.form.table-wrapper .booked')){
+        // Hide others
+        target.closest('.bookings-wrap').querySelectorAll(`.booking-detail-wrapper:not(.hidden)`).forEach(el=>el.classList.add('hidden'));
+        
         // Show the details
         target.closest('.bookings-wrap').querySelector(`.booking-detail-wrapper[data-bookingid="${target.dataset.bookingid}"]`).classList.remove('hidden');
-    }
-
-    if(target.matches('.booking-detail .edit')){
-        console.log(target)
     }
 });

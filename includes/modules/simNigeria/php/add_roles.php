@@ -27,14 +27,6 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 		);
 	}
 
-	if(!wp_roles()->is_role( 'housingreservation' )){
-		add_role( 
-			'housingreservation', 
-			'Housing Reservation', 
-			$roleSet
-		);
-	}
-
 	if(!wp_roles()->is_role( 'medicalinfo' )){
 		add_role( 
 			'medicalinfo', 
