@@ -98,17 +98,19 @@ class Bookings{
         ?>
         <div class="bookings-wrap <?php if($hidden){echo 'hidden';}?>" data-date="<?php echo "$yearStr-$monthStr";?>" data-subject="<?php echo $cleanSubject;?>" data-shortcodeid="<?php echo $this->forms->shortcodeId;?>">
             <div class="booking overview">
-                <h4 style='text-align:center;'><?php echo $subject;?> Calendar</h4>
+                <div class='header mobile-sticky'> 
+                    <h4 style='text-align:center;'><?php echo $subject;?> Calendar</h4>
                 
-                <?php 
-                if(!$isAdmin){
-                    echo $this->showSelectedModalDates();
-                }
-                ?>
-                <div class="navigators">
-                    <?php
-                    echo $this->getNavigator($date);
+                    <?php 
+                    if(!$isAdmin){
+                        echo $this->showSelectedModalDates();
+                    }
                     ?>
+                    <div class="navigators">
+                        <?php
+                        echo $this->getNavigator($date);
+                        ?>
+                    </div>
                 </div>
                 <div class="calendar table">
                     <?php
@@ -119,7 +121,7 @@ class Bookings{
                 <?php 
                 if(!$isAdmin){
                     ?>
-                    <div class="actions">
+                    <div class="actions mobile-sticky bottom">
                         <button class="button action reset disabled" type='button'>Reset</button>
                         <button class="button action confirm disabled" type='button'>Confirm</button>
                     </div>
@@ -178,7 +180,7 @@ class Bookings{
                 </div>
             </div>
 
-            <div class="instructions-wrapper">
+            <div class="instructions-wrapper mobile-hidden">
                 <div>
                     <div class="sewcpu6 dir dir-ltr" style="--spacingBottom:0;">
                         <div class="s1bh1tge dir dir-ltr">
@@ -224,7 +226,7 @@ class Bookings{
 		?>
         <div name='<?php echo $cleanSubject;?>-modal' class="booking modal hidden">
 			<div class="modal-content">
-				<span class="close">&times;</span>
+				<span class="close mobile-sticky">&times;</span>
                 <?php echo $this->modalContent($subject, $date);?>
             </div>
 		</div>

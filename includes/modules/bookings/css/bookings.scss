@@ -63,8 +63,12 @@
 }
 
 .actions{
-    float: right;
+    height: 50px;
+
     button.action{
+        
+        float: right;
+
         border-radius: 10px;
 
         &.disabled{
@@ -103,9 +107,17 @@ button.change-booking-date{
     }
 }
 
-.booking.modal .modal-content{
-    margin: 10px auto;
-    max-width: min(600px,100%);
+@media screen and (max-width: $mobilewidth){
+    .booking.modal .modal-content{
+        margin: 0px;
+    }
+}
+
+@media (min-width: $fullwidth){
+    .booking.modal .modal-content{
+        margin: 10px auto;
+        max-width: min(600px,100%);
+    }
 }
 
 .booking-icon{
@@ -161,6 +173,9 @@ article.booking{
     }
 }
 
+.navigators{
+    min-height: 30px;
+}
 .navigator{
     text-align: center;
     border: none;
@@ -221,6 +236,12 @@ article.booking{
         margin: 5px auto;
         display: flex;
 
+        @media (max-width: $mobilewidth){
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
         .month-container{
             margin-right: 20px;
         }
@@ -235,10 +256,6 @@ article.booking{
             @media (max-width: 766px){
                 margin-top: 20px;
             }
-        }
-
-        @media (max-width: $mobilewidth){
-            width: 100%;
         }
     }
 

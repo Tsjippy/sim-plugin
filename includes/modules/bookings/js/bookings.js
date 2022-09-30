@@ -79,7 +79,7 @@ function storeDates(target){
 
     startEl.closest('.selected-booking-dates').classList.remove('hidden');
 
-    modal.classList.add('hidden');
+    Main.hideModals();
 
     target.closest('form').querySelector('.change-booking-date').textContent    = 'Change';
 
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // show booking date selector
     document.querySelectorAll(`.booking-subject-selector`).forEach(el=>el.addEventListener(`change`, (ev)=>{
-        document.querySelector(`[name="${ev.target.value}-modal"]`).classList.remove('hidden');
+        Main.showModal(document.querySelector(`[name="${ev.target.value}-modal"]`));
     }));
 
     // show booking calendar

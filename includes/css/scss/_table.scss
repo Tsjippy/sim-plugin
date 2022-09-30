@@ -10,10 +10,6 @@
 
 	@media screen and (max-width: $mobilewidth){
 		width: 100vw;
-
-		.mobile-hidden{
-			display: none;
-		}
 	}
 	@media screen and (min-width: $mobilewidth){
 		width: intrinsic;           /* Safari/WebKit uses a non-standard name */

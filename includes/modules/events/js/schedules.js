@@ -28,7 +28,7 @@ function ShowPublishScheduleModal(target){
 		modal.querySelector('[name="publish_schedule"]').click();
 		Main.showLoader(target,true);
 	}else{
-		modal.classList.remove('hidden');
+		Main.showModal(modal);
 	}
 }
 
@@ -270,7 +270,7 @@ function showTimeslotModal(selected){
 		modal.querySelector('[name="host"]').value				= hostName;
 	}
 	
-	modal.classList.remove('hidden');
+	Main.showModal(modal);
 }
 
 async function editTimeSlot(selected){
@@ -323,7 +323,7 @@ function showRecipeModal(target){
 		document.querySelector('[name="add_recipe_keyword"]').textContent	= 'Update recipe keywords';
 	}
 	
-	recipeModal.classList.remove('hidden');
+	Main.showModal(recipeModal);
 }
 
 //submit the recipe form
@@ -453,7 +453,7 @@ function showEditScheduleModal(target){
 	modal.querySelector(`[name="skiplunch"]`).checked		= table.dataset.lunch;
 	modal.querySelector(`[name="skiporientation"]`).checked	= table.rows.length<3;
 
-	modal.classList.remove('hidden');
+	Main.showModal(modal);
 }
 
 document.addEventListener("DOMContentLoaded",function() {

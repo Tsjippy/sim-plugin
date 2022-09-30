@@ -213,3 +213,22 @@ div input[type="url"]{
 input.wide{
 	width: 100%;
 }
+
+@media screen and (max-width: $mobilewidth){
+	.mobile-hidden{
+		display: none;
+	}
+
+	.mobile-sticky{
+		z-index: 99999999;
+		position: sticky;
+		top: 0;
+		left: 0;
+		background: white;
+
+		&.bottom{
+			bottom: 0;
+			top: unset;
+		}
+	}
+}

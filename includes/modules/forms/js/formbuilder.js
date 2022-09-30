@@ -64,7 +64,7 @@ async function showEmptyModal(target){
 	
 	modal.querySelector('.element_conditions_wrapper').innerHTML = '<img src="'+sim.loadingGif+'" style="display:block; margin:0px auto 0px auto;">';
 	
-	modal.classList.remove('hidden');
+	Main.showModal(modal);
 
 	var formData = new FormData();
 	formData.append('elementid', '-1');
@@ -122,7 +122,7 @@ async function requestEditElementData(target){
 			select._niceselect = NiceSelect.bind(select,{searchable: true});
 		});
 		
-		modal.classList.remove('hidden');
+		Main.showModal(modal);
 		
 		//show edit button again
 		loader.outerHTML	= editButton;

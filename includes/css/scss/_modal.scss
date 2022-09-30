@@ -14,10 +14,11 @@
 	/* Modal Content/Box */
 	.modal-content {
 		margin: 10% auto; /* 10% from the top and centered */
-		padding: 20px;
+		padding: 20px 20px 0px 20px;
 		border: 1px solid #888;
 		max-width: min(500px,100%);
 		background-color: #fefefe;
+		overscroll-behavior-y: none;
 		
 		.form-row label{
 			display: block;

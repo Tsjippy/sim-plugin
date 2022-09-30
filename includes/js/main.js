@@ -171,10 +171,16 @@ function bodyScrolling(type){
 	}
 }
 
-export function showModal(modal_id){
-	var modal = document.getElementById(modal_id+"_modal");
+export function showModal(modal){
+	if(typeof(modal) == 'string'){
+		modal = document.getElementById(modal+"_modal");
+	}
 	
 	if(modal != null){
+		// Prevent main page scrolling
+		document.body.style.top			= `-${window.scrollY}px`;
+		document.body.style.position 	= 'fixed';
+
 		modal.classList.remove('hidden');
 	}	
 }
@@ -183,6 +189,12 @@ export function hideModals(){
 	document.querySelectorAll('.modal:not(.hidden)').forEach(modal=>{
 		modal.classList.add('hidden');
 	});
+
+	// Turn main page scrollin on again
+	const scrollY					= document.body.style.top;
+	document.body.style.position 	= '';
+	document.body.style.top 		= '';
+	window.scrollTo(0, parseInt(scrollY || '0') * -1);
 }
 
 //check internet
@@ -282,11 +294,6 @@ document.addEventListener("DOMContentLoaded",function() {
 //Hide or show the clicked tab
 window.addEventListener("mousedown", function(event) {	
 	var target = event.target;
-
-	//close modal on close click
-	if(target.matches(".modal .close")){
-		target.closest('.modal').classList.add('hidden');
-	}
 	
 	//we clicked the menu
 	if(target.closest('.menu-toggle') != null){
@@ -322,7 +329,7 @@ window.addEventListener("mousedown", function(event) {
 	}	
 
 	//close modal if clicked outside of modal
-	if(target.closest('.modal-content') == null && target.closest('.swal2-container') == null && target.tagName=='DIV'){
+	if(target.matches(".modal .close") || (target.closest('.modal-content') == null && target.closest('.swal2-container') == null && target.tagName=='DIV')){
 		hideModals();
 	}
 });
