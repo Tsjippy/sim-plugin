@@ -52,6 +52,9 @@ class Bookings{
         $minusMonth		= strtotime("-$min month", $date);
 		$minusMonthStr	= date('m', $minusMonth);
 		$minusYearStr	= date('Y', $minusMonth);
+
+        $firstMonth     = strtotime("+1 month", $minusMonth);
+
 		$plusMonth		= strtotime("+$plus month", $date);
 		$plusMonthStr	= date('m', $plusMonth);
 		$plusYearStr	= date('Y', $plusMonth);
@@ -62,7 +65,7 @@ class Bookings{
         }
         ob_start();
         ?>
-        <div class="navigator" data-month='<?php echo date('m', $date);?>' data-year='<?php echo date('Y', $date);?>'>
+        <div class="navigator" data-month='<?php echo date('m', $firstMonth);?>' data-year='<?php echo date('Y', $firstMonth);?>'>
             <div class="prev <?php echo $hidden;?>">
                 <a class="prevnext" data-month="<?php echo $minusMonthStr;?>" data-year="<?php echo $minusYearStr;?>">
                     <span><</span> <?php echo date('F', $minusMonth);?>

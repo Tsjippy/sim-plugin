@@ -51,8 +51,15 @@ async function getMonth(target){
             wrapper.querySelector('.booking.details-wrapper').insertAdjacentHTML('beforeEnd', response.details);
         }
     }else{
+        // hide the current navigator
         wrapper.querySelector('.navigators .navigator:not(.hidden)').classList.add('hidden');
+
+        // show the new one
+        console.log(wrapper);
+        console.log(target);
         wrapper.querySelector(`.navigator[data-month="${target.dataset.month}"][data-year="${target.dataset.year}"]`).classList.remove('hidden');
+        
+        // Show the month calendar
         monthContainer.classList.remove('hidden');
     }
 }
