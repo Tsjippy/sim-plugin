@@ -11,6 +11,7 @@
 -  better view of pictures in page gallery
  on big screens
 - mark new ministry as pending
+- better modal layouts
 
 ## [2.19.8] - 2022-09-30
 
