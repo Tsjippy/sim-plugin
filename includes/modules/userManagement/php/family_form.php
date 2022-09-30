@@ -61,17 +61,17 @@ add_action('sim_before_form',function ($formName){
 								
 				<label>
 					<h4>First name</h4>
-					<input type="text" class="" name="first_name">
+					<input type="text"  class='wide' name="first_name">
 				</label>
 				
 				<label>
 					<h4>Last name</h4>
-					<input type="text" name="last_name" value="<?php echo $lastname;?>">
+					<input type="text" name="last_name"  class='wide' value="<?php echo $lastname;?>">
 				</label>
 				
 				<label>
 					<h4>E-mail</h4>
-					<input type="email" name="email">
+					<input type="email"  class='wide' name="email">
 				</label>
 				
 				<?php echo SIM\addSaveButton('adduseraccount', 'Add family member');?>

@@ -598,7 +598,7 @@ class FrontEndContent{
 						
 						<label>
 							<h4>Category name<span class="required">*</span></h4>
-							<input type="text"  name="cat_name" required>
+							<input type="text"  name="cat_name" class='wide' required>
 						</label>
 						
 						<h4>Parent category</h4>

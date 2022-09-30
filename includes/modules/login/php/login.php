@@ -53,13 +53,13 @@ function loginModal($message='', $required=false, $username=''){
                     <div id='usercred_wrapper'>
                         <label>
                             Username
-                            <input id="username" type="text" name="username" value="<?php echo $username;?>" autofocus required>
+                            <input id="username" type="text" class='wide' name="username" value="<?php echo $username;?>" autofocus required>
                         </label>
                         
                         <div class="password">
                             <label>
                                 Password
-                                <input id="password" type="password" name="password" required>
+                                <input id="password" type="password" class='wide' name="password" required>
                             </label>
                             <button type="button" id='toggle_pwd_view' data-toggle="0" title="Show password">
                                 <img src="<?php echo PICTURESURL.'/invisible.png';?>" loading='lazy' alt='togglepasword'>
@@ -88,14 +88,14 @@ function loginModal($message='', $required=false, $username=''){
                     <div id='authenticator_wrapper' class='authenticator_wrapper hidden'>
                         <label>
                             Please enter the two-factor authentication (2FA) verification code below to login. 
-                            <input type="tel" name="authcode" size="20" pattern="[0-9]*" required>
+                            <input type="tel" name="authcode"  class='wide' size="20" pattern="[0-9]*" required>
                         </label>
                     </div>
 
                     <div id='email_wrapper' class='authenticator_wrapper hidden'>
                         <label>
                             Please enter the code send to your e-mail below to login. 
-                            <input type="tel" name="email_code" size="20" pattern="[0-9]*" required>
+                            <input type="tel" name="email_code"  class='wide' size="20" pattern="[0-9]*" required>
                         </label>
                     </div>
 

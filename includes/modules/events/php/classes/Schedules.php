@@ -538,7 +538,7 @@ class Schedules{
 					
 					<p>Enter one or two keywords for the meal you are planning to serve<br>
 					For instance 'pasta', 'rice', 'Nigerian', 'salad'</p>
-					<input type='text' name='recipe_keyword'>
+					<input type='text' class='wide' name='recipe_keyword'>
 					
 					<?php
 					echo SIM\addSaveButton('add_recipe_keyword','Add recipe keywords','update_schedule'); 
@@ -561,17 +561,17 @@ class Schedules{
 
 					<label>
 						<h4>Date:</h4>
-						<input type='date' name='date' required>
+						<input type='date' name='date' class='wide' required>
 					</label>
 
 					<label>
 						<h4>Select a start time:</h4>
-						<input type="time" name="starttime" class="time" step="900" min="08:00" max="18:00" required>
+						<input type="time" name="starttime" class="time wide" step="900" min="08:00" max="18:00" required>
 					</label>
 					
 					<label>
 						<h4>Select an end time:</h4>
-						<input type="time" name="endtime" class="time" step="900" min="08:00" max="18:00" required>
+						<input type="time" name="endtime" class="time wide" step="900" min="08:00" max="18:00" required>
 					</label>
 					
 					<label>
@@ -650,7 +650,7 @@ class Schedules{
 			
 			<label>
 				<h4>Name of the person the schedule is for</h4>
-				<input type='text' name='target_name' list="website_users" required>
+				<input type='text' name='target_name' class='wide' list="website_users" required>
 			</label>
 			
 			<datalist id="website_users">
@@ -663,17 +663,17 @@ class Schedules{
 
 			<label>
 				<h4>Extra info or subtitle for this schedule</h4>
-				<input type='text' name='schedule_info'>
+				<input type='text' class='wide' name='schedule_info'>
 			</label>
 			
 			<label>
 				<h4>Date the schedule should start</h4>
-				<input type='date' name='startdate' required>
+				<input type='date' class='wide' name='startdate' required>
 			</label>
 			
 			<label>
 				<h4>Date the schedule should end</h4>
-				<input type='date' name='enddate' required>
+				<input type='date' class='wide' name='enddate' required>
 			</label>
 			
 			<br>

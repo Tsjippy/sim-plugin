@@ -67,7 +67,6 @@ add_action('sim_before_form', function ($formName){
 	}
 	?>
 	<div id="add_ministry_modal" class="modal hidden">
-		<!-- Modal content -->
 		<div class="modal-content">
 			<span id="modal_close" class="close">&times;</span>
 			<form action="" method="post" id="add_ministry_form">
@@ -75,22 +74,22 @@ add_action('sim_before_form', function ($formName){
 				
 				<label>
 					<h4>Ministry name<span class="required">*</span></h4>
-					<input type="text" name="location_name" required>
+					<input type="text" name="location_name" class='wide' required>
 				</label>
 				
 				<label>
 					<h4>Address</h4>
-					<input type="text" class="address" name="location[address]">
+					<input type="text" class="address wide" name="location[address]">
 				</label>
 				
 				<label>
 					<h4>Latitude</h4>
-					<input type="text" class="latitude" name="location[latitude]">
+					<input type="text" class="latitude wide" name="location[latitude]">
 				</label>
 				
 				<label>
 					<h4>Longitude</h4>
-					<input type="text" class="longitude" name="location[longitude]">
+					<input type="text" class="longitude wide" name="location[longitude]">
 				</label>
 				
 				<?php echo SIM\addSaveButton('add_ministry','Add ministry page'); ?>
