@@ -10,6 +10,7 @@
 - bugs in bookings module
 -  better view of pictures in page gallery
  on big screens
+- mark new ministry as pending
 
 ## [2.19.8] - 2022-09-30
 
