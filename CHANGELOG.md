@@ -8,6 +8,7 @@
 
 ### Fixed
 - load shortcode data over ajax
+- stop scrolling when modal is open
 
 ## [2.19.5] - 2022-09-29
 
