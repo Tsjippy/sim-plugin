@@ -8,6 +8,7 @@
 
 ### Fixed
 - make next years months available
+- issue when navigating backwards
 
 ## [2.19.6] - 2022-09-30
 
