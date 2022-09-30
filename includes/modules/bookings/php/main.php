@@ -161,43 +161,53 @@ add_action('sim-formstable-after-table-settings', function($displayFormResults){
 // Display calendar instead of a table
 add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResults){
     // display the calendar instead of the table
-    if(isset($displayFormResults->tableSettings['booking-display']) && $displayFormResults->tableSettings['booking-display'] == 'calendar'){
-        wp_enqueue_script('sim-bookings');
-
-        $booking   = new Bookings($displayFormResults);
-
-        $indexes        = $displayFormResults->getElementByType('booking_selector');
-
-        foreach($indexes as $index){
-            $element    = $displayFormResults->formElements[$index];
-
-            $bookingDetails = maybe_unserialize($element->booking_details);
-    
-            if(!isset($bookingDetails['subjects'])){
-                return 'Please add one or more booking subjects';
-            }else{
-                $subjects       = explode("\n", $bookingDetails['subjects']);
-            }
-        }
-
-        $html       = '<div class="tables-wrapper">';
-            $html       .= '<div class="form-data-table" data-formid="20" data-shortcodeid="4">';
-                $checkboxes = '<h4>Please select the accomodation you want to see the calendar for</h4>';
-                // Find the accomodation names
-                foreach($subjects as $subject){
-                    $cleanSubject   = trim(str_replace(' ', '_', $subject));
-                    $checkboxes .= "<label>";
-                        $checkboxes .= "<input type='checkbox' class='admin-booking-subject-selector' value='$cleanSubject'>";
-                        $checkboxes .= $subject;
-                    $checkboxes .= "</label>";
-                    $html       .= $booking->modalContent($subject, time(), true, true);
-                }
-            $html   .= '</div>';
-        $html   .= '</div>';
-
-        return $checkboxes.$html;
+    if(
+        !isset($displayFormResults->tableSettings['booking-display'])   ||
+        (
+            isset($displayFormResults->tableSettings['booking-display']) && 
+            $displayFormResults->tableSettings['booking-display'] != 'calendar'
+        ) ||
+        !array_intersect($displayFormResults->userRoles, array_keys($displayFormResults->formSettings['full_right_roles']))
+    ){
+        return $shouldShow;
     }
-    return $shouldShow;
+    
+    wp_enqueue_script('sim-bookings');
+
+    $booking   = new Bookings($displayFormResults);
+
+    $indexes        = $displayFormResults->getElementByType('booking_selector');
+
+    foreach($indexes as $index){
+        $element    = $displayFormResults->formElements[$index];
+
+        $bookingDetails = maybe_unserialize($element->booking_details);
+
+        if(!isset($bookingDetails['subjects'])){
+            return 'Please add one or more booking subjects';
+        }else{
+            $subjects       = explode("\n", $bookingDetails['subjects']);
+        }
+    }
+
+    $html       = '<div class="tables-wrapper">';
+        $html       .= '<div class="form-data-table" data-formid="20" data-shortcodeid="4">';
+            $checkboxes = '<h4>Please select the accomodation you want to see the calendar for</h4>';
+            // Find the accomodation names
+            foreach($subjects as $subject){
+                $cleanSubject   = trim(str_replace(' ', '_', $subject));
+                $checkboxes .= "<label>";
+                    $checkboxes .= "<input type='checkbox' class='admin-booking-subject-selector' value='$cleanSubject'>";
+                    $checkboxes .= $subject;
+                $checkboxes .= "</label>";
+                $html       .= $booking->modalContent($subject, time(), true, true);
+            }
+        $html   .= '</div>';
+    $html   .= '</div>';
+
+    return $checkboxes.$html;
+    
+    
 }, 10, 2);
 
 // Create a booking

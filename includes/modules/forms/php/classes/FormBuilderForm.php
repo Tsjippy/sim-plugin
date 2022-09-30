@@ -361,38 +361,6 @@ class FormBuilderForm extends SimForms{
 					}
 					?>
 					
-					<h4>Select a field with multiple answers where you want to create seperate rows for</h4>
-					<select name="settings[split]">
-					<?php
-					if($settings['split'] == ''){
-						?><option value='' selected>---</option><?php
-					}else{
-						?><option value=''>---</option><?php
-					}
-					
-					$foundElements = [];
-					foreach($this->formElements as $key=>$element){
-						$pattern = "/([^\[]+)\[[0-9]+\]/i";
-						
-						if(preg_match($pattern, $element->name, $matches)){
-							//Only add if not found before
-							if(!in_array($matches[1], $foundElements)){
-								$foundElements[]	= $matches[1];
-								$value 				= strtolower(str_replace('_', ' ', $matches[1]));
-								$name				= ucfirst($value);
-								
-								//Check which option is the selected one
-								if($settings['split'] == $value){
-									$selected = 'selected';
-								}else{
-									$selected = '';
-								}
-								echo "<option value='$value' $selected>$name</option>";
-							}
-						}
-					}
-					?>
-					</select>
 					<div class="formsettings_wrapper">
 						<label class="block">
 							<h4>Select if you want to auto archive results</h4>
@@ -474,40 +442,78 @@ class FormBuilderForm extends SimForms{
 							</div>
 						</div>
 					</div>
-					
-					<h4>Select roles with form edit rights</h4>
-					<div class="role_info">
-					<?php
-					foreach($userRoles as $key=>$roleName){
-						if(!empty($settings['full_right_roles'][$key])){
-							$checked = 'checked';
-						}else{
-							$checked = '';
-						}
-						echo "<label class='option-label'>";
-							echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[full_right_roles][$key]' value='$roleName' $checked>";
-							echo $roleName;
-						echo"</label><br>";
-					}
-					?>
-					</div>
-					<br>
 
-					<div class='submit_others_form_wrapper<?php if(empty($settings['save_in_meta'])){echo 'hidden';}?>'>
-						<h4>Select who can submit this form on behalf of someone else</h4>
-						<?php
-						foreach($userRoles as $key=>$roleName){
-							if(!empty($settings['submit_others_form'][$key])){
-								$checked = 'checked';
-							}else{
-								$checked = '';
-							}
-							echo "<label class='option-label'>";
-								echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[submit_others_form][$key]' value='$roleName' $checked>";
-								echo $roleName;
-							echo"</label><br>";
-						}
-						?>
+					<div style='margin-top:10px;'>
+						<button class='button permissins-rights-form' type='button'>Advanced</button>
+						<div class='permission-wrapper hidden'>
+							<h4>Select a field with multiple answers where you want to create seperate rows for</h4>
+							<select name="settings[split]">
+								<?php
+								if($settings['split'] == ''){
+									?><option value='' selected>---</option><?php
+								}else{
+									?><option value=''>---</option><?php
+								}
+								
+								$foundElements = [];
+								foreach($this->formElements as $key=>$element){
+									$pattern = "/([^\[]+)\[[0-9]+\]/i";
+									
+									if(preg_match($pattern, $element->name, $matches)){
+										//Only add if not found before
+										if(!in_array($matches[1], $foundElements)){
+											$foundElements[]	= $matches[1];
+											$value 				= strtolower(str_replace('_', ' ', $matches[1]));
+											$name				= ucfirst($value);
+											
+											//Check which option is the selected one
+											if($settings['split'] == $value){
+												$selected = 'selected';
+											}else{
+												$selected = '';
+											}
+											echo "<option value='$value' $selected>$name</option>";
+										}
+									}
+								}
+								?>
+							</select>
+
+							<h4>Select roles with form edit rights</h4>
+							<div class="role_info">
+								<?php
+								foreach($userRoles as $key=>$roleName){
+									if(!empty($settings['full_right_roles'][$key])){
+										$checked = 'checked';
+									}else{
+										$checked = '';
+									}
+									echo "<label class='option-label'>";
+										echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[full_right_roles][$key]' value='$roleName' $checked>";
+										echo $roleName;
+									echo"</label><br>";
+								}
+								?>
+							</div>
+							<br>
+							
+							<div class='submit_others_form_wrapper<?php if(empty($settings['save_in_meta'])){echo 'hidden';}?>'>
+								<h4>Select who can submit this form on behalf of someone else</h4>
+								<?php
+								foreach($userRoles as $key=>$roleName){
+									if(!empty($settings['submit_others_form'][$key])){
+										$checked = 'checked';
+									}else{
+										$checked = '';
+									}
+									echo "<label class='option-label'>";
+										echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[submit_others_form][$key]' value='$roleName' $checked>";
+										echo $roleName;
+									echo"</label><br>";
+								}
+								?>
+							</div>
+						</div>
 					</div>
 				</div>
 				<?php

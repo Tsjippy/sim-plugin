@@ -884,7 +884,11 @@ window.addEventListener("click", event => {
 
 	if(target.matches('.remove_warn_cond')){
 		removeWarningCondition(target)
-	}	
+	}
+
+	if(target.matches('.permissins-rights-form')){
+		target.closest('div').querySelector('.permission-wrapper').classList.toggle('hidden');
+	}
 });
 
 window.addEventListener('change', ev=>{
