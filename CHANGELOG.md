@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- ministry list on generics form
 
 ### Fixed
 - bugs in bookings module
