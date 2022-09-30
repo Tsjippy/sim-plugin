@@ -6,14 +6,14 @@ use WP_Error;
 class DisplayFormResults extends DisplayForm{
 	use ExportFormResults;
 
-	function __construct(){
+	function __construct($atts=[]){
 		global $wpdb;
 		
 		$this->shortcodeTable			= $wpdb->prefix . 'sim_form_shortcodes';
 		$this->enriched					= false;
 		
 		// call parent constructor
-		parent::__construct();
+		parent::__construct($atts);
 		
 		if(function_exists('is_user_logged_in') && is_user_logged_in()){
 			$this->userRoles[]	= 'everyone';//used to indicate view rights on permissions
@@ -1119,15 +1119,15 @@ class DisplayFormResults extends DisplayForm{
 		}
 		
 		if(
-			$this->onlyOwn										|| 
+			$this->onlyOwn											|| 
 			(
 				$this->tableSettings['result_type'] == 'personal'	&&
 				!$this->all
 			)	||
-			!$this->tableEditPermissions						&&
+			!$this->tableEditPermissions							&&
 			!array_intersect($this->userRoles, array_keys((array)$this->tableSettings['view_right_roles']))
 		){
-			$this->tableViewPermissions = false;
+			$this->tableViewPermissions 	= false;
 			$this->getSubmissionData($this->user->ID);
 		}else{
 			$this->tableViewPermissions = true;

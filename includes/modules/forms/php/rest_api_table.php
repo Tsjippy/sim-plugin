@@ -61,7 +61,7 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-	//delete_table_prefs
+	// save_table_prefs
 	register_rest_route( 
 		RESTAPIPREFIX.'/forms', 
 		'/save_table_settings', 
@@ -69,7 +69,10 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> \WP_REST_Server::EDITABLE,
 			'callback' 				=> __NAMESPACE__.'\saveTableSettings',
 			'permission_callback' 	=> function(){
-				$formsTable		= new DisplayFormResults();
+				$formsTable		= new DisplayFormResults(array( 
+					'id'			=> $_POST['shortcode_id'],
+					'formid'		=> $_POST['formid']
+				));
 				return $formsTable->editRights;
 			},
 			'args'					=> array(
@@ -101,7 +104,7 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-	//remove submission
+	//archive submission
 	register_rest_route( 
 		RESTAPIPREFIX.'/forms', 
 		'/archive_submission', 
@@ -255,16 +258,16 @@ function saveTableSettings(){
 	global $wpdb;
 		
 	//update table settings
-	$tableSettings = $_POST['table_settings'];
+	$tableSettings 	= $_POST['table_settings'];
 
-	$formTable	= new DisplayFormResults();
+	$formTable		= new DisplayFormResults();
 	
 	$wpdb->update($formTable->shortcodeTable, 
 		array(
-			'table_settings'	 	=> maybe_serialize($tableSettings)
+			'table_settings'=> maybe_serialize($tableSettings)
 		), 
 		array(
-			'id'		=> $_POST['shortcode_id'],
+			'id'			=> $_POST['shortcode_id'],
 		),
 	);
 	

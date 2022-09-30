@@ -137,7 +137,7 @@ function getLocationEmployees($post){
 			$privacyPreference	= (array)get_user_meta( $user->ID, 'privacy_preference', true );
 			
 			if(!isset($privacyPreference['hide_ministry'])){
-				$html .=	"<div class='person-wrapper' style='margin: 0px 10px 10px 0px;display:flex;width:25%;'>";
+				$html .=	"<div class='person-wrapper'>";
 					if(!isset($privacyPreference['hide_profile_picture'])){
 						$html .= SIM\displayProfilePicture($user->ID);
 						$style = "";
@@ -158,7 +158,12 @@ function getLocationEmployees($post){
 	if(empty($html)){
 		$html .= "No one dares to say they are working here!";
 	}else{
-		$html	= "<div class='employee-gallery' style='display:flex;flex-wrap:wrap'>$html</div>";
+
+		$style	= "<style>";
+			$style	.= ".person-wrapper{margin: 0px 10px 10px 0px;display:flex;width:25%;}";
+			$style	.= ".profile-picture{max-height:50px;}";
+		$style	.= "</style>";
+		$html	= "$style<div class='employee-gallery' style='display:flex;flex-wrap:wrap'>$html</div>";
 	}
 
 	$html 	= "<p style='padding:10px;'><strong>People working at $post->post_title are:</strong><br><br>$html</p>";

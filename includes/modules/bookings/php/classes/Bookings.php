@@ -397,12 +397,12 @@ class Bookings{
                                             continue;
                                         }
 
-                                        $index  = $setting['nice_name'];
-                                        $data   = $bookingData[$setting['name']];
+                                        $index  = $setting['name'];
+                                        $data   = $bookingData[$index];
                                         $transformedData   = $this->forms->transformInputData($data, $index);
                                         echo "<tr class='$index' data-id='{$this->forms->formResults['id']}'>";
                                             if(file_exists(SIM\urlToPath("$baseUrl/$index.png"))){
-                                                echo "<td><img src='$baseUrl/$index.png' loading='lazy' alt='$index' class='booking-icon'></td>";
+                                                echo "<td><img src='$baseUrl/$index.png' loading='lazy' alt='{$setting['nice_name']}' class='booking-icon'></td>";
                                             }else{
                                                 echo "<td>$index:</td>";
                                             }

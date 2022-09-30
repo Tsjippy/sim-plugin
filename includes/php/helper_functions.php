@@ -1037,10 +1037,10 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 
 	if(is_numeric($attachmentId)){
 		$url = wp_get_attachment_image_url($attachmentId,'Full size');
-		return "<a href='$url'><img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'></a>";
+		return "<a href='$url'><img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'></a>";
 	}elseif($showDefault){
 		$url = plugins_url('pictures/usericon.png', __DIR__);
-		return "<img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
+		return "<img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
 	}else{
 		return false;
 	}

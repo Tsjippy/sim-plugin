@@ -122,8 +122,8 @@ class SimForms{
 		$this->getAllFormElements('priority', $formId);
 		
 		//used to find the index of an element based on its unique id
- 		$this->formData->elementMapping				= [];
-		 $this->formData->elementMapping['type']	= [];
+ 		$this->formData->elementMapping									= [];
+		$this->formData->elementMapping['type']							= [];
 		foreach($this->formElements as $index=>$element){			
 			$this->formData->elementMapping['id'][$element->id]			= $index;
 			$this->formData->elementMapping['name'][$element->name] 	= $index;
