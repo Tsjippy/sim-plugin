@@ -104,27 +104,38 @@ add_action('sim_before_form', function ($formName){
  * 
  * @return	array	Ministries list
  */
-function getMinistries(){	
-	//Get all pages describing a ministry
-	$ministryPages = get_posts([
-		'post_type'			=> 'location',
-		'posts_per_page'	=> -1,
-		'post_status'		=> 'publish',
-		'tax_query' => array(
-            array(
-                'taxonomy'	=> 'locations',
-				'field' => 'term_id',
-				'terms' => get_term_by('name', 'Ministries', 'locations')->term_id
-            )
-        )
-	]);
+function getMinistries(){
+	$categories	= get_categories( array(
+		'taxonomy'	=> 'locations',
+		'parent'  	=> get_term_by('name', 'Ministries', 'locations')->term_id
+	) );
+
 	$ministries = [];
-	foreach ( $ministryPages as $ministryPage ) {
-		$ministries[$ministryPage->ID] = $ministryPage->post_title;
+
+	foreach($categories as $category){
+		$url	= "<a href='".get_category_link($category)."'>$category->name</a>";
+
+		//Get all pages describing a ministry of this category
+		$ministryPages = get_posts([
+			'post_type'			=> 'location',
+			'posts_per_page'	=> -1,
+			'post_status'		=> 'publish',
+			'orderby'			=> 'title',
+			'tax_query' => array(
+				array(
+					'taxonomy'	=> 'locations',
+					'field' 	=> 'term_id',
+					'terms' 	=> $category->term_id
+				)
+			)
+		]);
+
+		foreach ( $ministryPages as $ministryPage ) {
+			$ministries[$url][$ministryPage->ID] = $ministryPage->post_title;
+		}
 	}
-	//Sort in alphabetical order
-	asort($ministries);
-	$ministries[] 			= "Other";
+
+	$ministries['Other'][-1] 			= "Other";
 	
 	return $ministries;
 }
@@ -142,43 +153,64 @@ function displayMinistryPositions($userId){
 	ob_start();
 	?>
 	<div id="ministries_list">
-	<?php		
-		//Retrieve all the ministries from the database
-		foreach (getMinistries() as $pageId=>$ministry) {
-			//Check which option should be a checked ministry
-			if (!empty($userMinistries[$pageId])){
-				$checked	= 'checked';
-				$class		= '';
-				$position	= $userMinistries[$pageId];
-			}else{
-				$checked	= '';
-				$class		= 'hidden';
-				$position	= "";
-			}
-			//Add the ministries as options to the checkbox
-			?>
-			<span>
-				<label>
-					<input type='checkbox' class='ministry_option_checkbox' name='ministries[]' value='<?php echo $pageId;?>' <?php echo $checked;?>>
-					<span class='optionlabel'><?php echo $ministry;?></span>
-				</label>
-				<label class='ministryposition <?php echo $class;?>' style='display:block;'>
-					<h4 class='labeltext'>Position at <?php echo $ministry;?>:</h4>
-					<input type='text' name='jobs[<?php echo $pageId;?>]' value='<?php echo $position;?>'>
-					<?php
-					if ($ministry == "Other"){
-						?>
-						<p>Is your ministry not listed? Just add it! <button type='button' class='button' id='add-ministry-button'>Add Ministry</button></p>
+		<ul style='margin-left:0px;'>
+			<?php		
+			//Retrieve all the ministries from the database
+			foreach (getMinistries() as $url=>$ministries) {
+				?>
+				<li style="list-style-type: none" class="page_item page-item-204 page_item_has_children">
+					<?php echo $url;?>
+					<button class="button small expand-children" type='button' style='font-size: 8px;'>▼</button>
+					<ul class='children'>
 						<?php
-					}
+						foreach ($ministries as $pageId=>$ministry) {
+							//Check which option should be a checked ministry
+							if (!empty($userMinistries[$pageId])){
+								$checked	= 'checked';
+								$class		= '';
+								$position	= $userMinistries[$pageId];
+							}else{
+								$checked	= '';
+								$class		= 'hidden';
+								$position	= "";
+							}
+							//Add the ministries as options to the checkbox
+							?>
+							<li style="list-style-type: none">
+								<label>
+									<input type='checkbox' class='ministry_option_checkbox' name='ministries[]' value='<?php echo $pageId;?>' <?php echo $checked;?>>
+									<span class='optionlabel'><?php echo $ministry;?></span>
+								</label>
+								<label class='ministryposition <?php echo $class;?>' style='display:block;'>
+									<h4 class='labeltext'>Position at <?php echo $ministry;?>:</h4>
+									<input type='text' name='jobs[<?php echo $pageId;?>]' value='<?php echo $position;?>'>
+									<?php
+									if ($ministry == "Other"){
+										?>
+										<p>Is your ministry not listed? Just add it! <button type='button' class='button' id='add-ministry-button'>Add Ministry</button></p>
+										<?php
+									}
+									?>
+								</label>
+							</li>
+							<?php
+						}
 					?>
-				</label>
-			</span>
-			<br>
-			<?php
-		}
-	?>
+					</ul>
+				</li>
+				<?php
+			}
+			?>
+		</ul>
 	</div>
+
+	<script>
+		document.addEventListener('click', ev=>{
+			if(ev.target.matches('.expand-children')){
+				ev.target.closest('li').querySelector('.children').classList.toggle('hidden');
+			}
+		});
+	</script>
 	<?php
 	
 	return ob_get_clean();

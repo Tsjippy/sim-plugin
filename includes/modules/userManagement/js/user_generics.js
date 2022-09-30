@@ -1,6 +1,6 @@
 //Show the position field when a ministry is checked
-function change_visibility(target) {
-	target.closest('span').querySelector('.ministryposition').classList.toggle('hidden');
+function changeVisibility(target) {
+	target.closest('li').querySelector('.ministryposition').classList.toggle('hidden');
 }
 
 async function addNewMinistry(target){
@@ -50,8 +50,8 @@ document.addEventListener('click',function(event) {
 		Main.showModal('add_ministry');
 	}
 	
-	if(target.classList.contains('ministry_option_checkbox')){
-		change_visibility(target);
+	if(target.matches('.ministry_option_checkbox')){
+		changeVisibility(target);
 	}
 
 	if(target.name == 'add_ministry'){
