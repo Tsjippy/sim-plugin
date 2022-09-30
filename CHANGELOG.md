@@ -15,6 +15,7 @@
 - better modal layouts
 - bug when booking with overlapping
 end and startdates
+- issue with immigration form
 
 ## [2.19.8] - 2022-09-30
 
