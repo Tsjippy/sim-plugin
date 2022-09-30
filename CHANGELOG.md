@@ -8,6 +8,7 @@
 
 ### Fixed
 - people gallery display
+- better handling of form permissions
 
 ## [2.19.7] - 2022-09-30
 
