@@ -9,6 +9,7 @@
 ### Fixed
 - load shortcode data over ajax
 - stop scrolling when modal is open
+- you can end and startdate can now overlap
 
 ## [2.19.5] - 2022-09-29
 
