@@ -2,7 +2,7 @@ function reset(modal, onlyEnd=false){
     if(!onlyEnd){
         modal.querySelector('.booking-startdate').value     = '';
         modal.querySelector('.calendar.day.startdate').classList.remove('startdate');
-        modal.querySelectorAll('.available.selected').forEach(dt=>dt.classList.remove('selected'));
+        modal.querySelectorAll('.available.unavailable').forEach(dt=>dt.classList.remove('unavailable'));
 
         modal.querySelector('.booking-date-label-wrapper.enddate').classList.add('disabled')
     }
@@ -114,16 +114,16 @@ function showDateSelectorModal(target){
         let dts     = target.closest('.calendar.table').querySelectorAll('dt.calendar.day:not(.head, .unavailable)');
         let skip    = false;
         for (i = 0; i < dts.length; ++i) {
-            // all dates after the selected date are available
+            // all dates after the booked date are available
             if(dts[i] == target){
                 skip = true;
-            // until we encounter another selected date
-            }else if(skip && dts[i].matches('.selected')){
+            // until we encounter another booked date
+            }else if(skip && dts[i].matches('.booked')){
                 skip = false;
             }
 
             if(!skip){
-                dts[i].classList.add('selected');
+                dts[i].classList.add('unavailable');
             }
         }
     }else{
@@ -133,14 +133,14 @@ function showDateSelectorModal(target){
         target.classList.add('enddate');
 
         // make other dates available again
-        target.closest('.calendar.table').querySelectorAll('.available.selected').forEach(dt=>dt.classList.remove('selected'));
+        target.closest('.calendar.table').querySelectorAll('.available.booked').forEach(dt=>dt.classList.remove('booked'));
 
         // color the dates between start and end
         let dts     = target.closest('.calendar.table').querySelectorAll('dt.calendar.day:not(.head)');
         let skip    = true;
         for (i = 0; i < dts.length; ++i) {
             
-            // until we encounter another selected date
+            // until we encounter another booked date
             if(dts[i] == target){
                 break;
             }
@@ -149,7 +149,7 @@ function showDateSelectorModal(target){
                 dts[i].classList.add('inbetween');
             }
 
-            // all dates after the selected date are available
+            // all dates after the booked date are available
             if(dts[i].matches('.startdate')){
                 skip = false;
             }
@@ -202,11 +202,11 @@ document.addEventListener('click', (ev) => {
         storeDates(target);
     }
 
-    if(target.matches('.bookings-wrap .available:not(.selected)')){
+    if(target.matches('.bookings-wrap .available:not(.unavailable)')){
         showDateSelectorModal(target);
     }
 
-    if(target.matches('.form.table-wrapper .selected')){
+    if(target.matches('.form.table-wrapper .booked')){
         // Show the details
         target.closest('.bookings-wrap').querySelector(`.booking-detail-wrapper[data-bookingid="${target.dataset.bookingid}"]`).classList.remove('hidden');
     }

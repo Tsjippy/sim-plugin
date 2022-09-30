@@ -275,12 +275,22 @@ class Bookings{
                         $calendarRows .=  "<dt class='empty'></dt>";
                     }else{
                         $data   = '';
+                        // date is in the past
                         if(date('md', $workingDate) < date('md', $curDate)){
                             $class	.= 'unavailable';
+                        // not booked
                         }elseif(!isset($this->unavailable[$workingDateStr])){
                             $class	.= 'available';
+                        // booked
                         }else{
-                            $class	.= 'selected';
+                            // First end last day of a reservation are both booked and available
+                            if(
+                                !isset($this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))])    ||
+                                !isset($this->unavailable[date('Y-m-d', strtotime('+1 day', $workingDate))])
+                            ){
+                                $class	.= 'available ';
+                            }
+                            $class	.= 'booked';
                             $data   .= "data-bookingid='{$this->unavailable[$workingDateStr]}'";
                         }
                         
