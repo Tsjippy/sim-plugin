@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.19.6] - 2022-09-30
+
+
+### Added
 - min and max to edit booking dates inputs
 
 ### Changed
