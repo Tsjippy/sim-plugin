@@ -18,6 +18,8 @@ end and startdates
 - issue with immigration form
 - find prayer message when year and month
 are not after each other in title
+- open up selector modal when clicking
+ on a date
 
 ## [2.19.8] - 2022-09-30
 
