@@ -132,6 +132,68 @@ add_filter('sim-forms-element-html', function($html, $element, $formBuilderForm)
     return $html;
 }, 10, 3); 
 
+// Form settings
+add_action('sim-forms-form-settings-form', function($formBuilderForm){
+    if(empty($formBuilderForm->getElementByType('booking_selector'))){
+        return;
+    }
+    global $wp_roles;
+    
+    //Get all available roles
+    $userRoles = $wp_roles->role_names;
+    
+    //Sort the roles
+    asort($userRoles);
+
+    $state    = '';
+    if(isset($formBuilderForm->formData->settings['default-booking-state'])){
+        $state  = $formBuilderForm->formData->settings['default-booking-state'];
+    }
+    ?>
+    <h4>Default status for new bookings</h4>
+    <label>
+        <input type='radio' name='settings[default-booking-state]' value='pending' <?php if($state == 'pending'){echo 'checked';}?>>
+        Pending
+    </label>
+    <label>
+        <input type='radio' name='settings[default-booking-state]' value='confimed' <?php if($state == 'confimed'){echo 'checked';}?>>
+        Confimed
+    </label>
+    <br>
+    <script>
+        document.querySelectorAll('[name="settings[default-booking-state]"]').forEach(el=>{
+            el.addEventListener('change', (ev) => {
+                let div = document.getElementById('confirmed-roles-wrapper');
+                if(ev.target.value == 'pending' && ev.target.checked){
+                    div.classList.remove('hidden');
+                }else{
+                    div.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+    <div id='confirmed-roles-wrapper' class='<?php if($state != 'pending'){echo 'hidden';}?>'>
+        <h4>Select roles for which bookings are confirmed by default</h4>
+        <div class="role_info">
+            <?php
+            foreach($userRoles as $key=>$roleName){
+                if(!empty($formBuilderForm->formData->settings['confirmed-booking-roles'][$key])){
+                    $checked = 'checked';
+                }else{
+                    $checked = '';
+                }
+                echo "<label class='option-label'>";
+                    echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[confirmed-booking-roles][$key]' value='$roleName' $checked>";
+                    echo $roleName;
+                echo"</label><br>";
+            }
+            ?>
+        </div>
+    </div>
+    <br>
+    <?php
+});
+
 // the choice for table view or calendar view
 add_action('sim-formstable-after-table-settings', function($displayFormResults){
     // Check if it has an booking selector
@@ -215,12 +277,12 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
 }, 10, 2);
 
 // Create a booking
-add_action('sim_after_saving_formdata', function($formBuilder){
+add_filter('sim_after_saving_formdata', function($message, $formBuilder){
     if(isset($formBuilder->formResults['booking-startdate'])){
         // find the subject
         $indexes        = $formBuilder->getElementByType('booking_selector');
 
-        $bookings       = new Bookings();
+        $bookings       = new Bookings($formBuilder);
 
         foreach($indexes as $index){
             $elementName    = $formBuilder->formElements[$index]->name;
@@ -231,7 +293,9 @@ add_action('sim_after_saving_formdata', function($formBuilder){
             }
         }
     }
-}, 10, 3);
+
+    return $message;
+}, 10, 2);
 
 
 // Update an existing booking

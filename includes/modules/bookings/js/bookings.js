@@ -201,7 +201,7 @@ document.addEventListener('click', (ev) => {
         getMonth(target);
     }
 
-    if(target.matches('.change-booking-date')){
+    if(target.matches('.change-booking-date, [name="booking-startdate"], [name="booking-enddate"]')){
         changeBookingData(target);
     }
 

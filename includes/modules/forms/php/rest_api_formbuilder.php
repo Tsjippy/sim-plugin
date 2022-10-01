@@ -677,7 +677,7 @@ function saveFormInput(){
 		}
 	}
 
-	do_action('sim_after_saving_formdata', $formBuilder);
+	$message	= apply_filters('sim_after_saving_formdata', $message, $formBuilder);
 
 	return $message;
 }

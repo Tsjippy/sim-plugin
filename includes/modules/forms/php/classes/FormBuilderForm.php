@@ -344,7 +344,6 @@ class FormBuilderForm extends SimForms{
 						
 					<h4>Select available actions for formdata</h4>
 					<?php
-					
 					$actions = ['archive','delete'];
 					foreach($actions as $action){
 						if(!empty($settings['actions'][$action])){
@@ -442,6 +441,8 @@ class FormBuilderForm extends SimForms{
 							</div>
 						</div>
 					</div>
+
+					<?php do_action('sim-forms-form-settings-form', $this); ?>
 
 					<div style='margin-top:10px;'>
 						<button class='button permissins-rights-form' type='button'>Advanced</button>
