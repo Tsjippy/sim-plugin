@@ -7,7 +7,7 @@ class Bookings{
         global $wpdb;
 		$this->tableName		= $wpdb->prefix.'sim_bookings';
 
-        if(getType($DisplayFormResults) == 'object' && get_class($DisplayFormResults) == "SIM\FORMS\DisplayFormResults"){
+        if(getType($DisplayFormResults) == 'object'){
             $this->forms            = $DisplayFormResults;
         }else{
             $this->forms            = new SIM\FORMS\DisplayFormResults();
@@ -466,6 +466,16 @@ class Bookings{
 		$query	.= " ORDER BY `startdate`, `starttime` ASC";
 
 		if(empty($wpdb->get_results($query))){
+            $pending    = false;
+
+            if(
+                isset($this->forms->formData->settings['default-booking-state']) &&
+                $this->forms->formData->settings['default-booking-state']   == 'pending'    &&
+                !array_intersect(wp_get_current_user()->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
+            ){
+                $pending    = true;
+            }
+
             // Insert in db
             $wpdb->insert(
                 $this->tableName, 
@@ -473,7 +483,8 @@ class Bookings{
                     'startdate'			=> $startDate,
                     'enddate'			=> $endDate,
                     'subject'			=> $subject,
-                    'submission_id'	    => $submissionId
+                    'submission_id'	    => $submissionId,
+                    'pending'           => $pending
                 )
             );
         }else{
