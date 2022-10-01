@@ -36,7 +36,7 @@ class Bookings{
 			endtime varchar(80) NOT NULL,
 			subject varchar(80) NOT NULL,
             submission_id mediumint(9) NOT NULL,
-            user_details varchar(80) NOT NULL,
+            pending boolean DEFAULT true,
 			PRIMARY KEY  (id)
 		) $charsetCollate;";
 

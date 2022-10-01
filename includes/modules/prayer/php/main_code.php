@@ -43,7 +43,7 @@ function prayerRequest($plainText = false) {
 	//Loop over them to find the post for this month
 	foreach($posts as $post){
 		// double check if the current month is in the title as the s parameter searches everywhere
-		if(strpos($post->post_title, date("F Y")) === false){
+		if(strpos($post->post_title, date("F")) === false && strpos($post->post_title, date("Y")) === false){
 			continue;
 		}
 
