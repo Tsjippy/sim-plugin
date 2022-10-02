@@ -353,6 +353,11 @@ article.booking{
     padding-bottom: 16px !important;
 }
 
+.pending-bookings-wrapper, .form-data-table{
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+}
 
 .booking-dates-input-wrapper {
     flex: 1 0 0% !important;

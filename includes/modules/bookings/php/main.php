@@ -256,22 +256,68 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
         }
     }
 
-    $html       = '<div class="tables-wrapper">';
-        $html       .= '<div class="form-data-table" data-formid="20" data-shortcodeid="4">';
-            $checkboxes = '<h4>Please select the accomodation you want to see the calendar for</h4>';
-            // Find the accomodation names
-            foreach($subjects as $subject){
-                $cleanSubject   = trim(str_replace(' ', '_', $subject));
-                $checkboxes .= "<label>";
-                    $checkboxes .= "<input type='checkbox' class='admin-booking-subject-selector' value='$cleanSubject'>";
-                    $checkboxes .= $subject;
-                $checkboxes .= "</label>";
-                $html       .= $booking->modalContent($subject, time(), true, true);
+    $pendingBookings    = $booking->retrievePendingBookings();
+    $html   = '<div class="tables-wrapper">';
+        if(!empty($pendingBookings)){
+            $submissions    = [];
+            foreach($displayFormResults->submissionData as $data){
+                $submissions[$data->id] = $data->formresults;
             }
-        $html   .= '</div>';
+
+            $html   .= "<div class='pending-bookings-wrapper'>";
+                $html   .= "<table class='sim-table'>";
+                    $html   .= "<thead>";
+                        $html   .= "<tr>";
+                            foreach($displayFormResults->columnSettings as $setting){
+                                if($setting['show'] == 'hide'){
+                                    break;
+                                }
+                                $html   .= "<th>{$setting['nice_name']}</th>";
+                            }
+                            $html   .= "<th>Actions</th>";
+                        $html   .= "</tr>";
+                    $html   .= "</thead>";
+
+                    $html   .= "<tbody>";
+                        foreach($pendingBookings as $pendingBooking){
+                            $data   = $submissions[$pendingBooking->submission_id];
+                            $html   .= "<tr>";
+                                foreach($displayFormResults->columnSettings as $setting){
+                                    if($setting['show'] == 'hide'){
+                                        break;
+                                    }
+                                    $cellContent    = $displayFormResults->transformInputData($data[$setting['name']], $setting['name']);
+                                    $html   .= "<td>$cellContent</td>";
+                                }
+                                $html   .= "<td>";
+                                    $html   .= "<button class='button approve' type='button' data-id='$pendingBooking->id'>Approve</button>";
+                                    $html   .= "<button class='button delete' type='button' data-id='$pendingBooking->id'>Delete</button><br>";
+                                $html   .= "</td>";
+                            $html   .= "</tr>";
+                        }
+                    $html   .= "</tbody>";
+                $html   .= "</table>";
+            $html   .= "</div>";
+        }
+
+        $calendars  = '';
+        $checkboxes = '<h4>Please select the accomodation you want to see the calendar for</h4>';
+        // Find the accomodation names
+        foreach($subjects as $subject){
+            $cleanSubject   = trim(str_replace(' ', '_', $subject));
+            $checkboxes .= "<label>";
+                $checkboxes .= "<input type='checkbox' class='admin-booking-subject-selector' value='$cleanSubject'>";
+                $checkboxes .= $subject;
+            $checkboxes .= "</label>";
+            $calendars  .= $booking->modalContent($subject, time(), true, true);
+        }
+        $html   .= '<div class="form-data-table">';
+            $html   .= $checkboxes;
+            $html   .= $calendars;
+        $html   .= "</div>";
     $html   .= '</div>';
 
-    return $checkboxes.$html;
+    return $html;
     
     
 }, 10, 2);

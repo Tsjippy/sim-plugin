@@ -64,6 +64,51 @@ async function getMonth(target){
     }
 }
 
+async function approve(target){    
+    let formData    = new FormData();
+    formData.append('id', target.dataset.id);
+
+    let row         = target.closest('tr');
+
+    Main.showLoader(target.closest('td'));
+        
+    let response = await FormSubmit.fetchRestApi('bookings/approve', formData);
+
+    if(response){
+        // remove the row
+        row.remove();
+
+        let subjectWrapper  = document.querySelector(`.bookings-wrap[data-subject='${response.subject}']`);
+
+        for (let i = 0; i < response.months.length; i++) {
+            // Get the calendar
+            subjectWrapper.querySelectorAll(`.month-container[data-month='${response.months[i]}'][data-year='${response.years[i]}']`).forEach(el=>el.outerHTML   = response.html);
+        }
+
+        // Add the details
+        subjectWrapper.querySelector(`.booking.details-wrapper`).insertAdjacentHTML('beforeEnd', response.details);
+        
+    }
+}
+
+async function remove(target){    
+    let formData    = new FormData();
+    formData.append('id', target.dataset.id);
+
+    let row         = target.closest('tr');
+
+    Main.showLoader(target.closest('td'));
+        
+    let response = await FormSubmit.fetchRestApi('bookings/remove', formData);
+
+    if(response){
+        // remove the row
+        row.remove();
+
+        Main.displayMessage(response);
+    }
+}
+
 function changeBookingData(target){
     let selector    = '';
     let el  = document.querySelector(`.booking-subject-selector`);
@@ -219,5 +264,11 @@ document.addEventListener('click', (ev) => {
         
         // Show the details
         target.closest('.bookings-wrap').querySelector(`.booking-detail-wrapper[data-bookingid="${target.dataset.bookingid}"]`).classList.remove('hidden');
+    }
+
+    if(target.matches('.button.approve')){
+        approve(target);
+    }else if(target.matches('.button.delete')){
+        remove(target);
     }
 });

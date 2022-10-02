@@ -242,6 +242,7 @@ class Bookings{
 	 * Get the month calendar
 	 * 
 	 * @param	string		$subject		The subject name
+     * @param   int         $date           The time
 	 * 
 	 * @return	string				        Html of the calendar
 	*/
@@ -256,7 +257,7 @@ class Bookings{
 		$calendarRows	= '';
 
         //get the bookings for this month
-		$this->retrieveBookings($month, $year, $subject);
+		$this->retrieveMonthBookings($month, $year, $subject);
 
 		//loop over all weeks of a month
 		while(true){
@@ -454,42 +455,60 @@ class Bookings{
     }
 
     /**
-     * Insert a new booking
+     * Check if a booking overlaps another booking
      */
-    function insertBooking($startDate, $endDate, $subject, $submissionId){
+    function checkOverlap($startDate, $endDate, $subject){
         global $wpdb;
 
+        // start end enddate may overlap so only check for dates in between
+        $queryStartDate  = strtotime('+1 day', strtotime($startDate));
+        $queryEndDate    = strtotime('-1 day', strtotime($endDate));
+
         // First check if a booking on these dates doesn't exist
-        $query	    = "SELECT * FROM $this->tableName WHERE ('$startDate' BETWEEN startdate and enddate) OR ('$endDate' BETWEEN startdate and enddate) AND subject = '$subject' ";
+        $query	    = "SELECT * FROM $this->tableName WHERE pending=0 AND subject = '$subject' AND ('$queryStartDate' BETWEEN startdate and enddate OR '$queryEndDate' BETWEEN startdate and enddate)";
 
         //sort on startdate
 		$query	.= " ORDER BY `startdate`, `starttime` ASC";
 
-		if(empty($wpdb->get_results($query))){
-            $pending    = false;
+		return !empty($wpdb->get_results($query));
+    }
 
-            if(
-                isset($this->forms->formData->settings['default-booking-state']) &&
-                $this->forms->formData->settings['default-booking-state']   == 'pending'    &&
-                !array_intersect(wp_get_current_user()->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
-            ){
-                $pending    = true;
-            }
+    /**
+     * Insert a new booking
+     * 
+     * @param   string      $startdate      The startdate string
+     * @param   string      $enddate        The enddate string
+     * @param   string      $subject        The subject the booking is for
+     * @param   int         $submissionId   The form submission id
+     */
+    function insertBooking($startDate, $endDate, $subject, $submissionId){
+        global $wpdb;
 
-            // Insert in db
-            $wpdb->insert(
-                $this->tableName, 
-                array(
-                    'startdate'			=> $startDate,
-                    'enddate'			=> $endDate,
-                    'subject'			=> $subject,
-                    'submission_id'	    => $submissionId,
-                    'pending'           => $pending
-                )
-            );
-        }else{
+		if($this->checkOverlap($startDate, $endDate, $subject)){
             return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
         }
+
+        $pending    = false;
+
+        if(
+            isset($this->forms->formData->settings['default-booking-state'])            &&
+            $this->forms->formData->settings['default-booking-state']   == 'pending'    &&
+            !array_intersect(wp_get_current_user()->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
+        ){
+            $pending    = true;
+        }
+
+        // Insert in db
+        $wpdb->insert(
+            $this->tableName, 
+            array(
+                'startdate'			=> $startDate,
+                'enddate'			=> $endDate,
+                'subject'			=> $subject,
+                'submission_id'	    => $submissionId,
+                'pending'           => $pending
+            )
+        );
     }
 
     /**
@@ -501,22 +520,77 @@ class Bookings{
     function updateBooking($bookingId, $values){
         global $wpdb;
 
+        // Get the booking
+        $booking        = $this->getBookingById($bookingId);
+        
+        if($this->checkOverlap($booking->startdate, $booking->enddate, $booking->subject)){
+            return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
+        }
+
         $wpdb->update($this->tableName, 
             $values,
             array(
                 'id'		=> $bookingId
             ),
         );
+
+        $date           = strtotime($booking->startdate);
+        $month          = date('m', $date);
+        $year           = date('Y', $date);
+
+        $monthsHtml     = [];
+        $months         = [];
+        $years          = [];
+        $details        = '';
+
+        // Get all the months
+        $start    = (new \DateTime($booking->startdate))->modify('first day of this month');
+        $end      = (new \DateTime($booking->enddate))->modify('first day of next month');
+        $interval = \DateInterval::createFromDateString('1 month');
+        $period   = new \DatePeriod($start, $interval, $end);
+
+        foreach ($period as $dt) {
+            $monthsHtml[]   = $this->monthCalendar($booking->subject, $dt->format("U"));
+            $months[]       = $dt->format("m");
+            $years[]        = $dt->format("Y");
+
+            $details        .= $this->detailHtml();
+        }
+
+        return [
+            'months'        => $months,
+            'years'         => $years,
+            'subject'       => $booking->subject,
+            'html'          => $monthsHtml,
+            'details'       => $details
+        ];
     }
+
+    /**
+     * Update an existing booking
+     * 
+     * @param   int     $bookingId  The booking id
+     */
+    function removeBooking($bookingId){
+        global $wpdb;
+
+        // Get the booking
+        $wpdb->delete(
+			$this->tableName,      
+			['id' => $bookingId],           
+			['%d'],
+		);
+    }
+
     /**
      * Retrieve the bookings for a certain month
      * 
      * @param   int     $month          The month to retrieve bookings for
      * @param   int     $year           The year to retrieve bookings for
-     * @param   string  $subject    The subject to retrieve bookings for
+     * @param   string  $subject        The subject to retrieve bookings for
      * 
      */
-    function retrieveBookings($month, $year, $subject){
+    function retrieveMonthBookings($month, $year, $subject){
         global $wpdb;
 
         $subject    = trim(str_replace(' ', '_', $subject));
@@ -524,7 +598,7 @@ class Bookings{
 		//select all bookings of this month
         $startDate  = "$year-$month-01";
         $endDate    = date("Y-m-t", strtotime($startDate));
-		$query	    = "SELECT * FROM $this->tableName WHERE (`startdate` >= '$startDate' OR '$startDate' BETWEEN startdate and enddate) AND `startdate` <= '$endDate' AND subject = '$subject' ";
+		$query	    = "SELECT * FROM $this->tableName WHERE (`startdate` >= '$startDate' OR '$startDate' BETWEEN startdate and enddate) AND `startdate` <= '$endDate' AND subject = '$subject' AND pending=0";
 
         //sort on startdate
 		$query	.= " ORDER BY `startdate`, `starttime` ASC";
@@ -545,6 +619,29 @@ class Bookings{
         }
     }
 
+    /**
+     * Retrieve all the pending bookings
+     * 
+     */
+    function retrievePendingBookings(){
+        global $wpdb;
+
+        $query	    = "SELECT * FROM $this->tableName WHERE pending=1 ";
+
+        //sort on startdate
+		$query	.= " ORDER BY `startdate`, `starttime` ASC";
+
+		return $wpdb->get_results($query);
+    }
+
+    /** Get a booking by submission id */
+    function getBookingById($id){
+        global $wpdb;
+
+		$query	    = "SELECT * FROM $this->tableName WHERE id=$id ";
+
+		return  $wpdb->get_results($query)[0];
+    }
 
     /** Get a booking by submission id */
     function getBookingBySubmission($id){

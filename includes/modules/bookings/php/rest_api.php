@@ -3,7 +3,7 @@ namespace SIM\BOOKINGS;
 use SIM;
 
 add_action( 'rest_api_init', function () {
-	//Route for notification messages
+	// Next month
 	register_rest_route( 
 		RESTAPIPREFIX.'/bookings', 
 		'/get_next_month', 
@@ -35,6 +35,50 @@ add_action( 'rest_api_init', function () {
 				),
 				'subject'		=> array(
 					'required'	=> true
+				)
+			)
+		)
+	);
+
+	// Approve pending booking
+	register_rest_route( 
+		RESTAPIPREFIX.'/bookings', 
+		'/approve', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function(){
+				$bookings	= new Bookings();
+
+				return $bookings->updateBooking($_POST['id'], ['pending' => 0]);
+			},
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'id'	=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+				)
+			)
+		)
+	);
+
+	// Delete a booking
+	register_rest_route( 
+		RESTAPIPREFIX.'/bookings', 
+		'/remove', 
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function(){
+				$bookings	= new Bookings();
+
+				$bookings->removeBooking($_POST['id']);
+
+				return 'Booking removed succesfully';
+			},
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'id'	=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
 				)
 			)
 		)
