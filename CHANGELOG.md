@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- pending bookings
 
 ### Changed
 - ministry list on generics form
