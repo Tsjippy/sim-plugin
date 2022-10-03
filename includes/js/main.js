@@ -148,6 +148,7 @@ function bodyScrolling(type){
 
 		//scroll to top
 		window.scrollTo(0, 0);
+		console.log('scrolling')
 
 		var menu = document.querySelector("#masthead");
 		menu.style.overflowY	= 'scroll';
@@ -195,6 +196,8 @@ export function hideModals(){
 	document.body.style.position 	= '';
 	document.body.style.top 		= '';
 	window.scrollTo(0, parseInt(scrollY || '0') * -1);
+	
+	console.log('scrolling')
 }
 
 //check internet

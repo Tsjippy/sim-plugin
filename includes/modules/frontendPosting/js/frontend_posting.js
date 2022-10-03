@@ -280,6 +280,8 @@ async function submitPost(target){
 
 		// Scroll page to top
 		window.scrollTo(0,0);
+		
+		console.log('scrolling')
 
 		document.getElementById('page-edit').classList.remove('hidden');
 

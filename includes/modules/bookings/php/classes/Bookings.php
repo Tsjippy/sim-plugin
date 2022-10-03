@@ -522,8 +522,21 @@ class Bookings{
 
         // Get the booking
         $booking        = $this->getBookingById($bookingId);
+
+        $startdate      = $booking->startdate;
+        if(isset($values['startdate'])){
+            $startdate  = $values['startdate'];
+        }
+        $enddate      = $booking->enddate;
+        if(isset($values['enddate'])){
+            $enddate  = $values['enddate'];
+        }
+        $subject      = $booking->subject;
+        if(isset($values['subject'])){
+            $subject  = $values['subject'];
+        }
         
-        if($this->checkOverlap($booking->startdate, $booking->enddate, $booking->subject)){
+        if($this->checkOverlap($startdate, $enddate, $subject)){
             return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
         }
 

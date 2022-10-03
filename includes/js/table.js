@@ -224,6 +224,8 @@ function showFullscreen(target){
 	window.lastY	= window.pageYOffset;
 
 	window.scrollTo(0,0);
+	
+	console.log('scrolling')
 
 	// remove scrollbars from body
 	document.querySelector('body').style.overflow	= 'hidden';
@@ -251,6 +253,8 @@ function closeFullscreen(target){
 		lastY	= window.lastY;
 	}
 	window.scrollTo(0, lastY);
+	
+	console.log('scrolling')
 
 	// remove scrollbars from body
 	document.querySelector('body').style.overflow	= 'unset';

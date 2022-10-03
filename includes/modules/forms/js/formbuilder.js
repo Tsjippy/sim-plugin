@@ -667,6 +667,8 @@ function fixConditionNumbering(){
 
 function focusFirst(){
 	modal.scrollTo(0,0);
+	
+	console.log('scrolling')
 	modal.querySelector('[name="add_form_element_form"] .nice-select').focus();
 }
 

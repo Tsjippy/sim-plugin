@@ -1,3 +1,5 @@
+@use '../../../css/scss/global' as *;
+
 .limit-length{
     min-width: 300px;
     white-space: pre-wrap;
@@ -83,4 +85,9 @@
         max-width: 100%;
         height: calc(100vh - 140px);
     }
+}
+
+.edit_forms_table{
+    text-decoration: underline;
+    text-decoration-color: $primary_color;
 }

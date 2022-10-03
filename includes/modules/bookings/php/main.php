@@ -287,7 +287,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
                                         break;
                                     }
                                     $cellContent    = $displayFormResults->transformInputData($data[$setting['name']], $setting['name']);
-                                    $html   .= "<td class='edit_forms_table' data-id='{$setting['name']}' data-oldvalue='".json_encode($cellContent)."'>$cellContent</td>";
+                                    $html   .= "<td class='edit_forms_table' data-id='{$setting['name']}' data-oldvalue='".json_encode($data[$setting['name']])."'>$cellContent</td>";
                                 }
                                 $html   .= "<td>";
                                     $html   .= "<button class='button approve' type='button' data-id='$pendingBooking->id'>Approve</button>";
