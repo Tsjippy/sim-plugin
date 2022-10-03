@@ -6,6 +6,7 @@ class Bookings{
     function __construct($DisplayFormResults=''){
         global $wpdb;
 		$this->tableName		= $wpdb->prefix.'sim_bookings';
+        $this->bookings         = [];
 
         if(getType($DisplayFormResults) == 'object'){
             $this->forms            = $DisplayFormResults;
@@ -616,7 +617,7 @@ class Bookings{
         //sort on startdate
 		$query	.= " ORDER BY `startdate`, `starttime` ASC";
 
-		$this->bookings 	=  $wpdb->get_results($query);
+		$this->bookings 	=  array_merge($this->bookings, $wpdb->get_results($query));
 
         $this->unavailable  = [];
 
