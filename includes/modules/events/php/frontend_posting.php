@@ -137,7 +137,7 @@ function displayRepetitionParameters($eventDetails){
 
 	?>
 	<fieldset class='repeat_wrapper <?php if(empty($eventDetails['isrepeated'])){echo 'hidden';}?>'>
-		<legend>Repeat parameters</legend>
+		<legend><span class='text'>Repeat parameters</span></legend>
 		<h4>Select repeat type:</h4>
 		<select name="event[repeat][type]">
 			<option value="">---</option>

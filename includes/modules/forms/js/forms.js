@@ -164,7 +164,7 @@ export function fixNumbering(cloneDivsWrapper){
 		//Update the new number	
 		//DIV
 		if(clone.id != ''){
-			clone.id = clone.id.replace(/(\d)/g, index);
+			clone.id = clone.id.replace(/[0-9]+(?!.*[0-9])/, index);
 		}
 		
 		if(clone.dataset.divid  != null){
@@ -172,14 +172,14 @@ export function fixNumbering(cloneDivsWrapper){
 		}
 		
 		//Update the title
-		clone.querySelectorAll('h3, h4').forEach(title => {
-			title.textContent = title.textContent.replace(/(\d)/g, index+1);
+		clone.querySelectorAll('h3, h4, legend :first-child').forEach(el => {
+			el.textContent = el.textContent.replace(/[0-9]+(?!.*[0-9])/, index+1);
 		});
 		
 		//Update the legend
-		clone.querySelectorAll('legend').forEach(legend => {
-			legend.innerHTML = legend.innerHTML.replace(/ (\d)/g, ' '+(index+1));
-		});
+		/* clone.querySelectorAll('legend').forEach(legend => {
+			legend.textContent = legend.textContent.replace(/[0-9]+(?!.*[0-9])/, ' '+(index+1));
+		}); */
 		
 		//Update the elements
 		clone.querySelectorAll('input,select,textarea').forEach(input => {
@@ -187,16 +187,16 @@ export function fixNumbering(cloneDivsWrapper){
 			if(!input.classList.contains('nice-select-search')){
 				//Update the id
 				if(input.id != '' && input.id != undefined){
-					input.id = input.id.replace(/(\d)/g, index);
+					input.id = input.id.replace(/[0-9]+(?!.*[0-9])/, index);
 				}
 				//Update the name
 				if(input.name != '' && input.name != undefined){
-					input.name = input.name.replace(/(\d)/g, index);
+					input.name = input.name.replace(/[0-9]+(?!.*[0-9])/, index);
 				}
 				
 				//Reset the select to the default
 				if(input.type == 'button'){
-					input.value = input.value.replace(/\d/g, index);
+					input.value = input.value.replace(/[0-9]+(?!.*[0-9])/, index);
 				}
 			}
 		});

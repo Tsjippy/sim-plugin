@@ -649,7 +649,7 @@ class FormBuilderForm extends SimForms{
 												<div class='clone_div' data-divid='<?php echo $fromKey;?>'>
 													<fieldset class='formemailfieldset'>
 														<legend class="formfield">
-															Condition <?php echo $fromKey+1;?>
+															<span class='text'>Condition <?php echo $fromKey+1;?></span>
 															<button type='button' class='add button' style='flex: 1;'>+</button>
 															<button type='button' class='remove button' style='flex: 1;'>-</button>
 														</legend>
@@ -672,6 +672,11 @@ class FormBuilderForm extends SimForms{
 												<?php
 											}
 											?>
+											<br>
+											<label class="formfield formfieldlabel">
+												Else the e-mail will be
+												<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][elsefrom]' value="<?php echo $email['elsefrom']; ?>">
+											</label>
 										</div>
 									</div>
 									
@@ -707,32 +712,38 @@ class FormBuilderForm extends SimForms{
 												];
 											}
 											foreach($email['conditionalemailto'] as $toKey=>$toEmail){
-											?>
-											<div class='clone_div' data-divid='<?php echo $toKey;?>'>
-												<fieldset class='formemailfieldset'>
-													<legend class="formfield">Condition <?php echo $toKey+1;?>
-													<button type='button' class='add button' style='flex: 1;'>+</button>
-													<button type='button' class='remove button' style='flex: 1;'>-</button>
-													</legend>
-													If 
-													<select name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][fieldid]'>
-														<?php
-														echo $this->inputDropdown($toEmail['fieldid']);
-														?>
-													</select>
-													<label class="formfield formfieldlabel">
-														equals 
-														<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][value]' value="<?php echo $toEmail['value'];?>">
-													</label>
-													<label class="formfield formfieldlabel">
-														then from e-mail address should be:<br>
-														<input type='email' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][email]' value="<?php echo $toEmail['email'];?>">
-													</label>
-												</fieldset>
-											</div>
-											<?php
+												?>
+												<div class='clone_div' data-divid='<?php echo $toKey;?>'>
+													<fieldset class='formemailfieldset'>
+														<legend class="formfield">
+															<span class='text'>Condition <?php echo $toKey+1;?></span>
+															<button type='button' class='add button' style='flex: 1;'>+</button>
+															<button type='button' class='remove button' style='flex: 1;'>-</button>
+														</legend>
+														If 
+														<select name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][fieldid]'>
+															<?php
+															echo $this->inputDropdown($toEmail['fieldid']);
+															?>
+														</select>
+														<label class="formfield formfieldlabel">
+															equals 
+															<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][value]' value="<?php echo $toEmail['value'];?>">
+														</label>
+														<label class="formfield formfieldlabel">
+															then from e-mail address should be:<br>
+															<input type='email' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][email]' value="<?php echo $toEmail['email'];?>">
+														</label>
+													</fieldset>
+												</div>
+												<?php
 											}
 											?>
+											<br>
+											<label class="formfield formfieldlabel">
+												Else the e-mail will be
+												<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][elseto]' value="<?php echo $email['elseto']; ?>">
+											</label>
 										</div>
 									</div>
 									<br>

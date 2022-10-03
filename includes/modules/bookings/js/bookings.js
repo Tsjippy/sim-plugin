@@ -75,8 +75,14 @@ async function approve(target){
     let response = await FormSubmit.fetchRestApi('bookings/approve', formData);
 
     if(response){
-        // remove the row
-        row.remove();
+
+        // Remove table if empty
+        if(row.closest('tbody').rows.length == 1){
+            row.closest('table').remove()
+        }else{
+            // remove the row
+            row.remove();
+        }
 
         let subjectWrapper  = document.querySelector(`.bookings-wrap[data-subject='${response.subject}']`);
 
@@ -94,7 +100,6 @@ async function approve(target){
 async function remove(target){    
     let formData    = new FormData();
     formData.append('id', target.dataset.id);
-
     let row         = target.closest('tr');
 
     Main.showLoader(target.closest('td'));
@@ -102,8 +107,13 @@ async function remove(target){
     let response = await FormSubmit.fetchRestApi('bookings/remove', formData);
 
     if(response){
-        // remove the row
-        row.remove();
+        // Remove table if empty
+        if(row.closest('tbody').rows.length == 1){
+            row.closest('table').remove()
+        }else{
+            // remove the row
+            row.remove();
+        }
 
         Main.displayMessage(response);
     }

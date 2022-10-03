@@ -83,6 +83,10 @@ class SubmitForm extends SimForms{
 				//Send e-mail from conditional e-mail adress
 				if($email['fromemail'] == 'conditional'){
 					$from 	= $this->findConditionalEmail($email['conditionalfromemail']);
+
+					if(!$from){
+						$from	= $email['elsefrom'];
+					}
 				}elseif($email['fromemail'] == 'fixed'){
 					$from	= $this->processPlaceholders($email['from']);
 				}
@@ -94,6 +98,10 @@ class SubmitForm extends SimForms{
 				$to		= '';
 				if($email['emailto'] == 'conditional'){
 					$to = $this->findConditionalEmail($email['conditionalemailto']);
+
+					if(!$from){
+						$from	= $email['elseto'];
+					}
 				}elseif($email['emailto'] == 'fixed'){
 					$to		= $this->processPlaceholders($email['to']);
 				}

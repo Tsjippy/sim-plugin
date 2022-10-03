@@ -265,7 +265,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
             }
 
             $html   .= "<div class='pending-bookings-wrapper'>";
-                $html   .= "<table class='sim-table'>";
+                $html   .= "<table class='sim-table' data-formid='{$booking->forms->formData->id}'>";
                     $html   .= "<thead>";
                         $html   .= "<tr>";
                             foreach($displayFormResults->columnSettings as $setting){
@@ -281,13 +281,13 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
                     $html   .= "<tbody>";
                         foreach($pendingBookings as $pendingBooking){
                             $data   = $submissions[$pendingBooking->submission_id];
-                            $html   .= "<tr>";
+                            $html   .= "<tr data-id='$pendingBooking->submission_id' >";
                                 foreach($displayFormResults->columnSettings as $setting){
                                     if($setting['show'] == 'hide'){
                                         break;
                                     }
                                     $cellContent    = $displayFormResults->transformInputData($data[$setting['name']], $setting['name']);
-                                    $html   .= "<td>$cellContent</td>";
+                                    $html   .= "<td class='edit_forms_table' data-id='{$setting['name']}' data-oldvalue='".json_encode($cellContent)."'>$cellContent</td>";
                                 }
                                 $html   .= "<td>";
                                     $html   .= "<button class='button approve' type='button' data-id='$pendingBooking->id'>Approve</button>";
