@@ -461,8 +461,8 @@ class Bookings{
         global $wpdb;
 
         // start end enddate may overlap so only check for dates in between
-        $queryStartDate  = strtotime('+1 day', strtotime($startDate));
-        $queryEndDate    = strtotime('-1 day', strtotime($endDate));
+        $queryStartDate  = date('Y-m-d', strtotime('+1 day', strtotime($startDate)));
+        $queryEndDate    = date('Y-m-d', strtotime('-1 day', strtotime($endDate)));
 
         // First check if a booking on these dates doesn't exist
         $query	    = "SELECT * FROM $this->tableName WHERE pending=0 AND subject = '$subject' AND ('$queryStartDate' BETWEEN startdate and enddate OR '$queryEndDate' BETWEEN startdate and enddate)";
@@ -493,7 +493,7 @@ class Bookings{
         if(
             isset($this->forms->formData->settings['default-booking-state'])            &&
             $this->forms->formData->settings['default-booking-state']   == 'pending'    &&
-            !array_intersect(wp_get_current_user()->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
+            !array_intersect(get_userdata($this->forms->formResults['user_id'])->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
         ){
             $pending    = true;
         }
