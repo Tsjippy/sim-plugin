@@ -22,6 +22,7 @@ are not after each other in title
 - open up selector modal when clicking
  on a date
 - issue with conditional form e-mails
+- error in overlapping bookings check
 
 ## [2.19.8] - 2022-09-30
 
