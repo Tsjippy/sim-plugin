@@ -9,9 +9,9 @@ class Bookings{
         $this->bookings         = [];
 
         if(getType($DisplayFormResults) == 'object'){
-            $this->forms            = $DisplayFormResults;
+            $this->forms        = $DisplayFormResults;
         }else{
-            $this->forms            = new SIM\FORMS\DisplayFormResults();
+            $this->forms        = new SIM\FORMS\DisplayFormResults();
         }
 
         wp_enqueue_style( 'sim_bookings_style');
