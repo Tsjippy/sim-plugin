@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.19.10] - 2022-10-03
+
+
+### Added
 - pending bookings
 
 ### Changed
