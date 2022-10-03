@@ -617,11 +617,12 @@ class Bookings{
         //sort on startdate
 		$query	.= " ORDER BY `startdate`, `starttime` ASC";
 
-		$this->bookings 	=  array_merge($this->bookings, $wpdb->get_results($query));
+        $result             = $wpdb->get_results($query);
+		$this->bookings 	=  array_merge($this->bookings, $result);
 
         $this->unavailable  = [];
 
-        foreach($this->bookings as $booking){
+        foreach($result as $booking){
 
             $current    = strtotime($booking->startdate);
             $last       = strtotime($booking->enddate);
