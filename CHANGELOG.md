@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.20.1] - 2022-10-04
+
+
+### Fixed
 - bug in image tracking
 
 ## [2.20.0] - 2022-10-04
