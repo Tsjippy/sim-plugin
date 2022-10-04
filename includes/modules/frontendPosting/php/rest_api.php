@@ -50,76 +50,7 @@ add_action( 'rest_api_init', function () {
 		'/submit_post', 
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> function(){
-				global $post;
-
-				$frontEndContent	= new FrontEndContent();
-				$result =  $frontEndContent->submitPost();
-
-				if(is_wp_error($result)){
-					return $result;
-				}
-
-				// Load the updated  post in the loop
-				if($result['post']->post_type  == 'change'){
-					$p	= $frontEndContent->oldPost->ID;
-				}else{
-					$p	= $frontEndContent->postId;
-				}
-
-				$posts	= new \WP_Query( array( 
-					'p'			=> $p, 
-					'post_type' => 'any'
-				) );
-
-				$GLOBALS['wp_query']= $posts;
-				$post				= $posts->post;
-				$GLOBALS['post']	= $post;
-
-				if('page' == $post->post_type){
-					$type = 'page';
-				}else{
-					$type = 'single';
-				}
-				// Find the the correct template
-				$baseTemplate	= locate_template(["content-{$type}.php",'content.php']);
-				$template 		= apply_filters( "content_template", $baseTemplate, 'content' );
-
-				if(empty($template)){
-					$html	= false;
-				}else{
-					// Get the html from the template
-					ob_start();
-					include_once($template);
-					$html=ob_get_clean();
-				}
-
-				// Get the picture
-				$result['picture']	= get_the_post_thumbnail_url($post->ID, 'full');
-
-				$result['html'] = do_shortcode($html);
-
-				if($post->post_status == 'pending'){
-					$result['url']	= get_preview_post_link($post->ID);
-				}else{
-					$result['url']	= get_permalink($post->ID);
-				}
-				
-				if($frontEndContent->update){
-					do_action('wp_enqueue_scripts');
-					ob_start();
-					wp_print_scripts();
-					print_footer_scripts();
-					$result['js']	= ob_get_clean();
-
-					do_action('wp_enqueue_style');
-					ob_start();
-					wp_print_styles();
-					$result['css']	= ob_get_clean();
-				}
-
-				return $result;
-			},
+			'callback' 				=> __NAMESPACE__.'\submitPost',
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'post_type'		=> array(
@@ -377,4 +308,75 @@ function sendPost(){
 		'url'		=> $url,
 		'content'	=> $content
 	];
+}
+
+function submitPost(){
+	global $post;
+
+	$frontEndContent	= new FrontEndContent();
+	$result =  $frontEndContent->submitPost();
+
+	if(is_wp_error($result)){
+		return $result;
+	}
+
+	// Load the updated  post in the loop
+	if($result['post']->post_type  == 'change'){
+		$p	= $frontEndContent->oldPost->ID;
+	}else{
+		$p	= $frontEndContent->postId;
+	}
+
+	$posts	= new \WP_Query( array( 
+		'p'			=> $p, 
+		'post_type' => 'any'
+	) );
+
+	$GLOBALS['wp_query']= $posts;
+	$post				= $posts->post;
+	$GLOBALS['post']	= $post;
+
+	if('page' == $post->post_type){
+		$type = 'page';
+	}else{
+		$type = 'single';
+	}
+	// Find the the correct template
+	$baseTemplate	= locate_template(["content-{$type}.php",'content.php']);
+	$template 		= apply_filters( "content_template", $baseTemplate, 'content' );
+
+	if(empty($template)){
+		$html	= false;
+	}else{
+		// Get the html from the template
+		ob_start();
+		include_once($template);
+		$html=ob_get_clean();
+	}
+
+	// Get the picture
+	$result['picture']	= get_the_post_thumbnail_url($post->ID, 'full');
+
+	$result['html'] = do_shortcode($html);
+
+	if($post->post_status == 'pending'){
+		$result['url']	= get_preview_post_link($post->ID);
+	}else{
+		$result['url']	= get_permalink($post->ID);
+	}
+	
+	if($frontEndContent->update){
+		do_action('wp_enqueue_scripts');
+		ob_start();
+		wp_print_scripts();
+		print_footer_scripts();
+		$result['js']	= ob_get_clean();
+
+		do_action('wp_enqueue_style');
+		ob_start();
+		wp_print_styles();
+		$result['css']	= ob_get_clean();
+	}
+
+	return $result;
 }

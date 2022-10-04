@@ -187,17 +187,20 @@ export function showModal(modal){
 }
 
 export function hideModals(){
-	document.querySelectorAll('.modal:not(.hidden)').forEach(modal=>{
-		modal.classList.add('hidden');
-	});
+	let modals	= document.querySelectorAll('.modal:not(.hidden)');
+	if(modals.length != 0){
+		modals.forEach(modal=>{
+			modal.classList.add('hidden');
+		});
 
-	// Turn main page scrollin on again
-	const scrollY					= document.body.style.top;
-	document.body.style.position 	= '';
-	document.body.style.top 		= '';
-	window.scrollTo(0, parseInt(scrollY || '0') * -1);
-	
-	console.log('scrolling')
+		// Turn main page scrollin on again
+		const scrollY					= document.body.style.top;
+		document.body.style.position 	= '';
+		document.body.style.top 		= '';
+		window.scrollTo(0, parseInt(scrollY || '0') * -1);
+		
+		console.log('scrolling');
+	}
 }
 
 //check internet
