@@ -43,8 +43,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	}
 
 	$postTypes	= get_post_types([
-		'public'   => true,
-		'_builtin' => false
+		'public'   => true
 	]);
 
 	$categories	= [];
