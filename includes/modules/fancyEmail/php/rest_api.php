@@ -25,6 +25,8 @@ add_filter('sim_allowed_rest_api_urls', function($urls){
  * Tracks if an e-mail is opened or not using an image with a url
  */
 function mailTracker(\WP_REST_Request $request) {
+
+	SIM\printArray($_SERVER);
 	global $wpdb;
 
 	$mailId		= $request->get_param('mailid');
@@ -60,7 +62,7 @@ function mailTracker(\WP_REST_Request $request) {
 		// redirect to picture
 		$url = plugins_url('pictures/transparent.png', __DIR__).'?ver='.time();
 	}
-	
+
 	wp_redirect( $url );
 	exit();
 }
