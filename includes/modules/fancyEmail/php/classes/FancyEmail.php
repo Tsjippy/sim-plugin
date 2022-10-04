@@ -180,7 +180,7 @@ class FancyEmail{
         return $html;
     }
 
-     /**
+    /**
      * Enable link tracking
      * 
      * @param   array   $matches    Matches from a regex
@@ -267,7 +267,7 @@ class FancyEmail{
                                         <?php
                                         echo apply_filters('sim_email_footer', $this->footer, $this->message);
                                         ?>
-                                        <img src="<?php echo "$this->mailTrackerUrl?mailid=$this->emailId";?>&ver=<?php echo time();?>" alt="" width="1px" height="1px">
+                                        <img src="<?php echo "$this->mailTrackerUrl?mailid=$this->emailId&ver=$this->emailId";?>" alt="." width="1px" height="1px">
                                     </td>
                                 </tr>
                             </table>

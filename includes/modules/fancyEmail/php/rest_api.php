@@ -7,9 +7,9 @@ global $wpdb;
 add_action( 'rest_api_init', function () {
 	//Route for e-mail tracking of today
 	register_rest_route( RESTAPIPREFIX, '/mailtracker', array(
-		'methods' => 'GET',
-		'callback' => __NAMESPACE__.'\mailTracker',
-		'permission_callback' => '__return_true',
+			'methods' => 'GET',
+			'callback' => __NAMESPACE__.'\mailTracker',
+			'permission_callback' => '__return_true',
 		)
 	);
 } );
@@ -60,6 +60,7 @@ function mailTracker(\WP_REST_Request $request) {
 		// redirect to picture
 		$url = plugins_url('pictures/transparent.png', __DIR__).'?ver='.time();
 	}
+	
 	wp_redirect( $url );
 	exit();
 }

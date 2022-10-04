@@ -25,9 +25,6 @@ add_filter('postie_post_before', function($post, $headers) {
 
 		foreach($categoryMapper as $mapper){
 			if ($mapper['email'] == $email){
-				SIM\printArray(get_cat_ID('Finance'));
-				echo "Setting the category";
-
 				$post['post_type']	= $mapper['category'][0];
 				$post['taxonomy']	= $mapper['category'][$post['post_type']][0];
 				//Set the category to the chosen category
