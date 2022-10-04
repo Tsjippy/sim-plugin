@@ -25,10 +25,16 @@ add_filter('postie_post_before', function($post, $headers) {
 
 		foreach($categoryMapper as $mapper){
 			if ($mapper['email'] == $email){
-				$post['post_type']	= $mapper['category'][0];
-				$post['taxonomy']	= $mapper['category'][$post['post_type']][0];
+				$postType			= $mapper['category'][0];
+				$post['post_type']	= $postType;
+				$taxonomy			= $mapper['category'][$postType][0];
+				$post['taxonomy']	= $taxonomy;
+
 				//Set the category to the chosen category
-				$post['tax_input'][$mapper['category'][$post['post_type']][0]] = $mapper['category'][$post['post_type']][$post['taxonomy']];
+				if(!isset($post['tax_input'][$taxonomy])){
+					$post['tax_input'][$taxonomy]	= [];
+				}
+				$post['tax_input'][$taxonomy] = array_merge($post['tax_input'][$taxonomy], $mapper['category'][$postType][$taxonomy]);
 			}
 		}
 	}
