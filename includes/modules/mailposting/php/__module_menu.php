@@ -36,13 +36,110 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		return $optionsHtml;
 	}
 
+	if(empty($settings['category_mapper'])){
+		$categoryMapper	= [''];
+	}else{
+		$categoryMapper	= $settings['category_mapper'];
+	}
+
+	$postTypes	= get_post_types([
+		'public'   => true,
+		'_builtin' => false
+	]);
+
+	$categories	= [];
+	foreach($postTypes as $postType){
+		$categories[$postType]	= [];
+
+		foreach(get_object_taxonomies($postType) as $taxonomy){
+			$categories[$postType][$taxonomy]	= get_categories( array(
+				'orderby' 	=> 'name',
+				'order'   	=> 'ASC',
+				'taxonomy'	=> $taxonomy,
+				'hide_empty'=> false,
+			) );
+		}
+	}
+
 	ob_start();
 	
     ?>
-	<label>
-		E-mail address used by finance department<br>
-		<input type="email" name="finance_email" value="<?php echo $settings['finance_email'];?>">
-	</label>
+	<div class="">
+		<h4>Give optional e-mail addresses and the categories their posts should be given:</h4>
+		<div class="clone_divs_wrapper">
+			<?php			
+			foreach($categoryMapper as $index=>$mapper){
+				if(empty($mapper)){
+					$mapper	= [];
+				}
+				?>
+				<div class="clone_div" data-divid="<?php echo $index;?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
+					<div class="multi_input_wrapper">
+						<label>
+							<h4 style='margin: 0px;'>E-mail address <?php echo $index+1;?></h4>
+							<input type='email' name="category_mapper[<?php echo $index;?>][email]" value='<?php echo $mapper['email'];?>'>
+						</label>
+						<label>
+							<h4 style='margin-bottom: 0px;'>The category e-mails from this address should be mapped to</h4>
+						</label>
+
+						<?php
+							foreach($categories as $postType=>$taxonomies){
+								?>
+								<div class='posttype-wrapper' data-posttype='<?php echo $postType;?>'>
+									<label>
+										<input type='checkbox' class='posttype' name='category_mapper[<?php echo $index;?>][category][]' value='<?php echo $postType;?>' <?php if(isset($mapper['category'][$postType])){echo 'checked';}?>>
+										<?php echo ucfirst($postType);?>
+									</label>
+
+									<div class='taxonomies-wrapper <?php if(!isset($mapper['category'][$postType])){echo 'hidden';}?>' style='margin-left: 20px;'>
+										<?php
+										foreach($taxonomies as $taxonomy=>$cats){
+											?>
+											<div class='taxonomy-wrapper'>
+												<label>
+													<input type='checkbox' class='taxonomy' name='category_mapper[<?php echo $index;?>][category][<?php echo $postType;?>][]' value='<?php echo $taxonomy;?>' <?php if(isset($mapper['category'][$postType][$taxonomy])){echo 'checked';}?>>
+													<?php echo ucfirst($taxonomy);?>
+												</label>
+
+												<div class='categories-wrapper <?php if(!isset($mapper['category'][$postType][$taxonomy])){echo 'hidden';}?>'  style='margin-left: 40px;'>
+													<?php
+													foreach($cats as $cat){
+														?>
+														<label>
+															<input type='checkbox' name='category_mapper[<?php echo $index;?>][category][<?php echo $postType;?>][<?php echo $taxonomy;?>][]' value='<?php echo $cat->id;?>' <?php if(in_array($cat->id, $mapper['category'][$postType][$taxonomy])){echo 'checked';}?>>
+															<?php echo $cat->name;?>
+														</label>
+														<?php
+													}
+													?>
+												</div>
+											</div>
+											<?php
+										}
+										?>
+									</div>
+								</div>
+								<?php
+							}
+						?>
+					</div>
+					<div class='buttonwrapper' style='margin:auto;'>
+						<button type="button" class="add button" style="flex: 1;">+</button>
+						<?php
+						if(count($categoryMapper)> 1){
+							?>
+							<button type="button" class="remove button" style="flex: 1;">-</button>
+							<?php
+						}
+						?>
+					</div>
+				</div>
+				<?php
+			}
+			?>
+		</div>
+	</div>
 	<?php
 	return ob_get_clean();
 }, 10, 3);

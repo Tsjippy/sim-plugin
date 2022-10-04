@@ -3,8 +3,14 @@ namespace SIM;
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
-    $test   = maybe_unserialize(get_option('sidebars_widgets'));
-    echo '';
+    $post   = get_post(11999, ARRAY_A);
+    $headers    = [
+        'from' => [
+            'mailbox' => 'jos.finance',
+            'host'      => 'sim.org'
+        ]
+    ];
+    apply_filters('postie_post_before', $post, $headers);
 });
 
 // turn off incorrect error on localhost

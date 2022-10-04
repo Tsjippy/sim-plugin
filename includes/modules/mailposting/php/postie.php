@@ -20,12 +20,19 @@ add_filter('postie_post_before', function($post, $headers) {
 		$post['post_title'] = trim(str_replace("Fwd:", "", $subject));
 	
 		//Set the category
-		SIM\printArray($headers);
-		if ($headers['from']['mailbox'].'@'.$headers['from']['host'] == SIM\getModuleOption(MODULE_SLUG, 'finance_email')){
-			SIM\printArray(get_cat_ID('Finance'));
-			echo "Setting the category";
-			//Set the category to Finance
-			$post['post_category'] = [get_cat_ID('Finance')];
+		$categoryMapper	= SIM\getModuleOption(MODULE_SLUG, 'category_mapper');
+		$email			= $headers['from']['mailbox'].'@'.$headers['from']['host'];
+
+		foreach($categoryMapper as $mapper){
+			if ($mapper['email'] == $email){
+				SIM\printArray(get_cat_ID('Finance'));
+				echo "Setting the category";
+
+				$post['post_type']	= $mapper['category'][0];
+				$post['taxonomy']	= $mapper['category'][$post['post_type']][0];
+				//Set the category to the chosen category
+				$post['tax_input'][$mapper['category'][$post['post_type']][0]] = $mapper['category'][$post['post_type']][$post['taxonomy']];
+			}
 		}
 	}
 	return $post;
