@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- Grt al post types
 
 ## [2.20.1] - 2022-10-04
 
