@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug in vimeo backup file
 
 ## [2.20.2] - 2022-10-04
 
