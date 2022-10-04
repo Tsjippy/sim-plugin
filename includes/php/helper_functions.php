@@ -1163,7 +1163,13 @@ function clearOutput(){
 function userPageLinks($string){
 	//Find display names in content
 	$users = getUserAccounts(false, false);
+	
 	foreach($users as $user){
+		// continue to next user if user not in string
+		if(strpos($string, $user->last_name) === false){
+			continue;
+		}
+
 		$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
 
 		//only replace the name with a link if privacy allows
@@ -1176,21 +1182,21 @@ function userPageLinks($string){
 
 			$link		= "<a href=\"$url\">$user->display_name</a>";
 			$name		= "$user->first_name $user->last_name";
-			$pattern	= "/$name(?!<\/a>)"; // Look for the name not followed by the ending of a hyperlink
+			$pattern	= "/([\s|>])$name(?!<\/a>)"; // Look for the name not followed by the ending of a hyperlink
 			if($user->display_name != $name){
 				$pattern	.= "|$user->display_name(?!<\/a>)";
 			}
 			$pattern	.= "/i";
-			$string		= preg_replace($pattern, $link, $string);
+			$string		= preg_replace($pattern, '$1'.$link, $string);
 
 			$partnerId	= hasPartner($user->ID);
 			if(is_numeric($partnerId)){
 				$partner	= get_userdata($partnerId);
 
 				// In case first names are used
-				$pattern	= "/{$user->first_name}.*{$partner->display_name}(?!<\/a>)/i";
+				$pattern	= "/([\s|>]){$user->first_name}.*?{$partner->display_name}(?!<\/a>)/i";
 				$link		= "<a href=\"$url\">$user->first_name & $partner->display_name</a>";
-				$string		= preg_replace($pattern, $link, $string);
+				$string		= preg_replace($pattern, '$1'.$link, $string);
 
 				// family
 				$pattern	= "/$user->last_name family(?!<\/a>)/i";

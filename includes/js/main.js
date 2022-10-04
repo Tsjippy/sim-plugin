@@ -193,7 +193,7 @@ export function hideModals(){
 			modal.classList.add('hidden');
 		});
 
-		// Turn main page scrollin on again
+		// Turn main page scrolling on again
 		const scrollY					= document.body.style.top;
 		document.body.style.position 	= '';
 		document.body.style.top 		= '';
