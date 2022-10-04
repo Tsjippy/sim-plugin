@@ -3,6 +3,8 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- allow multiple custom post categories to be set
+when importing e-mail
 
 ### Changed
 
