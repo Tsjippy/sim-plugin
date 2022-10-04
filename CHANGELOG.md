@@ -10,6 +10,7 @@
 - bug in vimeo backup file
 - assign multiple e-mail adresses
 to the same category
+- do not scroll when not needed
 
 ## [2.20.2] - 2022-10-04
 
