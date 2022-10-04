@@ -1,6 +1,8 @@
 <?php
 namespace SIM\BOOKINGS;
 use SIM;
+use SIM\EVENTS;
+use SIM\FORMS;
 
 class Bookings{
     function __construct($DisplayFormResults=''){
@@ -510,6 +512,28 @@ class Bookings{
                 'pending'           => $pending
             )
         );
+
+        // create a personal event
+        $post = array(
+			'post_type'		=> 'event',
+			'post_title'    => "Booking for $subject",
+			'post_content'  => "Booking for $subject",
+			'post_status'   => 'publish',
+			'post_author'   => $this->forms->formResults['user_id']
+		);
+
+		$eventId 	= wp_insert_post( $post, true, false);
+
+        $event							= [];	
+		$event['startdate']				= $startDate;
+		$event['starttime']				= '14:00';
+		$event['enddate']				= $endDate;
+		$event['endtime']				= '12:00';	
+		$event['location']				= $subject;
+		$event['organizer_id']			= $this->forms->formResults['user_id'];
+        $event['onlyfor']               = $this->forms->formResults['user_id'];
+        update_post_meta($eventId, 'eventdetails', json_encode($event));
+        update_post_meta($eventId, 'onlyfor', $this->forms->formResults['user_id']);
     }
 
     /**
