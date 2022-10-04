@@ -7,6 +7,15 @@
 ### Changed
 
 ### Fixed
+
+## [2.20.0] - 2022-10-04
+
+
+### Added
+- allow multiple custom post categories to be set
+when importing e-mail
+
+### Fixed
 - issue with booking details
 - better mobile layout of bookings overview
 
