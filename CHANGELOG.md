@@ -8,6 +8,7 @@
 
 ### Fixed
 - issue with booking details
+- better mobile layout of bookings overview
 
 ## [2.19.10] - 2022-10-03
 
