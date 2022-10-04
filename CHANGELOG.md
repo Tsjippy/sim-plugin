@@ -3,10 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- allow multiple custom post categories to be set
-when importing e-mail
 
 ### Changed
+
+### Fixed
+
+## [2.20.0] - 2022-10-04
+
+
+### Added
+- allow multiple custom post categories to be set
+when importing e-mail
 
 ### Fixed
 - issue with booking details
