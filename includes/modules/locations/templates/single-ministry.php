@@ -176,10 +176,10 @@ function getLocationEmployees($post){
 	}else{
 
 		$style	= "<style>";
-			$style	.= ".person-wrapper{margin: 0px 10px 10px 0px;display:flex;width:25%;}";
+			$style	.= ".person-wrapper{margin: 0px 10px 10px 0px;display:flex;width:25%;min-width: 200px;}";
 			$style	.= ".profile-picture{max-height:50px;}";
 		$style	.= "</style>";
-		$html	= "$style<div class='employee-gallery' style='display:flex;flex-wrap:wrap'>$html</div>";
+		$html	= "$style<div class='employee-gallery' style='display:flex;flex-wrap:wrap;margin-left:10px;'>$html</div>";
 	}
 
 	$html 	= "<p style='padding:10px;'><strong>People working at $post->post_title are:</strong><br><br>$html</p>";

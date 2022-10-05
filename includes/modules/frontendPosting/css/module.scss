@@ -49,11 +49,9 @@
 	}
 	
 	.infobox {
-		&:hover{
+		@media (min-width: 600px){
 			display: inline-table;
 		}
-		
-		display: inline-table;
 
 		/* Tooltip text  on frontend form*/
 		.tooltiptext {
@@ -85,6 +83,8 @@
 	{
 		width: 100%;
 	}
+
+	display: inline-block;
 }
 
 table.diff{
