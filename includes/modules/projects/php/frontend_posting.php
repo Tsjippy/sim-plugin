@@ -60,7 +60,7 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
             delete_post_meta($post->ID, 'manager');
         }else{
             //Store manager
-            update_metadata( 'post', $post->ID, 'manager', $_POST['manager']);
+            update_metadata( 'post', $post->ID, 'manager', json_encode($_POST['manager']));
         }
     }
 
@@ -164,7 +164,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
                 <h4>Project details</h4>
             </legend>					
         
-            <table class="form-table">
+            <table class="form-table"> 
                 <tr>
                     <th><label for="number">Project Number</label></th>
                     <td>
