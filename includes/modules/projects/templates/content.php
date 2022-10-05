@@ -127,7 +127,7 @@ if(!$archive){
 					echo "</div>";
 				}
 
-				$manager		= get_post_meta(get_the_ID(), 'manager', true);
+				$manager		= json_decode(get_post_meta(get_the_ID(), 'manager', true), true);
 				
 				echo "<div class='number project meta'>";
 					$imageUrl = plugins_url('pictures/manager.png', __DIR__);
@@ -145,6 +145,7 @@ if(!$archive){
 						$imageUrl = plugins_url('pictures/tel.png', __DIR__);
 						$icon = "<img src='$imageUrl' alt='telephone' loading='lazy' class='project_icon'>";
 						echo "<a href='tel:{$manager['tel']}'>$icon {$manager['tel']}</a>";
+					echo "</div>";
 				}
 
 				if(!empty($manager['email'])){
@@ -152,6 +153,7 @@ if(!$archive){
 						$imageUrl = plugins_url('pictures/email.png', __DIR__);
 						$icon = "<img src='$imageUrl' alt='email' loading='lazy' class='project_icon'>";
 						echo "<a href='mailto:{$manager['email']}'>$icon {$manager['email']}</a>";
+					echo "</div>";
 				}
 				?>
 				

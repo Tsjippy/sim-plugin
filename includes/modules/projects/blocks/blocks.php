@@ -1,5 +1,5 @@
 <?php
-namespace SIM\LOCATIONS;
+namespace SIM\PROJECTS;
 use SIM;
 
 add_action('init', function () {
@@ -14,18 +14,22 @@ add_action('init', function () {
 						"remove"	=> true
 					]
 				],
-				'tel'	=> [
-					'type'	=> 'string',
+				'number'	=> [
+					'type'	=> 'int',
 					'default'	=> ''
 				],
 				'url'	=> [
 					'type'	=> 'string',
 					'default'	=> ''
 				],
-				'location'	=> [
-					'type'	=> 'string',
-					'default'	=> '{"address":""}'
+				'manager'	=> [
+					'type'		=> 'string',
+					'default'	=> '{"userid":"","name":"","tel":"","email":"","":""}'
 				],
+				'ministry'	=> [
+					'type'	=> 'int',
+					'default'	=> ''
+				]
 			]
 		)
 	);
@@ -33,21 +37,28 @@ add_action('init', function () {
 
 // register custom meta tag field
 add_action( 'init', function(){
-	register_post_meta( 'location', 'tel', array(
+	register_post_meta( 'project', 'number', array(
         'show_in_rest' 		=> true,
         'single' 			=> true,
         'type' 				=> 'string',
 		'sanitize_callback' => 'sanitize_text_field'
     ) );
 
-	register_post_meta( 'location', 'url', array(
+	register_post_meta( 'project', 'url', array(
         'show_in_rest' 		=> true,
         'single' 			=> true,
         'type' 				=> 'string',
 		'sanitize_callback' => 'sanitize_text_field'
     ) );
 
-	register_post_meta( 'location', 'location', array(
+	register_post_meta( 'project', 'manager', array(
+        'show_in_rest' 		=> true,
+        'single' 			=> true,
+        'type' 				=> 'string',
+		'sanitize_callback' => 'sanitize_text_field'
+    ) );
+
+	register_post_meta( 'project', 'ministry', array(
         'show_in_rest' 		=> true,
         'single' 			=> true,
         'type' 				=> 'string',
@@ -55,7 +66,68 @@ add_action( 'init', function(){
     ) );
 } );
 
-add_action( 'enqueue_block_editor_assets', function(){
-	$apiKey = SIM\getModuleOption(MODULE_SLUG, 'google-maps-api-key');
-	wp_enqueue_script( 'googlemaps', "//maps.googleapis.com/maps/api/js?key=$apiKey", [], MODULE_VERSION, true);
-} );
+
+add_action( 'rest_api_init', function () {	
+	//Route for notification messages
+	register_rest_route( 
+		RESTAPIPREFIX.'/projects', 
+		'/ministries',
+		array(
+			'methods' => 'GET',
+			'callback' => function($request){
+				return get_posts([
+					'numberposts' => -1,
+					'post_type'   => 'location',
+					'orderby'     => 'title',
+					'order'		  => 'ASC',
+					'tax_query'	  => [
+						[
+							'taxonomy' 			=> 'locations',
+							'include_children' 	=> true,
+							'field'    			=> 'slug',
+							'operator'         	=> 'IN',
+							'terms'    			=> [$request['slug']],
+						]
+					]
+				]);
+			},
+			'permission_callback' => '__return_true',
+		)
+	);
+});
+
+
+
+add_filter('rest_locations_query', function( $args, $request ) {
+	if ( isset($request['category_slug']) ){
+		$categorySlug = sanitize_text_field($request['category_slug']);
+		/* $args['tax_query'] = [
+			[
+				'taxonomy' 			=> 'locations',
+				'include_children' 	=> true,
+				'field'    			=> 'slug',
+				'operator'         	=> 'IN',
+				'terms'    			=> [$categorySlug],
+			]
+		]; */
+
+		$args['term_taxonomy_id']	= get_term_by('slug', $categorySlug, 'locations')->term_taxonomy_id;
+		
+	}
+	
+	get_posts([
+		'numberposts' => -1,
+  		'post_type'   => 'location',
+		'tax_query' => [
+			[
+				'taxonomy' 			=> 'locations',
+				'include_children' 	=> true,
+				'field'    			=> 'slug',
+				'operator'         	=> 'IN',
+				'terms'    			=> [$categorySlug],
+			]
+		]
+	]);
+	return $args;
+	
+}, 10, 3);
