@@ -3,11 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- media showcast
 
 ### Changed
 
 ### Fixed
+
+## [2.20.4] - 2022-10-05
+
+
+### Added
+- media showcast
 
 ## [2.20.3] - 2022-10-05
 
