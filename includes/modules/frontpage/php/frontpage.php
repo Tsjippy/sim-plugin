@@ -278,7 +278,8 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 					];
 
 					if(!is_numeric(array_values($cats)[0])){
-						$args['tax_query']['field']	= 'slug';
+						// Get the last element of the $args['tax_query'] array and add slug
+						$args['tax_query'][count($args['tax_query'])-2]['field']	= 'slug';
 					}
 				}
 			}
