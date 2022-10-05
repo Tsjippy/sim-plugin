@@ -8,6 +8,7 @@
 
 ### Fixed
 - media galery search and category selection
+- category selector layout
 
 ## [2.20.4] - 2022-10-05
 
