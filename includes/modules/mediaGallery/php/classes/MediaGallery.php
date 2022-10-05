@@ -219,7 +219,7 @@ class MediaGallery{
                 }
                 ?>
                 <label>
-                    <input type='checkbox' name='media-category' class='media-cat-selector' value='<?php echo $cat->term_id;?>' <?php echo $checked;?>>
+                    <input type='checkbox' name='media-category' class='media-cat-selector' value='<?php echo $cat->slug;?>' <?php echo $checked;?>>
                     <?php echo $cat->name;?>
                 </label>
                 <?php
@@ -228,7 +228,7 @@ class MediaGallery{
         </div>
 
         <?php
-        if($mediaHtml && substr_count($mediaHtml, "class='cell") == 20){
+        if($mediaHtml && substr_count($mediaHtml, "class='cell") == $this->amount){
             ?>
             <div style='text-align:center; margin-top:20px;'>
                 <button id='loadmoremedia' type='button' class='button'>

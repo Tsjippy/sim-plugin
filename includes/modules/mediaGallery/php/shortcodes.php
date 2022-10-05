@@ -4,14 +4,16 @@ use SIM;
 
 add_shortcode('mediagallery', function($atts){
     $a = shortcode_atts( array(
-        'categories' 	=> []
+        'categories' 	=> [],
+        'types'         => ['image', 'audio', 'video'],
+        'amount'        => 20
     ), $atts );
 
     if(!is_array($a['categories'])){
         $a['categories']    = explode(',', $a['categories']);
     }
 
-    $mediaGallery   = new MediaGallery($acceptedMimes, $amount, $page, $a['categories'], $search='');
+    $mediaGallery   = new MediaGallery($a['types'], $a['amount'], $a['categories'], false);
 
     return $mediaGallery->filterableMediaGallery();
 });

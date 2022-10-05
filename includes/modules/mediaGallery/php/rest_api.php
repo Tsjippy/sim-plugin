@@ -43,11 +43,15 @@ add_action( 'rest_api_init', function () {
 			'methods'				=> 'POST',
 			'callback'				=> function(\WP_REST_Request $request){
 				$param	= $request->get_params();
-				if(!is_array($param['categories'])){
-					$param['categories']	= explode(',', $param['categories']);
+
+				$categories	= $param['categories'];
+				if(!empty($categories) && !is_array($categories)){
+					$categories	= explode(',', $categories);
+				}else{
+					$categories	= [];
 				}
 
-				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $param['categories'], false, 1, $param['search']);
+				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $categories, false, 1, $param['search']);
 				return $mediaGallery->loadMediaHTML();
 			},
 			'permission_callback' 	=> '__return_true',
