@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- project metadata block
 
 ### Changed
+
+### Fixed
+
+## [2.20.3] - 2022-10-05
+
+
+### Added
+- project metadata block
 
 ### Fixed
 - bug in vimeo backup file
