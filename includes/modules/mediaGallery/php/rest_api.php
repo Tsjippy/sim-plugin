@@ -23,7 +23,9 @@ add_action( 'rest_api_init', function () {
 				}elseif(!is_array($param['categories'])){
 					$categories	= explode(',', $param['categories']);
 				}
-				return loadMedia($param['amount'], $param['page'], $param['skipAmount'], $types, $categories, $param['startIndex']);
+
+				$mediaGallery	= new MediaGallery($types, $param['amount'], $categories, false, $param['page']);
+				return $mediaGallery->loadMediaHTML($param['skipAmount'], $param['startIndex']);
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -44,7 +46,9 @@ add_action( 'rest_api_init', function () {
 				if(!is_array($param['categories'])){
 					$param['categories']	= explode(',', $param['categories']);
 				}
-				return loadMedia($param['amount'], 1, false, explode(',', $param['types']), $param['categories'], 0, $param['search']);
+
+				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $param['categories'], false, 1, $param['search']);
+				return $mediaGallery->loadMediaHTML();
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -68,11 +72,42 @@ add_action( 'rest_api_init', function () {
 					$categories	= explode(',', $param['categories']);
 				}
 
-				$html=loadMedia($param['amount'], 1, false, explode(',', $param['types']), $categories);
+				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $categories, false, 1);
+				$html			= $mediaGallery->loadMediaHTML();
 				if(!$html){
 					return "No media found";
 				}
 				return $html;
+			},
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'amount'		=> array('required'	=> true)
+			)
+		)
+	);
+
+	register_rest_route( 
+		RESTAPIPREFIX.'/media_gallery', 
+		'/show_media_gallery', 
+		array(
+			'methods'				=> 'POST',
+			'callback'				=> function(\WP_REST_Request $request){
+				$param	= $request->get_params();
+
+				if(empty($param['categories'])){
+					$categories	= [];
+				}elseif(!is_array($param['categories'])){
+					$categories	= json_decode($param['categories']);
+				}
+
+				if(empty($param['types'])){
+					$types	= [];
+				}elseif(!is_array($param['types'])){
+					$types	= json_decode($param['types']);
+				}
+
+				$mediaGallery	= new MediaGallery($types, $param['amount'], $categories);
+				return $mediaGallery->mediaGallery($param['title'], $param['speed']);
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(

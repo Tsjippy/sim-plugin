@@ -60,7 +60,7 @@ if(!isset($skipHeader) || !$skipHeader){
 		get_footer();
 	}
 
-    /**
+ /**
  * Default content for ministry pages
  */
 function ministryDescription(){
@@ -96,6 +96,22 @@ function ministryDescription(){
 	}
 
 	$html	   .= getLocationEmployees($postId);
+
+	// Show relevant media
+	$cats			= get_the_terms(get_the_ID(), 'locations');
+	$categories		= [];
+
+	foreach($cats as $cat){
+		if(count($cats)>1 && $cat->slug == 'ministry'){
+			continue;
+		}
+
+		$categories[]	= $cat->slug;
+	}
+	
+	$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 3, $categories);
+
+    $html			.= $mediaGallery->mediaGallery('Media', 60);
 
 	return $html;	
 }

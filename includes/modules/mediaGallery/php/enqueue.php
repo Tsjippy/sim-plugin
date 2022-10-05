@@ -26,6 +26,7 @@ function enqueueMediaGalleryScripts(){
     wp_register_style( 'sim_gallery_style', plugins_url('css/media_gallery.min.css', __DIR__), array(), MODULE_VERSION);
 
     wp_register_script('sim_gallery_script', plugins_url('js/media_gallery.min.js', __DIR__), array('sim_formsubmit_script'), MODULE_VERSION, true);
+    wp_register_script('sim_refresh_gallery_script', plugins_url('js/auto_refresh.min.js', __DIR__), array('sim_formsubmit_script'), MODULE_VERSION, true);
 
     $pages   = SIM\getModuleOption(MODULE_SLUG, 'mediagallery_pages');
     if(in_array(get_the_ID(), $pages)){

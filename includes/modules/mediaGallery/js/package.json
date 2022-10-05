@@ -4,7 +4,8 @@
   "description": "Media gallery",
   "main": "./media_gallery.js",
   "scripts": {
-    "build": "webpack --watch --entry ./media_gallery.js --output-path . --output-filename media_gallery.min.js --progress --mode=production --devtool source-map"
+    "gallery": "webpack --watch --entry ./media_gallery.js --output-path . --output-filename media_gallery.min.js --progress --mode=production --devtool source-map",
+    "refresh": "webpack --watch --entry ./auto_refresh.js --output-path . --output-filename auto_refresh.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

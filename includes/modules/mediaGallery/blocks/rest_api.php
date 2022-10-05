@@ -15,11 +15,13 @@ add_action( 'rest_api_init', function () {
 	);
 } );
 
-function displayMediaGallery($attributes) {
+function displayMediaGallery($wpRestRequest) {
 
-	$args = wp_parse_args($attributes->get_params(), array(
+	$args = wp_parse_args($wpRestRequest->get_params(), array(
 		'categories'	=> []
 	));
 
-	return showMediaGallery($args);
+	$mediaGallery   = new MediaGallery(['image'], 20, $args['categories'], false, 1);
+
+    return $mediaGallery->filterableMediaGallery();
 }

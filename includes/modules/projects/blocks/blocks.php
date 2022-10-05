@@ -95,39 +95,3 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 });
-
-
-
-add_filter('rest_locations_query', function( $args, $request ) {
-	if ( isset($request['category_slug']) ){
-		$categorySlug = sanitize_text_field($request['category_slug']);
-		/* $args['tax_query'] = [
-			[
-				'taxonomy' 			=> 'locations',
-				'include_children' 	=> true,
-				'field'    			=> 'slug',
-				'operator'         	=> 'IN',
-				'terms'    			=> [$categorySlug],
-			]
-		]; */
-
-		$args['term_taxonomy_id']	= get_term_by('slug', $categorySlug, 'locations')->term_taxonomy_id;
-		
-	}
-	
-	get_posts([
-		'numberposts' => -1,
-  		'post_type'   => 'location',
-		'tax_query' => [
-			[
-				'taxonomy' 			=> 'locations',
-				'include_children' 	=> true,
-				'field'    			=> 'slug',
-				'operator'         	=> 'IN',
-				'terms'    			=> [$categorySlug],
-			]
-		]
-	]);
-	return $args;
-	
-}, 10, 3);
