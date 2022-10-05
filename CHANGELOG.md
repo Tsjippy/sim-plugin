@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.20.5] - 2022-10-05
+
+
+### Fixed
 - media galery search and category selection
 - category selector layout
 - bug in page gallery
