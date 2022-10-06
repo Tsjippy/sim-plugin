@@ -1251,7 +1251,7 @@ class FrontEndContent{
 		}
 
 		//store attachment categories
-		$this->storeCustomCategories($post, 'attachments');
+		$this->storeCustomCategories($post, 'attachment_cat');
 		
 		do_action('sim_after_post_save', (object)$post, $this);
 
