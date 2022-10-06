@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- store attachment categories
 
 ## [2.20.6] - 2022-10-06
 
