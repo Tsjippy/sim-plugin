@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better table layout on mobile
 
 ## [2.20.5] - 2022-10-05
 
