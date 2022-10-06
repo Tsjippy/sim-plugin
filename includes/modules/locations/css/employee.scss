@@ -1,0 +1,30 @@
+.person-wrapper{
+    margin: 0px 10px 10px 0px;
+    display:flex;
+    width:25%;
+    min-width: 200px;
+
+    img{
+        border-radius: 40%;
+    }
+}
+
+.profile-picture{
+    max-height:50px;
+}
+
+.employee-gallery{
+    display:flex;
+    flex-wrap:wrap;
+    margin-left:10px;
+}
+
+.empty-picture{
+    margin-left: 55px; 
+    padding-top: 30px; 
+    display: block;
+}
+
+.description{
+    margin-left: 10px;
+}

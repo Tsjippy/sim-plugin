@@ -126,6 +126,9 @@ function ministryDescription(){
  * @param 	int	$postId		The WP_Post id
  */
 function getLocationEmployees($post){
+
+	wp_enqueue_style('sim_employee_style');
+
 	if (!is_user_logged_in()){
 		return '';
 	}
@@ -155,19 +158,21 @@ function getLocationEmployees($post){
 		if ($intersect){
 			$userPageUrl		= SIM\maybeGetUserPageUrl($user->ID);
 			$privacyPreference	= (array)get_user_meta( $user->ID, 'privacy_preference', true );
+			$class				= 'description';
+			if(isset($privacyPreference['hide_profile_picture'])){
+				$class			.= ' empty-picture';
+			}
 			
 			if(!isset($privacyPreference['hide_ministry'])){
 				$html .=	"<div class='person-wrapper'>";
 					if(!isset($privacyPreference['hide_profile_picture'])){
 						$html .= SIM\displayProfilePicture($user->ID);
-						$style = "";
-					}else{
-						$style = ' style="margin-left: 55px; padding-top: 30px; display: block;"';
 					}
 					
 					$pageUrl = "<a class='user_link' href='$userPageUrl'>$user->display_name</a>";
 					foreach($intersect as $postId){
-						$html .= "   <div $style>$pageUrl <br>({$userLocations[$postId]})</div>";
+						$job	= ucfirst($userLocations[$postId]);
+						$html .= "   <div class='$class'>$pageUrl <br>($job)</div>";
 					}
 				$html .= '</div>';
 			}
@@ -178,12 +183,7 @@ function getLocationEmployees($post){
 	if(empty($html)){
 		$html .= "No one dares to say they are working here!";
 	}else{
-
-		$style	= "<style>";
-			$style	.= ".person-wrapper{margin: 0px 10px 10px 0px;display:flex;width:25%;min-width: 200px;}";
-			$style	.= ".profile-picture{max-height:50px;}";
-		$style	.= "</style>";
-		$html	= "$style<div class='employee-gallery' style='display:flex;flex-wrap:wrap;margin-left:10px;'>$html</div>";
+		$html	= "<div class='employee-gallery'>$html</div>";
 	}
 
 	$html 	= "<p style='padding:10px;'><strong>People working at $post->post_title are:</strong><br><br>$html</p>";
