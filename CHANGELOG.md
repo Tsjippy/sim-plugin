@@ -10,6 +10,7 @@
 - better table layout on mobile
 - better layout of schedules on mobile
 - frontend posting css not loaded over ajax
+- check cat when clicking label
 
 ## [2.20.5] - 2022-10-05
 
