@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.20.6] - 2022-10-06
+
+
+### Fixed
 - better table layout on mobile
 - better layout of schedules on mobile
 - frontend posting css not loaded over ajax
