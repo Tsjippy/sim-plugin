@@ -62,9 +62,9 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		/**
 		 * Add user to mailchimp list
 		 */
-		function addToMailchimp(){			
+		function addToMailchimp(){
 			//Only do if valid e-mail
-			if($this->user->user_email != '' and strpos($this->user->user_email,'.empty') === false){
+			if($this->user->user_email != '' && strpos($this->user->user_email,'.empty') === false && $_SERVER['HTTP_HOST'] != 'localhost'){
 				SIM\printArray("Adding '{$this->user->user_email}' to Mailchimp");
 				
 				//First add to the audience
@@ -75,12 +75,12 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			
 				$confidentialGroups	= (array)SIM\getModuleOption('contentfilter', 'confidential-roles');
 				if(array_intersect($confidentialGroups, $roles)){
-					$TAGs = explode(',', $this->settings['user_tags']);
+					$tags = explode(',', $this->settings['user_tags']);
 				}else{
-					$TAGs = array_merge(explode(',', $this->settings['user_tags']), explode(',', $this->settings['missionary_tags']));
+					$tags = array_merge(explode(',', $this->settings['user_tags']), explode(',', $this->settings['missionary_tags']));
 				}
 				
-				$this->changeTags($TAGs, 'active');
+				$this->changeTags($tags, 'active');
 			}
 		}
 		

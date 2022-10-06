@@ -91,33 +91,33 @@ add_shortcode('request_account', function (){
 		
 		<label>
 			<h4>First name<span class="required">*</span></h4>
-			<input type="text" name="first_name" value="" required>
+			<input type="text" class='wide'  name="first_name" value="" required>
 		</label>
 		
 		<label>
 			<h4>Last name<span class="required">*</span></h4>
-			<input type="text" class="" name="last_name" required>
+			<input type="text" class='wide' name="last_name" required>
 		</label>
 
 		<label>
 			<h4>Desired Password</h4>
-			<input type="password" class='changepass' name="pass1" size="16" autocomplete="off"/>
+			<input type="password" class='changepass wide' name="pass1" size="16" autocomplete="off"/>
 		</label>
 		<br>
 		<span style="text-align: center;" class="pass-strength-result hidden" id="pass-strength-result1">Strength indicator</span>
 		<br>
 		<label>
 			<h4>Confirm Password</h4>
-			<input type="password" class='changepass' name="pass2" size="16" autocomplete="off"/>
+			<input type="password" class='changepass wide' name="pass2" size="16" autocomplete="off"/>
 		</label>
 		<br>
 		<span style="text-align: center;" class="pass-strength-result hidden" id="pass-strength-result2">Strength indicator</span>
 		
 		<label>
 			<h4>E-mail<span class="required">*</span></h4>
-			<input class="" type="email" name="email" required>
+			<input class="wide" type="email" name="email" required>
 		</label>
-		<?php 
+		<?php
 		echo SIM\addSaveButton('request_account', 'Request an account');
 		?>
 	</form>

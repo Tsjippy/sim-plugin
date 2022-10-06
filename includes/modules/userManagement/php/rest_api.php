@@ -5,9 +5,9 @@ use WP_User;
 
 add_action( 'rest_api_init', function () {
 	// add element to form
-	register_rest_route( 
-		RESTAPIPREFIX.'/user_management', 
-		'/add_ministry', 
+	register_rest_route(
+		RESTAPIPREFIX.'/user_management',
+		'/add_ministry',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\addMinistry',
@@ -21,9 +21,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // disable or eneable useraccount
-	register_rest_route( 
-		RESTAPIPREFIX.'/user_management', 
-		'/disable_useraccount', 
+	register_rest_route(
+		RESTAPIPREFIX.'/user_management',
+		'/disable_useraccount',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\disableUserAccount',
@@ -40,9 +40,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // update user roles
-	register_rest_route( 
-		RESTAPIPREFIX.'/user_management', 
-		'/update_roles', 
+	register_rest_route(
+		RESTAPIPREFIX.'/user_management',
+		'/update_roles',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\updateRoles',
@@ -62,9 +62,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // add user account
-	register_rest_route( 
-		RESTAPIPREFIX.'/user_management', 
-		'/add_useraccount', 
+	register_rest_route(
+		RESTAPIPREFIX.'/user_management',
+		'/add_useraccount',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\createUserAccount',

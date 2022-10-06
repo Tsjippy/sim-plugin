@@ -16,17 +16,17 @@ add_shortcode('create_user_account', function (){
 				
 				<label>
 					<h4>First name<span class="required">*</span></h4>
-					<input type="text" name="first_name" value="" required>
+					<input type="text"  class='wide' name="first_name" value="" required>
 				</label>
 				
 				<label>
 					<h4>Last name<span class="required">*</span></h4>
-					<input type="text" class="" name="last_name" required>
+					<input type="text" class='wide' name="last_name" required>
 				</label>
 				
 				<label>
 					<h4>E-mail<span class="required">*</span></h4>
-					<input class="" type="email" name="email" required>
+					<input class='wide' type="email" name="email" required>
 				</label>
 				
 				<label>
