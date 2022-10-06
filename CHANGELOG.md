@@ -9,6 +9,7 @@
 ### Fixed
 - update bookings
 - better layout of employee gallery
+- better form layouts
 
 ## [2.20.7] - 2022-10-06
 
