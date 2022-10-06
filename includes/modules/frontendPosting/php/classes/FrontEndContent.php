@@ -789,10 +789,12 @@ class FrontEndContent{
 							if(count(get_term_children($category->cat_ID, $taxonomy)) > 0){
 								$checkboxClass .= " parent_cat";
 							}
-							$$html .= "<input type='checkbox' class='$checkboxClass' name='{$taxonomy}_ids[]' value='$catId' $checked>";
 						
 							//Name of the category
-							$$html .= "<label class='option-label category-select'>$name</label>";
+							$$html .= "<label class='option-label category-select'>";
+								$$html .= "<input type='checkbox' class='$checkboxClass' name='{$taxonomy}_ids[]' value='$catId' $checked>";
+								$$html .= $name;
+							$$html .= "</label>";
 							
 							//Add infobox if needed
 							if(!empty($catDescription)){

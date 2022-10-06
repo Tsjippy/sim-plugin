@@ -104,6 +104,7 @@ function showFormBuilder($attributes){
 
 	do_action('wp_enqueue_scripts');
 
+	wp_enqueue_style('sim_forms_style');
 	wp_enqueue_style( 'sim_formtable_style');
 	wp_enqueue_script( 'sim_formbuilderjs');
 
