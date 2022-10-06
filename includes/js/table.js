@@ -199,17 +199,15 @@ export function setTableLabel() {
 		});
 		
 		//loop over all table rows
-		table.querySelectorAll('tbody tr').forEach( tr => {
-			//loop over all table cells
-			Array.from(tr.children).forEach(
+		table.querySelectorAll('tbody td').forEach( (td, index) => {
+			if(!td.hasAttribute('label')){
 				//set the header text as label
-				function(td, index){
-					td.setAttribute('label', tdLabels[index]);
-					if(td.textContent=='X' || td.textContent==''){
-						td.classList.add('mobile-hidden');
-					}
-				}
-			);
+				td.setAttribute('label', tdLabels[index]);
+			}
+			
+			if(td.textContent == 'X' || td.textContent == ''){
+				td.classList.add('mobile-hidden');
+			}
 		});
 	});
 }

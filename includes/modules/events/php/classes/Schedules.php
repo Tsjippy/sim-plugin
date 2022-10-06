@@ -25,6 +25,7 @@ class Schedules{
 		$this->lunchEndTime		= '13:00';
 		$this->dinerTime		= '18:00';
 		$this->noPermissionText	= 'No permission to do that!';
+		$this->tdLabels			= [];
 	}
 	
 	/**
@@ -105,14 +106,14 @@ class Schedules{
 		return $html;
 	}
 
-	function showSchedule($schedule){
+	function showSchedule($schedule) {
 		ob_start();
 
-		if(
+		if (
 			(
 				$schedule->target == $this->user->ID 					||		// Target is me
 				$schedule->target == SIM\hasPartner($this->user->ID)			// Target is the partner
-			) 															&& 
+			) 															&&
 			!$this->admin 												&& 		// We are not admin
 			!$schedule->published												// Schedule is not yet published
 		){
@@ -122,7 +123,7 @@ class Schedules{
 		$onlyMeals 	= true;
 		
 		// Show also the orientation schedule if:
-		if(
+		if (
 			$this->admin											||		// We are an admin
 			!empty($this->getPersonalOrientationEvents($schedule)) 	||		// We are in the schedule
 			$schedule->target == $this->user->ID							// The schedule is meant for us
@@ -131,7 +132,7 @@ class Schedules{
 		}
 
 		//if looking for a family
-		if(strpos($schedule->name,'family') !== false){
+		if (strpos($schedule->name, 'family') !== false ){
 			$args = array(
 				'meta_query' => array(
 					array(
@@ -186,7 +187,7 @@ class Schedules{
 							$formatedDate	= date('d-m-Y', $dateTime);
 							echo "<th data-date='$dateStr' data-isodate='$date'>$dayName<br>$formatedDate</th>";
 
-							if($date == $schedule->enddate){
+							if ($date == $schedule->enddate) {
 								break;
 							}
 
@@ -322,7 +323,7 @@ class Schedules{
 			$class 			.= ' selected';
 			$partnerId 		= SIM\hasPartner($this->user->ID);
 			//Host is current user or the spouse
-			if($hostId == $this->user->ID || $hostId == $partnerId){	
+			if ($hostId == $this->user->ID || $hostId == $partnerId){	
 				$class 			.= ' own';
 							
 				$menu		= get_post_meta($event->post_id, 'recipe_keyword', true);
@@ -332,17 +333,19 @@ class Schedules{
 			
 				$cellText .= "<span class='keyword'>$menu</span>";
 			//current user is the target or is admin
-			}elseif(!$this->admin && $schedule->target != $this->user->ID && $schedule->target != $partnerId){
+			} elseif ( !$this->admin && $schedule->target != $this->user->ID && $schedule->target != $partnerId){
 				$cellText = 'Taken';
 			}
-		}else{
+		} else {
 			$cellText	 = 'Available';
 		}
 
-		if($this->admin){
+		if ($this->admin) {
 			$class .= ' admin';
 		}
-		return "<td class='$class' $rowSpan $hostData>$cellText</td>";
+
+		$label	= date('d-m-Y', strtotime($date));
+		return "<td class='$class' $rowSpan $hostData label='$label'>$cellText</td>";
 	}
 	
 	/**
@@ -354,18 +357,18 @@ class Schedules{
 	 * 
 	 * @return 	array					Cell html
 	*/
-	function writeOrientationCell($schedule, $date, $startTime){
+	function writeOrientationCell( $schedule, $date, $startTime) {
 		//get event which starts on this date and startTime
 		$event		= $this->getScheduleEvent($schedule, $date, $startTime);
 		$rowSpan	= '';
 		$class		= 'orientation'; 
 
-		if($event == null){
+		if ($event == null){
 			$cellText = 'Available';
-		}else{
+		}else {
 			$hostId			= $event->organizer_id;
 			$dataset	= "data-time='{$event->starttime}' data-endtime='{$event->endtime}'";
-			if(is_numeric($hostId)){
+			if (is_numeric($hostId)) {
 				$dataset	.= " data-host='".get_userdata($hostId)->display_name."' data-host_id='$hostId'";
 			}
 			$title		= get_the_title($event->post_id);
@@ -376,13 +379,13 @@ class Schedules{
 			$class 		.= ' selected';
 			$cellText	= "<span class='subject' data-userid='$hostId'><a href='$url'>$title</a></span><br>";
 		
-			if(!is_numeric($hostId)){
+			if (!is_numeric($hostId)) {
 				$cellText .= "<span class='person timeslot'>Add person</span>";
 			}
 		
-			if(empty($event->location)){
+			if (empty($event->location)) {
 				$cellText .= "<span class='location timeslot'>Add location</span>";
-			}else{
+			} else {
 				$cellText .= "<span class='timeslot'>At <span class='location'>{$event->location}</span></span>";
 				$dataset	.= " data-location='{$event->location}'";
 			}
@@ -405,8 +408,10 @@ class Schedules{
 		){
 			$class .= ' admin';
 		}
+
+		$label	= date('d-m-Y', strtotime($date));
 		
-		return "<td class='$class' $rowSpan $dataset>$cellText</td>";
+		return "<td class='$class' $rowSpan $dataset label='$label'>$cellText</td>";
 	}
 
 	/**
@@ -484,9 +489,10 @@ class Schedules{
 			}
 			
 			//Show the row if we can see all rows or the row is a mealschedule row
-			if(!$onlyMeals || $mealScheduleRow){
+			if (!$onlyMeals || $mealScheduleRow ) {
 				$html  .= "<tr class='table-row' data-starttime='$startTime' data-endtime='$endTime'>";
-					$html 	.= "<td $extra class='sticky'><b>$description</b></td>";
+					$label	= date('d-m-Y', strtotime($date));
+					$html 	.= "<td $extra class='sticky' label=''><strong>$description</strong></td>";
 					$html	.= $cells;
 				$html .= "</tr>";
 			}

@@ -9,8 +9,9 @@
 	@extend %shared-table;
 
 	@media screen and (max-width: $mobilewidth){
-		width: calc(100vw - 15px);
+		max-width: calc(100vw - 15px);
 	}
+
 	@media screen and (min-width: $mobilewidth){
 		width: intrinsic;           /* Safari/WebKit uses a non-standard name */
 		width: -moz-max-content;    /* Firefox/Gecko */
@@ -185,7 +186,7 @@
 	.sim-table td::before{
 		content: attr(label);
 		font-weight: bold;
-		min-width: 200px;
+		margin-right: 10px;
 	}
 	
 	.sim-table td, .sim-table td.sticky{
