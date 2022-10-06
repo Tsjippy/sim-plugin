@@ -45,6 +45,7 @@ class FrontEndContent{
 		}
 		
 		//Load js
+		wp_enqueue_style('sim_frontend_style');
 		wp_enqueue_script('sim_frontend_script');
 		wp_enqueue_media();
 		
