@@ -10,6 +10,8 @@
 - update bookings
 - better layout of employee gallery
 - better form layouts
+- page gallery build in
+into ministry template
 
 ## [2.20.7] - 2022-10-06
 
