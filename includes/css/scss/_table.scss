@@ -9,7 +9,7 @@
 	@extend %shared-table;
 
 	@media screen and (max-width: $mobilewidth){
-		width: 100vw;
+		width: calc(100vw - 15px);
 	}
 	@media screen and (min-width: $mobilewidth){
 		width: intrinsic;           /* Safari/WebKit uses a non-standard name */
@@ -190,6 +190,8 @@
 	
 	.sim-table td, .sim-table td.sticky{
 		display: flex;
+		flex-wrap: wrap;
+		max-width: calc( 100vw - 15px);
 	}
 }
 

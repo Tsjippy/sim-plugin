@@ -5,11 +5,13 @@
 }
 
 .tables-wrapper{
-    width: 100vw;
+    width: calc(100vw - 15px);
     z-index: 99;
     position: relative;
 
     .form-data-table{
+        max-width: calc(100vw - 15px);
+
         .bookings-wrap{
             display: flex;
             justify-content: center;
