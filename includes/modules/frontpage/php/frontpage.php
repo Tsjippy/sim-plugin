@@ -233,12 +233,12 @@ if(!empty($hookName)){
 
 /**
  * Function to show a gallery of 3 ministries
- * 
+ *
  * @param	array	$postTypes		Array of posttypes to include or an array of fixed post ids
  * @param	int		$amount			The amount of pages to show
  * @param	array	$categories		The categories of this page type to include
  * @param	int		$speed			The speed the pages should change
- * 
+ *
  * @return	string					The html
  */
 function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed = 60){
@@ -254,7 +254,7 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 		foreach($postTypes as $postId){
 			$posts[]	= get_post($postId);
 		}
-	}else{		
+	}else{
 		foreach($postTypes as $type){
 			$args = array(
 				'post_type'			=> $type,

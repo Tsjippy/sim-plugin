@@ -28,6 +28,14 @@ if(!isset($skipHeader) || !$skipHeader){
 				the_post();
 				include(__DIR__.'/content.php');
 
+				$cats['locations']	= [];
+
+				foreach(get_the_terms(get_the_ID(), 'locations') as $cat){
+					$cats['locations'][]	= $cat->slug;
+				}
+
+				echo SIM\FRONTPAGE\pageGallery('Read more', [get_post_type()], 3, $cats, 60);
+
 				// Show any projects linked to this
                 projectList();
 
@@ -80,7 +88,7 @@ function ministryDescription(){
 	if ($childPages){
 		$childPageHtml .= "<p><strong>Some of our $ministry are:</strong></p><ul>";
 		foreach($childPages as $childPage){
-			$childPageHtml .= '<li><a href="'.$childPage['guid'].'">'.$childPage['post_title']."</a></li>";
+			$childPageHtml .= "<li><a href='{$childPage['guid']}'>{$childPage['post_title']}</a></li>";
 		}
 		$childPageHtml .= "</ul>";
 	}
@@ -122,7 +130,7 @@ function ministryDescription(){
 
 /**
  * Get the people that work at a certain location
- * 
+ *
  * @param 	int	$postId		The WP_Post id
  */
 function getLocationEmployees($post){
