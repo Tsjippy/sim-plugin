@@ -30,10 +30,13 @@ export async function fetchRestApi(url, formData){
 		return response;
 	}else if(response.code == 'rest_cookie_invalid_nonce'){
 			Main.displayMessage('Please refresh the page and try again!', 'error');
+			console.error(response);
+			console.error(`/login/${url}`);
 			return false;
 	}else{
 		console.error(response);
 		Main.displayMessage(response.message, 'error');
+		console.error(`/login/${url}`);
 		return false;
 	}
 }

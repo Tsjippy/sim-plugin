@@ -345,7 +345,7 @@ add_filter('sim_after_saving_formdata', function($message, $formBuilder){
 
 
 // Update an existing booking
-add_action('sim-forms-submission-updated', function($formTable, $fieldName, $newValue){
+add_filter('sim-forms-submission-updated', function($message, $formTable, $fieldName, $newValue){
     global $wpdb;
 
     $bookings   =  new Bookings();
@@ -357,7 +357,7 @@ add_action('sim-forms-submission-updated', function($formTable, $fieldName, $new
 
     $fieldName  = str_replace('booking-', '', $fieldName);
     if(!in_array($fieldName, ['startdate', 'enddate', 'startime', 'endtime', $subject])){
-        return;
+        return $message;
     }
 
     // update the subject column
@@ -365,8 +365,14 @@ add_action('sim-forms-submission-updated', function($formTable, $fieldName, $new
         $fieldName  = 'subject';
     }
 
-    $bookings->updateBooking($booking->id, [$fieldName => $newValue]);
-}, 10, 3);
+    $result = $bookings->updateBooking($booking, [$fieldName => $newValue]);
+
+    if(is_wp_error($result)){
+        return $result;
+    }
+
+    return $message;
+}, 10, 4);
 
 // add a min and a max to booking dates on edit
 add_filter('sim-forms-element-html', function($html, $element, $displayFormResults){

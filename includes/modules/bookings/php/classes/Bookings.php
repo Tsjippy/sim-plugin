@@ -460,7 +460,7 @@ class Bookings{
     /**
      * Check if a booking overlaps another booking
      */
-    function checkOverlap($startDate, $endDate, $subject){
+    function checkOverlap($startDate, $endDate, $subject, $id=-1){
         global $wpdb;
 
         // start end enddate may overlap so only check for dates in between
@@ -470,6 +470,10 @@ class Bookings{
         // First check if a booking on these dates doesn't exist
         $query	    = "SELECT * FROM $this->tableName WHERE pending=0 AND subject = '$subject' AND ('$queryStartDate' BETWEEN startdate and enddate OR '$queryEndDate' BETWEEN startdate and enddate)";
 
+        if($id != -1){
+            $query  .= " AND NOT id=$id";
+        }
+        
         //sort on startdate
 		$query	.= " ORDER BY `startdate`, `starttime` ASC";
 
@@ -542,11 +546,13 @@ class Bookings{
      * @param   int     $bookingId  The booking id
      * @param   array   $values     The values to update
      */
-    function updateBooking($bookingId, $values){
+    function updateBooking($booking, $values){
         global $wpdb;
 
         // Get the booking
-        $booking        = $this->getBookingById($bookingId);
+        if(is_numeric($booking)){
+            $booking        = $this->getBookingById($booking);
+        }
 
         $startdate      = $booking->startdate;
         if(isset($values['startdate'])){
@@ -565,10 +571,11 @@ class Bookings{
             return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
         }
 
-        $wpdb->update($this->tableName, 
+        $wpdb->update(
+            $this->tableName, 
             $values,
             array(
-                'id'		=> $bookingId
+                'id'		=> $booking->id
             ),
         );
 

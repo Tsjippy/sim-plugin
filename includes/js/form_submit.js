@@ -96,14 +96,18 @@ export async function submitForm(target, url){
 export async function fetchRestApi(url, formData){
 	formData.append('_wpnonce', sim.restNonce);
 
-	let result = await fetch(
-		`${sim.baseUrl}/wp-json/sim/v2/${url}`,
-		{
-			method: 'POST',
-			credentials: 'same-origin',
-			body: formData
-		}
-	);
+	try{
+		let result = await fetch(
+			`${sim.baseUrl}/wp-json/sim/v2/${url}`,
+			{
+				method: 'POST',
+				credentials: 'same-origin',
+				body: formData
+			}
+		);
+	}catch(error){
+		console.error(error);
+	}
 	
 	let response	= await result.text();
 	try{
