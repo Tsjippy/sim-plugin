@@ -1250,8 +1250,10 @@ class FrontEndContent{
 			sendPendingPostWarning($post, $this->update);
 		}
 
-		//store attachment categories
-		$this->storeCustomCategories($post, 'attachment_cat');
+		if($post->post_type == 'attachment'){
+			//store attachment categories
+			$this->storeCustomCategories($post, 'attachment_cat');
+		}
 		
 		do_action('sim_after_post_save', (object)$post, $this);
 
