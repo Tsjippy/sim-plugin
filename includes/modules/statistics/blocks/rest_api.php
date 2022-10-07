@@ -2,18 +2,26 @@
 namespace SIM\STATISTICS;
 use SIM;
 
-// Adds statisics to a page about the current page
-add_filter( 'the_content', function ($content){
-    if(!is_main_query() || !is_user_logged_in()){
-        return $content;
-    }
+add_action( 'rest_api_init', function () {
+	// show schedules
+	register_rest_route(
+		RESTAPIPREFIX.'/statistics',
+		'/page_statistics',
+		array(
+			'methods' 				=> 'GET',
+			'callback' 				=> __NAMESPACE__.'\statisticsWidget',
+			'permission_callback' 	=> '__return_true',
+		)
+	);
+} );
 
-    $viewRoles     = SIM\getModuleOption(MODULE_SLUG, 'view_rights');
+function statisticsWidget(){
+	$viewRoles     = SIM\getModuleOption(MODULE_SLUG, 'view_rights');
     $userRoles     = wp_get_current_user()->roles;
 
     //only continue if we have the right so see the statistics
     if(!array_intersect($viewRoles, $userRoles)){
-        return $content;
+        return '';
     }
     
     global $wpdb;
@@ -27,7 +35,7 @@ add_filter( 'the_content', function ($content){
     $uniqueViewsLastMonths  = 0;
     $now                    = new \DateTime();
     foreach($pageViews as $view){
-        $totalViews += $view->counter; 
+        $totalViews += $view->counter;
 
         $date = new \DateTime($view->timelastedited);
         $interval = $now->diff($date)->format('%m months');
@@ -45,26 +53,26 @@ add_filter( 'the_content', function ($content){
             <tbody>
                 <tr>
                     <td>
-                        <strong>Total views:</strong>   
+                        <strong>Total views:</strong>
                     </td>
                     <td class='value'>
-                        <?php echo $totalViews;?>  
+                        <?php echo $totalViews;?>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <strong>Unique views:</strong>   
+                        <strong>Unique views:</strong>
                     </td>
                     <td class='value'>
-                        <?php echo $uniqueViews;?>  
+                        <?php echo $uniqueViews;?>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <strong>Unique views last 6 months:</strong>   
+                        <strong>Unique views last 6 months:</strong>
                     </td>
                     <td class='value'>
-                        <?php echo $uniqueViewsLastMonths;?>  
+                        <?php echo $uniqueViewsLastMonths;?>
                     </td>
                 </tr>
             </tbody>
@@ -72,5 +80,5 @@ add_filter( 'the_content', function ($content){
     </div>
     <?php
 
-    return $content.ob_get_clean();
-},999);
+    return ob_get_clean();
+}

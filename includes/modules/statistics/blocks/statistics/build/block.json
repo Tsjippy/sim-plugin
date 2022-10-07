@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "sim/statistics",
+  "version": "0.1.0",
+  "title": "Page statistics",
+  "category": "widgets",
+  "description": "A summary of the current post statistics",
+  "textdomain": "sim",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}
