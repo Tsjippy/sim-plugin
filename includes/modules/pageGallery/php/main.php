@@ -4,10 +4,11 @@ use SIM;
 
 /**
  * Function to show a gallery of 3 ministries
+ * They will only be listed if they have a featured image!
  *
  * @param	array	$postTypes		Array of posttypes to include or an array of fixed post ids
  * @param	int		$amount			The amount of pages to show
- * @param	array	$categories		The categories of this page type to include
+ * @param	array	$categories		The categories of this page type to include. Should be an array of arrays indexed by post type
  * @param	int		$speed			The speed the pages should change
  *
  * @return	string					The html

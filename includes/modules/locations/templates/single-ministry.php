@@ -29,11 +29,11 @@ if(!isset($skipHeader) || !$skipHeader){
 				include(__DIR__.'/content.php');
 
 				if(!empty(get_children(['post_parent' =>get_the_ID()]))){
-					$cats['locations']	= [];
+					$cats['location']	= [];
 
 					$categories	= get_the_terms(get_the_ID(), 'locations');
 					foreach($categories as $cat){
-						$cats['locations'][]	= $cat->slug;
+						$cats['location'][]	= $cat->slug;
 					}
 
 					echo SIM\PAGEGALLERY\pageGallery('Read more', [get_post_type()], 3, $cats, 60);
@@ -50,7 +50,7 @@ if(!isset($skipHeader) || !$skipHeader){
 					
 					$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 3, $cats);
 
-					$html			.= $mediaGallery->mediaGallery('Media', 60);
+					echo $mediaGallery->mediaGallery('Media', 60);
 				}
 
 				// Show any projects linked to this
