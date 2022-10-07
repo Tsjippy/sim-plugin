@@ -8,7 +8,7 @@ use SIM;
  *
  * @param	array	$postTypes		Array of posttypes to include or an array of fixed post ids
  * @param	int		$amount			The amount of pages to show
- * @param	array	$categories		The categories of this page type to include. Should be an array of arrays indexed by post type
+ * @param	array	$categories		The categories of this page type to include. Should be an multidimensional array of taxonmies indexed by postypes containing categories
  * @param	int		$speed			The speed the pages should change
  *
  * @return	string					The html
@@ -44,14 +44,18 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 				$args['tax_query'] = ['relation' => 'OR'];
 
 				foreach($categories[$type] as $tax => $cats){
-					$args['tax_query'][]	= [
-						'taxonomy' 			=> $tax,
-						'terms' 			=> $cats
-					];
+					foreach($cats as $cat){
+						$taxQuery	= [
+							'taxonomy' 			=> $tax,
+							'terms' 			=> $cat
+						];
 
-					if(!is_numeric(array_values($cats)[0])){
-						// Get the last element of the $args['tax_query'] array and add slug
-						$args['tax_query'][count($args['tax_query'])-2]['field']	= 'slug';
+						if(!is_numeric($cat)){
+							$taxQuery['field']	= 'slug';
+						}
+
+
+						$args['tax_query'][]	= $taxQuery;
 					}
 				}
 			}

@@ -29,11 +29,11 @@ if(!isset($skipHeader) || !$skipHeader){
 				include(__DIR__.'/content.php');
 
 				if(!empty(get_children(['post_parent' =>get_the_ID()]))){
-					$cats['location']	= [];
+					$cats['location']	= ['locations'=>[]];
 
 					$categories	= get_the_terms(get_the_ID(), 'locations');
 					foreach($categories as $cat){
-						$cats['location'][]	= $cat->slug;
+						$cats['location']['locations'][]	= $cat->slug;
 					}
 
 					echo SIM\PAGEGALLERY\pageGallery('Read more', [get_post_type()], 3, $cats, 60);

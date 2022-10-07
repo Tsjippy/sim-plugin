@@ -5,9 +5,9 @@ use SIM;
 add_action( 'rest_api_init', function () {
 
 	// show page gallery
-	register_rest_route( 
-		RESTAPIPREFIX.'/pagegallery', 
-		'/show_page_gallery', 
+	register_rest_route(
+		RESTAPIPREFIX.'/pagegallery',
+		'/show_page_gallery',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function($wp_rest_request){
