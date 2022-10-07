@@ -7,9 +7,11 @@
 ### Changed
 
 ### Fixed
-- issues with ministry template
 
-## [2.20.11] - 2022-10-07
+## [2.20.12] - 2022-10-07
+
+### Fixed
+- issues with ministry template
 
 
 ## [2.20.10] - 2022-10-07
