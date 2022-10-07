@@ -143,17 +143,17 @@ add_filter( 'content_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 /**
  * Finds a template file for a custom post type
  * Checks the theme folder, then the plugin folder
- * 
+ *
  * @param  string 	$template	the current template file
  * @param  string	$type     	the requested page type
- * @param  string	$name     	the requested page name 
- * 
- * @return string				the template file 
+ * @param  string	$name     	the requested page name
+ *
+ * @return string				the template file
 */
 function getTemplateFile($template, $type, $name=''){
 	global $post;
 
-	$baseDir		= __DIR__."/../modules";	
+	$baseDir		= __DIR__."/../modules";
 
 	//check what we are dealing with
 	switch ($type) {
