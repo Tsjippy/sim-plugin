@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- page gallery module
 
 ### Changed
+
+### Fixed
+
+## [2.20.8] - 2022-10-07
+
+
+### Added
+- page gallery module
 
 ### Fixed
 - update bookings
