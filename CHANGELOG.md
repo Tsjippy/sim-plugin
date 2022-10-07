@@ -8,6 +8,7 @@
 - remove logginh
 
 ### Fixed
+- user generics
 
 ## [2.20.8] - 2022-10-07
 
