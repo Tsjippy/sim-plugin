@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- statistics block
 
 ### Changed
+
+### Fixed
+
+## [2.21.0] - 2022-10-07
+
+
+### Added
+- statistics block
 
 ### Fixed
 - page galery
