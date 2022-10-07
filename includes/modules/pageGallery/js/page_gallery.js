@@ -20,7 +20,7 @@ let reloadPageGallery   = async function(gallery, first=false){
         formData.append('categories', gallery.dataset.categories);
         formData.append('speed', speed);
         formData.append('title', gallery.querySelector('.page-gallery-title').textContent);
-        var response = await FormSubmit.fetchRestApi('frontpage/show_page_gallery', formData);
+        var response = await FormSubmit.fetchRestApi('pagegallery/show_page_gallery', formData);
 
         if(response){
             // convert the html to a node so we can pass it on to the next iteration

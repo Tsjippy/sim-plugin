@@ -59,6 +59,6 @@ add_filter('sim-template-filter', function($templateFile){
 
 	if(in_array('locations', get_post_taxonomies()) && in_array('ministry', wp_get_post_terms($post->ID, 'locations', ['fields'=>'slugs']))){
 		return str_replace('single-location', 'single-ministry', $templateFile);
-	}	
+	}
     return $templateFile;
 });
