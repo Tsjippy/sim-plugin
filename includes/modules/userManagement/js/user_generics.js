@@ -11,7 +11,7 @@ async function addNewMinistry(target){
 		ministryName			= ministryName.charAt(0).toUpperCase() + ministryName.slice(1);
 
 		var html = `
-		<span>
+		<li style="list-style-type: none"> 
 			<label>
 				<input type="checkbox" class="ministry_option_checkbox" name="ministries[]" value="${response.postId}" checked>
 				<span class="optionlabel">${ministryName}</span>
@@ -20,7 +20,7 @@ async function addNewMinistry(target){
 				<h4 class="labeltext">Position at ${ministryName}:</h4>
 				<input type="text" id="justadded" name="jobs[${postId}]">
 			</label>
-		</span>`;
+		</li>`;
 		
 		document.querySelector("#ministries_list").insertAdjacentHTML('beforeEnd', html);
 		
@@ -43,7 +43,7 @@ document.addEventListener('click',function(event) {
 	//show add ministry modal
 	if(target.id == 'add-ministry-button'){
 		//uncheck other and hide
-		target.closest('span').querySelector('.ministry_option_checkbox').checked = false;
+		target.closest('li').querySelector('.ministry_option_checkbox').checked = false;
 		target.closest('.ministryposition').classList.add('hidden');
 
 		//Show the modal
