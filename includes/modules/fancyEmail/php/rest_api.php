@@ -25,8 +25,6 @@ add_filter('sim_allowed_rest_api_urls', function($urls){
  * Tracks if an e-mail is opened or not using an image with a url
  */
 function mailTracker(\WP_REST_Request $request) {
-
-	SIM\printArray($_SERVER);
 	global $wpdb;
 
 	$mailId		= $request->get_param('mailid');
@@ -44,7 +42,7 @@ function mailTracker(\WP_REST_Request $request) {
 
 		// Add e-mail to e-mails db
 		$wpdb->insert(
-			$fancyEmail->mailEventTable, 
+			$fancyEmail->mailEventTable,
 			array(
 				'email_id'		=> $mailId,
 				'type'			=> $type,
