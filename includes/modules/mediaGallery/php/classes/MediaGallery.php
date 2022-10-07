@@ -57,13 +57,16 @@ class MediaGallery{
 
     
         if(!empty($this->cats) && !in_array(-1, $this->cats)){
-            $args['tax_query'] = array(
-                array(
+            $args['tax_query'] = ['relation' => 'OR'];
+            
+            foreach($this->cats as $cat){
+            
+                $args['tax_query'][]    = [
                     'taxonomy'  => 'attachment_cat',
                     'field'     => 'slug',
-                    'terms'     => $this->cats
-                )
-            );
+                    'terms'     => $cat
+                ];
+            }
         }
     
         if(!empty($this->search)){
@@ -79,17 +82,17 @@ class MediaGallery{
 
     /**
      * Function to show a gallery of media items
-     * 
+     *
      * @param	int		$speed			The speed in seconds the media should change. Default 60. -1 for never
-     * 
+     *
      * @return	string					The html
      */
     function mediaGallery($title, $speed = 60){
-        ob_start();
 
         if(empty($this->posts)){
-            return ob_get_clean();
+            return '';
         }
+        ob_start();
 
         wp_enqueue_script('sim_page_gallery_script');
 
@@ -138,7 +141,7 @@ class MediaGallery{
     }
 
     /**
-     * Shows a filterable mediagalery 
+     * Shows a filterable mediagalery
      * People can load more media as they desire
      */
     function filterableMediaGallery(){
