@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issues with ministry template
 
 ## [2.20.11] - 2022-10-07
 
