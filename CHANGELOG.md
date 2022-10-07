@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- version bump
 
 ## [2.20.9] - 2022-10-07
 
