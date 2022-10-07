@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- page galery
 
 ## [2.20.13] - 2022-10-07
 
