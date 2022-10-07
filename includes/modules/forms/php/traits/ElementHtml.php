@@ -102,15 +102,15 @@ trait ElementHtml{
 
 		/**
 	 * Gets the options of an element like styling etc.
-	 * 
+	 *
 	 * @param	object	$element		The element
-	 * 
+	 *
 	 * @return	array					Array of options
 	 */
 	function getFieldOptions($element){
 		$options	= [];
 		//add element values
-		$elValues	= explode("\n", $element->valuelist);
+		$elValues	= explode("\n", trim($element->valuelist));
 		
 		if(!empty($elValues[0])){
 			foreach($elValues as $value){
@@ -263,10 +263,10 @@ trait ElementHtml{
 
 	/**
 	 * Gets the html of form element
-	 * 
+	 *
 	 * @param	object	$element	The element
 	 * @param	mixed	$value		The value of the element
-	 * 
+	 *
 	 * @return	string				The html
 	 */
 	function getElementHtml($element, $value =''){
@@ -279,7 +279,7 @@ trait ElementHtml{
 		*/
 		if(!empty($element->options)){
 			//Store options in an array
-			$options	= explode("\n", $element->options);
+			$options	= explode("\n", trim($element->options));
 			
 			//Loop over the options array
 			foreach($options as $option){
@@ -341,7 +341,7 @@ trait ElementHtml{
 				}else{
 					$targetDir	= "private/".$element->foldername;
 				}
-			} 
+			}
 			// Form setting
 			if(empty($targetDir)){
 				$targetDir = $this->formData->settings['upload_path'];
@@ -360,7 +360,7 @@ trait ElementHtml{
 				$metakey	= $name;
 				$userId		= $this->userId;
 			}
-			//Load js			
+			//Load js
 			$uploader = new SIM\FILEUPLOAD\FileUpload($userId, $metakey, $library, '', false);
 			
 			$html = $uploader->getUploadHtml($name, $targetDir, $element->multiple, $elOptions);
@@ -376,7 +376,7 @@ trait ElementHtml{
 				$elType	= "input type='{$element->type}'";
 			}
 			
-			/* 				
+			 /*
 				ELEMENT NAME
 			 */
 			//Get the field name, make it lowercase and replace any spaces with an underscore
@@ -428,8 +428,8 @@ trait ElementHtml{
 					$elValue	= "value='%value%'";
 				}
 			}elseif(!empty($values) || !empty($value)){
-				$val	= $value;	
-				if(empty($value)){		
+				$val	= $value;
+				if(empty($value)){
 					//this is an input and there is a value for it
 					if(empty($this->formData->settings['save_in_meta'])){
 						$val		= array_values((array)$values['defaults'])[0];

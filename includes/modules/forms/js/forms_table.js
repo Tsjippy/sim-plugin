@@ -295,7 +295,11 @@ async function processFormsTableInput(target){
 		let response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
 	
 		if(response){
-			let newValue = response.newvalue.replace('_', ' ');
+			let newValue = response.newvalue;
+			
+			if(typeof(newValue) == 'string'){
+				newValue.replace('_', ' ');
+			}
 
 			//Replace the input element with its value
 			if(newValue == "") newValue = "X";

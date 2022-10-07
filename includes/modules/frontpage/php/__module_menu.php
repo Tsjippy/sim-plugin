@@ -278,6 +278,10 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 		return $options;
 	}
 
+	if(!SIM\getModuleOption('pagegallery', 'enable')){
+		SIM\ADMIN\enableModule('pagegallery');
+	}
+
 	// Create frontend posting page
 	$content	= 'Hi [displayname],<br><br>I hope you have a great day!<br><br>[logged_home_page]<br><br>[welcome]';
 	$options	= SIM\ADMIN\createDefaultPage($options, 'home_page', 'Home', $content, $oldOptions, ['post_name'=>'lhome']);

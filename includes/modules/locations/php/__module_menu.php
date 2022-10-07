@@ -167,5 +167,9 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 		wp_insert_term( 'Ministries', 'locations', ['slug' => 'ministry']);
 	}
 
+	if(!SIM\getModuleOption('pagegallery', 'enable')){
+		SIM\ADMIN\enableModule('pagegallery');
+	}
+
 	return $options;
 }, 10, 2);

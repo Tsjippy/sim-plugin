@@ -199,10 +199,10 @@ export function setTableLabel() {
 		});
 		
 		//loop over all table rows
-		table.querySelectorAll('tbody td').forEach( (td, index) => {
+		table.querySelectorAll('tbody td').forEach( (td) => {
 			if(!td.hasAttribute('label')){
 				//set the header text as label
-				td.setAttribute('label', tdLabels[index]);
+				td.setAttribute('label', tdLabels[td.cellIndex]);
 			}
 			
 			if(td.textContent == 'X' || td.textContent == ''){

@@ -28,13 +28,30 @@ if(!isset($skipHeader) || !$skipHeader){
 				the_post();
 				include(__DIR__.'/content.php');
 
-				$cats['locations']	= [];
+				if(!empty(get_children(['post_parent' =>get_the_ID()]))){
+					$cats['locations']	= [];
 
-				foreach(get_the_terms(get_the_ID(), 'locations') as $cat){
-					$cats['locations'][]	= $cat->slug;
+					$categories	= get_the_terms(get_the_ID(), 'locations');
+					foreach($categories as $cat){
+						$cats['locations'][]	= $cat->slug;
+					}
+
+					echo SIM\PAGEGALLERY\pageGallery('Read more', [get_post_type()], 3, $cats, 60);
+
+						// Show relevant media
+					$cats		= [];
+					foreach($categories as $cat){
+						if(count($cats)>1 && $cat->slug == 'ministry'){
+							continue;
+						}
+
+						$cats[]	= $cat->slug;
+					}
+					
+					$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 3, $cats);
+
+					$html			.= $mediaGallery->mediaGallery('Media', 60);
 				}
-
-				echo SIM\FRONTPAGE\pageGallery('Read more', [get_post_type()], 3, $cats, 60);
 
 				// Show any projects linked to this
                 projectList();
@@ -108,22 +125,6 @@ function ministryDescription(){
 	}
 
 	$html	   .= getLocationEmployees($postId);
-
-	// Show relevant media
-	$cats			= get_the_terms(get_the_ID(), 'locations');
-	$categories		= [];
-
-	foreach($cats as $cat){
-		if(count($cats)>1 && $cat->slug == 'ministry'){
-			continue;
-		}
-
-		$categories[]	= $cat->slug;
-	}
-	
-	$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 3, $categories);
-
-    $html			.= $mediaGallery->mediaGallery('Media', 60);
 
 	return $html;
 }

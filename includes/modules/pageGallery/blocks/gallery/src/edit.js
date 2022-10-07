@@ -174,7 +174,7 @@ const Edit = ({ setAttributes, attributes, context }) => {
 	useEffect( async () => {
 		setHtml(<Spinner />);
 		const response = await apiFetch({
-			path: sim.restApiPrefix+'/frontpage/show_page_gallery',
+			path: sim.restApiPrefix+'/pagegallery/show_page_gallery',
 			method: 'POST',
 			data: { 
 				'postTypes'	: selPostTypes,

@@ -19,7 +19,7 @@ add_action('sim-after-formbuilder-element-options', function($element){
     <div class='elementoption booking_selector hidden'>
         <label>
             Specify the subjects to show a calendar for
-            <textarea class="formbuilder" name="formfield[booking_details][subjects]"><?php 
+            <textarea class="formbuilder" name="formfield[booking_details][subjects]"><?php
                 if(isset($bookingDetails['subjects'])){echo trim($bookingDetails['subjects']);}
             ?></textarea>
         </label>
@@ -76,7 +76,7 @@ add_filter('sim-forms-element-html', function($html, $element, $formBuilderForm)
         if(!isset($bookingDetails['subjects'])){
             return 'Please add one or more subjects';
         }else{
-            $subjects       = explode("\n", $bookingDetails['subjects']);
+            $subjects       = explode("\n", trim($bookingDetails['subjects']));
         }
 
         $html   = '';
