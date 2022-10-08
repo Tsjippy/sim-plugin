@@ -373,7 +373,7 @@ function getInputHtml(){
 function editValue(){
 	$formTable	= new EditFormResults();
 		
-	$formTable->getForm($_POST['formid']);	
+	$formTable->getForm($_POST['formid']);
 	$formTable->submissionId		= $_POST['submissionid'];
 	
 	$formTable->getSubmissionData(null, $formTable->submissionId);
@@ -400,10 +400,14 @@ function editValue(){
 		$formTable->formResults[$fieldName]	= $newValue;
 		$message = "Succesfully updated '$fieldName' to $transValue";
 	}
-	
-	$formTable->updateSubmissionData();
 
 	$message	= apply_filters('sim-forms-submission-updated', $message, $formTable, $fieldName, $newValue);
+
+	if(is_wp_error($message)){
+		return ['message' => $message->get_error_message()];
+	}
+
+	$formTable->updateSubmissionData();
 	
 	//send email if needed
 	$submitForm	= new SubmitForm();

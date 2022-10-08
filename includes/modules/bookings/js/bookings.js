@@ -124,8 +124,10 @@ function changeBookingData(target){
     let el  = document.querySelector(`.booking-subject-selector`);
     if(el == null){
         selector    = '.booking.modal';
+        console.log(selector);
     }else{
         selector    = `[name="${el.value}-modal"]`;
+        console.log(selector);
     }
     document.querySelector(selector).classList.remove('hidden');
 }

@@ -361,7 +361,7 @@ class Bookings{
         foreach($this->bookings as $booking){
             // Retrieve booking details
             $this->forms->getSubmissionData(null, $booking->submission_id);
-            $bookingData    = $this->forms->formResults;            
+            $bookingData    = $this->forms->formResults;
 
             ?>
             <div class='booking-detail-wrapper hidden' data-bookingid='<?php echo $booking->id;?>'>
@@ -404,6 +404,9 @@ class Bookings{
                                         $index  = $setting['name'];
                                         $data   = $bookingData[$index];
                                         $transformedData   = $this->forms->transformInputData($data, $index);
+                                        if(empty($transformedData)){
+                                            $transformedData    = 'X';
+                                        }
                                         echo "<tr class='$index' data-id='{$this->forms->formResults['id']}'>";
                                             if(file_exists(SIM\urlToPath("$baseUrl/$index.png"))){
                                                 echo "<td><img src='$baseUrl/$index.png' loading='lazy' alt='{$setting['nice_name']}' class='booking-icon'></td>";
@@ -482,7 +485,7 @@ class Bookings{
 
     /**
      * Insert a new booking
-     * 
+     *
      * @param   string      $startdate      The startdate string
      * @param   string      $enddate        The enddate string
      * @param   string      $subject        The subject the booking is for
@@ -507,7 +510,7 @@ class Bookings{
 
         // Insert in db
         $wpdb->insert(
-            $this->tableName, 
+            $this->tableName,
             array(
                 'startdate'			=> $startDate,
                 'enddate'			=> $endDate,
@@ -528,11 +531,11 @@ class Bookings{
 
 		$eventId 	= wp_insert_post( $post, true, false);
 
-        $event							= [];	
+        $event							= [];
 		$event['startdate']				= $startDate;
 		$event['starttime']				= '14:00';
 		$event['enddate']				= $endDate;
-		$event['endtime']				= '12:00';	
+		$event['endtime']				= '12:00';
 		$event['location']				= $subject;
 		$event['organizer_id']			= $this->forms->formResults['user_id'];
         $event['onlyfor']               = $this->forms->formResults['user_id'];
@@ -542,7 +545,7 @@ class Bookings{
 
     /**
      * Update an existing booking
-     * 
+     *
      * @param   int     $bookingId  The booking id
      * @param   array   $values     The values to update
      */
@@ -567,12 +570,12 @@ class Bookings{
             $subject  = $values['subject'];
         }
         
-        if($this->checkOverlap($startdate, $enddate, $subject)){
+        if($this->checkOverlap($startdate, $enddate, $subject, $booking->id)){
             return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
         }
 
         $wpdb->update(
-            $this->tableName, 
+            $this->tableName,
             $values,
             array(
                 'id'		=> $booking->id
@@ -613,7 +616,7 @@ class Bookings{
 
     /**
      * Update an existing booking
-     * 
+     *
      * @param   int     $bookingId  The booking id
      */
     function removeBooking($bookingId){
@@ -621,19 +624,19 @@ class Bookings{
 
         // Get the booking
         $wpdb->delete(
-			$this->tableName,      
-			['id' => $bookingId],           
+			$this->tableName,
+			['id' => $bookingId],
 			['%d'],
 		);
     }
 
     /**
      * Retrieve the bookings for a certain month
-     * 
+     *
      * @param   int     $month          The month to retrieve bookings for
      * @param   int     $year           The year to retrieve bookings for
      * @param   string  $subject        The subject to retrieve bookings for
-     * 
+     *
      */
     function retrieveMonthBookings($month, $year, $subject){
         global $wpdb;
@@ -667,7 +670,7 @@ class Bookings{
 
     /**
      * Retrieve all the pending bookings
-     * 
+     *
      */
     function retrievePendingBookings(){
         global $wpdb;
