@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with updating bookings
 
 ## [2.21.0] - 2022-10-07
 
