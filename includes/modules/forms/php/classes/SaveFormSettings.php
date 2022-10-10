@@ -296,25 +296,25 @@ class SaveFormSettings extends SimForms{
 		
 		//check if form row already exists
 		if(!$wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `name` = '{$this->formName}'")){
-			//Create a new form row			
+			//Create a new form row
 			$this->insertForm();
 		}
 	}
 
-	/** 
+	/**
 	 * Deletes a form
-	 * 
+	 *
 	 * @param	int		$formId	The id of the form to be deleted
 	 * @param	int		$pageId	The id of a page with a formbuilder shortcode
-	 * 
+	 *
 	 * @return	string			The deletion result
 	*/
 	function deleteForm($formId){
 		global $wpdb;
 
-		if(!isset($this->formData)){
+		/* if(!isset($this->formData)){
 			$this->getForm($formId);
-		}
+		} */
 
 		// Remove the form
 		$wpdb->delete(

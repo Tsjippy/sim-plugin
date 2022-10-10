@@ -191,9 +191,9 @@ class EditFormResults extends DisplayFormResults{
 
 	/**
 	 * Removes an existing submission from the database
-	 * 
+	 *
 	 * @param	int	$submissionId		The id of the submission to delete
-	 * 
+	 *
 	 * @return	int|WP_Error			The number of rows updated, or an WP_Error on error.
 	 */
 	function deleteSubmission($submissionId){
@@ -205,14 +205,14 @@ class EditFormResults extends DisplayFormResults{
 		}
 
 		$result = $wpdb->delete(
-			$this->submissionTableName, 
+			$this->submissionTableName,
 			array(
 				'id'		=> $submissionId
 			)
 		);
 		
 		if($result === false){
-			return new \WP_Error('sim forms', "Submission removal failed"); 
+			return new \WP_Error('sim forms', "Submission removal failed");
 		}
 
 		$this->sendEmail('removed');

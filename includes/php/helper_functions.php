@@ -5,7 +5,7 @@ use WP_Error;
 
 //Update user meta of a user and all of its relatives
 
-/**
+ /**
  * Update user meta for a specific key for the current user and all of its relatives
  * @param  int		$userId 	WP_User id
  * @param  string	metaKey		The meta key to update or create
@@ -32,7 +32,7 @@ function updateFamilyMeta($userId, $metaKey, $value){
 	}
 }
 
-/**
+ /**
  * Create a dropdown with all users
  * @param 	string		$title	 		The title to display above the select
  * @param	bool		$onlyAdults	 	Whether children should be excluded. Default false
@@ -45,7 +45,7 @@ function updateFamilyMeta($userId, $metaKey, $value){
  * @param	string		$type			Html input type Either select or list
  * 
  * @return	string						The html
-*/
+ */
 function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select', $listId=''){
 	global $wp_scripts;
 	

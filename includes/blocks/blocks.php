@@ -187,7 +187,7 @@ function displayChildren($attributes) {
 
 /**
  * Creates children html
- * 
+ *
  * @param	int		$postId		The postId of the post to get children for
  * @param	boolean	$recursive	Whether or not to add children of children
  */

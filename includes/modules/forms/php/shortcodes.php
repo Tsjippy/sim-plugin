@@ -13,10 +13,10 @@ function showFormSelector($atts=[]){
         'no_meta'   => true
     ), $atts );
 
-    $FormTable	= new DisplayFormResults();
-    $FormTable->getForms();
+    $formTable	= new DisplayFormResults();
+    $formTable->getForms();
 
-    $forms          = $FormTable->forms;
+    $forms          = $formTable->forms;
 
     // Remove any unwanted forms
     if(!empty($a['exclude']) || $a['no_meta']){
@@ -78,12 +78,12 @@ function showFormSelector($atts=[]){
 
         // Loop over the forms to add the to the page
         foreach($forms as $form){
-		    $query			= "SELECT * FROM {$FormTable->shortcodeTable} WHERE form_id= '{$form->id}'";
+		    $query			= "SELECT * FROM {$formTable->shortcodeTable} WHERE form_id= '{$form->id}'";
 		    $shortcodeData 	= $wpdb->get_results($query);
 
             //Create shortcode data if not existing
             if(empty($shortcodeData)){
-                $shortcodeId   = $FormTable->insertInDb($form->id);
+                $shortcodeId   = $formTable->insertInDb($form->id);
             }else{
                 $shortcodeId   = $shortcodeData[0]->id;
             }
@@ -103,12 +103,12 @@ function showFormSelector($atts=[]){
                 }
 
                  echo "<div id='{$form->name}_form' class='form_wrapper$formVis'>";
-                    echo do_shortcode("[formbuilder formname=$form->name]");
+                    echo do_shortcode("[formbuilder formname='$form->name']");
                 echo "</div>";
 
                 
                 echo "<div id='{$form->name}_results' class='form_results_wrapper$resultVis'>";
-                    echo do_shortcode("[formresults id=$shortcodeId formname=$form->name]");
+                    echo do_shortcode("[formresults id=$shortcodeId formname='$form->name']");
                 echo "</div>";
             echo "</div>";
         }
@@ -117,7 +117,7 @@ function showFormSelector($atts=[]){
     <?php
 
     return ob_get_clean();
-};
+}
 
 //shortcode to make forms
 add_shortcode( 'formbuilder', function($atts){

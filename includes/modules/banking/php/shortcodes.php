@@ -7,7 +7,7 @@ add_shortcode("account_statements", __NAMESPACE__.'\showStatements');
 
 /**
  * show an users bank statements
- * 
+ *
  * @return string html containing the staement overview 
  */
 function showStatements($userId=''){
@@ -61,9 +61,9 @@ function showStatements($userId=''){
 
 /**
  * Prints the year buttons
- * 
+ *
  * @param	int	$year	The year to output
- * 
+ *
  * @param	bool		Whether the year is visible or not
  */
 function printYears($year){
@@ -82,12 +82,10 @@ function printYears($year){
 
 /**
  * Prints all the account statement links for a given year
- * 
+ *
  * @param	array	$monthArray	The months
  * @param	int		$year		The year
  * @param	bool	$visibility	Whether the links should be shown
- * 
- * 
  */
 function printRows($monthArray, $year, $visibility){
 	$monthCount = count($monthArray);

@@ -66,20 +66,6 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	return ob_get_clean();
 }, 10, 2);
 
-add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
-		return $options;
-	}
-
-	// Create frontend posting page
-	$options	= SIM\ADMIN\createDefaultPage($options, 'forms_pages', 'Form selector', '[formselector]', $oldOptions);
-
-	scheduleTasks();
-
-	return $options;
-}, 10, 3);
-
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
@@ -152,23 +138,6 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 	return ob_get_clean();
 }, 10, 3);
 
-add_action('sim_module_actions', function(){
-	if(isset($_POST['import-form'])){
-		$formBuilder	= new FormBuilderForm();
-		$formBuilder->importForm($_FILES['formfile']['tmp_name']);
-	}
-
-	if(isset($_POST['export']) && is_numeric($_POST['export'])){
-		$simForms	= new FormBuilderForm();
-		$simForms->exportForm($_POST['export']);
-	}
-
-	if(isset($_POST['delete']) && is_numeric($_POST['delete'])){
-		$simForms	= new SaveFormSettings();
-		$simForms->deleteForm($_POST['delete']);
-	}
-});
-
 add_filter('sim_module_data', function($dataHtml, $moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
@@ -182,6 +151,11 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug){
 
 	$simForms	= new SaveFormSettings();
 	$simForms->getForms();
+
+	// sort the forms on name
+	usort($simForms->forms, function($a, $b){
+			return strcasecmp($a->name, $b->name);
+	});
 
 	$html	.= "<table class='formoverview'>";
 		$html	.= "<thead>";
@@ -210,11 +184,43 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug){
 	return $dataHtml.$html;
 }, 10, 2);
 
-add_filter('display_post_states', function ( $states, $post ) { 
+
+add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
+
+	// Create frontend posting page
+	$options	= SIM\ADMIN\createDefaultPage($options, 'forms_pages', 'Form selector', '[formselector]', $oldOptions);
+
+	scheduleTasks();
+
+	return $options;
+}, 10, 3);
+
+add_action('sim_module_actions', function(){
+	if(isset($_POST['import-form'])){
+		$formBuilder	= new FormBuilderForm();
+		$formBuilder->importForm($_FILES['formfile']['tmp_name']);
+	}
+
+	if(isset($_POST['export']) && is_numeric($_POST['export'])){
+		$simForms	= new FormBuilderForm();
+		$simForms->exportForm($_POST['export']);
+	}
+
+	if(isset($_POST['delete']) && is_numeric($_POST['delete'])){
+		$simForms	= new SaveFormSettings();
+		$simForms->deleteForm($_POST['delete']);
+	}
+});
+
+add_filter('display_post_states', function ( $states, $post ) {
     
     if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'forms_pages'))) {
         $states[] = __('Form selector page'); 
-    } 
+    }
 
     return $states;
 }, 10, 2);

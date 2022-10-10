@@ -3,7 +3,7 @@ namespace SIM\ADMIN;
 use SIM;
 
 /**
- * 
+ *
  * Creates a default page if it does not exist yet
  */
 function createDefaultPage($options, $optionKey, $title, $content, $oldOptions, $arg=[]){
@@ -56,10 +56,10 @@ function createDefaultPage($options, $optionKey, $title, $content, $oldOptions, 
 
 /**
  * Checks if all pages are valid in the default pages option array and returns the first valid one as a link
- * 
+ *
  * @param   string  $moduleSlug     The slug of the module 
  * @param   string  $optionKey      The key in the module option array
- * 
+ *
  * @return  string                  The url
  */
 function getDefaultPageLink($moduleSlug, $optionKey){

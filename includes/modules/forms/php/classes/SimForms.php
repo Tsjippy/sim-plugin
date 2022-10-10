@@ -64,7 +64,7 @@ class SimForms{
 		$this->formName	= $newName;
 
 		$wpdb->insert(
-			$this->tableName, 
+			$this->tableName,
 			array(
 				'name'			=> $this->formName,
 				'version' 		=> 1
@@ -96,6 +96,22 @@ class SimForms{
 	 */
 	function getForm($formId=''){
 		global $wpdb;
+
+		// first check if needed
+		if(!empty($this->formData)){
+			if(
+				(
+					!empty($this->formId)		&&
+					$this->formData->id	== $this->formId
+				)	||
+				(
+					!empty($this->formName)		&&
+					$this->formData->name	== $this->formName
+				)
+			){
+				return true;
+			}
+		}
 		
 		// Get the form data
 		$query				= "SELECT * FROM {$this->tableName} WHERE ";
@@ -124,7 +140,7 @@ class SimForms{
 		//used to find the index of an element based on its unique id
  		$this->formData->elementMapping									= [];
 		$this->formData->elementMapping['type']							= [];
-		foreach($this->formElements as $index=>$element){			
+		foreach($this->formElements as $index=>$element){
 			$this->formData->elementMapping['id'][$element->id]			= $index;
 			$this->formData->elementMapping['name'][$element->name] 	= $index;
 			$this->formData->elementMapping['type'][$element->type][] 	= $index;
@@ -457,7 +473,7 @@ class SimForms{
 		$query				= "SELECT * FROM {$this->elTableName} WHERE `form_id`=";
 
 		if(is_numeric($this->formId)){
-			$query	.= $this->formId; 
+			$query	.= $this->formId;
 		}elseif(!empty($this->formName)){
 			$query	.= "(SELECT `id` FROM {$this->tableName} WHERE name='$this->formName')";
 		}else{
@@ -465,14 +481,6 @@ class SimForms{
 		}
 		
 		$formElements 		=  $wpdb->get_results($query);
-
-		// preload the formbuilder in case we need it later
-		/* if($this->editRights){
-			wp_enqueue_style( 'sim_formtable_style');
-			wp_enqueue_script( 'sim_formbuilderjs');
-			// Enqueue tinymce
-			wp_enqueue_script('sim-tinymce', "/wp-includes/js/tinymce/tinymce.min.js", [], false, true);
-		} */
 
 		if((isset($_REQUEST['formbuilder']) || empty($formElements)) && $this->editRights){
 			$formBuilderForm	= new FormBuilderForm($atts);

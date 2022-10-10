@@ -7,7 +7,7 @@ abstract class MailSetting{
 
     /**
      * Initiates the class
-     * 
+     *
      * @param   string  $keyword    The keyword to use in the settings array
      */
     protected function __construct($keyword, $moduleSlug) {
@@ -38,7 +38,7 @@ abstract class MailSetting{
 
     /**
      * Add replacements for user names
-     * 
+     *
      * @param object    $user   WP_User
      */
     protected function addUser($user){
@@ -117,7 +117,7 @@ abstract class MailSetting{
 
     /**
      * Prints both the subject and the content inputs to screen
-     * 
+     *
      * @param   array   $settings   The module settings array
      */
     public function printInputs($settings){

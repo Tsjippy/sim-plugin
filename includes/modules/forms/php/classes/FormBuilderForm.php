@@ -17,10 +17,10 @@ class FormBuilderForm extends SimForms{
 
 	/**
 	 * Creates a dropdown with all form elements
-	 * 
+	 *
 	 * @param	int		$selectedId	The id of the current selected element in the dropdown. Default empty
 	 * @param	int		$elementId	the id of the element
-	 * 
+	 *
 	 * @return	string				The dropdown html
 	 */
 	function inputDropdown($selectedId, $elementId=''){

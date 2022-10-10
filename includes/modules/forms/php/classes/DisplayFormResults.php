@@ -1098,7 +1098,7 @@ class DisplayFormResults extends DisplayForm{
 			if(
 				array_intersect((array)$this->userRoles, array_keys((array)$this->formSettings['full_right_roles']))	||
 				(
-					isset($this->tableSettings['full_right_roles']) && 
+					isset($this->tableSettings['full_right_roles']) &&
 					array_intersect((array)$this->userRoles, array_keys((array)$this->tableSettings['full_right_roles']))
 				)	||
 				$this->editRights

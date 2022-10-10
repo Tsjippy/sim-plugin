@@ -262,10 +262,10 @@ function saveTableSettings(){
 
 	$formTable		= new DisplayFormResults();
 	
-	$wpdb->update($formTable->shortcodeTable, 
+	$wpdb->update($formTable->shortcodeTable,
 		array(
 			'table_settings'=> maybe_serialize($tableSettings)
-		), 
+		),
 		array(
 			'id'			=> $_POST['shortcode_id'],
 		),
@@ -282,10 +282,10 @@ function saveTableSettings(){
 		}
 		
 		//save in db
-		$wpdb->update($formTable->tableName, 
+		$wpdb->update($formTable->tableName,
 			array(
 				'settings' 	=> maybe_serialize($formTable->formData->settings)
-			), 
+			),
 			array(
 				'id'		=> $_POST['formid'],
 			),

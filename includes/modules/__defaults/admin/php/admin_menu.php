@@ -31,7 +31,7 @@ add_action( 'admin_menu', function() {
 
 	do_action('sim_module_actions');
 
-	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");	
+	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");
 
 	foreach($moduleDirs as $moduleSlug=>$folderName){
 		//do not load admin and template menu

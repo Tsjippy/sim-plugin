@@ -352,7 +352,7 @@ function addFormElement(){
 					unset($data->formresults[$oldElement->name]);
 				}
 				$wpdb->update(
-					$submitForm->submissionTableName, 
+					$submitForm->submissionTableName,
 					array(
 						'formresults'	=> maybe_serialize($data->formresults),
 					),
@@ -575,7 +575,7 @@ function saveFormInput(){
 	if(is_numeric($_POST['userid'])){
 		//If we are submitting for someone else and we do not have the right to save the form for someone else
 		if(
-			array_intersect($formBuilder->userRoles, $formBuilder->submitRoles) === false && 
+			array_intersect($formBuilder->userRoles, $formBuilder->submitRoles) === false &&
 			$formBuilder->user->ID != $_POST['userid']
 		){
 			return new \WP_Error('Error', 'You do not have permission to save data for user with id '.$_POST['userid']);
@@ -697,10 +697,10 @@ function saveFormEmails(){
 	}
 	
 	$formBuilder->maybeInsertForm();
-	$wpdb->update($formBuilder->tableName, 
+	$wpdb->update($formBuilder->tableName,
 		array(
 			'emails'	=> maybe_serialize($formEmails)
-		), 
+		),
 		array(
 			'id'		=> $_POST['formid'],
 		),

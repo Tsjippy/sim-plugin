@@ -11,7 +11,7 @@ class FileUpload{
 	
 	/**
 	 * Constructs the fileupload object
-	 * 
+	 *
 	 * @param 	int		$userId		The wp WP_User id
 	 * @param	string	$metakey	The key for storage in the user meta or options table. Default empty
 	 * @param	bool	$library	Whether to attach the upload to the wp library. Default false
@@ -68,7 +68,7 @@ class FileUpload{
 	 * @param	string	$targetDir		The subfolder of the uploads folder. Default empty
 	 * @param	bool	$multiple		Whether to allow multiple files to be uploaded. Default false
 	 * @param	string	$options		Extra options to add to the files input element
-	 * 
+	 *
 	 * @return	string					The input html
 	 */
 	function getUploadHtml($documentName, $targetDir='', $multiple=false, $options=''){
@@ -128,9 +128,9 @@ class FileUpload{
 	
 	/**
 	 * Renders the already uploaded images or show the link to a file
-	 * 
+	 *
 	 * @param	string|int	$documentPath	The url, filepath or WP attachment id of a file
-	 * @param	int			$index			The metakey sub key					
+	 * @param	int			$index			The metakey sub key
 	 */
 	function documentPreview($documentPath, $index){
 		$metaValue	= $documentPath;
