@@ -137,18 +137,26 @@ if(is_tax() || is_archive()){
 				//Show a map if one is defined
 				$customMapId = get_post_meta(get_the_ID(), 'map_id', true);
 				if(is_numeric($customMapId)){
-				?>
-				<div class='location_map' style='margin-top:15px;margin-bottom:25px;'>
-					<?php
-					$markers	= get_post_meta(get_the_ID(), 'marker_ids', true);
-					$markerId	= '';
-					if(is_array($markers) && isset($markers['page_marker'])){
-						$markerId	= $markers['page_marker'];
-					}
-					echo do_shortcode("[ultimate_maps id='$customMapId' map_center='$markerId']");
 					?>
-				</div>
-				<?php
+					<div class='location_map' style='margin-top:15px;margin-bottom:25px;'>
+						<h4>Location</h4>
+						<?php
+						$markers	= get_post_meta(get_the_ID(), 'marker_ids', true);
+						$markerId	= '';
+						if(is_array($markers) && isset($markers['page_marker'])){
+							$markerId	= $markers['page_marker'];
+						}
+						echo do_shortcode("[ultimate_maps id='$customMapId' map_center='$markerId']");
+						?>
+					</div>
+
+					<script>
+						document.addEventListener('DOMContentLoaded', () => {
+							let map	= document.querySelector(".location_map");
+							document.querySelector('.widget-area.sidebar').prepend(map);
+						});
+					</script>
+					<?php
 				}
 			}
 			?>
