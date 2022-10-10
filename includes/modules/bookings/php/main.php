@@ -130,7 +130,7 @@ add_filter('sim-forms-element-html', function($html, $element, $formBuilderForm)
         }
     }  
     return $html;
-}, 10, 3); 
+}, 10, 3);
 
 // Form settings
 add_action('sim-forms-form-settings-form', function($formBuilderForm){
@@ -230,7 +230,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
     if(
         !isset($displayFormResults->tableSettings['booking-display'])   ||
         (
-            isset($displayFormResults->tableSettings['booking-display']) && 
+            isset($displayFormResults->tableSettings['booking-display']) &&
             $displayFormResults->tableSettings['booking-display'] != 'calendar'
         ) ||
         !array_intersect($displayFormResults->userRoles, array_keys($displayFormResults->formSettings['full_right_roles']))
@@ -252,7 +252,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
         if(!isset($bookingDetails['subjects'])){
             return 'Please add one or more booking subjects';
         }else{
-            $subjects       = explode("\n", $bookingDetails['subjects']);
+            $subjects       = explode("\n", trim($bookingDetails['subjects']));
         }
     }
 
@@ -342,7 +342,6 @@ add_filter('sim_after_saving_formdata', function($message, $formBuilder){
 
     return $message;
 }, 10, 2);
-
 
 // Update an existing booking
 add_filter('sim-forms-submission-updated', function($message, $formTable, $fieldName, $newValue){

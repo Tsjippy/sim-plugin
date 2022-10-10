@@ -11,26 +11,23 @@ class SubmitForm extends SimForms{
 	
 	/**
 	 * Returns conditional e-mails with a valid condition
-	 * 
+	 *
 	 * @param	array	$conditions		The conditions of a conditional e-mail
-	 * 
+	 *
 	 * @return	string|false			The e-mail adres or false if none found
 	 */
-	function findConditionalEmail($conditions){
+	public function findConditionalEmail($conditions){
 		//loop over all conditions
 		foreach($conditions as $condition){
-			//loop over all elements to find the element with the id specified
-			foreach($this->formElements as $element){
-				//we found the element with the correct id
-				if($element->id == $condition['fieldid']){
-					//get the submitted form value
-					$formValue = $this->formResults[$element->name];
+
+			$elementName	= $this->getElementById($condition['fieldid'], 'name');
+
+			//get the submitted form value
+			$formValue = $this->formResults[$elementName];
 					
-					//if the value matches the conditional value
-					if(strtolower($formValue) == strtolower($condition['value'])){
-						return $condition['email'];
-					}
-				}
+			//if the value matches the conditional value
+			if(strtolower($formValue) == strtolower($condition['value'])){
+				return $condition['email'];
 			}
 		}
 
@@ -52,10 +49,10 @@ class SubmitForm extends SimForms{
 
 	/**
 	 * Send an e-mail
-	 * 
+	 *
 	 * @param	string	$trigger	One of 'submitted' or 'fieldchanged'. Default submitted
 	 */
-	function sendEmail($trigger='submitted'){
+	public function sendEmail($trigger='submitted'){
 		$emails = $this->formData->emails;
 		
 		foreach($emails as $key=>$email){
@@ -99,8 +96,8 @@ class SubmitForm extends SimForms{
 				if($email['emailto'] == 'conditional'){
 					$to = $this->findConditionalEmail($email['conditionalemailto']);
 
-					if(!$from){
-						$from	= $email['elseto'];
+					if(!$to){
+						$to	= $email['elseto'];
 					}
 				}elseif($email['emailto'] == 'fixed'){
 					$to		= $this->processPlaceholders($email['to']);
@@ -141,12 +138,12 @@ class SubmitForm extends SimForms{
 	
 	/**
 	 * Replaces placeholder with the value
-	 * 
+	 *
 	 * @param	string	$string		THe string to check for placeholders
-	 * 
+	 *
 	 * @return	string				The filtered string
 	 */
-	function processPlaceholders($string){
+	private function processPlaceholders($string){
 		if(empty($string)){
 			return $string;
 		}
