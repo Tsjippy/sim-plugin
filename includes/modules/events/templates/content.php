@@ -145,14 +145,21 @@ function displayEventMeta(){
 					<dl>
 						<dd>
 							<?php
-							echo ucfirst($meta['repeat']['type']);
+							$type	= $meta['repeat']['type'];
+							if($meta['repeat']['type'] == 'custom_days'){
+								$type	= '';
+								foreach($meta['repeat']['includedates'] as $date){
+									$type	.= date('j F Y', strtotime($date)).'<br>';
+								}
+							}
+							echo ucfirst($type);
 							if(!empty($meta['repeat']['enddate'])){
 								echo " until ".date('j F Y',strtotime($meta['repeat']['enddate']));
 							}
 							if(!empty($meta['repeat']['amount'])){
-								$repeat_amount = $meta['repeat']['amount'];
-								if($repeat_amount != 90){
-									echo " for $repeat_amount times";
+								$repeatAmount = $meta['repeat']['amount'];
+								if($repeatAmount != 90){
+									echo " for $repeatAmount times";
 								}
 							}
 							?>

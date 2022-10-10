@@ -519,7 +519,7 @@ document.addEventListener("click", event =>{
 		}
 	}else if(target.name == 'enable_event_repeat'){
 		document.querySelector('.repeat_wrapper').classList.toggle('hidden');
-		let repeated	= target.parentNode.querySelector('[name="event[repeated]"]');
+		let repeated	= target.parentNode.querySelector('[name="event[isrepeated]"]');
 		if(repeated.value == 'yes'){
 			repeated.value = '';
 		}else{

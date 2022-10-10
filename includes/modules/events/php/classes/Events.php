@@ -16,8 +16,8 @@ class Events{
 	 * Creates the table holding all events if it does not exist
 	*/
 	function createEventsTable(){
-		if ( !function_exists( 'maybe_create_table' ) ) { 
-			require_once ABSPATH . '/wp-admin/install-helper.php'; 
+		if ( !function_exists( 'maybe_create_table' ) ) {
+			require_once ABSPATH . '/wp-admin/install-helper.php';
 		}
 
 		global $wpdb;

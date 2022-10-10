@@ -41,7 +41,7 @@ class SubmitForm extends SimForms{
 	 *
 	 * @return	array				The filtered footer array
 	 */
-	private function emailFooter($footer){
+	protected function emailFooter($footer){
 		$footer['url']		= $_POST['formurl'];
 		$footer['text']		= $_POST['formurl'];
 		return $footer;
@@ -143,7 +143,7 @@ class SubmitForm extends SimForms{
 	 *
 	 * @return	string				The filtered string
 	 */
-	private function processPlaceholders($string){
+	protected function processPlaceholders($string){
 		if(empty($string)){
 			return $string;
 		}

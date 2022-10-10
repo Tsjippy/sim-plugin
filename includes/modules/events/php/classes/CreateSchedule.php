@@ -39,19 +39,19 @@ class CreateSchedule extends Schedules{
 	}
 
 	/**
-	 * Add new events to the db when a new activity is schedules
-	 * 
+	 * Add new events to the db when a new activity is scheduled
+	 *
 	 * @param	string	$title			the title of the event
 	 * @param	object	$schedule		the schedule of the event
 	 * @param	bool	$addHostPartner	Whether to add an event for the host partner as well. Default true
 	 * @param	bool	$addPartner		Whether to add an event for the schedule target partner as well. Default true
 	*/
-	private function addScheduleEvents($title, $schedule, $addHostPartner=true, $addPartner=true){
-		$event							= [];	
+	protected function addScheduleEvents($title, $schedule, $addHostPartner=true, $addPartner=true){
+		$event							= [];
 		$event['startdate']				= $this->date;
 		$event['starttime']				= $this->starttime;
 		$event['enddate']				= $this->date;
-		$event['endtime']				= $this->endtime;	
+		$event['endtime']				= $this->endtime;
 		$event['location']				= $this->location;
 		$event['organizer_id']			= $this->hostId;
 		$event['schedule_id']			= $this->scheduleId;

@@ -286,13 +286,20 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Get the repitition details of an event
-	 * 
+	 *
 	 * @param	object		$meta		The event meta data
-	 * 
+	 *
 	 * @return	string					String describing the repetition
 	*/
 	public function getRepeatDetail($meta){
-		$html = 'Repeats '.$meta['repeat']['type'];
+		$type	= $meta['repeat']['type'];
+		if($meta['repeat']['type'] == 'custom_days'){
+			$type	= '';
+			foreach($meta['repeat']['includedates'] as $date){
+				$type	.= date('j F Y', strtotime($date)).'<br>';
+			}
+		}
+		$html = "Repeats $type";
 
 		if($meta['repeat']['type'] == 'weekly' && !empty($meta['repeat']['weeks'])){
 			$when	= strtolower(implode(' and ', $meta['repeat']['weeks']));

@@ -68,7 +68,7 @@ abstract class MailSetting{
     /**
      * Prints the e-mail subject input
      */
-    private function printSubjectInput(){
+    protected function printSubjectInput(){
         $subject  = $this->subject;
         if(empty($subject)){
             $subject  = $this->defaultSubject;
@@ -86,7 +86,7 @@ abstract class MailSetting{
     /**
      * Prints the e-mail message input to screen
      */
-    private function printMessageInput(){
+    protected function printMessageInput(){
         $message  = $this->message;
         if(empty($message)){
             $message  = $this->defaultMessage;

@@ -40,7 +40,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
 
         //check if the platform matches
         $metadata   = unserialize(get_user_meta($this->userId,"2fa_webautn_cred_meta",true));
-        $os         = $this->get_os_info()['name'];
+        $os         = $this->getOsInfo()['name'];
 
         foreach($this->read() as $key=>$data){
             if(
@@ -115,7 +115,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
     }
 
     // Read credential database
-    private function read(): array {
+    protected function read(): array {
         $userCred  = get_user_meta($this->userId, "2fa_webautn_cred", true);
         if($userCred){
             try{
@@ -127,7 +127,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
         return [];
     }
 
-    function get_os_info(){
+    protected function getOsInfo(){
         $userAgent = $_SERVER['HTTP_USER_AGENT']; // change this to the useragent you want to parse
     
         $info = new OS_info($userAgent);
@@ -135,7 +135,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
     }
 
     // Save credentials data
-    private function write(array $data, string $key): void {
+    protected function write(array $data, string $key): void {
         if($key !== ''){
             // Save credentials's meta separately
             $source = $data[$key]->getUserHandle();
@@ -155,9 +155,9 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
             }else{
                 $meta[$key] = array(
                     "identifier"    => getFromTransient("identifier"),
-                    "os_info"       => $this->get_os_info(),
-                    "added"         => date('Y-m-d H:i:s', current_time('timestamp')), 
-                    "user"          => $source, 
+                    "os_info"       => $this->getOsInfo(),
+                    "added"         => date('Y-m-d H:i:s', current_time('timestamp')),
+                    "user"          => $source,
                     "last_used"     => "-"
                 );
             }

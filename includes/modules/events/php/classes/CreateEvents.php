@@ -7,17 +7,17 @@ class CreateEvents extends Events{
 	/**
 	 * Retrieves the weeknumber from a certain date
 	 * @param  	int  $date		a date in epoch
-	 * 
+	 *
 	 * @return	int				the weeknumber
 	*/
-	function yearWeek($date){
+	protected function yearWeek($date){
 		return intval(date('W', $date));
 	}
 
 	/**
 	 * Retrieves the weeknumber from a certain date
 	 * @param  	int  $date		a date in epoch
-	 * 
+	 *
 	 * @return	int				the weeknumber
 	*/
 	protected function monthWeek($date){
@@ -53,8 +53,8 @@ class CreateEvents extends Events{
 			$args['enddate']		= $enddate;
 
 			//Update the database
-			$wpdb->update($this->tableName, 
-				$args, 
+			$wpdb->update($this->tableName,
+				$args,
 				array(
 					'post_id'		=> $this->postId,
 					'startdate'		=> $startDate
@@ -176,6 +176,16 @@ class CreateEvents extends Events{
 		$repeatParam	= $this->eventData['repeat'];
 		$interval		= max(1, (int)$repeatParam['interval']);
 		$amount			= 200;
+
+		if($repeatParam['type'] == 'custom_days'){
+			foreach($repeatParam['includedates'] as $date){
+				if(!in_array($date, $this->startDates)){
+					$this->startDates[]	= $date;
+				}
+			}
+
+			return;
+		}
 		
 		$repeatStop	= $repeatParam['stop'];
 		if($repeatParam['stop'] == 'after' && !empty($repeatParam['amount']) && is_numeric($amount)){
