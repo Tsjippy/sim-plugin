@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- map in sidebar
 
 ### Fixed
 - conditional form e-mails
