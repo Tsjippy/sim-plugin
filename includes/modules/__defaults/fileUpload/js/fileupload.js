@@ -48,6 +48,9 @@ async function fileUpload(target){
 		Main.displayMessage("Please select some files before hitting the uplad button!", 'error');
 		return;
 	}
+
+	// prevent form submission
+	target.closest('form').querySelector('.button.form_submit').disabled	= true;
 	
 	//Create a formData element
 	let formData = new FormData();
@@ -84,8 +87,10 @@ async function fileUpload(target){
 		}
 	}
 
-	// No files remaining to upload
+	// No files remaining to upload after uploading videos
 	if(formData.get('files[]') == null){
+		target.closest('form').querySelector('.button.form_submit').disabled	= false;
+
 		return;
 	}
 	
@@ -164,6 +169,9 @@ function readyStateChanged(e){
 			
 		//Clear the input
 		fileUploadWrap.querySelector('.file_upload').value = "";
+
+		// enable form submission again
+		document.querySelectorAll('.button.form_submit[disabled]').forEach(el=>el.disabled	= false);
 	}
 }
 

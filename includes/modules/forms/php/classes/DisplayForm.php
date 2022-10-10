@@ -407,14 +407,14 @@ class DisplayForm extends SubmitForm{
 							
 								$html	.= "<div style='flex:1;'>";
 									$html	.= "<button type='button' class='button nextBtn' name='nextBtn'>Next</button>";
-									$html	.= SIM\addSaveButton('submit_form', $buttonText, 'hidden form_submit');
+									$html	.= SIM\addSaveButton('submit_form', $buttonText, 'hidden');
 								$html	.= "</div>";
 							$html	.= "</div>";
 						$html	.= "</div>";
 					}
 
 					if(!$this->isFormStep && !empty($this->formElements)){
-						$html	.= SIM\addSaveButton('submit_form', $buttonText, "form_submit");
+						$html	.= SIM\addSaveButton('submit_form', $buttonText);
 					}
 				$html	.= "</div>";
 			$html	.= "</form>";
