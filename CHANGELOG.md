@@ -10,6 +10,8 @@
 - conditional form e-mails
 - archiving bookings
 - custom dates repetition
+- prevent formsubmission when
+upload is not yet finished
 
 ## [2.21.1] - 2022-10-08
 
