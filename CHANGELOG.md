@@ -8,6 +8,7 @@
 
 ### Fixed
 - conditional form e-mails
+- archiving bookings
 
 ## [2.21.1] - 2022-10-08
 
