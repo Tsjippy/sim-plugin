@@ -143,13 +143,19 @@ async function archiveSubmission(target){
 		const params = new Proxy(new URLSearchParams(window.location.search), {
 			get: (searchParams, prop) => searchParams.get(prop),
 		});
+
+		// Create a custom event so others can listen to it.
+		// Used by bookings uploads
+		const event = new Event('submissionArchived');
 		
 		// Delete all
 		if(formData.get('subid') == null){
-			table.querySelectorAll(`.table-row[data-id="${submissionId}"]`).forEach(row=>{
+			table.querySelectorAll(`[data-id="${submissionId}"]`).forEach(row=>{
+				row.dispatchEvent(event);
+
 				// just change the button name
 				if(params.archived == 'true'){
-					let loader = row.querySelector('.loaderwrapper, .'+action);
+					let loader = row.querySelector(`.loaderwrapper`);
 					changeArchiveButton(loader, action);
 				}else{
 					row.remove();
@@ -158,6 +164,8 @@ async function archiveSubmission(target){
 		// Only delete subid
 		}else{
 			table.querySelectorAll(`.table-row[data-id="${submissionId}"][data-subid="${tableRow.dataset.subid}"]`).forEach(row=>{
+				row.dispatchEvent(event);
+				
 				// just change the button name
 				if(params.archived == 'true'){
 					let loader = row.querySelector('.loaderwrapper');

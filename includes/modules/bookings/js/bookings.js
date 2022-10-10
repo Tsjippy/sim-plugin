@@ -240,6 +240,22 @@ document.addEventListener('DOMContentLoaded', () => {
         offset	= wrapper.getBoundingClientRect().x;
         wrapper.style.marginLeft = `-${offset}px`;
     });
+
+    document.querySelectorAll('.booking-detail tr.actions').forEach(row=>row.addEventListener('submissionArchived', ev => {
+        let wrapper     = ev.target.closest('.booking-detail-wrapper');
+        let bookingId   = wrapper.dataset.bookingid;
+
+        // mark dates as available again
+        document.querySelectorAll(`.calendar.day.booked[data-bookingid="${bookingId}"]`).forEach(el=>{
+            el.classList.remove('booked');
+            el.classList.add('available');
+        });
+
+        // remove details
+        wrapper.remove();
+        
+        Main.displayMessage('Succesfully archived');
+    }));
 });
 
 document.addEventListener('click', (ev) => {

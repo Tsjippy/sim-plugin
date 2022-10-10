@@ -36,12 +36,12 @@ class SubmitForm extends SimForms{
 
 	/**
 	 * Filters the e-mail footer url and text
-	 * 
+	 *
 	 * @param	array	$footer		The footer array
-	 * 
+	 *
 	 * @return	array				The filtered footer array
 	 */
-	function emailFooter($footer){
+	private function emailFooter($footer){
 		$footer['url']		= $_POST['formurl'];
 		$footer['text']		= $_POST['formurl'];
 		return $footer;

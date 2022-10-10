@@ -10,9 +10,9 @@ class EditFormResults extends DisplayFormResults{
 
 	/**
 	 * Update an existing form submission
-	 * 
+	 *
 	 * @param	bool	$archive	Whether we should archive the submission. Default false
-	 * 
+	 *
 	 *  @return	true|WP_Error		The result or error on failure
 	 */
 	function updateSubmissionData($archive=false){
@@ -28,13 +28,13 @@ class EditFormResults extends DisplayFormResults{
 				SIM\printArray('No submission id found');
 				return false;
 			}
-		}	
+		}
 
 		$this->formResults['edittime']	= date("Y-m-d H:i:s");
 
 		//Update the database
 		$result = $wpdb->update(
-			$this->submissionTableName, 
+			$this->submissionTableName,
 			array(
 				'timelastedited'	=> date("Y-m-d H:i:s"),
 				'formresults'		=> maybe_serialize($this->formResults),
@@ -64,6 +64,8 @@ class EditFormResults extends DisplayFormResults{
 
 		if($archive){
 			$this->sendEmail('removed');
+
+			do_action('sim-forms-entry-archived', $this, $submissionId);
 		}
 		
 		return $result;
@@ -72,7 +74,7 @@ class EditFormResults extends DisplayFormResults{
 	/**
 	 * Auto archive form submission based on the form settings
 	 */
-	function autoArchive(){
+	public function autoArchive(){
 		//get all the forms
 		$this->getForms();
 		

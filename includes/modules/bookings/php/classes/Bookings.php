@@ -203,10 +203,10 @@ class Bookings{
     }
 
     /**
-     * 
+     *
      * Displays a date selector modal
      */
-    function dateSelectorModal($subject){
+    public function dateSelectorModal($subject){
         if(defined('REST_REQUEST') && isset($_POST['month']) && isset($_POST['year'])){
 			$month		= $_POST['month'];
 			$year		= $_POST['year'];
@@ -243,10 +243,10 @@ class Bookings{
 
     /**
 	 * Get the month calendar
-	 * 
+	 *
 	 * @param	string		$subject		The subject name
      * @param   int         $date           The time
-	 * 
+	 *
 	 * @return	string				        Html of the calendar
 	*/
 	public function monthCalendar($subject, $date){
@@ -349,7 +349,7 @@ class Bookings{
     /**
      * Build the detail html for the current month
      */
-    function detailHtml(){
+    public function detailHtml(){
         $baseUrl	= plugins_url('../pictures', __DIR__);
 
         if($this->forms->columnSettings == null){
@@ -420,11 +420,11 @@ class Bookings{
                                     }
 
                                     //if there are actions
-                                    if(!empty($this->forms->formSettings['actions'])){
+                                    if(!empty($this->forms->formData->settings['actions'])){
                                         //loop over all the actions
                                         $buttonsHtml	= [];
                                         $buttons		= '';
-                                        foreach($this->forms->formSettings['actions'] as $action){
+                                        foreach($this->forms->formData->settings['actions'] as $action){
                                             if($action == 'archive' && $this->showArchived == 'true' && $this->forms->submissionData->archived){
                                                 $action = 'unarchive';
                                             }
@@ -443,7 +443,7 @@ class Bookings{
                                             }
                                         }
                                         if(!empty($buttons)){
-                                            echo "<tr data-id='{$this->forms->formResults['id']}'>";
+                                            echo "<tr class='actions' data-id='{$this->forms->formResults['id']}'>";
                                                 echo "<td>$buttons</td>";
                                             echo "</tr>";
                                         }
@@ -463,7 +463,7 @@ class Bookings{
     /**
      * Check if a booking overlaps another booking
      */
-    function checkOverlap($startDate, $endDate, $subject, $id=-1){
+    public function checkOverlap($startDate, $endDate, $subject, $id=-1){
         global $wpdb;
 
         // start end enddate may overlap so only check for dates in between
@@ -491,7 +491,7 @@ class Bookings{
      * @param   string      $subject        The subject the booking is for
      * @param   int         $submissionId   The form submission id
      */
-    function insertBooking($startDate, $endDate, $subject, $submissionId){
+    public function insertBooking($startDate, $endDate, $subject, $submissionId){
         global $wpdb;
 
 		if($this->checkOverlap($startDate, $endDate, $subject)){
@@ -549,7 +549,7 @@ class Bookings{
      * @param   int     $bookingId  The booking id
      * @param   array   $values     The values to update
      */
-    function updateBooking($booking, $values){
+    public function updateBooking($booking, $values){
         global $wpdb;
 
         // Get the booking
@@ -619,7 +619,7 @@ class Bookings{
      *
      * @param   int     $bookingId  The booking id
      */
-    function removeBooking($bookingId){
+    public function removeBooking($bookingId){
         global $wpdb;
 
         // Get the booking
@@ -693,10 +693,10 @@ class Bookings{
     }
 
     /** Get a booking by submission id */
-    function getBookingBySubmission($id){
+    public function getBookingBySubmission($id){
         global $wpdb;
 
-		$query	    = "SELECT * FROM $this->tableName WHERE submission_id=$id ";
+		$query	    = "SELECT * FROM $this->tableName WHERE submission_id=$id";
 
 		return  $wpdb->get_results($query)[0];
     }

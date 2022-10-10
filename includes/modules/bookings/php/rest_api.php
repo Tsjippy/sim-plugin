@@ -4,15 +4,19 @@ use SIM;
 
 add_action( 'rest_api_init', function () {
 	// Next month
-	register_rest_route( 
-		RESTAPIPREFIX.'/bookings', 
-		'/get_next_month', 
+	register_rest_route(
+		RESTAPIPREFIX.'/bookings',
+		'/get_next_month',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$bookings	= new Bookings();
 
 				$bookings->forms->shortcodeId	= $_POST['shortcodeid'];
+
+				$bookings->forms->loadShortcodeData();
+
+				$bookings->forms->getForm($bookings->forms->shortcodeData->form_id);
 
 				$subject	= sanitize_text_field($_POST['subject']);
 
@@ -41,9 +45,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Approve pending booking
-	register_rest_route( 
-		RESTAPIPREFIX.'/bookings', 
-		'/approve', 
+	register_rest_route(
+		RESTAPIPREFIX.'/bookings',
+		'/approve',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){

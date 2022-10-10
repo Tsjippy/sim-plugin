@@ -406,3 +406,14 @@ add_filter('sim-forms-element-html', function($html, $element, $displayFormResul
     }
     return $html;
 }, 10, 3);
+
+add_action('sim-forms-entry-archived', __NAMESPACE__.'\removeBooking', 10, 2);
+add_action('sim-forms-entry-removed', __NAMESPACE__.'\removeBooking', 10, 2);
+function removeBooking($instance, $submissionId){
+    // remove the booking
+    $bookings   = new Bookings();
+
+    $booking    = $bookings->getBookingBySubmission($submissionId);
+
+    $bookings->removeBooking($booking->id);
+}

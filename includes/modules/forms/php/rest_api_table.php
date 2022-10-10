@@ -5,8 +5,8 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	//save_table_prefs
 	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/save_table_prefs', 
+		RESTAPIPREFIX.'/forms',
+		'/save_table_prefs',
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
 			'callback' 				=> __NAMESPACE__.'\saveTablePrefs',
@@ -23,8 +23,8 @@ add_action( 'rest_api_init', function () {
 
 	//delete_table_prefs
 	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/delete_table_prefs', 
+		RESTAPIPREFIX.'/forms',
+		'/delete_table_prefs',
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
 			'callback' 				=> __NAMESPACE__.'\deleteTablePrefs',
@@ -197,7 +197,7 @@ function saveTablePrefs( \WP_REST_Request $request ) {
 function deleteTablePrefs( \WP_REST_Request $request ) {
 	if (is_user_logged_in()) {
 		$userId		= get_current_user_id();
-		delete_user_meta($userId, 'hidden_columns_'.$request['formid']);	
+		delete_user_meta($userId, 'hidden_columns_'.$request['formid']);
 
 		return 'Succesfully deleted column settings';
 	}else{
@@ -307,6 +307,9 @@ function removeSubmission(){
 	if(is_wp_error($result)){
 		return $result;
 	}
+
+	do_action('sim-forms-entry-removed', $formTable, $_POST['submissionid']);
+
 	return "Entry with id {$_POST['submissionid']} succesfully removed";
 }
 
@@ -326,7 +329,7 @@ function archiveSubmission(){
 		$archive = false;
 	}
 
-	if(is_numeric($_POST['subid'])){
+	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
 		$subId						= $_POST['subid'];
 		$message					= "Entry with id {$formTable->submissionId} and subid $subId succesfully {$action}d";
 		$splitField					= $formTable->formData->settings['split'];
