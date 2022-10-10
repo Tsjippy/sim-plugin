@@ -9,6 +9,7 @@
 ### Fixed
 - conditional form e-mails
 - archiving bookings
+- custom dates repetition
 
 ## [2.21.1] - 2022-10-08
 
