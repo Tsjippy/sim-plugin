@@ -12,6 +12,7 @@
 - custom dates repetition
 - prevent formsubmission when
 upload is not yet finished
+- bug in forms with spaces in the name
 
 ## [2.21.1] - 2022-10-08
 
