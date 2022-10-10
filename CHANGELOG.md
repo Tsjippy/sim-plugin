@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- conditional form e-mails
 
 ## [2.21.1] - 2022-10-08
 
