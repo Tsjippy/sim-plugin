@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.21.2] - 2022-10-11
+
+
+### Changed
 - map in sidebar
 
 ### Fixed
