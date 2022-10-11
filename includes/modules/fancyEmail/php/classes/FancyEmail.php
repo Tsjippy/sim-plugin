@@ -3,7 +3,7 @@ namespace SIM\FANCYEMAIL;
 use SIM;
 
 class FancyEmail{
-    function __construct(){
+    public function __construct(){
         global $wpdb;
 
         $this->mailTable        = $wpdb->prefix."sim_emails";
@@ -15,15 +15,15 @@ class FancyEmail{
     /**
      * Creates the tables for this module
      */
-    function createDbTables(){
-        if ( !function_exists( 'maybe_create_table' ) ) { 
-            require_once ABSPATH . '/wp-admin/install-helper.php'; 
+    public function createDbTables(){
+        if ( !function_exists( 'maybe_create_table' ) ) {
+            require_once ABSPATH . '/wp-admin/install-helper.php';
         }
-        
+
         //only create db if it does not exist
         global $wpdb;
         $charsetCollate = $wpdb->get_charset_collate();
-    
+
         //Email overview
         $sql = "CREATE TABLE $this->mailTable (
           id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -32,9 +32,9 @@ class FancyEmail{
           time_send text NOT NULL,
           PRIMARY KEY  (id)
         ) $charsetCollate;";
-    
+
         maybe_create_table($this->mailTable, $sql );
-    
+
         // Clicked links
         $sql = "CREATE TABLE $this->mailEventTable (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -44,18 +44,18 @@ class FancyEmail{
             url text NOT NULL,
             PRIMARY KEY  (id)
           ) $charsetCollate;";
-    
+
         maybe_create_table($this->mailEventTable, $sql );
     }
 
     /**
      * Filters all WP_Mail arguments
-     * 
+     *
      * @param   array   $args   the array of wp_mail arguments
-     * 
+     *
      * @return  array           The filtered args
      */
-    function filterMail($args){
+    public function filterMail($args){
         global $wpdb;
 
         $this->subject      = &$args['subject'];
@@ -65,13 +65,13 @@ class FancyEmail{
         if(
             strpos($this->recipients,'.empty') !== false        ||
             (
-                SIM\getModuleOption(MODULE_SLUG, 'no-localhost') && 
+                SIM\getModuleOption(MODULE_SLUG, 'no-localhost') &&
                 $_SERVER['HTTP_HOST'] == 'localhost'
             )                                                   ||
             (
-                SIM\getModuleOption(MODULE_SLUG, 'no-staging') && 
+                SIM\getModuleOption(MODULE_SLUG, 'no-staging') &&
                 get_option("wpstg_is_staging_site") == "true"
-            )   
+            )
         ){
             $args['to'] = '';
             return $args;
@@ -86,63 +86,63 @@ class FancyEmail{
 
         // Add e-mail to e-mails db
         $wpdb->insert(
-            $this->mailTable , 
+            $this->mailTable ,
             array(
                 'subject'		=> $this->subject ,
                 'recipients'	=> $this->recipients,
                 'time_send'     => current_time('U')
             )
         );
-    
+
         $this->emailId   = $wpdb->insert_id;
-    
+
         //force html e-mail
         if(!in_array("Content-Type: text/html; charset=UTF-8", $this->headers)){
             $this->headers[]	= "Content-Type: text/html; charset=UTF-8";
         }
-    
+
         // Add site greetings if not given
         if(
-            strpos(strtolower($this->message), 'kind regards,') === false && 
+            strpos(strtolower($this->message), 'regards,') === false &&
             strpos(strtolower($this->message), 'cheers,') === false
         ){
             $this->message	.= "<br><br><br>Kind regards,<br><br>".SITENAME;
         }
-        
+
         // Mention that this is an automated message
-        $footer_url     = apply_filters('sim_email_footer_url', [
+        $footerUrl     = apply_filters('sim_email_footer_url', [
             'url'   => SITEURL,
             'text'  => SITEURL
         ]);
 
-        $url            = $footer_url['url'];
-        $text           = str_replace(['https://www.', 'https://', 'http://www.', 'http://'],'', $footer_url['text']);
+        $url            = $footerUrl['url'];
+        $text           = str_replace(['https://www.', 'https://', 'http://www.', 'http://'],'', $footerUrl['text']);
         $this->footer	= "<span style='font-size:10px'>This is an automated e-mail originating from <a href='$url'>$text</a></span>";
-    
+
         // Convert message to html
         if(strpos($this->message, '<!doctype html>') === false){
             $this->htmlEmail();
         }
-        
+
         return $args;
     }
 
     /**
      * Removes any obsolete email images
      */
-    function cleanUpEmailMessages($emailId){
+    public function cleanUpEmailMessages($emailId){
         $target   = "$this->mailImagesFolder/$emailId/";
         SIM\removeFiles($target);
     }
 
     /**
      * Replace any private urls to public urls, add mail logging to all links
-     * 
+     *
      * @param   array   $matches    Matches from a regex
-     * 
+     *
      * @return  string              Replace html
-     */ 
-    function checkEmailImages($matches){
+     */
+    public function checkEmailImages($matches){
         if(empty($matches)){
             return false;
         }
@@ -182,12 +182,12 @@ class FancyEmail{
 
     /**
      * Enable link tracking
-     * 
+     *
      * @param   array   $matches    Matches from a regex
-     * 
+     *
      * @return  string              Replace html
-     */ 
-    function urlReplace($matches){
+     */
+    public function urlReplace($matches){
         if(empty($matches)){
             return false;
         }
@@ -210,7 +210,7 @@ class FancyEmail{
     /**
      * Converts plain text e-mail message to html
      */
-    function htmlEmail(){
+    public function htmlEmail(){
         // Get the logo url and make public if private
         $headerImageId    = SIM\getModuleOption(MODULE_SLUG, 'picture_ids')['header_image'];
         if(!$headerImageId){
@@ -225,7 +225,7 @@ class FancyEmail{
         //Enable e-mail tracking
         $pattern = "/href=[\"|']([^\"']*)[\"|']/i";
         $message = preg_replace_callback($pattern, array($this, 'urlReplace'), $message);
-        
+
         //Replace all newline characters with html new line <br>
         $message  = str_replace("\n", '<br>', $message);
 
@@ -283,10 +283,10 @@ class FancyEmail{
 
     /**
      * Get all e-mail statistics from the db
-     * 
+     *
      * @return  object      all query results
      */
-    function getEmailStatistics(){
+    public function getEmailStatistics(){
         global $wpdb;
         if($_POST['type'] == 'link-clicked'){
             $query      =  "SELECT ";
@@ -296,7 +296,7 @@ class FancyEmail{
             $query      =  "SELECT COUNT($this->mailEventTable.email_id) AS viewcount, ";
         }
         $query  .= "$this->mailEventTable.url, $this->mailEventTable.type, $this->mailTable.recipients, $this->mailTable.time_send, $this->mailTable.subject FROM `$this->mailTable` LEFT JOIN $this->mailEventTable ON $this->mailEventTable.`email_id`=$this->mailTable.id";
-        
+
         if(empty($_POST)){
             $query  .= " WHERE $where AND $this->mailTable.time_send >= ".strtotime("-7 days");
         }else{
@@ -329,7 +329,7 @@ class FancyEmail{
     /**
      * Clear all e-mail tables
      */
-    function clearTables(){
+    public function clearTables(){
         global $wpdb;
 
         $wpdb->query("TRUNCATE $this->mailTable");
