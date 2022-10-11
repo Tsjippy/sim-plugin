@@ -14,6 +14,7 @@
 - prevent formsubmission when
 upload is not yet finished
 - bug in forms with spaces in the name
+- formbuilder block
 
 ## [2.21.1] - 2022-10-08
 
