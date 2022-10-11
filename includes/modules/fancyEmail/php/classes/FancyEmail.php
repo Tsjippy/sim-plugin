@@ -266,8 +266,9 @@ class FancyEmail{
                                     <td align="left" valign="top" class="content" style="word-wrap: break-word; -webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto; border-collapse: collapse !important; vertical-align: top; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #444; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-weight: normal; margin: 0; Margin: 0; text-align: left; font-size: 14px; mso-line-height-rule: exactly; line-height: 140%; padding: 20px 0px; text-align: center;">
                                         <?php
                                         echo apply_filters('sim_email_footer', $this->footer, $this->message);
+                                        $url    = "$this->mailTrackerUrl?mailid=$this->emailId&ver=$this->emailId";
                                         ?>
-                                        <img src="<?php echo "$this->mailTrackerUrl?mailid=$this->emailId&ver=$this->emailId";?>" alt="." width="1px" height="1px">
+                                        <img src="<?php echo $url;?>" alt="." width="1px" height="1px">
                                     </td>
                                 </tr>
                             </table>

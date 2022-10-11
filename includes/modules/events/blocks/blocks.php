@@ -99,7 +99,7 @@ function createEvents($metaId, $postId,  $metaKey,  $metaValue ){
 	
 	//create events
 	$events->eventData		= $metaValue;
-	$result	= $events->createEvents();	
+	$result	= $events->createEvents();
 
 	if(is_wp_error($result)){
 		SIM\printArray($result);

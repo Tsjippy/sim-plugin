@@ -415,5 +415,5 @@ function removeBooking($instance, $submissionId){
 
     $booking    = $bookings->getBookingBySubmission($submissionId);
 
-    $bookings->removeBooking($booking->id);
+    $bookings->removeBooking($booking);
 }

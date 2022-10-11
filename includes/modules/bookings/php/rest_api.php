@@ -66,9 +66,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Delete a booking
-	register_rest_route( 
-		RESTAPIPREFIX.'/bookings', 
-		'/remove', 
+	register_rest_route(
+		RESTAPIPREFIX.'/bookings',
+		'/remove',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){

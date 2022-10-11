@@ -39,6 +39,7 @@ class Bookings{
 			endtime varchar(80) NOT NULL,
 			subject varchar(80) NOT NULL,
             submission_id mediumint(9) NOT NULL,
+            event_id mediumint(9) NOT NULL,
             pending boolean DEFAULT true,
 			PRIMARY KEY  (id)
 		) $charsetCollate;";
@@ -498,28 +499,6 @@ class Bookings{
             return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
         }
 
-        $pending    = false;
-
-        if(
-            isset($this->forms->formData->settings['default-booking-state'])            &&
-            $this->forms->formData->settings['default-booking-state']   == 'pending'    &&
-            !array_intersect(get_userdata($this->forms->formResults['user_id'])->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
-        ){
-            $pending    = true;
-        }
-
-        // Insert in db
-        $wpdb->insert(
-            $this->tableName,
-            array(
-                'startdate'			=> $startDate,
-                'enddate'			=> $endDate,
-                'subject'			=> $subject,
-                'submission_id'	    => $submissionId,
-                'pending'           => $pending
-            )
-        );
-
         // create a personal event
         $post = array(
 			'post_type'		=> 'event',
@@ -541,6 +520,30 @@ class Bookings{
         $event['onlyfor']               = $this->forms->formResults['user_id'];
         update_post_meta($eventId, 'eventdetails', json_encode($event));
         update_post_meta($eventId, 'onlyfor', $this->forms->formResults['user_id']);
+
+        // insert the booking
+        $pending    = false;
+
+        if(
+            isset($this->forms->formData->settings['default-booking-state'])            &&
+            $this->forms->formData->settings['default-booking-state']   == 'pending'    &&
+            !array_intersect(get_userdata($this->forms->formResults['user_id'])->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
+        ){
+            $pending    = true;
+        }
+
+        // Insert in db
+        $wpdb->insert(
+            $this->tableName,
+            array(
+                'startdate'			=> $startDate,
+                'enddate'			=> $endDate,
+                'subject'			=> $subject,
+                'submission_id'	    => $submissionId,
+                'event_id'          => $eventId,
+                'pending'           => $pending
+            )
+        );
     }
 
     /**
@@ -556,6 +559,9 @@ class Bookings{
         if(is_numeric($booking)){
             $booking        = $this->getBookingById($booking);
         }
+
+        // only keep valid values
+        $values         = array_filter( $values, function($val){return in_array($val, ['startdate', 'enddate', 'starttime', 'endtime', 'subject', 'pending']);}, ARRAY_FILTER_USE_KEY);
 
         $startdate      = $booking->startdate;
         if(isset($values['startdate'])){
@@ -574,6 +580,7 @@ class Bookings{
             return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
         }
 
+        // update booking
         $wpdb->update(
             $this->tableName,
             $values,
@@ -581,6 +588,10 @@ class Bookings{
                 'id'		=> $booking->id
             ),
         );
+
+        // update event
+        $event                          = json_decode(get_post_meta($booking->event_id, 'eventdetails', true), true);
+        update_post_meta($booking->event_id, 'eventdetails', json_encode(array_merge($event, $values)));
 
         $monthsHtml     = [];
         $months         = [];
@@ -613,15 +624,25 @@ class Bookings{
     /**
      * Update an existing booking
      *
-     * @param   int     $bookingId  The booking id
+     * @param   int|object     $booking  The booking or booking id
      */
-    public function removeBooking($bookingId){
+    public function removeBooking($booking){
         global $wpdb;
 
         // Get the booking
+        if(is_numeric($booking)){
+            $booking        = $this->getBookingById($booking);
+        }
+
+        // Remove the event
+        wp_delete_post($booking->event_id);
+        $events = new SIM\EVENTS\CreateEvents();
+        $events->removeDbRows($booking->event_id);
+
+        // Remove the booking
         $wpdb->delete(
 			$this->tableName,
-			['id' => $bookingId],
+			['id' => $booking->id],
 			['%d'],
 		);
     }

@@ -3,8 +3,7 @@ namespace SIM;
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
-    $post   = get_post(11999, ARRAY_A);
-
+    global $wpdb;
 });
 
 // turn off incorrect error on localhost
