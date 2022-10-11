@@ -5,15 +5,7 @@ use SIM;
 const MODULE_VERSION		= '7.0.13';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
-//run on module activation
-add_action('sim_module_activated', function($moduleSlug, $options){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{
-		return;
-	}
-}, 10, 2);
-
-add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
+add_filter('sim_module_updated', function($newOptions, $moduleSlug){
 	global $wpdb;
 
 	//module slug should be the same as grandparent folder name
@@ -35,9 +27,9 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 
 	// Add booking manager role
 	if(!wp_roles()->is_role( 'bookingmanager' )){
-		add_role( 
-			'bookingmanager', 
-			'Booking manager', 
+		add_role(
+			'bookingmanager',
+			'Booking manager',
 			get_role( 'contributor' )->capabilities
 		);
 	}
@@ -54,17 +46,9 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 	scheduleTasks();
 
 	return $newOptions;
-}, 10, 3);
-
-//run on module deactivation
-add_action('sim_module_deactivated', function($moduleSlug, $options){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{
-		return;
-	}
 }, 10, 2);
 
-add_filter('sim_submenu_description', function($description, $moduleSlug, $moduleName){
+add_filter('sim_submenu_description', function($description, $moduleSlug){
 	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{
 		return $description;
@@ -81,28 +65,4 @@ add_filter('sim_submenu_description', function($description, $moduleSlug, $modul
 	<?php
 
 	return ob_get_clean();
-}, 10, 3);
-
-add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings, $moduleName){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
-		return $optionsHtml;
-	}
-
-	ob_start();
-	
-    ?>
-
-	<?php
-
-	return ob_get_clean();
-}, 10, 4);
-
-add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
-		return $dataHtml;
-	}
-
-	return $dataHtml;
-}, 10, 3);
+}, 10, 2);

@@ -5,7 +5,7 @@ use WP_Error;
 
 class DisplayEvents extends Events{
 
-	function __construct(){
+	public function __construct(){
 		parent::__construct();
 		
 		$this->calendarRows	= [];
@@ -74,11 +74,11 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Get all all events of the coming X months with a maximum of X
-	 * 
+	 *
 	 * @param	int		$max			The maximum total of items
 	 * @param	int		$months			The amount of months we should get events for
 	 * @param	array	$include		The categories to include
-	 * 
+	 *
 	 * @return	string					The html containg an event list
 	*/
 	public function upcomingEvents($max, $months, $include){
@@ -93,7 +93,7 @@ class DisplayEvents extends Events{
 			if(!$events){
 				?>
 				<div class="no-events">
-					No events found!    
+					No events found!
 				</div>
 				<?php
 			}else{
@@ -192,9 +192,9 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Get the date string of an event
-	 * 
+	 *
 	 * @param	object		$event		The event to get the date of
-	 * 
+	 *
 	 * @return	string					The date of the event. Startdate and end date in case of an multiday event
 	*/
 	public function getDate($event){
@@ -212,9 +212,9 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Get the time string of an event
-	 * 
+	 *
 	 * @param	object		$event		The event to get the time of
-	 * 
+	 *
 	 * @return	string					The time of the event. Start time and end time in case of an multiday event
 	*/
 	public function getTime($event){
@@ -233,9 +233,9 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Get the author details of an event
-	 * 
+	 *
 	 * @param	object		$event		The event to get the author of
-	 * 
+	 *
 	 * @return	string					Html with the author name linking to the user page of the author. E-mail and phonenumbers
 	*/
 	public function getAuthorDetail($event){
@@ -262,9 +262,9 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Get the location details of an event
-	 * 
+	 *
 	 * @param	object		$event		The event to get the location of
-	 * 
+	 *
 	 * @return	string					The location name or location url linking to the location page
 	*/
 	public function getLocationDetail($event){
@@ -323,9 +323,9 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Get the export buttons for an event
-	 * 
+	 *
 	 * @param	object		$meta		The event meta data
-	 * 
+	 *
 	 * @return	string					Html containing buttons to export the event
 	*/
 	public function eventExportHtml($event){
@@ -389,7 +389,7 @@ class DisplayEvents extends Events{
 
 				$gmail	.= ';';
 			}
-		} 
+		}
 
 		$startTime		= urlencode($event->starttime.':00');
 		$endTime		= urlencode($event->endtime.':00');
@@ -405,14 +405,14 @@ class DisplayEvents extends Events{
 			$html .= "<a class='button agenda-export' href='$sim' target='_blank'>Add to your SIM agenda</a>";
 		$html	.= '</div>';
 
-		return $html;								
+		return $html;
 	}
 
 	/**
 	 * Get the month calendar
-	 * 
+	 *
 	 * @param	int		$cat		The category of events to display
-	 * 
+	 *
 	 * @return	string				Html of the calendar
 	*/
 	public function monthCalendar($cat=[]){
@@ -537,7 +537,7 @@ class DisplayEvents extends Events{
 												$detailHtml .= "<img src='{$baseUrl}/location_red.png' loading='lazy' alt='time' class='event_icon'>";
 												$detailHtml .= $this->getLocationDetail($event);
 											$detailHtml .= "</div>";
-										}	
+										}
 										if(!empty($event->organizer)){
 											$detailHtml .= "<div class='organizer'>";
 												$detailHtml .= "<img src='{$baseUrl}/organizer.png' alt='time' loading='lazy' class='event_icon'>";
@@ -554,8 +554,8 @@ class DisplayEvents extends Events{
 									$detailHtml .= "</div>";
 								$detailHtml .= "</article>";
 							}
-						} 
-				$detailHtml .=  "</div>"; 
+						}
+				$detailHtml .=  "</div>";
 				
 				//calculate the next week
 				$workingDate	= strtotime('+1 day', $workingDate);
@@ -602,7 +602,7 @@ class DisplayEvents extends Events{
 							}
 							?>
 						</dl>
-						<?php		
+						<?php
 						echo $calendarRows;
 						?>
 					</div>
@@ -621,13 +621,13 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Builds the event detail html for each events
-	 * 
+	 *
 	 * @param	string	$workingDateStr	The date in this format: yyyy-mm-dd
 	 * @param	int		$workingDate	timesamp'
-	 * 
+	 *
 	 * @return	string					The detail html
 	 */
-	function weekDetails($workingDateStr, $workingDate){
+	private function weekDetails($workingDateStr, $workingDate){
 		
 		$detailHtml		= '';
 		$baseUrl		= plugins_url('../pictures', __DIR__);
@@ -672,7 +672,7 @@ class DisplayEvents extends Events{
 								$detailHtml .= "<img src='{$baseUrl}/location_red.png' alt='time' loading='lazy' class='event_icon'>";
 								$detailHtml .= $this->getLocationDetail($event);
 							$detailHtml .= "</div>";
-						}	
+						}
 						if(!empty($event->organizer)){
 							$detailHtml .= "<div class='organizer'>";
 								$detailHtml .= "<img src='{$baseUrl}/organizer.png' alt='time' loading='lazy' class='event_icon'>";
@@ -695,7 +695,7 @@ class DisplayEvents extends Events{
 		return $detailHtml;
 	}
 
-	function prepareWeekTable(){
+	protected function prepareWeekTable(){
 		$this->calendarRows['allday']	= [];
 
 		for ($x = 0; $x < 48; $x++) {
@@ -709,7 +709,7 @@ class DisplayEvents extends Events{
 		}
 	}
 
-	function getWeekDayEvents($weekDayTimestamp){
+	protected function getWeekDayEvents($weekDayTimestamp){
 		if(empty($this->events )){
 			return;
 		}
@@ -747,8 +747,8 @@ class DisplayEvents extends Events{
 
 			// Check if whole day event
 			if(
-				$startTime == $this->dayStartTime		&&	
-				$endTime == $this->dayEndTime			&& 
+				$startTime == $this->dayStartTime		&&
+				$endTime == $this->dayEndTime			&&
 				$event->startdate == $event->enddate
 			){
 				$this->calendarRows['allday'][$weekDay][]	= $event->post_title;
@@ -761,7 +761,7 @@ class DisplayEvents extends Events{
 				//add the event
 				$td =  "<td rowspan='$halfHours' class='calendar-hour has-event' data-date='$dateString' data-starttime='{$event->starttime}'>";
 					$td	.= $event->post_title;
-				$td	.= "</td>"; 
+				$td	.= "</td>";
 
 				$this->calendarRows[$timeIndex][$weekDay][]	= $td;
 				
@@ -774,7 +774,7 @@ class DisplayEvents extends Events{
 		
 	}
 
-	function getCalendarRows($weekDayTimestamp, $cat){
+	private function getCalendarRows($weekDayTimestamp, $cat){
 		$detailHtml		= '';
 
 		//loop over all days of a week
@@ -802,9 +802,9 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Get the week calendar
-	 * 
+	 *
 	 * @param	int		$cat		The category of events to display
-	 * 
+	 *
 	 * @return	string				Html of the calendar
 	*/
 	public function weekCalendar($cat=[]){
@@ -987,9 +987,9 @@ class DisplayEvents extends Events{
 
 	/**
 	 * Get the list calendar
-	 * 
+	 *
 	 * @param	int		$cat		The category of events to display
-	 * 
+	 *
 	 * @return	string				Html of the calendar
 	*/
 	public function listCalendar($cat=[]){
@@ -1082,7 +1082,7 @@ class DisplayEvents extends Events{
 	/**
 	 * Sends a message to anyone who has an event which is about to start
 	 * @param  	int 	$eventId		The id of the event
-	 * 
+	 *
 	 * @return	bool					true if succesfull false if no event found
 	
 	 */

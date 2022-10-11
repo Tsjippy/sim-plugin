@@ -6,16 +6,16 @@ use WP_Error;
 class CreateSchedule extends Schedules{
 	/**
 	 * Add a new event to the db
-	 * 
+	 *
 	 * @param	object	$event			the event
-	 * 
+	 *
 	 * @return 	array					Rows html
 	*/
-	function addEventToDb($event){
+	protected function addEventToDb($event){
 		global $wpdb;
 
 		$wpdb->insert(
-			$this->events->tableName, 
+			$this->events->tableName,
 			$event
 		);
 		
@@ -133,7 +133,7 @@ class CreateSchedule extends Schedules{
 	
 	/**
 	 * Add a new schedule
-	 * 
+	 *
 	 * @return array	text, new schedules list in html
 	*/
 	public function addSchedule($update=false){
@@ -170,7 +170,7 @@ class CreateSchedule extends Schedules{
 			$startTime	= $this->lunchStartTime;
 		}else{
 			$startTime	= $this->dinerTime;
-		}						
+		}
 
 		if($startDate > $endDate){
 			return new WP_Error('schedule', "Ending date cannot be before starting date");
@@ -190,14 +190,14 @@ class CreateSchedule extends Schedules{
 
 		if($update){
 			$wpdb->update(
-				$this->tableName, 
+				$this->tableName,
 				$arg,
 				array( 'ID' => $_POST['target_id'] )
 			);
 			$action	= 'updated';
 		}else{
 			$wpdb->insert(
-				$this->tableName, 
+				$this->tableName,
 				$arg
 			);
 			$action	= 'added';
@@ -212,7 +212,7 @@ class CreateSchedule extends Schedules{
 
 	/**
 	 * Publishes a new schedule
-	 * 
+	 *
 	 * @return string	success message
 	*/
 	public function publishSchedule(){
@@ -223,7 +223,7 @@ class CreateSchedule extends Schedules{
 		SIM\updateFamilyMeta($_POST['schedule_target'], 'schedule', $scheduleId);
 
 		$wpdb->update(
-			$this->tableName, 
+			$this->tableName,
 			array(
 				'published'	=> true
 			),
@@ -237,9 +237,9 @@ class CreateSchedule extends Schedules{
 	
 	/**
 	 * Removes a given schedule
-	 * 
-	 * @param int	$scheduleId	THe id of the schedule to remove	
-	 * 
+	 *
+	 * @param int	$scheduleId	THe id of the schedule to remove
+	 *
 	 * @return string	success message
 	*/
 	public function removeSchedule($scheduleId){
@@ -264,8 +264,8 @@ class CreateSchedule extends Schedules{
 		
 		//Delete all events of this schedule
 		$wpdb->delete(
-			$this->events->tableName,      
-			['schedule_id' => $scheduleId],           
+			$this->events->tableName,
+			['schedule_id' => $scheduleId],
 			['%d'],
 		);
 		
@@ -282,7 +282,7 @@ class CreateSchedule extends Schedules{
 
 	/**
 	 * Add a new host for a session
-	 * 
+	 *
 	 * @return string	success message and new cell html
 	*/
 	public function addHost(){
@@ -296,8 +296,8 @@ class CreateSchedule extends Schedules{
 			$partnerId		= SIM\hasPartner($this->hostId);
 
 			if(
-				!$this->admin						&& 
-				$this->hostId != $this->user->ID	&& 
+				!$this->admin						&&
+				$this->hostId != $this->user->ID	&&
 				$this->hostId != $partnerId
 			){
 				return new WP_Error('No permission', $this->noPermissionText);
@@ -334,7 +334,7 @@ class CreateSchedule extends Schedules{
 			$title				= 'lunch';
 			$this->location		= "House of $hostName";
 		}elseif($this->starttime == $this->dinerTime){
-			$this->endtime		= '19:30'; 
+			$this->endtime		= '19:30';
 			$title				= 'dinner';
 			$this->location		= "House of $hostName";
 		}else{
@@ -369,7 +369,7 @@ class CreateSchedule extends Schedules{
 
 	/**
 	 * Removes a host for a session
-	 * 
+	 *
 	 * @return string	success message
 	*/
 	public function removeHost(){
@@ -380,8 +380,8 @@ class CreateSchedule extends Schedules{
 
 		$partnerId			= SIM\hasPartner($this->hostId);
 		if(
-			!$this->admin 						&& 
-			$this->hostId != $this->user->ID 	&& 
+			!$this->admin 						&&
+			$this->hostId != $this->user->ID 	&&
 			$this->hostId != $partnerId
 		){
 			return new \WP_Error('Permission error', $this->noPermissionText);
@@ -416,10 +416,10 @@ class CreateSchedule extends Schedules{
 
 	/**
 	 * Adds a keyword to a meal session
-	 * 
+	 *
 	 * @return string	success message
 	*/
-	function addMenu(){
+	public function addMenu(){
 		$scheduleId		= $_POST['schedule_id'];
 		$schedule		= $this->findScheduleById($scheduleId);
 

@@ -8,7 +8,7 @@ add_shortcode("account_statements", __NAMESPACE__.'\showStatements');
 /**
  * show an users bank statements
  *
- * @return string html containing the staement overview 
+ * @return string html containing the staement overview
  */
 function showStatements($userId=''){
 	if(isset($_GET["id"]) && is_numeric($_GET["id"])){

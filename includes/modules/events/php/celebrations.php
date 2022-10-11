@@ -4,11 +4,11 @@ use SIM;
 
 /**
  * Get all the users arriving today
- * 
+ *
  * @return	array	The WP_Users arriving today
 */
 function getArrivingUsers(){
-	$date   = new \DateTime(); 
+	$date   = new \DateTime();
 	return get_users(array(
 		'meta_key'     => 'arrival_date',
 		'meta_value'   => $date->format('Y-m-d'),
@@ -18,7 +18,7 @@ function getArrivingUsers(){
 
 /**
  * Get all the anniversary events
- * 
+ *
  * @return	array	all messages
 */
 function getAnniversaries(){

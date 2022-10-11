@@ -6,7 +6,7 @@ use WP_Error;
 class DisplayFormResults extends DisplayForm{
 	use ExportFormResults;
 
-	function __construct($atts=[]){
+	public function __construct($atts=[]){
 		global $wpdb;
 		
 		$this->shortcodeTable			= $wpdb->prefix . 'sim_form_shortcodes';
@@ -22,15 +22,13 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	/**
+	 /**
 	 * Get formresults of the current form
-	 * 
+	 *
 	 * @param	int		$userId			Optional the user id to get the results of. Default null
 	 * @param	int		$submissionId	Optional a specific id. Default null
-	 * 
-	 * 
 	 */
-	function getSubmissionData($userId=null, $submissionId=null, $all=false){
+	public function getSubmissionData($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
 		
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE ";
@@ -107,10 +105,10 @@ class DisplayFormResults extends DisplayForm{
 
 	}
 
-	/**
+	 /**
 	 * This function creates seperated entries from entries with an splitted value
 	 */
-	function processSplittedData(){
+	protected function processSplittedData(){
 		if(empty($this->formData->settings['split'])){
 			return;
 		}
@@ -169,12 +167,12 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	/**
+	 /**
 	 * Creates the db table to hold the short codes and their settings
 	 */
-	function createDbShortcodeTable(){
-		if ( !function_exists( 'maybe_create_table' ) ) { 
-			require_once ABSPATH . '/wp-admin/install-helper.php'; 
+	public function createDbShortcodeTable(){
+		if ( !function_exists( 'maybe_create_table' ) ) {
+			require_once ABSPATH . '/wp-admin/install-helper.php';
 		}
 		
 		//create table for this form
@@ -193,15 +191,15 @@ class DisplayFormResults extends DisplayForm{
 		maybe_create_table($this->shortcodeTable, $sql );
 	}
 	
-	/**
+	 /**
 	 * Transforms a given string to hyperlinks or other formats
-	 * 
+	 *
 	 * @param 	string	$string		the string to convert
 	 * @param	string	$fieldname	The name of the value the string value belongs to
-	 * 
+	 *
 	 * @return	string				The transformed string
 	 */
-	function transformInputData($string, $fieldName){
+	public function transformInputData($string, $fieldName){
 		if(empty($string)){
 			return $string;
 		}
@@ -218,18 +216,18 @@ class DisplayFormResults extends DisplayForm{
 			}
 			return $output;
 		}else{
-			$output		= $string;	
+			$output		= $string;
 			//open mail programm on click on email
 			if (strpos($string, '@') !== false) {
 				$output 	= "<a href='mailto:$string'>$string</a>";
 			//Convert link to clickable link if not already
 			}elseif(
 				(
-					strpos($string, 'https://') !== false	|| 
+					strpos($string, 'https://') !== false	||
 					strpos($string, 'http://') !== false	||
 					strpos($string, '/form_uploads/') !== false
-				) && 
-				strpos($string, 'href') === false && 
+				) &&
+				strpos($string, 'href') === false &&
 				strpos($string, '<img') === false
 			) {
 				$url	= str_replace(['https://', 'http://'], '', SITEURL);
@@ -266,12 +264,12 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 	
-	/**
+	 /**
 	 * Adds a new column setting for a new element
-	 * 
+	 *
 	 * @param object	$element	the element to check if column settings exists for
 	 */
-	function addColumnSetting($element){
+	public function addColumnSetting($element){
 		//do not show non-input elements
 		if(in_array($element->type, $this->nonInputs)){
 			return;
@@ -333,10 +331,10 @@ class DisplayFormResults extends DisplayForm{
 		];
 	}
 
-	/**
+	 /**
 	 * Updates column settings with missing columns
 	 */
-	function enrichColumnSettings(){
+	protected function enrichColumnSettings(){
 		if($this->enriched){
 			return;
 		}
@@ -344,7 +342,7 @@ class DisplayFormResults extends DisplayForm{
 		$this->enriched	= true;
 		$elementIds		= [];
 		
-		//loop over all elements to build a new array		
+		//loop over all elements to build a new array
 		foreach ($this->formElements as $element){
 			$elementIds[]	= $element->id;
 
@@ -433,7 +431,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	function getRowContents($fieldValues, $index){
+	protected function getRowContents($fieldValues, $index){
 		$rowContents	= '';
 		$excelRow		= [];
 
@@ -459,7 +457,7 @@ class DisplayFormResults extends DisplayForm{
 						$ownEntry &&																		//or it is our own
 						!in_array('own', (array)$columnSetting['view_right_roles'])							//but we are not allowed to see it
 					)
-				)	&&											
+				)	&&
 				!$this->tableEditPermissions &&															//no permission to edit the table and
 				!empty($columnSetting['view_right_roles']) && 											// there are view right permissions defined
 				!array_intersect($this->userRoles, (array)$columnSetting['view_right_roles'])			// and we do not have the view right role
@@ -494,8 +492,8 @@ class DisplayFormResults extends DisplayForm{
 				$elementEditRights = false;
 			}
 					
-			/* 
-					Write the content to the cell, convert to something if needed 
+			/*
+					Write the content to the cell, convert to something if needed
 			*/
 			$fieldName 	= str_replace('[]', '', $columnSetting['name']);
 			$class 		= '';
@@ -535,7 +533,7 @@ class DisplayFormResults extends DisplayForm{
 				//Limit url cell width, for strings with a visible length of more then 30 characters
 				if(strlen(strip_tags($fieldValue))>30 && strpos($fieldValue, 'https://') === false){
 					$class .= ' limit-length';
-				}			
+				}
 			}
 
 			//Add classes to the cell
@@ -571,19 +569,19 @@ class DisplayFormResults extends DisplayForm{
 		return $rowContents;
 	}
 	
-	/**
+	 /**
 	 * Writes a row of the table to the screen
-	 * 
+	 *
 	 * @param	array	$fieldValues	Array containing all the values of a form submission
 	 * @param	int		$index			The index of the row. Default -1 for none
 	 * @param	bool	$isArchived		Whether the current submission is archived. Default false.
 	 */
-	function writeTableRow($fieldValues, $index=-1, $isArchived=false){
-		//Loop over the fields in order of the defined columns	
+	protected function writeTableRow($fieldValues, $index=-1, $isArchived=false){
+		//Loop over the fields in order of the defined columns
 		
 		$this->noRecords = false;
 		
-		//If this row should be written and it is the first cell then write 
+		//If this row should be written and it is the first cell then write
 		if($index > -1){
 			$subId = "data-subid='$index'";
 		}else{
@@ -623,10 +621,10 @@ class DisplayFormResults extends DisplayForm{
 		echo '</tr>';
 	}
 	
-	/**
+	 /**
 	 * Get shortcode settings from db
 	 */
-	function loadShortcodeData(){
+	public function loadShortcodeData(){
 		global $wpdb;
 
 		if(!is_numeric($this->shortcodeId)){
@@ -641,7 +639,7 @@ class DisplayFormResults extends DisplayForm{
 		$this->columnSettings		= unserialize($this->shortcodeData->column_settings);
 	}
 
-	function columnSettingsForm($class, $viewRoles, $editRoles){
+	protected function columnSettingsForm($class, $viewRoles, $editRoles){
 		?>
 		<div class="tabcontent <?php echo $class;?>" id="column_settings_<?php echo $this->shortcodeData->id;?>">
 			<form class="sortable_column_settings_rows">
@@ -726,7 +724,7 @@ class DisplayFormResults extends DisplayForm{
 		<?php
 	}
 
-	function tableRightsForm($class, $viewRoles, $editRoles){
+	protected function tableRightsForm($class, $viewRoles, $editRoles){
 		?>
 		<div class="tabcontent <?php echo $class;?>" id="table_rights_<?php echo $this->shortcodeData->id;?>">
 			<form>
@@ -770,7 +768,7 @@ class DisplayFormResults extends DisplayForm{
 						}
 
 						foreach($filters as $index=>$filter){
-							echo "<div class='clone_div' data-divid='$index'>";									
+							echo "<div class='clone_div' data-divid='$index'>";
 								echo "<select name='table_settings[filter][$index][element]' class='inline'>";
 									foreach($this->columnSettings as $key=>$element){
 										$name = $element['nice_name'];
@@ -952,21 +950,19 @@ class DisplayFormResults extends DisplayForm{
 								foreach($this->formElements as $key=>$element){
 									$pattern = "/([^\[]+)\[\d+\]/i";
 									
-									if(preg_match($pattern, $element->name, $matches)){
-										//Only add if not found before
-										if(!in_array($matches[1], $foundElements)){
-											$foundElements[]	= $matches[1];
-											$value 				= strtolower(str_replace('_', ' ', $matches[1]));
-											$name				= ucfirst($value);
-										
-											//Check which option is the selected one
-											if($this->formSettings['split'] == $value){
-												$selected = 'selected';
-											}else{
-												$selected = '';
-											}
-											echo "<option value='$value' $selected>$name</option>";
+									//Only add if not found before
+									if(preg_match($pattern, $element->name, $matches) && !in_array($matches[1], $foundElements)){
+										$foundElements[]	= $matches[1];
+										$value 				= strtolower(str_replace('_', ' ', $matches[1]));
+										$name				= ucfirst($value);
+									
+										//Check which option is the selected one
+										if($this->formSettings['split'] == $value){
+											$selected = 'selected';
+										}else{
+											$selected = '';
 										}
+										echo "<option value='$value' $selected>$name</option>";
 									}
 								}
 								?>
@@ -1021,10 +1017,10 @@ class DisplayFormResults extends DisplayForm{
 		<?php
 	}
 
-	/**
+	 /**
 	 * Print the modal to change table settings to the screen
 	 */
-	function addShortcodeSettingsModal(){
+	protected function addShortcodeSettingsModal(){
 		global $wp_roles;
 		
 		//Get all available roles
@@ -1075,10 +1071,10 @@ class DisplayFormResults extends DisplayForm{
 		<?php
 	}
 
-	/**
+	 /**
 	 * Processed the table settings
 	 */
-	function loadTableSettings(){
+	protected function loadTableSettings(){
 		//load shortcode settings
 		$this->loadShortcodeData();
 		
@@ -1119,7 +1115,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 		
 		if(
-			$this->onlyOwn											|| 
+			$this->onlyOwn											||
 			(
 				$this->tableSettings['result_type'] == 'personal'	&&
 				!$this->all
@@ -1135,12 +1131,12 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 	
-	/**
+	 /**
 	 * Renders the table buttons html
-	 * 
+	 *
 	 * @return string	The html
 	 */
-	function renderTableButtons(){	
+	protected function renderTableButtons(){
 		$html	= "<div class='table-buttons-wrapper'>";
 			//Show form properties button if we have form edit permissions
 			if($this->formEditPermissions){
@@ -1245,14 +1241,14 @@ class DisplayFormResults extends DisplayForm{
 					}
 				$html	.= "</div>";
 			}
-		$html	.= "</form>";	
+		$html	.= "</form>";
 		return $html;
 	}
 
-	/**
+	 /**
 	 * Compares 2 values according to a given comparison string
 	 */
-	function compareFilterValue ($var1, $op, $var2) {
+	protected function compareFilterValue ($var1, $op, $var2) {
 		if(empty($var1) || empty($var2)){
 			return true;
 		}
@@ -1274,20 +1270,20 @@ class DisplayFormResults extends DisplayForm{
 			case "<":  		return $var1 <  $var2;
 			case "like":	return strpos(strtolower($var1), strtolower($var2)) !== false;
 			default:       return true;
-		} 
+		}
 	}
 
-	/**
+	 /**
 	 * Creates the formresult table html
-	 * 
+	 *
 	 * @param	array	$atts	WP Shortcode attributes
-	 * 
+	 *
 	 * @return	string|WP_Error			The html or error on failure
 	 */
-	function showFormresultsTable(){
+	public function showFormresultsTable(){
 		//do not show if not logged in
 		if(!is_user_logged_in()){
-			return;
+			return '';
 		}
 
 		$this->loadTableSettings();
@@ -1302,7 +1298,7 @@ class DisplayFormResults extends DisplayForm{
 		do_action('sim_formtable_POST_actions');
 		
 		//Load js
-		wp_enqueue_script('sim_forms_table_script');	
+		wp_enqueue_script('sim_forms_table_script');
 		
 		?>
 		<div class='form table-wrapper'>
@@ -1341,8 +1337,8 @@ class DisplayFormResults extends DisplayForm{
 				});
 			}
 
-			/* 
-				Write the header row of the table 
+			/*
+				Write the header row of the table
 			*/
 			//first check if the data contains data of our own
 			$this->ownData	= false;
@@ -1377,20 +1373,20 @@ class DisplayFormResults extends DisplayForm{
 										$this->ownData			&& 																//or it does contain our own data but
 										!in_array('own',(array)$columnSetting['view_right_roles'])							//we are not allowed to see it
 									)
-								) &&																					
+								) &&
 								!$this->tableEditPermissions 				&&														//no permission to edit the table and
 								!empty($columnSetting['view_right_roles']) 	&& 										// there are view right permissions defined
 								!array_intersect($this->userRoles, (array)$columnSetting['view_right_roles'])		// and we do not have the view right role and
-							){ 
+							){
 								continue;
 							}
 							
 							$niceName			= $columnSetting['nice_name'];
 							
 							if($this->tableSettings['default_sort']	== $settingId){
-								$class	= "defaultsort"; 
+								$class	= "defaultsort";
 							}else{
-								$class	= ""; 
+								$class	= "";
 							}
 		
 							if(!empty($this->hiddenColumns[$columnSetting['name']])){
@@ -1445,8 +1441,8 @@ class DisplayFormResults extends DisplayForm{
 				<?php
 				//write header to excel
 				$this->excelContent[] = $excelRow;
-				/* 
-						WRITE THE CONTENT ROWS OF THE TABLE 
+				/*
+						WRITE THE CONTENT ROWS OF THE TABLE
 				*/
 				//Loop over all the submissions of this form
 				foreach($this->submissionData as $submissionData){
@@ -1458,7 +1454,7 @@ class DisplayFormResults extends DisplayForm{
 						$index				= $submissionData->sub_id;
 					}
 					
-					$this->writeTableRow($fieldValues, $index, $submissionData->archived);						
+					$this->writeTableRow($fieldValues, $index, $submissionData->archived);
 				}
 				?>
 				</tbody>
@@ -1508,19 +1504,19 @@ class DisplayFormResults extends DisplayForm{
 		return ob_get_clean();
 	}
 
-	/**
+	 /**
 	 * New form results table
-	 * 
+	 *
 	 * @param	int		$formId		the id of the form
-	 * 
+	 *
 	 * @return	int					The id of the new formtable
 	 */
-	function insertInDb($formId){
+	public function insertInDb($formId){
 		global $wpdb;
 
 		//add new row in db
 		$wpdb->insert(
-			$this->shortcodeTable, 
+			$this->shortcodeTable,
 			array(
 				'table_settings'	=> '',
 				'form_id'			=> $formId,
@@ -1530,21 +1526,21 @@ class DisplayFormResults extends DisplayForm{
 		return $wpdb->insert_id;
 	}
 
-	/**
+	 /**
 	 * check for any formresults shortcode and add an id if needed
-	 * 
+	 *
 	 * @param	array	$data	The post data
-	 * 
-	 * @return	array			The filtered post data	
+	 *
+	 * @return	array			The filtered post data
 	 */
-	function checkForFormShortcode($data) {
+	public function checkForFormShortcode($data) {
 		global $wpdb;
 		
 		//find any formresults shortcode
 		$pattern = "/\[formresults([^\]]*formname=([a-zA-Z]*)[^\]]*)\]/s";
 		
 		//if there are matches
-		if(preg_match_all($pattern, $data['post_content'], $matches)) {			
+		if(preg_match_all($pattern, $data['post_content'], $matches)) {
 			//loop over all the matches
 			foreach($matches[1] as $key=>$shortcodeAtts){
 				//this shortcode has no id attribute

@@ -4,7 +4,7 @@ use SIM;
 use WP_Error;
 
 class SimForms{
-	function __construct(){
+	public function __construct(){
 		global $wpdb;
 		$this->isFormStep				= false;
 		$this->isMultiStepForm			= '';
@@ -23,7 +23,12 @@ class SimForms{
 		$this->showArchived				= false;
 
 		//calculate full form rights
-		if(array_intersect(['editor'], $this->userRoles)){
+		$postAuthor	= get_queried_object()->post_author;
+		if(empty($postAuthor) && !empty($_REQUEST['post'])){
+			$postAuthor	= get_post($_REQUEST['post'])->post_author;
+		}
+
+		if(array_intersect(['editor'], $this->userRoles) || $postAuthor == $this->user->ID){
 			$this->editRights		= true;
 		}else{
 			$this->editRights		= false;
@@ -32,12 +37,12 @@ class SimForms{
 
 	/**
 	 * Inserts a new form in the db
-	 * 
+	 *
 	 * @param	string	$name	The form name
-	 * 
+	 *
 	 * @return	int|WP_Error	The form id or error ion failure
 	 */
-	function insertForm($name=''){
+	public function insertForm($name=''){
 		global $wpdb;
 
 		if(empty($name)){
@@ -81,7 +86,7 @@ class SimForms{
 	/**
 	 * Gets all forms from the db
 	 */
-	function getForms(){
+	public function getForms(){
 		global $wpdb;
 		
 		$query							= "SELECT * FROM {$this->tableName} WHERE 1";
@@ -91,26 +96,24 @@ class SimForms{
 
 	/**
 	 * Load a specific form or creates it if it does not exist
-	 * 
+	 *
 	 * @param	int		$formId	the form id to load. Default empty
 	 */
-	function getForm($formId=''){
+	public function getForm($formId=''){
 		global $wpdb;
 
 		// first check if needed
-		if(!empty($this->formData)){
-			if(
-				(
-					!empty($this->formId)		&&
-					$this->formData->id	== $this->formId
-				)	||
-				(
-					!empty($this->formName)		&&
-					$this->formData->name	== $this->formName
-				)
-			){
-				return true;
-			}
+		if(!empty($this->formData) && (
+			(
+				!empty($this->formId)		&&
+				$this->formData->id	== $this->formId
+			)	||
+			(
+				!empty($this->formName)		&&
+				$this->formData->name	== $this->formName
+			)
+		)){
+			return true;
 		}
 		
 		// Get the form data
@@ -164,7 +167,7 @@ class SimForms{
 				}
 			}
 			//calculate full form rights
-			if(array_intersect($editRoles, (array)$this->userRoles)){
+			if(array_intersect($editRoles, (array)$this->userRoles) || get_queried_object()->post_author == $this->user->ID){
 				$this->editRights		= true;
 			}else{
 				$this->editRights		= false;
@@ -201,10 +204,10 @@ class SimForms{
 
 	/**
 	 * Creates a dropdown with all the forms
-	 * 
+	 *
 	 * @return	string	the select html
 	 */
-	function formSelect(){
+	public function formSelect(){
 		$this->getForms();
 		
 		$this->names				= [];
@@ -225,10 +228,10 @@ class SimForms{
 	/**
 	 * Creates the tables for this module
 	 */
-	function createDbTable(){
-		if ( !function_exists( 'maybe_create_table' ) ) { 
-			require_once ABSPATH . '/wp-admin/install-helper.php'; 
-		} 
+	public function createDbTable(){
+		if ( !function_exists( 'maybe_create_table' ) ) {
+			require_once ABSPATH . '/wp-admin/install-helper.php';
+		}
 
 		add_option( "forms_db_version", "1.0" );
 		
@@ -296,13 +299,13 @@ class SimForms{
 	
 	/**
 	 * Finds an element by its id
-	 * 
+	 *
 	 * @param	int		$id		the element id
 	 * @param	string	$key	A specific element attribute to return. Default empty
-	 * 
+	 *
 	 * @return	object|array|string|false			The element or element property
 	 */
-	function getElementById($id, $key=''){
+	public function getElementById($id, $key=''){
 		if($id < 0){
 			return false;
 		}
@@ -330,13 +333,13 @@ class SimForms{
 
 	/**
 	 * Finds an element by its name
-	 * 
+	 *
 	 * @param	string	$name	The element name
 	 * @param	string	$key	A specific element attribute to return. Default empty
-	 * 
+	 *
 	 * @return	object|array|string|false			The element or element property
 	 */
-	function getElementByName($name, $key=''){
+	public function getElementByName($name, $key=''){
 		if(empty($name)){
 			return false;
 		}
@@ -364,13 +367,13 @@ class SimForms{
 
 	/**
 	 * Finds an element by its type
-	 * 
+	 *
 	 * @param	string	$name	The element type
 	 * @param	string	$key	A specific element attribute to return. Default empty
-	 * 
+	 *
 	 * @return	object|array|string|false			The element or element property
 	 */
-	function getElementByType($type, $key=''){
+	public function getElementByType($type){
 		if(empty($type)){
 			return false;
 		}
@@ -391,12 +394,12 @@ class SimForms{
 
 	/**
 	 * Get all elements belonging to the current form
-	 * 
+	 *
 	 * @param	string	$sortCol	the column to sort on. Default empty
 	 */
-	function getAllFormElements($sortCol = '', $formId=''){
+	public function getAllFormElements($sortCol = '', $formId=''){
 		if(isset($this->formElements)){
-			return;
+			return '';
 		}
 		
 		global $wpdb;
@@ -423,12 +426,12 @@ class SimForms{
 	/**
 	 * Parses all WP Shortcode attributes
 	 */
-	function processAtts($atts){
+	public function processAtts($atts){
 		if(!isset($this->formName)){
 			$atts	= shortcode_atts(
 				array(
-					'formname'		=> '', 
-					'userid'		=> '', 
+					'formname'		=> '',
+					'userid'		=> '',
 					'search'		=> '',
 					'id'			=> '',
 					'formid'		=> '',
@@ -465,7 +468,7 @@ class SimForms{
 	/**
 	 * Check if we should show the formbuilder or the form itself
 	 */
-	function determineForm($atts){
+	public function determineForm($atts){
 		global $wpdb;
 
 		$this->processAtts($atts);
@@ -486,6 +489,8 @@ class SimForms{
 			$formBuilderForm	= new FormBuilderForm($atts);
 
 			return $formBuilderForm->showForm();
+		}elseif(empty($formElements)){
+			return "<div class='warning'>This form has no elements yet</div>";
 		}else{
 			$displayForm	= new DisplayForm($atts);
 			return $displayForm->showForm();

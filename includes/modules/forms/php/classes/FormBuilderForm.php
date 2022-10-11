@@ -5,7 +5,7 @@ use SIM;
 class FormBuilderForm extends SimForms{
 	use ElementHtml;
 
-	function __construct($atts=[]){
+	public function __construct($atts=[]){
 		parent::__construct();
 
 		if(!empty($atts)){
@@ -23,7 +23,7 @@ class FormBuilderForm extends SimForms{
 	 *
 	 * @return	string				The dropdown html
 	 */
-	function inputDropdown($selectedId, $elementId=''){
+	protected function inputDropdown($selectedId, $elementId=''){
 		if($selectedId == ''){
 			$html = "<option value='' selected>---</option>";
 		}else{
@@ -50,13 +50,13 @@ class FormBuilderForm extends SimForms{
 
 	/**
 	 * Build all html for a particular elemnt including edit controls.
-	 * 
+	 *
 	 * @param	object	$element		The element
 	 * @param	int		$key			The key in case of a multi element. Default 0
-	 * 
+	 *
 	 * @return	string					The html
 	 */
-	function buildHtml($element, $key=0){
+	public function buildHtml($element, $key=0){
 		if(isset($this->formElements[$key+1])){
 			$this->nextElement		= $this->formElements[$key+1];
 		}else{
@@ -141,10 +141,10 @@ class FormBuilderForm extends SimForms{
 
 	/**
 	 * Main function to show all
-	 * 
+	 *
 	 * @param	array	$atts	The attribute array of the WP Shortcode
 	 */
-	function showForm(){		
+	public function showForm(){
 		// We cannot use the minified version as the dynamic js files depend on the function names
 		wp_enqueue_script('sim_forms_script');
 
@@ -166,7 +166,7 @@ class FormBuilderForm extends SimForms{
 		
 		?>
 		<div class="sim_form wrapper">
-			<?php	
+			<?php
 			$this->addElementModal();
 
 			?>
@@ -197,7 +197,7 @@ class FormBuilderForm extends SimForms{
 					<div class='form_elements'>
 						<input type='hidden' name='formid'		value='<?php echo $this->formData->id;?>'>
 
-						<?php		
+						<?php
 						foreach($this->formElements as $key=>$element){
 							echo $this->buildHtml($element, $key);
 						}
@@ -227,7 +227,7 @@ class FormBuilderForm extends SimForms{
 	/**
 	 * The modal to add an element to the form
 	 */
-	function addElementModal(){
+	public function addElementModal(){
 		?>
 		<div class="modal add_form_element_modal hidden">
 			<!-- Modal content -->
@@ -252,7 +252,7 @@ class FormBuilderForm extends SimForms{
 	/**
 	 * Form to change form settings
 	 */
-	function formSettingsForm(){
+	public function formSettingsForm(){
 		global $wp_roles;
 		
 		$settings = $this->formData->settings;
@@ -535,7 +535,7 @@ class FormBuilderForm extends SimForms{
 	/**
 	 * Form to setup form e-mails
 	 */
-	function formEmailsForm(){
+	public function formEmailsForm(){
 		$emails = $this->formData->emails;
 		?>
 		<div class="emails_wrapper">
@@ -653,14 +653,14 @@ class FormBuilderForm extends SimForms{
 															<button type='button' class='add button' style='flex: 1;'>+</button>
 															<button type='button' class='remove button' style='flex: 1;'>-</button>
 														</legend>
-														If 
+														If
 														<select name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][fieldid]'>
 															<?php
 															echo $this->inputDropdown($fromEmail['fieldid']);
 															?>
 														</select>
 														<label class="formfield formfieldlabel">
-															equals 
+															equals
 															<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalfromemail][<?php echo $fromKey;?>][value]' value="<?php echo $fromEmail['value'];?>">
 														</label>
 														<label class="formfield formfieldlabel">
@@ -720,14 +720,14 @@ class FormBuilderForm extends SimForms{
 															<button type='button' class='add button' style='flex: 1;'>+</button>
 															<button type='button' class='remove button' style='flex: 1;'>-</button>
 														</legend>
-														If 
+														If
 														<select name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][fieldid]'>
 															<?php
 															echo $this->inputDropdown($toEmail['fieldid']);
 															?>
 														</select>
 														<label class="formfield formfieldlabel">
-															equals 
+															equals
 															<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalemailto][<?php echo $toKey;?>][value]' value="<?php echo $toEmail['value'];?>">
 														</label>
 														<label class="formfield formfieldlabel">
@@ -806,7 +806,7 @@ class FormBuilderForm extends SimForms{
 	/**
 	 * Form to add or edit a new form element
 	 */
-	function elementBuilderForm($element=null){
+	public function elementBuilderForm($element=null){
 		ob_start();
 
 		if(is_numeric($element)){
@@ -1082,46 +1082,46 @@ class FormBuilderForm extends SimForms{
 				Check if this should be a hidden field
 			</label><br>
 
-			<?php 
+			<?php
 			if($element == null){
 				$text	= "Add";
 			}else{
 				$text	= "Change";
-			}	
+			}
 			echo SIM\addSaveButton('submit_form_element',"$text form element"); ?>
 		</form>
 		<?php
 
 		return ob_get_clean();
-	}	
+	}
 
 	/**
 	 * Form to add conditions to an element
-	 * 
+	 *
 	 * A field can have one or more conditions applied to it like:
 	*		1) hide when field X is Y
 	*		2) Show when field X is Z
 	*	Each condition can have multiple rules like:
-	*		Hide when field X is Y and field A is B 
-	*		
+	*		Hide when field X is Y and field A is B
+	*
 	*	The array structure is therefore:
 	*		[
 	*			[0][
-	*				[rules]	
+	*				[rules]
 	*						[0]
 	*						[1]
 	*				[action]
 	*			[1]
-	*				[rules]	
+	*				[rules]
 	*						[0]
 	*				[action]
 	*		]
-	*	
+	*
 	*	It is also stored at the conditional fields to be able to create efficient JavaScript
-	 * 
+	 *
 	 * @param int	$elementId	The id of the element. Default -1 for empty
 	 */
-	function elementConditionsForm($elementId = -1){
+	public function elementConditionsForm($elementId = -1){
 		$element	= $this->getElementById($elementId);
 
 		if($elementId == -1 || empty($element->conditions)){
@@ -1231,7 +1231,7 @@ class FormBuilderForm extends SimForms{
 									}
 									echo "<option value='$option' $selected>$optionLabel</option>";
 								}
-							?>							
+							?>
 						</select>
 
 						<?php
@@ -1280,7 +1280,7 @@ class FormBuilderForm extends SimForms{
 								?>
 							</select>
 						</span>
-						<?php 
+						<?php
 						if(strpos($rule['equation'], 'value') !== false || in_array($rule['equation'], ['changed','checked','!checked'])){
 							$hidden = 'hidden';
 						}else{
@@ -1301,7 +1301,7 @@ class FormBuilderForm extends SimForms{
 						}
 						?>
 					</div>
-				<?php 
+				<?php
 				}
 				?>
 				<br>
@@ -1350,7 +1350,7 @@ class FormBuilderForm extends SimForms{
 					</div>
 				</div>
 			</div>
-			<?php 
+			<?php
 			}
 			?>
 			<br>
@@ -1391,10 +1391,10 @@ class FormBuilderForm extends SimForms{
 
 	/**
 	 * Form to add warning conditions to an element
-	 * 
+	 *
 	 * @param	int		$elementId		The id to add warning conditions for. Default -1 for empty
 	 */
-	function warningConditionsForm($elementId = -1){
+	public function warningConditionsForm($elementId = -1){
 		$element	= $this->getElementById($elementId);
 
 		if($elementId == -1 || empty($element->warning_conditions)){
@@ -1489,7 +1489,7 @@ class FormBuilderForm extends SimForms{
 
 					<br>
 				</div>
-				<?php 
+				<?php
 			}
 			?>
 		</div>
@@ -1497,7 +1497,7 @@ class FormBuilderForm extends SimForms{
 		return ob_get_clean();
 	}
 
-	function exportForm($formId){
+	public function exportForm($formId){
 		global $wpdb;
 
 		$this->getForm($formId);
@@ -1525,7 +1525,7 @@ class FormBuilderForm extends SimForms{
 		}
 
 		$emails	= $result->emails;
-		$emails	= str_replace(["\n", "\r"], ['\n', '\r'], $emails); 
+		$emails	= str_replace(["\n", "\r"], ['\n', '\r'], $emails);
 
 		$content	= "INSERT INTO `$tableName` VALUES ('','$name',{$this->formData->version},'$settings','$emails')\n";
 
@@ -1554,15 +1554,15 @@ class FormBuilderForm extends SimForms{
 		$backupName = $this->formData->name.".sform";
 		SIM\clearOutput();
 
-        header('Content-Type: application/octet-stream');   
-        header("Content-Transfer-Encoding: Binary"); 
-        header("Content-disposition: attachment; filename=$backupName");  
+        header('Content-Type: application/octet-stream');
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-disposition: attachment; filename=$backupName");
 
-        echo $content; 
+        echo $content;
 		exit;
 	}
 
-	function importForm($path){
+	public function importForm($path){
 		if(!file_exists($path)){
 			return new \WP_Error('forms', "$path does not exist");
 		}
@@ -1612,10 +1612,10 @@ class FormBuilderForm extends SimForms{
 			$this->formData->settings['autoarchivefield']	= $elementIdMapping[$this->formData->settings['autoarchivefield']];
 
 			$wpdb->update(
-				$this->tableName, 
+				$this->tableName,
 				array(
 					'settings' 	=> maybe_serialize($this->formData->settings)
-				), 
+				),
 				array(
 					'id'		=> $this->formData->id,
 				),
@@ -1666,8 +1666,8 @@ class FormBuilderForm extends SimForms{
 
 			if($update){
 				$result = $wpdb->update(
-					$this->elTableName, 
-					(array)$element, 
+					$this->elTableName,
+					(array)$element,
 					array(
 						'id'		=> $element->id,
 					),
@@ -1693,10 +1693,10 @@ class FormBuilderForm extends SimForms{
 		// Update the form url
 		$this->formData->settings['formurl']	= $url;
 
-		$wpdb->update($this->tableName, 
+		$wpdb->update($this->tableName,
 			array(
 				'settings' 	=> maybe_serialize($this->formData->settings)
-			), 
+			),
 			array(
 				'id'		=> $this->formData->id,
 			),

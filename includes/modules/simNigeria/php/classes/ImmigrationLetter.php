@@ -3,7 +3,7 @@ namespace SIM\SIMNIGERIA;
 use SIM;
 
 class ImmigrationLetter extends SIM\PDF\PdfHtml{
-	function __construct($orientation='P', $unit='mm', $format='A4'){
+	public function __construct($orientation='P', $unit='mm', $format='A4'){
 		//Call parent constructor
 		parent::__construct($orientation,$unit,$format);
 		//Initialization
@@ -12,7 +12,7 @@ class ImmigrationLetter extends SIM\PDF\PdfHtml{
 	}
 	
 	//Add departure or arrival pages to an existing pdf
-	function generateTravelLetter($type, $visaInfo, $gender, $date, $origin, $destination, $transportType){
+	public function generateTravelLetter($type, $visaInfo, $gender, $date, $origin, $destination, $transportType){
 		//Check if values are available
 		if(!is_array($visaInfo)){
 			$passportName 		= "UNKNOWN";
@@ -163,7 +163,7 @@ class ImmigrationLetter extends SIM\PDF\PdfHtml{
 						$this->printImage($path,-1,-1,200);
 					}
 				}
-			}				
+			}
 		}
 	}
 }

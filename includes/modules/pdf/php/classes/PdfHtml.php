@@ -23,7 +23,7 @@ class PdfHtml extends \FPDF{
     const MAX_WIDTH = 800;
     const MAX_HEIGHT = 500;
 
-	function __construct($orientation='P', $unit='mm', $format='A4'){
+	public function __construct($orientation='P', $unit='mm', $format='A4'){
 		//Call parent constructor
 		parent::__construct($orientation,$unit,$format);
 		//Initialization

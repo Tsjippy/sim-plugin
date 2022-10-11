@@ -126,7 +126,6 @@ async function processInput(event, target){
 function sortTable(target){
 	let table 			= target.closest('table');
 	let switching	 	= true;
-	let shouldSwitch 	= false;
 	let x,y, rows;
 	var sort 		= 'asc';
 	
@@ -144,8 +143,6 @@ function sortTable(target){
 		/*Loop through all table rows (except the
 		first, which contains table headers):*/
 		for (let i = 1; i < (rows.length - 1); i++) {
-			//start by saying there should be no switching:
-			shouldSwitch = false;
 			// Get the lowercase cell contents
 			x = rows[i].getElementsByTagName("TD")[target.cellIndex].innerHTML.toLowerCase();
 			y = rows[i + 1].getElementsByTagName("TD")[target.cellIndex].innerHTML.toLowerCase();
@@ -175,12 +172,10 @@ function sortTable(target){
 	
 	//Mark the row to sort dsc the next time
 	if (sort == 'asc'){
-		target.classList.remove('asc');
-		target.classList.add('dsc');
+		target.classList.replace('asc', 'dsc');
 	//Mark the row to sort asc the next time
 	}else{
-		target.classList.remove('dsc');
-		target.classList.add('asc');
+		target.classList.replace('dsc', 'asc');
 	}
 }
 

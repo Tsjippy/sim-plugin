@@ -10,7 +10,7 @@ abstract class MailSetting{
      *
      * @param   string  $keyword    The keyword to use in the settings array
      */
-    protected function __construct($keyword, $moduleSlug) {
+    public function __construct($keyword, $moduleSlug) {
         $this->replaceArray     = [
             '%site_url%'    => SITEURL,
             '%site_name%'   => SITENAME

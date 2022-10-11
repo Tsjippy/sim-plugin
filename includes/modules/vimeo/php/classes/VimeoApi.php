@@ -5,11 +5,11 @@ use GuzzleHttp;
 use WP;
 use WP_Error;
 
-require( __DIR__  . '/../../lib/vendor/autoload.php');
+require_once( __DIR__  . '/../../lib/vendor/autoload.php');
 
 if(!class_exists(__NAMESPACE__.'\VimeoApi')){
     class VimeoApi{
-        function __construct(){
+        public function __construct(){
             global $Modules;
 
             if ( ! class_exists( '\Vimeo\Vimeo' ) ) {
@@ -39,7 +39,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   string      'online' or 'offline'
          *
         **/
-        function isConnected(){
+        public function isConnected(){
             $this->status = get_transient( 'vimeo_connected' );
             if ( $this->status === false || $this->status == 'offline' || empty($this->status)) {
                 try {
@@ -47,7 +47,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                         $this->api = new \Vimeo\Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
                     }
                     $response = $this->api->request( '/oauth/verify', [], 'GET' );
-        
+
                     $this->status       = 'online';
                     $this->license      = $response['body']['user']['account'];
                     if($response['status'] != 200){
@@ -60,7 +60,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                     $error          = $e;
                     error_log($error);
                 }
-                
+
                 set_transient( 'vimeo_connected', $this->status, 120 );
             }
             return $this->status;
@@ -76,11 +76,11 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   string     Theauthorized url
          *
         **/
-        function getAuthorizeUrl($clientId, $clientSecret, $url=null){
+        public function getAuthorizeUrl($clientId, $clientSecret, $url=null){
             if($url == null){
                 $redirectUri   =  admin_url( "admin.php?page=".$_GET["page"] );
             }
-        
+
             $scopes = array(
                 'create',
                 'interact',
@@ -91,15 +91,15 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 'public',
                 'video_files'
             );
-        
+
             $state  = mt_rand(1000000000,9999999999);
             update_option('vimeo_state', $state);
-        
+
             $api = new \Vimeo\Vimeo($clientId, $clientSecret);
-        
+
             return $api->buildAuthorizationEndpoint($redirectUri, $scopes, $state);
         }
-        
+
         /**
          *
          * Store the Vimeo Accestoken
@@ -111,11 +111,11 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   string     Acces token to Vimeo
          *
         **/
-        function storeAccessToken($clientId, $clientSecret, $code, $redirectUri){
+        public function storeAccessToken($clientId, $clientSecret, $code, $redirectUri){
             $api    = new \Vimeo\Vimeo($clientId, $clientSecret);
             $token  = $api->accessToken($code, $redirectUri);
             $api->setToken($token['body']['access_token']);
-        
+
             return $token['body']['access_token'];
         }
 
@@ -127,7 +127,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   int|false              Vimeo video id
          *
         **/
-        function getVimeoId($postId){
+        public function getVimeoId($postId){
             $vimeoId		= get_post_meta($postId, 'vimeo_id', true);
             if(is_numeric($vimeoId)){
                 return $vimeoId;
@@ -144,7 +144,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   WP_Post|WP_Error       Wordpress post
          *
         **/
-        function getPost($vimeoId){
+        public function getPost($vimeoId){
             // Get the post for this video
             $posts = get_posts(array(
                 'numberposts'   => -1,
@@ -167,7 +167,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   array      An Array containing all the videos on Vimeo
          *
         **/
-        function getUploadedVideos() {
+        public function getUploadedVideos() {
             $videos = array();
 
             if ( $this->isConnected() ) {
@@ -175,10 +175,10 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                     'fields'   => 'uri,name',
                     'filter'   => 'embeddable',
                 );
-            
+
                 $response   = $this->api->request( '/me/videos', $query, 'GET' );
                 $total      = $response['body']['total'];
-            
+
                 if ( $response['status'] === 200 ) {
                     $videos = array_merge( $videos, $response['body']['data'] );
 
@@ -192,7 +192,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                     //last page with video's
                     $lastPage = isset( $queryParams['page'] ) ? $queryParams['page'] : 1;
 
-                    // get the how many more queries we can do 
+                    // get the how many more queries we can do
                     $remaining = null;
                     if ( isset( $response['headers']['x-ratelimit-remaining'] ) ) {
                         $remaining = $response['headers']['x-ratelimit-remaining'];
@@ -213,7 +213,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                     }
                 }
             }
-        
+
             if($total != count($videos)){
                 return false;
             }
@@ -227,7 +227,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @param    int     $postId    Wordpress post id
          *
         **/
-        function deleteVimeoVideo($postId){  
+        public function deleteVimeoVideo($postId){
             if ( $this->isConnected() ) {
                 $vimeoId   = $this->getVimeoId($postId);
 
@@ -239,7 +239,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 if($_SERVER['HTTP_HOST'] != 'localhost'){
                     wp_mail('enharmsen@gmail.com' , 'Video deleted', 'Hi Ewald<br><br>'.wp_get_current_user()->display_name.' just deleted the video with id '.$vimeoId);
                     /* $response = $this->api->request( "/videos/$vimeo_id", [], 'DELETE' );
-        
+
                     if(isset($response['body']['error'])){
                         return $response['body']['error'];
                     } */
@@ -262,12 +262,12 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   array      An Array containing the upload url, WP post id and Vimeo video id
          *
         **/
-        function createVimeoVideo($path, $mime){
+        public function createVimeoVideo($path, $mime){
             //we should only do this via REST
             if(!defined('REST_REQUEST')){
                 return false;
             }
-        
+
             //remove extension
             $title		    = pathinfo($path, PATHINFO_FILENAME);
             $uploadLink     = '';
@@ -275,7 +275,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             if(!is_numeric($size)){
                 return new WP_Error('vimeo','No filesize given');
             }
-                
+
             if ( $this->isConnected()) {
                 $params=[
                     "upload" => [
@@ -297,22 +297,22 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             }else{
                 return new WP_Error('vimeo','No internet');
             }
-            
+
             if(!is_numeric($vimeoId)){
                 return new WP_Error('vimeo','Something went wrong');
-            } 
-        
+            }
+
             $attachmentId  = $this->createVimeoPost($title, $mime, $vimeoId);
-            
+
             add_post_meta($attachmentId, '_wp_attached_file', 'Uploading to vimeo');
-            
+
             //store upload link in case of failed upload and we want to resume
             add_post_meta($attachmentId, 'vimeo_upload_data', [
-                'url'       => $uploadLink, 
+                'url'       => $uploadLink,
                 'filename'  => $path,
                 'vimeo_id'  => $vimeoId
             ]);
-            
+
             return [
                 'upload_link'	=> $uploadLink,
                 'post_id'		=> $attachmentId,
@@ -330,7 +330,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   id                     The id of the created attachment
          *
         **/
-        function createVimeoPost($title, $mime, $vimeoId){
+        public function createVimeoPost($title, $mime, $vimeoId){
             $args = array(
                 'post_title'   		=> $title,
                 'post_name'   		=> str_replace(' ', '-', $title),
@@ -340,9 +340,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 'post_author'  		=> is_user_logged_in() ? get_current_user_id() : 0,
                 'post_mime_type'	=> $mime
             );
-        
+
             $attachmentId = wp_insert_post( $args );
-        
+
             //add to wp library
             update_post_meta($attachmentId, 'vimeo_id', $vimeoId);
             update_post_meta($attachmentId, '_wp_attached_file', $title);
@@ -358,7 +358,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   array              The vimeo response
          *
         **/
-        function upload($postId){
+        public function upload($postId){
             // only continue if not on vimeo yet
             if(!is_numeric($postId) || is_numeric($this->getVimeoId($postId))){
                 return false;
@@ -393,7 +393,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   int|bool           meta key id if a new one got created
          *
         **/
-        function saveVideoPath($postId, $filePath){
+        public function saveVideoPath($postId, $filePath){
             if(!is_numeric($postId)){
                 return false;
             }
@@ -409,7 +409,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   string|false       Path to the video file
          *
         **/
-        function getVideoPath($postId){
+        public function getVideoPath($postId){
             if(!is_numeric($postId)){
                 return false;
             }
@@ -431,7 +431,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @param    array   $data      Meta data to be updated
          *
         **/
-        function updateMeta($postId, $data){
+        public function updateMeta($postId, $data){
             $vimeoId   = $this->getVimeoId($postId);
 
             // Save meta on vimeo
@@ -459,12 +459,12 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
         /**
          *
-         * Hides a vimeo video 
+         * Hides a vimeo video
          *
          * @param    int        $postId    WP_Post id
          *
         **/
-        function hideVimeoVideo( $postId) {
+        public function hideVimeoVideo( $postId) {
             //Hide the video from vimeo
             try {
                 $vimeoId   = $this->getVimeoId($postId);
@@ -491,7 +491,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   string|WP_Error|false  Thumbnail path
          *
         **/
-        function getThumbnail($postId){
+        public function getThumbnail($postId){
             $thumbnail  = get_post_meta($postId, 'thumbnail', true);
 
             if(file_exists($thumbnail)){
@@ -505,9 +505,9 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 //Get thumbnails
                 $data	= $this->api->request("/videos/$vimeoId/pictures?sizes=48x64", [], 'GET')['body']['data'][0];
                 if($data['active']){
-                    $icon_url   = $data['base_link'].'.webp';
+                    $iconUrl   = $data['base_link'].'.webp';
 
-                    $result = $this->downloadFromVimeo($icon_url, $postId);
+                    $result = $this->downloadFromVimeo($iconUrl, $postId);
                     if(is_wp_error($result)){
                         $result = $result->error_data['vimeo']['path'];
                     }
@@ -530,7 +530,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @param    int        $postId     WP_Post id
          *
         **/
-        function downloadVideo($postId){
+        public function downloadVideo($postId){
             $vimeoId    = $this->getVimeoId($postId);
             $response	= $this->api->request("/videos/$vimeoId", [], 'GET');
 
@@ -543,7 +543,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 $message    .= "Please provide me with a link to download the Vimeo video with id $vimeoId to a local backup folder on your website.<br>";
                 $message    .= "Use <a href='$adminUrl'>this page</a> to provide me the download link.<br>";
                 $message    .= "Get the download link from Vimeo on <a href='https://vimeo.com/manage/$vimeoId/advanced'>this page</a>.<br>";
-                
+
                 wp_mail(get_option('admin_email'), 'Please backup this Vimeo Video', $message);
             }
         }
@@ -552,12 +552,12 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          *
          * Retrieves an upload url from Vimeo
          *
-         * @param    string                 $url        The url to the Vimeo 
+         * @param    string                 $url        The url to the Vimeo
          * @param    string                 $postID     The WP_Post id
          * @return   string|false|WP_Error              An Array containing the upload url, WP post id and Vimeo video id
          *
         **/
-        function downloadFromVimeo($url, $postId) {
+        public function downloadFromVimeo($url, $postId) {
             $extension  = pathinfo(parse_url($url)['path'], PATHINFO_EXTENSION);
             if($extension == 'webp'){
                 $path       = $this->picturesDir;

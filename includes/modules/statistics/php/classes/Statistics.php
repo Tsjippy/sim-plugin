@@ -3,7 +3,7 @@ namespace SIM\STATISTICS;
 use SIM;
 
 class Statistics {
-    function __construct(){
+    public function __construct(){
         global $wpdb;
         $this->tableName				= $wpdb->prefix . 'sim_statistics';
     }

@@ -5,13 +5,13 @@ use SIM\EVENTS;
 use SIM\FORMS;
 
 class Bookings{
-    function __construct($DisplayFormResults=''){
+    public function __construct($displayFormResults=''){
         global $wpdb;
 		$this->tableName		= $wpdb->prefix.'sim_bookings';
         $this->bookings         = [];
 
-        if(getType($DisplayFormResults) == 'object'){
-            $this->forms        = $DisplayFormResults;
+        if(getType($displayFormResults) == 'object'){
+            $this->forms        = $displayFormResults;
         }else{
             $this->forms        = new SIM\FORMS\DisplayFormResults();
         }
@@ -22,9 +22,9 @@ class Bookings{
     /**
 	 * Creates the table holding all bookings if it does not exist
 	*/
-	function createBookingsTable(){
-		if ( !function_exists( 'maybe_create_table' ) ) { 
-			require_once ABSPATH . '/wp-admin/install-helper.php'; 
+	public function createBookingsTable(){
+		if ( !function_exists( 'maybe_create_table' ) ) {
+			require_once ABSPATH . '/wp-admin/install-helper.php';
 		}
 
 		global $wpdb;
@@ -46,7 +46,7 @@ class Bookings{
 		maybe_create_table($this->tableName, $sql );
 	}
 
-    function getNavigator($date, $plus=2){
+    public function getNavigator($date, $plus=2){
         if($plus == 2){
             $min    = 1;
         }else{
@@ -91,10 +91,10 @@ class Bookings{
      * @param   int         $date       The date to retrieve the calendar for
      * @param   boolean     $isAdmin    Wheter to show for admin puposes
      * @param   boolean     $hidden     Wheter to hide the calendar by default
-     * 
+     *
      * @return  string                  The html
      */
-    function modalContent($subject, $date, $isAdmin = false, $hidden = false){
+    public function modalContent($subject, $date, $isAdmin = false, $hidden = false){
 		$monthStr		= date('m', $date);
 		$yearStr		= date('Y', $date);
         $cleanSubject   = trim(str_replace(' ', '_', $subject));
@@ -104,10 +104,10 @@ class Bookings{
         ?>
         <div class="bookings-wrap <?php if($hidden){echo 'hidden';}?>" data-date="<?php echo "$yearStr-$monthStr";?>" data-subject="<?php echo $cleanSubject;?>" data-shortcodeid="<?php echo $this->forms->shortcodeId;?>">
             <div class="booking overview">
-                <div class='header mobile-sticky'> 
+                <div class='header mobile-sticky'>
                     <h4 style='text-align:center;'><?php echo $subject;?> Calendar</h4>
                 
-                    <?php 
+                    <?php
                     if(!$isAdmin){
                         echo $this->showSelectedModalDates();
                     }
@@ -124,7 +124,7 @@ class Bookings{
                     echo $this->monthCalendar($subject, strtotime('+1 month', $date));
                     ?>
                 </div>
-                <?php 
+                <?php
                 if(!$isAdmin){
                     ?>
                     <div class="actions mobile-sticky bottom">
@@ -135,7 +135,7 @@ class Bookings{
                 }
                 ?>
             </div>
-            <?php 
+            <?php
             if($isAdmin){
                 ?>
                 <div class="booking details-wrapper">
@@ -155,7 +155,7 @@ class Bookings{
     /**
      * Displays the selected dates
      */
-    function showSelectedModalDates(){
+    protected function showSelectedModalDates(){
         ob_start();
 
         ?>
@@ -336,7 +336,7 @@ class Bookings{
                 }
                 ?>
             </dl>
-            <?php		
+            <?php
             echo $calendarRows;
             ?>
         </div>
@@ -582,10 +582,6 @@ class Bookings{
             ),
         );
 
-        $date           = strtotime($booking->startdate);
-        $month          = date('m', $date);
-        $year           = date('Y', $date);
-
         $monthsHtml     = [];
         $months         = [];
         $years          = [];
@@ -638,7 +634,7 @@ class Bookings{
      * @param   string  $subject        The subject to retrieve bookings for
      *
      */
-    function retrieveMonthBookings($month, $year, $subject){
+    protected function retrieveMonthBookings($month, $year, $subject){
         global $wpdb;
 
         $subject    = trim(str_replace(' ', '_', $subject));
@@ -672,7 +668,7 @@ class Bookings{
      * Retrieve all the pending bookings
      *
      */
-    function retrievePendingBookings(){
+    public function retrievePendingBookings(){
         global $wpdb;
 
         $query	    = "SELECT * FROM $this->tableName WHERE pending=1 ";
@@ -684,7 +680,7 @@ class Bookings{
     }
 
     /** Get a booking by submission id */
-    function getBookingById($id){
+    protected function getBookingById($id){
         global $wpdb;
 
 		$query	    = "SELECT * FROM $this->tableName WHERE id=$id ";

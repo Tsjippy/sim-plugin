@@ -120,10 +120,11 @@ function showFormSelector($atts=[]){
 }
 
 //shortcode to make forms
-add_shortcode( 'formbuilder', function($atts){
+add_shortcode( 'formbuilder', __NAMESPACE__.'\showForm');
+function showForm($atts){
     $simForms = new SimForms();
     return $simForms->determineForm($atts);
-});
+}
 
 add_shortcode( 'formresults', function($atts){
 	$displayFormResults = new DisplayFormResults($atts);

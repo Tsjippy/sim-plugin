@@ -4,7 +4,7 @@ use SIM;
 
 class IcalFeed{
 
-	function __construct(){
+	public function __construct(){
 		//see https://gist.github.com/jakebellacera/635416
 		$this->icalFormat = 'Ymd\THis\Z';
 	}
@@ -12,17 +12,17 @@ class IcalFeed{
 	/**
 	 * Creates an iCal feed
 	*/
-	function calendarStream(){
+	public function calendarStream(){
 		$userId		= $_GET['id'];
 		if(!is_numeric($userId)){
 			$userId	= -1;
-		}	
+		}
 
-		$events		= get_posts( 
+		$events		= get_posts(
 			array(
-				'post_type'      => 'event', 
+				'post_type'      => 'event',
 				'posts_per_page' => -1
-			) 
+			)
 		);
 		
 		$icalStart		 = "BEGIN:VCALENDAR\r\n";
@@ -71,13 +71,13 @@ class IcalFeed{
 
     /**
      * Creates an ical entry for a specific event
-     * 
+     *
      * @param   array     $meta     The metadata of the event
      * @param   object    $event    The event
-     * 
-     * @return  string              The ical data 
+     *
+     * @return  string              The ical data
      */
-	function createIcalEvent($meta, $event){
+	public function createIcalEvent($meta, $event){
 		$icalEvent	= "BEGIN:VEVENT\r\n";
 
 		//between times
@@ -127,7 +127,7 @@ class IcalFeed{
 		return		$icalEvent;
 	}
 
-	function addRepeatDetails($meta, $start, $end, $uid, $icalEvent){
+	public function addRepeatDetails($meta, $start, $end, $uid, $icalEvent){
 		$freq			 = strtoupper($meta['repeat']['type']);
 
 		if($freq == 'CUSTOM_DAYS'){
@@ -204,7 +204,7 @@ class IcalFeed{
 		return $icalEvent;
 	}
 
-	function addIcalCustomDates($meta, $start, $end, $uid, $icalEvent){
+	public function addIcalCustomDates($meta, $start, $end, $uid, $icalEvent){
 		//copy the event for each includes date
 		$extraIcalEvents	= '';
 		foreach($meta['repeat']['includedates'] as $date){

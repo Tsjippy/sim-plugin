@@ -34,16 +34,20 @@ __webpack_require__.r(__webpack_exports__);
 const Edit = _ref => {
   let {
     attributes,
-    setAttributes
+    setAttributes,
+    context
   } = _ref;
   const {
     formname
   } = attributes;
+  const {
+    postId
+  } = context;
   const [html, setHtml] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)('');
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(async () => {
     if (formname != undefined) {
       let response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_3___default()({
-        path: `${sim.restApiPrefix}/forms/form_builder?formname=${formname}`
+        path: `${sim.restApiPrefix}/forms/form_builder?formname=${formname}&post=${postId}`
       });
       setHtml(response);
     }
@@ -62,7 +66,7 @@ const Edit = _ref => {
     }
 
     return wp.element.RawHTML({
-      children: html
+      children: html.html
     });
   }
 
@@ -198,7 +202,7 @@ module.exports = window["wp"]["i18n"];
   \************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":2,"name":"sim/formbuilder","version":"0.1.0","title":"Build a form","category":"widgets","description":"Build or display a form","textdomain":"sim","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","attributes":{"formname":{"type":"string"}}}');
+module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":2,"name":"sim/formbuilder","version":"0.1.0","title":"Build a form","category":"widgets","description":"Build or display a form","textdomain":"sim","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","usesContext":["postId"],"attributes":{"formname":{"type":"string"}}}');
 
 /***/ })
 
@@ -357,7 +361,7 @@ module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
 /******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunksim_formselector"] = self["webpackChunksim_formselector"] || [];
+/******/ 		var chunkLoadingGlobal = self["webpackChunksim_formbuilder"] = self["webpackChunksim_formbuilder"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	})();

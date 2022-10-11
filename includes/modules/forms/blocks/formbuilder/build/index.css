@@ -225,6 +225,15 @@ html body:not(.home) #masthead {
 #site-navigation .inside-navigation {
   justify-content: normal !important;
 }
+@media (min-width: 768px) {
+  #site-navigation .inside-navigation {
+    max-height: 80px;
+  }
+}
+#site-navigation .menu-bar-items {
+  position: absolute;
+  right: -50px;
+}
 #site-navigation .menu-bar-item:hover > a {
   background-color: transparent;
 }
@@ -238,7 +247,7 @@ html body:not(.home) #masthead {
   background-color: white;
 }
 #site-navigation #menu-primary-menu {
-  justify-content: flex-end;
+  /*justify-content: flex-end;*/
   /* Samller line height */
   /* hover color of submenu*/
   /*Number behind menu item*/
@@ -271,11 +280,6 @@ html body:not(.home) #masthead {
   color: white;
   text-align: center;
   font: 10px Arial, sans-serif;
-}
-
-/* Max width of the menu to allow for the search icon*/
-.logged-in #primary-menu {
-  width: 91%;
 }
 
 /* background of submenus*/
@@ -313,7 +317,7 @@ html body:not(.home) #masthead {
 }
 .modal {
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-  z-index: 106;
+  z-index: 999999;
   position: fixed;
   left: 0;
   top: 0;
@@ -325,10 +329,11 @@ html body:not(.home) #masthead {
 }
 .modal .modal-content {
   margin: 10% auto; /* 10% from the top and centered */
-  padding: 20px;
+  padding: 20px 20px 0px 20px;
   border: 1px solid #888;
   max-width: min(500px, 100%);
   background-color: #fefefe;
+  overscroll-behavior-y: none;
   /* The Close Button */
 }
 .modal .modal-content .form-row label {
@@ -669,10 +674,7 @@ ul.child-sidebar-menu a {
 
 @media screen and (max-width: 570px) {
   .sim-table {
-    width: 100vw;
-  }
-  .sim-table .mobile-hidden {
-    display: none;
+    max-width: calc(100vw - 15px);
   }
 }
 @media screen and (min-width: 570px) {
@@ -822,7 +824,7 @@ ul.child-sidebar-menu a {
 }
 
 @media (min-width: 801px) {
-  td.sticky {
+  td.sticky, th.sticky {
     display: table-cell;
     position: -webkit-sticky;
     position: sticky;
@@ -837,10 +839,12 @@ ul.child-sidebar-menu a {
   .sim-table td::before {
     content: attr(label);
     font-weight: bold;
-    min-width: 200px;
+    margin-right: 10px;
   }
   .sim-table td, .sim-table td.sticky {
     display: flex;
+    flex-wrap: wrap;
+    max-width: calc(100vw - 15px);
   }
 }
 .exportform {
@@ -863,6 +867,26 @@ ul.child-sidebar-menu a {
   margin-bottom: 10px;
 }
 
+/* moretag layout */
+.moretag {
+  font-size: 15px;
+  border-radius: 30px;
+  color: white;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 10px 20px;
+  display: block;
+  max-width: 133px;
+  margin: 20px auto 0 auto;
+  white-space: nowrap;
+  background-color: #bd2919;
+  /* on hover of the more tag*/
+}
+.moretag:hover {
+  background-color: #8a1a0e;
+  color: white;
+}
+
 /* paragraph text color*/
 p {
   color: #676666;
@@ -873,10 +897,11 @@ p {
   width: 7%;
   max-height: 45px;
   margin: 20px 0px 0px 10px;
+  min-width: 50px;
 }
 
 /*Buttons */
-.wp-core-ui div .button, body div .button,
+#comments #submit, .wp-core-ui div .button, body div .button,
 body div .button:not(.small):focus {
   background-color: #bd2919;
   border-radius: 3px;
@@ -906,6 +931,10 @@ body div .button:not(.small):focus.tablink.active {
   border-color: unset;
 }
 
+#page-edit {
+  margin-top: 10px;
+}
+
 .wp-core-ui div .button {
   color: white;
   border-color: unset;
@@ -916,8 +945,16 @@ body div .button:not(.small):focus.tablink.active {
   border-color: unset;
 }
 
+.leaflet-container a.button {
+  color: white;
+}
+
 .button.small {
   padding: 0px 10px;
+}
+
+a.button.small {
+  padding-top: 5px;
 }
 
 .submit_wrapper {
@@ -950,6 +987,7 @@ div h4 {
   font-weight: bold;
   color: #bd2919;
   margin: 15px 5px 5px;
+  font-size: inherit;
 }
 
 div fieldset {
@@ -975,7 +1013,7 @@ h3 {
 }
 
 .swal2-container.swal2-center.swal2-backdrop-show {
-  z-index: 170000;
+  z-index: 9999999;
 }
 
 .success {
@@ -1024,6 +1062,27 @@ div input[type=url] {
   display: inline-block;
 }
 
+input.wide {
+  width: 100%;
+}
+
+@media screen and (max-width: 570px) {
+  .mobile-hidden {
+    display: none;
+  }
+  .mobile-sticky {
+    z-index: 99999999;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    left: 0;
+    background: white;
+  }
+  .mobile-sticky.bottom {
+    bottom: 0;
+    top: unset;
+  }
+}
 .sim_form.builder .inputwrapper {
   margin-bottom: 10px;
   position: relative;

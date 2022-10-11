@@ -18,7 +18,7 @@ class FileUpload{
 	 * @param	string	$callback	The callback function to call after upload. Default empty
 	 * @param	bool	$updatemeta	Whether or not to update the user meta. Default true
 	 */
-	function __construct($userId, $metakey='', $library=false, $callback='', $updatemeta=true) {
+	public function __construct($userId, $metakey='', $library=false, $callback='', $updatemeta=true) {
 		$this->userId		= $userId;
 		$this->metakey		= $metakey;
 		$this->library		= $library;

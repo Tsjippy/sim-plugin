@@ -3,7 +3,7 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 class PotentialFamilyMembers{
-    function __construct($userId){
+    public function __construct($userId){
         $this->userId               = $userId;
         $this->birthday	            = get_user_meta( $userId, 'birthday', true );
         $this->gender		        = get_user_meta( $userId, 'gender', true );

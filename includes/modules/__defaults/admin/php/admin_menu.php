@@ -208,7 +208,7 @@ function settingsTab($moduleSlug, $moduleName, $settings, $tab){
 				<?php
 			}
 			?>
-		</form> 
+		</form>
 		<br>
 	</div>
 	<?php
@@ -231,13 +231,13 @@ function emailSettingsTab($moduleSlug, $moduleName, $settings, $tab){
 			
 		<form action="" method="post">
 			<input type='hidden' name='module' value='<?php echo $moduleSlug;?>'>
-			<?php 
+			<?php
 			echo $html;
 			?>
 			<br>
 			<br>
 			<input type="submit" name="save-email-settings" value="Save <?php echo $moduleName;?> e-mail settings">
-		</form> 
+		</form>
 		<br>
 	</div>
 	<?php
@@ -260,7 +260,7 @@ function dataTab($moduleSlug, $moduleName, $settings, $tab){
 
 	?>
 	<div class='tabcontent <?php if($tab != 'data'){echo 'hidden';}?>' id='data'>
-		<?php 
+		<?php
 		echo $html;
 		?>
 	</div>

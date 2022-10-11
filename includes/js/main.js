@@ -68,11 +68,12 @@ function displayTab(tabButton){
 	//remove all existing highlights
 	document.querySelectorAll('.highlight').forEach(el=>el.classList.remove('highlight'));
 
+	let tab;
 	// Get content area
 	if(tabButton.dataset.target == undefined){
-		var tab = document.querySelector('#'+tabButton.dataset.param_val);
+		tab = document.querySelector('#'+tabButton.dataset.param_val);
 	}else{
-		var tab = tabButton.closest('div').querySelector('#'+tabButton.dataset.target);
+		tab = tabButton.closest('div').querySelector('#'+tabButton.dataset.target);
 	}
 	
 	if(tab != null){

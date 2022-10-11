@@ -3,7 +3,7 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 class DashboardWarnings{
-    function __construct($userId){
+    public function __construct($userId){
         $this->reminderCount    = 0;
         $this->reminderHtml     = '';
         $this->userId           = $userId;

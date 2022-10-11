@@ -3,7 +3,7 @@ namespace SIM\FILEUPLOAD;
 use SIM;
 
 class FileUploader{
-    function __construct($settings, $files){
+    public function __construct($settings, $files){
         $this->fileParam	= (array)$settings['fileupload'];
         $this->maxSize	    = wp_max_upload_size();
         $this->userId       = 0;

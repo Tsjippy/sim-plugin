@@ -5,7 +5,7 @@ use WP_Error;
 
 
 class Events{
-	function __construct(){
+	public function __construct(){
 		global $wpdb;
 		$this->tableName		= $wpdb->prefix.'sim_events';
 		$this->dayStartTime		= '00:00';
@@ -15,7 +15,7 @@ class Events{
 	/**
 	 * Creates the table holding all events if it does not exist
 	*/
-	function createEventsTable(){
+	public function createEventsTable(){
 		if ( !function_exists( 'maybe_create_table' ) ) {
 			require_once ABSPATH . '/wp-admin/install-helper.php';
 		}
@@ -45,7 +45,7 @@ class Events{
 	/**
 	 * Gets an event from the db
 	 * @param	int			$postId		WP_Post id
-	 * 
+	 *
 	 * @return	object|false			The event or false if no event found
 	*/
 	public function retrieveSingleEvent($postId){
@@ -64,7 +64,7 @@ class Events{
 	 * @param  	int  $postId		Optional post id
 	*/
 	public function removeDbRows($postId = null){
-		global $wpdb; 
+		global $wpdb;
  
 		if(!is_numeric($postId)){
 			$postId = $this->postId;

@@ -15,9 +15,9 @@ function checkPermissions(){
 
 add_action( 'rest_api_init', function () {
 	// add element to form
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/add_form_element', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/add_form_element',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\addFormElement',
@@ -34,9 +34,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// delete element
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/remove_element', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/remove_element',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\removeElement',
@@ -55,9 +55,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// request form element
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/request_form_element', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/request_form_element',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\requestFormElement',
@@ -76,9 +76,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// reorder form elements
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/reorder_form_elements', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/reorder_form_elements',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\reorderFormElements',
@@ -101,9 +101,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// edit formfield width
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/edit_formfield_width', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/edit_formfield_width',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\editFormfieldWidth',
@@ -126,9 +126,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// form conditions html
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/request_form_conditions_html', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/request_form_conditions_html',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\requestFormConditionsHtml',
@@ -147,9 +147,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// save_element_conditions
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/save_element_conditions', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/save_element_conditions',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\saveElementConditions',
@@ -168,9 +168,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// save_form_settings
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/save_form_settings', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/save_form_settings',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\saveFormSettings',
@@ -188,9 +188,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// save_form_input
-	register_rest_route( 
-		'sim/v2/forms', 
-		'/save_form_input', 
+	register_rest_route(
+		'sim/v2/forms',
+		'/save_form_input',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\saveFormInput',
@@ -205,9 +205,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// save_form_emails
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/save_form_emails', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/save_form_emails',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\saveFormEmails',
@@ -272,7 +272,7 @@ function addFormElement(){
 	if(
 		in_array($element->type, $simForms->nonInputs) 		&& 	// this is a non-input
 		$element->type != 'datalist'						&& 	// but not a datalist
-		strpos($element->name, $element->type) === false		// and the type is not yet added to the name 
+		strpos($element->name, $element->type) === false		// and the type is not yet added to the name
 	){
 		$element->name	.= '_'.$element->type;
 	}
@@ -419,8 +419,8 @@ function removeElement(){
 	$elementId		= $_POST['elementindex'];
 
 	$wpdb->delete(
-		$formBuilder->elTableName,      
-		['id' => $elementId],           
+		$formBuilder->elTableName,
+		['id' => $elementId],
 	);
 
 	// Fix priorities
@@ -431,10 +431,10 @@ function removeElement(){
 	foreach($formBuilder->formElements as $key=>$el){
 		if($el->priority != $key+1){
 			//Update the database
-			$wpdb->update($formBuilder->elTableName, 
+			$wpdb->update($formBuilder->elTableName,
 				array(
 					'priority'	=> $key+1
-				), 
+				),
 				array(
 					'id'		=> $el->id
 				),
@@ -599,7 +599,7 @@ function saveFormInput(){
 	}
 	
 	//save to submission table
-	if(empty($formBuilder->formData->settings['save_in_meta'])){		
+	if(empty($formBuilder->formData->settings['save_in_meta'])){
 		//Get the id from db before insert so we can use it in emails and file uploads
 		$formBuilder->formResults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$formBuilder->submissionTableName}') AND table_schema='$wpdb->dbname'");
 		
@@ -626,7 +626,7 @@ function saveFormInput(){
 		$formBuilder->formResults['edittime']			= $creationDate;
 		
 		$wpdb->insert(
-			$formBuilder->submissionTableName, 
+			$formBuilder->submissionTableName,
 			array(
 				'form_id'			=> $formId,
 				'timecreated'		=> $creationDate,

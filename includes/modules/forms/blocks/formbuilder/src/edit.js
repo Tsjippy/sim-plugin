@@ -5,15 +5,17 @@ import {useState, useEffect} from "@wordpress/element";
 import {Panel, PanelBody, __experimentalInputControl as InputControl} from "@wordpress/components";
 import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 
-const Edit = ({attributes, setAttributes}) => {
+const Edit = ({attributes, setAttributes, context}) => {
+
 	const {formname} = attributes;
+	const {postId} = context;
 
 	const [html, setHtml] = useState('');
 
 	useEffect( 
 		async () => {
 			if(formname != undefined){
-				let response = await apiFetch({path: `${sim.restApiPrefix}/forms/form_builder?formname=${formname}`});
+				let response = await apiFetch({path: `${sim.restApiPrefix}/forms/form_builder?formname=${formname}&post=${postId}`});
 				setHtml( response );
 			}
 		} ,
@@ -30,7 +32,7 @@ const Edit = ({attributes, setAttributes}) => {
 			/>
 		}
 
-		return wp.element.RawHTML( { children: html })
+		return wp.element.RawHTML( { children: html.html })
 	}
 
 	return (

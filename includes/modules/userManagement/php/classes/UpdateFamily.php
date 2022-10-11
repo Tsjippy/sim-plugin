@@ -3,7 +3,7 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 class UpdateFamily{
-    function __construct($userId, $family, $oldFamily){
+    public function __construct($userId, $family, $oldFamily){
         $this->userId           = $userId;
         $this->family           = $family;
         $this->oldFamily        = $oldFamily;
@@ -13,7 +13,7 @@ class UpdateFamily{
         if(empty($this->userGender)){
             $this->userGender = 'male';
         }
-        
+
         if (isset($this->oldFamily['partner'])){
             $this->oldPartner = $this->oldFamily['partner'];
         }else{
@@ -31,9 +31,9 @@ class UpdateFamily{
 
         //Update the previous partner if needed
         if (
-            $this->oldPartner != null                           &&  // We had a spouse before  
+            $this->oldPartner != null                           &&  // We had a spouse before
             (
-                !isset($this->family['partner'])                ||  // There is no spouse anymore          
+                !isset($this->family['partner'])                ||  // There is no spouse anymore
                 $this->family['partner'] != $this->oldPartner       // The spouse has changed
             )
         ){
@@ -57,7 +57,7 @@ class UpdateFamily{
         //No children anymore, update the children and partner
         }elseif(isset($this->oldFamily["children"]) && isset($this->family['partner'])){
             //Remove children - for the partner as well
-            unset($this->partnerFamily["children"]);	
+            unset($this->partnerFamily["children"]);
         }
 
         // Update family picture
@@ -74,7 +74,7 @@ class UpdateFamily{
         $this->save();
     }
 
-    function updateWeddingDate(){
+    public function updateWeddingDate(){
         if(!class_exists('SIM\EVENTS\CreateEvents')){
             return;
         }
@@ -91,11 +91,11 @@ class UpdateFamily{
         $events->createCelebrationEvent('Wedding anniversary', $this->userId, 'family[weddingdate]', $this->family['weddingdate']);
     }
 
-    function updatePartner(){
+    public function updatePartner(){
         if($this->family['partner'] != $this->oldPartner){
             //Store curent user as partner of the partner
             $this->partnerFamily['partner'] = $this->userId;
-            
+
             //If I am updating this user to have a partner and that partner has children adds them to the current user as well
             if (isset($this->partnerFamily['children']) && !isset($this->family['children']) && !isset($this->oldFamily['children'])){
                 //Add the children of the partner to this user as well.
@@ -104,7 +104,7 @@ class UpdateFamily{
         }
     }
 
-    function updateOldPartner(){
+    public function updateOldPartner(){
         $oldPartnerFamily = get_user_meta( $this->oldPartner, 'family', true );
         if (is_array($oldPartnerFamily)){
             unset($oldPartnerFamily["partner"]);
@@ -112,24 +112,24 @@ class UpdateFamily{
         }
     }
 
-    function removeChildren(){
+    public function removeChildren(){
         if(!is_array($this->family["children"])){
             $this->family["children"] = [];
         }
-        
+
         //get the removed children
         $childDiff	= array_diff($this->oldFamily["children"], $this->family["children"]);
-        
+
         //Loop over the removed children
         foreach($childDiff as $child){
             //Get the childs family array
             $childFamily = get_user_meta( $child, 'family', true );
-                    
+
             //Remove the parents for this child
             if (is_array($childFamily)){
                 unset($childFamily["father"]);
                 unset($childFamily["mother"]);
-                
+
                 //Save in DB
                 if(empty($childFamily)){
                     //delete the family entry if its empty
@@ -141,15 +141,15 @@ class UpdateFamily{
         }
     }
 
-    function addChildren(){
+    public function addChildren(){
         //get the added children
         $childDiff	= array_diff((array)$this->family["children"], (array)$this->oldFamily["children"]);
-                    
+
         //Loop over the added children
         foreach($childDiff as $child){
             //Get the childs family array
             $childFamily = (array)get_user_meta( $child, 'family', true );
-            
+
             //Store current user as parent of the child
             if($this->userGender == 'male'){
                 $childFamily["father"]  = $this->userId;
@@ -157,7 +157,7 @@ class UpdateFamily{
             }else{
                 $childFamily["mother"]  = $this->userId;
                 $otherParent            = 'father';
-                
+
             }
 
             if (isset($this->family['partner'])){
@@ -168,14 +168,14 @@ class UpdateFamily{
             //Save in DB
             update_user_meta( $child, 'family', $childFamily);
         }
-            
+
         //Store child - for current users partner as well
         if (isset($this->family['partner'])){
             $this->partnerFamily["children"] = $this->family["children"];
         }
     }
 
-    function changeFamilyPicture(){
+    public function changeFamilyPicture(){
         // Hide profile picture by default from media galery
         $pictureId	=  $this->family['picture'][0];
         if(is_numeric($pictureId)){
@@ -184,19 +184,19 @@ class UpdateFamily{
 
         do_action('sim_update_family_picture', $this->userId, $this->family['picture'][0]);
 
-        if (isset($this->family['partner'])){                
+        if (isset($this->family['partner'])){
             $this->partnerFamily['picture']	= $this->family['picture'];
         }
     }
 
-    function save(){
+    public function save(){
         //Save the family array
         $this->savefamilyIndb($this->userId, $this->family);
         if (isset($this->family['partner'])){
             //Save the partners family array
             update_user_meta( $this->family['partner'], 'family', $this->partnerFamily);
         }
-        
+
         //update user page if needed
         if(function_exists('SIM\USERPAGE\createUserPage')){
             SIM\USERPAGE\createUserPage($this->userId);
@@ -204,7 +204,7 @@ class UpdateFamily{
     }
 
     //Save in db
-    function savefamilyIndb(){
+    public function savefamilyIndb(){
         if(is_array($this->family)){
             SIM\cleanUpNestedArray($this->family);
         }

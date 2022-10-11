@@ -69,7 +69,7 @@ add_filter('sim-forms-elements', function($elements, $displayFormResults){
 }, 10, 2);
 
 // Display the date selector in the form
-add_filter('sim-forms-element-html', function($html, $element, $formBuilderForm){
+add_filter('sim-forms-element-html', function($html, $element){
     if($element->type == 'booking_selector'){
         $bookingDetails = maybe_unserialize($element->booking_details);
 
@@ -118,7 +118,7 @@ add_filter('sim-forms-element-html', function($html, $element, $formBuilderForm)
                 $html   .= "<input type='date' name='booking-enddate' disabled $required>";
             $html   .= "</div>";
             $html   .= "<button class='button change-booking-date' type='button'>$buttonText</button>";
-        $html   .= "</div>"; 
+        $html   .= "</div>";
 
         wp_enqueue_script('sim-bookings');
 
@@ -128,9 +128,9 @@ add_filter('sim-forms-element-html', function($html, $element, $formBuilderForm)
         foreach($subjects as $subject){
             $html   .= $booking->dateSelectorModal($subject);
         }
-    }  
+    }
     return $html;
-}, 10, 3);
+}, 10, 2);
 
 // Form settings
 add_action('sim-forms-form-settings-form', function($formBuilderForm){

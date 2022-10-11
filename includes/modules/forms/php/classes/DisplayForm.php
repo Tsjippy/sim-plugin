@@ -6,7 +6,7 @@ class DisplayForm extends SubmitForm{
 	use ElementHtml;
 	use CreateJs;
 
-	function __construct($atts=[]){
+	public function __construct($atts=[]){
 		parent::__construct();
 
 		$this->isFormStep				= false;
@@ -24,14 +24,14 @@ class DisplayForm extends SubmitForm{
 
 	/**
 	 * Check if we are editing on behalf of someone else, and we have permission for that
-	 * 
+	 *
 	 */
-	function getUserId($atts=[]){
+	protected function getUserId($atts=[]){
 		if(
 			array_intersect($this->userRoles, $this->submitRoles) 	&&	// we have the permission to submit on behalf on someone else
-			!empty(($_GET['userid']))								&& 
+			!empty(($_GET['userid']))								&&
 			is_numeric($_GET['userid'])								&& // and the userid parameter is set in the url
-			empty($atts['userid'])										// and the user id is not given in the shortcode 
+			empty($atts['userid'])										// and the user id is not given in the shortcode
 		){
 			$this->userId	= $_GET['userid'];
 		}
@@ -39,11 +39,11 @@ class DisplayForm extends SubmitForm{
 	
 	/**
 	 * Renders the html for element who can have multiple inputs
-	 * 
+	 *
 	 * @param	object	$element		The element
 	 * @param	int		$width			The width of the elements
 	 */
-	function processMultiFields($element, $width){
+	protected function processMultiFields($element, $width){
 		$class	= 'inputwrapper';
 
 		//Check if element needs to be hidden
@@ -80,7 +80,7 @@ class DisplayForm extends SubmitForm{
 			}
 		}
 		
-		if(in_array($element->type, $this->nonInputs)){	
+		if(in_array($element->type, $this->nonInputs)){
 			//Get the field values of the next element as this does not have any
 			$values		= $this->getFieldValues($this->nextElement);
 		}else{
@@ -139,13 +139,13 @@ class DisplayForm extends SubmitForm{
 
 	/**
 	 * Build all html for a particular elemnt including edit controls.
-	 * 
+	 *
 	 * @param	object	$element		The element
 	 * @param	int		$key			The key in case of a multi element. Default 0
-	 * 
+	 *
 	 * @return	string					The html
 	 */
-	function buildHtml($element, $key=0){
+	public function buildHtml($element, $key=0){
 		if(isset($this->formElements[$key-1])){
 			$this->prevElement		= $this->formElements[$key-1];
 		}else{
@@ -306,12 +306,12 @@ class DisplayForm extends SubmitForm{
 			return $html;
 		}
 		
-		//we have not started a wrap	
+		//we have not started a wrap
 		//only close wrap if the current element is not wrapped or it is the last
 		if(!$element->wrap || !is_object($this->nextElement)){
 			//close the label element after the field element or if this the last element of the form and a label
 			if(
-				$this->wrap == 'label' || 
+				$this->wrap == 'label' ||
 				($element->type == 'label' && !is_object($this->nextElement))
 			){
  				$html .= "</label>";
@@ -327,7 +327,7 @@ class DisplayForm extends SubmitForm{
 	/**
 	 * Show the form
 	 */
-	function showForm(){
+	public function showForm(){
 		//Load conditional js if available and needed
 		if($_SERVER['HTTP_HOST'] == 'localhost'){
 			$jsPath		= $this->jsFileName.'.js';
@@ -373,7 +373,7 @@ class DisplayForm extends SubmitForm{
 				$html	.= "<button type='button' class='button small formbuilder-switch'>Switch to formbuilder</button>";
 			}
 		
-			$html	.= "<h3>$formName</h3>";	
+			$html	.= "<h3>$formName</h3>";
 
 			if(array_intersect($this->userRoles, $this->submitRoles) && !empty($this->formData->settings['save_in_meta'])){
 				$html	.= SIM\userSelect("Select an user to show the data of:");
@@ -384,7 +384,7 @@ class DisplayForm extends SubmitForm{
 				$html	.= "<div class='form_elements'>";
 					$html	.= "<input type='hidden' name='formid' value='{$this->formData->id}'>";
 					$html	.= "<input type='hidden' name='formurl' value='".SIM\currentUrl()."'>";
-					$html	.= "<input type='hidden' name='userid' value='$this->userId'>";	
+					$html	.= "<input type='hidden' name='userid' value='$this->userId'>";
 					foreach($this->formElements as $key=>$element){
 						$html	.= $this->buildHtml($element, $key);
 					}

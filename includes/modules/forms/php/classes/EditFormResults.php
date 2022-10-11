@@ -3,11 +3,6 @@ namespace SIM\FORMS;
 use SIM;
 
 class EditFormResults extends DisplayFormResults{
-
-	function __construct(){
-		parent::__construct();
-	}
-
 	/**
 	 * Update an existing form submission
 	 *
@@ -15,7 +10,7 @@ class EditFormResults extends DisplayFormResults{
 	 *
 	 *  @return	true|WP_Error		The result or error on failure
 	 */
-	function updateSubmissionData($archive=false){
+	public function updateSubmissionData($archive=false){
 		global $wpdb;
 
 		$submissionId	= $this->formResults['id'];
@@ -103,7 +98,7 @@ class EditFormResults extends DisplayFormResults{
 				$triggerName	= $matches[1];
 			}
 			
-			//check if we need to transform a keyword to a date 
+			//check if we need to transform a keyword to a date
 			$pattern = '/%([^%;]*)%/i';
 			//Execute the regex
 			preg_match_all($pattern, $triggerValue,$matches);
@@ -130,7 +125,7 @@ class EditFormResults extends DisplayFormResults{
 					//loop over all multi values
 					foreach($this->formResults[$fieldMainName] as $subId=>$sub){
 						//we found a match for a sub entry, archive it
-						$val	= $sub[$triggerName];						
+						$val	= $sub[$triggerName];
 						if(
 							$val == $triggerValue || 						//value is the same as the trigger value or
 							(
@@ -163,10 +158,10 @@ class EditFormResults extends DisplayFormResults{
 
 	/**
 	 * Checks if all sub entries are archived, if so archives the whole
-	 * 
+	 *
 	 * @param	object	$data	the data to check
 	 */
-	function checkIfAllArchived($data){
+	public function checkIfAllArchived($data){
 		//check if all subfields are archived or empty
 		$allArchived = true;
 
@@ -196,7 +191,7 @@ class EditFormResults extends DisplayFormResults{
 	 *
 	 * @return	int|WP_Error			The number of rows updated, or an WP_Error on error.
 	 */
-	function deleteSubmission($submissionId){
+	public function deleteSubmission($submissionId){
 		global $wpdb;
 
 		if(!isset($this->formData) || $this->formData == null){

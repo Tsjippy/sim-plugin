@@ -4,7 +4,7 @@ use SIM;
 use WP_Error;
 
 class FrontEndContent{
-	function __construct(){
+	public function __construct(){
 		$this->postId			= $_GET['post_id'];
 		$this->user 			= wp_get_current_user();
 		$this->post 			= null;
@@ -16,22 +16,22 @@ class FrontEndContent{
 		$this->postParent 		= null;
 		$this->postImageId		= 0;
 		$this->lite 			= false;
-		
+
 		if($this->user->has_cap( 'edit_others_posts' )){
 			$this->fullrights		= true;
 		}else{
 			$this->fullrights		= false;
 		}
-		
+
 		if(get_class($this) == __NAMESPACE__.'\FrontEndContent'){
 			//Add tinymce plugin
 			add_filter('mce_external_plugins', array($this, 'addTinymcePlugin'),999);
-			
+
 			//add tinymce button
 			add_filter('mce_buttons', array($this,'registerButtons'));
 		}
 	}
-	
+
 	/**
 	 *
 	 * Renders the form to edit existing content or create new content
@@ -39,49 +39,49 @@ class FrontEndContent{
 	 * @return   string     The form html
 	 *
 	**/
-	function frontendPost($hide=false){
+	public function frontendPost($hide=false){
 		if(!function_exists('_wp_translate_postdata')){
-			include ABSPATH . 'wp-admin/includes/post.php';
+			include_once ABSPATH . 'wp-admin/includes/post.php';
 		}
-		
+
 		//Load js
 		wp_enqueue_style('sim_frontend_style');
 		wp_enqueue_script('sim_frontend_script');
 		wp_enqueue_media();
-		
+
 		ob_start();
-		
+
 		$this->fillPostData();
-		
+
 		//Show warning if not allowed to edit
 		$this->hasEditRights();
 		if(!$this->editRight && is_numeric($_GET['post_id'])){
 			return '<div class="error">You do not have permission to edit this page.</div>';
 		}
-		
+
 		//Show warning if someone else is editing
 		$currentEditingUser = wp_check_post_lock($_GET['post_id']);
 		if(is_numeric($currentEditingUser)){
 			header("Refresh: 30;");
 			return "<div class='error' id='	'>".get_userdata($currentEditingUser)->display_name." is currently editing this {$this->postType}, please wait.<br>We will refresh this page every 30 seconds to see if you can go ahead.</div>";
 		}
-		
+
 		//Current time minus last modified time
 		$secondsSinceUpdated = time()-get_post_modified_time('U', true, $this->post);
-		
+
 		//Show warning when post has been updated recently
 		if($secondsSinceUpdated < 3600 && $secondsSinceUpdated > -1){
 			$minutes = intval($secondsSinceUpdated/60);
 			echo "<div class='warning'>This {$this->postType} has been updated <span id='minutes'>$minutes</span> minutes ago.</div>";
 		}
-		
+
 		//Show warning when post is in trash
 		if($this->post->post_status == 'trash'){
 			echo "<div class='warning'>This {$this->postType} has been deleted.<br>You can republish if that should not be the case.</div>";
 		}
 
 		?>
-		<div id="frontend_upload_form" <?php if($hide){ echo 'class="hidden"';}?> style='margin-top: 10px;'>			
+		<div id="frontend_upload_form" <?php if($hide){ echo 'class="hidden"';}?> style='margin-top: 10px;'>
 			<?php
 			if(!$this->lite){
 				$hidden = 'hidden';
@@ -100,9 +100,9 @@ class FrontEndContent{
 				$this->update	= 'true';
 			}
 			echo "<button class='button sim $hidden show' id='showallfields'>Show all fields</button>";
-			
+
 			$this->postTypeSelector();
-			
+
 			$this->addModals();
 			do_action('sim_frontend_post_modal');
 
@@ -116,22 +116,22 @@ class FrontEndContent{
 				<input type="hidden" name="post_image_id" 	value="<?php echo $this->postImageId;?>">
 				<input type="hidden" name="update" 			value="<?php echo $this->update;?>">
 				<input type='hidden' name='post_id' 		value='<?php echo $this->postId;?>'>
-				
+
 				<h4>Title</h4>
 				<input type="text" name="post_title" class='block' value="<?php echo $this->postTitle;?>" required>
-				
+
 				<?php
 				do_action('sim_frontend_post_before_content', $this);
-				
+
 				$this->postCategories();
-				
+
 				$categories	= get_categories( array(
 					'orderby' 		=> 'name',
 					'order'   		=> 'ASC',
 					'taxonomy'		=> 'attachment_cat',
 					'hide_empty' 	=> false,
 				) );
-				
+
 				$this->showCategories('attachment', $categories);
 
 				?>
@@ -140,7 +140,7 @@ class FrontEndContent{
 					//Existing media
 					if(is_numeric($this->postId)){
 						$image	= wp_get_attachment_image($this->postId);
-						
+
 						echo "<h4>Attachment preview</h4>";
 						echo apply_filters('sim_attachment_preview', $image, $this->postId);
 					}else{
@@ -152,16 +152,16 @@ class FrontEndContent{
 					}
 					?>
 				</div>
-				
+
 		 		<div id="featured-image-div" <?php if($this->postImageId == 0){echo ' class="hidden"';}?>>
 					<h4 name="post_image_label">Featured image:</h4>
 
 					<span id='featured_image_wrapper'>
-						<?php 
+						<?php
 						if($this->postImageId != 0){
 							echo get_the_post_thumbnail(
-								esc_html($this->postId), 
-								'thumbnail', 
+								esc_html($this->postId),
+								'thumbnail',
 								array(
 									'title' => 'Featured Image',
 									'class' => 'postimage'
@@ -175,7 +175,7 @@ class FrontEndContent{
 					</span>
 					<button type='button' class='remove_featured_image button'>X</button>
 				</div>
-				
+
 				<?php
 				//Content wrapper
 				if($this->lite){
@@ -189,16 +189,16 @@ class FrontEndContent{
 						if($this->postType != 'post' && $this->postType != 'page'){
 							$class .= ' hidden';
 						}
-						
+
 						echo "<h4 class='$class' name='post_content_label'>";
 							echo  '<span class="capitalize replaceposttype">'.ucfirst($this->postType).'</span> content';
 						echo "</h4>";
 
 						echo "<h4 class='property attachment hidden' name='attachment_content_label'>Description:</h4>";
-						
+
 						do_action('sim_frontend_post_content_title', $this->postType);
 					echo "</div>";
-					
+
 					//make it possible to select or upload a featured image
 					if ( current_user_can( 'upload_files' ) ) {
 						add_action(
@@ -209,7 +209,7 @@ class FrontEndContent{
 							5
 						);
 					}
-					
+
 					//output tinymce window
 					$settings = array(
 						'wpautop'					=> false,
@@ -221,33 +221,33 @@ class FrontEndContent{
 					echo  wp_editor($this->postContent, 'post_content', $settings);
 					?>
 				</div>
-				
+
 				<?php
 				try{
 					$this->contentManagerOptions();
 				}catch(\Exception $e) {
 					SIM\printArray($e);
 				}
-				
+
 				//Add a draft button for new posts
 				if($this->postId == null || ($this->post->post_status != 'publish' && $this->post->post_status != 'inherit')){
 					if($this->postId == null){
-						$button_text = "Save <span class='replaceposttype'>{$this->post_name}</span> as draft";
+						$buttonText = "Save <span class='replaceposttype'>{$this->post_name}</span> as draft";
 					}else{
-						$button_text = "Update this <span class='replaceposttype'>{$this->post_name}</span> draft";
+						$buttonText = "Update this <span class='replaceposttype'>{$this->post_name}</span> draft";
 					}
-					
+
 					echo "<div class='submit_wrapper' style='display: flex;'>";
-						echo "<button type='button' class='button savedraft' name='draft_post'>$button_text</button>";
+						echo "<button type='button' class='button savedraft' name='draft_post'>$buttonText</button>";
 						echo "<img class='loadergif hidden' src='".LOADERIMAGEURL."' loading='lazy'>";
 					echo "</div>";
-					
+
 				}
 				echo  SIM\addSaveButton('submit_post', $this->action);
 				?>
 			</form>
 			<?php
-						
+
 			//Only show delete button for existing posts and not yet deleted
 			if($this->postId != null && $this->post->post_status != 'trash' && $this->fullrights){
 				?>
@@ -259,13 +259,13 @@ class FrontEndContent{
 						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt='' loading='lazy'>
 					</form>
 				</div>
-				<?php 
-			} 
+				<?php
+			}
 			?>
 		</div>
-		
+
 		<?php
-		
+
 		return ob_get_clean();
 	}
 
@@ -277,17 +277,17 @@ class FrontEndContent{
 	 * @return   array     			Array of new plugins
 	 *
 	**/
-	function addTinymcePlugin($plugins) {		
-		wp_localize_script( 'sim_frontend_script', 
-			'userSelect', 
+	public function addTinymcePlugin($plugins) {
+		wp_localize_script( 'sim_frontend_script',
+			'userSelect',
 			['html'=>SIM\userSelect("Select a person to show the link to",true)],
 		);
 
 		$plugins['select_user'] = plugins_url("../js/tiny_mce.js?ver=".MODULE_VERSION, __DIR__);
-		
+
 		return $plugins;
 	}
-	
+
 	/**
 	 *
 	 * Add a new button to the TinyMCE window to select an user and insert a user shortcode
@@ -296,22 +296,22 @@ class FrontEndContent{
 	 * @return   array     			Array of new buttons
 	 *
 	**/
-	function registerButtons($buttons) {
+	public function registerButtons($buttons) {
 		array_push($buttons, 'select_user');
 		return $buttons;
 	}
-	
+
 	/**
 	 *
 	 * Checks whether the current user has edit rights for the current post
 	 *
-	 * @return   boolean  true|false   
-	 *  
+	 * @return   boolean  true|false
+	 *
 	 *
 	**/
-	function hasEditRights(){
+	public function hasEditRights(){
 		//Only set this once
-		if(!isset($this->editRight)){				
+		if(!isset($this->editRight)){
 			//Check if allowed to edit this
 			if(
 				!allowedToEdit($this->post)										&&
@@ -325,13 +325,13 @@ class FrontEndContent{
 			$this->editRight	= apply_filters('sim_frontend_content_edit_rights', $this->editRight, $this->postCategory);
 		}
 	}
-	
+
 	/**
 	 *
-	 * Fills the submit form with existing option values of the current post 
+	 * Fills the submit form with existing option values of the current post
 	 *
 	**/
-	function fillPostData(){
+	public function fillPostData(){
 		//Load existing post data
 		if(is_numeric($this->postId)){
 			// Check if there are pending changes
@@ -340,7 +340,7 @@ class FrontEndContent{
 				'post_type'   => 'change',
 				'post_status' => 'inherit',
 			);
-		
+
 			$revisions = get_children( $args );
 
 			if(empty($revisions)){
@@ -359,19 +359,19 @@ class FrontEndContent{
 			$this->postContent 									= $this->post->post_content;
 			$this->postImageId									= get_post_thumbnail_id($this->postId);
 		}
-		
+
 		if(!empty($_GET['type'])){
 			$this->postType 	= $_GET['type'];
 		}
-		
+
 		$this->postName 										= str_replace("_lite","",$this->postType);
 		$this->postCategory 									= $this->post->post_category;
-		
+
 		//show lite version of location by default
 		if($this->postName == 'location' && $this->postContent == '' || strpos($this->postType, '_lite') !== false){
 			$this->lite 		= true;
 		}
-		
+
 		if($this->fullrights){
 			if($this->postId == null || ($this->post->post_status != 'publish' && $this->post->post_status != 'inherit')){
 				$this->action = "Publish <span class='replaceposttype'>{$this->postName}</span>";
@@ -388,16 +388,16 @@ class FrontEndContent{
 	 * Prints pending changes to the screen
 	 *
 	**/
-	function showChanges(){
+	public function showChanges(){
 		if($this->update && $this->post->post_type == 'change'){
 			// Get changes in title and content
 			if(!function_exists('wp_get_revision_ui_diff')){
 				include_once ABSPATH . 'wp-admin/includes/revision.php';
 			}
 
-			add_filter( "_wp_post_revision_field_post_content", function($text, $field, $compare_to, $context){
+			add_filter( "_wp_post_revision_field_post_content", function($text){
 				return preg_replace('/<!-- .* -->/i', '', $text);
-			}, 10, 4);
+			});
 
 			$result		= wp_get_revision_ui_diff($this->post->post_parent, $this->post->post_parent, $this->post->ID);
 
@@ -427,6 +427,7 @@ class FrontEndContent{
 
 				$meta	= trim(maybe_serialize($meta[0]));
 			}
+			unset($meta);
 
 			foreach($oldMeta as &$meta){
 				$meta[0]	= maybe_unserialize($meta[0]);
@@ -435,7 +436,8 @@ class FrontEndContent{
 				}
 
 				$meta	= trim(maybe_serialize($meta[0]));
-			} 
+			}
+			unset($meta);
 
 			$changed	= [];
 
@@ -450,7 +452,7 @@ class FrontEndContent{
 					$changed[$key]	= ['old'=>'', 'new'=>$meta];
 				}
 			}
-			
+
 			foreach(array_intersect($newMeta, $oldMeta) as $key=>$value){
 				if($oldMeta[$key] != $value){
 					if(is_array($newValue)){
@@ -515,7 +517,7 @@ class FrontEndContent{
 	 * Show a selector to select or change the post type
 	 *
 	**/
-	function postTypeSelector(){
+	public function postTypeSelector(){
 		//do not show for lite posts
 		if($this->lite){
 			return;
@@ -533,7 +535,7 @@ class FrontEndContent{
 		}
 
 		$postTypes	= get_post_types(['public'=>true]);
-		
+
 		$html	= "<h4>$labelText</h4>";
 		$html	.= "<select id='post_type_selector' name='post_type_selector' required>";
 
@@ -550,9 +552,9 @@ class FrontEndContent{
 			}
 			$html	.= "<option value='$postType' $selected>$typeName</option>";
 		}
-			
+
 		$html	.=	"</select>";
-	
+
 		if(is_numeric($this->postId)){
 			?>
 			<form action="" method="post" name="change_post_type">
@@ -568,13 +570,13 @@ class FrontEndContent{
 			echo  $html;
 		}
 	}
-	
+
 	/**
 	 *
 	 * Add a modal form to add a new category for the selected post type
 	 *
 	**/
-	function addModals(){
+	public function addModals(){
 		$postTypes		= apply_filters('sim_frontend_posting_modals', ['attachment']);
 
 		foreach($postTypes as $type){
@@ -596,12 +598,12 @@ class FrontEndContent{
 						<p>Please fill in the form to add a new <?php echo $type;?> category</p>
 						<input type="hidden" name="post_type" value="<?php echo $type;?>">
 						<input type="hidden" name="userid" value="<?php echo $this->user->ID; ?>">
-						
+
 						<label>
 							<h4>Category name<span class="required">*</span></h4>
 							<input type="text"  name="cat_name" class='wide' required>
 						</label>
-						
+
 						<h4>Parent category</h4>
 						<select class="" name='cat_parent'>
 							<option value=''>---</option>
@@ -614,8 +616,8 @@ class FrontEndContent{
 							}
 							?>
 						</select>
-						
-						
+
+
 						<?php echo SIM\addSaveButton('add_'.$type.'_type', "Add $type category"); ?>
 					</form>
 				</div>
@@ -623,13 +625,13 @@ class FrontEndContent{
 			<?php
 		}
 	}
-	
+
 	/**
 	 *
 	 * Show the post categories
 	 *
 	**/
-	function postCategories(){
+	public function postCategories(){
 		$categories = get_categories( array(
 			'orderby' => 'name',
 			'order'   => 'ASC',
@@ -659,11 +661,11 @@ class FrontEndContent{
 					if(is_array($this->postCategory) && in_array($catId, $this->postCategory)){
 						$checked 	= 'checked';
 					}
-					
+
 					echo "<div class='$class'>";
-					
+
 						echo "<input type='checkbox' name='category_id[]' value='$catId' $checked>";
-					
+
 						echo "<label class='option-label category-select'>$name</label>";
 
 						if(!empty($catDescription)){
@@ -677,13 +679,13 @@ class FrontEndContent{
 		</div>
 		<?php
 	}
-	
+
 	/**
 	 *
 	 * Adds fields specific for the post post_type
 	 *
 	**/
-	function postSpecificFields(){
+	public function postSpecificFields(){
 		?>
 		<div id="post-attributes"  class="property post<?php if($this->postType != 'post'){echo ' hidden';}?>">
 			<div id="expirydate_div" class="frontendform">
@@ -696,27 +698,27 @@ class FrontEndContent{
 		</div>
 		<?php
 	}
-	
+
 	/**
 	 *
 	 * Adds fields specific for the page post_type
 	 *
 	**/
-	function pageSpecificFields(){
+	public function pageSpecificFields(){
 		?>
 		<div id="page-attributes" class="property page<?php if($this->postType != 'page'){echo ' hidden';}?>">
 			<div id="parentpage" class="frontendform">
 				<h4>Select a parent page</h4>
-				<?php 
+				<?php
 				echo SIM\pageSelect('parent_page', $this->postParent, '', ['page'], false);
 				?>
 			</div>
 
 			<?php
 			do_action('sim_page_specific_fields', $this->postId);
-			?>			
+			?>
 			<div id="static_content" class="frontendform">
-				<h4>Update warnings</h4>	
+				<h4>Update warnings</h4>
 				<label>
 					<input type='checkbox' name='static_content' value='static_content' <?php if(get_post_meta($this->postId,'static_content',true) != ''){echo 'checked';}?>>
 					Do not send update warnings for this page
@@ -725,7 +727,7 @@ class FrontEndContent{
 		</div>
 		<?php
 	}
-	
+
 	/**
 	 *
 	 * Display the categories for a specific post_type
@@ -734,7 +736,7 @@ class FrontEndContent{
 	 * @param    array     	$categories	Array of categories
 	 *
 	**/
-	function showCategories($type, $categories){
+	public function showCategories($type, $categories){
 		?>
 		<div class="property <?php echo $type; if($this->postType != $type){echo ' hidden';} ?>">
 			<div class="frontendform">
@@ -744,7 +746,7 @@ class FrontEndContent{
 					$parentCategoryHtml 	= '';
 					$childCategoryHtml 		= '';
 					$hidden					= 'hidden';
-				
+
 					foreach($categories as $category){
 						$name 				= str_replace('-', ' ', ucfirst($category->slug));
 						$catId 				= $category->cat_ID;
@@ -753,7 +755,7 @@ class FrontEndContent{
 						$checked			= '';
 						$class				= 'infobox';
 						$taxonomy			= $category->taxonomy;
-						
+
 						//This category is a not a child
 						if($parent == 0){
 							$html = 'parentCategoryHtml';
@@ -761,41 +763,41 @@ class FrontEndContent{
 						}else{
 							$html = 'childCategoryHtml';
 						}
-						
+
 						//if this cat belongs to this post
 						if(has_term($catId, $taxonomy, $this->postId)){
 							$checked = 'checked';
-							
+
 							//If this type has child types, show the label
 							if(count(get_term_children($category->cat_ID, $taxonomy))>0){
 								$hidden = '';
 							}
 						}
-						
+
 						//if this is a child, hide it and attach the parent id as attribute
 						if($parent != 0){
 							//Hide subcategory if parent is not in the cat array
 							if(!has_term($parent, $taxonomy, $this->postId)){
 								$class .= " hidden";
 							}
-							
+
 							//Store cat parent
 							$class .= "' data-parent='$parent";
 						}
-						
+
 						//$$html --> use the value of $html as variable name
 						$$html .= "<div class='$class'>";
 							$checkboxClass = "{$type}type";
 							if(count(get_term_children($category->cat_ID, $taxonomy)) > 0){
 								$checkboxClass .= " parent_cat";
 							}
-						
+
 							//Name of the category
 							$$html .= "<label class='option-label category-select'>";
 								$$html .= "<input type='checkbox' class='$checkboxClass' name='{$taxonomy}_ids[]' value='$catId' $checked>";
 								$$html .= $name;
 							$$html .= "</label>";
-							
+
 							//Add infobox if needed
 							if(!empty($catDescription)){
 								$$html .= "<span class='info_text'>$catDescription</span>";
@@ -803,7 +805,7 @@ class FrontEndContent{
 
 						$$html .= '</div>';
 					}
-					
+
 					?>
 					<div id='<?php echo $type;?>_parenttypes'>
 						<?php
@@ -811,9 +813,9 @@ class FrontEndContent{
 						?>
 						<button type='button' name='add_<?php echo $type;?>_type_button' class='button add_cat' data-type='<?php echo $type;?>'>Add category</button>
 					</div>
-					
+
 					<label id='subcategorylabel' class='frontend-profile-label <?php echo $hidden ?>'>Sub-category</label>
-					
+
 					<div id='<?php echo $type;?>_childtypes' class='childtypes'>
 						<?php
 						echo $childCategoryHtml;
@@ -830,32 +832,32 @@ class FrontEndContent{
 	 * Adds options specific for content managers
 	 *
 	**/
-	function contentManagerOptions(){		
+	public function contentManagerOptions(){
 		if($this->fullrights){
 			$hidden			= '';
 		}else{
 			$hidden			= 'hidden';
 		}
-		
+
 		$buttontext			= 'Show';
-		
+
 		if(empty($hidden)){
 			$buttontext		= 'Hide';
 		}
-		
+
 		?>
 		<button type="button" class="button" id="advancedpublishoptionsbutton" style='display:block; margin-top:15px;'><span><?php echo $buttontext;?></span> advanced options</button>
-		
+
 		<div class="advancedpublishoptions <?php echo $hidden;?>">
-			<?php	
-			// Show change author dropdown 
+			<?php
+			// Show change author dropdown
 			$authorId	= $this->post->post_author;
 			if(!is_numeric($authorId)){
 				$authorId = $this->user->ID;
 			}
 
 			echo SIM\userSelect('Author', true, false, '', 'post_author', [], $authorId);
-			
+
 			// Only show publish date if not yet published
 			if(!in_array($this->post->post_status, ['publish', 'inherit'])){
 				if(empty($this->post)){
@@ -874,51 +876,51 @@ class FrontEndContent{
 			}
 
 			$this->postSpecificFields();
-			
+
 			$this->pageSpecificFields();
-				
+
 			do_action('sim_frontend_post_after_content', $this);
 			?>
 		</div>
 		<?php
 	}
-	
+
 	/**
 	 *
 	 * saves base64 images as images and adds them to the library
 	 *
 	 * @param    array     $matches	Array of matches from a regex
-	 * 
+	 *
 	 * @return   string     		Image url
 	 *
 	**/
-	function uploadImages($matches) {
+	public function uploadImages($matches) {
 		$ext 			= $matches[1];
 		$filename 		= "frontend_picture";
 		$basedir 		= wp_upload_dir()['basedir'];
 		$newFilePath 	= "$basedir/$filename.$ext";
 		$i 				= 0;
 		$uploadId		= 0;
-		
+
 		//Find an available filename
 		while( file_exists( $newFilePath ) ) {
 			$i++;
 			$newFilePath = "$basedir/$filename"."_$i.$ext";
 		}
-		
+
 		//Decode the base64
 		$fileContents = base64_decode(substr_replace($matches[2] ,"",-1));
-		
+
 		//Only continue if the decoding was succesfull
 		if( $fileContents !== false){
 			//Save the image in the uploads folder
 			file_put_contents($newFilePath, $fileContents);
-			
+
 			SIM\addToLibrary($newFilePath);
 		}else{
 			SIM\printArray('Not a valid image');
 		}
-		
+
 		//Return the image url
 		$url = wp_get_attachment_image_url($uploadId, '');
 		return '"'.$url;
@@ -926,11 +928,11 @@ class FrontEndContent{
 
 	/**
 	 * Store categories of custom post type
-	 * 
+	 *
 	 * @param	string	$taxonomy	The name of the categorie taxonomy
-	 * 
+	 *
 	 */
-	function storeCustomCategories($post, $taxonomy){
+	public function storeCustomCategories($post, $taxonomy){
 		$cats = [];
 		if(isset($_POST[$taxonomy.'_ids']) && is_array($_POST[$taxonomy.'_ids'])){
 			foreach($_POST[$taxonomy.'_ids'] as $catId) {
@@ -938,10 +940,10 @@ class FrontEndContent{
 					$cats[] = $catId;
 				}
 			}
-			
+
 			//Make sure we only send integers
 			$cats = array_map( 'intval', $cats );
-			
+
 			// Store
 			wp_set_post_terms($post->ID, $cats, $taxonomy);
 		}
@@ -950,12 +952,12 @@ class FrontEndContent{
 	/**
 	 * Several checks and adjustments to the post contents
 	 */
-	function preparePostContent($postContent){
+	public function preparePostContent($postContent){
 		//Sanitize the post content
 		$postContent = wp_kses_post(wp_kses_stripslashes($postContent));
 
 		// Remove some tags
-		$postContent 	= preg_replace("/(&lt;|<)(del|ins) .*?(>|&gt;)/im", "", $postContent); 
+		$postContent 	= preg_replace("/(&lt;|<)(del|ins) .*?(>|&gt;)/im", "", $postContent);
 
 		// Checks for opening and closing formating tags
 		$tags	= ['b', 'strong', 'i', 'em', 'mark', 'small', 'sub', 'sup', 'span'];
@@ -984,7 +986,7 @@ class FrontEndContent{
 	/**
 	 * Update an existing post
 	 */
-	function updateExistingPost(){
+	public function updateExistingPost(){
 		$this->postId = $_POST['post_id'];
 
 		//Retrieve the old post data
@@ -1005,11 +1007,11 @@ class FrontEndContent{
 			// Load parent post data
 			$post = get_post($this->postId);
 		}
-		
+
 		$this->update = true;
-		
+
 		$newPostData = ['ID'=>$this->postId];
-		
+
 		//Check for updates
 		if($this->postTitle != $post->post_title){
 			//title
@@ -1067,10 +1069,10 @@ class FrontEndContent{
 		if($post->post_type != $this->postType && !in_array($post->post_type, ['revision', 'change'])){
 			return new WP_Error('frontend_contend', 'You can not change the post type like that!');
 		}
-		
+
 		//Create a revision post if we are updating an already published post
 		if($this->status == 'pending' && $post->post_status == 'publish'){
-			$this->actionText = 'updated'; 
+			$this->actionText = 'updated';
 
 			foreach($newPostData as $key=>$data){
 				$post->$key	= $data;
@@ -1102,7 +1104,7 @@ class FrontEndContent{
 					$url		= get_permalink($post->ID);
 					$email    	= new ApprovedPostMail($author->display_name, $post->post_type, $url);
 					$email->filterMail();
-						
+
 					//Send e-mail
 					wp_mail( $author->user_email, $email->subject, $email->message);
 				}
@@ -1117,7 +1119,7 @@ class FrontEndContent{
 	/**
 	 * Create a new post
 	 */
-	function createNewPost(){
+	public function createNewPost(){
 		$this->update		= false;
 		$this->actionText	= 'created';
 
@@ -1133,11 +1135,11 @@ class FrontEndContent{
 		if($this->postType == 'attachment'){
 			$this->postId 	= SIM\addToLibrary(SIM\urlToPath($_POST['attachment'][0]), $this->postTitle, $this->postContent);
 			$post['ID']	= $this->postId;
-		}else{				
+		}else{
 			if(is_numeric($_POST['parent_page'])){
 				$post['post_parent'] = $_POST['parent_page'];
 			}
-		
+
 			if(!empty(count($this->categories))){
 				$post['post_category'] = $this->categories;
 			}
@@ -1149,12 +1151,12 @@ class FrontEndContent{
 				$post['post_date'] 		= $publishDate;
 				$post['post_date_gmt'] 	= $publishDate;
 			}
-			
+
 			// Insert the post into the database.
 			$this->postId 	= wp_insert_post( $post, true, false);
 			$post['ID']		= $this->postId;
 		}
-		
+
 		if(is_wp_error($this->postId)){
 			return new WP_Error('Inserting post error', $this->postId->get_error_message());
 		}elseif($this->postId === 0){
@@ -1172,7 +1174,7 @@ class FrontEndContent{
 	 * @return   array|WP_Error     		Result message
 	 *
 	**/
-	function submitPost($status=''){
+	public function submitPost($status=''){
 		if($_POST['post_status'] == 'draft'){
 			$this->status = 'draft';
 		}elseif(empty($status)){
@@ -1192,14 +1194,14 @@ class FrontEndContent{
 		while(in_array($this->oldPost->post_type, ['change', 'revision'])){
 			$this->oldPost	= get_post($this->oldPost->post_parent);
 		}
-		
+
 		$this->postType 	= sanitize_text_field($_POST['post_type']);
-		
+
 		//First letter should be capital in the title
 		$this->postTitle 	= ucfirst(sanitize_text_field($_POST['post_title']));
-		
+
 		$this->postContent 	= $this->preparePostContent($_POST['post_content']);
-		
+
 		$this->categories = [];
 		if(is_array($_POST['category_id'])){
 			foreach($_POST['category_id'] as $categoryId) {
@@ -1210,7 +1212,7 @@ class FrontEndContent{
 		}
 
 		// Create the possibility of pre-publish checks
-		$error	= apply_filters('sim_frontend_content_validation', '', $this); 
+		$error	= apply_filters('sim_frontend_content_validation', '', $this);
 		if(is_wp_error($error)){
 			return $error;
 		}
@@ -1221,21 +1223,21 @@ class FrontEndContent{
 		}else{
 			$post	= $this->createNewPost();
 		}
-		
+
 		//Set the featured image
 		if(isset($_POST['post_image_id']) && $_POST['post_image_id'] != 0){
 			set_post_thumbnail($this->postId, $_POST['post_image_id']);
 		}elseif($this->update){
 			delete_post_thumbnail($this->postId);
 		}
-		
+
 		//Static content
 		if(isset($_POST['static_content'])){
-			update_metadata( 'post', $this->postId, 'static_content', true);		
+			update_metadata( 'post', $this->postId, 'static_content', true);
 		}else{
 			delete_post_meta($this->postId, 'static_content');
 		}
-		
+
 		//Expiry date
 		if(isset($_POST['expirydate'])){
 			if(empty($_POST['expirydate'])){
@@ -1254,11 +1256,11 @@ class FrontEndContent{
 			//store attachment categories
 			$this->storeCustomCategories($post, 'attachment_cat');
 		}
-		
+
 		do_action('sim_after_post_save', (object)$post, $this);
 
 		wp_after_insert_post( $post, $this->update, $this->oldPost );
-		
+
 		//Return result
 		if($this->status == 'publish'){
 			$message	= "Succesfully $this->actionText the $this->postType";
@@ -1267,7 +1269,7 @@ class FrontEndContent{
 		}elseif($_POST['publish_date'] > date('Y-m-d') && $this->status == 'future'){
 			$message	= "Succesfully $this->actionText the $this->postType, it will be published on ".date('d F Y', strtotime($_POST['publish_date'])).' 8 AM';
 		}else{
-			$message	= "Succesfully $this->actionText the $this->postType, it will be published after it has been reviewed";			
+			$message	= "Succesfully $this->actionText the $this->postType, it will be published after it has been reviewed";
 		}
 
 		return [
@@ -1276,27 +1278,27 @@ class FrontEndContent{
 			'post'		=> $post
 		];
 	}
-	
+
 	/**
 	 *
 	 * Removes an existing post
 	 * @return   string|WP_Error     		Result message
 	 *
 	**/
-	function removePost(){
+	public function removePost(){
 		$postId = $_POST['post_id'];
-		
+
 		$post		= wp_trash_post($postId);
-		
+
 		$postType	= get_post_type($post);
-		
+
 		if($postType){
 			return "Succesfully deleted $postType '{$post->post_title}'<br>You can leave this page now";
 		}else{
 			return new WP_Error('Post removal error', 'Something went wrong');
 		}
-	}	
-	
+	}
+
 	/**
 	 *
 	 * Change the type of an existing post
@@ -1304,9 +1306,9 @@ class FrontEndContent{
 	 * @return   string|WP_Error     		Result message
 	 *
 	**/
-	function changePostType(){
+	public function changePostType(){
 		$postType	= $_POST['post_type_selector'];
-		
+
 		$postId		= $_POST['postid'];
 
 		$result		= set_post_type($postId, $postType);
@@ -1323,14 +1325,14 @@ class FrontEndContent{
 
 	/**
 	 * Removes the parent from a post
-	 * 
-	 * @param	int		$postId	The WP_Post id	
+	 *
+	 * @param	int		$postId	The WP_Post id
 	 */
-	function removeParents($postId){
+	public function removeParents($postId){
 		if(has_post_parent($postId)){
 			wp_update_post(
 				array(
-					'ID'            => $postId, 
+					'ID'            => $postId,
 					'post_parent'   => 0
 				)
 			);

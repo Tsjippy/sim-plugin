@@ -5,7 +5,7 @@ use SIM;
 class AccountStatement{
 	public $postiePost;
 
-	function __construct($postiePost){
+	public function __construct($postiePost){
 		$this->post			= $postiePost;
 		$this->loginName	= '';
 		$this->postDate		= false;

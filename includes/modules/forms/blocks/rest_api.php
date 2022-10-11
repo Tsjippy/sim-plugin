@@ -4,9 +4,9 @@ use SIM;
 
 add_action( 'rest_api_init', function () {
 	// add element to form
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/form_selector', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/form_selector',
 		array(
 			'methods' 				=> 'GET',
 			'callback' 				=> 	__NAMESPACE__.'\showFormSelector',
@@ -15,9 +15,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// form builder
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/form_builder', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/form_builder',
 		array(
 			'methods' 				=> 'POST,GET',
 			'callback' 				=> 	__NAMESPACE__.'\showFormBuilder',
@@ -26,9 +26,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Get all forms
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/get_forms', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/get_forms',
 		array(
 			'methods' 				=> 'POST,GET',
 			'callback' 				=> 	__NAMESPACE__.'\getAllForms',
@@ -37,9 +37,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	 // Show form results
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/show_form_results', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/show_form_results',
 		array(
 			'methods' 				=> 'POST,GET',
 			'callback' 				=> 	__NAMESPACE__.'\showFormResults',
@@ -48,9 +48,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Add new form table
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/add_form_table', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/add_form_table',
 		array(
 			'methods' 				=> 'POST,GET',
 			'callback' 				=> 	function(){
@@ -62,9 +62,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Add new form table
-	register_rest_route( 
-		RESTAPIPREFIX.'/forms', 
-		'/missing_form_fields', 
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/missing_form_fields',
 		array(
 			'methods' 				=> 'POST,GET',
 			'callback' 				=> 	function($attributes){

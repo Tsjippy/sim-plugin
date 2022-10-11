@@ -69,7 +69,7 @@ class CreateEvents extends Events{
 		return true;
 	}
 
-	function calculateStartDate($repeatParam, $baseStartDate, $index){
+	protected function calculateStartDate($repeatParam, $baseStartDate, $index){
 		$weekDays	= [];
 		if(!empty($repeatParam['weekdays'])){
 			$weekDays		= (array)$repeatParam['weekdays'];
@@ -168,7 +168,7 @@ class CreateEvents extends Events{
 		return $startDate;
 	}
 
-	function createRepeatedEvents($baseStartDate){
+	protected function createRepeatedEvents($baseStartDate){
 		//first remove any existing events for this post
 		$this->removeDbRows();
 
@@ -240,7 +240,7 @@ class CreateEvents extends Events{
 	/**
 	 * Deletes old celebration events
 	 * @param  	int  	$postId		WP_Post if
-	 * @param	string	$date		date string 
+	 * @param	string	$date		date string
 	 * @param	int		$userId		WP_User id
 	 * @param	string	$type		the anniverasry type
 	 * @param	string	$title		the event title
@@ -339,7 +339,7 @@ class CreateEvents extends Events{
 		$this->createEvents();
 	}
 
-	function createCelebrationPost($user, $metaValue, $title, $type, $eventIdMetaKey){
+	protected function createCelebrationPost($user, $metaValue, $title, $type, $eventIdMetaKey){
 		//Get the upcoming celebration date
 		$startdate								= date(date('Y').'-m-d', strtotime($metaValue));
 
@@ -411,7 +411,7 @@ class CreateEvents extends Events{
 
 		$this->postId					= $post->ID;
 	
-		$event							= $_POST['event'];	
+		$event							= $_POST['event'];
 		$event['allday']				= sanitize_text_field($event['allday']);
 		$event['startdate']				= sanitize_text_field($event['startdate']);
 		$event['starttime']				= sanitize_text_field($event['starttime']);
@@ -443,7 +443,7 @@ class CreateEvents extends Events{
 		}
 		if($oldMeta != $event){
 			//store meta in db
-			update_metadata( 'post', $this->postId, 'eventdetails', json_encode($event));	
+			update_metadata( 'post', $this->postId, 'eventdetails', json_encode($event));
 		}
 	}
 
@@ -457,7 +457,7 @@ class CreateEvents extends Events{
 		//check if form row already exists
 		if(!$wpdb->get_var("SELECT * FROM {$this->tableName} WHERE `post_id` = '{$this->postId}' AND startdate = '$startdate'")){
 			$wpdb->insert(
-				$this->tableName, 
+				$this->tableName,
 				array(
 					'post_id'			=> $this->postId,
 					'startdate'			=> $startdate

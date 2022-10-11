@@ -3,7 +3,7 @@ namespace SIM\MEDIAGALLERY;
 use SIM;
 
 class MediaGallery{
-    function __construct($types=['image'], $amount=3, $cats=[], $rand=true, $page=1, $search=''){
+    public function __construct($types=['image'], $amount=3, $cats=[], $rand=true, $page=1, $search=''){
         $allMimes               = get_allowed_mime_types();
         $this->acceptedMimes    = [];
         $this->types           = $types;
@@ -29,22 +29,22 @@ class MediaGallery{
     }
 
     /**
-     * 
+     *
      * Get media from db
      */
-    function getMedia(){
+    public function getMedia(){
         $args = array(
             'post_status'       => 'inherit',
             'post_type'         => 'attachment',
             'post_mime_type'    => $this->acceptedMimes,
-            'posts_per_page'    => $this->amount, 
+            'posts_per_page'    => $this->amount,
             'meta_query'        => array(
                 array(
                     'key'     => 'gallery_visibility',
                     'value'   => 'show',
                     'compare' => '=='
                 )
-            )    
+            )
         );
 
         if($this->page != 1){
@@ -55,12 +55,12 @@ class MediaGallery{
             $args['orderby']    = 'rand';
         }
 
-    
+
         if(!empty($this->cats) && !in_array(-1, $this->cats)){
             $args['tax_query'] = ['relation' => 'OR'];
-            
+
             foreach($this->cats as $cat){
-            
+
                 $args['tax_query'][]    = [
                     'taxonomy'  => 'attachment_cat',
                     'field'     => 'slug',
@@ -68,7 +68,7 @@ class MediaGallery{
                 ];
             }
         }
-    
+
         if(!empty($this->search)){
             $args['s']  = $this->search;
         }
@@ -76,7 +76,7 @@ class MediaGallery{
         $this->wpQuery  = new \WP_Query( $args );
 
         $this->posts    = $this->wpQuery->posts;
-    
+
         $this->total    = $this->wpQuery->found_posts;
     }
 
@@ -87,7 +87,7 @@ class MediaGallery{
      *
      * @return	string					The html
      */
-    function mediaGallery($title, $speed = 60){
+    public function mediaGallery($title, $speed = 60){
 
         if(empty($this->posts)){
             return '';
@@ -98,7 +98,7 @@ class MediaGallery{
 
         // make sure we only try to display as many posts as available
         $amount	= min(count($this->posts), $this->amount);
-        
+
         ?>
         <article class="media-gallery-article" data-types='<?php echo json_encode($this->types );?>' data-categories='<?php echo json_encode($this->cats);?>' data-speed='<?php echo $speed;?>'>
             <h3 class="media-gallery-title"><?php echo $title;?></h3>
@@ -144,7 +144,7 @@ class MediaGallery{
      * Shows a filterable mediagalery
      * People can load more media as they desire
      */
-    function filterableMediaGallery(){
+    public function filterableMediaGallery(){
         ob_start();
 
         $url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
@@ -213,7 +213,7 @@ class MediaGallery{
         </div>
 
         <div class='categories <?php if(!empty($this->categories)){ echo 'hidden'; }?>'>
-            Categories: 
+            Categories:
             <?php
             foreach($categories as $cat){
                 $checked    = '';
@@ -245,13 +245,13 @@ class MediaGallery{
 
     /**
      * Load more media items
-     * 
+     *
      * @param   int     $itemsToSkip    The amount of items to skip. Default false for none
      * @param   int     $startIndex     The index to start loading from. Default 0
-     * 
+     *
      * @return  string                  The html
      */
-    function loadMediaHTML($itemsToSkip=false, $startIndex=0){
+    public function loadMediaHTML($itemsToSkip=false, $startIndex=0){
         $canEdit           = in_array('editor', wp_get_current_user()->roles);
         $allMimes          = get_allowed_mime_types();
         $acceptedMimes     = [];
@@ -260,7 +260,7 @@ class MediaGallery{
             if(in_array($type, $this->acceptedMimes )){
                 $acceptedMimes[]   = $mime;
             }
-        }        
+        }
 
         if ( empty($this->posts) ) {
             return false;
@@ -285,7 +285,7 @@ class MediaGallery{
             $description    = ucfirst(get_the_content());
             $attachmentUrl  = get_attachment_link();
 
-            /* 
+            /*
             **** PREVIEW GRID ****
             */
 
@@ -322,7 +322,7 @@ class MediaGallery{
             </div>
             <?php
 
-            /* 
+            /*
             **** FULL SCREEN VIEWS ****
             */
             ?>
@@ -363,7 +363,7 @@ class MediaGallery{
                     echo apply_filters('sim_media_gallery_item_html', $mediaHtml, $type, $id);
                     ?>
                 </div>
-                
+
                 <?php
             // if(empty($videoUrl)){
                     //only show image text on images
@@ -417,7 +417,7 @@ class MediaGallery{
             </div>
 
             <?php
-        endwhile;  
+        endwhile;
 
         wp_reset_postdata();
 

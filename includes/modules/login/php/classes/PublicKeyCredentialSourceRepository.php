@@ -12,7 +12,7 @@ use DeviceDetector\Parser\OperatingSystem as OS_info;
 class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRepositoryInterface {
     public $user;
 
-    function __construct($user){
+    public function __construct($user){
         $this->userId = $user->ID;
     }
 
