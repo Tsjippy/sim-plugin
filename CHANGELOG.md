@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.21.2] - 2022-10-11
+
+
+### Changed
 - map in sidebar
 
 ### Fixed
@@ -14,6 +21,7 @@
 - prevent formsubmission when
 upload is not yet finished
 - bug in forms with spaces in the name
+- formbuilder block
 
 ## [2.21.1] - 2022-10-08
 
