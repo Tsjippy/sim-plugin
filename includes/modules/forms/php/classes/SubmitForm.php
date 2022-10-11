@@ -5,10 +5,6 @@ use WP_Embed;
 use WP_Error;
 
 class SubmitForm extends SimForms{
-	function __construct(){
-		parent::__construct();
-	}
-	
 	/**
 	 * Returns conditional e-mails with a valid condition
 	 *
@@ -180,7 +176,7 @@ class SubmitForm extends SimForms{
 	/**
 	 * Rename any existing files to include the form id.
 	 */
-	function processFiles($uploadedFiles, $inputName){
+	public function processFiles($uploadedFiles, $inputName){
 		//loop over all files uploaded in this fileinput
 		foreach ($uploadedFiles as $key => $url){
 			$urlParts 	= explode('/',$url);

@@ -4,7 +4,7 @@ use SIM;
 use WP_Error;
 
 class Schedules{
-	function __construct(){
+	public function __construct(){
 		global $wpdb;
 
 		$this->tableName		= $wpdb->prefix . 'sim_schedules';
@@ -31,10 +31,10 @@ class Schedules{
 	/**
 	 * Creates the table holding all schedules if it does not exist
 	*/
-	function createDbTable(){
-		if ( !function_exists( 'maybe_create_table' ) ) { 
-			require_once ABSPATH . '/wp-admin/install-helper.php'; 
-		} 
+	public function createDbTable(){
+		if ( !function_exists( 'maybe_create_table' ) ) {
+			require_once ABSPATH . '/wp-admin/install-helper.php';
+		}
 		
 		//only create db if it does not exist
 		global $wpdb;

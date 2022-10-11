@@ -7,24 +7,20 @@ use WP_Error;
 class SaveFormSettings extends SimForms{
 	use CreateJs;
 
-	function __construct(){
-		parent::__construct();
-	}
-
 	/**
 	 * Change an existing form element
-	 * 
+	 *
 	 * @param	object|array	$element	The new element data
-	 * 
+	 *
 	 * @return	true|WP_Error				The result or error on failure
 	 */
-	function updateFormElement($element){
+	public function updateFormElement($element){
 		global $wpdb;
 		
 		//Update element
 		$wpdb->update(
-			$this->elTableName, 
-			(array)$element, 
+			$this->elTableName,
+			(array)$element,
 			array(
 				'id'		=> $element->id,
 			),
@@ -36,8 +32,8 @@ class SaveFormSettings extends SimForms{
 
 		//Update form version
 		$result = $wpdb->update(
-			$this->tableName, 
-			['version'	=> $this->formData->version+1], 
+			$this->tableName,
+			['version'	=> $this->formData->version+1],
 			['id'		=> $this->formData->id],
 		);
 		
@@ -50,16 +46,16 @@ class SaveFormSettings extends SimForms{
 
 	/**
 	 * Inserts a new element in the db
-	 * 
+	 *
 	 * @param	object|array	$element	The new element to insert
-	 * 
+	 *
 	 * @return	int							The new element id
 	 */
-	function insertElement($element){
+	public function insertElement($element){
 		global $wpdb;
 		
 		$wpdb->insert(
-			$this->elTableName, 
+			$this->elTableName,
 			(array)$element
 		);
 
@@ -68,19 +64,19 @@ class SaveFormSettings extends SimForms{
 
 	/**
 	 * Change the priority of an element
-	 * 
+	 *
 	 * @param	object|array	$element	The element to change the priority of
-	 * 
+	 *
 	 * @return	array|WP_Error				The result or error on failure
 	 */
-	function updatePriority($element){
+	public function updatePriority($element){
 		global $wpdb;
 
 		//Update the database
-		$result = $wpdb->update($this->elTableName, 
+		$result = $wpdb->update($this->elTableName,
 			array(
 				'priority'	=> $element->priority
-			), 
+			),
 			array(
 				'id'		=> $element->id
 			),
@@ -95,12 +91,12 @@ class SaveFormSettings extends SimForms{
 
 	/**
 	 * Change the order of form elements
-	 * 
+	 *
 	 * @param	int				$oldPriority	The old priority of the element
 	 * @param	int				$newPriority	The new priority of the element
 	 * @param	object|array	$element		The element to change the priority of
 	 */
-	function reorderElements($oldPriority, $newPriority, $element, $formId='') {
+	public function reorderElements($oldPriority, $newPriority, $element, $formId='') {
 		if ($oldPriority == $newPriority){
 			return;
 		}
@@ -156,13 +152,13 @@ class SaveFormSettings extends SimForms{
 	
 	/**
 	 * Get formresults of the current form
-	 * 
+	 *
 	 * @param	int		$userId			Optional the user id to get the results of. Default null
 	 * @param	int		$submissionId	Optional a specific id. Default null
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	function getSubmissionData($userId=null, $submissionId=null, $all=false){
+	public function getSubmissionData($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
 		
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE form_id={$this->formData->id}";
@@ -232,7 +228,7 @@ class SaveFormSettings extends SimForms{
 	/**
 	 * This function creates seperated entries from entries with an splitted value
 	 */
-	function processSplittedData(){
+	public function processSplittedData(){
 		if(!empty($this->formData->settings['split'])){
 			$fieldMainName	= $this->formData->settings['split'];
 			
@@ -287,7 +283,7 @@ class SaveFormSettings extends SimForms{
 	/**
 	 * Checks if the current form exists in the db. If not, inserts it
 	 */
-	function maybeInsertForm(){
+	public function maybeInsertForm(){
 		global $wpdb;
 
 		if(!isset($this->formName)){
@@ -309,12 +305,8 @@ class SaveFormSettings extends SimForms{
 	 *
 	 * @return	string			The deletion result
 	*/
-	function deleteForm($formId){
+	public  function deleteForm($formId){
 		global $wpdb;
-
-		/* if(!isset($this->formData)){
-			$this->getForm($formId);
-		} */
 
 		// Remove the form
 		$wpdb->delete(
@@ -358,14 +350,14 @@ class SaveFormSettings extends SimForms{
 	/**
 	 * Update form settings
 	 */
-	function updateFormSettings($formId='', $formSettings=''){
+	public function updateFormSettings($formId='', $formSettings=''){
 		global $wpdb;
 
 		if(empty($formId)){
 			if(!empty($this->formData->id)){
 				$formId	= $this->formData->id;
 			}else{
-				return new \WP_Error('Error', 'Please supply a form id'); 
+				return new \WP_Error('Error', 'Please supply a form id');
 			}
 		}
 
@@ -373,14 +365,14 @@ class SaveFormSettings extends SimForms{
 			if(!empty($this->formData->settings)){
 				$formSettings	= $this->formData->settings;
 			}else{
-				return new \WP_Error('Error', 'Please supply a the form settings'); 
+				return new \WP_Error('Error', 'Please supply a the form settings');
 			}
 		}
 
-		$wpdb->update($this->tableName, 
+		$wpdb->update($this->tableName,
 			array(
 				'settings' 	=> maybe_serialize($formSettings)
-			), 
+			),
 			array(
 				'id'		=> $formId,
 			),
