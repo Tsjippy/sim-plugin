@@ -8,6 +8,8 @@
 
 ### Fixed
 - email regards
+- remove or edit event when booking
+ is updated or deleted
 
 ## [2.21.2] - 2022-10-11
 
