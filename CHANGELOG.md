@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- email regards
 
 ## [2.21.2] - 2022-10-11
 
