@@ -89,7 +89,7 @@ class EditFormResults extends DisplayFormResults{
 			$fieldMainName		= $settings['split'];
 			
 			//Get all submissions of this form
-			$this->getSubmissionData(null, null, true);
+			$this->setSubmissionData(null, null, true);
 			
 			$triggerName	= $this->getElementById($settings['autoarchivefield'], 'name');
 			$triggerValue	= $settings['autoarchivevalue'];
@@ -175,7 +175,7 @@ class EditFormResults extends DisplayFormResults{
 		}
 
 		// Get the original submission
-		$this->getSubmissionData(null, $submission->id);
+		$this->setSubmissionData(null, $submission->id);
 
 		// Update the original
 		$this->formResults[$this->formData->settings['split']][$data->sub_id]['archived']	= true;
@@ -195,7 +195,7 @@ class EditFormResults extends DisplayFormResults{
 		global $wpdb;
 
 		if(!isset($this->formData) || $this->formData == null){
-			$this->getSubmissionData(null, $submissionId);
+			$this->setSubmissionData(null, $submissionId);
 			$this->getForm($this->submissionData->form_id);
 		}
 

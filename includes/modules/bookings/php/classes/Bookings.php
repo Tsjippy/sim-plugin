@@ -361,7 +361,7 @@ class Bookings{
 
         foreach($this->bookings as $booking){
             // Retrieve booking details
-            $this->forms->getSubmissionData(null, $booking->submission_id);
+            $this->forms->setSubmissionData(null, $booking->submission_id);
             $bookingData    = $this->forms->formResults;
 
             ?>
@@ -431,7 +431,7 @@ class Bookings{
                                             }
                                             $buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
                                         }
-                                        $buttonsHtml = apply_filters('sim_form_actions', $buttonsHtml, $bookingData, $index);
+                                        $buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $bookingData, $index, $this);
                                         
                                         //we have te html now, check for which one we have permission
                                         foreach($buttonsHtml as $action=>$button){

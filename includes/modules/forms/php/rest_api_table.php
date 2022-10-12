@@ -319,7 +319,7 @@ function archiveSubmission(){
 	$formTable->getForm($_POST['formid']);
 	$formTable->submissionId	= $_POST['submissionid'];
 
-	$formTable->getSubmissionData(null, $formTable->submissionId);
+	$formTable->setSubmissionData(null, $formTable->submissionId);
 
 	$action	= $_POST['action'];
 
@@ -358,7 +358,7 @@ function getInputHtml(){
 	foreach ($formTable->formElements as $element){
 		$name	= str_replace('[]', '', $element->name);
 		if($name == $elementName || $name == $elementIndexedName){
-			$formTable->getSubmissionData(null, $_POST['submissionid']);
+			$formTable->setSubmissionData(null, $_POST['submissionid']);
 
 			$curValue	= '';
 			if(isset($formTable->formResults[$element->name])){
@@ -379,7 +379,7 @@ function editValue(){
 	$formTable->getForm($_POST['formid']);
 	$formTable->submissionId		= $_POST['submissionid'];
 	
-	$formTable->getSubmissionData(null, $formTable->submissionId);
+	$formTable->setSubmissionData(null, $formTable->submissionId);
 		
 	//update an existing entry
 	$fieldName 		= sanitize_text_field($_POST['fieldname']);

@@ -158,7 +158,7 @@ class SaveFormSettings extends SimForms{
 	 *
 	 *
 	 */
-	public function getSubmissionData($userId=null, $submissionId=null, $all=false){
+	public function setSubmissionData($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
 		
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE form_id={$this->formData->id}";

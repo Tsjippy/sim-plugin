@@ -82,7 +82,21 @@ class DisplayFormResults extends DisplayForm{
 		$result	= $wpdb->get_results($query);
 		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
 
-		$this->submissionData		= $result;
+		if($wpdb->last_error !== ''){
+			SIM\printArray($wpdb->print_error());
+		}
+
+		return $result;
+	}
+
+	 /**
+	 * Set formresults of the current form
+	 *
+	 * @param	int		$userId			Optional the user id to get the results of. Default null
+	 * @param	int		$submissionId	Optional a specific id. Default null
+	 */
+	public function setSubmissionData($userId=null, $submissionId=null, $all=false){
+		$this->submissionData		= $this->getSubmissionData($userId, $submissionId, $all);
 		
 		if(is_numeric($submissionId)){
 			$this->submissionData	= $this->submissionData[0];
@@ -98,11 +112,6 @@ class DisplayFormResults extends DisplayForm{
 
 		//Get personal visibility
 		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
-		
-		if($wpdb->last_error !== ''){
-			SIM\printArray($wpdb->print_error());
-		}
-
 	}
 
 	 /**
@@ -602,7 +611,7 @@ class DisplayFormResults extends DisplayForm{
 				}
 				$buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
 			}
-			$buttonsHtml = apply_filters('sim_form_actions', $buttonsHtml, $fieldValues, $index);
+			$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $fieldValues, $index, $this);
 			
 			//we have te html now, check for which one we have permission
 			foreach($buttonsHtml as $action=>$button){
@@ -1124,10 +1133,10 @@ class DisplayFormResults extends DisplayForm{
 			!array_intersect($this->userRoles, array_keys((array)$this->tableSettings['view_right_roles']))
 		){
 			$this->tableViewPermissions 	= false;
-			$this->getSubmissionData($this->user->ID);
+			$this->setSubmissionData($this->user->ID);
 		}else{
 			$this->tableViewPermissions = true;
-			$this->getSubmissionData();
+			$this->setSubmissionData();
 		}
 	}
 	
@@ -1176,7 +1185,7 @@ class DisplayFormResults extends DisplayForm{
 				}else{
 					$userId	= '';
 				}
-				$this->getSubmissionData($userId, null, true);
+				$this->setSubmissionData($userId, null, true);
 
 				$html	.= "<div class='filter-wrapper'>";
 

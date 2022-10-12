@@ -342,7 +342,7 @@ function addFormElement(){
 			// Update submission data
 			$displayFormResults->showArchived	= true;
 			$displayFormResults->getForm($simForms->formData->id);
-			$displayFormResults->getSubmissionData(null, null, true);
+			$displayFormResults->setSubmissionData(null, null, true);
 
 			$submitForm	= new SubmitForm();
 

@@ -216,15 +216,20 @@ add_filter('sim_retrieved_formdata', function($formdata, $userId, $formName){
 },10,3);
 
 //Add a print button
-add_filter('sim_form_actions', function($buttonsHtml, $fieldValues=null, $index=-1){
-	if(!in_array($index,[1,4])){
+add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues=null, $index=-1, $displayFormResults){
+	if(!in_array($index, [1,4])){
 		return $buttonsHtml;
 	}
 
 	if($fieldValues == null){
 		$buttonsHtml['print']	= '';
 	}else{
-		$tripDetails		= $fieldValues['travel'];
+		$tripDetails		= $displayFormResults->getSubmissionData(null, $fieldValues['id']);
+		if(empty($tripDetails)){
+			return $buttonsHtml;
+		}
+
+		$tripDetails	= maybe_unserialize($tripDetails[0]->formresults)['travel'];
 
 		//if this is a roundtrip check if it is longer than 7 days
 		if($fieldValues['roundtrip'][0] == 'Yes'){
@@ -285,12 +290,12 @@ add_filter('sim_form_actions', function($buttonsHtml, $fieldValues=null, $index=
 			<input type="hidden" name="traveltype"		value="<?php echo $travelType;?>">
 			<input type="hidden" name="travel_date"		value="<?php echo $travelDate;?>">
 			<input type="submit" class="button" value="Print">
-		</form> 
+		</form>
 		<?php
-		$buttonsHtml['print']	= ob_get_clean();
+		$buttonsHtml['print']	= trim(ob_get_clean());
 	}
 	return $buttonsHtml;
-},10,3);
+}, 10, 4);
 
 //print travel letters if post
 add_action('sim_formtable_POST_actions',function(){
