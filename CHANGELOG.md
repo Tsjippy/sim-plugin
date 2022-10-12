@@ -7,11 +7,6 @@
 ### Changed
 
 ### Fixed
-
-## [2.21.5] - 2022-10-12
-
-
-### Fixed
 - better layout fullscreen table
 - bug in travelform print button
 
