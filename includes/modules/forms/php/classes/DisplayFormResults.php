@@ -1302,7 +1302,7 @@ class DisplayFormResults extends DisplayForm{
 		
 		?>
 		<div class='form table-wrapper'>
-			<div class='form-table-head'>
+			<div class='form table-head'>
 				<h2 class="table_title"><?php echo esc_html($this->formSettings['formname']); ?></h2><br>
 				<?php
 					echo $buttons;
@@ -1459,29 +1459,33 @@ class DisplayFormResults extends DisplayForm{
 				?>
 				</tbody>
 			</table>
-				
-			<p id="table_remark">Click on any cell with <span class="edit">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>
 			
-			<?php
-			//Add excel export button if allowed
-			if($this->tableEditPermissions){
-				?>
-				<div>
-					<form method="post" class="exportform" id="export_xls">
-						<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
-					</form>
-					<?php
-					if(SIM\getModuleOption('pdf', 'enable')){
-						?>
-						<form method="post" class="exportform" id="export_pdf">
-							<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
+			<div class='sim-table-footer'>
+				<p id="table_remark">Click on any cell with <span class="edit">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>
+				
+				<?php
+				//Add excel export button if allowed
+				if($this->tableEditPermissions){
+					?>
+					<div>
+						<form method="post" class="exportform" id="export_xls">
+							<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
 						</form>
 						<?php
-					}
-					?>
-				</div>
-				<?php
-			}
+						if(SIM\getModuleOption('pdf', 'enable')){
+							?>
+							<form method="post" class="exportform" id="export_pdf">
+								<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
+							</form>
+							<?php
+						}
+						?>
+					</div>
+					<?php
+				}
+			?>
+			</div>
+			<?php
 			
 			if($this->noRecords){
 				?><p><br><br><br>No records found</p><?php

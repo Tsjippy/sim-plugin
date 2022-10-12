@@ -235,6 +235,8 @@ function showFullscreen(target){
 
 	window.history.pushState({}, '', url);
 
+	setTableHeight();
+
 	parent.requestFullscreen();
 }
 
@@ -267,6 +269,29 @@ function closeFullscreen(target){
 	window.history.pushState({}, '', url);
 
 	document.exitFullscreen();
+
+	setTableHeight();
+}
+
+function setTableHeight(){
+	const urlParams = new URLSearchParams(window.location.search);
+	let	fullscreen	= urlParams.get('fullscreen');
+
+	// calculate how heigh the table should be
+	let footerHeight, headerHeight;
+	document.querySelectorAll('.sim-table').forEach( table => {
+		if(fullscreen != null){
+			headerHeight	= 0;
+			table.closest('.table-wrapper').querySelectorAll('.table-head').forEach(el=> headerHeight = el.offsetHeight);
+		}else{
+			headerHeight	= document.querySelector('header').offsetHeight;
+		}
+		
+		footerHeight	= table.closest('.table-wrapper').querySelector('.sim-table-footer').offsetHeight;
+
+		let px	= headerHeight + footerHeight + 40;
+		table.style.height	= `calc(100vh - ${px}px)`;
+	});	
 }
 
 export function positionTable(){
@@ -363,4 +388,6 @@ document.addEventListener("DOMContentLoaded",function() {
 			console.error(`table[data-formid="${fullscreen}"]`);
 		}
 	}
+
+	setTableHeight();
 });

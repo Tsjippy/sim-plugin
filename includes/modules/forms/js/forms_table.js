@@ -320,8 +320,6 @@ async function processFormsTableInput(target){
 				cell.innerHTML = newValue;
 			}
 
-			console.log(cell)
-			console.log(response)
 			cell.dataset.oldvalue	 	= JSON.stringify(newValue);
 	
 			Main.displayMessage(response.message.replace('_', ' '));

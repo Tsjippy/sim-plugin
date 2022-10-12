@@ -7,7 +7,6 @@
 
 .sim-table{
 	@extend %shared-table;
-	height: 100vh;
 
 	@media screen and (max-width: $mobilewidth){
 		max-width: calc(100vw - 15px);
