@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- send signal messages messages from website
 
 ### Changed
 
