@@ -5,7 +5,7 @@ use WP_Embed;
 use WP_Error;
 
 class SubmitForm extends SimForms{
-	/**
+	 /**
 	 * Returns conditional e-mails with a valid condition
 	 *
 	 * @param	array	$conditions		The conditions of a conditional e-mail
@@ -30,7 +30,7 @@ class SubmitForm extends SimForms{
 		return false;
 	}
 
-	/**
+	 /**
 	 * Filters the e-mail footer url and text
 	 *
 	 * @param	array	$footer		The footer array
@@ -43,7 +43,7 @@ class SubmitForm extends SimForms{
 		return $footer;
 	}
 
-	/**
+	 /**
 	 * Send an e-mail
 	 *
 	 * @param	string	$trigger	One of 'submitted' or 'fieldchanged'. Default submitted
@@ -54,20 +54,12 @@ class SubmitForm extends SimForms{
 		foreach($emails as $key=>$email){
 			if($email['emailtrigger'] == $trigger){
 				if($trigger == 'fieldchanged'){
-					$formValue	= '';
-					//loop over all elements to find the element with the id specified
-					foreach($this->formElements as $element){
-						//we found the element with the correct id
-						if($element->id == $email['conditionalfield']){
-							//get the submitted form value
-							$formValue = $this->formResults[$element->name];
-							
-							break;
-						}
-					}
+					$elementName	= $this->getElementById($email['conditionalfield'], 'name');
+					$formValue 		= strtolower($this->formResults[$elementName]);
+					$compareValue	= strtolower($email['conditionalvalue']);
 
 					//do not proceed if there is no match
-					if(strtolower($formValue) != strtolower($email['conditionalvalue'])){
+					if($formValue != $compareValue && $formValue != str_replace(' ', '_', $compareValue)){
 						continue;
 					}
 				}
@@ -132,7 +124,7 @@ class SubmitForm extends SimForms{
 		}
 	}
 	
-	/**
+	 /**
 	 * Replaces placeholder with the value
 	 *
 	 * @param	string	$string		THe string to check for placeholders
@@ -173,7 +165,7 @@ class SubmitForm extends SimForms{
 		return $string;
 	}
 
-	/**
+	 /**
 	 * Rename any existing files to include the form id.
 	 */
 	public function processFiles($uploadedFiles, $inputName){

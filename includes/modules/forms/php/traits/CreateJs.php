@@ -26,7 +26,7 @@ trait CreateJs{
 		}
 	}
     
-    /** 
+    /**
      * Builds the js files for the current form
     */
     function createJs(){

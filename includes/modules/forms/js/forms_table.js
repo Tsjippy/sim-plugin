@@ -224,7 +224,7 @@ async function getInputHtml(target){
 	let response	= await FormSubmit.fetchRestApi('forms/get_input_html', formData);
 
 	if(response){
-		target.innerHTML	 = response;
+		target.innerHTML	 		= response;
 
 		addFormsTableInputEventListeners(target);
 
@@ -319,8 +319,12 @@ async function processFormsTableInput(target){
 			}else{
 				cell.innerHTML = newValue;
 			}
+
+			console.log(cell)
+			console.log(response)
+			cell.dataset.oldvalue	 	= JSON.stringify(newValue);
 	
-			Main.displayMessage(response.message)
+			Main.displayMessage(response.message.replace('_', ' '));
 		}
 	}else{
 		cell.innerHTML = cell.dataset.oldtext;

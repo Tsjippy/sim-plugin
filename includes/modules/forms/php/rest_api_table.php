@@ -413,8 +413,9 @@ function editValue(){
 	$formTable->updateSubmissionData();
 	
 	//send email if needed
-	$submitForm	= new SubmitForm();
+	$submitForm					= new SubmitForm();
 	$submitForm->getForm($_POST['formid']);
+	$submitForm->formResults	= $formTable->formResults;
 	$submitForm->sendEmail('fieldchanged');
 	
 	//send message back to js
