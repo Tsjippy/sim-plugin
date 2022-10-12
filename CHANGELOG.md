@@ -8,6 +8,7 @@
 
 ### Fixed
 - better fullscreen mode of tables
+- issue in form result changing
 
 ## [2.21.3] - 2022-10-12
 
