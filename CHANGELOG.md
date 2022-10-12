@@ -9,6 +9,7 @@
 ### Fixed
 - better layout fullscreen table
 - bug in travelform print button
+- print button permissions
 
 ## [2.21.4] - 2022-10-12
 
