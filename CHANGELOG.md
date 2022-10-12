@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better fullscreen mode of tables
 
 ## [2.21.3] - 2022-10-12
 
