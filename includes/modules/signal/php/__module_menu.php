@@ -109,11 +109,11 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 	<form method='post'>
 		<label>
 			<h4>Message to be send</h4>
-			<input type='text' name='message' style='width:100%;'>
+			<input type='text' name='message' style='width:100%;' required>
 		</label>
 		<label>
 			<h4>Recipient</h4>
-			<input type='text' name='recipient' list='groups' class='wide'>
+			<input type='text' name='recipient' list='groups' required>
 
 			<datalist id='groups'>
 				<?php

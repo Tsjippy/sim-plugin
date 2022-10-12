@@ -234,6 +234,8 @@ function showFullscreen(target){
 	url.searchParams.set('fullscreen', parent.querySelector('table').dataset.formid);
 
 	window.history.pushState({}, '', url);
+
+	parent.requestFullscreen();
 }
 
 function closeFullscreen(target){
@@ -263,6 +265,8 @@ function closeFullscreen(target){
 	url.searchParams.delete('fullscreen');
 
 	window.history.pushState({}, '', url);
+
+	document.exitFullscreen();
 }
 
 export function positionTable(){

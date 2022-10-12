@@ -4,6 +4,8 @@ namespace SIM;
 //Shortcode for testing
 add_shortcode("test",function ($atts){
     global $wpdb;
+
+
 });
 
 // turn off incorrect error on localhost

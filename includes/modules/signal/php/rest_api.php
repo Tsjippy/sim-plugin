@@ -2,7 +2,7 @@
 namespace SIM\SIGNAL;
 use SIM;
 
-add_action( 'rest_api_init', function () {	
+add_action( 'rest_api_init', function () {
 	//Route for notification messages
 	register_rest_route( RESTAPIPREFIX, '/notifications', array(
 		'methods' => 'GET',
@@ -10,7 +10,7 @@ add_action( 'rest_api_init', function () {
 		'permission_callback' => '__return_true',
 		)
 	);
-	
+
 	//Route for first names
 	register_rest_route( RESTAPIPREFIX, '/firstname', array(
 		'methods'				=> 'GET',
@@ -20,9 +20,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Update quota documents
-	register_rest_route( 
-		RESTAPIPREFIX.'/signal', 
-		'/save_preferences', 
+	register_rest_route(
+		RESTAPIPREFIX.'/signal',
+		'/save_preferences',
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
 			'callback' 				=> __NAMESPACE__.'\savePreferences',
@@ -40,7 +40,7 @@ add_action( 'rest_api_init', function () {
 function botMessages( $delete = true) {
 	if (is_user_logged_in()) {
 		$notifications = get_option('signal_bot_messages');
-		if($delete == true){
+		if($delete){
 			delete_option('signal_bot_messages');
 		}
 		return $notifications;
@@ -52,7 +52,7 @@ function findFirstname(\WP_REST_Request $request ) {
 	if (is_user_logged_in() && isset($request['phone'])){
 		//Change the user to the adminaccount otherwise get_users will not work
 		wp_set_current_user(1);
-	
+
 		$name = "not found";
 		$users = get_users(array(
 			'meta_key'     => 'phonenumbers',
@@ -64,7 +64,7 @@ function findFirstname(\WP_REST_Request $request ) {
 				$name = $user->first_name;
 			}
 		}
-		
+
 		return $name;
 	}
 }
