@@ -52,7 +52,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<div class="">
 		<h4>Give optional Signal group name(s) to send new content messages to:</h4>
 		<div class="clone_divs_wrapper">
-			<?php			
+			<?php
 			foreach($groups as $index=>$group){
 				?>
 				<div class="clone_div" data-divid="<?php echo $index;?>">
@@ -76,6 +76,57 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			?>
 		</div>
 	</div>
+	<?php
+
+	return ob_get_clean();
+}, 10, 3);
+
+add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $dataHtml;
+	}
+
+	if(empty($settings['groups'])){
+		$groups	= [''];
+	}else{
+		$groups	= $settings['groups'];
+	}
+
+	// check if we need to send a message
+	if(!empty($_POST['message']) && !empty($_POST['recipient'])){
+        sendSignalMessage($_POST['message'], $_POST['recipient']);
+        ?>
+		<div class='success'>
+			Message send succesfully
+		</div>
+		<?php
+    }
+
+	ob_start();
+
+	?>
+	<form method='post'>
+		<label>
+			<h4>Message to be send</h4>
+			<input type='text' name='message' style='width:100%;'>
+		</label>
+		<label>
+			<h4>Recipient</h4>
+			<input type='text' name='recipient' list='groups' class='wide'>
+
+			<datalist id='groups'>
+				<?php
+				foreach($groups as $group){
+					echo "<option>$group</option>";
+				}
+				?>
+			</datalist>
+		</label>
+		<br>
+		<br>
+		<button>Send message</button>
+	</form>
 	<?php
 
 	return ob_get_clean();
