@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better layout fullscreen table
 
 ## [2.21.4] - 2022-10-12
 
