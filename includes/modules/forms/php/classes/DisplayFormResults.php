@@ -331,6 +331,7 @@ class DisplayFormResults extends DisplayForm{
 			$editRightRoles	= $this->columnSettings[$element->id]['edit_right_roles'];
 			$viewRightRoles = $this->columnSettings[$element->id]['view_right_roles'];
 		}
+
 		$this->columnSettings[$element->id] = [
 			'name'				=> $name,
 			'nice_name'			=> $name,
@@ -379,11 +380,12 @@ class DisplayFormResults extends DisplayForm{
 		//Add a row for each table action as well
 		$actions	= [];
 		foreach($this->formSettings['actions'] as $action){
-			$actions[$action]	= '';
+			$actions[]	= $action;
 		}
+
 		$actions = apply_filters('sim_form_actions', $actions);
-		foreach($actions as $action=>$html){
-			if(!is_array($this->columnSettings[$action])){
+		foreach($actions as $action){
+			if(!isset($this->columnSettings[$action]) || !is_array($this->columnSettings[$action])){
 				$this->columnSettings[$action] = [
 					'name'				=> $action,
 					'nice_name'			=> $action,
@@ -1410,28 +1412,26 @@ class DisplayFormResults extends DisplayForm{
 						}
 						
 						//add a Actions heading if needed
-						$buttonsHtml = [];
+						$actions = [];
 						foreach($this->formSettings['actions'] as $action){
-							$buttonsHtml[$action]	= "";
+							$actions[]	= $action;
 						}
+						$actions = apply_filters('sim_form_actions', $actions);
 
 						//we have full permissions on this table
-						if($this->tableEditPermissions && !empty($buttonsHtml)){
+						if($this->tableEditPermissions && !empty($actions)){
 							$addHeading	= true;
 						}else{
-							$buttonsHtml = apply_filters('sim_form_actions', $buttonsHtml);
-							foreach($buttonsHtml as $action=>$button){
+							foreach($actions as $action){
 								//we have permission for this specific button
 								if(array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])){
 									$addHeading	= true;
 								}else{
 									//Loop over all buttons to see if the current user has permission for them
 									foreach($this->submissionData as $submissionData){
-										foreach($buttonsHtml as $action=>$button){
-											//we have permission on this row for this button
-											if($submissionData->formresults['userid'] == $this->user->ID){
-												$addHeading	= true;
-											}
+										//we have permission on this row for this button
+										if($submissionData->formresults['userid'] == $this->user->ID){
+											$addHeading	= true;
 										}
 									}
 								}

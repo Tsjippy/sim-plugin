@@ -213,9 +213,16 @@ add_filter('sim_retrieved_formdata', function($formdata, $userId, $formName){
 	}
 
 	return $formdata;
-},10,3);
+}, 10, 3);
 
-//Add a print button
+//Add a print button action
+add_filter('sim_form_actions', function($actions){
+	$actions[]	= 'print';
+
+	return $actions;
+});
+
+//Add a print button html
 add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues=null, $index=-1, $displayFormResults){
 	if(!in_array($index, [1,4])){
 		return $buttonsHtml;
