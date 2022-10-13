@@ -11,6 +11,7 @@
 ### Fixed
 - I have read thuis button for mandatory
 content send by mailchimp
+- show all entries action
 
 ## [2.21.6] - 2022-10-12
 
