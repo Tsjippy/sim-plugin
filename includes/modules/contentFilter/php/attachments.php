@@ -63,7 +63,7 @@ add_action( 'edit_attachment', function($attachmentId){
 /**
  * Move attachment to other folder
  * @param  	int 	$postId		    WP_Post id
- * @param  	string	$subDir   	    The sub folder where the files should be uploaded 
+ * @param  	string	$subDir   	    The sub folder where the files should be uploaded
 */
 function moveAttachment($postId, $subDir, $generate=true){
     if(empty($subDir)){
@@ -110,7 +110,7 @@ function moveAttachment($postId, $subDir, $generate=true){
     // Search for any post with the old url
     $query = new \WP_Query( array( 's' => $oldUrl ) );
 
-    foreach($query->posts as $post){        
+    foreach($query->posts as $post){
         //if old url is found in the content of this post
         if(strpos($post->post_content, $oldUrl) !== false){
             //replace with new url
@@ -120,7 +120,7 @@ function moveAttachment($postId, $subDir, $generate=true){
                 'ID'           => $post->ID,
                 'post_content' => $post->post_content,
             );
-           
+
             // Update the post into the database
             wp_update_post( $args );
         }
@@ -158,7 +158,7 @@ add_filter( 'ajax_query_attachments_args', function($query){
 // Move the file to the private dir
 add_filter('wp_handle_upload', function($file){
     $default    = SIM\getModuleOption(MODULE_SLUG, 'default_status');
-    
+
     if($default == 'private' && strpos($file['file'], 'private') === false){
         $newPath    = wp_upload_dir()['basedir'].'/private/'.basename($file['file']);
         $newUrl     = SIM\pathToUrl($newPath);
@@ -173,9 +173,9 @@ add_filter('wp_handle_upload', function($file){
 });
 
 // Set the visibility key
-add_action( 'add_attachment', function ( $postId) { 
+add_action( 'add_attachment', function ( $postId) {
     $default    = SIM\getModuleOption(MODULE_SLUG, 'default_status');
-    
+
     if($default == 'private'){
         update_metadata( 'post',  $postId, 'visibility', 'private' );
     }

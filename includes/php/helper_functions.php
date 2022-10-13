@@ -1011,7 +1011,7 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
 	return $userId;
 }
 
-/**
+ /**
  * Get profile picture html
  * @param	int 		$userId				WP_user id
  * @param	array 		$size				Size (width, height) of the image. Default [50,50]
@@ -1019,7 +1019,7 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
  * @param	bool		$famillyPicture		Whether or not to use the family picture
  * 
  * @return	string|false					The picture html or false if no picture
-*/
+ */
 function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $famillyPicture=false){
 	
 	$attachmentId = get_user_meta($userId, 'profile_picture', true);

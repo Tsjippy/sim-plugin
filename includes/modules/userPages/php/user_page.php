@@ -4,16 +4,16 @@ use SIM;
 
 /**
  * Create an user (family) page
- * 
+ *
  * @param	int	$userId		The WP_User id
- * 
+ *
  * @return	int				WP_Post id
  */
-function createUserPage($userId){	
+function createUserPage($userId){
 	//get the current page
 	$pageId		= getUserPageId($userId);
 	$userdata   = get_userdata($userId);
-	
+
     //return false when $userId is not valid
     if(!$userdata){
 		return false;
@@ -23,14 +23,14 @@ function createUserPage($userId){
 	if(get_post_status ($pageId) != 'publish' ){
 		$pageId = null;
 	}
-	
+
 	$family = SIM\familyFlatArray($userId);
 	if (!empty($family)){
 		$title = $userdata->last_name." family";
 	}else{
 		$title = $userdata->last_name.', '.$userdata->first_name;
 	}
-	
+
 	//Only create a page if the page does not exist
 	if ($pageId == null){
 		// Create post object
@@ -41,51 +41,51 @@ function createUserPage($userId){
 		  'post_type'	  => 'page',
 		  'post_parent'   => SIM\getModuleOption(MODULE_SLUG, 'allcontacts_pages')[0],
 		);
-		 
+		
 		// Insert the post into the database
 		$pageId = wp_insert_post( $userPage );
-		
+
 		//Save user id as meta
 		update_post_meta($pageId, 'user_id', $userId);
-		
+
 		SIM\printArray("Created user page with id $pageId");
 	}else{
         updateUserPageTitle($userId, $title, $pageId);
 	}
-	
+
 	if(!empty($family)){
 		//Check if family has other pages who should be deleted
 		foreach($family as $familyMember){
 			//get the current page
 			$memberPageId = get_user_meta($familyMember,"user_page_id",true);
-			
+
 			//Check if this page exists and is already trashed
 			if(get_post_status ($memberPageId) == 'trash' ){
 				$memberPageId = null;
 			}
-			
+
 			//If there a page exists for this family member and its not the same page
 			if(is_numeric($memberPageId) && $memberPageId != $pageId){
 				//Remove the current user page
 				wp_delete_post($memberPageId, true);
-				
+
 				SIM\printArray("Removed user page with id $memberPageId");
 			}
 		}
 	}
-	
+
 	//Add the post id to the user profile
 	SIM\updateFamilyMeta($userId, "user_page_id", $pageId);
-	
+
 	//Return the id
 	return $pageId;
 }
 
 /**
  * Get the link to a user page
- * 
+ *
  * @param	int|object	$user	WP_User or WP_user id
- * 
+ *
  * @return	string				Html link
  */
 function getUserPageLink($user){
@@ -107,14 +107,14 @@ function getUserPageLink($user){
 
 /**
  * Update the page title of a user page
- * 
+ *
  * @param	int		$userId		The WP_User id
  * @param	string	$title		The new title
- * 
+ *
  * @return	bool				True on succces false on failure
  */
 function updateUserPageTitle($userId, $title, $pageId=null){
-    
+
 	if(!is_numeric($pageId)){
 		$pageId    = getUserPageId($userId);
 	}
@@ -136,15 +136,15 @@ function updateUserPageTitle($userId, $title, $pageId=null){
 
 		return true;
 	}
-	
+
 	return false;
 }
 
 /**
  * Display name and job of user
- * 
+ *
  * @param	int		$userId		The WP_User id
- * 
+ *
  * @return	string				The html
  */
 function userDescription($userId){
@@ -153,11 +153,11 @@ function userDescription($userId){
 	$user	= get_userdata($userId);
 
 	do_action('sim_user_description', $user);
-	
+
 	//get the family details
 	$family = (array)get_user_meta( $userId, 'family', true );
 	SIM\cleanUpNestedArray($family, true);
-	
+
 	$privacyPreference = get_user_meta( $userId, 'privacy_preference', true );
 	if(!is_array($privacyPreference)){
 		$privacyPreference = [];
@@ -204,7 +204,7 @@ function userDescription($userId){
 		if($url){
 			$html .= "<a href='$url'><img src='$url' loading='lazy' width=200 height=200></a>";
 		}
-		
+
 		if($arrived){
 			$html .= "<p>";
 				$html	.= " Lives in: ";
@@ -215,15 +215,15 @@ function userDescription($userId){
 		$html .= $officeHtml;
 
 		$html .= $arrivalHtml;
-		
+
 		//Partner data
 		if (isset($family['partner']) && is_numeric($family['partner'])){
 			$html .= showUserInfo($family['partner'], $arrived);
 		}
-		
+
 		//User data
 		$html .= showUserInfo($userId, $arrived);
-			
+
 		//Children
 		if (isset($family["children"])){
 			$html .= "<p>";
@@ -234,7 +234,7 @@ function userDescription($userId){
 				if($age !== false){
 					$age = "($age)";
 				}
-				
+
 				$html .= SIM\displayProfilePicture($childdata->ID);
 			$html .= "<span class='person_work'> {$childdata->first_name} $age</span><br>";
 			}
@@ -243,14 +243,14 @@ function userDescription($userId){
 	//Single
 	}else{
 		$userdata = get_userdata($userId);
-	
+
 		if ($userdata != null){
-			if(isset($privacyPreference['hide_name'])){ 
+			if(isset($privacyPreference['hide_name'])){
 				$displayname = '';
 			}else{
 				$displayname = $userdata->data->display_name;
 			}
-			
+
 			$html	.= "<h1>";
 				if(!isset($privacyPreference['hide_profile_picture'])){
 					$html .= SIM\displayProfilePicture($userId);
@@ -258,45 +258,45 @@ function userDescription($userId){
 				$html	.= "  $displayname";
 			$html	.= "</h1>";
 			$html	.= "<br>";
-			if(!isset($privacyPreference['hide_location']) && $arrived){ 
+			if(!isset($privacyPreference['hide_location']) && $arrived){
 				$html .= "<p>Lives on: $address</p>";
 			}
-			if(!isset($privacyPreference['hide_ministry']) && $arrived){ 
+			if(!isset($privacyPreference['hide_ministry']) && $arrived){
 				$html .= "<p>Works with: <br>".addMinistryLinks($userId)."</p>";
 			}
-			
+
 			$html .= $officeHtml;
-				
+
 			$html .= $arrivalHtml;
-			
+
 			$html .= showPhonenumbers($userId);
 		}else{
 			$html .= "<p>Nothing to show here due to privacy settings.</p>";
 		}
 	}
-	
+
 	return $html;
 }
 
 /**
  * Shows the user name and details
  * @param	int		$userId		The WP_User id
- * 
+ *
  * @return	string				The html
  */
 function showUserInfo($userId, $arrived){
-	$html				= ""; 
+	$html				= "";
 	$userdata			= get_userdata($userId);
 	$privacyPreference 	= (array)get_user_meta( $userId, 'privacy_preference', true );
-	
+
 	//If it is a valid user and privacy allows us to show it
 	if ($userdata != null){
-		if(isset($privacyPreference['hide_name'])){ 
+		if(isset($privacyPreference['hide_name'])){
 			$displayname = '';
 		}else{
 			$displayname = $userdata->first_name;
 		}
-		
+
 		$html .= "<p>";
 			if(empty($privacyPreference['hide_profile_picture'])){
 				$html .= SIM\displayProfilePicture($userId);
@@ -304,8 +304,8 @@ function showUserInfo($userId, $arrived){
 			}else{
 				$style = ' style="margin-left: 55px;"';
 			}
-			
-			if(!isset($privacyPreference['hide_ministry']) & $arrived){ 
+
+			if(!isset($privacyPreference['hide_ministry']) & $arrived){
 				$html .= "<span class='person_work' $style> $displayname works with: </span><br>";
 				$html .= addMinistryLinks($userId);
 			}else{
@@ -314,24 +314,24 @@ function showUserInfo($userId, $arrived){
 		$html .= "</p>";
 		$html .= showPhonenumbers($userId);
 	}
-	
+
 	return $html;
 }
 
 /**
  * Show the phone numbers of an user
  * @param	int		$userId		The WP_User id
- * 
+ *
  * @return	string				The html
  */
 function showPhonenumbers($userId){
 	$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
-	
+
 	$html = "";
 	if(!isset($privacyPreference['hide_phone'])){
 		$phonenumbers	= get_user_meta( $userId, 'phonenumbers', true );
 		$email			= get_userdata($userId)->user_email;
-	
+
 		$html	.= "<p><span style='font-size: 15px;'>Contact details below are only for you to use.<br>Do not share with other people.</span><br><br>";
 		$html	.= "E-mail: <a href='mailto:$email'>$email</a><br>";
 		if(empty($phonenumbers)){
@@ -346,14 +346,14 @@ function showPhonenumbers($userId){
 		}
 		$html .= addVcardDownload($userId).'</p>';
 	}
-	
+
 	return $html;
 }
 
 /**
  * Create vcard
  * @param	int		$userId		The WP_User id
- * 
+ *
  * @return	string				The html
  */
 function addVcardDownload($userId){
@@ -380,7 +380,7 @@ function addVcardDownload($userId){
 /**
  * Get vcard contents for a person
  * @param	int		$userId		The WP_User id
- * 
+ *
  * @return	string				The html
  */
 function buildVcard($userId){
@@ -391,10 +391,10 @@ function buildVcard($userId){
 	}else{
 		$partner = "";
 	}
-	
+
 	$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
-	
-	if(empty($privacyPreference['hide_location'])){ 
+
+	if(empty($privacyPreference['hide_location'])){
 		//Get the user address
 		$location = get_user_meta( $userId, 'location', true );
 		if (!empty($location['address'])){
@@ -405,7 +405,7 @@ function buildVcard($userId){
 	}
 	$gender 	= get_user_meta( $userId, 'gender', true );
 	$userdata 	= get_userdata($userId);
-		
+
 	$vcard = "BEGIN:VCARD\r\n";
 	$vcard .= "VERSION:4.0\r\n";
 	if(empty($privacyPreference['hide_name'])){
@@ -414,7 +414,7 @@ function buildVcard($userId){
 	}
 	$vcard .= "ORG:".SITENAME."\r\n";
 	$vcard .= "EMAIL;TYPE=INTERNET;TYPE=WORK:".$userdata->user_email."\r\n";
-	
+
 	if(empty($privacyPreference['hide_phone'])){
 		$phonenumbers = get_user_meta( $userId, 'phonenumbers', true );
 		if (is_array($phonenumbers)){
@@ -446,7 +446,7 @@ function buildVcard($userId){
 		$vcard .= 'item1.X-ABLabel:_$!<Spouse>!$_';
 		$vcard .= "X-SPOUSE:".get_userdata($partner)->data->display_name."\r\n";
 	}
-	
+
 	if ($gender != ""){
 		if($gender == "female"){
 			$vcard .= "GENDER:F\r\n";
@@ -454,7 +454,7 @@ function buildVcard($userId){
 			$vcard .= "GENDER:M\r\n";
 		}
 	}
-	
+
 	//User has an profile picture add it
 	if (is_numeric(get_user_meta($userId, 'profile_picture', true)) && empty($privacyPreference['hide_profile_picture'])){
 		$pictureUrl 			= str_replace(wp_upload_dir()['url'], wp_upload_dir()['basedir'], SIM\USERMANAGEMENT\getProfilePictureUrl($userId, "large"));
@@ -471,9 +471,9 @@ function buildVcard($userId){
 
 /**
  * Build hyperlinks for ministries
- * 
+ *
  * @param	int		$userId		The WP_User id
- * 
+ *
  * @return	string				The html
  */
 function addMinistryLinks($userID){
@@ -495,7 +495,7 @@ function addMinistryLinks($userID){
 
 	if(empty($html)){
 		$html = "No clue, since no one told me.";
-	}	
+	}
 
 	return $html;
 }
@@ -518,7 +518,7 @@ add_filter( 'the_content', function ( $content ) {
 /**
  * Gets the page id describing an user
  * @param	int 		$userId		WP_user id
- * 
+ *
  * @return	int|WP_Error			The page id
 */
 function getUserPageId($userId){
@@ -528,13 +528,13 @@ function getUserPageId($userId){
 /**
  * Get the users description page
  * @param	int 		$userId		WP_user id
- * 
+ *
  * @return	string					user page url
 */
 function getUserPageUrl($userId){
 	//Get the user page of this user
 	$userPageId = getUserPageId($userId);
-	
+
 	if(!is_numeric($userPageId) || get_post_status($userPageId ) != 'publish'){
         $userPageId = createUserPage($userId);
 

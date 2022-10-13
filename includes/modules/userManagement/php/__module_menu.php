@@ -251,6 +251,13 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
 	}
+	
+	// image sub size for profile pictures
+	if(!function_exists('wp_generate_attachment_metadata')){
+		require_once(ABSPATH.'/wp-admin/includes/image.php');
+	}
+	wp_generate_attachment_metadata($postId, "$newPath/$filename");
+
 
 	// Create account page
 	$options	= SIM\ADMIN\createDefaultPage($options, 'account_page', 'Account', '[user-info currentuser=true]', $oldOptions);
@@ -269,16 +276,16 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	return $options;
 }, 10, 3);
 
-add_filter('display_post_states', function ( $states, $post ) { 
-    
+add_filter('display_post_states', function ( $states, $post ) {
+
 	if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'account_page'))) {
-		$states[] = __('Account page'); 
+		$states[] = __('Account page');
 	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'user_edit_page')) ) {
-		$states[] = __('User edit page'); 
+		$states[] = __('User edit page');
 	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'account_create_page'))) {
-		$states[] = __('Account create page'); 
+		$states[] = __('Account create page');
 	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'pending_users_page'))) {
-		$states[] = __('Pending users page'); 
+		$states[] = __('Pending users page');
 	}
 
 	return $states;
@@ -332,6 +339,6 @@ add_action('sim_module_activated', function($moduleSlug){
 
 	$files = glob(__DIR__  . "/../imports/*.sform");
 	foreach ($files as $file) {
-		$formBuilder->importForm($file);   
+		$formBuilder->importForm($file);
 	}
 });
