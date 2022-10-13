@@ -14,6 +14,7 @@ content send by mailchimp
 - show all entries action
 - bug in sorting table
 - like search
+- bug in printing travel documents
 
 ## [2.21.6] - 2022-10-12
 
