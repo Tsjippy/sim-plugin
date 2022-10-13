@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
+use WP_Error;
 
 add_action( 'rest_api_init', function () {
 	//save_table_prefs
@@ -256,13 +257,24 @@ function saveColumnSettings($settings='', $shortcodeId=''){
 
 function saveTableSettings(){
 	global $wpdb;
-		
-	//update table settings
+	
 	$tableSettings 	= $_POST['table_settings'];
 
+	// Check invalid filter names
+	if(isset($tableSettings['filter']) && is_array($tableSettings['filter'])){
+		foreach($tableSettings['filter'] as $filter){
+			if(in_array($filter['name'], ['accept-charset', 'action', 'autocomplete', 'enctype', 'method', 'name', 'novalidate', 'rel', 'target'])){
+				return new WP_Error('forms', "Invalid filter name '{$filter['name']}', use a different one");
+			}
+		}
+	}
+
+	//update table settings
 	$formTable		= new DisplayFormResults();
 	
-	$wpdb->update($formTable->shortcodeTable,
+	
+	$wpdb->update(
+		$formTable->shortcodeTable,
 		array(
 			'table_settings'=> maybe_serialize($tableSettings)
 		),

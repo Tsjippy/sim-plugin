@@ -207,7 +207,7 @@ export function setTableLabel() {
 	});
 }
 
-function showFullscreen(target){
+async function showFullscreen(target){
 	target.textContent	= 'Close full screen';
 	target.classList.replace('show', 'close');
 
@@ -217,8 +217,6 @@ function showFullscreen(target){
 	window.lastY	= window.pageYOffset;
 
 	window.scrollTo(0,0);
-	
-	console.log('scrolling')
 
 	// remove scrollbars from body
 	document.querySelector('body').style.overflow	= 'hidden';
@@ -237,7 +235,9 @@ function showFullscreen(target){
 
 	setTableHeight();
 
-	parent.requestFullscreen();
+	parent.requestFullscreen().catch((err) => {
+		// does not work without user interaction
+	});
 }
 
 function closeFullscreen(target){
@@ -287,10 +287,11 @@ function setTableHeight(){
 			headerHeight	= document.querySelector('header').offsetHeight;
 		}
 		
-		footerHeight	= table.closest('.table-wrapper').querySelector('.sim-table-footer').offsetHeight;
+		footerHeight	= 0;
+		table.closest('.table-wrapper').querySelectorAll('.sim-table-footer').forEach(el=> footerHeight	= el.offsetHeight);
 
 		let px	= headerHeight + footerHeight + 40;
-		table.style.height	= `calc(100vh - ${px}px)`;
+		table.style.maxHeight	= `calc(100vh - ${px}px)`;
 	});	
 }
 

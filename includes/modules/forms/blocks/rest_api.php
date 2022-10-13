@@ -132,7 +132,7 @@ function showFormBuilder($attributes){
 
 function showFormResults($attributes){
 
-	if($attributes instanceof \WP_REST_Request){
+ 	if($attributes instanceof \WP_REST_Request){
 		if(!empty($_REQUEST['formid'])){
 			$attributes = [
 				'formid' 	=> $_REQUEST['formid'],
@@ -164,9 +164,10 @@ function showFormResults($attributes){
 	if(isset($attributes['tableid'])){
 		$attributes['id']	= $attributes['tableid'];
 	}
-	
+	 
 	$displayFormResults = new DisplayFormResults();
     $displayFormResults->processAtts($attributes);
+	
 	$html	= $displayFormResults->showFormresultsTable();
 	
 	if(is_wp_error($html)){

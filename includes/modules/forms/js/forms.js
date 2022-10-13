@@ -540,7 +540,6 @@ async function requestNewFormResults(target){
 	}
 
 	if(url.searchParams.get('all')){
-		console.log('dsf')
 		formData.append('all', true);
 	}
 

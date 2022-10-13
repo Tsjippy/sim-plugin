@@ -1063,6 +1063,8 @@ class DisplayFormResults extends DisplayForm{
 		}
 		
 		$this->enrichColumnSettings();
+
+		ob_start();
 		?>
 		<div class="modal form_shortcode_settings hidden">
 			<!-- Modal content -->
@@ -1080,6 +1082,8 @@ class DisplayFormResults extends DisplayForm{
 			</div>
 		</div>
 		<?php
+
+		return ob_get_clean();
 	}
 
 	 /**
@@ -1141,45 +1145,14 @@ class DisplayFormResults extends DisplayForm{
 			$this->setSubmissionData();
 		}
 	}
-	
+
 	 /**
-	 * Renders the table buttons html
+	 * Renders the table filter html
 	 *
 	 * @return string	The html
 	 */
-	protected function renderTableButtons(){
-		$html	= "<div class='table-buttons-wrapper'>";
-			//Show form properties button if we have form edit permissions
-			if($this->formEditPermissions){
-				$html	.= "<button class='button small edit_formshortcode_settings'>Edit settings</button>";
-				$this->addShortcodeSettingsModal();
-			}
-
-			// Archived button
-			if($this->showArchived){
-				$html	.= "<button class='button sim small archive-switch-hide'>Hide archived entries</button>";
-			}else{
-				$html	.= "<button class='button sim small archive-switch-show'>Show archived entries</button>";
-			}
-
-			// Only own button
-			if($this->onlyOwn || ( $this->tableSettings['result_type'] == 'personal' && !$this->all)){
-				$html	.= "<button class='button sim small onlyown-switch-all'>Show all entries</button>";
-			}else{
-				$html	.= "<button class='button sim small onlyown-switch-on'>Show only my own entries</button>";
-			}
-
-			$html	.= "<button type='button' class='button small show fullscreenbutton'>Show full screen</button>";
-			
-			$hidden	= '';
-			if(empty($this->hiddenColumns)){
-				$hidden	= 'hidden';
-			}
-			$html	.= "<button type='button' class='button small reset-col-vis $hidden'>Reset visibility</button>";
-		$html	.= "</div>";
-
-		
-		$html	.= "<form method='post' class='filteroptions'>";
+	protected function renderFilterForm(){
+		$html	= "<form method='post' class='filteroptions'>";
 			if(!empty($this->tableSettings['filter'])){
 				// Load all the data
 				if(!$this->tableViewPermissions){
@@ -1217,9 +1190,14 @@ class DisplayFormResults extends DisplayForm{
 							$this->submissionData	= array_chunk($this->submissionData, $this->pageSize)[$this->currentPage];
 						}
 
+						$elementHtml	= $this->getElementHtml($filterElement, $filterValue);
+						
+						// make sure the name is not the element name but the filtername
+						$elementHtml	= str_replace("name='{$filterElement->name}'", "name='$filterKey'", $elementHtml);
+
 						$html	.= "<span class='filteroption'>";
 							$html	.= "<label>".ucfirst($filterKey).": </label>";
-							$html	.= $this->getElementHtml($filterElement, $filterValue);
+							$html	.= $elementHtml;
 						$html	.= "</span>";
 					}
 					$html	.= "<button class='button' style='height: fit-content;'>Filter</button>";
@@ -1253,6 +1231,48 @@ class DisplayFormResults extends DisplayForm{
 				$html	.= "</div>";
 			}
 		$html	.= "</form>";
+
+		return $html;
+	}
+	
+	 /**
+	 * Renders the table buttons html
+	 *
+	 * @return string	The html
+	 */
+	protected function renderTableButtons(){
+		$html	= "<div class='table-buttons-wrapper'>";
+			//Show form properties button if we have form edit permissions
+			if($this->formEditPermissions){
+				$html	.= "<button class='button small edit_formshortcode_settings'>Edit settings</button>";
+				$html	.= $this->addShortcodeSettingsModal();
+			}
+
+			// Archived button
+			if($this->showArchived){
+				$html	.= "<button class='button sim small archive-switch-hide'>Hide archived entries</button>";
+			}else{
+				$html	.= "<button class='button sim small archive-switch-show'>Show archived entries</button>";
+			}
+
+			// Only own button
+			if($this->onlyOwn || ( $this->tableSettings['result_type'] == 'personal' && !$this->all)){
+				$html	.= "<button class='button sim small onlyown-switch-all'>Show all entries</button>";
+			}else{
+				$html	.= "<button class='button sim small onlyown-switch-on'>Show only my own entries</button>";
+			}
+
+			$html	.= "<button type='button' class='button small show fullscreenbutton'>Show full screen</button>";
+			
+			$hidden	= '';
+			if(empty($this->hiddenColumns)){
+				$hidden	= 'hidden';
+			}
+			$html	.= "<button type='button' class='button small reset-col-vis $hidden'>Reset visibility</button>";
+		$html	.= "</div>";
+
+		$html	.= $this->renderFilterForm();
+		
 		return $html;
 	}
 

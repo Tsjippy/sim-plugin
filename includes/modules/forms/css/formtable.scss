@@ -36,11 +36,14 @@
     }
 
     .filteroption{
-        margin-right:10px;
         display: contents;
 
         label{
             margin-right: 10px;
+        }
+
+        input{
+            margin-right:10px;
         }
     }
 }
@@ -72,19 +75,6 @@
     th{
         position: sticky;
         top: 60px;
-    }
-}
-
-.fullscreen{
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: white;
-
-    table{
-        width: 100vw;
-        max-width: 100%;
-        height: calc(100vh - 140px);
     }
 }
 

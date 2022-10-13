@@ -214,3 +214,15 @@
 .table-buttons-wrapper{
 	margin-bottom: 10px;
 }
+
+.fullscreen{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: white;
+
+    table{
+        width: 100vw;
+        max-width: 100%;
+    }
+}
