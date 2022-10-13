@@ -8,6 +8,7 @@
 
 ### Fixed
 - gender in travel letters
+- form entry archive, archive actions
 
 ## [2.21.7] - 2022-10-13
 
