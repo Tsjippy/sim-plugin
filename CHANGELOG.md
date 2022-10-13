@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- gender in travel letters
 
 ## [2.21.7] - 2022-10-13
 
