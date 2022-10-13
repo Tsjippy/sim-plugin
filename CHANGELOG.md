@@ -13,6 +13,7 @@
 content send by mailchimp
 - show all entries action
 - bug in sorting table
+- like search
 
 ## [2.21.6] - 2022-10-12
 
