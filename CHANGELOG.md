@@ -4,6 +4,7 @@
 
 ### Added
 - mark all pages as read button
+- avatar image size
 
 ### Changed
 
