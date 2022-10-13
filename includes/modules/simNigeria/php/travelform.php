@@ -228,7 +228,7 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues=null, $i
 		return $buttonsHtml;
 	}
 
-	if($fieldValues == null){
+	if($fieldValues == null || !is_numeric($fieldValues['user_id'])){
 		$buttonsHtml['print']	= '';
 	}else{
 		$tripDetails		= $displayFormResults->getSubmissionData(null, $fieldValues['id']);
@@ -268,10 +268,12 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues=null, $i
 			$transportType	= 'air';
 		}else{
 			$transportType	= 'road';
-			if(!empty($tripDetails[$index+2])){
+			if(!empty($tripDetails[$index+2]['to'])){
 				$destination		= str_replace('_', ' ', $tripDetails[$index+2]['to']);
-			}elseif(!empty($tripDetails[$index+1])){
+			}elseif(!empty($tripDetails[$index+1]['to'])){
 				$destination		= str_replace('_', ' ', $tripDetails[$index+1]['to']);
+			}else{
+				$destination		= str_replace('_', ' ', $tripDetails[$index]['to']);
 			}
 		}
 
