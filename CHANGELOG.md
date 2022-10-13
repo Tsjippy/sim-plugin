@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- unarchiving of form submissions
 
 ## [2.21.8] - 2022-10-13
 
