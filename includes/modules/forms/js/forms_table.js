@@ -155,8 +155,13 @@ async function archiveSubmission(target){
 
 				// just change the button name
 				if(params.archived == 'true'){
-					let loader = row.querySelector(`.loaderwrapper`);
-					changeArchiveButton(loader, action);
+					let element;
+					if(action == 'archive'){
+						element = row.querySelector(`.loaderwrapper, .archive`);
+					}else{
+						element = row.querySelector(`.loaderwrapper, .unarchive`);
+					}
+					changeArchiveButton(element, action);
 				}else{
 					row.remove();
 				}
@@ -179,7 +184,7 @@ async function archiveSubmission(target){
 	}
 }
 
-function changeArchiveButton(loader, action){
+function changeArchiveButton(element, action){
 	let text;
 
 	if(action == 'archive'){
@@ -189,7 +194,7 @@ function changeArchiveButton(loader, action){
 		action 	= 'archive';
 		text	= 'Archive';
 	}
-	loader.outerHTML = `<button class="${action} button forms_table_action" name="${action}_action" value="${action}">${text}</button>`;
+	element.outerHTML = `<button class="${action} button forms_table_action" name="${action}_action" value="${action}">${text}</button>`;
 }
 
 async function getInputHtml(target){
