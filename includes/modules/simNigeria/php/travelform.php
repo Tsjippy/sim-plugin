@@ -332,7 +332,7 @@ function generateImmigrationLetters(){
 	
 	foreach($userIds as $userId){
 		$visaInfo 			= get_user_meta( $userId, "visa_info",true);
-		$gender				= get_user_meta($userId, 'gender', true);
+		$gender				= get_user_meta($userId, 'gender', true)[0];
 			
 		$pdf->generateTravelLetter($traveltType, $visaInfo, $gender, $travelDate, $origin, $destination, $transportType);
 	}

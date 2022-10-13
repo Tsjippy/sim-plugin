@@ -58,7 +58,7 @@ class ImmigrationLetter extends SIM\PDF\PdfHtml{
 			$travelDate 	= date('d-F-Y', $date);
 		}
 		
-		if($gender == 'male'){
+		if(strtolower($gender) == 'male'){
 			$genderWord 	= 'he';
 			$genderWord2	= 'his';
 		}else{
