@@ -172,6 +172,7 @@ function sortTable(target){
 	
 	//Mark the row to sort dsc the next time
 	if (sort == 'asc'){
+		target.classList.add('dsc');
 		target.classList.replace('asc', 'dsc');
 	//Mark the row to sort asc the next time
 	}else{

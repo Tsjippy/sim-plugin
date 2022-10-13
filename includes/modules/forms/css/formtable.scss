@@ -33,6 +33,7 @@
     .filter-wrapper{
         display: flex;
         flex-wrap: wrap;
+        align-items: center;
     }
 
     .filteroption{
@@ -81,4 +82,8 @@
 .edit_forms_table{
     text-decoration: underline;
     text-decoration-color: $primary_color;
+}
+
+.visibilityicon{
+    margin-right: 20px;
 }
