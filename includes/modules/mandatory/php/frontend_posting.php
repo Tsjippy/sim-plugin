@@ -5,14 +5,14 @@ use SIM;
 /**
  * Get the mandatory audience options
  */
-function getAudienceOptions($audience, $postId){	
+function getAudienceOptions($audience, $postId){
 	$keys	= [
 		'beforearrival'		=> "People should read this before arriving in the country (pre-field)",
 		'afterarrival'		=> "People should read this after arriving in the country",
 		'everyone'			=> "Everyone must read this no matter how long in the country"
 	];
 
-	
+
 	if($postId != null && is_array($audience) && !empty($audience)){
 		$keys['normal'] = "normal";
 	}
@@ -22,7 +22,7 @@ function getAudienceOptions($audience, $postId){
 
 /**
  * Adding fields to the frontend posting screen
- * @param  object $frontendContend 	frontendContend instance            
+ * @param  object $frontendContend 	frontendContend instance
 */
 add_action('sim_frontend_post_after_content', function($frontendContend){
 	$audience   = get_post_meta($frontendContend->postId, 'audience', true);
@@ -32,7 +32,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 
     ?>
     <div id="recipients" class="frontendform property post page<?php if($frontendContend->postType != 'page' && $frontendContend->postType != 'post'){echo ' hidden'; }?>">
-        <h4>Audience</h4>				
+        <h4>Audience</h4>
         <?php
 		$keys	= getAudienceOptions($audience, $frontendContend->postId);
 
@@ -55,7 +55,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 
 /**
  * Save the mandatory options
- * @param  object $frontendContend 	frontendContend instance            
+ * @param  object $frontendContend 	frontendContend instance
 */
 add_action('sim_after_post_save', function($post){
 	//store audience
@@ -65,18 +65,18 @@ add_action('sim_after_post_save', function($post){
 		return;
 	}
 	$audiences = $_POST['audience'];
-	
+
 	//Reset to normal if that box is ticked
 	if(isset($audiences['normal']) && $audiences['normal'] == 'normal'){
 		delete_post_meta($post->ID, "audience");
 	//Store in DB
 	}else{
 		SIM\cleanUpNestedArray($audiences);
-		
+
 		//Only continue if there are audiences defined
 		if(!empty($audiences)){
 			update_metadata( 'post', $post->ID, "audience", json_encode($audiences));
-		
+
 			//Mark existing users as if they have read the page if this pages should be read by new people after arrival
 			if(isset($audiences['afterarrival']) && !isset($audiences['everyone'])){
 				//Get all users who are longer than 1 month in the country
@@ -90,12 +90,12 @@ add_action('sim_after_post_save', function($post){
 						)
 					),
 				));
-				
+
 				//Loop over the users
 				foreach($users as $user){
 					//get current already read pages
 					$readPages		= (array)get_user_meta( $user->ID, 'read_pages', true );
-	
+
 					//add current page
 					$readPages[]	= $post->ID;
 					//update
@@ -110,8 +110,8 @@ add_action('sim_after_post_save', function($post){
 
 /**
  * Adds a message to the Signal message send about the content being mandatory
- * @param  string $message 	Signal message   
- * @return string			The message         
+ * @param  string $message 	Signal message
+ * @return string			The message
 */
 add_filter('sim_signal_post_notification_message', function($message, $post){
 	$audience   = get_post_meta($post->ID, 'audience', true);

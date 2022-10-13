@@ -3,10 +3,10 @@ namespace SIM\MANDATORY;
 use SIM;
 
 /**
- * Adds a message to the content that it is mandaory. 
+ * Adds a message to the content that it is mandaory.
  * Also add a button to mark the post as read
- * @param  string $content	post content    
- * @return string $content	post content                
+ * @param  string $content	post content
+ * @return string $content	post content
 */
 add_filter( 'the_content', function ($content){
 	if (!is_user_logged_in()){
@@ -31,9 +31,9 @@ add_filter( 'the_content', function ($content){
 	//People should read this, and have not read it yet
 	if(
 		get_the_author_meta('ID') != $userId					&&
-		!in_array($postId, $readPages)							&& 
+		!in_array($postId, $readPages)							&&
 		(
-			(isset($audience['beforearrival']) && !$arrived)	|| 
+			(isset($audience['beforearrival']) && !$arrived)	||
 			isset($audience['afterarrival']) 					||
 			isset($audience['everyone'])
 		)

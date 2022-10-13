@@ -11,9 +11,9 @@ add_filter('sim_allowed_rest_api_urls', function($urls){
 
 add_action( 'rest_api_init', function () {
 	//Route to update mark as read from mailchimp
-	register_rest_route( 
-		RESTAPIPREFIX.'/mandatory_content', 
-		'/mark_as_read_public', 
+	register_rest_route(
+		RESTAPIPREFIX.'/mandatory_content',
+		'/mark_as_read_public',
 		array(
 			'methods' => 'GET',
 			'callback' => __NAMESPACE__.'\markAsReadFromEmail',
@@ -31,9 +31,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Mark as read from website
-	register_rest_route( 
-		RESTAPIPREFIX.'/mandatory_content', 
-		'/mark_as_read', 
+	register_rest_route(
+		RESTAPIPREFIX.'/mandatory_content',
+		'/mark_as_read',
 		array(
 			'methods' => 'POST',
 			'callback' => __NAMESPACE__.'\markAsRead',
@@ -52,8 +52,8 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Mark all as read
-	register_rest_route( 
-		RESTAPIPREFIX.'/mandatory_content', 
+	register_rest_route(
+		RESTAPIPREFIX.'/mandatory_content',
 		'/mark_all_as_read', array(
 			'methods' => 'POST',
 			'callback' => __NAMESPACE__.'\markAllAsRead',
@@ -69,7 +69,7 @@ add_action( 'rest_api_init', function () {
 });
 
 add_filter('sim_before_mailchimp_send', function($mailContent, $post){
-	$audience   = get_post_meta($post->Id, 'audience', true);
+	$audience   = get_post_meta($post->ID, 'audience', true);
     if(!is_array($audience) && !empty($audience)){
         $audience  = json_decode($audience, true);
     }
@@ -86,7 +86,7 @@ add_filter('sim_before_mailchimp_send', function($mailContent, $post){
 
 /**
  * Rest Request to mark a page as read over e-mail
- * Also add a button to mark the post as read               
+ * Also add a button to mark the post as read
 */
 function markAsReadFromEmail(\WP_REST_Request $request){
 	$email		= $request['email'];
@@ -115,7 +115,7 @@ function markAsReadFromEmail(\WP_REST_Request $request){
 		}else{
 			//get current alread read pages
 			$readPages		= (array)get_user_meta( $userId, 'read_pages', true );
-				
+
 			//add current page
 			$readPages[]	= $postId;
 
@@ -132,25 +132,25 @@ function markAsReadFromEmail(\WP_REST_Request $request){
 }
 
 /**
- * Rest Request to mark a page as read             
+ * Rest Request to mark a page as read
 */
 function markAsRead(){
 	$userId = $_POST['userid'];
 	$postId = $_POST['postid'];
-	
+
 	//get current alread read pages
 	$readPages		= (array)get_user_meta( $userId, 'read_pages', true );
-	
+
 	//add current page
 	$readPages[]	= $postId;
 	//update
 	update_user_meta( $userId, 'read_pages', $readPages);
-	
+
 	return "Succesfully marked this page as read";
 }
 
 /**
- * Rest Request to mark all pages as read             
+ * Rest Request to mark all pages as read
 */
 function markAllAsRead(){
 	$userId = $_POST['userid'];
@@ -167,7 +167,7 @@ function markAllAsRead(){
 
 	//get current alread read pages
 	$readPages		= (array)get_user_meta( $userId, 'read_pages', true );
-	
+
 	foreach($pages as $page){
 		//add current page
 		$readPages[]	= $page->ID;
@@ -175,6 +175,6 @@ function markAllAsRead(){
 
 	//update in db
 	update_user_meta( $userId, 'read_pages', $readPages);
-	
+
 	return "Succesfully marked all pages as read for ".get_userdata($userId)->display_name;
 }
