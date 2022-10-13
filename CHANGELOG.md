@@ -3,10 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- mark all pages as read button
-- avatar image size
 
 ### Changed
+
+### Fixed
+
+## [2.21.7] - 2022-10-13
+
+
+### Added
+- mark all pages as read button
+- avatar image size
 
 ### Fixed
 - I have read thuis button for mandatory
