@@ -352,7 +352,7 @@ add_shortcode( 'quotadocuments', function (){
 		}
 		
 		ob_start();
-		?>	
+		?>
 		<div id="quota_documents" style="margin-top:30px;">
 			<button class="button tablink active" 	id="show_quota_document_upload" data-target="quota_document_upload">Show quota upload</button>
 			<button class="button tablink" 			id="show_quota_mapping" data-target="quota_mapping">Quoto mapping</button>
@@ -361,7 +361,7 @@ add_shortcode( 'quotadocuments', function (){
 				<div id="quota_document_upload">
 					<p style='margin:20px 0px 0px 0px'>Upload the document quota</p>
 					<?php
-					echo quoata_document_upload($quotaDocuments);
+					echo quoataDocumentUpload($quotaDocuments);
 					?>
 				</div>
 				<div id="quota_mapping" class='hidden'>
@@ -397,7 +397,7 @@ add_shortcode( 'quotadocuments', function (){
 	}
 });
 
-function quoata_document_upload($quotaDocuments){
+function quoataDocumentUpload($quotaDocuments){
 	//Load js
 	wp_enqueue_script( 'sim_quotajs');
 	

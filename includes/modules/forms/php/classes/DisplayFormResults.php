@@ -1299,7 +1299,7 @@ class DisplayFormResults extends DisplayForm{
 			case "<=": 		return $var1 <= $var2;
 			case ">":  		return $var1 >  $var2;
 			case "<":  		return $var1 <  $var2;
-			case "like":	return strpos(strtolower($var1), strtolower($var2)) !== false;
+			case "like":	return strpos(strtolower($var2), strtolower($var1)) !== false;
 			default:       return true;
 		}
 	}
