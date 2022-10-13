@@ -2,7 +2,7 @@
 namespace SIM\MANDATORY;
 use SIM;
 
-add_action('sim_dashboard_warnings', function($userId){	
+add_action('sim_dashboard_warnings', function($userId){
 	echo mustReadDocuments($userId);
 }, 5);
 
@@ -15,15 +15,15 @@ add_shortcode("must_read_documents", __NAMESPACE__.'\mustReadDocuments');
 
 /**
  * Get an unordered list of documents to read
- * @param  int		$userId 		
- * @param  bool	 	$excludeHeading        	Whether to include a heading for 
- * @return string							HTML unordered list              
+ * @param  int		$userId
+ * @param  bool	 	$excludeHeading        	Whether to include a heading for
+ * @return string							HTML unordered list
  */
 function mustReadDocuments($userId='', $excludeHeading=false){
 	$html 			= '';
 	$beforeHtml 	= '';
 	$arrivedHtml 	= '';
-	
+
 	wp_enqueue_script('sim_mandatory_script');
 
 	if(!is_numeric($userId)){
@@ -35,10 +35,10 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 	if(in_array('no_man_docs', $user->roles)){
 		return '';
 	}
-	
+
 	//Get all the pages this user already read
 	$readPages		= (array)get_user_meta( $userId, 'read_pages', true );
-	
+
 	//Get the users arrival date
 	$arrivalDate 	= strtotime(get_user_meta( $userId, 'arrival_date', true ));
 	if(!$arrivalDate || $arrivalDate < time()){
@@ -59,7 +59,7 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 			'author' 		=> '-'.$userId		// exclude own posts
 		)
 	);
-	
+
 	//Loop over the pages while building the html
 	$arrivedPagesCount = 0;
 	foreach($pages as $page){
@@ -69,12 +69,12 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 			if(!is_array($audience) && !empty($audience)){
 				$audience  = json_decode($audience, true);
 			}
-			
+
 			//Add a link if not yet in the country and should read before arriving
 			if(isset($audience['beforearrival']) && !$arrived){
 				$beforeHtml .= '<li><a href="'.get_permalink($page->ID).'">'.$page->post_title.'</a></li>';
 			}
-			
+
 			//Page has not been read, scheck if it should be read
 			$mustRead	= false;
 			if(
@@ -86,7 +86,7 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 					!isset($audience['beforearrival'])	|| 		// The before arrival is not set
 					(
 						isset($audience['beforearrival'])	&&	// Or it is set but we have arrived
-						$arrived						
+						$arrived
 					)
 				)
 			){
@@ -102,7 +102,7 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 			}
 		}
 	}
-	
+
 	///Documents to read before arrival
 	if(!empty($beforeHtml) && !$arrived){
 		if(!$excludeHeading){
@@ -114,27 +114,31 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 		}
 		$html .= "<ul>$beforeHtml</ul>";
 	}
-	
+
 	//Documents to read after arrival
-	if($arrivedHtml != ''){
+	if(!empty($arrivedHtml)){
 		if($arrivedPagesCount == 1){
 			$page = "page";
 		}else{
 			$page = "pages";
 		}
-		
+
 		if(!$excludeHeading){
 			$html .= "<h3>Please read the following $page:</h3>";
 		}
 		$html .= "<ul>$arrivedHtml</ul>";
 	}
-	
 
-	if(!empty($html)){
-		if($userId != get_current_user_id() && !wp_doing_cron()){
-			$html	= "<button type'button' class='button small mark-all-as-read' data-userid='$userId'>Mark all pages as read for {$user->display_name}</button>".$html;
-		}
 
-		return "<div id='personalinfo'>$html</div>";
+	if(empty($html) || wp_doing_cron()){
+		return '';
 	}
+
+	$extra	= '';
+	if($userId != get_current_user_id()){
+		$extra	=  " for {$user->display_name}";
+	}
+	$html	.= "<button type'button' class='button small mark-all-as-read' data-userid='$userId'>Mark all pages as read$extra</button>";
+
+	return "<div id='personalinfo'>$html</div>";
 }
