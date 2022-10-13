@@ -242,9 +242,9 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues=null, $i
 		if($fieldValues['roundtrip'][0] == 'Yes'){
 			$start = $tripDetails[1]['date'];
 
-			if(is_array($tripDetails[6])){
+			if(is_array($tripDetails[6]) && !empty($tripDetails[6]['date'])){
 				$end = $tripDetails[6]['date'];
-			}elseif(is_array($tripDetails[5])){
+			}elseif(is_array($tripDetails[5]) && !empty($tripDetails[5]['date'])){
 				$end = $tripDetails[5]['date'];
 			}else{
 				$end = $tripDetails[4]['date'];
@@ -257,11 +257,11 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues=null, $i
 		}
 		
 		//Add the current user to the passengers
-		$passengers			= implode(',',(array)$fieldValues['passengers']);
+		$passengers			= implode(',', (array)$fieldValues['passengers']);
 		if(!empty($passengers)){
 			$passengers .= ',';
 		}
-		$passengers		   .= $fieldValues['userid'];
+		$passengers		   .= $fieldValues['user_id'];
 		
 		$destination		= str_replace('_', ' ', $tripDetails[$index]['to']);
 		if($fieldValues['traveltype'][0] == 'International'){
