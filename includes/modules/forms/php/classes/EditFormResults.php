@@ -185,6 +185,24 @@ class EditFormResults extends DisplayFormResults{
 	}
 
 	/**
+	 * Checks if all sub entries are archived, if so archives the whole
+	 *
+	 * @param	object	$data	the data to check
+	 */
+	public function unArchiveAll($id){
+		// Get the original submission
+		$this->setSubmissionData(null, $id);
+
+		// Update the original
+		foreach($this->formResults[$this->formData->settings['split']] as &$sub){
+			$sub['archived']	= false;
+		}
+		
+		//update and mark as archived if all entries are empty or archived
+		$this->updateSubmissionData(false);
+	}
+
+	/**
 	 * Removes an existing submission from the database
 	 *
 	 * @param	int	$submissionId		The id of the submission to delete

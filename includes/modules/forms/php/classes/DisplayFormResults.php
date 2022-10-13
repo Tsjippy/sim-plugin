@@ -94,6 +94,7 @@ class DisplayFormResults extends DisplayForm{
 	 *
 	 * @param	int		$userId			Optional the user id to get the results of. Default null
 	 * @param	int		$submissionId	Optional a specific id. Default null
+	 * @param	bool	$all			Whether to retrieve all submissions or paged
 	 */
 	public function setSubmissionData($userId=null, $submissionId=null, $all=false){
 		$this->submissionData		= $this->getSubmissionData($userId, $submissionId, $all);
@@ -149,7 +150,7 @@ class DisplayFormResults extends DisplayForm{
 				// If it has data add as a seperate item to the submission data
 				$newSubmission	= clone $entry;
 				// Mark this submission as archived if needed
-				if(isset($array['archived'])){
+				if(isset($array['archived']) && $array['archived']){
 					if($this->showArchived){
 						$newSubmission->archived	= true;
 						unset($array['archived']);

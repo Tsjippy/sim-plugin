@@ -161,6 +161,9 @@ async function archiveSubmission(target){
 					}else{
 						element = row.querySelector(`.loaderwrapper, .unarchive`);
 					}
+					
+
+	console.log(element);
 					changeArchiveButton(element, action);
 				}else{
 					row.remove();
@@ -174,6 +177,9 @@ async function archiveSubmission(target){
 				// just change the button name
 				if(params.archived == 'true'){
 					let loader = row.querySelector('.loaderwrapper');
+					
+
+	console.log(loader);
 					changeArchiveButton(loader, action);
 				}else{
 					row.remove();
