@@ -11,7 +11,7 @@ add_action('sim_after_post_save', function($post){
 });
 
 // change visibility of an attachment when it is a video or audio
-add_action( 'add_attachment', function ( $postId) { 
+add_action( 'add_attachment', function ( $postId) {
     $post   = get_post($postId);
     $type   = explode('/', $post->post_mime_type)[0];
     

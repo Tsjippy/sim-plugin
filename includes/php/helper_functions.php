@@ -858,7 +858,7 @@ function processImages($post){
  * @param	string		$name			Human readable name of the picture
  * @param	array		$settings		The module settings array
  * @param	string		$type			The image type you allow
- * 
+ *
  * @return	string						the selector html
 */
 function pictureSelector($key, $name, $settings, $type=''){

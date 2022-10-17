@@ -79,17 +79,17 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 				<?php
 				if($settings[$iconName]){
 					$img			= "<img src='{$settings[$iconName]}' class='icon' loading='lazy'>";
-					$button_text	= "Change";
+					$buttonText	= "Change";
 				}else{
 					$img	= "";
-					$button_text	= "Select";
+					$buttonText	= "Select";
 				}
 				?>
 				<div class="icon_preview">
 					<?php echo $img;?>
 				</div>
 
-				<button type='button' class='dropbtn'><?php echo $button_text;?> Icon</button>";
+				<button type='button' class='dropbtn'><?php echo $buttonText;?> Icon</button>
 
 				<div class="dropdown-content">
 					<?php

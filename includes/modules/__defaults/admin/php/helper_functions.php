@@ -30,6 +30,7 @@ function installPlugin($pluginFile){
 	$plugins		= get_plugins();
 	$activePlugins	= get_option( 'active_plugins' );
 	$pluginName		= str_replace('.php', '', explode('/', $pluginFile)[1]);
+	$pluginSlug		= str_replace('.php', '', explode('/', $pluginFile)[0]);
 	
 	if(in_array($pluginFile, $activePlugins)){
 		// Already installed and activated
@@ -49,7 +50,7 @@ function installPlugin($pluginFile){
 	include_once( ABSPATH . 'wp-admin/includes/plugin-install.php' );
 
 	$api = plugins_api( 'plugin_information', array(
-		'slug' => $pluginName,
+		'slug' => $pluginSlug,
 		'fields' => array(
 			'short_description' => false,
 			'sections' => false,
@@ -67,7 +68,7 @@ function installPlugin($pluginFile){
 	));
 
 	if(is_wp_error($api)){
-		return;
+		return ob_get_clean();
 	}
 
 	//includes necessary for Plugin_Upgrader and Plugin_Installer_Skin
@@ -87,6 +88,8 @@ function installPlugin($pluginFile){
 	$_SESSION['plugin']   = ['installed'=>$pluginName];
 
 	printJs();
+
+	return ob_get_clean();
 }
 
 function printJs(){

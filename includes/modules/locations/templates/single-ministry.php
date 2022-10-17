@@ -47,10 +47,22 @@ if(!isset($skipHeader) || !$skipHeader){
 
 						$cats[]	= $cat->slug;
 					}
-					
+
 					$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 3, $cats);
 
-					echo $mediaGallery->mediaGallery('Media', 60);
+					if(isset($_POST['switch-gallery']) && $_POST['switch-gallery'] == 'filter'){
+						echo $mediaGallery->filterableMediaGallery();
+						$value	= 'gallery';
+						$text	= 'View less';
+					}else{
+						echo $mediaGallery->mediaGallery('Media', 60);
+						$value	= 'filter';
+						$text	= 'View more...';
+					}
+
+					echo "<form method='post' style='text-align: center;'>";
+						echo "<button class='small button' name='switch-gallery' value='$value'>$text</button>";
+            		echo "</form>";
 				}
 
 				// Show any projects linked to this

@@ -101,39 +101,41 @@ class MediaGallery{
 
         ?>
         <article class="media-gallery-article" data-types='<?php echo json_encode($this->types );?>' data-categories='<?php echo json_encode($this->cats);?>' data-speed='<?php echo $speed;?>'>
-            <h3 class="media-gallery-title"><?php echo $title;?></h3>
+            <h3 class="media-gallery-title">
+                <?php echo $title;?>
+            </h3>
             <div class="row">
-            <?php
-            while($amount > 0) {
-                $post           = $this->posts[0];
-                unset($this->posts[0]);
-                $this->posts    = array_values($this->posts);
-                $pageUrl	    = get_permalink($post->ID);
-                $title		    = $post->post_title;
-                ?>
-                <div class="media-gallery">
-                    <div class="card card-profile card-plain">
-                        <div class="col-md-5">
-                            <div class="card-image">
-                                <a href='<?php echo $pageUrl;?>'>
-                                    <img class='img' src='<?php echo wp_get_attachment_image_url($post->ID);?>' alt='' title='<?php echo $title;?>' loading='lazy'>
-                                </a>
+                <?php
+                while($amount > 0) {
+                    $post           = $this->posts[0];
+                    unset($this->posts[0]);
+                    $this->posts    = array_values($this->posts);
+                    $pageUrl	    = get_permalink($post->ID);
+                    $title		    = $post->post_title;
+                    ?>
+                    <div class="media-gallery">
+                        <div class="card card-profile card-plain">
+                            <div class="col-md-5">
+                                <div class="card-image">
+                                    <a href='<?php echo $pageUrl;?>'>
+                                        <img class='img' src='<?php echo wp_get_attachment_image_url($post->ID);?>' alt='' title='<?php echo $title;?>' loading='lazy'>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-7">
-                            <div class="content">
-                                <a href='<?php echo $pageUrl;?>'>
-                                    <h4 class='card-title'><?php echo $title;?></h4>
-                                    <p class='card-description'><?php echo get_the_excerpt($post->ID);?></p>
-                                </a>
+                            <div class="col-md-7">
+                                <div class="content">
+                                    <a href='<?php echo $pageUrl;?>'>
+                                        <h4 class='card-title'><?php echo $title;?></h4>
+                                        <p class='card-description'><?php echo get_the_excerpt($post->ID);?></p>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <?php
-                $amount--;
-            }
-            ?>
+                    <?php
+                    $amount--;
+                }
+                ?>
             </div>
         </article>
         <?php

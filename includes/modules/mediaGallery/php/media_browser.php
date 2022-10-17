@@ -17,7 +17,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
         'label' => __( 'Gallery visibility' ),
         'input' => 'html',
         'html'  =>  ob_get_clean()
-      );  
+      );
     return $formFields;
 }, 10, 2);
 
