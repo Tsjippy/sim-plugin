@@ -31,6 +31,40 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	return ob_get_clean();
 }, 10, 2);
 
+add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $optionsHtml;
+	}
+
+	ob_start();
+    ?>
+	<label>Select the categories you do not want to be selectable</label>
+	<br>
+	<?php
+	$categories	= get_categories( array(
+		'orderby' 		=> 'name',
+		'order'   		=> 'ASC',
+		'taxonomy'		=> 'attachment_cat',
+		'hide_empty' 	=> false,
+	) );
+
+	foreach($categories as $category){
+		$checked	= '';
+		if(is_array($settings['categories']) && in_array($category->slug, $settings['categories'])){
+			$checked	= 'checked';
+		}
+		echo "<label>";
+			echo "<input type='checkbox' name='categories[]' value='$category->slug' $checked>";
+			echo $category->name;
+		echo "</label><br>";
+	}
+	?>
+	<?php
+
+	return ob_get_clean();
+}, 10, 3);
+
 add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
@@ -43,10 +77,10 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	return $options;
 }, 10, 3);
 
-add_filter('display_post_states', function ( $states, $post ) { 
+add_filter('display_post_states', function ( $states, $post ) {
     
 	if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'mediagallery_pages')) ) {
-		$states[] = __('Media gallery page'); 
+		$states[] = __('Media gallery page');
 	}
 
 	return $states;

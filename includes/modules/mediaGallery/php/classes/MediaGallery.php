@@ -158,6 +158,16 @@ class MediaGallery{
             'hide_empty' 	=> false,
         ) );
 
+        $shouldSkip     = SIM\getModuleOption(MODULE_SLUG, 'categories');
+
+        foreach($categories as $index=>$category){
+            if(in_array($category->slug, $shouldSkip)){
+                unset($categories[$index]);
+            }
+        }
+
+        $categories = apply_filters('sim-media-gallery-categories', $categories);
+
         ?>
         <div id="medialoaderwrapper" class="hidden">
             <img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' alt=''>
@@ -355,7 +365,7 @@ class MediaGallery{
                             $mediaHtml  .=  "<source src='$url' type='$mime'>";
                         $mediaHtml  .=  '</video>';
                     }else{
-                        list($width, $height, $a, $attr) = getimagesize(SIM\urlToPath($url));
+                        list($width, $height) = getimagesize(SIM\urlToPath($url));
                         $ratio  = $height/$width;
 
                         //Center the image vertically
