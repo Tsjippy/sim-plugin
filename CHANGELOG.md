@@ -3,6 +3,8 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- possibility to not display certain cats in
+media gallery cat selector
 
 ### Changed
 
