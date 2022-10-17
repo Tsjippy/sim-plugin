@@ -8,6 +8,7 @@
 
 ### Fixed
 - print travel for one way
+- install 3th party plugin
 
 ## [2.21.9] - 2022-10-13
 
