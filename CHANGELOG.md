@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- print travel for one way
 
 ## [2.21.9] - 2022-10-13
 
