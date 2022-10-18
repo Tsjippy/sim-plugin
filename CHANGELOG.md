@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.21.10.2] - 2022-10-18
+
+
+### Changed
 - auto install postie plugin
 
 ### Fixed
