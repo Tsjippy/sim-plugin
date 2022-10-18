@@ -8,6 +8,7 @@
 - auto install postie plugin
 
 ### Fixed
+- bug in forms menu
 
 ## [2.21.10.1] - 2022-10-18
 
