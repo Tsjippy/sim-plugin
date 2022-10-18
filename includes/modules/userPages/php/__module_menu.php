@@ -57,10 +57,10 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	return $options;
 }, 10, 3);
 
-add_filter('display_post_states', function ( $states, $post ) { 
-    
-	if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'allcontacts_pages')) ) {
-		$states[] = __('Page showing all users'); 
+add_filter('display_post_states', function ( $states, $post ) {
+
+	if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'allcontacts_pages', 'array')) ) {
+		$states[] = __('Page showing all users');
 	}
 
 	return $states;

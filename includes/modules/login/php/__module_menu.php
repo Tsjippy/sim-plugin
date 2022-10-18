@@ -145,7 +145,7 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 	?>
 	<br>
 	<br>
-    
+
 	<h4>Two factor login reset e-mail</h4>
 	<label>Define the e-mail people get when their two factor login got reset by a user manager.</label>
 	<?php
@@ -209,15 +209,15 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 
 }, 10, 3);
 
-add_filter('display_post_states', function ( $states, $post ) { 
-    
-    if(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'password_reset_page')) ) {
-        $states[] = __('Password reset page'); 
-    }elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'register_page'))) {
-        $states[] = __('User register page'); 
-    }elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, '2fa_page')) ) {
-        $states[] = __('Two Factor Setup page'); 
-    } 
+add_filter('display_post_states', function ( $states, $post ) {
+
+    if(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'password_reset_page', 'array')) ) {
+        $states[] = __('Password reset page');
+    }elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'register_page', 'array'))) {
+        $states[] = __('User register page');
+    }elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, '2fa_page', 'array')) ) {
+        $states[] = __('Two Factor Setup page');
+    }
 
     return $states;
 }, 10, 2);

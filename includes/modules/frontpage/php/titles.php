@@ -69,12 +69,12 @@ add_action('generate_after_header', function (){
 	}
 	
 	//change title of all pages except the frontpage
-	if($title != 'Home' && !in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page'))){
+	if($title != 'Home' && !in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page', 'array'))){
 		//Display featured image in title if it has one
-		if ( 
-			has_post_thumbnail() 	&& 
-			!is_home() 				&& 
-			!is_category() 			&& 
+		if (
+			has_post_thumbnail() 	&&
+			!is_home() 				&&
+			!is_category() 			&&
 			!is_tax() 				&&
 			!is_archive()			&&
 			get_post_type() != 'recipe'

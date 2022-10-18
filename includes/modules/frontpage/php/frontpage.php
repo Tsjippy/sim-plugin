@@ -8,7 +8,7 @@ $hookName	= SIM\getModuleOption(MODULE_SLUG, 'header_hook');
 if(!empty($hookName)){
 	//Add a button to the header
 	add_action($hookName, function(){
-		if (is_user_logged_in() && (in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page')) || is_front_page())){
+		if (is_user_logged_in() && SIM\isHomePage(get_the_ID())){
 			$button1	= SIM\getModuleOption(MODULE_SLUG, 'first_button');
 			$button2	= SIM\getModuleOption(MODULE_SLUG, 'second_button');
 
@@ -33,7 +33,7 @@ $hookName	= SIM\getModuleOption(MODULE_SLUG, 'after_main_content_hook');
 if(!empty($hookName)){
 	add_action($hookName, function(){
 		//if on home page and prayer module activated
-		if(in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page')) && is_user_logged_in()){
+		if(SIM\isHomePage(get_the_ID()) && is_user_logged_in()){
 			$message	= apply_filters('sim_frontpage_message', '');
 				
 			echo "<article>";
@@ -49,9 +49,9 @@ $hookName	= SIM\getModuleOption(MODULE_SLUG, 'before_footer_hook');
 if(!empty($hookName)){
 	add_action($hookName, function() {
 		//if on home page
-		if(in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page')) || is_front_page()){
+		if(SIM\isHomePage(get_the_ID())){
 			// If not logged in and on the logged in homepage
-			if (!is_user_logged_in() && in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page'))){
+			if (!is_user_logged_in() && SIM\isHomePage(get_the_ID(), false)){
 				return;
 			}
 
@@ -233,7 +233,7 @@ if(!empty($hookName)){
 
 //Add the home class
 add_filter( 'body_class',function ( $classes ) {
-	if(in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG,'home_page')) || is_front_page()){
+	if( SIM\isHomePage(get_the_ID())){
 		$classes[] = 'home';
 	}
     return $classes;

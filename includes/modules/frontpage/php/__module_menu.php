@@ -289,11 +289,11 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	return $options;
 }, 10, 3);
 
-add_filter('display_post_states', function ( $states, $post ) { 
-    
-    if(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'home_page')) ) {
-        $states[] = __('Home page for logged in users'); 
-    } 
+add_filter('display_post_states', function ( $states, $post ) {
+
+    if(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'home_page', 'array')) ) {
+        $states[] = __('Home page for logged in users');
+    }
 
     return $states;
 }, 10, 2);

@@ -114,7 +114,7 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 	$email    = new ApprovedPostMail(wp_get_current_user());
 	$email->printPlaceholders();
 	$email->printInputs($settings);
-    
+
 	return ob_get_clean();
 }, 10, 3);
 
@@ -134,13 +134,13 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	return $options;
 }, 10, 3);
 
-add_filter('display_post_states', function ( $states, $post ) { 
-    
-    if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages'))) {
-        $states[] = __('Frontend posting page'); 
-    }elseif ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'pending_pages'))) {
-        $states[] = __('Pending posts page'); 
-    } 
+add_filter('display_post_states', function ( $states, $post ) {
+
+    if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages', 'array'))) {
+        $states[] = __('Frontend posting page');
+    }elseif ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'pending_pages', 'array'))) {
+        $states[] = __('Pending posts page');
+    }
 
     return $states;
 }, 10, 2);

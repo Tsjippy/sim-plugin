@@ -5,16 +5,18 @@ namespace SIM;
  * Retrievs the value of a certain module setting
  * @param	string 	$moduleName		The module name'
  * @param	string	$option			The option name
- * 
+ *
  * @return	array|string|false			The option value or false if option is not found
 */
-function getModuleOption($moduleName, $option){
+function getModuleOption($moduleName, $option, $return='boolean'){
 	global $Modules;
 
 	if(!empty($Modules[$moduleName][$option])){
 		return $Modules[$moduleName][$option];
-	}else{
+	}elseif($return == 'boolean'){
 		return false;
+	}else{
+		return [];
 	}
 }
 
