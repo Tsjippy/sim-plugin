@@ -9,6 +9,7 @@
 
 ### Fixed
 - bug in forms menu
+- in_array bugs
 
 ## [2.21.10.1] - 2022-10-18
 
