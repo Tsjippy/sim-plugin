@@ -66,7 +66,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<div class="">
 		<h4>Give optional e-mail addresses and the categories their posts should be given:</h4>
 		<div class="clone_divs_wrapper">
-			<?php			
+			<?php
 			foreach($categoryMapper as $index=>$mapper){
 				if(empty($mapper)){
 					$mapper	= [];
@@ -142,3 +142,13 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<?php
 	return ob_get_clean();
 }, 10, 3);
+
+//run on module activation
+add_filter('sim_module_updated', function($options, $moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
+
+	SIM\ADMIN\installPlugin('postie/postie.php');
+}, 10, 2);
