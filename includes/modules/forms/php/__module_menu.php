@@ -218,8 +218,8 @@ add_action('sim_module_actions', function(){
 
 add_filter('display_post_states', function ( $states, $post ) {
     
-    if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'forms_pages'))) {
-        $states[] = __('Form selector page'); 
+    if (is_array(SIM\getModuleOption(MODULE_SLUG, 'forms_pages')) && in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'forms_pages'))) {
+        $states[] = __('Form selector page');
     }
 
     return $states;

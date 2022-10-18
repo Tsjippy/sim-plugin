@@ -41,11 +41,12 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		return $optionsHtml;
 	}
 
-	ob_start();
+	
 	
 	$query = 'SELECT * FROM `'.$wpdb->prefix .'ums_icons` WHERE 1';
 	$icons = $wpdb->get_results($query);
 
+	ob_start();
 	wp_enqueue_style('sim_locations_admin_style', plugins_url('css/admin.min.css', __DIR__), array(), MODULE_VERSION);
 	wp_enqueue_script('sim_locations_admin_script', plugins_url('js/locations_admin.min.js', __DIR__), array(), MODULE_VERSION, true);
 

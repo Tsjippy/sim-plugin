@@ -6,14 +6,6 @@ const MODULE_VERSION		= '7.0.0';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
-//run on module activation
-add_action('sim_module_activated', function($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{return;}
-
-	wp_create_category('Finance');
-});
-
 add_filter('sim_submenu_description', function($description, $moduleSlug){
 	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{
@@ -24,7 +16,6 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	?>
 	This module depends on the <a href="wordpress.org/plugins/postie/">postie</a> plugin.<br>
 	It makes it possible to publish content via the mail.<br>
-	E-mails coming from the finance department will automatically get the finance category.<br>
 	<?php
 
 	return ob_get_clean();

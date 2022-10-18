@@ -10,6 +10,12 @@ if(!class_exists('BaconQrCode\Renderer\ImageRenderer')){
     return new \WP_Error('2fa', "bacon-qr-code interface does not exist. Please run 'composer require bacon/bacon-qr-code'");
 }
 
+/* Install java apt install openjdk-17-jdk -y
+export VERSION=0.11.3
+wget https://github.com/AsamK/signal-cli/releases/download/v"${VERSION}"/signal-cli-"${VERSION}"-Linux.tar.gz
+sudo tar xf signal-cli-"${VERSION}"-Linux.tar.gz -C /opt
+sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
+
 class SignalWrapper{
 
     public function __construct()
