@@ -3,12 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.21.10.1] - 2022-10-18
+
+
+### Added
 - possibility to not display certain cats in
 media gallery cat selector
 - signal library MTM for
 server side sending messages
-
-### Changed
 
 ### Fixed
 - print travel for one way
