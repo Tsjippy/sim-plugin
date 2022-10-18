@@ -5,6 +5,8 @@
 ### Added
 - possibility to not display certain cats in
 media gallery cat selector
+- signal library MTM for
+server side sending messages
 
 ### Changed
 
