@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- auto install postie plugin
 
 ### Fixed
 
