@@ -102,15 +102,15 @@ add_filter( 'pre_set_site_transient_update_plugins', function($transient){
 
 /**
  * Retrieves the latest github release from cache or github
- * 
+ *
  * @return	array	Array containing information about the latest release
  */
-function getLatestRelease(){
+function getLatestRelease($author='tsjippy', $package=PLUGINNAME){
 	if(isset($_GET['update'])){
 		$release	= false;
 	}else{
 		//check github version
-		$release    = get_transient('sim-git-release');
+		$release    = get_transient("$author-$package");
 	}
 	
 	// if not in transient
@@ -118,12 +118,12 @@ function getLatestRelease(){
 		try{
 			$client 	    = new \Github\Client();
 
-			$release 	    = $client->api('repo')->releases()->latest('tsjippy', PLUGINNAME);
+			$release 	    = $client->api('repo')->releases()->latest($author, $package);
 
 			$client->removeCache();
 			
 			// Store for 1 hours
-			set_transient( 'sim-git-release', $release, DAY_IN_SECONDS );
+			set_transient( "$author-$package", $release, DAY_IN_SECONDS );
 		} catch (ApiLimitExceedException $e) {
 			printArray('Rate limit reached, please try again in an hour');
 			return new \WP_Error('update', 'Rate limit reached, please try again in an hour');

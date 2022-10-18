@@ -7,6 +7,10 @@ add_shortcode("test",function ($atts){
 
     $signal = new SIGNAL\SignalWrapper();
 
+    if(!$signal->valid){
+        return $signal->error->get_error_message();
+    }
+
     return $signal->linkPhoneNumber();
 });
 

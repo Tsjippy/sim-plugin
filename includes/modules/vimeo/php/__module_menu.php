@@ -30,7 +30,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 			<?php
 			echo SIM\addSaveButton('download_video', 'Submit download url');
 			?>
-		</form> 
+		</form>
 		<?php
 	}
 	?>
@@ -84,17 +84,17 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			</div>
 			<?php
 		}elseif(!empty($_GET['code']) && !empty($_GET['state'])){
-			$VimeoApi		= new VimeoApi();
+			$vimeoApi		= new VimeoApi();
 			if(get_option('vimeo_state') != $_GET['state']){
 				?>
 				<div class='error'>
 					<p>
-						Something went wrong <a href="<?php echo $VimeoApi->getAuthorizeUrl($clientId, $clientSecret);?>">try again</a>.
+						Something went wrong <a href="<?php echo $vimeoApi->getAuthorizeUrl($clientId, $clientSecret);?>">try again</a>.
 					</p>
 				</div>
 				<?php
 			}else{
-				$accessToken = $VimeoApi->storeAccessToken($clientId, $clientSecret, $_GET['code'], admin_url( "admin.php?page=".$_GET["page"] ));
+				$accessToken = $vimeoApi->storeAccessToken($clientId, $clientSecret, $_GET['code'], admin_url( "admin.php?page=".$_GET["page"] ));
 				?>
 				<div id='set_vimeo_token'>
 					<h2>Succesfully connect to vimeo</h2>
@@ -106,8 +106,8 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 				<?php
 			}
 		}else{
-			$VimeoApi		= new VimeoApi();
-			$link	= $VimeoApi->getAuthorizeUrl($clientId, $clientSecret);
+			$vimeoApi		= new VimeoApi();
+			$link	= $vimeoApi->getAuthorizeUrl($clientId, $clientSecret);
 			?>
 			<div id='set_vimeo_token'>
 				<h2>Connect to vimeo</h2>
@@ -128,8 +128,8 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			<?php
 		}
 	}else{
-		$VimeoApi		= new VimeoApi();
-		$VimeoApi->isConnected();
+		$vimeoApi		= new VimeoApi();
+		$vimeoApi->isConnected();
 	}
 	?>
 	<div class="settings-section">

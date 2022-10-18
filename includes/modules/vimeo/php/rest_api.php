@@ -6,9 +6,9 @@ use WP_User;
 
 add_action( 'rest_api_init', function () {
 	// prepare video upload
-	register_rest_route( 
-		RESTAPIPREFIX.'/vimeo', 
-		'/prepare_vimeo_upload', 
+	register_rest_route(
+		RESTAPIPREFIX.'/vimeo',
+		'/prepare_vimeo_upload',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\prepareVimeoUpload',
@@ -25,9 +25,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // Save uploaded video details
-    register_rest_route( 
-		RESTAPIPREFIX.'/vimeo', 
-		'/add_uploaded_vimeo', 
+    register_rest_route(
+		RESTAPIPREFIX.'/vimeo',
+		'/add_uploaded_vimeo',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\addUploadedVimeo',
@@ -42,9 +42,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Save uploaded video details
-    register_rest_route( 
-		RESTAPIPREFIX.'/vimeo', 
-		'/download_to_server', 
+    register_rest_route(
+		RESTAPIPREFIX.'/vimeo',
+		'/download_to_server',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	function(){
@@ -78,9 +78,9 @@ add_action( 'rest_api_init', function () {
 
 /**
  * create a video on vimeo to upload to
- * 
+ *
  * @return	array		arra containing the upload link, post id and vimeo id
- * 
+ *
  */
 function prepareVimeoUpload(){
 	global $wpdb;
@@ -120,7 +120,7 @@ function prepareVimeoUpload(){
 
 /**
  * After upload to vimeo was succesfull
- * 
+ *
  * @return	array with succes and the attachment data
  */
 function addUploadedVimeo(){
