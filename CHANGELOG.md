@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- link signal device
 
 ### Fixed
 
