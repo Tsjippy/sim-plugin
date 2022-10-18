@@ -1,0 +1,261 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "dbcbfee4d9252c738affb6ae930d46ae",
+    "packages": [
+        {
+            "name": "bacon/bacon-qr-code",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Bacon/BaconQrCode.git",
+                "reference": "5c2d190a348868aa30480a988f1231f2a7d5f033"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/5c2d190a348868aa30480a988f1231f2a7d5f033",
+                "reference": "5c2d190a348868aa30480a988f1231f2a7d5f033",
+                "shasum": ""
+            },
+            "require": {
+                "dasprid/enum": "^1.0.3",
+                "ext-iconv": "*",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "phly/keep-a-changelog": "^2.1",
+                "phpunit/phpunit": "^7 | ^8 | ^9",
+                "spatie/phpunit-snapshot-assertions": "^4.2.9",
+                "squizlabs/php_codesniffer": "^3.4"
+            },
+            "suggest": {
+                "ext-imagick": "to generate QR code images"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "BaconQrCode\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Scholzen 'DASPRiD'",
+                    "email": "mail@dasprids.de",
+                    "homepage": "https://dasprids.de/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "BaconQrCode is a QR code generator for PHP.",
+            "homepage": "https://github.com/Bacon/BaconQrCode",
+            "support": {
+                "issues": "https://github.com/Bacon/BaconQrCode/issues",
+                "source": "https://github.com/Bacon/BaconQrCode/tree/master"
+            },
+            "time": "2022-03-14T02:08:39+00:00"
+        },
+        {
+            "name": "dasprid/enum",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DASPRiD/Enum.git",
+                "reference": "5abf82f213618696dda8e3bf6f64dd042d8542b2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DASPRiD/Enum/zipball/5abf82f213618696dda8e3bf6f64dd042d8542b2",
+                "reference": "5abf82f213618696dda8e3bf6f64dd042d8542b2",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7 | ^8 | ^9",
+                "squizlabs/php_codesniffer": "^3.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DASPRiD\\Enum\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Scholzen 'DASPRiD'",
+                    "email": "mail@dasprids.de",
+                    "homepage": "https://dasprids.de/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP 7.1 enum implementation",
+            "keywords": [
+                "enum",
+                "map"
+            ],
+            "support": {
+                "issues": "https://github.com/DASPRiD/Enum/issues",
+                "source": "https://github.com/DASPRiD/Enum/tree/1.0.3"
+            },
+            "time": "2020-10-02T16:03:48+00:00"
+        },
+        {
+            "name": "merlinthemagic/mtm-fs",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/merlinthemagic/MTM-FS.git",
+                "reference": "5d1b0626049e446e8eca18e6f0e3258835d23410"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/merlinthemagic/MTM-FS/zipball/5d1b0626049e446e8eca18e6f0e3258835d23410",
+                "reference": "5d1b0626049e446e8eca18e6f0e3258835d23410",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.3.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "./Src/Enable.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Martin Peter Madsen",
+                    "email": "dev@martinpetermadsen.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "File system tools for PHP 7",
+            "homepage": "https://github.com/merlinthemagic/MTM-FS",
+            "keywords": [
+                "directories",
+                "files"
+            ],
+            "support": {
+                "issues": "https://github.com/merlinthemagic/MTM-FS/issues",
+                "source": "https://github.com/merlinthemagic/MTM-FS/tree/master"
+            },
+            "time": "2022-04-25T10:43:22+00:00"
+        },
+        {
+            "name": "merlinthemagic/mtm-signal-api",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/merlinthemagic/MTM-Signal.git",
+                "reference": "0e884e1398126d6ca50e679f7932fa31e0b71b20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/merlinthemagic/MTM-Signal/zipball/0e884e1398126d6ca50e679f7932fa31e0b71b20",
+                "reference": "0e884e1398126d6ca50e679f7932fa31e0b71b20",
+                "shasum": ""
+            },
+            "require": {
+                "merlinthemagic/mtm-fs": ">=0.0.1",
+                "merlinthemagic/mtm-utilities": ">=0.0.1",
+                "php": ">=7.3.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "./Src/Enable.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Martin Peter Madsen",
+                    "email": "dev@martinpetermadsen.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Signal Api",
+            "homepage": "https://github.com/merlinthemagic/MTM-Signal",
+            "support": {
+                "issues": "https://github.com/merlinthemagic/MTM-Signal/issues",
+                "source": "https://github.com/merlinthemagic/MTM-Signal/tree/main"
+            },
+            "time": "2021-10-05T08:28:00+00:00"
+        },
+        {
+            "name": "merlinthemagic/mtm-utilities",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/merlinthemagic/MTM-Utilities.git",
+                "reference": "44202639184c6b3fe7ff32e63f9de4b9739332f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/merlinthemagic/MTM-Utilities/zipball/44202639184c6b3fe7ff32e63f9de4b9739332f5",
+                "reference": "44202639184c6b3fe7ff32e63f9de4b9739332f5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.3.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "./Src/Enable.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Martin Peter Madsen",
+                    "email": "dev@martinpetermadsen.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Utilities for PHP 7",
+            "homepage": "https://github.com/merlinthemagic/MTM-Utilities",
+            "keywords": [
+                "guids",
+                "hashing",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/merlinthemagic/MTM-Utilities/issues",
+                "source": "https://github.com/merlinthemagic/MTM-Utilities/tree/master"
+            },
+            "time": "2022-05-09T08:52:39+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "merlinthemagic/mtm-signal-api": 20,
+        "bacon/bacon-qr-code": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.2.0"
+}

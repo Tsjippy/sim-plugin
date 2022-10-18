@@ -8,6 +8,21 @@
     }
 }
 
+.mediagallery-wrapper{
+    .categories{
+        display: flex;
+        flex-wrap: wrap;
+
+        div{
+            width: 100%;
+        }
+        
+        label{
+            margin-right: 10px;
+        }
+    }
+}
+
 .mediawrapper{
     position: relative;
     display: flex;

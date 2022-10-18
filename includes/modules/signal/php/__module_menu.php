@@ -45,6 +45,11 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	
 	?>
 	<label>
+		Phone number to be used for sending messages
+		<input type="tel" name="phone" pattern="\+[0-9]{9,}" title="Phonenumber starting with a +. Only numbers. Example: +2349041234567" value='<?php echo $settings["phone"]; ?>' style='width:100%'>
+	</label>
+
+	<label>
 		Link to join the Signal group
 		<input type='url' name='group_link' value='<?php echo $settings["group_link"]; ?>' style='width:100%'>
 	</label>

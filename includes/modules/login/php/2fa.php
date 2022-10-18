@@ -19,7 +19,7 @@ if(!class_exists('RobThree\Auth\TwoFactorAuth')){
 //https://robthree.github.io/TwoFactorAuth/getting-started.html
 /**
  * Setup the one time key for authenticator
- * 
+ *
  * @return  object       An object with the secret key and qr code
  */
 function setupTimeCode(){

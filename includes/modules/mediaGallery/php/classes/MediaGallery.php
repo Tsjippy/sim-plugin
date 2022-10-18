@@ -169,88 +169,93 @@ class MediaGallery{
         $categories = apply_filters('sim-media-gallery-categories', $categories);
 
         ?>
-        <div id="medialoaderwrapper" class="hidden">
-            <img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' alt=''>
-            <div>Loading more...</div>
-        </div>
+        <div class='mediagallery-wrapper'>
+            <div id="medialoaderwrapper" class="hidden">
+                <img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' alt=''>
+                <div>Loading more...</div>
+            </div>
 
-        <div class="mediawrapper">
-            <?php
-            $mediaHtml  = $this->loadMediaHTML();
-            if($mediaHtml){
-                echo $mediaHtml;
-            }else{
-                echo "No media found";
-            }
-            ?>
-        </div>
-
-        <div class='mediabuttons'>
-            <input type='hidden' id='paged' value=1>
-
-            <?php
-            if($url){
-                ?>
-                <a href='<?php echo $url;?>?type=attachment' class="button">Upload new media</a>
+            <div class="mediawrapper">
                 <?php
-            }
-            ?>
-            Show:
-            <select id='media-amount' class='inline'>
-                <option value='10'>10</option>
-                <option value='20' selected>20</option>
-                <option value='30'>30</option>
-                <option value='40'>40</option>
-                <option value='50'>50</option>
-                <option value='60'>60</option>
-                <option value='70'>70</option>
-                <option value='80'>80</option>
-                <option value='90'>90</option>
-                <option value='100'>100</option>
-            </select>
-            <label>
-                <input type='checkbox' name='media_type' class='media-type-selector' value='image'>
-                Pictures
-            </label>
-            <label>
-                <input type='checkbox' name='media_type' class='media-type-selector' value='video'>
-                Videos
-            </label>
-            <label>
-                <input type='checkbox' name='media_type' class='media-type-selector' value='audio'>
-                Audio
-            </label>
-            <input class="searchtext" type="text" placeholder="Search..">
-            <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" loading='lazy' alt="magnifier">
-        </div>
-
-        <div class='categories <?php if(!empty($this->categories)){ echo 'hidden'; }?>'>
-            Categories:
-            <?php
-            foreach($categories as $cat){
-                $checked    = '';
-                if(in_array($cat->term_id, $this->categories)){
-                    $checked    = 'checked';
+                $mediaHtml  = $this->loadMediaHTML();
+                if($mediaHtml){
+                    echo $mediaHtml;
+                }else{
+                    echo "No media found";
                 }
                 ?>
-                <label>
-                    <input type='checkbox' name='media-category' class='media-cat-selector' value='<?php echo $cat->slug;?>' <?php echo $checked;?>>
-                    <?php echo $cat->name;?>
-                </label>
+            </div>
+
+            <div class='mediabuttons'>
+                <input type='hidden' id='paged' value=1>
+
                 <?php
+                if($url){
+                    ?>
+                    <a href='<?php echo $url;?>?type=attachment' class="button">Upload new media</a>
+                    <?php
+                }
+                ?>
+                Show:
+                <select id='media-amount' class='inline'>
+                    <option value='10'>10</option>
+                    <option value='20' selected>20</option>
+                    <option value='30'>30</option>
+                    <option value='40'>40</option>
+                    <option value='50'>50</option>
+                    <option value='60'>60</option>
+                    <option value='70'>70</option>
+                    <option value='80'>80</option>
+                    <option value='90'>90</option>
+                    <option value='100'>100</option>
+                </select>
+                <label>
+                    <input type='checkbox' name='media_type' class='media-type-selector' value='image'>
+                    Pictures
+                </label>
+                <label>
+                    <input type='checkbox' name='media_type' class='media-type-selector' value='video'>
+                    Videos
+                </label>
+                <label>
+                    <input type='checkbox' name='media_type' class='media-type-selector' value='audio'>
+                    Audio
+                </label>
+                <input class="searchtext" type="text" placeholder="Search..">
+                <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" loading='lazy' alt="magnifier">
+            </div>
+
+            <div class='categories <?php if(!empty($this->categories)){ echo 'hidden'; }?>'>
+                <div>Categories:<br></div>
+                <?php
+                foreach($categories as $cat){
+                    $checked    = '';
+                    if(in_array($cat->term_id, $this->categories)){
+                        $checked    = 'checked';
+                    }
+                    ?>
+                    <label>
+                        <input type='checkbox' name='media-category' class='media-cat-selector' value='<?php echo $cat->slug;?>' <?php echo $checked;?>>
+                        <?php echo $cat->name;?>
+                    </label>
+                    <?php
+                }
+                ?>
+            </div>
+
+            <?php
+            if($mediaHtml && substr_count($mediaHtml, "class='cell") == $this->amount){
+                ?>
+                <div style='text-align:center; margin-top:20px;'>
+                    <button id='loadmoremedia' type='button' class='button'>
+                        Load more
+                    </button>
+                </div><?php
             }
             ?>
         </div>
 
         <?php
-        if($mediaHtml && substr_count($mediaHtml, "class='cell") == $this->amount){
-            ?>
-            <div style='text-align:center; margin-top:20px;'>
-                <button id='loadmoremedia' type='button' class='button'>
-                    Load more
-                </button>
-            </div><?php
-        }
 
         return ob_get_clean();
     }

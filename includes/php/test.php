@@ -4,6 +4,10 @@ namespace SIM;
 //Shortcode for testing
 add_shortcode("test",function ($atts){
     global $wpdb;
+
+    $signal = new SIGNAL\SignalWrapper();
+
+    return $signal->linkPhoneNumber();
 });
 
 // turn off incorrect error on localhost

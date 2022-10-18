@@ -12,7 +12,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 
     ?>
     <div id="signalmessage" class="frontendform">
-        <h4>Signal</h4>	
+        <h4>Signal</h4>
         <label>
             <input type='checkbox' name='signal' value='send_signal' <?php echo $checked; ?>>
             Send signal message on <?php echo $frontendContend->update == 'true' ? 'update' : 'publish';?>
