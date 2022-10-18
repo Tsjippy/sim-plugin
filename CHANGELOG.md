@@ -5,9 +5,14 @@
 ### Added
 
 ### Changed
-- link signal device
 
 ### Fixed
+
+## [2.21.10.3] - 2022-10-18
+
+
+### Changed
+- link signal device
 
 ## [2.21.10.2] - 2022-10-18
 
