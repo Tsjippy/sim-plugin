@@ -30,10 +30,12 @@ class SignalWrapperNew{
         $this->path = '';
         if(strpos(php_uname(), 'Windows') !== false){
             $this->type     = 'Windows';
-            $this->path     = '"C:/Program Files/signal-cli/bin/signal-cli"';
+            $this->basePath = __DIR__.'/../../data/signal-cli';
+            $this->path     = $this->basePath.'/bin/signal-cli';
         }elseif(strpos(php_uname(), 'Linux') !== false){
             $this->type     = 'Linux';
-            $this->path     = "/usr/local/bin/signal-cli";
+            $this->basePath = "/usr/local";
+            $this->path     = $this->basePath."/bin/signal-cli";
         }
 
         $this->nr           = SIM\getModuleOption(MODULE_SLUG, 'phone');
@@ -42,7 +44,7 @@ class SignalWrapperNew{
 
         $this->client = new Signal(
             $this->path, // Binary Path
-            $this->nr, // Username/Number including Country Code with '+' 
+            $this->nr, // Username/Number including Country Code with '+'
             Signal::FORMAT_JSON // Format
         );
     }
@@ -60,9 +62,12 @@ class SignalWrapperNew{
 
         $curVersion     = str_replace('signal-cli ', 'v', trim(shell_exec($this->path.' --version')));
         if(empty($curVersion)){
-            $this->installSignal(str_replace('v','',$release['tag_name']));
-            $errorMessage .= "Please install signal-cli<br>";
-            $this->valid    = false;
+            $this->installSignal(str_replace('v', '', $release['tag_name']));
+
+            if(!file_exists($this->path)){
+                $errorMessage .= "Please install signal-cli<br>";
+                $this->valid    = false;
+            }
         }elseif($curVersion  != $release['tag_name']){
             $errorMessage .= "Please update to version {$release['tag_name']}<br>";
         }
@@ -114,8 +119,10 @@ class SignalWrapperNew{
             rename("$folder/signal-cli-$version", "/opt");
             echo shell_exec("sudo ln -sf /opt/signal-cli-$version/bin/signal-cli /usr/local/bin/");
         }elseif($this->type == 'Windows'){
-            rmdir("C:/Program Files/signal-cli");
-            rename("$folder/signal-cli-$version", "C:/Program Files/signal-cli");
+            if(file_exists($this->basePath)){
+                rmdir($this->basePath);
+            }
+            rename("$folder/signal-cli-$version", $this->basePath);
         }
     }
 
@@ -147,27 +154,61 @@ class SignalWrapperNew{
     }
 
     public function linkPhoneNumber(){
-        $link   = $this->client->link('Test');
+        SIM\clearOutput();
+        header("X-Accel-Buffering: no");
+        header('Content-Encoding: none');
 
-        echo $link;
+        // Turn on implicit flushing
+        ob_implicit_flush(1);
+
+        $link   = $this->client->link(get_bloginfo('name'));
+
+        echo "Link is <code>$link</code>";
+
+        SIM\printArray($this->client->listDevices(), true);
+
+        if (!extension_loaded('imagick')){
+            return $link;
+        }
+
+        $renderer       = new ImageRenderer(
+            new RendererStyle(400),
+            new ImagickImageBackEnd()
+        );
+        $writer         = new Writer($renderer);
+        $qrcodeImage    = base64_encode($writer->writeString($link));
+
+        return "<img loading='lazy' src='data:image/png;base64, $qrcodeImage'/><br>$link";
     }
-        
 
-    public function sendText($nr, $msg){
-        echo $this->client->send(['+2349045252526'], "Hi, testing from' PHP Library");
-        
+    public function sendText($nrs, $msg){
+        if(!is_array($nrs)){
+            $nrs    = [$nrs];
+        }
+        return $this->client->send($nrs, $msg);
+    }
+
+    public function setProfilePicture($path){
+        return $this->client->updateProfile(get_bloginfo('name'), $path);
+    }
+
+    public function getGroups(){
+        return $this->client->listGroups();
     }
 
     public function receive(){
-        //return array of message objects
-        $msgObjs		= $this->userObj->receive(); //will throw on error
-        foreach ($msgObjs as $msgObj) {
-            if ($msgObj->getType() == "DataMessage") {
-                    echo $msgObj->getMessage()."<br><br>";
-            } elseif ($msgObj->getType() == "ReceiptMessage") {
-                    echo $msgObj->getWhen()."<br><br>";
-            }
+        echo $this->client->receive();
+    }
+
+    public function isSignalNumber($nrs){
+        if(!is_array($nrs)){
+            $nrs    = [$nrs];
         }
+        $this->client->getUserStatus($nrs);
+    }
+
+    public function listDevices(){
+        echo $this->client->listDevices();
     }
 
        /*  $version    = shell_exec('curl --silent "https://api.github.com/repos/AsamK/signal-cli/releases/latest" | jq ".. .tag_name? // empty"');

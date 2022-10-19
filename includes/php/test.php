@@ -5,15 +5,36 @@ namespace SIM;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    $signal = new SIGNAL\SignalWrapperNew();
+    $signal = new SIGNAL\Signal(
+        SIGNAL\Signal::FORMAT_JSON // Format
+    );
 
     if(!$signal->valid){
         return $signal->error->get_error_message();
     }
 
-    echo $signal->linkPhoneNumber();
+    if(isset($_GET['link'])){
+        echo $signal->link();
+    }
 
-    return $signal->sendText(21, 'dgd');
+    if(isset($_GET['text'])){
+        echo $signal->send('+2349045252526', $_GET['text']);
+    }
+
+    if(isset($_GET['group'])){
+        echo $signal->listGroups();
+    }
+
+    if(isset($_GET['verify'])){
+        echo $signal->getUserStatus('+2349045252526');
+    }
+
+    if(isset($_GET['list'])){
+        echo $signal->listDevices();
+    }
+
+    
+    //echo $signal->linkPhoneNumber();
 });
 
 // turn off incorrect error on localhost

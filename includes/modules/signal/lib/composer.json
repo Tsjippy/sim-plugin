@@ -3,9 +3,8 @@
     "description": "signal module dependicies",
     "type": "library",
     "require": {
-        "merlinthemagic/mtm-signal-api": "dev-main",
         "bacon/bacon-qr-code": "dev-master",
-        "jigarakatidus/php-signal": "dev-main"
+        "mikehaertl/php-shellcommand": "dev-master"
     },
     "autoload": {
         "psr-4": {

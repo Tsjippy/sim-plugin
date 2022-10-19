@@ -6,20 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit66b6f4143277f3e8ec4a34462f1413aa
 {
-    public static $files = array (
-        'bce7d432c26ab1fc6102f7da221a6d21' => __DIR__ . '/..' . '/merlinthemagic/mtm-fs/Src/Enable.php',
-        '8e827de6340e9ba58c559c8f534f8765' => __DIR__ . '/..' . '/merlinthemagic/mtm-utilities/Src/Enable.php',
-        '26fe2c355d1daff45a746fae0849bd15' => __DIR__ . '/..' . '/merlinthemagic/mtm-signal-api/Src/Enable.php',
-    );
-
     public static $prefixLengthsPsr4 = array (
         'm' => 
         array (
             'mikehaertl\\shellcommand\\' => 24,
-        ),
-        'j' => 
-        array (
-            'jigarakatidus\\' => 14,
         ),
         'S' => 
         array (
@@ -39,10 +29,6 @@ class ComposerStaticInit66b6f4143277f3e8ec4a34462f1413aa
         'mikehaertl\\shellcommand\\' => 
         array (
             0 => __DIR__ . '/..' . '/mikehaertl/php-shellcommand/src',
-        ),
-        'jigarakatidus\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/jigarakatidus/php-signal/src',
         ),
         'Sim\\Signal\\' => 
         array (
