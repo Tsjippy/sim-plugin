@@ -6,6 +6,7 @@
 - another signal library
 
 ### Changed
+- removed signal libraries
 
 ### Fixed
 
