@@ -36,6 +36,8 @@ class Signal {
     protected $format;
 
     public function __construct(string $format){
+        require_once( __DIR__  . '/../../lib/vendor/autoload.php');
+        
         $this->format = $format;
 
         $this->valid    = true;
