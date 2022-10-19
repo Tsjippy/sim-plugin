@@ -5,13 +5,15 @@ namespace SIM;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    $signal = new SIGNAL\SignalWrapper();
+    $signal = new SIGNAL\SignalWrapperNew();
 
     if(!$signal->valid){
         return $signal->error->get_error_message();
     }
 
-    return $signal->linkPhoneNumber();
+    echo $signal->linkPhoneNumber();
+
+    return $signal->sendText(21, 'dgd');
 });
 
 // turn off incorrect error on localhost

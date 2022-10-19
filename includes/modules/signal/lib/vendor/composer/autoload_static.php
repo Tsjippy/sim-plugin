@@ -13,6 +13,14 @@ class ComposerStaticInit66b6f4143277f3e8ec4a34462f1413aa
     );
 
     public static $prefixLengthsPsr4 = array (
+        'm' => 
+        array (
+            'mikehaertl\\shellcommand\\' => 24,
+        ),
+        'j' => 
+        array (
+            'jigarakatidus\\' => 14,
+        ),
         'S' => 
         array (
             'Sim\\Signal\\' => 11,
@@ -28,6 +36,14 @@ class ComposerStaticInit66b6f4143277f3e8ec4a34462f1413aa
     );
 
     public static $prefixDirsPsr4 = array (
+        'mikehaertl\\shellcommand\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mikehaertl/php-shellcommand/src',
+        ),
+        'jigarakatidus\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jigarakatidus/php-signal/src',
+        ),
         'Sim\\Signal\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',

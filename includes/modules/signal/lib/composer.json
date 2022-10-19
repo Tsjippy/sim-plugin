@@ -4,7 +4,8 @@
     "type": "library",
     "require": {
         "merlinthemagic/mtm-signal-api": "dev-main",
-        "bacon/bacon-qr-code": "dev-master"
+        "bacon/bacon-qr-code": "dev-master",
+        "jigarakatidus/php-signal": "dev-main"
     },
     "autoload": {
         "psr-4": {

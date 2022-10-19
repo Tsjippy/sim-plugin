@@ -35,13 +35,15 @@ class SignalWrapper{
             $this->path     = "/usr/local/bin/signal-cli";
         }
 
+        $this->nr           = SIM\getModuleOption(MODULE_SLUG, 'phone');
+
         $this->checkPrerequisites();
 
         #curl --silent "https://api.github.com/repos/USER/REPO/releases/latest" | jq ".. .tag_name? // empty"
 
         
 
-/*         $this->safePath   = __DIR__.'/../../data';
+        /*         $this->safePath   = __DIR__.'/../../data';
         if (!is_dir($this->safePath)) {
             $result =  mkdir($this->safePath, 0777, true);
             if($result){
@@ -65,7 +67,8 @@ class SignalWrapper{
             return $this->linkPhoneNumber();
         }
 
-        $this->groups	    = $this->userObj->getGroups(); */
+        $this->groups	    = $this->userObj->getGroups(); 
+        */
     }
 
     public function checkPrerequisites(){
@@ -168,8 +171,99 @@ class SignalWrapper{
     }
 
     public function linkPhoneNumber(){
+        #https://www.qr-code-generator.com/
+
+        $userName   = shell_exec("whoami 2>&1");
+
+        # signal-cli --config /home/simnig1/.config/signal link
+
+        header("X-Accel-Buffering: no");
+        header('Content-Encoding: none');
+        ob_implicit_flush(true);
+        ob_end_flush();
+
+        for ($i=0; $i<5; $i++) {
+        echo $i.'<br>';
+        sleep(1);
+        }
+
+        ob_implicit_flush();
+
+        ob_start();
+
+          
+        for($i=0;$i<9;$i++) {
+            echo $i.'<br>';
+            ob_end_flush();
+            ob_flush();
+            sleep(1);
+      }
+
+        /* $cmd = $this->path.' link &'; //example command
+
+        $descriptorspec = array(
+            0 => array("pipe", "r"), 
+            1 => array("pipe", "w"), 
+            2 => array("pipe", "a")
+        );
+
+        $pipes = array();
+
+        $process = proc_open($cmd, $descriptorspec, $pipes, null, null);
+
+        echo "Start process:<br>";
+        ob_end_flush();
+        ob_flush();
+
+        $str = "";
+
+        if(is_resource($process)) {
+            do {
+                $curStr = fgets($pipes[1]);  //will wait for a end of line
+
+                echo $curStr;
+                ob_end_flush();
+                ob_flush();
+                if(strpos($curStr, 'sgnl://') !== false){
+                    $renderer                   = new ImageRenderer(
+                        new RendererStyle(400),
+                        new ImagickImageBackEnd()
+                    );
+                    $writer         = new Writer($renderer);
+                    $qrcodeImage    = base64_encode($writer->writeString($curStr));
+            
+                    echo "<img loading='lazy' src='data:image/png;base64, $qrcodeImage'/><br>";
+                    ob_end_flush();
+                    ob_flush();
+                }
+                
+                $str .= $curStr;
+
+                $arr = proc_get_status($process);
+
+            }while($arr['running']);
+        }else{
+            echo "Unable to start process<br>";
+            ob_end_flush();
+              ob_flush();
+        }
+
+        fclose($pipes[0]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+
+        echo "\n\n\nDone\n";
+        ob_end_flush();
+              ob_flush();
+
+        echo "Result is:<br>----<br>".$str."<br>----<br>"; */
+
+        ob_end_flush();
+        ob_flush();
+
         //$uri		= $this->clientObj->getDeviceLinkUri(get_bloginfo('name')); //will throw on error
-        $uri        = shell_exec($this->path.' link &');
+        /*         $uri        = system($this->path.' link');
 
 
         if (!extension_loaded('imagick')){
@@ -183,12 +277,47 @@ class SignalWrapper{
         $writer         = new Writer($renderer);
         $qrcodeImage    = base64_encode($writer->writeString($uri));
 
-        return "<img loading='lazy' src='data:image/png;base64, $qrcodeImage'/><br>$uri";
+        return "<img loading='lazy' src='data:image/png;base64, $qrcodeImage'/><br>$uri"; */
     }
         
 
     public function sendText($nr, $msg){
-        // send to individual
+        SIM\clearOutput();
+        header("X-Accel-Buffering: no");
+        header('Content-Encoding: none');
+
+        // Turn on implicit flushing
+        ob_implicit_flush(1);
+
+        // Some browsers will not display the content if it is too short
+        // We use str_pad() to make the output long enough
+        echo str_pad("Hello World!<br>", 4096);
+
+        // Even though the script is still running, the browser already can see the content
+        sleep(3);
+
+        echo str_pad("Hello World!<br>", 4096);
+
+
+        $userName   = str_replace('<br>', '', trim(shell_exec("whoami 2>&1"))).'<br>';
+
+        SIM\printArray($userName);
+
+        echo str_pad("'$userName'<br>", 4096);
+
+        echo "signal-cli --config /home/$userName/.config/signal link".'<br>';
+
+        #echo shell_exec("$this->path link & 2>&1").'<br>';
+
+        #$uri        = system("$this->path --config /home/simnig1/.config/signal -a $this->nr send -m 'This is a message' +2349045252526  2>&1 | tee /home/admin/test.txt").'<br>';
+
+        echo "signal-cli --config /home/simnig1/.config/signal -a $this->nr send -m 'This is a message' +2349045252526 2>&1";
+        echo shell_exec("signal-cli --config /home/simnig1/.config/signal -a $this->nr send -m 'This is a message' +2349045252526 2>&1").'<br>';
+        #echo shell_exec("whoami 2>&1").'<br>';
+
+        
+
+        /*         // send to individual
         if(strpos($nr, '+') !== false){
             $timeStamp		= $this->userObj->sendText($nr, $msg);
         }else{
@@ -200,7 +329,7 @@ class SignalWrapper{
                 }
             }
             
-        }
+        } */
         
     }
 
