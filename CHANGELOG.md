@@ -7,6 +7,7 @@
 
 ### Changed
 - removed signal libraries
+- receive messages on construct
 
 ### Fixed
 
