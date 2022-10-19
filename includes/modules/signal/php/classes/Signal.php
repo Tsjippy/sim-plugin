@@ -37,7 +37,7 @@ class Signal {
 
     public function __construct(string $format){
         require_once( __DIR__  . '/../../lib/vendor/autoload.php');
-        
+
         $this->format = $format;
 
         $this->valid    = true;
@@ -63,6 +63,8 @@ class Signal {
         ]);
 
         $this->checkPrerequisites();
+
+        $this->receive();
     }
 
     /**
@@ -228,8 +230,6 @@ class Signal {
         ob_implicit_flush(1);
 
         echo "Link is <code>$link</code>";
-
-        SIM\printArray($this->client->listDevices(), true);
 
         if (!extension_loaded('imagick')){
             return $link;
