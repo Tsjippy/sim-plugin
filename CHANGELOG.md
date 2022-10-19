@@ -3,19 +3,12 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-
-### Changed
-
-### Fixed
-
-## [2.21.10.6] - 2022-10-19
-
-
-### Added
 - another signal library
 
 ### Changed
 - removed signal libraries
+
+### Fixed
 
 ## [2.21.10.4] - 2022-10-19
 
