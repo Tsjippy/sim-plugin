@@ -8,6 +8,7 @@
 - do not signal messages from local host
 
 ### Fixed
+- typos
 
 ## [2.21.10.7] - 2022-10-24
 
