@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- do not signal messages from local host
 
 ### Fixed
 
