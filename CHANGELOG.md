@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- signal bot example
 
 ### Changed
 - do not signal messages from local host
