@@ -28,9 +28,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 
 	?>
 	<p>
-		This module adds 1 url to the rest api:<br>
-		sim/v2/prayermessage to get the current prayer request<br>
-		It also adds 1 post category: 'Prayer'<br>
+		This module adds 1 post category: 'Prayer'<br>
 		You should add a new post with the prayer category each month.
 		This post should have a prayer request for each day on seperate lines.<br>
 		The lines should have this format: '1(T) – '<br>
@@ -42,7 +40,6 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		<br>
 		<br>
 		If such a post is available the daily prayerrequest will be displayed on the homepage and will be available via the rest-api.<br>
-
 	</p>
 	<?php
 
@@ -51,7 +48,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
+	if($moduleSlug != MODULE_SLUG || !SIM\getModuleOption('signal', 'enable')){
 		return $optionsHtml;
 	}
 
@@ -68,15 +65,40 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<div class="">
 		<h4>Give optional Signal group name(s) to send a daily prayer message to:</h4>
 		<div class="clone_divs_wrapper">
-			<?php			
+			<?php
 			foreach($groups as $index=>$group){
 				?>
 				<div class="clone_div" data-divid="<?php echo $index;?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
 					<div class="multi_input_wrapper">
 						<label>
 							<h4 style='margin: 0px;'>Signal groupname <?php echo $index+1;?></h4>
-							<input type='text' name="groups[<?php echo $index;?>][name]" value='<?php echo $group['name'];?>'>
 						</label>
+						<?php
+						if(SIM\getModuleOption('signal', 'local')){
+							?>
+							<select  name="groups[<?php echo $index;?>][name]">
+								<?php
+								$signal 		= new SIM\SIGNAL\Signal();
+
+								foreach($signal->listGroups() as $g){
+									if(empty($g->name)){
+										continue;
+									}
+									$selected	= '';
+									if($group['name'] == $g->id){
+										$selected	= 'selected';
+									}
+									echo "<option value='$g->id' $selected>$g->name</option>";
+								}
+								?>
+							</select>
+							<?php
+						}else{
+							?>
+							<input type='text' name="groups[<?php echo $index;?>][name]" value='<?php echo $group['name'];?>'>
+							<?php
+						}
+						?>
 						<label>
 							<h4 style='margin-bottom: 0px;'>Time the message should be send</h4>
 							<input type='time' name="groups[<?php echo $index;?>][time]" value='<?php echo $group['time'];?>'>

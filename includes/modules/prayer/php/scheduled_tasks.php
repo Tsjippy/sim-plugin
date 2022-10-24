@@ -47,7 +47,7 @@ function sendPrayerRequests(){
 	wp_set_current_user(1);
 
 	$message	 = "The prayer request of today is:\n";
-	$message 	.= prayerRequest(true);	
+	$message 	.= prayerRequest(true);
 	$params		 = apply_filters('sim_after_bot_payer', ['message'=>$message, 'urls'=>'']);
 	$message	 = $params['message']."\n\n".$params['urls'];
 	
