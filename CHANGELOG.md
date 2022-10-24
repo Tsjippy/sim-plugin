@@ -9,6 +9,8 @@
 - removed signal libraries
 - receive messages on construct
 - better file paths
+- prayer module now handles
+local signal-cli
 
 ### Fixed
 - sending Signal message from backend
