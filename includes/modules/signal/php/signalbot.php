@@ -70,6 +70,11 @@ function sendPostNotification($post){
 }
 
 function sendSignalMessage($message, $recipient, $postId=""){
+	// do not send on localhost
+	if($_SERVER['HTTP_HOST'] == 'localhost'){
+		return;
+	}
+	
 	//remove https from site urldecode
 	$urlWithoutHttps	= str_replace('https://', '', SITEURL);
 	$message			= str_replace(SITEURL, $urlWithoutHttps, $message);
