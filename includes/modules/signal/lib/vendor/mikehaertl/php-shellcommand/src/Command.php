@@ -380,6 +380,8 @@ class Command
     {
         $command = $this->getExecCommand();
 
+        $command = str_replace('\\', '/', $command);
+
         if (!$command) {
             return false;
         }

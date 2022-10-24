@@ -34,14 +34,16 @@ class Signal {
 
         $this->valid    = true;
 
-        $this->OS   = 'macOS';
-        $this->path = '';
+        $this->OS       = 'macOS';
+        $this->path     = '';
+        $this->basePath = MODULE_PATH.'data/signal-cli';
         if(strpos(php_uname(), 'Windows') !== false){
-            $this->OS     = 'Windows';
+            $this->OS       = 'Windows';
+            $this->basePath = str_replace('\\', '/', $this->basePath);
         }elseif(strpos(php_uname(), 'Linux') !== false){
             $this->OS     = 'Linux';
         }
-        $this->basePath = MODULE_PATH.'data/signal-cli';
+        
         $this->path     = $this->basePath.'/bin/signal-cli';
 
         $this->username           = SIM\getModuleOption(MODULE_SLUG, 'phone');
@@ -51,6 +53,9 @@ class Signal {
             // This is required for binary to be able to find libzkgroup.dylib to support Group V2
             'procCwd' => dirname($this->path),
         ]);
+
+        // make sure we use the config for this website and phone number
+        $this->command->addArg('--config',  MODULE_PATH.'data/signal-profiles/'.$this->username);
 
         $this->checkPrerequisites();
     }
@@ -512,8 +517,6 @@ class Signal {
 
     private function installSignal($version){
         $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->OS.tar.gz");
-        
-        echo $path."<br>";
 
         // Unzip the gz
         $fileName = str_replace('.gz', '', $path);
@@ -551,12 +554,15 @@ class Signal {
             }
         }
 
-        echo $this->basePath.'<br>';
-
         // remove the old folder
         if(file_exists($this->basePath)){
             if($this->OS == 'Windows'){
-                exec("rmdir $this->basePath /s /q");
+                $path   = str_replace('/', '\\', $this->basePath);
+                // kill the process
+                exec("taskkill /IM audiodg.exe /F");
+
+                // remove the folder
+                exec("rmdir $path /s /q");
             }else{
                 exec("rmdir -rf $this->basePath");
             }
@@ -575,6 +581,8 @@ class Signal {
     private function downloadSignal($url){
         $filename   = basename($url);
         $path       = sys_get_temp_dir().'/'.$filename;
+
+        $path = str_replace('\\', '/', $path);
 
         if(file_exists($path)){
             return $path;

@@ -28,7 +28,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 			<?php
 		}else{
 			?>
-			Install jave JDK with <code>sudo apt install openjdk-17-jdk -y</code> and the rest will be installed automatically.
+			Java JDK is installed, you are ready to go
 			<?php
 		}
 		?>
@@ -149,12 +149,6 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 		return $dataHtml;
 	}
 
-	if(empty($settings['groups'])){
-		$groups	= [''];
-	}else{
-		$groups	= $settings['groups'];
-	}
-
 	// check if we need to send a message
 	if(!empty($_POST['message']) && !empty($_POST['recipient'])){
         sendSignalMessage($_POST['message'], $_POST['recipient']);
@@ -175,12 +169,29 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 		</label>
 		<label>
 			<h4>Recipient</h4>
-			<input type='text' name='recipient' list='groups' required>
+			<input type='text' name='recipient' list='groups' style='width:100%' required>
 
 			<datalist id='groups'>
 				<?php
-				foreach($groups as $group){
-					echo "<option>$group</option>";
+				if(isset($settings['local'])){
+					$signal = new Signal();
+					$groups	= $signal->listGroups();
+
+					foreach($groups as $group){
+						if(empty($group->name)){
+							continue;
+						}
+						echo "<option value='$group->id'>$group->name</option>";
+					}
+				}else{
+					if(empty($settings['groups'])){
+						$groups	= [''];
+					}else{
+						$groups	= $settings['groups'];
+					}
+					foreach($groups as $group){
+						echo "<option value='$group'>$group</option>";
+					}
 				}
 				?>
 			</datalist>
