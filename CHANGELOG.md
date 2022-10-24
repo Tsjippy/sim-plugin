@@ -4,6 +4,7 @@
 
 ### Added
 - signal bot example
+- link to example bot script
 
 ### Changed
 - do not signal messages from local host
