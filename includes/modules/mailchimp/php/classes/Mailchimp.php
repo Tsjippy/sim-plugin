@@ -6,7 +6,7 @@ use WP_Error;
 //https://mailchimp.com/developer/marketing
 
 if(!class_exists(__NAMESPACE__.'\Mailchimp')){
-	require_once( __DIR__  . '/../../lib/vendor/autoload.php');
+	require_once( MODULE_PATH  . 'lib/vendor/autoload.php');
 
 	class Mailchimp{
 		public $userId;

@@ -110,6 +110,7 @@ function buildSubMenu(){
 		$settingsTab		= settingsTab($moduleSlug, $moduleName, $settings, $tab);
 		$emailSettingsTab	= emailSettingsTab($moduleSlug, $moduleName, $settings, $tab);
 		$dataTab			= dataTab($moduleSlug, $moduleName, $settings, $tab);
+		$functionsTab		= functionsTab($moduleSlug, $moduleName, $settings, $tab);
 
 		?>
 		<div class='tablink-wrapper'>
@@ -124,7 +125,12 @@ function buildSubMenu(){
 			if(!empty($dataTab)){
 				?>
 				<button class="tablink <?php if($tab == 'data'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show_data" data-target="data">Module data</button>
-			<?php
+				<?php
+			}
+			if(!empty($functionsTab)){
+				?>
+				<button class="tablink <?php if($tab == 'functions'){echo 'active';} if(!isset($settings['enable'])){echo 'hidden';}?>" id="show_functions" data-target="functions">Functions</button>
+				<?php
 			}
 			?>
 		</div>
@@ -137,6 +143,9 @@ function buildSubMenu(){
 		}
 		if(!empty($dataTab)){
 			echo $dataTab;
+		}
+		if(!empty($functionsTab)){
+			echo $functionsTab;
 		}
 }
 
@@ -260,6 +269,30 @@ function dataTab($moduleSlug, $moduleName, $settings, $tab){
 
 	?>
 	<div class='tabcontent <?php if($tab != 'data'){echo 'hidden';}?>' id='data'>
+		<?php
+		echo $html;
+		?>
+	</div>
+	<?php
+
+	return ob_get_clean();
+}
+
+function functionsTab($moduleSlug, $moduleName, $settings, $tab){
+	if(!SIM\getModuleOption($moduleSlug, 'enable')){
+		return '';
+	}
+
+	$html	= apply_filters('sim_module_functions', '', $moduleSlug, $settings, $moduleName);
+
+	if(empty($html)){
+		return '';
+	}
+
+	ob_start();
+
+	?>
+	<div class='tabcontent <?php if($tab != 'functions'){echo 'hidden';}?>' id='functions'>
 		<?php
 		echo $html;
 		?>

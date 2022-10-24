@@ -27,6 +27,8 @@ function sendPostNotification($post){
 	delete_post_meta($post->ID, 'signal_url');
 	delete_post_meta($post->ID, 'signal_extra_message');
 	
+	SIM\printArray($post, true);
+
 	if($signalMessageType == 'all'){
 		$excerpt	= $post->post_content;
 
@@ -89,6 +91,18 @@ function sendSignalMessage($message, $recipient, $postId=""){
 			return;
 		}
 	}
+
+	$image = "";
+	if(is_numeric($postId) && has_post_thumbnail($postId)){
+		$image = get_attached_file(get_post_thumbnail_id($postId));
+	}
+
+	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
+		$signal = new Signal();
+		$signal->send($recipient, $message, $image);
+
+		return;
+	}
 	
 	$notifications = get_option('signal_bot_messages');
 	//Notifications should be an array of recipients
@@ -100,15 +114,10 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	if(!isset($notifications[$recipient]) || !is_array($notifications[$recipient])){
 		$notifications[$recipient]	= [];
 	}
-	
-	$image = "";
-	if(is_numeric($postId) && has_post_thumbnail($postId)){
-		$image = base64_encode(file_get_contents(get_attached_file(get_post_thumbnail_id($postId))));
-	}
 
 	$notifications[$recipient][] = [
 		$message,
-		$image
+		base64_encode(file_get_contents($image))
 	];
 	
 	update_option('signal_bot_messages', $notifications);

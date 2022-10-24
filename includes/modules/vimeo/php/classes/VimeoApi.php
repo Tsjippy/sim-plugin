@@ -5,7 +5,7 @@ use GuzzleHttp;
 use WP;
 use WP_Error;
 
-require_once( __DIR__  . '/../../lib/vendor/autoload.php');
+require_once( MODULE_PATH  . 'lib/vendor/autoload.php');
 
 if(!class_exists(__NAMESPACE__.'\VimeoApi')){
     class VimeoApi{

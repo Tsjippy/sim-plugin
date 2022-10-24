@@ -9,7 +9,7 @@ use SIM;
 
 // Get member info: https://api.trello.com/1/members/harmsenewald
 
-require( __DIR__  . '/../../lib/vendor/autoload.php');
+require( MODULE_PATH  . 'lib/vendor/autoload.php');
 
 class Trello{
 	function __construct(){

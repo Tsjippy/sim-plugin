@@ -47,7 +47,7 @@ function getCheckboxValue(form, name, compareValue, orgName){
 
 function getDataListValue(el){
 	let value		= '';
-	let origInput 	= el.list.querySelector("[value='"+el.value+"' i]");
+	let origInput 	= el.list.querySelector(`[value='${el.value}' i]`);
 			
 	if(origInput == null){
 		value =  el.value;

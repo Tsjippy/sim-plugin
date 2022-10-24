@@ -2,11 +2,14 @@
 namespace SIM\LOGIN;
 use SIM;
 
-require( __DIR__  . '/../lib/vendor/autoload.php');
 
 const MODULE_VERSION		= '7.0.16';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
+
+DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
+
+require( MODULE_PATH  . 'lib/vendor/autoload.php');
 
 add_filter('sim_submenu_description', function($description, $moduleSlug){
 	//module slug should be the same as the constant

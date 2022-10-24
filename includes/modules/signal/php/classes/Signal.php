@@ -19,40 +19,30 @@ wget https://github.com/AsamK/signal-cli/releases/download/v"${VERSION}"/signal-
 sudo tar xf signal-cli-"${VERSION}"-Linux.tar.gz -C /opt
 sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 
+// data is stored in $HOME/.local/share/signal-cli
+
 
 class Signal {
-
-    const FORMAT_JSON = 'json';
-    const FORMAT_PLAIN_TEST = 'plain-text';
 
     /**
      * @var string Username is phone number starting with country code starting with "+"
      */
     protected $username;
 
-    /**
-     * @var string json|plain-text Many sub-commands still don't support json.
-     */
-    protected $format;
-
-    public function __construct(string $format){
-        require_once( __DIR__  . '/../../lib/vendor/autoload.php');
-
-        $this->format = $format;
+    public function __construct(){
+        require_once( MODULE_PATH  . 'lib/vendor/autoload.php');
 
         $this->valid    = true;
 
-        $this->type   = 'macOS';
+        $this->OS   = 'macOS';
         $this->path = '';
         if(strpos(php_uname(), 'Windows') !== false){
-            $this->type     = 'Windows';
-            $this->basePath = __DIR__.'/../../data/signal-cli';
-            $this->path     = $this->basePath.'/bin/signal-cli';
+            $this->OS     = 'Windows';
         }elseif(strpos(php_uname(), 'Linux') !== false){
-            $this->type     = 'Linux';
-            $this->basePath = "/usr/local";
-            $this->path     = $this->basePath."/bin/signal-cli";
+            $this->OS     = 'Linux';
         }
+        $this->basePath = MODULE_PATH.'data/signal-cli';
+        $this->path     = $this->basePath.'/bin/signal-cli';
 
         $this->username           = SIM\getModuleOption(MODULE_SLUG, 'phone');
 
@@ -63,8 +53,6 @@ class Signal {
         ]);
 
         $this->checkPrerequisites();
-
-        $this->receive();
     }
 
     /**
@@ -72,9 +60,9 @@ class Signal {
      * Default verify with SMS
      * @param bool $voiceVerification The verification should be done over voice, not SMS.
      * @param string $captcha - from https://signalcaptchas.org/registration/generate.html
-     * @return bool
+     * @return bool|string
      */
-    public function register(bool $voiceVerification = false, string $captcha = ''): bool
+    public function register(bool $voiceVerification = false, string $captcha = '')
     {
         $this->command->addArg('-u', $this->username);
 
@@ -84,34 +72,37 @@ class Signal {
             $this->command->addArg('--voice', null);
         }
 
-
         if(!empty($captcha)){
             $this->command->addArg('--captcha', $captcha);
         }
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
      * Disable push support for this device, i.e. this device won’t receive any more messages.
      * If this is the master device, other users can’t send messages to this number anymore.
      * Use "updateAccount" to undo this. To remove a linked device, use "removeDevice" from the master device.
-     * @return bool
+     * @return bool|string
      */
-    public function unregister(): bool
+    public function unregister()
     {
         $this->command->addArg('unregister', null);
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
      * Uses a list of phone numbers to determine the statuses of those users.
      * Shows if they are registered on the Signal Servers or not.
      * @param string|array $recipients One or more numbers to check.
-     * @return string
+     * @return string|string
      */
-    public function getUserStatus($recipients): string
+    public function getUserStatus($recipients)
     {
         if(!is_array($recipients)){
             $recipients    = [$recipients];
@@ -121,36 +112,45 @@ class Signal {
 
         $this->command->execute();
 
-        return $this->command->getOutput(false);
+        return $this->parseResult();
     }
 
     /**
      * Verify the number using the code received via SMS or voice.
      * @param string $code The verification code e.g 123-456
-     * @return bool
+     * @return bool|string
      */
-    public function verify(string $code): bool
+    public function verify(string $code)
     {
         $this->command->addArg('-u', $this->username);
         $this->command->addArg('verify', $code);
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
      * Send a message to another user or group
-     * @param string|array $recipients Specify the recipients’ phone number
+     * @param string|array $recipients Specify the recipients’ phone number or a group id
      * @param string $message Specify the message, if missing, standard input is used
-     * @param string $groupId Specify the recipient group ID in base64 encoding
-     * @return bool
+     * @param string $attachment Image file path
+     * @return bool|string
      */
-    public function send($recipients, string $message, string $groupId = null): bool
+    public function send($recipients, string $message, string $attachment = null)
     {
+        $groupId    = null;
         if(!is_array($recipients)){
-            $recipients    = [$recipients];
+            if(strpos( $recipients , '+' ) === 0){
+                $recipients    = [$recipients];
+            }
+            $groupId    = $recipients;
+            $recipients = null;
         }
 
-        $this->command->addArg('-u', $this->username);        
+        $this->command->nonBlockingMode = true;
+
+        $this->command->addArg('-u', $this->username);
         $this->command->addArg('send', $recipients);
 
         $this->command->addArg('-m', $message);
@@ -159,7 +159,36 @@ class Signal {
             $this->command->addArg('-g', $groupId);
         }
 
-        return $this->command->execute();
+        SIM\printArray($attachment);
+        if(!empty($attachment) && file_exists($attachment)){
+            SIM\printArray($attachment);
+            $this->command->addArg('-a', [$attachment]);
+        }
+
+        $this->command->execute();
+
+        SIM\printArray($this->command);
+
+        return $this->parseResult();
+    }
+
+    private function parseResult($returnJson=false){
+        if($this->command->getExitCode()){
+            $error  = "<div class='error'>".$this->command->getError()."</div>";
+            
+            if($returnJson){
+                return json_encode($error);
+            }
+
+            return $error;
+        }
+
+        $output = $this->command->getOutput();
+
+        if($returnJson && (empty($output) || json_decode($output) == $output)){
+            return json_encode($output);
+        }
+        return $output;
     }
 
     /**
@@ -169,9 +198,9 @@ class Signal {
      * @param string $name New name visible by message recipients
      * @param string $avatarPath Path to the new avatar visible by message recipients
      * @param bool $removeAvatar Remove the avatar visible by message recipients
-     * @return bool
+     * @return bool|string
      */
-    public function updateProfile(string $name, string $avatarPath = null, bool $removeAvatar = false): bool
+    public function updateProfile(string $name, string $avatarPath = null, bool $removeAvatar = false)
     {
         $this->command->addArg('updateProfile', null);
 
@@ -185,7 +214,9 @@ class Signal {
             $this->command->addArg('--removeAvatar', null);
         }
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
@@ -221,6 +252,7 @@ class Signal {
         while(empty($link)){
             $link   = file_get_contents($randFile);
         }
+        unlink($randFile);
 
         SIM\clearOutput();
         header("X-Accel-Buffering: no");
@@ -231,6 +263,9 @@ class Signal {
 
         echo "Link is <code>$link</code>";
 
+        #https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$link
+
+        return "<img loading='lazy' src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$link'/><br>$link";
         if (!extension_loaded('imagick')){
             return $link;
         }
@@ -250,42 +285,46 @@ class Signal {
      * Only works, if this is the master device
      * @param string $uri Specify the uri contained in the QR code shown by the new device.
      *                    You will need the full uri enclosed in quotation marks, such as "tsdevice:/?uuid=…​.."
-     * @return bool
+     * @return bool|string
      */
-    public function addDevice(string $uri): bool
+    public function addDevice(string $uri)
     {
         $this->command->addArg('--uri', $uri);
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
      * Show a list of connected devices
-     * @return string
+     * @return array|null
      */
-    public function listDevices(): string
+    public function listDevices()
     {
-        $this->command->addArg('listDevices', null);
+        $this->command->addArg('-o', 'json');
 
-        // This command doesn't support JSON format
+        $this->command->addArg('listDevices', null);
 
         $this->command->execute();
 
-        return $this->command->getOutput();
+        return json_decode($this->parseResult(true));
     }
 
     /**
      * Remove a connected device. Only works, if this is the master device
      * @param int $deviceId Specify the device you want to remove. Use listDevices to see the deviceIds
-     * @return bool
+     * @return bool|string
      */
-    public function removeDevice(int $deviceId): bool
+    public function removeDevice(int $deviceId)
     {
         $this->command->addArg('removeDevice', null);
 
         $this->command->addArg('-d', $deviceId);
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
@@ -293,11 +332,13 @@ class Signal {
      * Can fix problems with receiving messages
      * @return bool
      */
-    public function updateAccount(): bool
+    public function updateAccount()
     {
         $this->command->addArg('updateAccount', null);
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
@@ -307,9 +348,9 @@ class Signal {
      * @param string|null $avatarPath Specify a new group avatar image file
      * @param string|null $groupId Specify the recipient group ID in base64 encoding.
      *                             If not specified, a new group with a new random ID is generated
-     * @return bool
+     * @return bool|string
      */
-    private function _createOrUpdateGroup(string $name = null, array $members = [], string $avatarPath = null, string $groupId = null): bool
+    private function _createOrUpdateGroup(string $name = null, array $members = [], string $avatarPath = null, string $groupId = null)
     {
         $this->command->addArg('updateGroup', null);
 
@@ -329,7 +370,9 @@ class Signal {
             $this->command->addArg('-a', $avatarPath);
         }
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
@@ -356,47 +399,51 @@ class Signal {
 
     /**
      * List Groups
-     * @return string
+     * @return array|string
      */
-    public function listGroups(): string
+    public function listGroups()
     {
-        $this->command->addArg('-o', $this->format);
+        $this->command->addArg('-o', 'json');
 
         $this->command->addArg('listGroups', null);
 
         $this->command->execute();
 
-        return $this->command->getOutput();
+        return json_decode($this->parseResult(true));
     }
 
     /**
      * Join a group via an invitation link.
      * To be able to join a v2 group the account needs to have a profile (can be created with the updateProfile command)
      * @param string $uri The invitation link URI (starts with https://signal.group/#)
-     * @return bool
+     * @return bool|string
      */
-    public function joinGroup(string $uri): bool
+    public function joinGroup(string $uri)
     {
         $this->command->addArg('joinGroup', null);
 
         $this->command->addArg('--uri', $uri);
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
      * Send a quit group message to all group members and remove self from member list.
      * If the user is a pending member, this command will decline the group invitation
      * @param string $groupId Specify the recipient group ID in base64 encoding
-     * @return bool
+     * @return bool|string
      */
-    public function quitGroup(string $groupId): bool
+    public function quitGroup(string $groupId)
     {
         $this->command->addArg('quitGroup', null);
 
         $this->command->addArg('-g', $groupId);
 
-        return $this->command->execute();
+        $this->command->execute();
+
+        return $this->parseResult();
     }
 
     /**
@@ -404,11 +451,11 @@ class Signal {
      * New messages are printed on standard output and attachments are downloaded to the config directory.
      * In json mode this is outputted as one json object per line
      * @param int $timeout Number of seconds to wait for new messages (negative values disable timeout). Default is 5 seconds
-     * @return string
+     * @return array|string
      */
-    public function receive(int $timeout = 5) : string
+    public function receive(int $timeout = 5)
     {
-        $this->command->addArg('-o', $this->format);
+        $this->command->addArg('-o', 'json');
 
         $this->command->addArg('receive', null);
 
@@ -416,7 +463,7 @@ class Signal {
 
         $this->command->execute();
 
-        return $this->command->getOutput();
+        return json_decode($this->parseResult(true));
     }
 
     /**
@@ -440,6 +487,7 @@ class Signal {
         $release        = SIM\getLatestRelease('AsamK', 'signal-cli');
 
         $curVersion     = str_replace('signal-cli ', 'v', trim(shell_exec($this->path.' --version')));
+
         if(empty($curVersion)){
             $this->installSignal(str_replace('v', '', $release['tag_name']));
 
@@ -448,7 +496,11 @@ class Signal {
                 $this->valid    = false;
             }
         }elseif($curVersion  != $release['tag_name']){
-            $errorMessage .= "Please update to version {$release['tag_name']}<br>";
+            echo "Updating <br>";
+
+            $this->installSignal(str_replace('v', '', $release['tag_name']));
+
+            //$errorMessage .= "Please update to version {$release['tag_name']}<br>";
         }
 
         if(empty($errorMessage)){
@@ -459,49 +511,64 @@ class Signal {
     }
 
     private function installSignal($version){
-        $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->type.tar.gz");
+        $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->OS.tar.gz");
         
+        echo $path."<br>";
+
         // Unzip the gz
         $fileName = str_replace('.gz', '', $path);
 
-        // Raising this value may increase performance
-        $bufferSize = 4096; // read 4kb at a time
+        if(!file_exists($fileName)){
+            // Raising this value may increase performance
+            $bufferSize = 4096; // read 4kb at a time
 
-        // Open our files (in binary mode)
-        $file       = gzopen($path, 'rb');
-        $outFile    = fopen($fileName, 'wb');
+            // Open our files (in binary mode)
+            $file       = gzopen($path, 'rb');
+            $outFile    = fopen($fileName, 'wb');
 
-        // Keep repeating until the end of the input file
-        while (!gzeof($file)) {
-            // Read buffer-size bytes
-            // Both fwrite and gzread and binary-safe
-            fwrite($outFile, gzread($file, $bufferSize));
+            // Keep repeating until the end of the input file
+            while (!gzeof($file)) {
+                // Read buffer-size bytes
+                // Both fwrite and gzread and binary-safe
+                fwrite($outFile, gzread($file, $bufferSize));
+            }
+
+            // Files are done, close files
+            fclose($outFile);
+            gzclose($file);
         }
 
-        // Files are done, close files
-        fclose($outFile);
-        gzclose($file);
-
         // unzip the tar
-
         $folder = str_replace('.tar.gz', '', $path);
-        try {
-            $phar = new \PharData($fileName);
-            $phar->extractTo($folder); // extract all files
-        } catch (\Exception $e) {
-            // handle errors
-            return new \WP_Error('signal', 'installation error');
+
+        if(!file_exists($folder)){
+            try {
+                $phar = new \PharData($fileName);
+                $phar->extractTo($folder); // extract all files
+            } catch (\Exception $e) {
+                // handle errors
+                return new \WP_Error('signal', 'installation error');
+            }
+        }
+
+        echo $this->basePath.'<br>';
+
+        // remove the old folder
+        if(file_exists($this->basePath)){
+            if($this->OS == 'Windows'){
+                exec("rmdir $this->basePath /s /q");
+            }else{
+                exec("rmdir -rf $this->basePath");
+            }
         }
 
         // move the folder
-        if($this->type == 'Linux'){
-            rename("$folder/signal-cli-$version", "/opt");
-            echo shell_exec("sudo ln -sf /opt/signal-cli-$version/bin/signal-cli /usr/local/bin/");
-        }elseif($this->type == 'Windows'){
-            if(file_exists($this->basePath)){
-                rmdir($this->basePath);
-            }
-            rename("$folder/signal-cli-$version", $this->basePath);
+        $result = rename("$folder/signal-cli-$version", $this->basePath);
+
+        if($result){
+            echo 'Succes!<br>';
+        }else{
+            echo 'Failed!<br>';
         }
     }
 

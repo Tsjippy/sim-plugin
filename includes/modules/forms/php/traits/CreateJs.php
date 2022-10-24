@@ -2,7 +2,7 @@
 namespace SIM\FORMS;
 use SIM;
 
-require( __DIR__  . '/../../lib/vendor/autoload.php');
+require( MODULE_PATH  . 'lib/vendor/autoload.php');
 
 trait CreateJs{
     	/**

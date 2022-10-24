@@ -6,6 +6,8 @@ const MODULE_VERSION		= '7.0.7';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
+DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
+
 add_filter('sim_submenu_description', function($description, $moduleSlug){
 	global $Modules;
 	
@@ -337,7 +339,7 @@ add_action('sim_module_activated', function($moduleSlug){
 	// Import the forms
 	$formBuilder	= new SIM\FORMS\FormBuilderForm();
 
-	$files = glob(__DIR__  . "/../imports/*.sform");
+	$files = glob(MODULE_PATH  . "imports/*.sform");
 	foreach ($files as $file) {
 		$formBuilder->importForm($file);
 	}

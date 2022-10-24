@@ -3,7 +3,7 @@ namespace SIM\PDF;
 use SIM;
 
 //load all libraries for this module
-require( __DIR__  . '/../../lib/vendor/autoload.php');
+require( MODULE_PATH  . 'lib/vendor/autoload.php');
 
 class PdfHtml extends \FPDF{
 	//variables of html parser
