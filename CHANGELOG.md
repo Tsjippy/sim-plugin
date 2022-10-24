@@ -11,6 +11,7 @@
 - better file paths
 
 ### Fixed
+- sending Signal message from backend
 
 ## [2.21.10.4] - 2022-10-19
 
