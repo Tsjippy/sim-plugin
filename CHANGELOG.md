@@ -3,12 +3,23 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.21.10.7] - 2022-10-24
+
+
+### Added
 - another signal library
 
 ### Changed
 - removed signal libraries
 - receive messages on construct
 - better file paths
+- prayer module now handles
+local signal-cli
 
 ### Fixed
 - sending Signal message from backend
