@@ -23,7 +23,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 			?>
 			An external Signal Bot can read and delete these messages and send them on Signal.<br>
 			<br>
-			Add one shortcode: 'signal_messages'.<br>
+			Adds one shortcode: 'signal_messages'.<br>
 			Use this shortcode to display all pending Signal messages and delete them if needed.<br>
 			<?php
 		}else{
@@ -55,7 +55,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			if(strpos(php_uname(), 'Linux') !== false){
 				echo "Try <code>sudo apt install openjdk-17-jdk -y</code>";
 			}
-			echo "<br><br>We assume you are on a shared host for now, which means you have to run an externa script to send signal messages<br>";
+			echo "<br><br>We assume you are on a shared host for now, which means you have to run an external script to send signal messages<br>";
 			
 		echo "</div>";
     }
