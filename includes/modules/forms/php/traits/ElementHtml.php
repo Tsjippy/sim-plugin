@@ -2,8 +2,8 @@
 namespace SIM\FORMS;
 use SIM;
 
-trait ElementHtml{    	
-	/**
+trait ElementHtml{
+	 /**
 	 * Builds the array with default values for the current user
 	 */
 	function buildDefaultsArray(){
@@ -33,7 +33,7 @@ trait ElementHtml{
 		}
 	}
     
-	/**
+	 /**
 	 * Get the values of an element
 	 * 
 	 * @param	object	$element		The element
@@ -100,7 +100,7 @@ trait ElementHtml{
 		return $values;
 	}
 
-		/**
+	 /**
 	 * Gets the options of an element like styling etc.
 	 *
 	 * @param	object	$element		The element
@@ -202,7 +202,7 @@ trait ElementHtml{
 		return  $elementHtml;
 	}
 
-	/**
+	 /**
 	 * Renders the html for element who can have multiple inputs
 	 * 
 	 * @param	object	$element		The element
@@ -261,7 +261,7 @@ trait ElementHtml{
 		}
 	}
 
-	/**
+	 /**
 	 * Gets the html of form element
 	 *
 	 * @param	object	$element	The element
@@ -492,7 +492,7 @@ trait ElementHtml{
 					}
 		
 					foreach($options as $key=>$option){
-						if(in_array(strtolower($option), $selValues) || in_array(strtolower($key), $selValues)){
+						if(in_array(strtolower($option), $selValues) || in_array(strtolower($key), $selValues) || in_array($element->default_value, [$key, $option])){
 							$selected	= 'selected';
 						}else{
 							$selected	= '';
@@ -511,6 +511,7 @@ trait ElementHtml{
 					$options	= $this->getFieldOptions($element);
 					$html		= "<div class='checkbox_options_group formfield'>";
 					
+					// get all the default options and make them lowercase
 					$lowValues	= [];
 					
 					$defaultKey				= $element->default_value;
@@ -538,10 +539,11 @@ trait ElementHtml{
 						}
 					}
 
+					// build the options
 					foreach($options as $key=>$option){
 						if($this->multiwrap){
 							$checked	= '%checked%';
-						}elseif(in_array(strtolower($option), $lowValues) || in_array(strtolower($key), $lowValues)){
+						}elseif(in_array(strtolower($option), $lowValues) || in_array(strtolower($key), $lowValues) || in_array($element->default_value, [$key, $option])){
 							$checked	= 'checked';
 						}else{
 							$checked	= '';

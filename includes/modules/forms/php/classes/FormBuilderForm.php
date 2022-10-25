@@ -1006,20 +1006,16 @@ class FormBuilderForm extends SimForms{
 
 			<div name='defaults' class='elementoption reverse notlabel notbutton notformstep notp notphp notfile notimage hide'>
 				<label class='block'>Specify a default value if desired</label>
-				<select class="formbuilder" name="formfield[default_value]">
-					<option value="">---</option>
+				<input type='text' class="formbuilder" name="formfield[default_value]" list='defaults' value='<?php if($element != null){echo trim($element->default_value);}?>'>
+
+				<datalist id='defaults'>
 					<?php
 					foreach($this->defaultValues as $key=>$field){
-						if($element != null && $element->default_value == $key){
-							$selected = 'selected';
-						}else{
-							$selected = '';
-						}
 						$optionName	= ucfirst(str_replace('_',' ',$key));
-						echo "<option value='$key' $selected>$optionName</option>";
+						echo "<option value='$key'>$optionName</option>";
 					}
 					?>
-				</select>
+				</datalist>
 			</div>
 
 			<?php
