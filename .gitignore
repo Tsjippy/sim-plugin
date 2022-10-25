@@ -1,5 +1,4 @@
 dynamic/
 node_modules/
 **/package-lock.json
-signalbot.db
-includes/modules/signal/data/*
+includes/modules/signal/*

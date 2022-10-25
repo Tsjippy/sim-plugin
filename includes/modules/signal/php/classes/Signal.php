@@ -26,7 +26,7 @@ class Signal {
 
         $this->OS       = 'macOS';
         $this->path     = '';
-        $this->basePath = MODULE_PATH.'data/signal-cli';
+        $this->basePath = MODULE_PATH.'signal-cli';
         if(strpos(php_uname(), 'Windows') !== false){
             $this->OS       = 'Windows';
             $this->basePath = str_replace('\\', '/', $this->basePath);
@@ -38,7 +38,11 @@ class Signal {
 
         $this->username         = SIM\getModuleOption(MODULE_SLUG, 'phone');
 
-        $this->profilePath      = MODULE_PATH.'data/signal-profile/';
+        $this->profilePath      = WP_CONTENT_DIR.'/signal-cli';
+
+        if (!is_dir($this->profilePath )) {
+            mkdir($this->profilePath , 0777, true);
+        }
 
         $this->checkPrerequisites();
     }
