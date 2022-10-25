@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- frontpage module
 
 ## [2.21.11.1] - 2022-10-25
 
