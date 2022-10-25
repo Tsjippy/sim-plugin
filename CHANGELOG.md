@@ -12,6 +12,7 @@
 ### Fixed
 - typos
 - reimbursements mailing
+- prevent scrolling when mobile menu is open
 
 ## [2.21.10.7] - 2022-10-24
 
