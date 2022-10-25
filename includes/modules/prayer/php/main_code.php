@@ -2,14 +2,14 @@
 namespace SIM\PRAYER;
 use SIM;
 
-//give prayer coordinator acces to prayer items		
+//give prayer coordinator acces to prayer items
 add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategory){
 	
 	if(
 		!$editRight														&&	// If we currently have no edit right
 		in_array('prayercoordinator', wp_get_current_user()->roles)		&& 	// If we have the prayer coordinator role and the post or page has the prayer category 
 		(
-			in_array(get_cat_ID('Prayer'), $postCategory) 				|| 
+			in_array(get_cat_ID('Prayer'), $postCategory) 				||
 			in_array('prayer', $postCategory)
 		)
 	){
@@ -29,7 +29,7 @@ add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategor
 **/
 function prayerRequest($plainText = false) {
 	if (!is_user_logged_in()){
-		return false;	
+		return false;
 	}
 
 	//Get all the post belonging to the prayer category
@@ -57,7 +57,7 @@ function prayerRequest($plainText = false) {
 		
 		if ($content != null){
 			//Current date
-			$datetime = date('Y-m-d'); 
+			$datetime = date('Y-m-d');
 			//Current day of the month
 			$dayNum = date('j', strtotime($datetime));
 
