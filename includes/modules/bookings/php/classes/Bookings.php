@@ -19,9 +19,9 @@ class Bookings{
         wp_enqueue_style( 'sim_bookings_style');
     }
 
-    /**
+     /**
 	 * Creates the table holding all bookings if it does not exist
-	*/
+	 */
 	public function createBookingsTable(){
 		if ( !function_exists( 'maybe_create_table' ) ) {
 			require_once ABSPATH . '/wp-admin/install-helper.php';
@@ -39,7 +39,7 @@ class Bookings{
 			endtime varchar(80) NOT NULL,
 			subject varchar(80) NOT NULL,
             submission_id mediumint(9) NOT NULL,
-            event_id mediumint(9) NOT NULL,
+            event_id mediumint(9),
             pending boolean DEFAULT true,
 			PRIMARY KEY  (id)
 		) $charsetCollate;";
@@ -86,7 +86,7 @@ class Bookings{
         return ob_get_clean();
     }
 
-    /**
+     /**
      * Displays the booking calendars
      * @param   string      $subject    The subject of the calendar
      * @param   int         $date       The date to retrieve the calendar for
@@ -153,7 +153,7 @@ class Bookings{
         return ob_get_clean();
     }
 
-    /**
+     /**
      * Displays the selected dates
      */
     protected function showSelectedModalDates(){
@@ -203,7 +203,7 @@ class Bookings{
         return ob_get_clean();
     }
 
-    /**
+     /**
      *
      * Displays a date selector modal
      */
@@ -242,14 +242,14 @@ class Bookings{
         return ob_get_clean();
     }
 
-    /**
+     /**
 	 * Get the month calendar
 	 *
 	 * @param	string		$subject		The subject name
      * @param   int         $date           The time
 	 *
 	 * @return	string				        Html of the calendar
-	*/
+	 */
 	public function monthCalendar($subject, $date){
 		
 		ob_start();
@@ -347,7 +347,7 @@ class Bookings{
 		return ob_get_clean();
 	}
 
-    /**
+     /**
      * Build the detail html for the current month
      */
     public function detailHtml(){
@@ -461,7 +461,7 @@ class Bookings{
         return ob_get_clean();
     }
 
-    /**
+     /**
      * Check if a booking overlaps another booking
      */
     public function checkOverlap($startDate, $endDate, $subject, $id=-1){
@@ -484,7 +484,7 @@ class Bookings{
 		return !empty($wpdb->get_results($query));
     }
 
-    /**
+     /**
      * Insert a new booking
      *
      * @param   string      $startdate      The startdate string
@@ -500,26 +500,28 @@ class Bookings{
         }
 
         // create a personal event
-        $post = array(
-			'post_type'		=> 'event',
-			'post_title'    => "Booking for $subject",
-			'post_content'  => "Booking for $subject",
-			'post_status'   => 'publish',
-			'post_author'   => $this->forms->formResults['user_id']
-		);
+        if(!empty($this->forms->formResults['user_id'])){
+            $post = array(
+                'post_type'		=> 'event',
+                'post_title'    => "Booking for $subject",
+                'post_content'  => "Booking for $subject",
+                'post_status'   => 'publish',
+                'post_author'   => $this->forms->formResults['user_id']
+            );
 
-		$eventId 	= wp_insert_post( $post, true, false);
+            $eventId 	= wp_insert_post( $post, true, false);
 
-        $event							= [];
-		$event['startdate']				= $startDate;
-		$event['starttime']				= '14:00';
-		$event['enddate']				= $endDate;
-		$event['endtime']				= '12:00';
-		$event['location']				= $subject;
-		$event['organizer_id']			= $this->forms->formResults['user_id'];
-        $event['onlyfor']               = $this->forms->formResults['user_id'];
-        update_post_meta($eventId, 'eventdetails', json_encode($event));
-        update_post_meta($eventId, 'onlyfor', $this->forms->formResults['user_id']);
+            $event							= [];
+            $event['startdate']				= $startDate;
+            $event['starttime']				= '14:00';
+            $event['enddate']				= $endDate;
+            $event['endtime']				= '12:00';
+            $event['location']				= $subject;
+            $event['organizer_id']			= $this->forms->formResults['user_id'];
+            $event['onlyfor']               = $this->forms->formResults['user_id'];
+            update_post_meta($eventId, 'eventdetails', json_encode($event));
+            update_post_meta($eventId, 'onlyfor', $this->forms->formResults['user_id']);
+        }
 
         // insert the booking
         $pending    = false;
@@ -546,7 +548,7 @@ class Bookings{
         );
     }
 
-    /**
+     /**
      * Update an existing booking
      *
      * @param   int     $bookingId  The booking id
@@ -621,7 +623,7 @@ class Bookings{
         ];
     }
 
-    /**
+     /**
      * Update an existing booking
      *
      * @param   int|object     $booking  The booking or booking id
@@ -647,7 +649,7 @@ class Bookings{
 		);
     }
 
-    /**
+     /**
      * Retrieve the bookings for a certain month
      *
      * @param   int     $month          The month to retrieve bookings for
@@ -685,7 +687,7 @@ class Bookings{
         }
     }
 
-    /**
+     /**
      * Retrieve all the pending bookings
      *
      */
@@ -700,7 +702,7 @@ class Bookings{
 		return $wpdb->get_results($query);
     }
 
-    /** Get a booking by submission id */
+     /** Get a booking by submission id */
     protected function getBookingById($id){
         global $wpdb;
 
@@ -709,7 +711,7 @@ class Bookings{
 		return  $wpdb->get_results($query)[0];
     }
 
-    /** Get a booking by submission id */
+     /** Get a booking by submission id */
     public function getBookingBySubmission($id){
         global $wpdb;
 

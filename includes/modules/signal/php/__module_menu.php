@@ -131,6 +131,10 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			
 		echo "</div>";
     }
+
+	
+	// store in settings
+	echo "<input type='hidden' name='local' value='$local'>";
 	
 	if($local){
 		// store in settings
@@ -139,10 +143,10 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			update_option('sim_modules', $Modules);
 		}
 
-		$signal = new Signal();
+		$signal 	= new Signal();
 		$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
 
-		if(file_exists($signal->profilePath)){
+		if(file_exists($signal->profilePath) && !empty($signal->username)){
 			$signalGroups	= $signal->listGroups();
 			if(!empty($signal->error)){
 				if($signal->error == "<div class='error'>User $signal->username is not registered.</div>"){
@@ -154,36 +158,41 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			}
 		}
 
-		if(file_exists($signal->profilePath)){
+		if(file_exists($signal->profilePath) && !empty($signal->username)){
 			?>
+			<input type='hidden' name="phone" value='<?php echo $settings["phone"]; ?>'>
 			<h4>Connection details</h4>
 			<p>
 				Currently connected to <?php echo $settings["phone"]; ?>
 				<a href='<?php echo $url;?>&unregister=<?php echo $settings["phone"]; ?>' class='button'>Unregister</a>
 			</p>
-			<div class="">
-				<h4>Select optional Signal group(s) to send new content messages to:</h4>
-				<?php
+			<?php
+			if(!empty($signalGroups)){
+				?>
+				<div class="">
+					<h4>Select optional Signal group(s) to send new content messages to:</h4>
+					<?php
 
-				if(empty($settings['groups'])){
-					$settings['groups']	= [];
-				}
+					if(empty($settings['groups'])){
+						$settings['groups']	= [];
+					}
 
-				foreach($signalGroups as $group){
-					if(empty($group->name)){
-						continue;
+					foreach($signalGroups as $group){
+						if(empty($group->name)){
+							continue;
+						}
+						?>
+						<label>
+							<input type='checkbox' name='groups[]' value='<?php echo $group->id;?>' <?php if(in_array($group->id, $settings['groups'])){echo 'checked';}?>>
+							<?php echo $group->name;?>
+						</label>
+						<br>
+						<?php
 					}
 					?>
-					<label>
-						<input type='checkbox' name='groups[]' value='<?php echo $group->id;?>' <?php if(in_array($group->id, $settings['groups'])){echo 'checked';}?>>
-						<?php echo $group->name;?>
-					</label>
-					<br>
-					<?php
-				}
-				?>
-			</div>
-			<?php
+				</div>
+				<?php
+			}
 		}else{
 			?>
 			<label>
@@ -280,7 +289,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 
 			<datalist id='groups'>
 				<?php
-				if(isset($settings['local'])){
+				if(isset($settings['local']) && $settings['local']){
 					$signal = new Signal();
 
 					if(file_exists($signal->profilePath)){
@@ -313,4 +322,18 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 	<?php
 
 	return ob_get_clean();
+}, 10, 3);
+
+add_filter('sim_module_updated', function($options, $moduleSlug, $oldSettings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
+
+	if(isset($options['local']) && $options['local']){
+		scheduleTasks();
+	}
+	
+
+	return $options;
 }, 10, 3);

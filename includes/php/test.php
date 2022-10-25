@@ -7,13 +7,17 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    /* $signal = new SIGNAL\Signal();
+    require_once( __DIR__  . '/../modules/signal/lib/vendor/autoload.php');
 
-    if(!$signal->valid){
+    $signal = new SIGNAL\Signal();
+
+    echo $signal->startDbus();
+
+  /*   if(!$signal->valid){
         return '<div class="error">'.$signal->error->get_error_message().'</div>';
     } */
 
-    require_once( __DIR__  . '/../modules/signal/lib/vendor/autoload.php');
+    
 });
 
 // turn off incorrect error on localhost

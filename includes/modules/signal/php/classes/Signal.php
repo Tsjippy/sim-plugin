@@ -9,10 +9,6 @@ use BaconQrCode\Writer;
 use GuzzleHttp;
 use mikehaertl\shellcommand\Command;
 
-if(!class_exists('BaconQrCode\Renderer\ImageRenderer')){
-    return new \WP_Error('2fa', "bacon-qr-code interface does not exist. Please run 'composer require bacon/bacon-qr-code'");
-}
-
 /* Install java apt install openjdk-17-jdk -y
 export VERSION=0.11.3
 wget https://github.com/AsamK/signal-cli/releases/download/v"${VERSION}"/signal-cli-"${VERSION}"-Linux.tar.gz
@@ -42,7 +38,7 @@ class Signal {
 
         $this->username         = SIM\getModuleOption(MODULE_SLUG, 'phone');
 
-        $this->profilePath      = MODULE_PATH.'data/signal-profiles/'.$this->username;
+        $this->profilePath      = MODULE_PATH.'data/signal-profile/';
 
         $this->checkPrerequisites();
     }
@@ -62,7 +58,19 @@ class Signal {
         }
     }
 
-    /**
+    public function startDbus(){
+        $this->baseCommand();
+
+        $this->command->addArg('-u', $this->username);
+
+        $this->command->addArg('daemon');
+
+        $this->command->execute();
+
+        return $this->parseResult();
+    }
+
+     /**
      * Register a phone number with SMS or voice verification. Use the verify command to complete the verification.
      * Default verify with SMS
      * @param bool $voiceVerification The verification should be done over voice, not SMS.
@@ -160,9 +168,10 @@ class Signal {
         if(!is_array($recipients)){
             if(strpos( $recipients , '+' ) === 0){
                 $recipients    = [$recipients];
+            }else{
+                $groupId    = $recipients;
+                $recipients = null;
             }
-            $groupId    = $recipients;
-            $recipients = null;
         }
 
         $this->baseCommand();
@@ -178,7 +187,6 @@ class Signal {
             $this->command->addArg('-g', $groupId);
         }
 
-        SIM\printArray($attachment);
         if(!empty($attachment) && file_exists($attachment)){
             SIM\printArray($attachment);
             $this->command->addArg('-a', [$attachment]);
@@ -186,7 +194,41 @@ class Signal {
 
         $this->command->execute();
 
-        SIM\printArray($this->command);
+        return $this->parseResult();
+    }
+
+    public function markAsRead($recipient, $timestamp){
+        // Mark as read
+        $this->baseCommand();
+
+        $this->command->addArg('-u', $this->username);
+        $this->command->addArg('sendReceipt', $recipient);
+
+        $this->command->addArg('-t', $timestamp);
+
+        $this->command->addArg('--type', 'read');
+
+        $this->command->execute();
+
+        return $this->parseResult();
+    }
+
+    public function sentTyping($recipient, $timestamp, $groupId=null){
+        // Mark as read
+        $this->markAsRead($recipient, $timestamp);
+
+        // Send typing
+        $this->baseCommand();
+
+        $this->command->addArg('-u', $this->username);
+
+        $this->command->addArg('sendTyping', $recipient);
+
+        if(!empty($groupId)){
+            $this->command->addArg('-g', $groupId);
+        }
+
+        $this->command->execute();
 
         return $this->parseResult();
     }
@@ -493,12 +535,12 @@ class Signal {
         return $this->parseResult();
     }
 
-    /**
+     /**
      * Query the server for new messages.
      * New messages are printed on standard output and attachments are downloaded to the config directory.
      * In json mode this is outputted as one json object per line
      * @param int $timeout Number of seconds to wait for new messages (negative values disable timeout). Default is 5 seconds
-     * @return array|string
+     * @return object|string
      */
     public function receive(int $timeout = 5)
     {
@@ -600,6 +642,9 @@ class Signal {
 
         // remove the old folder
         if(file_exists($this->basePath)){
+            // stop the deamon
+            unlink(__DIR__.'/../../daemon/running.signal');
+
             if($this->OS == 'Windows'){
                 $path   = str_replace('/', '\\', $this->basePath);
                 // kill the process
