@@ -6,6 +6,7 @@
 - prayer to the bot
 
 ### Changed
+- relocate signal-cli
 
 ### Fixed
 - frontpage module
