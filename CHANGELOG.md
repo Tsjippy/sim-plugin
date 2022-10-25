@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.21.11.2] - 2022-10-25
+
+
+### Added
 - prayer to the bot
 
 ### Changed
