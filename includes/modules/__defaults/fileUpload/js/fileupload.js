@@ -397,7 +397,7 @@ async function uploadVideo(file){
 window.addEventListener("click", function(event) {
 	var target = event.target;
 	
-	if (target.className.includes("remove_document")){
+	if (target.matches(".remove_document")){
 		event.preventDefault();
 		removeDocument(target);
 	}

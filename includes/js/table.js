@@ -196,7 +196,7 @@ export function setTableLabel() {
 		
 		//loop over all table rows
 		table.querySelectorAll('tbody td').forEach( (td) => {
-			if(!td.hasAttribute('label')){
+			if(!td.hasAttribute('label') && tdLabels[td.cellIndex] != undefined){
 				//set the header text as label
 				td.setAttribute('label', tdLabels[td.cellIndex]);
 			}

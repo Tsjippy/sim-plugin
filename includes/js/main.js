@@ -146,6 +146,8 @@ function bodyScrolling(type){
 	if(type == 'disable'){
 		//disable scrolling of the body
 		document.querySelector("body").style.overflow = 'hidden';
+		document.body.style.top			= `0px`;
+		document.body.style.position 	= 'fixed';
 
 		//scroll to top
 		window.scrollTo(0, 0);
@@ -160,8 +162,10 @@ function bodyScrolling(type){
 		menu.style.position		= 'absolute';
 
 	}else{
-		//disable scrolling of the body
+		//enable scrolling of the body
 		document.querySelector("body").style.overflow = '';
+		document.body.style.position 	= '';
+		document.body.style.top 		= '';
 
 		var menu = document.querySelector("#masthead");
 		menu.style.overflowY	= '';
@@ -305,10 +309,10 @@ window.addEventListener("mousedown", function(event) {
 	//we clicked the menu
 	if(target.closest('.menu-toggle') != null){
 		event.preventDefault();
-		if(document.querySelector('.menu-toggle').getAttribute("aria-expanded")=="true"){
-			bodyScrolling('disable');
-		}else{
+		if(document.querySelector('.menu-toggle').getAttribute("aria-expanded") == "true"){
 			bodyScrolling('enable');
+		}else{
+			bodyScrolling('disable');
 		}
 	}
 
