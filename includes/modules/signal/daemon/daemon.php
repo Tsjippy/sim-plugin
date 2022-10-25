@@ -42,13 +42,15 @@ while (file_exists($pidFile)){
         if(isset($result->envelope->dataMessage)){
             $timestamp  = $result->envelope->dataMessage->timestamp;
 
-            $message    = $result->envelope->dataMessage->message;
+            $message    = strtolower($result->envelope->dataMessage->message);
 
             $signal->sentTyping($recipient, $timestamp);
 
             if($message == 'Test'){
                 echo "Sending reply\n";
                 echo $signal->send($sender, 'Awesome!');
+            }elseif(strpos($message, 'prayer') !== false){
+                $signal->send($sender, SIM\PRAYER\prayerRequest(true));
             }
 
             echo $signal->send($sender, 'I have seen it!');
