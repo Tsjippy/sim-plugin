@@ -3,8 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.21.11] - 2022-10-25
+
+
+### Added
 - signal bot example
 - link to example bot script
+- defaults for form radio and dropdown
 
 ### Changed
 - do not signal messages from local host
