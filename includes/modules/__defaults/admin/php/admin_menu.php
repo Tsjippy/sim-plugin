@@ -56,6 +56,8 @@ add_action( 'admin_menu', function() {
 });
 
 function handlePost(){
+	do_action('sim-admin-settings-post');
+
 	if(!isset($_POST['module'])){
 		return;
 	}
@@ -95,7 +97,6 @@ function buildSubMenu(){
 	}
 
 	echo '<div class="module-settings">';
-		handlePost();
 		?>
 		<h1><?php echo $moduleName;?> module</h1>
 
@@ -135,6 +136,8 @@ function buildSubMenu(){
 			?>
 		</div>
 		<?php
+		
+		handlePost();
 
 		echo $descriptionsTab;
 		echo $settingsTab;

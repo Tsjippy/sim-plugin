@@ -90,16 +90,16 @@ function sendReimbursementRequests(){
 				$message		.= SIM\pathToUrl(str_replace($recieptsDir, "$recieptsDir/old", $attachment));
 				$message		.= '<br><br>';
 			}
-			$email_headers	 = ["Bcc:enharmsen@gmail.com"];
+			$emailHeaders	 = ["Bcc:enharmsen@gmail.com"];
 			
 			//Send the mail
 			$to				= SIM\getModuleOption('mailposting', 'finance_email');
-			wp_mail($to, $subject, $message, $email_headers, $excel);
+			wp_mail($to, $subject, $message, $emailHeaders, $excel);
 
 			//Loop over the attachements and move them
 			foreach($attachments as $file){
 				//Remove the upload attached to the form
-				rename($file, str_replace($recieptsDir, $oldDir, $file));
+				rename($file, str_replace($dir, $oldDir, $file));
 			}
 		}
 	}

@@ -23,12 +23,6 @@ sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 
 
 class Signal {
-
-    /**
-     * @var string Username is phone number starting with country code starting with "+"
-     */
-    protected $username;
-
     public function __construct(){
         require_once( MODULE_PATH  . 'lib/vendor/autoload.php');
 
@@ -44,10 +38,16 @@ class Signal {
             $this->OS     = 'Linux';
         }
         
-        $this->path     = $this->basePath.'/bin/signal-cli';
+        $this->path             = $this->basePath.'/bin/signal-cli';
 
-        $this->username           = SIM\getModuleOption(MODULE_SLUG, 'phone');
+        $this->username         = SIM\getModuleOption(MODULE_SLUG, 'phone');
 
+        $this->profilePath      = MODULE_PATH.'data/signal-profiles/'.$this->username;
+
+        $this->checkPrerequisites();
+    }
+
+    protected function baseCommand(){
         $this->command = new Command([
             'command' => $this->path,
             // This is required for binary to be able to find libzkgroup.dylib to support Group V2
@@ -55,9 +55,11 @@ class Signal {
         ]);
 
         // make sure we use the config for this website and phone number
-        $this->command->addArg('--config',  MODULE_PATH.'data/signal-profiles/'.$this->username);
+        $this->command->addArg('--config',  $this->profilePath);
 
-        $this->checkPrerequisites();
+        if($this->OS == 'Windows'){
+            $this->command->useExec  = true;
+        }
     }
 
     /**
@@ -67,8 +69,11 @@ class Signal {
      * @param string $captcha - from https://signalcaptchas.org/registration/generate.html
      * @return bool|string
      */
-    public function register(bool $voiceVerification = false, string $captcha = '')
+    public function register(string $captcha, bool $voiceVerification = false)
     {
+
+        $this->baseCommand();
+
         $this->command->addArg('-u', $this->username);
 
         $this->command->addArg('register');
@@ -94,6 +99,8 @@ class Signal {
      */
     public function unregister()
     {
+        $this->baseCommand();
+
         $this->command->addArg('unregister', null);
 
         $this->command->execute();
@@ -113,6 +120,8 @@ class Signal {
             $recipients    = [$recipients];
         }
 
+        $this->baseCommand();
+
         $this->command->addArg('getUserStatus', $recipients);
 
         $this->command->execute();
@@ -127,6 +136,9 @@ class Signal {
      */
     public function verify(string $code)
     {
+
+        $this->baseCommand();
+
         $this->command->addArg('-u', $this->username);
         $this->command->addArg('verify', $code);
 
@@ -152,6 +164,8 @@ class Signal {
             $groupId    = $recipients;
             $recipients = null;
         }
+
+        $this->baseCommand();
 
         $this->command->nonBlockingMode = true;
 
@@ -181,6 +195,7 @@ class Signal {
         if($this->command->getExitCode()){
             $error  = "<div class='error'>".$this->command->getError()."</div>";
             
+            $this->error    = $error;
             if($returnJson){
                 return json_encode($error);
             }
@@ -207,6 +222,8 @@ class Signal {
      */
     public function updateProfile(string $name, string $avatarPath = null, bool $removeAvatar = false)
     {
+        $this->baseCommand();
+
         $this->command->addArg('updateProfile', null);
 
         $this->command->addArg('--name', $name);
@@ -237,21 +254,30 @@ class Signal {
         if(empty($name)){
             $name   = get_bloginfo('name');
         }
+        $this->baseCommand();
 
         $this->command->nonBlockingMode = false;
 
         $this->command->addArg('link', null);
 
-        if($name) {
-            $this->command->addArg('-n', $name);
-        }
+        $this->command->addArg('-n', $name);
 
         // TODO: Better response handling
-        $randFile = sys_get_temp_dir().'/'.rand() . time() . '.device';
+        $randFile = $this->profilePath.'/'.rand() . time() . '.device';
         $this->command->addArg(" > $randFile 2>&1 &", null, false); // Ugly hack!
         sleep(1); // wait for file to get populated
 
         $this->command->execute();
+
+        if($this->command->getExitCode()){
+            $error  = "<div class='error'>";
+                $error  .= $this->command->getError()."<br>";
+                $error  .= "Try to do the linking yourself<br><br>";
+                $error  .= "Open a command line and run this:<br>";
+                $error  .= "<code>$this->path --config $this->profilePath link -n \"$name\"</code><br><br>";
+            $error  .= "</div>";
+            return $error;
+        }
 
         $link   = '';
         while(empty($link)){
@@ -294,6 +320,8 @@ class Signal {
      */
     public function addDevice(string $uri)
     {
+        $this->baseCommand();
+
         $this->command->addArg('--uri', $uri);
 
         $this->command->execute();
@@ -307,6 +335,8 @@ class Signal {
      */
     public function listDevices()
     {
+        $this->baseCommand();
+
         $this->command->addArg('-o', 'json');
 
         $this->command->addArg('listDevices', null);
@@ -323,6 +353,8 @@ class Signal {
      */
     public function removeDevice(int $deviceId)
     {
+        $this->baseCommand();
+
         $this->command->addArg('removeDevice', null);
 
         $this->command->addArg('-d', $deviceId);
@@ -339,6 +371,8 @@ class Signal {
      */
     public function updateAccount()
     {
+        $this->baseCommand();
+
         $this->command->addArg('updateAccount', null);
 
         $this->command->execute();
@@ -357,6 +391,8 @@ class Signal {
      */
     private function _createOrUpdateGroup(string $name = null, array $members = [], string $avatarPath = null, string $groupId = null)
     {
+        $this->baseCommand();
+
         $this->command->addArg('updateGroup', null);
 
         if(!empty($groupId)){
@@ -408,6 +444,8 @@ class Signal {
      */
     public function listGroups()
     {
+        $this->baseCommand();
+
         $this->command->addArg('-o', 'json');
 
         $this->command->addArg('listGroups', null);
@@ -425,6 +463,8 @@ class Signal {
      */
     public function joinGroup(string $uri)
     {
+        $this->baseCommand();
+
         $this->command->addArg('joinGroup', null);
 
         $this->command->addArg('--uri', $uri);
@@ -442,6 +482,8 @@ class Signal {
      */
     public function quitGroup(string $groupId)
     {
+        $this->baseCommand();
+
         $this->command->addArg('quitGroup', null);
 
         $this->command->addArg('-g', $groupId);
@@ -460,6 +502,8 @@ class Signal {
      */
     public function receive(int $timeout = 5)
     {
+        $this->baseCommand();
+
         $this->command->addArg('-o', 'json');
 
         $this->command->addArg('receive', null);

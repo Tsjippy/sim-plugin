@@ -6,7 +6,7 @@ const MODULE_VERSION		= '7.0.0';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
-DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
+DEFINE(__NAMESPACE__.'\MODULE_PATH', str_replace('\\', '/', plugin_dir_path(__DIR__)));
 
 add_filter('sim_submenu_description', function($description, $moduleSlug){
 	//module slug should be the same as the constant
@@ -38,11 +38,82 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	return ob_get_clean();
 }, 10, 2);
 
+function registerForm(){
+	?>
+	<form method='post' action='<?php echo admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );?>'>
+		<h4>Register with Signal</h4>
+		First get a captcha, see <a href='https://github.com/AsamK/signal-cli/wiki/Registration-with-captcha' target=_blank>here</a>
+		<br>
+		<label>
+			Captcha:
+			<br>
+			<input type='text' name='captcha' style='width:100%' required>
+		</label>
+		<br>
+		<label>
+			<input type='checkbox' name='voice' value='true'>
+			Register with a voice call in stead of sms
+		</label>
+		<br>
+		<br>
+		<button>Register</button>
+	</form>
+	<?php
+}
+
+add_action('sim-admin-settings-post', function(){
+	global $Modules;
+
+	$signal = new Signal();
+
+	if(isset($_GET['unregister'])){
+		$signal->unregister();
+
+		// remove the folder
+		$path   = str_replace('/', '\\', $signal->profilePath);
+		exec("rmdir $path /s /q");
+
+		// remove the phone number
+		unset($Modules[MODULE_SLUG]['phone']);
+		update_option('sim_modules', $Modules);
+	}elseif(isset($_GET['register'])){
+		registerForm();
+	}elseif(!empty($_POST['captcha'])){
+		echo $signal->register($_POST['captcha'], isset($_POST['voice']));
+
+		if(!empty($signal->error)){
+			registerForm();
+		}else{
+			?>
+			<form method='post'>
+				<label>
+					Verification code
+					<input type='number' name='verification-code' required>
+				</label>
+
+				<br>
+				<br>
+				<button>Verify</button>
+			</form>
+			<?php
+		}
+	}elseif(!empty($_POST['verification-code'])){
+		echo $signal->verify(isset($_POST['verification-code']));
+		if(empty($signal->error)){
+			unset($_POST['verification-code']);
+		}else{
+			registerForm();
+		}
+	}elseif(isset($_GET['link'])){
+		echo $signal->link();
+	}
+});
+
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	global $Modules;
 
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
+	if($moduleSlug != MODULE_SLUG || isset($_GET['register']) || $_POST['captcha'] || $_POST['verification-code']){
 		return $optionsHtml;
 	}
 
@@ -69,35 +140,70 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		}
 
 		$signal = new Signal();
-		$groups	= $signal->listGroups();
-		?>
-		<label>
-			Phone number to be used for sending messages
-			<input type="tel" name="phone" pattern="\+[0-9]{9,}" title="Phonenumber starting with a +. Only numbers. Example: +2349041234567" value='<?php echo $settings["phone"]; ?>' style='width:100%'>
-		</label>
+		$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
 
-		<div class="">
-			<h4>Select optional Signal group(s) to send new content messages to:</h4>
-			<?php
-
-			if(empty($settings['groups'])){
-				$settings['groups']	= [];
+		if(file_exists($signal->profilePath)){
+			$signalGroups	= $signal->listGroups();
+			if(!empty($signal->error)){
+				if($signal->error == "<div class='error'>User $signal->username is not registered.</div>"){
+					$path   = str_replace('/', '\\', $signal->profilePath);
+					exec("rmdir $path /s /q");
+				}else{
+					echo $signal->error;
+				}
 			}
-			foreach($groups as $group){
-				if(empty($group->name)){
-					continue;
+		}
+
+		if(file_exists($signal->profilePath)){
+			?>
+			<h4>Connection details</h4>
+			<p>
+				Currently connected to <?php echo $settings["phone"]; ?>
+				<a href='<?php echo $url;?>&unregister=<?php echo $settings["phone"]; ?>' class='button'>Unregister</a>
+			</p>
+			<div class="">
+				<h4>Select optional Signal group(s) to send new content messages to:</h4>
+				<?php
+
+				if(empty($settings['groups'])){
+					$settings['groups']	= [];
+				}
+
+				foreach($signalGroups as $group){
+					if(empty($group->name)){
+						continue;
+					}
+					?>
+					<label>
+						<input type='checkbox' name='groups[]' value='<?php echo $group->id;?>' <?php if(in_array($group->id, $settings['groups'])){echo 'checked';}?>>
+						<?php echo $group->name;?>
+					</label>
+					<br>
+					<?php
 				}
 				?>
-				<label>
-					<input type='checkbox' name='groups[]' value='<?php echo $group->id;?>' <?php if(in_array($group->id, $settings['groups'])){echo 'checked';}?>>
-					<?php echo $group->name;?>
-				</label>
-				<br>
+			</div>
+			<?php
+		}else{
+			?>
+			<label>
+				Phone number to be used for sending messages
+				<input type="tel" name="phone" pattern="\+[0-9]{9,}" title="Phonenumber starting with a +. Only numbers. Example: +2349041234567" value='<?php echo $settings["phone"]; ?>' style='width:100%'>
+			</label>
+			<?php
+			if(!empty($settings["phone"])){
+				?>
+				<h4>Connection details</h4>
+				<p>
+					Currently not connected to <?php echo $settings["phone"]; ?>
+					<br>
+					<a href='<?php echo $url;?>&register=<?php echo $settings["phone"]; ?>' class='button'>Register this number with Signal</a>
+					<br>
+					<a href='<?php echo $url;?>&link=<?php echo $settings["phone"]; ?>' class='button'>Link to an existing Signal number</a>
+				</p>
 				<?php
 			}
-			?>
-		</div>
-		<?php
+		}
 	}else{
 		if(empty($settings['groups'])){
 			$groups	= [''];
@@ -176,13 +282,16 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 				<?php
 				if(isset($settings['local'])){
 					$signal = new Signal();
-					$groups	= $signal->listGroups();
 
-					foreach($groups as $group){
-						if(empty($group->name)){
-							continue;
+					if(file_exists($signal->profilePath)){
+						$groups	= $signal->listGroups();
+
+						foreach($groups as $group){
+							if(empty($group->name)){
+								continue;
+							}
+							echo "<option value='$group->id'>$group->name</option>";
 						}
-						echo "<option value='$group->id'>$group->name</option>";
 					}
 				}else{
 					if(empty($settings['groups'])){
