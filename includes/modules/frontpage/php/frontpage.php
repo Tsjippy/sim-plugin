@@ -93,7 +93,7 @@ if(!empty($hookName)){
 				array(
 					'key' => 'onlyfor',
 					'compare' => 'NOT EXISTS',
-				), 
+				),
 				array(
 					'relation' => 'OR',
 					array(
@@ -149,7 +149,7 @@ if(!empty($hookName)){
 				$confidentialGroups	= (array)SIM\getModuleOption('contentfilter', 'confidential-roles');
 				
 				if(array_intersect($confidentialGroups, $user->roles)){
-					$args['tax_query'][] = 
+					$args['tax_query'][] =
 						array(
 							'taxonomy' => 'events',
 							'field'    => 'term_id',
@@ -204,7 +204,7 @@ if(!empty($hookName)){
 				?>
 				<article class="news-article">
 					<div class="card card-plain card-blog">
-						<?php if ( has_post_thumbnail() ) : 
+						<?php if ( has_post_thumbnail() ) :
 							echo '<div class="card-image">';
 								echo '<a href="'.get_permalink().'" style="background-image: url('.get_the_post_thumbnail_url().');"></a>';
 							echo '</div>';

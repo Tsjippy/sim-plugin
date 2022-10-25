@@ -1268,7 +1268,7 @@ function getJsDependicies(&$scripts, $handle, $extras = []){
 function isHomePage($pageId, $includePublic=true){
 	$isHomePage	= in_array($pageId, getModuleOption('frontpage', 'home_page', 'array'));
 
-	if($includePublic && $isHomePage){
+	if($includePublic && !$isHomePage){
 		$isHomePage	= is_front_page();
 	}
 	return $isHomePage;
