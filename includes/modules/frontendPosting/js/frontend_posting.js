@@ -67,8 +67,6 @@ function switchforms(target){
 	}else{
 		postType 		= target.value;
 	}
-				
-	var submitButton 	= parent.querySelector('[name="submit_post"]');
 	
 	document.querySelector('#postform [name="post_type"]').value 	= postType;
 	
@@ -95,17 +93,7 @@ function switchforms(target){
 	//Hide other options
 	parent.querySelectorAll(`.property:not(.${postType})`).forEach(el=>el.classList.add('hidden'));
 
-	if(postType == 'location') {
-		//Hide the lite elements if there is no content
-		if(tinymce.activeEditor == null || tinymce.activeEditor.getContent() == ""){
-			parent.querySelectorAll('.lite').forEach(function(el){
-				el.classList.add('hidden');
-			});
-			
-			//show the button to show all fields again
-			parent.querySelector('#showallfields').classList.remove('hidden');
-		}
-	}else if(postType == 'attachment') {
+	if(postType == 'attachment') {
 		// tick the box to always include the url
 		parent.querySelector('[name="signal_url"]').checked=true;
 	}

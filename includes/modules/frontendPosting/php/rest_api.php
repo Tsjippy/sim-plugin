@@ -4,9 +4,9 @@ use SIM;
 
 add_action( 'rest_api_init', function () {
 	// get_attachment_contents
-	register_rest_route( 
-		RESTAPIPREFIX.'/frontend_posting', 
-		'/get_attachment_contents', 
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/get_attachment_contents',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\getAttachmentContents',
@@ -21,9 +21,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// add_category
-	register_rest_route( 
-		RESTAPIPREFIX.'/frontend_posting', 
-		'/add_category', 
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/add_category',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\addCategory',
@@ -45,9 +45,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	//submit_post
-	register_rest_route( 
-		RESTAPIPREFIX.'/frontend_posting', 
-		'/submit_post', 
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/submit_post',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\submitPost',
@@ -78,9 +78,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// remove_post
-	register_rest_route( 
-		RESTAPIPREFIX.'/frontend_posting', 
-		'/remove_post', 
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/remove_post',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -101,9 +101,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// refresh post lock
-	register_rest_route( 
-		RESTAPIPREFIX.'/frontend_posting', 
-		'/refresh_post_lock', 
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/refresh_post_lock',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -128,9 +128,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// delete post lock
-	register_rest_route( 
-		RESTAPIPREFIX.'/frontend_posting', 
-		'/delete_post_lock', 
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/delete_post_lock',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -148,9 +148,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// change post type
-	register_rest_route( 
-		RESTAPIPREFIX.'/frontend_posting', 
-		'/change_post_type', 
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/change_post_type',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -177,9 +177,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Get frontend content form
-	register_rest_route( 
-		RESTAPIPREFIX.'/frontend_posting', 
-		'/post_edit', 
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/post_edit',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\sendForm',
@@ -196,9 +196,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Get post
-	register_rest_route( 
-		RESTAPIPREFIX.'/frontend_posting', 
-		'/post_result', 
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/post_result',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\sendPost',
@@ -219,7 +219,7 @@ add_action( 'rest_api_init', function () {
 function getAttachmentContents(\WP_REST_Request $request ){
 	$path	= get_attached_file($request['attachment_id']);
 
-	if(!file_exists($path)){ 
+	if(!file_exists($path)){
 		return new \WP_Error('frontendposting', "File $path does not exist!");
 	}
 
@@ -327,8 +327,8 @@ function submitPost(){
 		$p	= $frontEndContent->postId;
 	}
 
-	$posts	= new \WP_Query( array( 
-		'p'			=> $p, 
+	$posts	= new \WP_Query( array(
+		'p'			=> $p,
 		'post_type' => 'any'
 	) );
 

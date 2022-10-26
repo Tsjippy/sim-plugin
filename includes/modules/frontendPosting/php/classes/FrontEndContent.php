@@ -368,7 +368,7 @@ class FrontEndContent{
 		$this->postCategory 									= $this->post->post_category;
 
 		//show lite version of location by default
-		if($this->postName == 'location' && $this->postContent == '' || strpos($this->postType, '_lite') !== false){
+		if(strpos($this->postType, '_lite') !== false){
 			$this->lite 		= true;
 		}
 
@@ -1189,16 +1189,27 @@ class FrontEndContent{
 			}
 		}
 
-		$this->oldPost		= get_post($_POST['post_id']);
-		// find the parent with a correct posttype
-		while(in_array($this->oldPost->post_type, ['change', 'revision'])){
-			$this->oldPost	= get_post($this->oldPost->post_parent);
-		}
-
 		$this->postType 	= sanitize_text_field($_POST['post_type']);
-
+		
 		//First letter should be capital in the title
 		$this->postTitle 	= ucfirst(sanitize_text_field($_POST['post_title']));
+
+		$this->oldPost		= '';
+		if(is_numeric($_POST['post_id'])){
+			$this->oldPost	= get_post($_POST['post_id']);
+
+			// find the parent with a correct posttype
+			while(in_array($this->oldPost->post_type, ['change', 'revision'])){
+				$this->oldPost	= get_post($this->oldPost->post_parent);
+			}
+		}else{
+			// check double posting
+			$checkPost	= get_page_by_title($this->postTitle, OBJECT, $this->postType);
+			if(!empty($checkPost) && current_time('Y-m-d') == date('Y-m-d', strtotime($checkPost->post_date))){
+				$url	= get_permalink($checkPost);
+				return new \WP_Error('frontend', "A post with title $this->postTitle is already published today!\nSee it <a href='$url'>here</a>");
+			}
+		}
 
 		$this->postContent 	= $this->preparePostContent($_POST['post_content']);
 
