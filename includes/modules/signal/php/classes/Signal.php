@@ -27,6 +27,10 @@ class Signal {
         $this->OS       = 'macOS';
         $this->path     = '';
         $this->basePath = MODULE_PATH.'signal-cli';
+        if (!is_dir($this->basePath )) {
+            mkdir($this->basePath , 0777, true);
+        }
+
         if(strpos(php_uname(), 'Windows') !== false){
             $this->OS       = 'Windows';
             $this->basePath = str_replace('\\', '/', $this->basePath);
