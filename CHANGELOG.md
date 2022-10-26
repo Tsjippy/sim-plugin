@@ -8,6 +8,7 @@
 - signal module
 
 ### Fixed
+- mobile menu
 
 ## [2.21.11.2] - 2022-10-25
 
