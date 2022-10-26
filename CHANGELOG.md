@@ -9,6 +9,7 @@
 
 ### Fixed
 - mobile menu
+- prevent dublicate postings
 
 ## [2.21.11.2] - 2022-10-25
 
