@@ -9,13 +9,19 @@ document.addEventListener("DOMContentLoaded",function() {
 		//remove params again
 		window.history.replaceState({}, document.title, window.location.href.split('?')[0]);
 
-		//show the message
-		Swal.fire({
+		let options = {
 			icon: type.toLowerCase(),
 			title: type,
 			text: text,
 			confirmButtonColor: "#bd2919",
-		});
+		};
+
+		//show the message
+		if(document.fullscreenElement != null){
+			options['target']	= document.fullscreenElement;
+		}
+
+		Swal.fire(options);
 	}
 
 	var scrollTop = 0;

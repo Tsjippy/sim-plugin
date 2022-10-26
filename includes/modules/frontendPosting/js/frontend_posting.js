@@ -5,7 +5,7 @@ async function confirmPostDelete( event ) {
 	event.preventDefault();
 	parent = event.target.closest('#frontend_upload_form');
 
-	var confirmed = await Swal.fire({
+	let options = {
 		title: 'Are you sure?',
 		text: `Are you sure you want to remove this ${document.querySelector('[name="post_type"]').value}}?`,
 		icon: 'warning',
@@ -13,7 +13,13 @@ async function confirmPostDelete( event ) {
 		confirmButtonColor: '#3085d6',
 		cancelButtonColor: '#d33',
 		confirmButtonText: 'Yes, delete it!'
-	});
+	};
+
+	if(document.fullscreenElement != null){
+		options['target']	= document.fullscreenElement;
+	}
+
+	var confirmed = await Swal.fire(options);
 
 	if (confirmed.isConfirmed) {
 		var postId = parent.querySelector('[name="post_id"]').value;
@@ -309,7 +315,7 @@ function insertMediaContents(){
 			wp.media.frame.on('insert', function() {
 				let selection = wp.media.frame.state().get('selection').first().toJSON(); 
 				if (['.txt', '.doc', '.rtf'].some(v => selection.url.includes(v))) {
-					Swal.fire({
+					let options = {
 						title: 'Question',
 						text: 'Do you want to insert the contents of this file into the post?',
 						icon: 'question',
@@ -321,9 +327,15 @@ function insertMediaContents(){
 						hideClass: {
 							popup: '',                     // disable popup fade-out animation
 						},
-					}).then((result) => {
+					};
+
+					if(document.fullscreenElement != null){
+						options['target']	= document.fullscreenElement;
+					}
+
+					Swal.fire(options).then((result) => {
 						if (result.isConfirmed) {
-							Swal.fire({
+							let options = {
 								title: 'Please wait...',
 								html: "<IMG src='"+sim.loadingGif+"' width=100 height=100>",
 								showConfirmButton: false,
@@ -333,7 +345,13 @@ function insertMediaContents(){
 									icon: ''                       // disable icon animation
 								},
 								
-							});
+							};
+
+							if(document.fullscreenElement != null){
+								options['target']	= document.fullscreenElement;
+							}
+
+							Swal.fire(options);
 
 							readFileContents(selection.id);
 						}

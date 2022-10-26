@@ -274,14 +274,20 @@ function showTimeslotModal(selected){
 }
 
 async function editTimeSlot(selected){
-	var answer = await Swal.fire({
+	let options	= {
 		title: 'What do you want to do?',
 		text: "Do you want to edit or remove this timeslot?",
 		showDenyButton: true,
 		showCancelButton: true,
 		confirmButtonText: 'Edit timeslot',
 		denyButtonText: 'Remove timeslot',
-	});
+	}
+
+	if(document.fullscreenElement != null){
+		options['target']	= document.fullscreenElement;
+	}
+
+	var answer = await Swal.fire(options);
 	
 	var firstCell	= selected[0].node;
 
@@ -362,7 +368,7 @@ function loadHostFormdata(target){
 }
 
 async function checkConfirmation(text){
-	var result = await Swal.fire({
+	let options = {
 		title: 'Are you sure?',
 		text: text+"?",
 		icon: 'warning',
@@ -370,21 +376,27 @@ async function checkConfirmation(text){
 		confirmButtonColor: "#bd2919",
 		cancelButtonColor: '#d33',
 		confirmButtonText: 'Yes'
-	});
-	
-		if (result.isConfirmed) {
-			document.querySelectorAll('.modal:not(.hidden)').forEach(modal=>modal.classList.add('hidden'));
-			//display loading gif
-			if(target.classList.contains('remove_schedule')){
-				Main.showLoader(target.closest('.schedules_div'));
-			}else{
-				Main.showLoader(target.firstChild);
-			}
-			
-			return true;
-		}
+	};
 
-		return false;
+	if(document.fullscreenElement != null){
+		options['target']	= document.fullscreenElement;
+	}
+
+	var result = await Swal.fire(options);
+	
+	if (result.isConfirmed) {
+		document.querySelectorAll('.modal:not(.hidden)').forEach(modal=>modal.classList.add('hidden'));
+		//display loading gif
+		if(target.classList.contains('remove_schedule')){
+			Main.showLoader(target.closest('.schedules_div'));
+		}else{
+			Main.showLoader(target.firstChild);
+		}
+		
+		return true;
+	}
+
+	return false;
 }
 
 //hide empty rows on mobile
@@ -577,11 +589,18 @@ function checkIfValidSelection(target, selected, e){
 
 		for (const selection of selected){
 			if(columnNr != selection.node.cellIndex){
-				Swal.fire({
+				let options = {
 					icon: 'error',
 					title: "You can not select times on multiple days!",
 					confirmButtonColor: "#bd2919",
-				});
+				};
+
+				if(document.fullscreenElement != null){
+					options['target']	= document.fullscreenElement;
+				}
+
+				Swal.fire(options);
+
 				e.target.closest('.sim-table')._selectable.clear();
 				return;
 			}

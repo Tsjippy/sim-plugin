@@ -172,13 +172,19 @@ function mediaTypeSelected(target){
 }
 
 async function downloadMedia(target){
-    var answer = await Swal.fire({
+    let options = {
         title: 'Warning',
         html: "Downloading of materials is only allowed for use in presentations. <br>You should not share this file with others as it may contain privacy sensitive information",
         showCancelButton: true,
         confirmButtonText: 'I promise not to share this file',
         confirmButtonColor: "#bd2919"
-    });
+    }
+
+    if(document.fullscreenElement != null){
+        options['target']	= document.fullscreenElement;
+    }
+
+    var answer = await Swal.fire(options);
 
     //swap and/or
     if (answer.isConfirmed) {

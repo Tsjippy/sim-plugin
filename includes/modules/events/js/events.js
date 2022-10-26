@@ -256,12 +256,18 @@ document.addEventListener("click", function(event) {
         event.stopPropagation();
         if(target.textContent != ''){
             navigator.clipboard.writeText(target.textContent);
-            Swal.fire({
+            let options = {
                 icon: 'success',
                 title: 'Copied '+target.textContent,
                 showConfirmButton: false,
                 timer: 1500
-            })
+            };
+
+            if(document.fullscreenElement != null){
+                options['target']	= document.fullscreenElement;
+            }
+
+            Swal.fire(options);
         }
     }
 });

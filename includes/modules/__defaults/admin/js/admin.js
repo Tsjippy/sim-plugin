@@ -30,12 +30,18 @@ window.addEventListener("click", event => {
         }
         
         if(value != ''){
-            Swal.fire({
+            let options = {
                 icon: 'success',
                 title: 'Copied '+value,
                 showConfirmButton: false,
                 timer: 1500
-            })
+            };
+
+            if(document.fullscreenElement != null){
+                options['target']	= document.fullscreenElement;
+            }
+
+            Swal.fire(options);
             navigator.clipboard.writeText(value);
         }
     }

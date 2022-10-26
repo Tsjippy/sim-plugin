@@ -233,11 +233,17 @@ async function reorderformelements(event){
 			Main.displayMessage(response);
 		}
 	}else{
-		Swal.fire({
+		let options = {
 			icon: 'error',
 			title: 'ordering already in progress, please wait',
 			confirmButtonColor: "#bd2919",
-		});
+		};
+
+		if(document.fullscreenElement != null){
+			options['target']	= document.fullscreenElement;
+		}
+
+		Swal.fire(options);
 	}
 }
 
@@ -366,7 +372,7 @@ function maybeRemoveElement(target){
 	if(typeof(Swal)=='undefined'){
 		removeElement(target);
 	}else{
-		Swal.fire({
+		let options = {
 			title: 'Are you sure?',
 			text: "This will remove this element",
 			icon: 'warning',
@@ -374,7 +380,13 @@ function maybeRemoveElement(target){
 			confirmButtonColor: '#3085d6',
 			cancelButtonColor: '#d33',
 			confirmButtonText: 'Yes, delete it!'
-		}).then((result) => {
+		}
+
+		if(document.fullscreenElement != null){
+			options['target']	= document.fullscreenElement;
+		}
+
+		Swal.fire(options).then((result) => {
 			if (result.isConfirmed) {
 				removeElement(target);
 			}
@@ -423,14 +435,20 @@ function addConditionRule(target){
 			current		= 'AND';
 			opposite	= 'OR';
 		}
-		
-		Swal.fire({
+
+		let options = {
 			title: 'What do you want to do?',
 			showDenyButton: true,
 			showCancelButton: true,
 			confirmButtonText: `Change ${current} to ${opposite}`,
 			denyButtonText: 'Add a new rule',
-		}).then((result) => {
+		};
+
+		if(document.fullscreenElement != null){
+			options['target']	= document.fullscreenElement;
+		}
+		
+		Swal.fire(options).then((result) => {
 			//swap and/or
 			if (result.isConfirmed) {
 				//make other button inactive
@@ -568,14 +586,20 @@ function removeConditionRule(target){
 	
 	//count rule rows in this condition row
 	if(conditionRow.querySelectorAll('.rule_row').length > 1){
-		Swal.fire({
+		let options = {
 			title: 'What do you want to remove?',
 			showDenyButton: true,
 			showCancelButton: true,
 			confirmButtonText: `One condition rule`,
 			denyButtonText: `The whole condition`,
 			confirmButtonColor: "#bd2919",
-		}).then((result) => {
+		};
+
+		if(document.fullscreenElement != null){
+			options['target']	= document.fullscreenElement;
+		}
+
+		Swal.fire(options).then((result) => {
 			//remove a rule rowe
 			if (result.isConfirmed) {
 				//get the current row
@@ -604,7 +628,7 @@ function removeConditionRule(target){
 			}
 		});
 	}else{
-		Swal.fire({
+		let options = {
 			title: 'Are you sure?',
 			text: "This will remove this condition",
 			icon: 'warning',
@@ -612,7 +636,13 @@ function removeConditionRule(target){
 			confirmButtonColor: "#bd2919",
 			cancelButtonColor: '#d33',
 			confirmButtonText: 'Yes, delete it!'
-		}).then((result) => {
+		};
+
+		if(document.fullscreenElement != null){
+			options['target']	= document.fullscreenElement;
+		}
+
+		Swal.fire(options).then((result) => {
 			if (result.isConfirmed) {
 				conditionRow.remove();
 				fixConditionNumbering();
@@ -725,12 +755,19 @@ function placeholderSelect(target){
 	}
 	
 	if(value != ''){
-		Swal.fire({
+		let options = {
 			icon: 'success',
 			title: 'Copied '+value,
 			showConfirmButton: false,
 			timer: 1500
-		})
+		};
+
+		if(document.fullscreenElement != null){
+			options['target']	= document.fullscreenElement;
+		}
+
+		Swal.fire(options);
+
 		navigator.clipboard.writeText(value);
 	}
 }

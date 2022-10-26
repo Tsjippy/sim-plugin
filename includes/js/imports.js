@@ -127,6 +127,10 @@ export function displayMessage(message, icon, autoclose=false, no_ok=false, time
 		if(autoclose){
 			options['timer'] = timer;
 		}
+
+        if(document.fullscreenElement != null){
+			options['target']	= document.fullscreenElement;
+		}
 		
 		Swal.fire(options);
 	}else{

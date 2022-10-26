@@ -56,15 +56,24 @@ async function saveTableSettings(target){
 }
 
 async function askConfirmation(text){
-	let result = await Swal.fire({
+	let options	= {
 		title: 'Are you sure?',
 		text: `Are you sure you want to ${text} this?`,
 		icon: 'warning',
 		showCancelButton: true,
 		confirmButtonColor: "#bd2919",
 		cancelButtonColor: '#d33',
-		confirmButtonText: `Yes, ${text} it!`
-	});
+		confirmButtonText: `Yes, ${text} it!`,
+	};
+
+	if(document.fullscreenElement != null){
+		options['target']	= document.fullscreenElement;
+	}
+
+	let result	= await Swal.fire(options);
+
+
+	document.fullscreenElement
 
 	return result.isConfirmed;
 }
@@ -106,8 +115,8 @@ async function archiveSubmission(target){
 	// Ask whether to archive one piece or the whole
 	if(tableRow.dataset.subid != undefined){
 		showSwal = false;
-		
-		response = await Swal.fire({
+
+		let options	= {
 			title: `What do you want to ${action}?`,
 			text: `Do you want to ${action} just this one or the whole request?`,
 			icon: 'question',
@@ -115,8 +124,14 @@ async function archiveSubmission(target){
 			showCancelButton: true,
 			confirmButtonText: 'Just this one',
 			denyButtonText: 'The whole request',
-			confirmButtonColor: "#bd2919",
-		});
+			confirmButtonColor: "#bd2919"
+		};
+	
+		if(document.fullscreenElement != null){
+			options['target']	= document.fullscreenElement;
+		}
+		
+		response = await Swal.fire(options);
 
 		if (response.isConfirmed) {
 			formData.append('subid', tableRow.dataset.subid);
@@ -161,9 +176,6 @@ async function archiveSubmission(target){
 					}else{
 						element = row.querySelector(`.loaderwrapper, .unarchive`);
 					}
-					
-
-	console.log(element);
 					changeArchiveButton(element, action);
 				}else{
 					row.remove();
@@ -178,8 +190,6 @@ async function archiveSubmission(target){
 				if(params.archived == 'true'){
 					let loader = row.querySelector('.loaderwrapper');
 					
-
-	console.log(loader);
 					changeArchiveButton(loader, action);
 				}else{
 					row.remove();

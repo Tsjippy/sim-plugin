@@ -31,6 +31,10 @@ async function logout(event){
                 }
             };
             
+            if(document.fullscreenElement != null){
+                options['target']	= document.fullscreenElement;
+            }
+            
             Swal.fire(options);
         }
 
