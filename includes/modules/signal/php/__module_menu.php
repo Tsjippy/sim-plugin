@@ -109,18 +109,157 @@ add_action('sim-admin-settings-post', function(){
 	}
 });
 
+ /**
+ * Checks if the current phone number is connected with Signal
+ *
+ * @param	object	$signal		The signal object
+ *
+ * @return 	bool					true when connected
+ */
 function checkIfConnected($signal){
 	if(!file_exists($signal->profilePath.'/data/accounts.json') || empty($signal->username)){
 		return false;
 	}
 
-	$accounts	= json_decode(file_get_contents($signal->profilePath.'/data/accounts.json'));
+	$config	= json_decode(file_get_contents($signal->profilePath.'/data/accounts.json'));
 
-	if(empty($accounts)){
+	if(empty($config) || empty($config->accounts)){
 		return false;
 	}
 
-	return true;
+	foreach($config->accounts as $account){
+		if($account->number == $signal->username){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+ /**
+ * Shows the options when connected to Signal
+ *
+ * @param	object	$signal		The signal object
+ * @param	array	$settings	The module settings
+ */
+function connectedOptions($signal, $settings){
+	$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
+
+	$signalGroups	= $signal->listGroups();
+	if(!empty($signal->error)){
+		echo $signal->error;
+	}
+
+	?>
+	<input type='hidden' name="phone" value='<?php echo $settings["phone"]; ?>'>
+	<h4>Connection details</h4>
+	<p>
+		Currently connected to <?php echo $settings["phone"]; ?>
+		<a href='<?php echo $url;?>&unregister=<?php echo $settings["phone"]; ?>' class='button'>Unregister</a>
+	</p>
+	<?php
+	if(!empty($signalGroups)){
+		?>
+		<div class="">
+			<h4>Select optional Signal group(s) to send new content messages to:</h4>
+			<?php
+
+			if(empty($settings['groups'])){
+				$settings['groups']	= [];
+			}
+
+			foreach($signalGroups as $group){
+				if(empty($group->name)){
+					continue;
+				}
+				?>
+				<label>
+					<input type='checkbox' name='groups[]' value='<?php echo $group->id;?>' <?php if(in_array($group->id, $settings['groups'])){echo 'checked';}?>>
+					<?php echo $group->name;?>
+				</label>
+				<br>
+				<?php
+			}
+			?>
+		</div>
+		<?php
+	}
+}
+
+ /**
+ * Shows the options when not connected to Signal
+ *
+ * @param	array	$settings		The module settings
+ */
+function notConnectedOptions($settings){
+	$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
+
+	?>
+	<label>
+		Phone number to be used for sending messages
+		<input type="tel" name="phone" pattern="\+[0-9]{9,}" title="Phonenumber starting with a +. Only numbers. Example: +2349041234567" value='<?php echo $settings["phone"]; ?>' style='width:100%'>
+	</label>
+	<?php
+	if(!empty($settings["phone"])){
+		?>
+		<h4>Connection details</h4>
+		<p>
+			Currently not connected to <?php echo $settings["phone"]; ?>
+			<br>
+			<a href='<?php echo $url;?>&register=<?php echo $settings["phone"]; ?>' class='button'>Register this number with Signal</a>
+			<br>
+			<a href='<?php echo $url;?>&link=<?php echo $settings["phone"]; ?>' class='button'>Link to an existing Signal number</a>
+		</p>
+		<?php
+	}
+}
+
+ /**
+ * Shows the options when Java JDK is not installed
+ *
+ * @param	array	$settings		The module settings
+ */
+function notLocalOptions($settings){
+	if(empty($settings['groups'])){
+		$groups	= [''];
+	}else{
+		$groups	= $settings['groups'];
+	}
+
+	?>
+	<label>
+		Link to join the Signal group
+		<input type='url' name='group_link' value='<?php echo $settings["group_link"]; ?>' style='width:100%'>
+	</label>
+
+	<div class="">
+		<h4>Give optional Signal group name(s) to send new content messages to:</h4>
+		<div class="clone_divs_wrapper">
+			<?php
+			foreach($groups as $index=>$group){
+				?>
+				<div class="clone_div" data-divid="<?php echo $index;?>">
+					<label>
+						<h4 style='margin: 0px;'>Signal groupname <?php echo $index+1;?></h4>
+						<input type='text' name="groups[<?php echo $index;?>]" value='<?php echo $group;?>'>
+					</label>
+					<span class='buttonwrapper' style='margin:auto;'>
+						<button type="button" class="add button" style="flex: 1;">+</button>
+						<?php
+						if(count($groups)> 1){
+							?>
+							<button type="button" class="remove button" style="flex: 1;">-</button>
+							<?php
+						}
+						?>
+					</span>
+				</div>
+				<?php
+			}
+			?>
+		</div>
+	</div>
+	<?php
 }
 
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
@@ -158,109 +297,14 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		}
 
 		$signal 	= new Signal();
-		$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
 
 		if(checkIfConnected($signal)){
-			$signalGroups	= $signal->listGroups();
-			if(!empty($signal->error)){
-				echo $signal->error;
-			}
-
-			?>
-			<input type='hidden' name="phone" value='<?php echo $settings["phone"]; ?>'>
-			<h4>Connection details</h4>
-			<p>
-				Currently connected to <?php echo $settings["phone"]; ?>
-				<a href='<?php echo $url;?>&unregister=<?php echo $settings["phone"]; ?>' class='button'>Unregister</a>
-			</p>
-			<?php
-			if(!empty($signalGroups)){
-				?>
-				<div class="">
-					<h4>Select optional Signal group(s) to send new content messages to:</h4>
-					<?php
-
-					if(empty($settings['groups'])){
-						$settings['groups']	= [];
-					}
-
-					foreach($signalGroups as $group){
-						if(empty($group->name)){
-							continue;
-						}
-						?>
-						<label>
-							<input type='checkbox' name='groups[]' value='<?php echo $group->id;?>' <?php if(in_array($group->id, $settings['groups'])){echo 'checked';}?>>
-							<?php echo $group->name;?>
-						</label>
-						<br>
-						<?php
-					}
-					?>
-				</div>
-				<?php
-			}
+			connectedOptions($signal, $settings);
 		}else{
-			?>
-			<label>
-				Phone number to be used for sending messages
-				<input type="tel" name="phone" pattern="\+[0-9]{9,}" title="Phonenumber starting with a +. Only numbers. Example: +2349041234567" value='<?php echo $settings["phone"]; ?>' style='width:100%'>
-			</label>
-			<?php
-			if(!empty($settings["phone"])){
-				?>
-				<h4>Connection details</h4>
-				<p>
-					Currently not connected to <?php echo $settings["phone"]; ?>
-					<br>
-					<a href='<?php echo $url;?>&register=<?php echo $settings["phone"]; ?>' class='button'>Register this number with Signal</a>
-					<br>
-					<a href='<?php echo $url;?>&link=<?php echo $settings["phone"]; ?>' class='button'>Link to an existing Signal number</a>
-				</p>
-				<?php
-			}
+			notConnectedOptions($settings);
 		}
 	}else{
-		if(empty($settings['groups'])){
-			$groups	= [''];
-		}else{
-			$groups	= $settings['groups'];
-		}
-
-		?>
-		<label>
-			Link to join the Signal group
-			<input type='url' name='group_link' value='<?php echo $settings["group_link"]; ?>' style='width:100%'>
-		</label>
-
-		<div class="">
-			<h4>Give optional Signal group name(s) to send new content messages to:</h4>
-			<div class="clone_divs_wrapper">
-				<?php
-				foreach($groups as $index=>$group){
-					?>
-					<div class="clone_div" data-divid="<?php echo $index;?>">
-						<label>
-							<h4 style='margin: 0px;'>Signal groupname <?php echo $index+1;?></h4>
-							<input type='text' name="groups[<?php echo $index;?>]" value='<?php echo $group;?>'>
-						</label>
-						<span class='buttonwrapper' style='margin:auto;'>
-							<button type="button" class="add button" style="flex: 1;">+</button>
-							<?php
-							if(count($groups)> 1){
-								?>
-								<button type="button" class="remove button" style="flex: 1;">-</button>
-								<?php
-							}
-							?>
-						</span>
-					</div>
-					<?php
-				}
-				?>
-			</div>
-		</div>
-		<?php
+		notLocalOptions($settings);
 	}
 
 	return ob_get_clean();
@@ -282,6 +326,14 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 		<?php
     }
 
+	$phonenumbers	= '';
+	foreach (get_users() as $user) {
+		$phones	= (array)get_user_meta($user->ID, 'phonenumbers', true);
+		foreach($phones as $phone){
+			$phonenumbers	.= "<option value='$phone'>$user->display_name ($phone)</option>";
+		}
+	}
+
 	ob_start();
 
 	?>
@@ -296,6 +348,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 
 			<datalist id='groups'>
 				<?php
+				echo $phonenumbers;
 				if(isset($settings['local']) && $settings['local']){
 					$signal = new Signal();
 
@@ -337,8 +390,11 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldSettings){
 		return $options;
 	}
 
+	$signal = new Signal();
+	$signal->receive();
+
 	if(isset($options['local']) && $options['local']){
-		scheduleTasks();
+		//scheduleTasks();
 	}
 	
 

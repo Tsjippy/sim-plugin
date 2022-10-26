@@ -25,7 +25,7 @@ class Signal {
         $this->valid    = true;
 
         $this->OS       = 'macOS';
-        $this->basePath = MODULE_PATH.'signal-cli';
+        $this->basePath = WP_CONTENT_DIR.'/signal-cli';
         if (!is_dir($this->basePath )) {
             mkdir($this->basePath , 0777, true);
         }
@@ -37,11 +37,16 @@ class Signal {
             $this->OS     = 'Linux';
         }
         
-        $this->path             = $this->basePath.'/bin/signal-cli';
+        $this->programPath      = $this->basePath.'/program/';
+        if (!is_dir($this->programPath )) {
+            mkdir($this->programPath , 0777, true);
+        }
+
+        $this->path             = $this->programPath.'bin/signal-cli';
 
         $this->username         = SIM\getModuleOption(MODULE_SLUG, 'phone');
 
-        $this->profilePath      = WP_CONTENT_DIR.'/signal-cli';
+        $this->profilePath      = $this->basePath.'/data';
 
         if (!is_dir($this->profilePath )) {
             mkdir($this->profilePath , 0777, true);
@@ -597,8 +602,6 @@ class Signal {
             echo "Updating <br>";
 
             $this->installSignal(str_replace('v', '', $release['tag_name']));
-
-            //$errorMessage .= "Please update to version {$release['tag_name']}<br>";
         }
 
         if(empty($errorMessage)){
@@ -609,11 +612,11 @@ class Signal {
     }
 
     private function installSignal($version){
-        SIM\clearOutput(true);
-        header("X-Accel-Buffering: no");
-        header('Content-Encoding: none');
-
-        ob_implicit_flush(true);
+        $pidFile    = __DIR__.'/installing.signal';
+        if(file_exists($pidFile)){
+            return;
+        }
+        file_put_contents($pidFile, 'running');
 
         echo "Downloading Signal version $version<br>";
         $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->OS.tar.gz");
@@ -652,49 +655,53 @@ class Signal {
                 // remove the folder
                 exec("rmdir $folder /s /q");
             }else{
-                exec("rmdir -rf $folder");
+                exec("rm -R $folder");
             }
         }
 
         try {
-            echo "Unzipping .tar archive<br>";
+            echo "Unzipping .tar archive to $folder<br>";
 
             $phar = new \PharData($fileName);
             $phar->extractTo($folder); // extract all files
         } catch (\Exception $e) {
+            echo "<div class='error'>".$e->getMessage().'</div>';
+
+            unlink($pidFile);
+
             // handle errors
             return new \WP_Error('signal', 'installation error');
         }
 
         // remove the old folder
-        if(file_exists($this->basePath)){
+        if(file_exists($this->programPath)){
             echo "Removing old version<br>";
 
             // stop the deamon
             unlink(__DIR__.'/../../daemon/running.signal');
 
             if($this->OS == 'Windows'){
-                $path   = str_replace('/', '\\', $this->basePath);
+                $path   = str_replace('/', '\\', $this->programPath);
                 // kill the process
                 exec("taskkill /IM signal-cli /F");
 
                 // remove the folder
                 exec("rmdir $path /s /q");
             }else{
-                exec("rmdir -rf $this->basePath");
+                exec("rmdir -rf $this->programPath");
             }
         }
 
         // move the folder
-        $result = rename("$folder/signal-cli-$version", $this->basePath);
+        $result = rename("$folder/signal-cli-$version", $this->programPath);
 
         if($result){
             echo "Succesfully installed Signal version $version!<br>";
         }else{
-            echo "Failed!<br>Could not move $folder/signal-cli-$version to $this->basePath";
+            echo "Failed!<br>Could not move $folder/signal-cli-$version to $this->programPath";
         }
 
-        ob_implicit_flush(false);
+        unlink($pidFile);
     }
 
     private function downloadSignal($url){

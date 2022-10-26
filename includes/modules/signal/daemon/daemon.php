@@ -6,6 +6,7 @@ $pidFile    = __DIR__.'\running.signal';
 if(file_exists($pidFile)){
     return;
 }
+file_put_contents($pidFile, 'running');
 
 // load wp
 ob_start();
@@ -23,8 +24,6 @@ set_time_limit(0);
 
 /* Iteration interval in seconds */
 $sleep_time = 600;
-
-file_put_contents($pidFile, 'running');
 
 include_once __DIR__.'/../php/__module_menu.php';
 include_once __DIR__.'/../php/classes/Signal.php';
@@ -59,6 +58,9 @@ while (file_exists($pidFile)){
         echo "Received:\n";
         print_r($result, true);
         echo "\n";
+
+        // sleep to give others the opportunity to do actions to
+        sleep(30);
     }else{
         echo "Nothing to process\n";
     }
