@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.21.12] - 2022-10-26
+
+
+### Changed
 - signal module
 
 ### Fixed
