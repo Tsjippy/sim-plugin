@@ -25,7 +25,6 @@ class Signal {
         $this->valid    = true;
 
         $this->OS       = 'macOS';
-        $this->path     = '';
         $this->basePath = MODULE_PATH.'signal-cli';
         if (!is_dir($this->basePath )) {
             mkdir($this->basePath , 0777, true);
@@ -587,7 +586,7 @@ class Signal {
 
         $curVersion     = str_replace('signal-cli ', 'v', trim(shell_exec($this->path.' --version')));
 
-        if(empty($curVersion)){
+        if(!file_exists($this->path) || empty($curVersion)){
             $this->installSignal(str_replace('v', '', $release['tag_name']));
 
             if(!file_exists($this->path)){
@@ -610,12 +609,22 @@ class Signal {
     }
 
     private function installSignal($version){
+        SIM\clearOutput(true);
+        header("X-Accel-Buffering: no");
+        header('Content-Encoding: none');
+
+        ob_implicit_flush(true);
+
+        echo "Downloading Signal version $version<br>";
         $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->OS.tar.gz");
 
+        echo "Download finished<br>";
         // Unzip the gz
         $fileName = str_replace('.gz', '', $path);
 
         if(!file_exists($fileName)){
+
+            echo "Unzipping .gz archive<br>";
             // Raising this value may increase performance
             $bufferSize = 4096; // read 4kb at a time
 
@@ -638,25 +647,36 @@ class Signal {
         // unzip the tar
         $folder = str_replace('.tar.gz', '', $path);
 
-        if(!file_exists($folder)){
-            try {
-                $phar = new \PharData($fileName);
-                $phar->extractTo($folder); // extract all files
-            } catch (\Exception $e) {
-                // handle errors
-                return new \WP_Error('signal', 'installation error');
+        if(file_exists($folder)){
+            if($this->OS == 'Windows'){
+                // remove the folder
+                exec("rmdir $folder /s /q");
+            }else{
+                exec("rmdir -rf $folder");
             }
+        }
+
+        try {
+            echo "Unzipping .tar archive<br>";
+
+            $phar = new \PharData($fileName);
+            $phar->extractTo($folder); // extract all files
+        } catch (\Exception $e) {
+            // handle errors
+            return new \WP_Error('signal', 'installation error');
         }
 
         // remove the old folder
         if(file_exists($this->basePath)){
+            echo "Removing old version<br>";
+
             // stop the deamon
             unlink(__DIR__.'/../../daemon/running.signal');
 
             if($this->OS == 'Windows'){
                 $path   = str_replace('/', '\\', $this->basePath);
                 // kill the process
-                exec("taskkill /IM audiodg.exe /F");
+                exec("taskkill /IM signal-cli /F");
 
                 // remove the folder
                 exec("rmdir $path /s /q");
@@ -669,10 +689,12 @@ class Signal {
         $result = rename("$folder/signal-cli-$version", $this->basePath);
 
         if($result){
-            echo 'Succes!<br>';
+            echo "Succesfully installed Signal version $version!<br>";
         }else{
-            echo 'Failed!<br>';
+            echo "Failed!<br>Could not move $folder/signal-cli-$version to $this->basePath";
         }
+
+        ob_implicit_flush(false);
     }
 
     private function downloadSignal($url){

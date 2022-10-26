@@ -1143,13 +1143,16 @@ function isRestApiRequest() {
 /**
  * Clears the output queue
  */
-function clearOutput(){
+function clearOutput($write=false){
 	while(true){
         //ob_get_clean only returns false when there is absolutely nothing anymore
         $result	= ob_get_clean();
         if($result === false){
             break;
         }
+		if($write){
+			echo $result;
+		}
     }
 }
 

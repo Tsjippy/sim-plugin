@@ -109,6 +109,20 @@ add_action('sim-admin-settings-post', function(){
 	}
 });
 
+function checkIfConnected($signal){
+	if(!file_exists($signal->profilePath.'/data/accounts.json') || empty($signal->username)){
+		return false;
+	}
+
+	$accounts	= json_decode(file_get_contents($signal->profilePath.'/data/accounts.json'));
+
+	if(empty($accounts)){
+		return false;
+	}
+
+	return true;
+}
+
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	global $Modules;
 
@@ -146,19 +160,12 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		$signal 	= new Signal();
 		$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
 
-		if(file_exists($signal->profilePath) && !empty($signal->username)){
+		if(checkIfConnected($signal)){
 			$signalGroups	= $signal->listGroups();
 			if(!empty($signal->error)){
-				if($signal->error == "<div class='error'>User $signal->username is not registered.</div>"){
-					$path   = str_replace('/', '\\', $signal->profilePath);
-					exec("rmdir $path /s /q");
-				}else{
-					echo $signal->error;
-				}
+				echo $signal->error;
 			}
-		}
 
-		if(file_exists($signal->profilePath) && !empty($signal->username)){
 			?>
 			<input type='hidden' name="phone" value='<?php echo $settings["phone"]; ?>'>
 			<h4>Connection details</h4>
