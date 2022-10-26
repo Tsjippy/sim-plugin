@@ -10,6 +10,7 @@
 ### Fixed
 - mobile menu
 - prevent dublicate postings
+- swal popups when in full screen
 
 ## [2.21.11.2] - 2022-10-25
 
