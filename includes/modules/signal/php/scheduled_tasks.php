@@ -15,6 +15,17 @@ function scheduleTasks(){
 }
 
 function runDaemon(){
+	$command = new Command([
+		'command' => 'export'
+	]);
+
+	$command->addArg('DISPLAY',':1');
+
+	$command->execute();
+
+	SIM\printArray($command, true);
+	
+
 	$signal		= new Signal();
 	$signal->baseCommand();
 

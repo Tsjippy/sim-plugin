@@ -18,7 +18,7 @@ add_action( 'enqueue_block_editor_assets', function(){
         'sim-mandatory-block',
         plugins_url('blocks/mandatory-settings/build/index.js', __DIR__),
         [ 'wp-blocks', 'wp-dom', 'wp-dom-ready', 'wp-edit-post' ],
-        STYLE_VERSION
+        MODULE_VERSION
     );
 
 	$postId		= get_the_ID();
