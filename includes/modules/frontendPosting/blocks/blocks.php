@@ -25,7 +25,7 @@ add_action( 'enqueue_block_editor_assets', function(){
         'sim-expiry-date-block',
         plugins_url('blocks/expiry-date/build/index.js', __DIR__),
         [ 'wp-blocks', 'wp-dom', 'wp-dom-ready', 'wp-edit-post' ],
-        STYLE_VERSION
+        MODULE_VERSION
     );
 });
 
