@@ -18,8 +18,6 @@ function runDaemon(){
 	$signal		= new Signal();
 	$signal->baseCommand();
 
-	$signal->command->addArg('--config', $signal->profilePath);
-
 	$signal->command->addArg('-u', $signal->username);
 
 	$signal->command->addArg('daemon');

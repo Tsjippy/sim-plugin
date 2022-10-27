@@ -8,11 +8,11 @@ add_action( 'enqueue_block_editor_assets', function() {
         'sim-mailchimp-block',
         plugins_url('blocks/mailchimp_options/build/index.js', __DIR__),
         [ 'wp-blocks', 'wp-dom', 'wp-dom-ready', 'wp-edit-post' ],
-        STYLE_VERSION
+        MODULE_VERSION
     );
 
-    $Mailchimp  = new Mailchimp();
-    $segments   = $Mailchimp->getSegments();
+    $mailchimp  = new Mailchimp();
+    $segments   = $mailchimp->getSegments();
     $segments  = array_map(function($segment){
         return [
             'value' => $segment->id,
