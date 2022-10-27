@@ -223,7 +223,7 @@ add_filter('sim_form_actions', function($actions){
 });
 
 //Add a print button html
-add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues=null, $index=-1, $displayFormResults){
+add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $index, $displayFormResults){
 	if(!in_array($index, [1,4])){
 		return $buttonsHtml;
 	}
