@@ -11,6 +11,7 @@
 - daemon params
 - bug in embed page shortcode
 - bug in mailchimp block
+- error in frontend posting block
 
 ## [2.21.12.2] - 2022-10-27
 
