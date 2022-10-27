@@ -31,29 +31,17 @@ if(!empty($argv) && count($argv) == 5){
     $groupId        = $argv[2];
     $message        = $argv[3];
     $attachments    = $argv[4];
-    
-    $sender     = $result->envelope->source;
-
-    $sourceName = $result->envelope->sourceName;
 
     if(isset($result->envelope->dataMessage)){
-        $timestamp  = $result->envelope->dataMessage->timestamp;
-
-        $message    = strtolower($result->envelope->dataMessage->message);
-
-        $signal->sentTyping($recipient, $timestamp);
+        $signal->sentTyping($source, $timestamp);
 
         if($message == 'Test'){
             echo "Sending reply\n";
             echo $signal->send($sender, 'Awesome!');
         }elseif(strpos($message, 'prayer') !== false){
-            $signal->send($sender, SIM\PRAYER\prayerRequest(true));
+            $signal->send($source, SIM\PRAYER\prayerRequest(true));
         }
 
-        echo $signal->send($sender, 'I have seen it!');
+        echo $signal->send($source, 'I have seen it!');
     }
-
-    echo "Received:\n";
-    print_r($result, true);
-    echo "\n";
 }
