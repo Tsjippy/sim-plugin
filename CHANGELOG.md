@@ -17,11 +17,6 @@
 ### Fixed
 - bugfixes
 
-## [2.21.12.1] - 2022-10-27
-
-
-### Fixed
-- several bug fixes
 
 ## [2.21.12] - 2022-10-26
 
@@ -33,24 +28,7 @@
 - mobile menu
 - prevent dublicate postings
 - swal popups when in full screen
-
-## [2.21.11.2] - 2022-10-25
-
-
-### Added
-- prayer to the bot
-
-### Changed
-- relocate signal-cli
-
-### Fixed
-- frontpage module
-
-## [2.21.11.1] - 2022-10-25
-
-
-### Added
-- signal-cli deamon
+- several bug fixes
 
 ## [2.21.11] - 2022-10-25
 
@@ -59,62 +37,40 @@
 - signal bot example
 - link to example bot script
 - defaults for form radio and dropdown
+- prayer to the bot
+- signal-cli deamon
 
 ### Changed
 - do not signal messages from local host
+- relocate signal-cli
 
 ### Fixed
 - typos
 - reimbursements mailing
 - prevent scrolling when mobile menu is open
+- frontpage module
 
-## [2.21.10.7] - 2022-10-24
+
+## [2.21.10] - 2022-10-18
 
 
 ### Added
-- another signal library
-
-### Changed
-- removed signal libraries
-- receive messages on construct
-- better file paths
-- prayer module now handles
-local signal-cli
-
-### Fixed
-- sending Signal message from backend
-
-## [2.21.10.4] - 2022-10-19
-
-
-## [2.21.10.3] - 2022-10-18
-
-
-### Changed
-- link signal device
-
-## [2.21.10.2] - 2022-10-18
-
+- possibility to not display certain cats in media gallery cat selector
+- signal library MTM for server side sending messages
 
 ### Changed
 - auto install postie plugin
-
-### Fixed
-- bug in forms menu
-- in_array bugs
-
-## [2.21.10.1] - 2022-10-18
-
-
-### Added
-- possibility to not display certain cats in
-media gallery cat selector
-- signal library MTM for
-server side sending messages
+- removed signal libraries
+- receive messages on construct
+- better file paths
+- prayer module now handles local signal-cli
 
 ### Fixed
 - print travel for one way
 - install 3th party plugin
+- bug in forms menu
+- in_array bugs
+- sending Signal message from backend
 
 ## [2.21.9] - 2022-10-13
 
