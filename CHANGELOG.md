@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- daemon
 
 ### Fixed
 - bugfixes
