@@ -40,7 +40,7 @@ add_filter('sim_should_read_mandatory_page', function($mustRead, $audience, $use
     $visaInfo   = get_user_meta($userId, 'visa_info', true);
 
     if(
-        isset($visaInfo['permit_type'])         && 
+        isset($visaInfo['permit_type'])         &&
         $visaInfo['permit_type'][0] == 'no'     &&
         isset($audience['nolocal'])
     ){

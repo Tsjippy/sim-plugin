@@ -394,7 +394,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldSettings){
 	$signal->receive();
 
 	if(isset($options['local']) && $options['local']){
-		//scheduleTasks();
+		scheduleTasks();
 	}
 	
 

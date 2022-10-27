@@ -26,11 +26,11 @@ if(!empty($argv) && count($argv) == 5){
 
     SIM\printArray($argv, true);
 
-    $timestamp      = $argv[0];
-    $source         = $argv[1];
-    $groupId        = $argv[2];
-    $message        = $argv[3];
-    $attachments    = $argv[4];
+    $timestamp      = $argv[1];
+    $source         = $argv[2];
+    $groupId        = $argv[3];
+    $message        = $argv[4];
+    $attachments    = $argv[5];
 
     if(isset($result->envelope->dataMessage)){
         $signal->sentTyping($source, $timestamp);
