@@ -9,9 +9,7 @@ add_shortcode("test",function ($atts){
 
     require_once( __DIR__  . '/../modules/signal/lib/vendor/autoload.php');
 
-    $signal = new SIGNAL\Signal();
-
-    echo $signal->startDbus();
+    SIGNAL\runDaemon();
 
   /*   if(!$signal->valid){
         return '<div class="error">'.$signal->error->get_error_message().'</div>';

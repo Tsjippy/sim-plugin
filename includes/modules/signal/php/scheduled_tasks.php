@@ -16,17 +16,17 @@ function scheduleTasks(){
 
 function runDaemon(){
 	$signal		= new Signal();
-	$command 	= new Command([
-		'command' => $signal->path
-	]);
+	$signal->baseCommand();
 
-	$command->addArg('--config', $signal->profilePath);
+	$signal->command->addArg('--config', $signal->profilePath);
 
-	$command->addArg('-u', $signal->username);
+	$signal->command->addArg('-u', $signal->username);
 
-	$command->addArg('daemon');
+	$signal->command->addArg('daemon');
 
-	$command->execute();
+	$signal->command->execute();
+
+	SIM\printArray($signal->command, true);
 }
 
 // Remove scheduled tasks upon module deactivation

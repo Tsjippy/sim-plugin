@@ -55,7 +55,7 @@ class Signal {
         $this->checkPrerequisites();
     }
 
-    protected function baseCommand(){
+    public function baseCommand(){
         $this->command = new Command([
             'command' => $this->path,
             // This is required for binary to be able to find libzkgroup.dylib to support Group V2

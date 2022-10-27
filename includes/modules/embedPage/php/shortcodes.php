@@ -4,8 +4,12 @@ use SIM;
 
 // make it possible to include a page in another page
 add_shortcode('embed_page', function($atts){
+    if(!is_array($atts) || isset($atts['id']) || !is_numeric($atts['id']) ){
+        return '';
+    }
+
 	$id		= explode('/', $atts['id']);
-	
+
     return displayPageContents($id);
 });
 
@@ -19,7 +23,7 @@ function displayPageContents($id){
     // post
     if(is_numeric($id[0])){
         $args = array(
-            'post_type' => 'any',	
+            'post_type' => 'any',
             'post__in' => array($id[0])
         );
         $wp_query = new \WP_Query( $args );
@@ -34,7 +38,7 @@ function displayPageContents($id){
     }else{
         if(count($id) == 2){
             $args = array(
-                'post_type' => rtrim($id[0], 's'),	
+                'post_type' => rtrim($id[0], 's'),
                 'tax_query' => array(
                     array (
                         'taxonomy' => $id[0],
@@ -48,8 +52,8 @@ function displayPageContents($id){
             // archive
             $args   = array( 'taxonomy' => $id[0] );
             $type   = 'archive';
-        }   
-        
+        }
+
         $wp_query   = new \WP_Query($args);
         $wp_query->is_embed = true;
         $template           = SIM\getTemplateFile('', $type, $id[0]);
