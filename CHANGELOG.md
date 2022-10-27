@@ -8,6 +8,7 @@
 
 ### Fixed
 - bug fix
+- daemon params
 
 ## [2.21.12.2] - 2022-10-27
 
