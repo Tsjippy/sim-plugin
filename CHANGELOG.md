@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.21.12.2] - 2022-10-27
+
+
+### Changed
 - daemon
 
 ### Fixed
