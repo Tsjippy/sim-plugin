@@ -22,9 +22,15 @@ include_once __DIR__.'/../php/classes/Signal.php';
 
 $signal = new Signal();
 
-if(!empty($argv) && count($argv) > 1){
+if(!empty($argv) && count($argv) == 5){
 
     SIM\printArray($argv, true);
+
+    $timestamp      = $argv[0];
+    $source         = $argv[1];
+    $groupId        = $argv[2];
+    $message        = $argv[3];
+    $attachments    = $argv[4];
     
     $sender     = $result->envelope->source;
 

@@ -13,7 +13,15 @@ while read -r line; do
     echo $line | grep MessageReceivedV2 && echo MessageReceivedV2
 done
 
+dbus-monitor --profile "interface='org.asamk.Signal',member='MessageReceivedV2'" |  php /home/simnige1/web/simnigeria.org/public_html/wp-content/plugins/sim-plugin/includes/modules/signal/daemon/daemon2.php {} command2 {}
+
 dbus-monitor --profile "interface='org.asamk.Signal',member='MessageReceivedV2'"|
 while read line; do
+    php /home/simnige1/web/simnigeria.org/public_html/wp-content/plugins/sim-plugin/includes/modules/signal/daemon/daemon2.php $line
+done
+
+
+dbus-monitor "interface='org.asamk.Signal',member='MessageReceivedV2'"|
+while read -r -d 'signal' line; do
     php /home/simnige1/web/simnigeria.org/public_html/wp-content/plugins/sim-plugin/includes/modules/signal/daemon/daemon2.php $line
 done

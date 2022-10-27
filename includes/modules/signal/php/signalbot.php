@@ -108,6 +108,10 @@ function sendSignalMessage($message, $recipient, $postId=""){
 
 		return;
 	}
+
+	if(!empty($image)){
+		$image	= base64_encode(file_get_contents($image));
+	}
 	
 	$notifications = get_option('signal_bot_messages');
 	//Notifications should be an array of recipients
@@ -122,7 +126,7 @@ function sendSignalMessage($message, $recipient, $postId=""){
 
 	$notifications[$recipient][] = [
 		$message,
-		base64_encode(file_get_contents($image))
+		$image
 	];
 	
 	update_option('signal_bot_messages', $notifications);

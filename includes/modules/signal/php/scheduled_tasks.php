@@ -15,11 +15,16 @@ function scheduleTasks(){
 }
 
 function runDaemon(){
-	$command = new Command([
-		'command' => 'php'
+	$signal		= new Signal();
+	$command 	= new Command([
+		'command' => $signal->path
 	]);
 
-	$command->addArg(MODULE_PATH."daemon/daemon.php");
+	$command->addArg('--config', $signal->profilePath);
+
+	$command->addArg('-u', $signal->username);
+
+	$command->addArg('daemon');
 
 	$command->execute();
 }
