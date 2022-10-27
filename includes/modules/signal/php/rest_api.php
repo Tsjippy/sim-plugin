@@ -19,7 +19,7 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-	// Update quota documents
+	// Save signal preferences
 	register_rest_route(
 		RESTAPIPREFIX.'/signal',
 		'/save_preferences',

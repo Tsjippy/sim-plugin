@@ -11,13 +11,6 @@ add_action('init', function () {
 	);
 
 	register_block_type(
-		__DIR__ . '/form/build',
-		array(
-			'render_callback' => __NAMESPACE__.'\showForm',
-		)
-	);
-
-	register_block_type(
 		__DIR__ . '/formbuilder/build',
 		array(
 			'render_callback' => function($request){
