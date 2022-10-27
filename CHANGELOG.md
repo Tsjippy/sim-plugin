@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- several bug fixes
 
 ## [2.21.12] - 2022-10-26
 
