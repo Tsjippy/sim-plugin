@@ -1,12 +1,7 @@
 <?php
 use SIM\SIGNAL\Signal;
 
-$pidFile    = __DIR__.'\running.signal';
-
-if(file_exists($pidFile)){
-    return;
-}
-file_put_contents($pidFile, 'running');
+error_log(print_r($argv,true));
 
 // load wp
 ob_start();
@@ -22,48 +17,31 @@ $discard = ob_get_clean();
 /* Remove the execution time limit */
 set_time_limit(0);
 
-/* Iteration interval in seconds */
-$sleep_time = 600;
-
 include_once __DIR__.'/../php/__module_menu.php';
 include_once __DIR__.'/../php/classes/Signal.php';
 
 $signal = new Signal();
 
-while (file_exists($pidFile)){
-    $result = $signal->receive();
+if(!empty($argv) && count($argv) == 5){
 
-    if(!empty($result)){
-        $sender     = $result->envelope->source;
+    SIM\printArray($argv, true);
 
-        $sourceName = $result->envelope->sourceName;
+    $timestamp      = $argv[1];
+    $source         = $argv[2];
+    $groupId        = $argv[3];
+    $message        = $argv[4];
+    $attachments    = $argv[5];
 
-        if(isset($result->envelope->dataMessage)){
-            $timestamp  = $result->envelope->dataMessage->timestamp;
+    if(isset($result->envelope->dataMessage)){
+        $signal->sentTyping($source, $timestamp);
 
-            $message    = strtolower($result->envelope->dataMessage->message);
-
-            $signal->sentTyping($recipient, $timestamp);
-
-            if($message == 'Test'){
-                echo "Sending reply\n";
-                echo $signal->send($sender, 'Awesome!');
-            }elseif(strpos($message, 'prayer') !== false){
-                $signal->send($sender, SIM\PRAYER\prayerRequest(true));
-            }
-
-            echo $signal->send($sender, 'I have seen it!');
+        if($message == 'Test'){
+            echo "Sending reply\n";
+            echo $signal->send($sender, 'Awesome!');
+        }elseif(strpos($message, 'prayer') !== false){
+            $signal->send($source, SIM\PRAYER\prayerRequest(true));
         }
 
-        echo "Received:\n";
-        print_r($result, true);
-        echo "\n";
-
-        // sleep to give others the opportunity to do actions to
-        sleep(30);
-    }else{
-        echo "Nothing to process\n";
+        echo $signal->send($source, 'I have seen it!');
     }
 }
-
-echo "Stop command received";

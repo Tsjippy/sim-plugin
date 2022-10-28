@@ -7,7 +7,7 @@ folder  = str(pathlib.Path(__file__).parent.resolve())
 print(folder)
 
 def msg_rcv (timestamp, source, group_id, message, attachments):
-    subprocess.call(["php", folder+"/daemon2.php", str(timestamp), str(source), str(group_id), str(message), str(attachments)])
+    subprocess.call(["php", folder+"/daemon.php", str(timestamp), str(source), str(group_id), str(message), str(attachments)])
 
 bus                         = SessionBus()
 loop                        = GLib.MainLoop()

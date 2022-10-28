@@ -42,13 +42,18 @@ function registerForm(){
 	?>
 	<form method='post' action='<?php echo admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );?>'>
 		<h4>Register with Signal</h4>
-		First get a captcha, see <a href='https://github.com/AsamK/signal-cli/wiki/Registration-with-captcha' target=_blank>here</a>
+		<br>
+		<label>
+			Phone number you want to register
+			<input type="tel" name="phone" pattern="\+[0-9]{9,}" title="Phonenumber starting with a +. Only numbers. Example: +2349041234567" style='width:100%'>
+		</label>
 		<br>
 		<label>
 			Captcha:
 			<br>
 			<input type='text' name='captcha' style='width:100%' required>
 		</label>
+		Get a captcha from <a href='https://signalcaptchas.org/registration/generate.html' target=_blank>here</a>, for an explanation see <a href='https://github.com/AsamK/signal-cli/wiki/Registration-with-captcha' target=_blank>the manual.</a>
 		<br>
 		<label>
 			<input type='checkbox' name='voice' value='true'>
@@ -62,8 +67,6 @@ function registerForm(){
 }
 
 add_action('sim-admin-settings-post', function(){
-	global $Modules;
-
 	$signal = new Signal();
 
 	if(isset($_GET['unregister'])){
@@ -72,20 +75,19 @@ add_action('sim-admin-settings-post', function(){
 		// remove the folder
 		$path   = str_replace('/', '\\', $signal->profilePath);
 		exec("rmdir $path /s /q");
-
-		// remove the phone number
-		unset($Modules[MODULE_SLUG]['phone']);
-		update_option('sim_modules', $Modules);
 	}elseif(isset($_GET['register'])){
 		registerForm();
 	}elseif(!empty($_POST['captcha'])){
-		echo $signal->register($_POST['captcha'], isset($_POST['voice']));
+		echo $signal->register($_POST['phone'], $_POST['captcha'], isset($_POST['voice']));
 
 		if(!empty($signal->error)){
 			registerForm();
 		}else{
 			?>
 			<form method='post'>
+				You should have received a verification code.<br>
+				Please insert the code below.
+				<br>
 				<label>
 					Verification code
 					<input type='number' name='verification-code' required>
@@ -98,9 +100,11 @@ add_action('sim-admin-settings-post', function(){
 			<?php
 		}
 	}elseif(!empty($_POST['verification-code'])){
-		echo $signal->verify(isset($_POST['verification-code']));
+		echo $signal->verify($_POST['verification-code']);
 		if(empty($signal->error)){
 			unset($_POST['verification-code']);
+
+			echo "<div class='success'>Succesfully registered with Signal!</div>";
 		}else{
 			registerForm();
 		}
@@ -108,33 +112,6 @@ add_action('sim-admin-settings-post', function(){
 		echo $signal->link();
 	}
 });
-
- /**
- * Checks if the current phone number is connected with Signal
- *
- * @param	object	$signal		The signal object
- *
- * @return 	bool					true when connected
- */
-function checkIfConnected($signal){
-	if(!file_exists($signal->profilePath.'/data/accounts.json') || empty($signal->username)){
-		return false;
-	}
-
-	$config	= json_decode(file_get_contents($signal->profilePath.'/data/accounts.json'));
-
-	if(empty($config) || empty($config->accounts)){
-		return false;
-	}
-
-	foreach($config->accounts as $account){
-		if($account->number == $signal->username){
-			return true;
-		}
-	}
-
-	return false;
-}
 
  /**
  * Shows the options when connected to Signal
@@ -151,11 +128,10 @@ function connectedOptions($signal, $settings){
 	}
 
 	?>
-	<input type='hidden' name="phone" value='<?php echo $settings["phone"]; ?>'>
 	<h4>Connection details</h4>
 	<p>
-		Currently connected to <?php echo $settings["phone"]; ?>
-		<a href='<?php echo $url;?>&unregister=<?php echo $settings["phone"]; ?>' class='button'>Unregister</a>
+		Currently connected to <?php echo $signal->username; ?>
+		<a href='<?php echo $url;?>&unregister=true' class='button'>Unregister</a>
 	</p>
 	<?php
 	if(!empty($signalGroups)){
@@ -191,27 +167,19 @@ function connectedOptions($signal, $settings){
  *
  * @param	array	$settings		The module settings
  */
-function notConnectedOptions($settings){
+function notConnectedOptions(){
 	$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
 
 	?>
-	<label>
-		Phone number to be used for sending messages
-		<input type="tel" name="phone" pattern="\+[0-9]{9,}" title="Phonenumber starting with a +. Only numbers. Example: +2349041234567" value='<?php echo $settings["phone"]; ?>' style='width:100%'>
-	</label>
+	<h4>Connection details</h4>
+	<p>
+		Currently not connected to Signal
+		<br>
+		<a href='<?php echo $url;?>&register=true' class='button'>Register a new number with Signal</a>
+		
+		<a href='<?php echo $url;?>&link=true' class='button'>Link to an existing Signal number</a>
+	</p>
 	<?php
-	if(!empty($settings["phone"])){
-		?>
-		<h4>Connection details</h4>
-		<p>
-			Currently not connected to <?php echo $settings["phone"]; ?>
-			<br>
-			<a href='<?php echo $url;?>&register=<?php echo $settings["phone"]; ?>' class='button'>Register this number with Signal</a>
-			<br>
-			<a href='<?php echo $url;?>&link=<?php echo $settings["phone"]; ?>' class='button'>Link to an existing Signal number</a>
-		</p>
-		<?php
-	}
 }
 
  /**
@@ -298,7 +266,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 		$signal 	= new Signal();
 
-		if(checkIfConnected($signal)){
+		if($signal->username){
 			connectedOptions($signal, $settings);
 		}else{
 			notConnectedOptions($settings);
@@ -382,21 +350,4 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 	<?php
 
 	return ob_get_clean();
-}, 10, 3);
-
-add_filter('sim_module_updated', function($options, $moduleSlug, $oldSettings){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
-		return $options;
-	}
-
-	$signal = new Signal();
-	$signal->receive();
-
-	if(isset($options['local']) && $options['local']){
-		scheduleTasks();
-	}
-	
-
-	return $options;
 }, 10, 3);

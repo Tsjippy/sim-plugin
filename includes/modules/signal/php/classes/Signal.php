@@ -30,6 +30,11 @@ class Signal {
             mkdir($this->basePath , 0777, true);
         }
 
+        // .htaccess to prevent access
+        if(!file_exists($this->basePath.'/.htaccess')){
+            file_put_contents($this->basePath.'/.htaccess', 'deny from all');
+        }
+
         if(strpos(php_uname(), 'Windows') !== false){
             $this->OS       = 'Windows';
             $this->basePath = str_replace('\\', '/', $this->basePath);
@@ -44,13 +49,15 @@ class Signal {
 
         $this->path             = $this->programPath.'bin/signal-cli';
 
-        $this->username         = SIM\getModuleOption(MODULE_SLUG, 'phone');
-
         $this->profilePath      = $this->basePath.'/data';
+
+        $this->daemon           = false;
 
         if (!is_dir($this->profilePath )) {
             mkdir($this->profilePath , 0777, true);
         }
+
+        $this->username         = $this->getUsername();
 
         $this->checkPrerequisites();
     }
@@ -70,18 +77,6 @@ class Signal {
         }
     }
 
-    public function startDbus(){
-        $this->baseCommand();
-
-        $this->command->addArg('-u', $this->username);
-
-        $this->command->addArg('daemon');
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
      /**
      * Register a phone number with SMS or voice verification. Use the verify command to complete the verification.
      * Default verify with SMS
@@ -89,12 +84,12 @@ class Signal {
      * @param string $captcha - from https://signalcaptchas.org/registration/generate.html
      * @return bool|string
      */
-    public function register(string $captcha, bool $voiceVerification = false)
+    public function register(string $phone, string $captcha, bool $voiceVerification = false)
     {
 
         $this->baseCommand();
 
-        $this->command->addArg('-u', $this->username);
+        $this->command->addArg('-u', $phone);
 
         $this->command->addArg('register');
 
@@ -128,6 +123,31 @@ class Signal {
         return $this->parseResult();
     }
 
+     /**
+     * Checks if we are connected with Signal
+     *
+     * @return 	string|false					phone numer or false if not connected
+     */
+    public function getUsername($includeInactive=false){
+        if(!file_exists($this->profilePath.'/data/accounts.json')){
+            return false;
+        }
+
+        $config	= json_decode(file_get_contents($this->profilePath.'/data/accounts.json'));
+
+        if(empty($config) || empty($config->accounts)){
+            return false;
+        }
+
+        foreach($config->accounts as $account){
+            if(!empty($account->uuid) || $includeInactive){
+                return $account->number;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Uses a list of phone numbers to determine the statuses of those users.
      * Shows if they are registered on the Signal Servers or not.
@@ -158,6 +178,8 @@ class Signal {
     {
 
         $this->baseCommand();
+
+        $this->getUsername(true);
 
         $this->command->addArg('-u', $this->username);
         $this->command->addArg('verify', $code);
@@ -604,11 +626,65 @@ class Signal {
             $this->installSignal(str_replace('v', '', $release['tag_name']));
         }
 
+        // Check daemon
+        $this->checkDaemon();
+
         if(empty($errorMessage)){
             return true;
         }
 
         $this->error = new \WP_Error('signal', $errorMessage);
+    }
+
+    private function daemonIsRunning(){
+        // check if running
+        $command = new Command([
+            'command' => "ps -ef | grep -v grep | grep '$this->username daemon'"
+        ]);
+
+        $command->execute();
+
+        if(empty($command->getOutput())){
+            return false;
+        }
+
+        return true;
+    }
+
+    public function checkDaemon(){
+        if($this->OS == 'Windows' || !$this->username){
+            return;
+        }
+        
+        if(!$this->daemonIsRunning()){
+            // start daemon
+            $command = new Command([
+                'command' => "export DISPLAY=:0.0; DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001/bus signal-cli --config $this->profilePath daemon"
+            ]);
+    
+            $command->execute();
+            
+            // check again
+            if(!$this->daemonIsRunning()){
+                return;
+            }
+        }
+ 
+        $this->daemon   = true;
+
+        // check if need to be added to crontab
+        $command	= "@reboot export DISPLAY=:0.0; DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001/bus $this->path --config $this->profilePath daemon";
+
+        $addCommand	= "(crontab -u $(whoami) -l; echo '$command' ) | crontab -u $(whoami) -";
+
+        // check if command exists, if not add it.
+        $check		= "[ -z $(crontab -l 2>/dev/null | grep -x '$command') ] && $addCommand || echo 'Empty: No'";
+
+        $command = new Command([
+            'command' => $check
+        ]);
+
+        $command->execute();
     }
 
     private function installSignal($version){
