@@ -15,6 +15,7 @@
 - error in frontend posting block
 - bug in mandatory block
 - deny access to signal-cli folder
+- group typing
 
 ## [2.21.12.2] - 2022-10-27
 
