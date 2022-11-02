@@ -288,15 +288,10 @@ class SignalBus extends Signal {
         return $this->parseResult();
     }
 
-    public function sendGroupTyping($groupId, $timestamp=''){
-        if(!empty($timestamp)){
-            // Mark as read
-            $this->markAsRead($groupId, $timestamp);
-        }
-
+    public function sendGroupTyping($groupId){
         // Send typing
         $this->command = new Command([
-            'command' => "{$this->prefix}sendGroupTyping string:'$groupId' boolean:false"
+            'command' => "{$this->prefix}sendGroupTyping array:byte:'$groupId' boolean:false"
         ]);
 
         $this->command->execute();

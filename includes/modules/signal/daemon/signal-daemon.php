@@ -1,5 +1,6 @@
 <?php
 use SIM\SIGNAL\SignalBus;
+use SIM;
 
 if(!empty($argv) && count($argv) == 2){
     $data      = json_decode($argv[1]);
@@ -30,16 +31,32 @@ if(!empty($argv) && count($argv) == 2){
         return;
     }
 
-    $signal->sentTyping($data->envelope->source, $data->envelope->dataMessage->timestamp);
-
-    $message = strtolower($data->envelope->dataMessage->message);
-    if($message == 'test'){
-        echo "Sending reply\n";
-        echo $signal->send($data->envelope->source, 'Awesome!');
-    }elseif(strpos($message, 'prayer') !== false){
-        $signal->send($data->envelope->source, 'This is the prayer for today');
-        $signal->send($data->envelope->source, SIM\PRAYER\prayerRequest(true));
+    // message to group
+    if(
+        isset($data->envelope->dataMessage->groupInfo)      &&
+        isset($data->envelope->dataMessage->mentions)
+    ){
+        foreach($data->envelope->dataMessage->mentions as $mention){
+            if($mention->number == $signal->phoneNumber){
+                $groupId    = $signal->groupIdToByteArray($data->envelope->dataMessage->groupInfo->groupId);
+                $signal->sendGroupTyping($groupId);
+                $signal->sendGroupMessage(getAnswer(trim(explode('?',$data->envelope->dataMessage->message)[1])), $groupId);
+            }
+        }
+    }elseif(!isset($data->envelope->dataMessage->groupInfo)){
+        $signal->sentTyping($data->envelope->source, $data->envelope->dataMessage->timestamp);
+        $signal->send($data->envelope->source, getAnswer($data->envelope->dataMessage->message));
     }
+}
 
-    echo $signal->send($data->envelope->source, 'I have seen it!');
+function getAnswer($message){
+    $message = strtolower($message);
+
+    if($message == 'test'){
+        return 'Awesome!';
+    }elseif(strpos($message, 'prayer') !== false){
+        return 'This is the prayer for today\n'.SIM\PRAYER\prayerRequest(true);
+    }else{
+        return 'I have no clue, do you know?';
+    }
 }
