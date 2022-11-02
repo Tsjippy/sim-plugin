@@ -103,7 +103,12 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	}
 
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
-		$signal = new Signal();
+		if(strpos(php_uname(), 'Linux') !== false){
+			$signal = new SignalBus();
+		}else{
+			$signal = new Signal();
+		}
+		
 		$signal->send($recipient, $message, $image);
 
 		return;

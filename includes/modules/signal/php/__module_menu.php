@@ -55,6 +55,7 @@ function registerForm(){
 		</label>
 		Get a captcha from <a href='https://signalcaptchas.org/registration/generate.html' target=_blank>here</a>, for an explanation see <a href='https://github.com/AsamK/signal-cli/wiki/Registration-with-captcha' target=_blank>the manual.</a>
 		<br>
+		<br>
 		<label>
 			<input type='checkbox' name='voice' value='true'>
 			Register with a voice call in stead of sms
@@ -67,14 +68,16 @@ function registerForm(){
 }
 
 add_action('sim-admin-settings-post', function(){
-	$signal = new Signal();
+
+	if(strpos(php_uname(), 'Linux') !== false){
+		$signal = new SignalBus();
+	}else{
+		$signal = new Signal();
+	}
 
 	if(isset($_GET['unregister'])){
 		$signal->unregister();
 
-		// remove the folder
-		$path   = str_replace('/', '\\', $signal->profilePath);
-		exec("rmdir $path /s /q");
 	}elseif(isset($_GET['register'])){
 		registerForm();
 	}elseif(!empty($_POST['captcha'])){
@@ -130,8 +133,8 @@ function connectedOptions($signal, $settings){
 	?>
 	<h4>Connection details</h4>
 	<p>
-		Currently connected to <?php echo $signal->username; ?>
-		<a href='<?php echo $url;?>&unregister=true' class='button'>Unregister</a>
+		Currently connected to <?php echo $signal->phoneNumber; ?>
+		<a href='<?php echo $url;?>&unregister=true' class='button'>Unregister</a><br>
 	</p>
 	<?php
 	if(!empty($signalGroups)){
@@ -231,45 +234,75 @@ function notLocalOptions($settings){
 }
 
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
-	global $Modules;
-
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG || isset($_GET['register']) || $_POST['captcha'] || $_POST['verification-code']){
 		return $optionsHtml;
 	}
+	$local	= false;
+	if(isset($settings['local']) && $settings['local']){
+		$local	= true;
+	}
 
 	ob_start();
 
-	$local	= true;
-	if(empty(shell_exec('javac -version'))){
-		$local = false;
-        echo "<div class='warning'>";
-			echo "Java JDK is not installed.<br>You need to install Java JDK.<br>";
-			if(strpos(php_uname(), 'Linux') !== false){
-				echo "Try <code>sudo apt install openjdk-17-jdk -y</code>";
-			}
-			echo "<br><br>We assume you are on a shared host for now, which means you have to run an external script to send signal messages<br>";
-			
-		echo "</div>";
-    }
-
-	
-	// store in settings
-	echo "<input type='hidden' name='local' value='$local'>";
+	?>
+	<strong>Server type</strong><br>
+	Indicate if you can install signal-cli on this server or not<br>
+	I have root access on this server
+	<label class="switch">
+		<input type="checkbox" name="local" value=1 <?php if($local){echo 'checked';}?>>
+		<span class="slider round"></span>
+	</label>
+	<br>
+	<br>
+	<?php
 	
 	if($local){
-		// store in settings
-		if(!isset($settings['local'])){
-			$Modules[MODULE_SLUG]['local']	= true;
-			update_option('sim_modules', $Modules);
-		}
+		?>
+		<strong>D-bus type</strong><br>
+		Indicate if you want a system or a session dbus<br>
+		<label>
+			<input type="radio" name="dbus-type" value='system' <?php if(isset($settings['dbus-type']) && $settings['dbus-type'] == 'system'){echo 'checked';}?>>
+			System
+		</label>
+		<label>
+			<input type="radio" name="dbus-type" value='system' <?php if(isset($settings['dbus-type']) && $settings['dbus-type'] == 'session'){echo 'checked';}?>>
+			Session
+		</label>
+		<br>
+		System has the disadvantage that any user on the server has access to your signal information (although not easy)<br>
+		Session has the disadvantage that only one site in your userprofile can receive messages.<br>
+		<?php
 
-		$signal 	= new Signal();
+		if(isset($settings['dbus-type'])){
+			if(empty(shell_exec('javac -version'))){
+				echo "<div class='warning'>";
+					
+					if(strpos(php_uname(), 'Linux') !== false){
+						if( $settings['dbus-type'] == 'session'){
+							echo "Java JDK is not installed.<br>You need to install Java JDK with this command:<br><code>sudo apt install openjdk-17-jdk -y</code>";
+						}else{
+							echo "<strong>Signal-cli not yet installed</strong><br>";
+							echo "Please install signal-cli with this command:<br>";
+							echo "<code>sudo bash ".MODULE_PATH."daemon/install.sh '".WP_CONTENT_DIR."/signal-cli/program' '".MODULE_PATH."daemon'</code><br><br>";
+						}
+					}else{
+						echo "Java JDK is not installed.<br>You need to install Java JDK.<br>";
+					}
+				echo "</div>";
+			}else{
+				if(strpos(php_uname(), 'Linux') !== false){
+					$signal = new SignalBus();
+				}else{
+					$signal = new Signal();
+				}
 
-		if($signal->username){
-			connectedOptions($signal, $settings);
-		}else{
-			notConnectedOptions($settings);
+				if($signal->phoneNumber){
+					connectedOptions($signal, $settings);
+				}else{
+					notConnectedOptions($settings);
+				}
+			}
 		}
 	}else{
 		notLocalOptions($settings);
@@ -318,17 +351,19 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 				<?php
 				echo $phonenumbers;
 				if(isset($settings['local']) && $settings['local']){
-					$signal = new Signal();
+					if(strpos(php_uname(), 'Linux') !== false){
+						$signal = new SignalBus();
+					}else{
+						$signal = new Signal();
+					}
 
-					if(file_exists($signal->profilePath)){
-						$groups	= $signal->listGroups();
+					$groups	= $signal->listGroups();
 
-						foreach($groups as $group){
-							if(empty($group->name)){
-								continue;
-							}
-							echo "<option value='$group->id'>$group->name</option>";
+					foreach($groups as $group){
+						if(empty($group->name)){
+							continue;
 						}
+						echo "<option value='$group->id'>$group->name</option>";
 					}
 				}else{
 					if(empty($settings['groups'])){

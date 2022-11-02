@@ -36,10 +36,10 @@ class Signal {
         }
 
         if(strpos(php_uname(), 'Windows') !== false){
-            $this->OS       = 'Windows';
-            $this->basePath = str_replace('\\', '/', $this->basePath);
+            $this->OS               = 'Windows';
+            $this->basePath         = str_replace('\\', '/', $this->basePath);
         }elseif(strpos(php_uname(), 'Linux') !== false){
-            $this->OS     = 'Linux';
+            $this->OS               = 'Linux';
         }
         
         $this->programPath      = $this->basePath.'/program/';
@@ -47,30 +47,34 @@ class Signal {
             mkdir($this->programPath , 0777, true);
         }
 
-        $this->path             = $this->programPath.'bin/signal-cli';
+        $this->phoneNumber      = '';
+        if(file_exists($this->basePath.'/phone.signal')){
+            $this->phoneNumber      = trim(file_get_contents($this->basePath.'/phone.signal'));
+        }
 
-        $this->profilePath      = $this->basePath.'/data';
+        $this->path             = $this->programPath.'bin/signal-cli';
 
         $this->daemon           = false;
 
-        if (!is_dir($this->profilePath )) {
-            mkdir($this->profilePath , 0777, true);
-        }
-
-        $this->username         = $this->getUsername();
+        $this->osUserId         = "";
 
         $this->checkPrerequisites();
     }
 
     public function baseCommand(){
+        $prefix = '';
+        if($this->daemon){
+            $prefix = "export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$this->osUserId/bus; ";
+        }
         $this->command = new Command([
-            'command' => $this->path,
+            'command' => $prefix.$this->path,
             // This is required for binary to be able to find libzkgroup.dylib to support Group V2
             'procCwd' => dirname($this->path),
         ]);
 
-        // make sure we use the config for this website and phone number
-        $this->command->addArg('--config',  $this->profilePath);
+        if($this->daemon){
+            $this->command->addArg('--dbus');
+        }
 
         if($this->OS == 'Windows'){
             $this->command->useExec  = true;
@@ -84,12 +88,19 @@ class Signal {
      * @param string $captcha - from https://signalcaptchas.org/registration/generate.html
      * @return bool|string
      */
-    public function register(string $phone, string $captcha, bool $voiceVerification = false)
+    
+     public function register(string $phone, string $captcha, bool $voiceVerification = false)
     {
+        //dbus-send --session --dest=org.asamk.Signal --type=method_call --print-reply /org/asamk/Signal org.asamk.Signal.link string:"My secondary client" | tr '\n' '\0' | sed 's/.*string //g' | sed 's/\"//g' | qrencode -s10 -tANSI256
+
+        file_put_contents($this->basePath.'/phone.signal', $phone);
+
+        $captcha    = str_replace('signalcaptcha://', '', $captcha);
+
 
         $this->baseCommand();
 
-        $this->command->addArg('-u', $phone);
+        $this->command->addArg('-a', $phone);
 
         $this->command->addArg('register');
 
@@ -102,6 +113,10 @@ class Signal {
         }
 
         $this->command->execute();
+
+        if($this->command->getExitCode()){
+            unlink($this->basePath.'/phone.signal');
+        }
 
         return $this->parseResult();
     }
@@ -120,41 +135,19 @@ class Signal {
 
         $this->command->execute();
 
+        unlink($this->basePath.'/phone.signal');
+
         return $this->parseResult();
     }
 
      /**
-     * Checks if we are connected with Signal
-     *
-     * @return 	string|false					phone numer or false if not connected
-     */
-    public function getUsername($includeInactive=false){
-        if(!file_exists($this->profilePath.'/data/accounts.json')){
-            return false;
-        }
-
-        $config	= json_decode(file_get_contents($this->profilePath.'/data/accounts.json'));
-
-        if(empty($config) || empty($config->accounts)){
-            return false;
-        }
-
-        foreach($config->accounts as $account){
-            if(!empty($account->uuid) || $includeInactive){
-                return $account->number;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Uses a list of phone numbers to determine the statuses of those users.
      * Shows if they are registered on the Signal Servers or not.
      * @param string|array $recipients One or more numbers to check.
      * @return string|string
      */
-    public function getUserStatus($recipients)
+    
+     public function getUserStatus($recipients)
     {
         if(!is_array($recipients)){
             $recipients    = [$recipients];
@@ -179,12 +172,15 @@ class Signal {
 
         $this->baseCommand();
 
-        $this->getUsername(true);
+        $this->command->addArg('-a', $this->phoneNumber);
 
-        $this->command->addArg('-u', $this->username);
         $this->command->addArg('verify', $code);
 
         $this->command->execute();
+
+        if($this->command->getExitCode()){
+            unlink($this->basePath.'/phone.signal');
+        }
 
         return $this->parseResult();
     }
@@ -193,10 +189,10 @@ class Signal {
      * Send a message to another user or group
      * @param string|array $recipients Specify the recipients’ phone number or a group id
      * @param string $message Specify the message, if missing, standard input is used
-     * @param string $attachment Image file path
+     * @param string $attachments Image file path
      * @return bool|string
      */
-    public function send($recipients, string $message, string $attachment = null)
+    public function send($recipients, string $message, string $attachments = null)
     {
         $groupId    = null;
         if(!is_array($recipients)){
@@ -212,7 +208,8 @@ class Signal {
 
         $this->command->nonBlockingMode = true;
 
-        $this->command->addArg('-u', $this->username);
+        $this->command->addArg('-a', $this->phoneNumber);
+        
         $this->command->addArg('send', $recipients);
 
         $this->command->addArg('-m', $message);
@@ -221,9 +218,12 @@ class Signal {
             $this->command->addArg('-g', $groupId);
         }
 
-        if(!empty($attachment) && file_exists($attachment)){
-            SIM\printArray($attachment);
-            $this->command->addArg('-a', [$attachment]);
+        if(!empty($attachments)){
+            if(!is_array($attachments)){
+                $attachments    = [$attachments];
+            }
+            SIM\printArray($attachments);
+            $this->command->addArg('-a', $attachments);
         }
 
         $this->command->execute();
@@ -235,7 +235,8 @@ class Signal {
         // Mark as read
         $this->baseCommand();
 
-        $this->command->addArg('-u', $this->username);
+        $this->command->addArg('-a', $this->phoneNumber);
+
         $this->command->addArg('sendReceipt', $recipient);
 
         $this->command->addArg('-t', $timestamp);
@@ -254,7 +255,7 @@ class Signal {
         // Send typing
         $this->baseCommand();
 
-        $this->command->addArg('-u', $this->username);
+        $this->command->addArg('-a', $this->phoneNumber);
 
         $this->command->addArg('sendTyping', $recipient);
 
@@ -267,8 +268,10 @@ class Signal {
         return $this->parseResult();
     }
 
-    private function parseResult($returnJson=false){
+    protected function parseResult($returnJson=false){
         if($this->command->getExitCode()){
+            SIM\printArray($this->command, true);
+
             $error  = "<div class='error'>".$this->command->getError()."</div>";
             
             $this->error    = $error;
@@ -287,7 +290,7 @@ class Signal {
         return $output;
     }
 
-    /**
+     /**
      * Update the name and avatar image visible by message recipients for the current users.
      * The profile is stored encrypted on the Signal servers.
      * The decryption key is sent with every outgoing messages to contacts.
@@ -317,7 +320,7 @@ class Signal {
         return $this->parseResult();
     }
 
-    /**
+     /**
      * Link to an existing device, instead of registering a new number.
      * This shows a "tsdevice:/…" URI.
      * If you want to connect to another signal-cli instance, you can just use this URI.
@@ -327,6 +330,7 @@ class Signal {
      */
     public function link(string $name = ''): string
     {
+        #| tr '\n' '\0' | sed 's/.*string //g' | sed 's/\"//g' | qrencode -s10 -tANSI256
         if(empty($name)){
             $name   = get_bloginfo('name');
         }
@@ -339,7 +343,7 @@ class Signal {
         $this->command->addArg('-n', $name);
 
         // TODO: Better response handling
-        $randFile = $this->profilePath.'/'.rand() . time() . '.device';
+        $randFile = sys_get_temp_dir().'/'.rand() . time() . '.device';
         $this->command->addArg(" > $randFile 2>&1 &", null, false); // Ugly hack!
         sleep(1); // wait for file to get populated
 
@@ -350,7 +354,7 @@ class Signal {
                 $error  .= $this->command->getError()."<br>";
                 $error  .= "Try to do the linking yourself<br><br>";
                 $error  .= "Open a command line and run this:<br>";
-                $error  .= "<code>$this->path --config $this->profilePath link -n \"$name\"</code><br><br>";
+                $error  .= "<code>$this->path link -n \"$name\"</code><br><br>";
             $error  .= "</div>";
             return $error;
         }
@@ -387,7 +391,7 @@ class Signal {
         return "<img loading='lazy' src='data:image/png;base64, $qrcodeImage'/><br>$link";
     }
 
-    /**
+     /**
      * Link another device to this device.
      * Only works, if this is the master device
      * @param string $uri Specify the uri contained in the QR code shown by the new device.
@@ -405,7 +409,7 @@ class Signal {
         return $this->parseResult();
     }
 
-    /**
+     /**
      * Show a list of connected devices
      * @return array|null
      */
@@ -422,7 +426,7 @@ class Signal {
         return json_decode($this->parseResult(true));
     }
 
-    /**
+     /**
      * Remove a connected device. Only works, if this is the master device
      * @param int $deviceId Specify the device you want to remove. Use listDevices to see the deviceIds
      * @return bool|string
@@ -440,7 +444,7 @@ class Signal {
         return $this->parseResult();
     }
 
-    /**
+     /**
      * Update the account attributes on the signal server.
      * Can fix problems with receiving messages
      * @return bool
@@ -456,7 +460,7 @@ class Signal {
         return $this->parseResult();
     }
 
-    /**
+     /**
      * Private function to create group, update group and add members in the group
      * @param string|null $name Specify the new group name
      * @param array $members Specify one or more members to add to the group
@@ -492,7 +496,7 @@ class Signal {
         return $this->parseResult();
     }
 
-    /**
+     /**
      * Create Group
      * @param string $name
      * @param array $members
@@ -514,13 +518,15 @@ class Signal {
         return $this->_createOrUpdateGroup(null,$members,null,$groupId);
     }
 
-    /**
+     /**
      * List Groups
      * @return array|string
      */
     public function listGroups()
     {
         $this->baseCommand();
+
+        $this->command->addArg('-a', $this->phoneNumber);
 
         $this->command->addArg('-o', 'json');
 
@@ -531,7 +537,7 @@ class Signal {
         return json_decode($this->parseResult(true));
     }
 
-    /**
+     /**
      * Join a group via an invitation link.
      * To be able to join a v2 group the account needs to have a profile (can be created with the updateProfile command)
      * @param string $uri The invitation link URI (starts with https://signal.group/#)
@@ -605,7 +611,7 @@ class Signal {
 
         $curVersion = str_replace('javac ', '', shell_exec('javac -version'));
         if(version_compare('17.0.0.0', $curVersion) > 0){
-            $errorMessage .= "Please install Java JDK, at least version 17<br>";
+            $errorMessage .= "Please install Java JDK, at least version 17<br>install dbus-x11";
             $this->valid    = false;
         }
 
@@ -626,65 +632,11 @@ class Signal {
             $this->installSignal(str_replace('v', '', $release['tag_name']));
         }
 
-        // Check daemon
-        $this->checkDaemon();
-
         if(empty($errorMessage)){
             return true;
         }
 
         $this->error = new \WP_Error('signal', $errorMessage);
-    }
-
-    private function daemonIsRunning(){
-        // check if running
-        $command = new Command([
-            'command' => "ps -ef | grep -v grep | grep '$this->username daemon'"
-        ]);
-
-        $command->execute();
-
-        if(empty($command->getOutput())){
-            return false;
-        }
-
-        return true;
-    }
-
-    public function checkDaemon(){
-        if($this->OS == 'Windows' || !$this->username){
-            return;
-        }
-        
-        if(!$this->daemonIsRunning()){
-            // start daemon
-            $command = new Command([
-                'command' => "export DISPLAY=:0.0; DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001/bus signal-cli --config $this->profilePath daemon"
-            ]);
-    
-            $command->execute();
-            
-            // check again
-            if(!$this->daemonIsRunning()){
-                return;
-            }
-        }
- 
-        $this->daemon   = true;
-
-        // check if need to be added to crontab
-        $command	= "@reboot export DISPLAY=:0.0; DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001/bus $this->path --config $this->profilePath daemon";
-
-        $addCommand	= "(crontab -u $(whoami) -l; echo '$command' ) | crontab -u $(whoami) -";
-
-        // check if command exists, if not add it.
-        $check		= "[ -z $(crontab -l 2>/dev/null | grep -x '$command') ] && $addCommand || echo 'Empty: No'";
-
-        $command = new Command([
-            'command' => $check
-        ]);
-
-        $command->execute();
     }
 
     private function installSignal($version){
@@ -753,9 +705,6 @@ class Signal {
         if(file_exists($this->programPath)){
             echo "Removing old version<br>";
 
-            // stop the deamon
-            unlink(__DIR__.'/../../daemon/running.signal');
-
             if($this->OS == 'Windows'){
                 $path   = str_replace('/', '\\', $this->programPath);
                 // kill the process
@@ -764,6 +713,9 @@ class Signal {
                 // remove the folder
                 exec("rmdir $path /s /q");
             }else{
+                // stop the deamon
+                exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
+
                 exec("rmdir -rf $this->programPath");
             }
         }

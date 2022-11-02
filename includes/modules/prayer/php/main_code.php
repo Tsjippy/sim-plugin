@@ -79,5 +79,9 @@ function prayerRequest($plainText = false) {
 		}
 	}
 
+
+	if($plainText){
+		return 'Sorry I could not find any prayer request for today';
+	}
 	return false;
 }
