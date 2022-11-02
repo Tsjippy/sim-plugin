@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- signal bot works via dbus on linux
 
 ### Fixed
 - bug fix
