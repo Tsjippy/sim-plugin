@@ -5,7 +5,16 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.22.0] - 2022-11-03
+
+
+### Changed
 - signal bot works via dbus on linux
+- allow verified numbers to get
+the prayer request
 
 ### Fixed
 - bug fix
