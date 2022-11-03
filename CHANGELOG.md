@@ -6,6 +6,8 @@
 
 ### Changed
 - signal bot works via dbus on linux
+- allow verified numbers to get
+the prayer request
 
 ### Fixed
 - bug fix
