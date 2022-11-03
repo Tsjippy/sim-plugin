@@ -93,7 +93,7 @@ export async function submitForm(target, url){
 	}
 }
 
-export async function fetchRestApi(url, formData){
+export async function fetchRestApi(url, formData, showErrors=true){
 	formData.append('_wpnonce', sim.restNonce);
 	let result;
 	try{
@@ -128,7 +128,9 @@ export async function fetchRestApi(url, formData){
 		console.error(result);
 
 		if(result.ok){
-			Main.displayMessage(`Problem parsing the json, refresh the page or try again.`, 'error');
+			if(showErrors){
+				Main.displayMessage(`Problem parsing the json, refresh the page or try again.`, 'error');
+			}
 			console.error(`${sim.baseUrl}/wp-json${sim.restApiPrefix}/${url}` );
 			console.error(response);
 		}else{
