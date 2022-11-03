@@ -607,11 +607,11 @@ class Signal {
     }
 
     public function checkPrerequisites(){
-        $errorMessage   = '';
+        $this->error   = '';
 
         $curVersion = str_replace('javac ', '', shell_exec('javac -version'));
         if(version_compare('17.0.0.0', $curVersion) > 0){
-            $errorMessage .= "Please install Java JDK, at least version 17<br>install dbus-x11";
+            $this->error    .= "Please install Java JDK, at least version 17<br>install dbus-x11";
             $this->valid    = false;
         }
 
@@ -623,7 +623,7 @@ class Signal {
             $this->installSignal(str_replace('v', '', $release['tag_name']));
 
             if(!file_exists($this->path)){
-                $errorMessage .= "Please install signal-cli<br>";
+                $this->error    .= "Please install signal-cli<br>";
                 $this->valid    = false;
             }
         }elseif($curVersion  != $release['tag_name']){
@@ -632,11 +632,9 @@ class Signal {
             $this->installSignal(str_replace('v', '', $release['tag_name']));
         }
 
-        if(empty($errorMessage)){
+        if(empty($this->error)){
             return true;
         }
-
-        $this->error = new \WP_Error('signal', $errorMessage);
     }
 
     private function installSignal($version){
@@ -698,7 +696,8 @@ class Signal {
             unlink($pidFile);
 
             // handle errors
-            return new \WP_Error('signal', 'installation error');
+            $this->error    = 'Installation error';
+            return $this->error;
         }
 
         // remove the old folder
@@ -755,9 +754,9 @@ class Signal {
             unlink($path);
 
             if($e->getResponse()->getReasonPhrase() == 'Gone'){
-                return new \WP_Error('signal', "The link has expired, please get a new one");
+                return "The link has expired, please get a new one";
             }
-            return new \WP_Error('signal', $e->getResponse()->getReasonPhrase());
+            return $e->getResponse()->getReasonPhrase();
         }
     }
 }

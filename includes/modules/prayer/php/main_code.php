@@ -27,8 +27,8 @@ add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategor
  * @return   string|false     			The prayer request or false if no prayer request found
  *
 **/
-function prayerRequest($plainText = false) {
-	if (!is_user_logged_in()){
+function prayerRequest($plainText = false, $verified=false) {
+	if (!is_user_logged_in() || !$verified){
 		return false;
 	}
 
@@ -39,7 +39,7 @@ function prayerRequest($plainText = false) {
 			's'			=> date("F Y"),
 		)
 	);
-	
+
 	//Loop over them to find the post for this month
 	foreach($posts as $post){
 		// double check if the current month is in the title as the s parameter searches everywhere

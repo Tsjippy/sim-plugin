@@ -31,6 +31,8 @@ if(!empty($argv) && count($argv) == 2){
         return;
     }
 
+    SIM\printArray($data);
+
     // message to group
     if(
         isset($data->envelope->dataMessage->groupInfo)      &&
@@ -40,22 +42,39 @@ if(!empty($argv) && count($argv) == 2){
             if($mention->number == $signal->phoneNumber){
                 $groupId    = $signal->groupIdToByteArray($data->envelope->dataMessage->groupInfo->groupId);
                 $signal->sendGroupTyping($groupId);
-                $signal->sendGroupMessage(getAnswer(trim(explode('?',$data->envelope->dataMessage->message)[1])), $groupId);
+                $signal->sendGroupMessage(getAnswer(trim(explode('?', $data->envelope->dataMessage->message)[1]), $data->envelope->source), $groupId);
             }
         }
     }elseif(!isset($data->envelope->dataMessage->groupInfo)){
         $signal->sentTyping($data->envelope->source, $data->envelope->dataMessage->timestamp);
-        $signal->send($data->envelope->source, getAnswer($data->envelope->dataMessage->message));
+        $signal->send($data->envelope->source, getAnswer($data->envelope->dataMessage->message, $data->envelope->source));
     }
 }
 
-function getAnswer($message){
+function getAnswer($message, $source){
     $message = strtolower($message);
+
+    //Change the user to the adminaccount otherwise get_users will not work
+    wp_set_current_user(1);
+
+    $name = false;
+    $users = get_users(array(
+        'meta_key'     => 'phonenumbers',
+    ));
+
+    foreach($users as $user){
+        $phonenumbers = get_user_meta($user->ID,'phonenumbers',true);
+        if(in_array($source,$phonenumbers)){
+            $name = $user->first_name;
+        }
+    }
 
     if($message == 'test'){
         return 'Awesome!';
-    }elseif(strpos($message, 'prayer') !== false){
-        return 'This is the prayer for today\n'.SIM\PRAYER\prayerRequest(true);
+    }elseif(strpos($message, 'prayer') !== false && $name){
+        return "This is the prayer for today:\n\n".SIM\PRAYER\prayerRequest(true, $name);
+    }elseif($message == 'hi' || strpos($message, 'hello') !== false){
+        return "Hi $name";
     }else{
         return 'I have no clue, do you know?';
     }
