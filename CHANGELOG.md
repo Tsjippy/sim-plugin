@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- possibility to hide ajax errors
 
 ### Changed
 
