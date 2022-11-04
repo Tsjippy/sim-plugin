@@ -6,6 +6,8 @@
 - possibility to hide ajax errors
 
 ### Changed
+- no systembus, warning when session bus
+already in use
 
 ### Fixed
 
