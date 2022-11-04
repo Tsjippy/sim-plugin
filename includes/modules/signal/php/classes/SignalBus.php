@@ -41,7 +41,7 @@ class SignalBus extends Signal {
 
         // Check daemon
         $this->daemonIsRunning();
-        $this->checkDaemon();
+        $this->startDaemon();
     }
 
      /**
@@ -51,8 +51,7 @@ class SignalBus extends Signal {
      * @param string $captcha - from https://signalcaptchas.org/registration/generate.html
      * @return bool|string
      */
-    
-     public function register(string $phone, string $captcha, bool $voiceVerification = false)
+    public function register(string $phone, string $captcha, bool $voiceVerification = false)
     {
         $voice  = false;
         if($voiceVerification){
@@ -151,7 +150,7 @@ class SignalBus extends Signal {
      * @param   string          $recipient Number to check.
      * @return  string
      */
-     public function isRegistered($recipient)
+    public function isRegistered($recipient)
     {
 
         $this->command = new Command([
@@ -350,38 +349,39 @@ class SignalBus extends Signal {
 
         $command->execute();
 
-        if(empty($command->getOutput())){
+        $result = $command->getOutput();
+        if(empty($result)){
             $this->daemon   = false;
         }else{
             $this->daemon   =  true;
+
+            // Running daemon but not for this website
+            if(strpos($result, $this->basePath) === false){
+                $this->error    = 'The daemon is started but for another website in this user account.<br>';
+                $this->error   .= "You can send messages just fine, but not receive any.<br>";
+                $this->error   .= "To enable receiving messages add this to your crontab: <br>";
+                $this->error   .= '<code>@reboot '.$this->path.' -o json daemon | while read -r line; do find -name signal-daemon.php 2>/dev/null -exec php "{}" "$line" \; ; done;</code>';
+            }
         }
     }
 
-    public function checkDaemon(){
+    public function startDaemon(){
         if($this->OS == 'Windows'){
             SIM\printArray('exiting', true);
             return;
         }
 
-        
         if(!$this->daemon){
             $display    = 'export DISPLAY=:0.0;';
             $dbus       = "export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$this->osUserId/bus;";
             $cli        = "$this->path -o json daemon";
             $read       = 'while read -r line; do php '.__DIR__.'/../../daemon/signal-daemon.php "$line"; done;';
-            $output='';
-
-            exec("bash -c '$display $dbus $cli | $read' &", $output );
-
-            //SIM\printArray($output, true);
-
-            /*  $command = new Command([
-                'command' => 'bash -c "DISPLAY=:0.0;DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/'.$this->osUserId.'/bus '.$this->path.' -o json daemon | while read -r line; do find -name signal-daemon.php -exec php {} $line \; ; done;" &' 
+            
+            $command = new Command([
+                'command' => "bash -c '$display $dbus $cli | $read' &"
             ]);
 
             $command->execute();
-
-            SIM\printArray($command, true); */
         }
 
        /*  if(!$this->daemonIsRunning()){

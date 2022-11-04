@@ -258,50 +258,21 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<?php
 	
 	if($local){
-		?>
-		<strong>D-bus type</strong><br>
-		Indicate if you want a system or a session dbus<br>
-		<label>
-			<input type="radio" name="dbus-type" value='system' <?php if(isset($settings['dbus-type']) && $settings['dbus-type'] == 'system'){echo 'checked';}?>>
-			System
-		</label>
-		<label>
-			<input type="radio" name="dbus-type" value='system' <?php if(isset($settings['dbus-type']) && $settings['dbus-type'] == 'session'){echo 'checked';}?>>
-			Session
-		</label>
-		<br>
-		System has the disadvantage that any user on the server has access to your signal information (although not easy)<br>
-		Session has the disadvantage that only one site in your userprofile can receive messages.<br>
-		<?php
+		if(strpos(php_uname(), 'Linux') !== false){
+			$signal = new SignalBus();
+		}else{
+			$signal = new Signal();
+		}
 
-		if(isset($settings['dbus-type'])){
-			if(empty(shell_exec('javac -version'))){
-				echo "<div class='warning'>";
-					
-					if(strpos(php_uname(), 'Linux') !== false){
-						if( $settings['dbus-type'] == 'session'){
-							echo "Java JDK is not installed.<br>You need to install Java JDK with this command:<br><code>sudo apt install openjdk-17-jdk -y</code>";
-						}else{
-							echo "<strong>Signal-cli not yet installed</strong><br>";
-							echo "Please install signal-cli with this command:<br>";
-							echo "<code>sudo bash ".MODULE_PATH."daemon/install.sh '".WP_CONTENT_DIR."/signal-cli/program' '".MODULE_PATH."daemon'</code><br><br>";
-						}
-					}else{
-						echo "Java JDK is not installed.<br>You need to install Java JDK.<br>";
-					}
-				echo "</div>";
+		if(empty(shell_exec('javac -version'))){
+			echo "<div class='warning'>";
+				echo "Java JDK is not installed.<br>You need to install Java JDK.<br>";
+			echo "</div>";
+		}else{
+			if($signal->phoneNumber){
+				connectedOptions($signal, $settings);
 			}else{
-				if(strpos(php_uname(), 'Linux') !== false){
-					$signal = new SignalBus();
-				}else{
-					$signal = new Signal();
-				}
-
-				if($signal->phoneNumber){
-					connectedOptions($signal, $settings);
-				}else{
-					notConnectedOptions($settings);
-				}
+				notConnectedOptions();
 			}
 		}
 	}else{
