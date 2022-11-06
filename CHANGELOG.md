@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- failed e-mail message
 
 ### Fixed
 
