@@ -124,7 +124,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 
 		$fieldMainName	= $this->formData->settings['split'];
-		
+		$this->splittedSubmissionData   = [];
 		//loop over all submissions
 		foreach($this->submissionData as $key=>$entry){
 			// loop over all entries of the split key
@@ -169,11 +169,11 @@ class DisplayFormResults extends DisplayForm{
 				$newSubmission->sub_id	= $subKey;
 
 				// Copy the entry
-				$this->submissionData[]	= $newSubmission;
+				$this->splittedSubmissionData[]	= $newSubmission;
 			}
 
 			// remove the original entry
-			unset($this->submissionData[$key]);
+			//unset($this->submissionData[$key]);
 		}
 	}
 
