@@ -3,11 +3,20 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- possibility to hide ajax errors
 
 ### Changed
 
 ### Fixed
+
+## [2.22.1] - 2022-11-04
+
+
+### Added
+- possibility to hide ajax errors
+
+### Changed
+- no systembus, warning when session bus
+already in use
 
 ## [2.22.0] - 2022-11-03
 
