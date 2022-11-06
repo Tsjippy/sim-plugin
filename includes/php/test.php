@@ -7,23 +7,11 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    require_once( __DIR__  . '/../modules/signal/lib/vendor/autoload.php');
+    $result	= $wpdb->get_results('SELECT * FROM wp_sim_form_submissions WHERE form_id=8 and archived=0');
 
-    //$signal = new SIGNAL\Signal();
-
-
-    $command = new Command([
-        'command' => "php /home/web/demo.simnigeria.org/public_html/wp-content/plugins/sim-plugin/includes/modules/signal/daemon/signal-daemon.php 'test'"
-    ]);
-
-    $command->execute();
-
-    printArray($command, true);
-  /*   if(!$signal->valid){
-        return '<div class="error">'.$signal->error->get_error_message().'</div>';
-    } */
-
-    
+    foreach($result as $r){
+        printArray(unserialize($r->formresults)['id'], true);
+    }
 });
 
 // turn off incorrect error on localhost

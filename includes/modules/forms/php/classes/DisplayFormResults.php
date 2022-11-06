@@ -127,6 +127,9 @@ class DisplayFormResults extends DisplayForm{
 		
 		//loop over all submissions
 		foreach($this->submissionData as $key=>$entry){
+			if(empty($entry->formresults[$fieldMainName])){
+				//continue;
+			}
 			// loop over all entries of the split key
 			foreach($entry->formresults[$fieldMainName] as $subKey=>$array){
 				// Should always be an array

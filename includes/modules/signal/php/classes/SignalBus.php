@@ -145,6 +145,7 @@ class SignalBus extends Signal {
 
         return "<img src='data:image/png;base64, $qrcodeImage'/><br>$link";
     }
+     
      /**
      * Shows if a number is registered on the Signal Servers or not.
      * @param   string          $recipient Number to check.
@@ -191,7 +192,7 @@ class SignalBus extends Signal {
 
         $result = $this->parseResult();
 
-        if(!isset($this->error)){
+        if(empty($this->error)){
             preg_match_all('/struct {.*?array of bytes \[(.*?)\](.*?)}/s', $result, $matches);
 
             $result = [];
@@ -356,11 +357,12 @@ class SignalBus extends Signal {
             $this->daemon   =  true;
 
             // Running daemon but not for this website
-            if(strpos($result, $this->basePath) === false){
+            if(strpos($result, $this->basePath) === false && strpos($result, 'do find -name signal-daemon.php') === false){
                 $this->error    = 'The daemon is started but for another website in this user account.<br>';
                 $this->error   .= "You can send messages just fine, but not receive any.<br>";
-                $this->error   .= "To enable receiving messages add this to your crontab: <br>";
-                $this->error   .= '<code>@reboot '.$this->path.' -o json daemon | while read -r line; do find -name signal-daemon.php 2>/dev/null -exec php "{}" "$line" \; ; done;</code>';
+                $this->error   .= "To enable receiving messages add this to your crontab (crontab -e): <br>";
+                $this->error   .= '<code>@reboot export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/'.$this->osUserId.'/bus;'.$this->path.' -o json daemon | while read -r line; do find -name signal-daemon.php 2>/dev/null -exec php "{}" "$line" \; ; done; &</code><br>';
+                $this->error   .= "Then reboot your server";
             }
         }
     }

@@ -84,7 +84,8 @@ class EditFormResults extends DisplayFormResults{
 
 			$this->formName				= $form->name;
 			$this->formData				= $form;
-			$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
+			//$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
+			$this->formData->settings 	= $settings;
 
 			$fieldMainName		= $settings['split'];
 			
@@ -93,6 +94,11 @@ class EditFormResults extends DisplayFormResults{
 			
 			$triggerName	= $this->getElementById($settings['autoarchivefield'], 'name');
 			$triggerValue	= $settings['autoarchivevalue'];
+
+			if(!$triggerName || empty($triggerValue)){
+				continue;
+			}
+
 			$pattern		= '/'.$fieldMainName."\[[0-9]+\]\[([^\]]+)\]/i";
 			if(preg_match($pattern, $triggerName,$matches)){
 				$triggerName	= $matches[1];
@@ -178,7 +184,8 @@ class EditFormResults extends DisplayFormResults{
 		$this->setSubmissionData(null, $submission->id);
 
 		// Update the original
-		$this->formResults[$this->formData->settings['split']][$data->sub_id]['archived']	= true;
+		$splitField	= $this->formData->settings['split'];
+		$this->formResults[][$data->sub_id]['archived']	= true;
 		
 		//update and mark as archived if all entries are empty or archived
 		$this->updateSubmissionData($allArchived);

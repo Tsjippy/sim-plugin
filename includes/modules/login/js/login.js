@@ -119,10 +119,12 @@ async function requestEmailCode(){
 	var formData	= new FormData();
 	formData.append('username',username);
 
-	var response	= await fetchRestApi('request_email_code', formData);
+	var response	= await fetchRestApi('request_email_code', formData, false);
 	
 	if(response){
 		showMessage(response);
+	}else{
+		showMessage(`Sending e-mail failed`);
 	}
 }
 

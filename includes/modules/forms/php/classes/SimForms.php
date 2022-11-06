@@ -103,39 +103,37 @@ class SimForms{
 		global $wpdb;
 
 		// first check if needed
-		if(!empty($this->formData) && (
+		if(empty($this->formData) || (
 			(
 				!empty($this->formId)		&&
-				$this->formData->id	== $this->formId
+				$this->formData->id	!= $this->formId
 			)	||
 			(
 				!empty($this->formName)		&&
-				$this->formData->name	== $this->formName
+				$this->formData->name	!= $this->formName
 			)
 		)){
-			return true;
-		}
-		
-		// Get the form data
-		$query				= "SELECT * FROM {$this->tableName} WHERE ";
-		if(is_numeric($formId)){
-			$query	.= "id= '$formId'";
-		}elseif(is_numeric($this->formId)){
-			$query	.= "id= '$this->formId'";
-		}elseif(!empty($this->formName)){
-			$query	.= "name= '$this->formName'";
-		}else{
-			return new \WP_Error('forms', 'No form name or id given');
-		}
+			// Get the form data
+			$query				= "SELECT * FROM {$this->tableName} WHERE ";
+			if(is_numeric($formId)){
+				$query	.= "id= '$formId'";
+			}elseif(is_numeric($this->formId)){
+				$query	.= "id= '$this->formId'";
+			}elseif(!empty($this->formName)){
+				$query	.= "name= '$this->formName'";
+			}else{
+				return new \WP_Error('forms', 'No form name or id given');
+			}
 
-		$result				= $wpdb->get_results($query);
+			$result				= $wpdb->get_results($query);
 
-		// Form does not exist yet
-		if(empty($result)){
-			$this->insertForm();
-			$this->formData 	=  new \stdClass();
-		}else{
-			$this->formData 	=  (object)$result[0];
+			// Form does not exist yet
+			if(empty($result)){
+				$this->insertForm();
+				$this->formData 	=  new \stdClass();
+			}else{
+				$this->formData 	=  (object)$result[0];
+			}
 		}
 
 		$this->getAllFormElements('priority', $formId);
@@ -315,7 +313,6 @@ class SimForms{
 			$this->getForm();
 		}
 		
-
 		if(!isset($this->formData->elementMapping['id'][$id])){
 			SIM\printArray("Element with id $id not found");
 			return false;

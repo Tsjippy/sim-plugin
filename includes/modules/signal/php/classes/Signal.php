@@ -131,11 +131,15 @@ class Signal {
     {
         $this->baseCommand();
 
+        $this->command->addArg('-a', $this->phoneNumber);
+
         $this->command->addArg('unregister', null);
 
         $this->command->execute();
 
-        unlink($this->basePath.'/phone.signal');
+        if(!$this->command->getExitCode()){
+            unlink($this->basePath.'/phone.signal');
+        }
 
         return $this->parseResult();
     }
@@ -270,16 +274,14 @@ class Signal {
 
     protected function parseResult($returnJson=false){
         if($this->command->getExitCode()){
-            SIM\printArray($this->command, true);
-
-            $error  = "<div class='error'>".$this->command->getError()."</div>";
+            SIM\printArray($this->command);
             
-            $this->error    = $error;
+            $this->error    = "<div class='error'>".$this->command->getError()."</div>";
             if($returnJson){
-                return json_encode($error);
+                return json_encode($this->error);
             }
 
-            return $error;
+            return $this->error;
         }
 
         $output = $this->command->getOutput();

@@ -126,8 +126,9 @@ function connectedOptions($signal, $settings){
 	$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
 
 	$signalGroups	= $signal->listGroups();
+
 	if(!empty($signal->error)){
-		echo $signal->error;
+		echo "<div class='error'>$signal->error<br><br></div>";
 	}
 
 	?>
