@@ -28,7 +28,7 @@ add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategor
  *
 **/
 function prayerRequest($plainText = false, $verified=false) {
-	if (!is_user_logged_in() || !$verified){
+	if (!is_user_logged_in() && !$verified){
 		return false;
 	}
 
