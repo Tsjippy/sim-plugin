@@ -534,7 +534,7 @@ class Bookings{
             $pending    = true;
         }
 
-        // Insert in db
+        // Insert booking in db
         $wpdb->insert(
             $this->tableName,
             array(

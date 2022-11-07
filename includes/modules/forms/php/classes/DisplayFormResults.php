@@ -1158,7 +1158,8 @@ class DisplayFormResults extends DisplayForm{
 				}else{
 					$userId	= '';
 				}
-				$this->parseSubmissions($userId, null, true);
+
+				$submissionsLoaded	= false;
 
 				$html	.= "<div class='filter-wrapper'>";
 
@@ -1168,24 +1169,38 @@ class DisplayFormResults extends DisplayForm{
 						$filterKey		= strtolower($filter['name']);
 						if(!empty($_POST[$filterKey])){
 							$filterValue	= $_POST[$filterKey];
+
+							// Only load all submissions once if needed
+							if(!$submissionsLoaded){
+								$this->parseSubmissions($userId, null, true);
+								$submissionsLoaded	= true;
+							}
 						}
 
 						$name			= str_replace(']', '', end(explode('[', $filterElement->name)));
 
 						// Filter the current submission data
 						if(!empty($filterValue)){
-							foreach($this->submissions as $key=>$entry){
+							$submissions	= $this->submissions;
+							if(isset($this->splittedSubmissions)){
+								$submissions	= $this->splittedSubmissions;
+							}
+							foreach($submissions as $key=>$submission){
 								if(
-									!isset($entry->formresults[$name])	||													// The filter value is not set at all
-									!$this->compareFilterValue($filterValue, $filter['type'], $entry->formresults[$name])	// The filter value does not match the value
+									!isset($submission->formresults[$name])	||													// The filter value is not set at all
+									!$this->compareFilterValue($filterValue, $filter['type'], $submission->formresults[$name])	// The filter value does not match the value
 								){
-									unset($this->submissions[$key]);
+									unset($submissions[$key]);
 								}
 							}
 
 							// match the page params again
-							$this->total			= count($this->submissions);
-							$this->submissions	= array_chunk($this->submissions, $this->pageSize)[$this->currentPage];
+							$this->total		= count($submissions);
+							$submissions	= array_chunk($submissions, $this->pageSize)[$this->currentPage];
+
+							if(isset($this->splittedSubmissions)){
+								$this->splittedSubmissions	= $submissions;
+							}
 						}
 
 						$elementHtml	= $this->getElementHtml($filterElement, $filterValue);

@@ -206,11 +206,13 @@ class EditFormResults extends DisplayFormResults{
 	 * @param	object	$data	the data to check
 	 */
 	public function unArchiveAll($id){
-		// Get the original submission
-		$this->parseSubmissions(null, $id);
+		if($this->submission->id != $id){
+			// Get the submission
+			$this->parseSubmissions(null, $id);
+		}
 
-		// Update the original
-		foreach($this->submissions->formresults[$this->formData->settings['split']] as &$sub){
+		// Update all sub entries
+		foreach($this->submission->formresults[$this->formData->settings['split']] as &$sub){
 			$sub['archived']	= false;
 		}
 		
