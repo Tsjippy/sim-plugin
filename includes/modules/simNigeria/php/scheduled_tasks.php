@@ -22,14 +22,13 @@ function sendReimbursementRequests(){
 	wp_set_current_user(1);
 	
 	//Export the excel file to temp
-	$formTable = new SIM\FORMS\EditFormResults();
+	$formTable = new SIM\FORMS\EditFormResults(['id'=>'6','formname'=>'reimbursement']);
 
 	//make sure we have permission on the data
 	$formTable->tableEditPermissions = true;
 
 	//fill the excel data
-	
-    $formTable->processAtts(['id'=>'6','formname'=>'reimbursement']);
+    //$formTable->determineForm(['id'=>'6','formname'=>'reimbursement']);
 	$formTable->showFormresultsTable();
 
 	//Get all files in the reimbursement dir as they are the receipts
@@ -57,24 +56,24 @@ function sendReimbursementRequests(){
 	}
 
 	//if there are reimbursements
-	if(empty($formTable->submissionData )){
+	if(empty($formTable->submissions )){
 		SIM\printArray('No reimbursement requests found');
 	}else{
 		//Create the excel
 		$excel	= $formTable->exportExcel("Reimbursement requests - ".date("F Y", strtotime("previous month")).'.xlsx',false);
 
 		//mark all entries as archived
-		foreach($formTable->submissionData as $data){
-			$formTable->formResults		= maybe_unserialize($data->formresults);
-			$formTable->submissionId	= $data->id;
+		foreach($formTable->submissions as &$formTable->submission){
+			maybe_unserialize($formTable->submission->formresults);
+			$formTable->submissionId				= $formTable->submission->id;
 
 			// update the reciept url
-			if(isset($formTable->formResults['receipts'])){
-				foreach($formTable->formResults['receipts'] as &$receipt){
+			if(isset($formTable->submission->formresults['receipts'])){
+				foreach($formTable->submission->formresults['receipts'] as &$receipt){
 					$receipt	= str_replace($recieptsDir, '/private'.$recieptsDir, $receipt);
 				}
 			}
-			$formTable->updateSubmissionData(true);
+			$formTable->updateSubmission(true);
 		}
 
 		//If there are any attachements

@@ -2,7 +2,6 @@
 namespace SIM\FORMS;
 use SIM;
 use WP_Error;
-use ParseSplittedFormResults;
 
 class DisplayFormResults extends DisplayForm{
 	use ExportFormResults;
@@ -29,7 +28,7 @@ class DisplayFormResults extends DisplayForm{
 	 * @param	int		$userId			Optional the user id to get the results of. Default null
 	 * @param	int		$submissionId	Optional a specific id. Default null
 	 */
-	public function getSubmissionData($userId=null, $submissionId=null, $all=false){
+	public function getSubmissions($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
 		
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE ";
@@ -97,27 +96,86 @@ class DisplayFormResults extends DisplayForm{
 	 * @param	int		$submissionId	Optional a specific id. Default null
 	 * @param	bool	$all			Whether to retrieve all submissions or paged
 	 */
-	public function setSubmissionData($userId=null, $submissionId=null, $all=false){
-		$this->submissionData		= $this->getSubmissionData($userId, $submissionId, $all);
+	public function parseSubmissions($userId=null, $submissionId=null, $all=false){
+		$this->submissions		= $this->getSubmissions($userId, $submissionId, $all);
 		
-		if(is_numeric($submissionId)){
-			$this->submissionData	= $this->submissionData[0];
-			$this->formResults 		= maybe_unserialize($this->submissionData->formresults);
-		}else{
-			// unserialize
-			foreach($this->submissionData as &$data){
-				$data->formresults	= unserialize($data->formresults);
-			}
+		// unserialize
+		foreach($this->submissions as &$submission){
+			$submission->formresults	= unserialize($submission->formresults);
+		}
 
-			$this->processSplittedData();
+		$this->processSplittedData();
+
+		// single submission
+		if(is_numeric($submissionId)){
+			$this->submission				= $this->submissions[0];
 		}
 
 		//Get personal visibility
 		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 	}
 
-	 
-				
+		 /**
+	 * This function creates seperated entries from entries with an splitted value
+	 */
+	protected function processSplittedData(){
+		if(empty($this->formData->settings['split'])){
+			return;
+		}
+
+		$splitElementName			= $this->formData->settings['split'];
+		$this->splittedSubmissions  = [];
+		//loop over all submissions
+		foreach($this->submissions as $submission){
+			// loop over all entries of the split key
+			foreach($submission->formresults[$splitElementName] as $subKey=>$array){
+				// Should always be an array
+				if(!is_array($array)){
+					continue;
+				}
+
+				// Check if it has data
+				$hasData	= false;
+				foreach($array as $value){
+					if(!empty($value)){
+						$hasData = true;
+						break;
+					}
+				}
+
+				if(!$hasData){
+					continue;
+				}
+
+				// If it has data add as a seperate item to the submission data
+				$newSubmission	= clone $submission;
+
+				// Check if archived
+				if(isset($array['archived']) && $array['archived']){
+					if($this->showArchived){
+						// mark the entry as archived
+						$newSubmission->archived	= true;
+						unset($array['archived']);
+					}else{
+						// do not add an archived sub value to the results
+						continue;
+					}
+				}
+
+				// Add the array to the formresults array
+				$newSubmission->formresults = array_merge($submission->formresults, $array);
+
+				// remove the index value from the copy
+				unset($newSubmission->formresults[$splitElementName]);
+
+				// Add the subkey
+				$newSubmission->subId			= $subKey;
+
+				// Copy the entry
+				$this->splittedSubmissions[]	= $newSubmission;
+			}
+		}
+	}
 
 	 /**
 	 * Creates the db table to hold the short codes and their settings
@@ -1072,6 +1130,7 @@ class DisplayFormResults extends DisplayForm{
 			}
 		}
 		
+		$this->tableViewPermissions	= true;
 		if(
 			$this->onlyOwn											||
 			(
@@ -1082,10 +1141,6 @@ class DisplayFormResults extends DisplayForm{
 			!array_intersect($this->userRoles, array_keys((array)$this->tableSettings['view_right_roles']))
 		){
 			$this->tableViewPermissions 	= false;
-			$this->setSubmissionData($this->user->ID);
-		}else{
-			$this->tableViewPermissions = true;
-			$this->setSubmissionData();
 		}
 	}
 
@@ -1103,7 +1158,7 @@ class DisplayFormResults extends DisplayForm{
 				}else{
 					$userId	= '';
 				}
-				$this->setSubmissionData($userId, null, true);
+				$this->parseSubmissions($userId, null, true);
 
 				$html	.= "<div class='filter-wrapper'>";
 
@@ -1119,18 +1174,18 @@ class DisplayFormResults extends DisplayForm{
 
 						// Filter the current submission data
 						if(!empty($filterValue)){
-							foreach($this->submissionData as $key=>$entry){
+							foreach($this->submissions as $key=>$entry){
 								if(
 									!isset($entry->formresults[$name])	||													// The filter value is not set at all
 									!$this->compareFilterValue($filterValue, $filter['type'], $entry->formresults[$name])	// The filter value does not match the value
 								){
-									unset($this->submissionData[$key]);
+									unset($this->submissions[$key]);
 								}
 							}
 
 							// match the page params again
-							$this->total			= count($this->submissionData);
-							$this->submissionData	= array_chunk($this->submissionData, $this->pageSize)[$this->currentPage];
+							$this->total			= count($this->submissions);
+							$this->submissions	= array_chunk($this->submissions, $this->pageSize)[$this->currentPage];
 						}
 
 						$elementHtml	= $this->getElementHtml($filterElement, $filterValue);
@@ -1260,6 +1315,10 @@ class DisplayFormResults extends DisplayForm{
 			return '';
 		}
 
+		if(!isset($this->submissions)){
+			$this->parseSubmissions();
+		}
+
 		$this->loadTableSettings();
 
 		$buttons			= $this->renderTableButtons();
@@ -1284,7 +1343,7 @@ class DisplayFormResults extends DisplayForm{
 			</div>
 			<?php
 
-			if(empty($this->submissionData)){
+			if(empty($this->submissions)){
 				?>
 				<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
 					<td>No records found</td>
@@ -1303,7 +1362,7 @@ class DisplayFormResults extends DisplayForm{
 				$sort				= str_replace(']', '', end(explode('[', $sortElement->name)));
 				$sortElementType	= $sortElement->type;
 				//Sort the array
-				usort($this->submissionData, function($a, $b) use ($sort, $sortElementType){
+				usort($this->submissions, function($a, $b) use ($sort, $sortElementType){
 					if($sortElementType == 'date'){
 						return strtotime($a->formresults[$sort]) <=> strtotime($b->formresults[$sort]);
 					}
@@ -1317,9 +1376,9 @@ class DisplayFormResults extends DisplayForm{
 			//first check if the data contains data of our own
 			$this->ownData	= false;
 			$this->user->partnerId		= SIM\hasPartner($this->user->ID);
-			foreach($this->submissionData as $submissionData){
+			foreach($this->submissions as $submission){
 				//Our own entry or one of our partner
-				if($submissionData->userid == $this->user->ID || $submissionData->userid == $this->user->partnerId){
+				if($submission->userid == $this->user->ID || $submission->userid == $this->user->partnerId){
 					$this->ownData = true;
 					break;
 				}
@@ -1391,9 +1450,9 @@ class DisplayFormResults extends DisplayForm{
 									$addHeading	= true;
 								}else{
 									//Loop over all buttons to see if the current user has permission for them
-									foreach($this->submissionData as $submissionData){
+									foreach($this->submissions as $submission){
 										//we have permission on this row for this button
-										if($submissionData->formresults['userid'] == $this->user->ID){
+										if($submission->formresults['userid'] == $this->user->ID){
 											$addHeading	= true;
 										}
 									}
@@ -1417,16 +1476,22 @@ class DisplayFormResults extends DisplayForm{
 						WRITE THE CONTENT ROWS OF THE TABLE
 				*/
 				//Loop over all the submissions of this form
-				foreach($this->submissionData as $submissionData){
-					$fieldValues			= $submissionData->formresults;
-					$fieldValues['id']		= $submissionData->id;
-					$fieldValues['userid']	= $submissionData->userid;
+				if(isset($this->splittedSubmissions)){
+					$submissions	= $this->splittedSubmissions;
+				}else{
+					$submissions	= $this->submissions;
+				}
+
+				foreach($submissions as $submission){
+					$fieldValues			= $submission->formresults;
+					$fieldValues['id']		= $submission->id;
+					$fieldValues['userid']	= $submission->userid;
 					$index					= -1;
-					if(is_numeric($submissionData->sub_id)){
-						$index				= $submissionData->sub_id;
+					if(is_numeric($submission->subId)){
+						$index				= $submission->subId;
 					}
 					
-					$this->writeTableRow($fieldValues, $index, $submissionData->archived);
+					$this->writeTableRow($fieldValues, $index, $submission->archived);
 				}
 				?>
 				</tbody>

@@ -41,9 +41,9 @@ function verifyTraveldate( \WP_REST_Request $request ) {
 
 		$formBuilder->getForm();
 
-		$formBuilder->setSubmissionData();
+		$formBuilder->parseSubmissions();
 
-		foreach($formBuilder->submissionData as $submission){
+		foreach($formBuilder->submissions as $submission){
 			$formResults	= $submission->formresults;
 			if($formResults['departuredate1'] == $request['departuredate']){
 				if($formResults['user_id'] == $request['userid']){

@@ -3,17 +3,17 @@ namespace SIM\FORMS;
 use SIM;
 
 class EditFormResults extends DisplayFormResults{
-	/**
+	 /**
 	 * Update an existing form submission
 	 *
 	 * @param	bool	$archive	Whether we should archive the submission. Default false
 	 *
 	 *  @return	true|WP_Error		The result or error on failure
 	 */
-	public function updateSubmissionData($archive=false){
+	public function updateSubmission($archive=false){
 		global $wpdb;
 
-		$submissionId	= $this->formResults['id'];
+		$submissionId	= $this->submission->formresults['id'];
 		if(!is_numeric($submissionId)){
 			if(is_numeric($this->submissionId)){
 				$submissionId	= $this->submissionId;
@@ -25,18 +25,23 @@ class EditFormResults extends DisplayFormResults{
 			}
 		}
 
-		$this->formResults['edittime']	= date("Y-m-d H:i:s");
+		$this->submission->formresults['edittime']	= date("Y-m-d H:i:s");
 
 		//Update the database
 		$result = $wpdb->update(
 			$this->submissionTableName,
 			array(
 				'timelastedited'	=> date("Y-m-d H:i:s"),
-				'formresults'		=> maybe_serialize($this->formResults),
+				'formresults'		=> maybe_serialize($this->submission->formresults),
 				'archived'			=> $archive
 			),
 			array(
 				'id'				=> $submissionId,
+			),
+			array(
+				'%s',
+				'%s',
+				'%d'
 			)
 		);
 		
@@ -53,7 +58,7 @@ class EditFormResults extends DisplayFormResults{
 				return new \WP_Error('form error', $message);
 			}else{
 				SIM\printArray($message);
-				SIM\printArray($this->formResults);
+				SIM\printArray($this->submission->formresults);
 			}
 		}
 
@@ -87,10 +92,10 @@ class EditFormResults extends DisplayFormResults{
 			//$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
 			$this->formData->settings 	= $settings;
 
-			$fieldMainName		= $settings['split'];
-			
+			$splitElementName			= $settings['split'];
+
 			//Get all submissions of this form
-			$this->setSubmissionData(null, null, true);
+			$this->parseSubmissions(null, null, true);
 			
 			$triggerName	= $this->getElementById($settings['autoarchivefield'], 'name');
 			$triggerValue	= $settings['autoarchivevalue'];
@@ -99,7 +104,7 @@ class EditFormResults extends DisplayFormResults{
 				continue;
 			}
 
-			$pattern		= '/'.$fieldMainName."\[[0-9]+\]\[([^\]]+)\]/i";
+			$pattern		= '/'.$splitElementName."\[[0-9]+\]\[([^\]]+)\]/i";
 			if(preg_match($pattern, $triggerName,$matches)){
 				$triggerName	= $matches[1];
 			}
@@ -120,49 +125,54 @@ class EditFormResults extends DisplayFormResults{
 				}
 			}
 			
-			//loop over all submissions to see if we need to archive
-			foreach($this->submissionData as &$subData){
-				$this->formResults		= $subData->formresults;
+			//loop over all submissions to see if we need to archive them
+			foreach($this->submissions as &$this->submission){
 				
-				$this->submissionId		= $subData->id;
+				$this->submissionId		= $this->submission->id;
 
 				//there is no trigger value found in the results, check multi value array
-				if(empty($this->formResults[$triggerName])){
+				if(empty($this->submission->formresults[$triggerName])){
 					//loop over all multi values
-					foreach($this->formResults[$fieldMainName] as $subId=>$sub){
+					foreach($this->submission->formresults[$splitElementName] as $subId=>$sub){
+						if(
+							isset($sub['archived']) && 		// Archive entry exists
+							$sub['archived']		||		// sub is already archived
+							(
+								empty($sub['from'])	||		// from is empty
+								empty($sub['to'])	||		// to is empty
+								empty($sub['date'])			// date is empty
+							)
+						){
+							continue;
+						}
+
 						//we found a match for a sub entry, archive it
 						$val	= $sub[$triggerName];
 						if(
 							$val == $triggerValue || 						//value is the same as the trigger value or
 							(
-								strtotime($triggerValue) && 				// trigger value is a date
-								strtotime($val) &&							// this value is a date
+								strtotime($triggerValue) 	&& 				// trigger value is a date
+								strtotime($val) 			&&				// this value is a date
 								strtotime($val) < strtotime($triggerValue)	// value is smaller than the trigger value
 							)
 						){
-							$this->formResults[$fieldMainName][$subId]['archived'] = true;
+							$this->submission->formresults[$splitElementName][$subId]['archived'] = true;
 							
 							//update in db
-							$this->checkIfAllArchived($this->formResults[$fieldMainName]);
+							$this->checkIfAllArchived($this->submission->formresults[$splitElementName]);
 						}
 					}
 				}else{
 					//if the form value is equal to the trigger value it needs to be to be archived
-					if($this->formResults[$triggerName] == $triggerValue){
-						//Check if we are dealing with an subvalue
-						if($subData->sub_id){
-							$subData->archived	= true;
-							$this->checkIfAllArchived($subData);
-						}else{
-							$this->updateSubmissionData(true);
-						}
+					if($this->submission->formresults[$triggerName] == $triggerValue){
+						$this->updateSubmission(true);
 					}
 				}
 			}
 		}
 	}
 
-	/**
+	 /**
 	 * Checks if all sub entries are archived, if so archives the whole
 	 *
 	 * @param	object	$data	the data to check
@@ -171,24 +181,23 @@ class EditFormResults extends DisplayFormResults{
 		//check if all subfields are archived or empty
 		$allArchived = true;
 
-		// check if we have a subsubmission who is not yet archived
-		foreach($this->submissionData as $submission){
-			// If this submission belomgs to the same as the given submission and it is not archived
-			if($submission->id == $data->id && !$submission->archived){
+		foreach($data as $d){
+			if(
+				!isset($d['archived']) 	||	// Archived key does not exist
+				!$d['archived']			&&	// Or the value is false
+				(
+					!empty($d['from'])	&&	// the from field is not empty
+					!empty($d['date'])	&&	// the data field is not empty
+					!empty($d['to'])		// the to field is not empty
+				)
+			){
 				$allArchived = false;
 				break;
 			}
 		}
-
-		// Get the original submission
-		$this->setSubmissionData(null, $submission->id);
-
-		// Update the original
-		$splitField	= $this->formData->settings['split'];
-		$this->formResults[][$data->sub_id]['archived']	= true;
 		
 		//update and mark as archived if all entries are empty or archived
-		$this->updateSubmissionData($allArchived);
+		$this->updateSubmission($allArchived);
 	}
 
 	/**
@@ -198,15 +207,15 @@ class EditFormResults extends DisplayFormResults{
 	 */
 	public function unArchiveAll($id){
 		// Get the original submission
-		$this->setSubmissionData(null, $id);
+		$this->parseSubmissions(null, $id);
 
 		// Update the original
-		foreach($this->formResults[$this->formData->settings['split']] as &$sub){
+		foreach($this->submissions->formresults[$this->formData->settings['split']] as &$sub){
 			$sub['archived']	= false;
 		}
 		
 		//update and mark as archived if all entries are empty or archived
-		$this->updateSubmissionData(false);
+		$this->updateSubmission(false);
 	}
 
 	/**
@@ -220,8 +229,8 @@ class EditFormResults extends DisplayFormResults{
 		global $wpdb;
 
 		if(!isset($this->formData) || $this->formData == null){
-			$this->setSubmissionData(null, $submissionId);
-			$this->getForm($this->submissionData->form_id);
+			$this->parseSubmissions(null, $submissionId);
+			$this->getForm($this->submissions->form_id);
 		}
 
 		$result = $wpdb->delete(

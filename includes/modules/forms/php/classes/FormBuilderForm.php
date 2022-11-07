@@ -294,7 +294,7 @@ class FormBuilderForm extends SimForms{
 						}
 						?>
 						<input type='checkbox' class='formbuilder formfieldsetting' name='settings[save_in_meta]' value='save_in_meta' <?php echo $checked;?>>
-						Save submissiondata in usermeta table
+						Save submissions in usermeta table
 					</label>
 					<br>
 

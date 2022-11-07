@@ -231,7 +231,7 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $index,
 	if($fieldValues == null || !is_numeric($fieldValues['user_id'])){
 		$buttonsHtml['print']	= '';
 	}else{
-		$tripDetails		= $displayFormResults->getSubmissionData(null, $fieldValues['id']);
+		$tripDetails		= $displayFormResults->getSubmissions(null, $fieldValues['id']);
 		if(empty($tripDetails)){
 			return $buttonsHtml;
 		}

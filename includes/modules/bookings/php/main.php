@@ -260,8 +260,8 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
     $html   = '<div class="tables-wrapper">';
         if(!empty($pendingBookings)){
             $submissions    = [];
-            foreach($displayFormResults->submissionData as $data){
-                $submissions[$data->id] = $data->formresults;
+            foreach($displayFormResults->submissions as $submission){
+                $submissions[$submission->id] = $submission->formresults;
             }
 
             $html   .= "<div class='pending-bookings-wrapper'>";
@@ -324,7 +324,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
 
 // Create a booking
 add_filter('sim_after_saving_formdata', function($message, $formBuilder){
-    if(isset($formBuilder->formResults['booking-startdate'])){
+    if(isset($formBuilder->submission->formresults['booking-startdate'])){
         // find the subject
         $indexes        = $formBuilder->getElementByType('booking_selector');
 
@@ -332,7 +332,11 @@ add_filter('sim_after_saving_formdata', function($message, $formBuilder){
 
         foreach($indexes as $index){
             $elementName    = $formBuilder->formElements[$index]->name;
-            $result = $bookings->insertBooking($formBuilder->formResults['booking-startdate'], $formBuilder->formResults['booking-enddate'], $formBuilder->formResults[$elementName], $formBuilder->formResults['id']);
+            $startDate      = $formBuilder->submission->formresults['booking-startdate'];
+            $endDate        = $formBuilder->submission->formresults['booking-enddate'];
+            $subject        = $formBuilder->submission->formresults[$elementName];
+            $submissionId   = $formBuilder->submission->formresults['id'];
+            $result         = $bookings->insertBooking($startDate, $endDate, $subject, $submissionId);
 
             if(is_wp_error($result)){
                 return $result;
@@ -348,7 +352,7 @@ add_filter('sim-forms-submission-updated', function($message, $formTable, $field
     global $wpdb;
 
     $bookings   =  new Bookings();
-    $booking    = $bookings->getBookingBySubmission($formTable->formResults['id']);
+    $booking    = $bookings->getBookingBySubmission($formTable->submission->formresults['id']);
 
     // Get the subject element name
     $query      = "SELECT name FROM `wp_sim_form_elements` WHERE `form_id`=(select form_id from {$bookings->forms->submissionTableName} WHERE id=$booking->submission_id) AND `type`='booking_selector'";
@@ -379,30 +383,30 @@ add_filter('sim-forms-element-html', function($html, $element, $displayFormResul
 
     if($element->name == 'booking-enddate'){
         // Get the subject
-        $subject    = $displayFormResults->formResults[$displayFormResults->formElements[$displayFormResults->getElementByType('booking_selector')[0]]->name];
+        $subject    = $displayFormResults->submission->formresults[$displayFormResults->formElements[$displayFormResults->getElementByType('booking_selector')[0]]->name];
         
         // get the first event after this one
-        $query  = "SELECT startdate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND startdate > '{$displayFormResults->formResults[$element->name]}' ORDER BY startdate LIMIT 1";
+        $query  = "SELECT startdate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND startdate > '{$displayFormResults->submission->formresults[$element->name]}' ORDER BY startdate LIMIT 1";
         $max    = $wpdb->get_var($query);
 
         if(!empty($max)){
             $max    = "max='$max'";
         }
 
-        return str_replace('>', "min='{$displayFormResults->formResults['booking-startdate']}' $max>", $html);
+        return str_replace('>', "min='{$displayFormResults->submission->formresults['booking-startdate']}' $max>", $html);
     }elseif($element->name == 'booking-startdate'){
         // Get the subject
-        $subject    = $displayFormResults->formResults[$displayFormResults->formElements[$displayFormResults->getElementByType('booking_selector')[0]]->name];
+        $subject    = $displayFormResults->submission->formresults[$displayFormResults->formElements[$displayFormResults->getElementByType('booking_selector')[0]]->name];
 
         // get the first event before this one
-        $query  = "SELECT enddate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND enddate <= '{$displayFormResults->formResults[$element->name]}' ORDER BY enddate LIMIT 1";
+        $query  = "SELECT enddate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND enddate <= '{$displayFormResults->submission->formresults[$element->name]}' ORDER BY enddate LIMIT 1";
         $min    = $wpdb->get_var($query);
 
         if(!empty($min)){
             $min    = "min='$min'";
         }
 
-        return str_replace('>', "$min max='{$displayFormResults->formResults['booking-enddate']}'>", $html);
+        return str_replace('>', "$min max='{$displayFormResults->submission->formresults['booking-enddate']}'>", $html);
     }
     return $html;
 }, 10, 3);

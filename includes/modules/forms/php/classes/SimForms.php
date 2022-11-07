@@ -133,6 +133,7 @@ class SimForms{
 				$this->formData 	=  new \stdClass();
 			}else{
 				$this->formData 	=  (object)$result[0];
+				$formId				= $this->formData->id;
 			}
 		}
 
@@ -153,8 +154,8 @@ class SimForms{
 			$settings['roles']					= [];
 
 			$this->formData->settings = $settings;
-		}else{
-			$this->formData->settings = maybe_unserialize(utf8_encode($this->formData->settings));
+		}elseif(!is_array($this->formData->settings)){
+			$this->formData->settings = maybe_unserialize($this->formData->settings);
 		}
 
 		if(!$this->editRights){

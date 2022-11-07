@@ -60,7 +60,7 @@ trait ExportFormResults{
 	
 	/**
 	 * Export the current table to excel
-	 * 
+	 *
 	 * @param	string	$fileName	the name of the downloaded file. 	Default the formname
 	 * @param	bool	$download	Whether to download the excel or print it to screen
 	 */

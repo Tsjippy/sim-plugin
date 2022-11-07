@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
+use stdClass;
 use WP_Error;
 
 add_action( 'rest_api_init', function () {
@@ -331,7 +332,7 @@ function archiveSubmission(){
 	$formTable->getForm($_POST['formid']);
 	$formTable->submissionId	= $_POST['submissionid'];
 
-	$formTable->setSubmissionData(null, $formTable->submissionId);
+	$formTable->parseSubmissions(null, $formTable->submissionId);
 
 	$action	= $_POST['action'];
 
@@ -346,15 +347,15 @@ function archiveSubmission(){
 		$message					= "Entry with id {$formTable->submissionId} and subid $subId succesfully {$action}d";
 		$splitField					= $formTable->formData->settings['split'];
 		
-		$formTable->formResults[$splitField][$subId]['archived'] = $archive;
+		$formTable->submission->formresults[$splitField][$subId]['archived'] = $archive;
 		
 		//check if all subfields are archived or empty
-		$formTable->checkIfAllArchived($formTable->formResults[$splitField]);
+		$formTable->checkIfAllArchived($formTable->submission->formresults[$splitField]);
 	}else{
 		$message					= "Entry with id {$formTable->submissionId} succesfully {$action}d";
 
 		if($archive){
-			$formTable->updateSubmissionData($archive);
+			$formTable->updateSubmission($archive);
 		}else{
 			$formTable->unArchiveAll($formTable->submissionId);
 		}
@@ -364,39 +365,44 @@ function archiveSubmission(){
 }
 
 function getInputHtml(){
-	$formTable	= new DisplayFormResults();
+	$formTable		= new DisplayFormResults();
+
 	$formTable->getForm($_POST['formid']);
 
+	$formTable->parseSubmissions(null, $_POST['submissionid']);
+
 	$elementName	= sanitize_text_field($_POST['fieldname']);
-	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
-		$elementIndexedName	= $formTable->formData->settings['split']."[{$_POST['subid']}][$elementName]";
-	}
-	
-	foreach ($formTable->formElements as $element){
-		$name	= str_replace('[]', '', $element->name);
-		if($name == $elementName || $name == $elementIndexedName){
-			$formTable->setSubmissionData(null, $_POST['submissionid']);
+	$curValue		= '';
+	$element		= $formTable->getElementByName($elementName);
 
-			$curValue	= '';
-			if(isset($formTable->formResults[$element->name])){
-				$curValue	= $formTable->formResults[$element->name];
-			}
+	if(!$element && isset($_POST['subid']) && is_numeric($_POST['subid'])){
+		$splitElementName	= $formTable->formData->settings['split'];
+		$elementIndexedName	= $splitElementName."[{$_POST['subid']}][$elementName]";
 
-			//Load default values for this element
-			return $formTable->getElementHtml($element, $curValue);
+		$element	= $formTable->getElementByName($elementIndexedName);
+
+		if(isset($formTable->submission->formresults[$splitElementName][$_POST['subid']][$elementName])){
+			$curValue	= $formTable->submission->formresults[$splitElementName][$_POST['subid']][$elementName];
 		}
+	}elseif(isset($formTable->submission->formresults[$element->name])){
+		$curValue	= $formTable->submission->formresults[$element->name];
 	}
-	
-	return new \WP_Error('No element found', "No element found with id '{$_POST['fieldname']}'");
+
+	if(!$element){
+		return new \WP_Error('No element found', "No element found with id '{$_POST['fieldname']}'");
+	}
+
+	// Get element html with the value allready set
+	return $formTable->getElementHtml($element, $curValue);
 }
 
 function editValue(){
 	$formTable	= new EditFormResults();
 		
 	$formTable->getForm($_POST['formid']);
-	$formTable->submissionId		= $_POST['submissionid'];
+	$formTable->submissionId	= $_POST['submissionid'];
 	
-	$formTable->setSubmissionData(null, $formTable->submissionId);
+	$formTable->parseSubmissions(null, $formTable->submissionId);
 		
 	//update an existing entry
 	$fieldName 		= sanitize_text_field($_POST['fieldname']);
@@ -408,16 +414,17 @@ function editValue(){
 
 	// If there is a sub id set and this field is not a main field
 	if(is_numeric($subId)){
-		$fieldMainName	= $formTable->formData->settings['split'];
+		$splitElementName	= $formTable->formData->settings['split'];
+
 		//check if this is a main field
-		if(isset($formTable->formResults[$fieldMainName][$subId][$fieldName])){
-			$formTable->formResults[$fieldMainName][$subId][$fieldName]	= $newValue;
+		if(isset($formTable->submission->formresults[$splitElementName][$subId][$fieldName])){
+			$formTable->submission->formresults[$splitElementName][$subId][$fieldName]	= $newValue;
 		}else{
-			$formTable->formResults[$fieldName]= $newValue;
+			$formTable->submission->formresults[$fieldName]= $newValue;
 		}
 		$message = "Succesfully updated '$fieldName' to $transValue";
 	}else{
-		$formTable->formResults[$fieldName]	= $newValue;
+		$formTable->submission->formresults[$fieldName]	= $newValue;
 		$message = "Succesfully updated '$fieldName' to $transValue";
 	}
 
@@ -427,12 +434,13 @@ function editValue(){
 		return ['message' => $message->get_error_message()];
 	}
 
-	$formTable->updateSubmissionData();
+	$formTable->updateSubmission();
 	
 	//send email if needed
 	$submitForm					= new SubmitForm();
 	$submitForm->getForm($_POST['formid']);
-	$submitForm->formResults	= $formTable->formResults;
+	$submitForm->submission		= new stdClass();
+	$submitForm->submission->formresults	= $formTable->submission->formresults;
 	$submitForm->sendEmail('fieldchanged');
 	
 	//send message back to js

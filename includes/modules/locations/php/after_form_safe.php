@@ -78,7 +78,7 @@ add_action('sim_location_removal', function($userId){
 // Update marker icon when family picture is changed
 add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
 	if($formName != 'profile_picture'){
-        return $formResults;	
+        return $formResults;
     }
 	
 	$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );

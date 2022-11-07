@@ -5,7 +5,7 @@ use WP_Embed;
 use WP_Error;
 
 class SubmitForm extends SimForms{
-	 /**
+	/**
 	 * Returns conditional e-mails with a valid condition
 	 *
 	 * @param	array	$conditions		The conditions of a conditional e-mail
@@ -19,7 +19,7 @@ class SubmitForm extends SimForms{
 			$elementName	= $this->getElementById($condition['fieldid'], 'name');
 
 			//get the submitted form value
-			$formValue = $this->formResults[$elementName];
+			$formValue = $this->submission->formresults[$elementName];
 					
 			//if the value matches the conditional value
 			if(strtolower($formValue) == strtolower($condition['value'])){
@@ -30,7 +30,7 @@ class SubmitForm extends SimForms{
 		return false;
 	}
 
-	 /**
+	/**
 	 * Filters the e-mail footer url and text
 	 *
 	 * @param	array	$footer		The footer array
@@ -43,7 +43,7 @@ class SubmitForm extends SimForms{
 		return $footer;
 	}
 
-	 /**
+	/**
 	 * Send an e-mail
 	 *
 	 * @param	string	$trigger	One of 'submitted' or 'fieldchanged'. Default submitted
@@ -55,7 +55,7 @@ class SubmitForm extends SimForms{
 			if($email['emailtrigger'] == $trigger){
 				if($trigger == 'fieldchanged'){
 					$elementName	= $this->getElementById($email['conditionalfield'], 'name');
-					$formValue 		= strtolower($this->formResults[$elementName]);
+					$formValue 		= strtolower($this->submission->formresults[$elementName]);
 					$compareValue	= strtolower($email['conditionalvalue']);
 
 					//do not proceed if there is no match
@@ -124,7 +124,7 @@ class SubmitForm extends SimForms{
 		}
 	}
 	
-	 /**
+	/**
 	 * Replaces placeholder with the value
 	 *
 	 * @param	string	$string		THe string to check for placeholders
@@ -136,9 +136,9 @@ class SubmitForm extends SimForms{
 			return $string;
 		}
 
-		if(empty($this->formResults['submissiondate'])){
-			$this->formResults['submissiondate']	= date('d F y', strtotime($this->formResults['submissiontime']));
-			$this->formResults['editdate']			= date('d F y', strtotime($this->formResults['edittime']));
+		if(empty($this->submission->formresults['submissiondate'])){
+			$this->submission->formresults['submissiondate']	= date('d F y', strtotime($this->submission->formresults['submissiontime']));
+			$this->submission->formresults['editdate']			= date('d F y', strtotime($this->submission->formresults['edittime']));
 		}
 
 		$pattern = '/%([^%;]*)%/i';
@@ -147,17 +147,17 @@ class SubmitForm extends SimForms{
 		
 		//loop over the results
 		foreach($matches[1] as $match){
-			if(empty($this->formResults[$match])){
+			if(empty($this->submission->formresults[$match])){
 				//remove the placeholder, there is no value
 				$string = str_replace("%$match%", '', $string);
-			}elseif(is_array($this->formResults[$match])){
-				$files	= $this->formResults[$match];
+			}elseif(is_array($this->submission->formresults[$match])){
+				$files	= $this->submission->formresults[$match];
 				$string = array_map(function($value){
 					return ABSPATH.$value;
 				}, $files);
 			}else{
 				//replace the placeholder with the value
-				$replaceValue	= str_replace('_', ' ', $this->formResults[$match]);
+				$replaceValue	= str_replace('_', ' ', $this->submission->formresults[$match]);
 				$string 		= str_replace("%$match%", $replaceValue, $string);
 			}
 		}
@@ -165,7 +165,7 @@ class SubmitForm extends SimForms{
 		return $string;
 	}
 
-	 /**
+	/**
 	 * Rename any existing files to include the form id.
 	 */
 	public function processFiles($uploadedFiles, $inputName){
@@ -181,7 +181,7 @@ class SubmitForm extends SimForms{
 			
 			//also add submission id if not saving to meta
 			if(empty($this->formData->settings['save_in_meta'])){
-				$fileName	= $this->formResults['id']."_$fileName";
+				$fileName	= $this->submission->formresults['id']."_$fileName";
 			}
 			
 			//Create the filename
@@ -196,10 +196,10 @@ class SubmitForm extends SimForms{
 			//if rename is succesfull
 			if (rename($path, $targetFile)) {
 				//update in formdata
-				$this->formResults[$inputName][$key]	= str_replace(ABSPATH, '', $targetFile);
+				$this->submission->formresults[$inputName][$key]	= str_replace(ABSPATH, '', $targetFile);
 			}else {
 				//update in formdata
-				$this->formResults[$inputName][$key]	= str_replace(ABSPATH,'',$path);
+				$this->submission->formresults[$inputName][$key]	= str_replace(ABSPATH, '', $path);
 			}
 		}
 	}

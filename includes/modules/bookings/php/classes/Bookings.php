@@ -361,8 +361,8 @@ class Bookings{
 
         foreach($this->bookings as $booking){
             // Retrieve booking details
-            $this->forms->setSubmissionData(null, $booking->submission_id);
-            $bookingData    = $this->forms->formResults;
+            $this->forms->parseSubmissions(null, $booking->submission_id);
+            $bookingData    = $this->forms->submission->formresults;
 
             ?>
             <div class='booking-detail-wrapper hidden' data-bookingid='<?php echo $booking->id;?>'>
@@ -373,7 +373,7 @@ class Bookings{
                 <article class='booking'>
                     <h4 class='booking-title'><?php echo $bookingData['name'];?></h4>
                     <div class='booking-detail'>
-                        <table data-formid='<?php echo $this->forms->formResults['formid'];?>' style='width: unset;'>
+                        <table data-formid='<?php echo $this->forms->submission->formresults['formid'];?>' style='width: unset;'>
                             <thead></thead>
                             <tbody>
                                 <tr>
@@ -381,13 +381,13 @@ class Bookings{
                                         <img src='<?php echo $baseUrl;?>/date.png' loading='lazy' alt='date' class='booking-icon'>
                                     </td>
                                     <td class='booking-data-wrapper edit_forms_table'>
-                                        <table data-formid='<?php echo $this->forms->formResults['formid'];?>' style='margin-bottom: 0px; width:unset;'>
-                                            <tr data-id='<?php echo $this->forms->formResults['id'];?>'>
+                                        <table data-formid='<?php echo $this->forms->submission->formresults['formid'];?>' style='margin-bottom: 0px; width:unset;'>
+                                            <tr data-id='<?php echo $this->forms->submission->formresults['id'];?>'>
                                                 <td data-id='booking-startdate' data-oldvalue='<?php echo json_encode($booking->startdate);?>' class='edit_forms_table'>
                                                     <?php echo date('d-M-Y', strtotime($booking->startdate));?>
                                                 </td>
                                             </tr>
-                                            <tr data-id='<?php echo $this->forms->formResults['id'];?>'>
+                                            <tr data-id='<?php echo $this->forms->submission->formresults['id'];?>'>
                                                 <td data-id='booking-enddate' data-oldvalue='<?php echo json_encode($booking->enddate);?>' class='edit_forms_table'>
                                                     <?php echo date('d-M-Y',strtotime($booking->enddate));?>
                                                 </td>
@@ -408,7 +408,7 @@ class Bookings{
                                         if(empty($transformedData)){
                                             $transformedData    = 'X';
                                         }
-                                        echo "<tr class='$index' data-id='{$this->forms->formResults['id']}'>";
+                                        echo "<tr class='$index' data-id='{$this->forms->submission->formresults['id']}'>";
                                             if(file_exists(SIM\urlToPath("$baseUrl/$index.png"))){
                                                 echo "<td><img src='$baseUrl/$index.png' loading='lazy' alt='{$setting['nice_name']}' class='booking-icon'></td>";
                                             }else{
@@ -426,7 +426,7 @@ class Bookings{
                                         $buttonsHtml	= [];
                                         $buttons		= '';
                                         foreach($this->forms->formData->settings['actions'] as $action){
-                                            if($action == 'archive' && $this->showArchived == 'true' && $this->forms->submissionData->archived){
+                                            if($action == 'archive' && $this->showArchived == 'true' && $this->forms->submissions->archived){
                                                 $action = 'unarchive';
                                             }
                                             $buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
@@ -444,7 +444,7 @@ class Bookings{
                                             }
                                         }
                                         if(!empty($buttons)){
-                                            echo "<tr class='actions' data-id='{$this->forms->formResults['id']}'>";
+                                            echo "<tr class='actions' data-id='{$this->forms->submission->formresults['id']}'>";
                                                 echo "<td>$buttons</td>";
                                             echo "</tr>";
                                         }
@@ -500,13 +500,13 @@ class Bookings{
         }
 
         // create a personal event
-        if(!empty($this->forms->formResults['user_id'])){
+        if(!empty($this->forms->submission->formresults['user_id'])){
             $post = array(
                 'post_type'		=> 'event',
                 'post_title'    => "Booking for $subject",
                 'post_content'  => "Booking for $subject",
                 'post_status'   => 'publish',
-                'post_author'   => $this->forms->formResults['user_id']
+                'post_author'   => $this->forms->submission->formresults['user_id']
             );
 
             $eventId 	= wp_insert_post( $post, true, false);
@@ -517,10 +517,10 @@ class Bookings{
             $event['enddate']				= $endDate;
             $event['endtime']				= '12:00';
             $event['location']				= $subject;
-            $event['organizer_id']			= $this->forms->formResults['user_id'];
-            $event['onlyfor']               = $this->forms->formResults['user_id'];
+            $event['organizer_id']			= $this->forms->submission->formresults['user_id'];
+            $event['onlyfor']               = $this->forms->submission->formresults['user_id'];
             update_post_meta($eventId, 'eventdetails', json_encode($event));
-            update_post_meta($eventId, 'onlyfor', $this->forms->formResults['user_id']);
+            update_post_meta($eventId, 'onlyfor', $this->forms->submission->formresults['user_id']);
         }
 
         // insert the booking
@@ -529,7 +529,7 @@ class Bookings{
         if(
             isset($this->forms->formData->settings['default-booking-state'])            &&
             $this->forms->formData->settings['default-booking-state']   == 'pending'    &&
-            !array_intersect(get_userdata($this->forms->formResults['user_id'])->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
+            !array_intersect(get_userdata($this->forms->submission->formresults['user_id'])->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
         ){
             $pending    = true;
         }

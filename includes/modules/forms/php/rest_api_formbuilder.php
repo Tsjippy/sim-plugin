@@ -342,22 +342,22 @@ function addFormElement(){
 			// Update submission data
 			$displayFormResults->showArchived	= true;
 			$displayFormResults->getForm($simForms->formData->id);
-			$displayFormResults->setSubmissionData(null, null, true);
+			$displayFormResults->parseSubmissions(null, null, true);
 
 			$submitForm	= new SubmitForm();
 
-			foreach($displayFormResults->submissionData as $data){
-				if(isset($data->formresults[$oldElement->name])){
-					$data->formresults[$element->name]	= $data->formresults[$oldElement->name];
-					unset($data->formresults[$oldElement->name]);
+			foreach($displayFormResults->submissions as $submission){
+				if(isset($submission->formresults[$oldElement->name])){
+					$submission->formresults[$element->name]	= $submission->formresults[$oldElement->name];
+					unset($submission->formresults[$oldElement->name]);
 				}
 				$wpdb->update(
 					$submitForm->submissionTableName,
 					array(
-						'formresults'	=> maybe_serialize($data->formresults),
+						'formresults'	=> maybe_serialize($submission->formresults),
 					),
 					array(
-						'id'			=> $data->id
+						'id'			=> $submission->id
 					)
 					);
 			}
@@ -565,11 +565,13 @@ function saveFormSettings(){
 function saveFormInput(){
 	global $wpdb;
 
-	$formBuilder	= new SubmitForm();
+	$formBuilder								= new SubmitForm();
 
-	$formId			= $_POST['formid'];
+	$formBuilder->submission					= new stdClass();
+
+	$formBuilder->submission->form_id			= $_POST['formid'];
 	
-	$formBuilder->getForm($formId);
+	$formBuilder->getForm($formBuilder->submission->form_id);
 	
 	$formBuilder->userId	= 0;
 	if(is_numeric($_POST['userid'])){
@@ -583,15 +585,28 @@ function saveFormInput(){
 			$formBuilder->userId = $_POST['userid'];
 		}
 	}
+
+	$formBuilder->submission->timecreated		= date("Y-m-d H:i:s");
+
+	$formBuilder->submission->timelastedited	= date("Y-m-d H:i:s");
 	
-	$formBuilder->formResults = $_POST;
+	$formBuilder->submission->userid			= $formBuilder->userId;
+
+	$formBuilder->submission->formresults 		= $_POST;
+
+	$formBuilder->submission->archived 			= false;
 		
 	//remove the action and the formname
-	unset($formBuilder->formResults['formname']);
-	unset($formBuilder->formResults['fileupload']);
-	unset($formBuilder->formResults['userid']);
+	unset($formBuilder->submission->formresults['formname']);
+	unset($formBuilder->submission->formresults['fileupload']);
+	unset($formBuilder->submission->formresults['userid']);
+
+	$formBuilder->submission->formresults['submissiontime']	= $formBuilder->submission->timecreated;
+	$formBuilder->submission->formresults['edittime']		= $formBuilder->submission->timelastedited;
+		
+	$formBuilder->submission->formresults['formurl']		= $_POST['formurl'];
 	
-	$formBuilder->formResults = apply_filters('sim_before_saving_formdata', $formBuilder->formResults, $formBuilder->formData->name, $formBuilder->userId);
+	$formBuilder->submission->formresults 					= apply_filters('sim_before_saving_formdata', $formBuilder->submission->formresults, $formBuilder->formData->name, $formBuilder->userId);
 	
 	$message = $formBuilder->formData->settings['succesmessage'];
 	if(empty($message)){
@@ -601,10 +616,10 @@ function saveFormInput(){
 	//save to submission table
 	if(empty($formBuilder->formData->settings['save_in_meta'])){
 		//Get the id from db before insert so we can use it in emails and file uploads
-		$formBuilder->formResults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$formBuilder->submissionTableName}') AND table_schema='$wpdb->dbname'");
+		$formBuilder->submission->formresults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$formBuilder->submissionTableName}') AND table_schema='$wpdb->dbname'");
 		
 		//sort arrays
-		foreach($formBuilder->formResults as $key=>$result){
+		foreach($formBuilder->submission->formresults as $key=>$result){
 			if(is_array($result)){
 				//check if this a aray of uploaded files
 				if(!is_array(array_values($result)[0]) && strpos(array_values($result)[0],'wp-content/uploads/') !== false){
@@ -613,28 +628,17 @@ function saveFormInput(){
 				}else{
 					//sort the array
 					ksort($result);
-					$formBuilder->formResults[$key] = $result;
+					$formBuilder->submission->formresults[$key] = $result;
 				}
 			}
 		}
 
-		$creationDate	= date("Y-m-d H:i:s");
-		$formUrl		= $_POST['formurl'];
-		
-		$formBuilder->formResults['formurl']			= $formUrl;
-		$formBuilder->formResults['submissiontime']		= $creationDate;
-		$formBuilder->formResults['edittime']			= $creationDate;
-		
+		$submission = (array) $formBuilder->submission;
+		$submission['formresults']	= serialize($formBuilder->submission->formresults);
+
 		$wpdb->insert(
 			$formBuilder->submissionTableName,
-			array(
-				'form_id'			=> $formId,
-				'timecreated'		=> $creationDate,
-				'timelastedited'	=> $creationDate,
-				'userid'			=> $formBuilder->userId,
-				'formresults'		=> maybe_serialize($formBuilder->formResults),
-				'archived'			=> false
-			)
+			$submission
 		);
 		
 		$formBuilder->sendEmail();
@@ -642,19 +646,19 @@ function saveFormInput(){
 		if($wpdb->last_error !== ''){
 			$message	=  new \WP_Error('error', $wpdb->last_error);
 		}else{
-			$message	= "$message  \nYour id is {$formBuilder->formResults['id']}";
+			$message	= "$message  \nYour id is {$formBuilder->submission->formresults['id']}";
 		}
 	//save to user meta
 	}else{
-		unset($formBuilder->formResults['formurl']);
+		unset($formBuilder->submission->formresults['formurl']);
 		
 		//get user data as array
 		$userData		= (array)get_userdata($formBuilder->userId)->data;
-		foreach($formBuilder->formResults as $key=>$result){
+		foreach($formBuilder->submission->formresults as $key=>$result){
 			//remove empty elements from the array
 			if(is_array($result)){
 				SIM\cleanUpNestedArray($result);
-				$formBuilder->formResults[$key]	= $result;
+				$formBuilder->submission->formresults[$key]	= $result;
 			}
 			//update in the _users table
 			if(isset($userData[$key])){
