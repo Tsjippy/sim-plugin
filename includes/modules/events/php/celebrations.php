@@ -167,6 +167,9 @@ function anniversaryMessages(){
 			$partner		= get_userdata($partnerId);
 		}
 		$userdata	= get_userdata($userId);
+		if(!$userdata){
+			continue;
+		}
 
 		if($userId  == $currentUser->ID){
 			$coupleLink	= "of you and your spouse my dear $currentUser->first_name!<br>";
@@ -185,6 +188,10 @@ function anniversaryMessages(){
 		$message	= str_replace($userdata->display_name, $link, $message);
 
 		$messageString	.= $message;
+	}
+
+	if(empty($messageString)){
+		return '';
 	}
 
 	$html = '<div name="anniversaries" style="text-align: center; font-size: 18px;">';
