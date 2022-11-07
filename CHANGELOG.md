@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.22.3] - 2022-11-07
+
+
+### Fixed
 - only load filterable values if needed
 
 ## [2.22.2] - 2022-11-07
