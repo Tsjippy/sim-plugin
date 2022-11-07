@@ -8,6 +8,7 @@
 - failed e-mail message
 
 ### Fixed
+- major bug in form results with splitfield
 
 ## [2.22.1] - 2022-11-04
 
