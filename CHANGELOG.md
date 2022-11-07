@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.22.2] - 2022-11-07
+
+
+### Changed
 - failed e-mail message
 
 ### Fixed
