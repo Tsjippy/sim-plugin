@@ -9,6 +9,7 @@
 
 ### Fixed
 - major bug in form results with splitfield
+- prayer request
 
 ## [2.22.1] - 2022-11-04
 
