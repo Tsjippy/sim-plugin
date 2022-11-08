@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- no speed in page gallery
 
 ## [2.22.3] - 2022-11-07
 
