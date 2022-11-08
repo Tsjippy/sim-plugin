@@ -8,6 +8,7 @@
 - visibility reset message
 
 ### Fixed
+- issue with elements with [] in the name
 
 ## [2.22.4] - 2022-11-08
 
