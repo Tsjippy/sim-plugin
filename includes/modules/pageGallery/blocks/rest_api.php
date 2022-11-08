@@ -10,8 +10,8 @@ add_action( 'rest_api_init', function () {
 		'/show_page_gallery',
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> function($wp_rest_request){
-				$params			= $wp_rest_request->get_params();
+			'callback' 				=> function($wpRestRequest){
+				$params			= $wpRestRequest->get_params();
 
 				$categories		= json_decode($params['categories'], true);
 				if(empty($categories)){

@@ -200,13 +200,13 @@ function vaccinationReminders($userId){
 
 /**
  * Check expiry date of all vacination
- * 
+ *
  * @param	string	$date			The expiry date
  * @param	string	$expiryName		The name of the vaccination
- * 
+ *
  * @return	string					Html listing all vaccination who are expired
  */
-function checkExpiryDate($date, $expiryName){	
+function checkExpiryDate($date, $expiryName){
 	$vaccinationWarningTime	= SIM\getModuleOption(MODULE_SLUG, 'vaccination_warning_time');
 	if ($vaccinationWarningTime && !empty($date)){
 		$reminderHtml 	= "";

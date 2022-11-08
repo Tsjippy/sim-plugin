@@ -17,19 +17,19 @@ add_filter('sim_allowed_rest_api_urls', function($urls){
     $urls[]	= RESTAPIPREFIX.'/login/auth_start';
     $urls[] = RESTAPIPREFIX.'/login/request_email_code';
     $urls[] = RESTAPIPREFIX.'/login/check_cred';
-    $urls[] = RESTAPIPREFIX.'/login/request_login'; 
-    $urls[] = RESTAPIPREFIX.'/login/request_pwd_reset';    
+    $urls[] = RESTAPIPREFIX.'/login/request_login';
+    $urls[] = RESTAPIPREFIX.'/login/request_pwd_reset';
     $urls[] = RESTAPIPREFIX.'/login/update_password';
-    $urls[] = RESTAPIPREFIX.'/login/request_user_account'; 
+    $urls[] = RESTAPIPREFIX.'/login/request_user_account';
 
     return $urls;
 });
 
 add_action( 'rest_api_init', function () {
     // Send authentication request for storing fingerprint
-	register_rest_route( 
-        RESTAPIPREFIX.'/login', 
-        '/fingerprint_options', 
+	register_rest_route(
+        RESTAPIPREFIX.'/login',
+        '/fingerprint_options',
         array(
             'methods'               => 'POST,GET',
             'callback'              => __NAMESPACE__.'\biometricOptions',
@@ -43,9 +43,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // Verify and store fingerprint
-    register_rest_route( 
-        RESTAPIPREFIX.'/login', 
-        '/store_fingerprint', 
+    register_rest_route(
+        RESTAPIPREFIX.'/login',
+        '/store_fingerprint',
         array(
             'methods'               => 'POST,GET',
             'callback'              => __NAMESPACE__.'\storeBiometric',
@@ -59,9 +59,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // Send authentication request for login
-    register_rest_route( 
-        RESTAPIPREFIX.'/login', 
-        '/auth_start', 
+    register_rest_route(
+        RESTAPIPREFIX.'/login',
+        '/auth_start',
         array(
             'methods' => 'POST',
             'callback' => __NAMESPACE__.'\startAuthentication',
@@ -75,9 +75,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     //verify fingerprint for login
-    register_rest_route( 
-        RESTAPIPREFIX.'/login', 
-        '/auth_finish', 
+    register_rest_route(
+        RESTAPIPREFIX.'/login',
+        '/auth_finish',
         array(
             'methods' => 'POST,GET',
             'callback' => __NAMESPACE__.'\finishAuthentication',
@@ -91,9 +91,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// send email code
-	register_rest_route( 
-		RESTAPIPREFIX.'/login', 
-		'/request_email_code', 
+	register_rest_route(
+		RESTAPIPREFIX.'/login',
+		'/request_email_code',
 		array(
 			'methods' 				=> 'POST, GET',
 			'callback' 				=>  __NAMESPACE__.'\requestEmailCode',
@@ -107,9 +107,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // check credentials
-	register_rest_route( 
-		RESTAPIPREFIX.'/login', 
-		'/check_cred', 
+	register_rest_route(
+		RESTAPIPREFIX.'/login',
+		'/check_cred',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\checkCredentials',
@@ -126,9 +126,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // save_2fa_settings
-	register_rest_route( 
-		RESTAPIPREFIX.'/login', 
-		'/save_2fa_settings', 
+	register_rest_route(
+		RESTAPIPREFIX.'/login',
+		'/save_2fa_settings',
 		array(
 			'methods' 				=> 'GET,POST',
 			'callback' 				=> __NAMESPACE__.'\saveTwoFaSettings',
@@ -145,9 +145,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // remove_web_authenticator
-	register_rest_route( 
-		RESTAPIPREFIX.'/login', 
-		'/remove_web_authenticator', 
+	register_rest_route(
+		RESTAPIPREFIX.'/login',
+		'/remove_web_authenticator',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\removeWebAuthenticator',
@@ -161,9 +161,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // request_login
-	register_rest_route( 
-		RESTAPIPREFIX.'/login', 
-		'/request_login', 
+	register_rest_route(
+		RESTAPIPREFIX.'/login',
+		'/request_login',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\userLogin',
@@ -180,9 +180,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // logout
-	register_rest_route( 
-		RESTAPIPREFIX.'/login', 
-		'/logout', 
+	register_rest_route(
+		RESTAPIPREFIX.'/login',
+		'/logout',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -194,9 +194,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // request_pwd_reset
-	register_rest_route( 
-		RESTAPIPREFIX.'/login', 
-		'/request_pwd_reset', 
+	register_rest_route(
+		RESTAPIPREFIX.'/login',
+		'/request_pwd_reset',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\requestPasswordReset',
@@ -210,9 +210,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // update password
-	register_rest_route( 
-		RESTAPIPREFIX.'/login', 
-		'/update_password', 
+	register_rest_route(
+		RESTAPIPREFIX.'/login',
+		'/update_password',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\processPasswordUpdate',
@@ -233,9 +233,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // request_user_account
-	register_rest_route( 
-		RESTAPIPREFIX.'/login', 
-		'/request_user_account', 
+	register_rest_route(
+		RESTAPIPREFIX.'/login',
+		'/request_user_account',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\requestUserAccount',
@@ -322,19 +322,19 @@ function biometricOptions(){
         }, $credentialSources);
 
         // Set authenticator type
-        $authenticator_type = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_PLATFORM;
-        //$authenticator_type = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM;
-        //$authenticator_type = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_NO_PREFERENCE;
+        $authenticatorType = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_PLATFORM;
+        //$authenticatorType = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM;
+        //$authenticatorType = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_NO_PREFERENCE;
 
         // Set user verification
-        //$user_verification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED;
-        $user_verification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED;
+        //$userVerification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED;
+        $userVerification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED;
 
         // Create authenticator selection
         $authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria(
-            $authenticator_type,
+            $authenticatorType,
             false,
-            $user_verification
+            $userVerification
         );
 
         // Create a creation challenge
@@ -365,11 +365,11 @@ function biometricOptions(){
 // Verify and save the attestation
 function storeBiometric(){
     try{
-        $credential_id  = sanitize_text_field($_POST["publicKeyCredential"]);
+        $credentialId  = sanitize_text_field($_POST["publicKeyCredential"]);
 
         // Check param
-        if(empty($credential_id)){
-            return new WP_Error('Logged in error', "No credential_id given");
+        if(empty($credentialId)){
+            return new WP_Error('Logged in error', "No credential id given");
         }
 
         $user                                   = wp_get_current_user();
@@ -388,8 +388,8 @@ function storeBiometric(){
 
         // Check global unique credential ID
         $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user);
-        if($publicKeyCredentialSourceRepository->findOneMetaByCredentialId($credential_id) !== null){
-            SIM\printArray("ajax_create_response: (ERROR)Credential ID not unique, ID => \"".base64_encode($credential_id)."\" , exit");
+        if($publicKeyCredentialSourceRepository->findOneMetaByCredentialId($credentialId) !== null){
+            SIM\printArray("ajax_create_response: (ERROR)Credential ID not unique, ID => \"".base64_encode($credentialId)."\" , exit");
             return new WP_Error('Logged in error', "Credential ID not unique");
         }
 
@@ -410,9 +410,9 @@ function storeBiometric(){
         );
 
         // Allow to bypass scheme verification when under localhost
-        $current_domain = 'localhost';
-        if($current_domain === "localhost" || $current_domain === "127.0.0.1"){
-            $server->setSecuredRelyingPartyId([$current_domain]);
+        $currentDomain = 'localhost';
+        if($currentDomain === "localhost" || $currentDomain === "127.0.0.1"){
+            $server->setSecuredRelyingPartyId([$currentDomain]);
         }
 
         // Verify
@@ -451,7 +451,7 @@ function storeBiometric(){
             $methods[]  = 'webauthn';
             update_user_meta($user->ID, '2fa_methods', $methods);
         }
-        
+
         // Success
         return authTable();
     }catch(\Exception $exception){
@@ -469,13 +469,13 @@ function storeBiometric(){
 function startAuthentication(){
     try{
         $user           = get_user_by('login', $_POST['username']);
-        
+
         if(!$user){
             return new WP_Error('User error', "No user with user name {$_POST['username']} found.");
         }
-        
+
         $webauthnKey    = get_user_meta($user->ID, '2fa_webauthn_key', true);
-        
+
         //User has no webauthn yet
         if(!$webauthnKey){
             if(!isset($_SESSION)){
@@ -517,13 +517,13 @@ function startAuthentication(){
         }, $credentialSources);
 
         // Set user verification
-        $user_verification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED;
-        //$user_verification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED;
-        //$user_verification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_DISCOURAGED;
+        $userVerification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED;
+        //$userVerification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED;
+        //$userVerification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_DISCOURAGED;
 
         // Create a auth challenge
         $publicKeyCredentialRequestOptions = $server->generatePublicKeyCredentialRequestOptions(
-            $user_verification,
+            $userVerification,
             $allowedCredentials
         );
 
@@ -551,12 +551,12 @@ function finishAuthentication(){
         $publicKeyCredential                = sanitize_text_field(stripslashes($_POST['publicKeyCredential']));
 
         $publicKeyCredentialRequestOptions  = getFromTransient("pkcco_auth");
-        $user_name_auth                     = getFromTransient("user_name_auth");
+        $userNameAuth                       = getFromTransient("user_name_auth");
         $userEntity                         = getFromTransient("user_auth");
         $user                               = getFromTransient("user");
 
         // May not get the challenge yet
-        if(empty($publicKeyCredentialRequestOptions) || empty($user_name_auth) || empty($userEntity)){
+        if(empty($publicKeyCredentialRequestOptions) || empty($userNameAuth) || empty($userEntity)){
             SIM\printArray("ajax_auth_response: (ERROR)Challenge not found in transient, exit");
             return new WP_Error('webauthn',"Bad request.");
         }
@@ -593,9 +593,9 @@ function finishAuthentication(){
         );
 
         // Allow to bypass scheme verification when under localhost
-        $current_domain = $_SERVER['HTTP_HOST'];
-        if($current_domain === "localhost" || $current_domain === "127.0.0.1"){
-            $server->setSecuredRelyingPartyId([$current_domain]);
+        $currentDomain = $_SERVER['HTTP_HOST'];
+        if($currentDomain === "localhost" || $currentDomain === "127.0.0.1"){
+            $server->setSecuredRelyingPartyId([$currentDomain]);
             //bypass webauthn on local host
             //$_SESSION['webauthn']   = 'success';
             //return true;
@@ -649,7 +649,7 @@ function checkCredentials(){
         $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
         SIM\cleanUpNestedArray($methods);
-        
+
         //return the methods
         if(!empty($methods)){
             return array_values($methods);
@@ -663,13 +663,13 @@ function checkCredentials(){
 }
 
 // Save 2fa options
-function saveTwoFaSettings(){    
+function saveTwoFaSettings(){
     $userId = get_current_user_id();
 
     $newMethods    = $_POST['2fa_methods'];
 
     $oldMethods    = (array)get_user_meta($userId,'2fa_methods', true);
-    
+
     $twofa          = new TwoFactorAuth();
 
     $message        = 'Nothing to update';
@@ -689,7 +689,7 @@ function saveTwoFaSettings(){
         if(!password_verify($secretkey,$hash)){
             return new WP_Error('Secretkey error',"Why do you try to hack me?");
         }
-            
+
         $last2fa        = '';
         if($twofa->verifyCode($secretkey, $secret, 1, null, $last2fa)){
             //store in usermeta
@@ -697,7 +697,7 @@ function saveTwoFaSettings(){
             update_user_meta($userId, '2fa_last', $last2fa);
         }else{
             return new WP_Error('Invalid 2fa code', "Your code is expired");
-        } 
+        }
 
         $message    = "Succesfully enabled authenticator as a second factor";
     }
@@ -716,7 +716,7 @@ function saveTwoFaSettings(){
             //Send e-mail
             $emailVerfEnabled    = new EmailVerfEnabled($userdata);
             $emailVerfEnabled->filterMail();
-                            
+
             wp_mail( $userdata->user_email, $emailVerfEnabled->subject, $emailVerfEnabled->message);
 
             $message    = 'Enabled e-mail verification';
@@ -745,10 +745,10 @@ function userLogin(){
     $creds = array(
         'user_login'    => $username,
         'user_password' => $password,
-        'remember'      => $remember 
+        'remember'      => $remember
     );
     $user = wp_signon( $creds);
- 
+
     if ( is_wp_error( $user ) ) {
         return new WP_Error('Login error', $user->get_error_message());
     }
@@ -775,7 +775,7 @@ function userLogin(){
         }
     }
     update_user_meta( $user->ID, 'login_count', $login_count );
-    
+
     //store login date
     update_user_meta( $user->ID, 'last_login_date',date('Y-m-d'));
 
@@ -800,7 +800,7 @@ function userLogin(){
 
     if(!empty($redirect)){
         return $redirect;
-    }elseif(rtrim( $_SERVER['HTTP_REFERER'], '/' ) == rtrim(home_url(), '/')){        
+    }elseif(rtrim( $_SERVER['HTTP_REFERER'], '/' ) == rtrim(home_url(), '/')){
         //get 2fa methods for this user
         $methods  = get_user_meta($user->ID,'2fa_methods',true);
 
@@ -811,7 +811,7 @@ function userLogin(){
                 return $url;
             }
         }
-        
+
         //redirect to account page to fill in required fields
         if (!isset($_SESSION['showpage']) && !empty($fieldList) && is_numeric($accountPageId)){
             return get_permalink($accountPageId);
@@ -845,9 +845,9 @@ function requestPasswordReset(){
     if(is_wp_error($result)){
         return new WP_Error('pw reset error', $result->get_error_message());
     }
-    
+
 	return "Password reset link send to $email";
-} 
+}
 
 //Save a new password
 function processPasswordUpdate(){

@@ -22,7 +22,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	 /**
+	/**
 	 * Get formresults of the current form
 	 *
 	 * @param	int		$userId			Optional the user id to get the results of. Default null
@@ -89,7 +89,7 @@ class DisplayFormResults extends DisplayForm{
 		return $result;
 	}
 
-	 /**
+	/**
 	 * Set formresults of the current form
 	 *
 	 * @param	int		$userId			Optional the user id to get the results of. Default null
@@ -115,7 +115,7 @@ class DisplayFormResults extends DisplayForm{
 		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 	}
 
-		 /**
+	/**
 	 * This function creates seperated entries from entries with an splitted value
 	 */
 	protected function processSplittedData(){

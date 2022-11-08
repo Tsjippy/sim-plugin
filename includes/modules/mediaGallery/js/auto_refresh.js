@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
 let reloadMediaGallery   = async function(gallery, first=false){
     let speed   = gallery.dataset.speed;
 
+    if(typeof(speed) != 'number'){
+        return;
+    }
+
     let newGallery  = gallery
 
     if(!first){

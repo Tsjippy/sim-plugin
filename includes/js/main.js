@@ -141,7 +141,7 @@ export function getRoute(target,lat,lon){
 
 function bodyScrolling(type){
 	//don't do anything on homepage
-	if(document.querySelector('body').classList.contains('home')) return;
+	//if(document.querySelector('body').classList.contains('home')) return;
 	
 	if(type == 'disable'){
 		//disable scrolling of the body

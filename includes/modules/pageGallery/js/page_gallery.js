@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
 let reloadPageGallery   = async function(gallery, first=false){
     let speed   = gallery.dataset.speed;
 
+    if(typeof(speed) != 'number'){
+        return;
+    }
+
     let newGallery  = gallery
 
     if(!first){
@@ -20,7 +24,7 @@ let reloadPageGallery   = async function(gallery, first=false){
         formData.append('categories', gallery.dataset.categories);
         formData.append('speed', speed);
         formData.append('title', gallery.querySelector('.page-gallery-title').textContent);
-        var response = await FormSubmit.fetchRestApi('pagegallery/show_page_gallery', formData);
+        var response = await FormSubmit.fetchRestApi('pagegallery/show_page_gallery', formData, false);
 
         if(response){
             // convert the html to a node so we can pass it on to the next iteration
