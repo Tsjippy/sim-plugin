@@ -292,7 +292,7 @@ class Signal {
         return $output;
     }
 
-     /**
+    /**
      * Update the name and avatar image visible by message recipients for the current users.
      * The profile is stored encrypted on the Signal servers.
      * The decryption key is sent with every outgoing messages to contacts.
@@ -322,7 +322,7 @@ class Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * Link to an existing device, instead of registering a new number.
      * This shows a "tsdevice:/…" URI.
      * If you want to connect to another signal-cli instance, you can just use this URI.
@@ -393,7 +393,7 @@ class Signal {
         return "<img loading='lazy' src='data:image/png;base64, $qrcodeImage'/><br>$link";
     }
 
-     /**
+    /**
      * Link another device to this device.
      * Only works, if this is the master device
      * @param string $uri Specify the uri contained in the QR code shown by the new device.
@@ -411,7 +411,7 @@ class Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * Show a list of connected devices
      * @return array|null
      */
@@ -428,7 +428,7 @@ class Signal {
         return json_decode($this->parseResult(true));
     }
 
-     /**
+    /**
      * Remove a connected device. Only works, if this is the master device
      * @param int $deviceId Specify the device you want to remove. Use listDevices to see the deviceIds
      * @return bool|string
@@ -446,7 +446,7 @@ class Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * Update the account attributes on the signal server.
      * Can fix problems with receiving messages
      * @return bool
@@ -462,7 +462,7 @@ class Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * Private function to create group, update group and add members in the group
      * @param string|null $name Specify the new group name
      * @param array $members Specify one or more members to add to the group
@@ -498,7 +498,7 @@ class Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * Create Group
      * @param string $name
      * @param array $members
@@ -520,7 +520,7 @@ class Signal {
         return $this->_createOrUpdateGroup(null,$members,null,$groupId);
     }
 
-     /**
+    /**
      * List Groups
      * @return array|string
      */
@@ -539,7 +539,7 @@ class Signal {
         return json_decode($this->parseResult(true));
     }
 
-     /**
+    /**
      * Join a group via an invitation link.
      * To be able to join a v2 group the account needs to have a profile (can be created with the updateProfile command)
      * @param string $uri The invitation link URI (starts with https://signal.group/#)
@@ -577,7 +577,7 @@ class Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * Query the server for new messages.
      * New messages are printed on standard output and attachments are downloaded to the config directory.
      * In json mode this is outputted as one json object per line
@@ -717,7 +717,7 @@ class Signal {
                 // stop the deamon
                 exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
 
-                exec("rmdir -rf $this->programPath");
+                exec("rm -rfd $this->programPath");
             }
         }
 
