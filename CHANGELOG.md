@@ -8,6 +8,7 @@
 - visibility reset message
 
 ### Fixed
+- updating signal on ubuntu
 
 ## [2.22.4] - 2022-11-08
 
