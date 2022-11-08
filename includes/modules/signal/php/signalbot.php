@@ -26,8 +26,6 @@ function sendPostNotification($post){
 	delete_post_meta($post->ID, 'signal_message_type');
 	delete_post_meta($post->ID, 'signal_url');
 	delete_post_meta($post->ID, 'signal_extra_message');
-	
-	SIM\printArray($post, true);
 
 	if($signalMessageType == 'all'){
 		$excerpt	= $post->post_content;

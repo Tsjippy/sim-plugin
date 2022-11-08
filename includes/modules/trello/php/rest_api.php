@@ -4,9 +4,9 @@ use SIM;
 
 add_action( 'rest_api_init', function () {
 	//Route for notification messages
-	register_rest_route( 
-		RESTAPIPREFIX.'', 
-		'/trello', 
+	register_rest_route(
+		RESTAPIPREFIX.'',
+		'/trello',
 		array(
 			'methods' 				=> \WP_REST_Server::ALLMETHODS,
 			'callback' 				=> __NAMESPACE__.'\trelloActions',
@@ -59,9 +59,9 @@ function trelloActions( \WP_REST_Request $request ) {
 			$userId = $userProps['user_id'];
 			
 		//create an user account
-		}elseif(!empty($userProps['email address']) and !empty($userProps['first name']) and !empty($userProps['last name'])  and !empty($userProps['duration'])){
-			SIM\printArray('Creating user account from trello',true);
-			SIM\printArray($userProps,true);
+		}elseif(!empty($userProps['email address']) && !empty($userProps['first name']) && !empty($userProps['last name']) && !empty($userProps['duration'])){
+			SIM\printArray('Creating user account from trello', true);
+			SIM\printArray($userProps);
 			
 			//Find the duration number an quantifier in the result
 			$pattern = "/([0-9]+) (months?|years?)/i";
@@ -99,8 +99,8 @@ function trelloActions( \WP_REST_Request $request ) {
 		
 		$username = get_userdata($userId)->user_login;
 		
-		/* 		
-			SAVE COVER IMAGE AS PROFILE PICTURE 
+		/*
+			SAVE COVER IMAGE AS PROFILE PICTURE
 		*/
 		//Get the cover image url
 		$url = $trello->getCoverImage($cardId);

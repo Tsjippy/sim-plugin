@@ -128,8 +128,6 @@ class SignalBus extends Signal {
 
         $link   = $this->command->getOutput();
 
-        SIM\printArray("Link is <code>$link</code>", true);
-
         $link   = str_replace(['\n', '"'], ['\0', ''], $link);
 
         if (!extension_loaded('imagick')){
@@ -369,7 +367,6 @@ class SignalBus extends Signal {
 
     public function startDaemon(){
         if($this->OS == 'Windows'){
-            SIM\printArray('exiting', true);
             return;
         }
 
@@ -385,11 +382,6 @@ class SignalBus extends Signal {
 
             $command->execute();
         }
-
-       /*  if(!$this->daemonIsRunning()){
-            SIM\printArray($command, true);
-            return;
-        } */
  
         $this->daemon   = true;
     }
