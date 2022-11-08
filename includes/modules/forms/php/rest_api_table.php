@@ -188,7 +188,7 @@ function saveTablePrefs( \WP_REST_Request $request ) {
 
 		$hiddenColumns[$columnName]	= 'hidden';
 
-		update_user_meta($userId, 'hidden_columns_'.$request['formid'], $hiddenColumns);	
+		update_user_meta($userId, 'hidden_columns_'.$request['formid'], $hiddenColumns);
 
 		return 'Succesfully updated column settings';
 	}else{
@@ -201,7 +201,7 @@ function deleteTablePrefs( \WP_REST_Request $request ) {
 		$userId		= get_current_user_id();
 		delete_user_meta($userId, 'hidden_columns_'.$request['formid']);
 
-		return 'Succesfully deleted column settings';
+		return 'Succesfully reset column visibility';
 	}else{
 		return new \WP_Error('error','You are not logged in');
 	}
