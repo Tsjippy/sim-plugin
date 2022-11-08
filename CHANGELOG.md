@@ -5,14 +5,9 @@
 ### Added
 
 ### Changed
+- visibility reset message
 
 ### Fixed
-
-## [2.22.5] - 2022-11-08
-
-
-### Changed
-- visibility reset message
 
 ## [2.22.4] - 2022-11-08
 
