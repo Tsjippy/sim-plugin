@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- visibility reset message
 
 ### Fixed
 
