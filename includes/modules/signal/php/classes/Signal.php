@@ -716,6 +716,8 @@ class Signal {
             }else{
                 // stop the deamon
                 exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
+                exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
+                exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
 
                 exec("rm -rfd $this->programPath");
             }
