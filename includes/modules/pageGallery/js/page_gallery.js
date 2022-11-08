@@ -2,11 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Page gallery.js loaded');
     document.querySelectorAll('.page-gallery-article').forEach(gallery => {
         reloadPageGallery(gallery, true);
-    })
-
-    
+    });
 });
-
 
 let reloadPageGallery   = async function(gallery, first=false){
     let speed   = gallery.dataset.speed;

@@ -5,8 +5,8 @@ use SIM;
 add_action( 'rest_api_init', function () {
 	//add_schedule
 	register_rest_route(
-		RESTAPIPREFIX.'/events', 
-		'/add_schedule', 
+		RESTAPIPREFIX.'/events',
+		'/add_schedule',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -32,9 +32,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	//publish_schedule
-	register_rest_route( 
-		RESTAPIPREFIX.'/events', 
-		'/publish_schedule', 
+	register_rest_route(
+		RESTAPIPREFIX.'/events',
+		'/publish_schedule',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -59,9 +59,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	//remove_schedule
-	register_rest_route( 
-		RESTAPIPREFIX.'/events', 
-		'/remove_schedule', 
+	register_rest_route(
+		RESTAPIPREFIX.'/events',
+		'/remove_schedule',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -82,9 +82,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	//add_host
-	register_rest_route( 
-		RESTAPIPREFIX.'/events', 
-		'/add_host', 
+	register_rest_route(
+		RESTAPIPREFIX.'/events',
+		'/add_host',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -114,9 +114,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	//remove_host
-	register_rest_route( 
-		RESTAPIPREFIX.'/events', 
-		'/remove_host', 
+	register_rest_route(
+		RESTAPIPREFIX.'/events',
+		'/remove_host',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
@@ -152,9 +152,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	//add_menu
-	register_rest_route( 
-		RESTAPIPREFIX.'/events', 
-		'/add_menu', 
+	register_rest_route(
+		RESTAPIPREFIX.'/events',
+		'/add_menu',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){

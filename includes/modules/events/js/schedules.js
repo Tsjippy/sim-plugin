@@ -111,11 +111,11 @@ async function addHost(target){
 		cell.classList.remove('ui-selected', 'active', 'selected');
 		cell.removeAttribute('rowspan');
 
-		let date	= form.querySelector('[name="date"]').value;
-		let time	= form.querySelector('[name="starttime"]').value;
-		let columnNr= cell.closest('table').tHead.querySelector(`[data-isodate="${date}"]`).cellIndex;
+		let date		= form.querySelector('[name="date"]').value;
+		let time		= form.querySelector('[name="starttime"]').value;
+		let columnNr	= cell.closest('table').tHead.querySelector(`[data-isodate="${date}"]`).cellIndex;
 		// Add the new one
-		let newCell	= cell.closest('table').querySelector(`tr[data-starttime="${time}"]`).cells[columnNr];
+		let newCell		= cell.closest('table').querySelector(`tr[data-starttime="${time}"]`).cells[columnNr];
 		newCell.classList.add('ui-selected', 'active', 'selected');
 		newCell.innerHTML	= cell.innerHTML;
 
@@ -233,7 +233,7 @@ function showTimeslotModal(selected){
 	var date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 	
 	// Clear
-	modal.querySelectorAll('input:not([type="hidden"])').forEach(el=>el.value='')
+	modal.querySelectorAll('input:not([type="hidden"], [type="checkbox"], [type="radio"])').forEach(el=>el.value='')
 
 	//Fill the modal values
 	modal.querySelector('[name="schedule_id"]').value		= table.dataset["id"];
@@ -476,6 +476,8 @@ document.addEventListener("DOMContentLoaded",function() {
 
 document.addEventListener('click',function(event){
 	target = event.target;
+
+	console.log(target);
 
 	if(target.name == 'add_schedule'){
 		event.stopPropagation();
