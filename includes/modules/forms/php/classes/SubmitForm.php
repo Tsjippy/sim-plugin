@@ -54,7 +54,7 @@ class SubmitForm extends SimForms{
 		foreach($emails as $key=>$email){
 			if($email['emailtrigger'] == $trigger){
 				if($trigger == 'fieldchanged'){
-					$elementName	= $this->getElementById($email['conditionalfield'], 'name');
+					$elementName	= str_replace('[]', '', $this->getElementById($email['conditionalfield'], 'name'));
 					$formValue 		= strtolower($this->submission->formresults[$elementName]);
 					$compareValue	= strtolower($email['conditionalvalue']);
 

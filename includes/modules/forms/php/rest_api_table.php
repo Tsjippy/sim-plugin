@@ -440,7 +440,6 @@ function editValue(){
 	$submitForm					= new SubmitForm();
 	$submitForm->getForm($_POST['formid']);
 	$submitForm->submission		= new stdClass();
-	$submitForm->submission->formresults	= $formTable->submission->formresults;
 	$submitForm->sendEmail('fieldchanged');
 	
 	//send message back to js
