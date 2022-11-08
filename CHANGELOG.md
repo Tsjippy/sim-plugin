@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.22.4] - 2022-11-08
+
+
+### Fixed
 - no speed in page gallery
 - menu scroll on homepage
 - ajax requests
