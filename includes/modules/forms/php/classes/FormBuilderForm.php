@@ -827,7 +827,7 @@ class FormBuilderForm extends SimForms{
 			
 			<input type="hidden" name="formfield[width]" value="100">
 			
-			<label>Select which kind of form element you want to add</label>
+			<label>Select which kind of form element you want to add</label><br>
 			<select class="formbuilder elementtype" name="formfield[type]" required>
 				<optgroup label="Normal elements">
 					<?php

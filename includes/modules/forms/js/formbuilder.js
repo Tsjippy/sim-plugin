@@ -60,9 +60,9 @@ async function showEmptyModal(target){
 		modal.querySelector('[name="insertafter"]').value = formElementWrapper.dataset.priority;
 	}
 	
-	modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Update','Add');
+	modal.querySelector('[name="submit_form_element"]').textContent = modal.querySelector('[name="submit_form_element"]').textContent.replace('Change','Add');
 	
-	modal.querySelector('.element_conditions_wrapper').innerHTML = '<img src="'+sim.loadingGif+'" style="display:block; margin:0px auto 0px auto;">';
+	modal.querySelector('.element_conditions_wrapper').innerHTML = `<img src="${sim.loadingGif}" style="display:block; margin:0px auto 0px auto;">`;
 	
 	Main.showModal(modal);
 
