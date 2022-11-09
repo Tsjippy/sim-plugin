@@ -81,7 +81,7 @@ class Signal {
         }
     }
 
-     /**
+    /**
      * Register a phone number with SMS or voice verification. Use the verify command to complete the verification.
      * Default verify with SMS
      * @param bool $voiceVerification The verification should be done over voice, not SMS.
@@ -89,7 +89,7 @@ class Signal {
      * @return bool|string
      */
     
-     public function register(string $phone, string $captcha, bool $voiceVerification = false)
+    public function register(string $phone, string $captcha, bool $voiceVerification = false)
     {
         //dbus-send --session --dest=org.asamk.Signal --type=method_call --print-reply /org/asamk/Signal org.asamk.Signal.link string:"My secondary client" | tr '\n' '\0' | sed 's/.*string //g' | sed 's/\"//g' | qrencode -s10 -tANSI256
 
@@ -144,14 +144,14 @@ class Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * Uses a list of phone numbers to determine the statuses of those users.
      * Shows if they are registered on the Signal Servers or not.
      * @param string|array $recipients One or more numbers to check.
      * @return string|string
      */
     
-     public function getUserStatus($recipients)
+    public function getUserStatus($recipients)
     {
         if(!is_array($recipients)){
             $recipients    = [$recipients];

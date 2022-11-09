@@ -69,10 +69,14 @@ function registerForm(){
 
 add_action('sim-admin-settings-post', function(){
 
-	if(strpos(php_uname(), 'Linux') !== false){
-		$signal = new SignalBus();
-	}else{
-		$signal = new Signal();
+	$local	= SIM\getModuleOption(MODULE_SLUG, 'local');
+
+	if($local){
+		if(strpos(php_uname(), 'Linux') !== false){
+			$signal = new SignalBus();
+		}else{
+			$signal = new Signal();
+		}
 	}
 
 	if(isset($_GET['unregister'])){
