@@ -10,6 +10,8 @@
 
 ### Fixed
 - add button form builder
+- only show split field selector when
+there are options
 
 ## [2.22.6] - 2022-11-09
 
