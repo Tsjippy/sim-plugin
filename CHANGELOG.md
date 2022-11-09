@@ -3,6 +3,8 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- suport for multiple elements with the
+ same name if they end on []
 
 ### Changed
 
