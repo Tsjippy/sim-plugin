@@ -470,27 +470,18 @@ class FormBuilderForm extends SimForms{
 									}else{
 										?><option value=''>---</option><?php
 									}
-									
-									$foundElements = [];
-									foreach($this->formElements as $key=>$element){
-										$pattern = "/([^\[]+)\[[0-9]+\]/i";
+
+									foreach($foundElements as $key=>$element){
+										$value 	= strtolower(str_replace('_', ' ', $element));
+										$name	= ucfirst($value);
 										
-										if(preg_match($pattern, $element->name, $matches)){
-											//Only add if not found before
-											if(!in_array($matches[1], $foundElements)){
-												$foundElements[]	= $matches[1];
-												$value 				= strtolower(str_replace('_', ' ', $matches[1]));
-												$name				= ucfirst($value);
-												
-												//Check which option is the selected one
-												if($settings['split'] == $value){
-													$selected = 'selected';
-												}else{
-													$selected = '';
-												}
-												echo "<option value='$value' $selected>$name</option>";
-											}
+										//Check which option is the selected one
+										if($settings['split'] == $value){
+											$selected = 'selected';
+										}else{
+											$selected = '';
 										}
+										echo "<option value='$value' $selected>$name</option>";
 									}
 									?>
 								</select>
