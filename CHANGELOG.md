@@ -9,6 +9,7 @@
 
 ### Fixed
 - updating signal on ubuntu
+- only load signal class when needed
 
 ## [2.22.4] - 2022-11-08
 
