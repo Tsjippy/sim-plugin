@@ -224,7 +224,8 @@ async function reorderformelements(event){
 		let difference = event.newIndex-event.oldIndex
 
 		let formData = new FormData();
-		formData.append('formid', event.item.dataset.formid);
+		formData.append('form_id', event.item.dataset.formid);
+		formData.append('el_id', event.item.dataset.id);
 		formData.append('old_index', oldIndex);
 		formData.append('new_index',(oldIndex + difference));
 		

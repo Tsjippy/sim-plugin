@@ -84,7 +84,11 @@ add_action( 'rest_api_init', function () {
 			'callback' 				=> 	__NAMESPACE__.'\reorderFormElements',
 			'permission_callback' 	=> __NAMESPACE__.'\checkPermissions',
 			'args'					=> array(
-				'formid'		=> array(
+				'form_id'		=> array(
+					'required'	=> true,
+					'validate_callback' => 'is_numeric'
+				),
+				'el_id'		=> array(
 					'required'	=> true,
 					'validate_callback' => 'is_numeric'
 				),
@@ -226,6 +230,99 @@ add_action( 'rest_api_init', function () {
 	);
 });
 
+function getUniqueName($element, $update, $oldElement, $simForms){
+	if(strpos($element->name, '[]') !== false || ($update && $oldElement->name == $element->name)){
+		return $element->name;
+	}
+
+	global $wpdb;
+
+	$unique = false;
+	
+	$i = '';
+	while(!$unique){
+		if($i == ''){
+			$elementName = $element->name;
+		}else{
+			$elementName = "{$element->name}_$i";
+		}
+		
+		$unique = true;
+		//loop over all elements to check if the names are equal
+		foreach($simForms->formElements as $index=>$el){
+			//don't compare with itself
+			if($update && $index == $_POST['element_id']){
+				continue;
+			}
+
+			//we found a duplicate name
+			if($elementName == $el->name){
+				$i++;
+				$unique = false;
+			}
+		}
+	}
+	//update the name
+	if($i != ''){
+		$element->name .= "_$i";
+	}
+
+	// only update previous submissions when an update of the name of existing element took place
+	if(!$update){
+		return $element->name;
+	}
+
+	// update splitted field
+	if($simForms->formData->settings['split'] == $oldElement->name){
+		// update the splitted field
+		$simForms->formData->settings['split']	= $element->name;
+
+		$result	= $simForms->updateFormSettings();
+
+		if(is_wp_error($result)){
+			return $result;
+		}
+	}
+
+	// update js
+	$simForms->createJs();
+
+	// Update column settings
+	$displayFormResults	= new DisplayFormResults();
+
+	$query						= "SELECT * FROM {$displayFormResults->shortcodeTable} WHERE form_id= '{$simForms->formData->id}'";
+	foreach($wpdb->get_results($query) as $data){
+		$displayFormResults->shortcodeId	= $data->id;
+		$displayFormResults->loadShortcodeData();
+		$displayFormResults->addColumnSetting($element);
+
+		saveColumnSettings($displayFormResults->columnSettings, $displayFormResults->shortcodeId);
+	}
+
+	// Update submission data
+	$displayFormResults->showArchived	= true;
+	$displayFormResults->getForm($simForms->formData->id);
+	$displayFormResults->parseSubmissions(null, null, true);
+
+	$submitForm	= new SubmitForm();
+
+	foreach($displayFormResults->submissions as $submission){
+		if(isset($submission->formresults[$oldElement->name])){
+			$submission->formresults[$element->name]	= $submission->formresults[$oldElement->name];
+			unset($submission->formresults[$oldElement->name]);
+		}
+		$wpdb->update(
+			$submitForm->submissionTableName,
+			array(
+				'formresults'	=> maybe_serialize($submission->formresults),
+			),
+			array(
+				'id'			=> $submission->id
+			)
+			);
+	}
+}
+
 // DONE
 function addFormElement(){
 	global $wpdb;
@@ -278,90 +375,9 @@ function addFormElement(){
 	}
 	
 	//Give an unique name
-	if(strpos($element->name, '[]') === false && (!$update || $oldElement->name != $element->name)){
-		global $wpdb;
-
-		$unique = false;
-		
-		$i = '';
-		while(!$unique){
-			if($i == ''){
-				$elementName = $element->name;
-			}else{
-				$elementName = "{$element->name}_$i";
-			}
-			
-			$unique = true;
-			//loop over all elements to check if the names are equal
-			foreach($simForms->formElements as $index=>$el){
-				//don't compare with itself
-				if($update && $index == $_POST['element_id']){
-					continue;
-				}
-
-				//we found a duplicate name
-				if($elementName == $el->name){
-					$i++;
-					$unique = false;
-				}
-			}
-		}
-		//update the name
-		if($i != ''){
-			$element->name .= "_$i";
-		}
-
-		if($update){
-			// update splitted field
-			if($simForms->formData->settings['split'] == $oldElement->name){
-				// update the splitted field
-				$simForms->formData->settings['split']	= $element->name;
-
-				$result	= $simForms->updateFormSettings();
-		
-				if(is_wp_error($result)){
-					return $result;
-				}
-			}
-
-			// update js
-			$simForms->createJs();
-
-			// Update column settings
-			$displayFormResults	= new DisplayFormResults();
-
-			$query						= "SELECT * FROM {$displayFormResults->shortcodeTable} WHERE form_id= '{$simForms->formData->id}'";
-			foreach($wpdb->get_results($query) as $data){
-				$displayFormResults->shortcodeId	= $data->id;
-				$displayFormResults->loadShortcodeData();
-				$displayFormResults->addColumnSetting($element);
-
-				saveColumnSettings($displayFormResults->columnSettings, $displayFormResults->shortcodeId);
-			}
-
-			// Update submission data
-			$displayFormResults->showArchived	= true;
-			$displayFormResults->getForm($simForms->formData->id);
-			$displayFormResults->parseSubmissions(null, null, true);
-
-			$submitForm	= new SubmitForm();
-
-			foreach($displayFormResults->submissions as $submission){
-				if(isset($submission->formresults[$oldElement->name])){
-					$submission->formresults[$element->name]	= $submission->formresults[$oldElement->name];
-					unset($submission->formresults[$oldElement->name]);
-				}
-				$wpdb->update(
-					$submitForm->submissionTableName,
-					array(
-						'formresults'	=> maybe_serialize($submission->formresults),
-					),
-					array(
-						'id'			=> $submission->id
-					)
-					);
-			}
-		}
+	$element->name		= getUniqueName($element, $update, $oldElement, $simForms);
+	if(is_wp_error($element->name)){
+		return $element->name;
 	}
 
 	//Store info text in text column
@@ -470,12 +486,16 @@ function requestFormElement(){
 
 // DONE
 function reorderFormElements(){
-	$formBuilder	= new SaveFormSettings();
+	$formBuilder			= new SaveFormSettings();
+
+	$formBuilder->formId	= $_POST['form_id'];
 	
 	$oldIndex 	= $_POST['old_index'];
 	$newIndex	= $_POST['new_index'];
+
+	$element	= $formBuilder->getElementById($_POST['el_id']);
 	
-	$formBuilder->reorderElements($oldIndex, $newIndex, '', $_POST['formid']);
+	$formBuilder->reorderElements($oldIndex, $newIndex, $element);
 	
 	return "Succesfully saved new form order";
 }

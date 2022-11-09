@@ -232,7 +232,7 @@ class EditFormResults extends DisplayFormResults{
 
 		if(!isset($this->formData) || $this->formData == null){
 			$this->parseSubmissions(null, $submissionId);
-			$this->getForm($this->submissions->form_id);
+			$this->getForm($this->submission->form_id);
 		}
 
 		$result = $wpdb->delete(

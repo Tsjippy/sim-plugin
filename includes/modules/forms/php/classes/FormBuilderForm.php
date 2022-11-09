@@ -49,7 +49,7 @@ class FormBuilderForm extends SimForms{
 	}
 
 	/**
-	 * Build all html for a particular elemnt including edit controls.
+	 * Build all html for a particular element including edit controls.
 	 *
 	 * @param	object	$element		The element
 	 * @param	int		$key			The key in case of a multi element. Default 0
@@ -342,7 +342,7 @@ class FormBuilderForm extends SimForms{
 					</label>
 					<br>
 						
-					<h4>Select available actions for formdata</h4>
+					<h4>Available actions</h4>
 					<?php
 					$actions = ['archive','delete'];
 					foreach($actions as $action){
@@ -447,38 +447,56 @@ class FormBuilderForm extends SimForms{
 					<div style='margin-top:10px;'>
 						<button class='button permissins-rights-form' type='button'>Advanced</button>
 						<div class='permission-wrapper hidden'>
-							<h4>Select a field with multiple answers where you want to create seperate rows for</h4>
-							<select name="settings[split]">
-								<?php
-								if($settings['split'] == ''){
-									?><option value='' selected>---</option><?php
-								}else{
-									?><option value=''>---</option><?php
-								}
+							<?php
+							$foundElements = [];
+							foreach($this->formElements as $key=>$element){
+								$pattern = "/([^\[]+)\[[0-9]+\]/i";
 								
-								$foundElements = [];
-								foreach($this->formElements as $key=>$element){
-									$pattern = "/([^\[]+)\[[0-9]+\]/i";
-									
-									if(preg_match($pattern, $element->name, $matches)){
-										//Only add if not found before
-										if(!in_array($matches[1], $foundElements)){
-											$foundElements[]	= $matches[1];
-											$value 				= strtolower(str_replace('_', ' ', $matches[1]));
-											$name				= ucfirst($value);
-											
-											//Check which option is the selected one
-											if($settings['split'] == $value){
-												$selected = 'selected';
-											}else{
-												$selected = '';
-											}
-											echo "<option value='$value' $selected>$name</option>";
-										}
+								if(preg_match($pattern, $element->name, $matches)){
+									//Only add if not found before
+									if(!in_array($matches[1], $foundElements)){
+										$foundElements[]	= $matches[1];
 									}
 								}
+							}
+
+							if(!empty($foundElements)){
 								?>
-							</select>
+								<h4>Select a field with multiple answers where you want to create seperate rows for</h4>
+								<select name="settings[split]">
+									<?php
+									if($settings['split'] == ''){
+										?><option value='' selected>---</option><?php
+									}else{
+										?><option value=''>---</option><?php
+									}
+									
+									$foundElements = [];
+									foreach($this->formElements as $key=>$element){
+										$pattern = "/([^\[]+)\[[0-9]+\]/i";
+										
+										if(preg_match($pattern, $element->name, $matches)){
+											//Only add if not found before
+											if(!in_array($matches[1], $foundElements)){
+												$foundElements[]	= $matches[1];
+												$value 				= strtolower(str_replace('_', ' ', $matches[1]));
+												$name				= ucfirst($value);
+												
+												//Check which option is the selected one
+												if($settings['split'] == $value){
+													$selected = 'selected';
+												}else{
+													$selected = '';
+												}
+												echo "<option value='$value' $selected>$name</option>";
+											}
+										}
+									}
+									?>
+								</select>
+								<?php
+							}
+							?>
 
 							<h4>Select roles with form edit rights</h4>
 							<div class="role_info">

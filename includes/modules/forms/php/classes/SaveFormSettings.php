@@ -97,13 +97,13 @@ class SaveFormSettings extends SimForms{
 	 * @param	int				$newPriority	The new priority of the element
 	 * @param	object|array	$element		The element to change the priority of
 	 */
-	public function reorderElements($oldPriority, $newPriority, $element, $formId='') {
+	public function reorderElements($oldPriority, $newPriority, $element) {
 		if ($oldPriority == $newPriority){
 			return;
 		}
 
 		// Get all elements of this form
-		$this->getAllFormElements('priority', $formId);
+		$this->getAllFormElements('priority', $this->formId);
 
 		if(empty($element)){
 			foreach($this->formElements as $el){
@@ -125,25 +125,25 @@ class SaveFormSettings extends SimForms{
 		
 		//Loop over all elements and give them the new priority
 		foreach($this->formElements as $el){
-			if($el->name == $element->name){
-				$el->priority	= $newPriority;
-				$this->updatePriority($el);
-			}elseif($oldPriority == -1){
+			if($oldPriority == -1){
 				if($el->priority >= $newPriority){
 					$el->priority++;
 					$this->updatePriority($el);
 				}
+			}elseif($el->id == $element->id){
+				$el->priority	= $newPriority;
+				$this->updatePriority($el);
 			}elseif(
 				$oldPriority > $newPriority		&& 	//we are moving an element upward
-				$el->priority >= $newPriority	&&		// current priority is bigger then the new prio
-				$el->priority < $oldPriority			// current priority is smaller than the old prio
+				$el->priority >= $newPriority	&&	// current priority is bigger then the new prio
+				$el->priority < $oldPriority		// current priority is smaller than the old prio
 			){
 				$el->priority++;
 				$this->updatePriority($el);
 			}elseif(
 				$oldPriority < $newPriority		&& 	//we are moving an element downward
-				$el->priority > $oldPriority	&&		// current priority is bigger then the old prio
-				$el->priority < $newPriority			// current priority is smaller than the new prio
+				$el->priority > $oldPriority	&&	// current priority is bigger then the old prio
+				$el->priority < $newPriority		// current priority is smaller than the new prio
 			){
 				$el->priority--;
 				$this->updatePriority($el);
