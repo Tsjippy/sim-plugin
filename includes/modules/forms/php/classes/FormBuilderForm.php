@@ -362,7 +362,7 @@ class FormBuilderForm extends SimForms{
 					
 					<div class="formsettings_wrapper">
 						<label class="block">
-							<h4>Select if you want to auto archive results</h4>
+							<h4>Auto archive results</h4>
 							<br>
 							<?php
 							if($settings['autoarchive'] == 'true'){
@@ -893,18 +893,18 @@ class FormBuilderForm extends SimForms{
 			</select>
 			<br>
 			
-			<div name='elementname' class='elementoption reverse notlabel notphp notformstep button hide' style='background-color: unset;'>
+			<div name='elementname' class='elementoption wide reverse notlabel notphp notformstep button hide' style='background-color: unset;'>
 				<label>
 					<div>Specify a name for the element</div>
-					<input type="text" class="formbuilder" name="formfield[name]" value="<?php if($element != null){echo $element->name;}?>">
+					<input type="text" class="formbuilder wide" name="formfield[name]" value="<?php if($element != null){echo $element->name;}?>">
 				</label>
 				<br><br>
 			</div>
 			
-			<div name='functionname' class='elementoption hidden php'>
+			<div name='functionname' class='elementoption wide hidden php'>
 				<label>
 					Specify the functionname
-					<input type="text" class="formbuilder" name="formfield[functionname]" value="<?php if($element != null){echo $element->functionname;}?>">
+					<input type="text" class="formbuilder wide" name="formfield[functionname]" value="<?php if($element != null){echo $element->functionname;}?>">
 				</label>
 				<br><br>
 			</div>
@@ -912,7 +912,7 @@ class FormBuilderForm extends SimForms{
 			<div name='labeltext' class='elementoption label button formstep hidden' style='background-color: unset;'>
 				<label>
 					<div>Specify the <span class='elementtype'>label</span> text</div>
-					<input type="text" class="formbuilder" name="formfield[text]" value="<?php if($element != null){echo $element->text;}?>">
+					<input type="text" class="formbuilder wide" name="formfield[text]" value="<?php if($element != null){echo $element->text;}?>">
 				</label>
 				<br><br>
 			</div>

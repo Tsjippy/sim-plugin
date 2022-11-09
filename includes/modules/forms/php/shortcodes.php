@@ -122,6 +122,7 @@ function showFormSelector($atts=[]){
 //shortcode to make forms
 add_shortcode( 'formbuilder', __NAMESPACE__.'\showForm');
 function showForm($atts){
+    wp_enqueue_script('sim_forms_script');
     $simForms = new SimForms();
     return $simForms->determineForm($atts);
 }

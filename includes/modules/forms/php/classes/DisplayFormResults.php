@@ -177,7 +177,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	 /**
+	/**
 	 * Creates the db table to hold the short codes and their settings
 	 */
 	public function createDbShortcodeTable(){
@@ -201,7 +201,7 @@ class DisplayFormResults extends DisplayForm{
 		maybe_create_table($this->shortcodeTable, $sql );
 	}
 	
-	 /**
+	/**
 	 * Transforms a given string to hyperlinks or other formats
 	 *
 	 * @param 	string	$string		the string to convert
@@ -274,7 +274,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 	
-	 /**
+	/**
 	 * Adds a new column setting for a new element
 	 *
 	 * @param object	$element	the element to check if column settings exists for
@@ -342,7 +342,7 @@ class DisplayFormResults extends DisplayForm{
 		];
 	}
 
-	 /**
+	/**
 	 * Updates column settings with missing columns
 	 */
 	protected function enrichColumnSettings(){
@@ -430,8 +430,16 @@ class DisplayFormResults extends DisplayForm{
 			];
 		}
 		
-		//put hidden columns on the end
+		$names	= [];
+		//put hidden columns on the end and do not show same names twice
 		foreach($this->columnSettings as $key=>$setting){
+			if(in_array($setting['name'], $names)){
+				//remove the duplicate element: same name but different id
+				unset($this->columnSettings[$key]);
+			}
+
+			$names[]	= $setting['name'];
+
 			if($setting['show'] == 'hide'){
 				
 				//remove the element
@@ -581,7 +589,7 @@ class DisplayFormResults extends DisplayForm{
 		return $rowContents;
 	}
 	
-	 /**
+	/**
 	 * Writes a row of the table to the screen
 	 *
 	 * @param	array	$fieldValues	Array containing all the values of a form submission
@@ -633,7 +641,7 @@ class DisplayFormResults extends DisplayForm{
 		echo '</tr>';
 	}
 	
-	 /**
+	/**
 	 * Get shortcode settings from db
 	 */
 	public function loadShortcodeData(){
@@ -881,7 +889,7 @@ class DisplayFormResults extends DisplayForm{
 				<!-- We can define auto archive field both on table and on form settings-->
 				<div class="table_rights_wrapper">
 					<label class="label">
-						Select if you want to auto archive results<br>
+						Auto archive results<br>
 						<?php
 						if($this->formSettings['autoarchive'] == 'true'){
 							$checked1	= 'checked';
@@ -1029,7 +1037,7 @@ class DisplayFormResults extends DisplayForm{
 		<?php
 	}
 
-	 /**
+	/**
 	 * Print the modal to change table settings to the screen
 	 */
 	protected function addShortcodeSettingsModal(){
@@ -1087,7 +1095,7 @@ class DisplayFormResults extends DisplayForm{
 		return ob_get_clean();
 	}
 
-	 /**
+	/**
 	 * Processed the table settings
 	 */
 	protected function loadTableSettings(){
@@ -1144,7 +1152,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	 /**
+	/**
 	 * Renders the table filter html
 	 *
 	 * @return string	The html
@@ -1248,7 +1256,7 @@ class DisplayFormResults extends DisplayForm{
 		return $html;
 	}
 	
-	 /**
+	/**
 	 * Renders the table buttons html
 	 *
 	 * @return string	The html
@@ -1289,7 +1297,7 @@ class DisplayFormResults extends DisplayForm{
 		return $html;
 	}
 
-	 /**
+	/**
 	 * Compares 2 values according to a given comparison string
 	 */
 	protected function compareFilterValue ($var1, $op, $var2) {
@@ -1317,7 +1325,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	 /**
+	/**
 	 * Creates the formresult table html
 	 *
 	 * @param	array	$atts	WP Shortcode attributes
@@ -1560,7 +1568,7 @@ class DisplayFormResults extends DisplayForm{
 		return ob_get_clean();
 	}
 
-	 /**
+	/**
 	 * New form results table
 	 *
 	 * @param	int		$formId		the id of the form
@@ -1582,7 +1590,7 @@ class DisplayFormResults extends DisplayForm{
 		return $wpdb->insert_id;
 	}
 
-	 /**
+	/**
 	 * check for any formresults shortcode and add an id if needed
 	 *
 	 * @param	array	$data	The post data

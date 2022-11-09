@@ -9,7 +9,7 @@ add_action( 'wp_after_insert_post', function($postId, $post){
 
     // Add the form if it does not exist yet
     if($hasFormbuilderShortcode){
-        preg_match_all( 
+        preg_match_all(
             '/' . get_shortcode_regex() . '/',
             $post->post_content,
             $shortcodes,
