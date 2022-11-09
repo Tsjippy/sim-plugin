@@ -5,10 +5,18 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.22.6] - 2022-11-09
+
+
+### Changed
 - visibility reset message
 
 ### Fixed
 - updating signal on ubuntu
+- only load signal class when needed
 
 ## [2.22.4] - 2022-11-08
 
