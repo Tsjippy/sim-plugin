@@ -9,6 +9,7 @@
 ### Changed
 
 ### Fixed
+- add button form builder
 
 ## [2.22.6] - 2022-11-09
 
