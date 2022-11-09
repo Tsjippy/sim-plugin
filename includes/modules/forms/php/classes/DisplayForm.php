@@ -82,9 +82,9 @@ class DisplayForm extends SubmitForm{
 		
 		if(in_array($element->type, $this->nonInputs)){
 			//Get the field values of the next element as this does not have any
-			$values		= $this->getFieldValues($this->nextElement);
+			$values		= $this->getElementValues($this->nextElement);
 		}else{
-			$values		= $this->getFieldValues($element);
+			$values		= $this->getElementValues($element);
 		}
 
 		// Get the values we need
@@ -219,7 +219,7 @@ class DisplayForm extends SubmitForm{
 				if($type != 'multi_end'){
 					if(!in_array($type, $this->nonInputs)){
 						//Get the field values and count
-						$valueCount		= count($this->getFieldValues($this->formElements[$i]));
+						$valueCount		= count($this->getElementValues($this->formElements[$i]));
 						
 						if($valueCount > $this->multiWrapValueCount){
 							$this->multiWrapValueCount = $valueCount;

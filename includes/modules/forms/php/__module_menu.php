@@ -76,20 +76,6 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	ob_start();
 	?>
-	<h4>Form import</h4>
-	<p>
-		It is possible to import forms exported from this plugin previously.<br>
-		Use the button below to do so.
-	</p>
-	<form method='POST' enctype="multipart/form-data">
-		<label>
-			Select a form export file
-			<input type='file' name='formfile'>
-		</label>
-		<br>
-		<button type='submit' name='import-form'>Import the form</button>
-	</form>
-	<br><br>
 	<label for="reminder_freq">How often should people be reminded of remaining form fields to fill?</label>
 	<br>
 	<select name="reminder_freq">
@@ -186,12 +172,41 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug){
 	return $dataHtml.$html;
 }, 10, 2);
 
+add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $functionHtml;
+	}
+	
+	ob_start();
+	?>
+	<h4>Form import</h4>
+	<p>
+		It is possible to import forms exported from this plugin previously.<br>
+		Use the button below to do so.
+	</p>
+	<form method='POST' enctype="multipart/form-data">
+		<label>
+			Select a form export file
+			<input type='file' name='formfile'>
+		</label>
+		<br>
+		<button type='submit' name='import-form'>Import the form</button>
+	</form>
+
+	<?php
+	return ob_get_clean();
+}, 10, 2);
+
 
 add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
 	}
+
+	$simForms = new SimForms();
+	$simForms->createDbTable();
 
 	// Create frontend posting page
 	$options	= SIM\ADMIN\createDefaultPage($options, 'forms_pages', 'Form selector', '[formselector]', $oldOptions);

@@ -143,7 +143,7 @@ class SimForms{
  		$this->formData->elementMapping									= [];
 		$this->formData->elementMapping['type']							= [];
 		foreach($this->formElements as $index=>$element){
-			$name	= str_replace('[]', '', $element->name);
+			$name	= $element->nicename;
 			$this->formData->elementMapping['id'][$element->id]			= $index;
 			$this->formData->elementMapping['name'][$name] 				= $index;
 			$this->formData->elementMapping['type'][$element->type][] 	= $index;
@@ -286,11 +286,12 @@ class SimForms{
 		$sql = "CREATE TABLE {$this->submissionTableName} (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			form_id	int NOT NULL,
-			timecreated datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-			timelastedited datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+			timecreated datetime DEFAULT NULL,
+			timelastedited datetime DEFAULT NULL,
 			userid mediumint(9) NOT NULL,
 			formresults longtext NOT NULL,
 			archived BOOLEAN,
+			archivedsubs tinytext,
 			PRIMARY KEY  (id)
 		) $charsetCollate;";
 

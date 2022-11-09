@@ -272,18 +272,6 @@ function getUniqueName($element, $update, $oldElement, $simForms){
 		return $element->name;
 	}
 
-	// update splitted field
-	if($simForms->formData->settings['split'] == $oldElement->name){
-		// update the splitted field
-		$simForms->formData->settings['split']	= $element->name;
-
-		$result	= $simForms->updateFormSettings();
-
-		if(is_wp_error($result)){
-			return $result;
-		}
-	}
-
 	// update js
 	$simForms->createJs();
 
@@ -363,7 +351,7 @@ function addFormElement(){
 		return new \WP_Error('Error', "Please enter a formfieldname");
 	}
 
-	$element->nicename	= $element->name;
+	$element->nicename	= ucfirst(str_replace('[]', '', $element->name));
 	$element->name		= str_replace(" ","_",strtolower(trim($element->name)));
 
 	if(

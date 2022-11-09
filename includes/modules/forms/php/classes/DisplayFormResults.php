@@ -115,28 +115,19 @@ class DisplayFormResults extends DisplayForm{
 		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 	}
 
-	/**
-	 * This function creates seperated entries from entries with an splitted value
-	 */
-	protected function processSplittedData(){
-		if(empty($this->formData->settings['split'])){
-			return;
-		}
-
-		$splitElementName			= $this->formData->settings['split'];
-		$this->splittedSubmissions  = [];
+	function splitArrayedSubmission($splitElementName){
 		//loop over all submissions
-		foreach($this->submissions as $submission){
+		foreach($this->submissions as $this->submission){
 			// loop over all entries of the split key
-			foreach($submission->formresults[$splitElementName] as $subKey=>$array){
+			foreach($this->submission->formresults[$splitElementName] as $subKey=>$subSubmission){
 				// Should always be an array
-				if(!is_array($array)){
+				if(!is_array($subSubmission)){
 					continue;
 				}
 
 				// Check if it has data
 				$hasData	= false;
-				foreach($array as $value){
+				foreach($subSubmission as $value){
 					if(!empty($value)){
 						$hasData = true;
 						break;
@@ -148,14 +139,13 @@ class DisplayFormResults extends DisplayForm{
 				}
 
 				// If it has data add as a seperate item to the submission data
-				$newSubmission	= clone $submission;
+				$newSubmission	= clone $this->submission;
 
 				// Check if archived
-				if(isset($array['archived']) && $array['archived']){
+				if(is_array($this->submission->archivedsubs) && in_array($subKey, $this->submission->archivedsubs)){
 					if($this->showArchived){
 						// mark the entry as archived
 						$newSubmission->archived	= true;
-						unset($array['archived']);
 					}else{
 						// do not add an archived sub value to the results
 						continue;
@@ -163,7 +153,7 @@ class DisplayFormResults extends DisplayForm{
 				}
 
 				// Add the array to the formresults array
-				$newSubmission->formresults = array_merge($submission->formresults, $array);
+				$newSubmission->formresults = array_merge($this->submission->formresults, $subSubmission);
 
 				// remove the index value from the copy
 				unset($newSubmission->formresults[$splitElementName]);
@@ -174,6 +164,73 @@ class DisplayFormResults extends DisplayForm{
 				// Copy the entry
 				$this->splittedSubmissions[]	= $newSubmission;
 			}
+		}
+	}
+
+	function splitSubmission($splitElementName){
+		$splitNames	= [];
+		foreach($this->formData->settings['split'] as $id){
+			$splitNames[] = $this->getElementById($id, 'nicename');
+		}
+
+		//loop over all submissions
+		foreach($this->submissions as $this->submission){
+			if(!is_array($this->submission->formresults[$splitElementName])){
+				continue;
+			}
+
+			// check how many entries we should make
+			$count	= count($this->submission->formresults[$splitElementName]);
+
+			// loop over
+			for($x = 0; $x < $count; $x++){
+				// create a new submission
+				$newSubmission	= clone $this->submission;
+
+				foreach($splitNames as $name){
+					if(is_array($newSubmission->formresults[$name]) && isset($newSubmission->formresults[$name][$x])){
+						$newSubmission->formresults[$name]	= $newSubmission->formresults[$name][$x];
+					}
+				}
+
+				// Add the subkey
+				$newSubmission->subId			= $x;
+
+				//add the new submission
+				$this->splittedSubmissions[]	= $newSubmission;
+			}
+		}
+	}
+
+	/**
+	 * This function creates seperated entries from entries with an splitted value
+	 */
+	protected function processSplittedData(){
+		if(empty($this->formData->settings['split'])){
+			return;
+		}
+
+		// Get all the elements we should split the rows for
+		$splitElements				= $this->formData->settings['split'];
+
+		// Get the name of the first element
+		$splitElementName			= $this->getElementById($splitElements[0], 'nicename');
+
+		if(!$splitElementName){
+			return;
+		}
+
+		// Check if we are dealing with an split element with form name[X]name
+		preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $splitElementName, $matches);
+
+		$this->splittedSubmissions  = [];
+
+		if($matches && isset($matches[1])){
+			$splitElementName	= $matches[1];
+			$this->splitArrayedSubmission($splitElementName);
+		}else{
+			$splitElementName	= $splitElementName;
+			$this->splitSubmission($splitElementName);
 		}
 	}
 
@@ -205,11 +262,11 @@ class DisplayFormResults extends DisplayForm{
 	 * Transforms a given string to hyperlinks or other formats
 	 *
 	 * @param 	string	$string		the string to convert
-	 * @param	string	$fieldname	The name of the value the string value belongs to
+	 * @param	string	$elementName	The name of the value the string value belongs to
 	 *
 	 * @return	string				The transformed string
 	 */
-	public function transformInputData($string, $fieldName){
+	public function transformInputData($string, $elementName){
 		if(empty($string)){
 			return $string;
 		}
@@ -222,7 +279,7 @@ class DisplayFormResults extends DisplayForm{
 				if(!empty($output)){
 					$output .= "<br>";
 				}
-				$output .= $this->transformInputData($sub, $fieldName);
+				$output .= $this->transformInputData($sub, $elementName);
 			}
 			return $output;
 		}else{
@@ -262,14 +319,14 @@ class DisplayFormResults extends DisplayForm{
 			// Convert phonenumber to signal link
 			}elseif($string[0] == '+'){
 				$output	= "<a href='https://signal.me/#p/$string'>$string</a>";
-			}elseif($fieldName == 'userid'){
+			}elseif($elementName == 'userid'){
 				$output				= SIM\USERPAGE\getUserPageLink($string);
 				if(!$output){
 					$output	= $string;
 				}
 			}
 		
-			$output = apply_filters('sim_transform_formtable_data', $output, $fieldName);
+			$output = apply_filters('sim_transform_formtable_data', $output, $elementName);
 			return $output;
 		}
 	}
@@ -288,13 +345,13 @@ class DisplayFormResults extends DisplayForm{
 		//If we should split an entry, define a regex patterns
 		if(!empty($this->formSettings['split'])){
 			//find the keyword followed by one or more numbers between [] followed by a  keyword between []
-			$pattern	= '/'.$this->formSettings['split']."\[[0-9]+\]\[([^\]]+)\]/i";
+			$pattern	= "/.*?\[[0-9]+\]\[([^\]]+)\]/i";
 			$processed	= [];
 		}
 
 		$name	= $element->name;
 
-		//Do not show elements that will be splitted
+		//Do not show elements that will be splitted needed for split fields with this pattern name[X]name
 		//Execute the regex
 		if(!empty($this->formSettings['split']) && preg_match($pattern, $element->name, $matches)){
 			//We found a keyword, check if we already got the same one
@@ -335,7 +392,7 @@ class DisplayFormResults extends DisplayForm{
 
 		$this->columnSettings[$element->id] = [
 			'name'				=> $name,
-			'nice_name'			=> $name,
+			'nice_name'			=> $element->nicename,
 			'show'				=> $show,
 			'edit_right_roles'	=> $editRightRoles,
 			'view_right_roles'	=> $viewRightRoles
@@ -451,18 +508,18 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	protected function getRowContents($fieldValues, $index){
+	protected function getRowContents($values, $index){
 		$rowContents	= '';
 		$excelRow		= [];
 
-		if($fieldValues['userid'] == $this->user->ID || $fieldValues['userid'] == $this->user->partnerId){
+		if($values['userid'] == $this->user->ID || $values['userid'] == $this->user->partnerId){
 			$ownEntry	= true;
 		}else{
 			$ownEntry	= false;
 		}
 
 		foreach($this->columnSettings as $id=>$columnSetting){
-			$fieldValue	= '';
+			$value	= '';
 
 			//If the column is hidden, do not show this cell
 			if($columnSetting['show'] == 'hide' || !is_numeric($id)){
@@ -484,7 +541,7 @@ class DisplayFormResults extends DisplayForm{
 			){
 				//later on there will be a row with data in this column
 				if($this->ownData && in_array('own',(array)$columnSetting['view_right_roles'])){
-					$fieldValue = 'X';
+					$value = 'X';
 				}else{
 					continue;
 				}
@@ -494,7 +551,7 @@ class DisplayFormResults extends DisplayForm{
 			if(
 				!empty($this->tableSettings['hiderow']) &&												//There is a column defined
 				$columnSetting['name'] == $this->tableSettings['hiderow'] && 							//We are currently checking a cell in that column
-				$fieldValues[$this->tableSettings['hiderow']] == '' && 									//The cell has no value
+				$values[$this->tableSettings['hiderow']] == '' && 									//The cell has no value
 				!array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles'])	&&		//And we have no right to edit this specific column
 				!$this->tableEditPermissions															//and we have no right to edit all table data
 			){
@@ -515,49 +572,51 @@ class DisplayFormResults extends DisplayForm{
 			/*
 					Write the content to the cell, convert to something if needed
 			*/
-			$fieldName 	= str_replace('[]', '', $columnSetting['name']);
-			$class 		= '';
+			$elementName 	= $columnSetting['nice_name'];
+			$class 			= '';
 
 			//add field value if we are allowed to see it
-			if($fieldValue != 'X'){
+			if($value != 'X'){
 				//Get the field value from the array
-				$fieldValue	= $fieldValues[$fieldName];
+				$value	= $values[$elementName];
 					
 				// Add sub id if this is an sub value
 				$subId 		= "";
-				$element	= $this->getElementById($id);
-				if($index > -1 && strpos($element->name, $this->formSettings['split'].'[') !== false){
-					$subId = "data-subid='$index'";
+				if($index > -1){
+					$element	= $this->getElementById($id);
+					if(is_array($this->formSettings['split']) && in_array($element->id, $this->formSettings['split'])){
+						$subId = "data-subid='$index'";
+					}
 				}
 
-				if($fieldValue == null){
-					$fieldValue = '';
+				if($value == null){
+					$value = '';
 				}
 				
 				//transform if needed
-				$orgFieldValue	= $fieldValue;
-				$fieldValue 	= $this->transformInputData($fieldValue, $fieldName);
+				$orgFieldValue	= $value;
+				$value 	= $this->transformInputData($value, $elementName);
 				
 				//show original email in excel
-				if(strpos($fieldValue,'@') !== false){
+				if(strpos($value,'@') !== false){
 					$excelRow[]		= $orgFieldValue;
 				}else{
-					$excelRow[]		= wp_strip_all_tags($fieldValue);
+					$excelRow[]		= wp_strip_all_tags($value);
 				}
 
 				//Display an X if there is nothing to show
-				if (empty($fieldValue)){
-					$fieldValue = "X";
+				if (empty($value)){
+					$value = "X";
 				}
 				
 				//Limit url cell width, for strings with a visible length of more then 30 characters
-				if(strlen(strip_tags($fieldValue))>30 && strpos($fieldValue, 'https://') === false){
+				if(strlen(strip_tags($value))>30 && strpos($value, 'https://') === false){
 					$class .= ' limit-length';
 				}
 			}
 
 			//Add classes to the cell
-			if($fieldName == "displayname"){
+			if($elementName == "displayname"){
 				$class .= ' sticky';
 			}
 
@@ -565,23 +624,23 @@ class DisplayFormResults extends DisplayForm{
 				$class	.= ' hidden';
 			}
 			
-			//if the user has one of the roles diffined for this element
-			if($elementEditRights && $fieldName != 'id'){
+			//if the user has one of the roles defined for this element
+			if($elementEditRights && $elementName != 'id'){
 				$class	.= ' edit_forms_table';
 				$class	= trim($class);
-				$class	= " class='$class' data-id='$fieldName'";
+				$class	= " class='$class' data-id='$elementName'";
 			}elseif(!empty($class)){
 				$class	= trim($class);
 				$class = " class='$class'";
 			}
 			
 			//Convert underscores to spaces, but not in urls
-			if(strpos($fieldValue, 'href=') === false){
-				$fieldValue	= str_replace('_',' ',$fieldValue);
+			if(strpos($value, 'href=') === false){
+				$value	= str_replace('_',' ',$value);
 			}
 
 			$oldValue		= json_encode($orgFieldValue);
-			$rowContents .= "<td $class data-oldvalue='$oldValue' $subId>$fieldValue</td>";
+			$rowContents .= "<td $class data-oldvalue='$oldValue' $subId>$value</td>";
 		}
 
 		$this->excelContent[] = $excelRow;
@@ -592,11 +651,11 @@ class DisplayFormResults extends DisplayForm{
 	/**
 	 * Writes a row of the table to the screen
 	 *
-	 * @param	array	$fieldValues	Array containing all the values of a form submission
+	 * @param	array	$values	Array containing all the values of a form submission
 	 * @param	int		$index			The index of the row. Default -1 for none
 	 * @param	bool	$isArchived		Whether the current submission is archived. Default false.
 	 */
-	protected function writeTableRow($fieldValues, $index=-1, $isArchived=false){
+	protected function writeTableRow($values, $index=-1, $isArchived=false){
 		//Loop over the fields in order of the defined columns
 		
 		$this->noRecords = false;
@@ -607,9 +666,9 @@ class DisplayFormResults extends DisplayForm{
 		}else{
 			$subId = "";
 		}
-		echo "<tr class='table-row' data-id='{$fieldValues['id']}' $subId>";
+		echo "<tr class='table-row' data-id='{$values['id']}' $subId>";
 		
-		echo $this->getRowContents($fieldValues, $index);
+		echo $this->getRowContents($values, $index);
 
 		//if there are actions
 		if($this->formSettings['actions'] != ""){
@@ -622,13 +681,13 @@ class DisplayFormResults extends DisplayForm{
 				}
 				$buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
 			}
-			$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $fieldValues, $index, $this);
+			$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $values, $index, $this);
 			
 			//we have te html now, check for which one we have permission
 			foreach($buttonsHtml as $action=>$button){
 				if(
 					$this->tableEditPermissions || 																			//if we are allowed to do all actions
-					$fieldValues['userid'] == $this->user->ID || 															//or this is our own entry
+					$values['userid'] == $this->user->ID || 															//or this is our own entry
 					array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])			//or we have permission for this specific button
 				){
 					$buttons .= $button;
@@ -956,39 +1015,45 @@ class DisplayFormResults extends DisplayForm{
 				<div style='margin-top:10px;'>
 					<button class='button permissins-rights-form' type='button'>Advanced</button>
 					<div class='permission-wrapper hidden'>
-						<div class="table_rights_wrapper" style='margin-bottom:10px;'>
-							<label>Select a field with multiple answers where you want to create seperate rows for</label>
-							<select name="form_settings[split]">
-								<?php
-								if($this->formSettings['split'] == ''){
-									?><option value='' selected>---</option><?php
-								}else{
-									?><option value=''>---</option><?php
-								}
+						<?php
+							// Splitted fields
+							$foundElements = [];
+							foreach($this->formElements as $key=>$element){
+								$pattern = "/([^\[]+)\[[0-9]*\]/i";
 								
-								$foundElements = [];
-								foreach($this->formElements as $key=>$element){
-									$pattern = "/([^\[]+)\[\d+\]/i";
-									
+								if(preg_match($pattern, $element->name, $matches)){
 									//Only add if not found before
-									if(preg_match($pattern, $element->name, $matches) && !in_array($matches[1], $foundElements)){
-										$foundElements[]	= $matches[1];
-										$value 				= strtolower(str_replace('_', ' ', $matches[1]));
-										$name				= ucfirst($value);
-									
-										//Check which option is the selected one
-										if($this->formSettings['split'] == $value){
-											$selected = 'selected';
-										}else{
-											$selected = '';
-										}
-										echo "<option value='$value' $selected>$name</option>";
+									if(!in_array($matches[1], $foundElements)){
+										$foundElements[$element->id]	= $matches[1];
 									}
 								}
-								?>
-							</select>
-						</div>
+							}
 
+							if(!empty($foundElements)){
+								?>
+								<div class="table_rights_wrapper">
+									<h4>Select fields where you want to create seperate rows for</h4>
+									<?php
+
+									foreach($foundElements as $id=>$element){
+										$name	= ucfirst(strtolower(str_replace('_', ' ', $element)));
+										
+										//Check which option is the selected one
+										if(is_array($this->formSettings['split']) && in_array($id, $this->formSettings['split'])){
+											$checked = 'checked';
+										}else{
+											$checked = '';
+										}
+										echo "<label>";
+											echo "<input type='checkbox' name='settings[split][]' value='$id' $checked>   ";
+											echo $name;
+										echo "</label><br>";
+									}
+									?>
+								</div>
+								<?php
+							}
+							?>
 						<div class="table_rights_wrapper">
 							<label class="label">Select roles with permission to VIEW the table, finetune it per column on the 'column settings' tab</label>
 							<div class="role_info">
@@ -1506,15 +1571,15 @@ class DisplayFormResults extends DisplayForm{
 				}
 
 				foreach($submissions as $submission){
-					$fieldValues			= $submission->formresults;
-					$fieldValues['id']		= $submission->id;
-					$fieldValues['userid']	= $submission->userid;
+					$values			= $submission->formresults;
+					$values['id']		= $submission->id;
+					$values['userid']	= $submission->userid;
 					$index					= -1;
 					if(is_numeric($submission->subId)){
 						$index				= $submission->subId;
 					}
 					
-					$this->writeTableRow($fieldValues, $index, $submission->archived);
+					$this->writeTableRow($values, $index, $submission->archived);
 				}
 				?>
 				</tbody>

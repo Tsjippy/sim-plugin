@@ -145,3 +145,6 @@ add_filter('wp_nav_menu_items', function ($items) {
     }
   return $items;
 });
+
+// Disable administration email verification
+add_filter( 'admin_email_check_interval', '__return_false' );

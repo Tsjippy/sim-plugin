@@ -448,44 +448,38 @@ class FormBuilderForm extends SimForms{
 						<button class='button permissins-rights-form' type='button'>Advanced</button>
 						<div class='permission-wrapper hidden'>
 							<?php
+							// Splitted fields
 							$foundElements = [];
 							foreach($this->formElements as $key=>$element){
-								$pattern = "/([^\[]+)\[[0-9]+\]/i";
+								$pattern = "/([^\[]+)\[[0-9]*\]/i";
 								
 								if(preg_match($pattern, $element->name, $matches)){
 									//Only add if not found before
 									if(!in_array($matches[1], $foundElements)){
-										$foundElements[]	= $matches[1];
+										$foundElements[$element->id]	= $matches[1];
 									}
 								}
 							}
 
 							if(!empty($foundElements)){
 								?>
-								<h4>Select a field with multiple answers where you want to create seperate rows for</h4>
-								<select name="settings[split]">
-									<?php
-									if($settings['split'] == ''){
-										?><option value='' selected>---</option><?php
-									}else{
-										?><option value=''>---</option><?php
-									}
-
-									foreach($foundElements as $key=>$element){
-										$value 	= strtolower(str_replace('_', ' ', $element));
-										$name	= ucfirst($value);
-										
-										//Check which option is the selected one
-										if($settings['split'] == $value){
-											$selected = 'selected';
-										}else{
-											$selected = '';
-										}
-										echo "<option value='$value' $selected>$name</option>";
-									}
-									?>
-								</select>
+								<h4>Select fields where you want to create seperate rows for</h4>
 								<?php
+
+								foreach($foundElements as $id=>$element){
+									$name	= ucfirst(strtolower(str_replace('_', ' ', $element)));
+									
+									//Check which option is the selected one
+									if(is_array($settings['split']) && in_array($id, $settings['split'])){
+										$checked = 'checked';
+									}else{
+										$checked = '';
+									}
+									echo "<label>";
+										echo "<input type='checkbox' name='settings[split][]' value='$id' $checked>   ";
+										echo $name;
+									echo "</label><br>";
+								}
 							}
 							?>
 

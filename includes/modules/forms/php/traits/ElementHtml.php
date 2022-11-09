@@ -35,12 +35,12 @@ trait ElementHtml{
     
 	 /**
 	 * Get the values of an element
-	 * 
+	 *
 	 * @param	object	$element		The element
-	 * 
+	 *
 	 * @return	array					The array of values
 	 */
-	function getFieldValues($element){
+	function getElementValues($element){
 		$values	= [];
 
 		// Do not return default values when requesting the html over rest api
@@ -54,8 +54,8 @@ trait ElementHtml{
 
 		$this->buildDefaultsArray();
 
-		//get the fieldname, remove [] and split on remaining [
-		$fieldName	= str_replace(']', '', explode('[', str_replace('[]', '', $element->name)));
+		//get the elementName, remove [] and split on remaining [
+		$elementName	= explode('[', $element->nicename);
 		
 		//retrieve meta values if needed
 		if(!empty($this->formData->settings['save_in_meta'])){
@@ -69,16 +69,16 @@ trait ElementHtml{
 				$this->usermeta	= apply_filters('sim_forms_load_userdata', $this->usermeta, $this->userId);
 			}
 		
-			if(count($fieldName) == 1){
+			if(count($elementName) == 1){
 				//non array name
-				$fieldName					= $fieldName[0];
-				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$fieldName]);
+				$elementName					= $elementName[0];
+				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$elementName]);
 			}else{
 				//an array of values, we only want a specific one
-				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$fieldName[0]]);
-				unset($fieldName[0]);
+				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$elementName[0]]);
+				unset($elementName[0]);
 				//loop over all the subkeys, and store the value until we have our final result
-				foreach($fieldName as $v){
+				foreach($elementName as $v){
 					$values['metavalue'] = (array)$values['metavalue'][$v];
 				}
 			}
@@ -422,7 +422,7 @@ trait ElementHtml{
 			/*
 				ELEMENT VALUE
 			*/
-			$values	= $this->getFieldValues($element);
+			$values	= $this->getElementValues($element);
 			if($this->multiwrap || !empty($element->multiple)){
 				if(strpos($elType,'input') !== false){
 					$elValue	= "value='%value%'";

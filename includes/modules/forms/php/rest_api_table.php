@@ -345,12 +345,23 @@ function archiveSubmission(){
 	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
 		$subId						= $_POST['subid'];
 		$message					= "Entry with id {$formTable->submissionId} and subid $subId succesfully {$action}d";
-		$splitField					= $formTable->formData->settings['split'];
 		
-		$formTable->submission->formresults[$splitField][$subId]['archived'] = $archive;
+
+		if($archive){
+			// add
+			if(empty($formTable->submission->archivedsubs)){
+				$formTable->submission->archivedsubs	= [$subId];
+			}elseif(!in_array($subId, $formTable->submission->archivedsubs)){
+				// only add if not yet there
+				$formTable->submission->archivedsubs[]	= $subId;
+			}
+		}else{
+			// remove
+			$formTable->submission->archivedsubs	= array_diff($formTable->submission->archivedsubs, [$subId]);
+		}
 		
 		//check if all subfields are archived or empty
-		$formTable->checkIfAllArchived($formTable->submission->formresults[$splitField]);
+		//$formTable->checkIfAllArchived($formTable->submission->formresults[$splitField]);
 	}else{
 		$message					= "Entry with id {$formTable->submissionId} succesfully {$action}d";
 
@@ -375,17 +386,27 @@ function getInputHtml(){
 	$curValue		= '';
 	$element		= $formTable->getElementByName($elementName);
 
-	if(!$element && isset($_POST['subid']) && is_numeric($_POST['subid'])){
+	$subId			= '';
+	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
+		$subId		= $_POST['subid'];
+	}
+
+	// get value
+	if($element && isset($formTable->submission->formresults[$element->name])){
+		$curValue	= $formTable->submission->formresults[$element->name];
+
+		if(is_numeric($subId) && is_array($curValue)){
+			$curValue	= $curValue[subId];
+		}
+	}elseif(!$element && is_numeric($subId)){
 		$splitElementName	= $formTable->formData->settings['split'];
-		$elementIndexedName	= $splitElementName."[{$_POST['subid']}][$elementName]";
+		$elementIndexedName	= $splitElementName."[$subId][$elementName]";
 
 		$element	= $formTable->getElementByName($elementIndexedName);
 
-		if(isset($formTable->submission->formresults[$splitElementName][$_POST['subid']][$elementName])){
-			$curValue	= $formTable->submission->formresults[$splitElementName][$_POST['subid']][$elementName];
+		if(isset($formTable->submission->formresults[$splitElementName][$subId][$elementName])){
+			$curValue	= $formTable->submission->formresults[$splitElementName][$subId][$elementName];
 		}
-	}elseif(isset($formTable->submission->formresults[$element->name])){
-		$curValue	= $formTable->submission->formresults[$element->name];
 	}
 
 	if(!$element){
@@ -414,7 +435,8 @@ function editValue(){
 
 	// If there is a sub id set and this field is not a main field
 	if(is_numeric($subId)){
-		$splitElementName	= $formTable->formData->settings['split'];
+		$splitElementName	= [];
+		preg_match('/(.*?)\[[0-9]\]\[.*?\]/gm', $fieldName, $splitElementName);
 
 		//check if this is a main field
 		if(isset($formTable->submission->formresults[$splitElementName][$subId][$fieldName])){

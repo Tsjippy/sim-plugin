@@ -104,8 +104,8 @@ class EditFormResults extends DisplayFormResults{
 				continue;
 			}
 
-			$pattern		= '/'.$splitElementName."\[[0-9]+\]\[([^\]]+)\]/i";
-			if(preg_match($pattern, $triggerName,$matches)){
+			$pattern		= ".*?\[[0-9]+\]\[([^\]]+)\]/i";
+			if(preg_match($pattern, $triggerName, $matches)){
 				$triggerName	= $matches[1];
 			}
 			
@@ -211,10 +211,7 @@ class EditFormResults extends DisplayFormResults{
 			$this->parseSubmissions(null, $id);
 		}
 
-		// Update all sub entries
-		foreach($this->submission->formresults[$this->formData->settings['split']] as &$sub){
-			$sub['archived']	= false;
-		}
+		$this->submission->archivedsubs	= [];
 		
 		//update and mark as archived if all entries are empty or archived
 		$this->updateSubmission(false);

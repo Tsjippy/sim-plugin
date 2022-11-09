@@ -15,10 +15,10 @@ function getAllFields($userId, $type){
 
 	$child				= SIM\isChild($userId);
 	if($child){
-		$childName	= get_userdata($userId)->first_name;
+		$childName		= get_userdata($userId)->first_name;
 	}
 
-	$simForms		= new SimForms();
+	$simForms			= new SimForms();
 
 	$query				= "SELECT * FROM {$simForms->elTableName} WHERE ";
 	if($type == 'all'){
@@ -104,7 +104,7 @@ function getAllFields($userId, $type){
 			$metakey 	= explode('[', $field->name)[0];
 			$value		= get_user_meta($userId, $metakey, true);
 
-			$name		= str_replace('[]', '', $field->name);
+			$name		= $field->name;
 			if (strpos($name, '[') !== false){
 				$value = SIM\getMetaArrayValue($userId, $name, $value);
 			}
