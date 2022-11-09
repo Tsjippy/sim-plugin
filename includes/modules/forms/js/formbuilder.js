@@ -55,6 +55,9 @@ async function showEmptyModal(target){
 	}
 	
 	clearFormInputs();
+
+	// Hide all
+	modal.querySelectorAll(".hide").forEach(el=>el.classList.replace('hide', 'hidden'))
 	
 	if(formElementWrapper != null){
 		modal.querySelector('[name="insertafter"]').value = formElementWrapper.dataset.priority;
