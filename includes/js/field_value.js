@@ -77,6 +77,10 @@ export function getFieldValue(orgName, form, checkDatalist=true, compareValue=nu
 			el			= orgName;
 		}
 		name		= el.name;
+	// We should look for an id
+	}else if(orgName.match("E[0-9]")){	
+		el			= form.querySelector(`#${orgName}`);
+		name		= el.name;
 	}else{
 		name		= orgName;
 		el			= form.querySelector(`[name='${name}' i]`);

@@ -493,7 +493,9 @@ function addRuleRow(row){
 	fixRuleNumbering(row.closest('.condition_row'));
 }
 
-function addOppositeCondition(clone){
+function addOppositeCondition(clone, target){
+	console.log(clone)
+	console.log(target)
 	//Set values to opposite
 	clone.querySelectorAll('.element_condition').forEach(function(el){
 		if(el.tagName == 'SELECT' && el.classList.contains('equation')){
@@ -501,7 +503,7 @@ function addOppositeCondition(clone){
 			FormFunctions.removeDefaultSelect(el);
 			
 			//get the original value which was lost during cloning
-			let originalSelect 	= row.querySelector('.equation');
+			let originalSelect 	= target.closest('.condition_row').querySelector('.equation');
 			let selIndex		= originalSelect.selectedIndex;
 			
 			if(selIndex){
@@ -533,7 +535,7 @@ function addCondition(target){
 	
 	if(target.classList.contains('opposite')){
 		clone = FormFunctions.cloneNode(row, false);
-		clone = addOppositeCondition(clone);
+		clone = addOppositeCondition(clone, target);
 	}else{
 		clone = FormFunctions.cloneNode(row);
 	}

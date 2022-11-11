@@ -286,21 +286,21 @@ trait ElementHtml{
 				//Remove starting or ending spaces and make it lowercase
 				$option 		= trim($option);
 
-				$optionType		= explode('=',$option)[0];
+				$optionType		= explode('=', $option)[0];
 				$optionValue	= str_replace('\\\\', '\\', explode('=',$option)[1]);
 
 				if($optionType == 'class'){
 					$elClass .= " $optionValue";
 				}else{
-					if(!in_array($optionType, ['pattern', 'title', 'accept'])){
-						$optionValue = str_replace([' ', ',', '(', ')'],['_', '', '', ''], $optionValue);
+					if(!in_array($optionType, ['pattern', 'title', 'accept', 'placeholder'])){
+						//$optionValue = str_replace([' ', ',', '(', ')'],['_', '', '', ''], $optionValue);
 					}
 
 					//remove any leading "
 					$optionValue	= trim($optionValue, '\'"');
 
 					//Write the corrected option as html
-					$elOptions	.= " $optionType='$optionValue'";
+					$elOptions	.= " $optionType=\"$optionValue\"";
 				}
 			}
 		}
@@ -393,6 +393,10 @@ trait ElementHtml{
 			//datalist needs an id to work as well as mandatory elements for use in anchor links
 			if($element->type == 'datalist' || $element->mandatory || $element->recommended){
 				$elId	= "id='$elName'";
+			}
+
+			if(strpos($elName, '[]') !== false ){
+				$elId	= "id='E$element->id'";
 			}
 			
 			/*
@@ -600,7 +604,7 @@ trait ElementHtml{
 		//remove unnessary whitespaces
 		$html = preg_replace('/\s+/', ' ', $html);
 		
-		//check if we need to transform a keyword to date 
+		//check if we need to transform a keyword to date
 		preg_match_all('/%([^%;]*)%/i', $html, $matches);
 		foreach($matches[1] as $key=>$keyword){
 			$keyword = str_replace('_',' ', $keyword);

@@ -123,7 +123,7 @@ function getLatestRelease($author='tsjippy', $package=PLUGINNAME){
 			$client->removeCache();
 			
 			// Store for 1 hours
-			set_transient( "$author-$package", $release, DAY_IN_SECONDS );
+			set_transient( "$author-$package", $release, HOUR_IN_SECONDS );
 		} catch (ApiLimitExceedException $e) {
 			printArray('Rate limit reached, please try again in an hour');
 			return new \WP_Error('update', 'Rate limit reached, please try again in an hour');

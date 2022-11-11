@@ -572,7 +572,7 @@ class DisplayFormResults extends DisplayForm{
 			/*
 					Write the content to the cell, convert to something if needed
 			*/
-			$elementName 	= $columnSetting['nice_name'];
+			$elementName 	= str_replace('[]', '', $columnSetting['name']);
 			$class 			= '';
 
 			//add field value if we are allowed to see it
@@ -1443,14 +1443,20 @@ class DisplayFormResults extends DisplayForm{
 
 			$this->enrichColumnSettings();
 
+			$submissions		= $this->submissions;
+			if(isset($this->splittedSubmissions)){
+				$submissions		= $this->splittedSubmissions;
+			}
+
 			// Check if we should sort the data
 			if($this->tableSettings['default_sort']){
 				$defaultSortElement	= $this->tableSettings['default_sort'];
 				$sortElement		= $this->getElementById($defaultSortElement);
 				$sort				= str_replace(']', '', end(explode('[', $sortElement->name)));
 				$sortElementType	= $sortElement->type;
+
 				//Sort the array
-				usort($this->submissions, function($a, $b) use ($sort, $sortElementType){
+				usort($submissions, function($a, $b) use ($sort, $sortElementType){
 					if($sortElementType == 'date'){
 						return strtotime($a->formresults[$sort]) <=> strtotime($b->formresults[$sort]);
 					}
@@ -1464,7 +1470,7 @@ class DisplayFormResults extends DisplayForm{
 			//first check if the data contains data of our own
 			$this->ownData	= false;
 			$this->user->partnerId		= SIM\hasPartner($this->user->ID);
-			foreach($this->submissions as $submission){
+			foreach($submissions as $submission){
 				//Our own entry or one of our partner
 				if($submission->userid == $this->user->ID || $submission->userid == $this->user->partnerId){
 					$this->ownData = true;
@@ -1563,20 +1569,13 @@ class DisplayFormResults extends DisplayForm{
 				/*
 						WRITE THE CONTENT ROWS OF THE TABLE
 				*/
-				//Loop over all the submissions of this form
-				if(isset($this->splittedSubmissions)){
-					$submissions	= $this->splittedSubmissions;
-				}else{
-					$submissions	= $this->submissions;
-				}
-
 				foreach($submissions as $submission){
-					$values			= $submission->formresults;
+					$values				= $submission->formresults;
 					$values['id']		= $submission->id;
 					$values['userid']	= $submission->userid;
-					$index					= -1;
+					$index				= -1;
 					if(is_numeric($submission->subId)){
-						$index				= $submission->subId;
+						$index			= $submission->subId;
 					}
 					
 					$this->writeTableRow($values, $index, $submission->archived);

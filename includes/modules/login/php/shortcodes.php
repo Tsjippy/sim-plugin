@@ -33,7 +33,7 @@ function passwordResetForm($user){
 			</p>
 			<label>
 				New Password<br>
-				<input type="password" class='changepass' name="pass1" size="16" autocomplete="off" required/>
+				<input type="password" class='changepass wide' name="pass1" size="16" autocomplete="off" required/>
 			</label>
 			<br>
 			<span style="text-align: center;" class="pass-strength-result hidden" id="pass-strength-result1">Strength indicator</span>
@@ -41,7 +41,7 @@ function passwordResetForm($user){
 			<br>
 			<label>
 				Confirm New Password<br>
-				<input type="password" class='changepass' name="pass2" size="16" autocomplete="off" required/>
+				<input type="password" class='changepass wide' name="pass2" size="16" autocomplete="off" required/>
 			</label>
 			<br>
 			<span style="text-align: center;" class="pass-strength-result hidden" id="pass-strength-result2">Strength indicator</span>

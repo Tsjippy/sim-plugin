@@ -237,30 +237,14 @@ function getUniqueName($element, $update, $oldElement, $simForms){
 
 	global $wpdb;
 
-	$unique = false;
+	$elementName = $element->name;
 	
 	$i = '';
-	while(!$unique){
-		if($i == ''){
-			$elementName = $element->name;
-		}else{
-			$elementName = "{$element->name}_$i";
-		}
+	// getElementByName returns false when no match found
+	while($simForms->getElementByName($elementName)){
+		$i++;
 		
-		$unique = true;
-		//loop over all elements to check if the names are equal
-		foreach($simForms->formElements as $index=>$el){
-			//don't compare with itself
-			if($update && $index == $_POST['element_id']){
-				continue;
-			}
-
-			//we found a duplicate name
-			if($elementName == $el->name){
-				$i++;
-				$unique = false;
-			}
-		}
+		$elementName = "{$element->name}_$i";
 	}
 	//update the name
 	if($i != ''){
@@ -309,6 +293,8 @@ function getUniqueName($element, $update, $oldElement, $simForms){
 			)
 			);
 	}
+
+	return $element->name;
 }
 
 // DONE
@@ -322,7 +308,8 @@ function addFormElement(){
 	$oldElement	= new stdClass();
 
 	//Store form results if submitted
-	$element		= (object)$_POST["formfield"];
+	$element			= (object)$_POST["formfield"];
+	$element->options	= str_replace('\\\\', '\\', $element->options);
 	if(is_numeric($_POST['element_id'])){
 		$update		= true;
 

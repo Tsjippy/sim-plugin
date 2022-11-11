@@ -317,7 +317,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 	<form method='post'>
 		<label>
 			<h4>Message to be send</h4>
-			<input type='text' name='message' style='width:100%;' required>
+			<textarea name='message' style='width:100%;' required></textarea>
 		</label>
 		<label>
 			<h4>Recipient</h4>

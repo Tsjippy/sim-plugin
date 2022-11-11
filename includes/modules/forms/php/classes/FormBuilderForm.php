@@ -898,7 +898,7 @@ class FormBuilderForm extends SimForms{
 			
 			<div name='elementname' class='elementoption wide reverse notlabel notphp notformstep button hide' style='background-color: unset;'>
 				<label>
-					<div>Specify a name for the element</div>
+					<div style='text-align: left;'>Specify a name for the element</div>
 					<input type="text" class="formbuilder wide" name="formfield[name]" value="<?php if($element != null){echo $element->name;}?>">
 				</label>
 				<br><br>
@@ -912,9 +912,9 @@ class FormBuilderForm extends SimForms{
 				<br><br>
 			</div>
 			
-			<div name='labeltext' class='elementoption label button formstep hidden' style='background-color: unset;'>
+			<div name='labeltext' class='elementoption label button formstep hidden wide' style='background-color: unset;'>
 				<label>
-					<div>Specify the <span class='elementtype'>label</span> text</div>
+					<div style='text-align: left;'>Specify the <span class='elementtype'>label</span> text</div>
 					<input type="text" class="formbuilder wide" name="formfield[text]" value="<?php if($element != null){echo $element->text;}?>">
 				</label>
 				<br><br>

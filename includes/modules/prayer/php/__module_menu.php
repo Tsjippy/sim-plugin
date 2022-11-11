@@ -78,7 +78,11 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 							?>
 							<select  name="groups[<?php echo $index;?>][name]">
 								<?php
-								$signal 		= new SIM\SIGNAL\Signal();
+								if(strpos(php_uname(), 'Linux') !== false){
+									$signal 		= new SIM\SIGNAL\SignalBus();
+								}else{
+									$signal 		= new SIM\SIGNAL\Signal();
+								}
 
 								foreach($signal->listGroups() as $g){
 									if(empty($g->name)){

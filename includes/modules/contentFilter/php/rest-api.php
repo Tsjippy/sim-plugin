@@ -4,7 +4,7 @@ use SIM;
 use WP_Error;
 
 //Secure the rest api
-add_filter( 'rest_authentication_errors', function( $result ) {	
+add_filter( 'rest_authentication_errors', function( $result ) {
     // If a previous authentication check was applied, pass that result along without modification.
     if ( true === $result || is_wp_error( $result ) ) {
         return $result;

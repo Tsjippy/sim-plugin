@@ -33,7 +33,22 @@ add_shortcode("test",function ($atts){
             $result->formresults['travel']  = array_values($result->formresults['travel']);
             unset($result->formresults['travel'][6]);
         }
+
+        $allArchived    = true;
         foreach($result->formresults['travel'] as $index=>&$sub){
+            $empty=true;
+            foreach($sub as $key=>$s){
+                if(empty($s) || $key =='archived'){
+                    continue;
+                }
+                $empty = false;
+                break;
+            }
+
+            if((!isset($sub['archived']) || !$sub['archived']) && !$empty){
+                $allArchived    = false;
+            }
+
             if(isset($sub['archived']) && $sub['archived']){
                 $update = true;
                 unset($sub['archived']);
@@ -51,11 +66,17 @@ add_shortcode("test",function ($atts){
                 "{$wpdb->prefix}sim_form_submissions",
                 [
                     'formresults' => serialize($result->formresults),
-                    'archivedsubs' => $result->archivedsubs
+                    'archivedsubs' => serialize($result->archivedsubs),
+                    'archived'=>$allArchived
                 ],
                 array(
                     'id'		=> $result->id
                 ),
+                array(
+                    '%s',
+                    '%s',
+                    '%d'
+                )
             );
         }
     }

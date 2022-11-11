@@ -463,11 +463,11 @@ export function changeFieldValue(orgName, value, functionRef, form){
 	}
 }
 
-export function changeFieldProperty(name, att, value, functionRef, form){
+export function changeFieldProperty(selector, att, value, functionRef, form){
 	//first change the value
 	let target = form.querySelector(`[name="${name}" i]`);
 	
-	form.querySelector(`[name="${name}"]`)[att] = value;
+	form.querySelector(`${selector}`)[att] = value;
 	
 	//create a new event
 	let evt = new Event('input');

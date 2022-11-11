@@ -373,7 +373,7 @@ class SignalBus extends Signal {
         if(!$this->daemon){
             $display    = 'export DISPLAY=:0.0;';
             $dbus       = "export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$this->osUserId/bus;";
-            $cli        = "$this->path -o json daemon";
+            $cli        = "$this->path -o json --trust-new-identities=always daemon";
             $read       = 'while read -r line; do php '.__DIR__.'/../../daemon/signal-daemon.php "$line"; done;';
             
             $command = new Command([

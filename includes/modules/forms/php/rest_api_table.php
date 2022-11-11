@@ -436,7 +436,7 @@ function editValue(){
 	// If there is a sub id set and this field is not a main field
 	if(is_numeric($subId)){
 		$splitElementName	= [];
-		preg_match('/(.*?)\[[0-9]\]\[.*?\]/gm', $fieldName, $splitElementName);
+		preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $fieldName, $splitElementName);
 
 		//check if this is a main field
 		if(isset($formTable->submission->formresults[$splitElementName][$subId][$fieldName])){

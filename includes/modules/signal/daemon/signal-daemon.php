@@ -2,6 +2,8 @@
 use SIM\SIGNAL\SignalBus;
 use SIM;
 
+echo "Started from ".__DIR__;
+
 if(!empty($argv) && count($argv) == 2){
     $data      = json_decode($argv[1]);
 
@@ -71,6 +73,8 @@ function getAnswer($message, $source){
 
     if($message == 'test'){
         return 'Awesome!';
+    }elseif($message == 'thanks'){
+        return 'You`re welcome!';
     }elseif(strpos($message, 'prayer') !== false && $name){
         return "This is the prayer for today:\n\n".SIM\PRAYER\prayerRequest(true, $name);
     }elseif($message == 'hi' || strpos($message, 'hello') !== false){

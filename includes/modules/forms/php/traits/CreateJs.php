@@ -48,7 +48,7 @@ trait CreateJs{
                         $lastRuleKey			= array_key_last($condition['rules']);
                         $fieldCheckIf 		    = "";
                         $conditionVariables	    = [];
-                        $conditionIf			= ''; 
+                        $conditionIf			= '';
                         $checkForChange         = false;
                         
                         //Loop over the rules
@@ -66,8 +66,13 @@ trait CreateJs{
                             }
 
                             $conditionalFieldName		= $conditionalElement->name;
+                            $propCompare                = 'elName';
+
                             if(in_array($conditionalElement->type,['radio','checkbox']) && strpos($conditionalFieldName, '[]') === false) {
                                 $conditionalFieldName .= '[]';
+                            }elseif(strpos($conditionalFieldName, '[]') !== false){
+                                $propCompare            = 'el.id';
+                                $conditionalFieldName	= 'E'.$conditionalElement->id;
                             }
                             $conditionalFieldType		= $conditionalElement->type;
 
@@ -81,6 +86,9 @@ trait CreateJs{
                                 $conditionalField2Name	= $conditionalElement2->name;
                                 if(in_array($conditionalElement2->type, ['radio','checkbox']) && strpos($conditionalField2Name, '[]') === false) {
                                     $conditionalField2Name .= '[]';
+                                }elseif(strpos($conditionalField2Name, '[]') !== false){
+                                    $propCompare            = 'el.id';
+                                    $conditionalField2Name	= 'E'.$conditionalElement2->id;
                                 }
                             }
                             
@@ -93,7 +101,7 @@ trait CreateJs{
                             
                             //make sure we do not include other fields in changed or click rules
                             if(in_array($equation, ['changed','clicked'])){
-                                $fieldCheckIf		= "elName == '$conditionalFieldName'";
+                                $fieldCheckIf		= "$propCompare == '$conditionalFieldName'";
                                 $checkForChange	= true;
                             }
                             
@@ -103,11 +111,11 @@ trait CreateJs{
                                 if(!empty($fieldCheckIf)){
                                     $fieldCheckIf .= " || ";
                                 }
-                                $fieldCheckIf .= "elName == '$conditionalFieldName'";
+                                $fieldCheckIf .= "$propCompare == '$conditionalFieldName'";
                                 
                                 //If there is an extra field to check
                                 if(is_numeric($rule['conditional_field_2'])){
-                                    $fieldCheckIf .= " || elName == '$conditionalField2Name'";
+                                    $fieldCheckIf .= " || $propCompare == '$conditionalField2Name'";
                                 }
                             }
             
@@ -141,9 +149,9 @@ trait CreateJs{
                                 $compareValue2 = "'".strtolower(trim($rule['conditional_value']))."'";
                             }
                             
-                            /* 
+                            /*
                                 NOW WE KNOW THAT THE CHANGED FIELD BELONGS TO THIS CONDITION
-                                LETS CHECK IF ALL THE VALUES ARE MET AS WELL 
+                                LETS CHECK IF ALL THE VALUES ARE MET AS WELL
                             */
                             if(!in_array($equation, ['changed','clicked','checked','!checked'])){
                                 $conditionVariables[]      = "var value_$fieldNumber1 = FormFunctions.getFieldValue('$conditionalFieldName', form, true, $compareValue2, true);";
@@ -238,22 +246,13 @@ trait CreateJs{
                                     $actionArray[] = $actionCode;
                                 }
                             }else{
-                                if(in_array($element->type,['radio','checkbox']) && strpos($name, '[]') === false) {
-                                    $name .= '[]';
-                                }
-
-                                if(in_array($element->type, ['file', 'image'])){
-                                    $name .= '_files[]';
-                                }
-
                                 //only add if there is no wrapping element with the same condition.
                                 $prevElement = $this->formElements[$elementIndex];
-                                if(!$prevElement->wrap || !in_array("[name=\"$prevElement->name\"]", $actionArray['querystrings'][$action])){
-                                    if(empty($element->multiple)){
-                                        $actionArray['querystrings'][$action][]    = "[name=\"$name\"]";
-                                    }else{
-                                        $actionArray['querystrings'][$action][]    = "[name^=\"$name\"]";
-                                    }
+                                if(
+                                    !$prevElement->wrap ||                                                              // this element is not wrapped in the previous one
+                                    !in_array($prevElement, $actionArray['querystrings'][$action])   // or the previous element is not in the action array
+                                ){
+                                    $actionArray['querystrings'][$action][]    = $element;
                                 }
                             }
 
@@ -268,37 +267,24 @@ trait CreateJs{
                                     $errors[]   = "Element $element->name has an invalid rule";
                                     continue;
                                 }
-
-                                $name				= $copyToElement->name;
-                                if(in_array($copyToElement->type, ['radio', 'checkbox']) && strpos($name, '[]') === false) {
-                                    $name .= '[]';
-                                }
-
-                                if(in_array($copyToElement->type, ['file', 'image'])){
-                                    $name .= '_files[]';
-                                }
                                 
                                 //formstep do not have an inputwrapper
                                 if($copyToElement->type == 'formstep'){
-                                    $actionCode    = "form.querySelector('[name=\"$name\"]').classList.$action('hidden');";
+                                    $actionCode    = "form.querySelector('[name=\"$copyToElement->name\"]').classList.$action('hidden');";
                                     if(!in_array($actionCode, $actionArray)){
                                         $actionArray[] = $actionCode;
                                     }
                                 }else{
-                                    if(empty($copyToElement->multiple)){
-                                        $actionArray['querystrings'][$action][]    = "[name=\"$name\"]";
-                                    }else{
-                                        $actionArray['querystrings'][$action][]    = "[name^=\"$name\"]";
-                                    }
+                                    $actionArray['querystrings'][$action][]    = $copyToElement;
                                 }
                             }
                         //set property value
                         }elseif($action == 'property' || $action == 'value'){
                             //set the attribute value of one field to the value of another field
-                            $fieldName		= $element->name;
-                            if($element->type == 'checkbox'){
+                            $fieldName		= getSelector($element);
+                            /* if($element->type == 'checkbox'){
                                 $fieldName .= '[]';
-                            }
+                            } */
                             
                             //fixed prop value
                             if($action == 'value'){
@@ -353,7 +339,7 @@ trait CreateJs{
         $js         = "";
         $minifiedJs = "";
         
-        /* 
+        /*
         ** DOMContentLoaded JS
         */
         $newJs   = "\n\tdocument.addEventListener('DOMContentLoaded', function() {";
@@ -384,7 +370,7 @@ trait CreateJs{
         $js         .= $newJs;
         $minifiedJs .= \Garfix\JsMinify\Minifier::minify($newJs, array('flaggedComments' => false));
 
-        /* 
+        /*
         ** EVENT LISTENER JS
         */
         $newJs   = '';
@@ -431,7 +417,7 @@ trait CreateJs{
         $js         .= $newJs;
         $minifiedJs .= \Garfix\JsMinify\Minifier::minify($newJs, array('flaggedComments' => false));
 
-        /* 
+        /*
         ** MAIN JS
         */
         $newJs   = '';
@@ -439,6 +425,11 @@ trait CreateJs{
             $newJs  .= "\n\t\tvar elName = el.name;\n";
             $newJs  .= "\n\t\tvar form	= el.closest('form');\n";
             foreach($checks as $if => $check){
+                // empty if is not allowed
+                if($if == 'if()'){
+                    continue;
+                }
+                
                 $prevVar   = [];
                 $newJs  .= "\t\t$if\n";
                 foreach($check['variables'] as $variable){
@@ -488,10 +479,10 @@ trait CreateJs{
         $minifiedJs .= \Garfix\JsMinify\Minifier::minify($newJs, array('flaggedComments' => false));
       
         // Put is all in a namespace variable
-        $js         = "var {$this->formName} = new function(){".$js."\n};";  
+        $js         = "var {$this->formName} = new function(){".$js."\n};";
         $minifiedJs = "var {$this->formName} = new function(){".$minifiedJs."};";
 
-        /* 
+        /*
         ** EXTERNAL JS
         */
         $extraJs   = apply_filters('sim_form_extra_js', '', $this->formName, false);
@@ -550,13 +541,14 @@ trait CreateJs{
 
 function buildQuerySelector($queryStrings, $prefix){
     $actionCode    = '';
-    foreach($queryStrings as $action=>$names){
+    foreach($queryStrings as $action=>$elements){
         //multiple
-        if(count($names) > 1){
+        if(count($elements) > 1){
             $actionCode    .= "{$prefix}form.querySelectorAll('";
-            $last           = array_key_last($names);
-            foreach($names as $key=>$name){
-                $actionCode    .= $name;
+            $last           = array_key_last($elements);
+            foreach($elements as $key=>$element){
+                $actionCode     .= getSelector($element);
+
                 if($key != $last){
                     $actionCode    .= ', ';
                 }
@@ -574,11 +566,35 @@ function buildQuerySelector($queryStrings, $prefix){
             $actionCode    .= "{$prefix}});\n";
             $actionCode    .= "{$prefix}document.querySelectorAll('.action-processed').forEach(el=>{el.classList.remove('action-processed')});\n";
         //just one
-        }elseif(count($names)==1){
-            $actionCode    .= "{$prefix}form.querySelector('{$names[0]}')";
+        }elseif(count($elements) == 1){
+            $selector       = getSelector($elements[0]);
+            $actionCode    .= "{$prefix}form.querySelector('$selector')";
             $actionCode    .= ".closest('.inputwrapper').classList.$action('hidden');\n";
         }
     }
 
     return $actionCode;
+}
+
+function getSelector($element){
+    $queryById          = false;
+    $name				= $element->name;
+    if(in_array($element->type, ['radio', 'checkbox']) && strpos($name, '[]') === false) {
+        $name .= '[]';
+    }elseif(strpos($name, '[]') !== false){
+        $queryById          = true;
+    }
+
+    if(in_array($element->type, ['file', 'image'])){
+        $name .= '_files[]';
+    }
+
+    if($queryById){
+        return '#E'.$element->id;
+    }elseif(empty($element->multiple)){
+        return "[name=\"$name\"]";
+    }else{
+        // name is followed by an index [0]
+        return "[name^=$name\\[]";
+    }
 }

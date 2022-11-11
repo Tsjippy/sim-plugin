@@ -629,7 +629,7 @@ class Signal {
                 $this->valid    = false;
             }
         }elseif($curVersion  != $release['tag_name']){
-            echo "Updating <br>";
+            echo "<strong>Updating Signal</strong> <br>";
 
             $this->installSignal(str_replace('v', '', $release['tag_name']));
         }
@@ -715,9 +715,7 @@ class Signal {
                 exec("rmdir $path /s /q");
             }else{
                 // stop the deamon
-                exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
-                exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
-                exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
+                #exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
 
                 exec("rm -rfd $this->programPath");
             }

@@ -79,6 +79,7 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	
 	//Check if recipient is an existing userid
 	if(is_numeric($recipient) && get_userdata($recipient)){
+
 		$phonenumbers = get_user_meta( $recipient, 'phonenumbers', true );
 		
 		//If this user has more than 1 phone number add them all
@@ -103,11 +104,15 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
 		if(strpos(php_uname(), 'Linux') !== false){
 			$signal = new SignalBus();
+			if(strpos($recipient, ',') !== false){
+				$signal->sendGroupMessage($message, $recipient, $image);
+			}else{
+				$signal->send($recipient, $message, $image);
+			}
 		}else{
 			$signal = new Signal();
+			$signal->send($recipient, $message, $image);
 		}
-		
-		$signal->send($recipient, $message, $image);
 
 		return;
 	}

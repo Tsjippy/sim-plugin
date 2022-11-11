@@ -33,7 +33,8 @@ class EditFormResults extends DisplayFormResults{
 			array(
 				'timelastedited'	=> date("Y-m-d H:i:s"),
 				'formresults'		=> maybe_serialize($this->submission->formresults),
-				'archived'			=> $archive
+				'archived'			=> $archive,
+				'archivedsubs'		=> maybe_serialize($this->submission->archivedsubs)
 			),
 			array(
 				'id'				=> $submissionId,
@@ -41,7 +42,8 @@ class EditFormResults extends DisplayFormResults{
 			array(
 				'%s',
 				'%s',
-				'%d'
+				'%d',
+				'%s'
 			)
 		);
 		
@@ -92,7 +94,11 @@ class EditFormResults extends DisplayFormResults{
 			//$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
 			$this->formData->settings 	= $settings;
 
-			$splitElementName			= $settings['split'];
+			$splitElementName			= $this->getElementById($settings['split'][0], 'nicename');
+			$result						= preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $splitElementName, $matches);
+			if($result){
+				$splitElementName		= $matches[1];
+			}
 
 			//Get all submissions of this form
 			$this->parseSubmissions(null, null, true);
@@ -112,7 +118,7 @@ class EditFormResults extends DisplayFormResults{
 			//check if we need to transform a keyword to a date
 			$pattern = '/%([^%;]*)%/i';
 			//Execute the regex
-			preg_match_all($pattern, $triggerValue,$matches);
+			preg_match_all($pattern, $triggerValue, $matches);
 			if(!is_array($matches[1])){
 				SIM\printArray($matches[1]);
 			}else{

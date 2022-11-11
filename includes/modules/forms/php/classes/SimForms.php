@@ -142,10 +142,11 @@ class SimForms{
 		//used to find the index of an element based on its unique id
  		$this->formData->elementMapping									= [];
 		$this->formData->elementMapping['type']							= [];
+		$this->formData->elementMapping['name']							= [];
 		foreach($this->formElements as $index=>$element){
 			$name	= $element->nicename;
 			$this->formData->elementMapping['id'][$element->id]			= $index;
-			$this->formData->elementMapping['name'][$name] 				= $index;
+			$this->formData->elementMapping['name'][$name][] 			= $index;
 			$this->formData->elementMapping['type'][$element->type][] 	= $index;
 		}
 		
@@ -339,7 +340,7 @@ class SimForms{
 	 *
 	 * @return	object|array|string|false			The element or element property
 	 */
-	public function getElementByName($name, $key=''){
+	public function getElementByName($name, $key='', $single=true){
 		if(empty($name)){
 			return false;
 		}
@@ -355,7 +356,13 @@ class SimForms{
 		}
 		$elementIndex	= $this->formData->elementMapping['name'][$name];
 					
-		$element		= $this->formElements[$elementIndex];
+		$elements		= $this->formElements[$elementIndex];
+
+		if(!$single){
+			return $elements;
+		}
+
+		$element	= $elements[0];
 		
 		if(empty($key)){
 			return $element;

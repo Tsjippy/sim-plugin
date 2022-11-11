@@ -1062,10 +1062,6 @@ div input[type=url] {
   display: inline-block;
 }
 
-input.wide {
-  width: 100%;
-}
-
 @media screen and (max-width: 570px) {
   .mobile-hidden {
     display: none;
