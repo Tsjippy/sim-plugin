@@ -5,6 +5,7 @@
 ### Added
 - suport for multiple elements with the
  same name if they end on []
+- Disable administration email verification
 
 ### Changed
 
