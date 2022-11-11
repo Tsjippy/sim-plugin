@@ -554,7 +554,7 @@ trait ElementHtml{
 						}
 						
 						$html .= "<label>";
-							$html .= "<$elType name='$elName' class='$elClass' $elOptions value='$key' $checked>";
+							$html .= "<$elType name='$elName' $elId class='$elClass' $elOptions value='$key' $checked>";
 							$html .= "<span class='optionlabel'>$option</span>";
 						$html .= "</label><br>";
 					}

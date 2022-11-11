@@ -32,8 +32,13 @@ class FormBuilderForm extends SimForms{
 		
 		foreach($this->formElements as $element){
 			//do not include the element itself do not include non-input types
-			if($element->id != $elementId && !in_array($element->type, ['label','info','datalist','formstep'])){
+			if($element->id != $elementId && !in_array($element->type, ['label', 'info', 'datalist', 'formstep'])){
 				$name = ucfirst(str_replace('_',' ',$element->name));
+
+				// add the id if non-unique name
+				if(strpos($name, '[]') !== false){
+					$name	.= " ($element->id)";
+				}
 				
 				//Check which option is the selected one
 				if(!empty($selectedId) && $selectedId == $element->id){
@@ -100,8 +105,8 @@ class FormBuilderForm extends SimForms{
 		
 		//Add form edit controls if needed
 		$html = " <div class='form_element_wrapper' data-id='{$element->id}' data-formid='{$this->formData->id}' data-priority='{$element->priority}' style='display: flex;'>";
-			$html .= "<span class='movecontrol formfieldbutton' aria-hidden='true'>:::</span>";
-			$html .= "<div class='resizer_wrapper'>";
+			$html 	.= "<span class='movecontrol formfieldbutton' aria-hidden='true'>:::<br><span style='font-size:xx-small'>$element->id</span></span>";
+			$html 	.= "<div class='resizer_wrapper'>";
 				if($element->type == 'info'){
 					$html .= "<div class='show inputwrapper$hidden'>";
 				}else{
@@ -1344,7 +1349,7 @@ class FormBuilderForm extends SimForms{
 						<label for='property'> property to the value of </label>
 						
 						<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][property_value]'>
-						<?php echo $this->inputDropdown($condition['property_value'], $elementId);?>
+							<?php echo $this->inputDropdown($condition['property_value'], $elementId);?>
 						</select><br>
 					</div>
 				</div>

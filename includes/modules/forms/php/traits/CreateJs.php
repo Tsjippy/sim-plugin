@@ -7,7 +7,7 @@ require( MODULE_PATH  . 'lib/vendor/autoload.php');
 trait CreateJs{
     	/**
 	 * Checks if the current form is a multi step form
-	 * 
+	 *
 	 * @return	bool	True if multistep false otherwise
 	 */
 	function isMultiStep(){
@@ -68,12 +68,13 @@ trait CreateJs{
                             $conditionalFieldName		= $conditionalElement->name;
                             $propCompare                = 'elName';
 
-                            if(in_array($conditionalElement->type,['radio','checkbox']) && strpos($conditionalFieldName, '[]') === false) {
-                                $conditionalFieldName .= '[]';
-                            }elseif(strpos($conditionalFieldName, '[]') !== false){
+                            if(strpos($conditionalFieldName, '[]') !== false){
                                 $propCompare            = 'el.id';
                                 $conditionalFieldName	= 'E'.$conditionalElement->id;
+                            }elseif(in_array($conditionalElement->type,['radio','checkbox']) && strpos($conditionalFieldName, '[]') === false) {
+                                $conditionalFieldName .= '[]';
                             }
+
                             $conditionalFieldType		= $conditionalElement->type;
 
                             if(is_numeric($rule['conditional_field_2'])){
@@ -84,11 +85,12 @@ trait CreateJs{
                                 }
 
                                 $conditionalField2Name	= $conditionalElement2->name;
-                                if(in_array($conditionalElement2->type, ['radio','checkbox']) && strpos($conditionalField2Name, '[]') === false) {
-                                    $conditionalField2Name .= '[]';
-                                }elseif(strpos($conditionalField2Name, '[]') !== false){
+                                
+                                if(strpos($conditionalField2Name, '[]') !== false){
                                     $propCompare            = 'el.id';
                                     $conditionalField2Name	= 'E'.$conditionalElement2->id;
+                                }elseif(in_array($conditionalElement2->type, ['radio','checkbox']) && strpos($conditionalField2Name, '[]') === false) {
+                                    $conditionalField2Name .= '[]';
                                 }
                             }
                             
@@ -281,9 +283,9 @@ trait CreateJs{
                         //set property value
                         }elseif($action == 'property' || $action == 'value'){
                             //set the attribute value of one field to the value of another field
-                            $fieldName		= getSelector($element);
+                            $selector		= getSelector($element);
                             /* if($element->type == 'checkbox'){
-                                $fieldName .= '[]';
+                                $selector .= '[]';
                             } */
                             
                             //fixed prop value
@@ -306,7 +308,10 @@ trait CreateJs{
                                 }
 
                                 $copyFieldName	= $copyElement->name;
-                                if($copyElement->type == 'checkbox'){
+                                if(strpos($copyFieldName, '[]') !== false){
+                                    $propCompare            = 'el.id';
+                                    $copyFieldName	= 'E'.$copyElement->id;
+                                }elseif(in_array($copyElement->type,['radio','checkbox']) && strpos($copyFieldName, '[]') === false) {
                                     $copyFieldName .= '[]';
                                 }
                                 
@@ -319,12 +324,12 @@ trait CreateJs{
                             }
                             
                             if($propertyName == 'value'){
-                                $actionCode    = "FormFunctions.changeFieldValue('$fieldName', $varName, {$this->formName}.processFields, form);";
+                                $actionCode    = "FormFunctions.changeFieldValue('$selector', $varName, {$this->formName}.processFields, form);";
                                 if(!in_array($actionCode, $actionArray)){
                                     $actionArray[] = $actionCode;
                                 }
                             }else{
-                                $actionCode    = "FormFunctions.changeFieldProperty('$fieldName', '$propertyName', $varName, {$this->formName}.processFields, form);";
+                                $actionCode    = "FormFunctions.changeFieldProperty('$selector', '$propertyName', $varName, {$this->formName}.processFields, form);";
                                 if(!in_array($actionCode, $actionArray)){
                                     $actionArray[] = $actionCode;
                                 }
@@ -434,7 +439,7 @@ trait CreateJs{
                 $newJs  .= "\t\t$if\n";
                 foreach($check['variables'] as $variable){
                     //Only write same var definition once
-                    $varParts  = explode(' = ',$variable);
+                    $varParts  = explode(' = ', $variable);
                     if($prevVar[$varParts[0]] != $varParts[1]){
                         $newJs  .= "\t\t\t$variable\n";
                         $prevVar[$varParts[0]] = $varParts[1];
@@ -579,10 +584,11 @@ function buildQuerySelector($queryStrings, $prefix){
 function getSelector($element){
     $queryById          = false;
     $name				= $element->name;
-    if(in_array($element->type, ['radio', 'checkbox']) && strpos($name, '[]') === false) {
-        $name .= '[]';
-    }elseif(strpos($name, '[]') !== false){
+
+    if(strpos($name, '[]') !== false){
         $queryById          = true;
+    }elseif(in_array($element->type, ['radio', 'checkbox']) && strpos($name, '[]') === false) {
+        $name .= '[]';
     }
 
     if(in_array($element->type, ['file', 'image'])){

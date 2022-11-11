@@ -383,36 +383,42 @@ function findcheckboxTarget(form, name, value){
 }
 
 export function changeFieldValue(orgName, value, functionRef, form){
-	let name	= '';
-	let target	= '';
+	let name		= '';
+	let target		= '';
+	let selector	= '';
 
 	if(orgName instanceof Element){
 		name	= orgName.name;
 		target	= orgName;
+	}else if(orgName.match("E[0-9]")){
+		selector	= `${orgName}`;
+		target 		= form.querySelector(selector);
+		name		= target.name;
 	}else{
-		name 	= orgName;
+		selector	= `[name="${name}" i]`
+		name 		= orgName;
 		//get the target
-		target 	= form.querySelector(`[name="${name}" i]`);
+		target 	= form.querySelector(selector);
+	}
 
-		// Check if we are dealing with a multi input field
-		if(target == null){
-			let targets 	= form.querySelectorAll(`.clone_div [name^="${name}" i]`);
-			if(targets.length === 0){
-				return;
-			}else if(targets.length == 1){
-				target	= targets[0];
-				targets	= '';
-			}else{
-				target	= targets[0];
+	// Check if we are dealing with a multi input field
+	if(target == null){
+		let targets 	= form.querySelectorAll(`.clone_div [name^="${name}" i]`);
+		if(targets.length === 0){
+			return;
+		}else if(targets.length == 1){
+			target	= targets[0];
+			targets	= '';
+		}else{
+			target	= targets[0];
 
-				targets.forEach((el, index) =>{
-					if(index == 0){
-						changeFieldValue(el, '', '', form);
-					}else{
-						removeNode(el);
-					}
-				});
-			}
+			targets.forEach((el, index) =>{
+				if(index == 0){
+					changeFieldValue(el, '', '', form);
+				}else{
+					removeNode(el);
+				}
+			});
 		}
 	}
 	
@@ -465,9 +471,7 @@ export function changeFieldValue(orgName, value, functionRef, form){
 
 export function changeFieldProperty(selector, att, value, functionRef, form){
 	//first change the value
-	let target = form.querySelector(`[name="${name}" i]`);
-	
-	form.querySelector(`${selector}`)[att] = value;
+	let target = form.querySelector(selector)[att] = value;
 	
 	//create a new event
 	let evt = new Event('input');

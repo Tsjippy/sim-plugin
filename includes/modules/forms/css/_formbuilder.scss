@@ -20,25 +20,29 @@
 	.resizer_wrapper{
 		width:100%;
 		min-width: 220px;
-	}
+	
 
-	.resizer.show{
-		resize: horizontal;
-		overflow: hidden;
-		min-height: 30px;
-		position: relative;
+		.resizer{
+			margin-top: 0px;
+			&.show{
+				resize: horizontal;
+				overflow: hidden;
+				min-height: 30px;
+				position: relative;
 
-		&::after {
-			pointer-events: none;
-			content: "⇄";
-			font-size: 14px;
-			position: absolute;
-			height: 22px;
-			width: 22px;
-			text-align: center;
-			bottom: 2px;
-			right: -2px;
-			z-index: 2;
+				&::after {
+					pointer-events: none;
+					content: "⇄";
+					font-size: 14px;
+					position: absolute;
+					height: 22px;
+					width: 22px;
+					text-align: center;
+					bottom: 2px;
+					right: -2px;
+					z-index: 2;
+				}
+			}
 		}
 	}
 

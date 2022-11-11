@@ -1,5 +1,5 @@
-function getRadioValue(form, name){
-	let el	= form.querySelector(`[name='${name}' i]:checked`);
+function getRadioValue(form, selector){
+	let el	= form.querySelector(`${selector}:checked`);
 
 	//There is no radio selected currently
 	if(el == null){
@@ -10,7 +10,7 @@ function getRadioValue(form, name){
 	return el.value;
 }
 
-function getCheckboxValue(form, name, compareValue, orgName){
+function getCheckboxValue(form, selector, compareValue, orgName){
 	let value		= '';
 	let elements	= '';
 
@@ -25,13 +25,13 @@ function getCheckboxValue(form, name, compareValue, orgName){
 
 	//we should find the checkbox with this value and check if it is checked
 	if(compareValue != null){
-		elements	= form.querySelector(`[name='${name}' i][value="${compareValue}" i]:checked`);
+		elements	= form.querySelector(`${selector}[value="${compareValue}" i]:checked`);
 		if(elements != null){
 			value = compareValue;
 		}
 	//no compare value give just return all checked values
 	}else{
-		elements	= form.querySelectorAll(`[name="${name}" i]:checked`);
+		elements	= form.querySelectorAll(`${selector}:checked`);
 		value		= [];
 		elements.forEach(el=>{
 			value.push(el.value);
@@ -62,9 +62,10 @@ export function getDataListValue(el){
 }
 
 export function getFieldValue(orgName, form, checkDatalist=true, compareValue=null, lowercase=false){
-	let el		= ''; 
-	let name	= '';
-	let value 	= '';
+	let el			= ''; 
+	let name		= '';
+	let value 		= '';
+	let selector	= '';
 
 	//name is not a name but a node
 	if(orgName instanceof Element){
@@ -78,12 +79,14 @@ export function getFieldValue(orgName, form, checkDatalist=true, compareValue=nu
 		}
 		name		= el.name;
 	// We should look for an id
-	}else if(orgName.match("E[0-9]")){	
-		el			= form.querySelector(`#${orgName}`);
+	}else if(orgName.match("E[0-9]")){
+		selector	= `#${orgName}`;
+		el			= form.querySelector(selector);
 		name		= el.name;
 	}else{
 		name		= orgName;
-		el			= form.querySelector(`[name='${name}' i]`);
+		selector	= `[name='${name}' i]`;
+		el			= form.querySelector(selector);
 	}
 	
 	if(el == null){
@@ -94,9 +97,9 @@ export function getFieldValue(orgName, form, checkDatalist=true, compareValue=nu
 	}
 
 	if(el.type == 'radio'){
-		value	= getRadioValue(form, name);
+		value	= getRadioValue(form, selector);
 	}else if(el.type == 'checkbox'){
-		value	= getCheckboxValue(form, name, compareValue, orgName);	
+		value	= getCheckboxValue(form, selector, compareValue, orgName);	
 	}else if(el.closest('.nice-select-dropdown') != null && el.dataset.value != undefined){
 		//nice select
 		value = el.dataset.value
