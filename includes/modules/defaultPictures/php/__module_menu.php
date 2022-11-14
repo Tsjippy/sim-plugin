@@ -35,7 +35,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	$args = array(
 		'public'   => true,
 		'_builtin' => false
-	 );	   
+	 );
 	$postTypes = array_merge(get_post_types( $args, 'names', 'and' ), ['post']);
 
 	foreach($postTypes as $postType){

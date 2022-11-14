@@ -341,35 +341,49 @@ function hideConditionalfields(form){
 	form.querySelectorAll(`.elementoption.reverse`).forEach(el=>el.classList.replace('hidden', 'hide'));
 }
 
-function showOrHideControls(target){
+function showOrHideIds(target){
+
+	const url 		= new URL(window.location);
+
 	if(target.dataset.action == 'show'){
-		formWrapper.querySelectorAll('.formfieldbutton').forEach(function(el){
-			el.classList.remove('hidden');
-			target.textContent		= 'Hide form edit controls';
-			target.dataset.action	= 'hide';
-		});
+		url.searchParams.set('showid', 'true');
+
+		formWrapper.querySelectorAll('.elid.hidden').forEach(el=>el.classList.remove('hidden'));
 		
-		formWrapper.querySelectorAll('.resizer').forEach(function(el){
-			el.classList.add('show');
-		});
-		
-		//hide submit button
-		formWrapper.querySelector('[name="submit_form"]').classList.add('hidden');
-		
+		target.textContent 		= 'Hide ids';
+		target.dataset.action	= 'hide';
 	}else{
-		formWrapper.querySelectorAll('.formfieldbutton').forEach(function(el){
-			el.classList.add('hidden');
-			target.textContent 		= 'Show form edit controls';
-			target.dataset.action	= 'show';
-		});
+		url.searchParams.delete('showid');
+
+		formWrapper.querySelectorAll('.elid:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 		
-		formWrapper.querySelectorAll('.resizer').forEach(function(el){
-			el.classList.remove('show');
-		});
-		
-		//show submit button
-		formWrapper.querySelector('[name="submit_form"]').classList.remove('hidden');
+		target.textContent 		= 'Show ids';
+		target.dataset.action	= 'show';
 	}
+	
+	window.history.pushState({}, '', url);
+}
+
+function showOrHideName(target){
+	const url 		= new URL(window.location);
+
+	if(target.dataset.action == 'show'){
+		url.searchParams.set('showname', 'true');
+
+		formWrapper.querySelectorAll('.elname.hidden').forEach(el=>el.classList.remove('hidden'));
+		
+		target.textContent 		= 'Hide names';
+		target.dataset.action	= 'hide';
+	}else{
+		url.searchParams.delete('showid');
+
+		formWrapper.querySelectorAll('.elname:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+		
+		target.textContent 		= 'Show names';
+		target.dataset.action	= 'show';
+	}
+
+	window.history.pushState({}, '', url);
 }
 
 function maybeRemoveElement(target){
@@ -824,8 +838,10 @@ window.addEventListener("click", event => {
 	/* ELEMENT ACTIONS */
 	
 	//Show form edit controls
-	if (target.name == 'editform'){
-		showOrHideControls(target);
+	if (target.name == 'showid'){
+		showOrHideIds(target);
+	}else if (target.name == 'showname'){
+		showOrHideName(target);
 	}else if(target.name == 'submit_form_element'){
 		event.stopPropagation();
 		addFormElement(target);

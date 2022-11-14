@@ -170,7 +170,7 @@ class DisplayFormResults extends DisplayForm{
 	function splitSubmission($splitElementName){
 		$splitNames	= [];
 		foreach($this->formData->settings['split'] as $id){
-			$splitNames[] = $this->getElementById($id, 'nicename');
+			$splitNames[] = str_replace('[]', '', $this->getElementById($id, 'name'));
 		}
 
 		//loop over all submissions
@@ -214,7 +214,7 @@ class DisplayFormResults extends DisplayForm{
 		$splitElements				= $this->formData->settings['split'];
 
 		// Get the name of the first element
-		$splitElementName			= $this->getElementById($splitElements[0], 'nicename');
+		$splitElementName			= $this->getElementById($splitElements[0], 'name');
 
 		if(!$splitElementName){
 			return;
@@ -229,7 +229,7 @@ class DisplayFormResults extends DisplayForm{
 			$splitElementName	= $matches[1];
 			$this->splitArrayedSubmission($splitElementName);
 		}else{
-			$splitElementName	= $splitElementName;
+			$splitElementName	= str_replace('[]', '', $splitElementName);
 			$this->splitSubmission($splitElementName);
 		}
 	}

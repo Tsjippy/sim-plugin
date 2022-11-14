@@ -103,9 +103,19 @@ class FormBuilderForm extends SimForms{
 			$hidden .= ' required';
 		}
 		
+		$idHidden	= ' hidden';
+		if(isset($_REQUEST['showid'])){
+			$idHidden	= '';
+		}
+
+		$marginLeft	= '';
+		if($this->isInDiv && $element->type != 'div_end'){
+			$marginLeft	= 'margin-left: 30px;';
+		}
+
 		//Add form edit controls if needed
-		$html = " <div class='form_element_wrapper' data-id='{$element->id}' data-formid='{$this->formData->id}' data-priority='{$element->priority}' style='display: flex;'>";
-			$html 	.= "<span class='movecontrol formfieldbutton' aria-hidden='true'>:::<br><span style='font-size:xx-small'>$element->id</span></span>";
+		$html = " <div class='form_element_wrapper' data-id='{$element->id}' data-formid='{$this->formData->id}' data-priority='{$element->priority}' style='display: flex; $marginLeft'>";
+			$html 	.= "<span class='movecontrol formfieldbutton' aria-hidden='true'>:::<br><span class='elid$idHidden' style='font-size:xx-small'>$element->id</span></span>";
 			$html 	.= "<div class='resizer_wrapper'>";
 				if($element->type == 'info'){
 					$html .= "<div class='show inputwrapper$hidden'>";
@@ -123,9 +133,25 @@ class FormBuilderForm extends SimForms{
 				}elseif($element->type == 'multi_end'){
 					$html .= ' ***multi answer end***';
 					$elementHtml	= '';
+				}elseif($element->type == 'div_start'){
+					$name			= ucfirst(str_replace('_', ' ', $element->name));
+					$html 			.= " ***$name div container start***";
+					$elementHtml	= '';
+					$this->isInDiv	= true;
+				}elseif($element->type == 'div_end'){
+					$name			= ucfirst(str_replace('_', ' ', $element->name));
+					$html 			.= " ***$name div container end***";
+					$elementHtml	= '';
+					$this->isInDiv	= false;
 				}
 				
+				$hidden	= ' hidden';
+				if(isset($_REQUEST['showname'])){
+					$hidden	= '';
+				}
+
 				$html .= $elementHtml;
+					$html	.= "<span class='elname$hidden' style='font-size:xx-small;'>$element->name</span>";
 					//Add a star if this field has conditions
 					if(!empty($element->conditions)){
 						$html .= "<div class='infobox'>";
@@ -191,8 +217,9 @@ class FormBuilderForm extends SimForms{
 				}else{
 					?>
 					<div class="formeditbuttons_wrapper">
-						<button name='editform' class='button' data-action='hide' style='padding-top:0px;padding-bottom:0px;'>Hide form edit controls</button>
-						<button class='button formbuilder-switch-back'>Show enduser form</button>
+						<button name='showid' class='button' data-action='show' style='padding-top:0px;padding-bottom:0px;'>Show element id's</button>
+						<button name='showname' class='button' data-action='show' style='padding-top:0px;padding-bottom:0px;'>Show element name's</button>
+						<button class='button formbuilder-switch-back small'>Show enduser form</button>
 					</div>
 					<?php
 				}
@@ -877,13 +904,15 @@ class FormBuilderForm extends SimForms{
 					<?php
 					$options	= [
 						"captcha"		=> "Captcha",
-						"php"			=> "Custom code",
 						"datalist"		=> "Datalist",
+						"div_start"		=> "Div Container - start",
+						"div_end"		=> "Div Container - end",
+						"formstep"		=> "Multistep",
 						"info"			=> "Infobox",
 						"multi_start"	=> "Multi-answer - start",
 						"multi_end"		=> "Multi-answer - end",
-						"formstep"		=> "Multistep",
-						"p"				=> "Paragraph"
+						"p"				=> "Paragraph",
+						"php"			=> "Custom code"
 					];
 
 					$options	= apply_filters('sim-special-form-elements', $options);
@@ -1376,10 +1405,15 @@ class FormBuilderForm extends SimForms{
 							}else{
 								$checked = '';
 							}
+
+							$name	= ucfirst(str_replace('_', ' ', $element->name));
+							if(strpos($name, '[]') !== false){
+								$name	.= " ($element->id)";
+							}
 							
 							echo "<label>";
 								echo "<input type='checkbox' name='element_conditions[copyto][{$element->id}]' value='{$element->id}' $checked>";
-								echo ucfirst(str_replace('_',' ',$element->name));
+								echo $name;
 							echo "</label><br>";
 						}
 					}

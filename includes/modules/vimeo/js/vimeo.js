@@ -76,16 +76,17 @@ function loadVimeoVideo(el) {
 
 window.wp.Uploader.prototype.init = function() { // plupload 'PostInit'
 	this.uploader.bind('FileFiltered', function(_up, _files) {
-		//show vimeo loader
-		try{
-			showLoader(document.querySelector('.upload-inline-status'), false, '<span class="vimeo" style="font-size:x-large;">Preparing upload to Vimeo</span>');
-		}catch(error){
-			console.error(error);
+		if(_files.type.split("/")[0] == 'video'){
+			//show vimeo loader
+			try{
+				showLoader(document.querySelector('.upload-inline-status'), false, '<span class="vimeo" style="font-size:x-large;">Preparing upload to Vimeo</span>');
+			}catch(error){
+				console.error(error);
+			}
 		}
 	})
 
 	this.uploader.bind('BeforeUpload', function(up, file) {
-		console.log(file)
 		if(file.type.split("/")[0] == 'video'){
 			console.log(file)
 			

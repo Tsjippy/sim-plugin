@@ -84,3 +84,9 @@ add_shortcode("test",function ($atts){
 
 // turn off incorrect error on localhost
 add_filter( 'wp_mail_smtp_core_wp_mail_function_incorrect_location_notice', '__return_false' );
+
+/* add_action('get_header', function(){
+    if(!is_user_logged_in() || !is_admin() || !current_user_can('administrator')){
+        wp_die('<h1>On the move</h1><br><img src="https://simnigeria.org/wp-content/uploads/OnTheMove2.jpe" alt="move" width="400" height="150" style="margin-left:auto;margin-right:auto;display:block;"><br>This website is currently on the move to the Netherlands, and will available again soon');
+    }
+}); */

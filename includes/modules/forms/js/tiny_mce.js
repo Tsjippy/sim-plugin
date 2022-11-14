@@ -37,7 +37,7 @@ var insertFormShortcodeDialog = {
                 tinymce.activeEditor.insertContent(`[formbuilder formname=${formName}]`);
                 Main.displayMessage("Form succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
             }else if(formSelector != ''){
-                tinymce.activeEditor.insertContent(`[formresults formname=${formSelector}`);
+                tinymce.activeEditor.insertContent(`[formresults formname=${formSelector}]`);
                 
                 alert("Table succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
             }

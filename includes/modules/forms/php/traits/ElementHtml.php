@@ -317,6 +317,14 @@ trait ElementHtml{
 			}else{
 				$html	= "php function '$functionName' not found";
 			}
+		}elseif($element->type == 'div_start'){
+			$class		= '';
+			if($element->hidden){
+				$class	= "class='hidden'";
+			}
+			$html 		= "<div name='$element->name' $class>";
+		}elseif($element->type == 'div_end'){
+			$html 		= "</div>";
 		}elseif(in_array($element->type, ['multi_start','multi_end'])){
 			$html 		= "";
 		}elseif(in_array($element->type, ['info'])){
@@ -368,7 +376,7 @@ trait ElementHtml{
 			/*
 				ELEMENT TAG NAME
 			*/
-			if(in_array($element->type, ['formstep','info'])){
+			if(in_array($element->type, ['formstep', 'info', 'div_start'])){
 				$elType	= "div";
 			}elseif(in_array($element->type,array_merge($this->nonInputs,['select','textarea']))){
 				$elType	= $element->type;
@@ -428,7 +436,7 @@ trait ElementHtml{
 			*/
 			$values	= $this->getElementValues($element);
 			if($this->multiwrap || !empty($element->multiple)){
-				if(strpos($elType,'input') !== false){
+				if(strpos($elType, 'input') !== false){
 					$elValue	= "value='%value%'";
 				}
 			}elseif(!empty($values) || !empty($value)){
@@ -566,7 +574,7 @@ trait ElementHtml{
 			}
 			
 			//close the field
-			if(in_array($element->type,['select','textarea','button','datalist'])){
+			if(in_array($element->type, ['select', 'textarea', 'button', 'datalist'])){
 				$elClose	= "</{$element->type}>";
 			}else{
 				$elClose	= "";

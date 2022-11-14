@@ -83,6 +83,19 @@ export async function submitForm(target, url){
 			});
 		}
 
+		// also add get params
+		try{
+			location['search'].split('?')[1].split('&').forEach(param=>{
+				let split	= param.split('=');
+				if(split[0] != 'formbuilder' && split[0] != 'main_tab' && split[0] != 'second_tab'){
+					formData.append(split[0], split[1]);
+				}
+
+			});
+		}catch{
+			//pass
+		}
+
 		let response = await fetchRestApi(url, formData);
 
 		form.querySelectorAll('.submit_wrapper .loadergif').forEach(loader => loader.classList.add('hidden'));

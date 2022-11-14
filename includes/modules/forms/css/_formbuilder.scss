@@ -100,7 +100,7 @@
 	}
 
 	.resizer_wrapper{
-		.hidden:not(.modal), 
+		.hidden:not(.modal,.elname), 
 		.stephidden{
 			background-color: lightgray;
 			display: block !important;

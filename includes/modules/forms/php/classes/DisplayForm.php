@@ -146,6 +146,17 @@ class DisplayForm extends SubmitForm{
 	 * @return	string					The html
 	 */
 	public function buildHtml($element, $key=0){
+
+		if($element->type == 'div_start'){
+			$class		= 'inputwrapper';
+			if($element->hidden){
+				$class	.= " hidden";
+			}
+			return "<div name='$element->name' class='$class'>";
+		}elseif($element->type == 'div_end'){
+			return "</div>";
+		}
+
 		if(isset($this->formElements[$key-1])){
 			$this->prevElement		= $this->formElements[$key-1];
 		}else{
