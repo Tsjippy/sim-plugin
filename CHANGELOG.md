@@ -14,6 +14,7 @@
 - only show split field selector when
 there are options
 - several bugs in formbuilder
+- better handling of non unique form elements
 
 ## [2.22.6] - 2022-11-09
 
