@@ -12,7 +12,7 @@ class SimForms{
 		$this->submissionTableName		= $wpdb->prefix . 'sim_form_submissions';
 		$this->tableName				= $wpdb->prefix . 'sim_forms';
 		$this->elTableName				= $wpdb->prefix . 'sim_form_elements';
-		$this->nonInputs				= ['label','button','datalist','formstep','info','p','php','multi_start','multi_end'];
+		$this->nonInputs				= ['label','button','datalist','formstep','info','p','php','multi_start','multi_end','div_start','div_end'];
 		$this->multiInputsHtml			= [];
 		$this->user 					= wp_get_current_user();
 		$this->userRoles				= $this->user->roles;
@@ -412,6 +412,10 @@ class SimForms{
 
 		if(!is_numeric($formId) && $this->formData && is_numeric($this->formData->id)){
 			$formId	= $this->formData->id;
+		}
+
+		if(!is_numeric($formId) && isset($this->formId) && is_numeric($this->formId)){
+			$formId	= $this->formId;
 		}
 
 		if(!is_numeric($formId)){

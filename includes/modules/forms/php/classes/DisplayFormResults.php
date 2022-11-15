@@ -349,7 +349,8 @@ class DisplayFormResults extends DisplayForm{
 			$processed	= [];
 		}
 
-		$name	= $element->name;
+		$name		= $element->name;
+		$niceName	= $element->nicename;
 
 		//Do not show elements that will be splitted needed for split fields with this pattern name[X]name
 		//Execute the regex
@@ -364,7 +365,8 @@ class DisplayFormResults extends DisplayForm{
 			$processed[]	= $matches[1];
 			
 			//replace the name
-			$name		= $matches[1];
+			$name			= $matches[1];
+			$niceName		= ucfirst($name);
 			
 			//check if it was already added a previous time
 			$alreadyInSettings = false;
@@ -392,7 +394,7 @@ class DisplayFormResults extends DisplayForm{
 
 		$this->columnSettings[$element->id] = [
 			'name'				=> $name,
-			'nice_name'			=> $element->nicename,
+			'nice_name'			=> $niceName,
 			'show'				=> $show,
 			'edit_right_roles'	=> $editRightRoles,
 			'view_right_roles'	=> $viewRightRoles

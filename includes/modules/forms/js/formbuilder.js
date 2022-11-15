@@ -227,7 +227,7 @@ async function reorderformelements(event){
 		formData.append('form_id', event.item.dataset.formid);
 		formData.append('el_id', event.item.dataset.id);
 		formData.append('old_index', oldIndex);
-		formData.append('new_index',(oldIndex + difference));
+		formData.append('new_index', (oldIndex + difference));
 		
 		let response	= await FormSubmit.fetchRestApi('forms/reorder_form_elements', formData);
 

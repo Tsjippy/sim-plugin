@@ -332,10 +332,13 @@ export function nextPrev(n) {
 		// Report validity of each required field
 		let elements	= x[currentTab].querySelectorAll('.required:not(.hidden) input, .required:not(.hidden) textarea, .required:not(.hidden) select');
 		for(const element of elements) {
-			element.required		= true;
-			valid		= element.reportValidity();
-			if(!valid){
-				break;
+			if(element.closest('div.nice-select') == null && (element.type != 'file' || element.closest('.file_upload_wrap').querySelector('.documentpreview input') == null)){
+
+				element.required		= true;
+				valid		= element.reportValidity();
+				if(!valid){
+					break;
+				}
 			}
 		}
 
@@ -390,15 +393,10 @@ export function changeFieldValue(orgName, value, functionRef, form){
 	if(orgName instanceof Element){
 		name	= orgName.name;
 		target	= orgName;
-	}else if(orgName.match("E[0-9]")){
-		selector	= `${orgName}`;
+	}else{
+		selector	= orgName;
 		target 		= form.querySelector(selector);
 		name		= target.name;
-	}else{
-		selector	= `[name="${name}" i]`
-		name 		= orgName;
-		//get the target
-		target 	= form.querySelector(selector);
 	}
 
 	// Check if we are dealing with a multi input field

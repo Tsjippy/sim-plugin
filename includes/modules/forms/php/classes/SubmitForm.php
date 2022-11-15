@@ -203,4 +203,162 @@ class SubmitForm extends SimForms{
 			}
 		}
 	}
+
+	/**
+	 * Save a form submission to the db
+	 */
+	function formSubmit(){
+		global $wpdb;
+
+		$this->submission					= new \stdClass();
+
+		$this->submission->form_id			= $_POST['formid'];
+		
+		$this->getForm($this->submission->form_id);
+		
+		$this->userId	= 0;
+		if(is_numeric($_POST['userid'])){
+			//If we are submitting for someone else and we do not have the right to save the form for someone else
+			if(
+				array_intersect($this->userRoles, $this->submitRoles) === false &&
+				$this->user->ID != $_POST['userid']
+			){
+				return new \WP_Error('Error', 'You do not have permission to save data for user with id '.$_POST['userid']);
+			}else{
+				$this->userId = $_POST['userid'];
+			}
+		}
+
+		$this->submission->timecreated		= date("Y-m-d H:i:s");
+
+		$this->submission->timelastedited	= date("Y-m-d H:i:s");
+		
+		$this->submission->userid			= $this->userId;
+
+		$this->submission->formresults 		= $_POST;
+
+		$this->submission->archived 		= false;
+			
+		//remove the action and the formname
+		unset($this->submission->formresults['formname']);
+		unset($this->submission->formresults['fileupload']);
+		unset($this->submission->formresults['userid']);
+
+		$this->submission->formresults['submissiontime']	= $this->submission->timecreated;
+		$this->submission->formresults['edittime']			= $this->submission->timelastedited;
+			
+		$this->submission->formresults['formurl']			= $_POST['formurl'];
+
+		// remove empty splitted entries
+		
+		if(isset($this->formData->settings['split'])){
+			foreach($this->formData->settings['split'] as $id){
+				$name	= $this->getElementById($id, 'name');
+				// Check if we are dealing with an split element with form name[X]name
+				preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $name, $matches);
+
+				if($matches && isset($matches[1]) && is_array($this->submission->formresults[$matches[1]])){
+					// loop over all the sub entries of the split field to see if they are empty
+					foreach($this->submission->formresults[$matches[1]] as $index=>$sub){
+						$empty	= true;
+						if(is_array($sub)){
+							foreach($sub as $s){
+								if(!empty($s)){
+									$empty	= false;
+									break;
+								}
+							}
+						}
+
+						if($empty){
+							// remove from results
+							unset($this->submission->formresults[$matches[1]][$index]);
+						}
+					}
+
+					// reindex
+					$this->submission->formresults[$matches[1]]	= array_values(	$this->submission->formresults[$matches[1]]);
+				}
+			}
+		}
+		
+		$this->submission->formresults 					= apply_filters('sim_before_saving_formdata', $this->submission->formresults, $this->formData->name, $this->userId);
+
+		$message = $this->formData->settings['succesmessage'];
+		if(empty($message)){
+			$message = 'succes';
+		}
+		
+		//save to submission table
+		if(empty($this->formData->settings['save_in_meta'])){
+			//Get the id from db before insert so we can use it in emails and file uploads
+			$this->submission->formresults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$this->submissionTableName}') AND table_schema='$wpdb->dbname'");
+			
+			//sort arrays
+			foreach($this->submission->formresults as $key=>$result){
+				if(is_array($result)){
+					//check if this a aray of uploaded files
+					if(!is_array(array_values($result)[0]) && strpos(array_values($result)[0],'wp-content/uploads/') !== false){
+						//rename the file
+						$this->processFiles($result, $key);
+					}else{
+						//sort the array
+						ksort($result);
+						$this->submission->formresults[$key] = $result;
+					}
+				}
+			}
+
+			$submission = (array) $this->submission;
+			$submission['formresults']	= serialize($this->submission->formresults);
+
+			$wpdb->insert(
+				$this->submissionTableName,
+				$submission
+			);
+			
+			$this->sendEmail();
+				
+			if($wpdb->last_error !== ''){
+				$message	=  new \WP_Error('error', $wpdb->last_error);
+			}else{
+				$message	= "$message  \nYour id is {$this->submission->formresults['id']}";
+			}
+		//save to user meta
+		}else{
+			unset($this->submission->formresults['formurl']);
+			
+			//get user data as array
+			$userData		= (array)get_userdata($this->userId)->data;
+			foreach($this->submission->formresults as $key=>$result){
+				//remove empty elements from the array
+				if(is_array($result)){
+					SIM\cleanUpNestedArray($result);
+					$this->submission->formresults[$key]	= $result;
+				}
+				//update in the _users table
+				if(isset($userData[$key])){
+					if($userData[$key]		!= $result){
+						$userData[$key]		= $result;
+						$updateuserData		= true;
+					}
+				//update user meta
+				}else{
+					if(empty($result)){
+						delete_user_meta($this->userId, $key);
+					}else{
+						update_user_meta($this->userId, $key, $result);
+					}
+				}
+			}
+
+			if($updateuserData){
+				wp_update_user($userData);
+			}
+		}
+
+		$message	= apply_filters('sim_after_saving_formdata', $message, $this);
+
+		return $message;
+	}
 }

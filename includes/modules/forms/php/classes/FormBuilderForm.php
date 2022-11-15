@@ -176,8 +176,11 @@ class FormBuilderForm extends SimForms{
 	 * @param	array	$atts	The attribute array of the WP Shortcode
 	 */
 	public function showForm(){
-		// We cannot use the minified version as the dynamic js files depend on the function names
+		// Load js
 		wp_enqueue_script('sim_forms_script');
+
+		// make sure we use unique priorities
+		
 
 		ob_start();
 

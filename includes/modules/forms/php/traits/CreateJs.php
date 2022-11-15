@@ -102,13 +102,13 @@ trait CreateJs{
                             }
                             
                             //make sure we do not include other fields in changed or click rules
-                            if(in_array($equation, ['changed','clicked'])){
-                                $fieldCheckIf		= "$propCompare == '$conditionalFieldName'";
-                                $checkForChange	= true;
+                            if(in_array($equation, ['changed', 'clicked'])){
+                                $fieldCheckIf   = "$propCompare == '$conditionalFieldName'";
+                                $checkForChange = true;
                             }
                             
                             //Only allow or statements
-                            if(!$checkForChange || $condition['rules'][$ruleIndex-1]['combinator'] == 'OR'){
+                            if(!$checkForChange || (isset($condition['rules'][$ruleIndex-1]) && $condition['rules'][$ruleIndex-1]['combinator'] == 'OR')){
                                 //Write the if statement to check if the current clicked field belongs to this condition
                                 if(!empty($fieldCheckIf)){
                                     $fieldCheckIf .= " || ";
@@ -130,13 +130,11 @@ trait CreateJs{
                                     $conditionVariables[]  = "var calculated_value_$ruleIndex = value_$fieldNumber1 $equation value_$fieldNumber2;";
                                 }
                                 $equation = $rule['equation_2'];
-                            }
-                            
-                            //compare with calculated value
-                            if($calc){
+
+                                //compare with calculated value
                                 $compareValue1 = "calculated_value_$ruleIndex";
-                            //compare with a field value
                             }else{
+                                //compare with a field value
                                 $compareValue1 = "value_$fieldNumber1";
                             }
                                 
@@ -155,7 +153,7 @@ trait CreateJs{
                                 NOW WE KNOW THAT THE CHANGED FIELD BELONGS TO THIS CONDITION
                                 LETS CHECK IF ALL THE VALUES ARE MET AS WELL
                             */
-                            if(!in_array($equation, ['changed','clicked','checked','!checked'])){
+                            if(!in_array($equation, ['changed', 'clicked', 'checked', '!checked'])){
                                 $conditionVariables[]      = "var value_$fieldNumber1 = FormFunctions.getFieldValue('$conditionalFieldName', form, true, $compareValue2, true);";
                                 
                                 if(is_numeric($rule['conditional_field_2'])){
@@ -177,14 +175,17 @@ trait CreateJs{
                                 }
                             }elseif($equation != 'changed' && $equation != 'clicked'){
                                 $conditionIf .= "$compareValue1 $equation $compareValue2";
+                            }elseif($lastRuleKey != $ruleIndex && ($equation == 'changed' || $equation == 'clicked') ){
+                                // not the last statement
+                                $conditionIf .= "$propCompare == '$conditionalFieldName'";
                             }
                             
-                            //If there is another rule, add or or and
+                            //If there is another rule, add || or &&
                             if(
                                 $lastRuleKey != $ruleIndex                                                      &&
-                                !empty($rule['combinator'])														&& //there is a next rule
+                                !empty($rule['combinator'])														&&  //there is a next rule
                                 !empty($conditionIf) 															&&	//there is already preceding code
-                                !in_array($condition['rules'][$ruleIndex+1]['equation'],['changed','clicked'])		//The next element will also be included in the if statement
+                                !in_array($condition['rules'][$ruleIndex+1]['equation'], ['changed', 'clicked'])	//The next element will also be included in the if statement
                             ){
                                 if($rule['combinator'] == 'AND'){
                                     $conditionIf .= " && ";
@@ -601,6 +602,6 @@ function getSelector($element){
         return "[name=\"$name\"]";
     }else{
         // name is followed by an index [0]
-        return "[name^=$name\\[]";
+        return "[name^=$name\\\\[]";
     }
 }

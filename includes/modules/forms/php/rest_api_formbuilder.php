@@ -197,7 +197,10 @@ add_action( 'rest_api_init', function () {
 		'/save_form_input',
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> 	__NAMESPACE__.'\saveFormInput',
+			'callback' 				=> 	function(){
+				$formBuilder	= new SubmitForm();
+				return $formBuilder->formSubmit();
+			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'formid'		=> array(
@@ -555,130 +558,6 @@ function saveFormSettings(){
 		return $result;
 	}
 	return "Succesfully saved your form settings";
-}
-
-function saveFormInput(){
-	global $wpdb;
-
-	$formBuilder								= new SubmitForm();
-
-	$formBuilder->submission					= new stdClass();
-
-	$formBuilder->submission->form_id			= $_POST['formid'];
-	
-	$formBuilder->getForm($formBuilder->submission->form_id);
-	
-	$formBuilder->userId	= 0;
-	if(is_numeric($_POST['userid'])){
-		//If we are submitting for someone else and we do not have the right to save the form for someone else
-		if(
-			array_intersect($formBuilder->userRoles, $formBuilder->submitRoles) === false &&
-			$formBuilder->user->ID != $_POST['userid']
-		){
-			return new \WP_Error('Error', 'You do not have permission to save data for user with id '.$_POST['userid']);
-		}else{
-			$formBuilder->userId = $_POST['userid'];
-		}
-	}
-
-	$formBuilder->submission->timecreated		= date("Y-m-d H:i:s");
-
-	$formBuilder->submission->timelastedited	= date("Y-m-d H:i:s");
-	
-	$formBuilder->submission->userid			= $formBuilder->userId;
-
-	$formBuilder->submission->formresults 		= $_POST;
-
-	$formBuilder->submission->archived 			= false;
-		
-	//remove the action and the formname
-	unset($formBuilder->submission->formresults['formname']);
-	unset($formBuilder->submission->formresults['fileupload']);
-	unset($formBuilder->submission->formresults['userid']);
-
-	$formBuilder->submission->formresults['submissiontime']	= $formBuilder->submission->timecreated;
-	$formBuilder->submission->formresults['edittime']		= $formBuilder->submission->timelastedited;
-		
-	$formBuilder->submission->formresults['formurl']		= $_POST['formurl'];
-	
-	$formBuilder->submission->formresults 					= apply_filters('sim_before_saving_formdata', $formBuilder->submission->formresults, $formBuilder->formData->name, $formBuilder->userId);
-	
-	$message = $formBuilder->formData->settings['succesmessage'];
-	if(empty($message)){
-		$message = 'succes';
-	}
-	
-	//save to submission table
-	if(empty($formBuilder->formData->settings['save_in_meta'])){
-		//Get the id from db before insert so we can use it in emails and file uploads
-		$formBuilder->submission->formresults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$formBuilder->submissionTableName}') AND table_schema='$wpdb->dbname'");
-		
-		//sort arrays
-		foreach($formBuilder->submission->formresults as $key=>$result){
-			if(is_array($result)){
-				//check if this a aray of uploaded files
-				if(!is_array(array_values($result)[0]) && strpos(array_values($result)[0],'wp-content/uploads/') !== false){
-					//rename the file
-					$formBuilder->processFiles($result, $key);
-				}else{
-					//sort the array
-					ksort($result);
-					$formBuilder->submission->formresults[$key] = $result;
-				}
-			}
-		}
-
-		$submission = (array) $formBuilder->submission;
-		$submission['formresults']	= serialize($formBuilder->submission->formresults);
-
-		$wpdb->insert(
-			$formBuilder->submissionTableName,
-			$submission
-		);
-		
-		$formBuilder->sendEmail();
-			
-		if($wpdb->last_error !== ''){
-			$message	=  new \WP_Error('error', $wpdb->last_error);
-		}else{
-			$message	= "$message  \nYour id is {$formBuilder->submission->formresults['id']}";
-		}
-	//save to user meta
-	}else{
-		unset($formBuilder->submission->formresults['formurl']);
-		
-		//get user data as array
-		$userData		= (array)get_userdata($formBuilder->userId)->data;
-		foreach($formBuilder->submission->formresults as $key=>$result){
-			//remove empty elements from the array
-			if(is_array($result)){
-				SIM\cleanUpNestedArray($result);
-				$formBuilder->submission->formresults[$key]	= $result;
-			}
-			//update in the _users table
-			if(isset($userData[$key])){
-				if($userData[$key]		!= $result){
-					$userData[$key]		= $result;
-					$updateuserData		= true;
-				}
-			//update user meta
-			}else{
-				if(empty($result)){
-					delete_user_meta($formBuilder->userId, $key);
-				}else{
-					update_user_meta($formBuilder->userId, $key, $result);
-				}
-			}
-		}
-
-		if($updateuserData){
-			wp_update_user($userData);
-		}
-	}
-
-	$message	= apply_filters('sim_after_saving_formdata', $message, $formBuilder);
-
-	return $message;
 }
 
 // DONE

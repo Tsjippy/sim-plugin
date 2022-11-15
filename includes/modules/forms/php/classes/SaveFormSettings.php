@@ -102,9 +102,14 @@ class SaveFormSettings extends SimForms{
 			return;
 		}
 
+		if(!isset($this->formId) && !empty($element) && isset($element->form_id)){
+			$this->formId	= $element->form_id;
+		}
+
 		// Get all elements of this form
 		$this->getAllFormElements('priority', $this->formId);
 
+		// find the element
 		if(empty($element)){
 			foreach($this->formElements as $el){
 				if($el->priority == $oldPriority){
@@ -122,30 +127,19 @@ class SaveFormSettings extends SimForms{
 			$this->updatePriority($el);
 			return;
 		}
-		
-		//Loop over all elements and give them the new priority
-		foreach($this->formElements as $el){
-			if($oldPriority == -1){
-				if($el->priority >= $newPriority){
-					$el->priority++;
-					$this->updatePriority($el);
-				}
-			}elseif($el->id == $element->id){
-				$el->priority	= $newPriority;
-				$this->updatePriority($el);
-			}elseif(
-				$oldPriority > $newPriority		&& 	//we are moving an element upward
-				$el->priority >= $newPriority	&&	// current priority is bigger then the new prio
-				$el->priority < $oldPriority		// current priority is smaller than the old prio
-			){
-				$el->priority++;
-				$this->updatePriority($el);
-			}elseif(
-				$oldPriority < $newPriority		&& 	//we are moving an element downward
-				$el->priority > $oldPriority	&&	// current priority is bigger then the old prio
-				$el->priority < $newPriority		// current priority is smaller than the new prio
-			){
-				$el->priority--;
+
+		// Move the element to the new position priority should be index+1
+		if($oldPriority == -1){
+			$out				= [$element];
+		}else{
+			$out				= array_splice($this->formElements, $oldPriority-1, 1);
+		}
+		array_splice($this->formElements, $newPriority-1, 0, $out);
+
+ 		//Loop over all elements and give them the new priority
+		foreach($this->formElements as $index=>$el){
+			if($index+1 != $el->priority){
+				$el->priority	= $index+1;
 				$this->updatePriority($el);
 			}
 		}
