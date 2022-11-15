@@ -8,6 +8,7 @@
 - Disable administration email verification
 
 ### Changed
+- show id and name in formbuilder
 
 ### Fixed
 - add button form builder
