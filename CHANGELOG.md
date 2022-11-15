@@ -16,6 +16,7 @@
 there are options
 - several bugs in formbuilder
 - better handling of non unique form elements
+- formbuilder dynamic js
 
 ## [2.22.6] - 2022-11-09
 
