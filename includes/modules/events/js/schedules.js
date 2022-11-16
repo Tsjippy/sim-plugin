@@ -216,8 +216,9 @@ async function removeHost(target){
 }
 
 function showTimeslotModal(selected){
-	var modal 			= document.querySelector('[name="add_session"]');
-	var firstCell		= selected[0].node;
+	let modal 			= document.querySelector('[name="add_session"]');
+	let firstCell		= selected[0].node;
+	let lastCell		= selected[selected.length-1].node;
 
 	firstCell.classList.add('active');
 	let rowCount		= document.querySelectorAll('.ui-selected').length;
@@ -228,9 +229,12 @@ function showTimeslotModal(selected){
 		Main.showLoader(firstCell.firstChild);
 	}
 
-	var endTime			= firstCell.dataset.endtime;
-	var table			= firstCell.closest('table');
-	var date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
+	let endTime			= firstCell.dataset.endtime;
+	if(endTime == undefined){
+		endTime	= lastCell.closest('tr').dataset.endtime;
+	}
+	let table			= firstCell.closest('table');
+	let date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 	
 	// Clear
 	modal.querySelectorAll('input:not([type="hidden"], [type="checkbox"], [type="radio"])').forEach(el=>el.value='')

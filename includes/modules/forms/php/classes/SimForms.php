@@ -144,9 +144,8 @@ class SimForms{
 		$this->formData->elementMapping['type']							= [];
 		$this->formData->elementMapping['name']							= [];
 		foreach($this->formElements as $index=>$element){
-			$name	= $element->nicename;
 			$this->formData->elementMapping['id'][$element->id]			= $index;
-			$this->formData->elementMapping['name'][$name][] 			= $index;
+			$this->formData->elementMapping['name'][$element->name][] 	= $index;
 			$this->formData->elementMapping['type'][$element->type][] 	= $index;
 		}
 		
@@ -354,9 +353,13 @@ class SimForms{
 			SIM\printArray("Element with id $name not found");
 			return false;
 		}
-		$elementIndex	= $this->formData->elementMapping['name'][$name];
-					
-		$elements		= $this->formElements[$elementIndex];
+		$elementIndexes	= $this->formData->elementMapping['name'][$name];
+	
+		$elements		= [];
+		
+		foreach($elementIndexes as $index){
+			$elements[]	= $this->formElements[$index];
+		}
 
 		if(!$single){
 			return $elements;

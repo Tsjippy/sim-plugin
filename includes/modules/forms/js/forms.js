@@ -284,8 +284,6 @@ export function showTab(n, form) {
 		let y = x[n].offsetTop - document.querySelector("#masthead").offsetHeight
 		window.scrollTo({ top: y, behavior: 'auto'});
 		
-		console.log('scrolling')
-		
 		//show
 		x[n].classList.remove('stephidden');
 

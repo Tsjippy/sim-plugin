@@ -234,7 +234,7 @@ add_action( 'rest_api_init', function () {
 });
 
 function getUniqueName($element, $update, $oldElement, $simForms){
-	if(strpos($element->name, '[]') !== false || ($update && $oldElement->name == $element->name)){
+	if(strpos($element->name, '[]') !== false || ($update && $oldElement->name == $element->name && count($simForms->getElementByName($element->name, '', false)) == 1)){
 		return $element->name;
 	}
 
@@ -342,7 +342,7 @@ function addFormElement(){
 	}
 
 	$element->nicename	= ucfirst(str_replace('[]', '', $element->name));
-	$element->name		= str_replace(" ","_",strtolower(trim($element->name)));
+	$element->name		= str_replace(" ", "_", strtolower(trim($element->name)));
 
 	if(
 		in_array($element->type, $simForms->nonInputs) 		&& 	// this is a non-input
