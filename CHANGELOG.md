@@ -18,6 +18,7 @@ there are options
 - better handling of non unique form elements
 - formbuilder dynamic js
 - uncheck radio or checkboxes
+- issue in schedules
 
 ## [2.22.6] - 2022-11-09
 
