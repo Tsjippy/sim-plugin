@@ -175,8 +175,7 @@ trait CreateJs{
                                 }
                             }elseif($equation != 'changed' && $equation != 'clicked'){
                                 $conditionIf .= "$compareValue1 $equation $compareValue2";
-                            }elseif($lastRuleKey != $ruleIndex && ($equation == 'changed' || $equation == 'clicked') ){
-                                // not the last statement
+                            }elseif($equation == 'changed' || $equation == 'clicked'){
                                 $conditionIf .= "$propCompare == '$conditionalFieldName'";
                             }
                             
@@ -184,8 +183,8 @@ trait CreateJs{
                             if(
                                 $lastRuleKey != $ruleIndex                                                      &&
                                 !empty($rule['combinator'])														&&  //there is a next rule
-                                !empty($conditionIf) 															&&	//there is already preceding code
-                                !in_array($condition['rules'][$ruleIndex+1]['equation'], ['changed', 'clicked'])	//The next element will also be included in the if statement
+                                !empty($conditionIf) 																//there is already preceding code
+                                //!in_array($condition['rules'][$ruleIndex+1]['equation'], ['changed', 'clicked'])	//The next element will also be included in the if statement
                             ){
                                 if($rule['combinator'] == 'AND'){
                                     $conditionIf .= " && ";
@@ -285,9 +284,6 @@ trait CreateJs{
                         }elseif($action == 'property' || $action == 'value'){
                             //set the attribute value of one field to the value of another field
                             $selector		= getSelector($element);
-                            /* if($element->type == 'checkbox'){
-                                $selector .= '[]';
-                            } */
                             
                             //fixed prop value
                             if($action == 'value'){
@@ -318,7 +314,7 @@ trait CreateJs{
                                 
                                 $varName = str_replace(['[]', '[', ']'], ['', '_', ''], $copyFieldName);
 
-                                $varCode = "var $varName = FormFunctions.getFieldValue('$copyFieldName', form);";
+                                $varCode = "let $varName = FormFunctions.getFieldValue('$copyFieldName', form);";
                                 if(!in_array($varCode, $checks[$fieldCheckIf]['variables'])){
                                     $checks[$fieldCheckIf]['variables'][] = $varCode;
                                 }

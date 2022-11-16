@@ -1252,7 +1252,7 @@ class FormBuilderForm extends SimForms{
 									'checked'	=> 'is checked',
 									'!checked'	=> 'is not checked',
 									'== value'	=> 'equals the value of',
-									'!= value'	=> 'is not the value of',
+									'!= value'	=> 'does not equal the value of',
 									'> value'	=> 'greather than the value of',
 									'< value'	=> 'smaller than the value of',
 									'-'			=> 'minus the value of',

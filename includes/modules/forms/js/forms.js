@@ -376,25 +376,20 @@ export function nextPrev(n) {
 	showTab(currentTab,form);
 }
 
-function findcheckboxTarget(form, name, value){
-	let targets = form.querySelectorAll(`[name="${name}" i]`);
-	for (const element of targets) {
-		if(element.value.toLowerCase() == value.toLowerCase()){
-			return element;
-		}
-	}
-}
-
-export function changeFieldValue(orgName, value, functionRef, form){
+export function changeFieldValue(selector, value, functionRef, form){
 	let name		= '';
 	let target		= '';
-	let selector	= '';
 
-	if(orgName instanceof Element){
-		name	= orgName.name;
-		target	= orgName;
+	if(selector instanceof Element){
+		target		= selector;
+		name		= target.name;
+		if(target.id == ''){
+			selector	= `[name^="${target.name}" i]`;
+		}else{
+			selector	= `#${target.id}`;
+		}
+		
 	}else{
-		selector	= orgName;
 		target 		= form.querySelector(selector);
 		name		= target.name;
 	}
@@ -421,12 +416,24 @@ export function changeFieldValue(orgName, value, functionRef, form){
 	}
 	
 	if(target.type == 'radio' || target.type == 'checkbox'){
-		if(!(orgName instanceof Element)){
-			target	= findcheckboxTarget(form, name, value);
-		}
-		
-		if(target.value.toLowerCase() == value.toLowerCase()){
-			target.checked = true;
+		// uncheck all
+		if(value == ''){
+			if(selector != ''){
+				form.querySelectorAll(selector).forEach(el=>el.checked=false);
+			}
+		}else{
+			// Check if the current target is the one we need to check
+			if(target.value.toLowerCase() == value.toLowerCase()){
+				target.checked = true;
+			}else{
+				// find the element with the given value and check it
+				let targets = form.querySelectorAll(`[name="${name}" i]`);
+				for (const element of targets) {
+					if(element.value.toLowerCase() == value.toLowerCase()){
+						element.checked = true;
+					}
+				}
+			}
 		}
 	//the target has a list attached to it
 	}else if(target.list != null){
@@ -469,7 +476,8 @@ export function changeFieldValue(orgName, value, functionRef, form){
 
 export function changeFieldProperty(selector, att, value, functionRef, form){
 	//first change the value
-	let target = form.querySelector(selector)[att] = value;
+	let target = form.querySelector(selector);
+	target[att] = value;
 	
 	//create a new event
 	let evt = new Event('input');

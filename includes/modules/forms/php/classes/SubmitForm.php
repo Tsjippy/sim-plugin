@@ -250,7 +250,6 @@ class SubmitForm extends SimForms{
 		$this->submission->formresults['formurl']			= $_POST['formurl'];
 
 		// remove empty splitted entries
-		
 		if(isset($this->formData->settings['split'])){
 			foreach($this->formData->settings['split'] as $id){
 				$name	= $this->getElementById($id, 'name');
