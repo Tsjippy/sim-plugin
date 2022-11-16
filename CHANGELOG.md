@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.22.7] - 2022-11-16
+
+
+### Added
 - suport for multiple elements with the
  same name if they end on []
 - Disable administration email verification
