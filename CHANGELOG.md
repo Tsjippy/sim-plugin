@@ -17,6 +17,7 @@ there are options
 - several bugs in formbuilder
 - better handling of non unique form elements
 - formbuilder dynamic js
+- uncheck radio or checkboxes
 
 ## [2.22.6] - 2022-11-09
 
