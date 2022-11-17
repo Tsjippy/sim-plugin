@@ -236,7 +236,7 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $index,
 			return $buttonsHtml;
 		}
 
-		$tripDetails	= maybe_unserialize($tripDetails[0]->formresults)['travel'];
+		$tripDetails	= $tripDetails[0]->formresults ['travel'];
 
 		//if this is a roundtrip check if it is longer than 7 days
 		if($fieldValues['roundtrip'][0] == 'Yes'){

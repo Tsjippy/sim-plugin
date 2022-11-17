@@ -82,6 +82,11 @@ class DisplayFormResults extends DisplayForm{
 		$result	= $wpdb->get_results($query);
 		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
 
+		// unserialize
+		foreach($result as &$submission){
+			$submission->formresults	= unserialize($submission->formresults);
+		}
+
 		if($wpdb->last_error !== ''){
 			SIM\printArray($wpdb->print_error());
 		}
@@ -101,17 +106,9 @@ class DisplayFormResults extends DisplayForm{
 			$this->submissions		= $this->getSubmissions($userId, $submissionId, $all);
 		}else{
 			$this->submissions		= $this->getSubmissions($userId, $submissionId, true);
-		}
-		
-		// unserialize
-		foreach($this->submissions as &$submission){
-			$submission->formresults	= unserialize($submission->formresults);
-		}
+	
+			$this->processSplittedData();
 
-		$this->processSplittedData();
-
-		// Limit the amount to 100
-		if(!empty($this->formData->settings['split'])){
 			if(count($this->splittedSubmissions) > $this->pageSize){
 				$start	= 0;
 				if(isset($_POST['pagenumber']) && is_numeric($_POST['pagenumber'])){

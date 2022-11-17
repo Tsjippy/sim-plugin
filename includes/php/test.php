@@ -6,7 +6,7 @@ use mikehaertl\shellcommand\Command;
 //Shortcode for testing
 add_shortcode("test",function ($atts){
     global $wpdb;
-    $results				= $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}sim_form_elements` WHERE `nicename`LIKE '%[]%'");
+/*     $results				= $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}sim_form_elements` WHERE `nicename`LIKE '%[]%'");
 
     foreach($results as $result){
         $wpdb->update(
@@ -92,7 +92,7 @@ add_shortcode("test",function ($atts){
                 )
             );
         }
-    }
+    } */
 });
 
 // turn off incorrect error on localhost
