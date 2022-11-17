@@ -481,8 +481,6 @@ document.addEventListener("DOMContentLoaded",function() {
 document.addEventListener('click',function(event){
 	target = event.target;
 
-	console.log(target);
-
 	if(target.name == 'add_schedule'){
 		event.stopPropagation();
 

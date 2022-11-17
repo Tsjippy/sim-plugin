@@ -1364,7 +1364,7 @@ class FormBuilderForm extends SimForms{
 							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='value' <?php if($condition['action'] == 'value'){echo 'checked';}?> required>
 							Set property
 						</label>
-						<input type="text" name="element_conditions[<?php echo $conditionIndex;?>][propertyname1]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname1'];?>">
+						<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname1]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname1'];?>">
 						<label> to:</label>
 						<input type="text" name="element_conditions[<?php echo $conditionIndex;?>][action_value]" class='element_condition' value="<?php echo $condition['action_value'];?>">
 						<br>
@@ -1567,11 +1567,15 @@ class FormBuilderForm extends SimForms{
 
 		$emails	= $result->emails;
 		$emails	= str_replace(["\n", "\r"], ['\n', '\r'], $emails);
+		
+		$keys	= '(`'.implode('`, `', array_keys((array) $this->formElements[0])).'`)';
 
 		$content	= "INSERT INTO `$tableName` VALUES ('','$name',{$this->formData->version},'$settings','$emails')\n";
 
 		foreach($this->formElements as $element){
-			$query	= "INSERT INTO `$elTableName` VALUES (";
+			$query	= "INSERT INTO `$elTableName` $keys VALUES (";
+			
+			$lastKey	= array_key_last((array) $element);
 			foreach($element as $name=>$property){
 				if($name == 'form_id'){
 					$query	.= "%FORMID%";
@@ -1583,7 +1587,7 @@ class FormBuilderForm extends SimForms{
 					$query	.= "'".esc_sql($property)."'";
 				}
 
-				if($name != 'warning_conditions'){
+				if($name != $lastKey){
 					$query	.= ',';
 				}
 			}

@@ -135,7 +135,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 			}
 		$datalist .= '</datalist>';
 
-		$html	.= "<input type='text' name='$id' list='$listId' value='$value'>";
+		$html	.= "<input type='text' class='wide' name='$id' list='$listId' value='$value'>";
 		$html	.= $datalist;
 	}
 	
