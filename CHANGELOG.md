@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.22.8] - 2022-11-17
+
+
+### Changed
 - move unserialize
 
 ### Fixed
