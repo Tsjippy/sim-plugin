@@ -97,7 +97,11 @@ class DisplayFormResults extends DisplayForm{
 	 * @param	bool	$all			Whether to retrieve all submissions or paged
 	 */
 	public function parseSubmissions($userId=null, $submissionId=null, $all=false){
-		$this->submissions		= $this->getSubmissions($userId, $submissionId, $all);
+		if(empty($this->formData->settings['split'])){
+			$this->submissions		= $this->getSubmissions($userId, $submissionId, $all);
+		}else{
+			$this->submissions		= $this->getSubmissions($userId, $submissionId, true);
+		}
 		
 		// unserialize
 		foreach($this->submissions as &$submission){
@@ -105,6 +109,28 @@ class DisplayFormResults extends DisplayForm{
 		}
 
 		$this->processSplittedData();
+
+		// Limit the amount to 100
+		if(!empty($this->formData->settings['split'])){
+			if(count($this->splittedSubmissions) > $this->pageSize){
+				$start	= 0;
+				if(isset($_POST['pagenumber']) && is_numeric($_POST['pagenumber'])){
+					$this->currentPage	= $_POST['pagenumber'];
+
+					if(isset($_POST['prev'])){
+						$this->currentPage--;
+					}
+					if(isset($_POST['next'])){
+						$this->currentPage++;
+					}
+					$start	= $this->currentPage * $this->pageSize;
+				}
+
+				$this->splittedSubmissions	= array_splice($this->splittedSubmissions, $start, $this->pageSize);
+			}
+
+			$this->total	= count($this->splittedSubmissions);
+		}
 
 		// single submission
 		if(is_numeric($submissionId)){
@@ -116,8 +142,11 @@ class DisplayFormResults extends DisplayForm{
 	}
 
 	function splitArrayedSubmission($splitElementName){
+
 		//loop over all submissions
 		foreach($this->submissions as $this->submission){
+			$this->submission->archivedsubs	= maybe_unserialize($this->submission->archivedsubs);
+
 			// loop over all entries of the split key
 			foreach($this->submission->formresults[$splitElementName] as $subKey=>$subSubmission){
 				// Should always be an array
@@ -1270,7 +1299,7 @@ class DisplayFormResults extends DisplayForm{
 							}
 
 							// match the page params again
-							$this->total		= count($submissions);
+							$this->total	= count($submissions);
 							$submissions	= array_chunk($submissions, $this->pageSize)[$this->currentPage];
 
 							if(isset($this->splittedSubmissions)){

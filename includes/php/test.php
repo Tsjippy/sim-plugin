@@ -22,6 +22,7 @@ add_shortcode("test",function ($atts){
 
     foreach($results as $result){
         $result->formresults=unserialize($result->formresults);
+        $result->archivedsubs   = maybe_unserialize($result->archivedsubs);
 
         if(!is_array($result->formresults['travel'])){
             echo $result->id.'<br>';
@@ -36,32 +37,44 @@ add_shortcode("test",function ($atts){
 
         $allArchived    = true;
         foreach($result->formresults['travel'] as $index=>&$sub){
+            if(!is_array($result->archivedsubs)){
+                $result->archivedsubs   = [];
+            }
             $empty=true;
-            foreach($sub as $key=>$s){
-                if(empty($s) || $key =='archived'){
-                    continue;
-                }
-                $empty = false;
-                break;
+            if(!empty($sub['date']) && !empty($sub['from']) && !empty($sub['to'])){
+                $empty  = false;
             }
 
-            if((!isset($sub['archived']) || !$sub['archived']) && !$empty){
+            if($empty){
+                unset($result->formresults['travel'][$index]);
+                $update = true;
+                continue;
+            }
+
+            if((!isset($sub['archived']) || !$sub['archived']) && !in_array($index, $result->archivedsubs)){
+                $date   = strtotime($sub['date']);
+                if($date < (time() - 259200)){
+                    $sub['archived']    = true;
+                }
+            }
+
+            if((!isset($sub['archived']) || !$sub['archived']) && !$empty && !in_array($index, $result->archivedsubs)){
                 $allArchived    = false;
             }
 
-            if(isset($sub['archived']) && $sub['archived']){
+            if(isset($sub['archived']) && $sub['archived'] && !in_array($index, $result->archivedsubs)){
                 $update = true;
                 unset($sub['archived']);
 
-                if(!is_array($result->archivedsubs)){
-                    $result->archivedsubs   = [$index];
-                }else{
-                    $result->archivedsubs[] = $index;
-                }
+                $result->archivedsubs[] = $index;
             }
         }
 
         if($update){
+            echo "Updating $result->id<br>";
+
+            $result->formresults['travel'] = array_values($result->formresults['travel']);
+
             $wpdb->update(
                 "{$wpdb->prefix}sim_form_submissions",
                 [
