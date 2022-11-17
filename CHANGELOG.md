@@ -10,6 +10,7 @@
 ### Fixed
 - form export
 - bug in showing splitted data
+- bug in getting meta data in forms
 
 ## [2.22.7] - 2022-11-16
 
