@@ -341,7 +341,7 @@ function addFormElement(){
 		return new \WP_Error('Error', "Please enter a formfieldname");
 	}
 
-	$element->nicename	= ucfirst(str_replace('[]', '', $element->name));
+	$element->nicename	= ucfirst(trim($element->name, '[]'));
 	$element->name		= str_replace(" ", "_", strtolower(trim($element->name)));
 
 	if(

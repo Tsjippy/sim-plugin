@@ -48,14 +48,14 @@ trait ElementHtml{
 			return $values;
 		}
 		
-		if(in_array($element->type,$this->nonInputs)){
+		if(in_array($element->type, $this->nonInputs)){
 			return [];
 		}
 
 		$this->buildDefaultsArray();
 
 		//get the elementName, remove [] and split on remaining [
-		$elementName	= explode('[', $element->nicename);
+		$elementName	= explode('[', trim($element->name, '[]'));
 		
 		//retrieve meta values if needed
 		if(!empty($this->formData->settings['save_in_meta'])){
@@ -456,7 +456,6 @@ trait ElementHtml{
 					$elValue	= "";
 				}
 			}
-			
 			/*
 				ELEMENT TAG CONTENTS
 			*/
