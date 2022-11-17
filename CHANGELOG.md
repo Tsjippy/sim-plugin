@@ -8,6 +8,7 @@
 
 ### Fixed
 - form export
+- bug in showing splitted data
 
 ## [2.22.7] - 2022-11-16
 
