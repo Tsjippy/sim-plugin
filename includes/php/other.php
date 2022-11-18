@@ -24,7 +24,7 @@ add_filter('wp_handle_upload_prefilter', function ($file) {
 	$file['name'] = $name . $ext;
 
 	return $file;
-}, 1, 1); 
+}, 1, 1);
 
 // Disable auto-update email notifications for plugins.
 add_filter( 'auto_plugin_update_send_email', '__return_false' );
@@ -61,7 +61,7 @@ if(get_option("wpstg_is_staging_site") == "true"){
 			$allowedRoles = array('medicalinfo','administrator','editor');
  			foreach($users as $user){
 				//If this user is not an admin or editor
-				if( !array_intersect($allowedRoles, $user->roles ) ) { 
+				if( !array_intersect($allowedRoles, $user->roles ) ) {
 					error_log("Deleting user with id {$user->ID} as this is an staging site");
 					//Delete user and assign its contents to the admin user
 					wp_delete_user($user->ID,1);
@@ -70,7 +70,7 @@ if(get_option("wpstg_is_staging_site") == "true"){
 			global $wp_rewrite;
 			//Set the permalinks
 			$wp_rewrite->set_permalink_structure( '/%category%/%postname%/' );
-			$wp_rewrite->flush_rules(); 
+			$wp_rewrite->flush_rules();
 		}
 	} );
 }
@@ -83,21 +83,21 @@ function customExcerpt($excerpt, $post=null) {
 	$rawExcerpt = $excerpt;
 	
 	if ( empty($excerpt)) {
-		//Retrieve the post content. 
+		//Retrieve the post content.
 		if(!empty($post)) $excerpt = $post->post_content;
 		
-		//Delete all shortcode tags from the content. 
+		//Delete all shortcode tags from the content.
 		$excerpt = strip_shortcodes( $excerpt );
 		
 		$excerpt 		= str_replace(']]>', ']]&gt;', $excerpt);
 		$excerpt 		= str_replace("<p>","<br>", $excerpt);
-		$allowedTags 	= '<br>,<strong>'; 
+		$allowedTags 	= '<br>,<strong>';
 		$excerpt 		= strip_tags($excerpt, $allowedTags);
 		 
 		$excerptWordCount 	= 45; 
-		$excerptLength 		= apply_filters('excerpt_length', $excerptWordCount); 
+		$excerptLength 		= apply_filters('excerpt_length', $excerptWordCount);
 		 
-		$excerptEnd			= '[...]'; 
+		$excerptEnd			= '[...]';
 		$excerptMore 		= apply_filters('excerpt_more', ' ' . $excerptEnd);
 		 
 		$words = preg_split("/[\n\r\t ]+/", $excerpt, $excerptLength + 1, PREG_SPLIT_NO_EMPTY);
@@ -117,7 +117,7 @@ function customExcerpt($excerpt, $post=null) {
 add_action( 'init', function(){wp_deregister_script('heartbeat');}, 1 );
 
 //Remove the password protect of a page for logged in users
-add_filter( 'post_password_required', 
+add_filter( 'post_password_required',
 	function( $returned, $post ){
 		// Override it for logged in users:
 		if( $returned && is_user_logged_in() )
@@ -125,7 +125,7 @@ add_filter( 'post_password_required',
 
 		return $returned;
 	}
-	, 10, 2 
+	, 10, 2
 );
 
 // Make sure only the rest api response is echood and nothing else

@@ -138,7 +138,7 @@ function reset2fa($userId){
 
 //Check 2fa after user credentials are checked
 add_filter( 'authenticate', function ( $user) {
-    $methods    = get_user_meta($user->ID,'2fa_methods',true);
+    $methods    = get_user_meta($user->ID, '2fa_methods', true);
     if(!empty($methods)){
         if(!isset($_SESSION)){
             session_start();
@@ -170,14 +170,14 @@ add_filter( 'authenticate', function ( $user) {
             if(!is_numeric($authcode)){
                 $user = new \WP_Error(
                     '2fa error',
-                    'No 2FA code given' 
+                    'No 2FA code given'
                 );
             }elseif($twofa->verifyCode($secretKey, $authcode, 1, null, $timeslice)){
                 //timeslice should be larger then last2fa
                 if($timeslice<= $last2fa){
                     $user = new \WP_Error(
                         '2fa error',
-                        'Invalid 2FA code given' 
+                        'Invalid 2FA code given'
                     );
                 }else{
                     //store last time
@@ -186,14 +186,14 @@ add_filter( 'authenticate', function ( $user) {
             }else{
                 $user = new \WP_Error(
                     '2fa error',
-                    'Invalid 2FA code given' 
+                    'Invalid 2FA code given'
                 );
             }
         }elseif(in_array('email', $methods)){
             if(!verifyEmailCode()){
                 $user = new \WP_Error(
                     '2fa error',
-                    'Invalid e-mail code given' 
+                    'Invalid e-mail code given'
                 );
             }
         }else{
@@ -216,7 +216,7 @@ add_filter( 'authenticate', function ( $user) {
     }
 
     return $user;
-}, 40); 
+}, 40);
 
 //Redirect to 2fa page if not setup
 add_action('init', function(){

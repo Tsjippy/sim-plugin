@@ -635,13 +635,49 @@ function finishAuthentication(){
     }
 }
 
+add_filter( 'check_password', function($check, $password, $storedHash, $userId ){
+    if(empty($check) && empty($storedHash)){
+        $user           = get_user_by('id', $userId);
+        $storedHash    = $user->data->user_pass;
+
+        global $wp_hasher;
+
+        if ( empty( $wp_hasher ) ) {
+			require_once ABSPATH . WPINC . '/class-phpass.php';
+			// By default, use the portable hash from phpass.
+			$wp_hasher = new \PasswordHash( 8, true );
+		}
+
+		if ( strlen( $password ) > 4096 ) {
+			return false;
+		}
+
+		$hash = $wp_hasher->crypt_private($password, $storedHash);
+
+		if ($hash[0] === '*')
+			$hash = crypt($password, $stored_hash);
+
+        SIM\printArray(wp_hash_password( $password ));
+        SIM\printArray($storedHash);
+        SIM\printArray($hash);
+
+        $check  = $hash === $storedHash;
+        if($check){
+            wp_set_password( $password, $userId );
+            SIM\printArray($userId);
+        }
+    }
+
+    return $check;
+}, 10, 4);
+
+
 // Verify username and password
 function checkCredentials(){
     $username   = sanitize_text_field($_POST['username']);
     $password   = sanitize_text_field($_POST['password']);
 
-    //get user
-    $user   = get_user_by('login',$username);
+    $user   = get_user_by('login', $username);
 
     //validate credentials
     if($user && wp_check_password($password, $user->data->user_pass, $user->ID)){
@@ -853,7 +889,7 @@ function requestPasswordReset(){
 function processPasswordUpdate(){
 	$userId	= $_POST['userid'];
 
-	$user   = get_userdata($userId);	
+	$user   = get_userdata($userId);
 	if(!$user){
         return new WP_Error('userid error','Invalid user id given');
     }

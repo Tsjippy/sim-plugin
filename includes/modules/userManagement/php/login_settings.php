@@ -4,21 +4,21 @@ use SIM;
 
 //check if account is disabled
 add_filter( 'wp_authenticate_user', function($user, $password){
-	if ( 
-		!is_wp_error( $user ) and 									// there is no error
-		get_user_meta( $user->ID, 'disabled', true ) and 			// the account is disabled
+	if (
+		!is_wp_error( $user ) && 									// there is no error
+		get_user_meta( $user->ID, 'disabled', true ) && 			// the account is disabled
 		get_bloginfo( 'admin_email' ) !== $user->user_email			// this is not the main admin
 	) {
 		$user = new \WP_Error(
 			'account_disabled_error',
-			'Your account has been disabled for safety reasons.<br>Contact the office if you want to have it enabled again.' 
+			'Your account has been disabled for safety reasons.<br>Contact the office if you want to have it enabled again.'
 		);
 	}
 
 	return $user;
-},10,2);
+}, 10, 2);
 
-function change_password_form($userId = null){
+function changePasswordForm($userId = null){
 	if(is_numeric($userId)){
 		$user		= get_userdata($userId);
 	}else{
@@ -35,9 +35,9 @@ function change_password_form($userId = null){
 	ob_start();
 	
 	//Check if action is needed
-	if(isset($_GET['action']) and isset($_GET['wp_2fa_nonce'])){
-		if($_GET['action'] == 'reset2fa' and wp_verify_nonce( $_GET['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_GET['user_id'])){
-			if($_GET['do'] == 'off' and function_exists('SIM\LOGIN\reset2fa')){
+	if(isset($_GET['action']) && isset($_GET['wp_2fa_nonce'])){
+		if($_GET['action'] == 'reset2fa' && wp_verify_nonce( $_GET['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_GET['user_id'])){
+			if($_GET['do'] == 'off' && function_exists('SIM\LOGIN\reset2fa')){
 				SIM\LOGIN\reset2fa($userId);
 				echo "<div class='success'>Succesfully turned off 2fa for $name</div>";
 			}elseif($_GET['do'] == 'email'){
@@ -48,7 +48,7 @@ function change_password_form($userId = null){
 	}
 				
 	//Content
-	?>	
+	?>
 	<div id="login_info" class="tabcontent hidden">
 		<h3>User login</h3>
 
@@ -108,6 +108,6 @@ function change_password_form($userId = null){
 			</div>
 		<?php }?>
 	</div>
-	<?php	
+	<?php
 	return ob_get_clean();
 }

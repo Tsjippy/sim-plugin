@@ -7,7 +7,7 @@ class PotentialFamilyMembers{
         $this->userId               = $userId;
         $this->birthday	            = get_user_meta( $userId, 'birthday', true );
         $this->gender		        = get_user_meta( $userId, 'gender', true );
-        $this->family		        = (array)SIM\familyFlatArray($userId);        
+        $this->family		        = (array)SIM\familyFlatArray($userId);
         $this->potentialSpouses	    = [];
         $this->potentialFathers	    = [];
         $this->potentialMothers	    = [];
@@ -22,8 +22,8 @@ class PotentialFamilyMembers{
      */
     function getUsers(){
         //Get the id and the displayname of all users
-        $this->users 					= get_users( 
-            array( 
+        $this->users 					= get_users(
+            array(
                 'fields' 	=> array( 'ID','display_name' ) ,
                 'orderby'	=> 'meta_value',
                 'meta_key'	=> 'last_name',
@@ -88,7 +88,7 @@ class PotentialFamilyMembers{
             //Check if current processing user already has a spouse
 			$spouse = SIM\hasPartner($user->ID);
 
-			if( 
+			if(
 				$spouse == $this->userId				    ||	// This is our spouse
 				(
 					!is_numeric($spouse)				    &&	// this user does not have a spouse
@@ -118,6 +118,9 @@ class PotentialFamilyMembers{
 	function potentialChildren(){
         foreach($this->users as $user){
 			$parents 		= SIM\getParents($user->ID, true);
+            if(!$parents){
+                $parents    = [];
+            }
 			
 			if(
 				in_array($this->userId, $parents)       || // is the current users child
@@ -128,7 +131,7 @@ class PotentialFamilyMembers{
                         $user->ageDifference == null    ||  // there is no age diff
 				        $user->ageDifference > 16           // the age diff is at least 16 years
                     )
-                )					
+                )
 			){
 				$this->potentialChildren[$user->ID]	= $user->display_name;
 			}

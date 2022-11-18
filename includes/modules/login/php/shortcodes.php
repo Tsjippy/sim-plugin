@@ -4,9 +4,9 @@ use SIM;
 
 /**
  * Displays the password reset form for an user
- * 
+ *
  * @param	object	$user	WP_User
- * 
+ *
  * @return	string			The html
  */
 function passwordResetForm($user){

@@ -20,6 +20,10 @@ add_shortcode("must_read_documents", __NAMESPACE__.'\mustReadDocuments');
  * @return string							HTML unordered list
  */
 function mustReadDocuments($userId='', $excludeHeading=false){
+	if(!is_user_logged_in()){
+		return;
+	}
+	
 	$html 			= '';
 	$beforeHtml 	= '';
 	$arrivedHtml 	= '';

@@ -371,11 +371,11 @@ function userInfoPage($atts){
 	/*
 		LOGIN Info
 	*/
-	if(in_array('usermanagement', $userRoles )){				
+	if(in_array('usermanagement', $userRoles )){
 		//Add a tab button
 		$tabs[]	= '<li class="tablink" id="show_login_info" data-target="login_info">Login info</li>';
 		
-		$html .= change_password_form($userId);
+		$html .= changePasswordForm($userId);
 	}
 				
 	/*

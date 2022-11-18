@@ -3,7 +3,7 @@ namespace SIM\MAINTENANCE;
 use SIM;
 
 add_action('get_header', function(){
-    if(!is_user_logged_in() || !is_admin() || !current_user_can('administrator')){
+    if(!is_user_logged_in() || !current_user_can('administrator')){
         $title      = SIM\getModuleOption('maintenance', 'title');
         $message    = SIM\getModuleOption('maintenance', 'message');
         if(!$message){

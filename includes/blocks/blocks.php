@@ -17,12 +17,12 @@ add_filter('render_block', function($blockContent, $block){
 	if(
 		// not on a specific page
 		(
-			!empty($block['attrs']['onlyOn']) && 
+			!empty($block['attrs']['onlyOn']) &&
 			!in_array(get_the_ID(), $block['attrs']['onlyOn'])
 		)	||
 		// or not logged in
 		(
-			isset($block['attrs']['onlyLoggedIn']) && 
+			isset($block['attrs']['onlyLoggedIn']) &&
 			!is_user_logged_in()
 		)
 	){
@@ -87,7 +87,7 @@ add_action('init', function () {
 				],
 			]
 		)
-	); 
+	);
 });
 
 function displayCategories($attributes) {
@@ -162,7 +162,7 @@ function displayChildren($attributes) {
 	));
 
 	if(!empty($html)){
-		wp_enqueue_script('sim-child-posts', plugins_url('show_children/expand.min.js', __FILE__), array(), MODULE_VERSION, true);
+		wp_enqueue_script('sim-child-posts', plugins_url('show_children/expand.min.js', __FILE__), array(), STYLE_VERSION, true);
 
 		if(!empty($attributes['listtype'])){
 			$html	= str_replace("<li ", "<li style='list-style-type: {$attributes['listtype']}'", $html);
