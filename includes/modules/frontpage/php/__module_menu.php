@@ -291,7 +291,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 
 add_filter('display_post_states', function ( $states, $post ) {
 
-    if(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'home_page', 'array')) ) {
+    if(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'home_page', false)) ) {
         $states[] = __('Home page for logged in users');
     }
 

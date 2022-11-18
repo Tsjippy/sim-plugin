@@ -30,17 +30,20 @@ add_action( 'wp_after_insert_post', function($post_ID, $post){
 
 add_action( 'wp_trash_post', function($postId){
     global $Modules;
-    $index  = array_search($postId, $Modules[MODULE_SLUG]['upcomingevents_pages']);
+
+    $pages  = SIM\getModuleOption(MODULE_SLUG, 'upcomingevents_pages', false);
+    $index  = array_search($postId, $pages);
     if($index){
         unset($Modules[MODULE_SLUG]['upcomingevents_pages'][$index]);
-        $Modules[MODULE_SLUG]['upcomingevents_pages']   = array_values($Modules[MODULE_SLUG]['upcomingevents_pages']);
+        $Modules[MODULE_SLUG]['upcomingevents_pages']   = array_values($pages);
         update_option('sim_modules', $Modules);
     }
 
-    $index  = array_search($postId, $Modules[MODULE_SLUG]['schedule_pages']);
+    $pages  = SIM\getModuleOption(MODULE_SLUG, 'schedule_pages', false);
+    $index  = array_search($postId, $pages);
     if($index){
         unset($Modules[MODULE_SLUG]['schedule_pages'][$index]);
-        $Modules[MODULE_SLUG]['schedule_pages']   = array_values($Modules[MODULE_SLUG]['schedule_pages']);
+        $Modules[MODULE_SLUG]['schedule_pages']   = array_values($pages);
         update_option('sim_modules', $Modules);
     }
 } );

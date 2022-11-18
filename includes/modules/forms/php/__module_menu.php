@@ -235,7 +235,7 @@ add_action('sim_module_actions', function(){
 
 add_filter('display_post_states', function ( $states, $post ) {
     
-    if (is_array(SIM\getModuleOption(MODULE_SLUG, 'forms_pages')) && in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'forms_pages', 'array'))) {
+    if (is_array(SIM\getModuleOption(MODULE_SLUG, 'forms_pages')) && in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'forms_pages', false))) {
         $states[] = __('Form selector page');
     }
 

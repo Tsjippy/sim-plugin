@@ -280,13 +280,13 @@ add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 
 add_filter('display_post_states', function ( $states, $post ) {
 
-	if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'account_page', 'array'))) {
+	if ( in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'account_page', false))) {
 		$states[] = __('Account page');
-	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'user_edit_page', 'array')) ) {
+	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'user_edit_page', false)) ) {
 		$states[] = __('User edit page');
-	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'account_create_page', 'array'))) {
+	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'account_create_page', false))) {
 		$states[] = __('Account create page');
-	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'pending_users_page', 'array'))) {
+	}elseif(in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'pending_users_page', false))) {
 		$states[] = __('Pending users page');
 	}
 

@@ -27,7 +27,7 @@ add_action( 'wp_enqueue_scripts', function(){
 	    wp_enqueue_script('sim_password_strength_script');
     }
 
-    if(in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG, '2fa_page', 'array'))){
+    if(in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG, '2fa_page', false))){
         wp_enqueue_script('sim_2fa_script');
     }
 });
