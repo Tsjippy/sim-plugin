@@ -103,11 +103,30 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
     $postId     = $frontendcontend->postId;
     $postName   = $frontendcontend->postName;
     
-    $manager = get_post_meta($postId, 'manager', true);
+    $manager    = (array) get_post_meta($postId, 'manager', true);
+    $managerId  = '';
+    if(isset($manager['userid'])){
+        $managerId  = $manager['userid'];
+    }
 
-    $url = get_post_meta($postId, 'url', true);
+    $managerName  = '';
+    if(isset($manager['name'])){
+        $managerName  = $manager['name'];
+    }
 
-    $number = get_post_meta($postId, 'number', true);
+    $managerTel  = '';
+    if(isset($manager['tel'])){
+        $managerTel  = $manager['tel'];
+    }
+
+    $managerEmail  = '';
+    if(isset($manager['email'])){
+        $managerEmail  = $manager['email'];
+    }
+
+    $url        = get_post_meta($postId, 'url', true);
+
+    $number     = get_post_meta($postId, 'number', true);
 
     //Get all pages describing a ministry
 	$ministries = get_posts([
@@ -139,12 +158,12 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
     <div id="project-attributes" class="property project<?php if($postName != 'project'){echo ' hidden';} ?>">
         <div id="parentpage" class="frontendform">
             <h4>Select a parent project</h4>
-            <?php 
+            <?php
             echo SIM\pageSelect('parent_project', $frontendcontend->postParent, '', ['project'], false);
             ?>
         </div>
         <div class="frontendform">
-            <h4>Update warnings</h4>	
+            <h4>Update warnings</h4>
             <label>
                 <input type='checkbox' name='static_content' value='static_content' <?php if(!empty(get_post_meta($postId, 'static_content', true))){echo 'checked';}?>>
                 Do not send update warnings for this project
@@ -162,9 +181,9 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         <fieldset id="project" class="frontendform">
             <legend>
                 <h4>Project details</h4>
-            </legend>					
+            </legend>
         
-            <table class="form-table"> 
+            <table class="form-table">
                 <tr>
                     <th><label for="number">Project Number</label></th>
                     <td>
@@ -174,20 +193,20 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
                 <tr>
                     <th><label for="name">Manager name</label></th>
                     <td>
-                        <input type='hidden' class='datalistvalue' name='manager[userid]' value='<?php echo $manager['userid']; ?>'>
-                        <input type="text" class='formbuilder' name="manager[name]" value="<?php echo $manager['name']; ?>" list='users'>
+                        <input type='hidden' class='datalistvalue' name='manager[userid]' value='<?php echo $managerId; ?>'>
+                        <input type="text" class='formbuilder' name="manager[name]" value="<?php echo $managerName; ?>" list='users'>
                     </td>
                 </tr>
                 <tr>
                     <th><label for="name">Manager phone number</label></th>
                     <td>
-                        <input type="tel" class='formbuilder' name="manager[tel]" value="<?php echo $manager['tel']; ?>">
+                        <input type="tel" class='formbuilder' name="manager[tel]" value="<?php echo $managerTel; ?>">
                     </td>
                 </tr>
                 <tr>
                     <th><label for="name">Manager e-mail</label></th>
                     <td>
-                        <input type="text" class='formbuilder' name="manager[email]" value="<?php echo $manager['email']; ?>">
+                        <input type="text" class='formbuilder' name="manager[email]" value="<?php echo $managerEmail; ?>">
                     </td>
                 </tr>
                 <tr>
