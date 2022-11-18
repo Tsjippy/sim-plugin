@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- more logical getModuleOption function
 
 ### Fixed
 
