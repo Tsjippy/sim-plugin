@@ -3,11 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- maintenace module
 
 ### Changed
 
 ### Fixed
+
+## [2.23.0] - 2022-11-18
+
+
+### Added
+- maintenace module
 
 ## [2.22.8] - 2022-11-17
 
