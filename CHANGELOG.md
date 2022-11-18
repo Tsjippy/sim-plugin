@@ -9,6 +9,7 @@
 
 ### Fixed
 - several bugs
+- bug in projects page
 
 ## [2.23.0] - 2022-11-18
 
