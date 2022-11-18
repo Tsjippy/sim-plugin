@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.23.1] - 2022-11-18
+
+
+### Changed
 - more logical getModuleOption function
 
 ### Fixed
