@@ -8,6 +8,7 @@
 - more logical getModuleOption function
 
 ### Fixed
+- several bugs
 
 ## [2.23.0] - 2022-11-18
 
