@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.23.2] - 2022-11-19
+
+
+### Fixed
 - restapi is_numeric for php8
 
 ## [2.23.1] - 2022-11-18
