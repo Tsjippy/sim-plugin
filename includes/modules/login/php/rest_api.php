@@ -220,7 +220,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
                 'userid'		=> array(
 					'required'	=> true,
-                    'validate_callback' => 'is_numeric'
+                    'validate_callback' => function($userId){
+						return is_numeric($userId);
+					}
 				),
                 'pass1'		=> array(
 					'required'	=> true

@@ -35,7 +35,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'post_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($postId){
+						return is_numeric($postId);
+					}
                 )
 			)
 		)
@@ -66,7 +68,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'vimeoid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($vimeoId){
+						return is_numeric($vimeoId);
+					}
                 ),
 				'download_url'		=> array(
 					'required'	=> true

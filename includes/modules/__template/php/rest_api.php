@@ -4,9 +4,9 @@ use SIM;
 
 add_action( 'rest_api_init', function () {
 	//Route for notification messages
-	register_rest_route( 
-		RESTAPIPREFIX.'/MODULENAME', 
-		'/add_category', 
+	register_rest_route(
+		RESTAPIPREFIX.'/MODULENAME',
+		'/add_category',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\addCategory',
@@ -15,7 +15,9 @@ add_action( 'rest_api_init', function () {
 				'cat_name'		=> array('required'	=> true),
 				'cat_parent'	=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($catParent){
+						return is_numeric($catParent);
+					}
 				),
 				'post_type'		=> array(
 					'required'	=> true,

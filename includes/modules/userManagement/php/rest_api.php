@@ -33,7 +33,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'userid'		=> array(
 					'required'	=> true,
-                    'validate_callback' => 'is_numeric'
+                    'validate_callback' => function($userId){
+						return is_numeric($userId);
+					}
 				)
 			)
 		)
@@ -52,7 +54,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'userid'		=> array(
 					'required'	=> true,
-                    'validate_callback' => 'is_numeric'
+                    'validate_callback' => function($userId){
+						return is_numeric($userId);
+					}
                 ),
                 'roles'		=> array(
 					'required'	=> true
@@ -81,9 +85,9 @@ add_action( 'rest_api_init', function () {
 	);
 
     // extend user account validity
-	register_rest_route( 
-		RESTAPIPREFIX.'/user_management', 
-		'/extend_validity', 
+	register_rest_route(
+		RESTAPIPREFIX.'/user_management',
+		'/extend_validity',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> 	__NAMESPACE__.'\extendValidity',
@@ -93,7 +97,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'userid'		=> array(
 					'required'	=> true,
-                    'validate_callback' => 'is_numeric'
+                    'validate_callback' => function($userId){
+						return is_numeric($userId);
+					}
                 ),
                 'new_expiry_date'		=> array(
 					'required'	=> true
@@ -124,7 +130,7 @@ function addMinistry(){
 	if(wp_get_current_user()->has_cap( 'publish_post' )){
 		$status	= 'publish';
 	}
-    
+
     //Build the ministry page
     $ministryPage = array(
         'post_title'    => ucfirst($name),
@@ -135,13 +141,13 @@ function addMinistry(){
     );
 
 	$ministryCatId	= get_term_by('name', 'Ministries', 'locations')->term_id;
-        
+
     //Insert the page
     $postId = wp_insert_post( $ministryPage );
-    
+
     //Add the ministry cat
     wp_set_post_terms($postId , $ministryCatId, 'locations');
-    
+
     //Store the ministry location
     if ($postId != 0){
         //Add the location to the page
@@ -163,9 +169,9 @@ function updateRoles(){
 	if ( !function_exists( 'populate_roles' ) ) {
 		require_once( ABSPATH . 'wp-admin/includes/schema.php' );
 	  }
-	  
+	
 	  populate_roles();
-	  
+	
 	$user 		= get_userdata($_POST['userid']);
     $userRoles 	= $user->roles;
     $newRoles	= (array)$_POST['roles'];
@@ -175,7 +181,7 @@ function updateRoles(){
     }
 
 	SIM\saveExtraUserRoles($_POST['userid']);
-    
+
     return "Updated roles succesfully";
 }
 

@@ -4,9 +4,9 @@ use SIM;
 
 //Save a meta key via rest api
 add_action( 'rest_api_init', function () {
-	register_rest_route( 
-		RESTAPIPREFIX.'/bulkchange', 
-		'/bulk_change_meta', 
+	register_rest_route(
+		RESTAPIPREFIX.'/bulkchange',
+		'/bulk_change_meta',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\bulkUpdateMeta',
@@ -14,7 +14,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'user_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($userId){
+						return is_numeric($userId);
+					}
 				),
 				'meta_key'		=> array(
 					'required'	=> true

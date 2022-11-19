@@ -16,7 +16,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'formid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($formId){
+						return is_numeric($formId);
+					}
 				),
 				'column_name'	=> array('required'	=> true),
 			)
@@ -34,7 +36,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'formid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($formId){
+						return is_numeric($formId);
+					}
 				),
 			)
 		)
@@ -54,7 +58,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'shortcode_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($shortcodeId){
+						return is_numeric($shortcodeId);
+					}
 				),
 				'column_settings'		=> array(
 					'required'	=> true,
@@ -80,7 +86,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'shortcode_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($shortcodeId){
+						return is_numeric($shortcodeId);
+					}
 				),
 				'table_settings'		=> array(
 					'required'	=> true,
@@ -100,7 +108,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'submissionid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($submissionId){
+						return is_numeric($submissionId);
+					}
 				)
 			)
 		)
@@ -117,11 +127,15 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'formid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($formId){
+						return is_numeric($formId);
+					}
 				),
 				'submissionid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($submissionId){
+						return is_numeric($submissionId);
+					}
 				)
 			)
 		)
@@ -138,11 +152,15 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'formid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($formId){
+						return is_numeric($formId);
+					}
 				),
 				'submissionid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($submissionId){
+						return is_numeric($submissionId);
+					}
 				),
 				'fieldname'		=> array(
 					'required'	=> true,
@@ -165,14 +183,18 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'formid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($formId){
+						return is_numeric($formId);
+					}
 				),
 				'fieldname'		=> array(
 					'required'	=> true,
 				),
 				'submissionid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($submissionId){
+						return is_numeric($submissionId);
+					}
 				),
 			)
 		)

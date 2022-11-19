@@ -48,11 +48,15 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'schedule_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($scheduleId){
+						return is_numeric($scheduleId);
+					}
 				),
 				'schedule_target'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($userId){
+						return is_numeric($userId);
+					}
 				)
 			)
 		)
@@ -75,7 +79,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'schedule_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($scheduleId){
+						return is_numeric($scheduleId);
+					}
 				)
 			)
 		)
@@ -95,7 +101,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'schedule_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($scheduleId){
+						return is_numeric($scheduleId);
+					}
 				),
 				'date'		=> array(
 					'required'	=> true,
@@ -129,11 +137,15 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'schedule_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($scheduleId){
+						return is_numeric($scheduleId);
+					}
 				),
 				'host'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($userId){
+						return is_numeric($userId);
+					}
 				),
 				'date'		=> array(
 					'required'	=> true,
@@ -165,7 +177,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'schedule_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($scheduleId){
+						return is_numeric($scheduleId);
+					}
 				),
 				'date'		=> array(
 					'required'	=> true,
@@ -175,7 +189,9 @@ add_action( 'rest_api_init', function () {
 				),
 				'starttime'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($startTime){
+						return is_numeric($startTime);
+					}
 				),
 				'recipe_keyword'		=> array(
 					'required'	=> true

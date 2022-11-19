@@ -14,7 +14,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'attachment_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($attachmentId){
+						return is_numeric($attachmentId);
+					}
 				),
 			)
 		)
@@ -32,7 +34,9 @@ add_action( 'rest_api_init', function () {
 				'cat_name'		=> array('required'	=> true),
 				'cat_parent'	=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($catParentId){
+						return is_numeric($catParentId);
+					}
 				),
 				'post_type'		=> array(
 					'required'	=> true,
@@ -94,7 +98,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'post_id'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($postId){
+						return is_numeric($postId);
+					}
 				)
 			)
 		)
@@ -121,7 +127,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'postid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($postId){
+						return is_numeric($postId);
+					}
 				)
 			)
 		)
@@ -141,7 +149,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'postid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($test){
+						return true;
+					}
 				)
 			)
 		)
@@ -164,7 +174,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'postid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($postId){
+						return is_numeric($postId);
+					}
 				),
 				'post_type_selector'		=> array(
 					'required'	=> true,
@@ -189,7 +201,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'postid'		=> array(
 					'required'			=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($postId){
+						return is_numeric($postId);
+					}
 				)
 			)
 		)
@@ -206,7 +220,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'postid'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($postId){
+						return is_numeric($postId);
+					}
 				)
 			)
 		)

@@ -31,11 +31,15 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'month'	=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($month){
+						return is_numeric($month);
+					}
 				),
 				'year'		=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($year){
+						return is_numeric($year);
+					}
 				),
 				'subject'		=> array(
 					'required'	=> true
@@ -59,7 +63,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'id'	=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($bookingId){
+						return is_numeric($bookingId);
+					}
 				)
 			)
 		)
@@ -82,7 +88,9 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'id'	=> array(
 					'required'	=> true,
-					'validate_callback' => 'is_numeric'
+					'validate_callback' => function($bookingId){
+						return is_numeric($bookingId);
+					}
 				)
 			)
 		)
