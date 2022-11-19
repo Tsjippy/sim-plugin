@@ -149,8 +149,8 @@ add_action( 'rest_api_init', function () {
 			'args'					=> array(
 				'postid'		=> array(
 					'required'	=> true,
-					'validate_callback' => function($test){
-						return true;
+					'validate_callback' => function($postId){
+						return is_numeric($postId);
 					}
 				)
 			)
