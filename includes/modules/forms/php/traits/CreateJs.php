@@ -181,11 +181,13 @@ trait CreateJs{
                             
                             //If there is another rule, add || or &&
                             if(
-                                $lastRuleKey != $ruleIndex                                                      &&
-                                !empty($rule['combinator'])														&&  //there is a next rule
+                                $lastRuleKey != $ruleIndex                                                      &&  // there is a next rule
                                 !empty($conditionIf) 																//there is already preceding code
-                                //!in_array($condition['rules'][$ruleIndex+1]['equation'], ['changed', 'clicked'])	//The next element will also be included in the if statement
                             ){
+                                if(empty($rule['combinator'])){
+                                    $rule['combinator'] = 'AND';
+                                    SIM\printArray("Condition index $conditionIndex of $element->name is missing a combinator. I have set it to 'AND' for now");
+                                }
                                 if($rule['combinator'] == 'AND'){
                                     $conditionIf .= " && ";
                                 }else{
