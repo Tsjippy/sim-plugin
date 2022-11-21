@@ -20,7 +20,12 @@ function showFormSelector($atts=[]){
 
     // Remove any unwanted forms
     if(!empty($a['exclude']) || $a['no_meta']){
-        $exclusions = explode(',', $a['exclude']);
+        if(is_array($a['exclude'])){
+            $exclusions = $a['exclude'];
+        }else{
+            $exclusions = explode(',', $a['exclude']);
+        }
+        
         foreach($forms as $key=>$form){
             if(in_array($form->name, $exclusions) || empty($form->name)){
                 unset($forms[$key]);
