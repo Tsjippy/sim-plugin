@@ -742,8 +742,8 @@ class DisplayFormResults extends DisplayForm{
 		
 		$this->shortcodeData 		= $wpdb->get_results($query)[0];
 		
-		$this->tableSettings		= unserialize($this->shortcodeData->table_settings);
-		$this->columnSettings		= unserialize($this->shortcodeData->column_settings);
+		$this->tableSettings		= (array) maybe_unserialize($this->shortcodeData->table_settings);
+		$this->columnSettings		= (array) maybe_unserialize($this->shortcodeData->column_settings);
 	}
 
 	protected function columnSettingsForm($class, $viewRoles, $editRoles){
