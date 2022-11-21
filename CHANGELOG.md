@@ -9,6 +9,7 @@
 
 ### Fixed
 - bug in signups
+- bug in mailposting module
 
 ## [2.23.3.2] - 2022-11-21
 
