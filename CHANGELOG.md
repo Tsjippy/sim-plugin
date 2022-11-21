@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- media gallery
 
 ## [2.23.3] - 2022-11-21
 
