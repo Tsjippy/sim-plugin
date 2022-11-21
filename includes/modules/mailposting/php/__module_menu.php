@@ -97,7 +97,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 													foreach($cats as $cat){
 														?>
 														<label>
-															<input type='checkbox' name='category_mapper[<?php echo $index;?>][category][<?php echo $postType;?>][<?php echo $taxonomy;?>][]' value='<?php echo $cat->id;?>' <?php if(in_array($cat->id, $mapper['category'][$postType][$taxonomy])){echo 'checked';}?>>
+															<input type='checkbox' name='category_mapper[<?php echo $index;?>][category][<?php echo $postType;?>][<?php echo $taxonomy;?>][]' value='<?php echo $cat->id;?>' <?php if(isset($mapper['category'][$postType][$taxonomy]) && is_array($mapper['category'][$postType][$taxonomy]) && in_array($cat->id, $mapper['category'][$postType][$taxonomy])){echo 'checked';}?>>
 															<?php echo $cat->name;?>
 														</label>
 														<?php
