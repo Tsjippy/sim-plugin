@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.23.3] - 2022-11-21
+
+
+### Fixed
 - bug in icalfeed
 - bug in content filter
 - e-mail footer
