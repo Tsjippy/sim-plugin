@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php do_action( 'sim_before_content' );?>
 		<div class='entry-content'>
 			<div class="description event">
-				<?php 
+				<?php
 				displayEventCategories();
 				
 				the_content();
@@ -42,18 +42,18 @@ function displayEventCategories(){
 	$baseUrl	= plugins_url('pictures', __DIR__);
 
 	$categories = wp_get_post_terms(
-		get_the_ID(), 
+		get_the_ID(),
 		'events',
 		array(
 			'orderby'   => 'name',
 			'order'     => 'ASC',
 			'fields'    => 'id=>name'
-		) 
+		)
 	);
 
 	if(!empty($categories)){
 		?>
-		<span class='category eventmeta'> 
+		<span class='category eventmeta'>
 			<?php
 			echo "<img src='{$baseUrl}/event_category.png' alt='category' loading='lazy' class='event_icon'>";
 			
@@ -72,14 +72,14 @@ function displayEventCategories(){
 			}
 			
 			//now loop over the array to print the categories
-			$last_key	 = array_key_last($categories);
+			$lastKey	 = array_key_last($categories);
 			foreach($categories as $id=>$category){
 				//Only show the category if all of its subcats are not there
 				$url = get_term_link($id);
 				$category = ucfirst($category);
 				echo "<a href='$url'>$category</a>";
 				
-				if($id != $last_key){
+				if($id != $lastKey){
 					echo ', ';
 				}
 			}
@@ -92,6 +92,10 @@ function displayEventCategories(){
 function displayEventMeta(){
 	$events		= new DisplayEvents();
 	$event		= $events->retrieveSingleEvent(get_the_ID());
+	if(!$event){
+		return;
+	}
+	
 	$date		= $events->getDate($event);
 	$time		= $events->getTime($event);
 	$meta		= get_post_meta($event->ID, 'eventdetails', true);
