@@ -8,6 +8,7 @@
 
 ### Fixed
 - media gallery
+- location employee shortcode
 
 ## [2.23.3] - 2022-11-21
 
