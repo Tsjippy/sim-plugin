@@ -107,11 +107,16 @@ function sendSignalMessage($message, $recipient, $postId=""){
 			if(strpos($recipient, ',') !== false){
 				$signal->sendGroupMessage($message, $recipient, $image);
 			}else{
-				$signal->send($recipient, $message, $image);
+				// check if valid number
+				if($signal->isRegistered($recipient)){
+					$signal->send($recipient, $message, $image);
+				}
 			}
 		}else{
 			$signal = new Signal();
-			$signal->send($recipient, $message, $image);
+			if($signal->isRegistered($recipient)){
+				$signal->send($recipient, $message, $image);
+			}
 		}
 
 		return;

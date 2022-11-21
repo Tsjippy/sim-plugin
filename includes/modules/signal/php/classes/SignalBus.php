@@ -232,7 +232,7 @@ class SignalBus extends Signal {
             if(strpos( $recipients , '+' ) === 0){
                 $recipient    = "string:'$recipients'";
             }else{
-                Parent::send($recipients, $message, $attachments);
+                $this->sendGroupMessage($message, $recipients, $attachments);
             }
         }else{
             $recipient    = "array:string:".implode(',', $recipients);
