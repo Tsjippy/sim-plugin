@@ -93,13 +93,10 @@ function createEvents($metaId, $postId,  $metaKey,  $metaValue ){
 	$events->postId	= $postId;
     //check if anything has changed
 	$events->removeDbRows();
-
-	// Delete any existing events as well
-	wp_clear_scheduled_hook([$events, 'sendEventReminder'], $postId);
 	
 	//create events
 	$events->eventData		= $metaValue;
-	$result	= $events->createEvents();
+	$result					= $events->createEvents();
 
 	if(is_wp_error($result)){
 		SIM\printArray($result);

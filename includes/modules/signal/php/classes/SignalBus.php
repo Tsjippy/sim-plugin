@@ -325,16 +325,14 @@ class SignalBus extends Signal {
 
     public function getGroupInvitationLink($groupPath){
         $this->command = new Command([
-            'command' => "dbus-send --$this->dbusType --dest=org.asamk.Signal --print-reply $groupPath org.freedesktop.DBus.Properties.Get string:org.asamk.Signal.Group string:GroupInviteLink"
+            'command' => "export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$this->osUserId/bus; dbus-send --$this->dbusType --dest=org.asamk.Signal --print-reply $groupPath org.freedesktop.DBus.Properties.Get string:org.asamk.Signal.Group string:GroupInviteLink"
         ]);
 
         $this->command->execute();
 
         $result = $this->parseResult();
 
-        $link   = trim(str_replace('variant', '', $result));
-
-        return $link;
+        return trim(explode('string "', $result)[1],'"');
     }
 
     /**

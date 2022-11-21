@@ -36,7 +36,10 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 		if(is_array($groupPaths)){
 			$signal	= new SIM\SIGNAL\SignalBus();
 			foreach($groupPaths as $path){
-				$link	.=	$signal->getGroupInvitationLink($path);
+				$result	= 	$signal->getGroupInvitationLink($path);
+				if(empty($signal->error)){
+					$link	.= $result;
+				}
 			}
 		}else{
 			$link		= SIM\getModuleOption('signal', 'group_link');
@@ -63,8 +66,10 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 			$changedNumber = $formResults['phonenumbers'][$key]	= '+234'.$changedNumber;
 		}
 
-		$message	= "Hi $firstName\n\nI noticed you just updated your phonenumber on ".SITEURLWITHOUTSCHEME.".\n\nIf you want to join our Signal group with this number you can use this url:\n$link";
-		SIM\trySendSignal($message, $changedNumber);
+		if(!empty($link)){
+			$message	= "Hi $firstName\n\nI noticed you just updated your phonenumber on ".SITEURLWITHOUTSCHEME.".\n\nIf you want to join our Signal group with this number you can use this url:\n$link";
+			SIM\trySendSignal($message, $changedNumber);
+		}
 	}
 	
 	return $formResults;

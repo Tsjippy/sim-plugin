@@ -394,7 +394,7 @@ class SimForms{
 		
 
 		if(!isset($this->formData->elementMapping['type'][$type])){
-			SIM\printArray("Element with id $type not found");
+			//SIM\printArray("Element with id $type not found");
 			return false;
 		}
 		

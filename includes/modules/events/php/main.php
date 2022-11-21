@@ -2,9 +2,9 @@
 namespace SIM\EVENTS;
 use SIM;
 
-add_action('send_event_reminder_action', function ($event_id){
+add_action('send_event_reminder_action', function ($eventId){
     $events = new DisplayEvents();
-    $events->sendEventReminder($event_id);
+    $events->sendEventReminder($eventId);
 });
 
 add_action( 'before_delete_post', function($postId){

@@ -94,8 +94,20 @@ add_shortcode("test",function ($atts){
         }
     } */
 
-    $signal = new SIGNAL\SignalBus();
-    printArray($signal->listGroups());
+    $groupPaths		= getModuleOption('signal', 'invgroups');
+
+    $link			= '';
+    if(is_array($groupPaths)){
+        $signal	= new SIGNAL\SignalBus();
+        foreach($groupPaths as $path){
+            $result	= 	$signal->getGroupInvitationLink($path);
+            printArray($result, true);
+            if(empty($signal->error)){
+                $link	.= $result;
+            }
+        }
+    }
+		
 });
 
 // turn off incorrect error on localhost
