@@ -44,7 +44,7 @@ class SignalBus extends Signal {
         $this->startDaemon();
     }
 
-     /**
+    /**
      * Register a phone number with SMS or voice verification. Use the verify command to complete the verification.
      * Default verify with SMS
      * @param bool $voiceVerification The verification should be done over voice, not SMS.
@@ -75,7 +75,7 @@ class SignalBus extends Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * Verify the number using the code received via SMS or voice.
      * @param string $code The verification code e.g 123-456
      * @return bool|string
@@ -96,7 +96,7 @@ class SignalBus extends Signal {
         return $this->parseResult();
     }
     
-     /**
+    /**
      * Link to an existing device, instead of registering a new number.
      * This shows a "tsdevice:/…" URI.
      * If you want to connect to another signal-cli instance, you can just use this URI.
@@ -144,7 +144,7 @@ class SignalBus extends Signal {
         return "<img src='data:image/png;base64, $qrcodeImage'/><br>$link";
     }
      
-     /**
+    /**
      * Shows if a number is registered on the Signal Servers or not.
      * @param   string          $recipient Number to check.
      * @return  string
@@ -176,7 +176,7 @@ class SignalBus extends Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * List Groups
      * @return array|string
      */
@@ -297,7 +297,7 @@ class SignalBus extends Signal {
         return $this->parseResult();
     }
 
-     /**
+    /**
      * Update the name and avatar image visible by message recipients for the current users.
      * The profile is stored encrypted on the Signal servers.
      * The decryption key is sent with every outgoing messages to contacts.

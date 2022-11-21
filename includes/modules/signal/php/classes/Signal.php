@@ -151,7 +151,7 @@ class Signal {
      * @return string|string
      */
     
-    public function getUserStatus($recipients)
+    public function isRegistered($recipients)
     {
         if(!is_array($recipients)){
             $recipients    = [$recipients];
