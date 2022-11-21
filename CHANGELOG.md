@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug in icalfeed
 
 ## [2.23.2] - 2022-11-19
 
