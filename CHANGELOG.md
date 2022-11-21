@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.23.3.2] - 2022-11-21
+
+
+### Fixed
+- invalid js when no combinator selected
+
 ## [2.23.3.1] - 2022-11-21
 
 
