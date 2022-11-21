@@ -10,6 +10,7 @@
 - bug in icalfeed
 - bug in content filter
 - e-mail footer
+- bug in form selectore
 
 ## [2.23.2] - 2022-11-19
 
