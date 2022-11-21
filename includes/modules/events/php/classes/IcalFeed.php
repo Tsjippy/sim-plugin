@@ -33,7 +33,7 @@ class IcalFeed{
 		$icalEvents	 = '';
 		
 		foreach($events as $event){
-			$onlyFor		= get_post_meta($event->ID, 'onlyfor', true);
+			$onlyFor		= (array)get_post_meta($event->ID, 'onlyfor', true);
 
 			//do not show events which are not meant for us
 			if(!empty($onlyFor) && !in_array($userId, $onlyFor)){
