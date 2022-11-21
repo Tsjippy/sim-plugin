@@ -14,7 +14,7 @@ add_shortcode("markerdescription", 	function ($atts){
         
         $privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
 
-        $description = "";			
+        $description = "";
         if (empty($privacyPreference['hide_profile_picture'])){
             $description .= SIM\displayProfilePicture($userId, [80,80], true, true);
         }

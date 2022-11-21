@@ -2,7 +2,7 @@
 namespace SIM\LOCATIONS;
 use SIM;
 
-// Create the location custom post type 
+// Create the location custom post type
 add_action('init', function(){
 	SIM\registerPostTypeAndTax('location', 'locations');
 }, 999);
@@ -62,3 +62,74 @@ add_filter('sim-template-filter', function($templateFile){
 	}
     return $templateFile;
 });
+
+/**
+ * Get the people that work at a certain location
+ *
+ * @param 	int	$postId		The WP_Post id
+ */
+function getLocationEmployees($post){
+
+	wp_enqueue_style('sim_employee_style');
+
+	if (!is_user_logged_in()){
+		return '';
+	}
+
+	if(is_numeric($post)){
+		$post	= get_post($post);
+	}
+
+	$locations		= array_keys(get_children(array(
+		'post_parent'	=> $post->ID,
+		'post_type'   	=> 'location',
+		'post_status' 	=> 'publish',
+	)));
+	$locations[]	= $post->ID;
+
+	//Loop over all users to see if they work here
+	$users 			= get_users('orderby=display_name');
+	
+	$html 			= "";
+
+	foreach($users as $user){
+		$userLocations 	= (array)get_user_meta( $user->ID, "jobs", true);
+
+		$intersect		= array_intersect(array_keys($userLocations), $locations);
+	
+		//If a user works for this ministry, echo its name and position
+		if ($intersect){
+			$userPageUrl		= SIM\maybeGetUserPageUrl($user->ID);
+			$privacyPreference	= (array)get_user_meta( $user->ID, 'privacy_preference', true );
+			$class				= 'description';
+			if(isset($privacyPreference['hide_profile_picture'])){
+				$class			.= ' empty-picture';
+			}
+			
+			if(!isset($privacyPreference['hide_ministry'])){
+				$html .=	"<div class='person-wrapper'>";
+					if(!isset($privacyPreference['hide_profile_picture'])){
+						$html .= SIM\displayProfilePicture($user->ID);
+					}
+					
+					$pageUrl = "<a class='user_link' href='$userPageUrl'>$user->display_name</a>";
+					foreach($intersect as $postId){
+						$job	= ucfirst($userLocations[$postId]);
+						$html .= "   <div class='$class'>$pageUrl <br>($job)</div>";
+					}
+				$html .= '</div>';
+			}
+		}
+	}
+	
+
+	if(empty($html)){
+		$html .= "No one dares to say they are working here!";
+	}else{
+		$html	= "<div class='employee-gallery'>$html</div>";
+	}
+
+	$html 	= "<p style='padding:10px;'><strong>People working at $post->post_title are:</strong><br><br>$html</p>";
+	
+	return $html;
+}
