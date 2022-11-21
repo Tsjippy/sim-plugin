@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- group invite selector to Signal module
 
 ### Changed
 
