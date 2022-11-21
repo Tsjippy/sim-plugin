@@ -197,7 +197,7 @@ class DisplayEvents extends Events{
 	 *
 	 * @return	string					The date of the event. Startdate and end date in case of an multiday event
 	*/
-	public function getDate($event){
+	public function getDate(object $event){
 		if(empty($event->enddate)){
 			$event->enddate	= $event->startdate;
 		}

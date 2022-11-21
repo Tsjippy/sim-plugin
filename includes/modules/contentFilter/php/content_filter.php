@@ -35,9 +35,9 @@ function isProtected(){
 	if(
 		http_response_code() != 404			&&		//we try to visit an existing page
 		!is_user_logged_in()				&&
-		!$public							&& 
+		!$public							&&
 		!is_search()						&&
-		!is_home()							
+		!is_home()
 	){
 		return true;
 	}
@@ -60,7 +60,7 @@ add_action('wp_footer', function(){
 
 	//If this page or post does not have the public category and the user is not logged in, redirect them to the login page
 	if(	isProtected() ){
-		//prevent the output 
+		//prevent the output
 		ob_get_clean();
 
 		if(!isset($_SESSION)){
@@ -86,9 +86,9 @@ add_action('wp_footer', function(){
 	}
 	
 	//block access to confidential pages
-	$confidentialGroups	= getModuleOption(MODULE_SLUG, 'confidential-roles');
+	$confidentialGroups	= getModuleOption(MODULE_SLUG, 'confidential-roles', true);
 	if(is_page() && has_category('Confidential') && array_intersect($confidentialGroups, $user->roles)){
-		//prevent the output 
+		//prevent the output
 		ob_get_clean();
 		echo "<div class='error'>You do not have the permission to see this.</div>";
 	}
