@@ -13,7 +13,7 @@ class AccountStatement{
 
 	/**
 	 * Checks if the e-mail contains an account id and if so stores it
-	 * 
+	 *
 	 * @return	bool	true if id found, false otherwise
 	 */
 	function checkIfStatement(){
@@ -27,7 +27,7 @@ class AccountStatement{
 		preg_match_all($re, $content, $matches, PREG_SET_ORDER, 0);
 		
 		//If there is no result return false
-		if (is_array($matches) && count($matches[0]) == 2){
+		if (is_array($matches) && !empty($matches[0]) && count($matches[0]) == 2){
 
 			// Get the account id
 			$this->accountId	= trim($matches[0][1]);
@@ -45,7 +45,7 @@ class AccountStatement{
 
 	/**
 	 * Find an adult who has the account id
-	 * 
+	 *
 	 * @return	bool	true if user found, false otherwise
 	 */
 	function getLoginName(){
@@ -77,7 +77,7 @@ class AccountStatement{
 		}
 		
 		return false;
-	} 
+	}
 
     /**
      * Checks the e-mail attachments with a file with the name 'account-statement'
@@ -103,8 +103,8 @@ class AccountStatement{
 			$filePath = get_attached_file($attachment->ID);
 
 			if(file_exists($filePath)){
-				//Read the contents of the attachment					
-				$rtf	= file_get_contents($filePath); 
+				//Read the contents of the attachment
+				$rtf	= file_get_contents($filePath);
 
 				//Regex to find the month it applies to
 				$re = "/.*Date Range.*(\d{2}-[a-zA-Z]*-\d{4}).*/";
