@@ -86,7 +86,7 @@ add_action('wp_footer', function(){
 	}
 	
 	//block access to confidential pages
-	$confidentialGroups	= getModuleOption(MODULE_SLUG, 'confidential-roles', true);
+	$confidentialGroups	= getModuleOption(MODULE_SLUG, 'confidential-roles', false);
 	if(is_page() && has_category('Confidential') && array_intersect($confidentialGroups, $user->roles)){
 		//prevent the output
 		ob_get_clean();

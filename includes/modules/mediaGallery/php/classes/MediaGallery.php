@@ -158,7 +158,7 @@ class MediaGallery{
             'hide_empty' 	=> false,
         ) );
 
-        $shouldSkip     = SIM\getModuleOption(MODULE_SLUG, 'categories');
+        $shouldSkip     = SIM\getModuleOption(MODULE_SLUG, 'categories', false);
 
         foreach($categories as $index=>$category){
             if(in_array($category->slug, $shouldSkip)){
@@ -225,12 +225,12 @@ class MediaGallery{
                 <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" loading='lazy' alt="magnifier">
             </div>
 
-            <div class='categories <?php if(!empty($this->categories)){ echo 'hidden'; }?>'>
+            <div class='categories <?php if(!empty($this->cats)){ echo 'hidden'; }?>'>
                 <div>Categories:<br></div>
                 <?php
                 foreach($categories as $cat){
                     $checked    = '';
-                    if(in_array($cat->term_id, $this->categories)){
+                    if(in_array($cat->term_id, $this->cats)){
                         $checked    = 'checked';
                     }
                     ?>
