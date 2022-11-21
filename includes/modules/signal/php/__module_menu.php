@@ -167,6 +167,31 @@ function connectedOptions($signal, $settings){
 			?>
 		</div>
 		<?php
+
+		?>
+		<div class="">
+			<h4>Select optional Signal group(s) to invite new users to:</h4>
+			<?php
+
+			if(empty($settings['invgroups'])){
+				$settings['invgroups']	= [];
+			}
+
+			foreach($signalGroups as $group){
+				if(empty($group->name)){
+					continue;
+				}
+				?>
+				<label>
+					<input type='checkbox' name='groups[]' value='<?php echo $group->path;?>' <?php if(in_array($group->path, $settings['invgroups'])){echo 'checked';}?>>
+					<?php echo $group->name;?>
+				</label>
+				<br>
+				<?php
+			}
+			?>
+		</div>
+		<?php
 	}
 }
 

@@ -93,6 +93,9 @@ add_shortcode("test",function ($atts){
             );
         }
     } */
+
+    $signal = new SIGNAL\SignalBus();
+    printArray($signal->listGroups());
 });
 
 // turn off incorrect error on localhost

@@ -30,7 +30,17 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 	$changedNumbers		= array_diff($newPhonenumbers, $oldPhonenumbers);
 	$firstName			= get_userdata($userId)->first_name;
 	foreach($changedNumbers as $key=>$changedNumber){
-		$link		= SIM\getModuleOption('signal', 'group_link');
+		$groupPaths		= SIM\getModuleOption('signal', 'invgroups');
+
+		$link			= '';
+		if(is_array($groupPaths)){
+			$signal	= new SIM\SIGNAL\SignalBus();
+			foreach($groupPaths as $path){
+				$link	.=	$signal->getGroupInvitationLink($path);
+			}
+		}else{
+			$link		= SIM\getModuleOption('signal', 'group_link');
+		}
 
 		// Make sure the phonenumber is in the right format
 		# = should be +
@@ -58,7 +68,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 	}
 	
 	return $formResults;
-},10,3);
+}, 10, 3);
 
 //Add ministry modal
 add_action('sim_before_form', function ($formName){

@@ -191,10 +191,10 @@ class SignalBus extends Signal {
         $result = $this->parseResult();
 
         if(empty($this->error)){
-            preg_match_all('/struct {.*?array of bytes \[(.*?)\](.*?)}/s', $result, $matches);
+            preg_match_all('/struct {(.*?)array of bytes \[(.*?)\](.*?)}/s', $result, $matches);
 
             $result = [];
-            foreach($matches[1] as $key=>$match){
+            foreach($matches[2] as $key=>$match){
                 $group = new stdClass();
                 $id = trim(str_replace("\n", '', $match));
 
@@ -210,7 +210,8 @@ class SignalBus extends Signal {
                 $idString   = implode(',', $idString);
 
                 $group->{"id"}      = $idString;
-                $group->{"name"}    = trim(str_replace("\n", '', $matches[2][$key]));
+                $group->{"name"}    = trim(str_replace("\n", '', $matches[3][$key]));
+                $group->{"path"}    = trim(str_replace("\n", '', $matches[1][$key]));
 
                 $result[]           = $group;
             }
@@ -320,6 +321,20 @@ class SignalBus extends Signal {
         $this->command->execute();
 
         return $this->parseResult();
+    }
+
+    public function getGroupInvitationLink($groupPath){
+        $this->command = new Command([
+            'command' => "dbus-send --$this->dbusType --dest=org.asamk.Signal --print-reply $groupPath org.freedesktop.DBus.Properties.Get string:org.asamk.Signal.Group string:GroupInviteLink"
+        ]);
+
+        $this->command->execute();
+
+        $result = $this->parseResult();
+
+        $link   = trim(str_replace('variant', '', $result));
+
+        return $link;
     }
 
     /**
