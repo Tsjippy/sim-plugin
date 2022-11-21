@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- invalid js when no combinator selected
 
 ## [2.23.3.1] - 2022-11-21
 
