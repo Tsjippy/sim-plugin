@@ -43,8 +43,6 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug){
 		$wpdb->query("ALTER TABLE $forms->elTableName ADD booking_details text NOT NULL");
 	}
 
-	scheduleTasks();
-
 	return $newOptions;
 }, 10, 2);
 
