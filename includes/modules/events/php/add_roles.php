@@ -14,9 +14,9 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 	// Only add the new role if it does not exist
 	if(!wp_roles()->is_role( 'personnelinfo' )){
-		add_role( 
-			'personnelinfo', 
-			'Personnel Info', 
+		add_role(
+			'personnelinfo',
+			'Personnel Info',
 			$roleSet
 		);
 	}

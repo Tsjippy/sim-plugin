@@ -62,10 +62,10 @@ function enableModule($slug, $options=['enable'=>'on']){
 
     // Load module files as they might contain activation actions
     $dir    = $moduleDirs[$slug];
-    $files = glob(MODULESPATH  . "$dir/php/*.php");
+    $files  = glob(MODULESPATH  . "$dir/php/*.php");
     foreach ($files as $file) {
-        require_once($file);   
-    }	
+        require_once($file);
+    }
     do_action('sim_module_activated', $slug, $options);
     $Modules[$slug]	= apply_filters('sim_module_updated', $options, $slug, $Modules[$slug]);
 

@@ -142,4 +142,6 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	}
 
 	SIM\ADMIN\installPlugin('postie/postie.php');
+
+	return $options;
 }, 10, 2);
