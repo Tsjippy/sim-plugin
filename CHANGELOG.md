@@ -15,18 +15,6 @@
 - bug in banking module
 - mailposting options saving
 
-## [2.23.3.2] - 2022-11-21
-
-
-### Fixed
-- invalid js when no combinator selected
-
-## [2.23.3.1] - 2022-11-21
-
-
-### Fixed
-- media gallery
-- location employee shortcode
 
 ## [2.23.3] - 2022-11-21
 
@@ -36,8 +24,10 @@
 - bug in content filter
 - e-mail footer
 - bug in form selectore
-- only send message to
-registered phonenumbers
+- only send message to registered phonenumbers
+- media gallery
+- location employee shortcode
+- invalid js when no combinator selected
 
 ## [2.23.2] - 2022-11-19
 
@@ -76,8 +66,7 @@ registered phonenumbers
 
 
 ### Added
-- suport for multiple elements with the
- same name if they end on []
+- suport for multiple elements with the same name if they end on []
 - Disable administration email verification
 
 ### Changed
@@ -85,8 +74,7 @@ registered phonenumbers
 
 ### Fixed
 - add button form builder
-- only show split field selector when
-there are options
+- only show split field selector when there are options
 - several bugs in formbuilder
 - better handling of non unique form elements
 - formbuilder dynamic js
@@ -135,16 +123,14 @@ there are options
 - possibility to hide ajax errors
 
 ### Changed
-- no systembus, warning when session bus
-already in use
+- no systembus, warning when session bus already in use
 
 ## [2.22.0] - 2022-11-03
 
 
 ### Changed
 - signal bot works via dbus on linux
-- allow verified numbers to get
-the prayer request
+- allow verified numbers to get the prayer request
 
 ### Fixed
 - bug fix
@@ -241,8 +227,7 @@ the prayer request
 - avatar image size
 
 ### Fixed
-- I have read thuis button for mandatory
-content send by mailchimp
+- I have read thuis button for mandatory content send by mailchimp
 - show all entries action
 - bug in sorting table
 - like search
@@ -271,8 +256,7 @@ content send by mailchimp
 
 ### Fixed
 - email regards
-- remove or edit event when booking
- is updated or deleted
+- remove or edit event when booking  is updated or deleted
 
 ## [2.21.2] - 2022-10-11
 
@@ -284,8 +268,7 @@ content send by mailchimp
 - conditional form e-mails
 - archiving bookings
 - custom dates repetition
-- prevent formsubmission when
-upload is not yet finished
+- prevent formsubmission when upload is not yet finished
 - bug in forms with spaces in the name
 - formbuilder block
 
@@ -338,8 +321,7 @@ upload is not yet finished
 - update bookings
 - better layout of employee gallery
 - better form layouts
-- page gallery build in
-into ministry template
+- page gallery build in into ministry template
 
 ## [2.20.7] - 2022-10-06
 
@@ -378,8 +360,7 @@ into ministry template
 
 ### Fixed
 - bug in vimeo backup file
-- assign multiple e-mail adresses
-to the same category
+- assign multiple e-mail adresses to the same category
 - do not scroll when not needed
 - bug in user name replacements
 
@@ -399,8 +380,7 @@ to the same category
 
 
 ### Added
-- allow multiple custom post categories to be set
-when importing e-mail
+- allow multiple custom post categories to be set when importing e-mail
 
 ### Fixed
 - issue with booking details
@@ -417,17 +397,13 @@ when importing e-mail
 
 ### Fixed
 - bugs in bookings module
--  better view of pictures in page gallery
- on big screens
+-  better view of pictures in page gallery on big screens
 - mark new ministry as pending
 - better modal layouts
-- bug when booking with overlapping
-end and startdates
+- bug when booking with overlapping end and startdates
 - issue with immigration form
-- find prayer message when year and month
-are not after each other in title
-- open up selector modal when clicking
- on a date
+- find prayer message when year and month are not after each other in title
+- open up selector modal when clicking  on a date
 - issue with conditional form e-mails
 - error in overlapping bookings check
 
@@ -490,12 +466,9 @@ are not after each other in title
 - bookings module
 
 ### Fixed
-- signal message after pending post
- is published
-- updating of published post which
-should be reviewed
-- now possible to schedule
-diner/lunch at home
+- signal message after pending post  is published
+- updating of published post which should be reviewed
+- now possible to schedule diner/lunch at home
 
 ## [2.18.3] - 2022-09-26
 
@@ -526,9 +499,8 @@ diner/lunch at home
 - support for printing a location
 
 ### Fixed
-- media gallery category selection
-- celebration date only update year
-results in 2 events
+- media gallery category selection 
+- celebration date only update year results in 2 events
 
 ## [2.17.6] - 2022-09-22
 
@@ -538,8 +510,7 @@ results in 2 events
 
 ### Fixed
 - send e-mail on sumission deletion
-- keep colum settings, split field value and
-submission data when changing name of form element
+- keep colum settings, split field value and submission data when changing name of form element
 
 ## [2.17.5] - 2022-09-22
 
@@ -570,15 +541,13 @@ submission data when changing name of form element
 
 
 ### Fixed
-- prefill text area in form result table
-during edit
+- prefill text area in form result table during edit
 
 ## [2.16.9] - 2022-09-21
 
 
 ### Fixed
-- do not show hidden pages in page gallery
-when not logged in
+- do not show hidden pages in page gallery when not logged in
 
 ## [2.16.8] - 2022-09-20
 
@@ -601,8 +570,7 @@ when not logged in
 
 
 ### Changed
-- add submitted by column
-to formresults table
+- add submitted by column to formresults table
 
 ### Fixed
 - remove marker when hidding location
@@ -616,8 +584,7 @@ to formresults table
 
 ### Fixed
 - file upload enqueu in wrong namespace
-- keep form submission display settings
- on refresh
+- keep form submission display settings  on refresh
 - request not to index hidden pages
 - page gallery on frontpage
 - added speed parameter
@@ -765,8 +732,7 @@ to formresults table
 ### Fixed
 - reset update info on manual info check
 - issue with private event creation
-- alwasy show 'reset visibility' button
-when needed
+- alwasy show 'reset visibility' button when needed
 - issue with non admin submitting host
 
 ## [2.13.8] - 2022-09-06
@@ -828,8 +794,7 @@ at the usermanagement module
 
 
 ### Added
-- warning when editing a gutenberg
-post in frontend
+- warning when editing a gutenberg post in frontend
 - show post chidren block
 
 ### Fixed
@@ -860,14 +825,12 @@ post in frontend
 
 
 ### Changed
-- link pictures to full srceen picture
-mediagallery
+- link pictures to full srceen picture mediagallery
 
 ### Fixed
 - form validation
 - tinymce over ajax
-- warnig for prayer when not including
-month or year in title
+- warnig for prayer when not including month or year in title
 - issue with attachment categories
 - manual update screen
 
@@ -875,8 +838,7 @@ month or year in title
 
 
 ### Changed
-- only show post edit
-form when fully loaded
+- only show post edit form when fully loaded
 
 ### Fixed
 - issue with categories in mediagallery
@@ -889,8 +851,7 @@ form when fully loaded
 
 
 ### Changed
-- do not send to the same
-mailchimp group again
+- do not send to the same mailchimp group again
 
 ### Fixed
 - bug in fullscreen pdf
@@ -959,8 +920,7 @@ site optional
 
 ### Fixed
 - bug when creating repeating events
-- issue with upcoming events block
-date layout
+- issue with upcoming events block date layout
 
 ## [2.10.0] - 2022-08-26
 
@@ -972,8 +932,7 @@ date layout
 
 
 ### Added
-- edit page over AJAX instead of
-reloading the entire page
+- edit page over AJAX instead of reloading the entire page
 
 ### Changed
 - edit post now over AJAX
@@ -983,8 +942,7 @@ reloading the entire page
 
 ### Fixed
 - bug in calendar when no times set
-- issue with single events with small
-content body
+- issue with single events with small content body
 
 ## [2.8.3] - 2022-08-23
 
@@ -1004,8 +962,7 @@ content body
 - recipe metadata block
 - Signal block
 - mailchimp block
-- expiry date and update warnings
-block settings
+- expiry date and update warnings block settings
 
 ### Changed
 - embed page content to embed page module
@@ -1015,18 +972,14 @@ block settings
 - location lookup by google
 - issue with creating events
 - location pages not showing a map
-- when update featured image
-update icon image to
-- issue with  metadata blocks
-- &amp; in signal messages
+- when update featured image update icon image to
+- issue with  metadata blocks in signal messages
 - lists are shown again
 - issue in widget blocks page
 - do not show categories if there are none
 - upcoming events layout & all day events
-- warning when someone submits a
-post for review
-- do not send pendngpost warning when
-publishing it
+- warning when someone submits a post for review
+- do not send pendngpost warning when publishing it
 
 ## [2.7.0] - 2022-08-19
 
@@ -1040,14 +993,12 @@ publishing it
 ### Added
 - missing form fields block
 - pending pages block
-- pening pages, your posts, displayname, login count,
-welcome message, mandatory pages blocks
+- pening pages, your posts, displayname, login count, welcome message, mandatory pages blocks
 - user description block
 
 ### Changed
 - table buttons result in ajax refresh
-- removed simnigeria/v1/notifications
- from rest api
+- removed simnigeria/v1/notifications  from rest api
 
 ### Fixed
 - mail issue

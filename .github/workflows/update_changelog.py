@@ -15,6 +15,9 @@ if(len(lines) == 1):
     exit()
 text    = lines[1]
 
+print(text)
+print(text.replace("\n", " "))
+
 # load plugin file
 changelog = Path(file).read_text()
 
