@@ -13,10 +13,7 @@ lines   = newLine.split(': ', 1)
 type    = lines[0].lower()
 if(len(lines) == 1):
     exit()
-text    = lines[1]
-
-print(text)
-print(text.replace("\n", " "))
+text    = lines[1].replace("\n", " ")
 
 # load plugin file
 changelog = Path(file).read_text()
