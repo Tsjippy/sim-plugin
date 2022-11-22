@@ -14,6 +14,7 @@
 - bug with empty events
 - bug in banking module
 - mailposting options saving
+- bug in bookings module
 
 ## [2.23.3.2] - 2022-11-21
 
