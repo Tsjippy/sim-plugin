@@ -13,6 +13,7 @@
 - bug in mailposting module
 - bug with empty events
 - bug in banking module
+- mailposting options saving
 
 ## [2.23.3.2] - 2022-11-21
 
