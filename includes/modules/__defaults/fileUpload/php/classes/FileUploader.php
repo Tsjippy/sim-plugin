@@ -133,6 +133,9 @@ class FileUploader{
         }
         
         if(!empty($this->metaKeyIndex)){
+            if(!is_array($metaValue)){
+                $metaValue  = [];
+            }
             $metaValue[$this->metaKeyIndex] = $newValue;
         }
         
