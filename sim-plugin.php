@@ -31,7 +31,7 @@ define('PLUGIN', plugin_basename(__FILE__));
 
 $files = glob(__DIR__  . '/*.php');
 foreach ($files as $file) {
-    require_once($file);   
+    require_once($file);
 }
 
 // Check if is updated

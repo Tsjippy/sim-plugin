@@ -1233,10 +1233,10 @@ function deslash( $content ) {
 
 /**
  * Find all depency urls of a given js handle
- * 
+ *
  * @param	array	$scripts	the current urls array
  * @param	string	$handle			the handle of the js to find all urls for
- * 
+ *
  * @return	array					array containing all urls to the js files
  */
 function getJsDependicies(&$scripts, $handle, $extras = []){
@@ -1268,6 +1268,14 @@ function getJsDependicies(&$scripts, $handle, $extras = []){
     return $extras;
 }
 
+/**
+ * Checks if we are on the home page
+ *
+ * @param	int		$pageId			The page id to check
+ * @param	bool	$includePublic	Whetther to check for the public homepage too
+ *
+ * @return	bool					True if on homepage, false otherwise
+ */
 function isHomePage($pageId, $includePublic=true){
 	$isHomePage	= in_array($pageId, getModuleOption('frontpage', 'home_page', false));
 

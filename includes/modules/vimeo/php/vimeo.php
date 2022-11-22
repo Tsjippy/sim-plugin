@@ -22,7 +22,7 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 			'label' => __( 'Upload this video to vimeo' ),
 			'input' => 'html',
 			'html'  =>  $html
-		);  
+		);
 	}
 
 	//check if backup already exists
@@ -82,16 +82,16 @@ if(SIM\getModuleOption(MODULE_SLUG, 'remove')){
 
 add_action('sim_before_visibility_change', function($attachment_id, $visibility){
 	if($visibility == 'private'){
-		$VimeoApi	= new VimeoApi();
-		$VimeoApi->hideVimeoVideo($attachment_id);
+		$vimeoApi	= new VimeoApi();
+		$vimeoApi->hideVimeoVideo($attachment_id);
 	}
 }, 10, 2);
 
 //change the url of vimeo videos so it points to vimeo.com
-add_filter( 'wp_get_attachment_url', function( $url, $att_id ) {
-    $vimeo_id   = get_post_meta($att_id, 'vimeo_id', true);
-    if(is_numeric($vimeo_id)){
-        $url    = "https://vimeo.com/$vimeo_id";
+add_filter( 'wp_get_attachment_url', function( $url, $attId ) {
+    $vimeoId   = get_post_meta($attId, 'vimeo_id', true);
+    if(is_numeric($vimeoId)){
+        $url    = "https://vimeo.com/$vimeoId";
     }
     return $url;
 }, 999, 2 );
@@ -115,8 +115,8 @@ add_filter( 'media_send_to_editor', function ($html, $id, $attachment) {
 add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
 	if(strpos($icon, 'video.png')){
 		try{
-			$VimeoApi	= new VimeoApi();
-			$path		= $VimeoApi->getThumbnail($postId);
+			$vimeoApi	= new VimeoApi();
+			$path		= $vimeoApi->getThumbnail($postId);
 			if(!$path) {
 				return $icon;
 			}
@@ -132,16 +132,16 @@ add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
 if(SIM\getModuleOption(MODULE_SLUG, 'upload')){
 	//add filter
 	add_action('post-html-upload-ui', function(){
-		add_filter('gettext', 'SIM\VIMEO\change_upload_size_message', 10, 2);
+		add_filter('gettext', __NAMESPACE__.'\changeUploadSizeMessage', 10, 2);
 	});
 
 	//add filter
 	add_action('post-plupload-upload-ui', function(){
-		add_filter('gettext', 'SIM\VIMEO\change_upload_size_message', 10, 2);
+		add_filter('gettext', __NAMESPACE__.'\changeUploadSizeMessage', 10, 2);
 	});
 
 	//do the filter: change upload size message
-	function change_upload_size_message($translation, $text){
+	function changeUploadSizeMessage($translation, $text){
 		if($text == "Maximum upload file size: %s."){
 			$translation	= "Maximum upload file size: %s, unlimited upload size for videos.";
 		}
@@ -180,4 +180,4 @@ add_filter( 'render_block', function( $blockContent,  $block ){
 	}
 
 	return $blockContent;
-},10,2);
+}, 10, 2);
