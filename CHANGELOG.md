@@ -6,6 +6,7 @@
 - group invite selector to Signal module
 
 ### Changed
+- sync vimeo backup folder
 
 ### Fixed
 - bug in signups
