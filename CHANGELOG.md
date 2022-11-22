@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.23.4] - 2022-11-22
+
+
+### Added
 - group invite selector to Signal module
 
 ### Changed
