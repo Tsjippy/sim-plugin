@@ -15,9 +15,6 @@
 - bug in banking module
 - mailposting options saving
 - bug in bookings module
-- tested
-double line
-- double line test2
 
 
 ## [2.23.3] - 2022-11-21
