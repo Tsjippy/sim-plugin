@@ -731,7 +731,7 @@ function cleanUpNestedArray(&$array, $delEmptyArrays=false){
  * @param	int		$userId			WP_User id
  * @param	string	$metaKey    	The meta key we should get the value for
  * @param	array	$values			The optional values of a metakey
- * 
+ *
  * @return string					The value
 */
 function getMetaArrayValue($userId, $metaKey, $values=null){
@@ -754,15 +754,19 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 	preg_match_all('/\[(.*?)\]/', $metaKey, $matches);
 	if(is_array($matches[1])){
 		$value	= $values;
-		foreach($matches[1] as $match){
+		foreach($matches[1] as $key){
 			if(!is_array($value)){
 				break;
 			}
-			
-			if(!isset($value[$match])){
-				$match	= str_replace('_files', '', $match);
+
+			if(empty($key)){
+				$value = array_values($value)[0];
+			}else{
+				if(!isset($value[$key])){
+					$key	= str_replace('_files', '', $key);
+				}
+				$value = $value[$key];
 			}
-			$value = $value[$match];
 		}
 	}
 
