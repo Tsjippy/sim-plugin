@@ -48,7 +48,7 @@ add_action( 'rest_api_init', function () {
 		RESTAPIPREFIX.'/vimeo',
 		'/download_to_server',
 		array(
-			'methods' 				=> 'POST',
+			'methods' 				=> 'POST,GET',
 			'callback' 				=> 	function(){
 				$vimeo		= new VimeoApi();
 				$vimeoId	= $_POST['vimeoid'];

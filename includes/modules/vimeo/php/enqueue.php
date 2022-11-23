@@ -10,7 +10,7 @@ add_action( 'admin_enqueue_scripts', function(){
 		array(
 			'loadingGif' 	=> LOADERIMAGEURL,
 			'baseUrl' 		=> get_home_url(),
-			'restnonce'		=> wp_create_nonce('wp_rest')
+			'restNonce'		=> wp_create_nonce('wp_rest')
 		)
 	);
 });
