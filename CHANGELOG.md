@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- download vimeo backup screen location
 
 ### Fixed
 
