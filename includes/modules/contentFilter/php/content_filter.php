@@ -111,7 +111,7 @@ add_action('init', function (){
 				$query->set( 'has_password', false );
 			}else{
 				$user = wp_get_current_user();
-				$confidentialGroups	= getModuleOption(MODULE_SLUG, 'confidential-roles');
+				$confidentialGroups	= getModuleOption(MODULE_SLUG, 'confidential-roles', false);
 				if(array_intersect($confidentialGroups, $user->roles)){
 					//Hide confidential items
 					$query->set( 'category__not_in', [get_cat_ID('Confidential')] );

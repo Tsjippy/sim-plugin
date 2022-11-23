@@ -820,8 +820,8 @@ function userLogin(){
     $accountPageId  = SIM\getModuleOption('usermanagement', 'account_page');
 
     // GEt mandatory or recommended fields
-    if(function_exists('SIM\FORMS\getAllFields') && is_numeric($accountPageId)){
-        $fieldList   = SIM\FORMS\getAllFields($user->ID, 'all');
+    if(function_exists('SIM\FORMS\getAllEmptyRequiredElements') && is_numeric($accountPageId)){
+        $fieldList   = SIM\FORMS\getAllEmptyRequiredElements($user->ID, 'all');
     }
 
     /* check if we should redirect */

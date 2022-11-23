@@ -10,7 +10,7 @@ use SIM;
  *
  * @return string 	Returns html links to forms with empty mandatory fields
  */
-function getAllFields($userId, $type){
+function getAllEmptyRequiredElements($userId, $type){
 	global $wpdb;
 
 	$child				= SIM\isChild($userId);
@@ -27,20 +27,20 @@ function getAllFields($userId, $type){
 		$query			.= "`$type`=1";
 	}
 
-	$fields				= $wpdb->get_results($query);
+	$elements				= $wpdb->get_results($query);
 
 	// Filters the list of fields
-	$fields				= apply_filters("sim_{$type}_fields_filter", $fields, $userId);
+	$elements				= apply_filters("sim_{$type}_fields_filter", $elements, $userId);
 
 	$html				= '';
-	if(!empty($fields)){
+	if(!empty($elements)){
 		$html				= '';
 		$formUrls			= [];
 
 		//check which of the fields are not yet filled in
-		foreach($fields as $field){
-			//check if this field applies to this user
-			$warningCondition	= maybe_unserialize($field->warning_conditions);
+		foreach($elements as $element){
+			//check if this element applies to this user
+			$warningCondition	= maybe_unserialize($element->warning_conditions);
 			if(is_array($warningCondition)){
 				SIM\cleanUpNestedArray($warningCondition, true);
 				$skip	= false;
@@ -101,25 +101,25 @@ function getAllFields($userId, $type){
 				}
 			}
 
-			$metakey 	= explode('[', $field->name)[0];
+			$metakey 	= explode('[', $element->name)[0];
 			$value		= get_user_meta($userId, $metakey, true);
 
-			$name		= $field->name;
+			$name		= $element->name;
 			if (strpos($name, '[') !== false){
 				$value = SIM\getMetaArrayValue($userId, $name, $value);
 			}
 
 			if(empty($value)){
 				//get form url
-				if(isset($formUrls[$field->form_id])){
-					$formUrl			= $formUrls[$field->form_id];
+				if(isset($formUrls[$element->form_id])){
+					$formUrl			= $formUrls[$element->form_id];
 				}else{
-					$query				= "SELECT * FROM {$simForms->tableName} WHERE `id`={$field->form_id}";
+					$query				= "SELECT * FROM {$simForms->tableName} WHERE `id`={$element->form_id}";
 					$form				= $wpdb->get_results($query)[0];
 					$formUrl			= maybe_unserialize($form->settings)['formurl'];
 
 					//save in cache
-					$formUrls[$field->form_id]	= $formUrl;
+					$formUrls[$element->form_id]	= $formUrl;
 				}
 
 				// Do not add if no form url given
@@ -130,7 +130,7 @@ function getAllFields($userId, $type){
 				parse_str(parse_url($formUrl, PHP_URL_QUERY), $params);
 
 				//Show a nice name
-				$name	= str_replace(['[]', '_'], ['', ' '], $field->nicename);
+				$name	= str_replace(['[]', '_'], ['', ' '], $element->nicename);
 				$name	= ucfirst(str_replace(['[', ']'], [': ',''], $name));
 
 				$baseUrl	= explode('main_tab=', $_SERVER['REQUEST_URI'])[0];
@@ -143,15 +143,15 @@ function getAllFields($userId, $type){
 				
 				// If the url has no hash or we are not on the same url
 				if(empty($params['main_tab']) || strpos($formUrl, $baseUrl) === false){
-					$html .= "<li><a href='$formUrl#{$field->name}'>$name</a></li>";
+					$html .= "<li><a href='$formUrl#{$element->name}'>$name</a></li>";
 				//We are on the same page, just change the hash
 				}else{
 					$secondTab	= '';
-					$names		= explode('[', $field->name);
+					$names		= explode('[', $element->name);
 					if(count($names) > 1){
 						$secondTab	= $names[0];
 					}
-					$html .= "<li><a onclick='Main.changeUrl(this, `$secondTab`)' data-param_val='$mainTab' data-hash={$field->name} style='cursor:grabbing'>$name</a></li>";
+					$html .= "<li><a onclick='Main.changeUrl(this, `$secondTab`)' data-param_val='$mainTab' data-hash={$element->name} style='cursor:grabbing'>$name</a></li>";
 				}
 			}
 		}
@@ -179,7 +179,7 @@ function add_child_fields($html, $userId){
 			// Valid user account
 			if ($userData){
 				// Add html for each field as well
-				$html	.= getAllFields($child, 'mandatory');
+				$html	.= getAllEmptyRequiredElements($child, 'mandatory');
 			}
 		}
 	}
@@ -187,8 +187,8 @@ function add_child_fields($html, $userId){
 	return $html;
 }
 
-add_action('sim_dashboard_warnings', function($userId){		
-	$html	 = getAllFields($userId, 'recommended');
+add_action('sim_dashboard_warnings', function($userId){
+	$html	 = getAllEmptyRequiredElements($userId, 'recommended');
 	
 	if (empty($html)){
 		echo "<p>All your data is up to date, well done.</p>";

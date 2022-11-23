@@ -82,7 +82,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
     }
 	
 	$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
-	$family				= get_user_meta($userId, 'family', true);
+	$family				= (array)get_user_meta($userId, 'family', true);
     $maps               = new Maps();
 	
 	//update a marker icon only if privacy allows and no family picture is set
@@ -91,10 +91,10 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 		
 		//New profile picture is set, update the marker icon
 		if(is_numeric(get_user_meta($userId, 'profile_picture', true))){
-			$icon_url = SIM\USERMANAGEMENT\getProfilePictureUrl($userId);
+			$iconUrl = SIM\USERMANAGEMENT\getProfilePictureUrl($userId);
 			
 			//Save profile picture as icon
-			$maps->createIcon($markerId, get_userdata($userId)->user_login, $icon_url, 1);
+			$maps->createIcon($markerId, get_userdata($userId)->user_login, $iconUrl, 1);
 		}else{
 			//remove the icon
 			$maps->removeIcon($markerId);

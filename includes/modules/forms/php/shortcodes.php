@@ -152,7 +152,7 @@ function missingFormFields($atts){
 
 	$html	= '';
 
-    $fieldHtml = getAllFields(get_current_user_id(), $a['type']);
+    $fieldHtml = getAllEmptyRequiredElements(get_current_user_id(), $a['type']);
 	
 	if (!empty($fieldHtml)){
 		$html .=  '<div id=recommendations style="margin-top:20px;">';

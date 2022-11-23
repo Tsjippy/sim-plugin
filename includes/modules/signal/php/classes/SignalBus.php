@@ -168,7 +168,7 @@ class SignalBus extends Signal {
 
     public function sendGroupMessage($message, $groupId, $attachments=''){
         $this->command = new Command([
-            'command' => "{$this->prefix}sendGroupMessage string:'$message' array:string:$attachments array:byte:$groupId"
+            'command' => "{$this->prefix}sendGroupMessage string:\"$message\" array:string:\"$attachments\" array:byte:$groupId"
         ]);
 
         $this->command->execute();
@@ -244,7 +244,7 @@ class SignalBus extends Signal {
         }
 
         $this->command = new Command([
-            'command' => "{$this->prefix}sendMessage string:'$message' array:string:'$attachments' $recipient"
+            'command' => "{$this->prefix}sendMessage string:\"$message\" array:string:\"$attachments\" $recipient"
         ]);
 
         $this->command->execute();

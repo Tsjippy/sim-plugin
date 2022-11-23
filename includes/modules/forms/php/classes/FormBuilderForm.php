@@ -1180,7 +1180,7 @@ class FormBuilderForm extends SimForms{
 		ob_start();
 		$counter = 0;
 		foreach($this->formElements as $el){
-			if(in_array($elementId, (array)unserialize($el->conditions)['copyto'])){
+			if(in_array($elementId, (array)maybe_unserialize($el->conditions)['copyto'])){
 				$counter++;
 				?>
 				<div class="form_element_wrapper" data-id="<?php echo $el->id;?>" data-formid="<?php echo $this->formData->id;?>">
@@ -1436,7 +1436,16 @@ class FormBuilderForm extends SimForms{
 	 * @param	int		$elementId		The id to add warning conditions for. Default -1 for empty
 	 */
 	public function warningConditionsForm($elementId = -1){
-		$element	= $this->getElementById($elementId);
+		
+		if($elementId > -1){
+			$element	= $this->getElementById($elementId);
+
+			if(!$element){
+				return '';
+			}
+		}else{
+			$element	= new \stdClass();
+		}
 
 		if($elementId == -1 || empty($element->warning_conditions)){
 			$dummy[0]["user_meta_key"]	= "";
