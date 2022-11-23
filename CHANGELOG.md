@@ -8,6 +8,7 @@
 
 ### Fixed
 - bug in fileuploader
+- bug in getting array value
 
 ## [2.23.4] - 2022-11-22
 
