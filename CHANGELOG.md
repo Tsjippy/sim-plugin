@@ -8,6 +8,7 @@
 - download vimeo backup screen location
 
 ### Fixed
+- typo in restnonce of vimeo
 
 ## [2.23.5] - 2022-11-23
 
