@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug in fileuploader
 
 ## [2.23.4] - 2022-11-22
 
