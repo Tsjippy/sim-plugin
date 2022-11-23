@@ -16,25 +16,6 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 	}
 
 	ob_start();
-	//display url form
-	if(is_numeric($_GET['vimeoid'])){
-		wp_enqueue_script('sim_vimeo_admin_script');
-		?>
-		<style>
-			.loadergif{
-				width: 30px;
-			}
-		</style>
-		<form>
-			<label>Enter download url (get it from <a href='https://vimeo.com/manage/<?php echo $_GET['vimeoid'];?>/advanced' target="_blank">this page</a>)
-				<input type="url" name="download_url" style='width:100%;'><br><br>
-			</label>
-			<?php
-			echo SIM\addSaveButton('download_video', 'Submit download url');
-			?>
-		</form>
-		<?php
-	}
 	?>
 	<p>
 		This module will upload all video's to Vimeo. It support resumable uploads, meaning that if the page gets reloaded or internet connection is lost the video upload can be restarted and will continue where it was left.<br>
@@ -180,6 +161,37 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	return ob_get_clean();
 }, 10, 3);
+
+add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $functionHtml;
+	}
+	
+	ob_start();
+	//display url form
+	if(is_numeric($_GET['vimeoid'])){
+		wp_enqueue_script('sim_vimeo_admin_script');
+		?>
+		<style>
+			.loadergif{
+				width: 30px;
+			}
+		</style>
+		<form>
+			<label>Enter download url (get it from <a href='https://vimeo.com/manage/<?php echo $_GET['vimeoid'];?>/advanced' target="_blank">this page</a>)
+				<input type="url" name="download_url" style='width:100%;'><br><br>
+			</label>
+			<?php
+			echo SIM\addSaveButton('download_video', 'Submit download url');
+			?>
+		</form>
+		<?php
+	}
+	
+	return ob_get_clean();
+}, 10, 2);
+
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name

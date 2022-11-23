@@ -538,7 +538,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 $response['download']['quality'];
                 $url = $response['download']['link'];
             }else{
-                $adminUrl   = admin_url("admin.php?page=sim_vimeo&vimeoid=$vimeoId");
+                $adminUrl   = admin_url("admin.php?page=sim_vimeo&tab=functions&vimeoid=$vimeoId");
                 $message    = "Hi admin,<br><br>";
                 $message    .= "Please provide me with a link to download the Vimeo video with id $vimeoId to a local backup folder on your website.<br>";
                 $message    .= "Use <a href='$adminUrl'>this page</a> to provide me the download link.<br>";
