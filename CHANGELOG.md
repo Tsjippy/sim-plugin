@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.23.6] - 2022-11-24
+
+
+### Added
 - duplicate file handler
 
 ### Changed
