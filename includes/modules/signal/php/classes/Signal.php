@@ -57,8 +57,6 @@ class Signal {
         $this->daemon           = false;
 
         $this->osUserId         = "";
-
-        $this->checkPrerequisites();
     }
 
     public function baseCommand(){

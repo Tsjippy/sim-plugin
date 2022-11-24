@@ -39,7 +39,7 @@ async function confirmPostDelete( event ) {
 async function refreshPostLock(){
 	var postId = document.querySelector('[name="post_id"]');
 
-	if(postId != null){
+	if(postId != null && postId.value != ''){
 		var formData	= new FormData();
 		formData.append('postid', postId.value);
 		FormSubmit.fetchRestApi('frontend_posting/refresh_post_lock', formData);
@@ -49,7 +49,7 @@ async function refreshPostLock(){
 async function deletePostLock(){
 	var postId = document.querySelector('[name="post_id"]');
 
-	if(postId != null){
+	if(postId != null && postId.value != ''){
 		var formData	= new FormData();
 		formData.append('postid', postId.value);
 		await FormSubmit.fetchRestApi('frontend_posting/delete_post_lock', formData);

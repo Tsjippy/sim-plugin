@@ -294,6 +294,8 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			$signal = new Signal();
 		}
 
+		$signal->checkPrerequisites();
+
 		if(empty(shell_exec('javac -version'))){
 			echo "<div class='warning'>";
 				echo "Java JDK is not installed.<br>You need to install Java JDK.<br>";
@@ -387,3 +389,14 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 
 	return ob_get_clean();
 }, 10, 3);
+
+add_filter('sim_module_updated', function($options, $moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $options;
+	}
+
+	scheduleTasks();
+
+	return $options;
+}, 10, 2);
