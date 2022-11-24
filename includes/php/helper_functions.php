@@ -795,7 +795,7 @@ function addSaveButton($elementId, $buttonText, $extraClass = ''){
  * @param	string	$targetFile		The path to a file
  * @param	string	$title    		The title for the file
  * @param	string	$description	The default description of the file
- * 
+ *
  * @return 	int|WP_Error			The post id of the created attachment, WP_Error on error
 */
 function addToLibrary($targetFile, $title='', $description=''){
@@ -1115,9 +1115,9 @@ function readTextFile($path){
 		$html 		= $htmlWriter->getWriterPart('Body')->write();
 		
 		$html 		= preg_replace_callback(
-			//get all tags which are followed by the same tag 
+			//get all tags which are followed by the same tag
 			//syntax: <(some tagname)>(some text)</some tagname)0 or more spaces<(use tagname as found before + some extra symbols)>
-			'/<([^>]*)>([^<]*)<\/(\w+)>\s*<(\3[^>]*)>/m', 
+			'/<([^>]*)>([^<]*)<\/(\w+)>\s*<(\3[^>]*)>/m',
 			function($matches){
 				//If the opening tag is exactly like the next opening tag, remove the the duplicate
 				if($matches[1] == $matches[4] && ($matches[3] == 'span' || $matches[3] == 'strong' || $matches[3] == 'b')){
@@ -1125,7 +1125,7 @@ function readTextFile($path){
 				}else{
 					return $matches[0];
 				}
-			}, 
+			},
 			$html
 		);
 		
@@ -1287,6 +1287,105 @@ function isHomePage($pageId, $includePublic=true){
 		$isHomePage	= is_front_page();
 	}
 	return $isHomePage;
+}
+
+/**
+ * update url in posts
+ *
+ * @param	string		$oldPath	The path to be replaced
+ * @param	string		$newPath	The path to replace with
+ */
+function urlUpdate($oldPath, $newPath){
+	//replace any url with new urls for this attachment
+	$oldUrl    = pathToUrl($oldPath);
+	$newUrl    = pathToUrl($newPath);
+
+	// Search for any post with the old url
+	$query = new \WP_Query( array( 's' => $oldUrl ) );
+
+	foreach($query->posts as $post){
+		//if old url is found in the content of this post
+		if(strpos($post->post_content, $oldUrl) !== false){
+			//replace with new url
+			$post->post_content = str_replace($oldUrl, $newUrl, $post->post_content);
+
+			$args = array(
+				'ID'           => $post->ID,
+				'post_content' => $post->post_content,
+			);
+
+			// Update the post into the database
+			wp_update_post( $args );
+		}
+	}
+}
+
+/**
+ * Checks for duplicate files in a given dir
+ *
+ * @param	string	$dir	the directory to scan
+ */
+function duplicateFinder($dir, $dir2=''){
+	//get a files array
+	$files = glob($dir.'/*');
+
+	if(!empty($dir2)){
+		$files = array_merge($files, glob($dir2.'/*'));
+	}
+
+	unset(
+		$files[array_search('.',$files)],
+		$files[array_search('..', $files)]
+	);
+
+	//get an array of file hashes
+	$hashArr = [];
+	foreach ($files as $file) {
+		$fileHash 		= md5_file($file);
+		if($fileHash){
+			$hashArr[$file] = $fileHash;
+		}
+	}
+
+	//search for duplicates
+	$unique 		= array_unique($hashArr);
+	$duplicates 	= array_diff_assoc($hashArr, $unique);
+
+	$removed		= [];
+
+	// Loop over all duplicates
+	foreach($duplicates as $duplicate){
+		$dubs	= array_filter($hashArr, function($value)use($duplicate){
+			return $value	== $duplicate;
+		});
+
+		$paths	= array_keys($dubs);
+		rsort($paths);
+
+		// Only keep the first
+		foreach($paths as $key=>$path){
+			if($key === 0){
+				continue;
+			}
+
+			// delete the attachment
+			$postId	= attachment_url_to_postid(pathToUrl($path));
+			if(!$postId){
+				// remove the file
+				unlink($path);
+			}else{
+				// remove the file and the attached db entries
+				wp_delete_attachment($postId);
+			}
+
+			// update all references to it
+			urlUpdate($path, $paths[0]);
+		}
+
+		$removed	= array_merge($removed, $paths);
+	}
+
+	return $removed;
 }
 
 //Creates subimages

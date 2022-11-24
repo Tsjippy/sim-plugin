@@ -7,7 +7,7 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-	//some test 	
+	duplicateFinder(wp_upload_dir()['basedir'], wp_upload_dir()['basedir'].'/private');
 });
 
 // turn off incorrect error on localhost

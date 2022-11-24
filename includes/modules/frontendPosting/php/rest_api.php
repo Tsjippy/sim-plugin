@@ -330,7 +330,7 @@ function submitPost(){
 	global $post;
 
 	$frontEndContent	= new FrontEndContent();
-	$result =  $frontEndContent->submitPost();
+	$result 			= $frontEndContent->submitPost();
 
 	if(is_wp_error($result)){
 		return $result;

@@ -103,28 +103,7 @@ function moveAttachment($postId, $subDir, $generate=true){
         wp_generate_attachment_metadata($postId, "$newPath/$filename");
     }
 
-    //replace any url with new urls for this attachment
-    $oldUrl    = SIM\pathToUrl(str_replace($filename, $baseName, $oldPath));
-    $newUrl    = SIM\pathToUrl("$newPath/$baseName");
-
-    // Search for any post with the old url
-    $query = new \WP_Query( array( 's' => $oldUrl ) );
-
-    foreach($query->posts as $post){
-        //if old url is found in the content of this post
-        if(strpos($post->post_content, $oldUrl) !== false){
-            //replace with new url
-            $post->post_content = str_replace($oldUrl, $newUrl, $post->post_content);
-
-            $args = array(
-                'ID'           => $post->ID,
-                'post_content' => $post->post_content,
-            );
-
-            // Update the post into the database
-            wp_update_post( $args );
-        }
-    }
+    SIM\urlUpdate(str_replace($filename, $baseName, $oldPath), "$newPath/$baseName");
 }
 
 // filter library if needed

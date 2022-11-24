@@ -246,6 +246,10 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		 */
 		public function sendEmail(int $postId, int $segmentId, $from='', $extraMessage=''){
 			try {
+				if($_SERVER['HTTP_HOST'] == 'localhost'){
+					return 'Not sending from localhost';
+				}
+
 				$post 			= get_post($postId);
 
 				$title			= $post->post_title;

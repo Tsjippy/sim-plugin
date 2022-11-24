@@ -2,6 +2,8 @@
 namespace SIM\MEDIAGALLERY;
 use SIM;
 
+use function SIM\printArray;
+
 const MODULE_VERSION		= '7.0.30';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
@@ -64,6 +66,47 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	return ob_get_clean();
 }, 10, 3);
+
+add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $functionHtml;
+	}
+	
+	ob_start();
+	?>
+	<h4>Duplicate files</h4>
+	<?php
+	if(isset($_POST['fix-duplicates'])){
+		$removed	=	SIM\duplicateFinder(wp_upload_dir()['basedir'], wp_upload_dir()['basedir'].'/private');
+
+		if(empty($removed)){
+			echo "<div class='success'>There was nothing to remove</div>";
+		}else{
+			?>
+			<div class='success'>
+				Succesfully removed the following files:<br>
+				<pre>
+				<?php
+				print_r($removed);
+				?>
+				</pre>
+			</div>
+			<?php
+		}
+	}
+	?>
+	<p>
+		Scan and remove duplicate files in the uploads and uploads/private folder.
+	</p>
+	<form method='POST' enctype="multipart/form-data">
+		<button type='submit' name='fix-duplicates'>Remove duplicate files</button>
+	</form>
+
+	<?php
+	return ob_get_clean();
+}, 10, 2);
+
 
 add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name

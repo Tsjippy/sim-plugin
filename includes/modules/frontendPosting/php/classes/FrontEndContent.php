@@ -909,21 +909,22 @@ class FrontEndContent{
 		}
 
 		//Decode the base64
-		$fileContents = base64_decode(substr_replace($matches[2] ,"",-1));
+		$fileContents = base64_decode(substr_replace($matches[2] , "", -1));
 
 		//Only continue if the decoding was succesfull
 		if( $fileContents !== false){
 			//Save the image in the uploads folder
 			file_put_contents($newFilePath, $fileContents);
 
-			SIM\addToLibrary($newFilePath);
+			$uploadId		= SIM\addToLibrary($newFilePath);
 		}else{
 			SIM\printArray('Not a valid image');
+			return '';
 		}
 
 		//Return the image url
 		$url = wp_get_attachment_image_url($uploadId, '');
-		return '"'.$url;
+		return "src='$url'";
 	}
 
 	/**
@@ -954,7 +955,7 @@ class FrontEndContent{
 	 */
 	public function preparePostContent($postContent){
 		//Sanitize the post content
-		$postContent = wp_kses_post(wp_kses_stripslashes($postContent));
+		$postContent 	= wp_kses_post(wp_kses_stripslashes($postContent));
 
 		// Remove some tags
 		$postContent 	= preg_replace("/(&lt;|<)(del|ins) .*?(>|&gt;)/im", "", $postContent);
@@ -973,7 +974,9 @@ class FrontEndContent{
 		}, $postContent);
 
 		//Find any base64 encoded images in the post content and replace the url
-		$postContent 	= preg_replace_callback('/"data:image\/(\w+);base64,([^"]*)/m', array($this,'uploadImages'), $postContent);
+		//$postContent 	= preg_replace_callback('/"data:image\/(\w+);base64,([^"]*)/m', array($this, 'uploadImages'), $postContent);
+
+		$postContent 	= preg_replace_callback('/src="image\/(\w+);base64,([^"]*)"/is', array($this, 'uploadImages'), $postContent);
 
 		//Find display names in content and replaces them with a link
 		$postContent	= SIM\userPageLinks($postContent);
@@ -1158,7 +1161,8 @@ class FrontEndContent{
 		}
 
 		if(is_wp_error($this->postId)){
-			return new WP_Error('Inserting post error', $this->postId->get_error_message());
+			SIM\printArray($this->postId);
+			return $this->postId;
 		}elseif($this->postId === 0){
 			return new WP_Error('Inserting post error', "Could not create the $this->postType!");
 		}
@@ -1233,6 +1237,10 @@ class FrontEndContent{
 			$post	= $this->updateExistingPost();
 		}else{
 			$post	= $this->createNewPost();
+		}
+
+		if(is_wp_error($post)){
+			return $post;
 		}
 
 		//Set the featured image
