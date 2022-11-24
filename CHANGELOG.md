@@ -9,6 +9,7 @@
 
 ### Fixed
 - typo in restnonce of vimeo
+- expiry warnings
 
 ## [2.23.5] - 2022-11-23
 
