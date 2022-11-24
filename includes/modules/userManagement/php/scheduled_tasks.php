@@ -164,9 +164,9 @@ function vaccinationReminder(){
 
 /**
  * Get the vaccination reminder html of an user
- * 
+ *
  * @param	int		$userId	WP_User id
- * 
+ *
  * @return	string	The html
  */
 function vaccinationReminders($userId){	
@@ -191,7 +191,7 @@ function vaccinationReminders($userId){
 				$vaccinationName = str_replace('_vaccination', '', $vaccinationName);
 				$vaccinationName = ucwords(str_replace('_', ' ', $vaccinationName));
 				$reminderHtml .= checkExpiryDate($info, "$vaccinationName vaccination");
-			}	
+			}
 		}
 	}
 	
@@ -210,14 +210,6 @@ function checkExpiryDate($date, $expiryName){
 	$vaccinationWarningTime	= SIM\getModuleOption(MODULE_SLUG, 'vaccination_warning_time');
 	if ($vaccinationWarningTime && !empty($date)){
 		$reminderHtml 	= "";
-		
-		//Date of first warning
-		$now			= new \DateTime();
-		$interval		= new \DateInterval('P'.$vaccinationWarningTime.'M');
-		$warningDate 	= $now->add($interval);
-		
-		//todays date
-		//$now = new \DateTime();
 
 		//Vaccination expiry date
 		try{
@@ -225,6 +217,13 @@ function checkExpiryDate($date, $expiryName){
 		}catch (\Exception $e) {
 			return;
 		}
+
+		//Date of first warning
+		$warningDate	= new \DateTime($date);
+		$interval		= new \DateInterval('P'.$vaccinationWarningTime.'M');
+		date_sub($warningDate, $interval);
+
+		$now			= new \DateTime();
 		
 		$niceExpiryDate = $expiryDate->format('j F Y');
 		
@@ -235,7 +234,7 @@ function checkExpiryDate($date, $expiryName){
 		}elseif($expiryDate < $now){
 			$reminderHtml .= "<li>Your $expiryName is expired on $niceExpiryDate. </li><br>";
 		//In the near future
-		}elseif($expiryDate < $warningDate){
+		}elseif($now >= $warningDate){
 			$diff=date_diff(date_create(date("Y-m-d")), $expiryDate)->format("%a");
 			if($diff == 1){
 				$text = "tomorrow";
