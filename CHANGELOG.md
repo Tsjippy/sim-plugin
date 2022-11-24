@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- duplicate file handler
 
 ### Changed
 - download vimeo backup screen location
