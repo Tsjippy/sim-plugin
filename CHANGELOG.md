@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.23.7] - 2022-11-25
+
+
+### Fixed
 - find element with [] in the name
 - updaing sub form entries
 - archiving sub-form submission
