@@ -350,8 +350,12 @@ class SimForms{
 		}
 
 		if(!isset($this->formData->elementMapping['name'][$name])){
-			SIM\printArray("Element with id $name not found");
-			return false;
+			if(!isset($this->formData->elementMapping['name'][$name.'[]'])){
+				SIM\printArray("Element with id $name not found");
+				return false;
+			}
+
+			$name	.= '[]';
 		}
 		$elementIndexes	= $this->formData->elementMapping['name'][$name];
 	
