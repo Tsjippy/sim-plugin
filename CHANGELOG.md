@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- find element with [] in the name
 
 ## [2.23.6] - 2022-11-24
 
