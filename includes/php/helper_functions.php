@@ -1353,9 +1353,10 @@ function duplicateFinder($dir, $dir2=''){
 		}
 	}
 
-	//search for duplicates
+	// Get an array of unique hashes
 	$unique 		= array_unique($hashArr);
-	$duplicates 	= array_diff_assoc($hashArr, $unique);
+	// get all unique hashes who have a duplicate
+	$duplicates 	= array_unique(array_diff_assoc($hashArr, $unique));
 
 	$removed		= [];
 
@@ -1386,16 +1387,6 @@ function duplicateFinder($dir, $dir2=''){
 
 			// update all references to it
 			urlUpdate($path, $newPath);
-
-			// also check if there are same files in the other dir
-			if(!empty($dir2)){
-				if(strpos($path, $dir2) === false){
-					$path	= $dir2.basename($path);
-				}else{
-					$path	= $dir.basename($path);
-				}
-				urlUpdate($path, $newPath);
-			}
 		}
 
 		$removed	= array_merge($removed, $paths);
