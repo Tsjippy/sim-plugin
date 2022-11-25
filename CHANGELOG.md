@@ -8,6 +8,7 @@
 
 ### Fixed
 - find element with [] in the name
+- updaing sub form entries
 
 ## [2.23.6] - 2022-11-24
 
