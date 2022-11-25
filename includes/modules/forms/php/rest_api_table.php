@@ -423,8 +423,8 @@ function getInputHtml(){
 	}elseif(!$element && is_numeric($subId)){
 		$splitElements	= $formTable->formData->settings['split'];
 
-		foreach($splitElements as $index){
-			$element	= $formTable->getElementById($index);
+		foreach($splitElements as $id){
+			$element	= $formTable->getElementById($id);
 
 			// Check if we are dealing with an split element with form name[X]name
 			preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $element->name, $matches);
