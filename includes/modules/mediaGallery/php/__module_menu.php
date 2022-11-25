@@ -86,11 +86,11 @@ add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
 			?>
 			<div class='success'>
 				Succesfully removed the following files:<br>
-				<pre>
 				<?php
-				print_r($removed);
+				foreach($removed as $path){
+					echo "$path<br>";
+				}
 				?>
-				</pre>
 			</div>
 			<?php
 		}

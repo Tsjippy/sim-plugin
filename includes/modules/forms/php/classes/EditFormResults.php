@@ -165,7 +165,7 @@ class EditFormResults extends DisplayFormResults{
 							$this->submission->formresults[$splitElementName][$subId]['archived'] = true;
 							
 							//update in db
-							$this->checkIfAllArchived($this->submission->formresults[$splitElementName]);
+							$this->checkIfAllArchived();
 						}
 					}
 				}else{
@@ -180,25 +180,24 @@ class EditFormResults extends DisplayFormResults{
 
 	 /**
 	 * Checks if all sub entries are archived, if so archives the whole
-	 *
-	 * @param	object	$data	the data to check
 	 */
-	public function checkIfAllArchived($data){
+	public function checkIfAllArchived(){
 		//check if all subfields are archived or empty
 		$allArchived = true;
 
-		foreach($data as $d){
-			if(
-				!isset($d['archived']) 	||	// Archived key does not exist
-				!$d['archived']			&&	// Or the value is false
-				(
-					!empty($d['from'])	&&	// the from field is not empty
-					!empty($d['date'])	&&	// the data field is not empty
-					!empty($d['to'])		// the to field is not empty
-				)
-			){
+		$splitIds	= $this->formData->settings['split'];
+
+		foreach($splitIds as $id){
+			$elementName			= $this->getElementById($id, 'name');
+
+			preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $elementName, $matches);
+
+			if(isset($matches[1])){
+				$elementName	= $matches[1];
+			}
+
+			if(count($this->submission->formresults[$elementName]) > count($this->submission->archivedsubs)){
 				$allArchived = false;
-				break;
 			}
 		}
 		

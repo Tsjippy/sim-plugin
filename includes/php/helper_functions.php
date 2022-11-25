@@ -1292,8 +1292,8 @@ function isHomePage($pageId, $includePublic=true){
 /**
  * update url in posts
  *
- * @param	string		$oldPath	The path to be replaced
- * @param	string		$newPath	The path to replace with
+ * @param	string		$oldPath		The path to be replaced
+ * @param	string		$newPath		The path to replace with
  */
 function urlUpdate($oldPath, $newPath){
 	//replace any url with new urls for this attachment
@@ -1301,21 +1301,26 @@ function urlUpdate($oldPath, $newPath){
 	$newUrl    = pathToUrl($newPath);
 
 	// Search for any post with the old url
-	$query = new \WP_Query( array( 's' => $oldUrl ) );
+	$query = new \WP_Query( array( 's' => basename($oldUrl) ) );
 
 	foreach($query->posts as $post){
+		$updated	= false;
 		//if old url is found in the content of this post
 		if(strpos($post->post_content, $oldUrl) !== false){
 			//replace with new url
 			$post->post_content = str_replace($oldUrl, $newUrl, $post->post_content);
 
+			$updated	= true;
+		}
+
+		if($updated){
 			$args = array(
 				'ID'           => $post->ID,
 				'post_content' => $post->post_content,
 			);
 
 			// Update the post into the database
-			wp_update_post( $args );
+			wp_update_post( $args, false, false );
 		}
 	}
 }
@@ -1324,6 +1329,7 @@ function urlUpdate($oldPath, $newPath){
  * Checks for duplicate files in a given dir
  *
  * @param	string	$dir	the directory to scan
+ * @param	string	$dir2	An optional second directory to scan
  */
 function duplicateFinder($dir, $dir2=''){
 	//get a files array
@@ -1363,11 +1369,11 @@ function duplicateFinder($dir, $dir2=''){
 		rsort($paths);
 
 		// Only keep the first
-		foreach($paths as $key=>$path){
-			if($key === 0){
-				continue;
-			}
+		$newPath	= $paths[0];
+		unset($paths[0]);
 
+		// Remove the rest
+		foreach($paths as $key=>$path){
 			// delete the attachment
 			$postId	= attachment_url_to_postid(pathToUrl($path));
 			if(!$postId){
@@ -1379,12 +1385,24 @@ function duplicateFinder($dir, $dir2=''){
 			}
 
 			// update all references to it
-			urlUpdate($path, $paths[0]);
+			urlUpdate($path, $newPath);
+
+			// also check if there are same files in the other dir
+			if(!empty($dir2)){
+				if(strpos($path, $dir2) === false){
+					$path	= $dir2.basename($path);
+				}else{
+					$path	= $dir.basename($path);
+				}
+				urlUpdate($path, $newPath);
+			}
 		}
 
 		$removed	= array_merge($removed, $paths);
 	}
 
+	$removed	= array_unique($removed);
+	sort($removed);
 	return $removed;
 }
 

@@ -365,8 +365,8 @@ function archiveSubmission(){
 	}
 
 	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
-		$subId						= $_POST['subid'];
-		$message					= "Entry with id {$formTable->submissionId} and subid $subId succesfully {$action}d";
+		$subId		= $_POST['subid'];
+		$message	= "Entry with id {$formTable->submissionId} and subid $subId succesfully {$action}d";
 		
 
 		if($archive){
@@ -383,7 +383,7 @@ function archiveSubmission(){
 		}
 		
 		//check if all subfields are archived or empty
-		//$formTable->checkIfAllArchived($formTable->submission->formresults[$splitField]);
+		$formTable->checkIfAllArchived();
 	}else{
 		$message					= "Entry with id {$formTable->submissionId} succesfully {$action}d";
 
