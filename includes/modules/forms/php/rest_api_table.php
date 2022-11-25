@@ -421,13 +421,23 @@ function getInputHtml(){
 			$curValue	= $curValue[subId];
 		}
 	}elseif(!$element && is_numeric($subId)){
-		$splitElementName	= $formTable->formData->settings['split'];
-		$elementIndexedName	= $splitElementName."[$subId][$elementName]";
+		$splitElements	= $formTable->formData->settings['split'];
 
-		$element	= $formTable->getElementByName($elementIndexedName);
+		foreach($splitElements as $index){
+			$element	= $formTable->getElementById($index);
 
-		if(isset($formTable->submission->formresults[$splitElementName][$subId][$elementName])){
-			$curValue	= $formTable->submission->formresults[$splitElementName][$subId][$elementName];
+			// Check if we are dealing with an split element with form name[X]name
+			preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $element->name, $matches);
+
+			if($matches && isset($matches[1])){
+				$splitElementName	= $matches[1];
+			}else{
+				$splitElementName	= str_replace('[]', '', $element->name);
+			}
+
+			if(isset($formTable->submission->formresults[$splitElementName][$subId][$elementName])){
+				$curValue	= $formTable->submission->formresults[$splitElementName][$subId][$elementName];
+			}
 		}
 	}
 
@@ -457,16 +467,25 @@ function editValue(){
 
 	// If there is a sub id set and this field is not a main field
 	if(is_numeric($subId)){
-		$splitElementName	= [];
-		preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $fieldName, $splitElementName);
+		$splitElements				= $formTable->formData->settings['split'];
 
-		//check if this is a main field
-		if(isset($formTable->submission->formresults[$splitElementName][$subId][$fieldName])){
-			$formTable->submission->formresults[$splitElementName][$subId][$fieldName]	= $newValue;
-		}else{
-			$formTable->submission->formresults[$fieldName]= $newValue;
+		foreach($splitElements as $index){
+			$elementName			= $formTable->getElementById($index, 'name');
+
+			preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $elementName, $matches);
+
+			if(isset($matches[1])){
+				$elementName	= $matches[1];
+			}
+
+			//check if this is a main field
+			if(isset($formTable->submission->formresults[$elementName][$subId][$fieldName])){
+				$formTable->submission->formresults[$elementName][$subId][$fieldName]	= $newValue;
+			}elseif(isset($formTable->submission->formresults[$fieldName])){
+				$formTable->submission->formresults[$fieldName]	= $newValue;
+			}
+			$message = "Succesfully updated '$fieldName' to $transValue";
 		}
-		$message = "Succesfully updated '$fieldName' to $transValue";
 	}else{
 		$formTable->submission->formresults[$fieldName]	= $newValue;
 		$message = "Succesfully updated '$fieldName' to $transValue";
