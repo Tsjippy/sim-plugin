@@ -418,7 +418,7 @@ function getInputHtml(){
 		$curValue	= $formTable->submission->formresults[$element->name];
 
 		if(is_numeric($subId) && is_array($curValue)){
-			$curValue	= $curValue[subId];
+			$curValue	= $curValue[$subId];
 		}
 	}elseif(!$element && is_numeric($subId)){
 		$splitElements	= $formTable->formData->settings['split'];

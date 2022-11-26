@@ -1332,11 +1332,13 @@ function urlUpdate($oldPath, $newPath){
  * @param	string	$dir2	An optional second directory to scan
  */
 function duplicateFinder($dir, $dir2=''){
+	$dir	= trim($dir, '/\\');
 	//get a files array
-	$files = glob($dir.'/*');
+	$files = array_filter(glob($dir.'/*'), 'is_file');
 
 	if(!empty($dir2)){
-		$files = array_merge($files, glob($dir2.'/*'));
+		$dir2	= trim($dir2, '/\\');
+		$files = array_merge($files, array_filter(glob($dir2.'/*'), 'is_file'));
 	}
 
 	unset(
