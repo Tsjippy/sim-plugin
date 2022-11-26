@@ -291,7 +291,7 @@ async function processFormsTableInput(target){
 		target = target.target;
 	}
 	
-	if(running == target || target.value == ''){
+	if(running == target || target.value == '' || target.matches('.nice-select-search')){
 		return;
 	}
 	running = target;
