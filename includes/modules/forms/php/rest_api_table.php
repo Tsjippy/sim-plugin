@@ -406,21 +406,10 @@ function getInputHtml(){
 
 	$elementName	= sanitize_text_field($_POST['fieldname']);
 	$curValue		= '';
-	$element		= $formTable->getElementByName($elementName);
-
 	$subId			= '';
 	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
-		$subId		= $_POST['subid'];
-	}
+		$subId			= $_POST['subid'];
 
-	// get value
-	if($element && isset($formTable->submission->formresults[$element->name])){
-		$curValue	= $formTable->submission->formresults[$element->name];
-
-		if(is_numeric($subId) && is_array($curValue)){
-			$curValue	= $curValue[$subId];
-		}
-	}elseif(!$element && is_numeric($subId)){
 		$splitElements	= $formTable->formData->settings['split'];
 
 		foreach($splitElements as $id){
@@ -430,19 +419,35 @@ function getInputHtml(){
 			preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $element->name, $matches);
 
 			if($matches && isset($matches[1])){
-				$splitElementName	= $matches[1];
-			}else{
-				$splitElementName	= str_replace('[]', '', $element->name);
-			}
+				if(isset($formTable->submission->formresults[$matches[1]][$subId][$elementName])){
+					$curValue	= $formTable->submission->formresults[$matches[1]][$subId][$elementName];
+				}
 
-			if(isset($formTable->submission->formresults[$splitElementName][$subId][$elementName])){
-				$curValue	= $formTable->submission->formresults[$splitElementName][$subId][$elementName];
+				$element		= $formTable->getElementByName($matches[1]."[$subId][$elementName]");
+
+				if($subId == 0 && !$element){
+					$index		= $subId+1;
+					$element	= $formTable->getElementByName($matches[1]."[$index][$elementName]");
+				}
 			}
 		}
+	}
+	
+	if(!isset($element)){
+		$element		= $formTable->getElementByName($elementName);
 	}
 
 	if(!$element){
 		return new \WP_Error('No element found', "No element found with id '{$_POST['fieldname']}'");
+	}
+
+	// get value
+	if(isset($formTable->submission->formresults[$element->name])){
+		$curValue	= $formTable->submission->formresults[$element->name];
+
+		if(is_numeric($subId) && is_array($curValue)){
+			$curValue	= $curValue[$subId];
+		}
 	}
 
 	// Get element html with the value allready set
