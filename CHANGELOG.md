@@ -9,6 +9,7 @@
 ### Fixed
 - updating sub values
 - update a select value
+- get element html when subid is 0
 
 ## [2.23.7] - 2022-11-25
 
