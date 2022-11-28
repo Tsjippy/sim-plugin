@@ -425,8 +425,10 @@ function getInputHtml(){
 
 				$element		= $formTable->getElementByName($matches[1]."[$subId][$elementName]");
 
-				if($subId == 0 && !$element){
-					$index		= $subId+1;
+				// try to find an element with the given name and any subid
+				$index	= $subId;
+				while(!$element){
+					$index++;
 					$element	= $formTable->getElementByName($matches[1]."[$index][$elementName]");
 				}
 			}

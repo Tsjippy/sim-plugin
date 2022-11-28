@@ -546,6 +546,27 @@ class DisplayFormResults extends DisplayForm{
 			$ownEntry	= false;
 		}
 
+		// Get the names of fields the data is splitted on
+		$splitNames	= [];
+		if(is_array($this->formSettings['split'])){
+			foreach($this->formSettings['split'] as $id){
+				$element	= $this->getElementById($id);
+
+				if(!$element){
+					continue;
+				}
+
+				// Check if we are dealing with an split element with form name[X]name
+				preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $element->name, $matches);
+
+				if($matches && isset($matches[1])){
+					$splitNames[] = $matches[1];
+				}else{
+					$splitNames[] = $element->name;
+				}
+			}
+		}
+
 		foreach($this->columnSettings as $id=>$columnSetting){
 			$value	= '';
 
@@ -610,9 +631,15 @@ class DisplayFormResults extends DisplayForm{
 					
 				// Add sub id if this is an sub value
 				$subId 		= "";
-				if($index > -1){
+				if($index > -1 && $id > -1){
 					$element	= $this->getElementById($id);
-					if(is_array($this->formSettings['split']) && in_array($element->id, $this->formSettings['split'])){
+					preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $element->name, $matches);
+					$name	= $element->name;
+
+					if($matches && isset($matches[1])){
+						$name	= $matches[1];
+					}
+					if(!empty($splitNames) && in_array($name, $splitNames)){
 						$subId = "data-subid='$index'";
 					}
 				}

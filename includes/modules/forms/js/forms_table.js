@@ -228,7 +228,7 @@ async function getInputHtml(target){
 
 	let formId			= table.dataset.formid;
     let submissionId	= target.closest('tr').dataset.id;
-	let subId			= target.closest('tr').dataset.subid;
+	let subId			= target.dataset.subid;
     let cellId			= target.dataset.id
 	let oldText			= target.textContent;
     
@@ -239,7 +239,9 @@ async function getInputHtml(target){
 	let formData = new FormData();
     formData.append('formid', formId);
     formData.append('submissionid', submissionId);
-	formData.append('subid', subId);
+	if(subId != undefined){
+		formData.append('subid', subId);
+	}
     formData.append('fieldname', cellId);
 
 	let response	= await FormSubmit.fetchRestApi('forms/get_input_html', formData);
@@ -305,7 +307,7 @@ async function processFormsTableInput(target){
     let cellId			= cell.dataset.id
 	let value			= FormFunctions.getFieldValue(target, cell, false);
 	let submissionId	= target.closest('tr').dataset.id;
-	let subId			= target.closest('tr').dataset.subid;
+	let subId			= cell.dataset.subid;
 
 	//Only update when needed
 	if (value != JSON.parse(cell.dataset.oldvalue)){
