@@ -10,6 +10,7 @@
 - updating sub values
 - update a select value
 - get element html when subid is 0
+- some form bugs
 
 ## [2.23.7] - 2022-11-25
 
