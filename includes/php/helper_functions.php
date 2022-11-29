@@ -1399,6 +1399,80 @@ function duplicateFinder($dir, $dir2=''){
 	return $removed;
 }
 
+/**
+ * Finds media which is not used anywhere
+ */
+function checkOrphanMedia(){
+	$dir		= wp_upload_dir()['basedir'];
+	$paths		= array_filter(glob($dir.'/*'), 'is_file');
+	$orphans	= [];
+
+	foreach($paths as $key=>$path){
+		// check if url shows up anywhere in post content
+		$query = new \WP_Query( array( 's' => pathToUrl($path)) );
+
+		// url is found in at least one post
+		if($query->post_count > 0){
+			continue;
+		}
+
+		// check if attachment id shows up anywhere in the db
+		$postId	= attachment_url_to_postid(pathToUrl($path));
+		if(!$postId){
+			$orphans[] = $path;
+		}else{
+			// search db for postId
+			$results	= searchAllDB($postId);
+			if(empty($results)){
+				$orphans[] = $path;
+			}
+		}
+	}
+
+	foreach($orphans as $orphan){
+		echo "$orphan<br>";
+	}
+}
+
+function searchAllDB($search, $excludes=[]){
+    global $wpdb;
+    
+    $out 	= [];
+    
+    $sql	= "show tables";
+    $tables	= $wpdb->get_results($sql, ARRAY_N);
+    if(!empty($tables)){
+        foreach($tables as $table){
+			if(in_array($table[0], $excludes)){
+				continue;
+			}
+
+            $sqlSearch 			= "select * from `".$table[0]."` where ";
+            $sqlSearchFields 	= [];
+            $sql2 				= "SHOW COLUMNS FROM `".$table[0]."`";
+            $columns 			= $wpdb->get_results($sql2);
+            if(!empty($columns)){
+                foreach($columns as $column){
+                    $sqlSearchFields[] = "`".$column->Field."` like('%".$wpdb->_real_escape($search)."%')";
+                }
+            }
+            $sqlSearch 		.= implode(" OR ", $sqlSearchFields);
+            $results		= $wpdb->get_results($sqlSearch);
+			if(!empty($results)){
+				foreach($results as $result){
+					foreach($result as $column=>$value){
+						if($value == $search){
+							$out[] 	= ['table'=>$table[0], 'column'=>$column];
+						}
+					}
+				}
+			}
+        }
+    }
+    
+    return $out;
+}
+
 //Creates subimages
 //Add action
 add_action('init', function () {

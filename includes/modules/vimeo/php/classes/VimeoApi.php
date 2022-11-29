@@ -538,9 +538,10 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 $response['download']['quality'];
                 $url = $response['download']['link'];
             }else{
+                $name       = get_post_meta($postId, '_wp_attached_file', true);
                 $adminUrl   = admin_url("admin.php?page=sim_vimeo&tab=functions&vimeoid=$vimeoId");
                 $message    = "Hi admin,<br><br>";
-                $message    .= "Please provide me with a link to download the Vimeo video with id $vimeoId to a local backup folder on your website.<br>";
+                $message    .= "Please provide me with a link to download the Vimeo video '$name' with id $vimeoId to a local backup folder on your website.<br>";
                 $message    .= "Use <a href='$adminUrl'>this page</a> to provide me the download link.<br>";
                 $message    .= "Get the download link from Vimeo on <a href='https://vimeo.com/manage/$vimeoId/advanced'>this page</a>.<br>";
 

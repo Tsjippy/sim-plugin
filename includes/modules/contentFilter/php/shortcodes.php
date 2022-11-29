@@ -17,7 +17,7 @@ add_shortcode( 'content_filter', function ( $atts = array(), $content = null ) {
 	$user = wp_get_current_user();
 	
 	//User is logged in
-	if(is_user_logged_in() && in_array('All', $allowedRoles) || array_intersect($allowedRoles, $user->roles)) { 
+	if(is_user_logged_in() && in_array('All', $allowedRoles) || array_intersect($allowedRoles, $user->roles)) {
 		// display content
 		$return = true;
 	}

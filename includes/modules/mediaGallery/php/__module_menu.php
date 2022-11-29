@@ -140,3 +140,5 @@ add_action('sim_module_deactivated', function($moduleSlug, $options){
 		wp_delete_post($page, true);
 	}
 }, 10, 2);
+
+
