@@ -774,6 +774,27 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 }
 
 /**
+ * Finds a value in an nested array
+ */
+function arraySearchRecursive($needle, $haystack, $strict=true, $stack=array()) {
+    $results = array();
+    foreach($haystack as $key=>$value) {
+        if(($strict && $needle == $value) || (is_string($value) && !$strict && strpos($value, $needle) !== false)) {
+			$value	= maybe_unserialize($value);
+
+			if(!is_array($value)){
+            	$results[] = array_merge($stack, array($key));
+			}
+        }
+
+        if(is_array($value) && count($value) != 0) {
+            $results = array_merge($results, arraySearchRecursive($needle, $value, $strict, array_merge($stack, array($key))));
+        }
+    }
+    return($results);
+}
+
+/**
  * Creates a submit button with a loader gif
  * @param	string	$elementId		The name or id of the button
  * @param	string	$buttonText    	The text of the button
@@ -1399,15 +1420,75 @@ function duplicateFinder($dir, $dir2=''){
 	return $removed;
 }
 
+function moveAttachmentToRecycleBin($path){
+	$recycleBin	= WP_CONTENT_DIR.'/attachment-recylce';
+	if (!is_dir($recycleBin)) {
+		mkdir($recycleBin, 0777, true);
+	}
+
+	preg_match('/(.*)-\d{2,4}x\d{2,4}(\..*)/i', $path, $matches);
+	if(isset($matches[1])){
+		$path	= $matches[1];
+	}
+	$paths			= array_filter(glob($path.'*'), 'is_file');
+
+	if(is_array($paths)){
+		foreach($paths as $path){
+			rename($path, $recycleBin.'/'.basename($path));
+		}
+	}
+}
+
 /**
  * Finds media which is not used anywhere
  */
 function checkOrphanMedia(){
-	$dir		= wp_upload_dir()['basedir'];
-	$paths		= array_filter(glob($dir.'/*'), 'is_file');
-	$orphans	= [];
+	if(user_can(wp_get_current_user()->ID, 'administrator')){
+		if(!empty($_POST['delete'])){
+
+			if(!empty($_POST['path'])){
+				// move all to recycle bin
+				$path	= $_POST['path'];
+				moveAttachmentToRecycleBin($path);
+
+				echo "<div class='success'>Attachment succesfully deleted</div>";
+			}
+
+			if($_POST['delete'] == 'delete-all' && !empty($_POST['paths'])){
+				$paths	= json_decode(deslash($_POST['paths']));
+
+				foreach($paths as $path){
+					moveAttachmentToRecycleBin($path);
+				}
+
+				$count	= count($paths);
+				echo "<div class='success'>$count attachments succesfully deleted</div>";
+			}
+		}
+	}
+
+	$dir			= wp_upload_dir()['basedir'];
+	$paths			= array_filter(glob($dir.'/*'), 'is_file');
+	$orphans		= [];
+	$processed		= [];
+	$attachmentIds	= [];
 
 	foreach($paths as $key=>$path){
+		$ext	= pathinfo($path)['extension'];
+
+		// only process the base image not all formats
+		preg_match('/(.*)-\d{2,4}x\d{2,4}(\..*)/i', $path, $matches);
+
+		if(isset($matches[1])){
+			$path	= $matches[1];
+		}
+
+		if(in_array($path, $processed) || in_array(str_replace('.'.$ext, '', $path), $processed)){
+			continue;
+		}
+
+		$processed[]	= $path;
+
 		// check if url shows up anywhere in post content
 		$query = new \WP_Query( array( 's' => pathToUrl($path)) );
 
@@ -1416,8 +1497,18 @@ function checkOrphanMedia(){
 			continue;
 		}
 
+		// add the extension
+		if(isset($matches[2])){
+			$path	.= $matches[2];
+
+			if(!file_exists($path)){
+				$path	= $matches[0];
+			}
+		}
+
 		// check if attachment id shows up anywhere in the db
 		$postId	= attachment_url_to_postid(pathToUrl($path));
+
 		if(!$postId){
 			$orphans[] = $path;
 		}else{
@@ -1426,12 +1517,114 @@ function checkOrphanMedia(){
 			if(empty($results)){
 				$orphans[] = $path;
 			}
+
+			foreach($results as $index=>&$result){
+				$match	= false;
+				foreach($result as $value){
+					$value	= maybe_unserialize($value);
+					if(is_array($value)){
+						$found	= arraySearchRecursive($postId, $result);
+						if(!empty($found)){
+							$match	= true;
+							$result	= $found;
+						}
+					}elseif($value == $postId){
+						$match	= true;
+					}
+				}
+
+				if(!$match){
+					unset($results[$index]);
+				}
+			}
+			
+			$attachmentIds[$postId]	= $results;
 		}
 	}
 
-	foreach($orphans as $orphan){
-		echo "$orphan<br>";
+	if(!empty($orphans)){
+		$count	= count($orphans);
+		echo "<h1>Orphan media ($count)</h1>";
+		
+		?>
+		<form method='post' style='margin-bottom:10px;'>
+			<input type='hidden' name='paths' value='<?php echo json_encode($orphans);?>'>
+			<button class='button' name='delete' value='delete-all'>Delete all <?php echo $count;?> orphan attachments</button>
+		</form>
+		<?php
+
+		foreach($orphans as $orphan){
+			?>
+			<div>
+				<?php
+					$url	= pathToUrl($orphan);
+					$name	= basename($orphan);
+					if(@is_array(getimagesize($orphan))){
+						echo "<img src='$url' alt='$name' width='100' height='100' title='$orphan'>";
+						echo "<span>".basename($orphan)."</span>";
+					} else {
+						echo "<a href='$url' title='$orphan'>$name</a>";
+					}
+				?>
+				
+				<form method='post' style='display: inline-block;'>
+					<input type='hidden' name='path' value='<?php echo $orphan;?>'>
+					<input type='submit' class='button' name='delete' value='Delete'>
+				</form>
+			</div>
+			<?php
+		}
 	}
+
+	?>
+	<h1>Referenced media</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>Table</th>
+				<th>Column</th>
+				<th>Value</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			foreach($attachmentIds as $attachmentId=>$data){
+				foreach($data as $table){
+					if(
+						in_array($table['table'], ['wp_postmeta', 'wp_posts'])	||
+						in_array($table['column'], ['post_id', 'id', 'email_id', 'postId', 'log_id', 'object_id', 'mediaId', 'umeta_id', 'action_id'])
+					){
+						// For sure a match
+						continue;
+					}
+					echo "<tr>";
+						// data
+						foreach($table as $column=>$value){
+							echo "<td>$value</td>";
+						}
+
+						// actions
+						?>
+						<td>
+							<form method='post' style='margin-bottom:10px;'>
+								<input type='hidden' name='id' value='<?php echo $attachmentId;?>'>
+								<input type='hidden' name='table' value='<?php echo $table['table'];?>'>
+								<button class='button' name='ignore' value='ignore'>Ignore this table</button>
+							</form>
+							<form method='post'>
+								<input type='hidden' name='id' value='<?php echo $attachmentId;?>'>
+								<input type='submit' class='button' name='used' value='Mark as used'>
+							</form>
+						</td>
+					</tr>
+					<?php
+				}
+			}
+			?>
+		</tbody>
+	</table>
+	<?php
 }
 
 function searchAllDB($search, $excludes=[]){
@@ -1461,8 +1654,12 @@ function searchAllDB($search, $excludes=[]){
 			if(!empty($results)){
 				foreach($results as $result){
 					foreach($result as $column=>$value){
-						if($value == $search){
-							$out[] 	= ['table'=>$table[0], 'column'=>$column];
+						if(strpos($value, $search) !== false){
+							$out[] 	= [
+								'table'		=> $table[0],
+								'column'	=> $column,
+								'value'		=> $value,
+							];
 						}
 					}
 				}

@@ -137,14 +137,14 @@ add_filter( 'wp_footer', function () {
 }, 99999);
 
 //add login and logout buttons to main menu
-add_filter('wp_nav_menu_items', function ($items) {
+add_filter('wp_nav_menu_items', function ($items, $args) {
     if(is_user_logged_in()){
         $items .= '<li id="logout" class="menu-item logout"><a href="#logout" class="logout">Log out</a></li>';
     }else{
         $items .= '<li id="login" class="menu-item login hidden"><a href="#login">Login</a></li>';
     }
   return $items;
-});
+}, 10, 2);
 
 // Disable administration email verification
 add_filter( 'admin_email_check_interval', '__return_false' );
