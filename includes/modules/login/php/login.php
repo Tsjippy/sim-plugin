@@ -138,6 +138,10 @@ add_filter( 'wp_footer', function () {
 
 //add login and logout buttons to main menu
 add_filter('wp_nav_menu_items', function ($items, $args) {
+    if(in_array('top', array_keys(get_nav_menu_locations())) && $args->theme_location != 'top'){
+        return $items;
+    }
+
     if(is_user_logged_in()){
         $items .= '<li id="logout" class="menu-item logout"><a href="#logout" class="logout">Log out</a></li>';
     }else{
