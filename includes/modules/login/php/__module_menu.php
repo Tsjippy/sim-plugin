@@ -114,8 +114,23 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		<input type="checkbox" name="user_registration" value="enabled" <?php if($settings['user_registration']){echo 'checked';}?>>
 		Enable user registration
 	</label>
-
+	<br>
+	<br>
+	Where should the login and logout menu item be added?
+	<br>
 	<?php
+
+	$menus	= get_registered_nav_menus();
+	foreach($menus as $key=>$menu){
+		$checked	= '';
+		if(in_array($key, $settings['menu'])){
+			$checked	= 'checked';
+		}
+		echo "<label>";
+			echo "<input type='checkbox' name='menu[]' value='$key' $checked>";
+			echo "$menu";
+		echo "<label><br>";
+	}
 	return ob_get_clean();
 }, 10, 3);
 

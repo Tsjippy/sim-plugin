@@ -138,7 +138,7 @@ add_filter( 'wp_footer', function () {
 
 //add login and logout buttons to main menu
 add_filter('wp_nav_menu_items', function ($items, $args) {
-    if(in_array('top', array_keys(get_nav_menu_locations())) && $args->theme_location != 'top'){
+    if(!in_array($args->theme_location, SIM\getModuleOption(MODULE_SLUG, 'menu', false))){
         return $items;
     }
 
