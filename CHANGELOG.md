@@ -13,6 +13,7 @@
 - get element html when subid is 0
 - some form bugs
 - better vimeo download description
+- only add logout menu button once
 
 ## [2.23.7] - 2022-11-25
 
