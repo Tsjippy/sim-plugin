@@ -13,6 +13,10 @@ add_action( 'enqueue_block_editor_assets', function() {
 
     $mailchimp  = new Mailchimp();
     $segments   = $mailchimp->getSegments();
+    if(!is_array($segments)){
+        $segments   = [];
+    }
+
     $segments  = array_map(function($segment){
         return [
             'value' => $segment->id,

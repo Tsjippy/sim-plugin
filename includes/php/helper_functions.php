@@ -293,7 +293,7 @@ function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'loc
 		$taxonomies = get_taxonomies(
 			array(
 			'public'   => true,
-			'_builtin' => false	 
+			'_builtin' => false
 			)
 		);
 		foreach ( $taxonomies as $taxonomy ) {
@@ -304,7 +304,7 @@ function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'loc
 		foreach ( $terms as $term ) {
 			$options[$term->taxonomy.'/'.$term->slug]	= $term->name;
 		}
-	}	
+	}
 
 	asort($options);
 
@@ -1353,9 +1353,14 @@ function urlUpdate($oldPath, $newPath){
  * @param	string	$dir2	An optional second directory to scan
  */
 function duplicateFinder($dir, $dir2=''){
+	global $wpdb;
+
 	$dir	= trim($dir, '/\\');
 	//get a files array
 	$files = array_filter(glob($dir.'/*'), 'is_file');
+
+	$logoId			= get_option('site_logo');
+	$iconId			= get_option('site_icon');
 
 	if(!empty($dir2)){
 		$dir2	= trim($dir2, '/\\');
@@ -1385,6 +1390,7 @@ function duplicateFinder($dir, $dir2=''){
 
 	// Loop over all duplicates
 	foreach($duplicates as $duplicate){
+		// get all files with this hash
 		$dubs	= array_filter($hashArr, function($value)use($duplicate){
 			return $value	== $duplicate;
 		});
@@ -1406,6 +1412,14 @@ function duplicateFinder($dir, $dir2=''){
 			}else{
 				// remove the file and the attached db entries
 				wp_delete_attachment($postId);
+
+				// Update the attachment id
+				$newPostId		= attachment_url_to_postid(pathToUrl($newPath));
+
+				if(!empty($wpdb->get_results("SELECT post_id from $wpdb->postmeta WHERE meta_key='_thumbnail_id' AND meta_value=$postId"))){
+
+				}
+				$profileImage	= !empty($wpdb->get_results("SELECT user_id from $wpdb->usermeta WHERE meta_key='profile_picture' AND meta_value=$postId"));
 			}
 
 			// update all references to it
@@ -1443,35 +1457,66 @@ function moveAttachmentToRecycleBin($path){
  * Finds media which is not used anywhere
  */
 function checkOrphanMedia(){
-	if(user_can(wp_get_current_user()->ID, 'administrator')){
-		if(!empty($_POST['delete'])){
+	if(!user_can(wp_get_current_user()->ID, 'administrator')){
+		return;
+	}
 
-			if(!empty($_POST['path'])){
-				// move all to recycle bin
-				$path	= $_POST['path'];
-				moveAttachmentToRecycleBin($path);
+	global $wpdb;
 
-				echo "<div class='success'>Attachment succesfully deleted</div>";
-			}
+	$excludeIds		= get_option('excludeAttachmentIds');
+	if(!$excludeIds){
+		$excludeIds	= [];
+	}
+	$excludedTables	= get_option('excludedAttachmentTables');
+	if(!$excludedTables){
+		$excludedTables	= [];
+	}
 
-			if($_POST['delete'] == 'delete-all' && !empty($_POST['paths'])){
-				$paths	= json_decode(deslash($_POST['paths']));
+	if(!empty($_POST['delete'])){
+		if(!empty($_POST['path'])){
+			// move all to recycle bin
+			$path	= $_POST['path'];
+			moveAttachmentToRecycleBin($path);
 
-				foreach($paths as $path){
-					moveAttachmentToRecycleBin($path);
-				}
-
-				$count	= count($paths);
-				echo "<div class='success'>$count attachments succesfully deleted</div>";
-			}
+			echo "<div class='success'>Attachment succesfully deleted</div>";
 		}
+
+		if($_POST['delete'] == 'delete-all' && !empty($_POST['paths'])){
+			$paths	= json_decode(deslash($_POST['paths']));
+
+			foreach($paths as $path){
+				moveAttachmentToRecycleBin($path);
+			}
+
+			$count	= count($paths);
+			echo "<div class='success'>$count attachments succesfully deleted</div>";
+		}
+	}elseif(!empty($_POST['used']) && is_numeric($_POST['id'])){
+		$excludeIds[]	= $_POST['id'];
+		update_option('excludeAttachmentIds', $excludeIds);
+	}elseif(!empty($_POST['ignore']) && !empty($_POST['table'])){
+		$excludedTables[]	= $_POST['table'];
+		update_option('excludedAttachmentTables', $excludedTables);
 	}
 
 	$dir			= wp_upload_dir()['basedir'];
-	$paths			= array_filter(glob($dir.'/*'), 'is_file');
+	$files			= array_merge(glob($dir.'/*'), glob($dir.'/private/*'));
+	$dirs			= array_filter($files, function($file){
+		if(is_dir($file) && !in_array(basename($file), ['email_pictures', 'form_uploads', 'account_statements', 'profile_pictures', 'visa_uploads'])){
+			return true;
+		}
+		return false;
+	});
+
+	$paths			= array_filter($files, 'is_file');
+	foreach($dirs as $d){
+		$paths			= array_merge($paths, array_filter(glob($d.'/*'), 'is_file'));
+	}
 	$orphans		= [];
 	$processed		= [];
 	$attachmentIds	= [];
+	$logoId			= get_option('site_logo');
+	$iconId			= get_option('site_icon');
 
 	foreach($paths as $key=>$path){
 		$ext	= pathinfo($path)['extension'];
@@ -1507,13 +1552,21 @@ function checkOrphanMedia(){
 		}
 
 		// check if attachment id shows up anywhere in the db
-		$postId	= attachment_url_to_postid(pathToUrl($path));
+		$postId			= attachment_url_to_postid(pathToUrl($path));
+		$featuredImage	= !empty($wpdb->get_results("SELECT post_id from $wpdb->postmeta WHERE meta_key='_thumbnail_id' AND meta_value=$postId"));
+		$profileImage	= !empty($wpdb->get_results("SELECT user_id from $wpdb->usermeta WHERE meta_key='profile_picture' AND meta_value=$postId"));
 
-		if(!$postId){
+		if(in_array($postId, $excludeIds) || $featuredImage || $profileImage || $postId == $logoId || $postId == $iconId){
+			continue;
+		}elseif(!$postId){
 			$orphans[] = $path;
 		}else{
 			// search db for postId
-			$results	= searchAllDB($postId);
+			$results	= searchAllDB(
+				$postId,
+				array_merge($excludedTables, [$wpdb->postmeta, $wpdb->prefix.'sim_statistics']),
+				['ID', 'meta_id', 'post_id', 'id', 'email_id', 'postId', 'log_id', 'object_id', 'mediaId', 'umeta_id', 'action_id', 'option_id', 'user_id', 'hitID']
+			);
 			if(empty($results)){
 				$orphans[] = $path;
 			}
@@ -1538,7 +1591,9 @@ function checkOrphanMedia(){
 				}
 			}
 			
-			$attachmentIds[$postId]	= $results;
+			if(!empty($results)){
+				$attachmentIds[$postId]	= array_values($results);
+			}
 		}
 	}
 
@@ -1560,7 +1615,7 @@ function checkOrphanMedia(){
 					$url	= pathToUrl($orphan);
 					$name	= basename($orphan);
 					if(@is_array(getimagesize($orphan))){
-						echo "<img src='$url' alt='$name' width='100' height='100' title='$orphan'>";
+						echo "<a href='$url'><img src='$url' alt='$name' width='100' height='100' title='$orphan' loading='lazy'></a>";
 						echo "<span>".basename($orphan)."</span>";
 					} else {
 						echo "<a href='$url' title='$orphan'>$name</a>";
@@ -1576,58 +1631,77 @@ function checkOrphanMedia(){
 		}
 	}
 
-	?>
-	<h1>Referenced media</h1>
-	<table>
-		<thead>
-			<tr>
-				<th>Table</th>
-				<th>Column</th>
-				<th>Value</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php
-			foreach($attachmentIds as $attachmentId=>$data){
-				foreach($data as $table){
-					if(
-						in_array($table['table'], ['wp_postmeta', 'wp_posts'])	||
-						in_array($table['column'], ['post_id', 'id', 'email_id', 'postId', 'log_id', 'object_id', 'mediaId', 'umeta_id', 'action_id', 'option_id', 'user_id'])
-					){
-						// For sure a match
-						continue;
+	if(!empty($attachmentIds)){
+		?>
+		<h1>Referenced media</h1>
+		<table>
+			<thead>
+				<tr>
+					<th>Attachment</th>
+					<th>Table</th>
+					<th>Column</th>
+					<th>Value</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+				foreach($attachmentIds as $attachmentId=>$data){
+					$type	= explode('/', get_post_mime_type($attachmentId))[0];
+					if($type == 'image'){
+						$html	= wp_get_attachment_image( $attachmentId );
+					}else{
+						$url	= wp_get_attachment_url($attachmentId);
+						$title	= get_the_title($attachmentId);
+						$html	= "<a href='$url'>$title</a>";
 					}
-					echo "<tr>";
-						// data
-						foreach($table as $column=>$value){
-							echo "<td>$value</td>";
-						}
 
-						// actions
-						?>
-						<td>
-							<form method='post' style='margin-bottom:10px;'>
-								<input type='hidden' name='id' value='<?php echo $attachmentId;?>'>
-								<input type='hidden' name='table' value='<?php echo $table['table'];?>'>
-								<button class='button' name='ignore' value='ignore'>Ignore this table</button>
-							</form>
-							<form method='post'>
-								<input type='hidden' name='id' value='<?php echo $attachmentId;?>'>
-								<input type='submit' class='button' name='used' value='Mark as used'>
-							</form>
-						</td>
-					</tr>
-					<?php
+					foreach($data as $index=>$table){
+						echo "<tr>";
+							if($index == 0){
+								$rowspan	= count($data);
+								echo "<td rowspan='$rowspan' style='max-width: 300px;'>$html</td>";
+							}
+
+							// data
+							foreach($table as $value){
+								echo "<td>$value</td>";
+							}
+
+							// actions
+							?>
+							<td>
+								<form method='post' style='margin-bottom:10px;'>
+									<input type='hidden' name='id' value='<?php echo $attachmentId;?>'>
+									<input type='hidden' name='table' value='<?php echo $table['table'];?>'>
+									<button class='button' name='ignore' value='ignore'>Ignore this table</button>
+								</form>
+								<form method='post'>
+									<input type='hidden' name='id' value='<?php echo $attachmentId;?>'>
+									<input type='submit' class='button' name='used' value='Mark as used'>
+								</form>
+							</td>
+						</tr>
+						<?php
+					}
 				}
-			}
-			?>
-		</tbody>
-	</table>
-	<?php
+				?>
+			</tbody>
+		</table>
+		<?php
+	}
 }
 
-function searchAllDB($search, $excludes=[]){
+/**
+ * Search every table and column in the db
+ *
+ * @param	string	$search				the searchstring
+ * @param	array	$excludedTables		the tables to exclude from the search
+ * @param	array	$excludedColumns	the columns to exclude from the search
+ *
+ * @return	array						An array of results
+ */
+function searchAllDB($search, $excludedTables=[], $excludedColumns=[]){
     global $wpdb;
     
     $out 	= [];
@@ -1636,7 +1710,7 @@ function searchAllDB($search, $excludes=[]){
     $tables	= $wpdb->get_results($sql, ARRAY_N);
     if(!empty($tables)){
         foreach($tables as $table){
-			if(in_array($table[0], $excludes)){
+			if(in_array($table[0], $excludedTables)){
 				continue;
 			}
 
@@ -1646,6 +1720,10 @@ function searchAllDB($search, $excludes=[]){
             $columns 			= $wpdb->get_results($sql2);
             if(!empty($columns)){
                 foreach($columns as $column){
+					if(in_array($column->Field, $excludedColumns)){
+						continue;
+					}
+
                     $sqlSearchFields[] = "`".$column->Field."` like('%".$wpdb->_real_escape($search)."%')";
                 }
             }
@@ -1654,6 +1732,9 @@ function searchAllDB($search, $excludes=[]){
 			if(!empty($results)){
 				foreach($results as $result){
 					foreach($result as $column=>$value){
+						if(in_array($column, $excludedColumns)){
+							continue;
+						}
 						if(strpos($value, $search) !== false){
 							$out[] 	= [
 								'table'		=> $table[0],

@@ -120,7 +120,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<br>
 	<?php
 
-	$menus	= get_registered_nav_menus();
+	$menus	= wp_get_nav_menus();
 	foreach($menus as $key=>$menu){
 		$checked	= '';
 		if(in_array($key, $settings['menu'])){

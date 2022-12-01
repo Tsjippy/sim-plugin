@@ -164,11 +164,11 @@ if(!empty($hookName)){
 			<div id="rowwrap">
 				<h2 id="news-title">Latest news</h2>
 				<div class="row">
-		<?php
+				<?php
 
 		if ( ! $loop->have_posts() ) {
-			//Show message if there is no news
-			?>
+						//Show message if there is no news
+						?>
 						<article class="news-article">
 							<div class="card card-plain card-blog">
 								<div class="content">

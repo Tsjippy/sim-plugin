@@ -62,6 +62,12 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	}
 
     ?>
+	<h4>Show prayer request on homepage</h4>
+	<label>
+		Frontpage Hook<br>
+		<input type='text' name='frontpagehook' value='<?php if(isset($settings['frontpagehook'])){echo $settings['frontpagehook'];}else{echo '';}?>'>
+	</label>
+	<br>
 	<div class="">
 		<h4>Give optional Signal group name(s) to send a daily prayer message to:</h4>
 		<div class="clone_divs_wrapper">
