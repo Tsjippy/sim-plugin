@@ -4,6 +4,7 @@
 
 ### Added
 - helper function to search nested array
+- option to select in which menus the login button should be added
 
 ### Changed
 
