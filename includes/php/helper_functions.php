@@ -1593,7 +1593,7 @@ function checkOrphanMedia(){
 				foreach($data as $table){
 					if(
 						in_array($table['table'], ['wp_postmeta', 'wp_posts'])	||
-						in_array($table['column'], ['post_id', 'id', 'email_id', 'postId', 'log_id', 'object_id', 'mediaId', 'umeta_id', 'action_id'])
+						in_array($table['column'], ['post_id', 'id', 'email_id', 'postId', 'log_id', 'object_id', 'mediaId', 'umeta_id', 'action_id', 'option_id', 'user_id'])
 					){
 						// For sure a match
 						continue;
