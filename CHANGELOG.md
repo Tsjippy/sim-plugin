@@ -18,6 +18,7 @@
 - only add logout menu button once
 - login buttons
 - only query publick pages in page gallery when not logged in
+- logout button
 
 ## [2.23.7] - 2022-11-25
 
