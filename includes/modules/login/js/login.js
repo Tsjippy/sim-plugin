@@ -450,12 +450,3 @@ if (checkIsIOS()) {
 document.querySelectorAll('.login').forEach(el=>{
 	el.classList.remove('hidden');
 });
-
-// Move the login button to the primary menu if needed
-/* if(isMobileDevice()){
-	let topMenu	= document.getElementById('login').closest('#top-navigation');
-
-	if(topMenu != null && topMenu.offsetParent === null){
-		document.getElementById('login')
-	}
-} */
