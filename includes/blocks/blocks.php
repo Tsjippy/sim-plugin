@@ -24,6 +24,11 @@ add_filter('render_block', function($blockContent, $block){
 		(
 			isset($block['attrs']['onlyLoggedIn']) &&
 			!is_user_logged_in()
+		)	||
+		// or logged in
+		(
+			isset($block['attrs']['onlyNotLoggedIn']) &&
+			is_user_logged_in()
 		)
 	){
 		return '';

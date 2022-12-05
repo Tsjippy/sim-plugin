@@ -19,6 +19,9 @@ function addFilterAttribute(settings) {
             onlyLoggedIn: {
                 type: 'boolean',
             },
+            onlyNotLoggedIn: {
+                type: 'boolean',
+            },
             onlyOn: {
                 type: 'array'
             },
@@ -247,6 +250,12 @@ const blockFilterControls = createHigherOrderComponent((BlockEdit) => {
                             label={__('Hide if not logged in', 'sim')}
                             checked={!!attributes.onlyLoggedIn}
                             onChange={() => setAttributes({ onlyLoggedIn: !attributes.onlyLoggedIn })}
+                        />
+
+                        <ToggleControl
+                            label={__('Hide if logged in', 'sim')}
+                            checked={!!attributes.onlyNotLoggedIn}
+                            onChange={() => setAttributes({ onlyNotLoggedIn: !attributes.onlyNotLoggedIn })}
                         />
                         
                         <InputControl
