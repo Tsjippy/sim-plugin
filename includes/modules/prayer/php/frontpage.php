@@ -14,7 +14,7 @@ add_action('sim_frontpage_before_main_content', function(){
     }
 
     ?>
-    <div name='prayer_request' style='text-align: center; margin-left: auto; margin-right: auto; font-size: 18px; color:#999999; width:80%; max-width:800px;'>
+    <div name='prayer_request' style='margin-left: auto; margin-right: auto; font-size: 18px; color:#999999; width:80%; max-width:800px;'>
         <h3 id='prayertitle'>The prayer request of today:</h3>
         <p><?php echo $prayerRequest;?></p>
     </div>

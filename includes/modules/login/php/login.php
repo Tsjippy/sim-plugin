@@ -138,14 +138,27 @@ add_filter( 'wp_footer', function () {
 
 //add login and logout buttons to main menu
 add_filter('wp_nav_menu_items', function ($items, $args) {
-    if(!in_array($args->theme_location, SIM\getModuleOption(MODULE_SLUG, 'menu', false))){
+    if(
+        !in_array($args->theme_location, SIM\getModuleOption(MODULE_SLUG, 'menu', false))   &&  // Do not add when not in the list
+        !empty(SIM\getModuleOption(MODULE_SLUG, 'menu', false))
+    ){
         return $items;
     }
 
-    if(is_user_logged_in()){
-        $items .= '<li id="logout" class="menu-item logout"><a href="#logout" class="logout">Log out</a></li>';
+    if(has_action('generate_menu_bar_items' )){
+        add_action('generate_menu_bar_items', function(){
+            if(is_user_logged_in()){
+                echo "<span id='logout' class='menu-bar-item logout'><a href='#logout' class='logout button'>Log out</a></li>";
+            }else{
+                echo "<span id='login' class='menu-bar-item login hidden'><a href='#login' class='login button'>Log in</a></li>";
+            }
+        });
     }else{
-        $items .= '<li id="login" class="menu-item login hidden"><a href="#login">Login</a></li>';
+        if(is_user_logged_in()){
+            $items .= '<li id="logout" class="menu-item logout"><a href="#logout" class="logout">Log out</a></li>';
+        }else{
+            $items .= '<li id="login" class="menu-item login hidden"><a href="#login">Login</a></li>';
+        }
     }
   return $items;
 }, 10, 2);

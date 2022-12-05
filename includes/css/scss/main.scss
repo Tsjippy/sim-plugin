@@ -4,35 +4,8 @@
 @use 'infoIcons';
 @use 'modal';
 @use 'nice-select2';
-@use 'pagetitle';
 @use 'sidebar';
 @use 'table';
-
-/* moretag layout */
-.moretag{
-	font-size: 15px;
-	border-radius: 30px;
-	color: white;
-	text-transform: uppercase;
-	text-align: center;
-	padding: 10px 20px;
-	display: block;
-	max-width: 133px;
-	margin: 20px auto 0 auto;
-	white-space: nowrap;
-	background-color: $primary_color;
-	
-	/* on hover of the more tag*/
-	&:hover{
-		background-color:$secundary_color;
-		color:white;
-	}
-}
-
-/* paragraph text color*/
-p{
-	color: #676666;
-}
 
 /* Size of the loading gif */
 .loadergif{
@@ -40,68 +13,6 @@ p{
 	max-height:45px; 
 	margin:20px 0px 0px 10px;
 	min-width: 50px;
-}
-
-/*Buttons */
-%buttons{
-	background-color: $primary_color;
-	border-radius: 3px;
-	text-align: center;
-	margin-right: 10px;
-}
-
-body div .button, 
-body div .button:not(.small):focus{
-	@extend %buttons;
-	padding: 5px 10px;
-	
-	&:hover, &.active{
-		background-color: $secundary_color;
-	}
-	
-	&.tablink{
-		margin-top: 15px;
-		background-color: $secundary_color;
-		
-		&:hover,&.active{
-			background-color: $primary_color;
-			color: white;
-			border-color: unset;
-		}
-	}
-}
-
-#page-edit{
-	margin-top: 10px;
-}
-
-.wp-core-ui div .button{
-	@extend %buttons;
-	color: white;
-	border-color: unset;
-	
-	&:hover, &:active{
-		background-color: $secundary_color;
-		color: white;
-		border-color: unset;
-	}
-}
-
-#comments{
-	#submit{
-		@extend %buttons;
-	}
-}
-
-.leaflet-container a.button{
-	color: white;
-}
-
-.button.small{
-	padding: 0px 10px;
-}
-a.button.small{
-	padding-top: 5px;
 }
 
 .submit_wrapper{
@@ -128,13 +39,6 @@ a.button.small{
 	display: block;
     margin-top: 15px;
     width: 100%;
-}
-
-div h4{
-	font-weight: bold;
-	color: $primary_color;
-	margin: 15px 5px 5px;
-	font-size: inherit;
 }
 
 div fieldset{
@@ -235,4 +139,12 @@ input.wide{
 
 .wide {
 	width: 100%;
+}
+
+#page-edit{
+	margin-top: 10px;
+}
+
+.leaflet-container a.button{
+	color: white;
 }

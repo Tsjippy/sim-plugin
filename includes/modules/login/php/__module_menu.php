@@ -123,12 +123,12 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	$menus	= wp_get_nav_menus();
 	foreach($menus as $key=>$menu){
 		$checked	= '';
-		if(in_array($key, $settings['menu'])){
+		if(isset($settings['menu']) && in_array($key, $settings['menu'])){
 			$checked	= 'checked';
 		}
 		echo "<label>";
-			echo "<input type='checkbox' name='menu[]' value='$key' $checked>";
-			echo "$menu";
+			echo "<input type='checkbox' name='menu[]' value='$menu->slug' $checked>";
+			echo "$menu->name";
 		echo "<label><br>";
 	}
 	return ob_get_clean();
