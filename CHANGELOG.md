@@ -7,6 +7,7 @@
 - option to select in which menus the login button should be added
 
 ### Changed
+- moved frontpage module to sim theme
 
 ### Fixed
 - updating sub values
