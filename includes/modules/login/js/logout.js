@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded",function() {
 
 	document.querySelectorAll('.logout').forEach(el=>{
         el.addEventListener('click', logout);
+
+        el.classList.remove('hidden');
     });
 });
 
@@ -18,7 +20,7 @@ async function logout(event){
 
 	var target = event.target;
     
-	if(target.id == "logout" || target.parentNode.id == "logout"){
+	if(target.matches(".logout")){
         closeMobileMenu();
 
         if(typeof(Swal) != 'undefined'){
@@ -50,3 +52,5 @@ async function logout(event){
         }
     }
 }
+
+
