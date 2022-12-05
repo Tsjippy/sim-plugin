@@ -16,6 +16,7 @@
 - some form bugs
 - better vimeo download description
 - only add logout menu button once
+- login buttons
 
 ## [2.23.7] - 2022-11-25
 
