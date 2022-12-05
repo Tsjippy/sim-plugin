@@ -8,8 +8,11 @@ add_shortcode("welcome", __NAMESPACE__.'\welcomeMessage');
 function welcomeMessage(){
 	if (is_user_logged_in()){
 		$userId = get_current_user_id();
-		//Check welcome message needs to be shown
+
+		//Check if welcome message needs to be shown
 		if (empty(get_user_meta( $userId, 'welcomemessage', true ))){
+			wp_enqueue_script('sim_welcome_script', plugins_url('js/message.js', __DIR__), array('sweetalert'), MODULE_VERSION, true);
+			
 			$welcomeMessage = \SIM\getModuleOption(MODULE_SLUG, 'welcome_message');
 			if(!empty($welcomeMessage)){
 				//Html

@@ -16,20 +16,11 @@ add_action( 'enqueue_block_editor_assets', function() {
 add_filter('render_block', function($blockContent, $block){
 	if(
 		// not on a specific page
-		(
-			!empty($block['attrs']['onlyOn']) &&
-			!in_array(get_the_ID(), $block['attrs']['onlyOn'])
-		)	||
+		( !empty($block['attrs']['onlyOn']) && 	!in_array(get_the_ID(), $block['attrs']['onlyOn']) )	||
 		// or not logged in
-		(
-			isset($block['attrs']['onlyLoggedIn']) &&
-			!is_user_logged_in()
-		)	||
+		( isset($block['attrs']['onlyLoggedIn']) && !is_user_logged_in() )	||
 		// or logged in
-		(
-			isset($block['attrs']['onlyNotLoggedIn']) &&
-			is_user_logged_in()
-		)
+		( isset($block['attrs']['onlyNotLoggedIn']) && is_user_logged_in() )
 	){
 		return '';
 	}
