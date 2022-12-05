@@ -17,6 +17,7 @@
 - better vimeo download description
 - only add logout menu button once
 - login buttons
+- only query publick pages in page gallery when not logged in
 
 ## [2.23.7] - 2022-11-25
 
