@@ -3,7 +3,7 @@ namespace SIM\LOGIN;
 use SIM;
 
 
-const MODULE_VERSION		= '7.0.19';
+const MODULE_VERSION		= '7.0.20';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
@@ -121,13 +121,13 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<?php
 
 	$menus	= wp_get_nav_menus();
-	foreach($menus as $key=>$menu){
+	foreach($menus as $menu){
 		$checked	= '';
-		if(isset($settings['menu']) && in_array($key, $settings['menu'])){
+		if(isset($settings['menu']) && in_array($menu->term_id, $settings['menu'])){
 			$checked	= 'checked';
 		}
 		echo "<label>";
-			echo "<input type='checkbox' name='menu[]' value='$menu->slug' $checked>";
+			echo "<input type='checkbox' name='menu[]' value='$menu->term_id' $checked>";
 			echo "$menu->name";
 		echo "<label><br>";
 	}

@@ -1,4 +1,6 @@
 <?php
+namespace SIM\WELCOME;
+use SIM;
 
 add_action( 'rest_api_init', function () {
 	// get_attachment_contents

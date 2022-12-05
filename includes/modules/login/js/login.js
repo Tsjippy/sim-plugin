@@ -5,6 +5,8 @@ import {
 	fetchRestApi
 } from './shared.js';
 
+import { isMobileDevice } from './../../../js/imports.js';
+
 //Add an event listener to the login or register button
 console.log("Login.js loaded");
 
@@ -400,7 +402,7 @@ checkWebauthnAvailable();
 document.addEventListener("click", function(event){
 	var target = event.target;
 
-	if(target.id == 'login' || target.parentNode.id == 'login'){
+	if(target.matches('.login')){
 		// Show modal with login form
 		openLoginModal();
 	}else if(target.id == 'check_cred'){
@@ -445,4 +447,15 @@ if (checkIsIOS()) {
 	addMaximumScaleToMetaViewport();
 }
 
-document.getElementById('login').classList.remove('hidden');
+document.querySelectorAll('.login').forEach(el=>{
+	el.classList.remove('hidden');
+});
+
+// Move the login button to the primary menu if needed
+/* if(isMobileDevice()){
+	let topMenu	= document.getElementById('login').closest('#top-navigation');
+
+	if(topMenu != null && topMenu.offsetParent === null){
+		document.getElementById('login')
+	}
+} */
