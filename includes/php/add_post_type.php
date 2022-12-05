@@ -11,9 +11,9 @@ $taxnames=[];
 /**
  * Adds a new post type and taxonomy
  * Make sure to also register a template with the name sim/{$single}meta
- * 
+ *
  * @param  string 	$single		the single name of the posttype
- * @param  string	$plural     the plural name of the post type         
+ * @param  string	$plural     the plural name of the post type
 */
 function registerPostTypeAndTax($single, $plural){
 	global $taxnames;
@@ -76,10 +76,10 @@ function registerPostTypeAndTax($single, $plural){
 
 /**
  * Register taxonomy for an existing posttype
- * 
+ *
  * @param  string 	$taxonomyName	the name of the taxonomy
  * @param  string 	$postType		the single name of the posttype
- * @param  string	$plural     	the plural name of the post type  
+ * @param  string	$plural     	the plural name of the post type
  */
 function createTaxonomies($taxonomyName, $postType, $plural){
 	$taxonomyName		= strtolower($taxonomyName);
@@ -111,7 +111,7 @@ function createTaxonomies($taxonomyName, $postType, $plural){
 		'show_ui' 			=> true,
 		'show_in_rest' 		=> true,
 		'hierarchical' 		=> true,
-		'rewrite' 			=> array( 
+		'rewrite' 			=> array(
 			'slug' 			=> $plural,	//archive pages on /plural/
 			'hierarchical' 	=> true,
 			'has_archive'	=> true
@@ -128,7 +128,7 @@ function createTaxonomies($taxonomyName, $postType, $plural){
 	add_rewrite_rule($taxonomyName.'/?$','index.php?post_type='.$postType,'top');
 
 	// Clear the permalinks after the post type has been registered.
-    flush_rewrite_rules(); 
+    flush_rewrite_rules();
 }
 
 add_filter( 'single_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
@@ -154,6 +154,7 @@ function getTemplateFile($template, $type, $name=''){
 	global $post;
 
 	$baseDir		= __DIR__."/../modules";
+	$templateFile	= '';
 
 	//check what we are dealing with
 	switch ($type) {
@@ -182,22 +183,33 @@ function getTemplateFile($template, $type, $name=''){
 			$templateFile	= "$baseDir/$name/templates/$type-$name.php";
 			break;
 		case 'page';
+			// if on the logged in homepage
+			if(is_front_page()){
+				// load the frontpage template
+				if(file_exists(get_stylesheet_directory().'/front-page.php')){
+					$template	= get_stylesheet_directory().'/front-page.php';
+				}elseif(file_exists(get_template_directory().'/front-page.php')){
+					$template	= get_template_directory().'/front-page.php';
+				}
+			}
 			break;
 		default:
 			printArray("Not sure which template to load for $type");
 	}
 
-	$templateFile	= apply_filters('sim-template-filter', $templateFile);
+	if(!empty($templateFile)){
+		$templateFile	= apply_filters('sim-template-filter', $templateFile);
 
-	if ( 
-		file_exists($templateFile)										&&		// template file exists
-		(empty($template)												||
-		(
-			!empty($name)												&&		// current posttype is an enabled post type
-			locate_template( array( "$type-$name.php" ) ) !== $template			// and template is not found in theme folder
-		))															
-	) {
-		return $templateFile;
+		if (
+			file_exists($templateFile)										&&		// template file exists
+			(empty($template)												||
+			(
+				!empty($name)												&&		// current posttype is an enabled post type
+				locate_template( array( "$type-$name.php" ) ) !== $template			// and template is not found in theme folder
+			))
+		) {
+			return $templateFile;
+		}
 	}
 	
 	return $template;

@@ -71,6 +71,9 @@ function showFile(){
 	$file	= realpath($file);
 
 	if ($file === FALSE || !is_file($file)) {
+		require("wp-load.php");
+		require_once ABSPATH . WPINC . '/functions.php';
+		
 		require_once ABSPATH . WPINC . '/functions.php';
 		status_header(404);
 		die('404 &#8212; File not found.');

@@ -150,11 +150,13 @@ add_filter( 'authenticate', function ( $user) {
         }
         
         //we did a succesfull webauthn or are on localhost
-        if($_SERVER['HTTP_HOST'] == 'localhost' || in_array('webauthn', $methods) && $_SESSION['webauthn'] == 'success'){
+        if(
+            $_SERVER['HTTP_HOST'] == 'localhost' || 
+            in_array('webauthn', $methods) && $_SESSION['webauthn'] == 'success'){
             //succesfull webauthentication done before
         }elseif(in_array('authenticator', $methods)){
             $twofa      = new TwoFactorAuth();
-            $secretKey  = get_user_meta($user->ID,'2fa_key',true);
+            $secretKey  = get_user_meta($user->ID, '2fa_key', true);
             /*$hash     = get_user_meta($user->ID,'2fa_hash',true);
              if(!password_verify($secretKey,$hash)){
                 $user = new \WP_Error(
@@ -174,7 +176,7 @@ add_filter( 'authenticate', function ( $user) {
                 );
             }elseif($twofa->verifyCode($secretKey, $authcode, 1, null, $timeslice)){
                 //timeslice should be larger then last2fa
-                if($timeslice<= $last2fa){
+                if($timeslice <= $last2fa){
                     $user = new \WP_Error(
                         '2fa error',
                         'Invalid 2FA code given'

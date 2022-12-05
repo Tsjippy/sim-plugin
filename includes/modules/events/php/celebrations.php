@@ -125,12 +125,12 @@ add_action('delete_user', function($userId){
 
 /**
  *
- * Adds html to the forntpage
+ * Adds html to the frontpage prayer message
  *
  * @return   string|false     Birthday and arrining usrs html or false if there are no events
  *
 **/
-add_filter('sim_frontpage_message', function($html){
+add_filter('sim_prayer_message', function($html){
 	
 	$html	.= anniversaryMessages();
 
