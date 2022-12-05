@@ -4,6 +4,7 @@
 
 ### Added
 - hide if logged in for blocks
+- welcome message module
 
 ### Changed
 
