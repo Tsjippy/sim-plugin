@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.24.0] - 2022-12-05
+
+
+### Added
 - helper function to search nested array
 - option to select in which menus the login button should be added
 
