@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- hide if logged in for blocks
 
 ### Changed
 
