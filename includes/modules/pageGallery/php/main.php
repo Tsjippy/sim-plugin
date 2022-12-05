@@ -40,8 +40,9 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 				)
 			);
 
+			// if we should only include a few categories
 			if(!empty($categories[$type])){
-				$args['tax_query'] = ['relation' => 'OR'];
+				$args['tax_query']  = ['relation' => 'OR'];
 
 				foreach($categories[$type] as $tax => $cats){
 					foreach($cats as $cat){
@@ -54,10 +55,27 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 							$taxQuery['field']	= 'slug';
 						}
 
-
 						$args['tax_query'][]	= $taxQuery;
 					}
 				}
+			}
+
+			// Only show public if not logged in
+			if(!is_user_logged_in()){
+				$isPublicQuery	= ['relation' => 'OR'];
+				foreach(get_object_taxonomies($type) as $tax){
+					$isPublicQuery[]	= [
+						'taxonomy' => $tax,
+						'field'    => 'slug',
+						'terms'    => array( 'public' ),
+					];
+				}
+				
+				$args['tax_query']	= [
+					'relation' => 'AND',
+					$isPublicQuery,
+					$args['tax_query']
+				];
 			}
 
 			$args	= apply_filters('sim-frontpage-post-gallery-posts', $args, $postTypes);
