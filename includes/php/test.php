@@ -7,8 +7,6 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    $icalFeed	= new EVENTS\IcalFeed();
-    $icalFeed->calendarStream();
 });
 
 // turn off incorrect error on localhost

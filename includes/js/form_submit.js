@@ -106,7 +106,11 @@ export async function submitForm(target, url){
 	}
 }
 
-export async function fetchRestApi(url, formData, showErrors=true){
+export async function fetchRestApi(url, formData='', showErrors=true){
+	if(formData == ''){
+		formData	= new FormData();
+	}
+	
 	formData.append('_wpnonce', sim.restNonce);
 	let result;
 	try{

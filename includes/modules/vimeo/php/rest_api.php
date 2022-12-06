@@ -5,6 +5,18 @@ use WP_Error;
 use WP_User;
 
 add_action( 'rest_api_init', function () {
+
+	// Clean backup dir
+	register_rest_route(
+		RESTAPIPREFIX.'/vimeo',
+		'/cleanup_backup',
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> 	__NAMESPACE__.'\cleanupBackupFolder',
+			'permission_callback' 	=> '__return_true'
+		)
+	);
+
 	// prepare video upload
 	register_rest_route(
 		RESTAPIPREFIX.'/vimeo',
@@ -144,8 +156,8 @@ function addUploadedVimeo(){
     delete_post_meta($postId, 'vimeo_upload_data');
 
 	// Download a backup or send an e-mail if that is not possible
-	$VimeoApi	= new VimeoApi();
-	$VimeoApi->downloadVideo($postId);
+	$vimeoApi	= new VimeoApi();
+	$vimeoApi->downloadVideo($postId);
 
     // Media libray expects the below array!
     return [
@@ -158,4 +170,37 @@ function addUploadedVimeo(){
             'data'    => $attachment
         ]
     ];
+}
+
+function cleanupBackupFolder(){
+	$vimeoApi	= new VimeoApi();
+
+	$vimeoVideos	= $vimeoApi->getUploadedVideos();
+	if(!$vimeoVideos){
+		return;
+	}
+
+	//Build online video's array
+	foreach($vimeoVideos as $vimeoVideo){
+		$vimeoId				= str_replace('/videos/', '', $vimeoVideo['uri']);
+		$onlineVideos[$vimeoId]	= html_entity_decode($vimeoVideo['name']);
+	}
+
+	// Remove any backup
+	$files      = glob($vimeoApi->backupDir.'*.mp4');
+	$count		= 0;
+	foreach($files as $file){
+		$vimeoId    = explode('_', basename($file))[0];
+
+		if(!in_array($vimeoId, array_keys($onlineVideos))){
+			unlink($file);
+			$count++;
+		}
+	}
+
+	if($count == 0){
+		return 'There was nothing to remove';
+	}
+
+	return "Succesfully cleaned up the backup folder, removed $count files";
 }

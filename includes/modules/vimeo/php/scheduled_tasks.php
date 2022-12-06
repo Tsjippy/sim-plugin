@@ -4,8 +4,8 @@ use SIM;
 
 add_action('init', function(){
 	//add action for use in scheduled task
-	add_action( 'sync_vimeo_action', 'SIM\VIMEO\vimeoSync');
-    add_action( 'createVimeoThumbnails', 'SIM\VIMEO\createVimeoThumbnails');
+	add_action( 'sync_vimeo_action', __NAMESPACE__.'\vimeoSync');
+    add_action( 'createVimeoThumbnails', __NAMESPACE__.'\createVimeoThumbnails');
 });
 
 function scheduleTasks(){
@@ -76,16 +76,6 @@ function vimeoSync(){
         foreach($vimeoVideos as $vimeoVideo){
             $vimeoId				= str_replace('/videos/', '', $vimeoVideo['uri']);
             $onlineVideos[$vimeoId]	= html_entity_decode($vimeoVideo['name']);
-        }
-
-        // Cleanup the backup folder
-        $files      = glob($vimeoApi->backupDir.'*.mp4');
-        foreach($files as $file){
-            $vimeoId    = explode('_', basename($file))[0];
-    
-            if(!in_array($vimeoId, array_keys($onlineVideos))){
-                unlink($file);
-            }
         }
 
         //remove any local video which does not exist on vimeo

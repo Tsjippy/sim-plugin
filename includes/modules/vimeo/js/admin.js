@@ -32,4 +32,15 @@ document.addEventListener("DOMContentLoaded", function() {
             ev.target.closest('form').querySelector('[name="download_url"]').value = '';
         }
     });
+
+    document.getElementById('cleanup-archive').addEventListener('click', async ev => {
+        let response    = await FormSubmit.fetchRestApi('vimeo/cleanup_backup');
+
+        //hide loader
+        ev.target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
+
+        if(response){
+            Main.displayMessage(response, 'success');
+        }
+    });
 });

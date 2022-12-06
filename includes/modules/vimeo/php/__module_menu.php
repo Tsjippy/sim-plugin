@@ -168,10 +168,10 @@ add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
 		return $functionHtml;
 	}
 	
+	wp_enqueue_script('sim_vimeo_admin_script');
 	ob_start();
 	//display url form
 	if(is_numeric($_GET['vimeoid'])){
-		wp_enqueue_script('sim_vimeo_admin_script');
 		?>
 		<style>
 			.loadergif{
@@ -188,6 +188,16 @@ add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
 		</form>
 		<?php
 	}
+
+	?>
+	<style>
+		.loadergif{
+			width: 30px;
+		}
+	</style>
+	<button class='button' id='cleanup-archive'>Clean up the video archive folder</button>
+	<?php
+	
 	
 	return ob_get_clean();
 }, 10, 2);

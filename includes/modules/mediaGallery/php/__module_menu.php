@@ -106,7 +106,7 @@ add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
 		}
 
 		if($_POST['delete'] == 'delete-all' && !empty($_POST['paths'])){
-			$paths	= json_decode(deslash($_POST['paths']));
+			$paths	= json_decode(SIM\deslash($_POST['paths']));
 
 			foreach($paths as $path){
 				moveAttachmentToRecycleBin($path);
