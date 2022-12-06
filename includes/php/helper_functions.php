@@ -369,15 +369,11 @@ function familyFlatArray($userId){
 */
 function hasPartner($userId) {
 	$family = get_user_meta($userId, "family", true);
-	if(is_array($family)){
-		if (isset($family['partner']) && is_numeric($family['partner'])){
-			return $family['partner'];
-		}else{
-			return false;
-		}
-	}else{
-		return false;
+	if(is_array($family) && isset($family['partner']) && is_numeric($family['partner'])){
+		return $family['partner'];
 	}
+
+	return false;
 }
 
 /**

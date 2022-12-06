@@ -7,7 +7,6 @@ import {useState, useEffect} from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
 
 const Edit = ({attributes, setAttributes, context}) => {
-	console.log(context);
 	const {title, listtype, grandchildren, parents, grantparents} = attributes;
 	const {postId} = context;
 	

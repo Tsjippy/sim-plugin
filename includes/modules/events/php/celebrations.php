@@ -97,6 +97,33 @@ add_filter('sim_after_bot_payer', function($args){
 			$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($arrivalUsers[0]->ID))."\n";
 		}else{
 			$args['message'] .= "\n\nToday the following people will arrive: ";
+
+			//Loop over the arrival_users to find any families
+			$skip	= [];
+			foreach($arrivalUsers as $user){
+				if(in_array($user->ID, $skip)){
+					continue;
+				}
+
+				$partnerId	= SIM\hasPartner($user->ID);
+				$name		= $user->display_name;
+
+				if($partnerId){
+					$skip[]		= $partnerId;
+					$partner	= get_userdata($partnerId);
+
+					if($partner->last_name == $user->last_name){
+						$name 	= $user->last_name.' family';
+					}else{
+						$name	= $user->display_name.' & '. $partner->display_name;
+					}
+					
+				}
+
+				$args['message'] 	.= "$name\n";
+				$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($user->ID))."\n";
+			}
+
 			//Loop over the arrival_users
 			foreach($arrivalUsers as $user){
 				$args['message'] 	.= $user->display_name."\n";
@@ -228,10 +255,30 @@ function arrivingUsersMessage(){
 					$html	.= '<a href="'.$url.'">'.$arrivingUsers[0]->display_name."</a> arrives today!";
 				}else{
 					$html 	.= 'The following people arrive today:<br>';
+
+					$skip	= [];
 					//Loop over the arrivals
 					foreach($arrivingUsers as $user){
+						if(in_array($user->ID, $skip)){
+							continue;
+						}
+
+						$partnerId	= SIM\hasPartner($user->ID);
+						$name		= $user->display_name;
+
+						if($partnerId){
+							$skip[]		= $partnerId;
+							$partner	= get_userdata($partnerId);
+
+							if($partner->last_name == $user->last_name){
+								$name 	= $user->last_name.' family';
+							}else{
+								$name	= $user->display_name.' & '. $partner->display_name;
+							}
+							
+						}
 						$url 	 = SIM\maybeGetUserPageUrl($user->ID);
-						$html 	.= "<a href='$url'>$user->display_name</a><br>";
+						$html 	.= "<a href='$url'>$name</a><br>";
 					}
 				}
 			$html .= '.</p>';

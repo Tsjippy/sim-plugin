@@ -51,9 +51,9 @@ const Edit = ({attributes, setAttributes}) => {
 			{categories?.map( ( category ) => {
 				let nr	= '';
 				if(count){
-					nr	= <>  (<span class='cat-count'>{category.count}</span>)</>;
+					nr	= <>  (<span className='cat-count'>{category.count}</span>)</>;
 				}
-				return (<li><a href={category.link}>{category.name}{nr}</a></li>);
+				return (<li key={category.id}><a href={category.link}>{category.name}{nr}</a></li>);
 			} )}
 			</ul>
 		)
@@ -73,9 +73,9 @@ const Edit = ({attributes, setAttributes}) => {
 				</Panel>
 			</InspectorControls>
 			<div {...useBlockProps()}>
-				<aside class='event'>
-					<h4 class="title">Categories</h4>
-					<div class="upcomingevents_wrapper">
+				<aside className='event'>
+					<h4 className="title">Categories</h4>
+					<div className="upcomingevents_wrapper">
 						{BuildCategoryList()}
 					</div>
 				</aside>

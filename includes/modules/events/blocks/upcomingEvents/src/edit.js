@@ -6,7 +6,7 @@ import {useState, useEffect} from "@wordpress/element";
 import {Spinner, Panel, PanelBody, CheckboxControl, __experimentalNumberControl as NumberControl} from "@wordpress/components";
 
 const Edit = ({attributes, setAttributes}) => {
-	const {items, months, categories} = attributes;
+	const {items, months, categories} = attributes; 
 
 	const onCatChanged	= function(checked){
 		let copy =	{ ...categories }
@@ -24,6 +24,7 @@ const Edit = ({attributes, setAttributes}) => {
 
 		setCats( fetchedCats.map( c => (
 			<CheckboxControl
+				key			= {c.id}
 				label		= {c.name}
 				onChange	= {onCatChanged.bind(c.id)}
 				checked		= {categories[c.id]}
@@ -35,9 +36,7 @@ const Edit = ({attributes, setAttributes}) => {
 	// variable, function name to set variable
 	const [events, storeEvents] = useState([]);
 
-	const fetchEvents = async () => {
-		storeEvents(fetchedEvents);
-		
+	const fetchEvents = async () => {		
 		let param	= '';
 		
 		if(items != undefined){
@@ -82,18 +81,18 @@ const Edit = ({attributes, setAttributes}) => {
 		return (
 			events.map(event => {
 				return (
-					<article class="event-article">
-						<div class="event-wrapper">
-							<div class="event-date">
+					<article className="event-article">
+						<div className="event-wrapper">
+							<div className="event-date">
 								<span>{event.day}</span> {event.month}
 							</div>
 							<div>
-								<h4 class="event-title">
+								<h4 className="event-title">
 									<a href={event.url}>
 										{event.title}
 									</a>
 								</h4>
-								<div class="event-detail">
+								<div className="event-detail">
 									{event.time}
 								</div>
 							</div>
@@ -129,12 +128,12 @@ const Edit = ({attributes, setAttributes}) => {
 				</Panel>
 			</InspectorControls>
 			<div {...useBlockProps()}>
-				<aside class='event'>
-					<h4 class="title">Upcoming events</h4>
-					<div class="upcomingevents_wrapper">
+				<aside className='event'>
+					<h4 className="title">Upcoming events</h4>
+					<div className="upcomingevents_wrapper">
 						{buildHtml()}
 					</div>
-					<a class='calendar button sim' href="./events">
+					<a className='calendar button sim' href="./events">
 						Calendar
 					</a>
 				</aside>

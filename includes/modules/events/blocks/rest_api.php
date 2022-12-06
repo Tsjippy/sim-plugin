@@ -4,9 +4,9 @@ use SIM;
 
 add_action( 'rest_api_init', function () {
 	// show schedules
-	register_rest_route( 
-		RESTAPIPREFIX.'/events', 
-		'/show_schedules', 
+	register_rest_route(
+		RESTAPIPREFIX.'/events',
+		'/show_schedules',
 		array(
 			'methods' 				=> 'GET',
 			'callback' 				=> function(){
@@ -17,10 +17,21 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
+	// show upcoming arrivals
+	register_rest_route(
+		RESTAPIPREFIX.'/events',
+		'/upcoming_arrivals',
+		array(
+			'methods' 				=> 'GET',
+			'callback' 				=> __NAMESPACE__.'\upcomingArrivalsBlock',
+			'permission_callback' 	=> '__return_true',
+		)
+	);
+
 	// Upcoming events
-	register_rest_route( 
-		RESTAPIPREFIX.'/events', 
-		'/upcoming_events', 
+	register_rest_route(
+		RESTAPIPREFIX.'/events',
+		'/upcoming_events',
 		array(
 			'methods' 				=> 'GET',
 			'callback' 				=> function(){
