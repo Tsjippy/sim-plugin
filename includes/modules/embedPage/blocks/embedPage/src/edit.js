@@ -11,8 +11,8 @@ import { decodeEntities } from '@wordpress/html-entities';
 const Edit = ({attributes, setAttributes}) => {
 	const {page} = attributes;
 
-	const [ searchTerm, setSearchTerm ]     = useState( '' );
-	const [ embededPage, setEmbededPage ]    = useState( '' );
+	const [ searchTerm, setSearchTerm ]		= useState( '' );
+	const [ embededPage, setEmbededPage ]   = useState( '' );
 
 	const { pages, resolved } = useSelect(
 		( select) => {

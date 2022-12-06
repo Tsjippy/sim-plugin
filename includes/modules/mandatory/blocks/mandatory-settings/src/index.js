@@ -39,6 +39,7 @@ registerPlugin( 'mandatory-audience', {
         const   CheckBoxes  = () => {
             return Object.keys(mandatory).map( index => (
                 <CheckboxControl
+                    key         = {index}
                     label		= { mandatory[index] }
                     onChange	= { (selected) => updateMetaValue(selected, index) }
                     checked		= {audience[index] != undefined}
