@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- schedules do not show dates in the past
 
 ### Fixed
 
