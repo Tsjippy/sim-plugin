@@ -10,6 +10,9 @@ use SIM;
  * @return	string			The html
  */
 function passwordResetForm($user){
+	// Load style
+	wp_enqueue_style('sim_pw_reset_style');
+
 	//Load js
 	wp_enqueue_script('sim_password_strength_script');
 

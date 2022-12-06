@@ -899,12 +899,18 @@ function processPasswordUpdate(){
 	if($_POST['pass1'] != $_POST['pass2']){
         return new WP_Error('Password error', "Passwords do not match, try again.");
     }
+
+    add_filter('application_password_is_api_request', '__return_false');
 	
 	wp_set_password( $_POST['pass1'], $userId );
 
     $message    = 'Changed password succesfully';
     if(is_user_logged_in()){
-        $message .= ', please login again';
+        if(get_current_user_id() == $userId){
+            $message .= ', please login again';
+        }else{
+            $message .= " for $user->display_name";
+        }
     }
 	return [
         'message'	=> $message,

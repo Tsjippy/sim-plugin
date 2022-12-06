@@ -42,28 +42,34 @@ function updateIndicator(indicator){
 
 	var pass1 		= document.querySelector('[name="pass1"]');
 	var pass2 		= document.querySelector('[name="pass2"]');
-	var strength	= wp.passwordStrength.meter(pass1.value, wp.passwordStrength.userInputDisallowedList(), pass2.value);
 
-	switch (strength) {
-		case 2:
-			indicator.classList.add('bad');
-			indicator.textContent = pwsL10n.bad;
-			break;
-		case 3:
-			indicator.classList.add('good');
-			indicator.textContent = pwsL10n.good;
-			break;
-		case 4:
-			indicator.classList.add('strong');
-			indicator.textContent = pwsL10n.strong;
-			break;
-		case 5:
-			indicator.classList.add('short');
-			indicator.textContent = pwsL10n.mismatch;
-			break;
-		default:
-			indicator.classList.add('short');
-			indicator.textContent = pwsL10n['short'];
+	if(pass1 != pass2){
+		indicator.classList.add('bad');
+		indicator.textContent = pwsL10n.mismatch;
+	}else{
+		var strength	= wp.passwordStrength.meter(pass1.value, wp.passwordStrength.userInputDisallowedList(), pass2.value);
+
+		switch (strength) {
+			case 2:
+				indicator.classList.add('bad');
+				indicator.textContent = pwsL10n.bad;
+				break;
+			case 3:
+				indicator.classList.add('good');
+				indicator.textContent = pwsL10n.good;
+				break;
+			case 4:
+				indicator.classList.add('strong');
+				indicator.textContent = pwsL10n.strong;
+				break;
+			case 5:
+				indicator.classList.add('short');
+				indicator.textContent = pwsL10n.mismatch;
+				break;
+			default:
+				indicator.classList.add('short');
+				indicator.textContent = pwsL10n['short'];
+		}
 	}
 	
 	indicator.classList.remove('hidden');
@@ -82,8 +88,10 @@ async function submitPasswordChange(event){
 	if(response){
 		Main.displayMessage(response.message);
 
-		// redirect to login again
-		location.href	= response.redirect
+		// redirect to login again if resetting own password
+		if(!location.href.includes('?userid=')){
+			location.href	= response.redirect;
+		}
 	}
 
 	// hide loader
