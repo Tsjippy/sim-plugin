@@ -10,6 +10,7 @@
 - login module: decide for login and logout menu items seperately
 
 ### Fixed
+- resetting passwords when using wp-password-bcrypt
 
 ## [2.24.0] - 2022-12-05
 
