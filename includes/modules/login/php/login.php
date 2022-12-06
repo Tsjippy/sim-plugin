@@ -138,29 +138,38 @@ add_filter( 'wp_footer', function () {
 
 //add login and logout buttons to main menu
 add_filter('wp_nav_menu_items', function ($items, $args) {
+    $loginMenus     = SIM\getModuleOption(MODULE_SLUG, 'loginmenu', false);
+    $logoutMenus    = SIM\getModuleOption(MODULE_SLUG, 'logoutmenu', false);
+
     if(
-        !in_array($args->menu->term_id, SIM\getModuleOption(MODULE_SLUG, 'menu', false))   &&  // Do not add when not in the list
+        !in_array($args->menu->term_id, $loginMenus)   &&  // Do not add when not in the list
+        !in_array($args->menu->term_id, $logoutMenus)  &&
         !empty(SIM\getModuleOption(MODULE_SLUG, 'menu', false))
     ){
         return $items;
     }
 
-    if(has_action('generate_menu_bar_items' )){
-        add_action('generate_menu_bar_items', function(){
-            if(is_user_logged_in()){
+    // We should add a logout menu item
+    if(is_user_logged_in() && in_array($args->menu->term_id, $logoutMenus)){
+        if($args->menu->slug != 'footer' && has_action('generate_menu_bar_items' )){
+            add_action('generate_menu_bar_items', function(){
                 echo "<span class='menu-bar-item logout hidden'><a href='#logout' class='logout button'>Log out</a></li>";
-            }else{
-                echo "<span class='menu-bar-item login hidden'><a href='#login' class='login button'>Log in</a></li>";
-            }
-        });
-    }else{
-        if(is_user_logged_in()){
-            $items .= "<li class='menu-item logout hidden'><a href='#logout' class='logout'>Log out</a></li>";
+            });
         }else{
-            $items .= "<li class='menu-item login hidden'><a href='#login' class='login'>Login</a></li>";
+            $items .= "<li class='menu-item logout hidden'><a href='#logout' class='logout'>Log out</a></li>";
         }
     }
 
+    // We should add a login menu item
+    if(!is_user_logged_in() && in_array($args->menu->term_id, $loginMenus)){
+        if($args->menu->slug != 'footer' && has_action('generate_menu_bar_items' )){
+            add_action('generate_menu_bar_items', function(){
+                echo "<span class='menu-bar-item login hidden'><a href='#login' class='login button'>Log in</a></li>";
+            });
+        }else{
+            $items .= "<li class='menu-item login hidden'><a href='#login' class='login'>Log in</a></li>";
+        }
+    }
   return $items;
 }, 10, 2);
 

@@ -116,18 +116,32 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	</label>
 	<br>
 	<br>
-	Where should the login and logout menu item be added?
+	Where should the login menu item be added?
 	<br>
 	<?php
 
 	$menus	= wp_get_nav_menus();
 	foreach($menus as $menu){
 		$checked	= '';
-		if(isset($settings['menu']) && in_array($menu->term_id, $settings['menu'])){
+		if(isset($settings['loginmenu']) && in_array($menu->term_id, $settings['loginmenu'])){
 			$checked	= 'checked';
 		}
 		echo "<label>";
-			echo "<input type='checkbox' name='menu[]' value='$menu->term_id' $checked>";
+			echo "<input type='checkbox' name='loginmenu[]' value='$menu->term_id' $checked>";
+			echo "$menu->name";
+		echo "<label><br>";
+	}
+	?>
+	Where should the logout menu item be added?
+	<br>
+	<?php
+	foreach($menus as $menu){
+		$checked	= '';
+		if(isset($settings['logoutmenu']) && in_array($menu->term_id, $settings['logoutmenu'])){
+			$checked	= 'checked';
+		}
+		echo "<label>";
+			echo "<input type='checkbox' name='logoutmenu[]' value='$menu->term_id' $checked>";
 			echo "$menu->name";
 		echo "<label><br>";
 	}
