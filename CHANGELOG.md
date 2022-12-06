@@ -8,6 +8,7 @@
 - schedules do not show dates in the past
 
 ### Fixed
+- private events in public calendar
 
 ## [2.24.1] - 2022-12-06
 
