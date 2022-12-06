@@ -4,7 +4,7 @@ use SIM;
 
 // admin js
 add_action( 'admin_enqueue_scripts', function(){
-	wp_register_script('sim_vimeo_admin_script', plugins_url('js/admin.js', __DIR__), ['sim_formsubmit_script', 'sim_script'], MODULE_VERSION);
+	wp_register_script('sim_vimeo_admin_script', plugins_url('js/admin.min.js', __DIR__), ['sim_formsubmit_script', 'sim_script'], MODULE_VERSION);
 	wp_localize_script( 'sim_vimeo_admin_script',
 		'sim',
 		array(

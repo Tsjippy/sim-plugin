@@ -1,5 +1,7 @@
+import {showLoader} from './../../../js/imports.js';
+
 document.addEventListener("DOMContentLoaded", function() {
-    document.querySelector('[name="download_video"]').addEventListener('click', async ev=> {
+    document.querySelectorAll('[name="download_video"]').forEach(el=>el.addEventListener('click', async ev=> {
         const vimeoUrl   = ev.target.closest('form').querySelector('[name="download_url"]').value;
 
         if(vimeoUrl==''){
@@ -31,13 +33,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }else{
             ev.target.closest('form').querySelector('[name="download_url"]').value = '';
         }
-    });
+    }));
 
     document.getElementById('cleanup-archive').addEventListener('click', async ev => {
+        showLoader(ev.target);
+
         let response    = await FormSubmit.fetchRestApi('vimeo/cleanup_backup');
 
         //hide loader
-        ev.target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
+        document.querySelectorAll('.loadergif:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 
         if(response){
             Main.displayMessage(response, 'success');
