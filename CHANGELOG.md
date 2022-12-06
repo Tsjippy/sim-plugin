@@ -6,6 +6,7 @@
 - hide if logged in for blocks
 - welcome message module
 - upcoming arrivals block
+- external url block
 
 ### Changed
 - login module: decide for login and logout menu items seperately
