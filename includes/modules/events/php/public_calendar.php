@@ -12,7 +12,7 @@ add_action( 'template_redirect', function() {
     // if this is not a request for json or a singular object then bail
     if ( ! isset( $wp_query->query_vars['public_calendar'] )){
 		return;
-	}    
+	}
  
     // include custom template
 	$icalFeed	= new IcalFeed();

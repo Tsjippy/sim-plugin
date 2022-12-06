@@ -24,6 +24,18 @@ function displayEmbedBlock($value){
 
 function externalblock($attributes){
 	if(!empty($attributes['url'])){
-		echo "<iframe src='{$attributes['url']}' sandbox=''></iframe>";
+		// check if embedable
+		$url 	= $attributes['url'];
+		$header	= get_headers($url, 1);
+		if(in_array($header["x-frame-options"], ['DENY', 'SAMEORIGIN', 'ALLOW-FROM'])){
+			?>
+			<script>
+				document.addEventListener('mousemove', location.href='<?php echo $url;?>');
+			</script>
+			<?php
+			return "Redirection to $url";
+		}else{
+			return "<iframe src='$url' sandbox=''></iframe>";
+		}
 	}
 }
