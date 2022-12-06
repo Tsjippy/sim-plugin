@@ -86,7 +86,7 @@ class Schedules{
 
 	/**
 	 * Get all existing schedules
-	 * 
+	 *
 	 * @return 	string		the schedules html
 	*/
 	function showschedules(){
@@ -106,7 +106,7 @@ class Schedules{
 		return $html;
 	}
 
-	function showSchedule($schedule) {
+	public function showSchedule($schedule) {
 		ob_start();
 
 		if (
@@ -149,6 +149,9 @@ class Schedules{
 				'search_columns' 	=> ['display_name'],
 			);
 		}
+
+		// Do not show dates in the past
+		$schedule->startdate	= max([date('Y-m-d'), $schedule->startdate]);
 		
 		?>
 		<div class='schedules_div table-wrapper'>
@@ -163,7 +166,7 @@ class Schedules{
 						</p>
 						<?php
 						echo SIM\userSelect('', true, true, '', 'schedule_target', $args);
-						echo SIM\addSaveButton('publish_schedule', 'Publish this schedule'); 
+						echo SIM\addSaveButton('publish_schedule', 'Publish this schedule');
 						?>
 					</form>
 				</div>
@@ -182,7 +185,7 @@ class Schedules{
 						$date		= $schedule->startdate;
 						while(true){
 							$dateStr		= date('d F Y', strtotime($date));
-							$dateTime		= strtotime($date);					
+							$dateTime		= strtotime($date);
 							$dayName		= date('l', $dateTime);
 							$formatedDate	= date('d-m-Y', $dateTime);
 							echo "<th data-date='$dateStr' data-isodate='$date'>$dayName<br>$formatedDate</th>";
