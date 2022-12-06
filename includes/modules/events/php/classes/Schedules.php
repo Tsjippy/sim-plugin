@@ -353,18 +353,18 @@ class Schedules{
 	
 	/**
 	 * Creates a orientation cell html
-	 * 
+	 *
 	 * @param	object	$schedule		the Schedule
 	 * @param	string	$date			date string
 	 * @param	string	$startTime		time string
-	 * 
+	 *
 	 * @return 	array					Cell html
 	*/
 	function writeOrientationCell( $schedule, $date, $startTime) {
 		//get event which starts on this date and startTime
 		$event		= $this->getScheduleEvent($schedule, $date, $startTime);
 		$rowSpan	= '';
-		$class		= 'orientation'; 
+		$class		= 'orientation';
 
 		if ($event == null){
 			$cellText = 'Available';
@@ -393,7 +393,7 @@ class Schedules{
 				$dataset	.= " data-location='{$event->location}'";
 			}
 
-			////check how many rows this event should span
+			//check how many rows this event should span
 			$toTime		= new \DateTime($event->endtime);
 			$fromTime	= new \DateTime($event->starttime);
 			$interval	= $toTime->diff($fromTime);
@@ -407,7 +407,7 @@ class Schedules{
 		if(
 			$this->admin							||		// we are admin
 			$this->user->ID == $event->organizer_id || 		// We are the organizer
-			$cellText == 'Available'						// This cell  is available	
+			$cellText == 'Available'						// This cell  is available
 		){
 			$class .= ' admin';
 		}

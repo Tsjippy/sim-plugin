@@ -77,9 +77,16 @@ class CreateSchedule extends Schedules{
 		//clean title
 		$title	= str_replace([" with", $event['organizer'], "Hosting {$this->name} for "], '', $title);
 
-		$ownTitle	= ucfirst($title)." with {$event['organizer']}";
+		if(!empty($event['organizer'])){
+			$ownTitle	= ucfirst($title)." with {$event['organizer']}";
+		}else{
+			$ownTitle	= ucfirst($title);
+		}
+
 		if(strpos(strtolower($ownTitle), 'at home') !== false){
-			$ownTitle	= ucfirst($title).' '.$event['organizer'];
+			if(!empty($event['organizer'])){
+				$ownTitle	= ucfirst($title).' '.$event['organizer'];
+			}
 
 			$event['location']	= 'Home';
 			unset($event['organizer']);
