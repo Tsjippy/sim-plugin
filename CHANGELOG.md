@@ -9,6 +9,7 @@
 
 ### Fixed
 - with is schedule event title  when no organizer
+- vimeo admin js
 
 ## [2.24.2] - 2022-12-06
 
