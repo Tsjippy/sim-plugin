@@ -3,9 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.24.1] - 2022-12-06
+
+
+### Added
 - hide if logged in for blocks
 - welcome message module
 - upcoming arrivals block
+- external url block
 
 ### Changed
 - login module: decide for login and logout menu items seperately
