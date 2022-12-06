@@ -7,6 +7,7 @@
 - welcome message module
 
 ### Changed
+- login module: decide for login and logout menu items seperately
 
 ### Fixed
 
