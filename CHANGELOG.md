@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- cleanup archive vimeo backups
 
 ### Changed
 
