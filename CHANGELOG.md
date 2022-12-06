@@ -11,6 +11,7 @@
 
 ### Fixed
 - resetting passwords when using wp-password-bcrypt
+- bug when block filtering on removed page
 
 ## [2.24.0] - 2022-12-05
 
