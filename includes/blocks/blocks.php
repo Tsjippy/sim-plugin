@@ -14,6 +14,15 @@ add_action( 'enqueue_block_editor_assets', function() {
 
 // Filter block visibility
 add_filter('render_block', function($blockContent, $block){
+	// make sure only published pages are included
+	if(!empty($block['attrs']['onlyOn'])){
+		foreach($block['attrs']['onlyOn'] as $index=>$pageId){
+			if(get_post_status($pageId) != "publish"){
+				unset($block['attrs']['onlyOn'][$index]);
+			}
+		}
+	}
+
 	if(
 		// not on a specific page
 		( !empty($block['attrs']['onlyOn']) && 	!in_array(get_the_ID(), $block['attrs']['onlyOn']) )	||
