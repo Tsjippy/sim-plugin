@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FORMS;
 use SIM;
+use stdClass;
 
 class FormBuilderForm extends SimForms{
 	use ElementHtml;
@@ -847,13 +848,17 @@ class FormBuilderForm extends SimForms{
 	public function elementBuilderForm($element=null){
 		ob_start();
 
+		$heading	= "Please fill in the form to add a new form element";
+
 		if(is_numeric($element)){
 			$element = $this->getElementById($element);
+
+			$heading	= "Change this element";
 		}
 		?>
 		<form action="" method="post" name="add_form_element_form" class="form_element_form sim_form" data-addempty=true>
 			<div style="display: none;" class="error"></div>
-			<h4>Please fill in the form to add a new form element</h4><br>
+			<h4><?php echo $heading;?></h4><br>
 
 			<input type="hidden" name="formid" value="<?php echo $this->formData->id;?>">
 
@@ -865,7 +870,7 @@ class FormBuilderForm extends SimForms{
 			
 			<input type="hidden" name="formfield[width]" value="100">
 			
-			<label>Select which kind of form element you want to add</label><br>
+			<label>Element type</label><br>
 			<select class="formbuilder elementtype" name="formfield[type]" required>
 				<optgroup label="Normal elements">
 					<?php
@@ -1161,6 +1166,10 @@ class FormBuilderForm extends SimForms{
 		$element	= $this->getElementById($elementId);
 
 		if($elementId == -1 || empty($element->conditions)){
+			if(gettype($element) != 'object'){
+				$element	= new stdClass();
+			}
+
 			$dummyFieldCondition['rules'][0]["conditional_field"]	= "";
 			$dummyFieldCondition['rules'][0]["equation"]				= "";
 			$dummyFieldCondition['rules'][0]["conditional_field_2"]	= "";
@@ -1180,7 +1189,8 @@ class FormBuilderForm extends SimForms{
 		ob_start();
 		$counter = 0;
 		foreach($this->formElements as $el){
-			if(in_array($elementId, (array)maybe_unserialize($el->conditions)['copyto'])){
+			$copyTo	= (array)maybe_unserialize($el->conditions);
+			if(!empty($copyTo['copyto']) && in_array($elementId, $copyTo['copyto'])){
 				$counter++;
 				?>
 				<div class="form_element_wrapper" data-id="<?php echo $el->id;?>" data-formid="<?php echo $this->formData->id;?>">
