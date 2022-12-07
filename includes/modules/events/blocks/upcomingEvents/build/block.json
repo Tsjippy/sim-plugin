@@ -20,6 +20,10 @@
     "categories": {
       "type": "object",
       "default": "{}"
+    },
+    "title": {
+      "type": "string",
+      "default": "Upcoming Events"
     }
   }
 }

@@ -9,8 +9,6 @@ const Edit = ({attributes, setAttributes}) => {
 	console.log(attributes);
 	const {title, months} = attributes;
 
-	console.log(title);
-
 	const [html, setHtml] = useState(< Spinner />);
 
 	useEffect( 

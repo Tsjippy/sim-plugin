@@ -3,10 +3,10 @@ import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {Spinner, Panel, PanelBody, CheckboxControl, __experimentalNumberControl as NumberControl} from "@wordpress/components";
+import { TextControl, Spinner, Panel, PanelBody, CheckboxControl, __experimentalNumberControl as NumberControl} from "@wordpress/components";
 
 const Edit = ({attributes, setAttributes}) => {
-	const {items, months, categories} = attributes; 
+	const { items, months, categories, title } = attributes; 
 
 	const onCatChanged	= function(checked){
 		let copy =	{ ...categories }
@@ -81,7 +81,7 @@ const Edit = ({attributes, setAttributes}) => {
 		return (
 			events.map(event => {
 				return (
-					<article className="event-article">
+					<article className="event-article" key={event.id}>
 						<div className="event-wrapper">
 							<div className="event-date">
 								<span>{event.day}</span> {event.month}
@@ -108,6 +108,11 @@ const Edit = ({attributes, setAttributes}) => {
 			<InspectorControls>
 				<Panel>
 					<PanelBody>
+						<TextControl
+							label		= "Block title"
+							value		= { title }
+							onChange	= { (val) => setAttributes({title: val}) }
+						/>
 						Select an category you want to exclude from the list
 						{cats}
 						<NumberControl
@@ -129,7 +134,7 @@ const Edit = ({attributes, setAttributes}) => {
 			</InspectorControls>
 			<div {...useBlockProps()}>
 				<aside className='event'>
-					<h4 className="title">Upcoming events</h4>
+					<h4 className="title">{title}</h4>
 					<div className="upcomingevents_wrapper">
 						{buildHtml()}
 					</div>

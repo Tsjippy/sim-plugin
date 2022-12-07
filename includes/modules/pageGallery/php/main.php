@@ -10,10 +10,11 @@ use SIM;
  * @param	int		$amount			The amount of pages to show
  * @param	array	$categories		The categories of this page type to include. Should be an multidimensional array of taxonmies indexed by postypes containing categories
  * @param	int		$speed			The speed the pages should change
+ * @param	bool	$showIfEmpty	Whether or not show if no pages are found, default true
  *
  * @return	string					The html
  */
-function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed = 60){
+function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed = 60, $showIfEmpty=true){
 	wp_enqueue_script('sim_page_gallery_script');
 
 	ob_start();
