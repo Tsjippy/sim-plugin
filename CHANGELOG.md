@@ -3,12 +3,11 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- cleanup archive vimeo backups
 
 ### Changed
 
 ### Fixed
-- with in schedule event title  when no organizer
+- with is schedule event title  when no organizer
 
 ## [2.24.2] - 2022-12-06
 
