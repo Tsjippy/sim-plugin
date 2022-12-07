@@ -8,6 +8,7 @@
 
 ### Fixed
 - with is schedule event title  when no organizer
+- error in formbuilder
 
 ## [2.24.2] - 2022-12-06
 
