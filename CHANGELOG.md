@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.24.4] - 2022-12-07
+
+
+### Fixed
 - with in schedule event title  when no organizer
 - error in formbuilder
 
