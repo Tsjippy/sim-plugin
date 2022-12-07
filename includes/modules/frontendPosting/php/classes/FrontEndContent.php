@@ -1196,7 +1196,7 @@ class FrontEndContent{
 		$this->postType 	= sanitize_text_field($_POST['post_type']);
 		
 		//First letter should be capital in the title
-		$this->postTitle 	= ucfirst(sanitize_text_field($_POST['post_title']));
+		$this->postTitle 	= ucfirst(trim(sanitize_text_field($_POST['post_title'])));
 
 		$this->oldPost		= '';
 		if(is_numeric($_POST['post_id'])){

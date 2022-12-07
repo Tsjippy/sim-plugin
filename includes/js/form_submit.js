@@ -62,7 +62,12 @@ export async function submitForm(target, url){
 		
 		//save any tinymce forms
 		if (typeof tinymce !== 'undefined') {
-			tinymce.get().forEach((tn)=>tn.save());
+			tinymce.get().forEach((tn)=>{
+				// only save when the visual tab is active
+				if(!tn.hidden){
+					tn.save()
+				}
+			});
 		}
 		
 		let formData = new FormData(form);

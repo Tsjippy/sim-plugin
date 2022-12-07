@@ -244,6 +244,7 @@ async function addCatType(target){
 
 async function submitPost(target){
 	let response	= await FormSubmit.submitForm(target, 'frontend_posting/submit_post');
+	
 	if(response){
 		// If no html found, reload the page
 		if(!response.html || !response.js){

@@ -48,7 +48,7 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
 
         wp_update_post(
             array(
-                'ID'            => $post->ID, 
+                'ID'            => $post->ID,
                 'post_parent'   => $parent
             )
         );

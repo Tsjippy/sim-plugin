@@ -5,50 +5,46 @@ import {useState, useEffect} from "@wordpress/element";
 import {SearchControl,PanelBody, Spinner, CheckboxControl} from "@wordpress/components";
 import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
-import { decodeEntities } from '@wordpress/html-entities';	
+import { decodeEntities } from '@wordpress/html-entities';
+import apiFetch from "@wordpress/api-fetch";
 
 
 const Edit = ({attributes, setAttributes}) => {
 	const {page} = attributes;
 
+	let content;
+
+	if(JSON.parse(page).post_content == undefined){
+		content	= '';
+	}else{
+		content	= JSON.parse(page).post_content ;
+	}
+
 	const [ searchTerm, setSearchTerm ]		= useState( '' );
 	const [ embededPage, setEmbededPage ]   = useState( '' );
+	const [ pageContent, setPageContent ]   = useState( content );
+	const [results, setResults] = useState( false );
 
-	const { pages, resolved } = useSelect(
-		( select) => {
-			// do not show results if not searching
-			if ( !searchTerm ) {
-				return{
-					pages: [],
-					resolved: true
-				}
-			}
-
-			// find all pages
-			const query = {
-				search  : searchTerm,
-				per_page: 100,
-				orderby : 'relevance'
-			};
-
-			const pagesArgs         = [ 'postType', 'page', query ];
-
-			return {
-				pages: select( coreDataStore ).getEntityRecords(
-					...pagesArgs
-				),
-				resolved: select( coreDataStore ).hasFinishedResolution(
-					'getEntityRecords',
-					pagesArgs
-				)
-			};
-		},
-		[ searchTerm ]
+	useEffect( 
+		async () => {
+			setResults( false );
+			const response = await apiFetch({
+				path: sim.restApiPrefix+'/embedpage/find',
+				method: 'POST',
+    			data: { 
+					search: searchTerm
+				},
+			});
+			setResults( response );
+		} ,
+		[searchTerm]
 	);
 
 	const PageSelected	= function(selected){
 		if(selected){
-			setAttributes({ page: this });
+			console.log(JSON.stringify(this));
+			setAttributes({ page: JSON.stringify(this)});
+			setPageContent(this.post_content)
 		}else{
 			setAttributes({ page: null });
 		}
@@ -58,11 +54,12 @@ const Edit = ({attributes, setAttributes}) => {
 		if(page == undefined){
 			return '';
 		}
+
 		return (
 			<>
 			Currently embeded page:
 			<CheckboxControl
-				label		= {decodeEntities( page.title.rendered )}
+				label		= {decodeEntities( JSON.parse(page).post_title )}
 				onChange	= {PageSelected.bind(page)}
 				checked		= {true}
 			/>
@@ -70,8 +67,8 @@ const Edit = ({attributes, setAttributes}) => {
 		)
 	}
 
-	const SearchResults	= function({ hasResolved, pageList }){
-		if ( ! hasResolved ) {
+	const SearchResults	= function({ pageList }){
+		if ( ! results ) {
 			return(
 				<>
 				<Spinner />
@@ -79,7 +76,7 @@ const Edit = ({attributes, setAttributes}) => {
 				</>
 			);
 		}
-	
+
 		if ( ! pageList?.length ) {
 			if ( !searchTerm ) {
 				return '';
@@ -87,58 +84,38 @@ const Edit = ({attributes, setAttributes}) => {
 			return <div> {__('No search results', 'sim')}</div>;
 		}
 		
-		return pages?.map( ( p ) => {
+		return results?.map( ( p ) => {
 			return (
 			<CheckboxControl
-				label		= {decodeEntities( p.title.rendered )}
+				label		= {decodeEntities( p.post_title )}
 				onChange	= {PageSelected.bind(p)}
 				checked		= {attributes.page==p}
 			/>)
 		} )
 	}
 
-	const { pageContent, pageResolved } = useSelect(
-		( select) => {
-
-			if(attributes.page == undefined){
-				return {
-					pageContent:	false,
-					pageResolved:	false
-				}
-			}
-
-			const pagesArgs         = [ 'postType', 'page', { include : [attributes.page.id] } ];
-
-			return {
-				pageContent: select( coreDataStore ).getEntityRecords(
-					...pagesArgs
-				),
-				pageResolved: select( coreDataStore ).hasFinishedResolution(
-					'getEntityRecords',
-					pagesArgs
-				)
-			};
-		},
-		[ attributes.page ]
-	);
-
 	useEffect(
 		() => {
-			if(!pageContent){
+			if(pageContent != null && pageContent != ""){
+				setEmbededPage(wp.element.RawHTML( { children: pageContent }));
+			}else if(!pageContent || pageContent == null || pageContent == ''){
 				setEmbededPage(__('Please select a page...', 'sim'));
 			}else{
 				setEmbededPage(wp.element.RawHTML( { children: pageContent[0].content.raw }));
 			}
 			
 		},
-		[pageResolved]
+		[pageContent]
 	)
 
-	const SearchPage	= () => {
+	const SearchPage	= (hideIfFound) => {
+		if(pageContent != "" && hideIfFound){
+			return '';
+		}
 		return(
 			<>
 				< SearchControl onChange={setSearchTerm} value={ searchTerm } autoFocus={true}/>
-				< SearchResults hasResolved= {resolved} pageList= {pages} />
+				< SearchResults pageList= {results} />
 			</>
 		)
 	}
@@ -149,11 +126,11 @@ const Edit = ({attributes, setAttributes}) => {
 				<PanelBody title={ __( 'Page Embed Settings', 'sim' ) }>
 					< BuildCheckboxControls  />
 					<i>{__('Use searchbox below to search for a page', 'sim')}</i>
-					{ SearchPage() }
+					{ SearchPage(false) }
 				</PanelBody>
 			</InspectorControls>
 			<div {...useBlockProps()}>
-				{ SearchPage() }
+				{ SearchPage(true) }
 				{embededPage}
 			</div>
 		</>

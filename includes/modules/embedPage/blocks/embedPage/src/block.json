@@ -12,7 +12,8 @@
 	"style": "file:./style-index.css",
 	"attributes": {
 		"page": {
-		  "type": "object"
+			"type": "string",
+			"default": "{}"
 		}
 	}
 }

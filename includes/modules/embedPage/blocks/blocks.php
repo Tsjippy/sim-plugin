@@ -18,8 +18,11 @@ add_action('init', function () {
 	);
 });
 
-function displayEmbedBlock($value){
-	echo displayPageContents([$value['page']['id']]);
+function displayEmbedBlock($attributes){
+	$page	= json_decode($attributes['page']);
+	if(isset($page->ID)){
+		return displayPageContents($page->ID);
+	}
 }
 
 function externalblock($attributes){

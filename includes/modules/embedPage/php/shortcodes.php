@@ -21,10 +21,10 @@ function displayPageContents($id){
 	ob_start();
 
     // post
-    if(is_numeric($id[0])){
+    if(is_numeric($id)){
         $args = array(
             'post_type' => 'any',
-            'post__in' => array($id[0])
+            'post__in' => array($id)
         );
         $wp_query = new \WP_Query( $args );
 
@@ -35,7 +35,7 @@ function displayPageContents($id){
             }
         }
     // category or archive
-    }else{
+    }elseif(is_array($id)){
         if(count($id) == 2){
             $args = array(
                 'post_type' => rtrim($id[0], 's'),
