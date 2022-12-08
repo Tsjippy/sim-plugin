@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.24.5] - 2022-12-07
+
+
+### Changed
+- embed other post types
+
 ## [2.24.4] - 2022-12-07
 
 
