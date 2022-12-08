@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- option to hide embeded page contents
 
 ### Changed
 
