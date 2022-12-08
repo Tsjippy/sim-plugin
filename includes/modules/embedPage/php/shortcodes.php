@@ -13,7 +13,7 @@ add_shortcode('embed_page', function($atts){
     return displayPageContents($id);
 });
 
-function displayPageContents($id){
+function displayPageContents($id, $collapsible=false){
     global $wp_query;
 
     $oldQuery   = $wp_query;
@@ -31,7 +31,30 @@ function displayPageContents($id){
         if ( $wp_query->have_posts() ) {
             while ( $wp_query->have_posts() ) {
                 $wp_query->the_post();
-                the_content();
+
+                if($collapsible){
+                    ?>
+                    <span class='small content-embed-toggle'>
+                        <span class='underline'>
+                            <?php
+                            the_title();
+                            ?>
+                            <span class='icon'>
+                                ▼
+                            </span>
+                        </span>
+                    
+                        <div class='content-embed hidden'>
+                            <?php
+                            the_content();
+                            ?>
+                        </div>
+                    </span>
+                    <?php
+                }else{
+                    the_content();
+                }
+
             }
         }
     // category or archive

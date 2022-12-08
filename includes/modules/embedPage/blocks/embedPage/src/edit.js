@@ -8,7 +8,7 @@ import apiFetch from "@wordpress/api-fetch";
 
 
 const Edit = ({attributes, setAttributes}) => {
-	const {page} = attributes;
+	const { page, hide } = attributes;
 
 	let content;
 
@@ -121,6 +121,12 @@ const Edit = ({attributes, setAttributes}) => {
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Page Embed Settings', 'sim' ) }>
+					<CheckboxControl
+						label		= { __('Only show contents on hover') }
+						onChange	= { (checked) => setAttributes({ hide: checked}) }
+						checked		= { hide }
+					/>
+
 					< BuildCheckboxControls  />
 					<i>{__('Use searchbox below to search for a page', 'sim')}</i>
 					{ SearchPage(false) }

@@ -21,7 +21,7 @@ add_action('init', function () {
 function displayEmbedBlock($attributes){
 	$page	= json_decode($attributes['page']);
 	if(isset($page->ID)){
-		return displayPageContents($page->ID);
+		return displayPageContents($page->ID, $attributes['hide']);
 	}
 }
 
