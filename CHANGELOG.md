@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- option to hide embeded page contents
 
 ### Changed
+
+### Fixed
+
+## [2.24.6] - 2022-12-08
+
+
+### Added
+- option to hide embeded page contents
 
 ### Fixed
 - ical export should be in UTC
