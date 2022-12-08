@@ -281,15 +281,20 @@ function setTableHeight(){
 	// calculate how heigh the table should be
 	let footerHeight, headerHeight;
 	document.querySelectorAll('.sim-table').forEach( table => {
+		let wrapper	= table.closest('.table-wrapper');
+		if(wrapper == null){
+			return;
+		}
+		
 		if(fullscreen != null){
 			headerHeight	= 0;
-			table.closest('.table-wrapper').querySelectorAll('.table-head').forEach(el=> headerHeight = el.offsetHeight);
+			wrapper.querySelectorAll('.table-head').forEach(el=> headerHeight = el.offsetHeight);
 		}else{
 			headerHeight	= document.querySelector('header').offsetHeight;
 		}
 		
 		footerHeight	= 0;
-		table.closest('.table-wrapper').querySelectorAll('.sim-table-footer').forEach(el=> footerHeight	= el.offsetHeight);
+		wrapper.querySelectorAll('.sim-table-footer').forEach(el=> footerHeight	= el.offsetHeight);
 
 		let px	= headerHeight + footerHeight + 40;
 		table.style.maxHeight	= `calc(100vh - ${px}px)`;

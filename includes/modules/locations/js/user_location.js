@@ -1,5 +1,3 @@
-import { isMobileDevice } from './../../../js/imports.js';
-
 console.log("Location.js loaded");
 
 function fillLocationFields(event){
@@ -106,8 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	//If the current locationbutton is clicked, get the location, and fill the form
 	let el 	= document.querySelector('.current-location');
 	if(el != null){
-		console.log(isMobileDevice());
-		if (isMobileDevice() && navigator.geolocation) {
+		if (Main.isMobileDevice() && navigator.geolocation) {
 			el.addEventListener('click', ev=>navigator.geolocation.getCurrentPosition(showPosition));
 		} else { 
 			el.classList.add('hide');
