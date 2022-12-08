@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- ical export should be in UTC
 
 ## [2.24.5] - 2022-12-07
 
