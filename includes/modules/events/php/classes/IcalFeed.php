@@ -83,8 +83,8 @@ class IcalFeed{
 
 		//between times
 		if(empty($meta['allday'])){
-			$start			= date($this->icalFormat, strtotime($meta['startdate'].' '.$meta['starttime']));
-			$end			= date($this->icalFormat, strtotime($meta['enddate'].' '.$meta['endtime']));
+			$start			= get_gmt_from_date($meta['startdate'].' '.$meta['starttime'], $this->icalFormat);
+			$end			= get_gmt_from_date($meta['enddate'].' '.$meta['endtime'], $this->icalFormat);
 			$start			= "DTSTART:$start\r\n";
 			$end			= "DTEND:$end\r\n";
 		//all day
