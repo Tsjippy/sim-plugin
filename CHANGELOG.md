@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- summary selected by default in signal block
 
 ### Fixed
 - bug in dynamic js files
