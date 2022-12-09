@@ -13,46 +13,42 @@ add_shortcode('embed_page', function($atts){
     return displayPageContents($id);
 });
 
-function displayPageContents($id, $collapsible=false){
+function displayPageContents($id, $collapsible=false, $linebreak=false){
     global $wp_query;
-
-    $oldQuery   = $wp_query;
 
 	ob_start();
 
     // post
     if(is_numeric($id)){
-        $args = array(
-            'post_type' => 'any',
-            'post__in' => array($id)
-        );
-        $wp_query = new \WP_Query( $args );
+        $post       = get_post($id);
 
-        if ( $wp_query->have_posts() ) {
-            while ( $wp_query->have_posts() ) {
-                $wp_query->the_post();
+        if ( !empty($post)) {
+            $content    = get_the_content( null, false, $post );
+            $content    = apply_filters( 'the_content', $content );
+            $content    = str_replace( ']]>', ']]&gt;', $content );
 
-                if($collapsible){
-                    ?>
-                    <span class='small content-embed-toggle'>
-                        <span class='underline'>
-                            <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a>
-                            <span class='icon'>
-                                ▼
-                            </span>
-                        </span>
-                    
-                        <div class='content-embed hidden'>
-                            <?php
-                            the_content();
-                            ?>
-                        </div>
-                    </span>
-                    <?php
-                }else{
-                    the_content();
+            if($collapsible){
+                if($linebreak){
+                    echo '<br>';
                 }
-
+                ?>
+                <span class='small content-embed-toggle'>
+                    <span class='underline'>
+                        <a href="<?php the_permalink($post); ?>" title="<?php the_title_attribute(['post' => $post]); ?>"><?php echo get_the_title( $post ); ?></a>
+                        <span class='icon'>
+                            ▼
+                        </span>
+                    </span>
+                
+                    <div class='content-embed hidden'>
+                        <?php
+                        echo $content;
+                        ?>
+                    </div>
+                </span>
+                <?php
+            }else{
+                echo $content;
             }
         }
     // category or archive
@@ -75,14 +71,15 @@ function displayPageContents($id, $collapsible=false){
             $type   = 'archive';
         }
 
+        $oldQuery   = $wp_query;
         $wp_query   = new \WP_Query($args);
         $wp_query->is_embed = true;
         $template           = SIM\getTemplateFile('', $type, $id[0]);
 
         include_once($template);
-    }
 
-    $wp_query   = $oldQuery;
+        $wp_query   = $oldQuery;
+    }
 
     return ob_get_clean();
 }

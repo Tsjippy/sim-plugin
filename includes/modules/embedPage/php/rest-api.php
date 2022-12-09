@@ -35,4 +35,28 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
+
+    register_rest_route(
+        RESTAPIPREFIX.'/embedpage',
+        '/result',
+        array(
+            'methods'               => 'POST,GET',
+            'callback'              => function($wpRequest){
+                $id             = $wpRequest->get_param('id');
+                $collapsible    = $wpRequest->get_param('collapsible');
+                $linebreak      = $wpRequest->get_param('linebreak');
+
+                return displayPageContents($id, $collapsible, $linebreak);
+            },
+            'permission_callback'   => '__return_true',
+            'args'					=> array(
+				'id'	=> array(
+					'required'	=> true
+				),
+                'collapsible'	=> array(
+					'required'	=> true
+				),
+			)
+		)
+	);
 });

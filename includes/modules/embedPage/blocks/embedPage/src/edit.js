@@ -6,22 +6,45 @@ import { SearchControl,PanelBody, Spinner, CheckboxControl } from "@wordpress/co
 import { decodeEntities } from '@wordpress/html-entities';
 import apiFetch from "@wordpress/api-fetch";
 
-
 const Edit = ({attributes, setAttributes}) => {
-	const { page, hide } = attributes;
+	const { page, hide, newline, content } = attributes;
 
-	let content;
+	let noPostString	= __('Please select a page...', 'sim');
 
-	if(JSON.parse(page).post_content == undefined){
-		content	= '';
+	let initialContent;
+
+	if(JSON.parse(page).post_content == undefined || content == undefined){
+		initialContent	= noPostString;
 	}else{
-		content	= JSON.parse(page).post_content ;
+		initialContent	= wp.element.RawHTML( { children: content } );
 	}
 
 	const [ searchTerm, setSearchTerm ]		= useState( '' );
-	const [ embededPage, setEmbededPage ]   = useState( '' );
-	const [ pageContent, setPageContent ]   = useState( content );
+	const [ pageContent, setPageContent ]   = useState( initialContent );
 	const [ results, setResults ] 			= useState( false );
+
+	const SetContent	= async function(id, collapsible=hide, linebreak=newline){
+	
+		setPageContent(	<Spinner /> );
+	
+		initialContent	= await apiFetch({
+			path: sim.restApiPrefix+'/embedpage/result',
+			method: 'POST',
+			data: { 
+				id: id,
+				collapsible: collapsible,
+				linebreak: linebreak
+			},
+		});
+
+		if(initialContent.trim() == ''){
+			initialContent = "<div class='error'>Empty post</div>";
+		}
+
+		setAttributes({ content: initialContent});
+	
+		setPageContent(wp.element.RawHTML( { children: initialContent }));
+	}
 
 	useEffect( 
 		async () => {
@@ -38,17 +61,30 @@ const Edit = ({attributes, setAttributes}) => {
 		[searchTerm]
 	);
 
-	const PageSelected	= function(selected){
+	const PageSelected	= async function(selected, post){
 		if(selected){
-			setAttributes({ page: JSON.stringify(this)});
-			setPageContent(this.post_content)
+			SetContent(post.ID);
+			setAttributes({ page: JSON.stringify(post)});
 		}else{
 			setAttributes({ page: null });
+			setPageContent( noPostString );
 		}
 	}
 
+	const VisibilityChanged	= async function(checked){
+		setAttributes({ hide: checked});
+
+		SetContent(JSON.parse(page).ID, checked);
+	}
+
+	const LineBreakChanged	= async function(checked){
+		setAttributes({ newline: checked});
+
+		SetContent(JSON.parse(page).ID, hide, checked);
+	}
+
 	const BuildCheckboxControls = function(){
-		if(page == undefined){
+		if(page == '{}'){
 			return '';
 		}
 
@@ -57,7 +93,7 @@ const Edit = ({attributes, setAttributes}) => {
 			Currently embeded page:
 			<CheckboxControl
 				label		= {decodeEntities( JSON.parse(page).post_title )}
-				onChange	= {PageSelected.bind(page)}
+				onChange	= { (value) => PageSelected( value, JSON.parse(page) ) }
 				checked		= {true}
 			/>
 			</>
@@ -84,29 +120,15 @@ const Edit = ({attributes, setAttributes}) => {
 		return results?.map( ( p ) => {
 			return (
 			<CheckboxControl
-				label		= {decodeEntities( p.post_title )}
-				onChange	= {PageSelected.bind(p)}
-				checked		= {attributes.page==p}
+				label		= { decodeEntities( p.post_title )}
+				onChange	= { (value) => PageSelected( value, p ) }
+				checked		= { attributes.page==p}
 			/>)
 		} )
 	}
 
-	useEffect(
-		() => {
-			if(pageContent != null && pageContent != ""){
-				setEmbededPage(wp.element.RawHTML( { children: pageContent }));
-			}else if(!pageContent || pageContent == null || pageContent == ''){
-				setEmbededPage(__('Please select a page...', 'sim'));
-			}else{
-				setEmbededPage(wp.element.RawHTML( { children: pageContent[0].content.raw }));
-			}
-			
-		},
-		[pageContent]
-	)
-
 	const SearchPage	= (hideIfFound) => {
-		if(pageContent != "" && hideIfFound){
+		if(pageContent != noPostString && hideIfFound){
 			return '';
 		}
 		return(
@@ -123,8 +145,14 @@ const Edit = ({attributes, setAttributes}) => {
 				<PanelBody title={ __( 'Page Embed Settings', 'sim' ) }>
 					<CheckboxControl
 						label		= { __('Only show contents on hover') }
-						onChange	= { (checked) => setAttributes({ hide: checked}) }
+						onChange	= { (checked) => VisibilityChanged(checked) }
 						checked		= { hide }
+					/>
+
+					<CheckboxControl
+						label		= { __('Add a line break') }
+						onChange	= { (checked) => LineBreakChanged(checked) }
+						checked		= { newline }
 					/>
 
 					< BuildCheckboxControls  />
@@ -134,7 +162,7 @@ const Edit = ({attributes, setAttributes}) => {
 			</InspectorControls>
 			<div {...useBlockProps()}>
 				{ SearchPage(true) }
-				{embededPage}
+				{pageContent}
 			</div>
 		</>
 	);
