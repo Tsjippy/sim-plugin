@@ -36,9 +36,7 @@ function displayPageContents($id, $collapsible=false){
                     ?>
                     <span class='small content-embed-toggle'>
                         <span class='underline'>
-                            <?php
-                            the_title();
-                            ?>
+                            <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a>
                             <span class='icon'>
                                 ▼
                             </span>

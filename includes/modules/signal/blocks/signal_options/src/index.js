@@ -27,17 +27,23 @@ registerPlugin( 'signal-options', {
             return '';
         }
     
-        const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
+        const [ meta, setMeta ]     = useEntityProp( 'postType', postType, 'meta' );
 
         const sendSignal			= meta[ 'send_signal' ];
-	    const signalMessageType		= meta[ 'signal_message_type' ];
+	    let signalMessageType		= meta[ 'signal_message_type' ];
 	    const signalExtraMessage	= meta[ 'signal_extra_message' ];
         const signalUrl	            = meta[ 'signal_url' ];
+
+        if(signalMessageType != 'all'){
+            signalMessageType   = 'summary';
+        }
 
         const updateMetaValue = ( value, key ) => {
             let newMeta	= { ...meta };
 
             newMeta[key]	= value;
+
+            console.log(newMeta);
     
             setMeta( newMeta );
         };	

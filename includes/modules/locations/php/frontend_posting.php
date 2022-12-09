@@ -48,7 +48,7 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
 
         wp_update_post(
             array(
-                'ID'            => $post->ID, 
+                'ID'            => $post->ID,
                 'post_parent'   => $parent
             )
         );
@@ -87,7 +87,7 @@ function setLocationAddress($postId){
         isset($_POST['location'])				&&
         isset($_POST['location']['latitude'])	&&
         isset($_POST['location']['longitude'])  &&
-        !empty($_POST['location']['latitude'])  && 
+        !empty($_POST['location']['latitude'])  &&
         !empty($_POST['location']['longitude'])
     ){
         update_metadata( 'post', $postId, 'location', json_encode($_POST['location']));
