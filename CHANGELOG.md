@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- line break to page embed block
 
 ### Changed
 - summary selected by default in signal block
