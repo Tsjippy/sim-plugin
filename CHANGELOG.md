@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.24.7] - 2022-12-09
+
+
+### Added
 - line break to page embed block
 
 ### Changed
