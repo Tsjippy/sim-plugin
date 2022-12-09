@@ -71,9 +71,9 @@ class Schedules{
 
 	/**
 	 * Get a specific schedule from the db
-	 * 
+	 *
 	 * @param	int	$id		the schedule ID
-	 * 
+	 *
 	 * @return 	object		the schedule
 	*/
 	function findScheduleById($id){
@@ -110,6 +110,7 @@ class Schedules{
 		ob_start();
 
 		if (
+			$schedule->target											&&		// There is a target set
 			(
 				$schedule->target == $this->user->ID 					||		// Target is me
 				$schedule->target == SIM\hasPartner($this->user->ID)			// Target is the partner
@@ -230,11 +231,11 @@ class Schedules{
 
 	/**
 	 * Get a single event on a specific date and time
-	 * 
+	 *
 	 * @param	object	$schedule	the Schedule
 	 * @param 	string	$startDate	The Date the event starts
 	 * @param	string	#startTime	The time the event starts
-	 * 
+	 *
 	 * @return 	object|false		The event or false if no event
 	*/
 	function getScheduleEvent($schedule, $startDate, $startTime){
@@ -258,11 +259,11 @@ class Schedules{
 
 	/**
 	 * Get multiple events on a specific date and time
-	 * 
+	 *
 	 * @param	int		$scheduleId		the Schedule id
 	 * @param 	string	$startDate		The Date the event starts
 	 * @param	string	#startTime		The time the event starts
-	 * 
+	 *
 	 * @return 	object|false			The event or false if no event
 	*/
 	function getScheduleEvents($scheduleId, $startDate, $startTime){
@@ -274,9 +275,9 @@ class Schedules{
 
 	/**
 	 * Get all personal events belonging to a schedule
-	 * 
+	 *
 	 * @param	object	$schedule		the Schedule
-	 * 
+	 *
 	 * @return 	array					Array of objects
 	*/
 	function getPersonalOrientationEvents($schedule){
@@ -291,11 +292,11 @@ class Schedules{
 
 	/**
 	 * Creates a meal cell html
-	 * 
+	 *
 	 * @param	object	$schedule		the Schedule
 	 * @param	string	$date			date string
 	 * @param	string	$startTime		time string
-	 * 
+	 *
 	 * @return 	array					Cell html
 	*/
 	function writeMealCell($schedule, $date, $startTime){
@@ -419,10 +420,10 @@ class Schedules{
 
 	/**
 	 * Write all rws of a schedule table
-	 * 
+	 *
 	 * @param	object	$schedule		the Schedule
 	 * @param	bool	$onlyMeals		Whether to only write the meal rows. Default false
-	 * 
+	 *
 	 * @return 	array					Rows html
 	*/
 	function writeRows($schedule, $onlyMeals = false){
@@ -437,8 +438,8 @@ class Schedules{
 		while(true){
 			//If we do not have an orientation schedule, go strait to the dinner row
 			if(
-				$startTime >= $this->lunchEndTime	&& 
-				$startTime < $this->dinerTime		&& 
+				$startTime >= $this->lunchEndTime	&&
+				$startTime < $this->dinerTime		&&
 				!$schedule->orientation
 			){
 				$startTime = $this->dinerTime;
@@ -511,7 +512,7 @@ class Schedules{
 		
 	/**
 	 * Create all modals
-	 * 
+	 *
 	 * @return 	string		the modal html
 	*/
 	function addModals(){
@@ -530,7 +531,7 @@ class Schedules{
 					<input type='hidden' name='oldtime'>
 					<?php
 					echo SIM\userSelect('', true, true, '', 'host', [], '', [], 'list');
-					echo SIM\addSaveButton('add_host','Add host','update_schedule'); 
+					echo SIM\addSaveButton('add_host','Add host','update_schedule');
 					?>
 				</form>
 			</div>
@@ -550,7 +551,7 @@ class Schedules{
 					<input type='text' class='wide' name='recipe_keyword'>
 					
 					<?php
-					echo SIM\addSaveButton('add_recipe_keyword','Add recipe keywords','update_schedule'); 
+					echo SIM\addSaveButton('add_recipe_keyword','Add recipe keywords','update_schedule');
 					?>
 				</form>
 			</div>
@@ -642,7 +643,7 @@ class Schedules{
 
 	/**	
 	 * Create the form to add a schedule
-	 * 
+	 *
 	 * @return 	string		the form html
 	*/
 	function addScheduleForm($update=false){

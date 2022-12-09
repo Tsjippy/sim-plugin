@@ -431,10 +431,10 @@ function hideRows() {
 }
 
 function addSelectable(){
-	//Add selectable on non-mobile devices
-	if(!Main.isMobileDevice()){
-		//loop over all the schedule tables
-		document.querySelectorAll('.sim-table.schedule').forEach(function(table){
+	//loop over all the schedule tables
+	document.querySelectorAll('.sim-table.schedule').forEach(function(table){
+		//Add selectable on non-mobile devices or if it is only a lunch and dinner schedule
+		if(!Main.isMobileDevice() || table.rows.length < 7){
 			if(table._selectable != undefined){
 				table._selectable.destroy();
 			}
@@ -451,8 +451,8 @@ function addSelectable(){
 			
 			//Run the function afterSelect when selection is final
 			table._selectable.on('end', afterSelect);
-		});
-	}
+		}
+	});
 
 	hideRows();
 }
