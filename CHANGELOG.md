@@ -10,6 +10,7 @@
 
 ### Fixed
 - bug in dynamic js files
+- mealschedule reservation on mobile
 
 ## [2.24.6] - 2022-12-08
 
