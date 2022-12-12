@@ -409,9 +409,11 @@ class SimForms{
 	 * Get all elements belonging to the current form
 	 *
 	 * @param	string	$sortCol	the column to sort on. Default empty
+	 * @param	int		$formId		The id of the form to get elements for, default empty
+	 * @param	bool	$force		Whether to requery, default false
 	 */
-	public function getAllFormElements($sortCol = '', $formId=''){
-		if(isset($this->formElements)){
+	public function getAllFormElements($sortCol = '', $formId='', $force=false){
+		if(isset($this->formElements) && !$force){
 			return '';
 		}
 		

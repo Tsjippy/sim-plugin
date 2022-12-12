@@ -423,10 +423,11 @@ function addFormElement(){
 			$element->priority	= $wpdb->get_var( "SELECT COUNT(`id`) FROM `{$simForms->elTableName}` WHERE `form_id`={$element->form_id}") +1;
 		}else{
 			$element->priority	= $_POST['insertafter'] + 1;
-			$simForms->reorderElements(-1, $element->priority, $element);
 		}
 
 		$element->id	= $simForms->insertElement($element);
+		
+		$simForms->reorderElements(-1, $element->priority, $element);
 	}
 		
 	$formBuilderForm	= new FormBuilderForm();
@@ -504,10 +505,10 @@ function reorderFormElements(){
 
 	$formBuilder->formId	= $_POST['form_id'];
 	
-	$oldIndex 	= $_POST['old_index'];
-	$newIndex	= $_POST['new_index'];
+	$oldIndex 				= $_POST['old_index'];
+	$newIndex				= $_POST['new_index'];
 
-	$element	= $formBuilder->getElementById($_POST['el_id']);
+	$element				= $formBuilder->getElementById($_POST['el_id']);
 	
 	$formBuilder->reorderElements($oldIndex, $newIndex, $element);
 	
@@ -544,12 +545,15 @@ function requestFormConditionsHtml(){
 function saveElementConditions(){
 	$formBuilder	= new SaveFormSettings();
 
-	$elementID 		= $_POST['elementid'];
-	$formID			= $_POST['formid'];
+	$elementId		= $_POST['elementid'];
+	if(!$elementId){
+		return new \WP_Error('forms', "First save the element before adding conditions to it");
+	}
+	$formId			= $_POST['formid'];
 	
-	$formBuilder->getForm($formID);
+	$formBuilder->getForm($formId);
 	
-	$element = $formBuilder->getElementById($elementID);
+	$element = $formBuilder->getElementById($elementId);
 	
 	$elementConditions	= $_POST['element_conditions'];
 	if(empty($elementConditions)){

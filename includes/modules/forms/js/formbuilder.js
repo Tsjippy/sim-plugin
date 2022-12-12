@@ -508,8 +508,6 @@ function addRuleRow(row){
 }
 
 function addOppositeCondition(clone, target){
-	console.log(clone)
-	console.log(target)
 	//Set values to opposite
 	clone.querySelectorAll('.element_condition').forEach(function(el){
 		if(el.tagName == 'SELECT' && el.classList.contains('equation')){
@@ -973,6 +971,14 @@ window.addEventListener('change', ev=>{
 				opt.value 		= key;
 				datalist.appendChild(opt);
 			});
+		}
+	}
+
+	if(ev.target.matches("[name*='[property_value]']")){
+		if(numericElements.includes(ev.target.value)){
+			document.querySelectorAll('.addition.hidden').forEach(el=>el.classList.remove('hidden'));
+		}else{
+			document.querySelectorAll('.addition:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 		}
 	}
 });

@@ -219,30 +219,47 @@ function printArray($message, $display=false){
 	}
 }
 
+/**
+ * Prints html properly outlined for easy debugging
+ */
 function printHtml($html){
 	$tabs	= 0;
 
+	// Split on the < symbol to get a list of opening and closing tags
 	$html		= explode('>', $html);
 	$newHtml	= '';
 
-	foreach($html as $el){
+	// loop over the elements
+	foreach($html as $index=>$el){
 		if(empty($el)){
 			continue;
 		}
 
-		$lines= explode('</', $el);
+		// Split the line on a closing character </
+		$lines	= explode('</', $el);
 
 		if(!empty($lines[0])){
 			$newHtml	.= "\n";
 			
+			// write as many tabs as need
 			for ($x = 0; $x <= $tabs; $x++) {
 				$newHtml	.= "\t";
 			}
 
+			// then write the first element
 			$newHtml	.= $lines[0];
 		}
 
-		if(substr($el, 0, 1) == '<' && substr($el, 0, 2) != '</' && substr($el, 0, 6) != '<input' && $el != '<br'){
+		if(
+			substr($el, 0, 1) == '<' && 						// Element start with an opening symbol
+			substr($el, 0, 2) != '</' && 						// It does not start with a closing symbol
+			substr($el, 0, 6) != '<input' && 					// It does not start with <input (as that one does not have a closing />)
+			(
+				substr($el, 0, 7) != '<option' || 				// It does not start with <option (as that one does not have a closing />)
+				strpos( $html[$index+1], '</option')  !== false // or the next element contains a closing option
+			) &&
+			$el != '<br'
+		){
 			$tabs++;
 		}
 		
@@ -364,7 +381,7 @@ function familyFlatArray($userId){
 /**
  * Check if user has partner
  * @param 	int		$userId	 	WP User_ID
- * 
+ *
  * @return	int|false			The partner user id, or false if no partner
 */
 function hasPartner($userId) {

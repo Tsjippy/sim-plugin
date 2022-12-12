@@ -125,14 +125,14 @@ class FormBuilderForm extends SimForms{
 				}
 				
 				if($element->type == 'formstep'){
-					$html .= ' ***formstep element***</div>';
+					$html .= ' ***Formstep element***</div>';
 				}elseif($element->type == 'datalist'){
-					$html .= ' ***datalist element***';
+					$html .= " ***Datalist element $element->name***";
 				}elseif($element->type == 'multi_start'){
-					$html .= ' ***multi answer start***';
+					$html .= ' ***Multi answer start***';
 					$elementHtml	= '';
 				}elseif($element->type == 'multi_end'){
-					$html .= ' ***multi answer end***';
+					$html .= ' ***Multi answer end***';
 					$elementHtml	= '';
 				}elseif($element->type == 'div_start'){
 					$name			= ucfirst(str_replace('_', ' ', $element->name));
@@ -855,7 +855,17 @@ class FormBuilderForm extends SimForms{
 
 			$heading	= "Change this element";
 		}
+
+		$numericElements	= [];
+		foreach($this->formElements as $el){
+			if(in_array($el->type, ['date', 'number', 'range', 'week', 'month']) ){
+				$numericElements[]	= $el->id;
+			}
+		}
 		?>
+		<script>
+			const numericElements	= <?php echo json_encode($numericElements); ?>
+		</script>
 		<form action="" method="post" name="add_form_element_form" class="form_element_form sim_form" data-addempty=true>
 			<div style="display: none;" class="error"></div>
 			<h4><?php echo $heading;?></h4><br>
@@ -1380,9 +1390,10 @@ class FormBuilderForm extends SimForms{
 						<br>
 						
 						<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property'){echo 'checked';}?> required>
-						<label for='property'>Set the</label>
-						
-						<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
+						<label for='property'>
+							Set the
+							<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
+						</label>
 						<datalist id="propertylist">
 							<option value="value">
 							<option value="min">
@@ -1392,7 +1403,19 @@ class FormBuilderForm extends SimForms{
 						
 						<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][property_value]'>
 							<?php echo $this->inputDropdown($condition['property_value'], $elementId);?>
-						</select><br>
+						</select>
+
+						<?php
+						$type	= $this->getElementById($condition['property_value'], 'type');
+						$hidden	= 'hidden';
+						if(in_array($type, ['date', 'number', 'range', 'week', 'month']) ){
+							$hidden	= '';
+						}
+						?>
+						<label class='addition <?php echo $hidden;?>'>
+							+ <input type='number' name="element_conditions[<?php echo $conditionIndex;?>][addition]" class='element_condition' value="<?php echo $condition['addition'];?>" style='width: 60px;'> days
+						</label>
+						<br>
 					</div>
 				</div>
 			</div>

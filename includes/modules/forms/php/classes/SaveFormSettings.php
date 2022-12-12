@@ -107,7 +107,7 @@ class SaveFormSettings extends SimForms{
 		}
 
 		// Get all elements of this form
-		$this->getAllFormElements('priority', $this->formId);
+		$this->getAllFormElements('priority', $this->formId, true);
 
 		// find the element
 		if(empty($element)){
@@ -120,7 +120,12 @@ class SaveFormSettings extends SimForms{
 		}
 
 		//No need to reorder if we are adding a new element at the end
-		if(count($this->formElements) == $newPriority){
+		if($element->priority == $newPriority && count($this->formElements) == $element->priority){
+			return;
+		}
+
+		//No need to reorder if we are adding a new element at the end
+		if(count($this->formElements) == $newPriority && $this->formElements[0]->priority != 1){
 			// First element is the element without priority
 			$el				= $this->formElements[0];
 			$el->priority	= $newPriority;

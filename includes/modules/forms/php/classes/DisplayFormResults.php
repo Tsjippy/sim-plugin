@@ -397,6 +397,10 @@ class DisplayFormResults extends DisplayForm{
 			//check if it was already added a previous time
 			$alreadyInSettings = false;
 			foreach($this->columnSettings as $el){
+				if(!is_array($el)){
+					continue;
+				}
+				
 				if($el['name'] == $name){
 					$alreadyInSettings = true;
 					break;
@@ -456,7 +460,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 		
 		//check for removed elements
-		foreach(array_diff(array_keys($this->columnSettings), $elementIds) as $condition){
+		foreach(array_diff(array_keys((array)$this->columnSettings), $elementIds) as $condition){
 			//only unset elements
 			if(is_numeric($condition) && $condition > -1){
 				unset($this->columnSettings[$condition]);
@@ -1100,7 +1104,7 @@ class DisplayFormResults extends DisplayForm{
 											$checked = '';
 										}
 										echo "<label>";
-											echo "<input type='checkbox' name='settings[split][]' value='$id' $checked>   ";
+											echo "<input type='checkbox' name='form_settings[split][]' value='$id' $checked>   ";
 											echo $name;
 										echo "</label><br>";
 									}

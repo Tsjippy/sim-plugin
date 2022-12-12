@@ -206,7 +206,7 @@ function saveTablePrefs( \WP_REST_Request $request ) {
 		$columnName		= $request['column_name'];
 
 		$userId		= get_current_user_id();
-		$hiddenColumns	= (array)get_user_meta($userId, 'hidden_columns_'.$request['formid'], true);	
+		$hiddenColumns	= (array)get_user_meta($userId, 'hidden_columns_'.$request['formid'], true);
 
 		$hiddenColumns[$columnName]	= 'hidden';
 
@@ -275,7 +275,7 @@ function saveColumnSettings($settings='', $shortcodeId=''){
 		return new \WP_Error('db error', $wpdb->print_error());
 	}
 
-	return "Succesfully saved your column settings";	
+	return "Succesfully saved your column settings";
 }
 
 function saveTableSettings(){

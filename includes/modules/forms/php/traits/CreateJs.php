@@ -103,21 +103,33 @@ trait CreateJs{
                             
                             //make sure we do not include other fields in changed or click rules
                             if(in_array($equation, ['changed', 'clicked'])){
-                                $fieldCheckIf   = "$propCompare == '$conditionalFieldName'";
+                                // do not add the same element name twice
+                                if(strpos($fieldCheckIf, $conditionalFieldName) === false){
+                                    if(!empty($fieldCheckIf)){
+                                        $fieldCheckIf   .= " || ";
+                                    }
+                                    $fieldCheckIf   .= "$propCompare == '$conditionalFieldName'";
+                                }
                                 $checkForChange = true;
                             }
                             
                             //Only allow or statements
                             if(!$checkForChange || (isset($condition['rules'][$ruleIndex-1]) && $condition['rules'][$ruleIndex-1]['combinator'] == 'OR')){
-                                //Write the if statement to check if the current clicked field belongs to this condition
-                                if(!empty($fieldCheckIf)){
-                                    $fieldCheckIf .= " || ";
+                                // do not add the same element name twice
+                                if(strpos($fieldCheckIf, "$propCompare == '$conditionalFieldName'") === false){
+                                    //Write the if statement to check if the current clicked field belongs to this condition
+                                    if(!empty($fieldCheckIf)){
+                                        $fieldCheckIf .= " || ";
+                                    }
+                                    $fieldCheckIf .= "$propCompare == '$conditionalFieldName'";
                                 }
-                                $fieldCheckIf .= "$propCompare == '$conditionalFieldName'";
                                 
-                                //If there is an extra field to check
-                                if(is_numeric($rule['conditional_field_2'])){
-                                    $fieldCheckIf .= " || $propCompare == '$conditionalField2Name'";
+                                // do not add the same element name twice
+                                if(strpos($fieldCheckIf, "$propCompare == '$conditionalField2Name'") === false){
+                                    //If there is an extra field to check
+                                    if(is_numeric($rule['conditional_field_2'])){
+                                        $fieldCheckIf .= " || $propCompare == '$conditionalField2Name'";
+                                    }
                                 }
                             }
             
@@ -328,7 +340,12 @@ trait CreateJs{
                                     $actionArray[] = $actionCode;
                                 }
                             }else{
-                                $actionCode    = "FormFunctions.changeFieldProperty('$selector', '$propertyName', $varName, {$this->formName}.processFields, form);";
+
+                                $addition       = '';
+                                if(!empty($condition['addition'])){
+                                    $addition       = $condition['addition'];
+                                }
+                                $actionCode    = "FormFunctions.changeFieldProperty('$selector', '$propertyName', $varName, {$this->formName}.processFields, form, $addition);";
                                 if(!in_array($actionCode, $actionArray)){
                                     $actionArray[] = $actionCode;
                                 }
@@ -405,7 +422,7 @@ trait CreateJs{
             
             $newJs  .= "\n\t\tprevEl = el;";
             $newJs  .= "\n\n\t\t//clear event prevenion after 100 ms";
-            $newJs  .= "\n\t\tsetTimeout(function(){ prevEl = ''; }, 100);";
+            $newJs  .= "\n\t\tsetTimeout(function(){ prevEl = ''; }, 50);";
 
             $newJs  .= "\n\n\t\tif(elName == 'nextBtn'){";
                 $newJs  .= "\n\t\t\tFormFunctions.nextPrev(1);";
@@ -471,6 +488,9 @@ trait CreateJs{
                                 $newJs  .= buildQuerySelector($action, "\t\t\t\t");
                             }else{
                                 $newJs  .= "\t\t\t\t$action\n";
+                                if(strpos($action, 'formstep') !== false){
+                                    $newJs  .= "\t\t\t\tFormFunctions.updateMultiStepControls(form);\n";
+                                }
                             }
                         }
                         $newJs  .= "\t\t\t}\n";

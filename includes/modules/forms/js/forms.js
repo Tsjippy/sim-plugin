@@ -255,6 +255,29 @@ export function tidyMultiInputs(){
 		})
 	});
 }
+
+export function updateMultiStepControls(form){
+	// get active formsteps amount
+	let formsteps			= form.querySelectorAll('.formstep');
+	let visibleFormsteps	= form.querySelectorAll('.formstep:not(.hidden)');
+	let stepIndicators		= form.querySelectorAll('.multistepcontrols_wrapper .step');
+
+	// update step circles amount
+	for(let x = visibleFormsteps.length; x < formsteps.length; x++){
+		stepIndicators[x].classList.add('hidden');
+	}
+
+	// check if this is the last visible
+	let activeFormstep		= form.querySelector('.formstep:not(.stephidden)');
+	if(visibleFormsteps[visibleFormsteps.length-1] == activeFormstep){
+		// make the submit button visible
+		form.querySelector('.nextBtn').classList.add('hidden');
+		form.querySelector('.form_submit ').classList.remove('hidden');
+	}else{
+		form.querySelector('.nextBtn').classList.remove('hidden');
+		form.querySelector('.form_submit ').classList.add('hidden');
+	}
+}
 	
 //show a next form step
 export function showTab(n, form) {
@@ -330,7 +353,14 @@ export function nextPrev(n) {
 		// Report validity of each required field
 		let elements	= x[currentTab].querySelectorAll('.required:not(.hidden) input, .required:not(.hidden) textarea, .required:not(.hidden) select');
 		for(const element of elements) {
-			if(element.closest('div.nice-select') == null && (element.type != 'file' || element.closest('.file_upload_wrap').querySelector('.documentpreview input') == null)){
+			if(
+				element.closest('.hidden')	== null	&&
+				element.closest('div.nice-select') == null && 
+				(
+					element.type != 'file' || 
+					element.closest('.file_upload_wrap').querySelector('.documentpreview input') == null
+				)
+			){
 
 				element.required		= true;
 				valid		= element.reportValidity();
@@ -364,6 +394,10 @@ export function nextPrev(n) {
 	while(x[currentTab].classList.contains('hidden')){
 		//go to the next tab
 		currentTab = currentTab + n;
+
+		if (currentTab >= x.length) {
+			break;
+		}
 	}
 	
 	// if you have reached the end of the form... :
@@ -372,6 +406,8 @@ export function nextPrev(n) {
 	}
 	// Otherwise, display the correct tab:
 	showTab(currentTab,form);
+
+	return true;
 }
 
 export function changeFieldValue(selector, value, functionRef, form){
@@ -472,9 +508,22 @@ export function changeFieldValue(selector, value, functionRef, form){
 	}
 }
 
-export function changeFieldProperty(selector, att, value, functionRef, form){
+export function changeFieldProperty(selector, att, value, functionRef, form, addition=''){
 	//first change the value
 	let target = form.querySelector(selector);
+
+	// calculate the new value
+	if(addition != ''){
+		// check if a date
+		if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)){
+			let date	= new Date(value);
+			date.setDate(date.getDate() + parseInt(addition));
+			value	= date.toISOString().split('T')[0];
+		}else{
+			value	= value + parseInt(addition);
+		}
+	}
+
 	target[att] = value;
 	
 	//create a new event
