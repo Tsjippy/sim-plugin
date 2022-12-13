@@ -5,9 +5,14 @@
 ### Added
 
 ### Changed
-- can now dynamically add min=today etc to date form elements
 
 ### Fixed
+
+## [2.24.8] - 2022-12-13
+
+
+### Changed
+- can now dynamically add min=today etc to date form elements
 
 ## [2.24.7] - 2022-12-09
 
