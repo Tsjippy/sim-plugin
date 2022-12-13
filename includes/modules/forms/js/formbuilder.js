@@ -624,14 +624,16 @@ function removeConditionRule(target){
 				let ruleRow		= target.closest('.rule_row');
 				
 				//get the current row index
-				let ruleRowIndex	= ruleRow.dataset.rule_index;
+				let ruleRowIndex	= parseInt(ruleRow.dataset.rule_index);
 				
 				//Get previous row
-				let prevRow		= conditionRow.querySelector('[data-rule_index="'+(ruleRowIndex - 1)+'"]')
+				let prevRow		= conditionRow.querySelector('[data-rule_index="'+(ruleRowIndex - 1)+'"]');
 				
 				if(prevRow != null){
-					//remove the active class from row above
-					prevRow.querySelectorAll('.active').forEach(el=>el.classList.remove('active'));
+					//remove the active class from row above if there is no row after this one
+					if(conditionRow.querySelector(`[data-rule_index="${ruleRowIndex + 1}"]`) == null){
+						prevRow.querySelectorAll('.active').forEach(el=>el.classList.remove('active'));
+					}
 					
 					//clear the hidden input
 					prevRow.querySelector('.combinator').value	= '';
@@ -976,9 +978,9 @@ window.addEventListener('change', ev=>{
 
 	if(ev.target.matches("[name*='[property_value]']")){
 		if(numericElements.includes(ev.target.value)){
-			document.querySelectorAll('.addition.hidden').forEach(el=>el.classList.remove('hidden'));
+			ev.target.closest('.condition_form').querySelectorAll('.addition.hidden').forEach(el=>el.classList.remove('hidden'));
 		}else{
-			document.querySelectorAll('.addition:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+			ev.target.closest('.condition_form').querySelectorAll('.addition:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 		}
 	}
 });

@@ -1388,18 +1388,20 @@ class FormBuilderForm extends SimForms{
 						<label> to:</label>
 						<input type="text" name="element_conditions[<?php echo $conditionIndex;?>][action_value]" class='element_condition' value="<?php echo $condition['action_value'];?>">
 						<br>
-						
-						<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property'){echo 'checked';}?> required>
-						<label for='property'>
+						<label>
+							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property'){echo 'checked';}?> required>
 							Set the
-							<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
 						</label>
+					
 						<datalist id="propertylist">
 							<option value="value">
 							<option value="min">
 							<option value="max">
 						</datalist>
-						<label for='property'> property to the value of </label>
+						<label>
+							<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
+							property to the value of
+						</label>
 						
 						<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][property_value]'>
 							<?php echo $this->inputDropdown($condition['property_value'], $elementId);?>
