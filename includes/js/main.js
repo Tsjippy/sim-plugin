@@ -42,6 +42,7 @@ function switchTab(event=null){
 	
 	let mainTab 	= params.main_tab;
 	let lastTab		= '';
+
 	if(mainTab != null){
 		//find the tab and display it
 		document.querySelectorAll(`[data-param_val="${mainTab}"]`).forEach(tabbutton=>{
@@ -183,6 +184,10 @@ export function showModal(modal){
 		// Prevent main page scrolling
 		document.body.style.top			= `-${window.scrollY}px`;
 		document.body.style.position 	= 'fixed';
+		let prim						= document.getElementById('primary');
+		if(prim != null){
+			prim.style.zIndex			= 99999;
+		}
 
 		modal.classList.remove('hidden');
 	}	
@@ -200,6 +205,10 @@ export function hideModals(){
 		document.body.style.position 	= '';
 		document.body.style.top 		= '';
 		window.scrollTo(0, parseInt(scrollY || '0') * -1);
+		let prim						= document.getElementById('primary');
+		if(prim != null){
+			prim.style.zIndex			= 1;
+		}
 	}
 }
 

@@ -135,7 +135,7 @@ class SaveFormSettings extends SimForms{
 
 		// Move the element to the new position priority should be index+1
 		if($oldPriority == -1){
-			$out				= [$element];
+			$out				= $element;
 		}else{
 			$out				= array_splice($this->formElements, $oldPriority-1, 1);
 		}
@@ -143,7 +143,7 @@ class SaveFormSettings extends SimForms{
 
  		//Loop over all elements and give them the new priority
 		foreach($this->formElements as $index=>$el){
-			if($index+1 != $el->priority){
+			if($index+1 != $el->priority ){
 				$el->priority	= $index+1;
 				$this->updatePriority($el);
 			}

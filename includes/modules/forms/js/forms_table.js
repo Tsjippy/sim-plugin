@@ -390,7 +390,7 @@ document.addEventListener("click", event=>{
 	
 	//Open settings modal
 	if(target.classList.contains('edit_formshortcode_settings')){
-		document.querySelector('.modal.form_shortcode_settings').classList.remove('hidden');
+		Main.showModal(document.querySelector('.modal.form_shortcode_settings'));
 	}
 	
 	//Edit data

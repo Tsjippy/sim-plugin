@@ -299,7 +299,7 @@ trait ElementHtml{
 					//remove any leading "
 					$optionValue	= trim($optionValue, '\'"');
 
-					if($element->type == 'date' && in_array($optionType, ['min', 'max', 'value'])){
+					if($element->type == 'date' && in_array($optionType, ['min', 'max', 'value']) && strtotime($optionValue)){
 						$optionValue	= Date('Y-m-d', strtotime($optionValue));
 					}
 

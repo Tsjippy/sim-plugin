@@ -33,7 +33,7 @@ class FormBuilderForm extends SimForms{
 		
 		foreach($this->formElements as $element){
 			//do not include the element itself do not include non-input types
-			if($element->id != $elementId && !in_array($element->type, ['label', 'info', 'datalist', 'formstep'])){
+			if($element->id != $elementId && !in_array($element->type, ['label', 'info', 'datalist', 'formstep', 'div_end'])){
 				$name = ucfirst(str_replace('_',' ',$element->name));
 
 				// add the id if non-unique name
@@ -1339,7 +1339,7 @@ class FormBuilderForm extends SimForms{
 							</select>
 						</span>
 						<?php
-						if(strpos($rule['equation'], 'value') !== false || in_array($rule['equation'], ['changed','checked','!checked'])){
+						if(strpos($rule['equation'], 'value') !== false || in_array($rule['equation'], ['changed','checked','!checked', 'visible', 'invisible'])){
 							$hidden = 'hidden';
 						}else{
 							$hidden = '';
