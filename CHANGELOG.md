@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- can now dynamically add min=today etc to date form elements
 
 ### Fixed
 
