@@ -165,7 +165,7 @@ trait CreateJs{
                                 NOW WE KNOW THAT THE CHANGED FIELD BELONGS TO THIS CONDITION
                                 LETS CHECK IF ALL THE VALUES ARE MET AS WELL
                             */
-                            if(!in_array($equation, ['changed', 'clicked', 'checked', '!checked'])){
+                            if(!in_array($equation, ['changed', 'clicked', 'checked', '!checked', 'visible', 'invisible'])){
                                 $conditionVariables[]      = "var value_$fieldNumber1 = FormFunctions.getFieldValue('$conditionalFieldName', form, true, $compareValue2, true);";
                                 
                                 if(is_numeric($rule['conditional_field_2'])){
@@ -185,6 +185,10 @@ trait CreateJs{
                                 }else{
                                     $conditionIf .= "!form.querySelector('[name=\"$conditionalFieldName\"]').checked";
                                 }
+                            }elseif($equation == 'visible'){
+                                $conditionIf .= "form.querySelector(\"[name='$conditionalFieldName']\").closest('.hidden') == null";
+                            }elseif($equation == 'invisible'){
+                                $conditionIf .= "form.querySelector(\"[name='$conditionalFieldName']\").closest('.hidden') != null";
                             }elseif($equation != 'changed' && $equation != 'clicked'){
                                 $conditionIf .= "$compareValue1 $equation $compareValue2";
                             }elseif($equation == 'changed' || $equation == 'clicked'){

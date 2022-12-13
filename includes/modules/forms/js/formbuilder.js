@@ -413,7 +413,7 @@ function maybeRemoveElement(target){
 }
 
 function showOrHideConditionFields(target){
-	//showdefault conditional field
+	//show default conditional field
 	target.closest('.rule_row').querySelector('[name*="conditional_value"]').classList.remove('hidden');
 	
 	//hide extra fields
@@ -435,8 +435,10 @@ function showOrHideConditionFields(target){
 	}else if(target.dataset.value != undefined && (
 			target.dataset.value.includes('changed') || 
 			target.dataset.value.includes('clicked') ||
+			target.dataset.value.includes('visible') ||
+			target.dataset.value.includes('invisible') ||
 			target.dataset.value.includes('checked')
-		)){
+	)){
 		target.closest('.rule_row').querySelector('[name*="conditional_value"]').classList.add('hidden');
 	}
 }

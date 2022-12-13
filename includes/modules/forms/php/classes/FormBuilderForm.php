@@ -1277,6 +1277,8 @@ class FormBuilderForm extends SimForms{
 									'< value'	=> 'smaller than the value of',
 									'-'			=> 'minus the value of',
 									'+'			=> 'plus the value of',
+									'visible'	=> 'is visible',
+									'invisible'	=> 'is not visible',
 								];
 
 								foreach($optionArray as $option=>$optionLabel){
