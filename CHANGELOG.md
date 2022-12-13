@@ -3,16 +3,12 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- visible/invisible rule to forms
 
 ### Changed
 
 ### Fixed
-
-## [2.24.8.2] - 2022-12-13
-
-
-### Added
-- visible/invisible rule to forms
+- date bug in forms
 
 ## [2.24.8.1] - 2022-12-13
 
