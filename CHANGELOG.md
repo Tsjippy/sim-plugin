@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.24.8.1] - 2022-12-13
+
+
+### Fixed
+- issue when removing conditional rule in formbuilder
+
 ## [2.24.8] - 2022-12-13
 
 
