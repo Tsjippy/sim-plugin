@@ -204,7 +204,7 @@ trait ElementHtml{
 
 	 /**
 	 * Renders the html for element who can have multiple inputs
-	 * 
+	 *
 	 * @param	object	$element		The element
 	 * @param	array	$values			The values for this element
 	 * @param	string	$elementHtml	The html of a single element
@@ -298,6 +298,10 @@ trait ElementHtml{
 
 					//remove any leading "
 					$optionValue	= trim($optionValue, '\'"');
+
+					if($element->type == 'date' && in_array($optionType, ['min', 'max', 'value'])){
+						$optionValue	= Date('Y-m-d', strtotime($optionValue));
+					}
 
 					//Write the corrected option as html
 					$elOptions	.= " $optionType=\"$optionValue\"";

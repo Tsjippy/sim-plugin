@@ -410,7 +410,7 @@ export function nextPrev(n) {
 	return true;
 }
 
-export function changeFieldValue(selector, value, functionRef, form){
+export function changeFieldValue(selector, value, functionRef, form, addition=''){
 	let name		= '';
 	let target		= '';
 
@@ -446,6 +446,18 @@ export function changeFieldValue(selector, value, functionRef, form){
 					removeNode(el);
 				}
 			});
+		}
+	}
+
+	// calculate the new value
+	if(addition != ''){
+		// check if a date
+		if (/\d{4}-\d{2}-\d{2}/.test(value)){
+			let date	= new Date(value);
+			date.setDate(date.getDate() + parseInt(addition));
+			value	= date.toISOString().split('T')[0];
+		}else{
+			value	= value + parseInt(addition);
 		}
 	}
 	
@@ -515,7 +527,7 @@ export function changeFieldProperty(selector, att, value, functionRef, form, add
 	// calculate the new value
 	if(addition != ''){
 		// check if a date
-		if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)){
+		if (/\d{4}-\d{2}-\d{2}/.test(value)){
 			let date	= new Date(value);
 			date.setDate(date.getDate() + parseInt(addition));
 			value	= date.toISOString().split('T')[0];

@@ -334,17 +334,16 @@ trait CreateJs{
                                 }
                             }
                             
+                            $addition       = '';
+                            if(!empty($condition['addition'])){
+                                $addition       = $condition['addition'];
+                            }
                             if($propertyName == 'value'){
-                                $actionCode    = "FormFunctions.changeFieldValue('$selector', $varName, {$this->formName}.processFields, form);";
+                                $actionCode    = "FormFunctions.changeFieldValue('$selector', $varName, {$this->formName}.processFields, form, $addition);";
                                 if(!in_array($actionCode, $actionArray)){
                                     $actionArray[] = $actionCode;
                                 }
                             }else{
-
-                                $addition       = '';
-                                if(!empty($condition['addition'])){
-                                    $addition       = $condition['addition'];
-                                }
                                 $actionCode    = "FormFunctions.changeFieldProperty('$selector', '$propertyName', $varName, {$this->formName}.processFields, form, $addition);";
                                 if(!in_array($actionCode, $actionArray)){
                                     $actionArray[] = $actionCode;
