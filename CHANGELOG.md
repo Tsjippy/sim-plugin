@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- visible/invisible rule to forms
 
 ### Changed
 
