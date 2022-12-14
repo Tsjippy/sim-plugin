@@ -430,8 +430,6 @@ export function changeFieldValue(selector, value, functionRef, form, addition=''
 	}
 
 	let oldValue	= getFieldValue(target, form, false, value);
-	console.log(oldValue);
-	console.log(value);
 	// nothing to change
 	if(oldValue == value){
 		return;
@@ -525,15 +523,11 @@ export function changeFieldValue(selector, value, functionRef, form, addition=''
 	
 	//run the originating function with this event
 	if(typeof functionRef == 'function'){
-		console.log(target);
 		functionRef(target);
 	}
 }
 
 export function changeVisibility(action, el, functionRef){
-	console.log(action);
-	console.log(el);
-
 	let wrapper	= el.closest('.inputwrapper');
 	if(wrapper == null){
 		wrapper	= el
