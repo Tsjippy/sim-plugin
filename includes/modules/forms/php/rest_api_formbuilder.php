@@ -592,7 +592,7 @@ function saveFormSettings(){
 	//remove double slashes
 	$formSettings['upload_path']	= str_replace('\\\\', '\\', $formSettings['upload_path']);
 	
-	$formBuilder->maybeInsertForm();
+	$formBuilder->maybeInsertForm($_POST['formid']);
 	
 	$result	= $formBuilder->updateFormSettings($_POST['formid'], $formSettings);
 	

@@ -289,9 +289,15 @@ class FormBuilderForm extends SimForms{
 	 * Form to change form settings
 	 */
 	public function formSettingsForm(){
+
 		global $wp_roles;
 		
 		$settings = $this->formData->settings;
+
+		global $wpdb;
+		$results=$wpdb->get_results("SELECT `settings` FROM `Lcew4_sim_forms` WHERE `id`=58");
+		SIM\printArray($results[0], true);
+		SIM\printArray(maybe_unserialize($results[0]->settings), true);
 		
 		//Get all available roles
 		$userRoles = $wp_roles->role_names;
@@ -1614,7 +1620,9 @@ class FormBuilderForm extends SimForms{
 
 		if(is_array($settings)){
 			if(!empty($settings['formurl'])){
-				$result->settings			= str_replace($settings['formurl'], "%FORMURL%", $result->settings );
+				$newSettings				= maybe_unserialize($result->settings);
+				$newSettings['formurl']		= "%FORMURL%";
+				$result->settings			= maybe_serialize($newSettings);
 			}
 
 			$settings						= $result->settings;
@@ -1627,7 +1635,7 @@ class FormBuilderForm extends SimForms{
 		
 		$keys	= '(`'.implode('`, `', array_keys((array) $this->formElements[0])).'`)';
 
-		$content	= "INSERT INTO `$tableName` VALUES ('','$name',{$this->formData->version},'$settings','$emails')\n";
+		$content	= "INSERT INTO `$tableName` (`name`, `version`, `settings`, `emails`) VALUES ('$name',{$this->formData->version},'$settings','$emails')\n";
 
 		foreach($this->formElements as $element){
 			$query	= "INSERT INTO `$elTableName` $keys VALUES (";
