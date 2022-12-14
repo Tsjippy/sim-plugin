@@ -1,5 +1,6 @@
 import { addStyles } from './../../../js/imports.js';
-export { getFieldValue } from  '../../../js/field_value.js';
+import { getFieldValue } from  '../../../js/field_value.js';
+export{ getFieldValue };
 
 
 async function saveFormInput(target){
@@ -428,6 +429,14 @@ export function changeFieldValue(selector, value, functionRef, form, addition=''
 		name		= target.name;
 	}
 
+	let oldValue	= getFieldValue(target, form, false, value);
+	console.log(oldValue);
+	console.log(value);
+	// nothing to change
+	if(oldValue == value){
+		return;
+	}
+
 	// Check if we are dealing with a multi input field
 	if(target == null){
 		let targets 	= form.querySelectorAll(`.clone_div [name^="${name}" i]`);
@@ -516,7 +525,41 @@ export function changeFieldValue(selector, value, functionRef, form, addition=''
 	
 	//run the originating function with this event
 	if(typeof functionRef == 'function'){
+		console.log(target);
 		functionRef(target);
+	}
+}
+
+export function changeVisibility(action, el, functionRef){
+	console.log(action);
+	console.log(el);
+
+	let wrapper	= el.closest('.inputwrapper');
+	if(wrapper == null){
+		wrapper	= el
+	}
+	
+	if(action == 'add'){
+		if(wrapper.matches('.hidden')){
+			return;
+		}
+		wrapper.classList.add('hidden');
+	}else{
+		if(!wrapper.matches('.hidden')){
+			return;
+		}
+		wrapper.classList.remove('hidden');
+	}
+	//form.querySelector("[name='$conditionalFieldName']").closest('.hidden') == null;
+
+	//create a new event
+	let evt = new Event('input');
+	//attach the target
+	wrapper.dispatchEvent(evt);
+	
+	//run the originating function with this event
+	if(typeof functionRef == 'function'){
+		functionRef(el);
 	}
 }
 

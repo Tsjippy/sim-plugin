@@ -857,14 +857,19 @@ class FormBuilderForm extends SimForms{
 		}
 
 		$numericElements	= [];
+		$dateElements		= [];
 		foreach($this->formElements as $el){
 			if(in_array($el->type, ['date', 'number', 'range', 'week', 'month']) ){
 				$numericElements[]	= $el->id;
+			}
+			if(in_array($el->type, ['date', 'week', 'month']) ){
+				$dateElements[]	= $el->id;
 			}
 		}
 		?>
 		<script>
 			const numericElements	= <?php echo json_encode($numericElements); ?>
+			const dateElements		= <?php echo json_encode($dateElements); ?>
 		</script>
 		<form action="" method="post" name="add_form_element_form" class="form_element_form sim_form" data-addempty=true>
 			<div style="display: none;" class="error"></div>
@@ -1412,12 +1417,18 @@ class FormBuilderForm extends SimForms{
 						<?php
 						$type	= $this->getElementById($condition['property_value'], 'type');
 						$hidden	= 'hidden';
+						$hidden2= 'hidden';
 						if(in_array($type, ['date', 'number', 'range', 'week', 'month']) ){
 							$hidden	= '';
+
+							if(in_array($type, ['date', 'week', 'month']) ){
+								$hidden2	= '';
+							}
 						}
 						?>
 						<label class='addition <?php echo $hidden;?>'>
-							+ <input type='number' name="element_conditions[<?php echo $conditionIndex;?>][addition]" class='element_condition' value="<?php echo $condition['addition'];?>" style='width: 60px;'> days
+							+ <input type='number' name="element_conditions[<?php echo $conditionIndex;?>][addition]" class='element_condition' value="<?php echo $condition['addition'];?>" style='width: 60px;'>
+							<span class='days <?php echo $hidden2;?>'> days</span>
 						</label>
 						<br>
 					</div>

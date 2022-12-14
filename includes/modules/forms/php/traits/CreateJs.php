@@ -173,7 +173,9 @@ trait CreateJs{
                                 }
                             }
                             
-                            if($equation == 'checked'){
+                            if(empty($equation)){
+                                return new \WP_Error('forms', "$element->name has a rule without equation set. Please check");
+                            }elseif($equation == 'checked'){
                                 if(count($condition['rules'])==1){
                                     $conditionIf .= "el.checked";
                                 }else{
@@ -301,7 +303,7 @@ trait CreateJs{
                         //set property value
                         }elseif($action == 'property' || $action == 'value'){
                             //set the attribute value of one field to the value of another field
-                            $selector		= getSelector($element);
+                            $selector		= $this->getSelector($element);
                             
                             //fixed prop value
                             if($action == 'value'){
@@ -402,7 +404,7 @@ trait CreateJs{
         $newJs  .= "\n\n\tvar listener = function(event) {";
             $newJs  .= "\n\t\tvar el			= event.target;";
             $newJs  .= "\n\t\tform			= el.closest('form');";
-            $newJs  .= "\n\t\tvar elName		= el.name;";
+            $newJs  .= "\n\t\tvar elName		= el.getAttribute('name');";
             $newJs  .= "\n\n\t\tif(elName == '' || elName == undefined){";
                 $newJs  .= "\n\t\t\t//el is a nice select";
                 $newJs  .= "\n\t\t\tif(el.closest('.nice-select-dropdown') != null && el.closest('.inputwrapper') != null){";
@@ -446,7 +448,7 @@ trait CreateJs{
         */
         $newJs   = '';
         $newJs  .= "\n\n\tthis.processFields    = function(el){";
-            $newJs  .= "\n\t\tvar elName = el.name;\n";
+            $newJs  .= "\n\t\tvar elName = el.getAttribute('name');\n";
             $newJs  .= "\n\t\tvar form	= el.closest('form');\n";
             foreach($checks as $if => $check){
                 // empty if is not allowed
@@ -467,7 +469,7 @@ trait CreateJs{
 
                 foreach($check['actions'] as $index=>$action){
                     if($index === 'querystrings'){
-                        $newJs  .= buildQuerySelector($action, "\t\t\t");
+                        $newJs  .= $this->buildQuerySelector($action, "\t\t\t");
                     }else{
                         $newJs  .= "\t\t\t$action\n";
                     }
@@ -488,7 +490,7 @@ trait CreateJs{
                         $newJs  .= "\n\t\t\t$if\n";
                         foreach($prop['actions'] as $index=>$action){
                             if($index === 'querystrings'){
-                                $newJs  .= buildQuerySelector($action, "\t\t\t\t");
+                                $newJs  .= $this->buildQuerySelector($action, "\t\t\t\t");
                             }else{
                                 $newJs  .= "\t\t\t\t$action\n";
                                 if(strpos($action, 'formstep') !== false){
@@ -564,65 +566,67 @@ trait CreateJs{
 
         return $errors;
     }
-}
 
-function buildQuerySelector($queryStrings, $prefix){
-    $actionCode    = '';
-    foreach($queryStrings as $action=>$elements){
-        //multiple
-        if(count($elements) > 1){
-            $actionCode    .= "{$prefix}form.querySelectorAll('";
-            $last           = array_key_last($elements);
-            foreach($elements as $key=>$element){
-                $actionCode     .= getSelector($element);
 
-                if($key != $last){
-                    $actionCode    .= ', ';
+    function buildQuerySelector($queryStrings, $prefix){
+        $actionCode    = '';
+        foreach($queryStrings as $action=>$elements){
+            //multiple
+            if(count($elements) > 1){
+                $actionCode    .= "{$prefix}form.querySelectorAll('";
+                $last           = array_key_last($elements);
+                foreach($elements as $key=>$element){
+                    $actionCode     .= $this->getSelector($element);
+
+                    if($key != $last){
+                        $actionCode    .= ', ';
+                    }
                 }
+                $actionCode    .= "').forEach(el=>{\n";
+                    //$actionCode    .= "{$prefix}\ttry{\n";
+                        $actionCode    .= "{$prefix}\t\t//Make sure we only do each wrapper once by adding a temp class\n";
+                        $actionCode    .= "{$prefix}\t\tif(!el.closest('.inputwrapper').matches('.action-processed')){\n";
+                            $actionCode    .= "{$prefix}\t\t\tel.closest('.inputwrapper').classList.add('action-processed');\n";
+                            //$actionCode    .= "{$prefix}\t\t\tel.closest('.inputwrapper').classList.$action('hidden');\n";
+                            $actionCode    .= "{$prefix}\t\t\tFormFunctions.changeVisibility('$action', el, {$this->formName}.processFields);\n";
+                        $actionCode    .= "{$prefix}\t\t}\n";
+                    //$actionCode    .= "{$prefix}\t}catch(e){\n";
+                        //$actionCode    .= "{$prefix}\t\tel.classList.$action('hidden');\n";
+                    //$actionCode    .= "{$prefix}\t}\n";
+                $actionCode    .= "{$prefix}});\n";
+                $actionCode    .= "{$prefix}document.querySelectorAll('.action-processed').forEach(el=>{el.classList.remove('action-processed')});\n";
+            //just one
+            }elseif(count($elements) == 1){
+                $selector       = $this->getSelector($elements[0]);
+                //$actionCode    .= "{$prefix}form.querySelector('$selector').closest('.inputwrapper').classList.$action('hidden');\n";
+                $actionCode    .= "{$prefix}FormFunctions.changeVisibility('$action', form.querySelector('$selector').closest('.inputwrapper'), {$this->formName}.processFields);\n";
             }
-            $actionCode    .= "').forEach(el=>{\n";
-                $actionCode    .= "{$prefix}\ttry{\n";
-                    $actionCode    .= "{$prefix}\t\t//Make sure we only do each wrapper once by adding a temp class\n";
-                    $actionCode    .= "{$prefix}\t\tif(!el.closest('.inputwrapper').matches('.action-processed')){\n";
-                        $actionCode    .= "{$prefix}\t\t\tel.closest('.inputwrapper').classList.add('action-processed');\n";
-                        $actionCode    .= "{$prefix}\t\t\tel.closest('.inputwrapper').classList.$action('hidden');\n";
-                    $actionCode    .= "{$prefix}\t\t}\n";
-                $actionCode    .= "{$prefix}\t}catch(e){\n";
-                    $actionCode    .= "{$prefix}\t\tel.classList.$action('hidden');\n";
-                $actionCode    .= "{$prefix}\t}\n";
-            $actionCode    .= "{$prefix}});\n";
-            $actionCode    .= "{$prefix}document.querySelectorAll('.action-processed').forEach(el=>{el.classList.remove('action-processed')});\n";
-        //just one
-        }elseif(count($elements) == 1){
-            $selector       = getSelector($elements[0]);
-            $actionCode    .= "{$prefix}form.querySelector('$selector')";
-            $actionCode    .= ".closest('.inputwrapper').classList.$action('hidden');\n";
         }
+
+        return $actionCode;
     }
 
-    return $actionCode;
-}
+    function getSelector($element){
+        $queryById          = false;
+        $name				= $element->name;
 
-function getSelector($element){
-    $queryById          = false;
-    $name				= $element->name;
+        if(strpos($name, '[]') !== false){
+            $queryById          = true;
+        }elseif(in_array($element->type, ['radio', 'checkbox']) && strpos($name, '[]') === false) {
+            $name .= '[]';
+        }
 
-    if(strpos($name, '[]') !== false){
-        $queryById          = true;
-    }elseif(in_array($element->type, ['radio', 'checkbox']) && strpos($name, '[]') === false) {
-        $name .= '[]';
-    }
+        if(in_array($element->type, ['file', 'image'])){
+            $name .= '_files[]';
+        }
 
-    if(in_array($element->type, ['file', 'image'])){
-        $name .= '_files[]';
-    }
-
-    if($queryById){
-        return '#E'.$element->id;
-    }elseif(empty($element->multiple)){
-        return "[name=\"$name\"]";
-    }else{
-        // name is followed by an index [0]
-        return "[name^=\"{$name}[]\"]";
+        if($queryById){
+            return '#E'.$element->id;
+        }elseif(empty($element->multiple)){
+            return "[name=\"$name\"]";
+        }else{
+            // name is followed by an index [0]
+            return "[name^=\"{$name}[]\"]";
+        }
     }
 }

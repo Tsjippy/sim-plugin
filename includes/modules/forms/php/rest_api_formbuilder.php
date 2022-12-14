@@ -571,7 +571,9 @@ function saveElementConditions(){
 	//Create new js
 	$errors		 = $formBuilder->createJs();
 
-	if(!empty($errors)){
+	if(is_wp_error($errors)){
+		return $errors;
+	}elseif(!empty($errors)){
 		$message	.= "\n\nThere were some errors:\n";
 		$message	.= implode("\n", $errors);
 	}

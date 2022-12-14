@@ -984,6 +984,11 @@ window.addEventListener('change', ev=>{
 		}else{
 			ev.target.closest('.condition_form').querySelectorAll('.addition:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 		}
+		if(dateElements.includes(ev.target.value)){
+			ev.target.closest('.condition_form').querySelectorAll('.addition .days.hidden').forEach(el=>el.classList.remove('hidden'));
+		}else{
+			ev.target.closest('.condition_form').querySelectorAll('.addition .days:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+		}
 	}
 });
 
