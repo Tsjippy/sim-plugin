@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- export form settings
 
 ## [2.24.8.3] - 2022-12-13
 
