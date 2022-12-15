@@ -86,6 +86,10 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 	}
 
 	if(empty($posts)){
+		if($showIfEmpty){
+			return '';
+		}
+		
 		?>
 		<article class="page-gallery-article">
 			<h3 class="page-gallery-title"><?php echo $title;?></h3>
