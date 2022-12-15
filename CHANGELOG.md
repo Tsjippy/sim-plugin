@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- do not show page gallery when empty
 
 ### Changed
 
