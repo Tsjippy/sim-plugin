@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- warning when invalid form js
 
 ### Changed
+
+### Fixed
+
+## [2.24.9] - 2022-12-15
+
+
+### Added
+- warning when invalid form js
 
 ### Fixed
 - export form settings
