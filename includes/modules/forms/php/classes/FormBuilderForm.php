@@ -296,8 +296,6 @@ class FormBuilderForm extends SimForms{
 
 		global $wpdb;
 		$results=$wpdb->get_results("SELECT `settings` FROM `Lcew4_sim_forms` WHERE `id`=58");
-		SIM\printArray($results[0], true);
-		SIM\printArray(maybe_unserialize($results[0]->settings), true);
 		
 		//Get all available roles
 		$userRoles = $wp_roles->role_names;
@@ -1601,6 +1599,10 @@ class FormBuilderForm extends SimForms{
 		return ob_get_clean();
 	}
 
+	public function replaceLineEnds(&$value, $key){
+		$value	= str_replace(["\n", "\r"], ['\n', '\r'], trim($value));
+	}
+
 	public function exportForm($formId){
 		global $wpdb;
 
@@ -1630,8 +1632,9 @@ class FormBuilderForm extends SimForms{
 			$settings	= '';
 		}
 
-		$emails	= $result->emails;
-		$emails	= str_replace(["\n", "\r"], ['\n', '\r'], $emails);
+		$emails	= maybe_unserialize($result->emails);
+		array_walk_recursive($emails, [$this, "replaceLineEnds"]);
+		$emails	= maybe_serialize($emails);
 		
 		$keys	= '(`'.implode('`, `', array_keys((array) $this->formElements[0])).'`)';
 
