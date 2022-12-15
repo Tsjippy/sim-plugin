@@ -9,6 +9,7 @@
 
 ### Fixed
 - export form settings
+- exporting contacts
 
 ## [2.24.8.3] - 2022-12-13
 
