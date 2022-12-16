@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- create repeated events  only 5 years in advance
 
 ### Fixed
 
