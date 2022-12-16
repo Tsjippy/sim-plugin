@@ -6,6 +6,7 @@
 - do not show page gallery when empty
 
 ### Changed
+- several text updates
 
 ### Fixed
 
