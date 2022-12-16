@@ -7,15 +7,17 @@ add_action('init', function(){
 	add_action( 'remove_old_events_action', __NAMESPACE__.'\removeOldEvents');
 	add_action( 'anniversary_check_action', __NAMESPACE__.'\anniversaryCheck');
 	add_action( 'remove_old_schedules_action', __NAMESPACE__.'\removeOldSchedules');
+	add_action( 'add_repeated_events_action', __NAMESPACE__.'\addRepeatedEvents');
 });
 
 /**
  * Schedules the tasks for this module
- * 
+ *
 */
 function scheduleTasks(){
 	SIM\scheduleTask('anniversary_check_action', 'daily');
 	SIM\scheduleTask('remove_old_schedules_action', 'daily');
+	SIM\scheduleTask('add_repeated_events_action', 'yearly');
 
     $freq   = SIM\getModuleOption(MODULE_SLUG, 'freq');
 
@@ -26,7 +28,7 @@ function scheduleTasks(){
 
 /**
  * Clean up events, in events table. Not the post
- * 
+ *
 */
 function removeOldEvents(){
 	global $wpdb;
@@ -95,6 +97,32 @@ function removeOldSchedules(){
 	foreach($schedules->schedules as $schedule){
 		if($schedule->enddate < date('Y-m-d')){
 			$schedules->removeSchedule($schedule->id);
+		}
+	}
+}
+
+/**
+ * Create repeated events for the next 5 years
+ */
+function addRepeatedEvents(){
+	global $wpdb;
+
+	$query		= "SELECT * FROM `$wpdb->postmeta` WHERE `meta_key`='eventdetails'";
+	$results	= $wpdb->get_results($query);
+
+	foreach($results as $result){
+		$details	= maybe_unserialize($result->meta_value);
+		if(!is_array($details)){
+			$details	= json_decode($details, true);
+		}else{
+			update_post_meta($result->post_id, 'eventdetails', json_encode($details));
+		}
+
+		if(!empty($details['repeat']) && is_array($details['repeat']) && !empty($details['repeat']['stop']) && $details['repeat']['stop'] == 'never'){
+			$events	= new CreateEvents();
+			$events->eventData	= $details;
+			$events->postId		= $result->post_id;
+			$events->createEvents();
 		}
 	}
 }

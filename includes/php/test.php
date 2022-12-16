@@ -7,7 +7,7 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
     
-
+    EVENTS\addRepeatedEvents();
 });
 
 // turn off incorrect error on localhost
