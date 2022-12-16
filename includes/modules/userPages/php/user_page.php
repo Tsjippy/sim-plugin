@@ -25,11 +25,7 @@ function createUserPage($userId){
 	}
 
 	$family = SIM\familyFlatArray($userId);
-	if (!empty($family)){
-		$title = $userdata->last_name." family";
-	}else{
-		$title = $userdata->last_name.', '.$userdata->first_name;
-	}
+	$title 	= SIM\findFamilyName($userId);
 
 	//Only create a page if the page does not exist
 	if ($pageId == null){

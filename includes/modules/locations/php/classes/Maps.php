@@ -172,11 +172,7 @@ class Maps{
 			}
 
 			$family = SIM\familyFlatArray($userId);
-			if (!empty($family)){
-				$title = $userdata->last_name . " family";
-			}else{
-				$title = $userdata->display_name;
-			}
+			$title	= SIM\findFamilyName($userId);
 
 			//Add the profile picture to the marker description if it is set, and allowed by privacy
 			if (empty($privacyPreference['hide_profile_picture'])){

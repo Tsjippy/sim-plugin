@@ -25,15 +25,9 @@ add_action('sim_family_safe', function($userId){
     $maps       = new Maps();
 
 	//Update the marker title
-	$markerId   = get_user_meta($userId,"marker_id",true);
+	$markerId   = get_user_meta($userId, "marker_id", true);
 
-    $family     = SIM\familyFlatArray($userId);
-
-    if(empty($family)){
-        $title = get_userdata($userId)->display_name;
-    }else{
-        $title = get_userdata($userId)->last_name." family";
-    }
+    $title      = SIM\findFamilyName($userId);
     
 	$maps->updateMarkerTitle($markerId, $title);
 });

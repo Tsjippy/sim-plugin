@@ -9,7 +9,7 @@ use WP_Error;
  * Update user meta for a specific key for the current user and all of its relatives
  * @param  int		$userId 	WP_User id
  * @param  string	metaKey		The meta key to update or create
- * @param  string	value  		The new value            
+ * @param  string	value  		The new value
  */
 function updateFamilyMeta($userId, $metaKey, $value){
 	if($value == 'delete'){
@@ -38,12 +38,12 @@ function updateFamilyMeta($userId, $metaKey, $value){
  * @param	bool		$onlyAdults	 	Whether children should be excluded. Default false
  * @param	bool		$families  		Whether we should group families in one entry default false
  * @param	string		$class			Any extra class to be added to the dropdown default empty
- * @param	string		$id				The name or id of the dropdown, default 'user-selection'    
- * @param	array		$args    		Extra query arg to get the users  
+ * @param	string		$id				The name or id of the dropdown, default 'user-selection'
+ * @param	array		$args    		Extra query arg to get the users
  * @param	int			$userId			The current selected user id
- * @param	array		$excludeIds		An array of user id's to be excluded 
+ * @param	array		$excludeIds		An array of user id's to be excluded
  * @param	string		$type			Html input type Either select or list
- * 
+ *
  * @return	string						The html
  */
 function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select', $listId=''){
@@ -146,7 +146,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 
 /**
  * Returns the current url
- * 
+ *
  * @return	string						The url
 */
 function currentUrl(){
@@ -163,7 +163,7 @@ function currentUrl(){
 /**
  * Transforms an url to a path
  * @param 	string		$url	 		The url to be transformed
- * 
+ *
  * @return	string						The path
 */
 function urlToPath($url){
@@ -176,7 +176,7 @@ function urlToPath($url){
 /**
  * Transforms a path to an url
  * @param 	string		$path	 		The path to be transformed
- * 
+ *
  * @return	string						The url
 */
 function pathToUrl($path){
@@ -284,9 +284,9 @@ function printHtml($html){
  * Creates s dropdown to select a page
  * @param 	string		$selectId	 	The id or name of the dropown
  * @param	bool		$pageId	 		The current select page id default to empty
- * @param	string		$class			Any extra class to be added to the dropdown default empty   
- * @param	array		$postTypes    	The posttypes to include archive pages for. Defaults to pages and locations  
- * 
+ * @param	string		$class			Any extra class to be added to the dropdown default empty
+ * @param	array		$postTypes    	The posttypes to include archive pages for. Defaults to pages and locations
+ *
  * @return	string						The dropdown html
 */
 function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'location'], $includeTax=true){	
@@ -343,7 +343,7 @@ function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'loc
 /**
  * Checks if a child is a son or daughter
  * @param 	int		$userId	 	The User_ID of the child
- * 
+ *
  * @return	string				Either "son", "daughter" or 'child'
 */
 function getChildTitle($userId){
@@ -362,7 +362,7 @@ function getChildTitle($userId){
 /**
  * Gets the children array and add it to the main level of the array
  * @param 	int		$userId	 	WP User_ID
- * 
+ *
  * @return	array				All family members in one array
 */
 function familyFlatArray($userId){
@@ -397,7 +397,7 @@ function hasPartner($userId) {
  * Get users parents
  * @param 	int		$userId	 	WP User_ID
  * @param	bool	$onlyId		Whether to return the parent user or just the user id. Default false
- * 
+ *
  * @return	array|false			Array containing the id of the father and the mother, or false if no parents
 */
 function getParents($userId, $onlyId=false){
@@ -425,7 +425,7 @@ function getParents($userId, $onlyId=false){
 /**
  * Function to check if a certain user is a child
  * @param 	int		$userId	 	WP User_ID
- * 
+ *
  * @return	bool				True if a child, false if not
 */
 function isChild($userId) {
@@ -440,7 +440,7 @@ function isChild($userId) {
  * Get an users age
  * @param 	int		$userId	 	WP User_ID
  * @param	bool	$numeric	Whether to return the age as a number or a word. Default false
- * 
+ *
  * @return	int					Age in years
 */
 function getAge($userId, $numeric=false){
@@ -469,7 +469,7 @@ function getAge($userId, $numeric=false){
 /**
  * Converts an number to words
  * @param 	string|int|float	the number to be converted
- * 
+ *
  * @return	string				the number in words
 */
 function numberToWords($number) {
@@ -608,10 +608,10 @@ function numberToWords($number) {
 /**
  * Create a dropdown with all users
  * @param	bool		$returnFamily  	Whether we should group families in one entry default false
- * @param	bool		$adults			Whether we should only get adults  
+ * @param	bool		$adults			Whether we should only get adults
  * @param	array		$fields    		Extra fields to return
  * @param	array		$extraArgs		An array of extra query arguments
- * 
+ *
  * @return	array						An array of WP_Users
 */
 function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraArgs=[]){
@@ -648,7 +648,7 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 				if (isset($family["partner"])){
 					$doNotProcess[] = $family["partner"];
 					//Change the display name
-					$user->display_name = $user->last_name." family";
+					$user->display_name = findFamilyName($user);
 				}
 			}
 		//Only returning adults, but this is a child
@@ -698,7 +698,7 @@ function addToNestedArray($keys, &$array=array(), $value=null) {
  * Removes a key from a nested array based on array of keys
  * @param	array		$array			Reference to an array
  * @param	array		$arrayKeys    	Array of keys
- * 
+ *
  * @return array						The array
 */
 function removeFromNestedArray(&$array, $arrayKeys){
@@ -812,7 +812,7 @@ function arraySearchRecursive($needle, $haystack, $strict=true, $stack=array()) 
  * @param	string	$elementId		The name or id of the button
  * @param	string	$buttonText    	The text of the button
  * @param	string	$extraClass		Any extra class to add to the button
- * 
+ *
  * @return string					The html
 */
 function addSaveButton($elementId, $buttonText, $extraClass = ''){
@@ -840,7 +840,7 @@ function addToLibrary($targetFile, $title='', $description=''){
 		if(empty($title)){
 			$title = preg_replace( '/\.[^.]+$/', '', basename( $targetFile ) );
 		}
-		 
+		
 		// Prepare an array of post data for the attachment.
 		$attachment = array(
 			'guid'           =>	pathToUrl($targetFile ),
@@ -849,7 +849,7 @@ function addToLibrary($targetFile, $title='', $description=''){
 			'post_content'   => $description,
 			'post_status'    => 'publish'
 		);
-		 
+		
 		// Insert the attachment.
 		$postId = wp_insert_attachment( $attachment, $targetFile);
 
@@ -936,19 +936,19 @@ function removeFiles($target){
 		$files = glob( $target . '*', GLOB_MARK );
 
 		foreach( $files as $file ){
-			removeFiles( $file );      
+			removeFiles( $file );
 		}
 
 		rmdir( $target );
 	} elseif(is_file($target)) {
-		unlink( $target );  
+		unlink( $target );
 	}
 }
 
 /**
  * Checks if a string is a date
  * @param	string 		$date			the date to check
- * 
+ *
  * @return	bool						Whether a date or not
 */
 function isDate($date){
@@ -962,7 +962,7 @@ function isDate($date){
 /**
  * Checks if a string is a time
  * @param	string 		$time			the time to check
- * 
+ *
  * @return	bool						Whether a time or not
 */
 function isTime($time){
@@ -976,7 +976,7 @@ function isTime($time){
  * Returns a unique username
  * @param	string 		$firstName		First name of a new user
  * @param	string 		$lastName		Last name of a new user
- * 
+ *
  * @return	string						An unique username
 */
 function getAvailableUsername($firstName, $lastName){
@@ -1001,7 +1001,7 @@ function getAvailableUsername($firstName, $lastName){
  * @param	string		$email			E-mail adres
  * @param	bool		$approved		Whether the user is already approved or not. Default false
  * @param	string		$validity		How long the account will be valid, default 'unlimited'
- * 
+ *
  * @return	int|WP_Error				The new user id or WP_Error on error
 */
 function addUserAccount($firstName, $lastName, $email, $approved = false, $validity = 'unlimited'){
@@ -1055,7 +1055,7 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
  * @param	array 		$size				Size (width, height) of the image. Default [50,50]
  * @param	bool		$showDefault		Whether to show a default pictur if no user picture is found. Default true
  * @param	bool		$famillyPicture		Whether or not to use the family picture
- * 
+ *
  * @return	string|false					The picture html or false if no picture
  */
 function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $famillyPicture=false){
@@ -1087,7 +1087,7 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 /**
  * Get profile picture html
  * @param	int 		$postId				WP_post id
- * 
+ *
  * @return	string|false					The url or false if no valid page
 */
 function getValidPageLink($postId){
@@ -1196,9 +1196,9 @@ function clearOutput($write=false){
 
 /**
  * Replace a users name with a link to the user page
- * 
+ *
  * @param	string	$string		The string to scan for users
- * 
+ *
  * @return	string				The string with userpagelinks
  */
 function userPageLinks($string){
@@ -1252,9 +1252,9 @@ function userPageLinks($string){
 
 /**
  * Removes any unneeded slashes
- * 
+ *
  * @param	string	$content	The string to deslash
- * 
+ *
  * @return	string				The cleaned string
  */
 function deslash( $content ) {
@@ -1353,9 +1353,9 @@ function urlUpdate($oldPath, $newPath){
  */
 function searchAllDB($search, $excludedTables=[], $excludedColumns=[]){
     global $wpdb;
-    
+
     $out 	= [];
-    
+
     $sql	= "show tables";
     $tables	= $wpdb->get_results($sql, ARRAY_N);
     if(!empty($tables)){
@@ -1415,8 +1415,39 @@ function searchAllDB($search, $excludedTables=[], $excludedColumns=[]){
 			unset($out[$index]);
 		}
 	}
-    
+
     return array_values($out);
+}
+
+/**
+ * Finds the family name for a given user id
+ *
+ * @param	int|object	$userId	The user id to find the name for
+ */
+function findFamilyName($user){
+	if(is_numeric($user)){
+		$user	= get_userdata($user);
+	}
+	$partnerId	= hasPartner($user->id);
+
+	// no partner
+	if(!$partnerId){
+		return $user->display_name;
+	}
+
+	$partner	= get_userdata($partnerId);
+
+	// both have the same name
+	if($partner->last_name == $user->last_name){
+		return "$user->last_name family";
+	}
+
+	// add both last names, males name first
+	if(in_array('Male', (array) get_user_meta($user->ID, 'gender', true))){
+		return "$user->last_name-$partner->last_name family";
+	}else{
+		return "$partner->last_name-$user->last_name family";
+	}
 }
 
 //Creates subimages

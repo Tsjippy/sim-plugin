@@ -58,8 +58,8 @@ class CreateSchedule extends Schedules{
 		
 		$hostPartner					= false;
 		if(is_numeric($this->hostId)){
-			if($addHostPartner && SIM\hasPartner($this->hostId)){
-				$hostPartner	= true;
+			$hostPartner	= SIM\hasPartner($this->hostId);
+			if($addHostPartner && $hostPartner){
 				$event['organizer']				= get_userdata($this->hostId)->last_name.' family';
 			}else{
 				$event['organizer']				= get_userdata($this->hostId)->display_name;
@@ -96,9 +96,13 @@ class CreateSchedule extends Schedules{
 		$eventArray		= [
 			[
 				'title'		=> $ownTitle,
-				'onlyfor'	=> [$schedule->target, $partnerId]
+				'onlyfor'	=> [$schedule->target]
 			]
 		];
+
+		if($partnerId){
+			$eventArray[0]['onlyfor'][]	= $partnerId;
+		}
 
 		if(is_numeric($this->hostId)){
 			$eventArray[] =
@@ -199,7 +203,7 @@ class CreateSchedule extends Schedules{
 			$wpdb->update(
 				$this->tableName,
 				$arg,
-				array( 'ID' => $_POST['target_id'] )
+				array( 'id' => $_POST['schedule_id'] )
 			);
 			$action	= 'updated';
 		}else{

@@ -172,13 +172,25 @@ class Schedules{
 					</form>
 				</div>
 			</div>
+			<?php
+			if(!is_numeric($schedule->target) || !get_userdata($schedule->target)){
+				?>
+				<div class='warning'>
+					This schedule has no website user connected to it.<br>
+					Please <button type="button" class="button small schedule_action edit_schedule" data-schedule_id="<?php echo $schedule->id;?>">Edit</button> the schedule to add one.
+				</div>
+				<?php
+			}
+			?>
 			<h3 class="table_title">
 				Schedule for <?php echo $schedule->name;?>
 			</h3>
-			<h3 class="table_title sub-title"><?php echo $schedule->info;?></h3>
+			<h3 class="table_title sub-title">
+				<?php echo $schedule->info;?>
+			</h3>
 			<p>Click on an available date to indicate you want to host.<br>Click on any date you are subscribed for to unsubscribe</p>
 
-			<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule' data-lunch='<?php echo $schedule->lunch ? 'true' : 'false';?>'>
+			<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-target_id="<?php echo $schedule->target; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule' data-lunch='<?php echo $schedule->lunch ? 'true' : 'false';?>'>
 				<thead>
 					<tr>
 						<th class='sticky'>Dates</th>
@@ -641,7 +653,7 @@ class Schedules{
 		return ob_get_clean();
 	}
 
-	/**	
+	/**
 	 * Create the form to add a schedule
 	 *
 	 * @return 	string		the form html
@@ -652,9 +664,10 @@ class Schedules{
 			return '';
 		}
 
-		?>			
+		?>
 		<h3 style='text-align:center;'>Add a schedule</h3>
-		<form id='add-schedule-form'>
+		<form class='add-schedule-form'>
+			<input type="hidden" name="schedule_id">
 			<input type="hidden" name="target_id">
 			<input type="hidden" name="update" value="<?php echo $update;?>">
 			

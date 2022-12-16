@@ -166,9 +166,9 @@ function getAllEmptyRequiredElements($userId, $type){
 	return $html;
 }
 
-add_filter('sim_mandatory_html_filter', __NAMESPACE__.'\add_child_fields', 10, 2);
-add_filter('sim_recommended_html_filter', __NAMESPACE__.'\add_child_fields', 10, 2);
-function add_child_fields($html, $userId){
+add_filter('sim_mandatory_html_filter', __NAMESPACE__.'\addChildFields', 10, 2);
+add_filter('sim_recommended_html_filter', __NAMESPACE__.'\addChildFields', 10, 2);
+function addChildFields($html, $userId){
 	// Add warnings for child fields
 	$family = get_user_meta($userId, "family", true);
 	//User has children

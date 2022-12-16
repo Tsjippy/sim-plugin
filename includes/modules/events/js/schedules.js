@@ -461,7 +461,9 @@ function showEditScheduleModal(target){
 	let modal	= document.getElementById('edit_schedule_modal');
 	let wrapper	= target.closest('.schedules_div');
 	let table	= wrapper.querySelector('table.schedule');
-	modal.querySelector(`[name="target_id"]`).value			= table.dataset.id;
+
+	modal.querySelector(`[name="schedule_id"]`).value		= table.dataset.id;
+	modal.querySelector(`[name="target_id"]`).value			= table.dataset.target_id;
 	modal.querySelector(`[name="target_name"]`).value		= table.dataset.target;
 	modal.querySelector(`[name="schedule_info"]`).value		= wrapper.querySelector('.table_title.sub-title').textContent;
 	modal.querySelector(`[name="startdate"]`).value			= table.tHead.querySelector('tr').cells[1].dataset.isodate;
