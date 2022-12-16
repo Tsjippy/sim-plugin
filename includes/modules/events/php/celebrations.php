@@ -221,8 +221,8 @@ function anniversaryMessages(){
 		return '';
 	}
 
-	$html = '<div name="anniversaries" style="text-align: center; font-size: 18px;">';
-		$html .= '<h3>Celebrations:</h3>';
+	$html = '<div name="anniversaries" style="font-size: 18px;">';
+		$html .= '<h3>Celebrations</h3>';
 		$html .= '<p>';
 			$html .= "Today is the $messageString";
 		$html .= '.</p>';

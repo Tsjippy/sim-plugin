@@ -121,14 +121,8 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 
 	//Documents to read after arrival
 	if(!empty($arrivedHtml)){
-		if($arrivedPagesCount == 1){
-			$page = "page";
-		}else{
-			$page = "pages";
-		}
-
 		if(!$excludeHeading){
-			$html .= "<h3>Please read the following $page:</h3>";
+			$html .= "<h3>Important Reading for You Today</h3>";
 		}
 		$html .= "<ul>$arrivedHtml</ul>";
 	}

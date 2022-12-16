@@ -92,10 +92,11 @@ function allowedToEdit($post){
 add_filter( 'the_content', function ( $content ) {
 	//Do not show if:
 	if (
-		!is_user_logged_in() 							||	// not logged in or 
-		strpos($content,'[front_end_post]') !== false 	||	// already on the post edit page 
-		!is_singular() 									||  // it is not a single page 
-		is_tax()											// not an archive page
+		!is_user_logged_in() 							||	// not logged in or
+		strpos($content,'[front_end_post]') !== false 	||	// already on the post edit page
+		!is_singular() 									||  // it is not a single page
+		is_tax()										||	// not an archive page
+		is_front_page()										// is the front page
 	){
 		return $content;
 	}

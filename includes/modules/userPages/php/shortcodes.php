@@ -22,14 +22,14 @@ add_shortcode("all_contacts",function (){
 		}elseif($_GET['vcard']=="outlook"){
 			$zip = new \ZipArchive;
 			
-			if ($zip->open('SIMContacts.zip', \ZipArchive::CREATE) === TRUE){
+			if ($zip->open('SIMContacts.zip', \ZipArchive::CREATE) === true){
 				//Get all user accounts
 				$users = SIM\getUserAccounts(false,true,true,['ID','display_name']);
 				
 				//Loop over the accounts and add their vcards
 				foreach($users as $user){
 					$zip->addFromString($user->display_name.'.vcf', buildVcard($user->ID));
-				}	
+				}
 			 
 				// All files are added, so close the zip file.
 				$zip->close();
@@ -49,22 +49,29 @@ add_shortcode("all_contacts",function (){
 	//Return vcard hyperlink
 	}else{
 		$url 			= add_query_arg( ['vcard' => "all"], get_permalink( $post->ID ) );
-		$allButton 		= '<a href="'.$url.'" class="button sim vcard">Gmail and others</a>';
+		$allButton 		= '<a href="'.$url.'" class="button sim vcard">Gmail and Others</a>';
 		
 		$url 			= add_query_arg( ['vcard' => "outlook"], get_permalink( $post->ID ) );
 		$outlookButton	= '<a href="'.$url.'" class="button sim vcard">Outlook</a>';
 		
-		$html = "<div class='download contacts'>";
-			$html .= "<p>";
-				$html .= "If you want to add the contact details of all website users to your addressbook, you can use one of the buttons below.<br>";
-				$html .= "For gmail and other programs you can just import the vcf file.	";
-				$html .= "For outlook you receive a zip file. Extract it, then click on each .vcf file to add it to your outlook.";
-			$html .= "</p>";
-			$html .= "$outlookButton $allButton";
-			$html .= "<p>Be patient, preparing the download can take a while. </p>";
-		$html .= "</div>";
+		ob_start();
+		?>
+		<div class='download contacts' style='margin-top:10px;'>
+			<h4>Add Contacts to Your Address Book</h4>
+			<p>
+				For your convenience, you can add contact details for SIM Nigeria’s team members to your phone or email address book.<br>
+				For Gmail and other email clients, simply import the .vcf file after selecting the button below.
+				For Outlook, you will download a compressed .zip file. Extract this, then click on each .vcf file to add it to your Outlook contacts list.
+			</p>
+			<?php echo $outlookButton.' '.$allButton;?>
+			<p>Be patient, preparing the download can take a while. </p>
+			<?php
+			do_action('sim-after-download-contacts');
+			?>
+		</div>
 		
-		return $html;
+		<?php
+		return ob_get_clean();
 	}
 });
 
