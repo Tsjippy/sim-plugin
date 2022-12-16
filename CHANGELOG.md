@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.24.10] - 2022-12-16
+
+
+### Added
 - do not show page gallery when empty
 
 ### Changed
