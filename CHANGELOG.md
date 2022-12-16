@@ -5,11 +5,16 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.24.11] - 2022-12-16
+
+
+### Changed
 - create repeated events  only 5 years in advance
 - display of family names now includes the the option name of the spouse
 - asynchronosly send signal message
-
-### Fixed
 
 ## [2.24.10] - 2022-12-16
 
