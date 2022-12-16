@@ -87,19 +87,19 @@ function loginModal($message='', $required=false, $username=''){
 
                     <div id='authenticator_wrapper' class='authenticator_wrapper hidden'>
                         <label>
-                            Please enter the two-factor authentication (2FA) verification code below to login. 
+                            Please enter the two-factor authentication (2FA) verification code below to login.
                             <input type="tel" name="authcode"  class='wide' size="20" pattern="[0-9]*" required>
                         </label>
                     </div>
 
                     <div id='email_wrapper' class='authenticator_wrapper hidden'>
                         <label>
-                            Please enter the code send to your e-mail below to login. 
+                            Please enter the code sent to your e-mail below to login.
                             <input type="tel" name="email_code"  class='wide' size="20" pattern="[0-9]*" required>
                         </label>
                     </div>
 
-                    <div id='submit_login_wrapper' class='hidden'>                       
+                    <div id='submit_login_wrapper' class='hidden'>
                         <div class='submit_wrapper'>
 		                    <button type='button' class='button' id='login_button' disabled>Login</button>
 		                    <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy' alt='loader'>

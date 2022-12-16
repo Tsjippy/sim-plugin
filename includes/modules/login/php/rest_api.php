@@ -269,7 +269,7 @@ function requestEmailCode(){
         $result = sendEmailCode($user);
 
         if($result){
-            return "E-mail send to ".$user->user_email;
+            return "E-mail sent to ".$user->user_email;
         }
         return new WP_Error('login', 'Sending e-mail failed');
     }else{
