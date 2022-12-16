@@ -10,6 +10,7 @@
 
 ### Fixed
 - spelling mistake
+- problem with vimeo not loading
 
 ## [2.24.9] - 2022-12-15
 
