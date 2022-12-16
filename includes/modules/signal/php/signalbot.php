@@ -63,8 +63,12 @@ function sendPostNotification($post){
 	$recipients		= SIM\getModuleOption(MODULE_SLUG, 'groups');
 
 	foreach($recipients as $recipient){
-		sendSignalMessage($message, $recipient, $post->ID);
+		asyncSignalMessageSend($message, $recipient, $post->ID);
 	}
+}
+
+function asyncSignalMessageSend($message, $recipient, $postId=""){
+	wp_schedule_single_event(time(), 'schedule_signal_message_action', [$message, $recipient, $postId]);
 }
 
 function sendSignalMessage($message, $recipient, $postId=""){
@@ -72,7 +76,7 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	if($_SERVER['HTTP_HOST'] == 'localhost'){
 		return;
 	}
-	
+
 	//remove https from site urldecode
 	$urlWithoutHttps	= str_replace('https://', '', SITEURL);
 	$message			= str_replace(SITEURL, $urlWithoutHttps, $message);
@@ -88,7 +92,7 @@ function sendSignalMessage($message, $recipient, $postId=""){
 			$recipient = array_values($phonenumbers)[0];
 		}elseif(is_array($phonenumbers) && count($phonenumbers) > 1){
 			foreach($phonenumbers as $phonenumber){
-				sendSignalMessage($message, $phonenumber, $postId);
+				asyncSignalMessageSend($message, $phonenumber, $postId);
 			}
 			return;
 		}else{

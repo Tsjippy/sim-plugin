@@ -48,7 +48,7 @@ function maybeGetUserPageUrl($userId){
  * @param	int			$postId			Optional post id to add a link to
 */
 function trySendSignal($message, $recipient, $postId=""){
-	if (function_exists('SIM\SIGNAL\sendSignalMessage')) {
-		SIGNAL\sendSignalMessage($message, $recipient, $postId);
+	if (function_exists('SIM\SIGNAL\asyncSignalMessageSend')) {
+		SIGNAL\asyncSignalMessageSend($message, $recipient, $postId);
 	}
 }
