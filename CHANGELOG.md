@@ -7,6 +7,7 @@
 ### Changed
 - create repeated events  only 5 years in advance
 - display of family names now includes the the option name of the spouse
+- asynchronosly send signal message
 
 ### Fixed
 
