@@ -9,6 +9,7 @@
 - several text updates
 
 ### Fixed
+- spelling mistake
 
 ## [2.24.9] - 2022-12-15
 
