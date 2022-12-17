@@ -5,9 +5,14 @@
 ### Added
 
 ### Changed
-- use async signal message when needed
 
 ### Fixed
+
+## [2.24.12] - 2022-12-17
+
+
+### Changed
+- use async signal message when needed
 
 ## [2.24.11] - 2022-12-16
 
