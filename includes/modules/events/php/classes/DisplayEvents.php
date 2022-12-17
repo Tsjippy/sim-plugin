@@ -1099,18 +1099,15 @@ class DisplayEvents extends Events{
 		if(is_numeric($event->onlyfor)){
 			$today	= date('Y-m-d');
 			if($event->startdate != $today){
-				$current	= strtotime($today);
-				$date		= strtotime($event->startdate);
-				$datediff	= $date - $current;
-				$difference = floor($datediff / ( DAY_IN_SECONDS ));
+				$tomorrow	= date('Y-m-d', strtotime('+1 day', strtotime($event->startdate)));
 
-				if($difference==0){
+				if($today == $event->startdate){
 					$timeString	= "starts at $event->starttime";
-				}elseif($difference > 1){
-					$date		= date('d F', $date);
+				}elseif($tomorrow == $event->startdate){
+					$timeString	= "starts tomorrow at $event->starttime";
+				}elseif(strtotime($event->startdate) > time()){
+					$date	= date('d F', strtotime($event->startdate));
 					$timeString	= "starts $date at $event->starttime";
-				}elseif($difference > 0){
-					$timeString	= "starts tommorow at $event->starttime";
 				}else{
 					$timeString	= "is already started";
 				}

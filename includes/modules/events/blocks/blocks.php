@@ -72,7 +72,7 @@ function displayUpcomingEvents($attributes) {
 	$include	= [];
 
 	foreach($categories as $category){
-		if(!isset($exclude[$category->term_id])){
+		if(!isset($exclude[$category->term_id]) || $exclude[$category->term_id] !== true){
 			$include[]	= $category->term_id;
 		}
 	}

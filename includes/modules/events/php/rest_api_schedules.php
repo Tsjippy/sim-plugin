@@ -136,25 +136,19 @@ add_action( 'rest_api_init', function () {
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
 				'schedule_id'		=> array(
-					'required'	=> true,
+					'required'			=> true,
 					'validate_callback' => function($scheduleId){
 						return is_numeric($scheduleId);
 					}
 				),
-				'host'		=> array(
-					'required'	=> true,
-					'validate_callback' => function($userId){
-						return is_numeric($userId);
-					}
-				),
 				'date'		=> array(
-					'required'	=> true,
+					'required'			=> true,
 					'validate_callback' => function($param){
 						return SIM\isDate($param);
 					}
 				),
 				'starttime'		=> array(
-					'required'	=> true,
+					'required'			=> true,
 					'validate_callback' => function($param){
 						return SIM\isTime($param);
 					}
