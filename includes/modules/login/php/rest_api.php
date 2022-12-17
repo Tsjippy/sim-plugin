@@ -748,7 +748,8 @@ function saveTwoFaSettings(){
 
             SIM\trySendSignal(
                 "Hi ".$userdata->first_name.",\n\nYou have succesfully setup e-mail verification on ".SITENAME,
-                $userId
+                $userId,
+                true
             );
 
             //Send e-mail

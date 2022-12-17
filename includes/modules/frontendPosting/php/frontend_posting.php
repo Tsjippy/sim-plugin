@@ -32,7 +32,7 @@ function sendPendingPostWarning( object $post, $update){
 	
 	foreach($users as $user){
 		//send signal message
-		SIM\trySendSignal("$authorName just $actionText a $type. Please review it here:\n\n$url",$user->ID);
+		SIM\trySendSignal("$authorName just $actionText a $type. Please review it here:\n\n$url", $user->ID, true);
 
 		$pendinfPostEmail    = new PendingPostEmail($user, $authorName, $actionText, $type, $url);
 		$pendinfPostEmail->filterMail();

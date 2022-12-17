@@ -322,7 +322,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 
 	// check if we need to send a message
 	if(!empty($_POST['message']) && !empty($_POST['recipient'])){
-        asyncSignalMessageSend($_POST['message'], $_POST['recipient']);
+        sendSignalMessage($_POST['message'], $_POST['recipient']);
         ?>
 		<div class='success'>
 			Message send succesfully

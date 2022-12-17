@@ -68,7 +68,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 
 		if(!empty($link)){
 			$message	= "Hi $firstName\n\nI noticed you just updated your phonenumber on ".SITEURLWITHOUTSCHEME.".\n\nIf you want to join our Signal group with this number you can use this url:\n$link";
-			SIM\trySendSignal($message, $changedNumber);
+			SIM\trySendSignal($message, $changedNumber, true);
 		}
 	}
 	

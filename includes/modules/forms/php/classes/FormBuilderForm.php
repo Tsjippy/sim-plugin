@@ -295,8 +295,6 @@ class FormBuilderForm extends SimForms{
 		$settings = $this->formData->settings;
 
 		global $wpdb;
-		$results=$wpdb->get_results("SELECT `settings` FROM `Lcew4_sim_forms` WHERE `id`=58");
-		
 		//Get all available roles
 		$userRoles = $wp_roles->role_names;
 		

@@ -113,7 +113,7 @@ function send2faWarningEmail($user){
 
 /**
  * Reset 2fa and send a message about it
- * 
+ *
  * @param int   $userID
  */
 function reset2fa($userId){

@@ -47,8 +47,12 @@ function maybeGetUserPageUrl($userId){
  * @param	int|WP_User	$recipient		The user or user id the message should be send to
  * @param	int			$postId			Optional post id to add a link to
 */
-function trySendSignal($message, $recipient, $postId=""){
-	if (function_exists('SIM\SIGNAL\asyncSignalMessageSend')) {
-		SIGNAL\asyncSignalMessageSend($message, $recipient, $postId);
+function trySendSignal($message, $recipient, $async=false, $postId=""){
+	if (function_exists('SIM\SIGNAL\sendSignalMessage')) {
+		if($async){
+			SIGNAL\asyncSignalMessageSend($message, $recipient, $postId);
+		}else{
+			SIGNAL\sendSignalMessage($message, $recipient, $postId);
+		}
 	}
 }

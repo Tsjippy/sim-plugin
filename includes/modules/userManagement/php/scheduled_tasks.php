@@ -35,7 +35,7 @@ function birthdayCheck(){
 	wp_set_current_user(1);
 
 	//Current date time
-	$date   = new \DateTime(); 
+	$date   = new \DateTime();
 	
 	//Get all the birthday users of today
 	$users = get_users(array(
@@ -63,7 +63,7 @@ function birthdayCheck(){
 			$message = "Congratulations with the birthday of your $childTitle ".get_userdata($user->ID)->first_name;
 		}
 		
-		if (isset($family["father"])){	
+		if (isset($family["father"])){
 			SIM\trySendSignal(
 				"Hi ".get_userdata($family["father"])->first_name.",\n$message",
 				$family["father"]
@@ -81,7 +81,7 @@ function birthdayCheck(){
 /**
  * loop over all users and scan for expiry vaccinations
  */
-function vaccinationReminder(){	
+function vaccinationReminder(){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 	
@@ -106,7 +106,7 @@ function vaccinationReminder(){
 
 					$vaccinationWarningMail    	= new AdultVaccinationWarningMail($userdata);
 					$vaccinationWarningMail->filterMail();
-					$subject					= $vaccinationWarningMail->subject; 
+					$subject					= $vaccinationWarningMail->subject;
 					$message					= $vaccinationWarningMail->message;
 					
 					$childTitle = SIM\getChildTitle($user->ID);
@@ -123,9 +123,9 @@ function vaccinationReminder(){
 							"Hi $parent->first_name,\nPlease renew the vaccinations  of your $childTitle $userdata->first_name!\n\n".SITEURL,
 							$user->ID
 						);
-					}				
+					}
 				//not a child
-				}else{	
+				}else{
 					//If this not a valid email skip this email
 					if(strpos($userdata->user_email,'.empty') === false){
 						continue;
@@ -133,7 +133,7 @@ function vaccinationReminder(){
 
 					$vaccinationWarningMail    	= new AdultVaccinationWarningMail($userdata);
 					$vaccinationWarningMail->filterMail();
-					$subject					= $vaccinationWarningMail->subject; 
+					$subject					= $vaccinationWarningMail->subject;
 					$message					= $vaccinationWarningMail->message;
 					
 					//Send Signal message
@@ -347,7 +347,7 @@ function checkDetailsMail(){
 		$message .= 'Once a year we would like to remind you to keep your information on the website up to date.<br>';
 		$message .= 'Please check the information below to see if it is still valid, if not update it.<br><br>';
 		
-		/* 
+		/*
 		** PROFILE PICTURE
  		*/
 		$message .= "<a href='{$baseUrl}profilePicture' $styleString><b>Profile picture</b></a><br>";
@@ -367,7 +367,7 @@ function checkDetailsMail(){
 		}
 		$message .= "<br>";
 
-		/* 
+		/*
 		** PERSONAL DETAILS
  		*/
 		$message .= "<a href='{$baseUrl}generic_info' $styleString><b>Personal details</b></a><br>";
@@ -429,7 +429,7 @@ function checkDetailsMail(){
 		$message .= "</table>";
 		$message .= "<br>";
 
-		/* 
+		/*
 		** PHONENUMBERS
  		*/
 		$phonenumbers = (array)get_user_meta($user->ID, 'phonenumbers', true);
@@ -469,7 +469,7 @@ function checkDetailsMail(){
 		$message .= "</table>";
 		$message .= "<br>";
 
-		/* 
+		/*
 		** MINISTRIES
  		*/
 		$userMinistries = (array)get_user_meta($user->ID, 'jobs', true);
@@ -504,7 +504,7 @@ function checkDetailsMail(){
 		$message .= "</table>";
 		$message .= "<br>";
 
-		/* 
+		/*
 		** LOCATION
  		*/
 		$message	.= "<a href='{$baseUrl}location' $styleString><b>Location</b></a><br>";
@@ -525,7 +525,7 @@ function checkDetailsMail(){
 		$message .= "</table>";
 		$message .= "<br>";
 
-		/* 
+		/*
 		** FAMILY
  		*/
 		$family = get_user_meta( $user->ID, 'family', true );
@@ -629,7 +629,7 @@ function accountExpiryCheck(){
 				),
 				array(
 					'key' => 'account_validity',
-					'value' => date("Y-m-d", strtotime(" +1 months")), 
+					'value' => date("Y-m-d", strtotime(" +1 months")),
 					'compare' => '=',
 					'type' => 'DATE'
 				),
@@ -678,7 +678,7 @@ function accountExpiryCheck(){
 				),
 				array(
 					'key' => 'account_validity',
-					'value' => date("Y-m-d"), 
+					'value' => date("Y-m-d"),
 					'compare' => '<=',
 					'type' => 'DATE'
 				),
