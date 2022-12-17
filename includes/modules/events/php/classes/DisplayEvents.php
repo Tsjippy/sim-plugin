@@ -1084,7 +1084,6 @@ class DisplayEvents extends Events{
 	 * @param  	int 	$eventId		The id of the event
 	 *
 	 * @return	bool					true if succesfull false if no event found
-	
 	 */
 	public function sendEventReminder($eventId){
 		global $wpdb;
@@ -1098,7 +1097,25 @@ class DisplayEvents extends Events{
 		$event	= $results[0];
 
 		if(is_numeric($event->onlyfor)){
-			SIM\trySendSignal(get_the_title($event->post_id)." is about to start\nIt starts at $event->starttime", $event->onlyfor);
+			$today	= date('Y-m-d');
+			if($event->startdate != $today){
+				$current	= strtotime($today);
+				$date		= strtotime($event->startdate);
+				$datediff	= $date - $current;
+				$difference = floor($datediff / ( DAY_IN_SECONDS ));
+
+				if($difference==0){
+					$timeString	= "starts at $event->starttime";
+				}elseif($difference > 1){
+					$date		= date('d F', $date);
+					$timeString	= "starts $date at $event->starttime";
+				}elseif($difference > 0){
+					$timeString	= "starts tommorow at $event->starttime";
+				}else{
+					$timeString	= "is already started";
+				}
+			}
+			SIM\trySendSignal(get_the_title($event->post_id)." is about to start\nIt $timeString", $event->onlyfor);
 		}
 
 		return true;
