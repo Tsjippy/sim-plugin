@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.24.13] - 2022-12-17
+
+
+### Fixed
 - reminders for tomorrow
 - host removal
 
