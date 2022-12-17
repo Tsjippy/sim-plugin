@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- reminders for tomorrow
 
 ## [2.24.12] - 2022-12-17
 
