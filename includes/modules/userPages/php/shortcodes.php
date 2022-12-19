@@ -60,6 +60,7 @@ add_shortcode("all_contacts",function (){
 			<h4>Add Contacts to Your Address Book</h4>
 			<p>
 				For your convenience, you can add contact details for SIM Nigeria’s team members to your phone or email address book.<br>
+				<br>
 				For Gmail and other email clients, simply import the .vcf file after selecting the button below.
 				For Outlook, you will download a compressed .zip file. Extract this, then click on each .vcf file to add it to your Outlook contacts list.
 			</p>

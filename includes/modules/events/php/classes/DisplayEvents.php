@@ -1098,19 +1098,17 @@ class DisplayEvents extends Events{
 
 		if(is_numeric($event->onlyfor)){
 			$today	= date('Y-m-d');
-			if($event->startdate != $today){
-				$tomorrow	= date('Y-m-d', strtotime('+1 day', strtotime($event->startdate)));
+			$tomorrow	= date('Y-m-d', strtotime('+1 day', strtotime($event->startdate)));
 
-				if($today == $event->startdate){
-					$timeString	= "starts at $event->starttime";
-				}elseif($tomorrow == $event->startdate){
-					$timeString	= "starts tomorrow at $event->starttime";
-				}elseif(strtotime($event->startdate) > time()){
-					$date	= date('d F', strtotime($event->startdate));
-					$timeString	= "starts $date at $event->starttime";
-				}else{
-					$timeString	= "is already started";
-				}
+			if($today == $event->startdate){
+				$timeString	= "starts at $event->starttime";
+			}elseif($tomorrow == $event->startdate){
+				$timeString	= "starts tomorrow at $event->starttime";
+			}elseif(strtotime($event->startdate) > time()){
+				$date	= date('d F', strtotime($event->startdate));
+				$timeString	= "starts $date at $event->starttime";
+			}else{
+				$timeString	= "is already started";
 			}
 			SIM\trySendSignal(get_the_title($event->post_id)." is about to start\nIt $timeString", $event->onlyfor);
 		}
