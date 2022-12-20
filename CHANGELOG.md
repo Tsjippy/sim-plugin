@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug when removing users
 
 ## [2.24.14] - 2022-12-19
 
