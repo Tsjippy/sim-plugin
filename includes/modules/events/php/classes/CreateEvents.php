@@ -266,7 +266,7 @@ class CreateEvents extends Events{
 	}
 
 	/**
-	 * Deletes old celebration events
+	 * Deletes creates new celebration events
 	 * @param	string		$type		the anniverasry type
 	 * @param	int|object	$userId		WP_User id or WP_User object
 	 * @param	string		$metaKey	the meta key key
@@ -404,7 +404,6 @@ class CreateEvents extends Events{
 	 * Stores all event details in the db, removes any existing events, and creates new ones.
 	 * @param  	int|WP_post  $post		The id of a post or the post itself
 	*/
-
 	public function storeEventMeta($post){
 		if(is_numeric($post)){
 			$post	= get_post($post);

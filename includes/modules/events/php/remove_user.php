@@ -1,0 +1,43 @@
+<?php
+namespace SIM\EVENTS;
+use SIM;
+
+// remove all events related to the user to be deleted
+add_action('delete_user', function ($userId, $reassign){
+    $events     = new Events();
+
+    $allMeta    = get_user_meta($userId);
+
+    $celebrationIds = array_filter($allMeta, function($key){
+        return strpos($key, '_event_id') !== false;
+    }, ARRAY_FILTER_USE_KEY);
+
+    // Remove the celebration events
+    foreach($celebrationIds as $id){
+        wp_delete_post($id[0], true);
+        $events->removeDbRows($id[0]);
+    }
+
+    // add the remainder to the new author or delete
+    $eventIds = get_posts(
+        [
+            'author'        => $userId,
+            'fields'        => 'ids',
+            'numberposts'   => -1,
+            'post_type'     => 'any'
+        ]
+    );
+
+    foreach($eventIds as $id){
+        if(empty($reassign)){
+            wp_trash_post($id);
+        }else{
+            // update the autho
+            $arg = array(
+                'ID'            => $id,
+                'post_author'   => $reassign,
+            );
+            wp_update_post( $arg );
+        }
+    }
+}, 10, 2);

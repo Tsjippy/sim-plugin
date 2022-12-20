@@ -21,7 +21,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 	if(class_exists('SIM\EVENTS\Events')){
 		$events	= new SIM\EVENTS\CreateEvents();
 		$events->createCelebrationEvent('birthday', $userId, 'birthday', $_POST['birthday']);
-		$events->createCelebrationEvent(SITENAME.' anniversary', $userId,'arrival_date',$_POST['arrival_date']);
+		$events->createCelebrationEvent(SITENAME.' anniversary', $userId, 'arrival_date', $_POST['arrival_date']);
 	}
 
 	//check if phonenumber has changed
@@ -85,7 +85,7 @@ add_action('sim_before_form', function ($formName){
 		<div class="modal-content">
 			<span id="modal_close" class="close">&times;</span>
 			<form action="" method="post" id="add_ministry_form">
-				<p>Please fill in the form to create a page describing your ministry and list it as an option</p>				
+				<p>Please fill in the form to create a page describing your ministry and list it as an option</p>
 				
 				<label>
 					<h4>Ministry name<span class="required">*</span></h4>

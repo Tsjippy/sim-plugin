@@ -3,10 +3,10 @@ namespace SIM\USERPAGE;
 use SIM;
 
 add_action('delete_user', function ($userId){
-    $family = SIM\familyFlatArray($userId);
+    $partner = SIM\hasPartner($userId);
 
 	//Only remove if there is no family
-	if (empty($family)){
+	if (!$partner){
         //Check if a page exists for this person
         $userPage    = getUserPageId($userId);
         if (is_numeric($userPage)){
@@ -14,11 +14,11 @@ add_action('delete_user', function ($userId){
             wp_delete_post($userPage);
             SIM\printArray("Deleted the user page $userPage");
         }
-    }elseif(count($family) == 1){
+    }else{
         //Get the partners display name to use as the new title
-        $title = get_userdata(array_values($family)[0])->display_name;
+        $title = get_userdata($partner)->display_name;
 
         //Update
-        updateUserPageTitle($userId, $title);
+        updateUserPageTitle($partner, $title);
     }
 });

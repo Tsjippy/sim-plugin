@@ -125,8 +125,9 @@ function updateUserPageTitle($userId, $title, $pageId=null){
 	if($page->post_title != $title){
 		wp_update_post(
 			array (
-				'ID'         => $pageId,
-				'post_title' => $title
+				'ID'         	=> $pageId,
+				'post_title' 	=> $title,
+				'post_author'	=> $userId
 			)
 		);
 
