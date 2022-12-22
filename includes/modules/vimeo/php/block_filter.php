@@ -4,12 +4,12 @@ use SIM;
 
 add_filter('render_block', function($blockContent, $block){
     // Video block with a vimeo url
-    if($block['blockName'] == 'core/video' && strpos($blockContent, 'vimeo.com') !== false){
+    if($block['blockName'] == 'core/video' && strpos($blockContent, 'vimeo.com') !== false && !empty($block['attrs']['id'])){
         // Find vimeo id
-        $result = preg_match('/vimeo.com.*\/(\d*)/', $blockContent, $matches);
+        $vimeoId    = get_post_meta($block['attrs']['id'], 'vimeo_id', true);
 
-        if($result && !empty($matches[1])){
-            return showVimeoVideo($matches[1]);
+        if(is_numeric($vimeoId)){
+            return showVimeoVideo($vimeoId);
         }
     }
 
