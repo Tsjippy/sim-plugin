@@ -7,6 +7,14 @@
 ### Changed
 
 ### Fixed
+
+## [2.24.16] - 2022-12-22
+
+
+### Added
+- signal message log
+
+### Fixed
 - video block in case of vimeo video
 
 ## [2.24.15] - 2022-12-22
