@@ -60,10 +60,12 @@ function getAllEmptyRequiredElements($userId, $type){
 						$value	= $value[0];
 					}
 
+					$checkValue	= '';
 					if(isset($check['conditional_value'])){
-						$checkValue	= $check['conditional_value'];
-					}else{
-						$checkValue	= '';
+						$conditionalValue	= strtotime($check['conditional_value']);
+						if($conditionalValue && Date('Y', $conditionalValue) < 2200){
+							$checkValue	= Date('Y-m-d', $conditionalValue);
+						}
 					}
 
 					switch($check['equation']){
