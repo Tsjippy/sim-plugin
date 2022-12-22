@@ -3,6 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.24.15] - 2022-12-22
+
+
+### Added
 - clean up orphan events
 - uses of date srtings in form field conditions
 
