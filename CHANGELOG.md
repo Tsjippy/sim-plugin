@@ -6,6 +6,7 @@
 - clean up orphan events
 
 ### Changed
+- some layout
 
 ### Fixed
 - bug when removing users
