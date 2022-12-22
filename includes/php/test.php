@@ -7,7 +7,9 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
     
-    EVENTS\addRepeatedEvents();
+    $query  = "SELECT * FROM `{$wpdb->prefix}sim_events` INNER JOIN $wpdb->posts ON post_id = $wpdb->posts.ID WHERE $wpdb->posts.post_author NOT IN (SELECT ID FROM $wpdb->users)";
+
+    printArray($wpdb->get_results($query), true);
 });
 
 // turn off incorrect error on localhost

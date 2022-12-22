@@ -12,7 +12,9 @@ document.addEventListener("DOMContentLoaded",function() {
 
 	//add niceselects
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){
-		select._niceselect = NiceSelect.bind(select,{searchable: true});
+        if(select._niceselect  == undefined){
+		    select._niceselect = NiceSelect.bind(select,{searchable: true});
+        }
 	});
 });
 

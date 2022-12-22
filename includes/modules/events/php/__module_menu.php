@@ -88,6 +88,71 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	return ob_get_clean();
 }, 10, 3);
 
+add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $functionHtml;
+	}
+
+	global $wpdb;
+    
+    $query  	= "SELECT * FROM `{$wpdb->prefix}sim_events` INNER JOIN $wpdb->posts ON post_id = $wpdb->posts.ID WHERE $wpdb->posts.post_author NOT IN (SELECT ID FROM $wpdb->users)";
+
+    $orphans	= $wpdb->get_results($query);
+
+	$query  	= "SELECT * FROM `{$wpdb->prefix}sim_events` WHERE post_id NOT IN (SELECT ID FROM $wpdb->posts)";
+
+    $orphans	= array_merge($wpdb->get_results($query), $orphans);
+
+	if(empty($orphans)){
+		return '';
+	}
+	
+	ob_start();
+	?>
+	<h4>Orphan events</h4>
+	<p>
+		There are <?php echo count($orphans);?> events found linked to a valid user or post in the database.
+	</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Start date</th>
+				<th>Start time</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			foreach($orphans as $orphan){
+				?>
+				<tr>
+					<th><?php echo $orphan->post_title;?></th>
+					<th><?php echo $orphan->startdate;?></th>
+					<th><?php echo $orphan->starttime;?></th>
+				</tr>
+				<?php
+			}
+			?>
+		</tbody>
+	</table>
+	<form method='POST'>
+		<button type='submit' name='delete-orphans'>Remove these events</button>
+	</form>
+
+	<?php
+	return ob_get_clean();
+}, 10, 2);
+
+add_action('sim_module_actions', function(){
+	global $wpdb;
+	if(isset($_POST['delete-orphans'])){
+		$query  	= "DELETE `{$wpdb->prefix}sim_events` FROM `{$wpdb->prefix}sim_events` INNER JOIN $wpdb->posts ON post_id = $wpdb->posts.ID WHERE $wpdb->posts.post_author NOT IN (SELECT ID FROM $wpdb->users)";
+    	$wpdb->query($query);
+	}
+
+});
+
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
