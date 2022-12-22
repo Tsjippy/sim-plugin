@@ -337,7 +337,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 		$amount	= $_REQUEST['amount'];
 	}
 
-	$months	= 100;
+	$months	= 3;
 	if(isset($_REQUEST['months'])){
 		$months	= $_REQUEST['months'];
 	}
@@ -379,15 +379,15 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 		$end	= min($page + 2, $totalPages);
 
 		if($page > 1){
-			echo "<a href='{$url}1'>< First</a>";
+			echo "<a href='{$url}1'>< First</a>   ";
 		}
 
 		for ($x = $start; $x <= $end; $x++) {
-			echo "<a href='$url$x'>$x</a>";
+			echo "   <a href='$url$x'>$x</a>   ";
 		}
 
 		if($page < $totalPages){
-			echo "<a href='$url$totalPages'>Last ></a>";
+			echo "   <a href='$url$totalPages'>Last ></a>";
 		}
 
 		?>
