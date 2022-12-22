@@ -4,6 +4,7 @@
 
 ### Added
 - clean up orphan events
+- uses of date srtings in form field conditions
 
 ### Changed
 - some layout
