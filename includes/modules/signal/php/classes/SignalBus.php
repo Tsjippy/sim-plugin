@@ -27,6 +27,8 @@ class SignalBus extends Signal {
 
         $this->dbusType         = $dbusType;
 
+        $this->tableName        = 'sim_signal_messages';
+
         $phone                  = str_replace('+', '', $this->phoneNumber);
         $this->prefix           = "dbus-send --$this->dbusType --dest=org.asamk.Signal --type=method_call --print-reply=literal /org/asamk/Signal/_$phone org.asamk.Signal.";
         if($this->dbusType == 'session'){
@@ -42,6 +44,77 @@ class SignalBus extends Signal {
         // Check daemon
         $this->daemonIsRunning();
         $this->startDaemon();
+    }
+
+    /**
+     * Create the sent messages table if it does not exist
+     */
+    public function createDbTable(){
+		if ( !function_exists( 'maybe_create_table' ) ) {
+			require_once ABSPATH . '/wp-admin/install-helper.php';
+		}
+		
+		//only create db if it does not exist
+		global $wpdb;
+		$charsetCollate = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE {$this->tableName} (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            timesend datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            recipient longtext NOT NULL,
+            message longtext NOT NULL,
+            PRIMARY KEY  (id)
+		) $charsetCollate;";
+
+		maybe_create_table($this->tableName, $sql );
+	}
+
+    /**
+     * Adds a send message to the log
+     */
+    private function addToMessageLog($recipient, $message){
+        global $wpdb;
+
+        $wpdb->insert(
+            $this->tableName,
+            array(
+                'timesend'      => time(),
+                'recipient'     => $recipient,
+                'message'		=> $message,
+            )
+        );
+    }
+
+    /**
+     * Retrieves the messages from the log
+     *
+     * @param   int     $amount     The amount of rows to get per page, default 100
+     * @param   int     $page       Which page to get, default 1
+     */
+    public function getMessageLog($amount=100, $page=1, $minTime=''){
+        global $wpdb;
+
+        $startIndex = 0;
+
+        if($page > 1){
+            $startIndex         = $page * $amount;
+        }
+
+        $totalQuery = "SELECT COUNT(id) as total FROM $this->tableName";
+        $query      = "SELECT * FROM $this->tableName LIMIT $startIndex,$amount;";
+
+        if(!empty($minTime)){
+            $totalQuery .= " timesend > $minTime";
+            $query      .= " timesend > $minTime";
+        }
+
+        $this->totalMessages    = $wpdb->get_var($totalQuery);
+
+        if($this->totalMessages < $startIndex){
+            return [];
+        }
+        
+        return $wpdb->get_results( $query );
     }
 
     /**
@@ -167,6 +240,8 @@ class SignalBus extends Signal {
     }
 
     public function sendGroupMessage($message, $groupId, $attachments=''){
+        $this->addToMessageLog($groupId, $message);
+
         $this->command = new Command([
             'command' => "{$this->prefix}sendGroupMessage string:\"$message\" array:string:\"$attachments\" array:byte:$groupId"
         ]);
@@ -180,8 +255,11 @@ class SignalBus extends Signal {
      * List Groups
      * @return array|string
      */
-    public function listGroups()
-    {
+    public function listGroups(){
+        if(!empty($this->groups)){
+            return $this->groups;
+        }
+
         $this->command = new Command([
             'command' => "{$this->prefix}listGroups"
         ]);
@@ -217,7 +295,9 @@ class SignalBus extends Signal {
             }
         }
 
-        return $result;
+        $this->groups   = $result;
+
+        return $this->groups;
     }
 
     /**
@@ -238,6 +318,8 @@ class SignalBus extends Signal {
         }else{
             $recipient    = "array:string:".implode(',', $recipients);
         }
+
+        $this->addToMessageLog($recipient, $message);
 
         if(!empty($attachments) && is_array($attachments)){
             $attachments    = implode(',', $attachments);

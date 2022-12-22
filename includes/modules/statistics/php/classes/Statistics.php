@@ -12,9 +12,9 @@ class Statistics {
      * Create the statistics table if it does not exist
      */
     function createDbTable(){
-		if ( !function_exists( 'maybe_create_table' ) ) { 
-			require_once ABSPATH . '/wp-admin/install-helper.php'; 
-		} 
+		if ( !function_exists( 'maybe_create_table' ) ) {
+			require_once ABSPATH . '/wp-admin/install-helper.php';
+		}
 		
 		//only create db if it does not exist
 		global $wpdb;
@@ -46,11 +46,11 @@ class Statistics {
         
         if(is_numeric($pageViews)){
             $wpdb->update(
-                $this->tableName, 
+                $this->tableName,
                 array(
                     'timelastedited'=> $creationDate,
                     'counter'	 	=> $pageViews + 1
-                ), 
+                ),
                 array(
                     'userid'		=> $userId,
                     'url'           => $url,
@@ -58,7 +58,7 @@ class Statistics {
             );
         }else{
             $wpdb->insert(
-				$this->tableName, 
+				$this->tableName,
 				array(
                     'timecreated'   => $creationDate,
                     'timelastedited'=> $creationDate,

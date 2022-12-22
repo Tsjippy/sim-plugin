@@ -290,6 +290,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	if($local){
 		if(strpos(php_uname(), 'Linux') !== false){
 			$signal = new SignalBus();
+			$signal->createDbTable();
 		}else{
 			$signal = new Signal();
 		}
@@ -312,6 +313,112 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	}
 
 	return ob_get_clean();
+}, 10, 3);
+
+add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $dataHtml;
+	}
+
+	ob_start();
+
+	$local	= false;
+	if(isset($settings['local']) && $settings['local']){
+		$local	= true;
+	}
+
+	if(!$local){
+		return '';
+	}
+
+	$amount	= 100;
+	if(isset($_REQUEST['amount'])){
+		$amount	= $_REQUEST['amount'];
+	}
+
+	$months	= 100;
+	if(isset($_REQUEST['months'])){
+		$months	= $_REQUEST['months'];
+	}
+
+	$page	= 1;
+	if(isset($_REQUEST['page'])){
+		$page	= $_REQUEST['page'];
+	}
+
+	$signal 	= new SignalBus();
+	$messages	= $signal->getMessageLog($amount, $page, strtotime("-$months months", time()));
+
+	if(empty($messages)){
+		return '';
+	}
+
+	?>
+	<div class='send-signal-messages'>
+        <h2>Message History</h2>
+
+		<form method='get' id='message-overview-settings'>
+			<label>
+				Show Messages from the last <input type='number' name='months' value='<?php echo $months ;?>' style='max-width: 60px;'> months only
+			</label>
+			<br>
+			<label>
+				Amount of messages to show <input type='number' name='amount' value='<?php echo $amount; ?>' style='max-width: 60px;'>
+			</label>
+			<br>
+			<input type='submit' value='Apply'>
+		</form>
+
+		<?php
+		
+		$url		= admin_url("admin.php?page=sim_signal&tab=data&amount=$amount&months=$months&page=");
+		$totalPages	= ceil($signal->totalMessages/$amount);
+
+		$start	= max($page - 2, 1);
+		$end	= min($page + 2, $totalPages);
+
+		if($page > 1){
+			echo "<a href='{$url}1'>< First</a>";
+		}
+
+		for ($x = $start; $x <= $end; $x++) {
+			echo "<a href='$url$x'>$x</a>";
+		}
+
+		if($page < $totalPages){
+			echo "<a href='$url$totalPages'>Last ></a>";
+		}
+
+		?>
+
+        <table class='statistics_table'>
+			<thead>
+				<th>Date</th>
+				<th>Time</th>
+				<th>Recipient</th>
+				<th>Message</th>
+			</thead>
+            <tbody>
+				<?php
+					foreach($messages as $message){
+						$date	= date('d-m-Y', $message->timesend);
+						$time	= date('H:i', $message->timesend);
+						?>
+						<tr>
+							<td class='date'><?php echo $date;?></td>
+							<td class='time'><?php echo $time?></td>
+							<td class='recipient'><?php echo $message->recipient;?></td>
+							<td class='message'><?php echo $message->message;?></td>
+						</tr>
+						<?php
+					}
+				?>
+            </tbody>
+        </table>
+    </div>
+
+	<?php
 }, 10, 3);
 
 add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){

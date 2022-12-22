@@ -41,16 +41,16 @@ add_action( 'activated_plugin', function ( $plugin ) {
 } );
 
 //Add setting link
-add_filter("plugin_action_links_".PLUGIN, function ($links) { 
+add_filter("plugin_action_links_".PLUGIN, function ($links) {
     // Settings Link
     $url            = admin_url( 'admin.php?page=sim' );
-    $link           = "<a href='$url'>Settings</a>"; 
-    array_unshift($links, $link); 
+    $link           = "<a href='$url'>Settings</a>";
+    array_unshift($links, $link);
 
     // Details link
     $url            = admin_url( 'plugin-install.php?tab=plugin-information&plugin=sim-plugin&section=changelog' );
-    $link  = "<a href='$url'>Details</a>"; 
-    array_unshift($links, $link); 
+    $link  = "<a href='$url'>Details</a>";
+    array_unshift($links, $link);
 
     // Update links
     if(isset($_GET['update']) && $_GET['update'] == 'check'){
