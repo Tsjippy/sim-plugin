@@ -244,7 +244,7 @@ function arrivingUsersMessage(){
 
 	//If there are arrivals
 	if(!empty($arrivingUsers)){
-		$html 	.= '<div name="arrivals" style="text-align: center; font-size: 18px;">';
+		$html 	.= '<div name="arrivals" style="font-size: 18px;">';
 			$html 	.= '<h3>Arrivals</h3>';
 
 			$html .= '<p>';
@@ -252,9 +252,9 @@ function arrivingUsersMessage(){
 				if(count($arrivingUsers)==1){
 					//Get the url of the user page
 					$url	 = SIM\maybeGetUserPageUrl($arrivingUsers[0]->ID);
-					$html	.= '<a href="'.$url.'">'.$arrivingUsers[0]->display_name."</a> arrives today!";
+					$html	.= "<a href='$url'>{$arrivingUsers[0]->display_name}</a> arrives today!";
 				}else{
-					$html 	.= 'The following people arrive today:<br>';
+					$html 	.= 'The following people arrive today:<br><br>';
 
 					$skip	= [];
 					//Loop over the arrivals
