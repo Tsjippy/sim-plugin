@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- signal message log
 
 ### Changed
+
+### Fixed
+
+## [2.24.16] - 2022-12-22
+
+
+### Added
+- signal message log
 
 ### Fixed
 - video block in case of vimeo video
