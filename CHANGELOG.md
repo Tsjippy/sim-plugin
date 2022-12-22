@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- video block in case of vimeo video
 
 ## [2.24.15] - 2022-12-22
 
