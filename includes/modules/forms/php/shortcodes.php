@@ -137,11 +137,6 @@ add_shortcode( 'formresults', function($atts){
 	return $displayFormResults->showFormresultsTable();
 });
 
-add_filter('sim_loggedin_homepage',  function($content){
-	$content	.= missingFormFields(['type'=>"all"]);
-	return $content;
-});
-
 //Shortcode for recommended fields
 add_shortcode("missing_form_fields", __NAMESPACE__.'\missingFormFields');
 

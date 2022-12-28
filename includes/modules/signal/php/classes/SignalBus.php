@@ -21,13 +21,15 @@ sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 
 class SignalBus extends Signal {
     public function __construct($dbusType='session'){
+        global $wpdb;
+
         parent::__construct();
 
         $this->osUserId         = "";
 
         $this->dbusType         = $dbusType;
 
-        $this->tableName        = 'sim_signal_messages';
+        $this->tableName        = $wpdb->prefix.'sim_signal_messages';
 
         $phone                  = str_replace('+', '', $this->phoneNumber);
         $this->prefix           = "dbus-send --$this->dbusType --dest=org.asamk.Signal --type=method_call --print-reply=literal /org/asamk/Signal/_$phone org.asamk.Signal.";
@@ -60,7 +62,7 @@ class SignalBus extends Signal {
 
 		$sql = "CREATE TABLE {$this->tableName} (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            timesend datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            timesend int DEFAULT '0000-00-00 00:00:00' NOT NULL,
             recipient longtext NOT NULL,
             message longtext NOT NULL,
             PRIMARY KEY  (id)
@@ -101,12 +103,14 @@ class SignalBus extends Signal {
         }
 
         $totalQuery = "SELECT COUNT(id) as total FROM $this->tableName";
-        $query      = "SELECT * FROM $this->tableName LIMIT $startIndex,$amount;";
+        $query      = "SELECT * FROM $this->tableName";
 
         if(!empty($minTime)){
-            $totalQuery .= " timesend > $minTime";
-            $query      .= " timesend > $minTime";
+            $totalQuery .= " WHERE timesend > $minTime";
+            $query      .= " WHERE timesend > $minTime";
         }
+
+        $query      .= " LIMIT $startIndex,$amount;";
 
         $this->totalMessages    = $wpdb->get_var($totalQuery);
 
@@ -312,14 +316,17 @@ class SignalBus extends Signal {
         if(!is_array($recipients)){
             if(strpos( $recipients , '+' ) === 0){
                 $recipient    = "string:'$recipients'";
+                $this->addToMessageLog($recipients, $message);
             }else{
                 $this->sendGroupMessage($message, $recipients, $attachments);
             }
         }else{
             $recipient    = "array:string:".implode(',', $recipients);
-        }
 
-        $this->addToMessageLog($recipient, $message);
+            foreach($recipients as $rec){
+                $this->addToMessageLog($rec, $message);
+            }
+        }
 
         if(!empty($attachments) && is_array($attachments)){
             $attachments    = implode(',', $attachments);

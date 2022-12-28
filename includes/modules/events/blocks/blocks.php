@@ -104,9 +104,9 @@ function createEvents($metaId, $postId,  $metaKey,  $metaValue ){
 		return;
 	}
 
-	$metaValue	= json_decode($metaValue, true);
+	$metaValue		= json_decode($metaValue, true);
 
-	$events = new CreateEvents();
+	$events			= new CreateEvents();
 	$events->postId	= $postId;
     //check if anything has changed
 	$events->removeDbRows();

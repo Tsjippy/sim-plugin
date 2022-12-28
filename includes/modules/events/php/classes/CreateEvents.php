@@ -33,13 +33,22 @@ class CreateEvents extends Events{
 
 		$baseStartDateStr	= $this->eventData['startdate'];
 		$baseStartDate		= strtotime($baseStartDateStr);
+
+		// Startdate is in the past
+		if($baseStartDate < time()){
+			// in the past and not repeated
+			if( empty($this->eventData['isrepeated']) ){
+				return new \WP_Error('events', 'Date cannot be in the past');
+			}
+		}
+
+		$this->startDates	= [$baseStartDateStr];
+		if(!empty($this->eventData['isrepeated'])){
+			$baseStartDate	= $this->createRepeatedEvents($baseStartDate);
+		}
+
 		$baseEndDate		= $this->eventData['enddate'];
 		$dayDiff 			= ((new \DateTime($baseStartDateStr))->diff((new \DateTime($baseEndDate))))->d;
-
-		$this->startDates			= [$baseStartDateStr];
-		if(!empty($this->eventData['isrepeated'])){
-			$this->createRepeatedEvents($baseStartDate);
-		}
 		
 		foreach($this->startDates as $startDate){
 			$enddate	= date('Y-m-d', strtotime("+{$dayDiff} day", strtotime($startDate)));
@@ -180,17 +189,29 @@ class CreateEvents extends Events{
 
 		if($repeatParam['type'] == 'custom_days'){
 			foreach($repeatParam['includedates'] as $date){
-				if(!in_array($date, $this->startDates)){
+				// not yet included and not in the past
+				if(!in_array($date, $this->startDates) && $date > date('Y-m-d')){
 					$this->startDates[]	= $date;
 				}
 			}
 
 			return;
 		}
+
+		// Startdate is in the past, adjust
+		while($baseStartDate < strtotime(date('Y-m-d'))){
+			$type				= rtrim($repeatParam['type'], 'ly');
+
+			// Add one day/week/month/year
+			$baseStartDate		= strtotime("+1 $type", $baseStartDate);
+
+			//re-adjust the startdate string
+			$this->startDates	= [date('Y-m-d', $baseStartDate)];
+		}
 		
 		$repeatStop	= $repeatParam['stop'];
 		if($repeatParam['stop'] == 'after' && !empty($repeatParam['amount']) && is_numeric($amount)){
-			$amount = intval($repeatParam['amount'])-1;// The first event is already created
+			$amount = intval($repeatParam['amount'])-1;	// The first event is already created
 		}
 
 		if($repeatStop == 'date'){
@@ -236,6 +257,8 @@ class CreateEvents extends Events{
 			$i				= $i+$interval;
 			$amount			= $amount-1;
 		}
+
+		return $baseStartDate;
 	}
 
 	/**

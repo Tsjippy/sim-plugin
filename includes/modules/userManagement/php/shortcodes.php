@@ -172,17 +172,12 @@ add_action('sim_dashboard_warnings', function($userId){
 		</div>
 		<?php
 	}
-});
-
-add_filter('sim_loggedin_homepage',  function($content){
-	$content	.= expiryWarnings();
-	return $content;
-});
+}, 20);
 
 //Shortcode for expiry warnings
 add_shortcode("expiry_warnings", __NAMESPACE__.'\expiryWarnings');
 function expiryWarnings(){
-	if(is_numeric($_GET["userid"]) && in_array('usermanagement', wp_get_current_user()->roles )){
+	if(!empty($_GET["userid"]) && is_numeric($_GET["userid"]) && in_array('usermanagement', wp_get_current_user()->roles )){
 		$userId	= $_GET["userid"];
 	}else{
 		$userId = get_current_user_id();

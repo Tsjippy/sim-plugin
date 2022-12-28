@@ -2,14 +2,10 @@
 namespace SIM\MANDATORY;
 use SIM;
 
+// add to account dashboard
 add_action('sim_dashboard_warnings', function($userId){
 	echo mustReadDocuments($userId);
-}, 5);
-
-add_filter('sim_loggedin_homepage',  function($content){
-	$content	.= mustReadDocuments();
-	return $content;
-});
+}, 20);
 
 add_shortcode("must_read_documents", __NAMESPACE__.'\mustReadDocuments');
 
@@ -127,8 +123,15 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 		$html .= "<ul>$arrivedHtml</ul>";
 	}
 
+	if(wp_doing_cron()){
+		return '';
+	}
 
-	if(empty($html) || wp_doing_cron()){
+	if(empty($html)){
+		if(strpos($_SERVER['REQUEST_URI'], 'wp-admin/post.php') !== false || strpos($_SERVER['REQUEST_URI'], 'wp-json') !== false){
+			return 'Mandatory pages block<br>This will show empty as you have not pages to read';
+		}
+
 		return '';
 	}
 

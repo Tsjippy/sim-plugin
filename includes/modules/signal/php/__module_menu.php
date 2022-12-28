@@ -316,6 +316,8 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 }, 10, 3);
 
 add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
+	global $wpdb;
+
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $dataHtml;
@@ -343,8 +345,8 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 	}
 
 	$page	= 1;
-	if(isset($_REQUEST['page'])){
-		$page	= $_REQUEST['page'];
+	if(isset($_REQUEST['nr'])){
+		$page	= $_REQUEST['nr'];
 	}
 
 	$signal 	= new SignalBus();
@@ -371,23 +373,24 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 		</form>
 
 		<?php
-		
-		$url		= admin_url("admin.php?page=sim_signal&tab=data&amount=$amount&months=$months&page=");
-		$totalPages	= ceil($signal->totalMessages/$amount);
-
-		$start	= max($page - 2, 1);
-		$end	= min($page + 2, $totalPages);
 
 		if($page > 1){
+			$url		= admin_url("admin.php?page=sim_signal&tab=data&amount=$amount&months=$months&nr=");
+			$totalPages	= ceil($signal->totalMessages/$amount);
+	
+			$start	= max($page - 2, 1);
+			$end	= min($page + 2, $totalPages);
+			
 			echo "<a href='{$url}1'>< First</a>   ";
-		}
+	
 
-		for ($x = $start; $x <= $end; $x++) {
-			echo "   <a href='$url$x'>$x</a>   ";
-		}
+			for ($x = $start; $x <= $end; $x++) {
+				echo "   <a href='$url$x'>$x</a>   ";
+			}
 
-		if($page < $totalPages){
-			echo "   <a href='$url$totalPages'>Last ></a>";
+			if($page < $totalPages){
+				echo "   <a href='$url$totalPages'>Last ></a>";
+			}
 		}
 
 		?>
@@ -402,13 +405,27 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
             <tbody>
 				<?php
 					foreach($messages as $message){
-						$date	= date('d-m-Y', $message->timesend);
-						$time	= date('H:i', $message->timesend);
+						$date		= date('d-m-Y', $message->timesend);
+						$time		= date('H:i', $message->timesend);
+
+						$recipient	= '';
+						if(strpos($message->recipient, '+') !== false){
+							$recipient	= $wpdb->get_var("SELECT display_name FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->recipient%')");
+						}else{
+							$signal->listGroups();
+							foreach($signal->groups as $group){
+								if($group->id == $message->recipient){
+									$recipient	= $group->name;
+									break;
+								}
+							}
+						}
+
 						?>
 						<tr>
 							<td class='date'><?php echo $date;?></td>
 							<td class='time'><?php echo $time?></td>
-							<td class='recipient'><?php echo $message->recipient;?></td>
+							<td class='recipient'><?php echo $recipient;?></td>
 							<td class='message'><?php echo $message->message;?></td>
 						</tr>
 						<?php
@@ -419,6 +436,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
     </div>
 
 	<?php
+	return ob_get_clean();
 }, 10, 3);
 
 add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){

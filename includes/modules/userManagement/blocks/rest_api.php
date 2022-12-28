@@ -1,15 +1,15 @@
 <?php
-namespace SIM\MANDATORY;
+namespace SIM\USERMANAGEMENT;
 use SIM;
 
 add_action( 'rest_api_init', function () {
-	// show schedules
+	// show reminders
 	register_rest_route(
-		RESTAPIPREFIX.'/mandatory_content',
-		'/must_read_documents',
+		RESTAPIPREFIX.'/usermanagement',
+		'/show_reminders',
 		array(
 			'methods' 				=> 'GET',
-			'callback' 				=> __NAMESPACE__.'\mustReadDocuments',
+			'callback' 				=> 'expiryWarnings',
 			'permission_callback' 	=> '__return_true',
 		)
 	);

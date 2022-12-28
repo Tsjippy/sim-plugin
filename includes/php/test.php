@@ -6,6 +6,8 @@ use mikehaertl\shellcommand\Command;
 //Shortcode for testing
 add_shortcode("test",function ($atts){
     global $wpdb;
+
+    $events=EVENTS\getAnniversaries();
 });
 
 // turn off incorrect error on localhost

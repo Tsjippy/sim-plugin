@@ -72,18 +72,29 @@ add_filter('sim_after_bot_payer', function($args){
 		//Loop over the anniversary_messages
 		foreach($anniversaryMessages as $userId=>$msg){
 			$msg	= html_entity_decode($msg);
+
+			$userdata		= get_userdata($userId);
+
+			// user does not exist
+			if(!$userdata){
+				continue;
+			}
+			
 			if(!empty($messageString)){
 				$messageString .= " and the ";
 			}
 
-			$userdata		= get_userdata($userId);
 			$coupleString	= $userdata->first_name.' & '.get_userdata(SIM\hasPartner(($userdata->ID)))->display_name;
 
 			$msg	= str_replace($coupleString, "of $coupleString", $msg);
 			$msg	= str_replace($userdata->display_name, "of {$userdata->display_name}", $msg);
 
 			$messageString .= $msg;
-			$args['urls'] .= str_replace('https://', '', SIM\maybeGetUserPageUrl($userId))."\n";
+
+			$url			= SIM\maybeGetUserPageUrl($userId);
+			if($url){
+				$args['urls'] .= str_replace('https://', '', $url)."\n";
+			}
 		}
 		$args['message'] .= $messageString.'.';
 	}
