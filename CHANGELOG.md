@@ -3,12 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.25.0] - 2022-12-28
+
+
+### Added
 - reminder block
 
 ### Changed
 - signal backend layout
-
-### Fixed
 
 ## [2.24.16] - 2022-12-22
 
