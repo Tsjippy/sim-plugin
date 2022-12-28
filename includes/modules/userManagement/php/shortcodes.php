@@ -190,20 +190,24 @@ function expiryWarnings(){
 	$dashboardWarnings->vaccinationReminders();
 	
 	$dashboardWarnings->reviewReminder();
-	
-	if (!empty($dashboardWarnings->reminderHtml)){
-		$html = '<h3 class="frontpage">';
-		if($dashboardWarnings->reminderCount > 1){
-			$html 			.= 'Reminders</h3><p>'.$dashboardWarnings->reminderHtml;
-		}else{
-			$dashboardWarnings->reminderHtml 	= str_replace(['</li>', '<li>'], '', $dashboardWarnings->reminderHtml);
-			$html 			.= 'Reminder</h3><p>'.$dashboardWarnings->reminderHtml;
+
+	if (empty($dashboardWarnings->reminderHtml)){
+		if(strpos($_SERVER['REQUEST_URI'], 'wp-admin/post.php') !== false || strpos($_SERVER['REQUEST_URI'], 'wp-json') !== false){
+			return 'Reminder block<br>This will show empty as you have no reminders';
 		}
-		
-		$html 				=  '<div id=reminders>'.$html.'</p></div>';
+
+		return '';
+	}
+
+	$html = '<h3 class="frontpage">';
+	if($dashboardWarnings->reminderCount > 1){
+		$html 			.= 'Reminders</h3><p>'.$dashboardWarnings->reminderHtml;
+	}else{
+		$dashboardWarnings->reminderHtml 	= str_replace(['</li>', '<li>'], '', $dashboardWarnings->reminderHtml);
+		$html 			.= 'Reminder</h3><p>'.$dashboardWarnings->reminderHtml;
 	}
 	
-	return $html;
+	return  "<div id=reminders>$html</p></div>";
 }
 
 //Shortcode for userdata forms
@@ -222,7 +226,7 @@ function userInfoPage($atts){
 	
 	$a = shortcode_atts( array(
 		'currentuser' 	=> false,
-		'id' 			=> '', 
+		'id' 			=> '',
 	), $atts );
 
 	$showCurrentUserData = $a['currentuser'];
@@ -495,7 +499,7 @@ add_shortcode( 'delete_user', function(){
 		return "<div class='error'>You have no permission to delete user accounts!</div>";
 	}
 
-	//Load js	
+	//Load js
 	wp_enqueue_script('user_select_script');
 
 	$html = "";

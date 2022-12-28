@@ -9,7 +9,7 @@ add_action( 'rest_api_init', function () {
 		'/show_reminders',
 		array(
 			'methods' 				=> 'GET',
-			'callback' 				=> 'expiryWarnings',
+			'callback' 				=> __NAMESPACE__.'\expiryWarnings',
 			'permission_callback' 	=> '__return_true',
 		)
 	);
