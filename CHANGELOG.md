@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- reminder block
 
 ### Changed
 - signal backend layout
