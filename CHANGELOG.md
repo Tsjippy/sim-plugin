@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- reminder block
 
 ## [2.25.0] - 2022-12-28
 
