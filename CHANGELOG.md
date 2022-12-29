@@ -3,9 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- check for signal number
 
 ### Changed
+
+### Fixed
+
+## [2.26.0] - 2022-12-29
+
+
+### Added
+- check for signal number
 
 ### Fixed
 - reminder block
