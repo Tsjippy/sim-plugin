@@ -7,12 +7,7 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    $signal = new SIGNAL\SignalBus();
-	$result = $signal->send('+234904525252', 'Failing message');
-
-    if(strpos($result, 'Unregistered user') !== false){
-        return 'user not registered';
-    }
+	SIGNAL\checkSignalNumbers();
 });
 
 // turn off incorrect error on localhost

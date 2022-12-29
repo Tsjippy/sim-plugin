@@ -630,6 +630,6 @@ trait ElementHtml{
 			}
 		}
 
-		return $html;
+		return apply_filters('sim-form-element-html', $html, $element, $this);
 	}
 }

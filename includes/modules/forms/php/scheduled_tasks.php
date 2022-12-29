@@ -85,13 +85,13 @@ function mandatoryFieldsReminder(){
             }
             
             //If there is an email set
-            if(!empty($recipients)){                
+            if(!empty($recipients)){
                 $message .= $reminderHtml;
                 
                 wp_mail( $recipients, $subject, $message);
             }
 		}
-	} 
+	}
 }
 
 // Remove scheduled tasks upon module deactivatio
