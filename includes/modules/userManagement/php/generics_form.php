@@ -10,41 +10,19 @@ add_filter('sim_forms_load_userdata',function($usermeta,$userId){
 	unset($userdata['ID']);
 	
 	return array_merge($usermeta, $userdata);
-},10,2);
+}, 10, 2);
 
 //create  events
 add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
 	if($formName != 'user_generics'){
 		return $formResults;
 	}
-	
-	if(class_exists('SIM\EVENTS\Events')){
-		$events	= new SIM\EVENTS\CreateEvents();
-		$events->createCelebrationEvent('birthday', $userId, 'birthday', $_POST['birthday']);
-		$events->createCelebrationEvent(SITENAME.' anniversary', $userId, 'arrival_date', $_POST['arrival_date']);
-	}
 
 	//check if phonenumber has changed
 	$oldPhonenumbers	= (array)get_user_meta($userId, 'phonenumbers', true);
 	$newPhonenumbers	= $_POST['phonenumbers'];
 	$changedNumbers		= array_diff($newPhonenumbers, $oldPhonenumbers);
-	$firstName			= get_userdata($userId)->first_name;
 	foreach($changedNumbers as $key=>$changedNumber){
-		$groupPaths		= SIM\getModuleOption('signal', 'invgroups');
-
-		$link			= '';
-		if(is_array($groupPaths)){
-			$signal	= new SIM\SIGNAL\SignalBus();
-			foreach($groupPaths as $path){
-				$result	= 	$signal->getGroupInvitationLink($path);
-				if(empty($signal->error)){
-					$link	.= $result;
-				}
-			}
-		}else{
-			$link		= SIM\getModuleOption('signal', 'group_link');
-		}
-
 		// Make sure the phonenumber is in the right format
 		# = should be +
 		if($changedNumber[0] == '='){
@@ -66,10 +44,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 			$changedNumber = $formResults['phonenumbers'][$key]	= '+234'.$changedNumber;
 		}
 
-		if(!empty($link)){
-			$message	= "Hi $firstName\n\nI noticed you just updated your phonenumber on ".SITEURLWITHOUTSCHEME.".\n\nIf you want to join our Signal group with this number you can use this url:\n$link";
-			SIM\trySendSignal($message, $changedNumber, true);
-		}
+		do_action('sim-phonenumber-updated', $changedNumber, $userId);
 	}
 	
 	return $formResults;

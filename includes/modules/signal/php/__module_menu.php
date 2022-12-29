@@ -515,6 +515,33 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 	return ob_get_clean();
 }, 10, 3);
 
+add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG || !SIM\getModuleOption(MODULE_SLUG, 'local')){
+		return $optionsHtml;
+	}
+
+	ob_start();
+
+	?>
+	<label>
+		Define the e-mail people get when they should submit a Signal phonenumber
+	</label>
+	<br>
+
+	<?php
+	$email    = new SignalEmail(wp_get_current_user());
+	$email->printPlaceholders();
+	?>
+
+	<h4>E-mail to remind people to add their Signal phonenumber</h4>
+	<?php
+
+	$email->printInputs($settings);
+
+	return ob_get_clean();
+}, 10, 3);
+
 add_filter('sim_module_updated', function($options, $moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){

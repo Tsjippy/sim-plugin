@@ -226,8 +226,7 @@ class SignalBus extends Signal {
      * @param   string          $recipient Number to check.
      * @return  string
      */
-    public function isRegistered($recipient)
-    {
+    public function isRegistered($recipient){
 
         $this->command = new Command([
             'command' => "{$this->prefix}isRegistered string:'$recipient'"

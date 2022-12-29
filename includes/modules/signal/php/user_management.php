@@ -5,7 +5,7 @@ use SIM;
 /*
 	Add a signal page to user management screen
 */
-add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $user){	
+add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $user){
 	//Add an extra tab
 	$filteredHtml['tabs']['Signal']	= "<li class='tablink' id='show_signal_options' data-target='signal_options'>Signal options</li>";
 	

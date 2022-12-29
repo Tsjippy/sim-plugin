@@ -80,25 +80,6 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	//remove https from site urldecode
 	$urlWithoutHttps	= str_replace('https://', '', SITEURL);
 	$message			= str_replace(SITEURL, $urlWithoutHttps, $message);
-	
-	//Check if recipient is an existing userid
-	if(is_numeric($recipient) && get_userdata($recipient)){
-
-		$phonenumbers = get_user_meta( $recipient, 'phonenumbers', true );
-		
-		//If this user has more than 1 phone number add them all
-		if(is_array($phonenumbers) && count($phonenumbers) == 1){
-			//Store the first and only phonenumber as recipient
-			$recipient = array_values($phonenumbers)[0];
-		}elseif(is_array($phonenumbers) && count($phonenumbers) > 1){
-			foreach($phonenumbers as $phonenumber){
-				asyncSignalMessageSend($message, $phonenumber, $postId);
-			}
-			return;
-		}else{
-			return;
-		}
-	}
 
 	$image = "";
 	if(is_numeric($postId) && has_post_thumbnail($postId)){
@@ -106,42 +87,61 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	}
 
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
-		if(strpos(php_uname(), 'Linux') !== false){
-			$signal = new SignalBus();
-			if(strpos($recipient, ',') !== false){
-				$signal->sendGroupMessage($message, $recipient, $image);
-			}else{
-				// check if valid number
-				if($signal->isRegistered($recipient)){
-					$signal->send($recipient, $message, $image);
-				}
-			}
-		}else{
-			$signal = new Signal();
-			if($signal->isRegistered($recipient)){
-				$signal->send($recipient, $message, $image);
-			}
-		}
+		sendSignalFromLocal($message, $recipient, $image);
+	}else{
+		sendSignalFromExternal($message, $recipient, $image);
+	}
+}
 
-		return;
+function sendSignalFromLocal($message, $recipient, $image){
+	$phonenumber		= $recipient;
+
+	//Check if recipient is an existing userid
+	if(is_numeric($recipient) && get_userdata($recipient)){
+
+		$phonenumber = get_user_meta( $recipient, 'signal_number', true );
+
+		if(empty($phonenumber)){
+			return;
+		}
 	}
 
+	if(strpos(php_uname(), 'Linux') !== false){
+		$signal = new SignalBus();
+		if(strpos($phonenumber, ',') !== false){
+			$signal->sendGroupMessage($message, $phonenumber, $image);
+			return;
+		}
+	}else{
+		$signal = new Signal();
+	}
+
+	$result	= $signal->send($phonenumber, $message, $image);
+
+	if(strpos($result, 'Unregistered user') !== false){
+		//user not registered
+		delete_user_meta( $recipient, 'signal_number');
+	}
+}
+
+function sendSignalFromExternal($message, $phonenumber, $image){
 	if(!empty($image)){
 		$image	= base64_encode(file_get_contents($image));
 	}
 	
 	$notifications = get_option('signal_bot_messages');
+
 	//Notifications should be an array of recipients
 	if(!is_array($notifications)){
 		$notifications = [];
 	}
 
-	//The recipient should be an array of messages
-	if(!isset($notifications[$recipient]) || !is_array($notifications[$recipient])){
-		$notifications[$recipient]	= [];
+	//The phonenumber should be an array of messages
+	if(!isset($notifications[$phonenumber]) || !is_array($notifications[$phonenumber])){
+		$notifications[$phonenumber]	= [];
 	}
 
-	$notifications[$recipient][] = [
+	$notifications[$phonenumber][] = [
 		$message,
 		$image
 	];
