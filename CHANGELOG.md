@@ -3,16 +3,11 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- signal icon
 
 ### Changed
 
 ### Fixed
-
-## [2.26.1] - 2022-12-29
-
-
-### Added
-- signal icon
 
 ## [2.26.0] - 2022-12-29
 
