@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- bug in recommended fields warning
 
 ## [2.26.0] - 2022-12-29
 
