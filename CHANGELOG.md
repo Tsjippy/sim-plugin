@@ -3,11 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [2.27.0] - 2023-01-02
+
+
+### Added
 - signal icon
 - positional accounts
 - positional account has no mandatory content
-
-### Changed
 
 ### Fixed
 - bug in recommended fields warning
