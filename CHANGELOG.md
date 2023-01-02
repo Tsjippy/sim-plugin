@@ -5,6 +5,7 @@
 ### Added
 - signal icon
 - positional accounts
+- positional account has no mandatory content
 
 ### Changed
 
