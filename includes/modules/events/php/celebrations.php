@@ -103,7 +103,7 @@ add_filter('sim_after_bot_payer', function($args){
 	
 	//If there are arrivals
 	if(!empty($arrivalUsers)){
-		if(count($arrivalUsers)==1){
+		if(count($arrivalUsers) == 1){
 			$args['message'] 	.= "\n\n".$arrivalUsers[0]->display_name." arrives today.";
 			$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($arrivalUsers[0]->ID))."\n";
 		}else{
@@ -132,12 +132,6 @@ add_filter('sim_after_bot_payer', function($args){
 				}
 
 				$args['message'] 	.= "$name\n";
-				$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($user->ID))."\n";
-			}
-
-			//Loop over the arrival_users
-			foreach($arrivalUsers as $user){
-				$args['message'] 	.= $user->display_name."\n";
 				$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($user->ID))."\n";
 			}
 		}

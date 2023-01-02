@@ -62,6 +62,7 @@ function getAllEmptyRequiredElements($userId, $type){
 
 					$checkValue	= '';
 					if(isset($check['conditional_value'])){
+						$checkValue			= $check['conditional_value'];
 						$conditionalValue	= strtotime($check['conditional_value']);
 						if($conditionalValue && Date('Y', $conditionalValue) < 2200){
 							$checkValue	= Date('Y-m-d', $conditionalValue);

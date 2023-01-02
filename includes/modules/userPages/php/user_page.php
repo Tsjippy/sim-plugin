@@ -338,27 +338,29 @@ function showPhonenumbers($userId){
 		$icon   .= '</svg>';
 
 
-		$html	.= "<p><span style='font-size: 15px;'>Contact details below are only for you to use.<br>Do not share with other people.</span><br><br>";
+		$html	.= "<p style='margin-bottom:0px'>";
+		$html	.= "<span style='font-size: 15px;'>Contact details below are only for you to use.<br>Do not share with other people.</span><br><br>";
 		$html	.= "E-mail: <a href='mailto:$email'>$email</a><br>";
 		if(empty($phonenumbers)){
 			$html .= "Phone number: No phonenumber given<br><br>";
 		}elseif(count($phonenumbers) == 1){
 			if($phonenumbers[0] == $signalNumber){
-				$html .= "Phone number: <a href='https://signal.me/#p/{$phonenumbers[0]}'>{$phonenumbers[0]}$icon</a><br><br>";
+				$html .= "Phone number: <a href='https://signal.me/#p/{$phonenumbers[0]}'>{$phonenumbers[0]}$icon</a></p>";
 			}else{
-				$html .= "Phone number: {$phonenumbers[0]}<br><br>";
+				$html .= "Phone number: {$phonenumbers[0]}</p>";
 			}
 		}elseif(count($phonenumbers) > 1){
-			$html .= "Phone numbers:<br>";
+			$html .= "Phone numbers</p><ul style='list-style:square;margin-left: 25px;'>";
 			foreach($phonenumbers as $key=>$phonenumber){
 				if($phonenumber == $signalNumber){
-					$html .= "Phone number ".($key+1)." is: <a href='https://signal.me/#p/{$phonenumber}'>{$phonenumber}$icon</a><br><br>";
+					$html .= "<li><a href='https://signal.me/#p/{$phonenumber}'>{$phonenumber}$icon</a></li>";
 				}else{
-					$html .= "Phone number ".($key+1)." is: $phonenumber<br><br>";
+					$html .= "<li>$phonenumber</li>";
 				}
 			}
+			$html .= "</ul>";
 		}
-		$html .= addVcardDownload($userId).'</p>';
+		$html .= addVcardDownload($userId).'<br><br>';
 	}
 
 	return $html;
