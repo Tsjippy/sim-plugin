@@ -4,10 +4,10 @@ use SIM;
 
 /**
  * Shows the user account dashboard of a user
- * 
+ *
  * @param	int		$userId		WP_User id
  * @param	bool	$admin		Whether we run this for an admin account, default false
- * 
+ *
  * @return	string				The dashboard html
  */
 function showDashboard($userId, $admin=false){
@@ -103,4 +103,15 @@ function showDashboard($userId, $admin=false){
 	echo '</div>';
 
 	return ob_get_clean();
+}
+
+// No recommended fields for positional user accounts
+add_filter("sim_recommended_html_filter", __NAMESPACE__.'\filterPositionalAccount', 10, 2);
+add_filter("sim_mandatory_html_filter", __NAMESPACE__.'\filterPositionalAccount', 10, 2);
+function filterPositionalAccount($html, $userId){
+	if(get_user_meta($userId, 'account-type', true) == 'positional'){
+		return '';
+	}
+
+	return $html;
 }

@@ -270,6 +270,7 @@ add_action( 'rest_api_init', function () {
 });
 
 function getUniqueName($element, $update, $oldElement, $simForms){
+	$element->name	= end(explode('\\', $element->name));
 	if(strpos($element->name, '[]') !== false || ($update && $oldElement->name == $element->name && count($simForms->getElementByName($element->name, '', false)) == 1)){
 		return $element->name;
 	}

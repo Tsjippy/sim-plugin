@@ -43,6 +43,9 @@ function changePasswordForm($userId = null){
 			}elseif($_GET['do'] == 'email'){
 				update_user_meta($userId, '2fa_methods', ['email']);
 				echo "<div class='success'>Succesfully changed the 2fa factor for $name to e-mail</div>";
+			}elseif($_GET['do'] == 'positional'){
+				update_user_meta($userId, 'account-type', $_GET['type']);
+				echo "<div class='success'>Succesfully changed the account type for $name to {$_GET['type']}</div>";
 			}
 		}
 	}
@@ -90,20 +93,35 @@ function changePasswordForm($userId = null){
 				if(!isset($methods['email'])){
 					$param['do']	= 'email';
 					$url 			= add_query_arg($param);
-				?>
-				<p>
-					Use the button below to change the 2fa factor for <?php echo $name;?> to e-mail<br><br>
-					<a href="<?php echo esc_url($url) ;?>#Login%20info" class="button sim">Change to e-mail</a>
-				</p>
+					?>
+					<p>
+						Use the button below to change the 2fa factor for <?php echo $name;?> to e-mail<br><br>
+						<a href="<?php echo esc_url($url) ;?>#Login%20info" class="button sim">Change to e-mail</a>
+					</p>
 
-				<?php
+					<?php
 				}
-					$param['do']	= 'off';
-					$url = add_query_arg($param);
+
+				$param['do']	= 'off';
+				$url 			= add_query_arg($param);
 				?>
 				<p>
 					Use the button below to turn off Two Factor Authentication for <?php echo $name;?><br><br>
 					<a href="<?php echo esc_url( $url );?>#Login%20info" class="button sim">Reset 2FA</a>
+				</p>
+
+				<?php
+				$type			= 'positional';
+				if(get_user_meta($userId, 'account-type', true) == 'positional'){
+					$type		= 'normal';
+				}
+				$param['do']	= 'positional';
+				$param['type']	= $type;
+				$url 			= add_query_arg($param);
+				?>
+				<p>
+					Use the button below to switch this account to a <?php echo $type;?> account <br><br>
+					<a href="<?php echo esc_url( $url );?>#Login%20info" class="button sim">Change account type</a>
 				</p>
 			</div>
 		<?php }?>

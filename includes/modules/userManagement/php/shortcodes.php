@@ -277,6 +277,8 @@ function userInfoPage($atts){
 		return "<div class='error'>No user to display</div>";
 	}
 
+	$accountType	= get_user_meta($userId, 'account-type', true);
+
 	/*
 		Dashboard
 	*/
@@ -295,7 +297,14 @@ function userInfoPage($atts){
 	/*
 		Family Info
 	*/
-	if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('family', $availableForms) ){
+	if(
+		$accountType != 'positional'	&&
+		(
+			array_intersect($genericInfoRoles, $userRoles ) ||
+			$showCurrentUserData
+		) &&
+		in_array('family', $availableForms)
+	){
 		if($userAge > 18){
 			//Tab button
 			$tabs[]	= '<li class="tablink" id="show_family_info" data-target="family_info">Family</li>';
@@ -356,7 +365,14 @@ function userInfoPage($atts){
 	/*
 		Location Info
 	*/
-	if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('location', $availableForms)){
+	if(
+		$accountType != 'positional'	&&
+		(
+			array_intersect($genericInfoRoles, $userRoles ) ||
+			$showCurrentUserData
+		) &&
+		in_array('location', $availableForms)
+	){
 		//Add tab button
 		$tabs[]	= '<li class="tablink" id="show_location_info" data-target="location_info">Location</li>';
 		
@@ -400,7 +416,7 @@ function userInfoPage($atts){
 		$tabs[]	= '<li class="tablink" id="show_roles" data-target="role_info">Roles</li>';
 		
 		//Content
-		$roleHtml = '<div id="role_info" class="tabcontent hidden">'; 
+		$roleHtml = '<div id="role_info" class="tabcontent hidden">';
 			$roleHtml .= displayRoles($userId);
 		$roleHtml .= '</div>';
 
@@ -410,7 +426,14 @@ function userInfoPage($atts){
 	/*
 		SECURITY INFO
 	*/
-	if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('security', $availableForms)){				
+	if(
+		$accountType != 'positional'	&&
+		(
+			array_intersect($genericInfoRoles, $userRoles ) ||
+			$showCurrentUserData
+		) &&
+		in_array('security', $availableForms)
+	){
 		//Tab button
 		$tabs[]	= "<li class='tablink' id='show_security_info' data-target='security_info'>Security</li>";
 		
@@ -425,7 +448,14 @@ function userInfoPage($atts){
 	/*
 		Vaccinations Info
 	*/
-	if((array_intersect($medicalRoles, $userRoles) || $showCurrentUserData) && in_array('vaccinations', $availableForms)){
+	if(
+		$accountType != 'positional'	&&
+		(
+			array_intersect($medicalRoles, $userRoles) ||
+			$showCurrentUserData
+		) &&
+		in_array('vaccinations', $availableForms)
+	){
 		if($showCurrentUserData){
 			$active = '';
 			$class = 'class="hidden"';

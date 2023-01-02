@@ -132,9 +132,9 @@ function getMinistries(){
 
 /**
  * display ministries defined as php function in generics form
- * 
+ *
  * @param	int		$userId		WP_User id
- * 
+ *
  * @return	srtring				html
  */
 function displayMinistryPositions($userId){
@@ -142,9 +142,9 @@ function displayMinistryPositions($userId){
 	
 	ob_start();
 	?>
-	<div id="ministries_list">
+	<div id="ministries_list" name='displayministrypositions_php'>
 		<ul style='margin-left:0px;'>
-			<?php		
+			<?php
 			//Retrieve all the ministries from the database
 			foreach (getMinistries() as $url=>$ministries) {
 				?>

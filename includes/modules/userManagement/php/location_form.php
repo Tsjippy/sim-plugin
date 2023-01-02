@@ -26,15 +26,15 @@ add_filter('sim_before_saving_formdata',function($formResults, $formName, $userI
 	$location = $_POST["location"];
 	
 	//Only update when needed and if valid coordinates
-	if(is_array($location) and $location != $oldLocation and !empty($location['latitude']) and !empty($location['longitude'])){
+	if(is_array($location) && $location != $oldLocation && !empty($location['latitude']) && !empty($location['longitude'])){
 		$latitude = $location['latitude'] = filter_var(
-			$location['latitude'], 
+			$location['latitude'],
 			FILTER_SANITIZE_NUMBER_FLOAT,
 			FILTER_FLAG_ALLOW_FRACTION
 		);
 		
 		$location['longitude'] = filter_var(
-			$location['longitude'], 
+			$location['longitude'],
 			FILTER_SANITIZE_NUMBER_FLOAT,
 			FILTER_FLAG_ALLOW_FRACTION
 		);
@@ -46,7 +46,7 @@ add_filter('sim_before_saving_formdata',function($formResults, $formName, $userI
 		do_action('sim_location_update', $userId, $location);
 		
 		SIM\printArray("Saved location for user id $userId");
-	}elseif(isset($_POST["location"]) and (empty($location['latitude']) or empty($location['longitude']))){
+	}elseif(isset($_POST["location"]) && (empty($location['latitude']) || empty($location['longitude']))){
 		//Remove location from db if empty
 		delete_user_meta( $userId, 'location');
 		SIM\printArray("Deleted location for user id $userId");
@@ -55,4 +55,4 @@ add_filter('sim_before_saving_formdata',function($formResults, $formName, $userI
 	}
 	
 	return $formResults;
-},10,3);
+}, 10, 3);

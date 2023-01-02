@@ -289,7 +289,14 @@ add_filter('sim_user_page_dropdown', function($genericInfoRoles){
 	Add a visa Info page to user management screen
 */
 add_filter('sim_user_info_page', function($filteredHtml, $showCurrentUserData, $user, $userAge){
-	if((!array_intersect(["visainfo"], wp_get_current_user()->roles ) && !$showCurrentUserData) || $userAge < 18){
+	if(
+		get_user_meta($user->ID, 'account-type', true) == 'positional'	||
+		(
+			!array_intersect(["visainfo"], wp_get_current_user()->roles ) &&
+			!$showCurrentUserData
+		) ||
+		$userAge < 18
+	){
 		return $filteredHtml;
 	}
 
