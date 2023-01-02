@@ -4,6 +4,7 @@
 
 ### Added
 - signal icon
+- positional accounts
 
 ### Changed
 
