@@ -1,6 +1,5 @@
-import {
-	fetchRestApi
-} from './shared.js';
+import { fetchRestApi } from './shared.js';
+import { togglePassworView } from './login.js';
 
 function checkPassStrength() {
 	var pass1 		= document.querySelector('[name="pass1"]');
@@ -38,12 +37,12 @@ function checkPassStrength() {
 }
 
 function updateIndicator(indicator){
-	indicator.classList.remove('short,bad,good,strong');
+	indicator.classList.remove('short', 'bad', 'good', 'strong');
 
 	var pass1 		= document.querySelector('[name="pass1"]');
 	var pass2 		= document.querySelector('[name="pass2"]');
 
-	if(pass1 != pass2){
+	if(pass1.value != pass2.value){
 		indicator.classList.add('bad');
 		indicator.textContent = pwsL10n.mismatch;
 	}else{
@@ -101,8 +100,9 @@ async function submitPasswordChange(event){
 document.addEventListener("DOMContentLoaded",function() {
 	console.log('Password strength.js loaded');
 	
-	document.querySelectorAll('.changepass').forEach(el=>el.addEventListener("keyup",checkPassStrength));
+	document.querySelectorAll('.changepass').forEach(el=>el.addEventListener("keyup", checkPassStrength));
 
-	
 	document.querySelectorAll('[name="update_password"]').forEach(el=>el.addEventListener("click",submitPasswordChange));
+
+	document.querySelectorAll('.toggle_pwd_view').forEach(el=>el.addEventListener("click", togglePassworView));
 });

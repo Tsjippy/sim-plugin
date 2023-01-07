@@ -233,7 +233,7 @@ function userInfoPage($atts){
 	
 	//Variables
 	$medicalRoles		= ["medicalinfo"];
-	$genericInfoRoles 	= array_merge(['usermanagement'], $medicalRoles,['administrator']);
+	$genericInfoRoles 	= array_merge(['usermanagement'], $medicalRoles, ['administrator']);
 	$user 				= wp_get_current_user();
 	$userRoles 			= $user->roles;
 	$tabs				= [];
@@ -278,6 +278,10 @@ function userInfoPage($atts){
 	}
 
 	$accountType	= get_user_meta($userId, 'account-type', true);
+	// positional account with usermanagement rights as a normal account so they can change the forms
+	if($accountType == 'positional' && in_array('usermanagement', $userRoles )){
+		$accountType	= 'normal';
+	}
 
 	/*
 		Dashboard
@@ -298,12 +302,12 @@ function userInfoPage($atts){
 		Family Info
 	*/
 	if(
-		$accountType != 'positional'	&&
+		$accountType != 'positional'	&&							// we are not a positional account
 		(
-			array_intersect($genericInfoRoles, $userRoles ) ||
-			$showCurrentUserData
+			array_intersect($genericInfoRoles, $userRoles ) ||		// we do  have permission to view others data
+			$showCurrentUserData									// or its our own data
 		) &&
-		in_array('family', $availableForms)
+		in_array('family', $availableForms)							// and the family form is enabled
 	){
 		if($userAge > 18){
 			//Tab button

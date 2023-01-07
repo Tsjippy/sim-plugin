@@ -34,20 +34,29 @@ function passwordResetForm($user){
 			<p style="margin-top:30px;">
 				<?php echo $message;?>
 			</p>
-			<label>
-				New Password<br>
-				<input type="password" class='changepass wide' name="pass1" size="16" autocomplete="off" required/>
-			</label>
-			<br>
-			<span style="text-align: center;" class="pass-strength-result hidden" id="pass-strength-result1">Strength indicator</span>
-			<br>
-			<br>
-			<label>
-				Confirm New Password<br>
-				<input type="password" class='changepass wide' name="pass2" size="16" autocomplete="off" required/>
-			</label>
-			<br>
-			<span style="text-align: center;" class="pass-strength-result hidden" id="pass-strength-result2">Strength indicator</span>
+			<div class='password'>
+				<label>
+					New Password<br>
+					<input type="password" class='changepass wide' name="pass1" size="16" autocomplete="off" required/>
+				</label>
+				<button type="button" class='toggle_pwd_view' data-toggle="0" title="Show password">
+					<img src="<?php echo PICTURESURL.'/invisible.png';?>" loading='lazy' alt='togglepasword'>
+				</button>
+				<br>
+				<span class="pass-strength-result hidden" id="pass-strength-result1">Strength indicator</span>
+				<br>
+			</div>
+			<div class='password'>
+				<label>
+					Confirm New Password<br>
+					<input type="password" class='changepass wide' name="pass2" size="16" autocomplete="off" required/>
+				</label>
+				<button type="button" class='toggle_pwd_view' data-toggle="0" title="Show password">
+					<img src="<?php echo PICTURESURL.'/invisible.png';?>" loading='lazy' alt='togglepasword'>
+				</button>
+				<br>
+				<span class="pass-strength-result hidden" id="pass-strength-result2">Strength indicator</span>
+			</div>
 		</div>
 		<?php echo SIM\addSaveButton('update_password', 'Change password');?>
 	</form>

@@ -329,7 +329,7 @@ document.addEventListener('keypress', function (e) {
 	}
 });
 
-function togglePassworView(ev){
+export function togglePassworView(ev){
 	var target	= ev.target;
 
 	if(ev.target.tagName == 'IMG'){
@@ -340,12 +340,12 @@ function togglePassworView(ev){
 		target.title								= 'Hide password';
 		target.dataset.toggle						= '1';
 		target.innerHTML							= target.innerHTML.replace('invisible', 'visible');
-		document.getElementById('password').type	= 'text';
+		target.closest('.password').querySelector('input[type="password"]').type	= 'text';
 	}else{
 		target.title								= 'Show password';
 		target.dataset.toggle						= '0';
 		target.innerHTML							= target.innerHTML.replace('visible', 'invisible');
-		document.getElementById('password').type	= 'password';
+		target.closest('.password').querySelector('input[type="text"]').type	= 'password';
 	}
 }
 
@@ -411,7 +411,7 @@ document.addEventListener("click", function(event){
 	}else if(target.id == "login_button"){
 		// Submit the login form when averything is ok
 		requestLogin();
-	}else if(target.id == 'toggle_pwd_view' || target.parentNode.id == 'toggle_pwd_view'){
+	}else if(target.closest('.toggle_pwd_view') != null){
 		togglePassworView(event);
 	}else if(target.id == "lost_pwd_link"){
 		resetPassword(target);
