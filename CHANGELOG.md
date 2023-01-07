@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- password reset form
 
 ## [2.27.2] - 2023-01-02
 
