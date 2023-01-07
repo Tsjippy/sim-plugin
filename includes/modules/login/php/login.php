@@ -61,7 +61,7 @@ function loginModal($message='', $required=false, $username=''){
                                 Password
                                 <input id="password" type="password" class='wide' name="password" required>
                             </label>
-                            <button type="button" id='toggle_pwd_view' data-toggle="0" title="Show password">
+                            <button type="button" class='toggle_pwd_view' data-toggle="0" title="Show password">
                                 <img src="<?php echo PICTURESURL.'/invisible.png';?>" loading='lazy' alt='togglepasword'>
                             </button>
                         </div>
