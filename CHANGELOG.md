@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- loginform
 
 ## [2.27.3] - 2023-01-07
 
