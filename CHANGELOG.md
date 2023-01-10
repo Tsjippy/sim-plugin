@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- choose reminder frequency for signal
 
 ### Changed
 
