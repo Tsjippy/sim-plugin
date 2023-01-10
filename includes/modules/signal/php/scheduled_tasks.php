@@ -19,7 +19,11 @@ add_action('init', function(){
 
 function scheduleTasks(){
     SIM\scheduleTask('check_signal_action', 'daily');
-    SIM\scheduleTask('check_signal_numbers_action', 'weekly');
+
+    $freq   = SIM\getModuleOption(MODULE_SLUG, 'reminder_freq');
+    if($freq){
+        SIM\scheduleTask('check_signal_numbers_action', $freq);
+    }
 }
 
 /**

@@ -141,6 +141,15 @@ function connectedOptions($signal, $settings){
 		Currently connected to <?php echo $signal->phoneNumber; ?>
 		<a href='<?php echo $url;?>&unregister=true' class='button'>Unregister</a><br>
 	</p>
+
+	<label for="reminder_freq">How often should people be reminded to add a signal website to the website</label>
+	<br>
+	<select name="reminder_freq">
+		<?php
+		SIM\ADMIN\recurrenceSelector($settings['reminder_freq']);
+		?>
+	</select>
+
 	<?php
 	if(!empty($signalGroups)){
 		?>
