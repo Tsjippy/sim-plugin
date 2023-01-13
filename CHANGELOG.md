@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.27.6] - 2023-01-13
+
+
+### Changed
 - decalring variables in classes
 
 ### Fixed
