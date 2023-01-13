@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- decalring variables in classes
 
 ### Fixed
 
