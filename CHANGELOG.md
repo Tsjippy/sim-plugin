@@ -8,6 +8,12 @@
 
 ### Fixed
 
+## [2.27.5] - 2023-01-10
+
+
+### Added
+- choose reminder frequency for signal
+
 ## [2.27.4] - 2023-01-07
 
 
