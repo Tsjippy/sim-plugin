@@ -5,6 +5,8 @@ use WP_Embed;
 use WP_Error;
 
 class SubmitForm extends SimForms{
+	public $submission;
+	
 	/**
 	 * Returns conditional e-mails with a valid condition
 	 *

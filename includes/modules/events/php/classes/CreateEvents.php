@@ -57,7 +57,6 @@ class CreateEvents extends Events{
 			$args	= $this->eventData;
 			unset($args['startdate']);
 			unset($args['isrepeated']);
-			unset($args['repeated']);
 			unset($args['repeat']);
 			unset($args['allday']);
 			$args['enddate']		= $enddate;

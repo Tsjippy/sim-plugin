@@ -6,6 +6,13 @@ use stdClass;
 class FormBuilderForm extends SimForms{
 	use ElementHtml;
 
+	public $isInDiv;
+	public $defaultArrayValues;
+	public $defaultValues;
+	public $nextElement;
+	public $prevElement;
+	public $currentElement;
+
 	public function __construct($atts=[]){
 		parent::__construct();
 

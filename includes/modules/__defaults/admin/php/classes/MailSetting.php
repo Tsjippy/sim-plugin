@@ -4,6 +4,14 @@ use SIM;
 
 abstract class MailSetting{
     public $keyword;
+    public $replaceArray;
+    public $moduleSlug;
+    public $subjectKey;
+    public $messageKey;
+    public $subject;
+    public $message;
+    public $defaultSubject;
+    public $defaultMessage;
 
     /**
      * Initiates the class

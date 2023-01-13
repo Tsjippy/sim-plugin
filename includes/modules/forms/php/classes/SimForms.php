@@ -4,8 +4,37 @@ use SIM;
 use WP_Error;
 
 class SimForms{
+	
+	public $isFormStep;
+	public $isMultiStepForm;
+	public $formStepCounter;
+	public $submissionTableName;
+	public $tableName;
+	public $elTableName;
+	public $nonInputs;
+	public $multiInputsHtml;
+	public $user;
+	public $userRoles;
+	public $userId;
+	public $pageSize;
+	public $multiwrap;
+	public $submitRoles;
+	public $showArchived;
+	public $editRights;
+	public $formName;
+	public $formData;
+	public $forms;
+	public $formId;
+	public $formElements;
+	public $jsFileName;
+	public $names;
+	public $shortcodeId;
+	public $onlyOwn;
+	public $all;
+
 	public function __construct(){
 		global $wpdb;
+
 		$this->isFormStep				= false;
 		$this->isMultiStepForm			= '';
 		$this->formStepCounter			= 0;

@@ -6,6 +6,25 @@ use WP_Error;
 class DisplayFormResults extends DisplayForm{
 	use ExportFormResults;
 
+	public $shortcodeTable;
+	public $enriched;
+	public $excelContent;
+	public $currentPage;
+	public $total;
+	public $submission;
+	public $submissions;
+	public $splittedSubmissions;
+	public $hiddenColumns;
+	public $formSettings;
+	public $columnSettings;
+	public $tableSettings;
+	public $ownData;
+	public $noRecords;
+	public $shortcodeData;
+	public $formEditPermissions;
+	public $tableViewPermissions;
+	public $tableEditPermissions;
+
 	public function __construct($atts=[]){
 		global $wpdb;
 		
@@ -17,8 +36,7 @@ class DisplayFormResults extends DisplayForm{
 		
 		if(function_exists('is_user_logged_in') && is_user_logged_in()){
 			$this->userRoles[]	= 'everyone';//used to indicate view rights on permissions
-			
-			$this->excelContent= [];
+			$this->excelContent	= [];
 		}
 	}
 

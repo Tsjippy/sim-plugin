@@ -6,6 +6,12 @@ class DisplayForm extends SubmitForm{
 	use ElementHtml;
 	use CreateJs;
 
+	public $wrap;
+	public $multiWrapValueCount;
+	public $nextElement;
+	public $prevElement;
+	public $currentElement;
+
 	public function __construct($atts=[]){
 		parent::__construct();
 

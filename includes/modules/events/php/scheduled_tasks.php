@@ -50,7 +50,7 @@ function removeOldEvents(){
 /**
  * Get all the events of today and check if they are an anniversary.
  * If so, send a concratulation message
- * 
+ *
 */
 function anniversaryCheck(){
 	$events		= new DisplayEvents();

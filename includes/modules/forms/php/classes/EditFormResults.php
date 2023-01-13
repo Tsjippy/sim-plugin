@@ -3,6 +3,8 @@ namespace SIM\FORMS;
 use SIM;
 
 class EditFormResults extends DisplayFormResults{
+	public $submissionId;
+	
 	 /**
 	 * Update an existing form submission
 	 *

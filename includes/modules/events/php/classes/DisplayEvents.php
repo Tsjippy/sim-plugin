@@ -355,7 +355,7 @@ class DisplayEvents extends Events{
 		}
 
 		$gmail			= "https://calendar.google.com/calendar/render?action=TEMPLATE&text=$title&dates={$startdt}/{$enddt}&details={$description}&location={$location}&ctz=Africa/Lagos&sprop=website:".SITEURLWITHOUTSCHEME."&sprop=name:SIM";
- 		if(!empty($eventMeta['repeated'])){
+ 		if(!empty($eventMeta['isrepeated'])){
 			$gmail		.= "&recur=RRULE:FREQ=".strtoupper($eventMeta['repeat']['type']).";INTERVAL=".$eventMeta['repeat']['interval'].';';
 			$weeks 		= $eventMeta['repeat']['weeks'];
 			$weekDays	= $eventMeta['repeat']['weekDays'];
