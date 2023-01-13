@@ -148,3 +148,8 @@ input.wide{
 .leaflet-container a.button{
 	color: white;
 }
+
+input:invalid, .invalid{
+	background-color: #ffdddd !important;
+	border: 2px solid red !important;
+}
