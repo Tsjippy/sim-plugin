@@ -8,6 +8,7 @@
 - decalring variables in classes
 
 ### Fixed
+- loading all form submissions
 
 ## [2.27.5] - 2023-01-10
 
