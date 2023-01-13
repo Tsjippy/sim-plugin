@@ -648,7 +648,7 @@ class PdfHtml extends \FPDF{
 	
 	/**
 	 * Write a row of a table
-	 * 
+	 *
 	 * @param	array	$colWidths	the column widths
 	 * @param	array	$row		The row data
 	 * @param	bool	$fil		Whether to fill the row

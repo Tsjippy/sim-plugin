@@ -223,32 +223,37 @@ add_filter('sim_form_actions', function($actions){
 });
 
 //Add a print button html
-add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $index, $displayFormResults){
-	if(!in_array($index, [1,4])){
-		return $buttonsHtml;
-	}
-
+add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId, $displayFormResults, $submission){
 	if($fieldValues == null || !is_numeric($fieldValues['user_id'])){
 		$buttonsHtml['print']	= '';
 	}else{
-		$tripDetails		= $displayFormResults->getSubmissions(null, $fieldValues['id']);
-		if(empty($tripDetails)){
+		$tripDetails	= $displayFormResults->getSubmissions(null, $fieldValues['id'])->formresults;
+		
+		if(empty($tripDetails['travel'])){
 			return $buttonsHtml;
 		}
 
-		$tripDetails	= $tripDetails[0]->formresults ['travel'];
+		$origin				= str_replace('_', ' ', $tripDetails['travel'][0]['from']);
+		$destination		= str_replace('_', ' ', end($tripDetails['travel'])['to']);
 
 		//if this is a roundtrip check if it is longer than 7 days
-		if($fieldValues['roundtrip'][0] == 'Yes'){
-			$start = $tripDetails[1]['date'];
+		if($fieldValues['return'][0] == 'Yes'){
 
-			if(is_array($tripDetails[6]) && !empty($tripDetails[6]['date'])){
-				$end = $tripDetails[6]['date'];
-			}elseif(is_array($tripDetails[5]) && !empty($tripDetails[5]['date'])){
-				$end = $tripDetails[5]['date'];
-			}else{
-				$end = $tripDetails[4]['date'];
+			// find the last trip of the first journey
+			foreach($tripDetails['travel'] as $index=>$trip){
+				if($trip['to'] == $tripDetails['final_destination_1']){
+					// we are currently requesting the first trip
+					if($index >= $subId){
+						$destination		= str_replace('_', ' ', $trip['to']);
+					}else{
+						$origin				= str_replace('_', ' ', $tripDetails['travel'][$index+1]['from']);
+					}
+				}
 			}
+
+			$start	= $tripDetails['travel'][0]['date'];
+
+			$end	= end($tripDetails['travel'])['date'];
 
 			$dayDiff	= (strtotime($end)-strtotime($start))/ 86400;
 			if($dayDiff < 7){
@@ -263,29 +268,19 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $index,
 		}
 		$passengers		   .= $fieldValues['user_id'];
 		
-		$destination		= str_replace('_', ' ', $tripDetails[$index]['to']);
 		if($fieldValues['traveltype'][0] == 'International'){
 			$transportType	= 'air';
 		}else{
 			$transportType	= 'road';
-			if(!empty($tripDetails[$index+2]['to'])){
-				$destination		= str_replace('_', ' ', $tripDetails[$index+2]['to']);
-			}elseif(!empty($tripDetails[$index+1]['to'])){
-				$destination		= str_replace('_', ' ', $tripDetails[$index+1]['to']);
-			}else{
-				$destination		= str_replace('_', ' ', $tripDetails[$index]['to']);
-			}
 		}
 
-		if($index == 1){
-			$travelType			= 'Departure';
+		if($subId == 1){
+			$travelType		= 'Departure';
 		}else{
-			$travelType			= 'Arrival';
+			$travelType		= 'Arrival';
 		}
 		
-		$travelDate		= $tripDetails[$index]['date'];
-		
-		$origin				= str_replace('_', ' ', $tripDetails[$index]['from']);
+		$travelDate			= $tripDetails['travel'][0]['date'];
 
 		ob_start();
 		?>
@@ -304,7 +299,7 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $index,
 		$buttonsHtml['print']	= trim(ob_get_clean());
 	}
 	return $buttonsHtml;
-}, 10, 4);
+}, 10, 5);
 
 //print travel letters if post
 add_action('sim_formtable_POST_actions',function(){

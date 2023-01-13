@@ -217,7 +217,7 @@ function createContactlistPdf($header, $data) {
     $fill = false;
 	//Loop over all the rows
     foreach($data as $row){
-		$pdf->writeTableRow($widths, $row, $fill,$header);		
+		$pdf->writeTableRow($widths, $row, $fill,$header);
         $fill = !$fill;
     }
     // Closing line
@@ -225,7 +225,7 @@ function createContactlistPdf($header, $data) {
 	
 	$contactList = get_temp_dir().SITENAME." Contactlist - ".date('F').".pdf";
 	$pdf->Output( $contactList , "F");
-    return $contactList; 
+    return $contactList;
 }
 
 // Remove scheduled tasks upon module deactivatio

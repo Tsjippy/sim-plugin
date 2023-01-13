@@ -48,6 +48,15 @@ class DisplayFormResults extends DisplayForm{
 	 */
 	public function getSubmissions($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
+
+		// return an already loaded submission
+		if(is_numeric($submissionId) && !empty($this->submissions)){
+			foreach($this->submissions as $submission){
+				if($submission->id == $submissionId){
+					return $submission;
+				}
+			}
+		}
 		
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE ";
 
@@ -558,7 +567,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	protected function getRowContents($values, $index){
+	protected function getRowContents($values, $subId){
 		$rowContents	= '';
 		$excelRow		= [];
 
@@ -652,8 +661,7 @@ class DisplayFormResults extends DisplayForm{
 				$value	= $values[$elementName];
 					
 				// Add sub id if this is an sub value
-				$subId 		= "";
-				if($index > -1 && $id > -1){
+				if($subId > -1 && $id > -1){
 					$element	= $this->getElementById($id);
 					preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $element->name, $matches);
 					$name	= $element->name;
@@ -662,7 +670,7 @@ class DisplayFormResults extends DisplayForm{
 						$name	= $matches[1];
 					}
 					if(!empty($splitNames) && in_array($name, $splitNames)){
-						$subId = "data-subid='$index'";
+						$subId = "data-subid='$subId'";
 					}
 				}
 
@@ -728,24 +736,24 @@ class DisplayFormResults extends DisplayForm{
 	/**
 	 * Writes a row of the table to the screen
 	 *
-	 * @param	array	$values	Array containing all the values of a form submission
-	 * @param	int		$index			The index of the row. Default -1 for none
-	 * @param	bool	$isArchived		Whether the current submission is archived. Default false.
+	 * @param	array	$values			Array containing all the values of a form submission
+	 * @param	int		$subId			The subid of a submission. Default -1 for none
+	 * @param	object	$submission		The submission
 	 */
-	protected function writeTableRow($values, $index=-1, $isArchived=false){
+	protected function writeTableRow($values, $subId, $submission){
 		//Loop over the fields in order of the defined columns
 		
 		$this->noRecords = false;
 		
 		//If this row should be written and it is the first cell then write
-		if($index > -1){
-			$subId = "data-subid='$index'";
+		if($subId > -1){
+			$subIdString = "data-subid='$subId'";
 		}else{
-			$subId = "";
+			$subIdString = "";
 		}
-		echo "<tr class='table-row' data-id='{$values['id']}' $subId>";
+		echo "<tr class='table-row' data-id='{$values['id']}' $subIdString>";
 		
-		echo $this->getRowContents($values, $index);
+		echo $this->getRowContents($values, $subId);
 
 		//if there are actions
 		if($this->formSettings['actions'] != ""){
@@ -753,12 +761,12 @@ class DisplayFormResults extends DisplayForm{
 			$buttonsHtml	= [];
 			$buttons		= '';
 			foreach($this->formSettings['actions'] as $action){
-				if($action == 'archive' && $this->showArchived == 'true' && $isArchived){
+				if($action == 'archive' && $this->showArchived == 'true' && $submission->archived){
 					$action = 'unarchive';
 				}
 				$buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
 			}
-			$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $values, $index, $this);
+			$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $values, $subId, $this, $submission);
 			
 			//we have te html now, check for which one we have permission
 			foreach($buttonsHtml as $action=>$button){
@@ -1650,12 +1658,12 @@ class DisplayFormResults extends DisplayForm{
 					$values				= $submission->formresults;
 					$values['id']		= $submission->id;
 					$values['userid']	= $submission->userid;
-					$index				= -1;
+					$subId				= -1;
 					if(is_numeric($submission->subId)){
-						$index			= $submission->subId;
+						$subId			= $submission->subId;
 					}
 					
-					$this->writeTableRow($values, $index, $submission->archived);
+					$this->writeTableRow($values, $subId, $submission);
 				}
 				?>
 				</tbody>

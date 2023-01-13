@@ -492,6 +492,9 @@ class SimForms{
 			
 			$this->formName 	= strtolower(sanitize_text_field($atts['formname']));
 			$this->formId		= sanitize_text_field($atts['formid']);
+
+			$this->getForm();
+
 			$this->shortcodeId	= $atts['id'];
 			$this->onlyOwn		= $atts['onlyOwn'];
 			if(isset($_GET['onlyown'])){
