@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue when ratechallenge needed for  Signal messenger
 
 ## [2.27.7] - 2023-01-13
 
