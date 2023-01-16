@@ -19,12 +19,23 @@ sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 
 
 class Signal {
+    public $valid;
+    public $os;
+    public $basePath;
+    public $programPath;
+    public $phoneNumber;
+    public $path;
+    public $daemon;
+    public $osUserId;
+    public $command;
+    public $error;
+
     public function __construct(){
         require_once( MODULE_PATH  . 'lib/vendor/autoload.php');
 
         $this->valid    = true;
 
-        $this->OS       = 'macOS';
+        $this->os       = 'macOS';
         $this->basePath = WP_CONTENT_DIR.'/signal-cli';
         if (!is_dir($this->basePath )) {
             mkdir($this->basePath , 0777, true);
@@ -36,10 +47,10 @@ class Signal {
         }
 
         if(strpos(php_uname(), 'Windows') !== false){
-            $this->OS               = 'Windows';
+            $this->os               = 'Windows';
             $this->basePath         = str_replace('\\', '/', $this->basePath);
         }elseif(strpos(php_uname(), 'Linux') !== false){
-            $this->OS               = 'Linux';
+            $this->os               = 'Linux';
         }
         
         $this->programPath      = $this->basePath.'/program/';
@@ -74,7 +85,7 @@ class Signal {
             $this->command->addArg('--dbus');
         }
 
-        if($this->OS == 'Windows'){
+        if($this->os == 'Windows'){
             $this->command->useExec  = true;
         }
     }
@@ -94,7 +105,6 @@ class Signal {
         file_put_contents($this->basePath.'/phone.signal', $phone);
 
         $captcha    = str_replace('signalcaptcha://', '', $captcha);
-
 
         $this->baseCommand();
 
@@ -194,8 +204,8 @@ class Signal {
      * @param string $attachments Image file path
      * @return bool|string
      */
-    public function send($recipients, string $message, string $attachments = null)
-    {
+    public function send($recipients, string $message, string $attachments = null){
+        // /home/simnige1/web/simnigeria.org/public_html/wp-content/signal-cli/program/bin/signal-cli --config /home/simnige1/.local/share/signal-cli -a +2349011531222 send +2349045252526 -m test
         $groupId    = null;
         if(!is_array($recipients)){
             if(strpos( $recipients , '+' ) === 0){
@@ -272,6 +282,26 @@ class Signal {
 
     protected function parseResult($returnJson=false){
         if($this->command->getExitCode()){
+
+            if(strpos($this->command->getError(), 'CAPTCHA proof required') !== false){
+                $username       = [];
+                exec("bash -c 'whoami'", $username);
+
+                SIM\printArray($username);
+                $instructions   = $this->command->getError();
+                $instructions   = str_replace('signal-cli', "$this->path --config /home/{$username[0]}/.local/share/signal-cli" , $instructions);
+                $adminUrl       = admin_url("admin.php?page=sim_signal&tab=functions&challenge=");
+
+                $to             = get_option('admin_email');
+                $subject        = "Signal captcha required";
+                $message        = "Hi admin,<br><br>";
+                $message        = "Signal messages are currently not been send from the website as you need to submit a captcha.<br>";
+                $message        .= "Use the following instructions to submit the captacha:<br><br>";
+                $message        .= "<code>$instructions</code><br>";
+                $message        .= "Submit the challenge and captcha <a href='$adminUrl'>here</a>";
+
+                wp_mail($to, $subject, $message);
+            }
             SIM\printArray($this->command);
             
             $this->error    = "<div class='error'>".$this->command->getError()."</div>";
@@ -645,7 +675,7 @@ class Signal {
         file_put_contents($pidFile, 'running');
 
         echo "Downloading Signal version $version<br>";
-        $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->OS.tar.gz");
+        $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->os.tar.gz");
 
         echo "Download finished<br>";
         // Unzip the gz
@@ -677,7 +707,7 @@ class Signal {
         $folder = str_replace('.tar.gz', '', $path);
 
         if(file_exists($folder)){
-            if($this->OS == 'Windows'){
+            if($this->os == 'Windows'){
                 // remove the folder
                 exec("rmdir $folder /s /q");
             }else{
@@ -704,7 +734,7 @@ class Signal {
         if(file_exists($this->programPath)){
             echo "Removing old version<br>";
 
-            if($this->OS == 'Windows'){
+            if($this->os == 'Windows'){
                 $path   = str_replace('/', '\\', $this->programPath);
                 // kill the process
                 exec("taskkill /IM signal-cli /F");

@@ -41,7 +41,7 @@ if(!empty($argv) && count($argv) == 2){
         isset($data->envelope->dataMessage->mentions)
     ){
         foreach($data->envelope->dataMessage->mentions as $mention){
-            if($mention->number == $signal->phoneNumber){
+            if($mention->number == $signal->phoneNumber || $mention->name == '8fc6c236-f07b-4a3c-97c5-0a78efe488ee'){
                 $groupId    = $signal->groupIdToByteArray($data->envelope->dataMessage->groupInfo->groupId);
                 $signal->sendGroupTyping($groupId);
                 $signal->sendGroupMessage(getAnswer(trim(explode('?', $data->envelope->dataMessage->message)[1]), $data->envelope->source), $groupId);

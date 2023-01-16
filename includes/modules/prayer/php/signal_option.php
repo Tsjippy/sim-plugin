@@ -2,7 +2,7 @@
 namespace SIM\PRAYER;
 use SIM;
 
-add_filter('sim_personal_signal_settings', function($settings, $user, $prefs){    
+add_filter('sim_personal_signal_settings', function($settings, $user, $prefs){
     $prayerTime = '';
     if(isset($prefs['prayertime'])){
         $prayerTime = $prefs['prayertime'];

@@ -20,6 +20,12 @@ sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 
 
 class SignalBus extends Signal {
+    public $dbusType;
+    public $tableName;
+    public $prefix;
+    public $totalMessages;
+    public $groups;
+
     public function __construct($dbusType='session'){
         global $wpdb;
 
@@ -411,6 +417,24 @@ class SignalBus extends Signal {
         return $this->parseResult();
     }
 
+    /**
+     * Submit a challenge
+     *
+     * @param   string  $challenge  The challenge string
+     * @param   string  $captcha    The captcha as found on https://signalcaptchas.org/challenge/generate.html
+     *
+     * @return string               The result
+     */
+    public function submitRateLimitChallenge($challenge, $captcha){
+        $this->command = new Command([
+            'command' => "{$this->prefix}submitRateLimitChallenge string:'$challenge' string:'$captcha'"
+        ]);
+
+        $this->command->execute();
+
+        return $this->parseResult();
+    }
+
     public function getGroupInvitationLink($groupPath){
         $this->command = new Command([
             'command' => "export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$this->osUserId/bus; dbus-send --$this->dbusType --dest=org.asamk.Signal --print-reply $groupPath org.freedesktop.DBus.Properties.Get string:org.asamk.Signal.Group string:GroupInviteLink"
@@ -467,7 +491,7 @@ class SignalBus extends Signal {
     }
 
     public function startDaemon(){
-        if($this->OS == 'Windows'){
+        if($this->os == 'Windows'){
             return;
         }
 

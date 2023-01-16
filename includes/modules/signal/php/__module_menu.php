@@ -455,13 +455,16 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 	}
 
 	// check if we need to send a message
+	if(!empty($_POST['challenge']) && !empty($_POST['captchastring'])){
+		$signal	= new SignalBus();
+		$result	= $signal->submitRateLimitChallenge($_POST['challenge'], $_POST['captchastring']);
+		echo $result;
+    }
+
+	// check if we need to send a message
 	if(!empty($_POST['message']) && !empty($_POST['recipient'])){
-        sendSignalMessage($_POST['message'], $_POST['recipient']);
-        ?>
-		<div class='success'>
-			Message send succesfully
-		</div>
-		<?php
+        $result	= sendSignalMessage($_POST['message'], $_POST['recipient']);
+		echo $result;
     }
 
 	$phonenumbers	= '';
@@ -473,6 +476,26 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 	}
 
 	ob_start();
+
+	if(isset($_REQUEST['challenge']) && !isset($_REQUEST['captchastring'])){
+		?>
+		<form method='post'>
+			<label>
+				<h4>Challenge string</h4>
+				<input type='text' name='challenge' value='<?php echo $_REQUEST['challenge'];?>' style='width:100%;' required>
+			</label>
+
+			<h4>Captcha string</h4>
+			<textarea name='captchastring' style='width:100%;' required rows=10></textarea>
+
+			<br>
+
+			<button>Submit</button>
+		</form>
+
+		<?php
+		return ob_get_clean();
+	}
 
 	?>
 	<form method='post'>
@@ -515,10 +538,11 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 				?>
 			</datalist>
 		</label>
-		<br>
-		<br>
 		<button>Send message</button>
 	</form>
+	<br>
+	<br>
+
 	<?php
 
 	return ob_get_clean();

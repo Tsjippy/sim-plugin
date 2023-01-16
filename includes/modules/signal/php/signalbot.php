@@ -87,9 +87,22 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	}
 
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
-		sendSignalFromLocal($message, $recipient, $image);
+		$result	= sendSignalFromLocal($message, $recipient, $image);
+
+		if(strpos($result, 'error') !== false){
+			return $result;
+		}else{
+			ob_start();
+			?>
+			<div class='success'>
+				Message send succesfully
+			</div>
+			<?php;
+
+			return ob_get_clean();
+		}
 	}else{
-		sendSignalFromExternal($message, $recipient, $image);
+		return sendSignalFromExternal($message, $recipient, $image);
 	}
 }
 
@@ -122,6 +135,8 @@ function sendSignalFromLocal($message, $recipient, $image){
 		//user not registered
 		delete_user_meta( $recipient, 'signal_number');
 	}
+
+	return $result;
 }
 
 function sendSignalFromExternal($message, $phonenumber, $image){
@@ -147,4 +162,13 @@ function sendSignalFromExternal($message, $phonenumber, $image){
 	];
 	
 	update_option('signal_bot_messages', $notifications);
+
+	ob_start();
+	?>
+	<div class='success'>
+		Message send succesfully
+	</div>
+	<?php;
+
+	return ob_get_clean();
 }

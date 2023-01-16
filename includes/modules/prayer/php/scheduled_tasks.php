@@ -48,8 +48,6 @@ function sendPrayerRequests(){
 
 	$message	 = "The prayer request of today is:\n";
 	$message 	.= prayerRequest(true);
-	$params		 = apply_filters('sim_after_bot_payer', ['message'=>$message, 'urls'=>'']);
-	$message	 = $params['message']."\n\n".$params['urls'];
 	
 	// Get the schedule for today
 	$date			= \Date('y-m-d');

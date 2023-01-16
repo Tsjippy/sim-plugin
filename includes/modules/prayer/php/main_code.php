@@ -74,7 +74,14 @@ function prayerRequest($plainText = false, $verified=false) {
 			//prayer request found
 			if (isset($matches[0][1]) && !empty($matches[0][1])){
 				//Return the prayer request
-				return $matches[0][1];
+				$prayer	= $matches[0][1];
+
+				if($plainText){
+					$params	= apply_filters('sim_after_bot_payer', ['message'=>$prayer, 'urls'=>'']);
+					$prayer	= $params['message']."\n\n".$params['urls'];
+				}
+
+				return $prayer;
 			}
 		}
 	}
