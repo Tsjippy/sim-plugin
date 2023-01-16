@@ -24,6 +24,8 @@ add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategor
  * Get the prayer request of today
  *
  * @param    string     $plainText      Whether we shuld return the prayer request in html or plain text
+ * @param	bool		$verified		If we trust the request, default false
+ *
  * @return   string|false     			The prayer request or false if no prayer request found
  *
 **/

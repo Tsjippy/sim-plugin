@@ -59,16 +59,15 @@ function getAnswer($message, $source){
     //Change the user to the adminaccount otherwise get_users will not work
     wp_set_current_user(1);
 
+    // Find the first name
     $name = false;
     $users = get_users(array(
-        'meta_key'     => 'phonenumbers',
+        'meta_key'     => 'signal_number',
+        'meta_value'   => $source ,
     ));
 
-    foreach($users as $user){
-        $phonenumbers = get_user_meta($user->ID,'phonenumbers',true);
-        if(in_array($source,$phonenumbers)){
-            $name = $user->first_name;
-        }
+    if(!empty($users)){
+        $name = $users[0]->first_name;
     }
 
     if($message == 'test'){
@@ -76,10 +75,10 @@ function getAnswer($message, $source){
     }elseif($message == 'thanks'){
         return 'You`re welcome!';
     }elseif(strpos($message, 'prayer') !== false && $name){
-        return "This is the prayer for today:\n\n".SIM\PRAYER\prayerRequest(true, $name);
+        return "This is the prayer for today:\n\n".SIM\PRAYER\prayerRequest(true, true);
     }elseif($message == 'hi' || strpos($message, 'hello') !== false){
         return "Hi $name";
-    }else{
+    }elseif(!empty($message)){
         return 'I have no clue, do you know?';
     }
 }

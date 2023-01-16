@@ -97,7 +97,7 @@ function sendSignalMessage($message, $recipient, $postId=""){
 			<div class='success'>
 				Message send succesfully
 			</div>
-			<?php;
+			<?php
 
 			return ob_get_clean();
 		}
@@ -168,7 +168,7 @@ function sendSignalFromExternal($message, $phonenumber, $image){
 	<div class='success'>
 		Message send succesfully
 	</div>
-	<?php;
+	<?php
 
 	return ob_get_clean();
 }

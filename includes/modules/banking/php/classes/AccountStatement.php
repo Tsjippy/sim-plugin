@@ -4,11 +4,16 @@ use SIM;
 
 class AccountStatement{
 	public $postiePost;
+	public $post;
+	public $loginName;
+	public $postName;
+	public $postDate;
+	public $accountId;
+	public $users;
+	public $statementName;
 
 	public function __construct($postiePost){
 		$this->post			= $postiePost;
-		$this->loginName	= '';
-		$this->postDate		= false;
 	}
 
 	/**
