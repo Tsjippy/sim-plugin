@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- faster name lookup in signal bot
 
 ### Fixed
 - issue when ratechallenge needed for  Signal messenger
