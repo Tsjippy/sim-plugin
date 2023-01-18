@@ -7,7 +7,7 @@ echo "Started from ".__DIR__;
 if(!empty($argv) && count($argv) == 2){
     $data      = json_decode($argv[1]);
 
-    if(!isset($data->envelope->dataMessage)){
+    if(!isset($data->envelope->dataMessage) || empty($data->envelope->dataMessage->message)){
         return;
     }
 
@@ -80,5 +80,7 @@ function getAnswer($message, $source){
         return "Hi $name";
     }elseif(!empty($message)){
         return 'I have no clue, do you know?';
+    }else{
+        return ' ';
     }
 }

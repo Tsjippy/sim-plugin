@@ -2,11 +2,11 @@
 namespace SIM\FILEUPLOAD;
 use SIM;
 
-add_action( 'rest_api_init', function () {	
+add_action( 'rest_api_init', function () {
 	//Route for first names
-	register_rest_route( 
-		RESTAPIPREFIX, 
-		'/remove_document', 
+	register_rest_route(
+		RESTAPIPREFIX,
+		'/remove_document',
 		array(
 			'methods'				=> 'POST',
 			'callback'				=> __NAMESPACE__.'\removeDocument',

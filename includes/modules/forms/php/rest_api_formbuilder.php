@@ -372,7 +372,7 @@ function addFormElement(){
 		}
 	}
 	
-	if(in_array($element->type, ['label','button','formstep'])){
+	if(in_array($element->type, ['label', 'button', 'formstep'])){
 		$element->name	= $element->text;
 	}elseif(empty($element->name)){
 		return new \WP_Error('Error', "Please enter a formfieldname");

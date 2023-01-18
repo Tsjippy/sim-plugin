@@ -39,10 +39,7 @@ export async function submitForm(target, url){
 	let validity 	= true;
 	
 	//get all hidden required inputs and unrequire them
-	form.querySelectorAll('.hidden [required], select[required], .nice-select-search[required]').forEach(el=>{el.required = false});
-
-	// Unhide required selects so the warning can be shown
-	form.querySelectorAll('select[required]').forEach( el=>el.style.display	= 'block' );
+	form.querySelectorAll('.hidden [required], select[required], .nice-select-search[required], .stephidden [required]').forEach(el=>{el.required = false});
 
 	// enable disabled fields so it gets included and warnings are shown
 	form.querySelectorAll('[disabled][required]').forEach( el=>{
@@ -51,9 +48,6 @@ export async function submitForm(target, url){
 	});
 
 	validity	= form.reportValidity();
-
-	// Hide again
-	form.querySelectorAll('select[required]').forEach(el=>el.style.display	= 'none');
 
 	//only continue if valid
 	if(validity){
@@ -148,6 +142,7 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 	}catch(error){
 		console.error(error);
 		console.error(result);
+		console.error(response);
 
 		if(result.ok){
 			if(showErrors){
@@ -156,7 +151,15 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 			console.error(`${sim.baseUrl}/wp-json${sim.restApiPrefix}/${url}` );
 			console.error(response);
 		}else{
-			Main.displayMessage(`Url ${sim.baseUrl}/wp-json${sim.restApiPrefix}/${url} not found`, 'error');
+			let modal	= `<div id='response-details' class="modal hidden" style='z-index:9999999999;'>`;
+				modal	+= `<div class="modal-content" style='max-width: min(1000px,100%);'>`
+					modal	+= `<span class="close">&times;</span>`;
+					modal	+= response;
+				modal	+= `</div>`;
+			modal	+= `</div>`;
+
+			document.querySelector('body').insertAdjacentHTML('afterBegin', modal);
+			Main.displayMessage(`Error loading url ${sim.baseUrl}/wp-json${sim.restApiPrefix}/${url}<br><button class='button small' id='error-details' onclick='(function(){ document.getElementById("response-details").classList.remove("hidden"); })();'>Details</button><br><div class='hidden response-message'>${response}</div>`, 'error');
 		}
 		
 		return false;

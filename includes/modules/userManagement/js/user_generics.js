@@ -18,7 +18,7 @@ async function addNewMinistry(target){
 			</label>
 			<label class="ministryposition" style="display:block;">
 				<h4 class="labeltext">Position at ${ministryName}:</h4>
-				<input type="text" id="justadded" name="jobs[${postId}]">
+				<input type="text" id="justadded" name="jobs[${response.postId}]">
 			</label>
 		</li>`;
 		

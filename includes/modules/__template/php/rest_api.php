@@ -31,7 +31,7 @@ add_action( 'rest_api_init', function () {
 } );
 
 //Function to return the first name of a user with a certain phone number
-function find_firstname(\WP_REST_Request $request ) {	
+function find_firstname(\WP_REST_Request $request ) {
 	if (is_user_logged_in() && isset($request['phone'])){
 		//Change the user to the adminaccount otherwise get_users will not work
 		wp_set_current_user(1);

@@ -221,7 +221,7 @@ function createUserAccount(){
 	}
 	
     if(in_array('usermanagement', $userRoles)){
-        $url		= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'user_edit_page')." /?userid=$userId";
+        $url		= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'user_edit_page')."?userid=$userId";
         $message = "Succesfully created an useraccount for $firstName<br>You can edit the deails <a href='$url'>here</a>";
     }else{
         $message = "Succesfully created useraccount for $firstName<br>You can now select $firstName in the dropdowns";
