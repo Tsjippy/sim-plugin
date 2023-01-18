@@ -877,8 +877,8 @@ class FormBuilderForm extends SimForms{
 		}
 		?>
 		<script>
-			const numericElements	= <?php echo json_encode($numericElements); ?>
-			const dateElements		= <?php echo json_encode($dateElements); ?>
+			const numericElements	= <?php echo json_encode($numericElements); ?>;
+			const dateElements		= <?php echo json_encode($dateElements); ?>;
 		</script>
 		<form action="" method="post" name="add_form_element_form" class="form_element_form sim_form" data-addempty=true>
 			<div style="display: none;" class="error"></div>

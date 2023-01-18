@@ -91,7 +91,7 @@ function sendSignalMessage($message, $recipient, $postId=""){
 
 		if(strpos($result, 'error') !== false){
 			return $result;
-		}else{
+		}elseif(!wp_doing_cron()){
 			ob_start();
 			?>
 			<div class='success'>
@@ -136,6 +136,10 @@ function sendSignalFromLocal($message, $recipient, $image){
 		delete_user_meta( $recipient, 'signal_number');
 	}
 
+	if(wp_doing_cron()){
+		return '';
+	}
+
 	return $result;
 }
 
@@ -162,6 +166,10 @@ function sendSignalFromExternal($message, $phonenumber, $image){
 	];
 	
 	update_option('signal_bot_messages', $notifications);
+
+	if(wp_doing_cron()){
+		return '';
+	}
 
 	ob_start();
 	?>
