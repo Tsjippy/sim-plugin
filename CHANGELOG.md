@@ -9,6 +9,7 @@
 
 ### Fixed
 - issue when ratechallenge needed for  Signal messenger
+- js error
 
 ## [2.27.7] - 2023-01-13
 
