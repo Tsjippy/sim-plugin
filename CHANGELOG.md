@@ -5,6 +5,13 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+## [2.27.8] - 2023-01-18
+
+
+### Changed
 - faster name lookup in signal bot
 
 ### Fixed
