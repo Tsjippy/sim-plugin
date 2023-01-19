@@ -40,6 +40,6 @@ add_action('sim-phonenumber-updated', function($phonenumber, $userId){
     if(!empty($link) && $send){
 	    $firstName	= get_userdata($userId)->first_name;
         $message	= "Hi $firstName\n\nI noticed you just updated your phonenumber on ".SITEURLWITHOUTSCHEME.".\n\nIf you want to join our Signal group with this number you can use this url:\n$link";
-        sendSignalMessage($message, $phonenumber, true);
+        sendSignalMessage($message, $phonenumber);
     }
 }, 10, 2);
