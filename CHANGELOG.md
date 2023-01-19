@@ -8,6 +8,7 @@
 
 ### Fixed
 - form validation error
+- send post image to signal
 
 ## [2.27.8] - 2023-01-18
 
