@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- form validation error
 
 ## [2.27.8] - 2023-01-18
 
