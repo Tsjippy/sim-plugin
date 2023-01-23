@@ -3,6 +3,7 @@ namespace SIM\EVENTS;
 use SIM;
 
 class IcalFeed{
+	public $icalFormat;
 
 	public function __construct(){
 		//see https://gist.github.com/jakebellacera/635416

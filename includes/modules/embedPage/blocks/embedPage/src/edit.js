@@ -13,7 +13,15 @@ const Edit = ({attributes, setAttributes}) => {
 
 	let initialContent;
 
-	if(JSON.parse(page).post_content == undefined || content == undefined){
+	let parsedPage		= {};
+
+	try{
+		parsedPage			= JSON.parse(page);
+	}catch (error) {
+		console.error('not a valid page');
+	}
+
+	if(parsedPage.post_content == undefined || content == undefined){
 		initialContent	= noPostString;
 	}else{
 		initialContent	= wp.element.RawHTML( { children: content } );
@@ -74,13 +82,13 @@ const Edit = ({attributes, setAttributes}) => {
 	const VisibilityChanged	= async function(checked){
 		setAttributes({ hide: checked});
 
-		SetContent(JSON.parse(page).ID, checked);
+		SetContent(parsedPage.ID, checked);
 	}
 
 	const LineBreakChanged	= async function(checked){
 		setAttributes({ newline: checked});
 
-		SetContent(JSON.parse(page).ID, hide, checked);
+		SetContent(parsedPage.ID, hide, checked);
 	}
 
 	const BuildCheckboxControls = function(){
@@ -92,8 +100,8 @@ const Edit = ({attributes, setAttributes}) => {
 			<>
 			Currently embeded page:
 			<CheckboxControl
-				label		= {decodeEntities( JSON.parse(page).post_title )}
-				onChange	= { (value) => PageSelected( value, JSON.parse(page) ) }
+				label		= { decodeEntities( parsedPage.post_title ) }
+				onChange	= { (value) => PageSelected( value, parsedPage ) }
 				checked		= {true}
 			/>
 			</>

@@ -3,6 +3,17 @@ namespace SIM\FANCYEMAIL;
 use SIM;
 
 class FancyEmail{
+    public $mailTable;
+    public $mailEventTable;
+    public $mailTrackerUrl;
+    public $mailImagesFolder;
+    public $subject;
+    public $recipients;
+    public $headers;
+    public $message;
+    public $emailId;
+    public $footer;
+    
     public function __construct(){
         global $wpdb;
 

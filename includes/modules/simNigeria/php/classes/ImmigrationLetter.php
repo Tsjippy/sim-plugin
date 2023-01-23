@@ -3,6 +3,9 @@ namespace SIM\SIMNIGERIA;
 use SIM;
 
 class ImmigrationLetter extends SIM\PDF\PdfHtml{
+	public $lineHeight;
+	public $brakeHeight;
+
 	public function __construct($orientation='P', $unit='mm', $format='A4'){
 		//Call parent constructor
 		parent::__construct($orientation,$unit,$format);

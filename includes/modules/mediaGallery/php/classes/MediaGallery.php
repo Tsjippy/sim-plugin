@@ -1,9 +1,23 @@
 <?php
 namespace SIM\MEDIAGALLERY;
 use SIM;
+use stdClass;
 
 class MediaGallery{
+    public $acceptedMimes;
+    public $types;
+    public $amount;
+    public $cats;
+    public $rand;
+    public $page;
+    public $search;
+    public $wpQuery;
+    public $posts;
+    public $total;
+
     public function __construct($types=['image'], $amount=3, $cats=[], $rand=true, $page=1, $search=''){
+        global $wp_query;
+        
         $allMimes               = get_allowed_mime_types();
         $this->acceptedMimes    = [];
         $this->types           = $types;
@@ -18,7 +32,7 @@ class MediaGallery{
         $this->rand             = $rand;
         $this->page             = $page;
         $this->search           = $search;
-        $this->wpQuery          = [];
+        $this->wpQuery          = $wp_query;
         $this->posts            = [];
         $this->total            = 0;
 

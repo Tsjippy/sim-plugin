@@ -3,6 +3,10 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 class DashboardWarnings{
+    public $reminderCount;
+    public $reminderHtml;
+    public $userId;
+
     public function __construct($userId){
         $this->reminderCount    = 0;
         $this->reminderHtml     = '';
@@ -12,7 +16,7 @@ class DashboardWarnings{
     /**
      * Check for expired greencard
      */
-    function greenCardReminder(){
+    public function greenCardReminder(){
         $visaInfo = get_user_meta( $this->userId, "visa_info", true);
 
         if (is_array($visaInfo) && isset($visaInfo['greencard_expiry'])){
@@ -29,7 +33,7 @@ class DashboardWarnings{
      * Checks for vaccination reminders of the current user
      * and his or her children
      */
-    function vaccinationReminders(){
+    public function vaccinationReminders(){
         $vaccinationReminderHtml = vaccinationReminders($this->userId);
 	
         if (!empty($vaccinationReminderHtml)){
@@ -56,7 +60,7 @@ class DashboardWarnings{
     /**
      * Checks for upcoming reviews
      */
-    function reviewReminder(){
+    public function reviewReminder(){
         $personnelCoordinatorEmail	= SIM\getModuleOption(MODULE_SLUG, 'personnel_email');
 
         //Check for upcoming reviews, but only if not set to be hidden for this year
@@ -83,7 +87,7 @@ class DashboardWarnings{
         
         $reviewDate	= date('F', strtotime($personnelInfo['review_date']));
         //If this month is the review month or the month before the review month
-        if($reviewDate == date('F') || date('F', strtotime('-1 month', strtotime($reviewDate))) == date('F')){			
+        if($reviewDate == date('F') || date('F', strtotime('-1 month', strtotime($reviewDate))) == date('F')){
             $genericDocuments = get_option('personnel_documents');
 
             if(is_array($genericDocuments) && !empty($genericDocuments['Annual review form'])){

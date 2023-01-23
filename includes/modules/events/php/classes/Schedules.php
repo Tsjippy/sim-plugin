@@ -4,6 +4,18 @@ use SIM;
 use WP_Error;
 
 class Schedules{
+	public $tableName;
+	public $user;
+	public $admin;
+	public $events;
+	public $lunchStartTime;
+	public $lunchEndTime;
+	public $dinerTime;
+	public $noPermissionText;
+	public $tdLabels;
+	public $schedules;
+	public $nextStartTimes;
+	
 	public function __construct(){
 		global $wpdb;
 

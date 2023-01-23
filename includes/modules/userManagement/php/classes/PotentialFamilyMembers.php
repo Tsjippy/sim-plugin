@@ -3,6 +3,16 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 class PotentialFamilyMembers{
+    public $userId;
+    public $birthday;
+    public $gender;
+    public $family;
+    public $potentialSpouses;
+    public $potentialFathers;
+    public $potentialMothers;
+    public $potentialChildren;
+    public $users;
+
     public function __construct($userId){
         $this->userId               = $userId;
         $this->birthday	            = get_user_meta( $userId, 'birthday', true );
@@ -20,7 +30,7 @@ class PotentialFamilyMembers{
      * Gets all the users and makes sure the names are unique
      * Also get some meta data for them
      */
-    function getUsers(){
+    public function getUsers(){
         //Get the id and the displayname of all users
         $this->users 					= get_users(
             array(
@@ -65,7 +75,7 @@ class PotentialFamilyMembers{
     /**
      * Get potential fathers
      */
-	function potentialParents(){
+	public function potentialParents(){
         foreach($this->users as $user){
             //Add the displayname as potential father if not younger then 18 and not part of the family
             if(($user->age == null || $user->age > 18) && !in_array($user->ID, $this->family)) {
@@ -83,7 +93,7 @@ class PotentialFamilyMembers{
     /**
      * Get potential spouses
      */
-	function potentialSpouses(){
+	public function potentialSpouses(){
         foreach($this->users as $user){
             //Check if current processing user already has a spouse
 			$spouse = SIM\hasPartner($user->ID);
@@ -115,7 +125,7 @@ class PotentialFamilyMembers{
     /**
      * Get potential children
      */
-	function potentialChildren(){
+	public function potentialChildren(){
         foreach($this->users as $user){
 			$parents 		= SIM\getParents($user->ID, true);
             if(!$parents){

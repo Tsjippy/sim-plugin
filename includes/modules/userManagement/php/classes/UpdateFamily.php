@@ -3,6 +3,13 @@ namespace SIM\USERMANAGEMENT;
 use SIM;
 
 class UpdateFamily{
+    public $userId;
+    public $family;
+    public $partnerFamily;
+    public $oldFamily;
+    public $userGender;
+    public $oldPartner;
+
     public function __construct($userId, $family, $oldFamily){
         $this->userId           = $userId;
         $this->family           = $family;

@@ -43,8 +43,8 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<label>
 		Mailchimp audience(s) you want new users added to:<br>
 		<?php
-		$Mailchimp = new Mailchimp();
-		$lists = (array)$Mailchimp->getLists();
+		$mailchimp = new Mailchimp();
+		$lists = (array)$mailchimp->getLists();
 		foreach ($lists as $key=>$list){
 			if($settings["audienceids"][$key]==$list->id){
 				$checked = 'checked="checked"';
@@ -55,7 +55,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 				echo "<input type='checkbox' name='audienceids[$key]' value='$list->id' $checked>";
 				echo $list->name;
 			echo '</label><br>';
-		}				
+		}
 		?>
 	</label>
 	<br>
@@ -79,7 +79,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<br>
 	<label>Mailchimp template to be used for e-mails</label>
 	<?php
-	$templates	= $Mailchimp->getTemplates();
+	$templates	= $mailchimp->getTemplates();
 	?>
 	<select name="templateid">
 		<?php

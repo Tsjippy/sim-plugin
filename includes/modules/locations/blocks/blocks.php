@@ -57,5 +57,5 @@ add_action( 'init', function(){
 
 add_action( 'enqueue_block_editor_assets', function(){
 	$apiKey = SIM\getModuleOption(MODULE_SLUG, 'google-maps-api-key');
-	wp_enqueue_script( 'googlemaps', "//maps.googleapis.com/maps/api/js?key=$apiKey", [], MODULE_VERSION, true);
+	wp_enqueue_script( 'googlemaps', "//maps.googleapis.com/maps/api/js?key=$apiKey&callback=initMap", [], MODULE_VERSION, true);
 } );

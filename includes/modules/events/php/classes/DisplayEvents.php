@@ -4,6 +4,8 @@ use SIM;
 use WP_Error;
 
 class DisplayEvents extends Events{
+	public $calendarRows;
+	public $events;
 
 	public function __construct(){
 		parent::__construct();

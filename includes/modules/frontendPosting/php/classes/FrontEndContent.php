@@ -4,10 +4,31 @@ use SIM;
 use WP_Error;
 
 class FrontEndContent{
+	public $postId;
+	public $user;
+	public $post;
+	public $postType;
+	public $name;
+	public $postTitle;
+	public $postCategory;
+	public $postContent;
+	public $postParent;
+	public $postImageId;
+	public $postName;
+	public $lite;
+	public $fullrights;
+	public $editRight;
+	public $update;
+	public $action;
+	public $status;
+	public $categories;
+	public $actionText;
+	public $oldPost;
+
 	public function __construct(){
 		$this->postId			= $_GET['post_id'];
 		$this->user 			= wp_get_current_user();
-		$this->post 			= null;
+		$this->post 			= get_post($this->postId);
 		$this->postType 		= "post";
 		$this->name 			= "post";
 		$this->postTitle 		= '';
@@ -232,9 +253,9 @@ class FrontEndContent{
 				//Add a draft button for new posts
 				if($this->postId == null || ($this->post->post_status != 'publish' && $this->post->post_status != 'inherit')){
 					if($this->postId == null){
-						$buttonText = "Save <span class='replaceposttype'>{$this->post_name}</span> as draft";
+						$buttonText = "Save <span class='replaceposttype'>{$this->postName}</span> as draft";
 					}else{
-						$buttonText = "Update this <span class='replaceposttype'>{$this->post_name}</span> draft";
+						$buttonText = "Update this <span class='replaceposttype'>{$this->postName}</span> draft";
 					}
 
 					echo "<div class='submit_wrapper' style='display: flex;'>";
@@ -1034,10 +1055,10 @@ class FrontEndContent{
 
 			$i=1;
 			while(!empty($posts)){
-				$postName	= urldecode($this->postTitle.'_'.$i);
+				$postName		= urldecode($this->postTitle.'_'.$i);
 				$args['name']	= $postName;
 				$i++;
-				$posts	= get_posts( $args);
+				$posts			= get_posts( $args);
 			}
 
 			$newPostData['post_name'] 	= $postName;

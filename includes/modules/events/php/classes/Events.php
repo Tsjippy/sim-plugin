@@ -5,6 +5,11 @@ use WP_Error;
 
 
 class Events{
+	public $tableName;
+	public $dayStartTime;
+	public $dayEndTime;
+	public $postId;
+	
 	public function __construct(){
 		global $wpdb;
 		$this->tableName		= $wpdb->prefix.'sim_events';

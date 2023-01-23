@@ -3,6 +3,9 @@ namespace SIM\LOCATIONS;
 use SIM;
 
 class Maps{
+	public $mapTable;
+	public $markerTable;
+
 	public function __construct(){
 		global $wpdb;
 

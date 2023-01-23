@@ -10,6 +10,11 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 
 	class Mailchimp{
 		public $userId;
+		public $settings;
+		public $user;
+		public $phonenumbers;
+		public $mailchimpStatus;
+		public $client;
 
 		public function __construct($userId=''){
 			global $Modules;

@@ -3,6 +3,8 @@ namespace SIM\STATISTICS;
 use SIM;
 
 class Statistics {
+    public $tableName;
+
     public function __construct(){
         global $wpdb;
         $this->tableName				= $wpdb->prefix . 'sim_statistics';
@@ -11,7 +13,7 @@ class Statistics {
     /**
      * Create the statistics table if it does not exist
      */
-    function createDbTable(){
+    public function createDbTable(){
 		if ( !function_exists( 'maybe_create_table' ) ) {
 			require_once ABSPATH . '/wp-admin/install-helper.php';
 		}
@@ -36,7 +38,7 @@ class Statistics {
     /**
      * Add a viewed paged entry to db
      */
-    function addPageView(){
+    public function addPageView(){
         global $wpdb;
         $userId         = get_current_user_id();
         $url            = str_replace(SITEURL,'',$_POST['url']);

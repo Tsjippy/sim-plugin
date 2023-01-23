@@ -9,6 +9,16 @@ require_once( MODULE_PATH  . 'lib/vendor/autoload.php');
 
 if(!class_exists(__NAMESPACE__.'\VimeoApi')){
     class VimeoApi{
+        public $clientId;
+        public $clientSecret;
+        public $accessToken;
+        public $filesDir;
+        public $picturesDir;
+        public $backupDir;
+        public $api;
+        public $status;
+        public $license;
+
         public function __construct(){
             global $Modules;
 

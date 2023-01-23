@@ -24,7 +24,7 @@ function loadGoogleMapsScript(){
 	if(document.getElementById('googlemaps') == null && typeof(mapsApi) == 'object'){
 		const script = document.createElement('script');
 		script.id = 'googlemaps';
-		script.src = '//maps.googleapis.com/maps/api/js?key='+mapsApi.key;
+		script.src = `//maps.googleapis.com/maps/api/js?key=${mapsApi.key}&callback=initMap`;
 		script.async = true;
 		document.body.append(script);
 	}

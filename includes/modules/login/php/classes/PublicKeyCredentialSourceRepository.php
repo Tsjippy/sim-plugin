@@ -11,6 +11,7 @@ use DeviceDetector\Parser\OperatingSystem as OS_info;
  */
 class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRepositoryInterface {
     public $user;
+    public $userId;
 
     public function __construct($user){
         $this->userId = $user->ID;
@@ -56,10 +57,10 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
 
     // Save credential into database
     public function saveCredentialSource(PublicKeyCredentialSource $publicKeyCredentialSource): void {
-        $data = $this->read();
-        $data_key = base64_encode($publicKeyCredentialSource->getPublicKeyCredentialId());
-        $data[$data_key] = $publicKeyCredentialSource;
-        $this->write($data, $data_key);
+        $data           = $this->read();
+        $dataKey        = base64_encode($publicKeyCredentialSource->getPublicKeyCredentialId());
+        $data[$dataKey] = $publicKeyCredentialSource;
+        $this->write($data, $dataKey);
     }
 
     // Update credential's last used

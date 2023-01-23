@@ -7,14 +7,15 @@ require( MODULE_PATH  . 'lib/vendor/autoload.php');
 
 class PdfHtml extends \FPDF{
 	//variables of html parser
-	protected $B;
-	protected $I;
-	protected $U;
-	protected $HREF;
+	protected $b;
+	protected $href;
 	protected $fontList;
 	protected $issetfont;
 	protected $issetcolor;
-	
+	protected $fontlist;
+	protected $headertitle;
+	protected $skipFirstPage;
+
 	const DPI = 96;
     const MM_IN_INCH = 25.4;
     const A4_HEIGHT = 297;
@@ -27,33 +28,30 @@ class PdfHtml extends \FPDF{
 		//Call parent constructor
 		parent::__construct($orientation,$unit,$format);
 		//Initialization
-		$this->B=0;
-		$this->I=0;
-		$this->U=0;
-		$this->HREF='';
+		$this->href='';
 		$this->fontlist=array('arial', 'times', 'courier', 'helvetica', 'symbol');
 		$this->issetfont=false;
 		$this->issetcolor=false;
 		$this->headertitle = "";
 		$this->skipFirstPage = true;
-		
+
 	}
 
 	/**
 	 * returns an associative array (keys: R,G,B) from
 	 * a hex html code (e.g. #3FE5AA)
-	 * 
+	 *
 	 * @param	string	$color	The Color to process
-	 * 
+	 *
 	 * @return	array			The RGB array
 	 */
 	function hex2dec($color = "#000000"){
-		$R 				= substr($color, 1, 2);
-		$red 			= hexdec($R);
-		$V 				= substr($color, 3, 2);
-		$green 			= hexdec($V);
-		$B 				= substr($color, 5, 2);
-		$blue 			= hexdec($B);
+		$r 				= substr($color, 1, 2);
+		$red 			= hexdec($r);
+		$v 				= substr($color, 3, 2);
+		$green 			= hexdec($v);
+		$b 				= substr($color, 5, 2);
+		$blue 			= hexdec($b);
 		$tblColor 		= array();
 		$tblColor['R']	= $red;
 		$tblColor['G']	= $green;
@@ -63,9 +61,9 @@ class PdfHtml extends \FPDF{
 
 	/**
 	 * Get text from html
-	 * 
+	 *
 	 * @param	string	$html	The html to parse
-	 * 
+	 *
 	 * @return	string			the text
 	 */
 	function txtentities($html){
@@ -76,7 +74,7 @@ class PdfHtml extends \FPDF{
 
 	/**
 	 * Write html to pdf
-	 * 
+	 *
 	 * @param	string	$html	the html
 	 * @param	string	$parsed	reference to output var
 	 */
@@ -86,7 +84,7 @@ class PdfHtml extends \FPDF{
 		$html	= strip_tags($html, "<b><li><u><i><a><img><p><br><strong><em><font><tr><blockquote>");
 		$html	= str_replace("\n", ' ', $html);
 		$a		= preg_split('/<(.*)>/U', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
-		
+
 		if($parsed !== null && count($a) <2){
 			return false;
 		}
@@ -95,8 +93,8 @@ class PdfHtml extends \FPDF{
 			//every even index is the text, odd is the tag
 			if($i%2==0){
 				//Text
-				if($this->HREF){
-					$this->PutLink($this->HREF,$e);
+				if($this->href){
+					$this->PutLink($this->href,$e);
 				}elseif($parsed !== null){
 					$parsed.=stripslashes($this->txtentities($e));
 				}else{
@@ -124,9 +122,9 @@ class PdfHtml extends \FPDF{
 
 	/**
 	 * conversion pixel -> millimeter at 72 dpi
-	 * 
+	 *
 	 * @param	int		$px		The pixel amount
-	 * 
+	 *
 	 * @return	float			The mm
 	 */
 	function px2mm($px){
@@ -135,7 +133,7 @@ class PdfHtml extends \FPDF{
 
 	/**
 	 * Parses HTML opening tags
-	 * 
+	 *
 	 * @param	string	$tag	THe tag type
 	 * @param	array	$attr	The element attributes array
 	 */
@@ -154,7 +152,7 @@ class PdfHtml extends \FPDF{
 				$this->SetStyle($tag,true);
 				break;
 			case 'A':
-				$this->HREF=$attr['HREF'];
+				$this->href=$attr['HREF'];
 				break;
 			case 'IMG':
 				if(isset($attr['SRC']) && (isset($attr['WIDTH']) || isset($attr['HEIGHT']))) {
@@ -199,13 +197,13 @@ class PdfHtml extends \FPDF{
 				$this->Ln(5);
 				$this->Write(5,chr(127).'   ');
 				break;
-				
+
 		}
 	}
 
 	/**
 	 * Parses HTML closing tags
-	 * 
+	 *
 	 * @param	string	$tag	The tag type
 	 */
 	function CloseTag($tag){
@@ -220,7 +218,7 @@ class PdfHtml extends \FPDF{
 			$this->SetStyle($tag,false);
 		}
 		if($tag=='A'){
-			$this->HREF='';
+			$this->href='';
 		}
 		if($tag=='FONT'){
 			if ($this->issetcolor) {
@@ -248,7 +246,7 @@ class PdfHtml extends \FPDF{
 
 	/**
 	 * Write a hyperlink to pdf
-	 * 
+	 *
 	 * @param 	string	$url	the url
 	 * @param	string	$text	the text to display
 	 */
@@ -263,14 +261,14 @@ class PdfHtml extends \FPDF{
 
 	/**
 	 * Adds a first page with the title
-	 * 
-	 * @param	string	$title	
+	 *
+	 * @param	string	$title
 	 * @param	string	$subtitle
 	 */
 	function frontpage($title, $subtitle=''){
 		//Set the title of the document
 		$this->SetTitle($title. " " .$subtitle);
-		
+
 		$this->AddPage();
 
 		//Add the logo to the page
@@ -281,12 +279,12 @@ class PdfHtml extends \FPDF{
 			SIM\printArray("PDF_export.php: $logo is not a valid image");
 		}
 		$this->SetFont( 'Arial', '', 42 );
-		
+
 		//Set the cursor position to 80
 		$this->SetXY(0,80);
 		//Write the title
 		$this->Cell(0,0,$title,0,1,'C');
-		
+
 		//Set the cursor position to 100
 		$this->SetXY(0,100);
 		//Write the subtitle
@@ -295,13 +293,13 @@ class PdfHtml extends \FPDF{
 		//add new page
 		$this->AddPage();
 	}
-	
+
 
 	function setHeaderTitle($title){
         $this->headertitle = $title;
-        return true; 
+        return true;
 	}
-	
+
 	/**
 	 * Page header
 	 */
@@ -318,14 +316,14 @@ class PdfHtml extends \FPDF{
 			$this->SetFont('Arial','B',15);
 			// Move to the right
 			$this->Cell(80);
-			
+
 			// Title
 			if($this->headertitle == ""){
 				$this->Cell(30, 10, $this->metadata['Title'], 0, 0, 'C');
 			}else{
 				$this->Cell(30, 10, $this->headertitle, 0, 0, 'C');
 			}
-			
+
 			// Line break
 			$this->Ln(20);
 		}
@@ -345,7 +343,7 @@ class PdfHtml extends \FPDF{
 			$this->Cell(0, 10, 'Page '.$pageNumber, 0, 0, 'C');
 		}
 	}
-	
+
 	/**
 	 * Write page title
 	 */
@@ -353,7 +351,7 @@ class PdfHtml extends \FPDF{
 		if ($new){
 			$this->AddPage();
 		}
-		
+
 		$this->SetFont( 'Arial', '', 22 );
 		$this->Write($height, $title);
 
@@ -361,10 +359,10 @@ class PdfHtml extends \FPDF{
 		$this->Ln($height*1.5);
 		$this->SetFont( 'Arial', '', 12 );
 	}
-	
+
 	/**
 	 * Write an array to pdf as list
-	 * 
+	 *
 	 * @param	array	$array		The array to write
 	 * @param	int		$depth		The nesting level of the list
 	 * @param	string	$prevKey	The name of the upper nesting list
@@ -390,7 +388,7 @@ class PdfHtml extends \FPDF{
 			default:
 				$bullet = chr(149);
 				break;
-		} 
+		}
 
 		//Loop over the data
 		foreach($array as $key=>$field){
@@ -408,7 +406,7 @@ class PdfHtml extends \FPDF{
 				}else{
 					$this->WriteHTML(str_repeat("   ",$depth)."<strong>$key:</strong><br>");
 				}
-				
+
 				//Display this array as well
 				$this->WriteArray($field, $depth+1,$key);
 			}else{
@@ -417,16 +415,16 @@ class PdfHtml extends \FPDF{
 				}else{
 					$showKey = $key.": ";
 				}
-				
+
 				$this->Write(5, str_repeat("   ",$depth).$bullet.' '.$showKey.$field);
 				$this->Ln(5);
 			}
 		}
 	}
-	
+
 	/**
 	 * Write an array of pictures to pdf as list
-	 * 
+	 *
 	 * @param	array	$array		The array to write
 	 * @param	int		$depth		The nesting level of the list
 	 * @param	string	$prevKey	The name of the upper nesting list
@@ -452,7 +450,7 @@ class PdfHtml extends \FPDF{
 							$this->Ln(5);
 							$this->WriteHTML("<strong>".ucfirst($prevkey)."</strong><br>");
 						}
-						
+
 						//Check the extension to see if it is printable and check if the file exists
 						if(in_array($extension, ['JPG','JPEG','PNG','GIF'])){
 							if(file_exists(ABSPATH.$image)){
@@ -473,22 +471,22 @@ class PdfHtml extends \FPDF{
 			}
 		}
 	}
-	
+
 	function pixelsToMM($val) {
         return $val * self::MM_IN_INCH / self::DPI;
     }
 
 	/**
 	 * Resize an image so it fits on the page
-	 * 
+	 *
 	 * @param	string	$imgPath	The path to the image
 	 * @param	int		$maxHeight	Max height of the image
-	 * 
+	 *
 	 * @return	array				Array of width and height
 	 */
     function resizeToFit($imgPath, $maxHeight=self::MAX_HEIGHT) {
         list($width, $height) = getimagesize($imgPath);
-		
+
 		$maxHeight 		= min(self::MAX_HEIGHT, $maxHeight);
 
         $widthScale 	= self::MAX_WIDTH / $width;
@@ -504,12 +502,12 @@ class PdfHtml extends \FPDF{
 
 	/**
 	 * Center an image on a page
-	 * 
+	 *
 	 * @param	string	$path		The path to the image
 	 * @param	int		$y			The vertical position of the image
 	 * @param	int		$maxHeight	The maximum height of the image
 	 * @param	string	$ext		The extension of the image
-	 * 
+	 *
 	 * @return	array				Array of width and height
 	 */
     function centreImage($path, $y, $maxHeight, $ext) {
@@ -518,20 +516,20 @@ class PdfHtml extends \FPDF{
         // you will probably want to swap the width/height
         // around depending on the page's orientation
         $this->Image(
-            $path, 
+            $path,
 			(self::A4_WIDTH - $width) / 2,
             $y,
             $width,
             $height,
 			$ext
         );
-		
+
 		return array($width, $height);
     }
-	
+
 	/**
 	 * Prints a picture to pdf
-	 * 
+	 *
 	 * @param	string	$url		The url of the image
 	 * @param	int		$x			THe horizontal location
 	 * @param	int		$y			The vertical position
@@ -543,7 +541,7 @@ class PdfHtml extends \FPDF{
 	function printImage($url, $x=-1, $y=-1, $width=100, $height=200, $centre=false, $adjustY = false){
 		try{
 			$path = SIM\urlToPath($url);
-			
+
 			if($x == -1){
 				$x = $this->getX();
 			}
@@ -559,12 +557,12 @@ class PdfHtml extends \FPDF{
 			if($height == -1){
 				$height = 200;
 			}
-			
+
 			$ext = strtoupper(pathinfo($path)['extension']);
 			if($ext == 'JPE'){
 				$ext = 'JPG';
 			}
-			
+
  			if($centre){
 				list($width, $height) = $this->centreImage($path,$y,$height,$ext);
 			}else{
@@ -574,16 +572,16 @@ class PdfHtml extends \FPDF{
 			if($adjustY){
 				$y += $height;
 			}
-			
+
 			$this->setXY($x+$width,$y);
 		}catch (\Exception $e) {
 			SIM\printArray("PDF_export.php: $path is not a valid image");
 		}
 	}
-	
+
 	/**
 	 * Prints the table headers
-	 * 
+	 *
 	 * @param	array	$headers	the headers
 	 * @param	array	$widths		The widths of each column
 	 */
@@ -594,7 +592,7 @@ class PdfHtml extends \FPDF{
 		$this->SetDrawColor(128,0,0);
 		$this->SetLineWidth(.3);
 		$this->SetFont('Arial','B',12);
-		
+
 		// Header content
 		foreach($headers as $key=>$header_text){
 			if(!is_array($widths) || !isset($widths[$key])){
@@ -605,7 +603,7 @@ class PdfHtml extends \FPDF{
 			$this->Cell($width,7,$header_text,1,0,'C',true);
 		}
 		$this->Ln();
-		
+
 		// Color and font restoration
 		$this->SetFillColor(224,235,255);
 		$this->SetTextColor(0);
@@ -614,10 +612,10 @@ class PdfHtml extends \FPDF{
 
 	/**
 	 * Split cell contents when column limit is reached to multiple lines
-	 * 
+	 *
 	 * @param	string	$string		The string to split
 	 * @param	int		$maxWidth	THe maximum string width
-	 * 
+	 *
 	 * @return	string				The splited string
 	 */
 	function splitOnWidth($string, $maxWidth){
@@ -633,7 +631,7 @@ class PdfHtml extends \FPDF{
 				//reset length
 				$w	= 0;
 			}
-			
+
 			//reset on a space
 			if(empty(trim($string[$i]))){
 				$w = 0;
@@ -642,10 +640,10 @@ class PdfHtml extends \FPDF{
 			$w += $cw[$string[$i]];
 			$newString .= $string[$i];
 		}
-			
+
 		return $newString;
 	}
-	
+
 	/**
 	 * Write a row of a table
 	 *
@@ -657,7 +655,7 @@ class PdfHtml extends \FPDF{
 	function writeTableRow($colWidths, $row, $fill, $header){
 		$y 				= $this->GetY();
 		$cellHeights	= [];
-		
+
 		//Calculate the height of this row
 		foreach ($row as $colNr => $cellText){
 			if(is_array($cellText)){
@@ -679,25 +677,25 @@ class PdfHtml extends \FPDF{
 			$temp->Multicell($cellWidth, 6, $cellText, 'LR', 'C');
 			$after 		= $temp->getY();
 			$lineCount 	= ($after-$before)/6;
-			
+
 			$cellHeights[$colNr]	= $lineCount;
 		}
 		$rowHeight = max($cellHeights);
-		
+
 		//Check if we need to continue on a new page
 		if($this->y + $rowHeight * 6 > $this->h - 20){
 			//Draw the bottom line over the full width of the table
 			$this->Cell(array_sum($colWidths),0,'','T');
-			
+
 			//Add new page
 			$this->AddPage();
-			
+
 			//Add table headers again
 			$this->tableHeaders($header, $colWidths);
-			
+
 			$y = $this->GetY();
 		}
-		
+
 		//now that we have the row width, loop over the data again to write it
 		$lastKey = array_key_last($row);
 		foreach ($row as $colNr => $celltext){
@@ -712,13 +710,13 @@ class PdfHtml extends \FPDF{
 			foreach($orgLines as $l_nr=>$line){
 				//Stringlength
 				$length = $this->GetStringWidth($line)+2;
-				
+
 				//if we span multiple lines, makes sure each line has a space
 				if($length > $cellWidth){
 					$orgLines[$l_nr]	= $this->splitOnWidth($line, $cellWidth-5);
 				}
 			}
-			
+
 			$cellText	= trim(implode("\n", $orgLines));
 
 			$lineCount = $cellHeights[$colNr];
@@ -726,13 +724,13 @@ class PdfHtml extends \FPDF{
 			if($lineCount < $rowHeight){
 				$cellText = $cellText.str_repeat("\n ", $rowHeight - $lineCount);
 			}
-			
+
 			//Get current position
 			$x = $this->GetX();
 
 			//Write the cell
 			$this->Multicell($cellWidth, 6, $cellText, 'LR', 'C', $fill);
-			
+
 			//Move cursor to the next cell if not the last cell
 			if($colNr != $lastKey){
 				$x = $x + $cellWidth;
@@ -754,5 +752,5 @@ class PdfHtml extends \FPDF{
 		exit;
 		die();
 	}
-	
+
 }
