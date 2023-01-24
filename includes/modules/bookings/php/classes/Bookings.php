@@ -5,6 +5,15 @@ use SIM\EVENTS;
 use SIM\FORMS;
 
 class Bookings{
+    public $tableName;
+    public $bookings;
+    public $forms;
+    public $unavailable;
+    public $showArchived;
+    public $tableEditPermissions;
+    public $user;
+    public $userRoles;
+
     public function __construct($displayFormResults=''){
         global $wpdb;
 		$this->tableName		= $wpdb->prefix.'sim_bookings';
@@ -19,7 +28,7 @@ class Bookings{
         wp_enqueue_style( 'sim_bookings_style');
     }
 
-     /**
+    /**
 	 * Creates the table holding all bookings if it does not exist
 	 */
 	public function createBookingsTable(){
@@ -86,7 +95,7 @@ class Bookings{
         return ob_get_clean();
     }
 
-     /**
+    /**
      * Displays the booking calendars
      * @param   string      $subject    The subject of the calendar
      * @param   int         $date       The date to retrieve the calendar for
@@ -153,7 +162,7 @@ class Bookings{
         return ob_get_clean();
     }
 
-     /**
+    /**
      * Displays the selected dates
      */
     protected function showSelectedModalDates(){
@@ -203,7 +212,7 @@ class Bookings{
         return ob_get_clean();
     }
 
-     /**
+    /**
      *
      * Displays a date selector modal
      */
@@ -242,7 +251,7 @@ class Bookings{
         return ob_get_clean();
     }
 
-     /**
+    /**
 	 * Get the month calendar
 	 *
 	 * @param	string		$subject		The subject name
@@ -347,7 +356,7 @@ class Bookings{
 		return ob_get_clean();
 	}
 
-     /**
+    /**
      * Build the detail html for the current month
      */
     public function detailHtml(){
@@ -461,7 +470,7 @@ class Bookings{
         return ob_get_clean();
     }
 
-     /**
+    /**
      * Check if a booking overlaps another booking
      */
     public function checkOverlap($startDate, $endDate, $subject, $id=-1){
@@ -484,7 +493,7 @@ class Bookings{
 		return !empty($wpdb->get_results($query));
     }
 
-     /**
+    /**
      * Insert a new booking
      *
      * @param   string      $startdate      The startdate string
@@ -548,7 +557,7 @@ class Bookings{
         );
     }
 
-     /**
+    /**
      * Update an existing booking
      *
      * @param   int     $bookingId  The booking id
@@ -623,7 +632,7 @@ class Bookings{
         ];
     }
 
-     /**
+    /**
      * Update an existing booking
      *
      * @param   int|object     $booking  The booking or booking id
@@ -649,7 +658,7 @@ class Bookings{
 		);
     }
 
-     /**
+    /**
      * Retrieve the bookings for a certain month
      *
      * @param   int     $month          The month to retrieve bookings for
@@ -687,7 +696,7 @@ class Bookings{
         }
     }
 
-     /**
+    /**
      * Retrieve all the pending bookings
      *
      */
@@ -702,7 +711,7 @@ class Bookings{
 		return $wpdb->get_results($query);
     }
 
-     /** Get a booking by submission id */
+    /** Get a booking by submission id */
     protected function getBookingById($id){
         global $wpdb;
 
@@ -711,12 +720,23 @@ class Bookings{
 		return  $wpdb->get_results($query)[0];
     }
 
-     /** Get a booking by submission id */
+    /**
+     * Get a booking by submission id
+     *
+     * @param int   $id     The submission id
+     *
+     * @return  object|false    The booking or false if no booking found
+     * */
     public function getBookingBySubmission($id){
         global $wpdb;
 
 		$query	    = "SELECT * FROM $this->tableName WHERE submission_id=$id";
 
-		return  $wpdb->get_results($query)[0];
+        $results    = $wpdb->get_results($query);
+        if(!empty($results)){
+            return $results[0];
+        }
+		
+        return false;
     }
 }

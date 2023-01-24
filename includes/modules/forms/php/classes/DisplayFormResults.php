@@ -165,7 +165,7 @@ class DisplayFormResults extends DisplayForm{
 		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 	}
 
-	function splitArrayedSubmission($splitElementName){
+	public function splitArrayedSubmission($splitElementName){
 
 		//loop over all submissions
 		foreach($this->submissions as $this->submission){

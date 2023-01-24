@@ -209,7 +209,7 @@ class SubmitForm extends SimForms{
 	/**
 	 * Save a form submission to the db
 	 */
-	function formSubmit(){
+	public function formSubmit(){
 		global $wpdb;
 
 		$this->submission					= new \stdClass();
@@ -310,7 +310,7 @@ class SubmitForm extends SimForms{
 				}
 			}
 
-			$submission = (array) $this->submission;
+			$submission 				= (array) $this->submission;
 			$submission['formresults']	= serialize($this->submission->formresults);
 
 			$wpdb->insert(

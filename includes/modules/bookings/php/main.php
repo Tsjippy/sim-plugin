@@ -352,7 +352,11 @@ add_filter('sim-forms-submission-updated', function($message, $formTable, $field
     global $wpdb;
 
     $bookings   =  new Bookings();
-    $booking    = $bookings->getBookingBySubmission($formTable->submission->formresults['id']);
+    $booking    = $bookings->getBookingBySubmission($formTable->submission->id);
+
+    if(!$booking){
+        return $message;
+    }
 
     // Get the subject element name
     $query      = "SELECT name FROM `wp_sim_form_elements` WHERE `form_id`=(select form_id from {$bookings->forms->submissionTableName} WHERE id=$booking->submission_id) AND `type`='booking_selector'";
@@ -418,6 +422,10 @@ function removeBooking($instance, $submissionId){
     $bookings   = new Bookings();
 
     $booking    = $bookings->getBookingBySubmission($submissionId);
+
+    if(!$booking){
+        return;
+    }
 
     $bookings->removeBooking($booking);
 }
