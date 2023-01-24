@@ -7,8 +7,14 @@
 ### Changed
 
 ### Fixed
+
+## [2.27.9] - 2023-01-23
+
+
+### Fixed
 - form validation error
 - send post image to signal
+- issue with embed page block
 
 ## [2.27.8] - 2023-01-18
 
