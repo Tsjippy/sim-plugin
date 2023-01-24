@@ -224,6 +224,10 @@ add_filter('sim_form_actions', function($actions){
 
 //Add a print button html
 add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId, $displayFormResults, $submission){
+	if(get_class($displayFormResults) != 'SIM\FORMS\DisplayFormResults'){
+		return $buttonsHtml;
+	}
+
 	if($fieldValues == null || !is_numeric($fieldValues['user_id'])){
 		$buttonsHtml['print']	= '';
 	}else{

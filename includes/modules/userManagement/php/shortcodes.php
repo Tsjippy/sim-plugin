@@ -7,7 +7,7 @@ add_shortcode('create_user_account', function (){
 	wp_enqueue_script( 'sim_user_management');
 
 	$user = wp_get_current_user();
-	if ( in_array('usermanagement',$user->roles)){		
+	if ( in_array('usermanagement',$user->roles)){
 		ob_start();
 		?>
 		<div class="tabcontent">
@@ -41,7 +41,7 @@ add_shortcode('create_user_account', function (){
 					<option value="24">2 years</option>
 					<option value="unlimited">Always</option>
 				</select>
-				<?php 
+				<?php
 				do_action('sim_after_user_create_form');
 				
 				echo SIM\addSaveButton('adduseraccount', 'Add user account');

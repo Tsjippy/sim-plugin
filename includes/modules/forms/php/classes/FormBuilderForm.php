@@ -32,11 +32,12 @@ class FormBuilderForm extends SimForms{
 	 * @return	string				The dropdown html
 	 */
 	protected function inputDropdown($selectedId, $elementId=''){
-		if($selectedId == ''){
+		$html = "";
+		/* if($selectedId == ''){
 			$html = "<option value='' selected>---</option>";
 		}else{
 			$html = "<option value=''>---</option>";
-		}
+		} */
 		
 		foreach($this->formElements as $element){
 			//do not include the element itself do not include non-input types
@@ -1057,7 +1058,7 @@ class FormBuilderForm extends SimForms{
 			<div name='select_options' class='elementoption datalist radio select checkbox hidden'>
 				<label class='block'>Specify an options group if desired</label>
 				<select class="formbuilder" name="formfield[default_array_value]">
-					<option value="">---</option>
+					/*<option value="">---</option>*/
 					<?php
 					$this->buildDefaultsArray();
 					foreach($this->defaultArrayValues as $key=>$field){

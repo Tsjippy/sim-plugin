@@ -53,7 +53,7 @@ class DisplayFormResults extends DisplayForm{
 		if(is_numeric($submissionId) && !empty($this->submissions)){
 			foreach($this->submissions as $submission){
 				if($submission->id == $submissionId){
-					return $submission;
+					return [$submission];
 				}
 			}
 		}
@@ -156,9 +156,8 @@ class DisplayFormResults extends DisplayForm{
 			$this->total	= count($this->splittedSubmissions);
 		}
 
-		// single submission
-		if(is_numeric($submissionId)){
-			$this->submission				= $this->submissions[0];
+		if(count($this->submissions) == 1){
+			$this->submission	= $this->submissions[0];
 		}
 
 		//Get personal visibility

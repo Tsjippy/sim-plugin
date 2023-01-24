@@ -440,7 +440,7 @@ class Bookings{
                                             }
                                             $buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
                                         }
-                                        $buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $bookingData, $index, $this);
+                                        $buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $bookingData, $index, $this, $this->forms->submission);
                                         
                                         //we have te html now, check for which one we have permission
                                         foreach($buttonsHtml as $action=>$button){

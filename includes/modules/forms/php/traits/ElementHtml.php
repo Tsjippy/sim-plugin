@@ -33,7 +33,7 @@ trait ElementHtml{
 		}
 	}
     
-	 /**
+	/**
 	 * Get the values of an element
 	 *
 	 * @param	object	$element		The element
@@ -100,7 +100,7 @@ trait ElementHtml{
 		return $values;
 	}
 
-	 /**
+	/**
 	 * Gets the options of an element like styling etc.
 	 *
 	 * @param	object	$element		The element
@@ -147,7 +147,7 @@ trait ElementHtml{
 					
 		//we are dealing with a select, add options
 		if($element->type == 'select'){
-			$elementHtml .= "<option value=''>---</option>";
+			//$elementHtml .= "<option value=''>---</option>";
 			$options	= $this->getFieldOptions($element);
 			foreach($options as $option_key=>$option){
 				if(strtolower($value) == strtolower($option_key) || strtolower($value) == strtolower($option)){
@@ -202,7 +202,7 @@ trait ElementHtml{
 		return  $elementHtml;
 	}
 
-	 /**
+	/**
 	 * Renders the html for element who can have multiple inputs
 	 *
 	 * @param	object	$element		The element
@@ -261,7 +261,7 @@ trait ElementHtml{
 		}
 	}
 
-	 /**
+	/**
 	 * Gets the html of form element
 	 *
 	 * @param	object	$element	The element
@@ -488,7 +488,7 @@ trait ElementHtml{
 			
 			switch($element->type){
 				case 'select':
-					$elContent .= "<option value=''>---</option>";
+					//$elContent .= "<option value=''>---</option>";
 					$options	= $this->getFieldOptions($element);
 
 					$selValues	= [];
@@ -554,6 +554,14 @@ trait ElementHtml{
 						}
 					}
 
+					// check the length of each option
+					$maxLength		= 0;
+					$totalLength	= 0;
+					foreach($options as $option){
+						$maxLength		= max($maxLength, strlen($option));
+						$totalLength	+= strlen($option);
+					}
+
 					// build the options
 					foreach($options as $key=>$option){
 						if($this->multiwrap){
@@ -564,10 +572,13 @@ trait ElementHtml{
 							$checked	= '';
 						}
 						
-						$html .= "<label>";
+						$html .= "<label class='checkbox-label'>";
 							$html .= "<$elType name='$elName' $elId class='$elClass' $elOptions value='$key' $checked>";
 							$html .= "<span class='optionlabel'>$option</span>";
-						$html .= "</label><br>";
+						$html .= "</label>";
+						if($maxLength > 8 || $totalLength > 30){
+							$html .= "</br>";
+						}
 					}
 
 					$html .= "</div>";

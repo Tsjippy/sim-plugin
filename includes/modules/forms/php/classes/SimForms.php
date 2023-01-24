@@ -245,7 +245,7 @@ class SimForms{
 		}
 		
 		$html = "<select name='form_selector'>";
-			$html .= "<option value=''>---</option>";
+			//$html .= "<option value=''>---</option>";
 			foreach ($this->names as $name){
 				$html .= "<option value='$name'>$name</option>";
 			}
