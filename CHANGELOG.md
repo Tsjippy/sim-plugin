@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.28.0] - 2023-01-24
+
+
+### Fixed
 - issue with changed form value notification
 
 ## [2.27.9] - 2023-01-23
