@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- radio layout
 
 ## [2.28.0] - 2023-01-24
 
