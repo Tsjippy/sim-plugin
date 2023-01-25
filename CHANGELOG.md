@@ -8,6 +8,7 @@
 
 ### Fixed
 - issue with backtick in signal message
+- password reset form
 
 ## [2.28.2] - 2023-01-25
 
