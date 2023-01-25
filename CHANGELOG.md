@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- multiple pictures send from Signal
 
 ### Changed
 
