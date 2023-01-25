@@ -199,9 +199,10 @@ class Signal {
 
     /**
      * Send a message to another user or group
-     * @param string|array $recipients Specify the recipients’ phone number or a group id
-     * @param string $message Specify the message, if missing, standard input is used
-     * @param string $attachments Image file path
+     * @param string|array  $recipients     Specify the recipients’ phone number or a group id
+     * @param string        $message        Specify the message, if missing, standard input is used
+     * @param array         $attachments    Array of Image file paths
+     *
      * @return bool|string
      */
     public function send($recipients, string $message, string $attachments = null){

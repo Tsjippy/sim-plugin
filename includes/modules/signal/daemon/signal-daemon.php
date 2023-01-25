@@ -33,7 +33,7 @@ if(!empty($argv) && count($argv) == 2){
         return;
     }
 
-    SIM\printArray($data);
+    //SIM\printArray($data);
 
     // message to group
     if(
@@ -44,12 +44,15 @@ if(!empty($argv) && count($argv) == 2){
             if($mention->number == $signal->phoneNumber || $mention->name == '8fc6c236-f07b-4a3c-97c5-0a78efe488ee'){
                 $groupId    = $signal->groupIdToByteArray($data->envelope->dataMessage->groupInfo->groupId);
                 $signal->sendGroupTyping($groupId);
-                $signal->sendGroupMessage(getAnswer(trim(explode('?', $data->envelope->dataMessage->message)[1]), $data->envelope->source), $groupId);
+
+                $answer = getAnswer(trim(explode('?', $data->envelope->dataMessage->message)[1]), $data->envelope->source);
+                $signal->sendGroupMessage($answer['response'], $groupId, $answer['pictures']);
             }
         }
     }elseif(!isset($data->envelope->dataMessage->groupInfo)){
         $signal->sentTyping($data->envelope->source, $data->envelope->dataMessage->timestamp);
-        $signal->send($data->envelope->source, getAnswer($data->envelope->dataMessage->message, $data->envelope->source));
+        $answer = getAnswer($data->envelope->dataMessage->message, $data->envelope->source);
+        $signal->send($data->envelope->source, $answer['response'], $answer['pictures']);
     }
 }
 
@@ -70,17 +73,27 @@ function getAnswer($message, $source){
         $name = $users[0]->first_name;
     }
 
+    $pictures   = [];
+    $response   = '';
+
     if($message == 'test'){
-        return 'Awesome!';
+        $response    = 'Awesome!';
     }elseif($message == 'thanks'){
-        return 'You`re welcome!';
+        $response = 'You`re welcome!';
     }elseif(strpos($message, 'prayer') !== false && $name){
-        return "This is the prayer for today:\n\n".SIM\PRAYER\prayerRequest(true, true);
+        $prayerRequest  = SIM\PRAYER\prayerRequest(true, true);
+        $response       = "This is the prayer for today:\n\n{$prayerRequest['prayer']}";
+        $pictures       = $prayerRequest['pictures'];
     }elseif($message == 'hi' || strpos($message, 'hello') !== false){
-        return "Hi $name";
+        $response = "Hi $name";
     }elseif(!empty($message)){
-        return 'I have no clue, do you know?';
+        $response = 'I have no clue, do you know?';
     }else{
-        return ' ';
+        $response = ' ';
     }
+
+    return [
+        'response'  => $response,
+        'pictures'  => $pictures
+    ];
 }

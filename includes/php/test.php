@@ -7,12 +7,7 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    $users = get_users(array(
-        'meta_key'     => 'signal_number',
-        'meta_value'   => '+2349045252526' ,
-    ));
-
-    printArray($users, true);
+    PRAYER\prayerRequest(true);
 
 });
 

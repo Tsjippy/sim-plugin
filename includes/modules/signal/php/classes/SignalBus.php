@@ -248,8 +248,20 @@ class SignalBus extends Signal {
         return $result;
     }
 
+    /**
+     * Send a message to a group
+     * @param string $message Specify the message, if missing, standard input is used
+     * @param string $groupId Specify the group id
+     * @param string|array $attachments Image file path or array of file paths
+     *
+     * @return bool|string
+     */
     public function sendGroupMessage($message, $groupId, $attachments=''){
         $this->addToMessageLog($groupId, $message);
+
+        if(is_array($attachments)){
+            $attachments    = implode(',', $attachments);
+        }
 
         $this->command = new Command([
             'command' => "{$this->prefix}sendGroupMessage string:\"$message\" array:string:\"$attachments\" array:byte:$groupId"
@@ -314,10 +326,15 @@ class SignalBus extends Signal {
      * @param string|array $recipients Specify the recipients’ phone number or a group id
      * @param string $message Specify the message, if missing, standard input is used
      * @param string|array $attachments Image file path or array of file paths
+     *
      * @return bool|string
      */
     public function send($recipients, string $message, $attachments = '')
     {
+        if(!empty($attachments) && is_array($attachments)){
+            $attachments    = implode(',', $attachments);
+        }
+
         if(!is_array($recipients)){
             if(strpos( $recipients , '+' ) === 0){
                 $recipient    = "string:'$recipients'";
@@ -331,10 +348,6 @@ class SignalBus extends Signal {
             foreach($recipients as $rec){
                 $this->addToMessageLog($rec, $message);
             }
-        }
-
-        if(!empty($attachments) && is_array($attachments)){
-            $attachments    = implode(',', $attachments);
         }
 
         $this->command = new Command([

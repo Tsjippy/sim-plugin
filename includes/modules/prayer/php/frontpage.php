@@ -7,11 +7,13 @@ add_action('sim_frontpage_before_main_content', function(){
         return;
     }
 
-    $prayerRequest	= SIM\userPageLinks(apply_filters('sim_prayer_message', prayerRequest()));
-
-    if (empty($prayerRequest)){
+    // Get the prayerrequest of the day, add extra messages to it, replace names with urls
+    $prayerRequest	= prayerRequest();
+    if(!$prayerRequest){
         return;
     }
+
+    $message        = SIM\userPageLinks(apply_filters('sim_prayer_message', $prayerRequest['prayer']));
 
     ?>
     <style>
@@ -31,7 +33,7 @@ add_action('sim_frontpage_before_main_content', function(){
     </style>
     <div id='prayer-request'>
         <h3 id='prayertitle'>Today's Prayer Request</h3>
-        <p><?php echo $prayerRequest;?></p>
+        <p><?php echo $message;?></p>
     </div>
     <?php
 }, 5);

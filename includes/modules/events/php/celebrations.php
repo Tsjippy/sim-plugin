@@ -59,87 +59,6 @@ function getAnniversaries(){
 	return $messages;
 }
 
-// Add anniversaries to signal bot message
-add_filter('sim_after_bot_payer', function($args){
-	$anniversaryMessages = getAnniversaries();
-
-	//If there are anniversaries
-	if(!empty($anniversaryMessages)){
-		$args['message'] .= "\n\nToday is the ";
-
-		$messageString	= '';
-
-		//Loop over the anniversary_messages
-		foreach($anniversaryMessages as $userId=>$msg){
-			$msg	= html_entity_decode($msg);
-
-			$userdata		= get_userdata($userId);
-
-			// user does not exist
-			if(!$userdata){
-				continue;
-			}
-			
-			if(!empty($messageString)){
-				$messageString .= " and the ";
-			}
-
-			$coupleString	= $userdata->first_name.' & '.get_userdata(SIM\hasPartner(($userdata->ID)))->display_name;
-
-			$msg	= str_replace($coupleString, "of $coupleString", $msg);
-			$msg	= str_replace($userdata->display_name, "of {$userdata->display_name}", $msg);
-
-			$messageString .= $msg;
-
-			$url			= SIM\maybeGetUserPageUrl($userId);
-			if($url){
-				$args['urls'] .= str_replace('https://', '', $url)."\n";
-			}
-		}
-		$args['message'] .= $messageString.'.';
-	}
-
-	$arrivalUsers = getArrivingUsers();
-	
-	//If there are arrivals
-	if(!empty($arrivalUsers)){
-		if(count($arrivalUsers) == 1){
-			$args['message'] 	.= "\n\n".$arrivalUsers[0]->display_name." arrives today.";
-			$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($arrivalUsers[0]->ID))."\n";
-		}else{
-			$args['message'] .= "\n\nToday the following people will arrive: ";
-
-			//Loop over the arrival_users to find any families
-			$skip	= [];
-			foreach($arrivalUsers as $user){
-				if(in_array($user->ID, $skip)){
-					continue;
-				}
-
-				$partnerId	= SIM\hasPartner($user->ID);
-				$name		= $user->display_name;
-
-				if($partnerId){
-					$skip[]		= $partnerId;
-					$partner	= get_userdata($partnerId);
-
-					if($partner->last_name == $user->last_name){
-						$name 	= $user->last_name.' family';
-					}else{
-						$name	= $user->display_name.' & '. $partner->display_name;
-					}
-					
-				}
-
-				$args['message'] 	.= "$name\n";
-				$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($user->ID))."\n";
-			}
-		}
-	}
-
-	return $args;
-});
-
 add_action('delete_user', function($userId){
 	$events = new CreateEvents();
 
@@ -203,9 +122,13 @@ function anniversaryMessages(){
 			continue;
 		}
 
+		$addImage	= true;
+
 		if($userId  == $currentUser->ID){
 			$coupleLink	= "of you and your spouse my dear $currentUser->first_name!<br>";
 			$link		= str_replace($currentUser->display_name, "of you my dear $currentUser->first_name!<br>", $message);
+
+			$addImage	= false;
 		}else{
 			//Get the url of the user page
 			$url		= SIM\maybeGetUserPageUrl($userId);
@@ -215,9 +138,27 @@ function anniversaryMessages(){
 
 		if(is_numeric($partnerId)){
 			$pattern	= "/{$userdata->first_name}.*{$partner->display_name}/i";
-			$message	= preg_replace($pattern, $coupleLink, $message);
+			$message	= preg_replace($pattern, $coupleLink, $message, -1, $count);
+
+			// Add family picture if needed
+			if($count > 0 && $addImage){
+				$family	= get_user_meta($userId, 'family', true);
+
+				if(isset($family['picture'][0])){
+					$message	.= '<a href="'.wp_get_attachment_url($family['picture'][0]).'">'.wp_get_attachment_image($family['picture'][0], 'avatar', false, 'style=border-radius: 50%;').'</a>';
+				}
+
+				$addImage	= false;
+			}
 		}
 		$message	= str_replace($userdata->display_name, $link, $message);
+
+		if($addImage){
+			$profilePicture	= get_user_meta($userId, 'profile_picture', true);
+			if(isset($profilePicture[0])){
+				$message	.= '<a href="'.wp_get_attachment_url($profilePicture[0]).'">'.wp_get_attachment_image($profilePicture[0], 'avatar', false, 'style=border-radius: 50%;').'</a>';
+			}
+		}
 
 		$messageString	.= $message;
 	}

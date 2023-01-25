@@ -26,7 +26,7 @@ add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategor
  * @param    string     $plainText      Whether we shuld return the prayer request in html or plain text
  * @param	bool		$verified		If we trust the request, default false
  *
- * @return   string|false     			The prayer request or false if no prayer request found
+ * @return   array|false     			An array containing the prayer request and pictures or false if no prayer request found
  *
 **/
 function prayerRequest($plainText = false, $verified=false) {
@@ -79,18 +79,18 @@ function prayerRequest($plainText = false, $verified=false) {
 				$prayer	= $matches[0][1];
 
 				if($plainText){
-					$params	= apply_filters('sim_after_bot_payer', ['message'=>$prayer, 'urls'=>'']);
+					$params	= apply_filters('sim_after_bot_payer', ['message'=>$prayer, 'urls'=>'', 'pictures'=>[]]);
 					$prayer	= $params['message']."\n\n".$params['urls'];
 				}
 
-				return $prayer;
+				return ['prayer'=>$prayer, 'pictures'=>$params['pictures']];
 			}
 		}
 	}
 
 
 	if($plainText){
-		return 'Sorry I could not find any prayer request for today';
+		return ['prayer'=>'Sorry I could not find any prayer request for today', 'pictures'=>[]];
 	}
 	return false;
 }

@@ -81,13 +81,16 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	$urlWithoutHttps	= str_replace('https://', '', SITEURL);
 	$message			= str_replace(SITEURL, $urlWithoutHttps, $message);
 
-	$image = "";
-	if(is_numeric($postId) && has_post_thumbnail($postId)){
-		$image = get_attached_file(get_post_thumbnail_id($postId));
+	$images = [];
+	if(is_array($postId)){
+		// Post id is a file pathe
+		$images	= $postId;
+	}elseif(is_numeric($postId) && has_post_thumbnail($postId)){
+		$images = [get_attached_file(get_post_thumbnail_id($postId))];
 	}
 
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
-		$result	= sendSignalFromLocal($message, $recipient, $image);
+		$result	= sendSignalFromLocal($message, $recipient, $images);
 
 		if(strpos($result, 'error') !== false){
 			return $result;
@@ -102,11 +105,11 @@ function sendSignalMessage($message, $recipient, $postId=""){
 			return ob_get_clean();
 		}
 	}else{
-		return sendSignalFromExternal($message, $recipient, $image);
+		return sendSignalFromExternal($message, $recipient, $images);
 	}
 }
 
-function sendSignalFromLocal($message, $recipient, $image){
+function sendSignalFromLocal($message, $recipient, $images){
 	$phonenumber		= $recipient;
 
 	//Check if recipient is an existing userid
@@ -122,14 +125,14 @@ function sendSignalFromLocal($message, $recipient, $image){
 	if(strpos(php_uname(), 'Linux') !== false){
 		$signal = new SignalBus();
 		if(strpos($phonenumber, ',') !== false){
-			$signal->sendGroupMessage($message, $phonenumber, $image);
+			$signal->sendGroupMessage($message, $phonenumber, $images);
 			return;
 		}
 	}else{
 		$signal = new Signal();
 	}
 
-	$result	= $signal->send($phonenumber, $message, $image);
+	$result	= $signal->send($phonenumber, $message, $images);
 
 	if(strpos($result, 'Unregistered user') !== false){
 		//user not registered
@@ -145,6 +148,9 @@ function sendSignalFromLocal($message, $recipient, $image){
 
 function sendSignalFromExternal($message, $phonenumber, $image){
 	if(!empty($image)){
+		if(is_array($image)){
+			$image	= $image[0];
+		}
 		$image	= base64_encode(file_get_contents($image));
 	}
 	
