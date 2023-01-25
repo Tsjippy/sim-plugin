@@ -7,6 +7,11 @@
 ### Changed
 
 ### Fixed
+
+## [2.28.3] - 2023-01-25
+
+
+### Fixed
 - issue with backtick in signal message
 - password reset form
 
