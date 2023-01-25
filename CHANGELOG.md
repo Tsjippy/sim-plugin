@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with backtick in signal message
 
 ## [2.28.2] - 2023-01-25
 
