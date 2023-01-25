@@ -329,12 +329,11 @@ class SignalBus extends Signal {
      *
      * @return bool|string
      */
-    public function send($recipients, string $message, $attachments = '')
-    {
-        if(!empty($attachments) && is_array($attachments)){
+    public function send($recipients, string $message, $attachments = ''){
+        $message    = str_replace('`', "'", $message);
+        if(is_array($attachments)){
             $attachments    = implode(',', $attachments);
         }
-
         if(!is_array($recipients)){
             if(strpos( $recipients , '+' ) === 0){
                 $recipient    = "string:'$recipients'";

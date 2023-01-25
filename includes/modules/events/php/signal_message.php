@@ -7,7 +7,7 @@ add_filter('sim_after_bot_payer', function($args){
     // calendar events
     $events		= new DisplayEvents();
 
-    $events->retrieveEvents(date('Y-m-d'),date('Y-m-d'));
+    $events->retrieveEvents(date('Y-m-d'), date('Y-m-d'));
     foreach($events->events as $event){
         $startYear	= get_post_meta($event->ID, 'celebrationdate', true);
 
@@ -110,11 +110,13 @@ add_filter('sim_after_bot_payer', function($args){
                     $family	= get_user_meta($user->ID, 'family', true);
 
                     if(isset($family['picture'][0])){
+						SIM\printArray($args['pictures']);
                         $args['pictures'][] = get_attached_file($family['picture'][0]);
                     }
 				}else{
                     $profilePicture	= get_user_meta($user->ID, 'profile_picture', true);
                     if(isset($profilePicture[0])){
+						SIM\printArray($args['pictures']);
                         $args['pictures'][] = get_attached_file($profilePicture[0]);
                     }
                 }

@@ -68,7 +68,8 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
             $url    = wp_nonce_url( $url, 'bulk-update-plugins' );
             $link   = "<a href='$url' class='update-link'>Update to ".$updates->response[PLUGIN]->new_version."</a>";
         }else{
-            $link  = "Up to date";
+            $url   = admin_url( 'plugins.php?update=check' );
+            $link  = "Up to date <a href='$url'>Check again</a>";
         }
     }else{
         $url   = admin_url( 'plugins.php?update=check' );

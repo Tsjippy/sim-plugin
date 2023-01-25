@@ -85,7 +85,10 @@ function getAnswer($message, $source){
         $response       = "This is the prayer for today:\n\n{$prayerRequest['prayer']}";
         $pictures       = $prayerRequest['pictures'];
     }elseif($message == 'hi' || strpos($message, 'hello') !== false){
-        $response = "Hi $name";
+        $response = "Hi ";
+        if($name){
+            $response   .= $name;
+        }
     }elseif(!empty($message)){
         $response = 'I have no clue, do you know?';
     }else{
