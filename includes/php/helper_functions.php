@@ -95,7 +95,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	}
 
 	if($type == 'select'){
-		$html .= "<select name='$id' class='$class user_selection'>";
+		$html .= "<select name='$id' class='$class user_selection' value=''>";
 			foreach($users as $key=>$user){
 				if(empty($user->first_name) || empty($user->last_name)){
 					$name	= $user->display_name;

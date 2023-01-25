@@ -28,9 +28,13 @@ elif(type == 'changed'):
     newChanged  = changed + "\n- " + text
     newTotal    = total.replace(changed, newChanged)
 elif(type == 'fixed'):
-    fixed       = re.search(r'(### Fixed[\s\S]*)', total).group(1).rstrip("\n")
+    fixed       = re.search(r'(### Fixed[\s\S]*?)###)', total).group(1).rstrip("\n")
     newFixed    = fixed + "\n- " + text
     newTotal    = total.replace(fixed, newFixed)
+elif(type == 'updated'):
+    updated     = re.search(r'(### Updated[\s\S]*)', total).group(1).rstrip("\n")
+    newUpdated  = updated + "\n- " + text
+    newTotal    = total.replace(updated, newUpdated)
 elif(type != 'skip' and type != 'skipped' and '' != newLine):
     failure()
 else:

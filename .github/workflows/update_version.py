@@ -53,7 +53,7 @@ except Exception as e:
     pass
 
 # Add new unreleased section
-newSection  = "## [Unreleased] - yyyy-mm-dd\n\n### Added\n\n### Changed\n\n### Fixed\n\n## [" + newVersion + "] - " + datetime.datetime.now().strftime("%Y-%m-%d")+"\n"
+newSection  = "## [Unreleased] - yyyy-mm-dd\n\n### Added\n\n### Changed\n\n### Fixed\n\n### Updated\n\n## [" + newVersion + "] - " + datetime.datetime.now().strftime("%Y-%m-%d")+"\n"
 changelog    = changelog.replace('## [Unreleased] - yyyy-mm-dd', newSection)
 
 # Write changes
