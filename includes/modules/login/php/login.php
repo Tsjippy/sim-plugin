@@ -106,8 +106,8 @@ function loginModal($message='', $required=false, $username=''){
 	                    </div>
                     </div>
                 </form>
-                <form id="login_nav">
-                    <div id='captcha' class='hidden'>
+                <form id="captcha-form" class='hidden'>
+                    <div id='captcha'>
                         <p>
                             First complete the captcha before sending the request.
                         </p>

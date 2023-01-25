@@ -69,8 +69,10 @@ async function verifyWebauthn(methods){
 
 		// Update message
 		document.querySelector('#webauthn_wrapper .status_message').textContent	= 'Waiting for biometric';
+
 		// Verify on device
 		var credentials			= await navigator.credentials.get({publicKey});
+
 		// Update message
 		document.querySelector('#webauthn_wrapper .status_message').textContent	= 'Verifying...';
 
@@ -155,6 +157,9 @@ async function verifyCreds(){
  	if(response){
 		if(response == 'false') {
 			showMessage('Invalid login, try again');
+
+			// Password reset form
+			document.getElementById('captcha-form').classList.remove('hidden');
 			
 			// hide loader
 			document.querySelector('#check_cred_wrapper .loadergif').classList.add('hidden');
@@ -172,15 +177,15 @@ async function resetPassword(target){
 		Main.displayMessage('Specify your username first','error');
 		return;
 	}
-	var captcha	= target.previousElementSibling;
+	let captchaForm	= document.getElementById('captcha-form');
 	//check if captcha visible
-	if(captcha.classList.contains('hidden')){
+	if(captchaForm.classList.contains('hidden')){
 		if(captcha.querySelector('iframe') == null){
 			Main.displayMessage('Captcha failed to load, please refresh the page','error');
 		}
 
 		//show captcha
-		captcha.classList.remove('hidden');
+		captchaForm.classList.remove('hidden');
 
 		//change button text
 		target.text	= 'Send password reset request';
@@ -278,7 +283,7 @@ function addMethods(result){
 	
 	if(typeof(result) == 'string' && result){
 		//hide login form
-		document.querySelectorAll("#usercred_wrapper, #login_nav").forEach(el=>el.classList.add('hidden'));
+		document.querySelectorAll("#usercred_wrapper, #captcha-form").forEach(el=>el.classList.add('hidden'));
 
 		document.getElementById('logging_in_wrapper').classList.remove('hidden');
 
@@ -294,7 +299,7 @@ function addMethods(result){
 		showMessage('Invalid username or password!');
 	}else if(typeof(result) == 'object'){
 		//hide cred fields
-		document.querySelectorAll("#usercred_wrapper, #login_nav").forEach(el=>el.classList.add('hidden'));
+		document.querySelectorAll("#usercred_wrapper, #captcha-form").forEach(el=>el.classList.add('hidden'));
 
 		//hide messsages
 		showMessage('');
@@ -374,7 +379,7 @@ function openLoginModal(){
 var observer = new MutationObserver(function(mutations) {
 	mutations.forEach(function(mutation) {
 		if (mutation.attributeName === "data-hcaptcha-response" && document.querySelector('.h-captcha iframe').dataset.hcaptchaResponse.length > 1000) {
-			resetPassword(document.querySelector('#login_nav>a'));
+			resetPassword(document.querySelector('#captcha-form>a'));
 		}
 	});
 });
