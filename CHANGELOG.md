@@ -3,11 +3,16 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- multiple pictures send from Signal
 
 ### Changed
 
 ### Fixed
+
+## [2.28.2] - 2023-01-25
+
+
+### Added
+- multiple pictures send from Signal
 
 ## [2.28.1] - 2023-01-24
 
