@@ -5,9 +5,16 @@
 ### Added
 
 ### Changed
-- login modal layout
 
 ### Fixed
+
+### Updated
+
+## [2.28.4] - 2023-01-26
+
+
+### Changed
+- login modal layout
 
 ## [2.28.3] - 2023-01-25
 
