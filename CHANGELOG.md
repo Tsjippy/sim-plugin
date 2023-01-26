@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- mandatory content for new arrivals
 
 ### Updated
 
