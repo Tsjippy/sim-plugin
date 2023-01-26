@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issuew ith selecting families from dropdown
 
 ### Updated
 
