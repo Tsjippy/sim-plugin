@@ -73,7 +73,7 @@ class Schedules{
 	/**
 	 * Get all schedules from the db
 	*/
-	function getSchedules(){
+	public function getSchedules(){
 		global $wpdb;
 
 		$query				= "SELECT * FROM {$this->tableName} WHERE 1";
@@ -88,7 +88,7 @@ class Schedules{
 	 *
 	 * @return 	object		the schedule
 	*/
-	function findScheduleById($id){
+	public function findScheduleById($id){
 		foreach($this->schedules as $schedule){
 			if($schedule->id == $id){
 				return $schedule;
@@ -101,7 +101,7 @@ class Schedules{
 	 *
 	 * @return 	string		the schedules html
 	*/
-	function showschedules(){
+	public function showschedules(){
 		$schedules	= '';
 		$form	= $this->addScheduleForm();
 
@@ -262,7 +262,7 @@ class Schedules{
 	 *
 	 * @return 	object|false		The event or false if no event
 	*/
-	function getScheduleEvent($schedule, $startDate, $startTime){
+	public function getScheduleEvent($schedule, $startDate, $startTime){
 		//get event which starts on this date and time
 		$events = $this->getScheduleEvents($schedule->id, $startDate, $startTime);
 
@@ -290,7 +290,7 @@ class Schedules{
 	 *
 	 * @return 	object|false			The event or false if no event
 	*/
-	function getScheduleEvents($scheduleId, $startDate, $startTime){
+	public function getScheduleEvents($scheduleId, $startDate, $startTime){
 		global $wpdb;
 
 		$query	=  "SELECT * FROM {$this->events->tableName} WHERE `schedule_id` = '{$scheduleId}' AND startdate = '$startDate' AND starttime='$startTime'";
@@ -304,7 +304,7 @@ class Schedules{
 	 *
 	 * @return 	array					Array of objects
 	*/
-	function getPersonalOrientationEvents($schedule){
+	public function getPersonalOrientationEvents($schedule){
 		global $wpdb;
 
 		$query	= "SELECT * FROM {$this->events->tableName} WHERE `schedule_id` = '{$schedule->id}' AND onlyfor={$this->user->ID} AND starttime != '$this->dinerTime'";
@@ -323,7 +323,7 @@ class Schedules{
 	 *
 	 * @return 	array					Cell html
 	*/
-	function writeMealCell($schedule, $date, $startTime){
+	public function writeMealCell($schedule, $date, $startTime){
 		//get event which starts on this date and time
 		$event	= $this->getScheduleEvent($schedule, $date, $startTime);
 		$class	= 'meal';
@@ -385,7 +385,7 @@ class Schedules{
 	 *
 	 * @return 	array					Cell html
 	*/
-	function writeOrientationCell( $schedule, $date, $startTime) {
+	public function writeOrientationCell( $schedule, $date, $startTime) {
 		//get event which starts on this date and startTime
 		$event		= $this->getScheduleEvent($schedule, $date, $startTime);
 		$rowSpan	= '';
@@ -450,7 +450,7 @@ class Schedules{
 	 *
 	 * @return 	array					Rows html
 	*/
-	function writeRows($schedule, $onlyMeals = false){
+	public function writeRows($schedule, $onlyMeals = false){
 		$html 					= '';
 		
 		$this->nextStartTimes	= [];
@@ -539,7 +539,7 @@ class Schedules{
 	 *
 	 * @return 	string		the modal html
 	*/
-	function addModals(){
+	public function addModals(){
 		ob_start();
 		?>
 		<!-- Add host modal for admins -->
@@ -670,7 +670,7 @@ class Schedules{
 	 *
 	 * @return 	string		the form html
 	*/
-	function addScheduleForm($update=false){
+	public function addScheduleForm($update=false){
 		ob_start();
 		if(!$this->admin){
 			return '';

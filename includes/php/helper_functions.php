@@ -97,7 +97,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 	if($type == 'select'){
 		$html .= "<select name='$id' class='$class user_selection' value=''>";
 			foreach($users as $key=>$user){
-				if(empty($user->first_name) || empty($user->last_name)){
+				if(empty($user->first_name) || empty($user->last_name) || $families){
 					$name	= $user->display_name;
 				}else{
 					$name	= "$user->first_name $user->last_name";
@@ -121,7 +121,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 
 		$datalist = "<datalist id='$listId' class='$class user_selection'>";
 			foreach($users as $key=>$user){
-				if(empty($user->first_name) || empty($user->last_name)){
+				if(empty($user->first_name) || empty($user->last_name) || $families){
 					$name	= $user->display_name;
 				}else{
 					$name	= "$user->first_name $user->last_name";
@@ -471,7 +471,12 @@ function getFamilyName($user, &$partnerId=false) {
 			$partner	= get_userdata($family['partner']);
 
 			if($partner->last_name != $user->last_name){
-				$name	= $user->display_name.' & '. $partner->display_name;
+				// Male name first
+				if(get_user_meta($user->ID, 'gender', true)[0] == 'Male'){
+					$name	= $user->last_name.' - '. $partner->last_name;
+				}else{
+					$name	= $partner->last_name.' - '. $user->last_name;
+				}
 			}
 		}
 
@@ -680,20 +685,16 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 	foreach($users as $user){
 		//If we should only return families
 		if($returnFamily){
-			$family = get_user_meta( $user->ID, 'family', true );
-			if ($family == ""){
-				$family = [];
-			}
-
 			//Current user is a child, exclude it
 			if (isChild($user->ID)){
 				$doNotProcess[] = $user->ID;
 			//Check if this adult is not already in the list
 			}elseif(!in_array($user->ID, $doNotProcess)){
-				if (isset($family["partner"])){
-					$doNotProcess[] = $family["partner"];
-					//Change the display name
-					$user->display_name = getFamilyName($user);
+				//Change the display name
+				$user->display_name = getFamilyName($user, $partnerId);
+
+				if ($partnerId){
+					$doNotProcess[] = $partnerId;
 				}
 			}
 		//Only returning adults, but this is a child
