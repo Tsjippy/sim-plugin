@@ -344,7 +344,7 @@ export function nextPrev(n) {
 	let x 				= form.querySelectorAll(".formstep");
 	let stepIndicators	= form.querySelectorAll(".step");
 	let currentTab		= 0;
-	let valid;
+	let valid			= true;
 
 	// Find the current active tab
 	x.forEach((el, index)=>{if(!el.matches('.stephidden')){currentTab = index}});
@@ -362,9 +362,8 @@ export function nextPrev(n) {
 					element.closest('.file_upload_wrap').querySelector('.documentpreview input') == null
 				)
 			){
-
-				element.required		= true;
-				valid		= element.reportValidity();
+				element.required	= true;
+				valid				= element.reportValidity();
 				if(!valid){
 					break;
 				}
