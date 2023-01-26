@@ -326,7 +326,7 @@ function pageSelect($selectId, $pageId=null, $class="", $postTypes=['page', 'loc
 	asort($options);
 
 	$html = "<select name='$selectId' id='$selectId' class='selectpage $class'>";
-		//$html .= "<option value=''>---</option>";
+		$html .= "<option value=''>---</option>";
 	
 		foreach ( $options as $id=>$name ) {
 			$selected	= "";

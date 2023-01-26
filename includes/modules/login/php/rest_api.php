@@ -111,7 +111,7 @@ add_action( 'rest_api_init', function () {
 		RESTAPIPREFIX.'/login',
 		'/check_cred',
 		array(
-			'methods' 				=> 'POST',
+			'methods' 				=> 'POST,GET',
 			'callback' 				=> __NAMESPACE__.'\checkCredentials',
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(

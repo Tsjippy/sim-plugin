@@ -1,6 +1,7 @@
 <?php
 namespace SIM\FRONTENDPOSTING;
 use SIM;
+use stdClass;
 use WP_Error;
 
 class FrontEndContent{
@@ -28,7 +29,10 @@ class FrontEndContent{
 	public function __construct(){
 		$this->postId			= $_GET['post_id'];
 		$this->user 			= wp_get_current_user();
-		$this->post 			= get_post($this->postId);
+		$this->post 			= null;
+		if(is_numeric($this->postId)){
+			$this->post	= get_post($this->postId);
+		}
 		$this->postType 		= "post";
 		$this->name 			= "post";
 		$this->postTitle 		= '';
@@ -562,7 +566,7 @@ class FrontEndContent{
 
 		foreach($postTypes as $postType){
 			if($this->postType == $postType){
-				$selected = 'selected';
+				$selected = 'selected="selected"';
 			}else{
 				$selected = '';
 			}
@@ -1069,6 +1073,17 @@ class FrontEndContent{
 			}
 		}
 
+		// update publish date if needed
+		if(
+			strtotime($post->post_date) > time()	&&								// Current post date is in the future
+			!empty($_POST['publish_date']) 			&& 								// a publishing date is set
+			$_POST['publish_date'] != date('Y-m-d', strtotime($post->post_date))	// it is not the same as before
+		){
+			$publishDate					= date("Y-m-d 08:00:00", strtotime($_POST['publish_date']));
+			$newPostData['post_date'] 		= $publishDate;
+			$newPostData['post_date_gmt'] 	= $publishDate;
+		}
+
 		if($this->postContent != $post->post_content){
 			$newPostData['post_content'] 	= $this->postContent;
 		}
@@ -1168,7 +1183,7 @@ class FrontEndContent{
 				$post['post_category'] = $this->categories;
 			}
 
-			//Schedule the post
+			//Schedule the post if in the future
 			if($_POST['publish_date'] != date('Y-m-d')){
 				$publishDate			= date("Y-m-d 08:00:00", strtotime($_POST['publish_date']));
 

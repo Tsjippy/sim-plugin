@@ -147,7 +147,7 @@ trait ElementHtml{
 					
 		//we are dealing with a select, add options
 		if($element->type == 'select'){
-			//$elementHtml .= "<option value=''>---</option>";
+			$elementHtml .= "<option value=''>---</option>";
 			$options	= $this->getFieldOptions($element);
 			foreach($options as $option_key=>$option){
 				if(strtolower($value) == strtolower($option_key) || strtolower($value) == strtolower($option)){
@@ -488,7 +488,7 @@ trait ElementHtml{
 			
 			switch($element->type){
 				case 'select':
-					//$elContent .= "<option value=''>---</option>";
+					$elContent .= "<option value=''>---</option>";
 					$options	= $this->getFieldOptions($element);
 
 					$selValues	= [];

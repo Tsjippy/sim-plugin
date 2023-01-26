@@ -33,11 +33,11 @@ class FormBuilderForm extends SimForms{
 	 */
 	protected function inputDropdown($selectedId, $elementId=''){
 		$html = "";
-		/* if($selectedId == ''){
+		if($selectedId == ''){
 			$html = "<option value='' selected>---</option>";
 		}else{
 			$html = "<option value=''>---</option>";
-		} */
+		}
 		
 		foreach($this->formElements as $element){
 			//do not include the element itself do not include non-input types
