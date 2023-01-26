@@ -65,13 +65,13 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			foreach($strings as $string){
 				$selected	= '';
 				if($settings["max_age"] == $string){
-					$selected	= 'selected';
+					$selected	= 'selected=selected';
 				}
 
 				echo "<option value='$string' $selected>$string</option>";
 			}
 		?>
-	</select>	
+	</select>
 
 	<br>
 	<br>

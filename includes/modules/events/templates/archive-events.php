@@ -74,7 +74,7 @@ function showCalendar(){
 				Then paste this url in the agenda field <code class='calendarurl'>webcal://<?php echo SITEURLWITHOUTSCHEME;?>/public_calendar/sim_events.ics?id=<?php echo get_current_user_id();?></code>.
 			</p>
 		</div>
-		<div class="search-form">	
+		<div class="search-form">
 			<div class="date-selector">
 				<div class="date-search">
 					<?php
@@ -87,7 +87,7 @@ function showCalendar(){
 							$monthName	= date("F", mktime(0, 0, 0, $m, 10));
 							$monthNum	= sprintf("%02d", $m);
 							if(isset($_GET['month']) && $_GET['month'] == $m){
-								$selected	= ' selected';
+								$selected	= ' selected=selected';
 							}else{
 								$selected	= '';
 							}
@@ -99,7 +99,7 @@ function showCalendar(){
 						<?php
 						for ($w=1;$w<=53;$w++){
 							if($_GET['week'] == $w){
-								$selected	= ' selected';
+								$selected	= ' selected=selected';
 							}else{
 								$selected	= '';
 							}
@@ -113,7 +113,7 @@ function showCalendar(){
 						$end	= date("Y",strtotime('+10 year'));
 						for ($y=$start;$y<$end;$y++){
 							if($y == $_GET['year']){
-								$selected = 'selected';
+								$selected = 'selected=selected';
 							}else{
 								$selected = '';
 							}

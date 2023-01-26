@@ -1581,7 +1581,7 @@ class FormBuilderForm extends SimForms{
 						];
 						foreach($optionArray as $option=>$optionLabel){
 							if($condition['equation'] == $option){
-								$selected	= 'selected';
+								$selected	= 'selected=selected';
 							}else{
 								$selected	= '';
 							}

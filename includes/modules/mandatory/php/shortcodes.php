@@ -79,13 +79,16 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 			$mustRead	= false;
 			if(
 				(
-					isset($audience['afterarrival']) 	||		// People should read this after arrival
-					isset($audience['everyone'])				// Or everyone should read this
-				)										&&		// AND
-				(
-					!isset($audience['beforearrival'])	|| 		// The before arrival is not set
+					isset($audience['afterarrival']) 	||			// People should read this after arrival
 					(
-						isset($audience['beforearrival'])	&&	// Or it is set but we have arrived
+						isset($audience['everyone'])	&&			// Or everyone should read this
+						$arrivalDate < strtotime($page->post_date)	// And arrived before the post was published
+					)
+				)										&&			// AND
+				(
+					!isset($audience['beforearrival'])	|| 			// The before arrival is not set
+					(
+						isset($audience['beforearrival'])	&&		// Or it is set but we have arrived
 						$arrived
 					)
 				)

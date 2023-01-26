@@ -144,7 +144,7 @@ function displayRepetitionParameters($eventDetails){
 			<?php
 				foreach($list as $key=>$item){
 					if($repeatParam['type'] == $key){
-						$selected	= 'selected';
+						$selected	= 'selected=selected';
 					}else{
 						$selected	= '';
 					}
