@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- login modal layout
 
 ### Fixed
 
