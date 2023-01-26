@@ -8,6 +8,7 @@
 
 ### Fixed
 - mandatory content for new arrivals
+- formstep next not clickable
 
 ### Updated
 
