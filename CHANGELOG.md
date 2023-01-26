@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- custom familyname possibility
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.28.5] - 2023-01-26
+
+
+### Added
+- custom familyname possibility
 
 ### Fixed
 - mandatory content for new arrivals
