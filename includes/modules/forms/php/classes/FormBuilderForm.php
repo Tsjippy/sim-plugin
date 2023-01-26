@@ -51,7 +51,7 @@ class FormBuilderForm extends SimForms{
 				
 				//Check which option is the selected one
 				if(!empty($selectedId) && $selectedId == $element->id){
-					$selected = 'selected';
+					$selected = 'selected="selected"';
 				}else{
 					$selected = '';
 				}
@@ -464,7 +464,7 @@ class FormBuilderForm extends SimForms{
 								
 								//Check which option is the selected one
 								if(!empty($settings['autoarchivefield']) && $settings['autoarchivefield'] == $element->id){
-									$selected = 'selected';
+									$selected = 'selected="selected"';
 								}else{
 									$selected = '';
 								}
@@ -924,7 +924,7 @@ class FormBuilderForm extends SimForms{
 
 					foreach($options as $key=>$option){
 						if($element != null && $element->type == $key){
-							$selected = 'selected';
+							$selected = 'selected="selected"';
 						}else{
 							$selected = '';
 						}
@@ -952,7 +952,7 @@ class FormBuilderForm extends SimForms{
 
 					foreach($options as $key=>$option){
 						if($element != null && $element->type == $key){
-							$selected = 'selected';
+							$selected = 'selected="selected"';
 						}else{
 							$selected = '';
 						}
@@ -1063,7 +1063,7 @@ class FormBuilderForm extends SimForms{
 					$this->buildDefaultsArray();
 					foreach($this->defaultArrayValues as $key=>$field){
 						if($element != null && $element->default_array_value == $key){
-							$selected = 'selected';
+							$selected = 'selected="selected"';
 						}else{
 							$selected = '';
 						}
@@ -1298,7 +1298,7 @@ class FormBuilderForm extends SimForms{
 
 								foreach($optionArray as $option=>$optionLabel){
 									if($rule['equation'] == $option){
-										$selected	= 'selected';
+										$selected	= 'selected="selected"';
 									}else{
 										$selected	= '';
 									}
@@ -1344,7 +1344,7 @@ class FormBuilderForm extends SimForms{
 									];
 									foreach($optionArray as $option=>$optionLabel){
 										if($rule['equation_2'] == $option){
-											$selected	= 'selected';
+											$selected	= 'selected="selected"';
 										}else{
 											$selected	= '';
 										}

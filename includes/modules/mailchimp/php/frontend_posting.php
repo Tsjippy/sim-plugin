@@ -36,7 +36,7 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
                     if($sendSegment == $segment->id){
                         continue;
                     }elseif($mailchimpSegmentId == $segment->id){
-                        $selected = 'selected';
+                        $selected = 'selected="selected"';
                     }else{
                         $selected = '';
                     }
@@ -58,7 +58,7 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
                     ];
                     foreach($emails as $email=>$text){
                         if($mailchimpEmail == $email){
-                            $selected = 'selected';
+                            $selected = 'selected="selected"';
                         }else{
                             $selected = '';
                         }

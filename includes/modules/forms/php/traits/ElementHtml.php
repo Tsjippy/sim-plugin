@@ -151,7 +151,7 @@ trait ElementHtml{
 			$options	= $this->getFieldOptions($element);
 			foreach($options as $option_key=>$option){
 				if(strtolower($value) == strtolower($option_key) || strtolower($value) == strtolower($option)){
-					$selected	= 'selected';
+					$selected	= 'selected="selected"';
 				}else{
 					$selected	= '';
 				}
@@ -447,9 +447,9 @@ trait ElementHtml{
 				$val	= $value;
 				if(empty($value)){
 					//this is an input and there is a value for it
-					if(empty($this->formData->settings['save_in_meta'])){
+					if(empty($this->formData->settings['save_in_meta']) || empty($values['metavalue'])){
 						$val		= array_values((array)$values['defaults'])[0];
-					}elseif(isset($values['metavalue'])){
+					}elseif(!empty($values['metavalue'])){
 						$val		= array_values((array)$values['metavalue'])[0];
 					}
 				}
@@ -508,7 +508,7 @@ trait ElementHtml{
 		
 					foreach($options as $key=>$option){
 						if(in_array(strtolower($option), $selValues) || in_array(strtolower($key), $selValues) || in_array($element->default_value, [$key, $option])){
-							$selected	= 'selected';
+							$selected	= 'selected="selected"';
 						}else{
 							$selected	= '';
 						}

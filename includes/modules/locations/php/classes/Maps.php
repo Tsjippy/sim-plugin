@@ -175,7 +175,7 @@ class Maps{
 			}
 
 			$family = SIM\familyFlatArray($userId);
-			$title	= SIM\findFamilyName($userId);
+			$title	= SIM\getFamilyName($userdata);
 
 			//Add the profile picture to the marker description if it is set, and allowed by privacy
 			if (empty($privacyPreference['hide_profile_picture'])){

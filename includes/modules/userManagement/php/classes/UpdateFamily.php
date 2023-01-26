@@ -27,6 +27,10 @@ class UpdateFamily{
             $this->oldPartner = null;
         }
 
+        if ($this->family['name'] != $this->oldFamily['name']) {
+            $this->updateFamilyName();
+        }
+
         if ($this->family['weddingdate'] != $this->oldFamily['weddingdate']) {
             $this->updateWeddingDate();
         }
@@ -79,6 +83,15 @@ class UpdateFamily{
         }
 
         $this->save();
+    }
+
+    public function updateFamilyName(){
+        //save family name to partner as well
+        if (isset($this->family['partner'])){
+            //Get the partners family
+            $this->partnerFamily['name']	= $this->family['name'];
+            update_user_meta($this->family['partner'], 'family', $this->partnerFamily);
+        }
     }
 
     public function updateWeddingDate(){

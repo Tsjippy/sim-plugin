@@ -377,7 +377,7 @@ add_shortcode( 'quotadocuments', function (){
 								<?php
 								foreach($quotaDocuments['quotafiles'] as $key=>$quotaDocument){
 									if($quotaDocuments[$document] == $key){
-										$selected	= " selected";
+										$selected	= ' selected="selected"';
 									}else{
 										$selected	= "";
 									}

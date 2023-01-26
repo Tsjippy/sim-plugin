@@ -847,7 +847,7 @@ class DisplayFormResults extends DisplayForm{
 							<?php
 							foreach($viewRoles as $key=>$roleName){
 								if(in_array($key,(array)$columnSetting['view_right_roles'])){
-									$selected = 'selected';
+									$selected = 'selected="selected"';
 								}else{
 									$selected = '';
 								}
@@ -867,7 +867,7 @@ class DisplayFormResults extends DisplayForm{
 						<?php
 						foreach($editRoles as $key=>$roleName){
 							if(in_array($key,(array)$columnSetting['edit_right_roles'])){
-								$selected = 'selected';
+								$selected = 'selected="selected"';
 							}else{
 								$selected = '';
 							}
@@ -909,7 +909,7 @@ class DisplayFormResults extends DisplayForm{
 							
 							//Check which option is the selected one
 							if($this->tableSettings['default_sort'] != '' && $this->tableSettings['default_sort'] == $key){
-								$selected = 'selected';
+								$selected = 'selected="selected"';
 							}else{
 								$selected = '';
 							}
@@ -938,7 +938,7 @@ class DisplayFormResults extends DisplayForm{
 										
 										//Check which option is the selected one
 										if($this->tableSettings['filter'][$index]['element'] == $key){
-											$selected = 'selected';
+											$selected = 'selected="selected"';
 										}else{
 											$selected = '';
 										}
@@ -950,7 +950,7 @@ class DisplayFormResults extends DisplayForm{
 								echo "<select name='table_settings[filter][$index][type]' class='inline'>";
 									foreach(['>=', '<', '==', 'like'] as $type){
 										if($this->tableSettings['filter'][$index]['type'] == $type){
-											$selected = 'selected';
+											$selected = 'selected="selected"';
 										}else{
 											$selected = '';
 										}
@@ -985,7 +985,7 @@ class DisplayFormResults extends DisplayForm{
 						
 						//Check which option is the selected one
 						if($this->tableSettings['hiderow'] == $element['name']){
-							$selected = 'selected';
+							$selected = 'selected="selected"';
 						}else{
 							$selected = '';
 						}
@@ -1068,7 +1068,7 @@ class DisplayFormResults extends DisplayForm{
 								
 								//Check which option is the selected one
 								if($this->formSettings['autoarchivefield'] != '' && $this->formSettings['autoarchivefield'] == $key){
-									$selected = 'selected';
+									$selected = 'selected="selected"';
 								}else{
 									$selected = '';
 								}

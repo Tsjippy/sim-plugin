@@ -4,6 +4,11 @@ use SIM;
 use WP_Error;
 
 class CreateEvents extends Events{
+	public $eventData;
+	public $startDates;
+	public $partnerId;
+	
+
 	/**
 	 * Retrieves the weeknumber from a certain date
 	 * @param  	int  $date		a date in epoch

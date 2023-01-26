@@ -5,9 +5,9 @@ use SIM;
 // Update marker icon when family picture is updated
 add_action('sim_update_family_picture', function($userId, $attachmentId){
     $maps       = new Maps();
-    $markerId 	= get_user_meta($userId,"marker_id",true);
+    $markerId 	= get_user_meta($userId, "marker_id", true);
     $url        = wp_get_attachment_url($attachmentId);
-    $iconTitle	= get_userdata($userId)->last_name.' family';
+    $iconTitle	= SIM\getFamilyName($userId);
     
     $maps->createIcon($markerId, $iconTitle, $url, 1);
 
@@ -27,7 +27,7 @@ add_action('sim_family_safe', function($userId){
 	//Update the marker title
 	$markerId   = get_user_meta($userId, "marker_id", true);
 
-    $title      = SIM\findFamilyName($userId);
+    $title      = SIM\getFamilyName($userId);
     
 	$maps->updateMarkerTitle($markerId, $title);
 });

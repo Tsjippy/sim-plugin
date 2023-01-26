@@ -85,7 +85,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		<?php
 		foreach($templates as $template){
 			if($template->id == $settings["templateid"]){
-				$selected	= 'selected';
+				$selected	= 'selected="selected"';
 			}else{
 				$selected	= '';
 			}

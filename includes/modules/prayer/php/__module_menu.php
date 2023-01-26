@@ -96,7 +96,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 									}
 									$selected	= '';
 									if($group['name'] == $g->id){
-										$selected	= 'selected';
+										$selected	= 'selected="selected"';
 									}
 									echo "<option value='$g->id' $selected>$g->name</option>";
 								}

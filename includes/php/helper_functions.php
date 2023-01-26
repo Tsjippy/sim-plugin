@@ -437,6 +437,51 @@ function isChild($userId) {
 }
 
 /**
+ * Function to get proper family name
+ * @param 	object|int		$user		WP User_ID or WP_User object
+ * @param	mixed			$partnerId	Variable passed by reference to hold the partner id
+ *
+ * @return	string|false				Family name string or last name when a single or false when not a valid user
+*/
+function getFamilyName($user, &$partnerId=false) {
+	if(is_numeric($user)){
+		$user	= get_userdata($user);
+
+		if(!$user){
+			return false;
+		}
+	}
+
+	$partnerId	= false;
+
+	$family 	= get_user_meta($user->ID, "family", true);
+
+	if(!empty($family['name'])){
+		return $family['name'].' family';
+	}
+
+	// user has family
+	if(is_array($family)){
+		$name 	= $user->last_name;
+
+		// user has a partner
+		if(isset($family['partner']) && is_numeric($family['partner'])){
+			$partnerId	= $family['partner'];
+			
+			$partner	= get_userdata($family['partner']);
+
+			if($partner->last_name != $user->last_name){
+				$name	= $user->display_name.' & '. $partner->display_name;
+			}
+		}
+
+		return $name.' family';
+	}
+
+	return $user->display_name;
+}
+
+/**
  * Get an users age
  * @param 	int		$userId	 	WP User_ID
  * @param	bool	$numeric	Whether to return the age as a number or a word. Default false
@@ -648,7 +693,7 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 				if (isset($family["partner"])){
 					$doNotProcess[] = $family["partner"];
 					//Change the display name
-					$user->display_name = findFamilyName($user);
+					$user->display_name = getFamilyName($user);
 				}
 			}
 		//Only returning adults, but this is a child
@@ -1417,37 +1462,6 @@ function searchAllDB($search, $excludedTables=[], $excludedColumns=[]){
 	}
 
     return array_values($out);
-}
-
-/**
- * Finds the family name for a given user id
- *
- * @param	int|object	$userId	The user id to find the name for
- */
-function findFamilyName($user){
-	if(is_numeric($user)){
-		$user	= get_userdata($user);
-	}
-	$partnerId	= hasPartner($user->id);
-
-	// no partner
-	if(!$partnerId){
-		return $user->display_name;
-	}
-
-	$partner	= get_userdata($partnerId);
-
-	// both have the same name
-	if($partner->last_name == $user->last_name){
-		return "$user->last_name family";
-	}
-
-	// add both last names, males name first
-	if(in_array('Male', (array) get_user_meta($user->ID, 'gender', true))){
-		return "$user->last_name-$partner->last_name family";
-	}else{
-		return "$partner->last_name-$user->last_name family";
-	}
 }
 
 //Creates subimages

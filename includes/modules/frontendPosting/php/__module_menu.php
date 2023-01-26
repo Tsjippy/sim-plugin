@@ -61,7 +61,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		<?php
 		for ($x = 0; $x <= 12; $x++) {
 			if($settings['max_page_age'] === strval($x)){
-				$selected = 'selected';
+				$selected = 'selected="selected"';
 			}else{
 				$selected = '';
 			}

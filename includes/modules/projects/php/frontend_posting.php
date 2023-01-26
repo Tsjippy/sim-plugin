@@ -223,7 +223,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
                             foreach($ministries as $ministry){
                                 $selected   = '';
                                 if($ministry->ID == $selectedMinistry){
-                                    $selected   = 'selected';
+                                    $selected   = 'selected="selected"';
                                 }
                                 echo "<option value='$ministry->ID' $selected>$ministry->post_title</option>";
                             }
@@ -231,7 +231,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
                         </select>
                     </td>
                 </tr>
-            </table> 
+            </table>
         </fieldset>
     </div>
     <?php

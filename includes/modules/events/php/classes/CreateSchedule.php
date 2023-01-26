@@ -4,6 +4,14 @@ use SIM;
 use WP_Error;
 
 class CreateSchedule extends Schedules{
+	public $date;
+	public $startTime;
+	public $endTime;
+	public $location;
+	public $hostId;
+	public $scheduleId;
+	public $name;
+
 	/**
 	 * Add a new event to the db
 	 *
@@ -49,18 +57,17 @@ class CreateSchedule extends Schedules{
 	protected function addScheduleEvents($title, $schedule, $addHostPartner=true, $addPartner=true){
 		$event							= [];
 		$event['startdate']				= $this->date;
-		$event['starttime']				= $this->starttime;
+		$event['starttime']				= $this->startTime;
 		$event['enddate']				= $this->date;
-		$event['endtime']				= $this->endtime;
+		$event['endtime']				= $this->endTime;
 		$event['location']				= $this->location;
 		$event['organizer_id']			= $this->hostId;
 		$event['schedule_id']			= $this->scheduleId;
 		
 		$hostPartner					= false;
 		if(is_numeric($this->hostId)){
-			$hostPartner	= SIM\hasPartner($this->hostId);
-			if($addHostPartner && $hostPartner){
-				$event['organizer']				= get_userdata($this->hostId)->last_name.' family';
+			if($addHostPartner){
+				$event['organizer']				= SIM\getFamilyName($this->hostId, $hostPartner);
 			}else{
 				$event['organizer']				= get_userdata($this->hostId)->display_name;
 			}
@@ -307,15 +314,15 @@ class CreateSchedule extends Schedules{
 			$partnerId		= SIM\hasPartner($this->hostId);
 
 			if(
-				!$this->admin						&&
-				$this->hostId != $this->user->ID	&&
-				$this->hostId != $partnerId
+				!$this->admin						&&			// We are not admin
+				$this->hostId != $this->user->ID	&&			// We are not the host
+				$this->hostId != $partnerId						// Our partner is not the host
 			){
 				return new WP_Error('No permission', $this->noPermissionText);
 			}
 			
 			if($partnerId && !isset($_POST['subject'])){
-				$hostName		= $host->last_name.' family';
+				$hostName		= SIM\getFamilyName($host);
 			}else{
 				$hostName		= $host->display_name;
 			}
@@ -330,7 +337,7 @@ class CreateSchedule extends Schedules{
 		// remove any existing events
 		if(isset($_POST['oldtime'])){
 			$this->date			= $_POST['olddate'];
-			$this->starttime	= $_POST['oldtime'];
+			$this->startTime	= $_POST['oldtime'];
 			$this->removeHost();
 
 			$message	= "Succesfully updated this entry";
@@ -339,19 +346,19 @@ class CreateSchedule extends Schedules{
 		$this->name			= $schedule->name;
 		$this->date			= $_POST['date'];
 		$dateStr			= date('d F Y',strtotime($this->date));
-		$this->starttime	= $_POST['starttime'];
-		if($this->starttime == $this->lunchStartTime && $schedule->lunch){
-			$this->endtime		= $this->lunchEndTime;
+		$this->startTime	= $_POST['starttime'];
+		if($this->startTime == $this->lunchStartTime && $schedule->lunch){
+			$this->endTime		= $this->lunchEndTime;
 			$title				= 'lunch';
 			$this->location		= "House of $hostName";
-		}elseif($this->starttime == $this->dinerTime){
-			$this->endtime		= '19:30';
+		}elseif($this->startTime == $this->dinerTime){
+			$this->endTime		= '19:30';
 			$title				= 'dinner';
 			$this->location		= "House of $hostName";
 		}else{
 			$title				= sanitize_text_field($_POST['subject']);
 			$this->location		= sanitize_text_field($_POST['location']);
-			$this->endtime		= $_POST['endtime'];
+			$this->endTime		= $_POST['endtime'];
 		}
 
 		if(empty($message)){
@@ -365,11 +372,11 @@ class CreateSchedule extends Schedules{
 		if($title == 'lunch' || $title == 'dinner'){
 			$this->addScheduleEvents($title, $schedule);
 			
-			$html	= $this->writeMealCell($schedule, $this->date, $this->starttime);
+			$html	= $this->writeMealCell($schedule, $this->date, $this->startTime);
 		}else{
 			$this->addScheduleEvents($title, $schedule, false);
 
-			$html	= $this->writeOrientationCell($schedule, $this->date, $this->starttime);
+			$html	= $this->writeOrientationCell($schedule, $this->date, $this->startTime);
 		}
 		
 		return [
@@ -399,14 +406,14 @@ class CreateSchedule extends Schedules{
 		}
 
 		if($partnerId){
-			$hostName		= get_userdata($this->hostId)->last_name.' family';
+			$hostName		= SIM\getFamilyName($this->hostId);
 		}else{
 			$hostName		= get_userdata($this->hostId)->display_name;
 		}
 		
 		$dateStr			= date('d F Y', strtotime($this->date));
 
-		$events				= $this->getScheduleEvents($schedule->id, $this->date, $this->starttime);
+		$events				= $this->getScheduleEvents($schedule->id, $this->date, $this->startTime);
 		
 		foreach($events as $event){
 			//delete event_post

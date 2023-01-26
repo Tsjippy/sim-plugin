@@ -209,19 +209,10 @@ function arrivingUsersMessage(){
 							continue;
 						}
 
-						$partnerId	= SIM\hasPartner($user->ID);
-						$name		= $user->display_name;
+						$name		= SIM\getFamilyName($user, $partnerId);
 
 						if($partnerId){
 							$skip[]		= $partnerId;
-							$partner	= get_userdata($partnerId);
-
-							if($partner->last_name == $user->last_name){
-								$name 	= $user->last_name.' family';
-							}else{
-								$name	= $user->display_name.' & '. $partner->display_name;
-							}
-							
 						}
 						$url 	 = SIM\maybeGetUserPageUrl($user->ID);
 						$html 	.= "<a href='$url'>$name</a><br>";
