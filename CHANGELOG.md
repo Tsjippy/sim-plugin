@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.28.6] - 2023-01-28
+
+
+### Fixed
 - issuew ith selecting families from dropdown
 - e-mail string replacements with checkbox or radio values
 
