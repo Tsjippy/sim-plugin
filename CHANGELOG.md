@@ -8,6 +8,7 @@
 
 ### Fixed
 - issuew ith selecting families from dropdown
+- e-mail string replacements with checkbox or radio values
 
 ### Updated
 
