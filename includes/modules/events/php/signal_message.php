@@ -108,7 +108,6 @@ add_filter('sim_after_bot_payer', function($args){
 				}else{
                     $profilePicture	= get_user_meta($user->ID, 'profile_picture', true);
                     if(isset($profilePicture[0])){
-						SIM\printArray($args['pictures']);
                         $args['pictures'][] = get_attached_file($profilePicture[0]);
                     }
                 }

@@ -95,6 +95,10 @@ class FancyEmail{
 
         $this->message      = &$args['message'];
 
+        if(is_array($this->message)){
+            SIM\printArray($this->message);
+        }
+
         // Add e-mail to e-mails db
         $wpdb->insert(
             $this->mailTable ,

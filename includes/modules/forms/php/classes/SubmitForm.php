@@ -33,7 +33,7 @@ class SubmitForm extends SimForms{
 	}
 
 	/**
-	 * Filters the e-mail footer url and text
+	 * Replaces the url with form url
 	 *
 	 * @param	array	$footer		The footer array
 	 *
@@ -42,6 +42,7 @@ class SubmitForm extends SimForms{
 	public function emailFooter($footer){
 		$footer['url']		= $_POST['formurl'];
 		$footer['text']		= $_POST['formurl'];
+
 		return $footer;
 	}
 
@@ -114,12 +115,14 @@ class SubmitForm extends SimForms{
 
 				//Send the mail
 				if($_SERVER['HTTP_HOST'] != 'localhost'){
+					// add the formspecific footer filter
 					add_filter('sim_email_footer_url', [$this, 'emailFooter']);
 					$result = wp_mail($to , $subject, $message, $headers, $files);
 					if($result === false){
 						SIM\printArray("Sending the e-mail failed");
 					}
 
+					// remove the formspecific footer filter
 					remove_filter('sim_email_footer_url', [$this, 'emailFooter']);
 				}
 			}
@@ -149,17 +152,24 @@ class SubmitForm extends SimForms{
 		
 		//loop over the results
 		foreach($matches[1] as $match){
-			if(empty($this->submission->formresults[$match])){
+			$replaceValue	= $this->submission->formresults[$match];
+			if(empty($replaceValue)){
 				//remove the placeholder, there is no value
 				$string = str_replace("%$match%", '', $string);
-			}elseif(is_array($this->submission->formresults[$match])){
-				$files	= $this->submission->formresults[$match];
+			}elseif(
+				is_array($replaceValue)									&&	// the form results are an array
+				file_exists( ABSPATH.array_values($replaceValue)[0])		// and the first entry is a valid file
+			){
+				// add the ABSPATH to the file paths
 				$string = array_map(function($value){
 					return ABSPATH.$value;
-				}, $files);
+				}, $replaceValue);
 			}else{
+				if(is_array($replaceValue)){
+					$replaceValue	= implode(',', $replaceValue);
+				}
 				//replace the placeholder with the value
-				$replaceValue	= str_replace('_', ' ', $this->submission->formresults[$match]);
+				$replaceValue	= str_replace('_', ' ', $replaceValue);
 				$string 		= str_replace("%$match%", $replaceValue, $string);
 			}
 		}
