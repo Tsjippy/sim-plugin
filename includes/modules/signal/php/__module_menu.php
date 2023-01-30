@@ -417,8 +417,9 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
             <tbody>
 				<?php
 					foreach($messages as $message){
-						$date		= date('d-m-Y', $message->timesend);
-						$time		= date('H:i', $message->timesend);
+						$isoDate	= date( 'Y-m-d H:i:s', $message->timesend );
+						$date		= get_date_from_gmt( $isoDate, 'd-m-Y');
+						$time		= get_date_from_gmt( $isoDate, 'H:i');
 
 						$recipient	= '';
 						if(strpos($message->recipient, '+') !== false){
