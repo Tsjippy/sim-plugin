@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- use local time in signal message log
 
 ### Updated
 
