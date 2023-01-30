@@ -105,7 +105,7 @@ class SignalBus extends Signal {
         $startIndex = 0;
 
         if($page > 1){
-            $startIndex         = $page * $amount;
+            $startIndex         = ($page - 1) * $amount;
         }
 
         $totalQuery = "SELECT COUNT(id) as total FROM $this->tableName";
@@ -125,6 +125,23 @@ class SignalBus extends Signal {
         }
         
         return $wpdb->get_results( $query );
+    }
+
+    /**
+     * Deletes messages from the log
+     *
+     * @param   string     $maxDate     The date after which messages should be kept Should be in yyyy-mm-dd format
+     *
+     * @return  string                  The message
+     */
+    public function clearMessageLog($maxDate){
+        global $wpdb;
+
+        $timeSend   = strtotime(get_gmt_from_date($maxDate, 'Y-m-d'));
+
+        $query      = "DELETE FROM $this->tableName WHERE `timesend` < $timeSend";
+
+        return $wpdb->query( $query );
     }
 
     /**

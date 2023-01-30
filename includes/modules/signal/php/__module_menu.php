@@ -343,6 +343,18 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 		return '';
 	}
 
+	if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'Delete'){
+		$signal 	= new SignalBus();
+
+		$result		= $signal->clearMessageLog($_REQUEST['delete-date']);
+
+		if($result === false){
+			echo "<div class='error'>Something went wrong</div>";
+		}else{
+			echo "<div class='success'>Succesfully removed $result messages</div>";
+		}
+	}
+
 	$amount	= 100;
 	if(isset($_REQUEST['amount'])){
 		$amount	= $_REQUEST['amount'];
@@ -366,42 +378,76 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 	}
 
 	?>
+	<style>
+		.flex-container{
+			display: flex;
+		}
+
+		.flex{
+			padding: 20px;
+		}
+	</style>
 	<div class='send-signal-messages'>
-        <h2>Message History</h2>
+		<div class='flex-container'>
+			<div class='flex'>
+				<h2>Show Message History</h2>
 
-		<form method='get' id='message-overview-settings'>
-			<input type="hidden" name="page" value="sim_signal" />
-			<input type="hidden" name="tab" value="data" />
+				<form method='get' id='message-overview-settings'>
+					<input type="hidden" name="page" value="sim_signal" />
+					<input type="hidden" name="tab" value="data" />
 
-			<label>
-				Show Messages from the last <input type='number' name='months' value='<?php echo $months ;?>' style='max-width: 60px;'> months only
-			</label>
-			<br>
-			<label>
-				Amount of messages to show <input type='number' name='amount' value='<?php echo $amount; ?>' style='max-width: 60px;'>
-			</label>
-			<br>
-			<input type='submit' value='Apply'>
-		</form>
+					<label>
+						Show Messages from the last <input type='number' name='months' value='<?php echo $months ;?>' style='max-width: 60px;'> months only
+					</label>
+					<br>
+					<label>
+						Amount of messages to show <input type='number' name='amount' value='<?php echo $amount; ?>' style='max-width: 60px;'>
+					</label>
+					<br>
+					<input type='submit' value='Apply'>
+				</form>
+			</div>
+
+			<div class='flex'>
+				<h2>Clear Message History</h2>
+
+				<form method='post'>
+					<input type="hidden" name="page" value="sim_signal" />
+					<input type="hidden" name="tab" value="data" />
+
+					<label>
+						Delete Messages send before <input type='date' name='delete-date' value='<?php echo date('Y-m-d', strtotime('-1 month'));?>' max='<?php echo date('Y-m-d'); ?>'>
+					</label>
+					<br>
+					<input type='submit' name='action' value='Delete'>
+				</form>
+			</div>
+		</div>
 
 		<?php
 
-		if($page > 1){
+		if($signal->totalMessages > $amount){
 			$url		= admin_url("admin.php?page=sim_signal&tab=data&amount=$amount&months=$months&nr=");
 			$totalPages	= ceil($signal->totalMessages/$amount);
-	
-			$start	= max($page - 2, 1);
-			$end	= min($page + 2, $totalPages);
 			
-			echo "<a href='{$url}1'>< First</a>   ";
-	
-
-			for ($x = $start; $x <= $end; $x++) {
-				echo "   <a href='$url$x'>$x</a>   ";
+			if($page != 1){
+				$prev	= $page-1;
+				echo "<a href='$url$prev'>< Previous</a>   ";
 			}
 
-			if($page < $totalPages){
-				echo "   <a href='$url$totalPages'>Last ></a>";
+			for ($x = 1; $x <= $totalPages; $x++) {
+				if($page == $x){
+					echo "<strong>";
+				}
+				echo "   <a href='$url$x'>$x</a>   ";
+				if($page == $x){
+					echo "</strong>";
+				}
+			}
+
+			if($page != $totalPages){
+				$next	= $page + 1;
+				echo "   <a href='$url$next'>Next ></a>";
 			}
 		}
 
