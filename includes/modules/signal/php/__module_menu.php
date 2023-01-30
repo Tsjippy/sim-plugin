@@ -370,6 +370,9 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
         <h2>Message History</h2>
 
 		<form method='get' id='message-overview-settings'>
+			<input type="hidden" name="page" value="sim_signal" />
+			<input type="hidden" name="tab" value="data" />
+
 			<label>
 				Show Messages from the last <input type='number' name='months' value='<?php echo $months ;?>' style='max-width: 60px;'> months only
 			</label>
@@ -453,17 +456,20 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 	if($moduleSlug != MODULE_SLUG){
 		return $dataHtml;
 	}
+	
+	ob_start();
 
 	// check if we need to send a message
-	if(!empty($_POST['challenge']) && !empty($_POST['captchastring'])){
+	if(!empty($_REQUEST['challenge']) && !empty($_REQUEST['captchastring'])){
 		$signal	= new SignalBus();
-		$result	= $signal->submitRateLimitChallenge($_POST['challenge'], $_POST['captchastring']);
-		echo $result;
+		$result	= $signal->submitRateLimitChallenge($_REQUEST['challenge'], $_REQUEST['captchastring']);
+
+		echo "<div class='succes'>Rate challenge succesfully submitted <br>$result</div>";
     }
 
 	// check if we need to send a message
-	if(!empty($_POST['message']) && !empty($_POST['recipient'])){
-        $result	= sendSignalMessage($_POST['message'], $_POST['recipient']);
+	if(!empty($_REQUEST['message']) && !empty($_REQUEST['recipient'])){
+        $result	= sendSignalMessage($_REQUEST['message'], $_REQUEST['recipient']);
 		echo $result;
     }
 
@@ -475,11 +481,12 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 		}
 	}
 
-	ob_start();
-
 	if(isset($_REQUEST['challenge']) && !isset($_REQUEST['captchastring'])){
 		?>
-		<form method='post'>
+		<form method='get'>
+			<input type="hidden" name="page" value="sim_signal">
+			<input type="hidden" name="tab" value="functions">
+
 			<label>
 				<h4>Challenge string</h4>
 				<input type='text' name='challenge' value='<?php echo $_REQUEST['challenge'];?>' style='width:100%;' required>

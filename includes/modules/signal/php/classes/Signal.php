@@ -282,13 +282,16 @@ class Signal {
     }
 
     protected function parseResult($returnJson=false){
+        $errorMessages      = get_option('sim-signal-failed-messages', []);
         if($this->command->getExitCode()){
-
+            // Captcha required
             if(strpos($this->command->getError(), 'CAPTCHA proof required') !== false){
+                // Store message
+                $errorMessages[]    = $this->command->getCommand();
+                update_option('sim-signal-failed-messages', $errorMessages);
+
                 $username       = [];
                 exec("bash -c 'whoami'", $username);
-
-                SIM\printArray($username);
                 $instructions   = $this->command->getError();
                 $instructions   = str_replace('signal-cli', "$this->path --config /home/{$username[0]}/.local/share/signal-cli" , $instructions);
                 $adminUrl       = admin_url("admin.php?page=sim_signal&tab=functions&challenge=");
@@ -296,7 +299,7 @@ class Signal {
                 $to             = get_option('admin_email');
                 $subject        = "Signal captcha required";
                 $message        = "Hi admin,<br><br>";
-                $message        = "Signal messages are currently not been send from the website as you need to submit a captcha.<br>";
+                $message        .= "Signal messages are currently not been send from the website as you need to submit a captcha.<br>";
                 $message        .= "Use the following instructions to submit the captacha:<br><br>";
                 $message        .= "<code>$instructions</code><br>";
                 $message        .= "Submit the challenge and captcha <a href='$adminUrl'>here</a>";
@@ -311,6 +314,18 @@ class Signal {
             }
 
             return $this->error;
+        }elseif(!empty($errorMessages)){
+            foreach($errorMessages as $command){
+                $this->command = new Command([
+                    'command' => $command,
+                    // This is required for binary to be able to find libzkgroup.dylib to support Group V2
+                    'procCwd' => dirname($this->path),
+                ]);
+
+                $this->command->execute();
+            }
+
+            delete_option('sim-signal-failed-messages');
         }
 
         $output = $this->command->getOutput();

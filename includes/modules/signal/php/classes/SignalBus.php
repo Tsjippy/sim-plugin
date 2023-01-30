@@ -116,7 +116,7 @@ class SignalBus extends Signal {
             $query      .= " WHERE timesend > $minTime";
         }
 
-        $query      .= " LIMIT $startIndex,$amount;";
+        $query      .= "  ORDER BY `timesend` DESC LIMIT $startIndex,$amount;";
 
         $this->totalMessages    = $wpdb->get_var($totalQuery);
 
@@ -443,6 +443,8 @@ class SignalBus extends Signal {
         ]);
 
         $this->command->execute();
+
+        SIM\printArray($this->command);
 
         return $this->parseResult();
     }
