@@ -4,6 +4,7 @@
 
 ### Added
 - retry failed signal messages
+- signal log cleanup
 
 ### Changed
 
