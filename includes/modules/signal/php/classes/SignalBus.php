@@ -99,7 +99,7 @@ class SignalBus extends Signal {
      * @param   int     $amount     The amount of rows to get per page, default 100
      * @param   int     $page       Which page to get, default 1
      */
-    public function getMessageLog($amount=100, $page=1, $minTime=''){
+    public function getMessageLog($amount=100, $page=1, $minTime='', $maxTime=''){
         global $wpdb;
 
         $startIndex = 0;
@@ -114,6 +114,16 @@ class SignalBus extends Signal {
         if(!empty($minTime)){
             $totalQuery .= " WHERE timesend > $minTime";
             $query      .= " WHERE timesend > $minTime";
+        }
+
+        if(!empty($maxTime)){
+            $combinator = 'AND';
+            if(empty($minTime)){
+                $combinator     = 'WHERE';
+            }
+
+            $totalQuery .= " $combinator timesend < $maxTime";
+            $query      .= " $combinator timesend < $maxTime";
         }
 
         $query      .= "  ORDER BY `timesend` DESC LIMIT $startIndex,$amount;";

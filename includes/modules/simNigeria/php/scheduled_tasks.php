@@ -60,7 +60,7 @@ function sendReimbursementRequests(){
 		SIM\printArray('No reimbursement requests found');
 	}else{
 		//Create the excel
-		$excel	= $formTable->exportExcel("Reimbursement requests - ".date("F Y", strtotime("previous month")).'.xlsx',false);
+		$excel	= $formTable->exportExcel("Reimbursement requests - ".date("F Y", strtotime("previous month")).'.xlsx', false);
 
 		//mark all entries as archived
 		foreach($formTable->submissions as &$formTable->submission){
@@ -93,7 +93,9 @@ function sendReimbursementRequests(){
 			
 			//Send the mail
 			$to				= SIM\getModuleOption('mailposting', 'finance_email');
-			wp_mail($to, $subject, $message, $emailHeaders, $excel);
+
+			$attach	= array_merge($attachments, [$excel]);
+			wp_mail("jos.treasurer@sim.org", $subject, $message, $emailHeaders, $attach);
 
 			//Loop over the attachements and move them
 			foreach($attachments as $file){

@@ -360,9 +360,14 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 		$amount	= $_REQUEST['amount'];
 	}
 
-	$months	= 3;
-	if(isset($_REQUEST['months'])){
-		$months	= $_REQUEST['months'];
+	$startDate	= date('Y-m-d', strtotime('-3 month'));
+	if(isset($_REQUEST['start-date'])){
+		$startDate	= $_REQUEST['start-date'];
+	}
+
+	$endDate	= date('Y-m-d', strtotime('+1 day'));
+	if(isset($_REQUEST['end-date'])){
+		$endDate	= $_REQUEST['end-date'];
 	}
 
 	$page	= 1;
@@ -371,7 +376,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 	}
 
 	$signal 	= new SignalBus();
-	$messages	= $signal->getMessageLog($amount, $page, strtotime("-$months months", time()));
+	$messages	= $signal->getMessageLog($amount, $page, strtotime($startDate), strtotime($endDate));
 
 	if(empty($messages)){
 		return '';
@@ -397,7 +402,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 					<input type="hidden" name="tab" value="data" />
 
 					<label>
-						Show Messages from the last <input type='number' name='months' value='<?php echo $months ;?>' style='max-width: 60px;'> months only
+						Show Messages send between <input type='date' name='start-date' value='<?php echo $startDate;?>' max='<?php echo date('Y-m-d'); ?>'> and <input type='date' name='end-date' value='<?php echo $endDate;?>' max='<?php echo date('Y-m-d', strtotime('+1 day')); ?>'>
 					</label>
 					<br>
 					<label>
@@ -427,7 +432,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 		<?php
 
 		if($signal->totalMessages > $amount){
-			$url		= admin_url("admin.php?page=sim_signal&tab=data&amount=$amount&months=$months&nr=");
+			$url		= admin_url("admin.php?page=sim_signal&tab=data&amount=$amount&start-date=$startDate&end-date=$endDate&nr=");
 			$totalPages	= ceil($signal->totalMessages/$amount);
 			
 			if($page != 1){

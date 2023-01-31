@@ -131,7 +131,7 @@ class Bookings{
                 <div class="calendar table">
                     <?php
                     echo $this->monthCalendar($subject, $date);
-                    echo $this->monthCalendar($subject, strtotime('+1 month', $date));
+                    echo $this->monthCalendar($subject, strtotime('first day of next month', $date));
                     ?>
                 </div>
                 <?php
