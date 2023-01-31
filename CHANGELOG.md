@@ -10,6 +10,7 @@
 
 ### Fixed
 - use local time in signal message log
+- bug in bookings on 31th of the month
 
 ### Updated
 
