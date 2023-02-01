@@ -3,10 +3,22 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.28.7] - 2023-02-01
+
+
+### Added
 - retry failed signal messages
 - signal log cleanup
 
 ### Changed
+- set post status for mapped  e-mail addresses to publish
 
 ### Fixed
 - use local time in signal message log
