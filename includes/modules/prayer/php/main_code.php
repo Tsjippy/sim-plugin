@@ -7,7 +7,7 @@ add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategor
 	
 	if(
 		!$editRight														&&	// If we currently have no edit right
-		in_array('prayercoordinator', wp_get_current_user()->roles)		&& 	// If we have the prayer coordinator role and the post or page has the prayer category 
+		in_array('prayercoordinator', wp_get_current_user()->roles)		&& 	// If we have the prayer coordinator role and the post or page has the prayer category
 		(
 			in_array(get_cat_ID('Prayer'), $postCategory) 				||
 			in_array('prayer', $postCategory)
@@ -52,7 +52,7 @@ function prayerRequest($plainText = false, $verified=false) {
 		//Content of page with all prayer requests of this month
 		if($plainText){
 			$content 	= wp_strip_all_tags($post->post_content);
-			$content	= str_replace(["&nbsp;", '&amp; '], [' ',''], $content);
+			$content	= str_replace(["&nbsp;", '&amp;'], [' ','&'], $content);
 		}else{
 			$content	= $post->post_content;
 		}

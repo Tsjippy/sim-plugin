@@ -343,15 +343,26 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 		return '';
 	}
 
-	if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'Delete'){
-		$signal 	= new SignalBus();
+	if(isset($_REQUEST['action'])){
+		if($_REQUEST['action'] == 'Delete'){
+			$signal 	= new SignalBus();
 
-		$result		= $signal->clearMessageLog($_REQUEST['delete-date']);
+			$result		= $signal->clearMessageLog($_REQUEST['delete-date']);
 
-		if($result === false){
-			echo "<div class='error'>Something went wrong</div>";
-		}else{
-			echo "<div class='success'>Succesfully removed $result messages</div>";
+			if($result === false){
+				echo "<div class='error'>Something went wrong</div>";
+			}else{
+				echo "<div class='success'>Succesfully removed $result messages</div>";
+			}
+		}elseif($_REQUEST['action'] == 'Save'){
+			$settings['clean-period']	= $_REQUEST['clean-period'];
+			$settings['clean-amount']	= $_REQUEST['clean-amount'];
+
+			global $Modules;
+
+			$Modules[MODULE_SLUG]	= $settings;
+
+			update_option('sim_modules', $Modules);
 		}
 	}
 
@@ -425,6 +436,26 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 					</label>
 					<br>
 					<input type='submit' name='action' value='Delete'>
+				</form>
+			</div>
+
+			<div class='flex'>
+				<h2>Auto clean Message History</h2>
+
+				<form method='get' id='message-overview-settings'>
+					<input type="hidden" name="page" value="sim_signal" />
+					<input type="hidden" name="tab" value="data" />
+
+					<label>
+						Automatically remove messages older then <input type='number' name='clean-amount' value='<?php echo $settings['clean-amount'];?>' style='width:60px;'>
+						<select name='clean-period' class='inline'>
+							<option value='days' <?php if($settings['clean-period'] == 'days'){echo 'selected="selected"';}?>>days</option>
+							<option value='weeks' <?php if($settings['clean-period'] == 'weeks'){echo 'selected="selected"';}?>>weeks</option>
+							<option value='months' <?php if($settings['clean-period'] == 'months'){echo 'selected="selected"';}?>>months</option>
+						</select>
+					</label>
+					<br>
+					<input type='submit' name='action' value='Save'>
 				</form>
 			</div>
 		</div>

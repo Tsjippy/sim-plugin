@@ -663,6 +663,10 @@ class Signal {
 
         $release        = SIM\getLatestRelease('AsamK', 'signal-cli');
 
+        if(is_wp_error($release)){
+            return false;
+        }
+
         $curVersion     = str_replace('signal-cli ', 'v', trim(shell_exec($this->path.' --version')));
 
         if(!file_exists($this->path) || empty($curVersion)){

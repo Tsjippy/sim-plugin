@@ -14,11 +14,15 @@ add_action('init', function(){
     add_action( 'schedule_signal_message_action', __NAMESPACE__.'\sendSignalMessage', 10, 3);
 
     add_action( 'check_signal_numbers_action', __NAMESPACE__.'\checkSignalNumbers', 10, 3);
+
+    add_action( 'clean_signal_log_action', __NAMESPACE__.'\cleanSignalLog');
 });
 
 
 function scheduleTasks(){
     SIM\scheduleTask('check_signal_action', 'daily');
+
+    SIM\scheduleTask('clean_signal_log_action', 'daily');
 
     $freq   = SIM\getModuleOption(MODULE_SLUG, 'reminder_freq');
     if($freq){
@@ -76,4 +80,16 @@ function checkSignalNumbers(){
             wp_mail( $recipients, $subject, $message);
         }
     }
+}
+
+
+function cleanSignalLog(){
+    $period     = SIM\getModuleOption(MODULE_SLUG, 'clean-period');
+    $amount     = SIM\getModuleOption(MODULE_SLUG, 'clean-amount');
+
+    $maxDate    = date('Y-m-d', strtotime("-$amount $period"));
+
+    $signal     = new SignalBus();
+
+    $signal->clearMessageLog($maxDate);
 }
