@@ -3,10 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- auto clean signal log
-- subject to e-mail links
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.28.8] - 2023-02-01
+
+
+### Added
+- auto clean signal log
+- subject to e-mail links
 
 ### Fixed
 
