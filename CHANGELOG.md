@@ -7,6 +7,7 @@
 - signal log cleanup
 
 ### Changed
+- set post status for mapped  e-mail addresses to publish
 
 ### Fixed
 - use local time in signal message log
