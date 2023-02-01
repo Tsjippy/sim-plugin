@@ -66,7 +66,7 @@ class Bookings{
 		$minusMonthStr	= date('m', $minusMonth);
 		$minusYearStr	= date('Y', $minusMonth);
 
-        $firstMonth     = strtotime("+1 month", $minusMonth);
+        $firstMonth     = strtotime("first day of next month", $minusMonth);
 
 		$plusMonth		= strtotime("+$plus month", $date);
 		$plusMonthStr	= date('m', $plusMonth);

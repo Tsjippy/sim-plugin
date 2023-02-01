@@ -117,6 +117,7 @@ function createEvents($metaId, $postId,  $metaKey,  $metaValue ){
 
 	if(is_wp_error($result)){
 		SIM\printArray($result);
+		SIM\printArray($metaValue);
 	}
 }
 

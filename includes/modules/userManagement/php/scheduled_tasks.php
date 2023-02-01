@@ -619,19 +619,19 @@ function accountExpiryCheck(){
 			'meta_query' => array(
 				'relation' => 'AND',
 				array(
-					'key' => 'account_validity',
-					'compare' => 'EXISTS'
+					'key' 		=> 'account_validity',
+					'compare' 	=> 'EXISTS'
 				),
 				array(
-					'key' => 'account_validity',
-					'value' => 'unlimited',
-					'compare' => '!='
+					'key' 		=> 'account_validity',
+					'value' 	=> 'unlimited',
+					'compare' 	=> '!='
 				),
 				array(
-					'key' => 'account_validity',
-					'value' => date("Y-m-d", strtotime(" +1 months")),
-					'compare' => '=',
-					'type' => 'DATE'
+					'key' 		=> 'account_validity',
+					'value' 	=> date("Y-m-d", strtotime(" +1 months")),
+					'compare' 	=> '=',
+					'type' 		=> 'DATE'
 				),
 				
 			),

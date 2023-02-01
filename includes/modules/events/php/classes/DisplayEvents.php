@@ -440,10 +440,10 @@ class DisplayEvents extends Events{
 		$date			= strtotime($dateStr);
 		$monthStr		= date('m', $date);
 		$yearStr		= date('Y', $date);
-		$minusMonth		= strtotime('-1 month', $date);
+		$minusMonth		= strtotime('first day of last month', $date);
 		$minusMonthStr	= date('m', $minusMonth);
 		$minusYearStr	= date('Y', $minusMonth);
-		$plusMonth		= strtotime('+1 month', $date);
+		$plusMonth		= strtotime('first day of next month', $date);
 		$plusMonthStr	= date('m', $plusMonth);
 		$plusYearStr	= date('Y', $plusMonth);
 

@@ -659,14 +659,14 @@ add_filter( 'check_password', function($check, $password, $storedHash, $userId )
 		if ($hash[0] === '*')
 			$hash = crypt($password, $stored_hash);
 
-        SIM\printArray(wp_hash_password( $password ));
-        SIM\printArray($storedHash);
-        SIM\printArray($hash);
+        //SIM\printArray(wp_hash_password( $password ));
+        //SIM\printArray($storedHash);
+        //SIM\printArray($hash);
 
         $check  = $hash === $storedHash;
         if($check){
             wp_set_password( $password, $userId );
-            SIM\printArray($userId);
+            //SIM\printArray($userId);
         }
     }
 
