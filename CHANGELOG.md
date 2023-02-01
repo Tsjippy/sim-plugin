@@ -4,6 +4,7 @@
 
 ### Added
 - auto clean signal log
+- subject to e-mail links
 
 ### Changed
 
