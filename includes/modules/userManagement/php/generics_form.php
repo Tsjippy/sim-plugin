@@ -18,6 +18,20 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 		return $formResults;
 	}
 
+	// check if age is correct
+	$family	= get_user_meta($userId, 'family', true);
+	if(!empty($family['children'])){
+		$ownAge		= strtotime(get_user_meta($userId, 'birthday', true));
+
+		foreach($family['children']	as $child){
+			$ageDiff	= strtotime(get_user_meta($child, 'birthday', true)) - $ownAge;
+
+			if($ageDiff / YEAR_IN_SECONDS < 14){
+				return new \WP_ERROR('forms', "Please don't lie");
+			}
+		}
+	}
+
 	//check if phonenumber has changed
 	$oldPhonenumbers	= (array)get_user_meta($userId, 'phonenumbers', true);
 	$newPhonenumbers	= $_POST['phonenumbers'];
@@ -91,7 +105,7 @@ add_action('sim_before_form', function ($formName){
 
 /**
  * Get all locations with the ministries category
- * 
+ *
  * @return	array	Ministries list
  */
 function getMinistries(){

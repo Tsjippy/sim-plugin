@@ -295,6 +295,10 @@ class SubmitForm extends SimForms{
 		
 		$this->submission->formresults 					= apply_filters('sim_before_saving_formdata', $this->submission->formresults, $this->formData->name, $this->userId);
 
+		if(is_wp_error($this->submission->formresults)){
+			return $this->submission->formresults;
+		}
+
 		$message = $this->formData->settings['succesmessage'];
 		if(empty($message)){
 			$message = 'succes';
