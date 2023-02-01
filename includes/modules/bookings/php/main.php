@@ -286,7 +286,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
                                     if($setting['show'] == 'hide'){
                                         break;
                                     }
-                                    $cellContent    = $displayFormResults->transformInputData($data[$setting['name']], $setting['name']);
+                                    $cellContent    = $displayFormResults->transformInputData($data[$setting['name']], $setting['name'], $data);
                                     $html   .= "<td class='edit_forms_table' data-id='{$setting['name']}' data-oldvalue='".json_encode($data[$setting['name']])."'>$cellContent</td>";
                                 }
                                 $html   .= "<td>";

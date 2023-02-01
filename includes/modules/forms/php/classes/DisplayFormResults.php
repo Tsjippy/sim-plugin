@@ -313,12 +313,13 @@ class DisplayFormResults extends DisplayForm{
 	/**
 	 * Transforms a given string to hyperlinks or other formats
 	 *
-	 * @param 	string	$string		the string to convert
+	 * @param 	string	$string			the string to convert
 	 * @param	string	$elementName	The name of the value the string value belongs to
+	 * @param	object	$submission		The submission this string belongs to
 	 *
-	 * @return	string				The transformed string
+	 * @return	string					The transformed string
 	 */
-	public function transformInputData($string, $elementName){
+	public function transformInputData($string, $elementName, $submission){
 		if(empty($string)){
 			return $string;
 		}
@@ -331,14 +332,22 @@ class DisplayFormResults extends DisplayForm{
 				if(!empty($output)){
 					$output .= "<br>";
 				}
-				$output .= $this->transformInputData($sub, $elementName);
+				$output .= $this->transformInputData($sub, $elementName, $submission);
 			}
 			return $output;
 		}else{
 			$output		= $string;
 			//open mail programm on click on email
 			if (strpos($string, '@') !== false) {
-				$output 	= "<a href='mailto:$string'>$string</a>";
+				$name		= '';
+				if(isset($submission->name)){
+					$name	= "Hi $submission->name,";
+				}elseif(isset($submission->your_name)){
+					$name	= "Hi $submission->your_name,";
+				}elseif(isset($submission->first_name)){
+					$name	= "Hi $submission->first_name,";
+				}
+				$output 	= "<a href='mailto:$string?subject=Regarding your {$this->formData->name} with id $submission->id&body={$name}'>$string</a>";
 			//Convert link to clickable link if not already
 			}elseif(
 				(
@@ -679,7 +688,7 @@ class DisplayFormResults extends DisplayForm{
 				
 				//transform if needed
 				$orgFieldValue	= $value;
-				$value 	= $this->transformInputData($value, $elementName);
+				$value 	= $this->transformInputData($value, $elementName, (object)$values);
 				
 				//show original email in excel
 				if(strpos($value,'@') !== false){

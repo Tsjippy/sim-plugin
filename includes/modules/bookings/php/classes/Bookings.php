@@ -413,7 +413,7 @@ class Bookings{
 
                                         $index  = $setting['name'];
                                         $data   = $bookingData[$index];
-                                        $transformedData   = $this->forms->transformInputData($data, $index);
+                                        $transformedData   = $this->forms->transformInputData($data, $index, $bookingData);
                                         if(empty($transformedData)){
                                             $transformedData    = 'X';
                                         }

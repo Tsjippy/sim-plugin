@@ -153,9 +153,9 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 },1,2);
 
 //Transform table data from travelform
-add_filter('sim_transform_formtable_data',function($string,$field_name){
-	if(in_array($field_name,['name','driver','passengers'])){
-		if($field_name == 'passengers'){
+add_filter('sim_transform_formtable_data',function($string, $elementName){
+	if(in_array($elementName, ['name','driver','passengers'])){
+		if($elementName == 'passengers'){
 			$output		= '';
 			$string 	= explode(',',$string);
 			$lastKey 	= array_key_last($string);
@@ -186,7 +186,7 @@ add_filter('sim_transform_formtable_data',function($string,$field_name){
 		$output = $string;
 	}
 	return $output;
-},10,2);
+}, 10, 2);
 
 //first make sure we request all the data
 add_filter('sim_formdata_retrieval_query', function($query, $userId, $formName){
