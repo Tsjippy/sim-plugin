@@ -4,6 +4,7 @@
 
 ### Added
 - age check
+- always reurn post url for only pdf pages
 
 ### Changed
 
