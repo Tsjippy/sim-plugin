@@ -43,6 +43,7 @@ function sendPostNotification($post){
 			$excerpt .=	"...\n\nView it on the web:\n".get_permalink($post->ID);
 		}
 	}
+
 	$excerpt = html_entity_decode($excerpt);
 	
 	$excerpt = strip_tags(str_replace('<br>',"\n",$excerpt));
