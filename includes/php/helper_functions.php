@@ -456,34 +456,38 @@ function getFamilyName($user, &$partnerId=false) {
 
 	$family 	= get_user_meta($user->ID, "family", true);
 
+	if(isset($family['children']) && empty($family['children'])){
+		unset($family['children']);
+	}
+
 	if(!empty($family['name'])){
 		return $family['name'].' family';
 	}
 
 	// user has family
-	if(is_array($family)){
-		$name 	= $user->last_name;
+	if(empty($family)){
+		return $user->display_name;
+	}
+	
+	$name 	= $user->last_name;
 
-		// user has a partner
-		if(isset($family['partner']) && is_numeric($family['partner'])){
-			$partnerId	= $family['partner'];
-			
-			$partner	= get_userdata($family['partner']);
+	// user has a partner
+	if(isset($family['partner']) && is_numeric($family['partner'])){
+		$partnerId	= $family['partner'];
+		
+		$partner	= get_userdata($family['partner']);
 
-			if($partner->last_name != $user->last_name){
-				// Male name first
-				if(get_user_meta($user->ID, 'gender', true)[0] == 'Male'){
-					$name	= $user->last_name.' - '. $partner->last_name;
-				}else{
-					$name	= $partner->last_name.' - '. $user->last_name;
-				}
+		if($partner->last_name != $user->last_name){
+			// Male name first
+			if(get_user_meta($user->ID, 'gender', true)[0] == 'Male'){
+				$name	= $user->last_name.' - '. $partner->last_name;
+			}else{
+				$name	= $partner->last_name.' - '. $user->last_name;
 			}
 		}
-
-		return $name.' family';
 	}
 
-	return $user->display_name;
+	return $name.' family';	
 }
 
 /**
