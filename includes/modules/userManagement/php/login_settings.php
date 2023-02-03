@@ -38,6 +38,7 @@ function changePasswordForm($userId = null){
 	if(
 		isset($_REQUEST['action']) 			&&
 		isset($_REQUEST['wp_2fa_nonce'])	&&
+		isset($_REQUEST['user_id'])			&&
 		wp_verify_nonce( $_REQUEST['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_REQUEST['user_id'])
 	){
 		if($_REQUEST['action'] == 'Reset 2FA' && function_exists('SIM\LOGIN\reset2fa')){
