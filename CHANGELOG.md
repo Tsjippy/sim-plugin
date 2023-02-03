@@ -10,6 +10,7 @@
 
 ### Fixed
 - singles family name
+- reset 2fa
 
 ### Updated
 
