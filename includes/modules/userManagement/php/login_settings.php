@@ -35,18 +35,20 @@ function changePasswordForm($userId = null){
 	ob_start();
 	
 	//Check if action is needed
-	if(isset($_GET['action']) && isset($_GET['wp_2fa_nonce'])){
-		if($_GET['action'] == 'reset2fa' && wp_verify_nonce( $_GET['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_GET['user_id'])){
-			if($_GET['do'] == 'off' && function_exists('SIM\LOGIN\reset2fa')){
-				SIM\LOGIN\reset2fa($userId);
-				echo "<div class='success'>Succesfully turned off 2fa for $name</div>";
-			}elseif($_GET['do'] == 'email'){
-				update_user_meta($userId, '2fa_methods', ['email']);
-				echo "<div class='success'>Succesfully changed the 2fa factor for $name to e-mail</div>";
-			}elseif($_GET['do'] == 'positional'){
-				update_user_meta($userId, 'account-type', $_GET['type']);
-				echo "<div class='success'>Succesfully changed the account type for $name to {$_GET['type']}</div>";
-			}
+	if(
+		isset($_REQUEST['action']) 			&&
+		isset($_REQUEST['wp_2fa_nonce'])	&&
+		wp_verify_nonce( $_REQUEST['wp_2fa_nonce'], "wp-2fa-reset-nonce_".$_REQUEST['user_id'])
+	){
+		if($_REQUEST['action'] == 'Reset 2FA' && function_exists('SIM\LOGIN\reset2fa')){
+			SIM\LOGIN\reset2fa($userId);
+			echo "<div class='success'>Succesfully turned off 2fa for $name</div>";
+		}elseif($_REQUEST['action'] == 'Change to e-mail'){
+			update_user_meta($userId, '2fa_methods', ['email']);
+			echo "<div class='success'>Succesfully changed the 2fa factor for $name to e-mail</div>";
+		}elseif($_REQUEST['action'] == 'Change account type'){
+			update_user_meta($userId, 'account-type', $_REQUEST['type']);
+			echo "<div class='success'>Succesfully changed the account type for $name to {$_REQUEST['type']}</div>";
 		}
 	}
 				
@@ -78,53 +80,50 @@ function changePasswordForm($userId = null){
 		}
 		
 		$methods	= get_user_meta($userId, '2fa_methods', true);
+		$nonce	= wp_create_nonce( "wp-2fa-reset-nonce_$userId" );
 		if(is_array($methods)){
-
-			//base url parameters
-			$param	= [
-				'action'		=>'reset2fa',
-				'user_id'		=> $userId,
-				'wp_2fa_nonce'	=> wp_create_nonce( "wp-2fa-reset-nonce_$userId" )
-			];
 
 			?>
 			<div class="2FA" style="margin-top:30px;">
 				<?php
-				if(!isset($methods['email'])){
-					$param['do']	= 'email';
-					$url 			= add_query_arg($param);
+				if(!in_array('email', $methods)){
 					?>
-					<p>
-						Use the button below to change the 2fa factor for <?php echo $name;?> to e-mail<br><br>
-						<a href="<?php echo esc_url($url) ;?>#Login%20info" class="button sim">Change to e-mail</a>
-					</p>
+					<form method='post'>
+						<input type='hidden' name='user_id' value='<?php echo $userId;?>'>
+						<input type='hidden' name='wp_2fa_nonce' value='<?php echo $nonce;?>'>
 
+						Use the button below to change the 2fa factor for <?php echo $name;?> to e-mail<br>
+						<input type='submit' name='action' value='Change to e-mail' class='button small'>
+					</form>
+					<br>
 					<?php
 				}
 
-				$param['do']	= 'off';
-				$url 			= add_query_arg($param);
 				?>
-				<p>
-					Use the button below to turn off Two Factor Authentication for <?php echo $name;?><br><br>
-					<a href="<?php echo esc_url( $url );?>#Login%20info" class="button sim">Reset 2FA</a>
-				</p>
+				<form method='post'>
+					<input type='hidden' name='user_id' value='<?php echo $userId;?>'>
+					<input type='hidden' name='wp_2fa_nonce' value='<?php echo $nonce;?>'>
 
-				<?php
-				$type			= 'positional';
-				if(get_user_meta($userId, 'account-type', true) == 'positional'){
-					$type		= 'normal';
-				}
-				$param['do']	= 'positional';
-				$param['type']	= $type;
-				$url 			= add_query_arg($param);
-				?>
-				<p>
-					Use the button below to switch this account to a <?php echo $type;?> account <br><br>
-					<a href="<?php echo esc_url( $url );?>#Login%20info" class="button sim">Change account type</a>
-				</p>
+					Use the button below to turn off Two Factor Authentication for <?php echo $name;?><br>
+					<input type='submit' name='action' value='Reset 2FA' class='button small'>
+			</form>
 			</div>
-		<?php }?>
+		<?php
+		}
+
+		$type			= 'positional';
+		if(get_user_meta($userId, 'account-type', true) == 'positional'){
+			$type		= 'normal';
+		}
+		?>
+		<form method='post'>
+			<input type='hidden' name='user_id' value='<?php echo $userId;?>'>
+			<input type='hidden' name='wp_2fa_nonce' value='<?php echo $nonce;?>'>
+			<input type='hidden' name='type' value='<?php echo $type;?>'>
+
+			Use the button below to switch this account to a <?php echo $type;?> account<br>
+			<input type='submit' name='action' value='Change account type' class='button small'>
+		</form>
 	</div>
 	<?php
 	return ob_get_clean();
