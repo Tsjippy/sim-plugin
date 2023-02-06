@@ -14,7 +14,7 @@ class PdfHtml extends \FPDF{
 	protected $issetcolor;
 	protected $fontlist;
 	protected $headertitle;
-	protected $skipFirstPage;
+	public $skipFirstPage;
 
 	const DPI = 96;
     const MM_IN_INCH = 25.4;

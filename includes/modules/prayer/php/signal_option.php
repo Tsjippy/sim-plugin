@@ -19,7 +19,10 @@ add_filter('sim_personal_signal_settings', function($settings, $user, $prefs){
 add_action('sim_signal_before_pref_save', function($userId, $prefs){
     $prayerTimes    = (array)get_option('signal_prayers');
     $time           = $prefs['prayertime'];
-    $oldTime        = get_user_meta($userId, 'signal_preferences', true)['prayertime'];
+    $oldTime        = get_user_meta($userId, 'signal_preferences', true);
+    if(isset($oldTime['prayertime'])){
+        $oldTime        = $oldTime['prayertime'];
+    }
 
     // nothing changed
     if($time == $oldTime){

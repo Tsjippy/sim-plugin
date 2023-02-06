@@ -17,11 +17,11 @@ add_filter('postie_post_before', function($post, $headers) {
 	
 		//Set the category
 		$categoryMapper	= SIM\getModuleOption(MODULE_SLUG, 'category_mapper');
-		$email			= $headers['from']['mailbox'].'@'.$headers['from']['host'];
+		$email			= trim(strtolower($headers['from']['mailbox'].'@'.$headers['from']['host']));
 		$mapped			= false;
 
 		foreach($categoryMapper as $mapper){
-			if ($mapper['email'] == $email){
+			if (trim(strtolower($mapper['email'])) == $email){
 				$postType			= $mapper['category'][0];
 				$post['post_type']	= $postType;
 				$taxonomy			= $mapper['category'][$postType][0];
