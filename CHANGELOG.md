@@ -3,10 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- age check
-- always reurn post url for only pdf pages
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.28.9] - 2023-02-06
+
+
+### Added
+- age check
+- always reurn post url for only pdf pages
 
 ### Fixed
 - singles family name
