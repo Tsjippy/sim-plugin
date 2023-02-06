@@ -11,6 +11,7 @@
 ### Fixed
 - singles family name
 - reset 2fa
+- bugs
 
 ### Updated
 
