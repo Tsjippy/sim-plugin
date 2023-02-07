@@ -626,7 +626,7 @@ trait CreateJs{
             return "[name=\"$name\"]";
         }else{
             // name is followed by an index [0]
-            return "[name^=\"{$name}[]\"]";
+            return "[name^=\"{$name}[\"]";
         }
     }
 }

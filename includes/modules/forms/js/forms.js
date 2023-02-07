@@ -425,7 +425,12 @@ export function changeFieldValue(selector, value, functionRef, form, addition=''
 		
 	}else{
 		target 		= form.querySelector(selector);
-		name		= target.name;
+
+		try{
+			name		= target.name;
+		}catch{
+			console.log(target);
+		}
 	}
 
 	let oldValue	= getFieldValue(target, form, false, value);
