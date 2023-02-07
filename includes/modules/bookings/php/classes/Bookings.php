@@ -508,14 +508,16 @@ class Bookings{
             return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
         }
 
+        $userId     = $this->forms->submission->formresults['user_id'];
+
         // create a personal event
-        if(!empty($this->forms->submission->formresults['user_id'])){
+        if(!empty($userId)){
             $post = array(
                 'post_type'		=> 'event',
                 'post_title'    => "Booking for $subject",
                 'post_content'  => "Booking for $subject",
                 'post_status'   => 'publish',
-                'post_author'   => $this->forms->submission->formresults['user_id']
+                'post_author'   => $userId
             );
 
             $eventId 	= wp_insert_post( $post, true, false);
@@ -526,20 +528,21 @@ class Bookings{
             $event['enddate']				= $endDate;
             $event['endtime']				= '12:00';
             $event['location']				= $subject;
-            $event['organizer_id']			= $this->forms->submission->formresults['user_id'];
-            $event['onlyfor']               = $this->forms->submission->formresults['user_id'];
+            $event['organizer_id']			= $userId;
+            $event['onlyfor']               = $userId;
             update_post_meta($eventId, 'eventdetails', json_encode($event));
-            update_post_meta($eventId, 'onlyfor', $this->forms->submission->formresults['user_id']);
+            update_post_meta($eventId, 'onlyfor', $userId);
         }
 
         // insert the booking
         $pending    = false;
 
-        $userId     = $this->forms->submission->formresults['user_id'];
         $user       = false;
         if(is_numeric($userId)){
             $user       = get_userdata($userId);
         }
+
+        $submittingUser       = get_userdata($this->forms->submission->userid);
 
         if(
             isset($this->forms->formData->settings['default-booking-state'])            &&
@@ -547,6 +550,10 @@ class Bookings{
             (
                 !$user  ||          // No user found
                 !array_intersect($user->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles'])) // or not allowed
+            )   &&
+            (
+                !$submittingUser  ||          // No user found
+                !array_intersect($submittingUser->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles'])) // or not allowed
             )
         ){
             $pending    = true;
