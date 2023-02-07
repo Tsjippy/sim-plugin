@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- js selector
 
 ### Updated
 
