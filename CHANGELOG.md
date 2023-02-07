@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- dates in e-mails converted to site format
 
 ### Changed
 - position of load more button
