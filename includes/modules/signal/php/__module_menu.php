@@ -547,7 +547,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 		$signal	= new SignalBus();
 		$result	= $signal->submitRateLimitChallenge($_REQUEST['challenge'], $_REQUEST['captchastring']);
 
-		echo "<div class='succes'>Rate challenge succesfully submitted <br>$result</div>";
+		echo "<div class='success'>Rate challenge succesfully submitted <br>$result</div>";
     }
 
 	// check if we need to send a message

@@ -86,10 +86,12 @@ function mandatoryFieldsReminder(){
             
             //If there is an email set
             if(!empty($recipients)){
-                $message .= $reminderHtml;
-                
+                $message .= $reminderHtml;                
                 wp_mail( $recipients, $subject, $message);
             }
+
+            // pause 1 second to prevent signal overload
+            sleep(1);
 		}
 	}
 }

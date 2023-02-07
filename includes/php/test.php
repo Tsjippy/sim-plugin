@@ -7,8 +7,6 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    //return SIMNIGERIA\sendReimbursementRequests();
-
 });
 
 // turn off incorrect error on localhost

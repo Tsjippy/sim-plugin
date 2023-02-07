@@ -200,6 +200,17 @@ class MediaGallery{
                 ?>
             </div>
 
+            <?php
+            if($mediaHtml && substr_count($mediaHtml, "class='cell") == $this->amount){
+                ?>
+                <div style='text-align:center; margin-top:20px;'>
+                    <button id='loadmoremedia' type='button' class='button'>
+                        Load more
+                    </button>
+                </div><?php
+            }
+            ?>
+
             <div class='mediabuttons'>
                 <input type='hidden' id='paged' value=1>
 
@@ -256,17 +267,6 @@ class MediaGallery{
                 }
                 ?>
             </div>
-
-            <?php
-            if($mediaHtml && substr_count($mediaHtml, "class='cell") == $this->amount){
-                ?>
-                <div style='text-align:center; margin-top:20px;'>
-                    <button id='loadmoremedia' type='button' class='button'>
-                        Load more
-                    </button>
-                </div><?php
-            }
-            ?>
         </div>
 
         <?php
