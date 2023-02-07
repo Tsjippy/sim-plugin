@@ -62,13 +62,13 @@ class Bookings{
         }else{
             $min    = 2;
         }
-        $minusMonth		= strtotime("-$min month", $date);
+        $minusMonth		= strtotime("first day of $min months ago", $date);
 		$minusMonthStr	= date('m', $minusMonth);
 		$minusYearStr	= date('Y', $minusMonth);
 
         $firstMonth     = strtotime("first day of next month", $minusMonth);
 
-		$plusMonth		= strtotime("+$plus month", $date);
+		$plusMonth		= strtotime("first day of $plus months", $date);
 		$plusMonthStr	= date('m', $plusMonth);
 		$plusYearStr	= date('Y', $plusMonth);
 
@@ -535,10 +535,19 @@ class Bookings{
         // insert the booking
         $pending    = false;
 
+        $userId     = $this->forms->submission->formresults['user_id'];
+        $user       = false;
+        if(is_numeric($userId)){
+            $user       = get_userdata($userId);
+        }
+
         if(
             isset($this->forms->formData->settings['default-booking-state'])            &&
             $this->forms->formData->settings['default-booking-state']   == 'pending'    &&
-            !array_intersect(get_userdata($this->forms->submission->formresults['user_id'])->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles']))
+            (
+                !$user  ||          // No user found
+                !array_intersect($user->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles'])) // or not allowed
+            )
         ){
             $pending    = true;
         }

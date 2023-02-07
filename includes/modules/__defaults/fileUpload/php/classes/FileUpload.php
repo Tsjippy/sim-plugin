@@ -8,6 +8,7 @@ class FileUpload{
 	public $library;
 	public $callback;
 	public $updatemeta;
+	public $html;
 	
 	/**
 	 * Constructs the fileupload object
@@ -36,7 +37,7 @@ class FileUpload{
 	/**
 	 * Finds the value in the user meta or options table of a given metakey
 	 */
-	function processMetaKey(){
+	public function processMetaKey(){
 		if(empty($this->metakey)){
 			return '';
 		}
@@ -71,7 +72,7 @@ class FileUpload{
 	 *
 	 * @return	string					The input html
 	 */
-	function getUploadHtml($documentName, $targetDir='', $multiple=false, $options=''){
+	public function getUploadHtml($documentName, $targetDir='', $multiple=false, $options=''){
 		$documentArray = $this->processMetaKey();
 
 		if($multiple){
@@ -132,7 +133,7 @@ class FileUpload{
 	 * @param	string|int	$documentPath	The url, filepath or WP attachment id of a file
 	 * @param	int			$index			The metakey sub key
 	 */
-	function documentPreview($documentPath, $index){
+	public function documentPreview($documentPath, $index){
 		$metaValue	= $documentPath;
 		if(is_numeric($documentPath) && $this->library){
 			$url = wp_get_attachment_url($documentPath);
