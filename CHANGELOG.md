@@ -4,6 +4,7 @@
 
 ### Added
 - dates in e-mails converted to site format
+- confirmed booking for someone else
 
 ### Changed
 - position of load more button
