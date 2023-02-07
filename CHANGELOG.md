@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- position of load more button
 
 ### Fixed
 
