@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.29.0] - 2023-02-07
+
+
+### Added
 - dates in e-mails converted to site format
 - confirmed booking for someone else
 
