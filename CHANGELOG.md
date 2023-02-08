@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- settings for pending posts notifications
 
 ### Changed
 
