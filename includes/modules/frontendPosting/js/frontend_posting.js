@@ -500,6 +500,11 @@ document.addEventListener("click", event =>{
 		target.closest('form').querySelector('[name="post_status"]').value = 'draft';
 		
 		submitPost(target);
+	}else if(target.name == 'publish_post'){
+		//change action value
+		target.closest('form').querySelector('[name="post_status"]').value = 'publish';
+		
+		submitPost(target);
 	}else if(target.name == 'delete_post'){
 		confirmPostDelete(event);
 	}else if(target.name == 'change_post_type'){

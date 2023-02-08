@@ -271,7 +271,7 @@ class FrontEndContent{
 				echo  SIM\addSaveButton('submit_post', $this->action);
 				?>
 				<div class='submit_wrapper' style='display: flex;'>
-					<button type='button' class='button'>Publish <span class='replaceposttype'><?php echo $this->postName;?></span></button>
+					<button type='button' name='publish_post' class='button'>Publish <span class='replaceposttype'><?php echo $this->postName;?></span></button>
 					<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy'>
 				</div>
 			</form>
