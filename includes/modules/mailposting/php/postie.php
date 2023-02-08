@@ -18,7 +18,6 @@ add_filter('postie_post_before', function($post, $headers) {
 		//Set the category
 		$categoryMapper	= SIM\getModuleOption(MODULE_SLUG, 'category_mapper');
 		$email			= trim(strtolower($headers['from']['mailbox'].'@'.$headers['from']['host']));
-		$mapped			= false;
 
 		foreach($categoryMapper as $mapper){
 			if (trim(strtolower($mapper['email'])) == $email){
@@ -32,13 +31,11 @@ add_filter('postie_post_before', function($post, $headers) {
 					$post['tax_input'][$taxonomy]	= [];
 				}
 				$post['tax_input'][$taxonomy] = array_merge($post['tax_input'][$taxonomy], $mapper['category'][$postType][$taxonomy]);
-
-				$mapped	= true;
 			}
 		}
 
 		//Change the post status to pending for all users without the editor role
-		if ( !in_array('editor', $user->roles) && !$mapped){
+		if ( !in_array('editor', $user->roles)){
 			$post['post_status'] = 'pending';
 		}
 	}

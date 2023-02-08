@@ -49,6 +49,13 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	ob_start();
 	?>
+	<label>How should content managers be notified about pending content?</label>
+	<br>
+	<label><input type='checkbox' name='pending-channels[]' value='email'>E-mail</label>
+	<label><input type='checkbox' name='pending-channels[]' value='signal'>Signal</label>
+	<br>
+	<br>
+
 	<label>How often should people be reminded of content which should be updated?</label>
 	<select name="page_age_reminder">
 		<?php

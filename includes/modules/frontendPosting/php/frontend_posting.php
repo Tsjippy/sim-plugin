@@ -2,9 +2,15 @@
 namespace SIM\FRONTENDPOSTING;
 use SIM;
 
-function sendPendingPostWarning( object $post, $update){	
+function sendPendingPostWarning( object $post, $update){
 	//Do not continue if already send
 	if(!empty(get_post_meta($post->ID, 'pending_notification_send', true))){
+		return;
+	}
+
+	$channels	= SIM\getModuleOption(MODULE_SLUG, 'pending-channels');
+
+	if(empty($channels)){
 		return;
 	}
 	
@@ -31,14 +37,18 @@ function sendPendingPostWarning( object $post, $update){
 	$authorName		= get_userdata($post->post_author)->display_name;
 	
 	foreach($users as $user){
-		//send signal message
-		SIM\trySendSignal("$authorName just $actionText a $type. Please review it here:\n\n$url", $user->ID, true);
+		if(in_array('signal', $channels)){
+			//send signal message
+			SIM\trySendSignal("$authorName just $actionText a $type. Please review it here:\n\n$url", $user->ID, true);
+		}
 
-		$pendinfPostEmail    = new PendingPostEmail($user, $authorName, $actionText, $type, $url);
-		$pendinfPostEmail->filterMail();
-			
-		//Send e-mail
-		wp_mail( $user->user_email, $pendinfPostEmail->subject, $pendinfPostEmail->message);
+		if(in_array('email', $channels)){
+			$pendinfPostEmail    = new PendingPostEmail($user, $authorName, $actionText, $type, $url);
+			$pendinfPostEmail->filterMail();
+				
+			//Send e-mail
+			wp_mail( $user->user_email, $pendinfPostEmail->subject, $pendinfPostEmail->message);
+		}
 	}
 	
 	//Mark warning as send
