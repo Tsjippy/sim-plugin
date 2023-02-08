@@ -47,6 +47,10 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		return $optionsHtml;
 	}
 
+	if(!isset($settings['pending-channels']) || !is_array($settings['pending-channels'])){
+		$settings['pending-channels']	= [];
+	}
+
 	ob_start();
 	?>
 	<label>How should content managers be notified about pending content?</label>
