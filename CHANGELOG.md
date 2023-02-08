@@ -3,11 +3,20 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.29.1] - 2023-02-08
+
+
+### Added
 - settings for pending posts notifications
 - notification channels for pending content
 - publish button
-
-### Changed
 
 ### Fixed
 - js selector
