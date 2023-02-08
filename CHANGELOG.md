@@ -4,6 +4,7 @@
 
 ### Added
 - settings for pending posts notifications
+- notification channels for pending content
 
 ### Changed
 
