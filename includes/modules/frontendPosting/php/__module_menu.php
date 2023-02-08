@@ -51,8 +51,8 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	?>
 	<label>How should content managers be notified about pending content?</label>
 	<br>
-	<label><input type='checkbox' name='pending-channels[]' value='email'>E-mail</label>
-	<label><input type='checkbox' name='pending-channels[]' value='signal'>Signal</label>
+	<label><input type='checkbox' name='pending-channels[]' value='email' <?php if(in_array('email', $settings['pending-channels'])){echo 'checked';}?>>E-mail</label>
+	<label><input type='checkbox' name='pending-channels[]' value='signal' <?php if(in_array('signal', $settings['pending-channels'])){echo 'checked';}?>>Signal</label>
 	<br>
 	<br>
 

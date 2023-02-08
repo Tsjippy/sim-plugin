@@ -8,7 +8,7 @@ function sendPendingPostWarning( object $post, $update){
 		return;
 	}
 
-	$channels	= SIM\getModuleOption(MODULE_SLUG, 'pending-channels');
+	$channels	= SIM\getModuleOption(MODULE_SLUG, 'pending-channels', false);
 
 	if(empty($channels)){
 		return;
@@ -70,7 +70,7 @@ add_filter( 'safe_style_css', function( $styles ) {
 
 /**
  * Checks if the current user is allowed to edit a post
- * 
+ *
  * @return	boolean			True if allowed
  */
 function allowedToEdit($post){
@@ -80,14 +80,14 @@ function allowedToEdit($post){
 
 	$postId			= $post->ID;
 	$user 			= wp_get_current_user();
-	$postAuthor 	= $post->post_author;	
+	$postAuthor 	= $post->post_author;
 	$postCategory 	= $post->post_category;
 	$userPageId 	= SIM\maybeGetUserPageId($user->ID);
 	$ministries 	= (array)get_user_meta($user->ID, "jobs", true);
 
 	if (
 		$postAuthor == $user->ID 															|| 	// Own page
-		in_array($post->ID, array_keys($ministries))										||	// ministry pafe 
+		in_array($post->ID, array_keys($ministries))										||	// ministry pafe
 		$userPageId == $postId																||	// pseronal user page
 		apply_filters('sim_frontend_content_edit_rights', false, $postCategory)				||	// external filter
 		$user->has_cap( 'edit_others_posts' )													// user has permission to edit any post

@@ -136,7 +136,7 @@ class FrontEndContent{
 			//Write the form to create all posts except events
 			?>
 			<form id="postform">
-				<input type="hidden" name="post_status" 	value="publish">
+				<input type="hidden" name="post_status" 	value="pending">
 				<input type="hidden" name="post_type" 		value="<?php echo $this->postType; ?>">
 				<input type="hidden" name="post_image_id" 	value="<?php echo $this->postImageId;?>">
 				<input type="hidden" name="update" 			value="<?php echo $this->update;?>">
@@ -270,6 +270,10 @@ class FrontEndContent{
 				}
 				echo  SIM\addSaveButton('submit_post', $this->action);
 				?>
+				<div class='submit_wrapper' style='display: flex;'>
+					<button type='button' class='button'>Publish <span class='replaceposttype'><?php echo $this->postName;?></span></button>
+					<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy'>
+				</div>
 			</form>
 			<?php
 
@@ -397,12 +401,8 @@ class FrontEndContent{
 			$this->lite 		= true;
 		}
 
-		if($this->fullrights){
-			if($this->postId == null || ($this->post->post_status != 'publish' && $this->post->post_status != 'inherit')){
-				$this->action = "Publish <span class='replaceposttype'>{$this->postName}</span>";
-			}else{
-				$this->action = "Update <span class='replaceposttype'>{$this->postName}</span>";
-			}
+		if($this->fullrights && is_numeric($this->postId) && $this->post->post_status == 'publish'){
+			$this->action = "Update <span class='replaceposttype'>{$this->postName}</span>";
 		}else{
 			$this->action = "Submit <span class='replaceposttype'>{$this->postName}</span> for review";
 		}
@@ -643,7 +643,7 @@ class FrontEndContent{
 						</select>
 
 
-						<?php echo SIM\addSaveButton('add_'.$type.'_type', "Add $type category"); ?>
+						<?php echo SIM\addSaveButton("add_{$type}_type", "Add $type category"); ?>
 					</form>
 				</div>
 			</div>
@@ -1215,18 +1215,17 @@ class FrontEndContent{
 	 *
 	**/
 	public function submitPost($status=''){
-		if($_POST['post_status'] == 'draft'){
-			$this->status = 'draft';
-		}elseif(empty($status)){
-			if($this->fullrights){
-				if(!isset($_POST['publish_date']) || $_POST['publish_date'] == date('Y-m-d')){
-					$this->status = 'publish';
-				}else{
-					$this->status = 'future';
-				}
-			}else{
-				$this->status = 'pending';
-			}
+		$this->status	= $status;
+		if(empty($this->status)){
+			$this->status	= sanitize_text_field($_POST['post_status']);
+		}
+
+		if(
+			$this->fullrights &&
+			isset($_POST['publish_date']) &&
+			$_POST['publish_date'] > date('Y-m-d')
+		){
+			$this->status = 'future';
 		}
 
 		$this->postType 	= sanitize_text_field($_POST['post_type']);
