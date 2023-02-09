@@ -87,6 +87,21 @@
 	display: inline-block;
 }
 
+.post-button-wrapper{
+	@media (min-width: 1250px){
+		margin-top:-77px;
+		float: right;
+	}
+
+	display: flex;
+	z-index: 1;
+    position: relative;
+
+	.submit_wrapper:not(:last-child){
+		margin-right: 20px;
+	}
+}
+
 table.diff{
 	border: none;
 	

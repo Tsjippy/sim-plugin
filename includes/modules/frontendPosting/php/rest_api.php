@@ -106,6 +106,31 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
+	// archive post
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/archive_post',
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> function(){
+				$frontEndContent	= new FrontEndContent();
+				return $frontEndContent->archivePost();
+			},
+			'permission_callback' 	=> function(){
+				$frontEndContent	= new FrontEndContent();
+				return $frontEndContent->fullrights;
+			},
+			'args'					=> array(
+				'post_id'		=> array(
+					'required'	=> true,
+					'validate_callback' => function($postId){
+						return is_numeric($postId);
+					}
+				)
+			)
+		)
+	);
+
 	// refresh post lock
 	register_rest_route(
 		RESTAPIPREFIX.'/frontend_posting',

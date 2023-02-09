@@ -1,18 +1,19 @@
 import './../../locations/js/user_location.js';
 import { addStyles } from './../../../js/imports.js';
 
-async function confirmPostDelete( event ) {
+async function confirmPostDelete( event, type='delete' ) {
+	let url;
 	event.preventDefault();
 	parent = event.target.closest('#frontend_upload_form');
 
 	let options = {
 		title: 'Are you sure?',
-		text: `Are you sure you want to remove this ${document.querySelector('[name="post_type"]').value}}?`,
+		text: `Are you sure you want to ${type} this ${document.querySelector('[name="post_type"]').value}}?`,
 		icon: 'warning',
 		showCancelButton: true,
 		confirmButtonColor: '#3085d6',
 		cancelButtonColor: '#d33',
-		confirmButtonText: 'Yes, delete it!'
+		confirmButtonText: `Yes, ${type} it!`
 	};
 
 	if(document.fullscreenElement != null){
@@ -27,8 +28,14 @@ async function confirmPostDelete( event ) {
 	
 		var formData = new FormData();
 		formData.append('post_id', postId);
+
+		if(type=='delete'){
+			url 	= 'frontend_posting/remove_post'
+		}else{
+			url 	= 'frontend_posting/archive_post'
+		}
 		
-		var response = await FormSubmit.fetchRestApi('frontend_posting/remove_post', formData);
+		var response = await FormSubmit.fetchRestApi(url, formData);
 
 		if(response){
 			Main.displayMessage(response);
@@ -506,7 +513,9 @@ document.addEventListener("click", event =>{
 		
 		submitPost(target);
 	}else if(target.name == 'delete_post'){
-		confirmPostDelete(event);
+		confirmPostDelete(event, 'delete');
+	}else if(target.name == 'archive_post'){
+		confirmPostDelete(event, 'archive');
 	}else if(target.name == 'change_post_type'){
 		changePostType(target);
 	}else if(target.name == "add-featured-image"){

@@ -276,17 +276,26 @@ class FrontEndContent{
 				</div>
 			</form>
 			<?php
-
 			//Only show delete button for existing posts and not yet deleted
-			if($this->postId != null && $this->post->post_status != 'trash' && $this->fullrights){
+			if($this->postId != null && $this->fullrights){
 				?>
-				<div class='submit_wrapper' style='display: flex; margin-top:20px;float:right;margin-right:0px;'>
-					<form>
-						<input hidden name='post_id' value='<?php echo  esc_html($this->postId); ?>'>
+				<div class='post-button-wrapper'>
+					<?php
+					ob_start();
+					if($this->post->post_status != 'trash'){
+						?>
+						<div class='submit_wrapper'>
+							<form>
+								<input hidden name='post_id' value='<?php echo  esc_html($this->postId); ?>'>
 
-						<button type='submit' class='button' name='delete_post'>Delete <?php echo  esc_html($this->post->post_type); ?></button>
-						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt='' loading='lazy'>
-					</form>
+								<button type='submit' class='button' name='delete_post'>Delete <?php echo  esc_html($this->post->post_type); ?></button>
+								<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt='' loading='lazy'>
+							</form>
+						</div>
+						<?php
+					}
+					echo apply_filters('sim-frontend-buttons', ob_get_clean(), $this);
+					?>
 				</div>
 				<?php
 			}
@@ -1332,6 +1341,33 @@ class FrontEndContent{
 			'id'		=> $this->postId,
 			'post'		=> $post
 		];
+	}
+
+	/**
+	 *
+	 * Archives an existing post
+	 * @return   string|WP_Error     		Result message
+	 *
+	**/
+	public function archivePost(){
+		$postId 	= $_POST['post_id'];
+
+		$data = array(
+			'ID' 			=> $postId,
+			'post_status' 	=> 'archived'
+		   );
+		  
+		wp_update_post( $data );
+
+		$post		= get_post($postId);
+
+		$postType	= get_post_type($post);
+
+		if($postType){
+			return "Succesfully archived $postType '{$post->post_title}'<br>You can leave this page now";
+		}else{
+			return new WP_Error('Post archival error', 'Something went wrong');
+		}
 	}
 
 	/**

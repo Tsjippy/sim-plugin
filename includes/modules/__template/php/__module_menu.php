@@ -46,8 +46,20 @@ add_filter('sim_submenu_description', function($description, $moduleSlug, $modul
 		return $description;
 	}
 
-	return $description;
-},10,2);
+	ob_start();
+	?>
+	<p>
+		This module makes it possible to upload Account statements to the website.<br>
+		These statements will be visible on the dashboard page of an user.<br>
+		<br>
+		This module adds one shortcode: <code>[account_statements]</code>
+		<br>
+		This module depends on the postie plugin and the user management module.<br>
+	</p>
+	<?php
+
+	return ob_get_clean();
+}, 10, 3);
 
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings, $moduleName){
 	//module slug should be the same as grandparent folder name
