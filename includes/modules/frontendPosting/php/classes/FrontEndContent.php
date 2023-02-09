@@ -1221,11 +1221,12 @@ class FrontEndContent{
 		}
 
 		if(
-			$this->fullrights &&
-			isset($_POST['publish_date']) &&
+			$this->status	== 'publish'			&&
+			$this->fullrights 						&&
+			isset($_POST['publish_date']) 			&&
 			$_POST['publish_date'] > date('Y-m-d')
 		){
-			$this->status = 'future';
+			$this->status	= 'future';
 		}
 
 		$this->postType 	= sanitize_text_field($_POST['post_type']);
