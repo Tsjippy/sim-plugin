@@ -8,6 +8,7 @@
 
 ### Fixed
 - bug
+- submit futrue post for review
 
 ### Updated
 
