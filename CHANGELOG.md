@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- mobile friendly schedules
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.29.3] - 2023-02-11
+
+
+### Added
+- mobile friendly schedules
 
 ### Fixed
 
