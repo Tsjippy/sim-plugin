@@ -7,6 +7,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.29.2] - 2023-02-09
+
+
+### Added
+- content archive module
+
+### Fixed
 - bug
 - submit futrue post for review
 
