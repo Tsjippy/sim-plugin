@@ -337,7 +337,7 @@ class Schedules{
 						}
 						?>
 					</div>
-					<div class='diner-select-wrapper hidden'>
+					<div class='diner-select-wrapper <?php if($schedule->lunch){echo 'hidden';}?>'>
 						<label>
 							Select the date you want to host <?php echo $schedule->name;?> for diner
 						</label>
