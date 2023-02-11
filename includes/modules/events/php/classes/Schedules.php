@@ -119,6 +119,8 @@ class Schedules{
 	}
 
 	public function showSchedule($schedule) {
+		$mobile	= wp_is_mobile();
+
 		ob_start();
 
 		if (
@@ -167,7 +169,7 @@ class Schedules{
 		$schedule->startdate	= max([date('Y-m-d'), $schedule->startdate]);
 		
 		?>
-		<div class='schedules_div table-wrapper'>
+		<div class='schedules_div table-wrapper' data-id="<?php echo $schedule->id; ?>">
 			<div class="modal publish_schedule hidden">
 				<div class="modal-content">
 					<span id="modal_close" class="close">&times;</span>
@@ -200,57 +202,211 @@ class Schedules{
 			<h3 class="table_title sub-title">
 				<?php echo $schedule->info;?>
 			</h3>
-			<p>Click on an available date to indicate you want to host.<br>Click on any date you are subscribed for to unsubscribe</p>
-
-			<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-target_id="<?php echo $schedule->target; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule' data-lunch='<?php echo $schedule->lunch ? 'true' : 'false';?>'>
-				<thead>
-					<tr>
-						<th class='sticky'>Dates</th>
-						<?php
-						$date		= $schedule->startdate;
-						while(true){
-							$dateStr		= date('d F Y', strtotime($date));
-							$dateTime		= strtotime($date);
-							$dayName		= date('l', $dateTime);
-							$formatedDate	= date('d-m-Y', $dateTime);
-							echo "<th data-date='$dateStr' data-isodate='$date'>$dayName<br>$formatedDate</th>";
-
-							if ($date == $schedule->enddate) {
-								break;
-							}
-
-							$date	= date('Y-m-d', strtotime('+1 day', $dateTime) );
-						}
-						?>
-					</tr>
-				</thead>
-				<tbody class="table-body">
-					<?php
-					echo $this->writeRows($schedule, $onlyMeals);
-					?>
-				</tbody>
-			</table>
 
 			<?php
-			if($this->admin){
+			// Only render when not on a mobile device
+			if($mobile){
+				$this->showMobileSchedule($schedule, $onlyMeals);
+			}else{
 				?>
-				<div class='schedule_actions'>
-					<button type='button' class='button schedule_action edit_schedule' data-schedule_id='<?php echo $schedule->id;?>'>Edit</button>
-					<button type='button' class='button schedule_action remove_schedule' data-schedule_id='<?php echo $schedule->id;?>'>Remove</button>
-					<?php
-					//schedule is not yet set.
-					if(!$schedule->published && $schedule->target != 0){
-						echo "<button type='button' class='button schedule_action publish' data-target='{$schedule->target}' data-schedule_id='{$schedule->id}'>Publish</button>";
-					}
-					?>
-				</div>
+				<p>Click on an available date to indicate you want to host.<br>Click on any date you are subscribed for to unsubscribe</p>
+
+				<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-target_id="<?php echo $schedule->target; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule' data-lunch='<?php echo $schedule->lunch ? 'true' : 'false';?>'>
+					<thead>
+						<tr>
+							<th class='sticky'>Dates</th>
+							<?php
+							$date		= $schedule->startdate;
+							while(true){
+								$dateStr		= date('d F Y', strtotime($date));
+								$dateTime		= strtotime($date);
+								$dayName		= date('l', $dateTime);
+								$formatedDate	= date('d-m-Y', $dateTime);
+								echo "<th data-date='$dateStr' data-isodate='$date'>$dayName<br>$formatedDate</th>";
+
+								if ($date == $schedule->enddate) {
+									break;
+								}
+
+								$date	= date('Y-m-d', strtotime('+1 day', $dateTime) );
+							}
+							?>
+						</tr>
+					</thead>
+					<tbody class="table-body">
+						<?php
+						echo $this->writeRows($schedule, $onlyMeals);
+						?>
+					</tbody>
+				</table>
+
 				<?php
+				if($this->admin){
+					?>
+					<div class='schedule_actions'>
+						<button type='button' class='button schedule_action edit_schedule' data-schedule_id='<?php echo $schedule->id;?>'>Edit</button>
+						<button type='button' class='button schedule_action remove_schedule' data-schedule_id='<?php echo $schedule->id;?>'>Remove</button>
+						<?php
+						//schedule is not yet set.
+						if(!$schedule->published && $schedule->target != 0){
+							echo "<button type='button' class='button schedule_action publish' data-target='{$schedule->target}' data-schedule_id='{$schedule->id}'>Publish</button>";
+						}
+						?>
+					</div>
+					<?php
+				}
 			}
 			?>
 		</div>
 		<?php
 
 		return ob_get_clean();
+	}
+
+	public function showMobileSchedule($schedule, $onlyMeals) {
+		?>
+		<div name='add_host_mobile' class="modal hidden">
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<form action="" method="post">
+					<input type='hidden' name='schedule_id' value='<?php echo $schedule->id;?>'>
+
+					<?php
+					if($schedule->lunch){
+						?>
+						<label>
+							For what are you hosting?
+						</label>
+						<br>
+						<label >
+							<input type='radio' id='lunch' name='starttime' value='12:00'>
+							Lunch
+						</label>
+						<label>
+							<input type='radio' id='diner' name='starttime' value='18:00'>
+							Diner
+						</label>
+						<br>
+						<br>
+						<?php
+					}else{
+						?>
+						<input type='hidden' name='starttime' value='18:00'>
+						<?php
+					}
+					$date				= $schedule->startdate;
+					$availableLunches	= [];
+					$availableDiners	= [];
+
+					while(true){
+						$dateTime		= strtotime($date);
+
+						if($schedule->lunch){
+							$event			= $this->getScheduleEvent($schedule, $date, '12:00');
+							if(!$event){
+								$availableLunches[]	= $date;
+							}
+						}
+						$event			= $this->getScheduleEvent($schedule, $date, '18:00');
+						if(!$event){
+							$availableDiners[]	= $date;
+						}
+
+						if ($date == $schedule->enddate) {
+							break;
+						}
+						$date			= date('Y-m-d', strtotime('+1 day', $dateTime) );
+					}
+
+					?>
+					<div class='lunch-select-wrapper hidden'>
+						<label>
+							Select the date you want to host <?php echo $schedule->name;?> for lunch
+						</label>
+						<br>
+
+						<?php
+						foreach($availableLunches as $availableLunch){
+							?>
+							<label>
+								<input type='checkbox' name='date[]' value='<?php echo $availableLunch;?>'>
+								<?php echo date('l j F', strtotime($availableLunch));?>
+							</label>
+							<br>
+							<?php
+						}
+						?>
+					</div>
+					<div class='diner-select-wrapper hidden'>
+						<label>
+							Select the date you want to host <?php echo $schedule->name;?> for diner
+						</label>
+						<br>
+						<?php
+						foreach($availableDiners as $availableDiner){
+							?>
+							<label>
+								<input type='checkbox' name='date[]' value='<?php echo $availableDiner;?>'>
+								<?php echo date('l j F', strtotime($availableDiner));?>
+							</label>
+							<br>
+							<?php
+						}
+						?>
+					</div>
+					<br>
+					<br>
+
+						<?php
+					if($this->admin){
+						?>
+						<p>Please select the user or family who is hosting</p>
+						<?php
+						echo SIM\userSelect('', true, true, '', 'host_id', [], '', [], 'list');
+					}else{
+						echo "<input type='hidden' name='host_id' value='{$this->user->ID}'>";
+					}
+					echo SIM\addSaveButton('add_host_mobile','Save','update_schedule');
+					?>
+				</form>
+			</div>
+		</div>
+			
+				
+				<?php
+
+			$date		= $schedule->startdate;
+			while(true){
+				$dateTime		= strtotime($date);
+				$dayName		= date('l', $dateTime);
+				$formatedDate	= date('d-m-Y', $dateTime);
+				$html			= $this->getMobileDay($schedule, $onlyMeals, $date);
+				if(!empty($html)){
+					echo "<strong>$dayName $formatedDate</strong><br>";
+					echo $html.'<br>';
+				}
+
+				if ($date == $schedule->enddate) {
+					break;
+				}
+
+				$date	= date('Y-m-d', strtotime('+1 day', $dateTime) );
+			}
+
+			if($onlyMeals){
+				?>
+				<br>
+				<button class='button' name='add-host'>Add me as a host</button>
+				<?php
+			}else{
+				?>
+				<br>
+				<button class='button' name='add-session'>Add a session</button>
+				<?php
+			}
+			?>
+		</div>
+		<?php
 	}
 
 	/**
@@ -323,7 +479,7 @@ class Schedules{
 	 *
 	 * @return 	array					Cell html
 	*/
-	public function writeMealCell($schedule, $date, $startTime){
+	public function writeMealCell($schedule, $date, $startTime, $onlyText=false){
 		//get event which starts on this date and time
 		$event	= $this->getScheduleEvent($schedule, $date, $startTime);
 		$class	= 'meal';
@@ -351,7 +507,7 @@ class Schedules{
 			$class 			.= ' selected';
 			$partnerId 		= SIM\hasPartner($this->user->ID);
 			//Host is current user or the spouse
-			if ($hostId == $this->user->ID || $hostId == $partnerId){	
+			if ($hostId == $this->user->ID || $hostId == $partnerId){
 				$class 			.= ' own';
 							
 				$menu		= get_post_meta($event->post_id, 'recipe_keyword', true);
@@ -373,6 +529,10 @@ class Schedules{
 		}
 
 		$label	= date('d-m-Y', strtotime($date));
+
+		if($onlyText){
+			return $cellText;
+		}
 		return "<td class='$class' $rowSpan $hostData label='$label'>$cellText</td>";
 	}
 	
@@ -385,13 +545,13 @@ class Schedules{
 	 *
 	 * @return 	array					Cell html
 	*/
-	public function writeOrientationCell( $schedule, $date, $startTime) {
+	public function writeOrientationCell( $schedule, $date, $startTime, $onlyText=false) {
 		//get event which starts on this date and startTime
 		$event		= $this->getScheduleEvent($schedule, $date, $startTime);
 		$rowSpan	= '';
 		$class		= 'orientation';
 
-		if ($event == null){
+		if (!$event){
 			$cellText = 'Available';
 		}else {
 			$hostId			= $event->organizer_id;
@@ -426,6 +586,10 @@ class Schedules{
 			$rowSpan	= "rowspan='$value'";
 
 			$this->nextStartTimes[$date] = $endTime;
+		}
+
+		if($onlyText){
+			return $cellText;
 		}
 
 		//Make the cell editable if:
@@ -477,7 +641,7 @@ class Schedules{
 			if(
 				$startTime == $this->lunchStartTime	&&		// Starttime of the lunch
 				$schedule->lunch							// And the schedule includes a lunch
-			){			
+			){
 				$extra				= 'rowspan="4"';		// Span 4 rows
 				$description		= 'Lunch';
 			}elseif(
@@ -490,7 +654,7 @@ class Schedules{
 			}elseif($startTime == $this->dinerTime){
 				$description		= 'Dinner';
 			}else{
-				$mealScheduleRow	= false;	
+				$mealScheduleRow	= false;
 				$description		= $startTime;
 			}
 
@@ -505,7 +669,7 @@ class Schedules{
 						$cells .= $this->writeMealCell($schedule, $date, $startTime);
 					//Orientation schedule
 					}else{
-						$cells .= $this->writeOrientationCell($schedule, $date, $startTime);	
+						$cells .= $this->writeOrientationCell($schedule, $date, $startTime);
 					}
 				}
 
@@ -533,6 +697,72 @@ class Schedules{
 		
 		return $html;
 	}
+
+	/**
+	 * Write all rws of a schedule table
+	 *
+	 * @param	object	$schedule		the Schedule
+	 * @param	bool	$onlyMeals		Whether to only write the meal rows. Default false
+	 *
+	 * @return 	array					Rows html
+	*/
+	public function getMobileDay($schedule, $onlyMeals, $date){
+		$html 					= '';
+
+		//loop over the rows
+		$startTime	= $schedule->starttime;
+
+		//loop until we are at the endtime
+		while(true){
+			//If we do not have an orientation schedule, go strait to the dinner row
+			if(
+				$startTime >= $this->lunchEndTime	&&
+				$startTime < $this->dinerTime		&&
+				!$schedule->orientation
+			){
+				$startTime = $this->dinerTime;
+			}
+			
+			$mealScheduleRow	= true;
+			$endTime			= date("H:i", strtotime('+15 minutes', strtotime($startTime)));
+			
+			if(
+				$startTime >= $this->lunchStartTime	&&		// Time is past the start lunch time
+				$startTime < $this->lunchEndTime	&& 		// but before the end
+				$schedule->lunch							// And the schedule includes a lunch
+			){
+				$description		= 'Lunch';
+			}elseif($startTime == $this->dinerTime){
+				$description		= 'Dinner';
+			}else{
+				$mealScheduleRow	= false;
+				$description		= $startTime;
+			}
+
+			//Show the row if we can see all rows or the row is a mealschedule row
+			if (!$onlyMeals || $mealScheduleRow ) {
+				//mealschedule
+				if($mealScheduleRow){
+					$content	= $this->writeMealCell($schedule, $date, $startTime, true);
+				//Orientation schedule
+				}elseif(!$onlyMeals){
+					$content	= $this->writeOrientationCell($schedule, $date, $startTime, true);
+				}
+
+				if($content != 'Available'){
+					$html 	.= "<strong>$description</strong>:<br>";
+					$html 	.=	$content.'<br>';
+				}
+			}
+
+			if($startTime == $schedule->endtime){
+				break;
+			}
+			$startTime		= $endTime;
+		}//end true
+		
+		return $html;
+	}
 		
 	/**
 	 * Create all modals
@@ -547,14 +777,20 @@ class Schedules{
 			<div class="modal-content">
 				<span class="close">&times;</span>
 				<form action="" method="post">
-					<p>Please select the user or family who is hosting</p>
 					<input type='hidden' name='schedule_id'>
-					<input type='hidden' name='date'>
-					<input type='hidden' name='starttime'>
 					<input type='hidden' name='host_id'>
 					<input type='hidden' name='oldtime'>
-					<?php
-					echo SIM\userSelect('', true, true, '', 'host', [], '', [], 'list');
+					<input type='hidden' name='starttime'>
+					<input type='hidden' name='date'>
+						<?php
+					if($this->admin){
+						?>
+						<p>Please select the user or family who is hosting</p>
+						<?php
+						echo SIM\userSelect('', true, true, '', 'host', [], '', [], 'list');
+					}else{
+						echo "<input type='hidden' name='host' value='{$this->user->ID}'>";
+					}
 					echo SIM\addSaveButton('add_host','Add host','update_schedule');
 					?>
 				</form>

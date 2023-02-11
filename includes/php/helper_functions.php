@@ -1002,7 +1002,11 @@ function removeFiles($target){
  * @return	bool						Whether a date or not
 */
 function isDate($date){
-	if (preg_match("/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])$/",$date)) {
+	if(is_array($date)){
+		$date	= array_values($date)[0];
+	}
+	
+	if (preg_match("/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])$/", $date)) {
 		return true;
 	}
 		

@@ -94,8 +94,40 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
-				$schedule		= new CreateSchedule();
-				return $schedule->addHost();
+				$schedules		= new CreateSchedule();
+
+				if(is_array($_POST['date'])){
+					$succesFull		= '';
+					$unSuccesFull	= '';
+					foreach($_POST['date'] as $date){
+						$result	= $schedules->addHost($date);
+
+						if(is_wp_error($result)){
+							if(!empty($unSuccesFull)){
+								$unSuccesFull		.= ' and ';
+							}
+							$unSuccesFull	.= date('d-m-Y', strtotime($date));
+						}else{
+							if(!empty($succesFull)){
+								$succesFull		.= ' and ';
+							}
+							$succesFull	.= date('d-m-Y', strtotime($date));
+						}
+					}
+
+					$schedule			= $schedules->findScheduleById($schedules->scheduleId);
+
+					$msg	= '';
+					if(!empty($succesFull)){
+						$msg	.= "Succesfully added you as a host for $schedule->name on $succesFull";
+					}
+					if(!empty($unSuccesFull)){
+						$msg	.= "Could not add you as a host for $schedule->name on $unSuccesFull";
+					}
+
+					return $msg;
+				}
+				return $schedules->addHost($_POST['date']);
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
@@ -130,7 +162,7 @@ add_action( 'rest_api_init', function () {
 			'callback' 				=> function(){
 				$schedule				= new CreateSchedule();
 				$schedule->date			= $_POST['date'];
-				$schedule->starttime	= $_POST['starttime'];
+				$schedule->startTime	= $_POST['starttime'];
 				return $schedule->removeHost();
 			},
 			'permission_callback' 	=> '__return_true',

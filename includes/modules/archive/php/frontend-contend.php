@@ -13,7 +13,7 @@ add_filter('sim-frontend-buttons', function($html, $fontendContend){
                 <input hidden name='post_id' value='<?php echo  esc_html($fontendContend->postId); ?>'>
 
                 <button type='submit' class='button' name='archive_post'>Archive <?php echo  esc_html($fontendContend->post->post_type); ?></button>
-                <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt='' loading='lazy'>
+                <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt='' loading='lazy' style='max-height:30px;margin-top:0px;'>
             </form>
         </div>
         <?php

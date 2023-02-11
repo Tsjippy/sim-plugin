@@ -83,20 +83,23 @@ function removeRowSpan(target){
 
 //shows the modal to select a user as host
 function showAddHostModal(){
-	target.classList.add('active');
-	var table											= target.closest('table');
-	var cell											= target.closest('td');
-	var date											= table.rows[0].cells[cell.cellIndex].dataset.isodate;
-	var startTime										= target.closest('tr').dataset.starttime;
-	var modal											= target.closest('.schedules_wrapper').querySelector('[name="add_host"]');
+	let table											= target.closest('table');
+	
+	let modal											= document.querySelector('[name="add_host"]');
+	if(table != null){
+		target.classList.add('active');
+		let cell											= target.closest('td');
+		let date											= table.rows[0].cells[cell.cellIndex].dataset.isodate;
+		let startTime										= target.closest('tr').dataset.starttime;
+		modal.querySelector('[name="date"]').value			= date;
+		modal.querySelector('[name="starttime"]').value		= startTime;
+	}
 
 	// Clear
-	modal.querySelectorAll('input:not([type="hidden"])').forEach(el=>el.value='');
+	modal.querySelectorAll('input:not([type="hidden"], [type="radio"])').forEach(el=>el.value='');
 
 	// Add new values
-	modal.querySelector('[name="schedule_id"]').value	= table.dataset["id"];
-	modal.querySelector('[name="date"]').value			= date;
-	modal.querySelector('[name="starttime"]').value		= startTime;
+	modal.querySelector('[name="schedule_id"]').value	= target.closest('.schedules_div').dataset.id;
 
 	modal.classList.remove('hidden');
 }
@@ -129,6 +132,16 @@ async function addHost(target){
 	}
 }
 
+async function addHostMobile(target){
+	var response 	= await FormSubmit.submitForm(target, 'events/add_host');
+
+	if(response){
+		Main.displayMessage(response);
+	}
+
+	Main.hideModals();
+}
+
 // Add current user as host
 async function addCurrentUserAsHost(target){
 	var table			= target.closest('table');
@@ -155,10 +168,14 @@ async function addCurrentUserAsHost(target){
 // Show the new host in the schedule
 function addHostHtml(response){
 	var targetCell			= document.querySelector('td.active');
+
+	if(targetCell == null){
+		Main.hideModals();
+		return;
+	}
+
 	targetCell.classList.remove('active');
 	targetCell.outerHTML	= response.html;
-
-	Main.hideModals();
 
 	Main.displayMessage(response.message);
 
@@ -215,63 +232,68 @@ async function removeHost(target){
 	}
 }
 
-function showTimeslotModal(selected){
+function showTimeslotModal(selected=''){
 	let modal 			= document.querySelector('[name="add_session"]');
-	let firstCell		= selected[0].node;
-	let lastCell		= selected[selected.length-1].node;
 
-	firstCell.classList.add('active');
-	let rowCount		= document.querySelectorAll('.ui-selected').length;
-	applyRowSpan(firstCell, rowCount);
-
-	// Only show loader when the cell is empty
-	if(!firstCell.matches('.selected')){
-		Main.showLoader(firstCell.firstChild);
-	}
-
-	let endTime			= firstCell.dataset.endtime;
-	if(endTime == undefined){
-		endTime	= lastCell.closest('tr').dataset.endtime;
-	}
-	let table			= firstCell.closest('table');
-	let date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
-	
 	// Clear
-	modal.querySelectorAll('input:not([type="hidden"], [type="checkbox"], [type="radio"])').forEach(el=>el.value='')
+	modal.querySelectorAll('input:not([type="hidden"], [type="checkbox"], [type="radio"])').forEach(el=>el.value='');
 
-	//Fill the modal values
-	modal.querySelector('[name="schedule_id"]').value		= table.dataset["id"];
-	modal.querySelector('[name="date"]').value				= date;
-	modal.querySelector('[name="olddate"]').value 			= date;
-	modal.querySelector('[name="starttime"]').value			= firstCell.closest('tr').dataset.starttime;
-	modal.querySelector('[name="endtime"]').value			= endTime;
-	modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
-	modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
+	if(typeof(selected) == 'object'){
+		console.log(selected)
+		modal.querySelector('[name="schedule_id"]').value		= selected.closest('.schedules_div').dataset.id;
+	}else{
+		let firstCell		= selected[0].node;
+		let lastCell		= selected[selected.length-1].node;
 
-	let hostId			= firstCell.dataset.host_id;
-	let time			= firstCell.dataset.time;
-	let subject			= firstCell.dataset.subject;
-	let location		= firstCell.dataset.location;
-	let hostName		= firstCell.dataset.host;
+		firstCell.classList.add('active');
+		let rowCount		= document.querySelectorAll('.ui-selected').length;
+		applyRowSpan(firstCell, rowCount);
 
-	if(hostId	!= undefined){
-		modal.querySelector('[name="host_id"]').value			= hostId;
-	}
+		// Only show loader when the cell is empty
+		if(!firstCell.matches('.selected')){
+			Main.showLoader(firstCell.firstChild);
+		}
 
-	if(time	!= undefined){
-		modal.querySelector('[name="oldtime"]').value			= time;
-	}
+		let endTime			= firstCell.dataset.endtime;
+		if(endTime == undefined){
+			endTime	= lastCell.closest('tr').dataset.endtime;
+		}
+		let table			= firstCell.closest('table');
+		let date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 
-	if(subject	!= undefined){
-		modal.querySelector('[name="subject"]').value			= subject;
-	}
+		//Fill the modal values
+		modal.querySelector('[name="date"]').value				= date;
+		modal.querySelector('[name="olddate"]').value 			= date;
+		modal.querySelector('[name="starttime"]').value			= firstCell.closest('tr').dataset.starttime;
+		modal.querySelector('[name="endtime"]').value			= endTime;
+		modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
+		modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
+	
+		let hostId			= firstCell.dataset.host_id;
+		let time			= firstCell.dataset.time;
+		let subject			= firstCell.dataset.subject;
+		let location		= firstCell.dataset.location;
+		let hostName		= firstCell.dataset.host;
 
-	if(location	!= undefined){
-		modal.querySelector('[name="location"]').value			= location;
-	}
+		if(hostId	!= undefined){
+			modal.querySelector('[name="host_id"]').value			= hostId;
+		}
 
-	if(hostName	!= undefined){
-		modal.querySelector('[name="host"]').value				= hostName;
+		if(time	!= undefined){
+			modal.querySelector('[name="oldtime"]').value			= time;
+		}
+
+		if(subject	!= undefined){
+			modal.querySelector('[name="subject"]').value			= subject;
+		}
+
+		if(location	!= undefined){
+			modal.querySelector('[name="location"]').value			= location;
+		}
+
+		if(hostName	!= undefined){
+			modal.querySelector('[name="host"]').value				= hostName;
+		}
 	}
 	
 	Main.showModal(modal);
@@ -502,6 +524,16 @@ document.addEventListener('click',function(event){
 	}else if(target.matches('.close') && target.closest('.modal') != null && target.closest('.modal').attributes.name.value == 'add_session'){
 		console.log(target)
 		removeRowSpan(document.querySelector('td.active'));
+	}else if(target.name == 'add-session'){
+		event.stopPropagation();
+		showTimeslotModal(target);
+	}else if(target.name == 'add-host'){
+		event.stopPropagation();
+
+		Main.showModal(document.querySelector('[name="add_host_mobile"]'));
+	}else if (target.name == 'add_host_mobile' ){
+		event.stopPropagation();
+		addHostMobile(target)
 	}
 	
 	if(target.classList.contains('keyword')){
@@ -541,11 +573,23 @@ document.addEventListener('change', function(event){
 		}
 
 		target.closest('form').querySelector('[name="host_id"]').value	= userId;
+	}else if(target.name == 'starttime' && target.type == 'radio'){
+		if(target.value == '12:00'){
+			target.closest('form').querySelector('.lunch-select-wrapper').classList.remove('hidden');
+			target.closest('form').querySelector('.diner-select-wrapper').classList.add('hidden');
+		}else{
+			target.closest('form').querySelector('.diner-select-wrapper').classList.remove('hidden');
+			target.closest('form').querySelector('.lunch-select-wrapper').classList.add('hidden');
+		}
 	}
 
 	if(target.matches('[name="add_session"] .time')){
 		// get the active cell
 		let cell		= document.querySelector('td.active');
+
+		if(cell == null){
+			return;
+		}
 		let table		= cell.closest('table');
 
 		// validate the time

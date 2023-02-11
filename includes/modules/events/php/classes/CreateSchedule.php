@@ -303,10 +303,16 @@ class CreateSchedule extends Schedules{
 	 *
 	 * @return string	success message and new cell html
 	*/
-	public function addHost(){
+	public function addHost($date){
 		$message			= '';
 		$this->scheduleId	= $_POST['schedule_id'];
+		$this->startTime	= $_POST['starttime'];
 		$schedule			= $this->findScheduleById($this->scheduleId);
+
+		// check if available
+		if($this->getScheduleEvent($schedule, $date, $this->startTime)){
+			return new \WP_Error('schedules', 'This is already booked, sorry');
+		}
 
 		if(is_numeric($_POST['host_id'])){
 			$this->hostId	= $_POST['host_id'];
@@ -344,9 +350,8 @@ class CreateSchedule extends Schedules{
 		}
 
 		$this->name			= $schedule->name;
-		$this->date			= $_POST['date'];
+		$this->date			= $date;
 		$dateStr			= date('d F Y',strtotime($this->date));
-		$this->startTime	= $_POST['starttime'];
 		if($this->startTime == $this->lunchStartTime && $schedule->lunch){
 			$this->endTime		= $this->lunchEndTime;
 			$title				= 'lunch';

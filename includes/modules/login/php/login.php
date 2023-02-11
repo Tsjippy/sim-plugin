@@ -2,7 +2,7 @@
 namespace SIM\LOGIN;
 use SIM;
 
-//disable wp-login.php
+//disable wp-login.php except for logout
 add_action('init',function(){
     // do not run during rest request
     if(SIM\isRestApiRequest()){
@@ -10,7 +10,7 @@ add_action('init',function(){
     }
     
     global $pagenow;
-	if( $pagenow == 'wp-login.php' && get_option("wpstg_is_staging_site") != "true"){
+	if( $pagenow == 'wp-login.php' && get_option("wpstg_is_staging_site") != "true" && (!isset($_GET['action']) || $_GET['action'] != 'logout')){
         //redirect to login screen
         wp_redirect(SITEURL."/?showlogin");
         exit;
