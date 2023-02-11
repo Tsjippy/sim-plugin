@@ -265,7 +265,7 @@ class Schedules{
 
 	public function showMobileSchedule($schedule, $onlyMeals) {
 		?>
-		<div name='add_host_mobile' class="modal hidden">
+		<div class="add-host-mobile-wrapper modal hidden">
 			<div class="modal-content">
 				<span class="close">&times;</span>
 				<form action="" method="post">
@@ -319,7 +319,7 @@ class Schedules{
 					}
 
 					?>
-					<div class='lunch-select-wrapper hidden'>
+					<div class='lunch select-wrapper hidden'>
 						<label>
 							Select the date you want to host <?php echo $schedule->name;?> for lunch
 						</label>
@@ -328,7 +328,7 @@ class Schedules{
 						<?php
 						foreach($availableLunches as $availableLunch){
 							?>
-							<label>
+							<label class='date'>
 								<input type='checkbox' name='date[]' value='<?php echo $availableLunch;?>'>
 								<?php echo date('l j F', strtotime($availableLunch));?>
 							</label>
@@ -337,7 +337,7 @@ class Schedules{
 						}
 						?>
 					</div>
-					<div class='diner-select-wrapper <?php if($schedule->lunch){echo 'hidden';}?>'>
+					<div class='diner select-wrapper <?php if($schedule->lunch){echo 'hidden';}?>'>
 						<label>
 							Select the date you want to host <?php echo $schedule->name;?> for diner
 						</label>
@@ -345,7 +345,7 @@ class Schedules{
 						<?php
 						foreach($availableDiners as $availableDiner){
 							?>
-							<label>
+							<label class='date'>
 								<input type='checkbox' name='date[]' value='<?php echo $availableDiner;?>'>
 								<?php echo date('l j F', strtotime($availableDiner));?>
 							</label>
@@ -371,41 +371,38 @@ class Schedules{
 				</form>
 			</div>
 		</div>
-			
-				
-				<?php
+		<?php
 
-			$date		= $schedule->startdate;
-			while(true){
-				$dateTime		= strtotime($date);
-				$dayName		= date('l', $dateTime);
-				$formatedDate	= date('d-m-Y', $dateTime);
-				$html			= $this->getMobileDay($schedule, $onlyMeals, $date);
-				if(!empty($html)){
-					echo "<strong>$dayName $formatedDate</strong><br>";
-					echo $html.'<br>';
-				}
-
-				if ($date == $schedule->enddate) {
-					break;
-				}
-
-				$date	= date('Y-m-d', strtotime('+1 day', $dateTime) );
+		$date		= $schedule->startdate;
+		while(true){
+			$dateTime		= strtotime($date);
+			$dayName		= date('l', $dateTime);
+			$formatedDate	= date('d-m-Y', $dateTime);
+			$html			= $this->getMobileDay($schedule, $onlyMeals, $date);
+			if(!empty($html)){
+				echo "<strong>$dayName $formatedDate</strong><br>";
+				echo $html.'<br>';
 			}
 
-			if($onlyMeals){
-				?>
-				<br>
-				<button class='button' name='add-host'>Add me as a host</button>
-				<?php
-			}else{
-				?>
-				<br>
-				<button class='button' name='add-session'>Add a session</button>
-				<?php
+			if ($date == $schedule->enddate) {
+				break;
 			}
+
+			$date	= date('Y-m-d', strtotime('+1 day', $dateTime) );
+		}
+
+		if($onlyMeals){
 			?>
-		</div>
+			<br>
+			<button class='button' name='add-host'>Add me as a host</button>
+			<?php
+		}else{
+			?>
+			<br>
+			<button class='button' name='add-session'>Add a session</button>
+			<?php
+		}
+		?>
 		<?php
 	}
 

@@ -530,7 +530,7 @@ document.addEventListener('click',function(event){
 	}else if(target.name == 'add-host'){
 		event.stopPropagation();
 
-		Main.showModal(document.querySelector('[name="add_host_mobile"]'));
+		Main.showModal(target.closest('.schedules_div').querySelector('.add-host-mobile-wrapper'));
 	}else if (target.name == 'add_host_mobile' ){
 		event.stopPropagation();
 		addHostMobile(target)
@@ -575,11 +575,11 @@ document.addEventListener('change', function(event){
 		target.closest('form').querySelector('[name="host_id"]').value	= userId;
 	}else if(target.name == 'starttime' && target.type == 'radio'){
 		if(target.value == '12:00'){
-			target.closest('form').querySelector('.lunch-select-wrapper').classList.remove('hidden');
-			target.closest('form').querySelector('.diner-select-wrapper').classList.add('hidden');
+			target.closest('form').querySelector('.lunch.select-wrapper').classList.remove('hidden');
+			target.closest('form').querySelector('.diner.select-wrapper').classList.add('hidden');
 		}else{
-			target.closest('form').querySelector('.diner-select-wrapper').classList.remove('hidden');
-			target.closest('form').querySelector('.lunch-select-wrapper').classList.add('hidden');
+			target.closest('form').querySelector('.diner.select-wrapper').classList.remove('hidden');
+			target.closest('form').querySelector('.lunch.select-wrapper').classList.add('hidden');
 		}
 	}
 
