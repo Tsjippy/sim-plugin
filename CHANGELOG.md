@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- mobile friendly schedules
 
 ### Changed
 
