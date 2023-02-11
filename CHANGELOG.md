@@ -8,6 +8,7 @@
 
 ### Fixed
 - mobile mealschedule when no lunch
+- multiple mobile schedules
 
 ### Updated
 
