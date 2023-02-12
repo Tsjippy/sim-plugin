@@ -400,6 +400,8 @@ class Schedules{
 			?>
 			<br>
 			<button class='button' name='add-session'>Add a session</button>
+			<br>
+			<button class='button' name='add-host'>Add a meal host</button>
 			<?php
 		}
 		?>
@@ -487,17 +489,17 @@ class Schedules{
 		}else{
 			$rowSpan = '';
 		}
-		
+
 		if($event != null){
+			$title			= get_the_title($event->post_id);
+			$url			= get_permalink($event->post_id);
+			$cellText		= "<a href='$url'>$title</a>";
 			$hostId		= $event->organizer_id;
 			if(is_numeric($hostId)){
 				$hostData	= "data-host=$hostId";
 			}else{
 				$hostData	= "";
 			}
-			$title			= get_the_title($event->post_id);
-			$url			= get_permalink($event->post_id);
-			$cellText		= "<a href='$url'>$title</a>";
 			$date			= $event->startdate;
 			$startTime		= $event->starttime;
 
@@ -515,7 +517,7 @@ class Schedules{
 				$cellText .= "<span class='keyword'>$menu</span>";
 			//current user is the target or is admin
 			} elseif ( !$this->admin && $schedule->target != $this->user->ID && $schedule->target != $partnerId){
-				$cellText = 'Taken';
+				//$cellText = 'Taken';
 			}
 		} else {
 			$cellText	 = 'Available';
