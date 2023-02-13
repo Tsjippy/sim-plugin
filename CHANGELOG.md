@@ -3,10 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- admin add host on mobile
-- mobile schedule adjustments
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.29.4] - 2023-02-13
+
+
+### Added
+- admin add host on mobile
+- mobile schedule adjustments
 
 ### Fixed
 - mobile mealschedule when no lunch
