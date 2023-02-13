@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- change mobile schedule over ajax
 
 ### Fixed
 
