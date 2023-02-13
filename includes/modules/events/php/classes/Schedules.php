@@ -15,6 +15,7 @@ class Schedules{
 	public $tdLabels;
 	public $schedules;
 	public $nextStartTimes;
+	private $mobile;
 	
 	public function __construct(){
 		global $wpdb;
@@ -38,6 +39,8 @@ class Schedules{
 		$this->dinerTime		= '18:00';
 		$this->noPermissionText	= 'No permission to do that!';
 		$this->tdLabels			= [];
+
+		$this->mobile			= wp_is_mobile();
 	}
 	
 	/**
@@ -119,8 +122,6 @@ class Schedules{
 	}
 
 	public function showSchedule($schedule) {
-		$mobile	= wp_is_mobile();
-
 		ob_start();
 
 		if (
@@ -169,7 +170,7 @@ class Schedules{
 		$schedule->startdate	= max([date('Y-m-d'), $schedule->startdate]);
 		
 		?>
-		<div class='schedules_div table-wrapper' data-id="<?php echo $schedule->id; ?>">
+		<div class='schedules_div table-wrapper' data-id="<?php echo $schedule->id; ?>" data-target="<?php echo $schedule->name; ?>">
 			<div class="modal publish_schedule hidden">
 				<div class="modal-content">
 					<span id="modal_close" class="close">&times;</span>
@@ -205,13 +206,13 @@ class Schedules{
 
 			<?php
 			// Only render when not on a mobile device
-			if($mobile){
+			if($this->mobile){
 				$this->showMobileSchedule($schedule, $onlyMeals);
 			}else{
 				?>
 				<p>Click on an available date to indicate you want to host.<br>Click on any date you are subscribed for to unsubscribe</p>
 
-				<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-target_id="<?php echo $schedule->target; ?>" data-target="<?php echo $schedule->name; ?>" data-action='update_schedule' data-lunch='<?php echo $schedule->lunch ? 'true' : 'false';?>'>
+				<table class="sim-table schedule" data-id="<?php echo $schedule->id; ?>" data-action='update_schedule' data-lunch='<?php echo $schedule->lunch ? 'true' : 'false';?>'>
 					<thead>
 						<tr>
 							<th class='sticky'>Dates</th>
@@ -379,10 +380,8 @@ class Schedules{
 			$dayName		= date('l', $dateTime);
 			$formatedDate	= date('d-m-Y', $dateTime);
 			$html			= $this->getMobileDay($schedule, $onlyMeals, $date);
-			if(!empty($html)){
-				echo "<strong>$dayName $formatedDate</strong><br>";
-				echo $html.'<br>';
-			}
+			echo "<strong>$dayName $formatedDate</strong><br>";
+			echo $html.'<br>';
 
 			if ($date == $schedule->enddate) {
 				break;
@@ -400,6 +399,7 @@ class Schedules{
 			?>
 			<br>
 			<button class='button' name='add-session'>Add a session</button>
+			<br>
 			<br>
 			<button class='button' name='add-host'>Add a meal host</button>
 			<?php
@@ -494,14 +494,13 @@ class Schedules{
 			$title			= get_the_title($event->post_id);
 			$url			= get_permalink($event->post_id);
 			$cellText		= "<a href='$url'>$title</a>";
-			$hostId		= $event->organizer_id;
-			if(is_numeric($hostId)){
-				$hostData	= "data-host=$hostId";
-			}else{
-				$hostData	= "";
-			}
+			$hostId			= $event->organizer_id;
 			$date			= $event->startdate;
 			$startTime		= $event->starttime;
+			$hostData		= "";
+			if(is_numeric($hostId)){
+				$hostData	.= " data-host=$hostId data-starttime='$startTime'";
+			}
 
 			$class 			.= ' selected';
 			$partnerId 		= SIM\hasPartner($this->user->ID);
@@ -530,7 +529,11 @@ class Schedules{
 		$label	= date('d-m-Y', strtotime($date));
 
 		if($onlyText){
-			return $cellText;
+			return [
+				'text'	=> $cellText,
+				'data'	=> $hostData,
+				'event'	=> $event
+			];
 		}
 		return "<td class='$class' $rowSpan $hostData label='$label'>$cellText</td>";
 	}
@@ -554,7 +557,7 @@ class Schedules{
 			$cellText = 'Available';
 		}else {
 			$hostId			= $event->organizer_id;
-			$dataset	= "data-time='{$event->starttime}' data-endtime='{$event->endtime}'";
+			$dataset	= "data-starttime='{$event->starttime}' data-endtime='{$event->endtime}' data-event_id='$event->id'";
 			if (is_numeric($hostId)) {
 				$dataset	.= " data-host='".get_userdata($hostId)->display_name."' data-host_id='$hostId'";
 			}
@@ -587,8 +590,13 @@ class Schedules{
 			$this->nextStartTimes[$date] = $endTime;
 		}
 
+		// for Mobile view
 		if($onlyText){
-			return $cellText;
+			return [
+				'text'		=> $cellText,
+				'data'		=> $dataset,
+				'event'		=> $event
+			];
 		}
 
 		//Make the cell editable if:
@@ -682,7 +690,6 @@ class Schedules{
 			//Show the row if we can see all rows or the row is a mealschedule row
 			if (!$onlyMeals || $mealScheduleRow ) {
 				$html  .= "<tr class='table-row' data-starttime='$startTime' data-endtime='$endTime'>";
-					$label	= date('d-m-Y', strtotime($date));
 					$html 	.= "<td $extra class='sticky' label=''><strong>$description</strong></td>";
 					$html	.= $cells;
 				$html .= "</tr>";
@@ -742,15 +749,79 @@ class Schedules{
 			if (!$onlyMeals || $mealScheduleRow ) {
 				//mealschedule
 				if($mealScheduleRow){
-					$content	= $this->writeMealCell($schedule, $date, $startTime, true);
+					$data			= $this->writeMealCell($schedule, $date, $startTime, true);
 				//Orientation schedule
 				}elseif(!$onlyMeals){
-					$content	= $this->writeOrientationCell($schedule, $date, $startTime, true);
+					$data			= $this->writeOrientationCell($schedule, $date, $startTime, true);
+					if($data['event']){
+						$description	.=	' - '.$data['event']->endtime;
+					}
 				}
+				$content	= $data['text'];
+				if($content == 'Available' && $mealScheduleRow){
+					$dateStr	= date('d-m-Y', strtotime($date));
+					$hostId		= get_current_user_id();
 
-				if($content != 'Available'){
-					$html 	.= "<strong>$description</strong>:<br>";
-					$html 	.=	$content.'<br>';
+					$content	= "<span class='add-me-as-host' data-date='$dateStr' data-starttime='$startTime' data-host_id='$hostId' data-isodate='$date'>";
+						$content .= 'Available   ';
+						$content .= '<svg fill="#000000" height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve"> <g> <g><path d="M256,0C114.611,0,0,114.611,0,256s114.611,256,256,256s256-114.611,256-256S397.389,0,256,0z M256,486.4 C128.759,486.4,25.6,383.249,25.6,256S128.759,25.6,256,25.6S486.4,128.759,486.4,256S383.241,486.4,256,486.4z"/> </g> </g> <g> <g> <path d="M384,243.2H268.8V128c0-7.066-5.734-12.8-12.8-12.8c-7.066,0-12.8,5.734-12.8,12.8v115.2H128 c-7.066,0-12.8,5.734-12.8,12.8c0,7.066,5.734,12.8,12.8,12.8h115.2V384c0,7.066,5.734,12.8,12.8,12.8 c7.066,0,12.8-5.734,12.8-12.8V268.8H384c7.066,0,12.8-5.734,12.8-12.8C396.8,248.934,391.066,243.2,384,243.2z"/> </g> </g> </svg>';
+					$content .= "</span>";
+				}
+				
+				if(
+					$content != 'Available'		||	// There is something scheduled
+					(
+						$mealScheduleRow		&&	// Or it is a mealschedule row
+						(
+							$startTime == $this->lunchStartTime	||	// and this is the lunch
+							$startTime == $this->dinerTime			// or diner time
+						)
+					)
+				){
+					$admin	= '';
+					if($this->admin){
+						$admin = 'admin';
+					}
+
+					$html 	.= "<div class='session-wrapper-mobile $admin' style='display:flex;'>";
+						$html 	.= "<div style='padding-right:10px;'>";
+							$html 	.= "<strong>$description</strong>:<br>";
+							$html 	.=	$content.'<br>';
+						$html 	.= "</div>";
+
+						if(
+							$this->admin	||	// We can change any event
+							(
+								isset($data['event']->organizer_id)	&&						// an organizer id is set
+								$data['event']->organizer_id	== get_current_user_id()	// we are the organizer
+							)
+						){
+							$icon	= '';
+							$class	= '';
+							if($this->admin){
+								$class	= 'admin ';
+							}
+							if($mealScheduleRow){
+								if($content == 'Available'){
+									$icon	= '<svg enable-background="new 0 0 30 30" height="30px" id="Layer_1" version="1.1" viewBox="0 0 30 30" width="30px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M256,512C114.625,512,0,397.391,0,256C0,114.609,114.625,0,256,0c141.391,0,256,114.609,256,256  C512,397.391,397.391,512,256,512z M256,64C149.969,64,64,149.969,64,256s85.969,192,192,192c106.047,0,192-85.969,192-192  S362.047,64,256,64z M288,384h-64v-96h-96v-64h96v-96h64v96h96v64h-96V384z"/></svg>';
+									$class	.= 'remove-host-mobile';
+								}else{
+									$icon	= '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px">    <path d="M 10 2 L 9 3 L 4 3 L 4 5 L 20 5 L 20 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 22 L 19 22 L 19 7 L 5 7 z M 8 9 L 10 9 L 10 20 L 8 20 L 8 9 z M 14 9 L 16 9 L 16 20 L 14 20 L 14 9 z"/></svg>';
+									$class	.= 'remove-host-mobile';
+								}
+							}else{
+								$icon	= '<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 30 30" width="30px" height="30px">    <path d="M 22.828125 3 C 22.316375 3 21.804562 3.1954375 21.414062 3.5859375 L 19 6 L 24 11 L 26.414062 8.5859375 C 27.195062 7.8049375 27.195062 6.5388125 26.414062 5.7578125 L 24.242188 3.5859375 C 23.851688 3.1954375 23.339875 3 22.828125 3 z M 17 8 L 5.2597656 19.740234 C 5.2597656 19.740234 6.1775313 19.658 6.5195312 20 C 6.8615312 20.342 6.58 22.58 7 23 C 7.42 23.42 9.6438906 23.124359 9.9628906 23.443359 C 10.281891 23.762359 10.259766 24.740234 10.259766 24.740234 L 22 13 L 17 8 z M 4 23 L 3.0566406 25.671875 A 1 1 0 0 0 3 26 A 1 1 0 0 0 4 27 A 1 1 0 0 0 4.328125 26.943359 A 1 1 0 0 0 4.3378906 26.939453 L 4.3632812 26.931641 A 1 1 0 0 0 4.3691406 26.927734 L 7 26 L 5.5 24.5 L 4 23 z"/></svg>';;
+								$class	.= 'edit-session-mobile orientation';
+							}
+							
+							if(!empty($icon)){
+								$dateStr	= date('d-m-Y', strtotime($date));
+								$html 	.= "<div class='$class' {$data['data']} data-date='$dateStr' data-isodate='$date' style='margin-left: auto;'>";
+									$html 	.= $icon;
+								$html 	.= "</div>";
+							}
+						}
+					$html 	.= "</div>";
 				}
 			}
 
@@ -822,6 +893,7 @@ class Schedules{
 				<span class="close">&times;</span>
 				<form action="" method="post">
 					<input type='hidden' name='schedule_id'>
+					<input type='hidden' name='event-id'>
 					<input type='hidden' name='olddate'>
 					<input type='hidden' name='host_id'>
 					<input type='hidden' name='oldtime'>

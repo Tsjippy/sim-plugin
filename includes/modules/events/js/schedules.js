@@ -111,18 +111,20 @@ async function addHost(target){
 	if(oldtime != ''){
 		// remove the old event
 		let cell	= document.querySelector('td.active');
-		cell.classList.remove('ui-selected', 'active', 'selected');
-		cell.removeAttribute('rowspan');
+		if(cell != null){
+			cell.classList.remove('ui-selected', 'active', 'selected');
+			cell.removeAttribute('rowspan');
 
-		let date		= form.querySelector('[name="date"]').value;
-		let time		= form.querySelector('[name="starttime"]').value;
-		let columnNr	= cell.closest('table').tHead.querySelector(`[data-isodate="${date}"]`).cellIndex;
-		// Add the new one
-		let newCell		= cell.closest('table').querySelector(`tr[data-starttime="${time}"]`).cells[columnNr];
-		newCell.classList.add('ui-selected', 'active', 'selected');
-		newCell.innerHTML	= cell.innerHTML;
+			let date		= form.querySelector('[name="date"]').value;
+			let time		= form.querySelector('[name="starttime"]').value;
+			let columnNr	= cell.closest('table').tHead.querySelector(`[data-isodate="${date}"]`).cellIndex;
+			// Add the new one
+			let newCell		= cell.closest('table').querySelector(`tr[data-starttime="${time}"]`).cells[columnNr];
+			newCell.classList.add('ui-selected', 'active', 'selected');
+			newCell.innerHTML	= cell.innerHTML;
 
-		cell.innerHTML	= 'Available';
+			cell.innerHTML	= 'Available';
+		}
 	}
 
 	var response 	= await FormSubmit.submitForm(target, 'events/add_host');
@@ -145,17 +147,31 @@ async function addHostMobile(target){
 // Add current user as host
 async function addCurrentUserAsHost(target){
 	var table			= target.closest('table');
-	var cell			= target.closest('td');
-	var scheduleOwner	= table.dataset.target;
-	var dateStr			= table.rows[0].cells[cell.cellIndex].dataset.date;
+
+	let scheduleOwner, dateStr;
+
+	if(table != null){
+		var cell		= target.closest('td');
+		scheduleOwner	= table.closest('.schedules_div').dataset.target;;
+		dateStr			= table.rows[0].cells[cell.cellIndex].dataset.date;
+	}else{
+		console.log(target)
+		scheduleOwner	= target.closest('.schedules_div').dataset.target;;
+		dateStr			= target.dataset.date;
+	}
 	
 	var text 			= `Please confirm you want to be the host for ${scheduleOwner} on ${dateStr}`;
 	var confirmed		= await checkConfirmation(text);
 
 	if(confirmed){
-		target.classList.add('active');
 
 		var formData		= loadHostFormdata(target);
+		
+		if(table != null){
+			target.classList.add('active');
+		}else{
+			Main.showLoader(target);
+		}
 
 		var response	= await FormSubmit.fetchRestApi('events/add_host', formData);
 
@@ -171,6 +187,10 @@ function addHostHtml(response){
 
 	if(targetCell == null){
 		Main.hideModals();
+
+		Main.displayMessage(response.message);
+
+		location.reload();
 		return;
 	}
 
@@ -184,13 +204,20 @@ function addHostHtml(response){
 
 // Remove a host
 async function removeHost(target){
-	var formData		= loadHostFormdata(target);
+	let formData, scheduleOwner, cell, dateStr, text, wrapper, confirmed;
 
 	var table			= target.closest('table');
-	var scheduleOwner	= table.dataset.target;
-	var cell			= target.closest('td');
-	var dateStr			= table.rows[0].cells[cell.cellIndex].dataset.date;
-	var text;
+	if(table != null){
+		formData		= loadHostFormdata(target);
+		scheduleOwner	= table.closest('.schedules_div').dataset.target;
+		cell			= target.closest('td');
+		dateStr			= table.rows[0].cells[cell.cellIndex].dataset.date;
+	}else{
+		console.log(target)
+		formData		= loadHostFormdata(target);
+		scheduleOwner	= target.closest('.schedules_div').dataset.target;
+		dateStr			= target.dataset.date;
+	}
 
 	if(target.classList.contains('orientation')){
 		text 	= `Are you sure you want to remove this orientation session`;
@@ -200,32 +227,41 @@ async function removeHost(target){
 		text 	= `Please confirm you do not want to be the host for ${scheduleOwner} on ${dateStr} anymore`;
 	}
 
-	var confirmed	= await checkConfirmation(text);
+	confirmed	= await checkConfirmation(text);
 
 	if(confirmed){
-		Main.showLoader(cell.firstChild);
+		if(table != null){
+			Main.showLoader(cell.firstChild);
+		}else{
+			wrapper	= target.closest('.session-wrapper-mobile');
+			Main.showLoader(target);
+		}
 
 		var response = await FormSubmit.fetchRestApi('events/remove_host', formData);
 
-		//Remove cell class
-		cell.classList.remove('selected');
-		cell.classList.remove('ui-selected');
+		if(table != null){
+			//Remove cell class
+			cell.classList.remove('selected');
+			cell.classList.remove('ui-selected');
 
-		//Set cell text
-		cell.innerHTML	= 'Available';
-		var index		= cell.cellIndex;
-		var row			= cell.closest('tr');
+			//Set cell text
+			cell.innerHTML	= 'Available';
+			var index		= cell.cellIndex;
+			var row			= cell.closest('tr');
 
-		//only remove rowspan if the first cell of a row has no rowspan
-		if(row.cells[0].rowSpan==1){
-			//Loop over the next cells to remove the hidden attribute
-			for (var i = 1; i < target.rowSpan; i++) {
-				row = row.nextElementSibling;
-				row.cells[index].classList.remove('hidden');
+			//only remove rowspan if the first cell of a row has no rowspan
+			if(row.cells[0].rowSpan==1){
+				//Loop over the next cells to remove the hidden attribute
+				for (var i = 1; i < target.rowSpan; i++) {
+					row = row.nextElementSibling;
+					row.cells[index].classList.remove('hidden');
+				}
+
+				//Reset the rowSpan
+				target.rowSpan = 1;
 			}
-
-			//Reset the rowSpan
-			target.rowSpan = 1;
+		}else{
+			wrapper.remove();
 		}
 
 		Main.displayMessage(response);
@@ -233,16 +269,27 @@ async function removeHost(target){
 }
 
 function showTimeslotModal(selected=''){
+	let firstCell, date, startTime, endTime, hostId, oldTime, subject, location, hostName, eventId;
 	let modal 			= document.querySelector('[name="add_session"]');
 
 	// Clear
 	modal.querySelectorAll('input:not([type="hidden"], [type="checkbox"], [type="radio"])').forEach(el=>el.value='');
 
-	if(typeof(selected) == 'object'){
+	if(selected[0] == undefined){
 		console.log(selected)
+		firstCell	= selected;
+		date		= selected.dataset.isodate;
+		startTime	= selected.dataset.starttime;
+		endTime		= selected.dataset.endtime;
+		subject		= selected.dataset.subject;
+		location	= selected.dataset.location;
+		hostName	= selected.dataset.host;
+		hostId		= selected.dataset.host_id;
+		eventId		= selected.dataset.event_id;
+
 		modal.querySelector('[name="schedule_id"]').value		= selected.closest('.schedules_div').dataset.id;
 	}else{
-		let firstCell		= selected[0].node;
+		firstCell		= selected[0].node;
 		let lastCell		= selected[selected.length-1].node;
 
 		firstCell.classList.add('active');
@@ -254,46 +301,47 @@ function showTimeslotModal(selected=''){
 			Main.showLoader(firstCell.firstChild);
 		}
 
-		let endTime			= firstCell.dataset.endtime;
+		startTime	= firstCell.closest('tr').dataset.starttime;
+
+		endTime		= firstCell.dataset.endtime;
 		if(endTime == undefined){
 			endTime	= lastCell.closest('tr').dataset.endtime;
 		}
 		let table			= firstCell.closest('table');
-		let date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
+		date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 
-		//Fill the modal values
-		modal.querySelector('[name="date"]').value				= date;
-		modal.querySelector('[name="olddate"]').value 			= date;
-		modal.querySelector('[name="starttime"]').value			= firstCell.closest('tr').dataset.starttime;
-		modal.querySelector('[name="endtime"]').value			= endTime;
-		modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
-		modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
-	
-		let hostId			= firstCell.dataset.host_id;
-		let time			= firstCell.dataset.time;
-		let subject			= firstCell.dataset.subject;
-		let location		= firstCell.dataset.location;
-		let hostName		= firstCell.dataset.host;
+		hostId			= firstCell.dataset.host_id;
+		oldTime			= firstCell.dataset.old_time;
+		subject			= firstCell.dataset.subject;
+		location		= firstCell.dataset.location;
+		hostName		= firstCell.dataset.host;
+		eventId			= firstCell.dataset.event_id;
+	}
 
-		if(hostId	!= undefined){
-			modal.querySelector('[name="host_id"]').value			= hostId;
-		}
+	//Fill the modal values
+	modal.querySelector('[name="event-id"]').value			= eventId;
+	modal.querySelector('[name="date"]').value				= date;
+	modal.querySelector('[name="olddate"]').value 			= date;
+	modal.querySelector('[name="starttime"]').value			= startTime;
+	modal.querySelector('[name="endtime"]').value			= endTime;
+	modal.querySelector('[name="oldtime"]').value			= startTime;
+	modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
+	modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
 
-		if(time	!= undefined){
-			modal.querySelector('[name="oldtime"]').value			= time;
-		}
+	if(hostId	!= undefined){
+		modal.querySelector('[name="host_id"]').value			= hostId;
+	}
 
-		if(subject	!= undefined){
-			modal.querySelector('[name="subject"]').value			= subject;
-		}
+	if(subject	!= undefined){
+		modal.querySelector('[name="subject"]').value			= subject;
+	}
 
-		if(location	!= undefined){
-			modal.querySelector('[name="location"]').value			= location;
-		}
+	if(location	!= undefined){
+		modal.querySelector('[name="location"]').value			= location;
+	}
 
-		if(hostName	!= undefined){
-			modal.querySelector('[name="host"]').value				= hostName;
-		}
+	if(hostName	!= undefined){
+		modal.querySelector('[name="host"]').value				= hostName;
 	}
 	
 	Main.showModal(modal);
@@ -314,8 +362,13 @@ async function editTimeSlot(selected){
 	}
 
 	var answer = await Swal.fire(options);
-	
-	var firstCell	= selected[0].node;
+
+	let firstCell;
+	if(selected[0] == undefined){
+		firstCell	= selected;
+	}else{
+		firstCell	= selected[0].node;
+	}
 
 	//swap and/or
 	if (answer.isConfirmed) {
@@ -327,6 +380,7 @@ async function editTimeSlot(selected){
 		modal.querySelector('[name="add_timeslot"]').textContent	= 'Update time slot';
 	//add new rule after this one
 	}else if (answer.isDenied) {
+		console.log(firstCell)
 		removeHost(firstCell);
 	}
 }
@@ -373,16 +427,27 @@ async function submitRecipe(target){
 
 function loadHostFormdata(target){
 	var table			= target.closest('table');
-	var scheduleId		= table.dataset["id"];
-	var heading			= table.tHead.rows[0];
-	var cell			= target.closest('td');
-	var date			= heading.cells[cell.cellIndex].dataset.isodate;
-	var startTime		= target.closest('tr').dataset.starttime;
+
+	let scheduleId, heading, cell, date, startTime, host;
+
+	if(table == null){
+		scheduleId		= target.closest('.schedules_div').dataset["id"];
+		startTime		= target.dataset.starttime;
+		host			= target.dataset.host_id;
+		date			= target.dataset.isodate
+	}else{
+		scheduleId		= table.dataset["id"];
+		heading			= table.tHead.rows[0];
+		cell			= target.closest('td');
+		date			= heading.cells[cell.cellIndex].dataset.isodate;
+		startTime		= target.closest('tr').dataset.starttime;
+		host			= cell.dataset.host;
+	}
 
 	var formData		= new FormData();
-	formData.append('date',date);
-	if(cell.dataset.host != null){
-		formData.append('host', cell.dataset.host);
+	formData.append('date', date);
+	if(host != null){
+		formData.append('host_id', host);
 	}else{
 		formData.append('host_id', sim.userId);
 	}
@@ -534,6 +599,13 @@ document.addEventListener('click',function(event){
 	}else if (target.name == 'add_host_mobile' ){
 		event.stopPropagation();
 		addHostMobile(target)
+	}else if(target.closest('.remove-host-mobile') != null){
+		event.stopPropagation();
+		removeHost(target.closest('.remove-host-mobile'));
+	}else if(target.closest('.edit-session-mobile') != null){
+		editTimeSlot(target.closest('.edit-session-mobile'));
+	}else if(target.closest('.add-me-as-host') != null){
+		addCurrentUserAsHost(target.closest('.add-me-as-host'));
 	}
 	
 	if(target.classList.contains('keyword')){

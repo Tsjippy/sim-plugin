@@ -310,7 +310,8 @@ class CreateSchedule extends Schedules{
 		$schedule			= $this->findScheduleById($this->scheduleId);
 
 		// check if available
-		if($this->getScheduleEvent($schedule, $date, $this->startTime)){
+		$event	= $this->getScheduleEvent($schedule, $date, $this->startTime);
+		if($event && $event->id != $_POST['event-id']){
 			return new \WP_Error('schedules', 'This is already booked, sorry');
 		}
 
