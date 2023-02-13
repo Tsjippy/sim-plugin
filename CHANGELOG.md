@@ -4,6 +4,7 @@
 
 ### Added
 - admin add host on mobile
+- mobile schedule adjustments
 
 ### Changed
 
