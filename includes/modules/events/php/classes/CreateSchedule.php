@@ -377,12 +377,20 @@ class CreateSchedule extends Schedules{
 
 		if($title == 'lunch' || $title == 'dinner'){
 			$this->addScheduleEvents($title, $schedule);
-			
-			$html	= $this->writeMealCell($schedule, $this->date, $this->startTime);
+
+			if($this->mobile){
+				$html	= $this->getMobileDay($schedule, !$this->admin, $this->date);
+			}else{
+				$html	= $this->writeMealCell($schedule, $this->date, $this->startTime);
+			}
 		}else{
 			$this->addScheduleEvents($title, $schedule, false);
 
-			$html	= $this->writeOrientationCell($schedule, $this->date, $this->startTime);
+			if($this->mobile){
+				$html	= $this->getMobileDay($schedule, !$this->admin, $this->date);
+			}else{
+				$html	= $this->writeOrientationCell($schedule, $this->date, $this->startTime);
+			}
 		}
 		
 		return [

@@ -82,12 +82,11 @@ function removeRowSpan(target){
 }
 
 //shows the modal to select a user as host
-function showAddHostModal(){
+function showAddHostModal(target){
 	let table											= target.closest('table');
-	
+	target.classList.add('active');
 	let modal											= document.querySelector('[name="add_host"]');
 	if(table != null){
-		target.classList.add('active');
 		let cell											= target.closest('td');
 		let date											= table.rows[0].cells[cell.cellIndex].dataset.isodate;
 		let startTime										= target.closest('tr').dataset.starttime;
@@ -155,7 +154,6 @@ async function addCurrentUserAsHost(target){
 		scheduleOwner	= table.closest('.schedules_div').dataset.target;;
 		dateStr			= table.rows[0].cells[cell.cellIndex].dataset.date;
 	}else{
-		console.log(target)
 		scheduleOwner	= target.closest('.schedules_div').dataset.target;;
 		dateStr			= target.dataset.date;
 	}
@@ -166,10 +164,13 @@ async function addCurrentUserAsHost(target){
 	if(confirmed){
 
 		var formData		= loadHostFormdata(target);
-		
-		if(table != null){
-			target.classList.add('active');
-		}else{
+
+		target.classList.add('active');
+
+		if(target.closest('.session-wrapper-mobile ') != null){
+			target.closest('.session-wrapper-mobile ').classList.add('active');
+		}
+		if(table == null){
 			Main.showLoader(target);
 		}
 
@@ -183,16 +184,7 @@ async function addCurrentUserAsHost(target){
 
 // Show the new host in the schedule
 function addHostHtml(response){
-	var targetCell			= document.querySelector('td.active');
-
-	if(targetCell == null){
-		Main.hideModals();
-
-		Main.displayMessage(response.message);
-
-		location.reload();
-		return;
-	}
+	var targetCell			= document.querySelector('.active');
 
 	targetCell.classList.remove('active');
 	targetCell.outerHTML	= response.html;
@@ -200,6 +192,8 @@ function addHostHtml(response){
 	Main.displayMessage(response.message);
 
 	addSelectable();
+
+	Main.hideModals();
 }
 
 // Remove a host
@@ -276,23 +270,15 @@ function showTimeslotModal(selected=''){
 	modal.querySelectorAll('input:not([type="hidden"], [type="checkbox"], [type="radio"])').forEach(el=>el.value='');
 
 	if(selected[0] == undefined){
-		console.log(selected)
 		firstCell	= selected;
-		date		= selected.dataset.isodate;
-		startTime	= selected.dataset.starttime;
-		endTime		= selected.dataset.endtime;
-		subject		= selected.dataset.subject;
-		location	= selected.dataset.location;
-		hostName	= selected.dataset.host;
-		hostId		= selected.dataset.host_id;
-		eventId		= selected.dataset.event_id;
+		date		= firstCell.dataset.isodate;
+		startTime	= firstCell.dataset.starttime;
+		endTime		= firstCell.dataset.endtime;
 
 		modal.querySelector('[name="schedule_id"]').value		= selected.closest('.schedules_div').dataset.id;
 	}else{
 		firstCell		= selected[0].node;
 		let lastCell		= selected[selected.length-1].node;
-
-		firstCell.classList.add('active');
 		let rowCount		= document.querySelectorAll('.ui-selected').length;
 		applyRowSpan(firstCell, rowCount);
 
@@ -309,13 +295,19 @@ function showTimeslotModal(selected=''){
 		}
 		let table			= firstCell.closest('table');
 		date			= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
+	}
 
-		hostId			= firstCell.dataset.host_id;
-		oldTime			= firstCell.dataset.old_time;
-		subject			= firstCell.dataset.subject;
-		location		= firstCell.dataset.location;
-		hostName		= firstCell.dataset.host;
-		eventId			= firstCell.dataset.event_id;
+	hostId			= firstCell.dataset.host_id;
+	oldTime			= firstCell.dataset.old_time;
+	subject			= firstCell.dataset.subject;
+	location		= firstCell.dataset.location;
+	hostName		= firstCell.dataset.host;
+	eventId			= firstCell.dataset.event_id;
+	
+	if(target.closest('.day-wrapper-mobile') != null){
+		target.closest('.day-wrapper-mobile').classList.add('active');
+	}else{
+		firstCell.classList.add('active');
 	}
 
 	//Fill the modal values
@@ -380,7 +372,6 @@ async function editTimeSlot(selected){
 		modal.querySelector('[name="add_timeslot"]').textContent	= 'Update time slot';
 	//add new rule after this one
 	}else if (answer.isDenied) {
-		console.log(firstCell)
 		removeHost(firstCell);
 	}
 }
@@ -587,7 +578,6 @@ document.addEventListener('click',function(event){
 		
 		addHost(target);
 	}else if(target.matches('.close') && target.closest('.modal') != null && target.closest('.modal').attributes.name.value == 'add_session'){
-		console.log(target)
 		removeRowSpan(document.querySelector('td.active'));
 	}else if(target.name == 'add-session'){
 		event.stopPropagation();
@@ -746,7 +736,7 @@ function afterSelect(e, selected, _unselected){
 		removeHost(target);
 	//Add a host
 	}else if(target.matches('.meal.admin')){
-		showAddHostModal();
+		showAddHostModal(target);
 	//orientation slot
 	}else if(target.matches('.meal:not(.admin, .selected)')){
 		addCurrentUserAsHost(target);
