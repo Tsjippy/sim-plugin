@@ -97,6 +97,8 @@ add_action( 'rest_api_init', function () {
 				$schedules		= new CreateSchedule();
 
 				if(is_array($_POST['date'])){
+					$schedule		= $schedules->findScheduleById($schedules->scheduleId);
+
 					$succesFull		= '';
 					$unSuccesFull	= '';
 					foreach($_POST['date'] as $date){
@@ -112,20 +114,20 @@ add_action( 'rest_api_init', function () {
 								$succesFull		.= ' and ';
 							}
 							$succesFull	.= date('d-m-Y', strtotime($date));
+
+							$succes		= explode(" as a host for $schedule->name on", $result['message'])[0]." as a host for $schedule->name on";
 						}
 					}
 
-					$schedule			= $schedules->findScheduleById($schedules->scheduleId);
-
 					$msg	= '';
 					if(!empty($succesFull)){
-						$msg	.= "Succesfully added you as a host for $schedule->name on $succesFull";
+						$msg	.= "$succes $succesFull";
 					}
 					if(!empty($unSuccesFull)){
-						$msg	.= "Could not add you as a host for $schedule->name on $unSuccesFull";
+						$msg	.= "Existing bookings where found on $unSuccesFull";
 					}
 
-					return $msg;
+					return ['message'	=> $msg];
 				}
 				return $schedules->addHost($_POST['date']);
 			},

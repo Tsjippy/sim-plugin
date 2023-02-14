@@ -319,10 +319,14 @@ class Schedules{
 						$date			= date('Y-m-d', strtotime('+1 day', $dateTime) );
 					}
 
+					$nameString	= $schedule->name;
+					if(strpos($nameString, 'Family') !== false){
+						$nameString	= "the $nameString";
+					}
 					?>
 					<div class='lunch select-wrapper hidden'>
 						<label>
-							Select the date you want to host <?php echo $schedule->name;?> for lunch
+							Select the date(s) to host <?php echo $nameString;?> for lunch
 						</label>
 						<br>
 
@@ -340,7 +344,7 @@ class Schedules{
 					</div>
 					<div class='diner select-wrapper <?php if($schedule->lunch){echo 'hidden';}?>'>
 						<label>
-							Select the date you want to host <?php echo $schedule->name;?> for diner
+							Select the date(s) to host <?php echo $nameString;?> for diner
 						</label>
 						<br>
 						<?php
@@ -862,7 +866,11 @@ class Schedules{
 					}else{
 						echo "<input type='hidden' name='host' value='{$this->user->ID}'>";
 					}
-					echo SIM\addSaveButton('add_host','Add host','update_schedule');
+					$id	= 'add_host';
+					if($this->mobile){
+						$id	= 'add_host_mobile';
+					}
+					echo SIM\addSaveButton($id,'Add host','update_schedule');
 					?>
 				</form>
 			</div>

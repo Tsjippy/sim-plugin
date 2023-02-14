@@ -311,27 +311,29 @@ function showTimeslotModal(selected=''){
 	}
 
 	//Fill the modal values
-	modal.querySelector('[name="event-id"]').value			= eventId;
 	modal.querySelector('[name="date"]').value				= date;
-	modal.querySelector('[name="olddate"]').value 			= date;
 	modal.querySelector('[name="starttime"]').value			= startTime;
 	modal.querySelector('[name="endtime"]').value			= endTime;
-	modal.querySelector('[name="oldtime"]').value			= startTime;
 	modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
 	modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
-
-	if(hostId	!= undefined){
-		modal.querySelector('[name="host_id"]').value			= hostId;
+	if(startTime != undefined){
+		modal.querySelector('[name="oldtime"]').value		= startTime;
 	}
-
+	if(date != undefined){
+		modal.querySelector('[name="olddate"]').value 		= date;
+	}
+	if(eventId != undefined){
+		modal.querySelector('[name="event-id"]').value		= eventId;
+	}
+	if(hostId	!= undefined){
+		modal.querySelector('[name="host_id"]').value		= hostId;
+	}
 	if(subject	!= undefined){
 		modal.querySelector('[name="subject"]').value			= subject;
 	}
-
 	if(location	!= undefined){
 		modal.querySelector('[name="location"]').value			= location;
 	}
-
 	if(hostName	!= undefined){
 		modal.querySelector('[name="host"]').value				= hostName;
 	}
@@ -427,7 +429,7 @@ function loadHostFormdata(target){
 		host			= target.dataset.host_id;
 		date			= target.dataset.isodate
 	}else{
-		scheduleId		= table.dataset["id"];
+		scheduleId		= table.closest('.schedules_div').dataset["id"];
 		heading			= table.tHead.rows[0];
 		cell			= target.closest('td');
 		date			= heading.cells[cell.cellIndex].dataset.isodate;

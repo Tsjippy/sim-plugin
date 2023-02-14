@@ -342,7 +342,7 @@ class CreateSchedule extends Schedules{
 		}
 
 		// remove any existing events
-		if(isset($_POST['oldtime'])){
+		if(!empty($_POST['event-id'])){
 			$this->date			= $_POST['olddate'];
 			$this->startTime	= $_POST['oldtime'];
 			$this->removeHost();
