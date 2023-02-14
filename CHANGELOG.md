@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.29.6] - 2023-02-14
+
+
+### Changed
 - split js for mobile schedules
 
 ### Fixed
