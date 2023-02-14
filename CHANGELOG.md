@@ -10,6 +10,16 @@
 
 ### Updated
 
+## [2.29.5] - 2023-02-13
+
+
+### Changed
+- change mobile schedule over ajax
+
+### Fixed
+
+### Updated
+
 ## [2.29.4] - 2023-02-13
 
 
