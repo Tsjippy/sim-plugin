@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- split js for mobile schedules
 
 ### Fixed
 
