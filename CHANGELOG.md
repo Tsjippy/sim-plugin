@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- use wp date and time format
 
 ### Fixed
 
