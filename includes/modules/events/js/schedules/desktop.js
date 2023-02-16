@@ -78,38 +78,69 @@ function applyRowSpan(target, count){
 	}
 }
 
-function removeRowSpan(target){
-	document.querySelectorAll('.ui-selected').forEach(el=>el.classList.remove('ui-selected', 'active', 'hidden'));
-	target.rowSpan = 1;
+function removeRowSpan(cell){
+	cell.removeAttribute('rowspan');
+	let row			= cell.closest('tr').nextElementSibling;
+	cell			= row.cells[cell.cellIndex];
+	while(cell.matches('.hidden')){
+		cell.classList.remove('hidden');
+		row				= row.nextElementSibling;
+		cell			= row.cells[cell.cellIndex];
+	}
 }
 
 // Add a new host/ updates an existing entry when the host form is submitted
 async function addHost(target){
-	let form	= target.closest('form');
-	let oldtime	= form.querySelector('[name="oldtime"]').value;
-	if(oldtime != ''){
-		// remove the old event
-		let cell	= document.querySelector('td.active');
-		if(cell != null){
-			cell.classList.remove('ui-selected', 'active', 'selected');
-			cell.removeAttribute('rowspan');
+	let form		= target.closest('form');
+	let sessionId	= form.querySelector('[name="session-id"]').value;
+	let date		= form.querySelector('[name="date"]').value;
+	let startTime	= form.querySelector('[name="starttime"]').value;
+	let endTime		= form.querySelector('[name="endtime"]').value;
+	let newCell, table, newRow, newCol, cell, oldStartTime, oldDate, oldEndTime;
 
-			let date		= form.querySelector('[name="date"]').value;
-			let time		= form.querySelector('[name="starttime"]').value;
-			let columnNr	= cell.closest('table').tHead.querySelector(`[data-isodate="${date}"]`).cellIndex;
-			// Add the new one
-			let newCell		= cell.closest('table').querySelector(`tr[data-starttime="${time}"]`).cells[columnNr];
-			newCell.classList.add('ui-selected', 'active', 'selected');
-			newCell.innerHTML	= cell.innerHTML;
-
-			cell.innerHTML	= 'Available';
-		}
-	}
+	cell			= document.querySelector('td.active');
+	Main.showLoader(cell.firstChild);
 
 	var response 	= await FormSubmit.submitForm(target, 'events/add_host');
 
 	if(response){
+		table			= cell.closest('table');
+		newCell	= cell;
+		newRow	= cell.closest('tr');
+		newCol	= cell.cellIndex;
+
+		if(sessionId != ''){
+			oldStartTime	= cell.dataset.starttime;
+			oldEndTime		= cell.dataset.endtime;
+			oldDate			= table.rows[0].cells[1].dataset.isodate;
+			
+			// Adjust the table if date or times changed
+			if(oldDate != date || oldStartTime != startTime || oldEndTime != endTime){
+				removeRowSpan(cell);
+
+				if(oldDate != date || oldStartTime != startTime){
+					cell.innerHTML	= 'Available';
+
+					// find the new cell
+					newRow	= table.querySelector(`tr[data-starttime="${startTime}"]`);
+					newCol	= table.rows[0].querySelector(`[data-isodate="${date}"]`).cellIndex;
+					newCell	= newRow.cells[newCol];
+
+					// make old cell a normall cell
+					cell.classList.remove('ui-selected', 'active', 'selected');
+
+					// make the new cell the active cell
+					newCell.classList.add('ui-selected', 'active', 'selected');
+				}
+			}
+		}
+
 		addHostHtml(response);
+
+		// Get the new inserted cell
+		cell	= newRow.cells[newCol];
+
+		applyRowSpan(cell, cell.rowSpan);
 
         addSelectable();
 	}
@@ -244,26 +275,18 @@ async function deleteHost(target){
     let index   = cell.cellIndex;
     let row     = cell.closest('tr');
     let dateStr = cell.closest('table').rows[0].cells[cell.cellIndex].dataset.date;
-    let result  = await removeHost(target, dateStr);
+
+    let result  = await removeHost(cell, dateStr);
 
     if(result){
-        row.querySelector('.loaderwrapper').outerHTML   = `<td>Available</td>`;
+        cell.outerHTML   		= `<td>Available</td>`;
 
         cell                    = row.cells[index];
+		removeRowSpan(cell);
+
         cell.classList.value    = classes;
-        cell.classList.remove('selected');
 
-        //only remove rowspan if the first cell of a row has no rowspan
-        if(row.cells[0].rowSpan==1){
-            //Loop over the next cells to remove the hidden attribute
-            for (var i = 1; i < target.rowSpan; i++) {
-                row = row.nextElementSibling;
-                row.cells[index].classList.remove('hidden');
-            }
-
-            //Reset the rowSpan
-            target.rowSpan = 1;
-        }
+        cell.classList.remove('selected', 'ui-selected', 'active');
     }
 }
 
@@ -412,7 +435,7 @@ document.addEventListener('change', function(event){
 		target.closest('form').querySelector('[name="host_id"]').value	= userId;
 	}
 
-	if(target.matches('[name="add_session"] .time')){
+	/* if(target.matches('[name="add_session"] .time')){
 		// get the active cell
 		let cell		= document.querySelector('td.active');
 
@@ -455,5 +478,5 @@ document.addEventListener('change', function(event){
 		}else{
 			applyRowSpan(cell, rowSpan);
 		}
-	}
+	} */
 });

@@ -45,7 +45,7 @@ add_action('sim_signal_before_pref_save', function($userId, $prefs){
     update_option('signal_prayers', $prayerTimes);
 
     // Also add to todays schedule if time is later today
-    $curTime	= current_time('H:i');
+    $curTime	= current_time(TIMEFORMAT);
     if($time > $curTime){
         $date			= \Date('y-m-d');
         $schedule		= (array)get_option("prayer_schedule_$date");

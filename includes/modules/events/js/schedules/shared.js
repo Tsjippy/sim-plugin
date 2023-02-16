@@ -41,8 +41,10 @@ export async function addCurrentUserAsHost(target, dateStr){
 export function addHostHtml(response){
 	let target			= document.querySelector('.active');
 
-	target.classList.remove('active');
-	target.outerHTML	= response.html;
+	if(target != null){
+		target.classList.remove('active');
+		target.outerHTML	= response.html;
+	}
 
 	Main.displayMessage(response.message);
 
@@ -54,7 +56,6 @@ export async function removeHost(target, dateStr){
 	let text, confirmed;
 
     let scheduleOwner	= target.closest('.schedules_div').dataset.target;
-    let formData		= loadHostFormdata(target);
 
 	if(target.classList.contains('orientation')){
 		text 	= `Are you sure you want to remove this orientation session`;
@@ -67,7 +68,10 @@ export async function removeHost(target, dateStr){
 	confirmed	= await checkConfirmation(text, target.firstChild);
 
 	if(confirmed){
-		Main.showLoader(target);
+		
+		let formData		= new FormData();
+		formData.append('session_id', target.dataset.session_id);
+		Main.showLoader(target.firstChild);
 
 		var response = await FormSubmit.fetchRestApi('events/remove_host', formData);
 
@@ -78,7 +82,7 @@ export async function removeHost(target, dateStr){
 }
 
 export function showTimeslotModal(target='', date='', startTime='', endTime=''){
-	let hostId, oldTime, subject, location, hostName, eventId;
+	let hostId, subject, location, hostName, sessionId;
 	let modal 			= document.querySelector('[name="add_session"]');
 
 	// Clear
@@ -87,11 +91,10 @@ export function showTimeslotModal(target='', date='', startTime='', endTime=''){
 	modal.querySelector('[name="schedule_id"]').value		= target.closest('.schedules_div').dataset.id;
 
 	hostId			= target.dataset.host_id;
-	oldTime			= target.dataset.old_time;
 	subject			= target.dataset.subject;
 	location		= target.dataset.location;
 	hostName		= target.dataset.host;
-	eventId			= target.dataset.event_id;
+	sessionId		= target.dataset.session_id;
 
 	//Fill the modal values
 	modal.querySelector('[name="date"]').value				= date;
@@ -99,26 +102,21 @@ export function showTimeslotModal(target='', date='', startTime='', endTime=''){
 	modal.querySelector('[name="endtime"]').value			= endTime;
 	modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
 	modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
-	if(startTime != undefined){
-		modal.querySelector('[name="oldtime"]').value		= startTime;
-	}
-	if(date != undefined){
-		modal.querySelector('[name="olddate"]').value 		= date;
-	}
-	if(eventId != undefined){
-		modal.querySelector('[name="event-id"]').value		= eventId;
+
+	if( target.dataset.session_id != undefined){
+		modal.querySelector('[name="session-id"]').value	= sessionId;
 	}
 	if(hostId	!= undefined){
 		modal.querySelector('[name="host_id"]').value		= hostId;
 	}
 	if(subject	!= undefined){
-		modal.querySelector('[name="subject"]').value			= subject;
+		modal.querySelector('[name="subject"]').value		= subject;
 	}
 	if(location	!= undefined){
-		modal.querySelector('[name="location"]').value			= location;
+		modal.querySelector('[name="location"]').value		= location;
 	}
 	if(hostName	!= undefined){
-		modal.querySelector('[name="host"]').value				= hostName;
+		modal.querySelector('[name="host"]').value			= hostName;
 	}
 	
 	Main.showModal(modal);

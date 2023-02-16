@@ -108,12 +108,12 @@ add_action( 'rest_api_init', function () {
 							if(!empty($unSuccesFull)){
 								$unSuccesFull		.= ' and ';
 							}
-							$unSuccesFull	.= date('d-m-Y', strtotime($date));
+							$unSuccesFull	.= date(DATEFORMAT, strtotime($date));
 						}else{
 							if(!empty($succesFull)){
 								$succesFull		.= ' and ';
 							}
-							$succesFull	.= date('d-m-Y', strtotime($date));
+							$succesFull	.= date(DATEFORMAT, strtotime($date));
 
 							$succes		= explode(" as a host for $schedule->name on", $result['message'])[0]." as a host for $schedule->name on";
 						}
@@ -163,28 +163,14 @@ add_action( 'rest_api_init', function () {
 			'methods' 				=> 'POST',
 			'callback' 				=> function(){
 				$schedule				= new CreateSchedule();
-				$schedule->date			= $_POST['date'];
-				$schedule->startTime	= $_POST['starttime'];
-				return $schedule->removeHost();
+				return $schedule->removeHost($_POST['session_id']);
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
-				'schedule_id'		=> array(
+				'session_id'		=> array(
 					'required'			=> true,
 					'validate_callback' => function($scheduleId){
 						return is_numeric($scheduleId);
-					}
-				),
-				'date'		=> array(
-					'required'			=> true,
-					'validate_callback' => function($param){
-						return SIM\isDate($param);
-					}
-				),
-				'starttime'		=> array(
-					'required'			=> true,
-					'validate_callback' => function($param){
-						return SIM\isTime($param);
 					}
 				)
 			)

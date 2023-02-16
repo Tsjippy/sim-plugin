@@ -11,6 +11,7 @@ class CreateSchedule extends Schedules{
 	public $hostId;
 	public $scheduleId;
 	public $name;
+	public $title;
 
 	/**
 	 * Add a new event to the db
@@ -44,17 +45,18 @@ class CreateSchedule extends Schedules{
 				wp_schedule_single_event($start, 'send_event_reminder_action', [$eventId]);
 			}
 		}
+
+		return $eventId;
 	}
 
 	/**
 	 * Add new events to the db when a new activity is scheduled
 	 *
 	 * @param	string	$title			the title of the event
-	 * @param	object	$schedule		the schedule of the event
 	 * @param	bool	$addHostPartner	Whether to add an event for the host partner as well. Default true
 	 * @param	bool	$addPartner		Whether to add an event for the schedule target partner as well. Default true
 	*/
-	protected function addScheduleEvents($title, $schedule, $addHostPartner=true, $addPartner=true){
+	protected function addScheduleEvents($addHostPartner=true, $addPartner=true){
 		$event							= [];
 		$event['startdate']				= $this->date;
 		$event['starttime']				= $this->startTime;
@@ -62,7 +64,6 @@ class CreateSchedule extends Schedules{
 		$event['endtime']				= $this->endTime;
 		$event['location']				= $this->location;
 		$event['organizer_id']			= $this->hostId;
-		$event['schedule_id']			= $this->scheduleId;
 		
 		$hostPartner					= false;
 		if(is_numeric($this->hostId)){
@@ -74,6 +75,188 @@ class CreateSchedule extends Schedules{
 		}elseif(!empty($_POST['host'])){
 			$event['organizer']					= $_POST['host'];
 		}
+
+		if($addPartner){
+			$partnerId	= SIM\hasPartner($this->currentSchedule->target);
+		}else{
+			$partnerId	= false;
+		}
+
+		//clean title
+		$title	= str_replace([" with", $event['organizer'], "Hosting {$this->name} for "], '', $this->title);
+
+		if(!empty($event['organizer'])){
+			$ownTitle	= ucfirst($title)." with {$event['organizer']}";
+		}else{
+			$ownTitle	= ucfirst($title);
+		}
+
+		if(strpos(strtolower($ownTitle), 'at home') !== false){
+			if(!empty($event['organizer'])){
+				$ownTitle	= ucfirst($title).' '.$event['organizer'];
+			}
+
+			$event['location']	= 'Home';
+			unset($event['organizer']);
+		}
+		
+		//New events
+		$eventArray		= [
+			[
+				'title'		=> $ownTitle,
+				'onlyfor'	=> [$this->currentSchedule->target]
+			]
+		];
+
+		if($partnerId){
+			$eventArray[0]['onlyfor'][]	= $partnerId;
+		}
+
+		if(is_numeric($this->hostId)){
+			$eventArray[] =
+			[
+				'title'		=>"Hosting {$this->name} for $title",
+				'onlyfor'	=>[$this->hostId, $hostPartner]
+			];
+		}
+
+		$eventIds	= [];
+		$postIds	= [];
+		foreach($eventArray as $a){
+			$post = array(
+				'post_type'		=> 'event',
+				'post_title'    => $a['title'],
+				'post_content'  => $a['title'],
+				'post_status'   => "publish",
+				'post_author'   => $this->hostId
+			);
+
+			$postId 	= wp_insert_post( $post, true, false);
+			$postIds[]	= $postId;
+			update_post_meta($postId, 'eventdetails', json_encode($event));
+			update_post_meta($postId, 'onlyfor', $a['onlyfor']);
+			update_post_meta($postId, 'reminders', $_POST['reminders']);
+
+			// setting the eventdetails meta value also creates the event. Remove it
+			$events = new CreateEvents();
+			$events->postId	= $postId;
+			$events->removeDbRows();
+
+			foreach($a['onlyfor'] as $userId){
+				if(is_numeric($userId)){
+					$event['onlyfor']	= $userId;
+					$event['post_id']	= $postId;
+					$eventId 		= $this->addEventToDb($event);
+
+					if(is_numeric($eventId)){
+						$eventIds[]	= $eventId;
+					}
+				}
+			}
+		}
+
+		// store the event and post ids in db
+		global $wpdb;
+
+		$wpdb->insert(
+			$this->sessionTableName,
+			[
+				'schedule_id'	=> $this->scheduleId,
+				'post_ids'		=> serialize($postIds),
+				'event_ids'		=> serialize($eventIds),
+				'meal'			=> $title == 'lunch' || $title == 'dinner'
+			]
+		);
+
+		// add to schedule
+		if(!isset($this->currentSchedule->sessions[$this->date])){
+			$this->currentSchedule->sessions[$this->date]	= [];
+		}
+		$this->currentSchedule->sessions[$this->date][$this->startTime]	= $this->getSessionEvent($wpdb->insert_id);
+	}
+
+	/**
+	 * Updates events in the db
+	*/
+	protected function updateScheduleEvents($addHostPartner=true, $addPartner=true){
+		global $wpdb;
+
+		$updated	= false;
+
+		$hostPartner					= false;
+		if(is_numeric($this->hostId)){
+			if($addHostPartner){
+				$organizer				= SIM\getFamilyName($this->hostId, $hostPartner);
+			}else{
+				$organizer				= get_userdata($this->hostId)->display_name;
+			}
+		}elseif(!empty($_POST['host'])){
+			$organizer				= $_POST['host'];
+		}
+
+		$args	= [];
+		foreach($this->currentSession->events as $event){
+			if($event->startdate != $this->date){
+				$args['startdate']	= $this->date;
+				$args['enddate']		= $this->date;
+				$updated			= true;
+			}
+
+			if($event->starttime != $this->startTime){
+				$args['starttime']	= $this->startTime;
+				$updated			= true;
+			}
+
+			if($event->endtime != $this->endTime){
+				$args['endtime']	= $this->endTime;
+				$updated			= true;
+			}
+
+			if($event->location != $this->location){
+				$args['location']	= $this->location;
+				$updated			= true;
+			}
+
+			if($event->organizer != $organizer){
+				$args['organizer']	= $organizer;
+				$updated			= true;
+			}
+
+			if($event->organizer_id != $this->hostId){
+				$args['organizer_id']	= $this->hostId;
+				$updated				= true;
+			}
+
+			if(!$updated){
+				return new WP_Error('schedules', 'Nothing to update');
+			}
+
+			//Update the database
+			$wpdb->update(
+				$this->events->tableName,
+				$args,
+				array(
+					'id'		=> $event->id
+				),
+			);
+		}
+
+		// update the schedule
+		if(!isset($this->currentSchedule->sessions[$this->date])){
+			$this->currentSchedule->sessions[$this->date]	= [];
+		}
+		$this->currentSchedule->sessions[$this->date][$this->startTime]	= $this->getSessionEvent($this->currentSession->id);
+
+/* 		$event							= [];
+		$event['startdate']				= $this->date;
+		$event['starttime']				= $this->startTime;
+		$event['enddate']				= $this->date;
+		$event['endtime']				= $this->endTime;
+		$event['location']				= $this->location;
+		$event['organizer_id']			= $this->hostId;
+		//$event['schedule_id']			= $this->scheduleId;
+		
+		
 
 		if($addPartner){
 			$partnerId	= SIM\hasPartner($schedule->target);
@@ -97,56 +280,9 @@ class CreateSchedule extends Schedules{
 
 			$event['location']	= 'Home';
 			unset($event['organizer']);
-		}
+		} */
 		
-		//New events
-		$eventArray		= [
-			[
-				'title'		=> $ownTitle,
-				'onlyfor'	=> [$schedule->target]
-			]
-		];
-
-		if($partnerId){
-			$eventArray[0]['onlyfor'][]	= $partnerId;
-		}
-
-		if(is_numeric($this->hostId)){
-			$eventArray[] =
-			[
-				'title'		=>"Hosting {$this->name} for $title",
-				'onlyfor'	=>[$this->hostId, $hostPartner]
-			];
-		}
-
-		foreach($eventArray as $a){
-			$post = array(
-				'post_type'		=> 'event',
-				'post_title'    => $a['title'],
-				'post_content'  => $a['title'],
-				'post_status'   => "publish",
-				'post_author'   => $this->hostId
-			);
-
-			$postId 	= wp_insert_post( $post, true, false);
-			
-			update_post_meta($postId, 'eventdetails', json_encode($event));
-			update_post_meta($postId, 'onlyfor', $a['onlyfor']);
-			update_post_meta($postId, 'reminders', $_POST['reminders']);
-
-			// setting the eventdetails meta value also creates the event. Remove it
-			$events = new CreateEvents();
-			$events->postId	= $postId;
-			$events->removeDbRows();
-
-			foreach($a['onlyfor'] as $userId){
-				if(is_numeric($userId)){
-					$event['onlyfor']	= $userId;
-					$event['post_id']	= $postId;
-					$this->addEventToDb($event);
-				}
-			}
-		}
+		
 	}
 	
 	/**
@@ -310,8 +446,8 @@ class CreateSchedule extends Schedules{
 		$schedule			= $this->findScheduleById($this->scheduleId);
 
 		// check if available
-		$event	= $this->getScheduleEvent($schedule, $date, $this->startTime);
-		if($event && $event->id != $_POST['event-id']){
+		$session	= $this->getScheduleSession($date, $this->startTime);
+		if($session && $session->id != $_POST['session-id']){
 			return new \WP_Error('schedules', 'This is already booked, sorry');
 		}
 
@@ -341,56 +477,50 @@ class CreateSchedule extends Schedules{
 			}
 		}
 
-		// remove any existing events
-		if(!empty($_POST['event-id'])){
-			$this->date			= $_POST['olddate'];
-			$this->startTime	= $_POST['oldtime'];
-			$this->removeHost();
-
-			$message	= "Succesfully updated this entry";
-		}
-
 		$this->name			= $schedule->name;
 		$this->date			= $date;
 		$dateStr			= date('d F Y',strtotime($this->date));
+		$isMeal				= false;
 		if($this->startTime == $this->lunchStartTime && $schedule->lunch){
 			$this->endTime		= $this->lunchEndTime;
-			$title				= 'lunch';
+			$this->title		= 'lunch';
 			$this->location		= "House of $hostName";
+			$isMeal				= true;
 		}elseif($this->startTime == $this->dinerTime){
 			$this->endTime		= '19:30';
-			$title				= 'dinner';
+			$this->title		= 'dinner';
 			$this->location		= "House of $hostName";
+			$isMeal				= true;
 		}else{
-			$title				= sanitize_text_field($_POST['subject']);
+			$this->title		= sanitize_text_field($_POST['subject']);
 			$this->location		= sanitize_text_field($_POST['location']);
 			$this->endTime		= $_POST['endtime'];
 		}
 
-		if(empty($message)){
-			if($this->admin){
-				$message	= "Succesfully added $hostName as a host for {$this->name} on $dateStr";
-			}else{
-				$message	= "Succesfully added you as a host for {$this->name} on $dateStr";
-			}
+		if(!empty($_POST['session-id'])){
+			$message	= "Succesfully updated this entry";
+		}elseif($this->admin){
+			$message	= "Succesfully added $hostName as a host for {$this->name} on $dateStr";
+		}else{
+			$message	= "Succesfully added you as a host for {$this->name} on $dateStr";
 		}
 
-		if($title == 'lunch' || $title == 'dinner'){
-			$this->addScheduleEvents($title, $schedule);
-
-			if($this->mobile){
-				$html	= $this->getMobileDay($schedule, !$this->admin, $this->date);
-			}else{
-				$html	= $this->writeMealCell($schedule, $this->date, $this->startTime);
-			}
+		if($session){
+			$result	= $this->updateScheduleEvents($isMeal);
 		}else{
-			$this->addScheduleEvents($title, $schedule, false);
+			$result	= $this->addScheduleEvents($isMeal);
+		}
 
-			if($this->mobile){
-				$html	= $this->getMobileDay($schedule, !$this->admin, $this->date);
-			}else{
-				$html	= $this->writeOrientationCell($schedule, $this->date, $this->startTime);
-			}
+		if(is_wp_error($result)){
+			return $result;
+		}
+
+		if($this->mobile){
+			$html	= $this->getMobileDay($this->date);
+		}elseif($isMeal){
+			$html	= $this->writeMealCell($this->date, $this->startTime);
+		}else{
+			$html	= $this->writeOrientationCell($this->date, $this->startTime);
 		}
 		
 		return [
@@ -404,43 +534,44 @@ class CreateSchedule extends Schedules{
 	 *
 	 * @return string	success message
 	*/
-	public function removeHost(){
-		$this->scheduleId	= $_POST['schedule_id'];
-		$schedule			= $this->findScheduleById($this->scheduleId);
+	public function removeHost($sessionId){
+		global $wpdb;
 
-		$this->hostId		= $_POST['host_id'];
+		$session			= $this->getSessionEvent($sessionId);
 
-		$partnerId			= SIM\hasPartner($this->hostId);
+		$hostId				= $session->events[0]->organizer_id;
+
+		$partnerId			= SIM\hasPartner($this->user->ID);
 		if(
-			!$this->admin 						&&
-			$this->hostId != $this->user->ID 	&&
-			$this->hostId != $partnerId
+			!$this->admin 				&&
+			$hostId != $this->user->ID 	&&
+			$hostId != $partnerId
 		){
 			return new \WP_Error('Permission error', $this->noPermissionText);
 		}
-
-		if($partnerId){
-			$hostName		= SIM\getFamilyName($this->hostId);
-		}else{
-			$hostName		= get_userdata($this->hostId)->display_name;
-		}
 		
-		$dateStr			= date('d F Y', strtotime($this->date));
-
-		$events				= $this->getScheduleEvents($schedule->id, $this->date, $this->startTime);
-		
-		foreach($events as $event){
+		foreach($session->post_ids as $id){
 			//delete event_post
-			wp_delete_post($event->post_id);
+			wp_delete_post($id);
 
 			//delete events
-			$this->events->removeDbRows($event->post_id);
+			$this->events->removeDbRows($id);
 		}
 
+		// Delete the session
+		$wpdb->delete(
+			$this->sessionTableName,
+			['id' => $sessionId],
+			['%d'],
+		);
+
+		$dateStr		= date(get_option( 'date_format' ), strtotime($session->events[0]->startdate));
+
 		if($this->admin){
-			$message	= "Succesfully removed $hostName as a host for {$schedule->name} on $dateStr";
+			$hostName	= $session->events[0]->organizer;
+			$message	= "Succesfully removed $hostName as a host on $dateStr";
 		}else{
-			$message	= "Succesfully removed you as a host for {$this->name} on $dateStr";
+			$message	= "Succesfully removed you as a host on $dateStr";
 		}
 
 		return $message;

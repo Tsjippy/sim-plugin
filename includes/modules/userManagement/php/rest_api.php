@@ -243,7 +243,7 @@ function extendValidity(){
         $message    = "Marked the useraccount for ".get_userdata($userId)->first_name." to never expire.";
     }else{
         $date       = sanitize_text_field($_POST['new_expiry_date']);
-        $dateStr   = date('d-m-Y', strtotime($date));
+        $dateStr   = date(DATEFORMAT, strtotime($date));
         $message    = "Extended valitidy for ".get_userdata($userId)->first_name." till $dateStr";
     }
     update_user_meta( $userId, 'account_validity', $date);

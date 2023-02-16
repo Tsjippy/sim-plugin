@@ -175,7 +175,7 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 		}
 	}
 
-	$curTime	= current_time('H:i');
+	$curTime	= current_time(TIMEFORMAT);
 	foreach($added as $key=>$group){
 		// only add times in the future
 		if($group['time'] > $curTime){

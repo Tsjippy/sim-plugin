@@ -31,7 +31,7 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 	$res->requires 			= '5.5';
 	$res->author_profile 	= $release['author']['url'];
 	$res->requires_php 		= '7.1';
-	$res->last_updated 		= \Date('d-m-Y', strtotime($release['published_at']));
+	$res->last_updated 		= \Date(DATEFORMAT, strtotime($release['published_at']));
 
 	$description    = get_transient('sim-git-description');
 	// if not in transient

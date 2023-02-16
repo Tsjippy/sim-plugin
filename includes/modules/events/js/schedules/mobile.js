@@ -2,23 +2,13 @@ import { addCurrentUserAsHost, removeHost, editTimeSlot, addHostHtml } from './s
 
 console.log("Mobile-schedule.js loaded");
 
-async function addHostMobile(target){
-	var response 	= await FormSubmit.submitForm(target, 'events/add_host');
-
-    console.log(response);
-	if(response){
-		Main.displayMessage(response.message);
-	}
-
-	Main.hideModals();
-}
-
 // Add a new host/ updates an existing entry when the host form is submitted
 async function addHost(target){
 	var response 	= await FormSubmit.submitForm(target, 'events/add_host');
 
 	if(response){
 		addHostHtml(response);
+		Main.displayMessage(response.message);
 	}
 
     Main.hideModals();
@@ -43,7 +33,7 @@ document.addEventListener('click', async function(event){
         }
 	}else if (target.name == 'add_host_mobile' || target.name == 'add_timeslot' ){
 		event.stopPropagation();
-		addHostMobile(target)
+		addHost(target)
 	}else if(target.closest('.edit-session-mobile') != null){
         target  = target.closest('.edit-session-mobile');
 

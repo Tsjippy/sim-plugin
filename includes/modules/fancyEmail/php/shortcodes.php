@@ -74,7 +74,7 @@ function emailStats(){
                         <th>Viewcount</th>
                         <?php
                     }
-                    ?>                
+                    ?>
                 </tr>
             </thead>
             <?php
@@ -82,7 +82,7 @@ function emailStats(){
                 ?>
                 <tr>
                     <td>
-                        <?php echo date('d-m-Y H:i', $result->time_send);?>
+                        <?php echo date(DATEFORMAT.' '.TIMEFORMAT, $result->time_send);?>
                     </td>
                     <td>
                         <?php echo $result->recipients;?>

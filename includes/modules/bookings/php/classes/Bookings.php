@@ -311,7 +311,7 @@ class Bookings{
                             $data   .= "data-bookingid='{$this->unavailable[$workingDateStr]}'";
                         }
                         
-                        $calendarRows .=  "<dt class='calendar day $class' data-date='".date('d-m-Y', $workingDate)."' data-isodate='".date('Y-m-d', $workingDate)."' $data>";
+                        $calendarRows .=  "<dt class='calendar day $class' data-date='".date(DATEFORMAT, $workingDate)."' data-isodate='".date('Y-m-d', $workingDate)."' $data>";
                             $calendarRows	.= "<span class='day-nr'>$workingDay</span>";
                         $calendarRows	.= "</dt>";
                     }

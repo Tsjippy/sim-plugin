@@ -207,8 +207,8 @@ function printArray($message, $display=false){
 		error_log(print_r($message,true));
 		//file_put_contents(__DIR__.'/simlog.log',print_r($message,true),FILE_APPEND);
 	}else{
-		error_log(date('d-m-Y H:i',time()).' - '.$message);
-		//file_put_contents(__DIR__.'/simlog.log',date('d-m-Y H:i',time())." - $message\n",FILE_APPEND);
+		error_log(date(DATEFORMAT.' '.TIMEFORMAT, time()).' - '.$message);
+		//file_put_contents(__DIR__.'/simlog.log',date(DATEFORMAT.' '.TIMEFORMAT, time())." - $message\n",FILE_APPEND);
 	}
 	
 	if($display){

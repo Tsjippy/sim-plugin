@@ -389,11 +389,11 @@ add_filter('sim_signal_post_notification_message', function($excerpt, $post){
 	if($post->post_type == 'event'){
 		$events		= new DisplayEvents();
 		$event		= $events->retrieveSingleEvent($post->ID);
-		$startDate	= date('d-m-Y', strtotime($event->startdate));
+		$startDate	= date(DATEFORMAT, strtotime($event->startdate));
 		if($event->startdate == $event->enddate){
 			$excerpt .= "\n\nDate: $startDate";
 		}else{
-			$enddate	 = date('d-m-Y', strtotime($event->enddate));
+			$enddate	 = date(DATEFORMAT, strtotime($event->enddate));
 			$excerpt 	.= "\n\nStart date: $startDate";
 			$excerpt 	.= "\nEnd date: $enddate";
 		}

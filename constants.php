@@ -14,3 +14,5 @@ define('INCLUDESPATH', PLUGINPATH.'includes/');
 define('MODULESPATH', INCLUDESPATH.'modules/');
 define('PICTURESPATH', INCLUDESPATH.'pictures/');
 define('RESTAPIPREFIX', 'sim/v2');
+define('DATEFORMAT', get_option('date_format'));
+define('TIMEFORMAT', get_option('time_format'));

@@ -163,7 +163,7 @@ function upcomingArrivalsBlock($attributes){
 
 		$url 	= SIM\maybeGetUserPageUrl($user->ID);
 
-		$dateString	= date('d-m-Y', strtotime(get_user_meta($user->ID, 'arrival_date', true)));
+		$dateString	= date(DATEFORMAT, strtotime(get_user_meta($user->ID, 'arrival_date', true)));
 
 		// Add to an existing date, multiple people arrive on the same date
 		if(isset($dates[$dateString])){

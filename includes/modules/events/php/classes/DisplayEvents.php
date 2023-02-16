@@ -144,7 +144,7 @@ class DisplayEvents extends Events{
 
 		foreach($this->events as $key=>$event){
 			// do not keep events who already happened
-			if($event->startdate == date("Y-m-d") && $event->endtime < date('H:i', current_time('U'))){
+			if($event->startdate == date("Y-m-d") && $event->endtime < date(TIMEFORMAT, current_time('U'))){
 				unset($this->events[$key]);
 			}
 		}
@@ -204,9 +204,9 @@ class DisplayEvents extends Events{
 			$event->enddate	= $event->startdate;
 		}
 		if($event->startdate != $event->enddate){
-			$date		= date('d-m-Y', strtotime($event->startdate)).' - '.date('d-m-Y', strtotime($event->enddate));
+			$date		= date(DATEFORMAT, strtotime($event->startdate)).' - '.date(DATEFORMAT, strtotime($event->enddate));
 		}else{
-			$date		= date('d-m-Y', strtotime($event->startdate));
+			$date		= date(DATEFORMAT, strtotime($event->startdate));
 		}
 
 		return $date;
@@ -227,7 +227,7 @@ class DisplayEvents extends Events{
 				$time			= $event->starttime.' - '.$event->endtime;
 			}
 		}else{
-			$time			= date('d-m-Y',strtotime($event->startdate)).' - '.$event->starttime.' - '.date('d-m-Y',strtotime($event->enddate)).' - '.$event->endtime;
+			$time			= date(DATEFORMAT, strtotime($event->startdate)).' - '.$event->starttime.' - '.date(DATEFORMAT, strtotime($event->enddate)).' - '.$event->endtime;
 		}
 
 		return $time;

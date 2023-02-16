@@ -13,7 +13,7 @@ class AccountExpiryMail extends ADMIN\MailSetting{
 
         $this->addUser($user);
         
-		$expiryDate		                        = date("d-m-Y", strtotime(" +1 months"));
+		$expiryDate		                        = date(DATEFORMAT, strtotime(" +1 months"));
         $this->replaceArray['%expiry_date%']    = $expiryDate;
 
         $this->defaultSubject    = 'Your account will expire on %expiry_date%';

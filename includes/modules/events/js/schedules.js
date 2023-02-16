@@ -302,7 +302,7 @@ function showTimeslotModal(selected=''){
 	subject			= firstCell.dataset.subject;
 	location		= firstCell.dataset.location;
 	hostName		= firstCell.dataset.host;
-	eventId			= firstCell.dataset.event_id;
+	sessionId		= firstCell.dataset.session_id;
 	
 	if(target.closest('.day-wrapper-mobile') != null){
 		target.closest('.day-wrapper-mobile').classList.add('active');
@@ -323,7 +323,7 @@ function showTimeslotModal(selected=''){
 		modal.querySelector('[name="olddate"]').value 		= date;
 	}
 	if(eventId != undefined){
-		modal.querySelector('[name="event-id"]').value		= eventId;
+		modal.querySelector('[name="session-id"]').value	= sessionId;
 	}
 	if(hostId	!= undefined){
 		modal.querySelector('[name="host_id"]').value		= hostId;
