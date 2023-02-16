@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- mobile schedule changes
 
 ### Changed
 - use wp date and time format
