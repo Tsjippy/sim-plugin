@@ -75,7 +75,9 @@ export async function removeHost(target, dateStr){
 
 		var response = await FormSubmit.fetchRestApi('events/remove_host', formData);
 
-		Main.displayMessage(response);
+		Main.displayMessage(response.message);
+
+		return response.html;
 	}
 
     return confirmed;
@@ -211,18 +213,3 @@ export async function checkConfirmation(text, target){
 
 	return false;
 }
-
-document.addEventListener('click',function(event){
-	let target = event.target;
-
-	if(target.name == 'add-session'){
-        console.log('click12')
-		event.stopPropagation();
-		showTimeslotModal(target);
-	}else if(target.name == 'add-host'){
-        console.log('click13')
-		event.stopPropagation();
-
-		Main.showModal(target.closest('.schedules_div').querySelector('.add-host-mobile-wrapper'));
-	}	
-});

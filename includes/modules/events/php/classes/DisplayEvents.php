@@ -144,7 +144,7 @@ class DisplayEvents extends Events{
 
 		foreach($this->events as $key=>$event){
 			// do not keep events who already happened
-			if($event->startdate == date("Y-m-d") && $event->endtime < date(TIMEFORMAT, current_time('U'))){
+			if($event->startdate == date("Y-m-d") && $event->endtime < date('H:i', current_time('U'))){
 				unset($this->events[$key]);
 			}
 		}

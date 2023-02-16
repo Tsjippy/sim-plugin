@@ -12,7 +12,7 @@ add_filter('sim_after_bot_payer', function($args){
         $startYear	= get_post_meta($event->ID, 'celebrationdate', true);
 
         //only add events which are not a celebration and start today after curent time
-        if(empty($startYear) && $event->startdate == date('Y-m-d') && $event->starttime > date(TIMEFORMAT, current_time('U'))){
+        if(empty($startYear) && $event->startdate == date('Y-m-d') && $event->starttime > date('H:i', current_time('U'))){
             $args['message']    .= "\n\n".$event->post_title.' starts today at '.$event->starttime;
             if(!empty($event->location)){
                 $args['message']    .= "\nIt takes place at $event->location";

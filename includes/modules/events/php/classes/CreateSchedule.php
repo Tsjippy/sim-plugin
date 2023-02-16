@@ -537,9 +537,14 @@ class CreateSchedule extends Schedules{
 	public function removeHost($sessionId){
 		global $wpdb;
 
-		$session			= $this->getSessionEvent($sessionId);
+		$this->currentSession	= $this->getSessionEvent($sessionId);
 
-		$hostId				= $session->events[0]->organizer_id;
+		$this->findScheduleById($this->currentSession->schedule_id);
+
+		$date				= $this->currentSession->events[0]->startdate;
+		$startTime			= $this->currentSession->events[0]->starttime;
+
+		$hostId				= $this->currentSession->events[0]->organizer_id;
 
 		$partnerId			= SIM\hasPartner($this->user->ID);
 		if(
@@ -550,7 +555,7 @@ class CreateSchedule extends Schedules{
 			return new \WP_Error('Permission error', $this->noPermissionText);
 		}
 		
-		foreach($session->post_ids as $id){
+		foreach($this->currentSession->post_ids as $id){
 			//delete event_post
 			wp_delete_post($id);
 
@@ -565,16 +570,27 @@ class CreateSchedule extends Schedules{
 			['%d'],
 		);
 
-		$dateStr		= date(get_option( 'date_format' ), strtotime($session->events[0]->startdate));
+		$dateStr		= date(get_option( 'date_format' ), strtotime($date));
 
 		if($this->admin){
-			$hostName	= $session->events[0]->organizer;
+			$hostName	= $this->currentSession->events[0]->organizer;
 			$message	= "Succesfully removed $hostName as a host on $dateStr";
 		}else{
 			$message	= "Succesfully removed you as a host on $dateStr";
 		}
 
-		return $message;
+		if($this->mobile){
+			$html	= $this->getMobileDay($date);
+		}elseif($this->currentSession->meal){
+			$html	= $this->writeMealCell($date, $startTime);
+		}else{
+			$html	= $this->writeOrientationCell($date, $startTime);
+		}
+		
+		return [
+			'message'	=> $message,
+			'html'		=> $html
+		];
 	}
 
 	/**

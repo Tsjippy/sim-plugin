@@ -414,7 +414,7 @@ class Schedules{
 				break;
 			}
 
-			$date	= date('Y-m-d', strtotime('+1 day', $dateTime) );
+			$date	= date('Y-m-d', strtotime('+1 day', strtotime($date)) );
 		}
 
 		if($this->onlyMeals){
@@ -591,6 +591,8 @@ class Schedules{
 			$rowSpan = '';
 		}
 
+		$this->getScheduleSessions();
+
 		if(isset($this->currentSchedule->sessions[$date][$startTime])){
 			$data			= $this->currentSchedule->sessions[$date][$startTime];
 			$title			= $data->posts[0]->post_title;
@@ -660,6 +662,8 @@ class Schedules{
 	 * @return 	array					Cell html
 	*/
 	public function writeOrientationCell( $date, $startTime) {
+		$this->getScheduleSessions();
+
 		$rowSpan	= '';
 		$class		= 'orientation';
 
@@ -757,7 +761,7 @@ class Schedules{
 			
 			$date				= $this->currentSchedule->startdate;
 			$mealScheduleRow	= true;
-			$endTime			= date(TIMEFORMAT, strtotime('+15 minutes', strtotime($startTime)));
+			$endTime			= date('H:i', strtotime('+15 minutes', strtotime($startTime)));
 			$extra				= '';
 			
 			if(
@@ -820,7 +824,7 @@ class Schedules{
 	}
 
 	/**
-	 * Write all rws of a schedule table
+	 * Write all rows of a schedule table
 	 *
 	 * @param	string	$date		the date
 	 *
@@ -831,7 +835,7 @@ class Schedules{
 		$dayName		= date('l', $dateTime);
 		$formatedDate	= date(DATEFORMAT, $dateTime);
 
-		$html 	= "<div class='day-wrapper-mobile'>";
+		$html 	= "<div class='day-wrapper-mobile' data-isodate='$date'>";
 			$html 	.= "<strong>$dayName $formatedDate</strong><br>";
 
 			//loop over the rows
@@ -839,6 +843,8 @@ class Schedules{
 
 			//loop until we are at the endtime
 			while(true){
+				$isMeal	= false;
+
 				//If we do not have an orientation schedule, go strait to the dinner row
 				if(
 					$startTime >= $this->lunchEndTime	&&
@@ -849,7 +855,7 @@ class Schedules{
 				}
 				
 				$mealScheduleRow	= true;
-				$endTime			= date(TIMEFORMAT, strtotime('+15 minutes', strtotime($startTime)));
+				$endTime			= date('H:i', strtotime('+15 minutes', strtotime($startTime)));
 				
 				if(
 					$startTime >= $this->lunchStartTime	&&		// Time is past the start lunch time
@@ -860,8 +866,10 @@ class Schedules{
 						$startTime		= $endTime;
 						continue;
 					}
+					$isMeal				= true;
 					$description		= 'Lunch';
 				}elseif($startTime == $this->dinerTime){
+					$isMeal				= true;
 					$description		= 'Dinner';
 				}else{
 					$mealScheduleRow	= false;
@@ -892,12 +900,18 @@ class Schedules{
 							)
 						)
 					){
-						$admin	= '';
+						$class	= '';
 						if($this->admin){
-							$admin = 'admin';
+							$class = 'admin';
 						}
 
-						$html 	.= "<div class='session-wrapper-mobile $admin' style='display:flex;'>";
+						if($isMeal){
+							$class	.= ' meal';
+						}else{
+							$class	.= ' orientation';
+						}
+
+						$html 	.= "<div class='session-wrapper-mobile $class' data-session_id='{$this->currentSchedule->sessions[$date][$startTime]->id}' style='display:flex;'>";
 							$html 	.= "<div style='padding-right:10px;'>";
 								$html 	.= "<strong>$description</strong>:<br>";
 								$html 	.=	$content.'<br>';

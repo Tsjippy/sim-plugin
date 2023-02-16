@@ -57,7 +57,7 @@ function sendPrayerRequests(){
 
 	$schedule		= createNewSchedule($schedule);
 
-	$time	= current_time(TIMEFORMAT);
+	$time	= current_time('H:i');
 	foreach($schedule as $t=>$users){
 		if(is_array($users)){
 			// Do not continue for times in the future
