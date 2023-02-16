@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.29.7] - 2023-02-16
+
+
+### Added
 - mobile schedule changes
 
 ### Changed
