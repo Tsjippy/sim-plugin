@@ -8,6 +8,7 @@
 
 ### Fixed
 - frontend content buttons
+- bug in sending triggered e-mails
 
 ### Updated
 
