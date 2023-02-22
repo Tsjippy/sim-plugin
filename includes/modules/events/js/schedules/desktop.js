@@ -43,6 +43,9 @@ async function publishSchedule(target){
 		Main.hideModals();
 
 		Main.displayMessage(response);
+
+		document.querySelectorAll('.schedule.publish.warning').forEach(el=>el.remove());
+		
 	}
 }
 
@@ -81,11 +84,13 @@ function applyRowSpan(target, count){
 function removeRowSpan(cell){
 	cell.removeAttribute('rowspan');
 	let row			= cell.closest('tr').nextElementSibling;
-	cell			= row.cells[cell.cellIndex];
-	while(cell.matches('.hidden')){
-		cell.classList.remove('hidden');
-		row				= row.nextElementSibling;
+	if(row != null){
 		cell			= row.cells[cell.cellIndex];
+		while(cell.matches('.hidden')){
+			cell.classList.remove('hidden');
+			row				= row.nextElementSibling;
+			cell			= row.cells[cell.cellIndex];
+		}
 	}
 }
 
@@ -191,7 +196,7 @@ function showEditScheduleModal(target){
 	let wrapper		= target.closest('.schedules_div');
 	let table		= wrapper.querySelector('table.schedule');
 
-	let scheduleId	= table.closest('.schedules_div').dataset["id"];
+	let scheduleId	= wrapper.dataset.id;
 
 	modal.querySelector(`[name="schedule_id"]`).value		= scheduleId;
 	modal.querySelector(`[name="target_id"]`).value			= table.dataset.target_id;
@@ -279,14 +284,10 @@ async function deleteHost(target){
     let result  = await removeHost(cell, dateStr);
 
     if(result){
-        cell.outerHTML   		= `<td>Available</td>`;
+        cell.outerHTML   		= result;
 
         cell                    = row.cells[index];
 		removeRowSpan(cell);
-
-        cell.classList.value    = classes;
-
-        cell.classList.remove('selected', 'ui-selected', 'active');
     }
 }
 

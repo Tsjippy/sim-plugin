@@ -51,12 +51,6 @@ add_action( 'rest_api_init', function () {
 					'validate_callback' => function($scheduleId){
 						return is_numeric($scheduleId);
 					}
-				),
-				'schedule_target'		=> array(
-					'required'	=> true,
-					'validate_callback' => function($userId){
-						return is_numeric($userId);
-					}
 				)
 			)
 		)

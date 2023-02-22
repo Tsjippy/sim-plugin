@@ -121,7 +121,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 
 		$datalist = "<datalist id='$listId' class='$class user_selection'>";
 			foreach($users as $key=>$user){
-				if(empty($user->first_name) || empty($user->last_name) || $families){
+				if($families || empty($user->first_name) || empty($user->last_name)){
 					$name	= $user->display_name;
 				}else{
 					$name	= "$user->first_name $user->last_name";
@@ -460,6 +460,10 @@ function getFamilyName($user, &$partnerId=false) {
 		unset($family['children']);
 	}
 
+	if(isset($family['partner']) && is_numeric($family['partner'])){
+		$partnerId	= $family['partner'];
+	}
+
 	if(!empty($family['name'])){
 		return $family['name'].' family';
 	}
@@ -472,9 +476,7 @@ function getFamilyName($user, &$partnerId=false) {
 	$name 	= $user->last_name;
 
 	// user has a partner
-	if(isset($family['partner']) && is_numeric($family['partner'])){
-		$partnerId	= $family['partner'];
-		
+	if(isset($family['partner']) && is_numeric($family['partner'])){		
 		$partner	= get_userdata($family['partner']);
 
 		if($partner->last_name != $user->last_name){
@@ -487,7 +489,7 @@ function getFamilyName($user, &$partnerId=false) {
 		}
 	}
 
-	return $name.' family';	
+	return $name.' family';
 }
 
 /**

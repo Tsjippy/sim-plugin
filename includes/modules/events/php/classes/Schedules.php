@@ -80,8 +80,6 @@ class Schedules{
 		$sql = "CREATE TABLE {$this->sessionTableName} (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			schedule_id mediumint(9) NOT NULL,
-			date varchar(80) NOT NULL,
-			starttime varchar(80) NOT NULL,
 			post_ids longtext NOT NULL,
 			event_ids longtext NOT NULL,
 			meal boolean NOT NULL,
@@ -163,9 +161,9 @@ class Schedules{
 		
 		// Show also the orientation schedule if:
 		if (
-			$this->admin											||		// We are an admin
-			!empty($this->getPersonalOrientationEvents($this->currentSchedule)) 	||		// We are in the schedule
-			$this->currentSchedule->target == $this->user->ID							// The schedule is meant for us
+			$this->admin															||	// We are an admin
+			$this->currentSchedule->target == $this->user->ID						||	// The schedule is meant for us
+			$this->includedInSchedule()													// We are in the schedule
 		){
 			$this->onlyMeals = false;
 		}
@@ -223,22 +221,38 @@ class Schedules{
 				<?php
 			}
 			?>
-			<h3 class="table_title">
-				Schedule for <?php echo $this->currentSchedule->name;?>
-			</h3>
-			<h3 class="table_title sub-title">
-				<?php echo $this->currentSchedule->info;?>
-			</h3>
+			<div style='display:inline-block;'>
+				<h3 class="table_title">
+					Schedule for <?php echo $this->currentSchedule->name;?>
+				</h3>
+				<h3 class="table_title sub-title">
+					<?php echo $this->currentSchedule->info;?>
+				</h3>
+			</div>
 
 			<?php
 			// Only render when not on a mobile device
 			if($this->mobile){
 				$this->showMobileSchedule();
 			}else{
+				if(!$this->currentSchedule->published && $this->currentSchedule->target != 0){
+					$name	= $this->currentSchedule->name;
+					if(strpos($name, 'Family') !== false){
+						$name	= "the $name";
+					}
+					?>
+					<div class='schedule publish warning'>
+						This schedule is currently not scheduled.<br>
+						Publish it for <?php echo $name;?> to see it.<br>
+						<button type='button' class='button schedule_action publish' data-target='<?php echo $this->currentSchedule->target;?>' data-schedule_id='<?php echo $this->currentSchedule->id;?>'>Publish</button>
+					</div>
+					<?php
+				}
+
 				?>
 				<p>Click on an available date to indicate you want to host.<br>Click on any date you are subscribed for to unsubscribe</p>
 
-				<table class="sim-table schedule" data-id="<?php echo $this->currentSchedule->id; ?>" data-action='update_schedule' data-lunch='<?php echo $this->currentSchedule->lunch ? 'true' : 'false';?>'>
+				<table class="sim-table schedule" data-id="<?php echo $this->currentSchedule->id; ?>" data-target="<?php echo $this->currentSchedule->name; ?>" data-target_id="<?php echo $this->currentSchedule->target; ?>" data-action='update_schedule' data-lunch='<?php echo $this->currentSchedule->lunch ? 'true' : 'false';?>'>
 					<thead>
 						<tr>
 							<th class='sticky'>Dates</th>
@@ -456,7 +470,7 @@ class Schedules{
 	public function getScheduleSessions(){
 		global $wpdb;
 
-		if(isset($this->currentSchedule->sessions)){
+		if(!empty($this->currentSchedule->sessions)){
 			return;
 		}
 
@@ -519,7 +533,7 @@ class Schedules{
 	 *
 	 * @return 	object|false			The event or false if no event
 	*/
-	public function getScheduleEvents($scheduleId='', $startDate, $startTime){
+	public function getScheduleEvents($scheduleId='', $startDate='', $startTime=''){
 		global $wpdb;
 
 		if(empty($scheduleId)){
@@ -540,7 +554,7 @@ class Schedules{
 	public function getSessionEvent($sessionId){
 		global $wpdb;
 
-		$query	=  "SELECT * FROM `wp_sim_schedule_sessions` WHERE wp_sim_schedule_sessions.id=$sessionId";
+		$query	=  "SELECT * FROM $this->sessionTableName WHERE id=$sessionId";
 
 		$results	= $wpdb->get_results($query);
 
@@ -561,14 +575,32 @@ class Schedules{
 	 *
 	 * @return 	array					Array of objects
 	*/
-	public function getPersonalOrientationEvents($schedule){
+	public function includedInSchedule(){
+		$this->getScheduleSessions();
+
 		global $wpdb;
 
-		$query	= "SELECT * FROM {$this->events->tableName} WHERE `schedule_id` = '{$schedule->id}' AND onlyfor={$this->user->ID} AND starttime != '$this->dinerTime'";
-		if($schedule->lunch){
+		$query	= "SELECT * FROM {$this->events->tableName} WHERE onlyfor={$this->user->ID} AND starttime != '$this->dinerTime'";
+		if($this->currentSchedule->lunch){
 			$query	.= " AND starttime != '$this->lunchStartTime'";
 		}
-		return $wpdb->get_results($query);
+
+		$events	= $wpdb->get_results($query);
+
+		if(!empty($events)){
+			foreach($events as $event){
+				if(isset($this->currentSchedule->sessions[$event->startdate][$event->starttime])){	// there is a session on the date and time of this event
+					foreach($this->currentSchedule->sessions[$event->startdate][$event->starttime]->events as $ev){
+						// The found event belongs to this schedule
+						if($ev->id == $event->id){
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -618,9 +650,6 @@ class Schedules{
 				}
 			
 				$cellText .= "<br><span class='keyword'>$menu</span>";
-			//current user is the target or is admin
-			} elseif ( !$this->admin && $this->currentSchedule->target != $this->user->ID && $this->currentSchedule->target != $partnerId){
-				//$cellText = 'Taken';
 			}
 		} else {
 			if($this->mobile){
@@ -640,8 +669,6 @@ class Schedules{
 			$class .= ' admin';
 		}
 
-		$label	= date(DATEFORMAT, strtotime($date));
-
 		if($this->mobile){
 			return [
 				'text'	=> $cellText,
@@ -649,7 +676,7 @@ class Schedules{
 				'event'	=> $data->events[0]
 			];
 		}
-		return "<td class='$class' $rowSpan $hostData label='$label'>$cellText</td>";
+		return "<td class='$class' $rowSpan $hostData>$cellText</td>";
 	}
 	
 	/**
@@ -974,9 +1001,10 @@ class Schedules{
 				<span class="close">&times;</span>
 				<form action="" method="post">
 					<input type='hidden' name='schedule_id'>
+					<input type='hidden' name='session-id'>
 					<input type='hidden' name='host_id'>
-					<input type='hidden' name='oldtime'>
 					<input type='hidden' name='starttime'>
+					<input type='hidden' name='endtime'>
 					<input type='hidden' name='date'>
 						<?php
 					if($this->admin){

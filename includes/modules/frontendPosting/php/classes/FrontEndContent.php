@@ -274,32 +274,22 @@ class FrontEndContent{
 					<button type='button' name='publish_post' class='button'>Publish <span class='replaceposttype'><?php echo $this->postName;?></span></button>
 					<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy'>
 				</div>
-			</form>
-			<?php
-			//Only show delete button for existing posts and not yet deleted
-			if($this->postId != null && $this->fullrights){
-				?>
-				<div class='post-button-wrapper'>
-					<?php
-					ob_start();
-					if($this->post->post_status != 'trash'){
-						?>
-						<div class='submit_wrapper'>
-							<form>
-								<input hidden name='post_id' value='<?php echo  esc_html($this->postId); ?>'>
 
-								<button type='submit' class='button' name='delete_post'>Delete <?php echo  esc_html($this->post->post_type); ?></button>
-								<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt='' loading='lazy'>
-							</form>
-						</div>
-						<?php
-					}
-					echo apply_filters('sim-frontend-buttons', ob_get_clean(), $this);
-					?>
-				</div>
 				<?php
-			}
-			?>
+				ob_start();
+				if($this->post->post_status != 'trash'){
+					?>
+					<div class='submit_wrapper'>
+						<button type='button' class='button' name='delete_post' data-post_id='<?php echo  esc_html($this->postId); ?>'>
+							Delete <?php echo  esc_html($this->post->post_type); ?>
+						</button>
+						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL; ?>' alt='' loading='lazy'>
+					</div>
+					<?php
+				}
+				echo apply_filters('sim-frontend-buttons', ob_get_clean(), $this);
+				?>
+			</form>
 		</div>
 
 		<?php

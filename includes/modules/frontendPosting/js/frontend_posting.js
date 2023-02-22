@@ -3,8 +3,9 @@ import { addStyles } from './../../../js/imports.js';
 
 async function confirmPostDelete( event, type='delete' ) {
 	let url;
+	let target	= event.target;
 	event.preventDefault();
-	parent = event.target.closest('#frontend_upload_form');
+	parent = target.closest('#frontend_upload_form');
 
 	let options = {
 		title: 'Are you sure?',
@@ -23,13 +24,13 @@ async function confirmPostDelete( event, type='delete' ) {
 	var confirmed = await Swal.fire(options);
 
 	if (confirmed.isConfirmed) {
-		var postId = parent.querySelector('[name="post_id"]').value;
-		event.target.closest('form').querySelector('.loadergif').classList.remove('hidden');
+		let postId = target.dataset.post_id;
+		target.closest('div').querySelector('.loadergif').classList.remove('hidden');
 	
 		var formData = new FormData();
 		formData.append('post_id', postId);
 
-		if(type=='delete'){
+		if(type == 'delete'){
 			url 	= 'frontend_posting/remove_post'
 		}else{
 			url 	= 'frontend_posting/archive_post'
