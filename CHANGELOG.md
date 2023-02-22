@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.29.8] - 2023-02-22
+
+
+### Fixed
 - frontend content buttons
 - bug in sending triggered e-mails
 
