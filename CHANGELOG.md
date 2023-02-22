@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- frontend content buttons
 
 ### Updated
 
