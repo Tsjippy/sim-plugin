@@ -13,6 +13,7 @@ function checkIfOnlyPdf($content){
     
     //Execute the regex
     preg_match($pattern, $content, $matches);
+
     //If an url exists it means there is only a pdf on this page
     if(isset($matches[2])){
         return $matches;
@@ -52,7 +53,16 @@ add_filter( 'the_content', function ( $content ) {
 
         /* SHOW THE PDF */
         //Show the pdf fullscreen only if we are not a content manager
-        if(!in_array('editor', wp_get_current_user()->roles)){
+        if(
+            !in_array('editor', wp_get_current_user()->roles)   &&  // We are not an editor
+            (
+                (
+                    function_exists('SIM\CONTENTFILTER\isProtected') && // check if we should block this page function exists
+                    !SIM\CONTENTFILTER\isProtected()                    // page is not protected
+                )   ||
+                !function_exists('SIM\CONTENTFILTER\isProtected')       // or the function does not exist
+            )
+        ){
             //Get the url to the pdf
             $pdfUrl = $matches[1];
             
