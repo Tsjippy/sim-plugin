@@ -5,6 +5,7 @@
 ### Added
 - ordinal numbers above 20
 - querier module
+- role permission content filter
 
 ### Changed
 - layout of news screen
