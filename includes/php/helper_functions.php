@@ -476,7 +476,7 @@ function getFamilyName($user, &$partnerId=false) {
 	$name 	= $user->last_name;
 
 	// user has a partner
-	if(isset($family['partner']) && is_numeric($family['partner'])){		
+	if(isset($family['partner']) && is_numeric($family['partner'])){
 		$partner	= get_userdata($family['partner']);
 
 		if($partner->last_name != $user->last_name){
@@ -529,12 +529,13 @@ function getAge($userId, $numeric=false){
  * @return	string				the number in words
 */
 function numberToWords($number) {
-    $hyphen = '-';
-    $conjunction = ' and ';
-    $separator = ', ';
-    $negative = 'negative ';
-    $decimal = ' Thai Baht And ';
-	$first_dic	= [
+    $hyphen 		= '-';
+    $conjunction 	= ' and ';
+    $separator 		= ', ';
+    $negative 		= 'negative ';
+    $decimal 		= ' Thai Baht And ';
+
+	$firstDic		= [
         1 => 'first',
         2 => 'second',
         3 => 'third',
@@ -554,9 +555,16 @@ function numberToWords($number) {
         17 => 'seventeenth',
         18 => 'eighteenth',
         19 => 'nineteenth',
-		20 => 'twentieth'
+		20 => 'twentieth',
+		30 => 'thirtieth',
+		40 => 'fortieth',
+		50 => 'fiftieth',
+		60 => 'sixtieth',
+		70 => 'seventieth',
+		80 => 'eightieth',
+		90 => 'ninetieth'
 	];
-    $dictionary = array(
+    $dictionary 	= array(
         0 => 'zero',
         1 => 'one',
         2 => 'two',
@@ -618,15 +626,15 @@ function numberToWords($number) {
     }
 
     switch (true) {
-        case $number < 21:
-            $string = $first_dic[$number];
+        case isset($firstDic[$number]):
+            $string = $firstDic[$number];
             break;
         case $number < 100:
             $tens = ((int) ($number / 10)) * 10;
             $units = $number % 10;
             $string = $dictionary[$tens];
             if ($units) {
-                $string .= $hyphen . $first_dic[$units];
+                $string .= $hyphen . $firstDic[$units];
             }
             break;
         case $number < 1000:
