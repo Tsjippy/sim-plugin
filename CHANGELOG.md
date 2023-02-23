@@ -13,6 +13,7 @@
 
 ### Fixed
 - frontend content buttons
+- fullscreen pdf not protected again public views
 
 ### Updated
 
