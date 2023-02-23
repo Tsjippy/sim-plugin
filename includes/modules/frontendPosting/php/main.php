@@ -103,7 +103,7 @@ add_filter( 'the_content', function ( $content ) {
 	//Do not show if:
 	if (
 		!is_user_logged_in() 							||	// not logged in or
-		strpos($content,'[front_end_post]') !== false 	||	// already on the post edit page
+		strpos($content, '[front_end_post]') !== false 	||	// already on the post edit page
 		!is_singular() 									||  // it is not a single page
 		is_tax()										||	// not an archive page
 		is_front_page()										// is the front page
@@ -123,6 +123,14 @@ add_filter( 'the_content', function ( $content ) {
 	//published
 	}else{
 		$postId 		= get_the_ID();
+	}
+
+	$blockedRoles	= get_post_meta($postId, 'excluded_roles', true);
+	if(is_array($blockedRoles)){
+		$roles 		= get_userdata(get_current_user_id())->roles;
+		if(array_intersect($blockedRoles, $roles)){
+			return '<div class="error">You have no permission to see this</div>';
+		}
 	}
 		
 	//Add an edit page button if:
