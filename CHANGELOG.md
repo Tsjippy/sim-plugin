@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- layout of news screen
 
 ### Fixed
 
