@@ -7,24 +7,37 @@
 
 /*Full width if only one item*/
 @media (max-width: 600px){ 
-	article.location, article.recipe{
+	article.post,
+	article.project,
+	article.location, 
+	article.recipe{
 		width: 100%;
 	}
 }
 
 /*50% width if only two items*/
 @media (min-width: 601px){
-	article.location, article.recipe {
+	article.post,
+	article.project,
+	article.location, 
+	article.recipe {
 		width: 40%;
 		margin: 30px;
 	}
 }
 
 /* layout of the news cards */
-article.location, article.recipe{
+article.post,
+article.project,
+article.location, 
+article.recipe{
 	border-radius:3%;
 	background-color: whitesmoke;
 	display: inline-flex;
+
+	img{
+		width: 100%; 
+	}
 }
 
 /*Do not show the public category in the category widget*/
