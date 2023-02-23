@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- ordinal numbers above 20
 
 ### Changed
 - layout of news screen
