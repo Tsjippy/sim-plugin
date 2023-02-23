@@ -1068,7 +1068,7 @@ function getAvailableUsername($firstName, $lastName){
  *
  * @return	int|WP_Error				The new user id or WP_Error on error
 */
-function addUserAccount($firstName, $lastName, $email, $approved = false, $validity = 'unlimited'){
+function addUserAccount($firstName, $lastName, $email, $approved = false, $validity = 'unlimited', $roles=[]){
 	//Get the username based on the first and lastname
 	$username = getAvailableUsername($firstName, $lastName);
 	
@@ -1080,19 +1080,25 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
 		'user_email'    => $email,
 		'display_name'  => "$firstName $lastName",
 		'nickname'  	=> "$firstName $lastName",
-		'user_pass'     => NULL
+		'user_pass'     => null
 	);
 	
 	//Give it the guest user role
 	if($validity != "unlimited"){
 		$userData['role'] = 'subscriber';
 	}
+
 	//Insert the user
 	$userId = wp_insert_user( $userData ) ;
+
 	// User creation failed
 	if(is_wp_error($userId)){
 		printArray($userId->get_error_message());
 		return new \WP_Error('User creation', $userId->get_error_message());
+	}
+
+	if(!empty($roles) && function_exists('SIM\USERMANAGEMENT\updateRoles')){
+		USERMANAGEMENT\updateRoles($userId, $roles);
 	}
 	
 	if($approved){
@@ -1113,7 +1119,7 @@ function addUserAccount($firstName, $lastName, $email, $approved = false, $valid
 	return $userId;
 }
 
- /**
+/**
  * Get profile picture html
  * @param	int 		$userId				WP_user id
  * @param	array 		$size				Size (width, height) of the image. Default [50,50]

@@ -420,11 +420,26 @@ function userInfoPage($atts){
 		$tabs[]	= '<li class="tablink" id="show_roles" data-target="role_info">Roles</li>';
 		
 		//Content
-		$roleHtml = '<div id="role_info" class="tabcontent hidden">';
-			$roleHtml .= displayRoles($userId);
-		$roleHtml .= '</div>';
+		ob_start();
+		?>
+		<div id="role_info" class="tabcontent hidden">
+			<h3>Select user roles</h3>
+			<p>'
+				Select the roles this user should have.<br>
+				If you want to disable a user go to the login info tab.
+			</p>
+			<form>
+				<input type='hidden' name='userid' value='<?php echo $userId;?>'>
+				<?php
+				echo displayRoles($userId);
+				
+				echo SIM\addSaveButton('updateroles', 'Update roles');
+				?>
+			</form>
+		</div>
 
-		$html	.= $roleHtml;
+		<?php
+		$html	.= ob_get_clean();
 	}
 		
 	/*

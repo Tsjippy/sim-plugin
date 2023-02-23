@@ -1,5 +1,5 @@
 <?php
-namespace SIM\SIMNIGERIA;
+namespace SIM\QUERIER;
 use SIM;
 
 // add extra question to the new user form

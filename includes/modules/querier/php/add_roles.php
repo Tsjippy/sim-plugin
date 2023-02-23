@@ -11,10 +11,10 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	$roleSet = get_role( 'contributor' )->capabilities;
 
 	// Only add the new role if it does not exist
-	if(!wp_roles()->is_role( 'querier' )){
+	if(!wp_roles()->is_role( 'enquirer' )){
 		add_role(
-			'querier',
-			'Querier',
+			'enquirer',
+			'Enquirer',
 			$roleSet
 		);
 	}
@@ -23,7 +23,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 }, 10, 2);
 
 add_filter('sim_role_description', function($description, $role){
-    if($role == 'querier'){
+    if($role == 'enquirer'){
         return 'Someone who is investigating SIM Nigeria to serve with';
     }
     return $description;

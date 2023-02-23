@@ -41,10 +41,12 @@ add_action( 'edit_user_profile_update', __NAMESPACE__.'\saveExtraUserRoles');
 /**
  * Saves the selected user roles from the /wp-admin/users.php page
  */
-function saveExtraUserRoles( $userId ) {    
+function saveExtraUserRoles( $userId, $newRoles=[] ) {
     $user 		= get_userdata($userId);
     $userRoles 	= $user->roles;
-    $newRoles	= (array)$_POST['roles'];
+    if(empty($newRoles)){
+		$newRoles	= (array)$_POST['roles'];
+	}
 
     do_action('sim_roles_changed', $user, $newRoles);
     
@@ -68,14 +70,23 @@ add_filter('sim_role_description', function($description, $role){
     switch($role){
         case 'administrator':
             $description    = 'Access to all the administration features';
+            break;
         case 'editor':
             $description    = 'Can publish and edit all posts';
+            break;
         case 'author':
             $description    = 'Can publish and edit own content';
+            break;
         case 'contributor':
             $description    = 'Can write and manage their own posts but cannot publish them';
+            break;
         case 'subscriber':
             $description    = 'Can only view';
+            break;
+        case 'revisor':
+            $description    = 'Can submit content for review <strong>-- Default role</strong>';
+            break;
     }
+
     return $description;
 }, 10, 2);

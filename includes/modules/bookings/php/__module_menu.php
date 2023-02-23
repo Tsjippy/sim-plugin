@@ -46,6 +46,14 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug){
 	return $newOptions;
 }, 10, 2);
 
+add_filter('sim_role_description', function($description, $role){
+    if($role == 'bookingmanager'){
+        return 'Someone who can manage accomodation bookings';
+    }
+	
+    return $description;
+}, 10, 2);
+
 add_filter('sim_submenu_description', function($description, $moduleSlug){
 	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{

@@ -15,9 +15,9 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 		$roleSet['list_users']		= true;
 		$roleSet['promote_users']	= true;
 
-		add_role( 
-			'rolemanagement', 
-			'Role Manager', 
+		add_role(
+			'rolemanagement',
+			'Role Manager',
 			$roleSet
 		);
 	}
@@ -29,9 +29,9 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 		$roleSet['remove_users']	= true;
 		$roleSet['promote_users']	= true;
 		
-		add_role( 
-			'usermanagement', 
-			'User Manager', 
+		add_role(
+			'usermanagement',
+			'User Manager',
 			$roleSet
 		);
 	}

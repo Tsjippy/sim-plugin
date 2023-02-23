@@ -907,6 +907,35 @@ class FrontEndContent{
 			$this->pageSpecificFields();
 
 			do_action('sim_frontend_post_after_content', $this);
+
+			?>
+			<h4>Block this page for accounts with one of the following roles:</h4>
+			<?php
+			global $wp_roles;
+
+			$userRoles	= $wp_roles->role_names;
+
+			$selected	= [];
+
+			if(is_numeric($this->postId)){
+				$selected	= (array)get_post_meta($this->postId, 'excluded_roles', true);
+			}
+
+			foreach($userRoles as $key=>$roleName){
+				$checked = '';
+				if(in_array($key, $selected)){
+					$checked	= 'checked';
+				}
+				?>
+				<label>
+					<input type='checkbox' name='roles[<?php echo $key;?>]' value='<?php echo $roleName;?>' <?php echo $checked;?>>
+					<?php
+					echo $roleName;
+					?>
+				</label>
+				<br>
+				<?php
+			}
 			?>
 		</div>
 		<?php
@@ -1293,6 +1322,13 @@ class FrontEndContent{
 			update_metadata( 'post', $this->postId, 'static_content', true);
 		}else{
 			delete_post_meta($this->postId, 'static_content');
+		}
+
+		// Role exclusions
+		if(isset($_POST['roles'])){
+			update_metadata( 'post', $this->postId, 'excluded_roles', array_keys($_POST['roles']));
+		}else{
+			delete_post_meta($this->postId, 'excluded_roles');
 		}
 
 		//Expiry date

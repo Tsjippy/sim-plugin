@@ -19,6 +19,13 @@ add_action ( 'wp_head', function(){
 	}
 });
 
+add_filter( 'robots_txt', function($output, $public ){
+	$output	.= "User-agent: *\n";
+	$output	.= "Disallow: /wp-content/\n";
+
+	return $output;
+}, 10, 2);
+
 function isProtected(){
 	global	$post;
 	$taxonomy			= get_post_taxonomies()[0];

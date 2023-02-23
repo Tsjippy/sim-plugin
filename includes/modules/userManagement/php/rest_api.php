@@ -74,10 +74,13 @@ add_action( 'rest_api_init', function () {
 			'callback' 				=> 	__NAMESPACE__.'\createUserAccount',
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(
-				'first_name'		=> array(
+				'first_name' => array(
 					'required'	=> true
                 ),
-                'last_name'		=> array(
+                'last_name'	 => array(
+					'required'	=> true
+				),
+				'roles'		 => array(
 					'required'	=> true
 				)
 			)
@@ -122,7 +125,7 @@ function disableUserAccount(){
 /**
  * add new ministry location via rest api
  */
-function addMinistry(){	
+function addMinistry(){
     //Get the post data
     $name = sanitize_text_field($_POST["location_name"]);
 
@@ -165,22 +168,33 @@ function addMinistry(){
 /**
  * Update the users roles
  */
-function updateRoles(){
+function updateRoles($userId='', $newRoles=[]){
 	if ( !function_exists( 'populate_roles' ) ) {
 		require_once( ABSPATH . 'wp-admin/includes/schema.php' );
-	  }
+	}
 	
-	  populate_roles();
+	populate_roles();
+
+	if(empty($userId)){
+		$userId	= $_POST['userid'];
+	}
 	
-	$user 		= get_userdata($_POST['userid']);
+	$user 		= get_userdata($userId);
+	if(!$user){
+		return new \WP_Error('user', 'No user found');
+	}
+
     $userRoles 	= $user->roles;
-    $newRoles	= (array)$_POST['roles'];
+
+	if(empty($newRoles)){
+		$newRoles	= (array)$_POST['roles'];
+	}
 
     if(empty(array_diff($userRoles, array_keys($newRoles)) ) && empty(array_diff(array_keys($newRoles), $userRoles))){
         return "Nothing to update";
     }
 
-	SIM\saveExtraUserRoles($_POST['userid']);
+	SIM\saveExtraUserRoles($userId, $newRoles);
 
     return "Updated roles succesfully";
 }
@@ -215,7 +229,7 @@ function createUserAccount(){
 	}
 	
 	//Create the account
-	$userId = SIM\addUserAccount($firstName, $lastName, $email, $approved, $validity);
+	$userId = SIM\addUserAccount($firstName, $lastName, $email, $approved, $validity, $_POST['roles']);
 	if(is_wp_error($userId)){
 		return $userId;
 	}
@@ -238,7 +252,7 @@ function createUserAccount(){
  */
 function extendValidity(){
 	$userId = $_POST['userid'];
-    if(isset($_POST['unlimited']) and $_POST['unlimited'] == 'unlimited'){
+    if(isset($_POST['unlimited']) && $_POST['unlimited'] == 'unlimited'){
         $date       = 'unlimited';
         $message    = "Marked the useraccount for ".get_userdata($userId)->first_name." to never expire.";
     }else{
