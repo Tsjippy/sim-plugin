@@ -1,5 +1,5 @@
 <?php
-namespace SIM\PRAYER;
+namespace SIM\QUERIER;
 use SIM;
 
 add_filter('sim_module_updated', function($options, $moduleSlug){
@@ -11,10 +11,10 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	$roleSet = get_role( 'contributor' )->capabilities;
 
 	// Only add the new role if it does not exist
-	if(!wp_roles()->is_role( 'prayercoordinator' )){
+	if(!wp_roles()->is_role( 'querier' )){
 		add_role(
-			'prayercoordinator',
-			'Prayer coordinator',
+			'querier',
+			'Querier',
 			$roleSet
 		);
 	}
@@ -23,8 +23,8 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 }, 10, 2);
 
 add_filter('sim_role_description', function($description, $role){
-    if($role == 'prayercoordinator'){
-        return 'Ability to publish prayer requests';
+    if($role == 'querier'){
+        return 'Someone who is investigating SIM Nigeria to serve with';
     }
     return $description;
 }, 10, 2);

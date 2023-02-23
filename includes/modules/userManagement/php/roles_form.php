@@ -61,35 +61,69 @@ function displayRoles($userId){
 				If you want to disable a user go to the login info tab.
 			</p>
 			<?php
-			foreach($userRoles as $key=>$roleName){
-				$checked = '';
-				if(in_array($key,(array)$roles)){
-					$checked = 'checked';
-				}
-				?>
-				<label> 
-					<input type='checkbox' name='roles[<?php echo $key;?>]' value='<?php echo $roleName;?>' <?php echo $checked;?>>
-					<?php 
-					echo $roleName;
+			if(wp_is_mobile()){
+				foreach($userRoles as $key=>$roleName){
+					$checked = '';
+					if(in_array($key,(array)$roles)){
+						$checked = 'checked';
+					}
 					?>
-					<div class="infobox">
-						<div class="info-icon-wrapper">
-							<p class="info_icon">
-								<img draggable="false" role="img" class="emoji" alt="ℹ" loading='lazy' src="<?php echo PICTURESURL;?>/info.png">
-							</p>
+					<label>
+						<input type='checkbox' name='roles[<?php echo $key;?>]' value='<?php echo $roleName;?>' <?php echo $checked;?>>
+						<?php
+						echo $roleName;
+						?>
+						<div class="infobox">
+							<div class="info-icon-wrapper">
+								<p class="info_icon">
+									<img draggable="false" role="img" class="emoji" alt="ℹ" loading='lazy' src="<?php echo PICTURESURL;?>/info.png">
+								</p>
+							</div>
+							<span class="info_text">
+								<?php
+								echo $roleName.' - <i>'.apply_filters('sim_role_description', '', $key).'</i>';
+								?>
+							</span>
 						</div>
-						<span class="info_text">
-							<?php
-							echo $roleName.' - <i>'.apply_filters('sim_role_description', '', $key).'</i>';
-							?>
-						</span>
-					</div>
-				</label>
-				<br>
+					</label>
+					<br>
+					<?php
+				}
+			}else{
+				?>
+				<table style='border: none;width: max-content;'>
+					<?php
+					foreach($userRoles as $key=>$roleName){
+						$checked = '';
+						if(in_array($key,(array)$roles)){
+							$checked = 'checked';
+						}
+						?>
+						<tr style='border: none;'>
+							<td style='border: none;'>
+								<label>
+									<input type='checkbox' name='roles[<?php echo $key;?>]' value='<?php echo $roleName;?>' <?php echo $checked;?>>
+									<?php
+									echo $roleName;
+									?>
+								</label>
+							</td>
+							<td style='border: none;'>
+								<i>
+									<?php
+									echo apply_filters('sim_role_description', '', $key);
+									?>
+								</i>
+							</td>
+						</tr>
+						<?php
+					}
+					?>
+				</table>
 				<?php
 			}
-		
-			echo SIM\addSaveButton('updateroles','Update roles');
+			
+			echo SIM\addSaveButton('updateroles', 'Update roles');
 	
 		?>
 		</form>
