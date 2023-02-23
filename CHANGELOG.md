@@ -4,6 +4,7 @@
 
 ### Added
 - ordinal numbers above 20
+- querier module
 
 ### Changed
 - layout of news screen
