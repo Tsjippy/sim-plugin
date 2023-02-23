@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.29.9] - 2023-02-23
+
+
+### Added
 - ordinal numbers above 20
 - querier module
 - role permission content filter
