@@ -7,6 +7,7 @@
 
 ### Changed
 - layout of news screen
+- role form
 
 ### Fixed
 - frontend content buttons
