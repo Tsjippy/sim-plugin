@@ -5,7 +5,7 @@ use SIM;
 // Add archive button
 
 add_filter('sim-frontend-buttons', function($html, $fontendContend){
-    if($fontendContend->post->post_status != 'archived'){
+    if(!empty($fontendContend->post) && $fontendContend->post->post_status != 'archived'){
         ob_start();
         ?>
         <div class='submit_wrapper'>

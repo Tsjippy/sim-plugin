@@ -269,15 +269,18 @@ class FrontEndContent{
 
 				}
 				echo  SIM\addSaveButton('submit_post', $this->action);
-				?>
-				<div class='submit_wrapper' style='display: flex;'>
-					<button type='button' name='publish_post' class='button'>Publish <span class='replaceposttype'><?php echo $this->postName;?></span></button>
-					<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy'>
-				</div>
 
-				<?php
+				if($this->fullrights){
+					?>
+					<div class='submit_wrapper' style='display: flex;'>
+						<button type='button' name='publish_post' class='button'>Publish <span class='replaceposttype'><?php echo $this->postName;?></span></button>
+						<img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy' alt=''>
+					</div>
+					<?php
+				}
+
 				ob_start();
-				if($this->post->post_status != 'trash'){
+				if(!empty($this->post) && $this->post->post_status != 'trash'){
 					?>
 					<div class='submit_wrapper'>
 						<button type='button' class='button' name='delete_post' data-post_id='<?php echo  esc_html($this->postId); ?>'>
