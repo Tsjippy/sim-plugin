@@ -8,6 +8,7 @@
 - layout of news screen
 
 ### Fixed
+- frontend content buttons
 
 ### Updated
 
