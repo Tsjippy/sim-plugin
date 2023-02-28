@@ -43,16 +43,22 @@ add_shortcode("all_contacts",function (){
 			
 			//remove the zip from the server
 			unlink('SIMContacts.zip');
+		}elseif($_GET['vcard'] == "pdf"){
+			//Create a pdf and add it to the mail
+			buildUserDetailPdf();
 		}
 
 		die();
 	//Return vcard hyperlink
 	}else{
 		$url 			= add_query_arg( ['vcard' => "all"], get_permalink( $post->ID ) );
-		$allButton 		= '<a href="'.$url.'" class="button sim vcard">Gmail and Others</a>';
+		$allButton 		= "<a href='$url' class='button sim vcard'>Gmail and Others</a>";
 		
 		$url 			= add_query_arg( ['vcard' => "outlook"], get_permalink( $post->ID ) );
-		$outlookButton	= '<a href="'.$url.'" class="button sim vcard">Outlook</a>';
+		$outlookButton	= "<a href='$url' class='button sim vcard'>Outlook</a>";
+
+		$url 			= add_query_arg( ['vcard' => "pdf"], get_permalink( $post->ID ) );
+		$pdfButton		= "<a href='$url' class='button sim vcard'>Download a printable list</a>";
 		
 		ob_start();
 		?>
@@ -64,7 +70,7 @@ add_shortcode("all_contacts",function (){
 				For Gmail and other email clients, simply import the .vcf file after selecting the button below.
 				For Outlook, you will download a compressed .zip file. Extract this, then click on each .vcf file to add it to your Outlook contacts list.
 			</p>
-			<?php echo $outlookButton.' '.$allButton;?>
+			<?php echo "$outlookButton  $allButton  $pdfButton";?>
 			<p>Be patient, preparing the download can take a while. </p>
 			<?php
 			do_action('sim-after-download-contacts');
@@ -130,4 +136,146 @@ function linkedUserDescription($atts){
 		$html .= showPhonenumbers($userId);
 	}
 	return $html."</div>";
+}
+
+
+/**
+ * Export data in an PDF
+ *
+ * @param	array	$header 	The header text
+ * @param	array	$data		The data
+ * @param	bool	$download	Serve as downloadable filedefault false
+ *
+ * @return string the pdf path or none
+ */
+function createContactlistPdf($header, $data, $download=false) {
+	// Column headings
+	$widths = array(30, 45, 28, 47,45);
+	
+	//Built frontpage
+	$pdf = new SIM\PDF\PdfHtml();
+	$pdf->frontpage(SITENAME.' Contact List',date('F'));
+	
+	//Write the table headers
+	$pdf->tableHeaders($header, $widths);
+	
+    // Data
+    $fill = false;
+	//Loop over all the rows
+    foreach($data as $row){
+		$pdf->writeTableRow($widths, $row, $fill,$header);
+        $fill = !$fill;
+    }
+    // Closing line
+    $pdf->Cell(array_sum($widths),0,'','T');
+	
+	$contactList = "Contactlist - ".date('F').".pdf";
+
+	$output		= 'F';
+	if($download){
+		// CLear the complete queue
+		SIM\clearOutput();
+		$output		= 'D';
+	}else{
+		$contactList = get_temp_dir().SITENAME." $contactList";
+	}
+
+	$pdf->Output( $output, $contactList);
+	
+    return $contactList;
+}
+
+
+/**
+ * Builds the PDF of contact info of all users
+ *
+ * @return string pdf path
+ */
+function buildUserDetailPdf(){
+	//Change the user to the adminaccount otherwise get_users will not work
+	wp_set_current_user(1);
+		
+	//Sort users on last name, then on first name
+	$args = array(
+		'meta_query' => array(
+			'relation'	=> 'AND',
+			'query_one' => array(
+				'key' => 'last_name'
+			),
+			'query_two'	=> array(
+				'key' => 'first_name'
+			),
+		),
+		'orderby'	=> array(
+			'query_one' => 'ASC',
+			'query_two' => 'ASC',
+		),
+	);
+	
+	$users = SIM\getUserAccounts(false, true, [], $args);
+
+	//Loop over all users to add a row with their data to the table
+	$userDetails 	= [];
+
+	foreach($users as $user){
+		//skip admin
+		if ($user->ID != 1 && $user->display_name != 'Signal Bot'){
+			$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
+			if(!is_array($privacyPreference)){
+				$privacyPreference = [];
+			}
+			
+			$name		= $user->display_name; //Real name
+			$nickname	= get_user_meta($user->ID, 'nickname', true); //persons name in case of a office account
+			if($name != $nickname && $nickname != ''){
+				$name .= "\n ($nickname)";
+			}
+			
+			$email	= $user->user_email;
+			
+			//Add to recipients
+			if (strpos($user->user_email,'.empty') !== false){
+				$email	= '';
+			}
+			
+			$phonenumbers = "";
+			if(empty($privacyPreference['hide_phone'])){
+				$userPhonenumbers = (array)get_user_meta ( $user->ID,"phonenumbers",true);
+				foreach($userPhonenumbers as $key=>$phonenumber){
+					if ($key > 0){
+						$phonenumbers .= "\n";
+					}
+					$phonenumbers .= $phonenumber;
+				}
+			}
+			
+			$ministries = "";
+			if(empty($privacyPreference['hide_ministry'])){
+				$userMinistries = (array)get_user_meta( $user->ID, "jobs", true);
+				$i = 0;
+				foreach ($userMinistries as $key=>$userMinistry) {
+					if ($i > 0){
+						$ministries .= "\n";
+					}
+					$ministries  .= get_the_title($key);
+					$i++;
+				}
+			}
+			
+			$compound = "";
+			if(empty($privacyPreference['hide_location'])){
+				$location = (array)get_user_meta( $user->ID, 'location', true );
+				if(isset($location['compound'])){
+					$compound = $location['compound'];
+				}
+			}
+			$userDetails[] 	= [$name, $email, $phonenumbers, $ministries, $compound];
+		}
+	}
+
+	//Headers of the table
+	$tableHeaders = ["Name"," E-mail"," Phone"," Ministries"," State"];
+
+	//Create a pdf and add it to the mail
+	return createContactlistPdf($tableHeaders, $userDetails, true);
 }
