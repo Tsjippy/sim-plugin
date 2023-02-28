@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- contact details pdf button
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.30.0] - 2023-02-28
+
+
+### Added
+- contact details pdf button
 
 ### Fixed
 
