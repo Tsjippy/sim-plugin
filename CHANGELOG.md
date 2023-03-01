@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- frontend content manager roles selector
 
 ### Changed
 
