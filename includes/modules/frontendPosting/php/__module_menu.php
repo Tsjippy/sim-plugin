@@ -64,6 +64,10 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		//Sort the roles
 		asort($userRoles);
 
+		if(!isset($settings['content-manager-roles'])){
+			$settings['content-manager-roles']	= [];
+		}
+
 		foreach($userRoles as $key=>$role){
 			$selected	= '';
 			if(in_array($key, $settings['content-manager-roles'])){
