@@ -10,6 +10,16 @@
 
 ### Updated
 
+## [2.30.1] - 2023-03-01
+
+
+### Added
+- frontend content manager roles selector
+
+### Fixed
+
+### Updated
+
 ## [2.30.0] - 2023-02-28
 
 
