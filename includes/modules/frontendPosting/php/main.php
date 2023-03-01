@@ -14,9 +14,11 @@ function sendPendingPostWarning( object $post, $update){
 		return;
 	}
 	
+	$roles	= SIM\getModuleOption(MODULE_SLUG, 'content-manager-roles');
+	
 	//get all the content managers
 	$users = get_users( array(
-		'role'    => 'editor',
+		'role__in'    => $roles,
 	));
 	
 	if($update){

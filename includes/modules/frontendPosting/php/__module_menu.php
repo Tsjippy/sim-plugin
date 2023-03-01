@@ -53,6 +53,27 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	ob_start();
 	?>
+	<label>Content manager role</label>
+	<select name='content-manager-roles[]' multiple='multiple'>
+		<?php
+		global $wp_roles;
+	
+		//Get all available roles
+		$userRoles	= $wp_roles->role_names;
+		
+		//Sort the roles
+		asort($userRoles);
+
+		foreach($userRoles as $key=>$role){
+			$selected	= '';
+			if(in_array($key, $settings['content-manager-roles'])){
+				$selected	= 'selected=selected';
+			}
+			echo "<option value='$key' $selected>$role</option>";
+		}
+		?>
+	</select>
+	<br>
 	<label>How should content managers be notified about pending content?</label>
 	<br>
 	<label><input type='checkbox' name='pending-channels[]' value='email' <?php if(in_array('email', $settings['pending-channels'])){echo 'checked';}?>>E-mail</label>

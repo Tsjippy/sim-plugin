@@ -16,10 +16,10 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
     }else{
         $checked    = '';
     }
-    
+
     ?>
     <div id="comments" class="property frontendform <?php echo $hidden; echo implode(' ', $allowedPostTypes);?>">
-        <h4>Comments</h4>	
+        <h4>Comments</h4>
         <label>
             <input type='checkbox' name='comments' value='allow' <?php echo $checked; ?>>
             Allow comments
@@ -29,10 +29,10 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
 });
 
 
-// Send Signal message about the new or updated post
+// Allow comments
 add_action('sim_after_post_save', function($post, $frontEndPost){
     if(isset($_POST['comments']) && $_POST['comments'] == 'allow'){
-        wp_update_post( 
+        wp_update_post(
             array(
                 'ID'                => $post->ID,
                 'comment_status'    => 'open',
@@ -41,7 +41,7 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
             false
         );
     }elseif($frontEndPost->update){
-        wp_update_post( 
+        wp_update_post(
             array(
                 'ID'                => $post->ID,
                 'comment_status'    => 'closed'
