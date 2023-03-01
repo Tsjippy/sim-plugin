@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- frontend content manager roles selector
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.30.1] - 2023-03-01
+
+
+### Added
+- frontend content manager roles selector
 
 ### Fixed
 
