@@ -247,7 +247,7 @@ class CreateSchedule extends Schedules{
 		}
 		$this->currentSchedule->sessions[$this->date][$this->startTime]	= $this->getSessionEvent($this->currentSession->id);
 
-/* 		$event							= [];
+		/* 		$event							= [];
 		$event['startdate']				= $this->date;
 		$event['starttime']				= $this->startTime;
 		$event['enddate']				= $this->date;
@@ -335,11 +335,16 @@ class CreateSchedule extends Schedules{
 			'name'			=> $name,
 			'info'			=> $info,
 			'lunch'			=> $lunch,
+			'diner'			=> !isset($_POST['skipdiner']),
 			'orientation'	=> $orientation,
 			'startdate'		=> $startDateStr,
 			'enddate'		=> $endDateStr,
 			'starttime'		=> $startTime,
 			'endtime'		=> $this->dinerTime,
+			'timeslot_size'	=> $_POST['timeslotsize'],
+			'hidenames'		=> isset($_POST['hidenames']),
+			'admin_roles'	=> maybe_serialize($_POST['admin-roles']),
+			'view_roles'	=> maybe_serialize($_POST['view-roles'])
 		);
 
 		if($update){
@@ -443,7 +448,7 @@ class CreateSchedule extends Schedules{
 		$message			= '';
 		$this->scheduleId	= $_POST['schedule_id'];
 		$this->startTime	= $_POST['starttime'];
-		$schedule			= $this->findScheduleById($this->scheduleId);
+		$schedule			= $this->getScheduleById($this->scheduleId);
 
 		// check if available
 		$session	= $this->getScheduleSession($date, $this->startTime);
@@ -539,7 +544,7 @@ class CreateSchedule extends Schedules{
 
 		$this->currentSession	= $this->getSessionEvent($sessionId);
 
-		$this->findScheduleById($this->currentSession->schedule_id);
+		$this->getScheduleById($this->currentSession->schedule_id);
 
 		$date				= $this->currentSession->events[0]->startdate;
 		$startTime			= $this->currentSession->events[0]->starttime;
@@ -600,7 +605,7 @@ class CreateSchedule extends Schedules{
 	*/
 	public function addMenu(){
 		$scheduleId		= $_POST['schedule_id'];
-		$schedule		= $this->findScheduleById($scheduleId);
+		$schedule		= $this->getScheduleById($scheduleId);
 
 		$date			= sanitize_text_field($_POST['date']);
 

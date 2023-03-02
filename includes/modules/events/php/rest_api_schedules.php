@@ -15,6 +15,10 @@ add_action( 'rest_api_init', function () {
 			},
 			'permission_callback' 	=> function(){
 				$schedule	= new CreateSchedule();
+
+				if(is_numeric($_POST['schedule_id'])){
+					$schedule->getScheduleById($_POST['schedule_id']);
+				}
 				return $schedule->admin;
 			},
 			'args'					=> array(
@@ -91,7 +95,7 @@ add_action( 'rest_api_init', function () {
 				$schedules		= new CreateSchedule();
 
 				if(is_array($_POST['date'])){
-					$schedule		= $schedules->findScheduleById($schedules->scheduleId);
+					$schedule		= $schedules->getScheduleById($schedules->scheduleId);
 
 					$succesFull		= '';
 					$unSuccesFull	= '';

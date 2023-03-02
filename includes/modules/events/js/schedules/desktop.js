@@ -1,3 +1,4 @@
+import { showLoader } from '../../../../js/imports.js';
 import { showAddHostModal, addCurrentUserAsHost, addHostHtml, removeHost, showTimeslotModal, checkConfirmation, editTimeSlot } from './shared.js';
 
 /**
@@ -12,6 +13,8 @@ import { showAddHostModal, addCurrentUserAsHost, addHostHtml, removeHost, showTi
 */ 
 async function addSchedule(target){
 	var response = await FormSubmit.submitForm(target, 'events/add_schedule');
+
+	Main.hideModals();
 
 	if(response){
 		target.closest('.schedules_wrapper').outerHTML=response.html;
@@ -204,8 +207,17 @@ function showEditScheduleModal(target){
 	modal.querySelector(`[name="schedule_info"]`).value		= wrapper.querySelector('.table_title.sub-title').textContent;
 	modal.querySelector(`[name="startdate"]`).value			= table.tHead.querySelector('tr').cells[1].dataset.isodate;
 	modal.querySelector(`[name="enddate"]`).value			= table.tHead.querySelector('tr').cells[table.tHead.querySelector('tr').cells.length-1].dataset.isodate;
-	modal.querySelector(`[name="skiplunch"]`).checked		= table.dataset.lunch;
+	modal.querySelector(`[name="timeslotsize"]`).value		= wrapper.dataset.slotsize;
+	modal.querySelector(`[name="hidenames"]`).checked		= wrapper.dataset.hidenames;
+	modal.querySelector(`[name="skiplunch"]`).checked		= parseInt(table.dataset.skiplunch);
+	modal.querySelector(`[name="skipdiner"]`).checked		= parseInt(table.dataset.skipdiner);
 	modal.querySelector(`[name="skiporientation"]`).checked	= table.rows.length<3;
+
+	let adminRoles	= JSON.parse(table.dataset.adminroles);
+	modal.querySelectorAll(`[name="admin-roles[]"]`).forEach(checkbox => checkbox.checked = adminRoles.includes(checkbox.value));
+
+	let viewRoles	= JSON.parse(table.dataset.viewroles);
+	modal.querySelectorAll(`[name="view-roles[]"]`).forEach(checkbox => checkbox.checked = viewRoles.includes(checkbox.value));
 
 	Main.showModal(modal);
 }
@@ -237,6 +249,8 @@ async function checkIfValidSelection(target, selected, e){
 			}
 		}
 		
+		firstCell.dataset.oldvalue	= firstCell.innerHTML;
+
 		//We are dealing with a cell with a value
 		if(firstCell.classList.contains('selected')){
             let date    = firstCell.closest('table').rows[0].cells[firstCell.cellIndex].dataset.isodate;
@@ -377,9 +391,16 @@ document.addEventListener("DOMContentLoaded",function() {
 	console.log("Desktop-schedule.js loaded");
 	
 	addSelectable();
+
+	document.querySelector('[name="add_session"]').addEventListener('modalclosed', ev=>{
+		document.querySelectorAll('td.active').forEach(cell => {
+			cell.innerHTML = cell.dataset.oldvalue;
+			cell.classList.remove('active', 'ui-selected');
+		});
+	});
 });
 
-document.addEventListener('click',function(event){
+document.addEventListener('click', function(event){
 	let target = event.target;
 
 	if(target.name == 'add_schedule'){
@@ -394,7 +415,7 @@ document.addEventListener('click',function(event){
 		event.stopPropagation();
 
 		submitRecipe(target);
-	}else if(target.matches('.close') && target.closest('.modal') != null && target.closest('.modal').attributes.name.value == 'add_session'){
+	}else if(target.matches('.modal .close')  && target.closest('.modal').attributes.name.value == 'add_session'){
 		removeRowSpan(document.querySelector('td.active'));
 	}else if(target.classList.contains('keyword')){
 		showRecipeModal(target);

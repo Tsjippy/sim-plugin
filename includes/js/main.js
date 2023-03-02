@@ -198,6 +198,8 @@ export function hideModals(){
 	if(modals.length != 0){
 		modals.forEach(modal=>{
 			modal.classList.add('hidden');
+			const event = new Event('modalclosed');
+			modal.dispatchEvent(event);
 		});
 
 		// Turn main page scrolling on again

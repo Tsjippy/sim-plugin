@@ -6,8 +6,8 @@
   "scripts": {
     "events": "webpack --watch --entry ./events.js --output-path . --output-filename events.min.js --progress --mode=production --devtool source-map",
     "schedule": "webpack --watch --entry ./schedules.js --output-path . --output-filename schedules.min.js --progress --mode=production --devtool source-map",
-    "mobile-schedule": "webpack --watch --entry ./schedules/mobile.js --output-path . --output-filename mobile-schedule.min.js --progress --mode=production --devtool source-map",
-    "desktop-schedule": "webpack --watch --entry ./schedules/desktop.js --output-path . --output-filename desktop-schedule.min.js --progress --mode=production --devtool source-map"
+    "mobile": "webpack --watch --entry ./schedules/mobile.js --output-path . --output-filename mobile-schedule.min.js --progress --mode=production --devtool source-map",
+    "desktop": "webpack --watch --entry ./schedules/desktop.js --output-path . --output-filename desktop-schedule.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

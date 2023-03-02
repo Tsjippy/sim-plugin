@@ -20,6 +20,10 @@ class Schedules{
 	public $onlyMeals;
 	protected $mobile;
 	protected $currentSession;
+	protected $timeSlotSize;
+	protected $hideNames;
+	protected $adminRoles;
+	protected $viewRoles;
 	
 	public function __construct(){
 		global $wpdb;
@@ -30,12 +34,6 @@ class Schedules{
 		$this->getSchedules();
 		
 		$this->user 			= wp_get_current_user();
-		
-		if(in_array('personnelinfo', $this->user->roles)){
-			$this->admin		=	true;
-		}else{
-			$this->admin		= false;
-		}
 
 		$this->events			= new DisplayEvents();
 
@@ -46,6 +44,12 @@ class Schedules{
 		$this->tdLabels			= [];
 
 		$this->mobile			= wp_is_mobile();
+
+		if(in_array('editor', $this->user->roles)){
+			$this->admin		= true;
+		}else{
+			$this->admin		= false;
+		}
 	}
 	
 	/**
@@ -67,11 +71,16 @@ class Schedules{
 			name longtext NOT NULL,
 			info longtext NOT NULL,
 			lunch boolean NOT NULL,
+			diner boolean NOT NULL,
 			orientation boolean NOT NULL,
 			startdate varchar(80) NOT NULL,
 			enddate varchar(80) NOT NULL,
 			starttime varchar(80) NOT NULL,
 			endtime varchar(80) NOT NULL,
+			timeslot_size mediumint(9) NOT NULL,
+			hidenames boolean NOT NULL,
+			admin_roles varchar(80) NOT NULL,
+			view_roles varchar(80) NOT NULL,
 			PRIMARY KEY  (id)
 		) $charsetCollate;";
 
@@ -107,13 +116,59 @@ class Schedules{
 	 *
 	 * @return 	object		the schedule
 	*/
-	public function findScheduleById($id){
+	public function getScheduleById($id){
 		foreach($this->schedules as $schedule){
 			if($schedule->id == $id){
 				$this->currentSchedule	= $schedule;
 
+				$this->parseScheduleVars();
+
 				return $schedule;
 			}
+		}
+	}
+
+	/**
+	 * Sets the variable values for the current schedule
+	 */
+	protected function parseScheduleVars(){
+		$this->timeSlotSize	= $this->currentSchedule->timeslot_size;
+		if($this->timeSlotSize	== 0){
+			$this->timeSlotSize	= 15;
+		}
+
+		$this->hideNames	= $this->currentSchedule->hidenames;
+
+		// Parse admin rights
+		$this->admin		= false;
+
+		$this->adminRoles	= maybe_unserialize($this->currentSchedule->admin_roles);
+		$this->viewRoles	= maybe_unserialize($this->currentSchedule->view_roles);
+
+		if(empty($this->adminRoles)){
+			$this->adminRoles	= ['editor'];
+		}
+		
+		if(array_intersect($this->adminRoles, $this->user->roles)){
+			$this->admin	= true;
+		}
+
+		// parse view rights
+		$this->onlyMeals 	= true;
+
+		if(empty($this->viewRoles)){
+			$this->viewRoles	= [];
+		}
+		
+		// Show also the orientation schedule if:
+		if (
+			in_array('everyone', $this->viewRoles)				||	// Everyone can view
+			array_intersect($this->viewRoles, $this->user->roles)	||	// We have the view roles permission
+			$this->admin															||	// We are an admin
+			$this->currentSchedule->target == $this->user->ID						||	// The schedule is meant for us
+			$this->includedInSchedule()													// We are in the schedule
+		){
+			$this->onlyMeals = false;
 		}
 	}
 
@@ -130,6 +185,8 @@ class Schedules{
 		$form		= $this->addScheduleForm();
 
 		foreach($this->schedules as $this->currentSchedule){
+			$this->parseScheduleVars();
+
 			$schedules	.= $this->showSchedule();
 		}
 
@@ -155,17 +212,6 @@ class Schedules{
 			!$this->currentSchedule->published												// Schedule is not yet published
 		){
 			return '';
-		}
-		
-		$this->onlyMeals 	= true;
-		
-		// Show also the orientation schedule if:
-		if (
-			$this->admin															||	// We are an admin
-			$this->currentSchedule->target == $this->user->ID						||	// The schedule is meant for us
-			$this->includedInSchedule()													// We are in the schedule
-		){
-			$this->onlyMeals = false;
 		}
 
 		// Load all schedule events
@@ -194,7 +240,7 @@ class Schedules{
 		$this->currentSchedule->startdate	= max([date('Y-m-d'), $this->currentSchedule->startdate]);
 		
 		?>
-		<div class='schedules_div table-wrapper' data-id="<?php echo $this->currentSchedule->id; ?>" data-target="<?php echo $this->currentSchedule->name; ?>">
+		<div class='schedules_div table-wrapper' data-id="<?php echo $this->currentSchedule->id; ?>" data-target="<?php echo $this->currentSchedule->name; ?>" data-slotsize="<?php echo $this->timeSlotSize;?>" data-hidenames="<?php echo $this->hideNames;?>">
 			<div class="modal publish_schedule hidden">
 				<div class="modal-content">
 					<span id="modal_close" class="close">&times;</span>
@@ -212,7 +258,7 @@ class Schedules{
 				</div>
 			</div>
 			<?php
-			if(!is_numeric($this->currentSchedule->target) || !get_userdata($this->currentSchedule->target)){
+			if($this->admin && (!is_numeric($this->currentSchedule->target) || !get_userdata($this->currentSchedule->target))){
 				?>
 				<div class='warning'>
 					This schedule has no website user connected to it.<br>
@@ -252,7 +298,19 @@ class Schedules{
 				?>
 				<p>Click on an available date to indicate you want to host.<br>Click on any date you are subscribed for to unsubscribe</p>
 
-				<table class="sim-table schedule" data-id="<?php echo $this->currentSchedule->id; ?>" data-target="<?php echo $this->currentSchedule->name; ?>" data-target_id="<?php echo $this->currentSchedule->target; ?>" data-action='update_schedule' data-lunch='<?php echo $this->currentSchedule->lunch ? 'true' : 'false';?>'>
+				<?php
+				$dataSet	= "data-id='{$this->currentSchedule->id}' data-target='{$this->currentSchedule->name}' data-target_id='{$this->currentSchedule->target}' data-action='update_schedule'";
+
+				if($this->admin){
+					$skipLunch	= !$this->currentSchedule->lunch;
+					$skipDiner	= !$this->currentSchedule->diner;
+					$adminRoles	= json_encode($this->adminRoles);
+					$viewRoles	= json_encode($this->viewRoles);
+					$dataSet	.= "data-skiplunch='$skipLunch' data-skipdiner='$skipDiner' data-adminroles='$adminRoles' data-viewroles='$viewRoles'";
+				}
+
+				?>
+				<table class="sim-table schedule" <?php echo $dataSet;?>>
 					<thead>
 						<tr>
 							<th class='sticky'>Dates</th>
@@ -412,7 +470,7 @@ class Schedules{
 					}else{
 						echo "<input type='hidden' name='host_id' value='{$this->user->ID}'>";
 					}
-					echo SIM\addSaveButton('add_host_mobile','Save','update_schedule');
+					echo SIM\addSaveButton('add_host_mobile', 'Save', 'update_schedule');
 					?>
 				</form>
 			</div>
@@ -580,9 +638,13 @@ class Schedules{
 
 		global $wpdb;
 
-		$query	= "SELECT * FROM {$this->events->tableName} WHERE onlyfor={$this->user->ID} AND starttime != '$this->dinerTime'";
+		$query	= "SELECT * FROM {$this->events->tableName} WHERE onlyfor={$this->user->ID}";
 		if($this->currentSchedule->lunch){
 			$query	.= " AND starttime != '$this->lunchStartTime'";
+		}
+
+		if($this->currentSchedule->diner){
+			$query	.= " AND starttime != '$this->dinerTime'";
 		}
 
 		$events	= $wpdb->get_results($query);
@@ -617,7 +679,8 @@ class Schedules{
 		$class	= 'meal';
 
 		if($startTime == $this->lunchStartTime){
-			$rowSpan						= "rowspan='4'";
+			$rows							= 60/$this->timeSlotSize;
+			$rowSpan						= "rowspan='$rows'";
 			$this->nextStartTimes[$date]	= $this->lunchEndTime;
 		}else{
 			$rowSpan = '';
@@ -626,20 +689,26 @@ class Schedules{
 		$this->getScheduleSessions();
 
 		if(isset($this->currentSchedule->sessions[$date][$startTime])){
-			$data			= $this->currentSchedule->sessions[$date][$startTime];
-			$title			= $data->posts[0]->post_title;
-			$url			= get_permalink($data->posts[0]->ID);
-			$cellText		= "<a href='$url'>$title</a>";
-			$hostId			= $data->events[0]->organizer_id;
-			$date			= $data->events[0]->startdate;
-			$startTime		= $data->events[0]->starttime;
+			
 			$hostData		= "";
-			if(is_numeric($hostId)){
-				$hostData	.= " data-host=$hostId data-session_id='$data->id'";
+			$data			= $this->currentSchedule->sessions[$date][$startTime];
+			$hostId			= $data->events[0]->organizer_id;
+			$partnerId 		= SIM\hasPartner($this->user->ID);
+
+			if($this->hideNames && !$this->admin && $this->currentSchedule->target != $this->user->ID && $hostId != $this->user->ID && $hostId != $partnerId){
+				$cellText	= 'Taken';
+			}else{
+				$title			= $data->posts[0]->post_title;
+				$url			= get_permalink($data->posts[0]->ID);
+				$cellText		= "<a href='$url'>$title</a>";
+				$date			= $data->events[0]->startdate;
+				$startTime		= $data->events[0]->starttime;
+				if(is_numeric($hostId)){
+					$hostData	.= " data-host=$hostId data-session_id='$data->id'";
+				}
 			}
 
 			$class 			.= ' selected';
-			$partnerId 		= SIM\hasPartner($this->user->ID);
 			//Host is current user or the spouse
 			if ($hostId == $this->user->ID || $hostId == $partnerId){
 				$class 			.= ' own';
@@ -703,21 +772,25 @@ class Schedules{
 			if (is_numeric($hostId)) {
 				$dataset	.= " data-host='".get_userdata($hostId)->display_name."' data-host_id='$hostId'";
 			}
-			$title		= get_the_title($event->post_id);
-			$dataset	.= " data-subject='".explode(' with ', $title)[0]."'";
-			$url		= get_permalink($event->post_id);
-			$date		= $event->startdate;
+
 			$endTime	= $event->endtime;
 			$class 		.= ' selected';
-			$cellText	= "<span class='subject' data-userid='$hostId'><a href='$url'>$title</a></span><br>";
-		
+			if($this->hideNames && !$this->admin && $this->currentSchedule->target != $this->user->ID){
+				$cellText	= 'Taken';
+			}else{
+				$title		= get_the_title($event->post_id);$dataset	.= " data-subject='".explode(' with ', $title)[0]."'";
+				$url		= get_permalink($event->post_id);
+				$date		= $event->startdate;
+				$cellText	= "<span class='subject' data-userid='$hostId'><a href='$url'>$title</a></span><br>";
+			}
+			
 			if (!is_numeric($hostId)) {
 				$cellText .= "<span class='person timeslot'>Add person</span>";
 			}
 		
-			if (empty($event->location)) {
+			if (empty($event->location) && $this->admin) {
 				$cellText .= "<span class='location timeslot'>Add location</span>";
-			} else {
+			} elseif($cellText	!= 'Taken') {
 				$cellText .= "<span class='timeslot'>At <span class='location'>{$event->location}</span></span>";
 				$dataset	.= " data-location='{$event->location}'";
 			}
@@ -727,7 +800,7 @@ class Schedules{
 				$toTime		= new \DateTime($event->endtime);
 				$fromTime	= new \DateTime($event->starttime);
 				$interval	= $toTime->diff($fromTime);
-				$value		= ($interval->h*60+$interval->i)/15;
+				$value		= ($interval->h * 60 + $interval->i) / $this->timeSlotSize;
 				$rowSpan	= "rowspan='$value'";
 			}
 
@@ -788,14 +861,15 @@ class Schedules{
 			
 			$date				= $this->currentSchedule->startdate;
 			$mealScheduleRow	= true;
-			$endTime			= date('H:i', strtotime('+15 minutes', strtotime($startTime)));
+			$endTime			= date('H:i', strtotime("+$this->timeSlotSize minutes", strtotime($startTime)));
 			$extra				= '';
 			
 			if(
 				$startTime == $this->lunchStartTime	&&		// Starttime of the lunch
-				$this->currentSchedule->lunch							// And the schedule includes a lunch
+				$this->currentSchedule->lunch				// And the schedule includes a lunch
 			){
-				$extra				= 'rowspan="4"';		// Span 4 rows
+				$rows				= 60/$this->timeSlotSize;
+				$extra				= "rowspan='$rows'";	// Span 1 hour
 				$description		= 'Lunch';
 			}elseif(
 				$startTime > $this->lunchStartTime	&&		// Time is past the start lunch time
@@ -804,7 +878,7 @@ class Schedules{
 			){
 				$description		= 'Lunch';
 				$extra				= "class='hidden'";		// These rows should be hidden as the first spans 4 rows
-			}elseif($startTime == $this->dinerTime){
+			}elseif($startTime == $this->dinerTime && $this->currentSchedule->diner){
 				$description		= 'Dinner';
 			}else{
 				$mealScheduleRow	= false;
@@ -882,7 +956,7 @@ class Schedules{
 				}
 				
 				$mealScheduleRow	= true;
-				$endTime			= date('H:i', strtotime('+15 minutes', strtotime($startTime)));
+				$endTime			= date('H:i', strtotime("+$this->timeSlotSize minutes", strtotime($startTime)));
 				
 				if(
 					$startTime >= $this->lunchStartTime	&&		// Time is past the start lunch time
@@ -1134,6 +1208,7 @@ class Schedules{
 	 * @return 	string		the form html
 	*/
 	public function addScheduleForm($update=false){
+		global $wp_roles;
 		ob_start();
 		if(!$this->admin){
 			return '';
@@ -1174,16 +1249,82 @@ class Schedules{
 				<input type='date' class='wide' name='enddate' required>
 			</label>
 			
-			<br>
-			<label class='option-label'>
-				<input type='checkbox' name='skiplunch' style="display: inline;width: auto;">
-				Do not include a lunch in the schedule
+			<label>
+				<h4>Timeslot size (minutes)</h4>
+				<input type='number' name='timeslotsize' value='15'>
 			</label>
 			<br>
-			<label class='option-label'>
-				<input type='checkbox' name='skiporientation' style="display: inline;width: auto;">
-				Do not include an orientation schedule
-			</label><br>
+			<br>
+
+			<button type='button' class="button small" onClick='event.target.closest("form").querySelector(".advanced-wrapper").classList.toggle("hidden")'>Advanced Options</button>
+			<div class="advanced-wrapper hidden">
+				<label>
+					<h4>Privacy</h4>
+					<label>
+						<input type='checkbox' name='hidenames'>
+						Hide names in the schedule
+					</label>
+				</label>
+				<br>
+				<h4>Other options</h4>
+				<br>
+				<label class='option-label'>
+					<input type='checkbox' name='skiplunch' style="display: inline;width: auto;">
+					Do not include a lunch
+				</label>
+				<br>
+				<label class='option-label'>
+					<input type='checkbox' name='skipdiner' style="display: inline;width: auto;">
+					Do not include a diner
+				</label>
+				<br>
+				<label class='option-label'>
+					<input type='checkbox' name='skiporientation' style="display: inline;width: auto;">
+					Only meals
+				</label>
+				<br>
+				<br>
+				<label>
+					<h4>Roles with admin permissions:</h4>
+					<?php
+					//Get all available roles
+					$userRoles = $wp_roles->role_names;
+					
+					//Sort the roles
+					asort($userRoles);
+					foreach($userRoles as $key=>$role){
+						?>
+						<label>
+							<input type="checkbox" name="admin-roles[]" value="<?php echo $key;?>">
+							<?php echo $role;?>
+						</label>
+						<br>
+						<?php
+					}
+					?>
+				</label>
+				<br>
+				<label>
+					<h4>Roles with with full view permissions</h4>
+					<small><i>Roles without full view permission can only see the meal rows if they are not in the schedule</i></small><br>
+					<label>
+						<input type="checkbox" name="view-roles[]" value="everyone">
+						Everyone
+					</label>
+					<br>
+					<?php
+					foreach($userRoles as $key=>$role){
+						?>
+						<label>
+							<input type="checkbox" name="view-roles[]" value="<?php echo $key;?>">
+							<?php echo $role;?>
+						</label>
+						<br>
+						<?php
+					}
+					?>
+				</label>
+			</div>
 			
 			<?php
 			$action = 'Add';
