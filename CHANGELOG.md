@@ -6,6 +6,7 @@
 - non-meal schedules
 
 ### Changed
+- mail message reimbursements
 
 ### Fixed
 
