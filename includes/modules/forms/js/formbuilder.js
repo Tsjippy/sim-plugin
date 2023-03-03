@@ -920,8 +920,15 @@ window.addEventListener("click", event => {
 	}
 	
 	if(target.classList.contains('emailtrigger')){
-		let el = target.closest('.clone_div').querySelector('.emailfieldcondition');
+		let el = target.closest('.clone_div').querySelector('.conditionalfield-wrapper');
 		if(target.value == 'fieldchanged'){
+			el.classList.remove('hidden');
+		}else{
+			el.classList.add('hidden');
+		}
+
+		el = target.closest('.clone_div').querySelector('.conditionalfields-wrapper');
+		if(target.value == 'fieldschanged'){
 			el.classList.remove('hidden');
 		}else{
 			el.classList.add('hidden');

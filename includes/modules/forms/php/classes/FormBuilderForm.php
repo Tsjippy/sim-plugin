@@ -29,7 +29,7 @@ class FormBuilderForm extends SimForms{
 	 * @param	int		$selectedId	The id of the current selected element in the dropdown. Default empty
 	 * @param	int		$elementId	the id of the element
 	 *
-	 * @return	string				The dropdown html
+	 * @return	string	The dropdown html
 	 */
 	protected function inputDropdown($selectedId, $elementId=''){
 		$html = "";
@@ -38,11 +38,14 @@ class FormBuilderForm extends SimForms{
 		}else{
 			$html = "<option value=''>---</option>";
 		}
+
+		// Add booking date elements
+		$elements	= apply_filters('sim-forms-elements', $this->formElements, $this, true);
 		
-		foreach($this->formElements as $element){
+		foreach($elements as $element){
 			//do not include the element itself do not include non-input types
 			if($element->id != $elementId && !in_array($element->type, ['label', 'info', 'datalist', 'formstep', 'div_end'])){
-				$name = ucfirst(str_replace('_',' ',$element->name));
+				$name = ucfirst(str_replace('_', ' ', $element->name));
 
 				// add the id if non-unique name
 				if(strpos($name, '[]') !== false){
@@ -50,7 +53,15 @@ class FormBuilderForm extends SimForms{
 				}
 				
 				//Check which option is the selected one
-				if(!empty($selectedId) && $selectedId == $element->id){
+				if(
+					!empty($selectedId) &&					// there is an option selected
+					(
+						$selectedId == $element->id	||		// its the current element
+						is_array($selectedId)		&&		// multiple elements are selected
+						in_array($element->id, $selectedId)	// current element is one of the selected
+
+					)
+				){
 					$selected = 'selected="selected"';
 				}else{
 					$selected = '';
@@ -638,6 +649,10 @@ class FormBuilderForm extends SimForms{
 											A field has changed to a value
 										</label><br>
 										<label>
+											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='fieldschanged' <?php if($email['emailtrigger'] == 'fieldschanged'){	echo 'checked';}?>>
+											One or more fields have changed
+										</label><br>
+										<label>
 											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='removed' <?php if($email['emailtrigger'] == 'removed'){echo 'checked';}?>>
 											The submission is archived or deleted
 										</label><br>
@@ -647,7 +662,7 @@ class FormBuilderForm extends SimForms{
 										</label><br>
 									</div>
 									
-									<div class='emailfieldcondition <?php if($email['emailtrigger'] != 'fieldchanged'){echo 'hidden';}?>'>
+									<div class='conditionalfield-wrapper <?php if($email['emailtrigger'] != 'fieldchanged'){echo 'hidden';}?>'>
 										<label class="formfield formfieldlabel">Field</label>
 										<select name='emails[<?php echo $key;?>][conditionalfield]'>
 											<?php
@@ -657,8 +672,17 @@ class FormBuilderForm extends SimForms{
 										
 										<label class="formfield formfieldlabel">
 											Value
-											<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalvalue]' value="<?php echo $email['conditionalvalue']; ?>">
+											<input type='text' class='formbuilder formfieldsetting' name='emails[<?php echo $key;?>][conditionalvalue]' value="<?php echo $email['conditionalvalue']; ?>" style='width:fit-content;'>
 										</label>
+									</div>
+
+									<div class='conditionalfields-wrapper <?php if($email['emailtrigger'] != 'fieldschanged'){echo 'hidden';}?>'>
+										<label class="formfield formfieldlabel">Field(s)</label>
+										<select name='emails[<?php echo $key;?>][conditionalfields][]' multiple='multiple'>
+											<?php
+											echo $this->inputDropdown( $email['conditionalfields'] );
+											?>
+										</select>
 									</div>
 									
 									<br>

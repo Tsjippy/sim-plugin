@@ -511,6 +511,7 @@ function editValue(){
 	$submitForm->getForm($_POST['formid']);
 	$submitForm->submission		= $formTable->submission;
 	$submitForm->sendEmail('fieldchanged');
+	$submitForm->sendEmail('fieldschanged');
 	
 	//send message back to js
 	return [

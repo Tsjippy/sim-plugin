@@ -34,8 +34,8 @@ add_action('sim-after-formbuilder-element-options', function($element){
 });
 
 // add extra elements for displaying in results table
-add_filter('sim-forms-elements', function($elements, $displayFormResults){
-    if(!in_array(get_class($displayFormResults), ["SIM\FORMS\DisplayFormResults", "SIM\FORMS\SubmitForm"])){
+add_filter('sim-forms-elements', function($elements, $displayFormResults, $force){
+    if(!$force && !in_array(get_class($displayFormResults), ["SIM\FORMS\DisplayFormResults", "SIM\FORMS\SubmitForm"])){
         return $elements;
     }
 
@@ -66,7 +66,7 @@ add_filter('sim-forms-elements', function($elements, $displayFormResults){
         $elements[]         = $enddate;
     }
     return $elements;
-}, 10, 2);
+}, 10, 3);
 
 // Display the date selector in the form
 add_filter('sim-forms-element-html', function($html, $element){

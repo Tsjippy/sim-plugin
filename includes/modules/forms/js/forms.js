@@ -136,9 +136,13 @@ export function copyFormInput(originalNode){
 		select.options[previousVal].style.display = 'none';
 		
 		//Add nice select
-		select._niceselect.update();
-		
-		select.nextSibling.querySelector('.current').textContent = 'Select an option';
+		if(select._niceselect == undefined){
+			console.error(select);
+			select._niceselect = NiceSelect.bind(select, {searchable: true});
+		}else{
+			select._niceselect.update();
+			select.nextSibling.querySelector('.current').textContent = 'Select an option';
+		}
 		
 		i++;
 	});

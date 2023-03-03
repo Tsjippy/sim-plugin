@@ -466,9 +466,7 @@ class SimForms{
 		if(!empty($sortCol)){
 			$query .= " ORDER BY {$this->elTableName}.`$sortCol` ASC";
 		}
-		$this->formElements 		=  apply_filters('sim-forms-elements', $wpdb->get_results($query), $this);
-
-
+		$this->formElements 		=  apply_filters('sim-forms-elements', $wpdb->get_results($query), $this, false);
 	}
 
 	/**
