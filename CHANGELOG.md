@@ -4,6 +4,7 @@
 
 ### Added
 - non-meal schedules
+- send e-mail when one or more form entries changed
 
 ### Changed
 - mail message reimbursements
