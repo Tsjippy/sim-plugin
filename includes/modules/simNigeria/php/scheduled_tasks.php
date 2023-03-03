@@ -82,13 +82,14 @@ function sendReimbursementRequests(){
 			$subject		 = "Reimbursements for ".date("F Y", strtotime("previous month"));
 			$message		 = 'Dear finance team,<br><br>';
 			$message		.= 'Attached you can find all reimbursement requests of this month<br>';
-			$message		.= 'Please use the links below to get the reciepts:<br>';
+			$message		.= 'Please mention the Id of each request in the transfer description<br>';
+			//$message		.= 'Please use the links below to get the reciepts:<br>';
 
 			// Add attachments as urls so to not exceed the appendix limit of outlook
-			foreach($attachments as $attachment){
+			/* foreach($attachments as $attachment){
 				$message		.= SIM\pathToUrl(str_replace($recieptsDir, "$recieptsDir/old", $attachment));
 				$message		.= '<br><br>';
-			}
+			} */
 			$emailHeaders	 = ["Bcc:enharmsen@gmail.com"];
 			
 			//Send the mail
