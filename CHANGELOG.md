@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.30.2] - 2023-03-03
+
+
+### Added
 - non-meal schedules
 - send e-mail when one or more form entries changed
 
