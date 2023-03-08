@@ -102,7 +102,6 @@ export let addScripts	= function () {
     }
 }
 
-
 export function displayMessage(message, icon, autoclose=false, no_ok=false, timer=1500){
 	if(message == undefined){
 		return;

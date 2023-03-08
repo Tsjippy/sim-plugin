@@ -144,7 +144,7 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 	//emails
 	foreach (get_users() as $user) {
 		$phonenumbers											= (array)get_user_meta($user->ID, 'phonenumbers', true);
-		$accountId												= (array)get_user_meta($user->ID, 'financial_account_id', true);
+		$accountId												= get_user_meta($user->ID, 'financial_account_id', true);
 
 		$defaultArrayValues['emails'][$user->ID]				= $user->user_email;
 		$defaultArrayValues['All phonenumbers'][$user->ID]		= implode(";", $phonenumbers);

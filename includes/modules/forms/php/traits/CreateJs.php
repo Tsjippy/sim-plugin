@@ -30,7 +30,8 @@ trait CreateJs{
      * Builds the js files for the current form
     */
     function createJs(){
-        $this->formName = $this->formData->name;
+        $this->formName     = $this->formData->name;
+        $this->varName      = str_replace('-', '', $this->formName);
 
         $checks = [];
         $errors = [];
@@ -345,12 +346,12 @@ trait CreateJs{
                                 $addition       = $condition['addition'];
                             }
                             if($propertyName == 'value'){
-                                $actionCode    = "FormFunctions.changeFieldValue('$selector', $varName, {$this->formName}.processFields, form, $addition);";
+                                $actionCode    = "FormFunctions.changeFieldValue('$selector', $varName, {$this->varName}.processFields, form, $addition);";
                                 if(!in_array($actionCode, $actionArray)){
                                     $actionArray[] = $actionCode;
                                 }
                             }else{
-                                $actionCode    = "FormFunctions.changeFieldProperty('$selector', '$propertyName', $varName, {$this->formName}.processFields, form, $addition);";
+                                $actionCode    = "FormFunctions.changeFieldProperty('$selector', '$propertyName', $varName, {$this->varName}.processFields, form, $addition);";
                                 if(!in_array($actionCode, $actionArray)){
                                     $actionArray[] = $actionCode;
                                 }
@@ -382,7 +383,7 @@ trait CreateJs{
                 }
                 if(!empty($this->formData->settings['save_in_meta'])){
                     $tabJs.= "\n\t\t\tform.querySelectorAll('select, input, textarea').forEach(";
-                        $tabJs.= "\n\t\t\t\tel=>{$this->formName}.processFields(el)";
+                        $tabJs.= "\n\t\t\t\tel=>{$this->varName}.processFields(el)";
                     $tabJs.= "\n\t\t\t);";
                 }
             if(!empty($tabJs)){
@@ -435,7 +436,7 @@ trait CreateJs{
                 $newJs  .= "\n\t\t\tFormFunctions.nextPrev(-1);";
             $newJs  .= "\n\t\t}";
 
-            $newJs  .= "\n\n\t\t{$this->formName}.processFields(el);";
+            $newJs  .= "\n\n\t\t{$this->varName}.processFields(el);";
         $newJs  .= "\n\t};";
         $newJs  .= "\n\n\twindow.addEventListener('click', listener);";
         $newJs  .= "\n\twindow.addEventListener('input', listener);";
@@ -508,8 +509,8 @@ trait CreateJs{
         $minifiedJs .= \Garfix\JsMinify\Minifier::minify($newJs, array('flaggedComments' => false));
       
         // Put is all in a namespace variable
-        $js         = "var {$this->formName} = new function(){".$js."\n};";
-        $minifiedJs = "var {$this->formName} = new function(){".$minifiedJs."};";
+        $js         = "var $this->varName = new function(){".$js."\n};";
+        $minifiedJs = "var $this->varName  = new function(){".$minifiedJs."};";
 
         /*
         ** EXTERNAL JS
@@ -588,7 +589,7 @@ trait CreateJs{
                         $actionCode    .= "{$prefix}\t\tif(!el.closest('.inputwrapper').matches('.action-processed')){\n";
                             $actionCode    .= "{$prefix}\t\t\tel.closest('.inputwrapper').classList.add('action-processed');\n";
                             //$actionCode    .= "{$prefix}\t\t\tel.closest('.inputwrapper').classList.$action('hidden');\n";
-                            $actionCode    .= "{$prefix}\t\t\tFormFunctions.changeVisibility('$action', el, {$this->formName}.processFields);\n";
+                            $actionCode    .= "{$prefix}\t\t\tFormFunctions.changeVisibility('$action', el, {$this->varName}.processFields);\n";
                         $actionCode    .= "{$prefix}\t\t}\n";
                     //$actionCode    .= "{$prefix}\t}catch(e){\n";
                         //$actionCode    .= "{$prefix}\t\tel.classList.$action('hidden');\n";
@@ -599,7 +600,7 @@ trait CreateJs{
             }elseif(count($elements) == 1){
                 $selector       = $this->getSelector($elements[0]);
                 //$actionCode    .= "{$prefix}form.querySelector('$selector').closest('.inputwrapper').classList.$action('hidden');\n";
-                $actionCode    .= "{$prefix}FormFunctions.changeVisibility('$action', form.querySelector('$selector').closest('.inputwrapper'), {$this->formName}.processFields);\n";
+                $actionCode    .= "{$prefix}FormFunctions.changeVisibility('$action', form.querySelector('$selector').closest('.inputwrapper'), {$this->varName}.processFields);\n";
             }
         }
 

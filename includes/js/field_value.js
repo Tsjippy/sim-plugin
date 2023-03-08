@@ -53,9 +53,6 @@ export function getDataListValue(el){
 		value =  el.value;
 	}else{
 		value = origInput.dataset.value;
-		if(value == ''){
-			value =  el.value;
-		}
 	}
 
 	return value;
