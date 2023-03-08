@@ -90,7 +90,7 @@ add_filter( 'sim_add_form_defaults', function($defaultValues, $userId){
 	return $defaultValues;
 },10,2);
 
-//Multi default values used to prefil the travel form elements with multivalues like checkboxes ans dropdowns
+//Multi default values used to prefil the travel form elements with multivalues like checkboxes and dropdowns
 add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId){
 	$usermeta = get_user_meta($userId);
 	
@@ -142,15 +142,17 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 	}
 
 	//emails
-	//$all_users = get_users();
 	foreach (get_users() as $user) {
+		$phonenumbers											= (array)get_user_meta($user->ID, 'phonenumbers', true);
+		$accountId												= (array)get_user_meta($user->ID, 'financial_account_id', true);
+
 		$defaultArrayValues['emails'][$user->ID]				= $user->user_email;
-		$phonenumbers											= (array)get_user_meta($user->ID,'phonenumbers',true);
-		$defaultArrayValues['All phonenumbers'][$user->ID]	= implode(";", $phonenumbers);
+		$defaultArrayValues['All phonenumbers'][$user->ID]		= implode(";", $phonenumbers);
+		$defaultArrayValues['All account numbers'][$user->ID]	= $accountId;
 	}
 
 	return $defaultArrayValues;
-},1,2);
+}, 1, 2);
 
 //Transform table data from travelform
 add_filter('sim_transform_formtable_data',function($string, $elementName){
@@ -196,7 +198,7 @@ add_filter('sim_formdata_retrieval_query', function($query, $userId, $formName){
 	}
 
 	return $query;
-},10,3);
+}, 10, 3);
 
 //then remove all unwanted data
 add_filter('sim_retrieved_formdata', function($formdata, $userId, $formName){
@@ -324,11 +326,11 @@ function generateImmigrationLetters(){
 	$pdf = new ImmigrationLetter();
 	
 	try{
-		$pdf->AddFont('NSimSun','');
-		$pdf->SetFont('NSimSun','',12);
+		$pdf->AddFont('NSimSun', '');
+		$pdf->SetFont('NSimSun', '', 12);
 	}catch (\Exception $e){
 		SIM\printArray('Loading NSimSun font failed.');
-		$pdf->SetFont('Arial','B',12);
+		$pdf->SetFont('Arial', 'B', 12);
 	}
 	
 	foreach($userIds as $userId){
