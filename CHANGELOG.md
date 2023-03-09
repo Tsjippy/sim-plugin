@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- datalist value retrieval
 
 ### Fixed
 
