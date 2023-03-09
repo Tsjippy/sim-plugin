@@ -8,6 +8,7 @@
 - datalist value retrieval
 
 ### Fixed
+- adding condition rule
 
 ### Updated
 
