@@ -518,7 +518,7 @@ export function changeFieldValue(selector, value, functionRef, form, addition=''
 				target.value = dataListOption.value;
 			}
 		}else{
-			target.value = value;
+			target.value = '';
 		}
 	}else{
 		target.value = value;

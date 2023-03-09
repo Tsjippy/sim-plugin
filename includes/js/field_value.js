@@ -100,7 +100,7 @@ export function getFieldValue(orgName, form, checkDatalist=true, compareValue=nu
 	}else if(el.closest('.nice-select-dropdown') != null && el.dataset.value != undefined){
 		//nice select
 		value = el.dataset.value
-	}else if(el.list != null && checkDatalist){
+	}else if(el.list != null && el.value != '' && checkDatalist){
 		value =  getDataListValue(el);
 	}else if(el.value != null && el.value != 'undefined'){
 		value = el.value;

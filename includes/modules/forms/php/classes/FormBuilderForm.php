@@ -1276,98 +1276,53 @@ class FormBuilderForm extends SimForms{
 			<input type='hidden' class='element_condition' name='elementid' value='<?php echo $elementId;?>'>
 
 			<?php
-			$lastCondtionKey = array_key_last($conditions);
+			// get the last numeric array key
+			$lastCondtionKey = end(array_filter(array_keys($conditions), 'is_int'));
 			foreach($conditions as $conditionIndex=>$condition){
 				if(!is_numeric($conditionIndex)){
 					continue;
 				}
-			?>
-			<div class='condition_row' data-condition_index='<?php echo $conditionIndex;?>'>
-				<span style='font-weight: 600;'>If</span>
-				<br>
-				<?php
-				$lastRuleKey = array_key_last($condition['rules']);
-				foreach($condition['rules'] as $ruleIndex=>$rule){
-					?>
-					<div class='rule_row' data-rule_index='<?php echo $ruleIndex;?>'>
-						<input type='hidden' class='element_condition combinator' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][combinator]' value='<?php echo $rule['combinator']; ?>'>
-					
-						<select class='element_condition condition_select conditional_field' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_field]' required>
-						<?php
-							echo $this->inputDropdown($rule['conditional_field'], $elementId);
+				?>
+				<div class='condition_row' data-condition_index='<?php echo $conditionIndex;?>'>
+					<span style='font-weight: 600;'>If</span>
+					<br>
+					<?php
+					$lastRuleKey = array_key_last($condition['rules']);
+					foreach($condition['rules'] as $ruleIndex=>$rule){
 						?>
-						</select>
-
-						<select class='element_condition condition_select equation' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][equation]' required>
-							<?php
-								$optionArray	= [
-									''			=> '---',
-									'changed'	=> 'has changed',
-									'clicked'	=> 'is clicked',
-									'=='		=> 'equals',
-									'!='		=> 'is not',
-									'>'			=> 'greather than',
-									'<'			=> 'smaller than',
-									'checked'	=> 'is checked',
-									'!checked'	=> 'is not checked',
-									'== value'	=> 'equals the value of',
-									'!= value'	=> 'does not equal the value of',
-									'> value'	=> 'greather than the value of',
-									'< value'	=> 'smaller than the value of',
-									'-'			=> 'minus the value of',
-									'+'			=> 'plus the value of',
-									'visible'	=> 'is visible',
-									'invisible'	=> 'is not visible',
-								];
-
-								foreach($optionArray as $option=>$optionLabel){
-									if($rule['equation'] == $option){
-										$selected	= 'selected="selected"';
-									}else{
-										$selected	= '';
-									}
-									echo "<option value='$option' $selected>$optionLabel</option>";
-								}
-							?>
-						</select>
-
-						<?php
-						//show if -, + or value field istarget value
-						if($rule['equation'] == '-' || $rule['equation'] == '+' || strpos($rule['equation'], 'value') !== false){
-							$hidden = '';
-						}else{
-							$hidden = 'hidden';
-						}
-						?>
+						<div class='rule_row' data-rule_index='<?php echo $ruleIndex;?>'>
+							<input type='hidden' class='element_condition combinator' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][combinator]' value='<?php echo $rule['combinator']; ?>'>
 						
-						<span class='<?php echo $hidden;?> condition_form conditional_field_2'>
-							<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_field_2]'>
+							<select class='element_condition condition_select conditional_field' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_field]' required>
 							<?php
-								echo $this->inputDropdown($rule['conditional_field_2'], $elementId);
+								echo $this->inputDropdown($rule['conditional_field'], $elementId);
 							?>
 							</select>
-						</span>
-						
-						<?php
-						if($rule['equation'] == '-' || $rule['equation'] == '+'){
-							$hidden = '';
-						}else{
-							$hidden = 'hidden';
-						}
-						?>
 
-						<span class='<?php echo $hidden;?> condition_form equation_2'>
-							<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][equation_2]'>
+							<select class='element_condition condition_select equation' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][equation]' required>
 								<?php
 									$optionArray	= [
 										''			=> '---',
+										'changed'	=> 'has changed',
+										'clicked'	=> 'is clicked',
 										'=='		=> 'equals',
 										'!='		=> 'is not',
 										'>'			=> 'greather than',
 										'<'			=> 'smaller than',
+										'checked'	=> 'is checked',
+										'!checked'	=> 'is not checked',
+										'== value'	=> 'equals the value of',
+										'!= value'	=> 'does not equal the value of',
+										'> value'	=> 'greather than the value of',
+										'< value'	=> 'smaller than the value of',
+										'-'			=> 'minus the value of',
+										'+'			=> 'plus the value of',
+										'visible'	=> 'is visible',
+										'invisible'	=> 'is not visible',
 									];
+
 									foreach($optionArray as $option=>$optionLabel){
-										if($rule['equation_2'] == $option){
+										if($rule['equation'] == $option){
 											$selected	= 'selected="selected"';
 										}else{
 											$selected	= '';
@@ -1376,99 +1331,145 @@ class FormBuilderForm extends SimForms{
 									}
 								?>
 							</select>
-						</span>
-						<?php
-						if(strpos($rule['equation'], 'value') !== false || in_array($rule['equation'], ['changed','checked','!checked', 'visible', 'invisible'])){
-							$hidden = 'hidden';
-						}else{
-							$hidden = '';
-						}
-						?>
-						<input  type='text'   class='<?php echo $hidden;?> element_condition condition_form' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_value]' value="<?php echo $rule['conditional_value'];?>">
-						
-						<button type='button' class='element_condition and_rule condition_form button <?php if(!empty($rule['combinator']) && $rule['combinator'] == 'AND'){echo 'active';}?>'	title='Add a new "AND" rule to this condition'>AND</button>
-						<button type='button' class='element_condition or_rule condition_form button  <?php if(!empty($rule['combinator']) && $rule['combinator'] == 'OR'){echo 'active';}?>'	title='Add a new "OR"  rule to this condition'>OR</button>
-						<button type='button' class='remove_condition condition_form button' title='Remove rule or condition'>-</button>
-						<?php
-						if($conditionIndex == $lastCondtionKey && $ruleIndex == $lastRuleKey){
-							?>
-							<button type='button' class='add_condition condition_form button' title='Add a new condition'>+</button>
-							<button type='button' class='add_condition opposite condition_form button' title='Add a new condition, opposite to to the previous one'>Add opposite</button>
-						<?php
-						}
-						?>
-					</div>
-				<?php
-				}
-				?>
-				<br>
-				<span style='font-weight: 600;'>then</span><br>
-				
-				<div class='action_row'>
-					<div class='radio_wrapper condition_form'>
-						<label>
-							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='show' <?php if($condition['action'] == 'show'){echo 'checked';}?> required>
-							Show this element
-						</label><br>
-						
-						<label>
-							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='hide' <?php if($condition['action'] == 'hide'){echo 'checked';}?> required>
-							Hide this element
-						</label><br>
-						
-						<label>
-							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='toggle' <?php if($condition['action'] == 'toggle'){echo 'checked';}?> required>
-							Toggle this element
-						</label><br>
-						
-						<label>
-							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='value' <?php if($condition['action'] == 'value'){echo 'checked';}?> required>
-							Set property
-						</label>
-						<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname1]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname1'];?>">
-						<label> to:</label>
-						<input type="text" name="element_conditions[<?php echo $conditionIndex;?>][action_value]" class='element_condition' value="<?php echo $condition['action_value'];?>">
-						<br>
-						<label>
-							<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property'){echo 'checked';}?> required>
-							Set the
-						</label>
-					
-						<datalist id="propertylist">
-							<option value="value">
-							<option value="min">
-							<option value="max">
-						</datalist>
-						<label>
-							<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
-							property to the value of
-						</label>
-						
-						<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][property_value]'>
-							<?php echo $this->inputDropdown($condition['property_value'], $elementId);?>
-						</select>
 
-						<?php
-						$type	= $this->getElementById($condition['property_value'], 'type');
-						$hidden	= 'hidden';
-						$hidden2= 'hidden';
-						if(in_array($type, ['date', 'number', 'range', 'week', 'month']) ){
-							$hidden	= '';
-
-							if(in_array($type, ['date', 'week', 'month']) ){
-								$hidden2	= '';
+							<?php
+							//show if -, + or value field istarget value
+							if($rule['equation'] == '-' || $rule['equation'] == '+' || strpos($rule['equation'], 'value') !== false){
+								$hidden = '';
+							}else{
+								$hidden = 'hidden';
 							}
-						}
-						?>
-						<label class='addition <?php echo $hidden;?>'>
-							+ <input type='number' name="element_conditions[<?php echo $conditionIndex;?>][addition]" class='element_condition' value="<?php echo $condition['addition'];?>" style='width: 60px;'>
-							<span class='days <?php echo $hidden2;?>'> days</span>
-						</label>
-						<br>
+							?>
+							
+							<span class='<?php echo $hidden;?> condition_form conditional_field_2'>
+								<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_field_2]'>
+								<?php
+									echo $this->inputDropdown($rule['conditional_field_2'], $elementId);
+								?>
+								</select>
+							</span>
+							
+							<?php
+							if($rule['equation'] == '-' || $rule['equation'] == '+'){
+								$hidden = '';
+							}else{
+								$hidden = 'hidden';
+							}
+							?>
+
+							<span class='<?php echo $hidden;?> condition_form equation_2'>
+								<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][equation_2]'>
+									<?php
+										$optionArray	= [
+											''			=> '---',
+											'=='		=> 'equals',
+											'!='		=> 'is not',
+											'>'			=> 'greather than',
+											'<'			=> 'smaller than',
+										];
+										foreach($optionArray as $option=>$optionLabel){
+											if($rule['equation_2'] == $option){
+												$selected	= 'selected="selected"';
+											}else{
+												$selected	= '';
+											}
+											echo "<option value='$option' $selected>$optionLabel</option>";
+										}
+									?>
+								</select>
+							</span>
+							<?php
+							if(strpos($rule['equation'], 'value') !== false || in_array($rule['equation'], ['changed','checked','!checked', 'visible', 'invisible'])){
+								$hidden = 'hidden';
+							}else{
+								$hidden = '';
+							}
+							?>
+							<input  type='text'   class='<?php echo $hidden;?> element_condition condition_form' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_value]' value="<?php echo $rule['conditional_value'];?>">
+							
+							<button type='button' class='element_condition and_rule condition_form button <?php if(!empty($rule['combinator']) && $rule['combinator'] == 'AND'){echo 'active';}?>'	title='Add a new "AND" rule to this condition'>AND</button>
+							<button type='button' class='element_condition or_rule condition_form button  <?php if(!empty($rule['combinator']) && $rule['combinator'] == 'OR'){echo 'active';}?>'	title='Add a new "OR"  rule to this condition'>OR</button>
+							<button type='button' class='remove_condition condition_form button' title='Remove rule or condition'>-</button>
+							<?php
+							if($conditionIndex == $lastCondtionKey && $ruleIndex == $lastRuleKey){
+								?>
+								<button type='button' class='add_condition condition_form button' title='Add a new condition'>+</button>
+								<button type='button' class='add_condition opposite condition_form button' title='Add a new condition, opposite to to the previous one'>Add opposite</button>
+							<?php
+							}
+							?>
+						</div>
+						<?php
+					}
+					?>
+					<br>
+					<span style='font-weight: 600;'>then</span><br>
+					
+					<div class='action_row'>
+						<div class='radio_wrapper condition_form'>
+							<label>
+								<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='show' <?php if($condition['action'] == 'show'){echo 'checked';}?> required>
+								Show this element
+							</label><br>
+							
+							<label>
+								<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='hide' <?php if($condition['action'] == 'hide'){echo 'checked';}?> required>
+								Hide this element
+							</label><br>
+							
+							<label>
+								<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='toggle' <?php if($condition['action'] == 'toggle'){echo 'checked';}?> required>
+								Toggle this element
+							</label><br>
+							
+							<label>
+								<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='value' <?php if($condition['action'] == 'value'){echo 'checked';}?> required>
+								Set property
+							</label>
+							<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname1]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname1'];?>">
+							<label> to:</label>
+							<input type="text" name="element_conditions[<?php echo $conditionIndex;?>][action_value]" class='element_condition' value="<?php echo $condition['action_value'];?>">
+							<br>
+							<label>
+								<input type='radio' name='element_conditions[<?php echo $conditionIndex;?>][action]' class='element_condition' value='property' <?php if($condition['action'] == 'property'){echo 'checked';}?> required>
+								Set the
+							</label>
+						
+							<datalist id="propertylist">
+								<option value="value">
+								<option value="min">
+								<option value="max">
+							</datalist>
+							<label>
+								<input type="text" list="propertylist" name="element_conditions[<?php echo $conditionIndex;?>][propertyname]" class='element_condition' placeholder="property name" value="<?php echo $condition['propertyname'];?>">
+								property to the value of
+							</label>
+							
+							<select class='element_condition condition_select' name='element_conditions[<?php echo $conditionIndex;?>][property_value]'>
+								<?php echo $this->inputDropdown($condition['property_value'], $elementId);?>
+							</select>
+
+							<?php
+							$type	= $this->getElementById($condition['property_value'], 'type');
+							$hidden	= 'hidden';
+							$hidden2= 'hidden';
+							if(in_array($type, ['date', 'number', 'range', 'week', 'month']) ){
+								$hidden	= '';
+
+								if(in_array($type, ['date', 'week', 'month']) ){
+									$hidden2	= '';
+								}
+							}
+							?>
+							<label class='addition <?php echo $hidden;?>'>
+								+ <input type='number' name="element_conditions[<?php echo $conditionIndex;?>][addition]" class='element_condition' value="<?php echo $condition['addition'];?>" style='width: 60px;'>
+								<span class='days <?php echo $hidden2;?>'> days</span>
+							</label>
+							<br>
+						</div>
 					</div>
 				</div>
-			</div>
-			<?php
+				<?php
 			}
 			?>
 			<br>
