@@ -9,6 +9,7 @@
 
 ### Fixed
 - adding condition rule
+- only replace exact match with date
 
 ### Updated
 
