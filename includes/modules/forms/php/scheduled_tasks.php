@@ -86,7 +86,7 @@ function mandatoryFieldsReminder(){
             
             //If there is an email set
             if(!empty($recipients)){
-                $message .= $reminderHtml;                
+                $message .= $reminderHtml;
                 wp_mail( $recipients, $subject, $message);
             }
 

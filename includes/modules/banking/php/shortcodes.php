@@ -105,7 +105,7 @@ function printRows($monthArray, $year, $visibility){
 			?>
 			<td>
 				<?php
-				echo " <a href='$url>'>$month</a>" ;
+				echo " <a href='$url'>$month</a>" ;
 				?>
 			</td>
 			<td>

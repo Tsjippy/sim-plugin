@@ -19,4 +19,14 @@ add_action('delete_user', function ($userId){
 			}
 		}
     }
+
+	// banking is currently enabled
+    $currentSetting = get_user_meta($userId, 'online_statements', true);
+	if(is_array($currentSetting) && !empty(!$currentSetting)){
+		$user		= get_user_by('ID', $userId);
+		$email    	= new DisableBanking($user);
+		$email->filterMail();
+		
+		wp_mail( $user->user_email, $email->subject, $email->message);
+	}
 });

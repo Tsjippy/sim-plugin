@@ -21,7 +21,7 @@ class AccountStatement{
 	 *
 	 * @return	bool	true if id found, false otherwise
 	 */
-	function checkIfStatement(){
+	public function checkIfStatement(){
 		//Get the content of the email
 		$content = $this->post['post_content'];
 		
@@ -53,7 +53,7 @@ class AccountStatement{
 	 *
 	 * @return	bool	true if user found, false otherwise
 	 */
-	function getLoginName(){
+	public function getLoginName(){
 		//Change the user to the admin account otherwise get_users will not work
 		wp_set_current_user(1);
 				
@@ -87,7 +87,7 @@ class AccountStatement{
     /**
      * Checks the e-mail attachments with a file with the name 'account-statement'
      */
-	function findAccountStatement(){
+	public function findAccountStatement(){
 		$found= false;
 
 		//Find the attachment url
@@ -144,7 +144,7 @@ class AccountStatement{
     /**
      * Adds the found statment to the usermeta
      */
-	function storeAccountStatement(){
+	public function storeAccountStatement(){
 		$year = date_format($this->postDate, "Y");
 		foreach($this->users as $user){
 			if (SIM\isChild($user->ID)){
