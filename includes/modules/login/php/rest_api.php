@@ -793,34 +793,39 @@ function userLogin(){
     }
 
     //Update the current logon count
-    $current_login_count = get_user_meta( $user->ID, 'login_count', true );
-    if(is_numeric($current_login_count)){
-        $login_count = intval( $current_login_count ) + 1;
+    $currentLoginCount = get_user_meta( $user->ID, 'login_count', true );
+    if(is_numeric($currentLoginCount)){
+        $loginCount = intval( $currentLoginCount ) + 1;
     }else{
         //it is the first time a user logs in
-        $login_count = 1;
+        $loginCount = 1;
+
         //Save the first login data
         update_user_meta( $user->ID, 'first_login', time() );
+
         //Get the account validity
-        $validity = get_user_meta( $user->ID, 'account_validity',true);
+        $validity = get_user_meta( $user->ID, 'account_validity', true);
+
         //If the validity is set in months
         if(is_numeric($validity)){
             //Get the timestamp of today plus X months
-            $expiry_time = strtotime('+'.$validity.' month', time());
+            $expiryTime = strtotime("+$validity month", time());
+
             //Convert to date
-            $expiry_date = date('Y-m-d', $expiry_time);
+            $expiryDate = date('Y-m-d', $expiryTime);
+
             //Save the date
-            update_user_meta( $user->ID, 'account_validity',$expiry_date);
+            update_user_meta( $user->ID, 'account_validity', $expiryDate);
         }
     }
-    update_user_meta( $user->ID, 'login_count', $login_count );
+    update_user_meta( $user->ID, 'login_count', $loginCount );
 
     //store login date
-    update_user_meta( $user->ID, 'last_login_date',date('Y-m-d'));
+    update_user_meta( $user->ID, 'last_login_date', date('Y-m-d'));
 
     $accountPageId  = SIM\getModuleOption('usermanagement', 'account_page');
 
-    // GEt mandatory or recommended fields
+    // Get mandatory or recommended fields
     if(function_exists('SIM\FORMS\getAllEmptyRequiredElements') && is_numeric($accountPageId)){
         $fieldList   = SIM\FORMS\getAllEmptyRequiredElements($user->ID, 'all');
     }
@@ -841,7 +846,7 @@ function userLogin(){
         return $redirect;
     }elseif(rtrim( $_SERVER['HTTP_REFERER'], '/' ) == rtrim(home_url(), '/')){
         //get 2fa methods for this user
-        $methods  = get_user_meta($user->ID,'2fa_methods',true);
+        $methods  = get_user_meta($user->ID, '2fa_methods', true);
 
         //Redirect to account page if 2fa is not set
         if(!$methods || empty($methods)){

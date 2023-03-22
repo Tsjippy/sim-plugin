@@ -169,7 +169,7 @@ function vaccinationReminder(){
  *
  * @return	string	The html
  */
-function vaccinationReminders($userId){	
+function vaccinationReminders($userId){
 	//Get the current users medical data
 	$medicalUserInfo = (array)get_user_meta( $userId, "medical",true);
 
@@ -253,12 +253,12 @@ function checkExpiryDate($date, $expiryName){
  */
 function greencardReminder(){
 	//Get the current travel coordinator
-	$TravelCoordinator 			= get_users( array( 'role' => 'visainfo' ));
-	if($TravelCoordinator != null){
-		$TravelCoordinator = $TravelCoordinator[0];
+	$travelCoordinator 			= get_users( array( 'role' => 'visainfo' ));
+	if($travelCoordinator != null){
+		$travelCoordinator = $travelCoordinator[0];
 	}else{
-		$TravelCoordinator = new \stdClass();
-		$TravelCoordinator->display_name = '';
+		$travelCoordinator = new \stdClass();
+		$travelCoordinator->display_name = '';
 		error_log("Please assign someone the travelcoorodinator role!");
 	}
 	//Change the user to the adminaccount otherwise get_users will not work
@@ -276,7 +276,7 @@ function greencardReminder(){
 			$reminder = checkExpiryDate($visaInfo['greencard_expiry'], 'greencard');
 			$reminder = str_replace(['</li>', '<li>'], "", $reminder);
 			
-			if(!empty($reminder)){		
+			if(!empty($reminder)){
 				$to = $user->user_email;
 				
 				//Skip if not valid email
@@ -287,7 +287,7 @@ function greencardReminder(){
 				//Send e-mail
 				$greenCardReminderMail    = new GreenCardReminderMail($user, $reminder);
 				$greenCardReminderMail->filterMail();
-				$headers = ['Reply-To: '.$TravelCoordinator->display_name.' <'.$TravelCoordinator->user_email.'>'];
+				$headers = ['Reply-To: '.$travelCoordinator->display_name.' <'.$travelCoordinator->user_email.'>'];
 									
 				wp_mail( $to, $greenCardReminderMail->subject, $greenCardReminderMail->message, $headers);
 				
@@ -299,11 +299,11 @@ function greencardReminder(){
 }
 
 //Store page with user-info shortcode
-add_action( 'wp_after_insert_post', function($post_ID, $post){
+add_action( 'wp_after_insert_post', function($postId, $post){
     if(has_shortcode($post->post_content, 'user-info')){
         global $Modules;
 
-        $Modules[MODULE_SLUG]['account_page'][]    = $post_ID;
+        $Modules[MODULE_SLUG]['account_page'][]    = $postId;
 
         update_option('sim_modules', $Modules);
     }
@@ -335,7 +335,7 @@ function checkDetailsMail(){
 	if(!$accountPageUrl){
 		SIM\printArray('No account page defined');
 		return;
-	}	
+	}
 	$baseUrl		= "$accountPageUrl?main_tab=";
 
 	$styleString	= "style='text-decoration:none; color:#444;'";
@@ -665,22 +665,22 @@ function accountExpiryCheck(){
 	//Get the users who are expired
 	$expiredUsers = get_users(
 		array(
-			'meta_query' => array(
-				'relation' => 'AND',
+			'meta_query'	=> array(
+				'relation' 		=> 'AND',
 				array(
-					'key' => 'account_validity',
-					'compare' => 'EXISTS'
+					'key' 		=> 'account_validity',
+					'compare' 	=> 'EXISTS'
 				),
 				array(
-					'key' => 'account_validity',
-					'value' => 'unlimited',
-					'compare' => '!='
+					'key' 		=> 'account_validity',
+					'value' 	=> 'unlimited',
+					'compare'	=> '!='
 				),
 				array(
-					'key' => 'account_validity',
-					'value' => date("Y-m-d"),
-					'compare' => '<=',
-					'type' => 'DATE'
+					'key'		=> 'account_validity',
+					'value' 	=> date("Y-m-d"),
+					'compare' 	=> '<=',
+					'type' 		=> 'DATE'
 				),
 				
 			),
@@ -703,7 +703,7 @@ function accountExpiryCheck(){
 /**
  * send reminders about annual review
  */
-function reviewReminders(){	
+function reviewReminders(){
 	$genericDocuments = get_option('personnel_documents');
 	if(is_array($genericDocuments) && !empty($genericDocuments['Annual review form'])){
 		$personnelCoordinatorEmail	= SIM\getModuleOption(MODULE_SLUG, 'personnel_email');

@@ -221,10 +221,7 @@ async function hasInternet(){
 		return window['online'];
 	}
 
-	await fetch('https://google.com', {
-		method: 'GET', // *GET, POST, PUT, DELETE, etc.
-		mode: 'no-cors',
-	}).then((result) => {
+	await fetch(location.href).then((result) => {
 		window['online'] = true;
 	}).catch(e => {
 		window['online'] = false;
