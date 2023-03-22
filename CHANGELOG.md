@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.30.4] - 2023-03-22
+
+
+### Changed
 - datalist value retrieval
 
 ### Fixed
