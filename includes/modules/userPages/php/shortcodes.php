@@ -3,32 +3,62 @@ namespace SIM\USERPAGE;
 use SIM;
 
 //Shortcode to download all contact info
-add_shortcode("all_contacts",function (){
+add_shortcode("all_contacts", function (){
 	global $post;
 
+	$shouldDie	= true;
+
 	//Make vcard
-	if (isset($_GET['vcard'])){
-		if($_GET['vcard']=="all"){
-			ob_end_clean();
-			header('Content-Type: text/x-vcard');
-			header('Content-Disposition: inline; filename= "SIMContacts.vcf"');
-			
+	if (isset($_REQUEST['type'])){
+		// get last download time
+		$lastDownload	= get_user_meta(get_current_user_id(), 'last_contact_download', true);
+		if(empty($lastDownload)){
+			$lastDownload	= time();
+		}
+
+		// store date
+		update_user_meta(get_current_user_id(), 'last_contact_download', time());
+
+		if($_REQUEST['type'] == "web"){
 			$vcard = "";
-			$users = SIM\getUserAccounts(false,true,true,['ID']);
+			$users = SIM\getUserAccounts(false, true, true, ['ID']);
 			foreach($users as $user){
-				$vcard .= buildVcard($user->ID);
+				if(
+					(
+						!empty($_REQUEST['since'])									&&		// we only want new users since last download
+						strtotime($user->data->user_registered) > $lastDownload				// this user accont is created after our last download
+					)	||
+					empty($_REQUEST['since'])												// we want all accounts
+				){
+					$vcard .= buildVcard($user->ID);
+				}
 			}
-			echo $vcard;
-		}elseif($_GET['vcard']=="outlook"){
+			if(!empty($vcard)){
+				ob_end_clean();
+				header('Content-Type: text/x-vcard');
+				header('Content-Disposition: inline; filename= "SIMContacts.vcf"');
+				echo $vcard;
+			}else{
+				$shouldDie	= false;
+			}
+		}elseif($_REQUEST['type'] == "outlook"){
 			$zip = new \ZipArchive;
 			
 			if ($zip->open('SIMContacts.zip', \ZipArchive::CREATE) === true){
 				//Get all user accounts
-				$users = SIM\getUserAccounts(false,true,true,['ID','display_name']);
+				$users = SIM\getUserAccounts(false, true, true, ['ID','display_name']);
 				
 				//Loop over the accounts and add their vcards
 				foreach($users as $user){
-					$zip->addFromString($user->display_name.'.vcf', buildVcard($user->ID));
+					if(
+						(
+							!empty($_REQUEST['since'])									&&		// we only want new users since last download
+							strtotime($user->data->user_registered) > $lastDownload				// this user accont is created after our last download
+						)	||
+						empty($_REQUEST['since'])												// we want all accounts
+					){
+						$zip->addFromString($user->display_name.'.vcf', buildVcard($user->ID));
+					}
 				}
 			 
 				// All files are added, so close the zip file.
@@ -43,43 +73,88 @@ add_shortcode("all_contacts",function (){
 			
 			//remove the zip from the server
 			unlink('SIMContacts.zip');
-		}elseif($_GET['vcard'] == "pdf"){
+		}elseif($_REQUEST['type'] == "pdf"){
 			//Create a pdf and add it to the mail
 			buildUserDetailPdf();
 		}
 
-		die();
-	//Return vcard hyperlink
-	}else{
-		$url 			= add_query_arg( ['vcard' => "all"], get_permalink( $post->ID ) );
-		$allButton 		= "<a href='$url' class='button sim vcard'>Gmail and Others</a>";
-		
-		$url 			= add_query_arg( ['vcard' => "outlook"], get_permalink( $post->ID ) );
-		$outlookButton	= "<a href='$url' class='button sim vcard'>Outlook</a>";
+		if($shouldDie){
+			die();
 
-		$url 			= add_query_arg( ['vcard' => "pdf"], get_permalink( $post->ID ) );
-		$pdfButton		= "<a href='$url' class='button sim vcard'>Download a printable list</a>";
-		
-		ob_start();
-		?>
-		<div class='download contacts' style='margin-top:10px;'>
-			<h4>Add Contacts to Your Address Book</h4>
-			<p>
-				For your convenience, you can add contact details for SIM Nigeria’s team members to your phone or email address book.<br>
-				<br>
-				For Gmail and other email clients, simply import the .vcf file after selecting the button below.
-				For Outlook, you will download a compressed .zip file. Extract this, then click on each .vcf file to add it to your Outlook contacts list.
-			</p>
-			<?php echo "$outlookButton  $allButton  $pdfButton";?>
-			<p>Be patient, preparing the download can take a while. </p>
-			<?php
-			do_action('sim-after-download-contacts');
-			?>
-		</div>
-		
-		<?php
-		return ob_get_clean();
+			return;
+		}
+	
 	}
+
+	//Return vcard hyperlink
+	ob_start();
+	if(!$shouldDie){
+		?>
+		<div class='warning'>
+			No new contact details to download since last time
+		</div>
+		<?php
+	}
+	?>
+	<script>
+		document.addEventListener('click', ev=>{
+			let target	= ev.target;
+			if(target.matches('.type-selector')){
+				if(target.value == 'pdf'){
+					document.querySelectorAll('.since-wrapper').forEach(el=>el.classList.add('hidden'));
+				}else{
+					document.querySelectorAll('.since-wrapper').forEach(el=>el.classList.remove('hidden'));
+				}
+			}
+		})
+	</script>
+	<div class='download contacts' style='margin-top:10px;'>
+		<h4>Add Contacts to Your Address Book</h4>
+		<p>
+			For your convenience, you can add contact details for SIM Nigeria’s team members to your phone or email address book.<br>
+			<br>
+			For Gmail and other email clients, simply import the .vcf file after selecting the button below.
+			For Outlook, you will download a compressed .zip file. Extract this, then click on each .vcf file to add it to your Outlook contacts list.
+		</p>
+		<form method='post'>
+			<label>Download type</label>
+			<br>
+			<label>
+				<input type='radio' class='type-selector' name='type' id='type' value='outlook' required>
+				Outlook
+			</label>
+			<label>
+				<input type='radio' class='type-selector' name='type' id='type' value='web' required>
+				Gmail
+			</label>
+			<label>
+				<input type='radio' class='type-selector' name='type' id='type' value='pdf' required>
+				PDF
+			</label>
+
+			<br>
+			<br>
+			
+			<div class='since-wrapper hidden'>
+				<label>
+					<input type='checkbox' name='since' value='last' checked>
+					Download new user details since last download
+				</label>
+				<br>
+			</div>
+			<br>
+
+			<input type='submit' value='Start download' class='button'>
+		</form>
+		<br><br>
+		<p>Be patient, preparing the download can take a while. </p>
+		<?php
+		do_action('sim-after-download-contacts');
+		?>
+	</div>
+	
+	<?php
+	return ob_get_clean();
 });
 
 // Shortcode to display a user in a page or post
@@ -154,7 +229,7 @@ function createContactlistPdf($header, $data, $download=false) {
 	
 	//Built frontpage
 	$pdf = new SIM\PDF\PdfHtml();
-	$pdf->frontpage(SITENAME.' Contact List',date('F'));
+	$pdf->frontpage(SITENAME.' Contact List', date('F'));
 	
 	//Write the table headers
 	$pdf->tableHeaders($header, $widths);

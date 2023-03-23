@@ -265,7 +265,7 @@ class PdfHtml extends \FPDF{
 	 * @param	string	$title
 	 * @param	string	$subtitle
 	 */
-	function frontpage($title, $subtitle=''){
+	public function frontpage($title, $subtitle=''){
 		//Set the title of the document
 		$this->SetTitle($title. " " .$subtitle);
 

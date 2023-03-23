@@ -864,7 +864,7 @@ function Ln($h=null)
 function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
 {
 	// Put an image on the page
-	if($file==''){
+	if(empty($file)){
 		$this->Error('Image file name is empty');
 	}
 
@@ -877,8 +877,9 @@ function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
 			$type = substr($file,$pos+1);
 		}
 		$type = strtolower($type);
-		if($type=='jpeg')
+		if($type=='jpeg' || $type=='jpe'){
 			$type = 'jpg';
+		}
 		$mtd = '_parse'.$type;
 		if(!method_exists($this,$mtd))
 			$this->Error('Unsupported image type: '.$type);

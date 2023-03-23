@@ -81,6 +81,10 @@ class SignalBus extends Signal {
      * Adds a send message to the log
      */
     private function addToMessageLog($recipient, $message){
+        if(empty($recipient) || empty($message)){
+            return;
+        }
+        
         global $wpdb;
 
         $wpdb->insert(
