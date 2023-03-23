@@ -4,6 +4,7 @@
 
 ### Added
 - banking emails
+- download user details since last download
 
 ### Changed
 
