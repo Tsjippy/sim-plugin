@@ -3,10 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- banking emails
-- download user details since last download
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.30.5] - 2023-03-23
+
+
+### Added
+- banking emails
+- download user details since last download
 
 ### Fixed
 
