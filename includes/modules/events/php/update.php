@@ -2,7 +2,7 @@
 namespace SIM\EVENTS;
 use SIM;
 
-add_action('sim_plugin_update', function($pluginVersion){
+add_action('sim_plugin_update', function(){
     global $wpdb;
 
     $schedules = new Schedules();

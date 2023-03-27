@@ -80,11 +80,15 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
     return $links;
 });
 
-add_action( 'plugins_loaded', function () {
-    global $plugin_version;
+add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) {
 
-    if ( get_site_option( 'plugin_version' ) != $plugin_version ){
-        do_action('sim_plugin_update', $plugin_version);
+    // If an update has taken place and the updated type is plugins and the plugins element exists
+    if ( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
+        foreach( $options['plugins'] as $plugin ) {
+            // Check to ensure it's my plugin
+            if( $plugin == PLUGIN ) {
+                do_action('sim_plugin_update');
+            }
+        }
     }
-
-});
+}, 10, 2 );
