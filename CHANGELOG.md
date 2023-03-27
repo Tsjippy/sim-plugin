@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- db update mechanism
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.30.6] - 2023-03-27
+
+
+### Added
+- db update mechanism
 
 ### Fixed
 
