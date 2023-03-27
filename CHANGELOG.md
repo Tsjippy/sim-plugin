@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.30.7] - 2023-03-27
+
+
+### Fixed
 - after plugin update actions
 
 ### Updated
