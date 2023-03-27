@@ -79,3 +79,12 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
 
     return $links;
 });
+
+add_action( 'plugins_loaded', function () {
+    global $plugin_version;
+
+    if ( get_site_option( 'plugin_version' ) != $plugin_version ){
+        do_action('sim_plugin_update', $plugin_version);
+    }
+
+});

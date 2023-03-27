@@ -13,7 +13,7 @@ add_shortcode("all_contacts", function (){
 		// get last download time
 		$lastDownload	= get_user_meta(get_current_user_id(), 'last_contact_download', true);
 		if(empty($lastDownload)){
-			$lastDownload	= time();
+			$lastDownload	= strtotime('-1 year');
 		}
 
 		// store date

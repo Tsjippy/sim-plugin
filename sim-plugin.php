@@ -46,6 +46,6 @@ if(get_option('sim_version') != get_plugin_data(__FILE__)['Version']){
 }
 
 //Register a function to run on plugin deactivation
-register_deactivation_hook( __FILE__, function() {	
+register_deactivation_hook( __FILE__, function() {
 	printArray("Removing cron schedules");
 });

@@ -79,8 +79,8 @@ class Schedules{
 			endtime varchar(80) NOT NULL,
 			timeslot_size mediumint(9) NOT NULL,
 			hidenames boolean NOT NULL,
-			admin_roles varchar(80) NOT NULL,
-			view_roles varchar(80) NOT NULL,
+			admin_roles varchar(80),
+			view_roles varchar(80),
 			PRIMARY KEY  (id)
 		) $charsetCollate;";
 

@@ -359,6 +359,11 @@ class CreateSchedule extends Schedules{
 				$this->tableName,
 				$arg
 			);
+
+			if($wpdb->last_error !== ''){
+				return new WP_Error('schedules', $wpdb->last_error);
+			}
+
 			$action	= 'added';
 		}
 		

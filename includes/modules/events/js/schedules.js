@@ -11,6 +11,8 @@
 async function addSchedule(target){
 	var response = await FormSubmit.submitForm(target, 'events/add_schedule');
 
+	console.log(response)
+
 	if(response){
 		target.closest('.schedules_wrapper').outerHTML=response.html;
 		
