@@ -15,7 +15,10 @@ function showImage(index){
 }
 
 async function loadMore(index, showFirst, skipAmount=0){
-    document.getElementById('loadmoremedia').classList.add('hidden');
+    let button = document.getElementById('loadmoremedia');
+    if(button != null){
+        button.classList.add('hidden');
+    }
     var amount  = document.querySelector('#media-amount').value;
     if(amount == skipAmount) return;
     var types   = [];
@@ -39,7 +42,9 @@ async function loadMore(index, showFirst, skipAmount=0){
     if(!response){
         Main.displayMessage('All media are loaded', 'info');
     }else{
-        document.getElementById('loadmoremedia').classList.remove('hidden');
+        if(button != null){
+            button.classList.remove('hidden');
+        }
         document.querySelector('.mediawrapper').insertAdjacentHTML('beforeEnd', response);
 
         if(showFirst){
@@ -56,7 +61,9 @@ async function loadMore(index, showFirst, skipAmount=0){
         }
     }
 
-    document.getElementById('loadmoremedia').parentNode.querySelector('.loaderwrapper').remove();
+    if(button != null){
+        button.parentNode.querySelector('.loaderwrapper').remove();
+    }
 }
 
 async function catChanged(target){
@@ -172,7 +179,17 @@ function mediaTypeSelected(target){
     let visibleCellsCount    = document.querySelectorAll('.cell:not(.hidden)').length;
 
     if(visibleCellsCount < amount){
-        Main.showLoader(document.getElementById('loadmoremedia'), false, 'Loading more...');
+        let types   = '';
+
+        document.querySelectorAll('.media-type-selector:checked').forEach(el=>{
+            if(types != ''){
+                types += ' and ';
+            }
+            
+            types   += el.value+'s';
+        });
+
+        Main.showLoader(document.getElementById('loadmoremedia'), false, 'Loading '+types);
         loadMore(media[media.length-1].dataset.index, false, visibleCellsCount);
     }
 }
@@ -278,6 +295,8 @@ document.addEventListener('change', ev=>{
         if(target.value > curAmount){
             var start   = parseInt(media[media.length-1].dataset.index);
             loadMore(start, false, curAmount);
+
+            Main.showLoader(document.getElementById('loadmoremedia'), false, 'Loading more...');
         // We need to remove some
         }else if(target.value < curAmount){
             var i = 1;

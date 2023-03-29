@@ -332,6 +332,7 @@ class MediaGallery{
                 //skip if not existing, and send e-mail
                 $path   = get_attached_file($id);
                 if(!file_exists($path)){
+                    $this->amount-=1;
                     SIM\printArray("Check file with id $id");
                     wp_mail(get_option('admin_email'), 'Missing file', "Hi Admin,<br><br>A file is registered in the media gallery but does not exist: $path");
                     continue;
