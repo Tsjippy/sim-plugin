@@ -21,10 +21,13 @@ class MediaGallery{
         $allMimes               = get_allowed_mime_types();
         $this->acceptedMimes    = [];
         $this->types           = $types;
+        if(isset($_GET['type']) && in_array($_GET['type'], ['image', 'audio', 'video'])){
+            $this->types    = [$_GET['type']];
+        }
         foreach($allMimes as $mime){
             $type               = explode('/', $mime)[0];
-            if(in_array($type, $types)){
-                $this->acceptedMimes[]= $mime;
+            if(in_array($type, $this->types)){
+                $this->acceptedMimes[]  = $mime;
             }
         }
         $this->amount           = $amount;

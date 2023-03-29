@@ -4,9 +4,9 @@ use SIM;
 
 add_action( 'rest_api_init', function () {
 	// show schedules
-	register_rest_route( 
-		RESTAPIPREFIX.'/mediagallery', 
-		'/show', 
+	register_rest_route(
+		RESTAPIPREFIX.'/mediagallery',
+		'/show',
 		array(
 			'methods' 				=> 'POST',
 			'callback' 				=> __NAMESPACE__.'\displayMediaGallery',

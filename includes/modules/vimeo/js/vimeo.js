@@ -58,6 +58,7 @@ function loadVimeoVideo(el) {
 		iframe.onload		= function(){
 			//show iframe
 			iframe.style.display= '';
+			
 			//remove loading gif
 			wrapper.remove();
 		};

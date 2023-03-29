@@ -2,11 +2,11 @@
 namespace SIM\MEDIAGALLERY;
 use SIM;
 
-add_action( 'rest_api_init', function () {	
+add_action( 'rest_api_init', function () {
 	//load more media
-	register_rest_route( 
-		RESTAPIPREFIX.'/media_gallery', 
-		'/load_more_media', 
+	register_rest_route(
+		RESTAPIPREFIX.'/media_gallery',
+		'/load_more_media',
 		array(
 			'methods'				=> 'POST',
 			'callback'				=> function(\WP_REST_Request $request){
@@ -36,9 +36,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	//media search
-	register_rest_route( 
-		RESTAPIPREFIX.'/media_gallery', 
-		'/media_search', 
+	register_rest_route(
+		RESTAPIPREFIX.'/media_gallery',
+		'/media_search',
 		array(
 			'methods'				=> 'POST',
 			'callback'				=> function(\WP_REST_Request $request){
@@ -62,9 +62,9 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-	register_rest_route( 
-		RESTAPIPREFIX.'/media_gallery', 
-		'/change_cats', 
+	register_rest_route(
+		RESTAPIPREFIX.'/media_gallery',
+		'/change_cats',
 		array(
 			'methods'				=> 'POST',
 			'callback'				=> function(\WP_REST_Request $request){
@@ -90,9 +90,9 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-	register_rest_route( 
-		RESTAPIPREFIX.'/media_gallery', 
-		'/show_media_gallery', 
+	register_rest_route(
+		RESTAPIPREFIX.'/media_gallery',
+		'/show_media_gallery',
 		array(
 			'methods'				=> 'POST',
 			'callback'				=> function(\WP_REST_Request $request){
