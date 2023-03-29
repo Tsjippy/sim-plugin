@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- download all vimeo thumnails available
 
 ### Changed
 
