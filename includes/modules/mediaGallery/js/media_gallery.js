@@ -48,7 +48,7 @@ async function loadMore(index, showFirst, skipAmount=0){
         document.querySelector('.mediawrapper').insertAdjacentHTML('beforeEnd', response);
 
         if(showFirst){
-            var el      = document.querySelector('[data-index="'+index+'"]');
+            var el      = document.querySelector(`[data-index="${index}"]`);
             var nextEl = el.nextElementSibling.nextElementSibling;
 
             showImage(nextEl.dataset.index);
@@ -190,7 +190,12 @@ function mediaTypeSelected(target){
         });
 
         Main.showLoader(document.getElementById('loadmoremedia'), false, 'Loading '+types);
-        loadMore(media[media.length-1].dataset.index, false, visibleCellsCount);
+
+        let index    = 0;
+        if(media.length > 0){
+            index   = media[media.length-1].dataset.index;
+        }
+        loadMore(index, false, visibleCellsCount);
     }
 }
 
