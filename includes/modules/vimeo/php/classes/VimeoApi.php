@@ -513,17 +513,29 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
             if($vimeoId && $this->isConnected()){
                 //Get thumbnails
-                $data	= $this->api->request("/videos/$vimeoId/pictures?sizes=48x64", [], 'GET')['body']['data'][0];
-                if($data['active']){
-                    $iconUrl   = $data['base_link'].'.webp';
+                $data	= $this->api->request("/videos/$vimeoId/pictures", [], 'GET')['body']['data'][0];
+                if($data['active'] && is_array($data['sizes'])){
+                    $last   = array_key_last($data['sizes']);
+                    foreach($data['sizes'] as $index=>$image){
+                        $iconUrl   = explode('?', $image['link'])[0].'.webp';
 
-                    $result = $this->downloadFromVimeo($iconUrl, $postId);
-                    if(is_wp_error($result)){
-                        $result = $result->error_data['vimeo']['path'];
+                        if($index == $last){
+                            // do not add dimensions to the biggest image
+                            $result = $this->downloadFromVimeo($iconUrl, $postId);
+                        }else{
+                            $result = $this->downloadFromVimeo($iconUrl, $postId, $image['width'], $image['height']);
+                        }
+                        if(is_wp_error($result)){
+                            $result = $result->error_data['vimeo']['path'];
+                        }
+
+                        if($index === 0){
+                            update_post_meta($postId, 'thumbnail', $result);
+                            $thumbnail  = $result;
+                        }
                     }
-                    update_post_meta($postId, 'thumbnail', $result);
 
-                    return $result;
+                    return $thumbnail;
                 }else{
                     return false;
                 }
@@ -568,11 +580,15 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
          * @return   string|false|WP_Error              An Array containing the upload url, WP post id and Vimeo video id
          *
         **/
-        public function downloadFromVimeo($url, $postId) {
+        public function downloadFromVimeo($url, $postId, $width='', $height='') {
             $extension  = pathinfo(parse_url($url)['path'], PATHINFO_EXTENSION);
             if($extension == 'webp'){
                 $path       = $this->picturesDir;
                 $filename   = $this->getVimeoId($postId);
+                
+                if(is_numeric($width) && is_numeric($height)){
+                    $filename   .= "-{$width}x{$height}";
+                }
             }else{
                 $path       = $this->backupDir;
 
