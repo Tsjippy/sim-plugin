@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- better loading messages
 
 ### Updated
 
