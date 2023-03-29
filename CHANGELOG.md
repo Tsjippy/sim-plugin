@@ -3,12 +3,20 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- download all vimeo thumnails available
 
 ### Changed
 
 ### Fixed
-- better loading messages
+
+### Updated
+
+## [2.30.8] - 2023-03-29
+
+
+### Added
+- download all vimeo thumnails available
+
+### Fixed
 
 ### Updated
 
