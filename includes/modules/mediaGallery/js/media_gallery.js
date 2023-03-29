@@ -5,7 +5,13 @@ function showImage(index){
     document.querySelectorAll('.large-image:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 
     //show new one
-    document.querySelector('.large-image[data-index="'+index+'"]').classList.remove('hidden');
+    let wrapper     = document.querySelector(`.large-image[data-index="${index}"]`);
+
+    let image       = wrapper.querySelector('.image img');
+    if(image != null && image.dataset.full != undefined){
+        image.src   = image.dataset.full;
+    }
+    wrapper.classList.remove('hidden');
 }
 
 async function loadMore(index, showFirst, skipAmount=0){

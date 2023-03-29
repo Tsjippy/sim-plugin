@@ -308,7 +308,7 @@ class MediaGallery{
             }
 
             $id             = get_the_ID();
-            $url            = wp_get_attachment_url($id);
+            $url            = wp_get_attachment_thumb_url($id);
             $iconUrl        = $url;
             $title          = get_the_title();
             $mime           = get_post_mime_type();
@@ -387,8 +387,10 @@ class MediaGallery{
                         list($width, $height) = getimagesize(SIM\urlToPath($url));
                         $ratio  = $height/$width;
 
+                        // Get the url to the full size image
+                        $fullUrl    = wp_get_attachment_url($id);
                         //Center the image vertically
-                        $mediaHtml  =  "<a href='$url'><img src='$url' loading='lazy' with='100%' height='100vh' style='top: max(0px, calc( 50vh - 50vw * $ratio));'></a>";
+                        $mediaHtml  =  "<a href='$fullUrl' class='image'><img src='$url' loading='lazy' with='100%' height='100vh' style='top: max(0px, calc( 50vh - 50vw * $ratio));' data-full='$fullUrl'></a>";
                     }
 
                     echo apply_filters('sim_media_gallery_item_html', $mediaHtml, $type, $id);

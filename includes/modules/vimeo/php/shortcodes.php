@@ -10,12 +10,12 @@ add_shortcode("vimeo_video", function($atts){
 function showVimeoVideo($vimeoId){
 	// Load css
 	wp_enqueue_style( 'vimeo_style');
-	//wp_enqueue_script('sim_vimeo_shortcode_script');
+	wp_enqueue_script('sim_vimeo_shortcode_script');
 
 	ob_start();
 	?>
 	<script>
-		if( typeof(showVimeoIframe)=='undefined' ){
+		if( typeof(showVimeoIframe) =='undefined' ){
 			function showVimeoIframe(iframe){
 				var loaderWrapper	= iframe.closest('.vimeo-wrapper').querySelector('.loaderwrapper');
 				if(loaderWrapper != null){
