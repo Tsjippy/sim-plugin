@@ -30,7 +30,7 @@ function enqueueVimeoScripts(){
 		)
 	);
 
-	wp_register_script('sim_vimeo_uploader_script', plugins_url('js/vimeo_upload.min.js', __DIR__), ['sim_script'], MODULE_VERSION, true);
+	wp_register_script('sim_vimeo_uploader_script', plugins_url('js/vimeo_upload.min.js', __DIR__), ['sim_script', 'sim_formsubmit_script'], MODULE_VERSION, true);
 
 	if($_SERVER['PHP_SELF'] == "/simnigeria/wp-admin/upload.php"){
 		wp_enqueue_script('sim_vimeo_script');

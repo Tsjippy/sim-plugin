@@ -1,3 +1,4 @@
 dynamic/
 node_modules/
 **/package-lock.json
+includes/modules/vimeo/lib/vendor/ankitpokhrel/tus-php/.cache/tus_php.client.cache

@@ -3,6 +3,19 @@ namespace SIM\FILEUPLOAD;
 use SIM;
 
 class FileUploader{
+    public $fileParam;
+    public $maxSize;
+    public $userId;
+    public $username;
+    public $metaKey;
+    public $targetDir;
+    public $files;
+    public $filesArr;
+    public $metaKeyIndex;
+    public $key;
+    public $fileName;
+    public $targetFile;
+
     public function __construct($settings, $files){
         $this->fileParam	= (array)$settings['fileupload'];
         $this->maxSize	    = wp_max_upload_size();
@@ -43,7 +56,7 @@ class FileUploader{
         }
     }
 
-    function processFiles(){
+    public function processFiles(){
         foreach ($this->files['name'] as $this->key => $this->fileName) {
             //check file size
             if($this->files['size'][$this->key] > $this->maxSize){
@@ -63,7 +76,7 @@ class FileUploader{
     /**
      * Finds the first available filename
      */
-    function findFileName(){
+    public function findFileName(){
         $this->fileName 	= sanitize_file_name($this->fileName);
             
         //Create the filename
@@ -85,7 +98,7 @@ class FileUploader{
         }
     }
 
-    function moveFile(){
+    public function moveFile(){
         //Move the file
         $moved = move_uploaded_file($this->files['tmp_name'][$this->key], $this->targetFile);
 
@@ -99,7 +112,7 @@ class FileUploader{
         array_push($this->filesArr, ['url' => str_replace(ABSPATH, '', $this->targetFile)]);
     }
 
-    function addToDb(){
+    public function addToDb(){
         //get the basemetakey in case of an indexed one
         if(preg_match_all('/(.*?)\[(.*?)\]/i', $this->metaKey, $matches)){
             $baseMetaKey	= $matches[1][0];

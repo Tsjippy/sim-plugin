@@ -1,6 +1,7 @@
 import {VimeoUpload} from './vimeo_upload.js';
 import { showLoader } from './../../../js/imports.js';
 
+console.log('vimeo loaded');
 /* 
 		Show vimeo in wp library
 */
@@ -89,8 +90,6 @@ window.wp.Uploader.prototype.init = function() { // plupload 'PostInit'
 
 	this.uploader.bind('BeforeUpload', function(up, file) {
 		if(file.type.split("/")[0] == 'video'){
-			console.log(file)
-			
 			wpMediaUpload(file, up);
 
 			//mark plupload as finished
@@ -120,11 +119,21 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
 	var upload		= await uploader.tusUploader();
 
     upload.options.onProgress   = function(bytesUploaded, bytesTotal) {
+		// Show loader
+		if(document.querySelector('.loaderwrapper .media-progress-bar') == null){
+			document.querySelector('.loaderwrapper').innerHTML	= `
+			<div class="media-progress-bar" style='display:block;height: 20px;'>
+				<div style="width: 0%;height: 20px;">
+					<span style="width:100%;text-align:center;color:white;display:block;font-size:smaller;">0.00%</span>
+				</div>
+			</div>`;
+		}
+
         //calculate percentage
         let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
     
         //show percentage in progressbar
-        document.querySelectorAll('.attachments-wrapper .uploading:first-child .media-progress-bar > div, .selection-view .uploading:first-child .media-progress-bar > div, .media-uploader-status.uploading .media-progress-bar > div').forEach(div=>{
+        document.querySelectorAll('.loaderwrapper .media-progress-bar > div, .media-progress-bar > div, .selection-view .uploading:first-child .media-progress-bar > div, .media-uploader-status.uploading .media-progress-bar > div').forEach(div=>{
             div.style.width	= percentage+'%';
             div.innerHTML	= '<span style="width:100%;text-align:center;color:white;display:block;font-size:smaller;">'+percentage+'%</span>';
         });
@@ -144,6 +153,8 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
         //mark as uploaded
 	    wp_uploader.dispatchEvent('fileUploaded', plupload_file, request);
 	    document.querySelector('[data-id="'+uploader.storedEntry.postId+'"] .filename>div').textContent='Uploaded to Vimeo';    
+
+		document.querySelectorAll('.loaderwrapper').forEach(el=>el.remove());
     }
 
     upload.options.onError      = function(error) {

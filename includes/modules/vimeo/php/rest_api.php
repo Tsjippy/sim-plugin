@@ -120,8 +120,8 @@ function prepareVimeoUpload(){
 
     // If there is no file with the same name, create a new video on vimeo
 	if(empty($url)){
-		$VimeoApi	= new VimeoApi();
-		$result		= $VimeoApi->createVimeoVideo($fileName, $mime);
+		$vimeoApi	= new VimeoApi();
+		$result		= $vimeoApi->createVimeoVideo($fileName, $mime);
     // Return a previous created vimeo video link and post id
 	}else{
 		$result = [
@@ -147,6 +147,7 @@ function addUploadedVimeo(){
 	if ( ! $attachment ) {
 		return new WP_Error('attachemnt', 'Something went wrong');
 	}
+
     // Replace the icon if needed
 	$attachment['icon']	= str_replace('default', 'video', $attachment['icon']);
 

@@ -28,8 +28,25 @@ add_shortcode("markerdescription", 	function ($atts){
 } );
 
 add_shortcode('ministry_description', function($atts){
-    $post = get_page_by_title($atts['name'], 'OBJECT', 'location');
-    return getLocationEmployees($post);
+    // check double posting
+    $posts = get_posts(
+        array(
+            'post_type'              => 'location',
+            'title'                  => $atts['name'],
+            'post_status'            => 'publish',
+            'numberposts'            => -1,
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+            'orderby'                => 'post_date ID',
+            'order'                  => 'ASC',
+        )
+    );
+
+    if(empty($posts)){
+        return '';
+    }
+
+    return getLocationEmployees($posts[0]);
 });
 
 add_shortcode("location_description", function($atts){

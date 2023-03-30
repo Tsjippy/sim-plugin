@@ -1273,12 +1273,26 @@ class FrontEndContent{
 			while(in_array($this->oldPost->post_type, ['change', 'revision'])){
 				$this->oldPost	= get_post($this->oldPost->post_parent);
 			}
-		}else{
+		}elseif(!empty($this->postTitle)){
 			// check double posting
-			$checkPost	= get_page_by_title($this->postTitle, OBJECT, $this->postType);
-			if(!empty($checkPost) && current_time('Y-m-d') == date('Y-m-d', strtotime($checkPost->post_date))){
-				$url	= get_permalink($checkPost);
-				return new \WP_Error('frontend', "A post with title $this->postTitle is already published today!\nSee it <a href='$url'>here</a>");
+			$posts = get_posts(
+				array(
+					'post_type'              => $this->postType,
+					'title'                  => $this->postTitle,
+					'post_status'            => 'all',
+					'numberposts'            => -1,
+					'update_post_term_cache' => false,
+					'update_post_meta_cache' => false,
+					'orderby'                => 'post_date ID',
+					'order'                  => 'ASC',
+				)
+			);
+
+			foreach($posts as $p){
+				if(current_time('Y-m-d') == date('Y-m-d', strtotime($p->post_date))){
+					$url	= get_permalink($p);
+					return new \WP_Error('frontend', "A post with title $this->postTitle is already published today!\nSee it <a href='$url'>here</a>");
+				}
 			}
 		}
 

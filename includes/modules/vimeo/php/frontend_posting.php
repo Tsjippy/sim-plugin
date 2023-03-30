@@ -4,7 +4,7 @@ use SIM;
 
 // Update vimeo when attachment has changed
 add_action('sim_after_post_save', function($post){
-    if(isset($_POST['post_type']) && $_POST['post_type'] == 'attachment' && is_numeric($_POST['post_id'])){
+    if($post->post_type == 'attachment' && is_numeric($post->ID)){
         $vimeoApi		= new VimeoApi();
         $vimeoId        = $vimeoApi->getVimeoId($post->ID);
         if(!is_numeric($vimeoId)){
@@ -27,7 +27,7 @@ add_action('sim_after_post_save', function($post){
         if(!empty($data)){
             $vimeoApi->updateMeta($post->ID, $data);
         }
-    }    
+    }
 });
 
 add_filter('sim_attachment_preview', function($image, $postId){

@@ -387,7 +387,7 @@ async function uploadVideo(file){
 		console.error("Failed because: " + error);				
 	}
 
-	document.querySelector('.upload-message').textContent = "Uploading video"+s;
+	document.querySelector('.upload-message').textContent = "Uploading video"+s+" to Vimeo";
 	document.getElementById('progress-wrapper').classList.remove('hidden');
 
 	upload.start();

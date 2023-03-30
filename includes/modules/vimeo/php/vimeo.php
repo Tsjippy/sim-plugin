@@ -181,3 +181,60 @@ add_filter( 'render_block', function( $blockContent,  $block ){
 
 	return $blockContent;
 }, 10, 2);
+
+// Runs after file has been uploaded to the tmp folder but before adding it to the library
+add_filter( 'wp_handle_upload_prefilter', function($file){
+
+	if(explode('/', $file['type'])[0] == 'video' && is_numeric($_REQUEST['post'])){
+		$vimeoApi	= new VimeoApi();
+		$postId		= $_REQUEST['post'];
+
+		try{
+			$post		= get_post($postId);
+
+			$response 	= $vimeoApi->api->upload($file['tmp_name'], [
+				'name'          => $file['name'],
+				'description'   => $file['name']
+			]);
+
+			$vimeoId	= str_replace('/videos/', '', $response);
+
+			if(!is_numeric($vimeoId)){
+				return;
+			}
+
+			$path       = $vimeoApi->backupDir;
+
+			$filename   = $vimeoId."_".get_the_title($postId);
+
+			$filePath  = str_replace('\\', '/', $path.$filename.'.mp4');
+
+			move_uploaded_file($file['tmp_name'], $filePath);
+
+			$vimeoApi->saveVideoPath($postId, $filePath);
+
+			$blocks		= parse_blocks($post->post_content);
+
+			foreach($blocks as &$block){
+				if($block['blockName'] == 'core/video' && !isset($block['attrs']['id'])){
+					$block['attrs']['id']	= $vimeoId;
+				}
+			}
+
+			// change the post contents
+			wp_update_post(
+				array(
+					'ID'            => $postId,
+					'post_content'	=> serialize_blocks($blocks),
+				),
+				false,
+				false
+			);
+		}catch(\Exception $e) {
+			SIM\printArray('Unable to upload: '.$e->getMessage());
+		}
+		SIM\printArray($response);
+	}
+
+	return $file;
+} );

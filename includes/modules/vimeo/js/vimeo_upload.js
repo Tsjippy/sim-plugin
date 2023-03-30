@@ -1,4 +1,7 @@
 import * as tus from 'tus-js-client';
+import {fetchRestApi} from '../../../js/form_submit.js';
+
+console.log('vimeo upload loaded');
 
 export class VimeoUpload{
     constructor(file){
@@ -30,7 +33,7 @@ export class VimeoUpload{
         formData.append('file_name', this.file.name);
         formData.append('file_type', this.file.type);
 
-        var response    = await FormSubmit.fetchRestApi('vimeo/prepare_vimeo_upload', formData);
+        var response    = await fetchRestApi('vimeo/prepare_vimeo_upload', formData);
 
         //Failed
         if(response){
