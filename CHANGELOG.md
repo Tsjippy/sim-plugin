@@ -8,6 +8,7 @@
 
 ### Fixed
 - issue in media gallery
+- vimeo upload
 
 ### Updated
 
