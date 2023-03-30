@@ -183,7 +183,7 @@ add_filter( 'render_block', function( $blockContent,  $block ){
 }, 10, 2);
 
 // Runs after file has been uploaded to the tmp folder but before adding it to the library
-add_filter( 'wp_handle_upload_prefilter', function($file){
+add_filter( 'wp_handle_upload', function($file){
 
 	if(explode('/', $file['type'])[0] == 'video' && is_numeric($_REQUEST['post'])){
 		$vimeoApi	= new VimeoApi();
@@ -192,15 +192,27 @@ add_filter( 'wp_handle_upload_prefilter', function($file){
 		try{
 			$post		= get_post($postId);
 
-			$response 	= $vimeoApi->api->upload($file['tmp_name'], [
-				'name'          => $file['name'],
-				'description'   => $file['name']
+			if(!empty($post->post_title)){
+				$name	= $post->post_title;
+			}else{
+				$name	= basename($file['file']);
+			}
+
+			if(!empty($post->post_content)){
+				$content	= $post->post_content;
+			}else{
+				$content	= $name;
+			}
+
+			$response 	= $vimeoApi->api->upload($file['file'], [
+				'name'          => $name,
+				'description'   => $content
 			]);
 
 			$vimeoId	= str_replace('/videos/', '', $response);
 
 			if(!is_numeric($vimeoId)){
-				return;
+				return $file;
 			}
 
 			$path       = $vimeoApi->backupDir;
@@ -209,31 +221,15 @@ add_filter( 'wp_handle_upload_prefilter', function($file){
 
 			$filePath  = str_replace('\\', '/', $path.$filename.'.mp4');
 
-			move_uploaded_file($file['tmp_name'], $filePath);
+			move_uploaded_file($file['file'], $filePath);
 
 			$vimeoApi->saveVideoPath($postId, $filePath);
 
-			$blocks		= parse_blocks($post->post_content);
+			update_post_meta($post->ID, 'vimeo_id', $vimeoId);
 
-			foreach($blocks as &$block){
-				if($block['blockName'] == 'core/video' && !isset($block['attrs']['id'])){
-					$block['attrs']['id']	= $vimeoId;
-				}
-			}
-
-			// change the post contents
-			wp_update_post(
-				array(
-					'ID'            => $postId,
-					'post_content'	=> serialize_blocks($blocks),
-				),
-				false,
-				false
-			);
 		}catch(\Exception $e) {
 			SIM\printArray('Unable to upload: '.$e->getMessage());
 		}
-		SIM\printArray($response);
 	}
 
 	return $file;
