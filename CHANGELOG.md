@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue in media gallery
 
 ### Updated
 
