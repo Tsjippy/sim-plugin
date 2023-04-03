@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- account_page filter
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.31.0] - 2023-04-03
+
+
+### Added
+- account_page filter
 
 ### Fixed
 - understudy export
