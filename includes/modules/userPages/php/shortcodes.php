@@ -267,7 +267,7 @@ function createContactlistPdf($header, $data, $download=false) {
  *
  * @return string pdf path
  */
-function buildUserDetailPdf(){
+function buildUserDetailPdf($download=true){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 		
@@ -353,5 +353,5 @@ function buildUserDetailPdf(){
 	$tableHeaders = ["Name"," E-mail"," Phone"," Ministries"," State"];
 
 	//Create a pdf and add it to the mail
-	return createContactlistPdf($tableHeaders, $userDetails, true);
+	return createContactlistPdf($tableHeaders, $userDetails, $download);
 }

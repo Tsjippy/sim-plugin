@@ -13,6 +13,8 @@ class ContactList extends ADMIN\MailSetting{
 
         $this->addUser($user);
 
+        $this->replaceArray['%account_page%']     = SIM\ADMIN\getDefaultPageLink('usermanagement', 'account_page');
+
         $this->defaultSubject    = "Contact list";
 
         $this->defaultMessage    = 'Dear all,<br><br>';

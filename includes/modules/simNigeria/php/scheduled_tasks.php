@@ -111,7 +111,7 @@ function sendReimbursementRequests(){
 function sendMissonaryDetail(){
 	global $wpdb;
 
-	$attachments	= [SIM\USERPAGE\buildUserDetailPdf()];
+	$attachments	= [SIM\USERPAGE\buildUserDetailPdf(false)];
 	
 	//Send e-mail
 	$contactList    = new ContactList('');
