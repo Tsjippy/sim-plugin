@@ -12,8 +12,7 @@ class PdfHtml extends \FPDF{
 	protected $fontList;
 	protected $issetfont;
 	protected $issetcolor;
-	protected $fontlist;
-	protected $headertitle;
+	public $headertitle;
 	public $skipFirstPage;
 
 	const DPI = 96;
@@ -281,17 +280,15 @@ class PdfHtml extends \FPDF{
 		$this->SetFont( 'Arial', '', 42 );
 
 		//Set the cursor position to 80
-		$this->SetXY(0,80);
+		$this->SetXY(0, 80);
 		//Write the title
-		$this->Cell(0,0,$title,0,1,'C');
+		$this->Cell(0, 0, $title, 0, 1, 'C');
 
 		//Set the cursor position to 100
-		$this->SetXY(0,100);
-		//Write the subtitle
-		$this->Cell(0,0,$subtitle,0,1,'C');
+		$this->SetXY(0, 100);
 
-		//add new page
-		$this->AddPage();
+		//Write the subtitle
+		$this->Cell(0, 0, $subtitle,0,1,'C');
 	}
 
 
@@ -402,13 +399,13 @@ class PdfHtml extends \FPDF{
 				}
 
 				if(is_numeric($key)){
-					$this->WriteHTML(str_repeat("   ",$depth)."<strong>$prevKey $key.</strong><br>");
+					$this->WriteHTML(str_repeat("   ", $depth)."<strong>$prevKey $key.</strong><br>");
 				}else{
-					$this->WriteHTML(str_repeat("   ",$depth)."<strong>$key:</strong><br>");
+					$this->WriteHTML(str_repeat("   ", $depth)."<strong>$key:</strong><br>");
 				}
 
 				//Display this array as well
-				$this->WriteArray($field, $depth+1,$key);
+				$this->WriteArray($field, $depth+1, $key);
 			}else{
 				if(is_numeric($key)){
 					$showKey = "";
@@ -416,7 +413,12 @@ class PdfHtml extends \FPDF{
 					$showKey = $key.": ";
 				}
 
-				$this->Write(5, str_repeat("   ",$depth).$bullet.' '.$showKey.$field);
+				if (filter_var($field, FILTER_VALIDATE_URL)) {
+					$url	= $field;
+					$field	= basename($field);
+				}
+
+				$this->Write(5, str_repeat("   ", $depth).$bullet.' '.$showKey.$field, $url);
 				$this->Ln(5);
 			}
 		}
@@ -436,11 +438,11 @@ class PdfHtml extends \FPDF{
 			foreach($array as $key=>$image){
 				//If the picture is an array of pictures run the function again
 				if (is_array($image)){
-					$this->WriteImageArray($image,$depth+1,$key);
+					$this->WriteImageArray($image, $depth+1, $key);
 				}else{
 					//Get the extension
-					$extension = strtoupper(explode('.',$image)[1]);
-					if($extension != ""){
+					$extension = strtoupper(explode('.', $image)[1]);
+					if(!empty($extension)){
 						if($extension == 'JPE'){
 							$extension = 'JPG';
 						}
@@ -453,17 +455,26 @@ class PdfHtml extends \FPDF{
 
 						//Check the extension to see if it is printable and check if the file exists
 						if(in_array($extension, ['JPG','JPEG','PNG','GIF'])){
-							if(file_exists(ABSPATH.$image)){
+							if(file_exists($image)){
 								//Print the picture
 								try{
-									$this->Image(ABSPATH.$image, null, null, 100, 0,  $extension);
+									$this->Image($image, null, null, 100, 0,  $extension);
 								}catch (\Exception $e) {
-									SIM\printArray(ABSPATH.$image." is not a valid image");
+									SIM\printArray($image." is not a valid image");
 								}
 							}
 						}else{
+							if(is_string($image) && is_file($image)){
+								$image	= SIM\pathToUrl($image);
+							}
+
 							//Write down the url as link
-							$this->Write(10, chr(149).' '.explode('-', end(explode('/',$image)), 2)[1], site_url().'/'.$image);
+							$url	= $image;
+							if(strpos($url, site_url()) === false){
+								$url	= site_url().'/'.$url;
+							}
+
+							$this->Write(10, chr(149).' '.explode('-', basename($image), 2)[1], $url);
 							$this->Ln(5);
 						}
 					}

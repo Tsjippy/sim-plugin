@@ -298,27 +298,6 @@ function greencardReminder(){
 	}
 }
 
-//Store page with user-info shortcode
-add_action( 'wp_after_insert_post', function($postId, $post){
-    if(has_shortcode($post->post_content, 'user-info')){
-        global $Modules;
-
-        $Modules[MODULE_SLUG]['account_page'][]    = $postId;
-
-        update_option('sim_modules', $Modules);
-    }
-}, 10, 2);
-
-add_action( 'wp_trash_post', function($postId){
-    global $Modules;
-    $index  = array_search($postId, $Modules[MODULE_SLUG]['account_page']);
-    if($index){
-        unset($Modules[MODULE_SLUG]['account_page'][$index]);
-        $Modules[MODULE_SLUG]['account_page']   = array_values($Modules[MODULE_SLUG]['account_page']);
-        update_option('sim_modules', $Modules);
-    }
-} );
-
 /**
  * send an e-mail with an overview of an users details for them to check
  */
@@ -329,10 +308,9 @@ function checkDetailsMail(){
 	//Retrieve all users
 	$users 			= SIM\getUserAccounts(false, true);
 
-	$accountPage	= SIM\getModuleOption(MODULE_SLUG, 'account_page');
-	$accountPageUrl	= get_permalink($accountPage);
+	$accountPageUrl	= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'account_page');
 
-	if(!$accountPageUrl){
+	if(empty($accountPageUrl)){
 		SIM\printArray('No account page defined');
 		return;
 	}

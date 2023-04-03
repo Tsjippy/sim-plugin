@@ -230,6 +230,7 @@ function createContactlistPdf($header, $data, $download=false) {
 	//Built frontpage
 	$pdf = new SIM\PDF\PdfHtml();
 	$pdf->frontpage(SITENAME.' Contact List', date('F'));
+	$pdf->AddPage();
 	
 	//Write the table headers
 	$pdf->tableHeaders($header, $widths);

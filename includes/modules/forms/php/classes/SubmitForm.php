@@ -257,9 +257,6 @@ class SubmitForm extends SimForms{
 		unset($this->submission->formresults['formname']);
 		unset($this->submission->formresults['fileupload']);
 		unset($this->submission->formresults['userid']);
-
-		$this->submission->formresults['submissiontime']	= $this->submission->timecreated;
-		$this->submission->formresults['edittime']			= $this->submission->timelastedited;
 			
 		$this->submission->formresults['formurl']			= $_POST['formurl'];
 
@@ -308,6 +305,9 @@ class SubmitForm extends SimForms{
 		
 		//save to submission table
 		if(empty($this->formData->settings['save_in_meta'])){
+			$this->submission->formresults['submissiontime']	= $this->submission->timecreated;
+			$this->submission->formresults['edittime']			= $this->submission->timelastedited;
+			
 			//Get the id from db before insert so we can use it in emails and file uploads
 			$this->submission->formresults['id']	= $wpdb->get_var( "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE (TABLE_NAME = '{$this->submissionTableName}') AND table_schema='$wpdb->dbname'");
 			
@@ -344,6 +344,8 @@ class SubmitForm extends SimForms{
 		//save to user meta
 		}else{
 			unset($this->submission->formresults['formurl']);
+			unset($this->submission->formresults['formid']);
+			unset($this->submission->formresults['_wpnonce']);
 			
 			//get user data as array
 			$userData		= (array)get_userdata($this->userId)->data;

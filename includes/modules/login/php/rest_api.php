@@ -823,10 +823,10 @@ function userLogin(){
     //store login date
     update_user_meta( $user->ID, 'last_login_date', date('Y-m-d'));
 
-    $accountPageId  = SIM\getModuleOption('usermanagement', 'account_page');
+    $accountPage  = SIM\ADMIN\getDefaultPageLink('usermanagement', 'account_page');
 
     // Get mandatory or recommended fields
-    if(function_exists('SIM\FORMS\getAllEmptyRequiredElements') && is_numeric($accountPageId)){
+    if(function_exists('SIM\FORMS\getAllEmptyRequiredElements') && !empty($accountPage)){
         $fieldList   = SIM\FORMS\getAllEmptyRequiredElements($user->ID, 'all');
     }
 
@@ -857,8 +857,8 @@ function userLogin(){
         }
 
         //redirect to account page to fill in required fields
-        if (!isset($_SESSION['showpage']) && !empty($fieldList) && is_numeric($accountPageId)){
-            return get_permalink($accountPageId);
+        if (!isset($_SESSION['showpage']) && !empty($fieldList) && !empty($accountPage)){
+            return $accountPage;
         }else{
             if(isset($_SESSION['showpage'])){
                 unset($_SESSION['showpage']);

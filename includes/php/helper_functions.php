@@ -183,6 +183,10 @@ function pathToUrl($path){
 	if(is_string($path)){
 		$base	= str_replace('\\', '/', ABSPATH);
 		$path	= str_replace('\\', '/', $path);
+
+		if(strpos($path, ABSPATH) === false && strpos($path, $base) === false){
+			$path	= $base.$path;
+		}
 		$url	= str_replace($base, SITEURL.'/', $path);
 	}else{
 		$url	= $path;

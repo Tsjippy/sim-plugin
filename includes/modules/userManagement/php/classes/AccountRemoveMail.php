@@ -13,7 +13,7 @@ class AccountRemoveMail extends ADMIN\MailSetting{
 
         $this->addUser($user);
 
-        $this->replaceArray['%account_page%']    = get_permalink(SIM\getModuleOption($this->moduleSlug, 'account_page')[0]);
+        $this->replaceArray['%account_page%']    = SIM\ADMIN\getDefaultPageLink($this->moduleSlug, 'account_page');
 
         $this->defaultSubject    = 'Your account on %site_name% has been deleted';
 

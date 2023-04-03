@@ -255,6 +255,8 @@ trait ExportFormResults{
 		}
 		
 		$pdf->frontpage($title);
+
+		$pdf->AddPage();
 		
 		//Write the table headers
 		$pdf->tableHeaders($header, $colWidths);

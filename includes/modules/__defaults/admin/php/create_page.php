@@ -16,10 +16,17 @@ function createDefaultPage($options, $optionKey, $title, $content, $oldOptions, 
     }
 
     if(is_array($pages)){
-        foreach($pages as $key=>$page){
-			if(get_post_status($page) != 'publish'){
+        $processed  = [];
+        foreach($pages as $key=>$pageId){
+			if(
+                get_post_status($pageId) != 'publish' ||                                // not a published page
+                strpos(get_the_content(null, false, $pageId), $content) === false ||    // not the right content
+                in_array($pageId, $processed)                                           // dublicate
+            ){
 				unset($pages[$key]);
 			}
+
+            $processed[]    = $pageId;
 		}
 
         $options[$optionKey]    = $pages;

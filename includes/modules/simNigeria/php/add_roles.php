@@ -12,49 +12,49 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 	// Only add the new role if it does not exist
 	if(!wp_roles()->is_role( 'financialinfo' )){
-		add_role( 
-			'financialinfo', 
-			'Financial info', 
+		add_role(
+			'financialinfo',
+			'Financial info',
 			$roleSet
 		);
 	}
 
 	if(!wp_roles()->is_role( 'housingmanagement' )){
-		add_role( 
-			'housingmanagement', 
-			'Housing management', 
+		add_role(
+			'housingmanagement',
+			'Housing management',
 			$roleSet
 		);
 	}
 
 	if(!wp_roles()->is_role( 'medicalinfo' )){
-		add_role( 
-			'medicalinfo', 
-			'Medical info', 
+		add_role(
+			'medicalinfo',
+			'Medical info',
 			$roleSet
 		);
 	}
 
 	if(!wp_roles()->is_role( 'nigerianstaff' )){
-		add_role( 
-			'nigerianstaff', 
-			'Nigerian Staff', 
+		add_role(
+			'nigerianstaff',
+			'Nigerian Staff',
 			$roleSet
 		);
 	}
 
 	if(!wp_roles()->is_role( 'travelinfo' )){
-		add_role( 
-			'travelinfo', 
-			'Travel info', 
+		add_role(
+			'travelinfo',
+			'Travel info',
 			$roleSet
 		);
 	}
 
 	if(!wp_roles()->is_role( 'visainfo' )){
-		add_role( 
-			'visainfo', 
-			'Visa info', 
+		add_role(
+			'visainfo',
+			'Visa info',
 			$roleSet
 		);
 	}
