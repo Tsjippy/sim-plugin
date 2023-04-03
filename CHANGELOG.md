@@ -7,7 +7,15 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.30.9] - 2023-03-30
+
+
+### Fixed
 - issue in media gallery
+- vimeo upload
 
 ### Updated
 
