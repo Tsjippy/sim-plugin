@@ -97,6 +97,10 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
 
 //add meta data fields
 add_action('sim_frontend_post_after_content', function ($frontendcontend){
+    if(!empty($frontendcontend->post) && $frontendcontend->post->post_type != 'project'){
+        return;
+    }
+
     //Load js
     wp_enqueue_script('sim_project_script');
 

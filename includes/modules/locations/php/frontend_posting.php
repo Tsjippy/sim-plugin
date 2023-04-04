@@ -320,6 +320,11 @@ add_action( 'delete_post_meta', function($metaIds, $postId, $metaKey, $metaValue
 
 //add meta data fields
 add_action('sim_frontend_post_after_content', function ($frontendcontend){
+
+    if(!empty($frontendcontend->post) && $frontendcontend->post->post_type != 'location'){
+        return;
+    }
+    
     //Load js
     wp_enqueue_script('sim_location_script');
 
@@ -361,14 +366,14 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
     <div id="location-attributes" class="property location<?php if($postName != 'location'){echo ' hidden';} ?>">
         <div id="parentpage" class="frontendform">
             <h4>Select a parent location</h4>
-            <?php 
+            <?php
             echo SIM\pageSelect('parent_location', $frontendcontend->postParent, '', ['location'], false);
             ?>
         </div>
         <div class="frontendform">
-            <h4>Update warnings</h4>	
+            <h4>Update warnings</h4>
             <label>
-                <input type='checkbox' name='static_content' value='static_content' <?php if(!empty(get_post_meta($postId, 'static_content', true))){echo 'checked';}?>>
+                <input type='checkbox' name='static_content' value='static_content' <?php if(get_post_meta($postId, 'static_content', true)){echo 'checked';}?>>
                 Do not send update warnings for this location
             </label>
         </div>

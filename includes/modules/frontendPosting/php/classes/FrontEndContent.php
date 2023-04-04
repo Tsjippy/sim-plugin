@@ -747,7 +747,7 @@ class FrontEndContent{
 			<div id="static_content" class="frontendform">
 				<h4>Update warnings</h4>
 				<label>
-					<input type='checkbox' name='static_content' value='static_content' <?php if(get_post_meta($this->postId,'static_content',true) != ''){echo 'checked';}?>>
+					<input type='checkbox' name='static_content' value='static_content' <?php if(get_post_meta($this->postId, 'static_content', true)){echo 'checked';}?>>
 					Do not send update warnings for this page
 				</label>
 			</div>

@@ -43,7 +43,7 @@ add_action( 'init', function(){
         'show_in_rest' 	    => true,
         'single' 		    => true,
         'type' 			    => 'boolean',
-		'default'			=> 'false',
+		'default'			=> false,
 		'sanitize_callback' => 'sanitize_text_field'
     ) );
 } );

@@ -59,14 +59,15 @@ function pageAgeWarning(){
 		'numberposts'      => -1,
 		'post_type'        => ['page', 'location'],
 		'meta_query' => array(
-			'relation' => 'AND',
+			'relation' => 'OR',
 			array(
 				'key' 		=> 'static_content',
 				'compare'	=> 'NOT EXISTS'
 			),
 			array(
-				'key'		=> 'user_id',
-				'compare'	=> 'NOT EXISTS'
+				'key'		=> 'static_content',
+				'compare'	=> '!=',
+				'value'		=> true
 			),
 		)
 	));
@@ -78,6 +79,7 @@ function pageAgeWarning(){
 	foreach ( $pages as $page ) {
 		//Get the ID of the current page
 		$postId 				= $page->ID;
+
 		$postTitle 				= $page->post_title;
 		//Get the last modified date
 		$secondsSinceUpdated 	= time()-get_post_modified_time('U',true,$page);
@@ -86,8 +88,8 @@ function pageAgeWarning(){
 		//If it is X days since last modified
 		if ($secondsSinceUpdated > $maxAgeInSeconds){
 			//Get the edit page url
-			$url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
-			$url 		= add_query_arg( ['post_id' => $postId], $url );		
+			$url		= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
+			$url 		= add_query_arg( ['post_id' => $postId], $url );
 			
 			//Send an e-mail
 			$recipients = getPageRecipients($page);
