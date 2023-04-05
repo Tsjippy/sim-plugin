@@ -8,6 +8,7 @@
 
 ### Fixed
 - page age warning
+- update sub meta key entry
 
 ### Updated
 
