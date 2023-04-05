@@ -154,7 +154,7 @@ function getAllEmptyRequiredElements($userId, $type){
 					if(count($names) > 1){
 						$secondTab	= $names[0];
 					}
-					$html .= "<li><a onclick='Main.changeUrl(this, `$secondTab`)' data-param_val='$mainTab' data-hash={$element->name} style='cursor:grabbing'>$name</a></li>";
+					$html .= "<li><a onclick='Main.changeUrl(this, `$secondTab`)' data-param_val='$mainTab' data-hash={$element->name} style='cursor:pointer'>$name</a></li>";
 				}
 			}
 		}

@@ -74,26 +74,30 @@ class FileUpload{
 	 */
 	public function getUploadHtml($documentName, $targetDir='', $multiple=false, $options=''){
 		$documentArray = $this->processMetaKey();
-
-		if($multiple){
-			$multipleString = 'multiple="multiple"';
-			$class = '';
-		}else{
-			$multipleString = '';
-			if(!empty($documentArray)){
-				$class = "hidden";
-			}
-		}
 		
 		$this->html = '<div class="file_upload_wrap">';
 			$this->html .= '<div class="documentpreview">';
-			if(is_array($documentArray) && count($documentArray)>0){
+			if(is_array($documentArray) && count($documentArray) > 0){
 				foreach($documentArray as $documentKey => $document){
-					$this->documentPreview($document, $documentKey);
+					if(!$this->documentPreview($document, $documentKey)){
+						// remove from document array if the file is not valid
+						unset($documentArray[$documentKey]);
+					}
 				}
 			}elseif(!is_array($documentArray) && $documentArray != ""){
 				$this->documentPreview($documentArray, -1);
 			}
+
+			if($multiple){
+				$multipleString = 'multiple="multiple"';
+				$class = '';
+			}else{
+				$multipleString = '';
+				if(!empty($documentArray)){
+					$class = "hidden";
+				}
+			}
+
 			$this->html .= '</div>';
 		
 			$this->html .= "<div class='upload_div $class'>";
@@ -139,18 +143,20 @@ class FileUpload{
 			$url = wp_get_attachment_url($documentPath);
 
 			if($url === false){
-				$documentPath	= '';
-				$libraryId		= '';
+				return false;
 			}else{
 				$libraryId		= $documentPath;
 				$documentPath	= $url;
 			}
+		}elseif(!is_file($documentPath)){
+			return false;
 		}
 
 		//documentpath is already an url
+		$url = '';
 		if(strpos($documentPath, SITEURL) !== false){
 			$url = $documentPath;
-		}else{
+		}elseif(!empty($documentPath)){
 			$url = SITEURL.'/'.str_replace(ABSPATH, '', $documentPath);
 		}
 		
@@ -195,5 +201,7 @@ class FileUpload{
 		$this->html .= "<button type='button' class='remove_document button' data-url='$documentPath' data-userid='{$this->userId}' data-metakey='$metakeyString' $libraryString>X</button>";
 		$this->html .= "<img class='remove_document_loader hidden' src='".LOADERIMAGEURL."' loading='lazy' style='height:40px;' >";
 		$this->html .= "</div>";
+
+		return true;
 	}
 }

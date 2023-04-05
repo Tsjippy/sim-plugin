@@ -223,6 +223,7 @@ function userInfoPage($atts){
 	}
 
 	wp_enqueue_style('sim_forms_style');
+	wp_enqueue_style( 'sim_useraccount');
 	
 	$a = shortcode_atts( array(
 		'currentuser' 	=> false,

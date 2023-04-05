@@ -1,4 +1,5 @@
-@use 'global' as *;
+@use '../../../css/scss/global' as *;
+
 #profile_menu{
 	width: 30%;
     float: left;
@@ -28,8 +29,7 @@
 	}
 	
 	&:hover{
-		cursor: -webkit-grab; 
-		cursor: grab;
+		cursor: pointer ;
 	}
 }
 
