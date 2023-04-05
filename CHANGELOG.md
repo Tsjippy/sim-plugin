@@ -9,6 +9,7 @@
 ### Fixed
 - page age warning
 - update sub meta key entry
+- issue in file upload when invalid file
 
 ### Updated
 
