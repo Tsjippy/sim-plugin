@@ -133,13 +133,16 @@ class SaveFormSettings extends SimForms{
 			return;
 		}
 
-		// Move the element to the new position priority should be index+1
-		if($oldPriority == -1){
-			$out				= [$element];
-		}else{
-			$out				= array_splice($this->formElements, $oldPriority-1, 1);
+		// only move if element is not alreay on the right location
+		if($this->formElements[$newPriority-1]->name != $element->name){
+			// Move the element to the new position priority should be index+1
+			if($oldPriority == -1){
+				$out				= [$element];
+			}else{
+				$out				= array_splice($this->formElements, $oldPriority-1, 1);
+			}
+			array_splice($this->formElements, $newPriority-1, 0, $out);
 		}
-		array_splice($this->formElements, $newPriority-1, 0, $out);
 
  		//Loop over all elements and give them the new priority
 		foreach($this->formElements as $index=>$el){

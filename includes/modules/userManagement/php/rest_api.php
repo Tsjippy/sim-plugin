@@ -47,7 +47,9 @@ add_action( 'rest_api_init', function () {
 		'/update_roles',
 		array(
 			'methods' 				=> 'POST',
-			'callback' 				=> 	__NAMESPACE__.'\updateRoles',
+			'callback' 				=> 	function($wp_rest_request){
+				return updateRoles($_REQUEST['userid'], $_REQUEST['roles']);
+			},
 			'permission_callback' 	=> function(){
                 return (bool)array_intersect(['usermanagement', 'administrator'], wp_get_current_user()->roles);
             },

@@ -349,24 +349,49 @@ class SubmitForm extends SimForms{
 			
 			//get user data as array
 			$userData		= (array)get_userdata($this->userId)->data;
-			foreach($this->submission->formresults as $key=>$result){
+			foreach($this->submission->formresults as $key=>&$result){
+				$subKey	= false;
 				//remove empty elements from the array
 				if(is_array($result)){
 					SIM\cleanUpNestedArray($result);
-					$this->submission->formresults[$key]	= $result;
+
+					//check if we should only update one entry of the array
+					$el	= $this->getElementByName($key.'['.array_keys($result)[0].']');
+					if(count(array_keys($result)) == 1 && $el){
+						$subKey	= array_keys($result)[0];
+					}
 				}
+
 				//update in the _users table
 				if(isset($userData[$key])){
-					if($userData[$key]		!= $result){
+					if($subKey){
+						$userData[$key][$subKey]		= $result;
+						$updateuserData					= true;
+					}elseif($userData[$key]	!= $result){
 						$userData[$key]		= $result;
 						$updateuserData		= true;
 					}
 				//update user meta
 				}else{
-					if(empty($result)){
-						delete_user_meta($this->userId, $key);
-					}else{
+					if($subKey){
+						$curValue	= get_user_meta($this->userId, $key, true);
+						if(empty($result)){
+							// remove subkey
+							if(isset($curValue[$subKey])){
+								unset($curValue[$subKey]);
+							}
+						}else{
+							//update subkey
+							$curValue[$subKey]	= $result[$subKey];
+						}
+
 						update_user_meta($this->userId, $key, $result);
+					}else{
+						if(empty($result)){
+							delete_user_meta($this->userId, $key);
+						}else{
+							update_user_meta($this->userId, $key, $result);
+						}
 					}
 				}
 			}

@@ -424,7 +424,7 @@ function userInfoPage($atts){
 		?>
 		<div id="role_info" class="tabcontent hidden">
 			<h3>Select user roles</h3>
-			<p>'
+			<p>
 				Select the roles this user should have.<br>
 				If you want to disable a user go to the login info tab.
 			</p>
