@@ -11,6 +11,7 @@
 - update sub meta key entry
 - issue in file upload when invalid file
 - do not close modal on scroll
+- no duplicate id in forms
 
 ### Updated
 
