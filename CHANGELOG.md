@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.31.1] - 2023-04-06
+
+
+### Fixed
 - page age warning
 - update sub meta key entry
 - issue in file upload when invalid file
