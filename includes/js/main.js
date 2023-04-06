@@ -103,18 +103,20 @@ function displayTab(tabButton){
 
 		//scroll to field
 		if (window.location.hash) {
-			var hash 		= window.location.hash.replace('#','');
+			var hash 		= window.location.hash.replace('#', '');
 
-			var hashField	= tab.querySelector('[name^="'+hash+'"]');
+			var hashField	= tab.querySelector(`[name^="${hash}"]`);
 		
-			hashField.scrollIntoView({block: "center"});
+			if(hashField != null){
+				hashField.scrollIntoView({block: "center"});
 
-			var el			= hashField.closest('.inputwrapper');
-			if(el != null){
-				hashField.closest('.inputwrapper').classList.add('highlight');
+				var el			= hashField.closest('.inputwrapper');
+				if(el != null){
+					hashField.closest('.inputwrapper').classList.add('highlight');
+				}
+				hashField.classList.add('highlight');
+				hashField.focus();
 			}
-			hashField.classList.add('highlight');
-			hashField.focus();
 		}
 
 		// position any tables on this tab, as they can only be positioned when visible
@@ -345,7 +347,27 @@ window.addEventListener("mousedown", function(event) {
 	}	
 
 	//close modal if clicked outside of modal
-	if(target.matches(".modal .close") || (target.closest('.modal-content') == null && target.closest('.swal2-container') == null && target.tagName=='DIV')){
-		hideModals();
+	let modal	= document.querySelector('.modal:not(.hidden)');
+	if(modal != undefined){
+		let scrollBarWidth	= window.innerWidth - modal.clientWidth;
+		if(
+			target.matches(".modal .close") || 					// close button clicked
+			(
+				(
+					scrollBarWidth > 0	&&						// there is a scrollbar
+					event.clientX < modal.clientWidth			// but we did not click on it
+				)	||
+				scrollBarWidth	=== 0							// there is no scrollbar
+			)	&&
+			(
+				target.closest('.modal-content') == null && 	// not clicked inside the modal
+				target.closest('.swal2-container') == null &&	// not clicked on swal message container
+				target.tagName == 'DIV'							// the target is a div
+			)
+		){
+			console.log(event.clientX);
+			console.log(window.outerWidth);
+			hideModals();
+		}
 	}
 });

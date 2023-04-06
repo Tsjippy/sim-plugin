@@ -498,8 +498,8 @@ function buildVcard($userId){
  *
  * @return	string				The html
  */
-function addMinistryLinks($userID){
-	$userMinistries = (array)get_user_meta( $userID, "jobs", true);
+function addMinistryLinks($userId){
+	$userMinistries = (array)get_user_meta( $userId, "jobs", true);
 
 	$html = "";
 	foreach($userMinistries as $key=>$userMinistry){
@@ -508,15 +508,21 @@ function addMinistryLinks($userID){
 			if (!empty($page)){
 				$pageUrl = get_post_permalink($page->ID);
 				$pageUrl = "<a class='ministry_link' href='$pageUrl'>$page->post_title</a>";
+			}elseif($key == -1){
+				$pageUrl = 'Also';
 			}else{
-				$pageUrl = 'Not found';
+				continue;
 			}
 			$html .= "$pageUrl as $userMinistry<br>";
 		}
 	}
 
 	if(empty($html)){
-		$html = "No clue, since no one told me.";
+		$html	= "Ministry location(s) missing.";
+		if(get_current_user_id() == $userId){
+			$url	= SIM\ADMIN\getDefaultPageLink('usermanagement', 'account_page');
+			$html	.= "Please update on the <a href='$url/?main_tab=generic_info#ministries'>Generic Info page</a>";
+		}
 	}
 
 	return $html;

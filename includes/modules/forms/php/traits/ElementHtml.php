@@ -407,7 +407,7 @@ trait ElementHtml{
 				$elId	= "id='$elName'";
 			}
 
-			if(strpos($elName, '[]') !== false ){
+			if(strpos($elName, '[]') !== false && $element->type != 'checkbox'){
 				$elId	= "id='E$element->id'";
 			}
 			
