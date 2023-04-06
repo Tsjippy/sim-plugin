@@ -407,7 +407,7 @@ trait ElementHtml{
 				$elId	= "id='$elName'";
 			}
 
-			if(strpos($elName, '[]') !== false && $element->type != 'checkbox'){
+			if(strpos($elName, '[]') !== false){
 				$elId	= "id='E$element->id'";
 			}
 			
@@ -571,9 +571,14 @@ trait ElementHtml{
 						}else{
 							$checked	= '';
 						}
+
+						if(!empty($elId)){
+							$id	= trim($elId, "'");
+							$id	= "$id-$key'";
+						}
 						
 						$html .= "<label class='checkbox-label'>";
-							$html .= "<$elType name='$elName' $elId class='$elClass' $elOptions value='$key' $checked>";
+							$html .= "<$elType name='$elName' $id class='$elClass' $elOptions value='$key' $checked>";
 							$html .= "<span class='optionlabel'>$option</span>";
 						$html .= "</label>";
 						if($maxLength > 8 || $totalLength > 30){

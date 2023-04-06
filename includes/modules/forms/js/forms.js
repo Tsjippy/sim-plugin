@@ -424,7 +424,7 @@ export function changeFieldValue(selector, value, functionRef, form, addition=''
 		if(target.id == ''){
 			selector	= `[name^="${target.name}" i]`;
 		}else{
-			selector	= `#${target.id}`;
+			selector	= `[id^=${target.id}]`;
 		}
 		
 	}else{
