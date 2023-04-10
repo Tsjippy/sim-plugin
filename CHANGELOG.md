@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug in vimeo media gallery
 
 ### Updated
 
