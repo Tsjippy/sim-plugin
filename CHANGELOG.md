@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.31.2] - 2023-04-10
+
+
+### Fixed
 - bug in vimeo media gallery
 
 ### Updated
