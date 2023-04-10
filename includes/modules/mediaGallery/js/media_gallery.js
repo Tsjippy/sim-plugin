@@ -229,9 +229,7 @@ document.addEventListener('click', async ev=>{
         ev.preventDefault();
 		ev.stopPropagation();
         showImage(target.closest('.cell').dataset.index);
-    }
-
-    if(target.matches('.closebtn')){
+    }else if(target.matches('.closebtn')){
         parent.classList.add('hidden');
 
         //stop any video's
@@ -240,48 +238,34 @@ document.addEventListener('click', async ev=>{
             // refresh iframe
             iframe.src  = iframe.src;
         }
-    }
-
-    if(target.matches('.prevbtn')){
+    }else if(target.matches('.prevbtn')){
         let el      = target.closest('.large-image');
         let prevEl = el.previousElementSibling.previousElementSibling;
 
         showImage(prevEl.dataset.index);
-    }
-
-    if(target.matches('.nextbtn')){
+    }else if(target.matches('.nextbtn')){
         nextButtonClicked(target);
-    }
-
-    if(target.id == 'loadmoremedia'){
+    }else if(target.id == 'loadmoremedia'){
         ev.preventDefault();
 		ev.stopPropagation();
 
         loadMoreMedia(target);
-    }
-
-    if(target.matches('.buttonwrapper .description')){
+    }else if(target.matches('.buttonwrapper .description')){
         Main.displayMessage(atob(target.dataset.description));
-    }
-
-    // media type selector
-    if(target.matches('.media-type-selector')){
+    }else if(target.matches('.media-type-selector')){
+        // media type selector
         mediaTypeSelected(target);
-    }
-
-    if(target.matches('.mediabuttons .search')){
+    }else if(target.matches('.mediabuttons .search')){
         ev.preventDefault();
 		ev.stopPropagation();
         mediaSearch(target);
-    }
-
-    if(target.matches('.download')){
+    }else if(target.matches('.download')){
         ev.preventDefault();
         downloadMedia(target)
-    }
-
-    if(target.matches('.media-cat-selector')){
+    }else if(target.matches('.media-cat-selector')){
         catChanged(target);
+    }else if(target.id='category-options'){
+        target.closest('.mediagallery-wrapper').querySelector('.media-categories').classList.toggle('hidden');
     }
 });
 

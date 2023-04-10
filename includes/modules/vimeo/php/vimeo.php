@@ -25,20 +25,22 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 		);
 	}
 
-	//check if backup already exists
-	$vimeo	= new VimeoApi();
-	$path	= $vimeo->getVideoPath($post->ID);
-	if(is_numeric($vimeoId) && !file_exists($path)){
-		$formFields['vimeo_url'] = array(
-			'label' => "Video url",
-			'input' => 'text',
-			'value' => '',
-			'helps' => "Enter the url to download a backup to your server (get it from <a href='https://vimeo.com/manage/$vimeoId/advanced' target='_blank'>this page</a>)"
-		);
+	if(is_numeric($vimeoId)){
+		//check if backup already exists
+		$vimeo	= new VimeoApi();
+		$path	= $vimeo->getVideoPath($post->ID);
+		if(!file_exists($path)){
+			$formFields['vimeo_url'] = array(
+				'label' => "Video url",
+				'input' => 'text',
+				'value' => '',
+				'helps' => "Enter the url to download a backup to your server (get it from <a href='https://vimeo.com/manage/$vimeoId/advanced' target='_blank'>this page</a>)"
+			);
+		}
 	}
 
 	return $formFields;
-},10,2);
+}, 10, 2);
 
 //process the request to upload to Vimeo
 add_action( 'edit_attachment', function($attachmentId){
@@ -113,7 +115,7 @@ add_filter( 'media_send_to_editor', function ($html, $id, $attachment) {
 
 //change vimeo thumbnails
 add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
-	if(strpos($icon, 'video.png')){
+	if(strpos($icon, 'video.png') && is_numeric(get_post_meta($postId, 'vimeo_id', true))){
 		try{
 			$vimeoApi	= new VimeoApi();
 			$path		= $vimeoApi->getThumbnail($postId);

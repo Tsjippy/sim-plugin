@@ -187,33 +187,7 @@ class MediaGallery{
 
         ?>
         <div class='mediagallery-wrapper'>
-            <div id="medialoaderwrapper" class="hidden">
-                <img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' alt=''>
-                <div>Loading more...</div>
-            </div>
-
-            <div class="mediawrapper">
-                <?php
-                $mediaHtml  = $this->loadMediaHTML();
-                if($mediaHtml){
-                    echo $mediaHtml;
-                }else{
-                    echo "No media found";
-                }
-                ?>
-            </div>
-
-            <?php
-            if($mediaHtml && substr_count($mediaHtml, "class='cell") == $this->amount){
-                ?>
-                <div style='text-align:center; margin-top:20px;'>
-                    <button id='loadmoremedia' type='button' class='button'>
-                        Load more
-                    </button>
-                </div><?php
-            }
-            ?>
-
+            <h4>Media gallery options</h4>
             <div class='mediabuttons'>
                 <input type='hidden' id='paged' value=1>
 
@@ -251,9 +225,11 @@ class MediaGallery{
                 </label>
                 <input class="searchtext" type="text" placeholder="Search..">
                 <img class='search' src="<?php echo PICTURESURL.'/magnifier.png'?>" loading='lazy' alt="magnifier">
+
+                <button id='category-options' class='button small <?php if(!empty($this->cats)){ echo 'hidden'; }?>'>Categories</button>
             </div>
 
-            <div class='categories <?php if(!empty($this->cats)){ echo 'hidden'; }?>'>
+            <div class='media-categories hidden'>
                 <div>Categories:<br></div>
                 <?php
                 foreach($categories as $cat){
@@ -270,6 +246,33 @@ class MediaGallery{
                 }
                 ?>
             </div>
+
+            <div id="medialoaderwrapper" class="hidden">
+                <img src="<?php echo LOADERIMAGEURL;?>" loading='lazy' alt=''>
+                <div>Loading more...</div>
+            </div>
+
+            <div class="mediawrapper">
+                <?php
+                $mediaHtml  = $this->loadMediaHTML();
+                if($mediaHtml){
+                    echo $mediaHtml;
+                }else{
+                    echo "No media found";
+                }
+                ?>
+            </div>
+
+            <?php
+            if($mediaHtml && substr_count($mediaHtml, "class='cell") == $this->amount){
+                ?>
+                <div style='text-align:center; margin-top:20px;'>
+                    <button id='loadmoremedia' type='button' class='button'>
+                        Load more
+                    </button>
+                </div><?php
+            }
+            ?>
         </div>
 
         <?php

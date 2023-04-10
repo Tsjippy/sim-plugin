@@ -7,23 +7,25 @@ $defaultModules = [
 ];
 
 // Store all modulefolders
-$dirs    = scandir(MODULESPATH);
-$dirs    = array_merge($dirs, scandir(MODULESPATH.'/__defaults'));
-foreach($dirs as $key=>$dir){
-    if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
-        unset($dirs[$key]);
+$dirs       = scandir(MODULESPATH);
+$moduleDirs = [];
+if($dirs){
+    $dirs    = array_merge($dirs, scandir(MODULESPATH.'/__defaults'));
+    foreach($dirs as $key=>$dir){
+        if(substr($dir, 0, 2) == '__' || $dir == '.' || $dir == '..'){
+            unset($dirs[$key]);
+        }
     }
-}
 
-//Sort alphabeticalyy, ignore case
-sort($dirs, SORT_STRING | SORT_FLAG_CASE);
+    //Sort alphabeticalyy, ignore case
+    sort($dirs, SORT_STRING | SORT_FLAG_CASE);
 
-$moduleDirs  = [];
-foreach($dirs as $dir){
-    if(in_array($dir, $defaultModules)){
-        $moduleDirs[strtolower($dir)] = "__defaults/$dir";
-    }else{
-        $moduleDirs[strtolower($dir)] = $dir;
+    foreach($dirs as $dir){
+        if(in_array($dir, $defaultModules)){
+            $moduleDirs[strtolower($dir)] = "__defaults/$dir";
+        }else{
+            $moduleDirs[strtolower($dir)] = $dir;
+        }
     }
 }
 

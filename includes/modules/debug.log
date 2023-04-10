@@ -1,0 +1,970 @@
+[06-Apr-2023 11:32:48 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 345 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Abby Janeck
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 225 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Abigail Hunt
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 438 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Abigiya Hailemariam
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleted the user page 12009
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 353 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user abigya Atta
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleted the user page 4094
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 197 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Adam Jaehyeok Lee
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Adam Jaehyeok Lee
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 209 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Adena Wildman
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 161 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Marker id is 188 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Adriana Myland
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Adriana Myland
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleted the user page 11334
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 256 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Agnes Balewa
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 158 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Alanna Creighton
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Alanna Creighton
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 267 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Alazar Assefa
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleted the user page 11913
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 272 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Alexis Stokes
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Alexis Stokes
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 238 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Amanuel Atta
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Amanuel Atta
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 350 as this is an staging site
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Arabella Barley
+[06-Apr-2023 11:33:56 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:56 UTC] 06-04-2023 11:33 AM - Deleted the user page 2236
+[06-Apr-2023 11:33:56 UTC] Deleting user with id 202 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Asha Creighton
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Asha Creighton
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 2371
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 327 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Assefa Darebo
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Assefa Darebo
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 293 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Audu Nenwhie
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Audu Nenwhie
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 3896
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 215 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Yakubu Balewa
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 3413
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 440 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Barkot Yohannes
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 12007
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 422 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Bekah York
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 12154
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 166 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed the marker with id 138
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Ben Schroeder
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Ben Schroeder
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 11332
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 139 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Beth Garvie
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 2225
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 269 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Betselot Amanuel
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 4094
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 377 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Icon is already the default
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed the marker with id 472
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Betsie Campion Smith
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 9886
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 356 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Biruk Assefa
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Biruk Assefa
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 11913
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 244 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Icon is already the default
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed the marker with id 453
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Bitrus Gana
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 3056
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 417 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Bizualem Gelan
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 428 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Brianna Kuhl
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 241 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Buzunesh Shanga
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 335 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Icon is already the default
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed the marker with id 469
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Byron King
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 8648
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 447 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Charis Wallis
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 9856
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 200 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed the marker with id 223
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Charles Truxton
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Charles Truxton
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 2363
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 165 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Cheryl Pridham
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 11441
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 398 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Christine Lye
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 10713
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 203 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Conor Creighton
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 2371
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 421 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Corina Ziemer
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 11330
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 360 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Icon is already the default
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed the marker with id 473
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Daniela Hirschmuller
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleted the user page 9039
+[06-Apr-2023 11:33:57 UTC] Deleting user with id 289 as this is an staging site
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed the marker with id 454
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Danjuma Gambo
+[06-Apr-2023 11:33:57 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:57 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Danjuma Gambo
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 3864
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 260 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Marker id is 452 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user David Yakubu
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 3413
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 342 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Dick Ackley
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 8633
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 282 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Tricia Todd
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 14422
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 125 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Donald Garvie
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Donald Garvie
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 249 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Removed the marker with id 470
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Donna Pridham
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 11329
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 149 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Elias Barley
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 2236
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 412 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Erin Duerr
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 11591
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 354 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Esrael Atta
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 4094
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 239 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Etfwork Debalke
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Etfwork Debalke
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 11913
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 270 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Eyael Amanuel
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 4094
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 427 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Fabian Kuhl
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 12321
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 263 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Marker id is 460 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Feben Markos
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 3447
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 384 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Feven Markos
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 3447
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 155 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Removed the marker with id 214
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Gay Lynn McCrady
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Gay Lynn McCrady
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 11337
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 265 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Marker id is 425 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Hailelule Assefa
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 11913
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 441 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Hasset Yohannes
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 12007
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 322 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Haven Stokes
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 3508
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 366 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Hayley Giodano
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 11360
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 408 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Hilana Janeck
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 11355
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 67 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Imole Harmsen
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 2229
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 211 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Icon is already the default
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Removed the marker with id 455
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Istifanus Sunday
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 11345
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 258 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Marker id is 452 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Jabez Yakubu
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 3413
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 204 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Jack Creighton
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleted the user page 2371
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 340 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Jaeok Lee
+[06-Apr-2023 11:33:58 UTC] Deleting user with id 380 as this is an staging site
+[06-Apr-2023 11:33:58 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:58 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Jaron Harmsen
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 2229
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 287 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Icon is already the default
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Removed the marker with id 476
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Jessica Koch
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 3852
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 434 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Jinwoo Jang
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 10698
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 399 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Joanna Boxall
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 10711
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 275 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Jocelyn Redekop
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Jocelyn Redekop
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 401 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Johanna Janeck
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 11355
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 164 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user John Hunt
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Removed profile picture for user John Hunt
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 11344
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 446 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Joshua Wallis
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 9856
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 259 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Marker id is 452 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Joshua Yakubu
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 3413
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 295 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Jude Redekop
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 3536
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 199 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Marker id is 430 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Judy Ho
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 11342
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 414 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - No marker to remove
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Julia Killen
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 12005
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 264 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Kalkidan Mesele
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 11330
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 157 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Kate Burnett
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 338 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Kayla Hauan
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 68 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Marker id is 208 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Kevin Burnett
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 2754
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 323 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Kevin Stokes
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 3508
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 418 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Legesse Hailemariam
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 321 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Icon is already the default
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Removed the marker with id 475
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Liam Stokes
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleted the user page 3508
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 47 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Deleting userdata for user Lianne Harmsen
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Removed profile picture for user Lianne Harmsen
+[06-Apr-2023 11:33:59 UTC] Deleting user with id 118 as this is an staging site
+[06-Apr-2023 11:33:59 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/mailchimp/php/classes/Mailchimp.php line 271
+[06-Apr-2023 11:33:59 UTC] 06-04-2023 11:33 AM - Creating mailchimp campain
+[06-Apr-2023 11:34:03 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/mailchimp/php/classes/Mailchimp.php line 307
+[06-Apr-2023 11:34:03 UTC] 06-04-2023 11:34 AM - Campain_id is 436d44cfa6
+[06-Apr-2023 11:34:06 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/mailchimp/php/classes/Mailchimp.php line 334
+[06-Apr-2023 11:34:06 UTC] 06-04-2023 11:34 AM - Mailchimp campain send succesfully
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Lid Barley
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Removed profile picture for user Lid Barley
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 381 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Liesbeth Vinkesteijn - Stalmans
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 374 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Lisa Wallis
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 448 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Lydia Wallis
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 9856
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 248 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Markos Kalore
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 277 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Icon is already the default
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Removed the marker with id 230
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Mark Redekop
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 3536
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 236 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Martha Bradford
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 156 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Martin Barley
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 2236
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 140 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Matthew Garvie
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 2225
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 373 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Matthew Wallis
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 9856
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 168 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Icon is already the default
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Removed the marker with id 187
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Melissa Savary
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 11333
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 237 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Meselech Godaro
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Removed profile picture for user Meselech Godaro
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 4094
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 242 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Mesele Koroto
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 11330
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 431 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Michael Vinkesteijn
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 9614
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 294 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Michael Yunana
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 436 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Mikiyas Hailemariam
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 12009
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 397 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Minkyung Song
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 435 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Minwoo Jang
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 10698
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 60 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Miriam Fretheim
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 437 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Nahum Hailemariam
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 12009
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 235 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Icon is already the default
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Removed the marker with id 458
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Nathan Ibrahim
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 11346
+[06-Apr-2023 11:34:07 UTC] Deleting user with id 349 as this is an staging site
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - No marker to remove
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Neungsung Lee
+[06-Apr-2023 11:34:07 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:07 UTC] 06-04-2023 11:34 AM - Deleted the user page 11359
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 198 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Removed the marker with id 228
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Nicky Brand
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Removed profile picture for user Nicky Brand
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 11339
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 274 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Removed the marker with id 229
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Nicoline Zwikker
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Removed profile picture for user Nicoline Zwikker
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 3528
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 252 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - No marker to remove
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Nigeria Director
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 14419
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 162 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - No marker to remove
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Patrice Miles
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 8651
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 160 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Tricia Todd
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 73 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Patrick Hauan
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 3681
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 281 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Icon is already the default
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Removed the marker with id 457
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Paul Dauda
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 3690
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 170 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Icon is already the default
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Removed the marker with id 398
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Peter Burke
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 3352
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 62 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Peter Fretheim
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 2240
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 432 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Rafael Vinkesteijn
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 9614
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 208 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Randy Wildman
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 4485
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 409 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Remiel Janeck
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 11355
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 101 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Rick Bradford
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 3719
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 201 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Rick Creighton
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 2371
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 415 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - No marker to remove
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Riley Rolfsen
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 12006
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 355 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Marker id is 463 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Roda Atta
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 4094
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 368 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Roland
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 9614
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 400 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - No marker to remove
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Sam Somers Heslam
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 10712
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 138 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Samuel Garvie
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 2225
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 351 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Sanha Lee
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 11335
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 331 as this is an staging site
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Sanji Lee
+[06-Apr-2023 11:34:08 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:08 UTC] 06-04-2023 11:34 AM - Deleted the user page 11335
+[06-Apr-2023 11:34:08 UTC] Deleting user with id 268 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Marker id is 425 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Saron Assefa
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 11913
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 262 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Sebelewongel Markos
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 3447
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 232 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Marker id is 462 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Sherry Thomas
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Removed profile picture for user Sherry Thomas
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 11328
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 122 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Icon is already the default
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Removed the marker with id 461
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Silas Dokong
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 2809
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 150 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 333
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Marker id is 180 but this marker is not found in the db, marker_icon_id is 
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Simeon Tamrat Barley
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 2236
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 291 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - No marker to remove
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user STA Coordinator
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 14421
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 207 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Stephanie Lee
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 11335
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 228 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Tami Geysbeek
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Removed profile picture for user Tami Geysbeek
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 343 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Tami Johnson
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 423 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Tarikua Gode
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 12009
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 261 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Tibarek Markos
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 3447
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 433 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - No marker to remove
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Tim Allan
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 13405
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 205 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Tim Geysbeek
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Removed profile picture for user Tim Geysbeek
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 11338
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 296 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Icon is already the default
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Removed the marker with id 459
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Victoria Yunana
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 11347
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 344 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Wayne Janeck
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 16
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Removed profile picture for user Wayne Janeck
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleted the user page 11355
+[06-Apr-2023 11:34:09 UTC] Deleting user with id 394 as this is an staging site
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 325
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - No marker to remove
+[06-Apr-2023 11:34:09 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:09 UTC] 06-04-2023 11:34 AM - Deleting userdata for user website test
+[06-Apr-2023 11:34:10 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:10 UTC] 06-04-2023 11:34 AM - Deleted the user page 14402
+[06-Apr-2023 11:34:10 UTC] Deleting user with id 396 as this is an staging site
+[06-Apr-2023 11:34:10 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:10 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Yoohan Jang
+[06-Apr-2023 11:34:10 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:10 UTC] 06-04-2023 11:34 AM - Deleted the user page 10698
+[06-Apr-2023 11:34:10 UTC] Deleting user with id 279 as this is an staging site
+[06-Apr-2023 11:34:10 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 349
+[06-Apr-2023 11:34:10 UTC] 06-04-2023 11:34 AM - Icon is already the default
+[06-Apr-2023 11:34:10 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/locations/php/classes/Maps.php line 278
+[06-Apr-2023 11:34:10 UTC] 06-04-2023 11:34 AM - Removed the marker with id 231
+[06-Apr-2023 11:34:10 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userManagement/php/remove_user.php line 10
+[06-Apr-2023 11:34:10 UTC] 06-04-2023 11:34 AM - Deleting userdata for user Zoey Hauan
+[06-Apr-2023 11:34:10 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/remove_user.php line 15
+[06-Apr-2023 11:34:10 UTC] 06-04-2023 11:34 AM - Deleted the user page 3681
+[06-Apr-2023 11:34:26 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:34:26 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/userPages/php/user_page.php line 50
+[06-Apr-2023 11:34:26 UTC] 06-04-2023 11:34 AM - Created user page with id 14574
+[06-Apr-2023 11:34:40 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:34:55 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/sim-plugin.php line 50
+[06-Apr-2023 11:34:55 UTC] 06-04-2023 11:34 AM - Removing cron schedules
+[06-Apr-2023 11:35:53 UTC] Running activation
+[06-Apr-2023 11:36:01 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:38:30 UTC] WordPress database error Duplicate column name 'diner' for query ALTER TABLE wpstg0_sim_schedules ADD COLUMN `diner` boolean NOT NULL, ADD COLUMN `timeslot_size` mediumint(9) NOT NULL, ADD COLUMN `hidenames` boolean NOT NULL, ADD COLUMN `admin_roles` varchar(80), ADD COLUMN `view_roles` varchar(80) made by do_action('wp_ajax_update-plugin'), WP_Hook->do_action, WP_Hook->apply_filters, wp_ajax_update_plugin, Plugin_Upgrader->bulk_upgrade, do_action('upgrader_process_complete'), WP_Hook->do_action, WP_Hook->apply_filters, SIM\{closure}, do_action('sim_plugin_update'), WP_Hook->do_action, WP_Hook->apply_filters, SIM\EVENTS\{closure}
+[06-Apr-2023 11:39:18 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:39:54 UTC] PHP Fatal error:  Uncaught TypeError: array_merge(): Argument #1 must be of type array, bool given in /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/loader.php:11
+Stack trace:
+#0 /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/loader.php(11): array_merge()
+#1 /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/sim-plugin.php(34): require_once('...')
+#2 /home/simnige1/web/simnigeria.org/public_html/dev/wp-settings.php(453): include_once('...')
+#3 /home/simnige1/web/simnigeria.org/public_html/dev/wp-config.php(117): require_once('...')
+#4 /home/simnige1/web/simnigeria.org/public_html/dev/wp-load.php(50): require_once('...')
+#5 /home/simnige1/web/simnigeria.org/public_html/dev/wp-admin/admin.php(34): require_once('...')
+#6 /home/simnige1/web/simnigeria.org/public_html/dev/wp-admin/upload.php(10): require_once('...')
+#7 {main}
+  thrown in /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/loader.php on line 11
+[06-Apr-2023 11:39:54 UTC] You have an error notice: "Function is_embed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/documentation/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "/home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php" at line: "5865".
+[06-Apr-2023 11:39:54 UTC] 
+1) [internal function]: WP_Fatal_Error_Handler->handle()
+2) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(58): WP_Fatal_Error_Handler->display_error_template()
+3) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(154): WP_Fatal_Error_Handler->display_default_error_template()
+4) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(239): wp_die()
+5) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(3722): _default_wp_die_handler()
+6) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(3798): wp_robots()
+7) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/robots-template.php(32): apply_filters()
+8) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/plugin.php(205): WP_Hook->apply_filters()
+9) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-hook.php(308): wp_robots_noindex_embeds()
+10) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/robots-template.php(93): is_embed()
+11) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/query.php(882): _doing_it_wrong()
+12) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(5865): trigger_error()
+13) [internal function]: SIM\{closure}()
+
+[06-Apr-2023 11:39:54 UTC] You have an error notice: "Function is_search was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/documentation/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "/home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php" at line: "5865".
+[06-Apr-2023 11:39:54 UTC] 
+1) [internal function]: WP_Fatal_Error_Handler->handle()
+2) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(58): WP_Fatal_Error_Handler->display_error_template()
+3) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(154): WP_Fatal_Error_Handler->display_default_error_template()
+4) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(239): wp_die()
+5) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(3722): _default_wp_die_handler()
+6) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(3798): wp_robots()
+7) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/robots-template.php(32): apply_filters()
+8) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/plugin.php(205): WP_Hook->apply_filters()
+9) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-hook.php(308): wp_robots_noindex_search()
+10) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/robots-template.php(119): is_search()
+11) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/query.php(700): _doing_it_wrong()
+12) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(5865): trigger_error()
+13) [internal function]: SIM\{closure}()
+
+[06-Apr-2023 11:44:25 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:44:56 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:45:22 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:45:44 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:46:32 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:47:17 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:47:17 UTC] Called from file /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/loader.php line 56
+[06-Apr-2023 11:47:17 UTC] 06-04-2023 11:47 AM - /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/vimeo/php/classes/VimeoApi.php not found
+[06-Apr-2023 11:47:17 UTC] PHP Fatal error:  Uncaught Error: Class "SIM\VIMEO\VimeoApi" not found in /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/vimeo/php/vimeo.php:118
+Stack trace:
+#0 /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-hook.php(308): SIM\VIMEO\{closure}()
+#1 /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/plugin.php(205): WP_Hook->apply_filters()
+#2 /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/post.php(6924): apply_filters()
+#3 /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/media.php(4156): wp_mime_type_icon()
+#4 [internal function]: wp_prepare_attachment_for_js()
+#5 /home/simnige1/web/simnigeria.org/public_html/dev/wp-admin/includes/ajax-actions.php(3043): array_map()
+#6 /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-hook.php(308): wp_ajax_query_attachments()
+#7 /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-hook.php(332): WP_Hook->apply_filters()
+#8 /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/plugin.php(517): WP_Hook->do_action()
+#9 /home/simnige1/web/simnigeria.org/public_html/dev/wp-admin/admin-ajax.php(188): do_action()
+#10 {main}
+  thrown in /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/vimeo/php/vimeo.php on line 118
+[06-Apr-2023 11:47:56 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:48:17 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:48:28 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:48:36 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:48:46 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:48:55 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:49:05 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:49:41 UTC] PHP Parse error:  Unmatched '}' in /home/simnige1/web/simnigeria.org/public_html/dev/wp-content/plugins/sim-plugin/includes/modules/vimeo/php/vimeo.php on line 109
+[06-Apr-2023 11:49:41 UTC] You have an error notice: "Function is_embed was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/documentation/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "/home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php" at line: "5865".
+[06-Apr-2023 11:49:41 UTC] 
+1) [internal function]: WP_Fatal_Error_Handler->handle()
+2) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(58): WP_Fatal_Error_Handler->display_error_template()
+3) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(154): WP_Fatal_Error_Handler->display_default_error_template()
+4) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(239): wp_die()
+5) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(3722): _default_wp_die_handler()
+6) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(3798): wp_robots()
+7) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/robots-template.php(32): apply_filters()
+8) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/plugin.php(205): WP_Hook->apply_filters()
+9) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-hook.php(308): wp_robots_noindex_embeds()
+10) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/robots-template.php(93): is_embed()
+11) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/query.php(882): _doing_it_wrong()
+12) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(5865): trigger_error()
+13) [internal function]: SIM\{closure}()
+
+[06-Apr-2023 11:49:41 UTC] You have an error notice: "Function is_search was called <strong>incorrectly</strong>. Conditional query tags do not work before the query is run. Before then, they always return false. Please see <a href="https://wordpress.org/documentation/article/debugging-in-wordpress/">Debugging in WordPress</a> for more information. (This message was added in version 3.1.0.)" in file "/home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php" at line: "5865".
+[06-Apr-2023 11:49:41 UTC] 
+1) [internal function]: WP_Fatal_Error_Handler->handle()
+2) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(58): WP_Fatal_Error_Handler->display_error_template()
+3) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(154): WP_Fatal_Error_Handler->display_default_error_template()
+4) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-fatal-error-handler.php(239): wp_die()
+5) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(3722): _default_wp_die_handler()
+6) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(3798): wp_robots()
+7) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/robots-template.php(32): apply_filters()
+8) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/plugin.php(205): WP_Hook->apply_filters()
+9) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/class-wp-hook.php(308): wp_robots_noindex_search()
+10) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/robots-template.php(119): is_search()
+11) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/query.php(700): _doing_it_wrong()
+12) /home/simnige1/web/simnigeria.org/public_html/dev/wp-includes/functions.php(5865): trigger_error()
+13) [internal function]: SIM\{closure}()
+
+[06-Apr-2023 11:50:23 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:51:11 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:51:39 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:51:55 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:52:09 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:52:25 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:52:37 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:53:37 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:54:41 UTC] If Menu: callback for condition " ()" is not set up correctly
+[06-Apr-2023 11:55:08 UTC] If Menu: callback for condition " ()" is not set up correctly

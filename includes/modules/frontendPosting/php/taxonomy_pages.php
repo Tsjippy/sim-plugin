@@ -108,7 +108,7 @@ add_filter('sim_empty_description', function($message, $post){
 	$message	= "<div style='margin-top:10px;'>";
 		$message	.= "This {$post->post_type} lacks a description.<br>";
 		$message	.= "Please add one.<br>";
-		$message	.= "<a href='$url?post_id={$post->ID}' class='button'>Add discription</a>";
+		$message	.= "<a href='$url?post_id={$post->ID}' class='button'>Add description</a>";
 	$message	.= '</div>';
 
 	return $message;
