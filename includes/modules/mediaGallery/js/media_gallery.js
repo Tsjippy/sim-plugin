@@ -302,13 +302,15 @@ document.addEventListener('change', ev=>{
     }
 });
 
-function handleTouchStart(evt) {
+var xDown = null;                                                        
+var yDown = null;
+document.addEventListener('touchstart', evt=>{
     const firstTouch = evt.touches[0];                                      
     xDown = firstTouch.clientX;                                      
-    yDown = firstTouch.clientY;                                      
-}                                              
-                                                                           
-function handleTouchMove(evt) {
+    yDown = firstTouch.clientY;  
+});       
+
+document.addEventListener('touchmove', evt => {
     if ( ! xDown || ! yDown ) {
         return;
     }
@@ -333,10 +335,19 @@ function handleTouchMove(evt) {
     }
     /* reset values */
     xDown = null;
-    yDown = null;                                             
-}
+    yDown = null;  
+});
 
-var xDown = null;                                                        
-var yDown = null;
-document.addEventListener('touchstart', handleTouchStart);        
-document.addEventListener('touchmove', handleTouchMove);
+// close fullscreen view on escape
+document.onkeydown = function(evt) {
+    evt = evt || window.event;
+    var isEscape = false;
+    if ("key" in evt) {
+        isEscape = (evt.key === "Escape" || evt.key === "Esc");
+    } else {
+        isEscape = (evt.keyCode === 27);
+    }
+    if (isEscape) {
+        document.querySelectorAll('.large-image:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+    }
+};

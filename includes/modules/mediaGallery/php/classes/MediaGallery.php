@@ -14,13 +14,17 @@ class MediaGallery{
     public $wpQuery;
     public $posts;
     public $total;
+    public $backgroundColor;
 
-    public function __construct($types=['image'], $amount=3, $cats=[], $rand=true, $page=1, $search=''){
+    public function __construct($types=['image', 'audio', 'video'], $amount=3, $cats=[], $rand=true, $page=1, $search='', $backgroundColor='#FFFFFF'){
         global $wp_query;
         
         $allMimes               = get_allowed_mime_types();
         $this->acceptedMimes    = [];
         $this->types           = $types;
+        if(empty($types)){
+            $this->types        = ['image', 'audio', 'video'];
+        }
         if(isset($_GET['type']) && in_array($_GET['type'], ['image', 'audio', 'video'])){
             $this->types    = [$_GET['type']];
         }
@@ -35,6 +39,7 @@ class MediaGallery{
         $this->rand             = $rand;
         $this->page             = $page;
         $this->search           = $search;
+        $this->backgroundColor  = $backgroundColor;
         $this->wpQuery          = $wp_query;
         $this->posts            = [];
         $this->total            = 0;
@@ -186,7 +191,7 @@ class MediaGallery{
         $categories = apply_filters('sim-media-gallery-categories', $categories);
 
         ?>
-        <div class='mediagallery-wrapper'>
+        <div class='mediagallery-wrapper' style='background-color: <?php echo $this->backgroundColor;?>'>
             <h4>Media gallery options</h4>
             <div class='mediabuttons'>
                 <input type='hidden' id='paged' value=1>
@@ -273,9 +278,7 @@ class MediaGallery{
                 </div><?php
             }
             ?>
-        </div>
-
-        <?php
+        </div><?php
 
         return ob_get_clean();
     }

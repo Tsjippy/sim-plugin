@@ -13,12 +13,18 @@ add_action( 'rest_api_init', function () {
 			'callback' 				=> function($wpRestRequest){
 				$params			= $wpRestRequest->get_params();
 
-				$categories		= json_decode($params['categories'], true);
+				if(!is_array($params['categories'])){
+					$categories		= json_decode($params['categories'], true);
+				}
+
 				if(empty($categories)){
 					$categories	= $params['categories'];
 				}
 
-				$postTypes		= json_decode($params['postTypes']);
+				if(!is_array($params['postTypes'])){
+					$postTypes		= json_decode($params['postTypes']);
+				}
+
 				if(empty($postTypes)){
 					$postTypes	= $params['postTypes'];
 				}

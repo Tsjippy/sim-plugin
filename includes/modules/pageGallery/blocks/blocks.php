@@ -10,7 +10,7 @@ add_action('init', function () {
 		array(
 			'render_callback' => function($attributes){
 				$categories	= json_decode($attributes['categories'], true);
-				return pageGallery($attributes['title'], $attributes['postTypes'], $attributes['amount'], $categories, $attributes['speed']);
+				return pageGallery($attributes['title'], $attributes['postTypes'], $attributes['amount'], $categories, $attributes['speed'], true, $attributes['color']);
 			},
 			"attributes"	=>  [
 				'postTypes'	=> [
@@ -32,7 +32,11 @@ add_action('init', function () {
 				'title'	=> [
 					'type'		=> 'string',
 					'default'	=> ''
-				]
+				],
+				'color' => [
+					'type' 		=> 'string',
+					'default'	=> '#FFFFFF'
+				],
 			]
 		)
 	);

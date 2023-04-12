@@ -3,7 +3,7 @@ import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {Panel, PanelBody, CheckboxControl, Spinner} from "@wordpress/components";
+import {Panel, PanelBody, PanelRow, CheckboxControl, Spinner, ColorPicker } from "@wordpress/components";
 
 // Hide the gutenberg top bar when full screen
 document.addEventListener('click', async ev=>{
@@ -19,15 +19,16 @@ document.addEventListener('click', async ev=>{
 });
 
 const Edit = ({attributes, setAttributes}) => {
-	const {categories} = attributes;
+	const {categories, color} = attributes;
 
-	const [html, setHtml] = useState(< Spinner />);
+	const [html, setHtml] = useState(<>Loading < Spinner /></>);
 
 	const [cats, setCats] = useState(< Spinner />);
 
 	const [fetchedCats, storeFetchedCats] = useState(<Spinner/>);
 
 	const onCatChanged	= function(checked, id){
+
 		let copy;
 
 		if(checked && !categories.includes(id)){
@@ -39,46 +40,76 @@ const Edit = ({attributes, setAttributes}) => {
 		setAttributes({categories: copy});
 	}
 
-	useEffect( 
-		async () => {
-			setHtml(< Spinner />);
+	const updatecolor = function(color){
+		setAttributes({color: color});
+	}
 
-			setCats( fetchedCats.map( c => (
-				<CheckboxControl
-					label		= {c.name}
-					onChange	= {(checked) => onCatChanged(checked, c.id)}
-					checked		= {categories.includes(c.id)}
-				/>
-			)));
-			
-			const response = await apiFetch({
-				path: sim.restApiPrefix+'/mediagallery/show',
-				method: 'POST',
-    			data: { categories: categories },
-			});
-			setHtml( response );
+	useEffect( 
+		() => {
+			async function buildCatChecks(){
+				setHtml(<>Loading < Spinner /></>);
+
+				if(React.isValidElement(fetchedCats)){
+					return;
+				}
+
+				setCats( fetchedCats.map( c => (
+					<CheckboxControl
+						label		= {c.name}
+						onChange	= {(checked) => onCatChanged(checked, c.id)}
+						checked		= {categories.includes(c.id)}
+						key			= {c.id}
+					/>
+				)));
+
+				const response = await apiFetch({
+					path: sim.restApiPrefix+'/mediagallery/show',
+					method: 'POST',
+					data: { categories: categories, color: color  },
+				});
+				setHtml(wp.element.RawHTML( { children: response }));
+			}
+			buildCatChecks();
 		} ,
 		[fetchedCats, attributes.categories]
 	);
 
-	useEffect( async () => {
-		let fetchedCategories 	= await apiFetch({path: '/wp/v2/attachments'});
-		fetchedCategories.unshift({name:'All', id:-1});
-		storeFetchedCats( fetchedCategories);
-	} , []);
+ 	useEffect( 
+		() => {
+			async function getCats() {
+
+				let fetchedCategories 	= await apiFetch({path: '/wp/v2/attachment_cat'});
+				fetchedCategories.unshift({name:'All', id:-1});
+
+				storeFetchedCats( fetchedCategories);
+			}
+			getCats();
+	}, []);
 
 	return (
 		<>
 			<InspectorControls>
 				<Panel>
-					<PanelBody>
-						Select a category you want to include media for
+					<PanelBody title="Background color" initialOpen={ false }>
+						<PanelRow>
+							<ColorPicker
+								color			= { color }
+								onChange		= {(color) => setAttributes({color: color})}
+								enableAlpha
+								defaultValue	= "#000"
+							/>
+						</PanelRow>
+					</PanelBody>
+					<PanelBody title="Categories" initialOpen={ true }>
+						<PanelRow>
+							Select a category you want to include media for
+						</PanelRow>
 						{cats}
 					</PanelBody>
 				</Panel>
 			</InspectorControls>
 			<div {...useBlockProps()}>
-				{wp.element.RawHTML( { children: html })}
+				{html}
 			</div>
 		</>
 	);

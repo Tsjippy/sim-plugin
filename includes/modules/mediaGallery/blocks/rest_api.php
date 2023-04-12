@@ -21,7 +21,7 @@ function displayMediaGallery($wpRestRequest) {
 		'categories'	=> []
 	));
 
-	$mediaGallery   = new MediaGallery(['image'], 20, $args['categories'], false, 1);
+	$mediaGallery   = new MediaGallery(['image'], 20, $args['categories'], false, 1, '', $args['color']);
 
     return $mediaGallery->filterableMediaGallery();
 }

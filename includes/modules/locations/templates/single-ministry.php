@@ -60,9 +60,11 @@ if(!isset($skipHeader) || !$skipHeader){
 						$text	= 'View more...';
 					}
 
-					echo "<form method='post' style='text-align: center;'>";
-						echo "<button class='small button' name='switch-gallery' value='$value'>$text</button>";
-            		echo "</form>";
+					if($mediaGallery->total > 3){
+						echo "<form method='post' style='text-align: center;'>";
+							echo "<button class='small button' name='switch-gallery' value='$value'>$text</button>";
+						echo "</form>";
+					}
 				}
 
 				// Show any projects linked to this

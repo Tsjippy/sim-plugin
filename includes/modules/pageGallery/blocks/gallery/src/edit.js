@@ -3,11 +3,12 @@ import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {Panel, PanelBody, Spinner, CheckboxControl, __experimentalNumberControl as NumberControl, __experimentalInputControl as InputControl} from "@wordpress/components";
+import {Panel, PanelBody, PanelRow, Spinner, CheckboxControl, __experimentalNumberControl as NumberControl, __experimentalInputControl as InputControl, ColorPicker} from "@wordpress/components";
 import { store as coreDataStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 
 const Edit = ({ setAttributes, attributes, context }) => {
+	const color											= attributes.color;
 	let selPostTypes									= attributes.postTypes;
 	let selCategories									= JSON.parse(attributes.categories);
 	const curPostType									= context['postType'];
@@ -16,7 +17,7 @@ const Edit = ({ setAttributes, attributes, context }) => {
 
 	const [availableCats, setAvailableCats]				= useState( {} );
 
-	const [html, setHtml] 								= useState(< Spinner /> );
+	const [html, setHtml] 								= useState(<> Loading... < Spinner /> </>);
 
 	const [postTypeCheckboxes, setPostTypeCheckboxes]	= useState( <> <br></br>< Spinner /> </>);
 
@@ -96,22 +97,28 @@ const Edit = ({ setAttributes, attributes, context }) => {
 	}
 
 	// build the checkboxes for the post type selections
-	useEffect( async () => {
+	useEffect( 
+		() => {
+			async function buildCheckboxes() {
 
-		if(usedPostTypes.length == 0){
-			return;
-		}
+				if(usedPostTypes.length == 0){
+					return;
+				}
 
-		setPostTypeCheckboxes(
-			usedPostTypes.map( c => (
-				<CheckboxControl
-					label		= { c.name }
-					onChange	= { (checked) => {postTypeSelected(c.slug, checked)} }
-					checked		= { selPostTypes.includes(c.slug) }
-				/>
-			))
-		);
-	} , [ usedPostTypes, attributes.postTypes]);
+				setPostTypeCheckboxes(
+					usedPostTypes.map( c => (
+						<CheckboxControl
+							label		= { c.name }
+							onChange	= { (checked) => {postTypeSelected(c.slug, checked)} }
+							checked		= { selPostTypes.includes(c.slug) }
+							key			= { c.slug }
+						/>
+					))
+				);
+			}
+			buildCheckboxes();
+		} , [ usedPostTypes, attributes.postTypes]
+	);
 
 	// build the checkboxes for the category selection
 	useEffect( 
@@ -145,7 +152,9 @@ const Edit = ({ setAttributes, attributes, context }) => {
 				}
 
 				Object.keys(availableCats[postType]).forEach(tax=>{
+
 					rendered.push(tax.charAt(0).toUpperCase() + tax.slice(1));
+
 					Object.values(availableCats[postType][tax]).map(c=>{
 						selected	= true;
 						try{
@@ -158,6 +167,7 @@ const Edit = ({ setAttributes, attributes, context }) => {
 								label		= { c.name }
 								onChange	= { (checked) => { postCatSelected(postType, tax, c.slug, checked) } }
 								checked		= { selected }
+								key			= { c.id }
 							/>
 						)
 					});
@@ -171,60 +181,75 @@ const Edit = ({ setAttributes, attributes, context }) => {
 	);
 
 	// retrieve the html
-	useEffect( async () => {
-		setHtml(<Spinner />);
-		const response = await apiFetch({
-			path: sim.restApiPrefix+'/pagegallery/show_page_gallery',
-			method: 'POST',
-			data: { 
-				'postTypes'	: selPostTypes,
-				'amount'	: attributes.amount,
-				'categories': selCategories,
-				'speed'		: attributes.speed,
-				'title'		: attributes.title,
-			},
-		});
+	useEffect( 
+		() => {
+			async function getPageGallery(){
+				setHtml(<> Loading... < Spinner /> </>);
+				const response = await apiFetch({
+					path: sim.restApiPrefix+'/pagegallery/show_page_gallery',
+					method: 'POST',
+					data: { 
+						'postTypes'	: selPostTypes,
+						'amount'	: attributes.amount,
+						'categories': selCategories,
+						'speed'		: attributes.speed,
+						'title'		: attributes.title,
+					},
+				});
 
-		setHtml(wp.element.RawHTML( { children: response }));
-	} , [attributes]);
+				setHtml(wp.element.RawHTML( { children: response }));
+			}
+			getPageGallery();
+		} , [attributes]
+	);
 
 	return (
 		<>
 			<InspectorControls>
-					<Panel>
-						<PanelBody>
-							<InputControl
-								label				= {__('Title', 'sim') }
-								isPressEnterToChange= { true }
-								value				= { attributes.title }
-								onChange			= { (value) => setAttributes({ title: value }) }
+				<Panel>
+					<PanelBody title="Background color" initialOpen={ false }>
+						<PanelRow>
+							<ColorPicker
+								color			= { color }
+								onChange		= {(color) => setAttributes({color: color})}
+								enableAlpha
+								defaultValue	= "#000"
 							/>
+						</PanelRow>
+					</PanelBody>
+					<PanelBody title="Properties" initialOpen={ false }>
+						<InputControl
+							label				= {__('Title', 'sim') }
+							isPressEnterToChange= { true }
+							value				= { attributes.title }
+							onChange			= { (value) => setAttributes({ title: value }) }
+						/>
 
-							{__('How many pages should be shown at once', 'sim')}
-							<NumberControl
-								label		= {__('Page count', 'sim')}
-								value		= {attributes.amount}
-								onChange	= {(val) => setAttributes({amount: parseInt(val)})}
-								min			= {1}
-								max			= {12}
-							/>
-							<br></br>
-							{__('How often should we refresh in seconds', 'sim')}
-							<NumberControl
-								label		= {__('Refresh rate', 'sim')}
-								value		= {attributes.speed}
-								onChange	= {(val) => setAttributes({speed: parseInt(val)})}
-								min			= {30}
-							/>
-							<br></br>
-							Select the post types you want to include in the gallery:
-							{ postTypeCheckboxes }
-							<br></br>
-							Select the categories you want from any post type.
-							Leave empty for all
-							{ catCheckboxes }
-						</PanelBody>
-					</Panel>
+						{__('How many pages should be shown at once', 'sim')}
+						<NumberControl
+							label		= {__('Page count', 'sim')}
+							value		= {attributes.amount}
+							onChange	= {(val) => setAttributes({amount: parseInt(val)})}
+							min			= {1}
+							max			= {12}
+						/>
+						<br></br>
+						{__('How often should we refresh in seconds', 'sim')}
+						<NumberControl
+							label		= {__('Refresh rate', 'sim')}
+							value		= {attributes.speed}
+							onChange	= {(val) => setAttributes({speed: parseInt(val)})}
+							min			= {30}
+						/>
+						<br></br>
+						Select the post types you want to include in the gallery:
+						{ postTypeCheckboxes }
+						<br></br>
+						Select the categories you want from any post type.
+						Leave empty for all
+						{ catCheckboxes }
+					</PanelBody>
+				</Panel>
 			</InspectorControls>
 			<div {...useBlockProps()}>
 				{ html }
