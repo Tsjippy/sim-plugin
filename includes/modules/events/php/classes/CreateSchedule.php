@@ -139,8 +139,7 @@ class CreateSchedule extends Schedules{
 
 			// setting the eventdetails meta value also creates the event. Remove it
 			$events = new CreateEvents();
-			$events->postId	= $postId;
-			$events->removeDbRows();
+			$events->removeDbRows($postId);
 
 			foreach($a['onlyfor'] as $userId){
 				if(is_numeric($userId)){
@@ -420,18 +419,11 @@ class CreateSchedule extends Schedules{
 			SIM\updateFamilyMeta($schedule->target,'schedule','delete');
 		}
 		
-		//Delete all the posts of this schedule
-		$events = $wpdb->get_results("SELECT * FROM {$this->events->tableName} WHERE schedule_id='$scheduleId'");
-		foreach($events as $event){
-			wp_delete_post($event->post_id,true);
+		//Delete all the posts and events of this schedule
+		$sessions = $wpdb->get_results("SELECT * FROM {$this->sessionTableName} WHERE schedule_id='$scheduleId'");
+		foreach($sessions as $session){
+			$this->removeSession($session);
 		}
-		
-		//Delete all events of this schedule
-		$wpdb->delete(
-			$this->events->tableName,
-			['schedule_id' => $scheduleId],
-			['%d'],
-		);
 		
 		//Delete the schedule
 		$wpdb->delete(
@@ -442,6 +434,37 @@ class CreateSchedule extends Schedules{
 			
 		//Remove the schedule from the schedules array
 		return 'Succesfully removed the schedule';
+	}
+
+	/**
+	 * Removes a session and all events and posts attached to it
+	 *
+	 * @param object|int	$session		A session or session id of a session, if not given the value of $this->currentSession will be used
+	 *
+	*/
+	protected function removeSession($session=[]){
+		global $wpdb;
+
+		if(empty($session)){
+			$session	= $this->currentSession;
+		}if(is_numeric($session)){
+			$session	= $this->getSessionEvent($session);
+		}
+
+		foreach(maybe_unserialize($session->post_ids) as $postId){
+			//delete posts
+			wp_delete_post($postId);
+
+			//delete events
+			$this->events->removeDbRows($postId);
+		}
+
+		// Delete the session
+		$wpdb->delete(
+			$this->sessionTableName,
+			['id' => $session->id],
+			['%d'],
+		);
 	}
 
 	/**
@@ -545,7 +568,6 @@ class CreateSchedule extends Schedules{
 	 * @return string	success message
 	*/
 	public function removeHost($sessionId){
-		global $wpdb;
 
 		$this->currentSession	= $this->getSessionEvent($sessionId);
 
@@ -564,21 +586,6 @@ class CreateSchedule extends Schedules{
 		){
 			return new \WP_Error('Permission error', $this->noPermissionText);
 		}
-		
-		foreach($this->currentSession->post_ids as $id){
-			//delete event_post
-			wp_delete_post($id);
-
-			//delete events
-			$this->events->removeDbRows($id);
-		}
-
-		// Delete the session
-		$wpdb->delete(
-			$this->sessionTableName,
-			['id' => $sessionId],
-			['%d'],
-		);
 
 		$dateStr		= date(get_option( 'date_format' ), strtotime($date));
 
