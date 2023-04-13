@@ -45,7 +45,9 @@ class MediaGallery{
         $this->posts            = [];
         $this->total            = 0;
 
-        if($gradient){
+        if(strpos($backgroundColor, 'background') !== false){
+            $this->style	= $this->backgroundColor;
+        }elseif($gradient){
             $this->style	= "background: linear-gradient(-90deg, transparent 0 0.1%, $this->backgroundColor, transparent 99.9% 100%);";
         }else{
             $this->style	= "background-color: $this->backgroundColor;";

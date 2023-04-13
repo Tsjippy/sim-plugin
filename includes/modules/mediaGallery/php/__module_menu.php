@@ -4,7 +4,7 @@ use SIM;
 
 use function SIM\printArray;
 
-const MODULE_VERSION		= '7.0.34';
+const MODULE_VERSION		= '7.0.35';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 

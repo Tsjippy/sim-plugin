@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.media-gallery-article').forEach(gallery => {
         reloadMediaGallery(gallery, true);
     })
-
-    
 });
 
 
@@ -24,6 +22,7 @@ let reloadMediaGallery   = async function(gallery, first=false){
         formData.append('categories', gallery.dataset.categories);
         formData.append('speed', speed);
         formData.append('title', gallery.querySelector('.media-gallery-title').textContent);
+        formData.append('color', gallery.style.background);
         var response = await FormSubmit.fetchRestApi('media_gallery/show_media_gallery', formData, false);
 
         if(response){

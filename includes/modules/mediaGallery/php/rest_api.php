@@ -24,7 +24,7 @@ add_action( 'rest_api_init', function () {
 					$categories	= explode(',', $param['categories']);
 				}
 
-				$mediaGallery	= new MediaGallery($types, $param['amount'], $categories, false, $param['page'], '', $param['color']);
+				$mediaGallery	= new MediaGallery($types, $param['amount'], $categories, false, $param['page']);
 				return $mediaGallery->loadMediaHTML($param['skipAmount'], $param['startIndex']);
 			},
 			'permission_callback' 	=> '__return_true',
@@ -76,7 +76,7 @@ add_action( 'rest_api_init', function () {
 					$categories	= explode(',', $param['categories']);
 				}
 
-				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $categories, false, 1, '', $param['color']);
+				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $categories, false);
 				$html			= $mediaGallery->loadMediaHTML();
 				if(!$html){
 					return "No media found";

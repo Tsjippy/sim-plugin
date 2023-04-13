@@ -175,6 +175,7 @@ function mediaTypeSelected(target){
     }
 
     let media               = document.querySelectorAll('.cell');
+
     // load more of the remaining types untill we reach the maximum
     let visibleCellsCount    = document.querySelectorAll('.cell:not(.hidden)').length;
 
