@@ -184,8 +184,12 @@ function userDescription($userId){
 	}
 
 	//Find compound or address
-	$location = get_user_meta( $userId, 'location', true );
-	$address = "No clue, since no address is given";
+	$location	= get_user_meta( $userId, 'location', true );
+	$address	= "No address provided.";
+	if(get_current_user_id() == $userId){
+		$url	= SIM\ADMIN\getDefaultPageLink('usermanagement', 'account_page');
+		$address	.= "Please update on the <a href='$url/?main_tab=generic_info#ministries'>Generic Info page</a>";
+	}
 	if(is_array($location)){
 		if (empty($location["compound"])){
 			if (!empty($location["address"])){
