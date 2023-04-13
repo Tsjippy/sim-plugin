@@ -38,7 +38,7 @@ async function addNewMinistry(target){
 }
 
 //listen to all clicks
-document.addEventListener('click',function(event) {
+document.addEventListener('click', function(event) {
 	var target = event.target;
 	//show add ministry modal
 	if(target.id == 'add-ministry-button'){
@@ -57,4 +57,22 @@ document.addEventListener('click',function(event) {
 	if(target.name == 'add_ministry'){
 		addNewMinistry(target);
 	}
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+	// Add the value to all inputs with the same name
+	document.querySelectorAll('.ministryposition input[type="text"]').forEach(el => {
+		el.addEventListener('blur', ev=>{
+			document.querySelectorAll(`.ministryposition input[type="text"][name="${ev.target.name}"]`).forEach(input => {
+				// set value
+				input.value = ev.target.value;
+
+				// make visible
+				input.closest('.ministryposition').classList.remove('hidden');
+
+				// check the ministry
+				input.closest('li').querySelector('.ministry_option_checkbox').checked	= true;
+			});
+		});
+	});
 });

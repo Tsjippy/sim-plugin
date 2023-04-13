@@ -379,15 +379,15 @@ trait CreateJs{
                     $tabJs.= "\n\t\t\t// Display the current tab// Current tab is set to be the first tab (0)";
                     $tabJs.= "\n\t\t\tcurrentTab = 0; ";
                     $tabJs.= "\n\t\t\t// Display the current tab";
-                    $tabJs.= "\n\t\t\tFormFunctions.showTab(currentTab,form); ";
+                    $tabJs.= "\n\t\t\tFormFunctions.showTab(currentTab, form); ";
                 }
                 if(!empty($this->formData->settings['save_in_meta'])){
-                    $tabJs.= "\n\t\t\tform.querySelectorAll('select, input, textarea').forEach(";
+                    $tabJs.= "\n\t\t\tform.querySelectorAll(`select, input, textarea`).forEach(";
                         $tabJs.= "\n\t\t\t\tel=>{$this->varName}.processFields(el)";
                     $tabJs.= "\n\t\t\t);";
                 }
             if(!empty($tabJs)){
-                $newJs.= "\n\t\tlet forms = document.querySelectorAll('[data-formid=\"{$this->formData->id}\"]');";
+                $newJs.= "\n\t\tlet forms = document.querySelectorAll(`[data-formid=\"{$this->formData->id}\"]`);";
                 $newJs.= "\n\t\tforms.forEach(form=>{";
                     $newJs.= $tabJs;
                 $newJs.= "\n\t\t});";
@@ -574,7 +574,7 @@ trait CreateJs{
         foreach($queryStrings as $action=>$elements){
             //multiple
             if(count($elements) > 1){
-                $actionCode    .= "{$prefix}form.querySelectorAll('";
+                $actionCode    .= "{$prefix}form.querySelectorAll(`";
                 $last           = array_key_last($elements);
                 foreach($elements as $key=>$element){
                     $actionCode     .= $this->getSelector($element);
@@ -583,7 +583,7 @@ trait CreateJs{
                         $actionCode    .= ', ';
                     }
                 }
-                $actionCode    .= "').forEach(el=>{\n";
+                $actionCode    .= "`).forEach(el=>{\n";
                     //$actionCode    .= "{$prefix}\ttry{\n";
                         $actionCode    .= "{$prefix}\t\t//Make sure we only do each wrapper once by adding a temp class\n";
                         $actionCode    .= "{$prefix}\t\tif(!el.closest('.inputwrapper').matches('.action-processed')){\n";
@@ -622,7 +622,7 @@ trait CreateJs{
         }
 
         if($queryById){
-            return '#E'.$element->id;
+            return "[id^='E$element->id']";
         }elseif(empty($element->multiple)){
             return "[name=\"$name\"]";
         }else{

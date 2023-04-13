@@ -99,10 +99,10 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 },10,3);
 
 
-// Update marker  whenprivacy options are changed
+// Update marker when privacy options are changed
 add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
 	if($formName != 'user_generics'){
-        return $formResults;	
+        return $formResults;
     }
 
     if(is_array($formResults['privacy_preference']) && in_array("hide_location", $formResults['privacy_preference'])){

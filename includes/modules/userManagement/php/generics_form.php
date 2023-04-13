@@ -12,7 +12,7 @@ add_filter('sim_forms_load_userdata',function($usermeta,$userId){
 	return array_merge($usermeta, $userdata);
 }, 10, 2);
 
-//create  events
+// phonenumbers and more
 add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
 	if($formName != 'user_generics'){
 		return $formResults;
@@ -60,6 +60,9 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 
 		do_action('sim-phonenumber-updated', $changedNumber, $userId);
 	}
+	
+	// update ministries
+	
 	
 	return $formResults;
 }, 10, 3);
