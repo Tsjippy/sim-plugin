@@ -22,3 +22,13 @@ function showVimeoVideo($vimeoId){
 	<?php
 	return ob_get_clean();
 }
+
+add_filter( 'wp_video_shortcode', function($output, $atts, $video, $postId){
+	$vimeoId	= get_post_meta($postId, 'vimeo_id', true);
+
+	if(!is_numeric($vimeoId)){
+		return $output;
+	}
+
+	return showVimeoVideo($vimeoId);
+}, 10, 4 );
