@@ -138,6 +138,10 @@ function getMinistries(){
 		]);
 
 		foreach ( $ministryPages as $ministryPage ) {
+			// do not show the main page of the category in th elist
+			if($ministryPage->post_title == $category->name){
+				continue;
+			}
 			$ministries[$url][$ministryPage->ID] = $ministryPage->post_title;
 		}
 	}
