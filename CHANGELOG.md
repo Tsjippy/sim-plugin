@@ -11,6 +11,7 @@
 ### Fixed
 - removed session
 - dynamic form js
+- display vimeo video on attachment page
 
 ### Updated
 
