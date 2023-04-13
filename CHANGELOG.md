@@ -10,6 +10,7 @@
 
 ### Fixed
 - removed session
+- dynamic form js
 
 ### Updated
 
