@@ -6,6 +6,7 @@
 - background color option for galleries
 
 ### Changed
+- better messages
 
 ### Fixed
 - removed session
