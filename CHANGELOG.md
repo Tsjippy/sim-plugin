@@ -12,6 +12,7 @@
 - removed session
 - dynamic form js
 - display vimeo video on attachment page
+- ministry duplicates
 
 ### Updated
 
