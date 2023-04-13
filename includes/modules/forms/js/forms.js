@@ -133,7 +133,13 @@ export function copyFormInput(originalNode){
 		let previousVal = originalNode.getElementsByTagName('select')[i].selectedIndex;
 		
 		//Hide the value in the clone
-		select.options[previousVal].style.display = 'none';
+		if(select.options[previousVal] != undefined){
+			select.options[previousVal].style.display = 'none';
+		}else{
+			console.log(select);
+			console.log(options);
+			console.log(previousVal);
+		}
 		
 		//Add nice select
 		if(select._niceselect == undefined){

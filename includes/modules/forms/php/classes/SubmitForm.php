@@ -46,6 +46,11 @@ class SubmitForm extends SimForms{
 		return $footer;
 	}
 
+	
+	function findEmails($id){
+		return 'enharmsen@gmail.com';
+	}
+
 	/**
 	 * Send an e-mail
 	 *
@@ -55,7 +60,14 @@ class SubmitForm extends SimForms{
 		$emails = $this->formData->emails;
 		
 		foreach($emails as $key=>$email){
-			if($email['emailtrigger'] == $trigger){
+			if(
+				$email['emailtrigger'] == $trigger || 					// trigger of the e-mail matches the trigger exactly
+				(
+					$email['emailtrigger']	== 'submittedcond' &&		// trigger of the e-mail matches the trigger
+					$trigger				=='submitted'
+				)
+			){
+				// check if there is a match
 				if($trigger == 'fieldchanged'){
 					$elementName	= str_replace('[]', '', $this->getElementById($email['conditionalfield'], 'name'));
 					$formValue 		= strtolower($this->submission->formresults[$elementName]);
@@ -63,6 +75,38 @@ class SubmitForm extends SimForms{
 
 					//do not proceed if there is no match
 					if($formValue != $compareValue && $formValue != str_replace(' ', '_', $compareValue)){
+						continue;
+					}
+				}
+
+				// check if the submit condition is matched
+				if($email['emailtrigger'] == 'submittedcond'){
+					if(!is_array($email['submittedtrigger'])){
+						continue;
+					}
+
+					// get element and the form result of that element
+					$element	= $this->getElementById($email['submittedtrigger']['element']);
+					$elValue	= $this->submission->formresults[$element->name];
+					
+					// get the value to compare with
+					if(is_numeric($email['submittedtrigger']['valueelement'])){
+						$compareElement	= $this->getElementById($email['submittedtrigger']['valueelement']);
+						$compareElValue	= $this->submission->formresults[$compareElement->name];
+					}else{
+						$compareElValue	= $email['submittedtrigger']['value'];
+					}
+
+					if(is_array($elValue)){
+						$elValue	= $elValue[0];
+					}
+
+					if(is_array($compareElValue)){
+						$compareElValue	= $compareElValue[0];
+					}
+
+					// Do the comparisson, do not proceed if no match
+					if(!version_compare($elValue, $compareElValue, $email['submittedtrigger']['equation'])){
 						continue;
 					}
 				}
@@ -92,6 +136,24 @@ class SubmitForm extends SimForms{
 					}
 				}elseif($email['emailto'] == 'fixed'){
 					$to		= $this->processPlaceholders($email['to']);
+
+					// if no e-mail found, find any numbers and assume they are user ids
+					// than replace the id with the e-mail of that user
+					if(strpos($to, '@') === false){
+						$pattern 	= '/[0-9\.]+/i';
+						$to			= preg_replace_callback(
+							$pattern,
+							function ($match){
+								$user	= get_userdata($match[0]);
+
+								if($user){
+									return $user->user_email;
+								}
+								return $match[0];
+							},
+							$to
+						);
+					}
 				}
 				
 				if(empty($to)){

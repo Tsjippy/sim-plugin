@@ -24,7 +24,7 @@ add_action( 'rest_api_init', function () {
 					$categories	= explode(',', $param['categories']);
 				}
 
-				$mediaGallery	= new MediaGallery($types, $param['amount'], $categories, false, $param['page']);
+				$mediaGallery	= new MediaGallery($types, $param['amount'], $categories, false, $param['page'], '', $param['color']);
 				return $mediaGallery->loadMediaHTML($param['skipAmount'], $param['startIndex']);
 			},
 			'permission_callback' 	=> '__return_true',
@@ -51,7 +51,7 @@ add_action( 'rest_api_init', function () {
 					$categories	= [];
 				}
 
-				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $categories, false, 1, $param['search']);
+				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $categories, false, 1, $param['search'], $param['color']);
 				return $mediaGallery->loadMediaHTML();
 			},
 			'permission_callback' 	=> '__return_true',
@@ -76,7 +76,7 @@ add_action( 'rest_api_init', function () {
 					$categories	= explode(',', $param['categories']);
 				}
 
-				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $categories, false, 1);
+				$mediaGallery	= new MediaGallery(explode(',', $param['types']), $param['amount'], $categories, false, 1, '', $param['color']);
 				$html			= $mediaGallery->loadMediaHTML();
 				if(!$html){
 					return "No media found";
@@ -110,7 +110,7 @@ add_action( 'rest_api_init', function () {
 					$types	= json_decode($param['types']);
 				}
 
-				$mediaGallery	= new MediaGallery($types, $param['amount'], $categories);
+				$mediaGallery	= new MediaGallery($types, $param['amount'], $categories, true, 1, '', $param['color']);
 				return $mediaGallery->mediaGallery($param['title'], $param['speed']);
 			},
 			'permission_callback' 	=> '__return_true',

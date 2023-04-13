@@ -14,7 +14,7 @@ use SIM;
  *
  * @return	string					The html
  */
-function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed = 60, $showIfEmpty=true, $backgroundColor='#FFFFFF'){
+function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed = 60, $showIfEmpty=true, $backgroundColor='#FFFFFF', $gradient=false){
 	wp_enqueue_script('sim_page_gallery_script');
 
 	ob_start();
@@ -103,8 +103,14 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 	$amount	= min(count($posts), $amount);
 
 	$list	= $postTypes;
+
+	if($gradient){
+		$style	= "background: linear-gradient(-90deg, transparent 0 0.1%, $backgroundColor, transparent 99.9% 100%);";
+	}else{
+		$style	= "background-color: $backgroundColor;";
+	}
 	?>
-	<article class="page-gallery-article" data-posttypes='<?php echo json_encode($postTypes);?>' data-categories='<?php echo json_encode($categories);?>' data-speed='<?php echo $speed;?>' style='background-color: <?php echo $backgroundColor;?>'>
+	<article class="page-gallery-article" data-posttypes='<?php echo json_encode($postTypes);?>' data-categories='<?php echo json_encode($categories);?>' data-speed='<?php echo $speed;?>' style='<?php echo $style;?>'>
 		<h3 class="page-gallery-title"><?php echo $title;?></h3>
 		<div class="row">
 		<?php

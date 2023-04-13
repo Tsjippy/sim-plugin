@@ -40,8 +40,6 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	if($moduleSlug != MODULE_SLUG){
 		return $optionsHtml;
 	}
-
-	
 	
 	$query = 'SELECT * FROM `'.$wpdb->prefix .'ums_icons` WHERE 1';
 	$icons = $wpdb->get_results($query);
@@ -50,10 +48,38 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	wp_enqueue_style('sim_locations_admin_style', plugins_url('css/admin.min.css', __DIR__), array(), MODULE_VERSION);
 	wp_enqueue_script('sim_locations_admin_script', plugins_url('js/locations_admin.min.js', __DIR__), array(), MODULE_VERSION, true);
 
-	echo "<label>";
-		echo "Give Google API key for location lookup. See <a href='https://developers.google.com/maps/documentation/javascript/get-api-key'>here</a><br>";
-		echo "<input type='text' name='google-maps-api-key' value='{$settings['google-maps-api-key']}' style='width:400px;'>";
-	echo "</label><br>";
+	if(empty($settings['page-gallery-background-color'])){
+		$settings['page-gallery-background-color']	= '#FFFFFF';
+	}
+	if(empty($settings['media-gallery-background-color'])){
+		$settings['media-gallery-background-color']	= '#FFFFFF';
+	}
+	?>
+	<label>
+		Give Google API key for location lookup. See <a href='https://developers.google.com/maps/documentation/javascript/get-api-key'>here</a><br>
+		<input type='text' name='google-maps-api-key' value='<?php echo $settings['google-maps-api-key'];?>' style='width:400px;'>
+	</label>
+	<br>
+	<br>
+	<label>
+		Select a background color for any page galleries on location pages<br>
+		<input type='color' name='page-gallery-background-color' value='<?php echo $settings['page-gallery-background-color'];?>'>
+	</label>
+	<br>
+	<br>
+	<label>
+		Select a background color for any media galleries on location pages<br>
+		<input type='color' name='media-gallery-background-color' value='<?php echo $settings['media-gallery-background-color'];?>'>
+	</label>
+	<br>
+	<br>
+	<label>
+		<input type='checkbox' name='gallery-background-color-gradient' value='1' <?php if(!empty($settings['gallery-background-color-gradient'])){echo 'checked';}?>>
+		Smoothe the edges of the gallery background colors
+	</label>
+	<br>
+
+	<?php
 	
 	$categories = get_categories( array(
 		'orderby' 	=> 'name',
@@ -61,6 +87,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		'taxonomy'	=> 'locations',
 		'hide_empty'=> false,
 	) );
+
 	foreach($categories as $locationtype){
 		$name 				= $locationtype->slug;
 		$mapName			= $name."_map";

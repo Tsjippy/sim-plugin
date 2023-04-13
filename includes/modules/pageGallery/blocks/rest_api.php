@@ -29,7 +29,7 @@ add_action( 'rest_api_init', function () {
 					$postTypes	= $params['postTypes'];
 				}
 
-				return pageGallery($params['title'], $postTypes, $params['amount'], $categories, $params['speed']);
+				return pageGallery($params['title'], $postTypes, $params['amount'], $categories, $params['speed'], true, $params['color']);
 			},
 			'permission_callback' 	=> '__return_true',
 		)

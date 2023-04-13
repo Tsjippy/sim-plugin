@@ -641,9 +641,63 @@ class FormBuilderForm extends SimForms{
 									<div class="formfield formfieldlabel" style="margin-top:10px;">
 										Send e-mail when:<br>
 										<label>
-											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='submitted' <?php if(empty($email['emailtrigger']) || $email['emailtrigger'] == 'submitted'){echo 'checked';}?>>
+											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='submitted' <?php if($email['emailtrigger'] == 'submitted'){echo 'checked';}?>>
 											The form is submitted
 										</label><br>
+
+										<label>
+											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='submittedcond' <?php if($email['emailtrigger'] == 'submittedcond'){echo 'checked';}?>>
+											The form is submitted and meets a condition
+										</label><br>
+
+										<div class='submitted-type <?php if($email['emailtrigger'] != 'submittedcond'){echo 'hidden';}?>'>
+											<div class='submitted-trigger-type'>
+												Element 
+												<select class='' name='emails[<?php echo $key;?>][submittedtrigger][element]' required>
+													<?php
+													echo $this->inputDropdown($emails[$key]['submittedtrigger']['element'], "emails[$key][submittedtrigger']['element']");
+													?>
+												</select>
+
+												<select class='' name='emails[<?php echo $key;?>][submittedtrigger][equation]' required>
+													<?php
+														$optionArray	= [
+															''			=> '---',
+															'=='		=> 'equals',
+															'!='		=> 'is not',
+															'>'			=> 'greather than',
+															'<'			=> 'smaller than',
+															'checked'	=> 'is checked',
+															'!checked'	=> 'is not checked',
+															'== value'	=> 'equals the value of',
+															'!= value'	=> 'does not equal the value of',
+															'> value'	=> 'greather than the value of',
+															'< value'	=> 'smaller than the value of'
+														];
+
+														foreach($optionArray as $option=>$optionLabel){
+															if($emails[$key]['submittedtrigger']['equation'] == $option){
+																$selected	= 'selected="selected"';
+															}else{
+																$selected	= '';
+															}
+															echo "<option value='$option' $selected>$optionLabel</option>";
+														}
+													?>
+												</select>
+
+												<label class='staticvalue <?php if(empty($emails[$key]['submittedtrigger']['equation']) || !in_array($emails[$key]['submittedtrigger']['equation'], ['==', '!=', '>', '<'])){echo 'hidden';}?>'>
+													<input type='text' name='emails[<?php echo $key;?>][submittedtrigger][value]' value="<?php echo $emails[$key]['submittedtrigger']['value'];?>" style='width: auto;'>
+												</label>
+
+												<select class='dynamicvalue <?php if(empty($emails[$key]['submittedtrigger']['equation']) || in_array($emails[$key]['submittedtrigger']['equation'], ['==', '!=', '>', '<', 'checked', '!checked'])){echo 'hidden';}?>' name='emails[<?php echo $key;?>][submittedtrigger][valueelement]'>
+													<?php
+														echo $this->inputDropdown($emails[$key]['submittedtrigger']['valueelement'], "emails[$key][submittedtrigger][valueelement]");
+													?>
+												</select>
+											</div>
+										</div>
+
 										<label>
 											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='fieldchanged' <?php if($email['emailtrigger'] == 'fieldchanged'){echo 'checked';}?>>
 											A field has changed to a value
@@ -1294,9 +1348,9 @@ class FormBuilderForm extends SimForms{
 							<input type='hidden' class='element_condition combinator' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][combinator]' value='<?php echo $rule['combinator']; ?>'>
 						
 							<select class='element_condition condition_select conditional_field' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][conditional_field]' required>
-							<?php
-								echo $this->inputDropdown($rule['conditional_field'], $elementId);
-							?>
+								<?php
+									echo $this->inputDropdown($rule['conditional_field'], $elementId);
+								?>
 							</select>
 
 							<select class='element_condition condition_select equation' name='element_conditions[<?php echo $conditionIndex;?>][rules][<?php echo $ruleIndex;?>][equation]' required>
@@ -1333,7 +1387,7 @@ class FormBuilderForm extends SimForms{
 							</select>
 
 							<?php
-							//show if -, + or value field istarget value
+							//show if -, + or value field is target value
 							if($rule['equation'] == '-' || $rule['equation'] == '+' || strpos($rule['equation'], 'value') !== false){
 								$hidden = '';
 							}else{

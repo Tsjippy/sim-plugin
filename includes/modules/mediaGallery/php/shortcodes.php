@@ -14,7 +14,7 @@ add_shortcode('mediagallery', function($atts){
         $a['categories']    = explode(',', $a['categories']);
     }
 
-    $mediaGallery   = new MediaGallery($a['types'], $a['amount'], $a['categories'], false, 1, '',$a['color'] );
+    $mediaGallery   = new MediaGallery($a['types'], $a['amount'], $a['categories'], false, 1, '', $a['color'] );
 
     return $mediaGallery->filterableMediaGallery();
 });

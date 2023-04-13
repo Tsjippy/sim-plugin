@@ -15,8 +15,9 @@ class MediaGallery{
     public $posts;
     public $total;
     public $backgroundColor;
+    public $style;
 
-    public function __construct($types=['image', 'audio', 'video'], $amount=3, $cats=[], $rand=true, $page=1, $search='', $backgroundColor='#FFFFFF'){
+    public function __construct($types=['image', 'audio', 'video'], $amount=3, $cats=[], $rand=true, $page=1, $search='', $backgroundColor='#FFFFFF', $gradient=false){
         global $wp_query;
         
         $allMimes               = get_allowed_mime_types();
@@ -43,6 +44,12 @@ class MediaGallery{
         $this->wpQuery          = $wp_query;
         $this->posts            = [];
         $this->total            = 0;
+
+        if($gradient){
+            $this->style	= "background: linear-gradient(-90deg, transparent 0 0.1%, $this->backgroundColor, transparent 99.9% 100%);";
+        }else{
+            $this->style	= "background-color: $this->backgroundColor;";
+        }
 
         $this->getMedia();
 
@@ -111,7 +118,7 @@ class MediaGallery{
      */
     public function mediaGallery($title, $speed = 60){
 
-        if(empty($this->posts)){
+        if(empty($this->total)){
             return '';
         }
         ob_start();
@@ -122,7 +129,7 @@ class MediaGallery{
         $amount	= min(count($this->posts), $this->amount);
 
         ?>
-        <article class="media-gallery-article" data-types='<?php echo json_encode($this->types );?>' data-categories='<?php echo json_encode($this->cats);?>' data-speed='<?php echo $speed;?>'>
+        <article class="media-gallery-article" data-types='<?php echo json_encode($this->types );?>' data-categories='<?php echo json_encode($this->cats);?>' data-speed='<?php echo $speed;?>' style='<?php echo $this->style;?>'>
             <h3 class="media-gallery-title">
                 <?php echo $title;?>
             </h3>
@@ -191,7 +198,7 @@ class MediaGallery{
         $categories = apply_filters('sim-media-gallery-categories', $categories);
 
         ?>
-        <div class='mediagallery-wrapper' style='background-color: <?php echo $this->backgroundColor;?>'>
+        <div class='mediagallery-wrapper' style='<?php echo $this->style;?>'>
             <h4>Media gallery options</h4>
             <div class='mediabuttons'>
                 <input type='hidden' id='paged' value=1>

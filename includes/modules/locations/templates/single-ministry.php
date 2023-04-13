@@ -36,9 +36,12 @@ if(!isset($skipHeader) || !$skipHeader){
 						$cats['location']['locations'][]	= $cat->slug;
 					}
 
-					echo SIM\PAGEGALLERY\pageGallery('Read more', [get_post_type()], 3, $cats, 60);
+					
+					$gradient		= SIM\getModuleOption(MODULE_SLUG, 'gallery-background-color-gradient');
 
-						// Show relevant media
+					echo SIM\PAGEGALLERY\pageGallery('Read more', [get_post_type()], 3, $cats, 60, true, SIM\getModuleOption(MODULE_SLUG, 'page-gallery-background-color'), $gradient);
+
+					// Show relevant media
 					$cats		= [];
 					foreach($categories as $cat){
 						if(count($cats)>1 && $cat->slug == 'ministry'){
@@ -48,7 +51,8 @@ if(!isset($skipHeader) || !$skipHeader){
 						$cats[]	= $cat->slug;
 					}
 
-					$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 3, $cats);
+					$color			= SIM\getModuleOption(MODULE_SLUG, 'media-gallery-background-color');
+					$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 3, $cats, true, 1, '', $color, $gradient);
 
 					if(isset($_POST['switch-gallery']) && $_POST['switch-gallery'] == 'filter'){
 						echo $mediaGallery->filterableMediaGallery();
@@ -57,11 +61,11 @@ if(!isset($skipHeader) || !$skipHeader){
 					}else{
 						echo $mediaGallery->mediaGallery('Media', 60);
 						$value	= 'filter';
-						$text	= 'View more...';
+						$text	= 'View more media';
 					}
 
 					if($mediaGallery->total > 3){
-						echo "<form method='post' style='text-align: center;'>";
+						echo "<form method='post' style='text-align: center; padding-bottom:10px; $mediaGallery->style'>";
 							echo "<button class='small button' name='switch-gallery' value='$value'>$text</button>";
 						echo "</form>";
 					}

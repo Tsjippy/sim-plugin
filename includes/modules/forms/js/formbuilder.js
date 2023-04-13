@@ -933,6 +933,13 @@ window.addEventListener("click", event => {
 		}else{
 			el.classList.add('hidden');
 		}
+
+		el = target.closest('.clone_div').querySelector('.submitted-type');
+		if(target.value == 'submittedcond'){
+			el.classList.remove('hidden');
+		}else{
+			el.classList.add('hidden');
+		}
 	}
 	
 	if(target.classList.contains('fromemail')){
@@ -962,11 +969,12 @@ window.addEventListener("click", event => {
 });
 
 window.addEventListener('change', ev=>{
-	if(ev.target.matches('.meta_key')){
+	let target	= ev.target;
+	if(target.matches('.meta_key')){
 		//if this option has a keys data value
-		let metaIndexes	= ev.target.list.querySelector("[value='"+ev.target.value+"' i]").dataset.keys;
+		let metaIndexes	= ev.target.list.querySelector(`[value='${target.value}' i]`).dataset.keys;
 		if(metaIndexes != null){
-			parent	= ev.target.closest('.warning_conditions').querySelector('.index_wrapper');
+			parent	= target.closest('.warning_conditions').querySelector('.index_wrapper');
 			//show the data key selector
 			parent.classList.remove('hidden');
 			
@@ -983,18 +991,31 @@ window.addEventListener('change', ev=>{
 				datalist.appendChild(opt);
 			});
 		}
-	}
-
-	if(ev.target.matches("[name*='[property_value]']")){
-		if(numericElements.includes(ev.target.value)){
-			ev.target.closest('.condition_form').querySelectorAll('.addition.hidden').forEach(el=>el.classList.remove('hidden'));
+	}else if(target.matches("[name*='[property_value]']")){
+		if(numericElements.includes(target.value)){
+			target.closest('.condition_form').querySelectorAll('.addition.hidden').forEach(el=>el.classList.remove('hidden'));
 		}else{
-			ev.target.closest('.condition_form').querySelectorAll('.addition:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+			target.closest('.condition_form').querySelectorAll('.addition:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 		}
 		if(dateElements.includes(ev.target.value)){
-			ev.target.closest('.condition_form').querySelectorAll('.addition .days.hidden').forEach(el=>el.classList.remove('hidden'));
+			target.closest('.condition_form').querySelectorAll('.addition .days.hidden').forEach(el=>el.classList.remove('hidden'));
 		}else{
-			ev.target.closest('.condition_form').querySelectorAll('.addition .days:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+			target.closest('.condition_form').querySelectorAll('.addition .days:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+		}
+	}else if(target.matches("[name*='[submittedtrigger][equation]']")){
+		let parent	= target.closest('.submitted-trigger-type');
+		let static	= parent.querySelector('.staticvalue');
+		let dynamic	= parent.querySelector('div.dynamicvalue');
+		
+		if(target.value == '==' || target.value == '!=' || target.value == '>' || target.value == '<'){
+			static.classList.remove('hidden');
+			dynamic.classList.add('hidden');
+		}else if(target.value == 'checked' || target.value == '!checked'){
+			dynamic.classList.add('hidden');
+			static.classList.add('hidden');
+		}else{
+			dynamic.classList.remove('hidden');
+			static.classList.add('hidden');
 		}
 	}
 });
