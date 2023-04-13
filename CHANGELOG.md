@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.31.3] - 2023-04-13
+
+
+### Added
 - background color option for galleries
 
 ### Changed
