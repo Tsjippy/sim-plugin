@@ -9,6 +9,7 @@
 ### Fixed
 - react in blocks
 - upcoming arrivals block
+- vimeo display
 
 ### Updated
 
