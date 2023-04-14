@@ -8,6 +8,7 @@
 
 ### Fixed
 - react in blocks
+- upcoming arrivals block
 
 ### Updated
 
