@@ -171,6 +171,26 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         }
 
         /**
+         * Retrieves the embed code to display a video
+         *
+         * @param   int $vimeoId    The vimeo id of the video to display
+         */
+        public function getEmbedHtml($vimeoId){
+
+            $oembedEndpoint = 'http://vimeo.com/api/oembed';
+            $url = $oembedEndpoint . '.json?url=' . rawurlencode("http://vimeo.com/$vimeoId") . '&width=640';
+            
+            $curl = curl_init($url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+            $response = curl_exec($curl);
+            curl_close($curl);
+
+            return json_decode($response)->html;
+        }
+
+        /**
          *
          * Retrieves all videos on Vimeo
          *

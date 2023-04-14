@@ -6,6 +6,8 @@ const MODULE_VERSION		= '7.0.38';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
+DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
+
 add_filter('sim_submenu_description', function($description, $moduleSlug){
 	//module slug should be the same as the constant
 	if($moduleSlug != MODULE_SLUG)	{

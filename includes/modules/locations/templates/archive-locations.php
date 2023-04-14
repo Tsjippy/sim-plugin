@@ -5,7 +5,7 @@ use SIM;
 /**
  * The layout specific for the page with the slug 'locations' i.e. sim.org/locations.
  * Displays all the post of the location type
- * 
+ *
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -23,7 +23,7 @@ if($skipWrapper){
 	displayLocationArchive();
 }else{
 	if(!isset($skipHeader) || !$skipHeader){
-		get_header(); 
+		get_header();
 	}
 
 	?>
@@ -52,12 +52,12 @@ function displayLocationArchive(){
 	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 
 	$locationsQuery = new \WP_Query(array(
-		'post_type'			=>'location', 
-		'post_status'		=>'publish', 
+		'post_type'			=>'location',
+		'post_status'		=>'publish',
 		'paged'           	=> $paged,
 		'posts_per_page'  	=> 10 )
-	); 
-
+	);
+	
 	if ( $locationsQuery->have_posts() ){
 		do_action('sim_before_archive', 'location');
 

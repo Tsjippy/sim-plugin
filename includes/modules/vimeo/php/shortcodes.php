@@ -12,11 +12,14 @@ function showVimeoVideo($vimeoId){
 	// Load css
 	wp_enqueue_style( 'vimeo_style');
 
+	$api	= new VimeoApi();
+	$html	= $api->getEmbedHtml($vimeoId);
+
 	ob_start();
 	?>
 	<div class="vimeo-wrapper">
 		<div class='vimeo-embed-container' style='background:url(<?php echo LOADERIMAGEURL;?>) center center no-repeat;'>
-			<iframe title='' loading='lazy' src='https://player.vimeo.com/video/<?php echo $vimeoId; ?>' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+			<?php echo $html;?>
 		</div>
 	</div>
 	<?php

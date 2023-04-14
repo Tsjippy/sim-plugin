@@ -63,16 +63,16 @@ if(is_tax() || is_archive()){
 			?>
 
 			<div class='location metas'>
-				<div class='category location meta'> 
+				<div class='category location meta'>
 					<?php
 					$categories = wp_get_post_terms(
-						get_the_ID(), 
+						get_the_ID(),
 						'locations',
 						array(
 							'orderby'   => 'name',
 							'order'     => 'ASC',
 							'fields'    => 'id=>name'
-						) 
+						)
 					);
 					
 					$url	= plugins_url('pictures/location.png', __DIR__);

@@ -76,10 +76,10 @@ add_action( 'edit_attachment', function($attachmentId){
 if(SIM\getModuleOption(MODULE_SLUG, 'remove')){
 	add_action( 'delete_attachment', function($postId, $post ){
 		if(explode('/', $post->post_mime_type)[0] == 'video'){
-			$VimeoApi = new VimeoApi();
-			$VimeoApi->deleteVimeoVideo($postId);
+			$vimeoApi = new VimeoApi();
+			$vimeoApi->deleteVimeoVideo($postId);
 		}
-	},10,2);
+	}, 10, 2);
 }
 
 add_action('sim_before_visibility_change', function($attachment_id, $visibility){

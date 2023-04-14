@@ -31,7 +31,7 @@ add_action( 'init', function () {
 
 /**
  * Add categories to attachment page
- * 
+ *
  * WP expects a comma seperated list of cat slugs, so
  * we create a checkbox who update a hidden input wiht the comma seperated checkboxes
  */
