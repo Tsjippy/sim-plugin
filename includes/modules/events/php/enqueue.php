@@ -70,11 +70,13 @@ add_action( 'wp_enqueue_scripts', function(){
 
     $schedulePages         = (array)SIM\getModuleOption(MODULE_SLUG, 'schedule_pages');
     $upcomingEventsPages   = (array)SIM\getModuleOption(MODULE_SLUG, 'upcomingevents_pages');
-    if(in_array(get_the_ID(), $schedulePages)){
+    if(is_numeric(get_the_ID())){
+        if(in_array(get_the_ID(), $schedulePages)){
         wp_enqueue_style('sim_schedules_css');
 
-        wp_enqueue_script('sim_schedules_script');
-    }elseif(in_array(get_the_ID(), $upcomingEventsPages)){
-        wp_enqueue_style('sim_events_css');
+            wp_enqueue_script('sim_schedules_script');
+        }elseif(in_array(get_the_ID(), $upcomingEventsPages)){
+            wp_enqueue_style('sim_events_css');
+        }
     }
 });

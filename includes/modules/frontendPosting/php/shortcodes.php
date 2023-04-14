@@ -12,7 +12,7 @@ function yourPosts(){
 	$postTypes	= get_post_types(['public'=>true]);
 	unset( $postTypes['attachment'] );
 	
-	$userUserPosts = get_posts( 
+	$userUserPosts = get_posts(
 		array(
 			'post_type'		=> $postTypes,
 			'post_status'	=> 'any',

@@ -54,7 +54,7 @@ add_filter( 'the_content', function ( $content ) {
 add_action('sim_page_specific_fields', function($postId){
     ?>
 	<div id="add_print_button_div" class="frontendform">
-        <h4>PDF button</h4>	
+        <h4>PDF button</h4>
         <label>
             <input type='checkbox'  name='add_print_button' value='add_print_button' <?php if(!empty(get_post_meta($postId,'add_print_button',true))){echo 'checked';}?>>
             Add a 'Save as PDF' button

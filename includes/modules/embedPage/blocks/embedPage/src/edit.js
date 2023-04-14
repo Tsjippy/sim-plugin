@@ -55,16 +55,19 @@ const Edit = ({attributes, setAttributes}) => {
 	}
 
 	useEffect( 
-		async () => {
-			setResults( false );
-			const response = await apiFetch({
-				path: sim.restApiPrefix+'/embedpage/find',
-				method: 'POST',
-    			data: { 
-					search: searchTerm
-				},
-			});
-			setResults( response );
+		() => {
+			async function getResults(){
+				setResults( false );
+				const response = await apiFetch({
+					path: sim.restApiPrefix+'/embedpage/find',
+					method: 'POST',
+					data: { 
+						search: searchTerm
+					},
+				});
+				setResults( response );
+			}
+			getResults();
 		} ,
 		[searchTerm]
 	);

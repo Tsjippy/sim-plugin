@@ -84,6 +84,8 @@ class MediaGallery{
 
         if($this->rand){
             $args['orderby']    = 'rand';
+        }else{
+            $args['orderby']    = 'modified';
         }
 
 
@@ -118,7 +120,7 @@ class MediaGallery{
      *
      * @return	string					The html
      */
-    public function mediaGallery($title, $speed = 60){
+    public function mediaGallery($title, $speed = 60, $showDescription=true){
 
         if(empty($this->total)){
             return '';
@@ -153,14 +155,20 @@ class MediaGallery{
                                     </a>
                                 </div>
                             </div>
-                            <div class="col-md-7">
-                                <div class="content">
-                                    <a href='<?php echo $pageUrl;?>'>
-                                        <h4 class='card-title'><?php echo $title;?></h4>
-                                        <p class='card-description'><?php echo get_the_excerpt($post->ID);?></p>
-                                    </a>
+                            <?php
+                            if($showDescription){
+                                ?>
+                                <div class="col-md-7">
+                                    <div class="content">
+                                        <a href='<?php echo $pageUrl;?>'>
+                                            <h4 class='card-title'><?php echo $title;?></h4>
+                                            <p class='card-description'><?php echo get_the_excerpt($post->ID);?></p>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
+                                <?php
+                            }
+                            ?>
                         </div>
                     </div>
                     <?php

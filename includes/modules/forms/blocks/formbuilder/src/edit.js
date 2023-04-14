@@ -13,11 +13,14 @@ const Edit = ({attributes, setAttributes, context}) => {
 	const [html, setHtml] = useState('');
 
 	useEffect( 
-		async () => {
-			if(formname != undefined){
-				let response = await apiFetch({path: `${sim.restApiPrefix}/forms/form_builder?formname=${formname}&post=${postId}`});
-				setHtml( response );
+		() => {
+			async function getHTML(){
+				if(formname != undefined){
+					let response = await apiFetch({path: `${sim.restApiPrefix}/forms/form_builder?formname=${formname}&post=${postId}`});
+					setHtml( response );
+				}
 			}
+			getHTML();
 		} ,
 		[formname]
 	);

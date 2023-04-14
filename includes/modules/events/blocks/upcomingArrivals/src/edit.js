@@ -3,21 +3,34 @@ import {useBlockProps, InspectorControls} from "@wordpress/block-editor";
 import './editor.scss';
 import apiFetch from "@wordpress/api-fetch";
 import {useState, useEffect} from "@wordpress/element";
-import {TextControl , Spinner, Panel, PanelBody, __experimentalNumberControl as NumberControl} from "@wordpress/components";
+import {TextControl , Spinner, Panel, PanelBody, __experimentalNumberControl as NumberControl, CheckboxControl} from "@wordpress/components";
 
 const Edit = ({attributes, setAttributes}) => {
-	console.log(attributes);
-	const {title, months} = attributes;
+	const {title, months, hide} = attributes;
 
-	const [html, setHtml] = useState(< Spinner />);
+	const [html, setHtml] = useState(<>Loading < Spinner /></>);
 
 	useEffect( 
-		async () => {
-			setHtml( < Spinner /> );
-			const response = await apiFetch({path: sim.restApiPrefix+'/events/upcoming_arrivals'});
-			setHtml( response );
+		() => {
+			async function getHtml(){
+
+				setHtml( <>Loading < Spinner /></> );
+
+				const response = await apiFetch({
+					path: sim.restApiPrefix+'/events/upcoming_arrivals',
+					method: 'POST',
+					data: { 
+						title: title,
+						months: months
+					},
+				});
+
+				console.log(response)
+				setHtml( wp.element.RawHTML( { children: response }) );
+			}
+			getHtml();
 		} ,
-		[]
+		[title, months]
 	);
 
 	return (
@@ -31,17 +44,23 @@ const Edit = ({attributes, setAttributes}) => {
 							onChange	= { (val) => setAttributes({title: val}) }
 						/>
 						<NumberControl
-							label		= {__("Give the amount of months", "sim")}
-							value		= {months || 2}
-							onChange	= {(val) => setAttributes({months: parseInt(val)})}
-							min			= {1}
-							max			= {12}
+							label		= { __("Timespan in months", "sim") }
+							value		= { months || 2 }
+							onChange	= { (val) => setAttributes({months: parseInt(val)}) }
+							min			= { 1 }
+							max			= { 12 }
+						/>
+						<CheckboxControl
+							key			=  'hide'
+							label		= { __('Hide if no arrivals') }
+							onChange	= { (val) => setAttributes({hide: val}) }
+							checked		= { hide }
 						/>
 					</PanelBody>
 				</Panel>
 			</InspectorControls>
 			<div {...useBlockProps()}>
-				{wp.element.RawHTML( { children: html })}
+				{html}
 			</div>
 		</>
 	);

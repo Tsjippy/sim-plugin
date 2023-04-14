@@ -28,6 +28,35 @@ if(!isset($skipHeader) || !$skipHeader){
 				the_post();
 				include(__DIR__.'/content.php');
 
+				// Show relevant media
+				$cats		= [];
+				foreach($categories as $cat){
+					if(count($cats)>1 && $cat->slug == 'ministry'){
+						continue;
+					}
+
+					$cats[]	= $cat->slug;
+				}
+
+				$color			= SIM\getModuleOption(MODULE_SLUG, 'media-gallery-background-color');
+				$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 6, $cats, true, 1, '', $color, $gradient);
+
+				if(isset($_POST['switch-gallery']) && $_POST['switch-gallery'] == 'filter'){
+					echo $mediaGallery->filterableMediaGallery();
+					$value	= 'gallery';
+					$text	= 'View less';
+				}else{
+					echo $mediaGallery->mediaGallery('Media', 60, false);
+					$value	= 'filter';
+					$text	= 'View more media';
+				}
+
+				if($mediaGallery->total > 3){
+					echo "<form method='post' style='text-align: center; padding-bottom:10px; $mediaGallery->style'>";
+						echo "<button class='small button' name='switch-gallery' value='$value'>$text</button>";
+					echo "</form>";
+				}
+
 				if(!empty(get_children(['post_parent' =>get_the_ID()]))){
 					$cats['location']	= ['locations'=>[]];
 
@@ -40,35 +69,6 @@ if(!isset($skipHeader) || !$skipHeader){
 					$gradient		= SIM\getModuleOption(MODULE_SLUG, 'gallery-background-color-gradient');
 
 					echo SIM\PAGEGALLERY\pageGallery('Read more', [get_post_type()], 3, $cats, 60, true, SIM\getModuleOption(MODULE_SLUG, 'page-gallery-background-color'), $gradient);
-
-					// Show relevant media
-					$cats		= [];
-					foreach($categories as $cat){
-						if(count($cats)>1 && $cat->slug == 'ministry'){
-							continue;
-						}
-
-						$cats[]	= $cat->slug;
-					}
-
-					$color			= SIM\getModuleOption(MODULE_SLUG, 'media-gallery-background-color');
-					$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 3, $cats, true, 1, '', $color, $gradient);
-
-					if(isset($_POST['switch-gallery']) && $_POST['switch-gallery'] == 'filter'){
-						echo $mediaGallery->filterableMediaGallery();
-						$value	= 'gallery';
-						$text	= 'View less';
-					}else{
-						echo $mediaGallery->mediaGallery('Media', 60);
-						$value	= 'filter';
-						$text	= 'View more media';
-					}
-
-					if($mediaGallery->total > 3){
-						echo "<form method='post' style='text-align: center; padding-bottom:10px; $mediaGallery->style'>";
-							echo "<button class='small button' name='switch-gallery' value='$value'>$text</button>";
-						echo "</form>";
-					}
 				}
 
 				// Show any projects linked to this

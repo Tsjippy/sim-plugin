@@ -13,22 +13,25 @@ const Edit = ({attributes, setAttributes, context}) => {
 	const [html, setHtml] = useState(< Spinner />);
 
 	useEffect( 
-		async () => {
-			setHtml( < Spinner /> );
-			const response = await apiFetch({
-				path: sim.restApiPrefix+'/show_children',
-				method: 'POST',
-    			data: { 
-					title: title,
-					listtype: listtype,
-					grandchildren:grandchildren,
-					parents:parents,
-					grantparents:grantparents,
-					postid: postId
-				},
-			});
-			setHtml( response );
-		} ,
+		() => {
+			async function getHtml(){
+				setHtml( < Spinner /> );
+				const response = await apiFetch({
+					path: sim.restApiPrefix+'/show_children',
+					method: 'POST',
+					data: { 
+						title: title,
+						listtype: listtype,
+						grandchildren:grandchildren,
+						parents:parents,
+						grantparents:grantparents,
+						postid: postId
+					},
+				});
+				setHtml( response );
+			}
+			getHtml();
+		 } ,
 		[attributes]
 	);
 

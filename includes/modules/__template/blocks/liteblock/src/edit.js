@@ -9,10 +9,13 @@ const Edit = () => {
 	const [html, setHtml] = useState(< Spinner />);
 
 	useEffect( 
-		async () => {
-			setHtml( < Spinner /> );
-			const response = await apiFetch({path: sim.restApiPrefix+'/frontendposting/pending_pages'});
-			setHtml( response );
+		() => {
+			async function someFunction(){
+				setHtml( < Spinner /> );
+				const response = await apiFetch({path: sim.restApiPrefix+'/frontendposting/pending_pages'});
+				setHtml( response );
+			}
+			someFunction();
 		} ,
 		[]
 	);

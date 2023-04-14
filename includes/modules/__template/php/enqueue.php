@@ -33,7 +33,7 @@ add_action( 'wp_enqueue_scripts', function(){
     wp_register_script('sim_XXXX_script',plugins_url('js/XXXX.js', __DIR__), array('sweetalert'), MODULE_VERSION,true);
 
     $formbuilderPages   = SIM\getModuleOption('XXX', 'XXX_pages');
-    if(in_array(get_the_ID(), $formbuilderPages)){
+    if(is_numeric(get_the_ID()) && in_array(get_the_ID(), $formbuilderPages)){
         wp_enqueue_style('sim_XXX_style');
     }
 });

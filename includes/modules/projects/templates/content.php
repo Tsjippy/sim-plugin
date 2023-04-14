@@ -67,16 +67,16 @@ if(!$archive){
 			?>
 
 			<div class='project metas'>
-				<div class='category project meta'> 
+				<div class='category project meta'>
 					<?php
 					$categories = wp_get_post_terms(
-						get_the_ID(), 
+						get_the_ID(),
 						'projects',
 						array(
 							'orderby'   => 'name',
 							'order'     => 'ASC',
 							'fields'    => 'id=>name'
-						) 
+						)
 					);
 					
 					//First loop over the cat to see if any parent cat needs to be removed

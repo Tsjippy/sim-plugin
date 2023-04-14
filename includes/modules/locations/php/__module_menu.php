@@ -75,7 +75,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<br>
 	<label>
 		<input type='checkbox' name='gallery-background-color-gradient' value='1' <?php if(!empty($settings['gallery-background-color-gradient'])){echo 'checked';}?>>
-		Smoothe the edges of the gallery background colors
+		Smooth the edges of the gallery background colors
 	</label>
 	<br>
 

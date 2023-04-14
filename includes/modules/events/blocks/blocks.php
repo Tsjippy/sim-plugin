@@ -29,6 +29,10 @@ add_action('init', function () {
 				'months'	=> [
 					'type'		=> 'integer',
 					'default'	=> 2
+				],
+				'hide'	=> [
+					'type'		=> 'bool',
+					'default'	=> true
 				]
 			]
 		)
@@ -123,7 +127,7 @@ function createEvents($metaId, $postId,  $metaKey,  $metaValue ){
 
 function upcomingArrivalsBlock($attributes){
 	$args = wp_parse_args($attributes, array(
-		'title' 		=> '',
+		'title' 		=> 'Upcoming Arrivals',
 		'months'		=> 2
 	));
 
@@ -173,8 +177,12 @@ function upcomingArrivalsBlock($attributes){
 		}
 	}
 
-	$html	= "<h4>{$args['title']}</h4>";
-	$html	.= "<div class='arrival-dates-wrapper'>";
+	$html	= "<div class='arrival-dates-wrapper'>";
+		$html	.= "<h4 class='title'>{$args['title']}</h4>";
+
+		if(empty($dates) && !get_the_ID()){
+			$html	.= "No upcoming arrivals found";
+		}
 		foreach($dates as $date=>$string){
 			$html	.= "<div class='arrival-date-wrapper'>";
 				$html	.= "<strong class='arrival-title'>$date</strong><br>$string";

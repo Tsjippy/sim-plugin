@@ -9,11 +9,14 @@ const Edit = () => {
 
 	const [html, setHtml] = useState( < Spinner /> );
 
-	useEffect( 
-		async () => {
-			setHtml( < Spinner /> );
-			const response = await apiFetch({path: sim.restApiPrefix+'/events/show_schedules'});
-			setHtml( response );
+	useEffect(
+		() => {
+			async function getHtml(){
+				setHtml( < Spinner /> );
+				const response = await apiFetch({path: sim.restApiPrefix+'/events/show_schedules'});
+				setHtml( response );
+			}
+			getHtml();
 		} ,
 		[]
 	);

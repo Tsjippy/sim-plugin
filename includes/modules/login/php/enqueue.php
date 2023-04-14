@@ -19,15 +19,17 @@ add_action( 'wp_enqueue_scripts', function(){
 
 	wp_register_script('sim_2fa_script', plugins_url('js/2fa.min.js', __DIR__), array('sim_table_script'), MODULE_VERSION, true);
 
-    $passwordResetPage  = SIM\getModuleOption(MODULE_SLUG, 'password_reset_page');
-    $registerPage       = SIM\getModuleOption(MODULE_SLUG, 'register_page');
-    if(get_the_ID() == $passwordResetPage || get_the_ID() == $registerPage){
-        wp_enqueue_style('sim_pw_reset_style');
+    if(is_numeric(get_the_ID())){
+        $passwordResetPage  = SIM\getModuleOption(MODULE_SLUG, 'password_reset_page');
+        $registerPage       = SIM\getModuleOption(MODULE_SLUG, 'register_page');
+        if(get_the_ID() == $passwordResetPage || get_the_ID() == $registerPage){
+            wp_enqueue_style('sim_pw_reset_style');
 
-	    wp_enqueue_script('sim_password_strength_script');
-    }
+            wp_enqueue_script('sim_password_strength_script');
+        }
 
-    if(in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG, '2fa_page', false))){
-        wp_enqueue_script('sim_2fa_script');
+        if(in_array(get_the_ID(), SIM\getModuleOption(MODULE_SLUG, '2fa_page', false))){
+            wp_enqueue_script('sim_2fa_script');
+        }
     }
 });

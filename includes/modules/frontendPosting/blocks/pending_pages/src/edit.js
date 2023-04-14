@@ -8,9 +8,12 @@ const Edit = () => {
 	const [html, setHtml] = useState([]);
 
 	useEffect( 
-		async () => {
-			const response = await apiFetch({path: sim.restApiPrefix+'/frontendposting/pending_pages'});
-			setHtml( response );
+		() => {
+			async function getHtml(){
+				const response = await apiFetch({path: sim.restApiPrefix+'/frontendposting/pending_pages'});
+				setHtml( response );
+			}
+			getHtml();
 		} ,
 		[]
 	);

@@ -22,7 +22,7 @@ add_action('sim-before-print-content', function($post, $pdf){
     if(!empty($tel)){
         // tel
         $url = plugins_url('pictures/tel.png', __DIR__);
-        $pdf->printImage($url, 100, -1, 10, 10);    
+        $pdf->printImage($url, 100, -1, 10, 10);
         $pdf->write(10, $tel);
     }
     
@@ -31,7 +31,7 @@ add_action('sim-before-print-content', function($post, $pdf){
     $y      = $pdf->getY()+12;
     $url    = get_post_meta(get_the_ID(), 'url', true);
     if(!empty($url)){
-        $pdf->printImage($imageUrl, 10, $y, 10, 10);    
+        $pdf->printImage($imageUrl, 10, $y, 10, 10);
         $pdf->write(10, $url);
     }
 

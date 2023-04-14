@@ -9,9 +9,12 @@ const Edit = () => {
 	const [html, setHtml] = useState(<Spinner/>);
 
 	useEffect( 
-		async () => {
-			const response = await apiFetch({path: sim.restApiPrefix+'/mandatory_content/must_read_documents'});
-			setHtml( response );
+		() => {
+			async function getHTML(){
+				const response = await apiFetch({path: sim.restApiPrefix+'/mandatory_content/must_read_documents'});
+				setHtml( response );
+			}
+			getHTML();
 		} ,
 		[]
 	);

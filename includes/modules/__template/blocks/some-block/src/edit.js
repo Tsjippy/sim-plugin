@@ -15,17 +15,23 @@ const Edit = ({attributes, setAttributes}) => {
 
 	const [cats, setCats] = useState(< Spinner />);
 
-	useEffect( async () => {
-		setCats( < Spinner />);
-		const fetchedCats = await apiFetch({path: catsPath});
-		setCats( fetchedCats.map( c => (
-			<CheckboxControl
-				label		= {c.name}
-				onChange	= {onCatChanged.bind(c.id)}
-				checked		= {categories[c.id]}
-			/>
-		)));
-	} , [attributes.categories]);
+	useEffect( 
+		() => {
+			async function buildCheckboxes(){
+				setCats( < Spinner />);
+				const fetchedCats = await apiFetch({path: catsPath});
+				setCats( fetchedCats.map( c => (
+					<CheckboxControl
+						label		= {c.name}
+						onChange	= {onCatChanged.bind(c.id)}
+						checked		= {categories[c.id]}
+					/>
+				)));
+			}
+			buildCheckboxes();
+		} , 
+		[attributes.categories]
+	);
 
 	const { pages, hasResolved} = useSelect(
 		( select) => {
@@ -119,7 +125,7 @@ const Edit = ({attributes, setAttributes}) => {
 			</InspectorControls>
 			<div {...useBlockProps()}>
 				<aside class='event'>
-					<h4 class="title">Upcoming events</h4>
+					<h4 class="title">Upcoming Events</h4>
 					<div class="upcomingevents_wrapper">
 						{buildHtml()}
 					</div>

@@ -9,10 +9,13 @@ const Edit = () => {
 	const [html, setHtml] = useState(< Spinner />);
 
 	useEffect( 
-		async () => {
-			setHtml( < Spinner /> );
-			const response = await apiFetch({path: sim.restApiPrefix+'/statistics/page_statistics'});
-			setHtml( response );
+		() => {
+			async function getHTML(){
+				setHtml( < Spinner /> );
+				const response = await apiFetch({path: sim.restApiPrefix+'/statistics/page_statistics'});
+				setHtml( response );
+			}
+			getHTML();
 		} ,
 		[]
 	);

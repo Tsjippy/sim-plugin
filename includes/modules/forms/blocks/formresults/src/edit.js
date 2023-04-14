@@ -10,34 +10,43 @@ const Edit = ({attributes, setAttributes}) => {
 
 	const [forms, setForms] = useState([]);
 
-	useEffect( async () => {
-		const fetchedForms = await apiFetch({path: sim.restApiPrefix+'/forms/get_forms'});
+	useEffect( 
+		() => {
+			async function getForms(){
+				const fetchedForms = await apiFetch({path: sim.restApiPrefix+'/forms/get_forms'});
 
-		let options	= fetchedForms.map( c => (
-			{ label: c.name, value: c.id }
-		));
+				let options	= fetchedForms.map( c => (
+					{ label: c.name, value: c.id }
+				));
 
-		options.unshift({ label: __('Please select a form', 'sim'), value: '' });
+				options.unshift({ label: __('Please select a form', 'sim'), value: '' });
 
-		setForms( options );
-	} , []);
+				setForms( options );
+			}
+			getForms();
+		} , 
+		[]
+	);
 
 	const [html, setHtml] = useState(< Spinner />);
 
 	useEffect( 
-		async () => {
-			if(formid != undefined){
-				setHtml( < Spinner /> );
+		() => {
+			async function getHtml() {
+				if(formid != undefined){
+					setHtml( < Spinner /> );
 
-				// add shortcode id if not given
-				if(tableid == undefined){
-					tableid = await apiFetch({path: `${sim.restApiPrefix}/forms/add_form_table?formid=${formid}`});
-					setAttributes({tableid: tableid});
+					// add shortcode id if not given
+					if(tableid == undefined){
+						tableid = await apiFetch({path: `${sim.restApiPrefix}/forms/add_form_table?formid=${formid}`});
+						setAttributes({tableid: tableid});
+					}
+
+					let response = await apiFetch({path: `${sim.restApiPrefix}/forms/show_form_results?formid=${formid}&tableid=${String(tableid)}`});
+					setHtml( response );
 				}
-
-				let response = await apiFetch({path: `${sim.restApiPrefix}/forms/show_form_results?formid=${formid}&tableid=${String(tableid)}`});
-				setHtml( response );
 			}
+			getHtml();
 		} ,
 		[formid]
 	);

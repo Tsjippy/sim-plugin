@@ -9,10 +9,13 @@ const Edit = () => {
 	const [html, setHtml] = useState(< Spinner />);
 
 	useEffect( 
-		async () => {
-			setHtml( < Spinner /> );
-			const response = await apiFetch({path: sim.restApiPrefix+'/usermanagement/show_reminders'});
-			setHtml( response );
+		() => {
+			async function getHTML(){
+				setHtml( < Spinner /> );
+				const response = await apiFetch({path: sim.restApiPrefix+'/usermanagement/show_reminders'});
+				setHtml( response );
+			}
+			getHTML();
 		} ,
 		[]
 	);

@@ -23,16 +23,19 @@ const Edit = ( ) => {
 	const manager			= meta[ 'manager' ] == undefined || meta[ 'manager' ] == '' ? {} : JSON.parse(meta[ 'manager' ]);
 
 	useEffect( 
-		async () => {
-			const response = await apiFetch({path: '/sim/v2/projects/ministries?slug=ministry'});
+		 () => {
+			async function getMinistries(){
+				const response = await apiFetch({path: '/sim/v2/projects/ministries?slug=ministry'});
 
-			let options	= response.map( c => (
-				{ label: c.post_title, value: c.ID }
-			));
+				let options	= response.map( c => (
+					{ label: c.post_title, value: c.ID }
+				));
 
-			options.unshift({ label: __('Please select a ministry', 'sim'), value: '' });
+				options.unshift({ label: __('Please select a ministry', 'sim'), value: '' });
 
-			setMinistries( options );
+				setMinistries( options );
+			}
+			getMinistries();
 		} ,
 		[]
 	);

@@ -18,9 +18,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Upcoming events
-	register_rest_route( 
-		RESTAPIPREFIX.'/events', 
-		'/upcoming_events', 
+	register_rest_route(
+		RESTAPIPREFIX.'/events',
+		'/upcoming_events',
 		array(
 			'methods' 				=> 'GET',
 			'callback' 				=> function(){

@@ -18,19 +18,25 @@ const Edit = ({attributes, setAttributes}) => {
 
 	const [cats, setCats] = useState( < Spinner /> );
 
-	useEffect( async () => {
-		setCats( <Spinner />);
-		const fetchedCats = await apiFetch({path: "/wp/v2/events"});
+	useEffect( 
+		() => {
+			async function buildCheckboxes(){
+				setCats( <Spinner />);
+				const fetchedCats = await apiFetch({path: "/wp/v2/events"});
 
-		setCats( fetchedCats.map( c => (
-			<CheckboxControl
-				key			= {c.id}
-				label		= {c.name}
-				onChange	= {onCatChanged.bind(c.id)}
-				checked		= {categories[c.id]}
-			/>
-		)));
-	} , [attributes.categories]);
+				setCats( fetchedCats.map( c => (
+					<CheckboxControl
+						key			= {c.id}
+						label		= {c.name}
+						onChange	= {onCatChanged.bind(c.id)}
+						checked		= {categories[c.id]}
+					/>
+				)));
+			}
+			buildCheckboxes();
+		} , 
+		[attributes.categories]
+	);
 
 
 	// variable, function name to set variable

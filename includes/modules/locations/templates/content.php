@@ -34,7 +34,7 @@ if(is_tax() || is_archive()){
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
 	<div class="cat_card<?php if($archive){echo ' inside-article';}?>">
 		
-		<?php 
+		<?php
 		if($archive){
 			$url = get_permalink(get_the_ID());
 			echo the_title( "<h3 class='archivetitle'><a href='$url'>", '</a></h3>' );

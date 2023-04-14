@@ -15,17 +15,28 @@ const Edit = ({attributes, setAttributes}) => {
 	const [html, setHtml] = useState(<Spinner />);
 	const [availableRoles, setAvailableRoles] = useState(<Spinner />);
 
-	useEffect( async () => {
-		setHtml(<Spinner />);
-		const result = await apiFetch({path: `${sim.restApiPrefix}/bulkchange/bulk_change_meta_html`});
-		setHtml(result);
-	} , []);
+	useEffect( 
+		() => {
+			async function getHtml(){
+				setHtml(<Spinner />);
+				const result = await apiFetch({path: `${sim.restApiPrefix}/bulkchange/bulk_change_meta_html`});
+				setHtml(result);
+			}
+			getHtml();
+		} , 
+		[]
+	);
 
-	useEffect( async () => {
-		const result = await apiFetch({path: `${sim.restApiPrefix}/user_roles`});
-		setAvailableRoles(result);
-	} , []);
-
+	useEffect( 
+		() => {
+			async function getRoles() {
+				const result = await apiFetch({path: `${sim.restApiPrefix}/user_roles`});
+				setAvailableRoles(result);
+			}
+			getRoles();
+		} , 
+		[]
+	);
 
 	const RoleSelected	= function(selected){
 		if(selected){

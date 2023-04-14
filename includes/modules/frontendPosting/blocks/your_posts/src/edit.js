@@ -9,9 +9,11 @@ const Edit = ({attributes, setAttributes}) => {
 	const [html, setHtml] = useState(< Spinner />);
 
 	useEffect( 
-		async () => {
-			const response = await apiFetch({path: sim.restApiPrefix+'/frontendposting/your_posts'});
-			setHtml( response );
+		() => {
+			async function getHTML(){
+				const response = await apiFetch({path: sim.restApiPrefix+'/frontendposting/your_posts'});
+				setHtml( response );
+			}
 		} ,
 		[]
 	);

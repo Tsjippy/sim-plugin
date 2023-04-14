@@ -22,8 +22,13 @@ add_action( 'rest_api_init', function () {
 		RESTAPIPREFIX.'/events',
 		'/upcoming_arrivals',
 		array(
-			'methods' 				=> 'GET',
-			'callback' 				=> __NAMESPACE__.'\upcomingArrivalsBlock',
+			'methods' 				=> 'POST',
+			'callback' 				=> function($param){
+				if(!is_array($param)){
+					$param	= $param->get_Params();
+				}
+				return upcomingArrivalsBlock($param);
+			},
 			'permission_callback' 	=> '__return_true',
 		)
 	);

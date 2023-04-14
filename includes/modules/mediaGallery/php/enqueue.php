@@ -29,7 +29,7 @@ function enqueueMediaGalleryScripts(){
     wp_register_script('sim_refresh_gallery_script', plugins_url('js/auto_refresh.min.js', __DIR__), array('sim_formsubmit_script'), MODULE_VERSION, true);
 
     $pages   = SIM\getModuleOption(MODULE_SLUG, 'mediagallery_pages');
-    if(in_array(get_the_ID(), $pages)){
+    if(is_numeric(get_the_ID()) && in_array(get_the_ID(), $pages)){
         wp_enqueue_style('sim_gallery_style');
 		wp_enqueue_script('sim_gallery_script');
     }

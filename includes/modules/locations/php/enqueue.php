@@ -7,7 +7,7 @@ add_action( 'wp_enqueue_scripts', function(){
     wp_register_style('sim_employee_style', plugins_url('css/employee.min.css', __DIR__), array(), MODULE_VERSION);
 
 	$pages   = SIM\getModuleOption('frontendposting', 'front_end_post_pages', false);
-    if(in_array(get_the_ID(), $pages)){
+    if(is_numeric(get_the_ID()) && in_array(get_the_ID(), $pages)){
         wp_enqueue_style('sim_locations_style');
     }
 

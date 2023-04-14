@@ -92,13 +92,15 @@ function registerScripts(){
     
     wp_register_script('sim_forms_table_script', plugins_url('js/forms_table.js', __DIR__), array('sim_forms_script', 'sim_table_script'), MODULE_VERSION, true);
 
-    $formBuilderPages   = SIM\getModuleOption(MODULE_SLUG, 'formbuilder_pages');
-    if(in_array(get_the_ID(), $formBuilderPages)){
-        wp_enqueue_style('sim_forms_style');
-    }
+    if(is_numeric(get_the_ID())){
+        $formBuilderPages   = SIM\getModuleOption(MODULE_SLUG, 'formbuilder_pages');
+        if(in_array(get_the_ID(), $formBuilderPages)){
+            wp_enqueue_style('sim_forms_style');
+        }
 
-    $formtablePages   = SIM\getModuleOption(MODULE_SLUG, 'formtable_pages');
-    if(in_array(get_the_ID(), $formtablePages)){
-        wp_enqueue_style('sim_formtable_style');
+        $formtablePages   = SIM\getModuleOption(MODULE_SLUG, 'formtable_pages');
+        if(in_array(get_the_ID(), $formtablePages)){
+            wp_enqueue_style('sim_formtable_style');
+        }
     }
 }

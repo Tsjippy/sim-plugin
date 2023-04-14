@@ -60,14 +60,19 @@ class DisplayFormResults extends DisplayForm{
 		
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE ";
 
-		if(isset($this->formData->id)){
+		if(!empty($_REQUEST['subid'])){
+			$submissionId	= $_REQUEST['subid'];
+		}
+		
+		if(is_numeric($submissionId)){
+			$query .= "id='$submissionId'";
+		}elseif(isset($this->formData->id)){
 			$query	.= "form_id={$this->formData->id}";
 		}else{
 			$query	.= "1=1";
 		}
-		if(is_numeric($submissionId)){
-			$query .= " and id='$submissionId'";
-		}elseif(is_numeric($userId)){
+
+		if(is_numeric($userId)){
 			$query .= " and userid='$userId'";
 		}
 		

@@ -41,7 +41,7 @@ add_action( 'wp_enqueue_scripts', function () {
     wp_add_inline_script('sim_edit_post_script', "var edit_post_url = '$frontendEditUrl'", 'before');
 
     $frontEndPostPages   = SIM\getModuleOption(MODULE_SLUG, 'front_end_post_pages');
-    if(in_array(get_the_ID(), $frontEndPostPages)){
+    if(is_numeric(get_the_ID()) && in_array(get_the_ID(), $frontEndPostPages)){
         wp_enqueue_style('sim_frontend_style');
     }
 });
