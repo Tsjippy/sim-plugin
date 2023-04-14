@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.32.0] - 2023-04-14
+
+
+### Fixed
 - react in blocks
 - upcoming arrivals block
 - vimeo display
