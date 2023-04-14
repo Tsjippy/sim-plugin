@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- react in blocks
 
 ### Updated
 
