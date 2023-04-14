@@ -82,7 +82,8 @@ function displayUpcomingEvents($attributes) {
 	}
 	
 	$events		= new DisplayEvents();
-	return $events->upcomingEvents($args['items'], $args['months'], $include);
+
+	return $events->upcomingEvents($args['items'], $args['months'], $include, $args['title']);
 }
 
 function displaySchedules(){
@@ -177,10 +178,14 @@ function upcomingArrivalsBlock($attributes){
 		}
 	}
 
+	if(empty($dates) && get_the_ID()){
+		return '';
+	}
+
 	$html	= "<div class='arrival-dates-wrapper'>";
 		$html	.= "<h4 class='title'>{$args['title']}</h4>";
 
-		if(empty($dates) && !get_the_ID()){
+		if(empty($dates)){
 			$html	.= "No upcoming arrivals found";
 		}
 		foreach($dates as $date=>$string){

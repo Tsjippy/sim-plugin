@@ -80,16 +80,17 @@ class DisplayEvents extends Events{
 	 * @param	int		$max			The maximum total of items
 	 * @param	int		$months			The amount of months we should get events for
 	 * @param	array	$include		The categories to include
+	 * @param	string	$title			The title
 	 *
 	 * @return	string					The html containg an event list
 	*/
-	public function upcomingEvents($max, $months, $include){
+	public function upcomingEvents($max, $months, $include, $title='Upcoming Events'){
 
 		$events	= $this->upcomingEventsArray($max, $months, $include);
 
 		ob_start();
 		?>
-		<h4 class="title">Upcoming Events</h4>
+		<h4 class="title"><?php echo $title;?></h4>
 		<div class="upcomingevents_wrapper">
 			<?php
 			if(!$events){
