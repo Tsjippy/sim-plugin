@@ -343,3 +343,14 @@
 		}
 	}
 }
+
+.media-gallery-article .media-gallery .square{
+    height: auto;
+    width: -webkit-fill-available;
+
+    img{
+        border-radius: 0%;
+        width: 100%;
+        max-width: 100%;
+    }
+}

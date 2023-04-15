@@ -22,6 +22,7 @@ class MediaGallery{
         
         $allMimes               = get_allowed_mime_types();
         $this->acceptedMimes    = [];
+        SIM\cleanUpNestedArray($types);
         $this->types           = $types;
         if(empty($types)){
             $this->types        = ['image', 'audio', 'video'];
@@ -116,9 +117,11 @@ class MediaGallery{
     /**
      * Function to show a gallery of media items
      *
-     * @param	int		$speed			The speed in seconds the media should change. Default 60. -1 for never
+     * @param   string  $title              The title to display above the gallery
+     * @param	int		$speed			    The speed in seconds the media should change. Default 60. -1 for never
+     * @param   bool    $showDesxcription   Wheter to show the media description or not, default true
      *
-     * @return	string					The html
+     * @return	string					    The html
      */
     public function mediaGallery($title, $speed = 60, $showDescription=true){
 
@@ -133,7 +136,7 @@ class MediaGallery{
         $amount	= min(count($this->posts), $this->amount);
 
         ?>
-        <article class="media-gallery-article" data-types='<?php echo json_encode($this->types );?>' data-categories='<?php echo json_encode($this->cats);?>' data-speed='<?php echo $speed;?>' style='<?php echo $this->style;?>'>
+        <article class="media-gallery-article" data-types='<?php echo json_encode($this->types );?>' data-categories='<?php echo json_encode($this->cats);?>' data-speed='<?php echo $speed;?>' data-desc='<?php if($showDescription){echo 1;}else{echo 0;}?>' style='<?php echo $this->style;?>'>
             <h3 class="media-gallery-title">
                 <?php echo $title;?>
             </h3>
@@ -149,7 +152,7 @@ class MediaGallery{
                     <div class="media-gallery">
                         <div class="card card-profile card-plain">
                             <div class="col-md-5">
-                                <div class="card-image">
+                                <div class="card-image <?php if(!$showDescription){echo 'square';}?>">
                                     <a href='<?php echo $pageUrl;?>'>
                                         <img class='img' src='<?php echo wp_get_attachment_image_url($post->ID);?>' alt='' title='<?php echo $title;?>' loading='lazy'>
                                     </a>

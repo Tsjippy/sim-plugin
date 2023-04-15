@@ -28,66 +28,17 @@ if(!isset($skipHeader) || !$skipHeader){
 				the_post();
 				include(__DIR__.'/content.php');
 
-				// Show relevant media
-				$cats		= [];
-				foreach($categories as $cat){
-					if(count($cats)>1 && $cat->slug == 'ministry'){
-						continue;
-					}
-
-					$cats[]	= $cat->slug;
-				}
-
-				$color			= SIM\getModuleOption(MODULE_SLUG, 'media-gallery-background-color');
-				$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 6, $cats, true, 1, '', $color, $gradient);
-
-				if(isset($_POST['switch-gallery']) && $_POST['switch-gallery'] == 'filter'){
-					echo $mediaGallery->filterableMediaGallery();
-					$value	= 'gallery';
-					$text	= 'View less';
-				}else{
-					echo $mediaGallery->mediaGallery('Media', 60, false);
-					$value	= 'filter';
-					$text	= 'View more media';
-				}
-
-				if($mediaGallery->total > 3){
-					echo "<form method='post' style='text-align: center; padding-bottom:10px; $mediaGallery->style'>";
-						echo "<button class='small button' name='switch-gallery' value='$value'>$text</button>";
-					echo "</form>";
-				}
-
-				if(!empty(get_children(['post_parent' =>get_the_ID()]))){
-					$cats['location']	= ['locations'=>[]];
-
-					$categories	= get_the_terms(get_the_ID(), 'locations');
-					foreach($categories as $cat){
-						$cats['location']['locations'][]	= $cat->slug;
-					}
-
-					
-					$gradient		= SIM\getModuleOption(MODULE_SLUG, 'gallery-background-color-gradient');
-
-					echo SIM\PAGEGALLERY\pageGallery('Read more', [get_post_type()], 3, $cats, 60, true, SIM\getModuleOption(MODULE_SLUG, 'page-gallery-background-color'), $gradient);
-				}
+				showMedia();
 
 				// Show any projects linked to this
                 projectList();
 
                 // Show the people working here
                 echo ministryDescription();
+
+				showRelevantPages();
 			endwhile;
 			
-			?> <nav id='post_navigation'>
-				<span id='prev'>
-					<?php previous_post_link(); ?>
-				</span>
-				<span id='next' style='float:right;'>
-					<?php next_post_link(); ?>
-				</span>
-			</nav>
-			
-			<?php
 			echo apply_filters('sim-single-template-bottom', '', 'location');
 			?>
 		</main>
@@ -182,3 +133,81 @@ function projectList(){
     <br>
     <?php
 }
+
+function showMedia(){
+	// Show relevant media
+	$gradient		= SIM\getModuleOption(MODULE_SLUG, 'gallery-background-color-gradient');
+
+	$cats			= [];
+	$categories		= get_the_terms(get_the_ID(), 'locations');
+	foreach($categories as $cat){
+		if(count($categories) > 1 && $cat->slug == 'ministry'){
+			continue;
+		}
+
+		$cats[]	= $cat->slug;
+	}
+
+	$color			= SIM\getModuleOption(MODULE_SLUG, 'media-gallery-background-color');
+	$mediaGallery   = new SIM\MEDIAGALLERY\MediaGallery(['image'], 6, $cats, true, 1, '', $color, $gradient);
+
+	if(isset($_POST['switch-gallery']) && $_POST['switch-gallery'] == 'filter'){
+		echo $mediaGallery->filterableMediaGallery();
+		$value	= 'gallery';
+		$text	= 'View less';
+	}else{
+		echo $mediaGallery->mediaGallery('', 60, false);
+		$value	= 'filter';
+		$text	= 'View more media';
+	}
+
+	if($mediaGallery->total > 3){
+		echo "<form method='post' style='text-align: center; padding-bottom:10px; $mediaGallery->style'>";
+			echo "<button class='small button' name='switch-gallery' value='$value'>$text</button>";
+		echo "</form>";
+	}
+}
+
+function showRelevantPages(){
+	if(!empty(get_children(['post_parent' =>get_the_ID()]))){
+		$cats['location']	= ['locations'=>[]];
+
+		$categories	= get_the_terms(get_the_ID(), 'locations');
+
+		foreach($categories as $cat){
+			if(count($categories) > 1 && $cat->slug == 'ministry'){
+				continue;
+			}
+			
+			$cats['location']['locations'][]	= $cat->slug;
+		}
+
+		
+		$gradient		= SIM\getModuleOption(MODULE_SLUG, 'gallery-background-color-gradient');
+
+		echo SIM\PAGEGALLERY\pageGallery('Related Ministries', [get_post_type()], 3, $cats, 60, true, SIM\getModuleOption(MODULE_SLUG, 'page-gallery-background-color'), $gradient);
+	}
+}
+
+/* function addGallery($mediaGallery){
+	$content	= "<!-- wp:gallery {'linkTo':'none'} -->";
+		$content	.= "<figure class='wp-block-gallery has-nested-images columns-default is-cropped'>";
+			foreach($mediaGallery->posts as $post){
+				$url	= wp_get_attachment_image_url($post->ID);
+				$content	.= "<!-- wp:image {'id':$post->ID,'sizeSlug':'large','linkDestination':'media'} -->";
+					$content	.= "<figure class='wp-block-image size-large'>";
+						$content	.= "<img src='$url' alt='' class='wp-image-$post->ID'/>";
+					$content	.= "</figure>";
+				$content	.= "<!-- /wp:image -->";
+			}
+		$content	.= "</figure>";
+	$content	.= "<!-- /wp:gallery -->";
+
+	$html	= '';
+	$blocks = parse_blocks( $content );
+	foreach($blocks as $block){
+		$html	.= render_block($block);
+	}
+
+	echo $html;
+} */

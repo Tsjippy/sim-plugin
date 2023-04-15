@@ -185,6 +185,10 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             curl_setopt($curl, CURLOPT_TIMEOUT, 30);
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
             $response = curl_exec($curl);
+
+            if(!$response){
+                return "<div class='error'>No valid result found<br>Check this url manually: <a href='http://vimeo.com/$vimeoId'>http://vimeo.com/$vimeoId</a> </div>";
+            }
             curl_close($curl);
 
             return json_decode($response)->html;

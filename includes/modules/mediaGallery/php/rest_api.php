@@ -111,7 +111,7 @@ add_action( 'rest_api_init', function () {
 				}
 
 				$mediaGallery	= new MediaGallery($types, $param['amount'], $categories, true, 1, '', $param['color']);
-				return $mediaGallery->mediaGallery($param['title'], $param['speed']);
+				return $mediaGallery->mediaGallery(trim($param['title']), $param['speed'], $param['desc']);
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(

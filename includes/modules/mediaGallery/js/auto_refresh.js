@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 let reloadMediaGallery   = async function(gallery, first=false){
-    let speed   = gallery.dataset.speed;
+    let speed   = parseInt(gallery.dataset.speed);
 
     if(typeof(speed) != 'number'){
         return;
@@ -23,6 +23,7 @@ let reloadMediaGallery   = async function(gallery, first=false){
         formData.append('speed', speed);
         formData.append('title', gallery.querySelector('.media-gallery-title').textContent);
         formData.append('color', gallery.style.background);
+        formData.append('desc', gallery.dataset.desc);
         var response = await FormSubmit.fetchRestApi('media_gallery/show_media_gallery', formData, false);
 
         if(response){
