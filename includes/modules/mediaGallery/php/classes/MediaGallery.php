@@ -154,7 +154,7 @@ class MediaGallery{
                             <div class="col-md-5">
                                 <div class="card-image <?php if(!$showDescription){echo 'square';}?>">
                                     <a href='<?php echo $pageUrl;?>'>
-                                        <img class='img' src='<?php echo wp_get_attachment_image_url($post->ID);?>' alt='' title='<?php echo $title;?>' loading='lazy'>
+                                        <img class='img' alt='<?php echo $title;?>' src='<?php echo wp_get_attachment_image_url($post->ID);?>' title='<?php echo $title;?>' loading='lazy'>
                                     </a>
                                 </div>
                             </div>
