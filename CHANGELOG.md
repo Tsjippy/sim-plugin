@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- consitstend naming of variables
 
 ### Fixed
 
