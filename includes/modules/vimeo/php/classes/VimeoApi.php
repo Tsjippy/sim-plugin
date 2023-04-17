@@ -23,8 +23,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             global $Modules;
 
             if ( ! class_exists( '\Vimeo\Vimeo' ) ) {
-                $error = __( 'Vimeo not loaded', 'sim' );
-                SIM\printArray($error);
+                SIM\printArray(__( 'Vimeo not loaded', 'sim' ));
                 return false;
             }
 
@@ -173,9 +172,10 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         /**
          * Retrieves the embed code to display a video
          *
-         * @param   int $vimeoId    The vimeo id of the video to display
+         * @param   int     $vimeoId    The vimeo id of the video to display
+         * @param   bool    $html       Whether to return the html or the url. Default Html
          */
-        public function getEmbedHtml($vimeoId){
+        public function getEmbedHtml($vimeoId, $html=true){
 
             $oembedEndpoint = 'http://vimeo.com/api/oembed';
             $url = $oembedEndpoint . '.json?url=' . rawurlencode("http://vimeo.com/$vimeoId") . '&width=640';
@@ -191,7 +191,12 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             }
             curl_close($curl);
 
-            return json_decode($response)->html;
+            $result = json_decode($response);
+            if($html){
+                return $result->html;
+            }
+
+            return trim($result->provider_url, '/').$result->uri;
         }
 
         /**

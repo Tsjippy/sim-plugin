@@ -11,8 +11,20 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 
 	$vimeoId = get_post_meta( $post->ID, 'vimeo_id', true );
 
-	//Check if already uploaded
-	if(!SIM\getModuleOption(MODULE_SLUG, 'upload') && !is_numeric($vimeoId)){
+	if(is_numeric($vimeoId)){
+		//check if backup already exists
+		$path   = get_post_meta($post->ID, 'video_path', true);
+
+		if(!file_exists($path)){
+			$formFields['vimeo_url'] = array(
+				'label' => "Video url",
+				'input' => 'text',
+				'value' => '',
+				'helps' => "Enter the url to download a backup to your server (get it from <a href='https://vimeo.com/manage/$vimeoId/advanced' target='_blank'>this page</a>)"
+			);
+		}
+	}elseif( !SIM\getModuleOption(MODULE_SLUG, 'upload') ){
+		//Check if already uploaded
 		$html    = "<div>";
 			$html   .= "<input style='width: initial' type='checkbox' name='attachments[{$post->ID}][vimeo]' value='upload'>";
 		$html   .= "</div>";
@@ -23,20 +35,6 @@ add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
 			'input' => 'html',
 			'html'  =>  $html
 		);
-	}
-
-	if(is_numeric($vimeoId)){
-		//check if backup already exists
-		$vimeo	= new VimeoApi();
-		$path	= $vimeo->getVideoPath($post->ID);
-		if(!file_exists($path)){
-			$formFields['vimeo_url'] = array(
-				'label' => "Video url",
-				'input' => 'text',
-				'value' => '',
-				'helps' => "Enter the url to download a backup to your server (get it from <a href='https://vimeo.com/manage/$vimeoId/advanced' target='_blank'>this page</a>)"
-			);
-		}
 	}
 
 	return $formFields;
@@ -93,8 +91,10 @@ add_action('sim_before_visibility_change', function($attachment_id, $visibility)
 add_filter( 'wp_get_attachment_url', function( $url, $attId ) {
     $vimeoId   = get_post_meta($attId, 'vimeo_id', true);
     if(is_numeric($vimeoId)){
-        $url    = "https://vimeo.com/$vimeoId";
+		$api	= new VimeoApi();
+		$url	= $api->getEmbedHtml($vimeoId, false);
     }
+	
     return $url;
 }, 999, 2 );
 
@@ -117,12 +117,23 @@ add_filter( 'media_send_to_editor', function ($html, $id, $attachment) {
 add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
 	if(strpos($icon, 'video.png') && is_numeric(get_post_meta($postId, 'vimeo_id', true))){
 		try{
-			$vimeoApi	= new VimeoApi();
-			$path		= $vimeoApi->getThumbnail($postId);
-			if(!$path) {
+			$path  = get_post_meta($postId, 'thumbnail', true);
+
+			if(!file_exists($path)){
+                $vimeoApi	= new VimeoApi();
+				$path		= $vimeoApi->getThumbnail($postId);
+				if(!$path) {
+					return $icon;
+				}
+            }
+			
+			$newIcon		= SIM\pathToUrl($path);
+
+			if(!$newIcon){
 				return $icon;
 			}
-			$icon		= SIM\pathToUrl($path);
+
+			return $newIcon;
 		}catch(\Exception $e){
 			SIM\printArray($e);
 		}

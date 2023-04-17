@@ -3,7 +3,9 @@ namespace SIM\VIMEO;
 use SIM;
 
 add_filter('sim_media_gallery_item_html', function($mediaHtml, $type, $postId){
-    if($type != 'video') return $mediaHtml;
+    if($type != 'video'){
+        return $mediaHtml;
+    }
 
     $vimeo      = new VimeoApi();
     $vimeoId    = $vimeo->getVimeoId($postId);
@@ -28,7 +30,9 @@ add_filter('sim_media_gallery_download_url', function($url, $postId){
 }, 10, 2);
 
 add_filter('sim_media_gallery_download_filename', function($fileName, $type, $postId){
-    if($type != 'video') return $fileName;
+    if($type != 'video'){
+        return $fileName;
+    }
 
     $vimeo      = new VimeoApi();
     $path       = $vimeo->getVideoPath($postId);

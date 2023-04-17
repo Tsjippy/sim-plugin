@@ -177,7 +177,7 @@ function urlToPath($url){
  * Transforms a path to an url
  * @param 	string		$path	 		The path to be transformed
  *
- * @return	string						The url
+ * @return	string|false				The url or false on failure
 */
 function pathToUrl($path){
 	if(is_string($path)){
@@ -187,7 +187,16 @@ function pathToUrl($path){
 		if(strpos($path, ABSPATH) === false && strpos($path, $base) === false){
 			$path	= $base.$path;
 		}
+
+		if(!file_exists($path)){
+			return false;
+		}
 		$url	= str_replace($base, SITEURL.'/', $path);
+
+		// not a valid url
+		if(!filter_var($url, FILTER_VALIDATE_URL)){
+			return false;
+		}
 	}else{
 		$url	= $path;
 	}
