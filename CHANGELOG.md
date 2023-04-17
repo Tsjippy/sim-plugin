@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.32.2] - 2023-04-17
+
+
+### Fixed
 - vimeo bug
 
 ### Updated
