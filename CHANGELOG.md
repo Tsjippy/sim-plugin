@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- vimeo bug
 
 ### Updated
 
