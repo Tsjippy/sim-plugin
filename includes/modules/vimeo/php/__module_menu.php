@@ -27,7 +27,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 
 	return ob_get_clean();
 
-},10,2);
+}, 10, 2);
 
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name

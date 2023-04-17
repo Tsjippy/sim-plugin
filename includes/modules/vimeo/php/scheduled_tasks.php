@@ -17,6 +17,7 @@ function scheduleTasks(){
 
 //create local thumbnails
 function createVimeoThumbnails(){
+
 	$args = array(
 		'post_type'  	=> 'attachment',
 		'numberposts'	=> -1,
@@ -42,6 +43,7 @@ function createVimeoThumbnails(){
 
 //sync local db with vimeo.com
 function vimeoSync(){
+
     $vimeoApi	= new VimeoApi();
     
     if ( $vimeoApi->isConnected() ) {

@@ -62,14 +62,15 @@ add_action( 'rest_api_init', function () {
 		array(
 			'methods' 				=> 'POST,GET',
 			'callback' 				=> 	function(){
-				$vimeo		= new VimeoApi();
+
+				$vimeoApi	= new VimeoApi();
 				$vimeoId	= $_POST['vimeoid'];
 
-				$post	= $vimeo->getPost($vimeoId);
+				$post	= $vimeoApi->getPost($vimeoId);
 				if(is_wp_error($post)){
 					return $post;
 				}else{
-					$result		= $vimeo->downloadFromVimeo($_POST['download_url'], $post->ID);
+					$result		= $vimeoApi->downloadFromVimeo($_POST['download_url'], $post->ID);
 					if(is_wp_error($result)){
 						return $result;
 					}
@@ -140,6 +141,7 @@ function prepareVimeoUpload(){
  * @return	array with succes and the attachment data
  */
 function addUploadedVimeo(){
+
 	$postId		= $_POST['post_id'];
 
     // Get the attachement data
@@ -174,6 +176,7 @@ function addUploadedVimeo(){
 }
 
 function cleanupBackupFolder(){
+
 	$vimeoApi	= new VimeoApi();
 
 	$vimeoVideos	= $vimeoApi->getUploadedVideos();

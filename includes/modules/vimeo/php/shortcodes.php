@@ -9,11 +9,12 @@ add_shortcode("vimeo_video", function($atts){
 });
 
 function showVimeoVideo($vimeoId){
+
 	// Load css
 	wp_enqueue_style( 'vimeo_style');
 
-	$api	= new VimeoApi();
-	$html	= $api->getEmbedHtml($vimeoId);
+	$vimeoApi	= new VimeoApi();
+	$html	= $vimeoApi->getEmbedHtml($vimeoId);
 
 	ob_start();
 	?>

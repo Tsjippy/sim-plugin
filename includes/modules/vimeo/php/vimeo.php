@@ -2,56 +2,19 @@
 namespace SIM\VIMEO;
 use SIM;
 
-// Add upload to vimeo button to attachment page if auto upload is not on
-add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
-	//only work on video's
-	if(explode('/',$post->post_mime_type)[0] != 'video'){
-		return $formFields;
-	}
-
-	$vimeoId = get_post_meta( $post->ID, 'vimeo_id', true );
-
-	if(is_numeric($vimeoId)){
-		//check if backup already exists
-		$path   = get_post_meta($post->ID, 'video_path', true);
-
-		if(!file_exists($path)){
-			$formFields['vimeo_url'] = array(
-				'label' => "Video url",
-				'input' => 'text',
-				'value' => '',
-				'helps' => "Enter the url to download a backup to your server (get it from <a href='https://vimeo.com/manage/$vimeoId/advanced' target='_blank'>this page</a>)"
-			);
-		}
-	}elseif( !SIM\getModuleOption(MODULE_SLUG, 'upload') ){
-		//Check if already uploaded
-		$html    = "<div>";
-			$html   .= "<input style='width: initial' type='checkbox' name='attachments[{$post->ID}][vimeo]' value='upload'>";
-		$html   .= "</div>";
-
-		$formFields['visibility'] = array(
-			'value' => 'upload',
-			'label' => __( 'Upload this video to vimeo' ),
-			'input' => 'html',
-			'html'  =>  $html
-		);
-	}
-
-	return $formFields;
-}, 10, 2);
-
 //process the request to upload to Vimeo
 add_action( 'edit_attachment', function($attachmentId){
-	$vimeo	= new VimeoApi();
+
+	$vimeoApi	= new VimeoApi();
 
 	// Upload local video to vimeo
     if ( isset( $_REQUEST['attachments'][$attachmentId]['vimeo'] ) ) {
-        $vimeo->upload($attachmentId);
+        $vimeoApi->upload($attachmentId);
     }
 
 	// download vimeo video to server
 	if ( !empty( $_REQUEST['attachments'][$attachmentId]['vimeo_url'] ) ) {
-		$vimeo->downloadFromVimeo($_REQUEST['attachments'][$attachmentId]['vimeo_url'], $attachmentId);
+		$vimeoApi->downloadFromVimeo($_REQUEST['attachments'][$attachmentId]['vimeo_url'], $attachmentId);
 	}
 
 	// Update vimeo meta data
@@ -66,13 +29,14 @@ add_action( 'edit_attachment', function($attachmentId){
 	}
 
 	if(!empty($data)){
-		$vimeo->updateMeta($attachmentId, $data);
+		$vimeoApi->updateMeta($attachmentId, $data);
 	}
 } );
 
 // Delete video from vimeo when attachemnt is deleted, if that option is enabled
 if(SIM\getModuleOption(MODULE_SLUG, 'remove')){
 	add_action( 'delete_attachment', function($postId, $post ){
+
 		if(explode('/', $post->post_mime_type)[0] == 'video'){
 			$vimeoApi = new VimeoApi();
 			$vimeoApi->deleteVimeoVideo($postId);
@@ -80,19 +44,21 @@ if(SIM\getModuleOption(MODULE_SLUG, 'remove')){
 	}, 10, 2);
 }
 
-add_action('sim_before_visibility_change', function($attachment_id, $visibility){
+add_action('sim_before_visibility_change', function($attachmentId, $visibility){
+
 	if($visibility == 'private'){
 		$vimeoApi	= new VimeoApi();
-		$vimeoApi->hideVimeoVideo($attachment_id);
+		$vimeoApi->hideVimeoVideo($attachmentId);
 	}
 }, 10, 2);
 
 //change the url of vimeo videos so it points to vimeo.com
 add_filter( 'wp_get_attachment_url', function( $url, $attId ) {
     $vimeoId   = get_post_meta($attId, 'vimeo_id', true);
+
     if(is_numeric($vimeoId)){
-		$api	= new VimeoApi();
-		$url	= $api->getEmbedHtml($vimeoId, false);
+		$vimeoApi	= new VimeoApi();
+		$url		= $vimeoApi->getEmbedHtml($vimeoId, false);
     }
 	
     return $url;
@@ -103,43 +69,10 @@ add_filter( 'media_send_to_editor', function ($html, $id, $attachment) {
 	if(strpos($attachment['url'], 'https://vimeo.com') !== false){
 		$vimeoId	= str_replace('https://vimeo.com/', '', $attachment['url']);
 
-		/* $html = '<!-- wp:video {"id":'.$attachment['id'].'} -->';
-			$html .= '<figure class="wp-block-video"><video src="https://vimeo.com/'.$vimeo_id.'" controls="controls" width="300" height="150"></video></figure>';
-		$html .= '<!-- /wp:video -->'; */
-
 		$html	= "[vimeo_video id=$vimeoId]";
 	}
 	
 	return $html;
-}, 10, 9 );
-
-//change vimeo thumbnails
-add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
-	if(strpos($icon, 'video.png') && is_numeric(get_post_meta($postId, 'vimeo_id', true))){
-		try{
-			$path  = get_post_meta($postId, 'thumbnail', true);
-
-			if(!file_exists($path)){
-                $vimeoApi	= new VimeoApi();
-				$path		= $vimeoApi->getThumbnail($postId);
-				if(!$path) {
-					return $icon;
-				}
-            }
-			
-			$newIcon		= SIM\pathToUrl($path);
-
-			if(!$newIcon){
-				return $icon;
-			}
-
-			return $newIcon;
-		}catch(\Exception $e){
-			SIM\printArray($e);
-		}
-	}
-	
-	return $icon;
 }, 10, 9 );
 
 if(SIM\getModuleOption(MODULE_SLUG, 'upload')){
@@ -247,3 +180,72 @@ add_filter( 'wp_handle_upload', function($file){
 
 	return $file;
 } );
+
+//change vimeo thumbnails
+add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
+
+	if(strpos($icon, 'video.png') && is_numeric(get_post_meta($postId, 'vimeo_id', true))){
+		try{
+			$path  = get_post_meta($postId, 'thumbnail', true);
+
+			if(!file_exists($path)){
+                $vimeoApi	= new VimeoApi();
+				$path		= $vimeoApi->getThumbnail($postId);
+				if(!$path) {
+					return $icon;
+				}
+            }
+			
+			$newIcon		= SIM\pathToUrl($path);
+
+			if(!$newIcon){
+				return $icon;
+			}
+
+			return $newIcon;
+		}catch(\Exception $e){
+			SIM\printArray($e);
+		}
+	}
+	
+	return $icon;
+}, 10, 9 );
+
+
+// Add upload to vimeo button to attachment page if auto upload is not on
+add_filter( 'attachment_fields_to_edit', function($formFields, $post ){
+	//only work on video's
+	if(explode('/',$post->post_mime_type)[0] != 'video'){
+		return $formFields;
+	}
+
+	$vimeoId = get_post_meta( $post->ID, 'vimeo_id', true );
+
+	if(is_numeric($vimeoId)){
+		//check if backup already exists
+		$path   = get_post_meta($post->ID, 'video_path', true);
+
+		if(!file_exists($path)){
+			$formFields['vimeo_url'] = array(
+				'label' => "Video url",
+				'input' => 'text',
+				'value' => '',
+				'helps' => "Enter the url to download a backup to your server (get it from <a href='https://vimeo.com/manage/$vimeoId/advanced' target='_blank'>this page</a>)"
+			);
+		}
+	}elseif( !SIM\getModuleOption(MODULE_SLUG, 'upload') ){
+		//Check if already uploaded
+		$html    = "<div>";
+			$html   .= "<input style='width: initial' type='checkbox' name='attachments[{$post->ID}][vimeo]' value='upload'>";
+		$html   .= "</div>";
+
+		$formFields['visibility'] = array(
+			'value' => 'upload',
+			'label' => __( 'Upload this video to vimeo' ),
+			'input' => 'html',
+			'html'  =>  $html
+		);
+	}
+
+	return $formFields;
+}, 10, 2);
