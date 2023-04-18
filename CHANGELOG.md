@@ -8,6 +8,7 @@
 - consitstend naming of variables
 
 ### Fixed
+- vimeo video preview in media gallery backend
 
 ### Updated
 
