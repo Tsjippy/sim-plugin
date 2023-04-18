@@ -58,7 +58,14 @@ add_filter( 'wp_get_attachment_url', function( $url, $attId ) {
 
     if(is_numeric($vimeoId)){
 		$vimeoApi	= new VimeoApi();
-		$url		= $vimeoApi->getEmbedHtml($vimeoId, false);
+
+		$video		= $vimeoApi->getVideo($vimeoId);
+
+		if(isset($video['body']['player_embed_url'])){
+			$url		= $video['body']['player_embed_url'];
+
+			$url		=str_replace(['player.', 'video/'], '', $url);
+		}
     }
 	
     return $url;

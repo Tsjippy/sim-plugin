@@ -169,13 +169,22 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             return $posts[0];
         }
 
+        public function getVideo($vimeoId){
+            return $this->api->request( "/videos/$vimeoId", [], 'GET' );
+        }
+
         /**
          * Retrieves the embed code to display a video
          *
          * @param   int     $vimeoId    The vimeo id of the video to display
-         * @param   bool    $html       Whether to return the html or the url. Default Html
          */
-        public function getEmbedHtml($vimeoId, $html=true){
+        public function getEmbedHtml($vimeoId){
+
+            $video		= $this->getVideo($vimeoId);
+
+            if(isset($video['body']['embed']['html'])){
+                return $video['body']['embed']['html'];
+            }
 
             $oembedEndpoint = 'http://vimeo.com/api/oembed';
             $url = $oembedEndpoint . '.json?url=' . rawurlencode("http://vimeo.com/$vimeoId") . '&width=640';
@@ -192,11 +201,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             curl_close($curl);
 
             $result = json_decode($response);
-            if($html){
-                return $result->html;
-            }
-
-            return trim($result->provider_url, '/').$result->uri;
+            return $result->html;
         }
 
         /**
