@@ -9,6 +9,7 @@
 
 ### Fixed
 - vimeo video preview in media gallery backend
+- media gallery is slow
 
 ### Updated
 
