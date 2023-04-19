@@ -17,3 +17,33 @@ add_filter('render_block', function($blockContent, $block){
 
     return $blockContent;
 }, 999999999, 2);
+
+
+//change the default output for a local video to a vimeo iframe
+add_filter( 'render_block', function( $blockContent,  $block ){
+	//if this is a video block
+	if($block['blockName'] == 'core/video'){
+		$postId		= $block['attrs']['id'];
+		$vimeoId	= get_post_meta($postId, 'vimeo_id', true);
+
+		//if this video is an vimeo video
+		if(is_numeric($vimeoId)){
+			$vimeoApi	= new VimeoApi();
+			$html	= $vimeoApi->getEmbedHtml($vimeoId);
+
+			//return a vimeo block
+			ob_start();
+			?>
+			<figure class="wp-block-embed is-type-video is-provider-vimeo wp-block-embed-vimeo wp-embed-aspect-16-9 wp-has-aspect-ratio">
+				<div class="wp-block-embed__wrapper">
+					<?php echo $html;?>
+				</div>
+			</figure>
+			<?php
+
+            return ob_get_clean();
+        }
+	}
+
+	return $blockContent;
+}, 10, 2);

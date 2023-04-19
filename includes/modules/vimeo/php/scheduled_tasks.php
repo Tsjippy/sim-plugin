@@ -52,6 +52,18 @@ function vimeoSync(){
             return;
         }
 
+        $indexedVideos  = [];
+
+        // use the vimeo id as the index for easy finding
+        foreach($vimeoVideos as $vimeoVideo){
+            $vimeoId                    = str_replace('/videos/', '', $vimeoVideo['uri']);
+
+            $indexedVideos[$vimeoId]    = $vimeoVideo;
+        }
+
+        // update the cache
+        update_option('sim-vimeo-videos', $indexedVideos);
+
         $args = array(
             'post_type'  	=> 'attachment',
             'numberposts'	=> -1,

@@ -170,7 +170,30 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
         }
 
         public function getVideo($vimeoId){
-            return $this->api->request( "/videos/$vimeoId", [], 'GET' );
+            global $vimeoVideos;
+
+            if(!is_array($vimeoVideos)){
+                $vimeoVideos	= $this->getUploadedVideos();
+                if($vimeoVideos){
+                    $indexedVideos  = [];
+
+                    // use the vimeo id as the index for easy finding
+                    foreach($vimeoVideos as $vimeoVideo){
+                        $vimeoId                    = str_replace('/videos/', '', $vimeoVideo['uri']);
+
+                        $indexedVideos[$vimeoId]    = $vimeoVideo;
+                    }
+
+                    // update the cache
+                    update_option('sim-vimeo-videos', $indexedVideos);
+                }
+            }
+            
+            if(isset($vimeoVideos[$vimeoId])){
+                return $vimeoVideos[$vimeoId];
+            }
+
+            return $this->api->request( "/videos/$vimeoId", [], 'GET' )['body'];
         }
 
         /**
@@ -182,8 +205,8 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
             $video		= $this->getVideo($vimeoId);
 
-            if(isset($video['body']['embed']['html'])){
-                return $video['body']['embed']['html'];
+            if(isset($video['embed']['html'])){
+                return $video['embed']['html'];
             }
 
             $oembedEndpoint = 'http://vimeo.com/api/oembed';
@@ -216,7 +239,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
 
             if ( $this->isConnected() ) {
                 $query  = array(
-                    'fields'   => 'uri,name',
+                    'fields'   => 'uri,name,player_embed_url,embed',
                     'filter'   => 'embeddable',
                 );
 
