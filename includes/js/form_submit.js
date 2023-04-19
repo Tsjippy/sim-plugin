@@ -101,6 +101,22 @@ export async function submitForm(target, url){
 
 		return response;
 	}else{
+		form.querySelectorAll(':invalid').forEach(el=>{
+			if(el.validationMessage != undefined){
+				Main.displayMessage(`${el.name} has an error:\n${el.validationMessage}`, 'error').then((value)=>{
+					form.querySelectorAll('.formstep:not(.stephidden)').forEach(formstep=>formstep.classList.add('stephidden'));
+
+					el.closest('.stephidden').classList.remove('stephidden');
+
+					el.focus();
+
+					el.scrollIntoView();
+
+					el.focus();
+				});
+			}
+		});
+
 		return false;
 	}
 }

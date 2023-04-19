@@ -131,9 +131,9 @@ export function displayMessage(message, icon, autoclose=false, no_ok=false, time
 			options['target']	= document.fullscreenElement;
 		}
 		
-		Swal.fire(options);
+		return Swal.fire(options);
 	}else{
-		alert(message.trim());
+		return alert(message.trim());
 	}
 }
 
