@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- insert vimeo shortcode
 
 ### Updated
 
