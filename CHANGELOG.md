@@ -8,6 +8,7 @@
 
 ### Fixed
 - insert vimeo shortcode
+- rare bug in formbuilder
 
 ### Updated
 
