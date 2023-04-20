@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- user posts gallery
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.32.4] - 2023-04-20
+
+
+### Added
+- user posts gallery
 
 ### Fixed
 - insert vimeo shortcode
