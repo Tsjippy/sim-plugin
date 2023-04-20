@@ -413,6 +413,7 @@ class SubmitForm extends SimForms{
 			$userData		= (array)get_userdata($this->userId)->data;
 			foreach($this->submission->formresults as $key=>&$result){
 				$subKey	= false;
+
 				//remove empty elements from the array
 				if(is_array($result)){
 					SIM\cleanUpNestedArray($result);
@@ -443,6 +444,10 @@ class SubmitForm extends SimForms{
 								unset($curValue[$subKey]);
 							}
 						}else{
+							if(!is_array($curValue)){
+								$curValue	= [];
+							}
+
 							//update subkey
 							$curValue[$subKey]	= $result[$subKey];
 						}
