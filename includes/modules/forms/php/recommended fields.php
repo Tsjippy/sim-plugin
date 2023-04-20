@@ -174,6 +174,7 @@ add_filter('sim_recommended_html_filter', __NAMESPACE__.'\addChildFields', 10, 2
 function addChildFields($html, $userId){
 	// Add warnings for child fields
 	$family = get_user_meta($userId, "family", true);
+	
 	//User has children
 	if (isset($family["children"])){
 		// Loop over children

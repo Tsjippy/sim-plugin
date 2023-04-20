@@ -288,6 +288,11 @@ class SignalBus extends Signal {
      * @return bool|string
      */
     public function sendGroupMessage($message, $groupId, $attachments=''){
+
+        if(empty($message) || empty($groupId)){
+            return false;
+        }
+
         $this->addToMessageLog($groupId, $message);
 
         if(is_array($attachments)){
@@ -444,8 +449,7 @@ class SignalBus extends Signal {
      * @param bool $removeAvatar Remove the avatar visible by message recipients
      * @return bool|string
      */
-    public function updateProfile(string $name, string $avatarPath = null, bool $removeAvatar = false)
-    {
+    public function updateProfile(string $name, string $avatarPath = null, bool $removeAvatar = false){
         if($removeAvatar){
             $removeAvatar   = 'true';
         }else{
