@@ -10,6 +10,7 @@
 - insert vimeo shortcode
 - rare bug in formbuilder
 - saving generics in case rare bug
+- signal message to empty recipient
 
 ### Updated
 
