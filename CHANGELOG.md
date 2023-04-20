@@ -7,6 +7,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.32.4] - 2023-04-20
+
+
+### Added
+- user posts gallery
+
+### Fixed
 - insert vimeo shortcode
 - rare bug in formbuilder
 - saving generics in case rare bug
