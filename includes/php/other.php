@@ -1,11 +1,6 @@
 <?php
 namespace SIM;
 
-//Only show read more on home and news page
-add_filter( 'excerpt_more', function ( $more ) {
-	return '<a class="moretag" href="' . get_the_permalink() . '">Read More »</a>';
-}, 999  );
-
 //Change the timeout on post locks
 add_filter( 'wp_check_post_lock_window', function(){ return 70;});
 
@@ -84,7 +79,9 @@ function customExcerpt($excerpt, $post=null) {
 	
 	if ( empty($excerpt)) {
 		//Retrieve the post content.
-		if(!empty($post)) $excerpt = $post->post_content;
+		if(!empty($post)){
+			$excerpt = $post->post_content;
+		}
 		
 		//Delete all shortcode tags from the content.
 		$excerpt = strip_shortcodes( $excerpt );
@@ -94,7 +91,7 @@ function customExcerpt($excerpt, $post=null) {
 		$allowedTags 	= '<br>,<strong>';
 		$excerpt 		= strip_tags($excerpt, $allowedTags);
 		 
-		$excerptWordCount 	= 45; 
+		$excerptWordCount 	= 45;
 		$excerptLength 		= apply_filters('excerpt_length', $excerptWordCount);
 		 
 		$excerptEnd			= '[...]';
@@ -104,7 +101,7 @@ function customExcerpt($excerpt, $post=null) {
 		if ( count($words) > $excerptLength ) {
 			array_pop($words);
 			$excerpt = implode(' ', $words);
-			$excerpt = $excerpt . $excerptMore;
+			$excerpt = "<div class='excerpt'>$excerpt</div>$excerptMore";
 		} else {
 			$excerpt = implode(' ', $words);
 		}

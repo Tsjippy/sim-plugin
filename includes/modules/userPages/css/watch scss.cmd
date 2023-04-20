@@ -1,0 +1,1 @@
+sass --watch --style=compressed ".\usercontent.scss" "usercontent.min.css"

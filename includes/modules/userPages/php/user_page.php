@@ -199,6 +199,7 @@ function userDescription($userId){
 			$address = $location["compound"].' State';
 		}
 	}
+
 	//Build the html
 	//user has a family
 	if (!empty($family)){
@@ -244,6 +245,12 @@ function userDescription($userId){
 			}
 			$html .= "</p>";
 		}
+
+		$html .= showContent($userId);
+
+		if (isset($family['partner']) && is_numeric($family['partner'])){
+			$html .= showContent($family['partner']);
+		}
 	//Single
 	}else{
 		$userdata = get_userdata($userId);
@@ -263,7 +270,7 @@ function userDescription($userId){
 			$html	.= "</h1>";
 			$html	.= "<br>";
 			if(!isset($privacyPreference['hide_location']) && $arrived){
-				$html .= "<p>Lives on: $address</p>";
+				$html .= "<p>Lives in: $address</p>";
 			}
 			if(!isset($privacyPreference['hide_ministry']) && $arrived){
 				$html .= "<p>Works with: <br>".addMinistryLinks($userId)."</p>";
@@ -277,6 +284,8 @@ function userDescription($userId){
 		}else{
 			$html .= "<p>Nothing to show here due to privacy settings.</p>";
 		}
+
+		$html .= showContent($userId);
 	}
 
 	return $html;
@@ -576,4 +585,74 @@ function getUserPageUrl($userId){
     }
 
    	return get_permalink($userPageId);
+}
+
+/**
+ * Show a gallery of the users published content
+ *
+ * @param	int			$userId		WP_user id
+ */
+function showContent($userId){
+	wp_enqueue_style( 'sim_show_user_content_style', plugins_url('css/usercontent.min.css', __DIR__), array(), MODULE_VERSION);
+
+	$posts = get_posts(
+		array(
+			'post_type'		=> 'post',
+			'post_status'	=> 'publish',
+			'author'		=> $userId,
+			'orderby'		=> 'post_date',
+			'order'			=> 'ASC',
+			'numberposts'	=> -1,
+		)
+	);
+
+	$allowedHtml = array(
+        'br'     => array(),
+        'em'     => array(),
+        'strong' => array(),
+        'i'      => array(),
+        'class' => array(),
+        'span'   => array(),
+    );
+
+	ob_start();
+
+	$name	= get_userdata($userId)->first_name;
+
+	?>
+	<div class='content-wrapper'>
+		<h4>Content published by <?php echo $name;?></h4>
+		<div class='author-content-wrapper'>
+			<?php
+			foreach($posts as $post){
+				$url	= get_permalink($post);
+				?>
+				<article id="post-<?php echo $post->ID; ?>" class='author-content'>
+					<div class='picture'>
+						<a href='<?php echo $url;?>'>
+							<?php
+							echo get_the_post_thumbnail( $post, [250,200] );
+							?>
+						</a>
+					</div>
+
+					<div class='title'>
+						<a href='<?php echo $url;?>'>
+							<h4><?php echo wp_kses( force_balance_tags($post->post_title), $allowedHtml );?></h4>
+						</a>
+					</div>
+
+					<div class='content'>
+						<?php echo wp_kses( force_balance_tags(get_the_excerpt($post)), $allowedHtml );?>
+					</div>
+				</article>
+				
+				<?php
+			}
+			?>
+		</div>
+	</div>
+	<?php
+
+	return ob_get_clean();
 }

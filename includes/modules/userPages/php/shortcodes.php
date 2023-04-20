@@ -261,7 +261,6 @@ function createContactlistPdf($header, $data, $download=false) {
     return $contactList;
 }
 
-
 /**
  * Builds the PDF of contact info of all users
  *
