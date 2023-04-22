@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- bug when location was empty
 
 ### Updated
 
