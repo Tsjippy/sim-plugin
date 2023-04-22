@@ -611,8 +611,16 @@ function showContent($userId){
         'em'     => array(),
         'strong' => array(),
         'i'      => array(),
+        'span'   => array(
+			"class" => array(),
+		),
+		'div'   => array(
+			"class" => array(),
+		),
         'class' => array(),
-        'span'   => array(),
+		'a'		=> array(
+			"class" => array(),
+		)
     );
 
 	ob_start();
@@ -624,6 +632,9 @@ function showContent($userId){
 		<h4>Content published by <?php echo $name;?></h4>
 		<div class='author-content-wrapper'>
 			<?php
+			if(empty($posts)){
+				echo "No content found";
+			}
 			foreach($posts as $post){
 				$url	= get_permalink($post);
 				?>

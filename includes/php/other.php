@@ -84,7 +84,7 @@ function customExcerpt($excerpt, $post=null) {
 		}
 		
 		//Delete all shortcode tags from the content.
-		$excerpt = strip_shortcodes( $excerpt );
+		$excerpt 		= strip_shortcodes( $excerpt );
 		
 		$excerpt 		= str_replace(']]>', ']]&gt;', $excerpt);
 		$excerpt 		= str_replace("<p>","<br>", $excerpt);

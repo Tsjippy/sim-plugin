@@ -7,7 +7,24 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    VIMEO\vimeoSync();
+/*     $posts = get_posts(
+		array(
+			'post_type'		=> 'any',
+			'author'		=> 137,
+			'numberposts'	=> -1,
+		)
+	);
+
+    foreach($posts as $post){
+        wp_update_post(
+            [
+                'ID'         	=> $post->ID,
+				'post_author'	=> 292
+            ], 
+            false, 
+            false
+        );
+    } */
 });
 
 // turn off incorrect error on localhost
