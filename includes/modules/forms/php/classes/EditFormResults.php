@@ -84,6 +84,8 @@ class EditFormResults extends DisplayFormResults{
 		
 		//loop over all the forms
 		foreach($this->forms as $form){
+			$this->getForm($form->id);
+
 			$settings = (array)maybe_unserialize($form->settings);
 			
 			//check if auto archive is turned on for this form

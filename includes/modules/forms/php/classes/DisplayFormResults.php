@@ -60,7 +60,7 @@ class DisplayFormResults extends DisplayForm{
 		
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE ";
 
-		if(!empty($_REQUEST['subid'])){
+		if(empty($submissionId) && !empty($_REQUEST['subid'])){
 			$submissionId	= $_REQUEST['subid'];
 		}
 		
