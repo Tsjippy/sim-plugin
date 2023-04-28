@@ -8,6 +8,7 @@
 
 ### Fixed
 - bug when location was empty
+- wrong form submission returend in rare case
 
 ### Updated
 
