@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.32.5] - 2023-04-28
+
+
+### Fixed
 - bug when location was empty
 - wrong form submission returend in rare case
 
