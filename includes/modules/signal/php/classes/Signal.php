@@ -306,9 +306,16 @@ class Signal {
 
                 wp_mail($to, $subject, $message);
             }
-            SIM\printArray($this->command);
+
+            $error  = $this->command->getError();
+
+            if(strpos($error, 'Unregistered user') !== false){
+                SIM\printArray($error);
+            }else{
+                SIM\printArray($this->command);
+            }
             
-            $this->error    = "<div class='error'>".$this->command->getError()."</div>";
+            $this->error    = "<div class='error'>$error</div>";
             if($returnJson){
                 return json_encode($this->error);
             }

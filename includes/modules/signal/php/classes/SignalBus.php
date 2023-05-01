@@ -9,6 +9,7 @@ use BaconQrCode\Writer;
 use GuzzleHttp;
 use mikehaertl\shellcommand\Command;
 use stdClass;
+use WP_Error;
 
 /* Install java apt install openjdk-17-jdk -y
 export VERSION=0.11.3
@@ -366,16 +367,22 @@ class SignalBus extends Signal {
      * @return bool|string
      */
     public function send($recipients, string $message, $attachments = ''){
+        if(empty($recipients)){
+            return new WP_Error('Signal', 'You should submit at least one recipient');
+        }
+
         $message    = str_replace('`', "'", $message);
+
         if(is_array($attachments)){
             $attachments    = implode(',', $attachments);
         }
+
         if(!is_array($recipients)){
             if(strpos( $recipients , '+' ) === 0){
                 $recipient    = "string:'$recipients'";
                 $this->addToMessageLog($recipients, $message);
             }else{
-                $this->sendGroupMessage($message, $recipients, $attachments);
+                return $this->sendGroupMessage($message, $recipients, $attachments);
             }
         }else{
             $recipient    = "array:string:".implode(',', $recipients);

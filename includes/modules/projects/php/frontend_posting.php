@@ -223,6 +223,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
                     <th><label for="ministry">Ministry this project is connected to</label></th>
                     <td>
                         <select name='ministry'>
+                            <option value=''>---</option>
                             <?php
                             foreach($ministries as $ministry){
                                 $selected   = '';

@@ -33,7 +33,7 @@ add_action('sim_after_post_save', function($post){
 
 add_filter('sim_attachment_preview', function($image, $postId){
 
-    $vimeoApi      = new VimeoApi();
+    $vimeoApi   = new VimeoApi();
     $vimeoId    = $vimeoApi->getVimeoId($postId);
 
     if($vimeoId){

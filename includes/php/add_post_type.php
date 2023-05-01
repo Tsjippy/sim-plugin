@@ -136,7 +136,7 @@ add_filter( 'page_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 add_filter( 'taxonomy_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 add_filter( 'part_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 add_filter( 'archive_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
-add_filter( 'category_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
+//add_filter( 'category_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 add_filter( 'singular_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 add_filter( 'content_template', __NAMESPACE__.'\getTemplateFile', 10, 2 );
 

@@ -25,7 +25,7 @@ function getProfilePicture($userId){
             if(!empty($contents)){
                 $image = "data:image/$type;base64,".base64_encode($contents);
             }
-        }   
+        }
     }
 
     return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAAwFBMVEXm7NK41k3w8fDv7+q01Tyy0zqv0DeqyjOszDWnxjClxC6iwCu11z6y1DvA2WbY4rCAmSXO3JZDTxOiwC3q7tyryzTs7uSqyi6tzTCmxSukwi9aaxkWGga+3FLv8Ozh6MTT36MrMwywyVBziSC01TbT5ZW9z3Xi6Mq2y2Xu8Oioxy7f572qxzvI33Tb6KvR35ilwTmvykiwzzvV36/G2IPw8O++02+btyepyDKvzzifvSmw0TmtzTbw8PAAAADx8fEC59dUAAAA50lEQVQYV13RaXPCIBAG4FiVqlhyX5o23vfVqUq6mvD//1XZJY5T9xPzzLuwgKXKslQvZSG+6UXgCnFePtBE7e/ivXP/nRvUUl7UqNclvO3rpLqofPDAD8xiu2pOntjamqRy/RqZxs81oeVzwpCwfyA8A+8mLKFku9XfI0YnSKXnSYZ7ahSII+AwrqoMmEFKriAeVrqGM4O4Z+ADZIhjg3R6LtMpWuW0ERs5zunKVHdnnnMLNQqaUS0kyKkjE1aE98b8y9x9JYHH8aZXFMKO6JFMEvhucj3Wj0kY2D92HlHbE/9Vk77mD6srRZqmVEAZAAAAAElFTkSuQmCC';
@@ -35,9 +35,9 @@ function getProfilePicture($userId){
 
 /**
  * Create random strings for user ID
- * 
- * @param   int $length 
- * 
+ *
+ * @param   int $length
+ *
  * @return  string  the string
  */
 function generateRandomString($length = 10){
@@ -80,7 +80,7 @@ function generateCallTrace($exception = false){
 
 /**
  * Creates a new rp entity
- * 
+ *
  * @return  object the rprntity
  */
 function getRpEntity(){
@@ -104,7 +104,7 @@ function getRpEntity(){
 
 /**
  * Temporary store a value
- * 
+ *
  * @param   string  $key        The identifier
  * @param   string|int|array|object     $value  The value
  */
@@ -120,9 +120,9 @@ function storeInTransient($key, $value){
 
 /**
  * Retrieves a temporary stored value
- * 
+ *
  * @param   string  $key    The key the values was stored with
- * 
+ *
  * @return  string|int|array|object             The value
  */
 function getFromTransient($key){
@@ -136,7 +136,7 @@ function getFromTransient($key){
 
 /**
  * Get authenticator list
- * 
+ *
  * @return  object The autenticator object
  */
 function authenticatorList(){
@@ -144,8 +144,8 @@ function authenticatorList(){
 
     if(!current_user_can("read")){
         $name = $user->display_name;
-        SIM\printArray("$name has not enough permissions");
-        return;
+        //SIM\printArray("$name has not enough permissions");
+        //return;
     }
 
     if(isset($_GET["user_id"])){
@@ -186,14 +186,15 @@ function authenticatorList(){
     );
 
     $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user);
+
     return $publicKeyCredentialSourceRepository->getShowList($userEntity);
 }
 
 /**
  * Creates a table listing all the webauthn methods of an user
- * 
+ *
  * @param   int     $authId     The current used webauthn id
- * 
+ *
  * @return  string              The table html
  */
 function authTable($authId=''){
@@ -231,7 +232,7 @@ function authTable($authId=''){
                         }else{
                             echo "<tr>";
                         }
-                        
+             
 						?>
 							<td><?php echo $identifier;?></td>
 							<td><?php echo $osName;?></td>
