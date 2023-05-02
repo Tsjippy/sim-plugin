@@ -9,6 +9,7 @@
 
 ### Fixed
 - issue with empty Signal number
+- better excerpts
 
 ### Updated
 
