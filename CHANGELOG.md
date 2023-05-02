@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- keep track of changing phone numbers
 
 ### Changed
 
