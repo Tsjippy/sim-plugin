@@ -86,10 +86,13 @@ function customExcerpt($excerpt, $post=null) {
 		//Delete all shortcode tags from the content.
 		$excerpt 			= strip_shortcodes( $excerpt );
 		
-		$excerpt 			= str_replace(']]>', ']]&gt;', $excerpt);
-		$excerpt 			= str_replace("<p>","<br>", $excerpt);
+		$excerpt 			= str_replace(["]]>", "<p>", "</p>"], ["]]&gt;", "<br>", ""] , $excerpt);
 		$allowedTags 		= '<br>,<strong>';
 		$excerpt 			= strip_tags($excerpt, $allowedTags);
+
+		while(substr($excerpt, 0, 4) == '<br>'){
+			$excerpt	= trim(substr($excerpt, 4));
+		}
 		 
 		$excerptWordCount 	= 45;
 		$excerptLength 		= apply_filters('excerpt_length', $excerptWordCount);
