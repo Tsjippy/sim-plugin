@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- keep track of changing phone numbers
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.32.6] - 2023-05-02
+
+
+### Added
+- keep track of changing phone numbers
 
 ### Fixed
 - issue with empty Signal number
