@@ -23,10 +23,14 @@ add_shortcode("all_contacts", function (){
 			$vcard = "";
 			$users = SIM\getUserAccounts(false, true, true, ['ID']);
 			foreach($users as $user){
+				$lastChanged	= get_user_meta($user->ID, 'phone-last-changed', true);
 				if(
 					(
 						!empty($_REQUEST['since'])									&&		// we only want new users since last download
-						strtotime($user->data->user_registered) > $lastDownload				// this user accont is created after our last download
+						(
+							strtotime($user->data->user_registered) > $lastDownload	||		// this user accont is created after our last download
+							!empty($lastChanged) && $lastChanged > $lastDownload			// phone number updated since last download
+						)
 					)	||
 					empty($_REQUEST['since'])												// we want all accounts
 				){

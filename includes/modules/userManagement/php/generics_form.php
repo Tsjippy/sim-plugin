@@ -63,8 +63,10 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 		do_action('sim-phonenumber-updated', $changedNumber, $userId);
 	}
 	
-	// update ministries
-	
+	// store changed date
+	if(!empty($changedNumbers)){
+		update_user_meta($userId, 'phone-last-changed', time());
+	}
 	
 	return $formResults;
 }, 10, 3);
@@ -74,6 +76,7 @@ add_action('sim_before_form', function ($formName){
 	if($formName != 'user_generics'){
 		return;
 	}
+
 	?>
 	<div id="add_ministry_modal" class="modal hidden">
 		<div class="modal-content">

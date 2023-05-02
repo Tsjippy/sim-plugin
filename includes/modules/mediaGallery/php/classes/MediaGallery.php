@@ -165,7 +165,7 @@ class MediaGallery{
                                     <div class="content">
                                         <a href='<?php echo $pageUrl;?>'>
                                             <h4 class='card-title'><?php echo $title;?></h4>
-                                            <p class='card-description'><?php echo get_the_excerpt($post->ID);?></p>
+                                            <div class='card-description'><?php echo get_the_excerpt($post->ID);?></div>
                                         </a>
                                     </div>
                                 </div>

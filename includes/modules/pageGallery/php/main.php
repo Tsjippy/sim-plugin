@@ -15,6 +15,8 @@ use SIM;
  * @return	string					The html
  */
 function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed = 60, $showIfEmpty=true, $backgroundColor='#FFFFFF', $gradient=false){
+	global $post;
+
 	wp_enqueue_script('sim_page_gallery_script');
 
 	ob_start();
@@ -150,7 +152,7 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 						<div class="content">
 							<a href='<?php echo $pageUrl;?>'>
 								<h4 class='card-title'><?php echo $title;?></h4>
-								<p class='card-description'><?php echo get_the_excerpt($pageId);?></p>
+								<div class='card-description'><?php echo get_the_excerpt($pageId);?></div>
 							</a>
 						</div>
 					</div>
@@ -163,5 +165,9 @@ function pageGallery($title, $postTypes=[], $amount=3, $categories = [], $speed 
 		</div>
 	</article>
 	<?php
+
+	// restore original post
+	wp_reset_postdata();
+
 	return ob_get_clean();
 }
