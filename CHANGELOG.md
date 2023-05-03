@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- no mandatory pages from the past for new  users
 
 ### Fixed
 
