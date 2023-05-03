@@ -292,7 +292,12 @@ function greencardReminder(){
 				wp_mail( $to, $greenCardReminderMail->subject, $greenCardReminderMail->message, $headers);
 				
 				//Send OneSignal message
-				SIM\trySendSignal("Hi $user->first_name,\nPlease renew your greencard!\n\n".SITEURL, $user->ID);
+				$accountPageUrl	= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'account_page');
+
+				if(empty($accountPageUrl)){
+					SIM\printArray('No account page defined');
+				}
+				SIM\trySendSignal("Hi $user->first_name,\nPlease renew your greencard!\nIt has expired on {$visaInfo['greencard_expiry']}\n\nIf you have already renewed it, please indicate so on $accountPageUrl?main_tab=immigration", $user->ID);
 			}
 		}
 	}

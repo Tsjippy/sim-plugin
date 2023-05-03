@@ -61,8 +61,12 @@ add_action( 'rest_api_init', function () {
 	register_rest_route(
 		RESTAPIPREFIX.'/mandatory_content',
 		'/mark_all_as_read', array(
-			'methods' => 'POST',
-			'callback' => __NAMESPACE__.'\markAllAsRead',
+			'methods' 	=> 'POST',
+			'callback' 	=> function($wpRestRequest){
+				$userId = $wpRestRequest->get_param('userid');
+
+				return markAllAsRead($userId);
+			},
 			'permission_callback' => '__return_true',
 			'args'					=> array(
 				'userid'		=> array(
@@ -160,8 +164,7 @@ function markAsRead(){
 /**
  * Rest Request to mark all pages as read
 */
-function markAllAsRead(){
-	$userId = $_POST['userid'];
+function markAllAsRead($userId){
 
 	//Get all the pages with an audience meta key
 	$pages = get_posts(

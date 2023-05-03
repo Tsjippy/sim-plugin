@@ -26,5 +26,6 @@ add_filter('sim_role_description', function($description, $role){
     if($role == 'enquirer'){
         return 'Someone who is investigating SIM Nigeria to serve with';
     }
+	
     return $description;
 }, 10, 2);

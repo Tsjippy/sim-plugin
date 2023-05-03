@@ -12,9 +12,9 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 	// Only add the new role if it does not exist
 	if(!wp_roles()->is_role( 'no_man_docs' )){
-		add_role( 
-			'no_man_docs', 
-			'No mandatory documents', 
+		add_role(
+			'no_man_docs',
+			'No mandatory documents',
 			$roleSet
 		);
 	}
