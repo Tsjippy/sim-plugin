@@ -163,8 +163,11 @@ function markAsRead(){
 
 /**
  * Rest Request to mark all pages as read
+ *
+ * @param	int				$userId		the user id to mark as read for
+ * @param	array|string	$audience	array of audience targets to mark as read for or 'all' for all. Default 'everyone'
 */
-function markAllAsRead($userId){
+function markAllAsRead($userId, $audience=['everyone']){
 
 	//Get all the pages with an audience meta key
 	$pages = get_posts(
@@ -180,8 +183,19 @@ function markAllAsRead($userId){
 	$readPages		= (array)get_user_meta( $userId, 'read_pages', true );
 
 	foreach($pages as $page){
-		//add current page
-		$readPages[]	= $page->ID;
+		$targetAudience	= get_post_meta($page->ID, 'audience', true);
+
+		if(empty($targetAudience)){
+			delete_post_meta($page->ID, 'audience');
+			continue;
+		}elseif(!is_array($targetAudience)){
+			$targetAudience	= json_decode($targetAudience);
+		}
+
+		if($audience == 'all' || array_intersect($audience, array_keys((array)$targetAudience))){
+			//add current page
+			$readPages[]	= $page->ID;
+		}
 	}
 
 	//update in db
