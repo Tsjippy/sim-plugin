@@ -8,6 +8,7 @@
 - no mandatory pages from the past for new  users
 
 ### Fixed
+- mark past mandatory pages as read for new users
 
 ### Updated
 
