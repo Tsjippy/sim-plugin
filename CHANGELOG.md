@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- edit image before upload
 
 ### Changed
 - no mandatory pages from the past for new  users
