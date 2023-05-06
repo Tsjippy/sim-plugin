@@ -1,0 +1,1 @@
+sass --watch --style=compressed ".\image-edit.scss" "image-edit.min.css"

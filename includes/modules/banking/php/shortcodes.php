@@ -95,6 +95,10 @@ function printRows($monthArray, $year, $visibility){
 
 	foreach($monthArray as $month => $url){
 		$url	= SIM\pathToUrl(STATEMENT_FOLDER.$url);
+
+		if(!$url){
+			continue;
+		}
 		
 		echo "<tr class='_$year'$visibility>";
 			if($firstMonth == $month){

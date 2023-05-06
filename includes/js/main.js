@@ -365,8 +365,8 @@ window.addEventListener("mousedown", function(event) {
 				target.tagName == 'DIV'							// the target is a div
 			)
 		){
-			console.log(event.clientX);
-			console.log(window.outerWidth);
+			//console.log(event.clientX);
+			//console.log(window.outerWidth);
 			hideModals();
 		}
 	}

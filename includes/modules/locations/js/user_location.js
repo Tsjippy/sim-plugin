@@ -1,5 +1,9 @@
 console.log("Location.js loaded");
 
+function initMap(){
+	console.log('Google Maps loaded');
+}
+
 function fillLocationFields(event){
 	var target	= event.target;
 	var form	= target.closest('form');

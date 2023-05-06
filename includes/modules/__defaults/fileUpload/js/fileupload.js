@@ -1,3 +1,5 @@
+import { addCropper } from './image-edit.js';
+
 console.log("Fileupload.js loaded");
 
 let totalFiles			= 0;
@@ -34,12 +36,15 @@ function addPreview(link, value){
 		<img class="remove_document_loader hidden" src="${sim.loadingGif}" style="height:40px;">
 	</div>`;
 
+	// insert html
 	fileUploadWrap.querySelector('.documentpreview').insertAdjacentHTML('beforeend', html);
 
 	return fileUploadWrap.querySelector('.documentpreview .document');
 }
 
 async function fileUpload(target){
+	target.classList.add('active');
+
 	let s			= "";
 	fileUploadWrap	= target.closest('.file_upload_wrap');
 	totalFiles 		= target.files.length;
@@ -71,25 +76,33 @@ async function fileUpload(target){
 
 	//Add all the files to the formData
 	for (let index = 0; index < totalFiles; index++) {
+		let file	= target.files[index];
+		let type 	= file.type.split('/')[0];
 		// file is a video and vimeo enabled
-		if(target.files[index].type.split('/')[0] == 'video' && typeof(vimeoUploader) == 'object'){
+		if(type == 'video' && typeof(vimeoUploader) == 'object'){
 			createProgressBar(target);
 
 			//update post id on a postform
-			await uploadVideo(target.files[index]);
+			await uploadVideo(file);
 		// file to big
-		}else if(target.files[index].size > sim.maxFileSize){
+		}else if(file.size > sim.maxFileSize){
 			Main.displayMessage('File too big, max file size is '+(parseInt(sim.maxFileSize)/1024/1024)+'MB','error');
 			target.value = '';
 			return;
+		}else if(type == 'image'){
+			file	= await addCropper(file);
+
+			formData.append('files[]', file);
 		}else{
-			formData.append('files[]', target.files[index]);
+			formData.append('files[]', file);
 		}
 	}
 
 	// No files remaining to upload after uploading videos
 	if(formData.get('files[]') == null){
 		target.closest('form').querySelector('.button.form_submit').disabled	= false;
+
+		target.classList.remove('active');
 
 		return;
 	}
@@ -196,9 +209,9 @@ function fileUploadSucces(result){
 		}
 
 		//is image
-		if (src.toLowerCase().match(/\.(jpe|jpeg|jpg|gif|png)$/) != null){
+		if (src.toLowerCase().match(/\.(jpe|jpeg|jpg|gif|png|webp)$/) != null){
 			//Add the image
-			anchorLink	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="width:150px;height:150px;"></a>`;
+			anchorLink	= `<a class="fileupload" href="${url}"><img src="${url}" alt="picture" style="height:150px;"></a>`;
 		}else{
 			//Add a link
 			let filename	= url.split('/')[url.split('/').length-1]
@@ -225,6 +238,8 @@ function fileUploadSucces(result){
 	// Used by formstable uploads
 	const event = new Event('uploadfinished');
 	fileUploadWrap.dispatchEvent(event);
+
+	document.querySelector('.file_upload.active').classList.remove('active');
 }
 
 async function removeDocument(target){
@@ -392,6 +407,11 @@ async function uploadVideo(file){
 
 	upload.start();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+	// move the modal to the top of the body so its always visible when not hidden
+	document.body.append(document.querySelector('.modal.edit-image.hidden'));
+});
 
 //Remove picture on button click
 window.addEventListener("click", function(event) {

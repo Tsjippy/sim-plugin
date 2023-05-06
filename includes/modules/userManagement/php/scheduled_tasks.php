@@ -579,7 +579,7 @@ function checkDetailsMail(){
 		}
 
 		$message .= '<br>';
-		$message .= "If any information is not correct, please correct it on <a href='".SITEURL."/account/'>".str_replace(['https://www.','https://'], '', $accountPageUrl)."</a>.<br>Or just click on any details listed above.";
+		$message .= "If any information is not correct, please correct it on <a href='$accountPageUrl'>".str_replace(['https://www.','https://'], '', $accountPageUrl)."</a>.<br>Or just click on any details listed above.";
 		wp_mail( $user->user_email, $subject, $message);
 	}
 }

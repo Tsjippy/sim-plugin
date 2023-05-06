@@ -140,12 +140,12 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
     $title			= get_the_title($postId);
 
     $categories     = wp_get_post_terms(
-        $postId, 
+        $postId,
         'locations',
         array(
             'orderby'   => 'name',
             'order'     => 'ASC'
-        ) 
+        )
     );
 
     $description    = "[location_description id=$postId]";
@@ -163,23 +163,23 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
         $iconId = 1;
     }
         
-    /* 		
+    /*
         GENERIC MARKER
-    */	
+    */
     //Update existing marker
     if(isset($markerIds['generic']) && $maps->markerExists($markerIds['generic'])){
         //Generic map, always update
-        $wpdb->update($wpdb->prefix . 'ums_markers', 
+        $wpdb->update($wpdb->prefix . 'ums_markers',
             array(
                 'description'	=> $description,
                 'coord_x'		=> $latitude,
                 'coord_y'		=> $longitude,
                 'address'		=> $address,
-            ), 
+            ),
             array( 'ID'			=> $markerIds['generic']),
         ); 
     //Marker does not exist, create it
-    }else{			
+    }else{
         $mapId	=  SIM\getModuleOption(MODULE_SLUG, 'directions_map_id');
 
         //First create the marker on the generic map
@@ -422,7 +422,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
                         <input type="text" class='formbuilder longitude' name="location[longitude]" value="<?php echo $longitude; ?>">
                     </td>
                 </tr>
-            </table> 
+            </table>
         </fieldset>
     </div>
     <?php

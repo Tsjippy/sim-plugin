@@ -32,6 +32,8 @@ class FileUpload{
 		// Will only work if vimeo module is enabled
 		// Exposes the vimeoUploader variable
 		wp_enqueue_script('sim_vimeo_uploader_script');
+
+		wp_enqueue_style( 'sim_image-edit');
 	}
 
 	/**
@@ -62,6 +64,73 @@ class FileUpload{
 
 		return $documentArray;
 	}
+
+	public function imageEditModal(){
+		global $editImageModalAdded;
+
+		// only add the modal once
+		if($editImageModalAdded){
+			return '';
+		}else{
+			$editImageModalAdded	= true;
+		}
+
+		ob_start();
+
+		?>
+		<div id="edit-image-modal" class="modal edit-image hidden">
+			<!-- Modal content -->
+			<div class="modal-content" style='max-width:90%;'>
+				<span id="modal_close" class="close">&times;</span>
+
+				<div class="image-edit-container">
+					<div class="wrapper">
+						<div class="editor-panel">
+							<div class="filter">
+								<label class="title">Filters</label>
+								<div class="options">
+									<button id="brightness" type="button" class="active">Brightness</button>
+									<button id="saturation" type="button">Saturation</button>
+									<button id="inversion" type="button">Inversion</button>
+									<button id="grayscale" type="button">Grayscale</button>
+								</div>
+								<div class="slider">
+									<div class="filter-info">
+										<p class="name">Brighteness</p>
+										<p class="value">100%</p>
+									</div>
+									<input type="range" value="100" min="0" max="200">
+								</div>
+							</div>
+							<div class="rotate">
+								<label class="title">Rotate</label>
+								<div class="options">
+									<button id="left" type="button"><i class="fa-solid fa-rotate-left"></i></button>
+									<button id="right" type="button"><i class="fa-solid fa-rotate-right"></i></button>
+									<button id="horizontal" type="button"><i class='bx bx-reflect-vertical'></i></button>
+                        			<button id="vertical" type="button"><i class='bx bx-reflect-horizontal' ></i></button>
+								</div>
+							</div>
+						</div>
+						<div class="preview-img">
+							<img src="" alt="preview-img" class='hidden'>
+						</div>
+					</div>
+					<div class="controls">
+						<button type="button" class="reset-filter">Reset Filters</button>
+						<div class="row">
+							<input type="file" class="file-input" accept="image/*" hidden>
+							<button type="button" class="choose-img">Change Image</button>
+							<button type="button" class="save-img">Save Image</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		return ob_get_clean();
+	}
 	
 	/**
 	 * Renders the upload button
@@ -74,10 +143,13 @@ class FileUpload{
 	 */
 	public function getUploadHtml($documentName, $targetDir='', $multiple=false, $options=''){
 		$documentArray = $this->processMetaKey();
+
+		$this->html	= $this->imageEditModal();
 		
-		$this->html = '<div class="file_upload_wrap">';
+		$this->html .= '<div class="file_upload_wrap">';
 			$this->html .= '<div class="documentpreview">';
-			if(is_array($documentArray) && count($documentArray) > 0){
+
+			if(is_array($documentArray) && !empty($documentArray)){
 				foreach($documentArray as $documentKey => $document){
 					if(!$this->documentPreview($document, $documentKey)){
 						// remove from document array if the file is not valid
@@ -166,7 +238,7 @@ class FileUpload{
 		//Check if file is an image
 		if(getimagesize(SIM\urlToPath($url)) !== false) {
 			//Display the image
-			$this->html .= "<a href='$url'><img src='$url' alt='picture' loading='lazy' style='width:150px;height:150px;'></a>";
+			$this->html .= "<a href='$url'><img src='$url' alt='picture' loading='lazy' style='height:150px;'></a>";
 		//File is not an image
 		} else {
 			//Display an link to the file
