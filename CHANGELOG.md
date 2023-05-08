@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- make editing uploaded picture optional
 
 ### Changed
 
