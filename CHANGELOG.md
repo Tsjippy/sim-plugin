@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- make editing uploaded picture optional
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.32.8] - 2023-05-08
+
+
+### Added
+- make editing uploaded picture optional
 
 ### Fixed
 
