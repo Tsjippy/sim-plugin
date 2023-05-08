@@ -5,6 +5,18 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.32.7] - 2023-05-07
+
+
+### Added
+- edit image before upload
+
+### Changed
 - no mandatory pages from the past for new  users
 
 ### Fixed
