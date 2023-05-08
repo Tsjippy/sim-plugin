@@ -75,12 +75,14 @@ class FileUpload{
 			$editImageModalAdded	= true;
 		}
 
+		$basePicturesUrl	= plugins_url('../pictures/', __DIR__);
+
 		ob_start();
 
 		?>
 		<div id="edit-image-modal" class="modal edit-image hidden">
 			<!-- Modal content -->
-			<div class="modal-content" style='max-width:90%;'>
+			<div class="modal-content">
 				<span id="modal_close" class="close">&times;</span>
 
 				<div class="image-edit-container">
@@ -105,10 +107,10 @@ class FileUpload{
 							<div class="rotate">
 								<label class="title">Rotate</label>
 								<div class="options">
-									<button id="left" type="button"><i class="fa-solid fa-rotate-left"></i></button>
-									<button id="right" type="button"><i class="fa-solid fa-rotate-right"></i></button>
-									<button id="horizontal" type="button"><i class='bx bx-reflect-vertical'></i></button>
-                        			<button id="vertical" type="button"><i class='bx bx-reflect-horizontal' ></i></button>
+									<button id="left" type="button"><img src='<?php echo $basePicturesUrl;?>rotate-left-solid.svg' alt='rotate left'></button>
+									<button id="right" type="button"><img src='<?php echo $basePicturesUrl;?>rotate-right-solid.svg' alt='rotate right'></i></button>
+									<button id="horizontal" type="button"><img src='<?php echo $basePicturesUrl;?>reflect-vertical.svg' alt='reflect vertical'></button>
+                        			<button id="vertical" type="button"><img src='<?php echo $basePicturesUrl;?>reflect-horizontal.svg' alt='reflect horizontal'></button>
 								</div>
 							</div>
 						</div>
@@ -134,17 +136,20 @@ class FileUpload{
 	
 	/**
 	 * Renders the upload button
-	 * @param	string	$documentName	The name to use for the files input and storage in db
-	 * @param	string	$targetDir		The subfolder of the uploads folder. Default empty
-	 * @param	bool	$multiple		Whether to allow multiple files to be uploaded. Default false
-	 * @param	string	$options		Extra options to add to the files input element
+	 * @param	string	$documentName		The name to use for the files input and storage in db
+	 * @param	string	$targetDir			The subfolder of the uploads folder. Default empty
+	 * @param	bool	$multiple			Whether to allow multiple files to be uploaded. Default false
+	 * @param	string	$options			Extra options to add to the files input element
+	 * @param	bool	$editBeforeUpload	Whether or not people can edit a picture before uploading it, default false
 	 *
-	 * @return	string					The input html
+	 * @return	string						The input html
 	 */
-	public function getUploadHtml($documentName, $targetDir='', $multiple=false, $options=''){
+	public function getUploadHtml($documentName, $targetDir='', $multiple=false, $options='', $editBeforeUpload=false){
 		$documentArray = $this->processMetaKey();
 
-		$this->html	= $this->imageEditModal();
+		if($editBeforeUpload){
+			$this->html	= $this->imageEditModal();
+		}
 		
 		$this->html .= '<div class="file_upload_wrap">';
 			$this->html .= '<div class="documentpreview">';

@@ -16,8 +16,7 @@ export async function addCropper(file){
     rotateOptions   = modal.querySelectorAll(".rotate button"),
     resetFilterBtn  = modal.querySelector(".reset-filter"),
     chooseImgBtn    = modal.querySelector(".choose-img"),
-    saveImgBtn      = modal.querySelector(".save-img"),
-    orgImage        = modal.querySelector('.preview-img img');
+    saveImgBtn      = modal.querySelector(".save-img");
 
     // variables
     let brightness  = "100", 
@@ -27,22 +26,23 @@ export async function addCropper(file){
     rotate          = 0, 
     flipHorizontal  = 1, 
     flipVertical    = 1,
+    orgImage        = modal.querySelector('.preview-img img'),
     previewImg;
 
     modal.currentFileName   = file.name;
 
     // attach the cropper
-    orgImage.onload = function() {
+    function onImageLoad() {
         modal._cropper  = new Croppr(
             '.preview-img img',
             {
                 startSize: [50, 50, '%'],
             }
         );
-
         
         previewImg      = modal._cropper.imageClippedEl;
     };
+    orgImage.onload = onImageLoad;
 
     // add the picture
     modal.querySelector('.preview-img img').src	= URL.createObjectURL(file);
@@ -50,9 +50,20 @@ export async function addCropper(file){
     // functions
     const loadImage = () => {
         modal.classList.add("disable");
+
         let file = fileInput.files[0];
         if(!file) return;
+        
+        // remove the old cropper instance
+        clearCropper();
+
+        // refresh the orgImage var
+        orgImage        = modal.querySelector('.preview-img img');
+
+        orgImage.onload = onImageLoad;
+
         orgImage.src = URL.createObjectURL(file);
+
         previewImg.addEventListener("load", () => {
             resetFilterBtn.click();
             modal.classList.remove("disable");

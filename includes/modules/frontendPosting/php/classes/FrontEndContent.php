@@ -173,7 +173,7 @@ class FrontEndContent{
 						<h4>Upload your file</h4>
 						<?php
 						$uploader = new SIM\FILEUPLOAD\FileUpload($this->user->ID);
-						echo $uploader->getUploadHtml('attachment', 'private');
+						echo $uploader->getUploadHtml('attachment', 'private', false, '', true);
 					}
 					?>
 				</div>

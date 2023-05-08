@@ -183,7 +183,7 @@ function displayChildren($attributes) {
 		return "<style>.expand-children{font-size: 8px;}</style><div class='childpost'>$title<ul>$html</ul></div>";
 	}
 	
-	if ( function_exists( 'get_current_screen' ) && get_current_screen()->is_block_editor()){
+	if ( function_exists( 'get_current_screen' ) && !empty(get_current_screen()) && get_current_screen()->is_block_editor()){
 		return "This page has no children";
 	}
 

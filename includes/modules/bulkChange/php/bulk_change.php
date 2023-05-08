@@ -81,16 +81,16 @@ function bulkchangeMeta($metaKey, $allowedRoles, $returnFamily){
 /**
  * Shows a table displaying all meta keys with a value allowing to edit them
  * @param  	string 	$metaKey		The meta value to update
- * @param  	string	$targetDir   	The folder where the files should be uploaded 
+ * @param  	string	$targetDir   	The folder where the files should be uploaded
  * @param 	string	$returnFamily   Whether we are editing a family meta value or an individual one
- * 
+ *
  * @return	string					the html
 */
 function bulkChangeUpload($metaKey, $targetDir){
 	if (strpos($metaKey, '#') !== false){
 		$metaKeyBase 	= explode('#', $metaKey)[0];
 		$metaKeyName 	= explode('#', $metaKey)[1];
-		$metaKey		= $metaKeyBase.'['.$metaKeyName.']';				
+		$metaKey		= $metaKeyBase.'['.$metaKeyName.']';
 	}else{
 		$metaKeyBase 	= $metaKey;
 		$metaKeyName 	= $metaKey;
@@ -111,7 +111,7 @@ function bulkChangeUpload($metaKey, $targetDir){
 
 			$html .= "<div style='margin-top:50px;'>";
 				$html .= "<strong>{$user->display_name}</strong>";
-				$html .= $uploader->getUploadHtml($metaKey, $targetDir, true);
+				$html .= $uploader->getUploadHtml($metaKey, $targetDir, true, '', true);
 			$html .= '</div>';
 		}
 	}

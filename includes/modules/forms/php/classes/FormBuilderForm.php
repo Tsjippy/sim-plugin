@@ -1073,6 +1073,13 @@ class FormBuilderForm extends SimForms{
 				<br><br>
 
 				<label>
+					<input type="checkbox" class="formbuilder" name="formfield[editimage]" value="1" <?php if($element != null && $element->editimage){echo 'checked';}?>>
+					Allow people to edit an image before uploading it
+				</label>
+				<br>
+				<br>
+
+				<label>
 					Name of the folder the <span class='filetype'>file</span> should be uploaded to.<br>
 					<input type="text" class="formbuilder" name="formfield[foldername]" value="<?php if($element != null){echo $element->foldername;}?>">
 				</label>

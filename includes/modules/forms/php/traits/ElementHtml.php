@@ -375,7 +375,7 @@ trait ElementHtml{
 			//Load js
 			$uploader = new SIM\FILEUPLOAD\FileUpload($userId, $metakey, $library, '', false);
 			
-			$html = $uploader->getUploadHtml($name, $targetDir, $element->multiple, $elOptions);
+			$html = $uploader->getUploadHtml($name, $targetDir, $element->multiple, $elOptions, $element->editimage);
 		}else{
 			/*
 				ELEMENT TAG NAME
