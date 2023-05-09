@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- display of empty form result rows
 
 ### Updated
 
