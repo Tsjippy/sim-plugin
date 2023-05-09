@@ -147,8 +147,10 @@ class FileUpload{
 	public function getUploadHtml($documentName, $targetDir='', $multiple=false, $options='', $editBeforeUpload=false){
 		$documentArray = $this->processMetaKey();
 
+		$fileClass	= '';
 		if($editBeforeUpload){
 			$this->html	= $this->imageEditModal();
+			$fileClass	= 'should-edit';
 		}
 		
 		$this->html .= '<div class="file_upload_wrap">';
@@ -178,7 +180,7 @@ class FileUpload{
 			$this->html .= '</div>';
 		
 			$this->html .= "<div class='upload_div $class'>";
-				$this->html .= "<input class='file_upload' type='file' name='{$documentName}_files[]' $multipleString $options>";
+				$this->html .= "<input class='file_upload $fileClass' type='file' name='{$documentName}_files[]' $multipleString $options>";
 				$this->html .= "<div style='width:100%; display: flex;'>";
 					if(is_numeric($this->userId)){
 						$this->html .= "<input type='hidden' name='fileupload[userid]' 			value='{$this->userId}'>";

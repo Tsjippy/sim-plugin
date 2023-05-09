@@ -611,6 +611,8 @@ class DisplayFormResults extends DisplayForm{
 			}
 		}
 
+		$rowHasContents	= false;
+
 		foreach($this->columnSettings as $id=>$columnSetting){
 			$value	= '';
 
@@ -670,6 +672,8 @@ class DisplayFormResults extends DisplayForm{
 
 			//add field value if we are allowed to see it
 			if($value != 'X'){
+				$rowHasContents	= true;
+
 				//Get the field value from the array
 				$value	= $values[$elementName];
 					
@@ -739,6 +743,11 @@ class DisplayFormResults extends DisplayForm{
 
 			$oldValue		= json_encode($orgFieldValue);
 			$rowContents .= "<td $class data-oldvalue='$oldValue' $subId>$value</td>";
+		}
+
+		// none of the cells in this row has a value, only X
+		if(!$rowHasContents){
+			return '';
 		}
 
 		$this->excelContent[] = $excelRow;
@@ -1584,101 +1593,27 @@ class DisplayFormResults extends DisplayForm{
 			
 			?>
 			<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
-				<thead>
-					<tr>
-						<?php
-						//add normal fields
-						foreach($this->columnSettings as $settingId=>$columnSetting){
-							if(
-								!is_numeric($settingId)				||
-								$columnSetting['show'] == 'hide'	||													//hidden column
-								(
-									!$this->ownData				|| 																	//The table does not contain data of our own
-									(
-										$this->ownData			&& 																//or it does contain our own data but
-										!in_array('own',(array)$columnSetting['view_right_roles'])							//we are not allowed to see it
-									)
-								) &&
-								!$this->tableEditPermissions 				&&														//no permission to edit the table and
-								!empty($columnSetting['view_right_roles']) 	&& 										// there are view right permissions defined
-								!array_intersect($this->userRoles, (array)$columnSetting['view_right_roles'])		// and we do not have the view right role and
-							){
-								continue;
-							}
-							
-							$niceName			= $columnSetting['nice_name'];
-							
-							if($this->tableSettings['default_sort']	== $settingId){
-								$class	= "defaultsort";
-							}else{
-								$class	= "";
-							}
-		
-							if(!empty($this->hiddenColumns[$columnSetting['name']])){
-								$class	.= ' hidden';
-							}
-							$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20 loading='lazy' >";
-							
-							//Add a heading for each column
-							echo "<th class='$class' id='{$columnSetting['name']}' data-nicename='$niceName'>$niceName $icon</th>";
-							
-							$excelRow[]	= $niceName;
-						}
-						
-						//add a Actions heading if needed
-						$actions = [];
-						foreach($this->formSettings['actions'] as $action){
-							$actions[]	= $action;
-						}
-						$actions = apply_filters('sim_form_actions', $actions);
-
-						//we have full permissions on this table
-						if($this->tableEditPermissions && !empty($actions)){
-							$addHeading	= true;
-						}else{
-							foreach($actions as $action){
-								//we have permission for this specific button
-								if(array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])){
-									$addHeading	= true;
-								}else{
-									//Loop over all buttons to see if the current user has permission for them
-									foreach($this->submissions as $submission){
-										//we have permission on this row for this button
-										if($submission->formresults['userid'] == $this->user->ID){
-											$addHeading	= true;
-										}
-									}
-								}
-							}
-						}
-
-						if($addHeading){
-							echo "<th id='actions' data-nicename='Actions'>Actions</th>";
-						}
-						?>
-					</tr>
-				</thead>
+				<?php
+				$this->resultTableHead();
+				?>
 				
 				<tbody class="table-body">
-			
-				<?php
-				//write header to excel
-				$this->excelContent[] = $excelRow;
-				/*
-						WRITE THE CONTENT ROWS OF THE TABLE
-				*/
-				foreach($submissions as $submission){
-					$values				= $submission->formresults;
-					$values['id']		= $submission->id;
-					$values['userid']	= $submission->userid;
-					$subId				= -1;
-					if(is_numeric($submission->subId)){
-						$subId			= $submission->subId;
+					<?php
+					/*
+							WRITE THE CONTENT ROWS OF THE TABLE
+					*/
+					foreach($submissions as $submission){
+						$values				= $submission->formresults;
+						$values['id']		= $submission->id;
+						$values['userid']	= $submission->userid;
+						$subId				= -1;
+						if(is_numeric($submission->subId)){
+							$subId			= $submission->subId;
+						}
+						
+						$this->writeTableRow($values, $subId, $submission);
 					}
-					
-					$this->writeTableRow($values, $subId, $submission);
-				}
-				?>
+					?>
 				</tbody>
 			</table>
 			
@@ -1728,6 +1663,101 @@ class DisplayFormResults extends DisplayForm{
 		}
 		
 		return ob_get_clean();
+	}
+
+	/**
+	 * Prints the results table head
+	 */
+	private function resultTableHead(){
+		$excelRow	= [];
+		?>
+		<thead>
+			<tr>
+				<?php
+				//add normal fields
+				foreach($this->columnSettings as $settingId=>$columnSetting){
+					if(
+						!is_numeric($settingId)				||
+						$columnSetting['show'] == 'hide'	||												//hidden column
+						(
+							!$this->ownData				|| 													//The table does not contain data of our own
+							(
+								$this->ownData			&& 													//or it does contain our own data but
+								!in_array('own',(array)$columnSetting['view_right_roles'])					//we are not allowed to see it
+							)
+						) &&
+						!$this->tableEditPermissions 				&&										//no permission to edit the table and
+						!empty($columnSetting['view_right_roles']) 	&& 										// there are view right permissions defined
+						!array_intersect($this->userRoles, (array)$columnSetting['view_right_roles'])		// and we do not have the view right role and
+					){
+						continue;
+					}
+					
+					$niceName			= $columnSetting['nice_name'];
+					
+					if($this->tableSettings['default_sort']	== $settingId){
+						$class	= "defaultsort";
+					}else{
+						$class	= "";
+					}
+
+					if(!empty($this->hiddenColumns[$columnSetting['name']])){
+						$class	.= ' hidden';
+					}
+					$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20 loading='lazy' >";
+					
+					//Add a heading for each column
+					echo "<th class='$class' id='{$columnSetting['name']}' data-nicename='$niceName'>$niceName $icon</th>";
+					
+					$excelRow[]	= $niceName;
+				}
+				
+				//write header to excel
+				$this->excelContent[] = $excelRow;
+				
+				//add a Actions heading if needed
+				$actions = [];
+				foreach($this->formSettings['actions'] as $action){
+					$actions[]	= $action;
+				}
+				$actions = apply_filters('sim_form_actions', $actions);
+
+				//we have full permissions on this table
+				if($this->tableEditPermissions && !empty($actions)){
+					$addHeading	= true;
+				}else{
+					foreach($actions as $action){
+						//we have permission for this specific button
+						if(array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])){
+							$addHeading	= true;
+						}else{
+							//Loop over all submissions to see if the current user has permission for them
+							foreach($this->submissions as $submission){
+								//we have permission on this row for this button
+								if(
+									(
+										isset($submission->formresults['userid']) &&				// formresults contains a userid
+										$submission->formresults['userid'] == $this->user->ID		// userid is the current user
+									) ||
+									(
+										!isset($submission->formresults['userid']) &&				// formresults don't contain a userid
+										$submission->userid == $this->user->ID						// current user submitted the form
+									)
+								){
+									$addHeading	= true;
+								}
+							}
+						}
+					}
+				}
+
+				if($addHeading){
+					echo "<th id='actions' data-nicename='Actions'>Actions</th>";
+				}
+				?>
+			</tr>
+		</thead>
+		<?php
 	}
 
 	/**

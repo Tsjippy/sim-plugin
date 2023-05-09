@@ -89,7 +89,7 @@ async function fileUpload(target){
 			Main.displayMessage('File too big, max file size is '+(parseInt(sim.maxFileSize)/1024/1024)+'MB','error');
 			target.value = '';
 			return;
-		}else if(type == 'image'){
+		}else if(type == 'image' && target.matches('.should-edit')){
 			file	= await addCropper(file);
 
 			formData.append('files[]', file);

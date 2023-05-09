@@ -228,10 +228,10 @@ add_action('sim-formstable-after-table-settings', function($displayFormResults){
 add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResults){
     // display the calendar instead of the table
     if(
-        !isset($displayFormResults->tableSettings['booking-display'])   ||
+        !isset($displayFormResults->tableSettings['booking-display'])   ||                                                      // no option choosen
         (
-            isset($displayFormResults->tableSettings['booking-display']) &&
-            $displayFormResults->tableSettings['booking-display'] != 'calendar'
+            isset($displayFormResults->tableSettings['booking-display']) &&                                                     // option chosen
+            $displayFormResults->tableSettings['booking-display'] != 'calendar'                                                 // but choose table view
         ) ||
         !array_intersect($displayFormResults->userRoles, array_keys($displayFormResults->formSettings['full_right_roles']))
     ){
@@ -240,9 +240,9 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
     
     wp_enqueue_script('sim-bookings');
 
-    $booking   = new Bookings($displayFormResults);
+    $booking    = new Bookings($displayFormResults);
 
-    $indexes        = $displayFormResults->getElementByType('booking_selector');
+    $indexes    = $displayFormResults->getElementByType('booking_selector');
 
     foreach($indexes as $index){
         $element    = $displayFormResults->formElements[$index];
