@@ -429,3 +429,13 @@ function removeBooking($instance, $submissionId){
 
     $bookings->removeBooking($booking);
 }
+
+add_filter('sim_form_actions_html', function($buttonsHtml, $bookingData, $index, $instance, $submission){
+    if(get_class($instance) != 'SIM\BOOKINGS\Bookings' || !isset($buttonsHtml['archive'])){
+        return $buttonsHtml;
+    }
+
+    $buttonsHtml['archive'] = str_replace('>Archive', 'style="width: max-content;">Cancel booking', $buttonsHtml['archive']);
+
+    return $buttonsHtml;
+}, 10, 5);

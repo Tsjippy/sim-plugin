@@ -19,7 +19,6 @@ class DisplayFormResults extends DisplayForm{
 	public $columnSettings;
 	public $tableSettings;
 	public $ownData;
-	public $noRecords;
 	public $shortcodeData;
 	public $formEditPermissions;
 	public $tableViewPermissions;
@@ -763,22 +762,19 @@ class DisplayFormResults extends DisplayForm{
 	 * @param	object	$submission		The submission
 	 */
 	protected function writeTableRow($values, $subId, $submission){
-		//Loop over the fields in order of the defined columns
-		
-		$this->noRecords = false;
-		
 		//If this row should be written and it is the first cell then write
 		if($subId > -1){
 			$subIdString = "data-subid='$subId'";
 		}else{
 			$subIdString = "";
 		}
-		echo "<tr class='table-row' data-id='{$values['id']}' $subIdString>";
 		
-		echo $this->getRowContents($values, $subId);
+		$rowContents	= $this->getRowContents($values, $subId);
+
+		$buttonCell		= '';
 
 		//if there are actions
-		if($this->formSettings['actions'] != ""){
+		if(!empty($this->formSettings['actions'])){
 			//loop over all the actions
 			$buttonsHtml	= [];
 			$buttons		= '';
@@ -793,18 +789,28 @@ class DisplayFormResults extends DisplayForm{
 			//we have te html now, check for which one we have permission
 			foreach($buttonsHtml as $action=>$button){
 				if(
-					$this->tableEditPermissions || 																			//if we are allowed to do all actions
+					$this->tableEditPermissions || 																		//if we are allowed to do all actions
 					$values['userid'] == $this->user->ID || 															//or this is our own entry
-					array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])			//or we have permission for this specific button
+					array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])		//or we have permission for this specific button
 				){
 					$buttons .= $button;
 				}
 			}
 			if(!empty($buttons)){
-				echo "<td>$buttons</td>";
+				$buttonCell	= "<td>$buttons</td>";
 			}
 		}
-		echo '</tr>';
+
+		if(!empty($rowContents)){
+			echo "<tr class='table-row' data-id='{$values['id']}' $subIdString>";
+				echo $rowContents;
+				echo $buttonCell;
+			echo '</tr>';
+
+			return true;
+		}
+
+		return false;
 	}
 	
 	/**
@@ -1128,11 +1134,11 @@ class DisplayFormResults extends DisplayForm{
 							foreach($this->formElements as $key=>$element){
 								$pattern = "/([^\[]+)\[[0-9]*\]/i";
 								
-								if(preg_match($pattern, $element->name, $matches)){
-									//Only add if not found before
-									if(!in_array($matches[1], $foundElements)){
-										$foundElements[$element->id]	= $matches[1];
-									}
+								if(
+									preg_match($pattern, $element->name, $matches)	&&		// preg match was succesfull
+									!in_array($matches[1], $foundElements)					// the match is not yet in the found elements
+								){
+									$foundElements[$element->id]	= $matches[1];
 								}
 							}
 
@@ -1518,8 +1524,6 @@ class DisplayFormResults extends DisplayForm{
 
 		$buttons			= $this->renderTableButtons();
 
-		$this->noRecords	= true;
-
 		ob_start();
 		//process any $_GET acions
 		do_action('sim_formtable_GET_actions');
@@ -1602,6 +1606,7 @@ class DisplayFormResults extends DisplayForm{
 					/*
 							WRITE THE CONTENT ROWS OF THE TABLE
 					*/
+					$allRowsEmpty	= true;
 					foreach($submissions as $submission){
 						$values				= $submission->formresults;
 						$values['id']		= $submission->id;
@@ -1611,43 +1616,51 @@ class DisplayFormResults extends DisplayForm{
 							$subId			= $submission->subId;
 						}
 						
-						$this->writeTableRow($values, $subId, $submission);
+						if($this->writeTableRow($values, $subId, $submission)){
+							// this row has contents
+							$allRowsEmpty	= false;
+						}
+					}
+
+					if($allRowsEmpty){
+						?>
+						<td>No records found</td>
+						<?php
 					}
 					?>
 				</tbody>
 			</table>
 			
-			<div class='sim-table-footer'>
-				<p id="table_remark">Click on any cell with <span class="edit">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>
-				
-				<?php
-				//Add excel export button if allowed
-				if($this->tableEditPermissions){
-					?>
-					<div>
-						<form method="post" class="exportform" id="export_xls">
-							<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
-						</form>
-						<?php
-						if(SIM\getModuleOption('pdf', 'enable')){
-							?>
-							<form method="post" class="exportform" id="export_pdf">
-								<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
+			<?php
+			if(!$allRowsEmpty){
+				?>
+				<div class='sim-table-footer'>
+					<p id="table_remark">Click on any cell with <span class="edit_forms_table">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>
+					
+					<?php
+					//Add excel export button if allowed
+					if($this->tableEditPermissions){
+						?>
+						<div>
+							<form method="post" class="exportform" id="export_xls">
+								<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
 							</form>
 							<?php
-						}
-						?>
-					</div>
-					<?php
-				}
-			?>
-			</div>
-			<?php
-			
-			if($this->noRecords){
-				?><p><br><br><br>No records found</p><?php
+							if(SIM\getModuleOption('pdf', 'enable')){
+								?>
+								<form method="post" class="exportform" id="export_pdf">
+									<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
+								</form>
+								<?php
+							}
+							?>
+						</div>
+						<?php
+					}
+				?>
+				</div>
+				<?php
 			}
-			
 			?>
 		</div>
 		<?php

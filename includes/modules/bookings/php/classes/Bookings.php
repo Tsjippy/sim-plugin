@@ -438,7 +438,7 @@ class Bookings{
                                             if($action == 'archive' && $this->showArchived == 'true' && $this->forms->submissions->archived){
                                                 $action = 'unarchive';
                                             }
-                                            $buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
+                                            $buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'>".ucfirst($action)."</button>";
                                         }
                                         $buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $bookingData, $index, $this, $this->forms->submission);
                                         
@@ -454,7 +454,7 @@ class Bookings{
                                         }
                                         if(!empty($buttons)){
                                             echo "<tr class='actions' data-id='{$this->forms->submission->formresults['id']}'>";
-                                                echo "<td>$buttons</td>";
+                                                echo "<td  colspan='2'>$buttons</td>";
                                             echo "</tr>";
                                         }
                                     }
