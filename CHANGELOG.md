@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- archive booking to cancel
 
 ### Fixed
 
