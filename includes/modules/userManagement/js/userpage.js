@@ -10,7 +10,7 @@ async function loadTab(tab){
 	}else{
     	formData.append('userid', sim.userId);
 	}
-	
+
 	formData.append('tabname', tab.id.replace('_info', ''));
 
 	let response = await FormSubmit.fetchRestApi('user_management/get_userpage_tab', formData);
@@ -20,8 +20,6 @@ async function loadTab(tab){
 
 		// after scripts have been loaded over AJAX
 		tab.addEventListener("scriptsloaded", function(event) {
-			console.log(event.target);
-
 			event.target.querySelector('.wrapper.hidden').classList.remove('hidden');
 
 			event.target.querySelector('.tabloader').remove();
