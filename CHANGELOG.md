@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.33.0] - 2023-05-10
+
+
+### Changed
 - archive booking to cancel
 
 ### Fixed
