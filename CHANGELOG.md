@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- load user profile page over AJAX
 
 ### Fixed
 
