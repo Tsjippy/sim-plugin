@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.33.1] - 2023-05-11
+
+
+### Changed
 - load user profile page over AJAX
 
 ### Fixed
