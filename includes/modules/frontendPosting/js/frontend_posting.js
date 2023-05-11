@@ -279,7 +279,7 @@ async function submitPost(target){
 
 		document.querySelector('main').innerHTML	= response.html;
 
-		addStyles(response);
+		addStyles(response, document);
 
 		// Scroll page to top
 		window.scrollTo(0,0);

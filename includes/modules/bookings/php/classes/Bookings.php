@@ -447,7 +447,7 @@ class Bookings{
                                             if(
                                                 $this->tableEditPermissions || 																			//if we are allowed to do all actions
                                                 $bookingData['userid'] == $this->user->ID || 															//or this is our own entry
-                                                array_intersect($this->userRoles, (array)$this->forms->columnSettings[$action]['edit_right_roles'])			//or we have permission for this specific button
+                                                array_intersect($this->userRoles, (array)$this->forms->columnSettings[$action]['edit_right_roles'])		//or we have permission for this specific button
                                             ){
                                                 $buttons .= $button;
                                             }

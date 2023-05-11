@@ -4,7 +4,8 @@
   "description": "usermanagement",
   "main": "./user_management.js",
   "scripts": {
-    "build": "webpack --watch --entry ./user_management.js --output-path . --output-filename user_management.min.js --progress --mode=production --devtool source-map"
+    "management": "webpack --watch --entry ./user_management.js --output-path . --output-filename user_management.min.js --progress --mode=production --devtool source-map",
+    "page": "webpack --watch --entry ./userpage.js --output-path . --output-filename userpage.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",

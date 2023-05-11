@@ -1,13 +1,6 @@
-import { callback, addStyles } from './../../../js/imports.js';
+import { addStyles } from './../../../js/imports.js';
 
 let editPostSwitch = async function (event){
-	let afterScriptsLoadedFinal	= function (){
-		document.getElementById('frontend_upload_form').classList.remove('hidden');
-
-		wrapper.classList.remove('hidden');
-		loader.remove();
-	}
-
 	let button	= event.target;
 	let wrapper	= button.closest('main').querySelector('.content-wrapper');
 	wrapper.classList.add('hidden');
@@ -27,9 +20,8 @@ let editPostSwitch = async function (event){
 
 	if(response){
 		wrapper.innerHTML	= response.html;
-		callback	= afterScriptsLoadedFinal;
 
-		addStyles(response);
+		addStyles(response, document);	// runs also the afterScriptsLoaded function
 	}else{
 		loader.outerHTML	= button.outerHTML;
 	}
@@ -47,4 +39,12 @@ document.addEventListener("click", function(ev) {
 	if(ev.target.id == 'page-edit'){
 		editPostSwitch(ev);
 	}
+});
+
+// after scripts have been loaded over AJAX
+document.addEventListener("scriptsloaded", function() {
+	document.getElementById('frontend_upload_form').classList.remove('hidden');
+
+	wrapper.classList.remove('hidden');
+	loader.remove();
 });

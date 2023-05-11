@@ -1,8 +1,9 @@
 export let scripts;
-export let callback;
 
-export let afterScriptsLoaded	= function (){
-    tinymce.remove();
+export let afterScriptsLoaded	= function (attachTo){
+    if(typeof(tinymce) != 'undefined'){
+        tinymce.remove();
+    }
 
     // Activate tinyMce's again
     document.querySelectorAll('.entry-content .wp-editor-area').forEach(el =>{
@@ -36,18 +37,17 @@ export let afterScriptsLoaded	= function (){
         }
 	});
 
-    if(typeof callback == 'function'){
-        callback();
-    }
+    const ev = new Event('scriptsloaded');
+	attachTo.dispatchEvent(ev);
 }
 
-export let addStyles    = function (response){
+export let addStyles    = function (response, attachTo){
     let temp = document.createElement('div');
 
     if(response.js){
         temp.innerHTML =  response.js;
         scripts	= [...temp.children];
-        addScripts();
+        addScripts(attachTo);
     }
 
     if(response.css){
@@ -58,7 +58,14 @@ export let addStyles    = function (response){
     }
 }
 
-export let addScripts	= function () {
+export let addScripts	= function (attachTo) {
+    if(attachTo == undefined){
+        return;
+    }
+
+    if(scripts.length == 0){
+        afterScriptsLoaded(attachTo);
+    }
     let el	= scripts.shift();
 
     // only add if needed
@@ -83,22 +90,22 @@ export let addScripts	= function () {
 
         if(scripts.length > 0){
             if(el.src != ''){
-                s.addEventListener('load', addScripts);
+                s.addEventListener('load', addScripts.bind( null, attachTo ) );
             }else{
-                addScripts();
+                addScripts(attachTo);
             }
         }else{
             if(el.src != ''){
-                s.addEventListener('load', afterScriptsLoaded);
+                s.addEventListener('load', afterScriptsLoaded.bind( null, attachTo));
             }else{
-                afterScriptsLoaded();
+                afterScriptsLoaded(attachTo);
             }			
         }
     }else if(scripts.length > 0){
-        //run again when this script is loaded
-        addScripts();
+        // get next script
+        addScripts(attachTo);
     }else{
-        afterScriptsLoaded();
+        afterScriptsLoaded(attachTo);
     }
 }
 

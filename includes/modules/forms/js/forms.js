@@ -628,7 +628,7 @@ async function formbuilderSwitch(target){
 	if(response){
 		wrapper.innerHTML	= response.html;
 
-		addStyles(response);
+		addStyles(response, document);
 
 		// Activate tinyMce's again
 	/* 	wrapper.querySelectorAll('.wp-editor-area').forEach(el =>{

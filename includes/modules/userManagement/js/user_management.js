@@ -52,3 +52,5 @@ document.addEventListener('click', ev=>{
 		createUserAccount(target);
 	}
 });
+
+console.log('user management js loaded');

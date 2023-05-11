@@ -47,13 +47,12 @@ function updateFamilyMeta($userId, $metaKey, $value){
  * @return	string						The html
  */
 function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select', $listId=''){
-	global $wp_scripts;
-	
+
 	wp_enqueue_script('sim_user_select_script');
 	$html = "";
 
-	if(!empty($_GET["userid"]) && !is_numeric($userId)){
-		$userId = $_GET["userid"];
+	if(!empty($_REQUEST["userid"]) && !is_numeric($userId)){
+		$userId = $_REQUEST["userid"];
 	}
 	
 	//Get the id and the displayname of all users

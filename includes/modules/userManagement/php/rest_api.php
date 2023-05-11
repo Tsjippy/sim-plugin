@@ -112,7 +112,97 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
+
+	// get userpage tab contents
+	register_rest_route(
+		RESTAPIPREFIX.'/user_management',
+		'/get_userpage_tab',
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> 	__NAMESPACE__.'\getUserPageTab',
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'userid'		=> array(
+					'required'	=> true,
+                    'validate_callback' => function($userId){
+						return is_numeric($userId);
+					}
+                ),
+                'tabname'		=> array(
+					'required'	=> true
+				)
+			)
+		)
+	);
 });
+
+function getUserPageTab($wpRestRequest){
+	$params	= $wpRestRequest->get_params();
+
+	$userId	= $params['userid'];
+
+	$genericInfoRoles 	= array_merge(['usermanagement'], ["medicalinfo"], ['administrator']);
+	$userSelectRoles	= apply_filters('sim_user_page_dropdown', $genericInfoRoles);
+	$user 				= wp_get_current_user();
+	$userRoles 			= $user->roles;
+
+	if($userId	!= get_current_user_id() && array_intersect($userSelectRoles, $userRoles )){
+		$admin	= true;
+	}else{
+		$admin	= false;
+	}
+
+	switch($params['tabname']){
+		case 'generic':
+			$html	= getGenericsTab($userId);
+			break;
+		case 'dashboard':
+			$html	= showDashboard($userId, $admin);
+			break;
+		case 'family':
+			$html	= do_shortcode('[formbuilder formname=user_family]');
+			break;
+		case 'location':
+			$html	= do_shortcode('[formbuilder formname=user_location]');
+			break;
+		case 'location':
+			$html	= do_shortcode('[formbuilder formname=user_location]');
+			break;
+		case 'profile_picture':
+			$html	= do_shortcode('[formbuilder formname=profile_picture]');
+			break;
+		case 'security':
+			$html	= do_shortcode('[formbuilder formname=security_questions]');
+			break;
+		case 'medical':
+			$html	= getMedicalTab($userId);
+			break;
+		default:
+			// check if tabname has a number
+			$childId	= explode('_', $params['tabname']);
+			if($childId[0] == 'child' && isset($childId[1]) && is_numeric($childId[1])){
+				$html	= showChildrenFields($childId[1]);
+			}else{
+				$html	= showDashboard($userId, $admin);
+			}
+	}
+
+	do_action( 'wp_enqueue_scripts');
+	ob_start();
+	wp_print_scripts();
+	$js	= ob_get_clean();
+
+	do_action('wp_enqueue_style');
+	ob_start();
+	wp_print_styles();
+	$css	= ob_get_clean();
+
+	return [
+		'html'	=> $html,
+		'js'	=> $js,
+		'css'	=> $css
+	];
+}
 
 function disableUserAccount(){
 	if(empty(get_user_meta( $_POST['userid'], 'disabled', true ))){

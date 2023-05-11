@@ -327,7 +327,7 @@ function sendForm(){
 	$css	= ob_get_clean();
 
 	return [
-		'html'	=>$html,
+		'html'	=> $html,
 		'js'	=> $js,
 		'css'	=> $css
 	];

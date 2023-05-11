@@ -45,7 +45,7 @@ trait ElementHtml{
 
 		// Do not return default values when requesting the html over rest api
 		if(defined('REST_REQUEST')){
-			return $values;
+			//return $values;
 		}
 		
 		if(in_array($element->type, $this->nonInputs)){
