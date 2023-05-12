@@ -47,7 +47,7 @@ add_filter('sim_after_bot_payer', function($args){
 				$messageString .= " and the ";
 			}
 
-			$coupleString	= $userdata->first_name.' & '.get_userdata(SIM\hasPartner(($userdata->ID)))->display_name;
+			$coupleString	= getCoupleString($userdata);
 
 			$msg	        = str_replace($coupleString, "of $coupleString", $msg);
 			$msg	        = str_replace($userdata->display_name, "of {$userdata->display_name}", $msg);

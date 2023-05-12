@@ -221,7 +221,7 @@ function userInfoPage($atts){
 		//Content
 		$html	.= '<div id="profile_picture_info" class="tabcontent hidden">';
 
-			if($_GET['main_tab'] == 'profile_picture_info'){
+			if($_GET['main_tab'] == 'profile_picture'){
 				$html	.= do_shortcode('[formbuilder formname=profile_picture]');
 			}else{
 				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
@@ -339,11 +339,7 @@ function userInfoPage($atts){
 				//Content
 				$html	.= "<div id='child_info_$childId' class='tabcontent hidden'>";
 
-					if($_GET['main_tab'] == "child_info_$childId"){
-						$html	.= showChildrenFields($childId);
-					}else{
-						$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
-					}
+					$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 
 				$html .= '</div>';
 			}

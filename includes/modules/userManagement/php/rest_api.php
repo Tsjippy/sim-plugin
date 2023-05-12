@@ -160,19 +160,19 @@ function getUserPageTab($wpRestRequest){
 			$html	= showDashboard($userId, $admin);
 			break;
 		case 'family':
-			$html	= do_shortcode('[formbuilder formname=user_family]');
+			$html	= do_shortcode("[formbuilder formname=user_family userid='$userId']");
 			break;
 		case 'location':
-			$html	= do_shortcode('[formbuilder formname=user_location]');
+			$html	= do_shortcode("[formbuilder formname=user_location userid='$userId']");
 			break;
 		case 'location':
-			$html	= do_shortcode('[formbuilder formname=user_location]');
+			$html	= do_shortcode("[formbuilder formname=user_location userid='$userId']");
 			break;
 		case 'profile_picture':
-			$html	= do_shortcode('[formbuilder formname=profile_picture]');
+			$html	= do_shortcode("[formbuilder formname=profile_picture userid='$userId']");
 			break;
 		case 'security':
-			$html	= do_shortcode('[formbuilder formname=security_questions]');
+			$html	= do_shortcode("[formbuilder formname=security_questions userid='$userId']");
 			break;
 		case 'medical':
 			$html	= getMedicalTab($userId);

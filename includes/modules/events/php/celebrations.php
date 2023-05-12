@@ -91,6 +91,60 @@ add_filter('sim_prayer_message', function($html){
 });
 
 /**
+ * Get the couple string of a certain user
+ *
+ * @param	int|object				$user		the user or user id
+ * @param	int|object|string		$partner	the user object of the users partner. default empty
+ *
+ * @return	string					The couple string
+ */
+function getCoupleString($user, $partner=''){
+	if(is_numeric($user)){
+		$user	= get_userdata($user);
+	}
+
+	$family		= get_user_meta($user->ID, 'family', true);
+	$lastName	= $user->last_name;
+
+	if(!empty($family['name'])){
+		$lastName	= $family['name'];
+	}
+
+	if(empty($partner)){
+		$partnerId		= SIM\hasPartner($user->ID);
+
+		if(!$partnerId){
+			return "$user->first_name $lastName";
+		}
+
+		$partner		= get_userdata($partnerId);
+	}
+	
+	return "$user->first_name & $partner->first_name $lastName";
+}
+
+function replaceCoupleString($string, $replaceString, $user, $partner=''){
+	if(is_numeric($user)){
+		$user	= get_userdata($user);
+	}
+
+	if(empty($partner)){
+		$partnerId		= SIM\hasPartner($user->ID);
+
+		if(!$partnerId){
+			return $string;
+		}
+
+		$partner		= get_userdata($partnerId);
+	}
+
+	//Search for first names and last names
+	$pattern	= "/((\b$user->first_name\b)|(\b$partner->first_name\b)).*((\b$partner->last_name\b)|(\b$user->last_name\b))/i";
+
+	return preg_replace($pattern, $replaceString, $string);
+}
+
+/**
  *
  * Get the html birthday message
  *
@@ -113,6 +167,8 @@ function anniversaryMessages(){
 			$messageString .= " and the ";
 		}
 
+		$message		= str_replace('&amp;', '&', $message);
+
 		$partnerId		= SIM\hasPartner($userId);
 		if(is_numeric($partnerId)){
 			$partner		= get_userdata($partnerId);
@@ -132,20 +188,24 @@ function anniversaryMessages(){
 		}else{
 			//Get the url of the user page
 			$url		= SIM\maybeGetUserPageUrl($userId);
-			$coupleLink	= "of <a href='$url'>{$userdata->first_name} & {$partner->display_name}</a>";
-			$link		= "of <a href='$url'>{$userdata->display_name}</a>";
+
+			$coupleString	= getCoupleString($userdata, $partner);
+			$coupleLink		= "of <a href='$url'>$coupleString</a>";
+			$link			= "of <a href='$url'>{$userdata->display_name}</a>";
 		}
 
 		if(is_numeric($partnerId)){
-			$pattern	= "/{$userdata->first_name}.*{$partner->display_name}/i";
-			$message	= preg_replace($pattern, $coupleLink, $message, -1, $count);
+			$newMessage	= replaceCoupleString($message, $coupleLink, $userdata, $partner);
 
 			// Add family picture if needed
-			if($count > 0 && $addImage){
-				$family	= get_user_meta($userId, 'family', true);
+			if($newMessage != $message && $addImage){
+				$message	= $newMessage;
+				$family		= get_user_meta($userId, 'family', true);
 
-				if(isset($family['picture'][0])){
-					$message	.= '<a href="'.wp_get_attachment_url($family['picture'][0]).'">'.wp_get_attachment_image($family['picture'][0], 'avatar', false, 'style=border-radius: 50%;').'</a>';
+				if(is_array($family['picture']) && is_numeric($family['picture'][0])){
+					$url		= wp_get_attachment_url($family['picture'][0]);
+					$picture	= wp_get_attachment_image($family['picture'][0], 'avatar', false, 'style=border-radius: 50%;');
+					$message	.= "<a href='$url'>$picture</a>";
 				}
 
 				$addImage	= false;
