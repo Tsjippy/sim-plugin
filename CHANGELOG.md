@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- zoom control
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.33.2] - 2023-05-12
+
+
+### Added
+- zoom control
 
 ### Fixed
 - issue with editing other user profile
