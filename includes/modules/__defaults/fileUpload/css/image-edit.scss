@@ -96,12 +96,9 @@ $secundary_color:	#8a1a0e;
 
         .preview-img{
             width: 100%;
-            flex-grow: 1;
-            display: flex;
             margin-left: 20px;
             border-radius: 5px;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
 
             img{
               max-width: 490px;
@@ -128,6 +125,7 @@ $secundary_color:	#8a1a0e;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .filter .slider .filter-info{

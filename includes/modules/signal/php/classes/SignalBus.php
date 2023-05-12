@@ -306,7 +306,13 @@ class SignalBus extends Signal {
 
         $this->command->execute();
 
-        return $this->parseResult();
+        $result = $this->parseResult();
+
+        if(!empty($this->error) && strpos($this->error, 'Invalid group id') !== false){
+            SIM\printArray("Invalid GroupId: $groupId");
+        }
+
+        return $result;
     }
 
     /**

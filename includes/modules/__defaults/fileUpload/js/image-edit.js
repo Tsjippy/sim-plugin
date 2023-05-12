@@ -16,7 +16,8 @@ export async function addCropper(file){
     rotateOptions   = modal.querySelectorAll(".rotate button"),
     resetFilterBtn  = modal.querySelector(".reset-filter"),
     chooseImgBtn    = modal.querySelector(".choose-img"),
-    saveImgBtn      = modal.querySelector(".save-img");
+    saveImgBtn      = modal.querySelector(".save-img"),
+    zoomSlider      = modal.querySelector(".image-zoom");
 
     // variables
     let brightness  = "100", 
@@ -235,12 +236,25 @@ export async function addCropper(file){
         resetFilter();
     }
 
+    const zoomImage = () => {
+        modal._cropper.reset();
+
+        let zoomPercentage  = zoomSlider.value/100
+        let zoomWidth   = modal._cropper.imageClippedEl.width * zoomPercentage;
+        let zoomHeight  = modal._cropper.imageClippedEl.height * zoomPercentage;
+
+        modal._cropper.resizeTo(zoomWidth, zoomHeight);
+
+        zoomSlider.parentNode.querySelector('output').value = zoomSlider.value;
+    }
+
     //events
     filterSlider.addEventListener("input", updateFilter);
     resetFilterBtn.addEventListener("click", resetFilter);
     saveImgBtn.addEventListener("click", saveImage);
     fileInput.addEventListener("change", loadImage);
     chooseImgBtn.addEventListener("click", () => fileInput.click());
+    zoomSlider.addEventListener("input", zoomImage);
 
     Main.showModal(modal);
 

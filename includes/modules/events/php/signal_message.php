@@ -49,7 +49,8 @@ add_filter('sim_after_bot_payer', function($args){
 
 			$coupleString	= getCoupleString($userdata);
 
-			$msg	        = str_replace($coupleString, "of $coupleString", $msg);
+			$msg	        = replaceCoupleString($msg, "of $coupleString", $userdata);
+
 			$msg	        = str_replace($userdata->display_name, "of {$userdata->display_name}", $msg);
 
 			$messageString .= $msg;

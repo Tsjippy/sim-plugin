@@ -86,6 +86,7 @@ class FileUpload{
 				<span id="modal_close" class="close">&times;</span>
 
 				<div class="image-edit-container">
+					<h4>Edit your image</h4>
 					<div class="wrapper">
 						<div class="editor-panel">
 							<div class="filter">
@@ -116,7 +117,14 @@ class FileUpload{
 						</div>
 						<div class="preview-img">
 							<img src="" alt="preview-img" class='hidden'>
+							<div class="break"></div>
+							<div class="zoom" style='margin-top:10px;'>
+								Zoom<br>
+								<input class='image-zoom' type="range" value="50" min="0" max="100">
+								<output>50</output>%
+							</div>
 						</div>
+						
 					</div>
 					<div class="controls">
 						<button type="button" class="reset-filter">Reset Filters</button>

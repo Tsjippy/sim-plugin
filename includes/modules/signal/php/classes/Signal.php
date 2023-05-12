@@ -309,7 +309,7 @@ class Signal {
 
             $error  = $this->command->getError();
 
-            if(strpos($error, 'Unregistered user') !== false){
+            if(strpos($error, 'Unregistered user') !== false || strpos($error, 'Invalid group id') !== false){
                 SIM\printArray($error);
             }else{
                 SIM\printArray($this->command);
