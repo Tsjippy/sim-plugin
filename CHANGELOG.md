@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with editing other user profile
 
 ### Updated
 
