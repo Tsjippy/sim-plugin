@@ -274,7 +274,6 @@ export async function addCropper(file){
         clearCropper();
 
         // return the edited image
-        console.log(modal);
         if(modal.querySelector(".save-img").file != undefined){
             resolve(modal.querySelector(".save-img").file);
         }else{

@@ -68,8 +68,13 @@ export let addScripts	= function (attachTo) {
     }
     let el	= scripts.shift();
 
+    if(el == undefined){
+        afterScriptsLoaded(attachTo);
+        return;
+    }
+
     // only add if needed
-    if(document.getElementById(el.id) == null && el.tagName == 'SCRIPT'){
+    if(el.tagName == 'SCRIPT' && document.getElementById(el.id) == null){
         var s = document.createElement('script');
 
         if(el.type == ''){

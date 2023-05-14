@@ -20,7 +20,7 @@ async function loadTab(tab){
 
 		// after scripts have been loaded over AJAX
 		tab.addEventListener("scriptsloaded", function(event) {
-			event.target.querySelector('.wrapper.hidden').classList.remove('hidden');
+			event.target.querySelectorAll('.wrapper.hidden').forEach(el=>el.classList.remove('hidden'));
 
 			event.target.querySelector('.tabloader').remove();
 		});
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	// only load when the loader image is still there
 	document.querySelectorAll(`.wrapper.loading`).forEach(loader => {
 		loader.classList.remove('loading');
-		setTimeout(loadTab, 1000, loader.parentNode);
+		setTimeout(loadTab, 100, loader.parentNode);
 	});
 });
 

@@ -107,6 +107,10 @@ $secundary_color:	#8a1a0e;
               height: 100%;
               object-fit: contain;
             }
+
+            .image-zoom{
+              accent-color: $primary_color;
+            }
         }
     }
 }

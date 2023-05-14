@@ -708,10 +708,21 @@ async function onlyOwnSwitch(target){
 //Main code
 document.addEventListener("DOMContentLoaded",function() {
 	console.log('Forms.js is loaded');
+
+	document.querySelectorAll('.sim_form').forEach(form=>{
+		if(form._filledEls == undefined){
+			form._filledEls	= {};
+			form.querySelectorAll('input[value]').forEach(el => {
+				if(el.value != ''){
+					form._filledEls[el.name]	= el.value;
+				}
+			});
+		}
+	});
 });
 
 //we are online again
-window.addEventListener('online',function(){
+window.addEventListener('online', function(){
 	document.querySelectorAll('.form_submit').forEach(btn=>{
 		btn.disabled = false
 		btn.querySelectorAll('.offline').forEach(el=>el.remove());
@@ -729,7 +740,7 @@ window.addEventListener('offline',function(){
 	});
 });
 
-document.addEventListener('click',function(event) {
+document.addEventListener('click', function(event) {
 	let target = event.target;
 	
 	//add element
@@ -769,4 +780,25 @@ document.addEventListener('click',function(event) {
 	if(target.matches('.onlyown-switch-all') || target.matches('.onlyown-switch-on')){
 		onlyOwnSwitch(target);
 	}
+});
+
+// check for unsaved formdata
+window.addEventListener("beforeunload", (event) => {
+	document.querySelectorAll('form.sim_form').forEach(form=>{
+		if(form._filledEls != undefined){
+			// there is an extra element with a value
+			if(form.querySelectorAll('input[value]').length != form._filledEls.length){
+				event.preventDefault();
+				event.returnValue = 'test';
+			}
+
+			// a value does not exist or has changed
+			form.querySelectorAll('input[value]').forEach(el => {
+				if(form._filledEls[el.name] == undefined || form._filledEls[el.name] != el.value){
+					event.preventDefault();
+					event.returnValue = 'test2';
+				}
+			});
+		}
+	});
 });
