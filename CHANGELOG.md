@@ -4,6 +4,7 @@
 
 ### Added
 - zoom control
+- warning when pending form changes
 
 ### Changed
 
