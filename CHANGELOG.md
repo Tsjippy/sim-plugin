@@ -7,6 +7,7 @@
 - warning when pending form changes
 
 ### Changed
+- more robust domcontent loaded function
 
 ### Fixed
 - issue with editing other user profile
