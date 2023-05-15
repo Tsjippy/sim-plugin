@@ -1,5 +1,7 @@
 import { addStyles } from './../../../js/imports.js';
 
+console.log("Edit post.js loaded");
+
 let editPostSwitch = async function (event){
 	let button	= event.target;
 	let wrapper	= button.closest('main').querySelector('.content-wrapper');
@@ -28,9 +30,8 @@ let editPostSwitch = async function (event){
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-	console.log("Edit post.js loaded");
 	
-	document.querySelectorAll('#page-edit').forEach(el=>{
+	document.querySelectorAll('#page-edit.hidden').forEach(el=>{
 		el.classList.remove('hidden');
 	});
 });

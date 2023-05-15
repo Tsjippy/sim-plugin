@@ -5,7 +5,7 @@ use SIM;
 use function SIM\getModuleOption;
 use function SIM\getValidPageLink;
 
-const MODULE_VERSION		= '7.0.6';
+const MODULE_VERSION		= '7.0.7';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 

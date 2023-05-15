@@ -181,3 +181,30 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 		return false;
 	}
 }
+
+// check for unsaved formdata
+window.addEventListener("beforeunload", (event) => {
+	// check all inputs
+	document.querySelectorAll('form input:not([type=radio], [type=checkbox]), form textarea').forEach(el=>{
+		if(el.defaultValue != el.value){
+			event.preventDefault();
+			event.returnValue = 'test2';
+		}
+	});
+
+	// check all checkboxes and radio
+	document.querySelectorAll('form input[type=radio], form input[type=checkbox]').forEach(el=>{
+		if(el.defaultChecked != el.checked){
+			event.preventDefault();
+			event.returnValue = 'test2';
+		}
+	});
+
+	// check all dropdowns
+	document.querySelectorAll('form select').forEach(el=>{
+		if(!el.options[el.selectedIndex].defaultSelected){
+			event.preventDefault();
+			event.returnValue = 'test2';
+		}
+	});
+});

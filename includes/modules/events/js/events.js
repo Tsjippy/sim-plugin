@@ -134,9 +134,7 @@ const url = new URL(window.location);
 var xDown = null;                                                        
 var yDown = null;
 
-document.addEventListener("DOMContentLoaded",function() {
-	console.log("Events.js loaded");
-});
+console.log("Events.js loaded");
 
 function prevNext(target){
     let requestedMonth = target.dataset.month;

@@ -1,6 +1,10 @@
 //Load after page load
-document.addEventListener("DOMContentLoaded",function() {
-	sendStatistics();
+document.addEventListener("DOMContentLoaded", function() {
+	if(window['statisticsSent'] == undefined){
+		window['statisticsSent']	= true;
+		
+		sendStatistics();
+	}
 });
 
 //Hide or show the clicked tab

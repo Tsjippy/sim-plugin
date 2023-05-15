@@ -1,6 +1,8 @@
 import { fetchRestApi } from './shared.js';
 import { togglePassworView } from './login.js';
 
+console.log('Password strength.js loaded');
+
 function checkPassStrength() {
 	var pass1 		= document.querySelector('[name="pass1"]');
 	var pass2 		= document.querySelector('[name="pass2"]');
@@ -97,8 +99,7 @@ async function submitPasswordChange(event){
 	form.querySelector('.submit_wrapper .loadergif').classList.add('hidden');
 }
 					
-document.addEventListener("DOMContentLoaded",function() {
-	console.log('Password strength.js loaded');
+document.addEventListener("DOMContentLoaded", function() {
 	
 	document.querySelectorAll('.changepass').forEach(el=>el.addEventListener("keyup", checkPassStrength));
 

@@ -1,3 +1,6 @@
+
+console.log("Account statements.js loaded");
+
 function toggle_statements(event){
 	var button = event.target;
 
@@ -14,9 +17,8 @@ function toggle_statements(event){
 }
 
 document.addEventListener("DOMContentLoaded",function() {
-	console.log("Account statements.js loaded");
 	
 	document.querySelectorAll('.statement_button').forEach(function(button){
-		button.addEventListener('click',toggle_statements);
+		button.addEventListener('click', toggle_statements);
 	})
 });

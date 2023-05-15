@@ -3,11 +3,12 @@ import {
     fetchRestApi
 } from './shared.js';
 
+console.log("logout.js loaded");
+
 //Logout user
 document.addEventListener("DOMContentLoaded",function() {
-	console.log("logout.js loaded");
 
-	document.querySelectorAll('.logout').forEach(el=>{
+	document.querySelectorAll('.logout.hidden').forEach(el=>{
         el.addEventListener('click', logout);
 
         el.classList.remove('hidden');

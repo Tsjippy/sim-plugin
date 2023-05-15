@@ -5,6 +5,10 @@ import {
 	fetchRestApi
 } from './shared.js';
 
+
+console.log("2fa.js loaded");
+
+
 async function saveTwofaSettings(target){
 	// Show loader
 	var loader	= target.closest('.submit_wrapper').querySelector('.loadergif');
@@ -186,10 +190,8 @@ async function sendValidationEmail(target){
 }
 
 document.addEventListener("DOMContentLoaded",function() {
-	console.log("2fa.js loaded");
-
 	//hide the webauthn table if not possible
-	var el = document.getElementById('webauthn_wrapper');
+	var el = document.querySelector('#webauthn_wrapper.hidden');
 	if(el != null){
 		checkWebauthnAvailable();
 	}	

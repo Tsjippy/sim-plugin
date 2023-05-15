@@ -1,3 +1,6 @@
+
+console.log('Mandatory.js loaded');
+
 async function markAsRead(event){
     var target = event.target;
 	if(target.dataset.postid != undefined){
@@ -34,8 +37,7 @@ async function markAllAsRead(event){
 }
 
 document.addEventListener("DOMContentLoaded",function() {
-    console.log('Mandatory.js loaded');
-    document.querySelectorAll('.mark_as_read').forEach(el=>el.addEventListener('click',markAsRead));
+    document.querySelectorAll('.mark_as_read').forEach(el=>el.addEventListener('click', markAsRead));
 
     document.querySelectorAll('.mark-all-as-read').forEach(el=>el.addEventListener('click', markAllAsRead));
 })

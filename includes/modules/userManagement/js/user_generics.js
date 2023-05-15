@@ -59,20 +59,22 @@ document.addEventListener('click', function(event) {
 	}
 });
 
+function onBlur(ev){
+	document.querySelectorAll(`.ministryposition input[type="text"][name="${ev.target.name}"]`).forEach(input => {
+		// set value
+		input.value = ev.target.value;
+
+		// make visible
+		input.closest('.ministryposition').classList.remove('hidden');
+
+		// check the ministry
+		input.closest('li').querySelector('.ministry_option_checkbox').checked	= true;
+	});
+}
+
 document.addEventListener("DOMContentLoaded", function() {
 	// Add the value to all inputs with the same name
 	document.querySelectorAll('.ministryposition input[type="text"]').forEach(el => {
-		el.addEventListener('blur', ev=>{
-			document.querySelectorAll(`.ministryposition input[type="text"][name="${ev.target.name}"]`).forEach(input => {
-				// set value
-				input.value = ev.target.value;
-
-				// make visible
-				input.closest('.ministryposition').classList.remove('hidden');
-
-				// check the ministry
-				input.closest('li').querySelector('.ministry_option_checkbox').checked	= true;
-			});
-		});
+		el.addEventListener('blur', onBlur);
 	});
 });

@@ -1,3 +1,5 @@
+console.log('quota.js loaded');
+
 function updateDocumentName(target){
 	//All characters who are not a digit, all digits, followed by all character gives the numbers
 	var re = new RegExp('([\D]*)[0-9]{1,}(.*)',"g");
@@ -17,10 +19,6 @@ function updateDocumentName(target){
 	var labelEl			= parent.querySelector('.quotalabel');
 	labelEl.textContent	= labelEl.textContent.replace(re, '$1'+value+'$2');
 }
-
-document.addEventListener("DOMContentLoaded",function() {
-	console.log('quota.js loaded');
-});
 
 document.addEventListener('click', async ev=>{
     var target  = ev.target;

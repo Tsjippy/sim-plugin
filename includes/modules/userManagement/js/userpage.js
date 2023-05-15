@@ -22,7 +22,7 @@ async function loadTab(tab){
 		tab.addEventListener("scriptsloaded", function(event) {
 			event.target.querySelectorAll('.wrapper.hidden').forEach(el=>el.classList.remove('hidden'));
 
-			event.target.querySelector('.tabloader').remove();
+			event.target.querySelectorAll('.tabloader').forEach(el=>el.remove());
 		});
 
 		addStyles(response, tab);	// runs also the afterScriptsLoaded function

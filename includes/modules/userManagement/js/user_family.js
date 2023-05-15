@@ -1,4 +1,8 @@
 async function submitAddAccountForm(event){
+	
+	ev.preventDefault();
+	ev.stopPropagation();
+
 	var target		= event.target;
 
 	var response	= await FormSubmit.submitForm(target, 'user_management/add_useraccount');
@@ -40,15 +44,12 @@ async function submitAddAccountForm(event){
 	Main.hideModals();
 }
 
-document.addEventListener("DOMContentLoaded",function() {
-	document.querySelectorAll('[name="add_user_account_button"]').forEach(el=>el.addEventListener('click',function(){
-		Main.showModal('add_account');
-	}));
+function showAddAccountModal(){
+	Main.showModal('add_account');
+}
 
-	document.querySelectorAll('[name="adduseraccount"]').forEach(el=>el.addEventListener('click', ev=>{
-		
-		ev.preventDefault();
-		ev.stopPropagation();
-		submitAddAccountForm(ev);
-	}));
+document.addEventListener("DOMContentLoaded",function() {
+	document.querySelectorAll('[name="add_user_account_button"]').forEach(el=>el.addEventListener('click', showAddAccountModal));
+
+	document.querySelectorAll('[name="adduseraccount"]').forEach(el=>el.addEventListener('click', submitAddAccountForm));
 });

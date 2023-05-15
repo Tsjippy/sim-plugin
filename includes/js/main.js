@@ -45,7 +45,7 @@ function switchTab(event=null){
 
 	if(mainTab != null){
 		//find the tab and display it
-		document.querySelectorAll(`[data-param_val="${mainTab}"]`).forEach(tabbutton=>{
+		document.querySelectorAll(`[data-param_val="${mainTab}"]:not(.active)`).forEach(tabbutton=>{
 			//only process non-modal tabs
 			if(tabbutton.closest('.modal') == null){
 				let result	= displayTab(tabbutton);
@@ -59,7 +59,7 @@ function switchTab(event=null){
 	let secondTab = params.secondTab;
 	if(secondTab != null){
 		//find the tab and display it
-		lastTab.querySelectorAll(`[data-param_val="${secondTab}"]`).forEach(tabbutton=>{
+		lastTab.querySelectorAll(`[data-param_val="${secondTab}"]:not(.active)`).forEach(tabbutton=>{
 			displayTab(tabbutton);
 		});
 	}
@@ -82,7 +82,7 @@ function displayTab(tabButton){
 
 		if(tabButton.tagName != 'A'){
 			//Mark the other tabbuttons as inactive
-			tabButton.parentNode.querySelectorAll(':scope > .active:not(#'+tabButton.id+')').forEach(child=>{
+			tabButton.parentNode.querySelectorAll(`:scope > .active:not(#${tabButton.id})`).forEach(child=>{
 				//Make inactive
 				child.classList.remove("active");
 					
@@ -302,7 +302,7 @@ document.addEventListener("DOMContentLoaded",function() {
 
 	// hide mobile hidden
 	if(isMobileDevice()){
-		document.querySelectorAll('.hide-on-mobile').forEach(el=>el.classList.add('hidden'));
+		document.querySelectorAll('.hide-on-mobile:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 	}else{
 		positionSubSubMenus();
 	}	

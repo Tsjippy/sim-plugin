@@ -2,6 +2,7 @@ import { addStyles } from './../../../js/imports.js';
 import { getFieldValue } from  '../../../js/field_value.js';
 export{ getFieldValue };
 
+console.log('Forms.js is loaded');
 
 async function saveFormInput(target){
 	let form		= target.closest('form');
@@ -705,22 +706,6 @@ async function onlyOwnSwitch(target){
 	requestNewFormResults(target);
 }
 
-//Main code
-document.addEventListener("DOMContentLoaded",function() {
-	console.log('Forms.js is loaded');
-
-	document.querySelectorAll('.sim_form').forEach(form=>{
-		if(form._filledEls == undefined){
-			form._filledEls	= {};
-			form.querySelectorAll('input[value]').forEach(el => {
-				if(el.value != ''){
-					form._filledEls[el.name]	= el.value;
-				}
-			});
-		}
-	});
-});
-
 //we are online again
 window.addEventListener('online', function(){
 	document.querySelectorAll('.form_submit').forEach(btn=>{
@@ -780,25 +765,4 @@ document.addEventListener('click', function(event) {
 	if(target.matches('.onlyown-switch-all') || target.matches('.onlyown-switch-on')){
 		onlyOwnSwitch(target);
 	}
-});
-
-// check for unsaved formdata
-window.addEventListener("beforeunload", (event) => {
-	document.querySelectorAll('form.sim_form').forEach(form=>{
-		if(form._filledEls != undefined){
-			// there is an extra element with a value
-			if(form.querySelectorAll('input[value]').length != form._filledEls.length){
-				event.preventDefault();
-				event.returnValue = 'test';
-			}
-
-			// a value does not exist or has changed
-			form.querySelectorAll('input[value]').forEach(el => {
-				if(form._filledEls[el.name] == undefined || form._filledEls[el.name] != el.value){
-					event.preventDefault();
-					event.returnValue = 'test2';
-				}
-			});
-		}
-	});
 });

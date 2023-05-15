@@ -2,7 +2,7 @@
 namespace SIM\BANKING;
 use SIM;
 
-const MODULE_VERSION		= '7.0.1';
+const MODULE_VERSION		= '7.0.2';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 DEFINE(__NAMESPACE__.'\STATEMENT_FOLDER', wp_get_upload_dir()["basedir"]."/private/account_statements/");
 

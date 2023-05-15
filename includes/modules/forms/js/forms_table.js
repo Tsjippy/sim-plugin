@@ -1,3 +1,6 @@
+
+console.log("Formstable.js loaded");
+
 async function hideColumn(cell){
 	// Hide the column
 	var table		= cell.closest('table');
@@ -444,7 +447,6 @@ document.addEventListener("click", event=>{
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-	console.log("Formstable.js loaded");
 	
 	if(typeof(Sortable) != 'undefined'){
 		//Make the sortable_column_settings_rows div sortable

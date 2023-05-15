@@ -1,14 +1,16 @@
 console.log('admin.js loaded');
 
+function switchSlider(event){
+    if(event.target.checked){
+        document.querySelectorAll('.options, .tablink-wrapper').forEach(el=>el.style.display    = 'block');
+    }else{
+        document.querySelectorAll('.options, .tablink-wrapper').forEach(el=>el.style.display    = 'none');
+    }
+}
+
 //Load after page load
-document.addEventListener("DOMContentLoaded",function() {
-	document.querySelector('[name="enable"]').addEventListener('change', function(event){
-        if(event.target.checked){
-            document.querySelectorAll('.options, .tablink-wrapper').forEach(el=>el.style.display    = 'block');
-        }else{
-            document.querySelectorAll('.options, .tablink-wrapper').forEach(el=>el.style.display    = 'none');
-        }
-    })
+document.addEventListener("DOMContentLoaded", function() {
+	document.querySelector('[name="enable"]').addEventListener('change', switchSlider);
 
 	//add niceselects
 	document.querySelectorAll('select:not(.nonice,.swal2-select)').forEach(function(select){

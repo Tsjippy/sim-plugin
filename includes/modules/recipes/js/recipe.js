@@ -1,5 +1,7 @@
 /* global define */
 
+console.log('Recipe.js loaded');
+
 (function (root, pluralize) {
   /* istanbul ignore else */
   if (typeof require === 'function' && typeof exports === 'object' && typeof module === 'object') {
@@ -505,48 +507,49 @@
   return pluralize;
 });
 
-document.addEventListener("DOMContentLoaded",function() {
-	console.log('Recipe.js loaded');
+function changeServes(ev){
+  //Get the original value
+  var originalvalue 	= parseFloat(this.dataset.originalvalue);
+  //get the current value
+  var newvalue 	= this.value;
+
+  //Check with what number the ingredients need to be multiplied
+  var factor 		= newvalue/originalvalue;
+
+  //Update the person text
+  if(this.value == 1){
+    this.parentNode.querySelector('.personspan').textContent = "person";
+  }else{
+    this.parentNode.querySelector('.personspan').textContent = "people";
+  }
+
+  //Get the ingredient list
+  var ingredients_list = this.closest('.entry-content').querySelector('.ingredients');
+
+  //Loop over the ingredients
+  ingredients_list.querySelectorAll('span').forEach(function(span){
+    var value = Math.round(parseFloat(span.dataset.value) * factor *10)/10;
+    
+    var word = span.dataset.word;
+    var newWord;
+    //If the new number is one, make the word singular
+    if(value == 1){
+      newWord = pluralize.singular(word);
+    }else{
+      newWord = pluralize(word);
+    }
+    
+    //Replace the content
+    span.textContent = value + ' ' + newWord;
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
 	
 	//Loop over all select element with class serves_select
 	document.querySelectorAll(".serves_select").forEach(function(el){
 		
 		//Add change event listener
-		el.addEventListener('change', function(){
-			//Get the original value
-			var originalvalue 	= parseFloat(this.dataset.originalvalue);
-			//get the current value
-			var newvalue 	= this.value;
-			
-			//Check with what number the ingredients need to be multiplied
-			var factor 		= newvalue/originalvalue;
-			
-			//Update the person text
-			if(this.value == 1){
-				this.parentNode.querySelector('.personspan').textContent = "person";
-			}else{
-				this.parentNode.querySelector('.personspan').textContent = "people";
-			}
-			
-			//Get the ingredient list
-			var ingredients_list = this.closest('.entry-content').querySelector('.ingredients');
-			
-			//Loop over the ingredients
-			ingredients_list.querySelectorAll('span').forEach(function(span){
-				var value = Math.round(parseFloat(span.dataset.value) * factor *10)/10;
-				
-				var word = span.dataset.word;
-				var newWord;
-				//If the new number is one, make the word singular
-				if(value == 1){
-					newWord = pluralize.singular(word);
-				}else{
-					newWord = pluralize(word);
-				}
-				
-				//Replace the content
-				span.textContent = value + ' ' + newWord;
-			});
-		})
-	});
+		el.addEventListener('change', changeServes);
+  });
 });

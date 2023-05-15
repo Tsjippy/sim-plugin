@@ -1,6 +1,8 @@
 import { showLoader } from '../../../../js/imports.js';
 import { showAddHostModal, addCurrentUserAsHost, addHostHtml, removeHost, showTimeslotModal, checkConfirmation, editTimeSlot } from './shared.js';
 
+console.log("Desktop-schedule.js loaded");
+
 /**
  *
  * Submits the new schedule form via rest API and adds the new schedule to the screen.
@@ -387,17 +389,18 @@ function addSelectable(){
 	hideRows();
 }
 
+function modalclosed(ev){
+	document.querySelectorAll('td.active').forEach(cell => {
+		cell.innerHTML = cell.dataset.oldvalue;
+		cell.classList.remove('active', 'ui-selected');
+	});
+}
+
 document.addEventListener("DOMContentLoaded",function() {
-	console.log("Desktop-schedule.js loaded");
 	
 	addSelectable();
 
-	document.querySelector('[name="add_session"]').addEventListener('modalclosed', ev=>{
-		document.querySelectorAll('td.active').forEach(cell => {
-			cell.innerHTML = cell.dataset.oldvalue;
-			cell.classList.remove('active', 'ui-selected');
-		});
-	});
+	document.querySelector('[name="add_session"]').addEventListener('modalclosed', modalclosed);
 });
 
 document.addEventListener('click', function(event){

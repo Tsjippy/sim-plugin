@@ -1,5 +1,7 @@
 var reorderingBusy, formWrapper, formElementWrapper, modal;
 
+console.log("Formbuilder.js loaded");
+
 /* FUNCTIONS */
 function clearFormInputs(){
 	try {
@@ -726,7 +728,6 @@ function focusFirst(){
 
 reorderingBusy = false;
 document.addEventListener("DOMContentLoaded",function() {
-	console.log("Formbuilder.js loaded");
 
 	//Make the form_elements div sortable
 	let options = {

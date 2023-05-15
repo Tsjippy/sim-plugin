@@ -2,6 +2,8 @@ import { getFieldValue } from '/field_value.js';
 
 let oldValue;
 
+console.log("Table.js loaded");
+
 function outsideClicked(event){
 	if(event.target.closest('td') == null || !event.target.closest('td').matches('.editing')){
 		event.stopPropagation();
@@ -376,8 +378,7 @@ document.addEventListener("click", event=>{
 	}
 });
 
-document.addEventListener("DOMContentLoaded",function() {
-	console.log("Table.js loaded");
+document.addEventListener("DOMContentLoaded", function() {
 	
 	positionTable();
 	window.addEventListener('resize', positionTable);

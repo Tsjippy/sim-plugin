@@ -1,6 +1,8 @@
 import './../../locations/js/user_location.js';
 import { addStyles } from './../../../js/imports.js';
 
+console.log("Frontendposting.js loaded");
+
 async function confirmPostDelete( event, type='delete' ) {
 	let url;
 	let target	= event.target;
@@ -467,36 +469,40 @@ function startDateChanged(target){
 	document.querySelectorAll('.weeks [name="event[repeat][weeks][]"]')[montWeek].checked	= true;
 }
 
-document.addEventListener("DOMContentLoaded",function() {
-	console.log("Frontendposting.js loaded");
+document.addEventListener("DOMContentLoaded", function() {
 	
-	//Update minutes
-	let minutes = document.getElementById("minutes");
-	if(minutes != null){
-		setInterval(function() {
-			minutes.innerHTML = parseInt(minutes.innerHTML)+1;
-		}, 60000);
-	}
-	
-	refreshPostLock();
-	//Refresh the post lock every minute
-	setInterval(refreshPostLock, 60000);
-	
-	//Remove post lock when move away from the page
-	window.onbeforeunload = function(){
-		if(document.getElementById('post_lock_warning') == null){
-			deletePostLock();
-		}
-	};
-	
-	// run js if we open a specific post type
-	if(location.search.includes('?type') || location.search.includes('?post_id')){
-		switchforms(document.querySelector('#postform [name="post_type"]'));
-	}
+	if(window['frontendLoaded'] == undefined){
+		window['frontendLoaded']	= true;
 
-	// Listen to insert media actions
-	insertMediaContents();
+		//Update minutes
+		let minutes = document.querySelector("#minutes");
+		if(minutes != null){
+			setInterval(function() {
+				minutes.innerHTML = parseInt(minutes.innerHTML)+1;
+			}, 60000);
+		}
+		
+		refreshPostLock();
+		
+		//Refresh the post lock every minute
+		setInterval(refreshPostLock, 60000);
+		
+		// run js if we open a specific post type
+		if(location.search.includes('?type') || location.search.includes('?post_id')){
+			switchforms(document.querySelector('#postform [name="post_type"]'));
+		}
+
+		// Listen to insert media actions
+		insertMediaContents();
+	}
 });
+
+//Remove post lock when move away from the page
+window.onbeforeunload = function(){
+	if(document.getElementById('post_lock_warning') == null){
+		deletePostLock();
+	}
+};
 
 document.addEventListener("click", event =>{
 	let target = event.target;
