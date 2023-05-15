@@ -31,7 +31,7 @@ function addPreview(link, value){
 
 	let html = `
 	<div class='document'>
-		<input type='hidden' name='${name}' value='${value}'>
+		<input type='hidden' name='${name}' value='${value}' data-pending='true'>
 		${link}
 		<img class="remove_document_loader hidden" src="${sim.loadingGif}" style="height:40px;">
 	</div>`;

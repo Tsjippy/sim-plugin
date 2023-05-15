@@ -369,8 +369,9 @@ trait CreateJs{
         /*
         ** DOMContentLoaded JS
         */
-        $newJs   = "\n\tdocument.addEventListener('DOMContentLoaded', function() {";
-            $newJs.= "\n\t\tconsole.log('Dynamic $this->formName forms js loaded');";
+        
+        $newJs   = "\n\t\tconsole.log('Dynamic $this->formName forms js loaded');";
+        $newJs  .= "\n\tdocument.addEventListener('DOMContentLoaded', function() {";
             $newJs.= "\n\t\tFormFunctions.tidyMultiInputs();";
 
             $tabJs  = '';

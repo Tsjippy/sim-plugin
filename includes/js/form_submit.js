@@ -99,6 +99,8 @@ export async function submitForm(target, url){
 
 		form.querySelectorAll('.submit_wrapper .loadergif').forEach(loader => loader.classList.add('hidden'));
 
+		markComplete();
+
 		return response;
 	}else{
 		form.querySelectorAll(':invalid').forEach(el=>{
@@ -119,6 +121,35 @@ export async function submitForm(target, url){
 
 		return false;
 	}
+}
+
+/**
+ * Set the default values to the current values so to not trigger a page leave warning
+ */
+export function markComplete(event=''){
+	console.log(event);
+
+	// pending
+	document.querySelectorAll('[data-pending]').forEach(el=>{
+		el.removeAttribute('data-pending');
+	});
+
+	// check all inputs
+	document.querySelectorAll('form input:not([type=radio], [type=checkbox]), form textarea').forEach(el=>{
+		el.defaultValue = el.value
+	});
+
+	// check all checkboxes and radio
+	document.querySelectorAll('form input[type=radio], form input[type=checkbox]').forEach(el=>{
+		if(el.checked){
+			el.defaultChecked = true; 
+		}
+	});
+
+	// check all dropdowns
+	document.querySelectorAll('form select').forEach(el=>{
+		el.options[el.selectedIndex].defaultSelected	= true;
+	});
 }
 
 export async function fetchRestApi(url, formData='', showErrors=true){
@@ -182,27 +213,39 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 	}
 }
 
+document.querySelectorAll('form.sim_form').forEach(form=>form.addEventListener("submit", markComplete));
+
 // check for unsaved formdata
 window.addEventListener("beforeunload", (event) => {
+	// check all pending
+	document.querySelectorAll('[data-pending]').forEach(el=>{
+		console.log(`${el.defaultValue} - ${el.value}`);
+		event.preventDefault();
+		event.returnValue = 'test2';
+	});
+
 	// check all inputs
-	document.querySelectorAll('form input:not([type=radio], [type=checkbox]), form textarea').forEach(el=>{
+	document.querySelectorAll('form.sim_form input:not([type=radio], [type=checkbox]), form textarea').forEach(el=>{
 		if(el.defaultValue != el.value){
+			console.log(`${el.defaultValue} - ${el.value}`);
 			event.preventDefault();
 			event.returnValue = 'test2';
 		}
 	});
 
 	// check all checkboxes and radio
-	document.querySelectorAll('form input[type=radio], form input[type=checkbox]').forEach(el=>{
+	document.querySelectorAll('form.sim_form input[type=radio], form input[type=checkbox]').forEach(el=>{
 		if(el.defaultChecked != el.checked){
+			console.log(`${el.defaultValue} - ${el.value}`);
 			event.preventDefault();
 			event.returnValue = 'test2';
 		}
 	});
 
 	// check all dropdowns
-	document.querySelectorAll('form select').forEach(el=>{
+	document.querySelectorAll('form.sim_form select').forEach(el=>{
 		if(!el.options[el.selectedIndex].defaultSelected){
+			console.log(`${el.defaultValue} - ${el.value}`);
 			event.preventDefault();
 			event.returnValue = 'test2';
 		}
