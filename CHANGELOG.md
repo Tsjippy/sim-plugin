@@ -3,10 +3,22 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.33.3] - 2023-05-15
+
+
+### Added
 - zoom control
 - warning when pending form changes
 
 ### Changed
+- more robust domcontent loaded function
 
 ### Fixed
 - issue with editing other user profile
