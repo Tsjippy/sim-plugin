@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- clean up of vimeo archives
 
 ### Updated
 
