@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.33.5] - 2023-05-22
+
+
+### Fixed
 - clean up of vimeo archives
 
 ### Updated
