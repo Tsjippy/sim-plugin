@@ -148,14 +148,33 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug){
 	$html	.= "<table class='formoverview'>";
 		$html	.= "<thead>";
 			$html	.= "<tr>";
-				$html	.= "<th>Form name</th>";
+				$html	.= "<th>Id</th>";
+				$html	.= "<th>Name</th>";
+				$html	.= "<th>Url</th>";
 				$html	.= "<th>Actions</th>";
 			$html	.= "</tr>";
 		$html	.= "</thead>";
 		$html	.= "<tbody>";
 			foreach($simForms->forms as $form){
+				$settings	= maybe_unserialize($form->settings);
+				$formName	= $form->name;
+				$formUrl	= '';
+
+				if(is_array($settings)){
+					$formName	= $settings['formname'];
+					$formUrl	= $settings['formurl'];
+				}
+
+				$formName	= str_replace('_', ' ', ucfirst($formName));
+
 				$html	.= "<tr>";
-					$html	.= "<td>".str_replace('_', ' ', ucfirst($form->name))."</td>";
+					$html	.= "<td>$form->id</td>";
+					$html	.= "<td>$formName</td>";
+					if(empty($formUrl)){
+						$html	.= "<td>Not set</td>";
+					}else{
+						$html	.= "<td><a href='$formUrl'>Link</a></td>";
+					}
 					$html	.= "<td>";
 						$html	.= "<form action='' method='post' style='display: inline-block; margin-right:10px;'>";
 							$html	.= "<button class='small' name='export' value='{$form->id}'>Export</button>";

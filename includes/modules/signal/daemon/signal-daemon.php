@@ -10,10 +10,6 @@
 use SIM\SIGNAL\SignalBus;
 use SIM;
 
-echo "Started from ".__DIR__;
-
-error_log('Signal bus test');
-
 if(!empty($argv) && count($argv) == 2){
     $data      = json_decode($argv[1]);
 
@@ -42,8 +38,6 @@ if(!empty($argv) && count($argv) == 2){
     if($data->account != $signal->phoneNumber){
         return;
     }
-
-    SIM\printArray($data);
 
     // message to group
     if(

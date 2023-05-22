@@ -244,8 +244,9 @@ window.addEventListener("beforeunload", (event) => {
 
 	// check all dropdowns
 	document.querySelectorAll('form.sim_form select').forEach(el=>{
-		if(!el.options[el.selectedIndex].defaultSelected){
-			console.log(`${el.defaultValue} - ${el.value}`);
+		if(el.selectedIndex != 0 && el.options[el.selectedIndex] != undefined && !el.options[el.selectedIndex].defaultSelected){
+			console.log(el)
+			console.log(el.options[el.selectedIndex].defaultSelected);
 			event.preventDefault();
 			event.returnValue = 'test2';
 		}

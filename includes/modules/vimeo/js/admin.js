@@ -1,5 +1,7 @@
 import {showLoader} from './../../../js/imports.js';
 
+console.log('Vimeo admin js loaded');
+
 async function downloadVimeoVideo(ev){
     const vimeoUrl   = ev.target.closest('form').querySelector('[name="download_url"]').value;
 
@@ -34,7 +36,7 @@ async function downloadVimeoVideo(ev){
     }
 }
 
-async function cleanUpBackup(){
+async function cleanUpBackup(ev){
     showLoader(ev.target);
 
     let response    = await FormSubmit.fetchRestApi('vimeo/cleanup_backup');
