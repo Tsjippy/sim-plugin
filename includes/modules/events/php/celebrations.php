@@ -139,7 +139,7 @@ function replaceCoupleString($string, $replaceString, $user, $partner=''){
 	}
 
 	//Search for first names and last names
-	$pattern	= "/((\b$user->first_name\b)|(\b$partner->first_name\b)).*((\b$partner->last_name\b)|(\b$user->last_name\b))/i";
+	$pattern	= "/((\b$user->first_name\b)|(\b$partner->first_name\b)).*((\b$partner->first_name\b)|(\b$user->first_name\b)).*((\b$partner->last_name\b)|(\b$user->last_name\b))/i";
 
 	return preg_replace($pattern, $replaceString, $string);
 }

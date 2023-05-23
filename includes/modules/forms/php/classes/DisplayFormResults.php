@@ -62,6 +62,9 @@ class DisplayFormResults extends DisplayForm{
 		if(empty($submissionId) && !empty($_REQUEST['subid'])){
 			$submissionId	= $_REQUEST['subid'];
 		}
+		if(empty($submissionId) && !empty($_REQUEST['id'])){
+			$submissionId	= $_REQUEST['id'];
+		}
 		
 		if(is_numeric($submissionId)){
 			$query .= "id='$submissionId'";
@@ -140,7 +143,7 @@ class DisplayFormResults extends DisplayForm{
 	
 			$this->processSplittedData();
 
-			if(count($this->splittedSubmissions) > $this->pageSize){
+			if(!empty($this->splittedSubmissions) && count($this->splittedSubmissions) > $this->pageSize){
 				$start	= 0;
 				if(isset($_POST['pagenumber']) && is_numeric($_POST['pagenumber'])){
 					$this->currentPage	= $_POST['pagenumber'];
