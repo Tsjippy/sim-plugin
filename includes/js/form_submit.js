@@ -148,7 +148,9 @@ export function markComplete(event=''){
 
 	// check all dropdowns
 	document.querySelectorAll('form select').forEach(el=>{
-		el.options[el.selectedIndex].defaultSelected	= true;
+		if(el.selectedIndex != -1 && el.options[el.selectedIndex] != undefined){
+			el.options[el.selectedIndex].defaultSelected	= true;
+		}
 	});
 }
 
