@@ -8,6 +8,7 @@
 
 ### Fixed
 - celebration messages
+- form reload warning
 
 ### Updated
 
