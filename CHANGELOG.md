@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.33.6] - 2023-05-27
+
+
+### Fixed
 - celebration messages
 - form reload warning
 - prayer request when many posts found
