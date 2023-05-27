@@ -9,6 +9,7 @@
 ### Fixed
 - celebration messages
 - form reload warning
+- prayer request when many posts found
 
 ### Updated
 
