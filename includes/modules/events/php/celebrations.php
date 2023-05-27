@@ -190,8 +190,8 @@ function anniversaryMessages(){
 			$url		= SIM\maybeGetUserPageUrl($userId);
 
 			$coupleString	= getCoupleString($userdata, $partner);
-			$coupleLink		= "of <a href='$url'>$coupleString</a>";
-			$link			= "of <a href='$url'>{$userdata->display_name}</a>";
+			$coupleLink		= "of <a href=\"$url\">$coupleString</a>";
+			$link			= "of <a href=\"$url\">{$userdata->display_name}</a>";
 		}
 
 		if(is_numeric($partnerId)){
@@ -216,7 +216,9 @@ function anniversaryMessages(){
 		if($addImage){
 			$profilePicture	= get_user_meta($userId, 'profile_picture', true);
 			if(isset($profilePicture[0])){
-				$message	.= '<a href="'.wp_get_attachment_url($profilePicture[0]).'">'.wp_get_attachment_image($profilePicture[0], 'avatar', false, 'style=border-radius: 50%;').'</a>';
+				$pictureUrl		= wp_get_attachment_url($profilePicture[0]);
+				$pictureHtml	= wp_get_attachment_image($profilePicture[0], 'avatar', false, 'style=border-radius: 50%;');
+				$message		.= "<a href='$pictureUrl'>$pictureHtml</a>";
 			}
 		}
 

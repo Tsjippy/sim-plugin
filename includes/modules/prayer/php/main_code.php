@@ -37,8 +37,9 @@ function prayerRequest($plainText = false, $verified=false) {
 	//Get all the post belonging to the prayer category
 	$posts = get_posts(
 		array(
-			'category'  => get_cat_ID('Prayer'),
-			's'			=> date("F Y"),
+			'category'  	=> get_cat_ID('Prayer'),
+			's'				=> date("F Y"),
+			'numberposts'	=> -1
 		)
 	);
 
@@ -78,6 +79,7 @@ function prayerRequest($plainText = false, $verified=false) {
 				//Return the prayer request
 				$prayer	= $matches[0][1];
 
+				$params	= [];
 				if($plainText){
 					$params	= apply_filters('sim_after_bot_payer', ['message'=>$prayer, 'urls'=>'', 'pictures'=>[]]);
 					$prayer	= $params['message']."\n\n".$params['urls'];
