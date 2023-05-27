@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- signal daemon message reply
 
 ### Updated
 
