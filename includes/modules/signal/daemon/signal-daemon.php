@@ -49,13 +49,20 @@ if(!empty($argv) && count($argv) == 2){
                 $groupId    = $signal->groupIdToByteArray($data->envelope->dataMessage->groupInfo->groupId);
                 $signal->sendGroupTyping($groupId);
 
-                $answer = getAnswer(trim(explode('?', $data->envelope->dataMessage->message)[1]), $data->envelope->source);
+                $message    = $data->envelope->dataMessage->message;
+
+                // Remove mention from message
+                $message    = substr($message, $data->envelope->dataMessage->mentions[0]->length);
+                $answer     = getAnswer(trim($message), $data->envelope->source);
+
                 $signal->sendGroupMessage($answer['response'], $groupId, $answer['pictures']);
             }
         }
     }elseif(!isset($data->envelope->dataMessage->groupInfo)){
         $signal->sentTyping($data->envelope->source, $data->envelope->dataMessage->timestamp);
+
         $answer = getAnswer($data->envelope->dataMessage->message, $data->envelope->source);
+
         $signal->send($data->envelope->source, $answer['response'], $answer['pictures']);
     }
 }
