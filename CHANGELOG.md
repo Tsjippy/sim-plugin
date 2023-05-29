@@ -8,6 +8,7 @@
 
 ### Fixed
 - signal daemon message reply
+- bug
 
 ### Updated
 
