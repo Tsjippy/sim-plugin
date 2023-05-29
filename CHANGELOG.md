@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.33.7] - 2023-05-29
+
+
+### Fixed
 - signal daemon message reply
 - bug
 - load edit post over ajax
