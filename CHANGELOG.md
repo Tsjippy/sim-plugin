@@ -11,6 +11,7 @@
 - bug
 - load edit post over ajax
 - issue with repeating events
+- issue with non-existing uploaded picture
 
 ### Updated
 
