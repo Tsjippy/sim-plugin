@@ -9,6 +9,7 @@
 ### Fixed
 - signal daemon message reply
 - bug
+- load edit post over ajax
 
 ### Updated
 
