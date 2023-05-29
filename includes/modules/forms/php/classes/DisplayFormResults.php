@@ -160,7 +160,11 @@ class DisplayFormResults extends DisplayForm{
 				$this->splittedSubmissions	= array_splice($this->splittedSubmissions, $start, $this->pageSize);
 			}
 
-			$this->total	= count($this->splittedSubmissions);
+			if(empty($this->splittedSubmissions)){
+				$this->total	= 0;
+			}else{
+				$this->total	= count($this->splittedSubmissions);
+			}
 		}
 
 		if(count($this->submissions) == 1){
