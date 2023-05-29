@@ -172,7 +172,9 @@ class FileUpload{
 					}
 				}
 			}elseif(!is_array($documentArray) && $documentArray != ""){
-				$this->documentPreview($documentArray, -1);
+				if(!$this->documentPreview($documentArray, -1)){
+					$documentArray	= '';
+				}
 			}
 
 			if($multiple){
