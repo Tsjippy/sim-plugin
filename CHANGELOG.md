@@ -12,6 +12,7 @@
 - load edit post over ajax
 - issue with repeating events
 - issue with non-existing uploaded picture
+- issue with non-existing profile images
 
 ### Updated
 
