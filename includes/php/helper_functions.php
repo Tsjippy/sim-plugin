@@ -1154,8 +1154,9 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 	if(!empty($attachmentId) && is_array($attachmentId)){
 		$attachmentId	= $attachmentId[0];
 	}
-
-	$defaultPicture	= "<img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
+	
+	$defaultUrl		= plugins_url('pictures/usericon.png', __DIR__);
+	$defaultPicture	= "<img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$defaultUrl' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
 
 	if(is_numeric($attachmentId)){
 		$url = wp_get_attachment_image_url($attachmentId,'Full size');
@@ -1170,7 +1171,6 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 
 		return "<a href='$url'><img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'></a>";
 	}elseif($showDefault){
-		$url = plugins_url('pictures/usericon.png', __DIR__);
 		return $defaultPicture;
 	}else{
 		return false;
