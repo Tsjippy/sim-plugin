@@ -46,6 +46,6 @@ document.addEventListener("click", function(ev) {
 document.addEventListener("scriptsloaded", function() {
 	document.getElementById('frontend_upload_form').classList.remove('hidden');
 
-	wrapper.classList.remove('hidden');
-	loader.remove();
+	document.querySelectorAll('.content-wrapper').forEach(el=>el.classList.remove('hidden'));
+	document.querySelectorAll('.loaderwrapper:not(.hidden)').forEach(el=>el.remove());
 });
