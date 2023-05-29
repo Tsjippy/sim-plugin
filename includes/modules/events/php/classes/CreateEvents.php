@@ -203,9 +203,11 @@ class CreateEvents extends Events{
 		}
 
 		// Startdate is in the past, adjust
+		$type				= rtrim($repeatParam['type'], 'ly');
+		if($type == 'dai'){
+			$type	= 'day';
+		}
 		while($baseStartDate < strtotime(date('Y-m-d'))){
-			$type				= rtrim($repeatParam['type'], 'ly');
-
 			// Add one day/week/month/year
 			$baseStartDate		= strtotime("+1 $type", $baseStartDate);
 
@@ -219,7 +221,7 @@ class CreateEvents extends Events{
 		}
 
 		if($repeatStop == 'date'){
-			$repEnddate	= $repeatParam['enddate'];
+			$repEnddate	= strtotime($repeatParam['enddate']);
 		}else{
 			$repEnddate	= strtotime("+5 year", $baseStartDate);
 		}
@@ -472,6 +474,14 @@ class CreateEvents extends Events{
 			//store meta in db
 			update_metadata( 'post', $this->postId, 'eventdetails', json_encode($event));
 		}
+
+		/**
+		 * events are created using the
+		 * add_action( 'added_post_meta', __NAMESPACE__.'\createEvents', 10, 4);
+		 * add_action( 'updated_postmeta', __NAMESPACE__.'\createEvents', 10, 4);
+		 * hooks
+		 */
+
 	}
 
 	/**

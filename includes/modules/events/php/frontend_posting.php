@@ -83,13 +83,13 @@ function eventSpecificFields($frontEndContent){
 			<input type='text'							name='event[location]' 		value='<?php echo $eventDetails['location']; ?>' list="locations">
 			<datalist id="locations">
 				<?php
-				$locations = get_posts( 
+				$locations = get_posts(
 					array(
-						'post_type'      	=> 'location', 
+						'post_type'      	=> 'location',
 						'posts_per_page'	=> -1,
 						'orderby'			=> 'title',
 						'order' 			=> 'ASC'
-					) 
+					)
 				);
 				foreach($locations as $location){
 					echo "<option data-value='{$location->ID}' value='{$location->post_title}'></option>";
@@ -222,7 +222,7 @@ function displayRepetitionParameters($eventDetails){
 				On this date:
 			</label><br>
 			
-			<label class='repeat_type_option_specifics hidden'>
+			<label class='repeat_type_option_specifics <?php if($eventDetails['repeat']['stop'] != 'date'){echo 'hidden';}?>'>
 				<input type='date' name='event[repeat][enddate]' value='<?php echo $eventDetails['repeat']['enddate'];?>'>
 			</label>
 		</div>
@@ -233,7 +233,7 @@ function displayRepetitionParameters($eventDetails){
 				After this amount of repeats:<br>
 			</label>
 			
-			<label class='repeat_type_option_specifics hidden'>
+			<label class='repeat_type_option_specifics <?php if($eventDetails['repeat']['stop'] != 'after'){echo 'hidden';}?>'>
 				<input type='number' name='event[repeat][amount]' value='<?php echo $eventDetails['repeat']['amount'];?>'>
 			</label>
 		</div>
@@ -368,7 +368,7 @@ function repetitionIntervalSettings($eventDetails){
 				<input type='checkbox' class='selectall' name='alldays' value='all'>Select all days<br>
 			</label>
 
-			<?php 
+			<?php
 			foreach(['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $key=>$dayName){
 				if(is_array($eventDetails['repeat']['weekdays']) && in_array($dayName, $eventDetails['repeat']['weekdays'])){
 					$checked	= 'checked';
