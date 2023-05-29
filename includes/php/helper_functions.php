@@ -1155,17 +1155,23 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 		$attachmentId	= $attachmentId[0];
 	}
 
+	$defaultPicture	= "<img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
+
 	if(is_numeric($attachmentId)){
 		$url = wp_get_attachment_image_url($attachmentId,'Full size');
 
 		if(!$url || !file_exists(urlToPath($url))){
-			return false;
+			if($showDefault){
+				return $defaultPicture;
+			}else{
+				return false;
+			}
 		}
 
 		return "<a href='$url'><img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'></a>";
 	}elseif($showDefault){
 		$url = plugins_url('pictures/usericon.png', __DIR__);
-		return "<img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'>";
+		return $defaultPicture;
 	}else{
 		return false;
 	}
