@@ -1157,6 +1157,11 @@ function displayProfilePicture($userId, $size=[50,50], $showDefault = true, $fam
 
 	if(is_numeric($attachmentId)){
 		$url = wp_get_attachment_image_url($attachmentId,'Full size');
+
+		if(!$url || !file_exists(urlToPath($url))){
+			return false;
+		}
+
 		return "<a href='$url'><img loading='lazy' width='{$size[0]}' height='{$size[1]}' src='$url' class='profile-picture attachment-{$size[0]}x{$size[1]} size-{$size[0]}x{$size[1]}' loading='lazy'></a>";
 	}elseif($showDefault){
 		$url = plugins_url('pictures/usericon.png', __DIR__);
