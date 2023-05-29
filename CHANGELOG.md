@@ -10,6 +10,7 @@
 - signal daemon message reply
 - bug
 - load edit post over ajax
+- issue with repeating events
 
 ### Updated
 
