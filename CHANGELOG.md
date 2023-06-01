@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with attachments too big
 
 ### Updated
 
