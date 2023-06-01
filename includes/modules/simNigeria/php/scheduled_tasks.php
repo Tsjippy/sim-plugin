@@ -103,6 +103,8 @@ function sendReimbursementRequests(){
 				//Remove the upload attached to the form
 				rename($file, str_replace($dir, $oldDir, $file));
 			}
+		}else{
+			SIM\printArray('No attachments found');
 		}
 	}
 }

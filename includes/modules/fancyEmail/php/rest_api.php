@@ -6,10 +6,27 @@ global $wpdb;
 
 add_action( 'rest_api_init', function () {
 	//Route for e-mail tracking of today
-	register_rest_route( RESTAPIPREFIX, '/mailtracker', array(
-			'methods' => 'GET',
-			'callback' => __NAMESPACE__.'\mailTracker',
-			'permission_callback' => '__return_true',
+	register_rest_route(
+		RESTAPIPREFIX,
+		'/mailtracker',
+		array(
+			'methods' 				=> 'GET',
+			'callback' 				=> __NAMESPACE__.'\mailTracker',
+			'permission_callback' 	=> '__return_true',
+		)
+	);
+
+	//Route for e-mail tracking of today
+	register_rest_route(
+		RESTAPIPREFIX,
+		'/mailfailed',
+		array(
+			'methods' 				=> \WP_REST_Server::ALLMETHODS,
+			'callback' 				=> function($wpRestRequest){
+				SIM\printArray($wpRestRequest->get_params());
+				return $wpRestRequest->get_params();
+			},
+			'permission_callback' 	=> '__return_true',
 		)
 	);
 } );
@@ -17,6 +34,7 @@ add_action( 'rest_api_init', function () {
 // Make mailtracker rest api url publicy available
 add_filter('sim_allowed_rest_api_urls', function($urls){
 	$urls[]	= RESTAPIPREFIX.'/mailtracker';
+	$urls[]	= RESTAPIPREFIX.'/mailfailed';
 
 	return $urls;
 });

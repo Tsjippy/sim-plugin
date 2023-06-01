@@ -39,6 +39,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		SIM\ADMIN\recurrenceSelector($settings['contactlist_freq']);
 		?>
 	</select>
+	<br>
 	<?php
 	
     SIM\pictureSelector('tc_signature',  'Signature of the travel coordinator', $settings);

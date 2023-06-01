@@ -564,6 +564,17 @@ class DisplayFormResults extends DisplayForm{
 				'view_right_roles'	=> []
 			];
 		}
+
+		//also add the last edited date
+		if(!is_array($this->columnSettings[-4])){
+			$this->columnSettings[-4] = [
+				'name'				=> 'edittime',
+				'nice_name'			=> 'Last edit time',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
 		
 		$names	= [];
 		//put hidden columns on the end and do not show same names twice

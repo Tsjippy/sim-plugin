@@ -61,6 +61,12 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	</label>
 	<br>
 	<br>
+	<label>
+		Max attachment size in MB<br>
+		<input type='number' name='maxsize' value='<?php if(isset($settings['maxsize'])){echo $settings['maxsize'];}?>'>
+	</label>
+	<br>
+	<br>
 	<label>Select a picture for the e-mail header.</label>
 	<?php
 	SIM\pictureSelector('header_image', 'e-mail header', $settings);

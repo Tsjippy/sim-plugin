@@ -4,9 +4,9 @@ use SIM;
 
 add_action( 'rest_api_init', function () {
 	// Check for existing travel request
-	register_rest_route( 
-		RESTAPIPREFIX.'/sim_nigeria', 
-		'/verify_traveldate', 
+	register_rest_route(
+		RESTAPIPREFIX.'/sim_nigeria',
+		'/verify_traveldate',
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
 			'callback' 				=> __NAMESPACE__.'\verifyTraveldate',
@@ -19,9 +19,9 @@ add_action( 'rest_api_init', function () {
 	);
 
 	// Update quota documents
-	register_rest_route( 
-		RESTAPIPREFIX.'/sim_nigeria', 
-		'/update_visa_documents', 
+	register_rest_route(
+		RESTAPIPREFIX.'/sim_nigeria',
+		'/update_visa_documents',
 		array(
 			'methods' 				=> \WP_REST_Server::EDITABLE,
 			'callback' 				=> __NAMESPACE__.'\updateVisaDocuments',

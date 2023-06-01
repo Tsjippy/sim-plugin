@@ -104,6 +104,42 @@ class FancyEmail{
             SIM\printArray($this->message);
         }
 
+        // max attachment size
+        $totalSize  = 0;
+        $maxSize    = SIM\getModuleOption(MODULE_SLUG, 'maxsize');
+        $remaining  = [];
+        if(!$maxSize){
+            $maxSize    = 20;
+        }
+
+        // check if the total attachment size is past the limit
+        foreach($args['attachments'] as $index => $attach){
+            $totalSize   += filesize($attach);
+
+            // if this is more than the limit
+            if(number_format($totalSize / 1048576, 2) >= $maxSize){
+                $remaining[]    = $attach;
+                unset($args['attachments'][$index]);
+            }
+        }
+
+        if(!empty($remaining)){
+            // Send an e-mail with the remaining e-mails
+            $explode    = explode(' - ', $this->subject);
+            if(is_numeric(end($explode))){
+                $number = end($explode)++;
+                // remove the last element
+                array_pop($explode);
+
+                // Build the subject again without the last number
+                $subject    = implode(' ', $explode).' - '.$number;
+            }else{
+                $subject    = "$this->subject - 1";
+            }
+
+            wp_mail($this->recipients, $subject, $this->message, $args['headers'], $remaining);
+        }
+        
         // Add e-mail to e-mails db
         $wpdb->insert(
             $this->mailTable ,
