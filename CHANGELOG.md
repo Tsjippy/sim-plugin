@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- problem with ajax table refresh
 
 ### Updated
 
