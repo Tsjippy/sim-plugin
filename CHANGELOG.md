@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- better formresults for only current user
 
 ### Fixed
 - issue with attachments too big
