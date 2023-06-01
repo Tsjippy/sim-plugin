@@ -127,7 +127,8 @@ class FancyEmail{
             // Send an e-mail with the remaining e-mails
             $explode    = explode(' - ', $this->subject);
             if(is_numeric(end($explode))){
-                $number = end($explode)++;
+                $number = end($explode) +1;
+
                 // remove the last element
                 array_pop($explode);
 
