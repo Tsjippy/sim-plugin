@@ -135,8 +135,8 @@ function showFormResults($attributes){
  	if($attributes instanceof \WP_REST_Request){
 		if(!empty($_REQUEST['formid'])){
 			$attributes = [
-				'formid' 	=> $_REQUEST['formid'],
-				'id'		=> $_REQUEST['id']
+				'formid' 		=> $_REQUEST['formid'],
+				'shortcodeid'	=> $_REQUEST['shortcodeid']
 			];
 
 			if(isset($_REQUEST['archived'])){

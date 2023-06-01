@@ -410,7 +410,10 @@ async function uploadVideo(file){
 
 document.addEventListener('DOMContentLoaded', () => {
 	// move the modal to the top of the body so its always visible when not hidden
-	document.body.append(document.querySelector('.modal.edit-image.hidden'));
+	let imageEditModal	= document.querySelector('.modal.edit-image.hidden');
+	if(imageEditModal != null){
+		document.body.append(imageEditModal);
+	}
 });
 
 //Remove picture on button click

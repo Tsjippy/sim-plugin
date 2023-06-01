@@ -73,10 +73,6 @@ class DisplayFormResults extends DisplayForm{
 		}else{
 			$query	.= "1=1";
 		}
-
-		if(is_numeric($userId)){
-			$query .= " and userid='$userId'";
-		}
 		
 		if(!$this->showArchived && $submissionId == null){
 			$query .= " and archived=0";
@@ -117,8 +113,34 @@ class DisplayFormResults extends DisplayForm{
 		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
 
 		// unserialize
-		foreach($result as &$submission){
+		foreach($result as $index=>&$submission){
 			$submission->formresults	= unserialize($submission->formresults);
+
+			if(is_numeric($userId)){
+				$userIdKey	= false;
+				if(isset($submission->formresults['user_id'])){
+					$userIdKey	= 'user_id';
+				}elseif(isset($submission->formresults['userid'])){
+					$userIdKey	= 'userid';
+				}
+
+				// Form does not contain a user_id field, run the query against the user who submitted the form
+				if(!$userIdKey){
+					$query .= explode(' LIMIT',$query)[0]." and userid='$userId'";
+					if(!$all){
+						$query	.= " LIMIT $start, $this->pageSize";
+					}
+					
+					$result	= $wpdb->get_results($query);
+					$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
+
+					break;
+				}
+				// delete the result if we only want to keep results of a certain user and is not this user
+				elseif($submission->formresults[$userIdKey] != $userId){
+					unset($result[$index]);
+				}
+			}
 		}
 
 		if($wpdb->last_error !== ''){
@@ -1535,7 +1557,11 @@ class DisplayFormResults extends DisplayForm{
 		}
 
 		if(!isset($this->submissions)){
-			$this->parseSubmissions();
+			$userId	= null;
+			if($_REQUEST['onlyown']){
+				$userId	= get_current_user_id();
+			}
+			$this->parseSubmissions($userId	);
 		}
 
 		$this->loadTableSettings();
