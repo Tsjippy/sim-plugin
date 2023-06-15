@@ -10,6 +10,14 @@
 
 ### Updated
 
+## [2.33.9] - 2023-06-01
+
+
+### Fixed
+- problem with ajax table refresh
+
+### Updated
+
 ## [2.33.8] - 2023-06-01
 
 
