@@ -126,13 +126,17 @@ class DisplayFormResults extends DisplayForm{
 
 				// Form does not contain a user_id field, run the query against the user who submitted the form
 				if(!$userIdKey){
-					$query .= explode(' LIMIT',$query)[0]." and userid='$userId'";
+					$query = explode(' LIMIT', $query)[0]." and userid='$userId'";
 					if(!$all){
 						$query	.= " LIMIT $start, $this->pageSize";
 					}
 					
 					$result	= $wpdb->get_results($query);
 					$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
+
+					foreach($result as &$r){
+						$r->formresults	= unserialize($r->formresults);
+					}
 
 					break;
 				}

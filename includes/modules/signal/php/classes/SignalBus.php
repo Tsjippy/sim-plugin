@@ -297,6 +297,11 @@ class SignalBus extends Signal {
         $this->addToMessageLog($groupId, $message);
 
         if(is_array($attachments)){
+            foreach($attachments as $index => $attachment){
+                if(!file_exists($attachment)){
+                    unset($attachments[$index]);
+                }
+            }
             $attachments    = implode(',', $attachments);
         }
 
@@ -380,6 +385,11 @@ class SignalBus extends Signal {
         $message    = str_replace('`', "'", $message);
 
         if(is_array($attachments)){
+            foreach($attachments as $index => $attachment){
+                if(!file_exists($attachment)){
+                    unset($attachments[$index]);
+                }
+            }
             $attachments    = implode(',', $attachments);
         }
 
