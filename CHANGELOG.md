@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with non-existing image
 
 ### Updated
 
