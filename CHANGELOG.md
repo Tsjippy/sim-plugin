@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- better error message
 
 ### Fixed
 - issue with non-existing image
