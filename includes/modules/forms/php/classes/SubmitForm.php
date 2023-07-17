@@ -157,7 +157,7 @@ class SubmitForm extends SimForms{
 				}
 				
 				if(empty($to)){
-					SIM\printArray("No to email found for email $key");
+					SIM\printArray("No to email found for email $key on form {$this->formData->name} with id {$this->formData->id}");
 					continue;
 				}
 
