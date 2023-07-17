@@ -10,6 +10,7 @@
 
 ### Fixed
 - issue with non-existing image
+- to early deletion of accounts
 
 ### Updated
 
