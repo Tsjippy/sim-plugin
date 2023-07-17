@@ -346,7 +346,7 @@ class SimForms{
 		}
 		
 		if(!isset($this->formData->elementMapping['id'][$id])){
-			SIM\printArray("Element with id $id not found");
+			SIM\printArray("Element with id $id not found on form {$this->formData->name} with id {$this->formData->id}");
 			return false;
 		}
 		$elementIndex	= $this->formData->elementMapping['id'][$id];

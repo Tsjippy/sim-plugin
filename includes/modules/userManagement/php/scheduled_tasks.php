@@ -297,7 +297,8 @@ function greencardReminder(){
 				if(empty($accountPageUrl)){
 					SIM\printArray('No account page defined');
 				}
-				SIM\trySendSignal("Hi $user->first_name,\nPlease renew your greencard!\nIt has expired on {$visaInfo['greencard_expiry']}\n\nIf you have already renewed it, please indicate so on $accountPageUrl?main_tab=immigration", $user->ID);
+				$date		= date("M jS, Y", strtotime($visaInfo['greencard_expiry']));
+				SIM\trySendSignal("Hi $user->first_name,\nPlease renew your greencard!\nIt has expired on $date\n\nIf you have already renewed it, please indicate so on $accountPageUrl?main_tab=immigration", $user->ID);
 			}
 		}
 	}
