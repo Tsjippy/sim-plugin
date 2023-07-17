@@ -7,6 +7,7 @@
 ### Changed
 - better error message
 - greencard expired message
+- better name replacement
 
 ### Fixed
 - issue with non-existing image
