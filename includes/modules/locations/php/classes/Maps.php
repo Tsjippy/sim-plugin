@@ -14,7 +14,7 @@ class Maps{
 	}
 
 	/**
-	 * Function to retrive all maps from the db
+	 * Function to retrieve all maps from the db
 	 *
 	 * @return	array		array of map objects
 	 */
@@ -23,6 +23,15 @@ class Maps{
 
 		$query = "SELECT  `id`,`title` FROM `$this->mapTable` WHERE $where ORDER BY `title` ASC";
 		return $wpdb->get_results($query);
+	}
+
+	/**
+	 * Function to retrieve a specific map from the db
+	 *
+	 * @return	array		array of map objects
+	 */
+	public function getMap($mapId){
+		return $this->getMaps("id=$mapId ");
 	}
 
 	/**

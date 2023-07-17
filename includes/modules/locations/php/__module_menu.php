@@ -41,8 +41,13 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		return $optionsHtml;
 	}
 	
-	$query = 'SELECT * FROM `'.$wpdb->prefix .'ums_icons` WHERE 1';
-	$icons = $wpdb->get_results($query);
+	$query 		= 'SELECT * FROM `'.$wpdb->prefix .'ums_icons` WHERE 1';
+	$results 	= $wpdb->get_results($query);
+	$icons		= [];
+
+	foreach($results as $icon){
+		$icons[$icon->id]	= $icon;
+	}
 
 	ob_start();
 	wp_enqueue_style('sim_locations_admin_style', plugins_url('css/admin.min.css', __DIR__), array(), MODULE_VERSION);
@@ -101,12 +106,17 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		
 		<label>Icon on the map used for <?php echo $name;?></label>
 		<div class='icon_select_wrapper'>
-			<input type='hidden' class='icon_url' name='<?php echo $iconName;?>' value='<?php echo $settings[$iconName];?>'>
+			<input type='hidden' class='icon_id' name='<?php echo $iconName;?>' value='<?php echo $settings[$iconName];?>'>
 			<br>
 			<div class="dropdown">
 				<?php
-				if($settings[$iconName]){
-					$img			= "<img src='{$settings[$iconName]}' class='icon' loading='lazy'>";
+				if(is_numeric($settings[$iconName])){
+					$url		= $icons[$settings[$iconName]]->path;
+
+					if(strpos($url, '://' ) === false){
+						$url = plugins_url("ultimate-maps-by-supsystic/modules/icons/icons_files/def_icons/$url");
+					}
+					$img		= "<img src='$url' class='icon' data-id='{$settings[$iconName]}' loading='lazy'>";
 					$buttonText	= "Change";
 				}else{
 					$img	= "";
@@ -126,7 +136,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 							continue;
 						}
 						$url = plugins_url('ultimate-maps-by-supsystic/modules/icons/icons_files/def_icons/'.$icon->path);
-						echo "<div class='icon'><img src='$url' class='icon' loading='lazy'> $icon->description</div><br>";
+						echo "<div class='icon'><img src='$url' class='icon' data-id='$icon->id' loading='lazy'> $icon->description</div><br>";
 					}
 					?>
 				</div>

@@ -1,7 +1,7 @@
 <?php
 namespace SIM\LOCATIONS;
 use SIM;
-    
+
 add_filter('sim_frontend_posting_modals', function($types){
     $types[]	= 'location';
     return $types;
@@ -14,7 +14,7 @@ add_action('sim_frontend_post_before_content', function($frontEndContent){
         'taxonomy'	=> 'locations',
         'hide_empty'=> false,
     ) );
-    
+
     $frontEndContent->showCategories('location', $categories);
 });
 
@@ -24,7 +24,7 @@ add_action('sim_frontend_post_content_title', function ($postType){
     if($postType != 'location'){
         $class .= ' hidden';
     }
-    
+
     echo "<h4 class='$class' name='location_content_label'>";
         echo 'Please describe the location';
     echo "</h4>";
@@ -34,10 +34,10 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
     if($post->post_type != 'location'){
         return;
     }
-    
+
     //store categories
     $frontEndPost->storeCustomCategories($post, 'locations');
-    
+
     //parent
     if(isset($_POST['parent_location'])){
         if(empty($_POST['parent_location'])){
@@ -63,7 +63,7 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
             update_metadata( 'post', $post->ID, 'tel', $_POST['tel']);
         }
     }
-    
+
     //url
     if(isset($_POST['url'])){
         if(empty($_POST['url'])){
@@ -73,7 +73,7 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
             update_metadata( 'post', $post->ID, 'url', $_POST['url']);
         }
     }
-    
+
     setLocationAddress($post->ID);
 }, 10, 2);
 
@@ -92,7 +92,7 @@ function setLocationAddress($postId){
     ){
         update_metadata( 'post', $postId, 'location', json_encode($_POST['location']));
     }
-    
+
     if(empty($_POST['location']['latitude']) && empty($_POST['location']['longitude']) && empty($_POST['location']['address'])){
         //Delete the custom map for this post
         delete_metadata('post', $postId, 'location');
@@ -116,11 +116,11 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
     if(!is_array($location) && !empty($location)){
         $location   = json_decode($location, true);
     }
-        
+
     $address	= $location["address"]		= sanitize_text_field($location["address"]);
     $latitude	= $location["latitude"]	    = sanitize_text_field($location["latitude"]);
     $longitude	= $location["longitude"]	= sanitize_text_field($location["longitude"]);
-    
+
     //Only update if needed
     if(empty($latitude) || empty($longitude)){
         return;
@@ -152,17 +152,17 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
 
     //Get url of the featured image
     $iconUrl        = get_the_post_thumbnail_url($postId);
-    
+
     //Get the first category name
-    $name           = get_term( $categories[0], 'locations' )->slug.'_icon';
-    
+    $name           = get_term( $categories[0], 'locations' )->slug."_icon";
+
     //If there is a location category set and an custom icon for this category is set
     if(!empty($categories) && !empty(SIM\getModuleOption(MODULE_SLUG, $name))){
         $iconId = SIM\getModuleOption(MODULE_SLUG, $name);
     }else{
         $iconId = 1;
     }
-        
+
     /*
         GENERIC MARKER
     */
@@ -177,7 +177,7 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
                 'address'		=> $address,
             ),
             array( 'ID'			=> $markerIds['generic']),
-        ); 
+        );
     //Marker does not exist, create it
     }else{
         $mapId	=  SIM\getModuleOption(MODULE_SLUG, 'directions_map_id');
@@ -192,29 +192,38 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
             'map_id'		=> $mapId,		//Generic map with all places
             'address'		=> $address,
         ));
-        
+
         //Get the marker id
         $markerIds['generic'] = $wpdb->insert_id;
     }
-    
-    /* 
+
+    /*
         Location map
     */
     $mapId = get_post_meta($postId, 'map_id', true);
-    
+
+    // map no longer exists create a new one
+    if(is_numeric($mapId) && empty($maps->getMap($mapId))){
+        //Create a map for this location
+        $mapId = $maps->addMap($title, $latitude, $longitude, $address, '300', 10);
+
+        //Save the map id in db
+        update_metadata( 'post', $postId,'map_id', $mapId);
+    }
+
     //Update existing
     if(isset($markerIds['page_marker']) && $maps->markerExists($markerIds['page_marker'])){
         //Create an icon for this marker
         $maps->createIcon($markerIds['page_marker'], $title, $iconUrl, $iconId);
-            
-        $wpdb->update($wpdb->prefix . 'ums_markers', 
+
+        $wpdb->update($wpdb->prefix . 'ums_markers',
             array(
                 'title' 		=> $title,
                 'description'	=> "[location_description id=$postId basic=true]",
                 'coord_x'		=> $latitude,
                 'coord_y'		=> $longitude,
                 'address'		=> $address,
-            ), 
+            ),
             array( 'ID'			=> $markerIds['page_marker']),
         );
     // Create new
@@ -222,14 +231,14 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
         if(!is_numeric($mapId)){
             //Create a map for this location
             $mapId = $maps->addMap($title, $latitude, $longitude, $address, '300', 10);
-            
+
             //Save the map id in db
             update_metadata( 'post', $postId,'map_id', $mapId);
-        }					
-        
+        }
+
         //Create an icon for this marker
         $customIconId = $maps->createIcon(null, $title, $iconUrl, $iconId);
-        
+
         //Add the marker to this map
         $wpdb->insert($wpdb->prefix . 'ums_markers', array(
             'title' 		=> $title,
@@ -242,37 +251,37 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
         ));
         $markerIds['page_marker'] = $wpdb->insert_id;
     }
-    
-    /* 
+
+    /*
         Category maps
-    */		
+    */
     foreach($categories as $category){
         $name 				= $category->slug;
         $mapName			= $name."_map";
         $mapId				= SIM\getModuleOption(MODULE_SLUG, $mapName);
         $iconName			= $name."_icon";
         $iconId			    = SIM\getModuleOption(MODULE_SLUG, $iconName);
-        
+
         //Update existing
         if(is_numeric($markerIds[$name]) && $maps->markerExists($markerIds[$name])){
             //Create an icon for this marker
             $maps->createIcon($markerIds[$name], $title, $iconUrl, $iconId);
-            
+
             //Update the marker in db
-            $wpdb->update($wpdb->prefix . 'ums_markers', 
+            $wpdb->update($wpdb->prefix . 'ums_markers',
                 array(
                     'description'	=> $description,
                     'coord_x'		=> $latitude,
                     'coord_y'		=> $longitude,
                     'map_id'		=> $mapId,
                     'address'		=> $address,
-                ), 
+                ),
                 array( 'ID' => $markerIds[$name]),
             );
         }else{
             //Create an icon for this marker
             $customIconId = $maps->createIcon(null, $title, $iconUrl, $iconId);
-            
+
             //Add marker for this map
             $wpdb->insert($wpdb->prefix . 'ums_markers', array(
                 'title' 		=> $title,
@@ -283,14 +292,14 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
                 'map_id'		=> $mapId,
                 'address'		=> $address,
             ));
-            
+
             //Get the marker id
             $markerIds[$name] = $wpdb->insert_id;
-            
+
             SIM\printArray("Created marker with id {$wpdb->insert_id} and title $title on map with id $mapId");
         }
     }
-    
+
     //Store marker ids in db
     update_metadata( 'post', $postId, "marker_ids", $markerIds);
 }
@@ -306,7 +315,7 @@ add_action( 'delete_post_meta', function($metaIds, $postId, $metaKey, $metaValue
 
     delete_metadata('post', $postId, 'map_id');
     delete_metadata('post', $postId, 'marker_ids');
-    
+
     $maps   = new Maps();
 
     //Remove all markers related to this post
@@ -324,7 +333,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
     if(!empty($frontendcontend->post) && $frontendcontend->post->post_type != 'location'){
         return;
     }
-    
+
     //Load js
     wp_enqueue_script('sim_location_script');
 
@@ -334,25 +343,25 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
     if(!is_array($location) && !empty($location)){
         $location  = json_decode($location, true);
     }
-    
+
     if(isset($location['address'])){
         $address = $location['address'];
     }elseif(get_post_meta($postId, 'geo_address', true) != ''){
         $address = get_post_meta($postId, 'geo_address', true);
     }
-    
+
     if(isset($location['latitude'])){
         $latitude = $location['latitude'];
     }elseif(get_post_meta($postId, 'geo_latitude', true) != ''){
         $latitude = get_post_meta($postId, 'geo_latitude', true);
     }
-    
+
     if(isset($location['longitude'])){
         $longitude = $location['longitude'];
     }elseif(get_post_meta($postId, 'geo_longitude', true) != ''){
         $longitude = get_post_meta($postId, 'geo_longitude', true);
     }
-    
+
     $url = get_post_meta($postId, 'url', true);
     ?>
     <style>
@@ -382,7 +391,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
             <legend>
                 <h4>Location details</h4>
             </legend>
-        
+
             <table class="form-table">
                 <tr>
                     <th><label for="tel">Phone number</label></th>
@@ -402,7 +411,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
                         <input type="text" class='formbuilder address' name="location[address]" value="<?php echo $address; ?>">
                     </td>
                 </tr>
-            
+
                 <tr>
                     <th>
                         <button class='current-location button small' type='button'>Use current location</button>
