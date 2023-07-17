@@ -6,6 +6,7 @@
 
 ### Changed
 - better error message
+- greencard expired message
 
 ### Fixed
 - issue with non-existing image
