@@ -372,14 +372,33 @@ function getChildTitle($userId){
 }
 
 /**
+ * Get the family of an user
+ *
+ * @param 	int	$userId		The user id to get the family for
+ *
+ * @return	array			The family array
+ */
+function getUserFamily($userId){
+
+	$family = (array)get_user_meta( $userId, 'family', true );
+	cleanUpNestedArray($family, true);
+
+	// If there is no family, but a family name is set
+	if(count($family) == 1 && isset($family['name'])){
+		unset($family['name']);
+	}
+
+	return $family;
+}
+
+/**
  * Gets the children array and add it to the main level of the array
  * @param 	int		$userId	 	WP User_ID
  *
  * @return	array				All family members in one array
 */
 function familyFlatArray($userId){
-	$family = (array)get_user_meta( $userId, 'family', true );
-	cleanUpNestedArray($family);
+	getUserFamily($userId);
 
 	//make the family array flat
 	if (isset($family["children"])){

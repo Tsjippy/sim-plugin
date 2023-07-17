@@ -19,8 +19,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 	}
 
 	// check if age is correct
-	$family	= get_user_meta($userId, 'family', true);
-	SIM\cleanUpNestedArray($family);
+	$family	= SIM\getUserFamily($userId);
 	
 	if(!empty($family['children'])){
 		$ownAge		= strtotime(get_user_meta($userId, 'birthday', true));
