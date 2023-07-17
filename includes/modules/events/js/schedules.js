@@ -112,14 +112,18 @@ async function addHost(target){
 		let cell	= document.querySelector('td.active');
 		if(cell != null){
 			cell.classList.remove('ui-selected', 'active', 'selected');
+			cell.classList.add('available');
+
 			cell.removeAttribute('rowspan');
 
 			let date		= form.querySelector('[name="date"]').value;
 			let time		= form.querySelector('[name="starttime"]').value;
 			let columnNr	= cell.closest('table').tHead.querySelector(`[data-isodate="${date}"]`).cellIndex;
+
 			// Add the new one
 			let newCell		= cell.closest('table').querySelector(`tr[data-starttime="${time}"]`).cells[columnNr];
 			newCell.classList.add('ui-selected', 'active', 'selected');
+			cell.classList.remove('available');
 			newCell.innerHTML	= cell.innerHTML;
 
 			cell.innerHTML	= 'Available';

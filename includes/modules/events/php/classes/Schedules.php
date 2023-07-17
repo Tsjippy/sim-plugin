@@ -731,6 +731,7 @@ class Schedules{
 				$cellText .= "</span>";
 			}else{
 				$cellText	 = 'Available';
+				$class 		.= ' available';
 			}
 		}
 
@@ -824,7 +825,7 @@ class Schedules{
 			$this->user->ID == $event->organizer_id || 		// We are the organizer
 			$cellText == 'Available'						// This cell  is available
 		){
-			$class .= ' admin';
+			$class .= ' admin available';
 		}
 
 		$label	= date(DATEFORMAT, strtotime($date));

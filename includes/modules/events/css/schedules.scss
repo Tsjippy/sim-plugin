@@ -24,6 +24,10 @@ table.schedule td, table.schedule th{
     white-space: -pre-wrap; /* Opera 4-6 */    
     white-space: -o-pre-wrap; /* Opera 7 */    
     word-wrap: break-word; /* Internet Explorer 5.5+ */
+
+	&.admin, &.available, .keyword{
+		cursor: pointer;
+	}
 }
 
 @media screen and (min-width: $mobilewidth){

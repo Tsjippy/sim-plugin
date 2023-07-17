@@ -326,7 +326,7 @@ async function afterSelect(e, selected, _unselected){
 	}else if(target.matches('.meal:not(.admin, .selected)')){
         let table		= target.closest('table');
 		let cell		= target.closest('td');
-		dateStr			= table.rows[0].cells[cell.cellIndex].dataset.date;
+		let dateStr		= table.rows[0].cells[cell.cellIndex].dataset.date;
 
         target.classList.add('active');
 		addCurrentUserAsHost(target, dateStr);
