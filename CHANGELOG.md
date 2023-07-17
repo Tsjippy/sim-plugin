@@ -8,6 +8,7 @@
 - better error message
 - greencard expired message
 - better name replacement
+- pointer for available schedule slots
 
 ### Fixed
 - issue with non-existing image
