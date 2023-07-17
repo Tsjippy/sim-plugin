@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.34.0] - 2023-07-17
+
+
+### Added
 - get family function
 
 ### Changed
