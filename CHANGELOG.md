@@ -14,6 +14,7 @@
 - issue with non-existing image
 - to early deletion of accounts
 - recipe keyword
+- single userpage title
 
 ### Updated
 
