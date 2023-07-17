@@ -1297,6 +1297,8 @@ function clearOutput($write=false){
 function userPageLinks($string){
 	//Find display names in content
 	$users = getUserAccounts(false, false);
+
+	$string	= str_replace('&amp;', '&', $string);
 	
 	foreach($users as $user){
 		// continue to next user if user not in string

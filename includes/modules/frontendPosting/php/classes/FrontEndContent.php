@@ -1030,8 +1030,6 @@ class FrontEndContent{
 		}, $postContent);
 
 		//Find any base64 encoded images in the post content and replace the url
-		//$postContent 	= preg_replace_callback('/"data:image\/(\w+);base64,([^"]*)/m', array($this, 'uploadImages'), $postContent);
-
 		$postContent 	= preg_replace_callback('/src="image\/(\w+);base64,([^"]*)"/is', array($this, 'uploadImages'), $postContent);
 
 		//Find display names in content and replaces them with a link
