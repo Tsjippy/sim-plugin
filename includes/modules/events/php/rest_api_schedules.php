@@ -206,10 +206,7 @@ add_action( 'rest_api_init', function () {
 					}
 				),
 				'starttime'		=> array(
-					'required'	=> true,
-					'validate_callback' => function($startTime){
-						return is_numeric($startTime);
-					}
+					'required'	=> true
 				),
 				'recipe_keyword'		=> array(
 					'required'	=> true

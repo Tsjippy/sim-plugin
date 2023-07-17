@@ -625,9 +625,14 @@ class CreateSchedule extends Schedules{
 
 		$menu			= sanitize_text_field($_POST['recipe_keyword']);
 
-		$events			= $this->getScheduleEvents($schedule->id, $date, $startTime);
-		foreach($events as $event){
-			update_post_meta($event->post_id, 'recipe_keyword', $menu);
+		$events			= $this->getScheduleSession($date, $startTime);
+
+		if(empty($events)){
+			return 'No meal found';
+		}
+
+		foreach($events->post_ids as $postId){
+			update_post_meta($postId, 'recipe_keyword', $menu);
 		}
 
 		if(count(explode(' ', $menu)) == 1){

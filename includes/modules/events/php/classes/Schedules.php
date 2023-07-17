@@ -529,7 +529,7 @@ class Schedules{
 		global $wpdb;
 
 		if(!empty($this->currentSchedule->sessions)){
-			return;
+			return $this->currentSchedule->sessions;
 		}
 
 		$query	=  "SELECT * FROM $this->sessionTableName WHERE `schedule_id`={$this->currentSchedule->id}";
@@ -538,6 +538,7 @@ class Schedules{
 
 		$this->currentSchedule->sessions	= [];
 
+		// update the current schedule
 		foreach($results as $index=>&$result){
 			if($this->onlyMeals && !$result->meal){
 				unset($results[$index]);
@@ -580,26 +581,6 @@ class Schedules{
 		$this->currentSession	= $this->currentSchedule->sessions[$startDate][$startTime];
 
 		return $this->currentSchedule->sessions[$startDate][$startTime];
-	}
-
-	/**
-	 * Get multiple events on a specific date and time
-	 *
-	 * @param	int		$scheduleId		the Schedule id
-	 * @param 	string	$startDate		The Date the event starts
-	 * @param	string	#startTime		The time the event starts
-	 *
-	 * @return 	object|false			The event or false if no event
-	*/
-	public function getScheduleEvents($scheduleId='', $startDate='', $startTime=''){
-		global $wpdb;
-
-		if(empty($scheduleId)){
-			$scheduleId	= $this->currentSchedule->id;
-		}
-
-		$query	=  "SELECT * FROM {$this->events->tableName} WHERE `schedule_id` = '{$scheduleId}' AND startdate = '$startDate' AND starttime='$startTime'";
-		return	$wpdb->get_results($query);
 	}
 
 	/**
