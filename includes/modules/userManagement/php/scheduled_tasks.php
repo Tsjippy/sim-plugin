@@ -672,6 +672,11 @@ function accountExpiryCheck(){
 	);
 	
 	foreach($expiredUsers as $user){
+		// check if it is a valid date string
+		if(strtotime(get_user_meta($user->ID, 'account_validity', true))){
+			continue;
+		}
+		
 		//Send Signal message
 		SIM\trySendSignal(
 			"Hi ".$user->first_name.",\nYour account is expired, as you are no longer in country.",
