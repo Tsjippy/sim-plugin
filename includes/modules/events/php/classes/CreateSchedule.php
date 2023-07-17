@@ -68,7 +68,7 @@ class CreateSchedule extends Schedules{
 		$hostPartner					= false;
 		if(is_numeric($this->hostId)){
 			if($addHostPartner){
-				$event['organizer']				= SIM\getFamilyName($this->hostId, $hostPartner);
+				$event['organizer']				= SIM\getFamilyName($this->hostId, false, $hostPartner);
 			}else{
 				$event['organizer']				= get_userdata($this->hostId)->display_name;
 			}
@@ -185,7 +185,7 @@ class CreateSchedule extends Schedules{
 		$hostPartner					= false;
 		if(is_numeric($this->hostId)){
 			if($addHostPartner){
-				$organizer				= SIM\getFamilyName($this->hostId, $hostPartner);
+				$organizer				= SIM\getFamilyName($this->hostId, false, $hostPartner);
 			}else{
 				$organizer				= get_userdata($this->hostId)->display_name;
 			}
@@ -617,7 +617,6 @@ class CreateSchedule extends Schedules{
 	*/
 	public function addMenu(){
 		$scheduleId		= $_POST['schedule_id'];
-		$schedule		= $this->getScheduleById($scheduleId);
 
 		$date			= sanitize_text_field($_POST['date']);
 

@@ -25,7 +25,7 @@ function createUserPage($userId){
 	}
 
 	$family = SIM\familyFlatArray($userId);
-	$title 	= SIM\getFamilyName($userdata);
+	$title 	= SIM\getFamilyName($userdata, true);
 
 	//Only create a page if the page does not exist
 	if ($pageId == null){

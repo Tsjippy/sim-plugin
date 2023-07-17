@@ -450,12 +450,13 @@ function isChild($userId) {
 
 /**
  * Function to get proper family name
- * @param 	object|int		$user		WP User_ID or WP_User object
- * @param	mixed			$partnerId	Variable passed by reference to hold the partner id
+ * @param 	object|int		$user			WP User_ID or WP_User object
+ * @param	bool			$lastNameFirst	Whether we should return the names asl Lastname, Firstname. Default false
+ * @param	mixed			$partnerId		Variable passed by reference to hold the partner id
  *
  * @return	string|false				Family name string or last name when a single or false when not a valid user
 */
-function getFamilyName($user, &$partnerId=false) {
+function getFamilyName($user, $lastNameFirst=false, &$partnerId=false) {
 	if(is_numeric($user)){
 		$user	= get_userdata($user);
 
@@ -482,6 +483,10 @@ function getFamilyName($user, &$partnerId=false) {
 
 	// user has family
 	if(empty($family)){
+		if($lastNameFirst){
+			return "$user->last_name, $user->first_name";
+		}
+
 		return $user->display_name;
 	}
 	
@@ -717,7 +722,7 @@ function getUserAccounts($returnFamily=false, $adults=true, $fields=[], $extraAr
 			//Check if this adult is not already in the list
 			}elseif(!in_array($user->ID, $doNotProcess)){
 				//Change the display name
-				$user->display_name = getFamilyName($user, $partnerId);
+				$user->display_name = getFamilyName($user, false, $partnerId);
 
 				if ($partnerId){
 					$doNotProcess[] = $partnerId;

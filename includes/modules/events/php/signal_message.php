@@ -95,7 +95,7 @@ add_filter('sim_after_bot_payer', function($args){
 					continue;
 				}
 
-				$name		= SIM\getFamilyName($user, $partnerId);
+				$name		= SIM\getFamilyName($user, false, $partnerId);
 
 				if($partnerId){
 					$skip[]		= $partnerId;

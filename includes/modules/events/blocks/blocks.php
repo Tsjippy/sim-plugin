@@ -160,7 +160,7 @@ function upcomingArrivalsBlock($attributes){
 			continue;
 		}
 
-		$name		= SIM\getFamilyName($user, $partnerId);
+		$name		= SIM\getFamilyName($user, false, $partnerId);
 
 		if($partnerId){
 			$skip[]		= $partnerId;
