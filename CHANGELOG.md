@@ -10,6 +10,7 @@
 - marker icon updates
 - remove user marker
 - js issue
+- issue mith project manager
 
 ### Updated
 
