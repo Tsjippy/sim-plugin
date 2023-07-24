@@ -1,4 +1,3 @@
-import { showLoader } from '../../../../js/imports.js';
 import { showAddHostModal, addCurrentUserAsHost, addHostHtml, removeHost, showTimeslotModal, checkConfirmation, editTimeSlot } from './shared.js';
 
 console.log("Desktop-schedule.js loaded");

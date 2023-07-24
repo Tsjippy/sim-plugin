@@ -5,8 +5,6 @@ import {
 	fetchRestApi
 } from './shared.js';
 
-import { isMobileDevice } from './../../../js/imports.js';
-
 //Add an event listener to the login or register button
 console.log("Login.js loaded");
 

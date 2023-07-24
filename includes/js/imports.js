@@ -3,12 +3,12 @@ export let scripts;
 export let afterScriptsLoaded	= function (attachTo){
     if(typeof(tinymce) != 'undefined'){
         tinymce.remove();
-    }
 
-    // Activate tinyMce's again
-    document.querySelectorAll('.entry-content .wp-editor-area').forEach(el =>{
-        window.tinyMCE.execCommand('mceAddEditor', false, el.id);
-    });
+        // Activate tinyMce's again
+        document.querySelectorAll('.entry-content .wp-editor-area').forEach(el =>{
+            window.tinyMCE.execCommand('mceAddEditor', false, el.id);
+        });
+    }    
 
     // invoke dom content loaded events
     window.document.dispatchEvent(new Event("DOMContentLoaded", {
