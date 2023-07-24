@@ -38,7 +38,7 @@ if(!$archive){
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<div class="cat_card<?php if($archive){echo ' inside-article';}?>">
 		
-		<?php 
+		<?php
 		if($archive){
 			$url = get_permalink(get_the_ID());
 			echo the_title( "<h3 class='archivetitle'><a href='$url'>", '</a></h3>' );
@@ -127,7 +127,11 @@ if(!$archive){
 					echo "</div>";
 				}
 
-				$manager		= json_decode(get_post_meta(get_the_ID(), 'manager', true), true);
+				$manager		= get_post_meta(get_the_ID(), 'manager', true);
+
+				if(!is_array($manager)){
+					$manager	= json_decode($manager, true);
+				}
 				
 				echo "<div class='number project meta'>";
 					$imageUrl = plugins_url('pictures/manager.png', __DIR__);

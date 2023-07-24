@@ -386,7 +386,7 @@ class SimForms{
 			}elseif(isset($this->formData->elementMapping['name'][$name.'[]'])){
 				$name	.= '[]';
 			}else{
-				SIM\printArray("Element with name $name not found");
+				SIM\printArray("Element with name $name not found on form {$this->formData->name} with id {$this->formData->id}");
 				return false;
 			}
 		}
