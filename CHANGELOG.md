@@ -9,6 +9,7 @@
 ### Fixed
 - marker icon updates
 - remove user marker
+- js issue
 
 ### Updated
 
