@@ -44,17 +44,18 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
                 }
                 ?>
             </select>
-            
+
             <div class='mailchimp-wrapper hidden'>
                 <h4>Use this from email address</h4>
                 <select name='mailchimp_email'>
                     <option value=''>---</option>
-                    
+
                     <?php
                     $emails = [
                         'jos.personnel@sim.org'	=> 'jos.personnel',
                         'jos.dirassist@sim.org'	=> 'jos.dirassist',
                         'jos.director@sim.org'	=> 'jos.director',
+                        'jos.health@sim.org'	=> 'jos.health',
                     ];
                     foreach($emails as $email=>$text){
                         if($mailchimpEmail == $email){
@@ -73,7 +74,7 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
                 ?></textarea>
             </div>
         </div>
-        <?php 
+        <?php
     }
 });
 
@@ -100,7 +101,7 @@ add_action( 'wp_after_insert_post', function( $postId, $post ){
         //Send mailchimp message
         $Mailchimp = new Mailchimp();
         $Mailchimp->sendEmail($postId, intval($segmentId), $from, $extraMessage);
-        
+
         // Indicate as send
         update_metadata( 'post', $postId, 'mailchimp_message_send', $segmentId);
 

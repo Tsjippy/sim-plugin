@@ -36,33 +36,33 @@ function birthdayCheck(){
 
 	//Current date time
 	$date   = new \DateTime();
-	
+
 	//Get all the birthday users of today
 	$users = get_users(array(
 		'meta_key'     => 'birthday',
 		'meta_value'   => $date->format('-m-d'),
 		'meta_compare' => 'LIKE',
 	));
-	
+
 	foreach($users as $user){
 		$userId 	= $user->ID;
 		$firstName 	= $user->first_name;
-		
+
 		$family = get_user_meta( $userId, 'family', true );
 		if ($family == ""){
 			$family = [];
 		}
-	
+
 		//Send birthday wish to the user
 		SIM\trySendSignal("Hi $firstName,\nCongratulations with your birthday!", $userId);
 
 		//Send to parents
 		if (isset($family["father"]) || isset($family["mother"])){
 			$childTitle = SIM\getChildTitle($user->ID);
-			
+
 			$message = "Congratulations with the birthday of your $childTitle ".get_userdata($user->ID)->first_name;
 		}
-		
+
 		if (isset($family["father"])){
 			SIM\trySendSignal(
 				"Hi ".get_userdata($family["father"])->first_name.",\n$message",
@@ -84,10 +84,10 @@ function birthdayCheck(){
 function vaccinationReminder(){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
-	
+
 	//Retrieve all users
 	$users = get_users( array( 'fields' => array( 'ID','user_login','display_name' ) ) );
-	
+
 	//loop over the users
 	foreach($users as $user){
 		$reminderHtml = vaccinationReminders($user->ID);
@@ -98,17 +98,17 @@ function vaccinationReminder(){
 			if($userdata != null){
 				$parents 	= SIM\getParents($user->ID);
 				$recipients = '';
-				
+
 				//Is child
 				if($parents){
-					
+
 					$reminderHtml = str_replace("Your", $userdata->first_name."'s", $reminderHtml);
 
 					$vaccinationWarningMail    	= new AdultVaccinationWarningMail($userdata);
 					$vaccinationWarningMail->filterMail();
 					$subject					= $vaccinationWarningMail->subject;
 					$message					= $vaccinationWarningMail->message;
-					
+
 					$childTitle = SIM\getChildTitle($user->ID);
 					foreach($parents as $parent){
 						if(strpos($parent->user_email,'.empty') === false){
@@ -117,7 +117,7 @@ function vaccinationReminder(){
 							}
 							$recipients .= $parent->user_email;
 						}
-									
+
 						//Send OneSignal message
 						SIM\trySendSignal(
 							"Hi $parent->first_name,\nPlease renew the vaccinations  of your $childTitle $userdata->first_name!\n\n".SITEURL,
@@ -135,12 +135,12 @@ function vaccinationReminder(){
 					$vaccinationWarningMail->filterMail();
 					$subject					= $vaccinationWarningMail->subject;
 					$message					= $vaccinationWarningMail->message;
-					
+
 					//Send Signal message
 					SIM\trySendSignal("Hi $userdata->first_name,\nPlease renew your vaccinations!\n\n".SITEURL, $user->ID);
 				}
-				
-				
+
+
 				if(!empty($recipients)){
 					//Get the current health coordinator
 					$healtCoordinators 			= get_users( array( 'fields' => array( 'ID','display_name' ),'role' => 'medicalinfo' ));
@@ -153,7 +153,7 @@ function vaccinationReminder(){
 					}
 
 					$headers = ['Reply-To: '.$healtCoordinator->display_name.' <'.SIM\getModuleOption(MODULE_SLUG, 'health_email').'>'];
-					
+
 					//Send the mail
 					wp_mail($recipients , $subject, $message, $headers );
 				}
@@ -194,7 +194,7 @@ function vaccinationReminders($userId){
 			}
 		}
 	}
-	
+
 	return $reminderHtml;
 }
 
@@ -224,9 +224,9 @@ function checkExpiryDate($date, $expiryName){
 		date_sub($warningDate, $interval);
 
 		$now			= new \DateTime();
-		
+
 		$niceExpiryDate = $expiryDate->format('j F Y');
-		
+
 		//Expires today
 		if($niceExpiryDate == $now->format('j F Y')){
 			$reminderHtml .= "<li>Your $expiryName expires today.</li><br>";
@@ -243,7 +243,7 @@ function checkExpiryDate($date, $expiryName){
 			}
 			$reminderHtml .= "<li>Your $expiryName will expire $text.</li><br>";
 		}
-		
+
 		return $reminderHtml;
 	}
 }
@@ -263,10 +263,10 @@ function greencardReminder(){
 	}
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
-	
+
 	//Retrieve all users
 	$users = get_users( array( 'fields' => array( 'ID','user_login','display_name' ) ) );
-	
+
 	//loop over the users
 	foreach($users as $user){
 		$visaInfo = get_user_meta( $user->ID, "visa_info", true);
@@ -275,10 +275,10 @@ function greencardReminder(){
 		if (is_array($visaInfo) && isset($visaInfo['greencard_expiry'])){
 			$reminder = checkExpiryDate($visaInfo['greencard_expiry'], 'greencard');
 			$reminder = str_replace(['</li>', '<li>'], "", $reminder);
-			
+
 			if(!empty($reminder)){
 				$to = $user->user_email;
-				
+
 				//Skip if not valid email
 				if(strpos($to,'.empty') !== false){
 					continue;
@@ -288,9 +288,9 @@ function greencardReminder(){
 				$greenCardReminderMail    = new GreenCardReminderMail($user, $reminder);
 				$greenCardReminderMail->filterMail();
 				$headers = ['Reply-To: '.$travelCoordinator->display_name.' <'.$travelCoordinator->user_email.'>'];
-									
+
 				wp_mail( $to, $greenCardReminderMail->subject, $greenCardReminderMail->message, $headers);
-				
+
 				//Send OneSignal message
 				$accountPageUrl	= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'account_page');
 
@@ -310,7 +310,7 @@ function greencardReminder(){
 function checkDetailsMail(){
 	wp_set_current_user(1);
 	$subject	= 'Please review your website profile';
-	
+
 	//Retrieve all users
 	$users 			= SIM\getUserAccounts(false, true);
 
@@ -330,7 +330,7 @@ function checkDetailsMail(){
 		$message  = "Hi {$user->first_name},<br><br>";
 		$message .= 'Once a year we would like to remind you to keep your information on the website up to date.<br>';
 		$message .= 'Please check the information below to see if it is still valid, if not update it.<br><br>';
-		
+
 		/*
 		** PROFILE PICTURE
  		*/
@@ -483,7 +483,7 @@ function checkDetailsMail(){
 						$message .= "</td>";
 					$message .= "</tr>";
 				}
-				
+
 			}
 		$message .= "</table>";
 		$message .= "<br>";
@@ -590,13 +590,13 @@ function checkDetailsMail(){
  */
 function accountExpiryCheck(){
 	require_once(ABSPATH.'wp-admin/includes/user.php');
-	
+
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 
 	$personnelCoordinatorEmail	= SIM\getModuleOption(MODULE_SLUG, 'personnel_email');
 	$staEmail					= SIM\getModuleOption(MODULE_SLUG, 'sta_email');
-	
+
 	//Get the users who will expire in 1 month
 	$users = get_users(
 		array(
@@ -617,11 +617,11 @@ function accountExpiryCheck(){
 					'compare' 	=> '=',
 					'type' 		=> 'DATE'
 				),
-				
+
 			),
 		)
 	);
-	
+
 	foreach($users as $user){
 		//Send e-mail
 		$accountExpiryMail    = new AccountExpiryMail($user);
@@ -632,20 +632,20 @@ function accountExpiryCheck(){
 			"cc: $personnelCoordinatorEmail",
 			"cc: $staEmail"
 		];
-		
+
 		//Send the mail if valid email
 		if(strpos($user->user_email,'.empty') === false){
 			$recipient = $user->user_email;
 		}else{
 			$recipient = $staEmail;
 		}
-		
+
 		wp_mail( $recipient, $accountExpiryMail->subject, $accountExpiryMail->message, $headers);
-		
+
 		//Send OneSignal message
 		SIM\trySendSignal("Hi ".$user->first_name.",\nThis is just a reminder that your account on ".SITEURLWITHOUTSCHEME." will be deleted on ".date("d F Y", strtotime(" +1 months")),$user->ID);
 	}
-	
+
 	//Get the users who are expired
 	$expiredUsers = get_users(
 		array(
@@ -666,23 +666,23 @@ function accountExpiryCheck(){
 					'compare' 	=> '<=',
 					'type' 		=> 'DATE'
 				),
-				
+
 			),
 		)
 	);
-	
+
 	foreach($expiredUsers as $user){
 		// check if it is a valid date string
 		if(strtotime(get_user_meta($user->ID, 'account_validity', true))){
 			continue;
 		}
-		
+
 		//Send Signal message
 		SIM\trySendSignal(
 			"Hi ".$user->first_name.",\nYour account is expired, as you are no longer in country.",
 			$user->ID
 		);
-		
+
 		//Delete the account
 		SIM\printArray("Deleting user with id $user->ID and name $user->display_name as it was a temporary account.");
 		wp_delete_user($user->ID);
@@ -698,10 +698,10 @@ function reviewReminders(){
 		$personnelCoordinatorEmail	= SIM\getModuleOption(MODULE_SLUG, 'personnel_email');
 		//Change the user to the adminaccount otherwise get_users will not work
 		wp_set_current_user(1);
-		
+
 		//Retrieve all users
 		$users = SIM\getUserAccounts();
-		
+
 		//loop over the users
 		foreach($users as $user){
 			//Check for upcoming reviews, but only if not set to be hidden for this year
@@ -719,7 +719,7 @@ function reviewReminders(){
 						if(strpos($to,'.empty') !== false){
 							continue;
 						}
-						
+
 						$subject 	 = "Please fill in the annual review questionary.";
 						$message 	 = 'Hi '.$user->first_name.',<br><br>';
 
@@ -728,7 +728,7 @@ function reviewReminders(){
 							"Hi ".$user->first_name.",\n\nIt is time for your annual review.\nPlease fill in the annual review questionary:\n\n".SITEURL.'/'.$genericDocuments['Annual review form']."\n\nThen send it to $personnelCoordinatorEmail",
 							$user->ID
 						);
-						
+
 						//Send e-mail
 						$message 	.= 'It is time for your annual review.<br>';
 						$message 	.= 'Please fill in the <a href="'.SITEURL.'/'.$genericDocuments['Annual review form'].'">review questionaire</a> to prepare for the talk.<br>';
@@ -739,12 +739,12 @@ function reviewReminders(){
 							"Reply-To: $personnelCoordinatorEmail",
 							"Bcc: $personnelCoordinatorEmail"
 						);
-						
+
 						//Send the mail
 						wp_mail($to , $subject, $message, $headers );
 					}
 				}
-			}	
+			}
 		}
 	}
 }
@@ -763,7 +763,7 @@ function checkLastLoginDate(){
 		if(empty($lastLogin)){
 			//Send e-mail
 			$to = $user->user_email;
-			
+
 			//Skip if not valid email
 			if(strpos($to,'.empty') !== false){
 				continue;
@@ -785,7 +785,7 @@ function checkLastLoginDate(){
 			$lastLoginDate			= date_create($lastLogin);
 			$now 					= new \DateTime();
 			$yearsSinceLastLogin 	= date_diff($lastLoginDate, $now)->format("%y");
-			
+
 			//User has not logged in in the last year
 			if($yearsSinceLastLogin > 0){
 				//Send e-mail
@@ -800,16 +800,16 @@ function checkLastLoginDate(){
 					"Hi $user->first_name,\n\nWe miss you! We haven't seen you since $lastLogin\n\nPlease pay us a visit on\n".SITEURL,
 					$user->ID
 				);
-				
+
 				//Send e-mail
 				$weMissYouMail    = new WeMissYouMail($user, $lastLogin);
 				$weMissYouMail->filterMail();
-									
+
 				wp_mail( $to, $weMissYouMail->subject, $weMissYouMail->message);
 			}
 		}
 	}
-	
+
 }
 
 // Remove scheduled tasks upon module deactivatio

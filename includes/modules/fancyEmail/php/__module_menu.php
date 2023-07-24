@@ -30,11 +30,13 @@ add_filter('sim_submenu_description', function($description, $moduleSlug){
 		return $description;
 	}
 
+	$closing	= SIM\getModuleOption($moduleSlug, 'closing');
+
 	ob_start();
 	?>
 	This module will place all e-mails send in a nice format.<br>
 	It will also add a warning to the bottom of the e-mail about it being an automated e-mail.<br>
-	If there is no greeting in the e-mail it will add 'Kind regards, <?php echo SITENAME;?>'<br>
+	If there is no greeting in the e-mail it will add '<?php if($closing){echo $closing;}else{echo 'Kind regards,';} echo ' '.SITENAME;?>'<br>
 	It will also monitor how often an e-mail is opened.<br>
 	<?php
 
@@ -50,6 +52,11 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	ob_start();
 	
     ?>
+	<label>
+		Default e-mail greeting<br>
+		<input type='text' name='closing' value='<?php if(isset($settings['closing'])){echo $settings['closing'];}else{echo 'Kind regards'; }?>'>
+	</label>
+	<br><br>
 	<label>
 		<input type='checkbox' name='no-staging' value='true' <?php if(isset($settings['no-staging'])){echo 'checked';}?>>
 		Do not send e-mails from staging websites
