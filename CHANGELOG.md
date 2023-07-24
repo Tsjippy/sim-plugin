@@ -8,6 +8,7 @@
 
 ### Fixed
 - marker icon updates
+- remove user marker
 
 ### Updated
 
