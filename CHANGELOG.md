@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.34.1] - 2023-07-31
+
+
+### Fixed
 - marker icon updates
 - remove user marker
 - js issue
