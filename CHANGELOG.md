@@ -11,6 +11,7 @@
 - remove user marker
 - js issue
 - issue mith project manager
+- forms not resetting after submission
 
 ### Updated
 
