@@ -99,7 +99,9 @@ export async function submitForm(target, url){
 
 		form.querySelectorAll('.submit_wrapper .loadergif').forEach(loader => loader.classList.add('hidden'));
 
-		markComplete();
+		if(form.dataset.reset != 'true'){
+			markComplete();
+		}
 
 		return response;
 	}else{
@@ -126,8 +128,7 @@ export async function submitForm(target, url){
 /**
  * Set the default values to the current values so to not trigger a page leave warning
  */
-export function markComplete(event=''){
-	console.log(event);
+export function markComplete(){
 
 	// pending
 	document.querySelectorAll('[data-pending]').forEach(el=>{
