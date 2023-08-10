@@ -347,12 +347,22 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 		if($_REQUEST['action'] == 'Delete'){
 			$signal 	= new SignalBus();
 
-			$result		= $signal->clearMessageLog($_REQUEST['delete-date']);
+			if(isset($_REQUEST['timestamp'])){
+				$result		= $signal->deleteMessage($_REQUEST['timestamp'], $_REQUEST['recipients']);
 
-			if($result === false){
-				echo "<div class='error'>Something went wrong</div>";
+				if(!is_numeric($result)){
+					echo "<div class='error'>Something went wrong</div>";
+				}else{
+					echo "<div class='success'>Succesfully removed the message</div>";
+				}
 			}else{
-				echo "<div class='success'>Succesfully removed $result messages</div>";
+				$result		= $signal->clearMessageLog($_REQUEST['delete-date']);
+
+				if($result === false){
+					echo "<div class='error'>Something went wrong</div>";
+				}else{
+					echo "<div class='success'>Succesfully removed $result messages</div>";
+				}
 			}
 		}elseif($_REQUEST['action'] == 'Save'){
 			$settings['clean-period']	= $_REQUEST['clean-period'];
@@ -495,6 +505,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 				<th>Time</th>
 				<th>Recipient</th>
 				<th>Message</th>
+				<th>Actions</th>
 			</thead>
             <tbody>
 				<?php
@@ -522,6 +533,22 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 							<td class='time'><?php echo $time?></td>
 							<td class='recipient'><?php echo $recipient;?></td>
 							<td class='message'><?php echo $message->message;?></td>
+							<td class='delete'>
+								<?php
+								if($message->status == 'deleted'){
+									echo "Already Deleted";
+								}else{
+									?>
+									<form method='post'>
+										<input type="hidden" name="timestamp" value="<?php echo $message->timesend;?>" />
+										<input type="hidden" name="id" value="<?php echo $message->id;?>" />
+										<input type="hidden" name="recipients" value="<?php echo $message->recipient;?>" />
+										<input type='submit' name='action' value='Delete'>
+									</form>
+									<?php
+								}
+								?>
+							</td>
 						</tr>
 						<?php
 					}

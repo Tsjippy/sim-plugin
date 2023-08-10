@@ -72,6 +72,7 @@ class SignalBus extends Signal {
             timesend int DEFAULT '0000-00-00 00:00:00' NOT NULL,
             recipient longtext NOT NULL,
             message longtext NOT NULL,
+            status text NOT NULL,
             PRIMARY KEY  (id)
 		) $charsetCollate;";
 
@@ -81,7 +82,7 @@ class SignalBus extends Signal {
     /**
      * Adds a send message to the log
      */
-    private function addToMessageLog($recipient, $message){
+    private function addToMessageLog($recipient, $message, $timestamp){
         if(empty($recipient) || empty($message)){
             return;
         }
@@ -91,11 +92,13 @@ class SignalBus extends Signal {
         $wpdb->insert(
             $this->tableName,
             array(
-                'timesend'      => time(),
+                'timesend'      => $timestamp,
                 'recipient'     => $recipient,
                 'message'		=> $message,
             )
         );
+
+        return $wpdb->insert_id;
     }
 
     /**
@@ -155,6 +158,21 @@ class SignalBus extends Signal {
         $timeSend   = strtotime(get_gmt_from_date($maxDate, 'Y-m-d'));
 
         $query      = "DELETE FROM $this->tableName WHERE `timesend` < $timeSend";
+
+        return $wpdb->query( $query );
+    }
+
+    /**
+     * Marks a specific message as deleted in the log
+     *
+     * @param   int     $timesend     The date after which messages should be kept Should be in yyyy-mm-dd format
+     *
+     * @return  string                  The message
+     */
+    public function markAsDeleted($timeStamp){
+        global $wpdb;
+
+        $query      = "UPDATE $this->tableName SET `status` = 'deleted' WHERE timesend = $timeStamp";
 
         return $wpdb->query( $query );
     }
@@ -294,8 +312,6 @@ class SignalBus extends Signal {
             return false;
         }
 
-        $this->addToMessageLog($groupId, $message);
-
         if(is_array($attachments)){
             foreach($attachments as $index => $attachment){
                 if(!file_exists($attachment)){
@@ -311,13 +327,19 @@ class SignalBus extends Signal {
 
         $this->command->execute();
 
-        $result = $this->parseResult();
+        $timeStamp = $this->parseResult();
+
+        if(is_numeric($timeStamp)){
+            $this->addToMessageLog($groupId, $message, $timeStamp);
+        }else{
+            SIM\printArray($timeStamp);
+        }
 
         if(!empty($this->error) && strpos($this->error, 'Invalid group id') !== false){
             SIM\printArray("Invalid GroupId: $groupId");
         }
 
-        return $result;
+        return $timeStamp;
     }
 
     /**
@@ -395,17 +417,12 @@ class SignalBus extends Signal {
 
         if(!is_array($recipients)){
             if(strpos( $recipients , '+' ) === 0){
-                $recipient    = "string:'$recipients'";
-                $this->addToMessageLog($recipients, $message);
+                $recipient  = "string:'$recipients'";
             }else{
                 return $this->sendGroupMessage($message, $recipients, $attachments);
             }
         }else{
             $recipient    = "array:string:".implode(',', $recipients);
-
-            foreach($recipients as $rec){
-                $this->addToMessageLog($rec, $message);
-            }
         }
 
         $this->command = new Command([
@@ -414,7 +431,23 @@ class SignalBus extends Signal {
 
         $this->command->execute();
 
-        return $this->parseResult();
+        $timeStamp  = $this->parseResult();
+
+        if(is_numeric($timeStamp)){
+            if(!is_array($recipients)){
+                if(strpos( $recipients , '+' ) === 0){
+                    $this->addToMessageLog($recipients, $message, $timeStamp);
+                }
+            }else{
+                foreach($recipients as $rec){
+                    $this->addToMessageLog($rec, $message, $timeStamp);
+                }
+            }
+        }else{
+            SIM\printArray($timeStamp);
+        }
+
+        return $timeStamp;
     }
 
     public function markAsRead($recipient, $timestamp){
@@ -426,6 +459,44 @@ class SignalBus extends Signal {
         $this->command->execute();
 
         return $this->parseResult();
+    }
+
+    /**
+     * Deletes a message
+     *
+     * @param   int             $targetSentTimestamp    The original timestamp
+     * @param   string|array    $recipients             The original recipient(s)
+     */
+    public function deleteMessage($targetSentTimestamp, $recipients){
+
+        if(is_array($recipients)){
+            $recipients    = implode(',', $recipients);
+            $this->command = new Command([
+                'command' => "{$this->prefix}sendRemoteDeleteMessage int64:'$targetSentTimestamp' array:string:'$recipients'"
+            ]);
+        }else{
+            if(strpos($recipients, '+') !== false){
+                $this->command = new Command([
+                    'command' => "{$this->prefix}sendRemoteDeleteMessage int64:'$targetSentTimestamp' string:'$recipients'"
+                ]);
+            }else{
+                $this->command = new Command([
+                    'command' => "{$this->prefix}sendGroupRemoteDeleteMessage int64:'$targetSentTimestamp' array:byte:'$recipients'"
+                ]);
+            }
+        }
+
+        $this->command->execute();
+
+        $result = $this->parseResult();
+
+        if(is_numeric($result)){
+            $this->markAsDeleted($targetSentTimestamp);
+        }else{
+            SIM\printArray($result);
+        }
+
+        return $result;
     }
 
     /**
