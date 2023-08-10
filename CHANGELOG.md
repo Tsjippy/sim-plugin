@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- now possible to delete Signal messages
 
 ### Changed
 
