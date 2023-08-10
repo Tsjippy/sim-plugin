@@ -84,6 +84,9 @@ class EditFormResults extends DisplayFormResults{
 		
 		//loop over all the forms
 		foreach($this->forms as $form){
+			$this->formData	= $form;
+			$this->formId	= $form->id;
+			$this->formName	= $form->name;
 			$this->getForm($form->id);
 
 			$settings = (array)maybe_unserialize($form->settings);
@@ -92,9 +95,6 @@ class EditFormResults extends DisplayFormResults{
 			if(!isset($settings['autoarchive']) || $settings['autoarchive'] != 'true'){
 				continue;
 			}
-
-			$this->formName				= $form->name;
-			$this->formData				= $form;
 			//$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
 			$this->formData->settings 	= $settings;
 

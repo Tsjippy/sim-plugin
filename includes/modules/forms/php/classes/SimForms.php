@@ -166,7 +166,7 @@ class SimForms{
 			}
 		}
 
-		$this->getAllFormElements('priority', $formId);
+		$this->getAllFormElements('priority', $formId, true);
 		
 		//used to find the index of an element based on its unique id
  		$this->formData->elementMapping									= [];
