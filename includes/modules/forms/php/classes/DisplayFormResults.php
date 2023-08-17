@@ -59,9 +59,6 @@ class DisplayFormResults extends DisplayForm{
 		
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE ";
 
-		if(empty($submissionId) && !empty($_REQUEST['subid'])){
-			$submissionId	= $_REQUEST['subid'];
-		}
 		if(empty($submissionId) && !empty($_REQUEST['id'])){
 			$submissionId	= $_REQUEST['id'];
 		}
@@ -239,6 +236,11 @@ class DisplayFormResults extends DisplayForm{
 						// do not add an archived sub value to the results
 						continue;
 					}
+				}
+
+				//Check if need to display
+				if(is_numeric($_REQUEST['subid']) && $_REQUEST['subid'] != $subKey){
+					continue;
 				}
 
 				// Add the array to the formresults array
@@ -601,6 +603,17 @@ class DisplayFormResults extends DisplayForm{
 				'view_right_roles'	=> []
 			];
 		}
+
+		//also add the subid
+		if(!empty($this->formData->settings['split']) && empty($this->columnSettings[-5])){
+			$this->columnSettings[-5] = [
+				'name'				=> 'subid',
+				'nice_name'			=> 'Sub-Id',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
 		
 		$names	= [];
 		//put hidden columns on the end and do not show same names twice
@@ -729,12 +742,12 @@ class DisplayFormResults extends DisplayForm{
 					if($matches && isset($matches[1])){
 						$name	= $matches[1];
 					}
-					if(!empty($splitNames) && in_array($name, $splitNames)){
+					if(!empty($splitNames) && in_array($name, $splitNames) && strpos($subId, 'data-subid=') === false){
 						$subId = "data-subid='$subId'";
 					}
 				}
 
-				if($value == null){
+				if($value === null){
 					$value = '';
 				}
 				
@@ -750,7 +763,7 @@ class DisplayFormResults extends DisplayForm{
 				}
 
 				//Display an X if there is nothing to show
-				if (empty($value)){
+				if (empty($value) && $value !== 0){
 					$value = "X";
 				}
 				
@@ -1662,6 +1675,7 @@ class DisplayFormResults extends DisplayForm{
 						$subId				= -1;
 						if(is_numeric($submission->subId)){
 							$subId			= $submission->subId;
+							$values['subid']= $submission->subId;
 						}
 						
 						if($this->writeTableRow($values, $subId, $submission)){

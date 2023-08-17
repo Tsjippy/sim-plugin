@@ -7,5 +7,5 @@ add_action('sim_plugin_update', function(){
 
     $signal 	= new SignalBus();
 
-    maybe_add_column($signal->tableName, 'status', "ALTER TABLE $signal->tableName ADD COLUMN `status` text");
+    maybe_add_column($signal->tableName, 'stamp', "ALTER TABLE $signal->tableName ADD COLUMN `stamp` text");
 });

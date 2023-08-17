@@ -207,6 +207,10 @@ class SubmitForm extends SimForms{
 			$this->submission->formresults['submissiondate']	= date('d F y', strtotime($this->submission->formresults['submissiontime']));
 			$this->submission->formresults['editdate']			= date('d F y', strtotime($this->submission->formresults['edittime']));
 		}
+		
+		if(isset($_REQUEST['subid']) && empty($this->submission->formresults['subid'])){
+			$this->submission->formresults['subid']	= $_REQUEST['subid'];
+		}
 
 		$pattern = '/%([^%;]*)%/i';
 		//Execute the regex

@@ -350,8 +350,8 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 			if(isset($_REQUEST['timestamp'])){
 				$result		= $signal->deleteMessage($_REQUEST['timestamp'], $_REQUEST['recipients']);
 
-				if(!is_numeric($result)){
-					echo "<div class='error'>Something went wrong</div>";
+				if(!is_numeric(str_replace('int64 ', '', $result))){
+					echo "<div class='error'>$result</div>";
 				}else{
 					echo "<div class='success'>Succesfully removed the message</div>";
 				}
@@ -540,7 +540,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 								}else{
 									?>
 									<form method='post'>
-										<input type="hidden" name="timestamp" value="<?php echo $message->timesend;?>" />
+										<input type="hidden" name="timestamp" value="<?php echo $message->stamp;?>" />
 										<input type="hidden" name="id" value="<?php echo $message->id;?>" />
 										<input type="hidden" name="recipients" value="<?php echo $message->recipient;?>" />
 										<input type='submit' name='action' value='Delete'>
@@ -697,6 +697,12 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
 	}
+
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+    $signal 	= new SignalBus();
+
+    maybe_add_column($signal->tableName, 'stamp', "ALTER TABLE $signal->tableName ADD COLUMN `stamp` text");
 
 	scheduleTasks();
 

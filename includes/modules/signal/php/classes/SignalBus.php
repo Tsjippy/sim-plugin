@@ -73,6 +73,7 @@ class SignalBus extends Signal {
             recipient longtext NOT NULL,
             message longtext NOT NULL,
             status text NOT NULL,
+            stamp text NOT NULL,
             PRIMARY KEY  (id)
 		) $charsetCollate;";
 
@@ -92,9 +93,10 @@ class SignalBus extends Signal {
         $wpdb->insert(
             $this->tableName,
             array(
-                'timesend'      => $timestamp,
+                'timesend'      => time(),
                 'recipient'     => $recipient,
                 'message'		=> $message,
+                'stamp'         => $timestamp,
             )
         );
 
@@ -172,7 +174,7 @@ class SignalBus extends Signal {
     public function markAsDeleted($timeStamp){
         global $wpdb;
 
-        $query      = "UPDATE $this->tableName SET `status` = 'deleted' WHERE timesend = $timeStamp";
+        $query      = "UPDATE $this->tableName SET `status` = 'deleted' WHERE stamp = $timeStamp";
 
         return $wpdb->query( $query );
     }
@@ -312,6 +314,10 @@ class SignalBus extends Signal {
             return false;
         }
 
+        $message    = str_replace(['$1','$2','$3','$4','$5','$6','$7','$8','$9','$0'], ['$ 1','$ 2','$ 3','$ 4','$ 5','$ 6','$ 7','$ 8','$ 9','$ 0'], $message);
+
+        SIM\printArray($message);
+
         if(is_array($attachments)){
             foreach($attachments as $index => $attachment){
                 if(!file_exists($attachment)){
@@ -327,7 +333,7 @@ class SignalBus extends Signal {
 
         $this->command->execute();
 
-        $timeStamp = $this->parseResult();
+        $timeStamp = str_replace('int64 ', '', $this->parseResult());
 
         if(is_numeric($timeStamp)){
             $this->addToMessageLog($groupId, $message, $timeStamp);
@@ -431,7 +437,7 @@ class SignalBus extends Signal {
 
         $this->command->execute();
 
-        $timeStamp  = $this->parseResult();
+        $timeStamp = str_replace('int64 ', '', $this->parseResult());
 
         if(is_numeric($timeStamp)){
             if(!is_array($recipients)){
@@ -488,7 +494,7 @@ class SignalBus extends Signal {
 
         $this->command->execute();
 
-        $result = $this->parseResult();
+        $result = str_replace('int64 ', '', $this->parseResult());
 
         if(is_numeric($result)){
             $this->markAsDeleted($targetSentTimestamp);

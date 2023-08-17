@@ -609,6 +609,13 @@ class FormBuilderForm extends SimForms{
 						These default ones are available:<br><br>
 					</label>
 					<span class='placeholders' title="Click to copy">%id%</span>
+					<?php
+					if(!empty($this->formData->settings['split'])){
+						?>
+						<span class='placeholders' title="Click to copy">%subid%</span>
+						<?php
+					}
+					?>
 					<span class='placeholders' title="Click to copy">%formurl%</span>
 					<span class='placeholders' title="Click to copy">%submissiondate%</span>
 					<span class='placeholders' title="Click to copy">%editdate%</span>

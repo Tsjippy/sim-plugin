@@ -78,8 +78,25 @@ class FancyEmail{
         }
         
         //Do not send an e-mail when the adres contains .empty, or is localhost or is staging
+        $empty  = false;
+        if(is_array($this->recipients)){
+            foreach($this->recipients as $index=>$recipient){
+                if(strpos($recipient, '.empty') !== false){
+                    unset($this->recipients[$index]);
+                }
+            }
+
+            if(empty($this->recipients)){
+                $empty  = true;
+            }else{
+                $this->recipients   = implode(',', $this->recipients);
+            }
+        }elseif(strpos($this->recipients, '.empty') !== false){
+            $empty  = true;
+        }
+        
         if(
-            strpos($this->recipients,'.empty') !== false        ||
+            $empty        ||
             (
                 SIM\getModuleOption(MODULE_SLUG, 'no-localhost') &&
                 $_SERVER['HTTP_HOST'] == 'localhost'
