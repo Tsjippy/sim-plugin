@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with sending e-mails
 
 ### Updated
 
