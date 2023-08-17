@@ -7,6 +7,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.34.2] - 2023-08-10
+
+
+### Added
+- now possible to delete Signal messages
+
+### Fixed
 - autoarchivw
 
 ### Updated
