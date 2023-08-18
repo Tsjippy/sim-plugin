@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- printing of webp images in pdf
 
 ### Updated
 
