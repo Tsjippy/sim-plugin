@@ -316,8 +316,6 @@ class SignalBus extends Signal {
 
         $message    = str_replace(['$1','$2','$3','$4','$5','$6','$7','$8','$9','$0'], ['$ 1','$ 2','$ 3','$ 4','$ 5','$ 6','$ 7','$ 8','$ 9','$ 0'], $message);
 
-        SIM\printArray($message);
-
         if(is_array($attachments)){
             foreach($attachments as $index => $attachment){
                 if(!file_exists($attachment)){

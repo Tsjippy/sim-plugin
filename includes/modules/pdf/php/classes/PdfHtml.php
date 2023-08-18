@@ -167,10 +167,11 @@ class PdfHtml extends \FPDF{
 						if($ext == 'JPE'){
 							$ext = 'JPG';
 						}
-						$this->Image($attr['SRC'],$this->GetX(),$this->GetY(), $this->px2mm($attr['WIDTH']), $this->px2mm($attr['HEIGHT']),$ext);
+						$this->printImage($attr['SRC'], $this->GetX(), $this->GetY(), $this->px2mm($attr['WIDTH']), $this->px2mm($attr['HEIGHT']));
 						$this->SetY($this->GetY()+$this->px2mm($attr['HEIGHT'])+2);
 					}catch (\Exception $e) {
-						SIM\printArray("PDF_HELPER_Functions.php: {$attr['SRC']} is not a valid image");
+						SIM\printArray($e);
+						SIM\printArray("{$attr['SRC']} is not a valid image");
 					}
 				}
 				break;
@@ -573,6 +574,15 @@ class PdfHtml extends \FPDF{
 			$ext = strtoupper(pathinfo($path)['extension']);
 			if($ext == 'JPE'){
 				$ext = 'JPG';
+			}elseif($ext == 'webp'){
+				// create a temporay jpg file as webp is not supported by pdf
+				$im = imagecreatefromwebp($path);
+
+				// new source is jpg
+				$path	= get_temp_dir().str_replace('.webp', '.jpg', basename($path));
+				// Convert it to a jpeg file with 100% quality
+				imagejpeg($im, $path, 100);
+				imagedestroy($im);
 			}
 
  			if($centre){
