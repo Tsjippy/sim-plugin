@@ -8,6 +8,7 @@
 
 ### Fixed
 - printing of webp images in pdf
+- issue with form value updating
 
 ### Updated
 
