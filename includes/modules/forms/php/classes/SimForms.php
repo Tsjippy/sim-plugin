@@ -382,8 +382,10 @@ class SimForms{
 			$nameNew	= explode('[', $name)[0];
 
 			if(isset($this->formData->elementMapping['name'][$nameNew])){
+				// remove '[]'
 				$name	.= $nameNew;
 			}elseif(isset($this->formData->elementMapping['name'][$name.'[]'])){
+				// add []
 				$name	.= '[]';
 			}else{
 				SIM\printArray("Element with name $name not found on form {$this->formData->name} with id {$this->formData->id}");

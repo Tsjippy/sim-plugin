@@ -670,7 +670,8 @@ class DisplayFormResults extends DisplayForm{
 		$rowHasContents	= false;
 
 		foreach($this->columnSettings as $id=>$columnSetting){
-			$value	= '';
+			$value			= '';
+			$subIdString	= '';
 
 			//If the column is hidden, do not show this cell
 			if($columnSetting['show'] == 'hide' || !is_numeric($id)){
@@ -742,8 +743,8 @@ class DisplayFormResults extends DisplayForm{
 					if($matches && isset($matches[1])){
 						$name	= $matches[1];
 					}
-					if(!empty($splitNames) && in_array($name, $splitNames) && strpos($subId, 'data-subid=') === false){
-						$subId = "data-subid='$subId'";
+					if(!empty($splitNames) && in_array($name, $splitNames)){
+						$subIdString = "data-subid='$subId'";
 					}
 				}
 
@@ -798,7 +799,7 @@ class DisplayFormResults extends DisplayForm{
 			}
 
 			$oldValue		= json_encode($orgFieldValue);
-			$rowContents .= "<td $class data-oldvalue='$oldValue' $subId>$value</td>";
+			$rowContents .= "<td $class data-oldvalue='$oldValue' $subIdString>$value</td>";
 		}
 
 		// none of the cells in this row has a value, only X
