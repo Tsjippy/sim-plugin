@@ -46,7 +46,7 @@ add_filter( 'sim_add_form_defaults', function($defaultValues, $userId){
 	//loop over the fields
 	foreach($fields as $field){
 		//if the field value is an array
-		$values 				= unserialize($usermeta[$field][0]);
+		$values 				= maybe_unserialize($usermeta[$field][0]);
 		$defaultValues[$field] 	= '';
 		
 		if(is_array($values)){
@@ -104,7 +104,7 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 	//loop over the fields
 	foreach($fields as $field){
 		//if the field value is an array
-		$values = unserialize($usermeta[$field][0]);
+		$values = maybe_unserialize($usermeta[$field][0]);
 		if(is_array($values)){
 			//check if not dictionary
 			if(is_numeric(array_keys($values)[0])){
@@ -146,9 +146,18 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 		$phonenumbers											= (array)get_user_meta($user->ID, 'phonenumbers', true);
 		$accountId												= get_user_meta($user->ID, 'financial_account_id', true);
 
-		$defaultArrayValues['emails'][$user->ID]				= $user->user_email;
-		$defaultArrayValues['All phonenumbers'][$user->ID]		= implode(";", $phonenumbers);
-		$defaultArrayValues['All account numbers'][$user->ID]	= $accountId;
+		$defaultArrayValues['emails'][$user->ID]				= [
+			'value'		=> $user->user_email,
+			'display'	=> $user->display_name
+		];
+		$defaultArrayValues['All phonenumbers'][$user->ID]		= [
+			'value'		=> implode(";", $phonenumbers),
+			'display'	=> $user->display_name
+		];
+		$defaultArrayValues['All account numbers'][$user->ID]	= [
+			'value'		=> $accountId,
+			'display'	=> $user->display_name
+		];
 	}
 
 	return $defaultArrayValues;

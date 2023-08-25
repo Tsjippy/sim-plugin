@@ -421,7 +421,7 @@ export function nextPrev(n) {
 	return true;
 }
 
-export function changeFieldValue(selector, value, functionRef, form, addition=''){
+export function changeFieldValue(selector, value, functionRef, form, addition='', forceValue=false){
 	let name		= '';
 	let target		= '';
 
@@ -511,19 +511,29 @@ export function changeFieldValue(selector, value, functionRef, form, addition=''
 		if(dataListOption != null){
 			// We found a cloned field, add as many inputs as needed
 			if(target.closest('.clone_div') != null){
+				// mark the existing ones for deletion, we can delete right now as we need to copy the existing ones first
+				target.closest('.clone_divs_wrapper').querySelectorAll('.clone_div').forEach(el=>el.classList.add('shouldremove'));
+
 				let clone;
 				dataListOption.value.split(';').forEach(val=>{
 					clone = copyFormInput(target.closest('.clone_div'));
 
-					changeFieldValue(clone.querySelector(target.tagName), val, '', form);
+					clone.classList.remove('shouldremove');
+
+					changeFieldValue(clone.querySelector(target.tagName), val, '', form, '', true);
 				});
 
 				fixNumbering(target.closest('.clone_divs_wrapper'));
 
-				target.closest('.clone_div').remove();
+				// delete the old ones
+				target.closest('.clone_divs_wrapper').querySelectorAll('.shouldremove').forEach(el=>el.remove());
 			}else{
 				target.value = dataListOption.value;
 			}
+		// We did not find a match, we are filling in the given value
+		}else if(forceValue){
+			target.value = value;
+		// We did not find a match, empty value
 		}else{
 			target.value = '';
 		}
@@ -766,3 +776,14 @@ document.addEventListener('click', function(event) {
 		onlyOwnSwitch(target);
 	}
 });
+
+document.addEventListener('change', ev=>{
+	// select all elements with a datalist attached
+	if(ev.target.matches('input[list]') && ev.target.name.includes('[')){
+		// find the dataset value of the given element value
+		let value	= ev.target.list.querySelector(`[value="${ev.target.value}" i]`).dataset.value;
+
+		// change the value to create extra inputs if necessary
+		changeFieldValue(ev.target, value, '', ev.target.closest('form'));
+	}
+})

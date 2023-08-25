@@ -518,7 +518,17 @@ trait ElementHtml{
 				case 'datalist':
 					$options	= $this->getFieldOptions($element);
 					foreach($options as $key=>$option){
-						$elContent .= "<option data-value='$key' value='$option'>";
+						if(is_array($option)){
+							$value	= $option['value'];
+						}else{
+							$value	= $option;
+						}
+
+						$elContent .= "<option data-value='$key' value='$value'>";
+
+						if(is_array($option)){
+							$elContent .= $option['display']."</option>";
+						}
 					}
 					break;
 				case 'radio':

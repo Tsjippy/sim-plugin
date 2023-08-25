@@ -72,7 +72,7 @@ function sendPrayerRequests(){
 					$dayPart	= 'afternoon';
 				}elseif($hour > 17){
 					$dayPart	= 'evening';
-				}elseif($hour < 7){
+				}elseif($hour < 4){
 					$dayPart	= 'night';
 				}
 
