@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- not ebale to edit schedule events
 
 ### Updated
 
