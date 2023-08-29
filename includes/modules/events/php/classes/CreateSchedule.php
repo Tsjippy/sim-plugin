@@ -120,6 +120,16 @@ class CreateSchedule extends Schedules{
 			];
 		}
 
+		if(is_array($_POST['others_'])){
+			foreach($_POST['others_'] as $attendee){
+				$eventArray[] =
+				[
+					'title'		=>"Attending $title with {$this->name}",
+					'onlyfor'	=>[$attendee]
+				];
+			}
+		}
+
 		$eventIds	= [];
 		$postIds	= [];
 		foreach($eventArray as $a){

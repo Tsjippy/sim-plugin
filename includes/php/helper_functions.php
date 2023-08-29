@@ -88,17 +88,15 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 		}
 	}
 	
-	$html .= "<div>";
+	$html .= "<div class='optionwrapper'>";
 	if(!empty($title)){
 		$html .= "<h4>$title</h4>";
 	}
 
+	$inputClass	= 'wide';
 	if($multiple){
-		wp_enqueue_script('sim_forms_script');
-		
-		$html .= "<div class='clone_divs_wrapper'>
-		<div class='clone_div' data-divid='0' >
-			<div class='buttonwrapper' style='width:100%; display: flex;'>";
+		$html	.= '<ul class="listselectionlist"></ul>';
+		$inputClass	.= ' datalistinput multiple';
 	}
 
 	if($type == 'select'){
@@ -138,19 +136,12 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 					//Make this user the selected user
 					$value	= $user->display_name;
 				}
-				$datalist .= "<option value='$name' data-userid='$user->ID'>";
+				$datalist .= "<option value='$name' data-userid='$user->ID' data-value='$user->ID'>";
 			}
 		$datalist .= '</datalist>';
 
-		$html	.= "<input type='text' class='wide' name='$id' list='$listId' value='$value'>";
+		$html	.= "<input type='text' class='$inputClass' name='$id' list='$listId' value='$value'>";
 		$html	.= $datalist;
-	}
-
-	if($multiple){
-		$html .= "<button type='button' class='add button' style='flex: 1;'>+</button>
-				</div>
-			</div>
-		</div>";
 	}
 	
 	$html	.= '</div>';

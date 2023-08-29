@@ -137,15 +137,20 @@ add_filter( 'the_content', function ( $content ) {
 		
 	//Add an edit page button if:
 	if ( allowedToEdit($postId) ){
-		$type = $post->post_type;
+		$type 		= $post->post_type;
 		$buttonText = "Edit this $type";
+		$buttonHtml	= '';
 
 		if($type == 'attachment'){
-			$url	= admin_url("post.php?post=$post->ID&action=edit");
-			return "<a href=$url class='button small hidden' id='page-edit'>$buttonText</a><div class='content-wrapper'>$content</div>";
+			$url		= admin_url("post.php?post=$post->ID&action=edit");
+			$buttonHtml	= "<a href=$url class='button small hidden' id='page-edit'>$buttonText</a><div class='content-wrapper'>$content</div>";
 		}
 
-		return "<button class='button small hidden' id='page-edit' data-id='$postId'>$buttonText</button><div class='content-wrapper'>$content</div>";
+		$buttonHtml	= "<button class='button small hidden' id='page-edit' data-id='$postId'>$buttonText</button><div class='content-wrapper'>$content</div>";
+
+		$buttonHtml	= apply_filters('post-edit-button', $buttonHtml, $post, $content);
+
+		return $buttonHtml;
 	}
 
 	return $content;

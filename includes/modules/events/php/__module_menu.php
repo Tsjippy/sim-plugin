@@ -153,7 +153,7 @@ add_action('sim_module_actions', function(){
 
 });
 
-add_filter('sim_module_updated', function($options, $moduleSlug){
+add_filter('sim_module_updated', function($options, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $options;
@@ -167,5 +167,16 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 	scheduleTasks();
 
+	$options	= SIM\ADMIN\createDefaultPage($options, 'schedules_pages', 'Schedules', '[schedules]', $oldOptions);
+
 	return $options;
+}, 10, 3);
+
+add_filter('display_post_states', function ( $states, $post ) {
+    
+    if (is_array(SIM\getModuleOption(MODULE_SLUG, 'schedules_pages')) && in_array($post->ID, SIM\getModuleOption(MODULE_SLUG, 'schedules_pages', false))) {
+        $states[] = __('Schedules page');
+    }
+
+    return $states;
 }, 10, 2);

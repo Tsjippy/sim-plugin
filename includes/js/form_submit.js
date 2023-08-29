@@ -255,3 +255,59 @@ window.addEventListener("beforeunload", (event) => {
 		}
 	});
 });
+
+let timer;
+
+document.addEventListener('input', (ev)=>{
+	if(ev.target.matches(`.datalistinput.multiple`)){
+		// clear any previous set timers
+		clearTimeout(timer);
+
+		// 2 seconds
+		let timeout	= 2000;
+
+		// if the value is found in the datalist
+		if(ev.target.list.querySelector(`[value="${ev.target.value}"]`) != null){
+			doneTyping(ev.target);
+		}else{
+			timer = setTimeout(() => {
+				doneTyping(ev.target);
+			}, timeout);
+		}
+	}
+});
+
+document.addEventListener('click', (ev)=>{
+	if(ev.target.matches(`.remove-list-selection`)){
+		ev.target.closest('.listselection').remove();
+	}
+})
+
+function doneTyping(el) {
+
+	if(el.value	== ''){
+		return;
+	}
+
+	let li	 		= document.createElement('li');
+	li.classList.add('listselection');
+
+	let html	= `<button type="button" class="small remove-list-selection"><span class='remove-list-selection'>×</span></button>`;
+
+	// find the option in the datalist
+	let option	= el.list.querySelector(`[value="${el.value}"]`);
+	if(option != null && option.dataset.value != null){
+		html   += `<input type='hidden' name='${el.name}_[]' value='${option.dataset.value}'>`;
+		html   += `<span>${el.value}</span>`;
+	}else{
+		html   += `<span>`;
+			html   += `<input type='text' name='${el.name}_[]' value='${el.value}' readonly=readonly style='width:${el.value.length}ch'>`;
+		html   += `</span>`;
+	}
+
+	li.innerHTML	= html;
+
+	el.closest('.optionwrapper').querySelector('.listselectionlist').appendChild(li);
+
+	el.value	= '';
+}
