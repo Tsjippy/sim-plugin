@@ -7,6 +7,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.34.5] - 2023-08-25
+
+
+### Added
+- support for multi value datlist options
+
+### Fixed
 - printing of webp images in pdf
 - issue with form value updating
 
