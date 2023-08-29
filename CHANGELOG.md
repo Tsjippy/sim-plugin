@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- multiple schedule attendees
 
 ### Changed
 
