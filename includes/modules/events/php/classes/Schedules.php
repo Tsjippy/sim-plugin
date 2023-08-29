@@ -1141,12 +1141,23 @@ class Schedules{
 					//select for person in charge if an admin
 					if($this->admin){
 						?>
-						<label for="host"><h4>Who is in charge</h4></label>
+						<label>
+							<h4>Who is in charge</h4>
+							<?php
+							echo SIM\userSelect('', true, false, 'wide', 'host', [], '', [], 'list', 'admin_host');
+							?>
+						</label>
 						<?php
-						echo SIM\userSelect('', true, false, 'wide', 'host', [], '', [], 'list', 'admin_host');
 					}
-
 					?>
+
+					<label>
+						<h4>Other people involved</h4>
+						<?php
+						echo SIM\userSelect('', true, false, 'wide', 'others[]', [], '', [], 'list', 'admin_host',true);
+						?>
+					</label>
+	
 					<h4>Warnings</h4>
 					<label>
 						<input type="checkbox" name="reminders[]" value="15" checked>

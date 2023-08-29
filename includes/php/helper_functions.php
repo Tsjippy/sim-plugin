@@ -46,7 +46,7 @@ function updateFamilyMeta($userId, $metaKey, $value){
  *
  * @return	string						The html
  */
-function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select', $listId=''){
+function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='user_selection', $args=[], $userId='', $excludeIds=[1], $type='select', $listId='', $multiple=false){
 
 	wp_enqueue_script('sim_user_select_script');
 	$html = "";
@@ -93,6 +93,14 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 		$html .= "<h4>$title</h4>";
 	}
 
+	if($multiple){
+		wp_enqueue_script('sim_forms_script');
+		
+		$html .= "<div class='clone_divs_wrapper'>
+		<div class='clone_div' data-divid='0' >
+			<div class='buttonwrapper' style='width:100%; display: flex;'>";
+	}
+
 	if($type == 'select'){
 		$html .= "<select name='$id' class='$class user_selection' value=''>";
 			foreach($users as $key=>$user){
@@ -136,6 +144,13 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 
 		$html	.= "<input type='text' class='wide' name='$id' list='$listId' value='$value'>";
 		$html	.= $datalist;
+	}
+
+	if($multiple){
+		$html .= "<button type='button' class='add button' style='flex: 1;'>+</button>
+				</div>
+			</div>
+		</div>";
 	}
 	
 	$html	.= '</div>';

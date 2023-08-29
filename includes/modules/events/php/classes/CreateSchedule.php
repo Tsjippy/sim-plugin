@@ -197,7 +197,7 @@ class CreateSchedule extends Schedules{
 		foreach($this->currentSession->events as $event){
 			if($event->startdate != $this->date){
 				$args['startdate']	= $this->date;
-				$args['enddate']		= $this->date;
+				$args['enddate']	= $this->date;
 				$updated			= true;
 			}
 
@@ -586,6 +586,9 @@ class CreateSchedule extends Schedules{
 		){
 			return new \WP_Error('Permission error', $this->noPermissionText);
 		}
+
+		//Remove the session
+		$this->removeSession();
 
 		$dateStr		= date(get_option( 'date_format' ), strtotime($date));
 
