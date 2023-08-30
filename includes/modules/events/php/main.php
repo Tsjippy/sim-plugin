@@ -25,8 +25,9 @@ add_filter('post-edit-button', function($buttonHtml, $post, $content){
     $query  = "SELECT * FROM `{$schedules->sessionTableName}` WHERE `post_ids` LIKE '%{$post->ID}%';";
     $result = $wpdb->get_results($query);
     
-    if(!empty($result)){
-        $url        = SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'schedules_pages');
+    if(!empty($result)){;
+        $url        = SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'schedules_pages')."?schedule={$result[0]->schedule_id}&session={$result[0]->id}";
+
         $buttonHtml	= "<a href=$url class='button small'>Edit this schedule session</a><div class='content-wrapper'>$content</div>";
     }
 

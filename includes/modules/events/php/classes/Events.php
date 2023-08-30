@@ -40,6 +40,7 @@ class Events{
 			organizer varchar(80),
 			location_id mediumint(9),
 			organizer_id mediumint(9),
+			atendees varchar(80),
 			onlyfor mediumint(9),
 			PRIMARY KEY  (id)
 		) $charsetCollate;";

@@ -40,7 +40,7 @@ function updateFamilyMeta($userId, $metaKey, $value){
  * @param	string		$class			Any extra class to be added to the dropdown default empty
  * @param	string		$id				The name or id of the dropdown, default 'user-selection'
  * @param	array		$args    		Extra query arg to get the users
- * @param	int			$userId			The current selected user id
+ * @param	int|string	$userId			The current selected user id or name
  * @param	array		$excludeIds		An array of user id's to be excluded
  * @param	string		$type			Html input type Either select or list
  *
@@ -95,7 +95,29 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 
 	$inputClass	= 'wide';
 	if($multiple){
-		$html	.= '<ul class="listselectionlist"></ul>';
+		$html	.= '<ul class="listselectionlist">';
+			// we supplied an array of users
+			if(is_array($userId)){
+				foreach($userId as $userid){
+					$html	.= "<li class='listselection'>";
+						$html	.= "<button type='button' class='small remove-list-selection'><span class='remove-list-selection'>×</span></button>";
+					if(is_numeric($userid)){
+						$user	= get_userdata($userid);
+						if($user){
+							$html	.= "<input type='hidden' name='{$id}_[]' value='{$user->ID}'>";
+							$html	.= "<span>{$user->display_name}</span>";
+						}
+					}else{
+						$html	.= "<span>";
+							$html	.= "<input type='text' name='{$id}_[]' value='$userid' readonly=readonly style='width:".strlen($userid)."ch'>";
+						$html	.= "</span>";
+					}
+				}
+
+				$userId	= '';
+			}
+		$html	.= '</ul>';
+
 		$inputClass	.= ' datalistinput multiple';
 	}
 
@@ -119,6 +141,10 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 		$html .= '</select>';
 	}elseif($type == 'list'){
 		$value	= '';
+
+		if(!is_numeric($userId)){
+			$value	= $userId;
+		}
 
 		if(empty($listId)){
 			$listId = $id;

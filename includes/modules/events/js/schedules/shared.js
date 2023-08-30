@@ -83,29 +83,81 @@ export async function removeHost(target, dateStr){
     return confirmed;
 }
 
-export function showTimeslotModal(target='', date='', startTime='', endTime=''){
-	let hostId, subject, location, hostName, sessionId;
-	let modal 			= document.querySelector('[name="add_session"]');
+export function showTimeslotModal(selected=''){
+	let reminders, firstCell, lastCell, date, startTime, endTime, hostId, oldTime, subject, location, hostName, eventId, sessionId, atendees, li, html, option;
+	let modal 		= document.querySelector('[name="add_session"]');
+	let ul			= modal.querySelector('ul.listselectionlist');
 
 	// Clear
 	modal.querySelectorAll('input:not([type="hidden"], [type="checkbox"], [type="radio"])').forEach(el=>el.value='');
+	if(ul != null){
+		ul.innerHTML	= '';
+	}
 
-	modal.querySelector('[name="schedule_id"]').value		= target.closest('.schedules_div').dataset.id;
+	if(selected[0] == undefined){
+		firstCell	= selected;
+		startTime	= firstCell.dataset.starttime;
+		endTime		= firstCell.dataset.endtime;
 
-	hostId			= target.dataset.host_id;
-	subject			= target.dataset.subject;
-	location		= target.dataset.location;
-	hostName		= target.dataset.host;
-	sessionId		= target.dataset.session_id;
+		modal.querySelector('[name="schedule_id"]').value		= selected.closest('.schedules_div').dataset.id;
+	}else{
+		firstCell		= selected[0].node;
+		lastCell		= selected[selected.length-1].node;
+		let rowCount	= document.querySelectorAll('.ui-selected').length;
+		applyRowSpan(firstCell, rowCount);
+
+		// Only show loader when the cell is empty
+		if(!firstCell.matches('.selected')){
+			Main.showLoader(firstCell.firstChild);
+		}
+	}
+	startTime	= firstCell.closest('tr').dataset.starttime;
+
+	endTime		= firstCell.dataset.endtime;
+	if(endTime == undefined){
+		endTime	= lastCell.closest('tr').dataset.endtime;
+	}
+
+	let table	= firstCell.closest('table');
+	date		= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
+
+	hostId			= firstCell.dataset.host_id;
+	//oldTime			= firstCell.dataset.old_time;
+	subject			= firstCell.dataset.subject;
+	location		= firstCell.dataset.location;
+	hostName		= firstCell.dataset.host;
+	sessionId		= firstCell.dataset.session_id;
+	if(firstCell.dataset.reminders != undefined){
+		reminders		= JSON.parse(firstCell.dataset.reminders);
+
+		modal.querySelectorAll('[name="reminders[]"]').forEach(el => {
+			if(reminders.includes(el.value)){
+				el.checked	= true;
+			}else{
+				el.checked	= false;
+			}
+		});
+	}
+
+	if(firstCell.dataset.atendees != undefined){
+		atendees		= JSON.parse(firstCell.dataset.atendees);
+	}
+	
+	if(firstCell.closest('.day-wrapper-mobile') != null){
+		firstCell.closest('.day-wrapper-mobile').classList.add('active');
+	}else{
+		firstCell.classList.add('active');
+	}
 
 	//Fill the modal values
 	modal.querySelector('[name="date"]').value				= date;
 	modal.querySelector('[name="starttime"]').value			= startTime;
 	modal.querySelector('[name="endtime"]').value			= endTime;
+
 	modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
 	modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
 
-	if( target.dataset.session_id != undefined){
+	if(sessionId != undefined){
 		modal.querySelector('[name="session-id"]').value	= sessionId;
 	}
 	if(hostId	!= undefined){
@@ -119,6 +171,26 @@ export function showTimeslotModal(target='', date='', startTime='', endTime=''){
 	}
 	if(hostName	!= undefined){
 		modal.querySelector('[name="host"]').value			= hostName;
+	}
+	if(atendees != undefined){
+		atendees.forEach(atendee => {
+			li	 		= document.createElement('li');
+			li.classList.add('listselection');
+
+			html	= `<button type="button" class="small remove-list-selection"><span class='remove-list-selection'>×</span></button>`;
+
+			if(typeof(atendee) === 'object'){
+				html   += `<input type='hidden' name='others_[]' value='${atendee.id}'>`;
+				html   += `<span>${atendee.name}</span>`;
+			}else{
+				html   += `<span>`;
+					html   += `<input type='text' name='others_[]' value='${atendee}' readonly=readonly style='width:${atendee.length}ch'>`;
+				html   += `</span>`;
+			}
+
+			li.innerHTML	= html;
+		});
+		ul.appendChild(li);
 	}
 	
 	Main.showModal(modal);
@@ -212,4 +284,18 @@ export async function checkConfirmation(text, target){
 	}
 
 	return false;
+}
+
+
+export function applyRowSpan(target, count){
+	if(count > 1){
+		var row		= target.closest('tr');
+		var index	= target.cellIndex;
+		//Loop over the next cells to add the hidden attribute
+		for (var i = 1; i < count; i++) {
+			row = row.nextElementSibling;
+			row.cells[index].classList.add('hidden');
+		}
+		target.rowSpan	= count;
+	}
 }

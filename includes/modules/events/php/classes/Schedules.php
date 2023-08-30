@@ -514,10 +514,14 @@ class Schedules{
 		$result->event_ids	= unserialize($result->event_ids);
 
 		$ids				= implode(',', $result->post_ids);
-		$result->posts		=  $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID IN ($ids)");
+		$result->posts		= $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE ID IN ($ids)");
 
 		$ids				= implode(',', $result->event_ids);
-		$result->events		= $wpdb->get_results("SELECT * FROM {$this->events->tableName} WHERE id IN ($ids)");
+		if(empty($ids)){
+			$result->events		= [];
+		}else{
+			$result->events		= $wpdb->get_results("SELECT * FROM {$this->events->tableName} WHERE id IN ($ids)");
+		}
 	}
 
 	/**
@@ -591,6 +595,11 @@ class Schedules{
 	 * @return 	object|false			The event or false if no event
 	*/
 	public function getSessionEvent($sessionId){
+
+		if($this->currentSession->id == $sessionId){
+			return $this->currentSession;
+		}
+
 		global $wpdb;
 
 		$query	=  "SELECT * FROM $this->sessionTableName WHERE id=$sessionId";
@@ -601,8 +610,10 @@ class Schedules{
 			return false;
 		}
 
-		$session			= $results[0];
+		$session				= $results[0];
 		$this->parsePostsAndEvents($session);
+
+		$this->currentSession	= $session;
 
 		return $session;
 	}
@@ -755,6 +766,31 @@ class Schedules{
 				$dataset	.= " data-host='".get_userdata($hostId)->display_name."' data-host_id='$hostId'";
 			}
 
+			if(!empty($event->atendees)){
+				$atendees	= maybe_unserialize($event->atendees);
+
+				// find the names of each atendee
+				if(is_array($atendees)){
+					foreach($atendees as &$atendee){
+						if(is_numeric($atendee)){
+							$userdata	= get_userdata($atendee);
+							if(!empty($userdata)){
+								$atendee	= [
+									'id'	=> $userdata->ID,
+									'name'	=> $userdata->display_name
+								];
+							}
+						}
+					}
+				}
+				$dataset	.= " data-atendees='".json_encode($atendees)."'";
+			}
+
+			$reminders		= (array)get_post_meta($event->post_id, 'reminders', true);
+			if(!empty($reminders)){
+				$dataset	.= " data-reminders='".json_encode($reminders)."'";
+			}
+
 			$endTime	= $event->endtime;
 			$class 		.= ' selected';
 			if($this->hideNames && !$this->admin && $this->currentSchedule->target != $this->user->ID){
@@ -807,6 +843,15 @@ class Schedules{
 			$cellText == 'Available'						// This cell  is available
 		){
 			$class .= ' admin available';
+		}
+
+		if(is_numeric($_REQUEST['schedule']) && is_numeric($_REQUEST['session'])){
+			$this->getSessionEvent($_REQUEST['session']);
+
+			// we requested the current session
+			if($this->currentSession->events[0]->startdate == $date && $this->currentSession->events[0]->starttime == $startTime){
+				$class	.= ' active';
+			}
 		}
 
 		$label	= date(DATEFORMAT, strtotime($date));
@@ -1101,40 +1146,86 @@ class Schedules{
 			</div>
 		</div>
 		
+		<?php
+		$schdeuleId		= '';
+		$sessionId		= '';
+		$hostId			= '';
+		$date			= '';
+		$startTime		= '';
+		$endTime		= '';
+		$subject		= '';
+		$location		= '';
+		$host			= '';
+		$others			= '';
+		$hidden			= 'hidden';
+		$action			= 'Add';
+		$checked1		= 'checked';
+		$checked2		= '';
+
+		if(is_numeric($_REQUEST['schedule']) && is_numeric($_REQUEST['session'])){
+			$hidden			= '';
+			$action			= 'Update';
+			$this->getScheduleById($_REQUEST['schedule']);
+			$session	= $this->getSessionEvent($_REQUEST['session']);
+			
+			$schdeuleId		= $_REQUEST['schedule'];
+			$sessionId		= $_REQUEST['session'];
+			$hostId			= $session->events[0]->organizer_id;
+			$date			= $session->events[0]->startdate;
+			$startTime		= $session->events[0]->starttime;
+			$endTime		= $session->events[0]->endtime;
+			$subject		= explode(' with ', $session->posts[0]->post_title)[0];
+			$location		= $session->events[0]->location;
+			$host			= $session->events[0]->organizer;
+			if(is_numeric($hostId)){
+				$host	= $hostId;
+			}
+			$others			= maybe_unserialize($session->events[0]->atendees);
+
+			$reminders		= (array)get_post_meta($session->posts[0]->ID, 'reminders', true);
+			
+			if(!in_array(15, $reminders)){
+				$checked1		= '';
+			}
+			if(in_array(1440, $reminders)){
+				$checked2		= 'checked';
+			}
+		}
+		?>
 		<!-- Add session modal -->
-		<div name='add_session' class="modal hidden">
+		<div name='add_session' class="modal <?php echo $hidden;?>">
 			<div class="modal-content">
 				<span class="close">&times;</span>
 				<form action="" method="post">
-					<input type='hidden' name='schedule_id'>
-					<input type='hidden' name='session-id'>
-					<input type='hidden' name='host_id'>
+					<input type='hidden' name='schedule_id' value='<?php echo $schdeuleId;?>'>
+					<input type='hidden' name='session-id' value='<?php echo $sessionId;?>'>
+					<input type='hidden' name='host_id' value='<?php echo $hostId;?>'>
 					
 					<h3>Add an orientation session</h3>
 
 					<label>
 						<h4>Date:</h4>
-						<input type='date' name='date' class='wide' required>
+						<input type='date' name='date' class='wide'  value='<?php echo $date;?>' required>
 					</label>
 
 					<label>
 						<h4>Select a start time:</h4>
-						<input type="time" name="starttime" class="time wide" step="900" min="08:00" max="18:00" required>
+						<input type="time" name="starttime" class="time wide"  value='<?php echo $startTime;?>' step="900" min="08:00" max="18:00" required>
 					</label>
 					
 					<label>
 						<h4>Select an end time:</h4>
-						<input type="time" name="endtime" class="time wide" step="900" min="08:00" max="18:00" required>
+						<input type="time" name="endtime" class="time wide" value='<?php echo $endTime;?>' step="900" min="08:00" max="18:00" required>
 					</label>
 					
 					<label>
 						<h4>Subject</h4>
-						<input type="text" name="subject" class="wide" required>
+						<input type="text" name="subject" class="wide" value='<?php echo $subject;?>' required>
 					</label>
 					
 					<label>
 						<h4>Location</h4>
-						<input type="text"  name="location" class="wide">
+						<input type="text"  name="location" class="wide" value='<?php echo $location;?>'>
 					</label>
 					
 					<?php
@@ -1144,7 +1235,7 @@ class Schedules{
 						<label>
 							<h4>Who is in charge</h4>
 							<?php
-							echo SIM\userSelect('', true, false, 'wide', 'host', [], '', [], 'list', 'admin_host');
+							echo SIM\userSelect('', true, false, 'wide', 'host', [], $host, [], 'list', 'admin_host');
 							?>
 						</label>
 						<?php
@@ -1156,23 +1247,23 @@ class Schedules{
 					
 					</label>
 						<?php
-						echo SIM\userSelect('', true, false, 'wide', 'others', [], '', [], 'list', 'admin_host', true);
+						echo SIM\userSelect('', true, false, 'wide', 'others', [], $others, [], 'list', 'admin_host', true);
 						?>
 	
 					<h4>Warnings</h4>
 					<label>
-						<input type="checkbox" name="reminders[]" value="15" checked>
+						<input type="checkbox" name="reminders[]" value="15" <?php echo $checked1;?>>
 						Send a remider 15 minutes before the start
 					</label>
 					<br>
 					<label>
-						<input type="checkbox" name="reminders[]" value="1440">
+						<input type="checkbox" name="reminders[]" value="1440" <?php echo $checked2;?>>
 						Send a remider 1 day before the start
 					</label>
 					<br>
 					<?php
 					
-					echo SIM\addSaveButton('add_timeslot','Add time slot','update_event add_schedule_row');
+					echo SIM\addSaveButton('add_timeslot', "$action time slot",'update_event add_schedule_row');
 					?>
 				</form>
 			</div>

@@ -87,6 +87,7 @@ add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) 
         foreach( $options['plugins'] as $plugin ) {
             // Check to ensure it's my plugin
             if( $plugin == PLUGIN ) {
+                printArray('Running update actions');
                 do_action('sim_plugin_update');
             }
         }

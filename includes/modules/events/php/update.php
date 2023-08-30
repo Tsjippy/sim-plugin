@@ -16,4 +16,10 @@ add_action('sim_plugin_update', function(){
     maybe_add_column($schedules->tableName, 'admin_roles', "ALTER TABLE $schedules->tableName ADD COLUMN `admin_roles` varchar(80)");
 
     maybe_add_column($schedules->tableName, 'view_roles', "ALTER TABLE $schedules->tableName ADD COLUMN `view_roles` varchar(80)");
+
+    $events = new Events();
+
+    maybe_add_column($events->tableName, 'atendees', "ALTER TABLE $schedules->tableName ADD COLUMN `atendees` varchar(80)");
+
+    SIM\printArray('Columns added');
 });

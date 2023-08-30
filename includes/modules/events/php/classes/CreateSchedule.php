@@ -28,7 +28,7 @@ class CreateSchedule extends Schedules{
 			$event
 		);
 		
-		if($wpdb->last_error !== ''){
+		if(!empty($wpdb->last_error)){
 			return new WP_Error('schedules', $wpdb->print_error());
 		}
 
@@ -64,6 +64,7 @@ class CreateSchedule extends Schedules{
 		$event['endtime']				= $this->endTime;
 		$event['location']				= $this->location;
 		$event['organizer_id']			= $this->hostId;
+		$event['atendees']				= maybe_serialize($_POST['others_']);
 		
 		$hostPartner					= false;
 		if(is_numeric($this->hostId)){
@@ -155,7 +156,7 @@ class CreateSchedule extends Schedules{
 				if(is_numeric($userId)){
 					$event['onlyfor']	= $userId;
 					$event['post_id']	= $postId;
-					$eventId 		= $this->addEventToDb($event);
+					$eventId 			= $this->addEventToDb($event);
 
 					if(is_numeric($eventId)){
 						$eventIds[]	= $eventId;
@@ -233,6 +234,15 @@ class CreateSchedule extends Schedules{
 
 			if($event->organizer_id != $this->hostId){
 				$args['organizer_id']	= $this->hostId;
+				$updated				= true;
+			}
+
+			if(!isset($_POST['others_'])){
+				$_POST['others_']	= [];
+			}
+			
+			if($event->atendees != maybe_serialize($_POST['others_'])){
+				$args['atendees']		= maybe_serialize($_POST['others_']);
 				$updated				= true;
 			}
 

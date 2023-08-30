@@ -1,4 +1,4 @@
-import { showAddHostModal, addCurrentUserAsHost, addHostHtml, removeHost, showTimeslotModal, checkConfirmation, editTimeSlot } from './shared.js';
+import { applyRowSpan, showAddHostModal, addCurrentUserAsHost, addHostHtml, removeHost, showTimeslotModal, checkConfirmation, editTimeSlot } from './shared.js';
 
 console.log("Desktop-schedule.js loaded");
 
@@ -69,19 +69,6 @@ async function removeSchedule(target){
 
 			document.querySelector('.schedules_wrapper .loaderwrapper:not(.hidden)').remove();
 		}
-	}
-}
-
-function applyRowSpan(target, count){
-	if(count > 1){
-		var row		= target.closest('tr');
-		var index	= target.cellIndex;
-		//Loop over the next cells to add the hidden attribute
-		for (var i = 1; i < count; i++) {
-			row = row.nextElementSibling;
-			row.cells[index].classList.add('hidden');
-		}
-		target.rowSpan	= count;
 	}
 }
 
@@ -284,7 +271,7 @@ async function checkIfValidSelection(target, selected, e){
 
             firstCell.classList.add('active');
 
-			showTimeslotModal(firstCell, date, startTime, endTime);
+			showTimeslotModal(selected);
 		}
 	}
 }
