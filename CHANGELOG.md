@@ -5,6 +5,7 @@
 ### Added
 - multiple schedule attendees
 - event specific urls
+- multi text list inputs
 
 ### Changed
 
