@@ -98,8 +98,6 @@ export function showTimeslotModal(selected=''){
 		firstCell	= selected;
 		startTime	= firstCell.dataset.starttime;
 		endTime		= firstCell.dataset.endtime;
-
-		modal.querySelector('[name="schedule_id"]').value		= selected.closest('.schedules_div').dataset.id;
 	}else{
 		firstCell		= selected[0].node;
 		lastCell		= selected[selected.length-1].node;
@@ -111,6 +109,7 @@ export function showTimeslotModal(selected=''){
 			Main.showLoader(firstCell.firstChild);
 		}
 	}
+	modal.querySelector('[name="schedule_id"]').value		= firstCell.closest('.schedules_div').dataset.id;
 	startTime	= firstCell.closest('tr').dataset.starttime;
 
 	endTime		= firstCell.dataset.endtime;
