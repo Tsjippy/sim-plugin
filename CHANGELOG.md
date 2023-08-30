@@ -11,6 +11,7 @@
 
 ### Fixed
 - not ebale to edit schedule events
+- bug
 
 ### Updated
 
