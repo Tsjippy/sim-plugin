@@ -4,6 +4,7 @@
 
 ### Added
 - multiple schedule attendees
+- event specific urls
 
 ### Changed
 
