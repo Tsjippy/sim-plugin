@@ -3,11 +3,20 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.34.6] - 2023-08-30
+
+
+### Added
 - multiple schedule attendees
 - event specific urls
 - multi text list inputs
-
-### Changed
 
 ### Fixed
 - not ebale to edit schedule events
