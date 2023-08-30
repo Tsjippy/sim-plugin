@@ -2,7 +2,7 @@
 namespace SIM\forms;
 use SIM;
 
-const MODULE_VERSION		= '7.0.85';
+const MODULE_VERSION		= '7.0.86';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 

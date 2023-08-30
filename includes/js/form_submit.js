@@ -297,11 +297,11 @@ function doneTyping(el) {
 	// find the option in the datalist
 	let option	= el.list.querySelector(`[value="${el.value}"]`);
 	if(option != null && option.dataset.value != null){
-		html   += `<input type='hidden' name='${el.name}_[]' value='${option.dataset.value}'>`;
+		html   += `<input type='hidden' name='${el.id}[]' value='${option.dataset.value}'>`;
 		html   += `<span>${el.value}</span>`;
 	}else{
 		html   += `<span>`;
-			html   += `<input type='text' name='${el.name}_[]' value='${el.value}' readonly=readonly style='width:${el.value.length}ch'>`;
+			html   += `<input type='text' name='${el.id}[]' value='${el.value}' readonly=readonly style='width:${el.value.length}ch'>`;
 		html   += `</span>`;
 	}
 

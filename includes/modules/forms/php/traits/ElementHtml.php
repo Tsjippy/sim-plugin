@@ -292,10 +292,6 @@ trait ElementHtml{
 				if($optionType == 'class'){
 					$elClass .= " $optionValue";
 				}else{
-					if(!in_array($optionType, ['pattern', 'title', 'accept', 'placeholder'])){
-						//$optionValue = str_replace([' ', ',', '(', ')'],['_', '', '', ''], $optionValue);
-					}
-
 					//remove any leading "
 					$optionValue	= trim($optionValue, '\'"');
 
@@ -620,16 +616,23 @@ trait ElementHtml{
 			if(!empty($element->multiple)){
 				if($element->type == 'select'){
 					$html	= "<$elType name='$elName' $elId class='$elClass' $elOptions>";
+				}elseif($element->type == 'text'){
+					$html	= "<div class='optionwrapper'>";
+						$html	.= "<ul class='listselectionlist'></ul>";
+						$html	.= "<$elType id='$elName' class='$elClass datalistinput multiple' $elOptions>";
+					$html	.= "</div>";
 				}else{
 					$html	= "<$elType name='$elName' $elId class='$elClass' $elOptions value='%value%'>$elContent$elClose";
 				}
-					
-				$this->multiInput($element, $values, $html);
-				$html	= "<div class='clone_divs_wrapper'>";
-					foreach($this->multiInputsHtml as $h){
-						$html	.= $h;
-					}
-				$html	.= '</div>';
+				
+				if($element->type != 'text'){
+					$this->multiInput($element, $values, $html);
+					$html	= "<div class='clone_divs_wrapper'>";
+						foreach($this->multiInputsHtml as $h){
+							$html	.= $h;
+						}
+					$html	.= '</div>';
+				}
 			}elseif(empty($html)){
 				$html	= "<$elType  name='$elName' $elId class='$elClass' $elOptions $elValue>$elContent$elClose";
 			}

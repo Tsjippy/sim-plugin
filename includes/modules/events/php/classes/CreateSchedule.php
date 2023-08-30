@@ -64,7 +64,7 @@ class CreateSchedule extends Schedules{
 		$event['endtime']				= $this->endTime;
 		$event['location']				= $this->location;
 		$event['organizer_id']			= $this->hostId;
-		$event['atendees']				= maybe_serialize($_POST['others_']);
+		$event['atendees']				= maybe_serialize($_POST['others']);
 		
 		$hostPartner					= false;
 		if(is_numeric($this->hostId)){
@@ -121,8 +121,8 @@ class CreateSchedule extends Schedules{
 			];
 		}
 
-		if(is_array($_POST['others_'])){
-			foreach($_POST['others_'] as $attendee){
+		if(is_array($_POST['others'])){
+			foreach($_POST['others'] as $attendee){
 				$eventArray[] =
 				[
 					'title'		=>"Attending $title with {$this->name}",
@@ -237,12 +237,12 @@ class CreateSchedule extends Schedules{
 				$updated				= true;
 			}
 
-			if(!isset($_POST['others_'])){
-				$_POST['others_']	= [];
+			if(!isset($_POST['others'])){
+				$_POST['others']	= [];
 			}
 			
-			if($event->atendees != maybe_serialize($_POST['others_'])){
-				$args['atendees']		= maybe_serialize($_POST['others_']);
+			if($event->atendees != maybe_serialize($_POST['others'])){
+				$args['atendees']		= maybe_serialize($_POST['others']);
 				$updated				= true;
 			}
 

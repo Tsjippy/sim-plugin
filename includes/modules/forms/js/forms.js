@@ -327,7 +327,14 @@ export function showTab(n, form) {
 
 		//... and adds the "active" class to the current step:
 		x = form.getElementsByClassName("step");
-		x[n].classList.add("active");
+		try{
+			x[n].classList.add("active");
+		}catch(err) {
+			console.log(x);
+			console.log(n);
+		  	console.error(err.message);
+		}
+		
 
 		// ... and fix the Previous/Next buttons:
 		if (n == 0) {

@@ -1244,11 +1244,10 @@ class Schedules{
 
 					<label>
 						<h4>Other people involved</h4>
-					
 					</label>
-						<?php
-						echo SIM\userSelect('', true, false, 'wide', 'others', [], $others, [], 'list', 'admin_host', true);
-						?>
+					<?php
+					echo SIM\userSelect('', true, false, 'wide', 'others', [], $others, [], 'list', 'admin_host', true);
+					?>
 	
 					<h4>Warnings</h4>
 					<label>

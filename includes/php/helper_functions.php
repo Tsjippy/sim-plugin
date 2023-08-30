@@ -104,12 +104,12 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 					if(is_numeric($userid)){
 						$user	= get_userdata($userid);
 						if($user){
-							$html	.= "<input type='hidden' name='{$id}_[]' value='{$user->ID}'>";
+							$html	.= "<input type='hidden' name='{$id}[]' value='{$user->ID}'>";
 							$html	.= "<span>{$user->display_name}</span>";
 						}
 					}else{
 						$html	.= "<span>";
-							$html	.= "<input type='text' name='{$id}_[]' value='$userid' readonly=readonly style='width:".strlen($userid)."ch'>";
+							$html	.= "<input type='text' name='{$id}[]' value='$userid' readonly=readonly style='width:".strlen($userid)."ch'>";
 						$html	.= "</span>";
 					}
 				}
@@ -166,7 +166,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 			}
 		$datalist .= '</datalist>';
 
-		$html	.= "<input type='text' class='$inputClass' name='$id' list='$listId' value='$value'>";
+		$html	.= "<input type='text' class='$inputClass' id='$id' list='$listId' value='$value'>";
 		$html	.= $datalist;
 	}
 	
