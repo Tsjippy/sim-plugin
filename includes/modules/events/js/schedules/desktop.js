@@ -436,7 +436,7 @@ document.addEventListener('change', function(event){
 		var userid = target.list.querySelector(`[value='${target.value}' i]`).dataset.value;
 
 		target.closest('form').querySelector('[name="target_id"]').value	= userid;
-	}else if(target.name == 'host'){
+	}else if(target.id == 'host'){
 		let host	= target.list.querySelector(`[value="${target.value}"]`);
 		let userId	= '';
 		if(host != null){

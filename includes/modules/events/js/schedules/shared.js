@@ -161,6 +161,7 @@ export function showTimeslotModal(selected=''){
 	}
 	if(hostId	!= undefined){
 		modal.querySelector('[name="host_id"]').value		= hostId;
+
 	}
 	if(subject	!= undefined){
 		modal.querySelector('[name="subject"]').value		= subject;
@@ -169,7 +170,7 @@ export function showTimeslotModal(selected=''){
 		modal.querySelector('[name="location"]').value		= location;
 	}
 	if(hostName	!= undefined){
-		modal.querySelector('[name="host"]').value			= hostName;
+		modal.querySelector('#host').value					= hostName;
 	}
 	if(atendees != undefined){
 		atendees.forEach(atendee => {
@@ -188,8 +189,9 @@ export function showTimeslotModal(selected=''){
 			}
 
 			li.innerHTML	= html;
+
+			ul.appendChild(li);
 		});
-		ul.appendChild(li);
 	}
 	
 	Main.showModal(modal);

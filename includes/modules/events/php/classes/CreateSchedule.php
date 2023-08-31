@@ -64,7 +64,11 @@ class CreateSchedule extends Schedules{
 		$event['endtime']				= $this->endTime;
 		$event['location']				= $this->location;
 		$event['organizer_id']			= $this->hostId;
-		$event['atendees']				= maybe_serialize($_POST['others']);
+		if(empty($_POST['others'])){
+			$event['atendees']			= [];
+		}else{
+			$event['atendees']			= maybe_serialize($_POST['others']);
+		}
 		
 		$hostPartner					= false;
 		if(is_numeric($this->hostId)){
@@ -158,6 +162,10 @@ class CreateSchedule extends Schedules{
 					$event['post_id']	= $postId;
 					$eventId 			= $this->addEventToDb($event);
 
+					if(is_wp_error($eventId)){
+						return $eventId;
+					}
+
 					if(is_numeric($eventId)){
 						$eventIds[]	= $eventId;
 					}
@@ -229,6 +237,13 @@ class CreateSchedule extends Schedules{
 
 			if($event->organizer != $organizer){
 				$args['organizer']	= $organizer;
+
+				// update the post title
+				wp_update_post( array(
+					'ID'           => $event->post_id,
+					'post_title'   => "{$this->title} with $organizer",
+				));
+
 				$updated			= true;
 			}
 

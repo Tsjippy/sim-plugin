@@ -180,10 +180,11 @@ input:invalid, .invalid{
 			width: 15px;
 			line-height: 15px;
 			padding: 0px;
-			vertical-align: middle;
+			background-color: #bd2919;
+    		border-radius: 20%;
 		}
 
-		input{
+		input, .selectedname{
 			padding: 0px 3px;
 		}
 	}
