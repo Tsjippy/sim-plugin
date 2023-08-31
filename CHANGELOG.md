@@ -10,6 +10,14 @@
 
 ### Updated
 
+## [2.34.7] - 2023-08-31
+
+
+### Fixed
+- issue with selectable
+
+### Updated
+
 ## [2.34.6] - 2023-08-30
 
 
