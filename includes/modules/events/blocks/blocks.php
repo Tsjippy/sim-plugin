@@ -113,6 +113,7 @@ function createEvents($metaId, $postId,  $metaKey,  $metaValue ){
 
 	$events			= new CreateEvents();
 	$events->postId	= $postId;
+	
     //check if anything has changed
 	$events->removeDbRows();
 	

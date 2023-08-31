@@ -41,9 +41,7 @@ function removeOldEvents(){
 
 	$expiredEvents	= $wpdb->get_results( $query);
 	foreach($expiredEvents as $event){
-		wp_delete_post($event->ID);
-
-		$events->removeDbRows($event->ID);
+		$events->removeDbRows($event->ID, true);
 	}
 }
 

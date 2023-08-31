@@ -14,8 +14,7 @@ add_action('delete_user', function ($userId, $reassign){
 
     // Remove the celebration events
     foreach($celebrationIds as $id){
-        wp_delete_post($id[0], true);
-        $events->removeDbRows($id[0]);
+        $events->removeDbRows($id[0], true);
     }
 
     // add the remainder to the new author or delete

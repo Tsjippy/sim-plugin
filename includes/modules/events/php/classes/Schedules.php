@@ -757,11 +757,11 @@ class Schedules{
 		$class		= 'orientation';
 
 		if(isset($this->currentSchedule->sessions[$date][$startTime])){
-			$data		= $this->currentSchedule->sessions[$date][$startTime];
-			$event		= $data->events[0];
+			$this->currentSession		= $this->currentSchedule->sessions[$date][$startTime];
+			$event						= $this->currentSession->events[0];
 
 			$hostId			= $event->organizer_id;
-			$dataset	= "data-starttime='{$event->starttime}' data-endtime='{$event->endtime}' data-session_id='$data->id'";
+			$dataset	= "data-starttime='{$event->starttime}' data-endtime='{$event->endtime}' data-session_id='{$this->currentSession->id}'";
 			if (is_numeric($hostId)) {
 				$dataset	.= " data-host='".get_userdata($hostId)->display_name."' data-host_id='$hostId'";
 			}
@@ -796,10 +796,11 @@ class Schedules{
 			if($this->hideNames && !$this->admin && $this->currentSchedule->target != $this->user->ID){
 				$cellText	= 'Taken';
 			}else{
-				$title		= get_the_title($event->post_id);$dataset	.= " data-subject='".explode(' with ', $title)[0]."'";
+				$baseTitle	= $this->getBaseTitle();
+				$dataset	.= " data-subject='$baseTitle'";
 				$url		= get_permalink($event->post_id);
 				$date		= $event->startdate;
-				$cellText	= "<span class='subject' data-userid='$hostId'><a href='$url'>$title</a></span><br>";
+				$cellText	= "<span class='subject' data-userid='$hostId'><a href='$url'>{$this->currentSession->posts[0]->post_title}</a></span><br>";
 			}
 			
 			if (!is_numeric($hostId)) {
@@ -1087,6 +1088,10 @@ class Schedules{
 		$html 	.= "</div>";
 		return $html;
 	}
+
+	public function getBaseTitle(){
+		return explode(' with ', $this->currentSession->posts[0]->post_title)[0];
+	}
 		
 	/**
 	 * Create all modals
@@ -1174,7 +1179,7 @@ class Schedules{
 			$date			= $session->events[0]->startdate;
 			$startTime		= $session->events[0]->starttime;
 			$endTime		= $session->events[0]->endtime;
-			$subject		= explode(' with ', $session->posts[0]->post_title)[0];
+			$subject		= $this->getBaseTitle();
 			$location		= $session->events[0]->location;
 			$host			= $session->events[0]->organizer;
 			if(is_numeric($hostId)){

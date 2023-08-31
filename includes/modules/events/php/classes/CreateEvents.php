@@ -287,10 +287,9 @@ class CreateEvents extends Events{
 		){
 			return false; //nothing changed
 		}else{
-			wp_delete_post($postId, true);
 			delete_user_meta($userId, $type.'_event_id');
 
-			$this->removeDbRows();
+			$this->removeDbRows('', true);
 		}
 	}
 

@@ -662,9 +662,8 @@ class Bookings{
         }
 
         // Remove the event
-        wp_delete_post($booking->event_id);
         $events = new SIM\EVENTS\CreateEvents();
-        $events->removeDbRows($booking->event_id);
+        $events->removeDbRows($booking->event_id, true);
 
         // Remove the booking
         $wpdb->delete(

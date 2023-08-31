@@ -12,6 +12,13 @@ class CreateSchedule extends Schedules{
 	public $scheduleId;
 	public $name;
 	public $title;
+	public $sessionAtendeesUpdated;
+
+	public function __construct(){
+		parent::__construct();
+
+		$this->sessionAtendeesUpdated	= false;
+	}
 
 	/**
 	 * Add a new event to the db
@@ -29,7 +36,7 @@ class CreateSchedule extends Schedules{
 		);
 		
 		if(!empty($wpdb->last_error)){
-			return new WP_Error('schedules', $wpdb->print_error());
+			return new WP_Error('schedules', $wpdb->last_error);
 		}
 
 		$eventId   = $wpdb->insert_id;
@@ -65,7 +72,7 @@ class CreateSchedule extends Schedules{
 		$event['location']				= $this->location;
 		$event['organizer_id']			= $this->hostId;
 		if(empty($_POST['others'])){
-			$event['atendees']			= [];
+			$event['atendees']			= serialize([]);
 		}else{
 			$event['atendees']			= maybe_serialize($_POST['others']);
 		}
@@ -88,7 +95,7 @@ class CreateSchedule extends Schedules{
 		}
 
 		//clean title
-		$title	= str_replace([" with", $event['organizer'], "Hosting {$this->name} for "], '', $this->title);
+		$title	= $this->getBaseTitle();
 
 		if(!empty($event['organizer'])){
 			$ownTitle	= ucfirst($title)." with {$event['organizer']}";
@@ -134,9 +141,41 @@ class CreateSchedule extends Schedules{
 				];
 			}
 		}
+		
+		extract($this->createPostsAndEvents($eventArray, $event), EXTR_OVERWRITE);
 
+		// store the event and post ids in db
+		global $wpdb;
+
+		$wpdb->insert(
+			$this->sessionTableName,
+			[
+				'schedule_id'	=> $this->scheduleId,
+				'post_ids'		=> serialize($postIds),
+				'event_ids'		=> serialize($eventIds),
+				'meal'			=> $title == 'lunch' || $title == 'dinner'
+			]
+		);
+
+		// add to schedule
+		if(!isset($this->currentSchedule->sessions[$this->date])){
+			$this->currentSchedule->sessions[$this->date]	= [];
+		}
+		$this->currentSchedule->sessions[$this->date][$this->startTime]	= $this->getSessionEvent($wpdb->insert_id);
+	}
+
+	/**
+	 * Creates posts and events from an array
+	 *
+	 * @param	array	$eventArray		Array containin a title and a onlyfor key
+	 * @param	object	$event			Object with the event details
+	 *
+	 * @return	array					Array containing the created post and event ids
+	 */
+	public function createPostsAndEvents($eventArray, $event){
 		$eventIds	= [];
 		$postIds	= [];
+
 		foreach($eventArray as $a){
 			$post = array(
 				'post_type'		=> 'event',
@@ -173,24 +212,10 @@ class CreateSchedule extends Schedules{
 			}
 		}
 
-		// store the event and post ids in db
-		global $wpdb;
-
-		$wpdb->insert(
-			$this->sessionTableName,
-			[
-				'schedule_id'	=> $this->scheduleId,
-				'post_ids'		=> serialize($postIds),
-				'event_ids'		=> serialize($eventIds),
-				'meal'			=> $title == 'lunch' || $title == 'dinner'
-			]
-		);
-
-		// add to schedule
-		if(!isset($this->currentSchedule->sessions[$this->date])){
-			$this->currentSchedule->sessions[$this->date]	= [];
-		}
-		$this->currentSchedule->sessions[$this->date][$this->startTime]	= $this->getSessionEvent($wpdb->insert_id);
+		return [
+			'eventIds'	=> $eventIds,
+			'postIds'	=> $postIds
+		];
 	}
 
 	/**
@@ -212,8 +237,15 @@ class CreateSchedule extends Schedules{
 			$organizer				= $_POST['host'];
 		}
 
+		if($this->currentSession->events[0]->atendees != $_POST['others']){
+			$this->updateSessionAtendees();
+			$updated				= true;
+		}
+
 		$args	= [];
 		foreach($this->currentSession->events as $event){
+			$event->atendees	= maybe_unserialize($event->atendees);
+
 			if($event->startdate != $this->date){
 				$args['startdate']	= $this->date;
 				$args['enddate']	= $this->date;
@@ -253,11 +285,11 @@ class CreateSchedule extends Schedules{
 			}
 
 			if(!isset($_POST['others'])){
-				$_POST['others']	= [];
+				$_POST['others']		= [];
 			}
 			
-			if($event->atendees != maybe_serialize($_POST['others'])){
-				$args['atendees']		= maybe_serialize($_POST['others']);
+			if(maybe_unserialize($event->atendees) != $_POST['others']){
+				$args['atendees'] 		= maybe_serialize($_POST['others']);
 				$updated				= true;
 			}
 
@@ -280,45 +312,85 @@ class CreateSchedule extends Schedules{
 			$this->currentSchedule->sessions[$this->date]	= [];
 		}
 		$this->currentSchedule->sessions[$this->date][$this->startTime]	= $this->getSessionEvent($this->currentSession->id);
-
-		/* 		$event							= [];
-		$event['startdate']				= $this->date;
-		$event['starttime']				= $this->startTime;
-		$event['enddate']				= $this->date;
-		$event['endtime']				= $this->endTime;
-		$event['location']				= $this->location;
-		$event['organizer_id']			= $this->hostId;
-		//$event['schedule_id']			= $this->scheduleId;
-		
-		
-
-		if($addPartner){
-			$partnerId	= SIM\hasPartner($schedule->target);
-		}else{
-			$partnerId	= false;
-		}
-
-		//clean title
-		$title	= str_replace([" with", $event['organizer'], "Hosting {$this->name} for "], '', $title);
-
-		if(!empty($event['organizer'])){
-			$ownTitle	= ucfirst($title)." with {$event['organizer']}";
-		}else{
-			$ownTitle	= ucfirst($title);
-		}
-
-		if(strpos(strtolower($ownTitle), 'at home') !== false){
-			if(!empty($event['organizer'])){
-				$ownTitle	= ucfirst($title).' '.$event['organizer'];
-			}
-
-			$event['location']	= 'Home';
-			unset($event['organizer']);
-		} */
-		
-		
 	}
 	
+	/**
+	 * Updates the session atendees and the posts and events related to that
+	 */
+	public function updateSessionAtendees(){
+		global $wpdb;
+
+		if($this->sessionAtendeesUpdated){
+			return;
+		}
+
+		$this->sessionAtendeesUpdated	= true;
+		$event							= $this->currentSession->events[0];
+		$event->atendees				= maybe_unserialize($event->atendees);
+		$eventArray						= [];
+
+		// remove old events
+		foreach($this->currentSession->events as $i=>$ev){
+
+			if(
+				$ev->onlyfor != $this->currentSchedule->target 	&& 		// not an event for the target of the schedule
+				$ev->onlyfor != $event->organizer_id				&&		// not organizer of the event
+				!in_array($ev->onlyfor, $_POST['others'])				// and not one of the atendees
+			){
+				// remove the event and all posts related to it
+				$this->currentSession->event_ids		= array_diff($this->currentSession->event_ids, [$event->id]);
+				foreach($this->currentSession->posts as $index=>$post){
+					if($ev->post_id == $post->ID){
+						$this->currentSession->post_ids		= array_diff($this->currentSession->post_ids, [$post->ID]);
+
+						unset($this->currentSession->posts[$index]);
+					}
+				}
+
+				unset($this->currentSession->events[$i]);
+
+				$this->events->removeDbRows($post->ID, true);
+			}
+		}
+
+		// prepare the new events
+		foreach($_POST['others'] as $atendee){
+			if(is_numeric($atendee) && !in_array($atendee, (array)$event->atendees)){
+				$eventArray[] = [
+					'title'		=>"Attending {$this->title} with {$this->name}",
+					'onlyfor'	=>[$atendee]
+				];
+			}
+		}
+
+		// create new events
+		if(!empty($eventArray)){
+			$arrayedEvent	= (array)$event;
+			unset($arrayedEvent['id']);
+			$ids	= $this->createPostsAndEvents($eventArray, $arrayedEvent);
+			if(is_wp_error($ids)){
+				return $ids;
+			}
+			extract($ids, EXTR_OVERWRITE);
+
+			$this->currentSession->post_ids		= array_merge($postIds, $this->currentSession->post_ids);
+			$this->currentSession->event_ids	= array_merge($eventIds, $this->currentSession->event_ids);
+		}
+
+		// Update the session
+		$wpdb->update(
+			$this->sessionTableName,
+			[
+				'post_ids'		=> serialize($this->currentSession->post_ids),
+				'event_ids'		=> serialize($this->currentSession->event_ids)
+			],
+			[
+				'id'		=> $this->currentSession->id
+			],
+		);
+
+	}
+
 	/**
 	 * Add a new schedule
 	 *
@@ -487,11 +559,8 @@ class CreateSchedule extends Schedules{
 		}
 
 		foreach(maybe_unserialize($session->post_ids) as $postId){
-			//delete posts
-			wp_delete_post($postId);
-
 			//delete events
-			$this->events->removeDbRows($postId);
+			$this->events->removeDbRows($postId, true);
 		}
 
 		// Delete the session

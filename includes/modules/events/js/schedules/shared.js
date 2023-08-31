@@ -180,11 +180,11 @@ export function showTimeslotModal(selected=''){
 			html	= `<button type="button" class="small remove-list-selection"><span class='remove-list-selection'>×</span></button>`;
 
 			if(typeof(atendee) === 'object'){
-				html   += `<input type='hidden' name='others_[]' value='${atendee.id}'>`;
+				html   += `<input type='hidden' name='others[]' value='${atendee.id}'>`;
 				html   += `<span>${atendee.name}</span>`;
 			}else{
 				html   += `<span>`;
-					html   += `<input type='text' name='others_[]' value='${atendee}' readonly=readonly style='width:${atendee.length}ch'>`;
+					html   += `<input type='text' name='others[]' value='${atendee}' readonly=readonly style='width:${atendee.length}ch'>`;
 				html   += `</span>`;
 			}
 
