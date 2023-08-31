@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.34.8] - 2023-08-31
+
+
+### Changed
 - clean up code
 
 ### Fixed
