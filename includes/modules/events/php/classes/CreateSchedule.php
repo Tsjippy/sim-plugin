@@ -95,7 +95,7 @@ class CreateSchedule extends Schedules{
 		}
 
 		//clean title
-		$title	= $this->getBaseTitle();
+		$title	= sanitize_text_field($_POST['subject']);
 
 		if(!empty($event['organizer'])){
 			$ownTitle	= ucfirst($title)." with {$event['organizer']}";
