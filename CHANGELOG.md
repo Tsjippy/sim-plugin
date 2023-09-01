@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- schedule editing on mobile
 
 ### Updated
 
