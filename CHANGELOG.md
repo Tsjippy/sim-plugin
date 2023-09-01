@@ -10,6 +10,14 @@
 
 ### Updated
 
+## [2.34.9] - 2023-09-01
+
+
+### Fixed
+- schedule editing on mobile
+
+### Updated
+
 ## [2.34.8] - 2023-08-31
 
 
