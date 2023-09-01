@@ -1090,6 +1090,10 @@ class Schedules{
 	}
 
 	public function getBaseTitle(){
+		if(empty($this->currentSession->posts[0]->post_title)){
+			return false;
+		}
+		
 		return explode(' with ', $this->currentSession->posts[0]->post_title)[0];
 	}
 		
