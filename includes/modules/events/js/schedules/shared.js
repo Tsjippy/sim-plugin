@@ -110,15 +110,17 @@ export function showTimeslotModal(selected=''){
 		}
 	}
 	modal.querySelector('[name="schedule_id"]').value		= firstCell.closest('.schedules_div').dataset.id;
-	startTime	= firstCell.closest('tr').dataset.starttime;
-
+	
+	startTime	= firstCell.dataset.starttime;
 	endTime		= firstCell.dataset.endtime;
-	if(endTime == undefined){
-		endTime	= lastCell.closest('tr').dataset.endtime;
+	date	 	= firstCell.dataset.isodate;
+	if(firstCell.closest('tr') != null){
+		startTime	= firstCell.closest('tr').dataset.starttime;
+		endTime		= lastCell.closest('tr').dataset.endtime;
+		date		= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 	}
 
 	let table	= firstCell.closest('table');
-	date		= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 
 	hostId			= firstCell.dataset.host_id;
 	//oldTime			= firstCell.dataset.old_time;
