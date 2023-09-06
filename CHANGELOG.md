@@ -8,6 +8,7 @@
 
 ### Fixed
 - issue with session title
+- multiple bugs
 
 ### Updated
 
