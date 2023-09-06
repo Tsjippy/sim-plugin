@@ -16,6 +16,8 @@ add_action('init', function(){
     add_action( 'check_signal_numbers_action', __NAMESPACE__.'\checkSignalNumbers', 10, 3);
 
     add_action( 'clean_signal_log_action', __NAMESPACE__.'\cleanSignalLog');
+
+    add_action( 'retry_failed_messages_action', __NAMESPACE__.'\retryFailedMessages');
 });
 
 
@@ -23,6 +25,8 @@ function scheduleTasks(){
     SIM\scheduleTask('check_signal_action', 'daily');
 
     SIM\scheduleTask('clean_signal_log_action', 'daily');
+
+    SIM\scheduleTask('retry_failed_messages_action', 'quarterly');
 
     $freq   = SIM\getModuleOption(MODULE_SLUG, 'reminder_freq');
     if($freq){
@@ -92,4 +96,14 @@ function cleanSignalLog(){
     $signal     = new SignalBus();
 
     $signal->clearMessageLog($maxDate);
+}
+
+function retryFailedMessages(){
+    //if(strpos(php_uname(), 'Linux') !== false){
+      //  $signal = new SignalBus();
+    //}else{
+        $signal = new Signal();
+    //}
+
+    $signal->retryFailedMessages();
 }

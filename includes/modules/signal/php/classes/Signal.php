@@ -282,57 +282,38 @@ class Signal {
     }
 
     protected function parseResult($returnJson=false){
-        $errorMessages      = get_option('sim-signal-failed-messages', []);
         if($this->command->getExitCode()){
+            $failedCommands      = get_option('sim-signal-failed-messages', []);
+
+            $errorMessage  = $this->command->getError();
+
+            SIM\printArray($errorMessage);
+
             // Captcha required
-            if(strpos($this->command->getError(), 'CAPTCHA proof required') !== false){
-                // Store message
-                $errorMessages[]    = $this->command->getCommand();
-                update_option('sim-signal-failed-messages', $errorMessages);
+            if(strpos($errorMessage, 'CAPTCHA proof required') !== false){
+                // Store command
+                $failedCommands[]    = $this->command->getCommand();
+                update_option('sim-signal-failed-messages', $failedCommands);
 
-                $username       = [];
-                exec("bash -c 'whoami'", $username);
-                $instructions   = $this->command->getError();
-                $instructions   = str_replace('signal-cli', "$this->path --config /home/{$username[0]}/.local/share/signal-cli" , $instructions);
-                $adminUrl       = admin_url("admin.php?page=sim_signal&tab=functions&challenge=");
-
-                $to             = get_option('admin_email');
-                $subject        = "Signal captcha required";
-                $message        = "Hi admin,<br><br>";
-                $message        .= "Signal messages are currently not been send from the website as you need to submit a captcha.<br>";
-                $message        .= "Use the following instructions to submit the captacha:<br><br>";
-                $message        .= "<code>$instructions</code><br>";
-                $message        .= "Submit the challenge and captcha <a href='$adminUrl'>here</a>";
-
-                wp_mail($to, $subject, $message);
+                $this->sendCaptchaInstructions($errorMessage);
+            }elseif(strpos($errorMessage, '429 Too Many Requests') !== false){
+                // Store command
+                $failedCommands[]    = $this->command->getCommand();
+                update_option('sim-signal-failed-messages', $failedCommands);
             }
 
-            $error  = $this->command->getError();
-
-            if(strpos($error, 'Unregistered user') !== false || strpos($error, 'Invalid group id') !== false){
-                SIM\printArray($error);
+            if(strpos($errorMessage, 'Unregistered user') !== false || strpos($errorMessage, 'Invalid group id') !== false){
+                SIM\printArray($errorMessage);
             }else{
                 SIM\printArray($this->command);
             }
             
-            $this->error    = "<div class='error'>$error</div>";
+            $this->error    = "<div class='error'>$errorMessage</div>";
             if($returnJson){
                 return json_encode($this->error);
             }
 
             return $this->error;
-        }elseif(!empty($errorMessages)){
-            foreach($errorMessages as $command){
-                $this->command = new Command([
-                    'command' => $command,
-                    // This is required for binary to be able to find libzkgroup.dylib to support Group V2
-                    'procCwd' => dirname($this->path),
-                ]);
-
-                $this->command->execute();
-            }
-
-            delete_option('sim-signal-failed-messages');
         }
 
         $output = $this->command->getOutput();
@@ -341,6 +322,58 @@ class Signal {
             return json_encode($output);
         }
         return $output;
+    }
+
+    /**
+     * Send Captcha instructions by e-mail
+     *
+     * @param   string  $error  The error returned from a signal actions
+     */
+    function sendCaptchaInstructions($error){
+        $username       = [];
+        exec("bash -c 'whoami'", $username);
+        $instructions   = $error;
+        $instructions   = str_replace('signal-cli', "$this->path --config /home/{$username[0]}/.local/share/signal-cli" , $instructions);
+        $adminUrl       = admin_url("admin.php?page=sim_signal&tab=functions&challenge=");
+
+        $to             = get_option('admin_email');
+        $subject        = "Signal captcha required";
+        $message        = "Hi admin,<br><br>";
+        $message        .= "Signal messages are currently not been send from the website as you need to submit a captcha.<br>";
+        $message        .= "Use the following instructions to submit the captacha:<br><br>";
+        $message        .= "<code>$instructions</code><br>";
+        $message        .= "Submit the challenge and captcha <a href='$adminUrl'>here</a>";
+
+        wp_mail($to, $subject, $message);
+    }
+
+    /**
+     * Retry sending previous failed Signal messages
+     */
+    public function retryFailedMessages(){
+        // get failed commands from db
+        $failedCommands      = get_option('sim-signal-failed-messages', []);
+        
+        // clean db
+        delete_option('sim-signal-failed-messages');
+
+        if(empty($failedCommands)){
+            return;
+        }
+
+        foreach($failedCommands as $command){
+            SIM\printArray($command);
+
+            $this->command = new Command([
+                'command' => $command,
+                // This is required for binary to be able to find libzkgroup.dylib to support Group V2
+                'procCwd' => dirname($this->path),
+            ]);
+
+            $this->command->execute();
+
+            $this->parseResult();
+        }
     }
 
     /**

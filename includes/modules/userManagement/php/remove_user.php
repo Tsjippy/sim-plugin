@@ -18,11 +18,11 @@ add_action('delete_user', function ($userId){
 
 	$family = SIM\familyFlatArray($userId);
 	//User has family
-	if (count($family) > 0){		
+	if (!empty($family)){
 		//Remove user from the family arrays of its relatives
 		foreach($family as $relative){
 			//get the relatives family array
-			$relativeFamily = get_user_meta($relative,"family",true);
+			$relativeFamily = get_user_meta($relative, "family", true);
 			if (is_array($relativeFamily)){
 				//Find the familyrelation to $userId
 				$result = array_search($userId, $relativeFamily);
@@ -34,11 +34,11 @@ add_action('delete_user', function ($userId){
 					if(is_array($relativeFamily['children'])){
 						$children	= $relativeFamily['children'];
 						$result		= array_search($userId, $children);
-						if($result!==null){
+						if($result !== null){
 							//Remove the relation
 							unset($children[$result]);
 							//This was the only child, remove the whole children entry
-							if (count($children)==0){
+							if (empty($children)){
 								unset($relativeFamily["children"]);
 							}else{
 								//update the family
@@ -47,12 +47,12 @@ add_action('delete_user', function ($userId){
 						}
 					}
 				}
-				if (count($relativeFamily)==0){
+				if (empty($relativeFamily)){
 					//remove from db, there is no family anymore
 					delete_user_meta($relative, "family");
 				}else{
 					//Store in db
-					update_user_meta($relative, "family", $relativeFamily);					
+					update_user_meta($relative, "family", $relativeFamily);
 				}
 			}
 		}

@@ -430,11 +430,11 @@ function getUserFamily($userId){
  * @return	array				All family members in one array
 */
 function familyFlatArray($userId){
-	getUserFamily($userId);
+	$family	= getUserFamily($userId);
 
 	//make the family array flat
 	if (isset($family["children"])){
-		$family = array_merge($family["children"],$family);
+		$family = array_merge($family["children"], $family);
 		unset($family["children"]);
 	}
 	

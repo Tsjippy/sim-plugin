@@ -353,7 +353,7 @@ class DisplayForm extends SubmitForm{
 		}
 
 		if(!file_exists($jsPath)){
-			SIM\printArray("$jsPath does not exist!\nBuilding it now");
+			//SIM\printArray("$jsPath does not exist!\nBuilding it now");
 			
 			$path	= plugin_dir_path(__DIR__)."../js/dynamic";
 			if (!is_dir($path)) {
