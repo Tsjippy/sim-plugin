@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.35.0] - 2023-09-06
+
+
+### Fixed
 - issue with session title
 - multiple bugs
 
