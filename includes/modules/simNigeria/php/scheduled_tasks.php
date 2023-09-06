@@ -31,29 +31,7 @@ function sendReimbursementRequests(){
     //$formTable->determineForm(['id'=>'6','formname'=>'reimbursement']);
 	$formTable->showFormresultsTable();
 
-	//Get all files in the reimbursement dir as they are the receipts
-	$recieptsDir	= "/form_uploads/Reimbursement";
-	$dir			= wp_upload_dir()['basedir'].$recieptsDir;
-	$oldDir			= $dir.'/old';
-	$privateDir		= wp_upload_dir()['basedir'].'/private'.$recieptsDir;
-	$attachments	= glob("$dir/*.*");
-	$oldAttachments	= glob("$oldDir/*.*");
-
-	// Check if we need to make a folder
-	if (!is_dir($oldDir)) {
-		mkdir($oldDir, 0777, true);
-	}
-
-	if (!is_dir($privateDir)) {
-		mkdir($privateDir, 0777, true);
-	}
-
-	// Move all the files in the old dir to the private dir
-	// They belong to last months request
-	foreach($oldAttachments as $file){
-		//Remove the upload attached to the form
-		rename($file, str_replace($oldDir, $privateDir, $file));
-	}
+	$attachments	= [];
 
 	//if there are reimbursements
 	if(empty($formTable->submissions )){
@@ -65,14 +43,15 @@ function sendReimbursementRequests(){
 		//mark all entries as archived
 		foreach($formTable->submissions as &$formTable->submission){
 			maybe_unserialize($formTable->submission->formresults);
-			$formTable->submissionId				= $formTable->submission->id;
+			$formTable->submissionId	= $formTable->submission->id;
 
-			// update the reciept url
+			// find attachments
 			if(isset($formTable->submission->formresults['receipts'])){
-				foreach($formTable->submission->formresults['receipts'] as &$receipt){
-					$receipt	= str_replace($recieptsDir, '/private'.$recieptsDir, $receipt);
+				foreach($formTable->submission->formresults['receipts'] as $receipt){
+					$attachments[]	= wp_upload_dir()['basedir'].'/'.$receipt;
 				}
 			}
+
 			$formTable->updateSubmission(true);
 		}
 
@@ -83,13 +62,6 @@ function sendReimbursementRequests(){
 			$message		 = 'Dear finance team,<br><br>';
 			$message		.= 'Attached you can find all reimbursement requests of this month<br>';
 			$message		.= 'Please mention the Id of each request in the transfer description<br>';
-			//$message		.= 'Please use the links below to get the reciepts:<br>';
-
-			// Add attachments as urls so to not exceed the appendix limit of outlook
-			/* foreach($attachments as $attachment){
-				$message		.= SIM\pathToUrl(str_replace($recieptsDir, "$recieptsDir/old", $attachment));
-				$message		.= '<br><br>';
-			} */
 			$emailHeaders	 = ["Bcc:enharmsen@gmail.com"];
 			
 			//Send the mail
@@ -98,11 +70,6 @@ function sendReimbursementRequests(){
 			$attach	= array_merge($attachments, [$excel]);
 			wp_mail("jos.treasurer@sim.org", $subject, $message, $emailHeaders, $attach);
 
-			//Loop over the attachements and move them
-			foreach($attachments as $file){
-				//Remove the upload attached to the form
-				rename($file, str_replace($dir, $oldDir, $file));
-			}
 		}else{
 			SIM\printArray('No attachments found');
 		}

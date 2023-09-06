@@ -81,14 +81,9 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
 });
 
 add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) {
-    printArray('upgrader_process_complete');
-    printArray($options);
-    printArray(PLUGIN);
-
     // If an update has taken place and the updated type is plugins and the plugins element exists
     if ( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
         foreach( $options['plugins'] as $plugin ) {
-            printArray($plugin);
             // Check to ensure it's my plugin
             if( $plugin == PLUGIN ) {
                 printArray('Running update actions');

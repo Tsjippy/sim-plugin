@@ -280,7 +280,7 @@ function greencardReminder(){
 				$to = $user->user_email;
 
 				//Skip if not valid email
-				if(strpos($to,'.empty') !== false){
+				if(empty($to) || strpos($to,'.empty') !== false){
 					continue;
 				}
 
