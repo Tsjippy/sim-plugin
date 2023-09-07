@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.35.1] - 2023-09-06
+
+
+### Changed
 - reimbursements processing
 
 ### Fixed
