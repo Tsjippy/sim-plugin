@@ -4,6 +4,7 @@
 
 ### Added
 - hash parameter for non-logged in file access
+- temp access to private pictures when not logged in
 
 ### Changed
 
