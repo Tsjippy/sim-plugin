@@ -3,9 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- hash parameter for non-logged in file access
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.35.2] - 2023-09-07
+
+
+### Added
+- hash parameter for non-logged in file access
+- temp access to private pictures when not logged in
 
 ### Fixed
 
