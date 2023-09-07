@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- hash parameter for non-logged in file access
 
 ### Changed
 
