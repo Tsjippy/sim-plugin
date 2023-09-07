@@ -24,12 +24,14 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 
 	$discard = ob_get_clean();
 
+	$fileName	= sanitize_text_field($_GET['file']);
+
 	$allowedWithHash	= false;
 	if(!empty($_REQUEST['imagehash'])){
 		$allowedWithHash	= get_transient( $_REQUEST['imagehash']);
 	}
 
-	if(!is_user_logged_in() && $allowedWithHash != SIM\pathToUrl($file) && !auth_redirect()){
+	if(!is_user_logged_in() && $allowedWithHash != $fileName && !auth_redirect()){
 		die('<div style="text-align: center;"><p>You do not have permission to view this file!</p></div>');
 	}
 
@@ -40,7 +42,7 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 	//If the file part contains the account statements folder
 	//and the filename does not contain the username
 	//Block access
-	if (strpos($file, 'account_statements') !== false) {
+	if (strpos($fileName, 'account_statements') !== false) {
 		$partnerName		= $username;
 		
 		$family = get_user_meta($user->ID,'family',true);
@@ -50,7 +52,7 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 		}
 
 		//Block access if the filename does not contain the own or partners username
-		if(strpos($file, $username) === false && strpos($file, $partnerName) === false){
+		if(strpos($fileName, $username) === false && strpos($fileName, $partnerName) === false){
 			status_header(403);
 			die('<div style="text-align: center;"><p>Stop spying at someone elses file!</p></div>');
 		}
@@ -58,14 +60,14 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 	
 	$allowedRoles	= ["medicalinfo", "administrator"];
 	//If this is a medical file it is only visible to that person and the user with the correct role
-	if(strpos($file, 'medical_uploads') !== false && !array_intersect($allowedRoles, $user->roles ) && strpos($file, $username) === false) {
+	if(strpos($fileName, 'medical_uploads') !== false && !array_intersect($allowedRoles, $user->roles ) && strpos($fileName, $username) === false) {
 		status_header(403);
 		die('<div style="text-align: center;"><p>You do not have permission to view this file!</p></div>');
 	}
 	
 	$allowedRoles	= ["visainfo", "administrator"];
 	//If this is a visa file it is only visible to that person and the user with the correct role
-	if(strpos($file, 'visa_uploads') !== false && !array_intersect($allowedRoles, $user->roles ) && strpos($file, $username) === false) {
+	if(strpos($fileName, 'visa_uploads') !== false && !array_intersect($allowedRoles, $user->roles ) && strpos($fileName, $username) === false) {
 		status_header(403);
 		die('<div style="text-align: center;"><p>You do not have permission to view this file!</p></div>');
 	}

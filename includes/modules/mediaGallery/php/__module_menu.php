@@ -322,7 +322,7 @@ function checkOrphanMedia(){
 	$dir			= wp_upload_dir()['basedir'];
 	$files			= array_merge(glob($dir.'/*'), glob($dir.'/private/*'));
 	$dirs			= array_filter($files, function($file){
-		if(is_dir($file) && !in_array(basename($file), ['email_pictures', 'form_uploads', 'account_statements', 'profile_pictures', 'visa_uploads'])){
+		if(is_dir($file) && !in_array(basename($file), ['form_uploads', 'account_statements', 'profile_pictures', 'visa_uploads'])){
 			return true;
 		}
 		return false;

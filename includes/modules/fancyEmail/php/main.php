@@ -16,8 +16,3 @@ add_action( 'wp_mail_failed', function( $wpError ) {
         SIM\printArray($wpError);
     }
 });
-
-add_action('clean_up_email_messages_action', function(){
-    $fancyEmail = new FancyEmail();
-    $fancyEmail->cleanUpEmailMessages('');
-});

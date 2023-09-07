@@ -133,3 +133,12 @@ add_filter( 'rest_request_after_callbacks', function($response){
 	clearOutput();
 	return $response;
 });
+
+// disable auto updates for this plugin on localhost
+add_filter( 'auto_update_plugin', function ( $value, $item ) {
+    if ( 'sim-plugin' === $item->slug && $_SERVER['HTTP_HOST'] == 'localhost') {
+        return false; // Enable auto-updates for the specified plugin
+    }
+
+    return $value; // Preserve auto-update status for other plugins
+}, 10, 2 );

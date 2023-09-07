@@ -6,7 +6,6 @@ class FancyEmail{
     public $mailTable;
     public $mailEventTable;
     public $mailTrackerUrl;
-    public $mailImagesFolder;
     public $subject;
     public $recipients;
     public $headers;
@@ -20,7 +19,6 @@ class FancyEmail{
         $this->mailTable        = $wpdb->prefix."sim_emails";
         $this->mailEventTable   = $wpdb->prefix."sim_email_events";
         $this->mailTrackerUrl   = SITEURL."/wp-json/".RESTAPIPREFIX."/mailtracker";
-        $this->mailImagesFolder = wp_upload_dir()['basedir']."/email_pictures";
     }
 
     /**
@@ -207,14 +205,6 @@ class FancyEmail{
     }
 
     /**
-     * Removes any obsolete email images
-     */
-    public function cleanUpEmailMessages($emailId){
-        $target   = "$this->mailImagesFolder/$emailId/";
-        SIM\removeFiles($target);
-    }
-
-    /**
      * Replace any private urls to public urls, add mail logging to all links
      *
      * @param   array   $matches    Matches from a regex
@@ -234,26 +224,16 @@ class FancyEmail{
         $html	    = $matches[0];
         $url	    = $matches[1];
 
-        // Convert to public url
+        // add a hash so image is also readible when not logged in
         if(strpos($url, '/private/') !== false){
-            $path       = SIM\urlToPath($url);
-            $name       = basename($path);
-            $newPath    = "$this->mailImagesFolder/$this->emailId/";
+            // create the random string
+            $str    = rand();
+            $hash   = md5($str);
 
-            //create folder for this mailId
-            if (!is_dir($newPath)) {
-                mkdir($newPath, 0777, true);
+            // store hash in db for a month
+            set_transient( $hash, basename($url), MONTH_IN_SECONDS );
 
-                //Schedule a task to delete this folder in 1 month time
-                wp_schedule_single_event(strtotime(time(), '+1 minute'), 'clean_up_email_messages_action', [$this->emailId]);
-            }
-            $newPath   = $newPath.$name;
-
-            // Copy the private picture to the public accesible folder
-            copy($path, $newPath);
-
-            $newUrl     = SIM\pathToUrl($newPath);
-            $html	    = str_replace($url, $newUrl, $html);
+            $html	    = str_replace($url, "$url?imagehash=$hash", $html);
         }
 
         return $html;
