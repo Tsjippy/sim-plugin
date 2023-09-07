@@ -28,7 +28,6 @@ function sendReimbursementRequests(){
 	$formTable->tableEditPermissions = true;
 
 	//fill the excel data
-    //$formTable->determineForm(['id'=>'6','formname'=>'reimbursement']);
 	$formTable->showFormresultsTable();
 
 	$attachments	= [];
@@ -40,7 +39,7 @@ function sendReimbursementRequests(){
 		//Create the excel
 		$excel	= $formTable->exportExcel("Reimbursement requests - ".date("F Y", strtotime("previous month")).'.xlsx', false);
 
-		//mark all entries as archived
+		// loop over all submissions
 		foreach($formTable->submissions as &$formTable->submission){
 			maybe_unserialize($formTable->submission->formresults);
 			$formTable->submissionId	= $formTable->submission->id;
@@ -48,10 +47,12 @@ function sendReimbursementRequests(){
 			// find attachments
 			if(isset($formTable->submission->formresults['receipts'])){
 				foreach($formTable->submission->formresults['receipts'] as $receipt){
+					// add to e-mail attachments
 					$attachments[]	= wp_upload_dir()['basedir'].'/'.$receipt;
 				}
 			}
 
+			//mark  as archived
 			$formTable->updateSubmission(true);
 		}
 
