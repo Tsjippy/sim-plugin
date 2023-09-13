@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- expired accounts removal
 
 ### Updated
 
