@@ -237,22 +237,36 @@ function pathToUrl($path){
 
 /**
  * Prints something to the log file and optional to the screen
- * @param 	string		$message	 	The message to be printed
- * @param	bool		$display		Whether to print the message to the screen or not
+ * @param 	string		$message	 			The message to be printed
+ * @param	bool		$display				Whether to print the message to the screen or not
+ * @param	bool|int	$printFunctionHiearchy	Whether to print the full backtrace, false for not printing, true for all, number for max depth
 */
-function printArray($message, $display=false){
+function printArray($message, $display=false, $printFunctionHiearchy=false){
 	$bt		= debug_backtrace();
-	$caller = array_shift($bt);
-	//always write to log
-	error_log("Called from file {$caller['file']} line {$caller['line']}");
-	//file_put_contents(__DIR__.'/simlog.log',"Called from file {$caller['file']} line {$caller['line']}\n",FILE_APPEND);
+
+	if($printFunctionHiearchy){
+		error_log("Called from:");
+		foreach($bt as $index=>$trace){
+			// stop if we have reached the max depth
+			if(is_numeric($printFunctionHiearchy) && $index == $printFunctionHiearchy){
+				break;
+			}
+			error_log($index);
+			error_log( "    File: {$trace['file']}");
+			error_log( "    Line {$trace['line']}");
+			error_log( "    Function: {$trace['function']}");
+			error_log( "    Args:");
+			error_log(print_r($trace['args'], true));
+		}
+	}else{
+		$caller = array_shift($bt);
+		error_log("Called from file {$caller['file']} line {$caller['line']}");
+	}
 
 	if(is_array($message) || is_object($message)){
-		error_log(print_r($message,true));
-		//file_put_contents(__DIR__.'/simlog.log',print_r($message,true),FILE_APPEND);
+		error_log(print_r($message, true));
 	}else{
 		error_log(date(DATEFORMAT.' '.TIMEFORMAT, time()).' - '.$message);
-		//file_put_contents(__DIR__.'/simlog.log',date(DATEFORMAT.' '.TIMEFORMAT, time())." - $message\n",FILE_APPEND);
 	}
 	
 	if($display){

@@ -340,7 +340,7 @@ class SignalBus extends Signal {
         }
 
         if(!empty($this->error) && strpos($this->error, 'Invalid group id') !== false){
-            SIM\printArray("Invalid GroupId: $groupId");
+            SIM\printArray("Invalid GroupId: $groupId", false, true);
         }
 
         return $timeStamp;
