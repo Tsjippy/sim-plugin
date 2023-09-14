@@ -3,11 +3,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- better logging options
 
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.35.3] - 2023-09-13
+
+
+### Added
+- better logging options
+
+### Fixed
+- expired accounts removal
 
 ### Updated
 
