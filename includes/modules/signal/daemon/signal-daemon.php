@@ -13,6 +13,7 @@ use SIM;
 if(!empty($argv) && count($argv) == 2){
     $data      = json_decode($argv[1]);
 
+    // no message found
     if(!isset($data->envelope->dataMessage) || empty($data->envelope->dataMessage->message)){
         return;
     }
@@ -36,6 +37,7 @@ if(!empty($argv) && count($argv) == 2){
     $signal = new SignalBus();
 
     if($data->account != $signal->phoneNumber){
+        SIM\printArray($data);
         return;
     }
 

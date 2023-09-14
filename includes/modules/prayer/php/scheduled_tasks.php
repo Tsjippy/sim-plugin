@@ -18,8 +18,18 @@ function createNewSchedule($schedule){
 	}
 
 	// add the new schedule
-	$prayerTimes    = (array)get_option('signal_prayers');
-	$schedule		= $prayerTimes;
+	$schedule		= (array)get_option('signal_prayers');
+	$updated		= false;
+	foreach($schedule as $index=>$slot){
+		if(empty($slot)){
+			unset($schedule[$index]);
+			$updated	= true;
+		}
+	}
+
+	if($updated){
+		update_option('signal_prayers', $schedule);
+	}
 
 	$groups			= SIM\getModuleOption(MODULE_SLUG, 'groups');
 	foreach($groups as $group){

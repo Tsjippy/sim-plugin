@@ -117,10 +117,11 @@ function sendSignalFromLocal($message, $recipient, $images){
 	if(is_numeric($recipient) && get_userdata($recipient)){
 
 		$phonenumber = get_user_meta( $recipient, 'signal_number', true );
+	}
 
-		if(empty($phonenumber)){
-			return;
-		}
+	if(empty($phonenumber) || strlen($phonenumber) < 10){
+		SIM\printArray("Invalid Phoennumer $phonenumber", false, true);
+		return;
 	}
 
 	if(strpos(php_uname(), 'Linux') !== false){
