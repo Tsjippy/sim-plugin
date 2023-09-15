@@ -63,7 +63,7 @@ if(!empty($argv) && count($argv) == 2){
             }
         }
     }elseif(!isset($data->envelope->dataMessage->groupInfo)){
-        $signal->sentTyping($data->envelope->source, $data->envelope->dataMessage->timestamp);
+        $signal->sentTyping($data->envelope->source, $data->envelope->timestamp);
 
         $answer = getAnswer($message, $data->envelope->source);
 
@@ -72,7 +72,7 @@ if(!empty($argv) && count($argv) == 2){
 
     // add message to the received table
     SIM\printArray($data);
-    $signal->addToReceivedMessageLog($data->envelope->source, $message, $data->envelope->dataMessage->timestamp, $groupId);
+    $signal->addToReceivedMessageLog($data->envelope->source, $message, $data->envelope->timestamp, $groupId);
 }
 
 function getAnswer($message, $source){

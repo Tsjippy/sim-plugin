@@ -5,7 +5,9 @@ use mikehaertl\shellcommand\Command;
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
-/*     $posts = get_posts(
+    global $wpdb;
+
+    /*     $posts = get_posts(
 		array(
 			'post_type'		=> 'any',
 			'author'		=> 137,
