@@ -5,9 +5,19 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.35.8] - 2023-09-15
+
+
+### Changed
 - update procedure
 
 ### Fixed
+- db error
 
 ### Updated
 
