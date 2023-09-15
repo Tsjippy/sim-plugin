@@ -96,7 +96,7 @@ add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) 
 
                 //do_action('sim_plugin_update', $oldVersion);
 
-                wp_schedule_single_event(time()+60, 'schedule_sim_plugin_update_action', $oldVersion);
+                wp_schedule_single_event(time()+60, 'schedule_sim_plugin_update_action', [$oldVersion]);
             }
         }
     }
