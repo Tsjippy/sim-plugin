@@ -73,11 +73,10 @@ class SignalBus extends Signal {
 
 		$sql = "CREATE TABLE {$this->tableName} (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            timesend int(20) NOT NULL,
+            timesend bigint(20) NOT NULL,
             recipient longtext NOT NULL,
             message longtext NOT NULL,
             status text NOT NULL,
-            stamp text NOT NULL,
             PRIMARY KEY  (id)
 		) $charsetCollate;";
 
@@ -85,7 +84,7 @@ class SignalBus extends Signal {
 
         $sql = "CREATE TABLE {$this->receivedTableName} (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            timesend int(20) NOT NULL,
+            timesend bigint(20) NOT NULL,
             sender longtext NOT NULL,
             message longtext NOT NULL,
             chat longtext,
@@ -109,10 +108,9 @@ class SignalBus extends Signal {
         $wpdb->insert(
             $this->tableName,
             array(
-                'timesend'      => time(),
+                'timesend'      => $timestamp,
                 'recipient'     => $recipient,
                 'message'		=> $message,
-                'stamp'         => $timestamp,
             )
         );
 
@@ -135,6 +133,8 @@ class SignalBus extends Signal {
         if(empty($chat) ){
             $chat   = $sender;
         }
+
+        SIM\printArray($time);
         
         global $wpdb;
 
@@ -147,6 +147,8 @@ class SignalBus extends Signal {
                 'chat'      => $chat
             )
         );
+
+        SIM\printArray($wpdb->insert_id);
 
         return $wpdb->insert_id;
     }
@@ -270,7 +272,7 @@ class SignalBus extends Signal {
     public function markAsDeleted($timeStamp){
         global $wpdb;
 
-        $query      = "UPDATE $this->tableName SET `status` = 'deleted' WHERE stamp = $timeStamp";
+        $query      = "UPDATE $this->tableName SET `status` = 'deleted' WHERE timesend = $timeStamp";
 
         return $wpdb->query( $query );
     }
@@ -739,6 +741,17 @@ class SignalBus extends Signal {
         return $id;
     }
 
+    public function findGroupName($id){
+        $groups = $this->listGroups();
+
+        foreach($groups as $group){
+            if($group->id == $id){
+                return $group->name;
+            }
+        }
+
+        return '';
+    }
     private function daemonIsRunning(){
         // check if running
         $command = new Command([

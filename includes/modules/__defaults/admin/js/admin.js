@@ -1,3 +1,5 @@
+import {changeUrl, displayTab} from './../../../../js/main.js'
+
 console.log('admin.js loaded');
 
 function switchSlider(event){
@@ -50,18 +52,12 @@ window.addEventListener("click", event => {
         }
     }
 
-    if(target.matches('.tablink:not(.active)')){
-        const url 		= new URL(window.location);
-        url.searchParams.set('tab', target.dataset.target);
-	    window.history.pushState({}, '', url);
+    if(target.matches(".tablink")){
+		event.preventDefault();
+		//change the url in browser
+		changeUrl(target);
 
-        let curActive   = target.closest('.tablink-wrapper').querySelector('.active');
-        curActive.classList.remove('active');
-        document.getElementById(curActive.dataset.target).classList.add('hidden');
-
-        target.classList.add('active');
-        console.log(target);
-        document.getElementById(target.dataset.target).classList.remove('hidden');
-
-    }
+		//show the tab
+		displayTab(target);
+	}
 });

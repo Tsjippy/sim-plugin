@@ -129,7 +129,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug){
 			<input type='submit' value='Apply'>
 		</form>
 
-        <table class='statistics_table'>
+        <table class='statistics_table sim-table'>
 			<thead>
 				<th>URL</th>
 				<th>Total views</th>

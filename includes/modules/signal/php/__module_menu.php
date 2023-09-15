@@ -493,7 +493,7 @@ function sentMessagesTable($startDate, $endDate, $amount){
 
 		?>
 
-        <table class='statistics_table'>
+        <table class='signal_table sim-table'>
 			<thead>
 				<th>Date</th>
 				<th>Time</th>
@@ -555,7 +555,7 @@ function sentMessagesTable($startDate, $endDate, $amount){
 	return ob_get_clean();
 }
 
-function receivedMessagesTable($startDate, $endDate, $amount){
+function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 	global $wpdb;
 
 	ob_start();
@@ -576,8 +576,8 @@ function receivedMessagesTable($startDate, $endDate, $amount){
 
 	// group the messages by chat
 	foreach($messages as $message){
-		if(!isset($groupedMessages[$message->sender])){
-			$groupedMessages[$message->sender]	= [];
+		if(!isset($groupedMessages[$message->chat])){
+			$groupedMessages[$message->chat]	= [];
 		}
 
 		$groupedMessages[$message->chat][]	= [
@@ -599,7 +599,49 @@ function receivedMessagesTable($startDate, $endDate, $amount){
 			padding: 20px;
 		}
 	</style>
-	<div class='send-signal-messages tabcontent hidden' id='received'>
+	<script>
+		document.addEventListener("click", function(ev) {
+			let target	= ev.target;
+			if(target.matches('.expand')){
+
+				let rowspan = target.closest('td').dataset.rowspan;
+
+				target.closest('td').rowSpan	= rowspan;
+
+				let row	= target.closest('tr').nextElementSibling;
+
+				while(row.matches('.hidden')) {
+					row.classList.remove('hidden');
+					row	= row.nextElementSibling;
+
+					if(row == null){
+						break;
+					}
+				}
+
+				target.textContent	= '-';
+				target.classList.replace('expand', 'condense');
+			}else if(target.matches('.condense')){
+
+				let rowspan = target.closest('td').dataset.rowspan;
+
+				let row	= target.closest('tr').nextElementSibling;
+
+				while(row.matches(':not(.hidden)')) {
+					row.classList.add('hidden');
+					row	= row.nextElementSibling;
+
+					if(row == null){
+						break;
+					}
+				}
+
+				target.textContent	= '+';
+				target.classList.replace('condense','expand');
+			}
+		});
+	</script>
+	<div class='send-signal-messages tabcontent <?php echo $hidden;?>' id='received'>
 		<?php
 
 		if($signal->totalMessages > $amount){
@@ -629,8 +671,9 @@ function receivedMessagesTable($startDate, $endDate, $amount){
 
 		?>
 
-        <table class='statistics_table'>
+        <table class='signal_table sim-table'>
 			<thead>
+				<th>Chat</th>
 				<th>Date</th>
 				<th>Time</th>
 				<th>Sender</th>
@@ -640,45 +683,49 @@ function receivedMessagesTable($startDate, $endDate, $amount){
             <tbody>
 				<?php
 				foreach($groupedMessages as $chat=>$group){
-					?>
-					<tr>
-						<td class='chat' colspan='5'><?php echo $chat;?> ---- <span class='expand'>+</span></td>
-					</tr>
-					<?php
+					if(empty($group)){
+						continue;
+					}
+
+					if($message->chat != $message->sender){
+						$chatName	= $signal->findGroupName($message->chat );
+						if(empty($chatName)){
+							$chatName	= 'unknow group';
+						}
+					}else{
+						$chatName	= $message->sender;
+					}
+					
+
+					$hidden	= '';
+
 					foreach($messages as $index=>$message){
 						$isoDate	= date( 'Y-m-d H:i:s', $message->timesend );
 						$date		= get_date_from_gmt( $isoDate, DATEFORMAT);
 						$time		= get_date_from_gmt( $isoDate, TIMEFORMAT);
-						$rowSpan	= '';
 
-						if($index === 0){
-							$rowSpan	= "rowspan='".count($group)."'";
-						}
+						$sender	= $wpdb->get_results("SELECT * FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->sender%')");
 
-						$sender	= '';
-						if(strpos($message->sender, '+') !== false){
-							$sender	= $wpdb->get_results("SELECT * FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->sender%')");
-
-							if(empty($sender)){
-								$sender	= $message->sender;
-							}else{
-								$sender	= $sender[0];
-								$url	= SIM\USERPAGE\getUserPageLink($sender->ID);
-								$sender = "<a href='$url'>$sender->display_name</a>";
-							}
+						if(empty($sender)){
+							$sender	= $message->sender;
 						}else{
-							$signal->listGroups();
-							foreach($signal->groups as $group){
-								if($group->id == $message->sender){
-									$sender	= $group->name;
-									break;
-								}
-							}
+							$sender	= $sender[0];
+							$sender	= SIM\USERPAGE\getUserPageLink($sender->ID);
 						}
 
 						?>
-						<tr>
-							<td class='chat' <?php echo $rowSpan;?>><?php echo $chat;?></td>
+						<tr class=<?php echo $hidden;?>>
+							<?php
+							if($index === 0){
+								$rowSpan	= "data-rowspan='".count($group)."'";
+								
+								?>
+								<td class='chat' <?php echo $rowSpan;?>><?php echo $chatName;?> --- <span class='expand' style='color:#b22222;cursor: pointer;'>+</span></td>
+								<?php
+
+								$hidden	= 'hidden';
+							}
+							?>
 							<td class='date'><?php echo $date;?></td>
 							<td class='time'><?php echo $time?></td>
 							<td class='sender'><?php echo $sender;?></td>
@@ -749,7 +796,12 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 
 	$sentTable		= sentMessagesTable($startDate, $endDate, $amount);
 
-	$receivedTable	= receivedMessagesTable($startDate, $endDate, $amount);
+	$hidden	= 'hidden';
+	if(empty($sentTable)){
+		$hidden	= '';
+	}
+
+	$receivedTable	= receivedMessagesTable($startDate, $endDate, $amount, $hidden);
 
 	if(!empty($sentTable) && !empty($receivedTable)){
 		$html	.= '<div class="tablink-wrapper">';

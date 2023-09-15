@@ -65,7 +65,8 @@ function switchTab(event=null){
 	}
 }
 
-function displayTab(tabButton){
+export function displayTab(tabButton){
+
 	//remove all existing highlights
 	document.querySelectorAll('.highlight').forEach(el=>el.classList.remove('highlight'));
 
@@ -74,7 +75,7 @@ function displayTab(tabButton){
 	if(tabButton.dataset.target == undefined){
 		tab = document.querySelector('#'+tabButton.dataset.param_val);
 	}else{
-		tab = tabButton.closest('div').querySelector('#'+tabButton.dataset.target);
+		tab = tabButton.closest('div:not(.tablink-wrapper)').querySelector('#'+tabButton.dataset.target);
 	}
 	
 	if(tab != null){
@@ -87,10 +88,10 @@ function displayTab(tabButton){
 				child.classList.remove("active");
 					
 				//Hide the tab
-				var childTab	= child.closest('div').querySelector('#'+child.dataset.target);
+				var childTab	= child.closest('div:not(.tablink-wrapper)').querySelector('#'+child.dataset.target);
 				if(childTab == null){
 					console.error('Tab to hide not found:');
-					console.error(child.closest('div'));
+					console.error(child.closest('div:not(.tablink-wrapper)'));
 					console.error('#'+child.dataset.target);
 				}else{
 					childTab.classList.add('hidden');

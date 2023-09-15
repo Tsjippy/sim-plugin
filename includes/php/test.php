@@ -5,6 +5,9 @@ use mikehaertl\shellcommand\Command;
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
+    $signal = new SIGNAL\SignalBus();
+
+    $signal->addToReceivedMessageLog('+2349045252526', 'message', '1694727807', '106,44,55,227,35,67,190,174,122,12,239,54,17,14,26,184,108,147,179,18,49,93,140,58,9,139,132,188,87,2,86,137');
     global $wpdb;
 
 

@@ -2,7 +2,7 @@
 namespace SIM\ADMIN;
 use SIM;
 
-const MODULE_VERSION		= '7.0.7';
+const MODULE_VERSION		= '7.0.8';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
@@ -115,7 +115,7 @@ function buildSubMenu(){
 
 		?>
 		<div class='tablink-wrapper'>
-			<button class="tablink <?php if($tab == 'description'){echo 'active';}?>" id="show_description" data-target="description">Description</button>
+			<button class="tablink <?php if($tab == 'description'){echo 'active';}?>" id="show_description" data-target="description" >Description</button>
 			<button class="tablink <?php if($tab == 'settings'){echo 'active';}?>" id="show_settings" data-target="settings">Settings</button>
 			<?php
 			if(!empty($emailSettingsTab)){
