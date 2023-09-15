@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- plugin update behavior
 
 ### Updated
 
