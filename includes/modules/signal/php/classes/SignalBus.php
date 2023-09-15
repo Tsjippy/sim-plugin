@@ -27,6 +27,7 @@ class SignalBus extends Signal {
     public $totalMessages;
     public $groups;
     public $receivedTableName;
+    public $homeFolder;
 
     public function __construct($dbusType='session'){
         global $wpdb;
@@ -52,6 +53,10 @@ class SignalBus extends Signal {
 
             $this->prefix   = "export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$this->osUserId/bus; $this->prefix";
         }
+
+        $homefolder   = [];
+        exec("bash -c 'echo \$HOME'", $homefolder);
+        $this->homeFolder   = $homefolder[0];
 
         // Check daemon
         $this->daemonIsRunning();
@@ -88,6 +93,7 @@ class SignalBus extends Signal {
             sender longtext NOT NULL,
             message longtext NOT NULL,
             chat longtext,
+            attachments longtext,
             status text NOT NULL,
             PRIMARY KEY  (id)
 		) $charsetCollate;";
@@ -133,8 +139,6 @@ class SignalBus extends Signal {
         if(empty($chat) ){
             $chat   = $sender;
         }
-
-        SIM\printArray($time);
         
         global $wpdb;
 
@@ -147,8 +151,6 @@ class SignalBus extends Signal {
                 'chat'      => $chat
             )
         );
-
-        SIM\printArray($wpdb->insert_id);
 
         return $wpdb->insert_id;
     }

@@ -720,7 +720,7 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 								$rowSpan	= "data-rowspan='".count($group)."'";
 								
 								?>
-								<td class='chat' <?php echo $rowSpan;?>><?php echo $chatName;?> --- <span class='expand' style='color:#b22222;cursor: pointer;'>+</span></td>
+								<td class='chat' <?php echo $rowSpan;?>><?php echo $chatName;?> --- <span class='expand' style='color:#b22222;cursor: pointer;font-size: x-large;'>+</span></td>
 								<?php
 
 								$hidden	= 'hidden';

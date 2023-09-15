@@ -9,7 +9,7 @@ add_action('sim_plugin_update', function($oldVersion){
     $signal 	= new SignalBus();
 
     if($oldVersion < '2.35.7'){
-        maybe_add_column($signal->tableName, 'stamp', "ALTER TABLE $signal->tableName ADD COLUMN `stamp` text");
+            
 
         maybe_add_column($signal->receivedTableName, 'chat', "ALTER TABLE $signal->receivedTableName ADD COLUMN `chat` longtext");
 
@@ -26,5 +26,9 @@ add_action('sim_plugin_update', function($oldVersion){
 
         $wpdb->query("ALTER TABLE `$signal->tableName` CHANGE `timesend` `timesend` INT(20) NOT NULL;");
         $wpdb->query("ALTER TABLE `$signal->receivedTableName` CHANGE `timesend` `timesend` INT(20) NOT NULL;");
+    }
+
+    if($oldVersion < '2.36.4'){
+        maybe_add_column($signal->receivedTableName, 'attachments', "ALTER TABLE $signal->receivedTableName ADD COLUMN `attachments` longtext");
     }
 });

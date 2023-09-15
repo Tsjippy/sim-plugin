@@ -29,6 +29,7 @@ class Signal {
     public $osUserId;
     public $command;
     public $error;
+    public $attachmentsPath;
 
     public function __construct(){
         require_once( MODULE_PATH  . 'lib/vendor/autoload.php');
@@ -39,6 +40,11 @@ class Signal {
         $this->basePath = WP_CONTENT_DIR.'/signal-cli';
         if (!is_dir($this->basePath )) {
             mkdir($this->basePath , 0777, true);
+        }
+
+        $this->attachmentsPath  = $this->basePath.'/attachments';
+        if (!is_dir($this->attachmentsPath )) {
+            mkdir($this->attachmentsPath , 0777, true);
         }
 
         // .htaccess to prevent access

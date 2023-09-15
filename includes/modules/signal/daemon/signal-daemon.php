@@ -41,9 +41,26 @@ if(!empty($argv) && count($argv) == 2){
         return;
     }
 
+    $message        = $data->envelope->dataMessage->message;
+    $groupId        = $data->envelope->source;
 
-    $message    = $data->envelope->dataMessage->message;
-    $groupId    = $data->envelope->source;
+    $attachments    = [];
+
+    if(isset($data->envelope->dataMessage->attachments)){
+        foreach($data->envelope->dataMessage->attachments as $attachment){
+            $path       = "$signal->homeFolder/.local/share/signal-cli/attachments/{$attachment->id}";
+
+            $newPath    = "$signal->attachmentsPath/{$attachment->filename}";
+
+            // move the attachment
+            $result = rename($path, $newPath);
+            if($result){
+                $attachments[]      = $newPath;
+            }else{
+                SIM\printArray("Failed to move $path to $newPath ");
+            }
+        }
+    }
 
     // message to group
     if(
@@ -71,7 +88,6 @@ if(!empty($argv) && count($argv) == 2){
     }
 
     // add message to the received table
-    SIM\printArray($data);
     $signal->addToReceivedMessageLog($data->envelope->source, $message, $data->envelope->timestamp, $groupId);
 }
 
