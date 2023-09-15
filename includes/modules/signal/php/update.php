@@ -3,7 +3,7 @@ namespace SIM\SIGNAL;
 use SIM;
 
 add_action('sim_plugin_update', function(){
-    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    require_once ABSPATH . 'wp-admin/install-helper.php';
 
     $signal 	= new SignalBus();
 

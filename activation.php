@@ -80,14 +80,21 @@ add_filter("plugin_action_links_".PLUGIN, function ($links) {
     return $links;
 });
 
+add_action( 'schedule_sim_plugin_update_action', function(){
+    printArray('Running update actions test 2');
+    do_action('sim_plugin_update');
+});
+
 add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) {
     // If an update has taken place and the updated type is plugins and the plugins element exists
     if ( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
         foreach( $options['plugins'] as $plugin ) {
             // Check to ensure it's my plugin
             if( $plugin == PLUGIN ) {
-                printArray('Running update actions');
+                printArray('Running update actions test');
                 do_action('sim_plugin_update');
+
+                wp_schedule_single_event(time()+60, 'schedule_sim_plugin_update_action');
             }
         }
     }
