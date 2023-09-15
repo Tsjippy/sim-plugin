@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.36.2] - 2023-09-15
+
+
+### Changed
 - received messages table
 
 ### Fixed
