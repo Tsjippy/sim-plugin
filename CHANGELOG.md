@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- store signal group
 
 ### Fixed
 - issue with invalid signal phonenumbers
