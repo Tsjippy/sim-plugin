@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.35.4] - 2023-09-15
+
+
+### Changed
 - store signal group
 
 ### Fixed
