@@ -10,6 +10,16 @@
 
 ### Updated
 
+## [2.35.7] - 2023-09-15
+
+
+### Added
+- signal message replies
+
+### Fixed
+
+### Updated
+
 ## [2.35.6] - 2023-09-15
 
 
