@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- received messages table
 
 ### Fixed
 
