@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.35.6] - 2023-09-15
+
+
+### Fixed
 - plugin update behavior
 
 ### Updated
