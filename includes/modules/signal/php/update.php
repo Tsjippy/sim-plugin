@@ -21,8 +21,9 @@ add_action('sim_plugin_update', function($oldVersion){
     }
 
     SIM\printArray($oldVersion);
-    SIM\printArray($oldVersion < '2.35.8');
-    if($oldVersion < '2.35.8'){
+    if($oldVersion < '2.36.0'){
+        SIM\printArray($oldVersion < '2.35.8');
+
         $wpdb->query("ALTER TABLE `$signal->tableName` CHANGE `timesend` `timesend` MEDIUMINT(20) NOT NULL;");
         $wpdb->query("ALTER TABLE `$signal->receivedTableName` CHANGE `timesend` `timesend` MEDIUMINT(20) NOT NULL;");
     }
