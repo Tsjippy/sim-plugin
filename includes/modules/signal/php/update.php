@@ -21,10 +21,10 @@ add_action('sim_plugin_update', function($oldVersion){
     }
 
     SIM\printArray($oldVersion);
-    if($oldVersion < '2.36.0'){
+    if($oldVersion < '2.36.2'){
         SIM\printArray($oldVersion < '2.35.8');
 
-        $wpdb->query("ALTER TABLE `$signal->tableName` CHANGE `timesend` `timesend` MEDIUMINT(20) NOT NULL;");
-        $wpdb->query("ALTER TABLE `$signal->receivedTableName` CHANGE `timesend` `timesend` MEDIUMINT(20) NOT NULL;");
+        $wpdb->query("ALTER TABLE `$signal->tableName` CHANGE `timesend` `timesend` INT(20) NOT NULL;");
+        $wpdb->query("ALTER TABLE `$signal->receivedTableName` CHANGE `timesend` `timesend` INT(20) NOT NULL;");
     }
 });

@@ -73,7 +73,7 @@ class SignalBus extends Signal {
 
 		$sql = "CREATE TABLE {$this->tableName} (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            timesend mediumint(20) NOT NULL,
+            timesend int(20) NOT NULL,
             recipient longtext NOT NULL,
             message longtext NOT NULL,
             status text NOT NULL,
@@ -85,7 +85,7 @@ class SignalBus extends Signal {
 
         $sql = "CREATE TABLE {$this->receivedTableName} (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            timesend mediumint(20) NOT NULL,
+            timesend int(20) NOT NULL,
             sender longtext NOT NULL,
             message longtext NOT NULL,
             chat longtext,
