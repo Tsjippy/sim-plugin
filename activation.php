@@ -86,6 +86,8 @@ add_action( 'schedule_sim_plugin_update_action', function(){
 });
 
 add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) {
+    printArray($upgraderObject);
+    printArray($options);
     // If an update has taken place and the updated type is plugins and the plugins element exists
     if ( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
         foreach( $options['plugins'] as $plugin ) {
