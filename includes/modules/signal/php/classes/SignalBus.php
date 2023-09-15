@@ -648,22 +648,17 @@ class SignalBus extends Signal {
         return $this->parseResult();
     }
 
-    public function sendMessageReaction($recipient, $timestamp){
-        // Send typing
-        $this->command = new Command([
-            'command' => "{$this->prefix}sendMessageReaction string:U+1F60A boolean:false string:$recipient int64:$timestamp string:$recipient"
-        ]);
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    public function sendGroupMessageReaction($recipient, $timestamp, $groupId){
-        // Send typing
-        $this->command = new Command([
-            'command' => "{$this->prefix}sendGroupMessageReaction string:U+1F60A boolean:false string:$recipient int64:$timestamp array:byte:'$groupId'"
-        ]);
+    public function sendMessageReaction($recipient, $timestamp, $groupId=''){
+        if(empty($groupId)){
+            // Send typing
+            $this->command = new Command([
+                'command' => "{$this->prefix}sendMessageReaction string:U+1F60A boolean:false string:$recipient int64:$timestamp string:$recipient"
+            ]);
+        }else{
+            $this->command = new Command([
+                'command' => "{$this->prefix}sendGroupMessageReaction string:U+1F60A boolean:false string:$recipient int64:$timestamp array:byte:'$groupId'"
+            ]);
+        }
 
         $this->command->execute();
 

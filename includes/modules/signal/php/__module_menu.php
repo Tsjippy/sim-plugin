@@ -358,6 +358,15 @@ function processActions($settings){
 		$Modules[MODULE_SLUG]	= $settings;
 
 		update_option('sim_modules', $Modules);
+	}elseif($_REQUEST['action'] == 'Reply'){
+		$signal 	= new SignalBus();
+
+		$groupId	= '';
+		if($_REQUEST['sender'] != $_REQUEST['chat'] ){
+			$groupId	= $_REQUEST['chat'];
+		}
+
+		$signal->sendMessageReaction($_REQUEST['sender'] , $_REQUEST['timestamp'], $groupId  );
 	}
 
 	return '';
@@ -679,6 +688,7 @@ function receivedMessagesTable($startDate, $endDate, $amount){
 											<input type="hidden" name="timestamp" value="<?php echo $message->stamp;?>" />
 											<input type="hidden" name="id" value="<?php echo $message->id;?>" />
 											<input type="hidden" name="sender" value="<?php echo $message->sender;?>" />
+											<input type="hidden" name="chat" value="<?php echo $message->chat;?>" />
 											<input type='submit' name='action' value='Reply'>
 										</form>
 										<?php
