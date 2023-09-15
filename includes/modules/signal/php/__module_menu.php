@@ -324,72 +324,113 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	return ob_get_clean();
 }, 10, 3);
 
-add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
-	global $wpdb;
-
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
-		return $dataHtml;
-	}
-
-	ob_start();
-
-	$local	= false;
-	if(isset($settings['local']) && $settings['local']){
-		$local	= true;
-	}
-
-	if(!$local){
+function processActions($settings){
+	if(!isset($_REQUEST['action'])){
 		return '';
 	}
 
-	if(isset($_REQUEST['action'])){
-		if($_REQUEST['action'] == 'Delete'){
-			$signal 	= new SignalBus();
+	if($_REQUEST['action'] == 'Delete'){
+		$signal 	= new SignalBus();
 
-			if(isset($_REQUEST['timestamp'])){
-				$result		= $signal->deleteMessage($_REQUEST['timestamp'], $_REQUEST['recipients']);
+		if(isset($_REQUEST['timestamp'])){
+			$result		= $signal->deleteMessage($_REQUEST['timestamp'], $_REQUEST['recipients']);
 
-				if(!is_numeric(str_replace('int64 ', '', $result))){
-					echo "<div class='error'>$result</div>";
-				}else{
-					echo "<div class='success'>Succesfully removed the message</div>";
-				}
+			if(!is_numeric(str_replace('int64 ', '', $result))){
+				return "<div class='error'>$result</div>";
 			}else{
-				$result		= $signal->clearMessageLog($_REQUEST['delete-date']);
-
-				if($result === false){
-					echo "<div class='error'>Something went wrong</div>";
-				}else{
-					echo "<div class='success'>Succesfully removed $result messages</div>";
-				}
+				return "<div class='success'>Succesfully removed the message</div>";
 			}
-		}elseif($_REQUEST['action'] == 'Save'){
-			$settings['clean-period']	= $_REQUEST['clean-period'];
-			$settings['clean-amount']	= $_REQUEST['clean-amount'];
+		}else{
+			$result		= $signal->clearMessageLog($_REQUEST['delete-date']);
 
-			global $Modules;
-
-			$Modules[MODULE_SLUG]	= $settings;
-
-			update_option('sim_modules', $Modules);
+			if($result === false){
+				return "<div class='error'>Something went wrong</div>";
+			}else{
+				return "<div class='success'>Succesfully removed $result messages</div>";
+			}
 		}
+	}elseif($_REQUEST['action'] == 'Save'){
+		$settings['clean-period']	= $_REQUEST['clean-period'];
+		$settings['clean-amount']	= $_REQUEST['clean-amount'];
+
+		global $Modules;
+
+		$Modules[MODULE_SLUG]	= $settings;
+
+		update_option('sim_modules', $Modules);
 	}
 
-	$amount	= 100;
-	if(isset($_REQUEST['amount'])){
-		$amount	= $_REQUEST['amount'];
-	}
+	return '';
+}
 
-	$startDate	= date('Y-m-d', strtotime('-3 month'));
-	if(isset($_REQUEST['start-date'])){
-		$startDate	= $_REQUEST['start-date'];
-	}
+function messagesHeader($settings, $startDate, $endDate, $amount){
+	ob_start();
 
-	$endDate	= date('Y-m-d', strtotime('+1 day'));
-	if(isset($_REQUEST['end-date'])){
-		$endDate	= $_REQUEST['end-date'];
-	}
+	?>
+	<div class='flex-container'>
+		<div class='flex'>
+			<h2>Show Message History</h2>
+
+			<form method='get' id='message-overview-settings'>
+				<input type="hidden" name="page" value="sim_signal" />
+				<input type="hidden" name="tab" value="data" />
+
+				<label>
+					Show Messages send between <input type='date' name='start-date' value='<?php echo $startDate;?>' max='<?php echo date('Y-m-d'); ?>'> and <input type='date' name='end-date' value='<?php echo $endDate;?>' max='<?php echo date('Y-m-d', strtotime('+1 day')); ?>'>
+				</label>
+				<br>
+				<label>
+					Amount of messages to show <input type='number' name='amount' value='<?php echo $amount; ?>' style='max-width: 60px;'>
+				</label>
+				<br>
+				<input type='submit' value='Apply'>
+			</form>
+		</div>
+
+		<div class='flex'>
+			<h2>Clear Message History</h2>
+
+			<form method='post'>
+				<input type="hidden" name="page" value="sim_signal" />
+				<input type="hidden" name="tab" value="data" />
+
+				<label>
+					Delete Messages send before <input type='date' name='delete-date' value='<?php echo date('Y-m-d', strtotime('-1 month'));?>' max='<?php echo date('Y-m-d'); ?>'>
+				</label>
+				<br>
+				<input type='submit' name='action' value='Delete'>
+			</form>
+		</div>
+
+		<div class='flex'>
+			<h2>Auto clean Message History</h2>
+
+			<form method='get' id='message-overview-settings'>
+				<input type="hidden" name="page" value="sim_signal" />
+				<input type="hidden" name="tab" value="data" />
+
+				<label>
+					Automatically remove messages older then <input type='number' name='clean-amount' value='<?php echo $settings['clean-amount'];?>' style='width:60px;'>
+					<select name='clean-period' class='inline'>
+						<option value='days' <?php if($settings['clean-period'] == 'days'){echo 'selected="selected"';}?>>days</option>
+						<option value='weeks' <?php if($settings['clean-period'] == 'weeks'){echo 'selected="selected"';}?>>weeks</option>
+						<option value='months' <?php if($settings['clean-period'] == 'months'){echo 'selected="selected"';}?>>months</option>
+					</select>
+				</label>
+				<br>
+				<input type='submit' name='action' value='Save'>
+			</form>
+		</div>
+	</div>
+	<?php
+
+	return ob_get_clean();
+}
+
+function sentMessagesTable($startDate, $endDate, $amount){
+	global $wpdb;
+
+	ob_start();
 
 	$page	= 1;
 	if(isset($_REQUEST['nr'])){
@@ -413,63 +454,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 			padding: 20px;
 		}
 	</style>
-	<div class='send-signal-messages'>
-		<div class='flex-container'>
-			<div class='flex'>
-				<h2>Show Message History</h2>
-
-				<form method='get' id='message-overview-settings'>
-					<input type="hidden" name="page" value="sim_signal" />
-					<input type="hidden" name="tab" value="data" />
-
-					<label>
-						Show Messages send between <input type='date' name='start-date' value='<?php echo $startDate;?>' max='<?php echo date('Y-m-d'); ?>'> and <input type='date' name='end-date' value='<?php echo $endDate;?>' max='<?php echo date('Y-m-d', strtotime('+1 day')); ?>'>
-					</label>
-					<br>
-					<label>
-						Amount of messages to show <input type='number' name='amount' value='<?php echo $amount; ?>' style='max-width: 60px;'>
-					</label>
-					<br>
-					<input type='submit' value='Apply'>
-				</form>
-			</div>
-
-			<div class='flex'>
-				<h2>Clear Message History</h2>
-
-				<form method='post'>
-					<input type="hidden" name="page" value="sim_signal" />
-					<input type="hidden" name="tab" value="data" />
-
-					<label>
-						Delete Messages send before <input type='date' name='delete-date' value='<?php echo date('Y-m-d', strtotime('-1 month'));?>' max='<?php echo date('Y-m-d'); ?>'>
-					</label>
-					<br>
-					<input type='submit' name='action' value='Delete'>
-				</form>
-			</div>
-
-			<div class='flex'>
-				<h2>Auto clean Message History</h2>
-
-				<form method='get' id='message-overview-settings'>
-					<input type="hidden" name="page" value="sim_signal" />
-					<input type="hidden" name="tab" value="data" />
-
-					<label>
-						Automatically remove messages older then <input type='number' name='clean-amount' value='<?php echo $settings['clean-amount'];?>' style='width:60px;'>
-						<select name='clean-period' class='inline'>
-							<option value='days' <?php if($settings['clean-period'] == 'days'){echo 'selected="selected"';}?>>days</option>
-							<option value='weeks' <?php if($settings['clean-period'] == 'weeks'){echo 'selected="selected"';}?>>weeks</option>
-							<option value='months' <?php if($settings['clean-period'] == 'months'){echo 'selected="selected"';}?>>months</option>
-						</select>
-					</label>
-					<br>
-					<input type='submit' name='action' value='Save'>
-				</form>
-			</div>
-		</div>
-
+	<div class='send-signal-messages tabcontent' id='sent'>
 		<?php
 
 		if($signal->totalMessages > $amount){
@@ -559,6 +544,201 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 
 	<?php
 	return ob_get_clean();
+}
+
+function receivedMessagesTable($startDate, $endDate, $amount){
+	global $wpdb;
+
+	ob_start();
+
+	$page	= 1;
+	if(isset($_REQUEST['nr'])){
+		$page	= $_REQUEST['nr'];
+	}
+
+	$signal 	= new SignalBus();
+	$messages	= $signal->getReceivedMessageLog($amount, $page, strtotime($startDate), strtotime($endDate));
+
+	if(empty($messages)){
+		return '';
+	}
+
+	$groupedMessages	= [];
+
+	// group the messages by chat
+	foreach($messages as $message){
+		if(!isset($groupedMessages[$message->sender])){
+			$groupedMessages[$message->sender]	= [];
+		}
+
+		$groupedMessages[$message->chat][]	= [
+			'id'		=> $message->id,
+			'timesent'	=> $message->timesend,
+			'message'	=> $message->message,
+			'status'	=> $message->status,
+			'sender'	=> $message->sender
+		];
+	}
+
+	?>
+	<style>
+		.flex-container{
+			display: flex;
+		}
+
+		.flex{
+			padding: 20px;
+		}
+	</style>
+	<div class='send-signal-messages tabcontent hidden' id='received'>
+		<?php
+
+		if($signal->totalMessages > $amount){
+			$url		= admin_url("admin.php?page=sim_signal&tab=data&amount=$amount&start-date=$startDate&end-date=$endDate&nr=");
+			$totalPages	= ceil($signal->totalMessages/$amount);
+			
+			if($page != 1){
+				$prev	= $page-1;
+				echo "<a href='$url$prev'>< Previous</a>   ";
+			}
+
+			for ($x = 1; $x <= $totalPages; $x++) {
+				if($page == $x){
+					echo "<strong>";
+				}
+				echo "   <a href='$url$x'>$x</a>   ";
+				if($page == $x){
+					echo "</strong>";
+				}
+			}
+
+			if($page != $totalPages){
+				$next	= $page + 1;
+				echo "   <a href='$url$next'>Next ></a>";
+			}
+		}
+
+		?>
+
+        <table class='statistics_table'>
+			<thead>
+				<th>Date</th>
+				<th>Time</th>
+				<th>Sender</th>
+				<th>Message</th>
+				<th>Actions</th>
+			</thead>
+            <tbody>
+				<?php
+					foreach($messages as $message){
+						$isoDate	= date( 'Y-m-d H:i:s', $message->timesend );
+						$date		= get_date_from_gmt( $isoDate, DATEFORMAT);
+						$time		= get_date_from_gmt( $isoDate, TIMEFORMAT);
+
+						$sender	= '';
+						if(strpos($message->sender, '+') !== false){
+							$sender	= $wpdb->get_results("SELECT * FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->sender%')");
+
+							if(empty($sender)){
+								$sender	= $message->sender;
+							}else{
+								$sender	= $sender[0];
+								$url	= SIM\USERPAGE\getUserPageLink($sender->ID);
+								$sender = "<a href='$url'>$sender->display_name</a>";
+							}
+						}else{
+							$signal->listGroups();
+							foreach($signal->groups as $group){
+								if($group->id == $message->sender){
+									$sender	= $group->name;
+									break;
+								}
+							}
+						}
+
+						?>
+						<tr>
+							<td class='date'><?php echo $date;?></td>
+							<td class='time'><?php echo $time?></td>
+							<td class='sender'><?php echo $sender;?></td>
+							<td class='message'><?php echo $message->message;?></td>
+							<td class='reply'>
+								<?php
+								if($message->status == 'replied'){
+									echo "Already Replied";
+								}else{
+									?>
+									<form method='post'>
+										<input type="hidden" name="timestamp" value="<?php echo $message->stamp;?>" />
+										<input type="hidden" name="id" value="<?php echo $message->id;?>" />
+										<input type="hidden" name="sender" value="<?php echo $message->sender;?>" />
+										<input type='submit' name='action' value='Reply'>
+									</form>
+									<?php
+								}
+								?>
+							</td>
+						</tr>
+						<?php
+					}
+				?>
+            </tbody>
+        </table>
+    </div>
+
+	<?php
+	return ob_get_clean();
+}
+
+add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $dataHtml;
+	}
+
+	$local	= false;
+	if(isset($settings['local']) && $settings['local']){
+		$local	= true;
+	}
+
+	if(!$local){
+		return '';
+	}
+
+	$amount	= 100;
+	if(isset($_REQUEST['amount'])){
+		$amount	= $_REQUEST['amount'];
+	}
+
+	$startDate	= date('Y-m-d', strtotime('-3 month'));
+	if(isset($_REQUEST['start-date'])){
+		$startDate	= $_REQUEST['start-date'];
+	}
+
+	$endDate	= date('Y-m-d', strtotime('+1 day'));
+	if(isset($_REQUEST['end-date'])){
+		$endDate	= $_REQUEST['end-date'];
+	}
+
+	$html			= processActions($settings);
+
+	$html			.= messagesHeader($settings, $startDate, $endDate, $amount);
+
+	$sentTable		= sentMessagesTable($startDate, $endDate, $amount);
+
+	$receivedTable	= receivedMessagesTable($startDate, $endDate, $amount);
+
+	if(!empty($sentTable) && !empty($receivedTable)){
+		$html	.= '<div class="tablink-wrapper">';
+			$html	.= '<button class="tablink active" id="show_description" data-target="sent">Sent messages</button>';
+			$html	.= '<button class="tablink " id="show_settings" data-target="received">Received messages</button>';
+		$html	.= '</div>';
+	}
+
+	$html	.= $sentTable;
+	$html	.= $receivedTable;
+
+	return $html;
 }, 10, 3);
 
 add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
