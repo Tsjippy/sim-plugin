@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- signal message replies
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.35.7] - 2023-09-15
+
+
+### Added
+- signal message replies
 
 ### Fixed
 
