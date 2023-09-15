@@ -630,57 +630,69 @@ function receivedMessagesTable($startDate, $endDate, $amount){
 			</thead>
             <tbody>
 				<?php
-					foreach($messages as $message){
-						$isoDate	= date( 'Y-m-d H:i:s', $message->timesend );
-						$date		= get_date_from_gmt( $isoDate, DATEFORMAT);
-						$time		= get_date_from_gmt( $isoDate, TIMEFORMAT);
+				foreach($groupedMessages as $chat=>$group){
+						foreach($messages as $index=>$message){
+							$isoDate	= date( 'Y-m-d H:i:s', $message->timesend );
+							$date		= get_date_from_gmt( $isoDate, DATEFORMAT);
+							$time		= get_date_from_gmt( $isoDate, TIMEFORMAT);
+							$rowSpan	= '';
 
-						$sender	= '';
-						if(strpos($message->sender, '+') !== false){
-							$sender	= $wpdb->get_results("SELECT * FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->sender%')");
-
-							if(empty($sender)){
-								$sender	= $message->sender;
-							}else{
-								$sender	= $sender[0];
-								$url	= SIM\USERPAGE\getUserPageLink($sender->ID);
-								$sender = "<a href='$url'>$sender->display_name</a>";
+							if($index === 0){
+								$rowSpan	= "rowspan='".count($group)."'";
 							}
-						}else{
-							$signal->listGroups();
-							foreach($signal->groups as $group){
-								if($group->id == $message->sender){
-									$sender	= $group->name;
-									break;
+
+							$sender	= '';
+							if(strpos($message->sender, '+') !== false){
+								$sender	= $wpdb->get_results("SELECT * FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->sender%')");
+
+								if(empty($sender)){
+									$sender	= $message->sender;
+								}else{
+									$sender	= $sender[0];
+									$url	= SIM\USERPAGE\getUserPageLink($sender->ID);
+									$sender = "<a href='$url'>$sender->display_name</a>";
+								}
+							}else{
+								$signal->listGroups();
+								foreach($signal->groups as $group){
+									if($group->id == $message->sender){
+										$sender	= $group->name;
+										break;
+									}
 								}
 							}
+
+							?>
+							<tr>
+								<td class='chat' <?php echo $rowSpan;?>><?php echo $chat;?></td>
+								<td class='date'><?php echo $date;?></td>
+								<td class='time'><?php echo $time?></td>
+								<td class='sender'><?php echo $sender;?></td>
+								<td class='message'><?php echo $message->message;?></td>
+								<td class='reply'>
+									<?php
+									if($message->status == 'replied'){
+										echo "Already Replied";
+									}else{
+										?>
+										<form method='post'>
+											<input type="hidden" name="timestamp" value="<?php echo $message->stamp;?>" />
+											<input type="hidden" name="id" value="<?php echo $message->id;?>" />
+											<input type="hidden" name="sender" value="<?php echo $message->sender;?>" />
+											<input type='submit' name='action' value='Reply'>
+										</form>
+										<?php
+									}
+									?>
+								</td>
+							</tr>
+							<?php
 						}
 
 						?>
-						<tr>
-							<td class='date'><?php echo $date;?></td>
-							<td class='time'><?php echo $time?></td>
-							<td class='sender'><?php echo $sender;?></td>
-							<td class='message'><?php echo $message->message;?></td>
-							<td class='reply'>
-								<?php
-								if($message->status == 'replied'){
-									echo "Already Replied";
-								}else{
-									?>
-									<form method='post'>
-										<input type="hidden" name="timestamp" value="<?php echo $message->stamp;?>" />
-										<input type="hidden" name="id" value="<?php echo $message->id;?>" />
-										<input type="hidden" name="sender" value="<?php echo $message->sender;?>" />
-										<input type='submit' name='action' value='Reply'>
-									</form>
-									<?php
-								}
-								?>
-							</td>
-						</tr>
-						<?php
-					}
+					</tr>
+					<?php
+				}
 				?>
             </tbody>
         </table>
