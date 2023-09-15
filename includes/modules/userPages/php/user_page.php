@@ -94,6 +94,7 @@ function getUserPageLink($user){
 			return false;
 		}
     }
+	
     $url    = getUserPageUrl($user->ID);
     if($url){
         $html   = "<a href='$url'>$user->display_name</a>";

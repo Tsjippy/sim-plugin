@@ -41,6 +41,10 @@ if(!empty($argv) && count($argv) == 2){
         return;
     }
 
+
+    $message    = $data->envelope->dataMessage->message;
+    $groupId    = $data->envelope->source;
+
     // message to group
     if(
         isset($data->envelope->dataMessage->groupInfo)      &&
@@ -50,8 +54,6 @@ if(!empty($argv) && count($argv) == 2){
             if($mention->number == $signal->phoneNumber || $mention->name == '8fc6c236-f07b-4a3c-97c5-0a78efe488ee'){
                 $groupId    = $signal->groupIdToByteArray($data->envelope->dataMessage->groupInfo->groupId);
                 $signal->sendGroupTyping($groupId);
-
-                $message    = $data->envelope->dataMessage->message;
 
                 // Remove mention from message
                 $message    = substr($message, $data->envelope->dataMessage->mentions[0]->length);
@@ -63,10 +65,14 @@ if(!empty($argv) && count($argv) == 2){
     }elseif(!isset($data->envelope->dataMessage->groupInfo)){
         $signal->sentTyping($data->envelope->source, $data->envelope->dataMessage->timestamp);
 
-        $answer = getAnswer($data->envelope->dataMessage->message, $data->envelope->source);
+        $answer = getAnswer($message, $data->envelope->source);
 
         $signal->send($data->envelope->source, $answer['response'], $answer['pictures']);
     }
+
+    // add message to the received table
+    SIM\printArray($data);
+    $signal->addToReceivedMessageLog($data->envelope->source, $message, $data->envelope->dataMessage->timestamp, $groupId);
 }
 
 function getAnswer($message, $source){

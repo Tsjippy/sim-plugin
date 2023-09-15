@@ -26,6 +26,7 @@ class SignalBus extends Signal {
     public $prefix;
     public $totalMessages;
     public $groups;
+    public $receivedTableName;
 
     public function __construct($dbusType='session'){
         global $wpdb;
@@ -37,6 +38,8 @@ class SignalBus extends Signal {
         $this->dbusType         = $dbusType;
 
         $this->tableName        = $wpdb->prefix.'sim_signal_messages';
+
+        $this->receivedTableName= $wpdb->prefix.'sim_received_signal_messages';
 
         $phone                  = str_replace('+', '', $this->phoneNumber);
         $this->prefix           = "dbus-send --$this->dbusType --dest=org.asamk.Signal --type=method_call --print-reply=literal /org/asamk/Signal/_$phone org.asamk.Signal.";
@@ -59,17 +62,18 @@ class SignalBus extends Signal {
      * Create the sent messages table if it does not exist
      */
     public function createDbTable(){
+		global $wpdb;
+
 		if ( !function_exists( 'maybe_create_table' ) ) {
 			require_once ABSPATH . '/wp-admin/install-helper.php';
 		}
 		
 		//only create db if it does not exist
-		global $wpdb;
 		$charsetCollate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE {$this->tableName} (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            timesend int DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            timesend int NOT NULL,
             recipient longtext NOT NULL,
             message longtext NOT NULL,
             status text NOT NULL,
@@ -78,6 +82,18 @@ class SignalBus extends Signal {
 		) $charsetCollate;";
 
 		maybe_create_table($this->tableName, $sql );
+
+        $sql = "CREATE TABLE {$this->receivedTableName} (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            timesend int NOT NULL,
+            sender longtext NOT NULL,
+            message longtext NOT NULL,
+            chat longtext,
+            status text NOT NULL,
+            PRIMARY KEY  (id)
+		) $charsetCollate;";
+
+		maybe_create_table($this->receivedTableName, $sql );
 	}
 
     /**
@@ -104,10 +120,44 @@ class SignalBus extends Signal {
     }
 
     /**
+     * Adds a received message to the log
+     *
+     * @param   string  $sender     The sender phonenumber
+     * @param   string  $message    The message sent
+     * @param   int     $time       The time the message was sent
+     * @param   string  $chat       The groupId is sent in a group chat, defaults to $sender for private chats
+     */
+    public function addToReceivedMessageLog($sender, $message, $time, $chat=''){
+        if(empty($sender) || empty($message)){
+            return;
+        }
+
+        if(empty($chat) ){
+            $chat   = $sender;
+        }
+        
+        global $wpdb;
+
+        $wpdb->insert(
+            $this->receivedTableName,
+            array(
+                'timesend'  => $time,
+                'sender'    => $sender,
+                'message'	=> $message,
+                'chat'      => $chat
+            )
+        );
+
+        return $wpdb->insert_id;
+    }
+
+    /**
      * Retrieves the messages from the log
      *
      * @param   int     $amount     The amount of rows to get per page, default 100
      * @param   int     $page       Which page to get, default 1
+     * @param   int     $minTime    Time after which the message has been send, default empty
+     * @param   int     $maxTime    Time before which the message has been send, default empty
      */
     public function getMessageLog($amount=100, $page=1, $minTime='', $maxTime=''){
         global $wpdb;
@@ -137,6 +187,52 @@ class SignalBus extends Signal {
         }
 
         $query      .= "  ORDER BY `timesend` DESC LIMIT $startIndex,$amount;";
+
+        $this->totalMessages    = $wpdb->get_var($totalQuery);
+
+        if($this->totalMessages < $startIndex){
+            return [];
+        }
+        
+        return $wpdb->get_results( $query );
+    }
+
+        /**
+     * Retrieves the messages from the log
+     *
+     * @param   int     $amount     The amount of rows to get per page, default 100
+     * @param   int     $page       Which page to get, default 1
+     * @param   int     $minTime    Time after which the message has been send, default empty
+     * @param   int     $maxTime    Time before which the message has been send, default empty
+     */
+    public function getReceivedMessageLog($amount=100, $page=1, $minTime='', $maxTime=''){
+        global $wpdb;
+
+        $startIndex = 0;
+
+        if($page > 1){
+            $startIndex         = ($page - 1) * $amount;
+        }
+
+        $totalQuery = "SELECT COUNT(id) as total FROM $this->receivedTableName";
+        $query      = "SELECT * FROM $this->receivedTableName";
+
+        if(!empty($minTime)){
+            $totalQuery .= " WHERE timesend > $minTime";
+            $query      .= " WHERE timesend > $minTime";
+        }
+
+        if(!empty($maxTime)){
+            $combinator = 'AND';
+            if(empty($minTime)){
+                $combinator     = 'WHERE';
+            }
+
+            $totalQuery .= " $combinator timesend < $maxTime";
+            $query      .= " $combinator timesend < $maxTime";
+        }
+
+        $query      .= "  ORDER BY `sender` ASC, `timesend` DESC LIMIT $startIndex,$amount;";
 
         $this->totalMessages    = $wpdb->get_var($totalQuery);
 
@@ -302,17 +398,22 @@ class SignalBus extends Signal {
 
     /**
      * Send a message to a group
-     * @param string $message Specify the message, if missing, standard input is used
-     * @param string $groupId Specify the group id
-     * @param string|array $attachments Image file path or array of file paths
+     * @param string        $message        Specify the message, if missing, standard input is used
+     * @param string        $groupId        Specify the group id
+     * @param string|array  $attachments    Image file path or array of file paths
+     * @param int           $timeStamp      The timestamp of a message to reply to
      *
      * @return bool|string
      */
-    public function sendGroupMessage($message, $groupId, $attachments=''){
+    public function sendGroupMessage($message, $groupId, $attachments='', $timeStamp=''){
 
         if(empty($message) || empty($groupId)){
             return false;
         }
+
+        /*if(!empty($timeStamp)){
+            $this->sendGroupMessageReaction($recipient, $timeStamp, $groupId);
+        } */
 
         $message    = str_replace(['$1','$2','$3','$4','$5','$6','$7','$8','$9','$0'], ['$ 1','$ 2','$ 3','$ 4','$ 5','$ 6','$ 7','$ 8','$ 9','$ 0'], $message);
 
@@ -331,19 +432,19 @@ class SignalBus extends Signal {
 
         $this->command->execute();
 
-        $timeStamp = str_replace('int64 ', '', $this->parseResult());
+        $ownTimeStamp = str_replace('int64 ', '', $this->parseResult());
 
         if(is_numeric($timeStamp)){
-            $this->addToMessageLog($groupId, $message, $timeStamp);
+            $this->addToMessageLog($groupId, $message, $ownTimeStamp);
         }else{
-            SIM\printArray($timeStamp);
+            SIM\printArray($ownTimeStamp);
         }
 
         if(!empty($this->error) && strpos($this->error, 'Invalid group id') !== false){
             SIM\printArray("Invalid GroupId: $groupId", false, true);
         }
 
-        return $timeStamp;
+        return $ownTimeStamp;
     }
 
     /**
@@ -397,13 +498,14 @@ class SignalBus extends Signal {
 
     /**
      * Send a message to another user or group
-     * @param string|array $recipients Specify the recipients’ phone number or a group id
-     * @param string $message Specify the message, if missing, standard input is used
-     * @param string|array $attachments Image file path or array of file paths
+     * @param string|array  $recipients     Specify the recipients’ phone number or a group id
+     * @param string        $message        Specify the message, if missing, standard input is used
+     * @param string|array  $attachments    Image file path or array of file paths
+     * @param int           $timeStamp      The timestamp of a message to reply to
      *
      * @return bool|string
      */
-    public function send($recipients, string $message, $attachments = ''){
+    public function send($recipients, string $message, $attachments = '', $timeStamp=''){
         if(empty($recipients)){
             return new WP_Error('Signal', 'You should submit at least one recipient');
         }
@@ -429,29 +531,37 @@ class SignalBus extends Signal {
             $recipient    = "array:string:".implode(',', $recipients);
         }
 
+        $command    = "{$this->prefix}sendMessage string:\"$message\" array:string:\"$attachments\" $recipient";
+
+        if(!empty($timeStamp)){
+            $this->sendMessageReaction($recipient, $timeStamp);
+        }
+
+        //$command    .= "int64:$timestamp";
+
         $this->command = new Command([
-            'command' => "{$this->prefix}sendMessage string:\"$message\" array:string:\"$attachments\" $recipient"
+            'command' => $command
         ]);
 
         $this->command->execute();
 
-        $timeStamp = str_replace('int64 ', '', $this->parseResult());
+        $ownTimeStamp = str_replace('int64 ', '', $this->parseResult());
 
-        if(is_numeric($timeStamp)){
+        if(is_numeric($ownTimeStamp)){
             if(!is_array($recipients)){
                 if(strpos( $recipients , '+' ) === 0){
-                    $this->addToMessageLog($recipients, $message, $timeStamp);
+                    $this->addToMessageLog($recipients, $message, $ownTimeStamp);
                 }
             }else{
                 foreach($recipients as $rec){
-                    $this->addToMessageLog($rec, $message, $timeStamp);
+                    $this->addToMessageLog($rec, $message, $ownTimeStamp);
                 }
             }
         }else{
-            SIM\printArray($timeStamp);
+            SIM\printArray($ownTimeStamp);
         }
 
-        return $timeStamp;
+        return $ownTimeStamp;
     }
 
     public function markAsRead($recipient, $timestamp){
@@ -531,6 +641,28 @@ class SignalBus extends Signal {
         // Send typing
         $this->command = new Command([
             'command' => "{$this->prefix}sendGroupTyping array:byte:'$groupId' boolean:false"
+        ]);
+
+        $this->command->execute();
+
+        return $this->parseResult();
+    }
+
+    public function sendMessageReaction($recipient, $timestamp){
+        // Send typing
+        $this->command = new Command([
+            'command' => "{$this->prefix}sendMessageReaction string:U+1F60A boolean:false string:$recipient int64:$timestamp string:$recipient"
+        ]);
+
+        $this->command->execute();
+
+        return $this->parseResult();
+    }
+
+    public function sendGroupMessageReaction($recipient, $timestamp, $groupId){
+        // Send typing
+        $this->command = new Command([
+            'command' => "{$this->prefix}sendGroupMessageReaction string:U+1F60A boolean:false string:$recipient int64:$timestamp array:byte:'$groupId'"
         ]);
 
         $this->command->execute();
