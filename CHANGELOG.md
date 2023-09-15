@@ -8,6 +8,7 @@
 - update procedure
 
 ### Fixed
+- db error
 
 ### Updated
 
