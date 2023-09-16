@@ -372,7 +372,7 @@ function processActions($settings){
 		$result	= $signal->sendMessageReaction($_REQUEST['sender'] , $_REQUEST['timestamp'], $groupId  );
 
 		if(is_numeric(str_replace('int64 ', '', $result))){
-			return "<div class='succes'>Reaction sent succesfully</div>";
+			return "<div class='success'>Reaction sent succesfully</div>";
 		}else{
 			return "<div class='error'>Reaction sent not succesfull</div>";
 		}
