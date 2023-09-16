@@ -51,6 +51,12 @@ class Signal {
         if(!file_exists($this->basePath.'/.htaccess')){
             file_put_contents($this->basePath.'/.htaccess', 'deny from all');
         }
+        if(!file_exists($this->basePath.'/index.php')){
+            file_put_contents($this->basePath.'/index.php', '<?php');
+        }
+        if(!file_exists($this->attachmentsPath.'/.htaccess')){
+            file_put_contents($this->attachmentsPath.'/.htaccess', 'allow from all');
+        }
 
         if(strpos(php_uname(), 'Windows') !== false){
             $this->os               = 'Windows';

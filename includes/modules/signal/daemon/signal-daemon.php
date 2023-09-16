@@ -88,7 +88,7 @@ if(!empty($argv) && count($argv) == 2){
     }
 
     // add message to the received table
-    $signal->addToReceivedMessageLog($data->envelope->source, $message, $data->envelope->timestamp, $groupId);
+    $signal->addToReceivedMessageLog($data->envelope->source, $message, $data->envelope->timestamp, $groupId, $attachments);
 }
 
 function getAnswer($message, $source){

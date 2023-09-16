@@ -581,11 +581,12 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 		}
 
 		$groupedMessages[$message->chat][]	= [
-			'id'		=> $message->id,
-			'timesent'	=> $message->timesend,
-			'message'	=> $message->message,
-			'status'	=> $message->status,
-			'sender'	=> $message->sender
+			'id'			=> $message->id,
+			'timesent'		=> $message->timesend,
+			'message'		=> $message->message,
+			'status'		=> $message->status,
+			'sender'		=> $message->sender,
+			'attachments'	=> $message->attachments
 		];
 	}
 
@@ -678,6 +679,7 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 				<th>Time</th>
 				<th>Sender</th>
 				<th>Message</th>
+				<th>Attachments</th>
 				<th>Actions</th>
 			</thead>
             <tbody>
@@ -687,27 +689,26 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 						continue;
 					}
 
-					if($message->chat != $message->sender){
-						$chatName	= $signal->findGroupName($message->chat );
+					if(strpos($chat, '+') === false){
+						$chatName	= $signal->findGroupName($chat );
 						if(empty($chatName)){
-							$chatName	= 'unknow group';
+							$chatName	= 'Unknow group';
 						}
 					}else{
-						$chatName	= $message->sender;
+						$chatName	= $chat;
 					}
 					
-
 					$hidden	= '';
 
-					foreach($messages as $index=>$message){
-						$isoDate	= date( 'Y-m-d H:i:s', $message->timesend );
+					foreach($group as $index=>$message){
+						$isoDate	= date( 'Y-m-d H:i:s', $message['timesend'] );
 						$date		= get_date_from_gmt( $isoDate, DATEFORMAT);
 						$time		= get_date_from_gmt( $isoDate, TIMEFORMAT);
 
 						$sender	= $wpdb->get_results("SELECT * FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->sender%')");
 
 						if(empty($sender)){
-							$sender	= $message->sender;
+							$sender	= $message['sender'];
 						}else{
 							$sender	= $sender[0];
 							$sender	= SIM\USERPAGE\getUserPageLink($sender->ID);
@@ -717,10 +718,16 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 						<tr class=<?php echo $hidden;?>>
 							<?php
 							if($index === 0){
-								$rowSpan	= "data-rowspan='".count($group)."'";
+								if(count($group) > 1 ){
+									$rowSpan	= "data-rowspan='".count($group)."'";
+									$span		= "<span class='expand' style='color:#b22222;cursor: pointer;font-size: x-large;float: right;'>+</span>";
+								}else{
+									$rowSpan	= '';
+									$span		= '';
+								}
 								
 								?>
-								<td class='chat' <?php echo $rowSpan;?>><?php echo $chatName;?> --- <span class='expand' style='color:#b22222;cursor: pointer;font-size: x-large;'>+</span></td>
+								<td class='chat' <?php echo $rowSpan;?>><?php echo $chatName.'   '.$span;?></td>
 								<?php
 
 								$hidden	= 'hidden';
@@ -729,7 +736,24 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 							<td class='date'><?php echo $date;?></td>
 							<td class='time'><?php echo $time?></td>
 							<td class='sender'><?php echo $sender;?></td>
-							<td class='message'><?php echo $message->message;?></td>
+							<td class='message'><?php echo $message['message'];?></td>
+							<td class='attachments'>
+								<?php
+								$attachments	= maybe_unserialize($message['attachments']);
+								foreach($attachments as $attachment){
+									if(!file_exists($attachment)){
+										continue;
+									}
+
+									$url	= SIM\pathToUrl($attachment);
+									if(@is_array(getimagesize($attachment))){
+										echo "<a href='$url'><img src='$url' alt='picture' loading='lazy' style='height:150px;'></a>";
+									} else {
+										echo "<a href='$url'>".basename($attachment)."</a>";
+									}
+								}
+								?>
+							</td>
 							<td class='reply'>
 								<?php
 								if($message->status == 'replied'){

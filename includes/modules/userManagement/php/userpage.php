@@ -330,7 +330,7 @@ function userInfoPage($atts){
 	*/
 	if($showCurrentUserData){
 		$family = get_user_meta($userId, 'family', true);
-		if(is_array($family) && isset($family['children']) && is_array($family['children'])){
+		if(is_array($family) && @is_array($family['children'])){
 			foreach($family['children'] as $childId){
 				$firstName = get_userdata($childId)->first_name;
 				//Add tab button

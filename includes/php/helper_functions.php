@@ -224,8 +224,12 @@ function pathToUrl($path){
 		}
 		$url	= str_replace($base, SITEURL.'/', $path);
 
+		// fix any spaces
+		$url	= str_replace(' ', '%20', $url);
+
 		// not a valid url
 		if(!filter_var($url, FILTER_VALIDATE_URL)){
+			printArray($url);
 			return false;
 		}
 	}else{

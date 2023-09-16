@@ -131,7 +131,7 @@ class SignalBus extends Signal {
      * @param   int     $time       The time the message was sent
      * @param   string  $chat       The groupId is sent in a group chat, defaults to $sender for private chats
      */
-    public function addToReceivedMessageLog($sender, $message, $time, $chat=''){
+    public function addToReceivedMessageLog($sender, $message, $time, $chat='', $attachments=''){
         if(empty($sender) || empty($message)){
             return;
         }
@@ -145,10 +145,11 @@ class SignalBus extends Signal {
         $wpdb->insert(
             $this->receivedTableName,
             array(
-                'timesend'  => $time,
-                'sender'    => $sender,
-                'message'	=> $message,
-                'chat'      => $chat
+                'timesend'      => $time,
+                'sender'        => $sender,
+                'message'	    => $message,
+                'chat'          => $chat,
+                'attachments'   => maybe_serialize($attachments)
             )
         );
 
@@ -222,8 +223,8 @@ class SignalBus extends Signal {
         $query      = "SELECT * FROM $this->receivedTableName";
 
         if(!empty($minTime)){
-            $totalQuery .= " WHERE timesend > $minTime";
-            $query      .= " WHERE timesend > $minTime";
+            $totalQuery .= " WHERE timesend > {$minTime}000";
+            $query      .= " WHERE timesend > {$minTime}000";
         }
 
         if(!empty($maxTime)){
@@ -232,8 +233,8 @@ class SignalBus extends Signal {
                 $combinator     = 'WHERE';
             }
 
-            $totalQuery .= " $combinator timesend < $maxTime";
-            $query      .= " $combinator timesend < $maxTime";
+            $totalQuery .= " $combinator timesend < {$maxTime}000";
+            $query      .= " $combinator timesend < {$maxTime}000";
         }
 
         $query      .= "  ORDER BY `sender` ASC, `timesend` DESC LIMIT $startIndex,$amount;";

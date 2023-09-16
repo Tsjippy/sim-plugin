@@ -116,7 +116,7 @@ function addRepeatedEvents(){
 			update_post_meta($result->post_id, 'eventdetails', json_encode($details));
 		}
 
-		if(!empty($details['repeat']) && is_array($details['repeat']) && !empty($details['repeat']['stop']) && $details['repeat']['stop'] == 'never'){
+		if(@is_array($details['repeat']) && !empty($details['repeat']['stop']) && $details['repeat']['stop'] == 'never'){
 			$events	= new CreateEvents();
 			$events->eventData	= $details;
 			$events->postId		= $result->post_id;

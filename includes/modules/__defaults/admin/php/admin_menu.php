@@ -90,7 +90,7 @@ function buildSubMenu(){
 	$moduleSlug	= str_replace('sim_', '', $plugin_page);
 	$moduleName	= str_replace(' module', '', get_admin_page_title());
 
-	if(isset($Modules[$moduleSlug]) && is_array($Modules[$moduleSlug])){
+	if(@is_array($Modules[$moduleSlug])){
 		$settings	= $Modules[$moduleSlug];
 	}else{
 		$settings	= [];
