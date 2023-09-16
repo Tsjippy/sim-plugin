@@ -239,7 +239,7 @@ class DisplayFormResults extends DisplayForm{
 				}
 
 				//Check if need to display
-				if(is_numeric($_REQUEST['subid']) && $_REQUEST['subid'] != $subKey){
+				if(!empty($_REQUEST['subid']) && is_numeric($_REQUEST['subid']) && $_REQUEST['subid'] != $subKey){
 					continue;
 				}
 

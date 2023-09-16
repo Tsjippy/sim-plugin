@@ -52,9 +52,12 @@ class SimForms{
 		$this->showArchived				= false;
 
 		//calculate full form rights
-		$postAuthor	= get_queried_object()->post_author;
-		if(empty($postAuthor) && !empty($_REQUEST['post'])){
+		$object		= get_queried_object();
+		$postAuthor	= 0;
+		if(!empty($object) && empty($object->post_author) && !empty($_REQUEST['post'])){
 			$postAuthor	= get_post($_REQUEST['post'])->post_author;
+		}elseif(!empty($object)){
+			$postAuthor	= $object->post_author;
 		}
 
 		if(array_intersect(['editor'], $this->userRoles) || $postAuthor == $this->user->ID){
@@ -203,7 +206,7 @@ class SimForms{
 			}
 		}
 
-		foreach($this->formData->settings['submit_others_form'] as $key=>$role){
+		foreach((array)$this->formData->settings['submit_others_form'] as $key=>$role){
 			if(!empty($role)){
 				$this->submitRoles[] = $key;
 			}

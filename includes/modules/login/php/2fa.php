@@ -145,7 +145,7 @@ add_filter( 'authenticate', function ( $user) {
         }
 
         // Remove webautn_id if webauthn was unsuccesfull
-        if($_SESSION['webautn_id'] && $_SESSION['webauthn'] != 'success'){
+        if(@$_SESSION['webautn_id'] && $_SESSION['webauthn'] != 'success'){
             unset($_SESSION['webautn_id']);
         }
         

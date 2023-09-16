@@ -10,8 +10,8 @@ add_filter( 'user_row_actions', function ( $actions, $user ) {
 
 add_action('admin_menu', function() {
 	//Process the request
-    $userId    = $_GET['send_activation_email'];
-	if(is_numeric($userId )){
+	if(!empty($_GET['send_activation_email']) && is_numeric($_GET['send_activation_email'] )){
+		$userId    = $_GET['send_activation_email'];
 		$email = get_userdata($userId )->user_email;
 		SIM\printArray("Sending welcome email to $email");
 		wp_new_user_notification($userId, null, 'user');

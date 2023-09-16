@@ -871,6 +871,10 @@ function removeFromNestedArray(&$array, $arrayKeys){
  * @param	bool		$delEmptyArrays Wheter to delete empty nested arrays or not. Default false
 */
 function cleanUpNestedArray(&$array, $delEmptyArrays=false){
+	if(!is_array($array)){
+		return;
+	}
+	
 	foreach ($array as $key => $value){
         if(is_array($value)){
             cleanUpNestedArray($value);

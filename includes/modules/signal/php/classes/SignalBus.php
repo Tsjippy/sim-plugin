@@ -49,14 +49,18 @@ class SignalBus extends Signal {
             $id     = [];
             exec("bash -c 'echo \$UID'", $id);
 
-            $this->osUserId = $id[0];
+            if(!empty($id)){
+                $this->osUserId = $id[0];
+            }
 
             $this->prefix   = "export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$this->osUserId/bus; $this->prefix";
         }
 
         $homefolder   = [];
         exec("bash -c 'echo \$HOME'", $homefolder);
-        $this->homeFolder   = $homefolder[0];
+        if(!empty($homefolder)){
+            $this->homeFolder   = $homefolder[0];
+        }
 
         // Check daemon
         $this->daemonIsRunning();
@@ -177,8 +181,8 @@ class SignalBus extends Signal {
         $query      = "SELECT * FROM $this->tableName";
 
         if(!empty($minTime)){
-            $totalQuery .= " WHERE timesend > $minTime";
-            $query      .= " WHERE timesend > $minTime";
+            $totalQuery .= " WHERE timesend > {$minTime}000";
+            $query      .= " WHERE timesend > {$minTime}000";
         }
 
         if(!empty($maxTime)){
@@ -187,8 +191,8 @@ class SignalBus extends Signal {
                 $combinator     = 'WHERE';
             }
 
-            $totalQuery .= " $combinator timesend < $maxTime";
-            $query      .= " $combinator timesend < $maxTime";
+            $totalQuery .= " $combinator timesend < {$maxTime}000";
+            $query      .= " $combinator timesend < {$maxTime}000";
         }
 
         $query      .= "  ORDER BY `timesend` DESC LIMIT $startIndex,$amount;";
@@ -439,7 +443,7 @@ class SignalBus extends Signal {
 
         $ownTimeStamp = str_replace('int64 ', '', $this->parseResult());
 
-        if(is_numeric($timeStamp)){
+        if(is_numeric($ownTimeStamp)){
             $this->addToMessageLog($groupId, $message, $ownTimeStamp);
         }else{
             SIM\printArray($ownTimeStamp);
@@ -745,9 +749,12 @@ class SignalBus extends Signal {
     }
 
     public function findGroupName($id){
-        $groups = $this->listGroups();
+        $groups = (array)$this->listGroups();
 
         foreach($groups as $group){
+            if(gettype($group) == 'string'){
+                return $group;
+            }
             if($group->id == $id){
                 return $group->name;
             }

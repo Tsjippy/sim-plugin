@@ -32,7 +32,7 @@ function isProtected(){
 
 	$public				= false;
 	foreach((array)get_the_terms($post, $taxonomy) as $term){
-		if($term->slug	== 'public'){
+		if(!empty($term) && $term->slug	== 'public'){
 			$public	= true;
 			break;
 		}

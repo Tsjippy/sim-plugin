@@ -210,7 +210,10 @@ function connectedOptions($signal, $settings){
  * @param	array	$settings		The module settings
  */
 function notConnectedOptions(){
-	$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
+	$url		= admin_url( "admin.php?page={$_GET['page']}" );
+	if(!empty($_GET['tab'])){
+		$url	.= "&tab={$_GET['tab']}";
+	}
 
 	?>
 	<h4>Connection details</h4>
@@ -274,7 +277,7 @@ function notLocalOptions($settings){
 
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG || isset($_GET['register']) || $_POST['captcha'] || $_POST['verification-code']){
+	if($moduleSlug != MODULE_SLUG || isset($_GET['register']) || isset($_POST['captcha']) || isset($_POST['verification-code'])){
 		return $optionsHtml;
 	}
 	$local	= false;
@@ -332,8 +335,8 @@ function processActions($settings){
 	if($_REQUEST['action'] == 'Delete'){
 		$signal 	= new SignalBus();
 
-		if(isset($_REQUEST['timestamp'])){
-			$result		= $signal->deleteMessage($_REQUEST['timestamp'], $_REQUEST['recipients']);
+		if(isset($_REQUEST['timesend'])){
+			$result		= $signal->deleteMessage($_REQUEST['timesend'], $_REQUEST['recipients']);
 
 			if(!is_numeric(str_replace('int64 ', '', $result))){
 				return "<div class='error'>$result</div>";
@@ -366,7 +369,13 @@ function processActions($settings){
 			$groupId	= $_REQUEST['chat'];
 		}
 
-		$signal->sendMessageReaction($_REQUEST['sender'] , $_REQUEST['timestamp'], $groupId  );
+		$result	= $signal->sendMessageReaction($_REQUEST['sender'] , $_REQUEST['timestamp'], $groupId  );
+
+		if(is_numeric(str_replace('int64 ', '', $result))){
+			return "<div class='succes'>Reaction sent succesfully</div>";
+		}else{
+			return "<div class='error'>Reaction sent not succesfull</div>";
+		}
 	}
 
 	return '';
@@ -419,11 +428,11 @@ function messagesHeader($settings, $startDate, $endDate, $amount){
 				<input type="hidden" name="tab" value="data" />
 
 				<label>
-					Automatically remove messages older then <input type='number' name='clean-amount' value='<?php echo $settings['clean-amount'];?>' style='width:60px;'>
+					Automatically remove messages older then <input type='number' name='clean-amount' value='<?php echo @$settings['clean-amount'];?>' style='width:60px;'>
 					<select name='clean-period' class='inline'>
-						<option value='days' <?php if($settings['clean-period'] == 'days'){echo 'selected="selected"';}?>>days</option>
-						<option value='weeks' <?php if($settings['clean-period'] == 'weeks'){echo 'selected="selected"';}?>>weeks</option>
-						<option value='months' <?php if($settings['clean-period'] == 'months'){echo 'selected="selected"';}?>>months</option>
+						<option value='days' <?php if(@$settings['clean-period'] == 'days'){echo 'selected="selected"';}?>>days</option>
+						<option value='weeks' <?php if(@$settings['clean-period'] == 'weeks'){echo 'selected="selected"';}?>>weeks</option>
+						<option value='months' <?php if(@$settings['clean-period'] == 'months'){echo 'selected="selected"';}?>>months</option>
 					</select>
 				</label>
 				<br>
@@ -462,8 +471,14 @@ function sentMessagesTable($startDate, $endDate, $amount){
 		.flex{
 			padding: 20px;
 		}
+
+		.signal_table td.message{
+			max-width: 500px;
+			word-break: break-word;
+  			white-space: break-spaces;
+		}
 	</style>
-	<div class='send-signal-messages tabcontent' id='sent'>
+	<div class='send-signal-messages tabcontent <?php if(!empty($_GET['second_tab']) && $_GET['second_tab']=='received_messages'){echo ' hidden';}?>' id='sent'>
 		<?php
 
 		if($signal->totalMessages > $amount){
@@ -504,7 +519,7 @@ function sentMessagesTable($startDate, $endDate, $amount){
             <tbody>
 				<?php
 					foreach($messages as $message){
-						$isoDate	= date( 'Y-m-d H:i:s', $message->timesend );
+						$isoDate	= date( 'Y-m-d H:i:s', intval($message->timesend/1000) );
 						$date		= get_date_from_gmt( $isoDate, DATEFORMAT);
 						$time		= get_date_from_gmt( $isoDate, TIMEFORMAT);
 
@@ -534,7 +549,7 @@ function sentMessagesTable($startDate, $endDate, $amount){
 								}else{
 									?>
 									<form method='post'>
-										<input type="hidden" name="timestamp" value="<?php echo $message->stamp;?>" />
+										<input type="hidden" name="timesend" value="<?php echo $message->timesend;?>" />
 										<input type="hidden" name="id" value="<?php echo $message->id;?>" />
 										<input type="hidden" name="recipients" value="<?php echo $message->recipient;?>" />
 										<input type='submit' name='action' value='Delete'>
@@ -557,6 +572,10 @@ function sentMessagesTable($startDate, $endDate, $amount){
 
 function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 	global $wpdb;
+
+	if(!empty($_GET['second_tab']) && $_GET['second_tab']=='received_messages'){
+		$hidden	= '';
+	}
 
 	ob_start();
 
@@ -582,7 +601,7 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 
 		$groupedMessages[$message->chat][]	= [
 			'id'			=> $message->id,
-			'timesent'		=> $message->timesend,
+			'timesent'		=> $message->timesend,	// timestam is in milis
 			'message'		=> $message->message,
 			'status'		=> $message->status,
 			'sender'		=> $message->sender,
@@ -701,11 +720,11 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 					$hidden	= '';
 
 					foreach($group as $index=>$message){
-						$isoDate	= date( 'Y-m-d H:i:s', $message['timesend'] );
+						$isoDate	= date( 'Y-m-d H:i:s', intval($message['timesent']/1000) );
 						$date		= get_date_from_gmt( $isoDate, DATEFORMAT);
 						$time		= get_date_from_gmt( $isoDate, TIMEFORMAT);
 
-						$sender	= $wpdb->get_results("SELECT * FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->sender%')");
+						$sender	= $wpdb->get_results("SELECT * FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%{$message['sender']}')");
 
 						if(empty($sender)){
 							$sender	= $message['sender'];
@@ -739,7 +758,7 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 							<td class='message'><?php echo $message['message'];?></td>
 							<td class='attachments'>
 								<?php
-								$attachments	= maybe_unserialize($message['attachments']);
+								$attachments	= (array)maybe_unserialize($message['attachments']);
 								foreach($attachments as $attachment){
 									if(!file_exists($attachment)){
 										continue;
@@ -756,15 +775,15 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 							</td>
 							<td class='reply'>
 								<?php
-								if($message->status == 'replied'){
+								if($message['status'] == 'replied'){
 									echo "Already Replied";
 								}else{
 									?>
 									<form method='post'>
-										<input type="hidden" name="timestamp" value="<?php echo $message->stamp;?>" />
-										<input type="hidden" name="id" value="<?php echo $message->id;?>" />
-										<input type="hidden" name="sender" value="<?php echo $message->sender;?>" />
-										<input type="hidden" name="chat" value="<?php echo $message->chat;?>" />
+										<input type="hidden" name="timesent" value="<?php echo $message['timesent'];?>" />
+										<input type="hidden" name="id" value="<?php echo $message['id'];?>" />
+										<input type="hidden" name="sender" value="<?php echo $message['sender'];?>" />
+										<input type="hidden" name="chat" value="<?php echo $chat;?>" />
 										<input type='submit' name='action' value='Reply'>
 									</form>
 									<?php
@@ -814,9 +833,9 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 		$endDate	= $_REQUEST['end-date'];
 	}
 
-	$html			= processActions($settings);
-
-	$html			.= messagesHeader($settings, $startDate, $endDate, $amount);
+	$html			= messagesHeader($settings, $startDate, $endDate, $amount);
+	
+	$html			.= processActions($settings);
 
 	$sentTable		= sentMessagesTable($startDate, $endDate, $amount);
 
@@ -828,9 +847,16 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 	$receivedTable	= receivedMessagesTable($startDate, $endDate, $amount, $hidden);
 
 	if(!empty($sentTable) && !empty($receivedTable)){
+		if(isset($_GET['second_tab']) && $_GET['second_tab']=='received_messages'){
+			$active1	= '';
+			$active2	= 'active';
+		}else{
+			$active1	= 'active';
+			$active2	= '';
+		}
 		$html	.= '<div class="tablink-wrapper">';
-			$html	.= '<button class="tablink active" id="show_description" data-target="sent">Sent messages</button>';
-			$html	.= '<button class="tablink " id="show_settings" data-target="received">Received messages</button>';
+			$html	.= "<button class='tablink $active1' id='show_description' data-target='sent'>Sent messages</button>";
+			$html	.= "<button class='tablink $active2' id='show_settings' data-target='received'>Received messages</button>";
 		$html	.= '</div>';
 	}
 
@@ -915,7 +941,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 
 					$groups	= $signal->listGroups();
 
-					foreach($groups as $group){
+					foreach((array)$groups as $group){
 						if(empty($group->name)){
 							continue;
 						}
@@ -927,7 +953,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 					}else{
 						$groups	= $settings['groups'];
 					}
-					foreach($groups as $group){
+					foreach((array)$groups as $group){
 						echo "<option value='$group'>$group</option>";
 					}
 				}

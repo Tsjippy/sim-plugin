@@ -63,20 +63,21 @@ if(!empty($argv) && count($argv) == 2){
     }
 
     // message to group
-    if(
-        isset($data->envelope->dataMessage->groupInfo)      &&
-        isset($data->envelope->dataMessage->mentions)
-    ){
-        foreach($data->envelope->dataMessage->mentions as $mention){
-            if($mention->number == $signal->phoneNumber || $mention->name == '8fc6c236-f07b-4a3c-97c5-0a78efe488ee'){
-                $groupId    = $signal->groupIdToByteArray($data->envelope->dataMessage->groupInfo->groupId);
-                $signal->sendGroupTyping($groupId);
+    if(isset($data->envelope->dataMessage->groupInfo)){
+        $groupId    = $signal->groupIdToByteArray($data->envelope->dataMessage->groupInfo->groupId);
 
-                // Remove mention from message
-                $message    = substr($message, $data->envelope->dataMessage->mentions[0]->length);
-                $answer     = getAnswer(trim($message), $data->envelope->source);
+        // we are mentioned
+        if( isset($data->envelope->dataMessage->mentions)){
+            foreach($data->envelope->dataMessage->mentions as $mention){
+                if($mention->number == $signal->phoneNumber || $mention->name == '8fc6c236-f07b-4a3c-97c5-0a78efe488ee'){
+                    $signal->sendGroupTyping($groupId);
 
-                $signal->sendGroupMessage($answer['response'], $groupId, $answer['pictures']);
+                    // Remove mention from message
+                    $message    = substr($message, $data->envelope->dataMessage->mentions[0]->length);
+                    $answer     = getAnswer(trim($message), $data->envelope->source);
+
+                    $signal->sendGroupMessage($answer['response'], $groupId, $answer['pictures']);
+                }
             }
         }
     }elseif(!isset($data->envelope->dataMessage->groupInfo)){
@@ -88,6 +89,8 @@ if(!empty($argv) && count($argv) == 2){
     }
 
     // add message to the received table
+    SIM\printArray($groupId);
+    SIM\printArray($data);
     $signal->addToReceivedMessageLog($data->envelope->source, $message, $data->envelope->timestamp, $groupId, $attachments);
 }
 
