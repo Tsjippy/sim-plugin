@@ -264,7 +264,7 @@ class SignalBus extends Signal {
 
         $timeSend   = strtotime(get_gmt_from_date($maxDate, 'Y-m-d'));
 
-        // remove send messages
+        // remove sent messages
         $query      = "DELETE FROM $this->tableName WHERE `timesend` < {$timeSend}000";
 
         $result1    = $wpdb->query( $query );
@@ -281,6 +281,7 @@ class SignalBus extends Signal {
             }
         }
 
+        // remove received messages
         $query      = "DELETE FROM $this->receivedTableName WHERE `timesend` < {$timeSend}000";
 
         $result2    = $wpdb->query( $query );
