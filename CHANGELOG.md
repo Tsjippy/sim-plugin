@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- remove signal attachments when deleting message
 
 ### Fixed
 - several bugs
