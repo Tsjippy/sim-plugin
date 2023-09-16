@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.36.5] - 2023-09-16
+
+
+### Changed
 - remove signal attachments when deleting message
 
 ### Fixed
