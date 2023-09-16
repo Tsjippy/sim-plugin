@@ -264,9 +264,22 @@ class SignalBus extends Signal {
 
         $timeSend   = strtotime(get_gmt_from_date($maxDate, 'Y-m-d'));
 
+        // remove send messages
         $query      = "DELETE FROM $this->tableName WHERE `timesend` < {$timeSend}000";
 
         $result1    = $wpdb->query( $query );
+
+        // remove attachment files
+        $query      = "SELECT * FROM $this->receivedTableName WHERE `timesend` < {$timeSend}000 AND `attachments` is NOT NULL; ";
+        foreach($wpdb->get_results($query) as $result){
+            $attachments    = unserialize($result->attachments);
+
+            foreach($attachments as $attachment){
+                if(file_exists($attachment)){
+                    unlink($attachment);
+                }
+            }
+        }
 
         $query      = "DELETE FROM $this->receivedTableName WHERE `timesend` < {$timeSend}000";
 
