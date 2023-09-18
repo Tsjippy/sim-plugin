@@ -241,7 +241,7 @@ class SignalBus extends Signal {
             $query      .= " $combinator timesend < {$maxTime}000";
         }
 
-        $query      .= "  ORDER BY `sender` ASC, `timesend` DESC LIMIT $startIndex,$amount;";
+        $query      .= "  ORDER BY `chat` ASC, `timesend` DESC LIMIT $startIndex,$amount;";
 
         $this->totalMessages    = $wpdb->get_var($totalQuery);
 
@@ -679,9 +679,9 @@ class SignalBus extends Signal {
 
     public function sendMessageReaction($recipient, $timestamp, $groupId=''){
         if(empty($groupId)){
-            // Send typing
+            // Send emoji
             $this->command = new Command([
-                'command' => "{$this->prefix}sendMessageReaction string:U+1F60A boolean:false string:$recipient int64:$timestamp string:$recipient"
+                'command' => "{$this->prefix}sendMessageReaction string:🦘 boolean:false string:$recipient int64:$timestamp string:$recipient"
             ]);
         }else{
             $this->command = new Command([

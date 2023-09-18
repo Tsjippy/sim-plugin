@@ -5,13 +5,18 @@
  * crontab -e -u simnige1
  *
  * Something like:
- * @reboot export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001/bus;/home/simnige1/web/simnigeria.org/public_html/wp-content/signal-cli/program/bin/signal-cli -o  json --trust-new-identities=always daemon | while read -r line; do find -name signal-daemon.php 2>/dev/null -exec php "{}" "$line" \; ; done;
+ * @reboot export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001/bus;/home/simnige1/web/simnigeria.org/public_html/wp-content/signal-cli/program/bin/signal-cli -o json --trust-new-identities=always daemon | while read -r line; do find -name signal-daemon.php 2>/dev/null -exec php "{}" "$line" \; ; done;
  */
 use SIM\SIGNAL\SignalBus;
 use SIM;
 
+///$myfile = fopen("/home/simnige1//web/simnigeria.org/public_html/wp-content/debug1.log", "a") or die("Unable to open file!");
+//fwrite($myfile,print_r($argv, true));
+
 if(!empty($argv) && count($argv) == 2){
     $data      = json_decode($argv[1]);
+    //fwrite($myfile,print_r($data, true));
+    //fclose($myfile);
 
     // no message found
     if(!isset($data->envelope->dataMessage) || empty($data->envelope->dataMessage->message)){
@@ -33,6 +38,9 @@ if(!empty($argv) && count($argv) == 2){
 
     include_once __DIR__.'/../php/__module_menu.php';
     include_once __DIR__.'/../php/classes/Signal.php';
+
+    
+    SIM\printArray($data);
 
     $signal = new SignalBus();
 
@@ -89,8 +97,6 @@ if(!empty($argv) && count($argv) == 2){
     }
 
     // add message to the received table
-    SIM\printArray($groupId);
-    SIM\printArray($data);
     $signal->addToReceivedMessageLog($data->envelope->source, $message, $data->envelope->timestamp, $groupId, $attachments);
 }
 

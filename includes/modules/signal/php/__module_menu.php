@@ -382,6 +382,12 @@ function processActions($settings){
 }
 
 function messagesHeader($settings, $startDate, $endDate, $amount){
+	if(!isset($settings['clean-period'])){
+		$settings['clean-period']	= '';
+	}
+	if(!isset($settings['clean-amount'])){
+		$settings['clean-amount']	= '';
+	}
 	ob_start();
 
 	?>
@@ -428,11 +434,11 @@ function messagesHeader($settings, $startDate, $endDate, $amount){
 				<input type="hidden" name="tab" value="data" />
 
 				<label>
-					Automatically remove messages older then <input type='number' name='clean-amount' value='<?php echo @$settings['clean-amount'];?>' style='width:60px;'>
+					Automatically remove messages older then <input type='number' name='clean-amount' value='<?php echo $settings['clean-amount'];?>' style='width:60px;'>
 					<select name='clean-period' class='inline'>
-						<option value='days' <?php if(@$settings['clean-period'] == 'days'){echo 'selected="selected"';}?>>days</option>
-						<option value='weeks' <?php if(@$settings['clean-period'] == 'weeks'){echo 'selected="selected"';}?>>weeks</option>
-						<option value='months' <?php if(@$settings['clean-period'] == 'months'){echo 'selected="selected"';}?>>months</option>
+						<option value='days' <?php if($settings['clean-period'] == 'days'){echo 'selected="selected"';}?>>days</option>
+						<option value='weeks' <?php if($settings['clean-period'] == 'weeks'){echo 'selected="selected"';}?>>weeks</option>
+						<option value='months' <?php if($settings['clean-period'] == 'months'){echo 'selected="selected"';}?>>months</option>
 					</select>
 				</label>
 				<br>
@@ -528,10 +534,12 @@ function sentMessagesTable($startDate, $endDate, $amount){
 							$recipient	= $wpdb->get_var("SELECT display_name FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->recipient%')");
 						}else{
 							$signal->listGroups();
-							foreach($signal->groups as $group){
-								if($group->id == $message->recipient){
-									$recipient	= $group->name;
-									break;
+							if(gettype($signal->groups) == 'array'){
+								foreach($signal->groups as $group){
+									if($group->id == $message->recipient){
+										$recipient	= $group->name;
+										break;
+									}
 								}
 							}
 						}
@@ -643,11 +651,12 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 				target.classList.replace('expand', 'condense');
 			}else if(target.matches('.condense')){
 
-				let rowspan = target.closest('td').dataset.rowspan;
+				let rowspan = target.closest('td').rowSpan	= 1;
 
 				let row	= target.closest('tr').nextElementSibling;
 
-				while(row.matches(':not(.hidden)')) {
+				while(row.querySelector('td.chat') == null) {
+					console.log(row);
 					row.classList.add('hidden');
 					row	= row.nextElementSibling;
 
@@ -731,6 +740,11 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 						}else{
 							$sender	= $sender[0];
 							$sender	= SIM\USERPAGE\getUserPageLink($sender->ID);
+						}
+
+						// in case of private message replace the phonenumber in the chat for the name as well
+						if($message['sender'] == $chat){
+							$chatName = $sender;
 						}
 
 						?>

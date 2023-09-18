@@ -193,13 +193,14 @@ class SimForms{
 
 		if(!$this->editRights){
 			$editRoles	= ['editor'];
-			foreach($this->formData->settings['full_right_roles'] as $key=>$role){
+			foreach((array)$this->formData->settings['full_right_roles'] as $key=>$role){
 				if(!empty($role)){
 					$editRoles[] = $key;
 				}
 			}
 			//calculate full form rights
-			if(array_intersect($editRoles, (array)$this->userRoles) || get_queried_object()->post_author == $this->user->ID){
+			$object	= get_queried_object();
+			if(array_intersect($editRoles, (array)$this->userRoles) || (!empty($object) && $object->post_author == $this->user->ID)){
 				$this->editRights		= true;
 			}else{
 				$this->editRights		= false;
