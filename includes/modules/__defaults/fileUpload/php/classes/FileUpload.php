@@ -176,10 +176,10 @@ class FileUpload{
 					$documentArray	= '';
 				}
 			}
-
+			
+			$class = '';
 			if($multiple){
 				$multipleString = 'multiple="multiple"';
-				$class = '';
 			}else{
 				$multipleString = '';
 				if(!empty($documentArray)){
@@ -237,7 +237,7 @@ class FileUpload{
 				$libraryId		= $documentPath;
 				$documentPath	= $url;
 			}
-		}elseif(!is_file($documentPath)){
+		}elseif(gettype($documentPath) != 'string' || !is_file($documentPath)){
 			return false;
 		}
 

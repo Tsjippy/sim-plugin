@@ -146,7 +146,7 @@ function userInfoPage($atts){
 			//Content
 			$html	.= '<div id="family_info" class="tabcontent hidden">';
 
-				if($_GET['main_tab'] == 'family'){
+				if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'family'){
 					$html	.= do_shortcode('[formbuilder formname=user_family]');
 				}else{
 					$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
@@ -166,7 +166,7 @@ function userInfoPage($atts){
 
 		$html	.= "<div id='generic_info' class='tabcontent hidden'>";
 
-			if($_GET['main_tab'] == 'generic_info'){
+			if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'generic_info'){
 				$html	.= getGenericsTab($userId);
 			}else{
 				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
@@ -192,7 +192,7 @@ function userInfoPage($atts){
 		//Content
 		$html .= '<div id="location_info" class="tabcontent hidden">';
 		
-			if($_GET['main_tab'] == 'location_info'){
+			if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'location_info'){
 				$html	.= do_shortcode('[formbuilder formname=user_location]');
 			}else{
 				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
@@ -221,7 +221,7 @@ function userInfoPage($atts){
 		//Content
 		$html	.= '<div id="profile_picture_info" class="tabcontent hidden">';
 
-			if($_GET['main_tab'] == 'profile_picture'){
+			if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'profile_picture'){
 				$html	.= do_shortcode('[formbuilder formname=profile_picture]');
 			}else{
 				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
@@ -277,7 +277,7 @@ function userInfoPage($atts){
 		//Content
 		$html	.= "<div id='security_info' class='tabcontent hidden'>";
 
-			if($_GET['main_tab'] == "security_info"){
+			if(isset($_GET['main_tab']) && $_GET['main_tab'] == "security_info"){
 				$html	.= do_shortcode('[formbuilder formname=security_questions]');
 			}else{
 				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
@@ -311,7 +311,7 @@ function userInfoPage($atts){
 		//Content
 		$html	.= "<div id='medical_info' $class>";
 
-			if($_GET['main_tab'] == 'medical_info'){
+			if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'medical_info'){
 				$html	.= getMedicalTab($userId);
 			}else{
 				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";

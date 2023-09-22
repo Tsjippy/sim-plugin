@@ -191,7 +191,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 
 		if(count($this->submissions) == 1){
-			$this->submission	= $this->submissions[0];
+			$this->submission	= array_values($this->submissions)[0];
 		}
 
 		//Get personal visibility
@@ -672,6 +672,7 @@ class DisplayFormResults extends DisplayForm{
 		foreach($this->columnSettings as $id=>$columnSetting){
 			$value			= '';
 			$subIdString	= '';
+			$orgFieldValue	= $value;
 
 			//If the column is hidden, do not show this cell
 			if($columnSetting['show'] == 'hide' || !is_numeric($id)){
@@ -861,7 +862,7 @@ class DisplayFormResults extends DisplayForm{
 				if(
 					$this->tableEditPermissions || 																		//if we are allowed to do all actions
 					$values['userid'] == $this->user->ID || 															//or this is our own entry
-					array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])		//or we have permission for this specific button
+					(isset($this->columnSettings[$action]['edit_right_roles']) && array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles']))		//or we have permission for this specific button
 				){
 					$buttons .= $button;
 				}
@@ -1633,12 +1634,15 @@ class DisplayFormResults extends DisplayForm{
 		*/
 		//first check if the data contains data of our own
 		$this->ownData	= false;
-		$this->user->partnerId		= SIM\hasPartner($this->user->ID);
-		foreach($submissions as $submission){
-			//Our own entry or one of our partner
-			if($submission->userid == $this->user->ID || $submission->userid == $this->user->partnerId){
-				$this->ownData = true;
-				break;
+
+		if($type != 'others'){
+			$this->user->partnerId		= SIM\hasPartner($this->user->ID);
+			foreach($submissions as $submission){
+				//Our own entry or one of our partner
+				if($submission->userid == $this->user->ID || $submission->userid == $this->user->partnerId){
+					$this->ownData = true;
+					break;
+				}
 			}
 		}
 
@@ -1657,7 +1661,7 @@ class DisplayFormResults extends DisplayForm{
 		?>
 		<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
 			<?php
-			$this->resultTableHead();
+			$this->resultTableHead($type);
 			?>
 			
 			<tbody class="table-body">
@@ -1740,7 +1744,9 @@ class DisplayFormResults extends DisplayForm{
 
 			$allRowsEmpty	= true;
 			if(isset($this->tableSettings['split-table']) && $this->tableSettings['split-table'] == 'yes'){
-				$allRowsEmpty	= $this->renderTable('own') && $this->renderTable('others');
+				$result1		= $this->renderTable('own');
+				$result2		= $this->renderTable('others');
+				$allRowsEmpty	= $result1 && $result2;
 			}else{
 				$allRowsEmpty	= $this->renderTable('all');
 			}
@@ -1801,8 +1807,10 @@ class DisplayFormResults extends DisplayForm{
 
 	/**
 	 * Prints the results table head
+	 *
+	 * @param	string		$type		Either 'own', 'others' or 'all'
 	 */
-	private function resultTableHead(){
+	private function resultTableHead($type){
 		$excelRow	= [];
 		?>
 		<thead>
@@ -1822,12 +1830,12 @@ class DisplayFormResults extends DisplayForm{
 							!$this->ownData				|| 													//The table does not contain data of our own
 							(
 								$this->ownData			&& 													//or it does contain our own data but
-								!in_array('own', $columnSetting['view_right_roles'])					//we are not allowed to see it
+								!in_array('own', $columnSetting['view_right_roles'])						//we are not allowed to see it
 							)
 						) &&
 						!$this->tableEditPermissions 				&&										//no permission to edit the table and
 						!empty($columnSetting['view_right_roles']) 	&& 										// there are view right permissions defined
-						!array_intersect($this->userRoles, $columnSetting['view_right_roles'])		// and we do not have the view right role and
+						!array_intersect($this->userRoles, $columnSetting['view_right_roles'])				// and we do not have the view right role and
 					){
 						continue;
 					}
@@ -1862,14 +1870,15 @@ class DisplayFormResults extends DisplayForm{
 				$actions = apply_filters('sim_form_actions', $actions);
 
 				//we have full permissions on this table
+				$addHeading	= false;
 				if($this->tableEditPermissions && !empty($actions)){
 					$addHeading	= true;
 				}else{
 					foreach($actions as $action){
 						//we have permission for this specific button
-						if(array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])){
+						if(isset($this->columnSettings[$action]['edit_right_roles']) && array_intersect($this->userRoles, (array)$this->columnSettings[$action]['edit_right_roles'])){
 							$addHeading	= true;
-						}else{
+						}elseif($type != 'others'){
 							//Loop over all submissions to see if the current user has permission for them
 							foreach($this->submissions as $submission){
 								//we have permission on this row for this button

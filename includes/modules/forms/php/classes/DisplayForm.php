@@ -11,6 +11,7 @@ class DisplayForm extends SubmitForm{
 	public $nextElement;
 	public $prevElement;
 	public $currentElement;
+	public $usermeta;
 
 	public function __construct($atts=[]){
 		parent::__construct();
@@ -95,9 +96,13 @@ class DisplayForm extends SubmitForm{
 
 		// Get the values we need
 		if(empty($this->formData->settings['save_in_meta'])){
-			$values		= array_values((array)$values['defaults']);
+			if(!empty($values['defaults'])){
+				$values		= array_values((array)$values['defaults']);
+			}
 		}else{
-			$values		= array_values((array)$values['metavalue']);
+			if(!empty($values['metavalue'])){
+				$values		= array_values((array)$values['metavalue']);
+			}
 		}
 		
 		// Determine if we should wrap
@@ -112,8 +117,12 @@ class DisplayForm extends SubmitForm{
 
 		//create as many inputs as the maximum value found
 		for ($index = 0; $index < $this->multiWrapValueCount; $index++) {
+			$val	= '';
+			if(!empty($values[$index])){
+				$val	= $values[$index];
+			}
 			// prepare the base html for duplicating
-			$elementHtml	= $this->prepareElementHtml($element, $index, $elementHtml, $values[$index]);
+			$elementHtml	= $this->prepareElementHtml($element, $index, $elementHtml, $val);
 
 			if($this->prevElement->type == 'multi_start'){
 				$this->multiInputsHtml[$index] = "<div class='clone_div' data-divid='$index' style='display:flex'>";

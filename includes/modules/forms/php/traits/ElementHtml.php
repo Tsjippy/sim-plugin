@@ -71,15 +71,22 @@ trait ElementHtml{
 		
 			if(count($elementName) == 1){
 				//non array name
-				$elementName					= $elementName[0];
-				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$elementName]);
-			}else{
+				$elementName			= $elementName[0];
+				$values['metavalue']	= [];
+				if(isset($this->usermeta[$elementName])){
+					$values['metavalue']	= (array)maybe_unserialize($this->usermeta[$elementName]);
+				}
+			}elseif(!empty($this->usermeta[$elementName[0]])){
 				//an array of values, we only want a specific one
-				$values['metavalue']		= (array)maybe_unserialize($this->usermeta[$elementName[0]]);
+				$values['metavalue']	= (array)maybe_unserialize($this->usermeta[$elementName[0]]);
+				
+
 				unset($elementName[0]);
 				//loop over all the subkeys, and store the value until we have our final result
 				foreach($elementName as $v){
-					$values['metavalue'] = (array)$values['metavalue'][$v];
+					if(isset($values['metavalue'][$v])){
+						$values['metavalue'] = (array)$values['metavalue'][$v];
+					}
 				}
 			}
 		}
@@ -87,12 +94,12 @@ trait ElementHtml{
 		//add default values
 		if(empty($element->multiple) || in_array($element->type, ['select','checkbox'])){
 			$defaultKey					= $element->default_value;
-			if(!empty($defaultKey)){
+			if(!empty($defaultKey) && !empty($this->defaultValues[$defaultKey])){
 				$values['defaults']		= $this->defaultValues[$defaultKey];
 			}
 		}else{
 			$defaultKey					= $element->default_array_value;
-			if(!empty($defaultKey)){
+			if(!empty($defaultKey) && !empty($this->defaultValues[$defaultKey])){
 				$values['defaults']		= $this->defaultArrayValues[$defaultKey];
 			}
 		}
@@ -142,6 +149,9 @@ trait ElementHtml{
 	}
 
 	function prepareElementHtml($element, $index, $elementHtml, $value){
+		if($value === null){
+			$value = '';
+		}
 		//Add the key to the fields name
 		$elementHtml	= preg_replace("/(name='.*?)'/i", "\${1}[$index]'", $elementHtml);
 					
@@ -218,9 +228,9 @@ trait ElementHtml{
 			$prevLabel	= '';
 		}
 
-		if(empty($this->formData->settings['save_in_meta'])){
+		if(empty($this->formData->settings['save_in_meta']) && !empty($values['defaults'])){
 			$values		= array_values((array)$values['defaults']);
-		}else{
+		}elseif(!empty($values['metavalue'])){
 			$values		= array_values((array)$values['metavalue']);
 		}
 
@@ -229,7 +239,12 @@ trait ElementHtml{
 
 		//create as many inputs as the maximum value found
 		for ($index = 0; $index < $this->multiWrapValueCount; $index++) {
-			$elementItemHtml	= $this->prepareElementHtml($element, $index, $elementHtml, $values[$index]);
+			$val	= '';
+			if(!empty($values[$index])){
+				$val	= $values[$index];
+			}
+
+			$elementItemHtml	= $this->prepareElementHtml($element, $index, $elementHtml, $val);
 			
 			//open the clone div
 			$html	= "<div class='clone_div' data-divid='$index'>";
@@ -445,7 +460,7 @@ trait ElementHtml{
 				$val	= $value;
 				if(empty($value)){
 					//this is an input and there is a value for it
-					if(empty($this->formData->settings['save_in_meta']) || empty($values['metavalue'])){
+					if(!empty($values['defaults']) && (empty($this->formData->settings['save_in_meta']) || empty($values['metavalue']))){
 						$val		= array_values((array)$values['defaults'])[0];
 					}elseif(!empty($values['metavalue'])){
 						$val		= array_values((array)$values['metavalue'])[0];
@@ -536,17 +551,19 @@ trait ElementHtml{
 					$lowValues	= [];
 					
 					$defaultKey				= $element->default_value;
-					if(!empty($defaultKey)){
+					if(!empty($defaultKey) && !empty($this->defaultValues[$defaultKey])){
 						$lowValues[]	= strtolower($this->defaultValues[$defaultKey]);
 					}
 
-					foreach((array)$values['metavalue'] as $key=>$val){
-						if(is_array($val)){
-							foreach($val as $v){
-								$lowValues[] = strtolower($v);
+					if(isset($values['metavalue'] )){
+						foreach((array)$values['metavalue'] as $key=>$val){
+							if(is_array($val)){
+								foreach($val as $v){
+									$lowValues[] = strtolower($v);
+								}
+							}else{
+								$lowValues[] = strtolower($val);
 							}
-						}else{
-							$lowValues[] = strtolower($val);
 						}
 					}
 

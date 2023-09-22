@@ -928,7 +928,9 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 				if(!isset($value[$key])){
 					$key	= str_replace('_files', '', $key);
 				}
-				$value = $value[$key];
+				if(isset($value[$key])){
+					$value = $value[$key];
+				}
 			}
 		}
 	}

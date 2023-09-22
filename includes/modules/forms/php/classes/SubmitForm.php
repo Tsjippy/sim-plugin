@@ -87,7 +87,11 @@ class SubmitForm extends SimForms{
 
 					// get element and the form result of that element
 					$element	= $this->getElementById($email['submittedtrigger']['element']);
-					$elValue	= $this->submission->formresults[$element->name];
+					if(empty($this->submission->formresults[$element->name])){
+						$elValue	= '';
+					}else{
+						$elValue	= $this->submission->formresults[$element->name];
+					}
 					
 					// get the value to compare with
 					if(is_numeric($email['submittedtrigger']['valueelement'])){

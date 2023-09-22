@@ -45,6 +45,10 @@ add_filter( 'sim_add_form_defaults', function($defaultValues, $userId){
 	
 	//loop over the fields
 	foreach($fields as $field){
+		if(empty($usermeta[$field])){
+			continue;
+		}
+
 		//if the field value is an array
 		$values 				= maybe_unserialize($usermeta[$field][0]);
 		$defaultValues[$field] 	= '';
@@ -103,6 +107,10 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 	
 	//loop over the fields
 	foreach($fields as $field){
+		if(empty($usermeta[$field])){
+			continue;
+		}
+		
 		//if the field value is an array
 		$values = maybe_unserialize($usermeta[$field][0]);
 		if(is_array($values)){
