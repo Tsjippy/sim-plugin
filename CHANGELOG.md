@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- possibility to split form result in private  and public table
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.36.6] - 2023-09-22
+
+
+### Added
+- possibility to split form result in private  and public table
 
 ### Fixed
 - some bugs
