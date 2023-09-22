@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- possibility to split form result in private  and public table
 
 ### Changed
 
