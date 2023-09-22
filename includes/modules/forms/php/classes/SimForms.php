@@ -207,9 +207,11 @@ class SimForms{
 			}
 		}
 
-		foreach((array)$this->formData->settings['submit_others_form'] as $key=>$role){
-			if(!empty($role)){
-				$this->submitRoles[] = $key;
+		if(isset($this->formData->settings['submit_others_form'])){
+			foreach((array)$this->formData->settings['submit_others_form'] as $key=>$role){
+				if(!empty($role)){
+					$this->submitRoles[] = $key;
+				}
 			}
 		}
 		

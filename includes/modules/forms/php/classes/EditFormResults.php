@@ -98,10 +98,13 @@ class EditFormResults extends DisplayFormResults{
 			//$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
 			$this->formData->settings 	= $settings;
 
-			$splitElementName			= $this->getElementById($settings['split'][0], 'nicename');
-			$result						= preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $splitElementName, $matches);
-			if($result){
-				$splitElementName		= $matches[1];
+			$splitElementName	= '';
+			if(isset($settings['split'])){
+				$splitElementName			= $this->getElementById($settings['split'][0], 'name');
+				$result						= preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $splitElementName, $matches);
+				if($result){
+					$splitElementName		= $matches[1];
+				}
 			}
 
 			//Get all submissions of this form
@@ -114,7 +117,7 @@ class EditFormResults extends DisplayFormResults{
 				continue;
 			}
 
-			$pattern		= ".*?\[[0-9]+\]\[([^\]]+)\]/i";
+			$pattern		= "/.*?\[[0-9]+\]\[([^\]]+)\]/i";
 			if(preg_match($pattern, $triggerName, $matches)){
 				$triggerName	= $matches[1];
 			}
@@ -141,9 +144,13 @@ class EditFormResults extends DisplayFormResults{
 				$this->submissionId		= $this->submission->id;
 
 				//there is no trigger value found in the results, check multi value array
-				if(empty($this->submission->formresults[$triggerName])){
+				if(
+					!empty($splitElementName) &&
+					empty($this->submission->formresults[$triggerName]) && 
+					isset($this->submission->formresults[$splitElementName])
+				){
 					//loop over all multi values
-					foreach($this->submission->formresults[$splitElementName] as $subId=>$sub){
+					foreach((array)$this->submission->formresults[$splitElementName] as $subId=>$sub){
 						if(
 							isset($sub['archived']) && 		// Archive entry exists
 							$sub['archived']		||		// sub is already archived
@@ -174,7 +181,7 @@ class EditFormResults extends DisplayFormResults{
 					}
 				}else{
 					//if the form value is equal to the trigger value it needs to be to be archived
-					if($this->submission->formresults[$triggerName] == $triggerValue){
+					if(isset($this->submission->formresults[$triggerName]) && $this->submission->formresults[$triggerName] == $triggerValue){
 						$this->updateSubmission(true);
 					}
 				}
@@ -190,6 +197,10 @@ class EditFormResults extends DisplayFormResults{
 		$allArchived = true;
 
 		$splitIds	= $this->formData->settings['split'];
+
+		if(!is_array($this->submission->archivedsubs)){
+			$this->submission->archivedsubs	= [];
+		}
 
 		foreach($splitIds as $id){
 			$elementName			= $this->getElementById($id, 'name');

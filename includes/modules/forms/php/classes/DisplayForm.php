@@ -347,7 +347,7 @@ class DisplayForm extends SubmitForm{
 	public function showForm(){
 		//Load conditional js if available and needed
 		if($_SERVER['HTTP_HOST'] == 'localhost'){
-			$jsPath		= $this->jsFileName.'.min.js';
+			$jsPath		= $this->jsFileName.'.js';
 		}else{
 			$jsPath		= $this->jsFileName.'.min.js';
 		}

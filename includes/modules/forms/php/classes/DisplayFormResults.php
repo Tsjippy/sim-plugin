@@ -258,7 +258,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
-	function splitSubmission($splitElementName){
+	public function splitSubmission($splitElementName){
 		$splitNames	= [];
 		foreach($this->formData->settings['split'] as $id){
 			$splitNames[] = str_replace('[]', '', $this->getElementById($id, 'name'));
@@ -417,7 +417,7 @@ class DisplayFormResults extends DisplayForm{
 					$output		= date('d-M-Y',strtotime($string));
 				}
 			// Convert phonenumber to signal link
-			}elseif($string[0] == '+'){
+			}elseif(gettype($string) == 'string' && $string[0] == '+'){
 				$output	= "<a href='https://signal.me/#p/$string'>$string</a>";
 			}elseif($elementName == 'userid'){
 				$output				= SIM\USERPAGE\getUserPageLink($string);
@@ -677,6 +677,14 @@ class DisplayFormResults extends DisplayForm{
 			if($columnSetting['show'] == 'hide' || !is_numeric($id)){
 				continue;
 			}
+
+			if(!isset($columnSetting['view_right_roles'])){
+				$columnSetting['view_right_roles']	= [];
+			}
+
+			if(!isset($columnSetting['edit_right_roles'])){
+				$columnSetting['edit_right_roles']	= [];
+			}
 			
 			//if we lack view permission, do not show this cell
 			if(
@@ -689,10 +697,10 @@ class DisplayFormResults extends DisplayForm{
 				)	&&
 				!$this->tableEditPermissions &&															//no permission to edit the table and
 				!empty($columnSetting['view_right_roles']) && 											// there are view right permissions defined
-				!array_intersect($this->userRoles, (array)$columnSetting['view_right_roles'])			// and we do not have the view right role
+				!array_intersect($this->userRoles, $columnSetting['view_right_roles'])			// and we do not have the view right role
 			){
 				//later on there will be a row with data in this column
-				if($this->ownData && in_array('own',(array)$columnSetting['view_right_roles'])){
+				if($this->ownData && in_array('own', $columnSetting['view_right_roles'])){
 					$value = 'X';
 				}else{
 					continue;
@@ -703,7 +711,7 @@ class DisplayFormResults extends DisplayForm{
 			if(
 				!empty($this->tableSettings['hiderow']) &&												//There is a column defined
 				$columnSetting['name'] == $this->tableSettings['hiderow'] && 							//We are currently checking a cell in that column
-				$values[$this->tableSettings['hiderow']] == '' && 									//The cell has no value
+				(!isset($values[$this->tableSettings['hiderow']]) || $values[$this->tableSettings['hiderow']] == '') && 									//The cell has no value
 				!array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles'])	&&		//And we have no right to edit this specific column
 				!$this->tableEditPermissions															//and we have no right to edit all table data
 			){
@@ -711,9 +719,9 @@ class DisplayFormResults extends DisplayForm{
 			}
 
 			if(
-				in_array('own',(array)$columnSetting['edit_right_roles']) &&
+				in_array('own', $columnSetting['edit_right_roles']) &&
 				$ownEntry ||
-				array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles']) ||
+				array_intersect($this->userRoles, $columnSetting['edit_right_roles']) ||
 				$this->tableEditPermissions
 			){
 				$elementEditRights = true;
@@ -732,7 +740,11 @@ class DisplayFormResults extends DisplayForm{
 				$rowHasContents	= true;
 
 				//Get the field value from the array
-				$value	= $values[$elementName];
+				if(!isset($values[$elementName])){
+					$value	= 'X';
+				}else{
+					$value	= $values[$elementName];
+				}
 					
 				// Add sub id if this is an sub value
 				if($subId > -1 && $id > -1){
@@ -933,7 +945,7 @@ class DisplayFormResults extends DisplayForm{
 						<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][view_right_roles][]' multiple='multiple'>
 							<?php
 							foreach($viewRoles as $key=>$roleName){
-								if(in_array($key,(array)$columnSetting['view_right_roles'])){
+								if(isset($columnSetting['view_right_roles']) && in_array($key,(array)$columnSetting['view_right_roles'])){
 									$selected = 'selected="selected"';
 								}else{
 									$selected = '';
@@ -953,7 +965,7 @@ class DisplayFormResults extends DisplayForm{
 						<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][edit_right_roles][]' multiple='multiple'>
 						<?php
 						foreach($editRoles as $key=>$roleName){
-							if(in_array($key,(array)$columnSetting['edit_right_roles'])){
+							if(isset($columnSetting['edit_right_roles']) && @in_array($key,(array)$columnSetting['edit_right_roles'])){
 								$selected = 'selected="selected"';
 							}else{
 								$selected = '';
@@ -1091,6 +1103,12 @@ class DisplayFormResults extends DisplayForm{
 						<option value="personal" <?php if($this->tableSettings['result_type'] == 'personal'){echo 'selected';}?>>Only personal</option>
 						<option value="all" <?php if($this->tableSettings['result_type'] == 'all'){echo 'selected';}?>>All the viewer has permission for</option>
 					</select>
+					<br>
+					<label>
+						<input type='checkbox' name='table_settings[split-table]' value='yes' <?php if(isset($this->tableSettings['split-table']) && $this->tableSettings['split-table'] == 'yes'){echo 'checked';}?>>
+						Split the results in own entries and others entries
+					</label>
+
 				</div>
 				
 				<div class="table_rights_wrapper">
@@ -1421,7 +1439,9 @@ class DisplayFormResults extends DisplayForm{
 							}
 						}
 
-						$name			= str_replace(']', '', end(explode('[', $filterElement->name)));
+						$exploded		= explode('[', $filterElement->name);
+
+						$name			= str_replace(']', '', end($exploded));
 
 						// Filter the current submission data
 						if(!empty($filterValue)){
@@ -1562,9 +1582,129 @@ class DisplayFormResults extends DisplayForm{
 	}
 
 	/**
-	 * Creates the formresult table html
+	 * Writes a result table to the screen
 	 *
-	 * @param	array	$atts	WP Shortcode attributes
+	 * @param	string		$type		Either 'own', 'others' or 'all'
+	 *
+	 * @return	bool					True on no records found, false on data found
+	 */
+	public function renderTable($type){
+		$userId	= null;
+		if(isset($_REQUEST['onlyown'])){
+			$type		= 'own';
+		}
+
+		// get submissions for the current user only
+		if($type == 'own'){
+			$userId	= get_current_user_id();
+		}
+
+		$this->parseSubmissions($userId	);
+
+		$submissions		= $this->submissions;
+		if(isset($this->splittedSubmissions)){
+			$submissions		= $this->splittedSubmissions;
+		}
+
+		// do not write anything if empty 
+		if($type != 'all' && empty($submissions)){
+			return true;
+		}
+
+		// Check if we should sort the data
+		if($this->tableSettings['default_sort']){
+			$defaultSortElement	= $this->tableSettings['default_sort'];
+			$sortElement		= $this->getElementById($defaultSortElement);
+			$exploded			= explode('[', $sortElement->name);
+			$sort				= str_replace(']', '', end($exploded));
+			$sortElementType	= $sortElement->type;
+
+			//Sort the array
+			usort($submissions, function($a, $b) use ($sort, $sortElementType){
+				if($sortElementType == 'date'){
+					return strtotime($a->formresults[$sort]) <=> strtotime($b->formresults[$sort]);
+				}
+				return $a->formresults[$sort] > $b->formresults[$sort];
+			});
+		}
+
+		/*
+			Write the header row of the table
+		*/
+		//first check if the data contains data of our own
+		$this->ownData	= false;
+		$this->user->partnerId		= SIM\hasPartner($this->user->ID);
+		foreach($submissions as $submission){
+			//Our own entry or one of our partner
+			if($submission->userid == $this->user->ID || $submission->userid == $this->user->partnerId){
+				$this->ownData = true;
+				break;
+			}
+		}
+
+		$shouldShow	= apply_filters('sim-formstable-should-show', true, $this);
+
+		if($shouldShow !== true){
+			return  $shouldShow;
+		}
+		
+		ob_start();
+		if($type == 'own'){
+			echo "<h4>Your own submissions</h4>";
+		}elseif($type == 'others'){
+			echo "<h4>Submissions of others</h4>";
+		}
+		?>
+		<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
+			<?php
+			$this->resultTableHead();
+			?>
+			
+			<tbody class="table-body">
+				<?php
+				/*
+						WRITE THE CONTENT ROWS OF THE TABLE
+				*/
+				$allRowsEmpty	= true;
+				foreach($submissions as $submission){
+					$values				= $submission->formresults;
+					$values['id']		= $submission->id;
+					$values['userid']	= $submission->userid;
+
+					// Skip if needed
+					if($type == 'others' && $values['userid'] == $this->user->ID){
+						continue;
+					}
+
+					$subId				= -1;
+					if(is_numeric($submission->subId)){
+						$subId			= $submission->subId;
+						$values['subid']= $submission->subId;
+					}
+					
+					if($this->writeTableRow($values, $subId, $submission)){
+						// this row has contents
+						$allRowsEmpty	= false;
+					}
+				}
+
+				if($allRowsEmpty){
+					?>
+					<td>No records found</td>
+					<?php
+				}
+				?>
+			</tbody>
+		</table>
+		<?php
+		
+		echo ob_get_clean();
+
+		return $allRowsEmpty;
+	}
+
+	/**
+	 * Creates the formresult table html
 	 *
 	 * @return	string|WP_Error			The html or error on failure
 	 */
@@ -1572,14 +1712,6 @@ class DisplayFormResults extends DisplayForm{
 		//do not show if not logged in
 		if(!is_user_logged_in()){
 			return '';
-		}
-
-		if(!isset($this->submissions)){
-			$userId	= null;
-			if($_REQUEST['onlyown']){
-				$userId	= get_current_user_id();
-			}
-			$this->parseSubmissions($userId	);
 		}
 
 		$this->loadTableSettings();
@@ -1593,7 +1725,7 @@ class DisplayFormResults extends DisplayForm{
 		
 		//Load js
 		wp_enqueue_script('sim_forms_table_script');
-		
+
 		?>
 		<div class='form table-wrapper'>
 			<div class='form table-head'>
@@ -1604,7 +1736,16 @@ class DisplayFormResults extends DisplayForm{
 			</div>
 			<?php
 
-			if(empty($this->submissions)){
+			$this->enrichColumnSettings();
+
+			$allRowsEmpty	= true;
+			if(isset($this->tableSettings['split-table']) && $this->tableSettings['split-table'] == 'yes'){
+				$allRowsEmpty	= $this->renderTable('own') && $this->renderTable('others');
+			}else{
+				$allRowsEmpty	= $this->renderTable('all');
+			}
+			
+			if($allRowsEmpty){
 				?>
 				<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
 					<td>No records found</td>
@@ -1612,90 +1753,7 @@ class DisplayFormResults extends DisplayForm{
 				<?php
 
 				return ob_get_clean().'</div>';
-			}
-
-			$this->enrichColumnSettings();
-
-			$submissions		= $this->submissions;
-			if(isset($this->splittedSubmissions)){
-				$submissions		= $this->splittedSubmissions;
-			}
-
-			// Check if we should sort the data
-			if($this->tableSettings['default_sort']){
-				$defaultSortElement	= $this->tableSettings['default_sort'];
-				$sortElement		= $this->getElementById($defaultSortElement);
-				$sort				= str_replace(']', '', end(explode('[', $sortElement->name)));
-				$sortElementType	= $sortElement->type;
-
-				//Sort the array
-				usort($submissions, function($a, $b) use ($sort, $sortElementType){
-					if($sortElementType == 'date'){
-						return strtotime($a->formresults[$sort]) <=> strtotime($b->formresults[$sort]);
-					}
-					return $a->formresults[$sort] > $b->formresults[$sort];
-				});
-			}
-
-			/*
-				Write the header row of the table
-			*/
-			//first check if the data contains data of our own
-			$this->ownData	= false;
-			$this->user->partnerId		= SIM\hasPartner($this->user->ID);
-			foreach($submissions as $submission){
-				//Our own entry or one of our partner
-				if($submission->userid == $this->user->ID || $submission->userid == $this->user->partnerId){
-					$this->ownData = true;
-					break;
-				}
-			}
-
-			$shouldShow	= apply_filters('sim-formstable-should-show', true, $this);
-			if($shouldShow !== true){
-				echo $shouldShow;
-				return ob_get_clean().'</div>';
-			}
-			
-			?>
-			<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
-				<?php
-				$this->resultTableHead();
-				?>
-				
-				<tbody class="table-body">
-					<?php
-					/*
-							WRITE THE CONTENT ROWS OF THE TABLE
-					*/
-					$allRowsEmpty	= true;
-					foreach($submissions as $submission){
-						$values				= $submission->formresults;
-						$values['id']		= $submission->id;
-						$values['userid']	= $submission->userid;
-						$subId				= -1;
-						if(is_numeric($submission->subId)){
-							$subId			= $submission->subId;
-							$values['subid']= $submission->subId;
-						}
-						
-						if($this->writeTableRow($values, $subId, $submission)){
-							// this row has contents
-							$allRowsEmpty	= false;
-						}
-					}
-
-					if($allRowsEmpty){
-						?>
-						<td>No records found</td>
-						<?php
-					}
-					?>
-				</tbody>
-			</table>
-			
-			<?php
-			if(!$allRowsEmpty){
+			}else{
 				?>
 				<div class='sim-table-footer'>
 					<p id="table_remark">Click on any cell with <span class="edit_forms_table">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>
@@ -1750,8 +1808,13 @@ class DisplayFormResults extends DisplayForm{
 		<thead>
 			<tr>
 				<?php
+
 				//add normal fields
 				foreach($this->columnSettings as $settingId=>$columnSetting){
+					if(!isset($columnSetting['view_right_roles'])){
+						$columnSetting['view_right_roles']	= [];
+					}
+
 					if(
 						!is_numeric($settingId)				||
 						$columnSetting['show'] == 'hide'	||												//hidden column
@@ -1759,12 +1822,12 @@ class DisplayFormResults extends DisplayForm{
 							!$this->ownData				|| 													//The table does not contain data of our own
 							(
 								$this->ownData			&& 													//or it does contain our own data but
-								!in_array('own',(array)$columnSetting['view_right_roles'])					//we are not allowed to see it
+								!in_array('own', $columnSetting['view_right_roles'])					//we are not allowed to see it
 							)
 						) &&
 						!$this->tableEditPermissions 				&&										//no permission to edit the table and
 						!empty($columnSetting['view_right_roles']) 	&& 										// there are view right permissions defined
-						!array_intersect($this->userRoles, (array)$columnSetting['view_right_roles'])		// and we do not have the view right role and
+						!array_intersect($this->userRoles, $columnSetting['view_right_roles'])		// and we do not have the view right role and
 					){
 						continue;
 					}

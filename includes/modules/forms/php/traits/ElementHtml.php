@@ -304,6 +304,8 @@ trait ElementHtml{
 				}
 			}
 		}
+
+		$elValue	= "";
 		
 		if($element->type == 'p'){
 			$html = wp_kses_post($element->text);
@@ -452,8 +454,6 @@ trait ElementHtml{
 				
 				if(strpos($elType, 'input') !== false && !empty($val) && !in_array($elType, ['radio', 'checkbox'])){
 					$elValue	= "value='$val'";
-				}else{
-					$elValue	= "";
 				}
 			}
 			/*

@@ -242,7 +242,7 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId,
 	if($fieldValues == null || !is_numeric($fieldValues['user_id'])){
 		$buttonsHtml['print']	= '';
 	}else{
-		$tripDetails	= $displayFormResults->getSubmissions(null, $fieldValues['id'])->formresults;
+		$tripDetails	= $displayFormResults->getSubmissions(null, $fieldValues['id'])[0]->formresults;
 		
 		if(empty($tripDetails['travel'])){
 			return $buttonsHtml;
@@ -252,7 +252,7 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId,
 		$destination		= str_replace('_', ' ', end($tripDetails['travel'])['to']);
 
 		//if this is a roundtrip check if it is longer than 7 days
-		if($fieldValues['return'][0] == 'Yes'){
+		if(isset($fieldValues['return'][0]) && $fieldValues['return'][0] == 'Yes'){
 
 			// find the last trip of the first journey
 			foreach($tripDetails['travel'] as $index=>$trip){
@@ -277,13 +277,17 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId,
 		}
 		
 		//Add the current user to the passengers
+		if(!isset($fieldValues['passengers'])){
+			$fieldValues['passengers']	= [];
+		}
+
 		$passengers			= implode(',', (array)$fieldValues['passengers']);
 		if(!empty($passengers)){
 			$passengers .= ',';
 		}
 		$passengers		   .= $fieldValues['user_id'];
 		
-		if($fieldValues['traveltype'][0] == 'International'){
+		if(isset($fieldValues['traveltype'][0]) && $fieldValues['traveltype'][0] == 'International'){
 			$transportType	= 'air';
 		}else{
 			$transportType	= 'road';
@@ -303,7 +307,7 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId,
 			<input type="hidden" name="action" value="printtravelletter">
 			<input type="hidden" name="submissionid"	value="<?php echo $fieldValues['id'];?>">
 			<input type="hidden" name="passengers"		value="<?php echo $passengers;?>">
-			<input type="hidden" name="origin"			value="<?php echo $origin;?>">
+			<input type="hidden" name="origin"			value="<?php echo $origin[0];?>">
 			<input type="hidden" name="destination"		value="<?php echo $destination;?>">
 			<input type="hidden" name="transporttype"	value="<?php echo $transportType;?>">
 			<input type="hidden" name="traveltype"		value="<?php echo $travelType;?>">
@@ -318,7 +322,7 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId,
 
 //print travel letters if post
 add_action('sim_formtable_POST_actions',function(){
-	if($_POST['action'] == 'printtravelletter'){
+	if(isset($_POST['action']) && $_POST['action'] == 'printtravelletter'){
 		generateImmigrationLetters();
 		wp_die();
 	}

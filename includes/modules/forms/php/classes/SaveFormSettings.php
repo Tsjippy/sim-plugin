@@ -9,7 +9,7 @@ class SaveFormSettings extends SimForms{
 	use CreateJs;
 
 	/**
-	 * Change an existing form element
+	 * Change an existing form element in the db
 	 *
 	 * @param	object|array	$element	The new element data
 	 *

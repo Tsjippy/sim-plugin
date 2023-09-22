@@ -119,8 +119,13 @@ function sendSignalFromLocal($message, $recipient, $images){
 		$phonenumber = get_user_meta( $recipient, 'signal_number', true );
 	}
 
-	if(empty($phonenumber) || strlen($phonenumber) < 10){
-		SIM\printArray("Invalid Phoennumer $phonenumber", false, true);
+	if(empty($phonenumber)){
+		SIM\printArray("No Phonennumer $phonenumber", false, true);
+		return;
+	}
+
+	if(strlen($phonenumber) < 10){
+		SIM\printArray("Invalid Phonennumer $phonenumber", false, true);
 		return;
 	}
 

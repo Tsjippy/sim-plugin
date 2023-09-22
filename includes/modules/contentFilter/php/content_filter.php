@@ -59,7 +59,7 @@ add_action('wp_footer', function(){
 
 	$public				= false;
 	foreach((array)get_the_terms($post, $taxonomy) as $term){
-		if($term->slug	== 'public'){
+		if(gettype($term) == 'object' && $term->slug	== 'public'){
 			$public	= true;
 			break;
 		}
