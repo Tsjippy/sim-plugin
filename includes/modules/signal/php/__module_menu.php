@@ -885,6 +885,8 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 	if($moduleSlug != MODULE_SLUG){
 		return $dataHtml;
 	}
+
+	wp_enqueue_script('smiley');
 	
 	ob_start();
 
@@ -937,7 +939,8 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 	<form method='post'>
 		<label>
 			<h4>Message to be send</h4>
-			<textarea name='message' style='width:100%;' required></textarea>
+			<textarea name='message' style='width: calc(100% - 50px);' required></textarea>
+			<button type='button' id='trigger'>emoji</button>
 		</label>
 		<label>
 			<h4>Recipient</h4>

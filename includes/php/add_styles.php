@@ -18,6 +18,9 @@ function registerScripts($hook=''){
     //selectable select table cells https://github.com/Mobius1/Selectable
 	wp_register_script('selectable', plugins_url('js/selectable.min.js', __DIR__), array(), null, true);
 
+	//selectable select table cells https://github.com/Mobius1/Selectable
+	wp_register_script('smiley', plugins_url('js/smiley.min.js', __DIR__), array(), null, true);
+
 	//Nice select https://github.com/bluzky/nice-select2
 	wp_register_script('niceselect', plugins_url('js/nice-select2.js', __DIR__), array(), STYLE_VERSION,true);
 

@@ -8,12 +8,16 @@
     "user": "webpack --watch --entry ./user_select.js --output-path . --output-filename user_select.min.js --progress --mode=production --devtool source-map",
     "formsubmit": "webpack --watch --config formsubmit.config.js",
     "table": "webpack --watch --config table.config.js",
-    "main": "webpack --watch --config main.config.js"
+    "main": "webpack --watch --config main.config.js",
+    "smile": "webpack --watch --entry ./smiley.js --output-path . --output-filename smiley.min.js --progress --mode=production --devtool source-map"
   },
   "author": "Ewald Harmsen",
   "license": "ISC",
   "devDependencies": {
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2"
+  },
+  "dependencies": {
+    "@picmo/popup-picker": "^5.8.5"
   }
 }
