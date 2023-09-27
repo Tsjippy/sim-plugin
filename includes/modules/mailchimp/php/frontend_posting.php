@@ -47,9 +47,8 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
 
             <div class='mailchimp-wrapper hidden'>
                 <h4>Use this from email address</h4>
-                <select name='mailchimp_email'>
-                    <option value=''>---</option>
-
+                <input type='text' name='mailchimp_email' list='emails' value='<?php echo $mailchimpEmail;?>'>
+                <datalist id='emails'>
                     <?php
                     $emails = [
                         'jos.personnel@sim.org'	=> 'jos.personnel',
@@ -58,15 +57,10 @@ add_action('sim_frontend_post_after_content', function($frontendcontend){
                         'jos.health@sim.org'	=> 'jos.health',
                     ];
                     foreach($emails as $email=>$text){
-                        if($mailchimpEmail == $email){
-                            $selected = 'selected="selected"';
-                        }else{
-                            $selected = '';
-                        }
-                        echo "<option value='$email' $selected>$text</option>";
+                        echo "<option value='$email'>$text</option>";
                     }
                     ?>
-                </select>
+                </datalist>
 
                 <h4>Prepend the e-mail with this message:</h4>
                 <textarea name='mailchimp-extra-message'><?php

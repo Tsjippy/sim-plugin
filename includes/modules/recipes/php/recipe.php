@@ -147,22 +147,22 @@ function recipeSpecificFields($frontEndContent){
 	
 	$frontEndContent->showCategories('recipe', $categories);
 	?>
-	<div class="property recipe <?php if($frontEndContent->post_type != 'recipe'){echo 'hidden';} ?>">
+	<div class="property recipe <?php if($frontEndContent->postType != 'recipe'){echo 'hidden';} ?>">
 		<h4 name="ingredients_label">Recipe ingredients (one per line)</h4>
 		<textarea name="ingredients" rows="10">
-			<?php echo wp_strip_all_tags(get_post_meta($frontEndContent->post_id,'ingredients',true)); ?>
+			<?php echo wp_strip_all_tags(get_post_meta($frontEndContent->postId,'ingredients',true)); ?>
 		</textarea>
 		
 		
 		<label class="block" name="time_need_label">
 			<h4>Recipe time needed</h4>
-			<input type='number' name="time_needed" min="1" value="<?php echo get_post_meta($frontEndContent->post_id,'time_needed',true); ?>" style="display: inline-block;"> 
+			<input type='number' name="time_needed" min="1" value="<?php echo get_post_meta($frontEndContent->postId,'time_needed',true); ?>" style="display: inline-block;"> 
 			<span style="margin-left:-100px;">minutes</span>
 		</label>
 
 		<label class="block" name="serves_label">
 			<h4>Serves</h4>
-			<input type='number' name="serves" min="1" value="<?php echo get_post_meta($frontEndContent->post_id,'serves',true); ?>" style="display: inline-block;"> 
+			<input type='number' name="serves" min="1" value="<?php echo get_post_meta($frontEndContent->postId,'serves',true); ?>" style="display: inline-block;"> 
 			<span style="margin-left:-100px;">people</span>
 		</label>
 	</div>

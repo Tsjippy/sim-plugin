@@ -344,18 +344,21 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         $location  = json_decode($location, true);
     }
 
+    $address = '';
     if(isset($location['address'])){
         $address = $location['address'];
     }elseif(get_post_meta($postId, 'geo_address', true) != ''){
         $address = get_post_meta($postId, 'geo_address', true);
     }
 
+    $latitude = '';
     if(isset($location['latitude'])){
         $latitude = $location['latitude'];
     }elseif(get_post_meta($postId, 'geo_latitude', true) != ''){
         $latitude = get_post_meta($postId, 'geo_latitude', true);
     }
 
+    $longitude  = '';
     if(isset($location['longitude'])){
         $longitude = $location['longitude'];
     }elseif(get_post_meta($postId, 'geo_longitude', true) != ''){

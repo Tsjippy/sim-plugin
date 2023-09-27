@@ -27,7 +27,7 @@ class FrontEndContent{
 	public $oldPost;
 
 	public function __construct(){
-		$this->postId			= $_GET['post_id'];
+		$this->postId			= isset($_GET['post_id']) ? $_GET['post_id'] : '' ;
 		$this->user 			= wp_get_current_user();
 		$this->post 			= null;
 		if(is_numeric($this->postId)){
@@ -80,29 +80,31 @@ class FrontEndContent{
 
 		//Show warning if not allowed to edit
 		$this->hasEditRights();
-		if(!$this->editRight && is_numeric($_GET['post_id'])){
+		if(!$this->editRight && @is_numeric($_GET['post_id'])){
 			return '<div class="error">You do not have permission to edit this page.</div>';
 		}
 
-		//Show warning if someone else is editing
-		$currentEditingUser = wp_check_post_lock($_GET['post_id']);
-		if(is_numeric($currentEditingUser)){
-			header("Refresh: 30;");
-			return "<div class='error' id='	'>".get_userdata($currentEditingUser)->display_name." is currently editing this {$this->postType}, please wait.<br>We will refresh this page every 30 seconds to see if you can go ahead.</div>";
-		}
+		if(isset($_GET['post_id']) && is_numeric($_GET['post_id'])){
+			//Show warning if someone else is editing
+			$currentEditingUser = wp_check_post_lock($_GET['post_id']);
+			if(is_numeric($currentEditingUser)){
+				header("Refresh: 30;");
+				return "<div class='error' id='	'>".get_userdata($currentEditingUser)->display_name." is currently editing this {$this->postType}, please wait.<br>We will refresh this page every 30 seconds to see if you can go ahead.</div>";
+			}
 
-		//Current time minus last modified time
-		$secondsSinceUpdated = time()-get_post_modified_time('U', true, $this->post);
+			//Current time minus last modified time
+			$secondsSinceUpdated = time()-get_post_modified_time('U', true, $this->post);
 
-		//Show warning when post has been updated recently
-		if($secondsSinceUpdated < 3600 && $secondsSinceUpdated > -1){
-			$minutes = intval($secondsSinceUpdated/60);
-			echo "<div class='warning'>This {$this->postType} has been updated <span id='minutes'>$minutes</span> minutes ago.</div>";
-		}
+			//Show warning when post has been updated recently
+			if($secondsSinceUpdated < 3600 && $secondsSinceUpdated > -1){
+				$minutes = intval($secondsSinceUpdated/60);
+				echo "<div class='warning'>This {$this->postType} has been updated <span id='minutes'>$minutes</span> minutes ago.</div>";
+			}
 
-		//Show warning when post is in trash
-		if($this->post->post_status == 'trash'){
-			echo "<div class='warning'>This {$this->postType} has been deleted.<br>You can republish if that should not be the case.</div>";
+			//Show warning when post is in trash
+			if($this->post->post_status == 'trash'){
+				echo "<div class='warning'>This {$this->postType} has been deleted.<br>You can republish if that should not be the case.</div>";
+			}
 		}
 
 		?>
@@ -389,6 +391,8 @@ class FrontEndContent{
 			$this->postTitle 									= $this->post->post_title;
 			$this->postContent 									= $this->post->post_content;
 			$this->postImageId									= get_post_thumbnail_id($this->postId);
+
+			$this->postCategory 									= $this->post->post_category;
 		}
 
 		if(!empty($_GET['type'])){
@@ -396,7 +400,6 @@ class FrontEndContent{
 		}
 
 		$this->postName 										= str_replace("_lite","",$this->postType);
-		$this->postCategory 									= $this->post->post_category;
 
 		//show lite version of location by default
 		if(strpos($this->postType, '_lite') !== false){
@@ -416,7 +419,7 @@ class FrontEndContent{
 	 *
 	**/
 	public function showChanges(){
-		if($this->update && $this->post->post_type == 'change'){
+		if($this->update && isset($this->post->post_type) && $this->post->post_type == 'change'){
 			// Get changes in title and content
 			if(!function_exists('wp_get_revision_ui_diff')){
 				include_once ABSPATH . 'wp-admin/includes/revision.php';
@@ -878,15 +881,15 @@ class FrontEndContent{
 		<div class="advancedpublishoptions <?php echo $hidden;?>">
 			<?php
 			// Show change author dropdown
-			$authorId	= $this->post->post_author;
-			if(!is_numeric($authorId)){
-				$authorId = $this->user->ID;
+			$authorId = $this->user->ID;
+			if(isset($this->post->post_author) && is_numeric($this->post->post_author)){
+				$authorId = $this->post->post_author;
 			}
 
 			echo SIM\userSelect('Author', true, false, '', 'post_author', [], $authorId);
 
 			// Only show publish date if not yet published
-			if(!in_array($this->post->post_status, ['publish', 'inherit'])){
+			if(empty($this->post->post_status) || !in_array($this->post->post_status, ['publish', 'inherit'])){
 				if(empty($this->post)){
 					$publishDate	= date("Y-m-d");
 				}else{

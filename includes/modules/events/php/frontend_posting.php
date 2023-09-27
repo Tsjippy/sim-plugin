@@ -67,20 +67,20 @@ function eventSpecificFields($frontEndContent){
 	
 		<label name="startdate_label">
 			<h4>Startdate</h4>
-			<input type='date'						name='event[startdate]' value='<?php echo $eventDetails['startdate']; ?>' required>
-			<input type='time' class='eventtime<?php if(!empty($eventDetails['allday'])){echo " hidden";}?>'	name='event[starttime]' value='<?php echo $eventDetails['starttime']; ?>' required>
+			<input type='date'						name='event[startdate]' value='<?php if(isset($eventDetails['startdate'])){echo $eventDetails['startdate'];} ?>' required>
+			<input type='time' class='eventtime<?php if(!empty($eventDetails['starttime'])){echo " hidden";}?>'	name='event[starttime]' value='<?php echo $eventDetails['starttime']; ?>' required>
 		</label>
 		
 		<label name="enddate_label" <?php if(!empty($eventDetails['allday'])){echo "class='hidden'";}?>>
 			<h4>Enddate</h4>
-			<input type='date'						name='event[enddate]' value='<?php echo $eventDetails['enddate']; ?>' required>
-			<input type='time' class='eventtime'	name='event[endtime]' value='<?php echo $eventDetails['endtime']; ?>' required>
+			<input type='date'						name='event[enddate]' value='<?php if(isset($eventDetails['enddate'])){echo $eventDetails['enddate'];} ?>' required>
+			<input type='time' class='eventtime'	name='event[endtime]' value='<?php if(isset($eventDetails['endtime'])){echo $eventDetails['endtime'];} ?>' required>
 		</label>
 
 		<label name="location">
 			<h4>Location</h4>
-			<input type='hidden' class='datalistvalue'	name='event[location_id]' 	value='<?php echo $eventDetails['location_id']; ?>'>
-			<input type='text'							name='event[location]' 		value='<?php echo $eventDetails['location']; ?>' list="locations">
+			<input type='hidden' class='datalistvalue'	name='event[location_id]' 	value='<?php if(isset($eventDetails['location_id'])){echo $eventDetails['location_id'];} ?>'>
+			<input type='text'							name='event[location]' 		value='<?php if(isset($eventDetails['location'])){echo $eventDetails['location'];} ?>' list="locations">
 			<datalist id="locations">
 				<?php
 				$locations = get_posts(
@@ -100,8 +100,8 @@ function eventSpecificFields($frontEndContent){
 
 		<label name="organizer">
 			<h4>Organizer</h4>
-			<input type='hidden' class='datalistvalue'	name='event[organizer_id]'	value='<?php echo $eventDetails['organizer_id']; ?>'>
-			<input type='text'							name='event[organizer]'		value='<?php echo $eventDetails['organizer']; ?>' list="users">
+			<input type='hidden' class='datalistvalue'	name='event[organizer_id]'	value='<?php if(isset($eventDetails['organizer_id'])){echo $eventDetails['organizer_id'];} ?>'>
+			<input type='text'							name='event[organizer]'		value='<?php if(isset($eventDetails['organizer'])){echo $eventDetails['organizer'];} ?>' list="users">
 			<datalist id="users">
 				<?php
 				foreach(SIM\getUserAccounts(false,true,true) as $user){
@@ -115,7 +115,7 @@ function eventSpecificFields($frontEndContent){
 			<button class='button' type='button' name='enable_event_repeat'>
 				Repeat this event
 			</button>
-			<input type='hidden' name='event[isrepeated]' value='<?php echo $eventDetails['isrepeated'];?>'>
+			<input type='hidden' name='event[isrepeated]' value='<?php if(isset($eventDetails['isrepeated'])){echo $eventDetails['isrepeated'];}?>'>
 		</label>
 		
 		<?php
@@ -126,7 +126,12 @@ function eventSpecificFields($frontEndContent){
 }
 
 function displayRepetitionParameters($eventDetails){
-	$repeatParam	= $eventDetails['repeat'];
+	$repeatParam['type']		= '';
+	$repeatParam['datetype']	= '';
+
+	if(isset($eventDetails['repeat'])){
+		$repeatParam	= $eventDetails['repeat'];
+	}
 	$list	=	array(
 		'daily'			=> 'Daily',
 		'weekly'		=> 'Weekly',
@@ -191,8 +196,9 @@ function displayRepetitionParameters($eventDetails){
 			<h4> Specify repeat days</h4>
 			<div class="clone_divs_wrapper">
 				<?php
-				$includeDates	= $eventDetails['repeat']['includedates'];
-				if(!is_array($includeDates)){
+				if(!empty($eventDetails['repeat']['includedates']) && is_array($eventDetails['repeat']['includedates'])){
+					$includeDates	= $eventDetails['repeat']['includedates'];
+				}else{
 					$includeDates	= [''];
 				}
 				
@@ -218,23 +224,23 @@ function displayRepetitionParameters($eventDetails){
 		</label><br>
 		<div class='repeat_type_option'>
 			<label>
-				<input type='radio' name='event[repeat][stop]' value='date' <?php if($eventDetails['repeat']['stop'] == 'date'){echo 'checked';}?>>
+				<input type='radio' name='event[repeat][stop]' value='date' <?php if(!empty($eventDetails['repeat']['stop']) && $eventDetails['repeat']['stop'] == 'date'){echo 'checked';}?>>
 				On this date:
 			</label><br>
 			
-			<label class='repeat_type_option_specifics <?php if($eventDetails['repeat']['stop'] != 'date'){echo 'hidden';}?>'>
-				<input type='date' name='event[repeat][enddate]' value='<?php echo $eventDetails['repeat']['enddate'];?>'>
+			<label class='repeat_type_option_specifics <?php if(empty($eventDetails['repeat']['stop']) || $eventDetails['repeat']['stop'] != 'date'){echo 'hidden';}?>'>
+				<input type='date' name='event[repeat][enddate]' value='<?php if(!empty($eventDetails['repeat']['enddate'])){echo $eventDetails['repeat']['enddate'];}?>'>
 			</label>
 		</div>
 
 		<div class='repeat_type_option'>
 			<label>
-				<input type='radio' name='event[repeat][stop]' value='after' <?php if($eventDetails['repeat']['stop'] == 'after'){echo 'checked';}?>>
+				<input type='radio' name='event[repeat][stop]' value='after' <?php if(!empty($eventDetails['repeat']['stop']) && $eventDetails['repeat']['stop'] == 'after'){echo 'checked';}?>>
 				After this amount of repeats:<br>
 			</label>
 			
-			<label class='repeat_type_option_specifics <?php if($eventDetails['repeat']['stop'] != 'after'){echo 'hidden';}?>'>
-				<input type='number' name='event[repeat][amount]' value='<?php echo $eventDetails['repeat']['amount'];?>'>
+			<label class='repeat_type_option_specifics <?php if(empty($eventDetails['repeat']['stop']) || $eventDetails['repeat']['stop'] != 'after'){echo 'hidden';}?>'>
+				<input type='number' name='event[repeat][amount]' value='<?php if(!empty($eventDetails['repeat']['amount'])){echo $eventDetails['repeat']['amount'];}?>'>
 			</label>
 		</div>
 		
@@ -242,9 +248,10 @@ function displayRepetitionParameters($eventDetails){
 			<h4>Exclude dates from this pattern</h4>
 			<div class="clone_divs_wrapper">
 			<?php
-			$excludeDates	= (array)$eventDetails['repeat']['excludedates'];
-			if(empty($excludeDates)){
+			if(empty($eventDetails['repeat']['excludedates'])){
 				$excludeDates	= [''];
+			}else{
+				$excludeDates	= (array)$eventDetails['repeat']['excludedates'];
 			}
 			
 			foreach($excludeDates as $index=>$excludeDate){
@@ -266,7 +273,15 @@ function displayRepetitionParameters($eventDetails){
 }
 
 function repetitionIntervalSettings($eventDetails){
-	$repeatParam	= $eventDetails['repeat'];
+	if(empty($eventDetails['repeat'])){
+		$repeatParam	= [
+			'interval'	=> '',
+			'datetype'	=> '',
+			'type'		=> ''
+		];
+	}else{
+		$repeatParam	= $eventDetails['repeat'];
+	}
 	$weekNames 		= ['First','Second','Third','Fourth','Fifth','Last'];
 
 	if(empty($repeatParam['interval'])){
@@ -315,7 +330,7 @@ function repetitionIntervalSettings($eventDetails){
 			<?php
 			for ($m=1; $m<13; $m++){
 				$monthName = date("F", mktime(0, 0, 0, $m, 10));
-				if(is_array($eventDetails['repeat']['months']) && in_array($m, $eventDetails['repeat']['months'])){
+				if(isset($eventDetails['repeat']['months']) && is_array($eventDetails['repeat']['months']) && in_array($m, $eventDetails['repeat']['months'])){
 					$checked = 'checked';
 				}else{
 					$checked = '';
@@ -350,7 +365,7 @@ function repetitionIntervalSettings($eventDetails){
 
 			<?php
 			foreach($weekNames as $weekName){
-				if(is_array($eventDetails['repeat']['weeks']) && in_array($weekName, $eventDetails['repeat']['weeks'])){
+				if(!empty($eventDetails['repeat']['weeks']) && is_array($eventDetails['repeat']['weeks']) && in_array($weekName, $eventDetails['repeat']['weeks'])){
 					$checked = 'checked';
 				}else{
 					$checked = '';
@@ -370,7 +385,7 @@ function repetitionIntervalSettings($eventDetails){
 
 			<?php
 			foreach(['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $key=>$dayName){
-				if(is_array($eventDetails['repeat']['weekdays']) && in_array($dayName, $eventDetails['repeat']['weekdays'])){
+				if(!empty($eventDetails['repeat']['weekdays']) && is_array($eventDetails['repeat']['weekdays']) && in_array($dayName, $eventDetails['repeat']['weekdays'])){
 					$checked	= 'checked';
 				}else{
 					$checked	= '';

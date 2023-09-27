@@ -76,6 +76,10 @@ add_filter( 'safe_style_css', function( $styles ) {
  * @return	boolean			True if allowed
  */
 function allowedToEdit($post){
+	if(empty($post)){
+		return true;
+	}
+	
 	if(is_numeric($post)){
 		$post	= get_post($post);
 	}

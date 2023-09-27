@@ -193,9 +193,11 @@ class SimForms{
 
 		if(!$this->editRights){
 			$editRoles	= ['editor'];
-			foreach((array)$this->formData->settings['full_right_roles'] as $key=>$role){
-				if(!empty($role)){
-					$editRoles[] = $key;
+			if(!empty($this->formData->settings['full_right_roles'])){
+				foreach((array)$this->formData->settings['full_right_roles'] as $key=>$role){
+					if(!empty($role)){
+						$editRoles[] = $key;
+					}
 				}
 			}
 			//calculate full form rights
