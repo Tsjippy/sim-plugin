@@ -7,6 +7,23 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.36.7] - 2023-09-22
+
+
+### Fixed
+
+### Updated
+
+## [2.36.6] - 2023-09-22
+
+
+### Added
+- possibility to split form result in private  and public table
+
+### Fixed
 - some bugs
 - auto archiving
 
