@@ -77,6 +77,9 @@ class SubmitForm extends SimForms{
 					if($formValue != $compareValue && $formValue != str_replace(' ', '_', $compareValue)){
 						continue;
 					}
+
+					SIM\printArray($email);
+					SIM\printArray($trigger);
 				}
 
 				// check if the submit condition is matched

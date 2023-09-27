@@ -87,7 +87,13 @@ function sendPrayerRequests(){
 				}
 
 				if(is_numeric($user)){
-					$dayPart	.= " ".get_userdata($user)->first_name;
+					$userdata	= get_userdata($user);
+
+					if(!$userdata){
+						continue;
+					}
+					
+					$dayPart	.= " ".$userdata->first_name;
 				}
 				SIM\trySendSignal("Good $dayPart,\n\n$message", $user, false, $prayerRequest['pictures']);
 			}

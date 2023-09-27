@@ -40,7 +40,7 @@ if(!empty($argv) && count($argv) == 2){
     include_once __DIR__.'/../php/classes/Signal.php';
 
     
-    SIM\printArray($data);
+    //SIM\printArray($data);
 
     $signal = new SignalBus();
 

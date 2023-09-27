@@ -559,7 +559,13 @@ trait ElementHtml{
 						foreach((array)$values['metavalue'] as $key=>$val){
 							if(is_array($val)){
 								foreach($val as $v){
-									$lowValues[] = strtolower($v);
+									if(is_array($v)){
+										foreach($v as $v2){
+											$lowValues[] = strtolower($v2);
+										}
+									}else{
+										$lowValues[] = strtolower($v);
+									}
 								}
 							}else{
 								$lowValues[] = strtolower($val);
