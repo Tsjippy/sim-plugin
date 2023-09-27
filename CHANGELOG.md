@@ -7,6 +7,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.36.8] - 2023-09-27
+
+
+### Added
+- emoji
+
+### Fixed
 - bugfixes
 
 ### Updated
