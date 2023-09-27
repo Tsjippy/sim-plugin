@@ -944,7 +944,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 		</label>
 		<label>
 			<h4>Recipient</h4>
-			<input type='text' name='recipient' list='groups' style='width:100%' required>
+			<input type='text' name='recipient' list='groups' style='width: calc(100% - 50px);' placeholder="Type a name or groupname to select" required>
 
 			<datalist id='groups'>
 				<?php
