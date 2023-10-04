@@ -48,7 +48,7 @@ function sendReimbursementRequests(){
 			if(isset($formTable->submission->formresults['receipts'])){
 				foreach($formTable->submission->formresults['receipts'] as $receipt){
 					// add to e-mail attachments
-					$attachments[]	= wp_upload_dir()['basedir'].'/'.$receipt;
+					$attachments[]	= ABSPATH.$receipt;
 				}
 			}
 

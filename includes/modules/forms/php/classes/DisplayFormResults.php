@@ -76,8 +76,8 @@ class DisplayFormResults extends DisplayForm{
 		}
 
 		// Limit the amount to 100
-		if(isset($_POST['pagenumber']) && is_numeric($_POST['pagenumber'])){
-			$this->currentPage	= $_POST['pagenumber'];
+		if(isset($_REQUEST['pagenumber']) && is_numeric($_REQUEST['pagenumber'])){
+			$this->currentPage	= $_REQUEST['pagenumber'];
 
 			if(isset($_POST['prev'])){
 				$this->currentPage--;
@@ -1666,9 +1666,6 @@ class DisplayFormResults extends DisplayForm{
 			
 			<tbody class="table-body">
 				<?php
-				/*
-						WRITE THE CONTENT ROWS OF THE TABLE
-				*/
 				$allRowsEmpty	= true;
 				foreach($submissions as $submission){
 					$values				= $submission->formresults;
@@ -1720,6 +1717,18 @@ class DisplayFormResults extends DisplayForm{
 
 		$this->loadTableSettings();
 
+		// first render the table so we now how many results we have
+		ob_start();
+		$allRowsEmpty	= true;
+		if(isset($this->tableSettings['split-table']) && $this->tableSettings['split-table'] == 'yes'){
+			$result1		= $this->renderTable('own');
+			$result2		= $this->renderTable('others');
+			$allRowsEmpty	= $result1 && $result2;
+		}else{
+			$allRowsEmpty	= $this->renderTable('all');
+		}
+		$tableHtml	= ob_get_clean();
+
 		$buttons			= $this->renderTableButtons();
 
 		ob_start();
@@ -1741,15 +1750,6 @@ class DisplayFormResults extends DisplayForm{
 			<?php
 
 			$this->enrichColumnSettings();
-
-			$allRowsEmpty	= true;
-			if(isset($this->tableSettings['split-table']) && $this->tableSettings['split-table'] == 'yes'){
-				$result1		= $this->renderTable('own');
-				$result2		= $this->renderTable('others');
-				$allRowsEmpty	= $result1 && $result2;
-			}else{
-				$allRowsEmpty	= $this->renderTable('all');
-			}
 			
 			if($allRowsEmpty){
 				?>
@@ -1760,6 +1760,7 @@ class DisplayFormResults extends DisplayForm{
 
 				return ob_get_clean().'</div>';
 			}else{
+				echo $tableHtml;
 				?>
 				<div class='sim-table-footer'>
 					<p id="table_remark">Click on any cell with <span class="edit_forms_table">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>

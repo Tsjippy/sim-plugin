@@ -120,13 +120,13 @@ function sendSignalFromLocal($message, $recipient, $images){
 	}
 
 	if(empty($phonenumber)){
-		SIM\printArray("No Phonennumer $phonenumber", false, true);
-		return;
+		//SIM\printArray("No Phonennumer $phonenumber", false, true);
+		return false;
 	}
 
 	if(strlen($phonenumber) < 10){
-		SIM\printArray("Invalid Phonennumer $phonenumber", false, true);
-		return;
+		//SIM\printArray("Invalid Phonennumer $phonenumber", false, true);
+		return false;
 	}
 
 	if(strpos(php_uname(), 'Linux') !== false){

@@ -52,7 +52,7 @@ function trySendSignal($message, $recipient, $async=false, $postId=""){
 		if($async){
 			SIGNAL\asyncSignalMessageSend($message, $recipient, $postId);
 		}else{
-			SIGNAL\sendSignalMessage($message, $recipient, $postId);
+			return SIGNAL\sendSignalMessage($message, $recipient, $postId);
 		}
 	}
 }
