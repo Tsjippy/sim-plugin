@@ -9,6 +9,7 @@
 
 ### Fixed
 - bugs
+- error with paged results
 
 ### Updated
 
