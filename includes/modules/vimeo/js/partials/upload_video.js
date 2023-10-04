@@ -45,7 +45,7 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
 
     upload.options.onProgress   = function(bytesUploaded, bytesTotal) {
 		// Show loader
-		if(document.querySelector('.loaderwrapper .media-progress-bar') == null){
+		if(document.querySelector('.loaderwrapper .media-progress-bar') == null && document.querySelector('.loaderwrapper') != null){
 			document.querySelector('.loaderwrapper').innerHTML	= `
 			<div class="media-progress-bar" style='display:block;height: 20px;'>
 				<div style="width: 0%;height: 20px;">
@@ -83,7 +83,7 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
     }
 
     upload.options.onError      = function(error) {
-        console.error("Failed because: " + error);
+        console.error(`Failed because: ${error}`);
         wp_uploader.dispatchEvent('fileUploaded', plupload_file, '');
     }
 

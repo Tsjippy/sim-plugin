@@ -4,7 +4,9 @@ use SIM;
 
 //Multi default values used to prefil the compound dropdown
 add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId, $formName){
-	if($formName != 'user_location') return $defaultArrayValues;
+	if($formName != 'user_location'){
+		return $defaultArrayValues;
+	}
 
 	$compounds = [];
 	foreach ( NIGERIASTATES as $name=>$state ) {
@@ -17,7 +19,9 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 
 //create birthday and anniversary events
 add_filter('sim_before_saving_formdata',function($formResults, $formName, $userId){
-	if($formName != 'user_location') return $formResults;
+	if($formName != 'user_location'){
+		return $formResults;
+	}
 	
 	//Get the old values from the db
 	$oldLocation = get_user_meta( $userId, 'location', true );

@@ -396,7 +396,7 @@ class SimForms{
 				// add []
 				$name	.= '[]';
 			}else{
-				SIM\printArray("Element with name $name not found on form {$this->formData->name} with id {$this->formData->id}");
+				//SIM\printArray("Element with name $name not found on form {$this->formData->name} with id {$this->formData->id}");
 				return false;
 			}
 		}

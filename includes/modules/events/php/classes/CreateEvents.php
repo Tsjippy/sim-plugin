@@ -358,7 +358,7 @@ class CreateEvents extends Events{
 		$this->postId	= get_user_meta($user->ID, $eventIdMetaKey, true);
 		$this->deleteOldCelEvent($this->postId, $metaValue, $user->ID, $type, $title);
 
-		if($partnerId){
+		if($this->partnerId){
 			$this->deleteOldCelEvent(get_user_meta($this->partnerId, $eventIdMetaKey, true), $metaValue, $this->partnerId, $type, $title);
 		}
 

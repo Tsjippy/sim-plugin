@@ -137,7 +137,7 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 		}
 	}
 	
-	foreach(SIM\getUserAccounts(false, true) as $user){
+	foreach(SIM\getUserAccounts(false, false) as $user){
 		$defaultArrayValues['all_users'][$user->ID] = $user->display_name;
 	}
 
