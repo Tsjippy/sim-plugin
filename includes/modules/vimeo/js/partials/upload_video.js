@@ -55,7 +55,7 @@ async function wpMediaUpload (plupload_file, wp_uploader) {
 		}
 
         //calculate percentage
-        let percentage = (bytesUploaded / bytesTotal * 100).toFixed(2)
+        let percentage = (bytesUploaded / bytesTotal * 100).toFixed(1)
     
         //show percentage in progressbar
         document.querySelectorAll('.loaderwrapper .media-progress-bar > div, .media-progress-bar > div, .selection-view .uploading:first-child .media-progress-bar > div, .media-uploader-status.uploading .media-progress-bar > div').forEach(div=>{

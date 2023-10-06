@@ -4,7 +4,8 @@ use SIM;
 
 //Update the post
 //http://postieplugin.com/postie_post_before/
-add_filter('postie_post_before', function($post, $headers) {
+add_filter('postie_post_before', __NAMESPACE__.'processEmail', 10, 2);
+function processEmail($post, $headers) {
 	if($post != null){
 		$user = get_userdata($post['post_author']);
 		
@@ -21,6 +22,7 @@ add_filter('postie_post_before', function($post, $headers) {
 
 		foreach($categoryMapper as $mapper){
 			if (trim(strtolower($mapper['email'])) == $email){
+				unset($mapper['post_category']);
 				$postType			= $mapper['category'][0];
 				$post['post_type']	= $postType;
 				$taxonomy			= $mapper['category'][$postType][0];
@@ -41,7 +43,7 @@ add_filter('postie_post_before', function($post, $headers) {
 	}
 
 	return $post;
-}, 10, 2);
+}
 
 add_filter('postie_post_after', function($post){
 	SIM\printArray($post);
@@ -55,3 +57,29 @@ add_filter('postie_post_after', function($post){
 		SIM\FRONTENDPOSTING\sendPendingPostWarning(get_post($post['ID']), false);
 	}
 });
+
+function test(){
+	$post	= [
+		'post_author'	=> 122,
+		'post_status'	=> 'post_status',
+		'post_type'		=> 'post',
+		'taxonomy'		=> 'category',
+		'tax_input'		=> [
+			'category'		=> [
+				3
+			]
+		],
+		'post_title'	=> 'OCTOBER  2023 EXCHANGE RATE',
+		'post_category'	=> [4]
+	];
+
+	$headers	= [];
+	$headers['from']	= [
+		'mailbox'	=> 'jos.treasurer',
+		'host'		=> 'sim.org'
+	];
+
+	processEmail($post, $headers);
+
+	wp_insert_post($post);
+}
