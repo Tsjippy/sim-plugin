@@ -10,6 +10,7 @@
 ### Fixed
 - bugs
 - error with paged results
+- vimeo upload error
 
 ### Updated
 
