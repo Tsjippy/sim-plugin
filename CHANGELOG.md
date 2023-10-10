@@ -11,6 +11,7 @@
 - bugs
 - error with paged results
 - vimeo upload error
+- issue with mail postings
 
 ### Updated
 
