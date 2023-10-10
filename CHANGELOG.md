@@ -12,6 +12,7 @@
 - error with paged results
 - vimeo upload error
 - issue with mail postings
+- excel export
 
 ### Updated
 
