@@ -104,7 +104,7 @@ function eventSpecificFields($frontEndContent){
 			<input type='text'							name='event[organizer]'		value='<?php if(isset($eventDetails['organizer'])){echo $eventDetails['organizer'];} ?>' list="users">
 			<datalist id="users">
 				<?php
-				foreach(SIM\getUserAccounts(false,true,true) as $user){
+				foreach(SIM\getUserAccounts(false, true, true) as $user){
 					echo "<option data-value='{$user->ID}' value='{$user->display_name}'></option>";
 				}
 				?>

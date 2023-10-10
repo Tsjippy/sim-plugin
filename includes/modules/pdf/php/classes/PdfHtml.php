@@ -45,7 +45,7 @@ class PdfHtml extends \FPDF{
 	 *
 	 * @return	array			The RGB array
 	 */
-	function hex2dec($color = "#000000"){
+	public function hex2dec($color = "#000000"){
 		$r 				= substr($color, 1, 2);
 		$red 			= hexdec($r);
 		$v 				= substr($color, 3, 2);
@@ -66,7 +66,7 @@ class PdfHtml extends \FPDF{
 	 *
 	 * @return	string			the text
 	 */
-	function txtentities($html){
+	public function txtentities($html){
 		$trans = get_html_translation_table(HTML_ENTITIES);
 		$trans = array_flip($trans);
 		return strtr($html, $trans);
@@ -78,7 +78,7 @@ class PdfHtml extends \FPDF{
 	 * @param	string	$html	the html
 	 * @param	string	$parsed	reference to output var
 	 */
-	function WriteHTML($html, &$parsed = null){
+	public function WriteHTML($html, &$parsed = null){
 		//HTML parser
 		$html	= do_shortcode($html);
 		$html	= strip_tags($html, "<b><li><u><i><a><img><p><br><strong><em><font><tr><blockquote>");
@@ -127,7 +127,7 @@ class PdfHtml extends \FPDF{
 	 *
 	 * @return	float			The mm
 	 */
-	function px2mm($px){
+	public function px2mm($px){
 		return $px*25.4/72;
 	}
 
@@ -137,7 +137,7 @@ class PdfHtml extends \FPDF{
 	 * @param	string	$tag	THe tag type
 	 * @param	array	$attr	The element attributes array
 	 */
-	function OpenTag($tag, $attr){
+	public function OpenTag($tag, $attr){
 		//Opening tag
 		switch($tag){
 			case 'STRONG':
@@ -207,7 +207,7 @@ class PdfHtml extends \FPDF{
 	 *
 	 * @param	string	$tag	The tag type
 	 */
-	function CloseTag($tag){
+	public function CloseTag($tag){
 		//Closing tag
 		if($tag=='STRONG'){
 			$tag='B';
@@ -232,7 +232,7 @@ class PdfHtml extends \FPDF{
 		}
 	}
 
-	function SetStyle($tag, $enable){
+	public function SetStyle($tag, $enable){
 		//Modify style and select corresponding font
 		$this->$tag+=($enable ? 1 : -1);
 		$style	= '';
@@ -251,7 +251,7 @@ class PdfHtml extends \FPDF{
 	 * @param 	string	$url	the url
 	 * @param	string	$text	the text to display
 	 */
-	function PutLink($url, $txt){
+	public function PutLink($url, $txt){
 		//Put a hyperlink
 		$this->SetTextColor(0, 0, 255);
 		$this->SetStyle('U', true);
@@ -294,7 +294,7 @@ class PdfHtml extends \FPDF{
 	}
 
 
-	function setHeaderTitle($title){
+	public function setHeaderTitle($title){
         $this->headertitle = $title;
         return true;
 	}
@@ -302,7 +302,7 @@ class PdfHtml extends \FPDF{
 	/**
 	 * Page header
 	 */
-	function Header(){
+	public function Header(){
 		if(!$this->skipFirstPage || $this->PageNo() != 1){
 			$logo	= get_attached_file(SIM\getModuleOption(MODULE_SLUG, 'picture_ids')['logo']);
 			try{
@@ -331,7 +331,7 @@ class PdfHtml extends \FPDF{
 	/**
 	 * Page footer
 	 */
-	function Footer(){
+	public function Footer(){
 		if($this->PageNo() != 1){
 			// Position at 1.5 cm from bottom
 			$this->SetY(-15);
@@ -346,7 +346,7 @@ class PdfHtml extends \FPDF{
 	/**
 	 * Write page title
 	 */
-	function PageTitle($title, $new = true, $height = 10){
+	public function PageTitle($title, $new = true, $height = 10){
 		if ($new){
 			$this->AddPage();
 		}
@@ -366,7 +366,7 @@ class PdfHtml extends \FPDF{
 	 * @param	int		$depth		The nesting level of the list
 	 * @param	string	$prevKey	The name of the upper nesting list
 	 */
-	function WriteArray($array, $depth=0, $prevKey=""){
+	public function WriteArray($array, $depth=0, $prevKey=""){
 		//Determine the bullet symbol
 		switch ($depth) {
 			case 0:
@@ -433,7 +433,7 @@ class PdfHtml extends \FPDF{
 	 * @param	int		$depth		The nesting level of the list
 	 * @param	string	$prevKey	The name of the upper nesting list
 	 */
-	function WriteImageArray($array, $depth=0, $prevkey=""){
+	public function WriteImageArray($array, $depth=0, $prevkey=""){
 		//Do nothing if not an array
 		if(is_array($array)){
 			//Loop over all the pictures
@@ -485,7 +485,7 @@ class PdfHtml extends \FPDF{
 		}
 	}
 
-	function pixelsToMM($val) {
+	public function pixelsToMM($val) {
         return $val * self::MM_IN_INCH / self::DPI;
     }
 
@@ -497,7 +497,7 @@ class PdfHtml extends \FPDF{
 	 *
 	 * @return	array				Array of width and height
 	 */
-    function resizeToFit($imgPath, $maxHeight=self::MAX_HEIGHT) {
+    public function resizeToFit($imgPath, $maxHeight=self::MAX_HEIGHT) {
         list($width, $height) = getimagesize($imgPath);
 
 		$maxHeight 		= min(self::MAX_HEIGHT, $maxHeight);
@@ -523,7 +523,7 @@ class PdfHtml extends \FPDF{
 	 *
 	 * @return	array				Array of width and height
 	 */
-    function centreImage($path, $y, $maxHeight, $ext) {
+    public function centreImage($path, $y, $maxHeight, $ext) {
         list($width, $height) = $this->resizeToFit($path, $maxHeight);
 
         // you will probably want to swap the width/height
@@ -551,7 +551,7 @@ class PdfHtml extends \FPDF{
 	 * @param	bool	$centre		Whether to center the image on the page. Default false
 	 * @param	bool	$adjustY	Whether to center vertically. Default false
 	 */
-	function printImage($url, $x=-1, $y=-1, $width=100, $height=200, $centre=false, $adjustY = false){
+	public function printImage($url, $x=-1, $y=-1, $width=100, $height=200, $centre=false, $adjustY = false){
 		try{
 			$path = SIM\urlToPath($url);
 
@@ -595,7 +595,7 @@ class PdfHtml extends \FPDF{
 				$y += $height;
 			}
 
-			$this->setXY($x+$width,$y);
+			$this->setXY($x+$width, $y);
 		}catch (\Exception $e) {
 			SIM\printArray("PDF_export.php: $path is not a valid image");
 		}
@@ -607,7 +607,7 @@ class PdfHtml extends \FPDF{
 	 * @param	array	$headers	the headers
 	 * @param	array	$widths		The widths of each column
 	 */
-	function tableHeaders($headers, $widths=""){
+	public function tableHeaders($headers, $widths=""){
 		// Header colors, line width and bold font
 		$this->SetFillColor(189, 41, 25);
 		$this->SetTextColor(255);
@@ -640,7 +640,7 @@ class PdfHtml extends \FPDF{
 	 *
 	 * @return	string				The splited string
 	 */
-	function splitOnWidth($string, $maxWidth){
+	public function splitOnWidth($string, $maxWidth){
 		// Get width of a string in the current font
 		$cw 		= &$this->CurrentFont['cw'];
 		$w 			= 0;
@@ -666,6 +666,26 @@ class PdfHtml extends \FPDF{
 		return $newString;
 	}
 
+	public function addCellPicture($filePath, $x=0){
+		$link	= SIM\pathToUrl($filePath);
+				
+		//Add the picture to the page
+		 try{
+			if($x){
+				$beforeX	= $x;
+			}else{
+				$beforeX	= $this->getX();
+			}
+			
+			$beforeY	= $this->getY();
+			$this->Image($filePath, $beforeX, $beforeY, 6, 6, '', $link);
+		}catch (\Exception $e) {
+			SIM\printArray("PDF_export.php: $filePath is not a valid image");
+		}
+
+		$this->SetXY($beforeX, $beforeY);
+	}
+
 	/**
 	 * Write a row of a table
 	 *
@@ -674,12 +694,46 @@ class PdfHtml extends \FPDF{
 	 * @param	bool	$fil		Whether to fill the row
 	 * @param	array	$header		The  table headers
 	 */
-	function writeTableRow($colWidths, $row, $fill, $header){
+	public function writeTableRow($colWidths, $row, $fill, $header){
 		$y 				= $this->GetY();
 		$cellHeights	= [];
 
 		//Calculate the height of this row
 		foreach ($row as $colNr => $cellText){
+			
+			$cellText	= trim($cellText);
+
+			//create a temp pdf to measure the heigth of the cell
+			$temp 		= new $this();
+			$temp->SetFont( $this->FontFamily, '', $this->FontSizePt );
+			$temp->AddPage();
+			$before 	= $temp->getY();
+			$height		= 0;
+
+			if(strpos($cellText, str_replace('\\', '/', ABSPATH)) !== false){
+				$explode	= explode(';', $cellText);
+
+				if(strpos($explode[0], str_replace('\\', '/', ABSPATH)) !== false){
+					$filePath	= $explode[0];
+					$cellText	= '   '.$explode[1];
+				}else{
+					$filePath	= $explode[1];
+					$cellText	= $explode[0];
+				}
+				
+				//Add the picture to the page
+ 				try{
+					$temp->Image($filePath, null, null, 6);
+				}catch (\Exception $e) {
+					SIM\printArray("PDF_export.php: $filePath is not a valid image");
+				}
+
+				$height 		= $before - $temp->getY();
+
+				// reset the y position
+				$temp->setY($before);
+			}
+
 			if(is_array($cellText)){
 				$orgLines = $cellText;
 			}else{
@@ -691,14 +745,13 @@ class PdfHtml extends \FPDF{
 
 			$cellWidth 	= $colWidths[$colNr];
 
-			//create a temp pdf to measure the heigth of the cell
-			$temp 		= new $this();
-			$temp->SetFont( $this->FontFamily, '', $this->FontSizePt );
-			$temp->AddPage();
-			$before 	= $temp->getY();
+			
 			$temp->Multicell($cellWidth, 6, $cellText, 'LR', 'C');
 			$after 		= $temp->getY();
-			$lineCount 	= ($after-$before)/6;
+
+			// get the maximum of either the picture or text
+			$height		= max($after-$before, $height);
+			$lineCount 	= ($height)/6;
 
 			$cellHeights[$colNr]	= $lineCount;
 		}
@@ -720,11 +773,31 @@ class PdfHtml extends \FPDF{
 
 		//now that we have the row width, loop over the data again to write it
 		$lastKey = array_key_last($row);
-		foreach ($row as $colNr => $celltext){
-			if(is_array($celltext)){
-				$orgLines	= $celltext;
+		foreach ($row as $colNr => $cellText){
+			$cellText	= trim(str_replace('\\', '/', $cellText));
+
+			$later	= false;
+			//text contains a filepath
+			if(strpos($cellText, str_replace('\\', '/', ABSPATH)) !== false){
+				$explode	= explode(';', $cellText);
+				
+				if(strpos($explode[0], str_replace('\\', '/', ABSPATH)) !== false){
+					$filePath	= $explode[0];
+					$cellText	= '   '.$explode[1];
+
+					$this->addCellPicture($filePath);
+				}else{
+					$filePath	= $explode[1];
+					$cellText	= $explode[0];
+
+					$later		= true;
+				}
+			}
+
+			if(is_array($cellText)){
+				$orgLines	= $cellText;
 			}else{
-				$orgLines	= explode("\n",$celltext);
+				$orgLines	= explode("\n", $cellText);
 			}
 			SIM\cleanUpNestedArray($orgLines);
 
@@ -739,7 +812,7 @@ class PdfHtml extends \FPDF{
 				}
 			}
 
-			$cellText	= trim(implode("\n", $orgLines));
+			$cellText	= implode("\n", $orgLines);
 
 			$lineCount = $cellHeights[$colNr];
 
@@ -753,6 +826,10 @@ class PdfHtml extends \FPDF{
 			//Write the cell
 			$this->Multicell($cellWidth, 6, $cellText, 'LR', 'C', $fill);
 
+			if($later){
+				$this->addCellPicture($filePath, $x);
+			}
+
 			//Move cursor to the next cell if not the last cell
 			if($colNr != $lastKey){
 				$x = $x + $cellWidth;
@@ -764,7 +841,7 @@ class PdfHtml extends \FPDF{
 	/**
 	 * Print the pdf to screen
 	 */
-	function printPdf(){
+	public function printPdf(){
 		// CLear the complete queue
 		SIM\clearOutput();
 

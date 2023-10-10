@@ -22,7 +22,7 @@ function sendReimbursementRequests(){
 	wp_set_current_user(1);
 	
 	//Export the excel file to temp
-	$formTable = new SIM\FORMS\EditFormResults(['id'=>'6','formname'=>'reimbursement']);
+	$formTable = new SIM\FORMS\EditFormResults(['shortcodeid'=>'6', 'formname'=>'reimbursement']);
 
 	//make sure we have permission on the data
 	$formTable->tableEditPermissions = true;

@@ -223,7 +223,7 @@ function linkedUserDescription($atts){
  *
  * @param	array	$header 	The header text
  * @param	array	$data		The data
- * @param	bool	$download	Serve as downloadable filedefault false
+ * @param	bool	$download	Serve as downloadable file default false
  *
  * @return string the pdf path or none
  */
@@ -304,10 +304,15 @@ function buildUserDetailPdf($download=true){
 				$privacyPreference = [];
 			}
 			
-			$name		= $user->display_name; //Real name
-			$nickname	= get_user_meta($user->ID, 'nickname', true); //persons name in case of a office account
+			$name			= $user->display_name; //Real name
+			$nickname		= get_user_meta($user->ID, 'nickname', true); //persons name in case of a office account
 			if($name != $nickname && $nickname != ''){
 				$name .= "\n ($nickname)";
+			}
+
+			$profilePicture	= SIM\USERMANAGEMENT\getProfilePicturePath($user->ID);
+			if($profilePicture){
+				$name	= $profilePicture.';'.$name;
 			}
 			
 			$email	= $user->user_email;
@@ -319,12 +324,19 @@ function buildUserDetailPdf($download=true){
 			
 			$phonenumbers = "";
 			if(empty($privacyPreference['hide_phone'])){
-				$userPhonenumbers = (array)get_user_meta ( $user->ID,"phonenumbers",true);
-				foreach($userPhonenumbers as $key=>$phonenumber){
-					if ($key > 0){
-						$phonenumbers .= "\n";
+				$userPhonenumbers = get_user_meta ( $user->ID, "phonenumbers", true);
+
+				if(is_array($userPhonenumbers)){
+					$signalNr   	  = get_user_meta($user->ID, 'signal_number', true);
+					foreach($userPhonenumbers as $key=>$phonenumber){
+						if ($key > 0){
+							$phonenumbers .= "\n";
+						}
+						$phonenumbers .= $phonenumber;
+						if($phonenumber == $signalNr){
+							$phonenumbers .= ';'.MODULE_PATH.'pictures/signal.png';
+						}
 					}
-					$phonenumbers .= $phonenumber;
 				}
 			}
 			

@@ -47,7 +47,7 @@ function createUserPage($userId){
 		// make static
 		update_post_meta($pageId, 'static_content', true);
 
-		SIM\printArray("Created user page with id $pageId");
+		SIM\printArray("Created user page with id $pageId", false, true);
 	}else{
         updateUserPageTitle($userId, $title, $pageId);
 	}
@@ -68,7 +68,7 @@ function createUserPage($userId){
 				//Remove the current user page
 				wp_delete_post($memberPageId, true);
 
-				SIM\printArray("Removed user page with id $memberPageId");
+				SIM\printArray("Removed user page with id $memberPageId", false, true);
 			}
 		}
 	}
