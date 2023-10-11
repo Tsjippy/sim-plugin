@@ -46,9 +46,97 @@ class SubmitForm extends SimForms{
 		return $footer;
 	}
 
-	
-	function findEmails($id){
-		return 'enharmsen@gmail.com';
+	/**
+	 * check if an e-mail should be send
+	 */
+	private function checkEmailConditions($email, $trigger){
+		if(
+			$email['emailtrigger']	!= $trigger && 					// trigger of the e-mail does not match the trigger exactly
+			(
+				$email['emailtrigger']	!= 'submittedcond' ||		// trigger of the e-mail is not submittedcond
+				(
+					$email['emailtrigger']	== 'submittedcond' &&	// trigger of the e-mail is submittedcond
+					$trigger				!= 'submitted'			// the trigger is not submitted
+				)
+			)
+		){
+			return false;
+		}
+
+		$changedElementId	= $_POST['elementid'];
+
+		//SIM\printArray($email);
+		//SIM\printArray($trigger);
+		
+		// check if a certain element is changed to a certain value
+		if(
+			$trigger 			== 'fieldchanged'				&&	// an element has been changed
+			$changedElementId	== $email['conditionalfield']		// the changed element is the conditional element
+		){
+
+			// get the element value
+			$elementName	= str_replace('[]', '', $this->getElementById($changedElementId, 'name'));
+
+			$formValue 		= $this->submission->formresults[$elementName];
+			if(is_array($formValue)){
+				$formValue	= $formValue[0];
+			}
+			$formValue 		= strtolower($formValue);
+
+			// get the compare value
+			$compareValue	= strtolower($email['conditionalvalue']);
+
+			//do not proceed if there is no match
+			if($formValue != $compareValue && $formValue != str_replace(' ', '_', $compareValue)){
+				return false;
+			}
+		}
+
+		// check if the changed element is listed in the conditionalfields array
+		if(
+			$trigger == 'fieldschanged'									&&		// an element has been changed
+			!in_array($changedElementId, $email['conditionalfields'])			// and the element is not in the conditional fields array
+		){
+			return false;
+		}
+
+		// check if the submit condition is matched
+		if($trigger == 'submitted' && $email['emailtrigger'] == 'submittedcond'){
+			if(!is_array($email['submittedtrigger'])){
+				return false;
+			}
+
+			// get element and the form result of that element
+			$element	= $this->getElementById($email['submittedtrigger']['element']);
+			if(empty($this->submission->formresults[$element->name])){
+				$elValue	= '';
+			}else{
+				$elValue	= $this->submission->formresults[$element->name];
+			}
+			
+			// get the value to compare with
+			if(is_numeric($email['submittedtrigger']['valueelement'])){
+				$compareElement	= $this->getElementById($email['submittedtrigger']['valueelement']);
+				$compareElValue	= $this->submission->formresults[$compareElement->name];
+			}else{
+				$compareElValue	= $email['submittedtrigger']['value'];
+			}
+
+			if(is_array($elValue)){
+				$elValue	= $elValue[0];
+			}
+
+			if(is_array($compareElValue)){
+				$compareElValue	= $compareElValue[0];
+			}
+
+			// Do the comparisson, do not proceed if no match
+			if(!version_compare($elValue, $compareElValue, $email['submittedtrigger']['equation'])){
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -60,140 +148,95 @@ class SubmitForm extends SimForms{
 		$emails = $this->formData->emails;
 		
 		foreach($emails as $key=>$email){
-			if(
-				$email['emailtrigger'] == $trigger || 					// trigger of the e-mail matches the trigger exactly
-				(
-					$email['emailtrigger']	== 'submittedcond' &&		// trigger of the e-mail matches the trigger
-					$trigger				=='submitted'
-				)
-			){
-				// check if there is a match
-				if($trigger == 'fieldchanged'){
-					$elementName	= str_replace('[]', '', $this->getElementById($email['conditionalfield'], 'name'));
-					$formValue 		= strtolower($this->submission->formresults[$elementName]);
-					$compareValue	= strtolower($email['conditionalvalue']);
 
-					//do not proceed if there is no match
-					if($formValue != $compareValue && $formValue != str_replace(' ', '_', $compareValue)){
-						continue;
-					}
+			if(!$this->checkEmailConditions($email, $trigger)){
+				continue;
+			}
+			
+			$from	= '';
+			//Send e-mail from conditional e-mail adress
+			if($email['fromemail'] == 'conditional'){
+				$from 	= $this->findConditionalEmail($email['conditionalfromemail']);
 
-					SIM\printArray($email);
-					SIM\printArray($trigger);
+				if(!$from){
+					$from	= $email['elsefrom'];
+				}
+			}elseif($email['fromemail'] == 'fixed'){
+				$from	= $this->processPlaceholders($email['from']);
+			}
+
+			if(empty($from)){
+				SIM\printArray("No from email found for email $key");
+			}
+							
+			$to		= '';
+			if($email['emailto'] == 'conditional'){
+				$to = $this->findConditionalEmail($email['conditionalemailto']);
+
+				if(!$to){
+					$to	= $email['elseto'];
+				}
+			}elseif($email['emailto'] == 'fixed'){
+				$to		= $this->processPlaceholders($email['to']);
+
+				// if no e-mail found, find any numbers and assume they are user ids
+				// than replace the id with the e-mail of that user
+				if(strpos($to, '@') === false){
+					$pattern 	= '/[0-9\.]+/i';
+					$to			= preg_replace_callback(
+						$pattern,
+						function ($match){
+							$user	= get_userdata($match[0]);
+
+							if($user){
+								return $user->user_email;
+							}
+							return $match[0];
+						},
+						$to
+					);
+				}
+			}
+			
+			if(empty($to)){
+				SIM\printArray("No to email found for email $key on form {$this->formData->name} with id {$this->formData->id}");
+				continue;
+			}
+
+			$subject	= $this->processPlaceholders($email['subject']);
+			$message	= $this->processPlaceholders($email['message']);
+
+			$headers	= [];
+			if(!empty(trim($email['headers']))){
+				$headers	= explode("\n", trim($email['headers']));
+			}
+
+			if(!empty($from)){
+				$headers[]	= "Reply-To: $from";
+			}
+			
+			$files		= $this->processPlaceholders($email['files']);
+
+			//Send the mail
+			if($_SERVER['HTTP_HOST'] != 'localhost'){
+				// add the form specific footer filter
+				add_filter('sim_email_footer_url', [$this, 'emailFooter']);
+
+				$result = wp_mail($to , $subject, $message, $headers, $files);
+
+				if($result === false){
+					SIM\printArray("Sending the e-mail failed");
+					SIM\printArray([
+						$to,
+						$subject,
+						$message,
+						$headers,
+						$files
+					]);
 				}
 
-				// check if the submit condition is matched
-				if($email['emailtrigger'] == 'submittedcond'){
-					if(!is_array($email['submittedtrigger'])){
-						continue;
-					}
-
-					// get element and the form result of that element
-					$element	= $this->getElementById($email['submittedtrigger']['element']);
-					if(empty($this->submission->formresults[$element->name])){
-						$elValue	= '';
-					}else{
-						$elValue	= $this->submission->formresults[$element->name];
-					}
-					
-					// get the value to compare with
-					if(is_numeric($email['submittedtrigger']['valueelement'])){
-						$compareElement	= $this->getElementById($email['submittedtrigger']['valueelement']);
-						$compareElValue	= $this->submission->formresults[$compareElement->name];
-					}else{
-						$compareElValue	= $email['submittedtrigger']['value'];
-					}
-
-					if(is_array($elValue)){
-						$elValue	= $elValue[0];
-					}
-
-					if(is_array($compareElValue)){
-						$compareElValue	= $compareElValue[0];
-					}
-
-					// Do the comparisson, do not proceed if no match
-					if(!version_compare($elValue, $compareElValue, $email['submittedtrigger']['equation'])){
-						continue;
-					}
-				}
-				
-				$from	= '';
-				//Send e-mail from conditional e-mail adress
-				if($email['fromemail'] == 'conditional'){
-					$from 	= $this->findConditionalEmail($email['conditionalfromemail']);
-
-					if(!$from){
-						$from	= $email['elsefrom'];
-					}
-				}elseif($email['fromemail'] == 'fixed'){
-					$from	= $this->processPlaceholders($email['from']);
-				}
-
-				if(empty($from)){
-					SIM\printArray("No from email found for email $key");
-				}
-								
-				$to		= '';
-				if($email['emailto'] == 'conditional'){
-					$to = $this->findConditionalEmail($email['conditionalemailto']);
-
-					if(!$to){
-						$to	= $email['elseto'];
-					}
-				}elseif($email['emailto'] == 'fixed'){
-					$to		= $this->processPlaceholders($email['to']);
-
-					// if no e-mail found, find any numbers and assume they are user ids
-					// than replace the id with the e-mail of that user
-					if(strpos($to, '@') === false){
-						$pattern 	= '/[0-9\.]+/i';
-						$to			= preg_replace_callback(
-							$pattern,
-							function ($match){
-								$user	= get_userdata($match[0]);
-
-								if($user){
-									return $user->user_email;
-								}
-								return $match[0];
-							},
-							$to
-						);
-					}
-				}
-				
-				if(empty($to)){
-					SIM\printArray("No to email found for email $key on form {$this->formData->name} with id {$this->formData->id}");
-					continue;
-				}
-
-				$subject	= $this->processPlaceholders($email['subject']);
-				$message	= $this->processPlaceholders($email['message']);
-
-				$headers	= [];
-				if(!empty(trim($email['headers']))){
-					$headers	= explode("\n", trim($email['headers']));
-				}
-
-				if(!empty($from)){
-					$headers[]	= "Reply-To: $from";
-				}
-				
-				$files		= $this->processPlaceholders($email['files']);
-
-				//Send the mail
-				if($_SERVER['HTTP_HOST'] != 'localhost'){
-					// add the formspecific footer filter
-					add_filter('sim_email_footer_url', [$this, 'emailFooter']);
-					$result = wp_mail($to , $subject, $message, $headers, $files);
-					if($result === false){
-						SIM\printArray("Sending the e-mail failed");
-					}
-
-					// remove the formspecific footer filter
-					remove_filter('sim_email_footer_url', [$this, 'emailFooter']);
-				}
+				// remove the form specific footer filter
+				remove_filter('sim_email_footer_url', [$this, 'emailFooter']);
 			}
 		}
 	}

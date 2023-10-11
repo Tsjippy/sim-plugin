@@ -162,7 +162,7 @@ add_action( 'rest_api_init', function () {
 						return is_numeric($submissionId);
 					}
 				),
-				'fieldname'		=> array(
+				'elementname'		=> array(
 					'required'	=> true,
 				),
 				'newvalue'		=> array(
@@ -187,7 +187,7 @@ add_action( 'rest_api_init', function () {
 						return is_numeric($formId);
 					}
 				),
-				'fieldname'		=> array(
+				'elementid'		=> array(
 					'required'	=> true,
 				),
 				'submissionid'		=> array(
@@ -404,7 +404,12 @@ function getInputHtml(){
 
 	$formTable->parseSubmissions(null, $_POST['submissionid']);
 
-	$elementName	= sanitize_text_field($_POST['fieldname']);
+	$elementId		= sanitize_text_field($_POST['elementid']);
+
+	$elementName	= sanitize_text_field($_POST['elementname']);
+
+	$element		= $formTable->getElementById($elementId);
+
 	$curValue		= '';
 	$subId			= '';
 	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
@@ -419,7 +424,7 @@ function getInputHtml(){
 			preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $element->name, $matches);
 
 			if($matches && isset($matches[1])){
-				if(isset($formTable->submission->formresults[$matches[1]][$subId][$elementName])){
+				if(isset($formTable->submission->formresults[$matches[1]][$subId][$element->name])){
 					$curValue	= $formTable->submission->formresults[$matches[1]][$subId][$elementName];
 				}
 
@@ -436,16 +441,22 @@ function getInputHtml(){
 	}
 	
 	if(!isset($element)){
-		$element		= $formTable->getElementByName($elementName);
+		$element		= $formTable->getElementById($elementId);
 	}
 
 	if(!$element){
-		return new \WP_Error('No element found', "No element found with id '{$_POST['fieldname']}'");
+		return new \WP_Error('No element found', "No element found with id '{$_POST['elementid']}'");
 	}
 
 	// get value
-	if(isset($formTable->submission->formresults[$element->name])){
-		$curValue	= $formTable->submission->formresults[$element->name];
+	if(isset($formTable->submission->formresults[$elementName])){
+		$curValue	= $formTable->submission->formresults[$elementName];
+
+		if(is_numeric($subId) && is_array($curValue)){
+			$curValue	= $curValue[$subId];
+		}
+	}elseif(isset($formTable->submission->formresults[str_replace('[]', '', $element->name)])){
+		$curValue	= $formTable->submission->formresults[str_replace('[]', '', $element->name)];
 
 		if(is_numeric($subId) && is_array($curValue)){
 			$curValue	= $curValue[$subId];
@@ -465,15 +476,15 @@ function editValue(){
 	$formTable->parseSubmissions(null, $formTable->submissionId);
 		
 	//update an existing entry
-	$fieldName 		= sanitize_text_field($_POST['fieldname']);
+	$elementName 	= sanitize_text_field($_POST['elementname']);
 	$newValue 		= json_decode(sanitize_text_field(stripslashes($_POST['newvalue'])));
 
-	$transValue		= $formTable->transformInputData($newValue, $fieldName, $formTable->submission->formresults);
+	$transValue		= $formTable->transformInputData($newValue, $elementName, $formTable->submission->formresults);
 	
 	$subId			= $_POST['subid'];
 
 	// If there is a sub id set and this field is not a main field
-	if(is_numeric($subId)){
+	if(!empty($subId) && is_numeric($subId)){
 		$splitElements				= $formTable->formData->settings['split'];
 
 		foreach($splitElements as $index){
@@ -486,19 +497,19 @@ function editValue(){
 			}
 
 			//check if this is a main field
-			if(isset($formTable->submission->formresults[$elementName][$subId][$fieldName])){
-				$formTable->submission->formresults[$elementName][$subId][$fieldName]	= $newValue;
-			}elseif(isset($formTable->submission->formresults[$fieldName])){
-				$formTable->submission->formresults[$fieldName]	= $newValue;
+			if(isset($formTable->submission->formresults[$elementName][$subId][$elementName])){
+				$formTable->submission->formresults[$elementName][$subId][$elementName]	= $newValue;
+			}elseif(isset($formTable->submission->formresults[$elementName])){
+				$formTable->submission->formresults[$elementName]	= $newValue;
 			}
-			$message = "Succesfully updated '$fieldName' to $transValue";
+			$message = "Succesfully updated '$elementName' to $transValue";
 		}
 	}else{
-		$formTable->submission->formresults[$fieldName]	= $newValue;
-		$message = "Succesfully updated '$fieldName' to $transValue";
+		$formTable->submission->formresults[$elementName]	= $newValue;
+		$message = "Succesfully updated '$elementName' to $transValue";
 	}
 
-	$message	= apply_filters('sim-forms-submission-updated', $message, $formTable, $fieldName, $newValue);
+	$message	= apply_filters('sim-forms-submission-updated', $message, $formTable, $elementName, $newValue);
 
 	if(is_wp_error($message)){
 		return ['message' => $message->get_error_message()];

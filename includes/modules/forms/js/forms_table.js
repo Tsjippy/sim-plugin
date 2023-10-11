@@ -232,7 +232,8 @@ async function getInputHtml(target){
 	let formId			= table.dataset.formid;
     let submissionId	= target.closest('tr').dataset.id;
 	let subId			= target.dataset.subid;
-    let cellId			= target.dataset.id
+    let elementId		= target.dataset.id
+	let elementName		= target.dataset.name
 	let oldText			= target.textContent;
     
     Main.showLoader(target.firstChild);
@@ -245,7 +246,8 @@ async function getInputHtml(target){
 	if(subId != undefined){
 		formData.append('subid', subId);
 	}
-    formData.append('fieldname', cellId);
+    formData.append('elementid', elementId);
+	formData.append('elementname', elementName);
 
 	let response	= await FormSubmit.fetchRestApi('forms/get_input_html', formData);
 
@@ -307,7 +309,8 @@ async function processFormsTableInput(target){
 	let formId			= table.dataset.formid;
 	let cell			= target.closest('td');
 	cell.classList.remove('active');
-    let cellId			= cell.dataset.id
+    let elementId		= cell.dataset.id
+	let elementName		= cell.dataset.name
 	let value			= FormFunctions.getFieldValue(target, cell, false);
 	let submissionId	= target.closest('tr').dataset.id;
 	let subId			= cell.dataset.subid;
@@ -323,7 +326,8 @@ async function processFormsTableInput(target){
 		if(subId != undefined){
 			formData.append('subid', subId);
 		}
-		formData.append('fieldname', cellId);
+		formData.append('elementid', elementId);
+		formData.append('elementname', elementName);
 		formData.append('newvalue', JSON.stringify(value));
 		
 		let response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
@@ -340,7 +344,7 @@ async function processFormsTableInput(target){
 	
 			//Update all occurences of this field
 			if(subId == null){
-				let targets	= table.querySelectorAll(`tr[data-id="${submissionId}"] td[data-id="${cellId}"]`);
+				let targets	= table.querySelectorAll(`tr[data-id="${submissionId}"] td[data-id="${elementId}"]`);
 				targets.forEach(td=>{td.innerHTML = newValue;});
 			}else{
 				cell.innerHTML = newValue;

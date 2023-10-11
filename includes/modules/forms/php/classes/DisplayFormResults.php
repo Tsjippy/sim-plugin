@@ -353,7 +353,7 @@ class DisplayFormResults extends DisplayForm{
 	 * Transforms a given string to hyperlinks or other formats
 	 *
 	 * @param 	string	$string			the string to convert
-	 * @param	string	$elementName	The name of the value the string value belongs to
+	 * @param	string	$elementName	The name of the element the string value belongs to
 	 * @param	object	$submission		The submission this string belongs to
 	 *
 	 * @return	string					The transformed string
@@ -770,7 +770,7 @@ class DisplayFormResults extends DisplayForm{
 				$value 	= $this->transformInputData($value, $elementName, (object)$values);
 				
 				//show original email in excel
-				if(strpos($value,'@') !== false){
+				if(gettype($value) == 'string' && strpos($value, '@') !== false){
 					$excelRow[]		= $orgFieldValue;
 				}else{
 					$excelRow[]		= wp_strip_all_tags($value);
@@ -800,7 +800,7 @@ class DisplayFormResults extends DisplayForm{
 			if($elementEditRights && $elementName != 'id'){
 				$class	.= ' edit_forms_table';
 				$class	= trim($class);
-				$class	= " class='$class' data-id='$elementName'";
+				$class	= " class='$class' data-name='$elementName'";
 			}elseif(!empty($class)){
 				$class	= trim($class);
 				$class = " class='$class'";
@@ -812,7 +812,7 @@ class DisplayFormResults extends DisplayForm{
 			}
 
 			$oldValue		= json_encode($orgFieldValue);
-			$rowContents .= "<td $class data-oldvalue='$oldValue' $subIdString>$value</td>";
+			$rowContents .= "<td $class data-id='$element->id' data-oldvalue='$oldValue' $subIdString>$value</td>";
 		}
 
 		// none of the cells in this row has a value, only X
