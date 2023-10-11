@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issue with conditional e-mails
 
 ### Updated
 
