@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.36.9] - 2023-10-10
+
+
+### Changed
 - signal send layout
 
 ### Fixed
@@ -12,6 +21,7 @@
 - error with paged results
 - vimeo upload error
 - issue with mail postings
+- excel export
 
 ### Updated
 
