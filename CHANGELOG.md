@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.37.0] - 2023-10-11
+
+
+### Fixed
 - issue with conditional e-mails
 
 ### Updated
