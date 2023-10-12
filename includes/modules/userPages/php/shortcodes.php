@@ -229,7 +229,7 @@ function linkedUserDescription($atts){
  */
 function createContactlistPdf($header, $data, $download=false) {
 	// Column headings
-	$widths = array(30, 45, 28, 47,45);
+	$widths = array(30, 45, 30, 47,45);
 	
 	//Built frontpage
 	$pdf = new SIM\PDF\PdfHtml();
@@ -243,11 +243,15 @@ function createContactlistPdf($header, $data, $download=false) {
     $fill = false;
 	//Loop over all the rows
     foreach($data as $row){
+		// switch color only for rows for which the first cell has a value
+		if(!empty($row[0] )){
+			$fill = !$fill;
+		}
+
 		$pdf->writeTableRow($widths, $row, $fill,$header);
-        $fill = !$fill;
     }
     // Closing line
-    $pdf->Cell(array_sum($widths),0,'','T');
+    $pdf->Cell(array_sum($widths), 0, '', 'T');
 	
 	$contactList = "Contactlist - ".date('F').".pdf";
 
@@ -298,70 +302,83 @@ function buildUserDetailPdf($download=true){
 
 	foreach($users as $user){
 		//skip admin
-		if ($user->ID != 1 && $user->display_name != 'Signal Bot'){
-			$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
-			if(!is_array($privacyPreference)){
-				$privacyPreference = [];
-			}
-			
-			$name			= $user->display_name; //Real name
-			$nickname		= get_user_meta($user->ID, 'nickname', true); //persons name in case of a office account
-			if($name != $nickname && $nickname != ''){
-				$name .= "\n ($nickname)";
-			}
-
-			$profilePicture	= SIM\USERMANAGEMENT\getProfilePicturePath($user->ID);
-			if($profilePicture){
-				$name	= $profilePicture.';'.$name;
-			}
-			
-			$email	= $user->user_email;
-			
-			//Add to recipients
-			if (strpos($user->user_email,'.empty') !== false){
-				$email	= '';
-			}
-			
-			$phonenumbers = "";
-			if(empty($privacyPreference['hide_phone'])){
-				$userPhonenumbers = get_user_meta ( $user->ID, "phonenumbers", true);
-
-				if(is_array($userPhonenumbers)){
-					$signalNr   	  = get_user_meta($user->ID, 'signal_number', true);
-					foreach($userPhonenumbers as $key=>$phonenumber){
-						if ($key > 0){
-							$phonenumbers .= "\n";
-						}
-						$phonenumbers .= $phonenumber;
-						if($phonenumber == $signalNr){
-							$phonenumbers .= ';'.MODULE_PATH.'pictures/signal.png';
-						}
-					}
-				}
-			}
-			
-			$ministries = "";
-			if(empty($privacyPreference['hide_ministry'])){
-				$userMinistries = (array)get_user_meta( $user->ID, "jobs", true);
-				$i = 0;
-				foreach ($userMinistries as $key=>$userMinistry) {
-					if ($i > 0){
-						$ministries .= "\n";
-					}
-					$ministries  .= get_the_title($key);
-					$i++;
-				}
-			}
-			
-			$compound = "";
-			if(empty($privacyPreference['hide_location'])){
-				$location = (array)get_user_meta( $user->ID, 'location', true );
-				if(isset($location['compound'])){
-					$compound = $location['compound'];
-				}
-			}
-			$userDetails[] 	= [$name, $email, $phonenumbers, $ministries, $compound];
+		if ($user->ID == 1){
+			continue;
 		}
+
+		$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
+		if(!is_array($privacyPreference)){
+			$privacyPreference = [];
+		}
+		
+		$name			= $user->display_name; //Real name
+		$nickname		= get_user_meta($user->ID, 'nickname', true); //persons name in case of a office account
+		if($name != $nickname && $nickname != ''){
+			$name .= "\n ($nickname)";
+		}
+
+		$profilePicture	= SIM\USERMANAGEMENT\getProfilePicturePath($user->ID);
+		if($profilePicture){
+			$name	= [
+				'picture'	=> $profilePicture,
+				'name'		=> $name
+			];
+		}
+		
+		$email	= $user->user_email;
+		
+		//Add to recipients
+		if (strpos($user->user_email,'.empty') !== false){
+			$email	= '';
+		}
+		
+		$phonenumbers = [];
+		if(empty($privacyPreference['hide_phone'])){
+			$phonenumbers = (array)get_user_meta ( $user->ID, "phonenumbers", true);
+		}
+		
+		$ministries = [];
+		if(empty($privacyPreference['hide_ministry'])){
+			$userMinistries = get_user_meta( $user->ID, "jobs", true);
+
+			if(!empty($userMinistries)){
+				foreach ($userMinistries as $key=>$userMinistry) {
+					$title			= get_the_title($key);
+					if(!empty($title)){
+						$ministries[]  = $title;
+					}
+				}
+			}
+		}
+		
+		$compound = "";
+		if(empty($privacyPreference['hide_location'])){
+			$location = (array)get_user_meta( $user->ID, 'location', true );
+			if(isset($location['compound'])){
+				$compound = $location['compound'];
+			}
+		}
+
+		$userDetails[] 	= [$name, $email, $phonenumbers, $ministries, $compound];
+
+		// create a seperate row for each phonenumber and ministry
+/* 		$rows			= max(count($phonenumbers), count($ministries), 1);
+		for ($x = 0; $x < $rows; $x++) {
+			$phonenumber	= '';
+			if(isset($phonenumbers[$x])){
+				$phonenumber	= $phonenumbers[$x];
+			}
+
+			$ministry	= '';
+			if(isset($ministries[$x])){
+				$ministry	= $ministries[$x];
+			}
+
+			$userDetails[] 	= [$name, $email, $phonenumber, $ministry, $compound];
+			$name		= '';
+			$email		= '';
+			$compound	= '';
+		} */
 	}
 
 	//Headers of the table

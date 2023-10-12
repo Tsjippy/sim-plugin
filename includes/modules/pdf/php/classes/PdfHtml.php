@@ -666,24 +666,94 @@ class PdfHtml extends \FPDF{
 		return $newString;
 	}
 
-	public function addCellPicture($filePath, $x=0){
-		$link	= SIM\pathToUrl($filePath);
+	public function addCellPicture($filePath, $x=null, $y=null, $link='', $width=6, $reset=true){
+		if(empty($link)){
+			$link	= SIM\pathToUrl($filePath);
+		}
 				
 		//Add the picture to the page
 		 try{
-			if($x){
-				$beforeX	= $x;
-			}else{
-				$beforeX	= $this->getX();
+			if(!$x){
+				$x	= $this->getX();
 			}
-			
-			$beforeY	= $this->getY();
-			$this->Image($filePath, $beforeX, $beforeY, 6, 6, '', $link);
+
+			if(!$y){
+				$y	= $this->getY();
+			}
+
+			if($reset){
+				$x	= $x + 0.15;
+				$y	= $y + 0.15;
+			}else{
+				$y	= null; // needs to be set to null to get an updated Y value
+			}
+
+			$this->Image($filePath, $x, $y, $width, 0, '', $link);
 		}catch (\Exception $e) {
 			SIM\printArray("PDF_export.php: $filePath is not a valid image");
 		}
 
-		$this->SetXY($beforeX, $beforeY);
+		if($reset){
+			$this->SetXY($x, $y);
+		}
+	}
+
+	/**
+	 * Get the needed height of a row
+	 *
+	 * @param	array	$row	the row data
+	 *
+	 * @return	array			an array of cell heights
+	 */
+	private function getRowHeight($colWidths, $row){
+		$cellHeights	= [];
+
+		//Calculate the height of this row
+		foreach ($row as $colNr => $cellText){
+
+			//create a temp pdf to measure the heigth of the cell
+			$temp 		= new $this();
+			$temp->SetFont( $this->FontFamily, '', $this->FontSizePt );
+			$temp->AddPage();
+			$before 	= $temp->getY();
+
+			$cellText	= apply_filters('sim_before_pdf_text', $cellText, $temp);
+
+			$height		= $temp->getY() - $before;
+
+			$before 	= $temp->getY();
+
+			if(is_array($cellText)){
+				$orgLines = $cellText;
+			}else{
+				$orgLines = explode("\n", $cellText);
+			}
+			SIM\cleanUpNestedArray($orgLines);
+
+			$cellText	= implode("\n", $orgLines);
+
+			$cellWidth 	= $colWidths[$colNr];
+			
+			$x			= $temp->GetX();
+			$y			= $temp->GetY();
+
+			$temp->Multicell($cellWidth, 6, $cellText, 'LR', 'C');
+
+			$after 		= $temp->getY();
+
+			$height		= max(intval($after - $before), $height);
+
+			$before 	= $temp->getY();
+
+			do_action('sim_after_pdf_text', $row[$colNr], $temp, $x, $y, $cellWidth, false);
+
+			$after 		= $temp->getY();
+
+			// get the maximum of either the picture or text
+			$cellHeights[$colNr]	= max(intval($after - $before), $height);
+		}
+		
+		return $cellHeights;
 	}
 
 	/**
@@ -696,66 +766,10 @@ class PdfHtml extends \FPDF{
 	 */
 	public function writeTableRow($colWidths, $row, $fill, $header){
 		$y 				= $this->GetY();
-		$cellHeights	= [];
+		
+		$cellHeights	= $this->getRowHeight($colWidths, $row);
 
-		//Calculate the height of this row
-		foreach ($row as $colNr => $cellText){
-			
-			$cellText	= trim($cellText);
-
-			//create a temp pdf to measure the heigth of the cell
-			$temp 		= new $this();
-			$temp->SetFont( $this->FontFamily, '', $this->FontSizePt );
-			$temp->AddPage();
-			$before 	= $temp->getY();
-			$height		= 0;
-
-			if(strpos($cellText, str_replace('\\', '/', ABSPATH)) !== false){
-				$explode	= explode(';', $cellText);
-
-				if(strpos($explode[0], str_replace('\\', '/', ABSPATH)) !== false){
-					$filePath	= $explode[0];
-					$cellText	= '   '.$explode[1];
-				}else{
-					$filePath	= $explode[1];
-					$cellText	= $explode[0];
-				}
-				
-				//Add the picture to the page
- 				try{
-					$temp->Image($filePath, null, null, 6);
-				}catch (\Exception $e) {
-					SIM\printArray("PDF_export.php: $filePath is not a valid image");
-				}
-
-				$height 		= $before - $temp->getY();
-
-				// reset the y position
-				$temp->setY($before);
-			}
-
-			if(is_array($cellText)){
-				$orgLines = $cellText;
-			}else{
-				$orgLines = explode("\n", $cellText);
-			}
-			SIM\cleanUpNestedArray($orgLines);
-
-			$cellText	= trim(implode("\n", $orgLines));
-
-			$cellWidth 	= $colWidths[$colNr];
-
-			
-			$temp->Multicell($cellWidth, 6, $cellText, 'LR', 'C');
-			$after 		= $temp->getY();
-
-			// get the maximum of either the picture or text
-			$height		= max($after-$before, $height);
-			$lineCount 	= ($height)/6;
-
-			$cellHeights[$colNr]	= $lineCount;
-		}
-		$rowHeight = max($cellHeights);
+		$rowHeight		= ceil(max($cellHeights)/6)*6;
 
 		//Check if we need to continue on a new page
 		if($this->y + $rowHeight * 6 > $this->h - 20){
@@ -774,25 +788,9 @@ class PdfHtml extends \FPDF{
 		//now that we have the row width, loop over the data again to write it
 		$lastKey = array_key_last($row);
 		foreach ($row as $colNr => $cellText){
-			$cellText	= trim(str_replace('\\', '/', $cellText));
+			$cellText	= str_replace('\\', '/', $cellText);
 
-			$later	= false;
-			//text contains a filepath
-			if(strpos($cellText, str_replace('\\', '/', ABSPATH)) !== false){
-				$explode	= explode(';', $cellText);
-				
-				if(strpos($explode[0], str_replace('\\', '/', ABSPATH)) !== false){
-					$filePath	= $explode[0];
-					$cellText	= '   '.$explode[1];
-
-					$this->addCellPicture($filePath);
-				}else{
-					$filePath	= $explode[1];
-					$cellText	= $explode[0];
-
-					$later		= true;
-				}
-			}
+			$cellText	= apply_filters('sim_before_pdf_text', $cellText, $this);
 
 			if(is_array($cellText)){
 				$orgLines	= $cellText;
@@ -814,21 +812,21 @@ class PdfHtml extends \FPDF{
 
 			$cellText	= implode("\n", $orgLines);
 
-			$lineCount = $cellHeights[$colNr];
+			$cellHeight = $cellHeights[$colNr];
 
-			if($lineCount < $rowHeight){
-				$cellText = $cellText.str_repeat("\n ", $rowHeight - $lineCount);
+			// add as many empty lines as needed to make the cell the required height
+			if($cellHeight < $rowHeight){
+				$cellText = $cellText.str_repeat("\n ", ceil(($rowHeight - $cellHeight) / 6)); // each line is 6 units
 			}
 
 			//Get current position
-			$x = $this->GetX();
+			$x 	= $this->GetX();
+			$y	= $this->GetY();
 
 			//Write the cell
 			$this->Multicell($cellWidth, 6, $cellText, 'LR', 'C', $fill);
 
-			if($later){
-				$this->addCellPicture($filePath, $x);
-			}
+			do_action('sim_after_pdf_text', $row[$colNr], $this, $x, $y, $cellWidth, true);
 
 			//Move cursor to the next cell if not the last cell
 			if($colNr != $lastKey){

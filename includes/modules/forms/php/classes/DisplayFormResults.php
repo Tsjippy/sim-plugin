@@ -1649,7 +1649,8 @@ class DisplayFormResults extends DisplayForm{
 		$shouldShow	= apply_filters('sim-formstable-should-show', true, $this);
 
 		if($shouldShow !== true){
-			return  $shouldShow;
+			echo 	$shouldShow;
+			return  false;
 		}
 		
 		ob_start();
