@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- user export profile picture and signal link
 
 ### Changed
 
