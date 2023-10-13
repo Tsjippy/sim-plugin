@@ -1654,6 +1654,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 		
 		ob_start();
+
 		if($type == 'own'){
 			echo "<h4>Your own submissions</h4>";
 		}elseif($type == 'others'){
@@ -1699,10 +1700,42 @@ class DisplayFormResults extends DisplayForm{
 			</tbody>
 		</table>
 		<?php
+
+		$this->printTableFooter();
 		
 		echo ob_get_clean();
 
 		return $allRowsEmpty;
+	}
+
+	private function printTableFooter(){
+		?>
+		<div class='sim-table-footer'>
+			<p id="table_remark">Click on any cell with <span class="edit_forms_table">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>
+			
+			<?php
+			//Add excel export button if allowed
+			if($this->tableEditPermissions){
+				?>
+				<div>
+					<form method="post" class="exportform" id="export_xls">
+						<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
+					</form>
+					<?php
+					if(SIM\getModuleOption('pdf', 'enable')){
+						?>
+						<form method="post" class="exportform" id="export_pdf">
+							<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
+						</form>
+						<?php
+					}
+					?>
+				</div>
+				<?php
+			}
+		?>
+		</div>
+		<?php
 	}
 
 	/**
@@ -1762,33 +1795,6 @@ class DisplayFormResults extends DisplayForm{
 				return ob_get_clean().'</div>';
 			}else{
 				echo $tableHtml;
-				?>
-				<div class='sim-table-footer'>
-					<p id="table_remark">Click on any cell with <span class="edit_forms_table">underlined text</span> to edit its contents.<br>Click on any header to sort the column.</p>
-					
-					<?php
-					//Add excel export button if allowed
-					if($this->tableEditPermissions){
-						?>
-						<div>
-							<form method="post" class="exportform" id="export_xls">
-								<button class="button button-primary" type="submit" name="export_xls">Export data to excel</button>
-							</form>
-							<?php
-							if(SIM\getModuleOption('pdf', 'enable')){
-								?>
-								<form method="post" class="exportform" id="export_pdf">
-									<button class="button button-primary" type="submit" name="export_pdf">Export data to pdf</button>
-								</form>
-								<?php
-							}
-							?>
-						</div>
-						<?php
-					}
-				?>
-				</div>
-				<?php
 			}
 			?>
 		</div>

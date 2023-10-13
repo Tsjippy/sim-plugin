@@ -5,7 +5,7 @@ use mikehaertl\shellcommand\Command;
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
-    USERPAGE\buildUserDetailPdf(false);
+    USERPAGE\buildUserDetailPdf('screen');
 
     /*     $posts = get_posts(
 		array(

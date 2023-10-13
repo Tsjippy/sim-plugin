@@ -17,7 +17,11 @@ add_filter('sim-form-element-html', function($html, $element, $formBuilder){
                 $icon   .= '</g>';
             $icon   .= '</svg>';
 
-            return preg_replace($pattern, "\${0}$icon", $html);
+            $newHtml    = preg_replace($pattern, "\${0}$icon", $html);
+
+            if(!empty($newHtml)){
+                return $newHtml;
+            }
         }
     }
     return $html;

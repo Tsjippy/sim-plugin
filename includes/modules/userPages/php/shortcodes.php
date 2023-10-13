@@ -221,9 +221,9 @@ function linkedUserDescription($atts){
 /**
  * Export data in an PDF
  *
- * @param	array	$header 	The header text
- * @param	array	$data		The data
- * @param	bool	$download	Serve as downloadable file default false
+ * @param	array		$header 	The header text
+ * @param	array		$data		The data
+ * @param	bool|string	$download	Serve as downloadable file default false
  *
  * @return string the pdf path or none
  */
@@ -256,10 +256,13 @@ function createContactlistPdf($header, $data, $download=false) {
 	$contactList = "Contactlist - ".date('F').".pdf";
 
 	$output		= 'F';
-	if($download){
+	if($download === true){
 		// CLear the complete queue
 		SIM\clearOutput();
 		$output		= 'D';
+	}elseif($download = 'screen'){
+		$pdf->printPdf();
+		return '';
 	}else{
 		$contactList = get_temp_dir().SITENAME." $contactList";
 	}
