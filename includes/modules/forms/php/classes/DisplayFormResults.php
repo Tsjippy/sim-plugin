@@ -812,7 +812,13 @@ class DisplayFormResults extends DisplayForm{
 			}
 
 			$oldValue		= json_encode($orgFieldValue);
-			$rowContents .= "<td $class data-id='$element->id' data-oldvalue='$oldValue' $subIdString>$value</td>";
+			
+			$element		= $this->getElementByName($elementName);
+			if(!$element){
+				$rowContents .= "<td $class $subIdString>$value</td>";
+			}else{
+				$rowContents .= "<td $class data-id='$element->id' data-oldvalue='$oldValue' $subIdString>$value</td>";
+			}
 		}
 
 		// none of the cells in this row has a value, only X
