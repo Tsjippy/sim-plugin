@@ -8,6 +8,7 @@
 
 ### Fixed
 - bug in signal icon adding
+- edit results
 
 ### Updated
 
