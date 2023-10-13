@@ -9,6 +9,7 @@
 ### Fixed
 - bug in signal icon adding
 - edit results
+- load popup over AJAX
 
 ### Updated
 
