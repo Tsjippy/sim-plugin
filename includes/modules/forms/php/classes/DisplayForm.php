@@ -404,7 +404,7 @@ class DisplayForm extends SubmitForm{
 			if(array_intersect($this->userRoles, $this->submitRoles) && !empty($this->formData->settings['save_in_meta'])){
 				$html	.= SIM\userSelect("Select an user to show the data of:");
 			}
-			$html	.=  do_action('sim_before_form', $this->formName);
+			$html	.=  apply_filters('sim_before_form', '', $this->formName);
 
 			$html	.= "<form action='' method='post' class='sim_form' $dataset>";
 				$html	.= "<div class='form_elements'>";

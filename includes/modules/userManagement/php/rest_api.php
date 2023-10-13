@@ -81,9 +81,6 @@ add_action( 'rest_api_init', function () {
                 ),
                 'last_name'	 => array(
 					'required'	=> true
-				),
-				'roles'		 => array(
-					'required'	=> true
 				)
 			)
 		)
@@ -319,9 +316,15 @@ function createUserAccount(){
 	}else{
         $validity = $_POST["validity"];
 	}
+
+	if(empty($_POST["roles"])){
+		$roles = ["revisor"];
+	}else{
+        $roles = $_POST["roles"];
+	}
 	
 	//Create the account
-	$userId = SIM\addUserAccount($firstName, $lastName, $email, $approved, $validity, $_POST['roles']);
+	$userId = SIM\addUserAccount($firstName, $lastName, $email, $approved, $validity, $roles);
 	if(is_wp_error($userId)){
 		return $userId;
 	}

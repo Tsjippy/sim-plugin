@@ -71,11 +71,12 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 }, 10, 3);
 
 //Add ministry modal
-add_action('sim_before_form', function ($formName){
+add_filter('sim_before_form', function ($html, $formName){
 	if($formName != 'user_generics'){
-		return;
+		return $html;
 	}
 
+	ob_start();
 	?>
 	<div id="add_ministry_modal" class="modal hidden">
 		<div class="modal-content">
@@ -108,7 +109,9 @@ add_action('sim_before_form', function ($formName){
 		</div>
 	</div>
 	<?php
-});
+
+	return $html.ob_get_clean();
+}, 10, 2);
 
 /**
  * Get all locations with the ministries category

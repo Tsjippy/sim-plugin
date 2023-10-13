@@ -41,9 +41,9 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 }, 10, 3);
 
 // add a family member modal
-add_action('sim_before_form',function ($formName){
+add_filter('sim_before_form', function ($html, $formName){
 	if($formName != 'user_family'){
-		return;
+		return $html;
 	}
 	
 	if(isset($_GET['userid'])){
@@ -51,6 +51,8 @@ add_action('sim_before_form',function ($formName){
 	}else{
 		$lastname = wp_get_current_user()->last_name;
 	}
+
+	ob_start();
 		
 	?>
 	<div id='add_account_modal' class="modal hidden">
@@ -79,4 +81,6 @@ add_action('sim_before_form',function ($formName){
 		</div>
 	</div>
 	<?php
-});
+
+	return $html.ob_get_clean();
+}, 10, 2);

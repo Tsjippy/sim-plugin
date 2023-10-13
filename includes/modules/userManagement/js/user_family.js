@@ -48,7 +48,7 @@ function showAddAccountModal(){
 	Main.showModal('add_account');
 }
 
-document.addEventListener("DOMContentLoaded",function() {
+document.addEventListener("DOMContentLoaded", function() {
 	document.querySelectorAll('[name="add_user_account_button"]').forEach(el=>el.addEventListener('click', showAddAccountModal));
 
 	document.querySelectorAll('[name="adduseraccount"]').forEach(el=>el.addEventListener('click', submitAddAccountForm));
