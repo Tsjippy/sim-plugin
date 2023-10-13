@@ -7,6 +7,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.37.1] - 2023-10-13
+
+
+### Added
+- user export profile picture and signal link
+
+### Fixed
 - issue with conditional e-mails
 
 ### Updated
