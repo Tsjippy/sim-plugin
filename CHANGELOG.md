@@ -10,6 +10,7 @@
 - bug in signal icon adding
 - edit results
 - load popup over AJAX
+- issue with empty e-mails
 
 ### Updated
 
