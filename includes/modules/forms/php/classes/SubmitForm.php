@@ -188,7 +188,7 @@ class SubmitForm extends SimForms{
 						function ($match){
 							$user	= get_userdata($match[0]);
 
-							if($user){
+							if($user && !str_contains($user->user_email, 'empty')){
 								return $user->user_email;
 							}
 							return $match[0];

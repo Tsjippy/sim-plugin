@@ -56,7 +56,7 @@ function createUserPage($userId){
 		//Check if family has other pages who should be deleted
 		foreach($family as $familyMember){
 			//get the current page
-			$memberPageId = get_user_meta($familyMember,"user_page_id",true);
+			$memberPageId = get_user_meta($familyMember, "user_page_id", true);
 
 			//Check if this page exists and is already trashed
 			if(get_post_status ($memberPageId) == 'trash' ){
@@ -68,7 +68,7 @@ function createUserPage($userId){
 				//Remove the current user page
 				wp_delete_post($memberPageId, true);
 
-				SIM\printArray("Removed user page with id $memberPageId", false, true);
+				SIM\printArray("Removed user page with id $memberPageId because we only need one per family");
 			}
 		}
 	}
