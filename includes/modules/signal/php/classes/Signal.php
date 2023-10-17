@@ -385,6 +385,8 @@ class Signal {
             $this->command->execute();
 
             $this->parseResult();
+
+            sleep(10);
         }
     }
 

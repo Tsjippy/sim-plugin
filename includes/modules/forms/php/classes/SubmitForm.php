@@ -197,8 +197,15 @@ class SubmitForm extends SimForms{
 					);
 				}
 			}
+
+			$recipients	= [];
+			foreach(explode(',', $to) as $t){
+				if(str_contains($t, '@')){
+					$recipients[]	= $t;
+				}
+			}
 			
-			if(empty($to)){
+			if(empty($recipients)){
 				SIM\printArray("No to email found for email $key on form {$this->formData->name} with id {$this->formData->id}");
 				continue;
 			}

@@ -18,6 +18,8 @@ add_action('init', function(){
     add_action( 'clean_signal_log_action', __NAMESPACE__.'\cleanSignalLog');
 
     add_action( 'retry_failed_messages_action', __NAMESPACE__.'\retryFailedMessages');
+
+    add_action( 'signal_number_reminder_action', __NAMESPACE__.'\signalNumberReminder');
 });
 
 
@@ -26,16 +28,18 @@ function scheduleTasks(){
 
     SIM\scheduleTask('clean_signal_log_action', 'daily');
 
+    SIM\scheduleTask('check_signal_numbers_action', 'daily');
+
     SIM\scheduleTask('retry_failed_messages_action', 'quarterly');
 
     $freq   = SIM\getModuleOption(MODULE_SLUG, 'reminder_freq');
     if($freq){
-        SIM\scheduleTask('check_signal_numbers_action', $freq);
+        SIM\scheduleTask('signal_number_reminder_action', $freq);
     }
 }
 
 /**
- * Remind people to add their signal message to the website
+ * Check for updated signal numbers
  */
 function checkSignalNumbers(){
     // we can send a signal message directly from the server
@@ -68,24 +72,32 @@ function checkSignalNumbers(){
                 }
             }
 
-            // no signal number found, send reminder
-            //If this not a valid email skip this email
-            if(strpos($user->user_email,'.empty') !== false){
-                continue;
-            }
-
-            $email          = new SignalEmail($user);
-            $email->filterMail();
-                
-            $subject        = $email->subject;
-            $message        = $email->message;
-            $recipients	    = $user->user_email;
-
-            wp_mail( $recipients, $subject, $message);
+            // delete the metakey if it exists
+            delete_user_meta( $user->ID, 'signal_number', $phonenumber );
         }
     }
 }
 
+/**
+ * Remind people to add their signal message to the website
+ */
+function signalNumberReminder(){
+    $users = get_users([
+        'meta_key'     => 'signal_number',
+        'meta_compare' => 'NOT EXISTS',
+    ]);
+
+    foreach($users as $user){
+        $email          = new SignalEmail($user);
+        $email->filterMail();
+            
+        $subject        = $email->subject;
+        $message        = $email->message;
+        $recipients	    = $user->user_email;
+
+        wp_mail( $recipients, $subject, $message);
+    }
+}
 
 function cleanSignalLog(){
     $period     = SIM\getModuleOption(MODULE_SLUG, 'clean-period');
