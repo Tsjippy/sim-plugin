@@ -11,6 +11,7 @@
 - edit results
 - load popup over AJAX
 - issue with empty e-mails
+- signal message retry
 
 ### Updated
 
