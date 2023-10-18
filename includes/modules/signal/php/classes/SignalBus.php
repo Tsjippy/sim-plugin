@@ -677,15 +677,19 @@ class SignalBus extends Signal {
         return $this->parseResult();
     }
 
-    public function sendMessageReaction($recipient, $timestamp, $groupId=''){
+    public function sendMessageReaction($recipient, $timestamp, $groupId='', $emoji=''){
+        if(empty($emoji)){
+            $emoji  = "🦘";
+        }
+
         if(empty($groupId)){
             // Send emoji
             $this->command = new Command([
-                'command' => "{$this->prefix}sendMessageReaction string:🦘 boolean:false string:$recipient int64:$timestamp string:$recipient"
+                'command' => "{$this->prefix}sendMessageReaction string:$emoji boolean:false string:$recipient int64:$timestamp array:string:$recipient"
             ]);
         }else{
             $this->command = new Command([
-                'command' => "{$this->prefix}sendGroupMessageReaction string:U+1F60A boolean:false string:$recipient int64:$timestamp array:byte:'$groupId'"
+                'command' => "{$this->prefix}sendGroupMessageReaction string:$emoji boolean:false string:$recipient int64:$timestamp array:byte:'$groupId'"
             ]);
         }
 

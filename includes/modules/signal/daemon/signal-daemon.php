@@ -78,17 +78,22 @@ if(!empty($argv) && count($argv) == 2){
         if( isset($data->envelope->dataMessage->mentions)){
             foreach($data->envelope->dataMessage->mentions as $mention){
                 if($mention->number == $signal->phoneNumber || $mention->name == '8fc6c236-f07b-4a3c-97c5-0a78efe488ee'){
+                    $signal->sendMessageReaction($data->envelope->source, $data->envelope->timestamp, $groupId, '👍🏽');
+
                     $signal->sendGroupTyping($groupId);
 
                     // Remove mention from message
+                    $message    = utf8_decode($message);
                     $message    = substr($message, $data->envelope->dataMessage->mentions[0]->length);
-                    $answer     = getAnswer(trim($message), $data->envelope->source);
+                    $answer     = getAnswer(trim($message, " \t\n\r\0\x0B?"), $data->envelope->source);
 
                     $signal->sendGroupMessage($answer['response'], $groupId, $answer['pictures']);
                 }
             }
         }
     }elseif(!isset($data->envelope->dataMessage->groupInfo)){
+        $signal->sendMessageReaction($data->envelope->source, $data->envelope->timestamp, '', '👍🏽');
+
         $signal->sentTyping($data->envelope->source, $data->envelope->timestamp);
 
         $answer = getAnswer($message, $data->envelope->source);
@@ -128,12 +133,34 @@ function getAnswer($message, $source){
         $prayerRequest  = SIM\PRAYER\prayerRequest(true, true);
         $response       = "This is the prayer for today:\n\n{$prayerRequest['prayer']}";
         $pictures       = $prayerRequest['pictures'];
-    }elseif($message == 'hi' || strpos($message, 'hello') !== false){
+    }elseif($message == 'hi' || str_contains($message, 'hello')){
         $response = "Hi ";
         if($name){
             $response   .= $name;
         }
+    }elseif($message == 'good morning'){
+        $response = "Good morning ";
+        if($name){
+            $response   .= $name;
+        }
+    }elseif($message == 'good afternoon'){
+        $response = "Good afternoon ";
+        if($name){
+            $response   .= $name;
+        }
+    }elseif($message == 'good evening'){
+        $response = "Good evening ";
+        if($name){
+            $response   .= $name;
+        }
+    }elseif($message == 'good night'){
+        $response = "Good night ";
+        if($name){
+            $response   .= $name;
+        }
     }elseif(!empty($message)){
+        SIM\printArray("No answer found for '$message'");
+
         $response = 'I have no clue, do you know?';
     }else{
         $response = ' ';

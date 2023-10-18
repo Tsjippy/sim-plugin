@@ -369,7 +369,7 @@ function processActions($settings){
 			$groupId	= $_REQUEST['chat'];
 		}
 
-		$result	= $signal->sendMessageReaction($_REQUEST['sender'] , $_REQUEST['timestamp'], $groupId  );
+		$result	= $signal->sendMessageReaction($_REQUEST['sender'] , $_REQUEST['timesent'], $groupId, $_REQUEST['emoji']  );
 
 		if(is_numeric(str_replace('int64 ', '', $result))){
 			return "<div class='success'>Reaction sent succesfully</div>";
@@ -793,11 +793,13 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 									echo "Already Replied";
 								}else{
 									?>
+									<button type="button" class="trigger" data-target="[name='emoji']" data-replace='true'>emoji</button>
 									<form method='post'>
 										<input type="hidden" name="timesent" value="<?php echo $message['timesent'];?>" />
 										<input type="hidden" name="id" value="<?php echo $message['id'];?>" />
 										<input type="hidden" name="sender" value="<?php echo $message['sender'];?>" />
 										<input type="hidden" name="chat" value="<?php echo $chat;?>" />
+										<input type='hidden' name='emoji'>
 										<input type='submit' name='action' value='Reply'>
 									</form>
 									<?php
@@ -940,7 +942,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 		<label>
 			<h4>Message to be send</h4>
 			<textarea name='message' style='width: calc(100% - 50px);' required></textarea>
-			<button type='button' id='trigger'>emoji</button>
+			<button type='button' class='trigger' data-target='[name="message"]'>emoji</button>
 		</label>
 		<label>
 			<h4>Recipient</h4>

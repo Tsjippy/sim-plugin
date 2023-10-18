@@ -53,6 +53,11 @@ function getProfilePicturePath($userId){
 	if(is_numeric($attachmentId)){
 		$path = get_attached_file($attachmentId);
 	}
+
+	// file does not exist anymore or is not an image
+	if(!file_exists($path) || !@is_array(getimagesize($path))){
+		return false;
+	}
 	
 	return $path;
 }

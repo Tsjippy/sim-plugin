@@ -374,7 +374,7 @@ class Signal {
         }
 
         foreach($failedCommands as $command){
-            SIM\printArray($command);
+            //SIM\printArray($command);
 
             $this->command = new Command([
                 'command' => $command,

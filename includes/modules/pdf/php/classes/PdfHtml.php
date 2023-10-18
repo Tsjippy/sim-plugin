@@ -672,7 +672,7 @@ class PdfHtml extends \FPDF{
 		}
 				
 		//Add the picture to the page
-		 try{
+		try{
 			if(!$x){
 				$x	= $this->getX();
 			}
@@ -691,6 +691,7 @@ class PdfHtml extends \FPDF{
 			$this->Image($filePath, $x, $y, $width, 0, '', $link);
 		}catch (\Exception $e) {
 			SIM\printArray("PDF_export.php: $filePath is not a valid image");
+			//SIM\printArray($e);
 		}
 
 		if($reset){

@@ -3,28 +3,40 @@ import { createPopup } from '@picmo/popup-picker';
 console.log('Smiley.js loaded');
 
 document.addEventListener("DOMContentLoaded", function() {
-    const trigger   = document.querySelector('#trigger');
+    document.querySelectorAll('.trigger').forEach(trigger => {
 
-    const picker = createPopup({}, {
-        referenceElement: trigger,
-        triggerElement: trigger,
-        position: 'right-end'
-    });
+        const picker = createPopup({}, {
+            referenceElement: trigger,
+            triggerElement: trigger,
+            position: 'right-end'
+        });
 
-    trigger.addEventListener('click', () => {
-        picker.toggle();
-    });
+        trigger.addEventListener('click', () => {
+            picker.toggle();
+        });
 
-    picker.addEventListener('emoji:select', (selection) => {
-        //console.log(selection);
+        picker.addEventListener('emoji:select', (selection) => {
+            let target  = document.querySelector(trigger.dataset.target);
 
-        addToTextArea(selection.emoji);
+            if(target == null){
+                return;
+            }
+
+            if(target.type == 'textarea'){
+                addToTextArea(selection.emoji, target);
+            }else{
+                target.value    = selection.emoji;
+            }
+
+            if(trigger.dataset.replace != null){
+                trigger.outerHTML   = selection.emoji;
+            }
+        });
     });
 });
 
 
-const addToTextArea = function (text_to_add) {
-    const textarea  = document.querySelector('[name="message"]');
+const addToTextArea = function (text_to_add, textarea) {
     let start_position = textarea.selectionStart;
     let end_position = textarea.selectionEnd;
 
