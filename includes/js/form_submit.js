@@ -222,6 +222,7 @@ document.querySelectorAll('form.sim_form').forEach(form=>form.addEventListener("
 window.addEventListener("beforeunload", (event) => {
 	// check all pending
 	document.querySelectorAll('[data-pending]').forEach(el=>{
+		console.log(el);
 		console.log(`${el.defaultValue} - ${el.value}`);
 		event.preventDefault();
 		event.returnValue = 'test2';
@@ -230,6 +231,7 @@ window.addEventListener("beforeunload", (event) => {
 	// check all inputs
 	document.querySelectorAll('form.sim_form input:not([type=radio], [type=checkbox]), form textarea').forEach(el=>{
 		if(el.defaultValue != el.value){
+			console.log(el);
 			console.log(`${el.defaultValue} - ${el.value}`);
 			event.preventDefault();
 			event.returnValue = 'test2';
@@ -239,6 +241,7 @@ window.addEventListener("beforeunload", (event) => {
 	// check all checkboxes and radio
 	document.querySelectorAll('form.sim_form input[type=radio], form input[type=checkbox]').forEach(el=>{
 		if(el.defaultChecked != el.checked){
+			console.log(el);
 			console.log(`${el.defaultValue} - ${el.value}`);
 			event.preventDefault();
 			event.returnValue = 'test2';

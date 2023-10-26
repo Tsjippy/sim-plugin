@@ -1,6 +1,9 @@
 //Show the position field when a ministry is checked
 function changeVisibility(target) {
-	target.closest('li').querySelector('.ministryposition').classList.toggle('hidden');
+	target.closest('li').querySelectorAll('.ministryposition').forEach(label=>{
+		label.classList.toggle('hidden');
+		label.querySelectorAll('input').forEach(el=>el.value = '');
+	});
 }
 
 async function addNewMinistry(target){

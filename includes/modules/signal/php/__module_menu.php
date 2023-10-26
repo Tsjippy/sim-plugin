@@ -669,6 +669,10 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 				target.classList.replace('condense','expand');
 			}
 		});
+
+		document.addEventListener("emoji_selected", function(ev) {
+			ev.target.closest('form').submit();
+		});
 	</script>
 	<div class='send-signal-messages tabcontent <?php echo $hidden;?>' id='received'>
 		<?php
@@ -793,8 +797,8 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 									echo "Already Replied";
 								}else{
 									?>
-									<button type="button" class="trigger" data-target="[name='emoji']" data-replace='true'>emoji</button>
-									<form method='post'>
+									<button type="button" class="trigger" data-target="[name='emoji']" data-replace='true' title='Send an emoji reaction'>emoji</button>
+									<form method='post' class='hidden'>
 										<input type="hidden" name="timesent" value="<?php echo $message['timesent'];?>" />
 										<input type="hidden" name="id" value="<?php echo $message['id'];?>" />
 										<input type="hidden" name="sender" value="<?php echo $message['sender'];?>" />

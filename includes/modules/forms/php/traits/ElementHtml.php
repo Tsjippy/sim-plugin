@@ -83,10 +83,17 @@ trait ElementHtml{
 
 				unset($elementName[0]);
 				//loop over all the subkeys, and store the value until we have our final result
+				$resultFound	= false;
 				foreach($elementName as $v){
 					if(isset($values['metavalue'][$v])){
 						$values['metavalue'] = (array)$values['metavalue'][$v];
+						$resultFound	= true;
 					}
+				}
+
+				// somehow it does not exist, return an empty value
+				if(!$resultFound){
+					$values['metavalue']	= '';
 				}
 			}
 		}

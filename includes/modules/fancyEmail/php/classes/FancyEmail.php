@@ -360,21 +360,33 @@ class FancyEmail{
         if(empty($_POST)){
             $query  .= " WHERE $where AND $this->mailTable.time_send >= ".strtotime("-7 days");
         }else{
-            if(!empty($_POST['s'])){
-                $search  = '%'.$_POST['s'].'%';
+            if(!empty($_POST['s']) || isset($_POST['recipient'])){
+                if(isset($_POST['recipient'])){
+                    $search  = '%'.$_POST['recipient'].'%';
+                }else{
+                    $search  = '%'.$_POST['s'].'%';
+                }
+                
                 $query  .= " WHERE $where AND $this->mailTable.recipients LIKE '$search' OR $this->mailTable.subject LIKE '$search'";
             }else{
-                if(empty($_POST['date'])){
+                if(!empty($_POST['date'])){
+                    $maxTime   = strtotime($_POST['date']);
+                }elseif(!empty($_POST['date-start'])){
+                    $maxTime   = strtotime($_POST['date-start']);
+                }else{
                     if(empty($_POST['timespan'])){
                         $timespan   = '7';
                     }else{
                         $timespan   = $_POST['timespan'];
                     }
                     $maxTime   = strtotime("-$timespan days");
-                }else{
-                    $maxTime   = strtotime($_POST['date']);
                 }
                 $query  .= " WHERE $where AND $this->mailTable.time_send >= $maxTime";
+
+                if(!empty($_POST['date-end'])){
+                    $maxTime    = strtotime($_POST['date-end']);
+                    $query  .= " AND $this->mailTable.time_send <= $maxTime";
+                }
             }
         }
 

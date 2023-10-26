@@ -31,6 +31,12 @@ document.addEventListener("DOMContentLoaded", function() {
             if(trigger.dataset.replace != null){
                 trigger.outerHTML   = selection.emoji;
             }
+
+            const ev = new Event('emoji_selected', {
+                bubbles: true,
+                cancelable: true
+            });
+	        target.dispatchEvent(ev);
         });
     });
 });
