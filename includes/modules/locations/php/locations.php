@@ -131,7 +131,7 @@ function getLocationEmployees($post){
 		$html	= "<div class='employee-gallery'>$html</div>";
 	}
 
-	$html 	= "<p style='padding:10px;'><h4>People who Work at $post->post_title</h4><br><br>$html</p>";
+	$html 	= "<p style='padding:10px;'><h3 style='text-align:center'>People who Work at $post->post_title</h3><br><br>$html</p>";
 	
 	return $html;
 }

@@ -28,7 +28,7 @@ if(!isset($skipHeader) || !$skipHeader){
 				the_post();
 				include(__DIR__.'/content.php');
 
-				showMedia();
+				//showMedia();
 
 				// Show any projects linked to this
                 projectList();
