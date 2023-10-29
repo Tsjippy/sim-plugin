@@ -4,7 +4,7 @@ use SIM;
 
 //Update the post
 //http://postieplugin.com/postie_post_before/
-add_filter('postie_post_before', __NAMESPACE__.'processEmail', 10, 2);
+add_filter('postie_post_before', __NAMESPACE__.'\processEmail', 10, 2);
 function processEmail($post, $headers) {
 	if($post != null){
 		$user = get_userdata($post['post_author']);
