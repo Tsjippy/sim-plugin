@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- reply to signal messages
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.37.2] - 2023-10-29
+
+
+### Added
+- reply to signal messages
 
 ### Fixed
 - bug in signal icon adding
