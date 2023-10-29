@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- reply to signal messages
 
 ### Changed
 
