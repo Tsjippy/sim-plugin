@@ -13,6 +13,7 @@
 - load popup over AJAX
 - issue with empty e-mails
 - signal message retry
+- issue with array values for element html
 
 ### Updated
 
