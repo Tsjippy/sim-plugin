@@ -70,6 +70,16 @@ function expiryWarnings(){
 }
 
 add_shortcode("userstatistics",function (){
+
+	add_filter('post-edit-button', function($buttonHtml, $post, $content){
+		return $buttonHtml."<form style='display: inline-block;' action='' method='post'><button class='button small' name='getlist' value='true'>Get Contact List</button></form>";
+	}, 10, 3);
+
+	if(isset($_REQUEST['getlist'])){
+		SIM\USERPAGE\buildUserDetailPdf('screen');
+		return;
+	}
+
 	wp_enqueue_script('sim_table_script');
 
 	ob_start();
@@ -77,6 +87,8 @@ add_shortcode("userstatistics",function (){
 	$users 		= SIM\getUserAccounts(false, true);
 
 	$baseUrl	= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'user_edit_page');
+
+	
 	?>
 	<br>
 	<div class='table-wrapper'>

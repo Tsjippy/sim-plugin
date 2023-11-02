@@ -138,26 +138,23 @@ add_filter( 'the_content', function ( $content ) {
 			return '<div class="error">You have no permission to see this</div>';
 		}
 	}
-		
+	
+	$buttonHtml	= '';
 	//Add an edit page button if:
 	if ( allowedToEdit($postId) ){
 		$type 		= $post->post_type;
 		$buttonText = "Edit this $type";
-		$buttonHtml	= '';
 
 		if($type == 'attachment'){
 			$url		= admin_url("post.php?post=$post->ID&action=edit");
-			$buttonHtml	= "<a href=$url class='button small hidden' id='page-edit'>$buttonText</a><div class='content-wrapper'>$content</div>";
+			$buttonHtml	= "<a href=$url class='button small hidden' id='page-edit'>$buttonText</a>";
+		}else{
+			$buttonHtml	= "<button class='button small hidden' id='page-edit' data-id='$postId'>$buttonText</button>";
 		}
-
-		$buttonHtml	= "<button class='button small hidden' id='page-edit' data-id='$postId'>$buttonText</button><div class='content-wrapper'>$content</div>";
-
-		$buttonHtml	= apply_filters('post-edit-button', $buttonHtml, $post, $content);
-
-		return $buttonHtml;
 	}
+	$buttonHtml	= apply_filters('post-edit-button', $buttonHtml, $post, $content);
 
-	return $content;
+	return $buttonHtml."<div class='content-wrapper'>$content</div>";
 }, 15);
 
 add_filter('sim-template-filter', function($templateFile){

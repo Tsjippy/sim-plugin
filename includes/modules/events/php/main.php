@@ -18,7 +18,6 @@ add_filter('post-edit-button', function($buttonHtml, $post, $content){
     }
 
     global $wpdb;
-    global $Modules;
 
     $schedules  = new Schedules();
 
@@ -28,7 +27,7 @@ add_filter('post-edit-button', function($buttonHtml, $post, $content){
     if(!empty($result)){;
         $url        = SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'schedules_pages')."?schedule={$result[0]->schedule_id}&session={$result[0]->id}";
 
-        $buttonHtml	= "<a href=$url class='button small'>Edit this schedule session</a><div class='content-wrapper'>$content</div>";
+        $buttonHtml	= "<a href=$url class='button small'>Edit this schedule session</a>";
     }
 
     return $buttonHtml;
