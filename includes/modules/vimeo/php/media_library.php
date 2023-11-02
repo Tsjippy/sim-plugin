@@ -4,6 +4,9 @@ use SIM;
 
 // upload, download or edit a vimeo video
 add_action( 'edit_attachment', function($attachmentId){
+	if(empty($_REQUEST['changes'])){
+		return;
+	}
 
 	$vimeoApi	= new VimeoApi();
 

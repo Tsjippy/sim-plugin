@@ -69,10 +69,12 @@ class SubmitForm extends SimForms{
 		//SIM\printArray($trigger);
 		
 		// check if a certain element is changed to a certain value
-		if(
-			$trigger 			== 'fieldchanged'				&&	// an element has been changed
-			$changedElementId	== $email['conditionalfield']		// the changed element is the conditional element
-		){
+		if( $trigger == 'fieldchanged' ){
+
+			// the changed element is not the conditional element)
+			if($changedElementId != $email['conditionalfield']){
+				return false;
+			}
 
 			// get the element value
 			$elementName	= str_replace('[]', '', $this->getElementById($changedElementId, 'name'));
@@ -90,18 +92,12 @@ class SubmitForm extends SimForms{
 			if($formValue != $compareValue && $formValue != str_replace(' ', '_', $compareValue)){
 				return false;
 			}
-		}
-
-		// check if the changed element is listed in the conditionalfields array
-		if(
+		}elseif(
 			$trigger == 'fieldschanged'									&&		// an element has been changed
 			!in_array($changedElementId, $email['conditionalfields'])			// and the element is not in the conditional fields array
 		){
 			return false;
-		}
-
-		// check if the submit condition is matched
-		if($trigger == 'submitted' && $email['emailtrigger'] == 'submittedcond'){
+		}elseif($trigger == 'submitted' && $email['emailtrigger'] == 'submittedcond'){	// check if the submit condition is matched
 			if(!is_array($email['submittedtrigger'])){
 				return false;
 			}

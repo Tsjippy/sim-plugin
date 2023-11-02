@@ -7,6 +7,9 @@ use SIM;
 add_filter('postie_post_before', __NAMESPACE__.'\processEmail', 10, 2);
 function processEmail($post, $headers) {
 	if($post != null){
+
+		unset($post['post_category']);
+
 		$user = get_userdata($post['post_author']);
 		
 		//Get the subject and process shortcodes in it
@@ -22,7 +25,6 @@ function processEmail($post, $headers) {
 
 		foreach($categoryMapper as $mapper){
 			if (trim(strtolower($mapper['email'])) == $email){
-				unset($mapper['post_category']);
 				$postType			= $mapper['category'][0];
 				$post['post_type']	= $postType;
 				$taxonomy			= $mapper['category'][$postType][0];
