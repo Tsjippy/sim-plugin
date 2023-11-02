@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- postie categories
 
 ### Updated
 
