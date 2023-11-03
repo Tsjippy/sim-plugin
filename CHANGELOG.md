@@ -13,6 +13,7 @@
 ### Fixed
 - postie categories
 - unbalanced tags in summaries
+- page embed block
 
 ### Updated
 
