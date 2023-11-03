@@ -7,6 +7,7 @@
 
 ### Changed
 - location page redesign
+- removed navigation links
 
 ### Fixed
 - postie categories
