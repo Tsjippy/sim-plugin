@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.37.3] - 2023-11-03
+
+
+### Added
 - get contact list button
 - option to skip content from news gallery
 
