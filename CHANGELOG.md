@@ -9,6 +9,7 @@
 
 ### Fixed
 - postie categories
+- unbalanced tags in summaries
 
 ### Updated
 
