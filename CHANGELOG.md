@@ -4,6 +4,7 @@
 
 ### Added
 - get contact list button
+- option to skip content from news gallery
 
 ### Changed
 - location page redesign
