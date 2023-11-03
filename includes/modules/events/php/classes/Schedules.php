@@ -670,12 +670,14 @@ class Schedules{
 		//get event which starts on this date and time
 		$class	= 'meal';
 
+		$rowSpan = '';
 		if($startTime == $this->lunchStartTime){
 			$rows							= 60/$this->timeSlotSize;
-			$rowSpan						= "rowspan='$rows'";
+
+			if($rows > 1){
+				$rowSpan						= "rowspan='$rows'";
+			}
 			$this->nextStartTimes[$date]	= $this->lunchEndTime;
-		}else{
-			$rowSpan = '';
 		}
 
 		$this->getScheduleSessions();
@@ -897,7 +899,9 @@ class Schedules{
 				$this->currentSchedule->lunch				// And the schedule includes a lunch
 			){
 				$rows				= 60/$this->timeSlotSize;
-				$extra				= "rowspan='$rows'";	// Span 1 hour
+				if($rows > 1){
+					$extra				= "rowspan='$rows'";	// Span 1 hour
+				}
 				$description		= 'Lunch';
 			}elseif(
 				$startTime > $this->lunchStartTime	&&		// Time is past the start lunch time

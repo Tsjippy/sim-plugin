@@ -1396,20 +1396,21 @@ function userPageLinks($string){
 				continue;
 			}
 
-			$link		= "<a href=\"$url\">$user->display_name</a>";
+			$link		= "<a href=\"$url\">";
 
 			// do not run twice
 			if(strpos($string, $link) === false){
 				$name		= "$user->first_name $user->last_name";
-				$pattern	= "/([\s|>])$name(?!<\/a>)"; // Look for the name not followed by the ending of a hyperlink
+				$pattern	= "/([\s|>])($name(?!<\/a>)"; // Look for the name not followed by the ending of a hyperlink
 				if($user->display_name != $name){
 					$pattern	.= "|$user->display_name(?!<\/a>)";
 				}
-				$pattern	.= "/i";
-				$string		= preg_replace($pattern, '$1'.$link, $string);
+				$pattern	.= ")/i";
+				$string		= preg_replace($pattern, '$1'.$link.'$2</a>', $string);
 			}
 
 			$partnerId	= hasPartner($user->ID);
+			
 			if(is_numeric($partnerId)){
 				$partner	= get_userdata($partnerId);
 
