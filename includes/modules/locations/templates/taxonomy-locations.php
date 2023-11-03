@@ -27,8 +27,8 @@ if($skipWrapper){
 		get_header(); 
 	}
 	?>
-	<div id="primary" <?php generate_do_element_classes( 'content' ); ?>>
-		<main id="main" class='taxonomy inside-article'<?php generate_do_element_classes( 'main' ); ?>>
+	<div id="primary">
+		<main id="main" class='taxonomy inside-article'>
 			<?php displayLocationTax();?>
 		</main>
 	</div>
@@ -66,7 +66,7 @@ function displayLocationTax(){
 	}else{
 		//No items with this category
 		?>
-		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
+		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 		<div class="no-results not-found">
 			<div class="inside-article">
 				<div class="entry-content">

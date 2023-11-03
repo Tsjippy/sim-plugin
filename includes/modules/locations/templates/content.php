@@ -31,7 +31,7 @@ if(is_tax() || is_archive()){
 		padding: 10px;
 	}
 </style>
-<article id="post-<?php the_ID(); ?>" <?php post_class(); ?> <?php generate_do_microdata( 'article' ); ?>>
+<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<div class="cat_card<?php if($archive){echo ' inside-article';}?>">
 		
 		<?php
@@ -75,7 +75,7 @@ if(is_tax() || is_archive()){
 						)
 					);
 					
-					$url	= plugins_url('pictures/location.png', __DIR__);
+					$url	= plugins_url('pictures/category.png', __DIR__);
 					echo "<img src='$url' alt='category' loading='lazy' class='location_icon'>";
 					
 					//First loop over the cat to see if any parent cat needs to be removed
@@ -165,7 +165,7 @@ if(is_tax() || is_archive()){
 				<?php
 				//Only show summary on archive pages
 				if($archive){
-					$excerpt = get_the_excerpt();
+					$excerpt = force_balance_tags(wp_kses_post( get_the_excerpt()));
 					if(empty($excerpt)){
 						$url = get_permalink();
 						echo "<br><a href='$url'>View description »</a>";

@@ -177,7 +177,7 @@ if(!$archive){
 				<?php
 				//Only show summary on archive pages
 				if($archive){
-					$excerpt = get_the_excerpt();
+					$excerpt =  force_balance_tags(wp_kses_post(get_the_excerpt()));
 					if(empty($excerpt)){
 						$url = get_permalink();
 						echo "<br><a href='$url'>View description »</a>";

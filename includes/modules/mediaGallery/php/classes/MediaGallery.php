@@ -165,7 +165,7 @@ class MediaGallery{
                                     <div class="content">
                                         <a href='<?php echo $pageUrl;?>'>
                                             <h4 class='card-title'><?php echo $title;?></h4>
-                                            <div class='card-description'><?php echo get_the_excerpt($post->ID);?></div>
+                                            <div class='card-description'><?php echo  force_balance_tags(wp_kses_post(get_the_excerpt($post->ID)));?></div>
                                         </a>
                                     </div>
                                 </div>
