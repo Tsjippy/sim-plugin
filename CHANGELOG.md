@@ -15,6 +15,7 @@
 - postie categories
 - unbalanced tags in summaries
 - page embed block
+- bug with mealschedule with  timeslot size of more  than 1 hour
 
 ### Updated
 
