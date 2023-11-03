@@ -6,6 +6,7 @@
 - get contact list button
 
 ### Changed
+- location page redesign
 
 ### Fixed
 - postie categories
