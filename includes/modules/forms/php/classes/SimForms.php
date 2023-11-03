@@ -344,8 +344,12 @@ class SimForms{
 	 * @return	object|array|string|false			The element or element property
 	 */
 	public function getElementById($id, $key=''){
-		if(empty($id) || $id < 0){
+		if(empty($id)){
 			return false;
+		}
+
+		if(!is_numeric($id) && gettype($id) == 'string'){
+			return $this->getElementByName($id, $key);
 		}
 		
 		//load if needed

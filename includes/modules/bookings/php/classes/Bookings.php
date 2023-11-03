@@ -300,13 +300,13 @@ class Bookings{
                             $class	.= 'available';
                         // booked
                         }else{
-                            // First end last day of a reservation are both booked and available
-                            if(
+                            // First and last day of a reservation are both booked and available
+                            /* if(
                                 !isset($this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))])    ||
                                 !isset($this->unavailable[date('Y-m-d', strtotime('+1 day', $workingDate))])
                             ){
                                 $class	.= 'available ';
-                            }
+                            } */
                             $class	.= 'booked';
                             $data   .= "data-bookingid='{$this->unavailable[$workingDateStr]}'";
                         }
@@ -392,13 +392,13 @@ class Bookings{
                                     <td class='booking-data-wrapper edit_forms_table'>
                                         <table data-formid='<?php echo $this->forms->submission->formresults['formid'];?>' style='margin-bottom: 0px; width:unset;'>
                                             <tr data-id='<?php echo $this->forms->submission->formresults['id'];?>'>
-                                                <td data-id='booking-startdate' data-oldvalue='<?php echo json_encode($booking->startdate);?>' class='edit_forms_table'>
+                                                <td data-name='booking-startdate' data-id='<?php echo $this->forms->getElementByName('booking-startdate')->id;?>' data-oldvalue='<?php echo json_encode($booking->startdate);?>' class='edit_forms_table'>
                                                     <?php echo date('d-M-Y', strtotime($booking->startdate));?>
                                                 </td>
                                             </tr>
                                             <tr data-id='<?php echo $this->forms->submission->formresults['id'];?>'>
-                                                <td data-id='booking-enddate' data-oldvalue='<?php echo json_encode($booking->enddate);?>' class='edit_forms_table'>
-                                                    <?php echo date('d-M-Y',strtotime($booking->enddate));?>
+                                                <td data-name='booking-enddate' data-id='<?php echo  $this->forms->getElementByName('booking-enddate')->id;?>' data-oldvalue='<?php echo json_encode($booking->enddate);?>' class='edit_forms_table'>
+                                                    <?php echo date('d-M-Y', strtotime($booking->enddate));?>
                                                 </td>
                                             </tr>
                                         </table>
@@ -477,11 +477,11 @@ class Bookings{
         global $wpdb;
 
         // start end enddate may overlap so only check for dates in between
-        $queryStartDate  = date('Y-m-d', strtotime('+1 day', strtotime($startDate)));
-        $queryEndDate    = date('Y-m-d', strtotime('-1 day', strtotime($endDate)));
+        //$queryStartDate  = date('Y-m-d', strtotime('+1 day', strtotime($startDate)));
+        //$queryEndDate    = date('Y-m-d', strtotime('-1 day', strtotime($endDate)));
 
         // First check if a booking on these dates doesn't exist
-        $query	    = "SELECT * FROM $this->tableName WHERE pending=0 AND subject = '$subject' AND ('$queryStartDate' BETWEEN startdate and enddate OR '$queryEndDate' BETWEEN startdate and enddate)";
+        $query	    = "SELECT * FROM $this->tableName WHERE pending=0 AND subject = '$subject' AND ('$startDate' BETWEEN startdate and enddate OR '$endDate' BETWEEN startdate and enddate)";
 
         if($id != -1){
             $query  .= " AND NOT id=$id";
