@@ -60,77 +60,6 @@ if(is_tax() || is_archive()){
 					<?php
 				}
 			}
-			?>
-
-			<div class='location metas'>
-				<div class='category location meta'>
-					<?php
-					$categories = wp_get_post_terms(
-						get_the_ID(),
-						'locations',
-						array(
-							'orderby'   => 'name',
-							'order'     => 'ASC',
-							'fields'    => 'id=>name'
-						)
-					);
-					
-					$url	= plugins_url('pictures/category.png', __DIR__);
-					echo "<img src='$url' alt='category' loading='lazy' class='location_icon'>";
-					
-					//First loop over the cat to see if any parent cat needs to be removed
-					foreach($categories as $id=>$category){
-						//Get the child categories of this category
-						$children = get_term_children($id,'locations');
-						
-						//Loop over the children to see if one of them is also in he cat array
-						foreach($children as $child){
-							if(isset($categories[$child])){
-								unset($categories[$id]);
-								break;
-							}
-						}
-					}
-					
-					//now loop over the array to print the categories
-					$lastKey	 = array_key_last($categories);
-					foreach($categories as $id=>$category){
-						//Only show the category if all of its subcats are not there
-						$url = get_term_link($id);
-						$category = ucfirst($category);
-						echo "<a href='$url'>$category</a>";
-						
-						if($id != $lastKey){
-							echo ', ';
-						}
-					}
-					?>
-				</div>
-				
-				<div class='tel location meta'>
-					<?php
-					$tel		= get_post_meta(get_the_ID(),'tel',true);
-					if(!empty($tel)){
-						$imageUrl = plugins_url('pictures/tel.png', __DIR__);
-						$icon = "<img src='$imageUrl' alt='telephone' loading='lazy' class='location_icon'>";
-						echo "<a href='tel:$tel'>$icon Call them  »</a>";
-					}
-					?>
-				</div>
-				
-				<div class='url location meta'>
-					<?php
-					$url		= get_post_meta(get_the_ID(),'url',true);
-					if(!empty($url)){
-						$imageUrl 	= plugins_url('pictures/url.png', __DIR__);
-						$icon 		= "<img src='$imageUrl' alt='location' loading='lazy' class='location_icon'>";
-						echo "<a href='$url'>$icon Visit website  »</a>";
-					}
-					?>
-				</div>
-			</div>
-			
-			<?php
 			
 			//only show a map on the item page and if we are logged in
 			if(!$archive && is_user_logged_in()){
@@ -187,6 +116,91 @@ if(is_tax() || is_archive()){
 						'after'  => '</div>',
 					)
 				);
+				?>
+			</div>
+
+			<div class='location metas'>
+				<div class='category location meta'>
+					<?php
+					$categories = wp_get_post_terms(
+						get_the_ID(),
+						'locations',
+						array(
+							'orderby'   => 'name',
+							'order'     => 'ASC',
+							'fields'    => 'id=>name'
+						)
+					);
+					
+					if(!empty($categories)){
+						$url	= plugins_url('pictures/category.png', __DIR__);
+						echo "<img src='$url' alt='category' loading='lazy' class='location_icon'>";
+						
+						//First loop over the cat to see if any parent cat needs to be removed
+						foreach($categories as $id=>$category){
+							//Get the child categories of this category
+							$children = get_term_children($id,'locations');
+							
+							//Loop over the children to see if one of them is also in he cat array
+							foreach($children as $child){
+								if(isset($categories[$child])){
+									unset($categories[$id]);
+									break;
+								}
+							}
+						}
+						
+						//now loop over the array to print the categories
+						$lastKey	 = array_key_last($categories);
+						foreach($categories as $id=>$category){
+							//Only show the category if all of its subcats are not there
+							$url = get_term_link($id);
+							$category = ucfirst($category);
+							echo "<a href='$url'>$category</a>";
+							
+							if($id != $lastKey){
+								echo ', ';
+							}
+						}
+					}
+					?>
+				</div>
+				
+				<div class='tel location meta'>
+					<?php
+					$tel		= get_post_meta(get_the_ID(),'tel',true);
+					if(!empty($tel)){
+						$imageUrl = plugins_url('pictures/tel.png', __DIR__);
+						$icon = "<img src='$imageUrl' alt='telephone' loading='lazy' class='location_icon'>";
+						echo "<a href='tel:$tel'>$icon Call them  »</a>";
+					}
+					?>
+				</div>
+				
+				<div class='url location meta'>
+					<?php
+					$url		= get_post_meta(get_the_ID(), 'url', true);
+					if(!empty($url) && filter_var($url, FILTER_VALIDATE_URL) && $url != "https://www."){
+						$imageUrl 	= plugins_url('pictures/url.png', __DIR__);
+						$icon 		= "<img src='$imageUrl' alt='location' loading='lazy' class='location_icon'>";
+						echo "<a href='$url'>$icon Visit website  »</a>";
+					}
+					?>
+				</div>
+
+				<?php
+				$latitude 	= get_post_meta(get_the_ID(), 'geo_latitude', true);
+				$longitude 	= get_post_meta(get_the_ID(), 'geo_longitude', true);
+				if (!empty($latitude) && !empty($longitude)){
+					$url	= plugins_url('pictures/location.png', __DIR__);
+					?>
+					<a onclick='Main.getRoute(this, <?php echo "$latitude,$longitude";?>)'>
+						<img src='<?php echo $url;?>' alt='category' loading='lazy' class='location_icon'> Get directions
+					</a>
+					<?php
+				}
+
+				do_action('sim_inside_location_metas');
 				?>
 			</div>
 		</div>

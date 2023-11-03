@@ -79,16 +79,6 @@ function ministryDescription(){
 		$childPageHtml .= "</ul>";
 	}
 	
-	$latitude 	= get_post_meta($postId,'geo_latitude',true);
-	$longitude 	= get_post_meta($postId,'geo_longitude',true);
-	if (!empty($latitude) && !empty($longitude)){
-		$html .= "<p>";
-			$html .= "<a class='button' onclick='Main.getRoute(this,$latitude,$longitude)'>";
-				$html .= "Get directions to $ministry";
-			$html .= "</a>";
-		$html .= "</p>";
-	}
-	
 	if(!empty($childPageHtml)){
 		$html = $childPageHtml."<br><br>".$html;
 	}
