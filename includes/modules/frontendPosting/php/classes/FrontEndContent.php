@@ -905,6 +905,16 @@ class FrontEndContent{
 				<?php
 			}
 
+			?>
+			<div id="nonews" class="frontendform">
+				<h4>News Gallery</h4>
+				<label>
+					<input type='checkbox' name='skipgallery' value='skipgallery' <?php if(get_post_meta($this->postId, 'skipgallery', true)){echo 'checked';}?>>
+					Do not add this <?php echo $this->post->post_type;?> to the news gallery
+				</label>
+			</div>
+			<?php
+
 			$this->postSpecificFields();
 
 			$this->pageSpecificFields();
@@ -1354,6 +1364,13 @@ class FrontEndContent{
 				//Store expiry date
 				update_metadata( 'post', $this->postId, 'expirydate', $_POST['expirydate']);
 			}
+		}
+
+		// News Gallery
+		if(!isset($_POST['skipgallery'])){
+			delete_post_meta($this->postId, 'skipgallery');
+		}else{
+			update_metadata( 'post', $this->postId, 'skipgallery', $_POST['skipgallery']);
 		}
 
 		if($post->post_status == 'pending' && $this->status == 'pending'){
