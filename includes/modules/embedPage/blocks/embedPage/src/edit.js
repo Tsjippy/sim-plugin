@@ -21,10 +21,12 @@ const Edit = ({attributes, setAttributes}) => {
 		console.error('not a valid page');
 	}
 
+	console.log(parsedPage.post_content);
+
 	if(parsedPage.post_content == undefined || content == undefined){
 		initialContent	= noPostString;
 	}else{
-		initialContent	= wp.element.RawHTML( { children: content } );
+		initialContent	= wp.element.RawHTML( { children: parsedPage.post_content } );
 	}
 
 	const [ searchTerm, setSearchTerm ]		= useState( '' );
@@ -107,6 +109,7 @@ const Edit = ({attributes, setAttributes}) => {
 				onChange	= { (value) => PageSelected( value, parsedPage ) }
 				checked		= {true}
 			/>
+			<a href={`${sim.baseUrl}/wp-admin/post.php?post=${parsedPage.ID}&action=edit`}>Edit embeded page here</a><br></br><br></br>
 			</>
 		)
 	}
