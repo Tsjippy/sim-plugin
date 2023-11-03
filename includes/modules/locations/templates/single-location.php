@@ -29,7 +29,7 @@ if(!isset($skipHeader) || !$skipHeader){
 				include(__DIR__.'/content.php');
 			endwhile;
 			
-			?> <nav id='post_navigation'>
+ 			/*?> <nav id='post_navigation'>
 				<span id='prev'>
 					<?php previous_post_link(); ?>
 				</span>
@@ -38,7 +38,7 @@ if(!isset($skipHeader) || !$skipHeader){
 				</span>
 			</nav>
 			
-			<?php
+			<?php */
 			echo apply_filters('sim-single-template-bottom', '', 'location');
 			?>
 		</main>
