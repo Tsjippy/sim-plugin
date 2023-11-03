@@ -8,6 +8,7 @@
 ### Changed
 - location page redesign
 - removed navigation links
+- no overlap allowed in bookings
 
 ### Fixed
 - postie categories
