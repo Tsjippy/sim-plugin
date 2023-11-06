@@ -9,6 +9,7 @@
 
 ### Fixed
 - location handling
+- delete signal number when deleted
 
 ### Updated
 
