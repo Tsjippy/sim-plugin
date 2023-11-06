@@ -7,7 +7,7 @@ class Email extends ADMIN\MailSetting{
 
     public $user;
 
-    public function __construct($user) {
+    public function __construct(object $user) {
         // call parent constructor
 		parent::__construct('adult_reminder', MODULE_SLUG);
 
