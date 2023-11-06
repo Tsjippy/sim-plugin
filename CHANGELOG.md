@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- auto remove of non-valid signal messages
 
 ### Changed
 
