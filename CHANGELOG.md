@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.37.3] - 2023-11-03
+
+
+### Added
 - get contact list button
 - option to skip content from news gallery
 
@@ -15,6 +26,7 @@
 - postie categories
 - unbalanced tags in summaries
 - page embed block
+- bug with mealschedule with  timeslot size of more  than 1 hour
 
 ### Updated
 
