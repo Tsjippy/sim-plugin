@@ -312,7 +312,25 @@ class Signal {
                 // Store command
                 $failedCommands[]    = $this->command->getCommand();
                 update_option('sim-signal-failed-messages', $failedCommands);
-            }elseif(strpos($errorMessage, 'Unregistered user') !== false || strpos($errorMessage, 'Invalid group id') !== false){
+            }elseif(strpos($errorMessage, 'Unregistered user') !== false){
+                // get phonenumber from the message
+                preg_match('/"(\+\d*)/m', $errorMessage, $matches);
+
+                if(isset($matches[1])){
+                    // delete the signal meta key
+                    $users = get_users(array(
+                        'meta_key'     => 'signal_number',
+                        'meta_value'   => $matches[1],
+		                'meta_compare' => '=',
+                    ));
+            
+                    foreach($users as $user){
+                        delete_user_meta($user->ID, 'signal_number');
+
+                        SIM\printArray("Deleting Signal number {$matches[1]} for user $user->ID as it is not valid anymore");
+                    }
+                }
+            }elseif(strpos($errorMessage, 'Invalid group id') !== false){
                 SIM\printArray($errorMessage);
             }else{
                 SIM\printArray($this->command);
