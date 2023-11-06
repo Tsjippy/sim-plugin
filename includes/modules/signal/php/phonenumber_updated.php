@@ -37,6 +37,16 @@ add_action('sim-phonenumber-updated', function($phonenumber, $userId){
         }
 	}
 
+    // check if we need to remove the signal numbers
+    if(!$send){
+        $signalNumber   = get_user_meta( $userId, 'signal_number', $phonenumber );
+        $phoneNumbers   = get_user_meta( $userId, 'phonenumbers', $phonenumber );
+
+        if(!in_array($signalNumber, $phoneNumbers)){
+            delete_user_meta( $userId, 'signal_number');
+        }
+    }
+
     if(!empty($link) && $send){
 	    $firstName	= get_userdata($userId)->first_name;
         $message	= "Hi $firstName\n\nI noticed you just updated your phonenumber on ".SITEURLWITHOUTSCHEME.".\n\nIf you want to join our Signal group with this number you can use this url:\n$link";
