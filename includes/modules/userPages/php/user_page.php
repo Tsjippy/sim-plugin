@@ -47,7 +47,7 @@ function createUserPage($userId){
 		// make static
 		update_post_meta($pageId, 'static_content', true);
 
-		SIM\printArray("Created user page with id $pageId", false, true);
+		SIM\printArray("Created user page with id $pageId");
 	}else{
         updateUserPageTitle($userId, $title, $pageId);
 	}

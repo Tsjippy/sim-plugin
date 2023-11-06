@@ -299,7 +299,7 @@ class Signal {
 
             $errorMessage  = $this->command->getError();
 
-            SIM\printArray($errorMessage);
+            //SIM\printArray($errorMessage);
 
             // Captcha required
             if(strpos($errorMessage, 'CAPTCHA proof required') !== false){
@@ -312,9 +312,7 @@ class Signal {
                 // Store command
                 $failedCommands[]    = $this->command->getCommand();
                 update_option('sim-signal-failed-messages', $failedCommands);
-            }
-
-            if(strpos($errorMessage, 'Unregistered user') !== false || strpos($errorMessage, 'Invalid group id') !== false){
+            }elseif(strpos($errorMessage, 'Unregistered user') !== false || strpos($errorMessage, 'Invalid group id') !== false){
                 SIM\printArray($errorMessage);
             }else{
                 SIM\printArray($this->command);
@@ -744,6 +742,7 @@ class Signal {
     private function installSignal($version){
         $pidFile    = __DIR__.'/installing.signal';
         if(file_exists($pidFile)){
+            echo "$pidFile exists, another installation might by running already<br>";
             return;
         }
         file_put_contents($pidFile, 'running');

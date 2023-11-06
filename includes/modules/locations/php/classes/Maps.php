@@ -339,7 +339,9 @@ class Maps{
 		$markerIconId 	= $wpdb->get_var($query);
 
 		if(!is_numeric($markerIconId)){
-			SIM\printArray("Marker id is $markerId but this marker is not found in the db, marker_icon_id is $markerIconId");
+			if(!empty($markerIconId)){
+				SIM\printArray("Marker id is $markerId but this marker is not found in the db, marker_icon_id is $markerIconId");
+			}
 
 			return;
 		}

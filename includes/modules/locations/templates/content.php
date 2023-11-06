@@ -189,15 +189,12 @@ if(is_tax() || is_archive()){
 				</div>
 
 				<?php
-				$latitude 	= get_post_meta(get_the_ID(), 'geo_latitude', true);
-				$longitude 	= get_post_meta(get_the_ID(), 'geo_longitude', true);
-				if (!empty($latitude) && !empty($longitude)){
+				$location	= json_decode(get_post_meta(get_the_ID(), 'location', true));
+				if (!empty($location->latitude) && !empty($location->longitude)){
 					$url	= plugins_url('pictures/location.png', __DIR__);
-					?>
-					<a onclick='Main.getRoute(this, <?php echo "$latitude,$longitude";?>)'>
-						<img src='<?php echo $url;?>' alt='category' loading='lazy' class='location_icon'> Get directions
-					</a>
-					<?php
+					echo "<a onclick='Main.getRoute(this, {$location->latitude},$location->longitude)' style='cursor: pointer;'>
+						<img src='$url' alt='category' loading='lazy' class='location_icon'> Get directions
+					</a>";
 				}
 
 				do_action('sim_inside_location_metas');

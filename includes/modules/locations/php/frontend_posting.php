@@ -105,7 +105,7 @@ function setLocationAddress($postId){
 add_action( 'added_post_meta', __NAMESPACE__.'\createLocationMarker', 10, 4);
 add_action( 'updated_postmeta', __NAMESPACE__.'\createLocationMarker', 10, 4);
 function createLocationMarker($metaId, $postId,  $metaKey,  $location){
-    if($metaKey != 'location'){
+    if($metaKey != 'location' || empty($location)){
         return;
     }
 
@@ -113,7 +113,7 @@ function createLocationMarker($metaId, $postId,  $metaKey,  $location){
 
     $maps   = new Maps();
 
-    if(!is_array($location) && !empty($location)){
+    if(!is_array($location)){
         $location   = json_decode($location, true);
     }
 
