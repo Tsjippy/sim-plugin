@@ -143,6 +143,10 @@ class SimForms{
 			(
 				!empty($this->formName)		&&
 				$this->formData->name	!= $this->formName
+			)	||
+			(
+				empty($this->formId)		&&
+				!empty($formId)
 			)
 		)){
 			// Get the form data

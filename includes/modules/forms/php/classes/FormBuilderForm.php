@@ -1732,7 +1732,9 @@ class FormBuilderForm extends SimForms{
 		}
 
 		$emails	= maybe_unserialize($result->emails);
-		array_walk_recursive($emails, [$this, "replaceLineEnds"]);
+		if(!empty($emails)){
+			array_walk_recursive($emails, [$this, "replaceLineEnds"]);
+		}
 		$emails	= maybe_serialize($emails);
 		
 		$keys	= '(`'.implode('`, `', array_keys((array) $this->formElements[0])).'`)';
