@@ -10,6 +10,7 @@
 ### Fixed
 - location handling
 - delete signal number when deleted
+- bug in form export
 
 ### Updated
 
