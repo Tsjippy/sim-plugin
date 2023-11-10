@@ -15,13 +15,55 @@ add_action('sim-after-formbuilder-element-options', function($element){
     if($element != null && isset($element->booking_details)){
         $bookingDetails = maybe_unserialize($element->booking_details);
     }
+
+    if(!isset($bookingDetails['subjects'])){
+        $bookingDetails['subjects'] = ['No Subjects defined yet'];
+    }
+
+    if(!is_array($bookingDetails['subjects'])){
+        $bookingDetails['subjects'] = explode("\n", $bookingDetails['subjects']);
+    }
     ?>
     <div class='elementoption booking_selector hidden'>
         <label>
             Specify the subjects to show a calendar for
-            <textarea class="formbuilder" name="formfield[booking_details][subjects]"><?php
-                if(isset($bookingDetails['subjects'])){echo trim($bookingDetails['subjects']);}
-            ?></textarea>
+            <div class="clone_divs_wrapper">
+                <?php
+                foreach($bookingDetails['subjects'] as $index=>$subject){
+                    if(!is_array($subject)){
+                        $subject    = [
+                            'name'   => $subject,
+                            'amount' => 1
+                        ];
+                    }
+                    ?>
+                    <div class="clone_div" data-divid="<?php echo $index;?>">
+                        <div class="buttonwrapper" style="width:100%; display: flex;">
+                            <label name="Subject" class=" formfield formfieldlabel">
+                                <h4 class="labeltext">Subject <?php echo $index+1;?></h4>
+                                <input type="text" name="formfield[booking_details][subjects][<?php echo $index;?>][name]" id="subjects" class=" formfield formfieldinput" value="<?php echo $subject['name'];?>" placeholder="Enter subject name" style='width: unset;'>
+                            </label>
+                            
+                            <label name="Subject" class=" formfield formfieldlabel">
+                                <h4 class="labeltext">Room amount <?php echo $index+1;?></h4>
+                                <input type="number" name="formfield[booking_details][subjects][<?php echo $index;?>][amount]" id="subjects" class=" formfield formfieldinput" value="<?php echo $subject['amount'];?>" placeholder="Enter subject amount" style='width: unset;'>
+                            </label>
+                        
+                            <label name="Subject" class=" formfield formfieldlabel">
+                                <h4 class="labeltext">Number type <?php echo $index+1;?></h4>
+                                <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='numbers' <?php if($subject['nrtype'] == 'numbers'){echo 'checked';}?>>
+                                Numbers
+                                <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='letters' <?php if($subject['nrtype'] == 'letters'){echo 'checked';}?>>
+                                Letters
+                            </label>
+                            
+                            <button type="button" class="add button" style="flex: 1;">+</button>
+                        </div>
+                    </div>
+                    <?php
+                }
+                ?>
+            </div>
         </label>
         <br>
         <label>
@@ -69,60 +111,74 @@ add_filter('sim-forms-elements', function($elements, $displayFormResults, $force
 }, 10, 3);
 
 // Display the date selector in the form
-add_filter('sim-forms-element-html', function($html, $element){
+add_filter('sim-forms-element-html', function($html, $element, $displayForm){
     if($element->type == 'booking_selector'){
         $bookingDetails = maybe_unserialize($element->booking_details);
 
         if(!isset($bookingDetails['subjects'])){
             return 'Please add one or more subjects';
         }else{
-            $subjects       = explode("\n", trim($bookingDetails['subjects']));
+            $subjects       = $bookingDetails['subjects'];
         }
 
         $html   = '';
-
-         $hidden     = 'hidden';
+        $hidden     = 'hidden';
         $buttonText = 'Change';
         $required   = '';
         if($element->required){
             $required   = 'required';
         }
 
-        if(count($subjects) == 1){
+        if(empty($subjects)){
             $hidden     = "";
             $buttonText = 'Select dates';
-        }elseif(strlen($bookingDetails['subjects']) < 60){
+        }elseif(count($subjects) < 5){
             foreach($subjects as $subject){
-                $cleanSubject    = trim(str_replace(' ', '_', $subject));
-                $html   .= "<label>";
+                $cleanSubject    = trim($subject['name']);
+                $html   .= "<label style='margin-right:5px;'>";
                     $html   .= "<input type='radio' class='booking-subject-selector' name='$element->name' value='$cleanSubject'>";
-                    $html   .= "$subject";
+                    $html   .= "$cleanSubject";
                 $html   .= "</label>";
             }
         }else{
             $html   .= "<select class='booking-subject-selector' name='$element->name' $required>";
                 foreach($subjects as $subject){
-                    $cleanSubject    = trim(str_replace(' ', '_', $subject));
-                    $html   .= "<option value='$cleanSubject'>$subject</option>";
+                    $cleanSubject    = trim($subject['name']);
+                    $html   .= "<option value='$cleanSubject'>$cleanSubject</option>";
                 }
             $html   .= "</select>";
         }
 
-        $html   .= "<div class='selected-booking-dates $hidden'>";
-            $html   .= "<div>";
-                $html   .= "<h4>Arrival Date</h4>";
-                $html   .= "<input type='date' name='booking-startdate' disabled $required>";
-            $html   .= "</div>";
-            $html   .= "<div>";
-                $html   .= "<h4>Departure Date</h4>";
-                $html   .= "<input type='date' name='booking-enddate' disabled $required>";
-            $html   .= "</div>";
-            $html   .= "<button class='button change-booking-date' type='button'>$buttonText</button>";
-        $html   .= "</div>";
+        ob_start();
+
+        ?>
+        <div style='display:flex;align-items: center;'>
+            <div class="clone_divs_wrapper selected-booking-dates <?php echo $hidden;?>">
+                <div class="clone_div" data-divid="0">
+                    <div class="buttonwrapper" style="width:100%; display: flex;">
+                        <div class='hidden'>
+                            <h4>Room</h4>
+                            <input type='text' name='booking-room[0]' disabled <?php echo $required;?>>
+                        </div>
+                        <div>
+                            <h4>Arrival Date</h4>
+                            <input type='date' name='booking-startdate[0]' disabled <?php echo $required;?>>
+                        </div>
+                        <div>
+                            <h4>Departure Date</h4>
+                            <input type='date' name='booking-enddate[0]' disabled <?php echo $required;?>>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class='button change-booking-date hidden' type='button' style='margin-left: 20px;'><?php echo $buttonText;?></button>
+        </div>
+        <?php
+        $html   .= ob_get_clean();
 
         wp_enqueue_script('sim-bookings');
 
-        $booking   = new Bookings();
+        $booking   = new Bookings($displayForm);
 
         // Find the accomodation names
         foreach($subjects as $subject){
@@ -130,7 +186,7 @@ add_filter('sim-forms-element-html', function($html, $element){
         }
     }
     return $html;
-}, 10, 2);
+}, 10, 3);
 
 // Form settings
 add_action('sim-forms-form-settings-form', function($formBuilderForm){
@@ -252,7 +308,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
         if(!isset($bookingDetails['subjects'])){
             return 'Please add one or more booking subjects';
         }else{
-            $subjects       = explode("\n", trim($bookingDetails['subjects']));
+            $subjects       = $bookingDetails['subjects'];
         }
     }
 
@@ -304,12 +360,14 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
         $checkboxes = '<h4>Please select the accomodation you want to see the calendar for</h4>';
         // Find the accomodation names
         foreach($subjects as $subject){
-            $cleanSubject   = trim(str_replace(' ', '_', $subject));
+            $booking->bookings  = [];   // reset the bookings so they do not include the previous location
+
+            $cleanSubject   = trim($subject['name']);
             $checkboxes .= "<label>";
                 $checkboxes .= "<input type='checkbox' class='admin-booking-subject-selector' value='$cleanSubject'>";
-                $checkboxes .= $subject;
+                $checkboxes .= $cleanSubject;
             $checkboxes .= "</label>";
-            $calendars  .= $booking->modalContent($subject, time(), true, true);
+            $calendars  .= $booking->modalContent($subject, time(), true, true, true);
         }
         $html   .= '<div class="form-data-table">';
             $html   .= $checkboxes;
@@ -336,7 +394,14 @@ add_filter('sim_after_saving_formdata', function($message, $formBuilder){
             $endDate        = $formBuilder->submission->formresults['booking-enddate'];
             $subject        = $formBuilder->submission->formresults[$elementName];
             $submissionId   = $formBuilder->submission->formresults['id'];
-            $result         = $bookings->insertBooking($startDate, $endDate, $subject, $submissionId);
+
+            if(!empty($formBuilder->submission->formresults['booking-room'])){
+                foreach($formBuilder->submission->formresults['booking-room'] as $index=>$room){
+                    $result         = $bookings->insertBooking($startDate[$index], $endDate[$index], "$subject;$room", $submissionId);
+                }
+            }else{
+                $result         = $bookings->insertBooking($startDate, $endDate, $subject, $submissionId);
+            }
 
             if(is_wp_error($result)){
                 return $result;

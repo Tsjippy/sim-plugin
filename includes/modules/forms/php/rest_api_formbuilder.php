@@ -379,7 +379,7 @@ function addFormElement(){
 	}
 
 	$element->nicename	= ucfirst(trim($element->name, '[]'));
-	$element->name		= str_replace(" ", "_", strtolower(trim($element->name)));
+	//$element->name		= str_replace(" ", "_", strtolower(trim($element->name)));
 
 	if(
 		in_array($element->type, $simForms->nonInputs) 		&& 	// this is a non-input
@@ -417,7 +417,10 @@ function addFormElement(){
 	if($update){
 		$message								= "Succesfully updated '{$element->name}'";
 		$element->id							= $_POST['element_id'];
-		$simForms->updateFormElement($element);
+		$result									= $simForms->updateFormElement($element);
+		if(is_wp_error($result)){
+			return $result;
+		}
 	}else{
 		$message								= "Succesfully added '{$element->name}' to this form";
 		if(!is_numeric($_POST['insertafter'])){

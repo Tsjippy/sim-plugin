@@ -11,26 +11,50 @@ function reset(modal, onlyEnd=false){
     modal.querySelector('.calendar.day.enddate').classList.remove('enddate');
 
     modal.querySelectorAll('.inbetween').forEach(dt=>dt.classList.remove('inbetween'));    
+
+    modal.querySelectorAll('.room-selector').forEach(el=>el.checked=false);    
+
+    if(modal.querySelectorAll('.room-selector').length>1){
+        modal.querySelectorAll('.roomwrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+    }
 }
 
 async function getMonth(target){
     let wrapper         = target.closest('.bookings-wrap');
-    let monthContainer  = wrapper.querySelector(`.month-container[data-month="${target.dataset.month}"][data-year="${target.dataset.year}"]`);
+    let monthContainers = wrapper.querySelectorAll(`.month-container[data-month="${target.dataset.month}"][data-year="${target.dataset.year}"]`);
 
     // hide the first month
     if(target.closest('.prev') != null){
-        wrapper.querySelectorAll('.calendar.table .month-container:not(.hidden)')[1].classList.add('hidden');
+        wrapper.querySelectorAll('.calendar.table .month-container:not(.hidden)').forEach(
+            (el, index) => {
+                if(index % 2 != 0){ // uneven index
+                    el.classList.add('hidden');
+                }
+            }
+        );
     }else{
-        wrapper.querySelectorAll('.calendar.table .month-container:not(.hidden)')[0].classList.add('hidden');
+        wrapper.querySelectorAll('.calendar.table .month-container:not(.hidden)').forEach(
+            (el, index) => {
+                if(index % 2 == 0){ // even index
+                    el.classList.add('hidden');
+                }
+            }
+        );
     }
 
-    // month does not exist yet
-    if(monthContainer == null){
+    // month does not exist yet, request the data
+    if(monthContainers.length == 0){
         let formData    = new FormData();
         formData.append('month', target.dataset.month);
         formData.append('year', target.dataset.year);
-        formData.append('subject', target.closest('.bookings-wrap').dataset.subject);
-        formData.append('shortcodeid', target.closest('.bookings-wrap').dataset.shortcodeid);
+        formData.append('subject', wrapper.dataset.subject);
+        formData.append('formid', wrapper.dataset.formid);
+        if(wrapper.dataset.elid != undefined){
+            formData.append('elid', wrapper.dataset.elid);
+        }
+        if(wrapper.dataset.shortcodeid != undefined){
+            formData.append('shortcodeid', wrapper.dataset.shortcodeid);
+        }
 
         let loaderWrapper	= document.createElement("DIV");
         loaderWrapper.setAttribute('class','loaderwrapper');
@@ -39,12 +63,22 @@ async function getMonth(target){
         loader.setAttribute("src", sim.loadingGif);
 
         loaderWrapper.insertAdjacentElement('beforeEnd', loader);
-        wrapper.querySelector('.calendar.table').insertAdjacentElement('beforeEnd', loaderWrapper);
+        wrapper.querySelectorAll('.calendar.table .roomwrapper>div').forEach(div=>{
+            let clone   = loaderWrapper.cloneNode(true);
+            div.insertAdjacentElement('beforeEnd', clone);
+        });
             
         let response = await FormSubmit.fetchRestApi('bookings/get_next_month', formData);
 
         if(response){
-            loaderWrapper.outerHTML                                = response.month;
+
+            console.log(response);
+
+            // add the new months to each room
+            wrapper.querySelectorAll('.roomwrapper').forEach((el, index)=>{
+                el.querySelector('.loaderwrapper').outerHTML        = response.months[index];
+            });
+
             // hide current navigator and add new one
             wrapper.querySelector('.navigators .navigator:not(.hidden)').classList.add('hidden');
             wrapper.querySelector('.navigators').insertAdjacentHTML('beforeEnd', response.navigator);
@@ -60,7 +94,7 @@ async function getMonth(target){
         wrapper.querySelector(`.navigator[data-month="${target.dataset.month}"][data-year="${target.dataset.year}"]`).classList.remove('hidden');
         
         // Show the month calendar
-        monthContainer.classList.remove('hidden');
+        monthContainers.forEach(el=>el.classList.remove('hidden'));
     }
 }
 
@@ -121,7 +155,7 @@ async function remove(target){
 
 function changeBookingData(target){
     let selector    = '';
-    let el  = document.querySelector(`.booking-subject-selector`);
+    let el  = document.querySelector(`.booking-subject-selector:checked`);
     if(el == null){
         selector    = '.booking.modal';
         console.log(selector);
@@ -134,18 +168,53 @@ function changeBookingData(target){
 
 function storeDates(target){
     let modal   = target.closest('.modal');
+
+    // remove all previous dates
+    target.closest('form').querySelectorAll('.selected-booking-dates .clone_div').forEach((el, index)=>{
+        if(index>0){
+            el.remove();
+        }
+    });
+
+    let parent          = target.closest('form').querySelector('.selected-booking-dates');
+    let original        = parent.querySelector('.clone_div');
+
+    // set values and create clones
+    modal.querySelectorAll('.startdate').forEach((el, index)=>{
+        let clone		= original;
+
+        if(index > 0){
+            clone		= FormFunctions.cloneNode(original);
+        }
     
-    let startEl     = target.closest('form').querySelector('[name="booking-startdate"]');
-    let endEl       = target.closest('form').querySelector('[name="booking-enddate"]');
+        let startEl     = clone.querySelector('[name^="booking-startdate"]');
+        let endEl       = clone.querySelector('[name^="booking-enddate"]');
+        let roomEl      = clone.querySelector('[name^="booking-room"]');
+        let room        = el.closest('.roomwrapper').dataset.room;
 
-    startEl.value   = modal.querySelector('.booking-startdate').dataset.isodate;
-    endEl.value     = modal.querySelector('.booking-enddate').dataset.isodate;
+        startEl.value   = el.dataset.isodate;
+        endEl.value     = modal.querySelectorAll('.day.enddate')[index].dataset.isodate;
 
-    startEl.closest('.selected-booking-dates').classList.remove('hidden');
+        if(room == undefined){
+            roomEl.closest('div').classList.add('hidden');
+            roomEl.value    = '';
+        }else{
+            roomEl.closest('div').classList.remove('hidden');
+            roomEl.value    = room;
+        }
+
+        parent.insertAdjacentElement('beforeEnd', clone);
+        
+        FormFunctions.fixNumbering(parent);
+    });
+
+    parent.classList.remove('hidden');
 
     Main.hideModals();
 
     target.closest('form').querySelector('.change-booking-date').textContent    = 'Change';
+
+    target.closest('form').querySelector('.change-booking-date').classList.remove('hidden');
 
     reset(modal);
 }
@@ -157,8 +226,10 @@ function daySelected(target){
         return;
     }
 
+    let roomWrapper = target.closest('.roomwrapper');
+
     // we already have an selection
-    if(modal.querySelector('.calendar.day.startdate') != null && modal.querySelector('.calendar.day.enddate') != null){
+    if(roomWrapper.querySelector('.calendar.day.startdate') != null && roomWrapper.querySelector('.calendar.day.enddate') != null){
         let onlyEnd = false;
         if(target.matches('.inbetween')){
             onlyEnd = true;
@@ -167,15 +238,15 @@ function daySelected(target){
         reset(modal, onlyEnd);
     }
 
-    if(modal.querySelector('.calendar.day.startdate') == null){
-        modal.querySelector('.booking-startdate').value             = target.dataset.date;
-        modal.querySelector('.booking-startdate').dataset.isodate   = target.dataset.isodate;
+    if(roomWrapper.querySelector('.calendar.day.startdate') == null){
+        //roomWrapper.querySelector('.booking-startdate').value             = target.dataset.date;
+        //roomWrapper.querySelector('.booking-startdate').dataset.isodate   = target.dataset.isodate;
 
         target.classList.add('startdate');
-        modal.querySelectorAll('.booking-date-label-wrapper.disabled').forEach(el=>el.classList.remove('disabled'));
+        roomWrapper.querySelectorAll('.booking-date-label-wrapper.disabled').forEach(el=>el.classList.remove('disabled'));
 
         // do not allow any date before the startdate to be the enddate
-        let dts     = target.closest('.calendar.table').querySelectorAll('dt.calendar.day:not(.head, .unavailable)');
+        let dts     = roomWrapper.querySelectorAll('dt.calendar.day:not(.head, .unavailable)');
         let skip    = false;
         for (i = 0; i < dts.length; ++i) {
             // all dates after the booked date are available
@@ -197,10 +268,10 @@ function daySelected(target){
         target.classList.add('enddate');
 
         // make other dates available again
-        target.closest('.calendar.table').querySelectorAll('.available.booked:not(.enddate, .startdate)').forEach(dt=>dt.classList.remove('booked'));
+        roomWrapper.querySelectorAll('.available.booked:not(.enddate, .startdate)').forEach(dt=>dt.classList.remove('booked'));
 
         // color the dates between start and end
-        let dts     = target.closest('.calendar.table').querySelectorAll('dt.calendar.day:not(.head)');
+        let dts     = roomWrapper.querySelectorAll('dt.calendar.day:not(.head)');
         let skip    = true;
         for (i = 0; i < dts.length; ++i) {
             
@@ -221,6 +292,28 @@ function daySelected(target){
 
         modal.querySelectorAll('.actions .action.disabled').forEach(el=>el.classList.remove('disabled'));
     }
+}
+
+function roomSelected(target){
+
+    let modal   = target.closest('.modal');
+
+    if(modal == null){
+        modal = target.closest('.booking.overview'); // when viewing the results
+    }
+
+    if(modal == null){
+        return;
+    }
+
+    // show date warning
+    modal.querySelectorAll(`.booking-date-wrapper.hidden`).forEach(el=>el.classList.remove('hidden'));
+
+    // show month navigator
+    modal.querySelectorAll(`.navigators.hidden`).forEach(el=>el.classList.remove('hidden'));
+
+    // Show the selected room
+    modal.querySelectorAll(`[data-room="${target.value}"]`).forEach(el=>el.classList.toggle('hidden'));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -298,5 +391,7 @@ document.addEventListener('click', (ev) => {
         approve(target);
     }else if(target.matches('.button.delete')){
         remove(target);
+    }else if(target.matches('.room-selector')){
+        roomSelected(target);
     }
 });

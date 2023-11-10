@@ -27,6 +27,10 @@ class SaveFormSettings extends SimForms{
 			),
 		);
 
+		if($wpdb->last_error !== ''){
+			return new WP_Error('forms', $wpdb->last_error);
+		}
+
 		if($this->formData == null){
 			$this->getForm($_POST['formid']);
 		}
@@ -39,7 +43,7 @@ class SaveFormSettings extends SimForms{
 		);
 		
 		if($wpdb->last_error !== ''){
-			return new WP_Error('forms', $wpdb->last_error());
+			return new WP_Error('forms', $wpdb->last_error);
 		}
 
 		return $result;

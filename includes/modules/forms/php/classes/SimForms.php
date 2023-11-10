@@ -316,6 +316,7 @@ class SimForms{
 			hidden boolean default False,
 			multiple boolean default False,
 			library boolean default False,
+			editimage boolean default False,
 		  	conditions longtext,
 			warning_conditions longtext,
 			PRIMARY KEY  (id)

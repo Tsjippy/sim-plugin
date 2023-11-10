@@ -84,10 +84,10 @@ button.change-booking-date{
     height: fit-content;
 }
 
-.selected-booking-dates{
+/* .selected-booking-dates{
     display: flex;
     align-items: center;
-}
+} */
 
 .unavailable{
     color: rgb(176, 176, 176) !important;
@@ -347,13 +347,13 @@ article.booking{
 }
 
 
-.booking-date-wrapper {
-    -webkit-box-align: start !important;
-    -webkit-box-pack: justify !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: flex-start !important;
-    padding-bottom: 16px !important;
+.booking.overview .booking-date-wrapper {
+    -webkit-box-align: start;
+    -webkit-box-pack: justify;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 16px;
 }
 
 .pending-bookings-wrapper, .form-data-table{

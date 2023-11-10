@@ -104,34 +104,116 @@ class Bookings{
      *
      * @return  string                  The html
      */
-    public function modalContent($subject, $date, $isAdmin = false, $hidden = false){
+    public function modalContent($subject, $date, $isAdmin = false, $hidden = false, $isResult=false){
 		$monthStr		= date('m', $date);
 		$yearStr		= date('Y', $date);
-        $cleanSubject   = trim(str_replace(' ', '_', $subject));
+        $cleanSubject   = trim($subject['name']);
 
         ob_start();
 
+        $extraString   = '';
+        if(isset($this->forms->currentElement->id)){
+            $extraString   = "data-elid='{$this->forms->currentElement->id}'";
+        }
+        if(isset($this->forms->shortcodeId)){
+            $extraString   .= "data-shortcodeid='{$this->forms->shortcodeId}'";
+        }
+
         ?>
-        <div class="bookings-wrap <?php if($hidden){echo 'hidden';}?>" data-date="<?php echo "$yearStr-$monthStr";?>" data-subject="<?php echo $cleanSubject;?>" data-shortcodeid="<?php echo $this->forms->shortcodeId;?>">
+        <div class="bookings-wrap <?php if($hidden){echo 'hidden';}?>" data-date="<?php echo "$yearStr-$monthStr";?>" data-subject="<?php echo $cleanSubject;?>" data-formid="<?php echo $this->forms->formData->id;?>" <?php echo $extraString;?>>
             <div class="booking overview">
                 <div class='header mobile-sticky'>
-                    <h4 style='text-align:center;'><?php echo $subject;?> Calendar</h4>
+                    <h4 style='text-align:center;'><?php echo ucfirst($cleanSubject);?> Calendar</h4>
+
+                    <?php
+                    if($subject['amount'] > 1){
+                        ?>
+                        <div class="rooms">
+                            <?php
+                            if($isResult){
+                                echo "Select the rooms you want to check<br>";
+                            }else{
+                                echo "Select the room(s) you want to book:<br>";
+                            }
+                            
+                            if(isset($subject['nrtype']) && $subject['nrtype'] == 'letters'){
+                                $alphabet = range('A', 'Z');
+                                for ($x = 0; $x < $subject['amount']; $x++) {
+                                    ?>
+                                    <input type='checkbox' name='room' class='room-selector' value='<?php echo $alphabet[$x];?>'>
+                                    <?php
+                                    echo $alphabet[$x];
+                                }
+                            }else{
+                                for ($x = 1; $x <= $subject['amount']; $x++) {
+                                    ?>
+                                    <input type='checkbox' name='room' class='room-selector' value='<?php echo $x;?>'>
+                                    <?php
+                                    echo $x;
+                                }
+                            }
+                            ?>
+                        </div>
+                        <br>
+                        <br>
+                        <?php
+                    }
+                    ?>
                 
                     <?php
                     if(!$isAdmin){
-                        echo $this->showSelectedModalDates();
+                        echo $this->showSelectedModalDates($subject['amount'] > 1);
                     }
                     ?>
-                    <div class="navigators">
+                    <div class="navigators <?php if($subject['amount'] > 1){echo 'hidden';}?>">
                         <?php
                         echo $this->getNavigator($date);
                         ?>
                     </div>
                 </div>
-                <div class="calendar table">
+                <div class="calendar table" <?php if(!empty($subject['amount']) && $subject['amount'] > 1){echo 'style="display:block;"';}?>>
                     <?php
-                    echo $this->monthCalendar($subject, $date);
-                    echo $this->monthCalendar($subject, strtotime('first day of next month', $date));
+                    if(empty($subject['amount']) || $subject['amount'] == 1){
+                        ?>
+                        <div class='roomwrapper'>
+                            <div style='display:flex;'>
+                                <?php
+                                echo $this->monthCalendar($cleanSubject, $date);
+                                echo $this->monthCalendar($cleanSubject, strtotime('first day of next month', $date));
+                                ?>
+                            </div>
+                        </div>
+                        <?php
+                    }elseif(isset($subject['nrtype']) && $subject['nrtype'] == 'letters'){
+                        $alphabet = range('A', 'Z');
+                        for ($x = 0; $x < $subject['amount']; $x++) {
+                            ?>
+                            <div class='roomwrapper hidden'data-room='<?php echo $alphabet[$x];?>'>
+                                <h4>Room <?php echo $alphabet[$x];?></h4>
+                                <div style='display: flex;' >
+                                    <?php
+                                    echo $this->monthCalendar($cleanSubject.";$alphabet[$x]", $date);
+                                    echo $this->monthCalendar($cleanSubject.";$alphabet[$x]", strtotime('first day of next month', $date));
+                                    ?>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }else{
+                        for ($x = 1; $x <= $subject['amount']; $x++) {
+                            ?>
+                            <div class='roomwrapper hidden'data-room='<?php echo $x;?>'>
+                                <h4>Room <?php echo $x;?></h4>
+                                <div style='display: flex;' >
+                                    <?php
+                                    echo $this->monthCalendar($cleanSubject.";$x", $date);
+                                    echo $this->monthCalendar($cleanSubject.";$x", strtotime('first day of next month', $date));
+                                    ?>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }
                     ?>
                 </div>
                 <?php
@@ -165,11 +247,11 @@ class Bookings{
     /**
      * Displays the selected dates
      */
-    protected function showSelectedModalDates(){
+    protected function showSelectedModalDates($hide){
         ob_start();
 
         ?>
-        <div class="booking-date-wrapper">
+        <div class="booking-date-wrapper <?php if($hide){echo 'hidden';}?>">
             <div class="booking-dates-input-wrapper">
                 <div class="_h0i9fjw">
                     <div class="booking-date-label-wrapper">
@@ -215,6 +297,8 @@ class Bookings{
     /**
      *
      * Displays a date selector modal
+     *
+     * @param   array  $subject    array with The name of the building/event and the amount of rooms
      */
     public function dateSelectorModal($subject){
         if(defined('REST_REQUEST') && isset($_POST['month']) && isset($_POST['year'])){
@@ -237,7 +321,7 @@ class Bookings{
         $date			= strtotime($dateStr);
 
         ob_start();
-        $cleanSubject    = trim(str_replace(' ', '_', $subject));
+        $cleanSubject    = trim($subject['name']);
 
 		?>
         <div name='<?php echo $cleanSubject;?>-modal' class="booking modal hidden">
@@ -256,6 +340,7 @@ class Bookings{
 	 *
 	 * @param	string		$subject		The subject name
      * @param   int         $date           The time
+     * @param   boolean     $hidden         Wheter we should hide the calendar, default false
 	 *
 	 * @return	string				        Html of the calendar
 	 */
@@ -363,7 +448,10 @@ class Bookings{
         $baseUrl	= plugins_url('../pictures', __DIR__);
 
         if($this->forms->columnSettings == null){
-            $this->forms->loadShortcodeData();
+            $result = $this->forms->loadShortcodeData();
+            if(is_wp_error($result)){
+                return $result;
+            }
         }
 
         ob_start();
@@ -683,8 +771,6 @@ class Bookings{
      */
     protected function retrieveMonthBookings($month, $year, $subject){
         global $wpdb;
-
-        $subject    = trim(str_replace(' ', '_', $subject));
 
 		//select all bookings of this month
         $startDate  = "$year-$month-01";

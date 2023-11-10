@@ -498,6 +498,10 @@ class PdfHtml extends \FPDF{
 	 * @return	array				Array of width and height
 	 */
     public function resizeToFit($imgPath, $maxHeight=self::MAX_HEIGHT) {
+		if(!file_exists($imgPath)){
+			return false;
+		}
+		
         list($width, $height) = getimagesize($imgPath);
 
 		$maxHeight 		= min(self::MAX_HEIGHT, $maxHeight);
@@ -521,9 +525,13 @@ class PdfHtml extends \FPDF{
 	 * @param	int		$maxHeight	The maximum height of the image
 	 * @param	string	$ext		The extension of the image
 	 *
-	 * @return	array				Array of width and height
+	 * @return	array|boolean		Array of width and height or false in case of error
 	 */
     public function centreImage($path, $y, $maxHeight, $ext) {
+		if(!file_exists($path)){
+			return false;
+		}
+
         list($width, $height) = $this->resizeToFit($path, $maxHeight);
 
         // you will probably want to swap the width/height
