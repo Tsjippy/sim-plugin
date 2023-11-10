@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- auto remove of non-valid signal messages
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.37.4] - 2023-11-10
+
+
+### Added
+- auto remove of non-valid signal messages
 
 ### Fixed
 - location handling
