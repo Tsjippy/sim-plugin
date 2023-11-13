@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.37.5] - 2023-11-13
+
+
+### Fixed
 - updating accomodationroom
 
 ### Updated
