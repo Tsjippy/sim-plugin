@@ -15,6 +15,7 @@
 
 ### Added
 - auto remove of non-valid signal messages
+- Multi room accomodation reservatioins
 
 ### Fixed
 - location handling
