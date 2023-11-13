@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- updating accomodationroom
 
 ### Updated
 
