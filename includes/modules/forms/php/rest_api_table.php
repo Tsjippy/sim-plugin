@@ -451,16 +451,12 @@ function getInputHtml(){
 	// get value
 	if(isset($formTable->submission->formresults[$elementName])){
 		$curValue	= $formTable->submission->formresults[$elementName];
-
-		if(is_numeric($subId) && is_array($curValue)){
-			$curValue	= $curValue[$subId];
-		}
 	}elseif(isset($formTable->submission->formresults[str_replace('[]', '', $element->name)])){
 		$curValue	= $formTable->submission->formresults[str_replace('[]', '', $element->name)];
+	}
 
-		if(is_numeric($subId) && is_array($curValue)){
-			$curValue	= $curValue[$subId];
-		}
+	if(is_numeric($subId) && is_array($curValue)){
+		$curValue	= $curValue[$subId];
 	}
 
 	// Get element html with the value allready set
@@ -478,6 +474,10 @@ function editValue(){
 	//update an existing entry
 	$elementName 	= sanitize_text_field($_POST['elementname']);
 	$newValue 		= json_decode(sanitize_text_field(stripslashes($_POST['newvalue'])));
+
+	if(is_array($newValue)){
+		$newValue	= implode(';', $newValue);
+	}
 
 	$transValue		= $formTable->transformInputData($newValue, $elementName, $formTable->submission->formresults);
 	
@@ -498,18 +498,21 @@ function editValue(){
 
 			//check if this is a main field
 			if(isset($formTable->submission->formresults[$elementName][$subId][$elementName])){
+				$oldValue	= $formTable->submission->formresults[$elementName][$subId][$elementName];
 				$formTable->submission->formresults[$elementName][$subId][$elementName]	= $newValue;
 			}elseif(isset($formTable->submission->formresults[$elementName])){
+				$oldValue	= $formTable->submission->formresults[$elementName];
 				$formTable->submission->formresults[$elementName]	= $newValue;
 			}
 			$message = "Succesfully updated '$elementName' to $transValue";
 		}
 	}else{
+		$oldValue	= $formTable->submission->formresults[$elementName];
 		$formTable->submission->formresults[$elementName]	= $newValue;
 		$message = "Succesfully updated '$elementName' to $transValue";
 	}
 
-	$message	= apply_filters('sim-forms-submission-updated', $message, $formTable, $elementName, $newValue);
+	$message	= apply_filters('sim-forms-submission-updated', $message, $formTable, $elementName, $oldValue, $newValue);
 
 	if(is_wp_error($message)){
 		return ['message' => $message->get_error_message()];

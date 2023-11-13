@@ -384,7 +384,10 @@ document.addEventListener('click', (ev) => {
         target.closest('.bookings-wrap').querySelectorAll(`.booking-detail-wrapper:not(.hidden)`).forEach(el=>el.classList.add('hidden'));
         
         // Show the details
-        target.closest('.bookings-wrap').querySelector(`.booking-detail-wrapper[data-bookingid="${target.dataset.bookingid}"]`).classList.remove('hidden');
+        target.closest('.bookings-wrap').querySelectorAll(`.booking-detail-wrapper[data-bookingid="${target.dataset.bookingid}"]`).forEach(el=>{
+            el.classList.remove('hidden');
+            el.scrollIntoView({block: "center"});
+        });
     }
 
     if(target.matches('.button.approve')){

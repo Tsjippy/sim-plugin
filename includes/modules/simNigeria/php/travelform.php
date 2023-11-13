@@ -172,7 +172,7 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 }, 1, 2);
 
 //Transform table data from travelform
-add_filter('sim_transform_formtable_data',function($string, $elementName){
+add_filter('sim_transform_formtable_data', function($string, $elementName){
 	if(in_array($elementName, ['name','driver','passengers'])){
 		if($elementName == 'passengers'){
 			$output		= '';

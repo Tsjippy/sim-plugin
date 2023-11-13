@@ -7,8 +7,6 @@ use mikehaertl\shellcommand\Command;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-     $wpdb->query("UPDATE `{$wpdb->prefix}sim_bookings` SET `subject` = 'Grace Cottage' WHERE `subject`='Grace_Cottage'");
-    
 
     /*     $posts = get_posts(
 		array(

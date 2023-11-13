@@ -15,7 +15,7 @@ function getCheckboxValue(form, selector, compareValue, orgName){
 	let elements	= '';
 
 	//we are dealing with a specific checkbox
-	if(orgName.type == 'checkbox' ){
+	if(orgName.type == 'checkbox' && compareValue != null ){
 		if(orgName.checked){
 			return orgName.value;
 		}

@@ -98,14 +98,22 @@ add_filter('sim-forms-elements', function($elements, $displayFormResults, $force
         $startdate->name    = 'booking-startdate';
         $startdate->nicename= 'booking-startdate';
         $startdate->id      = -102;
+
         $enddate            = clone $element;
         $enddate->type      = 'date';
         $enddate->name      = 'booking-enddate';
         $enddate->nicename  = 'booking-enddate';
         $enddate->id        = -103;
+
+        $room               = clone $element;
+        $room->type         = 'checkbox';
+        $room->name         = 'booking-room';
+        $room->nicename     = 'booking-room';
+        $room->id           = -104;
         
         $elements[]         = $startdate;
         $elements[]         = $enddate;
+        $elements[]         = $room;
     }
     return $elements;
 }, 10, 3);
@@ -135,8 +143,12 @@ add_filter('sim-forms-element-html', function($html, $element, $displayForm){
         }elseif(count($subjects) < 5){
             foreach($subjects as $subject){
                 $cleanSubject    = trim($subject['name']);
+                $checked    = '';
+                if(isset($displayForm->submission->formresults['accomodation']) && $displayForm->submission->formresults['accomodation'] == $cleanSubject){
+                    $checked    = 'checked';
+                }
                 $html   .= "<label style='margin-right:5px;'>";
-                    $html   .= "<input type='radio' class='booking-subject-selector' name='$element->name' value='$cleanSubject'>";
+                    $html   .= "<input type='radio' class='booking-subject-selector' name='$element->name' value='$cleanSubject' $checked>";
                     $html   .= "$cleanSubject";
                 $html   .= "</label>";
             }
@@ -185,7 +197,28 @@ add_filter('sim-forms-element-html', function($html, $element, $displayForm){
             $html   .= $booking->dateSelectorModal($subject);
         }
     }
+
+    if($element->name == 'booking-room'){
+        $bookings   = new Bookings($displayForm);
+
+        $bookingDetails = maybe_unserialize($element->booking_details);
+
+        if(!isset($bookingDetails['subjects'])){
+            return 'Please add one or more subjects';
+        }else{
+            $subjects       = $bookingDetails['subjects'];
+        }
+
+        foreach($subjects as $subject){
+            if($subject['name'] == $displayForm->submission->formresults['accomodation']){
+                break;
+            }
+        }
+        $html   .= $bookings->roomSelector($subject, false);
+    }
+
     return $html;
+
 }, 10, 3);
 
 // Form settings
@@ -367,6 +400,8 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
                 $checkboxes .= "<input type='checkbox' class='admin-booking-subject-selector' value='$cleanSubject'>";
                 $checkboxes .= $cleanSubject;
             $checkboxes .= "</label>";
+
+            $booking->forms->submission = null;
             $calendars  .= $booking->modalContent($subject, time(), true, true, true);
         }
         $html   .= '<div class="form-data-table">';
@@ -413,38 +448,73 @@ add_filter('sim_after_saving_formdata', function($message, $formBuilder){
 }, 10, 2);
 
 // Update an existing booking
-add_filter('sim-forms-submission-updated', function($message, $formTable, $fieldName, $newValue){
+add_filter('sim-forms-submission-updated', function($message, $formTable, $elementName, $oldValue, $newValue){
     global $wpdb;
 
-    $bookings   =  new Bookings();
-    $booking    = $bookings->getBookingBySubmission($formTable->submission->id);
+    $bookings           =  new Bookings($formTable);
+    $currentBookings   = $bookings->getBookingsBySubmission($formTable->submission->id);
 
-    if(!$booking){
+    if(!$currentBookings || !isset($currentBookings[0])){
         return $message;
     }
 
-    // Get the subject element name
-    $query      = "SELECT name FROM `wp_sim_form_elements` WHERE `form_id`=(select form_id from {$bookings->forms->submissionTableName} WHERE id=$booking->submission_id) AND `type`='booking_selector'";
+    $booking    = $currentBookings[0];
+
+    // Get the element name
+    $query      = "SELECT name FROM `{$wpdb->prefix}sim_form_elements` WHERE `form_id`=(select form_id from {$bookings->forms->submissionTableName} WHERE id=$booking->submission_id) AND `type`='booking_selector'";
     $subject    = $wpdb->get_var($query);
 
-    $fieldName  = str_replace('booking-', '', $fieldName);
-    if(!in_array($fieldName, ['startdate', 'enddate', 'startime', 'endtime', $subject])){
+    $elementName  = str_replace('booking-', '', $elementName);
+    // location and date & time are editable
+    if(!in_array($elementName, ['startdate', 'enddate', 'startime', 'endtime', $subject, 'room'])){
         return $message;
     }
 
-    // update the subject column
-    if($subject == $fieldName){
-        $fieldName  = 'subject';
+    // change the $elementName to subject as that is the name of the column in the db
+    if($subject == $elementName){
+        $elementName  = 'subject';
     }
 
-    $result = $bookings->updateBooking($booking, [$fieldName => $newValue]);
+    // multiple rooms and bookings
+    if($elementName == 'room'){
+        $newValue   = explode(';', $newValue);
+        $baseSubject= explode(';', $booking->subject)[0];
+
+        //$oldRooms   = explode(';', $oldValue);
+
+        $deleted    = array_diff($oldValue, $newValue);
+        $added      = array_diff($newValue, $oldValue);
+
+        // remove any removed bookings
+        if(!empty($deleted)){
+            // find all bookings with the same submission_id
+            $currentBookings    = $bookings->getBookingsBySubmission($formTable->submission->id);
+
+            foreach($currentBookings as $booking){
+                if(in_array(explode(';', $booking->subject)[1], $deleted)){
+                    $result = $bookings->removeBooking($booking);
+                }
+            }
+        }
+
+        // add new ones
+        foreach($added as $room){
+            $result = $bookings->insertBooking($booking->startdate, $booking->enddate, $baseSubject.';'.$room, $formTable->submission->id);
+        }
+
+        $formTable->submission->formresults['booking-room'] = array_values($newValue);
+    }else{
+        foreach($currentBookings as $booking){
+            $result = $bookings->updateBooking($booking, [$elementName => $newValue]);
+        }
+    }
 
     if(is_wp_error($result)){
         return $result;
     }
 
     return $message;
-}, 10, 4);
+}, 10, 5);
 
 // add a min and a max to booking dates on edit
 add_filter('sim-forms-element-html', function($html, $element, $displayFormResults){
@@ -486,13 +556,15 @@ function removeBooking($instance, $submissionId){
     // remove the booking
     $bookings   = new Bookings();
 
-    $booking    = $bookings->getBookingBySubmission($submissionId);
+    $bookings    = $bookings->getBookingsBySubmission($submissionId);
 
-    if(!$booking){
+    if(!$bookings){
         return;
     }
 
-    $bookings->removeBooking($booking);
+    foreach($bookings as $booking){
+        $bookings->removeBooking($booking);
+    }
 }
 
 add_filter('sim_form_actions_html', function($buttonsHtml, $bookingData, $index, $instance, $submission){
@@ -504,3 +576,12 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $bookingData, $index,
 
     return $buttonsHtml;
 }, 10, 5);
+
+add_filter('sim_transform_formtable_data', function($output, $elementName){
+    if(str_contains($output, ';')){
+        // include room if needed
+        $rooms  = explode(';', $output);
+        $output = implode('&', $rooms);
+    }
+    return $output;
+}, 10, 2);

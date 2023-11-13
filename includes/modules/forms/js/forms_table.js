@@ -271,7 +271,7 @@ function addFormsTableInputEventListeners(cell){
 			inputNode._niceselect = NiceSelect.bind(inputNode, {searchable: true});
 		}
 		
-		if(inputNode.type != 'checkbox' || inputs.length == 1){
+		if((inputNode.type != 'radio' && inputNode.type != 'checkbox') || inputs.length == 1){
 
 			if(inputNode.type == 'date'){
 				inputNode.addEventListener("blur", processFormsTableInput);
@@ -333,6 +333,7 @@ async function processFormsTableInput(target){
 		let response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
 	
 		if(response){
+			console.log(response)
 			let newValue = response.newvalue;
 			
 			if(typeof(newValue) == 'string'){
@@ -340,7 +341,9 @@ async function processFormsTableInput(target){
 			}
 
 			//Replace the input element with its value
-			if(newValue == "") newValue = "X";
+			if(newValue == ""){
+				newValue = "X";
+			}
 	
 			//Update all occurences of this field
 			if(subId == null){
@@ -351,6 +354,8 @@ async function processFormsTableInput(target){
 			}
 
 			cell.dataset.oldvalue	 	= JSON.stringify(newValue);
+
+			console.log(cell)
 	
 			Main.displayMessage(response.message.replace('_', ' '));
 		}
@@ -362,6 +367,28 @@ async function processFormsTableInput(target){
 
 	if(target.dataset.oldtext != undefined){
 		delete target.dataset.oldtext;
+	}
+}
+
+// Add a change button when changing form values
+function addChangeButton(target){
+	let activeCell	= target.closest('td.active');
+	
+	if(activeCell == null){
+		return;
+	}
+
+	let button = document.createElement('button');
+    button.innerHTML = 'Save changes';
+    button.classList.add('button');
+    button.classList.add('small');
+    button.classList.add('save');
+
+	button.addEventListener('click', ev=>processFormsTableInput(ev.target.closest('td').querySelector('input')));
+
+	// only add the button once
+	if(activeCell.querySelector('.save') == null){
+		activeCell.appendChild(button)
 	}
 }
 
@@ -406,7 +433,8 @@ document.addEventListener("click", event=>{
 		if( target.matches('td.edit_forms_table')){
 			event.stopPropagation();
 			getInputHtml(target);
-		}else if(td.matches('td.edit_forms_table') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') ){
+		}else if(td.matches('td.edit_forms_table') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') && !target.matches('.button.save')){
+			console.log(target)
 			event.stopPropagation();
 			getInputHtml(target.closest('td'));
 		}
@@ -442,13 +470,18 @@ document.addEventListener("click", event=>{
 	// If we clicked somewhere and there is an active cell
 	let activeCell	= document.querySelector('td.active');
 	if(activeCell != null && td == null){
-		processFormsTableInput(activeCell);
+		if((target.type != 'checkbox') || target.length == 1){
+			console.log(target);
+			processFormsTableInput(activeCell);
+		}
 	}
 
 	if(target.matches('.permissins-rights-form')){
 		target.closest('div').querySelector('.permission-wrapper').classList.toggle('hidden');
 	}
 });
+
+
 
 document.addEventListener("DOMContentLoaded", function() {
 	
@@ -479,10 +512,25 @@ document.addEventListener('change', event=>{
 		SimTableFunctions.positionTable();
 	}
 
-	if(target.closest('td.active') != null && target.type != 'file' && target.type != 'date'){
-		processFormsTableInput(target);
-	}
+	if(target.closest('td.active') != null){
+		if(target.type != 'file' && target.type != 'date' && target.type != 'checkbox'){
+			// Check if there are multiple inputs
+			names=[];
+			target.closest('td.active').querySelectorAll('input').forEach(el=>{
+				if(!names.includes(el.type)){
+					names.push(el.type);
+				}
+			});
 
+			if(names.length == 1){
+				processFormsTableInput(target);
+			}else{
+				addChangeButton(target);
+			}
+		}else if(target.type != 'file'){
+			addChangeButton(target);
+		}
+	}
 });
 
 //Add a keyboard listener

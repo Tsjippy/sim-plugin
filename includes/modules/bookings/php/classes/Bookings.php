@@ -96,6 +96,59 @@ class Bookings{
     }
 
     /**
+     * Function to get the room selector html
+     * 
+     * @param    string  $subject   The name
+     * @param   boolean $isResult   Wheter we are looking at the form or the formresult
+     */
+    public function roomSelector($subject, $isResult){
+        ob_start();
+
+        if($subject['amount'] > 1){
+            ?>
+            <div class="rooms">
+                <?php
+                if($isResult){
+                    echo "Select the rooms you want to check<br>";
+                }else{
+                    echo "Select the room(s) you want to book:<br>";
+                }
+                
+                if(isset($subject['nrtype']) && $subject['nrtype'] == 'letters'){
+                    $alphabet = range('A', 'Z');
+                    for ($x = 0; $x < $subject['amount']; $x++) {
+                        $checked    = '';
+                        if(is_array($this->forms->submission->formresults['booking-room']) && in_array($alphabet[$x], $this->forms->submission->formresults['booking-room'])){
+                            $checked    = 'checked';
+                        }
+                        ?>
+                        <input type='checkbox' name='room' class='room-selector' value='<?php echo $alphabet[$x];?>' <?php echo $checked;?>>
+                        <?php
+                        echo $alphabet[$x];
+                    }
+                }else{
+                    for ($x = 1; $x <= $subject['amount']; $x++) {
+                        $checked    = '';
+                        if(isset($this->forms->submission->formresults['booking-room']) && in_array($x, $this->forms->submission->formresults['booking-room'])){
+                            $checked    = 'checked';
+                        }
+                        ?>
+                        <input type='checkbox' name='room' class='room-selector' value='<?php echo $x;?>' <?php echo $checked;?>>
+                        <?php
+                        echo $x;
+                    }
+                }
+                ?>
+            </div>
+            <br>
+            <br>
+            <?php
+        }
+
+        return ob_get_clean();
+    }
+
+    /**
      * Displays the booking calendars
      * @param   string      $subject    The subject of the calendar
      * @param   int         $date       The date to retrieve the calendar for
@@ -126,41 +179,8 @@ class Bookings{
                     <h4 style='text-align:center;'><?php echo ucfirst($cleanSubject);?> Calendar</h4>
 
                     <?php
-                    if($subject['amount'] > 1){
-                        ?>
-                        <div class="rooms">
-                            <?php
-                            if($isResult){
-                                echo "Select the rooms you want to check<br>";
-                            }else{
-                                echo "Select the room(s) you want to book:<br>";
-                            }
-                            
-                            if(isset($subject['nrtype']) && $subject['nrtype'] == 'letters'){
-                                $alphabet = range('A', 'Z');
-                                for ($x = 0; $x < $subject['amount']; $x++) {
-                                    ?>
-                                    <input type='checkbox' name='room' class='room-selector' value='<?php echo $alphabet[$x];?>'>
-                                    <?php
-                                    echo $alphabet[$x];
-                                }
-                            }else{
-                                for ($x = 1; $x <= $subject['amount']; $x++) {
-                                    ?>
-                                    <input type='checkbox' name='room' class='room-selector' value='<?php echo $x;?>'>
-                                    <?php
-                                    echo $x;
-                                }
-                            }
-                            ?>
-                        </div>
-                        <br>
-                        <br>
-                        <?php
-                    }
-                    ?>
-                
-                    <?php
+                    echo $this->roomSelector($subject, $isResult);
+
                     if(!$isAdmin){
                         echo $this->showSelectedModalDates($subject['amount'] > 1);
                     }
@@ -499,19 +519,26 @@ class Bookings{
                                             continue;
                                         }
 
-                                        $index  = $setting['name'];
-                                        $data   = $bookingData[$index];
-                                        $transformedData   = $this->forms->transformInputData($data, $index, $bookingData);
+                                        $name       = $setting['name'];
+                                        $element    = $this->forms->getElementByName($name);
+                                        $data       = $bookingData[$name];
+
+                                        if($name == 'booking-room' && is_array($data) ){
+                                            $data   = implode('&', $data);
+                                        }
+
+                                        $transformedData   = $this->forms->transformInputData($data, $name, $bookingData);
                                         if(empty($transformedData)){
                                             $transformedData    = 'X';
                                         }
-                                        echo "<tr class='$index' data-id='{$this->forms->submission->formresults['id']}'>";
-                                            if(file_exists(SIM\urlToPath("$baseUrl/$index.png"))){
-                                                echo "<td><img src='$baseUrl/$index.png' loading='lazy' alt='{$setting['nice_name']}' class='booking-icon'></td>";
+
+                                        echo "<tr class='$name' data-id='{$this->forms->submission->formresults['id']}'>";
+                                            if(file_exists(SIM\urlToPath("$baseUrl/$name.png"))){
+                                                echo "<td><img src='$baseUrl/$name.png' loading='lazy' alt='{$setting['nice_name']}' class='booking-icon' title='{$setting['nice_name']}'></td>";
                                             }else{
                                                 echo "<td>{$setting['nice_name']}:</td>";
                                             }
-                                            echo "<td class='booking-data-wrapper edit_forms_table' data-id='$index' data-oldvalue='".json_encode($data)."'>";
+                                            echo "<td class='booking-data-wrapper edit_forms_table' data-id='$element->id' data-name='$name' data-oldvalue='".json_encode($data)."'>";
                                                 echo $transformedData;
                                             echo "</td>";
                                         echo "</tr>";
@@ -528,7 +555,7 @@ class Bookings{
                                             }
                                             $buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'>".ucfirst($action)."</button>";
                                         }
-                                        $buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $bookingData, $index, $this, $this->forms->submission);
+                                        $buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $bookingData, $name, $this, $this->forms->submission);
                                         
                                         //we have te html now, check for which one we have permission
                                         foreach($buttonsHtml as $action=>$button){
@@ -598,12 +625,14 @@ class Bookings{
 
         $userId     = $this->forms->submission->formresults['user_id'];
 
+        $subjectWithRoom    = str_replace(';', ' room ', $subject);
+
         // create a personal event
         if(!empty($userId)){
             $post = array(
                 'post_type'		=> 'event',
-                'post_title'    => "Booking for $subject",
-                'post_content'  => "Booking for $subject",
+                'post_title'    => "Booking for $subjectWithRoom",
+                'post_content'  => "Booking for $subjectWithRoom",
                 'post_status'   => 'publish',
                 'post_author'   => $userId
             );
@@ -615,7 +644,7 @@ class Bookings{
             $event['starttime']				= '14:00';
             $event['enddate']				= $endDate;
             $event['endtime']				= '12:00';
-            $event['location']				= $subject;
+            $event['location']				= $subjectWithRoom;
             $event['organizer_id']			= $userId;
             $event['onlyfor']               = $userId;
             update_post_meta($eventId, 'eventdetails', json_encode($event));
@@ -690,9 +719,27 @@ class Bookings{
         if(isset($values['subject'])){
             $subject  = $values['subject'];
         }
+
+        if(!is_array($subject)){
+            $subject    = [$subject];
+        }
+
+        $subjectName    = $subject[0];
+        // subject with rooms
+        if(count($subject) > 1){
+            unset($subject[0]);
+        }
         
-        if($this->checkOverlap($startdate, $enddate, $subject, $booking->id)){
-            return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
+        foreach($subject as $s){
+            $subjectString  = $s;
+
+            if($s != $subjectName){
+                $subjectString  = "$subjectName;$s";
+            }
+            if($this->checkOverlap($startdate, $enddate, $subjectString, $booking->id)){
+                $subjectString    = str_replace(';', ' room ', $subjectString );
+                return new \WP_Error('booking', "The booking for $subjectString overlaps with an existing one, try again");
+            }
         }
 
         // update booking
@@ -724,7 +771,10 @@ class Bookings{
             $months[]       = $dt->format("m");
             $years[]        = $dt->format("Y");
 
-            $details        .= $this->detailHtml();
+            $details        = $this->detailHtml();
+            if(is_wp_error($details)){
+                $details    = $details->get_error_message();
+            }
         }
 
         return [
@@ -828,14 +878,14 @@ class Bookings{
      *
      * @return  object|false    The booking or false if no booking found
      * */
-    public function getBookingBySubmission($id){
+    public function getBookingsBySubmission($id){
         global $wpdb;
 
 		$query	    = "SELECT * FROM $this->tableName WHERE submission_id=$id";
 
         $results    = $wpdb->get_results($query);
         if(!empty($results)){
-            return $results[0];
+            return $results;
         }
 		
         return false;

@@ -475,6 +475,9 @@ trait ElementHtml{
 				}
 				
 				if(strpos($elType, 'input') !== false && !empty($val) && !in_array($elType, ['radio', 'checkbox'])){
+					if(is_array($val)){
+						$val	= array_values($val)[0];
+					}
 					$elValue	= "value='$val'";
 				}
 			}
