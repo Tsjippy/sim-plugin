@@ -429,6 +429,10 @@ export function nextPrev(n) {
 }
 
 export function changeFieldValue(selector, value, functionRef, form, addition='', forceValue=false){
+	if(value == undefined){
+		return;
+	}
+
 	let name		= '';
 	let target		= '';
 
@@ -787,10 +791,16 @@ document.addEventListener('click', function(event) {
 document.addEventListener('change', ev=>{
 	// select all elements with a datalist attached
 	if(ev.target.matches('input[list]') && ev.target.name.includes('[')){
-		// find the dataset value of the given element value
-		let value	= ev.target.list.querySelector(`[value="${ev.target.value}" i]`).dataset.value;
+		let el		= ev.target.list.querySelector(`[value="${ev.target.value}" i]`);
 
-		// change the value to create extra inputs if necessary
-		changeFieldValue(ev.target, value, '', ev.target.closest('form'));
+		if(el != null){
+			// find the dataset value of the given element value
+			let value	= el.dataset.value;
+
+			if(value != undefined){
+				// change the value to create extra inputs if necessary
+				changeFieldValue(ev.target, value, '', ev.target.closest('form'));
+			}
+		}
 	}
 })

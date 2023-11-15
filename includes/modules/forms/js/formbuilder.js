@@ -973,8 +973,8 @@ window.addEventListener('change', ev=>{
 	let target	= ev.target;
 	if(target.matches('.meta_key')){
 		//if this option has a keys data value
-		let metaIndexes	= ev.target.list.querySelector(`[value='${target.value}' i]`).dataset.keys;
-		if(metaIndexes != null){
+		let metaIndexes	= target.list.querySelector(`[value='${target.value}' i]`);
+		if(metaIndexes != null && metaIndexes.dataset.keys != undefined){
 			parent	= target.closest('.warning_conditions').querySelector('.index_wrapper');
 			//show the data key selector
 			parent.classList.remove('hidden');

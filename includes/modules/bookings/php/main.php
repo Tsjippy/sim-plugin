@@ -12,8 +12,10 @@ add_filter('sim-special-form-elements', function($options){
 // add element options
 add_action('sim-after-formbuilder-element-options', function($element){
     $bookingDetails = [];
-    if($element != null && isset($element->booking_details)){
+    if($element != null && !empty($element->booking_details)){
         $bookingDetails = maybe_unserialize($element->booking_details);
+    }else{
+        return;
     }
 
     if(!isset($bookingDetails['subjects'])){
@@ -140,7 +142,7 @@ add_filter('sim-forms-element-html', function($html, $element, $displayForm){
         if(empty($subjects)){
             $hidden     = "";
             $buttonText = 'Select dates';
-        }elseif(count($subjects) < 5){
+        }elseif(count($subjects) < 6){
             foreach($subjects as $subject){
                 $cleanSubject    = trim($subject['name']);
                 $checked    = '';

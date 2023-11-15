@@ -1640,7 +1640,7 @@ class FormBuilderForm extends SimForms{
 								$keys	= implode(',', array_keys($value));
 								$data	= "data-keys=$keys";
 							}
-							echo esc_html("<option value='$key' $data>");
+							echo "<option value='$key' $data>";
 						}
 
 						?>
