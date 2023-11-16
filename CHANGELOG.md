@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- references to account page
 
 ### Updated
 
