@@ -207,7 +207,7 @@ class Bookings{
                     if(empty($subject['nrtype']) || $subject['nrtype'] == 'none'){
                         ?>
                         <div class='roomwrapper'>
-                            <div style='display:flex;'>
+                            <div class='flex'>
                                 <?php
                                 echo $this->monthCalendar($cleanSubject, $date);
                                 echo $this->monthCalendar($cleanSubject, strtotime('first day of next month', $date));
@@ -221,7 +221,7 @@ class Bookings{
                             ?>
                             <div class='roomwrapper hidden'data-room='<?php echo $alphabet[$x];?>'>
                                 <h4>Room <?php echo $alphabet[$x];?></h4>
-                                <div style='display: flex;' >
+                                <div class='flex'>
                                     <?php
                                     echo $this->monthCalendar($cleanSubject.";$alphabet[$x]", $date);
                                     echo $this->monthCalendar($cleanSubject.";$alphabet[$x]", strtotime('first day of next month', $date));
@@ -235,7 +235,7 @@ class Bookings{
                             ?>
                             <div class='roomwrapper hidden'data-room='<?php echo $room;?>'>
                                 <h4>Room <?php echo $room;?></h4>
-                                <div style='display: flex;' >
+                                <div class='flex'>
                                     <?php
                                     echo $this->monthCalendar($cleanSubject.";$room", $date);
                                     echo $this->monthCalendar($cleanSubject.";$room", strtotime('first day of next month', $date));
@@ -249,7 +249,7 @@ class Bookings{
                             ?>
                             <div class='roomwrapper hidden'data-room='<?php echo $x;?>'>
                                 <h4>Room <?php echo $x;?></h4>
-                                <div style='display: flex;' >
+                                <div class='flex' >
                                     <?php
                                     echo $this->monthCalendar($cleanSubject.";$x", $date);
                                     echo $this->monthCalendar($cleanSubject.";$x", strtotime('first day of next month', $date));

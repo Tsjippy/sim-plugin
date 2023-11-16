@@ -210,7 +210,7 @@ add_filter('sim-forms-element-html', function($html, $element, $displayForm){
         <div style='display:flex;align-items: center;'>
             <div class="clone_divs_wrapper selected-booking-dates <?php echo $hidden;?>">
                 <div class="clone_div" data-divid="0">
-                    <div class="buttonwrapper" style="width:100%; display: flex;">
+                    <div class="buttonwrapper">
                         <div class='hidden'>
                             <h4>Room</h4>
                             <input type='text' name='booking-room[0]' disabled <?php echo $required;?>>

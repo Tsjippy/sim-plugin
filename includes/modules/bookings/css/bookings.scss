@@ -84,10 +84,15 @@ button.change-booking-date{
     height: fit-content;
 }
 
-/* .selected-booking-dates{
-    display: flex;
-    align-items: center;
-} */
+@media (min-width: $tabletwidth){
+    .selected-booking-dates{
+        .buttonwrapper{
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+    }
+}
 
 .unavailable{
     color: rgb(176, 176, 176) !important;
@@ -245,9 +250,19 @@ article.booking{
             justify-content: center;
         }
 
-        .month-container{
-            margin-right: 20px;
+        .roomwrapper{
+            .flex{
+                @media (min-width: $tabletwidth){
+                    display: flex;
+                }
+
+                .month-container{
+                    margin-right: 20px;
+                }
+            }
         }
+
+        
 
         .current{
             font-weight: 700;

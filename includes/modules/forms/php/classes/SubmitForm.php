@@ -284,6 +284,9 @@ class SubmitForm extends SimForms{
 					return ABSPATH.$value;
 				}, $replaceValue);
 			}else{
+				if(is_array($replaceValue) && count($replaceValue) == 1){
+					$replaceValue	= array_values($replaceValue)[0];
+				}
 				if(is_array($replaceValue)){
 					$replaceValue	= implode(',', $replaceValue);
 				}elseif(preg_match('/^(\d{4}-\d{2}-\d{2})$/', $replaceValue, $matches)){
