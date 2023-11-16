@@ -39,27 +39,68 @@ add_action('sim-after-formbuilder-element-options', function($element){
                         ];
                     }
                     ?>
-                    <div class="clone_div" data-divid="<?php echo $index;?>">
-                        <div class="buttonwrapper" style="width:100%; display: flex;">
-                            <label name="Subject" class=" formfield formfieldlabel">
-                                <h4 class="labeltext">Subject <?php echo $index+1;?></h4>
-                                <input type="text" name="formfield[booking_details][subjects][<?php echo $index;?>][name]" id="subjects" class=" formfield formfieldinput" value="<?php echo $subject['name'];?>" placeholder="Enter subject name" style='width: unset;'>
-                            </label>
+                    <div class="clone_div" data-divid="<?php echo $index;?>" style='display: flex;'>
+                        <label name="Subject" class=" formfield formfieldlabel" style='width: auto;margin-right: 20px;'>
+                            <h4 class="labeltext">Subject <?php echo $index+1;?></h4>
+                            <input type="text" name="formfield[booking_details][subjects][<?php echo $index;?>][name]" id="subjects" class=" formfield formfieldinput" value="<?php echo $subject['name'];?>" placeholder="Enter subject name" style='width: unset;'>
+                        </label>
+
+                        <label name="Subject" class=" formfield formfieldlabel">
+                            <h4 class="labeltext">Room numbering type <?php echo $index+1;?></h4>
+                            <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='none' <?php if($subject['nrtype'] == ''){echo 'checked';}?> onchange='this.closest(`.clone_div`).querySelector(`label.amount`).classList.add(`hidden`);this.closest(`.clone_div`).querySelector(`.rooms`).classList.add(`hidden`)'>
+                            No seperate rooms
+                            <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='numbers' <?php if($subject['nrtype'] == 'numbers'){echo 'checked';}?> onchange='this.closest(`.clone_div`).querySelector(`label.amount`).classList.remove(`hidden`);this.closest(`.clone_div`).querySelector(`.rooms`).classList.add(`hidden`)'>
+                            Numbers
+                            <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='letters' <?php if($subject['nrtype'] == 'letters'){echo 'checked';}?> onchange='this.closest(`.clone_div`).querySelector(`label.amount`).classList.remove(`hidden`);this.closest(`.clone_div`).querySelector(`.rooms`).classList.add(`hidden`)'>
+                            Letters
+                            <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='custom' <?php if($subject['nrtype'] == 'custom'){echo 'checked';}?> onchange='this.closest(`.clone_div`).querySelector(`label.amount`).classList.add(`hidden`);this.closest(`.clone_div`).querySelector(`.rooms`).classList.remove(`hidden`)'>
+                            Custom
+                        </label>
+
+                        <label class="amount formfield formfieldlabel <?php if($subject['nrtype'] == 'custom' || empty($subject['nrtype'])){echo 'hidden';}?>">
+                            <h4 class="labeltext">Room amount <?php echo $index+1;?></h4>
+                            <input type="number" name="formfield[booking_details][subjects][<?php echo $index;?>][amount]" id="subjects" class=" formfield formfieldinput" value="<?php echo $subject['amount'];?>" placeholder="Enter subject amount" style='width: unset;'>
+                        </label>                            
+
+                        <div class="rooms clone_divs_wrapper <?php if($subject['nrtype'] != 'custom'){echo 'hidden';}?>" style='display: inline-block;background: lightgrey;padding-bottom: 10px;padding-left: 10px;margin-right:10px'>
+                            <?php
+                            if(empty($subject['rooms'])){
+                                $subject['rooms']   = ['1'];
+                            }
+
+                            foreach($subject['rooms'] as $i=>$room){
+                                ?>
+                                <div class="clone_div" data-divid="<?php echo $i;?>" style='display: flex;'>
+                                    <label name="roomname" class=" formfield formfieldlabel">
+                                        <h4 class="labeltext">Room name <?php echo $i+1;?></h4>
+                                        <input type="text" name="formfield[booking_details][subjects][<?php echo $index;?>][rooms][<?php echo $i;?>]" id="rooms" class=" formfield formfieldinput" value="<?php echo $room;?>" placeholder="Enter room name" style='width: unset;'>
+                                    </label>
+                                    
+                                    <div class="buttonwrapper" style="width:100%; display: flex;">
+                                        <button type="button" class="add button" style="flex: 1;">+</button>
+                                        <?php
+                                        if(count($subject['rooms'])> 1){
+                                            ?>
+                                            <button type="button" class="remove button" style="flex: 1;">-</button>
+                                            <?php
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                            ?>
+                        </div>
                             
-                            <label name="Subject" class=" formfield formfieldlabel">
-                                <h4 class="labeltext">Room amount <?php echo $index+1;?></h4>
-                                <input type="number" name="formfield[booking_details][subjects][<?php echo $index;?>][amount]" id="subjects" class=" formfield formfieldinput" value="<?php echo $subject['amount'];?>" placeholder="Enter subject amount" style='width: unset;'>
-                            </label>
-                        
-                            <label name="Subject" class=" formfield formfieldlabel">
-                                <h4 class="labeltext">Number type <?php echo $index+1;?></h4>
-                                <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='numbers' <?php if($subject['nrtype'] == 'numbers'){echo 'checked';}?>>
-                                Numbers
-                                <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='letters' <?php if($subject['nrtype'] == 'letters'){echo 'checked';}?>>
-                                Letters
-                            </label>
-                            
+                        <div class="buttonwrapper" style="display: flex;">
                             <button type="button" class="add button" style="flex: 1;">+</button>
+                            <?php
+                            if(count($bookingDetails['subjects'])> 1){
+                                ?>
+                                <button type="button" class="remove button" style="flex: 1;">-</button>
+                                <?php
+                            }
+                            ?>
                         </div>
                     </div>
                     <?php

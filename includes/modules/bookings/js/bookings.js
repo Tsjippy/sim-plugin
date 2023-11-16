@@ -306,6 +306,8 @@ function roomSelected(target){
         return;
     }
 
+    console.log(target)
+
     // show date warning
     modal.querySelectorAll(`.booking-date-wrapper.hidden`).forEach(el=>el.classList.remove('hidden'));
 

@@ -98,7 +98,7 @@ class Bookings{
     /**
      * Function to get the room selector html
      * 
-     * @param    string  $subject   The name
+     * @param   array   $subject   The name
      * @param   boolean $isResult   Wheter we are looking at the form or the formresult
      */
     public function roomSelector($subject, $isResult){
@@ -125,6 +125,17 @@ class Bookings{
                         <input type='checkbox' name='room' class='room-selector' value='<?php echo $alphabet[$x];?>' <?php echo $checked;?>>
                         <?php
                         echo $alphabet[$x];
+                    }
+                }elseif(isset($subject['nrtype']) && $subject['nrtype'] == 'custom'){
+                    foreach($subject['rooms'] as $room){
+                        $checked    = '';
+                        if(is_array($this->forms->submission->formresults['booking-room']) && in_array($room, $this->forms->submission->formresults['booking-room'])){
+                            $checked    = 'checked';
+                        }
+                        ?>
+                        <input type='checkbox' name='room' class='room-selector' value='<?php echo $room;?>' <?php echo $checked;?>>
+                        <?php
+                        echo $room;
                     }
                 }else{
                     for ($x = 1; $x <= $subject['amount']; $x++) {
@@ -193,7 +204,7 @@ class Bookings{
                 </div>
                 <div class="calendar table" <?php if(!empty($subject['amount']) && $subject['amount'] > 1){echo 'style="display:block;"';}?>>
                     <?php
-                    if(empty($subject['amount']) || $subject['amount'] == 1){
+                    if(empty($subject['nrtype']) || $subject['nrtype'] == 'none'){
                         ?>
                         <div class='roomwrapper'>
                             <div style='display:flex;'>
@@ -214,6 +225,20 @@ class Bookings{
                                     <?php
                                     echo $this->monthCalendar($cleanSubject.";$alphabet[$x]", $date);
                                     echo $this->monthCalendar($cleanSubject.";$alphabet[$x]", strtotime('first day of next month', $date));
+                                    ?>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }elseif(isset($subject['nrtype']) && $subject['nrtype'] == 'custom'){
+                        foreach((array)$subject['rooms'] as $room) {
+                            ?>
+                            <div class='roomwrapper hidden'data-room='<?php echo $room;?>'>
+                                <h4>Room <?php echo $room;?></h4>
+                                <div style='display: flex;' >
+                                    <?php
+                                    echo $this->monthCalendar($cleanSubject.";$room", $date);
+                                    echo $this->monthCalendar($cleanSubject.";$room", strtotime('first day of next month', $date));
                                     ?>
                                 </div>
                             </div>
@@ -403,8 +428,10 @@ class Bookings{
                         // not booked
                         }elseif(!isset($this->unavailable[$workingDateStr])){
                             $class	.= 'available';
+                        }
+                        
                         // booked
-                        }else{
+                        if(isset($this->unavailable[$workingDateStr])){
                             // First and last day of a reservation are both booked and available
                             /* if(
                                 !isset($this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))])    ||
@@ -412,7 +439,7 @@ class Bookings{
                             ){
                                 $class	.= 'available ';
                             } */
-                            $class	.= 'booked';
+                            $class	.= ' booked';
                             $data   .= "data-bookingid='{$this->unavailable[$workingDateStr]}'";
                         }
                         
