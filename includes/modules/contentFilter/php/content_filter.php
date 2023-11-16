@@ -88,7 +88,8 @@ add_action('wp_footer', function(){
 	// If not a valid e-mail then only allow the account page to reset the email
 	if(strpos($user->user_email, ".empty") !== false && !$public && !is_search() && !is_home() && strpos($_SERVER['REQUEST_URI'], 'account') === false ){
 		ob_get_clean();
-		echo "<div class='error'>Your e-mail address is not valid please change it <a href='".SITEURL."/account/?section=generic'>here</a>.</div>";
+		$accountUrl		= SIM\ADMIN\getDefaultPageLink('usermanagement', 'account_page');
+		echo "<div class='error'>Your e-mail address is not valid please change it <a href='$accountUrl/?section=generic'>here</a>.</div>";
 		return;
 	}
 	

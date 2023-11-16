@@ -782,7 +782,7 @@ class FormBuilderForm extends SimForms{
 												?>
 												<div class='clone_div' data-divid='<?php echo $fromKey;?>'>
 													<fieldset class='formemailfieldset'>
-														<legend class="formfield">
+														<legend class="formfield buttonwrapper">
 															<span class='text'>Condition <?php echo $fromKey+1;?></span>
 															<button type='button' class='add button' style='flex: 1;'>+</button>
 															<button type='button' class='remove button' style='flex: 1;'>-</button>
@@ -848,7 +848,7 @@ class FormBuilderForm extends SimForms{
 											foreach($email['conditionalemailto'] as $toKey=>$toEmail){
 												?>
 												<div class='clone_div' data-divid='<?php echo $toKey;?>'>
-													<fieldset class='formemailfieldset'>
+													<fieldset class='formemailfieldset buttonwrapper'>
 														<legend class="formfield">
 															<span class='text'>Condition <?php echo $toKey+1;?></span>
 															<button type='button' class='add button' style='flex: 1;'>+</button>

@@ -29,6 +29,9 @@ function mandatoryFieldsReminder(){
 	
 	//Retrieve all users
 	$users = SIM\getUserAccounts(false, true, true);
+
+    $accountUrl		= SIM\ADMIN\getDefaultPageLink('usermanagement', 'account_page');
+		
 	//Loop over the users
  	foreach($users as $user){
 		//get the reminders for this user
@@ -59,7 +62,7 @@ function mandatoryFieldsReminder(){
                                 
                     //Send Signal message
                     SIM\trySendSignal(
-                        "Hi $parent->first_name,\nPlease update the personal information of your $childTitle $user->first_name here:\n\n".SITEURL."/account",
+                        "Hi $parent->first_name,\nPlease update the personal information of your $childTitle $user->first_name here:\n\n$accountUrl",
                         $user->ID
                     );
                 }
@@ -67,7 +70,7 @@ function mandatoryFieldsReminder(){
             }else{
                 //Send Signal message
                 SIM\trySendSignal(
-                    "Hi $user->first_name,\nPlease update your personal information here:\n\n".SITEURL."/account",
+                    "Hi $user->first_name,\nPlease update your personal information here:\n\n$accountUrl",
                     $user->ID
                 );
                 

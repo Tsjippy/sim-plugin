@@ -478,7 +478,7 @@ add_filter('sim_after_saving_formdata', function($message, $formBuilder){
                     $result         = $bookings->insertBooking($startDate[$index], $endDate[$index], "$subject;$room", $submissionId);
                 }
             }else{
-                $result         = $bookings->insertBooking($startDate, $endDate, $subject, $submissionId);
+                $result         = $bookings->insertBooking($startDate[0], $endDate[0], $subject, $submissionId);
             }
 
             if(is_wp_error($result)){
