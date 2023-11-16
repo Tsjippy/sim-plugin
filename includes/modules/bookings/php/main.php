@@ -124,6 +124,11 @@ add_filter('sim-forms-elements', function($elements, $displayFormResults, $force
         return $elements;
     }
 
+    // do not add to the formbuilder screen
+    if(str_contains($_SERVER['QUERY_STRING'], 'formbuilder=true')){
+        return $elements;
+    }
+
     // Check if it has an booking selector
     $hasBookingSelector = false;
 
@@ -628,3 +633,54 @@ add_filter('sim_transform_formtable_data', function($output, $elementName){
     }
     return $output;
 }, 10, 2);
+
+// Filter e-mail transforms
+add_filter('sim-forms-transform-array', function($string, $replaceValue, $forms, $match){
+    if(count(array_unique($replaceValue)) == 1){
+        $string = array_unique($replaceValue)[0];
+    }else{
+
+    }
+    return $string;
+}, 10, 4);
+
+// add the booking details to the drop down for use in e-mails
+add_action('sim-add-email-placeholder-option', function(){
+    echo "<option>%booking detalis%</option>";
+});
+
+add_filter('sim-forms-transform-empty', function($replaceValue, $instance, $match){
+
+    if($match == "booking detalis"){
+        
+        if(!empty($instance->submission->formresults['booking-startdate'])){
+            $startDates     = array_unique($instance->submission->formresults['booking-startdate']);
+            $endDates       = array_unique($instance->submission->formresults['booking-enddate']);
+        
+            // NO ROOMS
+            if(empty($instance->submission->formresults['booking-room'])){
+                
+                $startDate      = date(get_option('date_format'), strtotime((string)$startDates[0]));
+                $endDate        = date(get_option('date_format'), strtotime((string)$endDates[0]));
+                $replaceValue   = "from $startDate till $endDate";
+            }else{
+                if(count($startDates) == 1 && count($endDates) == 1){
+                    $rooms          = implode('&', $instance->submission->formresults['booking-room']);
+                    $startDate      = date(get_option('date_format'), strtotime((string)$startDates[0]));
+                    $endDate        = date(get_option('date_format'), strtotime((string)$endDates[0]));
+                    $replaceValue   = "room $rooms from $startDate till $endDate";
+                }else{
+                    $replaceValue   = "room:<br>";
+                    foreach($instance->submission->formresults['booking-room'] as $index=>$room){
+                        $startDate      = date(get_option('date_format'), strtotime((string)$startDates[$index]));
+                        $endDate        = date(get_option('date_format'), strtotime((string)$endDates[$index]));
+
+                        $replaceValue   .= "$room from $startDate till $endDate<br>";
+                    }
+                }
+            }
+        }
+        
+    }
+    return $replaceValue;
+}, 10, 3);

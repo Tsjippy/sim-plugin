@@ -630,6 +630,7 @@ class FormBuilderForm extends SimForms{
 								echo "<option>%{$element->name}%</option>";
 							}
 						}
+						do_action('sim-add-email-placeholder-option');
 						?>
 					</select>
 					

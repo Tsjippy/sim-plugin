@@ -273,8 +273,11 @@ class SubmitForm extends SimForms{
 		foreach($matches[1] as $match){
 			$replaceValue	= $this->submission->formresults[$match];
 			if(empty($replaceValue)){
-				//remove the placeholder, there is no value
-				$string = str_replace("%$match%", '', $string);
+				$replaceValue	= apply_filters('sim-forms-transform-empty', $replaceValue, $this, $match);
+				if(empty($replaceValue)){
+					//remove the placeholder, there is no value
+					$string = str_replace("%$match%", '', $string);
+				}
 			}elseif(
 				is_array($replaceValue)									&&	// the form results are an array
 				file_exists( ABSPATH.array_values($replaceValue)[0])		// and the first entry is a valid file
@@ -288,7 +291,7 @@ class SubmitForm extends SimForms{
 					$replaceValue	= array_values($replaceValue)[0];
 				}
 				if(is_array($replaceValue)){
-					$replaceValue	= implode(',', $replaceValue);
+					$replaceValue	= apply_filters('sim-forms-transform-array', implode(',', $replaceValue), $replaceValue, $this, $match);
 				}elseif(preg_match('/^(\d{4}-\d{2}-\d{2})$/', $replaceValue, $matches)){
 					$replaceValue	= date(get_option('date_format'), strtotime((string)$matches[1]));
 				}

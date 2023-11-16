@@ -54,7 +54,10 @@ add_action( 'rest_api_init', function () {
 				}
 
 				$navigator	= $bookings->getNavigator($date, 1);
-				$detail		= $bookings->detailHtml();
+				$detail		= '';
+				if(!empty($_POST['shortcodeid'])){
+					$detail		= $bookings->detailHtml();
+				}
 
 				if(is_wp_error($detail)){
 					return $detail;
