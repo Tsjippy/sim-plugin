@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- custom room names
 
 ### Fixed
 - bugs
