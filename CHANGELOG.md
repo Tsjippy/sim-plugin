@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.37.6] - 2023-11-16
+
+
+### Changed
 - custom room names
 
 ### Fixed
