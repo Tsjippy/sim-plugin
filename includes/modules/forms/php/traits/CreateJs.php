@@ -506,12 +506,21 @@ trait CreateJs{
                 $newJs  .= "\t\t}\n\n";
             }
         $newJs  .= "\t};";
+
         $js         .= $newJs;
         $minifiedJs .= \Garfix\JsMinify\Minifier::minify($newJs, array('flaggedComments' => false));
       
         // Put is all in a namespace variable
-        $js         = "var $this->varName = new function(){".$js."\n};";
-        $minifiedJs = "var $this->varName  = new function(){".$minifiedJs."};";
+        $js   = "var $this->varName = new function(){".$js."\n};\n\n";
+
+
+        $extraJs    = "// Loop over the element which value is given in the url;\n";
+        $extraJs    .= "const urlSearchParams = new URLSearchParams(window.location.search);\n";
+        $extraJs    .= "Array.from(urlSearchParams).forEach(array => document.querySelectorAll(`[name^='\${array[0]}']`).forEach(el => FormFunctions.changeFieldValue(el, array[1], $this->varName.processFields, el.closest('form'), )));\n\n";
+
+        
+        $js         .= $extraJs;
+        $minifiedJs .= \Garfix\JsMinify\Minifier::minify($extraJs, array('flaggedComments' => false));   
 
         /*
         ** EXTERNAL JS

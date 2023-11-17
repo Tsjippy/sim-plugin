@@ -605,7 +605,11 @@ trait ElementHtml{
 					foreach($options as $key=>$option){
 						if($this->multiwrap){
 							$checked	= '%checked%';
-						}elseif(in_array(strtolower($option), $lowValues) || in_array(strtolower($key), $lowValues) || in_array($element->default_value, [$key, $option])){
+						}elseif(
+							in_array(strtolower($option), $lowValues) || 
+							in_array(strtolower($key), $lowValues) || 
+							in_array($element->default_value, [$key, $option])
+						){
 							$checked	= 'checked';
 						}else{
 							$checked	= '';
