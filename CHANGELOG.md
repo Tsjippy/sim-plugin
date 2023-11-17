@@ -8,6 +8,7 @@
 
 ### Fixed
 - references to account page
+- booking mobile view
 
 ### Updated
 
