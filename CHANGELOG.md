@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.37.7] - 2023-11-17
+
+
+### Fixed
 - references to account page
 - booking mobile view
 - booking mails
