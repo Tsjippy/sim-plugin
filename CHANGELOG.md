@@ -8,6 +8,7 @@
 
 ### Fixed
 - bug room names
+- bug in formresult
 
 ### Updated
 
