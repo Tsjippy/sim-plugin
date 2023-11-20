@@ -1680,8 +1680,15 @@ class DisplayFormResults extends DisplayForm{
 					$values['id']		= $submission->id;
 					$values['userid']	= $submission->userid;
 
+					$userIdKey	= false;
+					if(isset($submission->formresults['user_id'])){
+						$userIdKey	= 'user_id';
+					}elseif(isset($submission->formresults['userid'])){
+						$userIdKey	= 'userid';
+					}
+
 					// Skip if needed
-					if($type == 'others' && $values['userid'] == $this->user->ID){
+					if($type == 'others' && $values[$userIdKey] == $this->user->ID){
 						continue;
 					}
 
