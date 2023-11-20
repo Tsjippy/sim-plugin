@@ -515,6 +515,44 @@ export function changeFieldValue(selector, value, functionRef, form, addition=''
 			}
 		}
 	//the target has a list attached to it
+	}else if(target.type == 'date'){
+		target.value = value;
+		
+		// convert a date to the right format
+		if (!/\d{4}-\d{2}-\d{2}/.test(value)){
+			let splitted = '';
+			if(value.split('-').length == 3){
+				splitted	= value.split('-');
+			}else if(value.split('/').length == 3){
+				splitted	= value.split('/');
+			}
+
+			if(splitted != ''){
+				let year;
+				let month;
+				let day;
+				splitted.forEach(nr=>{
+					if(nr.length == 4){
+						year	= nr;
+					}else if(nr.length == 2){
+						if(nr > 12){
+							day	= nr;
+						}else{
+							// does not have a value yet
+							if(month == undefined){
+								month	= nr;
+							}else{
+								day	= nr;
+							}
+						}
+					}
+				});
+
+				if(day != undefined && month != undefined && year != undefined){
+					target.value = `${year}-${month}-${day}`;
+				}
+			}
+		}
 	}else if(target.list != null){
 		let dataListOption = target.list.querySelector(`[data-value="${value}" i]`);
 

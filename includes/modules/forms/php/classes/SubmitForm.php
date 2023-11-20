@@ -278,6 +278,7 @@ class SubmitForm extends SimForms{
 					//remove the placeholder, there is no value
 					$string = str_replace("%$match%", '', $string);
 				}
+				$string 		= str_replace("%$match%", $replaceValue, $string);
 			}elseif(
 				is_array($replaceValue)									&&	// the form results are an array
 				file_exists( ABSPATH.array_values($replaceValue)[0])		// and the first entry is a valid file

@@ -5,6 +5,8 @@ use SIM;
 const MODULE_VERSION		= '7.0.0';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
+DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
+
 //run on module deactivation
 add_action('sim_module_deactivated', function($moduleSlug, $options){
 	//module slug should be the same as grandparent folder name

@@ -604,13 +604,13 @@ function removeBooking($instance, $submissionId){
     // remove the booking
     $bookings   = new Bookings();
 
-    $bookings    = $bookings->getBookingsBySubmission($submissionId);
+    $currentBookings    = $bookings->getBookingsBySubmission($submissionId);
 
-    if(!$bookings){
+    if(!$currentBookings){
         return;
     }
 
-    foreach($bookings as $booking){
+    foreach($currentBookings as $booking){
         $bookings->removeBooking($booking);
     }
 }
@@ -649,12 +649,12 @@ add_action('sim-add-email-placeholder-option', function(){
     echo "<option>%booking-startdate%</option>";
     echo "<option>%booking-enddate%</option>";
     echo "<option>%booking-room%</option>";
-    echo "<option>%booking detalis%</option>";
+    echo "<option>%booking-detalis%</option>";
 });
 
 add_filter('sim-forms-transform-empty', function($replaceValue, $instance, $match){
 
-    if($match == "booking detalis"){
+    if($match == "booking-detalis"){
         
         if(!empty($instance->submission->formresults['booking-startdate'])){
             $startDates     = array_unique($instance->submission->formresults['booking-startdate']);

@@ -41,6 +41,10 @@ add_action( 'rest_api_init', function () {
 									for ($x = 0; $x < $subject['amount']; $x++) {
 										$months[]	= $bookings->monthCalendar($subject['name'].';'.$alphabet[$x], $date);
 									}
+								}elseif(isset($subject['nrtype']) && $subject['nrtype'] == 'custom'){
+									foreach ($subject['rooms'] as $room) {
+										$months[]	= $bookings->monthCalendar($subject['name'].';'.$room, $date);
+									}
 								}else{
 									for ($x = 1; $x <= $subject['amount']; $x++) {
 										$months[]	= $bookings->monthCalendar($subject['name'].";$x", $date);
