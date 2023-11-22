@@ -80,7 +80,7 @@ function vimeoSync(){
 
         //Build the local videos array
         foreach($posts as $post){
-            $vimeoId	= get_post_meta($post->ID, 'vimeo_id',true);
+            $vimeoId	= get_post_meta($post->ID, 'vimeo_id', true);
             if(is_numeric($vimeoId)){
                 $localVideos[$vimeoId]	= $post->ID;
             }
@@ -106,6 +106,7 @@ function vimeoSync(){
 
         // Backup any video who is not yet backed up
         $files      = glob($vimeoApi->backupDir.'*.mp4');
+        $files      = apply_filters('sim-local-vimeo-files', $files);
         foreach(array_keys($onlineVideos) as $vimeoId){
             // If the video does not exist locally
             if(empty(preg_grep("~$vimeoId~", $files))){

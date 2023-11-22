@@ -53,7 +53,7 @@ class OnedriveConnector{
         // Redirect the user to the log in URL.
         wp_redirect($url);
 
-        echo "<script>location.href='$url'</script>";
+        echo "<script>window.open('$url', '_blank');</script>";
     }
 
     /**

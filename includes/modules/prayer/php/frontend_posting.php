@@ -39,7 +39,7 @@ add_filter('sim_frontend_content_validation', function($error, $frontEndContent)
         return new WP_Error('prayer', "I guess you are submitting a post with prayerpoints?<br><br>Please make sure the monthname is included in the post title.");
     }
 
-    $years  = [Date('Y'), Date('Y')+1];
+    $years  = [Date('Y')-2, Date('Y')-1, Date('Y'), Date('Y')+1];
     $found  = false;
     foreach($years as $year){
         if(strpos($frontEndContent->postTitle, strval($year)) !== false){

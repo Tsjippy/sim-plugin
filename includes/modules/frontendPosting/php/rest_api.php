@@ -252,6 +252,23 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
+
+	// Check for posts with the same title
+	register_rest_route(
+		RESTAPIPREFIX.'/frontend_posting',
+		'/check_duplicate',
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> __NAMESPACE__.'\checkForDuplicate',
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'title'		=> array(
+					'required'	=> true
+				)
+			)
+		)
+	);
+
 } );
 
 /**
@@ -420,4 +437,70 @@ function submitPost(){
 	}
 
 	return $result;
+}
+
+function checkForDuplicate(\WP_REST_Request $request ){
+	global $wpdb;
+
+	$url			= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
+	if(!$url){
+		return;
+	}
+
+	$title	= $request->get_param('title');
+	$type	= $request->get_param('type');
+	$exclude= $request->get_param('exclude');
+
+	$query	= "SELECT * FROM {$wpdb->prefix}posts WHERE post_title LIKE '%$title%' AND post_type = '$type'";
+
+	if(is_numeric($exclude)){
+		$query	.= " AND ID != $exclude";
+	}
+	$posts 	= $wpdb->get_results($query, OBJECT);
+
+	$html	= "";
+
+	// check for exact match
+	$found	= false;
+	foreach($posts as $post){
+		if($post->post_title != $title){
+			continue;
+		}
+
+		$html	.= "A post with title '$title' already exists.<br>";
+		$url1		= get_permalink($post);
+		$url2		= add_query_arg( ['post_id' => $post->ID], $url );
+		$html		.= "See it <a href='$url1'>here</a>, or edit it <a href='$url2'>here</a>";
+
+		$found	= true;
+		break;
+	}
+
+	// no exact match found
+	if(!$found){
+		if(count($posts) == 1){
+			$existingTitle	= $posts[0]->post_title;
+			$html	.= "A post with a similar title '$existingTitle' already exists.<br>";
+
+			$url1		= get_permalink($posts[0]);
+			$url2		= add_query_arg( ['post_id' => $posts[0]->ID], $url );
+			$html		.= "See it <a href='$url1'>here</a>, or edit it <a href='$url2'>here</a>";
+			
+		}elseif( count($posts) > 1){
+			$count	= count($posts);
+			$html	.= "$count posts with a similar title already exist:<br>";
+
+			foreach($posts as $post){
+				$url1		= get_permalink($post);
+				$url2		= add_query_arg( ['post_id' => $post->ID], $url );
+				$html		.= "$post->post_title <a href='$url1'>view</a>, or <a href='$url2'>edit</a><br>";
+			}
+
+		}
+	}
+	
+	return [
+		'warning'	=> $html,
+		'html'		=> "<div class='warning' id='post-title-warning'>$html</div>"
+	];
 }

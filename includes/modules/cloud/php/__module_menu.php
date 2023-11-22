@@ -45,14 +45,12 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 				You can create such an app on <a href="https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade">Azure</a>.<br>
 				For more information see this <a href="https://github.com/krizalys/onedrive-php-sdk">link</a>.<br>
 					Make sure it has the following permissions:<br>
-					files.read',<br>
-					'files.read.all',<br>
+					'files.read',<br>
 					'files.readwrite',<br>
-					'files.readwrite.all',<br>
 				<br>
 				Once you are done you will be redirected to a page containing the app details.<br>
 				Copy the "Client identifier" and the "Client secret" in the fields below.<br>
-				Now click "Save Vimeo options".<br>
+				Now click "Save OneDrive options".<br>
 			</p>
 		</div>
 		<?php
@@ -93,27 +91,6 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			<input type="text" name="access_token" value="<?php echo $accessToken;?>" style='width: 500px;'>
 		</label>
 		
-	</div>
-
-	<div class="settings-section" <?php if(empty($accessToken)){echo 'style="display:none;"';}?>>
-		<h2>Vimeo Settings</h2>
-
-		<label>
-			<input type="checkbox" name="upload" <?php if($settings['upload']){echo 'checked';}?>>
-			Automatically upload all video's to Vimeo
-		</label>
-		<br>
-
-		<label>
-			<input type="checkbox" name="remove" <?php if($settings['remove']){echo 'checked';}?>>
-			Automatically remove video from Vimeo when deleted in library
-		</label>
-		<br>
-
-		<label>
-			<input type="checkbox" name="sync" <?php if($settings['sync']){echo 'checked';}?>>
-			Automatically sync local video's with video's on Vimeo
-		</label>
 	</div>
 	<br>
 	<?php

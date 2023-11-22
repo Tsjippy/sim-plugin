@@ -469,6 +469,26 @@ function startDateChanged(target){
 	document.querySelectorAll('.weeks [name="event[repeat][weeks][]"]')[montWeek].checked	= true;
 }
 
+async function checkForDuplicate(target){
+	document.querySelectorAll('#post-title-warning').forEach(el=>el.remove());
+
+	if(target.value == ''){
+		return;
+	}
+
+	let formData	= new FormData();
+	formData.append('title', target.value);
+	formData.append('type', target.closest('form').querySelector('[name="post_type"]').value);
+	formData.append('exclude', target.closest('form').querySelector('[name="post_id"]').value);
+
+	let response	= await FormSubmit.fetchRestApi('frontend_posting/check_duplicate', formData);
+
+	if(response){
+		target.insertAdjacentHTML('afterEnd', response['html']);
+		Main.displayMessage(response['warning'], 'warning');
+	}
+}
+
 document.addEventListener("DOMContentLoaded", function() {
 	
 	if(window['frontendLoaded'] == undefined){
@@ -601,6 +621,11 @@ document.addEventListener('change', event=>{
 	//listen to change of post type
 	if(target.id == 'post_type_selector'){
 		switchforms(target);
+
+		// title is not empty
+		if(	target.closest('#frontend_upload_form').querySelector('[name="post_title"]').value != ''){
+			checkForDuplicate(target.closest('#frontend_upload_form').querySelector('[name="post_title"]'));
+		}
 	}else if(target.name == 'event[allday]'){
 		allDayClicked(target);
 	}else if(target.name == 'event[startdate]'){
@@ -608,6 +633,8 @@ document.addEventListener('change', event=>{
 	}else if(target.name == 'event[repeat][type]'){
 		//daily,weekly,monthly,yearly selector changed
 		repeatTypeChosen(target);
+	}else if(target.name == 'post_title'){
+		checkForDuplicate(target);
 	}
 
 	if(target.list != null){
