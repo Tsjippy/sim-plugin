@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- chnage bookings when accomodation name changes
 
 ### Changed
 
