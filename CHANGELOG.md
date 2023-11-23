@@ -7,6 +7,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.37.8] - 2023-11-22
+
+
+### Added
+- duplicate post check
+
+### Fixed
 - bug room names
 - bug in formresult
 
