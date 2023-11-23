@@ -46,6 +46,8 @@ class SaveFormSettings extends SimForms{
 			return new WP_Error('forms', $wpdb->last_error);
 		}
 
+		do_action('sim-after-formelement-updated', $element, $this);
+
 		return $result;
 	}
 

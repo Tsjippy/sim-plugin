@@ -687,3 +687,35 @@ add_filter('sim-forms-transform-empty', function($replaceValue, $instance, $matc
     }
     return $replaceValue;
 }, 10, 3);
+
+add_action('sim-after-formelement-updated', function($element, $instance){
+    global $wpdb;
+
+    if($element->type == 'booking_selector'){
+        $oldBookingDetails  = maybe_unserialize($instance->getElementById($element->id)->booking_details);
+        $newBookingDetails  = maybe_unserialize($element->booking_details);
+
+        $oldSubjects        = array_map(__NAMESPACE__.'\getSubjectNames', $oldBookingDetails['subjects']);
+        $newSubjects        = array_map(__NAMESPACE__.'\getSubjectNames', $newBookingDetails['subjects']);
+
+        $changedNames       = array_diff($newSubjects, $oldSubjects);
+
+        $bookings   = new Bookings($instance);
+
+        foreach($changedNames as $index=>$newName){
+            $oldName    = $oldSubjects[$index];
+
+            // update existing bookings
+            $query  = "UPDATE `$bookings->tableName` SET `subject`='$newName' WHERE `subject` = '$oldName'";
+            
+            $wpdb->query($query);
+        }
+    }
+}, 10, 2);
+
+function getSubjectNames($v){
+    if(is_array($v) && isset($v['name'])){
+        return $v['name'];
+    }
+    return '';
+}
