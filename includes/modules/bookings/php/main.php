@@ -688,6 +688,7 @@ add_filter('sim-forms-transform-empty', function($replaceValue, $instance, $matc
     return $replaceValue;
 }, 10, 3);
 
+// Update the booking subjects name if the form name has changed
 add_action('sim-after-formelement-updated', function($element, $instance){
     global $wpdb;
 
@@ -706,7 +707,7 @@ add_action('sim-after-formelement-updated', function($element, $instance){
             $oldName    = $oldSubjects[$index];
 
             // update existing bookings
-            $query  = "UPDATE `$bookings->tableName` SET `subject`='$newName' WHERE `subject` = '$oldName'";
+            $query  = "UPDATE `$bookings->tableName` SET subject = REPLACE( `subject`, '$oldName', '$newName' ) WHERE `subject` LIKE '$oldName%'";
             
             $wpdb->query($query);
         }
