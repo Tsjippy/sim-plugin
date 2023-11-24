@@ -105,6 +105,9 @@ class Bookings{
         ob_start();
 
         if($subject['amount'] > 1){
+            if(!empty($_REQUEST['id']) && $this->forms->submission->id != $_REQUEST['id']){
+                $this->forms->submission = $this->forms->getSubmissions(null, $_REQUEST['id'])[0];
+            }
             ?>
             <div class="rooms">
                 <?php
@@ -157,6 +160,37 @@ class Bookings{
         }
 
         return ob_get_clean();
+    }
+
+    /**
+     * Prints the calendar for each room of a subject
+     *
+     * @param   array   $rooms      Array of roomnames
+     * @param   string  $subject    Subject name
+     * @param   int     $date       Date the calendar should start
+     */
+    private function roomCalendars($rooms, $subject, $date){
+        foreach($rooms as $room){
+            $roomHidden = 'hidden';
+            if(
+                isset($_REQUEST['id'])                                  &&              // We should display a specific submission
+                is_array($this->forms->submission->formresults['booking-room'])   &&    // and a room is set
+                in_array($room, $this->forms->submission->formresults['booking-room'])  // and it is this room
+            ){
+                $roomHidden = '';
+            }
+            ?>
+            <div class='roomwrapper <?php echo $roomHidden;?>'data-room='<?php echo $room;?>'>
+                <h4>Room <?php echo $room;?></h4>
+                <div class='flex'>
+                    <?php
+                    echo $this->monthCalendar($subject.";$room", $date);
+                    echo $this->monthCalendar($subject.";$room", strtotime('first day of next month', $date));
+                    ?>
+                </div>
+            </div>
+            <?php
+        }
     }
 
     /**
@@ -215,49 +249,23 @@ class Bookings{
                             </div>
                         </div>
                         <?php
-                    }elseif(isset($subject['nrtype']) && $subject['nrtype'] == 'letters'){
-                        $alphabet = range('A', 'Z');
-                        for ($x = 0; $x < $subject['amount']; $x++) {
-                            ?>
-                            <div class='roomwrapper hidden'data-room='<?php echo $alphabet[$x];?>'>
-                                <h4>Room <?php echo $alphabet[$x];?></h4>
-                                <div class='flex'>
-                                    <?php
-                                    echo $this->monthCalendar($cleanSubject.";$alphabet[$x]", $date);
-                                    echo $this->monthCalendar($cleanSubject.";$alphabet[$x]", strtotime('first day of next month', $date));
-                                    ?>
-                                </div>
-                            </div>
-                            <?php
-                        }
-                    }elseif(isset($subject['nrtype']) && $subject['nrtype'] == 'custom'){
-                        foreach((array)$subject['rooms'] as $room) {
-                            ?>
-                            <div class='roomwrapper hidden'data-room='<?php echo $room;?>'>
-                                <h4>Room <?php echo $room;?></h4>
-                                <div class='flex'>
-                                    <?php
-                                    echo $this->monthCalendar($cleanSubject.";$room", $date);
-                                    echo $this->monthCalendar($cleanSubject.";$room", strtotime('first day of next month', $date));
-                                    ?>
-                                </div>
-                            </div>
-                            <?php
-                        }
                     }else{
-                        for ($x = 1; $x <= $subject['amount']; $x++) {
-                            ?>
-                            <div class='roomwrapper hidden'data-room='<?php echo $x;?>'>
-                                <h4>Room <?php echo $x;?></h4>
-                                <div class='flex' >
-                                    <?php
-                                    echo $this->monthCalendar($cleanSubject.";$x", $date);
-                                    echo $this->monthCalendar($cleanSubject.";$x", strtotime('first day of next month', $date));
-                                    ?>
-                                </div>
-                            </div>
-                            <?php
+                        $rooms  = [];
+
+                        if(isset($subject['nrtype']) && $subject['nrtype'] == 'letters'){
+                            $alphabet = range('A', 'Z');
+                            for ($x = 0; $x < $subject['amount']; $x++) {
+                                $rooms[]    = $alphabet[$x];
+                            }
+                        }elseif(isset($subject['nrtype']) && $subject['nrtype'] == 'custom'){
+                            $rooms  = $subject['rooms'];
+                        }else{
+                            for ($x = 1; $x <= $subject['amount']; $x++) {
+                                $rooms[]    = $x;
+                            }
                         }
+
+                        $this->roomCalendars($rooms, $cleanSubject, $date);
                     }
                     ?>
                 </div>
@@ -508,8 +516,13 @@ class Bookings{
             $this->forms->parseSubmissions(null, $booking->submission_id);
             $bookingData    = $this->forms->submission->formresults;
 
+            $hidden         = 'hidden';
+            if(!empty($_REQUEST['id']) && $_REQUEST['id'] == $bookingData['id']){
+                $hidden = '';
+            }
+
             ?>
-            <div class='booking-detail-wrapper hidden' data-bookingid='<?php echo $booking->id;?>'>
+            <div class='booking-detail-wrapper <?php echo $hidden;?>' data-bookingid='<?php echo $booking->id;?>'>
                 <h6 class='booking-title'>
                     Booking details
                 </h6>

@@ -454,7 +454,15 @@ class SimForms{
 			return false;
 		}
 		
-		return $this->formData->elementMapping['type'][$type];
+		$elementIndexes	= $this->formData->elementMapping['type'][$type];
+
+		$elements		= [];
+		
+		foreach($elementIndexes as $index){
+			$elements[]	= $this->formElements[$index];
+		}
+
+		return $elements;
 	}
 
 	/**

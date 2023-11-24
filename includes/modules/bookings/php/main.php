@@ -361,6 +361,52 @@ add_action('sim-formstable-after-table-settings', function($displayFormResults){
     <?php
 });
 
+function pendingBookingsHtml($booking, $displayFormResults, $html){
+    $pendingBookings    = $booking->retrievePendingBookings();
+
+    if(!empty($pendingBookings)){
+        $submissions    = [];
+        foreach($displayFormResults->submissions as $submission){
+            $submissions[$submission->id] = $submission->formresults;
+        }
+
+        $html   .= "<div class='pending-bookings-wrapper'>";
+            $html   .= "<table class='sim-table' data-formid='{$booking->forms->formData->id}'>";
+                $html   .= "<thead>";
+                    $html   .= "<tr>";
+                        foreach($displayFormResults->columnSettings as $setting){
+                            if($setting['show'] == 'hide'){
+                                break;
+                            }
+                            $html   .= "<th>{$setting['nice_name']}</th>";
+                        }
+                        $html   .= "<th>Actions</th>";
+                    $html   .= "</tr>";
+                $html   .= "</thead>";
+
+                $html   .= "<tbody>";
+                    foreach($pendingBookings as $pendingBooking){
+                        $data   = $submissions[$pendingBooking->submission_id];
+                        $html   .= "<tr data-id='$pendingBooking->submission_id' >";
+                            foreach($displayFormResults->columnSettings as $setting){
+                                if($setting['show'] == 'hide'){
+                                    break;
+                                }
+                                $cellContent    = $displayFormResults->transformInputData($data[$setting['name']], $setting['name'], $data);
+                                $html   .= "<td class='edit_forms_table' data-id='{$setting['name']}' data-oldvalue='".json_encode($data[$setting['name']])."'>$cellContent</td>";
+                            }
+                            $html   .= "<td>";
+                                $html   .= "<button class='button approve' type='button' data-id='$pendingBooking->id'>Approve</button>";
+                                $html   .= "<button class='button delete' type='button' data-id='$pendingBooking->id'>Delete</button><br>";
+                            $html   .= "</td>";
+                        $html   .= "</tr>";
+                    }
+                $html   .= "</tbody>";
+            $html   .= "</table>";
+        $html   .= "</div>";
+    }
+}
+
 // Display calendar instead of a table
 add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResults){
     // display the calendar instead of the table
@@ -379,11 +425,9 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
 
     $booking    = new Bookings($displayFormResults);
 
-    $indexes    = $displayFormResults->getElementByType('booking_selector');
+    $elements    = $displayFormResults->getElementByType('booking_selector');
 
-    foreach($indexes as $index){
-        $element    = $displayFormResults->formElements[$index];
-
+    foreach($elements as $element){
         $bookingDetails = maybe_unserialize($element->booking_details);
 
         if(!isset($bookingDetails['subjects'])){
@@ -393,64 +437,40 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
         }
     }
 
-    $pendingBookings    = $booking->retrievePendingBookings();
+    $targetDate                 = time();
+    $bookedSubject              = '';
+    $booking->forms->submission = null;
+    if(!empty($_REQUEST['id'])){
+        $booking->forms->submission = $booking->forms->getSubmissions(null, $_REQUEST['id'])[0];
+        $targetDate     = strtotime($booking->forms->submission->formresults['booking-startdate'][0]);
+        $elementName    = $booking->forms->getElementByType('booking_selector')[0]->name;
+        $bookedSubject  = $booking->forms->submission->formresults[$elementName];
+    }
+    
     $html   = '<div class="tables-wrapper">';
-        if(!empty($pendingBookings)){
-            $submissions    = [];
-            foreach($displayFormResults->submissions as $submission){
-                $submissions[$submission->id] = $submission->formresults;
-            }
-
-            $html   .= "<div class='pending-bookings-wrapper'>";
-                $html   .= "<table class='sim-table' data-formid='{$booking->forms->formData->id}'>";
-                    $html   .= "<thead>";
-                        $html   .= "<tr>";
-                            foreach($displayFormResults->columnSettings as $setting){
-                                if($setting['show'] == 'hide'){
-                                    break;
-                                }
-                                $html   .= "<th>{$setting['nice_name']}</th>";
-                            }
-                            $html   .= "<th>Actions</th>";
-                        $html   .= "</tr>";
-                    $html   .= "</thead>";
-
-                    $html   .= "<tbody>";
-                        foreach($pendingBookings as $pendingBooking){
-                            $data   = $submissions[$pendingBooking->submission_id];
-                            $html   .= "<tr data-id='$pendingBooking->submission_id' >";
-                                foreach($displayFormResults->columnSettings as $setting){
-                                    if($setting['show'] == 'hide'){
-                                        break;
-                                    }
-                                    $cellContent    = $displayFormResults->transformInputData($data[$setting['name']], $setting['name'], $data);
-                                    $html   .= "<td class='edit_forms_table' data-id='{$setting['name']}' data-oldvalue='".json_encode($data[$setting['name']])."'>$cellContent</td>";
-                                }
-                                $html   .= "<td>";
-                                    $html   .= "<button class='button approve' type='button' data-id='$pendingBooking->id'>Approve</button>";
-                                    $html   .= "<button class='button delete' type='button' data-id='$pendingBooking->id'>Delete</button><br>";
-                                $html   .= "</td>";
-                            $html   .= "</tr>";
-                        }
-                    $html   .= "</tbody>";
-                $html   .= "</table>";
-            $html   .= "</div>";
-        }
+        $html       .= pendingBookingsHtml($booking, $displayFormResults, $html);
 
         $calendars  = '';
         $checkboxes = '<h4>Please select the accomodation you want to see the calendar for</h4>';
+
         // Find the accomodation names
         foreach($subjects as $subject){
             $booking->bookings  = [];   // reset the bookings so they do not include the previous location
 
+            $checked    = '';
+            $hidden     = true;
+            if($subject['name'] == $bookedSubject){
+                $checked    = 'checked';
+                $hidden     = false;
+            }
+
             $cleanSubject   = trim($subject['name']);
             $checkboxes .= "<label>";
-                $checkboxes .= "<input type='checkbox' class='admin-booking-subject-selector' value='$cleanSubject'>";
+                $checkboxes .= "<input type='checkbox' class='admin-booking-subject-selector' value='$cleanSubject' $checked>";
                 $checkboxes .= $cleanSubject;
             $checkboxes .= "</label>";
 
-            $booking->forms->submission = null;
-            $calendars  .= $booking->modalContent($subject, time(), true, true, true);
+            $calendars  .= $booking->modalContent($subject, $targetDate, true, $hidden, true);
         }
         $html   .= '<div class="form-data-table">';
             $html   .= $checkboxes;
@@ -467,12 +487,12 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
 add_filter('sim_after_saving_formdata', function($message, $formBuilder){
     if(isset($formBuilder->submission->formresults['booking-startdate'])){
         // find the subject
-        $indexes        = $formBuilder->getElementByType('booking_selector');
+        $elements        = $formBuilder->getElementByType('booking_selector');
 
         $bookings       = new Bookings($formBuilder);
 
-        foreach($indexes as $index){
-            $elementName    = $formBuilder->formElements[$index]->name;
+        foreach($elements as $element){
+            $elementName    = $element->name;
             $startDate      = $formBuilder->submission->formresults['booking-startdate'];
             $endDate        = $formBuilder->submission->formresults['booking-enddate'];
             $subject        = $formBuilder->submission->formresults[$elementName];
@@ -570,7 +590,7 @@ add_filter('sim-forms-element-html', function($html, $element, $displayFormResul
 
     if($element->name == 'booking-enddate'){
         // Get the subject
-        $subject    = $displayFormResults->submission->formresults[$displayFormResults->formElements[$displayFormResults->getElementByType('booking_selector')[0]]->name];
+        $subject    = $displayFormResults->submission->formresults[$displayFormResults->getElementByType('booking_selector')[0]->name];
         
         // get the first event after this one
         $query  = "SELECT startdate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND startdate > '{$displayFormResults->submission->formresults[$element->name]}' ORDER BY startdate LIMIT 1";
@@ -583,7 +603,7 @@ add_filter('sim-forms-element-html', function($html, $element, $displayFormResul
         return str_replace('>', "min='{$displayFormResults->submission->formresults['booking-startdate']}' $max>", $html);
     }elseif($element->name == 'booking-startdate'){
         // Get the subject
-        $subject    = $displayFormResults->submission->formresults[$displayFormResults->formElements[$displayFormResults->getElementByType('booking_selector')[0]]->name];
+        $subject    = $displayFormResults->submission->formresults[$displayFormResults->getElementByType('booking_selector')[0]->name];
 
         // get the first event before this one
         $query  = "SELECT enddate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND enddate <= '{$displayFormResults->submission->formresults[$element->name]}' ORDER BY enddate LIMIT 1";
