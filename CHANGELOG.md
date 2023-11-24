@@ -4,6 +4,7 @@
 
 ### Added
 - chnage bookings when accomodation name changes
+- show accommodation by url param
 
 ### Changed
 
