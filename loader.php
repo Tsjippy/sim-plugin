@@ -32,8 +32,11 @@ if($dirs){
 //load all libraries
 require( __DIR__  . '/includes/lib/vendor/autoload.php');
 
+$Modules		= get_option('sim_modules', []);
+
 spl_autoload_register(function ($classname) {
     global $moduleDirs;
+    global $Modules;
 
     $path       = explode('\\', $classname);
 
@@ -42,6 +45,12 @@ spl_autoload_register(function ($classname) {
     }
 
     $module     = $moduleDirs[strtolower($path[1])];
+    $moduleName = end(explode('\\', $module));
+
+    if(!isset($Modules[$moduleName])){
+        return; // module is not activated
+    }
+
     $fileName   = $path[2];
 
     $modulePath = MODULESPATH."$module/php";
@@ -57,7 +66,7 @@ spl_autoload_register(function ($classname) {
     }
 });
 
-$Modules		= get_option('sim_modules', []);
+
 //Make sure the default modules are enabled always
 foreach($defaultModules as $module){
     $module = strtolower($module);
