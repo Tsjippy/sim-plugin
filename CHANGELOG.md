@@ -3,10 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- chnage bookings when accomodation name changes
-- show accommodation by url param
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [3.34.0] - 2023-11-24
+
+
+### Added
+- chnage bookings when accomodation name changes
+- show accommodation by url param
 
 ### Fixed
 - bug
