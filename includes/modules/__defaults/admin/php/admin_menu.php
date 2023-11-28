@@ -108,10 +108,19 @@ function buildSubMenu(){
 		}
 
 		$descriptionsTab	= descriptionsTab($moduleSlug, $moduleName, $tab);
+
+		$emailSettingsTab	= '';
+		$dataTab			= '';
+		$functionsTab		= '';
+		
 		$settingsTab		= settingsTab($moduleSlug, $moduleName, $settings, $tab);
-		$emailSettingsTab	= emailSettingsTab($moduleSlug, $moduleName, $settings, $tab);
-		$dataTab			= dataTab($moduleSlug, $moduleName, $settings, $tab);
-		$functionsTab		= functionsTab($moduleSlug, $moduleName, $settings, $tab);
+
+		// Only load if the module is enabled
+		if(isset($settings['enable'])){
+			$emailSettingsTab	= emailSettingsTab($moduleSlug, $moduleName, $settings, $tab);
+			$dataTab			= dataTab($moduleSlug, $moduleName, $settings, $tab);
+			$functionsTab		= functionsTab($moduleSlug, $moduleName, $settings, $tab);
+		}
 
 		?>
 		<div class='tablink-wrapper'>

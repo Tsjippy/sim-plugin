@@ -241,6 +241,25 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			}
 		}
 
+		private function removeGreeting($postContent){
+			$lines      = preg_split('/([(\r)(\n)(,)(.)])/', $postContent, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+			$firstLine  = strtolower($lines[0]);
+
+			if(
+				str_contains($firstLine, 'hi ') || 
+				str_contains($firstLine, 'dear') ||
+				str_contains($firstLine, 'good afternoon') || 
+				str_contains($firstLine, 'good morning') || 
+				str_contains($firstLine, 'good evening') || 
+				str_contains($firstLine, 'hey ')
+			){
+				unset($lines[0], $lines[1]);
+				$postContent    = trim(force_balance_tags(implode('', $lines)));
+			}
+
+			return $postContent;
+		}
+
 		/**
 		 * Send an e-mail via Mailchimp
 		 *
@@ -312,7 +331,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				$campainContent 	= $response->html;
 
 				//Update the html
-				$mailContent		= $extraMessage.'<br>'.$post->post_content;
+				$mailContent		= $extraMessage.'<br>'.$this->removeGreeting($post->post_content);
 
 				$replaceText 		= '//*THIS WILL BE REPLACED BY THE WEBSITE *//';
 

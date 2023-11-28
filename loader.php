@@ -45,9 +45,9 @@ spl_autoload_register(function ($classname) {
     }
 
     $module     = $moduleDirs[strtolower($path[1])];
-    $moduleName = end(explode('\\', $module));
+    $moduleName = strtolower(end(explode('/', $module)));
 
-    if(!isset($Modules[$moduleName])){
+    if(!isset($Modules[$moduleName]) && (empty($_GET['page']) || $_GET['page'] != "sim_$moduleName")){
         return; // module is not activated
     }
 

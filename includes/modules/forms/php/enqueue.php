@@ -94,12 +94,12 @@ function registerScripts(){
 
     if(is_numeric(get_the_ID())){
         $formBuilderPages   = SIM\getModuleOption(MODULE_SLUG, 'formbuilder_pages');
-        if(in_array(get_the_ID(), $formBuilderPages)){
+        if(is_array($formBuilderPages) && in_array(get_the_ID(), $formBuilderPages)){
             wp_enqueue_style('sim_forms_style');
         }
 
         $formtablePages   = SIM\getModuleOption(MODULE_SLUG, 'formtable_pages');
-        if(in_array(get_the_ID(), $formtablePages)){
+        if(is_array($formtablePages) && in_array(get_the_ID(), $formtablePages)){
             wp_enqueue_style('sim_formtable_style');
         }
     }
