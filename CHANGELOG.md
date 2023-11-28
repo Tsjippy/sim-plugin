@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- do not load class when module not activated
 
 ### Updated
 
