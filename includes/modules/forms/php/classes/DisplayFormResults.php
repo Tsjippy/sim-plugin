@@ -1498,13 +1498,21 @@ class DisplayFormResults extends DisplayForm{
 					}
 					//show page numbers
 					$html	.= "<span class='page-number-wrapper'>";
+						global $wp;  
+						$wp->parse_request();
+
+						if(isset($_GET['pagenumber'])){
+							unset($_GET['pagenumber']);
+						}
+
+						$currentUrl = home_url(add_query_arg(array($_GET), $wp->request));
 						for ($x = 0; $x < $pageCount; $x++) {
 							$pageNr	= $x+1;
 
 							if($this->currentPage == $x){
 								$html	.= "<strong>$pageNr </strong>";
 							}else{
-								$html	.= "$pageNr ";
+								$html	.= "<a href='$currentUrl&pagenumber=$x'>$pageNr</a> ";
 							}
 						}
 					$html	.= "</span>";
