@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- hyperlinked pagenumbers on  form results page
 
 ### Changed
 - remove greeting from mailchimp mailcontent
