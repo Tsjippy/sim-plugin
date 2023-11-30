@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- remove greeting from mailchimp mailcontent
 
 ### Fixed
 - do not load class when module not activated
