@@ -37,9 +37,11 @@ function prayerRequest($plainText = false, $verified=false) {
 	//Get all the post belonging to the prayer category
 	$posts = get_posts(
 		array(
-			'category'  	=> get_cat_ID('Prayer'),
-			's'				=> date("F Y"),
-			'numberposts'	=> -1
+			'category'  		=> get_cat_ID('Prayer'),
+			's'					=> date("F Y"),
+			'numberposts'		=> -1,
+			'search_columns'	=> ['post_title'],
+			'sentence'			=> true
 		)
 	);
 
@@ -66,7 +68,7 @@ function prayerRequest($plainText = false, $verified=false) {
 
 			//Find the request of the current day, Remove the daynumber (dayletter) - from the request
 			//space(A)space-space
-			$genericStart	= "\s*\([A-Za-z]\)\s*[\W]\s*";
+			$genericStart	= "\s*\(\s*[A-Za-z]\s*\)\s*[\W]\s*";
 			$reStart		= $dayNum.$genericStart;
 			$reNext			= ($dayNum + 1).$genericStart;
 
