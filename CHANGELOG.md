@@ -7,6 +7,7 @@
 
 ### Changed
 - remove greeting from mailchimp mailcontent
+- font of own booking dates
 
 ### Fixed
 - do not load class when module not activated
