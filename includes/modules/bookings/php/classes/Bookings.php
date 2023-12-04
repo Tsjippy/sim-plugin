@@ -440,6 +440,7 @@ class Bookings{
                         
                         // booked
                         if(isset($this->unavailable[$workingDateStr])){
+                            $bookingId  = $this->unavailable[$workingDateStr];
                             // First and last day of a reservation are both booked and available
                             /* if(
                                 !isset($this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))])    ||
@@ -448,7 +449,30 @@ class Bookings{
                                 $class	.= 'available ';
                             } */
                             $class	.= ' booked';
-                            $data   .= "data-bookingid='{$this->unavailable[$workingDateStr]}'";
+                            $data   .= "data-bookingid='$bookingId'";
+
+                            if(method_exists($this->forms, 'getSubmissions')){
+                                // check if this is our own booking
+                                foreach($this->bookings as $booking){
+                                    if($booking->id == $bookingId){
+                                        $submissionId   = $booking->submission_id;
+
+                                        $submission     = $this->forms->getSubmissions(null, $submissionId)[0];
+
+                                        $userId         = $submission->userid;
+                                        if(!empty($submission->formresults['userid'])){
+                                            $userId     = $submission->formresults['userid'];
+                                        }elseif(!empty($submission->formresults['user_id'])){
+                                            $userId     = $submission->formresults['user_id'];
+                                        }
+
+                                        if($userId == $this->forms->user->ID){
+                                            $class	.= ' own';
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                         }
                         
                         $calendarRows .=  "<dt class='calendar day $class' data-date='".date(DATEFORMAT, $workingDate)."' data-isodate='".date('Y-m-d', $workingDate)."' $data>";
@@ -515,6 +539,24 @@ class Bookings{
             // Retrieve booking details
             $this->forms->parseSubmissions(null, $booking->submission_id);
             $bookingData    = $this->forms->submission->formresults;
+
+            if(
+                !array_intersect($this->forms->userRoles, array_keys($this->forms->tableSettings['view_right_roles']))  &&      // we do not have the right to see others submissions
+                (
+                    isset($bookingData['user_id'])                      &&
+                    $bookingData['user_id'] != $this->forms->user->ID
+                ) ||
+                (
+                    isset($bookingData['userid'])                      &&
+                    $bookingData['userid'] != $this->forms->user->ID
+                )
+            ){
+                // no right to see this
+                echo "<div class='booking-detail-wrapper warning hidden' data-bookingid='$booking->id'>";
+                    echo "No Permission to see this booking";
+                echo "</div>";
+                continue;
+            }
 
             $hidden         = 'hidden';
             if(!empty($_REQUEST['id']) && $_REQUEST['id'] == $bookingData['id']){

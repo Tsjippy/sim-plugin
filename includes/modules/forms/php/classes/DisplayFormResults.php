@@ -101,7 +101,7 @@ class DisplayFormResults extends DisplayForm{
 			$this->total	= $result[0]->total;
 		}
 
-		if(!$all){
+		if(!$all && $start < $this->total){
 			$query	.= " LIMIT $start, $this->pageSize";
 		}
 
@@ -192,6 +192,8 @@ class DisplayFormResults extends DisplayForm{
 
 		if(count($this->submissions) == 1){
 			$this->submission	= array_values($this->submissions)[0];
+		}elseif(!empty($submissionId)){
+			$this->submission	= $this->submissions;
 		}
 
 		//Get personal visibility

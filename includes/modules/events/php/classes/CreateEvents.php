@@ -344,13 +344,16 @@ class CreateEvents extends Events{
 		$this->partnerId	= SIM\hasPartner($user->ID);
 		if($this->partnerId){
 			$partnerMeta	= SIM\getMetaArrayValue($this->partnerId, $metaKey);
+			if(is_array($partnerMeta) && count($partnerMeta) == 1){
+				$partnerMeta	= array_values($partnerMeta)[0];
+			}
 
 			//only treat as a couples event if they both have the same value
 			if($partnerMeta == $metaValue){
 				$partnerName	= get_userdata($this->partnerId)->first_name;
 				$title			= ucfirst($type)." {$user->first_name} & $partnerName {$user->last_name}";
 			}else{
-				$partnerId	= false;
+				$this->partnerId	= false;
 			}
 		}
 		

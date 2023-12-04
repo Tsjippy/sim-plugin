@@ -16,3 +16,9 @@ add_action( 'wp_mail_failed', function( $wpError ) {
         SIM\printArray($wpError);
     }
 });
+
+add_action( 'wp_mail_smtp_mailcatcher_send_failed', function($errorMessage, $instance, $mailMailer){
+    SIM\printArray($errorMessage);
+    SIM\printArray($instance);
+    SIM\printArray($mailMailer);
+}, 10, 3 );

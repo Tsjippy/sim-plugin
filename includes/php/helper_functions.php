@@ -915,7 +915,7 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 
 	//Return the value of the variable whos name is in the keystringvariable
 	preg_match_all('/\[(.*?)\]/', $metaKey, $matches);
-	if(is_array($matches[1])){
+	if(!empty($matches[1]) && is_array($matches[1])){
 		$value	= $values;
 		foreach($matches[1] as $key){
 			if(!is_array($value)){

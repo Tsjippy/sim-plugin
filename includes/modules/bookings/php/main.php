@@ -362,6 +362,11 @@ add_action('sim-formstable-after-table-settings', function($displayFormResults){
 });
 
 function pendingBookingsHtml($booking, $displayFormResults, $html){
+    // do not show if no permissions
+    if(!array_intersect(array_keys($booking->forms->formData->settings['full_right_roles']), $booking->forms->userRoles)){
+        return '';
+    }
+
     $pendingBookings    = $booking->retrievePendingBookings();
 
     if(!empty($pendingBookings)){
@@ -415,8 +420,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
         (
             isset($displayFormResults->tableSettings['booking-display']) &&                                                     // option chosen
             $displayFormResults->tableSettings['booking-display'] != 'calendar'                                                 // but choose table view
-        ) ||
-        !array_intersect($displayFormResults->userRoles, array_keys($displayFormResults->formSettings['full_right_roles']))
+        )        
     ){
         return $shouldShow;
     }

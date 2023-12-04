@@ -158,6 +158,11 @@ function getAnswer($message, $source){
         if($name){
             $response   .= $name;
         }
+    }elseif(str_contains($message, 'thank you')){
+        $response = "You are welcome ";
+        if($name){
+            $response   .= $name;
+        }
     }elseif(!empty($message)){
         SIM\printArray("No answer found for '$message'");
 
