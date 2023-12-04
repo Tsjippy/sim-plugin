@@ -73,6 +73,7 @@ function asyncSignalMessageSend($message, $recipient, $postId=""){
 }
 
 function sendSignalMessage($message, $recipient, $postId=""){
+
 	// do not send on localhost
 	if($_SERVER['HTTP_HOST'] == 'localhost'){
 		return;
