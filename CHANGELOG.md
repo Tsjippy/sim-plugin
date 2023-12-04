@@ -10,6 +10,7 @@
 
 ### Fixed
 - do not load class when module not activated
+- prayer requests
 
 ### Updated
 
