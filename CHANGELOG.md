@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.37.9] - 2023-12-04
+
+
+### Added
 - hyperlinked pagenumbers on  form results page
 
 ### Changed
@@ -12,6 +23,7 @@
 ### Fixed
 - do not load class when module not activated
 - prayer requests
+- remove slahses from signal messages
 
 ### Updated
 
