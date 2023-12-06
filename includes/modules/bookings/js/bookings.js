@@ -154,7 +154,7 @@ async function remove(target){
 }
 
 function changeBookingData(target){
-    let selector    = '';
+    let selector;
     let el  = document.querySelector(`.booking-subject-selector:checked`);
     if(el == null){
         selector    = '.booking.modal';
@@ -163,7 +163,8 @@ function changeBookingData(target){
         selector    = `[name="${el.value}-modal"]`;
         console.log(selector);
     }
-    document.querySelector(selector).classList.remove('hidden');
+
+    Main.showModal(document.querySelector(selector));
 }
 
 function storeDates(target){
