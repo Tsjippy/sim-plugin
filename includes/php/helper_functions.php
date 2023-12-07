@@ -147,7 +147,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 		}
 
 		if(empty($listId)){
-			$listId = $id;
+			$listId = $id."-list";
 		}
 
 		$datalist = "<datalist id='$listId' class='$class user_selection'>";

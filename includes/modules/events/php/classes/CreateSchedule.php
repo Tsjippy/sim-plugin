@@ -95,17 +95,19 @@ class CreateSchedule extends Schedules{
 		}
 
 		//clean title
-		$title	= sanitize_text_field($_POST['subject']);
+		if(!empty($_POST['subject'])){
+			$title	= sanitize_text_field($_POST['subject']);
+		}
 
 		if(!empty($event['organizer'])){
-			$ownTitle	= ucfirst($title)." with {$event['organizer']}";
+			$ownTitle	= ucfirst($this->title)." with {$event['organizer']}";
 		}else{
-			$ownTitle	= ucfirst($title);
+			$ownTitle	= ucfirst($this->title);
 		}
 
 		if(strpos(strtolower($ownTitle), 'at home') !== false){
 			if(!empty($event['organizer'])){
-				$ownTitle	= ucfirst($title).' '.$event['organizer'];
+				$ownTitle	= ucfirst($this->title).' '.$event['organizer'];
 			}
 
 			$event['location']	= 'Home';
@@ -132,7 +134,7 @@ class CreateSchedule extends Schedules{
 			];
 		}
 
-		if(is_array($_POST['others'])){
+		if(!empty($_POST['others']) && is_array($_POST['others'])){
 			foreach($_POST['others'] as $attendee){
 				$eventArray[] =
 				[
@@ -186,6 +188,10 @@ class CreateSchedule extends Schedules{
 			);
 
 			$postId 	= wp_insert_post( $post, true, false);
+			if(is_wp_error(($postId))){
+				return $postId;
+			}
+
 			$postIds[]	= $postId;
 			update_post_meta($postId, 'eventdetails', json_encode($event));
 			update_post_meta($postId, 'onlyfor', $a['onlyfor']);
