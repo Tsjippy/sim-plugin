@@ -8,6 +8,7 @@
 
 ### Fixed
 - issue with booking modal
+- title error
 
 ### Updated
 
