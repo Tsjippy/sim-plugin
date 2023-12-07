@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.38.0] - 2023-12-07
+
+
+### Fixed
 - issue with booking modal
 - title error
 
