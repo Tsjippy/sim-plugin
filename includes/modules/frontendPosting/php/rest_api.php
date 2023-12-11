@@ -477,7 +477,7 @@ function checkForDuplicate(\WP_REST_Request $request ){
 	}
 
 	// no exact match found
-	if(!$found){
+	if(!empty($posts) && !$found){
 		if(count($posts) == 1){
 			$existingTitle	= $posts[0]->post_title;
 			$html	.= "A post with a similar title '$existingTitle' already exists.<br>";
@@ -497,6 +497,10 @@ function checkForDuplicate(\WP_REST_Request $request ){
 			}
 
 		}
+	}
+
+	if(empty($html)){
+		return '';
 	}
 	
 	return [

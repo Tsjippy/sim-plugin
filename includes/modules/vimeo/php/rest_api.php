@@ -55,14 +55,13 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-	// Save uploaded video details
+	/* // Save uploaded video details
     register_rest_route(
 		RESTAPIPREFIX.'/vimeo',
 		'/download_to_server',
 		array(
 			'methods' 				=> 'POST,GET',
 			'callback' 				=> 	function(){
-
 				$vimeoApi	= new VimeoApi();
 				$vimeoId	= $_POST['vimeoid'];
 
@@ -90,7 +89,7 @@ add_action( 'rest_api_init', function () {
                 )
 			)
 		)
-	);
+	); */
 });
 
 /**
@@ -109,7 +108,7 @@ function prepareVimeoUpload(){
 	$postId		= 0;
 
 	//check if post already exists
-	$results = $wpdb->get_results($wpdb->prepare( "SELECT * FROM $wpdb->postmeta WHERE meta_key = 'vimeo_upload_data'"));
+	$results = $wpdb->get_results("SELECT * FROM $wpdb->postmeta WHERE meta_key = 'vimeo_upload_data'");
 	foreach($results as $result){
 		$data	= unserialize($result->meta_value);
 		if($data['filename'] == $fileName){
@@ -207,4 +206,49 @@ function cleanupBackupFolder(){
 	}
 
 	return "Succesfully cleaned up the backup folder, removed $count files";
+}
+
+function downloadToServer(){
+	session_start();
+
+	ini_set('max_execution_time', 0); // to get unlimited php script execution time
+
+	if(empty($_SESSION["vimeoprogress"])){
+		$_SESSION["vimeoprogress"] = 0;
+	}
+		
+	$vimeoApi	= new VimeoApi();
+	$vimeoId	= $_REQUEST['vimeoid'];
+
+	$post	= $vimeoApi->getPost($vimeoId);
+	if(is_wp_error($post)){
+		echo $post;
+	}else{
+		$result		= $vimeoApi->downloadFromVimeo(base64_decode($_REQUEST['download_url']), $post->ID);
+		if(is_wp_error($result)){
+			$message	= $result->get_error_message();
+			echo "<script>alert('$message');</script>";
+		}
+		echo "Video downloaded to server succesfully";
+		ob_flush(); 
+		flush(); 
+
+		while(true){
+			//ob_get_clean only returns false when there is absolutely nothing anymore
+			$result	= ob_get_clean();
+			if($result === false){
+				break;
+			}
+		}
+	}
+
+	session_destroy(); 
+
+	ob_end_flush();
+	exit;
+	die();
+}
+
+if(isset($_REQUEST['download_url']) && isset($_REQUEST['vimeoid'])){
+	downloadToServer();
 }

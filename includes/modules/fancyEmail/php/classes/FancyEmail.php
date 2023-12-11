@@ -176,7 +176,7 @@ class FancyEmail{
         // Add site greetings if not given
         $defaultGreeting    = SIM\getModuleOption(MODULE_SLUG, 'closing');
         if(!$defaultGreeting){
-            $defaultGreeting    = 'kind regards,';
+            $defaultGreeting    = 'Kind regards,';
         }
         if(
             strpos(strtolower($this->message), $defaultGreeting) === false &&

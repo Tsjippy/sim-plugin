@@ -220,6 +220,10 @@ document.querySelectorAll('form.sim_form').forEach(form=>form.addEventListener("
 
 // check for unsaved formdata
 window.addEventListener("beforeunload", (event) => {
+	if(document.querySelector('.loadergif:not(.hidden)') != null){
+		return;
+	}
+	
 	// check all pending
 	document.querySelectorAll('[data-pending]').forEach(el=>{
 		console.log(el);

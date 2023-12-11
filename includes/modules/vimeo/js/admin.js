@@ -17,23 +17,12 @@ async function downloadVimeoVideo(ev){
         get: (searchParams, prop) => searchParams.get(prop),
     });
     let vidmeoId    = params.vimeoid
-    let formData    = new FormData();
-    formData.append('vimeoid', vidmeoId);
-    formData.append('download_url', vimeoUrl);
 
-    Main.displayMessage('Download started please wait till it finishes');
+    let url = `${sim.baseUrl}/wp-json/sim/v2/vimeo/download_to_server?vimeoid=${vidmeoId}&download_url=${btoa(vimeoUrl)}`
 
-    let response    = await FormSubmit.fetchRestApi('vimeo/download_to_server', formData);
+    document.getElementById('loadarea').src=url;
 
-    //hide loader
-    ev.target.closest('.submit_wrapper').querySelector('.loadergif').classList.add('hidden');
-
-    if(response){
-        Main.displayMessage(response, 'success');
-        ev.target.closest('form').remove();
-    }else{
-        ev.target.closest('form').querySelector('[name="download_url"]').value = '';
-    }
+    Main.displayMessage('Download started', 'info', true);
 }
 
 async function cleanUpBackup(ev){

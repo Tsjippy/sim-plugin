@@ -3,7 +3,7 @@ namespace SIM\VIMEO;
 use SIM;
 use Vimeo\Vimeo;
 
-const MODULE_VERSION		= '7.0.17';
+const MODULE_VERSION		= '7.0.18';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
@@ -179,6 +179,10 @@ add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
 			.loadergif{
 				width: 30px;
 			}
+
+			#swal2-title{
+				line-height: 1;
+			}
 		</style>
 		<form>
 			<label>Enter download url (get it from <a href='https://vimeo.com/manage/<?php echo $_GET['vimeoid'];?>/advanced' target="_blank">this page</a>)
@@ -187,7 +191,10 @@ add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
 			<?php
 			echo SIM\addSaveButton('download_video', 'Submit download url');
 			?>
+			<div id="progressbar" style='height: 30px; margin-top: -30px;margin-left: 200px;border-radius: 50px; overflow: hidden;'></div>
+			<div id="information" ></div>
 		</form>
+		<iframe id="loadarea" style="display:none;"></iframe><br/>
 		<?php
 	}
 

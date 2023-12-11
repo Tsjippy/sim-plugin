@@ -676,13 +676,84 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 return new WP_Error('vimeo', "The video is already downloaded", ['path' => $filePath]);
             }
 
-            $client = new GuzzleHttp\Client();
+            echo '<script>';
+                echo "parent.document.getElementById('progressbar').innerHTML=`<div style='width:0%;background:linear-gradient(to bottom, #8a1a0e 0%,#b22222 100%);height:35px;'>&nbsp;</div>`;";
+                echo "parent.document.getElementById('information').innerHTML=`<div style='margin-top: -28px;text-align:center; color: white;font-weight:bold;text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;'>0% downloaded</div>`;";
+            echo '</script>';
+
+            ob_flush(); 
+            flush(); 
+
+            while(true){
+                //ob_get_clean only returns false when there is absolutely nothing anymore
+                $result	= ob_get_clean();
+                if($result === false){
+                    break;
+                }
+            }
+
+            $client         = new GuzzleHttp\Client();
+            $prevProgress   = 0;
             try{
                 $client->request(
                     'GET',
                     $url,
-                    array('sink' => $filePath)
+                    [
+                        'sink' => $filePath,
+                        'progress' => function(
+                            $downloadTotal,
+                            $downloadedBytes,
+                            $uploadTotal,
+                            $uploadedBytes
+                        ) use(&$prevProgress) {
+                            if($downloadTotal != 0 && $downloadedBytes != 0){
+                                //do something
+                                $percent    = round($downloadedBytes/$downloadTotal*100, 1);
+
+                                if($percent)
+
+                                if($prevProgress != $percent){
+                                    $prevProgress   = $percent;
+                                    //SIM\printArray("Downloaded: $percent%");
+                                    
+                                    echo '<script>';
+                                        echo "parent.document.getElementById('progressbar').innerHTML=`<div style='width:$percent%;background:linear-gradient(to bottom, #8a1a0e 0%,#b22222 100%);height:35px;'>&nbsp;</div>`;";
+                                        echo "parent.document.getElementById('information').innerHTML=`<div style='margin-top: -28px;text-align:center; color: white;font-weight:bold;text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;'>$percent% downloaded</div>`;";
+                                    echo '</script>';
+
+                                    ob_flush(); 
+                                    flush(); 
+
+                                    while(true){
+                                        //ob_get_clean only returns false when there is absolutely nothing anymore
+                                        $result	= ob_get_clean();
+                                        if($result === false){
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                    ]
                 );
+
+                echo '<script>';
+                    echo 'parent.document.getElementById("progressbar").innerHTML="";';
+                    echo 'parent.document.getElementById("information").innerHTML="";';
+                    echo "parent.document.querySelectorAll('.loadergif:not(.hidden)').forEach(el=>el.classList.add('hidden'));";
+                    echo "parent.document.querySelectorAll(`[name='download_url']`).forEach(el=>el.value='');";
+                echo '</script>';
+
+                ob_flush(); 
+                flush(); 
+
+                while(true){
+                    //ob_get_clean only returns false when there is absolutely nothing anymore
+                    $result	= ob_get_clean();
+                    if($result === false){
+                        break;
+                    }
+                }      
 
                 return $filePath;
             }catch (\GuzzleHttp\Exception\ClientException $e) {
