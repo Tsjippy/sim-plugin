@@ -6,6 +6,7 @@
 - vimeo video progress
 
 ### Changed
+- donwload progress
 
 ### Fixed
 
