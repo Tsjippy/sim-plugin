@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.38.1] - 2023-12-15
+
+
+### Added
 - vimeo video progress
 
 ### Changed
