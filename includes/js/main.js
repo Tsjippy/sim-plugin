@@ -1,6 +1,6 @@
 console.log("Main.js loaded");
 
-import {displayMessage, showLoader, isMobileDevice} from './imports.js';
+import {displayMessage, showLoader, isMobileDevice, } from './imports.js';
 export  {displayMessage, showLoader, isMobileDevice};
 
 export function changeUrl(target, secondTab=''){
