@@ -11,6 +11,7 @@
 ### Fixed
 
 ### Updated
+- form submit
 
 ## [2.38.0] - 2023-12-07
 
