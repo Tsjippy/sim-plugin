@@ -37,6 +37,8 @@ class DisplayFormResults extends DisplayForm{
 			$this->userRoles[]	= 'everyone';//used to indicate view rights on permissions
 			$this->excelContent	= [];
 		}
+
+		add_filter('sim-forms-elements', [__NAMESPACE__.'\DisplayFormResults', 'filterElements'], 10, 3);
 	}
 
 	/**
@@ -507,6 +509,91 @@ class DisplayFormResults extends DisplayForm{
 		];
 	}
 
+
+	public static function filterElements( $formElements, $instance, $force){
+
+		if(empty( $formElements)){
+			return $formElements;
+		}
+		
+		$instance->columnSettings();
+
+		// add column settings as elements
+		foreach($instance->columnSettings as $key=>$setting){
+			if($key > -1){
+				continue;
+			}
+
+			$formElement = clone($formElements[0]);
+
+			$formElement->id 		= $key;
+			$formElement->type		= 'text';
+			$formElement->name		= $setting['name'];
+			$formElement->nicename	= $setting['nice_name'];
+
+			$formElements[]			= $formElement;
+		}
+
+		return $formElements;
+	}
+
+	protected function columnSettings(){
+		//also add the id
+		if(!is_array($this->columnSettings[-1])){
+			$this->columnSettings[-1] = [
+				'name'				=> 'id',
+				'nice_name'			=> 'ID',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
+
+		//also add the submitted by
+		if(!is_array($this->columnSettings[-2])){
+			$this->columnSettings[-2] = [
+				'name'				=> 'userid',
+				'nice_name'			=> 'Submitted By',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
+
+		//also add the submission date
+		if(!is_array($this->columnSettings[-3])){
+			$this->columnSettings[-3] = [
+				'name'				=> 'submissiontime',
+				'nice_name'			=> 'Submission date',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
+
+		//also add the last edited date
+		if(!is_array($this->columnSettings[-4])){
+			$this->columnSettings[-4] = [
+				'name'				=> 'edittime',
+				'nice_name'			=> 'Last edit time',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
+
+		//also add the subid
+		if(!empty($this->formData->settings['split']) && empty($this->columnSettings[-5])){
+			$this->columnSettings[-5] = [
+				'name'				=> 'subid',
+				'nice_name'			=> 'Sub-Id',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
+	}
+
 	/**
 	 * Updates column settings with missing columns
 	 */
@@ -562,60 +649,7 @@ class DisplayFormResults extends DisplayForm{
 			}
 		}
 		
-		//also add the id
-		if(!is_array($this->columnSettings[-1])){
-			$this->columnSettings[-1] = [
-				'name'				=> 'id',
-				'nice_name'			=> 'ID',
-				'show'				=> '',
-				'edit_right_roles'	=> [],
-				'view_right_roles'	=> []
-			];
-		}
-
-		//also add the submitted by
-		if(!is_array($this->columnSettings[-2])){
-			$this->columnSettings[-2] = [
-				'name'				=> 'userid',
-				'nice_name'			=> 'Submitted By',
-				'show'				=> '',
-				'edit_right_roles'	=> [],
-				'view_right_roles'	=> []
-			];
-		}
-
-		//also add the submission date
-		if(!is_array($this->columnSettings[-3])){
-			$this->columnSettings[-3] = [
-				'name'				=> 'submissiontime',
-				'nice_name'			=> 'Submission date',
-				'show'				=> '',
-				'edit_right_roles'	=> [],
-				'view_right_roles'	=> []
-			];
-		}
-
-		//also add the last edited date
-		if(!is_array($this->columnSettings[-4])){
-			$this->columnSettings[-4] = [
-				'name'				=> 'edittime',
-				'nice_name'			=> 'Last edit time',
-				'show'				=> '',
-				'edit_right_roles'	=> [],
-				'view_right_roles'	=> []
-			];
-		}
-
-		//also add the subid
-		if(!empty($this->formData->settings['split']) && empty($this->columnSettings[-5])){
-			$this->columnSettings[-5] = [
-				'name'				=> 'subid',
-				'nice_name'			=> 'Sub-Id',
-				'show'				=> '',
-				'edit_right_roles'	=> [],
-				'view_right_roles'	=> []
-			];
-		}
+		$this->columnSettings();
 		
 		$names	= [];
 		//put hidden columns on the end and do not show same names twice

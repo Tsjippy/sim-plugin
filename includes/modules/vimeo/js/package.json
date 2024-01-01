@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Vimeo",
   "main": "./vimeo.js",
-  "sideEffects": false,
   "scripts": {
     "vimeo": "webpack --watch --entry ./vimeo.js --output-path . --output-filename vimeo.min.js --progress --mode=production --devtool source-map",
     "upload": "webpack --watch --config vimeo.config.js",

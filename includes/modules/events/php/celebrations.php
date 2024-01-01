@@ -29,6 +29,13 @@ function getAnniversaries(){
 
 	foreach($events->events as $event){
 		$startYear	= get_post_meta($event->ID, 'celebrationdate', true);
+
+		if(is_array($startYear)){
+			SIM\cleanUpNestedArray($startYear);
+
+			$startYear	= array_values($startYear)[0];
+		}
+		
 		if(!empty($startYear) && $startYear != date('Y-m-d')){
 			$title		= $event->post_title;
 			$age		= SIM\getAge($startYear);

@@ -765,48 +765,48 @@ class Signal {
         }
         file_put_contents($pidFile, 'running');
 
-        echo "Downloading Signal version $version<br>";
-        $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->os.tar.gz");
-
-        echo "Download finished<br>";
-        // Unzip the gz
-        $fileName = str_replace('.gz', '', $path);
-
-        if(!file_exists($fileName)){
-
-            echo "Unzipping .gz archive<br>";
-            // Raising this value may increase performance
-            $bufferSize = 4096; // read 4kb at a time
-
-            // Open our files (in binary mode)
-            $file       = gzopen($path, 'rb');
-            $outFile    = fopen($fileName, 'wb');
-
-            // Keep repeating until the end of the input file
-            while (!gzeof($file)) {
-                // Read buffer-size bytes
-                // Both fwrite and gzread and binary-safe
-                fwrite($outFile, gzread($file, $bufferSize));
-            }
-
-            // Files are done, close files
-            fclose($outFile);
-            gzclose($file);
-        }
-
-        // unzip the tar
-        $folder = str_replace('.tar.gz', '', $path);
-
-        if(file_exists($folder)){
-            if($this->os == 'Windows'){
-                // remove the folder
-                exec("rmdir $folder /s /q");
-            }else{
-                exec("rm -R $folder");
-            }
-        }
-
         try {
+            echo "Downloading Signal version $version<br>";
+            $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->os.tar.gz");
+
+            echo "Download finished<br>";
+            // Unzip the gz
+            $fileName = str_replace('.gz', '', $path);
+
+            if(!file_exists($fileName)){
+
+                echo "Unzipping .gz archive<br>";
+                // Raising this value may increase performance
+                $bufferSize = 4096; // read 4kb at a time
+
+                // Open our files (in binary mode)
+                $file       = gzopen($path, 'rb');
+                $outFile    = fopen($fileName, 'wb');
+
+                // Keep repeating until the end of the input file
+                while (!gzeof($file)) {
+                    // Read buffer-size bytes
+                    // Both fwrite and gzread and binary-safe
+                    fwrite($outFile, gzread($file, $bufferSize));
+                }
+
+                // Files are done, close files
+                fclose($outFile);
+                gzclose($file);
+            }
+
+            // unzip the tar
+            $folder = str_replace('.tar.gz', '', $path);
+
+            if(file_exists($folder)){
+                if($this->os == 'Windows'){
+                    // remove the folder
+                    exec("rmdir $folder /s /q");
+                }else{
+                    exec("rm -R $folder");
+                }
+            }
+
             echo "Unzipping .tar archive to $folder<br>";
 
             $phar = new \PharData($fileName);

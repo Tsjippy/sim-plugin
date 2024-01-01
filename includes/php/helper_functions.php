@@ -588,6 +588,7 @@ function getFamilyName($user, $lastNameFirst=false, &$partnerId=false) {
 function getAge($userId, $numeric=false){
 	if(is_numeric($userId)){
 		$birthday = get_user_meta( $userId, 'birthday', true );
+
 		if(empty($birthday)){
 			return false;
 		}
@@ -595,7 +596,16 @@ function getAge($userId, $numeric=false){
 		$birthday = $userId;
 	}
 
+	if(is_array($birthday)){
+		$birthday	= array_values($birthday)[0];
+	}
+	
+	if(empty($birthday)){
+		return;
+	}
+
 	$birthDate = explode("-", $birthday);
+
 	if (date("md", date("U", mktime(0, 0, 0, $birthDate[1], $birthDate[2], $birthDate[0]))) > date("md")){
 		$age = (date("Y") - $birthDate[0]) - 1;
 	}else{
