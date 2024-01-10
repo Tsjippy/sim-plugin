@@ -199,7 +199,7 @@ function currentUrl(){
 */
 function urlToPath($url){
 	$siteUrl	= str_replace(['https://', 'http://'], '', SITEURL);
-	$url		= str_replace(['https://', 'http://'], '', $url);
+	$url		= str_replace(['https://', 'http://'], '', urldecode($url));
 	
 	return str_replace(trailingslashit($siteUrl), ABSPATH, $url);
 }
