@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- prevent duplicate files
 
 ### Fixed
 - signal upgrade bug
