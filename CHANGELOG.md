@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.38.2] - 2024-01-10
+
+
+### Changed
 - prevent duplicate files
 
 ### Fixed
