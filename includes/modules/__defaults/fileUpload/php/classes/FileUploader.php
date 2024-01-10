@@ -90,6 +90,11 @@ class FileUploader{
         while (file_exists($this->targetFile)) {
             $i++;
 
+            // check if the file already exists
+            if(md5_file($this->files['tmp_name'][$this->key]) == md5_file($this->targetFile)){
+                return false;
+            }
+
             if(strtolower(substr($this->fileName, 0, strlen($this->username))) == strtolower($this->username)){
                 $this->targetFile = $this->targetDir.$i.'-'.$this->fileName;
             }else{
@@ -99,13 +104,15 @@ class FileUploader{
     }
 
     public function moveFile(){
-        //Move the file
-        $moved = move_uploaded_file($this->files['tmp_name'][$this->key], $this->targetFile);
+        //Move the file if it does not already exist
+        if(!file_exists($this->targetFile)){
+            $moved = move_uploaded_file($this->files['tmp_name'][$this->key], $this->targetFile);
 
-        if(!$moved){
-            header('HTTP/1.1 500 Internal Server Booboo');
-            header('Content-Type: application/json; charset=UTF-8');
-            die(json_encode(array('error' => "File is not uploaded")));
+            if(!$moved){
+                header('HTTP/1.1 500 Internal Server Booboo');
+                header('Content-Type: application/json; charset=UTF-8');
+                die(json_encode(array('error' => "File is not uploaded")));
+            }
         }
 
         // Add the url to the files array
