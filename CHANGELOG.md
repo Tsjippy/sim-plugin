@@ -10,6 +10,7 @@
 ### Fixed
 - signal upgrade bug
 - url decoding in url to path
+- bug
 
 ### Updated
 
