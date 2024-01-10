@@ -277,7 +277,7 @@ function closeFullscreen(target){
 }
 
 function setTableHeight(){
-	const urlParams = new URLSearchParams(window.location.search);
+	let urlParams = new URLSearchParams(window.location.search);
 	let	fullscreen	= urlParams.get('fullscreen');
 
 	// calculate how heigh the table should be
@@ -386,7 +386,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	//add label attribute
 	setTableLabel();
 
-	const urlParams = new URLSearchParams(window.location.search);
+	let urlParams = new URLSearchParams(window.location.search);
 	let	fullscreen	= urlParams.get('fullscreen');
 
 	if(fullscreen != null){

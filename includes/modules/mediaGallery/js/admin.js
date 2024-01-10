@@ -9,7 +9,7 @@ async function downloadVimeoVideo(ev){
     //show loader
     ev.target.closest('.submit_wrapper').querySelector('.loadergif').classList.remove('hidden');
 
-    const params = new Proxy(new URLSearchParams(window.location.search), {
+    let params = new Proxy(new URLSearchParams(window.location.search), {
         get: (searchParams, prop) => searchParams.get(prop),
     });
     let vidmeoId    = params.vimeoid

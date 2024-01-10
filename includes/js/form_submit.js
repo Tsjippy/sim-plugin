@@ -52,7 +52,17 @@ window.addEventListener("beforeunload", (event) => {
 
 let timer;
 
+document.addEventListener('focusout', (ev)=>{
+	if(ev.target.matches(`:invalid`)){
+		ev.target.reportValidity();
+	}
+})
+
 document.addEventListener('input', (ev)=>{
+	if(ev.target.matches(`:invalid`)){
+		//ev.target.reportValidity();
+	}
+
 	if(ev.target.matches(`.datalistinput.multiple`)){
 		// clear any previous set timers
 		clearTimeout(timer);

@@ -323,7 +323,7 @@ function addMethods(result){
 }
 
 document.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter'){
+    if (e.key === 'Enter' && document.querySelector("#usercred_wrapper") != null){
 		if(!document.querySelector("#usercred_wrapper").classList.contains('hidden')) {
 			verifyCreds();
 		}else if(!document.querySelector("#submit_login_wrapper").classList.contains('hidden')){

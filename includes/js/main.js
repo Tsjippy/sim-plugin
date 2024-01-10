@@ -36,7 +36,7 @@ export function changeUrl(target, secondTab=''){
 }
 
 function switchTab(event=null){
-	const params = new Proxy(new URLSearchParams(window.location.search), {
+	let params = new Proxy(new URLSearchParams(window.location.search), {
 		get: (searchParams, prop) => searchParams.get(prop),
 	});
 	

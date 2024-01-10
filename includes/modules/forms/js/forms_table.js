@@ -158,7 +158,7 @@ async function archiveSubmission(target){
 	response	= await FormSubmit.fetchRestApi('forms/archive_submission', formData);
 
 	if(response){
-		const params = new Proxy(new URLSearchParams(window.location.search), {
+		let params = new Proxy(new URLSearchParams(window.location.search), {
 			get: (searchParams, prop) => searchParams.get(prop),
 		});
 
