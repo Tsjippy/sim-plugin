@@ -11,6 +11,7 @@
 - signal upgrade bug
 - url decoding in url to path
 - bug
+- do not allow leaving invalid formfield
 
 ### Updated
 
