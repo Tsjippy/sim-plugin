@@ -314,6 +314,11 @@ async function processFormsTableInput(target){
 	let value			= FormFunctions.getFieldValue(target, cell, false);
 	let submissionId	= target.closest('tr').dataset.id;
 	let subId			= cell.dataset.subid;
+	let shortcodeid		= '';
+
+	if(target.closest('[data-shortcodeid]') != null){
+		shortcodeid	= target.closest('[data-shortcodeid]').dataset.shortcodeid;
+	}
 
 	//Only update when needed
 	if (value != JSON.parse(cell.dataset.oldvalue)){
@@ -329,6 +334,10 @@ async function processFormsTableInput(target){
 		formData.append('elementid', elementId);
 		formData.append('elementname', elementName);
 		formData.append('newvalue', JSON.stringify(value));
+
+		if(shortcodeid != ''){
+			formData.append('shortcodeid', shortcodeid);
+		}
 		
 		let response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);
 	

@@ -526,7 +526,7 @@ class Bookings{
     public function detailHtml(){
         $baseUrl	= plugins_url('../pictures', __DIR__);
 
-        if($this->forms->columnSettings == null){
+        if($this->forms->columnSettings == null || empty($this->forms->tableSettings)){
             $result = $this->forms->loadShortcodeData();
             if(is_wp_error($result)){
                 return $result;

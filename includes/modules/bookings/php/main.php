@@ -609,15 +609,27 @@ add_filter('sim-forms-element-html', function($html, $element, $displayFormResul
         // Get the subject
         $subject    = $displayFormResults->submission->formresults[$displayFormResults->getElementByType('booking_selector')[0]->name];
 
+        $endDate    = $displayFormResults->submission->formresults[$element->name];
+
+        if(is_array($endDate)){
+            $endDate    = $endDate[0];
+        }
+
         // get the first event before this one
-        $query  = "SELECT enddate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND enddate <= '{$displayFormResults->submission->formresults[$element->name]}' ORDER BY enddate LIMIT 1";
+        $query  = "SELECT enddate FROM {$wpdb->prefix}sim_bookings WHERE subject = '$subject' AND enddate <= '$endDate' ORDER BY enddate LIMIT 1";
         $min    = $wpdb->get_var($query);
 
         if(!empty($min)){
             $min    = "min='$min'";
         }
 
-        return str_replace('>', "$min max='{$displayFormResults->submission->formresults['booking-enddate']}'>", $html);
+
+        $max    = $displayFormResults->submission->formresults['booking-enddate'];
+        if(is_array($max)){
+            $max    = $max[0];
+        }
+        
+        return str_replace('>', "$min max='$max'>", $html);
     }
     return $html;
 }, 10, 3);

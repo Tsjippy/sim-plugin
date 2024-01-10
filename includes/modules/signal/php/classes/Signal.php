@@ -769,6 +769,8 @@ class Signal {
             echo "Downloading Signal version $version<br>";
             $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->os.tar.gz");
 
+            echo $path;
+            echo "URL: https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->os.tar.gz";
             echo "Download finished<br>";
             // Unzip the gz
             $fileName = str_replace('.gz', '', $path);

@@ -512,7 +512,7 @@ class DisplayFormResults extends DisplayForm{
 
 	public static function filterElements( $formElements, $instance, $force){
 
-		if(empty( $formElements)){
+		if(empty( $formElements) || !method_exists($instance, 'columnSettings')){
 			return $formElements;
 		}
 		
@@ -537,7 +537,7 @@ class DisplayFormResults extends DisplayForm{
 		return $formElements;
 	}
 
-	protected function columnSettings(){
+	public function columnSettings(){
 		//also add the id
 		if(!is_array($this->columnSettings[-1])){
 			$this->columnSettings[-1] = [
@@ -933,7 +933,11 @@ class DisplayFormResults extends DisplayForm{
 		global $wpdb;
 
 		if(!is_numeric($this->shortcodeId)){
-			return new WP_Error('forms', 'no shortcoode id');
+			if(!empty($_POST['shortcodeid']) && is_numeric($_POST['shortcodeid'])){
+				$this->shortcodeId	= $_POST['shortcodeid'];
+			}else{
+				return new WP_Error('forms', 'no shortcoode id');
+			}
 		}
 		
 		$query						= "SELECT * FROM {$this->shortcodeTable} WHERE id= '{$this->shortcodeId}'";
