@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- allow overlap
 
 ### Fixed
 
