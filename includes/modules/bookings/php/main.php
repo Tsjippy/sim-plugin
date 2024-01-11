@@ -45,7 +45,20 @@ add_action('sim-after-formbuilder-element-options', function($element){
                             <input type="text" name="formfield[booking_details][subjects][<?php echo $index;?>][name]" id="subjects" class=" formfield formfieldinput" value="<?php echo $subject['name'];?>" placeholder="Enter subject name" style='width: unset;'>
                         </label>
 
-                        <label name="Subject" class=" formfield formfieldlabel">
+                        <label class=" formfield formfieldlabel">
+                            <h4 class="labeltext">Allow overlap <?php echo $index+1;?></h4>
+                            Allow new arrivals on the day the previous people leave<br>
+                            <label>
+                                <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap]' value='yes' <?php if($subject['overlap'] == 'yes'){echo 'checked';}?>>
+                                Yes
+                            </label>
+                            <label>
+                                <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap]' value='no' <?php if($subject['overlap'] == 'no'){echo 'checked';}?>>
+                                No
+                            </label>
+                        </label>
+
+                        <label class=" formfield formfieldlabel">
                             <h4 class="labeltext">Room numbering type <?php echo $index+1;?></h4>
                             <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='none' <?php if($subject['nrtype'] == ''){echo 'checked';}?> onchange='this.closest(`.clone_div`).querySelector(`label.amount`).classList.add(`hidden`);this.closest(`.clone_div`).querySelector(`.rooms`).classList.add(`hidden`)'>
                             No seperate rooms

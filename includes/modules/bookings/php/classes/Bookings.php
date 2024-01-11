@@ -410,6 +410,18 @@ class Bookings{
         //get the bookings for this month
 		$this->retrieveMonthBookings($month, $year, $subject);
 
+        $baseSubject        = explode(';', $subject)[0];
+        $overlap            = false;
+
+        $bookingDetails     = maybe_unserialize($this->forms->currentElement->booking_details);
+        if(!empty($bookingDetails) && is_array($bookingDetails['subjects'])){
+            foreach($bookingDetails['subjects'] as $detail){
+                if($detail['name'] == $baseSubject && !empty($detail['overlap']) && $detail['overlap'] == 'yes'){
+                    $overlap    = true;
+                }
+            }
+        }
+
 		//loop over all weeks of a month
 		while(true){
             $hidden         = '';
@@ -441,13 +453,14 @@ class Bookings{
                         // booked
                         if(isset($this->unavailable[$workingDateStr])){
                             $bookingId  = $this->unavailable[$workingDateStr];
-                            // First and last day of a reservation are both booked and available
-                            /* if(
+                            // First and last day of a reservation are both booked and available if overlap is enabled
+                            if(
+                                $overlap &&
                                 !isset($this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))])    ||
                                 !isset($this->unavailable[date('Y-m-d', strtotime('+1 day', $workingDate))])
                             ){
                                 $class	.= 'available ';
-                            } */
+                            }
                             $class	.= ' booked';
                             $data   .= "data-bookingid='$bookingId'";
 
@@ -673,9 +686,23 @@ class Bookings{
     public function checkOverlap($startDate, $endDate, $subject, $id=-1){
         global $wpdb;
 
+        $baseSubject        = explode(';', $subject)[0];
+        $overlap            = false;
+
+        $bookingDetails     = maybe_unserialize($this->forms->getElementByType('booking_selector')[0]->booking_details);
+        if(!empty($bookingDetails) && is_array($bookingDetails['subjects'])){
+            foreach($bookingDetails['subjects'] as $detail){
+                if($detail['name'] == $baseSubject && !empty($detail['overlap']) && $detail['overlap'] == 'yes'){
+                    $overlap    = true;
+                }
+            }
+        }
+
         // start end enddate may overlap so only check for dates in between
-        //$queryStartDate  = date('Y-m-d', strtotime('+1 day', strtotime($startDate)));
-        //$queryEndDate    = date('Y-m-d', strtotime('-1 day', strtotime($endDate)));
+        if($overlap){
+            $startDate  = date('Y-m-d', strtotime('+1 day', strtotime($startDate)));
+            $endDate    = date('Y-m-d', strtotime('-1 day', strtotime($endDate)));
+        }
 
         // First check if a booking on these dates doesn't exist
         $query	    = "SELECT * FROM $this->tableName WHERE pending=0 AND subject = '$subject' AND ('$startDate' BETWEEN startdate and enddate OR '$endDate' BETWEEN startdate and enddate)";
