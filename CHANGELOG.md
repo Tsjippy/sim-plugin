@@ -6,6 +6,7 @@
 
 ### Changed
 - allow overlap
+- generic planning form for signup
 
 ### Fixed
 
