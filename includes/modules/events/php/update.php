@@ -24,4 +24,14 @@ add_action('sim_plugin_update', function($oldVersion){
 
         SIM\printArray('Columns added');
     }
+
+    if($oldVersion < '2.38.3'){
+        $schedules = new Schedules();
+
+        maybe_add_column($schedules->tableName, 'fixed_timeslot_size', "ALTER TABLE $schedules->tableName ADD COLUMN `fixed_timeslot_size` boolean NOT NULL");
+
+        maybe_add_column($schedules->tableName, 'subject', "ALTER TABLE $schedules->tableName ADD COLUMN `subject` longtext NOT NULL");
+
+        SIM\printArray('Columns added');
+    }
 });

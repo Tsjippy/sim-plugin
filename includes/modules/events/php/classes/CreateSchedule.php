@@ -99,7 +99,7 @@ class CreateSchedule extends Schedules{
 			$title	= sanitize_text_field($_POST['subject']);
 		}
 
-		if(!empty($event['organizer'])){
+		if(!empty($event['organizer']) && empty($this->defaultSubject)){
 			$ownTitle	= ucfirst($this->title)." with {$event['organizer']}";
 		}else{
 			$ownTitle	= ucfirst($this->title);
@@ -127,9 +127,15 @@ class CreateSchedule extends Schedules{
 		}
 
 		if(is_numeric($this->hostId)){
+			if(empty($this->defaultSubject)){
+				$titleString	= "Hosting {$this->name} for $title";
+			}else{
+				$titleString	= $title;
+			}
+
 			$eventArray[] =
 			[
-				'title'		=>"Hosting {$this->name} for $title",
+				'title'		=>	$titleString,
 				'onlyfor'	=>[$this->hostId, $hostPartner]
 			];
 		}
@@ -188,7 +194,7 @@ class CreateSchedule extends Schedules{
 			);
 
 			$postId 	= wp_insert_post( $post, true, false);
-			if(is_wp_error(($postId))){
+			if(is_wp_error($postId)){
 				return $postId;
 			}
 
@@ -442,21 +448,38 @@ class CreateSchedule extends Schedules{
 			return new WP_Error('schedule', "Ending date cannot be before starting date");
 		}
 
+		if($_POST['fixedtimeslotsize'] == 'yes'){
+			$fixedTimeslotSize	= true;
+		}else{
+			$fixedTimeslotSize	= false;
+		}
+
+		if(empty($_POST['subject'])){
+			$subject	= '';
+			$diner		= !isset($_POST['skipdiner']);
+		}else{
+			$subject	= $_POST['subject'];
+			$lunch		= false;
+			$diner		= false;
+		}
+
 		$arg	= array(
 			'target'		=> $_POST['target_id'],
 			'name'			=> $name,
 			'info'			=> $info,
 			'lunch'			=> $lunch,
-			'diner'			=> !isset($_POST['skipdiner']),
+			'diner'			=> $diner,
 			'orientation'	=> $orientation,
 			'startdate'		=> $startDateStr,
 			'enddate'		=> $endDateStr,
 			'starttime'		=> $startTime,
 			'endtime'		=> $this->dinerTime,
 			'timeslot_size'	=> $_POST['timeslotsize'],
+			'fixed_timeslot_size'	=> $fixedTimeslotSize,
 			'hidenames'		=> isset($_POST['hidenames']),
 			'admin_roles'	=> maybe_serialize($_POST['admin-roles']),
-			'view_roles'	=> maybe_serialize($_POST['view-roles'])
+			'view_roles'	=> maybe_serialize($_POST['view-roles']),
+			'subject'		=> $subject,
 		);
 
 		if($update){
@@ -629,7 +652,7 @@ class CreateSchedule extends Schedules{
 			$this->title		= 'lunch';
 			$this->location		= "House of $hostName";
 			$isMeal				= true;
-		}elseif($this->startTime == $this->dinerTime){
+		}elseif($this->startTime == $this->dinerTime && $schedule->dinner){
 			$this->endTime		= '19:30';
 			$this->title		= 'dinner';
 			$this->location		= "House of $hostName";
@@ -637,16 +660,29 @@ class CreateSchedule extends Schedules{
 		}else{
 			$this->title		= sanitize_text_field($_POST['subject']);
 			$this->location		= sanitize_text_field($_POST['location']);
-			$this->endTime		= $_POST['endtime'];
+			if(empty($_POST['endtime'])){
+				$this->endTime	= date('H:i', strtotime("+$this->timeSlotSize minutes", strtotime( $this->startTime)));
+			}else{
+				$this->endTime		= $_POST['endtime'];
+			}
 		}
+
 
 		if(!empty($_POST['session-id'])){
 			$message	= "Succesfully updated this entry";
-		}elseif($this->admin){
-			$message	= "Succesfully added $hostName as a host for {$this->name} on $dateStr";
+		}elseif($this->admin && $hostName != $this->user->display_name){
+			$name	= hostName;
 		}else{
-			$message	= "Succesfully added you as a host for {$this->name} on $dateStr";
+			$name	= "you";
 		}
+
+		if(empty($this->defaultSubject)){
+			$message	= "Succesfully added $name as a host for {$this->name} on $dateStr";
+		}else{
+			$message	= "Succesfully scheduled $name for $dateStr";
+		}
+
+		$message	.=  " at $this->startTime";
 
 		if($session){
 			$result	= $this->updateScheduleEvents($isMeal);

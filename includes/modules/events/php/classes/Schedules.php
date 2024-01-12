@@ -21,6 +21,8 @@ class Schedules{
 	protected $mobile;
 	protected $currentSession;
 	protected $timeSlotSize;
+	protected $fixedTimeSlotSize;
+	protected $defaultSubject;
 	protected $hideNames;
 	protected $adminRoles;
 	protected $viewRoles;
@@ -33,22 +35,24 @@ class Schedules{
 
 		$this->getSchedules();
 		
-		$this->user 			= wp_get_current_user();
+		$this->user 				= wp_get_current_user();
 
-		$this->events			= new DisplayEvents();
+		$this->events				= new DisplayEvents();
 
-		$this->lunchStartTime	= '12:00';
-		$this->lunchEndTime		= '13:00';
-		$this->dinerTime		= '18:00';
-		$this->noPermissionText	= 'No permission to do that!';
-		$this->tdLabels			= [];
+		$this->lunchStartTime		= '12:00';
+		$this->lunchEndTime			= '13:00';
+		$this->dinerTime			= '18:00';
+		$this->noPermissionText		= 'No permission to do that!';
+		$this->tdLabels				= [];
+		$this->fixedTimeSlotSize	= false;
+		$this->defaultSubject		= '';
 
-		$this->mobile			= wp_is_mobile();
+		$this->mobile				= wp_is_mobile();
 
 		if(in_array('editor', $this->user->roles)){
-			$this->admin		= true;
+			$this->admin			= true;
 		}else{
-			$this->admin		= false;
+			$this->admin			= false;
 		}
 	}
 	
@@ -78,6 +82,8 @@ class Schedules{
 			starttime varchar(80) NOT NULL,
 			endtime varchar(80) NOT NULL,
 			timeslot_size mediumint(9) NOT NULL,
+			fixed_timeslot_size boolean NOT NULL,
+			subject longtext NOT NULL,
 			hidenames boolean NOT NULL,
 			admin_roles varchar(80),
 			view_roles varchar(80),
@@ -137,6 +143,10 @@ class Schedules{
 			$this->timeSlotSize	= 15;
 		}
 
+		$this->fixedTimeSlotSize	= $this->currentSchedule->fixed_timeslot_size;
+
+		$this->defaultSubject		= $this->currentSchedule->subject;
+
 		$this->hideNames	= $this->currentSchedule->hidenames;
 
 		// Parse admin rights
@@ -162,11 +172,11 @@ class Schedules{
 		
 		// Show also the orientation schedule if:
 		if (
-			in_array('everyone', $this->viewRoles)				||	// Everyone can view
+			in_array('everyone', $this->viewRoles)					||	// Everyone can view
 			array_intersect($this->viewRoles, $this->user->roles)	||	// We have the view roles permission
-			$this->admin															||	// We are an admin
-			$this->currentSchedule->target == $this->user->ID						||	// The schedule is meant for us
-			$this->includedInSchedule()													// We are in the schedule
+			$this->admin											||	// We are an admin
+			$this->currentSchedule->target == $this->user->ID		||	// The schedule is meant for us
+			$this->includedInSchedule()									// We are in the schedule
 		){
 			$this->onlyMeals = false;
 		}
@@ -240,7 +250,7 @@ class Schedules{
 		$this->currentSchedule->startdate	= max([date('Y-m-d'), $this->currentSchedule->startdate]);
 		
 		?>
-		<div class='schedules_div table-wrapper' data-id="<?php echo $this->currentSchedule->id; ?>" data-target="<?php echo $this->currentSchedule->name; ?>" data-slotsize="<?php echo $this->timeSlotSize;?>" data-hidenames="<?php echo $this->hideNames;?>">
+		<div class='schedules_div table-wrapper' data-id="<?php echo $this->currentSchedule->id; ?>" data-target="<?php echo $this->currentSchedule->name; ?>" data-slotsize="<?php echo $this->timeSlotSize;?>" data-fixedslotsize="<?php echo $this->fixedTimeSlotSize;?>" data-hidenames="<?php echo $this->hideNames;?>" data-subject="<?php echo $this->defaultSubject;?>">
 			<div class="modal publish_schedule hidden">
 				<div class="modal-content">
 					<span id="modal_close" class="close">&times;</span>
@@ -334,7 +344,7 @@ class Schedules{
 					</thead>
 					<tbody class="table-body">
 						<?php
-						echo $this->writeRows($this->currentSchedule, $this->onlyMeals);
+						echo $this->writeRows();
 						?>
 					</tbody>
 				</table>
@@ -544,7 +554,7 @@ class Schedules{
 
 		// update the current schedule
 		foreach($results as $index=>&$result){
-			if($this->onlyMeals && !$result->meal){
+			if($this->onlyMeals && !$result->meal && empty($this->defaultSubject)){
 				unset($results[$index]);
 			}else{
 				$this->parsePostsAndEvents($result);
@@ -733,6 +743,10 @@ class Schedules{
 			$class .= ' admin';
 		}
 
+		if(!empty($this->defaultSubject)){
+			$class .= ' add-current';
+		}
+
 		if($this->mobile){
 			return [
 				'text'	=> $cellText,
@@ -795,7 +809,8 @@ class Schedules{
 
 			$endTime	= $event->endtime;
 			$class 		.= ' selected';
-			if($this->hideNames && !$this->admin && $this->currentSchedule->target != $this->user->ID){
+			$partnerId 	= SIM\hasPartner($this->user->ID);
+			if($this->hideNames && !$this->admin && $this->currentSchedule->target != $this->user->ID && $hostId != $this->user->ID && $hostId != $partnerId){
 				$cellText	= 'Taken';
 			}else{
 				$baseTitle	= $this->getBaseTitle();
@@ -809,9 +824,9 @@ class Schedules{
 				$cellText .= "<span class='person timeslot'>Add person</span>";
 			}
 		
-			if (empty($event->location) && $this->admin) {
+			if (empty($event->location) && $this->admin && empty($this->defaultSubject)) {
 				$cellText .= "<span class='location timeslot'>Add location</span>";
-			} elseif($cellText	!= 'Taken') {
+			} elseif(!empty($event->location) && $cellText != 'Taken') {
 				$cellText .= "<span class='timeslot'>At <span class='location'>{$event->location}</span></span>";
 				$dataset	.= " data-location='{$event->location}'";
 			}
@@ -827,7 +842,17 @@ class Schedules{
 
 			$this->nextStartTimes[$date] = $endTime;
 		}else{
-			$cellText = 'Available';
+			if($this->mobile){
+				$dateStr	= date(DATEFORMAT, strtotime($date));
+				$hostId		= get_current_user_id();
+
+				$cellText	= "<span class='add-me-as-host' data-date='$dateStr' data-starttime='$startTime' data-host_id='$hostId' data-isodate='$date'>";
+					$cellText .= 'Available   ';
+					$cellText .= '<svg fill="#000000" height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve"> <g> <g><path d="M256,0C114.611,0,0,114.611,0,256s114.611,256,256,256s256-114.611,256-256S397.389,0,256,0z M256,486.4 C128.759,486.4,25.6,383.249,25.6,256S128.759,25.6,256,25.6S486.4,128.759,486.4,256S383.241,486.4,256,486.4z"/> </g> </g> <g> <g> <path d="M384,243.2H268.8V128c0-7.066-5.734-12.8-12.8-12.8c-7.066,0-12.8,5.734-12.8,12.8v115.2H128 c-7.066,0-12.8,5.734-12.8,12.8c0,7.066,5.734,12.8,12.8,12.8h115.2V384c0,7.066,5.734,12.8,12.8,12.8 c7.066,0,12.8-5.734,12.8-12.8V268.8H384c7.066,0,12.8-5.734,12.8-12.8C396.8,248.934,391.066,243.2,384,243.2z"/> </g> </g> </svg>';
+				$cellText .= "</span>";
+			}else{
+				$cellText	 = 'Available';
+			}
 		}
 
 		// for Mobile view
@@ -845,7 +870,11 @@ class Schedules{
 			$this->user->ID == $event->organizer_id || 		// We are the organizer
 			$cellText == 'Available'						// This cell  is available
 		){
-			$class .= ' admin available';
+			$class .= ' available';
+		}
+
+		if(!empty($this->defaultSubject)){
+			$class .= ' add-current';
 		}
 
 		if(is_numeric($_REQUEST['schedule']) && is_numeric($_REQUEST['session'])){
@@ -864,9 +893,6 @@ class Schedules{
 
 	/**
 	 * Write all rws of a schedule table
-	 *
-	 * @param	object	$schedule		the Schedule
-	 * @param	bool	$onlyMeals		Whether to only write the meal rows. Default false
 	 *
 	 * @return 	array					Rows html
 	*/
@@ -906,7 +932,7 @@ class Schedules{
 			}elseif(
 				$startTime > $this->lunchStartTime	&&		// Time is past the start lunch time
 				$startTime < $this->lunchEndTime	&& 		// but before the end
-				$this->currentSchedule->lunch							// And the schedule includes a lunch
+				$this->currentSchedule->lunch				// And the schedule includes a lunch
 			){
 				$description		= 'Lunch';
 				$extra				= "class='hidden'";		// These rows should be hidden as the first spans 4 rows
@@ -940,7 +966,7 @@ class Schedules{
 			}
 			
 			//Show the row if we can see all rows or the row is a mealschedule row
-			if (!$this->onlyMeals || $mealScheduleRow ) {
+			if (!$this->onlyMeals || $mealScheduleRow || !empty($this->defaultSubject)) {
 				$html  .= "<tr class='table-row' data-starttime='$startTime' data-endtime='$endTime'>";
 					$html 	.= "<td $extra class='sticky' label=''><strong>$description</strong></td>";
 					$html	.= $cells;
@@ -1010,12 +1036,12 @@ class Schedules{
 				}
 
 				//Show the row if we can see all rows or the row is a mealschedule row
-				if (!$this->onlyMeals || $mealScheduleRow ) {
+				if (!$this->onlyMeals || $mealScheduleRow  || !empty($this->defaultSubject)) {
 					//mealschedule
 					if($mealScheduleRow){
 						$data			= $this->writeMealCell($date, $startTime, true);
 					//Orientation schedule
-					}elseif(!$this->onlyMeals){
+					}elseif(!$this->onlyMeals || !empty($this->defaultSubject)){
 						$data			= $this->writeOrientationCell($date, $startTime, true);
 						if($data['event']){
 							$description	.=	' - '.$data['event']->endtime;
@@ -1214,7 +1240,7 @@ class Schedules{
 					<input type='hidden' name='session-id' value='<?php echo $sessionId;?>'>
 					<input type='hidden' name='host_id' value='<?php echo $hostId;?>'>
 					
-					<h3>Add an orientation session</h3>
+					<h3>Add a session</h3>
 
 					<label>
 						<h4>Date:</h4>
@@ -1350,6 +1376,24 @@ class Schedules{
 				<h4>Timeslot size (minutes)</h4>
 				<input type='number' name='timeslotsize' value='15'>
 			</label>
+
+			<label>
+				<h4>Fixed timeslot size</h4>
+				<label>
+					<input type='radio' name='fixedtimeslotsize' value='yes'>
+					Yes
+				</label>
+				<label>
+					<input type='radio' name='fixedtimeslotsize' value='no'>
+					No
+				</label>
+			</label>
+
+			<label>
+				<h4>Static session name</h4>
+				<input type='text' name='subject' value=''>
+			</label>
+
 			<br>
 			<br>
 

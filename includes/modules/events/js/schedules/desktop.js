@@ -196,10 +196,17 @@ function showEditScheduleModal(target){
 	modal.querySelector(`[name="startdate"]`).value			= table.tHead.querySelector('tr').cells[1].dataset.isodate;
 	modal.querySelector(`[name="enddate"]`).value			= table.tHead.querySelector('tr').cells[table.tHead.querySelector('tr').cells.length-1].dataset.isodate;
 	modal.querySelector(`[name="timeslotsize"]`).value		= wrapper.dataset.slotsize;
+	if(wrapper.dataset.fixedslotsize == 1){
+		modal.querySelector(`[name='fixedtimeslotsize'][value='yes']`).checked = true;
+	}else{
+		modal.querySelector(`[name='fixedtimeslotsize'][value='no']`).checked = true;
+	}
+	modal.querySelector(`[name="subject"]`).value			= wrapper.dataset.subject;
 	modal.querySelector(`[name="hidenames"]`).checked		= wrapper.dataset.hidenames;
 	modal.querySelector(`[name="skiplunch"]`).checked		= parseInt(table.dataset.skiplunch);
 	modal.querySelector(`[name="skipdiner"]`).checked		= parseInt(table.dataset.skipdiner);
 	modal.querySelector(`[name="skiporientation"]`).checked	= table.rows.length<3;
+
 
 	let adminRoles	= JSON.parse(table.dataset.adminroles);
 	modal.querySelectorAll(`[name="admin-roles[]"]`).forEach(checkbox => checkbox.checked = adminRoles.includes(checkbox.value));
@@ -295,7 +302,7 @@ async function deleteHost(target){
 
 //Do something with selected items
 async function afterSelect(e, selected, _unselected){
-	let target = e.target;
+	let target = selected[0].node;
 
 	//remove a meal host
 	if(target.matches('.meal.selected.own, .meal.selected.admin')){
@@ -309,7 +316,7 @@ async function afterSelect(e, selected, _unselected){
         
 		showAddHostModal(target, date, startTime);
 	//orientation slot
-	}else if(target.matches('.meal:not(.admin, .selected)')){
+	}else if(target.matches('.add-current:not(.selected, .admin)')){
         let table		= target.closest('table');
 		let cell		= target.closest('td');
 		let dateStr		= table.rows[0].cells[cell.cellIndex].dataset.date;
@@ -351,21 +358,30 @@ function hideRows() {
 function addSelectable(){
 	//loop over all the schedule tables
 	document.querySelectorAll('.sim-table.schedule').forEach(function(table){
-		//Add selectable on non-mobile devices or if it is only a lunch and dinner schedule
+		//Add selectable on non-mobile devices
 		if(!Main.isMobileDevice() || table.rows.length < 7){
 			if(table._selectable != undefined){
 				table._selectable.destroy();
 			}
 
+			let options		= {
+				filter:		".orientation.available",
+				appendTo:	table.querySelector("tbody"),
+				lasso: {
+					 border: "none",
+					 backgroundColor: "none"
+				 }
+			}
+
+			// only allow 1 timeslot if we have fixed timeslots
+			console.log(table.closest('.schedules_div.table-wrapper').dataset.fixedslotsize == '1');
+			if(table.closest('.schedules_div.table-wrapper').dataset.fixedslotsize == '1' ){
+				console.log('test');
+				options.maxSelectable	= 1;
+			}
+
 			//Load selectable and attach it to the table
-			table._selectable = new Selectable({
-			   filter:		".orientation.admin",
-			   appendTo:	table.querySelector("tbody"),
-			   lasso: {
-					border: "none",
-					backgroundColor: "none"
-				}
-			});
+			table._selectable = new Selectable(options);
 			
 			//Run the function afterSelect when selection is final
 			table._selectable.on('end', afterSelect);

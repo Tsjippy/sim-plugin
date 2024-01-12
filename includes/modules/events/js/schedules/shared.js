@@ -27,6 +27,9 @@ export async function addCurrentUserAsHost(target, dateStr){
 
 		if(target.closest('table') == null){
 			Main.showLoader(target);
+		}else{
+			target.innerHTML = '<span></span>';
+			Main.showLoader(target.querySelector('span'));
 		}
 
 		let response	= await FormSubmit.fetchRestApi('events/add_host', formData);
@@ -111,6 +114,7 @@ export function showTimeslotModal(selected=''){
 	}
 	modal.querySelector('[name="schedule_id"]').value		= firstCell.closest('.schedules_div').dataset.id;
 	
+	let table	= firstCell.closest('table');
 	startTime	= firstCell.dataset.starttime;
 	endTime		= firstCell.dataset.endtime;
 	date	 	= firstCell.dataset.isodate;
@@ -119,8 +123,6 @@ export function showTimeslotModal(selected=''){
 		endTime		= lastCell.closest('tr').dataset.endtime;
 		date		= table.rows[0].cells[firstCell.cellIndex].dataset.isodate;
 	}
-
-	let table	= firstCell.closest('table');
 
 	hostId			= firstCell.dataset.host_id;
 	//oldTime			= firstCell.dataset.old_time;
@@ -154,6 +156,22 @@ export function showTimeslotModal(selected=''){
 	modal.querySelector('[name="date"]').value				= date;
 	modal.querySelector('[name="starttime"]').value			= startTime;
 	modal.querySelector('[name="endtime"]').value			= endTime;
+
+	if(firstCell.closest('.schedules_div.table-wrapper').dataset.fixedslotsize == '1' ){
+		modal.querySelector('[name="endtime"]').closest('label').querySelector('h4').textContent = 'End time';
+		modal.querySelector('[name="endtime"]').disabled	= true;
+	}else{
+		modal.querySelector('[name="endtime"]').disabled	= false;
+		modal.querySelector('[name="endtime"]').closest('label').querySelector('h4').textContent = 'Select an end time:'
+	}
+	
+	if(firstCell.closest('.schedules_div.table-wrapper').dataset.subject == '' || firstCell.closest('.schedules_div.table-wrapper').dataset.subject == undefined){
+		modal.querySelector('[name="subject"]').value		= '';
+		modal.querySelector('[name="endtime"]').disabled	= false;
+	}else{
+		modal.querySelector('[name="subject"]').value		= firstCell.closest('.schedules_div.table-wrapper').dataset.subject;
+		modal.querySelector('[name="endtime"]').disabled	= true;
+	}
 
 	modal.querySelector('[name="add_timeslot"]').classList.remove('add_schedule_row');
 	modal.querySelector('[name="add_timeslot"]').classList.add('update_schedule');
@@ -257,6 +275,8 @@ function loadHostFormdata(target){
 	
 	formData.append('starttime', startTime);
 	formData.append('schedule_id', scheduleId);
+
+	formData.append('subject', target.closest('.schedules_div.table-wrapper').dataset.subject)
 
 	return formData;
 }
