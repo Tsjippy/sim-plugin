@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- signal-cli update
 
 ### Updated
 
