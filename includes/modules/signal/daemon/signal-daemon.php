@@ -6,6 +6,7 @@
  *
  * Something like:
  * @reboot export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001/bus;/home/simnige1/web/simnigeria.org/public_html/wp-content/signal-cli/program/bin/signal-cli -o json --trust-new-identities=always daemon | while read -r line; do find -name signal-daemon.php 2>/dev/null -exec php "{}" "$line" \; ; done;
+ * @reboot export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1001/bus;/home/simnige1/web/simnigeria.org/public_html/wp-content/signal-cli/program/signal-cli -o json --trust-new-identities=always daemon | while read -r line; do find -name signal-daemon.php 2>/dev/null -exec php "{}" "$line" \; ; done;
  */
 use SIM\SIGNAL\SignalBus;
 use SIM;

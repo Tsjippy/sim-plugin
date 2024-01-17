@@ -426,6 +426,17 @@ class SignalBus extends Signal {
     }
 
     /**
+     * Fix messages before sending them
+     */
+    function escapeMessage(&$message){
+        $message    = str_replace(['$1','$2','$3','$4','$5','$6','$7','$8','$9','$0'], ['$ 1','$ 2','$ 3','$ 4','$ 5','$ 6','$ 7','$ 8','$ 9','$ 0'], $message);
+
+        $message    = str_replace(['`', '"'], "'", $message);
+
+
+    }
+
+    /**
      * Send a message to a group
      * @param string        $message        Specify the message, if missing, standard input is used
      * @param string        $groupId        Specify the group id
@@ -444,8 +455,8 @@ class SignalBus extends Signal {
             $this->sendGroupMessageReaction($recipient, $timeStamp, $groupId);
         } */
 
-        $message    = str_replace(['$1','$2','$3','$4','$5','$6','$7','$8','$9','$0'], ['$ 1','$ 2','$ 3','$ 4','$ 5','$ 6','$ 7','$ 8','$ 9','$ 0'], $message);
-
+        $this->escapeMessage($message);
+        
         if(is_array($attachments)){
             foreach($attachments as $index => $attachment){
                 if(!file_exists($attachment)){
@@ -539,7 +550,7 @@ class SignalBus extends Signal {
             return new WP_Error('Signal', 'You should submit at least one recipient');
         }
 
-        $message    = str_replace('`', "'", $message);
+        $this->escapeMessage($message);
 
         if(is_array($attachments)){
             foreach($attachments as $index => $attachment){

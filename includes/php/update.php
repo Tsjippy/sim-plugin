@@ -120,6 +120,8 @@ function getLatestRelease($author='tsjippy', $package=PLUGINNAME){
 
 			$release 	    = $client->api('repo')->releases()->latest($author, $package);
 
+			printArray($release);
+
 			$client->removeCache();
 			
 			// Store for 1 hours

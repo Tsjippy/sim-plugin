@@ -55,7 +55,7 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-	/* // Save uploaded video details
+	// Save uploaded video details
     register_rest_route(
 		RESTAPIPREFIX.'/vimeo',
 		'/download_to_server',
@@ -89,7 +89,26 @@ add_action( 'rest_api_init', function () {
                 )
 			)
 		)
-	); */
+	);
+
+	// Save uploaded video details
+    register_rest_route(
+		RESTAPIPREFIX.'/vimeo',
+		'/get_download_progress',
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> 	__NAMESPACE__.'\getDownloadProgress',
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'vimeoid'		=> array(
+					'required'	=> true,
+					'validate_callback' => function($vimeoId){
+						return is_numeric($vimeoId);
+					}
+                )
+			)
+		)
+	);
 });
 
 /**
@@ -208,47 +227,38 @@ function cleanupBackupFolder(){
 	return "Succesfully cleaned up the backup folder, removed $count files";
 }
 
-function downloadToServer(){
-	session_start();
-
-	ini_set('max_execution_time', 0); // to get unlimited php script execution time
-
-	if(empty($_SESSION["vimeoprogress"])){
-		$_SESSION["vimeoprogress"] = 0;
-	}
-		
+function downloadToServer(){	
 	$vimeoApi	= new VimeoApi();
 	$vimeoId	= $_REQUEST['vimeoid'];
 
 	$post	= $vimeoApi->getPost($vimeoId);
 	if(is_wp_error($post)){
-		echo $post;
+		return $post;
 	}else{
 		$result		= $vimeoApi->downloadFromVimeo(base64_decode($_REQUEST['download_url']), $post->ID);
 		if(is_wp_error($result)){
-			$message	= $result->get_error_message();
-			echo "<script>alert('$message');</script>";
-		}
-		echo "Video downloaded to server succesfully";
-		ob_flush(); 
-		flush(); 
-
-		while(true){
-			//ob_get_clean only returns false when there is absolutely nothing anymore
-			$result	= ob_get_clean();
-			if($result === false){
-				break;
-			}
+			return $result;
 		}
 	}
 
-	session_destroy(); 
-
-	ob_end_flush();
-	exit;
-	die();
+	return "Download succesfull";
 }
 
-if(isset($_REQUEST['download_url']) && isset($_REQUEST['vimeoid'])){
-	downloadToServer();
+/**
+ * Checks and returns the current filesize of a vimeo file backup
+ *
+ * @return	array with succes and the attachment data
+ */
+function getDownloadProgress(){
+	$vimeoApi	= new VimeoApi();
+	$vimeoId	= $_REQUEST['vimeoid'];
+	$post		= $vimeoApi->getPost($vimeoId);
+
+	$path		= $vimeoApi->getVideoPath($post->ID);
+
+	if(!$path){
+		return 0;
+	}else{
+		return filesize($path);
+	}
 }

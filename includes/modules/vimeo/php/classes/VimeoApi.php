@@ -673,99 +673,26 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
             }
 
             if (file_exists($filePath)) {
-                return new WP_Error('vimeo', "The video is already downloaded", ['path' => $filePath]);
-            }
+                // check if the same size
+                $localSize  = filesize($filePath);
 
-            ini_set('max_execution_time', 0); // to get unlimitedp script execution time
-            // Force output buffering off so that we get log lines sent to the browser as they come not all at once at the end of the ajax restore
-            // zlib creates an output buffer, and waits for the entire page to be generated before it can send it to the client try to turn it off
-            @ini_set("zlib.output_compression", 0);// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-            @ini_set("output_buffering", 0);// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+                $data       = get_headers($url, true);
+	            $remoteSize = isset($data['Content-Length'])?(int) $data['Content-Length']:0;  
 
-            // Turn off PHP output buffering for NGINX
-            header('X-Accel-Buffering: no');
-            header('Content-Encoding: none');
-            header("Cache-Control: no-cache");
-
-            echo '<script>';
-                echo "parent.document.getElementById('progressbar').innerHTML=`<div style='width:0%;background:linear-gradient(to bottom, #8a1a0e 0%,#b22222 100%);height:35px;'>&nbsp;</div>`;";
-                echo "parent.document.getElementById('information').innerHTML=`<div style='margin-top: -28px;text-align:center; color: white;font-weight:bold;text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;'>0% downloaded</div>`;";
-            echo '</script>';
-
-            ob_flush(); 
-            flush(); 
-
-            ob_implicit_flush(1);
-
-            while(true){
-                //ob_get_clean only returns false when there is absolutely nothing anymore
-                $result	= ob_get_clean();
-                if($result === false){
-                    break;
+                if($localSize != $remoteSize){
+                    SIM\printArray('Resuming download');
+                }else{
+                    return new WP_Error('vimeo', "The video is already downloaded", ['path' => $filePath]);
                 }
             }
 
-            $client         = new GuzzleHttp\Client();
-            $prevProgress   = 0;
+            $client = new GuzzleHttp\Client();
             try{
                 $client->request(
                     'GET',
                     $url,
-                    [
-                        'sink' => $filePath,
-                        'progress' => function(
-                            $downloadTotal,
-                            $downloadedBytes,
-                            $uploadTotal,
-                            $uploadedBytes
-                        ) use(&$prevProgress) {
-                            if($downloadTotal != 0 && $downloadedBytes != 0){
-                                //do something
-                                $percent    = round($downloadedBytes/$downloadTotal*100, 1);
-
-                                if($percent)
-
-                                if($prevProgress != $percent){
-                                    $prevProgress   = $percent;
-                                    
-                                    echo '<script>';
-                                        echo "parent.document.getElementById('progressbar').innerHTML=`<div style='width:$percent%;background:linear-gradient(to bottom, #8a1a0e 0%,#b22222 100%);height:35px;'>&nbsp;</div>`;";
-                                        echo "parent.document.getElementById('information').innerHTML=`<div style='margin-top: -28px;text-align:center; color: white;font-weight:bold;text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;'>$percent% downloaded</div>`;";
-                                    echo '</script>';
-
-                                    ob_flush(); 
-                                    flush(); 
-
-                                    while(true){
-                                        //ob_get_clean only returns false when there is absolutely nothing anymore
-                                        $result	= ob_get_clean();
-                                        if($result === false){
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                    ]
+                    array('sink' => $filePath)
                 );
-
-                echo '<script>';
-                    echo 'parent.document.getElementById("progressbar").innerHTML="";';
-                    echo 'parent.document.getElementById("information").innerHTML="";';
-                    echo "parent.document.querySelectorAll('.loadergif:not(.hidden)').forEach(el=>el.classList.add('hidden'));";
-                    echo "parent.document.querySelectorAll(`[name='download_url']`).forEach(el=>el.value='');";
-                echo '</script>';
-
-                ob_flush(); 
-                flush(); 
-
-                while(true){
-                    //ob_get_clean only returns false when there is absolutely nothing anymore
-                    $result	= ob_get_clean();
-                    if($result === false){
-                        break;
-                    }
-                }      
 
                 return $filePath;
             }catch (\GuzzleHttp\Exception\ClientException $e) {

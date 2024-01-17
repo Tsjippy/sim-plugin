@@ -77,6 +77,10 @@ class Signal {
 
         $this->path             = $this->programPath.'bin/signal-cli';
 
+        if(!file_exists($this->path) && file_exists($this->programPath.'signal-cli')){
+            $this->path = $this->programPath.'signal-cli';
+        }
+
         $this->daemon           = false;
 
         $this->osUserId         = "";
@@ -739,6 +743,13 @@ class Signal {
 
         $curVersion     = str_replace('signal-cli ', 'v', trim(shell_exec($this->path.' --version')));
 
+        if(empty($curVersion)){
+            SIM\printArray($this->path.' --version did not return any result', true);
+            echo $this->path.' --version did not return any result';
+        }
+
+        #echo "Current version is '$curVersion'<br>";
+
         if(!file_exists($this->path) || empty($curVersion)){
             $this->installSignal(str_replace('v', '', $release['tag_name']));
 
@@ -747,9 +758,9 @@ class Signal {
                 $this->valid    = false;
             }
         }elseif($curVersion  != $release['tag_name']){
-            echo "<strong>Updating Signal</strong> <br>";
+            echo "<strong>Updating Signal to version ".$release['tag_name']."</strong> <br>";
 
-            $this->installSignal(str_replace('v', '', $release['tag_name']));
+            $this->installSignal($release);
         }
 
         if(empty($this->error)){
@@ -757,7 +768,9 @@ class Signal {
         }
     }
 
-    private function installSignal($version){
+    private function installSignal($release){
+        $version    = str_replace('v', '', $release['tag_name']);
+
         $pidFile    = __DIR__.'/installing.signal';
         if(file_exists($pidFile)){
             echo "$pidFile exists, another installation might by running already<br>";
@@ -767,10 +780,20 @@ class Signal {
 
         try {
             echo "Downloading Signal version $version<br>";
-            $path   = $this->downloadSignal("https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->os.tar.gz");
+            $url    = "https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->os.tar.gz";
 
-            echo $path;
-            echo "URL: https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version-$this->os.tar.gz";
+            if(!empty($release['assets']) && is_array($release['assets'])){
+                foreach($release['assets'] as $asset){
+                    if(strpos($asset['browser_download_url'], $this->os)){
+                        $url    = $asset['browser_download_url'];
+                    }
+                }
+            }
+
+            $path   = $this->downloadSignal($url);
+
+            echo "URL: $url<br>";
+            echo "Destination: $path<br>";
             echo "Download finished<br>";
             // Unzip the gz
             $fileName = str_replace('.gz', '', $path);
@@ -816,11 +839,11 @@ class Signal {
         } catch (\Exception $e) {
             echo "<div class='error'>".$e->getMessage().'</div>';
 
-            unlink($pidFile);
-
             // handle errors
             $this->error    = 'Installation error';
             return $this->error;
+        } finally {
+            unlink($pidFile);
         }
 
         // remove the old folder
@@ -838,17 +861,30 @@ class Signal {
                 // stop the deamon
                 #exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
 
-                exec("rm -rfd $this->programPath");
+                echo "Removing from $path<br>";
+
+               exec("rm -rfd $path");
             }
         }
 
         // move the folder
-        $result = rename("$folder/signal-cli-$version", $this->programPath);
+        $path   = "$folder/signal-cli";
+        if(file_exists("$folder/signal-cli-$version")){
+            $path   = "$folder/signal-cli-$version";
+            #echo "$path exists<br>";
+            $result = rename("$folder/signal-cli-$version", "$this->programPath/signal-cli" );
+        }elseif(file_exists("$folder/signal-cli")){
+            #echo "$path exists<br>";
+            $result = rename("$folder/signal-cli", "$this->programPath/signal-cli" );
+        }else{
+            echo "$path does not exist<br>";
+            SIM\printArray("$folder/signal-cli not found please check", true);
+        }
 
         if($result){
-            echo "Succesfully installed Signal version $version!<br>";
+            echo "<div class='success'>Succesfully installed Signal version $version!</div>";
         }else{
-            echo "Failed!<br>Could not move $folder/signal-cli-$version to $this->programPath";
+            echo "<div class='error'>Failed!<br>Could not move $path to $this->programPath/signal-cli.<br>Check the $folder folder.</div>";
         }
 
         unlink($pidFile);
@@ -872,7 +908,9 @@ class Signal {
                 array('sink' => $path)
             );
 
-            return $path;
+            if(file_exists($path)){
+                return $path;
+            }
         }catch (\GuzzleHttp\Exception\ClientException $e) {
             unlink($path);
 
@@ -881,5 +919,7 @@ class Signal {
             }
             return $e->getResponse()->getReasonPhrase();
         }
+
+        echo "Downloading $url to $path failed!";
     }
 }

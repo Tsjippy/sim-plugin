@@ -71,9 +71,6 @@ function checkSignalNumbers(){
                     continue 2;
                 }
             }
-
-            // delete the metakey if it exists
-            delete_user_meta( $user->ID, 'signal_number', $phonenumber );
         }
     }
 }
