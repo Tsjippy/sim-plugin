@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.38.4] - 2024-01-17
+
+
+### Fixed
 - signal-cli update
 
 ### Updated
