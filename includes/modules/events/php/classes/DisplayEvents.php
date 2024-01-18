@@ -26,7 +26,7 @@ class DisplayEvents extends Events{
 		global $wpdb;
 
 		//select all events attached to a post with publish status
-		$query	 = "SELECT * FROM {$wpdb->prefix}posts ";
+		$query	 = "SELECT DISTINCT {$wpdb->prefix}posts.*, {$wpdb->prefix}sim_events.* FROM {$wpdb->prefix}posts ";
 		$query	.= "INNER JOIN `{$this->tableName}` ON {$wpdb->prefix}posts.ID={$this->tableName}.post_id";
 		
 		if(!empty($cats)){

@@ -120,7 +120,7 @@ function getLatestRelease($author='tsjippy', $package=PLUGINNAME){
 
 			$release 	    = $client->api('repo')->releases()->latest($author, $package);
 
-			printArray($release);
+			//printArray($release);
 
 			$client->removeCache();
 			
