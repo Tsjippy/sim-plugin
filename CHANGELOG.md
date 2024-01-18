@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- duplicate events hown when multiple categories
 
 ### Updated
 
