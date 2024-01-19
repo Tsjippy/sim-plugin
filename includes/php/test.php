@@ -2,14 +2,15 @@
 namespace SIM;
 
 use mikehaertl\shellcommand\Command;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpWord\IOFactory;
 
 //Shortcode for testing
 add_shortcode("test",function ($atts){
     global $wpdb;
 
     global $Modules;
-
-
 
     /* $posts = get_posts(
 		array(

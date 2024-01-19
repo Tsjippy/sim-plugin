@@ -10,34 +10,28 @@ class AccountStatement{
 	public $postDate;
 	public $accountId;
 	public $users;
-	public $statementName;
+	public $statementNames;
+	public $user;
 
 	public function __construct($postiePost){
 		$this->post			= $postiePost;
 	}
 
 	/**
-	 * Checks if the e-mail contains an account id and if so stores it
+	 * Checks if the e-mail contains an account statement and if so stores it
 	 *
 	 * @return	bool	true if id found, false otherwise
 	 */
 	public function checkIfStatement(){
-		//Get the content of the email
-		$content = $this->post['post_content'];
-		
-		//regex query to find the accountid of exactly 6 digits
-		$re = '/.*AccountID:.*-(\d{6})-.*/';
 
-		//execute regex
-		preg_match_all($re, $content, $matches, PREG_SET_ORDER, 0);
-		
-		//If there is no result return false
-		if (is_array($matches) && !empty($matches[0]) && count($matches[0]) == 2){
+		if(strpos($this->post['post_title'], 'Worker Account Statement - Nigeria')){
+			$this->user	= get_userdata($this->post['post_author']);
+	
+			if(!$this->user){
+				return;
+			}
 
-			// Get the account id
-			$this->accountId	= trim($matches[0][1]);
-
-			if($this->getLoginName() && $this->findAccountStatement()){
+			if($this->user && $this->findAccountStatement()){
 
 				$this->storeAccountStatement();
 
@@ -45,42 +39,6 @@ class AccountStatement{
 			}
 		}
 
-		return false;
-	}
-
-	/**
-	 * Find an adult who has the account id
-	 *
-	 * @return	bool	true if user found, false otherwise
-	 */
-	public function getLoginName(){
-		//Change the user to the admin account otherwise get_users will not work
-		wp_set_current_user(1);
-				
-		//Get all users with this financial_account_id meta key
-		$this->users = get_users(
-			array(
-				'meta_query' => array(
-					array(
-						'key'		=> 'financial_account_id',
-						'value'		=> $this->accountId,
-						'compare'	=> 'LIKE'
-					)
-				)
-			)
-		);
-
-		//Make sure we only continue with an adult
-		$this->loginName	= '';
-		foreach($this->users as $key=>$user){
-			if (SIM\isChild($user->ID)){
-				unset($this->users[$key]);
-			}else{
-				$this->loginName = $user->data->user_login;
-				return true;
-			}
-		}
-		
 		return false;
 	}
 
@@ -98,7 +56,7 @@ class AccountStatement{
 			$fileName = $attachment->post_name;
 			
 			//If this attachment is the account statement
-			if (strpos($fileName, 'account-statement') !== false) {
+			if (str_contains($fileName, 'sim-nigeria_w') && str_contains($fileName, strtolower($this->user->first_name)) && str_contains($fileName, strtolower($this->user->last_name))) {
 				$found	= true;
 				break;
 			}
@@ -109,17 +67,11 @@ class AccountStatement{
 
 			if(file_exists($filePath)){
 				//Read the contents of the attachment
-				$rtf	= file_get_contents($filePath);
+				$result					= SIM\PDFTOEXCEL\readPdf($filePath,  wp_upload_dir()['basedir'].'/private/.csv');
 
-				//Regex to find the month it applies to
-				$re = "/.*Date Range.*(\d{2}-[a-zA-Z]*-\d{4}).*/";
-				//execute regex
-				preg_match_all($re, $rtf, $matches, PREG_SET_ORDER, 0);
+				$datestring				= str_replace('/', '-', $result['rows'][0][0]);
 
-				if(isset($matches[0]) && !empty($matches[0][1])){
-					//Create a date
-					$this->postDate	= date_create($matches[0][1]);
-				}
+				$this->postDate			= date_create($datestring); // first cell of the first row should be a date
 			}
 		}
 
@@ -128,12 +80,23 @@ class AccountStatement{
 		}
 		
 		//Create a string based on the date
-		$datestring		= date_format($this->postDate, "Y-m");
+		$datestring				= date_format($this->postDate, "Y-m");
 		
 		//move to account_statements folder
-		$this->statementName	= "$this->loginName-$datestring-".basename($filePath);
-		$newPath		= STATEMENT_FOLDER.$this->statementName;
+		$append					= $this->user->user_login;
+		if(!str_contains($filePath, $datestring)){
+			$append				.= "-$datestring";
+		}
+
+		// pdf
+		$newPath				= STATEMENT_FOLDER."$append-".basename($filePath);
+		$this->statementNames	= ["$append-".basename($filePath)];
 		rename($filePath, $newPath);
+
+		// csv
+		$newPath				= STATEMENT_FOLDER."$append-".pathinfo($result['filepath'])['basename'];
+		$this->statementNames[]	= "$append-".pathinfo($result['filepath'])['basename'];
+		rename($result['filepath'], $newPath);
 
 		//remove the attachment as it should be private
 		wp_delete_attachment($attachment->ID, true);
@@ -145,8 +108,15 @@ class AccountStatement{
      * Adds the found statment to the usermeta
      */
 	public function storeAccountStatement(){
+		$users		= [$this->user];
+
+		$partnerId	= SIM\hasPartner($this->user->ID);
+		if(is_numeric($partnerId)){
+			$users[]	= get_userdata($partnerId);
+		}
+
 		$year = date_format($this->postDate, "Y");
-		foreach($this->users as $user){
+		foreach($users as $user){
 			if (SIM\isChild($user->ID)){
 				continue;
 			}
@@ -165,7 +135,7 @@ class AccountStatement{
 			}
 			
 			//Add the new statement to the year array
-			$accountStatements[$year][date_format($this->postDate, "F")] = $this->statementName;
+			$accountStatements[$year][date_format($this->postDate, "F")] = $this->statementNames;
 			
 			//Update the list
 			update_user_meta($user->ID, "account_statements", $accountStatements);
@@ -180,7 +150,7 @@ class AccountStatement{
 			}
 
 			//Send signal message
-			$url	= SIM\pathToUrl(STATEMENT_FOLDER.$this->statementName);
+			$url	= SIM\pathToUrl(STATEMENT_FOLDER.$this->statementNames[0]);
 			SIM\trySendSignal(
 				"Hi $user->first_name,\n\nThe account statement for the month ".date_format($this->postDate, 'F')." just got available on the website. $message\n\nDirect url to the statement:\n$url",
 				$user->ID

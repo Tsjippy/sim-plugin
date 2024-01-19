@@ -94,7 +94,18 @@ function printRows($monthArray, $year, $visibility){
 	$firstMonth = array_key_first($monthArray);
 
 	foreach($monthArray as $month => $url){
-		$url	= SIM\pathToUrl(STATEMENT_FOLDER.$url);
+		if(is_array($url)){
+			$downloadLinkHtml	= '<table style="border: none;">';
+			foreach($url as $u){
+				$ext 				= pathinfo($u, PATHINFO_EXTENSION);
+				$u					= SIM\pathToUrl(STATEMENT_FOLDER.$u);
+				$downloadLinkHtml	.= "<tr><td><a class='statement' href='$u'>Download $ext</a></td><tr>";
+			}
+			$downloadLinkHtml	.= '</table>';
+		}else{
+			$url					= SIM\pathToUrl(STATEMENT_FOLDER.$url);
+			$downloadLinkHtml		= "<a class='statement' href='$url'>Download</a><br>";
+		}
 
 		if(!$url){
 			continue;
@@ -113,7 +124,7 @@ function printRows($monthArray, $year, $visibility){
 				?>
 			</td>
 			<td>
-				<a class='statement' href='<?php echo $url;?>'>Download</a>
+				<?php echo $downloadLinkHtml;?>
 			</td>
 		</tr>
 		<?php
