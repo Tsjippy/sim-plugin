@@ -7,6 +7,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.39.0] - 2024-01-19
+
+
+### Added
+- pdf to excel
+
+### Fixed
 - duplicate events hown when multiple categories
 
 ### Updated
