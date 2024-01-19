@@ -28,7 +28,7 @@ class AccountStatement{
 			$this->user	= get_userdata($this->post['post_author']);
 	
 			if(!$this->user){
-				return;
+				return false;
 			}
 
 			if($this->user && $this->findAccountStatement()){
