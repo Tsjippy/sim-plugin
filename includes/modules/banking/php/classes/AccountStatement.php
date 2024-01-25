@@ -23,6 +23,7 @@ class AccountStatement{
 	 * @return	bool	true if id found, false otherwise
 	 */
 	public function checkIfStatement(){
+		SIM\printArray($this->post);
 
 		if(strpos($this->post['post_title'], 'Worker Account Statement - Nigeria')){
 			$this->user	= get_userdata($this->post['post_author']);

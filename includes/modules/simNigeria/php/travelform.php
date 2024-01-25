@@ -173,15 +173,27 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 
 //Transform table data from travelform
 add_filter('sim_transform_formtable_data', function($string, $elementName){
-	if(in_array($elementName, ['name','driver','passengers'])){
+	if(in_array($elementName, ['name', 'driver', 'passengers'])){
 		if($elementName == 'passengers'){
 			$output		= '';
-			$string 	= explode(',',$string);
+
+			$result	= json_decode($string);
+
+			if (json_last_error() === JSON_ERROR_NONE) {
+				$string		= $result;
+			}
+
+			if(!is_array($string)){
+				$string	= [$string];
+			}else{
+				$string	= array_unique($string);
+			}
+
 			$lastKey 	= array_key_last($string);
 			foreach($string as $key=>$value){
 				//assume its a userid if it is a number, then transform it to a clickable link
 				if(is_numeric($value)){
-					$output 			 = SIM\USERPAGE\getUserPageLink($value);
+					$output 			 .= SIM\USERPAGE\getUserPageLink($value);
 					if($output){
 						if($key != $lastKey){
 							$output .= ", ";

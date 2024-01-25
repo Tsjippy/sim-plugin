@@ -293,6 +293,7 @@ trait ElementHtml{
 	 */
 	function getElementHtml($element, $value =''){
 		$html		= '';
+		$extraHtml	= '';
 		$elClass	= '';
 		$elOptions	= '';
 
@@ -323,6 +324,12 @@ trait ElementHtml{
 
 					//Write the corrected option as html
 					$elOptions	.= " $optionType=\"$optionValue\"";
+				}
+				
+				// we are getting the html for an input and that input depends on a datalist
+				if($optionType == 'list'){
+					$datalist	= $this->getElementByName($optionValue);
+					$extraHtml	= $this->getElementHtml($datalist);
 				}
 			}
 		}
@@ -455,9 +462,46 @@ trait ElementHtml{
 			if($element->type == 'button'){
 				$elOptions	.= " type='button'";
 			}
+
 			/*
 				ELEMENT VALUE
 			*/
+			// Check if we should inlcude previous submitted values
+			$prevValues		= '';
+			if(str_contains($_SERVER['REDIRECT_URL'], 'get_input_html')){
+				$valueIndexes	= explode('[', $element->name);
+
+				foreach($valueIndexes as $i=>$index){
+					if($i == 0){
+						if(!isset($this->submission->formresults[$index])){
+							break;
+						}
+
+						$prevValues	= $this->submission->formresults[$index];
+					}else{
+						$index	= trim($index, ']');
+
+						if(!isset($prevValues[$index])){
+							break;
+						}
+
+						$prevValues	= $prevValues[$index];
+					}					
+				}
+
+				if(is_string($prevValues)){
+					$result	= json_decode($prevValues);
+
+					if (json_last_error() === JSON_ERROR_NONE) {
+						$prevValues		= $result;
+					}
+				}
+			}
+				
+			if(empty($value) & !empty($prevValues)){
+				$value	= $prevValues;
+			}
+
 			$values	= $this->getElementValues($element);
 			if($this->multiwrap || !empty($element->multiple)){
 				if(strpos($elType, 'input') !== false){
@@ -473,14 +517,19 @@ trait ElementHtml{
 						$val		= array_values((array)$values['metavalue'])[0];
 					}
 				}
-				
-				if(strpos($elType, 'input') !== false && !empty($val) && !in_array($elType, ['radio', 'checkbox'])){
+
+				if(
+					strpos($elType, 'input') !== false && 
+					!empty($val) && 
+					!in_array($elType, ['radio', 'checkbox'])
+				){
 					if(is_array($val)){
 						$val	= array_values($val)[0];
 					}
 					$elValue	= "value='$val'";
 				}
 			}
+
 			/*
 				ELEMENT TAG CONTENTS
 			*/
@@ -528,7 +577,11 @@ trait ElementHtml{
 					}
 		
 					foreach($options as $key=>$option){
-						if(in_array(strtolower($option), $selValues) || in_array(strtolower($key), $selValues) || in_array($element->default_value, [$key, $option])){
+						if(
+							in_array(strtolower($option), $selValues) || 
+							in_array(strtolower($key), $selValues) || 
+							in_array($element->default_value, [$key, $option])
+						){
 							$selected	= 'selected="selected"';
 						}else{
 							$selected	= '';
@@ -654,8 +707,25 @@ trait ElementHtml{
 				if($element->type == 'select'){
 					$html	= "<$elType name='$elName' $elId class='$elClass' $elOptions>";
 				}elseif($element->type == 'text'){
+					
 					$html	= "<div class='optionwrapper'>";
-						$html	.= "<ul class='listselectionlist'></ul>";
+						// container for choices made
+						$html	.= "<ul class='listselectionlist'>";
+							// add previous made inputs
+							foreach($prevValues as $v){
+								$transValue		= $this->transformInputData($v, $element->name, $this->submission->formresults);
+
+								$html	.= "<li class='listselection'>";
+									$html	.= "<button type='button' class='small remove-list-selection'>";
+										$html	.= "<span class='remove-list-selection'>×</span>";
+									$html	.= "</button>";
+									$html	.= "<input type='hidden' name='$element->name[]' value='$v'>";
+									$html	.= "<span class='selectedname'>$transValue</span>";
+								$html	.= "</li>";
+							}
+						$html	.= "</ul>";
+
+						// add the text input
 						$html	.= "<$elType id='$elName' class='$elClass datalistinput multiple' $elOptions>";
 					$html	.= "</div>";
 				}else{
@@ -674,6 +744,8 @@ trait ElementHtml{
 				$html	= "<$elType  name='$elName' $elId class='$elClass' $elOptions $elValue>$elContent$elClose";
 			}
 		}
+
+		$html	= $extraHtml.$html;
 
 		// filter the element html
 		$html	= apply_filters('sim-forms-element-html', $html, $element, $this);

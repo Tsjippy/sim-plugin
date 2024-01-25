@@ -45,6 +45,14 @@ function getCheckboxValue(form, selector, compareValue, orgName){
 	return value;
 }
 
+function getMultiValue(form, el){
+	let value = [];
+
+	form.querySelectorAll(`[name="${el.name}"]`).forEach(elem => value.push(elem.value));
+
+	return value;
+}
+
 export function getDataListValue(el){
 	let value		= '';
 	let origInput 	= el.list.querySelector(`[value='${el.value}' i]`);
@@ -59,6 +67,8 @@ export function getDataListValue(el){
 }
 
 export function getFieldValue(orgName, form, checkDatalist=true, compareValue=null, lowercase=false){
+
+	console.log(orgName)
 	let el			= ''; 
 	let name		= '';
 	let value 		= '';
@@ -102,6 +112,8 @@ export function getFieldValue(orgName, form, checkDatalist=true, compareValue=nu
 		value = el.dataset.value
 	}else if(el.list != null && el.value != '' && checkDatalist){
 		value =  getDataListValue(el);
+	}else if(el.name.endsWith('[]')){
+		value =  getMultiValue(form, el);
 	}else if(el.value != null && el.value != 'undefined'){
 		value = el.value;
 	}

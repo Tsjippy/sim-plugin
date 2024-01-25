@@ -480,7 +480,7 @@ function editValue(){
 	$newValue 		= json_decode(sanitize_text_field(stripslashes($_POST['newvalue'])));
 
 	if(is_array($newValue)){
-		$newValue	= implode(';', $newValue);
+		$newValue	= json_encode($newValue);
 	}
 
 	$transValue		= $formTable->transformInputData($newValue, $elementName, $formTable->submission->formresults);
