@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.40.1] - 2024-01-25
+
+
+### Fixed
 - update multi text inputs
 
 ### Updated
