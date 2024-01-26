@@ -50,8 +50,6 @@ window.addEventListener("beforeunload", (event) => {
 	});
 });
 
-let timer;
-
 document.addEventListener('focusout', (ev)=>{
 	if(ev.target.matches(`:invalid`)){
 		ev.target.reportValidity();
@@ -64,19 +62,12 @@ document.addEventListener('input', (ev)=>{
 	}
 
 	if(ev.target.matches(`.datalistinput.multiple`)){
-		// clear any previous set timers
-		clearTimeout(timer);
-
-		// 2 seconds
-		let timeout	= 2000;
-
 		// if the value is found in the datalist
 		if(ev.target.list.querySelector(`[value="${ev.target.value}"]`) != null){
 			doneTyping(ev.target);
 		}else{
-			timer = setTimeout(() => {
-				doneTyping(ev.target);
-			}, timeout);
+			// Show the add button
+			ev.target.closest(`.multi-text-input-wrapper`).querySelector(`.add-list-selection`).classList.remove('hidden');
 		}
 	}
 });
@@ -84,10 +75,14 @@ document.addEventListener('input', (ev)=>{
 document.addEventListener('click', (ev)=>{
 	if(ev.target.matches(`.remove-list-selection`)){
 		ev.target.closest('.listselection').remove();
+	}else if(ev.target.matches(`.add-list-selection`)){
+		// add button clicked
+		doneTyping(ev.target.closest(`.multi-text-input-wrapper`).querySelector(`.datalistinput`));
 	}
 })
 
 function doneTyping(el) {
+	el.closest(`.multi-text-input-wrapper`).querySelector(`.add-list-selection`).classList.add('hidden');
 
 	if(el.value	== ''){
 		return;
@@ -100,16 +95,19 @@ function doneTyping(el) {
 
 	// find the option in the datalist
 	let option	= el.list.querySelector(`[value="${el.value}"]`);
+	let value,text;
 	if(option != null && option.dataset.value != null){
-		html   += `<input type='hidden' name='${el.id}[]' value='${option.dataset.value}'>`;
-		html   += `<span class='selectedname'>${el.value}</span>`;
+		value	= option.dataset.value;
+		text	= el.value
 	}else{
-		html   += `<span>`;
-			html   += `<input type='text' name='${el.id}[]' value='${el.value}' readonly=readonly style='width:${el.value.length}ch'>`;
-		html   += `</span>`;
+		value	= el.value;
+		text	= el.value
 	}
+	html   += `<input type='hidden' name='${el.id}[]' value='${value}'>`;
+	html   += `<span class='selectedname'>${text}</span>`
 
 	li.innerHTML	= html;
+
 
 	el.closest('.optionwrapper').querySelector('.listselectionlist').appendChild(li);
 

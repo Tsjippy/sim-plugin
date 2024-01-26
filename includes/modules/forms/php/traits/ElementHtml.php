@@ -726,7 +726,10 @@ trait ElementHtml{
 						$html	.= "</ul>";
 
 						// add the text input
-						$html	.= "<$elType id='$elName' class='$elClass datalistinput multiple' $elOptions>";
+						$html	.= "<div class='multi-text-input-wrapper'>";
+							$html	.= "<$elType id='$elName' class='$elClass datalistinput multiple' $elOptions>";
+							$html	.= '<button type="button" class="small add-list-selection hidden">Add</button>';
+						$html	.= "</div>";
 					$html	.= "</div>";
 				}else{
 					$html	= "<$elType name='$elName' $elId class='$elClass' $elOptions value='%value%'>$elContent$elClose";

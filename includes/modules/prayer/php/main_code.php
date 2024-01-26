@@ -41,13 +41,13 @@ function prayerRequest($plainText = false, $verified=false) {
 			's'					=> date("F Y"),
 			'numberposts'		=> -1,
 			'search_columns'	=> ['post_title'],
-			'sentence'			=> true
+			//'sentence'			=> true
 		)
 	);
 
 	//Loop over them to find the post for this month
 	foreach($posts as $post){
-		// double check if the current month is in the title as the s parameter searches everywhere
+		// double check if the current month and year is in the title as the s parameter searches everywhere
 		if(strpos($post->post_title, date("F")) === false && strpos($post->post_title, date("Y")) === false){
 			continue;
 		}
@@ -63,14 +63,16 @@ function prayerRequest($plainText = false, $verified=false) {
 		if ($content != null){
 			//Current date
 			$datetime = date('Y-m-d');
+
 			//Current day of the month
-			$dayNum = date('j', strtotime($datetime));
+			$dayNum 	= date('j', strtotime($datetime));
+			$monthNum 	= date('m', strtotime($datetime));
 
 			//Find the request of the current day, Remove the daynumber (dayletter) - from the request
 			//space(A)space-space
 			$genericStart	= "\s*\(\s*[A-Za-z]\s*\)\s*[\W]\s*";
-			$reStart		= $dayNum.$genericStart;
-			$reNext			= ($dayNum + 1).$genericStart;
+			$reStart		= "$dayNum\/$monthNum$genericStart";
+			$reNext			= ($dayNum + 1)."\/$monthNum$genericStart";
 
 			//look for the start of a prayer line, get everything after "30(T) – " until you find a B* or the next "30(T) – " or the end of the document
 			$re			= "/(*UTF8)$reStart(.+?)((B\*)|$reNext|$)/m";
