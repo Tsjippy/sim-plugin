@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- better multi text inputs
 
 ### Fixed
 
