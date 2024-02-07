@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.40.2] - 2024-02-07
+
+
+### Changed
 - better multi text inputs
 
 ### Fixed
