@@ -98,8 +98,13 @@ function printRows($monthArray, $year, $visibility){
 			$downloadLinkHtml	= '<table style="border: none;">';
 			foreach($url as $u){
 				$ext 				= pathinfo($u, PATHINFO_EXTENSION);
+				if($ext == 'pdf'){
+					$ext 	= 'View PDF';
+				}else{
+					$ext	= "Download $ext";
+				}
 				$u					= SIM\pathToUrl(STATEMENT_FOLDER.$u);
-				$downloadLinkHtml	.= "<tr><td><a class='statement' href='$u'>Download $ext</a></td><tr>";
+				$downloadLinkHtml	.= "<tr><td><a class='statement' href='$u'>$ext</a></td><tr>";
 			}
 			$downloadLinkHtml	.= '</table>';
 		}else{

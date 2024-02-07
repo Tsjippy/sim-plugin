@@ -65,14 +65,14 @@ function prayerRequest($plainText = false, $verified=false) {
 			$datetime = date('Y-m-d');
 
 			//Current day of the month
-			$dayNum 	= date('j', strtotime($datetime));
-			$monthNum 	= date('m', strtotime($datetime));
+			$today 		= date('d-m-Y', strtotime($datetime));
+			$tomorrow 	= date('d-m-Y', strtotime('+1 day', strtotime($datetime)));
 
 			//Find the request of the current day, Remove the daynumber (dayletter) - from the request
 			//space(A)space-space
-			$genericStart	= "\s*\(\s*[A-Za-z]\s*\)\s*[\W]\s*";
-			$reStart		= "$dayNum\/$monthNum$genericStart";
-			$reNext			= ($dayNum + 1)."\/$monthNum$genericStart";
+			$genericStart	= "\s*\(\s*[A-Za-z]{1,2}\s*\)\s*[\W]\s*";
+			$reStart		= "$today$genericStart";
+			$reNext			= "$tomorrow$genericStart";
 
 			//look for the start of a prayer line, get everything after "30(T) – " until you find a B* or the next "30(T) – " or the end of the document
 			$re			= "/(*UTF8)$reStart(.+?)((B\*)|$reNext|$)/m";
@@ -81,11 +81,55 @@ function prayerRequest($plainText = false, $verified=false) {
 			//prayer request found
 			if (isset($matches[0][1]) && !empty($matches[0][1])){
 				//Return the prayer request
-				$prayer	= $matches[0][1];
+				$prayer		= $matches[0][1];
+				$urls		= [];
+				$pictures	= [];
+
+				// check if prayer contains a single name or a couples name
+				$re		= "/(*UTF8)(?:[\w]+.?+(?:&|and).[A-Z][\w]+.[A-Z][\w]+)|(?:[A-Z][\w]+.?+){2,}/m";	
+				preg_match_all($re, $prayer, $matches, PREG_SET_ORDER, 0);
+
+				// found a name
+				if(isset($matches[0][0])){
+					$name	= end(explode('&', $matches[0][0]));
+
+					$args= array(
+						'search' => $name, // or login or nicename in this example
+						'search_fields' => array('user_login','user_nicename','display_name')
+					);
+
+					$users = get_users($args);
+					if(!empty($users[0])){
+						// user page url
+						$url		= SIM\maybeGetUserPageUrl($users[0]->ID);
+						if($url){
+							$urls[]	= $url;
+						}
+
+						// family picture
+						$family			= get_user_meta($users[0]->ID, 'family', true);
+
+						if(isset($family['picture'])){
+							if(is_array($family['picture'])){
+								$attachmentId	= $family['picture'][0];
+							}elseif(is_numeric($family['picture'])){
+								$attachmentId	= $family['picture'];
+							}
+							$pictures[] 	= get_attached_file($attachmentId);
+						}else{
+							$profilePicture	= get_user_meta($users[0]->ID, 'profile_picture', true);
+							if(is_array($profilePicture) && isset($profilePicture[0])){
+								$pictures[] = get_attached_file($profilePicture[0]);
+							}elseif(is_numeric($profilePicture)){
+								$pictures[] = get_attached_file($profilePicture);
+							}
+						}
+					}
+				}
 
 				$params	= [];
 				if($plainText){
-					$params	= apply_filters('sim_after_bot_payer', ['message'=>$prayer, 'urls'=>'', 'pictures'=>[]]);
+					$params	= apply_filters('sim_after_bot_payer', ['message'=>$prayer, 'urls'=>$urls, 'pictures'=>$pictures]);
 					$prayer	= $params['message']."\n\n".$params['urls'];
 				}
 

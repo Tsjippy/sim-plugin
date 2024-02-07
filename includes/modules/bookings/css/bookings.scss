@@ -300,6 +300,15 @@ article.booking{
     }
 }
 
+@media (prefers-color-scheme: dark) {
+    .overview{
+        dt{
+            background-color: black;
+            color: white;
+        }
+    }
+}
+
 .details-wrapper{        
     /* height: 522px; */
     padding: 0px 40px;

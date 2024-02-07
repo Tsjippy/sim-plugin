@@ -46,7 +46,11 @@ class SimForms{
 		$this->user 					= wp_get_current_user();
 		$this->userRoles				= $this->user->roles;
 		$this->userId					= $this->user->ID;
-		$this->pageSize					= 100;
+		if(isset($_REQUEST['all'])){
+			$this->pageSize					= 99999;
+		}else{
+			$this->pageSize					= 100;
+		}
 		$this->multiwrap				= '';
 		$this->submitRoles				= [];
 		$this->showArchived				= false;

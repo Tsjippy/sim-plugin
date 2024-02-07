@@ -67,12 +67,16 @@ add_filter('sim_after_bot_payer', function($args){
 
 				if(isset($family['picture'][0])){
                     $args['pictures'][] = get_attached_file($family['picture'][0]);
+				}elseif(is_numeric($family['picture'])){
+					$args['pictures'][] = get_attached_file($family['picture']);
 				}
 			}else{
                 $profilePicture	= get_user_meta($userId, 'profile_picture', true);
-                if(isset($profilePicture[0])){
+                if(is_array($profilePicture) && isset($profilePicture[0])){
                     $args['pictures'][] = get_attached_file($profilePicture[0]);
-                }
+                }elseif(is_numeric($profilePicture)){
+					$args['pictures'][] = get_attached_file($profilePicture);
+				}
             }
 		}
 		$args['message'] .= $messageString.'.';

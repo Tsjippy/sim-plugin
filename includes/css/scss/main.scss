@@ -110,6 +110,21 @@ div input[type="url"],
     max-height: 38px;
 }
 
+@media (prefers-color-scheme: dark) {
+	div input[type="text"],
+	div input[type="email"],
+	div input[type="tel"],
+	div input[type="month"],
+	div input[type="password"],
+	div input[type="search"],
+	div input[type="number"],
+	div input[type="url"],
+	.multi-text-input-wrapper{
+		background-color: black;
+		color: white;
+	}
+}
+
 .inline{
 	display: inline-block;
 }

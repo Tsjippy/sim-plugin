@@ -115,6 +115,19 @@ $secundary_color:	#8a1a0e;
     }
 }
 
+@media (prefers-color-scheme: dark) {
+  .image-edit-container{
+    .wrapper{
+      .editor-panel{
+          button{
+            background-color: black;
+            color: white;
+          }
+        }
+      }
+    }
+}
+
 .image-edit-container.disable{
   .editor-panel,
   .controls .reset-filter,

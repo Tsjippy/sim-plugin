@@ -377,6 +377,17 @@ article.event{
     }
 }
 
+@media (prefers-color-scheme: dark) {
+    .calendar-wrap{
+        .view-style{
+            span, dt{
+                background-color: black;
+                color: white;
+            }
+        }
+    }
+}
+
 #listview{
     width: fit-content;
     margin-left: auto;

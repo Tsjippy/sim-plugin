@@ -50,6 +50,10 @@ class DisplayFormResults extends DisplayForm{
 	public function getSubmissions($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
 
+		if($_REQUEST['all']){
+			$all	= true;
+		}
+
 		// return an already loaded submission
 		if(is_numeric($submissionId) && !empty($this->submissions)){
 			foreach($this->submissions as $submission){
@@ -1776,7 +1780,7 @@ class DisplayFormResults extends DisplayForm{
 			
 			<?php
 			//Add excel export button if allowed
-			if($this->tableEditPermissions){
+			//if($this->tableEditPermissions){
 				?>
 				<div>
 					<form method="post" class="exportform" id="export_xls">
@@ -1793,7 +1797,7 @@ class DisplayFormResults extends DisplayForm{
 					?>
 				</div>
 				<?php
-			}
+			//}
 		?>
 		</div>
 		<?php
