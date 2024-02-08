@@ -21,7 +21,6 @@ add_filter('sim_after_bot_payer', function($args){
         }
     }
 
-
     // add aniversaries
 	$anniversaryMessages = getAnniversaries();
 

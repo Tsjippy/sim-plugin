@@ -219,7 +219,7 @@ add_filter('sim_transform_formtable_data', function($string, $elementName){
 	return $output;
 }, 10, 2);
 
-//first make sure we request all the data
+//if we only want our own data we first make sure we request all the data
 add_filter('sim_formdata_retrieval_query', function($query, $userId, $formName){
 	if($formName == 'travel' && $_GET['onlyown'] == 'true'){
 		//remove userid from query
@@ -229,12 +229,13 @@ add_filter('sim_formdata_retrieval_query', function($query, $userId, $formName){
 	return $query;
 }, 10, 3);
 
-//then remove all unwanted data
+//then remove all unwanted data, but keep where we are passengers
 add_filter('sim_retrieved_formdata', function($formdata, $userId, $formName){
 	if($formName == 'travel' && $_GET['onlyown'] == 'true'){
 		//remove userid from query
 		foreach($formdata as $key=>$entry){
 			$passengers	= (array)unserialize($entry->formresults)['passengers'];
+
 			//if this entry does not belong to this user and the user is no passenger
 			if($entry->userid != $userId && !in_array($userId, $passengers)){
 				//remove
@@ -244,6 +245,22 @@ add_filter('sim_retrieved_formdata', function($formdata, $userId, $formName){
 	}
 
 	return $formdata;
+}, 10, 3);
+
+// do not remove formresults where we are a passenger
+add_filter('sim_remove_formdata', function($shouldRemove, $userId, $submission){
+	if(gettype($submission->formresults['passengers']) == 'string'){
+		$submission->formresults['passengers']	= json_decode($submission->formresults['passengers']);
+	}
+	if(
+		!empty($submission->formresults['passengers']) && 
+		is_array($submission->formresults['passengers']) &&
+		in_array($userId, $submission->formresults['passengers'])
+	){
+		return false;
+	}
+
+	return $shouldRemove;
 }, 10, 3);
 
 //Add a print button action

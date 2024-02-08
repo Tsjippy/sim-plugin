@@ -480,10 +480,12 @@ function editValue(){
 	$newValue 		= json_decode(sanitize_text_field(stripslashes($_POST['newvalue'])));
 
 	if(is_array($newValue)){
-		$newValue	= json_encode($newValue);
+		$string	= json_encode($newValue);
+	}else{
+		$string	= $newValue;
 	}
 
-	$transValue		= $formTable->transformInputData($newValue, $elementName, $formTable->submission->formresults);
+	$transValue		= $formTable->transformInputData($string, $elementName, $formTable->submission->formresults);
 	
 	$subId			= $_POST['subid'];
 

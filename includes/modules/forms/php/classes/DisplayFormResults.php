@@ -50,7 +50,7 @@ class DisplayFormResults extends DisplayForm{
 	public function getSubmissions($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
 
-		if($_REQUEST['all']){
+		if(isset($_REQUEST['all'])){
 			$all	= true;
 		}
 
@@ -145,7 +145,10 @@ class DisplayFormResults extends DisplayForm{
 				}
 				// delete the result if we only want to keep results of a certain user and is not this user
 				elseif($submission->formresults[$userIdKey] != $userId){
-					unset($result[$index]);
+					$shouldRemove	= apply_filters('sim_remove_formdata', true, $userId, $submission);
+					if($shouldRemove){
+						unset($result[$index]);
+					}
 				}
 			}
 		}
