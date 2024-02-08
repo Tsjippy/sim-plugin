@@ -419,17 +419,38 @@ class DisplayFormResults extends DisplayForm{
 					$text	= "<img src='$string' alt='form_upload' style='width:150px;' loading='lazy'>";
 				}
 				$output		= "<a href='$string'>$text</a>";
+			// Convert phonenumber to signal link
+			}elseif(gettype($string) == 'string' && $string[0] == '+'){
+				$numbers		= explode(" ", $string);
+				$output			= '';
+				$signalNumber	= '';
+
+				$userIdKey	= false;
+				if(isset($submission->user_id)){
+					$userIdKey	= 'user_id';
+				}elseif(isset($submission->userid)){
+					$userIdKey	= 'userid';
+				}
+
+				if($userIdKey){
+					$signalNumber	= get_user_meta($submission->$userIdKey, 'signal_number', true);
+				}
+
+				foreach($numbers as $number){
+					if($userIdKey && $number == $signalNumber){
+						$output	.= "<a href='https://signal.me/#p/$number'>$number</a><br>";
+					}else{
+						$output	.= "<a href='https://api.whatsapp.com/send?phone=$number&text=Regarding%20your%20submission%20of%20{$this->formSettings['formname']}%20with%20id%20$submission->id'>$number</a><br>";
+					}
+				}
 			//display dates in a nice way
-			}elseif(strtotime($string) && Date('Y', strtotime($string)) < 2200){
+			}elseif(strtotime($string) && Date('Y', strtotime($string)) < 2200 && Date('Y', strtotime($string)) > 2000){
 				$date		= date_parse($string);
 
 				//Only transform if everything is there
 				if($date['year'] && $date['month'] && $date['day']){
-					$output		= date('d-M-Y',strtotime($string));
+					$output		= date('d-M-Y', strtotime($string));
 				}
-			// Convert phonenumber to signal link
-			}elseif(gettype($string) == 'string' && $string[0] == '+'){
-				$output	= "<a href='https://signal.me/#p/$string'>$string</a>";
 			}elseif($elementName == 'userid'){
 				$output				= SIM\USERPAGE\getUserPageLink($string);
 				if(!$output){

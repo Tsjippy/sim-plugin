@@ -14,7 +14,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
     <div id="signalmessage" class="frontendform">
         <h4>Signal</h4>
         <label>
-            <input type='checkbox' name='signal' value='send_signal' <?php echo $checked; ?>>
+            <input type='checkbox' name='send_signal' value='send_signal' <?php echo $checked; ?>>
             Send signal message on <?php echo $frontendContend->update == 'true' ? 'update' : 'publish';?>
         </label>
 
@@ -46,8 +46,8 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 
 // Send Signal message about the new or updated post
 add_action('sim_after_post_save', function($post){
-    if(isset($_POST['signal']) && $_POST['signal'] == 'send_signal'){
-        update_metadata( 'post', $post->ID, 'signal','checked');
+    if(isset($_POST['send_signal']) && $_POST['send_signal'] == 'send_signal'){
+        update_metadata( 'post', $post->ID, 'send_signal','checked');
         update_metadata( 'post', $post->ID, 'signal_message_type', $_POST['signalmessagetype']);
         update_metadata( 'post', $post->ID, 'signal_url', $_POST['signal_url']);
         update_metadata( 'post', $post->ID, 'signal_extra_message', $_POST['signal_extra_message']);
@@ -55,7 +55,7 @@ add_action('sim_after_post_save', function($post){
 }, 999);
 
 add_action( 'wp_after_insert_post', function( $postId, $post ){
-    if(in_array($post->post_status, ['publish'])){
+    if(in_array($post->post_status, ['publish'])){        
         //Send signal message
         sendPostNotification($post);
     }

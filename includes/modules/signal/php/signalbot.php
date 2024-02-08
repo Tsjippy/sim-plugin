@@ -14,15 +14,15 @@ function sendPostNotification($post){
 		$post = get_post($post);
 	}
 
-	if(empty(get_post_meta($post->ID, 'signal_message_type', true))){
+	if(empty(get_post_meta($post->ID, 'send_signal', true))){
 		return;
 	}
 
-    $signalMessageType	= get_post_meta($post->ID, 'signal_message_type', true);
+	$signalMessageType	= get_post_meta($post->ID, 'signal_message_type', true);
 	$signalUrl			= get_post_meta($post->ID, 'signal_url', true);
 	$signalExtraMessage	= get_post_meta($post->ID, 'signal_extra_message', true);
 
-	delete_post_meta($post->ID, 'signal');
+	delete_post_meta($post->ID, 'send_signal');
 	delete_post_meta($post->ID, 'signal_message_type');
 	delete_post_meta($post->ID, 'signal_url');
 	delete_post_meta($post->ID, 'signal_extra_message');
@@ -62,6 +62,8 @@ function sendPostNotification($post){
 	}
 
 	$recipients		= SIM\getModuleOption(MODULE_SLUG, 'groups');
+
+	SIM\printArray($recipients);
 
 	foreach($recipients as $recipient){
 		sendSignalMessage($message, $recipient, $post->ID);
