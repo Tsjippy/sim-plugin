@@ -6,6 +6,7 @@
 
 ### Changed
 - image urls
+- also show travel requests where you are a passenger as own entry
 
 ### Fixed
 
