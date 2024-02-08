@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- whatsapp links
 
 ### Changed
 - image urls
