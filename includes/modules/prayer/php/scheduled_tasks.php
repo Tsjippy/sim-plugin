@@ -59,7 +59,7 @@ function sendPrayerRequests(){
 	$prayerRequest	= prayerRequest(true);
 
 	$message	 	= "The prayer request of today is:\n";
-	$message 		.= $prayerRequest['prayer'];
+	$message 		.= $prayerRequest['message'];
 	
 	// Get the schedule for today
 	$date			= \Date('y-m-d');

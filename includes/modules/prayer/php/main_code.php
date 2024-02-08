@@ -85,62 +85,81 @@ function prayerRequest($plainText = false, $verified=false) {
 				$urls		= [];
 				$pictures	= [];
 
+				$coupleRe	= "(?:[A-Z][\w]+.?+(?:&|and).[A-Z][\w]+.[A-Z][\w]+)";
+				$singleRe	= "(?:[A-Z][\w]+.?+){2,}";	
+
 				// check if prayer contains a single name or a couples name
-				$re		= "/(*UTF8)(?:[\w]+.?+(?:&|and).[A-Z][\w]+.[A-Z][\w]+)|(?:[A-Z][\w]+.?+){2,}/m";	
+				// We use look ahead (?=)to allow for overlap
+				$re		= "/(*UTF8)(?=($coupleRe|$singleRe))/m";	
 				preg_match_all($re, $prayer, $matches, PREG_SET_ORDER, 0);
 
 				// found a name
-				if(isset($matches[0][0])){
-					$name	= end(explode('&', $matches[0][0]));
-
-					$args= array(
-						'search' => $name, // or login or nicename in this example
-						'search_fields' => array('user_login','user_nicename','display_name')
-					);
-
-					$users = get_users($args);
-					if(!empty($users[0])){
-						// user page url
-						$url		= SIM\maybeGetUserPageUrl($users[0]->ID);
-						if($url){
-							$urls[]	= $url;
+				if($matches){
+					foreach($matches as $match){
+						if(!isset($match[1])){
+							continue;
 						}
 
-						// family picture
-						$family			= get_user_meta($users[0]->ID, 'family', true);
+						$names	= preg_split('/ (&|and) /', $match[1]);
+						$name	= end($names);
 
-						if(isset($family['picture'])){
-							if(is_array($family['picture'])){
-								$attachmentId	= $family['picture'][0];
-							}elseif(is_numeric($family['picture'])){
-								$attachmentId	= $family['picture'];
+						$args= array(
+							'search' 		=> $name, // or login or nicename in this example
+							'search_fields' => array('user_login','user_nicename','display_name')
+						);
+
+						$users = get_users($args);
+						if(!empty($users[0])){
+							// user page url
+							$url		= SIM\maybeGetUserPageUrl($users[0]->ID);
+							if($url){
+								$urls[]	= $url;
 							}
-							$pictures[] 	= get_attached_file($attachmentId);
-						}else{
-							$profilePicture	= get_user_meta($users[0]->ID, 'profile_picture', true);
-							if(is_array($profilePicture) && isset($profilePicture[0])){
-								$pictures[] = get_attached_file($profilePicture[0]);
-							}elseif(is_numeric($profilePicture)){
-								$pictures[] = get_attached_file($profilePicture);
+
+							// family picture
+							$family			= get_user_meta($users[0]->ID, 'family', true);
+
+							if(isset($family['picture'])){
+								if(is_array($family['picture'])){
+									$attachmentId	= $family['picture'][0];
+								}elseif(is_numeric($family['picture'])){
+									$attachmentId	= $family['picture'];
+								}
+								$pictures[] 	= get_attached_file($attachmentId);
+							}else{
+								$profilePicture	= get_user_meta($users[0]->ID, 'profile_picture', true);
+								if(is_array($profilePicture) && isset($profilePicture[0])){
+									$pictures[] = get_attached_file($profilePicture[0]);
+								}elseif(is_numeric($profilePicture)){
+									$pictures[] = get_attached_file($profilePicture);
+								}
 							}
+
+							break; // only do it once
 						}
 					}
 				}
 
-				$params	= [];
+				$params	= [
+					'message'	=> $prayer,
+					'urls'		=> $urls,
+					'pictures'	=> $pictures
+				];
+
 				if($plainText){
-					$params	= apply_filters('sim_after_bot_payer', ['message'=>$prayer, 'urls'=>$urls, 'pictures'=>$pictures]);
-					$prayer	= $params['message']."\n\n".$params['urls'];
+					$params	= apply_filters('sim_after_bot_payer', $params);
+
+					$prayer	= $params['message']."\n\n".implode("\n", $params['urls']);
 				}
 
-				return ['prayer'=>$prayer, 'pictures'=>$params['pictures']];
+				return $params;
 			}
 		}
 	}
 
 
 	if($plainText){
-		return ['prayer'=>'Sorry I could not find any prayer request for today', 'pictures'=>[]];
+		return ['message'=>'Sorry I could not find any prayer request for today', 'pictures'=>[]];
 	}
 	return false;
 }

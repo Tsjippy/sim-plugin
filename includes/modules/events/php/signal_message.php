@@ -17,7 +17,7 @@ add_filter('sim_after_bot_payer', function($args){
             if(!empty($event->location)){
                 $args['message']    .= "\nIt takes place at $event->location";
             }
-            $args['urls']	    .= get_permalink($event->ID);
+            $args['urls'][]	    = get_permalink($event->ID);
         }
     }
 
@@ -58,7 +58,7 @@ add_filter('sim_after_bot_payer', function($args){
             // User page url
 			$url			= SIM\maybeGetUserPageUrl($userId);
 			if($url){
-				$args['urls'] .= str_replace('https://', '', $url)."\n";
+				$args['urls'][]	= str_replace('https://', '', $url)."\n";
 			}
 
             // add appropriate picture
@@ -88,7 +88,7 @@ add_filter('sim_after_bot_payer', function($args){
 	if(!empty($arrivalUsers)){
 		if(count($arrivalUsers) == 1){
 			$args['message'] 	.= "\n\n".$arrivalUsers[0]->display_name." arrives today.";
-			$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($arrivalUsers[0]->ID))."\n";
+			$args['urls'][]		= str_replace('https://', '', SIM\maybeGetUserPageUrl($arrivalUsers[0]->ID))."\n";
 		}else{
 			$args['message'] .= "\n\nToday the following people will arrive: ";
 
@@ -118,7 +118,7 @@ add_filter('sim_after_bot_payer', function($args){
                 }
 
 				$args['message'] 	.= "$name\n";
-				$args['urls'] 		.= str_replace('https://', '', SIM\maybeGetUserPageUrl($user->ID))."\n";
+				$args['urls'][] 	= str_replace('https://', '', SIM\maybeGetUserPageUrl($user->ID))."\n";
 			}
 		}
 	}

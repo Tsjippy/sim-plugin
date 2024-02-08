@@ -132,7 +132,7 @@ function getAnswer($message, $source){
         $response = 'You`re welcome!';
     }elseif(strpos($message, 'prayer') !== false && $name){
         $prayerRequest  = SIM\PRAYER\prayerRequest(true, true);
-        $response       = "This is the prayer for today:\n\n{$prayerRequest['prayer']}";
+        $response       = "This is the prayer for today:\n\n{$prayerRequest['message']}";
         $pictures       = $prayerRequest['pictures'];
     }elseif($message == 'hi' || str_contains($message, 'hello')){
         $response = "Hi ";

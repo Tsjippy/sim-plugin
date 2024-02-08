@@ -7,13 +7,19 @@ add_action('sim_frontpage_before_main_content', function(){
         return;
     }
 
-    // Get the prayerrequest of the day, add extra messages to it, replace names with urls
+    // Get the prayer request of the day, add extra messages to it, replace names with urls
     $prayerRequest	= prayerRequest();
     if(!$prayerRequest){
         return;
     }
 
-    $message        = SIM\userPageLinks(apply_filters('sim_prayer_message', $prayerRequest['prayer']));
+    $message        = SIM\userPageLinks(apply_filters('sim_prayer_message', $prayerRequest['message']));
+    foreach($prayerRequest['pictures'] as $index=>$path){
+        $url        = $prayerRequest['urls'][$index];
+        $pictureUrl = SIM\pathToUrl($path);
+        $picture	= "<img width='50' height='50' src='$pictureUrl' class='attachment-avatar size-avatar' alt='' style='border-radius: 50%;' decoding='async'/>";
+        $message	= "<a href='$url'>$picture</a>$message";
+    }
 
     ?>
     <style>

@@ -1393,7 +1393,7 @@ function userPageLinks($string){
 	
 	foreach($users as $user){
 		// continue to next user if user not in string
-		if(str_contains($string, $user->last_name)){
+		if(!str_contains($string, $user->last_name)){
 			continue;
 		}
 
