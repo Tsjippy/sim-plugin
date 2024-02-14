@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- clearer signal update method
 
 ### Fixed
 
