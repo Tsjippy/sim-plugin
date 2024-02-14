@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- prayer message
 
 ### Updated
 
