@@ -7,6 +7,7 @@ add_filter('sim_after_bot_payer', function($args){
     // calendar events
     $events		= new DisplayEvents();
 
+	// add normal events
     $events->retrieveEvents(date('Y-m-d'), date('Y-m-d'));
     foreach($events->events as $event){
         $startYear	= get_post_meta($event->ID, 'celebrationdate', true);
@@ -57,11 +58,11 @@ add_filter('sim_after_bot_payer', function($args){
             // User page url
 			$url			= SIM\maybeGetUserPageUrl($userId);
 			if($url){
-				$args['urls'][]	= str_replace('https://', '', $url)."\n";
+				$args['urls'][]	= str_replace('https://', '', $url);
 			}
 
             // add appropriate picture
-			if(strpos($msg, '&') !== false){
+			if(str_contains($msg, '&')){
 				$family	= get_user_meta($userId, 'family', true);
 
 				if(isset($family['picture'][0])){
@@ -117,7 +118,7 @@ add_filter('sim_after_bot_payer', function($args){
                 }
 
 				$args['message'] 	.= "$name\n";
-				$args['urls'][] 	= str_replace('https://', '', SIM\maybeGetUserPageUrl($user->ID))."\n";
+				$args['urls'][] 	= str_replace('https://', '', SIM\maybeGetUserPageUrl($user->ID));
 			}
 		}
 	}

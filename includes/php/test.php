@@ -10,7 +10,11 @@ use PhpOffice\PhpWord\IOFactory;
 add_shortcode("test",function ($atts){
     global $wpdb;
 
-    global $Modules;
+    global $Modules;/* 
+
+	$prayerRequest  = PRAYER\prayerRequest(true, true);
+	return "This is the prayer for today:\n\n{$prayerRequest['message']}";
+	$pictures       = $prayerRequest['pictures']; */
 
     /* $posts = get_posts(
 		array(

@@ -102,22 +102,47 @@ function prayerRequest($plainText = false, $verified=false) {
 
 						$names	= preg_split('/ (&|and) /', $match[1]);
 						$name	= end($names);
+						
+						// try to find the user account for the last name in the names array
+						$args	= [
+							'search' 		=> $name, 				// search for this name
+							'search_fields' => [					// 
+								'user_login', 
+								'user_nicename', 
+								'display_name'
+							],
+							'meta_query'	=> [					// exclude positional accounts
+								'relation'	=> 'OR',
+								[
+									'key'	=> 'account-type',
+									'value'	=> 'normal',
+								],
+								[
+									'key'	=> 'account-type',
+									'compare'	=> 'NOT EXISTS'
+								]
+							]
+						];
 
-						$args= array(
-							'search' 		=> $name, // or login or nicename in this example
-							'search_fields' => array('user_login','user_nicename','display_name')
-						);
+						$users = get_users( $args );
 
-						$users = get_users($args);
-						if(!empty($users[0])){
-							// user page url
-							$url		= SIM\maybeGetUserPageUrl($users[0]->ID);
-							if($url){
-								$urls[]	= $url;
-							}
+						// we found no user and there are multiple names found
+						if(empty($users) && count($names) > 1){
+							// get the surname
+							$lastName		= end(explode(' ', $name));
+							
+							// get the first name of the first entry in the names array
+							$firstName		= $names[0];
+
+							$args['search']	= "$firstName $lastName";
+							$users = get_users( $args );
+						}
+
+						if(!empty($users)){
+							$user		= $users[0];	
 
 							// family picture
-							$family			= get_user_meta($users[0]->ID, 'family', true);
+							$family			= get_user_meta($user->ID, 'family', true);
 
 							if(isset($family['picture'])){
 								if(is_array($family['picture'])){
@@ -125,14 +150,25 @@ function prayerRequest($plainText = false, $verified=false) {
 								}elseif(is_numeric($family['picture'])){
 									$attachmentId	= $family['picture'];
 								}
+
+								
+							}else{
+								$attachmentId	= get_user_meta($user->ID, 'profile_picture', true);
+								if(is_array($attachmentId) && isset($profilePicture[0])){
+									$attachmentId	= $profilePicture[0];
+								}
+							}
+
+							if(is_numeric($attachmentId)){
 								$pictures[] 	= get_attached_file($attachmentId);
 							}else{
-								$profilePicture	= get_user_meta($users[0]->ID, 'profile_picture', true);
-								if(is_array($profilePicture) && isset($profilePicture[0])){
-									$pictures[] = get_attached_file($profilePicture[0]);
-								}elseif(is_numeric($profilePicture)){
-									$pictures[] = get_attached_file($profilePicture);
-								}
+								$pictures[] 	= SIM\urlToPath($attachmentId);
+							}
+
+							// user page url
+							$url		= SIM\maybeGetUserPageUrl($user->ID);
+							if($url){
+								$urls[]	= $url;
 							}
 
 							break; // only do it once
@@ -149,7 +185,7 @@ function prayerRequest($plainText = false, $verified=false) {
 				if($plainText){
 					$params	= apply_filters('sim_after_bot_payer', $params);
 
-					$prayer	= $params['message']."\n\n".implode("\n", $params['urls']);
+					$params['message']	= $params['message']."\n\n".implode("\n", $params['urls']);
 				}
 
 				return $params;
