@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.40.4] - 2024-02-14
+
+
+### Fixed
 - prayer message
 
 ### Updated
