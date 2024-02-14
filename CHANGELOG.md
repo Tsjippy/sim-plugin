@@ -5,6 +5,18 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.40.3] - 2024-02-08
+
+
+### Added
+- whatsapp links
+
+### Changed
 - image urls
 - also show travel requests where you are a passenger as own entry
 
