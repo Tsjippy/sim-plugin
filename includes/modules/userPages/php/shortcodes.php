@@ -4,18 +4,16 @@ use SIM;
 
 //Shortcode to download all contact info
 add_shortcode("all_contacts", function (){
-	global $post;
-
 	$shouldDie	= true;
+
+	// get last download time
+	$lastDownload	= get_user_meta(get_current_user_id(), 'last_contact_download', true);
+	if(empty($lastDownload)){
+		$lastDownload	= strtotime('-1 year');
+	}
 
 	//Make vcard
 	if (isset($_REQUEST['type'])){
-		// get last download time
-		$lastDownload	= get_user_meta(get_current_user_id(), 'last_contact_download', true);
-		if(empty($lastDownload)){
-			$lastDownload	= strtotime('-1 year');
-		}
-
 		// store date
 		update_user_meta(get_current_user_id(), 'last_contact_download', time());
 
@@ -142,7 +140,7 @@ add_shortcode("all_contacts", function (){
 			<div class='since-wrapper hidden'>
 				<label>
 					<input type='checkbox' name='since' value='last' checked>
-					Download new user details since last download
+					Download new user details since last download (<?php echo date('d-m-Y', $lastDownload);?>)
 				</label>
 				<br>
 			</div>

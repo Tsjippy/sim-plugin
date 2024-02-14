@@ -752,7 +752,7 @@ class Signal {
         #echo "Current version is '$curVersion'<br>";
 
         if(!file_exists($this->path) || empty($curVersion)){
-            $this->installSignal(str_replace('v', '', $release['tag_name']));
+            $this->installSignal($release);
 
             if(!file_exists($this->path)){
                 $this->error    .= "Please install signal-cli<br>";

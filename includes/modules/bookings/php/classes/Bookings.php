@@ -74,7 +74,7 @@ class Bookings{
 
         $hidden         = '';
         if(date('ym', $minusMonth) < date('ym')){
-            $hidden = 'hidden';
+            //$hidden = 'hidden';
         }
         ob_start();
         ?>
