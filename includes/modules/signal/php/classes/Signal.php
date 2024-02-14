@@ -68,6 +68,7 @@ class Signal {
         $this->programPath      = $this->basePath.'/program/';
         if (!is_dir($this->programPath )) {
             mkdir($this->programPath , 0777, true);
+            SIM\printArray("Created $this->programPath");
         }
 
         $this->phoneNumber      = '';
@@ -790,22 +791,24 @@ class Signal {
                 }
             }
 
-            $path   = $this->downloadSignal($url);
+            $tempPath   = $this->downloadSignal($url);
 
             echo "URL: $url<br>";
-            echo "Destination: $path<br>";
+            echo "Destination: $tempPath<br>";
             echo "Download finished<br>";
+
             // Unzip the gz
-            $fileName = str_replace('.gz', '', $path);
+            $fileName = str_replace('.gz', '', $tempPath);
 
             if(!file_exists($fileName)){
 
                 echo "Unzipping .gz archive<br>";
+
                 // Raising this value may increase performance
                 $bufferSize = 4096; // read 4kb at a time
 
                 // Open our files (in binary mode)
-                $file       = gzopen($path, 'rb');
+                $file       = gzopen($tempPath, 'rb');
                 $outFile    = fopen($fileName, 'wb');
 
                 // Keep repeating until the end of the input file
@@ -821,7 +824,7 @@ class Signal {
             }
 
             // unzip the tar
-            $folder = str_replace('.tar.gz', '', $path);
+            $folder = str_replace('.tar.gz', '', $tempPath);
 
             if(file_exists($folder)){
                 if($this->os == 'Windows'){
@@ -861,9 +864,12 @@ class Signal {
                 // stop the deamon
                 #exec("kill $(ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'| awk '{print $2}')");
 
-                echo "Removing from $path<br>";
+                echo "Removing from $this->programPath<br>";
 
-               exec("rm -rfd $path");
+                exec("rm -rfd $this->programPath");
+
+                mkdir($this->programPath , 0777, true);
+                SIM\printArray("Created $this->programPath");
             }
         }
 
@@ -892,12 +898,12 @@ class Signal {
 
     private function downloadSignal($url){
         $filename   = basename($url);
-        $path       = sys_get_temp_dir().'/'.$filename;
+        $tempPath       = sys_get_temp_dir().'/'.$filename;
 
-        $path = str_replace('\\', '/', $path);
+        $tempPath = str_replace('\\', '/', $tempPath);
 
-        if(file_exists($path)){
-            return $path;
+        if(file_exists($tempPath)){
+            return $tempPath;
         }
 
         $client     = new GuzzleHttp\Client();
@@ -905,14 +911,14 @@ class Signal {
             $client->request(
                 'GET',
                 $url,
-                array('sink' => $path)
+                array('sink' => $tempPath)
             );
 
-            if(file_exists($path)){
-                return $path;
+            if(file_exists($tempPath)){
+                return $tempPath;
             }
         }catch (\GuzzleHttp\Exception\ClientException $e) {
-            unlink($path);
+            unlink($tempPath);
 
             if($e->getResponse()->getReasonPhrase() == 'Gone'){
                 return "The link has expired, please get a new one";
@@ -920,6 +926,6 @@ class Signal {
             return $e->getResponse()->getReasonPhrase();
         }
 
-        echo "Downloading $url to $path failed!";
+        echo "Downloading $url to $tempPath failed!";
     }
 }
