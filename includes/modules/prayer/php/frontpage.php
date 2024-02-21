@@ -17,6 +17,11 @@ add_action('sim_frontpage_before_main_content', function(){
     foreach($prayerRequest['pictures'] as $index=>$path){
         $url        = $prayerRequest['urls'][$index];
         $pictureUrl = SIM\pathToUrl($path);
+
+        if(!$pictureUrl ){
+            continue;
+        }
+        
         $picture	= "<img width='50' height='50' src='$pictureUrl' class='attachment-avatar size-avatar' alt='' style='border-radius: 50%;' decoding='async'/>";
         $message	= "<a href='$url'>$picture</a>$message";
     }

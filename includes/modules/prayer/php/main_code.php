@@ -85,8 +85,8 @@ function prayerRequest($plainText = false, $verified=false) {
 				$urls		= [];
 				$pictures	= [];
 
-				$coupleRe	= "(?:[A-Z][\w]+.?+(?:&|and).[A-Z][\w]+.[A-Z][\w]+)";
-				$singleRe	= "(?:[A-Z][\w]+.?+){2,}";	
+				$coupleRe	= "(?:[A-Z][^\$%\^*£=~@\d\s]+.?+(?:&|and).[A-Z][^\$%\^*£=~@\d\s]+.[A-Z][^\$%\^*£=~@\d\s]+)";
+				$singleRe	= "(?:[A-Z][^\$%\^*£=~@\d\s]+.?+){2,}";	
 
 				// check if prayer contains a single name or a couples name
 				// We use look ahead (?=)to allow for overlap
@@ -101,12 +101,12 @@ function prayerRequest($plainText = false, $verified=false) {
 						}
 
 						$names	= preg_split('/ (&|and) /', $match[1]);
-						$name	= end($names);
+						$name	= trim(end($names));
 						
 						// try to find the user account for the last name in the names array
 						$args	= [
 							'search' 		=> $name, 				// search for this name
-							'search_fields' => [					// 
+							'search_columns' => [					// 
 								'user_login', 
 								'user_nicename', 
 								'display_name'
@@ -126,16 +126,26 @@ function prayerRequest($plainText = false, $verified=false) {
 
 						$users = get_users( $args );
 
-						// we found no user and there are multiple names found
-						if(empty($users) && count($names) > 1){
+						// we found no user
+						if(empty($users)){
 							// get the surname
 							$lastName		= end(explode(' ', $name));
-							
-							// get the first name of the first entry in the names array
-							$firstName		= $names[0];
 
-							$args['search']	= "$firstName $lastName";
-							$users = get_users( $args );
+							// use the other name from a couples string
+							if(count($names) > 1){
+								// get the first name of the first entry in the names array
+								$firstName		= $names[0];
+
+								$args['search']	= "$firstName $lastName";
+								$users = get_users( $args );
+							}
+
+							// try username
+							if(empty($users)){
+								$firstName		= explode(' ', $firstName)[0];
+								$args['search']	= "$firstName$lastName[0]";
+								$users = get_users( $args );
+							}
 						}
 
 						if(!empty($users)){
@@ -144,18 +154,16 @@ function prayerRequest($plainText = false, $verified=false) {
 							// family picture
 							$family			= get_user_meta($user->ID, 'family', true);
 
-							if(isset($family['picture'])){
+							if(!empty($family['picture'])){
 								if(is_array($family['picture'])){
 									$attachmentId	= $family['picture'][0];
 								}elseif(is_numeric($family['picture'])){
 									$attachmentId	= $family['picture'];
-								}
-
-								
+								}								
 							}else{
 								$attachmentId	= get_user_meta($user->ID, 'profile_picture', true);
-								if(is_array($attachmentId) && isset($profilePicture[0])){
-									$attachmentId	= $profilePicture[0];
+								if(is_array($attachmentId) && isset($attachmentId[0])){
+									$attachmentId	= $attachmentId[0];
 								}
 							}
 

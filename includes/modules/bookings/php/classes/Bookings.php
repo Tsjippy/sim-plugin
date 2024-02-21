@@ -56,19 +56,19 @@ class Bookings{
 		maybe_create_table($this->tableName, $sql );
 	}
 
-    public function getNavigator($date, $plus=2){
-        if($plus == 2){
-            $min    = 1;
-        }else{
-            $min    = 2;
-        }
-        $minusMonth		= strtotime("first day of $min months ago", $date);
+    /**
+     * @param   string  $date   The timestring of the first month to shown in the view
+     *
+     * @return  string          Html of the navigator 
+     */
+    public function getNavigator($date){
+        $minusMonth		= strtotime("first day of 1 months ago", $date);
 		$minusMonthStr	= date('m', $minusMonth);
 		$minusYearStr	= date('Y', $minusMonth);
 
         $firstMonth     = strtotime("first day of next month", $minusMonth);
 
-		$plusMonth		= strtotime("first day of $plus months", $date);
+		$plusMonth		= strtotime("first day of 2 months", $date);
 		$plusMonthStr	= date('m', $plusMonth);
 		$plusYearStr	= date('Y', $plusMonth);
 

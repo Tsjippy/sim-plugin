@@ -57,7 +57,17 @@ add_action( 'rest_api_init', function () {
 					}
 				}
 
-				$navigator	= $bookings->getNavigator($date, 1);
+				/**
+				 * date is the month we are requesting
+				 * the navigator expect the month given to be the first visible month
+				 * So if we are adding a new month the first visible month will be the month before that
+				 */ 
+				if(isset($_POST['type']) && $_POST['type'] == 'prev'){
+					$navDate	= $date;
+				}else{
+					$navDate	= strtotime('-1 month', $date);
+				}
+				$navigator	= $bookings->getNavigator($navDate);
 				$detail		= '';
 				if(!empty($_POST['shortcodeid'])){
 					$detail		= $bookings->detailHtml();

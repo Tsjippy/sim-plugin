@@ -22,9 +22,12 @@ function reset(modal, onlyEnd=false){
 async function getMonth(target){
     let wrapper         = target.closest('.bookings-wrap');
     let monthContainers = wrapper.querySelectorAll(`.month-container[data-month="${target.dataset.month}"][data-year="${target.dataset.year}"]`);
+    let type;
 
-    // hide the first month
+    // we clicked the previous button
     if(target.closest('.prev') != null){
+        type    = 'prev';
+        // hide every second calendar, so that we can show a new calendar to the left
         wrapper.querySelectorAll('.calendar.table .month-container:not(.hidden)').forEach(
             (el, index) => {
                 if(index % 2 != 0){ // uneven index
@@ -33,6 +36,9 @@ async function getMonth(target){
             }
         );
     }else{
+        type    = 'next';
+
+        // hide every first calendar, so that we can show a new calendar to the right
         wrapper.querySelectorAll('.calendar.table .month-container:not(.hidden)').forEach(
             (el, index) => {
                 if(index % 2 == 0){ // even index
@@ -49,6 +55,7 @@ async function getMonth(target){
         formData.append('year', target.dataset.year);
         formData.append('subject', wrapper.dataset.subject);
         formData.append('formid', wrapper.dataset.formid);
+        formData.append('type', type);
         if(wrapper.dataset.elid != undefined){
             formData.append('elid', wrapper.dataset.elid);
         }
@@ -63,17 +70,22 @@ async function getMonth(target){
         loader.setAttribute("src", sim.loadingGif);
 
         loaderWrapper.insertAdjacentElement('beforeEnd', loader);
+
+        let position    = '';
+        if(type == 'prev'){
+            // insert the loader at the left
+            position    = 'afterBegin';
+        }else{
+            position    = 'beforeEnd';
+        }
         wrapper.querySelectorAll('.calendar.table .roomwrapper>div').forEach(div=>{
             let clone   = loaderWrapper.cloneNode(true);
-            div.insertAdjacentElement('beforeEnd', clone);
+            div.insertAdjacentElement(position, clone);
         });
             
         let response = await FormSubmit.fetchRestApi('bookings/get_next_month', formData);
 
         if(response){
-
-            console.log(response);
-
             // add the new months to each room
             wrapper.querySelectorAll('.roomwrapper').forEach((el, index)=>{
                 el.querySelector('.loaderwrapper').outerHTML        = response.months[index];
@@ -85,6 +97,7 @@ async function getMonth(target){
             wrapper.querySelector('.booking.details-wrapper').insertAdjacentHTML('beforeEnd', response.details);
         }
     }else{
+        console.log(monthContainers);
         // hide the current navigator
         wrapper.querySelector('.navigators .navigator:not(.hidden)').classList.add('hidden');
 
@@ -306,8 +319,6 @@ function roomSelected(target){
     if(modal == null){
         return;
     }
-
-    console.log(target)
 
     // show date warning
     modal.querySelectorAll(`.booking-date-wrapper.hidden`).forEach(el=>el.classList.remove('hidden'));

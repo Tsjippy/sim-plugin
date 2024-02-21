@@ -1407,33 +1407,42 @@ function userPageLinks($string){
 				continue;
 			}
 
-			$link		= "<a href=\"$url\">";
+			$link				= "<a href=\"$url\">";
+
+			$replacementCount	= 0;
 
 			// do not run twice
 			if(strpos($string, $link) === false){
+				$partnerId	= hasPartner($user->ID);
+			
+				// couple
+				if(is_numeric($partnerId)){
+					$partner	= get_userdata($partnerId);
+	
+					// In case first names are used
+					$pattern	= "/(\s|>|^){$user->first_name}.*?{$partner->display_name}/i";
+					$link		= "<a href=\"$url\">$user->first_name & $partner->display_name</a>";
+					$string		= preg_replace($pattern, '$1'.$link, $string, -1, $replacementCount);
+	
+					// other order of first names
+					$pattern	= "/(\s|>|^){$partner->first_name}.*?{$user->display_name}/i";
+					$link		= "<a href=\"$url\">$partner->first_name & $user->display_name</a>";
+					$string		= preg_replace($pattern, '$1'.$link, $string, -1, $replacementCount);
+	
+					// family
+					$pattern	= "/(\s|>|^)$user->last_name family/i";
+					$link		= "<a href=\"$url\">$user->last_name family</a>";
+					$string		= preg_replace($pattern, $link, $string, -1, $replacementCount);
+				}
+
+				// single
 				$name		= "$user->first_name $user->last_name";
-				$pattern	= "/([\s|>])($name(?!<\/a>)"; // Look for the name not followed by the ending of a hyperlink
+				$pattern	= "/(^|\s|>)($name(?!<\/a>)"; // Look for the name not followed by the ending of a hyperlink
 				if($user->display_name != $name){
 					$pattern	.= "|$user->display_name(?!<\/a>)";
 				}
 				$pattern	.= ")/i";
-				$string		= preg_replace($pattern, '$1'.$link.'$2</a>', $string);
-			}
-
-			$partnerId	= hasPartner($user->ID);
-			
-			if(is_numeric($partnerId)){
-				$partner	= get_userdata($partnerId);
-
-				// In case first names are used
-				$pattern	= "/([\s|>]){$user->first_name}.*?{$partner->display_name}(?!<\/a>)/i";
-				$link		= "<a href=\"$url\">$user->first_name & $partner->display_name</a>";
-				$string		= preg_replace($pattern, '$1'.$link, $string);
-
-				// family
-				$pattern	= "/$user->last_name family(?!<\/a>)/i";
-				$link		= "<a href=\"$url\">$user->last_name family</a>";
-				$string		= preg_replace($pattern, $link, $string);
+				$string		= preg_replace($pattern, '$1'.$link.'$2</a>', $string, -1, $replacementCount);
 			}
 		}
 	}
