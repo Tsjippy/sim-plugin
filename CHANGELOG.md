@@ -7,6 +7,7 @@
 ### Changed
 - clearer signal update method
 - show last download date on contact download page
+- show boookings in the past
 
 ### Fixed
 
