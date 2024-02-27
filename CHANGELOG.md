@@ -11,6 +11,7 @@
 - load next form result page over ajax
 
 ### Fixed
+- bug
 
 ### Updated
 
