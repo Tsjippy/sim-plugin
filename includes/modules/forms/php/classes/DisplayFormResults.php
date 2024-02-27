@@ -191,7 +191,7 @@ class DisplayFormResults extends DisplayForm{
 					$start	= $this->currentPage * $this->pageSize;
 				}
 
-				$this->pageSplittedSubmissions	= array_splice($this->splittedSubmissions, $start, $this->pageSize);
+				//$this->pageSplittedSubmissions	= array_splice($this->splittedSubmissions, $start, $this->pageSize);
 			}
 		}
 
