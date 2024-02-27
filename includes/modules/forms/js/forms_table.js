@@ -263,6 +263,105 @@ async function getInputHtml(target){
 	}
 }
 
+function updatePageNav(navWrapper, pageNr){
+
+	navWrapper.querySelector('.current').classList.remove('current');
+
+	navWrapper.querySelector(`[data-nr="${pageNr}"]`).classList.add('current');
+
+	// hide prev button
+	if(pageNr == 0){
+		navWrapper.querySelector('.prev').classList.add('hidden');
+	}else{
+		navWrapper.querySelector('.prev').classList.remove('hidden');
+	}
+
+	// hide next button
+	if(pageNr == navWrapper.querySelectorAll('.pagenumber').length -1){
+		navWrapper.querySelector('.next').classList.add('hidden');
+	}else{
+		navWrapper.querySelector('.next').classList.remove('hidden');
+	}
+}
+
+async function getNextPage(target){
+	let wrapper			= target.closest('.form.table-wrapper');
+	let navWrapper		= target.closest('.form-result-navigation');
+	let tableWrapper	= target.closest('.form-results-wrapper');
+	let table			= tableWrapper.querySelector('.form-data-table:not(.hidden)');
+
+	table.classList.add('hidden');
+
+	// get the requested page number
+	let	curPage			= parseInt(navWrapper.querySelector(".page-number-wrapper .current").dataset.nr);
+	let page;
+	if(target.matches('.next')){
+		page	= curPage + 1;
+	}else if(target.matches('.prev')){
+		page	= curPage - 1;
+	}else{
+		page	= target.dataset.nr;
+	}
+	
+	updatePageNav(navWrapper, page);
+
+	// check if the requested page is already loaded
+	let loadedPage	= tableWrapper.querySelector(`[data-page="${page}"]`);
+	
+	if(loadedPage != null){
+		console.log(loadedPage);
+		loadedPage.classList.remove('hidden');
+
+		return;
+	}
+
+	// request page over ajax
+	
+	let formId			= table.dataset.formid;
+
+	let loader	= Main.showLoader(table, false);
+	
+	let formData		= new FormData(wrapper.querySelector(".filteroptions"));
+
+    formData.append('formid', formId);
+    formData.append('pagenumber', page);
+	formData.append('shortcodeid', table.dataset.shortcodeid);
+    formData.append('type', table.dataset.type);
+
+	let params = new Proxy(new URLSearchParams(window.location.search), {
+		get: (searchParams, prop) => searchParams.get(prop),
+	});
+
+	let archived;
+	if(params['archived'] == null){
+		archived	= false;
+	}else{
+		archived	= true;
+	}
+
+	let onlyown;
+	if(params['onlyown'] == null){
+		onlyown	= false;
+	}else{
+		onlyown	= true;
+	}
+	formData.append('archived', archived);
+	formData.append('onlyown', onlyown);
+
+	let response	= await FormSubmit.fetchRestApi('forms/get_page', formData);
+
+	if(response){
+		loader.outerHTML	= response;
+	}else{
+		// restore prev data
+		table.classList.remove('hidden');
+
+		loader.remove();
+
+		updatePageNav(navWrapper, curPage);
+	}
+}
+
 function addFormsTableInputEventListeners(cell){
 	let inputs		= cell.querySelectorAll('input,select,textarea');
 		
@@ -416,6 +515,9 @@ document.addEventListener("click", event=>{
 		}else{
 			el.classList.add('hidden');
 		}
+	}else if(target.closest('.form-result-navigation') != null && (target.matches('.next') || target.matches('.prev') || target.matches('.pagenumber'))){
+		getNextPage(target);
+		event.stopPropagation();
 	}
 
 	//Actions

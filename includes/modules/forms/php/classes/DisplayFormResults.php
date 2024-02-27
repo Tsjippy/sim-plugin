@@ -14,6 +14,7 @@ class DisplayFormResults extends DisplayForm{
 	public $submission;
 	public $submissions;
 	public $splittedSubmissions;
+	public $pageSplittedSubmissions;
 	public $hiddenColumns;
 	public $formSettings;
 	public $columnSettings;
@@ -97,15 +98,10 @@ class DisplayFormResults extends DisplayForm{
 			$this->currentPage	= 0;
 		}
 
-		$query	= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this->formName);
+		$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this->formName);
 
 		// Get the total
-		$result	= $wpdb->get_results(str_replace('*', 'count(*) as total', $query));
-		if(empty($result)){
-			$this->total	= 0;
-		}else{
-			$this->total	= $result[0]->total;
-		}
+		$this->total			= $wpdb->get_var(str_replace('*', 'count(*) as total', $query));
 
 		if(!$all && $start < $this->total){
 			$query	.= " LIMIT $start, $this->pageSize";
@@ -175,6 +171,12 @@ class DisplayFormResults extends DisplayForm{
 	
 			$this->processSplittedData();
 
+			if(empty($this->splittedSubmissions)){
+				$this->total	= 0;
+			}else{
+				$this->total	= count($this->splittedSubmissions);
+			}
+
 			if(!empty($this->splittedSubmissions) && count($this->splittedSubmissions) > $this->pageSize){
 				$start	= 0;
 				if(isset($_POST['pagenumber']) && is_numeric($_POST['pagenumber'])){
@@ -189,13 +191,7 @@ class DisplayFormResults extends DisplayForm{
 					$start	= $this->currentPage * $this->pageSize;
 				}
 
-				$this->splittedSubmissions	= array_splice($this->splittedSubmissions, $start, $this->pageSize);
-			}
-
-			if(empty($this->splittedSubmissions)){
-				$this->total	= 0;
-			}else{
-				$this->total	= count($this->splittedSubmissions);
+				$this->pageSplittedSubmissions	= array_splice($this->splittedSubmissions, $start, $this->pageSize);
 			}
 		}
 
@@ -1524,22 +1520,29 @@ class DisplayFormResults extends DisplayForm{
 							if(isset($this->splittedSubmissions)){
 								$submissions	= $this->splittedSubmissions;
 							}
+
+							//$filterCount	= 0;
+
 							foreach($submissions as $key=>$submission){
 								if(
 									!isset($submission->formresults[$name])	||													// The filter value is not set at all
 									!$this->compareFilterValue($filterValue, $filter['type'], $submission->formresults[$name])	// The filter value does not match the value
 								){
 									unset($submissions[$key]);
+									//$filterCount++;
 								}
 							}
 
-							// match the page params again
+							// total minus the filtered out submissions
 							$this->total	= count($submissions);
+							//$this->total	= $this->total - $filterCount;
+
+							// Get the submissions page we need
 							$submissions	= array_chunk($submissions, $this->pageSize)[$this->currentPage];
 
-							if(isset($this->splittedSubmissions)){
+							/* if(isset($this->splittedSubmissions)){
 								$this->splittedSubmissions	= $submissions;
-							}
+							} */
 						}
 
 						$elementHtml	= $this->getElementHtml($filterElement, $filterValue);
@@ -1553,41 +1556,6 @@ class DisplayFormResults extends DisplayForm{
 						$html	.= "</span>";
 					}
 					$html	.= "<button class='button' style='height: fit-content;'>Filter</button>";
-				$html	.= "</div>";
-			}
-
-			if($this->total > $this->pageSize){
-				$pageCount	=  ceil($this->total / $this->pageSize);
-				$html	.= "<div class='form-result-navigation'>";
-					$html	.= "<input type='hidden' name='pagenumber' value='$this->currentPage'>";
-					// include a back button if we are not on the first page
-					if($this->currentPage > 0){
-						$html	.= "<button class='button small prev' name='prev' value='prev'>← Previous</button>";
-					}
-					//show page numbers
-					$html	.= "<span class='page-number-wrapper'>";
-						global $wp;  
-						$wp->parse_request();
-
-						if(isset($_GET['pagenumber'])){
-							unset($_GET['pagenumber']);
-						}
-
-						$currentUrl = home_url(add_query_arg(array($_GET), $wp->request));
-						for ($x = 0; $x < $pageCount; $x++) {
-							$pageNr	= $x+1;
-
-							if($this->currentPage == $x){
-								$html	.= "<strong>$pageNr </strong>";
-							}else{
-								$html	.= "<a href='$currentUrl&pagenumber=$x'>$pageNr</a> ";
-							}
-						}
-					$html	.= "</span>";
-					// Include a next button if we are not on the last page
-					if($this->total > $this->pageSize && $this->currentPage != $pageCount-1){
-						$html	.= "<button class='button small next' name='next' value='next'>Next →</button>";
-					}
 				$html	.= "</div>";
 			}
 		$html	.= "</form>";
@@ -1665,15 +1633,74 @@ class DisplayFormResults extends DisplayForm{
 	}
 
 	/**
+	 * creates the main table html
+	 */
+	public function theTable($type, $submissions){
+		// only use the submissions for this page
+		$submissions	= array_splice($submissions, ($this->currentPage*$this->pageSize), $this->pageSize);
+
+		?>
+		<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>' data-type='<?php echo $type;?>' data-page='<?php echo $this->currentPage;?>'>
+			<?php
+			$this->resultTableHead($type);
+			?>
+			
+			<tbody class="table-body">
+				<?php
+				$allRowsEmpty	= true;
+				foreach($submissions as $submission){
+					$values				= $submission->formresults;
+					$values['id']		= $submission->id;
+					$values['userid']	= $submission->userid;
+
+					$userIdKey	= false;
+					if(isset($submission->formresults['user_id'])){
+						$userIdKey	= 'user_id';
+					}elseif(isset($submission->formresults['userid'])){
+						$userIdKey	= 'userid';
+					}
+
+					// Skip if needed
+					if($type == 'others' && $values[$userIdKey] == $this->user->ID){
+						continue;
+					}
+
+					$subId				= -1;
+					if(is_numeric($submission->subId)){
+						$subId			= $submission->subId;
+						$values['subid']= $submission->subId;
+					}
+					
+					if($this->writeTableRow($values, $subId, $submission)){
+						// this row has contents
+						$allRowsEmpty	= false;
+					}
+				}
+
+				if($allRowsEmpty){
+					?>
+					<td>No records found</td>
+					<?php
+				}
+				?>
+			</tbody>
+		</table>
+		<?php
+
+		return $allRowsEmpty;
+	}
+
+	/**
 	 * Writes a result table to the screen
 	 *
 	 * @param	string		$type		Either 'own', 'others' or 'all'
+	 * @param	bool		$justTable	Only give the table not the heading and filter form
 	 *
 	 * @return	bool					True on no records found, false on data found
 	 */
-	public function renderTable($type){
+	public function renderTable($type, $justTable=false){
 		$userId	= null;
-		if(isset($_REQUEST['onlyown'])){
+		if(isset($_REQUEST['onlyown']) && $_REQUEST['onlyown'] == 'true'){
 			$type		= 'own';
 		}
 
@@ -1737,58 +1764,59 @@ class DisplayFormResults extends DisplayForm{
 		
 		ob_start();
 
-		if($type == 'own'){
-			echo "<h4>Your own submissions</h4>";
-		}elseif($type == 'others'){
-			echo "<h4>Submissions of others</h4>";
+		if($justTable){
+			$this->theTable($type, $submissions);
+
+			return ob_get_clean();
 		}
-		?>
-		<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>'>
-			<?php
-			$this->resultTableHead($type);
-			?>
+
+		echo "<div class='form-results-wrapper'>";
+			if($type == 'own'){
+				echo "<h4>Your own submissions</h4>";
+			}elseif($type == 'others'){
+				$type	= 'others';
+				echo "<h4>Submissions of others</h4>";
+			}
+
+			if($this->total > $this->pageSize){
+				$pageCount	=  ceil($this->total / $this->pageSize);
+
+				if(isset($_GET['pagenumber'])){
+					unset($_GET['pagenumber']);
+				}
+				$html	= "<div class='form-result-navigation'>";
+					// include a back button if we are not on the first page
+					$class = 'hidden';
+					if($this->currentPage > 0){
+						$class = '';
+					}
+					$html	.= "<button class='button small prev $class' name='prev' value='prev'>← Previous</button>";
+					//show page numbers
+					$html	.= "<span class='page-number-wrapper'>";
+						for ($x = 0; $x < $pageCount; $x++) {
+							$pageNr	= $x+1;
+
+							$class	= '';
+							if($this->currentPage == $x){
+								$class	= "current";
+							}
+							$html	.= "<span class='pagenumber $class' data-nr='$x'>$pageNr</span> ";
+						}
+					$html	.= "</span>";
+					// Include a next button if we are not on the last page
+					$class = 'hidden';
+					if($this->total > $this->pageSize && $this->currentPage != $pageCount-1){
+						$class = '';
+					}
+					$html	.= "<button class='button small next $class' name='next' value='next'>Next →</button>";
+				$html	.= "</div>";
+
+				echo $html;
+			}
+
+			$allRowsEmpty	= $this->theTable($type, $submissions);
+		echo "</div>";
 			
-			<tbody class="table-body">
-				<?php
-				$allRowsEmpty	= true;
-				foreach($submissions as $submission){
-					$values				= $submission->formresults;
-					$values['id']		= $submission->id;
-					$values['userid']	= $submission->userid;
-
-					$userIdKey	= false;
-					if(isset($submission->formresults['user_id'])){
-						$userIdKey	= 'user_id';
-					}elseif(isset($submission->formresults['userid'])){
-						$userIdKey	= 'userid';
-					}
-
-					// Skip if needed
-					if($type == 'others' && $values[$userIdKey] == $this->user->ID){
-						continue;
-					}
-
-					$subId				= -1;
-					if(is_numeric($submission->subId)){
-						$subId			= $submission->subId;
-						$values['subid']= $submission->subId;
-					}
-					
-					if($this->writeTableRow($values, $subId, $submission)){
-						// this row has contents
-						$allRowsEmpty	= false;
-					}
-				}
-
-				if($allRowsEmpty){
-					?>
-					<td>No records found</td>
-					<?php
-				}
-				?>
-			</tbody>
-		</table>
-		<?php
 
 		$this->printTableFooter();
 		
@@ -1850,7 +1878,7 @@ class DisplayFormResults extends DisplayForm{
 		}else{
 			$allRowsEmpty	= $this->renderTable('all');
 		}
-		$tableHtml	= ob_get_clean();
+		$tableHtml			= ob_get_clean();
 
 		$buttons			= $this->renderTableButtons();
 

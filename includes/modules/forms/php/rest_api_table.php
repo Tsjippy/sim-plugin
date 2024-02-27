@@ -199,7 +199,46 @@ add_action( 'rest_api_init', function () {
 			)
 		)
 	);
+
+	// get next or prev page
+	register_rest_route(
+		RESTAPIPREFIX.'/forms',
+		'/get_page',
+		array(
+			'methods' 				=> \WP_REST_Server::EDITABLE,
+			'callback' 				=> __NAMESPACE__.'\getPage',
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'formid'		=> array(
+					'required'	=> true,
+					'validate_callback' => function($formId){
+						return is_numeric($formId);
+					}
+				),
+				'pagenumber'		=> array(
+					'required'	=> true,
+					'validate_callback' => function($submissionId){
+						return is_numeric($submissionId);
+					}
+				)
+			)
+		)
+	);
 } );
+
+function getPage(){
+	$displayFormResults		= new DisplayFormResults([
+		'formid' 		=> $_POST['formid'],
+		'search'		=> $_POST['search'],
+		'shortcodeid'	=> $_POST['shortcodeid'],
+		'onlyOwn'		=> $_POST['onlyown'],
+		'archived'		=> $_POST['archived']
+	]);
+
+	$displayFormResults->loadShortcodeData();
+
+	return $displayFormResults->renderTable($_POST['type'], true);
+}
 
 function saveTablePrefs( \WP_REST_Request $request ) {
 	if (is_user_logged_in()) {

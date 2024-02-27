@@ -60,6 +60,17 @@
 
     .page-number-wrapper{
         line-height:25px;
+
+        .pagenumber{
+            color: $primary_color;
+            cursor: pointer;
+        }
+
+        .current{
+            font-weight: bold;
+            cursor: unset;
+            color: black;
+        }
     }
 
     .next{
