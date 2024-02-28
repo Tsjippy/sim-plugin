@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.40.7] - 2024-02-28
+
+
+### Changed
 - prayer request confirmation
 
 ### Fixed
