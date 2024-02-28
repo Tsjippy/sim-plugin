@@ -23,22 +23,40 @@ add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategor
  *
  * Get the prayer request of today
  *
- * @param    string     $plainText      Whether we shuld return the prayer request in html or plain text
+ * @param   string     	$plainText      Whether we shuld return the prayer request in html or plain text
  * @param	bool		$verified		If we trust the request, default false
+ * @param	string|int	$date			The date or time string for which to get the request, default empty for today
  *
  * @return   array|false     			An array containing the prayer request and pictures or false if no prayer request found
  *
 **/
-function prayerRequest($plainText = false, $verified=false) {
+function prayerRequest($plainText = false, $verified=false, $date='') {
 	if (!is_user_logged_in() && !$verified){
 		return false;
+	}
+
+	if(empty($date)){
+		$s			= date("F Y");
+
+		//Current date
+		$datetime 	= time();
+	}else{
+		// epoch
+		if(is_numeric($date)){
+			$datetime	= $date;
+		}else{
+			// date string given
+			$datetime 	= strtotime($date);
+		}
+
+		$s			= date("F Y", $datetime);
 	}
 
 	//Get all the post belonging to the prayer category
 	$posts = get_posts(
 		array(
 			'category'  		=> get_cat_ID('Prayer'),
-			's'					=> date("F Y"),
+			's'					=> $s,
 			'numberposts'		=> -1,
 			'search_columns'	=> ['post_title'],
 			//'sentence'			=> true
@@ -61,12 +79,9 @@ function prayerRequest($plainText = false, $verified=false) {
 		}
 		
 		if ($content != null){
-			//Current date
-			$datetime = date('Y-m-d');
-
 			//Current day of the month
-			$today 		= date('d-m-Y', strtotime($datetime));
-			$tomorrow 	= date('d-m-Y', strtotime('+1 day', strtotime($datetime)));
+			$today 		= date('d-m-Y', $datetime);
+			$tomorrow 	= date('d-m-Y', strtotime('+1 day', $datetime));
 
 			//Find the request of the current day, Remove the daynumber (dayletter) - from the request
 			//space(A)space-space
@@ -84,6 +99,8 @@ function prayerRequest($plainText = false, $verified=false) {
 				$prayer		= $matches[0][1];
 				$urls		= [];
 				$pictures	= [];
+				$usersFound	= [];
+				$postFound	= $post->ID;
 
 				$oneWord	= "[A-Z][^\$%\^*£=~@\d\s]+.?+";			// a word starting with a capital, ending with a space
 				$singleRe	= "(?:$oneWord){2,}";					// two or more words starting with a capital after each other 
@@ -180,6 +197,12 @@ function prayerRequest($plainText = false, $verified=false) {
 								$urls[]	= $url;
 							}
 
+							$usersFound[]	= $user->ID;
+
+							if(!empty($family['partner'])){
+								$usersFound[]	= $family['partner'];
+							}
+
 							break; // only do it once
 						}
 					}
@@ -188,10 +211,14 @@ function prayerRequest($plainText = false, $verified=false) {
 				$params	= [
 					'message'	=> $prayer,
 					'urls'		=> $urls,
-					'pictures'	=> $pictures
+					'pictures'	=> $pictures,
+					'users'		=> $usersFound,
+					'post'		=> $postFound
 				];
 
-				if($plainText){
+				
+				// skip filter if not for today
+				if($plainText && empty($date)){
 					$params	= apply_filters('sim_after_bot_payer', $params);
 
 					$params['message']	= $params['message']."\n\n".implode("\n", $params['urls']);
@@ -202,9 +229,11 @@ function prayerRequest($plainText = false, $verified=false) {
 		}
 	}
 
-
 	if($plainText){
-		return ['message'=>'Sorry I could not find any prayer request for today', 'pictures'=>[]];
+		return [
+			'message'	=> 'Sorry I could not find any prayer request for today', 
+			'pictures'	=> []
+		];
 	}
 	return false;
 }

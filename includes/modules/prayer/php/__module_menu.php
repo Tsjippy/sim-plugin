@@ -68,6 +68,13 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		<input type='text' name='frontpagehook' value='<?php if(isset($settings['frontpagehook'])){echo $settings['frontpagehook'];}else{echo '';}?>'>
 	</label>
 	<br>
+	<h4>Send prayer message check</h4>
+	<label>
+		People whom submitted a prayer request will be send their request X days in advance to check if it needs an update <br>
+		Leave empty for no check<br>
+		<input type='number' name='prayercheck' value='<?php if(isset($settings['prayercheck'])){echo $settings['prayercheck'];}else{echo '';}?>'>
+	</label>
+	<br>
 	<div class="">
 		<h4>Give optional Signal group name(s) to send a daily prayer message to:</h4>
 		<div class="clone_divs_wrapper">

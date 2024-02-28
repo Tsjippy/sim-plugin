@@ -5,10 +5,15 @@ use SIM;
 add_action('init', function(){
 	//add action for use in scheduled task
 	add_action( 'send_prayer_action', __NAMESPACE__.'\sendPrayerRequests' );
+	
+	//add action for use in scheduled task
+	add_action( 'check_prayer_action', __NAMESPACE__.'\checkPrayerRequests' );
 });
 
 function scheduleTasks(){
     SIM\scheduleTask('send_prayer_action', 'quarterly');
+
+	SIM\scheduleTask('check_prayer_action', 'daily');
 }
 
 function createNewSchedule($schedule){
@@ -105,6 +110,44 @@ function sendPrayerRequests(){
 	update_option("prayer_schedule_$date", $schedule);
 }
 
+/**
+ * Check if a prayer request needs an update
+ */
+function checkPrayerRequests(){
+	global $wpdb;
+
+	// clean up expired meta keys
+	$query			= "DELETE * FROM `{$wpdb->usermeta}` WHERE `meta_key` = 'pending-prayer-update' AND `meta_value` < ".time();
+
+	$wpdb->query($query);
+
+	// Add new ones
+
+	$days			= SIM\getModuleOption('prayer', 'prayercheck');
+	if(empty($days)){
+		return;
+	}
+
+	$dateTime		= strtotime("+$days day", time());
+	$dateString		= date('d-m-Y', $dateTime);
+	$prayerRequest  = prayerRequest(true, true, );
+	$exploded		= explode('-', $prayerRequest['message']);
+
+	if(count($exploded) < 2){
+		return;
+	}
+	
+	$message 		= trim($exploded[1]);
+
+	$signalMessage	= "Good day, $days days from now your prayer request will be send out\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be send on $dateString\n\nTo confirm the update start your reply with 'update prayer'";
+
+	foreach($prayerRequest['users'] as $user){
+		$timestamp	= SIM\trySendSignal($signalMessage, $user, false, $prayerRequest['pictures']);
+
+		update_user_meta($user->ID, 'pending-prayer-update', $timestamp);
+	}
+}
+
 
 // Remove scheduled tasks upon module deactivatio
 add_action('sim_module_deactivated', function($moduleSlug){
@@ -114,4 +157,6 @@ add_action('sim_module_deactivated', function($moduleSlug){
 	}
 
 	wp_clear_scheduled_hook( 'send_prayer_action' );
+
+	wp_clear_scheduled_hook( 'check_prayer_action' );
 });

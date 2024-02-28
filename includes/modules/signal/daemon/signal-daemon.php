@@ -107,7 +107,7 @@ if(!empty($argv) && count($argv) == 2){
 }
 
 function getAnswer($message, $source){
-    $message = strtolower($message);
+    $lowerMessage = strtolower($message);
 
     //Change the user to the adminaccount otherwise get_users will not work
     wp_set_current_user(1);
@@ -126,45 +126,47 @@ function getAnswer($message, $source){
     $pictures   = [];
     $response   = '';
 
-    if($message == 'test'){
+    if($lowerMessage == 'test'){
         $response    = 'Awesome!';
-    }elseif($message == 'thanks'){
+    }elseif($lowerMessage == 'thanks'){
         $response = 'You`re welcome!';
-    }elseif(strpos($message, 'prayer') !== false && $name){
+    }elseif(str_starts_with($lowerMessage, 'update prayer')){
+        $response = updatePrayerRequest($message, $users);
+    }elseif(strpos($lowerMessage, 'prayer') !== false && $name){
         $prayerRequest  = SIM\PRAYER\prayerRequest(true, true);
         $response       = "This is the prayer for today:\n\n{$prayerRequest['message']}";
         $pictures       = $prayerRequest['pictures'];
-    }elseif($message == 'hi' || str_contains($message, 'hello')){
+    }elseif($lowerMessage == 'hi' || str_contains($lowerMessage, 'hello')){
         $response = "Hi ";
         if($name){
             $response   .= $name;
         }
-    }elseif($message == 'good morning'){
+    }elseif($lowerMessage == 'good morning'){
         $response = "Good morning ";
         if($name){
             $response   .= $name;
         }
-    }elseif($message == 'good afternoon'){
+    }elseif($lowerMessage == 'good afternoon'){
         $response = "Good afternoon ";
         if($name){
             $response   .= $name;
         }
-    }elseif($message == 'good evening'){
+    }elseif($lowerMessage == 'good evening'){
         $response = "Good evening ";
         if($name){
             $response   .= $name;
         }
-    }elseif($message == 'good night'){
+    }elseif($lowerMessage == 'good night'){
         $response = "Good night ";
         if($name){
             $response   .= $name;
         }
-    }elseif(str_contains($message, 'thank you')){
+    }elseif(str_contains($lowerMessage, 'thank you')){
         $response = "You are welcome ";
         if($name){
             $response   .= $name;
         }
-    }elseif(!empty($message)){
+    }elseif(!empty($lowerMessage)){
         SIM\printArray("No answer found for '$message'");
 
         $response = 'I have no clue, do you know?';
@@ -176,4 +178,74 @@ function getAnswer($message, $source){
         'response'  => $response,
         'pictures'  => $pictures
     ];
+}
+
+function updatePrayerRequest($message, $users){
+    $timeStamp      = get_user_meta($users[0]->ID, 'pending-prayer-update', true);
+    if(!$timeStamp || !is_numeric($timeStamp)){
+        return "Could not find prayer request to update for timestamp '$timeStamp'";
+    }
+
+    $signal         = new SignalBus();
+
+    $sendMessage    = $signal->getSendMessageByTimestamp($timeStamp);
+
+    if(!preg_match_all("/[\d]{2}-[\d]{2}-[\d]{4}/m", $sendMessage, $matches, PREG_SET_ORDER, 0)){
+        return "Could not find prayer request to update 2";
+    }
+
+    $replaceDate	= $matches[0][0];
+
+    // get the prayer request to be replaced
+    $prayer	= SIM\PRAYER\prayerRequest(false, false, $replaceDate);
+
+    if(!$prayer){
+        return "Could not find prayer request to update 3";
+    }
+
+    // Split on the - 
+    $exploded   = explode('-', $prayer['message']);
+    if(count($exploded) < 2){
+        return "Could not find prayer request to update 4";
+    }
+    $prayerMessage = trim($exploded[1]);
+
+    // perform the replacement
+    if(strtolower($message) == 'update prayer correct'){
+        foreach($users as $user){
+            delete_user_meta($user->ID, 'pending-prayer-update');
+        }
+
+        $replacetext    = get_user_meta($user->ID, 'pending-prayer-update-text', true);
+        delete_user_meta($user->ID, 'pending-prayer-update-text');
+
+        if(empty($replacetext)){
+            return 'Something went wrong';
+        }
+
+        $post               = get_post($prayer['post']);
+
+        if(empty($post)){
+            return 'no post found to replace in'.implode(';', $prayer);
+        }
+
+        $post->post_content = str_replace($prayerMessage, $replacetext, $post->post_content);
+        // do the actual replacement
+        wp_update_post(
+            $post,
+            false,
+            false
+        );
+
+        return "Replaced:\n'$prayerMessage'\n\nwith:\n'$replacetext'";
+    }
+
+    // confirm the replacement
+    $replacetext    = trim(str_ireplace('update prayer', '', $message));
+
+    foreach($users as $user){
+        update_user_meta($user->ID, 'pending-prayer-update-text', $replacetext);
+    }
+
+	return "I am going to replace:\n'$prayerMessage'\n\nwith\n'$replacetext'\n\nReply with 'update prayer correct' if I should continue";
 }

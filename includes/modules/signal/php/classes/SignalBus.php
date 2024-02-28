@@ -195,7 +195,7 @@ class SignalBus extends Signal {
             $query      .= " $combinator timesend < {$maxTime}000";
         }
 
-        $query      .= "  ORDER BY `timesend` DESC LIMIT $startIndex,$amount;";
+        $query      .= " ORDER BY `timesend` DESC LIMIT $startIndex,$amount;";
 
         $this->totalMessages    = $wpdb->get_var($totalQuery);
 
@@ -250,6 +250,44 @@ class SignalBus extends Signal {
         }
         
         return $wpdb->get_results( $query );
+    }
+
+    /**
+     * Gets the latest messages from the log for a specific user
+     *
+     * @param   string  $phoneNumber    The phonenumber or user id
+     *
+     * @return  array                   The messages
+     */
+    public function getSendMessagesByUser($phoneNumber){
+        if(get_userdata($phoneNumber)){
+            $phoneNumber    = get_user_meta($phoneNumber, 'signalnumber', true);
+
+            if(!$phoneNumber){
+                return;
+            }
+        }
+
+        global $wpdb;
+
+        $query      = "SELECT * FROM $this->tableName WHERE `recipient` = '$phoneNumber' ORDER BY `timesend` DESC LIMIT 5; ";
+
+        return $wpdb->get_results( $query );
+    }
+
+    /**
+     * Gets the latest messages from the log for a specific user
+     *
+     * @param   int  $timestamp         The timestamp
+     *
+     * @return  string                   The message
+     */
+    public function getSendMessageByTimestamp($timestamp){
+        global $wpdb;
+
+        $query      = "SELECT message FROM $this->tableName WHERE `timesend` = '$timestamp'";
+
+        return $wpdb->get_var( $query );
     }
 
     /**

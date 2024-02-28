@@ -906,8 +906,8 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 
 	// check if we need to send a message
 	if(!empty($_REQUEST['message']) && !empty($_REQUEST['recipient'])){
-        $result	= sendSignalMessage(stripslashes($_REQUEST['message']), stripslashes($_REQUEST['recipient']));
-		echo $result;
+        echo sendSignalMessage(stripslashes($_REQUEST['message']), stripslashes($_REQUEST['recipient']));
+		
     }
 
 	$phonenumbers	= '';

@@ -74,6 +74,15 @@ function asyncSignalMessageSend($message, $recipient, $postId=""){
 	wp_schedule_single_event(time(), 'schedule_signal_message_action', [$message, $recipient, $postId]);
 }
 
+/**
+ * Send a message on Signal
+ * 
+ * @param	string		$message	The message
+ * @param	string		$recipient	The recipient
+ * @param	array|int	$postId		The post id or an array of filepaths to pictures
+ * 
+ * @return	string					the result
+ */
 function sendSignalMessage($message, $recipient, $postId=""){
 
 	// do not send on localhost
@@ -87,27 +96,14 @@ function sendSignalMessage($message, $recipient, $postId=""){
 
 	$images = [];
 	if(is_array($postId)){
-		// Post id is a file pathe
+		// Post id is a file path
 		$images	= $postId;
 	}elseif(is_numeric($postId) && has_post_thumbnail($postId)){
 		$images = [get_attached_file(get_post_thumbnail_id($postId))];
 	}
 
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
-		$result	= sendSignalFromLocal($message, $recipient, $images);
-
-		if(strpos($result, 'error') !== false){
-			return $result;
-		}elseif(!wp_doing_cron()){
-			ob_start();
-			?>
-			<div class='success'>
-				Message send succesfully
-			</div>
-			<?php
-
-			return ob_get_clean();
-		}
+		return sendSignalFromLocal($message, $recipient, $images);
 	}else{
 		return sendSignalFromExternal($message, $recipient, $images);
 	}
@@ -149,9 +145,9 @@ function sendSignalFromLocal($message, $recipient, $images){
 		delete_user_meta( $recipient, 'signal_number');
 	}
 
-	if(wp_doing_cron()){
+	/* if(wp_doing_cron()){
 		return '';
-	}
+	} */
 
 	return $result;
 }
