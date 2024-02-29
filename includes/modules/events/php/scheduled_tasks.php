@@ -63,11 +63,10 @@ function anniversaryCheck(){
 			$userData		= get_userdata($event->post_author);
 			$firstName		= $userData->first_name;
 			$eventTitle		= $event->post_title;
-			$partnerId		= SIM\hasPartner($event->post_author);
+			$partner		= SIM\hasPartner($event->post_author, true);
 
-			if($partnerId){
-				$partnerData	= get_userdata($partnerId);
-				$coupleString	= $firstName.' & '.$partnerData->display_name;
+			if($partner){
+				$coupleString	= $firstName.' & '.$partner->display_name;
 				$eventTitle		= trim(str_replace($coupleString, "", $eventTitle));
 			}
 			
@@ -78,8 +77,8 @@ function anniversaryCheck(){
 			SIM\trySendSignal("Hi $firstName,\nCongratulations with your $age $eventTitle!", $event->post_author);
 
 			//If the author has a partner and this events applies to both of them
-			if($partnerId && strpos($event->post_title, $coupleString)){
-				SIM\trySendSignal("Hi {$partnerData->first_name},\nCongratulations with your $eventTitle!", $partnerId);
+			if($partner && strpos($event->post_title, $coupleString)){
+				SIM\trySendSignal("Hi {$partner->first_name},\nCongratulations with your $eventTitle!", $partner->ID);
 			}
 		}
 	}

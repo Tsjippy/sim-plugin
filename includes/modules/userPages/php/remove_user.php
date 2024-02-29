@@ -3,7 +3,7 @@ namespace SIM\USERPAGE;
 use SIM;
 
 add_action('delete_user', function ($userId){
-    $partner = SIM\hasPartner($userId);
+    $partner = SIM\hasPartner($userId, true);
 
 	//Only remove if there is no family
 	if (!$partner){
@@ -16,9 +16,9 @@ add_action('delete_user', function ($userId){
         }
     }else{
         //Get the partners display name to use as the new title
-        $title = get_userdata($partner)->display_name;
+        $title = $partner->display_name;
 
         //Update
-        updateUserPageTitle($partner, $title);
+        updateUserPageTitle($partner->ID, $title);
     }
 });

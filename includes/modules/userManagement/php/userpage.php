@@ -14,9 +14,9 @@ add_action('sim_user_description', function($user){
 		$url .= '/?userid=';
 		
 		$html = "<div class='flex edit_useraccounts'><a href='$url$user->ID' class='button sim'>Edit useraccount for ".$user->first_name."</a>";
-        $partner    = SIM\hasPartner($user->ID);
+        $partner    = SIM\hasPartner($user->ID, true);
 		if($partner){
-			$html .= "<a  href='$url$partner' class='button sim'>Edit useraccount for ".get_userdata($partner)->first_name."</a>";
+			$html .= "<a  href='$url$partner->ID' class='button sim'>Edit useraccount for $partner->first_name</a>";
 		}
 
         $family = (array)get_user_meta( $user->ID, 'family', true );

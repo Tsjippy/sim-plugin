@@ -12,8 +12,6 @@ add_action('sim_module_activated', function($moduleSlug){
 	if($moduleSlug != MODULE_SLUG)	{
 		return;
 	}
-
-	scheduleTasks();
 	
 	wp_create_category('Prayer');
 });
@@ -148,6 +146,8 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 	if($moduleSlug != MODULE_SLUG){
 		return $newOptions;
 	}
+
+	scheduleTasks();
 
 	$date			= \Date('y-m-d');
 	$schedule		= (array)get_option("prayer_schedule_$date");

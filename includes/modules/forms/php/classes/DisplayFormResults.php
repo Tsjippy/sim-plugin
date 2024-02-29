@@ -177,7 +177,7 @@ class DisplayFormResults extends DisplayForm{
 				$this->total	= count($this->splittedSubmissions);
 			}
 
-			if(!empty($this->splittedSubmissions) && count($this->splittedSubmissions) > $this->pageSize){
+			/*if(!empty($this->splittedSubmissions) && count($this->splittedSubmissions) > $this->pageSize){
 				$start	= 0;
 				if(isset($_POST['pagenumber']) && is_numeric($_POST['pagenumber'])){
 					$this->currentPage	= $_POST['pagenumber'];
@@ -192,7 +192,7 @@ class DisplayFormResults extends DisplayForm{
 				}
 
 				//$this->pageSplittedSubmissions	= array_splice($this->splittedSubmissions, $start, $this->pageSize);
-			}
+			} */
 		}
 
 		if(count($this->submissions) == 1){

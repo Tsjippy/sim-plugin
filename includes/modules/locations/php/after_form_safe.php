@@ -12,9 +12,9 @@ add_action('sim_update_family_picture', function($userId, $attachmentId){
     $maps->createIcon($markerId, $iconTitle, $url, 1);
 
     //Save the marker id for all family members
-    $partner    = SIM\hasPartner($userId);
-	if(empty($markerId) && $partner){
-        $markerId = get_user_meta($partner ,"marker_id", true);
+    $partnerId    = SIM\hasPartner($userId);
+	if(empty($markerId) && $partnerId){
+        $markerId = get_user_meta($partnerId ,"marker_id", true);
     }
 
 	SIM\updateFamilyMeta( $userId, "marker_id", $markerId);

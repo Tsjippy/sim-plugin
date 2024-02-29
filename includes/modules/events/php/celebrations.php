@@ -118,13 +118,11 @@ function getCoupleString($user, $partner=''){
 	}
 
 	if(empty($partner)){
-		$partnerId		= SIM\hasPartner($user->ID);
+		$partner		= SIM\hasPartner($user->ID, true);
 
-		if(!$partnerId){
+		if(!$partner){
 			return "$user->first_name $lastName";
 		}
-
-		$partner		= get_userdata($partnerId);
 	}
 	
 	return "$user->first_name & $partner->first_name $lastName";
@@ -136,13 +134,11 @@ function replaceCoupleString($string, $replaceString, $user, $partner=''){
 	}
 
 	if(empty($partner)){
-		$partnerId		= SIM\hasPartner($user->ID);
+		$partner		= SIM\hasPartner($user->ID, true);
 
-		if(!$partnerId){
+		if(!$partner){
 			return $string;
 		}
-
-		$partner		= get_userdata($partnerId);
 	}
 
 	//Search for first names and last names
@@ -174,12 +170,10 @@ function anniversaryMessages(){
 			$messageString .= " and the ";
 		}
 
-		$message		= str_replace('&amp;', '&', $message);
+		$message	= str_replace('&amp;', '&', $message);
 
-		$partnerId		= SIM\hasPartner($userId);
-		if(is_numeric($partnerId)){
-			$partner		= get_userdata($partnerId);
-		}
+		$partner	= SIM\hasPartner($userId, true);
+
 		$userdata	= get_userdata($userId);
 		if(!$userdata){
 			continue;
@@ -201,7 +195,7 @@ function anniversaryMessages(){
 			$link			= "of <a href=\"$url\">{$userdata->display_name}</a>";
 		}
 
-		if(is_numeric($partnerId)){
+		if($partner){
 			$newMessage	= replaceCoupleString($message, $coupleLink, $userdata, $partner);
 
 			// Add family picture if needed

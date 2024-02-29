@@ -462,12 +462,16 @@ function familyFlatArray($userId){
 /**
  * Check if user has partner
  * @param 	int		$userId	 	WP User_ID
+ * @param	bool	$returnUser	Whether to return the partners user id or the full user object default false for just the id
  *
- * @return	int|false			The partner user id, or false if no partner
+ * @return	int|object|false			The partner user id, partner user object or false if no partner
 */
-function hasPartner($userId) {
+function hasPartner($userId, $returnUser=false) {
 	$family = get_user_meta($userId, "family", true);
 	if(is_array($family) && isset($family['partner']) && is_numeric($family['partner'])){
+		if($returnUser){
+			return get_userdata($family['partner']);
+		}
 		return $family['partner'];
 	}
 
@@ -1386,65 +1390,76 @@ function clearOutput($write=false){
  * @return	string				The string with userpagelinks
  */
 function userPageLinks($string){
-	//Find display names in content
+	//Find names in content
+
+	$oneWord	= "[A-Z][^\$%\^*£=~@\d\s:\[\],\"\.\)\(]+.?+";			// a word starting with a capital, ending with a space
+	$singleRe	= "(?:$oneWord){2,}";					// two or more words starting with a capital after each other 
+	$coupleRe	= "(?:$oneWord(?:&|and).($oneWord)+)";
+	$familyRe	= "$oneWord\s(?:F|f)amily";
+
+	// check if prayer contains a single name or a couples name
+	// We use look ahead (?=)to allow for overlap
+	$re		= "/(*UTF8)(?=($coupleRe|$singleRe|$familyRe))/m";	
+	preg_match_all($re, $string, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE, 0);
+
 	$users = getUserAccounts(false, false);
 
 	$string	= str_replace('&amp;', '&', $string);
-	
+
+	$displayNames	= [];
+	$coupleNames	= [];
 	foreach($users as $user){
-		// continue to next user if user not in string
-		if(!str_contains($string, $user->last_name)){
+		// store displayname
+		$displayNames[$user->ID]	= $user->display_name;
+		$partner					= hasPartner($user->ID, true);
+
+		// store firstname and partner firstname incase last name is omitted
+		if($partner){
+			$coupleNames[$user->ID]	= "$user->first_name & $partner->first_name";
+		}
+	}
+
+	foreach($matches as $match){
+		// last name must be there and it should not be a hyperlink already
+		if(!isset($match[1]) || str_contains($match[1][0], '</a>')){
 			continue;
 		}
 
-		$privacyPreference = get_user_meta( $user->ID, 'privacy_preference', true );
+		$name	= trim($match[1][0]);
 
-		//only replace the name with a link if privacy allows
-		if(empty($privacyPreference['hide_name'])){
-			//Replace the name with a hyperlink
-			$url		= maybeGetUserPageUrl($user->ID);
-			if(!$url){
+		if(!empty($match[2])){
+			$name	= trim($match[2][0]);
+		}
+
+		// check is single user
+		$userId	= array_search($name, $displayNames);		
+
+		$name	= trim($match[1][0]);
+		if(!$userId){
+			// check if mentioned as a couple without lastname
+			$userId	= array_search(str_replace(' and ', ' & ', $name), $coupleNames);
+
+			if(!$userId){
 				continue;
 			}
-
-			$link				= "<a href=\"$url\">";
-
-			$replacementCount	= 0;
-
-			// do not run twice
-			if(strpos($string, $link) === false){
-				$partnerId	= hasPartner($user->ID);
-			
-				// couple
-				if(is_numeric($partnerId)){
-					$partner	= get_userdata($partnerId);
-	
-					// In case first names are used
-					$pattern	= "/(\s|>|^){$user->first_name}.*?{$partner->display_name}/i";
-					$link		= "<a href=\"$url\">$user->first_name & $partner->display_name</a>";
-					$string		= preg_replace($pattern, '$1'.$link, $string, -1, $replacementCount);
-	
-					// other order of first names
-					$pattern	= "/(\s|>|^){$partner->first_name}.*?{$user->display_name}/i";
-					$link		= "<a href=\"$url\">$partner->first_name & $user->display_name</a>";
-					$string		= preg_replace($pattern, '$1'.$link, $string, -1, $replacementCount);
-	
-					// family
-					$pattern	= "/(\s|>|^)$user->last_name family/i";
-					$link		= "<a href=\"$url\">$user->last_name family</a>";
-					$string		= preg_replace($pattern, $link, $string, -1, $replacementCount);
-				}
-
-				// single
-				$name		= "$user->first_name $user->last_name";
-				$pattern	= "/(^|\s|>)($name(?!<\/a>)"; // Look for the name not followed by the ending of a hyperlink
-				if($user->display_name != $name){
-					$pattern	.= "|$user->display_name(?!<\/a>)";
-				}
-				$pattern	.= ")/i";
-				$string		= preg_replace($pattern, '$1'.$link.'$2</a>', $string, -1, $replacementCount);
-			}
 		}
+
+		$privacyPreference = get_user_meta( $userId, 'privacy_preference', true );
+
+		//only replace the name with a link if privacy allows
+		if(!empty($privacyPreference['hide_name'])){
+			continue;
+		}
+
+		//Replace the name with a hyperlink
+		$url	= maybeGetUserPageUrl($userId);
+		if(!$url){
+			continue;
+		}
+
+		$link	= "<a href=\"$url\">$name</a>";
+
+		$string	= str_replace($match[1][0], $link, $string);
 	}
 
 	return $string;

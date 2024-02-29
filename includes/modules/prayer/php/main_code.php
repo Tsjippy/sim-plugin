@@ -105,6 +105,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 				$oneWord	= "[A-Z][^\$%\^*£=~@\d\s]+.?+";			// a word starting with a capital, ending with a space
 				$singleRe	= "(?:$oneWord){2,}";					// two or more words starting with a capital after each other 
 				$coupleRe	= "(?:$oneWord(?:&|and).$singleRe)";
+				$familyRe	= "$oneWord\s(?:F|f)amily";
 
 				// check if prayer contains a single name or a couples name
 				// We use look ahead (?=)to allow for overlap
