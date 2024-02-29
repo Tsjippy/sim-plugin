@@ -6,6 +6,7 @@
 
 ### Changed
 - username processing
+- better username search
 
 ### Fixed
 
