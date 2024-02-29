@@ -102,110 +102,41 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 				$usersFound	= [];
 				$postFound	= $post->ID;
 
-				$oneWord	= "[A-Z][^\$%\^*£=~@\d\s]+.?+";			// a word starting with a capital, ending with a space
-				$singleRe	= "(?:$oneWord){2,}";					// two or more words starting with a capital after each other 
-				$coupleRe	= "(?:$oneWord(?:&|and).$singleRe)";
-				$familyRe	= "$oneWord\s(?:F|f)amily";
+				$userIds	= SIM\findUsers($prayer, false);
 
-				// check if prayer contains a single name or a couples name
-				// We use look ahead (?=)to allow for overlap
-				$re		= "/(*UTF8)(?=($coupleRe|$singleRe))/m";	
-				preg_match_all($re, $prayer, $matches, PREG_SET_ORDER, 0);
+				foreach($userIds as $userId=>$match){
+					// family picture
+					$family			= get_user_meta($userId, 'family', true);
 
-				// found a name
-				if($matches){
-					foreach($matches as $match){
-						if(!isset($match[1])){
-							continue;
+					if(!empty($family['picture'])){
+						if(is_array($family['picture'])){
+							$attachmentId	= $family['picture'][0];
+						}elseif(is_numeric($family['picture'])){
+							$attachmentId	= $family['picture'];
+						}								
+					}else{
+						$attachmentId	= get_user_meta($userId, 'profile_picture', true);
+						if(is_array($attachmentId) && isset($attachmentId[0])){
+							$attachmentId	= $attachmentId[0];
 						}
+					}
 
-						$names	= preg_split('/ (&|and) /', $match[1]);
-						$name	= trim(end($names));
-						
-						// try to find the user account for the last name in the names array
-						$args	= [
-							'search' 		=> $name, 				// search for this name
-							'search_columns' => [					// 
-								'user_login', 
-								'user_nicename', 
-								'display_name'
-							],
-							'meta_query'	=> [					// exclude positional accounts
-								'relation'	=> 'OR',
-								[
-									'key'	=> 'account-type',
-									'value'	=> 'normal',
-								],
-								[
-									'key'	=> 'account-type',
-									'compare'	=> 'NOT EXISTS'
-								]
-							]
-						];
+					if(is_numeric($attachmentId)){
+						$pictures[] 	= get_attached_file($attachmentId);
+					}else{
+						$pictures[] 	= SIM\urlToPath($attachmentId);
+					}
 
-						$users = get_users( $args );
+					// user page url
+					$url		= SIM\maybeGetUserPageUrl($userId);
+					if($url){
+						$urls[]	= $url;
+					}
 
-						// we found no user
-						if(empty($users)){
-							// get the surname
-							$lastName		= end(explode(' ', $name));
+					$usersFound[]	= $userId;
 
-							// use the other name from a couples string
-							if(count($names) > 1){
-								// get the first name of the first entry in the names array
-								$firstName		= $names[0];
-
-								$args['search']	= "$firstName $lastName";
-								$users = get_users( $args );
-							}
-
-							// try username
-							if(empty($users)){
-								$firstName		= explode(' ', $firstName)[0];
-								$args['search']	= "$firstName$lastName[0]";
-								$users = get_users( $args );
-							}
-						}
-
-						if(!empty($users)){
-							$user		= $users[0];	
-
-							// family picture
-							$family			= get_user_meta($user->ID, 'family', true);
-
-							if(!empty($family['picture'])){
-								if(is_array($family['picture'])){
-									$attachmentId	= $family['picture'][0];
-								}elseif(is_numeric($family['picture'])){
-									$attachmentId	= $family['picture'];
-								}								
-							}else{
-								$attachmentId	= get_user_meta($user->ID, 'profile_picture', true);
-								if(is_array($attachmentId) && isset($attachmentId[0])){
-									$attachmentId	= $attachmentId[0];
-								}
-							}
-
-							if(is_numeric($attachmentId)){
-								$pictures[] 	= get_attached_file($attachmentId);
-							}else{
-								$pictures[] 	= SIM\urlToPath($attachmentId);
-							}
-
-							// user page url
-							$url		= SIM\maybeGetUserPageUrl($user->ID);
-							if($url){
-								$urls[]	= $url;
-							}
-
-							$usersFound[]	= $user->ID;
-
-							if(!empty($family['partner'])){
-								$usersFound[]	= $family['partner'];
-							}
-
-							break; // only do it once
-						}
+					if(!empty($family['partner'])){
+						$usersFound[]	= $family['partner'];
 					}
 				}
 
@@ -216,7 +147,6 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 					'users'		=> $usersFound,
 					'post'		=> $postFound
 				];
-
 				
 				// skip filter if not for today
 				if($plainText && empty($date)){

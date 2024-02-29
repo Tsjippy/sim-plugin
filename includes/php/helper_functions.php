@@ -1383,31 +1383,25 @@ function clearOutput($write=false){
 }
 
 /**
- * Replace a users name with a link to the user page
+ * Find users in a string
  *
- * @param	string	$string		The string to scan for users
+ * @param	string	$string			The string to search in
+ * @param	bool	$skipHyperlinks	Wheter we should skip users contained in a hyperlink
  *
- * @return	string				The string with userpagelinks
+ * @return	array					Array of with found user ids as index and an array of the text found and its start location as value
  */
-function userPageLinks($string){
-	//Find names in content
+function findUsers(&$string, $skipHyperlinks){
+	$foundUsers	= [];
 
-	$oneWord	= "[A-Z][^\$%\^*£=~@\d\s:\[\],\"\.\)\(]+.?+";			// a word starting with a capital, ending with a space
-	$singleRe	= "(?:$oneWord){2,}";					// two or more words starting with a capital after each other 
-	$coupleRe	= "(?:$oneWord(?:&|and).($oneWord)+)";
-	$familyRe	= "$oneWord\s(?:F|f)amily";
+	// get all useraccounts
+	$users 		= getUserAccounts(false, false);
 
-	// check if prayer contains a single name or a couples name
-	// We use look ahead (?=)to allow for overlap
-	$re		= "/(*UTF8)(?=($coupleRe|$singleRe|$familyRe))/m";	
-	preg_match_all($re, $string, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE, 0);
-
-	$users = getUserAccounts(false, false);
-
-	$string	= str_replace('&amp;', '&', $string);
+	// Clean up the string
+	$string		= str_replace(['&amp;', chr(194), chr(160)], ['&', ' '], $string);
 
 	$displayNames	= [];
 	$coupleNames	= [];
+
 	foreach($users as $user){
 		// store displayname
 		$displayNames[$user->ID]	= $user->display_name;
@@ -1419,9 +1413,25 @@ function userPageLinks($string){
 		}
 	}
 
+	//Find names in content
+	$oneWord	= "[A-Z][^\$%\^*£=~@\d\s:\[\],\"\.\)\(]+\s?+";			// a word starting with a capital, ending with a space
+	$singleRe	= "(?:$oneWord){2,}";									// two or more words starting with a capital after each other 
+	$coupleRe	= "(?:(?:$oneWord)+(?:&|and).((?:$oneWord)+))";			// one or more words starting with a capital letter followed by 'and' or '&' followed by one or more words starting with a capital letter 
+	$familyRe	= "$oneWord\s(?:F|f)amily";
+
+	// check if prayer contains a single name or a couples name
+	// We use look ahead (?=)to allow for overlap
+	$re		= "/(*UTF8)(?=($coupleRe|$singleRe|$familyRe))/m";	
+	preg_match_all($re, $string, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE, 0);
+
 	foreach($matches as $match){
-		// last name must be there and it should not be a hyperlink already
-		if(!isset($match[1]) || str_contains($match[1][0], '</a>')){
+		if(
+			!isset($match[1]) || 
+			(
+				$skipHyperlinks	&&
+				str_contains($match[1][0], '</a>')		// skip hyperlinks
+			)
+		){
 			continue;
 		}
 
@@ -1431,11 +1441,12 @@ function userPageLinks($string){
 			$name	= trim($match[2][0]);
 		}
 
-		// check is single user
+		// check if single user
 		$userId	= array_search($name, $displayNames);		
 
-		$name	= trim($match[1][0]);
 		if(!$userId){
+			$name	= trim($match[1][0]);
+
 			// check if mentioned as a couple without lastname
 			$userId	= array_search(str_replace(' and ', ' & ', $name), $coupleNames);
 
@@ -1444,6 +1455,26 @@ function userPageLinks($string){
 			}
 		}
 
+		if(!isset($foundUsers[$userId])){
+			$foundUsers[$userId]	= $match[1];
+		}
+	}
+
+	return $foundUsers;
+}
+
+/**
+ * Replace a users name with a link to the user page
+ *
+ * @param	string	$string		The string to scan for users
+ *
+ * @return	string				The string with userpagelinks
+ */
+function userPageLinks($string){
+	$userIds	= findUsers($string, true);
+
+	$offset	= 0;
+	foreach($userIds as $userId => $match){
 		$privacyPreference = get_user_meta( $userId, 'privacy_preference', true );
 
 		//only replace the name with a link if privacy allows
@@ -1457,9 +1488,13 @@ function userPageLinks($string){
 			continue;
 		}
 
+		$name	= trim($match[0]);
 		$link	= "<a href=\"$url\">$name</a>";
 
-		$string	= str_replace($match[1][0], $link, $string);
+		$string	= substr_replace($string, $link, $match[1] + $offset, strlen($name));
+
+		// $match comes with the original offset, we need to keep track of the amount of added chars
+		$offset	+= strlen($link) - strlen($name);
 	}
 
 	return $string;
