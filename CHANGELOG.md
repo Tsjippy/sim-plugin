@@ -5,15 +5,6 @@
 ### Added
 
 ### Changed
-
-### Fixed
-
-### Updated
-
-## [2.40.8] - 2024-02-29
-
-
-### Changed
 - username processing
 
 ### Fixed
