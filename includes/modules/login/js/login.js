@@ -367,6 +367,10 @@ let startConditionalRequest = async (mediation) => {
 			return;
 		}
 
+		if(error.message.includes('A request is already pending.')){
+			startConditionalRequest(mediation)
+		}
+
 		document.getElementById('usercred_wrapper').classList.remove('hidden');
 		document.getElementById('webauthn_wrapper').classList.add('hidden');
 
