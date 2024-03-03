@@ -270,7 +270,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		 */
 		public function sendEmail(int $postId, int $segmentId, $from='', $extraMessage=''){
 			try {
-				if($_SERVER['HTTP_HOST'] == 'localhost'){
+				if($_SERVER['HTTP_HOST'] == 'localhost' || get_option("wpstg_is_staging_site") == "true"){
 					return 'Not sending from localhost';
 				}
 

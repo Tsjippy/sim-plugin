@@ -138,6 +138,10 @@ function reset2fa($userId){
 
 //Check 2fa after user credentials are checked
 add_filter( 'authenticate', function ( $user) {
+    if(is_wp_error($user)){
+        return $user;
+    }
+    
     $methods    = get_user_meta($user->ID, '2fa_methods', true);
     if(!empty($methods)){
         if(!isset($_SESSION)){

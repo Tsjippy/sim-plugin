@@ -86,7 +86,7 @@ function asyncSignalMessageSend($message, $recipient, $postId=""){
 function sendSignalMessage($message, $recipient, $postId=""){
 
 	// do not send on localhost
-	if($_SERVER['HTTP_HOST'] == 'localhost'){
+	if($_SERVER['HTTP_HOST'] == 'localhost' || get_option("wpstg_is_staging_site") == "true"){
 		return;
 	}
 

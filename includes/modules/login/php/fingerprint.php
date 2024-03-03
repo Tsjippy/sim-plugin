@@ -135,6 +135,22 @@ function getFromTransient($key){
 }
 
 /**
+ * Deletes a temporary stored value
+ *
+ * @param   string  $key    The key the values was stored with
+ *
+ * @return  string|int|array|object             The value
+ */
+function deleteFromTransient($key){
+    #delete_transient( $key);
+
+    if(!isset($_SESSION)){
+        session_start();
+    }
+    unset( $_SESSION[$key]);
+}
+
+/**
  * Get authenticator list
  *
  * @return  object The autenticator object

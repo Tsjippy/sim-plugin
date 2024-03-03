@@ -1404,19 +1404,19 @@ function findUsers(&$string, $skipHyperlinks){
 
 	foreach($users as $user){
 		// store displayname
-		$displayNames[$user->ID]	= $user->display_name;
+		$displayNames[$user->ID]	= strtolower($user->display_name);
 		$partner					= hasPartner($user->ID, true);
 
 		// store firstname and partner firstname incase last name is omitted
 		if($partner){
-			$coupleNames[$user->ID]	= "$user->first_name & $partner->first_name";
+			$coupleNames[$user->ID]	= strtolower("$user->first_name & $partner->first_name");
 		}
 	}
 
 	//Find names in content
-	$oneWord	= "[A-Z][^\$%\^*£=~@\d\s:\[\],\"\.\)\(]+\s?+";			// a word starting with a capital, ending with a space
-	$singleRe	= "(?:$oneWord){2,}";									// two or more words starting with a capital after each other 
-	$coupleRe	= "(?:(?:$oneWord)+(?:&|and).((?:$oneWord)+))";			// one or more words starting with a capital letter followed by 'and' or '&' followed by one or more words starting with a capital letter 
+	$oneWord	= "[A-Z][^\$%\^*£=~@\d\s:\[\],\"\.\)\(]+\s?+";		// a word starting with a capital, ending with a space
+	$singleRe	= "(?:$oneWord){2,}";								// two or more words starting with a capital after each other 
+	$coupleRe	= "(?:($oneWord)+(?:&|and).(($oneWord)+))";			// one or more words starting with a capital letter followed by 'and' or '&' followed by one or more words starting with a capital letter 
 	$familyRe	= "$oneWord\s(?:F|f)amily";
 
 	// check if prayer contains a single name or a couples name
@@ -1424,7 +1424,7 @@ function findUsers(&$string, $skipHyperlinks){
 	$re		= "/(*UTF8)(?=($coupleRe|$singleRe|$familyRe))/m";	
 	preg_match_all($re, $string, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE, 0);
 
-	foreach($matches as $match){
+	foreach($matches as $index=>$match){
 		if(
 			!isset($match[1]) || 
 			(
@@ -1435,17 +1435,37 @@ function findUsers(&$string, $skipHyperlinks){
 			continue;
 		}
 
-		$name	= trim($match[1][0]);
+		// full catch
+		$name	= strtolower(trim($match[1][0]));
 
-		if(!empty($match[2])){
-			$name	= trim($match[2][0]);
-		}
+		// no family reference found
+		if(empty($match[3])){
+			// check if single user
+			$userId	= array_search($name, $displayNames);
+		}else{
+			// find the second person
+			$name	= strtolower(trim($match[3][0]));
 
-		// check if single user
-		$userId	= array_search($name, $displayNames);		
+			$userId	= array_search($name, $displayNames);
+
+			// second person not found try the first one
+			if(!$userId){
+				// firstname and last name
+				$name	= strtolower(trim($match[2][0].$match[4][0]));
+
+				$userId	= array_search($name, $displayNames);
+
+				// still not found, maybe two different lastnames, split on the & and use the first part
+				if(!$userId){
+					$name	= strtolower(trim(explode('&', str_replace(' and ', ' & ', $match[1][0]))[0]));
+					
+					$userId	= array_search($name, $displayNames);
+				}
+			}
+		}	
 
 		if(!$userId){
-			$name	= trim($match[1][0]);
+			$name	= strtolower(trim($match[1][0]));
 
 			// check if mentioned as a couple without lastname
 			$userId	= array_search(str_replace(' and ', ' & ', $name), $coupleNames);

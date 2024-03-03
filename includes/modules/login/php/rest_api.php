@@ -7,6 +7,7 @@ use Webauthn\PublicKeyCredentialUserEntity;
 use Webauthn\PublicKeyCredentialCreationOptions;
 use Webauthn\PublicKeyCredentialSource;
 use Webauthn\AuthenticatorSelectionCriteria;
+use Webauthn\PublicKeyCredentialRequestOptions;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use WP_Error;
@@ -282,6 +283,14 @@ function removeWebAuthenticator(){
     $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository(wp_get_current_user());
     $publicKeyCredentialSourceRepository->removeCredential($key);
 
+    // store id for keypasslogin without username
+    $usedIds    = get_option('sim-webauth-ids');
+    if(!$usedIds){
+        $usedIds    = [];
+    }
+    unset($usedIds[$_POST['key']]);
+    update_option('sim-webauth-ids', $usedIds);
+
     return 'Succesfull removed the authenticator';
 }
 
@@ -324,20 +333,30 @@ function biometricOptions(){
         }, $credentialSources);
 
         // Set authenticator type
-        $authenticatorType = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_PLATFORM;
+        $authenticatorType   = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_PLATFORM;
         //$authenticatorType = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM;
         //$authenticatorType = AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_NO_PREFERENCE;
 
         // Set user verification
         //$userVerification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED;
-        $userVerification = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED;
+        $userVerification   = AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED;
+
+        $residentKey        = AuthenticatorSelectionCriteria::RESIDENT_KEY_REQUIREMENT_REQUIRED;
 
         // Create authenticator selection
-        $authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria(
+        /* $authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria(
             $authenticatorType,
-            false,
-            $userVerification
-        );
+            true,
+            $userVerification,
+            $residentKey
+        ); */
+
+        $authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria();
+
+        $authenticatorSelectionCriteria->setAuthenticatorAttachment($authenticatorType);
+        $authenticatorSelectionCriteria->setRequireResidentKey(true);
+        $authenticatorSelectionCriteria->setUserVerification($userVerification);
+        $authenticatorSelectionCriteria->setResidentKey($residentKey);
 
         // Create a creation challenge
         $publicKeyCredentialCreationOptions = $server->generatePublicKeyCredentialCreationOptions(
@@ -356,11 +375,11 @@ function biometricOptions(){
     }catch(\Exception $exception){
         SIM\printArray("ajax_create: (ERROR)".$exception->getMessage());
         SIM\printArray(generateCallTrace($exception));
-        return new WP_Error('Error',"Something went wrong.");
+        return new WP_Error('Error',"Something went wrong 1.");
     }catch(\Error $error){
         SIM\printArray("ajax_create: (ERROR)".$error->getMessage());
         SIM\printArray(generateCallTrace($error));
-        return new WP_Error('Error',"Something went wrong.");
+        return new WP_Error('Error',"Something went wrong 2.");
     }
 }
 
@@ -395,6 +414,14 @@ function storeBiometric(){
             return new WP_Error('Logged in error', "Credential ID not unique");
         }
 
+        // store id for keypasslogin without username
+        $usedIds    = get_option('sim-webauth-ids');
+        if(!$usedIds){
+            $usedIds    = [];
+        }
+        $usedIds[json_decode(stripslashes($_POST['publicKeyCredential']))->rawId]  = $user->ID;
+        update_option('sim-webauth-ids', $usedIds);
+
         $psr17Factory = new Psr17Factory();
         $creator = new ServerRequestCreator(
             $psr17Factory,
@@ -412,7 +439,8 @@ function storeBiometric(){
         );
 
         // Allow to bypass scheme verification when under localhost
-        $currentDomain = 'localhost';
+        //$currentDomain = 'localhost';
+        $currentDomain = $_SERVER['HTTP_HOST'];
         if($currentDomain === "localhost" || $currentDomain === "127.0.0.1"){
             $server->setSecuredRelyingPartyId([$currentDomain]);
         }
@@ -459,17 +487,32 @@ function storeBiometric(){
     }catch(\Exception $exception){
         SIM\printArray("ajax_create_response: (ERROR)".$exception->getMessage());
         SIM\printArray(generateCallTrace($exception));
-        return new WP_Error('Logged in error', "Something went wrong.");
+        return new WP_Error('Logged in error', "Something went wrong 3.");
     }catch(\Error $error){
         SIM\printArray("ajax_create_response: (ERROR)".$error->getMessage());
         SIM\printArray(generateCallTrace($error));
-        return new WP_Error('Logged in error', "Something went wrong.");
+        return new WP_Error('Logged in error', "Something went wrong 4.");
     }
 }
 
 // Auth challenge
 function startAuthentication(){
     try{
+        if(empty($_POST['username'])){
+
+            $publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions::create(
+                random_bytes(32),
+                PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_REQUIRED
+            );
+
+            storeInTransient("pkcco_auth", $publicKeyCredentialRequestOptions);
+            deleteFromTransient("user_name_auth");
+            deleteFromTransient("user_auth");
+            deleteFromTransient("user");
+
+            return $publicKeyCredentialRequestOptions;
+        }
+
         $user           = get_user_by('login', $_POST['username']);
 
         if(!$user){
@@ -510,7 +553,7 @@ function startAuthentication(){
         if(count($credentialSources) === 0){
             SIM\printArray("ajax_auth: (ERROR)No authenticator found");
             SIM\printArray($userEntity);
-            return new WP_Error('authenticator error',"No authenticator available");
+            return new WP_Error('authenticator error', "No authenticator available");
         }
 
         // Convert the Credential Sources into Public Key Credential Descriptors for excluding
@@ -539,11 +582,11 @@ function startAuthentication(){
     }catch(\Exception $exception){
         SIM\printArray("ajax_auth: (ERROR)".$exception->getMessage());
         SIM\printArray(generateCallTrace($exception));
-        return new WP_Error('webauthn error',"Something went wrong.");
+        return new WP_Error('webauthn error',"Something went wrong 5.");
     }catch(\Error $error){
         SIM\printArray("ajax_auth: (ERROR)".$error->getMessage());
         SIM\printArray(generateCallTrace($error));
-        return new WP_Error('webauthn error',"Something went wrong.");
+        return new WP_Error('webauthn error',"Something went wrong 6.");
     }
 }
 
@@ -557,8 +600,31 @@ function finishAuthentication(){
         $userEntity                         = getFromTransient("user_auth");
         $user                               = getFromTransient("user");
 
+        // check if doing passkey login
+        if(empty($user) || empty($userNameAuth) || empty($userEntity)){
+            $usedIds    = get_option('sim-webauth-ids');
+            if(!$usedIds){
+                $usedIds    = [];
+            }
+
+            $userId = $usedIds[json_decode(stripslashes($_POST['publicKeyCredential']))->rawId];
+            if(empty($userId)){
+                return new WP_Error('webauthn',"Authenticator id not found");
+            }
+
+            $user           = get_userdata($userId);
+
+            if(empty($userId)){
+                return new WP_Error('webauthn',"User not found");
+            }
+
+            $userNameAuth   = $user->user_login;
+
+            $_SESSION['allow_passwordless_login']   = true;
+        }
+
         // May not get the challenge yet
-        if(empty($publicKeyCredentialRequestOptions) || empty($userNameAuth) || empty($userEntity)){
+        if(empty($publicKeyCredentialRequestOptions)){
             SIM\printArray("ajax_auth_response: (ERROR)Challenge not found in transient, exit");
             return new WP_Error('webauthn',"Bad request.");
         }
@@ -581,12 +647,14 @@ function finishAuthentication(){
             return new WP_Error('webauthn',"User not inited.");
         }
 
-        $userEntity = new PublicKeyCredentialUserEntity(
-            $user->user_login,
-            $webauthnKey,
-            $user->display_name,
-            getProfilePicture($user->ID)
-        );
+        if(empty($userEntity)){
+            $userEntity = new PublicKeyCredentialUserEntity(
+                $user->user_login,
+                $webauthnKey,
+                $user->display_name,
+                getProfilePicture($user->ID)
+            );
+        }
 
         $server = new Server(
             getRpEntity(),
@@ -598,9 +666,6 @@ function finishAuthentication(){
         $currentDomain = $_SERVER['HTTP_HOST'];
         if($currentDomain === "localhost" || $currentDomain === "127.0.0.1"){
             $server->setSecuredRelyingPartyId([$currentDomain]);
-            //bypass webauthn on local host
-            //$_SESSION['webauthn']   = 'success';
-            //return true;
         }
 
         // Verify
@@ -624,16 +689,16 @@ function finishAuthentication(){
             // Failed to verify
             SIM\printArray("ajax_auth_response: (ERROR)".$exception->getMessage());
             SIM\printArray(generateCallTrace($exception));
-            return new WP_Error('webauthn', "Something went wrong.");
+            return new WP_Error('webauthn', $exception->getMessage());
         }
     }catch(\Exception $exception){
         SIM\printArray("ajax_auth_response: (ERROR)".$exception->getMessage());
         SIM\printArray(generateCallTrace($exception));
-        return new WP_Error('webauthn', "Something went wrong.");
+        return new WP_Error('webauthn', $exception->getMessage());
     }catch(\Error $error){
         SIM\printArray("ajax_auth_response: (ERROR)".$error->getMessage());
         SIM\printArray(generateCallTrace($error));
-        return new WP_Error('webauthn', "Something went wrong.");
+        return new WP_Error('webauthn', $error->getMessage());
     }
 }
 
@@ -786,7 +851,11 @@ function userLogin(){
         'user_password' => $password,
         'remember'      => $remember
     );
+
+    // add a filter to allow passwordless sign in
+    add_filter( 'authenticate', __NAMESPACE__.'\allowPasswordlessLogin', 999, 3 );
     $user = wp_signon( $creds);
+    remove_filter( 'authenticate', __NAMESPACE__.'\allowPasswordlessLogin', 999, 3 );
 
     if ( is_wp_error( $user ) ) {
         return new WP_Error('Login error', $user->get_error_message());
@@ -965,3 +1034,32 @@ function requestUserAccount(){
 
 	return 'Useraccount successfully created, you will receive an e-mail as soon as it gets approved.';
 }
+
+/**
+  * An 'authenticate' filter callback that authenticates the user using only the username.
+  *
+  * To avoid potential security vulnerabilities, this should only be used in the context of a programmatic login,
+  * and unhooked immediately after it fires.
+  * 
+  * @param WP_User $user
+  * @param string $username
+  * @param string $password
+  * @return bool|WP_User a WP_User object if the username matched an existing user, or false if it didn't
+*/
+function allowPasswordlessLogin( $user, $username, $password ) {
+    session_start();
+
+    if(isset($_SESSION['allow_passwordless_login'])){
+        deleteFromTransient('allow_passwordless_login');
+        deleteFromTransient('pkcco');
+        deleteFromTransient('pkcco_auth');
+        deleteFromTransient('userEntity');
+        deleteFromTransient('user_info');
+        deleteFromTransient('webauthn');
+        deleteFromTransient('user');
+
+        return get_user_by( 'login', getFromTransient('username') );
+    }
+
+    return $user;
+ }

@@ -5,6 +5,14 @@ import {
 	fetchRestApi
 } from './shared.js';
 
+window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(
+	result => {
+	  if (!result) {
+		console.log("No platform authenticator found. If your OS does not come with one, try using devtools to set one up.");
+	  }
+	}
+);
+
 //Add an event listener to the login or register button
 console.log("Login.js loaded");
 
@@ -69,7 +77,7 @@ async function verifyWebauthn(methods){
 		document.querySelector('#webauthn_wrapper .status_message').textContent	= 'Waiting for biometric';
 
 		// Verify on device
-		var credentials			= await navigator.credentials.get({publicKey});
+		var credentials			= await navigator.credentials.get({	publicKey });
 
 		// Update message
 		document.querySelector('#webauthn_wrapper .status_message').textContent	= 'Verifying...';
@@ -232,6 +240,142 @@ function showMessage(message){
 }
 
 let webauthnSupported	= false;
+let modal;
+let credParsing			= false;
+let abortController;
+
+async function processCredential(credential){
+	if(credParsing){
+		return;
+	}
+	if (credential) {
+		credParsing	= true;
+		let username = String.fromCodePoint(...new Uint8Array(credential.response.userHandle));
+
+		document.querySelector('#webauthn_wrapper .status_message').textContent='Verifying credentials...';
+
+		// Verify on the server
+		const publicKeyCredential 	= preparePublicKeyCredentials(credential);
+		let formData				= new FormData();
+		formData.append('publicKeyCredential', JSON.stringify(publicKeyCredential));
+		let response				= await fetchRestApi('auth_finish', formData, false);
+
+		if(response){
+			showMessage('Passkey login succesfull');
+		}else{
+			document.querySelector('#webauthn_wrapper .status_message').textContent='Please authenticate';
+
+			document.getElementById('usercred_wrapper').classList.remove('hidden');
+			document.getElementById('webauthn_wrapper').classList.add('hidden');
+
+			showMessage('Passkey login failed, try using your username and password');
+
+			return;
+		}
+
+		//authentication success
+		requestLogin();
+
+	} else {
+		console.log("Credential returned null");
+
+		document.getElementById('usercred_wrapper').classList.remove('hidden');
+		document.getElementById('webauthn_wrapper').classList.add('hidden');
+
+		showMessage('Passkey login failed');
+	}
+}
+
+let startConditionalRequest = async (mediation) => {
+	if (window.PublicKeyCredential && PublicKeyCredential.isConditionalMediationAvailable) {
+		console.log("Conditional UI is understood by the browser");
+		if (!await window.PublicKeyCredential.isConditionalMediationAvailable()) {
+			console.log("Conditional UI is understood by your browser but not available");
+			return;
+		}
+	} else {
+		if (!navigator.credentials.conditionalMediationSupported) {
+			console.log("Your browser does not implement Conditional UI (are you running the right chrome/safari version with the right flags?)");
+			return;
+		} else {
+			console.log("This browser understand the old version of Conditional UI feature detection");
+		}
+	}
+
+	if(abortController != undefined){
+		abortController.abort('aborted');
+	}
+	
+	abortController	= new AbortController();
+		
+	abortController.onAbort	= function(ev){
+		//console.log(ev);
+	}
+	abortController.signal.onAbort	= function(ev){
+		//console.log(ev);
+	}
+
+	if(mediation != 'conditional'){
+		document.getElementById('usercred_wrapper').classList.add('hidden');
+		document.getElementById('webauthn_wrapper').classList.remove('hidden');
+
+		showMessage('Performing passkey login');
+	}
+
+	try {
+		let formData			= new FormData();
+		formData.append('username', '');
+
+		let response			= await fetchRestApi('auth_start', formData);
+		if(!response){
+			throw new Error('auth_start failed');
+		}
+
+		let publicKey			= preparePublicKeyOptions(response);
+
+		let credential = await navigator.credentials.get({
+			signal: abortController.signal,
+			publicKey: {
+				challenge: publicKey.challenge,
+				hints: "client-device"
+			},
+			//mediation: 'silent',
+			//mediation: 'conditional',
+			//mediation: 'required',
+			mediation: mediation
+		});
+
+		if(mediation == 'conditional'){	
+			document.getElementById('usercred_wrapper').classList.add('hidden');
+			document.getElementById('webauthn_wrapper').classList.remove('hidden');
+	
+			showMessage('Performing passkey login');
+		}
+		
+		processCredential(credential);
+		/* .catch((err) => {
+			console.error(err);
+			document.getElementById('usercred_wrapper').classList.remove('hidden');
+			document.getElementById('webauthn_wrapper').classList.add('hidden');
+			showMessage('Passkey login failed');
+			return false;
+		}); */
+
+	} catch (error) {
+		if (error == "aborted") {
+			console.log("request aborted");
+			return;
+		}
+
+		document.getElementById('usercred_wrapper').classList.remove('hidden');
+		document.getElementById('webauthn_wrapper').classList.add('hidden');
+
+		showMessage('Passkey login failed, try using your username and password');
+
+		console.log(error);
+	}
+}
+
 function checkWebauthnAvailable(){
 	if (window.PublicKeyCredential) {
 		PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then((available) => {
@@ -363,7 +507,7 @@ function openLoginModal(){
 	//prevent page scrolling
 	document.querySelector('body').style.overflowY = 'hidden';
 
-	var modal	= document.getElementById('login_modal');
+	modal	= document.getElementById('login_modal');
 
 	//reset form
 	modal.querySelectorAll('form > div:not(.hidden)').forEach(el=>el.classList.add('hidden'));
@@ -399,8 +543,10 @@ function waitForCaptcha(){
 	}, 1000);
 }
 
-//check if the current browser supports webauthn
-checkWebauthnAvailable();
+document.addEventListener('DOMContentLoaded', () => {
+	//check if the current browser supports webauthn
+	checkWebauthnAvailable();
+});
 
 document.addEventListener("click", function(event){
 	var target = event.target;
@@ -423,6 +569,8 @@ document.addEventListener("click", function(event){
 		verifyWebauthn([]);
 	}else if(target.name == 'request_account'){
 		requestAccount(target);
+	}else if(target.closest(`[name='fingerprintpicture']`) != null){
+		startConditionalRequest('silent');
 	}
 });
 
@@ -453,3 +601,5 @@ if (checkIsIOS()) {
 document.querySelectorAll('.login').forEach(el=>{
 	el.classList.remove('hidden');
 });
+
+startConditionalRequest('conditional');

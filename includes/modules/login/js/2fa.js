@@ -157,6 +157,7 @@ async function registerBiometric(target){
 	}catch(error){
 		document.getElementById('add_webauthn').classList.remove('hidden');
 		console.error(error);
+		Main.displayMessage(error, 'error');
 	}
 
     document.querySelector('#loader_wrapper').remove();

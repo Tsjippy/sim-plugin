@@ -28,7 +28,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
 
     // Get one credential's meta by credential ID
     public function findOneMetaByCredentialId(string $publicKeyCredentialId): ?array {
-        $meta = unserialize(get_user_meta($this->userId,"2fa_webautn_cred_meta",true));
+        $meta = unserialize(get_user_meta($this->userId, "2fa_webautn_cred_meta", true));
         if(isset($meta[$publicKeyCredentialId])){
             return $meta[$publicKeyCredentialId];
         }
