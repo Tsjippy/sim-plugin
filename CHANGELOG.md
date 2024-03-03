@@ -8,6 +8,7 @@
 
 ### Fixed
 - ets
+- passkey login bug
 
 ### Updated
 
