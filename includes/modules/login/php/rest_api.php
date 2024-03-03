@@ -594,11 +594,16 @@ function startAuthentication(){
 function finishAuthentication(){
     try{
         $publicKeyCredential                = sanitize_text_field(stripslashes($_POST['publicKeyCredential']));
-
         $publicKeyCredentialRequestOptions  = getFromTransient("pkcco_auth");
         $userNameAuth                       = getFromTransient("user_name_auth");
         $userEntity                         = getFromTransient("user_auth");
         $user                               = getFromTransient("user");
+
+        // May not get the challenge yet
+        if(empty($publicKeyCredentialRequestOptions)){
+            SIM\printArray("ajax_auth_response: (ERROR)Challenge not found in transient, exit");
+            return new WP_Error('webauthn',"Bad request.");
+        }
 
         // check if doing passkey login
         if(empty($user) || empty($userNameAuth) || empty($userEntity)){
@@ -623,21 +628,15 @@ function finishAuthentication(){
             $_SESSION['allow_passwordless_login']   = true;
         }
 
-        // May not get the challenge yet
-        if(empty($publicKeyCredentialRequestOptions)){
-            SIM\printArray("ajax_auth_response: (ERROR)Challenge not found in transient, exit");
-            return new WP_Error('webauthn',"Bad request.");
-        }
-
-        $psr17Factory = new Psr17Factory();
-        $creator = new ServerRequestCreator(
+        $psr17Factory   = new Psr17Factory();
+        $creator        = new ServerRequestCreator(
             $psr17Factory,
             $psr17Factory,
             $psr17Factory,
             $psr17Factory
         );
 
-        $serverRequest = $creator->fromGlobals();
+        $serverRequest  = $creator->fromGlobals();
         $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository($user);
 
         // If user entity is not saved, read from WordPress
