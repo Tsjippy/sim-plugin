@@ -523,11 +523,8 @@ function startAuthentication(){
 
         //User has no webauthn yet
         if(!$webauthnKey){
-            if(!isset($_SESSION)){
-                session_start();
-            }
             //indicate a failed webauth for content filtering
-            $_SESSION['webauthn'] = 'failed';
+            storeInTransient('webauthn', 'failed');
             return;
         }
 
@@ -625,7 +622,8 @@ function finishAuthentication(){
 
             $userNameAuth   = $user->user_login;
 
-            $_SESSION['allow_passwordless_login']   = true;
+            storeInTransient("username", $userNameAuth);
+            storeInTransient("allow_passwordless_login", true);
         }
 
         $psr17Factory   = new Psr17Factory();
@@ -679,10 +677,7 @@ function finishAuthentication(){
             // Store last used
             $publicKeyCredentialSourceRepository->updateCredentialLastUsed($publicKeyCredential);
 
-            if(!isset($_SESSION)){
-                session_start();
-            }
-            $_SESSION['webauthn']   = 'success';
+            storeInTransient('webauthn','success');
             return "true";
         }catch(\Throwable $exception){
             // Failed to verify
