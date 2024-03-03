@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.41.0] - 2024-03-03
+
+
+### Added
 - passkey login
 
 ### Changed
