@@ -110,7 +110,7 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug, $settings){
 add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings, $moduleName){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
-		return;
+		return $optionsHtml;
 	}
 
 	ob_start();

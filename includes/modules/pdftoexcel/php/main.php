@@ -41,7 +41,7 @@ function readPdf($filePath, $destination, $keepName=true, $type='csv'){
     foreach($pages as $index=>$page){
         // skip front page
         if($index == 0){
-            continue;
+            //continue;
         }
 
         $data = $page->getDataTm();

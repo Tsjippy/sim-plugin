@@ -1,12 +1,8 @@
 @use 'global' as *;
 
-%shared-table{
+.sim-table{
 	border: 1px solid black;
 	text-align: center !important;
-}
-
-.sim-table{
-	@extend %shared-table;
 
 	@media screen and (max-width: $mobilewidth){
 		max-width: calc(100vw - 15px);
@@ -89,17 +85,45 @@
 
 	tr:nth-child(even), 
 	tr:nth-child(even) .sticky{
-	background-color: #dddddd;
+		background-color: #dddddd;
 	}
 
 	tr:nth-child(odd),
 	tr:nth-child(odd) .sticky{
-	background-color: white;
+		background-color: white;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		border: 1px solid $secundary_color;
+
+		> thead{
+			background-color: #595959;
+			> tr > th {
+				background-color: #595959;
+
+			}
+		}
+
+		tr:nth-child(even), 
+		tr:nth-child(even) .sticky{
+			background-color: #595959;
+		}
+
+		tr:nth-child(odd),
+		tr:nth-child(odd) .sticky{
+			background-color: black;
+		}
 	}
 }
 
 .table-row-final {
 	background-color: #dddddd;
+}
+
+@media (prefers-color-scheme: dark) {
+	.table-row-final {
+		background-color: #595959;
+	}
 }
 
 .table_action{

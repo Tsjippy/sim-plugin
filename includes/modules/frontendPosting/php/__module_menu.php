@@ -133,6 +133,18 @@ add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 	?>
 	<br>
 	<br>
+	<label>
+		Define the e-mail people get when they are responsible for multiple pages which is out of date.<br>
+		You can use placeholders in your inputs.<br>
+		These ones are available (click on any of them to copy):
+	</label>
+	<?php
+	$email    = new PostOutOfDateEmails(wp_get_current_user());
+	$email->printPlaceholders();
+	$email->printInputs($settings);
+	?>
+	<br>
+	<br>
 	<h4>E-mail send to content managers when a post is pending</h4>
 	<label>
 		Define the e-mail content managers get when someone has submitted a post or post update for review<br>

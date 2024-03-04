@@ -12,6 +12,7 @@ add_shortcode("test", function ($atts){
 
     global $Modules;
 	
+	FRONTENDPOSTING\pageAgeWarning();
 
     /* $posts = get_posts(
 		array(

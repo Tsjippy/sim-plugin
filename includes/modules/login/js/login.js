@@ -353,13 +353,6 @@ let startConditionalRequest = async (mediation) => {
 		}
 		
 		processCredential(credential);
-		/* .catch((err) => {
-			console.error(err);
-			document.getElementById('usercred_wrapper').classList.remove('hidden');
-			document.getElementById('webauthn_wrapper').classList.add('hidden');
-			showMessage('Passkey login failed');
-			return false;
-		}); */
 
 	} catch (error) {
 		if (error == "aborted") {
@@ -368,13 +361,16 @@ let startConditionalRequest = async (mediation) => {
 		}
 
 		if(error.message.includes('A request is already pending.')){
-			startConditionalRequest(mediation)
+			startConditionalRequest(mediation);
 		}
 
-		document.getElementById('usercred_wrapper').classList.remove('hidden');
-		document.getElementById('webauthn_wrapper').classList.add('hidden');
+		// only do when login modal is open
+		if(document.getElementById('usercred_wrapper').closest('.hidden') == null){
+			document.getElementById('usercred_wrapper').classList.remove('hidden');
+			document.getElementById('webauthn_wrapper').classList.add('hidden');
 
-		showMessage('Passkey login failed, try using your username and password');
+			showMessage('Passkey login failed, try using your username and password');
+		}
 
 		console.log(error);
 	}

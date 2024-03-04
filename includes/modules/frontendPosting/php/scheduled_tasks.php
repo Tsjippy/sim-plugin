@@ -74,6 +74,8 @@ function pageAgeWarning(){
 	
 	//Months converted to seconds (days*hours*minutes*seconds)
 	$maxAgeInSeconds		= SIM\getModuleOption(MODULE_SLUG, 'max_page_age') * 30.4375 *24 *60 * 60;
+
+	$emails					= [];
 	
 	//Loop over all the pages
 	foreach ( $pages as $page ) {
@@ -94,16 +96,47 @@ function pageAgeWarning(){
 			//Send an e-mail
 			$recipients = getPageRecipients($page);
 			foreach($recipients as $recipient){
+				$email	= $recipient->user_email;
 				//Only email if valid email
-				if(strpos($recipient->user_email,'.empty') === false){
-					$postOutOfDateEmail    = new PostOutOfDateEmail($recipient, $postTitle, $pageAge, $url);
-					$postOutOfDateEmail->filterMail();
+				if(strpos($email,'.empty') === false){
+
+					if(!isset($emails[$email])){
+
+						$postOutOfDateEmail    = new PostOutOfDateEmail($recipient, $postTitle, $pageAge, $url);
+						$postOutOfDateEmail->filterMail();
+
+						$emails[$email]	= [
+							'subject'	=> $postOutOfDateEmail->subject,
+							'message'	=> $postOutOfDateEmail->message,
+							'count'		=> 1
+						];
+					}else{
+						$postOutOfDateEmail    = new PostOutOfDateEmails($recipient, $postTitle, $pageAge, $url);
+						$postOutOfDateEmail->filterMail();
+
+						// replace the main message
+						if($emails[$email]['count'] == 1){
+							$emails[$email]['message']	= $postOutOfDateEmail->message;
+						}
+						$message	= $emails[$email]['message'];
+
+						$count		= intval($emails[$email]['count']);
+						$count++;
+
+						$emails[$email]	= [
+							'subject'	=> $postOutOfDateEmail->subject,
+							'message'	=> "$message<br><a href='$url'>$postTitle</a><br>",
+							'count'		=> $count
+						];
+					}
 						
-					wp_mail( $recipient->user_email, $postOutOfDateEmail->subject, $postOutOfDateEmail->message);
+					//wp_mail( $recipient->user_email, $postOutOfDateEmail->subject, $postOutOfDateEmail->message);
 				}
 			}
 		}
 	}
+
+	SIM\printArray($emails, true);
 }
 
 /**
