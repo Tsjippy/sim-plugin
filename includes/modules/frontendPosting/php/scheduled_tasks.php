@@ -136,7 +136,9 @@ function pageAgeWarning(){
 		}
 	}
 
-	SIM\printArray($emails, true);
+	foreach($emails as $address=>$email){
+		wp_mail( $address, $email['subject'], $email['message']);
+	}
 }
 
 /**
