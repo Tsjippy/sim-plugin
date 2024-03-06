@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.41.1] - 2024-03-06
+
+
+### Changed
 - old post messages
 
 ### Fixed
