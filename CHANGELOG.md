@@ -10,6 +10,7 @@
 ### Fixed
 - ets
 - passkey login bug
+- formresult filtering
 
 ### Updated
 
