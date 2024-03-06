@@ -1,5 +1,7 @@
 <?php
 namespace SIM\FORMS;
+
+use ParagonIE\Sodium\Core\Curve25519\Ge\P2;
 use SIM;
 use WP_Error;
 
@@ -24,12 +26,19 @@ class DisplayFormResults extends DisplayForm{
 	public $formEditPermissions;
 	public $tableViewPermissions;
 	public $tableEditPermissions;
+	public $sortColumn;
+	public $sortDirection;
+	public $sortColumnFound;
+	public $spliced;
 
 	public function __construct($atts=[]){
 		global $wpdb;
 		
 		$this->shortcodeTable			= $wpdb->prefix . 'sim_form_shortcodes';
 		$this->enriched					= false;
+		$this->sortColumn				= false;
+		$this->sortDirection			= 'ASC';
+		$this->spliced					= false;
 		
 		// call parent constructor
 		parent::__construct($atts);
@@ -98,22 +107,49 @@ class DisplayFormResults extends DisplayForm{
 			$this->currentPage	= 0;
 		}
 
+		// sort colomn
+		$this->sortColumnFound	= false;
+		if($this->sortColumn){
+			$colNames	= $wpdb->get_results( "DESC $this->submissionTableName" );
+			foreach ( $colNames as $name ) {
+				if ( $name->Field === $this->sortColumn ) {
+					$this->sortColumnFound	= true;
+				}
+			}
+			if($this->sortDirection != 'ASC'){
+				$this->sortDirection	= 'DESC';
+			}
+
+			if($this->sortColumnFound){
+				$query	.= " ORDER BY `$this->sortColumn` $this->sortDirection";
+			}else{
+				// have to get all results to be able to sort them later
+				$all		= true;
+			}
+		}
+
 		$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this->formName);
 
 		// Get the total
 		$this->total			= $wpdb->get_var(str_replace('*', 'count(*) as total', $query));
 
 		if(!$all && $start < $this->total){
+			$this->spliced	= true;
 			$query	.= " LIMIT $start, $this->pageSize";
 		}
 
 		// Get results
 		$result	= $wpdb->get_results($query);
+
 		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
 
 		// unserialize
 		foreach($result as $index=>&$submission){
 			$submission->formresults	= unserialize($submission->formresults);
+
+			if($this->sortColumn && !$this->sortColumnFound){
+				$sortArray[$index]	= $submission->formresults[$this->sortColumn];
+			}
 
 			if(is_numeric($userId)){
 				$userIdKey	= false;
@@ -157,42 +193,71 @@ class DisplayFormResults extends DisplayForm{
 	}
 
 	/**
+	 * Sorts an array of subissions on the sortvalue
+	 *
+	 * @param	array	$submissions	Array of submissions past by reference
+	 */
+	function sortSubmissions(&$submissions){
+		// sort if needed
+		if($this->sortColumn && !$this->sortColumnFound){
+			$sortElement	= $this->getElementByName($this->sortColumn);
+
+			if(empty($sortElement)){
+				$defaultSortElement	= $this->tableSettings['default_sort'];
+				$sortElement		= $this->getElementById($defaultSortElement);
+			}
+
+			$sortElementType	= $sortElement->type;
+
+			//Sort the array
+			usort($submissions, function($a, $b) use ($sortElementType){
+				// ascending
+				if($this->sortDirection == 'ASC'){
+					if($sortElementType == 'date'){
+						return strtotime($a->formresults[$this->sortColumn]) <=> strtotime($b->formresults[$this->sortColumn]);
+					}
+					return $a->formresults[$this->sortColumn] > $b->formresults[$this->sortColumn];
+				// Decending
+				}else{
+					if($sortElementType == 'date'){
+						return strtotime($b->formresults[$this->sortColumn]) <=> strtotime($a->formresults[$this->sortColumn]);
+					}
+					return $b->formresults[$this->sortColumn] > $a->formresults[$this->sortColumn];
+				}
+			});
+		}
+	}
+
+	/**
 	 * Set formresults of the current form
 	 *
 	 * @param	int		$userId			Optional the user id to get the results of. Default null
 	 * @param	int		$submissionId	Optional a specific id. Default null
 	 * @param	bool	$all			Whether to retrieve all submissions or paged
+	 * @param	bool	$force			Whether to retrieve submissions even if alrady done
 	 */
-	public function parseSubmissions($userId=null, $submissionId=null, $all=false){
+	public function parseSubmissions($userId=null, $submissionId=null, $all=false, $force=false){
+		// no need to this again
+		if(!empty($this->submissions) && !$force){
+			return;
+		}
+
 		if(empty($this->formData->settings['split'])){
 			$this->submissions		= $this->getSubmissions($userId, $submissionId, $all);
+
+			$this->sortSubmissions($this->submissions);
 		}else{
 			$this->submissions		= $this->getSubmissions($userId, $submissionId, true);
 	
 			$this->processSplittedData();
+
+			$this->sortSubmissions($this->splittedSubmissions);
 
 			if(empty($this->splittedSubmissions)){
 				$this->total	= 0;
 			}else{
 				$this->total	= count($this->splittedSubmissions);
 			}
-
-			/*if(!empty($this->splittedSubmissions) && count($this->splittedSubmissions) > $this->pageSize){
-				$start	= 0;
-				if(isset($_POST['pagenumber']) && is_numeric($_POST['pagenumber'])){
-					$this->currentPage	= $_POST['pagenumber'];
-
-					if(isset($_POST['prev'])){
-						$this->currentPage--;
-					}
-					if(isset($_POST['next'])){
-						$this->currentPage++;
-					}
-					$start	= $this->currentPage * $this->pageSize;
-				}
-
-				//$this->pageSplittedSubmissions	= array_splice($this->splittedSubmissions, $start, $this->pageSize);
-			} */
 		}
 
 		if(count($this->submissions) == 1){
@@ -205,6 +270,11 @@ class DisplayFormResults extends DisplayForm{
 		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 	}
 
+	/**
+	 * creates seperate entries for each sub-submission
+	 *
+	 * @param	string	$splitElementName	The name of the element the results should be split on
+	 */
 	public function splitArrayedSubmission($splitElementName){
 
 		//loop over all submissions
@@ -1478,6 +1548,55 @@ class DisplayFormResults extends DisplayForm{
 	}
 
 	/**
+	 * Filters the given submissions according to the filter values in POST
+	 *
+	 * @param	array		$submissions	The submissions to be filtered
+	 *
+	 * @return	array						The filtered submissions
+	 */
+	function filterSubmissions($submissions){
+		foreach($this->tableSettings['filter'] as $filter){
+			$filterElement	= $this->getElementById($filter['element']);
+			$filterValue	= '';
+			$filterKey		= strtolower($filter['name']);
+			if(!empty($_POST[$filterKey])){
+				$filterValue	= $_POST[$filterKey];
+			}
+
+			$exploded		= explode('[', $filterElement->name);
+
+			$name			= str_replace(']', '', end($exploded));
+
+			// Filter the current submission data
+			if(!empty($filterValue)){
+
+				foreach($submissions as $key=>$submission){
+					if(
+						!isset($submission->formresults[$name])	||													// The filter value is not set at all
+						!$this->compareFilterValue($submission->formresults[$name], $filter['type'], $filterValue)	// The filter value does not match the value
+					){
+						unset($submissions[$key]);
+					}
+				}
+			}
+		}
+
+		// total minus the filtered out submissions
+		$this->total	= count($submissions);
+
+		// Get the submissions we need
+		if(isset($this->splittedSubmissions)){
+			$this->splittedSubmissions	= array_chunk($submissions, $this->pageSize)[$this->currentPage];
+		}else{
+			$this->submissions			= array_chunk($submissions, $this->pageSize)[$this->currentPage];
+		}
+
+		$this->spliced	= true;
+
+		return $submissions;
+	}
+
+	/**
 	 * Renders the table filter html
 	 *
 	 * @return string	The html
@@ -1485,71 +1604,20 @@ class DisplayFormResults extends DisplayForm{
 	protected function renderFilterForm(){
 		$html	= "<form method='post' class='filteroptions'>";
 			if(!empty($this->tableSettings['filter'])){
-				// Load all the data
-				if(!$this->tableViewPermissions){
-					$userId	= $this->user->ID;
-				}else{
-					$userId	= '';
-				}
-
-				$submissionsLoaded	= false;
-
 				$html	.= "<div class='filter-wrapper'>";
-
 					foreach($this->tableSettings['filter'] as $filter){
 						$filterElement	= $this->getElementById($filter['element']);
 						$filterValue	= '';
 						$filterKey		= strtolower($filter['name']);
 						if(!empty($_POST[$filterKey])){
 							$filterValue	= $_POST[$filterKey];
-
-							// Only load all submissions once if needed
-							if(!$submissionsLoaded){
-								$this->parseSubmissions($userId, null, true);
-								$submissionsLoaded	= true;
-							}
 						}
-
-						$exploded		= explode('[', $filterElement->name);
-
-						$name			= str_replace(']', '', end($exploded));
-
-						// Filter the current submission data
-						if(!empty($filterValue)){
-							$submissions	= $this->submissions;
-							if(isset($this->splittedSubmissions)){
-								$submissions	= $this->splittedSubmissions;
-							}
-
-							//$filterCount	= 0;
-
-							foreach($submissions as $key=>$submission){
-								if(
-									!isset($submission->formresults[$name])	||													// The filter value is not set at all
-									!$this->compareFilterValue($filterValue, $filter['type'], $submission->formresults[$name])	// The filter value does not match the value
-								){
-									unset($submissions[$key]);
-									//$filterCount++;
-								}
-							}
-
-							// total minus the filtered out submissions
-							$this->total	= count($submissions);
-							//$this->total	= $this->total - $filterCount;
-
-							// Get the submissions page we need
-							$submissions	= array_chunk($submissions, $this->pageSize)[$this->currentPage];
-
-							/* if(isset($this->splittedSubmissions)){
-								$this->splittedSubmissions	= $submissions;
-							} */
-						}
-
-						$elementHtml	= $this->getElementHtml($filterElement, $filterValue);
+			
+						$elementHtml	= $this->getElementHtml($filterElement, $filterValue, true);
 						
 						// make sure the name is not the element name but the filtername
 						$elementHtml	= str_replace("name='{$filterElement->name}'", "name='$filterKey'", $elementHtml);
-
+			
 						$html	.= "<span class='filteroption'>";
 							$html	.= "<label>".ucfirst($filterKey).": </label>";
 							$html	.= $elementHtml;
@@ -1608,8 +1676,12 @@ class DisplayFormResults extends DisplayForm{
 	 * Compares 2 values according to a given comparison string
 	 */
 	protected function compareFilterValue ($var1, $op, $var2) {
-		if(empty($var1) || empty($var2)){
+		if(empty($var1) && empty($var2)){
 			return true;
+		}
+
+		if(empty($var1) || empty($var2)){
+			return false;
 		}
 
 		if(is_array($var1) && $op == 'like'){
@@ -1634,10 +1706,17 @@ class DisplayFormResults extends DisplayForm{
 
 	/**
 	 * creates the main table html
+	 *
+	 * @param	string		$type			Either 'own', 'others' or 'all'
+	 * @param	array		$submissions	Array of Submissions
+	 *
+	 * @return	bool						If there are submissions or not
 	 */
 	public function theTable($type, $submissions){
-		// only use the submissions for this page
-		$submissions	= array_splice($submissions, ($this->currentPage*$this->pageSize), $this->pageSize);
+		if(!$this->spliced){
+			// only use the submissions for this page
+			$submissions	= array_splice($submissions, ($this->currentPage*$this->pageSize), $this->pageSize);
+		}
 
 		?>
 		<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>' data-type='<?php echo $type;?>' data-page='<?php echo $this->currentPage;?>'>
@@ -1698,7 +1777,7 @@ class DisplayFormResults extends DisplayForm{
 	 *
 	 * @return	bool					True on no records found, false on data found
 	 */
-	public function renderTable($type, $justTable=false){
+	public function renderTable($type, $justTable=false, $force=false){
 		$userId	= null;
 		if(isset($_REQUEST['onlyown']) && $_REQUEST['onlyown'] == 'true'){
 			$type		= 'own';
@@ -1709,33 +1788,36 @@ class DisplayFormResults extends DisplayForm{
 			$userId	= get_current_user_id();
 		}
 
-		$this->parseSubmissions($userId	);
+		// Check if we should sort the data
+		if($this->tableSettings['default_sort'] || isset($_REQUEST['sortcol'])){
+			if(isset($_REQUEST['sortcol'])){
+				$this->sortColumn	= $_REQUEST['sortcol'];
+			}else{
+				$defaultSortElement	= $this->tableSettings['default_sort'];
+				$sortElement		= $this->getElementById($defaultSortElement);
+				$exploded			= explode('[', $sortElement->name);
+				$sort				= str_replace(']', '', end($exploded));
+
+				$this->sortColumn	= $sort;
+			}
+		}
+
+		if(isset($_REQUEST['sortdir'])){
+			$this->sortDirection	= $_REQUEST['sortdir'];
+		}
+
+		$this->parseSubmissions($userId, null, false, $force);
 
 		$submissions		= $this->submissions;
 		if(isset($this->splittedSubmissions)){
-			$submissions		= $this->splittedSubmissions;
+			$submissions	= $this->splittedSubmissions;
 		}
+
+		$submissions	= $this->filterSubmissions($submissions);
 
 		// do not write anything if empty 
 		if($type != 'all' && empty($submissions)){
 			return true;
-		}
-
-		// Check if we should sort the data
-		if($this->tableSettings['default_sort']){
-			$defaultSortElement	= $this->tableSettings['default_sort'];
-			$sortElement		= $this->getElementById($defaultSortElement);
-			$exploded			= explode('[', $sortElement->name);
-			$sort				= str_replace(']', '', end($exploded));
-			$sortElementType	= $sortElement->type;
-
-			//Sort the array
-			usort($submissions, function($a, $b) use ($sort, $sortElementType){
-				if($sortElementType == 'date'){
-					return strtotime($a->formresults[$sort]) <=> strtotime($b->formresults[$sort]);
-				}
-				return $a->formresults[$sort] > $b->formresults[$sort];
-			});
 		}
 
 		/*
@@ -1872,15 +1954,17 @@ class DisplayFormResults extends DisplayForm{
 		ob_start();
 		$allRowsEmpty	= true;
 		if(isset($this->tableSettings['split-table']) && $this->tableSettings['split-table'] == 'yes'){
-			$result1		= $this->renderTable('own');
-			$result2		= $this->renderTable('others');
+			$buttons		= $this->renderTableButtons();
+			$result1		= $this->renderTable('own', false, true);
+
+			$buttons		= $this->renderTableButtons();
+			$result2		= $this->renderTable('others', false, true);
 			$allRowsEmpty	= $result1 && $result2;
 		}else{
+			$buttons		= $this->renderTableButtons();
 			$allRowsEmpty	= $this->renderTable('all');
 		}
 		$tableHtml			= ob_get_clean();
-
-		$buttons			= $this->renderTableButtons();
 
 		ob_start();
 		//process any $_GET acions
@@ -1971,6 +2055,10 @@ class DisplayFormResults extends DisplayForm{
 						$class	= "defaultsort";
 					}else{
 						$class	= "";
+					}
+
+					if($this->sortColumn == $columnSetting['name']){
+						$class	= strtolower($this->sortDirection). ' defaultsort';
 					}
 
 					if(!empty($this->hiddenColumns[$columnSetting['name']])){

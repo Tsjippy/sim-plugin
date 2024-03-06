@@ -129,8 +129,6 @@ function pageAgeWarning(){
 							'count'		=> $count
 						];
 					}
-						
-					//wp_mail( $recipient->user_email, $postOutOfDateEmail->subject, $postOutOfDateEmail->message);
 				}
 			}
 		}

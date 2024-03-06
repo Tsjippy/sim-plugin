@@ -316,10 +316,9 @@ async function getNextPage(target){
 	}
 
 	// request page over ajax
-	
 	let formId			= table.dataset.formid;
 
-	let loader	= Main.showLoader(table, false);
+	let loader			= Main.showLoader(table, false);
 	
 	let formData		= new FormData(wrapper.querySelector(".filteroptions"));
 
@@ -347,6 +346,14 @@ async function getNextPage(target){
 	}
 	formData.append('archived', archived);
 	formData.append('onlyown', onlyown);
+	
+	if(tableWrapper.dataset.sortcol){
+		formData.append('sortcol', tableWrapper.dataset.sortcol);
+	}
+
+	if(tableWrapper.dataset.sortdir){
+		formData.append('sortdir', tableWrapper.dataset.sortdir);
+	}
 
 	let response	= await FormSubmit.fetchRestApi('forms/get_page', formData);
 
@@ -359,6 +366,66 @@ async function getNextPage(target){
 		loader.remove();
 
 		updatePageNav(navWrapper, curPage);
+	}
+}
+
+async function getSortedPage(target){
+	
+	let wrapper			= target.closest('.form.table-wrapper');
+	let tableWrapper	= target.closest('.form-results-wrapper');
+
+	// always start at page 1 again after sorting
+	let navWrapper		= tableWrapper.querySelector('.form-result-navigation');
+	updatePageNav(navWrapper, 0);
+
+	let table			= tableWrapper.querySelector('.form-data-table:not(.hidden)');
+	let formId			= table.dataset.formid;
+	let sortCol			= target.id;
+	let sortDir			= target.classList.contains('desc') ? 'DESC' : 'ASC';
+
+	tableWrapper.dataset.sortcol	= sortCol;
+	tableWrapper.dataset.sortdir	= sortDir;
+
+	let loader			= Main.showLoader(table, true, 'Loading sorted data');
+	
+	let formData		= new FormData(wrapper.querySelector(".filteroptions"));
+
+    formData.append('formid', formId);
+    formData.append('pagenumber', 0);
+	formData.append('shortcodeid', table.dataset.shortcodeid);
+    formData.append('type', table.dataset.type);
+
+	let params = new Proxy(new URLSearchParams(window.location.search), {
+		get: (searchParams, prop) => searchParams.get(prop),
+	});
+
+	let archived;
+	if(params['archived'] == null){
+		archived	= false;
+	}else{
+		archived	= true;
+	}
+
+	let onlyown;
+	if(params['onlyown'] == null){
+		onlyown	= false;
+	}else{
+		onlyown	= true;
+	}
+	formData.append('archived', archived);
+	formData.append('onlyown', onlyown);
+	formData.append('sortcol', sortCol);
+	formData.append('sortdir', sortDir);
+
+	let response	= await FormSubmit.fetchRestApi('forms/get_page', formData);
+
+	if(response){
+		loader.outerHTML	= response;
+	}else{
+		// restore prev data
+		table.classList.remove('hidden');
+
+		loader.remove();
 	}
 }
 
@@ -520,6 +587,11 @@ document.addEventListener("click", event=>{
 		event.stopPropagation();
 	}
 
+	if(target.tagName == 'TH' && target.closest(".form-results-wrapper").querySelector('.form-result-navigation') != null){
+		// get a sorted table over AJAX
+		getSortedPage(target);
+	}
+
 	//Actions
 	if(target.matches('.delete.forms_table_action')){
 		removeSubmission(target);
@@ -591,8 +663,6 @@ document.addEventListener("click", event=>{
 		target.closest('div').querySelector('.permission-wrapper').classList.toggle('hidden');
 	}
 });
-
-
 
 document.addEventListener("DOMContentLoaded", function() {
 	

@@ -503,7 +503,7 @@ function getInputHtml(){
 	}
 
 	// Get element html with the value allready set
-	return $formTable->getElementHtml($element, $curValue);
+	return $formTable->getElementHtml($element, $curValue, true);
 }
 
 function editValue(){

@@ -36,7 +36,7 @@ function bulkchangeMeta($metaKey, $allowedRoles, $returnFamily){
 		<table class='sim-table' data-url='bulkchange\bulk_change_meta'>
 			<thead>
 				<tr>
-					<th class='dsc'>Name</th>
+					<th class='desc'>Name</th>
 					<th id='<?php echo $metaKey;?>'><?php echo $displayName;?></th>
 				</tr>
 			</thead>

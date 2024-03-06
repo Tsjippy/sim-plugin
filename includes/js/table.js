@@ -132,8 +132,8 @@ function sortTable(target){
 	var sort 		= 'asc';
 	
 	//Check the sort order
-	if (target.classList.contains('dsc')){
-		sort 		= 'dsc';
+	if (target.classList.contains('desc')){
+		sort 		= 'desc';
 	}
 	
 	/*Make a loop that will continue until
@@ -164,7 +164,7 @@ function sortTable(target){
 			}
 			
 			//check if the two rows should switch place ASC:
-			if ((sort == 'asc' && x > y) || (sort == 'dsc'  && y > x)) {
+			if ((sort == 'asc' && x > y) || (sort == 'desc'  && y > x)) {
 				//Switch positions of the rows and start over
 				rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
 				switching = true;
@@ -172,13 +172,13 @@ function sortTable(target){
 		}
 	}
 	
-	//Mark the row to sort dsc the next time
+	//Mark the row to sort desc the next time
 	if (sort == 'asc'){
-		target.classList.add('dsc');
-		target.classList.replace('asc', 'dsc');
+		target.classList.add('desc');
+		target.classList.replace('asc', 'desc');
 	//Mark the row to sort asc the next time
 	}else{
-		target.classList.replace('dsc', 'asc');
+		target.classList.replace('desc', 'asc');
 	}
 }
 

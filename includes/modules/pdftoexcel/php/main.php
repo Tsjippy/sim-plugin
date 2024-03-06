@@ -22,12 +22,19 @@ function readPdf($filePath, $destination, $keepName=true, $type='csv'){
     if($keepName || $destination == 'download'){
 
         if($destination == 'download'){
-            $ext        = $type;
+            $ext            = $type;
+            
+            $destination    = pathinfo($filePath)['filename'].'.'.$ext;
         }else{
-            $ext        = pathinfo($destination, PATHINFO_EXTENSION);
-        }
+            $info           = pathinfo($filePath);
+            $ext            = pathinfo($destination, PATHINFO_EXTENSION);
 
-        $fileName   = pathinfo($filePath)['filename'].'.'.$ext;
+            if(empty($ext)){
+                $destination    = "$destination{$info['filename']}.$type";
+            }else{
+                $destination    = str_replace($info['basename'], "{$info['filename']}.$type", $destination);
+            }
+        }
     }
 
     $parser = new \Smalot\PdfParser\Parser();
@@ -120,7 +127,7 @@ function readPdf($filePath, $destination, $keepName=true, $type='csv'){
     return [
         'header'    => $header, 
         'rows'      => $rows,
-        'filepath'  => createExcel($header, $rows, $fileName, $destination=='download')
+        'filepath'  => createExcel($header, $rows, $destination, $destination=='download')
     ];
 }
 
@@ -176,8 +183,8 @@ function createExcel($header, $rows, $destination, $download=false){
         die();
     }else{
         //Store xlsx file on server and return the path
-        $file = get_temp_dir().$destination;
-        $writer->save($file);
-        return $file;
+        //$file = get_temp_dir().$destination;
+        $writer->save($destination);
+        return $destination;
     }
 }

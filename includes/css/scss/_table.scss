@@ -67,16 +67,16 @@
 				border-bottom: 5px solid transparent;
 			}
 
-			&.dsc:after {    
+			&.desc:after {    
 				border-top: 5px solid transparent;
 				border-bottom: 5px solid #333;
 			}
 
-			&:hover:after {
+			&:hover:after, &.defaultsort:after {
 				border-top: 5px solid #bd2919;
-				}
+			}
 
-			&.dsc:hover:after {
+			&.desc:hover:after, &.desc.defaultsort:after  {
 				border-top: 5px solid transparent;
 				border-bottom: 5px solid #bd2919;
 			}

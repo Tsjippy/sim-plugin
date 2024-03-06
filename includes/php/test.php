@@ -12,7 +12,7 @@ add_shortcode("test", function ($atts){
 
     global $Modules;
 	
-	FRONTENDPOSTING\pageAgeWarning();
+	$result=PDFTOEXCEL\readPdf("C:/Users/ewald/Downloads/SIM Nigeria_W050526 - Harmsen, Ewald and  Lianne_4_27 February 2024,  144900.pdf", "C:/Users/ewald/Downloads/test.csv");
 
     /* $posts = get_posts(
 		array(

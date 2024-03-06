@@ -286,12 +286,13 @@ trait ElementHtml{
 	/**
 	 * Gets the html of form element
 	 *
-	 * @param	object	$element	The element
-	 * @param	mixed	$value		The value of the element
+	 * @param	object	$element		The element
+	 * @param	mixed	$value			The value of the element
+	 * @param	bool	$removeMinMax	Wheter to ignore min and max values for date elements
 	 *
 	 * @return	string				The html
 	 */
-	function getElementHtml($element, $value =''){
+	function getElementHtml($element, $value ='', $removeMinMax=false){
 		$html		= '';
 		$extraHtml	= '';
 		$elClass	= '';
@@ -311,6 +312,11 @@ trait ElementHtml{
 
 				$optionType		= explode('=', $option)[0];
 				$optionValue	= str_replace('\\\\', '\\', explode('=',$option)[1]);
+
+				
+				if($removeMinMax && in_array($optionType, ['min', 'max'])){
+					continue;
+				}
 
 				if($optionType == 'class'){
 					$elClass .= " $optionValue";
