@@ -238,7 +238,7 @@ class DisplayFormResults extends DisplayForm{
 	 */
 	public function parseSubmissions($userId=null, $submissionId=null, $all=false, $force=false){
 		// no need to this again
-		if(!empty($this->submissions) && !$force){
+		if(!empty($this->submissions) && !$force && empty($submissionId)){
 			return;
 		}
 
@@ -305,7 +305,13 @@ class DisplayFormResults extends DisplayForm{
 				$newSubmission	= clone $this->submission;
 
 				// Check if archived
-				if(is_array($this->submission->archivedsubs) && in_array($subKey, $this->submission->archivedsubs)){
+				if(
+					(
+						is_array($this->submission->archivedsubs) && 
+						in_array($subKey, $this->submission->archivedsubs)
+					)	||
+					$subSubmission['archived']
+				){
 					if($this->showArchived){
 						// mark the entry as archived
 						$newSubmission->archived	= true;
@@ -840,11 +846,14 @@ class DisplayFormResults extends DisplayForm{
 			
 			//if this row has no value in this column remove the row
 			if(
-				!empty($this->tableSettings['hiderow']) &&												//There is a column defined
-				$columnSetting['name'] == $this->tableSettings['hiderow'] && 							//We are currently checking a cell in that column
-				(!isset($values[$this->tableSettings['hiderow']]) || $values[$this->tableSettings['hiderow']] == '') && 									//The cell has no value
-				!array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles'])	&&		//And we have no right to edit this specific column
-				!$this->tableEditPermissions															//and we have no right to edit all table data
+				!empty($this->tableSettings['hiderow']) &&												// There is a column defined
+				$columnSetting['name'] == $this->tableSettings['hiderow'] && 							// We are currently checking a cell in that column
+				(
+					!isset($values[$this->tableSettings['hiderow']]) || 								// The cell has no value
+					empty($values[$this->tableSettings['hiderow']])
+				) && 									
+				!array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles'])	&&		// And we have no right to edit this specific column
+				!$this->tableEditPermissions															// and we have no right to edit all table data
 			){
 				return '';
 			}
@@ -986,7 +995,14 @@ class DisplayFormResults extends DisplayForm{
 			$buttonsHtml	= [];
 			$buttons		= '';
 			foreach($this->formSettings['actions'] as $action){
-				if($action == 'archive' && $this->showArchived == 'true' && $submission->archived){
+				if(
+					$action == 'archive' && 
+					$this->showArchived == 'true' && 
+					(
+						$submission->archived ||
+						$submission->formresults['archived']
+					)
+				){
 					$action = 'unarchive';
 				}
 				$buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";

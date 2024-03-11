@@ -22,6 +22,7 @@ export async function fetchRestApi(url, formData, showErrors=true){
 	try{
 		response	= await result.json();
 	}catch (error){
+		console.error(result);
 		console.error(error);
 		return false;
 	}

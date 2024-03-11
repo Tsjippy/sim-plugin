@@ -79,6 +79,8 @@ class EditFormResults extends DisplayFormResults{
 	 * Auto archive form submission based on the form settings
 	 */
 	public function autoArchive(){
+		global $wpdb;
+
 		//get all the forms
 		$this->getForms();
 		
@@ -95,7 +97,7 @@ class EditFormResults extends DisplayFormResults{
 			if(!isset($settings['autoarchive']) || $settings['autoarchive'] != 'true'){
 				continue;
 			}
-			//$this->formData->settings 	= maybe_unserialize(utf8_encode($this->formData->settings));
+
 			$this->formData->settings 	= $settings;
 
 			$splitElementName	= '';
@@ -108,7 +110,7 @@ class EditFormResults extends DisplayFormResults{
 			}
 
 			//Get all submissions of this form
-			$this->parseSubmissions(null, null, true);
+			$this->parseSubmissions(null, null, true, true);
 			
 			$triggerName	= $this->getElementById($settings['autoarchivefield'], 'name');
 			$triggerValue	= $settings['autoarchivevalue'];
@@ -145,21 +147,19 @@ class EditFormResults extends DisplayFormResults{
 
 				//there is no trigger value found in the results, check multi value array
 				if(
-					!empty($splitElementName) &&
-					empty($this->submission->formresults[$triggerName]) && 
-					isset($this->submission->formresults[$splitElementName])
+					!empty($splitElementName) &&								// we should split
+					empty($this->submission->formresults[$triggerName]) && 		// we don't have a triggerfield in the results
+					isset($this->submission->formresults[$splitElementName])	// but we do have the splitted field
 				){
+					$archivedCounter	= 0;
+
 					//loop over all multi values
 					foreach((array)$this->submission->formresults[$splitElementName] as $subId=>$sub){
 						if(
 							isset($sub['archived']) && 		// Archive entry exists
-							$sub['archived']		||		// sub is already archived
-							(
-								empty($sub['from'])	||		// from is empty
-								empty($sub['to'])	||		// to is empty
-								empty($sub['date'])			// date is empty
-							)
+							$sub['archived']				// sub is already archived
 						){
+							$archivedCounter++;
 							continue;
 						}
 
@@ -174,10 +174,36 @@ class EditFormResults extends DisplayFormResults{
 							)
 						){
 							$this->submission->formresults[$splitElementName][$subId]['archived'] = true;
+
+							// add
+							if(empty($this->submission->archivedsubs)){
+								$this->submission->archivedsubs	= [$subId];
+							}elseif(!in_array($subId, $this->submission->archivedsubs)){
+								// only add if not yet there
+								$this->submission->archivedsubs[]	= $subId;
+							}
 							
 							//update in db
 							$this->checkIfAllArchived();
 						}
+					}
+
+					if(count($this->submission->formresults[$splitElementName]) == $archivedCounter && !$this->submission->archived){
+						// Something went wrong in the past, mark submission as archived
+						$result = $wpdb->update(
+							$this->submissionTableName,
+							array(
+								'timelastedited'	=> date("Y-m-d H:i:s"),
+								'archived'			=> true
+							),
+							array(
+								'id'				=> $this->submission->id,
+							),
+							array(
+								'%s',
+								'%d'
+							)
+						);
 					}
 				}else{
 					//if the form value is equal to the trigger value it needs to be to be archived

@@ -605,7 +605,6 @@ class Bookings{
                                                 </td>
                                             </tr>
                                         </table>
-                                        
                                     </td>
                                 </tr>
                                 <?php
