@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.41.2] - 2024-03-11
+
+
+### Fixed
 - auto archive issue
 
 ### Updated
