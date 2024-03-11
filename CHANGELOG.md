@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- auto archive issue
 
 ### Updated
 
