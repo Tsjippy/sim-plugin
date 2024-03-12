@@ -42,6 +42,9 @@ class DisplayFormResults extends DisplayForm{
 		
 		// call parent constructor
 		parent::__construct($atts);
+
+		//Get personal visibility
+		$this->hiddenColumns			= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 		
 		if(function_exists('is_user_logged_in') && is_user_logged_in()){
 			$this->userRoles[]	= 'everyone';//used to indicate view rights on permissions
@@ -265,9 +268,6 @@ class DisplayFormResults extends DisplayForm{
 		}elseif(!empty($submissionId)){
 			$this->submission	= $this->submissions;
 		}
-
-		//Get personal visibility
-		$this->hiddenColumns	= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 	}
 
 	/**
