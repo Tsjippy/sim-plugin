@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- overlapping booking when booking only one night
 
 ### Updated
 
