@@ -442,26 +442,32 @@ class Bookings{
                         $calendarRows .=  "<dt class='empty'></dt>";
                     }else{
                         $data   = '';
-                        // date is in the past
+                        // date is in the past, make it unavailable
                         if(date('Ymd', $workingDate) < date('Ymd', $curDate)){
-                            $class	.= 'unavailable';
+                            $class	= 'unavailable';
                         // not booked
                         }elseif(!isset($this->unavailable[$workingDateStr])){
-                            $class	.= 'available';
+                            $class	= 'available';
                         }
                         
                         // booked
                         if(isset($this->unavailable[$workingDateStr])){
                             $bookingId  = $this->unavailable[$workingDateStr];
+
                             // First and last day of a reservation are both booked and available if overlap is enabled
                             if(
-                                $overlap &&
-                                !isset($this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))])    ||
-                                !isset($this->unavailable[date('Y-m-d', strtotime('+1 day', $workingDate))])
+                                $class	!= 'unavailable' &&                                                                 // not in the past
+                                $overlap &&                                                                                 // overlap enabled
+                                (
+                                    !isset($this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))])    ||      // first day of a booking
+                                    !isset($this->unavailable[date('Y-m-d', strtotime('+1 day', $workingDate))])            // last day of a booking
+                                )
                             ){
-                                $class	.= 'available ';
+                                $class	.= ' available';
+                            }else{
+                                $class	.= ' booked';
                             }
-                            $class	.= ' booked';
+
                             $data   .= "data-bookingid='$bookingId'";
 
                             if(method_exists($this->forms, 'getSubmissions')){
@@ -681,9 +687,26 @@ class Bookings{
 
     /**
      * Check if a booking overlaps another booking
+     *
+     * @param   int     $startDate      The startdate epoch of a booking
+     * @param   int     $endDate        The enddate epoch of a booking
+     * @param   string  $subject        The subject  of a booking
+     * @param   int     $id             An booking id to ignore to check exclude the the booking itself
      */
     public function checkOverlap($startDate, $endDate, $subject, $id=-1){
         global $wpdb;
+
+        // First check if a booking on these dates doesn't exist
+        $query	    = "SELECT * FROM $this->tableName WHERE pending=0 AND subject = '$subject' AND ('$startDate' BETWEEN startdate and enddate OR '$endDate' BETWEEN startdate and enddate)";
+
+        if($id != -1){
+            $query  .= " AND NOT id=$id";
+        }
+        
+        //sort on startdate
+		$query	.= " ORDER BY `startdate`, `starttime` ASC";
+
+		$bookings   = $wpdb->get_results($query);
 
         $baseSubject        = explode(';', $subject)[0];
         $overlap            = false;
@@ -697,23 +720,22 @@ class Bookings{
             }
         }
 
-        // start end enddate may overlap so only check for dates in between
+        // start and enddate may overlap so remove any of those
         if($overlap){
-            $startDate  = date('Y-m-d', strtotime('+1 day', strtotime($startDate)));
-            $endDate    = date('Y-m-d', strtotime('-1 day', strtotime($endDate)));
+            foreach($bookings as $index=>$booking){
+                // this booking end on the first day of the booking we are checking
+                if($booking->enddate == $startDate){
+                    unset($bookings[$index]);
+                }
+
+                // this booking starts on the last day of the booking we are checking
+                if($booking->startdate == $endDate){
+                    unset($bookings[$index]);
+                }
+            }
         }
 
-        // First check if a booking on these dates doesn't exist
-        $query	    = "SELECT * FROM $this->tableName WHERE pending=0 AND subject = '$subject' AND ('$startDate' BETWEEN startdate and enddate OR '$endDate' BETWEEN startdate and enddate)";
-
-        if($id != -1){
-            $query  .= " AND NOT id=$id";
-        }
-        
-        //sort on startdate
-		$query	.= " ORDER BY `startdate`, `starttime` ASC";
-
-		return !empty($wpdb->get_results($query));
+        return !empty($bookings);
     }
 
     /**
