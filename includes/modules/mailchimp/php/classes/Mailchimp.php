@@ -183,11 +183,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 						"merge_fields" 	=> $mergeFields
 					]
 				);
-			}
-
-			//catch exception
-			//catch exception
-			catch(\GuzzleHttp\Exception\ClientException $e){
+			}catch(\GuzzleHttp\Exception\ClientException $e){
 				$result = json_decode($e->getResponse()->getBody()->getContents());
 				$errorResult = $result->detail."<pre>".print_r($result->errors,true)."</pre>";
 				SIM\printArray($errorResult);
@@ -461,6 +457,13 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					$this->changeTags($relative, $tags, $status);
 				}
 			}
+		}
+
+		public function getCampaigns(){
+			$count			= 1000;
+			$createdAfter	= '2023-10-21T15:41:36+00:00';
+			$sort			= "send_time";
+			return $this->client->campaigns->list(null, null, $count, 0, null, null, null,$createdAfter, null, null, null, null, null, $sort);
 		}
 	}
 }

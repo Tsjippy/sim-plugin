@@ -7,6 +7,12 @@
         "http-interop/http-factory-guzzle": "1.0",
         "michelf/php-markdown": "^1.9",
         "bacon/bacon-qr-code": "^2.0",
-        "robthree/twofactorauth": "^1.8"
+        "robthree/twofactorauth": "^1.8",
+        "maestroerror/php-heic-to-jpg": "^1.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
