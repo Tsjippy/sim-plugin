@@ -76,8 +76,6 @@ function addMailchimpCampaigns(){
 
                 update_post_meta($postId, 'mailchimp_campaign_id', $campaign->id);
             }
-
-            SIM\printArray($campaign, true);
         }
     }
 }
