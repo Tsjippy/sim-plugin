@@ -35,6 +35,10 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	ob_start();
 	
 	?>
+	Default picture for imported Mailchimp campaigns
+	<?php
+	SIM\pictureSelector('imageId', 'Default Picture', $settings);
+	?>
 	<label>
 		Mailchimp API key
 		<input type="text" name="apikey" id="apikey" value="<?php echo $settings["apikey"]; ?>" style="width:100%;">
@@ -95,4 +99,15 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	</select>
 	<?php
 	return ob_get_clean();
+}, 10, 3);
+
+add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG){
+		return $newOptions;
+	}
+
+	scheduleTasks();
+
+	return $newOptions;
 }, 10, 3);
