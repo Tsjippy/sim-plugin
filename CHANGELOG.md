@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.41.3] - 2024-03-19
+
+
+### Added
 - Mailchimp campaigns
 
 ### Changed
