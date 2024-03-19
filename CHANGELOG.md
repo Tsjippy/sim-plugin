@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- dependicy updates
 
 ### Fixed
 - overlapping booking when booking only one night
