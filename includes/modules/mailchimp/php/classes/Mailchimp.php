@@ -320,6 +320,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				//Get the campain id
 				$campainId = $response->id;
 				SIM\printArray("Campain_id is $campainId");
+				update_post_meta($post->ID, 'mailchimp_campaign_id', $campainId);
 
 				//get the campain html
 				$response 			= $this->client->campaigns->getContent($campainId);

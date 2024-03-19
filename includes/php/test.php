@@ -10,7 +10,6 @@ use PhpOffice\PhpWord\IOFactory;
 //Shortcode for testing
 add_shortcode("test", function ($atts){
     global $wpdb;
-
     global $Modules;
 
 	$path	= "C:/xampp/htdocs/simnigeria/wp-content/test.heic";

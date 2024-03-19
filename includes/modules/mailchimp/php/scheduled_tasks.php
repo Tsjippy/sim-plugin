@@ -23,6 +23,8 @@ add_action('sim_module_deactivated', function($moduleSlug, $options){
 
 function addMailchimpCampaigns(){
     $mailchimp 	= new Mailchimp();
+
+    // get all mailchimp campaigns created yesterday
     $result		= $mailchimp->getCampaigns(date("Y-m-d", strtotime('-1 day')).'T00:00:00+00:00');
 
     $templateId = SIM\getModuleOption(MODULE_SLUG, 'templateid');
@@ -36,18 +38,20 @@ function addMailchimpCampaigns(){
     );
 
     foreach($result->campaigns as $campaign){
+        // do not add mailchimp campaigns created by the website
         if( $campaign->settings->template_id != $templateId	){
+            // make sure we do not add the same post twice
             $posts = get_posts(array(
                 'numberposts'      => -1,
                 'meta_query' 	=> array(
                     'relation' 		=> 'AND',
                     array(
-                        'key' 		=> 'mailchimp_templateid',
+                        'key' 		=> 'mailchimp_campaign_id',
                         'compare' 	=> 'EXISTS'
                     ),
                     array(
-                        'key'	 	=> 'mailchimp_templateid',
-                        'value' 	=> $campaign->settings->template_id, 
+                        'key'	 	=> 'mailchimp_campaign_id',
+                        'value' 	=> $campaign->id, 
                         'compare' 	=> '='
                     ),
                 )
@@ -70,7 +74,7 @@ function addMailchimpCampaigns(){
                     set_post_thumbnail( $postId, $pictures['imageId']);
                 }
 
-                update_post_meta($postId, 'mailchimp_templateid', $campaign->settings->template_id);
+                update_post_meta($postId, 'mailchimp_campaign_id', $campaign->id);
             }
 
             SIM\printArray($campaign, true);
