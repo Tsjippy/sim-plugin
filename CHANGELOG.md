@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- Mailchimp campaigns
 
 ### Changed
 - dependicy updates
