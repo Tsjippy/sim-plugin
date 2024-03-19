@@ -8,6 +8,7 @@
 
 ### Fixed
 - overlapping booking when booking only one night
+- reset form visibility settings
 
 ### Updated
 
