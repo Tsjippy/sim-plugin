@@ -172,7 +172,7 @@ add_shortcode("front_end_post", function(){
 add_shortcode("old-pages", function(){
 	$oldPages	= getOldPages();
 
-	$html	= '<table>';
+	$html	= '<table class="sim-table">';
 		$html	.= "<tr>";
 			$html	.= "<th>";
 				$html	.= "Title";
