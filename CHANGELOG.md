@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- only keep unique urls
 
 ### Fixed
 
