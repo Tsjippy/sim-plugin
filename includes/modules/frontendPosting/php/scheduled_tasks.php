@@ -54,81 +54,58 @@ function pageAgeWarning(){
 	//Change the user to the adminaccount otherwise get_users will not work
 	wp_set_current_user(1);
 
-	//Get all pages without the static content meta key
-	$pages = get_posts(array(
-		'numberposts'      => -1,
-		'post_type'        => ['page', 'location'],
-		'meta_query' => array(
-			'relation' => 'OR',
-			array(
-				'key' 		=> 'static_content',
-				'compare'	=> 'NOT EXISTS'
-			),
-			array(
-				'key'		=> 'static_content',
-				'compare'	=> '!=',
-				'value'		=> true
-			),
-		)
-	));
-	
-	//Months converted to seconds (days*hours*minutes*seconds)
-	$maxAgeInSeconds		= SIM\getModuleOption(MODULE_SLUG, 'max_page_age') * 30.4375 *24 *60 * 60;
-
 	$emails					= [];
 	
 	//Loop over all the pages
-	foreach ( $pages as $page ) {
+	foreach ( getOldPages() as $page ) {
 		//Get the ID of the current page
 		$postId 				= $page->ID;
 
 		$postTitle 				= $page->post_title;
+
+		//Get the edit page url
+		$url		= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
+		$url 		= add_query_arg( ['post_id' => $postId], $url );
+
 		//Get the last modified date
-		$secondsSinceUpdated 	= time()-get_post_modified_time('U',true,$page);
-		$pageAge				= round($secondsSinceUpdated/60/60/24);
+		$secondsSinceUpdated 	= time() - get_post_modified_time('U', true, $page);
+		$pageAge				= round($secondsSinceUpdated /60 /60 /24);
+		
+		//Send an e-mail
+		$recipients = getPageRecipients($page);
+		foreach($recipients as $recipient){
+			$email	= $recipient->user_email;
+			//Only email if valid email
+			if(strpos($email,'.empty') === false){
 
-		//If it is X days since last modified
-		if ($secondsSinceUpdated > $maxAgeInSeconds){
-			//Get the edit page url
-			$url		= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, 'front_end_post_pages');
-			$url 		= add_query_arg( ['post_id' => $postId], $url );
-			
-			//Send an e-mail
-			$recipients = getPageRecipients($page);
-			foreach($recipients as $recipient){
-				$email	= $recipient->user_email;
-				//Only email if valid email
-				if(strpos($email,'.empty') === false){
+				if(!isset($emails[$email])){
 
-					if(!isset($emails[$email])){
+					$postOutOfDateEmail    = new PostOutOfDateEmail($recipient, $postTitle, $pageAge, $url);
+					$postOutOfDateEmail->filterMail();
 
-						$postOutOfDateEmail    = new PostOutOfDateEmail($recipient, $postTitle, $pageAge, $url);
-						$postOutOfDateEmail->filterMail();
+					$emails[$email]	= [
+						'subject'	=> $postOutOfDateEmail->subject,
+						'message'	=> $postOutOfDateEmail->message,
+						'count'		=> 1
+					];
+				}else{
+					$postOutOfDateEmail    = new PostOutOfDateEmails($recipient, $postTitle, $pageAge, $url);
+					$postOutOfDateEmail->filterMail();
 
-						$emails[$email]	= [
-							'subject'	=> $postOutOfDateEmail->subject,
-							'message'	=> $postOutOfDateEmail->message,
-							'count'		=> 1
-						];
-					}else{
-						$postOutOfDateEmail    = new PostOutOfDateEmails($recipient, $postTitle, $pageAge, $url);
-						$postOutOfDateEmail->filterMail();
-
-						// replace the main message
-						if($emails[$email]['count'] == 1){
-							$emails[$email]['message']	= $postOutOfDateEmail->message;
-						}
-						$message	= $emails[$email]['message'];
-
-						$count		= intval($emails[$email]['count']);
-						$count++;
-
-						$emails[$email]	= [
-							'subject'	=> $postOutOfDateEmail->subject,
-							'message'	=> "$message<br><a href='$url'>$postTitle</a><br>",
-							'count'		=> $count
-						];
+					// replace the main message
+					if($emails[$email]['count'] == 1){
+						$emails[$email]['message']	= $postOutOfDateEmail->message;
 					}
+					$message	= $emails[$email]['message'];
+
+					$count		= intval($emails[$email]['count']);
+					$count++;
+
+					$emails[$email]	= [
+						'subject'	=> $postOutOfDateEmail->subject,
+						'message'	=> "$message<br><a href='$url'>$postTitle</a><br>",
+						'count'		=> $count
+					];
 				}
 			}
 		}

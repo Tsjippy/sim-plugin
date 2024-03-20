@@ -2,6 +2,39 @@
 namespace SIM\FRONTENDPOSTING;
 use SIM;
 
+/**
+ * Gets all the pages who have not been edited recently and are not static
+ *
+ * @return	array	Array of post objects
+ */
+function getOldPages(){
+	$maxAge	= SIM\getModuleOption(MODULE_SLUG, 'max_page_age');
+	//$maxAge	= date('Y-m-d', strtotime("-$maxAge months"));
+
+	//Get all pages without the static content meta key who have been edited last more than X months ago
+	return get_posts(array(
+		'numberposts'      	=> -1,
+		'post_type'        	=> ['page', 'location'],
+		'orderby'			=> 'modified',
+		'meta_query' => array(
+			'relation' => 'OR',
+			array(
+				'key' 		=> 'static_content',
+				'compare'	=> 'NOT EXISTS'
+			),
+			array(
+				'key'		=> 'static_content',
+				'compare'	=> '!=',
+				'value'		=> true
+			),
+		),
+		'date_query' => [
+			'column' => 'post_modified',
+			'before'  => "$maxAge months ago",
+		],
+	));
+}
+
 function sendPendingPostWarning( object $post, $update){
 	//Do not continue if already send
 	if(!empty(get_post_meta($post->ID, 'pending_notification_send', true))){

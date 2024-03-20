@@ -167,3 +167,43 @@ add_shortcode("front_end_post", function(){
 	$frontEndContent	= new FrontEndContent();
 	return $frontEndContent->frontendPost();
 });
+
+//Add shortcode for the post edit form
+add_shortcode("old-pages", function(){
+	$oldPages	= getOldPages();
+
+	$html	= '<table>';
+		$html	.= "<tr>";
+			$html	.= "<th>";
+				$html	.= "Title";
+			$html	.= "</th>";
+			$html	.= "<th>";
+				$html	.= "Last Modified";
+			$html	.= "</th>";
+			$html	.= "<th>";
+				$html	.= "Author";
+			$html	.= "</th>";
+		$html	.= "</tr>";
+		foreach($oldPages as $page){
+			$url					= get_permalink($page);
+			$authorUrl				= SIM\maybeGetUserPageUrl($page->post_author);
+			$authorName				= get_userdata($page->post_author)->first_name;
+			$secondsSinceUpdated 	= time() - get_post_modified_time('U', true, $page);
+			$pageAge				= round($secondsSinceUpdated /60 /60 /24);
+
+			$html	.= "<tr>";
+				$html	.= "<td>";
+					$html	.= "<a href='$url'>$page->post_title</a>";
+				$html	.= "</td>";
+				$html	.= "<td>";
+					$html	.= "<a href='$url'>$pageAge days</a>";
+				$html	.= "</td>";
+				$html	.= "<td>";
+					$html	.= "<a href='$authorUrl'>$authorName</a>";
+				$html	.= "</td>";
+			$html	.= "</tr>";
+		}
+	$html	.= '</table>';
+
+	return $html;
+});
