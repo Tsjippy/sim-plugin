@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.41.4] - 2024-03-20
+
+
+### Changed
 - better booking experience
 
 ### Fixed
