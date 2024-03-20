@@ -7,7 +7,7 @@ add_shortcode('create_user_account', function (){
 	wp_enqueue_script( 'sim_user_management');
 
 	$user = wp_get_current_user();
-	if ( in_array('usermanagement',$user->roles)){
+	if ( in_array('usermanagement', $user->roles)){
 		ob_start();
 		?>
 		<div class="tabcontent">

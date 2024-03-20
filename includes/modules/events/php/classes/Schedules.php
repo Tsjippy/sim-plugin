@@ -49,7 +49,7 @@ class Schedules{
 
 		$this->mobile				= wp_is_mobile();
 
-		if(in_array('editor', $this->user->roles)){
+		if(array_intersect(['editor', 'personnelinfo'], $this->user->roles)){
 			$this->admin			= true;
 		}else{
 			$this->admin			= false;

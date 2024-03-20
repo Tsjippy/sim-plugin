@@ -152,6 +152,9 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 				if($plainText && empty($date)){
 					$params	= apply_filters('sim_after_bot_payer', $params);
 
+					//prevent duplicate urls
+					$params['urls']		= array_unique($params['urls']);
+
 					$params['message']	= $params['message']."\n\n".implode("\n", $params['urls']);
 				}
 
