@@ -1,21 +1,23 @@
-function reset(modal, onlyEnd=false){
+function reset(modal, onlyEnd=false, skipRoomSelector=true){
     if(!onlyEnd){
         modal.querySelector('.booking-startdate').value     = '';
-        modal.querySelector('.calendar.day.startdate').classList.remove('startdate');
-        modal.querySelectorAll('.available.unavailable').forEach(dt=>dt.classList.remove('unavailable'));
+        modal.querySelectorAll('.calendar.day.startdate').forEach(el => el.classList.remove('startdate'));
+        modal.querySelectorAll('.available.unavailable').forEach(dt => dt.classList.remove('unavailable'));
 
         modal.querySelector('.booking-date-label-wrapper.enddate').classList.add('disabled')
     }
     modal.querySelector('.booking-enddate').value       = '';
     
-    modal.querySelector('.calendar.day.enddate').classList.remove('enddate');
+    modal.querySelectorAll('.calendar.day.enddate').forEach(el => el.classList.remove('enddate'));
 
-    modal.querySelectorAll('.inbetween').forEach(dt=>dt.classList.remove('inbetween'));    
+    modal.querySelectorAll('.inbetween').forEach(dt => dt.classList.remove('inbetween'));    
 
-    modal.querySelectorAll('.room-selector').forEach(el=>el.checked=false);    
+    if(!skipRoomSelector){
+        modal.querySelectorAll('.room-selector').forEach(el => el.checked=false);    
 
-    if(modal.querySelectorAll('.room-selector').length>1){
-        modal.querySelectorAll('.roomwrapper:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+        if(modal.querySelectorAll('.room-selector').length > 1){
+            modal.querySelectorAll('.roomwrapper:not(.hidden)').forEach(el => el.classList.add('hidden'));
+        }
     }
 }
 
@@ -230,7 +232,7 @@ function storeDates(target){
 
     target.closest('form').querySelector('.change-booking-date').classList.remove('hidden');
 
-    reset(modal);
+    reset(modal, false, false);
 }
 
 function daySelected(target){ 
@@ -242,7 +244,7 @@ function daySelected(target){
 
     let roomWrapper = target.closest('.roomwrapper');
 
-    // we already have an selection
+    // remove previous selection
     if(roomWrapper.querySelector('.calendar.day.startdate') != null && roomWrapper.querySelector('.calendar.day.enddate') != null){
         let onlyEnd = false;
         if(target.matches('.inbetween')){
@@ -252,9 +254,13 @@ function daySelected(target){
         reset(modal, onlyEnd);
     }
 
+    // start selection
     if(roomWrapper.querySelector('.calendar.day.startdate') == null){
-        //roomWrapper.querySelector('.booking-startdate').value             = target.dataset.date;
-        //roomWrapper.querySelector('.booking-startdate').dataset.isodate   = target.dataset.isodate;
+        // the selected cell is the first day of an already booked period
+        if(target.matches('.first-day')){
+            Main.displayMessage('You can only select this day as the last day of your stay!', 'error');
+            return;
+        }
 
         target.classList.add('startdate');
         roomWrapper.querySelectorAll('.booking-date-label-wrapper.disabled').forEach(el=>el.classList.remove('disabled'));
@@ -276,13 +282,16 @@ function daySelected(target){
             }
         }
     }else{
+        // the selected cell is the first day of an already booked period
+        if(target.matches('.last-day')){
+            Main.displayMessage('You can only select this day as the first day of your stay!', 'error');
+            return;
+        }
+
         // store enddate
         modal.querySelector('.booking-enddate').value               = target.dataset.date;
         modal.querySelector('.booking-enddate').dataset.isodate     = target.dataset.isodate;
         target.classList.add('enddate');
-
-        // make other dates available again
-        roomWrapper.querySelectorAll('.available.booked:not(.enddate, .startdate)').forEach(dt=>dt.classList.remove('booked'));
 
         // color the dates between start and end
         let dts     = roomWrapper.querySelectorAll('dt.calendar.day:not(.head)');
@@ -302,6 +311,18 @@ function daySelected(target){
             if(dts[i].matches('.startdate')){
                 skip = false;
             }
+        }
+
+        // make other dates available again
+        //roomWrapper.querySelectorAll('.available.booked:not(.enddate, .startdate, .inbetween)').forEach(dt=>dt.classList.remove('booked'));
+
+        //check if overlapping an existing booking
+        if(target.closest('.calendar.table').querySelectorAll('.inbetween.first-day, .inbetween.last-day').length > 0){
+            Main.displayMessage('You can not book this period as it is overlapping an existing booking!', 'error');
+
+            reset(modal);
+
+            return;
         }
 
         modal.querySelectorAll('.actions .action.disabled').forEach(el=>el.classList.remove('disabled'));
@@ -373,27 +394,21 @@ document.addEventListener('click', (ev) => {
         target  = target.closest('dt');
     }
 
-    if(target.matches('.action.reset')){
+    if(target.matches('.action.reset') ){
+        reset(modal, false, false);
+    }else if(target.matches('.available.unavailable')){
         reset(modal);
-    }
-
-    if(target.matches('.prevnext')){
+    }else if(target.matches('.prevnext')){
         getMonth(target);
-    }
-
-    if(target.matches('.change-booking-date, [name="booking-startdate"], [name="booking-enddate"]')){
+    }else if(target.matches('.change-booking-date, [name="booking-startdate"], [name="booking-enddate"]')){
         changeBookingData(target);
-    }
-
-    if(target.matches('.action.confirm')){
+    }else if(target.matches('.action.confirm')){
         storeDates(target);
     }
-
+    
     if(target.matches('.bookings-wrap .available:not(.unavailable)')){
         daySelected(target);
-    }
-
-    if(target.matches('.form.table-wrapper .booked')){
+    }else if(target.matches('.form.table-wrapper .booked')){
         // Hide others
         target.closest('.bookings-wrap').querySelectorAll(`.booking-detail-wrapper:not(.hidden)`).forEach(el=>el.classList.add('hidden'));
         
@@ -402,9 +417,7 @@ document.addEventListener('click', (ev) => {
             el.classList.remove('hidden');
             el.scrollIntoView({block: "center"});
         });
-    }
-
-    if(target.matches('.button.approve')){
+    }else if(target.matches('.button.approve')){
         approve(target);
     }else if(target.matches('.button.delete')){
         remove(target);

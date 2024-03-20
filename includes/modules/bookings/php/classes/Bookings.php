@@ -454,16 +454,34 @@ class Bookings{
                         if(isset($this->unavailable[$workingDateStr])){
                             $bookingId  = $this->unavailable[$workingDateStr];
 
-                            // First and last day of a reservation are both booked and available if overlap is enabled
+                            // First and last day of a reservation are available if overlap is enabled
                             if(
                                 $class	!= 'unavailable' &&                                                                 // not in the past
                                 $overlap &&                                                                                 // overlap enabled
                                 (
-                                    !isset($this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))])    ||      // first day of a booking
-                                    !isset($this->unavailable[date('Y-m-d', strtotime('+1 day', $workingDate))])            // last day of a booking
+                                    !isset($this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))])    ||      // this is the first day of a booking
+                                    !isset($this->unavailable[date('Y-m-d', strtotime('+1 day', $workingDate))])            // or the last day of a booking
                                 )
                             ){
                                 $class	.= ' available';
+
+                                // if the booking is only 1 or two days long we still should mark it as booked otherwise it wil not be visible in the calendar
+                                if(isset($this->unavailable[$workingDateStr])){
+                                    if(   
+                                        $this->unavailable[date('Y-m-d', strtotime('-1 day', $workingDate))] != $this->unavailable[$workingDateStr]   &&  // this is the first day of a booking
+                                        $this->unavailable[date('Y-m-d', strtotime('+2 day', $workingDate))] != $this->unavailable[$workingDateStr]       // booking is maximum 2 days long
+                                    ){
+                                        $class	.= ' booked first-day';
+                                    }
+                                    
+                                    if(   
+                                        $this->unavailable[date('Y-m-d', strtotime('+1 day', $workingDate))] != $this->unavailable[$workingDateStr]   &&  // this is the last day of a booking
+                                        $this->unavailable[date('Y-m-d', strtotime('-2 day', $workingDate))] != $this->unavailable[$workingDateStr]       // booking is maximum 2 days long
+                                    ){
+                                        // both booked and available
+                                        $class	.= ' booked last-day';
+                                    }
+                                }
                             }else{
                                 $class	.= ' booked';
                             }
@@ -723,7 +741,7 @@ class Bookings{
         // start and enddate may overlap so remove any of those
         if($overlap){
             foreach($bookings as $index=>$booking){
-                // this booking end on the first day of the booking we are checking
+                // this booking ends on the first day of the booking we are checking
                 if($booking->enddate == $startDate){
                     unset($bookings[$index]);
                 }

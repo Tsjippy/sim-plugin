@@ -12,6 +12,8 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
+	MAILCHIMP\addMailchimpCampaigns();
+
 	$path	= "C:/xampp/htdocs/simnigeria/wp-content/test.heic";
 	$dest	= "C:/xampp/htdocs/simnigeria/wp-content/uploads/test.jpg";
 	// 1. save as file

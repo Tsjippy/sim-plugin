@@ -463,14 +463,14 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		/**
 		 * Gets all Mailchimp campaigns created after a certain date
 		 *
-		 * @param	string	$createdAfter	The string in the format '2023-10-21T15:41:36+00:00'
+		 * @param	string	$sendAfter	The string in the format '2023-10-21T15:41:36+00:00'
 		 *
 		 * @return	object					Object containing all campaigns
 		 */
-		public function getCampaigns($createdAfter){
+		public function getCampaigns($sendAfter){
 			$count			= 1000;
 			$sort			= "send_time";
-			return $this->client->campaigns->list(null, null, $count, 0, null, null, null, null, null, null, null, null, null, $sort);
+			return $this->client->campaigns->list(null, null, $count, 0, null, null, null, $sendAfter, null, null, null, null, null, $sort);
 		}
 	}
 }
