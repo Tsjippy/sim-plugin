@@ -3,17 +3,6 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-
-### Changed
-
-### Fixed
-
-### Updated
-
-## [2.41.5] - 2024-03-20
-
-
-### Added
 - old pages shortcode
 
 ### Changed
