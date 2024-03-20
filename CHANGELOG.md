@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- old pages shortcode
 
 ### Changed
 - only keep unique urls
