@@ -10,6 +10,16 @@
 
 ### Updated
 
+## [2.41.4] - 2024-03-20
+
+
+### Changed
+- better booking experience
+
+### Fixed
+
+### Updated
+
 ## [2.41.3] - 2024-03-19
 
 
