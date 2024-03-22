@@ -445,7 +445,7 @@ class CreateSchedule extends Schedules{
 		}
 
 		if($startDate > $endDate){
-			return new WP_Error('schedule', "Ending date cannot be before starting date");
+			return new \WP_Error('schedule', "Ending date cannot be before starting date");
 		}
 
 		if($_POST['fixedtimeslotsize'] == 'yes'){
@@ -464,22 +464,22 @@ class CreateSchedule extends Schedules{
 		}
 
 		$arg	= array(
-			'target'		=> $_POST['target_id'],
-			'name'			=> $name,
-			'info'			=> $info,
-			'lunch'			=> $lunch,
-			'diner'			=> $diner,
-			'orientation'	=> $orientation,
-			'startdate'		=> $startDateStr,
-			'enddate'		=> $endDateStr,
-			'starttime'		=> $startTime,
-			'endtime'		=> $this->dinerTime,
-			'timeslot_size'	=> $_POST['timeslotsize'],
+			'target'				=> $_POST['target_id'],
+			'name'					=> $name,
+			'info'					=> $info,
+			'lunch'					=> $lunch,
+			'diner'					=> $diner,
+			'orientation'			=> $orientation,
+			'startdate'				=> $startDateStr,
+			'enddate'				=> $endDateStr,
+			'starttime'				=> $startTime,
+			'endtime'				=> $this->dinerTime,
+			'timeslot_size'			=> $_POST['timeslotsize'],
 			'fixed_timeslot_size'	=> $fixedTimeslotSize,
-			'hidenames'		=> isset($_POST['hidenames']),
-			'admin_roles'	=> maybe_serialize($_POST['admin-roles']),
-			'view_roles'	=> maybe_serialize($_POST['view-roles']),
-			'subject'		=> $subject,
+			'hidenames'				=> isset($_POST['hidenames']),
+			'admin_roles'			=> maybe_serialize($_POST['admin-roles']),
+			'view_roles'			=> maybe_serialize($_POST['view-roles']),
+			'subject'				=> $subject,
 		);
 
 		if($update){
