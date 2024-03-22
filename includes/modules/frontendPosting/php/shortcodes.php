@@ -184,6 +184,7 @@ add_shortcode("old-pages", function(){
 				$html	.= "Author";
 			$html	.= "</th>";
 		$html	.= "</tr>";
+		
 		foreach($oldPages as $page){
 			$url					= get_permalink($page);
 			$authorUrl				= SIM\maybeGetUserPageUrl($page->post_author);

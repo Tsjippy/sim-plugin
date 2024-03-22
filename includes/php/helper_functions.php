@@ -198,6 +198,11 @@ function currentUrl(){
  * @return	string						The path
 */
 function urlToPath($url){
+	if(gettype($url) != 'string'){
+		printArray($url);
+		return '';
+	}
+	
 	$siteUrl	= str_replace(['https://', 'http://'], '', SITEURL);
 	$url		= str_replace(['https://', 'http://'], '', urldecode($url));
 	

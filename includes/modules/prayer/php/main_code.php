@@ -116,8 +116,11 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 						}								
 					}else{
 						$attachmentId	= get_user_meta($userId, 'profile_picture', true);
-						if(is_array($attachmentId) && isset($attachmentId[0])){
-							$attachmentId	= $attachmentId[0];
+						if(is_array($attachmentId)){
+							if (isset($attachmentId[0])){
+								$attachmentId	= $attachmentId[0];
+							}else{
+								$attachmentId	= 0;						}
 						}
 					}
 
