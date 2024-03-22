@@ -23,6 +23,8 @@ function twoFaSettingsForm($userId=''){
 		$publicKeyCredentialId	= null;
 	}
 
+	session_write_close();
+	
 	ob_start();
 	$twoFaMethods	= (array)get_user_meta($userId, '2fa_methods', true);
 	SIM\cleanUpNestedArray($twoFaMethods);

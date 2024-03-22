@@ -43,7 +43,9 @@ function installPlugin($pluginFile){
 		if(!isset($_SESSION)){
 			session_start();
 		}
-		$_SESSION['plugin']   = ['activated'=>$pluginName];
+		$_SESSION['plugin']   = ['activated' => $pluginName];
+
+		session_write_close();
 		return;
 	}
 
@@ -86,7 +88,9 @@ function installPlugin($pluginFile){
 	if(!isset($_SESSION)){
 		session_start();
 	}
-	$_SESSION['plugin']   = ['installed'=>$pluginName];
+	$_SESSION['plugin']   = ['installed' => $pluginName];
+
+	session_write_close();
 
 	printJs();
 

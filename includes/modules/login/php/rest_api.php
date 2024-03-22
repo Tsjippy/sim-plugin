@@ -1052,6 +1052,8 @@ function allowPasswordlessLogin( $user, $username, $password ) {
         deleteFromTransient('webauthn');
         deleteFromTransient('user');
 
+        session_write_close();
+
         return get_user_by( 'login', getFromTransient('username') );
     }
 

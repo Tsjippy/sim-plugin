@@ -12,6 +12,13 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+	$schedules = new EVENTS\Schedules();
+	maybe_add_column($schedules->tableName, 'fixed_timeslot_size', "ALTER TABLE $schedules->tableName ADD COLUMN `fixed_timeslot_size` boolean NOT NULL");
+
+	maybe_add_column($schedules->tableName, 'subject', "ALTER TABLE $schedules->tableName ADD COLUMN `subject` longtext NOT NULL");
+
+
 	$path	= "C:/xampp/htdocs/simnigeria/wp-content/test.heic";
 	$dest	= "C:/xampp/htdocs/simnigeria/wp-content/uploads/test.jpg";
 	// 1. save as file

@@ -94,9 +94,7 @@ add_action( 'upgrader_process_complete', function ( $upgraderObject, $options ) 
                 printArray('Scheduling update actions');
                 $oldVersion = $upgraderObject->skin->plugin_info['Version'];
 
-                //do_action('sim_plugin_update', $oldVersion);
-
-                wp_schedule_single_event(time()+10, 'schedule_sim_plugin_update_action', [$oldVersion]);
+                wp_schedule_single_event(time() + 10, 'schedule_sim_plugin_update_action', [ $oldVersion ]);
             }
         }
     }

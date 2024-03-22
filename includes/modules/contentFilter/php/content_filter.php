@@ -75,6 +75,8 @@ add_action('wp_footer', function(){
 		}
 		$_SESSION['showpage']   = 'true';
 
+		session_write_close();
+
 		// Set message in the session to be used in the login page
 		$message = 'This content is restricted. <br>You will be able to see this page as soon as you login.';
 

@@ -27,10 +27,10 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 	$res->slug 				= PLUGINNAME;
 	$res->version 			= $release['tag_name'];
 	$res->author 			= $release['author']['login'];
-	$res->tested			= '6.1.0';
+	$res->tested			= '6.5.0';
 	$res->requires 			= '5.5';
 	$res->author_profile 	= $release['author']['url'];
-	$res->requires_php 		= '7.1';
+	$res->requires_php 		= '8.1';
 	$res->last_updated 		= \Date(DATEFORMAT, strtotime($release['published_at']));
 
 	$description    = get_transient('sim-git-description');

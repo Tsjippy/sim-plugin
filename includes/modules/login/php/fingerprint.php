@@ -10,7 +10,7 @@ use WP_Error;
 
 //check for interface
 if(!interface_exists('Webauthn\PublicKeyCredentialSourceRepository')){
-    return new WP_Error('biometric', "Webauthn\PublicKeyCredentialSourceRepository interface does not exist. Please run 'composer require web-auth/webauthn-lib'");
+    return new \WP_Error('biometric', "Webauthn\PublicKeyCredentialSourceRepository interface does not exist. Please run 'composer require web-auth/webauthn-lib'");
 }
 
 function getProfilePicture($userId){
@@ -116,6 +116,8 @@ function storeInTransient($key, $value){
         session_start();
     }
     $_SESSION[$key] = $value;
+
+    session_write_close();
 }
 
 /**
@@ -131,7 +133,11 @@ function getFromTransient($key){
     if(!isset($_SESSION)){
         session_start();
     }
-    return $_SESSION[$key];
+
+    $value  = $_SESSION[$key]; 
+    session_write_close();
+
+    return $value;
 }
 
 /**
@@ -148,6 +154,8 @@ function deleteFromTransient($key){
         session_start();
     }
     unset( $_SESSION[$key]);
+
+    session_write_close();
 }
 
 /**

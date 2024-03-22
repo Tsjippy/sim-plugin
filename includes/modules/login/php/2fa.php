@@ -68,6 +68,8 @@ function sendEmailCode($user){
     }
     $_SESSION['2fa_email_key']  = $emailCode;
 
+    session_write_close();
+
     $twoFaEmail    = new TwoFaEmail($user, $emailCode);
 	$twoFaEmail->filterMail();
 						
@@ -87,6 +89,8 @@ function verifyEmailCode(){
 
     if($emailCode == $_POST['email_code']){
         unset($_SESSION['2fa_email_key']);
+
+        session_write_close();
         return true;
     }
     
@@ -221,6 +225,8 @@ add_filter( 'authenticate', function ( $user) {
         }
     }
 
+    session_write_close();
+
     return $user;
 }, 40);
 
@@ -240,6 +246,7 @@ add_action('init', function(){
     if(!isset($_SESSION)){
         session_start();
     }
+
     if (
         is_user_logged_in()                             &&	// we are logged in
         strpos($user->user_email,'.empty') === false    && 	// we have a valid email
@@ -254,10 +261,14 @@ add_action('init', function(){
     ){
         $url		= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, '2fa_page');
         if(!$url){
+
+            session_write_close();
             return;
         }
 
         if(SIM\currentUrl() != $url){
+            session_write_close();
+            
             SIM\printArray("Redirecting from ".SIM\currentUrl()." to $url");
             wp_redirect($url);
             exit();

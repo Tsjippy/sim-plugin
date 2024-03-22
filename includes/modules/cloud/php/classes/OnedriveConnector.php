@@ -50,6 +50,8 @@ class OnedriveConnector{
         // Persist the OneDrive client' state for next API requests.
         $_SESSION['onedrive.client.state'] = $this->client->getState();
 
+        session_write_close();
+
         // Redirect the user to the log in URL.
         wp_redirect($url);
 
@@ -80,6 +82,8 @@ class OnedriveConnector{
         
         // Persist the OneDrive client' state for next API requests.
         $_SESSION['onedrive.client.state'] = $this->client->getState();
+
+        session_write_close();
         
         // Past this point, you can start using file/folder functions from the SDK, eg:
         $file = $this->client->getRoot()->upload('hello.txt', 'Hello World!');

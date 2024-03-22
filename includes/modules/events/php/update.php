@@ -7,7 +7,7 @@ add_action('sim_plugin_update', function($oldVersion){
 
     SIM\printArray($oldVersion);
 
-    if($oldVersion < '2.38.3'){
+    if($oldVersion < '2.41.7'){
         $schedules = new Schedules();
 
         SIM\printArray($oldVersion);
