@@ -410,7 +410,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					$this->settings['audienceids'][0], 	//Audience id
 					null, 						// Fields to return
 					null,						// Fields to return
-					100,						//Maximum amount of segments
+					100,						// Maximum amount of segments
 					0,							// Offset
 					'saved'						// Only export segments, not tags
 				);
