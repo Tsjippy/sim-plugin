@@ -6,6 +6,7 @@
 
 ### Changed
 - form builder module page
+- sort mailchimp segements
 
 ### Fixed
 
