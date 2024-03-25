@@ -46,12 +46,13 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	<?php
 	if(!empty($settings["apikey"])){
+		$mailchimp = new Mailchimp();
 		?>
 		<br>
 		<label>
 			Mailchimp audience(s) you want new users added to:<br>
 			<?php
-			$mailchimp = new Mailchimp();
+			
 			$lists = (array)$mailchimp->getLists();
 			foreach ($lists as $key=>$list){
 				if($settings["audienceids"][$key]==$list->id){
@@ -62,6 +63,24 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 				echo '<label>';
 					echo "<input type='checkbox' name='audienceids[$key]' value='$list->id' $checked>";
 					echo $list->name;
+				echo '</label><br>';
+			}
+			?>
+		</label>
+		<br>
+		<label>
+			Default group you want to send new posts to<br>
+			<?php
+			$segments = (array)$mailchimp->getSegments();
+			foreach ($segments as $key=>$segment){
+				if(isset($settings["segmentids"][$key]) && $settings["segmentids"][$key] == $segment->id){
+					$checked = 'checked="checked"';
+				}else{
+					$checked = '';
+				}
+				echo '<label>';
+					echo "<input type='checkbox' name='audienceids[$key]' value='$segment->id' $checked>";
+					echo $segment->name;
 				echo '</label><br>';
 			}
 			?>

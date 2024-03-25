@@ -38,7 +38,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	foreach(get_post_types() as $type){
 		?>
 		<label>
-			<input type='checkbox' name='posttypes[]' value='<?php echo $type;?>' <?php if(in_array($type, $settings['posttypes'])){echo 'checked';}?>>
+			<input type='checkbox' name='posttypes[]' value='<?php echo $type;?>' <?php if(is_array($settings['posttypes']) && in_array($type, $settings['posttypes'])){echo 'checked';}?>>
 			<?php echo $type;?>
 		</label>
 		<br>

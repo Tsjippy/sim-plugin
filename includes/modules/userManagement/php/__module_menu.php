@@ -145,7 +145,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<?php
 
 	foreach(['family', 'generic', 'location', 'profile picture', 'security', 'vaccinations'] as $form){
-		if(in_array($form, $settings['enabled-forms'])){
+		if(is_array($settings['enabled-forms']) && in_array($form, $settings['enabled-forms'])){
 			$checked	= 'checked';
 		}else{
 			$checked	= '';

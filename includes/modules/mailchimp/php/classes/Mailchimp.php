@@ -67,9 +67,31 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		/**
 		 * Add user to mailchimp list
 		 */
-		public function addToMailchimp(){
+		public function addToMailchimp($email='', $firstName='', $lastName='', $phoneNumber='', $birthday=''){
+			if(!empty($email)){
+				$mergeFields = [];
+				
+				if(!empty($firstName)){
+					$mergeFields['FNAME']	= $firstName;
+				}
+
+				if(!empty($lastName)){
+					$mergeFields['LNAME']	= $lastName;
+				}
+
+				if(!empty($phoneNumber)){
+					$mergeFields['PHONE']	= $phoneNumber;
+				}
+
+				if(!empty($birthday)){
+					$birthday					= explode('-', $birthday);
+					$mergeFields['BIRTHDAY']	= $birthday[1].'/'.$birthday[2];
+				}
+
+				$this->subscribeMember($mergeFields);
+			}
 			//Only do if valid e-mail
-			if($this->user->user_email != '' && strpos($this->user->user_email,'.empty') === false && $_SERVER['HTTP_HOST'] != 'localhost'){
+			elseif(!empty($this->user->user_email) && strpos($this->user->user_email,'.empty') === false && $_SERVER['HTTP_HOST'] != 'localhost'){
 				SIM\printArray("Adding '{$this->user->user_email}' to Mailchimp");
 
 				//First add to the audience
@@ -262,9 +284,10 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		 * @param	int		$postId			The post id to send
 		 * @param	int		$segmentId		The id of the Mailchimp segment to e-mail to
 		 * @param	string	$from			The from e-mail to use
-		 * @param	string	$extraMessage	THe extra message to prepend the -mail contents with
+		 * @param	string	$extraMessage	The extra message to prepend the -mail contents with
+		 * @param	bool	$full			Whether or not to send the full post content or only a summary
 		 */
-		public function sendEmail(int $postId, int $segmentId, $from='', $extraMessage=''){
+		public function sendEmail(int $postId, int $segmentId, $from='', $extraMessage='', $full=true){
 			try {
 				if($_SERVER['HTTP_HOST'] == 'localhost' || get_option("wpstg_is_staging_site") == "true"){
 					return 'Not sending from localhost';
@@ -387,10 +410,14 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					$this->settings['audienceids'][0], 	//Audience id
 					null, 						// Fields to return
 					null,						// Fields to return
-					100,						//	Maximum amount of segments
+					100,						//Maximum amount of segments
 					0,							// Offset
 					'saved'						// Only export segments, not tags
 				);
+
+				usort($response->segments, function ($list1, $list2) { 
+					return strtolower($list1->name) > strtolower($list2->name); 
+				} ); 
 
 				set_transient( 'mailchimp_segments', $response->segments, DAY_IN_SECONDS );
 

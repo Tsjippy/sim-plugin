@@ -72,7 +72,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 		foreach($userRoles as $key=>$role){
 			$selected	= '';
-			if(in_array($key, $settings['content-manager-roles'])){
+			if(is_array($settings['content-manager-roles']) && in_array($key, $settings['content-manager-roles'])){
 				$selected	= 'selected=selected';
 			}
 			echo "<option value='$key' $selected>$role</option>";
@@ -82,8 +82,8 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<br>
 	<label>How should content managers be notified about pending content?</label>
 	<br>
-	<label><input type='checkbox' name='pending-channels[]' value='email' <?php if(in_array('email', $settings['pending-channels'])){echo 'checked';}?>>E-mail</label>
-	<label><input type='checkbox' name='pending-channels[]' value='signal' <?php if(in_array('signal', $settings['pending-channels'])){echo 'checked';}?>>Signal</label>
+	<label><input type='checkbox' name='pending-channels[]' value='email' <?php if(is_array($settings['pending-channels']) && in_array('email', $settings['pending-channels'])){echo 'checked';}?>>E-mail</label>
+	<label><input type='checkbox' name='pending-channels[]' value='signal' <?php if(is_array($settings['pending-channels']) && in_array('signal', $settings['pending-channels'])){echo 'checked';}?>>Signal</label>
 	<br>
 	<br>
 

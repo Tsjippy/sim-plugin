@@ -167,7 +167,7 @@ function connectedOptions($signal, $settings){
 				}
 				?>
 				<label>
-					<input type='checkbox' name='groups[]' value='<?php echo $group->id;?>' <?php if(in_array($group->id, $settings['groups'])){echo 'checked';}?>>
+					<input type='checkbox' name='groups[]' value='<?php echo $group->id;?>' <?php if(is_array($settings['groups']) && in_array($group->id, $settings['groups'])){echo 'checked';}?>>
 					<?php echo $group->name;?>
 				</label>
 				<br>
@@ -192,7 +192,7 @@ function connectedOptions($signal, $settings){
 				}
 				?>
 				<label>
-					<input type='checkbox' name='invgroups[]' value='<?php echo $group->path;?>' <?php if(in_array($group->path, $settings['invgroups'])){echo 'checked';}?>>
+					<input type='checkbox' name='invgroups[]' value='<?php echo $group->path;?>' <?php if(is_array($settings['invgroups']) && in_array($group->path, $settings['invgroups'])){echo 'checked';}?>>
 					<?php echo $group->name;?>
 				</label>
 				<br>
