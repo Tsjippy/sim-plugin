@@ -76,21 +76,36 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 	ob_start();
 	?>
-	<label for="reminder_freq">How often should people be reminded of remaining form fields to fill?</label>
-	<br>
-	<select name="reminder_freq">
-		<?php
-		SIM\ADMIN\recurrenceSelector($settings['reminder_freq']);
-		?>
-	</select>
+	Do you want to use this module also for userdata?
+	<label class="switch">
+		<input type="checkbox" name="userdata" <?php if(isset($settings['userdata'])){echo 'checked';}?>>
+		<span class="slider round"></span>
+	</label>
 
 	<?php
+	if(isset($settings['userdata'])){
+		?>
+		<br>
+		<br>
+		<label for="reminder_freq">
+			How often should people be reminded of remaining form fields to fill?
+		</label>
+		<br>
+		<select name="reminder_freq">
+			<?php
+			SIM\ADMIN\recurrenceSelector($settings['reminder_freq']);
+			?>
+		</select>
+
+		<?php
+	}
+
 	return ob_get_clean();
 }, 10, 3);
 
 add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG){
+	if($moduleSlug != MODULE_SLUG || !isset($settings['userdata'])){
 		return $optionsHtml;
 	}
 

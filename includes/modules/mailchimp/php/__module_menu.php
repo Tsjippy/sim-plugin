@@ -43,61 +43,70 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		Mailchimp API key
 		<input type="text" name="apikey" id="apikey" value="<?php echo $settings["apikey"]; ?>" style="width:100%;">
 	</label>
-	<br>
-	<label>
-		Mailchimp audience(s) you want new users added to:<br>
-		<?php
-		$mailchimp = new Mailchimp();
-		$lists = (array)$mailchimp->getLists();
-		foreach ($lists as $key=>$list){
-			if($settings["audienceids"][$key]==$list->id){
-				$checked = 'checked="checked"';
-			}else{
-				$checked = '';
-			}
-			echo '<label>';
-				echo "<input type='checkbox' name='audienceids[$key]' value='$list->id' $checked>";
-				echo $list->name;
-			echo '</label><br>';
-		}
-		?>
-	</label>
-	<br>
-	<label>
-		Mailchimp TAGs you want to add to new users<br>
-		<input type="text" name="user_tags" value="<?php echo $settings["user_tags"]; ?>">
-	</label>
-	<br>
-	<br>
-	<label>
-		Mailchimp TAGs you want to add to missionaries<br>
-		<input type="text" name="missionary_tags" value="<?php echo $settings["missionary_tags"]; ?>">
-	</label>
-	<br>
-	<br>
-	<label>
-		Mailchimp TAGs you want to add to office staff<br>
-		<input type="text" name="office_staff_tags" value="<?php echo $settings["office_staff_tags"]; ?>">
-	</label>
-	<br>
-	<br>
-	<label>Mailchimp template to be used for e-mails</label>
+
 	<?php
-	$templates	= $mailchimp->getTemplates();
-	?>
-	<select name="templateid">
-		<?php
-		foreach($templates as $template){
-			if($template->id == $settings["templateid"]){
-				$selected	= 'selected="selected"';
-			}else{
-				$selected	= '';
-			}
-			echo "<option value='$template->id' $selected>$template->name</option>";
-		}
+	if(!empty($settings["apikey"])){
 		?>
-	</select>
-	<?php
+		<br>
+		<label>
+			Mailchimp audience(s) you want new users added to:<br>
+			<?php
+			$mailchimp = new Mailchimp();
+			$lists = (array)$mailchimp->getLists();
+			foreach ($lists as $key=>$list){
+				if($settings["audienceids"][$key]==$list->id){
+					$checked = 'checked="checked"';
+				}else{
+					$checked = '';
+				}
+				echo '<label>';
+					echo "<input type='checkbox' name='audienceids[$key]' value='$list->id' $checked>";
+					echo $list->name;
+				echo '</label><br>';
+			}
+			?>
+		</label>
+		<br>
+		<label>
+			Mailchimp TAGs you want to add to new users<br>
+			<input type="text" name="user_tags" value="<?php echo $settings["user_tags"]; ?>">
+		</label>
+		<br>
+		<br>
+		<label>
+			Mailchimp TAGs you want to add to missionaries<br>
+			<input type="text" name="missionary_tags" value="<?php echo $settings["missionary_tags"]; ?>">
+		</label>
+		<br>
+		<br>
+		<label>
+			Mailchimp TAGs you want to add to office staff<br>
+			<input type="text" name="office_staff_tags" value="<?php echo $settings["office_staff_tags"]; ?>">
+		</label>
+		<br>
+		<br>
+		<label>
+			Mailchimp template to be used for e-mails<br>
+			Make sure it contains the text '//*THIS WILL BE REPLACED BY THE WEBSITE *//'
+		</label>
+		<?php
+		$templates	= $mailchimp->getTemplates();
+		?>
+		<select name="templateid">
+			<?php
+			foreach($templates as $template){
+				if($template->id == $settings["templateid"]){
+					$selected	= 'selected="selected"';
+				}else{
+					$selected	= '';
+				}
+				echo "<option value='$template->id' $selected>$template->name</option>";
+			}
+			?>
+		</select>
+		<?php
+	}
+
 	return ob_get_clean();
 }, 10, 3);
 

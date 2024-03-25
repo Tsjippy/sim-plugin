@@ -156,7 +156,7 @@ class Schedules{
 		$this->viewRoles	= maybe_unserialize($this->currentSchedule->view_roles);
 
 		if(empty($this->adminRoles)){
-			$this->adminRoles	= ['editor'];
+			$this->adminRoles	= ['editor', 'personnelinfo'];
 		}
 		
 		if(array_intersect($this->adminRoles, $this->user->roles)){

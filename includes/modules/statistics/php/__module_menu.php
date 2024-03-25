@@ -34,7 +34,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
     <label>Who should see the statistics?</label><br>
 	<?php
 	foreach($wp_roles->role_names as $key=>$name){
-		if(in_array($key, $settings['view_rights'])){
+		if(is_array($settings['view_rights']) && in_array($key, $settings['view_rights'])){
 			$checked = 'checked';
 		}else{
 			$checked = '';

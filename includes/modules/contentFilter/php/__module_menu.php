@@ -63,7 +63,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 			foreach($roles as $key=>$role){
 				?>
 				<label>
-					<input type="checkbox" name="confidential-roles[]" value="<?php echo $key;?>" <?php if(in_array($key, $settings['confidential-roles'])){echo 'checked';}?>>
+					<input type="checkbox" name="confidential-roles[]" value="<?php echo $key;?>" <?php if(is_array($settings['confidential-roles']) && in_array($key, $settings['confidential-roles'])){echo 'checked';}?>>
 					<?php echo $role;?>
 				</label>
 				<br>
