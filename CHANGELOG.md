@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.41.7] - 2024-03-25
+
+
+### Changed
 - form builder module page
 - sort mailchimp segements
 
