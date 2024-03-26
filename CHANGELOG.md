@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- define custom subscribe mailchim adres
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.41.9] - 2024-03-26
+
+
+### Added
+- define custom subscribe mailchim adres
 
 ### Fixed
 - schedules bug
