@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- define custom subscribe mailchim adres
 
 ### Changed
 
