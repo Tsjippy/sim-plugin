@@ -9,14 +9,6 @@ add_action( 'activated_plugin', function ( $plugin ) {
 
     error_log('Running activation');
 
-    // create must use plugins folder if it does not exist
-    if (!is_dir(WP_CONTENT_DIR.'/mu-plugins')) {
-        mkdir(WP_CONTENT_DIR.'/mu-plugins', 0777, true);
-    }
-
-    // Copy must plugin
-    copy(__DIR__.'/other/sim.php', WP_CONTENT_DIR.'/mu-plugins/sim.php');
-
     // Create private upload folder
     $path   = wp_upload_dir()['basedir'].'/private';
     if (!is_dir($path)) {
