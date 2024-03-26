@@ -192,6 +192,15 @@ function currentUrl(){
 }
 
 /**
+ * Returns the current url
+ *
+ * @return	string						The url
+*/
+function getCurrentUrl(){
+	return currentUrl();
+}
+
+/**
  * Transforms an url to a path
  * @param 	string		$url	 		The url to be transformed
  *
