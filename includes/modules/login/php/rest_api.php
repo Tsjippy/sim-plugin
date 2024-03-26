@@ -914,6 +914,8 @@ function userLogin(){
         //Redirect to account page if 2fa is not set
         if(!$methods || empty($methods)){
             $url		= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, '2fa_page');
+
+            SIM\printArray($url);
             if($url){
                 return $url;
             }
@@ -921,6 +923,7 @@ function userLogin(){
 
         //redirect to account page to fill in required fields
         if (!isset($_SESSION['showpage']) && !empty($fieldList) && !empty($accountPage)){
+            SIM\printArray($url);
             return $accountPage;
         }else{
             if(isset($_SESSION['showpage'])){

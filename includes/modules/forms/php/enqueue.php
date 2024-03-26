@@ -2,46 +2,66 @@
 namespace SIM\FORMS;
 use SIM;
 
+function checkFormExistence($formName){
+    $simForms    = new SimForms();
+    $simForms->getForms();
+
+    // check if a form with this name already exists
+    $found  = false;
+    foreach($simForms->forms as $form){
+        if($form->name == $formName){
+            $found  = true;
+            break;
+        }
+    }
+
+    // Only add a new form if it does not exist yet
+    if(!$found){
+        $simForms->insertForm($formName);
+
+        return $simForms->formName;
+    }
+
+    return $formName;
+}
+
 add_action( 'wp_after_insert_post', function($postId, $post){
     global $Modules;
 
-    $hasFormbuilderShortcode    = has_shortcode($post->post_content, 'formbuilder');
+    if(has_block('sim/formbuilder', $post)){
+        $hasFormbuilderShortcode    = true;
 
-    // Add the form if it does not exist yet
-    if($hasFormbuilderShortcode){
-        preg_match_all(
-            '/' . get_shortcode_regex() . '/',
-            $post->post_content,
-            $shortcodes,
-            PREG_SET_ORDER
-        );
+        $blocks                    = parse_blocks($post->post_content);
 
-        // loop over all the found shortcodes
-        foreach($shortcodes as $shortcode){
-            // Only continue if the current shortcode is a formbuilder shortcode
-            if($shortcode[2] == 'formbuilder'){
-                // Get the formbuilder name from the shortcode
-                $formName       = shortcode_parse_atts($shortcode[3])['formname'];
+        foreach($blocks as $block){
+            if($block['blockName'] == 'sim/formbuilder' && !empty($block['attrs']['formname'])){
+                checkFormExistence($block['attrs']['formname']);
+            }
+        }
+    }else{
+        $hasFormbuilderShortcode    = has_shortcode($post->post_content, 'formbuilder') ;
 
-                $simForms    = new SimForms();
-                $simForms->getForms();
+        // Add the form if it does not exist yet
+        if($hasFormbuilderShortcode){
+            preg_match_all(
+                '/' . get_shortcode_regex() . '/',
+                $post->post_content,
+                $shortcodes,
+                PREG_SET_ORDER
+            );
 
-                // check if a form with this name already exists
-                $found  = false;
-                foreach($simForms->forms as $form){
-                    if($form->name == $formName){
-                        $found  = true;
-                        break;
-                    }
-                }
+            // loop over all the found shortcodes
+            foreach($shortcodes as $shortcode){
+                // Only continue if the current shortcode is a formbuilder shortcode
+                if($shortcode[2] == 'formbuilder'){
+                    // Get the formbuilder name from the shortcode
+                    $formName       = shortcode_parse_atts($shortcode[3])['formname'];
 
-                // Only add a new form if it does not exist yet
-                if(!$found){
-                    $simForms->insertForm($formName);
+                    $newFormName    = checkFormExistence($formName);
 
                     // Check if we should adjust the name
-                    if($formName != $simForms->formName){
-                        $newShortcode  = str_replace($formName, $simForms->formName, $shortcode[0]);
+                    if($formName != $newFormName){
+                        $newShortcode  = str_replace($formName, $newFormName, $shortcode[0]);
 
                         $content        = str_replace($shortcode[0], $newShortcode, $post->post_content);
                         wp_update_post(
@@ -58,7 +78,7 @@ add_action( 'wp_after_insert_post', function($postId, $post){
         }
     }
 
-    if($hasFormbuilderShortcode || has_shortcode($post->post_content, 'formselector')){
+    if($hasFormbuilderShortcode || has_shortcode($post->post_content, 'formselector') || has_block('sim/formbuilder', $post)){
         if(!is_array($Modules[MODULE_SLUG]['formbuilder_pages'])){
             $Modules[MODULE_SLUG]['formbuilder_pages']    = [$postId];
         }elseif(!in_array($postId, $Modules[MODULE_SLUG]['formbuilder_pages'])){

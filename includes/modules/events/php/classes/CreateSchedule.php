@@ -671,7 +671,7 @@ class CreateSchedule extends Schedules{
 		if(!empty($_POST['session-id'])){
 			$message	= "Succesfully updated this entry";
 		}elseif($this->admin && $hostName != $this->user->display_name){
-			$name	= hostName;
+			$name	= $hostName;
 		}else{
 			$name	= "you";
 		}
