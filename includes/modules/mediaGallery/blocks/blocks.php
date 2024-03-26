@@ -27,7 +27,9 @@ add_action('init', function () {
 
 add_action( 'enqueue_block_editor_assets', function(){
 	SIM\enqueueScripts();
+
 	enqueueMediaGalleryScripts();
+	
 	if(function_exists('SIM\VIMEO\enqueueVimeoScripts')){
 		SIM\VIMEO\enqueueVimeoScripts();
 	}

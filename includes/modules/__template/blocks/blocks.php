@@ -28,5 +28,9 @@ add_action('init', function () {
 });
 
 add_action( 'enqueue_block_editor_assets', function(){
+	SIM\enqueueScripts();
+
+	registerScripts();
+	
 	wp_enqueue_script( 'sim_formbuilderjs');
 } );

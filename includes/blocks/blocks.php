@@ -3,12 +3,14 @@ namespace SIM;
 
 // Load the js file to filter all blocks
 add_action( 'enqueue_block_editor_assets', function() {
+
     wp_register_script(
         'sim-block-filter',
         plugins_url('blocks/block_filters/build/index.js', __DIR__),
         [ 'wp-blocks', 'wp-dom', 'wp-dom-ready', 'wp-edit-post' ],
         STYLE_VERSION
     );
+	
     wp_enqueue_script( 'sim-block-filter' );
 });
 
