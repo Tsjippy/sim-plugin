@@ -83,7 +83,9 @@ add_action( 'rest_api_init', function () {
 });
 
 function showFormBuilder($attributes){
+	$isRest	= false;
 	if($attributes instanceof \WP_REST_Request){
+		$isRest	= true;
 		if(!empty($_REQUEST['formname'])){
 			$attributes = ['formname' => $_REQUEST['formname']];
 		}elseif(!empty($_REQUEST['formid'])){
@@ -100,6 +102,12 @@ function showFormBuilder($attributes){
 	$html	= $simForms->determineForm($attributes);
 	if(is_wp_error($html)){
 		$html = $html->get_error_message();
+	}
+	
+	if(!$isRest){
+		return [
+			'html'	=> $html,
+		];
 	}
 
 	do_action('wp_enqueue_scripts');

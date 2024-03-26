@@ -574,7 +574,7 @@ class SimForms{
 
 			return $formBuilderForm->showForm();
 		}elseif(empty($formElements)){
-			return "<div class='warning'>This form has no elements yet</div>";
+			return "<div class='warning'>This form has no elements yet.<br>Ask an user with the editor role to start working on it</div>";
 		}else{
 			$displayForm	= new DisplayForm($atts);
 			return $displayForm->showForm();
