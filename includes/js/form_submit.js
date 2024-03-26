@@ -51,7 +51,7 @@ window.addEventListener("beforeunload", (event) => {
 });
 
 document.addEventListener('focusout', (ev)=>{
-	if(ev.target.matches(`:invalid`)){
+	if(ev.target.matches(`:invalid:not(select)`)){
 		ev.target.reportValidity();
 	}
 })

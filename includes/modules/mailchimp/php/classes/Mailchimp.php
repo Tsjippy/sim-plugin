@@ -88,7 +88,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					$mergeFields['BIRTHDAY']	= $birthday[1].'/'.$birthday[2];
 				}
 
-				$this->subscribeMember($mergeFields);
+				$this->subscribeMember($mergeFields, $email);
 			}
 			//Only do if valid e-mail
 			elseif(!empty($this->user->user_email) && strpos($this->user->user_email,'.empty') === false && $_SERVER['HTTP_HOST'] != 'localhost'){
@@ -191,11 +191,17 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		/**
 		 * Add someone to the audience of Mailchimp
 		 *
+		 * @param	array	$mergeFields	The extra data for the user
+		 * @param	string	$email			Optional email adres to use, default current users e-mail
+		 *
 		 * @return	array|string	The result or error
 		 */
-		public function subscribeMember($mergeFields){
+		public function subscribeMember($mergeFields, $email=''){
 			try {
-				$email = $this->user->user_email;
+				if(empty($email)){
+					$email = $this->user->user_email;
+				}
+				
 				return $this->client->lists->setListMember(
 					$this->settings['audienceids'][0],
 					md5(strtolower($email)),
