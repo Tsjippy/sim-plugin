@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.41.8] - 2024-03-26
+
+
+### Fixed
 - bug in schedules
 
 ### Updated
