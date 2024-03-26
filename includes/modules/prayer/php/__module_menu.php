@@ -110,13 +110,13 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 							<?php
 						}else{
 							?>
-							<input type='text' name="groups[<?php echo $index;?>][name]" value='<?php echo $group['name'];?>'>
+							<input type='text' name="groups[<?php echo $index;?>][name]" value='<?php if(!empty($group['name'])){echo $group['name'];}?>'>
 							<?php
 						}
 						?>
 						<label>
 							<h4 style='margin-bottom: 0px;'>Time the message should be send</h4>
-							<input type='time' name="groups[<?php echo $index;?>][time]" value='<?php echo $group['time'];?>'>
+							<input type='time' name="groups[<?php echo $index;?>][time]" value='<?php if(!empty($group['time'])){echo $group['time'];}?>'>
 						</label>
 					</div>
 					<div class='buttonwrapper' style='margin:auto;'>

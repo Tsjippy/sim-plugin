@@ -302,7 +302,14 @@ async function deleteHost(target){
 
 //Do something with selected items
 async function afterSelect(e, selected, _unselected){
-	let target = selected[0].node;
+	console.log(e)
+	console.log(selected);
+	let target;
+	if(selected[0] != undefined){
+		target 	= selected[0].node;
+	}else{
+		target	= e.target;
+	}
 
 	//remove a meal host
 	if(target.matches('.meal.selected.own, .meal.selected.admin')){
