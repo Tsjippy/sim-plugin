@@ -1007,16 +1007,19 @@ window.addEventListener('change', ev=>{
 		let parent	= target.closest('.submitted-trigger-type');
 		let static	= parent.querySelector('.staticvalue');
 		let dynamic	= parent.querySelector('div.dynamicvalue');
+
+		if(dynamic != null){
 		
-		if(target.value == '==' || target.value == '!=' || target.value == '>' || target.value == '<'){
-			static.classList.remove('hidden');
-			dynamic.classList.add('hidden');
-		}else if(target.value == 'checked' || target.value == '!checked'){
-			dynamic.classList.add('hidden');
-			static.classList.add('hidden');
-		}else{
-			dynamic.classList.remove('hidden');
-			static.classList.add('hidden');
+			if(target.value == '==' || target.value == '!=' || target.value == '>' || target.value == '<'){
+				static.classList.remove('hidden');
+				dynamic.classList.add('hidden');
+			}else if(target.value == 'checked' || target.value == '!checked'){
+				dynamic.classList.add('hidden');
+				static.classList.add('hidden');
+			}else{
+				dynamic.classList.remove('hidden');
+				static.classList.add('hidden');
+			}
 		}
 	}
 });

@@ -4,7 +4,7 @@ use SIM;
 
 //Multi default values used to prefil the compound dropdown
 add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId, $formName){
-	if($formName != 'user_location'){
+	if($formName != 'user_location' || !defined('NIGERIASTATES')){
 		return $defaultArrayValues;
 	}
 

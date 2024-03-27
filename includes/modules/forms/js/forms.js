@@ -84,7 +84,9 @@ export function cloneNode(originalNode, clear=true){
 	
 	//add tinymce's again
 	originalNode.querySelectorAll('.wp-editor-area').forEach(el =>{
-		tinymce.init(tinymceSettings[el.id]);
+		if(tinymceSettings[el.id] != undefined){
+			tinymce.init(tinymceSettings[el.id]);
+		}
 	});
 	
 	//clear values in the clone
@@ -138,7 +140,7 @@ export function copyFormInput(originalNode){
 			select.options[previousVal].style.display = 'none';
 		}else{
 			console.log(select);
-			console.log(options);
+			console.log(select.options);
 			console.log(previousVal);
 		}
 		
