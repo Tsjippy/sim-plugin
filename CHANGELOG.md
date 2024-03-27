@@ -8,6 +8,7 @@
 
 ### Fixed
 - bug in form settings
+- mailchimp birthdate field
 
 ### Updated
 
