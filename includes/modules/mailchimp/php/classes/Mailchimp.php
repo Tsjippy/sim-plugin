@@ -86,7 +86,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				if(!empty($birthday)){
 					$birthday					= explode('-', $birthday);
 					$mergeFields['BIRTHDAY']	= $birthday[1].'/'.$birthday[2];
-					$mergeFields['BIRTHDATE']	= $birthday[1].'/'.$birthday[2].$birthday[0];
+					$mergeFields['BIRTHDATE']	= $birthday[1].'/'.$birthday[2].'/'.$birthday[0];
 				}
 
 				if(!empty($address)){

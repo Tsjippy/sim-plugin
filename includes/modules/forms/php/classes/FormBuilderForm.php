@@ -1061,7 +1061,7 @@ class FormBuilderForm extends SimForms{
 			</select>
 			<br>
 			
-			<div name='elementname' class='elementoption wide reverse notlabel notphp notformstep button hide' style='background-color: unset;'>
+			<div name='elementname' class='elementoption wide reverse notlabel notphp notformstep button shouldhide' style='background-color: unset;'>
 				<label>
 					<div style='text-align: left;'>Specify a name for the element</div>
 					<input type="text" class="formbuilder wide" name="formfield[name]" value="<?php if($element != null){echo $element->name;}?>">
@@ -1105,7 +1105,7 @@ class FormBuilderForm extends SimForms{
 				</label>
 			</div>
 			
-			<div name='wrap' class='elementoption reverse notp notphp notfile notimage hide'>
+			<div name='wrap' class='elementoption reverse notp notphp notfile notimage shouldhide'>
 				<label>
 					<input type="checkbox" class="formbuilder" name="formfield[wrap]" value="true" <?php if($element != null && $element->wrap){echo 'checked';}?>>
 					Group together with next element
@@ -1143,7 +1143,7 @@ class FormBuilderForm extends SimForms{
 				<br>
 			</div>
 			
-			<div name='multiple' class='elementoption reverse notlabel notbutton notformstep notp notphp hide'>
+			<div name='multiple' class='elementoption reverse notlabel notbutton notformstep notp notphp shouldhide'>
 				<label>
 					<input type="checkbox" class="formbuilder" name="formfield[multiple]" value="true" <?php if($element != null && $element->multiple){echo 'checked';}?>>
 					Allow multiple answers
@@ -1179,7 +1179,7 @@ class FormBuilderForm extends SimForms{
 				</select>
 			</div>
 
-			<div name='defaults' class='elementoption reverse notlabel notbutton notformstep notp notphp notfile notimage hide'>
+			<div name='defaults' class='elementoption reverse notlabel notbutton notformstep notp notphp notfile notimage shouldhide'>
 				<label class='block'>Specify a default value if desired</label>
 				<input type='text' class="formbuilder" name="formfield[default_value]" list='defaults' value='<?php if($element != null){echo trim($element->default_value);}?>'>
 
@@ -1197,7 +1197,7 @@ class FormBuilderForm extends SimForms{
 			do_action('sim-after-formbuilder-element-options', $element);
 			?>
 			<br>
-			<div name='elementoptions' class='elementoption reverse notlabel notbutton notformstep notp notphp hide'>
+			<div name='elementoptions' class='elementoption reverse notlabel notbutton notformstep notp notphp shouldhide'>
 				<label>
 					Specify any options like styling
 					<textarea class="formbuilder" name="formfield[options]"><?php if($element != null){echo trim($element->options);}?></textarea>
