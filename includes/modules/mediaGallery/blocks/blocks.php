@@ -25,7 +25,7 @@ add_action('init', function () {
 	);
 });
 
-add_action( 'enqueue_block_editor_assets', function(){
+add_action( 'enqueue_block_assets', function(){
 	SIM\enqueueScripts();
 
 	enqueueMediaGalleryScripts();

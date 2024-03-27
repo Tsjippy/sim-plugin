@@ -203,6 +203,8 @@ export function hideModals(){
 	if(modals.length != 0){
 		modals.forEach(modal=>{
 			modal.classList.add('hidden');
+			modal.style.removeProperty('display');
+			
 			const event = new Event('modalclosed');
 			modal.dispatchEvent(event);
 		});
@@ -216,8 +218,6 @@ export function hideModals(){
 		if(prim != null){
 			prim.style.zIndex			= 1;
 		}
-
-		modal.style.removeProperty('display');
 	}
 }
 

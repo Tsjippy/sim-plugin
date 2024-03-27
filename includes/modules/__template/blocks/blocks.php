@@ -27,10 +27,19 @@ add_action('init', function () {
 	);
 });
 
-add_action( 'enqueue_block_editor_assets', function(){
+add_action( 'enqueue_block_assets', function(){
 	SIM\enqueueScripts();
 
 	registerScripts();
 	
 	wp_enqueue_script( 'sim_formbuilderjs');
 } );
+
+add_action( 'enqueue_block_editor_assets', function() {
+    wp_enqueue_script(
+        'sim-signal-block',
+        plugins_url('blocks/signal_options/build/index.js', __DIR__),
+        [ 'wp-blocks', 'wp-dom', 'wp-dom-ready', 'wp-edit-post' ],
+        STYLE_VERSION
+    );
+});
