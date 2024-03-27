@@ -1,6 +1,6 @@
 @use '../../../css/scss/global' as *;
 
-.sim_form{
+.sim-form-wrapper{
 	.formfieldinput:not(input[type='radio']){
 		float:left;
 	}
@@ -161,7 +161,7 @@
 		}
 	}
 	
-	.wrapper, .clone_div{
+	.clone_div{
 		.nice-select{
 			display: inline-block;
 		}

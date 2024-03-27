@@ -432,7 +432,7 @@ class MediaGallery{
                     //only show image text on images
                     ?>
                     <div id="imgtext">
-                        <div class="wrapper">
+                        <div class="image-title-wrapper">
                             <?php
                             echo $title;
                             ?>

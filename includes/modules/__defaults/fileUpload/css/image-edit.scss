@@ -22,7 +22,7 @@ $secundary_color:	#8a1a0e;
         font-weight: 500;
     }
 
-    .wrapper{
+    .image-edit-wrapper{
         display: flex;
         margin: 20px 10px;
         min-height: 335px;
@@ -117,7 +117,7 @@ $secundary_color:	#8a1a0e;
 
 @media (prefers-color-scheme: dark) {
   .image-edit-container{
-    .wrapper{
+    .image-edit-wrapper{
       .editor-panel{
           button{
             background-color: black;
@@ -188,15 +188,15 @@ $secundary_color:	#8a1a0e;
 }
 
 @media screen and (max-width: 760px) {
-  .image-edit-container .wrapper{
+  .image-edit-container .image-edit-wrapper{
     flex-wrap: wrap-reverse;
   }
 
-  .wrapper .editor-panel{
+  .image-edit-wrapper .editor-panel{
     width: 100%;
   }
 
-  .wrapper .preview-img{
+  .image-edit-wrapper .preview-img{
     width: 100%;
     margin: 0 0 15px;
   }

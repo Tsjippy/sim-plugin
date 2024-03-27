@@ -123,7 +123,7 @@ function userInfoPage($atts){
 			if(!isset($_GET['main_tab']) || $_GET['main_tab'] == 'dashboard' ){
 				$html	.= showDashboard($userId, $admin);
 			}else{
-				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
+				$html	.= "<div class='loader-wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 			}
 		$html	.= '</div>';
 	}
@@ -149,7 +149,7 @@ function userInfoPage($atts){
 				if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'family'){
 					$html	.= do_shortcode('[formbuilder formname=user_family]');
 				}else{
-					$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
+					$html	.= "<div class='loader-wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 				}
 				
 			$html .= '</div>';
@@ -195,7 +195,7 @@ function userInfoPage($atts){
 			if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'location_info'){
 				$html	.= do_shortcode('[formbuilder formname=user_location]');
 			}else{
-				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
+				$html	.= "<div class='loader-wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 			}
 
 		$html .= '</div>';
@@ -224,7 +224,7 @@ function userInfoPage($atts){
 			if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'profile_picture'){
 				$html	.= do_shortcode('[formbuilder formname=profile_picture]');
 			}else{
-				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
+				$html	.= "<div class='loader-wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 			}
 
 		$html .= '</div>';
@@ -280,7 +280,7 @@ function userInfoPage($atts){
 			if(isset($_GET['main_tab']) && $_GET['main_tab'] == "security_info"){
 				$html	.= do_shortcode('[formbuilder formname=security_questions]');
 			}else{
-				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
+				$html	.= "<div class='loader-wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 			}
 
 		$html .= '</div>';
@@ -314,7 +314,7 @@ function userInfoPage($atts){
 			if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'medical_info'){
 				$html	.= getMedicalTab($userId);
 			}else{
-				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
+				$html	.= "<div class='loader-wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 			}
 
 		$html	.= "</div>";
@@ -339,7 +339,7 @@ function userInfoPage($atts){
 				//Content
 				$html	.= "<div id='child_info_$childId' class='tabcontent hidden'>";
 
-					$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
+					$html	.= "<div class='loader-wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 
 				$html .= '</div>';
 			}

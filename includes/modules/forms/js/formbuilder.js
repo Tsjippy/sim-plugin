@@ -831,7 +831,7 @@ function removeWarningCondition(target){
 window.addEventListener("click", event => {
 	let target = event.target;
 	
-	formWrapper				= target.closest('.sim_form.wrapper');
+	formWrapper				= target.closest('.sim-form-wrapper');
 	formElementWrapper		= target.closest('.form_element_wrapper');
 	
 	if(formWrapper != null){

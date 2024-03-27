@@ -219,7 +219,7 @@ class FormBuilderForm extends SimForms{
 		wp_enqueue_script( 'sim_formbuilderjs');
 		
 		?>
-		<div class="sim_form wrapper">
+		<div class="sim-form-wrapper">
 			<?php
 			$this->addElementModal();
 

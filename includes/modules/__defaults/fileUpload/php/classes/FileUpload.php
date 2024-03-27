@@ -87,7 +87,7 @@ class FileUpload{
 
 				<div class="image-edit-container">
 					<h4>Edit your image</h4>
-					<div class="wrapper">
+					<div class="image-edit-wrapper">
 						<div class="editor-panel">
 							<div class="filter">
 								<label class="title">Filters</label>

@@ -16,11 +16,11 @@ async function loadTab(tab){
 	let response = await FormSubmit.fetchRestApi('user_management/get_userpage_tab', formData);
 
 	if(response){
-		tab.querySelector('.wrapper').innerHTML	= response.html;
+		tab.querySelector('.loader-wrapper').innerHTML	= response.html;
 
 		// after scripts have been loaded over AJAX
 		tab.addEventListener("scriptsloaded", function(event) {
-			event.target.querySelectorAll('.wrapper.hidden').forEach(el=>el.classList.remove('hidden'));
+			event.target.querySelectorAll('.loader-wrapper.hidden').forEach(el=>el.classList.remove('hidden'));
 
 			event.target.querySelectorAll('.tabloader').forEach(el=>el.remove());
 		});
@@ -34,7 +34,7 @@ async function loadTab(tab){
 document.addEventListener("DOMContentLoaded", function() {
 
 	// only load when the loader image is still there
-	document.querySelectorAll(`.wrapper.loading`).forEach(loader => {
+	document.querySelectorAll(`.loader-wrapper.loading`).forEach(loader => {
 		loader.classList.remove('loading');
 		setTimeout(loadTab, 100, loader.parentNode);
 	});

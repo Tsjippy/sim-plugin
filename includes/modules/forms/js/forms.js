@@ -660,7 +660,7 @@ export function changeFieldProperty(selector, att, value, functionRef, form, add
 }
 
 async function formbuilderSwitch(target){
-	let wrapper	= target.closest('.sim_form.wrapper');
+	let wrapper	= target.closest('.sim-form-wrapper');
 	let button	= target.outerHTML;
 
 	let formData = new FormData();
