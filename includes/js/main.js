@@ -193,6 +193,8 @@ export function showModal(modal){
 		}
 
 		modal.classList.remove('hidden');
+
+		modal.style.display	= 'block';
 	}	
 }
 
@@ -214,6 +216,8 @@ export function hideModals(){
 		if(prim != null){
 			prim.style.zIndex			= 1;
 		}
+
+		modal.style.removeProperty('display');
 	}
 }
 
