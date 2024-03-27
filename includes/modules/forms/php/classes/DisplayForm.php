@@ -406,7 +406,7 @@ class DisplayForm extends SubmitForm{
 			}
 			$html	.=  apply_filters('sim_before_form', '', $this->formName);
 
-			$html	.= "<form action='' method='post' class='sim_form' $dataset>";
+			$html	.= "<form action='' method='post' class='sim-form-wrapper' $dataset>";
 				$html	.= "<div class='form_elements'>";
 					$html	.= "<input type='hidden' name='formid' value='{$this->formData->id}'>";
 					$html	.= "<input type='hidden' name='formurl' value='".SIM\currentUrl()."'>";

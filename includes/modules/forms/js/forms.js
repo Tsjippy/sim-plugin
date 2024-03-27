@@ -671,7 +671,7 @@ async function formbuilderSwitch(target){
 		formData.append('formbuilder', true);
 		url.searchParams.set('formbuilder', true);
 
-		formId	= wrapper.querySelector('form.sim-form').dataset.formid;
+		formId	= wrapper.querySelector('form.sim-form-wrapper').dataset.formid;
 	}else{
 		url.searchParams.delete('formbuilder');
 		formId	= wrapper.querySelector('[name="formid"]').value;

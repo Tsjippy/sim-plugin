@@ -20,6 +20,8 @@
 		max-width: min(500px,100%);
 		background-color: #fefefe;
 		overscroll-behavior-y: none;
+		max-height: calc(100vh - 20%);
+    	overflow-y: auto;
 		
 		.form-row label{
 			display: block;
