@@ -59,7 +59,7 @@ async function showEmptyModal(target){
 	clearFormInputs();
 
 	// Hide all
-	modal.querySelectorAll(".hide").forEach(el=>el.classList.replace('hide', 'hidden'))
+	modal.querySelectorAll(".shouldhide").forEach(el=>el.classList.replace('shouldhide', 'hidden'))
 	
 	if(formElementWrapper != null){
 		modal.querySelector('[name="insertafter"]').value = formElementWrapper.dataset.priority;
@@ -308,8 +308,8 @@ const resizeOb = new ResizeObserver(function(entries) {
 function showCondionalFields(type, form){
 	hideConditionalfields(form);
 
-	form.querySelectorAll(`.elementoption:not(.${type}, .reverse), .elementoption.not${type}`).forEach(el=>el.classList.replace('hide', 'hidden'));
-	form.querySelectorAll(`.elementoption.${type}`).forEach(el=>el.classList.replace('hidden', 'hide'));
+	form.querySelectorAll(`.elementoption:not(.${type}, .reverse), .elementoption.not${type}`).forEach(el=>el.classList.replace('shouldhide', 'hidden'));
+	form.querySelectorAll(`.elementoption.${type}`).forEach(el=>el.classList.replace('hidden', 'shouldhide'));
 
 	switch(type) {
 		case 'button':
@@ -340,7 +340,7 @@ function showCondionalFields(type, form){
 }
 
 function hideConditionalfields(form){
-	form.querySelectorAll(`.elementoption.reverse`).forEach(el=>el.classList.replace('hidden', 'hide'));
+	form.querySelectorAll(`.elementoption.reverse`).forEach(el=>el.classList.replace('hidden', 'shouldhide'));
 }
 
 function showOrHideIds(target){

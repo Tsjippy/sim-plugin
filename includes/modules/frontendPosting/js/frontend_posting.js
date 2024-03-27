@@ -124,7 +124,7 @@ function showallfields(target){
 		});
 		
 		target.classList.remove('show');
-		target.classList.add('hide');
+		target.classList.add('shouldhide');
 		
 		target.textContent = "Only show required fields" 
 	}else{
@@ -134,7 +134,7 @@ function showallfields(target){
 		});
 		
 		target.classList.add('show');
-		target.classList.remove('hide');
+		target.classList.remove('shouldhide');
 		
 		target.textContent = "Show all fields" 
 	}
@@ -378,7 +378,7 @@ function repeatTypeChosen(target){
 	let parent	= target.closest('.repeat_wrapper');
 
 	//hide all what should be hidden
-	parent.querySelectorAll('.hide').forEach(el=>el.classList.replace('hide','hidden'));
+	parent.querySelectorAll('.shouldhide').forEach(el=>el.classList.replace('shouldhide', 'hidden'));
 
 	let startDate	= new Date(document.querySelector('[name="event[startdate]"]').value);
 	let weekDays	= [
@@ -410,24 +410,24 @@ function repeatTypeChosen(target){
 	switch(target.value){
 		case 'daily':
 			//show
-			parent.querySelectorAll('.repeatinterval, .days, .days h4.checkbox, .pattern-wrapper, .days .selectall_wrapper, .daily').forEach(el=>el.classList.replace('hidden', 'hide'));
+			parent.querySelectorAll('.repeatinterval, .days, .days h4.checkbox, .pattern-wrapper, .days .selectall_wrapper, .daily').forEach(el=>el.classList.replace('hidden', 'shouldhide'));
 			parent.querySelector('#repeattype').textContent	= 'days';
 			break;
 		case 'weekly':
-			parent.querySelectorAll('.repeatinterval, .weeks, .weeks h4.checkbox, .weeks .selectall_wrapper, .pattern-wrapper, .weekly').forEach(el=>el.classList.replace('hidden', 'hide')); 
+			parent.querySelectorAll('.repeatinterval, .weeks, .weeks h4.checkbox, .weeks .selectall_wrapper, .pattern-wrapper, .weekly').forEach(el=>el.classList.replace('hidden', 'shouldhide')); 
 			parent.querySelector('#repeattype').textContent	= 'week(s)';
 
 			//change radio to checkbox
 			parent.querySelectorAll('.weeks input[type="radio"]').forEach(el=>el.type = 'checkbox');
 			break;
 		case 'monthly':
-			parent.querySelectorAll('.repeatdatetype, .pattern-wrapper, .monthly, .months').forEach(el=>el.classList.replace('hidden', 'hide')); 
+			parent.querySelectorAll('.repeatdatetype, .pattern-wrapper, .monthly, .months').forEach(el=>el.classList.replace('hidden', 'shouldhide')); 
 			parent.querySelector('#repeattype').textContent			= 'month(s)';
 			break;
 		case 'yearly':
 			break;
 		case 'custom_days':
-			parent.querySelectorAll('.custom_dates_selector').forEach(el=>el.classList.replace('hidden', 'hide')); 
+			parent.querySelectorAll('.custom_dates_selector').forEach(el=>el.classList.replace('hidden', 'shouldhide')); 
 			break;
 	}
 }

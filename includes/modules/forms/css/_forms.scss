@@ -190,14 +190,14 @@
 	}
 }
 
-.sim_form input[type="text"],
-.sim_form input[type="email"],
-.sim_form input[type="tel"],
-.sim_form input[type="month"],
-.sim_form input[type="password"],
-.sim_form input[type="search"],
-.sim_form input[type="number"],
-.sim_form input[type="url"]
+.sim-form-wrapper input[type="text"],
+.sim-form-wrapper input[type="email"],
+.sim-form-wrapper input[type="tel"],
+.sim-form-wrapper input[type="month"],
+.sim-form-wrapper input[type="password"],
+.sim-form-wrapper input[type="search"],
+.sim-form-wrapper input[type="number"],
+.sim-form-wrapper input[type="url"]
 {
 	&:not(.column_settings, .element_condition){
 		width: 100%;

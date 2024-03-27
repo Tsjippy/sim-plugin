@@ -248,7 +248,7 @@ class FormBuilderForm extends SimForms{
 				}
 			
 				?>
-				<form action='' method='post' class='sim_form builder'>
+				<form action='' method='post' class='sim-form builder'>
 					<div class='form_elements'>
 						<input type='hidden' name='formid'		value='<?php echo $this->formData->id;?>'>
 
@@ -322,7 +322,7 @@ class FormBuilderForm extends SimForms{
 		
 		?>
 		<div class="element_settings_wrapper">
-			<form action='' method='post' class='sim_form builder'>
+			<form action='' method='post' class='sim-form builder'>
 				<div class='form_elements'>
 					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formData->id;?>'>
 					
@@ -611,7 +611,7 @@ class FormBuilderForm extends SimForms{
 		$emails = $this->formData->emails;
 		?>
 		<div class="emails_wrapper">
-			<form action='' method='post' class='sim_form builder'>
+			<form action='' method='post' class='sim-form builder'>
 				<div class='form_elements'>
 					<input type='hidden' class='formbuilder' name='formid'	value='<?php echo $this->formData->id;?>'>
 					

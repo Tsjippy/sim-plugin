@@ -807,7 +807,7 @@ document.addEventListener('click', function(event) {
 		removeNode(target);
 	}
 
-	if(target.matches('.sim_form [name="submit_form"]')){
+	if(target.matches('.sim-form-wrapper [name="submit_form"]')){
 		event.stopPropagation();
 		
 		saveFormInput(target);

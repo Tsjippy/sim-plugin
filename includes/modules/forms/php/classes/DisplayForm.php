@@ -393,7 +393,7 @@ class DisplayForm extends SubmitForm{
 			$dataset .= " data-addempty='true'";
 		}
 
-		$html	= '<div class="sim_form wrapper">';
+		$html	= '<div class="sim-form-wrapper">';
 			// Formbuilder button
 			if($this->editRights){
 				$html	.= "<button type='button' class='button small formbuilder-switch'>Switch to formbuilder</button>";
