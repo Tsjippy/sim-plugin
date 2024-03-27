@@ -20,6 +20,7 @@ function getModuleName($slug){
  */
 add_action( 'admin_menu', function() {
 	global $moduleDirs;
+	global $Modules;
 
 	if(isset($_POST['module'])){
 		if(isset($_POST['emails'])){
@@ -32,6 +33,16 @@ add_action( 'admin_menu', function() {
 	do_action('sim_module_actions');
 
 	add_menu_page("SIM Plugin Settings", "SIM Settings", 'edit_others_posts', "sim", __NAMESPACE__."\mainMenu");
+
+	$active		= [];
+	foreach($moduleDirs as $moduleSlug=>$moduleName){
+		$moduleName	= getModuleName($moduleName);
+		if(!in_array($moduleSlug, ["__template", "admin", "__defaults"])){
+			if(in_array($moduleSlug, array_keys($Modules))){
+				$active[$moduleSlug]	= $moduleName;
+			}
+		}
+	}
 
 	foreach($moduleDirs as $moduleSlug=>$folderName){
 		//do not load admin and template menu
@@ -51,7 +62,11 @@ add_action( 'admin_menu', function() {
 		//load the menu page php file
 		require_once(MODULESPATH.$folderName.'/php/__module_menu.php');
 
-		add_submenu_page('sim', "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
+		if(in_array($moduleName, $active)){
+			add_submenu_page('sim', "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
+		}else{
+			add_submenu_page(null, "$moduleName module", $moduleName, "edit_others_posts", "sim_$moduleSlug", __NAMESPACE__."\buildSubMenu");
+		}
 	}
 });
 
