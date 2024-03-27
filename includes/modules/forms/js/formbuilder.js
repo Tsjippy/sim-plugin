@@ -862,7 +862,7 @@ window.addEventListener("click", event => {
 			el.classList.add('hidden');
 		}
 	}else if(target.name == 'settings[save_in_meta]'){
-		target.closest('.sim_form.builder').querySelector('.submit_others_form_wrapper').classList.toggle('hidden');
+		target.closest('.sim-form.builder').querySelector('.submit_others_form_wrapper').classList.toggle('hidden');
 	}else if(target.name == 'formfield[mandatory]' && target.checked){
 		target.closest('div').querySelector('[name="formfield[recommended]"]').checked=true;
 	}
