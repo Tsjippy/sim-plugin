@@ -7,6 +7,13 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.42.1] - 2024-03-27
+
+
+### Fixed
 - better equeing of block assets
 
 ### Updated
