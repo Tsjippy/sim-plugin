@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.42.0] - 2024-03-27
+
+
+### Changed
 - do not fore 2fa on admin pages
 - make id optional in form message
 - more specific wrapper classnaming
