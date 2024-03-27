@@ -7,6 +7,7 @@
 ### Changed
 - do not fore 2fa on admin pages
 - make id optional in form message
+- more specific wrapper classnaming
 
 ### Fixed
 
