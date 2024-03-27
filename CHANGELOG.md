@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- do not fore 2fa on admin pages
 
 ### Fixed
 
