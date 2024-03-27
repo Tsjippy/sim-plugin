@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- better equeing of block assets
 
 ### Updated
 
