@@ -67,7 +67,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		/**
 		 * Add user to mailchimp list
 		 */
-		public function addToMailchimp($email='', $firstName='', $lastName='', $phoneNumber='', $birthday=''){
+		public function addToMailchimp($email='', $firstName='', $lastName='', $phoneNumber='', $birthday='', $address=''){
 			if(!empty($email)){
 				$mergeFields = [];
 				
@@ -86,10 +86,16 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				if(!empty($birthday)){
 					$birthday					= explode('-', $birthday);
 					$mergeFields['BIRTHDAY']	= $birthday[1].'/'.$birthday[2];
+					$mergeFields['BIRTHDATE']	= $birthday[1].'/'.$birthday[2].$birthday[0];
 				}
 
-				$this->subscribeMember($mergeFields, $email);
+				if(!empty($address)){
+					$mergeFields['ADDRESS']	= $address;
+				}
+
+				return $this->subscribeMember($mergeFields, $email);
 			}
+
 			//Only do if valid e-mail
 			elseif(!empty($this->user->user_email) && strpos($this->user->user_email,'.empty') === false && $_SERVER['HTTP_HOST'] != 'localhost'){
 				SIM\printArray("Adding '{$this->user->user_email}' to Mailchimp");

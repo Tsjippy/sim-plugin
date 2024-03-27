@@ -369,6 +369,8 @@ function biometricOptions(){
         storeInTransient('pkcco', $publicKeyCredentialCreationOptions);
         storeInTransient('userEntity', $userEntity);
         storeInTransient('username', $user->user_login);
+        SIM\printArray(getFromTransient('username'));
+        SIM\printArray($user->user_login);
         storeInTransient('identifier', $identifier);
 
         return $publicKeyCredentialCreationOptions;
@@ -395,15 +397,16 @@ function storeBiometric(){
 
         $user                                   = wp_get_current_user();
         $username                               = $user->user_login;
-        $userEntity                             = getFromTransient('userEntity');
         $publicKeyCredentialCreationOptions     = getFromTransient('pkcco');
 
         // May not get the challenge yet
-        if(empty($publicKeyCredentialCreationOptions) || empty($userEntity)){
+        if(empty($publicKeyCredentialCreationOptions)){
             return new WP_Error('Logged in error', "No challenge given");
         }
 
         if(strtolower(getFromTransient('username')) !== strtolower($username)){
+            SIM\printArray($username);
+            SIM\printArray(getFromTransient('username'));
             return new WP_Error('Logged in error', "Invalid username given");
         }
 

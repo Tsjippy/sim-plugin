@@ -270,7 +270,10 @@ add_action('init', function(){
             return;
         }
 
-        if(SIM\currentUrl() != $url){
+        $fromUrl    = SIM\currentUrl();
+
+        if(str_replace(['http://', 'https://'], '', $fromUrl) != str_replace(['http://', 'https://'], '', $url)){
+
             session_write_close();
             
             SIM\printArray("Redirecting from ".SIM\currentUrl()." to $url");

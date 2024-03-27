@@ -116,8 +116,6 @@ function storeInTransient($key, $value){
         session_start();
     }
     $_SESSION[$key] = $value;
-
-    session_write_close();
 }
 
 /**
@@ -135,7 +133,6 @@ function getFromTransient($key){
     }
 
     $value  = $_SESSION[$key]; 
-    session_write_close();
 
     return $value;
 }

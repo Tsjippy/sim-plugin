@@ -335,6 +335,18 @@ class FormBuilderForm extends SimForms{
 						<h4>Succes message</h4>
 						<input type='text' class='formbuilder formfieldsetting' name='settings[succesmessage]' value="<?php echo $settings['succesmessage']?>">
 					</label>
+
+					<label class="block">
+						<h4>Include submission ID in message</h4>
+						<label>
+							<input type='radio' class='formbuilder formfieldsetting' name='settings[includeid]' value="yes" <?php if(!isset($settings['includeid']) || $settings['includeid'] == 'yes'){echo 'checked';}?>>
+							Yes
+						</label>
+						<label>
+							<input type='radio' class='formbuilder formfieldsetting' name='settings[includeid]' value="no" <?php if(isset($settings['includeid']) && $settings['includeid'] == 'no'){echo 'checked';}?>>
+							No
+						</label>
+					</label>
 					
 					<label class="block">
 						<h4>Form name</h4>
