@@ -964,7 +964,7 @@ window.addEventListener("click", event => {
 		removeWarningCondition(target)
 	}
 
-	if(target.matches('.permissins-rights-form')){
+	if(target.matches('.sim-form.builder .permissions-rights-form')){
 		target.closest('div').querySelector('.permission-wrapper').classList.toggle('hidden');
 	}
 });

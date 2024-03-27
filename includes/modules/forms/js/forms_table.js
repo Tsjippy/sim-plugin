@@ -659,7 +659,7 @@ document.addEventListener("click", event=>{
 		}
 	}
 
-	if(target.matches('.permissins-rights-form')){
+	if(target.matches('.table_rights_wrapper .permissins-rights-form')){
 		target.closest('div').querySelector('.permission-wrapper').classList.toggle('hidden');
 	}
 });
