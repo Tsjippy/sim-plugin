@@ -9,6 +9,7 @@
 ### Fixed
 - bug in form settings
 - mailchimp birthdate field
+- issue with form e-mails
 
 ### Updated
 
