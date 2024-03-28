@@ -4,6 +4,7 @@
 
 ### Added
 - hcaptcha auto-install for forms
+- recaptcha and turnstile
 
 ### Changed
 
