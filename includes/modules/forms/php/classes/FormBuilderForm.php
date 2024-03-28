@@ -1034,7 +1034,7 @@ class FormBuilderForm extends SimForms{
 				<optgroup label="Special elements">
 					<?php
 					$options	= [
-						"captcha"		=> "Captcha",
+						"captcha"		=> "hCaptcha",
 						"datalist"		=> "Datalist",
 						"div_start"		=> "Div Container - start",
 						"div_end"		=> "Div Container - end",
@@ -1293,7 +1293,9 @@ class FormBuilderForm extends SimForms{
 	 * @param int	$elementId	The id of the element. Default -1 for empty
 	 */
 	public function elementConditionsForm($elementId = -1){
-		$element	= $this->getElementById($elementId);
+		if($elementId != $elementId){
+			$element	= $this->getElementById($elementId);
+		}
 
 		if($elementId == -1 || empty($element->conditions)){
 			if(gettype($element) != 'object'){

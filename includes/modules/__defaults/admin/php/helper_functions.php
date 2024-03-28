@@ -25,6 +25,10 @@ function updatePlugin($pluginFile){
 
 /**
  * Installs a plugin using the wp api for that
+ *
+ * @param	string	$pluginFile		The relative path of the plugin file
+ *
+ * @return	boolean|string			true if already activated. Result if installed or activated
  */
 function installPlugin($pluginFile){
 	//check if plugin is already installed
@@ -35,7 +39,7 @@ function installPlugin($pluginFile){
 	
 	if(in_array($pluginFile, $activePlugins)){
 		// Already installed and activated
-		return;
+		return true;
 	}elseif(isset($plugins[$pluginFile])){
 		// Installed but not active
 		activate_plugin( $pluginFile);
@@ -46,7 +50,7 @@ function installPlugin($pluginFile){
 		$_SESSION['plugin']   = ['activated' => $pluginName];
 
 		session_write_close();
-		return;
+		return 'Activated';
 	}
 
 	ob_start();
