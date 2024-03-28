@@ -3,9 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- hcaptcha auto-install for forms
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.42.3] - 2024-03-28
+
+
+### Added
+- hcaptcha auto-install for forms
+- recaptcha and turnstile
 
 ### Fixed
 - bug in form settings
