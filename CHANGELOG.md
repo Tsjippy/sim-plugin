@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- hcaptcha auto-install for forms
 
 ### Changed
 
