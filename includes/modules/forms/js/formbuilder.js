@@ -998,14 +998,23 @@ window.addEventListener('change', ev=>{
 				datalist.appendChild(opt);
 			});
 		}
-	}else if(target.matches("[name*='[property_value]']")){
-		if(numericElements.includes(target.value)){
+	}else if(target.matches(".condition_row [name*='[property_value]']")){
+		let selectedElement	= document.querySelector(`.form_element_wrapper[data-id="${target.value}"]`);
+		if(selectedElement == null){
+			return;
+		}
+
+		let selectedElementType	= selectedElement.dataset.type;
+
+		// if select element is of number type
+		if(selectedElementType == 'number'){
 			target.closest('.condition_form').querySelectorAll('.addition.hidden').forEach(el=>el.classList.remove('hidden'));
 		}else{
 			target.closest('.condition_form').querySelectorAll('.addition:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 		}
-
-		if(dateElements.includes(ev.target.value)){
+		
+		// if select element is of date type
+		if(selectedElementType == 'date'){
 			target.closest('.condition_form').querySelectorAll('.addition .days.hidden').forEach(el=>el.classList.remove('hidden'));
 		}else{
 			target.closest('.condition_form').querySelectorAll('.addition .days:not(.hidden)').forEach(el=>el.classList.add('hidden'));
