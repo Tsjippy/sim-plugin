@@ -573,10 +573,16 @@ trait ElementHtml{
 					if(isset($_REQUEST['install-hcaptcha'])){
 						ob_start();
 						if(SIM\ADMIN\installPlugin('hcaptcha-for-forms-and-more/hcaptcha.php') !== true){
-							if(current_user_can( 'manage_options' )){
-								wp_redirect(admin_url('options-general.php?page=hcaptcha'));
-							}else{
-								$html	.= "Installation succesfull.<br>Please make sure the hCaptcha api key is set";
+							// check if api is set
+							$options	= get_option('hcaptcha_settings');
+
+							if(!$options || empty($options['site_key']) || empty($options['secret_key'])){
+								// redirect to the admin page to set an api key
+								if(current_user_can( 'manage_options' )){
+									wp_redirect(admin_url('options-general.php?page=hcaptcha'));
+								}else{
+									$html	.= "Installation succesfull.<br>Please make sure the hCaptcha api key is set";
+								}
 							}
 						};
 						ob_end_clean();
