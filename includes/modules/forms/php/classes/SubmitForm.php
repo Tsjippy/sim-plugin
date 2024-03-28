@@ -345,6 +345,84 @@ class SubmitForm extends SimForms{
 	}
 
 	/**
+	 * Generic function to retrieve token status for captchas
+	 */
+	public function verifyCaptcha($verifyUrl, $data, $name){
+		if (function_exists('curl_init') && function_exists('curl_setopt') && function_exists('curl_exec')){
+			// Use cURL to get data 10x faster than using file_get_contents or other methods
+			$ch = curl_init($verifyUrl);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-type: application/x-www-form-urlencoded'));
+			$response = curl_exec($ch);
+			curl_close($ch);
+		}else{
+			// If server not have active cURL module, use file_get_contents
+			$opts = array('http' =>
+				array(
+					'method' 	=> 'POST',
+					'header'	=> 'Content-type: application/x-www-form-urlencoded',
+					'content' 	=> $data
+				)
+			);
+			$context 	= stream_context_create($opts);
+			$response 	= file_get_contents($verifyUrl, false, $context);
+		}
+
+		$json	= json_decode($response);
+		if(empty($json->succes)){
+			return new WP_Error('forms', "Invalid $name Response!");
+		}else{
+			return true;
+		}
+	}
+
+	/**
+	 * Verifies a turnstile token from $_REQUEST
+	 *
+	 * @return	bool			false if no token found
+	 */
+	public function verifyTurnstile(){
+		if(!isset($_REQUEST['cf-turnstile-response'])){
+			return false;
+		}
+
+		$secret		= SIM\getModuleOption(MODULE_SLUG, 'turnstilesecretkey');
+		$verifyUrl 	= "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+		$data		= "secret=$secret&response={$_REQUEST['cf-turnstile-response']}";
+
+		return $this->verifyCaptcha($verifyUrl, $data, 'Turnstile');
+	}
+
+	/**
+	 * Verifies a recaptcha token from $_REQUEST
+	 */
+	public function verifyRecaptcha(){
+		if(!isset($_REQUEST['g-recaptcha-response'])){
+			return false;
+		}
+
+		$secret		= SIM\getModuleOption(MODULE_SLUG, 'turnstilesecretkey');
+		$verifyUrl 	= 'https://www.google.com/recaptcha/api/siteverify';
+
+		$queryData = [
+			'secret' 	=> $secret,
+			'response' 	=> $_REQUEST['g-recaptcha-response'],
+			'remoteip' 	=> (isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER['REMOTE_ADDR'])
+		];
+	
+		// Collect and build POST data
+		$data = http_build_query($queryData, '', '&');
+
+		return $this->verifyCaptcha($verifyUrl, $data, 'reCaptcha');
+	}
+
+	/**
 	 * Save a form submission to the db
 	 */
 	public function formSubmit(){
@@ -355,6 +433,19 @@ class SubmitForm extends SimForms{
 		$this->submission->form_id			= $_POST['formid'];
 		
 		$this->getForm($this->submission->form_id);
+
+		$verifcation	= true;
+		if($this->getElementByType('turnstile')){
+			$verifcation	= $this->verifyTurnstile();
+		}
+
+		if($this->getElementByType('recaptcha')){
+			$verifcation	= $this->verifyRecaptcha();
+		}
+
+		if($verifcation !== true){
+			return $verifcation;
+		}
 		
 		$this->userId	= 0;
 		if(is_numeric($_POST['userid'])){

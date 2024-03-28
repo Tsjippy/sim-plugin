@@ -1034,7 +1034,9 @@ class FormBuilderForm extends SimForms{
 				<optgroup label="Special elements">
 					<?php
 					$options	= [
-						"captcha"		=> "hCaptcha",
+						"hcaptcha"		=> "hCaptcha",
+						"recaptcha"		=> "reCaptcha",
+						"turnstile"		=> "Cloudflare Turnstile",
 						"datalist"		=> "Datalist",
 						"div_start"		=> "Div Container - start",
 						"div_end"		=> "Div Container - end",

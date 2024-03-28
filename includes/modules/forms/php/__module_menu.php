@@ -99,6 +99,59 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 
 		<?php
 	}
+	?>
+	<br>
+	Do you want to use Google's reCaptcha? (<a href='https://www.google.com/recaptcha/admin/create'>See here</a>)
+	<label class="switch">
+		<input type="checkbox" name="recaptcha" <?php if(isset($settings['recaptcha'])){echo 'checked';}?>>
+		<span class="slider round"></span>
+	</label>
+
+	<?php
+	if(isset($settings['recaptcha'])){
+		?>
+		<br>
+		<br>
+		<label>
+			Your API key<br>
+			<input type='text' name='recaptchakey' value='<?php if(!empty($settings['recaptchakey'])){echo $settings['recaptchakey'];}?>' style='width:350px'>
+		</label>
+		<br>
+		<br>
+		<label>
+			Your secret key<br>
+			<input type='text' name='recaptchasecret' value='<?php if(!empty($settings['recaptchasecret'])){echo $settings['recaptchasecret'];}?>' style='width:350px'>
+		</label>
+		<br>
+		<?php
+	}
+
+	?>
+	<br>
+	Do you want to use Cloudflare's Turnstile? (<a href='https://www.cloudflare.com/en-gb/products/turnstile/#Page-Pricing-AS'>See here</a>)
+	<label class="switch">
+		<input type="checkbox" name="turnstile" <?php if(isset($settings['turnstile'])){echo 'checked';}?>>
+		<span class="slider round"></span>
+	</label>
+
+	<?php
+	if(isset($settings['turnstile'])){
+		?>
+		<br>
+		<br>
+		<label>
+			Your API key<br>
+			<input type='text' name='turnstilekey' value='<?php if(!empty($settings['turnstilekey'])){echo $settings['turnstilekey'];}?>' style='width:350px'>
+		</label>
+		<br>
+		<label>
+			Your secret key<br>
+			<input type='text' name='turnstilesecretkey' value='<?php if(!empty($settings['turnstilesecretkey'])){echo $settings['turnstilesecretkey'];}?>' style='width:350px'>
+		</label>
+		<br>
+
+		<?php
+	}
 
 	return ob_get_clean();
 }, 10, 3);

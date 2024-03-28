@@ -320,6 +320,12 @@ function showCondionalFields(type, form){
 		case 'info':
 			form.querySelector('[name="infotext"] .type').textContent = 'infobox';
 			break;
+		case 'hcaptcha':
+		case 'recaptcha':
+		case 'turnstile':
+			modal.querySelectorAll(".shouldhide").forEach(el=>el.classList.replace('shouldhide', 'hidden'));
+			modal.querySelectorAll(`[name="elementname"]`).forEach(el=>el.classList.replace('hidden', 'shouldhide'));
+			break;
 		case 'radio':
 		case 'select':
 		case 'checkbox':
@@ -998,6 +1004,7 @@ window.addEventListener('change', ev=>{
 		}else{
 			target.closest('.condition_form').querySelectorAll('.addition:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 		}
+
 		if(dateElements.includes(ev.target.value)){
 			target.closest('.condition_form').querySelectorAll('.addition .days.hidden').forEach(el=>el.classList.remove('hidden'));
 		}else{
