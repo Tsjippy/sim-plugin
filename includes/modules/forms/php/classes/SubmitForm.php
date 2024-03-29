@@ -347,7 +347,7 @@ class SubmitForm extends SimForms{
 	/**
 	 * Generic function to retrieve token status for captchas
 	 */
-	public function verifyCaptcha($verifyUrl, $data, $name){
+	public function verifyCaptcha($verifyUrl, $data){
 		if (function_exists('curl_init') && function_exists('curl_setopt') && function_exists('curl_exec')){
 			// Use cURL to get data 10x faster than using file_get_contents or other methods
 			$ch = curl_init($verifyUrl);
@@ -374,12 +374,7 @@ class SubmitForm extends SimForms{
 			$response 	= file_get_contents($verifyUrl, false, $context);
 		}
 
-		$json	= json_decode($response);
-		if(empty($json->succes)){
-			return new WP_Error('forms', "Invalid $name Response!");
-		}else{
-			return true;
-		}
+		return json_decode($response);
 	}
 
 	/**
@@ -396,18 +391,24 @@ class SubmitForm extends SimForms{
 		$verifyUrl 	= "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 		$data		= "secret=$secret&response={$_REQUEST['cf-turnstile-response']}";
 
-		return $this->verifyCaptcha($verifyUrl, $data, 'Turnstile');
+		$json	= $this->verifyCaptcha($verifyUrl, $data);
+
+		if(empty($json->success)){
+			return new WP_Error('forms', "Invalid Turnstile Response!");
+		}else{
+			return true;
+		}
 	}
 
 	/**
 	 * Verifies a recaptcha token from $_REQUEST
 	 */
 	public function verifyRecaptcha(){
-		if(!isset($_REQUEST['g-recaptcha-response'])){
+		if(empty($_REQUEST['g-recaptcha-response'])){
 			return false;
 		}
 
-		$secret		= SIM\getModuleOption(MODULE_SLUG, 'turnstilesecretkey');
+		$secret		= SIM\getModuleOption(MODULE_SLUG, 'recaptchasecret');
 		$verifyUrl 	= 'https://www.google.com/recaptcha/api/siteverify';
 
 		$queryData = [
@@ -419,7 +420,13 @@ class SubmitForm extends SimForms{
 		// Collect and build POST data
 		$data = http_build_query($queryData, '', '&');
 
-		return $this->verifyCaptcha($verifyUrl, $data, 'reCaptcha');
+		$json	= $this->verifyCaptcha($verifyUrl, $data, 'reCaptcha');
+
+		if(empty($json->success) || $json->score < 0.5){
+			return new WP_Error('forms', "Invalid Google Response!");
+		}else{
+			return true;
+		}
 	}
 
 	/**
@@ -439,7 +446,7 @@ class SubmitForm extends SimForms{
 			$verifcation	= $this->verifyTurnstile();
 		}
 
-		if($this->getElementByType('recaptcha')){
+		if($verifcation && $this->getElementByType('recaptcha')){
 			$verifcation	= $this->verifyRecaptcha();
 		}
 

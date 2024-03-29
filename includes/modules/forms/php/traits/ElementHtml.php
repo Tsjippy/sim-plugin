@@ -569,7 +569,7 @@ trait ElementHtml{
 				case 'datalist':
 					$elContent .= $this->datalistOptionsHtml($element);
 					break;
-				case 'captcha':
+				case 'hcaptcha':
 					if(isset($_REQUEST['install-hcaptcha'])){
 						ob_start();
 						if(SIM\ADMIN\installPlugin('hcaptcha-for-forms-and-more/hcaptcha.php') !== true){
@@ -602,7 +602,8 @@ trait ElementHtml{
 					}
 					break;
 				case 'recaptcha':
-					$key	= SIM\getModuleOption(MODULE_SLUG, 'recaptchakey');
+					$key		= SIM\getModuleOption(MODULE_SLUG, 'recaptchakey');
+					$keyType	= SIM\getModuleOption(MODULE_SLUG, 'recaptchakeytype');
 
 					if(!$key){
 						if(isset($_REQUEST['formbuilder'])){
@@ -611,12 +612,33 @@ trait ElementHtml{
 							$html	= '';
 						}
 					}else{
-						wp_enqueue_script('sim_recaptcha', 'https://www.google.com/recaptcha/api.js', [], false, true);
-
 						if(isset($_REQUEST['formbuilder'])){
 							$html	.= "<img src='".SIM\pathToUrl(MODULE_PATH."pictures/recaptcha.png")."'>";
 						}
-						$html	.= "<div class='g-recaptcha' data-sitekey='$key' required></div>";
+						if(!$keyType || $keyType == 'v2'){
+							wp_enqueue_script('sim_recaptcha', "https://www.google.com/recaptcha/api.js", [], false, true);
+							$html	.= "<div class='g-recaptcha' data-sitekey='$key' required></div>";
+						}else{
+							wp_enqueue_script('sim_recaptcha', "https://www.google.com/recaptcha/api.js?render=$key&onload=onloadCallback", [], false, true);
+							$html	.= "
+								<input type='hidden' name='g-recaptcha-response' id='g-recaptcha-response'>
+								<script>
+									document.querySelectorAll('.submit_wrapper .form_submit').forEach(el=>el.disabled=true);
+									function onloadCallback(){
+										console.log('teset');
+										grecaptcha.ready(function() {
+											setInterval(function(){
+												grecaptcha.execute('$key', {action: 'validate_captcha'}).then(function(token) {
+													document.querySelectorAll('.submit_wrapper .form_submit[disabled]').forEach(el=>el.disabled=false);
+													console.log( 'refreshed token:', token );
+													document.getElementById('g-recaptcha-response').value = token;
+												});
+											}, 60000);
+										});
+									}
+								</script>
+							";
+						}
 					}
 					break;
 				case 'turnstile':
@@ -631,8 +653,9 @@ trait ElementHtml{
 						wp_enqueue_script('sim_turnstile', 'https://challenges.cloudflare.com/turnstile/v0/api.js', [], false, true);
 
 						$extraData	= '';
-						if(!isset($_REQUEST['formbuilder'])){
+						if(!isset($_REQUEST['formbuilder']) && $element->hidden){
 							$extraData	= "data-appearance='interaction-only'";
+							$element->hidden	= false;
 						}
 						$html	.= "<div class='cf-turnstile' data-sitekey='$key' $extraData></div>";
 					}

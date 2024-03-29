@@ -120,6 +120,19 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		<br>
 		<br>
 		<label>
+			API key type<br>
+			<label>
+				<input type='radio' name='recaptchakeytype' value='v2' <?php if(!empty($settings['recaptchakeytype']) && $settings['recaptchakeytype'] == 'v2'){echo 'checked';}?>>
+				v2
+			</label>
+			<label>
+				<input type='radio' name='recaptchakeytype' value='v3' <?php if(!empty($settings['recaptchakeytype']) && $settings['recaptchakeytype'] == 'v3'){echo 'checked';}?>>
+				v3 / Enterprise
+			</label>
+		</label>
+		<br>
+		<br>
+		<label>
 			Your secret key<br>
 			<input type='text' name='recaptchasecret' value='<?php if(!empty($settings['recaptchasecret'])){echo $settings['recaptchasecret'];}?>' style='width:350px'>
 		</label>
