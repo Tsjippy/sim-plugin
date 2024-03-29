@@ -4,6 +4,7 @@
 
 ### Added
 - support for Google v3 in forms
+- captcha for comment forms
 
 ### Changed
 
