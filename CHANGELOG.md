@@ -11,6 +11,7 @@
 
 ### Fixed
 - bug in formbuilder
+- show form submission with specific id even if archived
 
 ### Updated
 
