@@ -3,14 +3,24 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- support for Google v3 in forms
-- captcha for comment forms
-- captcha module
 
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.42.4] - 2024-03-30
+
+
+### Added
+- support for Google v3 in forms
+- captcha for comment forms
+- captcha module
+
+### Fixed
 - bug in formbuilder
+- show form submission with specific id even if archived
 
 ### Updated
 
