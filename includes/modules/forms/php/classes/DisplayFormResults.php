@@ -312,7 +312,7 @@ class DisplayFormResults extends DisplayForm{
 					)	||
 					$subSubmission['archived']
 				){
-					if($this->showArchived){
+					if($this->showArchived || isset($_REQUEST['id'])){
 						// mark the entry as archived
 						$newSubmission->archived	= true;
 					}else{
@@ -997,7 +997,10 @@ class DisplayFormResults extends DisplayForm{
 			foreach($this->formSettings['actions'] as $action){
 				if(
 					$action == 'archive' && 
-					$this->showArchived == 'true' && 
+					(
+						$this->showArchived == 'true' ||
+						isset($_REQUEST['id'])					// if we are requesting a specific id, we are showing archived ones even if not set
+					) && 
 					(
 						$submission->archived ||
 						$submission->formresults['archived']
