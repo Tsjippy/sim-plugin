@@ -104,8 +104,11 @@ function buildSubMenu(){
 
 	$moduleSlug	= str_replace('sim_', '', $plugin_page);
 	$moduleName	= str_replace(' module', '', get_admin_page_title());
+	if(empty($moduleName)){
+		$moduleName	= ucfirst(str_replace('_', ' ', $moduleSlug));
+	}
 
-	if(@is_array($Modules[$moduleSlug])){
+	if(isset($Modules[$moduleSlug]) && is_array($Modules[$moduleSlug])){
 		$settings	= $Modules[$moduleSlug];
 	}else{
 		$settings	= [];
