@@ -3,10 +3,10 @@ namespace SIM\CAPTCHA;
 use SIM;
 
 add_filter('sim-form-element-html', __NAMESPACE__.'\addCaptchaHtml', 99, 3);
-
 function addCaptchaHtml($html, $element, $object){
     switch($element->type){
         case 'hcaptcha':
+            $html   = '';
             if(isset($_REQUEST['install-hcaptcha'])){
                 ob_start();
                 if(SIM\ADMIN\installPlugin('hcaptcha-for-forms-and-more/hcaptcha.php') !== true){
@@ -39,10 +39,13 @@ function addCaptchaHtml($html, $element, $object){
             }
             break;
         case 'recaptcha':
+            $html   = '';
             if(isset($_REQUEST['formbuilder'])){
                 $key		= SIM\getModuleOption(MODULE_SLUG, 'recaptchakey');
                 if(!$key){
                     $html	.= "<Please enter your recaptcha key in the module settings";
+                }else{
+                    $html   .= "<img src'".SIM\pathToUrl(MODULE_PATH.'/pictures/recaptcha.png')."'>";
                 }
             }
             $html   .= getRecaptchHtml();
@@ -51,7 +54,7 @@ function addCaptchaHtml($html, $element, $object){
             $key	= SIM\getModuleOption(MODULE_SLUG, 'turnstilekey');
             if(!$key){
                 if(isset($_REQUEST['formbuilder'])){
-                    $html	.= "<Please enter your recaptcha key in the module settings";
+                    $html	= "<Please enter your turnstile key in the module settings";
                 }else{
                     $html	= '';
                 }
@@ -63,7 +66,7 @@ function addCaptchaHtml($html, $element, $object){
                     $extraData	= "data-appearance='interaction-only'";
                     $element->hidden	= false;
                 }
-                $html	.= "<div class='cf-turnstile' data-sitekey='$key' $extraData></div>";
+                $html	= "<div class='cf-turnstile' data-sitekey='$key' $extraData></div>";
             }
             break;
     }

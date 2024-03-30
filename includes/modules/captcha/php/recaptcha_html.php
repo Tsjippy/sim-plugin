@@ -34,4 +34,6 @@ function getRecaptchHtml(){
             $html   .= ob_get_clean();
         }
     }
+
+    return $html;
 }
