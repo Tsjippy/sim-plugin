@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- optional closing message for mailchime mails
 
 ### Changed
 
