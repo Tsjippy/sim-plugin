@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- optional closing message for mailchime mails
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.42.5] - 2024-04-01
+
+
+### Added
+- optional closing message for mailchime mails
 
 ### Fixed
 
