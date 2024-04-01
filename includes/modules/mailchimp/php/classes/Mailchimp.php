@@ -298,8 +298,9 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 		 * @param	string	$from			The from e-mail to use
 		 * @param	string	$extraMessage	The extra message to prepend the -mail contents with
 		 * @param	bool	$full			Whether or not to send the full post content or only a summary
+		 * @param	string	$finalMessage	The extra message to add to the mail content
 		 */
-		public function sendEmail(int $postId, int $segmentId, $from='', $extraMessage='', $full=true){
+		public function sendEmail(int $postId, int $segmentId, $from='', $extraMessage='', $full=true, $finalMessage=''){
 			try {
 				if($_SERVER['HTTP_HOST'] == 'localhost' || get_option("wpstg_is_staging_site") == "true"){
 					return 'Not sending from localhost';
@@ -363,7 +364,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				$campainContent 	= $response->html;
 
 				//Update the html
-				$mailContent		= $extraMessage.'<br>'.$this->removeGreeting($post->post_content);
+				$mailContent		= $extraMessage.'<br>'.$this->removeGreeting($post->post_content).$finalMessage;
 
 				$replaceText 		= '//*THIS WILL BE REPLACED BY THE WEBSITE *//';
 
