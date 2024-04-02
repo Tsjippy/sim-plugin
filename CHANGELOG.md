@@ -5,6 +5,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.42.6] - 2024-04-02
+
+
+### Changed
 - make sure all required form elements are filled
 
 ### Fixed
