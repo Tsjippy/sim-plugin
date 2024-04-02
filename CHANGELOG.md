@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- make sure all required form elements are filled
 
 ### Fixed
 
