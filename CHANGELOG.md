@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- store mailchimp last aufdience
 
 ### Fixed
 
