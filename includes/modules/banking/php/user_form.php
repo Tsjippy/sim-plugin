@@ -3,14 +3,14 @@ namespace SIM\BANKING;
 use SIM;
 
 
-add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
-	if($formName != 'user_generics'){
+add_filter('sim_before_saving_formdata', function($formResults, $object){
+	if($object->formData->name != 'user_generics'){
 		return $formResults;
 	}
 
 	$enabled	= false;
 
-    $currentSetting = get_user_meta($userId, 'online_statements', true);
+    $currentSetting = get_user_meta($object->userId, 'online_statements', true);
 	if(is_array($currentSetting) && !empty($currentSetting)){
 		$enabled	= true;
 	}
@@ -18,7 +18,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 	// was not enabled, send e-mail
 	SIM\cleanUpNestedArray($formResults['online_statements']);
 	if(!empty($formResults['online_statements']) && !$enabled){
-		$user		= get_user_by('ID', $userId);
+		$user		= get_user_by('ID', $object->userId);
 		$email    	= new EnableBanking($user);
 		$email->filterMail();
 
@@ -26,7 +26,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 		
 		wp_mail( $address, $email->subject, $email->message);
 	}elseif(empty($formResults['online_statements']) && $enabled){
-		$user		= get_user_by('ID', $userId);
+		$user		= get_user_by('ID', $object->userId);
 		$email    	= new DisableBanking($user);
 		$email->filterMail();
 		
@@ -36,4 +36,4 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 	}
 	
 	return $formResults;
-}, 10, 3);
+}, 10, 2);

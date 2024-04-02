@@ -500,19 +500,55 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
     
 }, 10, 2);
 
+// check if a booking request is ok
+add_filter('sim_before_saving_formdata', function($formResults, $object){
+    // find the subject
+    $elements       = $object->getElementByType('booking_selector');
+
+    if(empty($elements)){
+        return $formResults;
+    }
+
+    // loop over all booking selectors (usually one)
+    foreach($elements as $element){
+        $bookingDetails = unserialize($element->booking_details);
+        $subjectName    = $formResults[$element->name];
+
+        // somehow we do not have any data
+        if(empty($bookingDetails['subjects'])){
+            return new \WP_Error('bookings', "No booking details found");
+        }
+
+        // find the selected subject
+        foreach($bookingDetails['subjects'] as $subject){
+            if(
+                !empty($subject['name']) &&             // Subjects name is set 
+                $subject['name'] == $subjectName &&     // and this is the selected subject
+                !empty($subject['rooms'])   &&          // and the subject as a key called rooms
+                count($subject['rooms']) > 1 &&         // and there is more than 1 room for this subject
+                empty($formResults['booking-room'])     // but there is no room selected
+            ){
+                return new \WP_Error('bookings', "Please select a room");
+            }
+        }
+    }
+
+    return $formResults;
+}, 99, 2);
+
 // Create a booking
 add_filter('sim_after_saving_formdata', function($message, $formBuilder){
-    if(isset($formBuilder->submission->formresults['booking-startdate'])){
-        // find the subject
-        $elements        = $formBuilder->getElementByType('booking_selector');
+    // find the subject
+    $elements        = $formBuilder->getElementByType('booking_selector');
 
+    if(isset($elements)){
+    
         $bookings       = new Bookings($formBuilder);
 
         foreach($elements as $element){
-            $elementName    = $element->name;
             $startDate      = $formBuilder->submission->formresults['booking-startdate'];
             $endDate        = $formBuilder->submission->formresults['booking-enddate'];
-            $subject        = $formBuilder->submission->formresults[$elementName];
+            $subject        = $formBuilder->submission->formresults[$element->name];
             $submissionId   = $formBuilder->submission->formresults['id'];
 
             if(!empty($formBuilder->submission->formresults['booking-room'])){

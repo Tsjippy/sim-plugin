@@ -773,7 +773,7 @@ class Bookings{
 
         $userId     = $this->forms->submission->formresults['user_id'];
 
-        $subjectWithRoom    = str_replace(';', ' room ', $subject);
+        $subjectWithRoom    = str_replace(';', ' room ', $subject, $count);
 
         // create a personal event
         if(!empty($userId)){

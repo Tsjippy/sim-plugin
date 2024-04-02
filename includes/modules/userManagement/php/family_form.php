@@ -20,25 +20,25 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 }, 10, 3);
 
 //Save family
-add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
-	if($formName != 'user_family'){
+add_filter('sim_before_saving_formdata', function($formResults, $object){
+	if($object->formdata->name != 'user_family'){
 		return $formResults;
 	}
 	
 	$family 	= $formResults["family"];
 	
-	$oldFamily 	= (array)get_user_meta( $userId, 'family', true );
+	$oldFamily 	= (array)get_user_meta( $object->userId, 'family', true );
 	
 	//Don't do anything if the current and the last family is equal
 	if($family == $oldFamily){
 		return $formResults;
 	}
 
-	$updateFamily	= new UpdateFamily($userId, $family, $oldFamily);
+	$updateFamily	= new UpdateFamily($object->userId, $family, $oldFamily);
 	$formResults["family"]	= $updateFamily->family;
 	
 	return $formResults;
-}, 10, 3);
+}, 10, 2);
 
 // add a family member modal
 add_filter('sim_before_form', function ($html, $formName){

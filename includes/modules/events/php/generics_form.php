@@ -3,14 +3,14 @@ namespace SIM\EVENTS;
 use SIM;
 
 //create  events
-add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
-	if($formName != 'user_generics'){
+add_filter('sim_before_saving_formdata', function($formResults, $object){
+	if($object->formData->name != 'user_generics'){
 		return $formResults;
 	}
 	
 	$events	= new CreateEvents();
-	$events->createCelebrationEvent('birthday', $userId, 'birthday', $_POST['birthday']);
-	$events->createCelebrationEvent(SITENAME.' anniversary', $userId, 'arrival_date', $_POST['arrival_date']);
+	$events->createCelebrationEvent('birthday', $object->userId, 'birthday', $_POST['birthday']);
+	$events->createCelebrationEvent(SITENAME.' anniversary', $object->userId, 'arrival_date', $_POST['arrival_date']);
 	
 	return $formResults;
-}, 10, 3);
+}, 10, 2);

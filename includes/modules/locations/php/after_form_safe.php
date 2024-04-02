@@ -70,25 +70,25 @@ add_action('sim_location_removal', function($userId){
 
 
 // Update marker icon when family picture is changed
-add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
-	if($formName != 'profile_picture'){
+add_filter('sim_before_saving_formdata', function($formResults, $object){
+	if($object->formdata->name != 'profile_picture'){
         return $formResults;
     }
 	
-	$privacyPreference = (array)get_user_meta( $userId, 'privacy_preference', true );
-	$family				= (array)get_user_meta($userId, 'family', true);
+	$privacyPreference = (array)get_user_meta( $object->userId, 'privacy_preference', true );
+	$family				= (array)get_user_meta($object->userId, 'family', true);
     $maps               = new Maps();
 	
 	//update a marker icon only if privacy allows and no family picture is set
 	if (empty($privacyPreference['hide_profile_picture']) && !is_numeric($family['picture'][0])){
-		$markerId = get_user_meta($userId, "marker_id", true);
+		$markerId = get_user_meta($object->userId, "marker_id", true);
 		
 		//New profile picture is set, update the marker icon
-		if(is_numeric(get_user_meta($userId, 'profile_picture', true))){
-			$iconUrl = SIM\USERMANAGEMENT\getProfilePictureUrl($userId);
+		if(is_numeric(get_user_meta($object->userId, 'profile_picture', true))){
+			$iconUrl = SIM\USERMANAGEMENT\getProfilePictureUrl($object->userId);
 			
 			//Save profile picture as icon
-			$maps->createIcon($markerId, get_userdata($userId)->user_login, $iconUrl, 1);
+			$maps->createIcon($markerId, get_userdata($object->userId)->user_login, $iconUrl, 1);
 		}else{
 			//remove the icon
 			$maps->removeIcon($markerId);
@@ -100,13 +100,13 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 
 
 // Update marker when privacy options are changed
-add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
-	if($formName != 'user_generics'){
+add_filter('sim_before_saving_formdata', function($formResults, $object){
+	if($object->formData->name != 'user_generics'){
         return $formResults;
     }
 
     if(is_array($formResults['privacy_preference']) && in_array("hide_location", $formResults['privacy_preference'])){
-        $markerId = get_user_meta($userId, "marker_id", true);
+        $markerId = get_user_meta($object->userId, "marker_id", true);
 
         if(is_numeric($markerId)){
             $maps = new Maps();
@@ -115,4 +115,4 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
     }
 
 	return $formResults;
-},10,3);
+}, 10, 2);

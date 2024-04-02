@@ -18,13 +18,13 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 }, 10, 3);
 
 //create birthday and anniversary events
-add_filter('sim_before_saving_formdata',function($formResults, $formName, $userId){
-	if($formName != 'user_location'){
+add_filter('sim_before_saving_formdata',function($formResults, $object){
+	if($object->formdata->name != 'user_location'){
 		return $formResults;
 	}
 	
 	//Get the old values from the db
-	$oldLocation = get_user_meta( $userId, 'location', true );
+	$oldLocation = get_user_meta( $object->userId, 'location', true );
 	
 	//Get the location from the post array
 	$location = $_POST["location"];
@@ -45,18 +45,18 @@ add_filter('sim_before_saving_formdata',function($formResults, $formName, $userI
 		
 		$location['address'] = sanitize_text_field($location['address']);
 		
-		SIM\updateFamilyMeta($userId, "location", $location);
+		SIM\updateFamilyMeta($object->userId, "location", $location);
 
-		do_action('sim_location_update', $userId, $location);
+		do_action('sim_location_update', $object->userId, $location);
 		
-		SIM\printArray("Saved location for user id $userId");
+		SIM\printArray("Saved location for user id $object->userId");
 	}elseif(isset($_POST["location"]) && (empty($location['latitude']) || empty($location['longitude']))){
 		//Remove location from db if empty
-		delete_user_meta( $userId, 'location');
-		SIM\printArray("Deleted location for user id $userId");
+		delete_user_meta( $object->userId, 'location');
+		SIM\printArray("Deleted location for user id $object->userId");
 
-		do_action('sim_location_removal', $userId);
+		do_action('sim_location_removal', $object->userId);
 	}
 	
 	return $formResults;
-}, 10, 3);
+}, 10, 2);

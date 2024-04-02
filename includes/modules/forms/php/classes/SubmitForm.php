@@ -356,11 +356,11 @@ class SubmitForm extends SimForms{
 		
 		$this->getForm($this->submission->form_id);
 
-		$shouldProceed						= apply_filters('sim_abefore_saving_formdata', true, $this);
+		//$shouldProceed						= apply_filters('sim_before_saving_formdata', true, $this);
 
-		if(is_wp_error($shouldProceed)){
-			return $shouldProceed;
-		  }
+		//if(is_wp_error($shouldProceed)){
+			//return $shouldProceed;
+		  //}
 		
 		$this->userId	= 0;
 		if(is_numeric($_POST['userid'])){
@@ -382,6 +382,14 @@ class SubmitForm extends SimForms{
 		$this->submission->userid			= $this->userId;
 
 		$this->submission->formresults 		= $_POST;
+
+		// check for required empty elements
+		foreach($this->formElements as $element){
+			// element is required but has no value
+			if($element->required && empty($this->submission->formresults[$element->name])){
+				return new \WP_Error('Error', "$element->nicename is required!");
+			}
+		}
 
 		$this->submission->archived 		= false;
 			
@@ -424,7 +432,7 @@ class SubmitForm extends SimForms{
 			}
 		}
 		
-		$this->submission->formresults 					= apply_filters('sim_before_saving_formdata', $this->submission->formresults, $this->formData->name, $this->userId);
+		$this->submission->formresults 					= apply_filters('sim_before_saving_formdata', $this->submission->formresults, $this);
 
 		if(is_wp_error($this->submission->formresults)){
 			return $this->submission->formresults;

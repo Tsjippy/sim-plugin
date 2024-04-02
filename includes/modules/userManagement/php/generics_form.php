@@ -13,16 +13,16 @@ add_filter('sim_forms_load_userdata',function($usermeta,$userId){
 }, 10, 2);
 
 // phonenumbers and more
-add_filter('sim_before_saving_formdata', function($formResults, $formName, $userId){
-	if($formName != 'user_generics'){
+add_filter('sim_before_saving_formdata', function($formResults, $object){
+	if($object->formdata->name != 'user_generics'){
 		return $formResults;
 	}
 
 	// check if age is correct
-	$family	= SIM\getUserFamily($userId);
+	$family	= SIM\getUserFamily($object->userId);
 	
 	if(!empty($family['children'])){
-		$ownAge		= strtotime(get_user_meta($userId, 'birthday', true));
+		$ownAge		= strtotime(get_user_meta($object->userId, 'birthday', true));
 
 		foreach($family['children']	as $child){
 			$ageDiff	= strtotime(get_user_meta($child, 'birthday', true)) - $ownAge;
@@ -34,7 +34,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 	}
 
 	//check if phonenumber has changed
-	$oldPhonenumbers	= (array)get_user_meta($userId, 'phonenumbers', true);
+	$oldPhonenumbers	= (array)get_user_meta($object->userId, 'phonenumbers', true);
 	$newPhonenumbers	= $_POST['phonenumbers'];
 	$changedNumbers		= array_diff($newPhonenumbers, $oldPhonenumbers);
 	foreach($changedNumbers as $key=>$changedNumber){
@@ -59,16 +59,16 @@ add_filter('sim_before_saving_formdata', function($formResults, $formName, $user
 			$changedNumber = $formResults['phonenumbers'][$key]	= '+234'.$changedNumber;
 		}
 
-		do_action('sim-phonenumber-updated', $changedNumber, $userId);
+		do_action('sim-phonenumber-updated', $changedNumber, $object->userId);
 	}
 	
 	// store changed date
 	if(!empty($changedNumbers)){
-		update_user_meta($userId, 'phone-last-changed', time());
+		update_user_meta($object->userId, 'phone-last-changed', time());
 	}
 	
 	return $formResults;
-}, 10, 3);
+}, 10, 2);
 
 //Add ministry modal
 add_filter('sim_before_form', function ($html, $formName){
