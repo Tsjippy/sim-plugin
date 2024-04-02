@@ -10,6 +10,16 @@
 
 ### Updated
 
+## [2.42.5] - 2024-04-01
+
+
+### Added
+- optional closing message for mailchime mails
+
+### Fixed
+
+### Updated
+
 ## [2.42.4] - 2024-03-30
 
 
