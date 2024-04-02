@@ -93,15 +93,17 @@ add_action( 'wp_after_insert_post', function( $postId, $post ){
         }
 
         //Send mailchimp message
-        $Mailchimp = new Mailchimp();
-        $Mailchimp->sendEmail($postId, intval($segmentId), $from, $extraMessage);
+        $Mailchimp  = new Mailchimp();
+        $result     = $Mailchimp->sendEmail($postId, intval($segmentId), $from, $extraMessage);
 
         // Indicate as send
-        update_metadata( 'post', $postId, 'mailchimp_message_send', $segmentId);
+        if($result == 'succes'){
+            update_metadata( 'post', $postId, 'mailchimp_message_send', $segmentId);
 
-        //delete any post metakey
-        delete_post_meta($postId,'mailchimp_segment_id');
-        delete_post_meta($postId,'mailchimp_email');
-        delete_post_meta($postId,'mailchimp_extra_message');
+            //delete any post metakey
+            delete_post_meta($postId,'mailchimp_segment_id');
+            delete_post_meta($postId,'mailchimp_email');
+            delete_post_meta($postId,'mailchimp_extra_message');
+        }
     }
 }, 10, 3);

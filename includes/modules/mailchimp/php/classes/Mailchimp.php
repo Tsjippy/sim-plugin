@@ -383,6 +383,9 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				//Send the campain
 				$response = $this->client->campaigns->send($campainId);
 
+				// Indicate as send
+				update_metadata( 'post', $postId, 'mailchimp_message_send', $segmentId);
+
 				SIM\printArray("Mailchimp campain send succesfully");
 				return 'succes';
 			}
