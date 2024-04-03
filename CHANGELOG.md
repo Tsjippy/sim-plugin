@@ -10,6 +10,16 @@
 
 ### Updated
 
+## [2.42.7] - 2024-04-02
+
+
+### Changed
+- store mailchimp last aufdience
+
+### Fixed
+
+### Updated
+
 ## [2.42.6] - 2024-04-02
 
 
