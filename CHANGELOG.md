@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- skip e-mails without recipients
 
 ### Changed
 
