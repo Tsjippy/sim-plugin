@@ -70,10 +70,6 @@ class FancyEmail{
         $this->subject      = &$args['subject'];
 
         $this->recipients   = &$args['to'];
-
-        if(empty($this->recipients)){
-            return $args;
-        }
         
         //Do not send an e-mail when the adres contains .empty, or is localhost or is staging
         $empty  = false;
