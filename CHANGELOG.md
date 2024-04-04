@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- captcha bug
 
 ### Updated
 
