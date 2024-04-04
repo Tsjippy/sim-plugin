@@ -145,7 +145,7 @@ async function verifyCreds(){
 
 	// Check if the fields are filled
 	if(username != '' && password != ''){
-		document.querySelector('#check_cred_wrapper .loadergif').classList.remove('hidden');
+		document.querySelector('#usercred_wrapper .loadergif').classList.remove('hidden');
 	}else{
 		showMessage('Please give an username and password!');
 		return;
@@ -163,12 +163,9 @@ async function verifyCreds(){
  	if(response){
 		if(response == 'false') {
 			showMessage('Invalid login, try again');
-
-			// Password reset form
-			document.getElementById('captcha-form').classList.remove('hidden');
 			
 			// hide loader
-			document.querySelector('#check_cred_wrapper .loadergif').classList.add('hidden');
+			document.querySelector('#usercred_wrapper .loadergif').classList.add('hidden');
 		} else {
 			addMethods(response);
 		}
@@ -176,41 +173,30 @@ async function verifyCreds(){
 }
 
 //request password reset e-mail
-async function resetPassword(target){
+async function resetPassword(form){
 	var username	= document.getElementById('username').value;
 
 	if(username == ''){
 		Main.displayMessage('Specify your username first','error');
 		return;
 	}
-	let captchaForm	= document.getElementById('captcha-form');
-	//check if captcha visible
-	if(captchaForm.classList.contains('hidden')){
-		if(captcha.querySelector('iframe') == null){
-			Main.displayMessage('Captcha failed to load, please refresh the page','error');
-		}
 
-		//show captcha
-		captchaForm.classList.remove('hidden');
+	let button	= form.querySelector('#lost_pwd_link');
+	
+	button.classList.add('hidden');
+	let loader = Main.showLoader(button, false, 'Sending e-mail...   ');
 
-		//change button text
-		target.text	= 'Send password reset request';
-	}else{
-		target.classList.add('hidden');
-		var loader = Main.showLoader(target, false, 'Sending e-mail...   ');
+	let formData	= new FormData(form);
+	formData.append('username', username);
+	
+	let response	= await fetchRestApi('request_pwd_reset', formData);
 
-		var formData	= new FormData();
-		formData.append('username',username);
-		
-		var response	= await fetchRestApi('request_pwd_reset', formData);
-
-		if (response) {
-			Main.displayMessage(response,'success');
-		}
-
-		loader.remove();
-		target.classList.remove('hidden');
+	if (response) {
+		Main.displayMessage(response,'success');
 	}
+
+	loader.remove();
+	button.classList.remove('hidden');
 }
 
 // request a new user account
@@ -421,11 +407,11 @@ function showTwoFaFields(methods){
 }
 
 function addMethods(result){
-	document.querySelector('#check_cred_wrapper .loadergif').classList.add('hidden');
+	document.querySelector('#usercred_wrapper .loadergif').classList.add('hidden');
 	
 	if(typeof(result) == 'string' && result){
 		//hide login form
-		document.querySelectorAll("#usercred_wrapper, #captcha-form").forEach(el=>el.classList.add('hidden'));
+		document.querySelectorAll("#usercred_wrapper").forEach(el=>el.classList.add('hidden'));
 
 		document.getElementById('logging_in_wrapper').classList.remove('hidden');
 
@@ -441,7 +427,7 @@ function addMethods(result){
 		showMessage('Invalid username or password!');
 	}else if(typeof(result) == 'object'){
 		//hide cred fields
-		document.querySelectorAll("#usercred_wrapper, #captcha-form").forEach(el=>el.classList.add('hidden'));
+		document.querySelectorAll("#usercred_wrapper").forEach(el=>el.classList.add('hidden'));
 
 		//hide messsages
 		showMessage('');
@@ -498,9 +484,6 @@ export function togglePassworView(ev){
 
 // Show the modal with the login form
 function openLoginModal(){
-	// Allready load the captcha for password reset so it is available when we need it
-	waitForCaptcha();
-
 	// Make sure the menu is closed
 	closeMobileMenu();
 
@@ -510,37 +493,12 @@ function openLoginModal(){
 	modal	= document.getElementById('login_modal');
 
 	//reset form
-	modal.querySelectorAll('form > div:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+	modal.querySelectorAll('form > div:not(.hidden, .cf-turnstile)').forEach(el=>el.classList.add('hidden'));
 	modal.querySelector('#usercred_wrapper').classList.remove('hidden');
 
 	modal.classList.remove('hidden');
 
 	window.setTimeout(() => modal.querySelector('#username').focus(), 0);
-}
-
-var observer = new MutationObserver(function(mutations) {
-	mutations.forEach(function(mutation) {
-		if (mutation.attributeName === "data-hcaptcha-response" && document.querySelector('.h-captcha iframe').dataset.hcaptchaResponse.length > 1000) {
-			resetPassword(document.querySelector('#captcha-form>a'));
-		}
-	});
-});
-
-function waitForCaptcha(){
-	// Do not try to load if there is not even a h-captcha element
-	if(document.querySelector('.h-captcha') == null) return;
-
-	// Wait till the iframe is loaded before we attach the observer
-	setTimeout(function() {
-		var iframe	= document.querySelector('.h-captcha iframe');
-		if(iframe	== null){
-			waitForCaptcha();
-		}else{
-			observer.observe(iframe, {
-				attributes: true
-			});
-		}
-	}, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -562,8 +520,8 @@ document.addEventListener("click", function(event){
 		requestLogin();
 	}else if(target.closest('.toggle_pwd_view') != null){
 		togglePassworView(event);
-	}else if(target.id == "lost_pwd_link"){
-		resetPassword(target);
+	}else if(target.id == 'password-reset-form' || target.id == "lost_pwd_link"){
+		resetPassword(target.closest('form'));
 	}else if(target.id == 'retry_webauthn'){
 		showMessage('');
 		verifyWebauthn([]);

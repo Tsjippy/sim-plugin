@@ -950,8 +950,15 @@ function requestPasswordReset(){
 
 	$email  = $user->user_email;
     if(!$email || strpos('.empty', $email) !== false){
-        return new WP_Error('email error',"No valid e-mail found for user $username");
+        return new WP_Error('email error', "No valid e-mail found for user $username");
     }
+
+    $errors = new \WP_Error();
+    $errors = apply_filters( 'lostpassword_errors', $errors, $user );
+
+	if ( $errors->has_errors() ) {
+		return $errors;
+	}
 
 	$result = sendPasswordResetMessage($user);
 
@@ -1020,6 +1027,13 @@ function requestUserAccount(){
     if(!empty($pass1)){
         $userdata['user_pass']     = $pass1;
     }
+
+    $errors = new \WP_Error();
+    $errors = apply_filters( 'registration_errors', $errors, $userdata );
+
+	if ( $errors->has_errors() ) {
+		return $errors;
+	}
 
 	//Insert the user
 	$userId = wp_insert_user( $userdata ) ;

@@ -16,7 +16,7 @@ add_filter('sim_submenu_description', function($description, $moduleSlug, $modul
 	ob_start();
 	?>
 	<p>
-		This module makes it possible to enable and use captcha on form made with the formbuilder or on the comment form
+		This module makes it possible to enable and use captcha on forms made with the formbuilder or on the wordpress default forms (login, register, reset password, comment)
 	</p>
 	<?php
 
@@ -46,18 +46,18 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings,
 		<br>
 		<label>
 			Your API key<br>
-			<input type='text' name='recaptchakey' value='<?php if(!empty($settings['recaptchakey'])){echo $settings['recaptchakey'];}?>' style='width:350px'>
+			<input type='text' name='recaptcha[key]' value='<?php if(!empty($settings['recaptcha']["key"])){echo $settings['recaptcha']["key"];}?>' style='width:350px'>
 		</label>
 		<br>
 		<br>
 		<label>
 			API key type<br>
 			<label>
-				<input type='radio' name='recaptchakeytype' value='v2' <?php if(!empty($settings['recaptchakeytype']) && $settings['recaptchakeytype'] == 'v2'){echo 'checked';}?>>
+				<input type='radio' name='recaptcha[keytype]' value='v2' <?php if(!empty($settings['recaptcha']["keytype"]) && $settings['recaptcha']["keytype"] == 'v2'){echo 'checked';}?>>
 				v2
 			</label>
 			<label>
-				<input type='radio' name='recaptchakeytype' value='v3' <?php if(!empty($settings['recaptchakeytype']) && $settings['recaptchakeytype'] == 'v3'){echo 'checked';}?>>
+				<input type='radio' name='recaptcha[keytype]' value='v3' <?php if(!empty($settings['recaptcha']["keytype"]) && $settings['recaptcha']["keytype"] == 'v3'){echo 'checked';}?>>
 				v3 / Enterprise
 			</label>
 		</label>
@@ -65,10 +65,57 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings,
 		<br>
 		<label>
 			Your secret key<br>
-			<input type='text' name='recaptchasecret' value='<?php if(!empty($settings['recaptchasecret'])){echo $settings['recaptchasecret'];}?>' style='width:350px'>
+			<input type='text' name='recaptcha[secret]' value='<?php if(!empty($settings['recaptcha']['secret'])){echo $settings['recaptcha']['secret'];}?>' style='width:350px'>
 		</label>
 		<br>
-		<?php
+		<br>
+		<table style='border:none'>
+			<tr>
+				<td>
+					Use on login form
+				</td>
+				<td>
+					<label class="switch">
+						<input type="checkbox" name="recaptcha[login]" <?php if(isset($settings['recaptcha']['login'])){echo 'checked';}?>>
+						<span class="slider round"></span>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Use on password reset form
+				</td>
+				<td>
+					<label class="switch">
+						<input type="checkbox" name="recaptcha[password]" <?php if(isset($settings['recaptcha']['password'])){echo 'checked';}?>>
+						<span class="slider round"></span>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Use on new user form
+				</td>
+				<td>
+					<label class="switch">
+						<input type="checkbox" name="recaptcha[newuser]" <?php if(isset($settings['recaptcha']['newuser'])){echo 'checked';}?>>
+						<span class="slider round"></span>
+					</label>			
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Use on comment form
+				</td>
+				<td>
+					<label class="switch">
+						<input type="checkbox" name="recaptcha[comment]" <?php if(isset($settings['recaptcha']['comment'])){echo 'checked';}?>>
+						<span class="slider round"></span>
+					</label>			
+				</td>
+			</tr>
+		</table>	
+		<?php	
 	}
 
 	?>
@@ -87,14 +134,61 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings,
 		<br>
 		<label>
 			Your API key<br>
-			<input type='text' name='turnstilekey' value='<?php if(!empty($settings['turnstilekey'])){echo $settings['turnstilekey'];}?>' style='width:350px'>
+			<input type='text' name='turnstile[key]' value='<?php if(!empty($settings['turnstile']['key'])){echo $settings['turnstile']['key'];}?>' style='width:350px'>
 		</label>
 		<br>
 		<label>
 			Your secret key<br>
-			<input type='text' name='turnstilesecretkey' value='<?php if(!empty($settings['turnstilesecretkey'])){echo $settings['turnstilesecretkey'];}?>' style='width:350px'>
+			<input type='text' name='turnstile[secretkey]' value='<?php if(!empty($settings['turnstile']['secretkey'])){echo $settings['turnstile']['secretkey'];}?>' style='width:350px'>
 		</label>
 		<br>
+		<br>
+		<table style='border:none'>
+			<tr>
+				<td>
+					Use on login form
+				</td>
+				<td>
+					<label class="switch">
+						<input type="checkbox" name="turnstile[login]" <?php if(isset($settings['turnstile']['login'])){echo 'checked';}?>>
+						<span class="slider round"></span>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Use on password reset form
+				</td>
+				<td>
+					<label class="switch">
+						<input type="checkbox" name="turnstile[password]" <?php if(isset($settings['turnstile']['password'])){echo 'checked';}?>>
+						<span class="slider round"></span>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Use on new user form
+				</td>
+				<td>
+					<label class="switch">
+						<input type="checkbox" name="turnstile[newuser]" <?php if(isset($settings['turnstile']['newuser'])){echo 'checked';}?>>
+						<span class="slider round"></span>
+					</label>			
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Use on comment form
+				</td>
+				<td>
+					<label class="switch">
+						<input type="checkbox" name="turnstile[comment]" <?php if(isset($settings['turnstile']['comment'])){echo 'checked';}?>>
+						<span class="slider round"></span>
+					</label>			
+				</td>
+			</tr>
+		</table>
 
 		<?php
 	}

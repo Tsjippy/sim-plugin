@@ -13,7 +13,11 @@
 	
 	/* Modal Content/Box */
 	.modal-content {
-		margin: 10% auto; /* 10% from the top and centered */
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		
 		padding: 20px 20px 0px 20px;
 		border: 1px solid #888;
 		border-radius: 10px;
@@ -22,7 +26,6 @@
 		overscroll-behavior-y: none;
 		max-height: calc(100vh - 20%);
     	overflow-y: auto;
-		
 		.form-row label{
 			display: block;
 			margin-top: 20px;

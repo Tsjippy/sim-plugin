@@ -73,9 +73,11 @@ function loginModal($message='', $required=false, $username=''){
                                 <input name="rememberme" type="checkbox" id="rememberme" value="forever" checked>
                                 Remember Me
                             </label>
-                            <button type='button' id='check_cred' class='button'>Verify credentials</button>
-                            <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy' alt='loader'>
                         </div>
+                        <?php do_action( 'login_form' );?>
+                        
+                        <button type='button' id='check_cred' class='button'>Verify credentials</button>
+                        <img class='loadergif hidden' src='<?php echo LOADERIMAGEURL;?>' loading='lazy' alt='loader'>
                     </div>
 
                     <div id='logging_in_wrapper' class='hidden'>
@@ -109,13 +111,8 @@ function loginModal($message='', $required=false, $username=''){
 	                    </div>
                     </div>
                 </form>
-                <form id="captcha-form" class='hidden'>
-                    <div id='captcha'>
-                        <p>
-                            First complete the captcha before sending the request.
-                        </p>
-                        <?php echo do_shortcode('[hcaptcha auto="true"]');?>
-                    </div>
+                <form id="password-reset-form">
+                    <?php echo do_action('resetpass_form');?>
                     <a href='#pwd_reset' id='lost_pwd_link'>Request password reset</a>
                 </form>
             </div>
@@ -125,7 +122,7 @@ function loginModal($message='', $required=false, $username=''){
 }
 
 //add hidden login modal to page if not logged in
-add_filter( 'wp_footer', function () {
+add_action( 'loop_end', function () {
     if(!is_main_query()){
         return;
     }

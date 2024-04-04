@@ -2,15 +2,14 @@
 namespace SIM\CAPTCHA;
 use SIM;
 
-function getRecaptchHtml(){
-    $recaptchaKey		= SIM\getModuleOption(MODULE_SLUG, 'recaptchakey');
-    $recaptchaKeyType	= SIM\getModuleOption(MODULE_SLUG, 'recaptchakeytype');
+function getRecaptchaHtml(){
+    $recaptcha		= SIM\getModuleOption(MODULE_SLUG, 'recaptcha');
     $html               = '';
 
-    if($recaptchaKey){
-        if(!$recaptchaKeyType || $recaptchaKeyType == 'v2'){
+    if($recaptcha && !empty($recaptcha['key'])){
+        if(!$recaptcha['keytype'] || $recaptcha['keytype'] == 'v2'){
             wp_enqueue_script('sim_recaptcha_v2');
-            $html	.= "<div class='g-recaptcha' data-sitekey='$recaptchaKey' required></div>";
+            $html	.= "<div class='g-recaptcha' data-sitekey='{$recaptcha['key']}' required></div>";
         }else{
             wp_enqueue_script('sim_recaptcha_v3');
             ob_start();
@@ -21,7 +20,7 @@ function getRecaptchHtml(){
                 function onloadCallback(){
                     grecaptcha.ready(function() {
                         setInterval(function(){
-                            grecaptcha.execute('<?php echo $recaptchaKey;?>', {action: 'validate_captcha'}).then(function(token) {
+                            grecaptcha.execute('<?php echo $recaptcha['key'];?>', {action: 'validate_captcha'}).then(function(token) {
                                 document.querySelectorAll('.submit_wrapper .form_submit[disabled]').forEach(el=>el.disabled=false);
                                 console.log( 'refreshed token:', token );
                                 document.getElementById('g-recaptcha-response').value = token;

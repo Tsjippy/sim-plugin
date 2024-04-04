@@ -48,7 +48,7 @@ function addCaptchaHtml($html, $element, $object){
                     $html   .= "<img src'".SIM\pathToUrl(MODULE_PATH.'/pictures/recaptcha.png')."'>";
                 }
             }
-            $html   .= getRecaptchHtml();
+            $html   .= getRecaptchaHtml();
             break;
         case 'turnstile':
             $key	= SIM\getModuleOption(MODULE_SLUG, 'turnstilekey');
@@ -59,14 +59,12 @@ function addCaptchaHtml($html, $element, $object){
                     $html	= '';
                 }
             }else{
-                wp_enqueue_script('sim_turnstile');
-
                 $extraData	= '';
                 if(!isset($_REQUEST['formbuilder']) && $element->hidden){
-                    $extraData	= "data-appearance='interaction-only'";
+                    $extraData	        = "data-appearance='interaction-only'";
                     $element->hidden	= false;
                 }
-                $html	= "<div class='cf-turnstile' data-sitekey='$key' $extraData></div>";
+                $html	= getTurnstileHtml($extraData);
             }
             break;
     }
