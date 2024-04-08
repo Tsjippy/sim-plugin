@@ -386,7 +386,7 @@ class SubmitForm extends SimForms{
 		// check for required empty elements
 		foreach($this->formElements as $element){
 			// element is required but has no value
-			if($element->required && empty($this->submission->formresults[$element->name])){
+			if($element->required && $this->submission->formresults[$element->name] === '' ){
 				return new \WP_Error('Error', "$element->nicename is required!");
 			}
 		}

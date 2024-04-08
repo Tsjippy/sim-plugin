@@ -176,31 +176,60 @@ class FormBuilderForm extends SimForms{
 
 				$html .= $elementHtml;
 					$html	.= "<span class='elname$hidden' style='font-size:xx-small;'>$element->name</span>";
-					//Add a star if this field has conditions or is required
+					
+					//Add a symbol if this field has conditions or is required
 					if(!empty($element->conditions) || !empty($element->required) || !empty($element->mandatory)){
-						$html .= "<div class='infobox'>";
-							$class		= '';
-							$content	= '';
-							$explainer	= '';
+							$icons		= [];
 							if(!empty($element->conditions)){
-								$content	= '*';
-								$explainer	= 'This element has conditions';
-							}
-							if(!empty($element->required) || !empty($element->mandatory)){
-								$content	= '!';
-								$explainer	= 'This element is required';
-							}
-							if(!empty($element->mandatory)){
-								$content	= '!';
-								$explainer	= 'This element is conditionally required';
-								$class		= 'conditional';
+								$icons[]		= [
+									'content' 	=> '*',
+									'explainer'	=> 'This element has conditions',
+									'class'		=> '',
+									'right'		=> 20
+								];
 							}
 
-							if(!empty($content)){
-								$html .= "<span class='conditions_info formfieldbutton $class'>$content</span>";
-								$html .= "<span class='info_text conditions' style='margin:-20px 10px;'>$explainer</span>";
+							if(!empty($element->required)){
+								$right			= 20;
+								if(count($icons) > 0){
+									$right	= 50;
+								}
+								$icons[]		= [
+									'content' 	=> '!',
+									'explainer'	=> 'This element is required',
+									'class'		=> '',
+									'right'		=> $right
+								];
 							}
-						$html .= "</div>";
+
+							if(!empty($element->mandatory)){
+								$right			= 20;
+								if(count($icons) == 1){
+									$right	= 50;
+								}elseif(count($icons) == 2){
+									$right	= 80;
+								}
+
+								$icons[]		= [
+									'content' 	=> '!',
+									'explainer'	=> 'This element is conditionally required',
+									'class'		=> 'conditional',
+									'right'		=> $right
+								];
+							}
+
+							if(!empty($icons)){
+								$right	= $icons[array_key_last($icons)]['right'] + 30;
+								
+								foreach($icons as $icon){
+									$style	= "position: absolute;margin: 0;right: {$right}px;top: 5px;height: 30px;";
+									$html .= "<div class='infobox' style='position: absolute;top: 0;width: 100%;'>";
+										$html .= "<span class='conditions_info formfieldbutton {$icon['class']}' style='right:{$icon['right']}px'>{$icon['content']}</span>";
+										$html .= "<span class='info_text conditions' style='$style'>{$icon['explainer']}</span>";
+									$html .= "</div>";
+								}
+							}
+						
 					}
 
 					$html .= "<span class='widthpercentage formfieldbutton'></span>";
