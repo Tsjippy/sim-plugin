@@ -169,7 +169,7 @@ function userInfoPage($atts){
 			if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'generic_info'){
 				$html	.= getGenericsTab($userId);
 			}else{
-				$html	.= "<div class='wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
+				$html	.= "<div class='loader-wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 			}
 
 		$html	.= "</div>";
