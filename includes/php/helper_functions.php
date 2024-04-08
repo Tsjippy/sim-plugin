@@ -178,15 +178,21 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 /**
  * Returns the current url
  *
- * @return	string						The url
+ * @param	bool	$trim		Remove request params
+ *
+ * @return	string				The url
 */
-function currentUrl(){
+function currentUrl($trim=false){
 	if(defined('REST_REQUEST')){
 		$url	 = trim(explode('?', $_SERVER['HTTP_REFERER'])[0], "/");
 	}else{
 		$url	 = '';
 		$url 	.=	$_SERVER['REQUEST_SCHEME']."://";
 		$url	.=	$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	}
+
+	if($trim){
+		$url	 = trim(explode('?', $url)[0], "/");
 	}
 	return $url;
 }

@@ -909,8 +909,17 @@ class DisplayFormResults extends DisplayForm{
 				$value 	= $this->transformInputData($value, $elementName, (object)$values);
 				
 				//show original email in excel
-				if(gettype($value) == 'string' && strpos($value, '@') !== false){
+				if(gettype($value) == 'string' && str_contains($value, '@')){
 					$excelRow[]		= $orgFieldValue;
+				}elseif(gettype($value) == 'string' && str_contains($value, '<a href=') && str_contains(wp_strip_all_tags($value), 'Link')){
+					// add the url to excel
+					preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $value, $match);
+
+					if(!empty($match[0][0])){
+						$excelRow[]		= $match[0][0];
+					}else{
+						$excelRow[]		= $orgFieldValue;
+					}
 				}else{
 					$excelRow[]		= wp_strip_all_tags($value);
 				}
@@ -1574,6 +1583,7 @@ class DisplayFormResults extends DisplayForm{
 	 * @return	array						The filtered submissions
 	 */
 	function filterSubmissions($submissions){
+		$filteredCount	= 0;
 		foreach($this->tableSettings['filter'] as $filter){
 			$filterElement	= $this->getElementById($filter['element']);
 			$filterValue	= '';
@@ -1595,13 +1605,14 @@ class DisplayFormResults extends DisplayForm{
 						!$this->compareFilterValue($submission->formresults[$name], $filter['type'], $filterValue)	// The filter value does not match the value
 					){
 						unset($submissions[$key]);
+						$filteredCount++;
 					}
 				}
 			}
 		}
 
 		// total minus the filtered out submissions
-		$this->total	= count($submissions);
+		$this->total	= $this->total - $filteredCount;
 
 		// Get the submissions we need
 		if(isset($this->splittedSubmissions)){
@@ -1825,7 +1836,12 @@ class DisplayFormResults extends DisplayForm{
 			$this->sortDirection	= $_REQUEST['sortdir'];
 		}
 
-		$this->parseSubmissions($userId, null, false, $force);
+		$all	= false;
+		if(isset($_REQUEST['export_pfd']) || isset($_REQUEST['export_xls'])){
+			$all	= true;
+		}
+
+		$this->parseSubmissions($userId, null, $all, $force);
 
 		$submissions		= $this->submissions;
 		if(isset($this->splittedSubmissions)){

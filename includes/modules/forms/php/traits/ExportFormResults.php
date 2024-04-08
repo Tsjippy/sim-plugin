@@ -92,7 +92,7 @@ trait ExportFormResults{
 				/* 
 						Write the content to the cell
 				*/
-				$sheet->setCellValueByColumnAndRow($col, $rowIndex, $cell);
+				$sheet->setCellValue([$col, $rowIndex], $cell);
 
 				$col++;
 			}

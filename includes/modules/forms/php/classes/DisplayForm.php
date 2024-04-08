@@ -417,7 +417,7 @@ class DisplayForm extends SubmitForm{
 			$html	.= "<form action='' method='post' class='sim-form-wrapper' $dataset>";
 				$html	.= "<div class='form_elements'>";
 					$html	.= "<input type='hidden' name='formid' value='{$this->formData->id}'>";
-					$html	.= "<input type='hidden' name='formurl' value='".SIM\currentUrl()."'>";
+					$html	.= "<input type='hidden' name='formurl' value='".SIM\currentUrl(true)."'>";
 					$html	.= "<input type='hidden' name='userid' value='$this->userId'>";
 					foreach($this->formElements as $key=>$element){
 						$html	.= $this->buildHtml($element, $key);
