@@ -124,11 +124,14 @@
 	}
 
 	.conditions_info{
-		margin-top: -20px;
-		margin-right: 30px;
+		margin-top: -39px;
 		float: right;
 		color: $primary_color;
 		font-size: xx-large;
+
+		&.conditional{
+			color: orange;
+		}
 	}
 }
 

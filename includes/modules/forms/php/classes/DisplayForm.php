@@ -61,8 +61,12 @@ class DisplayForm extends SubmitForm{
 		//if the current element is required or this is a label and the next element is required
 		if(
 			!empty($element->required)		||
+			!empty($element->mandatory)		||
 			$element->type == 'label'		&&
-			$this->nextElement->required
+			(
+				$this->nextElement->required	||
+				$this->nextElement->mandatory
+			)
 		){
 			$class .= ' required';
 		}
@@ -297,8 +301,12 @@ class DisplayForm extends SubmitForm{
 			//if the current element is required or this is a label and the next element is required
 			if(
 				!empty($element->required)		||
+				!empty($element->mandatory)		||
 				$element->type == 'label'		&&
-				$this->nextElement->required
+				(
+					$this->nextElement->required	||
+					$this->nextElement->mandatory
+				)
 			){
 				$class .= ' required';
 			}

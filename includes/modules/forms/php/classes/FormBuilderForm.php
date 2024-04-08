@@ -117,8 +117,12 @@ class FormBuilderForm extends SimForms{
 		//if the current element is required or this is a label and the next element is required
 		if(
 			!empty($element->required)		||
+			!empty($element->mandatory)		||
 			$element->type == 'label'		&&
-			$this->nextElement->required
+			(
+				$this->nextElement->required	||
+				$this->nextElement->mandatory
+			)
 		){
 			$hidden .= ' required';
 		}
@@ -172,13 +176,33 @@ class FormBuilderForm extends SimForms{
 
 				$html .= $elementHtml;
 					$html	.= "<span class='elname$hidden' style='font-size:xx-small;'>$element->name</span>";
-					//Add a star if this field has conditions
-					if(!empty($element->conditions)){
+					//Add a star if this field has conditions or is required
+					if(!empty($element->conditions) || !empty($element->required) || !empty($element->mandatory)){
 						$html .= "<div class='infobox'>";
-							$html .= "<span class='conditions_info formfieldbutton'>*</span>";
-							$html .= "<span class='info_text conditions' style='margin:-20px 10px;'>This element has conditions</span>";
+							$class		= '';
+							$content	= '';
+							$explainer	= '';
+							if(!empty($element->conditions)){
+								$content	= '*';
+								$explainer	= 'This element has conditions';
+							}
+							if(!empty($element->required) || !empty($element->mandatory)){
+								$content	= '!';
+								$explainer	= 'This element is required';
+							}
+							if(!empty($element->mandatory)){
+								$content	= '!';
+								$explainer	= 'This element is conditionally required';
+								$class		= 'conditional';
+							}
+
+							if(!empty($content)){
+								$html .= "<span class='conditions_info formfieldbutton $class'>$content</span>";
+								$html .= "<span class='info_text conditions' style='margin:-20px 10px;'>$explainer</span>";
+							}
 						$html .= "</div>";
 					}
+
 					$html .= "<span class='widthpercentage formfieldbutton'></span>";
 				$html .= "</div>";
 			$html .= "</div>";
@@ -286,7 +310,7 @@ class FormBuilderForm extends SimForms{
 		?>
 		<div class="modal add_form_element_modal hidden">
 			<!-- Modal content -->
-			<div class="modal-content" style='max-width:90%;'>
+			<div class="modal-content" style='max-width:90%; width:max-content;'>
 				<span id="modal_close" class="close">&times;</span>
 				
 				<button class="button tablink formbuilderform active"	id="show_element_builder" data-target="element_builder">Form element</button>
@@ -1244,6 +1268,10 @@ class FormBuilderForm extends SimForms{
 						<input type="checkbox" class="formbuilder" name="formfield[required]" value="true" <?php if($element != null && $element->required){echo 'checked';}?>>
 						Check if this should be a required field
 					</label><br>
+					<label class="option-label">
+						<input type="checkbox" class="formbuilder" name="formfield[mandatory]" value="true" <?php if($element != null && $element->mandatory){echo 'checked';}?>>
+						Check if this should be a conditional required field: its only required when visible
+					</label><br>
 					<br>
 					<?php
 				}
@@ -1295,9 +1323,7 @@ class FormBuilderForm extends SimForms{
 	 * @param int	$elementId	The id of the element. Default -1 for empty
 	 */
 	public function elementConditionsForm($elementId = -1){
-		if($elementId != $elementId){
-			$element	= $this->getElementById($elementId);
-		}
+		$element	= $this->getElementById($elementId);
 
 		if($elementId == -1 || empty($element->conditions)){
 			if(gettype($element) != 'object'){

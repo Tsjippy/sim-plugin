@@ -360,7 +360,7 @@ class SubmitForm extends SimForms{
 
 		//if(is_wp_error($shouldProceed)){
 			//return $shouldProceed;
-		  //}
+		//}
 		
 		$this->userId	= 0;
 		if(is_numeric($_POST['userid'])){
