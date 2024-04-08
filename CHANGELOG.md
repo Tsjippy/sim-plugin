@@ -9,6 +9,7 @@
 
 ### Fixed
 - captcha bug
+- bug with conditional required elements
 
 ### Updated
 
