@@ -3,9 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- skip e-mails without recipients
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.42.8] - 2024-04-08
+
+
+### Added
+- skip e-mails without recipients
 
 ### Fixed
 - captcha bug
