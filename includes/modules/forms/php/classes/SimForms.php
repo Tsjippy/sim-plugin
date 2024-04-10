@@ -574,7 +574,7 @@ class SimForms{
 		if(is_numeric($this->formId)){
 			$query	.= $this->formId;
 		}elseif(!empty($this->formName)){
-			$query	.= "(SELECT `id` FROM {$this->tableName} WHERE name='$this->formName')";
+			$query	.= "(SELECT `id` FROM {$this->tableName} WHERE name='$this->formName' LIMIT 1)";
 		}else{
 			return new WP_Error('forms', 'Which form do you have?');
 		}
