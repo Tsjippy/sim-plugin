@@ -7,6 +7,7 @@
 
 ### Changed
 - export urlss to excel
+- forms table layout
 
 ### Fixed
 
