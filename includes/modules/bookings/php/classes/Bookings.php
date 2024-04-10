@@ -663,11 +663,11 @@ class Bookings{
                                     }
 
                                     //if there are actions
-                                    if(!empty($this->forms->formData->settings['actions'])){
+                                    if(!empty($this->forms->formData->actions)){
                                         //loop over all the actions
                                         $buttonsHtml	= [];
                                         $buttons		= '';
-                                        foreach($this->forms->formData->settings['actions'] as $action){
+                                        foreach($this->forms->formData->actions as $action){
                                             if($action == 'archive' && $this->showArchived == 'true' && $this->forms->submissions->archived){
                                                 $action = 'unarchive';
                                             }
@@ -810,15 +810,15 @@ class Bookings{
         $submittingUser       = get_userdata($this->forms->submission->userid);
 
         if(
-            isset($this->forms->formData->settings['default-booking-state'])            &&
-            $this->forms->formData->settings['default-booking-state']   == 'pending'    &&
+            isset($this->forms->formData->default_booking_state)            &&
+            $this->forms->formData->default_booking_state   == 'pending'    &&
             (
                 !$user  ||          // No user found
-                !array_intersect($user->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles'])) // or not allowed
+                !array_intersect($user->roles, array_keys($this->forms->formData->confirmed_booking_roles)) // or not allowed
             )   &&
             (
                 !$submittingUser  ||          // No user found
-                !array_intersect($submittingUser->roles, array_keys($this->forms->formData->settings['confirmed-booking-roles'])) // or not allowed
+                !array_intersect($submittingUser->roles, array_keys($this->forms->formData->confirmed_booking_roles)) // or not allowed
             )
         ){
             $pending    = true;

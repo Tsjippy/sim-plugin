@@ -570,6 +570,8 @@ function addChangeButton(target){
 document.addEventListener("click", event=>{
 	let target = event.target;
 
+	console.log(target);
+
 	if(target.name == 'submit_column_setting'){
 		saveColumnSettings(target);
 	}else if(target.name == 'submit_table_setting'){
@@ -577,7 +579,7 @@ document.addEventListener("click", event=>{
 	}else if(target.name == 'form_settings[autoarchive]'){
 		//show auto archive fields
 		let el = target.closest('.table_rights_wrapper').querySelector('.autoarchivelogic');
-		if(target.value == 'true'){
+		if(target.value == '1'){
 			el.classList.remove('hidden');
 		}else{
 			el.classList.add('hidden');
@@ -659,7 +661,7 @@ document.addEventListener("click", event=>{
 		}
 	}
 
-	if(target.matches('.table_rights_wrapper .permissins-rights-form')){
+	if(target.matches('form .permissions-rights-form')){
 		target.closest('div').querySelector('.permission-wrapper').classList.toggle('hidden');
 	}
 });

@@ -355,17 +355,17 @@ function saveTableSettings(){
 		$formTable->getForm($_POST['formid']);
 		
 		//update existing
-		foreach($formSettings as $key=>$setting){
-			$formTable->formData->$key = $setting;
+		foreach($formSettings as $key=>&$value){
+			if(is_array($value)){
+				$value	= serialize($value);
+			}
 		}
 		
 		//save in db
 		$wpdb->update($formTable->tableName,
+			$formSettings,
 			array(
-				'settings' 	=> maybe_serialize($formTable->formData->settings)
-			),
-			array(
-				'id'		=> $_POST['formid'],
+				'id'		=> $formTable->formData->id,
 			),
 		);
 	}

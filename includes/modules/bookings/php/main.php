@@ -296,22 +296,22 @@ add_action('sim-forms-form-settings-form', function($formBuilderForm){
     asort($userRoles);
 
     $state    = '';
-    if(isset($formBuilderForm->formData->settings['default-booking-state'])){
-        $state  = $formBuilderForm->formData->settings['default-booking-state'];
+    if(isset($formBuilderForm->formData->default_booking_state)){
+        $state  = $formBuilderForm->formData->default_booking_state;
     }
     ?>
     <h4>Default status for new bookings</h4>
     <label>
-        <input type='radio' name='settings[default-booking-state]' value='pending' <?php if($state == 'pending'){echo 'checked';}?>>
+        <input type='radio' name='default_booking_state' value='pending' <?php if($state == 'pending'){echo 'checked';}?>>
         Pending
     </label>
     <label>
-        <input type='radio' name='settings[default-booking-state]' value='confimed' <?php if($state == 'confimed'){echo 'checked';}?>>
+        <input type='radio' name='default_booking_state' value='confimed' <?php if($state == 'confimed'){echo 'checked';}?>>
         Confimed
     </label>
     <br>
     <script>
-        document.querySelectorAll('[name="settings[default-booking-state]"]').forEach(el=>{
+        document.querySelectorAll('[name="default_booking_state"]').forEach(el=>{
             el.addEventListener('change', (ev) => {
                 let div = document.getElementById('confirmed-roles-wrapper');
                 if(ev.target.value == 'pending' && ev.target.checked){
@@ -327,7 +327,7 @@ add_action('sim-forms-form-settings-form', function($formBuilderForm){
         <div class="role_info">
             <?php
             foreach($userRoles as $key=>$roleName){
-                if(!empty($formBuilderForm->formData->settings['confirmed-booking-roles'][$key])){
+                if(!empty($formBuilderForm->formData->confirmed_booking_roles[$key])){
                     $checked = 'checked';
                 }else{
                     $checked = '';
@@ -376,7 +376,7 @@ add_action('sim-formstable-after-table-settings', function($displayFormResults){
 
 function pendingBookingsHtml($booking, $displayFormResults, $html){
     // do not show if no permissions
-    if(!array_intersect(array_keys($booking->forms->formData->settings['full_right_roles']), $booking->forms->userRoles)){
+    if(!array_intersect(array_keys($booking->forms->formData->full_right_roles), $booking->forms->userRoles)){
         return '';
     }
 
@@ -429,11 +429,13 @@ function pendingBookingsHtml($booking, $displayFormResults, $html){
 add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResults){
     // display the calendar instead of the table
     if(
-        !isset($displayFormResults->tableSettings['booking-display'])   ||                                                      // no option choosen
+        !isset($displayFormResults->tableSettings['booking-display'])   ||          // no option choosen
         (
-            isset($displayFormResults->tableSettings['booking-display']) &&                                                     // option chosen
-            $displayFormResults->tableSettings['booking-display'] != 'calendar'                                                 // but choose table view
-        )        
+            isset($displayFormResults->tableSettings['booking-display']) &&         // option chosen
+            $displayFormResults->tableSettings['booking-display'] != 'calendar'     // but choose table view
+        )      ||
+        isset($_REQUEST['export_xls'])  ||                                          // exporting an excel
+        isset($_REQUEST['export_pdf'])                                              // exporting a pdf
     ){
         return $shouldShow;
     }

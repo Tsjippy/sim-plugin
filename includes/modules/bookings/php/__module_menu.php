@@ -34,11 +34,22 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug){
 		);
 	}
 
-	// Add columns to forms table
+	// Add columns to forms element table
 	$forms	= new SIM\FORMS\SimForms();
-	$row = $wpdb->get_results(  "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
-	WHERE table_name = '$forms->elTableName' AND column_name = 'booking_details'"  );
 
+	// Add columns to forms table
+	$row 	= $wpdb->get_results(  "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '$forms->tableName' AND column_name = 'default_booking_state'"  );
+	if(empty($row)){
+		$wpdb->query("ALTER TABLE $forms->tableName ADD default_booking_state text NOT NULL");
+	}
+
+	$row 	= $wpdb->get_results(  "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '$forms->tableName' AND column_name = 'confirmed_booking_roles'"  );
+	if(empty($row)){
+		$wpdb->query("ALTER TABLE $forms->tableName ADD confirmed_booking_roles text NOT NULL");
+	}
+
+	// Add columns to forms element table
+	$row 	= $wpdb->get_results(  "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '$forms->elTableName' AND column_name = 'booking_details'"  );
 	if(empty($row)){
 		$wpdb->query("ALTER TABLE $forms->elTableName ADD booking_details text NOT NULL");
 	}

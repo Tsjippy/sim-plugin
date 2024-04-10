@@ -18,7 +18,6 @@ class DisplayFormResults extends DisplayForm{
 	public $splittedSubmissions;
 	public $pageSplittedSubmissions;
 	public $hiddenColumns;
-	public $formSettings;
 	public $columnSettings;
 	public $tableSettings;
 	public $ownData;
@@ -524,7 +523,7 @@ class DisplayFormResults extends DisplayForm{
 					if($userIdKey && $number == $signalNumber){
 						$output	.= "<a href='https://signal.me/#p/$number'>$number</a><br>";
 					}else{
-						$output	.= "<a href='https://api.whatsapp.com/send?phone=$number&text=Regarding%20your%20submission%20of%20{$this->formSettings['formname']}%20with%20id%20$submission->id'>$number</a><br>";
+						$output	.= "<a href='https://api.whatsapp.com/send?phone=$number&text=Regarding%20your%20submission%20of%20{$this->formData->form_name}%20with%20id%20$submission->id'>$number</a><br>";
 					}
 				}
 			//display dates in a nice way
@@ -559,7 +558,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 
 		//If we should split an entry, define a regex patterns
-		if(!empty($this->formSettings['split'])){
+		if(!empty($this->formData->split)){
 			//find the keyword followed by one or more numbers between [] followed by a  keyword between []
 			$pattern	= "/.*?\[[0-9]+\]\[([^\]]+)\]/i";
 			$processed	= [];
@@ -570,7 +569,7 @@ class DisplayFormResults extends DisplayForm{
 
 		//Do not show elements that will be splitted needed for split fields with this pattern name[X]name
 		//Execute the regex
-		if(!empty($this->formSettings['split']) && preg_match($pattern, $element->name, $matches)){
+		if(!empty($this->formData->split) && preg_match($pattern, $element->name, $matches)){
 			//We found a keyword, check if we already got the same one
 			if(in_array($matches[1], $processed)){
 				//do not show this element
@@ -744,7 +743,7 @@ class DisplayFormResults extends DisplayForm{
 
 		//Add a row for each table action as well
 		$actions	= [];
-		foreach($this->formSettings['actions'] as $action){
+		foreach($this->formData->actions as $action){
 			$actions[]	= $action;
 		}
 
@@ -796,8 +795,8 @@ class DisplayFormResults extends DisplayForm{
 
 		// Get the names of fields the data is splitted on
 		$splitNames	= [];
-		if(is_array($this->formSettings['split'])){
-			foreach($this->formSettings['split'] as $id){
+		if(is_array($this->formData->split)){
+			foreach($this->formData->split as $id){
 				$element	= $this->getElementById($id);
 
 				if(!$element){
@@ -1011,11 +1010,11 @@ class DisplayFormResults extends DisplayForm{
 		$buttonCell		= '';
 
 		//if there are actions
-		if(!empty($this->formSettings['actions'])){
+		if(!empty($this->formData->actions)){
 			//loop over all the actions
 			$buttonsHtml	= [];
 			$buttons		= '';
-			foreach($this->formSettings['actions'] as $action){
+			foreach($this->formData->actions as $action){
 				if(
 					$action == 'archive' && 
 					(
@@ -1320,7 +1319,7 @@ class DisplayFormResults extends DisplayForm{
 					<label class="label">
 						Auto archive results<br>
 						<?php
-						if($this->formSettings['autoarchive'] == 'true'){
+						if($this->formData->autoarchive){
 							$checked1	= 'checked';
 							$checked2	= '';
 						}else{
@@ -1329,11 +1328,11 @@ class DisplayFormResults extends DisplayForm{
 						}
 						?>
 						<label>
-							<input type="radio" name="form_settings[autoarchive]" value="true" <?php echo $checked1;?>>
+							<input type="radio" name="form_settings[autoarchive]" value="1" <?php echo $checked1;?>>
 							Yes
 						</label>
 						<label>
-							<input type="radio" name="form_settings[autoarchive]" value="false" <?php echo $checked2;?>>
+							<input type="radio" name="form_settings[autoarchive]" value="0" <?php echo $checked2;?>>
 							No
 						</label>
 					</label>
@@ -1341,9 +1340,9 @@ class DisplayFormResults extends DisplayForm{
 					<br>
 					<div class='autoarchivelogic <?php if($checked1 == ''){echo 'hidden';}?>'>
 						Auto archive a (sub) entry when field<br>
-						<select name="form_settings[autoarchivefield]" style="margin-right:10px;">
+						<select name="form_settings[autoarchive_el]" style="margin-right:10px;">
 							<?php
-							if($this->formSettings['autoarchivefield'] == ''){
+							if(empty($this->formData->autoarchive_el)){
 								?><option value='' selected>---</option><?php
 							}else{
 								?><option value=''>---</option><?php
@@ -1353,7 +1352,7 @@ class DisplayFormResults extends DisplayForm{
 								$name = $element['nice_name'];
 								
 								//Check which option is the selected one
-								if($this->formSettings['autoarchivefield'] != '' && $this->formSettings['autoarchivefield'] == $key){
+								if($this->formData->autoarchive_el != '' && $this->formData->autoarchive_el == $key){
 									$selected = 'selected="selected"';
 								}else{
 									$selected = '';
@@ -1363,7 +1362,7 @@ class DisplayFormResults extends DisplayForm{
 							?>
 						</select>
 						<label style="margin:0 10px;">equals</label>
-						<input type='text' class='wide' name="form_settings[autoarchivevalue]" value="<?php echo $this->formSettings['autoarchivevalue'];?>">
+						<input type='text' class='wide' name="form_settings[autoarchive_value]" value="<?php echo $this->formData->autoarchive_value;?>">
 						
 						<div class="infobox" name="info">
 							<div>
@@ -1409,7 +1408,7 @@ class DisplayFormResults extends DisplayForm{
 										$name	= ucfirst(strtolower(str_replace('_', ' ', $element)));
 										
 										//Check which option is the selected one
-										if(is_array($this->formSettings['split']) && in_array($id, $this->formSettings['split'])){
+										if(is_array($this->formData->split) && in_array($id, $this->formData->split)){
 											$checked = 'checked';
 										}else{
 											$checked = '';
@@ -2042,7 +2041,7 @@ class DisplayFormResults extends DisplayForm{
 		?>
 		<div class='form table-wrapper'>
 			<div class='form table-head'>
-				<h2 class="table_title"><?php echo esc_html($this->formSettings['formname']); ?></h2><br>
+				<h2 class="table_title"><?php echo esc_html($this->formData->form_name); ?></h2><br>
 				<?php
 					echo $buttons;
 				?>
@@ -2142,7 +2141,7 @@ class DisplayFormResults extends DisplayForm{
 				
 				//add a Actions heading if needed
 				$actions = [];
-				foreach($this->formSettings['actions'] as $action){
+				foreach($this->formData->actions as $action){
 					$actions[]	= $action;
 				}
 				$actions = apply_filters('sim_form_actions', $actions);

@@ -245,11 +245,7 @@ class SaveFormSettings extends SimForms{
 		}
 
 		if(empty($settings)){
-			if(!empty($this->formData->settings)){
-				$settings	= $this->formData->settings;
-			}else{
-				return new \WP_Error('Error', 'Please supply the form settings');
-			}
+			return new \WP_Error('Error', 'Please supply the form settings');
 		}
 
 		$wpdb->update($this->tableName,
