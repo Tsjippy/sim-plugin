@@ -4,6 +4,7 @@
 
 ### Added
 - formbuilder symbols
+- bookings export
 
 ### Changed
 - export urlss to excel
