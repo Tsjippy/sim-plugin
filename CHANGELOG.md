@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.43.0] - 2024-04-10
+
+
+### Added
 - formbuilder symbols
 - bookings export
 
@@ -12,8 +23,6 @@
 
 ### Fixed
 - issue when multiple forms have the same name
-
-### Updated
 
 ## [2.42.8] - 2024-04-08
 
