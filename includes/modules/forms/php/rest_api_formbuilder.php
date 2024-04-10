@@ -215,9 +215,6 @@ add_action( 'rest_api_init', function () {
 					'validate_callback' => function($formId){
 						return is_numeric($formId);
 					}
-				),
-				'settings'		=> array(
-					'required'	=> true
 				)
 			)
 		)
@@ -589,9 +586,11 @@ function saveElementConditions(){
 function saveFormSettings(){
 	$formBuilder			= new SaveFormSettings();
 	
-	$formSettings 			= $_POST['settings'];
+	$formSettings 			= $_POST;
+	unset($formSettings['_wpnonce']);
+	unset($formSettings['formid']);
 
-	$formBuilder->formName	= $formSettings['formname'];
+	$formBuilder->formName	= $formSettings['form_name'];
 	
 	//remove double slashes
 	$formSettings['upload_path']	= str_replace('\\\\', '\\', $formSettings['upload_path']);

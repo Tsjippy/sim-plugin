@@ -171,14 +171,11 @@ add_filter('sim_module_data', function($dataHtml, $moduleSlug){
 		$html	.= "</thead>";
 		$html	.= "<tbody>";
 			foreach($simForms->forms as $form){
-				$settings	= maybe_unserialize($form->settings);
 				$formName	= $form->name;
 				$formUrl	= '';
 
-				if(is_array($settings)){
-					$formName	= $settings['formname'];
-					$formUrl	= $settings['formurl'];
-				}
+				$formName	= $form->form_name;
+				$formUrl	= $form->form_url;
 
 				$formName	= str_replace('_', ' ', ucfirst($formName));
 

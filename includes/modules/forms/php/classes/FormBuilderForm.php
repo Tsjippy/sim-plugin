@@ -363,10 +363,7 @@ class FormBuilderForm extends SimForms{
 	public function formSettingsForm(){
 
 		global $wp_roles;
-		
-		$settings = $this->formData->settings;
 
-		global $wpdb;
 		//Get all available roles
 		$userRoles = $wp_roles->role_names;
 		
@@ -381,41 +378,41 @@ class FormBuilderForm extends SimForms{
 					
 					<label class="block">
 						<h4>Submit button text</h4>
-						<input type='text' class='formbuilder formfieldsetting' name='settings[buttontext]' value="<?php echo $settings['buttontext']?>">
+						<input type='text' class='formbuilder formfieldsetting' name='button_text' value="<?php echo $this->formData->button_text?>">
 					</label>
 					
 					<label class="block">
 						<h4>Succes message</h4>
-						<input type='text' class='formbuilder formfieldsetting' name='settings[succesmessage]' value="<?php echo $settings['succesmessage']?>">
+						<input type='text' class='formbuilder formfieldsetting' name='succes_message' value="<?php echo $this->formData->succes_message?>">
 					</label>
 
 					<label class="block">
 						<h4>Include submission ID in message</h4>
 						<label>
-							<input type='radio' class='formbuilder formfieldsetting' name='settings[includeid]' value="yes" <?php if(!isset($settings['includeid']) || $settings['includeid'] == 'yes'){echo 'checked';}?>>
+							<input type='radio' class='formbuilder formfieldsetting' name='include_id' value="yes" <?php if(!isset($this->formData->include_id) || $this->formData->includeid){echo 'checked';}?>>
 							Yes
 						</label>
 						<label>
-							<input type='radio' class='formbuilder formfieldsetting' name='settings[includeid]' value="no" <?php if(isset($settings['includeid']) && $settings['includeid'] == 'no'){echo 'checked';}?>>
+							<input type='radio' class='formbuilder formfieldsetting' name='include_id' value="no" <?php if(isset($this->formData->include_id) && !$this->formData->includeid){echo 'checked';}?>>
 							No
 						</label>
 					</label>
 					
 					<label class="block">
 						<h4>Form name</h4>
-						<input type='text' class='formbuilder formfieldsetting' name='settings[formname]' value="<?php echo $settings['formname']?>">
+						<input type='text' class='formbuilder formfieldsetting' name='form_name' value="<?php echo $this->formData->form_name?>">
 					</label>
 					<br>
 					
 					<label class='block'>
 						<?php
-						if(!empty($settings['save_in_meta'])){
+						if($this->formData->save_in_meta){
 							$checked = 'checked';
 						}else{
 							$checked = '';
 						}
 						?>
-						<input type='checkbox' class='formbuilder formfieldsetting' name='settings[save_in_meta]' value='save_in_meta' <?php echo $checked;?>>
+						<input type='checkbox' class='formbuilder formfieldsetting' name='save_in_meta' value='save_in_meta' <?php echo $checked;?>>
 						Save submissions in usermeta table
 					</label>
 					<br>
@@ -423,14 +420,14 @@ class FormBuilderForm extends SimForms{
 					<label class="block">
 						<h4>Form url</h4>
 						<?php
-						if(!empty($settings['formurl'])){
-							$url	= $settings['formurl'];
+						if(!empty($this->formData->form_url)){
+							$url	= $this->formData->form_url;
 						}else{
-							$url	= str_replace(['?formbuilder=yes', '&formbuilder=yes'], '', SIM\currentUrl());
+							$url	= str_replace(['?formbuilder=yes', '&formbuilder=yes'], '', SIM\currentUrl(true));
 						}
 
 						?>
-						<input type='url' class='formbuilder formfieldsetting' name='settings[formurl]' value="<?php echo $url?>">
+						<input type='url' class='formbuilder formfieldsetting' name='form_url' value="<?php echo $url?>">
 					</label>
 					<br>
 					
@@ -447,19 +444,19 @@ class FormBuilderForm extends SimForms{
 					<label class='block <?php if($hideUploadEl){echo 'hidden';}?>'>
 						<h4>Save form uploads in this subfolder of the uploads folder:<br>
 						If you leave it empty the default form_uploads will be used</h4>
-						<input type='text' class='formbuilder formfieldsetting' name='settings[upload_path]' value='<?php echo $settings['upload_path'];?>'>
+						<input type='text' class='formbuilder formfieldsetting' name='upload_path' value='<?php echo $this->formData->upload_path;?>'>
 					</label>
 					<br>
 					
 					<label>
 						<?php
-						if(!empty($settings['formreset'])){
+						if($this->formData->form_reset){
 							$checked = 'checked';
 						}else{
 							$checked = '';
 						}
 						?>
-						<input type='checkbox' class='formbuilder formfieldsetting' name='settings[formreset]' value='formreset' <?php echo $checked;?>>
+						<input type='checkbox' class='formbuilder formfieldsetting' name='form_reset' value='form_reset' <?php echo $checked;?>>
 						Reset form after succesfull submission
 					</label>
 					<br>
@@ -468,14 +465,14 @@ class FormBuilderForm extends SimForms{
 					<?php
 					$actions = ['archive','delete'];
 					foreach($actions as $action){
-						if(!empty($settings['actions'][$action])){
+						if(!empty($this->formData->actions[$action])){
 							$checked = 'checked';
 						}else{
 							$checked = '';
 						}
 						?>
 						<label class='option-label'>
-							<input type='checkbox' class='formbuilder formfieldsetting' name='settings[actions][<?php echo $action;?>]' value='<?php echo $action;?>' <?php echo $checked;?>>
+							<input type='checkbox' class='formbuilder formfieldsetting' name='actions[<?php echo $action;?>]' value='<?php echo $action;?>' <?php echo $checked;?>>
 							<?php echo ucfirst($action);?>
 						</label><br>
 						<?php
@@ -487,7 +484,7 @@ class FormBuilderForm extends SimForms{
 							<h4>Auto archive results</h4>
 							<br>
 							<?php
-							if($settings['autoarchive'] == 'true'){
+							if($this->formData->autoarchive){
 								$checked1	= 'checked';
 								$checked2	= '';
 							}else{
@@ -496,61 +493,61 @@ class FormBuilderForm extends SimForms{
 							}
 							?>
 							<label>
-								<input type="radio" name="settings[autoarchive]" value="true" <?php echo $checked1;?>>
+								<input type="radio" name="autoarchive" value="true" <?php echo $checked1;?>>
 								Yes
 							</label>
 							<label>
-								<input type="radio" name="settings[autoarchive]" value="false" <?php echo $checked2;?>>
+								<input type="radio" name="autoarchive" value="false" <?php echo $checked2;?>>
 								No
 							</label>
 						</label>
 						<br>
 						<div class='autoarchivelogic <?php if(empty($checked1)){echo 'hidden';}?>' style="display: flex;width: 100%;">
 							Auto archive a (sub) entry when field
-							<select name="settings[autoarchivefield]" style="margin-right:10px;">
-							<?php
-							if($settings['autoarchivefield'] == ''){
-								?><option value='' selected>---</option><?php
-							}else{
-								?><option value=''>---</option><?php
-							}
-							
-							$processed = [];
-							foreach($this->formElements as $key=>$element){
-								if(in_array($element->type, $this->nonInputs)){
-									continue;
+							<select name="autoarchive_el" style="margin-right:10px;">
+								<?php
+								if(empty($this->formData->autoarchive_el)){
+									?><option value='' selected>---</option><?php
+								}else{
+									?><option value=''>---</option><?php
 								}
 								
-								$pattern			= "/\[[0-9]+\]\[([^\]]+)\]/i";
-								
-								$name = $element->name;
-								if(preg_match($pattern, $element->name,$matches)){
-									//We found a keyword, check if we already got the same one
-									if(!in_array($matches[1],$processed)){
-										//Add to the processed array
-										$processed[]	= $matches[1];
-										
-										//replace the name
-										$name		= $matches[1];
-									}else{
-										//do not show this element
+								$processed = [];
+								foreach($this->formElements as $key=>$element){
+									if(in_array($element->type, $this->nonInputs)){
 										continue;
 									}
+									
+									$pattern			= "/\[[0-9]+\]\[([^\]]+)\]/i";
+									
+									$name = $element->name;
+									if(preg_match($pattern, $element->name,$matches)){
+										//We found a keyword, check if we already got the same one
+										if(!in_array($matches[1],$processed)){
+											//Add to the processed array
+											$processed[]	= $matches[1];
+											
+											//replace the name
+											$name		= $matches[1];
+										}else{
+											//do not show this element
+											continue;
+										}
+									}
+									
+									//Check which option is the selected one
+									if(!empty($this->formData->autoarchive_el) && $this->formData->autoarchive_el == $element->id){
+										$selected = 'selected="selected"';
+									}else{
+										$selected = '';
+									}
+									echo "<option value='{$element->id}' $selected>$name</option>";
 								}
 								
-								//Check which option is the selected one
-								if(!empty($settings['autoarchivefield']) && $settings['autoarchivefield'] == $element->id){
-									$selected = 'selected="selected"';
-								}else{
-									$selected = '';
-								}
-								echo "<option value='{$element->id}' $selected>$name</option>";
-							}
-							
-							?>
+								?>
 							</select>
 							<label style="margin:0 10px;">equals</label>
-							<input type='text' name="settings[autoarchivevalue]" value="<?php echo $settings['autoarchivevalue'];?>">
+							<input type='text' name="autoarchive_value" value="<?php echo $this->formData->autoarchive_value;?>">
 							<div class="infobox" name="info" style="min-width: fit-content;">
 								<div style="float:right">
 									<p class="info_icon">
@@ -592,13 +589,13 @@ class FormBuilderForm extends SimForms{
 									$name	= ucfirst(strtolower(str_replace('_', ' ', $element)));
 									
 									//Check which option is the selected one
-									if(is_array($settings['split']) && in_array($id, $settings['split'])){
+									if(is_array($this->formData->split) && in_array($id, $this->formData->split)){
 										$checked = 'checked';
 									}else{
 										$checked = '';
 									}
 									echo "<label>";
-										echo "<input type='checkbox' name='settings[split][]' value='$id' $checked>   ";
+										echo "<input type='checkbox' name='split[]' value='$id' $checked>   ";
 										echo $name;
 									echo "</label><br>";
 								}
@@ -609,13 +606,13 @@ class FormBuilderForm extends SimForms{
 							<div class="role_info">
 								<?php
 								foreach($userRoles as $key=>$roleName){
-									if(!empty($settings['full_right_roles'][$key])){
+									if(!empty($this->formData->full_right_roles[$key])){
 										$checked = 'checked';
 									}else{
 										$checked = '';
 									}
 									echo "<label class='option-label'>";
-										echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[full_right_roles][$key]' value='$roleName' $checked>";
+										echo "<input type='checkbox' class='formbuilder formfieldsetting' name='full_right_roles[$key]' value='$roleName' $checked>";
 										echo $roleName;
 									echo"</label><br>";
 								}
@@ -623,17 +620,17 @@ class FormBuilderForm extends SimForms{
 							</div>
 							<br>
 							
-							<div class='submit_others_form_wrapper<?php if(empty($settings['save_in_meta'])){echo 'hidden';}?>'>
+							<div class='submit_others_form_wrapper<?php if(empty($save_in_meta)){echo 'hidden';}?>'>
 								<h4>Select who can submit this form on behalf of someone else</h4>
 								<?php
 								foreach($userRoles as $key=>$roleName){
-									if(!empty($settings['submit_others_form'][$key])){
+									if(!empty($this->formData->submit_others_form[$key])){
 										$checked = 'checked';
 									}else{
 										$checked = '';
 									}
 									echo "<label class='option-label'>";
-										echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[submit_others_form][$key]' value='$roleName' $checked>";
+										echo "<input type='checkbox' class='formbuilder formfieldsetting' name='submit_others_form[$key]' value='$roleName' $checked>";
 										echo $roleName;
 									echo"</label><br>";
 								}
@@ -675,7 +672,7 @@ class FormBuilderForm extends SimForms{
 					</label>
 					<span class='placeholders' title="Click to copy">%id%</span>
 					<?php
-					if(!empty($this->formData->settings['split'])){
+					if(!empty($this->formData->split)){
 						?>
 						<span class='placeholders' title="Click to copy">%subid%</span>
 						<?php
@@ -1261,7 +1258,7 @@ class FormBuilderForm extends SimForms{
 				
 				<?php
 				$meta	= false;
-				if(!empty($this->formData->settings['save_in_meta'])){
+				if(!empty($this->formData->save_in_meta)){
 					$meta	= true;
 				}
 
@@ -1788,33 +1785,24 @@ class FormBuilderForm extends SimForms{
 		$result				= $wpdb->get_results($query)[0];
 
 		// Fix the settings
-		$settings						= $this->formData->settings;
-		SIM\cleanUpNestedArray($settings, true);
+		$result->form_url		= "%FORMURL%";
 
-		if(is_array($settings)){
-			if(!empty($settings['formurl'])){
-				$newSettings				= maybe_unserialize($result->settings);
-				$newSettings['formurl']		= "%FORMURL%";
-				$result->settings			= maybe_serialize($newSettings);
-			}
-
-			$settings						= $result->settings;
-		}else{
-			$settings	= '';
+		$result->emails	= maybe_unserialize($result->emails);
+		if(!empty($result->emails)){
+			array_walk_recursive($result->emails, [$this, "replaceLineEnds"]);
 		}
+		$result->emails	= maybe_serialize($result->emails);
 
-		$emails	= maybe_unserialize($result->emails);
-		if(!empty($emails)){
-			array_walk_recursive($emails, [$this, "replaceLineEnds"]);
-		}
-		$emails	= maybe_serialize($emails);
+		unset($result->id);
 		
-		$keys	= '(`'.implode('`, `', array_keys((array) $this->formElements[0])).'`)';
+		$formKeys	= '(`'.implode('`, `', array_keys((array) $result)).'`)';
+		$formValues	= "('".implode("', '", array_values((array) $result))."')";
 
-		$content	= "INSERT INTO `$tableName` (`name`, `version`, `settings`, `emails`) VALUES ('$name',{$this->formData->version},'$settings','$emails')\n";
+		$content	= "INSERT INTO `$tableName` $formKeys VALUES $formValues\n";
 
+		$elementKeys	= '(`'.implode('`, `', array_keys((array) $this->formElements[0])).'`)';
 		foreach($this->formElements as $element){
-			$query	= "INSERT INTO `$elTableName` $keys VALUES (";
+			$query	= "INSERT INTO `$elTableName` $elementKeys VALUES (";
 			
 			$lastKey	= array_key_last((array) $element);
 			foreach($element as $name=>$property){
@@ -1894,13 +1882,13 @@ class FormBuilderForm extends SimForms{
 		// Load the new form
 		$this->getForm($formId);
 
-		if(!empty($this->formData->settings['autoarchivefield'])){
-			$this->formData->settings['autoarchivefield']	= $elementIdMapping[$this->formData->settings['autoarchivefield']];
+		if(!empty($this->formData->autoarchive_el)){
+			$this->formData->autoarchive_el	= $elementIdMapping[$this->formData->autoarchive_el];
 
 			$wpdb->update(
 				$this->tableName,
 				array(
-					'settings' 	=> maybe_serialize($this->formData->settings)
+					'autoarchive_el' 	=> $this->formData->autoarchive_el
 				),
 				array(
 					'id'		=> $this->formData->id,
@@ -1977,11 +1965,9 @@ class FormBuilderForm extends SimForms{
 		$url	= get_permalink(wp_insert_post( $post, true, false));
 
 		// Update the form url
-		$this->formData->settings['formurl']	= $url;
-
 		$wpdb->update($this->tableName,
 			array(
-				'settings' 	=> maybe_serialize($this->formData->settings)
+				'form_url' 	=> $this->formData->form_url
 			),
 			array(
 				'id'		=> $this->formData->id,

@@ -320,7 +320,7 @@ class SubmitForm extends SimForms{
 			$fileName	= "{$inputName}_$fileName";
 			
 			//also add submission id if not saving to meta
-			if(empty($this->formData->settings['save_in_meta'])){
+			if(empty($this->formData->save_in_meta)){
 				$fileName	= $this->submission->formresults['id']."_$fileName";
 			}
 			
@@ -401,8 +401,8 @@ class SubmitForm extends SimForms{
 		$this->submission->formresults['formurl']			= $_POST['formurl'];
 
 		// remove empty splitted entries
-		if(isset($this->formData->settings['split'])){
-			foreach($this->formData->settings['split'] as $id){
+		if(isset($this->formData->split)){
+			foreach($this->formData->split as $id){
 				$name	= $this->getElementById($id, 'name');
 				// Check if we are dealing with an split element with form name[X]name
 				preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $name, $matches);
@@ -438,13 +438,13 @@ class SubmitForm extends SimForms{
 			return $this->submission->formresults;
 		}
 
-		$message = $this->formData->settings['succesmessage'];
+		$message = $this->formData->succes_message;
 		if(empty($message)){
 			$message = 'succes';
 		}
 		
 		//save to submission table
-		if(empty($this->formData->settings['save_in_meta'])){
+		if(empty($this->formData->save_in_meta)){
 			$this->submission->formresults['submissiontime']	= $this->submission->timecreated;
 			$this->submission->formresults['edittime']			= $this->submission->timelastedited;
 			
@@ -478,7 +478,7 @@ class SubmitForm extends SimForms{
 				
 			if($wpdb->last_error !== ''){
 				$message	=  new \WP_Error('error', $wpdb->last_error);
-			}elseif(empty($this->formData->settings['includeid']) || $this->formData->settings['includeid'] == 'yes'){
+			}elseif(empty($this->formData->include_id) || $this->formData->include_id == 'yes'){
 				$message	.= "\nYour id is {$this->submission->formresults['id']}";
 			}
 		//save to user meta

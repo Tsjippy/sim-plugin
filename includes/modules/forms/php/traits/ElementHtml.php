@@ -58,7 +58,7 @@ trait ElementHtml{
 		$elementName	= explode('[', trim($element->name, '[]'));
 		
 		//retrieve meta values if needed
-		if(!empty($this->formData->settings['save_in_meta'])){
+		if(!empty($this->formData->save_in_meta)){
 			//only load usermeta once
 			if(!is_array($this->usermeta)){
 				//usermeta comes as arrays, only keep the first
@@ -235,7 +235,7 @@ trait ElementHtml{
 			$prevLabel	= '';
 		}
 
-		if(empty($this->formData->settings['save_in_meta']) && !empty($values['defaults'])){
+		if(empty($this->formData->save_in_meta) && !empty($values['defaults'])){
 			$values		= array_values((array)$values['defaults']);
 		}elseif(!empty($values['metavalue'])){
 			$values		= array_values((array)$values['metavalue']);
@@ -389,14 +389,14 @@ trait ElementHtml{
 			}
 			// Form setting
 			if(empty($targetDir)){
-				$targetDir = $this->formData->settings['upload_path'];
+				$targetDir = $this->formData->upload_path;
 			}
 			// Default setting
 			if(empty($targetDir)){
-				$targetDir = 'form_uploads/'.$this->formData->settings['formname'];
+				$targetDir = 'form_uploads/'.$this->formData->form_name;
 			}
 
-			if(empty($this->formData->settings['save_in_meta'])){
+			if(empty($this->formData->save_in_meta)){
 				$library	= false;
 				$metakey	= '';
 				$userId		= '';
@@ -517,7 +517,7 @@ trait ElementHtml{
 				$val	= $value;
 				if(empty($value)){
 					//this is an input and there is a value for it
-					if(!empty($values['defaults']) && (empty($this->formData->settings['save_in_meta']) || empty($values['metavalue']))){
+					if(!empty($values['defaults']) && (empty($this->formData->save_in_meta) || empty($values['metavalue']))){
 						$val		= array_values((array)$values['defaults'])[0];
 					}elseif(!empty($values['metavalue'])){
 						$val		= array_values((array)$values['metavalue'])[0];

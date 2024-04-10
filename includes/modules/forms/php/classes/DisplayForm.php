@@ -99,7 +99,7 @@ class DisplayForm extends SubmitForm{
 		}
 
 		// Get the values we need
-		if(empty($this->formData->settings['save_in_meta'])){
+		if(empty($this->formData->save_in_meta)){
 			if(!empty($values['defaults'])){
 				$values		= array_values((array)$values['defaults']);
 			}
@@ -386,18 +386,18 @@ class DisplayForm extends SubmitForm{
 			wp_enqueue_script( "dynamic_{$this->formName}forms", SIM\pathToUrl($jsPath), array('sim_forms_script'), $this->formData->version, true);
 		}
 
-		$formName	= $this->formData->settings['formname'];
+		$formName	= $this->formData->form_name;
 
 		$buttonText	= 'Submit the form';
-		if(!empty($this->formData->settings['buttontext'])){
-			$buttonText	= $this->formData->settings['buttontext'];
+		if(!empty($this->formData->button_text)){
+			$buttonText	= $this->formData->button_text;
 		}
 
 		$dataset	= "data-formid='{$this->formData->id}'";
-		if(!empty($this->formData->settings['formreset'])){
+		if(!empty($this->formData->form_reset)){
 			$dataset .= " data-reset='true'";
 		}
-		if(!empty($this->formData->settings['save_in_meta'])){
+		if(!empty($this->formData->save_in_meta)){
 			$dataset .= " data-addempty='true'";
 		}
 
@@ -409,7 +409,7 @@ class DisplayForm extends SubmitForm{
 		
 			$html	.= "<h3>$formName</h3>";
 
-			if(array_intersect($this->userRoles, $this->submitRoles) && !empty($this->formData->settings['save_in_meta'])){
+			if(array_intersect($this->userRoles, $this->submitRoles) && !empty($this->formData->save_in_meta)){
 				$html	.= SIM\userSelect("Select an user to show the data of:");
 			}
 			$html	.=  apply_filters('sim_before_form', '', $this->formName);

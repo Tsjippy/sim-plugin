@@ -233,7 +233,7 @@ class SaveFormSettings extends SimForms{
 	/**
 	 * Update form settings
 	 */
-	public function updateFormSettings($formId='', $formSettings=''){
+	public function updateFormSettings($formId='', $settings=''){
 		global $wpdb;
 
 		if(empty($formId)){
@@ -244,17 +244,31 @@ class SaveFormSettings extends SimForms{
 			}
 		}
 
-		if(empty($formSettings)){
+		if(empty($settings)){
 			if(!empty($this->formData->settings)){
-				$formSettings	= $this->formData->settings;
+				$settings	= $this->formData->settings;
 			}else{
-				return new \WP_Error('Error', 'Please supply a the form settings');
+				return new \WP_Error('Error', 'Please supply the form settings');
 			}
 		}
 
 		$wpdb->update($this->tableName,
 			array(
-				'settings' 	=> maybe_serialize($formSettings)
+				'button_text'		=> isset($settings['button_text']) 			? $settings['button_text'] 							: null,
+				'succes_message'	=> isset($settings['succes_message']) 		? $settings['succes_message'] 						: null,
+				'include_id'		=> isset($settings['include_id']) 			? $settings['include_id'] 							: false,
+				'form_name'			=> isset($settings['form_name']) 			? $settings['form_name'] 							: null,
+				'save_in_meta'		=> isset($settings['save_in_meta']) 		? $settings['save_in_meta'] 						: false,
+				'form_url'			=> isset($settings['form_url']) 			? $settings['form_url'] 							: null,
+				'form_reset'		=> isset($settings['form_reset']) 			? $settings['form_reset'] 							: false,
+				'actions'			=> isset($settings['actions']) 				? maybe_serialize($settings['actions']) 			: null,
+				'autoarchive'		=> isset($settings['autoarchive']) 			? $settings['autoarchive'] 							: false,
+				'autoarchive_el'	=> isset($settings['autoarchive_el']) 		? $settings['autoarchive_el'] 						: null,
+				'autoarchive_value'	=> isset($settings['autoarchive_value']) 	? $settings['autoarchive_value'] 					: null,
+				'split'				=> isset($settings['split']) 				? maybe_serialize($settings['split'])				: null,
+				'full_right_roles'	=> isset($settings['full_right_roles']) 	? maybe_serialize($settings['full_right_roles'])	: null,
+				'submit_others_form'=> isset($settings['submit_others_form']) 	? maybe_serialize($settings['submit_others_form'])	: null,
+				'upload_path'		=> isset($settings['upload_path']) 			? $settings['upload_path'] 							: null
 			),
 			array(
 				'id'		=> $formId,

@@ -356,7 +356,7 @@ function saveTableSettings(){
 		
 		//update existing
 		foreach($formSettings as $key=>$setting){
-			$formTable->formData->settings[$key] = $setting;
+			$formTable->formData->$key = $setting;
 		}
 		
 		//save in db
@@ -458,7 +458,7 @@ function getInputHtml(){
 	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
 		$subId			= $_POST['subid'];
 
-		$splitElements	= $formTable->formData->settings['split'];
+		$splitElements	= $formTable->formData->split;
 
 		foreach($splitElements as $id){
 			$element	= $formTable->getElementById($id);
@@ -530,7 +530,7 @@ function editValue(){
 
 	// If there is a sub id set and this field is not a main field
 	if(!empty($subId) && is_numeric($subId)){
-		$splitElements				= $formTable->formData->settings['split'];
+		$splitElements				= $formTable->formData->split;
 
 		foreach($splitElements as $index){
 			$elementName			= $formTable->getElementById($index, 'name');

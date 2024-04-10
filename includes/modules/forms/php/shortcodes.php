@@ -32,7 +32,7 @@ function showFormSelector($atts=[]){
             }
 
             // Remove any form that saves its data in the usermeta
-            if($a['no_meta'] && unserialize($form->settings)['save_in_meta']){
+            if($a['no_meta'] && $form->save_in_meta){
                 unset($forms[$key]);
             }
         }

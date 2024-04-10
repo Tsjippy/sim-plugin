@@ -90,19 +90,15 @@ class EditFormResults extends DisplayFormResults{
 			$this->formId	= $form->id;
 			$this->formName	= $form->name;
 			$this->getForm($form->id);
-
-			$settings = (array)maybe_unserialize($form->settings);
 			
 			//check if auto archive is turned on for this form
-			if(!isset($settings['autoarchive']) || $settings['autoarchive'] != 'true'){
+			if(!isset($form->autoarchive) || !$form->autoarchive){
 				continue;
 			}
 
-			$this->formData->settings 	= $settings;
-
 			$splitElementName	= '';
-			if(isset($settings['split'])){
-				$splitElementName			= $this->getElementById($settings['split'][0], 'name');
+			if(isset($form->split)){
+				$splitElementName			= $this->getElementById($form->split[0], 'name');
 				$result						= preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $splitElementName, $matches);
 				if($result){
 					$splitElementName		= $matches[1];
@@ -112,8 +108,8 @@ class EditFormResults extends DisplayFormResults{
 			//Get all submissions of this form
 			$this->parseSubmissions(null, null, true, true);
 			
-			$triggerName	= $this->getElementById($settings['autoarchivefield'], 'name');
-			$triggerValue	= $settings['autoarchivevalue'];
+			$triggerName	= $this->getElementById($form->autoarchive_el, 'name');
+			$triggerValue	= $form->autoarchive_value;
 
 			if(!$triggerName || empty($triggerValue)){
 				continue;
@@ -222,7 +218,7 @@ class EditFormResults extends DisplayFormResults{
 		//check if all subfields are archived or empty
 		$allArchived = true;
 
-		$splitIds	= $this->formData->settings['split'];
+		$splitIds	= $this->formData->split;
 
 		if(!is_array($this->submission->archivedsubs)){
 			$this->submission->archivedsubs	= [];

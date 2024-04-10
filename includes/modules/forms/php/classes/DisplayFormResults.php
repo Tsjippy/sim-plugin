@@ -136,7 +136,8 @@ class DisplayFormResults extends DisplayForm{
 		// Get the total
 		$this->total			= $wpdb->get_var(str_replace('*', 'count(*) as total', $query));
 
-		if(!$all && $start < $this->total){
+		// add the limit only if we are not querying everything, or for a specific user or start is larger than the total
+		if(!$all && empty($userId) && $start < $this->total){
 			$this->spliced	= true;
 			$query	.= " LIMIT $start, $this->pageSize";
 		}
@@ -147,6 +148,7 @@ class DisplayFormResults extends DisplayForm{
 		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
 
 		// unserialize
+		$keptCount		= 0;
 		foreach($result as $index=>&$submission){
 			$submission->formresults	= unserialize($submission->formresults);
 
@@ -183,6 +185,16 @@ class DisplayFormResults extends DisplayForm{
 					$shouldRemove	= apply_filters('sim_remove_formdata', true, $userId, $submission);
 					if($shouldRemove){
 						unset($result[$index]);
+
+						$this->total--;
+					}else{
+						$keptCount++;
+
+						// check if we have enough results left
+						if($keptCount == $start + $this->pageSize){
+							$result	= array_splice($result, $keptCount);
+							break;
+						}
 					}
 				}
 			}
@@ -245,7 +257,7 @@ class DisplayFormResults extends DisplayForm{
 			return;
 		}
 
-		if(empty($this->formData->settings['split'])){
+		if(empty($this->formData->split)){
 			$this->submissions		= $this->getSubmissions($userId, $submissionId, $all);
 
 			$this->sortSubmissions($this->submissions);
@@ -343,7 +355,7 @@ class DisplayFormResults extends DisplayForm{
 
 	public function splitSubmission($splitElementName){
 		$splitNames	= [];
-		foreach($this->formData->settings['split'] as $id){
+		foreach($this->formData->split as $id){
 			$splitNames[] = str_replace('[]', '', $this->getElementById($id, 'name'));
 		}
 
@@ -380,12 +392,12 @@ class DisplayFormResults extends DisplayForm{
 	 * This function creates seperated entries from entries with an splitted value
 	 */
 	protected function processSplittedData(){
-		if(empty($this->formData->settings['split'])){
+		if(empty($this->formData->split)){
 			return;
 		}
 
 		// Get all the elements we should split the rows for
-		$splitElements				= $this->formData->settings['split'];
+		$splitElements				= $this->formData->split;
 
 		// Get the name of the first element
 		$splitElementName			= $this->getElementById($splitElements[0], 'name');
@@ -683,7 +695,7 @@ class DisplayFormResults extends DisplayForm{
 		}
 
 		//also add the subid
-		if(!empty($this->formData->settings['split']) && empty($this->columnSettings[-5])){
+		if(!empty($this->formData->split) && empty($this->columnSettings[-5])){
 			$this->columnSettings[-5] = [
 				'name'				=> 'subid',
 				'nice_name'			=> 'Sub-Id',
@@ -1528,7 +1540,6 @@ class DisplayFormResults extends DisplayForm{
 		//load form settings
 		$this->getForm();
 		
-		$this->formSettings		= $this->formData->settings;
 		
 		if((isset($this->tableSettings['archived']) && $this->tableSettings['archived'] == 'true') || $this->showArchived){
 			$this->showArchived = true;
@@ -1539,7 +1550,7 @@ class DisplayFormResults extends DisplayForm{
 		//check if we have rights on this form
 		if(!isset($this->formEditPermissions) || !$this->formEditPermissions){
 			if(
-				array_intersect((array)$this->userRoles, array_keys((array)$this->formSettings['full_right_roles']))	||
+				array_intersect((array)$this->userRoles, array_keys((array)$this->formData->full_right_roles))	||
 				(
 					isset($this->tableSettings['full_right_roles']) &&
 					array_intersect((array)$this->userRoles, array_keys((array)$this->tableSettings['full_right_roles']))
@@ -1926,6 +1937,25 @@ class DisplayFormResults extends DisplayForm{
 						$class = '';
 					}
 					$html	.= "<button class='button small next $class' name='next' value='next'>Next →</button>";
+
+					// Adjust page size
+					$get	= $_REQUEST;
+					unset($get['_wpnonce']);
+					unset($get['formid']);
+					unset($get['shortcodeid']);
+
+					$get['pagesize']	= '';
+					$get	= '?'.http_build_query($get);
+
+					$html	.= "<select onchange=location.href='{$get}'+this.value>";
+						foreach([1000, 500, 200, 100, 50, 40, 20, 10] as $size){
+							$selected	= '';
+							if(isset($_GET['pagesize']) && $_GET['pagesize'] == $size){
+								$selected	= 'selected';
+							}
+							$html	.= "<option $selected>$size</option>";
+						}
+					$html	.= "</select>";
 				$html	.= "</div>";
 
 				echo $html;

@@ -20,17 +20,17 @@ function getAllEmptyRequiredElements($userId, $type){
 
 	$simForms			= new SimForms();
 
-	$query				= "SELECT * FROM {$simForms->elTableName} WHERE ";
+	$query				= "SELECT * FROM {$simForms->elTableName} WHERE form_id IN(SELECT id FROM {$simForms->tableName} WHERE save_in_meta=1) AND ";
 	if($type == 'all'){
-		$query			.= "`recommended`=1 OR `mandatory`=1";
+		$query			.= "(`recommended`=1 OR `mandatory`=1)";
 	}else{
 		$query			.= "`$type`=1";
 	}
 
 	$elements				= $wpdb->get_results($query);
 
-	// Filters the list of fields
-	$elements				= apply_filters("sim_{$type}_fields_filter", $elements, $userId);
+	// Filters the list of elements
+	$elements				= apply_filters("sim_{$type}_elements_filter", $elements, $userId);
 
 	$html				= '';
 	if(!empty($elements)){
@@ -38,7 +38,7 @@ function getAllEmptyRequiredElements($userId, $type){
 		$formUrls			= [];
 
 		//check which of the fields are not yet filled in
-		foreach($elements as $element){
+		foreach($elements as $index=>$element){
 			//check if this element applies to this user
 			$warningCondition	= maybe_unserialize($element->warning_conditions);
 			if(is_array($warningCondition)){
@@ -119,7 +119,7 @@ function getAllEmptyRequiredElements($userId, $type){
 				}else{
 					$query				= "SELECT * FROM {$simForms->tableName} WHERE `id`={$element->form_id}";
 					$form				= $wpdb->get_results($query)[0];
-					$formUrl			= maybe_unserialize($form->settings)['formurl'];
+					$formUrl			= $form->form_url;
 
 					//save in cache
 					$formUrls[$element->form_id]	= $formUrl;

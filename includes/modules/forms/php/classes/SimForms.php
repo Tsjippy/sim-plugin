@@ -47,10 +47,13 @@ class SimForms{
 		$this->userRoles				= $this->user->roles;
 		$this->userId					= $this->user->ID;
 		if(isset($_REQUEST['all'])){
-			$this->pageSize					= 99999;
+			$this->pageSize				= 99999;
+		}elseif(isset($_REQUEST['pagesize']) && is_numeric($_REQUEST['pagesize'])){
+			$this->pageSize				= $_REQUEST['pagesize'];
 		}else{
-			$this->pageSize					= 100;
+			$this->pageSize				= 100;
 		}
+
 		$this->multiwrap				= '';
 		$this->submitRoles				= [];
 		$this->showArchived				= false;
@@ -125,7 +128,7 @@ class SimForms{
 	public function getForms(){
 		global $wpdb;
 		
-		$query							= "SELECT * FROM {$this->tableName} WHERE 1";
+		$query							= "SELECT * FROM {$this->tableName}";
 		
 		$this->forms					= $wpdb->get_results($query);
 	}
@@ -173,6 +176,12 @@ class SimForms{
 				$this->formData 	=  new \stdClass();
 			}else{
 				$this->formData 	=  (object)$result[0];
+
+				$this->formData->actions			= maybe_unserialize($this->formData->actions);
+				$this->formData->split				= maybe_unserialize($this->formData->split);
+				$this->formData->full_right_roles	= maybe_unserialize($this->formData->full_right_roles);
+				$this->formData->submit_others_form	= maybe_unserialize($this->formData->submit_others_form);				
+				
 				$formId				= $this->formData->id;
 			}
 		}
@@ -188,21 +197,11 @@ class SimForms{
 			$this->formData->elementMapping['name'][$element->name][] 	= $index;
 			$this->formData->elementMapping['type'][$element->type][] 	= $index;
 		}
-		
-		if(empty($this->formData->settings)){
-			$settings['succesmessage']			= "";
-			$settings['formname']				= "";
-			$settings['roles']					= [];
-
-			$this->formData->settings = $settings;
-		}elseif(!is_array($this->formData->settings)){
-			$this->formData->settings = maybe_unserialize($this->formData->settings);
-		}
 
 		if(!$this->editRights){
 			$editRoles	= ['editor'];
-			if(!empty($this->formData->settings['full_right_roles'])){
-				foreach((array)$this->formData->settings['full_right_roles'] as $key=>$role){
+			if(!empty($this->formData->full_right_roles)){
+				foreach((array)$this->formData->full_right_roles as $key=>$role){
 					if(!empty($role)){
 						$editRoles[] = $key;
 					}
@@ -217,8 +216,8 @@ class SimForms{
 			}
 		}
 
-		if(isset($this->formData->settings['submit_others_form'])){
-			foreach((array)$this->formData->settings['submit_others_form'] as $key=>$role){
+		if(isset($this->formData->submit_others_form)){
+			foreach((array)$this->formData->submit_others_form as $key=>$role){
 				if(!empty($role)){
 					$this->submitRoles[] = $key;
 				}
@@ -289,7 +288,20 @@ class SimForms{
 		  id mediumint(9) NOT NULL AUTO_INCREMENT,
 		  name tinytext NOT NULL,
 		  version text NOT NULL,
-		  settings text,
+		  buttontext text,
+		  succesmessage text,
+		  includeid boolean,
+		  formname text,
+		  save_in_meta boolean,
+		  formurl text,
+		  formreset boolean,
+		  actions text,
+		  autoarchive boolean,
+		  autoarchivefield integer,
+		  autoarchivevalue text,
+		  split text,
+		  full_right_roles text,
+		  submit_others_form text,
 		  emails text,
 		  PRIMARY KEY  (id)
 		) $charsetCollate;";

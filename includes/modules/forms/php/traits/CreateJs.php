@@ -382,7 +382,7 @@ trait CreateJs{
                     $tabJs.= "\n\t\t\t// Display the current tab";
                     $tabJs.= "\n\t\t\tFormFunctions.showTab(currentTab, form); ";
                 }
-                if(!empty($this->formData->settings['save_in_meta'])){
+                if(!empty($this->formData->save_in_meta)){
                     $tabJs.= "\n\t\t\tform.querySelectorAll(`select, input, textarea`).forEach(";
                         $tabJs.= "\n\t\t\t\tel=>{$this->varName}.processFields(el)";
                     $tabJs.= "\n\t\t\t);";
