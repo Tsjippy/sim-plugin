@@ -10,6 +10,7 @@
 - forms table layout
 
 ### Fixed
+- issue when multiple forms have the same name
 
 ### Updated
 
