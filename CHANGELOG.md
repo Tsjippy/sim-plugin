@@ -7,9 +7,14 @@
 ### Changed
 
 ### Fixed
-- signal url
 
 ### Updated
+
+## [2.43.1] - 2024-04-15
+
+
+### Fixed
+- signal url
 
 ## [2.43.0] - 2024-04-10
 
