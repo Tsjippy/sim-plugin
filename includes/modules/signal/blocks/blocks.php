@@ -33,4 +33,11 @@ add_action( 'init', function(){
         'type' 			    => 'string',
 		'sanitize_callback' => 'sanitize_text_field'
     ) );
+
+    register_post_meta( '', 'signal_url', array(
+        'show_in_rest' 	    => true,
+        'single' 		    => true,
+        'type' 			    => 'boolean',
+		'sanitize_callback' => 'sanitize_text_field'
+    ) );
 } );

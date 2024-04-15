@@ -29,10 +29,10 @@ registerPlugin( 'signal-options', {
     
         const [ meta, setMeta ]     = useEntityProp( 'postType', postType, 'meta' );
 
-        const sendSignal			= meta[ 'send_signal' ];
-	    let signalMessageType		= meta[ 'signal_message_type' ];
-	    const signalExtraMessage	= meta[ 'signal_extra_message' ];
-        const signalUrl	            = meta[ 'signal_url' ];
+        let sendSignal			= meta[ 'send_signal' ];
+	    let signalMessageType	= meta[ 'signal_message_type' ];
+	    let signalExtraMessage	= meta[ 'signal_extra_message' ];
+        let signalUrl	        = meta[ 'signal_url' ];
 
         if(signalMessageType != 'all'){
             signalMessageType   = 'summary';
@@ -81,6 +81,12 @@ registerPlugin( 'signal-options', {
                     label={__('Include the url in the message even if the whole content is posted', 'sim')}
                     checked={signalUrl}
                     onChange={(value) => updateMetaValue(value, 'signal_url')}
+                />
+
+                <ToggleControl
+                    label={__('Send signal message on', 'sim')}
+                    checked={sendSigna}
+                    onChange={(value) => updateMetaValue(value, 'send_signal')}
                 />
             </PluginDocumentSettingPanel>
         );
