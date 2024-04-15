@@ -495,16 +495,20 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
             $html   .= $checkboxes;
             $html   .= $calendars;
         $html   .= "</div>";
-        $html   .= "<div>";
-            $html   .= "<form method='post' class='exportform' id='export_xls'>";
-                $html   .= "<button class='button button-primary' type='submit' name='export_xls'>Export data to excel</button>'";
-            $html   .= "</form>";
-            if(SIM\getModuleOption('pdf', 'enable')){
-                $html   .= "<form method='post' class='exportform' id='export_pdf'>";
-                    $html   .= "<button class=button button-primary type='submit' name='export_pdf'>Export data to pdf</button>";
+
+        // Export buttons
+        if(array_intersect($booking->forms->userRoles, array_keys($booking->forms->tableSettings['view_right_roles']))){
+            $html   .= "<div>";
+                $html   .= "<form method='post' class='exportform' id='export_xls'>";
+                    $html   .= "<button class='button button-primary' type='submit' name='export_xls'>Export data to excel</button>'";
                 $html   .= "</form>";
-            }
-        $html   .= "</div>";
+                if(SIM\getModuleOption('pdf', 'enable')){
+                    $html   .= "<form method='post' class='exportform' id='export_pdf'>";
+                        $html   .= "<button class=button button-primary type='submit' name='export_pdf'>Export data to pdf</button>";
+                    $html   .= "</form>";
+                }
+            $html   .= "</div>";
+        }
     $html   .= '</div>';
 
     return $html;

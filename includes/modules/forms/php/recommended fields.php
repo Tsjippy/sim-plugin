@@ -145,7 +145,12 @@ function getAllEmptyRequiredElements($userId, $type){
 				}
 				
 				// If the url has no hash or we are not on the same url
-				if(empty($params['main_tab']) || strpos($formUrl, $baseUrl) === false){
+				if(
+					!isset($_GET['userid']) && (
+						empty($params['main_tab']) || 
+						!str_contains($formUrl, $baseUrl)
+					)
+				){
 					$html .= "<li><a href='$formUrl#{$element->name}'>$name</a></li>";
 				//We are on the same page, just change the hash
 				}else{

@@ -68,7 +68,6 @@ export function getDataListValue(el){
 
 export function getFieldValue(orgName, form, checkDatalist=true, compareValue=null, lowercase=false){
 
-	console.log(orgName)
 	let el			= ''; 
 	let name		= '';
 	let value 		= '';

@@ -114,7 +114,7 @@ class Bookings{
                 if($isResult){
                     echo "Select the rooms you want to check<br>";
                 }else{
-                    echo "Select the room(s) you want to book:<br>";
+                    echo "First, select one or more room(s) you want to book:<br>";
                 }
                 
                 if(isset($subject['nrtype']) && $subject['nrtype'] == 'letters'){
@@ -335,7 +335,7 @@ class Bookings{
                 <div>
                     <div class="sewcpu6 dir dir-ltr" style="--spacingBottom:0;">
                         <div class="s1bh1tge dir dir-ltr">
-                            <div class="_uxnsba" data-testid="availability-calendar-date-range">Please select your arrival and departure date</div>
+                            <div class="_uxnsba" data-testid="availability-calendar-date-range">Next, select your arrival date.<br>Then click again to select your departure date.</div>
                         </div>
                     </div>
                 </div>

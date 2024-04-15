@@ -262,6 +262,8 @@ function daySelected(target){
             return;
         }
 
+        modal.querySelector('.booking-startdate').value               = target.dataset.date;
+        modal.querySelector('.booking-startdate').dataset.isodate     = target.dataset.isodate;
         target.classList.add('startdate');
         roomWrapper.querySelectorAll('.booking-date-label-wrapper.disabled').forEach(el=>el.classList.remove('disabled'));
 
