@@ -3,14 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- better login experience
-- heic to jpg module
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [2.43.2] - 2024-04-18
+
+
+### Added
+- better login experience
+- heic to jpg module
 
 ## [2.43.1] - 2024-04-15
 
