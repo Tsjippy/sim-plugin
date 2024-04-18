@@ -926,7 +926,6 @@ function userLogin(){
 
         //redirect to account page to fill in required fields
         if (!isset($_SESSION['showpage']) && !empty($fieldList) && !empty($accountPage)){
-            SIM\printArray($url);
             return $accountPage;
         }else{
             if(isset($_SESSION['showpage'])){

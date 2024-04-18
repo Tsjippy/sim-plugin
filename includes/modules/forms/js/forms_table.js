@@ -570,8 +570,6 @@ function addChangeButton(target){
 document.addEventListener("click", event=>{
 	let target = event.target;
 
-	console.log(target);
-
 	if(target.name == 'submit_column_setting'){
 		saveColumnSettings(target);
 	}else if(target.name == 'submit_table_setting'){

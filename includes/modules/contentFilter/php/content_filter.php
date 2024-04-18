@@ -26,6 +26,11 @@ add_filter( 'robots_txt', function($output, $public ){
 	return $output;
 }, 10, 2);
 
+/**
+ * Checks if current page is protected
+ *
+ * @return	boolean		false if visible, true if protected
+ */
 function isProtected(){
 	global	$post;
 	$taxonomy			= get_post_taxonomies()[0];
@@ -52,7 +57,12 @@ function isProtected(){
 	return false;
 }
 
-add_action('wp_footer', function(){
+add_filter('sim_add_login_button', function($show){
+
+	return !isProtected();
+});
+
+add_action('loop_end', function(){
 	$user				= wp_get_current_user();
 	global	$post;
 	$taxonomy			= get_post_taxonomies()[0];
@@ -77,14 +87,14 @@ add_action('wp_footer', function(){
 
 		session_write_close();
 
-		// Set message in the session to be used in the login page
+		// Set message to be used in the login page
 		$message = 'This content is restricted. <br>You will be able to see this page as soon as you login.';
 
 		//show login modal
 		if(function_exists('SIM\LOGIN\loginModal')){
 			SIM\LOGIN\loginModal($message, true);
 		}
-		return;
+		return; 
 	}
 	
 	// If not a valid e-mail then only allow the account page to reset the email

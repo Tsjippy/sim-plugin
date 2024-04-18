@@ -151,24 +151,31 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
 
     // We should add a logout menu item
     if(is_user_logged_in() && in_array($args->menu->term_id, $logoutMenus)){
-        if($args->menu->slug != 'footer' && has_action('generate_menu_bar_items' )){
-            add_action('generate_menu_bar_items', function(){
-                echo "<span class='menu-bar-item logout hidden'><a href='#logout' class='logout button'>Log out</a></li>";
-            });
-        }else{
-            $items .= "<li class='menu-item logout hidden'><a href='#logout' class='logout'>Log out</a></li>";
+        $class  = '';
+        if($args->menu->slug != 'footer'){
+            $class  = 'button';
         }
+        
+        $items .= "<li class='menu-item logout hidden'><a href='#logout' class='logout $class'>Log out</a></li>";
     }
 
     // We should add a login menu item
-    if(!is_user_logged_in() && in_array($args->menu->term_id, $loginMenus)){
-        if($args->menu->slug != 'footer' && has_action('generate_menu_bar_items' )){
-            add_action('generate_menu_bar_items', function(){
-                echo "<span class='menu-bar-item login hidden'><a href='#login' class='login button'>Log in</a></li>";
-            });
-        }else{
-            $items .= "<li class='menu-item login hidden'><a href='#login' class='login'>Log in</a></li>";
+    if(
+        !is_user_logged_in() &&                     // we are not logged in
+        in_array($args->menu->term_id, $loginMenus) // we should add it to the current menu
+    ){
+        $shouldAdd  = apply_filters('sim_add_login_button', true, $args->menu->term_id, $loginMenus);
+
+        if(!$shouldAdd){
+            return $items;
         }
+
+        $class   = '';
+        if($args->menu->slug != 'footer'){
+            $class  = 'button';
+        }
+
+        $items .= "<li class='menu-item login hidden'><a href='#login' class='login $class'>Log in</a></li>";
     }
   return $items;
 }, 10, 2);
