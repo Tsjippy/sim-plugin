@@ -82,6 +82,10 @@
     .form.table-head{
         background-color: white;
         min-height: 140px;
+
+        @media (prefers-color-scheme: dark) {
+            background-color: black;
+        }
     }
 
     th{

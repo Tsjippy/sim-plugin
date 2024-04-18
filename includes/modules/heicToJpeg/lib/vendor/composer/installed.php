@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => '__root__',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'd7a970df4d7dd957a10f8fa5016c824fda25f40c',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => true,
+    ),
+    'versions' => array(
+        '__root__' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'd7a970df4d7dd957a10f8fa5016c824fda25f40c',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'maestroerror/heif-converter' => array(
+            'pretty_version' => '0.2',
+            'version' => '0.2.0.0',
+            'reference' => '714f3e6c2c18f85ffe3495057874cb01ca89ce63',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../maestroerror/heif-converter',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'maestroerror/php-heic-to-jpg' => array(
+            'pretty_version' => 'v1.0.7',
+            'version' => '1.0.7.0',
+            'reference' => 'cebe7319dcecbcb8bb03102151a82c9e235080e4',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../maestroerror/php-heic-to-jpg',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);

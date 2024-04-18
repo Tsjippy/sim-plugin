@@ -12,7 +12,30 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
-	
+	//include "src/HeicToJpg.php";
+
+	$path	= wp_upload_dir()['basedir']."/test2.heic";
+	$dest	= wp_upload_dir()['basedir']."/test2.jpg";
+
+	if(\Maestroerror\HeicToJpg::isHeic($path)) {
+		// 1. save as file
+		try{
+			$result = \Maestroerror\HeicToJpg::convert($path)->saveAs($dest);
+		}catch (\Exception $e) {
+			printArray($e, true);
+			return explode(':', $e->getMessage())[0];
+		}
+		
+		// Works
+		$jpg = file_get_contents($dest);
+		$base64=base64_encode($jpg);
+		echo "<img src='data:image/jpeg;base64, $base64'/>";
+		
+		// Works
+		$jpg = \Maestroerror\HeicToJpg::convert($path)->get();
+		$base64=base64_encode($jpg);
+		echo "<img src='data:image/jpeg;base64, $base64'/>";
+	}
 	
     /* $posts = get_posts(
 		array(

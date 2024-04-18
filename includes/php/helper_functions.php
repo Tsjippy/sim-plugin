@@ -221,7 +221,7 @@ function urlToPath($url){
 	$siteUrl	= str_replace(['https://', 'http://'], '', SITEURL);
 	$url		= str_replace(['https://', 'http://'], '', urldecode($url));
 	
-	return str_replace(trailingslashit($siteUrl), ABSPATH, $url);
+	return str_replace(trailingslashit($siteUrl), str_replace('\\', '/', ABSPATH), $url);
 }
 
 /**

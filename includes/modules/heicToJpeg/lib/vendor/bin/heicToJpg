@@ -12,7 +12,7 @@ if [ -z "$self" ]; then
     self="$selfArg"
 fi
 
-dir=$(cd "${self%[/\\]*}" > /dev/null; cd ../maestroerror/heif-converter/bin && pwd)
+dir=$(cd "${self%[/\\]*}" > /dev/null; cd ../maestroerror/php-heic-to-jpg/bin && pwd)
 
 if [ -d /proc/cygdrive ]; then
     case $(which php) in
@@ -23,15 +23,15 @@ if [ -d /proc/cygdrive ]; then
     esac
 fi
 
-export COMPOSER_RUNTIME_BIN_DIR=$(cd "${self%[/\\]*}" > /dev/null; pwd)
+export COMPOSER_RUNTIME_BIN_DIR="$(cd "${self%[/\\]*}" > /dev/null; pwd)"
 
 # If bash is sourcing this file, we have to source the target as well
 bashSource="$BASH_SOURCE"
 if [ -n "$bashSource" ]; then
     if [ "$bashSource" != "$0" ]; then
-        source "${dir}/heif-converter-linux" "$@"
+        source "${dir}/heicToJpg" "$@"
         return
     fi
 fi
 
-"${dir}/heif-converter-linux" "$@"
+"${dir}/heicToJpg" "$@"
