@@ -4,6 +4,7 @@
 
 ### Added
 - better login experience
+- heic to jpg module
 
 ### Changed
 
