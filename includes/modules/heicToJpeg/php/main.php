@@ -1,35 +1,6 @@
 <?php
-namespace SIM\HEICTOJPG;
-
-use Composer\Pcre\Regex;
+namespace SIM\HEICTOJPEG;
 use SIM;
-
-/**
- * Converts heic images to jpg
- *
- * @param   string  $path       The path to the file
- * @param   string  $dest       The path to the destination file. If left empty it will echo the image to the screen
- *
- * @return  boolean|string      Whether the conversion was succesfull or if destination is empty the image blob(url)
- */
-function convert($path, $dest=''){
-    if(is_file($path) && \Maestroerror\HeicToJpg::isHeic($path)) {
-        if(empty($dest)){
-            $jpg    = \Maestroerror\HeicToJpg::convert($path)->get();
-            $base64 = base64_encode($jpg);
-            return "data:image/jpeg;base64, $base64";
-        }
-        
-        try{
-            return \Maestroerror\HeicToJpg::convert($path)->saveAs($dest);
-        }catch (\Exception $e) {
-            SIM\printArray($e, true);
-            return explode(':', $e->getMessage())[0];
-        }
-    }else{
-        return false;
-    }
-}
 
 // Images in post galleries
 add_filter( 'get_post_galleries',          __NAMESPACE__.'\_imgUrlFilter', PHP_INT_MAX );
@@ -70,12 +41,19 @@ add_filter('acf/format_value',              __NAMESPACE__.'\_htmlImgUrlFilter');
  * @return string
  */
 function _imgUrlFilter($url) {
+    global $heicConverter;
+
+    // only instantiate this class once to speed up
+    if(!isset($heicConverter)){
+        $heicConverter = new HeicConverter();
+    }
+
     if(gettype($url) != 'string' || empty($url) || !str_contains($url, '.heic')){
         return $url;
     }
 
     // Convert the heic image
-    $result = convert(SIM\urlToPath($url));
+    $result = $heicConverter->convert(SIM\urlToPath($url));
     
     if(!$result){
         return $url;
@@ -94,6 +72,7 @@ function _imgUrlFilter($url) {
  * @return  string              HTML with possibly images that have been filtered
  */
 function _htmlImgUrlFilter($content) {
+
     // find any heic hyperlinks
     preg_match_all('/<a[^<]*?href=(?:\'|")([^<]*?\.heic)(?:\'|").*?>(.*?)<\/a>/', $content, $images);
 
@@ -116,8 +95,3 @@ function _htmlImgUrlFilter($content) {
 
     return $content;
 }
-
-add_filter('sim_transform_formtable_data', function($output){
-
-    return $output;
-});

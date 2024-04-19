@@ -1,5 +1,5 @@
 <?php
-namespace SIM\HEICTOJPG;
+namespace SIM\HEICTOJPEG;
 use SIM;
 
 const MODULE_VERSION		= '7.0.0';

@@ -158,14 +158,20 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 			'value'		=> $user->user_email,
 			'display'	=> $user->display_name
 		];
-		$defaultArrayValues['All phonenumbers'][$user->ID]		= [
-			'value'		=> implode(";", $phonenumbers),
-			'display'	=> $user->display_name
-		];
-		$defaultArrayValues['All account numbers'][$user->ID]	= [
-			'value'		=> $accountId,
-			'display'	=> $user->display_name
-		];
+
+		if(!empty($phonenumbers)){
+			$defaultArrayValues['All phonenumbers'][$user->ID]		= [
+				'value'		=> implode(";", $phonenumbers),
+				'display'	=> $user->display_name
+			];
+		}
+
+		if(!empty($accountId)){
+			$defaultArrayValues['All account numbers'][$user->ID]	= [
+				'value'		=> $accountId,
+				'display'	=> $user->display_name
+			];
+		}
 	}
 
 	return $defaultArrayValues;

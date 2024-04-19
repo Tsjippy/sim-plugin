@@ -71,6 +71,12 @@ class Signal {
             SIM\printArray("Created $this->programPath");
         }
 
+        // check permissions
+        $path   = $this->programPath.'/signal-cli';
+        if(!is_executable($path)){
+            chmod($path, 0555);
+        }
+
         $this->phoneNumber      = '';
         if(file_exists($this->basePath.'/phone.signal')){
             $this->phoneNumber      = trim(file_get_contents($this->basePath.'/phone.signal'));
