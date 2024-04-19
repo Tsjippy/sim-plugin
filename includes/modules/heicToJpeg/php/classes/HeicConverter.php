@@ -27,15 +27,18 @@ class HeicConverter{
 
                 // reduce size, as we do not need super big images
                 if($size[0] > 1024 || $size[1] > 1024){
-                    $img        = imagecreatefromstring($jpg);
-                    $imgResized = imagescale($img , 1024);
+                    $ext        = pathinfo($path, PATHINFO_EXTENSION);
+                    $checkPath  = str_replace(".$ext", '.jpeg', $path);
+    
+                    //store the jpeg so that we dont have to reduce again next time
+                    if(!file_exists($checkPath)){
+                        $img        = imagecreatefromstring($jpg);
+                        $imgResized = imagescale($img , 1024);
 
-                    ob_start (); 
-            
-                    imagejpeg ($imgResized);
-                    $jpg = ob_get_contents (); 
-                
-                    ob_end_clean (); 
+                        imagejpeg ($imgResized, $checkPath);
+                    }
+                    
+                    $jpg = file_get_contents($checkPath);
                 }
                 $base64 = base64_encode($jpg);
 
