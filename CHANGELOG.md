@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- only reduce image size once
 
 ### Fixed
 
