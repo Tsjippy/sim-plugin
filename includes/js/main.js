@@ -309,6 +309,8 @@ document.addEventListener("DOMContentLoaded",function() {
 	if(isMobileDevice()){
 		document.querySelectorAll('.hide-on-mobile:not(.hidden)').forEach(el=>el.classList.add('hidden'));
 	}else{
+		document.querySelectorAll('.hide-on-desktop:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+
 		positionSubSubMenus();
 	}	
 });

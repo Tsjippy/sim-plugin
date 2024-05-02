@@ -504,6 +504,10 @@ function openLoginModal(){
 document.addEventListener('DOMContentLoaded', () => {
 	//check if the current browser supports webauthn
 	checkWebauthnAvailable();
+
+	document.querySelectorAll('.login.hidden').forEach(el=>{
+		el.classList.remove('hidden');
+	});	
 });
 
 document.addEventListener("click", function(event){
@@ -556,8 +560,5 @@ if (checkIsIOS()) {
 	addMaximumScaleToMetaViewport();
 }
 
-document.querySelectorAll('.login').forEach(el=>{
-	el.classList.remove('hidden');
-});
 
 startConditionalRequest('conditional');

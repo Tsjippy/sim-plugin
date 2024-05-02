@@ -136,7 +136,7 @@ add_action( 'loop_end', function () {
     }
 }, 99999);
 
-//add login and logout buttons to main menu
+//add login and logout buttons to menu's
 add_filter('wp_nav_menu_items', function ($items, $args) {
     $loginMenus     = SIM\getModuleOption(MODULE_SLUG, 'loginmenu', false);
     $logoutMenus    = SIM\getModuleOption(MODULE_SLUG, 'logoutmenu', false);
@@ -154,6 +154,18 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
         $class  = '';
         if($args->menu->slug != 'footer'){
             $class  = 'button';
+        }
+
+        $visibilities   = SIM\getModuleOption(MODULE_SLUG, 'visibiltylogoutmenu', false);
+
+        if(in_array($args->menu->term_id, array_keys($visibilities))){
+            if($visibilities[$args->menu->term_id] == 'mobile'){
+                $class  .= " hide-on-desktop";
+            }
+
+            if($visibilities[$args->menu->term_id] == 'desktop'){
+                $class  .= " hide-on-mobile";
+            }
         }
         
         $items .= "<li class='menu-item logout hidden'><a href='#logout' class='logout $class'>Log out</a></li>";
@@ -173,6 +185,18 @@ add_filter('wp_nav_menu_items', function ($items, $args) {
         $class   = '';
         if($args->menu->slug != 'footer'){
             $class  = 'button';
+        }
+
+        $visibilities   = SIM\getModuleOption(MODULE_SLUG, 'visibiltyloginmenu', false);
+
+        if(in_array($args->menu->term_id, array_keys($visibilities))){
+            if($visibilities[$args->menu->term_id] == 'mobile'){
+                $class  .= " hide-on-desktop";
+            }
+
+            if($visibilities[$args->menu->term_id] == 'desktop'){
+                $class  .= " hide-on-mobile";
+            }
         }
 
         $items .= "<li class='menu-item login hidden'><a href='#login' class='login $class'>Log in</a></li>";

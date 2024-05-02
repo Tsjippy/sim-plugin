@@ -85,7 +85,7 @@ registerPlugin( 'signal-options', {
 
                 <ToggleControl
                     label={__('Send signal message on', 'sim')}
-                    checked={sendSigna}
+                    checked={sendSignal}
                     onChange={(value) => updateMetaValue(value, 'send_signal')}
                 />
             </PluginDocumentSettingPanel>

@@ -117,33 +117,115 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<br>
 	Where should the login menu item be added?
 	<br>
-	<?php
 
-	$menus	= wp_get_nav_menus();
-	foreach($menus as $menu){
-		$checked	= '';
-		if(isset($settings['loginmenu']) && in_array($menu->term_id, $settings['loginmenu'])){
-			$checked	= 'checked';
+	<table style="border: none;">
+		<?php
+		$menus	= wp_get_nav_menus();
+
+		if(!isset($settings['visibiltyloginmenu'])){
+			$settings['visibiltyloginmenu']	= [];
 		}
-		echo "<label>";
-			echo "<input type='checkbox' name='loginmenu[]' value='$menu->term_id' $checked>";
-			echo "$menu->name";
-		echo "<label><br>";
-	}
-	?>
+
+		if(!isset($settings['visibiltylogoutmenu'])){
+			$settings['visibiltylogoutmenu']	= [];
+		}
+
+		foreach($menus as $menu){
+			$checked	= '';
+			if(isset($settings['loginmenu']) && in_array($menu->term_id, $settings['loginmenu'])){
+				$checked	= 'checked';
+			}
+
+			if(!isset($settings['visibiltyloginmenu'][$menu->term_id])){
+				$settings['visibiltyloginmenu'][$menu->term_id]	= '';
+			}
+			echo "<tr>";
+				echo "<td>";
+					echo "<label>";
+						echo "<input type='checkbox' name='loginmenu[]' value='$menu->term_id' $checked>";
+						echo "$menu->name";
+					echo "</label>";
+				echo "</td>";
+
+				$checked	= '';
+				if($settings['visibiltyloginmenu'][$menu->term_id] == ''){
+					$checked	= 'checked';
+				}
+				echo "<td>";
+					echo "<input type='radio' id='$menu->term_id' name='visibiltyloginmenu[$menu->term_id]' value='' $checked>";
+					echo "<label>Always</label>";
+				echo "</td>";
+
+				$checked	= '';
+				if($settings['visibiltyloginmenu'][$menu->term_id] == 'mobile'){
+					$checked	= 'checked';
+				}
+				echo "<td>";
+					echo "<input type='radio' id='$menu->term_id' name='visibiltyloginmenu[$menu->term_id]' value='mobile' $checked>";
+					echo "<label>Mobile only</label>";
+				echo "</td>";
+
+				$checked	= '';
+				if($settings['visibiltyloginmenu'][$menu->term_id] == 'desktop'){
+					$checked	= 'checked';
+				}
+				echo "<td>";
+					echo "<input type='radio' id='$menu->term_id' name='visibiltyloginmenu[$menu->term_id]' value='desktop' $checked>";
+					echo "<label>Desktop only </label>";
+				echo "</td>";
+			echo "</tr>";
+		}
+		?>
+	</table>
+	<br>
 	Where should the logout menu item be added?
 	<br>
-	<?php
-	foreach($menus as $menu){
-		$checked	= '';
-		if(isset($settings['logoutmenu']) && in_array($menu->term_id, $settings['logoutmenu'])){
-			$checked	= 'checked';
+	<table>
+		<?php
+		foreach($menus as $menu){
+			$checked	= '';
+			if(isset($settings['logoutmenu']) && in_array($menu->term_id, $settings['logoutmenu'])){
+				$checked	= 'checked';
+			}
+			echo "<tr>";
+				echo "<td>";
+					echo "<label>";
+						echo "<input type='checkbox' name='logoutmenu[]' value='$menu->term_id' $checked>";
+						echo "$menu->name";
+					echo "</label>";
+				echo "</td>";
+
+				$checked	= '';
+				if($settings['visibiltylogoutmenu'][$menu->term_id] == ''){
+					$checked	= 'checked';
+				}
+				echo "<td>";
+					echo "<input type='radio' id='$menu->term_id' name='visibiltylogoutmenu[$menu->term_id]' value='' $checked>";
+					echo "<label>Always</label>";
+				echo "</td>";
+
+				$checked	= '';
+				if($settings['visibiltylogoutmenu'][$menu->term_id] == 'mobile'){
+					$checked	= 'checked';
+				}
+				echo "<td>";
+					echo "<input type='radio' id='$menu->term_id' name='visibiltylogoutmenu[$menu->term_id]' value='mobile' $checked>";
+					echo "<label>Mobile only</label>";
+				echo "</td>";
+
+				$checked	= '';
+				if($settings['visibiltylogoutmenu'][$menu->term_id] == 'desktop'){
+					$checked	= 'checked';
+				}
+				echo "<td>";
+					echo "<input type='radio' id='$menu->term_id' name='visibiltylogoutmenu[$menu->term_id]' value='desktop' $checked>";
+					echo "<label>Desktop only </label>";
+				echo "</td>";
+			echo "</tr>";
 		}
-		echo "<label>";
-			echo "<input type='checkbox' name='logoutmenu[]' value='$menu->term_id' $checked>";
-			echo "$menu->name";
-		echo "<label><br>";
-	}
+
+	echo "</table>";
+
 	return ob_get_clean();
 }, 10, 3);
 
