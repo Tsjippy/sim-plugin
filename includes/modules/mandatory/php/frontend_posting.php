@@ -25,7 +25,7 @@ function getAudienceOptions($audience, $postId){
  * @param  object $frontendContend 	frontendContend instance
 */
 add_action('sim_frontend_post_after_content', function($frontendContend){
-	$audience   = get_post_meta($frontendContend->postId, 'audience', true);
+	$audience   = $frontendContend->getPostMeta('audience');
     if(!is_array($audience) && !empty($audience)){
         $audience  = json_decode($audience, true);
     }

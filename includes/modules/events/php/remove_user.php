@@ -36,7 +36,7 @@ add_action('delete_user', function ($userId, $reassign){
                 'ID'            => $id,
                 'post_author'   => $reassign,
             );
-            wp_update_post( $arg );
+            wp_update_post( $arg, false, false );
         }
     }
 }, 10, 2);

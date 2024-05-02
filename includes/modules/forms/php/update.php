@@ -4,6 +4,7 @@ use SIM;
 
 add_action('sim_plugin_update', function($oldVersion){
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    require_once ABSPATH . 'wp-admin/install-helper.php';
 
     $simForms = new SimForms();
 

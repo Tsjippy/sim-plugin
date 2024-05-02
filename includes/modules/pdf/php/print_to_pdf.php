@@ -74,6 +74,8 @@ add_action('sim_after_post_save', function($post){
             $value = true;
         }
         update_post_meta($post->ID, 'add_print_button', $value);
+    }else{
+        delete_post_meta($post->ID, 'add_print_button');
     }
 });
 

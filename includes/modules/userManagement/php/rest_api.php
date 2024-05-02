@@ -20,7 +20,7 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
-    // disable or eneable useraccount
+    // disable or enable useraccount
 	register_rest_route(
 		RESTAPIPREFIX.'/user_management',
 		'/disable_useraccount',

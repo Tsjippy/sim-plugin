@@ -2,19 +2,19 @@
 namespace SIM\MAILCHIMP;
 use SIM;
 
-add_action('sim_frontend_post_after_content', function($frontendcontend){
-    $mailchimpSegmentId	    = get_post_meta($frontendcontend->postId, 'mailchimp_segment_id', true);
-    $mailchimpEmail		    = get_post_meta($frontendcontend->postId, 'mailchimp_email', true);
-    $mailchimpExtraMessage  = get_post_meta($frontendcontend->postId, 'mailchimp_extra_message', true);
-    $Mailchimp              = new Mailchimp($frontendcontend->user->ID);
+add_action('sim_frontend_post_after_content', function($frontendContend){
+    $mailchimpSegmentId	    = $frontendContend->getPostMeta('mailchimp_segment_id');
+    $mailchimpEmail		    = $frontendContend->getPostMeta('mailchimp_email');
+    $mailchimpExtraMessage  = $frontendContend->getPostMeta('mailchimp_extra_message');
+    $Mailchimp              = new Mailchimp($frontendContend->user->ID);
     $segments               = $Mailchimp->getSegments();
 
     if($segments){
         ?>
         <div id="mailchimp" class="frontendform">
-            <h4>Send <span class="replaceposttype"><?php echo $frontendcontend->postType;?></span> contents to the following Mailchimp group on <?php echo $frontendcontend->update == 'true' ? 'update' : 'publish';?>:</h4>
+            <h4>Send <span class="replaceposttype"><?php echo $frontendContend->postType;?></span> contents to the following Mailchimp group on <?php echo $frontendContend->update == 'true' ? 'update' : 'publish';?>:</h4>
             <?php
-            $sendSegment    = get_post_meta($frontendcontend->postId, 'mailchimp_message_send', true);
+            $sendSegment    = $frontendContend->getPostMeta('mailchimp_message_send');
             if(is_numeric($sendSegment)){
                 foreach($segments as $segment){
                     if($sendSegment == $segment->id){
@@ -79,6 +79,10 @@ add_action('sim_after_post_save', function($post){
         update_metadata( 'post', $post->ID,'mailchimp_segment_id', $_POST['mailchimp_segment_id']);
         update_metadata( 'post', $post->ID,'mailchimp_email', $_POST['mailchimp_email']);
         update_metadata( 'post', $post->ID,'mailchimp_extra_message', $extraMessage);
+    }else{
+        delete_metadata( 'post', $post->ID,'mailchimp_segment_id');
+        delete_metadata( 'post', $post->ID,'mailchimp_email');
+        delete_metadata( 'post', $post->ID,'mailchimp_extra_message');
     }
 });
 

@@ -96,18 +96,18 @@ add_action('sim_after_post_save', function($post, $frontEndPost){
 }, 10, 2);
 
 //add meta data fields
-add_action('sim_frontend_post_after_content', function ($frontendcontend){
-    if(!empty($frontendcontend->post) && $frontendcontend->post->post_type != 'project'){
+add_action('sim_frontend_post_after_content', function ($frontendContend){
+    if(!empty($frontendContend->post) && $frontendContend->post->post_type != 'project'){
         return;
     }
 
     //Load js
     wp_enqueue_script('sim_project_script');
 
-    $postId     = $frontendcontend->postId;
-    $postName   = $frontendcontend->postName;
+    $postId     = $frontendContend->postId;
+    $postName   = $frontendContend->postName;
     
-    $manager    = (array) get_post_meta($postId, 'manager', true);
+    $manager    = (array) $frontendContend->getPostMeta('manager');
     $managerId  = '';
     if(isset($manager['userid'])){
         $managerId  = $manager['userid'];
@@ -128,9 +128,9 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         $managerEmail  = $manager['email'];
     }
 
-    $url        = get_post_meta($postId, 'url', true);
+    $url        = $frontendContend->getPostMeta('url');
 
-    $number     = get_post_meta($postId, 'number', true);
+    $number     = $frontendContend->getPostMeta('number');
 
     //Get all pages describing a ministry
 	$ministries = get_posts([
@@ -148,7 +148,7 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         )
 	]);
 
-    $selectedMinistry = get_post_meta($postId, 'ministry', true);
+    $selectedMinistry = $frontendContend->getPostMeta('ministry');
     
     ?>
     <style>
@@ -163,13 +163,13 @@ add_action('sim_frontend_post_after_content', function ($frontendcontend){
         <div id="parentpage" class="frontendform">
             <h4>Select a parent project</h4>
             <?php
-            echo SIM\pageSelect('parent_project', $frontendcontend->postParent, '', ['project'], false);
+            echo SIM\pageSelect('parent_project', $frontendContend->postParent, '', ['project'], false);
             ?>
         </div>
         <div class="frontendform">
             <h4>Update warnings</h4>
             <label>
-                <input type='checkbox' name='static_content' value='static_content' <?php if(!empty(get_post_meta($postId, 'static_content', true))){echo 'checked';}?>>
+                <input type='checkbox' name='static_content' value='static_content' <?php if(!empty($frontendContend->getPostMeta('static_content'))){echo 'checked';}?>>
                 Do not send update warnings for this project
             </label>
         </div>

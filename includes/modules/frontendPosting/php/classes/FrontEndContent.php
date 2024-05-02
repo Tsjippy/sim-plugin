@@ -392,7 +392,7 @@ class FrontEndContent{
 			$this->postContent 									= $this->post->post_content;
 			$this->postImageId									= get_post_thumbnail_id($this->postId);
 
-			$this->postCategory 									= $this->post->post_category;
+			$this->postCategory 								= $this->post->post_category;
 		}
 
 		if(!empty($_GET['type'])){
@@ -1494,5 +1494,19 @@ class FrontEndContent{
 		foreach(get_children($postId) as $child){
 			$this->removeParents($child->ID);
 		}
+	}
+
+	/**
+	 * Get the meta value of the revision or parent post if empty
+	 */
+	public function getPostMeta( $key){
+		$value  = get_post_meta($this->postId, $key, true);
+	
+		// use parent value if the revision value is non existing
+		if(empty($value) && !empty($this->postParent)){
+			$value    =  get_post_meta($this->postParent, $key, true);
+		}
+	
+		return $value;
 	}
 }

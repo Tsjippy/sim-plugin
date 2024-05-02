@@ -4,10 +4,16 @@ use SIM;
 
 add_action('sim_frontend_post_after_content', function($frontendContend){
     $hidden	= 'hidden';
-    if($frontendContend->fullrights && ($frontendContend->postId == null || !empty(get_post_meta($frontendContend->postId, 'signal', true)))){
+    if(
+        $frontendContend->fullrights &&                             // we have publish rights
+        (
+            $frontendContend->postId == null ||                     // this is a new page
+            !empty($frontendContend->getPostMeta('send_signal'))    // we should send a signal message
+        )
+    ){
         $checked 	    = 'checked';
         $hidden		    = '';
-        $messageType	= get_post_meta($frontendContend->postId,'signal_message_type',true);
+        $messageType	= $frontendContend->getPostMeta('signal_message_type');
     }
 
     ?>
@@ -51,6 +57,11 @@ add_action('sim_after_post_save', function($post){
         update_metadata( 'post', $post->ID, 'signal_message_type', $_POST['signalmessagetype']);
         update_metadata( 'post', $post->ID, 'signal_url', $_POST['signal_url']);
         update_metadata( 'post', $post->ID, 'signal_extra_message', $_POST['signal_extra_message']);
+    }else{
+        delete_metadata( 'post', $post->ID, 'send_signal');
+        delete_metadata( 'post', $post->ID, 'signal_message_type');
+        delete_metadata( 'post', $post->ID, 'signal_url');
+        delete_metadata( 'post', $post->ID, 'signal_extra_message');
     }
 }, 999);
 
