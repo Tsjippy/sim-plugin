@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- conditional login menu
 
 ### Changed
 - only reduce image size once
