@@ -9,6 +9,7 @@
 - only reduce image size once
 
 ### Fixed
+- sending signal messages on user removal
 
 ### Updated
 
