@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.43.3] - 2024-05-03
+
+
+### Added
 - conditional login menu
 
 ### Changed
@@ -11,8 +22,6 @@
 
 ### Fixed
 - sending signal messages on user removal
-
-### Updated
 
 ## [2.43.2] - 2024-04-18
 
