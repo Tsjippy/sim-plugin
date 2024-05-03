@@ -7,6 +7,7 @@
 
 ### Changed
 - only reduce image size once
+- str_pos to str_contains
 
 ### Fixed
 - sending signal messages on user removal
