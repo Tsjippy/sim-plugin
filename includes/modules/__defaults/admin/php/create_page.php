@@ -20,7 +20,7 @@ function createDefaultPage($options, $optionKey, $title, $content, $oldOptions, 
         foreach($pages as $key=>$pageId){
 			if(
                 get_post_status($pageId) != 'publish' ||                                // not a published page
-                strpos(get_the_content(null, false, $pageId), $content) === false ||    // not the right content
+                !str_contains(get_the_content(null, false, $pageId), $content) ||       // not the right content
                 in_array($pageId, $processed)                                           // dublicate
             ){
 				unset($pages[$key]);

@@ -27,7 +27,7 @@ function isAllowedRestApiUrl(){
 	$urls	= apply_filters('sim_allowed_rest_api_urls', $urls);
 
 	foreach($urls as $url){
-		if(strpos($_SERVER['REQUEST_URI'], $url) !== false){
+		if(str_contains($_SERVER['REQUEST_URI'], $url)){
 			return true;
 		}
 	}

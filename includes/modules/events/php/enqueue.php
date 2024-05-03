@@ -49,7 +49,7 @@ add_action( 'wp_trash_post', function($postId){
 } );
 
 add_action( 'wp_enqueue_scripts', function(){
-    if(strpos($_SERVER['REQUEST_URI'], '.map') !== false){
+    if(str_contains($_SERVER['REQUEST_URI'], '.map')){
         return;
     }
     

@@ -42,7 +42,7 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 	//If the file part contains the account statements folder
 	//and the filename does not contain the username
 	//Block access
-	if (strpos($fileName, 'account_statements') !== false) {
+	if (str_contains($fileName, 'account_statements')) {
 		$partnerName		= $username;
 		
 		$family = get_user_meta($user->ID,'family',true);
@@ -52,7 +52,7 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 		}
 
 		//Block access if the filename does not contain the own or partners username
-		if(strpos($fileName, $username) === false && strpos($fileName, $partnerName) === false){
+		if(!str_contains($fileName, $username) && !str_contains($fileName, $partnerName)){
 			status_header(403);
 			die('<div style="text-align: center;"><p>Stop spying at someone elses file!</p></div>');
 		}
@@ -60,14 +60,14 @@ if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
 	
 	$allowedRoles	= ["medicalinfo", "administrator"];
 	//If this is a medical file it is only visible to that person and the user with the correct role
-	if(strpos($fileName, 'medical_uploads') !== false && !array_intersect($allowedRoles, $user->roles ) && strpos($fileName, $username) === false) {
+	if(str_contains($fileName, 'medical_uploads') && !array_intersect($allowedRoles, $user->roles ) && !str_contains($fileName, $username)) {
 		status_header(403);
 		die('<div style="text-align: center;"><p>You do not have permission to view this file!</p></div>');
 	}
 	
 	$allowedRoles	= ["visainfo", "administrator"];
 	//If this is a visa file it is only visible to that person and the user with the correct role
-	if(strpos($fileName, 'visa_uploads') !== false && !array_intersect($allowedRoles, $user->roles ) && strpos($fileName, $username) === false) {
+	if(str_contains($fileName, 'visa_uploads') && !array_intersect($allowedRoles, $user->roles ) && !str_contains($fileName, $username)) {
 		status_header(403);
 		die('<div style="text-align: center;"><p>You do not have permission to view this file!</p></div>');
 	}
@@ -97,7 +97,7 @@ function showFile(){
 	}
 
 	header( 'Content-Type: ' . $mimetype ); // always send this
-	if ( false === strpos( $_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS' ) ){
+	if ( !str_contains( $_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS' ) ){
 		header( 'Content-Length: ' . filesize( $file ) );
 	}
 

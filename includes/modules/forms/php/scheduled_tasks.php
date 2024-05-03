@@ -53,7 +53,7 @@ function mandatoryFieldsReminder(){
                 $reminderHtml  = str_replace("Your", $user->first_name."'s", $reminderHtml);
                 
                 foreach($parents as $parent){
-                    if(strpos($parent->user_email,'.empty') === false){
+                    if(!str_contains($parent->user_email,'.empty')){
                         if(!empty($recipients)){
                             $recipients .= ', ';
                         }
@@ -75,7 +75,7 @@ function mandatoryFieldsReminder(){
                 );
                 
                 //If this not a valid email skip this email
-                if(strpos($user->user_email,'.empty') !== false){
+                if(str_contains($user->user_email,'.empty')){
                     continue;
                 }
 

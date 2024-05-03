@@ -69,10 +69,10 @@ trait CreateJs{
                             $conditionalFieldName		= $conditionalElement->name;
                             $propCompare                = 'elName';
 
-                            if(strpos($conditionalFieldName, '[]') !== false){
+                            if(str_contains($conditionalFieldName, '[]')){
                                 $propCompare            = 'el.id';
                                 $conditionalFieldName	= 'E'.$conditionalElement->id;
-                            }elseif(in_array($conditionalElement->type,['radio','checkbox']) && strpos($conditionalFieldName, '[]') === false) {
+                            }elseif(in_array($conditionalElement->type,['radio','checkbox']) && !str_contains($conditionalFieldName, '[]')) {
                                 $conditionalFieldName .= '[]';
                             }
 
@@ -87,10 +87,10 @@ trait CreateJs{
 
                                 $conditionalField2Name	= $conditionalElement2->name;
                                 
-                                if(strpos($conditionalField2Name, '[]') !== false){
+                                if(str_contains($conditionalField2Name, '[]')){
                                     $propCompare            = 'el.id';
                                     $conditionalField2Name	= 'E'.$conditionalElement2->id;
-                                }elseif(in_array($conditionalElement2->type, ['radio','checkbox']) && strpos($conditionalField2Name, '[]') === false) {
+                                }elseif(in_array($conditionalElement2->type, ['radio','checkbox']) && !str_contains($conditionalField2Name, '[]')) {
                                     $conditionalField2Name .= '[]';
                                 }
                             }
@@ -105,7 +105,7 @@ trait CreateJs{
                             //make sure we do not include other fields in changed or click rules
                             if(in_array($equation, ['changed', 'clicked'])){
                                 // do not add the same element name twice
-                                if(strpos($fieldCheckIf, $conditionalFieldName) === false){
+                                if(!str_contains($fieldCheckIf, $conditionalFieldName)){
                                     if(!empty($fieldCheckIf)){
                                         $fieldCheckIf   .= " || ";
                                     }
@@ -117,7 +117,7 @@ trait CreateJs{
                             //Only allow or statements
                             if(!$checkForChange || (isset($condition['rules'][$ruleIndex-1]) && $condition['rules'][$ruleIndex-1]['combinator'] == 'OR')){
                                 // do not add the same element name twice
-                                if(strpos($fieldCheckIf, "$propCompare == '$conditionalFieldName'") === false){
+                                if(!str_contains($fieldCheckIf, "$propCompare == '$conditionalFieldName'")){
                                     //Write the if statement to check if the current clicked field belongs to this condition
                                     if(!empty($fieldCheckIf)){
                                         $fieldCheckIf .= " || ";
@@ -126,7 +126,7 @@ trait CreateJs{
                                 }
                                 
                                 // do not add the same element name twice
-                                if(strpos($fieldCheckIf, "$propCompare == '$conditionalField2Name'") === false){
+                                if(!str_contains($fieldCheckIf, "$propCompare == '$conditionalField2Name'")){
                                     //If there is an extra field to check
                                     if(is_numeric($rule['conditional_field_2'])){
                                         $fieldCheckIf .= " || $propCompare == '$conditionalField2Name'";
@@ -152,7 +152,7 @@ trait CreateJs{
                             }
                                 
                             //compare with the value of another field
-                            if(strpos($rule['equation'], 'value') !== false){
+                            if(str_contains($rule['equation'], 'value')){
                                 $compareValue2 = "value_$fieldNumber2";
                             //compare with a number
                             }elseif(is_numeric($rule['conditional_value'])){
@@ -326,10 +326,10 @@ trait CreateJs{
                                 }
 
                                 $copyFieldName	= $copyElement->name;
-                                if(strpos($copyFieldName, '[]') !== false){
+                                if(str_contains($copyFieldName, '[]')){
                                     $propCompare            = 'el.id';
                                     $copyFieldName	= 'E'.$copyElement->id;
-                                }elseif(in_array($copyElement->type,['radio','checkbox']) && strpos($copyFieldName, '[]') === false) {
+                                }elseif(in_array($copyElement->type,['radio','checkbox']) && !str_contains($copyFieldName, '[]')) {
                                     $copyFieldName .= '[]';
                                 }
                                 
@@ -495,7 +495,7 @@ trait CreateJs{
                                 $newJs  .= $this->buildQuerySelector($action, "\t\t\t\t");
                             }else{
                                 $newJs  .= "\t\t\t\t$action\n";
-                                if(strpos($action, 'formstep') !== false){
+                                if(str_contains($action, 'formstep')){
                                     $newJs  .= "\t\t\t\tFormFunctions.updateMultiStepControls(form);\n";
                                 }
                             }
@@ -620,9 +620,9 @@ trait CreateJs{
         $queryById          = false;
         $name				= $element->name;
 
-        if(strpos($name, '[]') !== false){
+        if(str_contains($name, '[]')){
             $queryById          = true;
-        }elseif(in_array($element->type, ['radio', 'checkbox']) && strpos($name, '[]') === false) {
+        }elseif(in_array($element->type, ['radio', 'checkbox']) && !str_contains($name, '[]')) {
             $name .= '[]';
         }
 

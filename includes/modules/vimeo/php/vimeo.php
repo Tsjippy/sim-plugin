@@ -121,7 +121,7 @@ add_filter( 'wp_handle_upload', function($file){
 //change vimeo thumbnails
 add_filter( 'wp_mime_type_icon', function ($icon, $mime, $postId) {
 
-	if(strpos($icon, 'video.png') && is_numeric(get_post_meta($postId, 'vimeo_id', true))){
+	if(str_contains($icon, 'video.png') && is_numeric(get_post_meta($postId, 'vimeo_id', true))){
 		$startTime = microtime(true);
 		try{
 			$path  = get_post_meta($postId, 'thumbnail', true);

@@ -5,7 +5,7 @@ use SIM;
 add_action('sim_location_update', function($userId, $location){
     //Update mailchimp tags if needed
     $mailchimp = new Mailchimp($userId);
-    if(strpos(strtolower($location['address']),'jos') !== false){
+    if(str_contains(strtolower($location['address']),'jos')){
         //Live in Jos, add the tags
         $mailchimp->updateFamilyTags(['Jos'], 'active');
         $mailchimp->updateFamilyTags(['not-Jos'], 'inactive');

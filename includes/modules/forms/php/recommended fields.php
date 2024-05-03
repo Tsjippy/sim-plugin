@@ -108,7 +108,7 @@ function getAllEmptyRequiredElements($userId, $type){
 			$value		= get_user_meta($userId, $metakey, true);
 
 			$name		= $element->name;
-			if (strpos($name, '[') !== false){
+			if (str_contains($name, '[')){
 				$value = SIM\getMetaArrayValue($userId, $name, $value);
 			}
 

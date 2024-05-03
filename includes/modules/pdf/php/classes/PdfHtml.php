@@ -472,7 +472,7 @@ class PdfHtml extends \FPDF{
 
 							//Write down the url as link
 							$url	= $image;
-							if(strpos($url, site_url()) === false){
+							if(!str_contains($url, site_url())){
 								$url	= site_url().'/'.$url;
 							}
 

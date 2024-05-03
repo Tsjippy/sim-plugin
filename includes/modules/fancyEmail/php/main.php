@@ -3,7 +3,7 @@ namespace SIM\FANCYEMAIL;
 use SIM;
 
 // Filter any wp_email
-add_filter('wp_mail',function($args){
+add_filter('wp_mail', function($args){
     $fancyEmail     = new FancyEmail();
     $args = $fancyEmail->filterMail($args);
 

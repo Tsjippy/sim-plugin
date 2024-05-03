@@ -177,7 +177,7 @@ class SubmitForm extends SimForms{
 
 				// if no e-mail found, find any numbers and assume they are user ids
 				// than replace the id with the e-mail of that user
-				if(strpos($to, '@') === false){
+				if(!str_contains($to, '@')){
 					$pattern 	= '/[0-9\.]+/i';
 					$to			= preg_replace_callback(
 						$pattern,
@@ -455,7 +455,7 @@ class SubmitForm extends SimForms{
 			foreach($this->submission->formresults as $key=>$result){
 				if(is_array($result)){
 					//check if this a aray of uploaded files
-					if(!is_array(array_values($result)[0]) && strpos(array_values($result)[0],'wp-content/uploads/') !== false){
+					if(!is_array(array_values($result)[0]) && str_contains(array_values($result)[0],'wp-content/uploads/')){
 						//rename the file
 						$this->processFiles($result, $key);
 					}else{

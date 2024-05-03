@@ -132,7 +132,7 @@ function getAnswer($message, $source){
         $response = 'You`re welcome!';
     }elseif(str_starts_with($lowerMessage, 'update prayer')){
         $response = updatePrayerRequest($message, $users);
-    }elseif(strpos($lowerMessage, 'prayer') !== false && $name){
+    }elseif(str_contains($lowerMessage, 'prayer') && $name){
         $prayerRequest  = SIM\PRAYER\prayerRequest(true, true);
         $response       = "This is the prayer for today:\n\n{$prayerRequest['message']}";
         $pictures       = $prayerRequest['pictures'];

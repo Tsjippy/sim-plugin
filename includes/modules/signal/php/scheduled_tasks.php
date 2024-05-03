@@ -47,7 +47,7 @@ function checkSignalNumbers(){
         return;
     }
     
-    if(strpos(php_uname(), 'Linux') !== false){
+    if(str_contains(php_uname(), 'Linux')){
         $signal = new SignalBus();
     }else{
         $signal = new Signal();
@@ -108,11 +108,7 @@ function cleanSignalLog(){
 }
 
 function retryFailedMessages(){
-    //if(strpos(php_uname(), 'Linux') !== false){
-      //  $signal = new SignalBus();
-    //}else{
-        $signal = new Signal();
-    //}
+    $signal = new Signal();
 
     $signal->retryFailedMessages();
 }

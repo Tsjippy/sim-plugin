@@ -48,7 +48,7 @@ class FormBuilderForm extends SimForms{
 				$name = ucfirst(str_replace('_', ' ', $element->name));
 
 				// add the id if non-unique name
-				if(strpos($name, '[]') !== false){
+				if(str_contains($name, '[]')){
 					$name	.= " ($element->id)";
 				}
 				
@@ -1471,7 +1471,7 @@ class FormBuilderForm extends SimForms{
 
 							<?php
 							//show if -, + or value field is target value
-							if($rule['equation'] == '-' || $rule['equation'] == '+' || strpos($rule['equation'], 'value') !== false){
+							if($rule['equation'] == '-' || $rule['equation'] == '+' || str_contains($rule['equation'], 'value')){
 								$hidden = '';
 							}else{
 								$hidden = 'hidden';
@@ -1516,7 +1516,7 @@ class FormBuilderForm extends SimForms{
 								</select>
 							</span>
 							<?php
-							if(strpos($rule['equation'], 'value') !== false || in_array($rule['equation'], ['changed','checked','!checked', 'visible', 'invisible'])){
+							if(str_contains($rule['equation'], 'value') || in_array($rule['equation'], ['changed','checked','!checked', 'visible', 'invisible'])){
 								$hidden = 'hidden';
 							}else{
 								$hidden = '';
@@ -1630,7 +1630,7 @@ class FormBuilderForm extends SimForms{
 							}
 
 							$name	= ucfirst(str_replace('_', ' ', $element->name));
-							if(strpos($name, '[]') !== false){
+							if(str_contains($name, '[]')){
 								$name	.= " ($element->id)";
 							}
 							

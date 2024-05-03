@@ -131,7 +131,7 @@ function mustReadDocuments($userId='', $excludeHeading=false){
 	}
 
 	if(empty($html)){
-		if(strpos($_SERVER['REQUEST_URI'], 'wp-admin/post.php') !== false || strpos($_SERVER['REQUEST_URI'], 'wp-json') !== false){
+		if(str_contains($_SERVER['REQUEST_URI'], 'wp-admin/post.php')|| str_contains($_SERVER['REQUEST_URI'], 'wp-json')){
 			return 'Mandatory pages block<br>This will show empty as you have not pages to read';
 		}
 

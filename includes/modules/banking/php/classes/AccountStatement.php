@@ -25,7 +25,7 @@ class AccountStatement{
 	public function checkIfStatement(){
 		SIM\printArray($this->post);
 
-		if(strpos($this->post['post_title'], 'Worker Account Statement - Nigeria')){
+		if(str_contains($this->post['post_title'], 'Worker Account Statement - Nigeria')){
 			$this->user	= get_userdata($this->post['post_author']);
 	
 			if(!$this->user){

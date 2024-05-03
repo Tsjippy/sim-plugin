@@ -45,7 +45,7 @@ if(get_option("wpstg_is_staging_site") == "true"){
 	require_once(ABSPATH.'wp-admin/includes/user.php');
 	
 	add_action( 'init', function() {
-		if(strpos($_SERVER['REQUEST_URI'], 'options-permalink.php') !== false && get_option("first_run") == ""){
+		if(str_contains($_SERVER['REQUEST_URI'], 'options-permalink.php') && get_option("first_run") == ""){
 			flush_rewrite_rules();
 
 			//Indicate that the first run has been done

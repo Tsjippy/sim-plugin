@@ -471,7 +471,7 @@ class DisplayFormResults extends DisplayForm{
 		}else{
 			$output		= $string;
 			//open mail programm on click on email
-			if (strpos($string, '@') !== false) {
+			if (str_contains($string, '@')) {
 				$name		= '';
 				if(isset($submission->name)){
 					$name	= "Hi $submission->name,";
@@ -484,15 +484,15 @@ class DisplayFormResults extends DisplayForm{
 			//Convert link to clickable link if not already
 			}elseif(
 				(
-					strpos($string, 'https://') !== false	||
-					strpos($string, 'http://') !== false	||
-					strpos($string, '/form_uploads/') !== false
+					str_contains($string, 'https://')	||
+					str_contains($string, 'http://')	||
+					str_contains($string, '/form_uploads/')
 				) &&
-				strpos($string, 'href') === false &&
-				strpos($string, '<img') === false
+				!str_contains($string, 'href') &&
+				!str_contains($string, '<img')
 			) {
 				$url	= str_replace(['https://', 'http://'], '', SITEURL);
-				if(strpos($string, $url) === false){
+				if(!str_contains($string, $url)){
 					$string		= SITEURL."/$string";
 				}
 
@@ -941,7 +941,7 @@ class DisplayFormResults extends DisplayForm{
 				}
 				
 				//Limit url cell width, for strings with a visible length of more then 30 characters
-				if(strlen(strip_tags($value))>30 && strpos($value, 'https://') === false){
+				if(strlen(strip_tags($value))>30 && !str_contains($value, 'https://')){
 					$class .= ' limit-length';
 				}
 			}
@@ -966,7 +966,7 @@ class DisplayFormResults extends DisplayForm{
 			}
 			
 			//Convert underscores to spaces, but not in urls
-			if(strpos($value, 'href=') === false){
+			if(!str_contains($value, 'href=')){
 				$value	= str_replace('_',' ',$value);
 			}
 
@@ -1739,7 +1739,7 @@ class DisplayFormResults extends DisplayForm{
 			case "<=": 		return $var1 <= $var2;
 			case ">":  		return $var1 >  $var2;
 			case "<":  		return $var1 <  $var2;
-			case "like":	return strpos(strtolower($var2), strtolower($var1)) !== false;
+			case "like":	return str_contains(strtolower($var2), strtolower($var1));
 			default:       return true;
 		}
 	}
@@ -2225,7 +2225,7 @@ class DisplayFormResults extends DisplayForm{
 			//loop over all the matches
 			foreach($matches[1] as $key=>$shortcodeAtts){
 				//this shortcode has no id attribute
-				if (strpos($shortcodeAtts, ' id=') === false) {
+				if (!str_contains($shortcodeAtts, ' id=')) {
 					$shortcode		= $matches[0][$key];
 					
 					$this->formName = $matches[2][$key];
@@ -2238,7 +2238,7 @@ class DisplayFormResults extends DisplayForm{
 					$newShortcode	= str_replace('formresults',"formresults id=$shortcodeId", $shortcode);
 					
 					//replace the old shortcode with the new one
-					$pos = strpos($data['post_content'], $shortcode);
+					$pos = str_contains($data['post_content'], $shortcode);
 					if ($pos !== false) {
 						$data['post_content'] = substr_replace($data['post_content'], $newShortcode, $pos, strlen($shortcode));
 					}

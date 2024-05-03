@@ -138,7 +138,7 @@ add_filter( 'ajax_query_attachments_args', function($query){
 add_filter('wp_handle_upload', function($file){
     $default    = SIM\getModuleOption(MODULE_SLUG, 'default_status');
 
-    if($default == 'private' && strpos($file['file'], 'private') === false){
+    if($default == 'private' && !str_contains($file['file'], 'private')){
         $newPath    = wp_upload_dir()['basedir'].'/private/'.basename($file['file']);
         $newUrl     = SIM\pathToUrl($newPath);
 

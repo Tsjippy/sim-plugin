@@ -105,7 +105,7 @@ class CreateSchedule extends Schedules{
 			$ownTitle	= ucfirst($this->title);
 		}
 
-		if(strpos(strtolower($ownTitle), 'at home') !== false){
+		if(str_contains(strtolower($ownTitle), 'at home')){
 			if(!empty($event['organizer'])){
 				$ownTitle	= ucfirst($this->title).' '.$event['organizer'];
 			}

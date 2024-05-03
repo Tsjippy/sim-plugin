@@ -128,9 +128,9 @@ function sendSignalFromLocal($message, $recipient, $images){
 		return false;
 	}
 
-	if(strpos(php_uname(), 'Linux') !== false){
+	if(str_contains(php_uname(), 'Linux')){
 		$signal = new SignalBus();
-		if(strpos($phonenumber, ',') !== false){
+		if(str_contains($phonenumber, ',')){
 			$signal->sendGroupMessage($message, $phonenumber, $images);
 			return;
 		}
@@ -140,7 +140,7 @@ function sendSignalFromLocal($message, $recipient, $images){
 
 	$result	= $signal->send($phonenumber, $message, $images);
 
-	if(strpos($result, 'Unregistered user') !== false){
+	if(str_contains($result, 'Unregistered user')){
 		//user not registered
 		delete_user_meta( $recipient, 'signal_number');
 	}

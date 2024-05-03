@@ -151,7 +151,7 @@ class Maps{
 	}
 
 	public function checkCoordinates($lattitude, $longitude){
-		if(strlen($lattitude) < 3 || strlen($longitude) < 3 || strpos($lattitude, '.') === false || strpos($longitude, '.') === false){
+		if(strlen($lattitude) < 3 || strlen($longitude) < 3 || !str_contains($lattitude, '.') || !str_contains($longitude, '.')){
 			return new \WP_Error('maps', 'Please give valid coordinates');
 		}
 

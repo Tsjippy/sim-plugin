@@ -13,7 +13,7 @@ function postieBeforeFilter($post) {
 		$csv	= '';
 
 		foreach($accountStatement->statementNames as $file){
-			if(strpos($file, '.csv')){
+			if(str_contains($file, '.csv')){
 				$csv	= STATEMENT_FOLDER.$file;
 				break;
 			}

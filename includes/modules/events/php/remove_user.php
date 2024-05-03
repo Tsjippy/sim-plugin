@@ -9,7 +9,7 @@ add_action('delete_user', function ($userId, $reassign){
     $allMeta    = get_user_meta($userId);
 
     $celebrationIds = array_filter($allMeta, function($key){
-        return strpos($key, '_event_id') !== false;
+        return str_contains($key, '_event_id');
     }, ARRAY_FILTER_USE_KEY);
 
     // Remove the celebration events

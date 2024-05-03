@@ -79,7 +79,7 @@ function userSelect($title, $onlyAdults=false, $families=false, $class='', $id='
 			$user = $users[$existsArray[$fullName]];
 			
 			//But only if not already done
-			if(strpos($user->last_name, $user->user_email) === false ){
+			if(!str_contains($user->last_name, $user->user_email)  ){
 				$user->last_name = "$user->last_name ($user->user_email)";
 			}
 		}else{
@@ -235,7 +235,7 @@ function pathToUrl($path){
 		$base	= str_replace('\\', '/', ABSPATH);
 		$path	= str_replace('\\', '/', $path);
 
-		if(strpos($path, ABSPATH) === false && strpos($path, $base) === false){
+		if(!str_contains($path, ABSPATH)  && !str_contains($path, $base) ){
 			$path	= $base.$path;
 		}
 
@@ -338,7 +338,7 @@ function printHtml($html){
 			substr($el, 0, 6) != '<input' && 					// It does not start with <input (as that one does not have a closing />)
 			(
 				substr($el, 0, 7) != '<option' || 				// It does not start with <option (as that one does not have a closing />)
-				strpos( $html[$index+1], '</option')  !== false // or the next element contains a closing option
+				str_contains( $html[$index+1], '</option') 		// or the next element contains a closing option
 			) &&
 			$el != '<br'
 		){
@@ -741,7 +741,7 @@ function numberToWords($number) {
 
     $string = $fraction = null;
 
-    if (strpos($number, '.') !== false) {
+    if (str_contains($number, '.')) {
         list($number, $fraction) = explode('.', $number);
     }
 
@@ -979,7 +979,7 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 function arraySearchRecursive($needle, $haystack, $strict=true, $stack=array()) {
     $results = array();
     foreach($haystack as $key=>$value) {
-        if(($strict && $needle == $value) || (is_string($value) && !$strict && strpos($value, $needle) !== false)) {
+        if(($strict && $needle == $value) || (is_string($value) && !$strict && str_contains($value, $needle))) {
 			$value	= maybe_unserialize($value);
 
 			if(!is_array($value)){
@@ -1319,7 +1319,7 @@ function getValidPageLink($postId){
 	$link      = get_page_link($postId);
 
 	//Only redirect if we are not currently on the page already
-	if(strpos(currentUrl(), $link) !== false){
+	if(str_contains(currentUrl(), $link)){
 		return false;
 	}
 
@@ -1383,7 +1383,7 @@ function isRestApiRequest() {
     }
 
     $restPrefix         = trailingslashit( rest_get_url_prefix() );
-    return strpos( $_SERVER['REQUEST_URI'], $restPrefix ) !== false;
+    return str_contains( $_SERVER['REQUEST_URI'], $restPrefix );
 }
 
 /**
@@ -1575,7 +1575,7 @@ function getJsDependicies(&$scripts, $handle, $extras = []){
 		return $extras;
 	}
 
-	if(strpos($url, '//') === false){
+	if(!str_contains($url, '//')){
 		$url	= $wp_scripts->base_url.$url;
 	}
 	$scripts[$handle]	= [
@@ -1613,7 +1613,7 @@ function urlUpdate($oldPath, $newPath){
 	foreach($query->posts as $post){
 		$updated	= false;
 		//if old url is found in the content of this post
-		if(strpos($post->post_content, $oldUrl) !== false){
+		if(str_contains($post->post_content, $oldUrl)){
 			//replace with new url
 			$post->post_content = str_replace($oldUrl, $newUrl, $post->post_content);
 
@@ -1675,7 +1675,7 @@ function searchAllDB($search, $excludedTables=[], $excludedColumns=[]){
 						if(in_array($column, $excludedColumns)){
 							continue;
 						}
-						if(strpos($value, $search) !== false){
+						if(str_contains($value, $search)){
 							$out[] 	= [
 								'table'		=> $table[0],
 								'column'	=> $column,

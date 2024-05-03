@@ -98,7 +98,7 @@ add_action('loop_end', function(){
 	}
 	
 	// If not a valid e-mail then only allow the account page to reset the email
-	if(strpos($user->user_email, ".empty") !== false && !$public && !is_search() && !is_home() && strpos($_SERVER['REQUEST_URI'], 'account') === false ){
+	if(str_contains($user->user_email, ".empty") && !$public && !is_search() && !is_home() && !str_contains($_SERVER['REQUEST_URI'], 'account') ){
 		ob_get_clean();
 		$accountUrl		= SIM\ADMIN\getDefaultPageLink('usermanagement', 'account_page');
 		echo "<div class='error'>Your e-mail address is not valid please change it <a href='$accountUrl/?section=generic'>here</a>.</div>";

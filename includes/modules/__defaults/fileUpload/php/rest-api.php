@@ -16,7 +16,7 @@ add_action( 'rest_api_init', function () {
 					'required'	=> true,
                     'validate_callback' => function($param){
                         // File should be in the uploads folder or a sub folder
-                        return strpos($param, 'wp-content/uploads');
+                        return str_contains($param, 'wp-content/uploads');
                     }
 				)
 			)

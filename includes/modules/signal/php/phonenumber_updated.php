@@ -22,7 +22,7 @@ add_action('sim-phonenumber-updated', function($phonenumber, $userId){
     $send   = true;
     // we send a signal message directly from the server
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
-		if(strpos(php_uname(), 'Linux') !== false){
+		if(str_contains(php_uname(), 'Linux')){
 			$signal = new SignalBus();
 		}else{
 			$signal = new Signal();

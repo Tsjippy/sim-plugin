@@ -20,7 +20,7 @@ add_action( 'activated_plugin', function ( $plugin ) {
 
     //.htaccess
     $htaccess = file_get_contents(ABSPATH.'/.htaccess');
-    if(strpos($htaccess, '# BEGIN THIS DL-FILE.PHP ADDITION') === false){
+    if(!str_contains($htaccess, '# BEGIN THIS DL-FILE.PHP ADDITION')){
         $htaccess .= "\n\n# BEGIN THIS DL-FILE.PHP ADDITION";
         $htaccess .= "\nRewriteCond %{REQUEST_URI} ^.*wp-content/uploads/private/.*";
         $htaccess .= "\nRewriteRule ^wp-content/uploads/(private/.*)$ dl-file.php?file=$1 [QSA,L] */";

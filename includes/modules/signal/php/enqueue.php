@@ -9,7 +9,7 @@ add_action( 'wp_enqueue_scripts', function(){
 
 add_action( 'admin_enqueue_scripts', function ($hook) {
 	//Only load on sim settings pages
-	if(strpos($hook, 'sim-settings_page_sim_signal') === false) {
+	if(!str_contains($hook, 'sim-settings_page_sim_signal')) {
 		return;
 	}
 

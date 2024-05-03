@@ -58,10 +58,10 @@ class Signal {
             file_put_contents($this->attachmentsPath.'/.htaccess', 'allow from all');
         }
 
-        if(strpos(php_uname(), 'Windows') !== false){
+        if(str_contains(php_uname(), 'Windows')){
             $this->os               = 'Windows';
             $this->basePath         = str_replace('\\', '/', $this->basePath);
-        }elseif(strpos(php_uname(), 'Linux') !== false){
+        }elseif(str_contains(php_uname(), 'Linux')){
             $this->os               = 'Linux';
         }
         
@@ -313,17 +313,17 @@ class Signal {
             //SIM\printArray($errorMessage);
 
             // Captcha required
-            if(strpos($errorMessage, 'CAPTCHA proof required') !== false){
+            if(str_contains($errorMessage, 'CAPTCHA proof required')){
                 // Store command
                 $failedCommands[]    = $this->command->getCommand();
                 update_option('sim-signal-failed-messages', $failedCommands);
 
                 $this->sendCaptchaInstructions($errorMessage);
-            }elseif(strpos($errorMessage, '429 Too Many Requests') !== false){
+            }elseif(str_contains($errorMessage, '429 Too Many Requests')){
                 // Store command
                 $failedCommands[]    = $this->command->getCommand();
                 update_option('sim-signal-failed-messages', $failedCommands);
-            }elseif(strpos($errorMessage, 'Unregistered user') !== false){
+            }elseif(str_contains($errorMessage, 'Unregistered user')){
                 // get phonenumber from the message
                 preg_match('/"(\+\d*)/m', $errorMessage, $matches);
 
@@ -341,7 +341,7 @@ class Signal {
                         SIM\printArray("Deleting Signal number {$matches[1]} for user $user->ID as it is not valid anymore");
                     }
                 }
-            }elseif(strpos($errorMessage, 'Invalid group id') !== false){
+            }elseif(str_contains($errorMessage, 'Invalid group id')){
                 SIM\printArray($errorMessage);
             }else{
                 SIM\printArray($this->command);
@@ -791,7 +791,7 @@ class Signal {
 
             if(!empty($release['assets']) && is_array($release['assets'])){
                 foreach($release['assets'] as $asset){
-                    if(strpos($asset['browser_download_url'], $this->os)){
+                    if(str_contains($asset['browser_download_url'], $this->os)){
                         $url    = $asset['browser_download_url'];
                     }
                 }

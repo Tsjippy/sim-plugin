@@ -75,7 +75,7 @@ class FancyEmail{
         $empty  = false;
         if(is_array($this->recipients)){
             foreach($this->recipients as $index=>$recipient){
-                if(strpos($recipient, '.empty') !== false){
+                if(str_contains($recipient, '.empty')){
                     unset($this->recipients[$index]);
                 }
             }
@@ -85,7 +85,7 @@ class FancyEmail{
             }else{
                 $this->recipients   = implode(',', $this->recipients);
             }
-        }elseif(strpos($this->recipients, '.empty') !== false){
+        }elseif(str_contains($this->recipients, '.empty')){
             $empty  = true;
         }
         
@@ -175,9 +175,9 @@ class FancyEmail{
             $defaultGreeting    = 'Kind regards,';
         }
         if(
-            strpos(strtolower($this->message), $defaultGreeting) === false &&
-            strpos(strtolower($this->message), 'regards,') === false &&
-            strpos(strtolower($this->message), 'cheers,') === false
+            !str_contains(strtolower($this->message), strtolower($defaultGreeting)) &&
+            !str_contains(strtolower($this->message), 'regards,') &&
+            !str_contains(strtolower($this->message), 'cheers,')
         ){
             $this->message	.= "<br><br><br>$defaultGreeting<br><br>".SITENAME;
         }
@@ -193,7 +193,7 @@ class FancyEmail{
         $this->footer	= "<span style='font-size:10px'>This is an automated e-mail originating from <a href='$url'>$text</a></span>";
 
         // Convert message to html
-        if(strpos($this->message, '<!doctype html>') === false){
+        if(!str_contains($this->message, '<!doctype html>')){
             $this->htmlEmail();
         }
 
@@ -221,7 +221,7 @@ class FancyEmail{
         $url	    = $matches[1];
 
         // add a hash so image is also readible when not logged in
-        if(strpos($url, '/private/') !== false){
+        if(str_contains($url, '/private/')){
             // create the random string
             $str    = rand();
             $hash   = md5($str);

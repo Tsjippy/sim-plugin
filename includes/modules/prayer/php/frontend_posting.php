@@ -29,7 +29,7 @@ add_filter('sim_frontend_content_validation', function($error, $frontEndContent)
     // Check if the title contains the month
     $found  = false;
     foreach($months as $month){
-        if(strpos($frontEndContent->postTitle, $month) !== false){
+        if(str_contains($frontEndContent->postTitle, $month)){
             $found  = true;
             break;
         }
@@ -42,7 +42,7 @@ add_filter('sim_frontend_content_validation', function($error, $frontEndContent)
     $years  = [Date('Y')-2, Date('Y')-1, Date('Y'), Date('Y')+1];
     $found  = false;
     foreach($years as $year){
-        if(strpos($frontEndContent->postTitle, strval($year)) !== false){
+        if(str_contains($frontEndContent->postTitle, strval($year))){
             $found  = true;
             break;
         }

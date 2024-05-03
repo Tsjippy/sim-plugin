@@ -8,6 +8,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		return $optionsHtml;
 	}
 
+	ob_start();
     ?>
     <br>
 	<label>
@@ -17,4 +18,4 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
     <?php
 
     return $optionsHtml.ob_get_clean();
-}, 20);
+}, 20, 3);

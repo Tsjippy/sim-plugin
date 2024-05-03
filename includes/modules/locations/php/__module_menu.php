@@ -113,7 +113,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 				if(is_numeric($settings[$iconName])){
 					$url		= $icons[$settings[$iconName]]->path;
 
-					if(strpos($url, '://' ) === false){
+					if(!str_contains($url, '://' )){
 						$url = plugins_url("ultimate-maps-by-supsystic/modules/icons/icons_files/def_icons/$url");
 					}
 					$img		= "<img src='$url' class='icon' data-id='{$settings[$iconName]}' loading='lazy'>";

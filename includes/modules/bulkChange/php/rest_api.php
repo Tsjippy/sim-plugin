@@ -39,7 +39,7 @@ function bulkUpdateMeta(){
 	
 	// To do: Check if permissions to edit
 
-	if (strpos($metaKey, '#') !== false){
+	if (str_contains($metaKey, '#')){
 		$metaKeyBase 			= explode('#', $metaKey)[0];
 		$metaKeyName 			= explode('#', $metaKey)[1];
 		

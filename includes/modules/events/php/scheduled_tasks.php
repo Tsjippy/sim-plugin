@@ -77,7 +77,7 @@ function anniversaryCheck(){
 			SIM\trySendSignal("Hi $firstName,\nCongratulations with your $age $eventTitle!", $event->post_author);
 
 			//If the author has a partner and this events applies to both of them
-			if($partner && strpos($event->post_title, $coupleString)){
+			if($partner && str_contains($event->post_title, $coupleString)){
 				SIM\trySendSignal("Hi {$partner->first_name},\nCongratulations with your $eventTitle!", $partner->ID);
 			}
 		}

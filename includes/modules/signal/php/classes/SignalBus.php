@@ -518,7 +518,7 @@ class SignalBus extends Signal {
             SIM\printArray($ownTimeStamp);
         }
 
-        if(!empty($this->error) && strpos($this->error, 'Invalid group id') !== false){
+        if(!empty($this->error) && str_contains($this->error, 'Invalid group id')){
             SIM\printArray("Invalid GroupId: $groupId", false, true);
         }
 
@@ -667,7 +667,7 @@ class SignalBus extends Signal {
                 'command' => "{$this->prefix}sendRemoteDeleteMessage int64:'$targetSentTimestamp' array:string:'$recipients'"
             ]);
         }else{
-            if(strpos($recipients, '+') !== false){
+            if(str_contains($recipients, '+')){
                 $this->command = new Command([
                     'command' => "{$this->prefix}sendRemoteDeleteMessage int64:'$targetSentTimestamp' string:'$recipients'"
                 ]);
@@ -850,7 +850,7 @@ class SignalBus extends Signal {
             $this->daemon   =  true;
 
             // Running daemon but not for this website
-            if(strpos($result, $this->basePath) === false && strpos($result, 'do find -name signal-daemon.php') === false){
+            if(!str_contains($result, $this->basePath) && !str_contains($result, 'do find -name signal-daemon.php')){
                 $this->error    = 'The daemon is started but for another website in this user account.<br>';
                 $this->error   .= "You can send messages just fine, but not receive any.<br>";
                 $this->error   .= "To enable receiving messages add this to your crontab (crontab -e): <br>";

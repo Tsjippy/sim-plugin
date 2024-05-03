@@ -402,7 +402,7 @@ class FrontEndContent{
 		$this->postName 										= str_replace("_lite","",$this->postType);
 
 		//show lite version of location by default
-		if(strpos($this->postType, '_lite') !== false){
+		if(str_contains($this->postType, '_lite')){
 			$this->lite 		= true;
 		}
 

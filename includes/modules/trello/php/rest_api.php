@@ -68,7 +68,7 @@ function trelloActions( \WP_REST_Request $request ) {
 			preg_match($pattern, $userProps['duration'],$matches);
 			
 			//Duration is defined in years
-			if (strpos($matches[2], 'year') !== false) {
+			if (str_contains($matches[2], 'year')) {
 				$duration = $matches[1] * 12;
 			//Duration is defined in months
 			}else{

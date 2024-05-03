@@ -243,7 +243,7 @@ class FileUpload{
 
 		//documentpath is already an url
 		$url = '';
-		if(strpos($documentPath, SITEURL) !== false){
+		if(str_contains($documentPath, SITEURL)){
 			$url = $documentPath;
 		}elseif(!empty($documentPath)){
 			$url = SITEURL.'/'.str_replace(ABSPATH, '', $documentPath);

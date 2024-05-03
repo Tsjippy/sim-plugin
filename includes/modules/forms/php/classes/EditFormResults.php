@@ -15,7 +15,7 @@ class EditFormResults extends DisplayFormResults{
 	public function updateSubmission($archive=false){
 		global $wpdb;
 
-		$submissionId	= $this->submission->formresults['id'];
+		$submissionId	= $this->submission->id;
 		if(!is_numeric($submissionId)){
 			if(is_numeric($this->submissionId)){
 				$submissionId	= $this->submissionId;

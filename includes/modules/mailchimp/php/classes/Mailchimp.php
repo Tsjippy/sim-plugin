@@ -97,7 +97,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 			}
 
 			//Only do if valid e-mail
-			elseif(!empty($this->user->user_email) && strpos($this->user->user_email,'.empty') === false && $_SERVER['HTTP_HOST'] != 'localhost'){
+			elseif(!empty($this->user->user_email) && !str_contains($this->user->user_email,'.empty') && $_SERVER['HTTP_HOST'] != 'localhost'){
 				SIM\printArray("Adding '{$this->user->user_email}' to Mailchimp");
 
 				//First add to the audience
@@ -128,7 +128,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				$this->mailchimpStatus = [];
 			}
 
-			if($this->user->user_mail == '' || strpos($this->user->user_mail,'.empty') !== false){
+			if($this->user->user_mail == '' || str_contains($this->user->user_mail,'.empty')){
 				return;
 			}
 

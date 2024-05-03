@@ -43,13 +43,13 @@ class HeicConverter{
                 $base64 = base64_encode($jpg);
 
                 return "data:image/jpeg;base64, $base64";
-            }
-            
-            try{
-                return \Maestroerror\HeicToJpg::convert($path)->saveAs($dest);
-            }catch (\Exception $e) {
-                SIM\printArray($e, true);
-                return explode(':', $e->getMessage())[0];
+            }else{
+                try{
+                    return \Maestroerror\HeicToJpg::convert($path)->saveAs($dest);
+                }catch (\Exception $e) {
+                    SIM\printArray($e, true);
+                    return explode(':', $e->getMessage())[0];
+                }
             }
         }else{
             return false;

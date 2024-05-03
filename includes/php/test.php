@@ -11,6 +11,8 @@ use PhpOffice\PhpWord\IOFactory;
 add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
+
+	wp_mail('enharmsen@gmail.com', "Test HEIC", "Hi Ewald,<br><br>", '', [wp_upload_dir()['basedir']."/test2.heic"]);
 	
     /* $posts = get_posts(
 		array(

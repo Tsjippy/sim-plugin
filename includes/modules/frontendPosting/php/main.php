@@ -142,7 +142,7 @@ add_filter( 'the_content', function ( $content ) {
 	//Do not show if:
 	if (
 		!is_user_logged_in() 							||	// not logged in or
-		strpos($content, '[front_end_post]') !== false 	||	// already on the post edit page
+		str_contains($content, '[front_end_post]')  	||	// already on the post edit page
 		!is_singular() 									||  // it is not a single page
 		is_tax()										||	// not an archive page
 		is_front_page()										// is the front page
@@ -191,7 +191,7 @@ add_filter( 'the_content', function ( $content ) {
 }, 15);
 
 add_filter('sim-template-filter', function($templateFile){
-	if(strpos($templateFile, 'single-attachment') !== false){
+	if(str_contains($templateFile, 'single-attachment')){
 		return MODULE_PATH.'templates/single-attachment.php';
 	}
 

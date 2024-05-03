@@ -249,7 +249,7 @@ add_action('init', function(){
 
     if (
         is_user_logged_in()                             &&	// we are logged in
-        strpos($user->user_email,'.empty') === false    && 	// we have a valid email
+        !str_contains($user->user_email,'.empty')       && 	// we have a valid email
         !is_admin()                                     &&  // we are not on an admin page
         (
             !$methods                                   ||	// and we have no 2fa enabled or

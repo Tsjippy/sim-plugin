@@ -51,7 +51,7 @@ function expiryWarnings(){
 	$dashboardWarnings->reviewReminder();
 
 	if (empty($dashboardWarnings->reminderHtml)){
-		if(strpos($_SERVER['REQUEST_URI'], 'wp-admin/post.php') !== false || strpos($_SERVER['REQUEST_URI'], 'wp-json') !== false){
+		if(str_contains($_SERVER['REQUEST_URI'], 'wp-admin/post.php') || str_contains($_SERVER['REQUEST_URI'], 'wp-json')){
 			return 'Reminder block<br>This will show empty as you have no reminders';
 		}
 

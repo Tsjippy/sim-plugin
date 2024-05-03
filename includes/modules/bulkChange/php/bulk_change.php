@@ -16,7 +16,7 @@ function bulkchangeMeta($metaKey, $allowedRoles, $returnFamily){
 	
 	$metaKeyBase = $metaKey;
 	$metaKeyName = $metaKey;
-	if (strpos($metaKey, '#') !== false){
+	if (str_contains($metaKey, '#')){
 		$metaKeyBase = explode('#',$metaKey)[0];
 		$metaKeyName = explode('#',$metaKey)[1];
 		
@@ -87,7 +87,7 @@ function bulkchangeMeta($metaKey, $allowedRoles, $returnFamily){
  * @return	string					the html
 */
 function bulkChangeUpload($metaKey, $targetDir){
-	if (strpos($metaKey, '#') !== false){
+	if (str_contains($metaKey, '#')){
 		$metaKeyBase 	= explode('#', $metaKey)[0];
 		$metaKeyName 	= explode('#', $metaKey)[1];
 		$metaKey		= $metaKeyBase.'['.$metaKeyName.']';
@@ -101,7 +101,7 @@ function bulkChangeUpload($metaKey, $targetDir){
 	foreach($users as $user){
 		$value 	= get_user_meta( $user->ID, $metaKeyBase, true );
 
-		if (strpos($metaKey, '#') !== false){
+		if (str_contains($metaKey, '#')){
 			$value			= $value[$metaKeyName];
 		}
 		

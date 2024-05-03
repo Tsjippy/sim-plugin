@@ -89,7 +89,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 							?>
 							<select  name="groups[<?php echo $index;?>][name]">
 								<?php
-								if(strpos(php_uname(), 'Linux') !== false){
+								if(str_contains(php_uname(), 'Linux')){
 									$signal 		= new SIM\SIGNAL\SignalBus();
 								}else{
 									$signal 		= new SIM\SIGNAL\Signal();

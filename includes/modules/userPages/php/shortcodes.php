@@ -329,7 +329,7 @@ function buildUserDetailPdf($download=true){
 		$email	= $user->user_email;
 		
 		//Add to recipients
-		if (strpos($user->user_email,'.empty') !== false){
+		if (str_contains($user->user_email,'.empty')){
 			$email	= '';
 		}
 		

@@ -52,7 +52,7 @@ function getAnniversaries(){
 			if(isset($messages[$event->post_author])){
 				$name	= get_userdata($event->post_author)->display_name;
 				// remove the name of the previous text
-				if(strpos($title, $name) !== false){
+				if(str_contains($title, $name)){
 					$messages[$event->post_author]	= trim(str_replace($name, '', $messages[$event->post_author]));
 				}
 				$messages[$event->post_author]	.= ' and the ';

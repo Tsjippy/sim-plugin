@@ -268,7 +268,12 @@ add_action( 'rest_api_init', function () {
 
 function getUniqueName($element, $update, $oldElement, $simForms){
 	$element->name	= end(explode('\\', $element->name));
-	if(strpos($element->name, '[]') !== false || ($update && $oldElement->name == $element->name && count($simForms->getElementByName($element->name, '', false)) == 1)){
+	if(
+		str_contains($element->name, '[]') || 
+		(
+			$update && $oldElement->name == $element->name && 
+			count($simForms->getElementByName($element->name, '', false)) == 1)
+		){
 		return $element->name;
 	}
 
@@ -381,7 +386,7 @@ function addFormElement(){
 	if(
 		in_array($element->type, $simForms->nonInputs) 		&& 	// this is a non-input
 		$element->type != 'datalist'						&& 	// but not a datalist
-		strpos($element->name, $element->type) === false		// and the type is not yet added to the name
+		!str_contains($element->name, $element->type)			// and the type is not yet added to the name
 	){
 		$element->name	.= '_'.$element->type;
 	}

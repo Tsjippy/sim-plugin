@@ -111,7 +111,7 @@ function vaccinationReminder(){
 
 					$childTitle = SIM\getChildTitle($user->ID);
 					foreach($parents as $parent){
-						if(strpos($parent->user_email,'.empty') === false){
+						if(!str_contains($parent->user_email,'.empty')){
 							if(!empty($recipients)){
 								$recipients .= ', ';
 							}
@@ -127,7 +127,7 @@ function vaccinationReminder(){
 				//not a child
 				}else{
 					//If this not a valid email skip this email
-					if(strpos($userdata->user_email,'.empty') === false){
+					if(!str_contains($userdata->user_email,'.empty')){
 						continue;
 					}
 
@@ -175,7 +175,7 @@ function vaccinationReminders($userId){
 
 	$reminderHtml = "";
 	foreach($medicalUserInfo as $key=>$info){
-		if (strpos($key, 'expiry_date') !== false) {
+		if (str_contains($key, 'expiry_date')) {
 			//Its an array, so another vaccination
 			if(is_array($info)){
 				foreach($info as $date_key=>$date){
@@ -280,7 +280,7 @@ function greencardReminder(){
 				$to = $user->user_email;
 
 				//Skip if not valid email
-				if(empty($to) || strpos($to,'.empty') !== false){
+				if(empty($to) || str_contains($to,'.empty')){
 					continue;
 				}
 
@@ -634,7 +634,7 @@ function accountExpiryCheck(){
 		];
 
 		//Send the mail if valid email
-		if(strpos($user->user_email,'.empty') === false){
+		if(!str_contains($user->user_email,'.empty')){
 			$recipient = $user->user_email;
 		}else{
 			$recipient = $staEmail;
@@ -709,14 +709,14 @@ function reviewReminders(){
 				$personnelInfo	= get_user_meta($user->ID, "personnel", true);
 				$arrivalDate	= get_user_meta($user->ID, 'arrival_date', true);
 				//Only do when not arriving this year
-				if(is_array($personnelInfo) && !empty($personnelInfo['review_date']) && strpos($arrivalDate, date('Y')) === false){
+				if(is_array($personnelInfo) && !empty($personnelInfo['review_date']) && !str_contains($arrivalDate, date('Y')) ){
 					$reviewDate	= date('m', strtotime($personnelInfo['review_date']));
 					//Start sending the warning 1 month before until it is done.
 					if(($reviewDate - 2) < date('m')){
 						//Send e-mail
 						$to = $user->user_email;
 						//Skip if not valid email
-						if(strpos($to,'.empty') !== false){
+						if(str_contains($to,'.empty')){
 							continue;
 						}
 
@@ -765,7 +765,7 @@ function checkLastLoginDate(){
 			$to = $user->user_email;
 
 			//Skip if not valid email
-			if(strpos($to,'.empty') !== false){
+			if(str_contains($to,'.empty')){
 				continue;
 			}
 
@@ -791,7 +791,7 @@ function checkLastLoginDate(){
 				//Send e-mail
 				$to = $user->user_email;
 				//Skip if not valid email
-				if(strpos($to, '.empty') !== false){
+				if(str_contains($to, '.empty')){
 					continue;
 				}
 

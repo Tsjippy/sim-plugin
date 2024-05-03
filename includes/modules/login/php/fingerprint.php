@@ -72,7 +72,7 @@ function generateCallTrace($exception = false){
     $result = array();
 
     for($i = 0; $i < $length; $i++){
-        $result[] = ($i + 1).')'.substr($trace[$i], strpos($trace[$i], ' '));
+        $result[] = ($i + 1).')'.substr($trace[$i], str_contains($trace[$i], ' '));
     }
 
     return "Traceback:\n                              ".implode("\n                              ", $result);

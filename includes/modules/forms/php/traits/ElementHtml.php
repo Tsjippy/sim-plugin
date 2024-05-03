@@ -381,7 +381,7 @@ trait ElementHtml{
 			
 			// Element setting
 			if(!empty($element->foldername)){
-				if(strpos($element->foldername, "private/") !== false){
+				if(str_contains($element->foldername, "private/")){
 					$targetDir	= $element->foldername;
 				}else{
 					$targetDir	= "private/".$element->foldername;
@@ -427,7 +427,7 @@ trait ElementHtml{
 			//Get the field name, make it lowercase and replace any spaces with an underscore
 			$elName	= $element->name;
 			// [] not yet added to name
-			if(in_array($element->type, ['radio','checkbox']) && strpos($elName, '[]') === false) {
+			if(in_array($element->type, ['radio','checkbox']) && !str_contains($elName, '[]')) {
 				$elName .= '[]';
 			}
 			
@@ -440,7 +440,7 @@ trait ElementHtml{
 				$elId	= "id='$elName'";
 			}
 
-			if(strpos($elName, '[]') !== false){
+			if(str_contains($elName, '[]')){
 				$elId	= "id='E$element->id'";
 			}
 			
@@ -510,7 +510,7 @@ trait ElementHtml{
 
 			$values	= $this->getElementValues($element);
 			if($this->multiwrap || !empty($element->multiple)){
-				if(strpos($elType, 'input') !== false){
+				if(str_contains($elType, 'input')){
 					$elValue	= "value='%value%'";
 				}
 			}elseif(!empty($values) || !empty($value)){
@@ -525,7 +525,7 @@ trait ElementHtml{
 				}
 
 				if(
-					strpos($elType, 'input') !== false && 
+					str_contains($elType, 'input') && 
 					!empty($val) && 
 					!in_array($elType, ['radio', 'checkbox'])
 				){

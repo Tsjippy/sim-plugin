@@ -72,7 +72,7 @@ add_action('sim-admin-settings-post', function(){
 	$local	= SIM\getModuleOption(MODULE_SLUG, 'local');
 
 	if($local){
-		if(strpos(php_uname(), 'Linux') !== false){
+		if(str_contains(php_uname(), 'Linux')){
 			$signal = new SignalBus();
 		}else{
 			$signal = new Signal();
@@ -300,7 +300,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<?php
 	
 	if($local){
-		if(strpos(php_uname(), 'Linux') !== false){
+		if(str_contains(php_uname(), 'Linux')){
 			$signal = new SignalBus();
 			$signal->createDbTable();
 		}else{
@@ -530,7 +530,7 @@ function sentMessagesTable($startDate, $endDate, $amount){
 						$time		= get_date_from_gmt( $isoDate, TIMEFORMAT);
 
 						$recipient	= '';
-						if(strpos($message->recipient, '+') !== false){
+						if(str_contains($message->recipient, '+')){
 							$recipient	= $wpdb->get_var("SELECT display_name FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->recipient%')");
 						}else{
 							$signal->listGroups();
@@ -721,7 +721,7 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 						continue;
 					}
 
-					if(strpos($chat, '+') === false){
+					if(!str_contains($chat, '+')){
 						$chatName	= $signal->findGroupName($chat );
 						if(empty($chatName)){
 							$chatName	= 'Unknow group';
@@ -956,7 +956,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 				<?php
 				echo $phonenumbers;
 				if(isset($settings['local']) && $settings['local']){
-					if(strpos(php_uname(), 'Linux') !== false){
+					if(str_contains(php_uname(), 'Linux')){
 						$signal = new SignalBus();
 					}else{
 						$signal = new Signal();

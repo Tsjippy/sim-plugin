@@ -48,7 +48,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	</label>
 	<br>
 	<?php
-	if(isset($settings["key"]) && isset($settings["token"]) && strpos(SITEURL, 'localhost') === false){
+	if(isset($settings["key"]) && isset($settings["token"]) && !str_contains(SITEURL, 'localhost')){
 		?>
 		<label>
 			Trello board you want listen to
