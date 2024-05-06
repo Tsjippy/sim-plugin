@@ -3,14 +3,19 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- booking reminders
-- support for multi text area's
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [2.43.4] - 2024-05-06
+
+
+### Added
+- booking reminders
+- support for multi text area's
 
 ## [2.43.3] - 2024-05-03
 
