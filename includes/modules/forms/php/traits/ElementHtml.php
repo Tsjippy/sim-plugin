@@ -535,7 +535,19 @@ trait ElementHtml{
 					if(!empty($values['defaults']) && (empty($this->formData->save_in_meta) || empty($values['metavalue']))){
 						$val		= array_values((array)$values['defaults'])[0];
 					}elseif(!empty($values['metavalue'])){
-						$val		= array_values((array)$values['metavalue'])[0];
+						$elIndex	= 0;
+						if(str_contains($element->name, '[]')){
+							// Check if there are multiple elements with the same name
+							$elements	= $this->getElementByName($element->name, '', false);
+
+							foreach($elements as $elIndex=>$el){
+								if($el->id == $element->id){
+									break;
+								}
+							}
+						}
+
+						$val		= array_values((array)$values['metavalue'])[$elIndex];
 					}
 				}
 
@@ -558,8 +570,8 @@ trait ElementHtml{
 			if($element->type == 'textarea'){
 				if(!empty($value)){
 					$elContent = $value;
-				}elseif(isset($values['metavalue'][0])){
-					$elContent = $values['metavalue'][0];
+				}elseif(!empty($val)){
+					$elContent = $val;
 				}
 			}elseif(!empty($element->text)){
 				switch($element->type){

@@ -1084,22 +1084,21 @@ class Bookings{
                 $accommodation  += " room $room";
             }
 
-
             $userId             = $submissions[0]->user_id;
             SIM\trySendSignal("Just a reminder about your booking for $accommodationString tommorow. Hopefully you didn't forget:)", $userId);
 
             $this->forms->getForm($submissions[0]->formresults['formid']);
 
-            // get the 
+            // get the booking selector element
             $bookingDetails     = maybe_unserialize($this->forms->getElementByType('booking_selector')[0]->booking_details);
 
             // find the subject
             if($bookingDetails && !empty($bookingDetails['subjects'])){
                 foreach($bookingDetails['subjects'] as $subject){
                     if($subject['name'] == $accommodation){
-                        $managerId    = $subject['manager'];
-                        $name           = get_userdata($userId)->display_name;
-                        SIM\trySendSignal("Just a reminder about the booking for $accommodationString by $name ", $managerId);
+                        $managerId  = $subject['manager'];
+                        $name       = get_userdata($userId)->display_name;
+                        SIM\trySendSignal("Just a reminder about tommorows booking for $accommodationString by $name ", $managerId);
                     }
                 }
             }
