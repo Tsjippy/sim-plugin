@@ -509,3 +509,17 @@ function quoataDocumentUpload($quotaDocuments){
 	
 	return ob_get_clean();
 }
+
+add_filter('sim_before_saving_formdata',function($formResults, $object){
+	if($object->formData->name != 'Travelformnew'){
+		return $formResults;
+	}
+	
+	foreach($formResults['travel'] as $index=>&$trip){
+		if(empty($trip['date']) || empty($trip['from']) || empty($trip['to'])){
+			unset($formResults['travel'][$index]);
+		}
+	}
+
+	return $formResults;
+}, 10, 2);

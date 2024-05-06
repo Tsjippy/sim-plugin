@@ -98,6 +98,7 @@ class EditFormResults extends DisplayFormResults{
 
 			$splitElementName	= '';
 			if(isset($form->split)){
+				$form->split				= maybe_unserialize($form->split);
 				$splitElementName			= $this->getElementById($form->split[0], 'name');
 				$result						= preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $splitElementName, $matches);
 				if($result){
