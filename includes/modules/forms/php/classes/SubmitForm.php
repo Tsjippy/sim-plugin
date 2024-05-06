@@ -402,14 +402,19 @@ class SubmitForm extends SimForms{
 
 		// remove empty splitted entries
 		if(isset($this->formData->split)){
-			foreach($this->formData->split as $id){
+			foreach($this->formData->split as $index=>$id){
 				$name	= $this->getElementById($id, 'name');
-				// Check if we are dealing with an split element with form name[X]name
-				preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $name, $matches);
 
-				if($matches && isset($matches[1]) && is_array($this->submission->formresults[$matches[1]])){
+				// Check if we are dealing with an split element with form name[X]name
+				preg_match('/(.*?)\[[0-9]\](\[.*?\])/', $name, $matches);
+
+				if(
+					$matches && 
+					isset($matches[1]) && 
+					is_array($this->submission->formresults[$matches[1]])
+				){
 					// loop over all the sub entries of the split field to see if they are empty
-					foreach($this->submission->formresults[$matches[1]] as $index=>$sub){
+					foreach($this->submission->formresults[$matches[1]] as $index=>&$sub){
 						$empty	= true;
 						if(is_array($sub)){
 							foreach($sub as $s){
@@ -424,10 +429,12 @@ class SubmitForm extends SimForms{
 							// remove from results
 							unset($this->submission->formresults[$matches[1]][$index]);
 						}
+
+						$sub['elementindex']	= $index; // store the elementname so we can get the original element for editing
 					}
 
 					// reindex
-					$this->submission->formresults[$matches[1]]	= array_values(	$this->submission->formresults[$matches[1]]);
+					$this->submission->formresults[$matches[1]] = array_values(	$this->submission->formresults[$matches[1]]);
 				}
 			}
 		}

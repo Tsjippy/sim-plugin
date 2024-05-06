@@ -454,34 +454,6 @@ function getInputHtml(){
 	$element		= $formTable->getElementById($elementId);
 
 	$curValue		= '';
-	$subId			= '';
-	if(isset($_POST['subid']) && is_numeric($_POST['subid'])){
-		$subId			= $_POST['subid'];
-
-		$splitElements	= $formTable->formData->split;
-
-		foreach($splitElements as $id){
-			$element	= $formTable->getElementById($id);
-
-			// Check if we are dealing with an split element with form name[X]name
-			preg_match('/(.*?)\[[0-9]\]\[.*?\]/', $element->name, $matches);
-
-			if($matches && isset($matches[1])){
-				if(isset($formTable->submission->formresults[$matches[1]][$subId][$element->name])){
-					$curValue	= $formTable->submission->formresults[$matches[1]][$subId][$elementName];
-				}
-
-				$element		= $formTable->getElementByName($matches[1]."[$subId][$elementName]");
-
-				// try to find an element with the given name and any subid
-				$index	= $subId;
-				while(!$element){
-					$index++;
-					$element	= $formTable->getElementByName($matches[1]."[$index][$elementName]");
-				}
-			}
-		}
-	}
 	
 	if(!isset($element)){
 		$element		= $formTable->getElementById($elementId);
@@ -492,15 +464,22 @@ function getInputHtml(){
 	}
 
 	// get value
+
+	// Check if we are dealing with an split element with form name[X]name
+	preg_match('/(.*?)\[[0-9]\]\[(.*?)\]/', $element->name, $matches);
+
 	if(isset($formTable->submission->formresults[$elementName])){
 		$curValue	= $formTable->submission->formresults[$elementName];
 	}elseif(isset($formTable->submission->formresults[str_replace('[]', '', $element->name)])){
 		$curValue	= $formTable->submission->formresults[str_replace('[]', '', $element->name)];
+	}elseif(isset($formTable->submission->formresults[$matches[1]])){
+		$subId = $_POST['subid'];
+		if(is_numeric($subId) && isset($formTable->submission->formresults[$matches[1]][$subId][$matches[2]])){
+			$curValue	= $formTable->submission->formresults[$matches[1]][$subId][$matches[2]];
+		}
 	}
 
-	if(is_numeric($subId) && is_array($curValue)){
-		$curValue	= $curValue[$subId];
-	}
+	
 
 	// Get element html with the value allready set
 	return $formTable->getElementHtml($element, $curValue, true);

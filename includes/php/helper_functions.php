@@ -32,7 +32,7 @@ function updateFamilyMeta($userId, $metaKey, $value){
 	}
 }
 
- /**
+/**
  * Create a dropdown with all users
  * @param 	string		$title	 		The title to display above the select
  * @param	bool		$onlyAdults	 	Whether children should be excluded. Default false

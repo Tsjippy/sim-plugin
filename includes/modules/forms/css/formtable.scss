@@ -1,9 +1,10 @@
 @use '../../../css/scss/global' as *;
 
 .limit-length{
-    min-width: 300px;
+    //min-width: 300px;
     white-space: pre-wrap;
-    word-wrap: break-word;
+    //word-wrap: break-word;
+    max-width: 200px;
 }
 
 .column_setting_wrapper{
@@ -100,5 +101,20 @@
 }
 
 .visibilityicon{
-    margin-right: 20px;
+    margin-right: 5px;
+}
+
+td button{
+    margin-bottom: 3px;
+}
+
+input[type=number].column_settings {
+    width: 70px;
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    }
 }

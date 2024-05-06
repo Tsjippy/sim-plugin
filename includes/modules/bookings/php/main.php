@@ -42,7 +42,12 @@ add_action('sim-after-formbuilder-element-options', function($element){
                     <div class="clone_div" data-divid="<?php echo $index;?>" style='display: flex;'>
                         <label name="Subject" class=" formfield formfieldlabel" style='width: auto;margin-right: 20px;'>
                             <h4 class="labeltext">Subject <?php echo $index+1;?></h4>
+                            <h5 style='margin-bottom:2px;'><strong>Name</bold></strong>
                             <input type="text" name="formfield[booking_details][subjects][<?php echo $index;?>][name]" id="subjects" class=" formfield formfieldinput" value="<?php echo $subject['name'];?>" placeholder="Enter subject name" style='width: unset;'>
+                            <h5 style='margin-bottom:2px;'><strong>Manager</strong></h5>
+                            <?php
+                            echo SIM\userSelect('', false, false, '', "formfield[booking_details][subjects][$index][manager]", [], $subject['manager']);
+                            ?>
                         </label>
 
                         <label class=" formfield formfieldlabel">

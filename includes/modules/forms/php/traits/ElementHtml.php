@@ -284,6 +284,53 @@ trait ElementHtml{
 	}
 
 	/**
+	 * Get the previous values of a element
+	 */
+	function getPrevValues($element, $returnArray=false){
+		// Check if we should inlcude previous submitted values
+		$prevValues		= '';
+
+		if($returnArray){
+			$prevValues		= [];
+		}
+		
+		if(str_contains($_SERVER['REDIRECT_URL'], 'get_input_html')){
+			$valueIndexes	= explode('[', $element->name);
+
+			foreach($valueIndexes as $i=>$index){
+				if($i == 0){
+					if(!isset($this->submission->formresults[$index])){
+						break;
+					}
+
+					$prevValues	= $this->submission->formresults[$index];
+				}else{
+					if($i == 1 && is_numeric($_POST['subid'])){
+						$index	= $_POST['subid'];
+					}
+
+					$index	= trim($index, ']');
+
+					if(!isset($prevValues[$index])){
+						break;
+					}
+
+					$prevValues	= $prevValues[$index];
+				}					
+			}
+
+			if(is_string($prevValues)){
+				$result	= json_decode($prevValues);
+
+				if (json_last_error() === JSON_ERROR_NONE) {
+					$prevValues		= $result;
+				}
+			}
+		}
+
+		return $prevValues;
+	}
+	/**
 	 * Gets the html of form element
 	 *
 	 * @param	object	$element		The element
@@ -471,41 +518,9 @@ trait ElementHtml{
 
 			/*
 				ELEMENT VALUE
-			*/
-			// Check if we should inlcude previous submitted values
-			$prevValues		= '';
-			if(str_contains($_SERVER['REDIRECT_URL'], 'get_input_html')){
-				$valueIndexes	= explode('[', $element->name);
-
-				foreach($valueIndexes as $i=>$index){
-					if($i == 0){
-						if(!isset($this->submission->formresults[$index])){
-							break;
-						}
-
-						$prevValues	= $this->submission->formresults[$index];
-					}else{
-						$index	= trim($index, ']');
-
-						if(!isset($prevValues[$index])){
-							break;
-						}
-
-						$prevValues	= $prevValues[$index];
-					}					
-				}
-
-				if(is_string($prevValues)){
-					$result	= json_decode($prevValues);
-
-					if (json_last_error() === JSON_ERROR_NONE) {
-						$prevValues		= $result;
-					}
-				}
-			}
-				
-			if(empty($value) & !empty($prevValues)){
-				$value	= $prevValues;
+			*/				
+			if(empty($value)){
+				$value	= $this->getPrevValues($element);
 			}
 
 			$values	= $this->getElementValues($element);
@@ -601,7 +616,7 @@ trait ElementHtml{
 						// container for choices made
 						$html	.= "<ul class='listselectionlist'>";
 							// add previous made inputs
-							foreach($prevValues as $v){
+							foreach($this->getPrevValues($element, true) as $v){
 								$transValue		= $this->transformInputData($v, $element->name, $this->submission->formresults);
 
 								$html	.= "<li class='listselection'>";
@@ -783,7 +798,19 @@ trait ElementHtml{
 		if(!empty($value)){
 			if(is_array($value)){
 				foreach($value as $v){
-					$lowValues[] = strtolower($v);
+					if(is_array($v)){
+						foreach($v as $av){
+							if(is_array($av)){
+								foreach($av as $aav){
+									$lowValues[] = strtolower($aav);
+								}
+							}else{
+								$lowValues[] = strtolower($av);
+							}
+						}
+					}else{
+						$lowValues[] = strtolower($v);
+					}
 				}
 			}else{
 				$lowValues[] = strtolower($value);

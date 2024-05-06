@@ -58,6 +58,8 @@ class DisplayFormResults extends DisplayForm{
 	 *
 	 * @param	int		$userId			Optional the user id to get the results of. Default null
 	 * @param	int		$submissionId	Optional a specific id. Default null
+	 *
+	 * @return	array					array of results
 	 */
 	public function getSubmissions($userId=null, $submissionId=null, $all=false){
 		global $wpdb;
@@ -884,7 +886,7 @@ class DisplayFormResults extends DisplayForm{
 					Write the content to the cell, convert to something if needed
 			*/
 			$elementName 	= str_replace('[]', '', $columnSetting['name']);
-			$class 			= '';
+			$class 			= $columnSetting['name'];
 
 			//add field value if we are allowed to see it
 			if($value != 'X'){
@@ -957,8 +959,14 @@ class DisplayFormResults extends DisplayForm{
 			
 			//if the user has one of the roles defined for this element
 			if($elementEditRights && $elementName != 'id'){
+				
 				$class	.= ' edit_forms_table';
 				$class	= trim($class);
+
+				// check if we can update the element name with the indexed one
+				if(isset($values['elementindex']) && isset($this->submission->formresults[$name][0][$elementName])){
+					$elementName	= $name.'['.$values['elementindex'].']['.$elementName.']';
+				}
 				$class	= " class='$class' data-name='$elementName'";
 			}elseif(!empty($class)){
 				$class	= trim($class);
@@ -1089,11 +1097,12 @@ class DisplayFormResults extends DisplayForm{
 				
 				<div class="column_setting_wrapper">
 					<label class="columnheading formfieldbutton">Sort</label>
-					<label class="columnheading column_settings">Field name</label>
+					<label class="columnheading column_settings" style="width: 200px;">Field name</label>
 					<label class="columnheading column_settings">Display name</label>
 					<label style="width: 30px;"></label>
 					<label class="columnheading column_settings">Display permissions</label>
 					<label class="columnheading column_settings">Edit permissions</label>
+					<label class="columnheading column_settings" style="width: 60px;">Width</label>
 				</div>
 				<?php
 				foreach ($this->columnSettings as $elementIndex=>$columnSetting){
@@ -1102,6 +1111,8 @@ class DisplayFormResults extends DisplayForm{
 					}
 
 					$niceName	= $columnSetting['nice_name'];
+
+					$width		= $columnSetting['width'];
 					
 					if($columnSetting['show'] == 'hide'){
 						$visibility	= 'invisible';
@@ -1121,20 +1132,20 @@ class DisplayFormResults extends DisplayForm{
 						<?php
 						//only add view permission for numeric elements others are buttons
 						if(is_numeric($elementIndex)){
-						?>
-						<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][view_right_roles][]' multiple='multiple'>
-							<?php
-							foreach($viewRoles as $key=>$roleName){
-								if(isset($columnSetting['view_right_roles']) && in_array($key,(array)$columnSetting['view_right_roles'])){
-									$selected = 'selected="selected"';
-								}else{
-									$selected = '';
-								}
-								echo "<option value='$key' $selected>$roleName</option>";
-							}
 							?>
-						</select>
-						<?php
+							<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][view_right_roles][]' multiple='multiple'>
+								<?php
+								foreach($viewRoles as $key=>$roleName){
+									if(isset($columnSetting['view_right_roles']) && in_array($key,(array)$columnSetting['view_right_roles'])){
+										$selected = 'selected="selected"';
+									}else{
+										$selected = '';
+									}
+									echo "<option value='$key' $selected>$roleName</option>";
+								}
+								?>
+							</select>
+							<?php
 						}else{
 							?>
 							<div class='column_settings'></div>
@@ -1143,17 +1154,19 @@ class DisplayFormResults extends DisplayForm{
 						?>
 						
 						<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][edit_right_roles][]' multiple='multiple'>
-						<?php
-						foreach($editRoles as $key=>$roleName){
-							if(isset($columnSetting['edit_right_roles']) && @in_array($key,(array)$columnSetting['edit_right_roles'])){
-								$selected = 'selected="selected"';
-							}else{
-								$selected = '';
+							<?php
+							foreach($editRoles as $key=>$roleName){
+								if(isset($columnSetting['edit_right_roles']) && @in_array($key,(array)$columnSetting['edit_right_roles'])){
+									$selected = 'selected="selected"';
+								}else{
+									$selected = '';
+								}
+								echo "<option value='$key' $selected>$roleName</option>";
 							}
-							echo "<option value='$key' $selected>$roleName</option>";
-						}
-						?>
+							?>
 						</select>
+
+						<input type="number" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][width]" value="<?php echo $width;?>" min="100" placeholder="200">
 					</div>
 					<?php
 				}
@@ -1759,6 +1772,12 @@ class DisplayFormResults extends DisplayForm{
 		}
 
 		?>
+		<style>
+			.name{
+				max-width: 50px;
+    			white-space: normal;
+			}
+		</style>
 		<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>' data-type='<?php echo $type;?>' data-page='<?php echo $this->currentPage;?>'>
 			<?php
 			$this->resultTableHead($type);

@@ -8,6 +8,11 @@ add_action('init', function(){
 	add_action( 'anniversary_check_action', __NAMESPACE__.'\anniversaryCheck');
 	add_action( 'remove_old_schedules_action', __NAMESPACE__.'\removeOldSchedules');
 	add_action( 'add_repeated_events_action', __NAMESPACE__.'\addRepeatedEvents');
+
+	add_action('send_event_reminder_action', function ($eventId){
+		$events = new DisplayEvents();
+		$events->sendEventReminder($eventId);
+	});
 });
 
 /**

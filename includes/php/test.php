@@ -12,7 +12,8 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
-	wp_mail('enharmsen@gmail.com', "Test HEIC", "Hi Ewald,<br><br>", '', [wp_upload_dir()['basedir']."/test2.heic"]);
+	$bookings	= new BOOKINGS\Bookings();
+	$bookings->sendBookingReminder(112);
 	
     /* $posts = get_posts(
 		array(

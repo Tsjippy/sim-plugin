@@ -836,6 +836,20 @@ class Bookings{
                 'pending'           => $pending
             )
         );
+		
+		if(!empty($wpdb->last_error)){
+			return new \WP_Error('bookings', $wpdb->last_error);
+		}
+
+		$bookingId   = $wpdb->insert_id;
+
+		//Create an booking warning for the owner and the manager
+        $start	= new \DateTime($event['startdate'].' '.$event['starttime'], new \DateTimeZone(wp_timezone_string()));
+
+        //Warn 1 day in advance
+        $start	= $start->getTimestamp() - DAY_IN_SECONDS;
+
+        wp_schedule_single_event($start, 'send_booking_reminder_action', [$bookingId]);
     }
 
     /**
@@ -1010,21 +1024,27 @@ class Bookings{
 		return $wpdb->get_results($query);
     }
 
-    /** Get a booking by submission id */
+    /** Get a booking by booking id */
     protected function getBookingById($id){
         global $wpdb;
 
 		$query	    = "SELECT * FROM $this->tableName WHERE id=$id ";
 
-		return  $wpdb->get_results($query)[0];
+		$results    =  $wpdb->get_results($query);
+
+        if(!empty($results)){
+            return $results[0];
+        }
+		
+        return false;
     }
 
     /**
      * Get a booking by submission id
      *
-     * @param int   $id     The submission id
+     * @param   int             $id     The submission id
      *
-     * @return  object|false    The booking or false if no booking found
+     * @return  object|false            The booking or false if no booking found
      * */
     public function getBookingsBySubmission($id){
         global $wpdb;
@@ -1037,5 +1057,52 @@ class Bookings{
         }
 		
         return false;
+    }
+
+    /**
+     * Sends a reminder to the owner of a booking and to the manager 
+     */
+    public function sendBookingReminder($bookingId){
+        $booking    = $this->getBookingById($bookingId);
+
+        if(!$booking ){
+            return;
+        }
+
+        $subject    = $booking->subject;
+
+        $submissions = $this->forms->getSubmissions(null, $booking->submission_id);
+
+        if(!empty($submissions)){
+            $exploded       = explode(';', $booking->subject);
+            $accommodation  = $exploded[0];
+
+            $accommodationString    = $accommodation;
+            if(count($exploded) > 1){
+                $room   = $exploded[1];
+
+                $accommodation  += " room $room";
+            }
+
+
+            $userId             = $submissions[0]->user_id;
+            SIM\trySendSignal("Just a reminder about your booking for $accommodationString tommorow. Hopefully you didn't forget:)", $userId);
+
+            $this->forms->getForm($submissions[0]->formresults['formid']);
+
+            // get the 
+            $bookingDetails     = maybe_unserialize($this->forms->getElementByType('booking_selector')[0]->booking_details);
+
+            // find the subject
+            if($bookingDetails && !empty($bookingDetails['subjects'])){
+                foreach($bookingDetails['subjects'] as $subject){
+                    if($subject['name'] == $accommodation){
+                        $managerId    = $subject['manager'];
+                        $name           = get_userdata($userId)->display_name;
+                        SIM\trySendSignal("Just a reminder about the booking for $accommodationString by $name ", $managerId);
+                    }
+                }
+            }
+        }
     }
 }
