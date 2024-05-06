@@ -7,9 +7,14 @@
 ### Changed
 
 ### Fixed
-- auto archove form results
 
 ### Updated
+
+## [2.43.6] - 2024-05-06
+
+
+### Fixed
+- auto archove form results
 
 ## [2.43.5] - 2024-05-06
 
