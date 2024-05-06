@@ -4,6 +4,7 @@
 
 ### Added
 - booking reminders
+- support for multi text area's
 
 ### Changed
 
