@@ -11,9 +11,6 @@ use PhpOffice\PhpWord\IOFactory;
 add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
-
-	$bookings	= new BOOKINGS\Bookings();
-	$bookings->sendBookingReminder(112);
 	
     /* $posts = get_posts(
 		array(
