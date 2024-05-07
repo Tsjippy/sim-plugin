@@ -117,5 +117,5 @@ add_shortcode( 'repairfund', function($atts){
         }
     }
 
-    return "$". $totalAvailable - $totalSpent;
+    return "$". number_format(round($totalAvailable - $totalSpent, 2),2);
 });
