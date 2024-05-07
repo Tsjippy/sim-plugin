@@ -6,6 +6,7 @@
 - Repair fund indicator shortcode
 
 ### Changed
+- add zeros if needed
 
 ### Fixed
 
