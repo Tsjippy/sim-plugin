@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- Repair fund indicator shortcode
 
 ### Changed
 
