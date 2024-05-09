@@ -20,7 +20,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
     <div id="signalmessage" class="frontendform">
         <h4>Signal</h4>
         <label>
-            <input type='checkbox' name='send_signal' value='send_signal' <?php echo $checked; ?>>
+            <input type='checkbox' name='send_signal' value='1' <?php echo $checked; ?>>
             Send signal message on <?php echo $frontendContend->update == 'true' ? 'update' : 'publish';?>
         </label>
 
@@ -42,7 +42,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
             <br>
             <br>
             <label>
-                <input type="checkbox" name="signal_url">
+                <input type="checkbox" name="signal_url" value='1'>
                 Include the url in the message even if the whole content is posted
             </label>
         </div>
@@ -52,10 +52,10 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 
 // Send Signal message about the new or updated post
 add_action('sim_after_post_save', function($post){
-    if(isset($_POST['send_signal']) && $_POST['send_signal'] == 'send_signal'){
-        update_metadata( 'post', $post->ID, 'send_signal','checked');
+    if(isset($_POST['send_signal']) && $_POST['send_signal']){
+        update_metadata( 'post', $post->ID, 'send_signal', true);
         update_metadata( 'post', $post->ID, 'signal_message_type', $_POST['signalmessagetype']);
-        update_metadata( 'post', $post->ID, 'signal_url', $_POST['signal_url']);
+        update_metadata( 'post', $post->ID, 'signal_url', true);
         update_metadata( 'post', $post->ID, 'signal_extra_message', $_POST['signal_extra_message']);
     }else{
         delete_metadata( 'post', $post->ID, 'send_signal');

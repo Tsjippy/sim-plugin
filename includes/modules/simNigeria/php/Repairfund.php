@@ -21,7 +21,7 @@ add_shortcode( 'repairfund', function($atts){
     // get all the exchange rates
     $posts = get_posts(
 		array(
-			//'category'  		=> get_cat_ID('Finance'),
+			'category'  		=> get_cat_ID('Finance'),
 			's'					=> "exchange rate",
 			'numberposts'		=> -1,
 			'search_columns'	=> ['post_title'],
@@ -36,7 +36,12 @@ add_shortcode( 'repairfund', function($atts){
 	);
 
     foreach($posts as $post){
-        $month  = date("n", strtotime($post->post_date));
+
+        // try to get the month from the title
+        $month  = date_parse($post->post_title)['month'];
+        if(!is_numeric($month)){
+            $month  = date("n", strtotime($post->post_date));
+        }
 
         $result = preg_match('/(₦|N)([0-9]{3,}|[0-9]+,[0-9]{3,})/i', $post->post_content, $matches);
 
@@ -66,7 +71,7 @@ add_shortcode( 'repairfund', function($atts){
     }
 
     if(!empty($missing)){
-        wp_mail('enharmsen@sim.org', 'Some exchange rates are missing', 'hi,<br>please make sure to set the exchange rates for the following months: '.implode(',', $missing));
+        wp_mail(get_bloginfo('admin_email'), 'Some exchange rates are missing', 'hi,<br>please make sure to set the exchange rates for the following months: '.implode(',', $missing));
     }
 
     if(!empty($_REQUEST['userid'])){

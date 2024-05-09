@@ -63,7 +63,7 @@ function sendPostNotification($post){
 
 	$recipients		= SIM\getModuleOption(MODULE_SLUG, 'groups');
 
-	SIM\printArray($recipients);
+	//SIM\printArray($recipients);
 
 	foreach($recipients as $recipient){
 		sendSignalMessage($message, $recipient, $post->ID);

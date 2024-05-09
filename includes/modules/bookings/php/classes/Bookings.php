@@ -1081,7 +1081,7 @@ class Bookings{
             if(count($exploded) > 1){
                 $room   = $exploded[1];
 
-                $accommodation  += " room $room";
+                $accommodationString  = "$accommodation room $room";
             }
 
             $userId             = $submissions[0]->user_id;

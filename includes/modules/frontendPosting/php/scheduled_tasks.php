@@ -7,11 +7,13 @@ add_action('init', function(){
 	add_action( 'expired_posts_check_action', __NAMESPACE__.'\expiredPostsCheck' );
 	add_action( 'page_age_warning_action', __NAMESPACE__.'\pageAgeWarning' );
 	add_action( 'publish_posts_action', __NAMESPACE__.'\publishPost' );
+	add_action( 'publish_sheduled_posts_action', __NAMESPACE__.'\publish_missed_posts' );
 	
 });
 
 function scheduleTasks(){
     SIM\scheduleTask('expired_posts_check_action', 'daily');
+	SIM\scheduleTask('publish_sheduled_posts_action', 'quarterly');
 
 	$freq	= SIM\getModuleOption(MODULE_SLUG, 'page_age_reminder');
 	if($freq){
@@ -147,6 +149,27 @@ function getPageRecipients($page){
 	return $recipients;
 }
 
+/**
+ * publish any scheduled post that missed its schedule
+ */
+function publish_missed_posts(){
+	$posts = get_posts(
+		array(
+			'post_type'		=> 'any',
+			'numberposts'	=> -1,
+			'post_status'	=> 'future',
+			'date_query' => [
+				'column' => 'post_date',
+				'before'  => "now",
+			],
+		)
+	);
+
+	foreach($posts as $post){
+		wp_publish_post($post);
+	}
+}
+
 // Remove scheduled tasks upon module deactivatio
 add_action('sim_module_deactivated', function($moduleSlug){
 	//module slug should be the same as grandparent folder name
@@ -154,4 +177,5 @@ add_action('sim_module_deactivated', function($moduleSlug){
 
 	wp_clear_scheduled_hook( 'expired_posts_check_action' );
 	wp_clear_scheduled_hook( 'page_age_warning_action' );
+	wp_clear_scheduled_hook( 'publish_sheduled_posts_action' );
 });

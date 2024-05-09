@@ -29,7 +29,7 @@ registerPlugin( 'signal-options', {
     
         const [ meta, setMeta ]     = useEntityProp( 'postType', postType, 'meta' );
 
-        let sendSignal			= meta[ 'send_signal' ];
+        let sendSignal			= meta[ 'send_signal' ] == null ? false : true;
 	    let signalMessageType	= meta[ 'signal_message_type' ];
 	    let signalExtraMessage	= meta[ 'signal_extra_message' ];
         let signalUrl	        = meta[ 'signal_url' ];

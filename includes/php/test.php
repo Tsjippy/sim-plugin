@@ -11,9 +11,6 @@ use PhpOffice\PhpWord\IOFactory;
 add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
-
-	echo do_shortcode('[repairfund]');
-	
     /* $posts = get_posts(
 		array(
 			'post_type'		=> 'any',

@@ -319,7 +319,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 					$email		= $from;
 				}
 
-				SIM\printArray("Creating mailchimp campain");
+				//SIM\printArray("Creating mailchimp campain");
 				//Create a campain
 				try{
 					$response = $this->client->campaigns->create(
@@ -355,7 +355,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 
 				//Get the campain id
 				$campainId = $response->id;
-				SIM\printArray("Campain_id is $campainId");
+				//SIM\printArray("Campain_id is $campainId");
 				update_post_meta($post->ID, 'mailchimp_campaign_id', $campainId);
 
 				//get the campain html
@@ -386,7 +386,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				// Indicate as send
 				update_metadata( 'post', $postId, 'mailchimp_message_send', $segmentId);
 
-				SIM\printArray("Mailchimp campain send succesfully");
+				//SIM\printArray("Mailchimp campain send succesfully");
 				return 'succes';
 			}
 

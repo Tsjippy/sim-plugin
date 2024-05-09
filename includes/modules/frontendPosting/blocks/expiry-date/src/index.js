@@ -18,7 +18,7 @@ registerPlugin( 'expiry-date', {
     
         const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
 
-        const expiryDate	= meta[ 'expiry-date' ];
+        const expiryDate	= meta[ 'expirydate' ];
         const staticContent	= meta[ 'static_content' ];
 
         const updateMetaValue = ( value, key) => {
@@ -39,7 +39,7 @@ registerPlugin( 'expiry-date', {
                     <DatePicker
                         currentDate={ expiryDate }
                         value={ expiryDate }
-                        onChange={ ( value ) => updateMetaValue( value, 'expiry-date' ) }
+                        onChange={ ( value ) => updateMetaValue( value, 'expirydate' ) }
                     />
                 </PluginDocumentSettingPanel>
                 <PluginDocumentSettingPanel

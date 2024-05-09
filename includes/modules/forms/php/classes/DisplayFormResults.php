@@ -981,10 +981,16 @@ class DisplayFormResults extends DisplayForm{
 			$oldValue		= json_encode($orgFieldValue);
 			
 			$element		= $this->getElementByName($elementName);
+
+			$style			= '';
+			if(!empty($columnSetting['width'])){
+				$style	= "style='max-width:{$columnSetting['width']}px;width:{$columnSetting['width']}px;min-width:{$columnSetting['width']}px;'";
+			}
+
 			if(!$element){
-				$rowContents .= "<td $class $subIdString>$value</td>";
+				$rowContents .= "<td $class $subIdString $style>$value</td>";
 			}else{
-				$rowContents .= "<td $class data-id='$element->id' data-oldvalue='$oldValue' $subIdString>$value</td>";
+				$rowContents .= "<td $class data-id='$element->id' data-oldvalue='$oldValue' $subIdString $style>$value</td>";
 			}
 		}
 
@@ -1097,12 +1103,12 @@ class DisplayFormResults extends DisplayForm{
 				
 				<div class="column_setting_wrapper">
 					<label class="columnheading formfieldbutton">Sort</label>
-					<label class="columnheading column_settings" style="width: 200px;">Field name</label>
+					<label class="columnheading column_settings" style="width: 145px;">Field name</label>
 					<label class="columnheading column_settings">Display name</label>
 					<label style="width: 30px;"></label>
 					<label class="columnheading column_settings">Display permissions</label>
 					<label class="columnheading column_settings">Edit permissions</label>
-					<label class="columnheading column_settings" style="width: 60px;">Width</label>
+					<label class="columnheading column_settings" style="width: 60px;">Max Width</label>
 				</div>
 				<?php
 				foreach ($this->columnSettings as $elementIndex=>$columnSetting){
@@ -1166,7 +1172,7 @@ class DisplayFormResults extends DisplayForm{
 							?>
 						</select>
 
-						<input type="number" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][width]" value="<?php echo $width;?>" min="100" placeholder="200">
+						<input type="number" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][width]" value="<?php echo $width;?>" placeholder="200" min="100">px
 					</div>
 					<?php
 				}
@@ -2150,7 +2156,13 @@ class DisplayFormResults extends DisplayForm{
 					$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20 loading='lazy' >";
 					
 					//Add a heading for each column
-					echo "<th class='$class' id='{$columnSetting['name']}' data-nicename='$niceName'>$niceName $icon</th>";
+
+					$style			= '';
+					if(!empty($columnSetting['width'])){
+						$style	= "style='max-width:{$columnSetting['width']}px;width:{$columnSetting['width']}px;min-width:{$columnSetting['width']}px;'";
+					}
+
+					echo "<th class='$class' id='{$columnSetting['name']}' data-nicename='$niceName' $style>$niceName $icon</th>";
 					
 					$excelRow[]	= $niceName;
 				}
