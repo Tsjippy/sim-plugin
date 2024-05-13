@@ -5,11 +5,16 @@
 ### Added
 
 ### Changed
-- signal-cli to json rpc
 
 ### Fixed
 
 ### Updated
+
+## [2.43.9] - 2024-05-13
+
+
+### Changed
+- signal-cli to json rpc
 
 ## [2.43.8] - 2024-05-11
 
