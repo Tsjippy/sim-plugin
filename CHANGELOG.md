@@ -3,14 +3,27 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.43.8] - 2024-05-11
+
+
+## [2.43.7] - 2024-05-09
+
+
+### Added
 - Repair fund indicator shortcode
 
 ### Changed
 - add zeros if needed
 
 ### Fixed
-
-### Updated
+- backend issues
 
 ## [2.43.6] - 2024-05-06
 
