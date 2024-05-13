@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- signal-cli to json rpc
 
 ### Fixed
 
