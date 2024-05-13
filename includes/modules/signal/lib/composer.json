@@ -3,8 +3,9 @@
     "description": "signal module dependicies",
     "type": "library",
     "require": {
-        "bacon/bacon-qr-code": "dev-master",
-        "mikehaertl/php-shellcommand": "dev-master"
+        "mikehaertl/php-shellcommand": "dev-master",
+        "bacon/bacon-qr-code": "dev-main",
+        "guzzlehttp/guzzle": "7.0.1"
     },
     "autoload": {
         "psr-4": {

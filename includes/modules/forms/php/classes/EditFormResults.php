@@ -153,8 +153,9 @@ class EditFormResults extends DisplayFormResults{
 					//loop over all multi values
 					foreach((array)$this->submission->formresults[$splitElementName] as $subId=>$sub){
 						if(
-							isset($sub['archived']) && 		// Archive entry exists
-							$sub['archived']				// sub is already archived
+							!is_array($sub)		||
+							(isset($sub['archived']) && 	// Archive entry exists
+							$sub['archived'])				// sub is already archived
 						){
 							$archivedCounter++;
 							continue;

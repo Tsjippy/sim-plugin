@@ -8,7 +8,7 @@ add_action('sim-phonenumber-updated', function($phonenumber, $userId){
 
     $link			= '';
     if(is_array($groupPaths)){
-        $signal	= new SignalBus();
+        $signal	= new SignalJsonRpc();
         foreach($groupPaths as $path){
             $result	= 	$signal->getGroupInvitationLink($path);
             if(empty($signal->error)){
@@ -23,7 +23,7 @@ add_action('sim-phonenumber-updated', function($phonenumber, $userId){
     // we send a signal message directly from the server
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
 		if(str_contains(php_uname(), 'Linux')){
-			$signal = new SignalBus();
+			$signal = new SignalJsonRpc();
 		}else{
 			$signal = new Signal();
 		}

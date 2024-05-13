@@ -6,7 +6,7 @@ add_action('sim_plugin_update', function($oldVersion){
     global $wpdb;
     require_once ABSPATH . 'wp-admin/install-helper.php';
 
-    $signal 	= new SignalBus();
+    $signal 	= new SignalJsonRpc();
 
     if($oldVersion < '2.35.7'){
             

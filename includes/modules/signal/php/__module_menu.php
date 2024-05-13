@@ -73,7 +73,7 @@ add_action('sim-admin-settings-post', function(){
 
 	if($local){
 		if(str_contains(php_uname(), 'Linux')){
-			$signal = new SignalBus();
+			$signal = new SignalJsonRpc();
 		}else{
 			$signal = new Signal();
 		}
@@ -301,7 +301,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	
 	if($local){
 		if(str_contains(php_uname(), 'Linux')){
-			$signal = new SignalBus();
+			$signal = new SignalJsonRpc();
 			$signal->createDbTable();
 		}else{
 			$signal = new Signal();
@@ -333,7 +333,7 @@ function processActions($settings){
 	}
 
 	if($_REQUEST['action'] == 'Delete'){
-		$signal 	= new SignalBus();
+		$signal 	= new SignalJsonRpc();
 
 		if(isset($_REQUEST['timesend'])){
 			$result		= $signal->deleteMessage($_REQUEST['timesend'], $_REQUEST['recipients']);
@@ -362,7 +362,7 @@ function processActions($settings){
 
 		update_option('sim_modules', $Modules);
 	}elseif($_REQUEST['action'] == 'Reply'){
-		$signal 	= new SignalBus();
+		$signal 	= new SignalJsonRpc();
 
 		$groupId	= '';
 		if($_REQUEST['sender'] != $_REQUEST['chat'] ){
@@ -461,7 +461,7 @@ function sentMessagesTable($startDate, $endDate, $amount){
 		$page	= $_REQUEST['nr'];
 	}
 
-	$signal 	= new SignalBus();
+	$signal 	= new SignalJsonRpc();
 	$messages	= $signal->getMessageLog($amount, $page, strtotime($startDate), strtotime($endDate));
 
 	if(empty($messages)){
@@ -592,7 +592,7 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 		$page	= $_REQUEST['nr'];
 	}
 
-	$signal 	= new SignalBus();
+	$signal 	= new SignalJsonRpc();
 	$messages	= $signal->getReceivedMessageLog($amount, $page, strtotime($startDate), strtotime($endDate));
 
 	if(empty($messages)){
@@ -898,7 +898,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 
 	// check if we need to send a message
 	if(!empty($_REQUEST['challenge']) && !empty($_REQUEST['captchastring'])){
-		$signal	= new SignalBus();
+		$signal	= new SignalJsonRpc();
 		$result	= $signal->submitRateLimitChallenge($_REQUEST['challenge'], $_REQUEST['captchastring']);
 
 		echo "<div class='success'>Rate challenge succesfully submitted <br>$result</div>";
@@ -957,7 +957,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 				echo $phonenumbers;
 				if(isset($settings['local']) && $settings['local']){
 					if(str_contains(php_uname(), 'Linux')){
-						$signal = new SignalBus();
+						$signal = new SignalJsonRpc();
 					}else{
 						$signal = new Signal();
 					}
@@ -1028,7 +1028,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-    $signal 	= new SignalBus();
+    $signal 	= new SignalJsonRpc();
 
     maybe_add_column($signal->tableName, 'stamp', "ALTER TABLE $signal->tableName ADD COLUMN `stamp` text");
 

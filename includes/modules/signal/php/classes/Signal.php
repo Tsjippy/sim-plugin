@@ -343,6 +343,8 @@ class Signal {
                 }
             }elseif(str_contains($errorMessage, 'Invalid group id')){
                 SIM\printArray($errorMessage);
+            }elseif(str_contains($errorMessage, 'Did not receive a reply.')){
+                SIM\printArray($errorMessage); 
             }else{
                 SIM\printArray($this->command);
             }

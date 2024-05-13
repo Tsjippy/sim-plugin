@@ -48,7 +48,7 @@ function checkSignalNumbers(){
     }
     
     if(str_contains(php_uname(), 'Linux')){
-        $signal = new SignalBus();
+        $signal = new SignalJsonRpc();
     }else{
         $signal = new Signal();
     }
@@ -102,7 +102,7 @@ function cleanSignalLog(){
 
     $maxDate    = date('Y-m-d', strtotime("-$amount $period"));
 
-    $signal     = new SignalBus();
+    $signal     = new SignalJsonRpc();
 
     $signal->clearMessageLog($maxDate);
 }

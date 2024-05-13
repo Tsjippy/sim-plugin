@@ -129,7 +129,7 @@ function sendSignalFromLocal($message, $recipient, $images){
 	}
 
 	if(str_contains(php_uname(), 'Linux')){
-		$signal = new SignalBus();
+		$signal = new SignalJsonRpc();
 		if(str_contains($phonenumber, ',')){
 			$signal->sendGroupMessage($message, $phonenumber, $images);
 			return;
