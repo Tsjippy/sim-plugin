@@ -30,13 +30,19 @@ class Signal {
     public $command;
     public $error;
     public $attachmentsPath;
+    public $tableName;
+    public $receivedTableName;
+    public $totalMessages;
 
     public function __construct(){
         require_once( MODULE_PATH  . 'lib/vendor/autoload.php');
 
-        $this->valid    = true;
+        $this->valid            = true;
+        $this->tableName        = $wpdb->prefix.'sim_signal_messages';
 
-        $this->os       = 'macOS';
+        $this->receivedTableName= $wpdb->prefix.'sim_received_signal_messages';
+
+        $this->os               = 'macOS';
         $this->basePath = WP_CONTENT_DIR.'/signal-cli';
         if (!is_dir($this->basePath )) {
             mkdir($this->basePath , 0777, true);
@@ -93,215 +99,288 @@ class Signal {
         $this->osUserId         = "";
     }
 
-    public function baseCommand(){
-        $prefix = '';
-        if($this->daemon){
-            $prefix = "export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$this->osUserId/bus; ";
-        }
-        $this->command = new Command([
-            'command' => $prefix.$this->path,
-            // This is required for binary to be able to find libzkgroup.dylib to support Group V2
-            'procCwd' => dirname($this->path),
-        ]);
+    /**
+     * Create the sent messages table if it does not exist
+     */
+    public function createDbTable(){
+		global $wpdb;
 
-        if($this->daemon){
-            $this->command->addArg('--dbus');
-        }
+		if ( !function_exists( 'maybe_create_table' ) ) {
+			require_once ABSPATH . '/wp-admin/install-helper.php';
+		}
+		
+		//only create db if it does not exist
+		$charsetCollate = $wpdb->get_charset_collate();
 
-        if($this->os == 'Windows'){
-            $this->command->useExec  = true;
-        }
-    }
+		$sql = "CREATE TABLE {$this->tableName} (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            timesend bigint(20) NOT NULL,
+            recipient longtext NOT NULL,
+            message longtext NOT NULL,
+            status text NOT NULL,
+            PRIMARY KEY  (id)
+		) $charsetCollate;";
+
+		maybe_create_table($this->tableName, $sql );
+
+        $sql = "CREATE TABLE {$this->receivedTableName} (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            timesend bigint(20) NOT NULL,
+            sender longtext NOT NULL,
+            message longtext NOT NULL,
+            chat longtext,
+            attachments longtext,
+            status text NOT NULL,
+            PRIMARY KEY  (id)
+		) $charsetCollate;";
+
+		maybe_create_table($this->receivedTableName, $sql );
+	}
 
     /**
-     * Register a phone number with SMS or voice verification. Use the verify command to complete the verification.
-     * Default verify with SMS
-     * @param bool $voiceVerification The verification should be done over voice, not SMS.
-     * @param string $captcha - from https://signalcaptchas.org/registration/generate.html
-     * @return bool|string
+     * Adds a send message to the log
      */
-    
-    public function register(string $phone, string $captcha, bool $voiceVerification = false)
-    {
-        //dbus-send --session --dest=org.asamk.Signal --type=method_call --print-reply /org/asamk/Signal org.asamk.Signal.link string:"My secondary client" | tr '\n' '\0' | sed 's/.*string //g' | sed 's/\"//g' | qrencode -s10 -tANSI256
-
-        file_put_contents($this->basePath.'/phone.signal', $phone);
-
-        $captcha    = str_replace('signalcaptcha://', '', $captcha);
-
-        $this->baseCommand();
-
-        $this->command->addArg('-a', $phone);
-
-        $this->command->addArg('register');
-
-        if($voiceVerification){
-            $this->command->addArg('--voice', null);
+    protected function addToMessageLog($recipient, $message, $timestamp){
+        if(empty($recipient) || empty($message)){
+            return;
         }
-
-        if(!empty($captcha)){
-            $this->command->addArg('--captcha', $captcha);
-        }
-
-        $this->command->execute();
-
-        if($this->command->getExitCode()){
-            unlink($this->basePath.'/phone.signal');
-        }
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Disable push support for this device, i.e. this device won’t receive any more messages.
-     * If this is the master device, other users can’t send messages to this number anymore.
-     * Use "updateAccount" to undo this. To remove a linked device, use "removeDevice" from the master device.
-     * @return bool|string
-     */
-    public function unregister()
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('-a', $this->phoneNumber);
-
-        $this->command->addArg('unregister', null);
-
-        $this->command->execute();
-
-        if(!$this->command->getExitCode()){
-            unlink($this->basePath.'/phone.signal');
-        }
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Uses a list of phone numbers to determine the statuses of those users.
-     * Shows if they are registered on the Signal Servers or not.
-     * @param string|array $recipients One or more numbers to check.
-     * @return string|string
-     */
-    
-    public function isRegistered($recipients)
-    {
-        if(!is_array($recipients)){
-            $recipients    = [$recipients];
-        }
-
-        $this->baseCommand();
-
-        $this->command->addArg('getUserStatus', $recipients);
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Verify the number using the code received via SMS or voice.
-     * @param string $code The verification code e.g 123-456
-     * @return bool|string
-     */
-    public function verify(string $code)
-    {
-
-        $this->baseCommand();
-
-        $this->command->addArg('-a', $this->phoneNumber);
-
-        $this->command->addArg('verify', $code);
-
-        $this->command->execute();
-
-        if($this->command->getExitCode()){
-            unlink($this->basePath.'/phone.signal');
-        }
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Send a message to another user or group
-     * @param string|array  $recipients     Specify the recipients’ phone number or a group id
-     * @param string        $message        Specify the message, if missing, standard input is used
-     * @param array         $attachments    Array of Image file paths
-     *
-     * @return bool|string
-     */
-    public function send($recipients, string $message, string $attachments = null){
-        // /home/simnige1/web/simnigeria.org/public_html/wp-content/signal-cli/program/bin/signal-cli --config /home/simnige1/.local/share/signal-cli -a +2349011531222 send +2349045252526 -m test
-        $groupId    = null;
-        if(!is_array($recipients)){
-            if(strpos( $recipients , '+' ) === 0){
-                $recipients    = [$recipients];
-            }else{
-                $groupId    = $recipients;
-                $recipients = null;
-            }
-        }
-
-        $this->baseCommand();
-
-        $this->command->nonBlockingMode = true;
-
-        $this->command->addArg('-a', $this->phoneNumber);
         
-        $this->command->addArg('send', $recipients);
+        global $wpdb;
 
-        $this->command->addArg('-m', $message);
+        $wpdb->insert(
+            $this->tableName,
+            array(
+                'timesend'      => $timestamp,
+                'recipient'     => $recipient,
+                'message'		=> $message,
+            )
+        );
 
-        if($groupId){
-            $this->command->addArg('-g', $groupId);
+        return $wpdb->insert_id;
+    }
+
+    /**
+     * Adds a received message to the log
+     *
+     * @param   string  $sender     The sender phonenumber
+     * @param   string  $message    The message sent
+     * @param   int     $time       The time the message was sent
+     * @param   string  $chat       The groupId is sent in a group chat, defaults to $sender for private chats
+     */
+    public function addToReceivedMessageLog($sender, $message, $time, $chat='', $attachments=''){
+        if(empty($sender) || empty($message)){
+            return;
         }
 
-        if(!empty($attachments)){
-            if(!is_array($attachments)){
-                $attachments    = [$attachments];
+        if(empty($chat) ){
+            $chat   = $sender;
+        }
+        
+        global $wpdb;
+
+        $wpdb->insert(
+            $this->receivedTableName,
+            array(
+                'timesend'      => $time,
+                'sender'        => $sender,
+                'message'	    => $message,
+                'chat'          => $chat,
+                'attachments'   => maybe_serialize($attachments)
+            )
+        );
+
+        return $wpdb->insert_id;
+    }
+
+    /**
+     * Retrieves the messages from the log
+     *
+     * @param   int     $amount     The amount of rows to get per page, default 100
+     * @param   int     $page       Which page to get, default 1
+     * @param   int     $minTime    Time after which the message has been send, default empty
+     * @param   int     $maxTime    Time before which the message has been send, default empty
+     */
+    public function getMessageLog($amount=100, $page=1, $minTime='', $maxTime=''){
+        global $wpdb;
+
+        $startIndex = 0;
+
+        if($page > 1){
+            $startIndex         = ($page - 1) * $amount;
+        }
+
+        $totalQuery = "SELECT COUNT(id) as total FROM $this->tableName";
+        $query      = "SELECT * FROM $this->tableName";
+
+        if(!empty($minTime)){
+            $totalQuery .= " WHERE timesend > {$minTime}000";
+            $query      .= " WHERE timesend > {$minTime}000";
+        }
+
+        if(!empty($maxTime)){
+            $combinator = 'AND';
+            if(empty($minTime)){
+                $combinator     = 'WHERE';
             }
-            SIM\printArray($attachments);
-            $this->command->addArg('-a', $attachments);
+
+            $totalQuery .= " $combinator timesend < {$maxTime}000";
+            $query      .= " $combinator timesend < {$maxTime}000";
         }
 
-        $this->command->execute();
+        $query      .= " ORDER BY `timesend` DESC LIMIT $startIndex,$amount;";
 
-        return $this->parseResult();
+        $this->totalMessages    = $wpdb->get_var($totalQuery);
+
+        if($this->totalMessages < $startIndex){
+            return [];
+        }
+        
+        return $wpdb->get_results( $query );
     }
 
-    public function markAsRead($recipient, $timestamp){
-        // Mark as read
-        $this->baseCommand();
+    /**
+     * Retrieves the messages from the log
+     *
+     * @param   int     $amount     The amount of rows to get per page, default 100
+     * @param   int     $page       Which page to get, default 1
+     * @param   int     $minTime    Time after which the message has been send, default empty
+     * @param   int     $maxTime    Time before which the message has been send, default empty
+     */
+    public function getReceivedMessageLog($amount=100, $page=1, $minTime='', $maxTime=''){
+        global $wpdb;
 
-        $this->command->addArg('-a', $this->phoneNumber);
+        $startIndex = 0;
 
-        $this->command->addArg('sendReceipt', $recipient);
-
-        $this->command->addArg('-t', $timestamp);
-
-        $this->command->addArg('--type', 'read');
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    public function sentTyping($recipient, $timestamp, $groupId=null){
-        // Mark as read
-        $this->markAsRead($recipient, $timestamp);
-
-        // Send typing
-        $this->baseCommand();
-
-        $this->command->addArg('-a', $this->phoneNumber);
-
-        $this->command->addArg('sendTyping', $recipient);
-
-        if(!empty($groupId)){
-            $this->command->addArg('-g', $groupId);
+        if($page > 1){
+            $startIndex         = ($page - 1) * $amount;
         }
 
-        $this->command->execute();
+        $totalQuery = "SELECT COUNT(id) as total FROM $this->receivedTableName";
+        $query      = "SELECT * FROM $this->receivedTableName";
 
-        return $this->parseResult();
+        if(!empty($minTime)){
+            $totalQuery .= " WHERE timesend > {$minTime}000";
+            $query      .= " WHERE timesend > {$minTime}000";
+        }
+
+        if(!empty($maxTime)){
+            $combinator = 'AND';
+            if(empty($minTime)){
+                $combinator     = 'WHERE';
+            }
+
+            $totalQuery .= " $combinator timesend < {$maxTime}000";
+            $query      .= " $combinator timesend < {$maxTime}000";
+        }
+
+        $query      .= "  ORDER BY `chat` ASC, `timesend` DESC LIMIT $startIndex,$amount;";
+
+        $this->totalMessages    = $wpdb->get_var($totalQuery);
+
+        if($this->totalMessages < $startIndex){
+            return [];
+        }
+        
+        return $wpdb->get_results( $query );
+    }
+
+    /**
+     * Gets the latest messages from the log for a specific user
+     *
+     * @param   string  $phoneNumber    The phonenumber or user id
+     *
+     * @return  array                   The messages
+     */
+    public function getSendMessagesByUser($phoneNumber){
+        if(get_userdata($phoneNumber)){
+            $phoneNumber    = get_user_meta($phoneNumber, 'signalnumber', true);
+
+            if(!$phoneNumber){
+                return;
+            }
+        }
+
+        global $wpdb;
+
+        $query      = "SELECT * FROM $this->tableName WHERE `recipient` = '$phoneNumber' ORDER BY `timesend` DESC LIMIT 5; ";
+
+        return $wpdb->get_results( $query );
+    }
+
+    /**
+     * Gets the latest messages from the log for a specific user
+     *
+     * @param   int  $timestamp         The timestamp
+     *
+     * @return  string                   The message
+     */
+    public function getSendMessageByTimestamp($timestamp){
+        global $wpdb;
+
+        $query      = "SELECT message FROM $this->tableName WHERE `timesend` = '$timestamp'";
+
+        return $wpdb->get_var( $query );
+    }
+
+    /**
+     * Deletes messages from the log
+     *
+     * @param   string     $maxDate     The date after which messages should be kept Should be in yyyy-mm-dd format
+     *
+     * @return  string                  The message
+     */
+    public function clearMessageLog($maxDate){
+        global $wpdb;
+
+        $timeSend   = strtotime(get_gmt_from_date($maxDate, 'Y-m-d'));
+
+        // remove sent messages
+        $query      = "DELETE FROM $this->tableName WHERE `timesend` < {$timeSend}000";
+
+        $result1    = $wpdb->query( $query );
+
+        // remove attachment files
+        $query      = "SELECT * FROM $this->receivedTableName WHERE `timesend` < {$timeSend}000 AND `attachments` is NOT NULL; ";
+        foreach($wpdb->get_results($query) as $result){
+            $attachments    = unserialize($result->attachments);
+
+            foreach($attachments as $attachment){
+                if(file_exists($attachment)){
+                    unlink($attachment);
+                }
+            }
+        }
+
+        // remove received messages
+        $query      = "DELETE FROM $this->receivedTableName WHERE `timesend` < {$timeSend}000";
+
+        $result2    = $wpdb->query( $query );
+
+        return $result1 && $result2;
+    }
+
+    /**
+     * Marks a specific message as deleted in the log
+     *
+     * @param   int     $timesend     The date after which messages should be kept Should be in yyyy-mm-dd format
+     *
+     * @return  string                  The message
+     */
+    public function markAsDeleted($timeStamp){
+        global $wpdb;
+
+        $query      = "UPDATE $this->tableName SET `status` = 'deleted' WHERE timesend = $timeStamp";
+
+        return $wpdb->query( $query );
+    }
+
+    /**
+     * Get Command to further get output, error or more details of the command.
+     * @return Command
+     */
+    public function getCommand()
+    {
+        return $this->command;
     }
 
     protected function parseResult($returnJson=false){
@@ -417,322 +496,6 @@ class Signal {
 
             sleep(10);
         }
-    }
-
-    /**
-     * Update the name and avatar image visible by message recipients for the current users.
-     * The profile is stored encrypted on the Signal servers.
-     * The decryption key is sent with every outgoing messages to contacts.
-     * @param string $name New name visible by message recipients
-     * @param string $avatarPath Path to the new avatar visible by message recipients
-     * @param bool $removeAvatar Remove the avatar visible by message recipients
-     * @return bool|string
-     */
-    public function updateProfile(string $name, string $avatarPath = null, bool $removeAvatar = false)
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('updateProfile', null);
-
-        $this->command->addArg('--name', $name);
-
-        if($avatarPath){
-            $this->command->addArg('--avatar', $avatarPath);
-        }
-
-        if($removeAvatar){
-            $this->command->addArg('--removeAvatar', null);
-        }
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Link to an existing device, instead of registering a new number.
-     * This shows a "tsdevice:/…" URI.
-     * If you want to connect to another signal-cli instance, you can just use this URI.
-     * If you want to link to an Android/iOS device, create a QR code with the URI (e.g. with qrencode) and scan that in the Signal app.
-     * @param string|null $name Optionally specify a name to describe this new device. By default "cli" will be used
-     * @return string
-     */
-    public function link(string $name = ''): string
-    {
-        #| tr '\n' '\0' | sed 's/.*string //g' | sed 's/\"//g' | qrencode -s10 -tANSI256
-        if(empty($name)){
-            $name   = get_bloginfo('name');
-        }
-        $this->baseCommand();
-
-        $this->command->nonBlockingMode = false;
-
-        $this->command->addArg('link', null);
-
-        $this->command->addArg('-n', $name);
-
-        // TODO: Better response handling
-        $randFile = sys_get_temp_dir().'/'.rand() . time() . '.device';
-        $this->command->addArg(" > $randFile 2>&1 &", null, false); // Ugly hack!
-        sleep(1); // wait for file to get populated
-
-        $this->command->execute();
-
-        if($this->command->getExitCode()){
-            $error  = "<div class='error'>";
-                $error  .= $this->command->getError()."<br>";
-                $error  .= "Try to do the linking yourself<br><br>";
-                $error  .= "Open a command line and run this:<br>";
-                $error  .= "<code>$this->path link -n \"$name\"</code><br><br>";
-            $error  .= "</div>";
-            return $error;
-        }
-
-        $link   = '';
-        while(empty($link)){
-            $link   = file_get_contents($randFile);
-        }
-        unlink($randFile);
-
-        SIM\clearOutput();
-        header("X-Accel-Buffering: no");
-        header('Content-Encoding: none');
-
-        // Turn on implicit flushing
-        ob_implicit_flush(1);
-
-        echo "Link is <code>$link</code>";
-
-        #https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$link
-
-        return "<img loading='lazy' src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$link'/><br>$link";
-        if (!extension_loaded('imagick')){
-            return $link;
-        }
-
-        $renderer       = new ImageRenderer(
-            new RendererStyle(400),
-            new ImagickImageBackEnd()
-        );
-        $writer         = new Writer($renderer);
-        $qrcodeImage    = base64_encode($writer->writeString($link));
-
-        return "<img loading='lazy' src='data:image/png;base64, $qrcodeImage'/><br>$link";
-    }
-
-    /**
-     * Link another device to this device.
-     * Only works, if this is the master device
-     * @param string $uri Specify the uri contained in the QR code shown by the new device.
-     *                    You will need the full uri enclosed in quotation marks, such as "tsdevice:/?uuid=…​.."
-     * @return bool|string
-     */
-    public function addDevice(string $uri)
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('--uri', $uri);
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Show a list of connected devices
-     * @return array|null
-     */
-    public function listDevices()
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('-o', 'json');
-
-        $this->command->addArg('listDevices', null);
-
-        $this->command->execute();
-
-        return json_decode($this->parseResult(true));
-    }
-
-    /**
-     * Remove a connected device. Only works, if this is the master device
-     * @param int $deviceId Specify the device you want to remove. Use listDevices to see the deviceIds
-     * @return bool|string
-     */
-    public function removeDevice(int $deviceId)
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('removeDevice', null);
-
-        $this->command->addArg('-d', $deviceId);
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Update the account attributes on the signal server.
-     * Can fix problems with receiving messages
-     * @return bool
-     */
-    public function updateAccount()
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('updateAccount', null);
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Private function to create group, update group and add members in the group
-     * @param string|null $name Specify the new group name
-     * @param array $members Specify one or more members to add to the group
-     * @param string|null $avatarPath Specify a new group avatar image file
-     * @param string|null $groupId Specify the recipient group ID in base64 encoding.
-     *                             If not specified, a new group with a new random ID is generated
-     * @return bool|string
-     */
-    private function _createOrUpdateGroup(string $name = null, array $members = [], string $avatarPath = null, string $groupId = null)
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('updateGroup', null);
-
-        if(!empty($groupId)){
-            $this->command->addArg('-g', $groupId);
-        }
-
-        if($name){
-            $this->command->addArg('-n', $name);
-        }
-
-        if(!empty($members)){
-            $this->command->addArg('-m', $members);
-        }
-
-        if(!empty($avatarPath)){
-            $this->command->addArg('-a', $avatarPath);
-        }
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Create Group
-     * @param string $name
-     * @param array $members
-     * @param string|null $avatarPath
-     * @return bool
-     */
-    public function createGroup(string $name, array $members = [], string $avatarPath = null): bool
-    {
-        return $this->_createOrUpdateGroup($name, $members, $avatarPath);
-    }
-
-    public function updateGroup(string $groupId, string $name = null, array $members = [], string $avatarPath = null): bool
-    {
-        return $this->_createOrUpdateGroup($name, $members, $avatarPath, $groupId);
-    }
-
-    public function addMembersToGroup(string $groupId, array $members)
-    {
-        return $this->_createOrUpdateGroup(null,$members,null,$groupId);
-    }
-
-    /**
-     * List Groups
-     * @return array|string
-     */
-    public function listGroups()
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('-a', $this->phoneNumber);
-
-        $this->command->addArg('-o', 'json');
-
-        $this->command->addArg('listGroups', null);
-
-        $this->command->execute();
-
-        return json_decode($this->parseResult(true));
-    }
-
-    /**
-     * Join a group via an invitation link.
-     * To be able to join a v2 group the account needs to have a profile (can be created with the updateProfile command)
-     * @param string $uri The invitation link URI (starts with https://signal.group/#)
-     * @return bool|string
-     */
-    public function joinGroup(string $uri)
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('joinGroup', null);
-
-        $this->command->addArg('--uri', $uri);
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Send a quit group message to all group members and remove self from member list.
-     * If the user is a pending member, this command will decline the group invitation
-     * @param string $groupId Specify the recipient group ID in base64 encoding
-     * @return bool|string
-     */
-    public function quitGroup(string $groupId)
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('quitGroup', null);
-
-        $this->command->addArg('-g', $groupId);
-
-        $this->command->execute();
-
-        return $this->parseResult();
-    }
-
-    /**
-     * Query the server for new messages.
-     * New messages are printed on standard output and attachments are downloaded to the config directory.
-     * In json mode this is outputted as one json object per line
-     * @param int $timeout Number of seconds to wait for new messages (negative values disable timeout). Default is 5 seconds
-     * @return object|string
-     */
-    public function receive(int $timeout = 5)
-    {
-        $this->baseCommand();
-
-        $this->command->addArg('-o', 'json');
-
-        $this->command->addArg('receive', null);
-
-        $this->command->addArg('-t', $timeout);
-
-        $this->command->execute();
-
-        return json_decode($this->parseResult(true));
-    }
-
-    /**
-     * Get Command to further get output, error or more details of the command.
-     * @return Command
-     */
-    public function getCommand()
-    {
-        return $this->command;
     }
 
     public function checkPrerequisites(){
@@ -935,5 +698,51 @@ class Signal {
         }
 
         echo "Downloading $url to $tempPath failed!";
+    }
+
+    protected function daemonIsRunning(){
+        // check if running
+        $command = new Command([
+            'command' => "ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'"
+        ]);
+
+        $command->execute();
+
+        $result = $command->getOutput();
+        if(empty($result)){
+            $this->daemon   = false;
+        }else{
+            $this->daemon   =  true;
+
+            // Running daemon but not for this website
+            if(!str_contains($result, $this->basePath) && !str_contains($result, 'do find -name signal-daemon.php')){
+                $this->error    = 'The daemon is started but for another website in this user account.<br>';
+                $this->error   .= "You can send messages just fine, but not receive any.<br>";
+                $this->error   .= "To enable receiving messages add this to your crontab (crontab -e): <br>";
+                $this->error   .= '<code>@reboot export DISPLAY=:0.0; export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/'.$this->osUserId.'/bus;'.$this->path.' -o json daemon | while read -r line; do find -name signal-daemon.php 2>/dev/null -exec php "{}" "$line" \; ; done; &</code><br>';
+                $this->error   .= "Then reboot your server";
+            }
+        }
+    }
+
+    public function startDaemon(){
+        if($this->os == 'Windows'){
+            return;
+        }
+
+        if(!$this->daemon){
+            $display    = 'export DISPLAY=:0.0;';
+            $dbus       = "export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$this->osUserId/bus;";
+            $cli        = "$this->path -o json --trust-new-identities=always daemon";
+            $read       = 'while read -r line; do php '.__DIR__.'/../../daemon/signal-daemon.php "$line"; done;';
+            
+            $command = new Command([
+                'command' => "bash -c '$display $dbus $cli | $read' &"
+            ]);
+
+            $command->execute();
+        }
+ 
+        $this->daemon   = true;
     }
 }

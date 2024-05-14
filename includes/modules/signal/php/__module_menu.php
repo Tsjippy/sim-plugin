@@ -72,11 +72,7 @@ add_action('sim-admin-settings-post', function(){
 	$local	= SIM\getModuleOption(MODULE_SLUG, 'local');
 
 	if($local){
-		if(str_contains(php_uname(), 'Linux')){
-			$signal = new SignalJsonRpc();
-		}else{
-			$signal = new Signal();
-		}
+		$signal	= getSignalInstance();
 	}
 
 	if(isset($_GET['unregister'])){
@@ -192,7 +188,7 @@ function connectedOptions($signal, $settings){
 				}
 				?>
 				<label>
-					<input type='checkbox' name='invgroups[]' value='<?php echo $group->path;?>' <?php if(is_array($settings['invgroups']) && in_array($group->path, $settings['invgroups'])){echo 'checked';}?>>
+					<input type='checkbox' name='invgroups[]' value='<?php echo $group->id;?>' <?php if(is_array($settings['invgroups']) && in_array($group->id, $settings['invgroups'])){echo 'checked';}?>>
 					<?php echo $group->name;?>
 				</label>
 				<br>
@@ -280,9 +276,15 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	if($moduleSlug != MODULE_SLUG || isset($_GET['register']) || isset($_POST['captcha']) || isset($_POST['verification-code'])){
 		return $optionsHtml;
 	}
+
 	$local	= false;
 	if(isset($settings['local']) && $settings['local']){
 		$local	= true;
+	}
+
+	$type	= false;
+	if(isset($settings['type'])){
+		$type	= $settings['type'];
 	}
 
 	ob_start();
@@ -297,14 +299,24 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	</label>
 	<br>
 	<br>
+	Which type of connection do you use?<br>
+	<label>
+		<input type="radio" id='type' name="type" value='dbus' <?php if($type == 'dbus'){echo 'checked';}?>>
+		Dbus
+	</label>
+	<label>
+		<input type="radio" id='type' name="type" value='json' <?php if($type == 'json'){echo 'checked';}?>>
+		JsonRpc
+	</label>
+	<br>
+	<br>
 	<?php
 	
 	if($local){
+		$signal = getSignalInstance();
+
 		if(str_contains(php_uname(), 'Linux')){
-			$signal = new SignalJsonRpc();
 			$signal->createDbTable();
-		}else{
-			$signal = new Signal();
 		}
 
 		$signal->checkPrerequisites();
@@ -333,7 +345,7 @@ function processActions($settings){
 	}
 
 	if($_REQUEST['action'] == 'Delete'){
-		$signal 	= new SignalJsonRpc();
+		$signal	= getSignalInstance();
 
 		if(isset($_REQUEST['timesend'])){
 			$result		= $signal->deleteMessage($_REQUEST['timesend'], $_REQUEST['recipients']);
@@ -362,7 +374,7 @@ function processActions($settings){
 
 		update_option('sim_modules', $Modules);
 	}elseif($_REQUEST['action'] == 'Reply'){
-		$signal 	= new SignalJsonRpc();
+		$signal	= getSignalInstance();
 
 		$groupId	= '';
 		if($_REQUEST['sender'] != $_REQUEST['chat'] ){
@@ -461,7 +473,7 @@ function sentMessagesTable($startDate, $endDate, $amount){
 		$page	= $_REQUEST['nr'];
 	}
 
-	$signal 	= new SignalJsonRpc();
+	$signal	= getSignalInstance();
 	$messages	= $signal->getMessageLog($amount, $page, strtotime($startDate), strtotime($endDate));
 
 	if(empty($messages)){
@@ -592,7 +604,7 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 		$page	= $_REQUEST['nr'];
 	}
 
-	$signal 	= new SignalJsonRpc();
+	$signal	= getSignalInstance();
 	$messages	= $signal->getReceivedMessageLog($amount, $page, strtotime($startDate), strtotime($endDate));
 
 	if(empty($messages)){
@@ -898,7 +910,8 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 
 	// check if we need to send a message
 	if(!empty($_REQUEST['challenge']) && !empty($_REQUEST['captchastring'])){
-		$signal	= new SignalJsonRpc();
+		$signal	= getSignalInstance();
+
 		$result	= $signal->submitRateLimitChallenge($_REQUEST['challenge'], $_REQUEST['captchastring']);
 
 		echo "<div class='success'>Rate challenge succesfully submitted <br>$result</div>";
@@ -956,11 +969,7 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 				<?php
 				echo $phonenumbers;
 				if(isset($settings['local']) && $settings['local']){
-					if(str_contains(php_uname(), 'Linux')){
-						$signal = new SignalJsonRpc();
-					}else{
-						$signal = new Signal();
-					}
+					$signal	= getSignalInstance();
 
 					$groups	= $signal->listGroups();
 
@@ -1028,7 +1037,7 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-    $signal 	= new SignalJsonRpc();
+    $signal	= new Signal();
 
     maybe_add_column($signal->tableName, 'stamp', "ALTER TABLE $signal->tableName ADD COLUMN `stamp` text");
 

@@ -19,7 +19,7 @@ sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 // data is stored in $HOME/.local/share/signal-cli
 
 
-class SignalJsonRpc{
+class SignalJsonRpc extends Signal{
     public $os;
     public $basePath;
     public $programPath;
@@ -37,78 +37,10 @@ class SignalJsonRpc{
     public $homeFolder;
     private $postUrl;
     public $socket;
+    public $shouldCloseSocket;
 
-    public function __construct(){
-        global $wpdb;
-        require_once( MODULE_PATH  . 'lib/vendor/autoload.php');
-
-        $this->postUrl  = "127.0.0.1:8080/api/v1/rpc";
-
-        $this->os       = 'macOS';
-        $this->basePath = WP_CONTENT_DIR.'/signal-cli';
-        if (!is_dir($this->basePath )) {
-            mkdir($this->basePath , 0777, true);
-        }
-
-        $this->attachmentsPath  = $this->basePath.'/attachments';
-        if (!is_dir($this->attachmentsPath )) {
-            mkdir($this->attachmentsPath , 0777, true);
-        }
-
-        // .htaccess to prevent access
-        if(!file_exists($this->basePath.'/.htaccess')){
-            file_put_contents($this->basePath.'/.htaccess', 'deny from all');
-        }
-        if(!file_exists($this->basePath.'/index.php')){
-            file_put_contents($this->basePath.'/index.php', '<?php');
-        }
-        if(!file_exists($this->attachmentsPath.'/.htaccess')){
-            file_put_contents($this->attachmentsPath.'/.htaccess', 'allow from all');
-        }
-
-        if(str_contains(php_uname(), 'Windows')){
-            $this->os               = 'Windows';
-            $this->basePath         = str_replace('\\', '/', $this->basePath);
-        }elseif(str_contains(php_uname(), 'Linux')){
-            $this->os               = 'Linux';
-        }
-        
-        $this->programPath      = $this->basePath.'/program/';
-        if (!is_dir($this->programPath )) {
-            mkdir($this->programPath , 0777, true);
-            SIM\printArray("Created $this->programPath");
-        }
-
-        // check permissions
-        $path   = $this->programPath.'/signal-cli';
-        if(!is_executable($path)){
-            chmod($path, 0555);
-        }
-
-        $this->phoneNumber      = '';
-        if(file_exists($this->basePath.'/phone.signal')){
-            $this->phoneNumber      = trim(file_get_contents($this->basePath.'/phone.signal'));
-        }
-
-        $this->path             = $this->programPath.'bin/signal-cli';
-
-        if(!file_exists($this->path) && file_exists($this->programPath.'signal-cli')){
-            $this->path = $this->programPath.'signal-cli';
-        }
-
-        $this->daemon           = false;
-
-        $this->tableName        = $wpdb->prefix.'sim_signal_messages';
-
-        $this->receivedTableName= $wpdb->prefix.'sim_received_signal_messages';
-
-        $phone                  = str_replace('+', '', $this->phoneNumber);
-
-        $homefolder   = [];
-        exec("bash -c 'echo \$HOME'", $homefolder);
-        if(!empty($homefolder)){
-            $this->homeFolder   = $homefolder[0];
-        }
+    public function __construct($shouldCloseSocket=true){
+        parent::__construct();
 
         // Check daemon
         $this->daemonIsRunning();
@@ -119,281 +51,8 @@ class SignalJsonRpc{
         if(!$this->socket){
             SIM\printArray("$errno: $this->error", true);
         }
-    }
 
-    /**
-     * Create the sent messages table if it does not exist
-     */
-    public function createDbTable(){
-		global $wpdb;
-
-		if ( !function_exists( 'maybe_create_table' ) ) {
-			require_once ABSPATH . '/wp-admin/install-helper.php';
-		}
-		
-		//only create db if it does not exist
-		$charsetCollate = $wpdb->get_charset_collate();
-
-		$sql = "CREATE TABLE {$this->tableName} (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            timesend bigint(20) NOT NULL,
-            recipient longtext NOT NULL,
-            message longtext NOT NULL,
-            status text NOT NULL,
-            PRIMARY KEY  (id)
-		) $charsetCollate;";
-
-		maybe_create_table($this->tableName, $sql );
-
-        $sql = "CREATE TABLE {$this->receivedTableName} (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            timesend bigint(20) NOT NULL,
-            sender longtext NOT NULL,
-            message longtext NOT NULL,
-            chat longtext,
-            attachments longtext,
-            status text NOT NULL,
-            PRIMARY KEY  (id)
-		) $charsetCollate;";
-
-		maybe_create_table($this->receivedTableName, $sql );
-	}
-
-    /**
-     * Adds a send message to the log
-     */
-    private function addToMessageLog($recipient, $message, $timestamp){
-        if(empty($recipient) || empty($message)){
-            return;
-        }
-        
-        global $wpdb;
-
-        $wpdb->insert(
-            $this->tableName,
-            array(
-                'timesend'      => $timestamp,
-                'recipient'     => $recipient,
-                'message'		=> $message,
-            )
-        );
-
-        return $wpdb->insert_id;
-    }
-
-    /**
-     * Adds a received message to the log
-     *
-     * @param   string  $sender     The sender phonenumber
-     * @param   string  $message    The message sent
-     * @param   int     $time       The time the message was sent
-     * @param   string  $chat       The groupId is sent in a group chat, defaults to $sender for private chats
-     */
-    public function addToReceivedMessageLog($sender, $message, $time, $chat='', $attachments=''){
-        if(empty($sender) || empty($message)){
-            return;
-        }
-
-        if(empty($chat) ){
-            $chat   = $sender;
-        }
-        
-        global $wpdb;
-
-        $wpdb->insert(
-            $this->receivedTableName,
-            array(
-                'timesend'      => $time,
-                'sender'        => $sender,
-                'message'	    => $message,
-                'chat'          => $chat,
-                'attachments'   => maybe_serialize($attachments)
-            )
-        );
-
-        return $wpdb->insert_id;
-    }
-
-    /**
-     * Retrieves the messages from the log
-     *
-     * @param   int     $amount     The amount of rows to get per page, default 100
-     * @param   int     $page       Which page to get, default 1
-     * @param   int     $minTime    Time after which the message has been send, default empty
-     * @param   int     $maxTime    Time before which the message has been send, default empty
-     */
-    public function getMessageLog($amount=100, $page=1, $minTime='', $maxTime=''){
-        global $wpdb;
-
-        $startIndex = 0;
-
-        if($page > 1){
-            $startIndex         = ($page - 1) * $amount;
-        }
-
-        $totalQuery = "SELECT COUNT(id) as total FROM $this->tableName";
-        $query      = "SELECT * FROM $this->tableName";
-
-        if(!empty($minTime)){
-            $totalQuery .= " WHERE timesend > {$minTime}000";
-            $query      .= " WHERE timesend > {$minTime}000";
-        }
-
-        if(!empty($maxTime)){
-            $combinator = 'AND';
-            if(empty($minTime)){
-                $combinator     = 'WHERE';
-            }
-
-            $totalQuery .= " $combinator timesend < {$maxTime}000";
-            $query      .= " $combinator timesend < {$maxTime}000";
-        }
-
-        $query      .= " ORDER BY `timesend` DESC LIMIT $startIndex,$amount;";
-
-        $this->totalMessages    = $wpdb->get_var($totalQuery);
-
-        if($this->totalMessages < $startIndex){
-            return [];
-        }
-        
-        return $wpdb->get_results( $query );
-    }
-
-        /**
-     * Retrieves the messages from the log
-     *
-     * @param   int     $amount     The amount of rows to get per page, default 100
-     * @param   int     $page       Which page to get, default 1
-     * @param   int     $minTime    Time after which the message has been send, default empty
-     * @param   int     $maxTime    Time before which the message has been send, default empty
-     */
-    public function getReceivedMessageLog($amount=100, $page=1, $minTime='', $maxTime=''){
-        global $wpdb;
-
-        $startIndex = 0;
-
-        if($page > 1){
-            $startIndex         = ($page - 1) * $amount;
-        }
-
-        $totalQuery = "SELECT COUNT(id) as total FROM $this->receivedTableName";
-        $query      = "SELECT * FROM $this->receivedTableName";
-
-        if(!empty($minTime)){
-            $totalQuery .= " WHERE timesend > {$minTime}000";
-            $query      .= " WHERE timesend > {$minTime}000";
-        }
-
-        if(!empty($maxTime)){
-            $combinator = 'AND';
-            if(empty($minTime)){
-                $combinator     = 'WHERE';
-            }
-
-            $totalQuery .= " $combinator timesend < {$maxTime}000";
-            $query      .= " $combinator timesend < {$maxTime}000";
-        }
-
-        $query      .= "  ORDER BY `chat` ASC, `timesend` DESC LIMIT $startIndex,$amount;";
-
-        $this->totalMessages    = $wpdb->get_var($totalQuery);
-
-        if($this->totalMessages < $startIndex){
-            return [];
-        }
-        
-        return $wpdb->get_results( $query );
-    }
-
-    /**
-     * Gets the latest messages from the log for a specific user
-     *
-     * @param   string  $phoneNumber    The phonenumber or user id
-     *
-     * @return  array                   The messages
-     */
-    public function getSendMessagesByUser($phoneNumber){
-        if(get_userdata($phoneNumber)){
-            $phoneNumber    = get_user_meta($phoneNumber, 'signalnumber', true);
-
-            if(!$phoneNumber){
-                return;
-            }
-        }
-
-        global $wpdb;
-
-        $query      = "SELECT * FROM $this->tableName WHERE `recipient` = '$phoneNumber' ORDER BY `timesend` DESC LIMIT 5; ";
-
-        return $wpdb->get_results( $query );
-    }
-
-    /**
-     * Gets the latest messages from the log for a specific user
-     *
-     * @param   int  $timestamp         The timestamp
-     *
-     * @return  string                   The message
-     */
-    public function getSendMessageByTimestamp($timestamp){
-        global $wpdb;
-
-        $query      = "SELECT message FROM $this->tableName WHERE `timesend` = '$timestamp'";
-
-        return $wpdb->get_var( $query );
-    }
-
-    /**
-     * Deletes messages from the log
-     *
-     * @param   string     $maxDate     The date after which messages should be kept Should be in yyyy-mm-dd format
-     *
-     * @return  string                  The message
-     */
-    public function clearMessageLog($maxDate){
-        global $wpdb;
-
-        $timeSend   = strtotime(get_gmt_from_date($maxDate, 'Y-m-d'));
-
-        // remove sent messages
-        $query      = "DELETE FROM $this->tableName WHERE `timesend` < {$timeSend}000";
-
-        $result1    = $wpdb->query( $query );
-
-        // remove attachment files
-        $query      = "SELECT * FROM $this->receivedTableName WHERE `timesend` < {$timeSend}000 AND `attachments` is NOT NULL; ";
-        foreach($wpdb->get_results($query) as $result){
-            $attachments    = unserialize($result->attachments);
-
-            foreach($attachments as $attachment){
-                if(file_exists($attachment)){
-                    unlink($attachment);
-                }
-            }
-        }
-
-        // remove received messages
-        $query      = "DELETE FROM $this->receivedTableName WHERE `timesend` < {$timeSend}000";
-
-        $result2    = $wpdb->query( $query );
-
-        return $result1 && $result2;
-    }
-
-    /**
-     * Marks a specific message as deleted in the log
-     *
-     * @param   int     $timesend     The date after which messages should be kept Should be in yyyy-mm-dd format
-     *
-     * @return  string                  The message
-     */
-    public function markAsDeleted($timeStamp){
-        global $wpdb;
-
-        $query      = "UPDATE $this->tableName SET `status` = 'deleted' WHERE timesend = $timeStamp";
-
-        return $wpdb->query( $query );
+        $this->shouldCloseSocket   = $shouldCloseSocket;
     }
 
     /**
@@ -403,25 +62,55 @@ class SignalJsonRpc{
 
         $response = '';
 
-        SIM\printArray("getting response", true);
-
+        $x  = 0;
         while (!feof($this->socket)) {
-            $response .= fread($this->socket, 1024);
-            SIM\printArray($response, true);
-            $stream_meta_data = stream_get_meta_data($this->socket); //Added line
-            SIM\printArray($stream_meta_data, true);
-            if($stream_meta_data['unread_bytes'] <= 0) break; //Added line
+            $response       .= fread($this->socket, 4096);
+
+            if(!empty(json_decode($response))){
+                //SIM\printArray(json_decode($response));
+                break;
+            }
+
+            $streamMetaData  = stream_get_meta_data($this->socket);
+
+            if($streamMetaData['unread_bytes'] <= 0){
+                $x++;
+
+                if( $x > 10 ){
+                    break;
+                }
+            }
         }
         flush();
 
-        SIM\printArray($response, true);
-
         $json   = json_decode($response);
 
-        SIM\printArray($json, true);
-
-        if(!isset($json->result) && !isset($json->error)){
-            SIM\printArray($json);
+        if(empty($json)){
+            switch (json_last_error()) {
+                case JSON_ERROR_NONE:
+                    SIM\printArray(' - No errors', true);
+                    break;
+                case JSON_ERROR_DEPTH:
+                    SIM\printArray(' - Maximum stack depth exceeded', true);
+                    break;
+                case JSON_ERROR_STATE_MISMATCH:
+                    SIM\printArray(' - Underflow or the modes mismatch', true);
+                    break;
+                case JSON_ERROR_CTRL_CHAR:
+                    SIM\printArray(' - Unexpected control character found', true);
+                    break;
+                case JSON_ERROR_SYNTAX:
+                    SIM\printArray(' - Syntax error, malformed JSON '.$response, true);
+                    break;
+                case JSON_ERROR_UTF8:
+                    SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded', true);
+                    break;
+                default:
+                    break;
+            }
+        }
+        if(!isset($json->result) && !isset($json->error) || $json->id != $id){
+            SIM\printArray($response);
             //$this->getRequestResponse($id);
         }
 
@@ -432,7 +121,12 @@ class SignalJsonRpc{
      * Performs the json RPC request
      */
     public function doRequest($method, $params=[]){
+        if($this->shouldCloseSocket){
+            $this->socket   = stream_socket_client('unix:////home/simnige1/sockets/signal', $errno, $this->error);
+        }
+
         if(!$this->socket){
+            //SIM\printArray("$errno: $this->error", true);
             return false;
         }
 
@@ -449,17 +143,16 @@ class SignalJsonRpc{
 
         $json   = json_encode($data)."\n";
 
-        SIM\printArray($json);    
-
         fwrite($this->socket, $json);         
 
         flush();
-        ob_flush();
 
         //stream_socket_recvfrom
         $response = $this->getRequestResponse($id);
 
-        //SIM\printArray($response, true);
+        if($this->shouldCloseSocket){
+            fclose($this->socket);
+        }
 
         if(!empty($response->error)){
             SIM\printArray("Got error {$response->error->message} For command $json");
@@ -475,6 +168,23 @@ class SignalJsonRpc{
         }
 
         return $response->result;
+    }
+
+    /**
+     * Disable push support for this device, i.e. this device won’t receive any more messages.
+     * If this is the master device, other users can’t send messages to this number anymore.
+     * Use "updateAccount" to undo this. To remove a linked device, use "removeDevice" from the master device.
+     *
+     * @return bool|string
+     */
+    public function unregister(){
+        $result = $this->doRequest('unregister');
+
+        if($result){
+            unlink($this->basePath.'/phone.signal');
+        }
+
+        return $result;
     }
 
     /**
@@ -591,16 +301,30 @@ class SignalJsonRpc{
      
     /**
      * Shows if a number is registered on the Signal Servers or not.
-     * @param   string          $recipient Number to check.
-     * @return  string
+     * @param   string|array          $recipient or array of recipients number to check.
+     *
+     * @return  array|bool              If more than one recipient returns an array of results, if only one returns a boolean true or false
      */
     public function isRegistered($recipient){
+        if(!is_array($recipient)){
+            $recipient  = [$recipient];
+        }
 
         $params     = [
-            "number"     => [$recipient]
+            "recipient"     => $recipient
         ];
 
-        return $this->doRequest('getUserStatus', $params);
+        $result = $this->doRequest('getUserStatus', $params);
+
+        if(!$result){
+            return true;
+        }
+
+        if(count($result) == 1){
+            return $result[0]->isRegistered;
+        }
+
+        return $result;
     }
 
     /**
@@ -635,7 +359,7 @@ class SignalJsonRpc{
         }
 
         $params     = [
-            "recipient"     => $recipient,
+            "recipient"     => $recipients,
             "message"       => $message
         ];
 
@@ -678,10 +402,18 @@ class SignalJsonRpc{
         return $ownTimeStamp;
     }
 
+    /**
+     * Compliancy function
+     */
+    public function sendGroupMessage($recipients, string $message, $attachments = '', $timeStamp=''){
+        return $this->send($recipients, $message, $attachments, $timeStamp);
+    }
+
     public function markAsRead($recipient, $timestamp){
         $params = [
             "recipient"         => $recipient,
-            "targetTimestamp"   => $timestamp
+            "targetTimestamp"   => $timestamp,
+            "type"              => "read"
         ];
         
         return $this->doRequest('sendReceipt', $params);
@@ -712,38 +444,9 @@ class SignalJsonRpc{
         
         $result = $this->doRequest('listGroups');
 
-        SIM\printArray($result, true);
-
-        if(empty($this->error)){
-            SIM\printArray($result, true);
-
-            preg_match_all('/struct {(.*?)array of bytes \[(.*?)\](.*?)}/s', $result, $matches);
-
-            $result = [];
-            foreach($matches[2] as $key=>$match){
-                $group = new stdClass();
-                $id = trim(str_replace("\n", '', $match));
-
-                $idString   = [];
-                foreach(explode(' ', $id) as $digid){
-                    if(empty($digid)){
-                        continue;
-                    }
-
-                    $idString[] = hexdec($digid);
-                }
-
-                $idString   = implode(',', $idString);
-
-                $group->{"id"}      = $idString;
-                $group->{"name"}    = trim(str_replace("\n", '', $matches[3][$key]));
-                $group->{"path"}    = trim(str_replace("\n", '', $matches[1][$key]));
-
-                $result[]           = $group;
-            }
+        if(empty($this->error) && !empty($result)){
+            $this->groups   = $result;
         }
-
-        $this->groups   = $result;
 
         return $this->groups;
     }
@@ -762,8 +465,7 @@ class SignalJsonRpc{
             }
         }
 
-        $params = [
-            "recipient"         => $recipient,
+        $param = [
             "targetTimestamp"   => $targetSentTimestamp
         ];
 
@@ -772,8 +474,10 @@ class SignalJsonRpc{
         }else{
             $param['groupId']   = $recipients;
         }
+
+        SIM\printArray($param, true);
         
-        $result = $this->doRequest('remoteDelete', $params);
+        $result = $this->doRequest('remoteDelete', $param);
 
         if(is_numeric($result)){
             $this->markAsDeleted($targetSentTimestamp);
@@ -807,6 +511,13 @@ class SignalJsonRpc{
         }
 
         return $this->doRequest('sendTyping', $params);
+    }
+
+    /**
+     * Dummy function for complicance to signal-dbus
+     */
+    public function sendGroupTyping($recipient, $timestamp='', $groupId=''){
+        $this->sentTyping($recipient, $timestamp, $groupId);
     }
 
     public function sendMessageReaction($recipient, $timestamp, $groupId='', $emoji=''){
@@ -886,24 +597,6 @@ class SignalJsonRpc{
         return $result[0]['groupInviteLink'];
     }
 
-    /**
-     * Converts a base64 group id to an array of bytes
-     *
-     * @param   string  $id       the base64encode group id
-     *
-     * @return  string            A comma seperated list of bytes
-     */
-    public function groupIdToByteArray($id){
-        $id = str_replace('_', '/', $id);
-
-        $id = base64_decode($id);
-
-        $id = unpack('C*',$id);
-
-        $id = implode(',', $id);
-        return $id;
-    }
-
     public function findGroupName($id){
         $groups = (array)$this->listGroups();
 
@@ -918,48 +611,5 @@ class SignalJsonRpc{
         }
 
         return '';
-    }
-
-    private function daemonIsRunning(){
-        // check if running
-        $command = new Command([
-            'command' => "ps -ef | grep -v grep | grep -P 'signal-cli.*daemon'"
-        ]);
-
-        $command->execute();
-
-        $result = $command->getOutput();
-        if(empty($result)){
-            $this->daemon   = false;
-        }else{
-            $this->daemon   =  true;
-
-            // Running daemon but not for this website
-            if(!str_contains($result, $this->basePath)){
-                $this->error    = 'The daemon is started but for another website in this user account.<br>';
-                $this->error   .= "You can send messages just fine, but not receive any.<br>";
-                $this->error   .= "To enable receiving messages add this to your crontab (crontab -e): <br>";
-                $this->error   .= "<code>@reboot $this->path -o json --trust-new-identities=always daemon --http --send-read-receipts &</code><br>";
-                $this->error   .= "Then reboot your server";
-            }
-        }
-    }
-
-    public function startDaemon(){
-        if($this->os == 'Windows'){
-            return;
-        }
-
-        if(!$this->daemon){
-            $cli        = "$this->path -o json --trust-new-identities=always daemon --socket --send-read-receipts;";
-            
-            $command = new Command([
-                'command' => "bash -c '$cli' &"
-            ]);
-
-            $command->execute();
-        }
- 
-        $this->daemon   = true;
     }
 }

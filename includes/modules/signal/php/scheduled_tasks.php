@@ -6,7 +6,7 @@ use SIM;
 add_action('init', function(){
 	//add action for use in scheduled task
 	add_action( 'check_signal_action', function(){
-        $signal = new Signal();
+        $signal = new SignalCommandLine();
         $signal->checkPrerequisites();
     });
 
@@ -47,11 +47,7 @@ function checkSignalNumbers(){
         return;
     }
     
-    if(str_contains(php_uname(), 'Linux')){
-        $signal = new SignalJsonRpc();
-    }else{
-        $signal = new Signal();
-    }
+    $signal	= getSignalInstance();
 
     foreach(SIM\getUserAccounts() as $user){
         $phonenumber    = get_user_meta( $user->ID, 'signal_number', true );
@@ -102,13 +98,13 @@ function cleanSignalLog(){
 
     $maxDate    = date('Y-m-d', strtotime("-$amount $period"));
 
-    $signal     = new SignalJsonRpc();
+    $signal     = new Signal();
 
     $signal->clearMessageLog($maxDate);
 }
 
 function retryFailedMessages(){
-    $signal = new Signal();
+    $signal = new SignalCommandLine();
 
     $signal->retryFailedMessages();
 }

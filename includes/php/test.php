@@ -14,27 +14,18 @@ add_shortcode("test", function ($atts){
 
 	$signal	= new SIGNAL\SignalJsonRpc();
 
-	//printArray($signal->isRegistered("+2349045252526"), true);
+    $recipient  = "+2349045252526";
 
-	/* printArray($signal->send("+2349045252526", "hi"), true);
+    //$timeStamp = $signal->send($recipient, "message", [ABSPATH.'/wp-content/debug.log']);
+    //printArray($timeStamp, true);
 
-	printArray($signal->listGroups(), true);
+    //$result = $signal->markAsRead($recipient,  1715602373536);
+    //printArray($result, true);
 
+	// does not work 
+    //printArray($signal->isRegistered("+2349045252526"), true);
 
-	$groupPaths		= getModuleOption('signal', 'invgroups');
-
-    $link			= '';
-    if(is_array($groupPaths)){
-        foreach($groupPaths as $path){
-            $result	= 	$signal->getGroupInvitationLink($path);
-			printArray($result, true);
-
-            if(empty($signal->error)){
-                $link	.= $result;
-            }
-        }
-    } */
-	
+    printArray($signal->listGroups(false, true), true);
 
     /* $posts = get_posts(
 		array(
@@ -51,3 +42,37 @@ add_shortcode("test", function ($atts){
 
 // turn off incorrect error on localhost
 add_filter( 'wp_mail_smtp_core_wp_mail_function_incorrect_location_notice', '__return_false' );
+
+function works(){
+    $socket   = stream_socket_client('unix:////home/simnige1/sockets/signal', $errno, $error);
+
+    $params     = [
+        "recipient"     => "+2349045252526",
+        "message"       => "message" 
+    ];
+    $params["account"]  = "+2349011531222";
+
+    $id     = time(); 
+
+    $data   = [
+        "jsonrpc"       => "2.0",
+        "method"        => "send",
+        "params"        => $params,
+        "id"            => $id
+    ];
+
+    printArray(json_encode($data)."\n", true);
+
+    fwrite($socket, json_encode($data));         
+
+    flush();
+    ob_flush();
+
+    $request    = fread($socket, 4096);
+    flush();
+
+    $json   = json_decode($request);
+
+    printArray($json, true);
+
+}

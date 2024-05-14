@@ -36,9 +36,7 @@ include_once __DIR__.'/../php/classes/SignalJsonRpc.php';
 
 //SIM\printArray($data);
 
-$signal = new SIGNAL\SignalJsonRpc();
-
-print("test1\n");
+$signal = new SIGNAL\SignalJsonRpc(false);
 
 if(!$signal->socket){
    print("Invalid socket: $signal->error\n");
@@ -46,7 +44,27 @@ if(!$signal->socket){
 }
 
 while(1){
-    $request    = fread($signal->socket, 4096);
+    $request = '';
+
+    $x  = 0;
+    while (!feof($signal->socket)) {
+        $request       .= fread($signal->socket, 4096);
+
+        if(!empty(json_decode($request))){
+            //SIM\printArray(json_decode($response));
+            break;
+        }
+
+        $streamMetaData  = stream_get_meta_data($signal->socket);
+
+        if($streamMetaData['unread_bytes'] <= 0){
+            $x++;
+
+            if( $x > 10 ){
+                break;
+            }
+        }
+    }
     flush();
 
     $json   = json_decode($request);
@@ -55,32 +73,11 @@ while(1){
     if($json->method == 'receive'){
         print("receive");
         processMessage($json->params);
-    }else{
-        print("response");
-        SIM\printArray($request, true);
-
-        // reaction to request
-        $responses                  = get_option('sim_signal_request_responses', []);
-
-        $responses[$json->id]    = $json;
-
-        update_option('sim_signal_request_responses', $responses);
     }
-    flush();
-    ob_flush();
 }
-
-//while(fread($signal->socket, 4096)){
-   // print_r(json_decode(fread($signal->socket, 4096))->params);
-  //  print("sa");
-    //processMessage(json_decode(fread($signal->socket, 4096))->params);
-//}
-
 
 function processMessage($data){
     global $signal;
-
-    //print_r($data);
 
     //SIM\printArray($data, true);
 
@@ -117,22 +114,22 @@ function processMessage($data){
 
     // message to group
     if(isset($data->envelope->dataMessage->groupInfo)){
-        $groupId    = $signal->groupIdToByteArray($data->envelope->dataMessage->groupInfo->groupId);
+        $groupId    = $data->envelope->dataMessage->groupInfo->groupId;
 
         // we are mentioned
         if( isset($data->envelope->dataMessage->mentions)){
             foreach($data->envelope->dataMessage->mentions as $mention){
-                if($mention->number == $signal->phoneNumber || $mention->name == '8fc6c236-f07b-4a3c-97c5-0a78efe488ee'){
+                if($mention->number == $signal->phoneNumber){
                     $signal->sendMessageReaction($data->envelope->source, $data->envelope->timestamp, $groupId, '👍🏽');
 
-                    $signal->sendGroupTyping($groupId);
+                    $signal->sentTyping($data->envelope->source, '', $groupId);
 
                     // Remove mention from message
                     $message    = utf8_decode($message);
                     $message    = substr($message, $data->envelope->dataMessage->mentions[0]->length);
                     $answer     = getAnswer(trim($message, " \t\n\r\0\x0B?"), $data->envelope->source);
 
-                    $signal->sendGroupMessage($answer['response'], $groupId, $answer['pictures']);
+                    $signal->send($groupId, $answer['response'], $answer['pictures']);
                 }
             }
         }
