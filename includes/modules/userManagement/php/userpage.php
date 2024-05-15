@@ -160,7 +160,6 @@ function userInfoPage($atts){
 		GENERIC Info
 	*/
 	if((array_intersect($genericInfoRoles, $userRoles ) || $showCurrentUserData) && in_array('generic', $availableForms)){
-		
 		//Add a tab button
 		$tabs[]	= '<li class="tablink" id="show_generic_info" data-target="generic_info">Generic info</li>';
 
@@ -214,7 +213,7 @@ function userInfoPage($atts){
 	/*
 		PROFILE PICTURE Info
 	*/
-	if((in_array('usermanagement',$userRoles ) || $showCurrentUserData) && in_array('profile picture', $availableForms)){
+	if((in_array('usermanagement', $userRoles ) || $showCurrentUserData) && in_array('profile picture', $availableForms)){
 		//Add tab button
 		$tabs[]	= '<li class="tablink" id="show_profile_picture_info" data-target="profile_picture_info">Profile picture</li>';
 		
@@ -222,7 +221,11 @@ function userInfoPage($atts){
 		$html	.= '<div id="profile_picture_info" class="tabcontent hidden">';
 
 			if(isset($_GET['main_tab']) && $_GET['main_tab'] == 'profile_picture'){
-				$html	.= do_shortcode('[formbuilder formname=profile_picture]');
+				if(SIM\isChild($userId)){
+					$html	.= do_shortcode("[formbuilder formname=profile_picture userid='$userId']");
+				}else{
+					$html	.= do_shortcode('[formbuilder formname=profile_picture]');
+				}
 			}else{
 				$html	.= "<div class='loader-wrapper loading hidden'></div><img class='tabloader' src='".LOADERIMAGEURL."' loading='lazy'>";
 			}
@@ -407,7 +410,11 @@ function getGenericsTab($userId){
 		$html	.= "</div>";
 	}
 
-	$html	.= do_shortcode("[formbuilder formname=user_generics userid='$userId']");
+	if(SIM\isChild($userId)){
+		$html	.= do_shortcode("[formbuilder formname=child_generic userid=$userId]");
+	}else{
+		$html	.= do_shortcode("[formbuilder formname=user_generics userid='$userId']");
+	}
 
 	return $html;
 }
@@ -415,7 +422,11 @@ function getGenericsTab($userId){
 function getMedicalTab($userId){
 	ob_start();
 	
-	echo do_shortcode('[formbuilder formname=user_medical]');
+	if(SIM\isChild($userId)){
+		echo do_shortcode("[formbuilder formname=user_medical userid=$userId]");
+	}else{
+		echo do_shortcode('[formbuilder formname=user_medical]');
+	}
 				
 	?>
 	<form method='post' id='print_medicals-form'>
