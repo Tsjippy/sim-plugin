@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- show children forms for children
 
 ### Fixed
 
