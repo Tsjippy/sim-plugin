@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- auto archive bug
 
 ### Updated
 
