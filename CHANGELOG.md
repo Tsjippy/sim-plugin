@@ -3,15 +3,22 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- support for signal jsonRpc
 
 ### Changed
 
 ### Fixed
-- auto archive bug
-- bug in editing splitted form result
 
 ### Updated
+
+## [2.44.0] - 2024-05-15
+
+
+### Added
+- support for signal jsonRpc
+
+### Fixed
+- auto archive bug
+- bug in editing splitted form result
 
 ## [2.43.9] - 2024-05-13
 
