@@ -501,17 +501,17 @@
         },
         {
             "name": "matomo/device-detector",
-            "version": "6.3.0",
-            "version_normalized": "6.3.0.0",
+            "version": "6.3.1",
+            "version_normalized": "6.3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matomo-org/device-detector.git",
-                "reference": "35efad75b31f2596701834d19f097497909572a4"
+                "reference": "8096093346917ee2477d802ab3b00c4c091c5cee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/35efad75b31f2596701834d19f097497909572a4",
-                "reference": "35efad75b31f2596701834d19f097497909572a4",
+                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/8096093346917ee2477d802ab3b00c4c091c5cee",
+                "reference": "8096093346917ee2477d802ab3b00c4c091c5cee",
                 "shasum": ""
             },
             "require": {
@@ -534,7 +534,7 @@
                 "doctrine/cache": "Can directly be used for caching purpose",
                 "ext-yaml": "Necessary for using the Pecl YAML parser"
             },
-            "time": "2024-02-16T16:26:57+00:00",
+            "time": "2024-04-12T12:16:21+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -831,24 +831,24 @@
         },
         {
             "name": "psr/http-factory",
-            "version": "1.0.2",
-            "version_normalized": "1.0.2.0",
+            "version": "1.1.0",
+            "version_normalized": "1.1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-factory.git",
-                "reference": "e616d01114759c4c489f93b099585439f795fe35"
+                "reference": "2b4765fddfe3b508ac62f829e852b1501d3f6e8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/e616d01114759c4c489f93b099585439f795fe35",
-                "reference": "e616d01114759c4c489f93b099585439f795fe35",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/2b4765fddfe3b508ac62f829e852b1501d3f6e8a",
+                "reference": "2b4765fddfe3b508ac62f829e852b1501d3f6e8a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0",
+                "php": ">=7.1",
                 "psr/http-message": "^1.0 || ^2.0"
             },
-            "time": "2023-04-10T20:10:41+00:00",
+            "time": "2024-04-15T12:06:14+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -871,7 +871,7 @@
                     "homepage": "https://www.php-fig.org/"
                 }
             ],
-            "description": "Common interfaces for PSR-7 HTTP message factories",
+            "description": "PSR-17: Common interfaces for PSR-7 HTTP message factories",
             "keywords": [
                 "factory",
                 "http",
@@ -883,7 +883,7 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-factory/tree/1.0.2"
+                "source": "https://github.com/php-fig/http-factory"
             },
             "install-path": "../psr/http-factory"
         },
@@ -1090,21 +1090,21 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "4.7.5",
-            "version_normalized": "4.7.5.0",
+            "version": "4.7.6",
+            "version_normalized": "4.7.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e"
+                "reference": "91039bc1faa45ba123c4328958e620d382ec7088"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e",
-                "reference": "5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/91039bc1faa45ba123c4328958e620d382ec7088",
+                "reference": "91039bc1faa45ba123c4328958e620d382ec7088",
                 "shasum": ""
             },
             "require": {
-                "brick/math": "^0.8.8 || ^0.9 || ^0.10 || ^0.11",
+                "brick/math": "^0.8.8 || ^0.9 || ^0.10 || ^0.11 || ^0.12",
                 "ext-json": "*",
                 "php": "^8.0",
                 "ramsey/collection": "^1.2 || ^2.0"
@@ -1141,7 +1141,7 @@
                 "paragonie/random-lib": "Provides RandomLib for use with the RandomLibAdapter",
                 "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
             },
-            "time": "2023-11-08T05:53:05+00:00",
+            "time": "2024-04-27T21:32:50+00:00",
             "type": "library",
             "extra": {
                 "captainhook": {
@@ -1169,7 +1169,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ramsey/uuid/issues",
-                "source": "https://github.com/ramsey/uuid/tree/4.7.5"
+                "source": "https://github.com/ramsey/uuid/tree/4.7.6"
             },
             "funding": [
                 {
@@ -1492,24 +1492,24 @@
         },
         {
             "name": "symfony/process",
-            "version": "v5.4.36",
-            "version_normalized": "5.4.36.0",
+            "version": "v5.4.39",
+            "version_normalized": "5.4.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "4fdf34004f149cc20b2f51d7d119aa500caad975"
+                "reference": "85a554acd7c28522241faf2e97b9541247a0d3d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/4fdf34004f149cc20b2f51d7d119aa500caad975",
-                "reference": "4fdf34004f149cc20b2f51d7d119aa500caad975",
+                "url": "https://api.github.com/repos/symfony/process/zipball/85a554acd7c28522241faf2e97b9541247a0d3d5",
+                "reference": "85a554acd7c28522241faf2e97b9541247a0d3d5",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.5",
                 "symfony/polyfill-php80": "^1.16"
             },
-            "time": "2024-02-12T15:49:53+00:00",
+            "time": "2024-04-18T08:26:06+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1537,7 +1537,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v5.4.36"
+                "source": "https://github.com/symfony/process/tree/v5.4.39"
             },
             "funding": [
                 {

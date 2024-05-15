@@ -486,16 +486,16 @@
         },
         {
             "name": "matomo/device-detector",
-            "version": "6.3.0",
+            "version": "6.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matomo-org/device-detector.git",
-                "reference": "35efad75b31f2596701834d19f097497909572a4"
+                "reference": "8096093346917ee2477d802ab3b00c4c091c5cee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/35efad75b31f2596701834d19f097497909572a4",
-                "reference": "35efad75b31f2596701834d19f097497909572a4",
+                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/8096093346917ee2477d802ab3b00c4c091c5cee",
+                "reference": "8096093346917ee2477d802ab3b00c4c091c5cee",
                 "shasum": ""
             },
             "require": {
@@ -551,14 +551,14 @@
                 "source": "https://github.com/matomo-org/matomo",
                 "wiki": "https://dev.matomo.org/"
             },
-            "time": "2024-02-16T16:26:57+00:00"
+            "time": "2024-04-12T12:16:21+00:00"
         },
         {
             "name": "mustangostang/spyc",
             "version": "0.6.3",
             "source": {
                 "type": "git",
-                "url": "git@github.com:mustangostang/spyc.git",
+                "url": "https://github.com/mustangostang/spyc.git",
                 "reference": "4627c838b16550b666d15aeae1e5289dd5b77da0"
             },
             "dist": {
@@ -601,6 +601,10 @@
                 "yaml",
                 "yml"
             ],
+            "support": {
+                "issues": "https://github.com/mustangostang/spyc/issues",
+                "source": "https://github.com/mustangostang/spyc/tree/0.6.3"
+            },
             "time": "2019-09-10T13:16:29+00:00"
         },
         {
@@ -801,20 +805,20 @@
         },
         {
             "name": "psr/http-factory",
-            "version": "1.0.2",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-factory.git",
-                "reference": "e616d01114759c4c489f93b099585439f795fe35"
+                "reference": "2b4765fddfe3b508ac62f829e852b1501d3f6e8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/e616d01114759c4c489f93b099585439f795fe35",
-                "reference": "e616d01114759c4c489f93b099585439f795fe35",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/2b4765fddfe3b508ac62f829e852b1501d3f6e8a",
+                "reference": "2b4765fddfe3b508ac62f829e852b1501d3f6e8a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0",
+                "php": ">=7.1",
                 "psr/http-message": "^1.0 || ^2.0"
             },
             "type": "library",
@@ -838,7 +842,7 @@
                     "homepage": "https://www.php-fig.org/"
                 }
             ],
-            "description": "Common interfaces for PSR-7 HTTP message factories",
+            "description": "PSR-17: Common interfaces for PSR-7 HTTP message factories",
             "keywords": [
                 "factory",
                 "http",
@@ -850,9 +854,9 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-factory/tree/1.0.2"
+                "source": "https://github.com/php-fig/http-factory"
             },
-            "time": "2023-04-10T20:10:41+00:00"
+            "time": "2024-04-15T12:06:14+00:00"
         },
         {
             "name": "psr/http-message",
@@ -1048,20 +1052,20 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "4.7.5",
+            "version": "4.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e"
+                "reference": "91039bc1faa45ba123c4328958e620d382ec7088"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e",
-                "reference": "5f0df49ae5ad6efb7afa69e6bfab4e5b1e080d8e",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/91039bc1faa45ba123c4328958e620d382ec7088",
+                "reference": "91039bc1faa45ba123c4328958e620d382ec7088",
                 "shasum": ""
             },
             "require": {
-                "brick/math": "^0.8.8 || ^0.9 || ^0.10 || ^0.11",
+                "brick/math": "^0.8.8 || ^0.9 || ^0.10 || ^0.11 || ^0.12",
                 "ext-json": "*",
                 "php": "^8.0",
                 "ramsey/collection": "^1.2 || ^2.0"
@@ -1124,7 +1128,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ramsey/uuid/issues",
-                "source": "https://github.com/ramsey/uuid/tree/4.7.5"
+                "source": "https://github.com/ramsey/uuid/tree/4.7.6"
             },
             "funding": [
                 {
@@ -1136,7 +1140,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-08T05:53:05+00:00"
+            "time": "2024-04-27T21:32:50+00:00"
         },
         {
             "name": "robthree/twofactorauth",
@@ -1435,16 +1439,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v5.4.36",
+            "version": "v5.4.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "4fdf34004f149cc20b2f51d7d119aa500caad975"
+                "reference": "85a554acd7c28522241faf2e97b9541247a0d3d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/4fdf34004f149cc20b2f51d7d119aa500caad975",
-                "reference": "4fdf34004f149cc20b2f51d7d119aa500caad975",
+                "url": "https://api.github.com/repos/symfony/process/zipball/85a554acd7c28522241faf2e97b9541247a0d3d5",
+                "reference": "85a554acd7c28522241faf2e97b9541247a0d3d5",
                 "shasum": ""
             },
             "require": {
@@ -1477,7 +1481,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v5.4.36"
+                "source": "https://github.com/symfony/process/tree/v5.4.39"
             },
             "funding": [
                 {
@@ -1493,7 +1497,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-12T15:49:53+00:00"
+            "time": "2024-04-18T08:26:06+00:00"
         },
         {
             "name": "thecodingmachine/safe",
@@ -1857,5 +1861,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.6.0"
 }

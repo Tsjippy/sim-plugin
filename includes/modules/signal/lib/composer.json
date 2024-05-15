@@ -5,7 +5,7 @@
     "require": {
         "mikehaertl/php-shellcommand": "dev-master",
         "bacon/bacon-qr-code": "dev-main",
-        "guzzlehttp/guzzle": "7.0.1"
+        "guzzlehttp/guzzle": "8.0.x-dev"
     },
     "autoload": {
         "psr-4": {

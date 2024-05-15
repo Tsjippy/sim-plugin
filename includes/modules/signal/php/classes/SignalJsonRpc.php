@@ -46,7 +46,17 @@ class SignalJsonRpc extends Signal{
         $this->daemonIsRunning();
         $this->startDaemon();
 
-        $this->socket   = stream_socket_client('unix:////home/simnige1/sockets/signal', $errno, $this->error);
+        $socketPath     = "/home/simnige1/sockets/signal";
+
+        $this->socket   = stream_socket_client("unix:///$socketPath", $errno, $this->error);
+
+        if($errno == 111){
+            // remove the old socket file
+            unlink($socketPath);
+
+            // try again
+            $this->socket   = stream_socket_client("unix:///$socketPath", $errno, $this->error);
+        }
 
         if(!$this->socket){
             SIM\printArray("$errno: $this->error", true);

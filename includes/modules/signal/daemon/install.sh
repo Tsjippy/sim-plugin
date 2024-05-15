@@ -31,5 +31,9 @@ cp -f $2/org.asamk.Signal.conf /etc/dbus-1/system.d/
 cp -f $2/org.asamk.Signal.service /usr/share/dbus-1/system-services/
 cp -f $2/signal-cli.service /etc/systemd/system/
 systemctl daemon-reload
+
+systemctl enable signal-cli-jsonrpc.service
+systemctl enable signal-cli-jsonrpc-daemon.service
+
 systemctl enable signal-cli.service
 systemctl reload dbus.service

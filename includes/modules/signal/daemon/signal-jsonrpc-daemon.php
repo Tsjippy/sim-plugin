@@ -12,19 +12,17 @@
  *  php "/home/simnige1/web/simnigeria.org/public_html/wp-content/plugins/sim-plugin/includes/modules/signal/daemon/signal-daemon copy.php"
  * /home/simnige1/web/simnigeria.org/public_html/wp-content/signal-cli/program/signal-cli --config /home/simnige1/.local/share/signal-cli/ -o json --trust-new-identities=always -a +2349011531222 daemon --http
  */
-use SIM\SIGNAL;
 use SIM;
+use SIM\SIGNAL;
 
 // load wp
 //ob_start();
 define( 'WP_USE_THEMES', false ); // Do not use the theme files
 define( 'COOKIE_DOMAIN', false ); // Do not append verify the domain to the cookie
-print("test2\n");
 
 require(__DIR__."/../../../../../../../wp-load.php");
 require_once ABSPATH . WPINC . '/functions.php';
 
-print("test3\n");
 //print(ob_get_clean());
 
 
@@ -33,8 +31,6 @@ set_time_limit(0);
 
 include_once __DIR__.'/../php/__module_menu.php';
 include_once __DIR__.'/../php/classes/SignalJsonRpc.php';
-
-//SIM\printArray($data);
 
 $signal = new SIGNAL\SignalJsonRpc(false);
 

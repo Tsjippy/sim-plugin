@@ -186,7 +186,7 @@ class EditFormResults extends DisplayFormResults{
 						}
 					}
 
-					if(count($this->submission->formresults[$splitElementName]) == $archivedCounter && !$this->submission->archived){
+					if(count((array)$this->submission->formresults[$splitElementName]) == $archivedCounter && !$this->submission->archived){
 						// Something went wrong in the past, mark submission as archived
 						$result = $wpdb->update(
 							$this->submissionTableName,
