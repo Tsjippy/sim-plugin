@@ -9,6 +9,7 @@
 
 ### Fixed
 - auto archive bug
+- bug in editing splitted form result
 
 ### Updated
 
