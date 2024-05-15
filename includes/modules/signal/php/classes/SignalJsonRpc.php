@@ -369,12 +369,13 @@ class SignalJsonRpc extends Signal{
         }
 
         $params     = [
-            "recipient"     => $recipients,
             "message"       => $message
         ];
 
         if($group){
             $params['groupId']  = $recipients;
+        }else{
+            $params['recipient']  = $recipients;
         }
 
         if(is_array($attachments)){

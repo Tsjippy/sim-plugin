@@ -101,6 +101,7 @@ function sendPrayerRequests(){
 					$dayPart	.= " ".$userdata->first_name;
 				}
 				$result	= SIM\trySendSignal("Good $dayPart,\n\n$message", $user, false, $prayerRequest['pictures']);
+				SIM\printArray($result);
 			}
 		}
 
