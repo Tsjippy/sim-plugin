@@ -413,6 +413,7 @@ class SimForms{
 		}
 
 		if(!isset($this->formData->elementMapping['name'][$name])){
+			// first part of the name, remove anything after [
 			$nameNew	= explode('[', $name)[0];
 
 			if(isset($this->formData->elementMapping['name'][$nameNew])){
@@ -421,6 +422,21 @@ class SimForms{
 			}elseif(isset($this->formData->elementMapping['name'][$name.'[]'])){
 				// add []
 				$name	.= '[]';
+			}elseif(!empty($this->formData->split)){
+				// only the last part of a plitted name is give
+				$mainName	= explode('[', $this->getElementById($this->formData->split[0], 'name'))[0];
+
+				// we already tried adding splits, did not work
+				if(str_contains($name, $mainName.'[1][')){
+					return false;
+				}elseif($mainName == $nameNew){
+					$orgName	= trim(end(explode('[',$name)), ']');
+					$name		= $mainName."[1][$orgName]";
+				}else{
+					$name		= $mainName."[0][$name]";
+				}
+
+				return $this->getElementByName($name, $key, $single);
 			}else{
 				//SIM\printArray("Element with name $name not found on form {$this->formData->name} with id {$this->formData->id}");
 				return false;
