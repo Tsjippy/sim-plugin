@@ -68,63 +68,89 @@ class SignalJsonRpc extends Signal{
     /**
      * Get the response to a request
      */
-    public function getRequestResponse($id){
+    public function getRequestResponse($id, $counter=0){
+        $signalResults  = get_option('sim-signal-results', []);
 
-        $response = '';
+        // wait till the response comes back into the daemon
+        $x  = 1;
+        while(!isset($signalResults[$id]) && $x < 60){
+            sleep(1);
+            $signalResults  = get_option('sim-signal-results', []);
+        }
 
-        $x  = 0;
-        while (!feof($this->socket)) {
-            $response       .= fread($this->socket, 4096);
+        // maybe the daemon is not running, lets read from the socket ourselves
+        if(!isset($signalResults[$id])){
+            $response = '';
 
-            if(!empty(json_decode($response))){
-                //SIM\printArray(json_decode($response));
-                break;
-            }
+            $x  = 0;
+            while (!feof($this->socket)) {
+                $response       .= fread($this->socket, 4096);
 
-            $streamMetaData  = stream_get_meta_data($this->socket);
-
-            if($streamMetaData['unread_bytes'] <= 0){
-                $x++;
-
-                if( $x > 10 ){
+                if(!empty(json_decode($response))){
+                    //SIM\printArray(json_decode($response));
                     break;
                 }
+
+                $streamMetaData  = stream_get_meta_data($this->socket);
+
+                if($streamMetaData['unread_bytes'] <= 0){
+                    $x++;
+
+                    if( $x > 10 ){
+                        break;
+                    }
+                }
             }
-        }
-        flush();
+            flush();
 
-        $json   = json_decode($response);
+            $json   = json_decode($response);
 
-        if(empty($json)){
-            switch (json_last_error()) {
-                case JSON_ERROR_NONE:
-                    SIM\printArray(' - No errors', true);
-                    break;
-                case JSON_ERROR_DEPTH:
-                    SIM\printArray(' - Maximum stack depth exceeded', true);
-                    break;
-                case JSON_ERROR_STATE_MISMATCH:
-                    SIM\printArray(' - Underflow or the modes mismatch', true);
-                    break;
-                case JSON_ERROR_CTRL_CHAR:
-                    SIM\printArray(' - Unexpected control character found', true);
-                    break;
-                case JSON_ERROR_SYNTAX:
-                    SIM\printArray(' - Syntax error, malformed JSON '.$response, true);
-                    break;
-                case JSON_ERROR_UTF8:
-                    SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded', true);
-                    break;
-                default:
-                    break;
+            if(empty($json)){
+                switch (json_last_error()) {
+                    case JSON_ERROR_NONE:
+                        SIM\printArray(' - No errors', true);
+                        break;
+                    case JSON_ERROR_DEPTH:
+                        SIM\printArray(' - Maximum stack depth exceeded', true);
+                        break;
+                    case JSON_ERROR_STATE_MISMATCH:
+                        SIM\printArray(' - Underflow or the modes mismatch', true);
+                        break;
+                    case JSON_ERROR_CTRL_CHAR:
+                        SIM\printArray(' - Unexpected control character found', true);
+                        break;
+                    case JSON_ERROR_SYNTAX:
+                        SIM\printArray(' - Syntax error, malformed JSON: '.$response, true);
+                        break;
+                    case JSON_ERROR_UTF8:
+                        SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded', true);
+                        break;
+                    default:
+                        break;
+                }
             }
-        }
-        if(!isset($json->result) && !isset($json->error) || $json->id != $id){
-            SIM\printArray($response);
-            //$this->getRequestResponse($id);
+
+            // read until we have a result but no more than 10 times
+            if(!isset($json->result) && $counter < 10){
+                $this->getRequestResponse($id, $counter++);
+            }
+
+            if(!isset($json->result) && !isset($json->error) || $json->id != $id){
+                SIM\printArray($response);
+                //$this->getRequestResponse($id);
+            }
+
+            return $json; 
         }
 
-        return $json;
+        $result = $signalResults[$id];
+
+        unset($signalResults[$id]);
+
+        // remove the result from the array
+        update_option('sim-signal-results', $signalResults);
+
+        return $result;
     }
 
     /**

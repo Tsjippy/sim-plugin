@@ -20,19 +20,26 @@ add_action('admin_menu', function() {
 
 //Apply our e-mail settings
 add_filter( 'wp_new_user_notification_email', function($args, $user){
-	$key		 = get_password_reset_key($user);
+	
+	$expirationDuration	= apply_filters( 'password_reset_expiration', DAY_IN_SECONDS );
+	$key		 		= get_password_reset_key($user);
 	if(is_wp_error($key)){
 		return $key;
 	}
+	$validTill			= time()+$expirationDuration;
 
-	$pageUrl	 = get_permalink(SIM\getModuleOption('login', 'password_reset_page')[0]);
-	$url		 = "$pageUrl?key=$key&login=$user->user_login";
+	$format				= get_option('date_format').' '.get_option('time_format');
+
+	$validTillString	= date($format, $validTill);
+
+	$pageUrl	= get_permalink(SIM\getModuleOption('login', 'password_reset_page')[0]);
+	$url		= "$pageUrl?key=$key&login=$user->user_login";
 
 	if(get_user_meta($user->ID, 'disabled', true) == 'pending'){
-		$mail = new AccountApproveddMail($user, $url);
+		$mail = new AccountApproveddMail($user, $url, $validTillString);
 		$mail->filterMail();
 	}else{
-		$mail = new AccountCreatedMail($user, $url);
+		$mail = new AccountCreatedMail($user, $url, $validTillString);
 		$mail->filterMail();
 	}
 

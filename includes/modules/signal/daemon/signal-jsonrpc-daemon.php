@@ -40,18 +40,18 @@ if(!$signal->socket){
 }
 
 while(1){
-    $request = '';
+    $response = '';
 
     $x  = 0;
-    while (!feof($signal->socket)) {
-        $request       .= fread($signal->socket, 4096);
+    while (!feof($this->socket)) {
+        $response       .= fread($this->socket, 4096);
 
-        if(!empty(json_decode($request))){
+        if(!empty(json_decode($response))){
             //SIM\printArray(json_decode($response));
             break;
         }
 
-        $streamMetaData  = stream_get_meta_data($signal->socket);
+        $streamMetaData  = stream_get_meta_data($this->socket);
 
         if($streamMetaData['unread_bytes'] <= 0){
             $x++;
@@ -63,12 +63,43 @@ while(1){
     }
     flush();
 
-    $json   = json_decode($request);
+    $json   = json_decode($response);
+
+    if(empty($json)){
+        switch (json_last_error()) {
+            case JSON_ERROR_NONE:
+                SIM\printArray(' - No errors'.$response, true);
+                break;
+            case JSON_ERROR_DEPTH:
+                SIM\printArray(' - Maximum stack depth exceeded'.$response, true);
+                break;
+            case JSON_ERROR_STATE_MISMATCH:
+                SIM\printArray(' - Underflow or the modes mismatch'.$response, true);
+                break;
+            case JSON_ERROR_CTRL_CHAR:
+                SIM\printArray(' - Unexpected control character found'.$response, true);
+                break;
+            case JSON_ERROR_SYNTAX:
+                SIM\printArray(' - Syntax error, malformed JSON: '.$response, true);
+                break;
+            case JSON_ERROR_UTF8:
+                SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded'.$response, true);
+                break;
+            default:
+                break;
+        }
+    }
 
     // incoming message
     if($json->method == 'receive'){
         print("receive");
         processMessage($json->params);
+    }elseif(isset($json->result)){
+        $signalResults  = get_option('sim-signal-results', []);
+
+        $signalResults[$json->id]   = $json->result;
+
+        update_option('sim-signal-results', $signalResults);
     }
 }
 

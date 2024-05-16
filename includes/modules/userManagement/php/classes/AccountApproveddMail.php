@@ -8,7 +8,7 @@ class AccountApproveddMail extends ADMIN\MailSetting{
     public $user;
     public $loginUrl;
 
-    public function __construct($user, $loginUrl='') {
+    public function __construct($user, $loginUrl='', $validTill='') {
         // call parent constructor
 		parent::__construct('account_approved', MODULE_SLUG);
 
@@ -16,6 +16,7 @@ class AccountApproveddMail extends ADMIN\MailSetting{
 
         $this->replaceArray['%login_url%']    = $loginUrl;
         $this->replaceArray['%user_name%']    = $user->user_login;
+        $this->replaceArray['%valid_till%']    = $validTill;
 
         $this->defaultSubject    = 'We have approved your account on %site_name%';
 
@@ -24,6 +25,7 @@ class AccountApproveddMail extends ADMIN\MailSetting{
         $this->defaultMessage 	.= "You can now login on %site_url%.<br>";
         $this->defaultMessage 	.= 'Your username is: %user_name%.<br>';
 		$this->defaultMessage 	.= "If you have not yet setup a password you can do so using this <a href='%login_url%'>link</a>.<br>";
+        $this->defaultMessage   .= "This link is valid till %valid_till%<br>";
         $this->defaultMessage 	.= 'If you have any problems, please contact us by replying to this e-mail.';
     }
 }
