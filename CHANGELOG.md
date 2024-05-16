@@ -5,12 +5,17 @@
 ### Added
 
 ### Changed
-- show children forms for children
-- more robust signal messaging
 
 ### Fixed
 
 ### Updated
+
+## [2.44.1] - 2024-05-16
+
+
+### Changed
+- show children forms for children
+- more robust signal messaging
 
 ## [2.44.0] - 2024-05-15
 
