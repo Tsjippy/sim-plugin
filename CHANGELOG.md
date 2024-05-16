@@ -6,6 +6,7 @@
 
 ### Changed
 - show children forms for children
+- more robust signal messaging
 
 ### Fixed
 
