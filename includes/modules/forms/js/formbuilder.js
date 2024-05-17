@@ -451,47 +451,67 @@ function showOrHideConditionFields(target){
 	}
 }
 
-function addConditionRule(target){
+async function addConditionRule(target){
+	let condition		= target.closest('.condition_row');
 	let row				= target.closest('.rule_row');
 	let activeButton	= row.querySelector('.active');
 		
-	//there was alreay an next rule and we clicked on the button which was no active
-	if(activeButton != null && !target.classList.contains('active')){	
+	
+	if(
+		(
+			activeButton == null && 													// there is no active button
+			condition.querySelectorAll('.rule_row').length > 1 && 						// but there are more than one rules
+			row.dataset.rule_index != condition.querySelectorAll('.rule_row').length -1	// and this is not the last rule
+		) ||
+		(
+			activeButton != null && 				// there is an active button
+			!target.classList.contains('active')	// We clicked on the button which was not active
+		)
+	){	
 		let current		= 'OR';
-		let opposite	= 'AND';	
-		if(activeButton.textContent == 'AND'){
-			current		= 'AND';
-			opposite	= 'OR';
-		}
-
-		let options = {
-			title: 'What do you want to do?',
-			showDenyButton: true,
-			showCancelButton: true,
-			confirmButtonText: `Change ${current} to ${opposite}`,
-			denyButtonText: 'Add a new rule',
-		};
-
-		if(document.fullscreenElement != null){
-			options['target']	= document.fullscreenElement;
-		}
+		let opposite	= 'AND';
+		let makeActive	= true;
 		
-		Swal.fire(options).then((result) => {
+		if(activeButton != null){
+			if(activeButton.textContent == 'AND'){
+				current		= 'AND';
+				opposite	= 'OR';
+			}
+
+			let options = {
+				title: 'What do you want to do?',
+				showDenyButton: true,
+				showCancelButton: true,
+				confirmButtonText: `Change ${current} to ${opposite}`,
+				denyButtonText: 'Add a new rule',
+			};
+	
+			if(document.fullscreenElement != null){
+				options['target']	= document.fullscreenElement;
+			}
+			
+			result	= await Swal.fire(options)
+
 			//swap and/or
 			if (result.isConfirmed) {
 				//make other button inactive
 				activeButton.classList.remove('active');
-				
-				//make the button active
-				target.classList.add('active');
-				
-				//store action 
-				row.querySelector('.combinator').value = target.textContent;
 			//add new rule after this one
 			}else if (result.isDenied) {
 				addRuleRow(row);
+				makeActive	= false;
 			}
-		});
+		}
+
+		if(makeActive){
+			//make the button active
+			target.classList.add('active');
+			
+			//store action 
+			row.querySelector('.combinator').value = target.textContent;
+		}
+		
+			
 	//add new rule at the end
 	}else{
 		addRuleRow(row);

@@ -51,10 +51,10 @@ function sendPostNotification($post){
 	$excerpt = apply_filters('sim_signal_post_notification_message', $excerpt, $post);
 	
 	if($_POST['update'] == 'true'){
-		$message 	= "'{$post->post_title}' just got updated\n\n$excerpt";
+		$message 	= "<b>'{$post->post_title}'</b> just got updated\n\n$excerpt";
 	}else{
 		$author		= get_userdata($post->post_author)->display_name;
-		$message	= "'{$post->post_title}' just got published by $author\n\n$excerpt";
+		$message	= "<b>'{$post->post_title}'</b> just got published by <i>$author</i>\n\n$excerpt";
 	}
 
 	if(!empty($signalExtraMessage)){
@@ -83,7 +83,7 @@ function asyncSignalMessageSend($message, $recipient, $postId=""){
  * 
  * @return	string					the result
  */
-function sendSignalMessage($message, $recipient, $postId=""){
+function sendSignalMessage($message, $recipient, $postId="", int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
 
 	// do not send on localhost
 	if($_SERVER['HTTP_HOST'] == 'localhost' || get_option("wpstg_is_staging_site") == "true"){
@@ -103,13 +103,13 @@ function sendSignalMessage($message, $recipient, $postId=""){
 	}
 
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
-		return sendSignalFromLocal($message, $recipient, $images);
+		return sendSignalFromLocal($message, $recipient, $images, $timeStamp, $quoteAuthor, $quoteMessage, $style);
 	}else{
 		return sendSignalFromExternal($message, $recipient, $images);
 	}
 }
 
-function sendSignalFromLocal($message, $recipient, $images){
+function sendSignalFromLocal($message, $recipient, $images, int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
 	$phonenumber		= $recipient;
 
 	//Check if recipient is an existing userid
@@ -128,18 +128,13 @@ function sendSignalFromLocal($message, $recipient, $images){
 		return false;
 	}
 
-	if(str_contains(php_uname(), 'Linux')){
-		$signal	= getSignalInstance();
-		
-		if(str_contains($phonenumber, ',')){
-			$signal->sendGroupMessage($message, $phonenumber, $images);
-			return;
-		}
-	}else{
-		$signal = new SignalCommandLine();
+	$signal	= getSignalInstance();
+	if(str_contains($phonenumber, ',')){
+		$signal->sendGroupMessage($message, $phonenumber, $images, $timeStamp, $quoteAuthor, $quoteMessage, $style);
+		return;
 	}
 
-	$result	= $signal->send($phonenumber, $message, $images);
+	$result	= $signal->send($phonenumber, $message, $images, $timeStamp, $quoteAuthor, $quoteMessage, $style);
 
 	if(str_contains($result, 'Unregistered user')){
 		//user not registered

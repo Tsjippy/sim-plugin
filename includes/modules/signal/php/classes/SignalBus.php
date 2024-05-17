@@ -220,7 +220,7 @@ class SignalBus extends Signal {
      *
      * @return bool|string
      */
-    public function sendGroupMessage($message, $groupId, $attachments='', $timeStamp=''){
+    public function sendGroupMessage($message, $groupId, $attachments='', int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
 
         if(empty($message) || empty($groupId)){
             return false;
@@ -320,7 +320,7 @@ class SignalBus extends Signal {
      *
      * @return bool|string
      */
-    public function send($recipients, string $message, $attachments = '', $timeStamp=''){
+    public function send($recipients, string $message, $attachments = '', int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
         if(empty($recipients)){
             return new WP_Error('Signal', 'You should submit at least one recipient');
         }

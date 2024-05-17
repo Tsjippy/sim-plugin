@@ -162,8 +162,7 @@ class SignalCommandLine extends Signal{
      *
      * @return bool|string
      */
-    public function send($recipients, string $message, string $attachments = null){
-        // /home/simnige1/web/simnigeria.org/public_html/wp-content/signal-cli/program/bin/signal-cli --config /home/simnige1/.local/share/signal-cli -a +2349011531222 send +2349045252526 -m test
+    public function send($recipients, string $message, $attachments = null, int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
         $groupId    = null;
         if(!is_array($recipients)){
             if(strpos( $recipients , '+' ) === 0){
@@ -201,6 +200,19 @@ class SignalCommandLine extends Signal{
         return $this->parseResult();
     }
 
+    /**
+     * Send a message to a group
+     * @param string        $message        Specify the message, if missing, standard input is used
+     * @param string        $groupId        Specify the group id
+     * @param string|array  $attachments    Image file path or array of file paths
+     * @param int           $timeStamp      The timestamp of a message to reply to
+     *
+     * @return bool|string
+     */
+    public function sendGroupMessage($message, $groupId, $attachments='', $timeStamp='', $quoteAuthor='', $quoteMessage='', $style=''){
+        return $this->send($groupId, $message, $attachments, $timeStamp, $quoteAuthor, $quoteMessage);
+    }
+
     public function markAsRead($recipient, $timestamp){
         // Mark as read
         $this->baseCommand();
@@ -218,7 +230,7 @@ class SignalCommandLine extends Signal{
         return $this->parseResult();
     }
 
-    public function sentTyping($recipient, $timestamp, $groupId=null){
+    public function sentTyping($recipient, $timestamp='', $groupId=''){
         // Mark as read
         $this->markAsRead($recipient, $timestamp);
 
@@ -236,6 +248,10 @@ class SignalCommandLine extends Signal{
         $this->command->execute();
 
         return $this->parseResult();
+    }
+
+    public function sendGroupTyping($groupId){
+        return $this->sentTyping($groupId);
     }
 
     /**
@@ -543,5 +559,31 @@ class SignalCommandLine extends Signal{
         $this->command->execute();
 
         return json_decode($this->parseResult(true));
+    }
+
+    /**
+     * Deletes a message
+     *
+     * @param   int             $targetSentTimestamp    The original timestamp
+     * @param   string|array    $recipients             The original recipient(s)
+     */
+    public function deleteMessage($targetSentTimestamp, $recipients){
+        // to be implemented
+    }
+
+    public function sendMessageReaction($recipient, $timestamp, $groupId='', $emoji=''){
+        // to be implemented
+    }
+
+    public function submitRateLimitChallenge($challenge, $captcha){
+        // to be implemented
+    }
+
+    public function getGroupInvitationLink($groupPath){
+        // to be implemented
+    }
+
+    public function findGroupName($id){
+        // to be implemented
     }
 }

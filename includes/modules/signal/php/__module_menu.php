@@ -125,7 +125,11 @@ add_action('sim-admin-settings-post', function(){
 function connectedOptions($signal, $settings){
 	$url		= admin_url( "admin.php?page={$_GET['page']}&tab={$_GET['tab']}" );
 
-	$signalGroups	= $signal->listGroups();
+	if(isset($_GET['force'])){
+		$signalGroups	= $signal->listGroups(false, false, true);
+	}else{
+		$signalGroups	= $signal->listGroups();
+	}
 
 	if(!empty($signal->error)){
 		echo "<div class='error'>$signal->error<br><br></div>";
@@ -621,7 +625,7 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 
 		$groupedMessages[$message->chat][]	= [
 			'id'			=> $message->id,
-			'timesent'		=> $message->timesend,	// timestam is in milis
+			'timesent'		=> $message->timesend,	// timestamp is in milis
 			'message'		=> $message->message,
 			'status'		=> $message->status,
 			'sender'		=> $message->sender,
@@ -808,6 +812,9 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 								if($message['status'] == 'replied'){
 									echo "Already Replied";
 								}else{
+									$msg	= urlencode($message['message']);
+									$author	= urlencode($message['sender']);
+									$chat	= urlencode($chat);
 									?>
 									<button type="button" class="trigger" data-target="[name='emoji']" data-replace='true' title='Send an emoji reaction'>emoji</button>
 									<form method='post' class='hidden'>
@@ -818,6 +825,7 @@ function receivedMessagesTable($startDate, $endDate, $amount, $hidden='hidden'){
 										<input type='hidden' name='emoji'>
 										<input type='submit' name='action' value='Reply'>
 									</form>
+									<a class='button small' href='<?php echo admin_url( "admin.php?page={$_GET['page']}&tab=functions&recipient=$chat&timesent={$message['timesent']}&replymessage=$msg&author=$author" );?>'>Reply</a>
 									<?php
 								}
 								?>
@@ -919,8 +927,14 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 
 	// check if we need to send a message
 	if(!empty($_REQUEST['message']) && !empty($_REQUEST['recipient'])){
-        echo sendSignalMessage(stripslashes($_REQUEST['message']), stripslashes($_REQUEST['recipient']));
-		
+		$message	= stripslashes($_REQUEST['message']);
+
+		// reply to previous message
+		if(!empty($_REQUEST['timesent']) && !empty($_REQUEST['replymessage']) && !empty($_REQUEST['author'])){
+			echo sendSignalMessage($message, stripslashes($_REQUEST['recipient']),'', intval($_REQUEST['timesent']), $_REQUEST['author'], $_REQUEST['replymessage']);
+		}else{
+			echo sendSignalMessage($message, stripslashes($_REQUEST['recipient']));
+		}
     }
 
 	$phonenumbers	= '';
@@ -954,16 +968,72 @@ add_filter('sim_module_functions', function($dataHtml, $moduleSlug, $settings){
 		return ob_get_clean();
 	}
 
+	$author			= '';
+	$prevMessage	= '';
+	$timeStamp		= '';
+	$chat			= '';
+
+	if(!empty($_GET['timesent'])){
+		$timeStamp	= $_GET['timesent'];
+	}
+
+	if(!empty($_GET['replymessage'])){
+		$prevMessage	= $_GET['replymessage'];
+	}
+
+	if(!empty($_GET['author'])){
+		$author	= $_GET['author'];
+	}
+
+	if(!empty($_GET['recipient'])){
+		$chat	= $_GET['recipient'];
+	}
+
 	?>
 	<form method='post'>
+		<input type='hidden' name='timestamp' 	value='<?php echo $timeStamp;?>'>
+		<input type='hidden' name='author' 		value='<?php echo $author;?>'>
+		<input type='hidden' name='prevmessage' value='<?php echo $prevMessage;?>'>
+
 		<label>
 			<h4>Message to be send</h4>
+			You can do basic formatting as listed below:<br>
+			<table>
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Example</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>BOLD</td>
+						<td>&lt;b&gt;Some <b>bold</b> text&lt;/b&gt;</td>
+					</tr>
+					<tr>
+						<td>ITALIC</td>
+						<td>&lt;i&gt;Some <i>italic</i> text&lt;/i&gt;</td>
+					</tr>
+					<tr>
+						<td>SPOILER</td>
+						<td>&lt;spoiler&gt;Some spoiler text&lt;/spoiler&gt;</td>
+					</tr>
+					<tr>
+						<td>STRIKETHROUGH</td>
+						<td>&lt;ss&gt;Some <s>striketrhough</s> text&lt;/ss&gt;</td>
+					</tr>
+					<tr>
+						<td>MONOSPACE</td>
+						<td>&lt;tt&gt;Some <tt>monospace</tt> text&lt;/tt&gt;</td>
+					</tr>
+				</tbody>
+			</table>
 			<textarea name='message' style='width: calc(100% - 50px);' required></textarea>
 			<button type='button' class='trigger' data-target='[name="message"]'>emoji</button>
 		</label>
 		<label>
 			<h4>Recipient</h4>
-			<input type='text' name='recipient' list='groups' style='width: calc(100% - 50px);' placeholder="Type a name or groupname to select" required>
+			<input type='text' name='recipient' list='groups' style='width: calc(100% - 50px);' placeholder="Type a name or groupname to select" required value='<?php echo $chat;?>'>
 
 			<datalist id='groups'>
 				<?php

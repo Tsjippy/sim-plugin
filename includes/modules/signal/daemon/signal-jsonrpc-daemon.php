@@ -12,7 +12,7 @@
  *  php "/home/simnige1/web/simnigeria.org/public_html/wp-content/plugins/sim-plugin/includes/modules/signal/daemon/signal-daemon copy.php"
  * /home/simnige1/web/simnigeria.org/public_html/wp-content/signal-cli/program/signal-cli --config /home/simnige1/.local/share/signal-cli/ -o json --trust-new-identities=always -a +2349011531222 daemon --http
  */
-use SIM;
+//use SIM;
 use SIM\SIGNAL;
 
 // load wp
@@ -36,6 +36,7 @@ $signal = new SIGNAL\SignalJsonRpc(false);
 
 if(!$signal->socket){
    print("Invalid socket: $signal->error\n");
+   SIM\printArray("Invalid socket: $signal->error\n", true);
    return;
 }
 
@@ -43,15 +44,17 @@ while(1){
     $response = '';
 
     $x  = 0;
-    while (!feof($this->socket)) {
-        $response       .= fread($this->socket, 4096);
+    while (!feof($signal->socket)) {
+        $response       .= fread($signal->socket, 4096);
+
+        //SIM\printArray($response, true);
 
         if(!empty(json_decode($response))){
             //SIM\printArray(json_decode($response));
             break;
         }
 
-        $streamMetaData  = stream_get_meta_data($this->socket);
+        $streamMetaData  = stream_get_meta_data($signal->socket);
 
         if($streamMetaData['unread_bytes'] <= 0){
             $x++;
@@ -62,6 +65,10 @@ while(1){
         }
     }
     flush();
+
+    if(empty($response)){
+        continue;
+    }
 
     $json   = json_decode($response);
 
@@ -95,13 +102,16 @@ while(1){
         print("receive");
         processMessage($json->params);
     }elseif(isset($json->result)){
-        $signalResults  = get_option('sim-signal-results', []);
+        SIM\printArray($json);
+        /*$signalResults  = get_option('sim-signal-results', []);
 
         $signalResults[$json->id]   = $json->result;
 
-        update_option('sim-signal-results', $signalResults);
+        update_option('sim-signal-results', $signalResults); */
     }
 }
+
+SIM\printArray("The end", true);
 
 function processMessage($data){
     global $signal;
@@ -156,7 +166,7 @@ function processMessage($data){
                     $message    = substr($message, $data->envelope->dataMessage->mentions[0]->length);
                     $answer     = getAnswer(trim($message, " \t\n\r\0\x0B?"), $data->envelope->source);
 
-                    $signal->send($groupId, $answer['response'], $answer['pictures']);
+                    $signal->send($groupId, $answer['response'], $answer['pictures'], $data->envelope->timestamp, $data->envelope->source, $data->envelope->dataMessage->message);
                 }
             }
         }
@@ -167,7 +177,7 @@ function processMessage($data){
 
         $answer = getAnswer($message, $data->envelope->source);
 
-        $signal->send($data->envelope->source, $answer['response'], $answer['pictures']);
+        $signal->send($data->envelope->source, $answer['response'], $answer['pictures'], $data->envelope->timestamp, $data->envelope->source, $data->envelope->dataMessage->message);
     }
 
     // add message to the received table
@@ -234,6 +244,12 @@ function getAnswer($message, $source){
         if($name){
             $response   .= $name;
         }
+    }elseif(str_contains($lowerMessage, 'help')){
+        $response = "";
+        if($name){
+            $response   .= $name.', ';
+        }
+        $response .= "I am so sorry to hear you need help. I am afraid I am not a good councelor";
     }elseif(!empty($lowerMessage)){
         SIM\printArray("No answer found for '$message'");
 

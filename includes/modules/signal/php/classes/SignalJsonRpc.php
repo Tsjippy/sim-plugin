@@ -65,10 +65,11 @@ class SignalJsonRpc extends Signal{
         $this->shouldCloseSocket   = $shouldCloseSocket;
     }
 
+
     /**
-     * Get the response to a request
+     * Get response from db
      */
-    public function getRequestResponse($id, $counter=0){
+    public function getResultFromDb($id){
         $signalResults  = get_option('sim-signal-results', []);
 
         // wait till the response comes back into the daemon
@@ -76,71 +77,6 @@ class SignalJsonRpc extends Signal{
         while(!isset($signalResults[$id]) && $x < 60){
             sleep(1);
             $signalResults  = get_option('sim-signal-results', []);
-        }
-
-        // maybe the daemon is not running, lets read from the socket ourselves
-        if(!isset($signalResults[$id])){
-            $response = '';
-
-            $x  = 0;
-            while (!feof($this->socket)) {
-                $response       .= fread($this->socket, 4096);
-
-                if(!empty(json_decode($response))){
-                    //SIM\printArray(json_decode($response));
-                    break;
-                }
-
-                $streamMetaData  = stream_get_meta_data($this->socket);
-
-                if($streamMetaData['unread_bytes'] <= 0){
-                    $x++;
-
-                    if( $x > 10 ){
-                        break;
-                    }
-                }
-            }
-            flush();
-
-            $json   = json_decode($response);
-
-            if(empty($json)){
-                switch (json_last_error()) {
-                    case JSON_ERROR_NONE:
-                        SIM\printArray(' - No errors', true);
-                        break;
-                    case JSON_ERROR_DEPTH:
-                        SIM\printArray(' - Maximum stack depth exceeded', true);
-                        break;
-                    case JSON_ERROR_STATE_MISMATCH:
-                        SIM\printArray(' - Underflow or the modes mismatch', true);
-                        break;
-                    case JSON_ERROR_CTRL_CHAR:
-                        SIM\printArray(' - Unexpected control character found', true);
-                        break;
-                    case JSON_ERROR_SYNTAX:
-                        SIM\printArray(' - Syntax error, malformed JSON: '.$response, true);
-                        break;
-                    case JSON_ERROR_UTF8:
-                        SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded', true);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            // read until we have a result but no more than 10 times
-            if(!isset($json->result) && $counter < 10){
-                $this->getRequestResponse($id, $counter++);
-            }
-
-            if(!isset($json->result) && !isset($json->error) || $json->id != $id){
-                SIM\printArray($response);
-                //$this->getRequestResponse($id);
-            }
-
-            return $json; 
         }
 
         $result = $signalResults[$id];
@@ -151,6 +87,81 @@ class SignalJsonRpc extends Signal{
         update_option('sim-signal-results', $signalResults);
 
         return $result;
+    }
+
+    /**
+     * Get the response to a request
+     */
+    public function getRequestResponse($id, $counter=0){
+        // maybe the daemon is not running, lets read from the socket ourselves
+        $response = '';
+
+        $x  = 0;
+        while (!feof($this->socket)) {
+            $response       .= fread($this->socket, 4096);
+
+            if(!empty(json_decode($response))){
+                //SIM\printArray(json_decode($response));
+                break;
+            }
+
+            $streamMetaData  = stream_get_meta_data($this->socket);
+
+            if($streamMetaData['unread_bytes'] <= 0){
+                $x++;
+
+                if( $x > 10 ){
+                    break;
+                }
+            }
+        }
+        flush();
+
+        $json   = json_decode($response);
+
+        if(empty($json)){
+            switch (json_last_error()) {
+                case JSON_ERROR_NONE:
+                    SIM\printArray(' - No errors', true);
+                    break;
+                case JSON_ERROR_DEPTH:
+                    SIM\printArray(' - Maximum stack depth exceeded', true);
+                    break;
+                case JSON_ERROR_STATE_MISMATCH:
+                    SIM\printArray(' - Underflow or the modes mismatch', true);
+                    break;
+                case JSON_ERROR_CTRL_CHAR:
+                    SIM\printArray(' - Unexpected control character found', true);
+                    break;
+                case JSON_ERROR_SYNTAX:
+                    SIM\printArray(' - Syntax error, malformed JSON: '.$response, true);
+                    break;
+                case JSON_ERROR_UTF8:
+                    SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded', true);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if(isset($json->error)){
+            SIM\printArray("Error, error is: ");
+            SIM\printArray($json);
+        }elseif(!isset($json->result) && $counter < 10){
+            SIM\printArray("Trying again, counter is $counter\nJson is: ");
+            $counter++;
+
+            $json   = $this->getRequestResponse($id, $counter);
+        }elseif(!isset($json->result) || $json->id != $id){
+            SIM\printArray($response);
+            //$this->getRequestResponse($id);
+        }
+
+        if($counter > 0){
+            SIM\printArray($response);
+        }
+
+        return $json; 
     }
 
     /**
@@ -196,6 +207,8 @@ class SignalJsonRpc extends Signal{
             $this->error    =  new \WP_Error('sim-signal', $response->error->message . " For command $json");
 
             return $this->error;
+        }else{
+            SIM\printArray("No error for command $json");
         }
 
         if(!is_object($response) || empty($response->result)){
@@ -372,7 +385,7 @@ class SignalJsonRpc extends Signal{
      *
      * @return bool|string
      */
-    public function send($recipients, string $message, $attachments = '', $timeStamp=''){
+    public function send($recipients, string $message, $attachments = '', int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
         if(empty($recipients)){
             return new WP_Error('Signal', 'You should submit at least one recipient');
         }
@@ -393,6 +406,8 @@ class SignalJsonRpc extends Signal{
             
             return;
         }
+
+        extract($this->parseMessageLayout($message));
 
         $params     = [
             "message"       => $message
@@ -424,6 +439,18 @@ class SignalJsonRpc extends Signal{
             $params['quoteTimestamp']   = $timeStamp;
         }
 
+        if(!empty($quoteAuthor)){
+            $params['quoteAuthor']   = $quoteAuthor;
+        }
+
+        if(!empty($quoteMessage)){
+            $params['quoteMessage']   = $quoteMessage;
+        }
+
+        if(!empty($style)){
+            $params['textStyle']   = $style;
+        }
+
         $result   =  $this->doRequest('send', $params);
 
         if(!empty($result->timestamp)){
@@ -442,8 +469,8 @@ class SignalJsonRpc extends Signal{
     /**
      * Compliancy function
      */
-    public function sendGroupMessage($recipients, string $message, $attachments = '', $timeStamp=''){
-        return $this->send($recipients, $message, $attachments, $timeStamp);
+    public function sendGroupMessage($message, $groupId, $attachments='', int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
+        return $this->send($groupId, $message, $attachments, $timeStamp, $quoteAuthor, $quoteMessage);
     }
 
     public function markAsRead($recipient, $timestamp){
@@ -464,9 +491,15 @@ class SignalJsonRpc extends Signal{
      *
      * @return array|string
      */
-    public function listGroups($detailed = false, $groupId = false){
-        if(!empty($this->groups)){
+    public function listGroups($detailed = false, $groupId = false, $force=false){
+        if(!empty($this->groups) && !$force){
             return $this->groups;
+        }
+
+        $transientGroups    = get_transient('sim-signal-groups');
+
+        if($transientGroups && !$force){
+            return $transientGroups;
         }
 
         $params = [];
@@ -483,6 +516,7 @@ class SignalJsonRpc extends Signal{
 
         if(empty($this->error) && !empty($result)){
             $this->groups   = $result;
+            set_transient('sim-signal-groups', $result, WEEK_IN_SECONDS);
         }
 
         return $this->groups;

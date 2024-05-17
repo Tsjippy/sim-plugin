@@ -25,11 +25,11 @@ function fillLocationFields(event){
 
 //dynamically load google maps script only when needed
 function loadGoogleMapsScript(){
-	if(document.getElementById('googlemaps') == null && typeof(mapsApi) == 'object'){
-		const script = document.createElement('script');
-		script.id = 'googlemaps';
-		script.src = `//maps.googleapis.com/maps/api/js?key=${mapsApi.key}&callback=initMap`;
-		script.async = true;
+	if(document.getElementById('googlemaps') == null && typeof(mapsApi) == 'object' && typeof(initMap) != 'undefined'){
+		const script	= document.createElement('script');
+		script.id 		= 'googlemaps';
+		script.src 		= `//maps.googleapis.com/maps/api/js?key=${mapsApi.key}&callback=initMap`;
+		script.async 	= true;
 		document.body.append(script);
 	}
 }
