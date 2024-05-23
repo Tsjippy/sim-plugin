@@ -9,6 +9,7 @@
 ### Changed
 
 ### Fixed
+- bug with empty picture path
 
 ### Updated
 
