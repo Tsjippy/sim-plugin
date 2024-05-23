@@ -4,6 +4,7 @@
 
 ### Added
 - styling for signal messages
+- abstract signal class
 
 ### Changed
 
