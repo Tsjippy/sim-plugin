@@ -231,6 +231,10 @@ function urlToPath($url){
  * @return	string|false				The url or false on failure
 */
 function pathToUrl($path){
+	if(empty($path)){
+		return false;
+	}
+	
 	if(is_string($path)){
 		$base	= str_replace('\\', '/', ABSPATH);
 		$path	= str_replace('\\', '/', $path);
