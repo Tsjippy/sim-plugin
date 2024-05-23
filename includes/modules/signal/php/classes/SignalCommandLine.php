@@ -18,7 +18,7 @@ sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 // data is stored in $HOME/.local/share/signal-cli
 
 
-class SignalCommandLine extends Signal{
+class SignalCommandLine extends AbstractSignal{
     public $valid;
     public $os;
     public $basePath;

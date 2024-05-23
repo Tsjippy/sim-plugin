@@ -19,7 +19,7 @@ sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 // data is stored in $HOME/.local/share/signal-cli
 
 
-class SignalJsonRpc extends Signal{
+class SignalJsonRpc extends AbstractSignal{
     public $os;
     public $basePath;
     public $programPath;
@@ -117,27 +117,29 @@ class SignalJsonRpc extends Signal{
         }
         flush();
 
+        $response   = trim($response);
+
         $json   = json_decode($response);
 
         if(empty($json)){
             switch (json_last_error()) {
                 case JSON_ERROR_NONE:
-                    SIM\printArray(' - No errors', true);
+                    SIM\printArray(' - No errors'.$response, true);
                     break;
                 case JSON_ERROR_DEPTH:
-                    SIM\printArray(' - Maximum stack depth exceeded', true);
+                    SIM\printArray(' - Maximum stack depth exceeded'.$response, true);
                     break;
                 case JSON_ERROR_STATE_MISMATCH:
-                    SIM\printArray(' - Underflow or the modes mismatch', true);
+                    SIM\printArray(' - Underflow or the modes mismatch'.$response, true);
                     break;
                 case JSON_ERROR_CTRL_CHAR:
-                    SIM\printArray(' - Unexpected control character found', true);
+                    SIM\printArray(' - Unexpected control character found'.$response, true);
                     break;
                 case JSON_ERROR_SYNTAX:
                     SIM\printArray(' - Syntax error, malformed JSON: '.$response, true);
                     break;
                 case JSON_ERROR_UTF8:
-                    SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded', true);
+                    SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded'.$response, true);
                     break;
                 default:
                     break;
@@ -208,7 +210,7 @@ class SignalJsonRpc extends Signal{
 
             return $this->error;
         }else{
-            SIM\printArray("No error for command $json");
+            //SIM\printArray("No error for command $json");
         }
 
         if(!is_object($response) || empty($response->result)){
@@ -385,7 +387,7 @@ class SignalJsonRpc extends Signal{
      *
      * @return bool|string
      */
-    public function send($recipients, string $message, $attachments = '', int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
+    public function send($recipients, string $message, $attachments = [], int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
         if(empty($recipients)){
             return new WP_Error('Signal', 'You should submit at least one recipient');
         }
@@ -419,7 +421,11 @@ class SignalJsonRpc extends Signal{
             $params['recipient']  = $recipients;
         }
 
-        if(is_array($attachments)){
+        if(!empty($attachments)){
+            if(!is_array($attachments)){
+                $attachments    = [$attachments];
+            }
+
             foreach($attachments as $index => $attachment){
                 if(!file_exists($attachment)){
                     unset($attachments[$index]);
@@ -427,11 +433,7 @@ class SignalJsonRpc extends Signal{
             }
         
             if(!empty($attachments)){
-                if(count($attachments) == 1){
-                    $params["attachment"]   = $attachments;
-                }else{
-                    $params["attachments"]  = $attachments;
-                }
+                $params["attachments"]  = array_values($attachments);
             }
         }
 
@@ -469,7 +471,7 @@ class SignalJsonRpc extends Signal{
     /**
      * Compliancy function
      */
-    public function sendGroupMessage($message, $groupId, $attachments='', int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
+    public function sendGroupMessage($message, $groupId, $attachments=[], int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
         return $this->send($groupId, $message, $attachments, $timeStamp, $quoteAuthor, $quoteMessage);
     }
 

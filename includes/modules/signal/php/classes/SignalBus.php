@@ -20,7 +20,7 @@ sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 // data is stored in $HOME/.local/share/signal-cli
 
 
-class SignalBus extends Signal {
+class SignalBus extends AbstractSignal {
     public $dbusType;
     public $tableName;
     public $prefix;

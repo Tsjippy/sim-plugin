@@ -66,6 +66,8 @@ while(1){
     }
     flush();
 
+    $response   = trim($response);
+
     if(empty($response)){
         continue;
     }
@@ -73,28 +75,36 @@ while(1){
     $json   = json_decode($response);
 
     if(empty($json)){
+        if(empty($response)){
+            SIM\printArray("Response is empty");
+        }else{
+            SIM\printArray("Response is '$response'");
+        }
+
         switch (json_last_error()) {
             case JSON_ERROR_NONE:
-                SIM\printArray(' - No errors'.$response, true);
+                SIM\printArray(' No errors'.$response, true);
                 break;
             case JSON_ERROR_DEPTH:
-                SIM\printArray(' - Maximum stack depth exceeded'.$response, true);
+                SIM\printArray(' Maximum stack depth exceeded'.$response, true);
                 break;
             case JSON_ERROR_STATE_MISMATCH:
-                SIM\printArray(' - Underflow or the modes mismatch'.$response, true);
+                SIM\printArray(' Underflow or the modes mismatch'.$response, true);
                 break;
             case JSON_ERROR_CTRL_CHAR:
-                SIM\printArray(' - Unexpected control character found'.$response, true);
+                SIM\printArray(' Unexpected control character found'.$response, true);
                 break;
             case JSON_ERROR_SYNTAX:
-                SIM\printArray(' - Syntax error, malformed JSON: '.$response, true);
+                SIM\printArray(' Syntax error, malformed JSON: '.$response, true);
                 break;
             case JSON_ERROR_UTF8:
-                SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded'.$response, true);
+                SIM\printArray(' Malformed UTF-8 characters, possibly incorrectly encoded'.$response, true);
                 break;
             default:
                 break;
         }
+
+        continue;
     }
 
     // incoming message
