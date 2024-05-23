@@ -10,6 +10,7 @@
 
 ### Fixed
 - bug with empty picture path
+- post publishing when not utf8
 
 ### Updated
 
