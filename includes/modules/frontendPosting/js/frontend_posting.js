@@ -258,7 +258,7 @@ async function submitPost(target){
 	if(response){
 		// If no html found, reload the page
 		if(!response.html || !response.js){
-			Main.displayMessage(response.message);
+			Main.displayMessage(response.message+response.data);
 
 			location.href	= response.url;
 			return;

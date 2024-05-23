@@ -184,7 +184,7 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 			return false;
 		}else{
 			console.error(json);
-			Main.displayMessage(json.message, 'error');
+			Main.displayMessage(json.message+"\n"+json.data, 'error');
 			return false;
 		}
 	}catch(error){

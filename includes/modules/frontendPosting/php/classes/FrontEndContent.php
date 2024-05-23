@@ -1127,7 +1127,7 @@ class FrontEndContent{
 		}
 
 		if($this->postContent != $post->post_content){
-			$newPostData['post_content'] 	= $this->postContent;
+			$newPostData['post_content'] 	= utf8_encode($this->postContent);
 		}
 
 		if($this->status != $post->post_status){
@@ -1175,7 +1175,7 @@ class FrontEndContent{
 		}else{
 			$result = wp_update_post( $newPostData, true, false);
 			if(is_wp_error($result)){
-				return new WP_Error('Update failed', $result->get_error_message());
+				return $result;
 			}elseif(($post->post_status == 'draft' || $post->post_status == 'pending') && $this->status == 'publish'){
 				$this->actionText = 'published';
 
@@ -1208,7 +1208,7 @@ class FrontEndContent{
 		$post = array(
 			'post_type'		=> $this->postType,
 			'post_title'    => $this->postTitle,
-			'post_content'  => $this->postContent,
+			'post_content'  => utf8_encode($this->postContent),
 			'post_status'   => $this->status,
 			'post_author'   => $_POST['post_author']
 		);
