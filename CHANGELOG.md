@@ -3,18 +3,25 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- styling for signal messages
-- abstract signal class
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.44.2] - 2024-05-29
+
+
+### Added
+- styling for signal messages
+- abstract signal class
 
 ### Fixed
 - bug with empty picture path
 - post publishing when not utf8
 - signal block
 - login message
-
-### Updated
 
 ## [2.44.1] - 2024-05-16
 
