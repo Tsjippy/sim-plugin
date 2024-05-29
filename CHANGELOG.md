@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- immigration data export
 
 ### Updated
 
