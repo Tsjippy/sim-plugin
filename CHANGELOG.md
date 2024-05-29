@@ -7,9 +7,14 @@
 ### Changed
 
 ### Fixed
-- immigration data export
 
 ### Updated
+
+## [2.44.3] - 2024-05-29
+
+
+### Fixed
+- immigration data export
 
 ## [2.44.2] - 2024-05-29
 
