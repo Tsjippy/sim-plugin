@@ -38,8 +38,9 @@ class SignalJsonRpc extends AbstractSignal{
     private $postUrl;
     public $socket;
     public $shouldCloseSocket;
+    public $getResult;
 
-    public function __construct($shouldCloseSocket=true){
+    public function __construct($shouldCloseSocket=true, $getResult=true){
         parent::__construct();
 
         // Check daemon
@@ -63,6 +64,7 @@ class SignalJsonRpc extends AbstractSignal{
         }
 
         $this->shouldCloseSocket   = $shouldCloseSocket;
+        $this->getResult           = $getResult;
     }
 
 
@@ -91,8 +93,36 @@ class SignalJsonRpc extends AbstractSignal{
 
     /**
      * Get the response to a request
+     *
+     * @param   int     $id         the request id should epoch of the request
+     * @param   int     $counter    how often we already checked the response for this request
      */
-    public function getRequestResponse($id, $counter=0){
+    public function getRequestResponse(int $id, $counter=0){
+        if(empty($id)){
+            SIM\printArray("Got an empty Id");
+            return false;
+        }
+
+        $signalResults  = get_option('sim-signal-results', []);
+
+        if(isset($signalResults[$id])){
+            $result = $signalResults[$id];
+
+            unset($signalResults[$id]);
+
+            update_option('sim-signal-results', $signalResults);
+
+            SIM\printArray("Received result from db for id $id");
+
+            return $result;
+        }
+
+        // maximum of 5 minutes
+        if(time() - $id > 300){
+            SIM\printArray('Cancelling as this has been running for '.time() - $id.' seconds');
+            return false;
+        }
+
         // maybe the daemon is not running, lets read from the socket ourselves
         $response = '';
 
@@ -149,14 +179,15 @@ class SignalJsonRpc extends AbstractSignal{
         if(isset($json->error)){
             SIM\printArray("Error, error is: ");
             SIM\printArray($json);
-        }elseif(!isset($json->result) && $counter < 10){
-            SIM\printArray("Trying again, counter is $counter\nJson is: ");
+        }elseif(!isset($json->result) && $counter < 20){
+            SIM\printArray("Trying again, counter is $counter");
             $counter++;
 
             $json   = $this->getRequestResponse($id, $counter);
-        }elseif(!isset($json->result) || $json->id != $id){
+        }elseif($json->id != $id){
+            SIM\printArray("Id '$json->id' is not the right id '$id', trying again");
             SIM\printArray($response);
-            //$this->getRequestResponse($id);
+            $json   = $this->getRequestResponse($id);
         }
 
         if($counter > 0){
@@ -168,6 +199,11 @@ class SignalJsonRpc extends AbstractSignal{
 
     /**
      * Performs the json RPC request
+     *
+     * @param   string      $method     The command to perform
+     * @param   array       $params     The parameters for the command
+     *
+     * @return  mixed                   The result or false in case of trouble or nothing if $getResult is false
      */
     public function doRequest($method, $params=[]){
         if($this->shouldCloseSocket){
@@ -196,29 +232,33 @@ class SignalJsonRpc extends AbstractSignal{
 
         flush();
 
-        //stream_socket_recvfrom
-        $response = $this->getRequestResponse($id);
+        if($this->getResult){
+            //stream_socket_recvfrom
+            $response = $this->getRequestResponse($id);
+        }
 
         if($this->shouldCloseSocket){
             fclose($this->socket);
         }
 
-        if(!empty($response->error)){
-            SIM\printArray("Got error {$response->error->message} For command $json");
+        if($this->getResult){
+            if(!empty($response->error)){
+                SIM\printArray("Got error {$response->error->message} For command $json");
 
-            $this->error    =  new \WP_Error('sim-signal', $response->error->message . " For command $json");
+                $this->error    =  new \WP_Error('sim-signal', $response->error->message . " For command $json");
 
-            return $this->error;
-        }else{
-            //SIM\printArray("No error for command $json");
+                return $this->error;
+            }else{
+                //SIM\printArray("No error for command $json");
+            }
+
+            if(!is_object($response) || empty($response->result)){
+                //SIM\printArray("Got faulty result $response");
+                return false;
+            }
+
+            return $response->result;
         }
-
-        if(!is_object($response) || empty($response->result)){
-            //SIM\printArray("Got faulty result $response");
-            return false;
-        }
-
-        return $response->result;
     }
 
     /**

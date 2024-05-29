@@ -12,20 +12,9 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
-	$signal	= new SIGNAL\SignalJsonRpc();
+	$signalResults  = get_option('sim-signal-results', []);
 
-    $recipient  = "+2349045252526";
-
-    //$timeStamp = $signal->send($recipient, "message", [ABSPATH.'/wp-content/debug.log']);
-    //printArray($timeStamp, true);
-
-    //$result = $signal->markAsRead($recipient,  1715602373536);
-    //printArray($result, true);
-
-	// does not work 
-    //printArray($signal->isRegistered("+2349045252526"), true);
-
-    printArray($signal->listGroups(false, true), true);
+    printArray($signalResults, true);
 
     /* $posts = get_posts(
 		array(

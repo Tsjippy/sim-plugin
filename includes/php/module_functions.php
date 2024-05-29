@@ -47,15 +47,16 @@ function maybeGetUserPageUrl($userId){
  * @param	int|WP_User	$recipient		The user or user id the message should be send to
  * @param	bool		$async			Whether to send the signal later
  * @param	int|array	$postId			Optional post id to add a link to or an array of filepaths of pictures
+ * @param   bool        $getResult  	Whether we should return the result, default true
  *
  * @return	string						The result
 */
-function trySendSignal($message, $recipient, $async=false, $postId=""){
+function trySendSignal($message, $recipient, $async=false, $postId="", $getResult=true){
 	if (function_exists('SIM\SIGNAL\sendSignalMessage')) {
 		if($async){
 			SIGNAL\asyncSignalMessageSend($message, $recipient, $postId);
 		}else{
-			return SIGNAL\sendSignalMessage($message, $recipient, $postId);
+			return SIGNAL\sendSignalMessage($message, $recipient, $postId, $getResult);
 		}
 	}
 }

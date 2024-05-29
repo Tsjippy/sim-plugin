@@ -79,6 +79,7 @@ add_action('loop_end', function(){
 	if(	isProtected() ){
 		//prevent the output
 		ob_get_clean();
+		unset($GLOBALS['loginadded']);
 
 		if(!isset($_SESSION)){
 			session_start();

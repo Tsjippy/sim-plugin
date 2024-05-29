@@ -71,19 +71,24 @@ function sendPostNotification($post){
 }
 
 function asyncSignalMessageSend($message, $recipient, $postId=""){
-	wp_schedule_single_event(time(), 'schedule_signal_message_action', [$message, $recipient, $postId]);
+	wp_schedule_single_event(time(), 'schedule_signal_message_action', [$message, $recipient, $postId, 0, '', '', '', false]);
 }
 
 /**
  * Send a message on Signal
  * 
- * @param	string		$message	The message
- * @param	string		$recipient	The recipient
- * @param	array|int	$postId		The post id or an array of filepaths to pictures
+ * @param	string		$message		The message
+ * @param	string		$recipient		The recipient
+ * @param	array|int	$postId			The post id or an array of filepaths to pictures
+ * @param	int			$timeStamp		The timestam of a message to reply to
+ * @param	string		$quoteAuthor	The name of the author to respond to
+ * @param	string		$quoteMessage	The message to respond to
+ * @param	string		$style			Any styling of the message
+ * @param   bool        $getResult  	Whether we should return the result, default true
  * 
  * @return	string					the result
  */
-function sendSignalMessage($message, $recipient, $postId="", int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
+function sendSignalMessage($message, $recipient, $postId="", int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style='', $getResult=true){
 
 	// do not send on localhost
 	if($_SERVER['HTTP_HOST'] == 'localhost' || get_option("wpstg_is_staging_site") == "true"){
@@ -103,13 +108,17 @@ function sendSignalMessage($message, $recipient, $postId="", int $timeStamp=0, $
 	}
 
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
-		return sendSignalFromLocal($message, $recipient, $images, $timeStamp, $quoteAuthor, $quoteMessage, $style);
+		return sendSignalFromLocal($message, $recipient, $images, $timeStamp, $quoteAuthor, $quoteMessage, $style, $getResult);
 	}else{
 		return sendSignalFromExternal($message, $recipient, $images);
 	}
 }
 
-function sendSignalFromLocal($message, $recipient, $images, int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style=''){
+/**
+ * 
+ * @param   bool        $getResult  Whether we should return the result, default true
+ */
+function sendSignalFromLocal($message, $recipient, $images, int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style='', $getResult=true){
 	$phonenumber		= $recipient;
 
 	//Check if recipient is an existing userid
@@ -128,7 +137,8 @@ function sendSignalFromLocal($message, $recipient, $images, int $timeStamp=0, $q
 		return false;
 	}
 
-	$signal	= getSignalInstance();
+	$signal					= getSignalInstance($getResult);
+
 	if(str_contains($phonenumber, ',')){
 		$signal->sendGroupMessage($message, $phonenumber, $images, $timeStamp, $quoteAuthor, $quoteMessage, $style);
 		return;

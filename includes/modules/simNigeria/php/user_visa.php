@@ -102,12 +102,12 @@ function exportVisaExcel(){
 	$understudyData		= ['name','email','employing_institution','position','grade_level','salary','phonenumber1','phonenumber2','taxid','nin'];
 
 	foreach($greencardData as $key=>$field){
-		$sheet->setCellValueByColumnAndRow($key+2, 2, ucfirst(str_replace('_',' ',$field)));
+		$sheet->setCellValue([$key+2, 2], ucfirst(str_replace('_',' ',$field)));
 	}
 
 	foreach($understudyData as $key=>$field){
-		$sheet->setCellValueByColumnAndRow($key+8, 2, ucfirst(str_replace('_',' ',$field)));
-		$sheet->setCellValueByColumnAndRow($key+19, 2, ucfirst(str_replace('_',' ',$field)));
+		$sheet->setCellValue([$key+8, 2], ucfirst(str_replace('_',' ',$field)));
+		$sheet->setCellValue([$key+19, 2], ucfirst(str_replace('_',' ',$field)));
 	}
 
 	//Autowidth of colums
@@ -130,23 +130,23 @@ function exportVisaExcel(){
 		$understudy1	= get_user_meta( $user->ID, "understudy_1",true);
 		$understudy2	= get_user_meta( $user->ID, "understudy_2",true);
 
-		$sheet->setCellValueByColumnAndRow(1, $row, $displayName);
+		$sheet->setCellValue("A$row", $displayName);
 
 		//Skip if there is no data
 		if(!is_array($visaInfo) || empty($visaInfo)){
-			$sheet->setCellValueByColumnAndRow(2, $row, 'No data');
+			$sheet->setCellValue("B$row", 'No data');
 			continue;
 		}
 
 		//Loop over the greencard values and write them to excel
 		foreach($greencardData as $key=>$field){
-			$sheet->setCellValueByColumnAndRow($key+2, $row, $visaInfo[$field]);
+			$sheet->setCellValue([$key+2, $row], $visaInfo[$field]);
 		}
 
 		//Loop over the understudy values and write them to excel
 		foreach($understudyData as $key=>$field){
-			$sheet->setCellValueByColumnAndRow($key+8 , $row, $understudy1[$field]);
-			$sheet->setCellValueByColumnAndRow($key+19, $row, $understudy2[$field]);
+			$sheet->setCellValue([$key+8 , $row], $understudy1[$field]);
+			$sheet->setCellValue([$key+19, $row], $understudy2[$field]);
 		}
 
 		$row++;

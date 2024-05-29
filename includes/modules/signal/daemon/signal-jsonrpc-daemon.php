@@ -113,11 +113,11 @@ while(1){
         processMessage($json->params);
     }elseif(isset($json->result)){
         SIM\printArray($json);
-        /*$signalResults  = get_option('sim-signal-results', []);
+        $signalResults  = get_option('sim-signal-results', []);
 
         $signalResults[$json->id]   = $json->result;
 
-        update_option('sim-signal-results', $signalResults); */
+        update_option('sim-signal-results', $signalResults);
     }
 }
 

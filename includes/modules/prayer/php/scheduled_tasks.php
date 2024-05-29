@@ -80,6 +80,8 @@ function sendPrayerRequests(){
 				continue;
 			}
 
+			unset($schedule[$t]);
+
 			foreach($users as $user){
 				$dayPart	= "morning";
 				$hour		= current_time('H');
@@ -100,12 +102,9 @@ function sendPrayerRequests(){
 					
 					$dayPart	.= " ".$userdata->first_name;
 				}
-				$result	= SIM\trySendSignal("Good $dayPart,\n\n$message", $user, false, $prayerRequest['pictures']);
-				SIM\printArray($result);
+				SIM\trySendSignal("Good $dayPart,\n\n$message", $user, false, $prayerRequest['pictures'], false);
 			}
 		}
-
-		unset($schedule[$t]);
 	}
 
 	update_option("prayer_schedule_$date", $schedule);

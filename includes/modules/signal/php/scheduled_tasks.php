@@ -11,7 +11,7 @@ add_action('init', function(){
     });
 
     // needed for async signal messages
-    add_action( 'schedule_signal_message_action', __NAMESPACE__.'\sendSignalMessage', 10, 3);
+    add_action( 'schedule_signal_message_action', __NAMESPACE__.'\sendSignalMessage', 10, 8);
 
     add_action( 'check_signal_numbers_action', __NAMESPACE__.'\checkSignalNumbers', 10, 3);
 
