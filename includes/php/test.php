@@ -12,9 +12,6 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
-	$signalResults  = get_option('sim-signal-results', []);
-
-    printArray($signalResults, true);
 
     /* $posts = get_posts(
 		array(

@@ -264,7 +264,9 @@ add_action('init', function(){
     ){
         $url		= SIM\ADMIN\getDefaultPageLink(MODULE_SLUG, '2fa_page');
 
-        SIM\printArray($url);
+        //SIM\printArray($url);
+
+        //$url=false;
         
         if(!$url){
 

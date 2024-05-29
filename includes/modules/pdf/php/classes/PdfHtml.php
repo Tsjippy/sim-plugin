@@ -848,12 +848,12 @@ class PdfHtml extends \FPDF{
 	/**
 	 * Print the pdf to screen
 	 */
-	public function printPdf(){
+	public function printPdf($dest='', $name='', $isUTF8=false){
 		// CLear the complete queue
 		SIM\clearOutput();
 
 		ob_start();
-		$this->Output();
+		$this->Output($dest, $name, $isUTF8);
 		ob_end_flush();
 		exit;
 		die();

@@ -126,9 +126,17 @@ function exportVisaExcel(){
 		}
 
 		$displayName 	= get_userdata( $user->ID)->display_name;
-		$visaInfo 		= get_user_meta( $user->ID, "visa_info",true);
-		$understudy1	= get_user_meta( $user->ID, "understudy_1",true);
-		$understudy2	= get_user_meta( $user->ID, "understudy_2",true);
+		$visaInfo 		= get_user_meta( $user->ID, "visa_info", true);
+		$understudy1	= get_user_meta( $user->ID, "understudy_1", true);
+		$understudy2	= get_user_meta( $user->ID, "understudy_2", true);
+
+		if(!is_array($understudy1)){
+			$understudy1	= [];
+		}
+
+		if(!is_array($understudy2)){
+			$understudy2	= [];
+		}
 
 		$sheet->setCellValue("A$row", $displayName);
 
@@ -140,13 +148,22 @@ function exportVisaExcel(){
 
 		//Loop over the greencard values and write them to excel
 		foreach($greencardData as $key=>$field){
+			if(is_array($visaInfo[$field])){
+				$visaInfo[$field] = array_values($visaInfo[$field])[0];
+			}
+
 			$sheet->setCellValue([$key+2, $row], $visaInfo[$field]);
 		}
 
 		//Loop over the understudy values and write them to excel
 		foreach($understudyData as $key=>$field){
-			$sheet->setCellValue([$key+8 , $row], $understudy1[$field]);
-			$sheet->setCellValue([$key+19, $row], $understudy2[$field]);
+			if(!empty($understudy1[$field])){
+				$sheet->setCellValue([$key+8 , $row], $understudy1[$field]);
+			}
+
+			if(!empty($understudy2[$field])){
+				$sheet->setCellValue([$key+19, $row], $understudy2[$field]);
+			}
 		}
 
 		$row++;
@@ -192,7 +209,7 @@ function exportVisaInfoPdf($userId=0, $all=false) {
 		writeVisaPages($userId, $pdf);
 	}
 
-	$pdf->printPdf();
+	$pdf->printPdf('D', 'Immigration Info.pdf');
 }
 
 /**
@@ -214,7 +231,7 @@ function writeVisaPages($user, $pdf){
 		isset($visaInfo['permit_type']) &&
 		(
 			is_array($visaInfo['permit_type'])	&& $visaInfo['permit_type'][0] != 'greencard' || // Nigerian passport or no green card needed
-			$visaInfo['permit_type'] != 'greencard'
+			!is_array($visaInfo['permit_type'])	&& $visaInfo['permit_type'] != 'greencard'
 		) ||
 		get_user_meta($user->ID, 'account-type', true) == 'positional'						// positional account
 	){

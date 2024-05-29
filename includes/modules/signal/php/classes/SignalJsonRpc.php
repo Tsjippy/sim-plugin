@@ -126,9 +126,23 @@ class SignalJsonRpc extends AbstractSignal{
         // maybe the daemon is not running, lets read from the socket ourselves
         $response = '';
 
-        $x  = 0;
+        $x      = 0;
+        $base   = '{"jsonrpc":';
+
         while (!feof($this->socket)) {
             $response       .= fread($this->socket, 4096);
+
+            // somehow we are reading the second one already
+            if(substr_count($response, $base) > 1){
+                // loop over each jsonrpc response to find the one with a result property
+                foreach(explode($base, $response) as $jsonString){
+                    $decoded    = json_decode($base.$jsonString);
+
+                    if(!empty($decoded) && isset($decoded->result) && $decoded->id == $id){
+                        return $decoded;
+                    }
+                }
+            }
 
             if(!empty(json_decode($response))){
                 //SIM\printArray(json_decode($response));
