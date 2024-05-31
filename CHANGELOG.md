@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- faster signal daemon
 
 ### Fixed
 
