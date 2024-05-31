@@ -5,11 +5,16 @@
 ### Added
 
 ### Changed
-- faster signal daemon
 
 ### Fixed
 
 ### Updated
+
+## [2.44.4] - 2024-05-31
+
+
+### Changed
+- faster signal daemon
 
 ## [2.44.3] - 2024-05-29
 
