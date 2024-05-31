@@ -70,15 +70,17 @@ class SignalJsonRpc extends AbstractSignal{
 
     /**
      * Get response from db
+     *
+     * @param   int     $id         the request id should epoch of the request
+     *
+     * @return  mixed               the result or empty if no result
      */
     public function getResultFromDb($id){
         $signalResults  = get_option('sim-signal-results', []);
 
-        // wait till the response comes back into the daemon
-        $x  = 1;
-        while(!isset($signalResults[$id]) && $x < 60){
-            sleep(1);
-            $signalResults  = get_option('sim-signal-results', []);
+        // the id is not found in the db
+        if(!!isset($signalResults[$id])){
+            return false;
         }
 
         $result = $signalResults[$id];
@@ -92,60 +94,22 @@ class SignalJsonRpc extends AbstractSignal{
     }
 
     /**
-     * Get the response to a request
+     * Get response from socket
      *
      * @param   int     $id         the request id should epoch of the request
-     * @param   int     $counter    how often we already checked the response for this request
+     *
+     * @return  string              a json result string
      */
-    public function getRequestResponse(int $id, $counter=0){
-        if(empty($id)){
-            SIM\printArray("Got an empty Id");
-            return false;
-        }
-
-        $signalResults  = get_option('sim-signal-results', []);
-
-        if(isset($signalResults[$id])){
-            $result = $signalResults[$id];
-
-            unset($signalResults[$id]);
-
-            update_option('sim-signal-results', $signalResults);
-
-            SIM\printArray("Received result from db for id $id");
-
-            return $result;
-        }
-
-        // maximum of 5 minutes
-        if(time() - $id > 300){
-            SIM\printArray('Cancelling as this has been running for '.time() - $id.' seconds');
-            return false;
-        }
-
+    public function getResultFromSocket($id){
         // maybe the daemon is not running, lets read from the socket ourselves
-        $response = '';
-
-        $x      = 0;
-        $base   = '{"jsonrpc":';
+        $response   = '';
+        $x          = 0;
+        $base       = '{"jsonrpc":';
 
         while (!feof($this->socket)) {
             $response       .= fread($this->socket, 4096);
 
-            // somehow we are reading the second one already
-            if(substr_count($response, $base) > 1){
-                // loop over each jsonrpc response to find the one with a result property
-                foreach(explode($base, $response) as $jsonString){
-                    $decoded    = json_decode($base.$jsonString);
-
-                    if(!empty($decoded) && isset($decoded->result) && $decoded->id == $id){
-                        return $decoded;
-                    }
-                }
-            }
-
             if(!empty(json_decode($response))){
-                //SIM\printArray(json_decode($response));
                 break;
             }
 
@@ -163,7 +127,41 @@ class SignalJsonRpc extends AbstractSignal{
 
         $response   = trim($response);
 
-        $json   = json_decode($response);
+        if(empty($response)){
+            return $this->getRequestResponse($id);
+        }
+
+        // somehow we have red multiple responses
+        if(substr_count($response, $base) > 1){
+            SIM\printArray($response);
+
+            $results    = [];
+            // loop over each jsonrpc response to find the ones with a result property
+            foreach(explode($base, $response) as $jsonString){
+                $decoded    = json_decode($base.$jsonString);
+
+                if(!empty($decoded) && isset($decoded->result)){
+                    // this is the one we are after
+                    if($decoded->id == $id){
+                        $response   = json_encode($decoded);
+                    }else{
+                        // not this one
+                        $results[$decoded->id]  = $decoded;
+                    }
+                }
+            }
+
+            // add the results we are not interested in to the db
+            if(!empty($results)){
+                $signalResults              = get_option('sim-signal-results', []);
+
+                array_merge($signalResults, $results);
+
+                update_option('sim-signal-results', $signalResults);
+            }
+        }
+
+        $json       = json_decode($response);
 
         if(empty($json)){
             switch (json_last_error()) {
@@ -193,20 +191,47 @@ class SignalJsonRpc extends AbstractSignal{
         if(isset($json->error)){
             SIM\printArray("Error, error is: ");
             SIM\printArray($json);
-        }elseif(!isset($json->result) && $counter < 20){
-            SIM\printArray("Trying again, counter is $counter");
-            $counter++;
+        }elseif(!isset($json->result)){
+            SIM\printArray("Trying again");
 
-            $json   = $this->getRequestResponse($id, $counter);
+            $json   = $this->getRequestResponse($id);
+        }elseif(!isset($json->id)){
+            SIM\printArray("Response has no id");
+            SIM\printArray($response);
+            SIM\printArray($json);
+            $json   = $this->getRequestResponse($id);
         }elseif($json->id != $id){
             SIM\printArray("Id '$json->id' is not the right id '$id', trying again");
             SIM\printArray($response);
+            SIM\printArray($json);
             $json   = $this->getRequestResponse($id);
         }
 
-        if($counter > 0){
-            SIM\printArray($response);
+        return $json;
+    }
+
+    /**
+     * Get the response to a request
+     *
+     * @param   int     $id         the request id should epoch of the request
+     */
+    public function getRequestResponse(int $id){
+        if(empty($id)){
+            SIM\printArray("Got an empty Id");
+            return false;
         }
+
+        // maximum of 5 minutes
+        if(time() - $id > 60){
+            SIM\printArray('Cancelling as this has been running for '.time() - $id.' seconds');
+            return false;
+        }
+
+        $json   = $this->getResultFromSocket($id);
+
+        if(!$json){
+            $json   = $this->getResultFromDb($id);
+        }        
 
         return $json; 
     }
@@ -491,15 +516,11 @@ class SignalJsonRpc extends AbstractSignal{
             }
         }
 
-        if(!empty($timeStamp)){
+        if(!empty($timeStamp) && !empty($quoteAuthor) && !empty($quoteMessage)){
             $params['quoteTimestamp']   = $timeStamp;
-        }
-
-        if(!empty($quoteAuthor)){
+       
             $params['quoteAuthor']   = $quoteAuthor;
-        }
-
-        if(!empty($quoteMessage)){
+        
             $params['quoteMessage']   = $quoteMessage;
         }
 

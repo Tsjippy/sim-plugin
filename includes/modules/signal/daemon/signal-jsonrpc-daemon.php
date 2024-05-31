@@ -32,7 +32,7 @@ set_time_limit(0);
 include_once __DIR__.'/../php/__module_menu.php';
 include_once __DIR__.'/../php/classes/SignalJsonRpc.php';
 
-$signal = new SIGNAL\SignalJsonRpc(false);
+$signal = new SIGNAL\SignalJsonRpc(false, true);
 
 if(!$signal->socket){
    print("Invalid socket: $signal->error\n");
@@ -43,9 +43,23 @@ if(!$signal->socket){
 while(1){
     $response = '';
 
-    $x  = 0;
+    $x      = 0;
+    $base   = '{"jsonrpc":';
     while (!feof($signal->socket)) {
         $response       .= fread($signal->socket, 4096);
+
+        // somehow we are reading the second one already
+        if(substr_count($response, $base) > 1){
+            // loop over each jsonrpc response to find the one with a result property
+            foreach(explode($base, $response) as $jsonString){
+                $decoded    = json_decode($base.$jsonString);
+
+                if(!empty($decoded) && isset($decoded->method) && $decoded->method == 'receive'){
+                    $response   = json_encode($decoded);
+                    break 2;
+                }
+            }
+        }
 
         //SIM\printArray($response, true);
 
@@ -113,9 +127,9 @@ while(1){
         processMessage($json->params);
     }elseif(isset($json->result)){
         SIM\printArray($json);
-        $signalResults  = get_option('sim-signal-results', []);
+        $signalResults              = get_option('sim-signal-results', []);
 
-        $signalResults[$json->id]   = $json->result;
+        $signalResults[$json->id]   = $json;
 
         update_option('sim-signal-results', $signalResults);
     }

@@ -279,8 +279,11 @@ function printArray($message, $display=false, $printFunctionHiearchy=false){
 			if(is_numeric($printFunctionHiearchy) && $index == $printFunctionHiearchy){
 				break;
 			}
+			
+			$path	= str_replace(MODULESPATH, '', $trace['file']);
+
 			error_log($index);
-			error_log( "    File: {$trace['file']}");
+			error_log( "    File: $path");
 			error_log( "    Line {$trace['line']}");
 			error_log( "    Function: {$trace['function']}");
 			error_log( "    Args:");
@@ -288,7 +291,8 @@ function printArray($message, $display=false, $printFunctionHiearchy=false){
 		}
 	}else{
 		$caller = array_shift($bt);
-		error_log("Called from file {$caller['file']} line {$caller['line']}");
+		$path	= str_replace(MODULESPATH, '', $caller['file']);
+		error_log("Called from file $path line {$caller['line']}");
 	}
 
 	if(is_array($message) || is_object($message)){
