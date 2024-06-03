@@ -128,4 +128,10 @@ abstract class AbstractSignal extends Signal {
     abstract public function getGroupInvitationLink($groupPath);
 
     abstract public function findGroupName($id);
+
+
+    /**
+    * Retry sending previous failed Signal messages
+    */
+   abstract public function retryFailedMessages();
 }

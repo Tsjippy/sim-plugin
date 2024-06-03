@@ -146,15 +146,6 @@ function sendSignalFromLocal($message, $recipient, $images, int $timeStamp=0, $q
 
 	$result	= $signal->send($phonenumber, $message, $images, $timeStamp, $quoteAuthor, $quoteMessage, $style);
 
-	if(str_contains($result, 'Unregistered user')){
-		//user not registered
-		delete_user_meta( $recipient, 'signal_number');
-	}
-
-	/* if(wp_doing_cron()){
-		return '';
-	} */
-
 	return $result;
 }
 

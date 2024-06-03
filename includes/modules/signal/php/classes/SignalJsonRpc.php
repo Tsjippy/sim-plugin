@@ -236,6 +236,58 @@ class SignalJsonRpc extends AbstractSignal{
         return $json; 
     }
 
+    protected function parseResult($json, $method, $params){
+        $this->error    = "";
+
+        if(!empty($json->error)){
+            
+            SIM\printArray("Got error {$json->error->message} For command $json");
+
+            $failedCommands      = get_option('sim-signal-failed-messages', []);
+
+            $errorMessage  = $json->error->message;
+
+            SIM\printArray($errorMessage);
+            SIM\printArray($this);
+
+            // Captcha required
+            if(str_contains($errorMessage, 'CAPTCHA proof required')){
+                // Store command
+                $failedCommands[$method]    = $params;
+                update_option('sim-signal-failed-messages', $failedCommands);
+
+                $this->sendCaptchaInstructions($errorMessage);
+            }elseif(str_contains($errorMessage, '429 Too Many Requests')){
+                // Store command
+                $failedCommands[$method]    = $params;
+                update_option('sim-signal-failed-messages', $failedCommands);
+            }elseif($json->error->data->response->results[0]->type == 'UNREGISTERED_FAILURE'){
+                if(isset($json->error->data->response->results[0]->recipientAddress->number)){
+                    // delete the signal meta key
+                    $users = get_users(array(
+                        'meta_key'     => 'signal_number',
+                        'meta_value'   => $json->error->data->response->results[0]->recipientAddress->number,
+		                'meta_compare' => '=',
+                    ));
+            
+                    foreach($users as $user){
+                        delete_user_meta($user->ID, 'signal_number');
+
+                        SIM\printArray("Deleting Signal number {$json->error->data->response->results[0]->recipientAddress->number} for user $user->ID as it is not valid anymore");
+                    }
+                }
+            }elseif(str_contains($errorMessage, 'Invalid group id')){
+                SIM\printArray($errorMessage);
+            }elseif(str_contains($errorMessage, 'Did not receive a reply.')){
+                SIM\printArray($errorMessage); 
+            }else{
+                SIM\printArray($this->command);
+            }
+            
+            $this->error    = "<div class='error'>$errorMessage</div>";
+        }
+    }
+
     /**
      * Performs the json RPC request
      *
@@ -281,14 +333,9 @@ class SignalJsonRpc extends AbstractSignal{
         }
 
         if($this->getResult){
-            if(!empty($response->error)){
-                SIM\printArray("Got error {$response->error->message} For command $json");
-
-                $this->error    =  new \WP_Error('sim-signal', $response->error->message . " For command $json");
-
-                return $this->error;
-            }else{
-                //SIM\printArray("No error for command $json");
+            $this->parseResult($response, $method, $params);
+            if(!empty($this->error)){
+                return new \WP_Error('sim-signal', $this->error);
             }
 
             if(!is_object($response) || empty($response->result)){
@@ -536,11 +583,11 @@ class SignalJsonRpc extends AbstractSignal{
 
         if(is_numeric($ownTimeStamp)){
             $this->addToMessageLog($recipient, $message, $ownTimeStamp);
+            return $ownTimeStamp;
         }else{
-            SIM\printArray($ownTimeStamp);
+            SIM\printArray($result);
+            return $result;
         }
-
-        return $ownTimeStamp;
     }
 
     /**
@@ -759,5 +806,28 @@ class SignalJsonRpc extends AbstractSignal{
         }
 
         return '';
+    }
+
+    /**
+     * Retry sending previous failed Signal messages
+     */
+    public function retryFailedMessages(){
+        // get failed commands from db
+        $failedCommands      = get_option('sim-signal-failed-messages', []);
+        
+        // clean db
+        delete_option('sim-signal-failed-messages');
+
+        if(empty($failedCommands)){
+            return;
+        }
+
+        foreach($failedCommands as $command=>$arguments){
+            SIM\printArray($command);
+
+            $this->doRequest($command, $arguments);
+
+            sleep(10);
+        }
     }
 }

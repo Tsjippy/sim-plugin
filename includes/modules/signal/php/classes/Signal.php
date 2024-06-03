@@ -449,67 +449,6 @@ class Signal{
         ];
     }
 
-    protected function parseResult($returnJson=false){
-        if($this->command->getExitCode()){
-            $failedCommands      = get_option('sim-signal-failed-messages', []);
-
-            $errorMessage  = $this->command->getError();
-
-            //SIM\printArray($errorMessage);
-
-            // Captcha required
-            if(str_contains($errorMessage, 'CAPTCHA proof required')){
-                // Store command
-                $failedCommands[]    = $this->command->getCommand();
-                update_option('sim-signal-failed-messages', $failedCommands);
-
-                $this->sendCaptchaInstructions($errorMessage);
-            }elseif(str_contains($errorMessage, '429 Too Many Requests')){
-                // Store command
-                $failedCommands[]    = $this->command->getCommand();
-                update_option('sim-signal-failed-messages', $failedCommands);
-            }elseif(str_contains($errorMessage, 'Unregistered user')){
-                // get phonenumber from the message
-                preg_match('/"(\+\d*)/m', $errorMessage, $matches);
-
-                if(isset($matches[1])){
-                    // delete the signal meta key
-                    $users = get_users(array(
-                        'meta_key'     => 'signal_number',
-                        'meta_value'   => $matches[1],
-		                'meta_compare' => '=',
-                    ));
-            
-                    foreach($users as $user){
-                        delete_user_meta($user->ID, 'signal_number');
-
-                        SIM\printArray("Deleting Signal number {$matches[1]} for user $user->ID as it is not valid anymore");
-                    }
-                }
-            }elseif(str_contains($errorMessage, 'Invalid group id')){
-                SIM\printArray($errorMessage);
-            }elseif(str_contains($errorMessage, 'Did not receive a reply.')){
-                SIM\printArray($errorMessage); 
-            }else{
-                SIM\printArray($this->command);
-            }
-            
-            $this->error    = "<div class='error'>$errorMessage</div>";
-            if($returnJson){
-                return json_encode($this->error);
-            }
-
-            return $this->error;
-        }
-
-        $output = $this->command->getOutput();
-
-        if($returnJson && (empty($output) || json_decode($output) == $output)){
-            return json_encode($output);
-        }
-        return $output;
-    }
-
     /**
      * Send Captcha instructions by e-mail
      *
@@ -531,37 +470,6 @@ class Signal{
         $message        .= "Submit the challenge and captcha <a href='$adminUrl'>here</a>";
 
         wp_mail($to, $subject, $message);
-    }
-
-    /**
-     * Retry sending previous failed Signal messages
-     */
-    public function retryFailedMessages(){
-        // get failed commands from db
-        $failedCommands      = get_option('sim-signal-failed-messages', []);
-        
-        // clean db
-        delete_option('sim-signal-failed-messages');
-
-        if(empty($failedCommands)){
-            return;
-        }
-
-        foreach($failedCommands as $command){
-            //SIM\printArray($command);
-
-            $this->command = new Command([
-                'command' => $command,
-                // This is required for binary to be able to find libzkgroup.dylib to support Group V2
-                'procCwd' => dirname($this->path),
-            ]);
-
-            $this->command->execute();
-
-            $this->parseResult();
-
-            sleep(10);
-        }
     }
 
     public function checkPrerequisites(){

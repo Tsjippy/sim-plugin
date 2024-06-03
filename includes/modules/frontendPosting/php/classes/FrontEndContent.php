@@ -1127,7 +1127,7 @@ class FrontEndContent{
 		}
 
 		if($this->postContent != $post->post_content){
-			$newPostData['post_content'] 	= utf8_encode($this->postContent);
+			$newPostData['post_content'] 	= $this->postContent;
 		}
 
 		if($this->status != $post->post_status){
@@ -1174,9 +1174,34 @@ class FrontEndContent{
 			$this->postId	= $postId;
 		}else{
 			$result = wp_update_post( $newPostData, true, false);
+
+			// check for errors
 			if(is_wp_error($result)){
-				return $result;
-			}elseif(($post->post_status == 'draft' || $post->post_status == 'pending') && $this->status == 'publish'){
+				// most likely some invalid data in post, try to fix it.
+				if($result->get_error_message() == "Could not update post in the database."){
+					$illigalChars	= [];
+					foreach(str_split($newPostData['post_content']) as $index=>$chr){
+						json_encode($chr);
+						if(json_last_error() == 5){
+							$illigalChars[$index] = $chr;
+						}elseif(json_last_error() == 0 && !empty($illigalChars)){
+							$newPostData['post_content']	= str_replace(implode('', $illigalChars), mb_convert_encoding(implode('', $illigalChars), "UTF-8", "auto"), $newPostData['post_content']);
+							$illigalChars	= [];
+						}
+					}
+
+					// try to update again
+					$result = wp_update_post( $newPostData, true, false);
+
+					if(is_wp_error($result)){
+						return $result;
+					}
+				}else{
+					return $result;
+				}				
+			}
+			
+			if(($post->post_status == 'draft' || $post->post_status == 'pending') && $this->status == 'publish'){
 				$this->actionText = 'published';
 
 				// If we publish a post which was pending before send an notification to the author
@@ -1208,7 +1233,7 @@ class FrontEndContent{
 		$post = array(
 			'post_type'		=> $this->postType,
 			'post_title'    => $this->postTitle,
-			'post_content'  => utf8_encode($this->postContent),
+			'post_content'  => $this->postContent,
 			'post_status'   => $this->status,
 			'post_author'   => $_POST['post_author']
 		);
@@ -1239,8 +1264,32 @@ class FrontEndContent{
 		}
 
 		if(is_wp_error($this->postId)){
-			SIM\printArray($this->postId);
-			return $this->postId;
+			// check for errors
+			if(is_wp_error($this->postId)){
+				// most likely some invalid data in post, try to fix it.
+				if($this->postId->get_error_message() == "Could not update post in the database."){
+					$illigalChars	= [];
+					foreach(str_split($post['post_content']) as $index=>$chr){
+						json_encode($chr);
+						if(json_last_error() == 5){
+							$illigalChars[$index] = $chr;
+						}elseif(json_last_error() == 0 && !empty($illigalChars)){
+							$post['post_content']	= str_replace(implode('', $illigalChars), mb_convert_encoding(implode('', $illigalChars), "UTF-8", "auto"), $post['post_content']);
+							$illigalChars	= [];
+						}
+					}
+
+					// try to update again
+					$this->postId 	= wp_insert_post( $post, true, false);
+					$post['ID']		= $this->postId;
+
+					if(is_wp_error($this->postId)){
+						return $this->postId;
+					}
+				}else{
+					return $this->postId;
+				}				
+			}
 		}elseif($this->postId === 0){
 			return new WP_Error('Inserting post error', "Could not create the $this->postType!");
 		}
