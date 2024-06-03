@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- posting problems with illigal chars
 
 ### Updated
 
