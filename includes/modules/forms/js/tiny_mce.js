@@ -39,7 +39,7 @@ var insertFormShortcodeDialog = {
             }else if(formSelector != ''){
                 tinymce.activeEditor.insertContent(`[formresults formname=${formSelector}]`);
                 
-                alert("Table succesfully inserted.\n\n Please publish the page, then visit the new page to start building your form");
+                alert("Table succesfully inserted.\n\n Please publish the page, then visit the new page to view the form results");
             }
             
             dialog.close();

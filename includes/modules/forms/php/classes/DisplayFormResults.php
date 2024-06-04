@@ -53,6 +53,116 @@ class DisplayFormResults extends DisplayForm{
 		add_filter('sim-forms-elements', [__NAMESPACE__.'\DisplayFormResults', 'filterElements'], 10, 3);
 	}
 
+	public function getMetaKeyFormSubmissions($userId=null, $all=false){
+		global $wpdb;
+
+		// also check the users table
+		$colNames	= $wpdb->get_results( "DESC {$wpdb->users}" );
+		$usedCols	= [];
+		foreach($colNames as &$desc){
+			$desc	= $desc->Field;
+		}
+		
+		$query				= "SELECT * FROM {$wpdb->usermeta} WHERE ";
+
+		if(is_numeric($userId)){
+			$query				= "user_id = $userId ";
+		}
+
+		$counter	= 0;
+		foreach($this->formElements as $element){
+			if(!in_array($element->type, $this->nonInputs) && $element->id >= 0){
+				$name			= trim($element->name, '[]');
+
+				if(in_array($name, $colNames)){
+					$usedCols[]	= $name;
+				}else{
+					if($counter > 0){
+						$query			.= "OR ";
+					}
+
+
+					$query			.= "meta_key = '$name' ";
+
+					$counter++;
+				}
+			}
+		}
+
+		$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this->formName);
+
+		// Get results
+		$result		= $wpdb->get_results($query);
+
+		// parse results to merge based on userId
+		$results	= [];
+		$counter	= 0;
+		foreach($result as $r){
+			if(!isset($results[$r->user_id])){
+				$results[$r->user_id]					= new \stdClass();
+				$results[$r->user_id]->id				= $counter;
+				$results[$r->user_id]->form_id			= $this->formData->id;
+				$results[$r->user_id]->timecreated		= get_userdata($r->user_id)->user_registered;
+				$results[$r->user_id]->timelastedited	= get_userdata($r->user_id)->user_registered;
+				$results[$r->user_id]->userid			= $r->user_id;
+				$results[$r->user_id]->formresults		= [
+					'submissiontime'	=> $results[$r->user_id]->timecreated,
+					'edittime'			=> $results[$r->user_id]->timelastedited
+				];
+
+				$counter++;
+			}
+
+			$results[$r->user_id]->formresults[$r->meta_key]	= maybe_unserialize($r->meta_value);
+		}
+
+		// now also add result from the users table
+		if(!empty($usedCols)){
+			$selectQuery	= 'ID,'.implode(',', $usedCols);
+			$result		= $wpdb->get_results("Select $selectQuery from {$wpdb->users}");
+
+			foreach($result as $r){	
+				foreach($usedCols as $col){
+					$results[$r->ID]->formresults[$col]	= maybe_unserialize($r->$col);
+				}
+			}
+		}
+
+		// Get the total
+		$this->total			= count($results);
+
+		// Limit the amount to 100
+		if(!$all && isset($_REQUEST['pagenumber']) && is_numeric($_REQUEST['pagenumber']) && $this->total > $this->pageSize){
+			$this->currentPage	= $_REQUEST['pagenumber'];
+
+			if(isset($_POST['prev'])){
+				$this->currentPage--;
+			}
+			if(isset($_POST['next'])){
+				$this->currentPage++;
+			}
+			$start			= $this->currentPage * $this->pageSize;
+
+			$results		= array_slice($results, $start, $this->pageSize);
+
+			$this->spliced	= true;
+		}else{
+			$this->currentPage	= 0;
+		}
+
+		// sort colomn
+		$this->sortColumnFound	= false;
+		if($this->sortColumn){
+			if($this->sortDirection != 'ASC'){
+				$this->sortDirection	= 'DESC';
+			}
+
+			
+		}	
+
+		return apply_filters('sim_retrieved_formdata', $results, $userId, $this->formName);
+	}
+
 	/**
 	 * Get formresults of the current form
 	 *
@@ -76,7 +186,11 @@ class DisplayFormResults extends DisplayForm{
 				}
 			}
 		}
-		
+
+		if($this->formData->save_in_meta){
+			return $this->getMetaKeyFormSubmissions($userId, $all);
+		}
+
 		$query				= "SELECT * FROM {$this->submissionTableName} WHERE ";
 
 		if(empty($submissionId) && !empty($_REQUEST['id'])){
@@ -529,12 +643,19 @@ class DisplayFormResults extends DisplayForm{
 					}
 				}
 			//display dates in a nice way
-			}elseif(strtotime($string) && Date('Y', strtotime($string)) < 2200 && Date('Y', strtotime($string)) > 2000){
+			}elseif(strtotime($string) && Date('Y', strtotime($string)) < 2200 && Date('Y', strtotime($string)) > 1900){
 				$date		= date_parse($string);
 
 				//Only transform if everything is there
 				if($date['year'] && $date['month'] && $date['day']){
-					$output		= date('d-M-Y', strtotime($string));
+					$format		= get_option('date_format');
+
+					//include time if needed
+					if($date['hour'] && $date['minute']){
+						$format	.= ' '.get_option('time_format');
+					}
+
+					$output		= date($format, strtotime($string));
 				}
 			}elseif($elementName == 'userid'){
 				$output				= SIM\USERPAGE\getUserPageLink($string);
@@ -862,8 +983,10 @@ class DisplayFormResults extends DisplayForm{
 				!empty($this->tableSettings['hiderow']) &&												// There is a column defined
 				$columnSetting['name'] == $this->tableSettings['hiderow'] && 							// We are currently checking a cell in that column
 				(
-					!isset($values[$this->tableSettings['hiderow']]) || 								// The cell has no value
-					empty($values[$this->tableSettings['hiderow']])
+					(
+						empty($values[$this->tableSettings['hiderow']]) && 								// The cell has no value
+						empty($values[trim($this->tableSettings['hiderow'], '[]')])						// also check the name without []
+					)
 				) && 									
 				!array_intersect($this->userRoles, (array)$columnSetting['edit_right_roles'])	&&		// And we have no right to edit this specific column
 				!$this->tableEditPermissions															// and we have no right to edit all table data
@@ -1794,6 +1917,7 @@ class DisplayFormResults extends DisplayForm{
 				$allRowsEmpty	= true;
 				foreach($submissions as $submission){
 					$values				= $submission->formresults;
+
 					$values['id']		= $submission->id;
 					$values['userid']	= $submission->userid;
 
@@ -1898,9 +2022,12 @@ class DisplayFormResults extends DisplayForm{
 
 		if($type != 'others'){
 			$this->user->partnerId		= SIM\hasPartner($this->user->ID);
-			foreach($submissions as $submission){
+			foreach($submissions as $submission){				
 				//Our own entry or one of our partner
-				if($submission->userid == $this->user->ID || $submission->userid == $this->user->partnerId){
+				if(
+					$submission->userid == $this->user->ID || 
+					$submission->userid == $this->user->partnerId
+				){
 					$this->ownData = true;
 					break;
 				}

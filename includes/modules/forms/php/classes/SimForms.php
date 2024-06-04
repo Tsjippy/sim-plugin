@@ -544,6 +544,7 @@ class SimForms{
 					'userid'		=> '',
 					'search'		=> '',
 					'shortcodeid'	=> '',
+					'id'			=> '',
 					'formid'		=> '',
 					'onlyOwn'		=> false,
 					'archived'		=> false,
@@ -558,6 +559,9 @@ class SimForms{
 			$this->getForm();
 
 			$this->shortcodeId	= $atts['shortcodeid'];
+			if(empty($this->shortcodeId)){
+				$this->shortcodeId	= $atts['id'];
+			}
 			$this->onlyOwn		= $atts['onlyOwn'];
 			if(isset($_GET['onlyown'])){
 				$this->onlyOwn	= $_GET['onlyown'];

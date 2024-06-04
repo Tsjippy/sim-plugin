@@ -242,10 +242,10 @@ function getPage(){
 
 function saveTablePrefs( \WP_REST_Request $request ) {
 	if (is_user_logged_in()) {
-		$columnName		= $request['column_name'];
+		$columnName					= $request['column_name'];
 
-		$userId		= get_current_user_id();
-		$hiddenColumns	= (array)get_user_meta($userId, 'hidden_columns_'.$request['formid'], true);
+		$userId						= get_current_user_id();
+		$hiddenColumns				= (array)get_user_meta($userId, 'hidden_columns_'.$request['formid'], true);
 
 		$hiddenColumns[$columnName]	= 'hidden';
 
