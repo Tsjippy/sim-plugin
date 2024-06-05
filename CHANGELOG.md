@@ -6,6 +6,7 @@
 - display meta form results
 
 ### Changed
+- freads vs fgets
 
 ### Fixed
 - posting problems with illigal chars
