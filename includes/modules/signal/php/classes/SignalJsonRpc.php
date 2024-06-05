@@ -107,7 +107,7 @@ class SignalJsonRpc extends AbstractSignal{
         $base       = '{"jsonrpc":';
 
         while (!feof($this->socket)) {
-            $response       .= fread($this->socket, 4096);
+            $response       .= fgets($this->socket, 4096);
 
             if(!empty(json_decode($response))){
                 break;
