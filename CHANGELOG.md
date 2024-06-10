@@ -3,14 +3,24 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- display meta form results
 
 ### Changed
 
 ### Fixed
-- posting problems with illigal chars
 
 ### Updated
+
+## [2.44.5] - 2024-06-05
+
+
+### Added
+- display meta form results
+
+### Changed
+- freads vs fgets
+
+### Fixed
+- posting problems with illigal chars
 
 ## [2.44.4] - 2024-05-31
 
