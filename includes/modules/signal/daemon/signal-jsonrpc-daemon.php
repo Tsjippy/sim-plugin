@@ -46,7 +46,7 @@ while(1){
     $x      = 0;
     $base   = '{"jsonrpc":';
     while (!feof($signal->socket)) {
-        $response       .= fread($signal->socket, 4096);
+        $response       .= fgets($signal->socket, 4096);
 
         // somehow we are reading the second one already
         if(substr_count($response, $base) > 1){

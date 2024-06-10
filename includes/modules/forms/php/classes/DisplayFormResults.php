@@ -2244,6 +2244,10 @@ class DisplayFormResults extends DisplayForm{
 
 				//add normal fields
 				foreach($this->columnSettings as $settingId=>$columnSetting){
+					if(!is_array($columnSetting)){
+						$columnSetting	= [];
+					}
+					
 					if(!isset($columnSetting['view_right_roles'])){
 						$columnSetting['view_right_roles']	= [];
 					}

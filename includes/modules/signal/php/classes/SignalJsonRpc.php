@@ -18,6 +18,14 @@ sudo ln -sf /opt/signal-cli-"${VERSION}"/bin/signal-cli /usr/local/bin/ */
 
 // data is stored in $HOME/.local/share/signal-cli
 
+/*
+    Test unix socket from command line: 
+    printf  '{"jsonrpc":"2.0","method":"getUserStatus","params":{"recipient":["+SOMENUMBER"]},"id":SOMEID}\n' | socat UNIX-CONNECT:/home/simnige1/sockets/signal -
+
+    Test json RPC
+    echo '{"jsonrpc":"2.0","method":"getUserStatus","params":{"recipient":["+SOMENUMBER"]},"id":"my special mark"}' | ...public_html/wp-content/signal-cli/program/signal-cli --config ..../.local/share/signal-cli jsonRpc
+*/
+
 
 class SignalJsonRpc extends AbstractSignal{
     public $os;
@@ -236,56 +244,68 @@ class SignalJsonRpc extends AbstractSignal{
         return $json; 
     }
 
-    protected function parseResult($json, $method, $params){
+    protected function parseResult($json, $method, $params, $id){
         $this->error    = "";
 
-        if(!empty($json->error)){
-            
-            SIM\printArray("Got error {$json->error->message} For command $json");
+        if(!$json){
+            SIM\printArray("Getting response for command $method timed out");
+            SIM\printArray($params);
 
-            $failedCommands      = get_option('sim-signal-failed-messages', []);
 
-            $errorMessage  = $json->error->message;
-
-            SIM\printArray($errorMessage);
-            SIM\printArray($this);
-
-            // Captcha required
-            if(str_contains($errorMessage, 'CAPTCHA proof required')){
-                // Store command
-                $failedCommands[$method]    = $params;
-                update_option('sim-signal-failed-messages', $failedCommands);
-
-                $this->sendCaptchaInstructions($errorMessage);
-            }elseif(str_contains($errorMessage, '429 Too Many Requests')){
-                // Store command
-                $failedCommands[$method]    = $params;
-                update_option('sim-signal-failed-messages', $failedCommands);
-            }elseif($json->error->data->response->results[0]->type == 'UNREGISTERED_FAILURE'){
-                if(isset($json->error->data->response->results[0]->recipientAddress->number)){
-                    // delete the signal meta key
-                    $users = get_users(array(
-                        'meta_key'     => 'signal_number',
-                        'meta_value'   => $json->error->data->response->results[0]->recipientAddress->number,
-		                'meta_compare' => '=',
-                    ));
-            
-                    foreach($users as $user){
-                        delete_user_meta($user->ID, 'signal_number');
-
-                        SIM\printArray("Deleting Signal number {$json->error->data->response->results[0]->recipientAddress->number} for user $user->ID as it is not valid anymore");
-                    }
-                }
-            }elseif(str_contains($errorMessage, 'Invalid group id')){
-                SIM\printArray($errorMessage);
-            }elseif(str_contains($errorMessage, 'Did not receive a reply.')){
-                SIM\printArray($errorMessage); 
-            }else{
-                SIM\printArray($this->command);
+            $signalResults              = get_option('sim-signal-results', []);
+            if(isset($signalResults[$id])){
+                SIM\printArray($signalResults[$id]);
             }
-            
-            $this->error    = "<div class='error'>$errorMessage</div>";
+
+            return false;
+        }elseif(empty($json->error)){
+            return;
         }
+            
+        SIM\printArray("Got error {$json->error->message} For command $method, $params");
+
+        $failedCommands      = get_option('sim-signal-failed-messages', []);
+
+        $errorMessage  = $json->error->message;
+
+        SIM\printArray($errorMessage);
+        SIM\printArray($this);
+
+        // Captcha required
+        if(str_contains($errorMessage, 'CAPTCHA proof required')){
+            // Store command
+            $failedCommands[$method]    = $params;
+            update_option('sim-signal-failed-messages', $failedCommands);
+
+            $this->sendCaptchaInstructions($errorMessage);
+        }elseif(str_contains($errorMessage, '429 Too Many Requests')){
+            // Store command
+            $failedCommands[$method]    = $params;
+            update_option('sim-signal-failed-messages', $failedCommands);
+        }elseif($json->error->data->response->results[0]->type == 'UNREGISTERED_FAILURE'){
+            if(isset($json->error->data->response->results[0]->recipientAddress->number)){
+                // delete the signal meta key
+                $users = get_users(array(
+                    'meta_key'     => 'signal_number',
+                    'meta_value'   => $json->error->data->response->results[0]->recipientAddress->number,
+                    'meta_compare' => '=',
+                ));
+        
+                foreach($users as $user){
+                    delete_user_meta($user->ID, 'signal_number');
+
+                    SIM\printArray("Deleting Signal number {$json->error->data->response->results[0]->recipientAddress->number} for user $user->ID as it is not valid anymore");
+                }
+            }
+        }elseif(str_contains($errorMessage, 'Invalid group id')){
+            SIM\printArray($errorMessage);
+        }elseif(str_contains($errorMessage, 'Did not receive a reply.')){
+            SIM\printArray($errorMessage); 
+        }else{
+            SIM\printArray($this->command);
+        }
+        
+        $this->error    = "<div class='error'>$errorMessage</div>";
     }
 
     /**
@@ -333,7 +353,7 @@ class SignalJsonRpc extends AbstractSignal{
         }
 
         if($this->getResult){
-            $this->parseResult($response, $method, $params);
+            $this->parseResult($response, $method, $params, $id);
             if(!empty($this->error)){
                 return new \WP_Error('sim-signal', $this->error);
             }
