@@ -6,9 +6,24 @@ use mikehaertl\shellcommand\Command;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpWord\IOFactory;
+use SIM\FORMS\SimForms;
 
 //Shortcode for testing
 add_shortcode("test", function ($atts){
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    require_once ABSPATH . 'wp-admin/install-helper.php';
+
+    
+
+    $simForms = new FORMS\SimForms();
+
+        maybe_add_column($simForms->tableName, 'reminder_frequency', "ALTER TABLE $simForms->tableName ADD COLUMN `reminder_frequency` text");
+        maybe_add_column($simForms->tableName, 'reminder_period', "ALTER TABLE $simForms->tableName ADD COLUMN `reminder_period` text");
+        maybe_add_column($simForms->tableName, 'reminder_startdate', "ALTER TABLE $simForms->tableName ADD COLUMN `reminder_startdate` text");
+
+        maybe_drop_column($simForms->tableName, 'settings', "ALTER TABLE $simForms->tableName DROP COLUMN `settings`");
+
+
     global $wpdb;
     global $Modules;
 

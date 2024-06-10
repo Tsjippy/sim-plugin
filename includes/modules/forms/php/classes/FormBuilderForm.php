@@ -417,6 +417,34 @@ class FormBuilderForm extends SimForms{
 					</label>
 					<br>
 
+					<label class='<?php if($this->formData->save_in_meta){ echo 'hidden';}?>'>
+						Request new form submissions every 
+						<input type='number' name='reminder_frequency' value='<?php echo $this->formData->reminder_frequency;?>' style='max-width: 70px;'>
+
+						<?php
+							foreach(['years', 'months', 'days'] as $period) {
+								if(isset($this->formData->reminder_period) && $this->formData->reminder_period == $period){
+									$checked = 'checked';	
+								}else{
+									$checked = '';
+								}
+
+								?>
+								<label>
+									<input type='radio' name='reminder_period' id='reminder_period' value='<?php echo $period;?>' <?php echo $checked;?>>
+									<?php echo $period;?>
+								</label>
+								<?php
+							}
+						?>
+					</label>
+					<br>
+
+					<label class='<?php if($this->formData->save_in_meta){ echo 'hidden';}?>'>
+							Start reminding from <input type='date' name='reminder_startdate' value='<?php echo $this->formData->reminder_startdate;?>'>
+					</label>
+					<br>
+
 					<label class="block">
 						<h4>Form url</h4>
 						<?php
@@ -713,6 +741,11 @@ class FormBuilderForm extends SimForms{
 										<label>
 											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='submitted' <?php if($email['emailtrigger'] == 'submitted'){echo 'checked';}?>>
 											The form is submitted
+										</label><br>
+
+										<label>
+											<input type='radio' name='emails[<?php echo $key;?>][emailtrigger]' class='emailtrigger' value='shouldsubmit' <?php if($email['emailtrigger'] == 'shouldsubmit'){echo 'checked';}?>>
+											The form is due for submission
 										</label><br>
 
 										<label>

@@ -36,6 +36,7 @@ function mandatoryFieldsReminder(){
  	foreach($users as $user){
 		//get the reminders for this user
 		$reminderHtml = getAllEmptyRequiredElements($user->ID, 'mandatory');
+
 		//If there are reminders, send an e-mail
 		if (!empty($reminderHtml)){
 			$recipients     = '';
@@ -97,6 +98,59 @@ function mandatoryFieldsReminder(){
             sleep(1);
 		}
 	}
+
+    // Also send a reminder for any mandatory forms
+    $simForms   = new SimForms();
+    foreach(getAllRequiredForms() as $formId=>$userIds){
+        $simForms->getForm($formId);
+        $emails = $simForms->formData->emails;
+		
+		foreach($emails as $mail){
+            if($mail['emailtrigger'] == 'shouldsubmit'){
+
+                $from       = $mail['from'];
+
+                $to         = $mail['to'];
+
+                $subject    = $mail['subject'];
+
+                $message    = $mail['message'];
+
+                $headers	= [];
+
+                if(!empty(trim($mail['headers']))){
+                    $headers	= explode("\n", trim($mail['headers']));
+                }
+
+                // Send an e-mail to each user
+                foreach($userIds as $userId){
+                    $user   = get_userdata($userId);
+
+                    if(!empty($from)){
+                        if(str_contains($from, '%')){
+                            $headers[]	= "Reply-To: ". $user->user_email;
+                        }else{
+                            $headers[]	= "Reply-To: $from";
+                        }
+                    }
+
+                    if(str_contains($to, '%')){
+                        $recipient  = $user->user_email;
+                    }else{
+                        $recipient  = $to;
+                    }
+
+                    $result = wp_mail($recipient , $subject, "Hi $user->first_name,<br>$message", $headers);
+
+                    //Send Signal message
+                    SIM\trySendSignal(
+                        "Hi $user->first_name,\n".html_entity_decode(strip_tags(str_replace('[<br>, </br>]', "\n", $message))),
+                        $user->ID
+                    );
+                }
+            }
+        }
+    }
 }
 
 // Remove scheduled tasks upon module deactivatio

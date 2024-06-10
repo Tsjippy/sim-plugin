@@ -163,15 +163,96 @@ function getAllEmptyRequiredElements($userId, $type){
 				}
 			}
 		}
+	}
 
-		if(!empty($html)){
-			$html	= "<ul>$html</ul>";
-		}
+	if($type == 'mandatory' || $type == 'all'){
+		$html	.= getAllRequiredForms($userId);
+	}
+
+	if(!empty($html)){
+		$html	= "<ul>$html</ul>";
 	}
 
 	$html	= apply_filters("sim_{$type}_html_filter", $html, $userId);
 
 	return $html;
+}
+
+/**
+ * Gets all mandatory forms as html links
+ *
+ * @param int    		$userId 	WP user id
+ *
+ * @return string|array 			Returns html links to forms who are due for submission if a userid is given, an array of form => [userids] otherwise
+ */
+function getAllRequiredForms($userId=''){
+	global $wpdb;
+
+	$html				= '';
+	$formReminders		= [];
+
+	$simForms			= new SimForms();
+
+	$query				= "SELECT * FROM {$simForms->tableName} WHERE reminder_frequency <> '' AND reminder_period <> '' AND reminder_startdate <> '' ";
+
+	$forms				= $wpdb->get_results($query);
+
+	foreach($forms as $form){
+		// Check last submission date for this user for this form
+		$interval 		= \DateInterval::createFromDateString("$form->reminder_frequency $form->reminder_period");
+		$daterange 		= new \DatePeriod(
+			date_create($form->reminder_startdate), 
+			$interval , 
+			new \DateTime('now')
+		);
+
+		$threshold		= $daterange->getEndDate()->format('Y-m-d');
+		foreach($daterange as $date1){
+			$threshold = $date1->format('Y-m-d');
+		}
+
+		$query			= "SELECT * FROM {$simForms->submissionTableName} WHERE form_id=$form->id AND timecreated > $threshold";
+
+		$submissions	= $wpdb->get_results($query);
+
+		// get all the users who have submitted the form after the threshold date
+		$usersWithSubmission	= [];
+		foreach($submissions as $submission){
+			$results	= maybe_unserialize($submission->formresults);
+
+			if(isset($results['userid'])){
+				$usersWithSubmission[]	= $results['userid'];
+			}elseif(isset($results['user_id'])){
+				$usersWithSubmission[]	= $results['user_id'];
+			}else{
+				$usersWithSubmission[]	= $submission->userid;
+			}
+		}
+
+
+		// now check which users are missing
+		$users 		= get_users( array( 'fields' => array( 'ID' ) ) );
+		$userIds	= [];
+		foreach($users as $user){
+			$userIds[]	= $user->ID;
+		}
+
+		$usersWithoutSubmission	= array_diff($userIds, $usersWithSubmission);
+
+		if(is_numeric($userId)){
+			if(in_array($userId, $usersWithoutSubmission)){
+				$html .= "<li><a href='$form->form_url'>$form->name</a></li>";
+			}
+		}else{
+			$formReminders[$form->id]	= $usersWithoutSubmission;
+		}
+	}
+
+	if(is_numeric($userId)){
+		return $html;
+	}else{
+		return $formReminders;
+	}
 }
 
 add_filter('sim_mandatory_html_filter', __NAMESPACE__.'\addChildFields', 10, 2);
