@@ -7,9 +7,17 @@
 ### Changed
 
 ### Fixed
-- bug in form results display
 
 ### Updated
+
+## [2.44.6] - 2024-06-10
+
+
+### Added
+- mandatory regular forms
+
+### Fixed
+- bug in form results display
 
 ## [2.44.5] - 2024-06-05
 
