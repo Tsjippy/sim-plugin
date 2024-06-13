@@ -140,7 +140,7 @@ function mandatoryFieldsReminder(){
                         $recipient  = $to;
                     }
 
-                    $result = wp_mail($recipient , $subject, "Hi $user->first_name,<br>$message", $headers);
+                    $result = wp_mail($recipient , $subject, "Hi $user->first_name,<br><br>$message", $headers);
 
                     //Send Signal message
                     SIM\trySendSignal(

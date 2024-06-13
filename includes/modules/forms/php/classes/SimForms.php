@@ -186,17 +186,7 @@ class SimForms{
 			}
 		}
 
-		$this->getAllFormElements('priority', $formId, true);
-		
-		//used to find the index of an element based on its unique id
- 		$this->formData->elementMapping									= [];
-		$this->formData->elementMapping['type']							= [];
-		$this->formData->elementMapping['name']							= [];
-		foreach($this->formElements as $index=>$element){
-			$this->formData->elementMapping['id'][$element->id]			= $index;
-			$this->formData->elementMapping['name'][$element->name][] 	= $index;
-			$this->formData->elementMapping['type'][$element->type][] 	= $index;
-		}
+		$this->elementMapper($formId);
 
 		if(!$this->editRights){
 			$editRoles	= ['editor'];
@@ -244,6 +234,28 @@ class SimForms{
 		$this->jsFileName	= plugin_dir_path(__DIR__)."../js/dynamic/{$this->formData->name}forms";
 
 		return true;
+	}
+
+	/**
+	 * Creates the element mappers to find elements based on id, name or type
+	 */
+	public function elementMapper(){
+		if(isset($this->formData->elementMapping)){
+			return;
+		}
+
+		//used to find the index of an element based on its unique id, type or name
+		$this->formData->elementMapping									= [];
+		$this->formData->elementMapping['type']							= [];
+		$this->formData->elementMapping['name']							= [];
+
+		$this->getAllFormElements('priority', $this->formData->id, true);
+
+		foreach($this->formElements as $index=>$element){
+			$this->formData->elementMapping['id'][$element->id]			= $index;
+			$this->formData->elementMapping['name'][$element->name][] 	= $index;
+			$this->formData->elementMapping['type'][$element->type][] 	= $index;
+		}
 	}
 
 	/**
@@ -533,6 +545,7 @@ class SimForms{
 		if(!empty($sortCol)){
 			$query .= " ORDER BY {$this->elTableName}.`$sortCol` ASC";
 		}
+
 		$this->formElements 		=  apply_filters('sim-forms-elements', $wpdb->get_results($query), $this, false);
 	}
 
