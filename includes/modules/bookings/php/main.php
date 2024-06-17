@@ -751,11 +751,13 @@ add_filter('sim-forms-transform-array', function($string, $replaceValue, $forms,
 }, 10, 4);
 
 // add the booking details to the drop down for use in e-mails
-add_action('sim-add-email-placeholder-option', function(){
-    echo "<option>%booking-startdate%</option>";
-    echo "<option>%booking-enddate%</option>";
-    echo "<option>%booking-room%</option>";
-    echo "<option>%booking-detalis%</option>";
+add_action('sim-add-email-placeholder-option', function($formBuilderForm){
+    if($formBuilderForm->getElementByType('booking_selector')){
+        echo "<option>%booking-startdate%</option>";
+        echo "<option>%booking-enddate%</option>";
+        echo "<option>%booking-room%</option>";
+        echo "<option>%booking-detalis%</option>";
+    }
 });
 
 add_filter('sim-forms-transform-empty', function($replaceValue, $instance, $match){

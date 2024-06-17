@@ -16,6 +16,8 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
+    FORMS\mandatoryFieldsReminder();
+
 
     /* $posts = get_posts(
 		array(
@@ -32,37 +34,3 @@ add_shortcode("test", function ($atts){
 
 // turn off incorrect error on localhost
 add_filter( 'wp_mail_smtp_core_wp_mail_function_incorrect_location_notice', '__return_false' );
-
-function works(){
-    $socket   = stream_socket_client('unix:////home/simnige1/sockets/signal', $errno, $error);
-
-    $params     = [
-        "recipient"     => "+2349045252526",
-        "message"       => "message" 
-    ];
-    $params["account"]  = "+2349011531222";
-
-    $id     = time(); 
-
-    $data   = [
-        "jsonrpc"       => "2.0",
-        "method"        => "send",
-        "params"        => $params,
-        "id"            => $id
-    ];
-
-    printArray(json_encode($data)."\n", true);
-
-    fwrite($socket, json_encode($data));         
-
-    flush();
-    ob_flush();
-
-    $request    = fread($socket, 4096);
-    flush();
-
-    $json   = json_decode($request);
-
-    printArray($json, true);
-
-}

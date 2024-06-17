@@ -716,11 +716,12 @@ class FormBuilderForm extends SimForms{
 					<select class='nonice placeholderselect'>
 						<option value=''>Select to copy to clipboard</option><?php
 						foreach($this->formElements as $element){
+							$element->name	= str_replace('[]', '', $element->name);
 							if(!in_array($element->type, ['label','info','button','datalist','formstep'])){
 								echo "<option>%{$element->name}%</option>";
 							}
 						}
-						do_action('sim-add-email-placeholder-option');
+						do_action('sim-add-email-placeholder-option', $this);
 						?>
 					</select>
 					

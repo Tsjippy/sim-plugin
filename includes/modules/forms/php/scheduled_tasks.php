@@ -100,7 +100,7 @@ function mandatoryFieldsReminder(){
 	}
 
     // Also send a reminder for any mandatory forms
-    $simForms   = new SimForms();
+    $simForms   = new SubmitForm();
     foreach(getAllRequiredForms() as $formId=>$userIds){
         $simForms->getForm($formId);
         $emails = $simForms->formData->emails;
@@ -135,16 +135,26 @@ function mandatoryFieldsReminder(){
                     }
 
                     if(str_contains($to, '%')){
-                        $recipient  = $user->user_email;
+                        $recipient  = $user->user_email; 
                     }else{
                         $recipient  = $to;
                     }
 
-                    $result = wp_mail($recipient , $subject, "Hi $user->first_name,<br><br>$message", $headers);
+                    $m      = "Hi $user->first_name,<br><br>";
+                    $m      .= $simForms->processPlaceholders(
+                        $message,
+                        [
+                            'formurl'   => $simForms->formData->form_url,
+                            'name'      => $user->first_name,
+                            'email'     => $user->user_email,
+                        ]
+                    );
+
+                    $result = wp_mail($recipient , $subject, $message, $headers);
 
                     //Send Signal message
                     SIM\trySendSignal(
-                        "Hi $user->first_name,\n".html_entity_decode(strip_tags(str_replace('[<br>, </br>]', "\n", $message))),
+                        html_entity_decode(strip_tags(str_replace('[<br>, </br>]', "\n", $message))),
                         $user->ID
                     );
                 }

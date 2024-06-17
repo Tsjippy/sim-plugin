@@ -247,22 +247,29 @@ class SubmitForm extends SimForms{
 	/**
 	 * Replaces placeholder with the value
 	 *
-	 * @param	string	$string		THe string to check for placeholders
+	 * @param	string	$string			The string to check for placeholders
+	 * @param	array	$replaceValues	An indexed array where the index is the keyword and the value the keyword should be replaced with. Default empty, in that case form results are used.
 	 *
 	 * @return	string				The filtered string
 	 */
-	protected function processPlaceholders($string){
+	public function processPlaceholders($string, $replaceValues=''){
 		if(empty($string)){
 			return $string;
 		}
 
-		if(empty($this->submission->formresults['submissiondate'])){
-			$this->submission->formresults['submissiondate']	= date('d F y', strtotime($this->submission->formresults['submissiontime']));
-			$this->submission->formresults['editdate']			= date('d F y', strtotime($this->submission->formresults['edittime']));
-		}
-		
-		if(isset($_REQUEST['subid']) && empty($this->submission->formresults['subid'])){
-			$this->submission->formresults['subid']	= $_REQUEST['subid'];
+		if(!empty($this->submission->formresults)){
+			if(empty($replaceValues)){
+				$replaceValues = $this->submission->formresults;
+			}
+
+			if(empty($this->submission->formresults['submissiondate'])){
+				$this->submission->formresults['submissiondate']	= date('d F y', strtotime($this->submission->formresults['submissiontime']));
+				$this->submission->formresults['editdate']			= date('d F y', strtotime($this->submission->formresults['edittime']));
+			}
+			
+			if(isset($_REQUEST['subid']) && empty($this->submission->formresults['subid'])){
+				$this->submission->formresults['subid']	= $_REQUEST['subid'];
+			}
 		}
 
 		$pattern = '/%([^%;]*)%/i';
@@ -271,12 +278,15 @@ class SubmitForm extends SimForms{
 		
 		//loop over the results
 		foreach($matches[1] as $match){
-			$replaceValue	= $this->submission->formresults[$match];
+			$replaceValue	= $replaceValues[$match];
 			if(empty($replaceValue)){
 				$replaceValue	= apply_filters('sim-forms-transform-empty', $replaceValue, $this, $match);
 				if(empty($replaceValue)){
 					//remove the placeholder, there is no value
 					$string = str_replace("%$match%", '', $string);
+
+					// mention it in the log
+					SIM\printArray("No value found for transform value '%$match%' on form '{$this->formData->name}' with id {$this->formData->id}");
 				}
 				$string 		= str_replace("%$match%", $replaceValue, $string);
 			}elseif(
@@ -298,6 +308,11 @@ class SubmitForm extends SimForms{
 				}
 				//replace the placeholder with the value
 				$replaceValue	= str_replace('_', ' ', $replaceValue);
+
+				// wordpress sometimes adds http:// automatically
+				if($match == 'formurl'){
+					$string 		= str_replace("http://%$match%", $replaceValue, $string);
+				}
 				$string 		= str_replace("%$match%", $replaceValue, $string);
 			}
 		}

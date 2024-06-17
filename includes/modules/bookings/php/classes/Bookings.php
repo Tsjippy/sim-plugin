@@ -42,8 +42,8 @@ class Bookings{
 
 		$sql = "CREATE TABLE {$this->tableName}(
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
-			startdate varchar(80) NOT NULL,
-			enddate varchar(80) NOT NULL,
+			startdate date NOT NULL,
+			enddate date NOT NULL,
 			starttime varchar(80) NOT NULL,
 			endtime varchar(80) NOT NULL,
 			subject varchar(80) NOT NULL,

@@ -948,6 +948,10 @@ class DisplayFormResults extends DisplayForm{
 		$rowHasContents	= false;
 
 		foreach($this->columnSettings as $id=>$columnSetting){
+			if(!is_array($columnSetting)){
+				continue;
+			}
+			
 			$value			= '';
 			$subIdString	= '';
 			$orgFieldValue	= $value;
