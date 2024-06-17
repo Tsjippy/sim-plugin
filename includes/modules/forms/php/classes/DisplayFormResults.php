@@ -951,7 +951,7 @@ class DisplayFormResults extends DisplayForm{
 			if(!is_array($columnSetting)){
 				continue;
 			}
-			
+
 			$value			= '';
 			$subIdString	= '';
 			$orgFieldValue	= $value;
@@ -1236,82 +1236,90 @@ class DisplayFormResults extends DisplayForm{
 			<form class="sortable_column_settings_rows">
 				<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodeData->id;?>'>
 				
-				<div class="column_setting_wrapper">
-					<label class="columnheading formfieldbutton">Sort</label>
-					<label class="columnheading column_settings" style="width: 145px;">Field name</label>
-					<label class="columnheading column_settings">Display name</label>
-					<label style="width: 30px;"></label>
-					<label class="columnheading column_settings">Display permissions</label>
-					<label class="columnheading column_settings">Edit permissions</label>
-					<label class="columnheading column_settings" style="width: 60px;">Max Width</label>
-				</div>
-				<?php
-				foreach ($this->columnSettings as $elementIndex=>$columnSetting){
-					if(!isset($columnSetting['name'])){
-						continue;
-					}
-
-					$niceName	= $columnSetting['nice_name'];
-
-					$width		= $columnSetting['width'];
-					
-					if($columnSetting['show'] == 'hide'){
-						$visibility	= 'invisible';
-					}else{
-						$visibility	= 'visible';
-					}
-					$icon			= "<img class='visibilityicon $visibility' src='".PICTURESURL."/$visibility.png' loading='lazy' >";
-					
-					?>
-					<div class="column_setting_wrapper" data-id="<?php echo $elementIndex;?>">
-						<input type="hidden" class="visibilitytype" name="column_settings[<?php echo $elementIndex;?>][show]" 		value="<?php echo $columnSetting['show'];?>">
-						<input type="hidden" name="column_settings[<?php echo $elementIndex;?>][name]"	value="<?php echo $columnSetting['name'];?>">
-						<span class="movecontrol formfieldbutton" aria-hidden="true">:::</span>
-						<span class="column_settings"><?php echo $columnSetting['name'];?></span>
-						<input type="text" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][nice_name]" value="<?php echo $niceName;?>">
-						<span class="visibilityicon"><?php echo $icon;?></span>
+				<table class='sim-table' style='display:table'>
+					<thead class="column_setting_wrapper">
+						<tr>
+							<th class="columnheading formfieldbutton">Sort</th>
+							<th class="columnheading column_settings" style="width: 145px;">Field name</th>
+							<th class="columnheading column_settings">Display name</th>
+							<th style="width: 30px;"></th>
+							<th class="columnheading column_settings">Display permissions</th>
+							<th class="columnheading column_settings">Edit permissions</th>
+							<th class="columnheading column_settings" style="width: 60px;">Max Width</th>
+						</tr>
+					</thead>
+					<tbody>
 						<?php
-						//only add view permission for numeric elements others are buttons
-						if(is_numeric($elementIndex)){
+						foreach ($this->columnSettings as $elementIndex=>$columnSetting){
+							if(!isset($columnSetting['name'])){
+								continue;
+							}
+
+							$niceName	= $columnSetting['nice_name'];
+
+							$width		= $columnSetting['width'];
+							
+							if($columnSetting['show'] == 'hide'){
+								$visibility	= 'invisible';
+							}else{
+								$visibility	= 'visible';
+							}
+							$icon			= "<img class='visibilityicon $visibility' src='".PICTURESURL."/$visibility.png' width='20px' loading='lazy' style='min-width:20px;'>";
+							
 							?>
-							<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][view_right_roles][]' multiple='multiple'>
+							<tr class="column_setting_wrapper" data-id="<?php echo $elementIndex;?>">
+								<input type="hidden" class="visibilitytype" name="column_settings[<?php echo $elementIndex;?>][show]" 		value="<?php echo $columnSetting['show'];?>">
+								<input type="hidden" name="column_settings[<?php echo $elementIndex;?>][name]"	value="<?php echo $columnSetting['name'];?>">
+								<td><span class="movecontrol formfieldbutton" aria-hidden="true">:::</span></td>
+								<td><span class="column_settings" style="margin-right:0px;"><?php echo $columnSetting['name'];?></span></td>
+								<td><input type="text" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][nice_name]" value="<?php echo $niceName;?>" style="margin-right:0px;"></td>
+								<td><span class="visibilityicon"><?php echo $icon;?></span></td>
 								<?php
-								foreach($viewRoles as $key=>$roleName){
-									if(isset($columnSetting['view_right_roles']) && in_array($key,(array)$columnSetting['view_right_roles'])){
-										$selected = 'selected="selected"';
-									}else{
-										$selected = '';
-									}
-									echo "<option value='$key' $selected>$roleName</option>";
+								//only add view permission for numeric elements others are buttons
+								if(is_numeric($elementIndex)){
+									?>
+									<td>
+										<select class='column_settings inline' name='column_settings[<?php echo $elementIndex;?>][view_right_roles][]' multiple='multiple' style="margin-right:0px;">
+											<?php
+											foreach($viewRoles as $key=>$roleName){
+												if(isset($columnSetting['view_right_roles']) && in_array($key,(array)$columnSetting['view_right_roles'])){
+													$selected = 'selected="selected"';
+												}else{
+													$selected = '';
+												}
+												echo "<option value='$key' $selected>$roleName</option>";
+											}
+											?>
+										</select>
+									</td>
+									<?php
+								}else{
+									?>
+									<td class='column_settings' style="margin-right:0px;"></td>
+									<?php
 								}
 								?>
-							</select>
-							<?php
-						}else{
-							?>
-							<div class='column_settings'></div>
+								<td>
+									<select class='column_settings inline' name='column_settings[<?php echo $elementIndex;?>][edit_right_roles][]' multiple='multiple' style="margin-right:0px;">
+										<?php
+										foreach($editRoles as $key=>$roleName){
+											if(isset($columnSetting['edit_right_roles']) && @in_array($key,(array)$columnSetting['edit_right_roles'])){
+												$selected = 'selected="selected"';
+											}else{
+												$selected = '';
+											}
+											echo "<option value='$key' $selected>$roleName</option>";
+										}
+										?>
+									</select>
+								</td>
+								<td><input type="number" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][width]" value="<?php echo $width;?>" placeholder="200" min="100" style="max-width: 80px; margin-right:0px;">px
+							</tr>
 							<?php
 						}
 						?>
-						
-						<select class='column_settings' name='column_settings[<?php echo $elementIndex;?>][edit_right_roles][]' multiple='multiple'>
-							<?php
-							foreach($editRoles as $key=>$roleName){
-								if(isset($columnSetting['edit_right_roles']) && @in_array($key,(array)$columnSetting['edit_right_roles'])){
-									$selected = 'selected="selected"';
-								}else{
-									$selected = '';
-								}
-								echo "<option value='$key' $selected>$roleName</option>";
-							}
-							?>
-						</select>
-
-						<input type="number" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][width]" value="<?php echo $width;?>" placeholder="200" min="100">px
-					</div>
-					<?php
-				}
-				?>
+					</tbody>
+				</table>
 				<?php
 				echo SIM\addSaveButton('submit_column_setting','Save table column settings');
 				?>
@@ -1354,7 +1362,7 @@ class DisplayFormResults extends DisplayForm{
 
 				<div class="table_filters_wrapper" style='margin-top:10px;'>
 					<label>Select the fields the table can be filtered on</label>
-					<div class='clone_divs_wrapper'>
+					<table class='clone_divs_wrapper' style='border: none;'>
 						<?php
 						$filters	= $this->tableSettings['filter'];
 
@@ -1364,40 +1372,47 @@ class DisplayFormResults extends DisplayForm{
 						}
 
 						foreach($filters as $index=>$filter){
-							echo "<div class='clone_div' data-divid='$index'>";
-								echo "<select name='table_settings[filter][$index][element]' class='inline'>";
-									foreach($this->columnSettings as $key=>$element){
-										$name = $element['nice_name'];
-										
-										//Check which option is the selected one
-										if($this->tableSettings['filter'][$index]['element'] == $key){
-											$selected = 'selected="selected"';
-										}else{
-											$selected = '';
+							echo "<tr class='clone_div' data-divid='$index'> style='border: none;'";
+								echo "<td style='border: none;'>";
+									echo "<select name='table_settings[filter][$index][element]' class='inline'>";
+										foreach($this->columnSettings as $key=>$element){
+											$name = $element['nice_name'];
+											
+											//Check which option is the selected one
+											if($this->tableSettings['filter'][$index]['element'] == $key){
+												$selected = 'selected="selected"';
+											}else{
+												$selected = '';
+											}
+											echo "<option value='$key' $selected>$name</option>";
 										}
-										echo "<option value='$key' $selected>$name</option>";
-									}
-								echo "</select>";
+									echo "</select>";
+								echo "</td>";
 
-								echo "   filter type";
-								echo "<select name='table_settings[filter][$index][type]' class='inline'>";
-									foreach(['>=', '<', '==', 'like'] as $type){
-										if($this->tableSettings['filter'][$index]['type'] == $type){
-											$selected = 'selected="selected"';
-										}else{
-											$selected = '';
+								echo "<td style='border: none;'>";
+									echo "   filter type";
+									echo "<select name='table_settings[filter][$index][type]' class='inline'>";
+										foreach(['>=', '<', '==', 'like'] as $type){
+											if($this->tableSettings['filter'][$index]['type'] == $type){
+												$selected = 'selected="selected"';
+											}else{
+												$selected = '';
+											}
+											echo "<option value='$type' $selected>$type</option>";
 										}
-										echo "<option value='$type' $selected>$type</option>";
-									}
-								echo "</select>";
-								echo "   Filter name  ";
-								echo "<input name='table_settings[filter][$index][name]' value='{$this->tableSettings['filter'][$index]['name']}'>";
-								echo "  <button type='button' class='add button'>+</button>";
-								echo "<button type='button' class='remove button'>-</button>";
-							echo "</div>";
+									echo "</select>";
+								echo "</td>";
+
+								echo "<td style='border: none;'>";
+									echo "   Filter name  ";
+									echo "<input name='table_settings[filter][$index][name]' value='{$this->tableSettings['filter'][$index]['name']}'>";
+								echo "</td>";
+								echo "<td style='border: none;'><button type='button' class='add button'>+</button></td>";
+								echo "<td style='border: none;'><button type='button' class='remove button'>-</button></td>";
+							echo "</tr>";
 						}
 						?>
-					</div>
+					</table>
 				</div>
 				
 				<div class="table_rights_wrapper">
@@ -1494,7 +1509,7 @@ class DisplayFormResults extends DisplayForm{
 					<br>
 					<div class='autoarchivelogic <?php if($checked1 == ''){echo 'hidden';}?>'>
 						Auto archive a (sub) entry when field<br>
-						<select name="form_settings[autoarchive_el]" style="margin-right:10px;">
+						<select name="form_settings[autoarchive_el]" class='inline' style="margin-right:10px;">
 							<?php
 							if(empty($this->formData->autoarchive_el)){
 								?><option value='' selected>---</option><?php
@@ -1516,7 +1531,7 @@ class DisplayFormResults extends DisplayForm{
 							?>
 						</select>
 						<label style="margin:0 10px;">equals</label>
-						<input type='text' class='wide' name="form_settings[autoarchive_value]" value="<?php echo $this->formData->autoarchive_value;?>">
+						<input type='text' class='wide' name="form_settings[autoarchive_value]" value="<?php echo $this->formData->autoarchive_value;?>" style='max-width:200px;'>
 						
 						<div class="infobox" name="info">
 							<div>
@@ -1665,7 +1680,7 @@ class DisplayFormResults extends DisplayForm{
 		?>
 		<div class="modal form_shortcode_settings hidden">
 			<!-- Modal content -->
-			<div class="modal-content" style='max-width:90%;'>
+			<div class="modal-content" style='max-width:100vw;min-width:90vw;'>
 				<span id="modal_close" class="close">&times;</span>
 				
 				<button id="column_settings" class="button tablink <?php echo $active1;?>" data-target="column_settings_<?php echo $this->shortcodeData->id;?>">Column settings</button>

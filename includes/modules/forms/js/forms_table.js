@@ -673,7 +673,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			animation: 150,
 		};
 
-		document.querySelectorAll('.sortable_column_settings_rows').forEach(el=>{
+		document.querySelectorAll('.sortable_column_settings_rows tbody').forEach(el=>{
 			Sortable.create(el, options);
 		});
 	}

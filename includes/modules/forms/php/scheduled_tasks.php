@@ -150,11 +150,19 @@ function mandatoryFieldsReminder(){
                         ]
                     );
 
-                    $result = wp_mail($recipient , $subject, $message, $headers);
+                    $result = wp_mail($recipient , $subject, $m, $headers);
+
+                    // Find any hyperlinks in the text
+                    preg_match_all('/<a\s+href=(?:"|\')(.*?)(?:"|\')>(.*?)<\/a>/i', $m, $matches);
+
+                    //replace the hyperlinks with plain links
+                    foreach($matches[0] as $index=>$match){
+                        $m  = str_replace($match, $matches[2][$index].': '.str_replace('https://', '', $matches[1][$index]), $m);
+                    }
 
                     //Send Signal message
                     SIM\trySendSignal(
-                        html_entity_decode(strip_tags(str_replace('[<br>, </br>]', "\n", $message))),
+                        html_entity_decode(strip_tags(str_replace('[<br>, </br>]', "\n", $m))),
                         $user->ID
                     );
                 }
