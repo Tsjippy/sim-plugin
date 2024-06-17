@@ -7,10 +7,15 @@
 ### Changed
 
 ### Fixed
-- bug in form results page
-- issues
 
 ### Updated
+
+## [2.44.9] - 2024-06-17
+
+
+### Fixed
+- bug in form results page
+- issues
 
 ## [2.44.8] - 2024-06-17
 
