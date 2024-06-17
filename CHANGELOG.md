@@ -7,9 +7,14 @@
 ### Changed
 
 ### Fixed
-- column settings table
 
 ### Updated
+
+## [2.44.8] - 2024-06-17
+
+
+### Fixed
+- column settings table
 
 ## [2.44.7] - 2024-06-17
 
