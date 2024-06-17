@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- column settings table
 
 ### Updated
 
