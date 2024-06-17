@@ -8,6 +8,7 @@
 
 ### Fixed
 - element missing with id -1
+- bug with recurring forms
 
 ### Updated
 
