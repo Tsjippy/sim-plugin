@@ -752,17 +752,17 @@ class DisplayFormResults extends DisplayForm{
 			return $formElements;
 		}
 		
-		$instance->columnSettings();
-
-		return $instance->formElements;
+		return array_merge($instance->columnSettings(), $formElements);
 	}
 
 	/**
 	 * Adds extra column settings and also adds the virtual elements
+	 *
+	 * @return		array	The form elements
 	 */
 	public function columnSettings(){
 		if(isset($this->columnSettings[-1])){
-			return;
+			return $this->formElements;
 		}
 
 		//also add the id
@@ -834,6 +834,8 @@ class DisplayFormResults extends DisplayForm{
 			$this->formData->elementMapping['name'][$element->name][] 	= count($this->formElements)-1;
 			$this->formData->elementMapping['type'][$element->type][] 	= count($this->formElements)-1;
 		}
+
+		return $this->columnSettings;
 	}
 
 	/**

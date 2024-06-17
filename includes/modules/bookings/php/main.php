@@ -181,6 +181,7 @@ add_filter('sim-forms-elements', function($elements, $displayFormResults, $force
         $elements[]         = $enddate;
         $elements[]         = $room;
     }
+    
     return $elements;
 }, 10, 3);
 

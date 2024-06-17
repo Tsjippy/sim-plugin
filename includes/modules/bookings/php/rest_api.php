@@ -16,9 +16,8 @@ add_action( 'rest_api_init', function () {
 
 				$bookings->forms->shortcodeId	= $_POST['shortcodeid'];
 
-				$elementId	= $_POST['elid'];
-				if(is_numeric($elementId)){
-					$element	= $bookings->forms->getElementById($elementId);
+				if(isset($_POST['elid']) && is_numeric($_POST['elid'])){
+					$element	= $bookings->forms->getElementById($_POST['elid']);
 				}else{
 					foreach($bookings->forms->formElements as $element){
 						if($element->type == 'booking_selector'){
