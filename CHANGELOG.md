@@ -7,10 +7,15 @@
 ### Changed
 
 ### Fixed
-- element missing with id -1
-- bug with recurring forms
 
 ### Updated
+
+## [2.44.7] - 2024-06-17
+
+
+### Fixed
+- element missing with id -1
+- bug with recurring forms
 
 ## [2.44.6] - 2024-06-10
 
