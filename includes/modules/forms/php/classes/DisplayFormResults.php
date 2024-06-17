@@ -50,7 +50,7 @@ class DisplayFormResults extends DisplayForm{
 			$this->excelContent	= [];
 		}
 
-		add_filter('sim-forms-elements', [__NAMESPACE__.'\DisplayFormResults', 'filterElements'], 10, 3);
+		$this->enrichColumnSettings();
 	}
 
 	public function getMetaKeyFormSubmissions($userId=null, $all=false){
@@ -741,18 +741,17 @@ class DisplayFormResults extends DisplayForm{
 			'edit_right_roles'	=> $editRightRoles,
 			'view_right_roles'	=> $viewRightRoles
 		];
-	}
 
-	/**
-	 * Adds the column settings as defined in columnSettings() as elements
-	 */
-	public static function filterElements( $formElements, $instance, $force){
+		$this->elementMapper();
 
-		if(empty( $formElements) || !method_exists($instance, 'columnSettings')){
-			return $formElements;
-		}
+		// add to the form elements
+		$this->formElements[]		= $element;
+
+		//add the mappers
+		$this->formData->elementMapping['id'][$element->id]			= count($this->formElements)-1;
+		$this->formData->elementMapping['name'][$element->name][] 	= count($this->formElements)-1;
+		$this->formData->elementMapping['type'][$element->type][] 	= count($this->formElements)-1;
 		
-		return array_merge($instance->columnSettings(), $formElements);
 	}
 
 	/**
@@ -760,8 +759,8 @@ class DisplayFormResults extends DisplayForm{
 	 *
 	 * @return		array	The form elements
 	 */
-	public function columnSettings(){
-		if(isset($this->columnSettings[-1])){
+	public function addColumnSettings(){
+		if(isset($this->columnSettings[-1]) && isset($this->formData->elementMapping['id'][-1])){
 			return $this->formElements;
 		}
 
@@ -846,8 +845,16 @@ class DisplayFormResults extends DisplayForm{
 			return;
 		}
 
+		if(empty($this->formData)){
+			$this->loadShortcodeData();
+
+			$this->getForm($this->shortcodeData->form_id);
+		}
+
 		$this->enriched	= true;
 		$elementIds		= [];
+		
+		$this->addColumnSettings();
 		
 		//loop over all elements to build a new array
 		foreach ($this->formElements as $element){
@@ -892,8 +899,6 @@ class DisplayFormResults extends DisplayForm{
 				];
 			}
 		}
-		
-		$this->columnSettings();
 		
 		$names	= [];
 		//put hidden columns on the end and do not show same names twice
@@ -1121,7 +1126,7 @@ class DisplayFormResults extends DisplayForm{
 
 			$style			= '';
 			if(!empty($columnSetting['width'])){
-				$style	= "style='max-width:{$columnSetting['width']}px;width:{$columnSetting['width']}px;min-width:{$columnSetting['width']}px;'";
+				$style	= "style='max-width:{$columnSetting['width']}px;width:{$columnSetting['width']}px;min-width:{$columnSetting['width']}px;text-wrap: balance;'";
 			}
 
 			if(!$element){
@@ -1217,8 +1222,8 @@ class DisplayFormResults extends DisplayForm{
 		global $wpdb;
 
 		if(!is_numeric($this->shortcodeId)){
-			if(!empty($_POST['shortcodeid']) && is_numeric($_POST['shortcodeid'])){
-				$this->shortcodeId	= $_POST['shortcodeid'];
+			if(!empty($_POST['shortcode_id']) && is_numeric($_POST['shortcode_id'])){
+				$this->shortcodeId	= $_POST['shortcode_id'];
 			}else{
 				return new WP_Error('forms', 'no shortcoode id');
 			}
@@ -1374,7 +1379,7 @@ class DisplayFormResults extends DisplayForm{
 						}
 
 						foreach($filters as $index=>$filter){
-							echo "<tr class='clone_div' data-divid='$index'> style='border: none;'";
+							echo "<tr class='clone_div' data-divid='$index' style='border: none;'>";
 								echo "<td style='border: none;'>";
 									echo "<select name='table_settings[filter][$index][element]' class='inline'>";
 										foreach($this->columnSettings as $key=>$element){
@@ -1675,8 +1680,6 @@ class DisplayFormResults extends DisplayForm{
 			$class1		= "";
 			$class2		= "hidden";
 		}
-		
-		$this->enrichColumnSettings();
 
 		ob_start();
 		?>
@@ -1709,7 +1712,6 @@ class DisplayFormResults extends DisplayForm{
 		
 		//load form settings
 		$this->getForm();
-		
 		
 		if((isset($this->tableSettings['archived']) && $this->tableSettings['archived'] == 'true') || $this->showArchived){
 			$this->showArchived = true;
@@ -1813,31 +1815,43 @@ class DisplayFormResults extends DisplayForm{
 	 * @return string	The html
 	 */
 	protected function renderFilterForm(){
-		$html	= "<form method='post' class='filteroptions'>";
-			if(!empty($this->tableSettings['filter'])){
-				$html	.= "<div class='filter-wrapper'>";
-					foreach($this->tableSettings['filter'] as $filter){
-						$filterElement	= $this->getElementById($filter['element']);
-						$filterValue	= '';
-						$filterKey		= strtolower($filter['name']);
-						if(!empty($_POST[$filterKey])){
-							$filterValue	= $_POST[$filterKey];
-						}
-			
-						$elementHtml	= $this->getElementHtml($filterElement, $filterValue, true);
-						
-						// make sure the name is not the element name but the filtername
-						$elementHtml	= str_replace("name='{$filterElement->name}'", "name='$filterKey'", $elementHtml);
-			
-						$html	.= "<span class='filteroption'>";
-							$html	.= "<label>".ucfirst($filterKey).": </label>";
-							$html	.= $elementHtml;
-						$html	.= "</span>";
-					}
-					$html	.= "<button class='button' style='height: fit-content;'>Filter</button>";
-				$html	.= "</div>";
+		$html	= '';
+
+		if(!empty($this->tableSettings['filter'])){
+			$filterOption	= '';
+			foreach($this->tableSettings['filter'] as $filter){
+				$filterElement	= $this->getElementById($filter['element']);
+				$filterValue	= '';
+				$filterKey		= strtolower($filter['name']);
+
+				if(!$filterElement || empty($filterKey)){
+					continue;
+				}
+
+				if(!empty($_POST[$filterKey])){
+					$filterValue	= $_POST[$filterKey];
+				}
+	
+				$elementHtml	= $this->getElementHtml($filterElement, $filterValue, true);
+				
+				// make sure the name is not the element name but the filtername
+				$elementHtml	= str_replace("name='{$filterElement->name}'", "name='$filterKey'", $elementHtml);
+	
+				$filterOption	.= "<span class='filteroption'>";
+					$filterOption	.= "<label>".ucfirst($filterKey).": </label>";
+					$filterOption	.= $elementHtml;
+				$filterOption	.= "</span>";
 			}
-		$html	.= "</form>";
+
+			if(!empty($filterOption)){
+				$html	= "<form method='post' class='filteroptions'>";
+					$html	.= "<div class='filter-wrapper'>";
+						$html	.= $filterOption;
+						$html	.= "<button class='button' style='height: fit-content;'>Filter</button>";
+					$html	.= "</div>";
+				$html	.= "</form>";
+			}
+		}
 
 		return $html;
 	}
@@ -1863,9 +1877,20 @@ class DisplayFormResults extends DisplayForm{
 			}
 
 			// Only own button
-			if($this->onlyOwn || ( $this->tableSettings['result_type'] == 'personal' && !$this->all)){
+			if(
+				$this->tableViewPermissions &&
+				$this->onlyOwn || 
+				( $this->tableSettings['result_type'] == 'personal' && !$this->all)
+			){
 				$html	.= "<button class='button sim small onlyown-switch-all'>Show all entries</button>";
-			}else{
+			}elseif(
+				$this->tableViewPermissions &&
+				(
+					!$this->onlyOwn	||
+					$this->all		||
+					$this->tableSettings['result_type'] != 'personal'
+				)
+			){
 				$html	.= "<button class='button sim small onlyown-switch-on'>Show only my own entries</button>";
 			}
 
@@ -1936,7 +1961,7 @@ class DisplayFormResults extends DisplayForm{
     			white-space: normal;
 			}
 		</style>
-		<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>' data-type='<?php echo $type;?>' data-page='<?php echo $this->currentPage;?>'>
+		<table class='sim-table form-data-table' data-formid='<?php echo $this->formData->id;?>' data-shortcodeid='<?php echo $this->shortcodeId;?>' data-type='<?php echo $type;?>' data-page='<?php echo $this->currentPage;?>' style='position: relative;z-index: 999;'>
 			<?php
 			$this->resultTableHead($type);
 			?>
@@ -1997,7 +2022,7 @@ class DisplayFormResults extends DisplayForm{
 	 */
 	public function renderTable($type, $justTable=false, $force=false){
 		$userId	= null;
-		if(isset($_REQUEST['onlyown']) && $_REQUEST['onlyown'] == 'true'){
+		if($this->onlyOwn || !$this->tableViewPermissions || isset($_REQUEST['onlyown']) && $_REQUEST['onlyown'] == 'true'){
 			$type		= 'own';
 		}
 
@@ -2013,10 +2038,13 @@ class DisplayFormResults extends DisplayForm{
 			}else{
 				$defaultSortElement	= $this->tableSettings['default_sort'];
 				$sortElement		= $this->getElementById($defaultSortElement);
-				$exploded			= explode('[', $sortElement->name);
-				$sort				= str_replace(']', '', end($exploded));
 
-				$this->sortColumn	= $sort;
+				if($sortElement){
+					$exploded			= explode('[', $sortElement->name);
+					$sort				= str_replace(']', '', end($exploded));
+
+					$this->sortColumn	= $sort;
+				}
 			}
 		}
 
@@ -2122,7 +2150,7 @@ class DisplayFormResults extends DisplayForm{
 					$get	= $_REQUEST;
 					unset($get['_wpnonce']);
 					unset($get['formid']);
-					unset($get['shortcodeid']);
+					unset($get['shortcode_id']);
 
 					$get['pagesize']	= '';
 					$get	= '?'.http_build_query($get);
@@ -2228,8 +2256,6 @@ class DisplayFormResults extends DisplayForm{
 				?>
 			</div>
 			<?php
-
-			$this->enrichColumnSettings();
 			
 			if($allRowsEmpty){
 				?>
@@ -2316,10 +2342,9 @@ class DisplayFormResults extends DisplayForm{
 					$icon			= "<img class='visibilityicon visible' src='".PICTURESURL."/visible.png' width=20 height=20 loading='lazy' >";
 					
 					//Add a heading for each column
-
 					$style			= '';
 					if(!empty($columnSetting['width'])){
-						$style	= "style='max-width:{$columnSetting['width']}px;width:{$columnSetting['width']}px;min-width:{$columnSetting['width']}px;'";
+						$style	= "style='max-width:{$columnSetting['width']}px;width:{$columnSetting['width']}px;min-width:{$columnSetting['width']}px;text-wrap: balance;'";
 					}
 
 					echo "<th class='$class' id='{$columnSetting['name']}' data-nicename='$niceName' $style>$niceName $icon</th>";

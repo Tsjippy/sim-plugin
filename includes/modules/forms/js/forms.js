@@ -714,7 +714,7 @@ async function requestNewFormResults(target){
 	let shortcodeId	= wrapper.querySelector('.sim-table.form-data-table').dataset.shortcodeid;
 
 	formData.append('formid', formId);
-	formData.append('shortcodeid', shortcodeId);
+	formData.append('shortcode_id', shortcodeId);
 
 	const url 		= new URL(window.location);
 	if(url.searchParams.get('onlyown')){

@@ -240,7 +240,7 @@ class SimForms{
 	 * Creates the element mappers to find elements based on id, name or type
 	 */
 	public function elementMapper(){
-		if(isset($this->formData->elementMapping)){
+		if(empty($this->formData) || isset($this->formData->elementMapping)){
 			return;
 		}
 
@@ -562,7 +562,7 @@ class SimForms{
 					'shortcodeid'	=> '',
 					'id'			=> '',
 					'formid'		=> '',
-					'onlyOwn'		=> false,
+					'onlyown'		=> false,
 					'archived'		=> false,
 					'all'			=> false,
 				),
@@ -578,7 +578,7 @@ class SimForms{
 			if(empty($this->shortcodeId)){
 				$this->shortcodeId	= $atts['id'];
 			}
-			$this->onlyOwn		= $atts['onlyOwn'];
+			$this->onlyOwn		= $atts['onlyown'];
 			if(isset($_GET['onlyown'])){
 				$this->onlyOwn	= $_GET['onlyown'];
 			}

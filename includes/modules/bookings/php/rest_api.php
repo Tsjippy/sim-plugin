@@ -14,7 +14,7 @@ add_action( 'rest_api_init', function () {
 
 				$bookings->forms->getForm($_POST['formid']);
 
-				$bookings->forms->shortcodeId	= $_POST['shortcodeid'];
+				$bookings->forms->shortcodeId	= $_POST['shortcode_id'];
 
 				if(isset($_POST['elid']) && is_numeric($_POST['elid'])){
 					$element	= $bookings->forms->getElementById($_POST['elid']);
@@ -68,7 +68,7 @@ add_action( 'rest_api_init', function () {
 				}
 				$navigator	= $bookings->getNavigator($navDate);
 				$detail		= '';
-				if(!empty($_POST['shortcodeid'])){
+				if(!empty($_POST['shortcode_id'])){
 					$detail		= $bookings->detailHtml();
 				}
 

@@ -230,7 +230,7 @@ function getPage(){
 	$displayFormResults		= new DisplayFormResults([
 		'formid' 		=> $_POST['formid'],
 		'search'		=> $_POST['search'],
-		'shortcodeid'	=> $_POST['shortcodeid'],
+		'shortcodeid'	=> $_POST['shortcode_id'],
 		'onlyOwn'		=> $_POST['onlyown'],
 		'archived'		=> $_POST['archived']
 	]);

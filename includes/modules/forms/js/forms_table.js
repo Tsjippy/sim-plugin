@@ -324,7 +324,7 @@ async function getNextPage(target){
 
     formData.append('formid', formId);
     formData.append('pagenumber', page);
-	formData.append('shortcodeid', table.dataset.shortcodeid);
+	formData.append('shortcode_id', table.dataset.shortcodeid);
     formData.append('type', table.dataset.type);
 
 	let params = new Proxy(new URLSearchParams(window.location.search), {
@@ -392,7 +392,7 @@ async function getSortedPage(target){
 
     formData.append('formid', formId);
     formData.append('pagenumber', 0);
-	formData.append('shortcodeid', table.dataset.shortcodeid);
+	formData.append('shortcode_id', table.dataset.shortcodeid);
     formData.append('type', table.dataset.type);
 
 	let params = new Proxy(new URLSearchParams(window.location.search), {
@@ -502,7 +502,7 @@ async function processFormsTableInput(target){
 		formData.append('newvalue', JSON.stringify(value));
 
 		if(shortcodeid != ''){
-			formData.append('shortcodeid', shortcodeid);
+			formData.append('shortcode_id', shortcodeid);
 		}
 		
 		let response	= await FormSubmit.fetchRestApi('forms/edit_value', formData);

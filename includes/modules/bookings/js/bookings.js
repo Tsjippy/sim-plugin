@@ -62,7 +62,7 @@ async function getMonth(target){
             formData.append('elid', wrapper.dataset.elid);
         }
         if(wrapper.dataset.shortcodeid != undefined){
-            formData.append('shortcodeid', wrapper.dataset.shortcodeid);
+            formData.append('shortcode_id', wrapper.dataset.shortcodeid);
         }
 
         let loaderWrapper	= document.createElement("DIV");
