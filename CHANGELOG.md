@@ -4,6 +4,7 @@
 
 ### Added
 - custom form results table title
+- conditions for recurring form submissions
 
 ### Changed
 
