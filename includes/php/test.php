@@ -16,8 +16,6 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
-    FORMS\mandatoryFieldsReminder();
-
 
     /* $posts = get_posts(
 		array(

@@ -417,7 +417,8 @@ class FormBuilderForm extends SimForms{
 					</label>
 					<br>
 
-					<label class='<?php if($this->formData->save_in_meta){ echo 'hidden';}?>'>
+					<div class='recurring-submissions<?php if($this->formData->save_in_meta){ echo ' hidden';}?>'>
+						<h4>Recurring Submissions</h4>
 						Request new form submissions every 
 						<input type='number' name='reminder_frequency' value='<?php echo $this->formData->reminder_frequency;?>' style='max-width: 70px;'>
 
@@ -437,15 +438,16 @@ class FormBuilderForm extends SimForms{
 								<?php
 							}
 						?>
-					</label>
-					<br>
 
-					<label class='<?php if($this->formData->save_in_meta){ echo 'hidden';}?>'>
-							Start reminding from <input type='date' name='reminder_startdate' value='<?php echo $this->formData->reminder_startdate;?>'>
-					</label>
-					<br>
+						<div class='<?php if($this->formData->save_in_meta){ echo 'hidden';}?>'>
+							<label>
+								Start reminding from 
+								<input type='date' name='reminder_startdate' value='<?php echo $this->formData->reminder_startdate;?>'>
+							</label>
+						</div>
 
-					<?php $this->warningConditionsForm();?>
+						<?php echo $this->warningConditionsForm('reminder_conditions', maybe_unserialize($this->formData->reminder_conditions));?>
+					</div>
 
 					<label class="block">
 						<h4>Form url</h4>
@@ -650,7 +652,7 @@ class FormBuilderForm extends SimForms{
 							</div>
 							<br>
 							
-							<div class='submit_others_form_wrapper<?php if(empty($save_in_meta)){echo 'hidden';}?>'>
+							<div class='submit_others_form_wrapper'>
 								<h4>Select who can submit this form on behalf of someone else</h4>
 								<?php
 								foreach($userRoles as $key=>$roleName){
@@ -1316,11 +1318,11 @@ class FormBuilderForm extends SimForms{
 					<div <?php if($element == null || (!$element->mandatory && !$element->recommended)){echo "class='hidden'";}?>>
 						<?php
 						if($element == null){
-							$elementId	= -1;
+							$conditions	= '';
 						}else{
-							$elementId	= $element->id;
+							$conditions = maybe_unserialize($element->warning_conditions);
 						}
-						echo $this->warningConditionsForm($elementId);
+						echo $this->warningConditionsForm('formfield[warning_conditions]', $conditions);
 						?>
 					</div>
 					<?php
@@ -1689,31 +1691,18 @@ class FormBuilderForm extends SimForms{
 	/**
 	 * Form to add warning conditions to an element
 	 *
-	 * @param	int		$elementId		The id to add warning conditions for. Default -1 for empty
+	 * @param	string	$name			The basename for the form conditions inputs.
+	 * @param	int		$conditions		The existing conditions
 	 */
-	public function warningConditionsForm($elementId = -1){
-		
-		if($elementId > -1){
-			$element	= $this->getElementById($elementId);
-
-			if(!$element){
-				return '';
-			}
-		}else{
-			$element	= new \stdClass();
-		}
-
-		if($elementId == -1 || empty($element->warning_conditions)){
-			$dummy[0]["user_meta_key"]	= "";
-			$dummy[0]["equation"]		= "";
-			
-			if($elementId == -1){
-				$elementId			= 0;
-			}
-			$element->warning_conditions = $dummy;
-		}
-		
-		$conditions 	= maybe_unserialize($element->warning_conditions);
+	public function warningConditionsForm($name, $conditions = ''){
+		if(empty($conditions) || !is_array($conditions)){
+			$conditions	=[
+				[
+					"user_meta_key"	=> '',
+					"equation"		=> ''
+				]
+			];
+		}		
 		
 		$userMetaKeys	= get_user_meta($this->user->ID);
 		ksort($userMetaKeys);
@@ -1724,7 +1713,7 @@ class FormBuilderForm extends SimForms{
 		<label>Do not warn if usermeta with the key</label>
 		<br>
 
-		<div class="conditions_wrapper">
+		<div class="conditions_wrapper" style='width: 80vw;'>
 			<?php
 			foreach($conditions as $conditionIndex=>$condition){
 				if(!is_numeric($conditionIndex)){
@@ -1732,9 +1721,9 @@ class FormBuilderForm extends SimForms{
 				}
 				?>
 				<div class='warning_conditions element_conditions' data-index='<?php echo $conditionIndex;?>'>
-					<input type="hidden" class='warning_condition combinator' name="formfield[warning_conditions][<?php echo $conditionIndex;?>][combinator]" value="<?php echo $condition['combinator'];?>">
+					<input type="hidden" class='warning_condition combinator' name="<?php echo $name;?>[<?php echo $conditionIndex;?>][combinator]" value="<?php echo $condition['combinator'];?>">
 
-					<input type="text" class="warning_condition meta_key" name="formfield[warning_conditions][<?php echo $conditionIndex;?>][meta_key]" value="<?php echo $condition['meta_key'];?>" list="meta_key" style="width: fit-content;">
+					<input type="text" class="warning_condition meta_key" name="<?php echo $name;?>[<?php echo $conditionIndex;?>][meta_key]" value="<?php echo $condition['meta_key'];?>" list="meta_key" style="width: fit-content;">
 					<datalist id="meta_key">
 						<?php
 						foreach($userMetaKeys as $key=>$value){
@@ -1756,7 +1745,7 @@ class FormBuilderForm extends SimForms{
 					?>
 					<span class="index_wrapper <?php if(!is_array($arrayKeys)){echo 'hidden';}?>">
 						<span>and index</span>
-						<input type="text" class="warning_condition meta_key_index" name='formfield[warning_conditions][<?php echo $conditionIndex;?>][meta_key_index]' value="<?php echo $condition['meta_key_index'];?>" list="meta_key_index[<?php echo $conditionIndex;?>]" style="width: fit-content;">
+						<input type="text" class="warning_condition meta_key_index" name='<?php echo $name;?>[<?php echo $conditionIndex;?>][meta_key_index]' value="<?php echo $condition['meta_key_index'];?>" list="meta_key_index[<?php echo $conditionIndex;?>]" style="width: fit-content;">
 						<datalist class="meta_key_index_list warning_condition" id="meta_key_index[<?php echo $conditionIndex;?>]">
 							<?php
 							if(is_array($arrayKeys)){
@@ -1768,7 +1757,7 @@ class FormBuilderForm extends SimForms{
 						</datalist>
 					</span>
 					
-					<select class="warning_condition" name='formfield[warning_conditions][<?php echo $conditionIndex;?>][equation]'>
+					<select class="warning_condition inline" name='<?php echo $name;?>[<?php echo $conditionIndex;?>][equation]'>
 						<?php
 						$optionArray	= [
 							''			=> '---',
@@ -1787,7 +1776,7 @@ class FormBuilderForm extends SimForms{
 						}
 						?>
 					</select>
-					<input  type='text'   class='warning_condition' name='formfield[warning_conditions][<?php echo $conditionIndex;?>][conditional_value]' value="<?php echo $condition['conditional_value'];?>" style="width: fit-content;">
+					<input  type='text'   class='warning_condition' name='<?php echo $name;?>[<?php echo $conditionIndex;?>][conditional_value]' value="<?php echo $condition['conditional_value'];?>" style="width: fit-content;">
 					
 					<button type='button' class='warn_cond button <?php if(!empty($condition['combinator']) && $condition['combinator'] == 'and'){echo 'active';}?>'	title='Add a new "AND" rule' value="and">AND</button>
 					<button type='button' class='warn_cond button  <?php if(!empty($condition['combinator']) && $condition['combinator'] == 'or'){echo 'active';}?>'	title='Add a new "OR"  rule' value="or">OR</button>

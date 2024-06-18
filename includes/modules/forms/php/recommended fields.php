@@ -46,31 +46,28 @@ function getAllEmptyRequiredElements($userId, $type){
 }
 
 /**
- * Checks if a given mandatory or recommended element has conditions that apply to the current user
+ * Checks if a given set of conditions apply to the current user. Returns true if there is a match
  *
- * @param	object	$element	The element
+ * @param	object	$conditions	The element conditions
  * @param	int		$userId		The user id
  *
  * @return	bool				true if no conditions or the condition apply, false if it does not apply
  */
-function checkElementConditions($element, $userId){
-	//check if this element applies to this user
-	$warningCondition	= maybe_unserialize($element->warning_conditions);
-
-	if(!is_array($warningCondition)){
+function checkConditions($conditions, $userId){
+	if(!is_array($conditions)){
 		return true;
 	}
 
-	SIM\cleanUpNestedArray($warningCondition, true);
+	SIM\cleanUpNestedArray($conditions, true);
 	$skip	= false;
 
-	foreach($warningCondition as $check){
+	foreach($conditions as $check){
 		// get the user value
 		$value		= get_user_meta($userId, $check['meta_key'], true);
 
 		if(!empty($check['meta_key_index'])){
-			if(isset($value[$check['meta_key_index']])){
-				$value		= $value[$check['meta_key_index']];
+			if(isset($value[trim($check['meta_key_index'])])){
+				$value		= $value[trim($check['meta_key_index'])];
 			}else{
 				$value		= '';
 			}
@@ -121,7 +118,7 @@ function checkElementConditions($element, $userId){
 		}
 	}
 	
-	return $skip;
+	return !$skip;
 }
 
 /**
@@ -146,7 +143,9 @@ function checkElementNeedsInput($elements, $userId){
 
 	//check which of the fields are not yet filled in
 	foreach($elements as $element){
-		if(!checkElementConditions($element, $userId)){
+		//check if this element applies to this user
+		$warningCondition	= maybe_unserialize($element->warning_conditions);
+		if(checkConditions($warningCondition, $userId)){
 			continue;
 		}
 
@@ -231,6 +230,8 @@ function getAllRequiredForms($userId=''){
 	$forms				= $wpdb->get_results($query);
 
 	foreach($forms as $form){
+		$conditions		= maybe_unserialize($form->reminder_conditions);
+
 		// Check last submission date for this user for this form
 		$interval 		= \DateInterval::createFromDateString("$form->reminder_frequency $form->reminder_period");
 		$daterange 		= new \DatePeriod(
@@ -272,16 +273,22 @@ function getAllRequiredForms($userId=''){
 		$usersWithoutSubmission	= array_diff($userIds, $usersWithSubmission);
 
 		if(is_numeric($userId)){
-			$child				= SIM\isChild($userId);
-			$childName			= '';
-			if($child){
-				$childName		= " for ".get_userdata($userId)->first_name;
-			}
+			// only add if conditions match
+			if(in_array($userId, $usersWithoutSubmission) && checkConditions($conditions, $userId)){
+				$child				= SIM\isChild($userId);
+				$childName			= '';
+				if($child){
+					$childName		= " for ".get_userdata($userId)->first_name;
+				}
 
-			if(in_array($userId, $usersWithoutSubmission)){
 				$html .= "<li><a href='$form->form_url'>$form->form_name$childName</a></li>";
 			}
 		}else{
+			foreach($usersWithoutSubmission as $index=>$userId){
+				if(!checkConditions($conditions, $userId)){
+					unset($usersWithoutSubmission[$index]);
+				}
+			}
 			$formReminders[$form->id]	= $usersWithoutSubmission;
 		}
 	}

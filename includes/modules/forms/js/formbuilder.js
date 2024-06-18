@@ -880,15 +880,15 @@ window.addEventListener("click", event => {
 		saveFormSettings(target);
 	}else if(target.name == 'submit_form_emails'){
 		saveFormEmails(target);
-	}else if(target.name == 'settings[autoarchive]'){
+	}else if(target.name == 'autoarchive'){
 		let el = target.closest('.formsettings_wrapper').querySelector('.autoarchivelogic');
 		if(target.value == 'true'){
 			el.classList.remove('hidden');
 		}else{
 			el.classList.add('hidden');
 		}
-	}else if(target.name == 'settings[save_in_meta]'){
-		target.closest('.sim-form.builder').querySelector('.submit_others_form_wrapper').classList.toggle('hidden');
+	}else if(target.name == 'save_in_meta'){
+		target.closest('.sim-form.builder').querySelector('.recurring-submissions').classList.toggle('hidden');
 	}else if(target.name == 'formfield[mandatory]' && target.checked){
 		target.closest('div').querySelector('[name="formfield[recommended]"]').checked=true;
 	}

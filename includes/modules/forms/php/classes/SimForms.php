@@ -308,6 +308,7 @@ class SimForms{
 		  reminder_frequency text,
 		  reminder_period text,
 		  reminder_startdate date,
+		  reminder_conditions LONGTEXT,
 		  formurl text,
 		  formreset boolean,
 		  actions text,
@@ -315,9 +316,9 @@ class SimForms{
 		  autoarchivefield integer,
 		  autoarchivevalue text,
 		  split text,
-		  full_right_roles text,
-		  submit_others_form text,
-		  emails text,
+		  full_right_roles LONGTEXT,
+		  submit_others_form LONGTEXT,
+		  emails LONGTEXT,
 		  PRIMARY KEY  (id)
 		) $charsetCollate;";
 
