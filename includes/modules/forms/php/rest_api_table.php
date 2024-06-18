@@ -293,7 +293,7 @@ function saveColumnSettings($settings='', $shortcodeId=''){
 		}
 		
 		//if there are edit rights defined
-		if(@is_array($setting['edit_right_roles'])){
+		if(isset($setting['edit_right_roles'])){
 			//create view array if it does not exist
 			if(!is_array($setting['view_right_roles'])){
 				$setting['view_right_roles'] = [];

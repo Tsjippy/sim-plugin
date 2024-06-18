@@ -765,43 +765,51 @@ class DisplayFormResults extends DisplayForm{
 		}
 
 		//also add the id
-		$this->columnSettings[-1] = [
-			'name'				=> 'id',
-			'nice_name'			=> 'ID',
-			'show'				=> '',
-			'edit_right_roles'	=> [],
-			'view_right_roles'	=> []
-		];
+		if(!isset($this->columnSettings[-1])){
+			$this->columnSettings[-1] = [
+				'name'				=> 'id',
+				'nice_name'			=> 'ID',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
 
-		//also add the submitted by
-		$this->columnSettings[-2] = [
-			'name'				=> 'userid',
-			'nice_name'			=> 'Submitted By',
-			'show'				=> '',
-			'edit_right_roles'	=> [],
-			'view_right_roles'	=> []
-		];
+		if(!isset($this->columnSettings[-2])){
+			//also add the submitted by
+			$this->columnSettings[-2] = [
+				'name'				=> 'userid',
+				'nice_name'			=> 'Submitted By',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
 
-		//also add the submission date
-		$this->columnSettings[-3] = [
-			'name'				=> 'submissiontime',
-			'nice_name'			=> 'Submission date',
-			'show'				=> '',
-			'edit_right_roles'	=> [],
-			'view_right_roles'	=> []
-		];
+		if(!isset($this->columnSettings[-3])){
+			//also add the submission date
+			$this->columnSettings[-3] = [
+				'name'				=> 'submissiontime',
+				'nice_name'			=> 'Submission date',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
 
-		//also add the last edited date
-		$this->columnSettings[-4] = [
-			'name'				=> 'edittime',
-			'nice_name'			=> 'Last edit time',
-			'show'				=> '',
-			'edit_right_roles'	=> [],
-			'view_right_roles'	=> []
-		];
-
+		if(!isset($this->columnSettings[-4])){
+			//also add the last edited date
+			$this->columnSettings[-4] = [
+				'name'				=> 'edittime',
+				'nice_name'			=> 'Last edit time',
+				'show'				=> '',
+				'edit_right_roles'	=> [],
+				'view_right_roles'	=> []
+			];
+		}
+		
 		//also add the subid
-		if(!empty($this->formData->split)){
+		if(!isset($this->columnSettings[-1]) && !empty($this->formData->split)){
 			$this->columnSettings[-5] = [
 				'name'				=> 'subid',
 				'nice_name'			=> 'Sub-Id',
@@ -815,6 +823,10 @@ class DisplayFormResults extends DisplayForm{
 
 		// add column settings as elements
 		foreach($this->columnSettings as $key=>$setting){
+			if(!is_array($setting)){
+				continue;
+			}
+
 			if($key > -1){
 				continue;
 			}
@@ -845,8 +857,12 @@ class DisplayFormResults extends DisplayForm{
 			return;
 		}
 
-		if(empty($this->formData)){
-			$this->loadShortcodeData();
+		if(empty($this->formData) || (!empty($this->shortcodeId) && empty($this->shortcodeData))){
+			$result	= $this->loadShortcodeData();
+
+			if(is_wp_error($result)){
+				return $result;
+			}
 
 			$this->getForm($this->shortcodeData->form_id);
 		}
@@ -903,6 +919,9 @@ class DisplayFormResults extends DisplayForm{
 		$names	= [];
 		//put hidden columns on the end and do not show same names twice
 		foreach($this->columnSettings as $key=>$setting){
+			if(!is_array($setting)){
+				continue;
+			}
 			if(in_array($setting['name'], $names)){
 				//remove the duplicate element: same name but different id
 				unset($this->columnSettings[$key]);
@@ -1235,6 +1254,8 @@ class DisplayFormResults extends DisplayForm{
 		
 		$this->tableSettings		= (array) maybe_unserialize($this->shortcodeData->table_settings);
 		$this->columnSettings		= (array) maybe_unserialize($this->shortcodeData->column_settings);
+
+		return true;
 	}
 
 	protected function columnSettingsForm($class, $viewRoles, $editRoles){
@@ -1352,8 +1373,12 @@ class DisplayFormResults extends DisplayForm{
 							?><option value=''>---</option><?php
 						}
 						
-						foreach($this->columnSettings as $key=>$element){
-							$name = $element['nice_name'];
+						foreach($this->columnSettings as $key=>$columnSetting){
+							if(!is_array($columnSetting)){
+								continue;
+							}
+
+							$name = $columnSetting['nice_name'];
 							
 							//Check which option is the selected one
 							if($this->tableSettings['default_sort'] != '' && $this->tableSettings['default_sort'] == $key){
@@ -1382,8 +1407,13 @@ class DisplayFormResults extends DisplayForm{
 							echo "<tr class='clone_div' data-divid='$index' style='border: none;'>";
 								echo "<td style='border: none;'>";
 									echo "<select name='table_settings[filter][$index][element]' class='inline'>";
-										foreach($this->columnSettings as $key=>$element){
-											$name = $element['nice_name'];
+										foreach($this->columnSettings as $key=>$columnSetting){
+
+											if(!is_array($columnSetting)){
+												continue;
+											}
+
+											$name = $columnSetting['nice_name'];
 											
 											//Check which option is the selected one
 											if($this->tableSettings['filter'][$index]['element'] == $key){
@@ -1435,16 +1465,20 @@ class DisplayFormResults extends DisplayForm{
 						?><option value=''>---</option><?php
 					}
 					
-					foreach($this->columnSettings as $key=>$element){
-						$name = $element['nice_name'];
+					foreach($this->columnSettings as $key=>$columnSetting){
+						if(!is_array($columnSetting)){
+							continue;
+						}
+
+						$name = $columnSetting['nice_name'];
 						
 						//Check which option is the selected one
-						if($this->tableSettings['hiderow'] == $element['name']){
+						if($this->tableSettings['hiderow'] == $columnSetting['name']){
 							$selected = 'selected="selected"';
 						}else{
 							$selected = '';
 						}
-						echo "<option value='{$element['name']}' $selected>$name</option>";
+						echo "<option value='{$columnSetting['name']}' $selected>$name</option>";
 					}
 					?>
 					</select>
@@ -1524,8 +1558,12 @@ class DisplayFormResults extends DisplayForm{
 								?><option value=''>---</option><?php
 							}
 							
-							foreach($this->columnSettings as $key=>$element){
-								$name = $element['nice_name'];
+							foreach($this->columnSettings as $key=>$columnSetting){
+								if(!is_array($columnSetting)){
+									continue;
+								}
+
+								$name = $columnSetting['nice_name'];
 								
 								//Check which option is the selected one
 								if($this->formData->autoarchive_el != '' && $this->formData->autoarchive_el == $key){
@@ -1706,13 +1744,7 @@ class DisplayFormResults extends DisplayForm{
 	/**
 	 * Processed the table settings
 	 */
-	protected function loadTableSettings(){
-		//load shortcode settings
-		$this->loadShortcodeData();
-		
-		//load form settings
-		$this->getForm();
-		
+	protected function loadTableSettings(){		
 		if((isset($this->tableSettings['archived']) && $this->tableSettings['archived'] == 'true') || $this->showArchived){
 			$this->showArchived = true;
 		}else{
@@ -2454,7 +2486,7 @@ class DisplayFormResults extends DisplayForm{
 					$newShortcode	= str_replace('formresults',"formresults id=$shortcodeId", $shortcode);
 					
 					//replace the old shortcode with the new one
-					$pos = str_contains($data['post_content'], $shortcode);
+					$pos = strpos($data['post_content'], $shortcode);
 					if ($pos !== false) {
 						$data['post_content'] = substr_replace($data['post_content'], $newShortcode, $pos, strlen($shortcode));
 					}
