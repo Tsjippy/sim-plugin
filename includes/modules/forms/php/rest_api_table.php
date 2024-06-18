@@ -327,7 +327,7 @@ function saveTableSettings(){
 	$tableSettings 	= $_POST['table_settings'];
 
 	// Check invalid filter names
-	if(@is_array($tableSettings['filter'])){
+	if(isset($tableSettings['filter'])){
 		foreach($tableSettings['filter'] as $filter){
 			if(in_array($filter['name'], ['accept-charset', 'action', 'autocomplete', 'enctype', 'method', 'name', 'novalidate', 'rel', 'target'])){
 				return new WP_Error('forms', "Invalid filter name '{$filter['name']}', use a different one");
@@ -337,7 +337,6 @@ function saveTableSettings(){
 
 	//update table settings
 	$formTable		= new DisplayFormResults();
-	
 	
 	$wpdb->update(
 		$formTable->shortcodeTable,

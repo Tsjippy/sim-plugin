@@ -1356,13 +1356,16 @@ class DisplayFormResults extends DisplayForm{
 		<?php
 	}
 
-	protected function tableRightsForm($class, $viewRoles, $editRoles){
+	protected function tableSettingsForm($class, $viewRoles, $editRoles){
 		?>
 		<div class="tabcontent <?php echo $class;?>" id="table_rights_<?php echo $this->shortcodeData->id;?>">
 			<form>
 				<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodeData->id;?>'>
 				<input type='hidden' class='shortcode_settings' name='formid'		value='<?php echo $this->formData->id;?>'>
 				
+				<label>Set the title for the results table</label>
+				<input type='text' name="table_settings[title]" value='<?php echo $this->tableSettings['title'];?>'>
+
 				<div class="table_rights_wrapper">
 					<label>Select the default column the table is sorted on</label>
 					<select name="table_settings[default_sort]">
@@ -1732,7 +1735,7 @@ class DisplayFormResults extends DisplayForm{
 				<?php
 				$this->columnSettingsForm($class1, $viewRoles, $editRoles);
 
-				$this->tableRightsForm($class2, $viewRoles, $editRoles);
+				$this->tableSettingsForm($class2, $viewRoles, $editRoles);
 				?>
 			</div>
 		</div>
@@ -2282,7 +2285,7 @@ class DisplayFormResults extends DisplayForm{
 		?>
 		<div class='form table-wrapper'>
 			<div class='form table-head'>
-				<h2 class="table_title"><?php echo esc_html($this->formData->form_name); ?></h2><br>
+				<h2 class="table_title"><?php echo esc_html($this->tableSettings['title']); ?></h2><br>
 				<?php
 					echo $buttons;
 				?>

@@ -922,7 +922,11 @@ class FrontEndContent{
 			do_action('sim_frontend_post_after_content', $this);
 
 			?>
-			<h4>Block this page for accounts with one of the following roles:</h4>
+			<select class='inline' name='permissionfiltertype'>
+				<option>Block</option>
+				<option>Allow</option>
+			</select>
+			<h4> this page for accounts with one of the following roles:</h4>
 			<?php
 			global $wp_roles;
 
