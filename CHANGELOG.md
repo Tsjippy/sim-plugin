@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- form display bug
 
 ### Updated
 
