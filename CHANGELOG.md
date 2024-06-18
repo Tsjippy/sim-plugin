@@ -3,16 +3,23 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- custom form results table title
-- conditions for recurring form submissions
 
 ### Changed
 
 ### Fixed
-- form display bug
-- layout issue on profile page
 
 ### Updated
+
+## [2.45.0] - 2024-06-18
+
+
+### Added
+- custom form results table title
+- conditions for recurring form submissions
+
+### Fixed
+- form display bug
+- layout issue on profile page
 
 ## [2.44.9] - 2024-06-17
 
