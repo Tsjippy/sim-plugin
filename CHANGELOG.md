@@ -9,6 +9,7 @@
 
 ### Fixed
 - form display bug
+- layout issue on profile page
 
 ### Updated
 
