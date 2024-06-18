@@ -349,17 +349,19 @@ function userInfoPage($atts){
 		}
 	}
 
-	$result	= "<nav id='profile_menu'>";
-		$result	.= "<ul id='profile_menu_list'>";
-		foreach($tabs as $tab){
-			$result	.= $tab;
-		}
-		$result	.= "</ul>";
-	$result	.= "</nav>";
+	$result	= "<div style='min-width: 50vw;'>";
+		$result	= "<nav id='profile_menu'>";
+			$result	.= "<ul id='profile_menu_list'>";
+				foreach($tabs as $tab){
+					$result	.= $tab;
+				}
+			$result	.= "</ul>";
+		$result	.= "</nav>";
 
-	$result	.= "<div id='profile_forms'>";
-		$result .= "<input type='hidden' class='input-text' name='userid' value='$userId'>";
-		$result	.= $html;
+		$result	.= "<div id='profile_forms'>";
+			$result .= "<input type='hidden' class='input-text' name='userid' value='$userId'>";
+			$result	.= $html;
+		$result	.= "</div>";
 	$result	.= "</div>";
 
 	return $result;

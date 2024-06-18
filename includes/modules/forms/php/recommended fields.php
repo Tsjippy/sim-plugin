@@ -13,11 +13,6 @@ use SIM;
 function getAllEmptyRequiredElements($userId, $type){
 	global $wpdb;
 
-	$child				= SIM\isChild($userId);
-	if($child){
-		$childName		= get_userdata($userId)->first_name;
-	}
-
 	$simForms			= new SimForms();
 
 	$query				= "SELECT * FROM {$simForms->elTableName} WHERE form_id IN(SELECT id FROM {$simForms->tableName} WHERE save_in_meta=1) AND ";
@@ -33,136 +28,8 @@ function getAllEmptyRequiredElements($userId, $type){
 	$elements				= apply_filters("sim_{$type}_elements_filter", $elements, $userId);
 
 	$html				= '';
-	if(!empty($elements)){
-		$html				= '';
-		$formUrls			= [];
-
-		//check which of the fields are not yet filled in
-		foreach($elements as $index=>$element){
-			//check if this element applies to this user
-			$warningCondition	= maybe_unserialize($element->warning_conditions);
-			if(is_array($warningCondition)){
-				SIM\cleanUpNestedArray($warningCondition, true);
-				$skip	= false;
-
-				foreach($warningCondition as $check){
-					$value		= get_user_meta($userId, $check['meta_key'], true);
-
-					if(!empty($check['meta_key_index'])){
-						if(isset($value[$check['meta_key_index']])){
-							$value		= $value[$check['meta_key_index']];
-						}else{
-							$value		= '';
-						}
-					}
-
-					if(is_array($value) && isset($value[0])){
-						$value	= $value[0];
-					}
-
-					$checkValue	= '';
-					if(isset($check['conditional_value'])){
-						$checkValue			= $check['conditional_value'];
-						$conditionalValue	= strtotime($check['conditional_value']);
-						if($conditionalValue && Date('Y', $conditionalValue) < 2200){
-							$checkValue	= Date('Y-m-d', $conditionalValue);
-						}
-					}
-
-					switch($check['equation']){
-						case '==':
-							$result	= $value == $checkValue;
-							break;
-						case '!=':
-							$result	= $value != $checkValue;
-							break;
-						case '>':
-							$result	= $value > $checkValue;
-							break;
-						case '<':
-							$result	= $value < $checkValue;
-							break;
-						default:
-							$result = false;
-					}
-
-					// Check the result
-					if($result){
-						$skip = true;
-						//break this loop when when already know we should skip this field
-						if(!empty($check['combinator']) && $check['combinator'] == 'or'){
-							break;
-						}
-					}else{
-						$skip = false;
-					}
-				}
-				
-				//if we should check the next one
-				if($skip ){
-					continue;
-				}
-			}
-
-			$metakey 	= explode('[', $element->name)[0];
-			$value		= get_user_meta($userId, $metakey, true);
-
-			$name		= $element->name;
-			if (str_contains($name, '[')){
-				$value = SIM\getMetaArrayValue($userId, $name, $value);
-			}
-
-			if(empty($value)){
-				//get form url
-				if(isset($formUrls[$element->form_id])){
-					$formUrl			= $formUrls[$element->form_id];
-				}else{
-					$query				= "SELECT * FROM {$simForms->tableName} WHERE `id`={$element->form_id}";
-					$form				= $wpdb->get_results($query)[0];
-					$formUrl			= $form->form_url;
-
-					//save in cache
-					$formUrls[$element->form_id]	= $formUrl;
-				}
-
-				// Do not add if no form url given
-				if(empty($formUrl)){
-					continue;
-				}
-
-				parse_str(parse_url($formUrl, PHP_URL_QUERY), $params);
-
-				//Show a nice name
-				$name	= str_replace(['[]', '_'], ['', ' '], $element->nicename);
-				$name	= ucfirst(str_replace(['[', ']'], [': ',''], $name));
-
-				$baseUrl	= explode('main_tab=', $_SERVER['REQUEST_URI'])[0];
-				$mainTab	= $params['main_tab'];
-				if($child){
-					$name 		.= " for $childName";
-					$mainTab	 = strtolower($childName);
-					$formUrl	 = str_replace($params['main_tab'], $mainTab, $formUrl);
-				}
-				
-				// If the url has no hash or we are not on the same url
-				if(
-					!isset($_GET['userid']) && (
-						empty($params['main_tab']) || 
-						!str_contains($formUrl, $baseUrl)
-					)
-				){
-					$html .= "<li><a href='$formUrl#{$element->name}'>$name</a></li>";
-				//We are on the same page, just change the hash
-				}else{
-					$secondTab	= '';
-					$names		= explode('[', $element->name);
-					if(count($names) > 1){
-						$secondTab	= $names[0];
-					}
-					$html .= "<li><a onclick='Main.changeUrl(this, `$secondTab`)' data-param_val='$mainTab' data-hash={$element->name} style='cursor:pointer'>$name</a></li>";
-				}
-			}
-		}
+	if(!empty($elements)){		
+		$html	.= checkElementNeedsInput($elements, $userId);
 	}
 
 	if($type == 'mandatory' || $type == 'all'){
@@ -176,6 +43,172 @@ function getAllEmptyRequiredElements($userId, $type){
 	$html	= apply_filters("sim_{$type}_html_filter", $html, $userId);
 
 	return $html;
+}
+
+/**
+ * Checks if a given mandatory or recommended element has conditions that apply to the current user
+ *
+ * @param	object	$element	The element
+ * @param	int		$userId		The user id
+ *
+ * @return	bool				true if no conditions or the condition apply, false if it does not apply
+ */
+function checkElementConditions($element, $userId){
+	//check if this element applies to this user
+	$warningCondition	= maybe_unserialize($element->warning_conditions);
+
+	if(!is_array($warningCondition)){
+		return true;
+	}
+
+	SIM\cleanUpNestedArray($warningCondition, true);
+	$skip	= false;
+
+	foreach($warningCondition as $check){
+		// get the user value
+		$value		= get_user_meta($userId, $check['meta_key'], true);
+
+		if(!empty($check['meta_key_index'])){
+			if(isset($value[$check['meta_key_index']])){
+				$value		= $value[$check['meta_key_index']];
+			}else{
+				$value		= '';
+			}
+		}
+
+		if(is_array($value) && isset($value[0])){
+			$value	= $value[0];
+		}
+
+		// Get the compare value
+		$checkValue	= '';
+		if(isset($check['conditional_value'])){
+			$checkValue			= $check['conditional_value'];
+			$conditionalValue	= strtotime($check['conditional_value']);
+			if($conditionalValue && Date('Y', $conditionalValue) < 2200){
+				$checkValue	= Date('Y-m-d', $conditionalValue);
+			}
+		}
+
+		// compare the values
+		switch($check['equation']){
+			case '==':
+				$result	= $value == $checkValue;
+				break;
+			case '!=':
+				$result	= $value != $checkValue;
+				break;
+			case '>':
+				$result	= $value > $checkValue;
+				break;
+			case '<':
+				$result	= $value < $checkValue;
+				break;
+			default:
+				$result = false;
+		}
+
+		// Check the result
+		if($result){
+			$skip = true;
+
+			//break this loop when when already know we should skip this field
+			if(!empty($check['combinator']) && $check['combinator'] == 'or'){
+				break;
+			}
+		}else{
+			$skip = false;
+		}
+	}
+	
+	return $skip;
+}
+
+/**
+ * Checks if a given elements needs some input of a given user and returns html links for each element that needs input
+ *
+ * @param	array	$elements	The elements
+ * @param	int		$userId		The id of the user
+ *
+ * @return	string				The html
+ */
+function checkElementNeedsInput($elements, $userId){
+	global $wpdb;
+
+	$simForms			= new SimForms();
+	$child				= SIM\isChild($userId);
+	if($child){
+		$childName		= get_userdata($userId)->first_name;
+	}
+	
+	$html				= '';
+	$formUrls			= [];
+
+	//check which of the fields are not yet filled in
+	foreach($elements as $element){
+		if(!checkElementConditions($element, $userId)){
+			continue;
+		}
+
+		$metakey 	= explode('[', $element->name)[0];
+		$value		= get_user_meta($userId, $metakey, true);
+
+		$name		= $element->name;
+		if (str_contains($name, '[')){
+			$value = SIM\getMetaArrayValue($userId, $name, $value);
+		}
+
+		if(empty($value)){
+			//get form url
+			if(isset($formUrls[$element->form_id])){
+				$formUrl			= $formUrls[$element->form_id];
+			}else{
+				$query				= "SELECT * FROM {$simForms->tableName} WHERE `id`={$element->form_id}";
+				$form				= $wpdb->get_results($query)[0];
+				$formUrl			= $form->form_url;
+
+				//save in cache
+				$formUrls[$element->form_id]	= $formUrl;
+			}
+
+			// Do not add if no form url given
+			if(empty($formUrl)){
+				continue;
+			}
+
+			parse_str(parse_url($formUrl, PHP_URL_QUERY), $params);
+
+			//Show a nice name
+			$name	= str_replace(['[]', '_'], ['', ' '], $element->nicename);
+			$name	= ucfirst(str_replace(['[', ']'], [': ',''], $name));
+
+			$baseUrl	= explode('main_tab=', $_SERVER['REQUEST_URI'])[0];
+			$mainTab	= $params['main_tab'];
+			if($child){
+				$name 		.= " for $childName";
+				$mainTab	 = strtolower($childName);
+				$formUrl	 = str_replace($params['main_tab'], $mainTab, $formUrl);
+			}
+			
+			// If the url has no hash or we are not on the same url
+			if(
+				!isset($_GET['userid']) && (
+					empty($params['main_tab']) || 
+					!str_contains($formUrl, $baseUrl)
+				)
+			){
+				$html .= "<li><a href='$formUrl#{$element->name}'>$name</a></li>";
+			}else{
+				//We are on the same page, just change the hash
+				$secondTab	= '';
+				$names		= explode('[', $element->name);
+				if(count($names) > 1){
+					$secondTab	= $names[0];
+				}
+				$html .= "<li><a onclick='Main.changeUrl(this, `$secondTab`)' data-param_val='$mainTab' data-hash={$element->name} style='cursor:pointer'>$name</a></li>";
+			}
+		}
+	}
 }
 
 /**
@@ -229,7 +262,6 @@ function getAllRequiredForms($userId=''){
 			}
 		}
 
-
 		// now check which users are missing
 		$users 		= get_users( array( 'fields' => array( 'ID' ) ) );
 		$userIds	= [];
@@ -240,8 +272,14 @@ function getAllRequiredForms($userId=''){
 		$usersWithoutSubmission	= array_diff($userIds, $usersWithSubmission);
 
 		if(is_numeric($userId)){
+			$child				= SIM\isChild($userId);
+			$childName			= '';
+			if($child){
+				$childName		= " for ".get_userdata($userId)->first_name;
+			}
+
 			if(in_array($userId, $usersWithoutSubmission)){
-				$html .= "<li><a href='$form->form_url'>$form->name</a></li>";
+				$html .= "<li><a href='$form->form_url'>$form->form_name$childName</a></li>";
 			}
 		}else{
 			$formReminders[$form->id]	= $usersWithoutSubmission;
@@ -287,6 +325,6 @@ add_action('sim_dashboard_warnings', function($userId){
 	}
 		
 	if (!empty($html)){
-		echo "<p>Please fill in these fields:<br></p>$html";
+		echo "<p>Please complete the following:<br></p>$html";
 	}
 });

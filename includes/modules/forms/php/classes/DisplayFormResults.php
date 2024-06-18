@@ -1363,8 +1363,8 @@ class DisplayFormResults extends DisplayForm{
 				<input type='hidden' class='shortcode_settings' name='shortcode_id'	value='<?php echo $this->shortcodeData->id;?>'>
 				<input type='hidden' class='shortcode_settings' name='formid'		value='<?php echo $this->formData->id;?>'>
 				
-				<label>Set the title for the results table</label>
-				<input type='text' name="table_settings[title]" value='<?php echo $this->tableSettings['title'];?>'>
+				<label>Set the title for the results table</label><br>
+				<input type='text' name="table_settings[title]" value='<?php echo $this->tableSettings['title'];?>' style='width:500px;'>
 
 				<div class="table_rights_wrapper">
 					<label>Select the default column the table is sorted on</label>

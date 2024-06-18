@@ -445,6 +445,8 @@ class FormBuilderForm extends SimForms{
 					</label>
 					<br>
 
+					<?php $this->warningConditionsForm();?>
+
 					<label class="block">
 						<h4>Form url</h4>
 						<?php

@@ -152,7 +152,7 @@ function missingFormFields($atts){
 	if (!empty($fieldHtml)){
 		$html .=  '<div id=recommendations style="margin-top:20px;">';
             $html .=  '<h3 class="frontpage">Recommendations</h3>';
-            $html .=  '<p>It would be very helpfull if you could fill in the fields below:</p>';
+            $html .=  '<p>It would be very helpfull if you could fill in the following:</p>';
             $html .=  $fieldHtml;
         $html .=  '</div>';
 	}
