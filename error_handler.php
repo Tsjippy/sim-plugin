@@ -12,7 +12,7 @@ set_error_handler(function ( $errno, $errstr, $errfile, $errline ) {
     }
 });
 
-// Function from php.net http://php.net/manual/en/function.debug-backtrace.php#112238
+// Function from php.net https://php.net/manual/en/function.debug-backtrace.php#112238
 function generateStackTrace() {
 
     $e = new \Exception();

@@ -65,7 +65,18 @@ add_action('sim-after-formbuilder-element-options', function($element){
                             <div class='min-bookking-gap-time <?php if(!isset($subject['overlap']) || $subject['overlap'] == 'yes'){echo 'hidden';}?>'>
                                 <label>
                                     Minimum time between two bookings in days
-                                    <input type='number' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap-period]' value='<?php echo $subject['overlap-period'];?>' min='1'>
+                                    <div class="infobox" name="info">
+                                        <div>
+                                            <p class="info_icon" style='float:right'>
+                                                <img draggable="false" role="img" class="emoji" alt="ℹ" src="<?php echo PICTURESURL."/info.png";?>" loading='lazy' >
+                                            </p>
+                                        </div>
+                                        <span class="info_text">
+                                            Use 0 for allowing guests to arrive the next day.<br>
+                                            1 means there is one full day between the previous and the next booking
+                                        </span>
+                                    </div>
+                                    <input type='number' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap-period]' value='<?php echo $subject['overlap-period'];?>' min='0'>
                                 </label>
                             </div>
                         </label>

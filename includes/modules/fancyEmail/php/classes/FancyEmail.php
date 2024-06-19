@@ -177,6 +177,7 @@ class FancyEmail{
         if(
             !str_contains(strtolower($this->message), strtolower($defaultGreeting)) &&
             !str_contains(strtolower($this->message), 'regards,') &&
+            !str_contains(strtolower($this->message), 'blessings,') &&
             !str_contains(strtolower($this->message), 'cheers,')
         ){
             $this->message	.= "<br><br><br>$defaultGreeting<br><br>".SITENAME;
@@ -201,7 +202,7 @@ class FancyEmail{
     }
 
     /**
-     * Replace any private urls to public urls, add mail logging to all links
+     * Replace any images to tracebale ones
      *
      * @param   array   $matches    Matches from a regex
      *
@@ -254,6 +255,9 @@ class FancyEmail{
 
         $html	    = $matches[0];
         $url	    = $matches[1];
+
+        $url        = str_replace(['http://', 'https://', 'http://https://'], 'https://', $url);
+        $url        = str_replace('https://https://', 'https://', $url);
 
         // Change to rest-api url
         $newUrl    = "$this->mailTrackerUrl?mailid=$this->emailId&url=".urlencode($url);
