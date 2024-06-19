@@ -50,17 +50,24 @@ add_action('sim-after-formbuilder-element-options', function($element){
                             ?>
                         </label>
 
-                        <label class=" formfield formfieldlabel">
+                        <label class="formfield formfieldlabel">
                             <h4 class="labeltext">Allow overlap <?php echo $index+1;?></h4>
                             Allow new arrivals on the day the previous people leave<br>
                             <label>
-                                <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap]' value='yes' <?php if($subject['overlap'] == 'yes'){echo 'checked';}?>>
+                                <input type='radio' class='booking-subject-selector overlap' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap]' value='yes' <?php if($subject['overlap'] == 'yes'){echo 'checked';}?>>
                                 Yes
                             </label>
                             <label>
-                                <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap]' value='no' <?php if($subject['overlap'] == 'no'){echo 'checked';}?>>
+                                <input type='radio' class='booking-subject-selector overlap' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap]' value='no' <?php if($subject['overlap'] == 'no'){echo 'checked';}?>>
                                 No
                             </label>
+                            <br>
+                            <div class='min-bookking-gap-time <?php if(!isset($subject['overlap']) || $subject['overlap'] == 'yes'){echo 'hidden';}?>'>
+                                <label>
+                                    Minimum time between two bookings in days
+                                    <input type='number' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap-period]' value='<?php echo $subject['overlap-period'];?>' min='1'>
+                                </label>
+                            </div>
                         </label>
 
                         <label class=" formfield formfieldlabel">

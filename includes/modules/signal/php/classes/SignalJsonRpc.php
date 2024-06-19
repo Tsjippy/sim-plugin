@@ -503,6 +503,8 @@ class SignalJsonRpc extends AbstractSignal{
      * @return  array|bool              If more than one recipient returns an array of results, if only one returns a boolean true or false
      */
     public function isRegistered($recipient){
+        return true; // until this is fixed
+        
         if(!is_array($recipient)){
             $recipient  = [$recipient];
         }
@@ -605,7 +607,11 @@ class SignalJsonRpc extends AbstractSignal{
             $this->addToMessageLog($recipient, $message, $ownTimeStamp);
             return $ownTimeStamp;
         }else{
-            SIM\printArray($result);
+            SIM\printArray("Sending Signal Message failed");
+            SIM\printArray($params);
+            if(!empty($result)){
+                SIM\printArray($result);
+            }
             return $result;
         }
     }

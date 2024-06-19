@@ -1599,7 +1599,7 @@ class DisplayFormResults extends DisplayForm{
 				?>
 				
 				<div style='margin-top:10px;'>
-					<button class='button permissions-rights-form' type='button'>Advanced</button>
+					<button class='button table-permissions-rights-form' type='button'>Advanced</button>
 					<div class='permission-wrapper hidden'>
 						<?php
 							// Splitted fields

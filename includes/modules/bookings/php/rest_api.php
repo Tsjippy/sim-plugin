@@ -14,10 +14,10 @@ add_action( 'rest_api_init', function () {
 
 				$bookings->forms->getForm($_POST['formid']);
 
-				$bookings->forms->shortcodeId	= $_POST['shortcode_id'];
+				$bookings->forms->shortcodeId		= $_POST['shortcode_id'];
 
 				if(isset($_POST['elid']) && is_numeric($_POST['elid'])){
-					$element	= $bookings->forms->getElementById($_POST['elid']);
+					$element						= $bookings->forms->getElementById($_POST['elid']);
 				}else{
 					foreach($bookings->forms->formElements as $element){
 						if($element->type == 'booking_selector'){
@@ -25,6 +25,7 @@ add_action( 'rest_api_init', function () {
 						}
 					}
 				}
+				$bookings->forms->currentElement	= $element;
 
 				$subjectName	= sanitize_text_field($_POST['subject']);
 				$date			= strtotime($_POST['year'].'-'.$_POST['month'].'-01');

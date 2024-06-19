@@ -350,7 +350,7 @@ function userInfoPage($atts){
 	}
 
 	$result	= "<div style='min-width: 50vw;'>";
-		$result	= "<nav id='profile_menu'>";
+		$result	.= "<nav id='profile_menu'>";
 			$result	.= "<ul id='profile_menu_list'>";
 				foreach($tabs as $tab){
 					$result	.= $tab;

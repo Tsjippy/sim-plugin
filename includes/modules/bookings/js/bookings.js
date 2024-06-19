@@ -406,6 +406,12 @@ document.addEventListener('click', (ev) => {
         changeBookingData(target);
     }else if(target.matches('.action.confirm')){
         storeDates(target);
+    }else if(target.matches('.booking-subject-selector.overlap')){
+        if(target.value == 'yes'){
+            target.closest(`.formfieldlabel`).querySelector(`.min-bookking-gap-time`).classList.add('hidden');
+        }else{
+            target.closest(`.formfieldlabel`).querySelector(`.min-bookking-gap-time`).classList.remove('hidden');
+        }
     }
     
     if(target.matches('.bookings-wrap .available:not(.unavailable)')){

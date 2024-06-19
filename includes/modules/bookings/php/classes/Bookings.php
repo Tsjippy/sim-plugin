@@ -299,6 +299,10 @@ class Bookings{
 
     /**
      * Displays the selected dates
+     *
+     * @param   bool    $hide   Wheter or not this should be hidden by default
+     *
+     * @return  string          The html
      */
     protected function showSelectedModalDates($hide){
         ob_start();
@@ -352,6 +356,8 @@ class Bookings{
      * Displays a date selector modal
      *
      * @param   array  $subject    array with The name of the building/event and the amount of rooms
+     *
+     * @return  string              The html
      */
     public function dateSelectorModal($subject){
         if(defined('REST_REQUEST') && isset($_POST['month']) && isset($_POST['year'])){
@@ -399,6 +405,10 @@ class Bookings{
 	 */
 	public function monthCalendar($subject, $date){
 		
+        if(is_array($subject)){
+            $subject= $subject['name'];
+        }
+
 		ob_start();
 		$curDate        = time();
         $month          = date('m', $date);
@@ -407,20 +417,31 @@ class Bookings{
 		$workingDate	= strtotime("-$weekDay day", strtotime(date('Y-m-01', $date)));
 		$calendarRows	= '';
 
-        //get the bookings for this month
-		$this->retrieveMonthBookings($month, $year, $subject);
-
+        // subject without optional room name
         $baseSubject        = explode(';', $subject)[0];
         $overlap            = false;
+        $gapDays            = 0;
 
+        // get the details of all subjects
         $bookingDetails     = maybe_unserialize($this->forms->currentElement->booking_details);
         if(!empty($bookingDetails) && is_array($bookingDetails['subjects'])){
-            foreach($bookingDetails['subjects'] as $detail){
-                if($detail['name'] == $baseSubject && !empty($detail['overlap']) && $detail['overlap'] == 'yes'){
-                    $overlap    = true;
-                }
+            // find the details of the current subject
+            foreach($bookingDetails['subjects'] as $s){
+                // check overlap
+                if($s['name'] == $baseSubject && !empty($s['overlap'])){
+                    if($s['overlap'] == 'yes'){
+                        $overlap    = true;
+                    }elseif(!empty($s['overlap-period']) && is_numeric($s['overlap-period'])){
+                        $gapDays    = $s['overlap-period'];
+                    }
+
+                    break;
+                } 
             }
         }
+
+        //get the bookings for this month
+		$this->retrieveMonthBookings($month, $year, $subject, $gapDays);
 
 		//loop over all weeks of a month
 		while(true){
@@ -979,9 +1000,10 @@ class Bookings{
      * @param   int     $month          The month to retrieve bookings for
      * @param   int     $year           The year to retrieve bookings for
      * @param   string  $subject        The subject to retrieve bookings for
+     * @param   int     $extraDays      Extra days to block after each booking, default 0
      *
      */
-    protected function retrieveMonthBookings($month, $year, $subject){
+    protected function retrieveMonthBookings($month, $year, $subject, $extraDays=0){
         global $wpdb;
 
 		//select all bookings of this month
@@ -1001,6 +1023,10 @@ class Bookings{
 
             $current    = strtotime($booking->startdate);
             $last       = strtotime($booking->enddate);
+
+            if($extraDays > 0){
+                $last   = strtotime("+$extraDays days", $last);
+            }
 
             while( $current <= $last ) {
                 $this->unavailable[date('Y-m-d', $current)] = $booking->id;
