@@ -10,6 +10,12 @@
 
 ### Updated
 
+## [2.45.1] - 2024-06-19
+
+
+### Added
+- gap period between bookings
+
 ## [2.45.0] - 2024-06-18
 
 
