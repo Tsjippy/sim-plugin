@@ -157,6 +157,7 @@ function userDescription($userId){
 
 	//get the family details
 	$family	= SIM\getUserFamily($userId);
+	SIM\cleanUpNestedArray($family);
 
 	$privacyPreference = get_user_meta( $userId, 'privacy_preference', true );
 	if(!is_array($privacyPreference)){
@@ -202,6 +203,12 @@ function userDescription($userId){
 
 	//Build the html
 	//user has a family
+	$siblings	= [];
+	if(isset($family["siblings"])){
+		$siblings	= $family["siblings"];
+		unset($family["siblings"]);
+	}
+	unset($family["name"]);
 	if (!empty($family)){
 		$html .= "<h1>$user->last_name family</h1>";
 
@@ -230,7 +237,7 @@ function userDescription($userId){
 		$html .= showUserInfo($userId, $arrived);
 
 		//Children
-		if (isset($family["children"])){
+		if (!empty($family["children"])){
 			$html .= "<p>";
 			$html .= " They have the following children:<br>";
 			foreach($family["children"] as $child){
@@ -243,6 +250,18 @@ function userDescription($userId){
 				$html .= SIM\displayProfilePicture($childdata->ID);
 			$html .= "<span class='person_work'> {$childdata->first_name} $age</span><br>";
 			}
+			$html .= "</p>";
+		}
+
+		if (!empty($siblings)){
+			$html .= "<p>";
+				$html .= " They are related to:<br>";
+				foreach($siblings as $sibling){
+					$siblingsData	= get_userdata($sibling);
+
+					$html .= SIM\displayProfilePicture($siblingsData->ID);
+				$html .= "<span class='person_work'> {$siblingsData->first_name}</span><br>";
+				}
 			$html .= "</p>";
 		}
 
@@ -281,8 +300,35 @@ function userDescription($userId){
 			$html .= $arrivalHtml;
 
 			$html .= showPhonenumbers($userId);
+
+			if (!empty($siblings)){
+				$gender 	= get_user_meta( $userId, 'gender', true );
+				if(is_array($gender)){
+					if(isset($gender[0])){
+						$gender	= $gender[0];
+					}else{
+						$gender	= '';
+					}
+				}
+				if ($gender == "" || strtolower($gender) == "female" ){
+					$gender	= 'She';
+				}else{
+					$gender	= 'He';
+				}
+
+				$html .= "<p>";
+					$html .= " $gender is related to:<br>";
+					foreach($siblings as $sibling){
+						$siblingsData	= get_userdata($sibling);
+	
+						$html	.= SIM\displayProfilePicture($siblingsData->ID);
+						$link	= getUserPageLink($siblingsData->ID);
+						$html	.= "<span class='person_work'> $link</span><br>";
+					}
+				$html .= "</p>";
+			}
 		}else{
-			$html .= "<p>Nothing to show here due to privacy settings.</p>";
+			$html .= "<p>No user found with id $userId.</p>";
 		}
 
 		$html .= showContent($userId);

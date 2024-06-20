@@ -146,6 +146,10 @@ class UpdateFamily{
             $this->family["siblings"] = [];
         }
 
+        if(!is_array($this->oldFamily["siblings"])){
+            $this->oldFamily["siblings"] = [];
+        }
+
         //get the removed siblings
         $siblingDiff	= array_diff($this->oldFamily["siblings"], $this->family["siblings"]);
 

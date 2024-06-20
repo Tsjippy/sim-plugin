@@ -578,8 +578,14 @@ function getFamilyName($user, $lastNameFirst=false, &$partnerId=false) {
 		$partnerId	= $family['partner'];
 	}
 
+	if(isset($family['siblings'])){
+		unset($family['siblings']);
+	}
+
+	$familyName	= '';
 	if(!empty($family['name'])){
-		return $family['name'].' family';
+		$familyName	= $family['name'];
+		unset($family['name']);
 	}
 
 	// user has family
@@ -591,6 +597,10 @@ function getFamilyName($user, $lastNameFirst=false, &$partnerId=false) {
 		return $user->display_name;
 	}
 	
+	if(!empty($familyName)){
+		return $familyName.' family';
+	}
+
 	$name 	= $user->last_name;
 
 	// user has a partner
