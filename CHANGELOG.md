@@ -3,14 +3,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- siblings to family form
 
 ### Changed
 
 ### Fixed
-- issue with hyperlinks
 
 ### Updated
+
+## [2.45.2] - 2024-06-20
+
+
+### Added
+- siblings to family form
+
+### Fixed
+- issue with hyperlinks
 
 ## [2.45.1] - 2024-06-19
 
