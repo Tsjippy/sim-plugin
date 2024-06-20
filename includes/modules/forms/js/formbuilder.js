@@ -1057,6 +1057,12 @@ window.addEventListener('change', ev=>{
 				static.classList.add('hidden');
 			}
 		}
+	}else if(target.name.includes('[equation')){
+		if( target.value == 'submitted'){
+			target.closest('.warning_conditions').querySelector(`[name*='[conditional_value]']`).classList.add('hidden');
+		}else{
+			target.closest('.warning_conditions').querySelector(`[name*='[conditional_value]']`).classList.remove('hidden');
+		}
 	}
 });
 

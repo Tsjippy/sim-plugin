@@ -19,7 +19,7 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 
 //create birthday and anniversary events
 add_filter('sim_before_saving_formdata',function($formResults, $object){
-	if($object->formdata->name != 'user_location'){
+	if($object->formData->name != 'user_location'){
 		return $formResults;
 	}
 	

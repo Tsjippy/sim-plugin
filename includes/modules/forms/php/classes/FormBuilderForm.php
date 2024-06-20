@@ -1713,7 +1713,7 @@ class FormBuilderForm extends SimForms{
 		<label>Do not warn if usermeta with the key</label>
 		<br>
 
-		<div class="conditions_wrapper" style='width: 80vw;'>
+		<div class="conditions_wrapper" style='width: 90vw;z-index: 9999;position: relative;'>
 			<?php
 			foreach($conditions as $conditionIndex=>$condition){
 				if(!is_numeric($conditionIndex)){
@@ -1765,6 +1765,7 @@ class FormBuilderForm extends SimForms{
 							'!='		=> 'is not',
 							'>'			=> 'greather than',
 							'<'			=> 'smaller than',
+							'submitted'	=> 'has submitted',
 						];
 						foreach($optionArray as $option=>$optionLabel){
 							if($condition['equation'] == $option){

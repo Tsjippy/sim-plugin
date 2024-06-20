@@ -13,6 +13,11 @@ class UpdateFamily{
     public function __construct($userId, $family, $oldFamily){
         $this->userId           = $userId;
         $this->family           = $family;
+
+        if(is_array($this->family)){
+            SIM\cleanUpNestedArray($this->family);
+        }
+
         $this->oldFamily        = $oldFamily;
         $this->partnerFamily    = (array)get_user_meta( $this->family['partner'], 'family', true );
         $this->userGender       = get_user_meta( $userId, 'gender', true );
@@ -75,11 +80,15 @@ class UpdateFamily{
         if (
             !empty($this->family['picture'])                            &&  // There is a family picture
             (
-                !isset($this->oldFamily['picture'])                     ||  // There was no familhy picture
+                !isset($this->oldFamily['picture'])                     ||  // There was no family picture
                 $this->family['picture'] != $this->oldFamily['picture']     // The family picture has changed
             )
         ){
             $this->changeFamilyPicture();
+        }
+
+        if($this->family['siblings'] != $this->oldFamily['siblings'] ){
+            $this->updateSiblings();
         }
 
         $this->save();
@@ -132,6 +141,44 @@ class UpdateFamily{
         }
     }
 
+    public function updateSiblings(){
+        if(!is_array($this->family["siblings"])){
+            $this->family["siblings"] = [];
+        }
+
+        //get the removed siblings
+        $siblingDiff	= array_diff($this->oldFamily["siblings"], $this->family["siblings"]);
+
+        //Loop over the removed children
+        foreach($siblingDiff as $sibling){
+            $siblingFamily = get_user_meta( $sibling, 'family', true );
+
+            foreach($siblingFamily["siblings"] as $index=>$sibling){
+                if($sibling == $this->userId && isset($siblingFamily["siblings"][$index])){
+                    unset($siblingFamily["siblings"][$index]);
+                }
+            } 
+        }
+
+        //get the added siblings
+        $siblingDiff	= array_diff($this->family["siblings"], $this->oldFamily["siblings"]);
+
+        //Loop over the removed children
+        foreach($siblingDiff as $sibling){
+            $siblingFamily = get_user_meta( $sibling, 'family', true );
+
+            $siblingFamily["siblings"][] =  $this->userId;
+        }
+
+        //Save in DB
+        if(empty($siblingFamily)){
+            //delete the family entry if its empty
+            delete_user_meta( $sibling, 'family');
+        }else{
+            update_user_meta( $sibling, 'family', $siblingFamily);
+        }
+    }
+
     public function removeChildren(){
         if(!is_array($this->family["children"])){
             $this->family["children"] = [];
@@ -149,6 +196,7 @@ class UpdateFamily{
             if (is_array($childFamily)){
                 unset($childFamily["father"]);
                 unset($childFamily["mother"]);
+                unset($childFamily["siblings"]);
 
                 //Save in DB
                 if(empty($childFamily)){
@@ -189,7 +237,24 @@ class UpdateFamily{
             update_user_meta( $child, 'family', $childFamily);
         }
 
-        //Store child - for current users partner as well
+        // update childrens siblings
+        foreach($this->family["children"] as $child){
+            $childFamily = (array)get_user_meta( $child, 'family', true );
+
+            $childFamily['siblings']    = $this->family["children"];
+
+            // remove the child itself from the siblings
+            foreach($this->family['children'] as $index=>$c){
+                if($c == $child){
+                    unset($childFamily['siblings'][$index]);
+                }
+            }
+
+            //Save in DB
+            update_user_meta( $child, 'family', $childFamily);
+        }
+
+        //Store child for current users partner as well
         if (isset($this->family['partner'])){
             $this->partnerFamily["children"] = $this->family["children"];
         }
@@ -225,10 +290,6 @@ class UpdateFamily{
 
     //Save in db
     public function savefamilyIndb(){
-        if(is_array($this->family)){
-            SIM\cleanUpNestedArray($this->family);
-        }
-
         if (empty($this->family)){
             //remove from db, there is no family anymore
             delete_user_meta($this->userId, "family");

@@ -227,6 +227,8 @@ trait ElementHtml{
 	 * @param	string	$elementHtml	The html of a single element
 	 */
 	function multiInput($element, $values=null, $elementHtml=''){
+		$this->multiInputsHtml	= [];
+		
 		//add label to each entry if prev element is a label and wrapped with this one
 		if($this->prevElement->type	== 'label' && !empty($this->prevElement->wrap) && $this->prevElement != $element){
 			$this->prevElement->text = $this->prevElement->text.' %key%';

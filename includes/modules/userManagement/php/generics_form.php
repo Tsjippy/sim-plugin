@@ -14,7 +14,7 @@ add_filter('sim_forms_load_userdata',function($usermeta,$userId){
 
 // phonenumbers and more
 add_filter('sim_before_saving_formdata', function($formResults, $object){
-	if($object->formdata->name != 'user_generics'){
+	if($object->formData->name != 'user_generics'){
 		return $formResults;
 	}
 

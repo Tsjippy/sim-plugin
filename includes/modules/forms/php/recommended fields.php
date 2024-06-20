@@ -48,12 +48,13 @@ function getAllEmptyRequiredElements($userId, $type){
 /**
  * Checks if a given set of conditions apply to the current user. Returns true if there is a match
  *
- * @param	object	$conditions	The element conditions
- * @param	int		$userId		The user id
+ * @param	object	$conditions		The element conditions
+ * @param	int		$userId			The user id
+ * @param	array	$submissions	The submissions to check
  *
  * @return	bool				true if no conditions or the condition apply, false if it does not apply
  */
-function checkConditions($conditions, $userId){
+function checkConditions($conditions, $userId, $submissions=''){
 	if(!is_array($conditions)){
 		return true;
 	}
@@ -73,7 +74,7 @@ function checkConditions($conditions, $userId){
 			}
 		}
 
-		if(is_array($value) && isset($value[0])){
+		if(is_array($value) && $check['equation'] != 'submitted' && isset($value[0])){
 			$value	= $value[0];
 		}
 
@@ -100,6 +101,23 @@ function checkConditions($conditions, $userId){
 				break;
 			case '<':
 				$result	= $value < $checkValue;
+				break;
+			case 'submitted':
+				$result	= false;
+				// check if the given userid has submitted the form already 
+				foreach($submissions as $submission){
+					if(is_array($value)){
+						if(in_array($submission->userid, $value)){
+							$result	= true;
+							break;
+						}
+					}else{
+						if($submission->userid == $value){
+							$result	= true;
+							break;
+						}
+					}
+				}
 				break;
 			default:
 				$result = false;
@@ -274,7 +292,7 @@ function getAllRequiredForms($userId=''){
 
 		if(is_numeric($userId)){
 			// only add if conditions match
-			if(in_array($userId, $usersWithoutSubmission) && checkConditions($conditions, $userId)){
+			if(in_array($userId, $usersWithoutSubmission) && checkConditions($conditions, $userId, $submissions)){
 				$child				= SIM\isChild($userId);
 				$childName			= '';
 				if($child){
@@ -285,7 +303,7 @@ function getAllRequiredForms($userId=''){
 			}
 		}else{
 			foreach($usersWithoutSubmission as $index=>$userId){
-				if(!checkConditions($conditions, $userId)){
+				if(!checkConditions($conditions, $userId, $submissions)){
 					unset($usersWithoutSubmission[$index]);
 				}
 			}

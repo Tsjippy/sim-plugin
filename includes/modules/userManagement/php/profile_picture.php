@@ -8,7 +8,7 @@ add_action('init', function(){
 
 
 add_filter('sim_before_saving_formdata',function($formResults, $object){
-	if($object->formdata->name != 'profile_picture'){
+	if($object->formData->name != 'profile_picture'){
 		return $formResults;
 	}
 	

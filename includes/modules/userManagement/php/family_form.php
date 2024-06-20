@@ -21,7 +21,7 @@ add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId
 
 //Save family
 add_filter('sim_before_saving_formdata', function($formResults, $object){
-	if($object->formdata->name != 'user_family'){
+	if($object->formData->name != 'user_family'){
 		return $formResults;
 	}
 	
@@ -34,7 +34,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $object){
 		return $formResults;
 	}
 
-	$updateFamily	= new UpdateFamily($object->userId, $family, $oldFamily);
+	$updateFamily			= new UpdateFamily($object->userId, $family, $oldFamily);
 	$formResults["family"]	= $updateFamily->family;
 	
 	return $formResults;
