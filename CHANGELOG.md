@@ -8,6 +8,7 @@
 
 ### Fixed
 - userpage title
+- sending form reminders
 
 ### Updated
 
