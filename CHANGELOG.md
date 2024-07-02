@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- userpage title
 
 ### Updated
 
