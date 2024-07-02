@@ -5,11 +5,16 @@ use SIM;
 add_action('init', function(){
 	//add action for use in scheduled task
 	add_action( 'auto_archive_action', __NAMESPACE__.'\autoArchiveFormEntries' );
+    
+	add_action( 'form_reminder_action', __NAMESPACE__.'\formReminder' );
+
     add_action( 'mandatory_fields_reminder_action', __NAMESPACE__.'\mandatoryFieldsReminder' );
 });
 
 function scheduleTasks(){
     SIM\scheduleTask('auto_archive_action', 'daily');
+    
+    SIM\scheduleTask('form_reminder_action', 'daily');
 
     $freq   = SIM\getModuleOption(MODULE_SLUG, 'reminder_freq');
     if($freq){
@@ -20,6 +25,88 @@ function scheduleTasks(){
 function autoArchiveFormEntries(){
 	$editFormResults = new EditFormResults();
 	$editFormResults->autoArchive();
+}
+
+/**
+ * Sends reminders by e-mail and Signal to fill in a form
+ */
+function formReminder(){
+    // Also send a reminder for any mandatory forms
+    $simForms   = new SubmitForm();
+
+    SIM\printArray(getAllRequiredForms());
+
+    foreach(getAllRequiredForms() as $formId=>$userIds){
+        SIM\printArray($formId);
+
+        $simForms->getForm($formId);
+        $emails = $simForms->formData->emails;
+		
+		foreach($emails as $mail){
+            SIM\printArray($mail);
+            if($mail['emailtrigger'] == 'shouldsubmit'){
+
+                $from       = $mail['from'];
+
+                $to         = $mail['to'];
+
+                $subject    = $mail['subject'];
+
+                $message    = $mail['message'];
+
+                $headers	= [];
+
+                if(!empty(trim($mail['headers']))){
+                    $headers	= explode("\n", trim($mail['headers']));
+                }
+
+                // Send an e-mail to each user
+                foreach($userIds as $userId){
+                    $user   = get_userdata($userId);
+
+                    if(!empty($from)){
+                        if(str_contains($from, '%')){
+                            $headers[]	= "Reply-To: ". $user->user_email;
+                        }else{
+                            $headers[]	= "Reply-To: $from";
+                        }
+                    }
+
+                    if(str_contains($to, '%')){
+                        $recipient  = $user->user_email; 
+                    }else{
+                        $recipient  = $to;
+                    }
+
+                    $m      = "Hi $user->first_name,<br><br>";
+                    $m      .= $simForms->processPlaceholders(
+                        $message,
+                        [
+                            'formurl'   => $simForms->formData->form_url,
+                            'name'      => $user->first_name,
+                            'email'     => $user->user_email,
+                        ]
+                    );
+
+                    $result = wp_mail($recipient , $subject, $m, $headers);
+
+                    // Find any hyperlinks in the text
+                    preg_match_all('/<a\s+href=(?:"|\')(.*?)(?:"|\')>(.*?)<\/a>/i', $m, $matches);
+
+                    //replace the hyperlinks with plain links
+                    foreach($matches[0] as $index=>$match){
+                        $m  = str_replace($match, $matches[2][$index].': '.str_replace('https://', '', $matches[1][$index]), $m);
+                    }
+
+                    //Send Signal message
+                    SIM\trySendSignal(
+                        html_entity_decode(strip_tags(str_replace('[<br>, </br>]', "\n", $m))),
+                        $user->ID
+                    );
+                }
+            }
+        }
+    }
 }
 
 //loop over all users and scan for missing info
@@ -99,76 +186,6 @@ function mandatoryFieldsReminder(){
 		}
 	}
 
-    // Also send a reminder for any mandatory forms
-    $simForms   = new SubmitForm();
-    foreach(getAllRequiredForms() as $formId=>$userIds){
-        $simForms->getForm($formId);
-        $emails = $simForms->formData->emails;
-		
-		foreach($emails as $mail){
-            if($mail['emailtrigger'] == 'shouldsubmit'){
-
-                $from       = $mail['from'];
-
-                $to         = $mail['to'];
-
-                $subject    = $mail['subject'];
-
-                $message    = $mail['message'];
-
-                $headers	= [];
-
-                if(!empty(trim($mail['headers']))){
-                    $headers	= explode("\n", trim($mail['headers']));
-                }
-
-                // Send an e-mail to each user
-                foreach($userIds as $userId){
-                    $user   = get_userdata($userId);
-
-                    if(!empty($from)){
-                        if(str_contains($from, '%')){
-                            $headers[]	= "Reply-To: ". $user->user_email;
-                        }else{
-                            $headers[]	= "Reply-To: $from";
-                        }
-                    }
-
-                    if(str_contains($to, '%')){
-                        $recipient  = $user->user_email; 
-                    }else{
-                        $recipient  = $to;
-                    }
-
-                    $m      = "Hi $user->first_name,<br><br>";
-                    $m      .= $simForms->processPlaceholders(
-                        $message,
-                        [
-                            'formurl'   => $simForms->formData->form_url,
-                            'name'      => $user->first_name,
-                            'email'     => $user->user_email,
-                        ]
-                    );
-
-                    $result = wp_mail($recipient , $subject, $m, $headers);
-
-                    // Find any hyperlinks in the text
-                    preg_match_all('/<a\s+href=(?:"|\')(.*?)(?:"|\')>(.*?)<\/a>/i', $m, $matches);
-
-                    //replace the hyperlinks with plain links
-                    foreach($matches[0] as $index=>$match){
-                        $m  = str_replace($match, $matches[2][$index].': '.str_replace('https://', '', $matches[1][$index]), $m);
-                    }
-
-                    //Send Signal message
-                    SIM\trySendSignal(
-                        html_entity_decode(strip_tags(str_replace('[<br>, </br>]', "\n", $m))),
-                        $user->ID
-                    );
-                }
-            }
-        }
-    }
 }
 
 // Remove scheduled tasks upon module deactivatio

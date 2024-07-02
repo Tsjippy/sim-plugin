@@ -262,7 +262,8 @@ class SignalJsonRpc extends AbstractSignal{
             return;
         }
             
-        SIM\printArray("Got error {$json->error->message} For command $method, $params");
+        SIM\printArray("Got error {$json->error->message} For command $method");
+        SIM\printArray($params);
 
         $failedCommands      = get_option('sim-signal-failed-messages', []);
 
@@ -599,20 +600,23 @@ class SignalJsonRpc extends AbstractSignal{
 
         $result   =  $this->doRequest('send', $params);
 
-        if(!empty($result->timestamp)){
-            $ownTimeStamp = $result->timestamp;
-        }
+        if($this->getResult){
 
-        if(is_numeric($ownTimeStamp)){
-            $this->addToMessageLog($recipient, $message, $ownTimeStamp);
-            return $ownTimeStamp;
-        }else{
-            SIM\printArray("Sending Signal Message failed");
-            SIM\printArray($params);
-            if(!empty($result)){
-                SIM\printArray($result);
+            if(!empty($result->timestamp)){
+                $ownTimeStamp = $result->timestamp;
             }
-            return $result;
+
+            if(is_numeric($ownTimeStamp)){
+                $this->addToMessageLog($recipient, $message, $ownTimeStamp);
+                return $ownTimeStamp;
+            }else{
+                SIM\printArray("Sending Signal Message failed");
+                SIM\printArray($params);
+                if(!empty($result)){
+                    SIM\printArray($result);
+                }
+                return $result;
+            }
         }
     }
 

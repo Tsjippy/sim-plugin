@@ -243,7 +243,9 @@ function getAllRequiredForms($userId=''){
 
 	$simForms			= new SimForms();
 
-	$query				= "SELECT * FROM {$simForms->tableName} WHERE reminder_frequency <> '' AND reminder_period <> '' AND reminder_startdate <> '' AND reminder_startdate < CURDATE()";
+	$date				= date('Y-m-d');
+
+	$query				= "SELECT * FROM {$simForms->tableName} WHERE reminder_frequency <> '' AND reminder_period <> '' AND reminder_startdate <> '' AND reminder_startdate < '$date'";
 
 	$forms				= $wpdb->get_results($query);
 
@@ -302,8 +304,8 @@ function getAllRequiredForms($userId=''){
 				$html .= "<li><a href='$form->form_url'>$form->form_name$childName</a></li>";
 			}
 		}else{
-			foreach($usersWithoutSubmission as $index=>$userId){
-				if(!checkConditions($conditions, $userId, $submissions)){
+			foreach($usersWithoutSubmission as $index=>$userWithoutSubmission){
+				if(!checkConditions($conditions, $userWithoutSubmission, $submissions)){
 					unset($usersWithoutSubmission[$index]);
 				}
 			}
