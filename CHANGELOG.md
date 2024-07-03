@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- only send form reminders once a week
 
 ### Fixed
 - userpage title
