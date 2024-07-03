@@ -34,8 +34,6 @@ function formReminder(){
     // Also send a reminder for any mandatory forms
     $simForms   = new SubmitForm();
 
-    SIM\printArray(getAllRequiredForms());
-
     foreach(getAllRequiredForms() as $formId=>$userIds){
         SIM\printArray($formId);
 

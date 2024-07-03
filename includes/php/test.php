@@ -28,27 +28,6 @@ add_shortcode("test", function ($atts){
     foreach($posts as $post){
        
     }  */
-
-    foreach(getUserAccounts(true) as $user){
-        $family = get_user_meta($user->ID, 'family', true);
-
-        if(isset($family['children']) && is_array($family['children'])){
-            foreach($family['children'] as $child){
-                $childFamily = (array)get_user_meta( $child, 'family', true );
-
-                $childFamily['siblings']    = $family["children"];
-    
-                foreach($family['children'] as $index=>$c){
-                    if($c == $child){
-                        unset($childFamily['siblings'][$index]);
-                    }
-                }
-    
-                //Save in DB
-                update_user_meta( $child, 'family', $childFamily);
-            }
-        }
-    }
 });
 
 // turn off incorrect error on localhost

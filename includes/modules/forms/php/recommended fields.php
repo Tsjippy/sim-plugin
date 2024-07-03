@@ -250,21 +250,32 @@ function getAllRequiredForms($userId=''){
 	$forms				= $wpdb->get_results($query);
 
 	foreach($forms as $form){
+		// get the start day of the week
+		$day = date('D', strtotime($form->reminder_startdate));
+
+		// only do it once a week
+		if(date('D') != $day){
+			continue;
+		}
+
 		$conditions		= maybe_unserialize($form->reminder_conditions);
 
 		// Check last submission date for this user for this form
-		$interval 		= \DateInterval::createFromDateString("$form->reminder_frequency $form->reminder_period");
-		$daterange 		= new \DatePeriod(
+		$interval 		= \DateInterval::createFromDateString("$form->reminder_frequency $form->reminder_period");  // the interval between submissions
+		$daterange 		= new \DatePeriod(																			// the date range between startdate and today with the specified interval 
 			date_create($form->reminder_startdate), 
 			$interval , 
-			new \DateTime('now')
+			new \DateTime('now'),
+			false
 		);
 
+		// find the last date of the daterange, this is the date closest to today
 		$threshold		= $daterange->getEndDate()->format('Y-m-d');
 		foreach($daterange as $date1){
 			$threshold = $date1->format('Y-m-d');
 		}
 
+		// get all submissions created after the threshold
 		$query			= "SELECT * FROM {$simForms->submissionTableName} WHERE form_id=$form->id AND timecreated > $threshold";
 
 		$submissions	= $wpdb->get_results($query);
