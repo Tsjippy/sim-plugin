@@ -10,6 +10,7 @@
 ### Fixed
 - userpage title
 - sending form reminders
+- fileupload bugs
 
 ### Updated
 
