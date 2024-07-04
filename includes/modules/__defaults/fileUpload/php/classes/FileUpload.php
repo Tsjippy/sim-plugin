@@ -227,7 +227,16 @@ class FileUpload{
 	 * @param	int			$index			The metakey sub key
 	 */
 	public function documentPreview($documentPath, $index){
-		$metaValue	= $documentPath;
+		$metaValue		= $documentPath;
+
+		if(is_array($documentPath)){
+			if(count($documentPath) == 1){
+				$documentPath	= array_values($documentPath)[0];
+			}else{
+				return 'please supply a string, not an array';
+			}
+		}
+
 		if(is_numeric($documentPath) && $this->library){
 			$url = wp_get_attachment_url($documentPath);
 
@@ -237,7 +246,7 @@ class FileUpload{
 				$libraryId		= $documentPath;
 				$documentPath	= $url;
 			}
-		}elseif(gettype($documentPath) != 'string' || !is_file($documentPath)){
+		}elseif(gettype($documentPath) != 'string' || !is_file(SIM\urlToPath($documentPath))){
 			return false;
 		}
 

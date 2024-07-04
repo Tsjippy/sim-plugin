@@ -251,7 +251,6 @@ class SignalJsonRpc extends AbstractSignal{
             SIM\printArray("Getting response for command $method timed out");
             SIM\printArray($params);
 
-
             $signalResults              = get_option('sim-signal-results', []);
             if(isset($signalResults[$id])){
                 SIM\printArray($signalResults[$id]);
@@ -360,7 +359,8 @@ class SignalJsonRpc extends AbstractSignal{
             }
 
             if(!is_object($response) || empty($response->result)){
-                //SIM\printArray("Got faulty result $response");
+                SIM\printArray("Got faulty result");
+                SIM\printArray($response);
                 return false;
             }
 
