@@ -115,48 +115,63 @@ class SaveFormSettings extends SimForms{
 		// Get all elements of this form
 		$this->getAllFormElements('priority', $this->formId, true);
 
-		// find the element
-		if(empty($element)){
-			foreach($this->formElements as $el){
-				if($el->priority == $oldPriority){
-					$element = $el;
-					break;
+		$newFormElements		= [
+			$newPriority - 1	=> $element
+		];
+
+		$untouchedMin			= min($oldPriority, $newPriority);
+		$untouchedMax			= max($oldPriority, $newPriority);
+		if($oldPriority == -1){
+			$untouchedMin	= $newPriority;
+		}
+
+		foreach($this->formElements as $el){
+			// skip the element with the new priority
+			if($el->id == $element->id){
+				if($el->priority != $newPriority){
+					$el->priority	= $newPriority;
+					$result 		= $this->updatePriority($el);
+
+					if(is_wp_error($result)){
+						return $result;
+					}
+				}
+				continue;
+			}
+
+			if($el->priority < $untouchedMin){
+				$newFormElements[$el->priority - 1]	= $el;
+			}elseif($el->priority > $untouchedMax){
+				$newFormElements[$el->priority]	= $el;
+			}else{
+				if($oldPriority == -1){
+					// we inserted a new element
+					$newFormElements[$el->priority]	= $el;
+
+					$el->priority	= $el->priority + 1;
+				}elseif($oldPriority < $newPriority){
+					// we moved an element down
+					$el->priority	= $el->priority - 1;
+
+					$newFormElements[$el->priority]	= $el;
+				}else{
+					// me moved an element up
+					$el->priority	= $el->priority + 1;
+
+					$newFormElements[$el->priority]	= $el;
+				}
+
+				$result 		= $this->updatePriority($el);
+
+				if(is_wp_error($result)){
+					return $result;
 				}
 			}
 		}
 
-		//No need to reorder if we are adding a new element at the end
-		if($element->priority == $newPriority && count($this->formElements) == $element->priority){
-			return;
-		}
+		$this->formElements	= $newFormElements;
 
-		//No need to reorder if we are adding a new element at the end
-		if(count($this->formElements) == $newPriority && $this->formElements[0]->priority != 1){
-			// First element is the element without priority
-			$el				= $this->formElements[0];
-			$el->priority	= $newPriority;
-			$this->updatePriority($el);
-			return;
-		}
-
-		// only move if element is not alreay on the right location
-		if($this->formElements[$newPriority-1]->name != $element->name){
-			// Move the element to the new position priority should be index+1
-			if($oldPriority == -1){
-				$out				= [$element];
-			}else{
-				$out				= array_splice($this->formElements, $oldPriority-1, 1);
-			}
-			array_splice($this->formElements, $newPriority-1, 0, $out);
-		}
-
- 		//Loop over all elements and give them the new priority
-		foreach($this->formElements as $index=>$el){
-			if($index+1 != $el->priority ){
-				$el->priority	= $index+1;
-				$this->updatePriority($el);
-			}
-		}
+		return;
 	}
 
 	/**

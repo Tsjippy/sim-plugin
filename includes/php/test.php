@@ -16,7 +16,6 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
-
     /* $posts = get_posts(
 		array(
 			'post_type'		=> 'any',

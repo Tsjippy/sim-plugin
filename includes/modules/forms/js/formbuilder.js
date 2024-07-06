@@ -150,7 +150,7 @@ async function addFormElement(target){
 			referenceNode.classList.remove('clicked');
 			referenceNode.closest('.form_element_wrapper').insertAdjacentHTML('afterEnd', response.html)
 			
-			fixElementNumbering(form);
+			fixElementNumbering(referenceNode.closest('form'));
 			
 			//add resize listener
 			form.querySelectorAll('.resizer').forEach(el=>{resizeOb.observe(el);});
@@ -1057,11 +1057,15 @@ window.addEventListener('change', ev=>{
 				static.classList.add('hidden');
 			}
 		}
-	}else if(target.name.includes('[equation')){
-		if( target.value == 'submitted'){
-			target.closest('.warning_conditions').querySelector(`[name*='[conditional_value]']`).classList.add('hidden');
-		}else{
-			target.closest('.warning_conditions').querySelector(`[name*='[conditional_value]']`).classList.remove('hidden');
+	}else if(target.name != undefined && target.name.includes('[equation')){
+		let warningsConditions	= target.closest('.warning_conditions');
+
+		if(warningsConditions != null){
+			if( target.value == 'submitted'){
+				warningsConditions.querySelector(`[name*='[conditional_value]']`).classList.add('hidden');
+			}else{
+				warningsConditions.querySelector(`[name*='[conditional_value]']`).classList.remove('hidden');
+			}
 		}
 	}
 });

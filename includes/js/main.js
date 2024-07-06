@@ -56,10 +56,10 @@ function switchTab(event=null){
 		});
 	}
 
-	let secondTab = params.secondTab;
+	let secondTab = params.second_tab;
 	if(secondTab != null){
 		//find the tab and display it
-		lastTab.querySelectorAll(`[data-param_val="${secondTab}"]:not(.active)`).forEach(tabbutton=>{
+		document.querySelectorAll(`[data-param_val="${secondTab}"]:not(.active)`).forEach(tabbutton=>{
 			displayTab(tabbutton);
 		});
 	}

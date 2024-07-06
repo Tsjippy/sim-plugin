@@ -217,6 +217,10 @@ function urlToPath($url){
 		printArray($url);
 		return '';
 	}
+
+	if(file_exists($url)){
+		return $url;
+	}
 	
 	$siteUrl	= str_replace(['https://', 'http://'], '', SITEURL);
 	$url		= str_replace(['https://', 'http://'], '', urldecode($url));
@@ -981,8 +985,11 @@ function getMetaArrayValue($userId, $metaKey, $values=null){
 				if(!isset($value[$key])){
 					$key	= str_replace('_files', '', $key);
 				}
+
 				if(isset($value[$key])){
-					$value = $value[$key];
+					$value	= $value[$key];
+				}else{
+					$value	= '';
 				}
 			}
 		}

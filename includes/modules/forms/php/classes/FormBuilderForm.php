@@ -1387,7 +1387,9 @@ class FormBuilderForm extends SimForms{
 	 * @param int	$elementId	The id of the element. Default -1 for empty
 	 */
 	public function elementConditionsForm($elementId = -1){
-		$element	= $this->getElementById($elementId);
+		if($elementId != -1){
+			$element	= $this->getElementById($elementId);
+		}
 
 		if($elementId == -1 || empty($element->conditions)){
 			if(gettype($element) != 'object'){
