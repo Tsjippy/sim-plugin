@@ -7,9 +7,14 @@
 ### Changed
 
 ### Fixed
-- formbuilder bugs
 
 ### Updated
+
+## [2.45.4] - 2024-07-06
+
+
+### Fixed
+- formbuilder bugs
 
 ## [2.45.3] - 2024-07-04
 
