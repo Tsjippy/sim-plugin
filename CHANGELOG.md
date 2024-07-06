@@ -5,13 +5,21 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.45.3] - 2024-07-04
+
+
+### Changed
 - only send form reminders once a week
 
 ### Fixed
 - userpage title
 - sending form reminders
-
-### Updated
+- fileupload bugs
 
 ## [2.45.2] - 2024-06-20
 
