@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- some upgrade bugs
 
 ### Updated
 
