@@ -7,9 +7,14 @@
 ### Changed
 
 ### Fixed
-- some upgrade bugs
 
 ### Updated
+
+## [2.45.5] - 2024-07-22
+
+
+### Fixed
+- some upgrade bugs
 
 ## [2.45.4] - 2024-07-06
 
