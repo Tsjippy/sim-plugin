@@ -7,6 +7,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpWord\IOFactory;
 use SIM\FORMS\SimForms;
+use wpdb;
 
 //Shortcode for testing
 add_shortcode("test", function ($atts){
@@ -16,6 +17,7 @@ add_shortcode("test", function ($atts){
     global $wpdb;
     global $Modules;
 
+    
     /* $posts = get_posts(
 		array(
 			'post_type'		=> 'any',

@@ -230,7 +230,7 @@ function getAnswer($message, $source){
 
     if($lowerMessage == 'test'){
         $response    = 'Awesome!';
-    }elseif($lowerMessage == 'thanks'){
+    }elseif($lowerMessage == 'thanks' || str_contains($lowerMessage, 'thanks')){
         $response = 'You`re welcome!';
     }elseif(str_starts_with($lowerMessage, 'update prayer')){
         $response = updatePrayerRequest($message, $users);
