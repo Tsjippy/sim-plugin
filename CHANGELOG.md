@@ -7,7 +7,6 @@
 ### Changed
 
 ### Fixed
-- formresults table issue
 
 ### Updated
 
