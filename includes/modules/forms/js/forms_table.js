@@ -319,8 +319,12 @@ async function getNextPage(target){
 	let formId			= table.dataset.formid;
 
 	let loader			= Main.showLoader(table, false);
-	
-	let formData		= new FormData(wrapper.querySelector(".filteroptions"));
+	let formData;
+	if(wrapper.querySelector(".filteroptions") == null){
+		formData		= new FormData();
+	}else{
+		formData		= new FormData(wrapper.querySelector(".filteroptions"));
+	}
 
     formData.append('formid', formId);
     formData.append('pagenumber', page);
@@ -387,8 +391,12 @@ async function getSortedPage(target){
 	tableWrapper.dataset.sortdir	= sortDir;
 
 	let loader			= Main.showLoader(table, true, 'Loading sorted data');
-	
-	let formData		= new FormData(wrapper.querySelector(".filteroptions"));
+	let formData;
+	if(wrapper.querySelector(".filteroptions") == null){
+		formData		= new FormData();
+	}else{
+		formData		= new FormData(wrapper.querySelector(".filteroptions"));
+	}
 
     formData.append('formid', formId);
     formData.append('pagenumber', 0);

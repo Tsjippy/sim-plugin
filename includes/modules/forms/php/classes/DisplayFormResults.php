@@ -2057,7 +2057,17 @@ class DisplayFormResults extends DisplayForm{
 	 */
 	public function renderTable($type, $justTable=false, $force=false){
 		$userId	= null;
-		if($this->onlyOwn || !$this->tableViewPermissions || isset($_REQUEST['onlyown']) && $_REQUEST['onlyown'] == 'true'){
+
+		// Check permissions
+		if(
+			$this->onlyOwn || 
+			!$this->tableViewPermissions || 
+			isset($_REQUEST['onlyown']) && $_REQUEST['onlyown'] == 'true'
+		){
+			// we do not have permission to view someoneelses submissions
+			if($type == 'others'){
+				return true;
+			}
 			$type		= 'own';
 		}
 
