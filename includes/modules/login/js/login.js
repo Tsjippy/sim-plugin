@@ -491,9 +491,10 @@ function openLoginModal(){
 	document.querySelector('body').style.overflowY = 'hidden';
 
 	modal	= document.getElementById('login_modal');
+	modal.style.display = 'block';
 
 	//reset form
-	modal.querySelectorAll('form > div:not(.hidden, .cf-turnstile)').forEach(el=>el.classList.add('hidden'));
+	//modal.querySelectorAll('form > div:not(.hidden, .cf-turnstile)').forEach(el=>el.classList.add('hidden'));
 	modal.querySelector('#usercred_wrapper').classList.remove('hidden');
 
 	modal.classList.remove('hidden');

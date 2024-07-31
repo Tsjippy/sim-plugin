@@ -2,7 +2,7 @@ export function closeMobileMenu(){
 	//close mobile menu
 	document.querySelectorAll('#site-navigation, #mobile-menu-control-wrapper').forEach(el=>el.classList.remove('toggled'));
 	document.querySelector('body').classList.remove('mobile-menu-open');
-	document.querySelector("#mobile-menu-control-wrapper > button").ariaExpanded = 'false';
+	document.querySelectorAll("#mobile-menu-control-wrapper > button").forEach(el=>el.ariaExpanded = 'false');
 }
 
 // get response from rest api server
