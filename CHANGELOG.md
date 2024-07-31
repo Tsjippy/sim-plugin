@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- issues with login modal
 
 ### Updated
 
