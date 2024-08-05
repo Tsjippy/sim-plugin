@@ -94,28 +94,6 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		Enable temporary user accounts
 	</label>
 	<br>
-	<label>How long in advance (in months) should we warn people about vaccinations who are about to expire?</label>
-	<select name="vaccination_warning_time">
-		<?php
-		for ($x = 0; $x <= 12; $x++) {
-			if($settings['vaccination_warning_time'] === strval($x)){
-				$selected = 'selected="selected"';
-			}else{
-				$selected = '';
-			}
-			echo "<option value='$x' $selected>$x</option>";
-		}
-		?>
-	</select>
-	<br>
-	<label for="greencard_reminder_freq">How often should people be reminded of their greencard expiry?</label>
-	<br>
-	<select name="greencard_reminder_freq">
-		<?php
-		SIM\ADMIN\recurrenceSelector($settings['greencard_reminder_freq']);
-		?>
-	</select>
-	<br>
 	<label for="check_details_mail_freq">How often should people asked to check their details for changes?</label>
 	<br>
 	<select name="check_details_mail_freq">
@@ -124,27 +102,12 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		?>
 	</select>
 	<br>
-	<label>
-		E-mail address of the healthcare coordinator<br>
-		<input type="email" name="health_email" value="<?php echo $settings['health_email'];?>">
-	</label>
-	<br>
-	<label>
-		E-mail address of the personnel coordinator<br>
-		<input type="email" name="personnel_email" value="<?php echo $settings['personnel_email'];?>">
-	</label>
-	<br>
-	<label>
-		E-mail address of the short term coordinator<br>
-		<input type="email" name="sta_email" value="<?php echo $settings['sta_email'];?>">
-	</label>
-	<br>
 	<br>
 	<label>Select any forms you want to be available on the account page</label>
 	<br>
 	<?php
 
-	foreach(['family', 'generic', 'location', 'profile picture', 'security', 'vaccinations'] as $form){
+	foreach(['family', 'generic', 'location', 'profile picture', 'security'] as $form){
 		if(is_array($settings['enabled-forms']) && in_array($form, $settings['enabled-forms'])){
 			$checked	= 'checked';
 		}else{
@@ -157,7 +120,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		echo "</label><br>";
 	}
 
-	return ob_get_clean();
+	return ob_get_clean().$optionsHtml;
 }, 10, 3);
 
 add_filter('sim_email_settings', function($optionsHtml, $moduleSlug, $settings){
