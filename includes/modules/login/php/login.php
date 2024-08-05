@@ -53,16 +53,16 @@ function loginModal($message='', $required=false, $username=''){
                     <input type='hidden' name='action' value='request_login'>
 
                     <div id='usercred_wrapper'>
-                        <label>
+                        <label style="width: 100%;">
                             Username<br>
-                            <input id="username" type="text" class='wide' name="username" value="<?php echo $username;?>" autofocus autocomplete="username webauthn" style='width: calc(100% - 40px);display:inline-block;'>
+                            <input id="username" type="text" class='wide' name="username" value="<?php echo $username;?>" autofocus autocomplete="username webauthn" style='width: calc(100% - 40px);display:inline-block;color: black;'>
                             <?php echo $imgSvg;?>
                         </label>
 
                         <div class="password">
                             <label style='width:100%'>
                                 Password
-                                <input id="password" type="password" class='wide' name="password" autocomplete="password webauthn">
+                                <input id="password" type="password" class='wide' name="password" autocomplete="password webauthn" style='color: black;'>
                             </label>
                             <button type="button" class='toggle_pwd_view' data-toggle="0" title="Show password">
                                 <img src="<?php echo PICTURESURL.'/invisible.png';?>" loading='lazy' alt='togglepasword'>
