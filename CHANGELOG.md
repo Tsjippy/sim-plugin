@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- moved sim nigeria specific settings
 
 ### Fixed
 
