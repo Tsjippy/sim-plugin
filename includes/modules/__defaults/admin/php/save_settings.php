@@ -25,7 +25,7 @@ function saveSettings(){
     if(isset($Modules[$moduleSlug])){
         //deactivate the module
         if(!isset($options['enable'])){
-            unset($Modules[$moduleSlug]);
+            unset($Modules[$moduleSlug]['enable']);
             do_action('sim_module_deactivated', $moduleSlug, $options);
         }elseif(!empty($options)){
             $Modules[$moduleSlug]	= apply_filters('sim_module_updated', $options, $moduleSlug, $Modules[$moduleSlug]);

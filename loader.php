@@ -7,6 +7,7 @@ $defaultModules = [
 ];
 
 // Store all modulefolders
+
 $dirs       = scandir(MODULESPATH);
 $moduleDirs = [];
 if($dirs){
@@ -45,7 +46,9 @@ spl_autoload_register(function ($classname) {
     }
 
     $module     = $moduleDirs[strtolower($path[1])];
-    $moduleName = strtolower(end(explode('/', $module)));
+    // get the module name from the path
+    $folderName = explode('/', $module);
+    $moduleName = strtolower(end($folderName));
 
     if(!isset($Modules[$moduleName]) && (empty($_GET['page']) || $_GET['page'] != "sim_$moduleName")){
         return; // module is not activated
