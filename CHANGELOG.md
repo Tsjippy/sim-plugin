@@ -7,10 +7,15 @@
 ### Changed
 
 ### Fixed
-- issues with login modal
-- give all users last logindate on module activations
 
 ### Updated
+
+## [2.45.8] - 2024-08-05
+
+
+### Fixed
+- issues with login modal
+- give all users last logindate on module activations
 
 ## [2.45.7] - 2024-07-30
 
