@@ -8,6 +8,7 @@
 
 ### Fixed
 - issues with login modal
+- give all users last logindate on module activations
 
 ### Updated
 
