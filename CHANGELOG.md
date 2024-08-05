@@ -8,6 +8,7 @@
 - moved sim nigeria specific settings
 
 ### Fixed
+- text color login form
 
 ### Updated
 
