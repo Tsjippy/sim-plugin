@@ -820,7 +820,7 @@ class Bookings{
             update_post_meta($eventId, 'onlyfor', $userId);
         }
 
-        // insert the booking
+        // Determine the pending state
         $pending    = false;
 
         $user       = false;

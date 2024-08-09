@@ -416,7 +416,7 @@ class SimForms{
 	 * @param	string	$key	A specific element attribute to return. Default empty
 	 * @param	bool	$single	Wheter to return a singel element, default true
 	 *
-	 * @return	object|array|string|false			The element or element property
+	 * @return	object|array|string|false			The element or an array of elements or an element property of false if not found
 	 */
 	public function getElementByName($name, $key='', $single=true){
 		if(empty($name)){

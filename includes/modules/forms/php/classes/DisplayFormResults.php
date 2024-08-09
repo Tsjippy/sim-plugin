@@ -262,54 +262,71 @@ class DisplayFormResults extends DisplayForm{
 
 		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
 
-		// unserialize
-		$keptCount		= 0;
-		foreach($result as $index=>&$submission){
-			$submission->formresults	= unserialize($submission->formresults);
-
-			if($this->sortColumn && !$this->sortColumnFound){
-				$sortArray[$index]	= $submission->formresults[$this->sortColumn];
+		if(is_numeric($userId)){
+			// find the user id element
+			$userIdKey	= false;
+			if($this->getElementByName('user_id')){
+				$userIdKey	= 'user_id';
+			}elseif($this->getElementByName('userid')){
+				$userIdKey	= 'userid';
+			}elseif($this->getElementByName('user-id')){
+				$userIdKey	= 'user-id';
 			}
 
-			if(is_numeric($userId)){
-				$userIdKey	= false;
-				if(isset($submission->formresults['user_id'])){
-					$userIdKey	= 'user_id';
-				}elseif(isset($submission->formresults['userid'])){
-					$userIdKey	= 'userid';
+			// Form does not contain an user id field, run the query against the user who submitted the form
+			if(!$userIdKey){
+				$query = explode(' LIMIT', $query)[0]." and userid='$userId'";
+				if(!$all){
+					$query	.= " LIMIT $start, $this->pageSize";
 				}
-
-				// Form does not contain a user_id field, run the query against the user who submitted the form
-				if(!$userIdKey){
-					$query = explode(' LIMIT', $query)[0]." and userid='$userId'";
-					if(!$all){
-						$query	.= " LIMIT $start, $this->pageSize";
-					}
-					
-					$result	= $wpdb->get_results($query);
+				
+				$result	= $wpdb->get_results($query);
+				
+				if($wpdb->last_error !== ''){
+					SIM\printArray($wpdb->print_error());
+				}else{
 					$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
 
 					foreach($result as &$r){
 						$r->formresults	= unserialize($r->formresults);
 					}
-
-					break;
 				}
+		
+				return $result;
+			}
+		}
+
+		// unserialize
+		$keptCount		= 0;
+		foreach($result as $index=>&$submission){
+			$submission->formresults	= unserialize($submission->formresults);
+
+			if(
+				is_numeric($userId)									&& 	// We only want results af a particular user
+				(
+					(
+						isset($submission->formresults[$userIdKey])		&& 	// There is an user id in the result
+						$submission->formresults[$userIdKey] != $userId		// But not the right one
+					)													||
+					(
+						!isset($submission->formresults[$userIdKey])	&& 	// There is no user id in the result
+						$submission->userid != $userId						// this user did not submit this form
+					)
+				)
+			){
 				// delete the result if we only want to keep results of a certain user and is not this user
-				elseif($submission->formresults[$userIdKey] != $userId){
-					$shouldRemove	= apply_filters('sim_remove_formdata', true, $userId, $submission);
-					if($shouldRemove){
-						unset($result[$index]);
+				$shouldRemove	= apply_filters('sim_remove_formdata', true, $userId, $submission);
+				if($shouldRemove){
+					unset($result[$index]);
 
-						$this->total--;
-					}else{
-						$keptCount++;
+					$this->total--;
+				}else{
+					$keptCount++;
 
-						// check if we have enough results left
-						if($keptCount == $start + $this->pageSize){
-							$result	= array_splice($result, $keptCount);
-							break;
-						}
+					// check if we have enough results left
+					if($keptCount == $start + $this->pageSize){
+						$result	= array_splice($result, $keptCount);
+						break;
 					}
 				}
 			}
@@ -1896,7 +1913,7 @@ class DisplayFormResults extends DisplayForm{
 	 *
 	 * @return string	The html
 	 */
-	protected function renderTableButtons(){
+	public function renderTableButtons(){
 		$html	= "<div class='table-buttons-wrapper'>";
 			//Show form properties button if we have form edit permissions
 			if($this->formEditPermissions){
@@ -1975,6 +1992,30 @@ class DisplayFormResults extends DisplayForm{
 		}
 	}
 
+	/**
+	 * Checks if a given submssion belongs to a given user
+	 *
+	 * @param	object		$submission			The submission to check
+	 * @param	int			$userId				The user id
+	 * @param	bool		$includingPartner	Also return true if the partner submitted
+	 *
+	 * @return	bool							True if the submission belongs to the user, false otherwise
+	 */
+	public function ownSubmission($submission, $userId, $includingPartner){
+		$isOwn	= false;
+
+		$submissionUserId	= $submission->userid;
+
+		if(isset($submission->formresults['userid'])){
+			$submissionUserId	= $submission->formresults['userid'];
+		}elseif(isset($submission->formresults['user_id'])){
+			$submissionUserId	= $submission->formresults['user_id'];
+		}elseif(isset($submission->formresults['user-id'])){
+			$submissionUserId	= $submission->formresults['user-id'];
+		}
+
+		return $isOwn;
+	}
 	/**
 	 * creates the main table html
 	 *
@@ -2136,7 +2177,7 @@ class DisplayFormResults extends DisplayForm{
 			}
 		}
 
-		$shouldShow	= apply_filters('sim-formstable-should-show', true, $this);
+		$shouldShow	= apply_filters('sim-formstable-should-show', true, $this, $type);
 
 		if($shouldShow !== true){
 			echo 	$shouldShow;

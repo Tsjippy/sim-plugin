@@ -450,9 +450,10 @@ function pendingBookingsHtml($booking, $displayFormResults, $html){
 }
 
 // Display calendar instead of a table
-add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResults){
+add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResults, $type){
     // display the calendar instead of the table
     if(
+        $type == 'own'                                                  ||          // own is always an table
         !isset($displayFormResults->tableSettings['booking-display'])   ||          // no option choosen
         (
             isset($displayFormResults->tableSettings['booking-display']) &&         // option chosen
@@ -538,7 +539,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
     return $html;
     
     
-}, 10, 2);
+}, 10, 3);
 
 // check if a booking request is ok
 add_filter('sim_before_saving_formdata', function($formResults, $object){
