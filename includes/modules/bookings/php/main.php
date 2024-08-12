@@ -165,17 +165,16 @@ add_filter('sim-forms-elements', function($elements, $displayFormResults, $force
         return $elements;
     }
 
-    // Check if it has an booking selector
-    $hasBookingSelector = false;
-
-    foreach($elements as $element){
-        if($element->type == 'booking_selector'){
-            $hasBookingSelector = true;
+    // We cannot use getElementByType here as we have not gotten all elements yet.
+    $element    = false;
+    foreach($elements as $el){
+        if($el->type == 'booking_selector'){
+            $element    = $el;
             break;
         }
     }
 
-    if($hasBookingSelector){
+    if($element){
         // Add the startdate and enddate
         $startdate          = clone $element;
         $startdate->type    = 'date';
@@ -848,3 +847,26 @@ function getSubjectNames($v){
     }
     return '';
 }
+
+// only show upcoming bookings for own bookings
+add_filter('sim_retrieved_formdata', function($submissions, $userId, $object){
+    if(is_numeric($userId) && $object->getElementByType('booking_selector')){
+        foreach($submissions as $index=>$submission){
+            $result = maybe_unserialize($submission->formresults);
+
+            if(isset($result['booking-enddate'])){
+                $endDate    = $result['booking-enddate'];
+                if(is_array($endDate)){
+                    $endDate    = $endDate[0];
+                }
+
+                if($endDate < date('Y-m-d')){
+                    unset($submissions[$index]);
+                    $object->total--;
+                }
+            }
+        }
+    }
+
+    return $submissions;
+}, 10, 3);

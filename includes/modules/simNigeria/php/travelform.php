@@ -226,8 +226,8 @@ add_filter('sim_transform_formtable_data', function($string, $elementName){
 }, 10, 2);
 
 //if we only want our own data we first make sure we request all the data
-add_filter('sim_formdata_retrieval_query', function($query, $userId, $formName){
-	if($formName == 'travel' && $_GET['onlyown'] == 'true'){
+add_filter('sim_formdata_retrieval_query', function($query, $userId, $object){
+	if($object->formName == 'travel' && $_GET['onlyown'] == 'true'){
 		//remove userid from query
 		$query	= str_replace(" userid='$userId' and", '', $query);
 	}
@@ -236,8 +236,8 @@ add_filter('sim_formdata_retrieval_query', function($query, $userId, $formName){
 }, 10, 3);
 
 //then remove all unwanted data, but keep where we are passengers
-add_filter('sim_retrieved_formdata', function($formdata, $userId, $formName){
-	if($formName == 'travel' && $_GET['onlyown'] == 'true'){
+add_filter('sim_retrieved_formdata', function($formdata, $userId, $object){
+	if($object->formName == 'travel' && $_GET['onlyown'] == 'true'){
 		//remove userid from query
 		foreach($formdata as $key=>$entry){
 			$passengers	= (array)unserialize($entry->formresults)['passengers'];

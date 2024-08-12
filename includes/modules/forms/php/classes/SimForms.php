@@ -238,9 +238,18 @@ class SimForms{
 
 	/**
 	 * Creates the element mappers to find elements based on id, name or type
+	 *
+	 * @param	bool	$force		Whether to requery, default false
 	 */
-	public function elementMapper(){
-		if(empty($this->formData) || isset($this->formData->elementMapping)){
+	public function elementMapper($force = false){
+		if(
+			empty($this->formData) || 
+			(
+				isset($this->formData->elementMapping) && 
+				!empty($this->formData->elementMapping['type']) && 
+				!$force
+			)
+		){
 			return;
 		}
 
@@ -395,6 +404,7 @@ class SimForms{
 		}
 		
 		if(!isset($this->formData->elementMapping['id'][$id])){
+			$this->elementMapper(true);
 			SIM\printArray("Element with id $id not found on form {$this->formData->name} with id {$this->formData->id}",false,true);
 			return false;
 		}
@@ -482,18 +492,18 @@ class SimForms{
 	/**
 	 * Finds an element by its type
 	 *
-	 * @param	string	$name	The element type
-	 * @param	string	$key	A specific element attribute to return. Default empty
+	 * @param	string	$type	The element type
+	 * @param	bool	$load	Try to load the formdata if empty default true
 	 *
-	 * @return	object|array|string|false			The element or element property
+	 * @return	object|array|string|false			An array of elements
 	 */
-	public function getElementByType($type){
+	public function getElementByType($type, $load=true){
 		if(empty($type)){
 			return false;
 		}
 		
 		//load if needed
-		if(empty($this->formData->elementMapping)){
+		if(empty($this->formData->elementMapping['type']) && $load){
 			$this->getForm();
 		}
 		

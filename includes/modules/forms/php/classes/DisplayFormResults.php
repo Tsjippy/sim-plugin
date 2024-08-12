@@ -89,7 +89,7 @@ class DisplayFormResults extends DisplayForm{
 			}
 		}
 
-		$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this->formName);
+		$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this);
 
 		// Get results
 		$result		= $wpdb->get_results($query);
@@ -160,7 +160,7 @@ class DisplayFormResults extends DisplayForm{
 			
 		}	
 
-		return apply_filters('sim_retrieved_formdata', $results, $userId, $this->formName);
+		return apply_filters('sim_retrieved_formdata', $results, $userId, $this);
 	}
 
 	/**
@@ -246,7 +246,7 @@ class DisplayFormResults extends DisplayForm{
 			}
 		}
 
-		$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this->formName);
+		$query					= apply_filters('sim_formdata_retrieval_query', $query, $userId, $this);
 
 		// Get the total
 		$this->total			= $wpdb->get_var(str_replace('*', 'count(*) as total', $query));
@@ -260,7 +260,7 @@ class DisplayFormResults extends DisplayForm{
 		// Get results
 		$result	= $wpdb->get_results($query);
 
-		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
+		$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this);
 
 		if(is_numeric($userId)){
 			// find the user id element
@@ -285,7 +285,7 @@ class DisplayFormResults extends DisplayForm{
 				if($wpdb->last_error !== ''){
 					SIM\printArray($wpdb->print_error());
 				}else{
-					$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this->formName);
+					$result	= apply_filters('sim_retrieved_formdata', $result, $userId, $this);
 
 					foreach($result as &$r){
 						$r->formresults	= unserialize($r->formresults);
