@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- show own bookings possibility
 
 ### Changed
 - moved sim nigeria specific settings
