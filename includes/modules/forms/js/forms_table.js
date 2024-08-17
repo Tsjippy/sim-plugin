@@ -685,6 +685,10 @@ document.addEventListener("DOMContentLoaded", function() {
 			Sortable.create(el, options);
 		});
 	}
+
+	document.querySelectorAll('.form-data-table th').forEach(cell=>{
+		cell.style.minWidth		= parseFloat(window.getComputedStyle(cell).width) + 20 + 'px';
+	});
 });
 
 document.addEventListener('change', event=>{

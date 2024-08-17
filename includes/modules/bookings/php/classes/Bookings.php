@@ -743,17 +743,27 @@ class Bookings{
         }
         
         //sort on startdate
-		$query	.= " ORDER BY `startdate`, `starttime` ASC";
+		$query	            .= " ORDER BY `startdate`, `starttime` ASC";
 
-		$bookings   = $wpdb->get_results($query);
+		$bookings           = $wpdb->get_results($query);
 
         $baseSubject        = explode(';', $subject)[0];
         $overlap            = false;
 
-        $bookingDetails     = maybe_unserialize($this->forms->getElementByType('booking_selector')[0]->booking_details);
+        $bookingEl          = $this->forms->getElementByType('booking_selector');
+
+        if(is_wp_error($bookingEl)){
+            return $bookingEl;
+        }
+
+        $bookingDetails     = maybe_unserialize($bookingEl[0]->booking_details);
         if(!empty($bookingDetails) && is_array($bookingDetails['subjects'])){
             foreach($bookingDetails['subjects'] as $detail){
-                if($detail['name'] == $baseSubject && !empty($detail['overlap']) && $detail['overlap'] == 'yes'){
+                if(
+                    $detail['name'] == $baseSubject && 
+                    !empty($detail['overlap']) && 
+                    $detail['overlap'] == 'yes'
+                ){
                     $overlap    = true;
                 }
             }
@@ -778,6 +788,59 @@ class Bookings{
     }
 
     /**
+     * Checks wheter a booking to be inserted should be a pending booking
+     *
+     * @param   int     $user       the user or userId of the person for who the booking is done
+     * 
+     * @return  bool                true if is should be pending, false otherwise
+     */
+    public function checkPending($user, $subject){
+        $el = $this->forms->getElementByType('booking_selector');
+        if(!$el){
+            return true;
+        }
+
+        $elSettings    = maybe_unserialize($el[0]->booking_details);
+
+        foreach($elSettings['subjects'] as $subjectSettings){
+            if($subjectSettings['name'] != $subject){
+                continue;
+            }
+
+            if($subjectSettings['default_booking_state'] == 'pending'){
+                SIM\cleanUpNestedArray($subjectSettings['confirmed_booking_roles']);
+
+                $confirmRoles   = array_keys($subjectSettings['confirmed_booking_roles']);
+
+                // user the boooking is for
+                if(is_numeric($user)){
+                    $user       = get_userdata($user);
+                }
+
+                // user who submitted the form
+                $submittingUser = get_userdata($this->forms->submission->userid);
+
+                if(
+                    (
+                        $user  &&          //user found
+                        array_intersect($user->roles, $confirmRoles) // and allowed
+                    )   ||
+                    (
+                        $submittingUser  &&          // user found
+                        array_intersect($submittingUser->roles, $confirmRoles) // and allowed
+                    )
+                ){
+                    return    false;
+                }
+
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Insert a new booking
      *
      * @param   string      $startdate      The startdate string
@@ -792,7 +855,9 @@ class Bookings{
             return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
         }
 
-        $userId     = $this->forms->submission->formresults['user_id'];
+        $userIdKey	        = $this->forms->findUserIdElement();
+
+        $userId             = $this->forms->submission->formresults[$userIdKey];
 
         $subjectWithRoom    = str_replace(';', ' room ', $subject, $count);
 
@@ -821,29 +886,7 @@ class Bookings{
         }
 
         // Determine the pending state
-        $pending    = false;
-
-        $user       = false;
-        if(is_numeric($userId)){
-            $user       = get_userdata($userId);
-        }
-
-        $submittingUser       = get_userdata($this->forms->submission->userid);
-
-        if(
-            isset($this->forms->formData->default_booking_state)            &&
-            $this->forms->formData->default_booking_state   == 'pending'    &&
-            (
-                !$user  ||          // No user found
-                !array_intersect($user->roles, array_keys($this->forms->formData->confirmed_booking_roles)) // or not allowed
-            )   &&
-            (
-                !$submittingUser  ||          // No user found
-                !array_intersect($submittingUser->roles, array_keys($this->forms->formData->confirmed_booking_roles)) // or not allowed
-            )
-        ){
-            $pending    = true;
-        }
+        $pending    = $this->checkPending($userId, $subject);
 
         // Insert booking in db
         $wpdb->insert(
@@ -934,6 +977,38 @@ class Bookings{
             ),
         );
 
+        if(empty($wpdb->last_error)){
+            $message            = 'Succesfully approved the booking';
+        }else{
+            $message            = $wpdb->last_error;
+        }
+
+        // update submission
+        if(empty($this->forms->submission)){
+            $this->forms->submission = $this->forms->getSubmissions(null, $booking->submission_id)[0];
+        }
+        $formResults    = $this->forms->submission->formresults;
+
+        foreach($values as $key => $value){
+            if(isset($formResults[$key])){
+                $formResults[$key]  = $value;
+            }
+
+            if(isset($formResults['booking-'.$key])){
+                $formResults['booking-'.$key]  = [$value];
+            }
+        }
+
+        $wpdb->update(
+            $this->forms->submissionTableName,
+            [
+                'formresults'   => serialize($formResults)
+            ],
+            array(
+                'id'		=> $booking->submission_id
+            ),
+        );
+
         // update event
         $event                          = json_decode(get_post_meta($booking->event_id, 'eventdetails', true), true);
         update_post_meta($booking->event_id, 'eventdetails', json_encode(array_merge($event, $values)));
@@ -965,7 +1040,8 @@ class Bookings{
             'years'         => $years,
             'subject'       => $booking->subject,
             'html'          => $monthsHtml,
-            'details'       => $details
+            'details'       => $details,
+            'message'       => $message
         ];
     }
 
@@ -1070,7 +1146,7 @@ class Bookings{
      *
      * @param   int             $id     The submission id
      *
-     * @return  object|false            The booking or false if no booking found
+     * @return  array|false             An array of bookings or false if no booking found
      * */
     public function getBookingsBySubmission($id){
         global $wpdb;

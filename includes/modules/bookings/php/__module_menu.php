@@ -2,7 +2,7 @@
 namespace SIM\BOOKINGS;
 use SIM;
 
-const MODULE_VERSION		= '7.1.0';
+const MODULE_VERSION		= '7.1.1';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
 add_filter('sim_module_updated', function($newOptions, $moduleSlug){

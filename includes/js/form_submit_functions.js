@@ -184,7 +184,11 @@ export async function fetchRestApi(url, formData='', showErrors=true){
 			return false;
 		}else{
 			console.error(json);
-			Main.displayMessage(json.message+"\n"+json.data, 'error');
+			if(json.data == null){
+				Main.displayMessage(json.message);
+			}else{
+				Main.displayMessage(json.message+"\n"+json.data, 'error');
+			}
 			return false;
 		}
 	}catch(error){

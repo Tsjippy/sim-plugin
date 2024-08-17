@@ -117,7 +117,17 @@ add_action( 'rest_api_init', function () {
 			'callback' 				=> function(){
 				$bookings	= new Bookings();
 
-				return $bookings->updateBooking($_POST['id'], ['pending' => 0]);
+				$bookings->forms->formId	= $_POST['formid'];
+
+				foreach($bookings->getBookingsBySubmission($_POST['id']) as $booking){
+					$result	= $bookings->updateBooking($booking, ['pending' => 0]);
+
+					if(is_wp_error($result)){
+						return $result;
+					}
+				}
+
+				return $result;
 			},
 			'permission_callback' 	=> '__return_true',
 			'args'					=> array(

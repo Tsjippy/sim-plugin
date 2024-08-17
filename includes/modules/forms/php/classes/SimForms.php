@@ -175,8 +175,7 @@ class SimForms{
 				$this->insertForm();
 				$this->formData 	=  new \stdClass();
 			}else{
-				$this->formData 	=  (object)$result[0];
-
+				$this->formData 					=  (object)$result[0];
 				$this->formData->actions			= maybe_unserialize($this->formData->actions);
 				$this->formData->split				= maybe_unserialize($this->formData->split);
 				$this->formData->full_right_roles	= maybe_unserialize($this->formData->full_right_roles);
@@ -504,9 +503,12 @@ class SimForms{
 		
 		//load if needed
 		if(empty($this->formData->elementMapping['type']) && $load){
-			$this->getForm();
+			$result	= $this->getForm();
+
+			if(is_wp_error($result)){
+				return $result;
+			}
 		}
-		
 
 		if(!isset($this->formData->elementMapping['type'][$type])){
 			//SIM\printArray("Element with id $type not found");
@@ -522,6 +524,25 @@ class SimForms{
 		}
 
 		return $elements;
+	}
+
+	/**
+	 * Finds the user id element in a form
+	 *
+	 * @return	string	the element name or false if no user id element is found
+	 */
+	public function findUserIdElement(){
+		// find the user id element
+		$userIdKey	= false;
+		if($this->getElementByName('user_id')){
+			$userIdKey	= 'user_id';
+		}elseif($this->getElementByName('userid')){
+			$userIdKey	= 'userid';
+		}elseif($this->getElementByName('user-id')){
+			$userIdKey	= 'user-id';
+		}
+
+		return $userIdKey;
 	}
 
 	/**

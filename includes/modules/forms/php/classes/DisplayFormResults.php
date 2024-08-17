@@ -264,14 +264,7 @@ class DisplayFormResults extends DisplayForm{
 
 		if(is_numeric($userId)){
 			// find the user id element
-			$userIdKey	= false;
-			if($this->getElementByName('user_id')){
-				$userIdKey	= 'user_id';
-			}elseif($this->getElementByName('userid')){
-				$userIdKey	= 'userid';
-			}elseif($this->getElementByName('user-id')){
-				$userIdKey	= 'user-id';
-			}
+			$userIdKey	= $this->findUserIdElement();
 
 			// Form does not contain an user id field, run the query against the user who submitted the form
 			if(!$userIdKey){
@@ -2112,6 +2105,13 @@ class DisplayFormResults extends DisplayForm{
 			$type		= 'own';
 		}
 
+		$shouldShow	= apply_filters('sim-formstable-should-show', true, $this, $type);
+
+		if($shouldShow !== true){
+			echo 	$shouldShow;
+			return  false;
+		}
+		
 		// get submissions for the current user only
 		if($type == 'own'){
 			$userId	= get_current_user_id();
@@ -2175,13 +2175,6 @@ class DisplayFormResults extends DisplayForm{
 					break;
 				}
 			}
-		}
-
-		$shouldShow	= apply_filters('sim-formstable-should-show', true, $this, $type);
-
-		if($shouldShow !== true){
-			echo 	$shouldShow;
-			return  false;
 		}
 		
 		ob_start();
@@ -2299,9 +2292,11 @@ class DisplayFormResults extends DisplayForm{
 	/**
 	 * Creates the formresult table html
 	 *
+	 * @param	bool			$split	Whether or not to split in two tables, default table settings		
+	 *
 	 * @return	string|WP_Error			The html or error on failure
 	 */
-	public function showFormresultsTable(){
+	public function showFormresultsTable($split = null){
 		//do not show if not logged in
 		if(!is_user_logged_in()){
 			return '';
@@ -2312,7 +2307,14 @@ class DisplayFormResults extends DisplayForm{
 		// first render the table so we now how many results we have
 		ob_start();
 		$allRowsEmpty	= true;
-		if(isset($this->tableSettings['split-table']) && $this->tableSettings['split-table'] == 'yes'){
+		if(
+			(
+				empty($split)	&&									// we should use the table settings
+				isset($this->tableSettings['split-table']) && 		// split-table is defined
+				$this->tableSettings['split-table'] == 'yes'		// and we should split						
+			) ||
+			$split == true											// we should always split
+		){
 			$buttons		= $this->renderTableButtons();
 			$result1		= $this->renderTable('own', false, true);
 

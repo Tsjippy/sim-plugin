@@ -11,6 +11,14 @@ add_filter('sim-special-form-elements', function($options){
 
 // add element options
 add_action('sim-after-formbuilder-element-options', function($element){
+    global $wp_roles;
+    
+    //Get all available roles
+    $userRoles = $wp_roles->role_names;
+    
+    //Sort the roles
+    asort($userRoles);
+
     $bookingDetails = [];
     if($element != null && !empty($element->booking_details)){
         $bookingDetails = maybe_unserialize($element->booking_details);
@@ -56,11 +64,13 @@ add_action('sim-after-formbuilder-element-options', function($element){
                             <label>
                                 <input type='radio' class='booking-subject-selector overlap' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap]' value='yes' <?php if($subject['overlap'] == 'yes'){echo 'checked';}?>>
                                 Yes
-                            </label>
+                            </label>    
+
                             <label>
                                 <input type='radio' class='booking-subject-selector overlap' name='formfield[booking_details][subjects][<?php echo $index;?>][overlap]' value='no' <?php if($subject['overlap'] == 'no'){echo 'checked';}?>>
                                 No
                             </label>
+                            <br>
                             <br>
                             <div class='min-bookking-gap-time <?php if(!isset($subject['overlap']) || $subject['overlap'] == 'yes'){echo 'hidden';}?>'>
                                 <label>
@@ -81,14 +91,55 @@ add_action('sim-after-formbuilder-element-options', function($element){
                             </div>
                         </label>
 
+                        <label class="formfield formfieldlabel">
+                            <h4>Default status for new bookings</h4>
+                            <label>
+                                <input type='radio' name='formfield[booking_details][subjects][<?php echo $index;?>][default_booking_state]' value='pending' <?php if($subject['default_booking_state'] == 'pending'){echo 'checked';}?>>
+                                Pending
+                            </label>
+                            <br>
+                            <label>
+                                <input type='radio' name='formfield[booking_details][subjects][<?php echo $index;?>][default_booking_state]' value='confimed' <?php if($subject['default_booking_state'] == 'confimed'){echo 'checked';}?>>
+                                Confimed
+                            </label>
+                            <br>
+                            <br>
+                            <button class="button sim small confirmed-roles-switcher <?php if($subject['default_booking_state'] != 'pending'){echo 'hidden';}?>" type="button" style='max-width: unset;'>Advanced</button>
+                            <div class='confirmed-roles-wrapper hidden'>
+                                <h4>Select roles for which bookings are confirmed by default</h4>
+                                <div class="role_info">
+                                    <?php
+                                    foreach($userRoles as $key=>$roleName){
+                                        if(!empty($subject['confirmed_booking_roles'][$key])){
+                                            $checked = 'checked';
+                                        }else{
+                                            $checked = '';
+                                        }
+                                        echo "<label class='option-label'>";
+                                            echo "<input type='checkbox' class='formbuilder formfieldsetting' name='formfield[booking_details][subjects][$index][confirmed_booking_roles][$key]' value='$roleName' $checked>";
+                                            echo $roleName;
+                                        echo"</label><br>";
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </label>
+                        <br>
+
                         <label class=" formfield formfieldlabel">
                             <h4 class="labeltext">Room numbering type <?php echo $index+1;?></h4>
                             <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='none' <?php if($subject['nrtype'] == ''){echo 'checked';}?> onchange='this.closest(`.clone_div`).querySelector(`label.amount`).classList.add(`hidden`);this.closest(`.clone_div`).querySelector(`.rooms`).classList.add(`hidden`)'>
                             No seperate rooms
+                            <br>
+
                             <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='numbers' <?php if($subject['nrtype'] == 'numbers'){echo 'checked';}?> onchange='this.closest(`.clone_div`).querySelector(`label.amount`).classList.remove(`hidden`);this.closest(`.clone_div`).querySelector(`.rooms`).classList.add(`hidden`)'>
                             Numbers
+                            <br>
+
                             <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='letters' <?php if($subject['nrtype'] == 'letters'){echo 'checked';}?> onchange='this.closest(`.clone_div`).querySelector(`label.amount`).classList.remove(`hidden`);this.closest(`.clone_div`).querySelector(`.rooms`).classList.add(`hidden`)'>
                             Letters
+                            <br>
+
                             <input type='radio' class='booking-subject-selector' name='formfield[booking_details][subjects][<?php echo $index;?>][nrtype]' value='custom' <?php if($subject['nrtype'] == 'custom'){echo 'checked';}?> onchange='this.closest(`.clone_div`).querySelector(`label.amount`).classList.add(`hidden`);this.closest(`.clone_div`).querySelector(`.rooms`).classList.remove(`hidden`)'>
                             Custom
                         </label>
@@ -305,68 +356,6 @@ add_filter('sim-forms-element-html', function($html, $element, $displayForm){
 
 }, 10, 3);
 
-// Form settings
-add_action('sim-forms-form-settings-form', function($formBuilderForm){
-    if(empty($formBuilderForm->getElementByType('booking_selector'))){
-        return;
-    }
-    global $wp_roles;
-    
-    //Get all available roles
-    $userRoles = $wp_roles->role_names;
-    
-    //Sort the roles
-    asort($userRoles);
-
-    $state    = '';
-    if(isset($formBuilderForm->formData->default_booking_state)){
-        $state  = $formBuilderForm->formData->default_booking_state;
-    }
-    ?>
-    <h4>Default status for new bookings</h4>
-    <label>
-        <input type='radio' name='default_booking_state' value='pending' <?php if($state == 'pending'){echo 'checked';}?>>
-        Pending
-    </label>
-    <label>
-        <input type='radio' name='default_booking_state' value='confimed' <?php if($state == 'confimed'){echo 'checked';}?>>
-        Confimed
-    </label>
-    <br>
-    <script>
-        document.querySelectorAll('[name="default_booking_state"]').forEach(el=>{
-            el.addEventListener('change', (ev) => {
-                let div = document.getElementById('confirmed-roles-wrapper');
-                if(ev.target.value == 'pending' && ev.target.checked){
-                    div.classList.remove('hidden');
-                }else{
-                    div.classList.add('hidden');
-                }
-            });
-        });
-    </script>
-    <div id='confirmed-roles-wrapper' class='<?php if($state != 'pending'){echo 'hidden';}?>'>
-        <h4>Select roles for which bookings are confirmed by default</h4>
-        <div class="role_info">
-            <?php
-            foreach($userRoles as $key=>$roleName){
-                if(!empty($formBuilderForm->formData->confirmed_booking_roles[$key])){
-                    $checked = 'checked';
-                }else{
-                    $checked = '';
-                }
-                echo "<label class='option-label'>";
-                    echo "<input type='checkbox' class='formbuilder formfieldsetting' name='settings[confirmed-booking-roles][$key]' value='$roleName' $checked>";
-                    echo $roleName;
-                echo"</label><br>";
-            }
-            ?>
-        </div>
-    </div>
-    <br>
-    <?php
-});
-
 // the choice for table view or calendar view
 add_action('sim-formstable-after-table-settings', function($displayFormResults){
     // Check if it has an booking selector
@@ -397,7 +386,18 @@ add_action('sim-formstable-after-table-settings', function($displayFormResults){
     <?php
 });
 
-function pendingBookingsHtml($booking, $displayFormResults, $html){
+/**
+ * Adds the buttons to approve or delete a pending booking
+ */
+function pendingButtons($buttonsHtml, $values, $subId, $object, $submission){
+    $buttonsHtml['approve'] = "<button class='button approve' type='button' data-id='$submission->id' data-formid='$submission->form_id'>Approve</button>";
+    $buttonsHtml['delete']  = "<button class='button delete' type='button' data-id='$submission->id' data-formid='$submission->form_id'>Delete</button><br>";
+    unset($buttonsHtml['archive']);
+
+    return $buttonsHtml;
+}
+
+function pendingBookingsHtml($booking, $displayFormResults){
     // do not show if no permissions
     if(!array_intersect(array_keys($booking->forms->formData->full_right_roles), $booking->forms->userRoles)){
         return '';
@@ -405,47 +405,34 @@ function pendingBookingsHtml($booking, $displayFormResults, $html){
 
     $pendingBookings    = $booking->retrievePendingBookings();
 
-    if(!empty($pendingBookings)){
-        $submissions    = [];
-        foreach($displayFormResults->submissions as $submission){
-            $submissions[$submission->id] = $submission->formresults;
-        }
-
-        $html   .= "<div class='pending-bookings-wrapper'>";
-            $html   .= "<table class='sim-table' data-formid='{$booking->forms->formData->id}'>";
-                $html   .= "<thead>";
-                    $html   .= "<tr>";
-                        foreach($displayFormResults->columnSettings as $setting){
-                            if($setting['show'] == 'hide'){
-                                break;
-                            }
-                            $html   .= "<th>{$setting['nice_name']}</th>";
-                        }
-                        $html   .= "<th>Actions</th>";
-                    $html   .= "</tr>";
-                $html   .= "</thead>";
-
-                $html   .= "<tbody>";
-                    foreach($pendingBookings as $pendingBooking){
-                        $data   = $submissions[$pendingBooking->submission_id];
-                        $html   .= "<tr data-id='$pendingBooking->submission_id' >";
-                            foreach($displayFormResults->columnSettings as $setting){
-                                if($setting['show'] == 'hide'){
-                                    break;
-                                }
-                                $cellContent    = $displayFormResults->transformInputData($data[$setting['name']], $setting['name'], $data);
-                                $html   .= "<td class='edit_forms_table' data-id='{$setting['name']}' data-oldvalue='".json_encode($data[$setting['name']])."'>$cellContent</td>";
-                            }
-                            $html   .= "<td>";
-                                $html   .= "<button class='button approve' type='button' data-id='$pendingBooking->id'>Approve</button>";
-                                $html   .= "<button class='button delete' type='button' data-id='$pendingBooking->id'>Delete</button><br>";
-                            $html   .= "</td>";
-                        $html   .= "</tr>";
-                    }
-                $html   .= "</tbody>";
-            $html   .= "</table>";
-        $html   .= "</div>";
+    if(empty($pendingBookings)){
+        return '';
     }
+
+    $html   = "<h4>Pending Bookings</h4>";
+
+    $submissions    = [];
+
+    // only show one booking for submissions with multiple
+    foreach($pendingBookings as $index => $pendingBooking){
+        if(isset($submissions[$pendingBooking->submission_id])){
+            unset($pendingBookings[$index]);
+        }else{
+            $submissions[$pendingBooking->submission_id]  = $booking->forms->getSubmissions(null, $pendingBooking->submission_id)[0];
+        }
+    }
+
+    add_filter('sim_form_actions_html', __NAMESPACE__.'\pendingButtons', 10, 5);
+
+    ob_start();
+
+    $displayFormResults->theTable('pending', $submissions);
+
+    $html   .= ob_get_clean();
+
+    remove_filter('sim_form_actions_html', __NAMESPACE__.'\pendingButtons', 10);
+
+    return $html;
 }
 
 // Display calendar instead of a table
@@ -461,6 +448,10 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
         isset($_REQUEST['export_xls'])  ||                                          // exporting an excel
         isset($_REQUEST['export_pdf'])                                              // exporting a pdf
     ){
+        if($type == 'own' && $displayFormResults->tableSettings['booking-display'] == 'calendar'){
+            $booking    = new Bookings($displayFormResults);
+            echo pendingBookingsHtml($booking, $displayFormResults);
+        }
         return $shouldShow;
     }
     
@@ -468,7 +459,7 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
 
     $booking    = new Bookings($displayFormResults);
 
-    $elements    = $displayFormResults->getElementByType('booking_selector');
+    $elements   = $displayFormResults->getElementByType('booking_selector');
 
     foreach($elements as $element){
         $bookingDetails = maybe_unserialize($element->booking_details);
@@ -491,7 +482,9 @@ add_filter('sim-formstable-should-show', function($shouldShow, $displayFormResul
     }
     
     $html   = '<div class="tables-wrapper">';
-        $html       .= pendingBookingsHtml($booking, $displayFormResults, $html);
+        if($type != 'others'){ // has already been rendered for above own submissions
+            $html       .= pendingBookingsHtml($booking, $displayFormResults);
+        }
 
         $calendars  = '';
         $checkboxes = '<h4>Please select the accomodation you want to see the calendar for</h4>';
@@ -612,7 +605,7 @@ add_filter('sim_after_saving_formdata', function($message, $formBuilder){
 add_filter('sim-forms-submission-updated', function($message, $formTable, $elementName, $oldValue, $newValue){
     global $wpdb;
 
-    $bookings           =  new Bookings($formTable);
+    $bookings          =  new Bookings($formTable);
     $currentBookings   = $bookings->getBookingsBySubmission($formTable->submission->id);
 
     if(!$currentBookings || !isset($currentBookings[0])){

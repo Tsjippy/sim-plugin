@@ -116,10 +116,15 @@ async function getMonth(target){
 async function approve(target){    
     let formData    = new FormData();
     formData.append('id', target.dataset.id);
+    formData.append('formid', target.dataset.formid);
 
     let row         = target.closest('tr');
 
-    Main.showLoader(target.closest('td'));
+    let cell        = target.closest('td');
+
+    let initContent = cell.outerHTML;
+
+    Main.showLoader(cell);
         
     let response = await FormSubmit.fetchRestApi('bookings/approve', formData);
 
@@ -133,7 +138,17 @@ async function approve(target){
             row.remove();
         }
 
-        let subjectWrapper  = document.querySelector(`.bookings-wrap[data-subject='${response.subject}']`);
+        Main.displayMessage(response.message);
+
+        let building        = response.subject.split(';')[0];
+        let room            = response.subject.split(';')[1];
+        let querySelector   = `.bookings-wrap[data-subject='${building}']`;
+
+        if(room != undefined){
+            querySelector   += ` .roomwrapper[data-room='${room}']`;
+        }
+
+        let subjectWrapper  = document.querySelector(querySelector);
 
         for (let i = 0; i < response.months.length; i++) {
             // Get the calendar
@@ -141,8 +156,10 @@ async function approve(target){
         }
 
         // Add the details
-        subjectWrapper.querySelector(`.booking.details-wrapper`).insertAdjacentHTML('beforeEnd', response.details);
+        subjectWrapper.closest('.bookings-wrap').querySelector(`.booking.details-wrapper`).insertAdjacentHTML('beforeEnd', response.details);
         
+    }else{
+        row.querySelector('.loaderwrapper').outerHTML  = initContent;
     }
 }
 
@@ -431,5 +448,17 @@ document.addEventListener('click', (ev) => {
         remove(target);
     }else if(target.matches('.room-selector')){
         roomSelected(target);
+    }else if(target.matches('.confirmed-roles-switcher')){
+        target.closest('.formfieldlabel').querySelectorAll('.confirmed-roles-wrapper').forEach(el=>el.classList.toggle('hidden'));
+    }
+});
+
+document.addEventListener('change', (ev) => {
+    if(ev.target.name.includes('default_booking_state')){
+        if(ev.target.value == 'pending' && ev.target.checked){
+            ev.target.closest('.formfield.formfieldlabel').querySelectorAll('button.confirmed-roles-switcher.hidden').forEach(but=>but.classList.remove('hidden'));
+        }else{
+            ev.target.closest('.formfield.formfieldlabel').querySelectorAll('button.confirmed-roles-switcher:not(.hidden)').forEach(but=>but.classList.add('hidden'));
+        }
     }
 });
