@@ -10,6 +10,7 @@
 
 ### Fixed
 - text color login form
+- booking approvals
 
 ### Updated
 
