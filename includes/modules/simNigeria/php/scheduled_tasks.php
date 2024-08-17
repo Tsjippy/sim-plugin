@@ -25,10 +25,11 @@ function sendReimbursementRequests(){
 	$formTable = new SIM\FORMS\EditFormResults(['shortcodeid'=>'6', 'formname'=>'reimbursement']);
 
 	//make sure we have permission on the data
-	$formTable->tableEditPermissions = true;
+	$formTable->tableEditPermissions 	= true;
+	$formTable->all						= true;
 
 	//fill the excel data
-	$formTable->showFormresultsTable();
+	$formTable->showFormresultsTable(false, true);
 
 	$attachments	= [];
 

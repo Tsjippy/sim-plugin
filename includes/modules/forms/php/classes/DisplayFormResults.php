@@ -1797,7 +1797,8 @@ class DisplayFormResults extends DisplayForm{
 				!$this->all
 			)	||
 			!$this->tableEditPermissions							&&
-			!array_intersect($this->userRoles, array_keys((array)$this->tableSettings['view_right_roles']))
+			!array_intersect($this->userRoles, array_keys((array)$this->tableSettings['view_right_roles'])) &&
+			!wp_doing_cron()
 		){
 			$this->tableViewPermissions 	= false;
 		}
@@ -2086,10 +2087,12 @@ class DisplayFormResults extends DisplayForm{
 	 *
 	 * @param	string		$type		Either 'own', 'others' or 'all'
 	 * @param	bool		$justTable	Only give the table not the heading and filter form
+	 * @param	bool		$force		Whether to retrieve submissions even if already done
+	 * @param	bool		$all		Retrieve all bookings or paged, default false for paged
 	 *
 	 * @return	bool					True on no records found, false on data found
 	 */
-	public function renderTable($type, $justTable=false, $force=false){
+	public function renderTable($type, $justTable=false, $force=false, $all	= false){
 		$userId	= null;
 
 		// Check permissions
@@ -2138,7 +2141,6 @@ class DisplayFormResults extends DisplayForm{
 			$this->sortDirection	= $_REQUEST['sortdir'];
 		}
 
-		$all	= false;
 		if(isset($_REQUEST['export_pfd']) || isset($_REQUEST['export_xls'])){
 			$all	= true;
 		}
@@ -2292,11 +2294,12 @@ class DisplayFormResults extends DisplayForm{
 	/**
 	 * Creates the formresult table html
 	 *
-	 * @param	bool			$split	Whether or not to split in two tables, default table settings		
+	 * @param	bool	$split	Whether or not to split in two tables, default table settings	
+	 * @param	bool	$all	Retrieve all bookings or paged, default false for paged	
 	 *
 	 * @return	string|WP_Error			The html or error on failure
 	 */
-	public function showFormresultsTable($split = null){
+	public function showFormresultsTable($split = null, $all = false){
 		//do not show if not logged in
 		if(!is_user_logged_in()){
 			return '';
@@ -2309,21 +2312,21 @@ class DisplayFormResults extends DisplayForm{
 		$allRowsEmpty	= true;
 		if(
 			(
-				empty($split)	&&									// we should use the table settings
+				$split === null	&&									// we should use the table settings
 				isset($this->tableSettings['split-table']) && 		// split-table is defined
 				$this->tableSettings['split-table'] == 'yes'		// and we should split						
 			) ||
 			$split == true											// we should always split
 		){
 			$buttons		= $this->renderTableButtons();
-			$result1		= $this->renderTable('own', false, true);
+			$result1		= $this->renderTable('own', false, true, $all);
 
 			$buttons		= $this->renderTableButtons();
-			$result2		= $this->renderTable('others', false, true);
+			$result2		= $this->renderTable('others', false, true, $all);
 			$allRowsEmpty	= $result1 && $result2;
 		}else{
 			$buttons		= $this->renderTableButtons();
-			$allRowsEmpty	= $this->renderTable('all');
+			$allRowsEmpty	= $this->renderTable('all', false, false, $all);
 		}
 		$tableHtml			= ob_get_clean();
 
