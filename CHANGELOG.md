@@ -11,6 +11,7 @@
 ### Fixed
 - text color login form
 - booking approvals
+- reimbursement export
 
 ### Updated
 
