@@ -3,6 +3,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [2.45.9] - 2024-08-17
+
+
+### Added
 - show own bookings possibility
 
 ### Changed
@@ -11,8 +22,7 @@
 ### Fixed
 - text color login form
 - booking approvals
-
-### Updated
+- reimbursement export
 
 ## [2.45.8] - 2024-08-05
 
