@@ -100,19 +100,31 @@ class Bookings{
      * 
      * @param   array   $subject   The name
      * @param   boolean $isResult   Wheter we are looking at the form or the formresult
+     * @param   bool    $radio      true for radio choice, false for checkboxes
      */
-    public function roomSelector($subject, $isResult){
+    public function roomSelector($subject, $isResult, $radio=false){
         ob_start();
 
         if($subject['amount'] > 1){
+            if($radio){
+                $type   = 'radio';
+            }else{
+                $type   = 'checkbox';
+            }
+
             if(!empty($_REQUEST['id']) && $this->forms->submission->id != $_REQUEST['id']){
                 $this->forms->submission = $this->forms->getSubmissions(null, $_REQUEST['id'])[0];
             }
             ?>
             <div class="rooms">
                 <?php
+                $s  = 's';
+                if($radio){
+                    $s  = '';
+                }
+
                 if($isResult){
-                    echo "Select the rooms you want to check<br>";
+                    echo "Select the room$s you want to check<br>";
                 }else{
                     echo "First, select one or more room(s) you want to book:<br>";
                 }
@@ -125,7 +137,7 @@ class Bookings{
                             $checked    = 'checked';
                         }
                         ?>
-                        <input type='checkbox' name='room' class='room-selector' value='<?php echo $alphabet[$x];?>' <?php echo $checked;?>>
+                        <input type='<?php echo $type;?>' name='room' class='room-selector' value='<?php echo $alphabet[$x];?>' <?php echo $checked;?>>
                         <?php
                         echo $alphabet[$x];
                     }
@@ -136,7 +148,7 @@ class Bookings{
                             $checked    = 'checked';
                         }
                         ?>
-                        <input type='checkbox' name='room' class='room-selector' value='<?php echo $room;?>' <?php echo $checked;?>>
+                        <input type='<?php echo $type;?>' name='room' class='room-selector' value='<?php echo $room;?>' <?php echo $checked;?>>
                         <?php
                         echo $room;
                     }
@@ -147,7 +159,7 @@ class Bookings{
                             $checked    = 'checked';
                         }
                         ?>
-                        <input type='checkbox' name='room' class='room-selector' value='<?php echo $x;?>' <?php echo $checked;?>>
+                        <input type='<?php echo $type;?>' name='room' class='room-selector' value='<?php echo $x;?>' <?php echo $checked;?>>
                         <?php
                         echo $x;
                     }
@@ -989,25 +1001,30 @@ class Bookings{
         }
         $formResults    = $this->forms->submission->formresults;
 
+        $shouldUpdate   = false;
         foreach($values as $key => $value){
             if(isset($formResults[$key])){
+                $shouldUpdate       = true;
                 $formResults[$key]  = $value;
             }
 
             if(isset($formResults['booking-'.$key])){
-                $formResults['booking-'.$key]  = [$value];
+                $shouldUpdate                   = true;
+                $formResults['booking-'.$key]   = [$value];
             }
         }
 
-        $wpdb->update(
-            $this->forms->submissionTableName,
-            [
-                'formresults'   => serialize($formResults)
-            ],
-            array(
-                'id'		=> $booking->submission_id
-            ),
-        );
+        if($shouldUpdate){
+            $wpdb->update(
+                $this->forms->submissionTableName,
+                [
+                    'formresults'   => serialize($formResults)
+                ],
+                array(
+                    'id'		=> $booking->submission_id
+                ),
+            );
+        }
 
         // update event
         $event                          = json_decode(get_post_meta($booking->event_id, 'eventdetails', true), true);
@@ -1126,8 +1143,13 @@ class Bookings{
 		return $wpdb->get_results($query);
     }
 
-    /** Get a booking by booking id */
-    protected function getBookingById($id){
+    /** Get a booking by booking id 
+     *
+     * @param   int $id         The booking id
+     *
+     * @return  object|false    The booking or false if not found
+    */
+    public function getBookingById($id){
         global $wpdb;
 
 		$query	    = "SELECT * FROM $this->tableName WHERE id=$id ";

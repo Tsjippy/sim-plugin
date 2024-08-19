@@ -1159,10 +1159,14 @@ class DisplayFormResults extends DisplayForm{
 			}
 
 			if(!$element){
-				$rowContents .= "<td $class $subIdString $style>$value</td>";
+				$cellOpeningTag	= "<td $class";
 			}else{
-				$rowContents .= "<td $class data-id='$element->id' data-oldvalue='$oldValue' $subIdString $style>$value</td>";
+				$cellOpeningTag	= "<td $class data-id='$element->id' data-oldvalue='$oldValue'";
 			}
+
+			$cellOpeningTag	= apply_filters('sim-formresult-cell-opening-tag', $cellOpeningTag, $this, $columnSetting, $values);
+			
+			$rowContents .= "$cellOpeningTag $subIdString $style>$value</td>";
 		}
 
 		// none of the cells in this row has a value, only X
@@ -1180,9 +1184,8 @@ class DisplayFormResults extends DisplayForm{
 	 *
 	 * @param	array	$values			Array containing all the values of a form submission
 	 * @param	int		$subId			The subid of a submission. Default -1 for none
-	 * @param	object	$submission		The submission
 	 */
-	protected function writeTableRow($values, $subId, $submission){
+	protected function writeTableRow($values, $subId){
 		//If this row should be written and it is the first cell then write
 		if($subId > -1){
 			$subIdString = "data-subid='$subId'";
@@ -1207,15 +1210,15 @@ class DisplayFormResults extends DisplayForm{
 						isset($_REQUEST['id'])					// if we are requesting a specific id, we are showing archived ones even if not set
 					) && 
 					(
-						$submission->archived ||
-						$submission->formresults['archived']
+						$this->submission->archived ||
+						$this->submission->formresults['archived']
 					)
 				){
 					$action = 'unarchive';
 				}
 				$buttonsHtml[$action]	= "<button class='$action button forms_table_action' name='{$action}_action' value='$action'/>".ucfirst($action)."</button>";
 			}
-			$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $values, $subId, $this, $submission);
+			$buttonsHtml = apply_filters('sim_form_actions_html', $buttonsHtml, $values, $subId, $this);
 			
 			//we have te html now, check for which one we have permission
 			foreach($buttonsHtml as $action=>$button){
@@ -2039,16 +2042,16 @@ class DisplayFormResults extends DisplayForm{
 			<tbody class="table-body">
 				<?php
 				$allRowsEmpty	= true;
-				foreach($submissions as $submission){
-					$values				= $submission->formresults;
+				foreach($submissions as $this->submission){
+					$values				= $this->submission->formresults;
 
-					$values['id']		= $submission->id;
-					$values['userid']	= $submission->userid;
+					$values['id']		= $this->submission->id;
+					$values['userid']	= $this->submission->userid;
 
 					$userIdKey	= false;
-					if(isset($submission->formresults['user_id'])){
+					if(isset($this->submission->formresults['user_id'])){
 						$userIdKey	= 'user_id';
-					}elseif(isset($submission->formresults['userid'])){
+					}elseif(isset($this->submission->formresults['userid'])){
 						$userIdKey	= 'userid';
 					}
 
@@ -2058,12 +2061,12 @@ class DisplayFormResults extends DisplayForm{
 					}
 
 					$subId				= -1;
-					if(is_numeric($submission->subId)){
-						$subId			= $submission->subId;
-						$values['subid']= $submission->subId;
+					if(is_numeric($this->submission->subId)){
+						$subId			= $this->submission->subId;
+						$values['subid']= $this->submission->subId;
 					}
 					
-					if($this->writeTableRow($values, $subId, $submission)){
+					if($this->writeTableRow($values, $subId)){
 						// this row has contents
 						$allRowsEmpty	= false;
 					}

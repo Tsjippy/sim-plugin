@@ -162,7 +162,7 @@ add_action( 'rest_api_init', function () {
 						return is_numeric($submissionId);
 					}
 				),
-				'elementname'		=> array(
+				'name'		=> array(
 					'required'	=> true,
 				),
 				'newvalue'		=> array(
@@ -187,7 +187,7 @@ add_action( 'rest_api_init', function () {
 						return is_numeric($formId);
 					}
 				),
-				'elementid'		=> array(
+				'id'		=> array(
 					'required'	=> true,
 				),
 				'submissionid'		=> array(
@@ -446,9 +446,9 @@ function getInputHtml(){
 
 	$formTable->parseSubmissions(null, $_POST['submissionid']);
 
-	$elementId		= sanitize_text_field($_POST['elementid']);
+	$elementId		= sanitize_text_field($_POST['id']);
 
-	$elementName	= sanitize_text_field($_POST['elementname']);
+	$elementName	= sanitize_text_field($_POST['name']);
 
 	$element		= $formTable->getElementById($elementId);
 
@@ -478,8 +478,6 @@ function getInputHtml(){
 		}
 	}
 
-	
-
 	// Get element html with the value allready set
 	return $formTable->getElementHtml($element, $curValue, true);
 }
@@ -493,7 +491,7 @@ function editValue(){
 	$formTable->parseSubmissions(null, $formTable->submissionId);
 		
 	//update an existing entry
-	$elementName 	= sanitize_text_field($_POST['elementname']);
+	$elementName 	= sanitize_text_field($_POST['name']);
 	$newValue 		= json_decode(sanitize_text_field(stripslashes($_POST['newvalue'])));
 
 	if(is_array($newValue)){

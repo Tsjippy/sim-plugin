@@ -231,9 +231,7 @@ async function getInputHtml(target){
 
 	let formId			= table.dataset.formid;
     let submissionId	= target.closest('tr').dataset.id;
-	let subId			= target.dataset.subid;
-    let elementId		= target.dataset.id
-	let elementName		= target.dataset.name
+	let data			= target.dataset;
 	let oldText			= target.textContent;
     
     Main.showLoader(target.firstChild);
@@ -243,11 +241,10 @@ async function getInputHtml(target){
 	let formData = new FormData();
     formData.append('formid', formId);
     formData.append('submissionid', submissionId);
-	if(subId != undefined){
-		formData.append('subid', subId);
+
+	for( var d in data){
+		formData.append(d, data[d]);
 	}
-    formData.append('elementid', elementId);
-	formData.append('elementname', elementName);
 
 	let response	= await FormSubmit.fetchRestApi('forms/get_input_html', formData);
 
@@ -481,13 +478,11 @@ async function processFormsTableInput(target){
 
 	let table			= target.closest('table');
 	let formId			= table.dataset.formid;
+	let submissionId	= target.closest('tr').dataset.id;
 	let cell			= target.closest('td');
 	cell.classList.remove('active');
-    let elementId		= cell.dataset.id
-	let elementName		= cell.dataset.name
+    let data			= cell.dataset;
 	let value			= FormFunctions.getFieldValue(target, cell, false);
-	let submissionId	= target.closest('tr').dataset.id;
-	let subId			= cell.dataset.subid;
 	let shortcodeid		= '';
 
 	if(target.closest('[data-shortcodeid]') != null){
@@ -502,11 +497,10 @@ async function processFormsTableInput(target){
 		let formData = new FormData();
 		formData.append('formid', formId);
 		formData.append('submissionid', submissionId);
-		if(subId != undefined){
-			formData.append('subid', subId);
+
+		for(d in data){
+			formData.append(d, data[d]);
 		}
-		formData.append('elementid', elementId);
-		formData.append('elementname', elementName);
 		formData.append('newvalue', JSON.stringify(value));
 
 		if(shortcodeid != ''){
@@ -529,16 +523,14 @@ async function processFormsTableInput(target){
 			}
 	
 			//Update all occurences of this field
-			if(subId == null){
-				let targets	= table.querySelectorAll(`tr[data-id="${submissionId}"] td[data-id="${elementId}"]`);
+			if(data['subid'] == undefined){
+				let targets	= table.querySelectorAll(`tr[data-id="${submissionId}"] td[data-id="${data['id']}"]`);
 				targets.forEach(td=>{td.innerHTML = newValue;});
 			}else{
 				cell.innerHTML = newValue;
 			}
 
 			cell.dataset.oldvalue	 	= JSON.stringify(newValue);
-
-			console.log(cell)
 	
 			Main.displayMessage(response.message.replace('_', ' '));
 		}

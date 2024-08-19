@@ -277,7 +277,7 @@ add_filter('sim_form_actions', function($actions){
 });
 
 //Add a print button html
-add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId, $displayFormResults, $submission){
+add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId, $displayFormResults){
 	if(get_class($displayFormResults) != 'SIM\FORMS\DisplayFormResults'){
 		return $buttonsHtml;
 	}
@@ -361,7 +361,7 @@ add_filter('sim_form_actions_html', function($buttonsHtml, $fieldValues, $subId,
 		$buttonsHtml['print']	= trim(ob_get_clean());
 	}
 	return $buttonsHtml;
-}, 10, 5);
+}, 10, 4);
 
 //print travel letters if post
 add_action('sim_formtable_POST_actions',function(){

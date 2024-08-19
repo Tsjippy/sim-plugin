@@ -119,12 +119,10 @@ add_action( 'rest_api_init', function () {
 
 				$bookings->forms->formId	= $_POST['formid'];
 
-				foreach($bookings->getBookingsBySubmission($_POST['id']) as $booking){
-					$result	= $bookings->updateBooking($booking, ['pending' => 0]);
+				$result	= $bookings->updateBooking($_POST['id'], ['pending' => 0]);
 
-					if(is_wp_error($result)){
-						return $result;
-					}
+				if(is_wp_error($result)){
+					return $result;
 				}
 
 				return $result;
@@ -150,7 +148,11 @@ add_action( 'rest_api_init', function () {
 			'callback' 				=> function(){
 				$bookings	= new Bookings();
 
-				$bookings->removeBooking($_POST['id']);
+				$result	= $bookings->removeBooking($_POST['id']);
+
+				if(is_wp_error($result)){
+					return $result;
+				}
 
 				return 'Booking removed succesfully';
 			},
