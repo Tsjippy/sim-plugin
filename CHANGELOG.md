@@ -7,9 +7,15 @@
 ### Changed
 
 ### Fixed
-- change multi-room bookings before approval
 
 ### Updated
+
+## [2.46.0] - 2024-08-29
+
+
+### Fixed
+- change multi-room bookings before approval
+- edit multi room bookings
 
 ## [2.45.9] - 2024-08-17
 
