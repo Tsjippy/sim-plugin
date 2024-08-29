@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- change multi-room bookings before approval
 
 ### Updated
 
