@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- mailchimp from address filter
 
 ### Changed
 
