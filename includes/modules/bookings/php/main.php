@@ -636,9 +636,9 @@ add_filter('sim-forms-submission-updated', function($message, $formTable, $eleme
     
     $currentBookings   = $bookings->getBookingsBySubmission($formTable->submission->id);
 
-    if(isset($_POST['bookingId']) && is_numeric($_POST['bookingId'])){
+    if(isset($_POST['bookingid']) && is_numeric($_POST['bookingid'])){
         foreach($currentBookings as $index=>$booking){
-            if($booking->id == $_POST['bookingId']){
+            if($booking->id == $_POST['bookingid']){
                 break;
             }
         }
@@ -664,7 +664,7 @@ add_filter('sim-forms-submission-updated', function($message, $formTable, $eleme
     }
 
     // change the $elementName to subject as that is the name of the column in the db
-        if($subject == $elementName){
+    if($subject == $elementName){
         $elementName  = 'subject';
     }
 
@@ -731,8 +731,8 @@ add_filter('sim-forms-element-html', function($html, $element, $displayFormResul
     $startDate  = $displayFormResults->submission->formresults['booking-startdate'];
     $endDate    = $displayFormResults->submission->formresults['booking-enddate'];
 
-    if(isset($_POST['bookingId']) && is_numeric($_POST['bookingId'])){
-        $html   = str_replace('>', " data-bookingId='{$_POST['bookingId']}'>", $html);
+    if(isset($_POST['bookingid']) && is_numeric($_POST['bookingid'])){
+        $html   = str_replace('>', " data-bookingid='{$_POST['bookingid']}'>", $html);
     }
 
     if($element->name == 'booking-enddate'){

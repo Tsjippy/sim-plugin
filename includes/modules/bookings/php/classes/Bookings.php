@@ -652,12 +652,12 @@ class Bookings{
                                     <td class='booking-data-wrapper edit_forms_table'>
                                         <table data-formid='<?php echo $this->forms->submission->formresults['formid'];?>' style='margin-bottom: 0px; width:unset;'>
                                             <tr data-id='<?php echo $this->forms->submission->formresults['id'];?>'>
-                                                <td data-name='booking-startdate' data-id='<?php echo $this->forms->getElementByName('booking-startdate')->id;?>' data-oldvalue='<?php echo json_encode($booking->startdate);?>' class='edit_forms_table'>
+                                                <td data-name='booking-startdate' data-id='<?php echo $this->forms->getElementByName('booking-startdate')->id;?>' data-oldvalue='<?php echo json_encode($booking->startdate);?>' data-bookingid='<?php echo $booking->id;?>' class='edit_forms_table'>
                                                     <?php echo date('d-M-Y', strtotime($booking->startdate));?>
                                                 </td>
                                             </tr>
                                             <tr data-id='<?php echo $this->forms->submission->formresults['id'];?>'>
-                                                <td data-name='booking-enddate' data-id='<?php echo  $this->forms->getElementByName('booking-enddate')->id;?>' data-oldvalue='<?php echo json_encode($booking->enddate);?>' class='edit_forms_table'>
+                                                <td data-name='booking-enddate' data-id='<?php echo  $this->forms->getElementByName('booking-enddate')->id;?>' data-oldvalue='<?php echo json_encode($booking->enddate);?>' data-bookingid='<?php echo $booking->id;?>' class='edit_forms_table'>
                                                     <?php echo date('d-M-Y', strtotime($booking->enddate));?>
                                                 </td>
                                             </tr>
@@ -689,7 +689,7 @@ class Bookings{
                                             }else{
                                                 echo "<td>{$setting['nice_name']}:</td>";
                                             }
-                                            echo "<td class='booking-data-wrapper edit_forms_table' data-id='$element->id' data-name='$name' data-oldvalue='".json_encode($data)."'>";
+                                            echo "<td class='booking-data-wrapper edit_forms_table' data-id='$element->id' data-name='$name' data-oldvalue='".json_encode($data)."' data-bookingid='$booking->id'>";
                                                 echo $transformedData;
                                             echo "</td>";
                                         echo "</tr>";
@@ -815,11 +815,11 @@ class Bookings{
         $elSettings    = maybe_unserialize($el[0]->booking_details);
 
         foreach($elSettings['subjects'] as $subjectSettings){
-            if($subjectSettings['name'] != $subject){
+            if(!str_contains($subject, $subjectSettings['name'])){
                 continue;
             }
 
-            if($subjectSettings['default_booking_state'] == 'pending'){
+            if(isset($subjectSettings['default_booking_state']) && $subjectSettings['default_booking_state'] == 'pending'){
                 SIM\cleanUpNestedArray($subjectSettings['confirmed_booking_roles']);
 
                 $confirmRoles   = array_keys($subjectSettings['confirmed_booking_roles']);
@@ -1102,7 +1102,7 @@ class Bookings{
 		//select all bookings of this month
         $startDate  = "$year-$month-01";
         $endDate    = date("Y-m-t", strtotime($startDate));
-		$query	    = "SELECT * FROM $this->tableName WHERE (`startdate` >= '$startDate' OR '$startDate' BETWEEN startdate and enddate) AND `startdate` <= '$endDate' AND subject = '$subject' AND pending=0";
+		$query	    = "SELECT * FROM $this->tableName WHERE (`startdate` >= '$startDate' OR '$startDate' BETWEEN startdate and enddate) AND `startdate` <= '$endDate' AND subject = '$subject'";
 
         //sort on startdate
 		$query	.= " ORDER BY `startdate`, `starttime` ASC";

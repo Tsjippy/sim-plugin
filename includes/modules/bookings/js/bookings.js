@@ -431,7 +431,7 @@ document.addEventListener('click', (ev) => {
         }
     }
     
-    if(target.matches('.bookings-wrap .available:not(.unavailable)')){
+    if(target.matches('.bookings-wrap .available:not(.unavailable)') && modal != null){
         daySelected(target);
     }else if(target.matches('.form.table-wrapper .booked')){
         // Hide others
