@@ -8,6 +8,7 @@
 
 ### Fixed
 - change multi-room bookings before approval
+- edit multi room bookings
 
 ### Updated
 
