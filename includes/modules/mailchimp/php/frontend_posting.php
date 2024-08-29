@@ -46,16 +46,11 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
             </select>
 
             <div class='mailchimp-wrapper hidden'>
-                <h4>Use this from email address</h4>
+                <h4>Use this from e-mail address</h4>
                 <input type='text' name='mailchimp_email' list='emails' value='<?php echo $mailchimpEmail;?>'>
                 <datalist id='emails'>
                     <?php
-                    $emails = [
-                        'jos.personnel@sim.org'	=> 'jos.personnel',
-                        'jos.dirassist@sim.org'	=> 'jos.dirassist',
-                        'jos.director@sim.org'	=> 'jos.director',
-                        'jos.health@sim.org'	=> 'jos.health',
-                    ];
+                    $emails = apply_filters('sim-mailchimp-from', []);
                     foreach($emails as $email=>$text){
                         echo "<option value='$email'>$text</option>";
                     }
