@@ -8,6 +8,7 @@
 ### Changed
 
 ### Fixed
+- group invite link
 
 ### Updated
 
