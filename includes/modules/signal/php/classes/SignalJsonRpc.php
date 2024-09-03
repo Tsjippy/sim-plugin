@@ -666,7 +666,7 @@ class SignalJsonRpc extends AbstractSignal{
             $params['groupId'] = $groupId; 
         }
         
-        $result = $this->doRequest('listGroups');
+        $result = $this->doRequest('listGroups', $params);
 
         if(empty($this->error) && !empty($result)){
             $this->groups   = $result;
@@ -819,7 +819,7 @@ class SignalJsonRpc extends AbstractSignal{
 
         SIM\printArray($result, true);
 
-        return $result[0]['groupInviteLink'];
+        return $result[0]->groupInviteLink;
     }
 
     public function findGroupName($id){
