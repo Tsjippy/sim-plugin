@@ -47,6 +47,7 @@ class SignalJsonRpc extends AbstractSignal{
     public $socket;
     public $shouldCloseSocket;
     public $getResult;
+    public $listenTime;
 
     public function __construct($shouldCloseSocket=true, $getResult=true){
         parent::__construct();
@@ -71,8 +72,9 @@ class SignalJsonRpc extends AbstractSignal{
             SIM\printArray("$errno: $this->error", true);
         }
 
-        $this->shouldCloseSocket   = $shouldCloseSocket;
-        $this->getResult           = $getResult;
+        $this->shouldCloseSocket    = $shouldCloseSocket;
+        $this->getResult            = $getResult;
+        $this->listenTime           = 60;
     }
 
 
@@ -117,10 +119,12 @@ class SignalJsonRpc extends AbstractSignal{
         while (!feof($this->socket)) {
             $response       .= fgets($this->socket, 4096);
 
+            // response is a valid json response
             if(!empty(json_decode($response))){
                 break;
             }
 
+            // break if not broken yet and there is no more data
             $streamMetaData  = stream_get_meta_data($this->socket);
 
             if($streamMetaData['unread_bytes'] <= 0){
@@ -144,6 +148,7 @@ class SignalJsonRpc extends AbstractSignal{
             SIM\printArray($response);
 
             $results    = [];
+
             // loop over each jsonrpc response to find the ones with a result property
             foreach(explode($base, $response) as $jsonString){
                 $decoded    = json_decode($base.$jsonString);
@@ -229,8 +234,8 @@ class SignalJsonRpc extends AbstractSignal{
             return false;
         }
 
-        // maximum of 5 minutes
-        if(time() - $id > 60){
+        // maximum of listentime seconds
+        if(time() - $id > $this->listenTime){
             SIM\printArray('Cancelling as this has been running for '.time() - $id.' seconds');
             return false;
         }
@@ -565,9 +570,9 @@ class SignalJsonRpc extends AbstractSignal{
         ];
 
         if($group){
-            $params['groupId']  = $recipients;
+            $params['groupId']      = $recipients;
         }else{
-            $params['recipient']  = $recipients;
+            $params['recipient']    = $recipients;
         }
 
         if(!empty($attachments)){
@@ -607,7 +612,12 @@ class SignalJsonRpc extends AbstractSignal{
             }
 
             if(is_numeric($ownTimeStamp)){
-                $this->addToMessageLog($recipient, $message, $ownTimeStamp);
+                if(isset($params['groupId'])){
+                    $rcv  = $params['groupId'];
+                }else{
+                    $rcv  = $recipient;
+                }
+                $this->addToMessageLog($rcv, $message, $ownTimeStamp);
                 return $ownTimeStamp;
             }else{
                 SIM\printArray("Sending Signal Message failed");

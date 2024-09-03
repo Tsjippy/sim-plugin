@@ -141,6 +141,12 @@ class Signal{
 
     /**
      * Adds a send message to the log
+     *
+     * @param   string  $recipient  The user or group the message was sent to
+     * @param   string  $message    The sent message
+     * @param   int     $timestamp  The timestamp of the message
+     *
+     * @return  int                 The db row id
      */
     protected function addToMessageLog($recipient, $message, $timestamp){
         if(empty($recipient) || empty($message)){
