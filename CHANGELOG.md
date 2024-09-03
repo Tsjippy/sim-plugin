@@ -3,14 +3,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- mailchimp from address filter
 
 ### Changed
 
 ### Fixed
-- group invite link
 
 ### Updated
+
+## [2.46.1] - 2024-09-03
+
+
+### Added
+- mailchimp from address filter
+
+### Fixed
+- group invite link
 
 ## [2.46.0] - 2024-08-29
 
