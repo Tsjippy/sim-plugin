@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- group messages not in the message log
 
 ### Updated
 
