@@ -5,7 +5,7 @@ from pathlib import Path
 def failure():
     print("ERROR: \nYou should start your commit message with either 'ADDED: ', 'CHANGED: ' or 'FIXED: '")
     print("Your commit message: "+sys.argv[1])
-    exit(0)
+    exit(1)
 
 file    = 'CHANGELOG.md'
 newLine = sys.argv[1]
@@ -35,7 +35,7 @@ elif(type == 'updated'):
     updated     = re.search(r'(### Updated[\s\S]*)', total).group(1).rstrip("\n")
     newUpdated  = updated + "\n- " + text
     newTotal    = total.replace(updated, newUpdated)
-elif(type != 'skip' and type != 'skipped' and '' != newLine):
+elif(type != 'skip' and type != 'skipped' and '' != newLine and 'build(deps-dev)' not in type):
     failure()
 else:
     exit()
