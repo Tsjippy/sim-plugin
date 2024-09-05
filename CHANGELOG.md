@@ -7,10 +7,15 @@
 ### Changed
 
 ### Fixed
-- group messages not in the message log
-- resetting column visibility
 
 ### Updated
+
+## [2.46.2] - 2024-09-05
+
+
+### Fixed
+- group messages not in the message log
+- resetting column visibility
 
 ## [2.46.1] - 2024-09-03
 
