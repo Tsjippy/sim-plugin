@@ -202,8 +202,10 @@ class SignalJsonRpc extends AbstractSignal{
         }
 
         if(isset($json->error)){
-            SIM\printArray("Error, error is: ");
-            SIM\printArray($json);
+            if(!isset($json->error->data->response->results[0]->type) || $json->error->data->response->results[0]->type != 'UNREGISTERED_FAILURE'){
+                SIM\printArray("Error, error is: ");
+                SIM\printArray($json);
+            }
         }elseif(!isset($json->result)){
             SIM\printArray("Trying again");
 
@@ -265,29 +267,9 @@ class SignalJsonRpc extends AbstractSignal{
         }elseif(empty($json->error)){
             return;
         }
-            
-        SIM\printArray("Got error {$json->error->message} For command $method");
-        SIM\printArray($params);
 
-        $failedCommands      = get_option('sim-signal-failed-messages', []);
-
-        $errorMessage  = $json->error->message;
-
-        SIM\printArray($errorMessage);
-        SIM\printArray($this);
-
-        // Captcha required
-        if(str_contains($errorMessage, 'CAPTCHA proof required')){
-            // Store command
-            $failedCommands[$method]    = $params;
-            update_option('sim-signal-failed-messages', $failedCommands);
-
-            $this->sendCaptchaInstructions($errorMessage);
-        }elseif(str_contains($errorMessage, '429 Too Many Requests')){
-            // Store command
-            $failedCommands[$method]    = $params;
-            update_option('sim-signal-failed-messages', $failedCommands);
-        }elseif($json->error->data->response->results[0]->type == 'UNREGISTERED_FAILURE'){
+        // unregistered number or user
+        if(isset($json->error->data->response->results[0]->type) && $json->error->data->response->results[0]->type == 'UNREGISTERED_FAILURE'){
             if(isset($json->error->data->response->results[0]->recipientAddress->number)){
                 // delete the signal meta key
                 $users = get_users(array(
@@ -301,13 +283,37 @@ class SignalJsonRpc extends AbstractSignal{
 
                     SIM\printArray("Deleting Signal number {$json->error->data->response->results[0]->recipientAddress->number} for user $user->ID as it is not valid anymore");
                 }
+            }else{
+                SIM\printArray($json->error->data->response->results);
             }
+
+            return;
+        }
+
+        $errorMessage  = $json->error->message;
+
+        // Captcha required
+        if(str_contains($errorMessage, 'CAPTCHA proof required')){
+            // Store command
+            $failedCommands      = get_option('sim-signal-failed-messages', []);
+            $failedCommands[$method]    = $params;
+            update_option('sim-signal-failed-messages', $failedCommands);
+
+            $this->sendCaptchaInstructions($errorMessage);
+        }elseif(str_contains($errorMessage, '429 Too Many Requests')){
+            // Store command
+            $failedCommands      = get_option('sim-signal-failed-messages', []);
+            $failedCommands[$method]    = $params;
+            update_option('sim-signal-failed-messages', $failedCommands);
         }elseif(str_contains($errorMessage, 'Invalid group id')){
             SIM\printArray($errorMessage);
         }elseif(str_contains($errorMessage, 'Did not receive a reply.')){
             SIM\printArray($errorMessage); 
         }else{
-            SIM\printArray($this->command);
+            SIM\printArray("Got error $errorMessage For command $method");
+            SIM\printArray($params);            
+            SIM\printArray($errorMessage);
+            SIM\printArray($this);
         }
         
         $this->error    = "<div class='error'>$errorMessage</div>";
@@ -547,33 +553,26 @@ class SignalJsonRpc extends AbstractSignal{
         }
 
         $group  = false;
+        $params = [];
 
-        if(!is_array($recipients)){
+        if(is_array($recipients)){
+            foreach($recipients as $recipient){
+                $this->send($recipient, $message, $attachments, $timeStamp);
+            }
+
+            return;
+        }else{
             // first character is a +
             if(strpos( $recipients , '+' ) === 0){
-                $recipient  = $recipients;
+                $params['recipient']    = $recipients;
             }else{
-                $group  = true;
+                $params['groupId']      = $recipients;
             }
-        }else{
-            foreach($recipients as $recipient){
-                $this->send($recipients, $message, $attachments, $timeStamp);
-            }
-            
-            return;
         }
 
         extract($this->parseMessageLayout($message));
 
-        $params     = [
-            "message"       => $message
-        ];
-
-        if($group){
-            $params['groupId']      = $recipients;
-        }else{
-            $params['recipient']    = $recipients;
-        }
+        $params["message"]  = $message;
 
         if(!empty($attachments)){
             if(!is_array($attachments)){
@@ -594,9 +593,9 @@ class SignalJsonRpc extends AbstractSignal{
         if(!empty($timeStamp) && !empty($quoteAuthor) && !empty($quoteMessage)){
             $params['quoteTimestamp']   = $timeStamp;
        
-            $params['quoteAuthor']   = $quoteAuthor;
+            $params['quoteAuthor']      = $quoteAuthor;
         
-            $params['quoteMessage']   = $quoteMessage;
+            $params['quoteMessage']     = $quoteMessage;
         }
 
         if(!empty($style)){
@@ -612,12 +611,7 @@ class SignalJsonRpc extends AbstractSignal{
             }
 
             if(is_numeric($ownTimeStamp)){
-                if(isset($params['groupId'])){
-                    $rcv  = $params['groupId'];
-                }else{
-                    $rcv  = $recipient;
-                }
-                $this->addToMessageLog($rcv, $message, $ownTimeStamp);
+                $this->addToMessageLog($recipients, $message, $ownTimeStamp);
                 return $ownTimeStamp;
             }else{
                 SIM\printArray("Sending Signal Message failed");
@@ -662,7 +656,9 @@ class SignalJsonRpc extends AbstractSignal{
 
         $transientGroups    = get_transient('sim-signal-groups');
 
-        if($transientGroups && !$force){
+        if($transientGroups && is_array($transientGroups) && !$force){
+            $this->groups   = $transientGroups;
+            
             return $transientGroups;
         }
 
@@ -701,7 +697,7 @@ class SignalJsonRpc extends AbstractSignal{
         }
 
         $param = [
-            "targetTimestamp"   => $targetSentTimestamp
+            "targetTimestamp"   => intval($targetSentTimestamp)
         ];
 
         if(str_contains($recipients, '+')){
@@ -710,14 +706,16 @@ class SignalJsonRpc extends AbstractSignal{
             $param['groupId']   = $recipients;
         }
 
-        SIM\printArray($param, true);
+        //SIM\printArray($param, true);
         
         $result = $this->doRequest('remoteDelete', $param);
 
-        if(is_numeric($result)){
+        if(isset($result->results[0]->type) && $result->results[0]->type == 'SUCCESS'){
             $this->markAsDeleted($targetSentTimestamp);
+
+            return true;
         }else{
-            SIM\printArray($result,true);
+            SIM\printArray($result, true);
         }
 
         return $result;

@@ -354,7 +354,12 @@ function processActions($settings){
 		if(isset($_REQUEST['timesend'])){
 			$result		= $signal->deleteMessage($_REQUEST['timesend'], $_REQUEST['recipients']);
 
-			if(!is_numeric(str_replace('int64 ', '', $result))){
+			if(	
+				$result !== true ||
+				(
+					is_string($result) && !is_numeric(str_replace('int64 ', '', $result))
+				)
+			){
 				return "<div class='error'>$result</div>";
 			}else{
 				return "<div class='success'>Succesfully removed the message</div>";
@@ -546,7 +551,7 @@ function sentMessagesTable($startDate, $endDate, $amount){
 						$time		= get_date_from_gmt( $isoDate, TIMEFORMAT);
 
 						$recipient	= '';
-						if(str_contains($message->recipient, '+')){
+						if($message->recipient[0] === '+'){
 							$recipient	= $wpdb->get_var("SELECT display_name FROM $wpdb->users WHERE ID in (SELECT user_id FROM `{$wpdb->prefix}usermeta` WHERE `meta_value` LIKE '%$message->recipient%')");
 						}else{
 							$signal->listGroups();

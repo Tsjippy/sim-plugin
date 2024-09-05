@@ -26,12 +26,12 @@ async function showHiddenColumns(target){
 	target.closest('.table-wrapper').querySelector('.reset-col-vis').classList.add('hidden');
 
 	// Show the columns again
-	let table		= target.closest('.table-wrapper').querySelector('table');
+	let table		= target.closest('.form.table-wrapper').querySelector('table');
 	table.querySelectorAll('th.hidden, td.hidden').forEach(el=>el.classList.remove('hidden'));
 
 	// store as preference
 	let formData	= new FormData();
-	formData.append('formid', table.dataset.formid);
+	formData.append('formid', target.dataset.formid);
 
 	let response	= await FormSubmit.fetchRestApi('forms/delete_table_prefs', formData);
 

@@ -1949,7 +1949,7 @@ class DisplayFormResults extends DisplayForm{
 			if(empty($this->hiddenColumns)){
 				$hidden	= 'hidden';
 			}
-			$html	.= "<button type='button' class='button small reset-col-vis $hidden'>Reset visibility</button>";
+			$html	.= "<button type='button' class='button small reset-col-vis $hidden' data-formid='{$this->formData->id}'>Reset visibility</button>";
 		$html	.= "</div>";
 
 		$html	.= $this->renderFilterForm();

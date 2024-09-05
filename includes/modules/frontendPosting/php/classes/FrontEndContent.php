@@ -922,11 +922,10 @@ class FrontEndContent{
 			do_action('sim_frontend_post_after_content', $this);
 
 			?>
-			<select class='inline' name='permissionfiltertype'>
-				<option>Block</option>
-				<option>Allow</option>
-			</select>
-			<h4> this page for accounts with one of the following roles:</h4>
+			<h4>View Permissions</h4>
+			<input type='radio' name='permissionfiltertype' id='permissionfiltertype' value='block'>Block this page 
+			<input type='radio' name='permissionfiltertype' id='permissionfiltertype' value='allow'>Allow this page <br>
+			for accounts with one of the following roles:<br>
 			<?php
 			global $wp_roles;
 
