@@ -8,6 +8,7 @@
 
 ### Fixed
 - group messages not in the message log
+- resetting column visibility
 
 ### Updated
 
