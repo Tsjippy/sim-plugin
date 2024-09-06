@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- mailchimp e-mail do no longer use a template but use html from admin menu
 
 ### Fixed
 
