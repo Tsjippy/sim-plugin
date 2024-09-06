@@ -4,8 +4,6 @@ use SIM;
 
 add_action('delete_user', function ($userId){
     //remove category from mailchimp
-
-    // 388, 359, 369, 334
     $userTags			= SIM\getModuleOption(MODULE_SLUG, 'user_tags');
     $missionaryTags	    = SIM\getModuleOption(MODULE_SLUG, 'user_tags');
     $tags               = array_merge(explode(',', $userTags), explode(',', $missionaryTags));

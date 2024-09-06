@@ -93,7 +93,7 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 									//$signal 		= new SIM\SIGNAL\SignalBus();
 									$signal 		= new SIM\SIGNAL\SignalJsonRpc();
 								}else{
-									$signal 		= new SIM\SIGNAL\Signal();
+									$signal 		= new SIM\SIGNAL\SignalCommandLine();
 								}
 
 								foreach($signal->listGroups() as $g){

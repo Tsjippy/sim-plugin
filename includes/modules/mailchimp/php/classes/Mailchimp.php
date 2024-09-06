@@ -320,9 +320,9 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				}
 
 				//SIM\printArray("Creating mailchimp campain");
-				//Create a campain
+				//Create an empty campain
 				try{
-					$response = $this->client->campaigns->create(
+					$createResult = $this->client->campaigns->create(
 						[
 							"type" 			=> "regular",
 							"recipients"	=> [
@@ -338,7 +338,7 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 								"from_name"		=> SITENAME,
 								"reply_to"		=> $email,
 								"to_name"		=> "*|FNAME|*",
-								"template_id"	=> (int)$this->settings['templateid']
+								//"template_id"	=> (int)$this->settings['templateid']
 							]
 						]
 					);
@@ -354,37 +354,33 @@ if(!class_exists(__NAMESPACE__.'\Mailchimp')){
 				}
 
 				//Get the campain id
-				$campainId = $response->id;
-				//SIM\printArray("Campain_id is $campainId");
-				update_post_meta($post->ID, 'mailchimp_campaign_id', $campainId);
-
-				//get the campain html
-				$response 			= $this->client->campaigns->getContent($campainId);
-
-				$campainContent 	= $response->html;
+				$campainId 			= $createResult->id;
 
 				//Update the html
 				$mailContent		= $extraMessage.'<br>'.$this->removeGreeting($post->post_content).$finalMessage;
 
-				$replaceText 		= '//*THIS WILL BE REPLACED BY THE WEBSITE *//';
+				$template			= SIM\getModuleOption(MODULE_SLUG, 'mailchimp_html');
 
 				$mailContent		= apply_filters('sim_before_mailchimp_send', $mailContent, $post);
 
-				$mailContent 		= str_replace($replaceText, $mailContent, $campainContent);
+				$mailContent 		= str_replace('%content%', $mailContent, $template, $count);
 
 				//Push the new content
-				$response = $this->client->campaigns->setContent(
+				$setContentResult = $this->client->campaigns->setContent(
 					$campainId,
 					[
-						"html"	=> $mailContent,
+						"html"			=> $mailContent,
 					]
 				);
 
 				//Send the campain
-				$response = $this->client->campaigns->send($campainId);
+				$sendResult = $this->client->campaigns->send($campainId);
 
 				// Indicate as send
 				update_metadata( 'post', $postId, 'mailchimp_message_send', $segmentId);
+
+				// Store campaign id
+				update_metadata( 'post', $postId, 'mailchimp_campaign_id', $campainId);
 
 				//SIM\printArray("Mailchimp campain send succesfully");
 				return 'succes';

@@ -74,37 +74,30 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 		</label>
 		<br>
 		<br>
-		<label>
-			Mailchimp TAGs you want to add to missionaries<br>
-			<input type="text" name="missionary_tags" value="<?php echo $settings["missionary_tags"]; ?>">
-		</label>
-		<br>
-		<br>
-		<label>
-			Mailchimp TAGs you want to add to office staff<br>
-			<input type="text" name="office_staff_tags" value="<?php echo $settings["office_staff_tags"]; ?>">
-		</label>
-		<br>
-		<br>
-		<label>
-			Mailchimp template to be used for e-mails<br>
-			Make sure it contains the text '//*THIS WILL BE REPLACED BY THE WEBSITE *//'
-		</label>
 		<?php
-		$templates	= $mailchimp->getTemplates();
+		do_action('sim-mailchimp-module-extra-tags', $settings);
+
 		?>
-		<select name="templateid">
+		<label>
+			Static mailchimp e-mail html.<br>
+			Insert the placeholder '%content%' where you want post content to be inserted.
 			<?php
-			foreach($templates as $template){
-				if($template->id == $settings["templateid"]){
-					$selected	= 'selected="selected"';
-				}else{
-					$selected	= '';
-				}
-				echo "<option value='$template->id' $selected>$template->name</option>";
-			}
+			$tinyMceSettings = array(
+				'wpautop' 					=> false,
+				'media_buttons' 			=> false,
+				'forced_root_block' 		=> true,
+				'convert_newlines_to_brs'	=> true,
+				'textarea_name' 			=> "mailchimp_html",
+				'textarea_rows' 			=> 20
+			);
+
+			echo wp_editor(
+				$settings["mailchimp_html"],
+				"mailchimp_html",
+				$tinyMceSettings
+			);
 			?>
-		</select>
+		</label>
 		<?php
 	}
 

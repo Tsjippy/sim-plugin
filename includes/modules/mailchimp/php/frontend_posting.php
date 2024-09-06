@@ -2,6 +2,7 @@
 namespace SIM\MAILCHIMP;
 use SIM;
 
+// add the mailchimp fields to the content creation form
 add_action('sim_frontend_post_after_content', function($frontendContend){
     $mailchimpSegmentId	    = $frontendContend->getPostMeta('mailchimp_segment_id');
     $mailchimpEmail		    = $frontendContend->getPostMeta('mailchimp_email');

@@ -11,3 +11,20 @@ add_filter('sim-mailchimp-from', function($adresses){
         'jos.communications@sim.org'	=> 'jos.communications',
     ]);
 });
+
+add_action('sim-mailchimp-module-extra-tags', function($settings){
+    ?>
+    <label>
+        Mailchimp TAGs you want to add to missionaries<br>
+        <input type="text" name="missionary_tags" value="<?php echo $settings["missionary_tags"]; ?>">
+    </label>
+    <br>
+    <br>
+    <label>
+        Mailchimp TAGs you want to add to office staff<br>
+        <input type="text" name="office_staff_tags" value="<?php echo $settings["office_staff_tags"]; ?>">
+    </label>
+    <br>
+    <br>
+    <?php
+});
