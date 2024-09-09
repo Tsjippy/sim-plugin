@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- do not log unregistered numbers
 
 ### Fixed
 - booking reminders
