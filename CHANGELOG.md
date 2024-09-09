@@ -10,6 +10,7 @@
 ### Fixed
 - booking reminders
 - updating prayer requests
+- prayer messages updates
 
 ### Updated
 
