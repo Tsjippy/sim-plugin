@@ -10,6 +10,12 @@
 
 ### Updated
 
+## [2.46.3] - 2024-09-09
+
+
+### Fixed
+- mandatory form reminders
+
 ## [3.0.0] - 2024-09-06
 
 
