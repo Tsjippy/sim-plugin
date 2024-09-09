@@ -116,6 +116,10 @@ function sendPrayerRequests(){
 function checkPrayerRequests(){
 	global $wpdb;
 
+	if(wp_doing_cron()){
+		wp_set_current_user(1);
+	}
+
 	// clean up expired meta keys
 	$query			= "DELETE FROM `{$wpdb->usermeta}` WHERE `meta_key` = 'pending-prayer-update' AND `meta_value` < ".time().'000';
 
@@ -139,7 +143,7 @@ function checkPrayerRequests(){
 	
 	$message 		= trim($exploded[1]);
 
-	$signalMessage	= "Good day %name%, $days days from now your prayer request will be send out\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be send on $dateString\n\nTo confirm the update start your reply with 'update prayer'";
+	$signalMessage	= "Good day %name%, $days days from now your prayer request will be send out\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be send on $dateString\n\nStart your reply with 'update prayer'";
 
 	foreach($prayerRequest['users'] as $userId){
 		$user		= get_userdata($userId);

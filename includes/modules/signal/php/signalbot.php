@@ -95,6 +95,20 @@ function sendSignalMessage($message, $recipient, $postId="", int $timeStamp=0, $
 		return;
 	}
 
+	if(is_object($recipient) && isset($recipient->ID)){
+		$recipient	= $recipient->ID;
+	}
+
+	//Check if recipient is an existing userid
+	if(is_numeric($recipient) && get_userdata($recipient)){
+		$phonenumber = get_user_meta( $recipient, 'signal_number', true );
+	}
+
+	if(!is_string($phonenumber) || empty($phonenumber)){
+		//SIM\printArray("No Phonennumer $phonenumber", false, true);
+		return false;
+	}
+
 	//remove https from site urldecode
 	$urlWithoutHttps	= str_replace('https://', '', SITEURL);
 	$message			= str_replace(SITEURL, $urlWithoutHttps, $message);
@@ -108,29 +122,28 @@ function sendSignalMessage($message, $recipient, $postId="", int $timeStamp=0, $
 	}
 
 	if(SIM\getModuleOption(MODULE_SLUG, 'local')){
-		return sendSignalFromLocal($message, $recipient, $images, $timeStamp, $quoteAuthor, $quoteMessage, $style, $getResult);
+		return sendSignalFromLocal($message, $phonenumber, $images, $timeStamp, $quoteAuthor, $quoteMessage, $style, $getResult);
 	}else{
-		return sendSignalFromExternal($message, $recipient, $images);
+		return sendSignalFromExternal($message, $phonenumber, $images);
 	}
 }
 
 /**
+ * Send a signal message from the local machine
  * 
- * @param   bool        $getResult  Whether we should return the result, default true
+ * @param	string		$message		The message
+ * @param	string		$recipient		The recipient
+ * @param	array|int	$images			Aan array of filepaths to pictures
+ * @param	int			$timeStamp		The timestam of a message to reply to
+ * @param	string		$quoteAuthor	The name of the author to respond to
+ * @param	string		$quoteMessage	The message to respond to
+ * @param	string		$style			Any styling of the message
+ * @param   bool        $getResult  	Whether we should return the result, default true
+ * 
+ * @return	string					the result
  */
 function sendSignalFromLocal($message, $recipient, $images, int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style='', $getResult=true){
 	$phonenumber		= $recipient;
-
-	//Check if recipient is an existing userid
-	if(is_numeric($recipient) && get_userdata($recipient)){
-
-		$phonenumber = get_user_meta( $recipient, 'signal_number', true );
-	}
-
-	if(empty($phonenumber)){
-		//SIM\printArray("No Phonennumer $phonenumber", false, true);
-		return false;
-	}
 
 	if(strlen($phonenumber) < 10){
 		//SIM\printArray("Invalid Phonennumer $phonenumber", false, true);
