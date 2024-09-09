@@ -371,8 +371,11 @@ class SignalJsonRpc extends AbstractSignal{
             }
 
             if(!is_object($response) || empty($response->result)){
-                SIM\printArray("Got faulty result");
-                SIM\printArray($response);
+                if(!isset($response->error->data->response->results[0]->type) || $response->error->data->response->results[0]->type != 'UNREGISTERED_FAILURE'){
+                    SIM\printArray("Got faulty result");
+                    SIM\printArray($response);
+                }
+
                 return false;
             }
 
