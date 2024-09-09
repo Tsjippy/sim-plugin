@@ -8,6 +8,7 @@
 
 ### Fixed
 - booking reminders
+- updating prayer requests
 
 ### Updated
 
