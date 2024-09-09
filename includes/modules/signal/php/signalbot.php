@@ -89,7 +89,8 @@ function asyncSignalMessageSend($message, $recipient, $postId=""){
  * @return	string					the result
  */
 function sendSignalMessage($message, $recipient, $postId="", int $timeStamp=0, $quoteAuthor='', $quoteMessage='', $style='', $getResult=true){
-
+	$phonenumber	= $recipient;
+	
 	// do not send on localhost
 	if($_SERVER['HTTP_HOST'] == 'localhost' || get_option("wpstg_is_staging_site") == "true"){
 		return;

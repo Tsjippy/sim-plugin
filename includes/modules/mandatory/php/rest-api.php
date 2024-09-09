@@ -4,7 +4,7 @@ use SIM;
 
 // Make mark as read rest api publicy available
 add_filter('sim_allowed_rest_api_urls', function($urls){
-	$urls[]	= RESTAPIPREFIX.'/markasread';
+	$urls[]	= RESTAPIPREFIX.'/mandatory_content';
 
 	return $urls;
 });
