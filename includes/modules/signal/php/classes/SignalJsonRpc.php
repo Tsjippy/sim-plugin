@@ -48,6 +48,8 @@ class SignalJsonRpc extends AbstractSignal{
     public $shouldCloseSocket;
     public $getResult;
     public $listenTime;
+    public $lastResponse;
+    public $invalidNumber;
 
     public function __construct($shouldCloseSocket=true, $getResult=true){
         parent::__construct();
@@ -75,6 +77,8 @@ class SignalJsonRpc extends AbstractSignal{
         $this->shouldCloseSocket    = $shouldCloseSocket;
         $this->getResult            = $getResult;
         $this->listenTime           = 60;
+        $this->lastResponse         = '';
+        $this->invalidNumber        = false;
     }
 
 
@@ -137,26 +141,27 @@ class SignalJsonRpc extends AbstractSignal{
         }
         flush();
 
-        $response   = trim($response);
+        $this->lastResponse     = trim($response);
+        $this->invalidNumber    = false;
 
-        if(empty($response)){
+        if(empty($this->lastResponse)){
             return $this->getRequestResponse($id);
         }
 
         // somehow we have red multiple responses
-        if(substr_count($response, $base) > 1){
-            SIM\printArray($response);
+        if(substr_count($this->lastResponse, $base) > 1){
+            SIM\printArray($this->lastResponse);
 
             $results    = [];
 
             // loop over each jsonrpc response to find the ones with a result property
-            foreach(explode($base, $response) as $jsonString){
+            foreach(explode($base, $this->lastResponse) as $jsonString){
                 $decoded    = json_decode($base.$jsonString);
 
                 if(!empty($decoded) && isset($decoded->result)){
                     // this is the one we are after
                     if($decoded->id == $id){
-                        $response   = json_encode($decoded);
+                        $this->lastResponse   = json_encode($decoded);
                     }else{
                         // not this one
                         $results[$decoded->id]  = $decoded;
@@ -174,27 +179,27 @@ class SignalJsonRpc extends AbstractSignal{
             }
         }
 
-        $json       = json_decode($response);
+        $json       = json_decode($this->lastResponse);
 
         if(empty($json)){
             switch (json_last_error()) {
                 case JSON_ERROR_NONE:
-                    SIM\printArray(' - No errors'.$response, true);
+                    SIM\printArray(' - No errors'.$this->lastResponse, true);
                     break;
                 case JSON_ERROR_DEPTH:
-                    SIM\printArray(' - Maximum stack depth exceeded'.$response, true);
+                    SIM\printArray(' - Maximum stack depth exceeded'.$this->lastResponse, true);
                     break;
                 case JSON_ERROR_STATE_MISMATCH:
-                    SIM\printArray(' - Underflow or the modes mismatch'.$response, true);
+                    SIM\printArray(' - Underflow or the modes mismatch'.$this->lastResponse, true);
                     break;
                 case JSON_ERROR_CTRL_CHAR:
-                    SIM\printArray(' - Unexpected control character found'.$response, true);
+                    SIM\printArray(' - Unexpected control character found'.$this->lastResponse, true);
                     break;
                 case JSON_ERROR_SYNTAX:
-                    SIM\printArray(' - Syntax error, malformed JSON: '.$response, true);
+                    SIM\printArray(' - Syntax error, malformed JSON: '.$this->lastResponse, true);
                     break;
                 case JSON_ERROR_UTF8:
-                    SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded'.$response, true);
+                    SIM\printArray(' - Malformed UTF-8 characters, possibly incorrectly encoded'.$this->lastResponse, true);
                     break;
                 default:
                     break;
@@ -202,7 +207,9 @@ class SignalJsonRpc extends AbstractSignal{
         }
 
         if(isset($json->error)){
-            if(!isset($json->error->data->response->results[0]->type) || $json->error->data->response->results[0]->type != 'UNREGISTERED_FAILURE'){
+            if(isset($json->error->data->response->results[0]->type) && $json->error->data->response->results[0]->type == 'UNREGISTERED_FAILURE'){
+                $this->invalidNumber = true;
+            }else{
                 SIM\printArray("Error, error is: ");
                 SIM\printArray($json);
             }
@@ -212,7 +219,7 @@ class SignalJsonRpc extends AbstractSignal{
             $json   = $this->getRequestResponse($id);
         }elseif(!isset($json->id)){
             SIM\printArray("Response has no id");
-            SIM\printArray($response);
+            SIM\printArray($this->lastResponse);
             SIM\printArray($json);
             $json   = $this->getRequestResponse($id);
         }elseif($json->id != $id){
@@ -269,8 +276,11 @@ class SignalJsonRpc extends AbstractSignal{
         }
 
         // unregistered number or user
-        if(isset($json->error->data->response->results[0]->type) && $json->error->data->response->results[0]->type == 'UNREGISTERED_FAILURE'){
+        if($this->invalidNumber){
             if(isset($json->error->data->response->results[0]->recipientAddress->number)){
+                SIM\printArray("Deleting Signal number");
+                SIM\printArray($json);
+
                 // delete the signal meta key
                 $users = get_users(array(
                     'meta_key'     => 'signal_number',
@@ -371,7 +381,7 @@ class SignalJsonRpc extends AbstractSignal{
             }
 
             if(!is_object($response) || empty($response->result)){
-                if(!isset($response->error->data->response->results[0]->type) || $response->error->data->response->results[0]->type != 'UNREGISTERED_FAILURE'){
+                if(!$this->invalidNumber){
                     SIM\printArray("Got faulty result");
                     SIM\printArray($response);
                 }
@@ -556,7 +566,6 @@ class SignalJsonRpc extends AbstractSignal{
             return new WP_Error('Signal', 'You should submit at least one recipient');
         }
 
-        $group  = false;
         $params = [];
 
         if(is_array($recipients)){
@@ -617,7 +626,7 @@ class SignalJsonRpc extends AbstractSignal{
             if(is_numeric($ownTimeStamp)){
                 $this->addToMessageLog($recipients, $message, $ownTimeStamp);
                 return $ownTimeStamp;
-            }else{
+            }elseif(!$this->invalidNumber){
                 SIM\printArray("Sending Signal Message failed");
                 SIM\printArray($params);
                 if(!empty($result)){
