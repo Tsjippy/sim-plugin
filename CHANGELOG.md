@@ -10,6 +10,12 @@
 
 ### Updated
 
+## [3.0.0] - 2024-09-06
+
+
+### Changed
+- mailchimp e-mail do no longer use a template but use html from admin menu
+
 ## [2.46.2] - 2024-09-05
 
 
