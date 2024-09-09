@@ -293,13 +293,13 @@ function updatePrayerRequest($message, $users){
 
     $timeStamp      = get_user_meta($users[0]->ID, 'pending-prayer-update', true);
     if(!$timeStamp || !is_numeric($timeStamp)){
-        return "Could not find prayer request to update for timestamp '$timeStamp'";
+        return "You do not have a pending prayer request";
     }
 
     $sendMessage    = $signal->getSendMessageByTimestamp($timeStamp);
 
     if(!preg_match_all("/[\d]{2}-[\d]{2}-[\d]{4}/m", $sendMessage, $matches, PREG_SET_ORDER, 0)){
-        return "Could not find prayer request to update 2";
+        return "Not sure which prayer request is pending for you";
     }
 
     $replaceDate	= $matches[0][0];
@@ -308,13 +308,13 @@ function updatePrayerRequest($message, $users){
     $prayer	= SIM\PRAYER\prayerRequest(false, false, $replaceDate);
 
     if(!$prayer){
-        return "Could not find prayer request to update 3";
+        return "Could not find prayer request to update for $replaceDate";
     }
 
     // Split on the - 
     $exploded   = explode('-', $prayer['message']);
     if(count($exploded) < 2){
-        return "Could not find prayer request to update 4";
+        return "Could not find prayer request to update.\nNot sure whose prayer request it is";
     }
     $prayerMessage = trim($exploded[1]);
 

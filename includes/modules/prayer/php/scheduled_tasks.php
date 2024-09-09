@@ -117,20 +117,20 @@ function checkPrayerRequests(){
 	global $wpdb;
 
 	// clean up expired meta keys
-	$query			= "DELETE FROM `{$wpdb->usermeta}` WHERE `meta_key` = 'pending-prayer-update' AND `meta_value` < ".time();
+	$query			= "DELETE FROM `{$wpdb->usermeta}` WHERE `meta_key` = 'pending-prayer-update' AND `meta_value` < ".time().'000';
 
 	$wpdb->query($query);
 
-	// Add new ones
-
+	// Get the amount of days between this check and the actual publishing
 	$days			= SIM\getModuleOption('prayer', 'prayercheck');
 	if(empty($days)){
 		return;
 	}
 
+	// Get the actual prayer request this warning is for
 	$dateTime		= strtotime("+$days day", time());
 	$dateString		= date('d-m-Y', $dateTime);
-	$prayerRequest  = prayerRequest(true, true, );
+	$prayerRequest  = prayerRequest(true, true, $dateString);
 	$exploded		= explode('-', $prayerRequest['message']);
 
 	if(count($exploded) < 2){
@@ -139,10 +139,12 @@ function checkPrayerRequests(){
 	
 	$message 		= trim($exploded[1]);
 
-	$signalMessage	= "Good day, $days days from now your prayer request will be send out\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be send on $dateString\n\nTo confirm the update start your reply with 'update prayer'";
+	$signalMessage	= "Good day %name%, $days days from now your prayer request will be send out\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be send on $dateString\n\nTo confirm the update start your reply with 'update prayer'";
 
-	foreach($prayerRequest['users'] as $user){
-		$timestamp	= SIM\trySendSignal($signalMessage, $user, false, $prayerRequest['pictures']);
+	foreach($prayerRequest['users'] as $userId){
+		$user		= get_userdata($userId);
+		$msg		= str_replace('%name%', $user->first_name, $signalMessage);
+		$timestamp	= SIM\trySendSignal($msg, $user, false, $prayerRequest['pictures']);
 
 		update_user_meta($user->ID, 'pending-prayer-update', $timestamp);
 	}

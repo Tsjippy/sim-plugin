@@ -98,7 +98,7 @@ function formReminder(){
 
                     //Send Signal message
                     SIM\trySendSignal(
-                        html_entity_decode(strip_tags(str_replace('[<br>, </br>]', "\n", $m))),
+                        html_entity_decode(strip_tags(str_replace(['<br>', '</br>', '<br />', '</p>'], "\n", $m))),
                         $user->ID
                     );
                 }
