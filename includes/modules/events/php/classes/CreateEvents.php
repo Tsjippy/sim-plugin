@@ -59,12 +59,16 @@ class CreateEvents extends Events{
 			$enddate	= date('Y-m-d', strtotime("+{$dayDiff} day", strtotime($startDate)));
 			$this->maybeCreateRow($startDate);
 
-			$args	= $this->eventData;
-			unset($args['startdate']);
-			unset($args['isrepeated']);
-			unset($args['repeat']);
-			unset($args['allday']);
-			$args['enddate']		= $enddate;
+			$args	= [
+				'enddate'	=> $enddate
+			];
+
+			// only add the data where there is a column for it
+			foreach(['id', 'post_id', 'starttime', 'endtime', 'location', 'organizer', 'location_id', 'organizer_id', 'atendees', 'onlyfor'] as $column){
+				if(isset($this->eventData[$column])){
+					$args[$column]	= $this->eventData[$column];
+				}
+			}
 
 			//Update the database
 			$wpdb->update($this->tableName,

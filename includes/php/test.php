@@ -16,6 +16,26 @@ add_shortcode("test", function ($atts){
 
     global $wpdb;
     global $Modules;
+
+    FORMS\getAllRequiredForms(45);
+
+/*     $results    = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}sim_events` WHERE `enddate` = ''");
+    foreach($results as $result){
+        $meta   = json_decode(get_post_meta($result->post_id, 'eventdetails', true));
+
+        foreach(['id', 'post_id', 'enddate', 'starttime', 'endtime', 'location', 'organizer', 'location_id', 'organizer_id', 'atendees', 'onlyfor'] as $column){
+            if(isset($meta->$column)){
+                $args[$column]	= $meta->$column;
+            }
+        }
+
+        $wpdb->update("{$wpdb->prefix}sim_events",
+            $args,
+            array(
+                'id'		=> $result->id
+            ),
+        );
+    } */
     
     /* $posts = get_posts(
 		array(

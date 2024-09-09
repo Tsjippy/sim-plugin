@@ -264,7 +264,7 @@ class DisplayFormResults extends DisplayForm{
 
 		if(is_numeric($userId)){
 			// find the user id element
-			$userIdKey	= $this->findUserIdElement();
+			$userIdKey	= $this->findUserIdElementName();
 
 			// Form does not contain an user id field, run the query against the user who submitted the form
 			if(!$userIdKey){
@@ -1999,19 +1999,15 @@ class DisplayFormResults extends DisplayForm{
 	 * @return	bool							True if the submission belongs to the user, false otherwise
 	 */
 	public function ownSubmission($submission, $userId, $includingPartner){
-		$isOwn	= false;
-
 		$submissionUserId	= $submission->userid;
 
-		if(isset($submission->formresults['userid'])){
+		$userIdElementName	= $this->findUserIdElementName();
+
+		if(isset($submission->formresults[$userIdElementName])){
 			$submissionUserId	= $submission->formresults['userid'];
-		}elseif(isset($submission->formresults['user_id'])){
-			$submissionUserId	= $submission->formresults['user_id'];
-		}elseif(isset($submission->formresults['user-id'])){
-			$submissionUserId	= $submission->formresults['user-id'];
 		}
 
-		return $isOwn;
+		return $submissionUserId == $userId;
 	}
 	/**
 	 * creates the main table html

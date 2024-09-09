@@ -616,8 +616,6 @@ add_filter('sim_after_saving_formdata', function($message, $formBuilder){
 
 // Update an existing booking
 add_filter('sim-forms-submission-updated', function($message, $formTable, $elementName, $oldValue, $newValue){
-    global $wpdb;
-
     // Get the element name
     $subject    = $formTable->getElementByType('booking_selector');
     if(!$subject){

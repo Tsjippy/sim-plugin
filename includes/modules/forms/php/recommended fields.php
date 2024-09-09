@@ -250,6 +250,8 @@ function getAllRequiredForms($userId=''){
 	$forms				= $wpdb->get_results($query);
 
 	foreach($forms as $form){
+		$simForms->formData	= $form;
+
 		// get the start day of the week
 		$day = date('D', strtotime($form->reminder_startdate));
 
@@ -276,19 +278,22 @@ function getAllRequiredForms($userId=''){
 		}
 
 		// get all submissions created after the threshold
-		$query			= "SELECT * FROM {$simForms->submissionTableName} WHERE form_id=$form->id AND timecreated > $threshold";
+		$query			= "SELECT * FROM {$simForms->submissionTableName} WHERE form_id=$form->id AND timecreated > '$threshold'";
 
 		$submissions	= $wpdb->get_results($query);
 
 		// get all the users who have submitted the form after the threshold date
+		$userIdElementName		= $simForms->findUserIdElementName();
+		if(is_wp_error($userIdElementName)){
+			return $userIdElementName;
+		}
+
 		$usersWithSubmission	= [];
 		foreach($submissions as $submission){
 			$results	= maybe_unserialize($submission->formresults);
 
-			if(isset($results['userid'])){
-				$usersWithSubmission[]	= $results['userid'];
-			}elseif(isset($results['user_id'])){
-				$usersWithSubmission[]	= $results['user_id'];
+			if(!empty($results[$userIdElementName])){
+				$usersWithSubmission[]	= $results[$userIdElementName];
 			}else{
 				$usersWithSubmission[]	= $submission->userid;
 			}

@@ -27,9 +27,15 @@ chmod -R 777 /var/lib/signal-cli/
 
 #Install the service
 echo "Installing system service"
-cp -f $2/org.asamk.Signal.conf /etc/dbus-1/system.d/
-cp -f $2/org.asamk.Signal.service /usr/share/dbus-1/system-services/
-cp -f $2/signal-cli.service /etc/systemd/system/
+$ For DBUS
+#cp -f $2/org.asamk.Signal.conf /etc/dbus-1/system.d/
+#cp -f $2/org.asamk.Signal.service /usr/share/dbus-1/system-services/
+#cp -f $2/signal-cli.service /etc/systemd/system/
+
+#For JSON-RPC
+cp -f $2/signal-cli-jsonrpc-daemon.service /etc/systemd/system/
+cp -f $2/signal-cli-jsonrpc.service /etc/systemd/system/
+
 systemctl daemon-reload
 
 systemctl enable signal-cli-jsonrpc.service

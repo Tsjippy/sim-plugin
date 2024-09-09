@@ -867,7 +867,7 @@ class Bookings{
             return new \WP_Error('booking', 'This booking overlaps with an existing one, try again');
         }
 
-        $userIdKey	        = $this->forms->findUserIdElement();
+        $userIdKey	        = $this->forms->findUserIdElementName();
 
         $userId             = $this->forms->submission->formresults[$userIdKey];
 

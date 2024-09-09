@@ -434,7 +434,11 @@ class SimForms{
 		
 		//load if needed
 		if(empty($this->formData->elementMapping)){
-			$this->getForm();
+			$result	= $this->getForm();
+
+			if(is_wp_error($result)){
+				return $result;
+			}
 		}
 
 		if(!isset($this->formData->elementMapping['name'][$name])){
@@ -531,10 +535,17 @@ class SimForms{
 	 *
 	 * @return	string	the element name or false if no user id element is found
 	 */
-	public function findUserIdElement(){
+	public function findUserIdElementName(){
 		// find the user id element
 		$userIdKey	= false;
-		if($this->getElementByName('user_id')){
+
+		$result		= $this->getElementByName('user_id');
+
+		if(is_wp_error($result)){
+			return $result;
+		}
+
+		if($result){
 			$userIdKey	= 'user_id';
 		}elseif($this->getElementByName('userid')){
 			$userIdKey	= 'userid';

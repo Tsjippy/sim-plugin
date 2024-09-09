@@ -311,7 +311,8 @@ class SignalJsonRpc extends AbstractSignal{
             SIM\printArray($errorMessage); 
         }else{
             SIM\printArray("Got error $errorMessage For command $method");
-            SIM\printArray($params);            
+            SIM\printArray($params);   
+            SIM\printArray($json);            
             SIM\printArray($errorMessage);
             SIM\printArray($this);
         }
