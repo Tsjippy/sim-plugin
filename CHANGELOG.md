@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- booking reminders
 
 ### Updated
 
