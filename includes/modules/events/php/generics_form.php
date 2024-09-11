@@ -4,7 +4,7 @@ use SIM;
 
 //create  events
 add_filter('sim_before_saving_formdata', function($formResults, $object){
-	if($object->formData->name != 'user_generics'){
+	if($object->formData->name != 'user_generics' && $object->formData->name != 'child_generic'){
 		return $formResults;
 	}
 	

@@ -17,6 +17,28 @@ add_action( 'rest_api_init', function () {
 		)
 	);
 
+	// Store external url
+	register_rest_route(
+		RESTAPIPREFIX.'/vimeo',
+		'/store_external_url',
+		array(
+			'methods' 				=> 'POST',
+			'callback' 				=> 	__NAMESPACE__.'\storeExternalUrl',
+			'permission_callback' 	=> '__return_true',
+			'args'					=> array(
+				'external_url'		=> array(
+					'required'	=> true
+                ),
+				'post_id'		=> array(
+					'required'	=> true,
+					'validate_callback' => function($postId){
+						return is_numeric($postId);
+					}
+                )
+			)
+		)
+	);
+
 	// prepare video upload
 	register_rest_route(
 		RESTAPIPREFIX.'/vimeo',
@@ -225,6 +247,18 @@ function cleanupBackupFolder(){
 	}
 
 	return "Succesfully cleaned up the backup folder, removed $count files";
+}
+
+function storeExternalUrl(){
+	$vimeoApi	= new VimeoApi();
+
+	$result		= $vimeoApi->setDownloadUrl($_POST['post_id'], $_POST['external_url']);
+
+	if($result){
+		return "Succesfully stored the url";
+	}else{
+		return new WP_Error('Vimeo', 'Something went wrong');
+	}
 }
 
 function downloadToServer(){	

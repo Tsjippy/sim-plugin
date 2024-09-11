@@ -18,7 +18,7 @@ add_filter('sim_before_saving_formdata', function($formResults, $object){
 		return $formResults;
 	}
 
-	// check if age is correct
+	// check if childrens age is correct
 	$family	= SIM\getUserFamily($object->userId);
 	
 	if(!empty($family['children'])){

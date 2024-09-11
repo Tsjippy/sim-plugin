@@ -3,7 +3,7 @@ namespace SIM\VIMEO;
 use SIM;
 use Vimeo\Vimeo;
 
-const MODULE_VERSION		= '7.0.19';
+const MODULE_VERSION		= '7.0.20';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
@@ -193,6 +193,28 @@ add_filter('sim_module_functions', function($functionHtml, $moduleSlug){
 			?>
 			<div id="progressbar" style='height: 30px; margin-top: -30px;margin-left: 200px;border-radius: 50px; overflow: hidden;'></div>
 			<div id="information" ></div>
+		</form>
+		<?php
+	}
+
+	if(is_numeric($_GET['vimeopostid'])){
+		?>
+		<style>
+			.loadergif{
+				width: 30px;
+			}
+
+			#swal2-title{
+				line-height: 1;
+			}
+		</style>
+		<form>
+			<label>Enter the external url for this video
+				<input type="url" name="external_url" style='width:100%;'><br><br>
+			</label>
+			<?php
+			echo SIM\addSaveButton('save_vimeo_url', 'Save download url');
+			?>
 		</form>
 		<?php
 	}

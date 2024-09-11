@@ -52,6 +52,12 @@ Number.prototype.formatBytes = function() {
     return bytes.toFixed(2) + units[i];
 }
 
+/**
+ * Downloads a vimeo video to the server
+ *
+ * @param {*} ev 
+ * @returns 
+ */
 async function downloadVimeoVideo(ev){
     const vimeoUrl   = ev.target.closest('form').querySelector('[name="download_url"]').value;
 
@@ -97,6 +103,42 @@ async function downloadVimeoVideo(ev){
     updateProgress();
 }
 
+/**
+ * Stores the url given as vimeo post meta data
+ * @param {*} ev 
+ */
+async function storeVimeoUrlLocation(ev){
+    const vimeoUrl   = ev.target.closest('form').querySelector('[name="external_url"]').value;
+
+    if(vimeoUrl == ''){
+        Main.displayMessage('Please provide an external url', 'error');
+        return;
+    }
+
+    //show loader
+    ev.target.closest('.submit_wrapper').querySelector('.loadergif').classList.remove('hidden');
+
+    // initiate the download
+    let params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+    let vidmeoPostId    = params.vimeopostid
+
+    let formData    = new FormData();
+    formData.append('post_id', vidmeoPostId);
+    formData.append('external_url', vimeoUrl);
+
+    // when download is done
+    FormSubmit.fetchRestApi('vimeo/store_external_url', formData).then(response=>{
+        Main.displayMessage(response, 'info', true);
+
+        //hide loader and progressbar
+        document.querySelectorAll('.submit_wrapper .loadergif:not(.hidden)').forEach(el=>el.classList.add('hidden'));
+
+        ev.target.closest('form').querySelector('[name="external_url"]').value  = '';
+    });
+}
+
 async function cleanUpBackup(ev){
     showLoader(ev.target);
 
@@ -112,6 +154,8 @@ async function cleanUpBackup(ev){
 
 document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('[name="download_video"]').forEach(el=>el.addEventListener('click', downloadVimeoVideo));
+
+    document.querySelectorAll('[name="save_vimeo_url"]').forEach(el=>el.addEventListener('click', storeVimeoUrlLocation));
 
     document.getElementById('cleanup-archive').addEventListener('click', cleanUpBackup);
 });
