@@ -571,8 +571,14 @@ trait ElementHtml{
 			$elContent = "";
 			if($element->type == 'textarea'){
 				if(!empty($value)){
+					if(is_array($value)){
+						$value	= array_values($value)[0];
+					}
 					$elContent = $value;
 				}elseif(!empty($val)){
+					if(is_array($val)){
+						$val	= array_values($val)[0];
+					}
 					$elContent = $val;
 				}
 			}elseif(!empty($element->text)){

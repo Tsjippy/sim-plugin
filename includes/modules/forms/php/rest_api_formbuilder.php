@@ -302,7 +302,7 @@ function getUniqueName($element, $update, $oldElement, $simForms){
 	$simForms->createJs();
 
 	// Update column settings
-	$displayFormResults	= new DisplayFormResults();
+	$displayFormResults	= new DisplayFormResults(['formid'=>$simForms->formData->id]);
 
 	$query						= "SELECT * FROM {$displayFormResults->shortcodeTable} WHERE form_id= '{$simForms->formData->id}'";
 	foreach($wpdb->get_results($query) as $data){

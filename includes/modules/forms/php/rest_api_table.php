@@ -453,10 +453,6 @@ function getInputHtml(){
 	$element		= $formTable->getElementById($elementId);
 
 	$curValue		= '';
-	
-	if(!isset($element)){
-		$element		= $formTable->getElementById($elementId);
-	}
 
 	if(!$element){
 		return new \WP_Error('No element found', "No element found with id '{$_POST['elementid']}'");
