@@ -12,6 +12,7 @@
 - updating prayer requests
 - prayer messages updates
 - mark as read when not logged in
+- birthday correctios for children
 
 ### Updated
 
