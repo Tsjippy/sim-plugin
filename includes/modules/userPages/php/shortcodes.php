@@ -12,6 +12,11 @@ add_shortcode("all_contacts", function (){
 		$lastDownload	= strtotime('-1 year');
 	}
 
+	$excludeChildren	= true;
+	if(isset($_REQUEST['children'])){
+		$excludeChildren	= false;
+	}
+
 	//Make vcard
 	if (isset($_REQUEST['type'])){
 		// store date
@@ -19,7 +24,7 @@ add_shortcode("all_contacts", function (){
 
 		if($_REQUEST['type'] == "web"){
 			$vcard = "";
-			$users = SIM\getUserAccounts(false, true, true, ['ID']);
+			$users = SIM\getUserAccounts(false, $excludeChildren, true, ['ID']);
 			foreach($users as $user){
 				$lastChanged	= get_user_meta($user->ID, 'phone-last-changed', true);
 				if(
@@ -48,7 +53,7 @@ add_shortcode("all_contacts", function (){
 			
 			if ($zip->open('SIMContacts.zip', \ZipArchive::CREATE) === true){
 				//Get all user accounts
-				$users = SIM\getUserAccounts(false, true, true, ['ID','display_name']);
+				$users = SIM\getUserAccounts(false, $excludeChildren, true, ['ID','display_name']);
 				
 				//Loop over the accounts and add their vcards
 				foreach($users as $user){
@@ -135,6 +140,12 @@ add_shortcode("all_contacts", function (){
 			</label>
 
 			<br>
+			<br>
+
+			<label>
+				<input type='checkbox' name='children' value='1'>
+				Also export childrens accounts
+			</label>
 			<br>
 			
 			<div class='since-wrapper hidden'>
