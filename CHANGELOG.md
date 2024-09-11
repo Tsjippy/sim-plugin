@@ -5,7 +5,17 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.46.4] - 2024-09-11
+
+
+### Changed
 - do not log unregistered numbers
+- allow export of children accounts
 
 ### Fixed
 - booking reminders
@@ -13,8 +23,6 @@
 - prayer messages updates
 - mark as read when not logged in
 - birthday correctios for children
-
-### Updated
 
 ## [2.46.3] - 2024-09-09
 
