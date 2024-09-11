@@ -6,6 +6,7 @@
 
 ### Changed
 - do not log unregistered numbers
+- allow export of children accounts
 
 ### Fixed
 - booking reminders
