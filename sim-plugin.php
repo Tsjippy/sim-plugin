@@ -46,3 +46,8 @@ if(get_option('sim_version') != get_plugin_data(__FILE__)['Version']){
 register_deactivation_hook( __FILE__, function() {
 	printArray("Removing cron schedules");
 });
+
+// Make sure we have an active user when doing cron
+if(wp_doing_cron()){
+	wp_set_current_user(1);
+}

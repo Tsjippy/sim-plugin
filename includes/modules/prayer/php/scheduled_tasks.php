@@ -116,10 +116,6 @@ function sendPrayerRequests(){
 function checkPrayerRequests(){
 	global $wpdb;
 
-	if(wp_doing_cron()){
-		wp_set_current_user(1);
-	}
-
 	// clean up expired meta keys
 	$query			= "DELETE FROM `{$wpdb->usermeta}` WHERE `meta_key` = 'pending-prayer-update' AND `meta_value` < ".time().'000';
 
