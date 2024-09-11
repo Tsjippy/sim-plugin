@@ -10,6 +10,7 @@
 
 ### Fixed
 - double creation of mailchimp posts
+- arrayed values
 
 ### Updated
 
