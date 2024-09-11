@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- always have an active user account when doing cron
 
 ### Fixed
 
