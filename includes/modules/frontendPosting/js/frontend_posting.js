@@ -654,13 +654,4 @@ document.addEventListener('change', event=>{
 	if(target.classList.contains('parent_cat')){
 		catChanged(target);
 	}
-
-	// Mailchimp
-	if(target.name == 'mailchimp_segment_id'){
-		if(target.value == ''){
-			document.querySelectorAll('.mailchimp-wrapper').forEach(el => el.classList.add('hidden'));
-		}else{
-			document.querySelectorAll('.mailchimp-wrapper').forEach(el => el.classList.remove('hidden'));
-		}
-	}
 });

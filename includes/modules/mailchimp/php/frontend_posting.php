@@ -4,7 +4,7 @@ use SIM;
 
 // add the mailchimp fields to the content creation form
 add_action('sim_frontend_post_after_content', function($frontendContend){
-    $mailchimpSegmentId	    = $frontendContend->getPostMeta('mailchimp_segment_id');
+    $mailchimpSegmentIds    = $frontendContend->getPostMeta('mailchimp_segment_id');
     $mailchimpEmail		    = $frontendContend->getPostMeta('mailchimp_email');
     $mailchimpExtraMessage  = $frontendContend->getPostMeta('mailchimp_extra_message');
     $Mailchimp              = new Mailchimp($frontendContend->user->ID);
@@ -13,10 +13,14 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
     if($segments){
         ?>
         <div id="mailchimp" class="frontendform">
-            <h4>Send <span class="replaceposttype"><?php echo $frontendContend->postType;?></span> contents to the following Mailchimp group on <?php echo $frontendContend->update == 'true' ? 'update' : 'publish';?>:</h4>
+            <h4>Send <span class="replaceposttype"><?php echo $frontendContend->postType;?></span> contents to the following Mailchimp group(s) on <?php echo $frontendContend->update == 'true' ? 'update' : 'publish';?>:</h4>
             <?php
             $sendSegment    = $frontendContend->getPostMeta('mailchimp_message_send');
             if(is_numeric($sendSegment)){
+                $sendSegment    = [$sendSegment];
+            }
+
+            if(is_array($sendSegment)){
                 foreach($segments as $segment){
                     if($sendSegment == $segment->id){
                         $sendSegment    = $segment->name;
@@ -29,14 +33,23 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
                 <?php
             }
             ?>
-            <select name='mailchimp_segment_id' onchange="showMailChimp(this)">
+            <script>
+                function showMailChimp(el){
+                    if(el.value == ''){
+                        el.closest('div').querySelectorAll('.mailchimp-wrapper').forEach(el => el.classList.add('hidden'));
+                    }else{
+                        el.closest('div').querySelectorAll('.mailchimp-wrapper').forEach(el => el.classList.remove('hidden'));
+                    }
+                }
+            </script>
+            <select name='mailchimp_segment_ids' onchange="showMailChimp(this)" multiple='multiple'>
                 <option value="">---</option>
                 <?php
                 foreach($segments as $segment){
                     // Do not send it to the same group twice
                     if($sendSegment == $segment->id){
                         continue;
-                    }elseif($mailchimpSegmentId == $segment->id){
+                    }elseif(is_array($mailchimpSegmentIds) && in_array($segment->id, $mailchimpSegmentIds)){
                         $selected = 'selected="selected"';
                     }else{
                         $selected = '';
@@ -70,13 +83,14 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
 
 add_action('sim_after_post_save', function($post){
 	//Mailchimp
-	if(is_numeric($_POST['mailchimp_segment_id'])){
+    $segmentIds = explode(",", $_POST['mailchimp_segment_ids']);
+	if(is_array($segmentIds) && !empty($segmentIds)){
         $extraMessage   = str_replace("\n", '<br>', sanitize_text_field($_POST['mailchimp-extra-message']));
-        update_metadata( 'post', $post->ID,'mailchimp_segment_id', $_POST['mailchimp_segment_id']);
+        update_metadata( 'post', $post->ID,'mailchimp_segment_ids', $segmentIds);
         update_metadata( 'post', $post->ID,'mailchimp_email', $_POST['mailchimp_email']);
         update_metadata( 'post', $post->ID,'mailchimp_extra_message', $extraMessage);
     }else{
-        delete_metadata( 'post', $post->ID,'mailchimp_segment_id');
+        delete_metadata( 'post', $post->ID,'mailchimp_segment_ids');
         delete_metadata( 'post', $post->ID,'mailchimp_email');
         delete_metadata( 'post', $post->ID,'mailchimp_extra_message');
     }
@@ -84,24 +98,30 @@ add_action('sim_after_post_save', function($post){
 
 add_action( 'wp_after_insert_post', function( $postId, $post ){
     if(in_array($post->post_status, ['publish', 'inherit'])){
-        $segmentId      = get_post_meta($postId, 'mailchimp_segment_id', true);
+        $segmentIds     = (array) get_post_meta($postId, 'mailchimp_segment_ids', true);
         $from           = get_post_meta($postId, 'mailchimp_email', true);
         $extraMessage   = get_post_meta($postId, 'mailchimp_extra_message', true);
 
-        if(empty($segmentId) || empty($from)){
+        if(empty($segmentIds) || empty($from)){
             return;
         }
 
         //Send mailchimp message
         $Mailchimp  = new Mailchimp();
-        $result     = $Mailchimp->sendEmail($postId, intval($segmentId), $from, $extraMessage);
+        foreach($segmentIds as $segmentId){
+            if(!is_numeric($segmentId)){
+                continue;
+            }
+
+            $result     = $Mailchimp->sendEmail($postId, intval($segmentId), $from, $extraMessage);
+        }
 
         // Indicate as send
         if($result == 'succes'){
-            update_metadata( 'post', $postId, 'mailchimp_message_send', $segmentId);
+            update_metadata( 'post', $postId, 'mailchimp_message_send', $segmentIds);
 
             //delete any post metakey
-            delete_post_meta($postId,'mailchimp_segment_id');
+            delete_post_meta($postId,'mailchimp_segment_ids');
             delete_post_meta($postId,'mailchimp_email');
             delete_post_meta($postId,'mailchimp_extra_message');
         }

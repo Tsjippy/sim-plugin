@@ -93,6 +93,11 @@ export async function submitForm(target, url){
 			//pass
 		}
 
+		// store values of multi-selects
+		document.querySelectorAll('select[multiple]').forEach(el => {
+			formData.set(el.name, Array.from(el.selectedOptions,e=>e.value));
+		});
+
 		let response = await fetchRestApi(url, formData);
 
 		form.querySelectorAll('.submit_wrapper .loadergif').forEach(loader => loader.classList.add('hidden'));
