@@ -11,6 +11,7 @@
 - booking reminders
 - updating prayer requests
 - prayer messages updates
+- mark as read when not logged in
 
 ### Updated
 
