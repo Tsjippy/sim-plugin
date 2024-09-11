@@ -8,6 +8,7 @@
 - always have an active user account when doing cron
 
 ### Fixed
+- double creation of mailchimp posts
 
 ### Updated
 
