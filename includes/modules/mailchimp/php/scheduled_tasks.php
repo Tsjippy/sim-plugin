@@ -40,6 +40,7 @@ function addMailchimpCampaigns(){
         // make sure we do not add the same post twice
         $posts = get_posts(array(
             'numberposts'   => -1,
+            'post_status'   => 'any',
             'meta_query' 	=> array(
                 'relation' 		=> 'AND',
                 array(

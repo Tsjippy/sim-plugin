@@ -48,6 +48,8 @@ register_deactivation_hook( __FILE__, function() {
 });
 
 // Make sure we have an active user when doing cron
-if(wp_doing_cron()){
-	wp_set_current_user(1);
-}
+add_action('init', function(){
+	if(wp_doing_cron()){
+		wp_set_current_user(1);
+	}
+});
