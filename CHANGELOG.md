@@ -5,14 +5,21 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [2.46.5] - 2024-09-11
+
+
+### Changed
 - always have an active user account when doing cron
 - send to multiple mailchimp segments at once
 
 ### Fixed
 - double creation of mailchimp posts
 - arrayed values
-
-### Updated
 
 ## [2.46.4] - 2024-09-11
 
