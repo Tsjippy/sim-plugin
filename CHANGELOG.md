@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- posibility to copy cell contents
 
 ### Changed
 
