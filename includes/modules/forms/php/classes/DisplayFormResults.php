@@ -42,6 +42,8 @@ class DisplayFormResults extends DisplayForm{
 		// call parent constructor
 		parent::__construct($atts);
 
+		wp_enqueue_style('sim_formtable_style');
+
 		//Get personal visibility
 		$this->hiddenColumns			= get_user_meta($this->user->ID, 'hidden_columns_'.$this->formData->id, true);
 		
@@ -1127,6 +1129,10 @@ class DisplayFormResults extends DisplayForm{
 			if(!empty($this->hiddenColumns[$columnSetting['name']])){
 				$class	.= ' hidden';
 			}
+
+			if(isset($columnSetting['copy'])){
+				$class	.= ' copy-wrapper';
+			}
 			
 			//if the user has one of the roles defined for this element
 			if($elementEditRights && $elementName != 'id'){
@@ -1165,8 +1171,14 @@ class DisplayFormResults extends DisplayForm{
 			}
 
 			$cellOpeningTag	= apply_filters('sim-formresult-cell-opening-tag', $cellOpeningTag, $this, $columnSetting, $values);
+
+			// Add a copy option to the value
+			$copy	= "";
+			if(isset($columnSetting['copy'])){
+				$copy	= "<img class='copy' src='".SIM\pathToUrl(MODULE_PATH.'/pictures/copy.png')."' width='20' height='20' loading='lazy' title='Click to copy cell contents'>";
+			}
 			
-			$rowContents .= "$cellOpeningTag $subIdString $style>$value</td>";
+			$rowContents .= "$cellOpeningTag $subIdString $style>$copy$value</td>";
 		}
 
 		// none of the cells in this row has a value, only X
@@ -1287,6 +1299,7 @@ class DisplayFormResults extends DisplayForm{
 							<th class="columnheading column_settings">Display permissions</th>
 							<th class="columnheading column_settings">Edit permissions</th>
 							<th class="columnheading column_settings" style="width: 60px;">Max Width</th>
+							<th class="columnheading column_settings">Copy</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -1354,7 +1367,12 @@ class DisplayFormResults extends DisplayForm{
 										?>
 									</select>
 								</td>
-								<td><input type="number" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][width]" value="<?php echo $width;?>" placeholder="200" min="100" style="max-width: 80px; margin-right:0px;">px
+								<td>
+									<input type="number" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][width]" value="<?php echo $width;?>" placeholder="200" min="100" style="max-width: 80px; margin-right:0px;">px
+								</td>
+								<td>
+									<input type="checkbox" class="column_settings" name="column_settings[<?php echo $elementIndex;?>][copy]" value="1" <?php if(isset($columnSetting['copy'])){echo 'checked';}?> style="max-width: 40px; margin-right:0px;">
+								</td>
 							</tr>
 							<?php
 						}

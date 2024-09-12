@@ -113,3 +113,13 @@ input[type=number].column_settings {
     margin: 0;
     }
 }
+
+.copy-wrapper{
+    position:relative;
+
+    .copy{
+        position:absolute; 
+        right:0px;
+        top: 0px;
+    }
+}

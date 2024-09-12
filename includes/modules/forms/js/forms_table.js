@@ -1,26 +1,6 @@
 
 console.log("Formstable.js loaded");
 
-async function hideColumn(cell){
-	// Hide the column
-	var table		= cell.closest('table');
-	var tableRows	= table.rows;
-	for (const element of tableRows) {
-		element.cells[cell.cellIndex].classList.add('hidden')
-	}
-
-	//show the reset button
-
-	cell.closest('.table-wrapper').querySelector('.reset-col-vis').classList.remove('hidden');
-
-	// store as preference
-	var formData	= new FormData();
-	formData.append('formid', table.dataset.formid);
-	formData.append('column_name', cell.id);
-	
-	await FormSubmit.fetchRestApi('forms/save_table_prefs', formData);
-}
-
 async function showHiddenColumns(target){
 	//hiden the reset button
 	target.closest('.table-wrapper').querySelector('.reset-col-vis').classList.add('hidden');
@@ -567,6 +547,75 @@ function addChangeButton(target){
 	}
 }
 
+const copyContent = async (target) => {
+	let text	= target.closest('td').innerText;
+    try {
+		let options = {
+			icon: 'success',
+			title: `Copied '${text}'`,
+			showConfirmButton: false,
+			timer: 3000
+		};
+
+		Swal.fire(options);
+
+		navigator.clipboard.writeText(text);
+    } catch (err) {
+		Main.displayMessage('Failed to copy: '+err, 'error');
+    }
+}
+
+const editCellValue	= async(event, td) => {
+	let target	= event.target;
+	if( target.matches('td.edit_forms_table')){
+		event.stopPropagation();
+		getInputHtml(target);
+	}else if(td.matches('td.edit_forms_table') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') && !target.matches('.button.save')){
+		console.log(target)
+		event.stopPropagation();
+		getInputHtml(target.closest('td'));
+	}
+}
+
+const hideColumn	= async (target) => {
+	if(target.tagName == 'SPAN'){
+		target = target.querySelector('img');
+	}
+
+	// Table itself
+	if(target.parentNode.matches('th')){
+		let cell 	= target.parentNode;
+
+		// Hide the column
+		var table		= cell.closest('table');
+		var tableRows	= table.rows;
+		for (const element of tableRows) {
+			element.cells[cell.cellIndex].classList.add('hidden')
+		}
+
+		//show the reset button
+		cell.closest('.table-wrapper').querySelector('.reset-col-vis').classList.remove('hidden');
+
+		// store as preference
+		var formData	= new FormData();
+		formData.append('formid', table.dataset.formid);
+		formData.append('column_name', cell.id);
+		
+		await FormSubmit.fetchRestApi('forms/save_table_prefs', formData);
+	// Table settings
+	}else{
+		if(target.classList.contains('visible')){
+			target.classList.replace('visible','invisible');
+			target.src	= target.src.replace('visible.png','invisible.png');
+			target.closest('.column_setting_wrapper').querySelector('.visibilitytype').value = 'hide';
+		}else{
+			target.classList.replace('invisible','visible');
+			target.src	= target.src.replace('invisible.png','visible.png');
+			target.closest('.column_setting_wrapper').querySelector('.visibilitytype').value = 'show';
+		}
+	}
+}
+
 document.addEventListener("click", event=>{
 	let target = event.target;
 
@@ -592,6 +641,11 @@ document.addEventListener("click", event=>{
 		getSortedPage(target);
 	}
 
+	// copy cell contents
+	if(target.matches('.copy')){
+		copyContent(target);
+	}
+
 	//Actions
 	if(target.matches('.delete.forms_table_action')){
 		removeSubmission(target);
@@ -612,38 +666,13 @@ document.addEventListener("click", event=>{
 	
 	//Edit data
 	let td = target.closest('td');
-	if(td && !td.matches('.active')){
-		if( target.matches('td.edit_forms_table')){
-			event.stopPropagation();
-			getInputHtml(target);
-		}else if(td.matches('td.edit_forms_table') && target.tagName != 'INPUT' && target.tagName != 'A' && target.tagName != 'TEXTAREA' && !target.closest('.nice-select') && !target.matches('.button.save')){
-			console.log(target)
-			event.stopPropagation();
-			getInputHtml(target.closest('td'));
-		}
+	if(!target.matches('.copy') && td && !td.matches('.active')){
+		editCellValue(event, td);
 	}
 	
 	//Hide column
 	if(target.classList.contains('visibilityicon')){
-		if(target.tagName == 'SPAN'){
-			target = target.querySelector('img');
-		}
-
-		// Table itself
-		if(target.parentNode.matches('th')){
-			hideColumn(target.parentNode);
-		// Table settings
-		}else{
-			if(target.classList.contains('visible')){
-				target.classList.replace('visible','invisible');
-				target.src	= target.src.replace('visible.png','invisible.png');
-				target.closest('.column_setting_wrapper').querySelector('.visibilitytype').value = 'hide';
-			}else{
-				target.classList.replace('invisible','visible');
-				target.src	= target.src.replace('invisible.png','visible.png');
-				target.closest('.column_setting_wrapper').querySelector('.visibilitytype').value = 'show';
-			}
-		}
+		hideColumn(target);
 	}
 
 	if(target.matches('.reset-col-vis')){

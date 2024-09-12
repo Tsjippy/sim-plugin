@@ -659,7 +659,7 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 $message    .= "Get the download link from Vimeo on <a href='https://vimeo.com/manage/$vimeoId/advanced'>this page</a>.<br><br>";
 
                 $adminUrl   = admin_url("admin.php?page=sim_vimeo&tab=functions&vimeopostid=$postId");
-                $message    .= "Alternatively you can host the video somewhere else, you can provide me the external link <a href='adminUrl'>here</a> in that case.<br><br>";
+                $message    .= "Alternatively you can host the video somewhere else. You can provide me the external link <a href='$adminUrl'>here</a> in that case.<br><br>";
 
                 wp_mail(get_option('admin_email'), 'Please backup this Vimeo Video', $message);
             }

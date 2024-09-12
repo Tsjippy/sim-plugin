@@ -118,9 +118,9 @@ function registerScripts(){
             wp_enqueue_style('sim_forms_style');
         }
 
-        $formtablePages   = SIM\getModuleOption(MODULE_SLUG, 'formtable_pages');
+        /*         $formtablePages   = SIM\getModuleOption(MODULE_SLUG, 'formtable_pages');
         if(is_array($formtablePages) && in_array(get_the_ID(), $formtablePages)){
             wp_enqueue_style('sim_formtable_style');
-        }
+        } */
     }
 }

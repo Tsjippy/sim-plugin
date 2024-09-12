@@ -214,7 +214,8 @@ class SignalJsonRpc extends AbstractSignal{
                 SIM\printArray($json);
             }
         }elseif(!isset($json->result)){
-            SIM\printArray("Trying again");
+            SIM\printArray("Trying again:");
+            SIM\printArray($json);
 
             $json   = $this->getRequestResponse($id);
         }elseif(!isset($json->id)){
@@ -278,8 +279,8 @@ class SignalJsonRpc extends AbstractSignal{
         // unregistered number or user
         if($this->invalidNumber){
             if(isset($json->error->data->response->results[0]->recipientAddress->number)){
-                SIM\printArray("Deleting Signal number");
-                SIM\printArray($json);
+                //SIM\printArray("Deleting Signal number: ".$json->error->data->response->results[0]->recipientAddress->number);
+                //SIM\printArray($json);
 
                 // delete the signal meta key
                 $users = get_users(array(
@@ -291,7 +292,7 @@ class SignalJsonRpc extends AbstractSignal{
                 foreach($users as $user){
                     delete_user_meta($user->ID, 'signal_number');
 
-                    SIM\printArray("Deleting Signal number {$json->error->data->response->results[0]->recipientAddress->number} for user $user->ID as it is not valid anymore");
+                    SIM\printArray("Deleting Signal number {$json->error->data->response->results[0]->recipientAddress->number} for $user->display_name with id $user->ID as it is not valid anymore");
                 }
             }else{
                 SIM\printArray($json->error->data->response->results);
