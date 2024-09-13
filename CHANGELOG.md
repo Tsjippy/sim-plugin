@@ -3,13 +3,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- posibility to copy cell contents
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [2.46.6] - 2024-09-12
+
+
+### Added
+- posibility to copy cell contents
 
 ## [2.46.5] - 2024-09-11
 
