@@ -1208,7 +1208,16 @@ class Bookings{
                 $accommodationString  = "$accommodation room $room";
             }
 
-            $userId             = $submissions[0]->user_id;
+            $userIdElName       = $this->forms->findUserIdElementName();
+            if($userIdElName){
+                $userId             = $submissions[0]->formresults[$userIdElName];
+            }else{
+                $userId             = $submissions[0]->userid;
+            }
+            
+            if(!is_numeric($userId)){
+                SIM\printArray($submissions);
+            }
             SIM\trySendSignal("Just a reminder about your booking for $accommodationString tommorow. Hopefully you didn't forget:)", $userId);
 
             $this->forms->getForm($submissions[0]->formresults['formid']);
@@ -1221,6 +1230,9 @@ class Bookings{
                 foreach($bookingDetails['subjects'] as $subject){
                     if($subject['name'] == $accommodation){
                         $managerId  = $subject['manager'];
+                        if(!get_userdata($userId)){
+                            SIM\printArray($submissions);
+                        }
                         $name       = get_userdata($userId)->display_name;
                         SIM\trySendSignal("Just a reminder about tommorows booking for $accommodationString by $name ", $managerId);
                     }

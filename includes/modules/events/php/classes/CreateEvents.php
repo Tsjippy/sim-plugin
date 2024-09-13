@@ -40,10 +40,10 @@ class CreateEvents extends Events{
 		$baseStartDate		= strtotime($baseStartDateStr);
 
 		// Startdate is in the past
-		if($baseStartDate < time()){
+		if($baseStartDate < strtotime(date('Y-m-d', time()))){
 			// in the past and not repeated
 			if( empty($this->eventData['isrepeated']) ){
-				return new \WP_Error('events', 'Date cannot be in the past');
+				return new \WP_Error('events', "Date cannot be in the past: {$this->eventData['startdate']}");
 			}
 		}
 

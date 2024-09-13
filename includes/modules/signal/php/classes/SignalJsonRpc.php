@@ -218,16 +218,19 @@ class SignalJsonRpc extends AbstractSignal{
             SIM\printArray($json);
 
             $json   = $this->getRequestResponse($id);
+            SIM\printArray($json);
         }elseif(!isset($json->id)){
             SIM\printArray("Response has no id");
             SIM\printArray($this->lastResponse);
             SIM\printArray($json);
             $json   = $this->getRequestResponse($id);
+            SIM\printArray($json);
         }elseif($json->id != $id){
             SIM\printArray("Id '$json->id' is not the right id '$id', trying again");
             SIM\printArray($response);
             SIM\printArray($json);
             $json   = $this->getRequestResponse($id);
+            SIM\printArray($json);
         }
 
         return $json;
