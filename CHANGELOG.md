@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- submitting booking for today
 
 ### Updated
 
