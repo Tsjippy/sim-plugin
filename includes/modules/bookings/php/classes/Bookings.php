@@ -1198,6 +1198,9 @@ class Bookings{
         $submissions = $this->forms->getSubmissions(null, $booking->submission_id);
 
         if(!empty($submissions)){
+            // Load the form
+            $this->forms->getForm($submissions[0]->form_id);
+
             $exploded       = explode(';', $booking->subject);
             $accommodation  = $exploded[0];
 
@@ -1209,6 +1212,10 @@ class Bookings{
             }
 
             $userIdElName       = $this->forms->findUserIdElementName();
+            if(is_wp_error($userIdElName)){
+                return $userIdElName;
+            }
+
             if($userIdElName){
                 $userId             = $submissions[0]->formresults[$userIdElName];
             }else{
@@ -1219,8 +1226,6 @@ class Bookings{
                 SIM\printArray($submissions);
             }
             SIM\trySendSignal("Just a reminder about your booking for $accommodationString tommorow. Hopefully you didn't forget:)", $userId);
-
-            $this->forms->getForm($submissions[0]->formresults['formid']);
 
             // get the booking selector element
             $bookingDetails     = maybe_unserialize($this->forms->getElementByType('booking_selector')[0]->booking_details);

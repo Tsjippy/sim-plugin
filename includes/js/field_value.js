@@ -111,7 +111,7 @@ export function getFieldValue(orgName, form, checkDatalist=true, compareValue=nu
 		value = el.dataset.value
 	}else if(el.list != null && el.value != '' && checkDatalist){
 		value =  getDataListValue(el);
-	}else if(el.name.endsWith('[]')){
+	}else if(el.name != undefined && el.name.endsWith('[]')){
 		value =  getMultiValue(form, el);
 	}else if(el.value != null && el.value != 'undefined'){
 		value = el.value;

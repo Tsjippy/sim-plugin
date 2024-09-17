@@ -681,7 +681,7 @@ document.addEventListener("click", event=>{
 
 	// If we clicked somewhere and there is an active cell
 	let activeCell	= document.querySelector('td.active');
-	if(activeCell != null && td == null){
+	if(activeCell != null && td == null && activeCell.closest('.schedule') == null){
 		if((target.type != 'checkbox') || target.length == 1){
 			console.log(target);
 			processFormsTableInput(activeCell);

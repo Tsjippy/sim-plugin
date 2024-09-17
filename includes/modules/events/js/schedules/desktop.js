@@ -95,6 +95,10 @@ async function addHost(target){
 	let newCell, table, newRow, newCol, cell, oldStartTime, oldDate, oldEndTime;
 
 	cell			= document.querySelector('td.active');
+	if(cell == null){
+		return;
+	}
+
 	Main.showLoader(cell.firstChild);
 
 	var response 	= await FormSubmit.submitForm(target, 'events/add_host');
@@ -318,6 +322,7 @@ async function afterSelect(e, selected, _unselected){
 	}else if(target.matches('.meal.admin')){
         let table											= target.closest('table');
         let cell											= target.closest('td');
+		cell.classList.add('active');
         let date											= table.rows[0].cells[cell.cellIndex].dataset.isodate;
         let startTime										= target.closest('tr').dataset.starttime;
         
