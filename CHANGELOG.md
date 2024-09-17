@@ -8,6 +8,7 @@
 
 ### Fixed
 - submitting booking for today
+- booking reminders
 
 ### Updated
 
