@@ -7,12 +7,17 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [2.46.7] - 2024-09-18
+
+
+### Fixed
 - submitting booking for today
 - booking reminders
 - submission id in message
 - loading unnecesary js
-
-### Updated
 
 ## [2.46.6] - 2024-09-12
 
