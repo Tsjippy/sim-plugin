@@ -500,7 +500,7 @@ class SubmitForm extends SimForms{
 				
 			if($wpdb->last_error !== ''){
 				$message	=  new \WP_Error('error', $wpdb->last_error);
-			}elseif(empty($this->formData->include_id) || $this->formData->include_id == 'yes'){
+			}elseif(empty($this->formData->include_id) || $this->formData->include_id){
 				$message	.= "\nYour id is {$this->submission->formresults['id']}";
 			}
 		//save to user meta

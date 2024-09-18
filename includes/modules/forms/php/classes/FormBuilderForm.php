@@ -389,11 +389,11 @@ class FormBuilderForm extends SimForms{
 					<label class="block">
 						<h4>Include submission ID in message</h4>
 						<label>
-							<input type='radio' class='formbuilder formfieldsetting' name='include_id' value="yes" <?php if(!isset($this->formData->include_id) || $this->formData->includeid){echo 'checked';}?>>
+							<input type='radio' class='formbuilder formfieldsetting' name='include_id' value="yes" <?php if(!isset($this->formData->include_id) || $this->formData->include_id){echo 'checked';}?>>
 							Yes
 						</label>
 						<label>
-							<input type='radio' class='formbuilder formfieldsetting' name='include_id' value="no" <?php if(isset($this->formData->include_id) && !$this->formData->includeid){echo 'checked';}?>>
+							<input type='radio' class='formbuilder formfieldsetting' name='include_id' value="no" <?php if(isset($this->formData->include_id) && !$this->formData->include_id){echo 'checked';}?>>
 							No
 						</label>
 					</label>
