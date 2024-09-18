@@ -10,6 +10,7 @@
 - submitting booking for today
 - booking reminders
 - submission id in message
+- loading unnecesary js
 
 ### Updated
 
