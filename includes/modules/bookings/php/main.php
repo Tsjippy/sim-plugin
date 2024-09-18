@@ -565,12 +565,19 @@ add_filter('sim_before_saving_formdata', function($formResults, $object){
             return new \WP_Error('bookings', "No booking details found");
         }
 
+        // Same start and end date
+        foreach($formResults['booking-startdate'] as $index=>$startdate){
+            if($startdate == $formResults['booking-enddate'][$index]){
+                return new \WP_Error('bookings', "End date cannot be the same as the start date");
+            }
+        }
+
         // find the selected subject
         foreach($bookingDetails['subjects'] as $subject){
             if(
                 !empty($subject['name']) &&             // Subjects name is set 
                 $subject['name'] == $subjectName &&     // and this is the selected subject
-                !empty($subject['rooms'])   &&          // and the subject as a key called rooms
+                !empty($subject['rooms'])   &&          // and the subject has a key called rooms
                 count($subject['rooms']) > 1 &&         // and there is more than 1 room for this subject
                 empty($formResults['booking-room'])     // but there is no room selected
             ){

@@ -307,6 +307,12 @@ function daySelected(target){
             return;
         }
 
+        // the selected cell is also the startdate
+        if(target.closest('.startdate') != null){
+            Main.displayMessage('End date cannot be the same as the startdate!', 'error');
+            return;
+        }
+
         // store enddate
         modal.querySelector('.booking-enddate').value               = target.dataset.date;
         modal.querySelector('.booking-enddate').dataset.isodate     = target.dataset.isodate;
