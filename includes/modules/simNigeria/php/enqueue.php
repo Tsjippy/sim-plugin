@@ -145,6 +145,10 @@ define('NIGERIASTATES', [
     ],
 ]);
 
+add_filter('sim-locations-array', function($locations){
+    return array_merge($locations, NIGERIASTATES);
+});
+
 define('QUOTANAMES', [
     'Administrative Workers',
     'Allied Health Professionals',

@@ -26,13 +26,15 @@ add_action('init', function () {
 });
 
 add_action( 'enqueue_block_assets', function(){
-	SIM\enqueueScripts();
+	if(is_admin()){
+		SIM\enqueueScripts();
 
-	enqueueMediaGalleryScripts();
-	
-	if(function_exists('SIM\VIMEO\enqueueVimeoScripts')){
-		SIM\VIMEO\enqueueVimeoScripts();
+		enqueueMediaGalleryScripts();
+		
+		if(function_exists('SIM\VIMEO\enqueueVimeoScripts')){
+			SIM\VIMEO\enqueueVimeoScripts();
+		}
+
+		wp_enqueue_script('sim_vimeo_shortcode_script');
 	}
-
-	wp_enqueue_script('sim_vimeo_shortcode_script');
 } );

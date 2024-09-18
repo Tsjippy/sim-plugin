@@ -363,15 +363,15 @@ function buildUserDetailPdf($download=true){
 			}
 		}
 		
-		$compound = "";
+		$location = "";
 		if(empty($privacyPreference['hide_location'])){
-			$location = (array)get_user_meta( $user->ID, 'location', true );
-			if(isset($location['compound'])){
-				$compound = $location['compound'];
+			$locationDetails = (array)get_user_meta( $user->ID, 'location', true );
+			if(isset($locationDetails['location'])){
+				$location = $locationDetails['location'];
 			}
 		}
 
-		$userDetails[] 	= [$name, $email, $phonenumbers, $ministries, $compound];
+		$userDetails[] 	= [$name, $email, $phonenumbers, $ministries, $location];
 
 		// create a seperate row for each phonenumber and ministry
 /* 		$rows			= max(count($phonenumbers), count($ministries), 1);
@@ -386,10 +386,10 @@ function buildUserDetailPdf($download=true){
 				$ministry	= $ministries[$x];
 			}
 
-			$userDetails[] 	= [$name, $email, $phonenumber, $ministry, $compound];
+			$userDetails[] 	= [$name, $email, $phonenumber, $ministry, $location];
 			$name		= '';
 			$email		= '';
-			$compound	= '';
+			$location	= '';
 		} */
 	}
 

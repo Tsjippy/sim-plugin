@@ -184,7 +184,7 @@ function userDescription($userId){
 		}
 	}
 
-	//Find compound or address
+	//Find location or address
 	$location	= get_user_meta( $userId, 'location', true );
 	$address	= "No address provided.";
 	if(get_current_user_id() == $userId){
@@ -192,12 +192,12 @@ function userDescription($userId){
 		$address	.= "Please update on the <a href='$url/?main_tab=generic_info#ministries'>Generic Info page</a>";
 	}
 	if(is_array($location)){
-		if (empty($location["compound"])){
+		if (empty($location["location"])){
 			if (!empty($location["address"])){
 				$address = $location["address"].' State';
 			}
 		}else{
-			$address = $location["compound"].' State';
+			$address = $location["location"].' State';
 		}
 	}
 

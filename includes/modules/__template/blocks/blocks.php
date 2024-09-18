@@ -28,11 +28,13 @@ add_action('init', function () {
 });
 
 add_action( 'enqueue_block_assets', function(){
-	SIM\enqueueScripts();
+	if(is_admin()){
+		SIM\enqueueScripts();
 
-	registerScripts();
-	
-	wp_enqueue_script( 'sim_formbuilderjs');
+		SIM\registerScripts();
+		
+		wp_enqueue_script( 'sim_formbuilderjs');
+	}
 } );
 
 add_action( 'enqueue_block_editor_assets', function() {

@@ -211,3 +211,19 @@ add_filter('sim_module_updated', function($options, $moduleSlug){
 
 	return $options;
 }, 10, 2);
+
+//run on module activation
+add_action('sim_module_activated', function($moduleSlug, $options){
+	//module slug should be the same as grandparent folder name
+	if($moduleSlug != MODULE_SLUG)	{
+		return;
+	}
+
+	// add an extra form setting column in db
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    require_once ABSPATH . 'wp-admin/install-helper.php';
+
+	$forms	= new SIM\FORMS\SimForms();
+
+	maybe_add_column($forms->tableName, 'google_maps_api', "ALTER TABLE $forms->tableName ADD COLUMN `google_maps_api` bool");
+}, 10, 2);

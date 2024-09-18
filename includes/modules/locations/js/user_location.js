@@ -1,8 +1,5 @@
 console.log("Location.js loaded");
 
-function initMap(){
-	console.log('Google Maps loaded');
-}
 
 function fillLocationFields(event){
 	var target	= event.target;
@@ -14,12 +11,12 @@ function fillLocationFields(event){
 	
 	//Fill the fields based on the selected compound
 	if(value == 'modal'){
-		Main.showModal('add_compound');
+		Main.showModal('add_location');
 	}else if (name != ""){
-		//Get the compounds from the compounds variable
+		//Get the locations from the presets variable
 		form.querySelector("[name='location[address]']").value		= name+' State';
-		form.querySelector("[name='location[latitude]']").value		= sim.locations[value]["lat"];
-		form.querySelector("[name='location[longitude]']").value	= sim.locations[value]["lon"];
+		form.querySelector("[name='location[latitude]']").value		= locations.locations[value]["lat"];
+		form.querySelector("[name='location[longitude]']").value	= locations.locations[value]["lon"];
 	}
 }
 
@@ -30,6 +27,7 @@ function loadGoogleMapsScript(){
 		script.id 		= 'googlemaps';
 		script.src 		= `//maps.googleapis.com/maps/api/js?key=${mapsApi.key}&callback=initMap`;
 		script.async 	= true;
+		script.loading	= 'async';
 		document.body.append(script);
 	}
 }
@@ -37,8 +35,14 @@ function loadGoogleMapsScript(){
 document.addEventListener("DOMContentLoaded", function() {
 	loadGoogleMapsScript();
 	
+	// Add event listener to a state field
+	let element = document.querySelector(`[name="location[preset]"]`);
+	if (typeof(element) != 'undefined' && element != null){
+		element.addEventListener('change', fillLocationFields);
+	}
+
 	//Add event listener to the latitude field
-	let element = document.querySelector(".latitude");
+	element = document.querySelector(".latitude");
 	if (typeof(element) != 'undefined' && element != null){
 		element.addEventListener('keydown', setTimer);
 	}

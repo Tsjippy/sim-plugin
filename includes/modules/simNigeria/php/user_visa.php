@@ -6,7 +6,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-//Multi default values used to prefil the compound dropdown
+//Multi default values used to prefil the location dropdown
 add_filter( 'sim_add_form_multi_defaults', function($defaultArrayValues, $userId, $formName){
 	if($formName != 'user_visa'){
 		return $defaultArrayValues;

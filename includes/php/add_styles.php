@@ -13,6 +13,13 @@ add_action( 'wp_enqueue_media', function(){
 });
 
 function registerScripts($hook=''){
+	global $runned;
+
+	if($runned){
+		return;
+	}
+
+	$runned	= true;
 	//LIBRARIES
 	
     //selectable select table cells https://github.com/Mobius1/Selectable
@@ -43,30 +50,15 @@ function registerScripts($hook=''){
 	//add main.js
 	wp_register_script('sim_script', plugins_url('js/main.min.js', __DIR__), array('niceselect', 'sweetalert'), STYLE_VERSION, true);
 
-	//Get current users location
-	$location = get_user_meta( wp_get_current_user()->ID, 'location', true );
-	if (isset($location['address'])){
-		$address = $location['address'];
-	}else{
-		$address = "";
-	}
-
-	$locations	= '';
-	if(defined('NIGERIASTATES')){
-		$locations	= NIGERIASTATES;
-	}
-
 	wp_localize_script( 'sim_script',
 		'sim',
 		array(
 			'ajaxUrl' 		=> admin_url( 'admin-ajax.php' ),
 			"userId"		=> wp_get_current_user()->ID,
-			'address' 		=> $address,
 			'loadingGif' 	=> LOADERIMAGEURL,
 			'baseUrl' 		=> get_home_url(),
 			'maxFileSize'	=> wp_max_upload_size(),
 			'restNonce'		=> wp_create_nonce('wp_rest'),
-			'locations'		=> $locations,
 			'restApiPrefix'	=> '/'.RESTAPIPREFIX
 		)
 	);
@@ -79,6 +71,12 @@ function registerScripts($hook=''){
 }
 
 function enqueueScripts(){
+	global $runned;
+
+	if($runned){
+		return;
+	}
+	
 	registerScripts();
 
 	if ( is_home() || is_search() || is_category() || is_tax()){

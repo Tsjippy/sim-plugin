@@ -12,29 +12,31 @@ add_action('init', function () {
 });
 
 add_action( 'enqueue_block_assets', function(){
-    registerMandatoryScripts();
+    if(is_admin()){
+        registerMandatoryScripts();
 
-	wp_enqueue_script( 'sim_mandatory_script');
+        wp_enqueue_script( 'sim_mandatory_script');
 
-    wp_enqueue_script(
-        'sim-mandatory-block',
-        plugins_url('blocks/mandatory-settings/build/index.js', __DIR__),
-        [ 'wp-blocks', 'wp-dom', 'wp-dom-ready', 'wp-edit-post' ],
-        MODULE_VERSION
-    );
+        wp_enqueue_script(
+            'sim-mandatory-block',
+            plugins_url('blocks/mandatory-settings/build/index.js', __DIR__),
+            [ 'wp-blocks', 'wp-dom', 'wp-dom-ready', 'wp-edit-post' ],
+            MODULE_VERSION
+        );
 
-	$postId		= get_the_ID();
+        $postId		= get_the_ID();
 
-    $audience   = get_post_meta($postId, 'audience', true);
-    if(!is_array($audience) && !empty($audience)){
-        $audience  = json_decode($audience, true);
+        $audience   = get_post_meta($postId, 'audience', true);
+        if(!is_array($audience) && !empty($audience)){
+            $audience  = json_decode($audience, true);
+        }
+
+        wp_localize_script(
+            'sim-mandatory-block',
+            'mandatory',
+            getAudienceOptions($audience, $postId)
+        );
     }
-
-    wp_localize_script(
-        'sim-mandatory-block',
-        'mandatory',
-        getAudienceOptions($audience, $postId)
-    );
 });
 
 // register custom meta tag field

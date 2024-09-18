@@ -593,7 +593,7 @@ class FormBuilderForm extends SimForms{
 						</div>
 					</div>
 
-					<?php do_action('sim-forms-form-settings-form', $this); ?>
+					<?php do_action('sim-forms-extra-form-settings', $this); ?>
 
 					<div style='margin-top:10px;'>
 						<button class='button builder-permissions-rights-form' type='button'>Advanced</button>

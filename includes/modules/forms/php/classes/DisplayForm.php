@@ -386,6 +386,8 @@ class DisplayForm extends SubmitForm{
 			wp_enqueue_script( "dynamic_{$this->formName}forms", SIM\pathToUrl($jsPath), array('sim_forms_script'), $this->formData->version, true);
 		}
 
+		$html	= apply_filters('sim-forms-before-showing-form', '', $this);
+
 		$formName	= $this->formData->form_name;
 
 		$buttonText	= 'Submit the form';
@@ -401,7 +403,7 @@ class DisplayForm extends SubmitForm{
 			$dataset .= " data-addempty='true'";
 		}
 
-		$html	= '<div class="sim-form-wrapper">';
+		$html	.= '<div class="sim-form-wrapper">';
 			// Formbuilder button
 			if($this->editRights){
 				$html	.= "<button type='button' class='button small formbuilder-switch'>Switch to formbuilder</button>";
