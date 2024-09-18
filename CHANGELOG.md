@@ -9,6 +9,7 @@
 ### Fixed
 - submitting booking for today
 - booking reminders
+- submission id in message
 
 ### Updated
 
