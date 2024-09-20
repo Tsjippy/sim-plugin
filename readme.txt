@@ -2,7 +2,7 @@
 Tags: CSS, JS, and other tweaks
 Contributors: Ewald Harmsen
 Requires at least: 4.0.0
-Tested up to: 4.9.1
+Tested up to: 6.6.2
 Stable tag: 1.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html

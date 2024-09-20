@@ -395,7 +395,7 @@ class Bookings{
         $cleanSubject    = trim($subject['name']);
 
 		?>
-        <div name='<?php echo $cleanSubject;?>-modal' class="booking modal hidden">
+        <div name='<?php echo $cleanSubject;?>-modal' class="booking modal hidden" style="display:unset;">
 			<div class="modal-content">
 				<span class="close mobile-sticky">&times;</span>
                 <?php echo $this->modalContent($subject, $date);?>
@@ -1223,7 +1223,15 @@ class Bookings{
             }
             
             if(!is_numeric($userId)){
-                SIM\printArray($submissions);
+                SIM\printArray('No user id, trying phone numbers');
+
+                foreach($submissions[0]->formresults['phone'] as $phonenumber){
+                    if (str_starts_with($phonenumber, '+')) {
+                        SIM\printArray(SIM\trySendSignal("Just a reminder about your booking for $accommodationString tommorow. Hopefully you didn't forget:)", $phonenumber));
+                    }
+                }
+
+                return;
             }
             SIM\trySendSignal("Just a reminder about your booking for $accommodationString tommorow. Hopefully you didn't forget:)", $userId);
 
@@ -1238,8 +1246,17 @@ class Bookings{
                         if(!get_userdata($userId)){
                             SIM\printArray($submissions);
                         }
-                        $name       = get_userdata($userId)->display_name;
-                        SIM\trySendSignal("Just a reminder about tommorows booking for $accommodationString by $name ", $managerId);
+
+                        $user       = get_userdata($userId);
+                        if($user){
+                            $name       = 'by '.$user->display_name;
+                        }elseif(!empty($submissions[0]->formresults['name'])){
+                            $name       = 'by '.$submissions[0]->formresults['name'];
+                        }else{
+                            $name       = '';
+                        }
+                        
+                        SIM\trySendSignal("Just a reminder about tommorows booking for $accommodationString $name ", $managerId);
                     }
                 }
             }

@@ -7,6 +7,8 @@ namespace SIM;
  * Version:      2.46.7
  * Author:       Ewald Harmsen
  * Requires at least: 4.0
+ * Requires PHP: 8.0
+ * Tested up to: 6.6.2
  *
  * @author Ewald Harmsen
  */

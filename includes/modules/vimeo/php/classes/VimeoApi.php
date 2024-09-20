@@ -741,5 +741,17 @@ if(!class_exists(__NAMESPACE__.'\VimeoApi')){
                 return new WP_Error('vimeo', $e->getResponse()->getReasonPhrase());
             }
         }
+
+        /**
+         * Set the download attribute for a video
+         *
+         * @param   int     $vimeoId        The id of the video
+         * @param   bool    $state          True for downloadable
+         *
+         * @return  string                  The result
+         */
+        public function setDownloadPermission($vimeoId, $state){
+            return $this->api->request("/videos/$vimeoId", ['privacy'=>['download'=>$state]], 'PATCH');
+        }
     }
 }
