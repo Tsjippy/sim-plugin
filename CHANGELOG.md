@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- login modal visibility
 
 ### Updated
 
