@@ -10,7 +10,7 @@ add_action('sim_plugin_update', function($oldVersion){
 
     SIM\printArray($oldVersion);
 
-    if($oldVersion < '2.46.9'){
+    if($oldVersion < '2.47.0'){
         maybe_add_column($simForms->tableName, 'google_maps_api', "ALTER TABLE $simForms->tableName ADD COLUMN `google_maps_api` bool");	
 
         foreach(get_users() as $user){
