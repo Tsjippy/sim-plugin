@@ -5,11 +5,16 @@
 ### Added
 
 ### Changed
-- better logging
 
 ### Fixed
 
 ### Updated
+
+## [2.46,9] - 2024-09-23
+
+
+### Changed
+- better logging
 
 ## [2.46.8] - 2024-09-23
 
