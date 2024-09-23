@@ -7,9 +7,14 @@
 ### Changed
 
 ### Fixed
-- login modal visibility
 
 ### Updated
+
+## [2.46.8] - 2024-09-23
+
+
+### Fixed
+- login modal visibility
 
 ## [2.46.7] - 2024-09-18
 
