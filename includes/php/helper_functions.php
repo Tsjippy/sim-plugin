@@ -214,6 +214,7 @@ function getCurrentUrl(){
 */
 function urlToPath($url){
 	if(gettype($url) != 'string'){
+		printArray("Invalid url:");
 		printArray($url);
 		return '';
 	}
