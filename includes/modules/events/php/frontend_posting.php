@@ -132,6 +132,7 @@ function displayRepetitionParameters($eventDetails){
 	if(isset($eventDetails['repeat'])){
 		$repeatParam	= $eventDetails['repeat'];
 	}
+
 	$list	=	array(
 		'daily'			=> 'Daily',
 		'weekly'		=> 'Weekly',
@@ -139,6 +140,32 @@ function displayRepetitionParameters($eventDetails){
 		'yearly'		=> 'Yearly',
 		'custom_days'	=> 'Custom Days',
 	);
+
+	$dayName	= 'monday';
+	$occurence	= 'first';
+	if(!empty($eventDetails)){
+		$dayName	= strtolower(date('l', strtotime($eventDetails['startdate'])));
+		$dayNum		= explode('-', $eventDetails['startdate'])[2];
+		$occurence	= 1;
+		while($dayNum - 7 >= 0){
+			$occurence++;
+			$dayNum	= $dayNum - 7;
+		}
+
+		$occurence		= SIM\numberToWords($occurence);
+
+		$hideLast		= 'hidden';
+		$hideLastDay	= 'hidden';
+
+		// Selected date is the last day of the week of the month
+		if(!empty($eventDetails['startdate']) && strtotime("last $dayName of this month") == strtotime($eventDetails['startdate'])){
+			$hideLast	= '';
+
+			if(strtotime($eventDetails['startdate']) == strtotime("last day of this month")){
+				$hideLastDay	= '';
+			}
+		}
+	}
 
 	?>
 	<fieldset class='repeat_wrapper <?php if(empty($eventDetails['isrepeated'])){echo 'hidden';}?>'>
@@ -160,29 +187,26 @@ function displayRepetitionParameters($eventDetails){
 
 		<div class='repeatdatetype <?php echo $repeatParam['type'] == 'monthly' || $repeatParam['type'] == 'yearly' ? 'hide' : 'hidden';?>'>
 			<h4>Select repeat pattern:</h4>
+			<!-- Same day number of the month -->
 			<label class='optionlabel'>
 				<input type='radio' name='event[repeat][datetype]' value='samedate' <?php if($repeatParam['datetype'] == 'samedate'){echo 'checked';}?>>
 				On the same day
 			</label>
+
+			<!-- Same Day of the week -->
 			<label class='optionlabel'>
 				<input type='radio' name='event[repeat][datetype]' value='patterned' <?php if($repeatParam['datetype'] == 'patterned'){echo 'checked';}?>>
-				On the <?php
-				echo "<span class='weekword'>";
-				echo "</span> ";
-				echo "<span class='dayname'>";
-				echo "</span>";
-				?>
-				of the month
+				On the <span class='weekword'><?php echo $occurence;?></span> <span class='dayname'><?php echo $dayName;?></span> of the month
 			</label>
-			<label class='optionlabel'>
+
+			<!-- Last dayname of the month-->
+			<label class='optionlabel last-dayname-of-month <?php echo $hideLast;?>'>
 				<input type='radio' name='event[repeat][datetype]' value='last' <?php if($repeatParam['datetype'] == 'last'){echo 'checked';}?>>
-				On the last <?php
-				echo "<span class='dayname'>";
-				echo "</span>";
-				?>
-				 of the month
+				On the last <span class='dayname'><?php echo $dayName;?></span> of the month
 			</label>
-			<label class='optionlabel'>
+
+			<!-- On the very last day of the month-->
+			<label class='optionlabel last-day-of-month <?php echo $hideLastDay;?>'>
 				<input type='radio' name='event[repeat][datetype]' value='lastday' <?php if($repeatParam['datetype'] == 'lastday'){echo 'checked';}?>>
 				On the last day of the month
 			</label>
@@ -296,106 +320,54 @@ function repetitionIntervalSettings($eventDetails){
 		$samedate	= 'hidden';
 	}
 
-	if($repeatParam['datetype'] == 'patterned'){
-		$patterned	= 'hide';
-	}else{
-		$patterned	= 'hidden';
-	}
 	?>
 	<label class='repeatinterval <?php echo $samedate;?>'>
 		<h4>Repeat every </h4>
 		
 		<input type='number' name='event[repeat][interval]' value='<?php echo $interval;?>'>
-		<span id='repeattype'></span>
+		<span id='repeattype'>days</span>
 	</label>
 
-	<div class='pattern-wrapper <?php echo $patterned;?>'>
-		<div class="selector_wrapper months hide">
-			<?php
-			if($repeatParam['type'] == 'monthly'){
-				$type		= 'radio';
+	<!-- Weekly repetition options -->
+	<div class="selector_wrapper weeks <?php echo $repeatParam['type'] == 'weekly' ? 'hide' : "hidden";?>">
+		<h4 class='checkbox'>Select weeks(s) of the month this event should be repeated on</h4>
+		<label class='selectall_wrapper optionlabel'>
+			<input type='checkbox' class='selectall' name='allweekss' value='all'>Select all weeks<br>
+		</label>
+
+		<?php
+		foreach($weekNames as $weekName){
+			if(!empty($eventDetails['repeat']['weeks']) && is_array($eventDetails['repeat']['weeks']) && in_array($weekName, $eventDetails['repeat']['weeks'])){
+				$checked = 'checked';
 			}else{
-				$type		= 'checkbox';
+				$checked = '';
 			}
-			?>
-			<div class="yearly <?php echo $repeatParam['type'] == 'yearly' ? 'hide' : "hidden";?>">
-				<h4 class='checkbox'>Select month(s) this event should be repeated on</h4>
-				<label class='selectall_wrapper optionlabel'>
-					<input type='checkbox' class='selectall' name='allmonths' value='all'>Select all months<br>
-				</label>
-			</div>
-			
-			<h4 class='monthly radio <?php echo $repeatParam['type'] != 'monthly' ? 'hide' : "hidden";?>'>Select the month this event should be repeated on</h4>
+			echo "<label class='optionlabel'>";
+				echo "<input type='checkbox' name='event[repeat][weeks][]' value='$weekName' $checked>$weekName";
+			echo "</label>";
+		}
+		?>
+	</div>
 
-			<?php
-			for ($m=1; $m<13; $m++){
-				$monthName = date("F", mktime(0, 0, 0, $m, 10));
-				if(isset($eventDetails['repeat']['months']) && is_array($eventDetails['repeat']['months']) && in_array($m, $eventDetails['repeat']['months'])){
-					$checked = 'checked';
-				}else{
-					$checked = '';
-				}
-				echo "<label class='optionlabel month'>";
-					echo "<input type='$type' name='event[repeat][months][]' value='$m' $checked>$monthName";
-				echo "</label>";
-				if($m  % 3 == 0){
-					echo  '<br>';
-				}
-			}
-			?>
-		</div>
+	<!-- Daily repetition options -->
+	<div class="selector_wrapper days <?php echo $repeatParam['type'] == 'daily' ? 'hide' : "hidden";?>">
+		<h4 class='checkbox'>Select day(s) this event should be repeated on</h4>
+		<label class='selectall_wrapper optionlabel'>
+			<input type='checkbox' class='selectall' name='alldays' value='all'>Select all days<br>
+		</label>
 
-		<div class="selector_wrapper weeks hide">
-			<?php
-			if($repeatParam['type'] == 'weekly'){
-				$type		= 'checkbox';
+		<?php
+		foreach(['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $key=>$dayName){
+			if(!empty($eventDetails['repeat']['weekdays']) && is_array($eventDetails['repeat']['weekdays']) && in_array($dayName, $eventDetails['repeat']['weekdays'])){
+				$checked	= 'checked';
 			}else{
-				$type		= 'radio';
+				$checked	= '';
 			}
-			
-			?>
-			<div class="weekly <?php echo $repeatParam['type'] == 'weekly' ? 'hide' : "hidden";?>">
-				<h4 class='checkbox'>Select weeks(s) of the month this event should be repeated on</h4>
-				<label class='selectall_wrapper optionlabel'>
-					<input type='checkbox' class='selectall' name='allweekss' value='all'>Select all weeks<br>
-				</label>
-			</div>
-
-			<h4 class='radio monthly yearly <?php echo $repeatParam['type'] != 'weekly' ? 'hide' : "hidden";?>'>Select the week of the month this event should be repeated on</h4>
-
-			<?php
-			foreach($weekNames as $weekName){
-				if(!empty($eventDetails['repeat']['weeks']) && is_array($eventDetails['repeat']['weeks']) && in_array($weekName, $eventDetails['repeat']['weeks'])){
-					$checked = 'checked';
-				}else{
-					$checked = '';
-				}
-				echo "<label class='optionlabel'>";
-					echo "<input type='$type' name='event[repeat][weeks][]' value='$weekName' $checked>$weekName";
-				echo "</label>";
-			}
-			?>
-		</div>
-
-		<div class="selector_wrapper days hide">
-			<h4 class='checkbox'>Select day(s) this event should be repeated on</h4>
-			<label class='selectall_wrapper optionlabel'>
-				<input type='checkbox' class='selectall' name='alldays' value='all'>Select all days<br>
-			</label>
-
-			<?php
-			foreach(['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $key=>$dayName){
-				if(!empty($eventDetails['repeat']['weekdays']) && is_array($eventDetails['repeat']['weekdays']) && in_array($dayName, $eventDetails['repeat']['weekdays'])){
-					$checked	= 'checked';
-				}else{
-					$checked	= '';
-				}
-				echo "<label class='optionlabel'>";
-					echo "<input type='checkbox' name='event[repeat][weekdays][]' value='$key'$checked>$dayName";
-				echo "</label>";
-			}
-			?>
-		</div>
+			echo "<label class='optionlabel'>";
+				echo "<input type='checkbox' name='event[repeat][weekdays][]' value='$key'$checked>$dayName";
+			echo "</label>";
+		}
+		?>
 	</div>
 	<?php
 }

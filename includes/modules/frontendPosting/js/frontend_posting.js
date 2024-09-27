@@ -66,6 +66,7 @@ async function deletePostLock(){
 	}
 }
 
+// Strores a change of post type on the server
 async function changePostType(target){
 	var response = await FormSubmit.submitForm(target, 'frontend_posting/change_post_type');
 
@@ -74,6 +75,7 @@ async function changePostType(target){
 	}
 }
 
+// Switches the available fields on post type change
 function switchforms(target){
 	var postType;
 	var parent 			= document.getElementById('frontend_upload_form');
@@ -374,101 +376,6 @@ function insertMediaContents(){
 	);
 }
 
-function repeatTypeChosen(target){
-	let parent	= target.closest('.repeat_wrapper');
-
-	//hide all what should be hidden
-	parent.querySelectorAll('.shouldhide').forEach(el=>el.classList.replace('shouldhide', 'hidden'));
-
-	let startDate	= new Date(document.querySelector('[name="event[startdate]"]').value);
-	let weekDays	= [
-		'Sunday',
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday'
-	]
-
-	let weekDay	= weekDays[startDate.getDay()];
-	let weekNr	= parseInt(startDate.getDate()/7);
-
-	console.log(weekNr)
-	let nrInWords	= [
-		'first',
-		'second',
-		'third',
-		'fourth',
-		'fifth'
-	]
-	let weekWord	= nrInWords[weekNr];
-
-	parent.querySelectorAll('.dayname').forEach(el=>el.textContent = weekDay);
-	parent.querySelectorAll('.weekword').forEach(el=>el.textContent = weekWord);
-
-	switch(target.value){
-		case 'daily':
-			//show
-			parent.querySelectorAll('.repeatinterval, .days, .days h4.checkbox, .pattern-wrapper, .days .selectall_wrapper, .daily').forEach(el=>el.classList.replace('hidden', 'shouldhide'));
-			parent.querySelector('#repeattype').textContent	= 'days';
-			break;
-		case 'weekly':
-			parent.querySelectorAll('.repeatinterval, .weeks, .weeks h4.checkbox, .weeks .selectall_wrapper, .pattern-wrapper, .weekly').forEach(el=>el.classList.replace('hidden', 'shouldhide')); 
-			parent.querySelector('#repeattype').textContent	= 'week(s)';
-
-			//change radio to checkbox
-			parent.querySelectorAll('.weeks input[type="radio"]').forEach(el=>el.type = 'checkbox');
-			break;
-		case 'monthly':
-			parent.querySelectorAll('.repeatdatetype, .pattern-wrapper, .monthly, .months').forEach(el=>el.classList.replace('hidden', 'shouldhide')); 
-			parent.querySelector('#repeattype').textContent			= 'month(s)';
-			break;
-		case 'yearly':
-			break;
-		case 'custom_days':
-			parent.querySelectorAll('.custom_dates_selector').forEach(el=>el.classList.replace('hidden', 'shouldhide')); 
-			break;
-	}
-}
-
-function allDayClicked(target){
-	let startTime	= target.closest('.event').querySelector('[name="event[starttime]"]');
-	let endTime		= target.closest('.event').querySelector('[name="event[endtime]"]');
-	let endDate		= target.closest('.event').querySelector('[name="enddate_label"]');
-
-	if(target.checked){
-		startTime.classList.add('hidden');
-		endTime.classList.add('hidden');
-		endDate.classList.add('hidden');
-
-		startTime.value	='00:00';
-		endTime.value	= '23:59';
-	}else{
-		startTime.classList.remove('hidden');
-		endTime.classList.remove('hidden');
-		endDate.classList.remove('hidden');
-
-		startTime.value	='';
-		endTime.value	= '';
-	}
-}
-
-function startDateChanged(target){
-	let endDate		= target.closest('.event').querySelector('[name="event[enddate]"]');
-	let start		= new Date(target.value);
-	let end			= new Date(endDate.value);
-
-	if(endDate.value == '' || start>end){
-		endDate.value	= target.value;
-	}
-	let firstWeekday	= new Date(start.getFullYear(), start.getMonth(), 1).getDay();
-	let offsetDate		= start.getDate() + firstWeekday - 1;
-	let montWeek		= Math.floor(offsetDate / 7);
-
-	document.querySelectorAll('.weeks [name="event[repeat][weeks][]"]')[montWeek].checked	= true;
-}
-
 async function checkForDuplicate(target){
 	document.querySelectorAll('#post-title-warning').forEach(el=>el.remove());
 
@@ -558,32 +465,6 @@ document.addEventListener("click", event =>{
 			div.classList.add('hidden');
 			target.querySelector('span').textContent = 'Show';
 		}
-	}else if(target.name == 'signal'){
-		let div = target.closest('#signalmessage').querySelector('.signalmessagetype');
-		if(target.checked){
-			div.classList.remove('hidden');
-		}else{
-			div.classList.add('hidden');
-		}
-	}else if(target.name == 'enable_event_repeat'){
-		document.querySelector('.repeat_wrapper').classList.toggle('hidden');
-		let repeated	= target.parentNode.querySelector('[name="event[isrepeated]"]');
-		if(repeated.value == 'yes'){
-			repeated.value = '';
-		}else{
-			repeated.value = 'yes';
-		}
-	}else if(target.name == 'event[repeat][repeat_type]'){
-		//hide all 
-		target.closest('.event').querySelectorAll('.repeat_type_option').forEach(el=>{
-			el.querySelector('.repeat_type_option_specifics').classList.add('hidden');	
-		});
-		//show the selected
-		target.closest('.repeat_type_option').querySelector('.repeat_type_option_specifics').classList.remove('hidden');
-	}
-
-	if(target.classList.contains('selectall')){
-		target.closest('.selector_wrapper').querySelectorAll('input[type="checkbox"]').forEach(el=>el.checked = target.checked);
 	}
 	
 	if(target.matches('.remove_featured_image')){
@@ -599,11 +480,6 @@ document.addEventListener("click", event =>{
 	// SHow add category modal
 	if(target.classList.contains('add_cat')){
 		document.getElementById('add_'+target.dataset.type+'_type').classList.remove('hidden');
-	}
-
-	if(target.closest('.repeat_type_option') != null){
-		document.querySelectorAll('.repeat_type_option_specifics:not(.hidden)').forEach(el=>el.classList.add('hidden'));
-		target.closest('.repeat_type_option').querySelector('.repeat_type_option_specifics').classList.remove('hidden');
 	}
 
 	if(target.matches('.add_category .form_submit')){
@@ -626,13 +502,6 @@ document.addEventListener('change', event=>{
 		if(	target.closest('#frontend_upload_form').querySelector('[name="post_title"]').value != ''){
 			checkForDuplicate(target.closest('#frontend_upload_form').querySelector('[name="post_title"]'));
 		}
-	}else if(target.name == 'event[allday]'){
-		allDayClicked(target);
-	}else if(target.name == 'event[startdate]'){
-		startDateChanged(target)
-	}else if(target.name == 'event[repeat][type]'){
-		//daily,weekly,monthly,yearly selector changed
-		repeatTypeChosen(target);
 	}else if(target.name == 'post_title'){
 		checkForDuplicate(target);
 	}

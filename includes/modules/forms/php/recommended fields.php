@@ -257,7 +257,7 @@ function getAllRequiredForms($userId=''){
 
 		// only do it once a week
 		if(date('D') != $day){
-			continue;
+			//continue;
 		}
 
 		$conditions		= maybe_unserialize($form->reminder_conditions);

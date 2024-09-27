@@ -124,23 +124,13 @@ class CreateEvents extends Events{
 					return false;
 				}
 				break;
-			case 'monthly':
-				if(isset($repeatParam['months'])){
-					$months			= (array)$repeatParam['months'];
-				}else{
-					$repeatParam['months']	= [];
-				}
-
+			case 'monthly' || 'yearly':
 				// Get the next month
-				$startDate		= strtotime("first day of +{$index} month", $baseStartDate);
-
-				// Skip this month if needed
-				$month			= date('m', $startDate);
-				if(!empty($months) && !in_array($month, $months) && !in_array('All', $months)){
-					return false;
+				if($repeatParam['type'] == 'yearly'){
+					$startDate	= strtotime("+{$index} year", $baseStartDate);
+				}else{
+					$startDate	= strtotime("first day of +{$index} month", $baseStartDate);
 				}
-
-				// Find the correct day of the month by datetype
 
 				// same day number
 				if($repeatParam['datetype'] == 'samedate'){
@@ -153,8 +143,12 @@ class CreateEvents extends Events{
 					$startDate	= strtotime("+$day days", $startDate);
 				// Same week and day i.e. first friday
 				}elseif($repeatParam['datetype'] == 'patterned'){
+					// The weeknumber of the first week of the month
 					$firstWeek	= Date('W', strtotime("first day of 0 month", $baseStartDate));
+
+					// The weeknumber of this week in the month
 					$targetWeek	= SIM\numberToWords(Date("W", $baseStartDate)-$firstWeek +1);
+
 					$dayName	= Date('l', $baseStartDate);
 
 					$startDate	= strtotime("$targetWeek $dayName of +{$index} month", $baseStartDate);
@@ -171,10 +165,7 @@ class CreateEvents extends Events{
 			case 'yearly':
 				$startDate	= strtotime("+{$index} year", $baseStartDate);
 
-				if(!empty($weeks) && !empty($weekDays)){
-					$day		= $weekDayNames[$weekDays[0]];
-					$startDate	= strtotime("{$weeks[0]} $day of this month", $startDate);
-				}
+
 				break;
 			case 'custom_days':
 				break;
@@ -193,7 +184,7 @@ class CreateEvents extends Events{
 		//then create the new ones
 		$repeatParam	= $this->eventData['repeat'];
 		$interval		= max(1, (int)$repeatParam['interval']);
-		$amount			= 200;
+		$amount			= 200; // no more than 200 events to not overload the db
 
 		if($repeatParam['type'] == 'custom_days'){
 			foreach($repeatParam['includedates'] as $date){

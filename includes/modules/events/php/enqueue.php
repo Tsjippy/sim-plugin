@@ -52,7 +52,14 @@ add_action( 'wp_enqueue_scripts', function(){
     if(str_contains($_SERVER['REQUEST_URI'], '.map')){
         return;
     }
-    
+
+    wp_register_script('sim_frontend_events_script', plugins_url('js/frontend-event.min.js', __DIR__), [], MODULE_VERSION, true);
+    add_filter('sim-frontend-content-js', function($dependables){
+        $dependables[]  = 'sim_frontend_events_script';
+
+        return $dependables;
+    });
+
     //css
     wp_register_style('sim_schedules_css', plugins_url('css/schedules.min.css', __DIR__), array(), MODULE_VERSION);
     wp_register_style('sim_events_css', plugins_url('css/events.min.css', __DIR__), array(), MODULE_VERSION);

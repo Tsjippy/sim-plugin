@@ -2,8 +2,6 @@
 namespace SIM\EVENTS;
 use SIM;
 
-
-
 add_action( 'before_delete_post', function($postId){
     $events = new CreateEvents();
     $events->removeDbRows($postId);

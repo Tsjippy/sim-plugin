@@ -33,7 +33,8 @@ add_action( 'wp_enqueue_scripts', function () {
     //Load js
     wp_register_script('sim_forms_script', plugins_url('../forms/js/forms.min.js', __DIR__), array('sweetalert', 'sim_formsubmit_script'), MODULE_VERSION,true);
 
-	wp_register_script('sim_frontend_script', plugins_url('js/frontend_posting.min.js', __DIR__), array('sim_fileupload_script', 'sim_forms_script'), MODULE_VERSION, true);
+    $dependables    = apply_filters('sim-frontend-content-js', array('sim_fileupload_script', 'sim_forms_script'));
+	wp_register_script('sim_frontend_script', plugins_url('js/frontend_posting.min.js', __DIR__), $dependables, MODULE_VERSION, true);
 
     wp_enqueue_script('sim_edit_post_script', plugins_url('js/edit_post.min.js', __DIR__), array('sim_formsubmit_script'), MODULE_VERSION, true);
     
