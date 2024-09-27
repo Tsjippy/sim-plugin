@@ -847,7 +847,9 @@ class SignalJsonRpc extends AbstractSignal{
     public function getGroupInvitationLink($groupPath){
         $result = $this->listGroups(true, $groupPath);
 
-        SIM\printArray($result, true);
+        if(empty($result[0]->groupInviteLink)){
+            SIM\printArray($result, true);
+        }
 
         return $result[0]->groupInviteLink;
     }
