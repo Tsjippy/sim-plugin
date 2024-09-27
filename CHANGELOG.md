@@ -7,6 +7,7 @@
 ### Changed
 
 ### Fixed
+- repeated events
 
 ### Updated
 
