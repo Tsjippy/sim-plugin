@@ -13,7 +13,7 @@ add_action('sim_frontend_post_after_content', function($frontendContend){
     if($segments){
         ?>
         <div id="mailchimp" class="frontendform">
-            <h4>Send <span class="replaceposttype"><?php echo $frontendContend->postType;?></span> contents to the following Mailchimp group(s) on <?php echo $frontendContend->update == 'true' ? 'update' : 'publish';?>:</h4>
+            <h4>Send <span class="replaceposttype"><?php echo $frontendContend->postType;?></span> contents to the following Mailchimp segement(s) on <?php echo $frontendContend->update == 'true' ? 'update' : 'publish';?>:</h4>
             <?php
             $sendSegment    = $frontendContend->getPostMeta('mailchimp_message_send');
             if(is_numeric($sendSegment)){

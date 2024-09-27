@@ -11,5 +11,12 @@ add_shortcode("mailchimp", function($atts){
 	$href   	= $dom->getElementById('templateFooter');
 	$href->parentNode->removeChild($href);
 
-	return "<style>table,td{border: none !important;}</style>".$dom->saveHTML($dom->getElementsByTagName('style')->item(0)).$dom->saveHTML($dom->getElementsByTagName('body')->item(0));
+	$content	= $dom->saveHTML($dom->getElementsByTagName('body')->item(0));
+	$mergeTags	= ['MC_PREVIEW_TEXT'];
+
+	foreach($mergeTags as $tag){
+		$content	= str_replace("*|$tag|*", '', $content);
+	}
+
+	return "<style>table,td{border: none !important;}</style>".$dom->saveHTML($dom->getElementsByTagName('style')->item(0)).$content;
 });
