@@ -28,7 +28,6 @@ if(!isset($_SERVER['HTTP_SEC_FETCH_DEST'])){
 
 //only call it once
 //remove_action( 'wp_head', 'adjacent_posts_rel_link');
-
 define('PLUGIN', plugin_basename(__FILE__));
 
 $files = glob(__DIR__  . '/*.php');

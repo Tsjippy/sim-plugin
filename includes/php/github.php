@@ -28,7 +28,7 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 	$res->version 			= $release['tag_name'];
 	$res->author 			= $release['author']['login'];
 	$res->tested			= '6.5.0';
-	$res->requires 			= '5.5';
+	$res->requires 			= '6.2';
 	$res->author_profile 	= $release['author']['url'];
 	$res->requires_php 		= '8.1';
 	$res->last_updated 		= \Date(DATEFORMAT, strtotime($release['published_at']));
@@ -63,6 +63,9 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 
 }, 10, 3);
 
+/**
+ * Checks and shows plugin updates from github
+ */
 add_filter( 'pre_set_site_transient_update_plugins', function($transient){
 	$plugin = explode('/', PLUGIN)[0];
 
