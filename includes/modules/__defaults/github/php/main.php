@@ -17,42 +17,30 @@ add_filter( 'plugins_api', function ( $res, $action, $args ) {
 	}
 
 	$github 	    		= new Github();
-	return $github->pluginData(PLUGIN_PATH);
+	return $github->pluginData(PLUGIN_PATH, 'Tsjippy', 'sim-plugin', [
+		'active_installs'	=> 2, 
+		'donate_link'		=> 'harmseninnigeria.nl', 
+		'rating'			=> 5, 
+		'ratings'			=> [4,5,5,5,5,5], 
+		'slug'				=> 'sim-plugin', 
+		'banners'			=> [
+			'high'	=> PICTURESURL."/banner-1544x500.jpg",
+			'low'	=> PICTURESURL."/banner-772x250.jpg"
+		], 
+		'tested'			=> '6.6.2'		
+	]);
 }, 10, 3);
 
 /**
  * Checks and shows plugin updates from github
  */
 add_filter( 'pre_set_site_transient_update_plugins', function($transient){
-	$plugin = explode('/', PLUGIN)[0];
-
-	if( !function_exists('get_plugin_data') ){
-		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-	}
-	$pluginVersion  = get_plugin_data(WP_PLUGIN_DIR.'/'.PLUGIN)['Version'];
-
 	$github			= new Github();
-	$release		= $github->getLatestRelease();
 
-	if(is_wp_error($release)){
-		return $release;
-	}
-
-	$gitVersion     = $release['tag_name'];
-
-	$item			= (object) array(
-		'slug'          => $plugin,
-		'new_version'   => $pluginVersion,
-		'url'           => 'https://api.github.com/repos/Tsjippy/sim-plugin',
-		'package'       => '',
-		'plugin'		=> PLUGIN
-	);
+	$item			= $github->pluginVersionInfo(PLUGIN_PATH);
 
 	// Git has a newer version
-	if(version_compare($gitVersion, $pluginVersion) && !empty($release['assets'][0]['browser_download_url'])){
-		$item->new_version	= $gitVersion;
-		$item->package		= $release['assets'][0]['browser_download_url'];
-
+	if(isset($item->new_version)){
 		$transient->response[PLUGIN]	= $item;
 	}else{
 		$transient->no_update[PLUGIN]	= $item;

@@ -35,23 +35,23 @@ class Github{
      * Retrieves the latest github release information from cache or github
      * 
      * @param	string	$author		The github author. Default 'Tsjippy'
-     * @param	string	$package	The github package name
+     * @param	string	$repo	    The github repo name
      * @param   bool    $force      Whether to skip the cached result. Default false
      *
      * @return	array	Array containing information about the latest release
      */
-    public function getLatestRelease($author='tsjippy', $package=PLUGINNAME, $force=false){
+    public function getLatestRelease($author='tsjippy', $repo=PLUGINNAME, $force=false){
         if(isset($_GET['update']) || $force){
             $release	= false;
         }else{
             //check db version
-            $release    = get_transient("$author-$package");
+            $release    = get_transient("$author-$repo");
         }
         
         // if not in transient
         if(!$release){
             try{
-                $release 	    = $this->client->api('repo')->releases()->latest($author, $package);
+                $release 	    = $this->client->api('repo')->releases()->latest($author, $repo);
             } catch (ApiLimitExceedException $e) {
                 SIM\printArray('Rate limit reached, please try again in an hour');
                 return new \WP_Error('update', 'Rate limit reached, please try again in an hour');
@@ -62,7 +62,7 @@ class Github{
                     $this->authenticate();
                     
                     // rerun
-                    return $this->getLatestRelease($author, $package);
+                    return $this->getLatestRelease($author, $repo);
                 }else{
                     return new \WP_Error('update', $exception->getMessage());
                 }
@@ -72,7 +72,7 @@ class Github{
             $this->client->removeCache();
             
             // Store for 1 hours
-            set_transient( "$author-$package", $release, HOUR_IN_SECONDS );
+            set_transient( "$author-$repo", $release, HOUR_IN_SECONDS );
         }
         return $release;
     }
@@ -81,21 +81,21 @@ class Github{
      * Downloads and unzips the latest release from a given github location to a given path
      *
      * @param	string	$author		The github author. Default 'Tsjippy'
-     * @param	string	$package	The github package name
+     * @param	string	$repo	    The github repo name
      * @param	string	$path		The destination path
      * 
      * @return	true|WP_Error       True on success, WP_Error object on failure
      */
-    public function downloadFromGithub($author='Tsjippy', $package, $path){
+    public function downloadFromGithub($author='Tsjippy', $repo=PLUGINNAME, $path){
         // Get latest release info
-        $release	= $this->getLatestRelease($author, $package, true);
+        $release	= $this->getLatestRelease($author, $repo, true);
 
         if(is_wp_error($release)){
             return $release;
         }
 
         // download latest release
-        $zipContent = $this->client->api('repo')->releases()->assets()->show($author, $package, $release['assets'][0]['id'], true);
+        $zipContent = $this->client->api('repo')->releases()->assets()->show($author, $repo, $release['assets'][0]['id'], true);
         
         $tmpZipFile = tmpfile();
         fwrite($tmpZipFile, $zipContent);
@@ -118,15 +118,20 @@ class Github{
     }
 
     /**
-     * Parses plugininfo from github
+     * Parses plugin info from github
      *
      * @param   string  $pluginFilePath     The main file of the plugin you want to have info of
+     * @param   string  $author             The github author
+     * @param   string  $repo               The github repository, default PLUGINNAME
+     * @param   array   $extraData          Extra data to include an array of active_installs, donate_link, rating, ratings, slug, banners, tested
+     * 
+     * @return  object                      The details object
      */
-    public function pluginData($pluginFilePath){
+    public function pluginData($pluginFilePath, $author, $repo=PLUGINNAME, $extraData=[]){
         if( ! function_exists('get_plugin_data') ){
             require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         }
-        $pluginData = get_plugin_data( $pluginFilePath, false, true );
+        $pluginData             = get_plugin_data( $pluginFilePath, false, true );
 
         $res 					= (object)$pluginData;
 
@@ -138,48 +143,92 @@ class Github{
         $res->Version 			= $release['tag_name'];
         $res->last_updated 		= \Date(DATEFORMAT, strtotime($release['published_at']));
 
-        $description    		= get_transient('sim-git-description');
+        $res->sections = [];
+        foreach(['description', 'installation', 'faq', 'changelog', 'screenshots', 'reviews', 'hooks'] as $item){
+            $content    = get_transient("sim-git-$item");
+            // if not in transient
+            if($content === ''){
+                try{
+                    $file   = $this->client->api('repo')->contents()->show($author, $repo, $item.'.md');
+                    
+                    if(!empty($file)){
+                        $content	= base64_decode($file['content']);
+                        //convert to html
+                        $parser 	= new \Michelf\MarkdownExtra;
+                        $content	= $parser->transform($content);
+                    }
+                }catch (\Exception $e) {
+                    // 404 is not found
+                    if($e->getCode() != 404){
+                        SIM\printArray($e);
+                    }
 
-        // if not in transient
-        if(!$description){
-            $description    = base64_decode($github->client->api('repo')->contents()->readme('Tsjippy', PLUGINNAME)['content']);
-            // Store for 24 hours
-            set_transient( 'sim-git-description', $description, DAY_IN_SECONDS );
+                    $content    = '';
+                }
+
+                // Store for 24 hours
+                set_transient( "sim-git-$item", $content, DAY_IN_SECONDS );
+            }
+
+            if(!empty($content)){
+                $res->sections[$item]    = trim($content);
+            }
         }
 
-        $changelog    = get_transient('sim-git-changelog');
-        // if not in transient
-        if(!$changelog){
-            $changelog	= base64_decode($github->client->api('repo')->contents()->show('Tsjippy', PLUGINNAME, 'CHANGELOG.md')['content']);
-            
-            //convert to html
-            $parser 	= new \Michelf\MarkdownExtra;
-            $changelog	= $parser->transform($changelog);
-            
-            // Store for 24 hours
-            set_transient( 'sim-git-changelog', $changelog, DAY_IN_SECONDS );
+        $res->version           = $res->Version;
+        $res->author            = $res->Author;
+        $res->last_updated      = $res->last_updated;
+        $res->requires          = $res->RequiresWP;
+        $res->requires_php      = $res->RequiresPhp;
+        $res->homepage          = $res->PluginURI;
+
+        foreach($extraData  as $key=>$data){
+            $res->$key  = $data;
+
+            if($key == 'ratings'){
+                $res->num_ratings       = count($data);
+            }
         }
-            
-        $res->sections = array(
-            'description' 	=> $description,
-            'changelog' 	=> $changelog
+
+        return $res;
+    }
+
+    /**
+     * Checks for update from github
+     *
+     * @param   string  $pluginPath     The fullpath to the plugin main file
+     *
+     * @return  object                  Version information
+     */
+    public function pluginVersionInfo($pluginPath){
+        $plugin = explode('/', $pluginPath)[0];
+
+        if( !function_exists('get_plugin_data') ){
+            require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+        }
+        $pluginVersion  = get_plugin_data($pluginPath)['Version'];
+
+        $release		= $this->getLatestRelease();
+
+        if(is_wp_error($release)){
+            return $release;
+        }
+
+        $gitVersion     = $release['tag_name'];
+
+        $item			= (object) array(
+            'slug'          => $plugin,
+            'new_version'   => $pluginVersion,
+            'url'           => 'https://api.github.com/repos/Tsjippy/sim-plugin',
+            'package'       => '',
+            'plugin'		=> PLUGIN
         );
 
-        $res->plugin_uri        = $res->PluginURI;
-        $res->author_profile    = $res->AuthorURI;
-        $res->text_domain       = $res->TextDomain;
-        $res->domain_path       = $res->DomainPath;
-        $res->requires_wp       = $res->RequiresWP;
-        $res->requires_php      = $res->RequiresPHP;
-        $res->update_uri        = $res->UpdateURI;
-        $res->requires_plugins  = (array)$res->RequiresPlugins;
-        $res->author_name       = $res->authorName;
-        $res->homepage          = $res->PluginURI;
-        
-        foreach($res as $key=>$value){
-            $newKey = strtolower($key);
-            $res->$newKey   = $value;
+        if(version_compare($gitVersion, $pluginVersion) && !empty($release['assets'][0]['browser_download_url'])){
+            $item->new_version	= $gitVersion;
+            $item->package		= $release['assets'][0]['browser_download_url'];
         }
-        return $res;
+
+        return $item;
     }
 }

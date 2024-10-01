@@ -1,5 +1,4 @@
 # Changelog
-
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
